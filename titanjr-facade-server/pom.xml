@@ -67,7 +67,16 @@
             <artifactId>hibernate-validator</artifactId>
             <version>5.1.3.Final</version>
         </dependency>
-
+      <dependency>
+          <groupId>com.fangcang</groupId>
+          <artifactId>configparam</artifactId>
+          <exclusions>
+              <exclusion>
+                  <groupId>org.springframework</groupId>
+                  <artifactId>spring</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
   </dependencies>
   
   <build>

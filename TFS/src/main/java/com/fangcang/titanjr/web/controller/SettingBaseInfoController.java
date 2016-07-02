@@ -2,14 +2,13 @@ package com.fangcang.titanjr.web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 /**
  * 基础信息
  * @author luoqinglong
  * @2016年7月1日
  */
 @Controller
-@RequestMapping("/setting")
+@RequestMapping("/setting2")
 public class SettingBaseInfoController extends BaseController{
 
 	/**
@@ -19,6 +18,8 @@ public class SettingBaseInfoController extends BaseController{
 	@RequestMapping("/base-info")
 	public String baseInfo(){
 		
+		
+		///测试
 		return "setting/base-info";
 	}
 }

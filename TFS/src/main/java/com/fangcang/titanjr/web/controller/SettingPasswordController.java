@@ -29,6 +29,10 @@ public class SettingPasswordController extends BaseController{
 		
 		//userService.queryFinancialUser(userInfoQueryRequest);
 		
+		
+		
+		
+		///测试
 		model.addAttribute("isSetPayPass","");
 		return "setting/pay-set";
 	}
