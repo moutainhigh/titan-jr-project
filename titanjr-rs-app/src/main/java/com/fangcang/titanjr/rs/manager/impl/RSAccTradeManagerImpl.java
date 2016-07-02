@@ -1,0 +1,436 @@
+package com.fangcang.titanjr.rs.manager.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+
+import com.Rop.api.domain.SHBalanceInfo;
+import com.Rop.api.request.WheatfieldBalanceGetlistRequest;
+import com.Rop.api.request.WheatfieldOrderOperRequest;
+import com.Rop.api.request.WheatfieldOrderServiceAuthcodeserviceRequest;
+import com.Rop.api.request.WheatfieldOrderServiceMultitransferQueryRequest;
+import com.Rop.api.request.WheatfieldOrderServiceMultitransferRequest;
+import com.Rop.api.request.WheatfieldOrderServiceThawauthcodeRequest;
+import com.Rop.api.request.WheatfieldOrderServiceWithdrawserviceRequest;
+import com.Rop.api.request.WheatfieldOrderTransferRequest;
+import com.Rop.api.response.WheatfieldAccountFreezeResponse;
+import com.Rop.api.response.WheatfieldBalanceGetlistResponse;
+import com.Rop.api.response.WheatfieldOrderOperResponse;
+import com.Rop.api.response.WheatfieldOrderServiceAuthcodeserviceResponse;
+import com.Rop.api.response.WheatfieldOrderServiceMultitransferQueryResponse;
+import com.Rop.api.response.WheatfieldOrderServiceThawauthcodeResponse;
+import com.Rop.api.response.WheatfieldOrderServiceWithdrawserviceResponse;
+import com.Rop.api.response.WheatfieldOrderTransferResponse;
+import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
+import com.fangcang.titanjr.common.exception.RSValidateException;
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.rs.dto.BalanceInfo;
+import com.fangcang.titanjr.rs.dto.OrderTransferFlow;
+import com.fangcang.titanjr.rs.dto.TradeInfoList;
+import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
+import com.fangcang.titanjr.rs.request.AccountBalanceQueryRequest;
+import com.fangcang.titanjr.rs.request.AccountTransferRequest;
+import com.fangcang.titanjr.rs.request.AccountWithDrawRequest;
+import com.fangcang.titanjr.rs.request.BalanceFreezeRequest;
+import com.fangcang.titanjr.rs.request.BalanceUnFreezeRequest;
+import com.fangcang.titanjr.rs.request.OrderOperateRequest;
+import com.fangcang.titanjr.rs.request.OrderTransferFlowRequest;
+import com.fangcang.titanjr.rs.response.AccountBalanceQueryResponse;
+import com.fangcang.titanjr.rs.response.AccountTransferResponse;
+import com.fangcang.titanjr.rs.response.AccountWithDrawResponse;
+import com.fangcang.titanjr.rs.response.BalanceFreezeResponse;
+import com.fangcang.titanjr.rs.response.BalanceUnFreezeResponse;
+import com.fangcang.titanjr.rs.response.OrderInfoResponse;
+import com.fangcang.titanjr.rs.response.OrderOperateResponse;
+import com.fangcang.titanjr.rs.response.OrderTransferFlowResponse;
+import com.fangcang.titanjr.rs.response.Retbeanlist;
+import com.fangcang.titanjr.rs.util.MyConvertXmlToObject;
+import com.fangcang.util.MyBeanUtil;
+
+public class RSAccTradeManagerImpl implements RSAccTradeManager {
+
+	private static final Log log = LogFactory
+			.getLog(RSOrganizationManagerImpl.class);
+
+	private RSInvokeInitManagerImpl rsInvokeInitManager;
+
+	private static final boolean needCheckRequest = true;// 是否校验请求
+	@Override
+	public AccountBalanceQueryResponse queryAccountBalance(
+			AccountBalanceQueryRequest accountBalanceQueryRequest) {
+		AccountBalanceQueryResponse response = new AccountBalanceQueryResponse();
+		try{
+			WheatfieldBalanceGetlistRequest req = new WheatfieldBalanceGetlistRequest();
+			if(needCheckRequest){
+				accountBalanceQueryRequest.check();
+			}
+			MyBeanUtil.copyProperties(req, accountBalanceQueryRequest);
+			WheatfieldBalanceGetlistResponse rsp = RSInvokeConstant.ropClient
+					.execute(req, RSInvokeConstant.sessionKey);
+			if (rsp != null) {
+				log.debug("调用queryAccountBalance返回报文: \n" + rsp.getBody());
+				String errorMsg;
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						errorMsg = rsp.getSubMsg();
+					} else {
+						errorMsg = rsp.getMsg();
+					}
+					response.setReturnCode(rsp.getErrorCode());
+					response.setReturnMsg(errorMsg);
+					log.error("调用接口queryAccountBalance异常：" + errorMsg);
+				} else {
+					response.setSuccess(true);
+					response.setOperateStatus(rsp.getIs_success());
+					response.setBalanceInfoList(shbalanceinfoToBalanceInfo(rsp.getShbalanceinfos()));
+					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+				}
+			} else {
+				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
+				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
+			}
+		}catch(Exception e){
+			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+			response.setReturnMsg(e.getMessage());
+			log.error("调用queryAccountBalance过程出现未知异常", e);
+		}
+		return response;
+	}
+
+	@Override
+	public BalanceFreezeResponse freezeAccountBalance(
+			BalanceFreezeRequest balanceFreezeRequest) {
+		BalanceFreezeResponse response = new BalanceFreezeResponse();
+		try{
+			WheatfieldOrderServiceAuthcodeserviceRequest req = new WheatfieldOrderServiceAuthcodeserviceRequest();
+			if(needCheckRequest){
+				balanceFreezeRequest.check();
+			}
+			MyBeanUtil.copyProperties(req, balanceFreezeRequest);
+			WheatfieldOrderServiceAuthcodeserviceResponse rsp = RSInvokeConstant.ropClient
+					.execute(req, RSInvokeConstant.sessionKey);
+			if (rsp != null) {
+				log.debug("调用freezeAccountBalance返回报文: \n" + rsp.getBody());
+				String errorMsg;
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						errorMsg = rsp.getSubMsg();
+					} else {
+						errorMsg = rsp.getMsg();
+					}
+					response.setReturnCode(rsp.getErrorCode());
+					response.setReturnMsg(errorMsg);
+					log.error("调用接口freezeAccountBalance异常：" + errorMsg);
+				} else {
+					response.setSuccess(true);
+					response.setAuthcode(rsp.getAuthcode());
+					response.setOperateStatus(rsp.getIs_success());
+					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+				}
+			} else {
+				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
+				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
+			}
+		}catch(Exception e){
+			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+			response.setReturnMsg(e.getMessage());
+			log.error("调用freezeAccountBalance过程出现未知异常", e);
+		}
+		return response;
+	}
+
+	@Override
+	public BalanceUnFreezeResponse unFreezeAccountBalance(
+			BalanceUnFreezeRequest balanceUnFreezeRequest) {
+		BalanceUnFreezeResponse response = new BalanceUnFreezeResponse();
+		try{
+			WheatfieldOrderServiceThawauthcodeRequest req = new WheatfieldOrderServiceThawauthcodeRequest();
+			if(needCheckRequest){
+				balanceUnFreezeRequest.check();
+			}
+			MyBeanUtil.copyProperties(req, balanceUnFreezeRequest);
+			WheatfieldOrderServiceThawauthcodeResponse rsp = RSInvokeConstant.ropClient
+					.execute(req, RSInvokeConstant.sessionKey);
+			if (rsp != null) {
+				log.debug("调用unFreezeAccountBalance返回报文: \n" + rsp.getBody());
+				String errorMsg;
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						errorMsg = rsp.getSubMsg();
+					} else {
+						errorMsg = rsp.getMsg();
+					}
+					response.setReturnCode(rsp.getErrorCode());
+					response.setReturnMsg(errorMsg);
+					log.error("调用接口unFreezeAccountBalance异常：" + errorMsg);
+				} else {
+					response.setSuccess(true);
+					response.setRetcode(rsp.getRetcode());
+					response.setRetmsg(rsp.getRetmsg());
+					response.setOperateStatus(rsp.getIs_success());
+					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+				}
+			} else {
+				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
+				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
+			}
+		}catch(Exception e){
+			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+			response.setReturnMsg(e.getMessage());
+			log.error("调用freezeAccountBalance过程出现未知异常", e);
+		}
+		return response;
+	}
+
+	@Override
+	public OrderOperateResponse operateOrder(
+			OrderOperateRequest orderOperateRequest) {
+		OrderOperateResponse response = new OrderOperateResponse();
+		try{
+			WheatfieldOrderOperRequest req = new WheatfieldOrderOperRequest();
+			if(needCheckRequest){
+				orderOperateRequest.check();
+			}
+			MyBeanUtil.copyProperties(req, orderOperateRequest);
+			WheatfieldOrderOperResponse rsp = RSInvokeConstant.ropClient
+					.execute(req, RSInvokeConstant.sessionKey);
+			if (rsp != null) {
+				log.debug("调用operateOrder返回报文: \n" + rsp.getBody());
+				String errorMsg;
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						errorMsg = rsp.getSubMsg();
+					} else {
+						errorMsg = rsp.getMsg();
+					}
+					response.setReturnCode(rsp.getErrorCode());
+					response.setReturnMsg(errorMsg);
+					log.error("调用接口operateOrder异常：" + errorMsg);
+				} else {
+					response.setSuccess(true);
+					response.setOperateStatus(rsp.getIs_success());
+					response.setOrderid(rsp.getOrderid());
+					//订单查询操作的时候进行xml解析
+					if(orderOperateRequest !=null && "3".equals(orderOperateRequest.getOpertype())){
+						Object obj = MyConvertXmlToObject.convertXml2Object(rsp.getBody());
+						if(obj !=null){
+							OrderInfoResponse orderInfoRequest = (OrderInfoResponse)obj;
+							if(orderInfoRequest !=null && orderInfoRequest.getRetbeanlist()!=null){
+								Retbeanlist retbeanlist = orderInfoRequest.getRetbeanlist();
+								if(retbeanlist!=null && retbeanlist.getOrderOperateInfo()!=null){
+									response.setOrderOperateInfoList(retbeanlist.getOrderOperateInfo());
+								}
+							}
+						}
+					}
+					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+				}
+			} else {
+				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
+				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
+			}
+		}catch(RSValidateException e){
+			response.setReturnCode(e.getErrorCode());
+			response.setReturnMsg(e.getErrorMsg());
+		}catch(Exception e){
+			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+			response.setReturnMsg(e.getMessage());
+			log.error("调用operateOrder过程出现未知异常", e);
+		}
+		return response;
+	}
+
+	@Override
+	public OrderTransferFlowResponse queryOrderTranferFlow(
+			OrderTransferFlowRequest orderTransferFlowRequest) {
+		OrderTransferFlowResponse response = new OrderTransferFlowResponse();
+		try{
+			WheatfieldOrderServiceMultitransferQueryRequest req = new WheatfieldOrderServiceMultitransferQueryRequest();
+			if(needCheckRequest){
+				orderTransferFlowRequest.check();
+			}
+			MyBeanUtil.copyProperties(req, orderTransferFlowRequest);
+			WheatfieldOrderServiceMultitransferQueryResponse rsp = RSInvokeConstant.ropClient
+					.execute(req, RSInvokeConstant.sessionKey);
+			if (rsp != null) {
+				log.debug("调用queryOrderTranferFlow返回报文: \n" + rsp.getBody());
+				String errorMsg;
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						errorMsg = rsp.getSubMsg();
+					} else {
+						errorMsg = rsp.getMsg();
+					}
+					response.setReturnCode(rsp.getErrorCode());
+					response.setReturnMsg(errorMsg);
+					log.error("调用接口queryOrderTranferFlow异常：" + errorMsg);
+				} else {
+					response.setSuccess(true);
+					response.setOperateStatus(rsp.getIs_success());
+					response.setRetcode(rsp.getRetcode());
+					response.setRetmsg(rsp.getRetmsg());
+					Object obj = MyConvertXmlToObject.convertXml2Object(rsp.getBody());
+					if(obj !=null && CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
+						OrderTransferFlow orderTransferFlow = (OrderTransferFlow)obj;
+						if(orderTransferFlow !=null && orderTransferFlow.getTradeInfoList()!=null){
+							TradeInfoList orderTransferFlowList = orderTransferFlow.getTradeInfoList();
+							if(orderTransferFlowList!=null && orderTransferFlowList.getTradeInfoList()!=null){
+								response.setTradeInfoList(orderTransferFlowList.getTradeInfoList());
+							}
+						}
+					}
+					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+				}
+			} else {
+				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
+				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
+			}
+		}catch(Exception e){
+			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+			response.setReturnMsg(e.getMessage());
+			log.error("调用queryOrderTranferFlow过程出现未知异常", e);
+		}
+		return response;	
+		
+	}
+
+	@Override
+	public AccountTransferResponse accountBalanceTransfer(
+			AccountTransferRequest accountTransferRequest) {
+		AccountTransferResponse response = new AccountTransferResponse();
+		try{
+			WheatfieldOrderTransferRequest req = new WheatfieldOrderTransferRequest();;
+			if(needCheckRequest){
+				accountTransferRequest.check();
+			}
+			MyBeanUtil.copyProperties(req, accountTransferRequest);
+			WheatfieldOrderTransferResponse rsp = RSInvokeConstant.ropClient
+					.execute(req, RSInvokeConstant.sessionKey);
+			if (rsp != null) {
+				log.debug("调用accountBalanceTransfer返回报文: \n" + rsp.getBody());
+				String errorMsg;
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						errorMsg = rsp.getSubMsg();
+					} else {
+						errorMsg = rsp.getMsg();
+					}
+					response.setReturnCode(rsp.getErrorCode());
+					response.setReturnMsg(errorMsg);
+					log.error("调用接口accountBalanceTransfer异常：" + errorMsg);
+				} else {
+					response.setOperateStatus(rsp.getIs_success());
+					response.setRetcode(rsp.getRetcode());
+					response.setRetmsg(rsp.getRetmsg());
+					response.setOrderid(rsp.getOrderid());
+					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+				}
+			} else {
+				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
+				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
+			}
+		}catch(Exception e){
+			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+			response.setReturnMsg(e.getMessage());
+			log.error("调用accountBalanceTransfer过程出现未知异常", e);
+		}
+		return response;	
+	}
+
+	@Override
+	public AccountWithDrawResponse accountBalanceWithDraw(
+			AccountWithDrawRequest accountWithDrawRequest) {
+		AccountWithDrawResponse response = new AccountWithDrawResponse();
+		try{
+			WheatfieldOrderServiceWithdrawserviceRequest req = new WheatfieldOrderServiceWithdrawserviceRequest();
+			if(needCheckRequest){
+				accountWithDrawRequest.check();
+			}
+			MyBeanUtil.copyProperties(req, accountWithDrawRequest);
+			WheatfieldOrderServiceWithdrawserviceResponse rsp = RSInvokeConstant.ropClient
+					.execute(req, RSInvokeConstant.sessionKey);
+			if (rsp != null) {
+				log.debug("调用accountBalanceWithDraw返回报文: \n" + rsp.getBody());
+				String errorMsg;
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						errorMsg = rsp.getSubMsg();
+					} else {
+						errorMsg = rsp.getMsg();
+					}
+					response.setReturnCode(rsp.getErrorCode());
+					response.setReturnMsg(errorMsg);
+					log.error("调用接口accountBalanceWithDraw异常：" + errorMsg);
+				} else {
+					response.setSuccess(true);
+					response.setOperateStatus(rsp.getIs_success());
+					response.setReturnMsg(rsp.getMsg());
+					if(rsp.getIs_success().equals("true")){
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}
+				}
+			} else {
+				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
+				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
+			}
+		}catch(Exception e){
+			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+			response.setReturnMsg(e.getMessage());
+			log.error("调用accountBalanceWithDraw过程出现未知异常", e);
+		}
+		return response;	
+	}
+	
+	/**
+	 * 将融数账户信息转换为本地的账户信息
+	 * @param shBalanceInfos 融数返回的账户信息
+	 * @return BalanceInfo本地账户信息
+	 * @author fangdaikang
+	 */
+	private List<BalanceInfo> shbalanceinfoToBalanceInfo(List<SHBalanceInfo> shBalanceInfos){
+		List<BalanceInfo> balanceInfos = new ArrayList<BalanceInfo>();
+		if(shBalanceInfos !=null && shBalanceInfos.size()>0){
+			for(int i=0;i<shBalanceInfos.size();i++){
+				BalanceInfo balanceInfo = new BalanceInfo();
+				SHBalanceInfo  shBalanceInfo = shBalanceInfos.get(i);
+				if(shBalanceInfo !=null){
+					balanceInfo.setAmount(shBalanceInfo.getAmount());
+					balanceInfo.setBalancecredit(shBalanceInfo.getBalancecredit());
+					balanceInfo.setBalancefrozon(shBalanceInfo.getBalancefrozon());
+					balanceInfo.setBalanceoverlimit(shBalanceInfo.getBalanceoverlimit());
+					balanceInfo.setBalancesettle(shBalanceInfo.getBalancesettle());
+					
+					balanceInfo.setBalanceusable(shBalanceInfo.getBalanceusable());
+					balanceInfo.setProductid(shBalanceInfo.getProductid());
+					balanceInfo.setUserid(shBalanceInfo.getUserid());
+					balanceInfos.add(balanceInfo);
+				}
+				
+			}
+			
+		}
+		
+		return balanceInfos;
+	}
+
+	public RSInvokeInitManagerImpl getRsInvokeInitManager() {
+		return rsInvokeInitManager;
+	}
+
+	public void setRsInvokeInitManager(RSInvokeInitManagerImpl rsInvokeInitManager) {
+		this.rsInvokeInitManager = rsInvokeInitManager;
+	}
+
+}

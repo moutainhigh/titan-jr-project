@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanOrgDao">
+    <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanOrg"
+            parameterType="com.fangcang.titanjr.entity.parameter.TitanOrgParam">
+        select
+        *
+        from t_tfs_org
+        <where>
+            <if test="orgid != null">orgid = #{orgid}</if>
+            <if test="orgcode != null"> and orgcode = #{orgcode}</if>
+            <if test="userid != null"> and userid =#{userid}</if>
+            <if test="productid != null"> and productid =#{productid}</if>
+            <if test="orgname !=null"> and orgname = #{orgname}</if>
+            <if test="titancode !=null"> and titancode = #{titancode}</if>
+            <if test="buslince != null"> and buslince = #{buslince}</if>
+            <if test="certificatetype != null"> and certificatetype =#{certificatetype}</if>
+            <if test="certificatenumber != null"> and certificatenumber =#{certificatenumber}</if>
+        </where>
+    </select>
+
+    <select id="queryTitanOrgList" resultType="com.fangcang.titanjr.entity.TitanOrg"
+            parameterType="com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest">
+        SELECT
+          userid,
+          orgname,
+          productid,
+          constid,
+          usertype,
+          statusid,
+          orgtype
+        FROM
+          t_tfs_org
+        WHERE
+          1=1
+          <if test="userId != null">AND userId = #{userId}</if>
+          <if test="userType != null">AND orgcode = #{userType}</if>
+          <if test="orgType != null">AND userid =#{orgType}</if>
+          <if test="statusId != null">AND productid =#{statusId}</if>
+    </select>
+    
+    
+    <select id="countOrg" parameterType="com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest" resultType="Integer">
+    	select count(1) from 
+	      t_tfs_org g
+          LEFT JOIN t_tfs_orgcheck c ON g.userid = c.userid
+		<where>
+			<if test="userId !=null"> g.userId = #{userId}</if>
+			<if test="orgId !=null"> and g.orgid = #{orgId}</if>
+			<if test="userType !=null"> and g.usertype = #{userType}</if>
+			<if test="orgCode !=null"> and g.orgCode = #{orgCode}</if>
+			<if test="statusId !=null"> and  g.statusId = #{statusId}</if>
+			<if test="resultKey !=null"> and  c.resultkey = #{resultKey}</if>
+			<if test="orgType !=null"> and  g.orgType = #{orgType}</if>
+		</where>
+    </select>
+
+    <resultMap id="resultMapOrgan" type="com.fangcang.titanjr.dto.bean.FinancialOrganDTO">
+        <result property="orgCode" column="orgcode"/>
+        <result property="orgId" column="orgid"/>
+        <result property="orgName" column="orgname"/>
+        <result property="constId" column="constid"/>
+        <result property="userId" column="userid"/>
+        <result property="productId" column="productid"/>
+        <result property="role" column="role"/>
+        <result property="userName" column="username"/>
+        <result property="userType" column="usertype"/>
+        <result property="statusId" column="statusid"/>
+        <result property="address" column="address"/>
+        <result property="post" column="post"/>
+        <result property="remark" column="remark"/>
+        <result property="orgType" column="orgtype"/>
+        <result property="certificateType" column="certificatetype"/>
+        <result property="certificateNumber" column="certificatenumber"/>
+        <result property="mobileTel" column="mobiletel"/>
+        <result property="bindCompanyName" column="bindcompanyname"/>
+        <result property="orgshortname" column="orgshortname"/>
+         <result property="createTime" column="createTime"/>
+        <result property="mcc" column="mcc"/>
+        <result property="connect" column="connect"/>
+        <result property="buslince" column="buslince"/>
+        <result property="taxregcardf" column="taxregcardf"/>
+        <result property="taxregcards" column="taxregcards"/>
+        <result property="organcertificate" column="organcertificate"/>
+        <result property="busplacectf" column="busplacectf"/>
+        <result property="loancard" column="loancard"/>
+        <result property="acuntopnlince" column="acuntopnlince"/>
+        <result property="corporatename" column="corporatename"/>
+        <result property="personengname" column="personengname"/>
+        <result property="persontype" column="persontype"/>
+        <result property="personsex" column="personsex"/>
+        <result property="birthday" column="birthday"/>
+        <result property="fixTel" column="fixTel"/>
+        <result property="email" column="email"/>
+        <result property="titanCode" column="titancode"/>
+
+        <association property="checkStatus" javaType="com.fangcang.titanjr.dto.bean.CheckStatus">
+            <result property="checkResultKey" column="resultkey" />
+            <result property="checkResultMsg" column="resultmsg" />
+            <result property="checkUser" column="checkuser" />
+            <result property="checkTime" column="checktime" />
+        </association>
+
+        <association property="orgBindInfo" javaType="com.fangcang.titanjr.dto.bean.OrgBindInfo">
+            <result property="merchantCode" column="merchantcode" />
+            <result property="merchantName" column="merchantname" />
+            <result property="bindStatus" column="bindstatus" />
+            <result property="bindApplyPhone" column="bindapplyphone" />
+            <result property="bindApplyName" column="bindapplyname" />
+        </association>
+
+        <collection property="orgImageInfoList" ofType="com.fangcang.titanjr.dto.bean.OrgImageInfo">
+            <result property="imageName" column="imageName" />
+            <result property="imageType" column="imagetype" />
+            <result property="sizeType" column="sizetype" />
+            <result property="imageURL" column="imageurl" />
+        </collection>
+    </resultMap>
+	<select id="queryOrgIdList" parameterType="java.lang.Object" resultType="java.lang.Integer">
+		SELECT
+	      g.orgid
+        FROM
+	      t_tfs_org g
+          LEFT JOIN t_tfs_orgbindinfo b ON g.userid = b.userid
+          LEFT JOIN t_tfs_orgimage i ON g.userid = i.userid
+          LEFT JOIN t_tfs_orgcheck c ON g.userid = c.userid
+		<where>
+			<if test="userId !=null"> g.userId = #{userId}</if>
+			<if test="orgId !=null"> and g.orgid = #{orgId}</if>
+			<if test="orgCode !=null"> and g.orgCode = #{orgCode}</if>
+			<if test="statusId !=null"> and  g.statusId = #{statusId}</if>
+			<if test="resultKey !=null"> and  c.resultkey = #{resultKey}</if>
+			<if test="orgType !=null"> and  g.orgType = #{orgType}</if>
+			<if test="merchantcode !=null"> and  b.merchantcode = #{merchantcode}</if>
+		</where>
+		group by g.orgid
+	</select>
+	<select id="queryOrgCollectionList" parameterType="java.util.Map" resultMap="resultMapOrgan">
+		SELECT
+	      g.orgcode,
+	      g.orgid,
+	      g.orgname,
+	      g.constid,
+	      g.userid,
+	      g.productid,
+	      g.role,
+	      g.username,
+          g.usertype,
+	      g.statusid,
+	      g.address,
+	      g.post,
+	      g.remark,
+	      g.orgtype,
+	      g.certificatetype,
+	      g.certificatenumber,
+	      g.mobiletel,
+	      g.bindcompanyname,
+	      g.orgshortname,
+	      g.mcc,
+	      g.connect,
+	      g.buslince,
+	      g.taxregcardf,
+	      g.taxregcards,
+          g.organcertificate,
+	      g.busplacectf,
+	      g.loancard,
+	      g.acuntopnlince,
+	      g.corporatename,
+	      g.personengname,
+	      g.persontype,
+	      g.personsex,
+	      g.birthday,
+	      g.fixTel,
+	      g.email,
+	      g.titancode,
+	      g.createTime,
+	      i.imageName,
+	      i.imagetype,
+	      i.sizetype,
+	      i.imageurl,
+	      c.resultkey,
+	      c.resultmsg,
+	      c.checkuser,
+	      c.checktime,
+	      b.merchantcode,
+	      b.merchantname,
+	      b.bindstatus,
+	      b.bindapplyphone,
+	      b.bindapplyname
+        FROM
+	      t_tfs_org g
+          LEFT JOIN t_tfs_orgbindinfo b ON g.userid = b.userid
+          LEFT JOIN t_tfs_orgimage i ON g.userid = i.userid
+          LEFT JOIN t_tfs_orgcheck c ON g.userid = c.userid
+     	<where>
+	    	g.orgid in
+	        <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
+	            #{item}
+	        </foreach>
+    	</where>
+	</select>
+	
+    <resultMap  id="resultMapOrgCheck" type="com.fangcang.titanjr.dto.bean.OrgCheckDTO">
+    	<result property="orgId" column="orgid"/>
+    	<result property="orgcode" column="orgcode"/>
+    	<result property="tfsuserid" column="tfsuserid"/>
+    	<result property="userloginname" column="userloginname"/>
+    	<result property="orgname" column="orgname"/>
+    	<result property="buslince" column="buslince"/>
+    	<result property="connect" column="connect"/>
+    	<result property="mobiletel" column="mobiletel"/>
+    	<result property="certificateType" column="certificatetype"/>
+    	<result property="certificateNumber" column="certificateNumber"/>
+    	<result property="checkuser" column="checkuser"/>
+    	<result property="resultkey" column="resultkey"/>
+    </resultMap>
+	<select id="queryOrgCheckList" resultMap="resultMapOrgCheck"  parameterType="com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest">
+		SELECT 
+			G.orgid,
+			G.orgcode,
+			G.certificatetype,
+			G.certificatenumber,
+			G.orgname,
+			G.buslince,	
+			G.connect,	
+			G.mobiletel,	
+			U.tfsuserid,
+			U.userloginname,
+			C.resultkey ,
+			C.checkuser,
+			C.checktime
+		FROM 
+			t_tfs_org G 
+			LEFT JOIN t_tfs_user U ON G.userid = U.userid
+			LEFT JOIN t_tfs_orgcheck C ON G.userid = C.userid 
+			<where>
+				<if test="isadmin != null"> and U.isadmin = #{isadmin}</if>
+				<if test="isoperator != null"> and U.isoperator = #{isoperator}</if>
+				<if test="orgName != null"> and G.orgname like concat('%',#{orgName},'%')</if>
+				<if test="userloginname != null"> and U.userloginname like concat('%',#{userloginname},'%')</if>
+				<if test="resultKey != null"> and C.resultkey = #{resultKey}</if>
+				<if test="regStartTime != null"><![CDATA[ and G.createTime >= #{regStartTime}]]></if>
+				<if test="regEndTime != null"><![CDATA[ and G.createTime <= #{regEndTime}]]></if>
+				<if test="userType != null"> and G.usertype = #{userType}</if>
+				<if test="orgType != null"> and G.orgtype = #{orgType}</if>
+			</where>
+	</select>
+    <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanOrg" useGeneratedKeys="true" keyProperty="orgid">
+    insert into t_tfs_org (orgid, orgcode, orgname, 
+      constid, userid, productid, 
+      role, username, usertype, 
+      statusid, address, post, 
+      remark, orgtype, certificatetype, 
+      certificatenumber, mobiletel, 
+      bindcompanyname, orgshortname, mcc, 
+      connect, buslince, taxregcardf, 
+      taxregcards, organcertificate, busplacectf, 
+      loancard, acuntopnlince, corporatename, 
+      personengname, persontype, personsex, 
+      birthday, fixTel, titancode, 
+      email,createTime)
+    values (#{orgid,jdbcType=INTEGER}, #{orgcode,jdbcType=VARCHAR}, #{orgname,jdbcType=VARCHAR}, 
+      #{constid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, #{productid,jdbcType=VARCHAR}, 
+      #{role,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{usertype,jdbcType=INTEGER}, 
+      #{statusid,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR}, #{post,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{orgtype,jdbcType=INTEGER}, #{certificatetype,jdbcType=INTEGER}, 
+      #{certificatenumber,jdbcType=VARCHAR}, #{mobiletel,jdbcType=VARCHAR}, 
+      #{bindcompanyname,jdbcType=VARCHAR}, #{orgshortname,jdbcType=VARCHAR}, #{mcc,jdbcType=VARCHAR}, 
+      #{connect,jdbcType=VARCHAR}, #{buslince,jdbcType=VARCHAR}, #{taxregcardf,jdbcType=VARCHAR}, 
+      #{taxregcards,jdbcType=VARCHAR}, #{organcertificate,jdbcType=VARCHAR}, #{busplacectf,jdbcType=VARCHAR}, 
+      #{loancard,jdbcType=VARCHAR}, #{acuntopnlince,jdbcType=VARCHAR}, #{corporatename,jdbcType=VARCHAR}, 
+      #{personengname,jdbcType=VARCHAR}, #{persontype,jdbcType=VARCHAR}, #{personsex,jdbcType=VARCHAR}, 
+      #{birthday}, #{fixTel,jdbcType=VARCHAR}, #{titancode,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR},#{createTime})
+  </insert>
+    <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanOrg">
+        update t_tfs_org
+        <set>
+            <if test="orgcode != null">
+                orgcode = #{orgcode,jdbcType=VARCHAR},
+            </if>
+            <if test="orgname != null">
+                orgname = #{orgname,jdbcType=VARCHAR},
+            </if>
+            <if test="constid != null">
+                constid = #{constid,jdbcType=VARCHAR},
+            </if>
+            <if test="userid != null">
+                userid = #{userid,jdbcType=VARCHAR},
+            </if>
+            <if test="productid != null">
+                productid = #{productid,jdbcType=VARCHAR},
+            </if>
+            <if test="role != null">
+                role = #{role,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="usertype != null">
+                usertype = #{usertype,jdbcType=INTEGER},
+            </if>
+            <if test="statusid != null">
+                statusid = #{statusid,jdbcType=INTEGER},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="post != null">
+                post = #{post,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="orgtype != null">
+                orgtype = #{orgtype,jdbcType=INTEGER},
+            </if>
+            <if test="certificatetype != null">
+                certificatetype = #{certificatetype,jdbcType=INTEGER},
+            </if>
+            <if test="certificatenumber != null">
+                certificatenumber = #{certificatenumber,jdbcType=VARCHAR},
+            </if>
+            <if test="mobiletel != null">
+                mobiletel = #{mobiletel,jdbcType=VARCHAR},
+            </if>
+            <if test="bindcompanyname != null">
+                bindcompanyname = #{bindcompanyname,jdbcType=VARCHAR},
+            </if>
+            <if test="orgshortname != null">
+                orgshortname = #{orgshortname,jdbcType=VARCHAR},
+            </if>
+            <if test="mcc != null">
+                mcc = #{mcc,jdbcType=VARCHAR},
+            </if>
+            <if test="connect != null">
+                connect = #{connect,jdbcType=VARCHAR},
+            </if>
+            <if test="buslince != null">
+                buslince = #{buslince,jdbcType=VARCHAR},
+            </if>
+            <if test="taxregcardf != null">
+                taxregcardf = #{taxregcardf,jdbcType=VARCHAR},
+            </if>
+            <if test="taxregcards != null">
+                taxregcards = #{taxregcards,jdbcType=VARCHAR},
+            </if>
+            <if test="organcertificate != null">
+                organcertificate = #{organcertificate,jdbcType=VARCHAR},
+            </if>
+            <if test="busplacectf != null">
+                busplacectf = #{busplacectf,jdbcType=VARCHAR},
+            </if>
+            <if test="loancard != null">
+                loancard = #{loancard,jdbcType=VARCHAR},
+            </if>
+            <if test="acuntopnlince != null">
+                acuntopnlince = #{acuntopnlince,jdbcType=VARCHAR},
+            </if>
+            <if test="corporatename != null">
+                corporatename = #{corporatename,jdbcType=VARCHAR},
+            </if>
+            <if test="personengname != null">
+                personengname = #{personengname,jdbcType=VARCHAR},
+            </if>
+            <if test="persontype != null">
+                persontype = #{persontype,jdbcType=VARCHAR},
+            </if>
+            <if test="personsex != null">
+                personsex = #{personsex,jdbcType=VARCHAR},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday},
+            </if>
+            <if test="fixTel != null">
+                fixTel = #{fixTel,jdbcType=VARCHAR},
+            </if>
+            <if test="titancode != null">
+                titancode = #{titancode,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            
+        </set>
+        where orgid = #{orgid,jdbcType=INTEGER}
+    </update>
+
+</mapper>

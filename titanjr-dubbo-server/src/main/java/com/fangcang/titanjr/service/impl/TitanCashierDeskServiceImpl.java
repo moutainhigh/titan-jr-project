@@ -1,0 +1,316 @@
+package com.fangcang.titanjr.service.impl;
+
+import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.titanjr.common.enums.CashierDeskTypeEnum;
+import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
+import com.fangcang.titanjr.common.enums.SupportBankEnum;
+import com.fangcang.titanjr.dao.TitanCashierDeskDao;
+import com.fangcang.titanjr.dao.TitanCashierDeskItemDao;
+import com.fangcang.titanjr.dao.TitanCashierItemBankDao;
+import com.fangcang.titanjr.dao.TitanCommonPayMethodDao;
+import com.fangcang.titanjr.dao.TitanRateConfigDao;
+import com.fangcang.titanjr.dto.bean.CashierDeskDTO;
+import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
+import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
+import com.fangcang.titanjr.dto.request.CashierDeskInitRequest;
+import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
+import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
+import com.fangcang.titanjr.dto.response.CashierDeskInitResponse;
+import com.fangcang.titanjr.dto.response.CashierDeskResponse;
+import com.fangcang.titanjr.entity.TitanCashierDesk;
+import com.fangcang.titanjr.entity.TitanCashierDeskItem;
+import com.fangcang.titanjr.entity.TitanCashierItemBank;
+import com.fangcang.titanjr.entity.TitanCommonPayMethod;
+import com.fangcang.titanjr.entity.TitanRateConfig;
+import com.fangcang.titanjr.entity.parameter.TitanCommonPayMethodParam;
+import com.fangcang.titanjr.service.TitanCashierDeskService;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.util.DateUtil;
+import com.fangcang.util.MyBeanUtil;
+import com.fangcang.util.StringUtil;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * Created by zhaoshan on 2016/5/18.
+ */
+@Service("titanCashierDeskService")
+public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Serializable {
+
+    private static final Log log = LogFactory.getLog(TitanCashierDeskServiceImpl.class);
+
+    @Resource
+    TitanCashierDeskDao titanCashierDeskDao;
+
+    @Resource
+    TitanCashierDeskItemDao titanCashierDeskItemDao;
+
+    @Resource
+    TitanCashierItemBankDao titanCashierItemBankDao;
+    
+    @Resource
+    TitanCommonPayMethodDao titanCommonPayMethodDao;
+
+    @Resource
+    TitanRateConfigDao titanRateConfigDao;
+
+    @Resource
+    TitanFinancialOrganService titanFinancialOrganService;
+
+    @Override
+    public CashierDeskResponse queryCashierDesk(CashierDeskQueryRequest cashierDeskQueryRequest) {
+        //需要补充accountHistory，账户是否需要密码等数据
+        CashierDeskResponse deskResponse = new CashierDeskResponse();
+        try {
+            List<CashierDeskDTO> result = titanCashierDeskDao.queryCashierDesk(cashierDeskQueryRequest);
+            if (CollectionUtils.isNotEmpty(result)) {
+                deskResponse.setCashierDeskDTOList(result);
+                if (StringUtil.isValidString(cashierDeskQueryRequest.getPayerOrgCode())) {//验证付款方编码
+                    FinancialOrganQueryRequest titanOrgQueryDTO = new FinancialOrganQueryRequest();
+                    titanOrgQueryDTO.setMerchantcode(cashierDeskQueryRequest.getPayerOrgCode());
+                    titanFinancialOrganService.queryFinancialOrgan(titanOrgQueryDTO);
+                }
+            }
+            deskResponse.putSuccess();
+        } catch (Exception e) {
+            log.error("查询收银台异常", e);
+            deskResponse.putSysError();
+        }
+        return deskResponse;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    public CashierDeskInitResponse initCashierDesk(CashierDeskInitRequest cashierDeskInitRequest) throws Exception {
+        CashierDeskInitResponse deskInitResponse = new CashierDeskInitResponse();
+        try {
+            TitanCashierDesk b2bCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.B2B_DESK);
+            TitanCashierDesk supplyCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.SUPPLY_DESK);
+            TitanCashierDesk allianceCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.ALLIANCE_DESK);
+            TitanCashierDesk rechargeCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.RECHARGE);
+            //批量插入初始化收银台
+            titanCashierDeskDao.saveCashierDesk(b2bCashierDesk);
+            titanCashierDeskDao.saveCashierDesk(supplyCashierDesk);
+            titanCashierDeskDao.saveCashierDesk(allianceCashierDesk);
+            titanCashierDeskDao.saveCashierDesk(rechargeCashierDesk);
+
+            //B2B的收银台有下面三个选项
+            TitanCashierDeskItem b2bitem = buildCahsierDesk(b2bCashierDesk.getDeskid(), CashierItemTypeEnum.B2B_ITEM);
+            TitanCashierDeskItem b2citem = buildCahsierDesk(b2bCashierDesk.getDeskid(), CashierItemTypeEnum.B2C_ITEM);
+            TitanCashierDeskItem creditItem = buildCahsierDesk(b2bCashierDesk.getDeskid(), CashierItemTypeEnum.CREDIT_ITEM);
+            //分销商付款给供应商以及账单结算时有下面四个选项
+            TitanCashierDeskItem b2bsitem = buildCahsierDesk(supplyCashierDesk.getDeskid(), CashierItemTypeEnum.B2B_ITEM);
+            TitanCashierDeskItem b2csitem = buildCahsierDesk(supplyCashierDesk.getDeskid(), CashierItemTypeEnum.B2C_ITEM);
+            TitanCashierDeskItem creditsitem = buildCahsierDesk(supplyCashierDesk.getDeskid(), CashierItemTypeEnum.CREDIT_ITEM);
+            TitanCashierDeskItem balancesitem = buildCahsierDesk(supplyCashierDesk.getDeskid(), CashierItemTypeEnum.BALANCE_ITEM);
+            //联盟分销商付款给联盟供应商时有以下一个选项
+            TitanCashierDeskItem balanceaitem = buildCahsierDesk(allianceCashierDesk.getDeskid(), CashierItemTypeEnum.BALANCE_ITEM);
+
+            //账户充值的收银台有下面三个选项
+            TitanCashierDeskItem b2britem = buildCahsierDesk(rechargeCashierDesk.getDeskid(), CashierItemTypeEnum.B2B_ITEM);
+            TitanCashierDeskItem b2critem = buildCahsierDesk(rechargeCashierDesk.getDeskid(), CashierItemTypeEnum.B2C_ITEM);
+
+            //批量插入初始化收银台子项
+            titanCashierDeskItemDao.saveCashierDeskItem(b2bitem);
+            titanCashierDeskItemDao.saveCashierDeskItem(b2citem);
+            titanCashierDeskItemDao.saveCashierDeskItem(creditItem);
+            titanCashierDeskItemDao.saveCashierDeskItem(b2bsitem);
+            titanCashierDeskItemDao.saveCashierDeskItem(b2csitem);
+            titanCashierDeskItemDao.saveCashierDeskItem(creditsitem);
+            titanCashierDeskItemDao.saveCashierDeskItem(balancesitem);
+            titanCashierDeskItemDao.saveCashierDeskItem(balanceaitem);
+            //充值
+            titanCashierDeskItemDao.saveCashierDeskItem(b2britem);
+            titanCashierDeskItemDao.saveCashierDeskItem(b2critem);
+
+            //默认初始化银行：
+            List<TitanCashierItemBank> allItemBanks = new ArrayList<TitanCashierItemBank>();
+            allItemBanks.addAll(buildItemBankList(b2bitem.getItemid(), "B2B"));
+            allItemBanks.addAll(buildItemBankList(b2bsitem.getItemid(), "B2B"));
+            allItemBanks.addAll(buildItemBankList(b2britem.getItemid(), "B2B"));
+
+            allItemBanks.addAll(buildItemBankList(b2citem.getItemid(), "B2C"));
+            allItemBanks.addAll(buildItemBankList(b2csitem.getItemid(), "B2C"));
+            allItemBanks.addAll(buildItemBankList(b2critem.getItemid(), "B2C"));
+
+            allItemBanks.addAll(buildItemBankList(creditItem.getItemid(), "Credit"));
+            allItemBanks.addAll(buildItemBankList(creditsitem.getItemid(), "Credit"));
+
+            titanCashierItemBankDao.batchSaveItemBanks(allItemBanks);
+
+            //默认初始化费率设置
+            List<TitanRateConfig> rateConfigList = new ArrayList<TitanRateConfig>();
+            rateConfigList.add(bulidPayRateConfig(b2bitem.getItemid(), cashierDeskInitRequest.getUserId(), "GDP企业网银支付费率"));
+            rateConfigList.add(bulidPayRateConfig(b2bsitem.getItemid(), cashierDeskInitRequest.getUserId(), "财务企业网银支付费率"));
+            rateConfigList.add(bulidPayRateConfig(b2britem.getItemid(), cashierDeskInitRequest.getUserId(), "企业网银充值费率"));
+
+            rateConfigList.add(bulidPayRateConfig(b2citem.getItemid(), cashierDeskInitRequest.getUserId(), "GDP个人网银支付费率"));
+            rateConfigList.add(bulidPayRateConfig(b2csitem.getItemid(), cashierDeskInitRequest.getUserId(), "财务个人网银支付费率"));
+            rateConfigList.add(bulidPayRateConfig(b2critem.getItemid(), cashierDeskInitRequest.getUserId(), "个人网银充值费率"));
+
+            rateConfigList.add(bulidPayRateConfig(creditsitem.getItemid(), cashierDeskInitRequest.getUserId(), "GDP信用卡支付费率"));
+            rateConfigList.add(bulidPayRateConfig(creditItem.getItemid(), cashierDeskInitRequest.getUserId(), "财务信用卡支付费率"));
+
+            rateConfigList.add(bulidWithDrawRateConfig(cashierDeskInitRequest.getUserId(), "账户提现费率"));
+
+            titanRateConfigDao.batchSaveRateConfigs(rateConfigList);
+            deskInitResponse.putSuccess();
+        } catch (Exception e) {
+            log.error("初始化收银台数据异常", e);
+            deskInitResponse.putSysError();
+        }
+        return deskInitResponse;
+    }
+
+    private TitanRateConfig bulidPayRateConfig(Integer deskItemId, String userId, String desc) {
+        TitanRateConfig rateConfig = new TitanRateConfig();
+        rateConfig.setBustype(1);//1表示付款费率
+        rateConfig.setCashieritemid(deskItemId);
+        rateConfig.setDescription(desc);
+        rateConfig.setRatetype(1);//百分比
+        rateConfig.setExecutionrate(0f);
+        rateConfig.setRsrate(0.15f);//千分之一点五
+        rateConfig.setStandrate(0.3f);
+        rateConfig.setUserid(userId);
+        rateConfig.setCreator("system");
+        rateConfig.setCreatetime(new Date());
+        rateConfig.setExpiration(DateUtil.getDate(new Date(), 6));//默认6个月
+        return rateConfig;
+    }
+
+    private TitanRateConfig bulidWithDrawRateConfig(String userId, String desc) {
+        TitanRateConfig rateConfig = new TitanRateConfig();
+        rateConfig.setBustype(2);//2表示提现费率
+        rateConfig.setDescription(desc);
+        rateConfig.setRatetype(2);//单笔多少钱
+        rateConfig.setExecutionrate(0f);
+        rateConfig.setRsrate(8f);//每笔8元
+        rateConfig.setStandrate(10f);//每笔10元
+        rateConfig.setUserid(userId);
+        rateConfig.setCreator("system");
+        rateConfig.setCreatetime(new Date());
+        rateConfig.setExpiration(DateUtil.getDate(new Date(), 6));//默认6个月
+        return rateConfig;
+    }
+
+    private List<TitanCashierItemBank> buildItemBankList(Integer bankItemId, String type) {
+        List<TitanCashierItemBank> result = new ArrayList<TitanCashierItemBank>();
+        for (SupportBankEnum bankEnum : SupportBankEnum.values()) {
+            if (bankEnum.bankType.equals(type)) {
+                TitanCashierItemBank bank = new TitanCashierItemBank();
+                bank.setItemid(bankItemId);
+                bank.setBankmark(bankEnum.bankRemark);
+                bank.setBankname(bankEnum.bankName);
+                bank.setCreator("system");
+                bank.setCreatetime(new Date());
+                result.add(bank);
+            }
+        }
+        return result;
+    }
+
+    private TitanCashierDesk buildCahsierDesk(CashierDeskInitRequest cashierDeskInitRequest, CashierDeskTypeEnum deskType) {
+        TitanCashierDesk desk = new TitanCashierDesk();
+        desk.setUserid(cashierDeskInitRequest.getUserId());
+        desk.setCreator(cashierDeskInitRequest.getOperator());
+        desk.setCreatetime(new Date());
+        desk.setConstid(cashierDeskInitRequest.getConstId());
+        desk.setPaytype(1);
+        desk.setUsedfor(Integer.valueOf(deskType.deskCode));
+        desk.setDeskname(deskType.deskName + "收银台");
+        return desk;
+    }
+
+    private TitanCashierDeskItem buildCahsierDesk(Integer deskId, CashierItemTypeEnum deskItemType) {
+        TitanCashierDeskItem deskItem = new TitanCashierDeskItem();
+        deskItem.setDeskid(deskId);
+        deskItem.setItemtype(Integer.valueOf(deskItemType.itemCode));
+        deskItem.setItemname(deskItemType.itemName);
+        deskItem.setCreator("system");
+        deskItem.setCreatetime(new Date());
+        return deskItem;
+    }
+
+    @Override
+    public CashierItemBankDTO queryCashierItemBankDTOByBankName(String bankName) {
+        try {
+            List<TitanCashierItemBank> titanCashierItemBankList = titanCashierItemBankDao.queryCashierItemBankDTOByBankName(bankName);
+            if (titanCashierItemBankList != null && titanCashierItemBankList.size() > 0) {
+                return converToCashierItemBankDTO(titanCashierItemBankList.get(0));
+            }
+
+        } catch (Exception e) {
+            log.error("查询银行信息失败" + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private CashierItemBankDTO converToCashierItemBankDTO(TitanCashierItemBank titanCashierItemBank) {
+        if (titanCashierItemBank != null) {
+            CashierItemBankDTO cashierItemBankDTO = new CashierItemBankDTO();
+            cashierItemBankDTO.setBankImage(titanCashierItemBank.getBankimage());
+            cashierItemBankDTO.setBankMark(titanCashierItemBank.getBankmark());
+            cashierItemBankDTO.setBankName(cashierItemBankDTO.getBankName());
+            return cashierItemBankDTO;
+        }
+        return null;
+    }
+
+	@Override
+	public boolean saveCommonPayMethod(CommonPayMethodDTO commonPayMethodDTO) {
+		if(commonPayMethodDTO !=null && StringUtil.isValidString(commonPayMethodDTO.getBankname())
+				 && commonPayMethodDTO.getDeskid()!=null
+				 && commonPayMethodDTO.getPaytype()!=null){
+			//更新还是插入，根据deskId,bankName,payType判断
+			TitanCommonPayMethodParam condition = new TitanCommonPayMethodParam();
+			condition.setBankname(commonPayMethodDTO.getBankname());
+			condition.setDeskid(commonPayMethodDTO.getDeskid());
+			condition.setPaytype(commonPayMethodDTO.getPaytype());
+			
+			PaginationSupport<TitanCommonPayMethod> paginationSupport = new PaginationSupport<TitanCommonPayMethod>();
+			titanCommonPayMethodDao.selectForPage(condition, paginationSupport);
+			//判断该deskId,bankMark,payType只对应一条记录
+			if(paginationSupport.getItemList()!=null && paginationSupport.getItemList().size()!=0 ){
+			   if(paginationSupport.getItemList().size()==1){
+				   TitanCommonPayMethod titanCommonPayMethod = paginationSupport.getItemList().get(0);
+				   if(paginationSupport.getItemList().get(0).getCount() !=null){
+					   titanCommonPayMethod.setCount(titanCommonPayMethod.getCount()+1);
+				   }
+				  return titanCommonPayMethodDao.update(titanCommonPayMethod)>0?true:false;
+			   }else{
+				   log.error("常用的的支付方式错误"+"deskId:"+commonPayMethodDTO.getDeskid());
+			   }
+			}else{
+				TitanCommonPayMethod titanCommonPayMethod = new TitanCommonPayMethod();
+				MyBeanUtil.copyProperties(titanCommonPayMethod, commonPayMethodDTO);
+				titanCommonPayMethod.setCount(1);
+				return titanCommonPayMethodDao.insert(titanCommonPayMethod)>0?true:false;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public List<CommonPayMethodDTO> queryCommonPayMethod(
+			CashierDeskQueryRequest cashierDeskQueryRequest) {
+		try{
+			return titanCommonPayMethodDao.queryCommomPayMethod(cashierDeskQueryRequest);
+		}catch(Exception e){
+			 log.error("查询常用支付方式失败" + e.getMessage(), e);
+		}
+		return null;
+	}
+}

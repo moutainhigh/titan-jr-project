@@ -1,0 +1,401 @@
+package com.fangcang.titanjr.web.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.json.JSONSerializer;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.dubbo.common.utils.CollectionUtils;
+import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.titanjr.common.enums.LoginSourceEnum;
+import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.common.exception.MessageServiceException;
+import com.fangcang.titanjr.common.util.MD5;
+import com.fangcang.titanjr.dto.bean.RoleDTO;
+import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
+import com.fangcang.titanjr.dto.bean.UserInfoDTO;
+import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
+import com.fangcang.titanjr.dto.request.SaaSUserRoleRequest;
+import com.fangcang.titanjr.dto.request.UpdateUserRequest;
+import com.fangcang.titanjr.dto.request.UserFreezeRequest;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
+import com.fangcang.titanjr.dto.request.UserRegisterRequest;
+import com.fangcang.titanjr.dto.response.CancelPermissionResponse;
+import com.fangcang.titanjr.dto.response.RoleUserInfoPageResponse;
+import com.fangcang.titanjr.dto.response.SaaSUserRoleResponse;
+import com.fangcang.titanjr.dto.response.UpdateUserResponse;
+import com.fangcang.titanjr.dto.response.UserFreezeResponse;
+import com.fangcang.titanjr.dto.response.UserInfoResponse;
+import com.fangcang.titanjr.dto.response.UserRegisterResponse;
+import com.fangcang.titanjr.service.TitanFinancialUserService;
+import com.fangcang.titanjr.web.pojo.EmployeePojo;
+import com.fangcang.titanjr.web.pojo.FcEmployeeTablePojo;
+import com.fangcang.titanjr.web.util.CommonConstant;
+import com.fangcang.titanjr.web.util.TFSTools;
+import com.fangcang.util.DateUtil;
+import com.fangcang.util.StringUtil;
+
+/***
+ * 泰坦金融员工权限设置
+ * @author luoqinglong
+ * @2016年6月14日
+ */
+@Controller
+@RequestMapping("/setting")
+public class SettingEmployeeController extends BaseController{
+	private static final Log log = LogFactory.getLog(SettingEmployeeController.class);
+    
+    @Autowired
+    private TitanFinancialUserService titanFinancialUserService;
+	/**
+	 * 左侧菜单（本地调试使用）
+	 * @return
+	 */
+	@RequestMapping("/slidemenu")
+	public String slidemenu(){
+		return "slidemenu/jr-setting-menu";
+	}
+	/***
+	 * 员工权限设置(查询员工)
+	 * @return
+	 */
+	@RequestMapping("/employee")
+	public String employee(){
+		
+		return "setting/employee-list";
+	}
+	/**
+	 * 员工权限设置-表格数据
+	 * @param pageNo
+	 * @param pageSize
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/employee-table")
+	public String employeeTable(String tfsUserLoginName,String userName, Integer pageNo,Integer pageSize,Model model){
+		if(pageNo==null){
+			pageNo = 1;
+		}
+		Integer tfsUserId = (Integer)session.getAttribute(CommonConstant.SESSION_KEY_JR_TFS_USERID);
+		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+		userInfoQueryRequest.setTfsUserId(tfsUserId);
+		userInfoQueryRequest.setPageSize(pageSize);
+		userInfoQueryRequest.setCurrentPage(pageNo);
+		userInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
+		UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
+		
+		userInfoQueryRequest.setTfsUserId(null);
+		userInfoQueryRequest.setUserLoginName("".equals(tfsUserLoginName)?null:tfsUserLoginName);
+		userInfoQueryRequest.setUserName("".equals(userName)?null:userName);
+		userInfoQueryRequest.setOrgCode(userInfoResponse.getUserInfoDTOList().get(0).getOrgCode());
+		RoleUserInfoPageResponse roleUserInfoPageResponse = titanFinancialUserService.queryRoleUserInfoPage(userInfoQueryRequest);
+		if(roleUserInfoPageResponse.isResult()){
+			model.addAttribute("userInfoDTOPage", roleUserInfoPageResponse.getPaginationSupport());
+		}
+		return "setting/employee-list-table";
+	}
+	/**
+	 * 新增员工权限
+	 * @return
+	 */
+	@RequestMapping("/fc-employee")
+	public String fcEmployee(){
+		return "setting/fc-employee-list";
+	}
+	
+	/**
+	 * 新增员工权限-表格数据(房仓员工查询)
+	 * @return
+	 */
+	@RequestMapping("/fc-employee-table")
+	public String fcEmployeeTable(FcEmployeeTablePojo  fcEmployeeTablePojo,Model model){
+		SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
+		String merchantCode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+		
+		saaSUserRoleRequest.setMerchantCode(merchantCode);
+		saaSUserRoleRequest.setSaasUserName(fcEmployeeTablePojo.getSaasUserName());
+		//saaSUserRoleRequest.setFcUserId(fcEmployeeTablePojo.get);
+		//saaSUserRoleRequest.setSaasUserName(fcEmployeeTablePojo.getSaasUserName());
+		saaSUserRoleRequest.setPageSize(PaginationSupport.NO_SPLIT_PAGE_SIZE);
+		try {
+			SaaSUserRoleResponse saasUserRoleResponse = titanFinancialUserService.querySaaSUserRolePage(saaSUserRoleRequest);
+			if(saasUserRoleResponse.isResult()){
+				model.addAttribute("saasUserRoleList", saasUserRoleResponse.getPaginationSupport().getItemList());
+			}else{
+				model.addAttribute("errormsg", saasUserRoleResponse.getReturnMessage());
+				return "error";
+			}
+		} catch (GlobalServiceException e) {
+			log.error("房仓用户数据查询失败,请求参数:"+ToStringBuilder.reflectionToString(fcEmployeeTablePojo), e);
+			model.addAttribute("errormsg", CommonConstant.CONTROLLER_ERROR_MSG);
+			return "error";
+		}
+		return "setting/fc-employee-list-table";
+	}
+	/***
+	 * 新增权限员工 添加 / 修改 金融员工信息（查询员工信息）
+	 * @return
+	 */
+	@RequestMapping("/employee-add")
+	public String employeeAdd(Integer tfsUserId,Integer fcUserId,Model model){
+		
+		model.addAttribute("tfsUserId", tfsUserId);//新增该变量没有值
+		model.addAttribute("fcUserId", fcUserId);
+		if(tfsUserId!=null&&tfsUserId>0){
+			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+			userInfoQueryRequest.setTfsUserId(tfsUserId);
+			UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
+			
+			if(userInfoResponse.getUserInfoDTOList()!=null&&userInfoResponse.getUserInfoDTOList().size()>0){
+				UserInfoDTO userInfoDTO = userInfoResponse.getUserInfoDTOList().get(0);
+				model.addAttribute("userInfoDTO", userInfoDTO);
+				if(CollectionUtils.isNotEmpty(userInfoDTO.getRoleDTOList())){
+					String roleIds = "";
+					for(RoleDTO item : userInfoDTO.getRoleDTOList()){
+						if(item.getIsActive()==1){
+							roleIds += item.getRoleId()+",";
+						}
+					}
+					model.addAttribute("roleIds", roleIds);
+				}
+				if(fcUserId!=null&&fcUserId>0){
+					String merchantCode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+					SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
+					saaSUserRoleRequest.setFcUserId(fcUserId);
+					saaSUserRoleRequest.setMerchantCode(merchantCode);
+					SaaSUserRoleResponse saaSUserRoleResponse = new SaaSUserRoleResponse();
+					try {
+						saaSUserRoleResponse = titanFinancialUserService.querySaaSUserRolePage(saaSUserRoleRequest);
+						
+					} catch (GlobalServiceException e) {
+						log.error("查询saas用户失败，参数saaSUserRoleRequest:" +ToStringBuilder.reflectionToString(saaSUserRoleRequest), e);
+						model.addAttribute("errormsg", "数据信息不存在");
+						return "error";
+					}
+					SaaSMerchantUserDTO saaSMerchantUserDTO =saaSUserRoleResponse.getPaginationSupport().getItemList().get(0);
+					model.addAttribute("fcUserName", saaSMerchantUserDTO.getUserName());
+				}
+				
+				return "setting/employee-update";
+			}
+			model.addAttribute("errormsg", "数据信息不存在");
+			return "error";
+		}
+		
+		return "setting/employee-add";
+	}
+	
+	/***
+	 * 保存添加员工
+	 * @param employeePojo
+	 * @param model
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/save-employee")
+	public String saveEmployee(EmployeePojo employeePojo){
+		//检验验证码
+		String rcode = TFSTools.validateRegCode(session,employeePojo.getReceiveAddress(),employeePojo.getCode());
+    	if(!rcode.equals("SUCCESS")){
+    		return toJson(putSysError("验证码错误,请重新输入"));
+    	}
+		//TODO 校验待新增的用户是不是属于该商家
+		
+		String merchantCode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+		String userId = (String)session.getAttribute(CommonConstant.SESSION_KEY_JR_USERID);
+		
+		SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
+		saaSUserRoleRequest.setFcUserId(employeePojo.getFcUserId());
+		saaSUserRoleRequest.setMerchantCode(merchantCode);
+		SaaSUserRoleResponse saaSUserRoleResponse = new SaaSUserRoleResponse();
+		try {
+			saaSUserRoleResponse = titanFinancialUserService.querySaaSUserRolePage(saaSUserRoleRequest);
+			
+		} catch (GlobalServiceException e) {
+			log.error("查询saas用户失败，参数employeePojo:" +ToStringBuilder.reflectionToString(employeePojo), e);
+			putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+			return toJson();
+		}
+		SaaSMerchantUserDTO saaSMerchantUserDTO =saaSUserRoleResponse.getPaginationSupport().getItemList().get(0);
+		//新增用户
+		UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
+		userRegisterRequest.setOperator(getSAASLoginName());
+		userRegisterRequest.setOperateTime(DateUtil.dateToString(DateUtil.getCurrentDate()));
+    	userRegisterRequest.setIsAdminUser(0);
+		userRegisterRequest.setFcLoginUserName(saaSMerchantUserDTO.getUserLoginName());
+    	userRegisterRequest.setLoginUserName(employeePojo.getReceiveAddress());
+    	userRegisterRequest.setUserName(employeePojo.getUserName());
+    	userRegisterRequest.setMerchantCode(merchantCode);
+    	userRegisterRequest.setOrgCode(userId);
+    	userRegisterRequest.setRoleIdList(toList(employeePojo.getCheckedRoleId()));
+    	userRegisterRequest.setUnselectRoleIdList(toList(employeePojo.getUncheckedRoleId()));
+    	//TODO 暂时生成一个临时密码
+    	userRegisterRequest.setPassword(MD5.MD5Encode("123456"));
+    	userRegisterRequest.setRegisterSource(LoginSourceEnum.SAAS.getKey());
+    	userRegisterRequest.setUserId(userId);//金服机构
+    	try {
+			UserRegisterResponse respose = titanFinancialUserService.registerFinancialUser(userRegisterRequest);
+			if(respose.isResult()){
+				putSuccess();
+			}else{
+				putSysError(respose.getReturnMessage());
+			}
+		} catch (Exception e) {
+			log.error("查询saas用户失败，参数employeePojo:" +ToStringBuilder.reflectionToString(employeePojo), e);
+			putSysError("添加员工失败，请重试");
+		}
+    	
+    	return toJson();
+	}
+	/**
+	 * 转为数组
+	 * @param roleIds
+	 * @return
+	 */
+	private List<Long> toList(String roleIds){
+		 List<Long> roleIdList = new ArrayList<Long>();
+		 if(StringUtil.isValidString(roleIds)){
+			 String[] roleIdString = roleIds.split(",");
+			 for(String item : roleIdString){
+				 try {
+					 roleIdList.add(Long.valueOf(item));
+				} catch (Exception e) {
+				}
+			 }
+		 }
+		 return roleIdList;
+	}
+	
+	
+	
+	/**
+	 * 修改时保存员工信息
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/save-update-user")
+	public String saveUpdateUser(EmployeePojo employeePojo){
+		if(employeePojo.getTfsUserId()==null||employeePojo.getTfsUserId()<=0){
+			putSysError("参数错误");
+			return toJson();
+		}
+		UpdateUserRequest updateUserRequest = new UpdateUserRequest();
+		
+		updateUserRequest.setTfsUserId(employeePojo.getTfsUserId());
+		updateUserRequest.setUserName(employeePojo.getUserName());
+		updateUserRequest.setOperator(getSAASLoginName());
+		updateUserRequest.setRoleIdList(toList(employeePojo.getCheckedRoleId()));
+		updateUserRequest.setUnselectRoleIdList(toList(employeePojo.getUncheckedRoleId()));
+		try {
+			UpdateUserResponse updateUserResponse = titanFinancialUserService.updateUser(updateUserRequest);
+			if(updateUserResponse.isResult()){
+				putSuccess("修改成功");
+			}else{
+				putSysError(updateUserResponse.getReturnMessage());
+			}
+		} catch (GlobalServiceException e) {
+			log.error("修改时保存员工信息失败，参数employeePojo："+JSONSerializer.toJSON(employeePojo).toString(),e);
+			putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+		}
+		
+		return toJson();
+	}
+	/***
+	 * 解冻或冻结员工
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/freeze-user")
+	public String freezeUser(Integer status,Integer tfsUserId){
+		if((status==null||status<0)||(tfsUserId==null||tfsUserId<0)){
+			putSysError("参数错误");
+			return toJson();
+		}
+		UserFreezeRequest userFreezeRequest = new UserFreezeRequest();
+		userFreezeRequest.setTfsUserId(tfsUserId);
+		userFreezeRequest.setOperator(getSAASLoginName());
+		userFreezeRequest.setStatus(status);
+		
+		try {
+			UserFreezeResponse userFreezeResponse = titanFinancialUserService.freezeUser(userFreezeRequest);
+			if(userFreezeResponse.isResult()){
+				putSuccess("操作成功");
+				return toJson();
+			}else{
+				putSysError(userFreezeResponse.getReturnMessage());
+				return toJson();
+			}
+		} catch (GlobalServiceException e) {
+			log.error(",冻结或者解冻失败,请求参数：tfsUserId:"+tfsUserId+",status:"+status+",操作发起用户username："+getSAASLoginName(), e);
+			putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+			return toJson();
+		}
+		
+				
+	}
+	
+	/**
+	 * 解除权限
+	 * @param tfsUserId
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/cancel-permission")
+	public String cancelPermission(Integer tfsUserId){
+		String merchantcode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+		CancelPermissionRequest cancelPermissionRequest = new CancelPermissionRequest();
+		cancelPermissionRequest.setTfsUserId(tfsUserId);
+		cancelPermissionRequest.setOperator(getSAASLoginName());
+		cancelPermissionRequest.setMerchantcode(merchantcode);
+		try {
+			CancelPermissionResponse cancelPermissionResponse =	titanFinancialUserService.cancelPermission(cancelPermissionRequest);
+			if(cancelPermissionResponse.isResult()){
+				putSuccess("操作成功");
+				return toJson();
+			}else{
+				putSysError(cancelPermissionResponse.getReturnMessage());
+				return toJson();
+			}
+		} catch (GlobalServiceException e) {
+			log.error("解除权限操作失败，操作发起用户username："+getSAASLoginName()+",tfsUserId:"+tfsUserId, e);
+			putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+			return toJson();
+		} catch (MessageServiceException e) {
+			log.error("解除权限操作失败， 原因：参数错误。操作发起用户username："+getSAASLoginName()+",tfsUserId:"+tfsUserId, e);
+			putSysError(e.getMessage());
+			return toJson();
+		}
+	}
+	
+	
+	
+	/***
+	 * 收付款费率公示
+	 * @return
+	 */
+	@RequestMapping("/fee")
+	public String fee(){
+		return "setting/fee";
+	}
+	
+	/**
+	 * 金融协议
+	 * @return
+	 */
+	@RequestMapping("/protocol")
+	public String protocol(){
+		return "setting/protocol";
+	}
+	
+	
+}

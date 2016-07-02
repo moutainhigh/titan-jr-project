@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+						http://www.springframework.org/schema/tx
+    					http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+						http://www.springframework.org/schema/aop
+	       				http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+	       				http://www.springframework.org/schema/context
+           				http://www.springframework.org/schema/context/spring-context-4.2.xsd
+	       				http://www.springframework.org/schema/mvc
+           				http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+           				http://code.alibabatech.com/schema/dubbo
+           				http://code.alibabatech.com/schema/dubbo/dubbo.xsd"
+		default-autowire="byName">
+
+               
+	<bean id="rsInvokeInitService" class="com.fangcang.titanjr.rs.manager.impl.RSInvokeInitManagerImpl" init-method="initRopClient" />  
+	
+	<bean id="rsAccountManager" class="com.fangcang.titanjr.rs.manager.impl.RSAccountManagerImpl" />
+	
+	<bean id="rsOrganizationManager" class="com.fangcang.titanjr.rs.manager.impl.RSOrganizationManagerImpl" />  
+	
+    <bean id="rsInvokeInitManager" class="com.fangcang.titanjr.rs.manager.impl.RSInvokeInitManagerImpl"></bean>
+    
+    <bean id="rsAccTradeManager" class="com.fangcang.titanjr.rs.manager.impl.RSAccTradeManagerImpl"></bean>
+    
+    <bean id="rsBankCardInfoManager" class="com.fangcang.titanjr.rs.manager.impl.RSBankCardInfoManagerImpl"></bean>
+    
+    <bean id="rsPayOrderManager"  class="com.fangcang.titanjr.rs.manager.impl.RSPayOrderManagerImpl"></bean>
+    
+    <bean id="baseInfoInitManager" class="com.fangcang.titanjr.rs.manager.impl.BaseInfoInitManagerImpl"></bean>
+
+	<bean id="invokeLogRecordManager" class="com.fangcang.titanjr.rs.manager.impl.InvokeLogRecordManager"/>
+
+	<!--避免aop中写日志的速度慢，交给线程处理-->
+	<bean id="rsLogRecordExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="20" />
+		<property name="maxPoolSize" value="30" />
+		<property name="queueCapacity" value="500" />
+	</bean>
+
+	<aop:config>
+		<aop:aspect id="rsLogAspectManager" ref="invokeLogRecordManager">
+			<aop:pointcut id="rsInvokeTarget"
+						  expression="execution(* com.fangcang.titanjr.rs.manager.impl.*ManagerImpl.*(..)) " />
+			<aop:around method="aroundRSInvokeExecution" pointcut-ref="rsInvokeTarget" />
+		</aop:aspect>
+	</aop:config>
+
+	<bean id="logDataDao" class="com.fangcang.redis.dao.impl.LogDataDaoImpl"/>
+
+</beans>

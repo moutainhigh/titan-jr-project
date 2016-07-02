@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanWithDrawReqDao" >
+  <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanWithDrawReq" parameterType="com.fangcang.titanjr.entity.parameter.TitanWithDrawReqParam" >
+    select 
+    *
+    from t_tfs_withdrawreq
+    <where>
+      <if test="withdrawreqid !=null">
+         and withdrawreqid = #{withdrawreqid,jdbcType=INTEGER}
+      </if>
+      <if test="transorderid !=null">
+         and transorderid = #{transorderid}
+      </if>
+      
+      <if test="userorderid !=null">
+        userorderid = #{userorderid}
+      </if>
+    </where>
+    order by createtime desc
+  </select>
+  
+  <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanWithDrawReq" useGeneratedKeys="true" keyProperty="withdrawreqid">
+    insert into t_tfs_withdrawreq (withdrawreqid, transorderid, merchantcode, 
+      userid, productid, userorderid, 
+      orderdate, amount, userfee, 
+      status, creator, createtime, 
+      standardrate, executionrate, ratetype, 
+      receivablefee, receivedfee,bankname,bankcode)
+    values (#{withdrawreqid,jdbcType=INTEGER}, #{transorderid,jdbcType=INTEGER}, #{merchantcode,jdbcType=VARCHAR}, 
+      #{userid,jdbcType=VARCHAR}, #{productid,jdbcType=VARCHAR}, #{userorderid,jdbcType=VARCHAR}, 
+      #{orderdate}, #{amount}, #{userfee}, 
+      #{status,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, #{createtime}, 
+      #{standardrate}, #{executionrate}, #{ratetype,jdbcType=INTEGER}, 
+      #{receivablefee}, #{receivedfee},#{bankname},#{bankcode})
+  </insert>
+   
+  <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanWithDrawReq" >
+    update t_tfs_withdrawreq
+    <set >
+      <if test="transorderid != null" >
+        transorderid = #{transorderid,jdbcType=INTEGER},
+      </if>
+      <if test="merchantcode != null" >
+        merchantcode = #{merchantcode,jdbcType=VARCHAR},
+      </if>
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="productid != null" >
+        productid = #{productid,jdbcType=VARCHAR},
+      </if>
+      <if test="userorderid != null" >
+        userorderid = #{userorderid,jdbcType=VARCHAR},
+      </if>
+      <if test="orderdate != null" >
+        orderdate = #{orderdate},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount},
+      </if>
+      <if test="userfee != null" >
+        userfee = #{userfee},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="creator != null" >
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        createtime = #{createtime},
+      </if>
+      <if test="standardrate != null" >
+        standardrate = #{standardrate},
+      </if>
+      <if test="executionrate != null" >
+        executionrate = #{executionrate},
+      </if>
+      <if test="ratetype != null" >
+        ratetype = #{ratetype,jdbcType=INTEGER},
+      </if>
+      <if test="receivablefee != null" >
+        receivablefee = #{receivablefee},
+      </if>
+      <if test="receivedfee != null" >
+        receivedfee = #{receivedfee},
+      </if>
+    </set>
+    where withdrawreqid = #{withdrawreqid}
+  </update>
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanAccountOperLogDao" >
+   <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanAccountOperLog" parameterType="com.fangcang.titanjr.entity.parameter.TitanAccountOperLogParam" >
+    select 
+    *
+    from t_tfs_accountoperlog
+  </select>
+  <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanAccountOperLog" >
+    insert into t_tfs_accountoperlog (operlogid, constid, userid, 
+      operatetype, currentstatus, description, 
+      operator, operatetime)
+    values (#{operlogid,jdbcType=INTEGER}, #{constid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, 
+      #{operatetype,jdbcType=INTEGER}, #{currentstatus,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, 
+      #{operator,jdbcType=VARCHAR}, #{operatetime})
+  </insert>
+   
+  <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanAccountOperLog" >
+    update t_tfs_accountoperlog
+    <set >
+      <if test="constid != null" >
+        constid = #{constid,jdbcType=VARCHAR},
+      </if>
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="operatetype != null" >
+        operatetype = #{operatetype,jdbcType=INTEGER},
+      </if>
+      <if test="currentstatus != null" >
+        currentstatus = #{currentstatus,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="operatetime != null" >
+        operatetime = #{operatetime},
+      </if>
+    </set>
+    where operlogid = #{operlogid,jdbcType=INTEGER}
+  </update>
+</mapper>

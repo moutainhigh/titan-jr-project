@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanPayMethodConfigDao" >
+    <select id="queryTitanPayMethodConfig" resultType="com.fangcang.titanjr.entity.TitanPayMethodConfig" parameterType="com.fangcang.titanjr.dto.request.PayMethodConfigRequest" >
+    select paymethodid,userid,pageurl,notifyurl,creator from t_tfs_paymethodconfig
+   <!--  where userid = #{userId} -->
+  </select>
+</mapper>
