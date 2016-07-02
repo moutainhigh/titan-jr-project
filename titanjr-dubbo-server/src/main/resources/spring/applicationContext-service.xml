@@ -27,7 +27,8 @@
 	</bean>
 	
     <dubbo:application name="titanjr_service_provider" />
-    <dubbo:registry address="zookeeper://192.168.1.124:2181" timeout="10000" />
+
+	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
 
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialOrganService" ref="titanOrgService" timeout="20000" /><!--  group="production" -->
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanCashierDeskService" ref="titanCashierDeskService" timeout="20000" />

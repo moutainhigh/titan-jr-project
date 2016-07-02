@@ -81,7 +81,16 @@
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.fangcang</groupId>
+            <artifactId>configparam</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
     <build>

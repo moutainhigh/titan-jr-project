@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import net.sf.json.JSONSerializer;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +35,7 @@ import com.fangcang.titanjr.web.util.CommonConstant;
 @Controller
 @RequestMapping("/admin")
 public class OrgController extends BaseController{
-	private static Logger logger = Logger.getLogger(OrgController.class);
+//	private static Logger logger = Logger.getLogger(OrgController.class);
 	
 	@Resource
 	private TitanFinancialOrganService organService;
@@ -84,7 +84,7 @@ public class OrgController extends BaseController{
 		if(organCheckResponse.isResult()){
 			model.addAttribute("orgCheckDTOPage", organCheckResponse.getPaginationSupport());
 		}else{
-			logger.error("机构查询失败,参数:"+JSONSerializer.toJSON(orgPojo).toString());
+//			logger.error("机构查询失败,参数:"+JSONSerializer.toJSON(orgPojo).toString());
 			throw new Exception("机构查询失败");
 		}
 		count(model);
@@ -162,12 +162,12 @@ public class OrgController extends BaseController{
 				return toJson();
 			}
 		} catch (GlobalServiceException e) {
-			logger.error("机构审核失败,参数:orgId["+orgId+"],checkStatus["+checkStatus+"],reason["+reason+"]",e);
+//			logger.error("机构审核失败,参数:orgId["+orgId+"],checkStatus["+checkStatus+"],reason["+reason+"]",e);
 			putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
 			return toJson();
 			
 		} catch (MessageServiceException e) {
-			logger.error("机构审核失败,参数:orgId["+orgId+"],checkStatus["+checkStatus+"],reason["+reason+"]",e);
+//			logger.error("机构审核失败,参数:orgId["+orgId+"],checkStatus["+checkStatus+"],reason["+reason+"]",e);
 			putSysError(e.getMessage());
 			return toJson();
 		}

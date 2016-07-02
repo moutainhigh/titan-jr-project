@@ -20,9 +20,7 @@
 
 	<dubbo:application name="titanjr_service_consumer" />
 	<!--  group="production" -->
-	<!--<dubbo:registry address="zookeeper://192.168.1.124:2181" timeout="10000" />-->
-	<!-- <dubbo:registry address="zookeeper://172.16.2.212:2181" timeout="10000" /> -->
-    <dubbo:registry address="zookeeper://192.168.1.124:2181" timeout="10000" />
+	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
 
 	<dubbo:monitor protocol="registry" />
 

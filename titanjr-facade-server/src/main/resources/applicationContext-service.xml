@@ -22,7 +22,9 @@
      	
      <dubbo:application name="titanjr_facade_consumer" />
 	<!--  group="production" -->
-	<dubbo:registry address="zookeeper://192.168.1.10:2181" timeout="10000" />
+	<!--<dubbo:protocol port="20881" />--><!--本地一台server时使用-->
+	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
+
 	<dubbo:monitor protocol="registry" />
 	
     <dubbo:service interface="com.fangcang.titanjr.facade.TitanFinancialPermissionFacade" ref="titanFinancialPermissionFacade" timeout="20000"></dubbo:service>
