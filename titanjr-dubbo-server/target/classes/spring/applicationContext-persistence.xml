@@ -24,29 +24,29 @@
 	<!-- LOB大数据列支持 -->
 	
 	<!-- <bean id="lobHandler" lazy-init="true" class="org.springframework.jdbc.support.lob.DefaultLobHandler" /> -->
-	<jee:jndi-lookup id="dataSource" jndi-name="jdbc/titanjr" />
+	<!--<jee:jndi-lookup id="dataSource" jndi-name="jdbc/titanjr" />-->
 	<!-- dataSource 定义 -->
-	<!--<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
 		<property name="driverClassName" value="${driverClassName}" />
 		<property name="url" value="${url}" />
 		<property name="username" value="${username}" />
 		<property name="password" value="${password}" />
-		&lt;!&ndash; <property name="filters" value="${filters}" /> &ndash;&gt;
+		<!-- <property name="filters" value="${filters}" /> -->
 		<property name="maxActive" value="${maxActive}" />
 		<property name="initialSize" value="${initialSize}" />
 		<property name="maxWait" value="${maxWait}" />
 		<property name="minIdle" value="${minIdle}" />
 		<property name="timeBetweenEvictionRunsMillis" value="${timeBetweenEvictionRunsMillis}" />
 		<property name="minEvictableIdleTimeMillis" value="${minEvictableIdleTimeMillis}" />
-		&lt;!&ndash; <property name="validationQuery" value="${validationQuery}" />
+		<!-- <property name="validationQuery" value="${validationQuery}" />
         <property name="testWhileIdle" value="${testWhileIdle}" />
         <property name="testOnBorrow" value="${testOnBorrow}" />
-        <property name="testOnReturn" value="${testOnReturn}" /> &ndash;&gt;
+        <property name="testOnReturn" value="${testOnReturn}" /> -->
 		<property name="maxOpenPreparedStatements" value="${maxOpenPreparedStatements}" />
-		<property name="removeAbandoned" value="${removeAbandoned}" /> &lt;!&ndash; 打开removeAbandoned功能 &ndash;&gt;
-		<property name="removeAbandonedTimeout" value="${removeAbandonedTimeout}" /> &lt;!&ndash; 1800秒，也就是30分钟 &ndash;&gt;
-		<property name="logAbandoned" value="${logAbandoned}" /> &lt;!&ndash; 关闭abanded连接时输出错误日志 &ndash;&gt;
-	</bean>-->
+		<property name="removeAbandoned" value="${removeAbandoned}" /> <!-- 打开removeAbandoned功能 -->
+		<property name="removeAbandonedTimeout" value="${removeAbandonedTimeout}" /> <!-- 1800秒，也就是30分钟 -->
+		<property name="logAbandoned" value="${logAbandoned}" /> <!-- 关闭abanded连接时输出错误日志 -->
+	</bean>
 
 	<!-- 事务管理器-->
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
