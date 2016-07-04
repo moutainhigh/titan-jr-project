@@ -21,5 +21,9 @@
 
         <import resource="applicationContext-quartz.xml"/>
         <import resource="applicationContext-service.xml"/>
-
+        <bean id="placeholderspring" class="com.ctol.fangcang.common.Spring3PropertyConfigurer">
+                <property name="location">
+                        <value>classpath:jdbc.properties</value>
+                </property>
+        </bean>
 </beans>

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @2016年7月1日
  */
 @Controller
-@RequestMapping("/setting")
+@RequestMapping("/setting2")
 public class SettingBaseInfoController extends BaseController{
 
 	/**

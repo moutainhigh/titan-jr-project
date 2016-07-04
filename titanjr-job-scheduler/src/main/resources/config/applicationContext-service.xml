@@ -19,8 +19,8 @@
            				http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
    
     <dubbo:application name="titanjr_job_consumer" />
-	<!--  group="production" -->
-     <dubbo:registry address="zookeeper://192.168.1.10:2181" timeout="10000" />
+	<!-- group="production" -->
+	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
 
 	<dubbo:monitor protocol="registry" />
 
