@@ -110,4 +110,5 @@ public interface TitanFinancialAccountService {
 	 */
 	public void  unfreezeAccountBalanceBatch (UnFreeBalanceBatchRequest unFreeBalanceBatchRequest);
 	
+	
 }

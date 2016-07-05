@@ -174,13 +174,14 @@ public class FinancialTradeController extends BaseController {
                     						OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "冻结失败", OrderExceptionEnum.Freeze_Insert, JSON.toJSONString(transferRequest));
                         	        		titanOrderService.saveOrderException(orderExceptionDTO);
                     					}
-                    					
                     					//记录收款账户
                     					if(StringUtil.isValidString(transOrderDTO.getMerchantcode())){//GDP的账户历史是不需要记录的
                     						if(StringUtil.isValidString(transOrderDTO.getMerchantcode())){
                         						titanFinancialAccountService.addAccountHistory(transferRequest);
                         					}
                     					}
+                    	        	}else{//转账失败记录此次交易失败
+                    	        		orderStatusEnum = OrderStatusEnum.Status_4;
                     	        	}
                     			}else{//
                     				orderStatusEnum= OrderStatusEnum.Status_2;

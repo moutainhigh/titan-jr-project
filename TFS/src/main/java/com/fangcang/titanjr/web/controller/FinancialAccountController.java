@@ -18,6 +18,7 @@ import com.fangcang.titanjr.common.enums.TradeTypeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
+import com.fangcang.titanjr.dto.bean.BankCardDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
@@ -28,8 +29,8 @@ import com.fangcang.titanjr.web.pojo.WithDrawRequest;
 import com.fangcang.titanjr.web.util.CommonConstant;
 import com.fangcang.titanjr.web.util.RSADecryptString;
 import com.fangcang.util.DateUtil;
-
 import com.fangcang.util.PasswordUtil;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,7 +49,12 @@ import com.fangcang.util.StringUtil;
 @RequestMapping("account")
 public class FinancialAccountController extends BaseController {
 
-    private static final Log log = LogFactory.getLog(FinancialAccountController.class);
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private static final Log log = LogFactory.getLog(FinancialAccountController.class);
 
     @Resource
     private TitanFinancialUserService titanFinancialUserService;
@@ -157,7 +163,7 @@ public class FinancialAccountController extends BaseController {
                 model.addAttribute("tradePage", tradeDetailResponse.getTransOrders());
             }
         }
-        return "account-overview/freeze-order-list";
+        return "account-overview/bind-bankcard";
     }
 
     @RequestMapping(value = "/freeze-detail-page", method = RequestMethod.GET)
@@ -166,9 +172,70 @@ public class FinancialAccountController extends BaseController {
         return "account-overview/freeze-detail";
     }
 
+    @ResponseBody
+    @RequestMapping("validate_person_Enterprise")
+    public String validatePersonOrEnterprise(HttpServletRequest request, Model model){
+    	Map<String,String> resultMap = new HashMap<String, String>();
+    	resultMap.put(CommonConstant.RESULT,CommonConstant.FAIL);
+    	//判断是否为对公账户
+    	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+    	organQueryRequest.setUserId(this.getUserId());
+    	FinancialOrganResponse response  = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+        if(response.isResult()){
+        	FinancialOrganDTO financialOrganDTO = response.getFinancialOrganDTO();
+        	if(financialOrganDTO !=null && financialOrganDTO.getUserType()!=null){
+        		resultMap.put(CommonConstant.RESULT,CommonConstant.SUCCESS);
+        		if(CommonConstant.ACCOUNT_PUBLIC.equals(financialOrganDTO.getUserType().toString())){
+        			BankCardRequest bankCardRequest = new BankCardRequest();
+        	    	bankCardRequest.setUserId(this.getUserId());
+        	    	bankCardRequest.setAccountproperty(CommonConstant.ACCOUNT_PUBLIC);
+        	    	bankCardRequest.setAccountpurpose(CommonConstant.ACCOUNT_PURPOSE_WITHDRAW);
+        	    	List<BankCardDTO> bankCardDTOList = titanFinancialBankCardService.queryBankCardDTO(bankCardRequest);
+        	    	if(bankCardDTOList !=null && bankCardDTOList.size()>0){
+        	    		BankCardDTO bankCardDTO = bankCardDTOList.get(0);
+        	    		if(bankCardDTO !=null && bankCardDTO.getStatus()!=null){
+        	    			if(CommonConstant.BANKCARD_SUCCESS.intValue()==bankCardDTO.getStatus().intValue()){//对公且绑定失败
+        	    				resultMap.put(CommonConstant.MSG, CommonConstant.ACCOUNT_PUBLIC_SUCCESS);
+        	        		}else if(CommonConstant.BANKCARD_BINDING.intValue()==bankCardDTO.getStatus().intValue()){
+        	        			resultMap.put(CommonConstant.MSG, CommonConstant.ACCOUNT_PUBLIC_BINDING);
+        	        		}else{
+        	        			resultMap.put(CommonConstant.MSG, CommonConstant.ACCOUNT_PUBLIC_FAIL);
+        	        		}
+        	    			return toJson(resultMap);
+        	    		}
+        	    	}else{
+        	    		resultMap.put(CommonConstant.MSG, CommonConstant.ACCOUNT_PUBLIC_NO_BIND);
+        	    		return toJson(resultMap);
+        	    	}
+        			
+        		}else{
+        			resultMap.put(CommonConstant.MSG, CommonConstant.ACCOUNT_PERSON);
+        		}
+        		return toJson(resultMap);
+        	}
+        }
+    	resultMap.put(CommonConstant.MSG, "系统错误");
+    	return toJson(resultMap);
+    }
+    
+    @RequestMapping(value = "/toBindAccountWithDrawCard")
+    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model){
+    	model.addAttribute("modifyOrBind",CommonConstant.BIND_BANK_CARD);
+    	return "account-overview/bind-bankcard";
+    }
+    
+    @RequestMapping("update_account-withdraw_info")
+    public String updateAccountWithdrawInfo(HttpServletRequest request, Model model){
+    	model.addAttribute("showBankCardInput",1);
+    	model.addAttribute("modifyOrBind",CommonConstant.MODIFY_BANK_CARD);
+    	return "account-overview/bind-bankcard";
+    }
+    
+    
     @RequestMapping(value = "/account-withdraw", method = RequestMethod.GET)
     public String toAccountWithDrawPage(HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
+        	
             model.addAttribute("organ", this.getTitanOrganDTO());
             AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
             accountBalanceRequest.setUserid(this.getUserId());
@@ -199,6 +266,76 @@ public class FinancialAccountController extends BaseController {
         return "account-overview/account-withdraw";
     }
 
+    @ResponseBody
+    @RequestMapping("bankCardBind")
+    public String bankCardBindToPublic(BindBankCardRequest  bindBankCardRequest,Model model){
+     	if(!StringUtil.isValidString(bindBankCardRequest.getBankCardCode()) 
+    			|| !StringUtil.isValidString(bindBankCardRequest.getBankCardName())
+    			|| !StringUtil.isValidString(bindBankCardRequest.getUserName())
+    			|| !StringUtil.isValidString(bindBankCardRequest.getBankCode())
+    			|| !StringUtil.isValidString(bindBankCardRequest.getModifyOrBind())){
+    	
+    		return toJson(putSysError("参数不能为空"));
+    	}
+     	
+     	if(CommonConstant.BIND_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//绑卡
+     		CusBankCardBindResponse cardBindResponse = bindBindCardToPublic(bindBankCardRequest);
+     		 if (!cardBindResponse.isResult()){
+                 return toJson(putSysError(cardBindResponse.getReturnMessage()));
+             }
+     	}else if(CommonConstant.MODIFY_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//失败修改绑卡
+     		ModifyInvalidWithDrawCardResponse modifyInvalidWithDrawCardResponse = modifyBindCard(bindBankCardRequest);
+     	    if(!modifyInvalidWithDrawCardResponse.isResult()){
+     	    	  return toJson(putSysError(modifyInvalidWithDrawCardResponse.getReturnMessage()));
+     	    }
+     	}else{
+     		return toJson(putSysError("参数错误"));
+     	}
+    	
+    	return toJson(putSuccess("提现卡申请审核中"));
+    }
+    
+    
+    private ModifyInvalidWithDrawCardResponse modifyBindCard(BindBankCardRequest bindBankCardRequest){
+    	ModifyInvalidWithDrawCardRequest modifyInvalidWithDrawCardRequest = new ModifyInvalidWithDrawCardRequest();
+    	modifyInvalidWithDrawCardRequest.setAccountnumber(bindBankCardRequest.getBankCardCode());
+    	modifyInvalidWithDrawCardRequest.setAccountrealname(bindBankCardRequest.getUserName());
+    	modifyInvalidWithDrawCardRequest.setHankheadname(bindBankCardRequest.getBankCardName());
+    	modifyInvalidWithDrawCardRequest.setBankhead(bindBankCardRequest.getBankCode());
+    	modifyInvalidWithDrawCardRequest.setUserid(this.getUserId());
+    	return titanFinancialBankCardService.modifyinvalidPublicCard(modifyInvalidWithDrawCardRequest);
+    }
+    
+    
+    private CusBankCardBindResponse bindBindCardToPublic(BindBankCardRequest bindBankCardRequest){
+    	 CusBankCardBindRequest  bankCardBindRequest = new CusBankCardBindRequest();
+         bankCardBindRequest.setUserId(this.getUserId());
+         bankCardBindRequest.setProductId(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_PRODUCT_ID);
+         bankCardBindRequest.setConstId(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_CONST_ID);
+         bankCardBindRequest.setUserType(String.valueOf(this.getTitanOrganDTO().getUserType()));
+         bankCardBindRequest.setAccountTypeId("00");
+         bankCardBindRequest.setBankHeadName(bindBankCardRequest.getBankCardName());
+         bankCardBindRequest.setCurrency("CNY");
+         bankCardBindRequest.setReqSn(String.valueOf(System.currentTimeMillis()));
+         bankCardBindRequest.setSubmitTime(DateUtil.dateToString(new Date(),"yyyyMMddHHmmss"));
+         bankCardBindRequest.setAccountProperty(CommonConstant.ACCOUNT_PUBLIC);
+         bankCardBindRequest.setAccountPurpose(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey());
+         bankCardBindRequest.setCertificateType(String.valueOf(0));
+         //查询企业营业执照号
+         bankCardBindRequest.setCertificateNumber(this.getTitanOrganDTO().getCertificateNumber());
+         bankCardBindRequest.setAccountNumber(bindBankCardRequest.getBankCardCode());
+         bankCardBindRequest.setAccountName(bindBankCardRequest.getUserName());
+         bankCardBindRequest.setBankCode(bindBankCardRequest.getBankCode());
+         
+         //以下是哪个说必填但是可选
+         bankCardBindRequest.setBankBranch("");
+         bankCardBindRequest.setBankCity("");
+         bankCardBindRequest.setBankProvince("");
+         
+         return titanFinancialBankCardService.bankCardBind(bankCardBindRequest);
+        
+    }
+    
     @ResponseBody
     @RequestMapping("getBankInfoList")
     public String getBankInfo(){

@@ -450,7 +450,6 @@
 	</div>
 
 	<script type="text/javascript">
-
 		//当前页码
 		var page1,page2,page3,page4,page5;
 		//总记录数
@@ -464,8 +463,25 @@
 			initPageSizeChangeEvent();
 			initQueryDate();
 			initAutoSelectPartner();
+			validate_BankCard_Satatus();
 		});
 
+		function validate_BankCard_Satatus(){
+			$.ajax({
+				dataType:"json",
+				url:"<%=basePath%>/account/validate_person_Enterprise.shtml",
+				success: function (data) {
+					if(data.msg=="5"){
+						//修改银行卡
+						bind_card_fail();
+					}else if(data.msg=="6"){//审核中该如何解决
+						$(".withdrawBtn").text('提现卡审核中···').removeClass('blue decorationUnderline').css("color","#999");
+					}
+				}
+			});
+			
+		}
+		
         //充值
         $('.rechargeBtn').on('click',function(){
                 window.top.createIframeDialog({
@@ -474,17 +490,124 @@
                 return false;
         });
 
-        //提现
         $('.withdrawBtn').on('click',function(){
-                window.top.createIframeDialog({
-                    url : '<%=basePath%>/account/account-withdraw.shtml',
-					close:function () {
-						alert("===");
-					}
-                });
-                return false;
+        	$.ajax({
+        		dataType : 'json',		      
+		        url : '<%=basePath%>/account/validate_person_Enterprise.shtml',
+		        success:function(data){
+		        	if(data.result=="success"){
+		        		if(data.msg=="3"){//对公且未绑定
+		        			bind_card_public($(this));
+		        		}else if(data.msg=="2"|| data.msg=="4"){//对私或者对公已绑定成功
+		        			account_withdraw();
+		        		}else if(data.msg=="5"){//对公，且绑定失败
+		        			 bind_card_fail();
+		        		}else if(data.msg=="6"){
+		        			bank_card_binding();
+		        		}else{
+		        			 new top.Tip({msg: "系统错误", type: 1, time: 1000});
+		        		}
+		        	}else{
+		        		 new top.Tip({msg: "系统错误", type: 1, time: 1000});
+		        	}
+		        }
+        	});
+        	
+        	
         });
 
+        function account_withdraw(){
+      	  window.top.createIframeDialog({
+                url : '<%=basePath%>/account/account-withdraw.shtml',
+					close:function () {
+						/* ALERT("==="); */
+					}
+            });
+        }
+        
+        function bind_card_fail(){
+        	new top.createConfirm({
+			    title:'提示',
+				padding: '20px 20px 40px',
+				width:400,
+				cancelValue : '下次再说',
+		        okValue : '修改提现卡信息',		
+		        content : '<div class="l_h26" style="padding-left: 30px;"><i class="mr_ico"></i><span class="TFS_mrtips"><strong class="c_tfscolor f_16">对不起,提现卡绑定失败</strong>失败原因：银行卡信息或持卡人姓名不正确不正正宗确。银行卡信息或持卡人。</span></div>',
+				ok : function(){	
+					$.ajax({
+				        dataType : 'html',		      
+				        context: document.body,
+				        url : '<%=basePath%>/account/update_account-withdraw_info.shtml',
+				        success : function(html){
+				        	var d = window.top.dialog({
+						        title: ' ',
+						        padding: '0 0 0px 0 ',
+						        content: html,
+						        skin : 'saas_pop',
+						    }).showModal();		
+							//点击关闭
+							window.parent.$(".J_finsh").on('click', function() {
+								d.remove();
+									$(".withdrawBtn").text('提现卡审核中···').removeClass('blue decorationUnderline').css("color","#999");
+								});  
+							window.parent.$(".J_finsh_close").on('click', function() {
+								d.remove();
+									$(".withdrawBtn").text('提现卡审核失败···').removeClass('blue decorationUnderline').css("color","#999");
+								});  
+						}
+
+				    });
+		        },
+		        cancel : function(){
+		          	$(".withdrawBtn").text('提现卡绑定失败').removeClass('blue').addClass('MyAssets_red');
+		        }
+		      });
+        
+        }
+        
+        function bank_card_binding(){
+        	new top.createConfirm({
+			    title:'提示',
+				padding: '20px 20px 40px',
+				width:400,
+				cancelValue : '关闭',
+		        content : '<div class="l_h26" style="padding-left: 30px;"><i class="mr_ico"></i><span class="TFS_mrtips"><strong class="c_tfscolor f_16">对不起,提现卡绑定审核中</strong>请您稍后查看,我们会在24小时之内审核您的提现卡。</span></div>',
+		        cancel : function(){
+		          	
+		        }
+		      });
+        }        
+        
+        
+        function bind_card_public(this_Object){
+        	var _this=this_Object;
+        	$.ajax({
+		        dataType : 'html',		      
+		        context: document.body,
+		        url : '<%=basePath%>/account/toBindAccountWithDrawCard.shtml',
+		        success : function(html){
+		        	var d = window.top.dialog({
+				        title: ' ',
+				        padding: '0 0 0px 0 ',
+				        content: html,
+				        skin : 'saas_pop',
+				    }).showModal();		
+					//点击关闭
+					window.parent.$(".J_finsh").on('click', function() {
+						d.remove();
+						_this.text('提现卡审核中···').removeClass('blue decorationUnderline').css("color","#999");
+					}); 
+					window.parent.$(".J_finsh_close").on('click', function() {
+						d.remove();
+							 $(".withdrawBtn").text('提现卡审核失败···').removeClass('blue decorationUnderline').css("color","#999"); 
+						});  
+				}
+
+		    });
+        	
+        }
+        
+        
         //导出提示
 //        $(".J_export").on('click', function() {
 //        	top.F.loading.show();

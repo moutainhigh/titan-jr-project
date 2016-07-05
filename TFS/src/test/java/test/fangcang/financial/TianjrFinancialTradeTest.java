@@ -86,7 +86,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	try{
     		FinancialOrderRequest financialOrderRequest = new FinancialOrderRequest();
         	financialOrderRequest.setMerchantcode("M10000001");
-        	financialOrderRequest.setOrderNo("TW14090202365");
+        	financialOrderRequest.setOrderNo("TW15051906771");
 
         	FinancialOrderResponse financialOrderResponse =titanFinancialTradeService.queryFinanceOrderDetail(financialOrderRequest);
             if(financialOrderResponse !=null){
@@ -465,7 +465,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
 //    @Test
     public void testGetPaymentUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
-    	paymentUrlRequest.setPayOrderNo("H0139130605060630");
+    	paymentUrlRequest.setPayOrderNo("H0199130625164436");
     	paymentUrlRequest.setPaySource("1");
     	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
     	paymentUrlRequest.setIsEscrowed("1");
@@ -499,7 +499,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     public void testGetMerchantLineUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");
-    	paymentUrlRequest.setPayOrderNo("TW15073008812");
+    	paymentUrlRequest.setPayOrderNo("TW15051906771");
     	paymentUrlRequest.setFcUserid("23298");
     	
     	paymentUrlRequest.setPaySource("2");

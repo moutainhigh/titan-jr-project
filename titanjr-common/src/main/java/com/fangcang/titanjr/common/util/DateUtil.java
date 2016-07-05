@@ -795,13 +795,14 @@ public class DateUtil {
 		 * System.out.println(differDaysWithoutRigor(new
 		 * Date(),getAddMonthDate(new Date(),6)));
 		 */
+		System.out.println(new Date().getTime());
 
 		try {
-			Calendar cal = Calendar.getInstance(); 
-	        Date date = new Date(); 
-	        cal.setTime(date); 
-            cal.add(cal.DATE, 2); 
-            System.out.println("下一天的时间是：" + sdf.format(cal.getTime())); 
+//			Calendar cal = Calendar.getInstance(); 
+//	        Date date = new Date(); 
+//	        cal.setTime(date); 
+//            cal.add(cal.DATE, 2); 
+//            System.out.println("下一天的时间是：" + sdf.format(cal.getTime())); 
 //			SimpleDateFormat sss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
 //			String now1 = "2015-07-16 23:51:00 999";
 //			String now2 = "2015-07-17 00:00:01 000";
