@@ -157,7 +157,7 @@ $(".J_exitKan").on('click', function() {
 });
 
 //检查是否有交易密码
- $.ajax({
+ <%-- $.ajax({
     	 type: "post",
          url: "<%=basePath%>/account/checkIsSetPayPassword.action",
          dataType: "json",
@@ -173,7 +173,7 @@ $(".J_exitKan").on('click', function() {
         		    });
         	 }
         	}
-        }); 
+        });  --%>
 	
 	
 //设置交易密码
@@ -184,43 +184,45 @@ $('.J_password').on('click',function(){
 		 alert("必须输入金额");
 		 return;
 	 }
-	 var is_Input_Password= validate_isInput_password();
-	 if(is_Input_Password==false){
-		 $.ajax({
-	            dataType: 'html',
-	            context: document.body,
-	            url: '<%=basePath%>/account/showPayPassword.action',
-	            success: function (html) {
-	                var d = dialog({
-	                    title: ' ',
-	                    padding: '0 0 0px 0 ',
-	                    content: html,
-	                    skin: 'saas_pop',
-	                    button: [
-	                        {
-	                            value: '确定',
-	                            skin: 'btn p_lr30',
-	                            callback: function () {
-	                            	//获取密码
-	                            	recharge_Order();
-	                            },
-	                            autofocus: true
-	                        },
-	                        {
-	                            value: '取消',
-	                            skin: 'btn btn_grey btn_exit',
-	                            callback: function () {
-	                                //   alert('c');
-	                            }
-	                        }
-	                    ]
-	                }).showModal();
-	            }
-	        });
-	 }else{
-		 recharge_Order(); 
-	 }
+	 recharge_Order(); 
 });	
+
+<%-- var is_Input_Password= validate_isInput_password();
+if(is_Input_Password==false){
+	 $.ajax({
+           dataType: 'html',
+           context: document.body,
+           url: '<%=basePath%>/account/showPayPassword.action',
+           success: function (html) {
+               var d = dialog({
+                   title: ' ',
+                   padding: '0 0 0px 0 ',
+                   content: html,
+                   skin: 'saas_pop',
+                   button: [
+                       {
+                           value: '确定',
+                           skin: 'btn p_lr30',
+                           callback: function () {
+                           	//获取密码
+                           	recharge_Order();
+                           },
+                           autofocus: true
+                       },
+                       {
+                           value: '取消',
+                           skin: 'btn btn_grey btn_exit',
+                           callback: function () {
+                               //   alert('c');
+                           }
+                       }
+                   ]
+               }).showModal();
+           }
+       });
+}else{ 
+
+}  --%>
 
 function showPayResult(){
 	 new top.createConfirm({
@@ -321,7 +323,7 @@ function getRechargePayOrderNo(){
 }
 
 
-function validate_isInput_password(){
+<%-- function validate_isInput_password(){
 	var flag = false;
 	 $.ajax({
 		 dataType: "json",
@@ -338,7 +340,7 @@ function validate_isInput_password(){
          }
      });
 	return flag;
-}
+} --%>
 
 function validate_isBlank(){
 	var inputeAmount = $("#inputeAmount").val();
@@ -368,7 +370,7 @@ $("#inputeAmount").blur(function(){
 });
 
 //设置交易密码
-function setPayPassword(html){
+<%-- function setPayPassword(html){
 	var d = dialog({
         title: ' ',
         padding: '0 0 0px 0 ',
@@ -413,7 +415,7 @@ function setPayPassword(html){
         ]
     }).showModal();
 }
-
+ --%>
 </script>
 </body>
 </html>

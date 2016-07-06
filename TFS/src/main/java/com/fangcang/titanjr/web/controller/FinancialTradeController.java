@@ -9,18 +9,14 @@ import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.ReqstatusEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
-import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
-import com.fangcang.titanjr.common.util.rsa.JsRSAUtil;
-import com.fangcang.titanjr.common.util.rsa.RSAUtil;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
-import com.fangcang.titanjr.dto.bean.CharsetEnum;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.GDPOrderDTO;
@@ -38,7 +34,6 @@ import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
-import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.*;
 import com.fangcang.titanjr.web.pojo.GDPDefaultPayerment;
 import com.fangcang.titanjr.web.util.CommonConstant;
@@ -60,10 +55,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -614,34 +605,39 @@ public class FinancialTradeController extends BaseController {
     private Map<String,String> validatePaymentDate(PaymentRequest paymentRequest,FinancialOrderResponse financialOrderResponse) throws Exception{
     	Map<String,String> resultMap = new HashMap<String, String>();
 			resultMap.put(CommonConstant.RESULT, CommonConstant.FAIL); 
-			//是否需要免密支付
+			//是否需要免密支付,只有用到余额转账付款的时候才需要验证密码
 			BigDecimal totalAmount = null;
 			totalAmount = new BigDecimal(paymentRequest.getPayAmount());
 			if(StringUtil.isValidString(paymentRequest.getTransferAmount())){
 				totalAmount = new BigDecimal(paymentRequest.getPayAmount()).add(new BigDecimal(paymentRequest.getTransferAmount()));
 			}
-			AllowNoPwdPayResponse allowNoPwdPayResponse = isAllowNoPwdPay(paymentRequest.getUserid(),totalAmount.toString());
-			if(!allowNoPwdPayResponse.isAllowNoPwdPay()){
-				TitanUserBindInfoDTO  titanUserBindInfoDTO = new TitanUserBindInfoDTO();
-				if(StringUtil.isValidString(paymentRequest.getFcUserid())){
-					titanUserBindInfoDTO.setFcuserid(Long.parseLong(paymentRequest.getFcUserid()));
-				}else{
-					titanUserBindInfoDTO.setTfsuserid(Integer.parseInt(getTfsUserId()));
-				}
-				titanUserBindInfoDTO = titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
-				if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid()!=null){
-					paymentRequest.setPayPassword(RSADecryptString.decryptString(paymentRequest.getPayPassword(),request));
-					//验证支付密码
-					boolean flag = titanFinancialUserService.checkPayPassword(paymentRequest.getPayPassword(),titanUserBindInfoDTO.getTfsuserid().toString());
-				   if(!flag){
-				   	resultMap.put(CommonConstant.MSG, "支付密码错误");
-				   	return resultMap;
-				   }
-				}else{
-				   	resultMap.put(CommonConstant.MSG, "用户不存在");
-				   	return resultMap;
+			
+			if(totalAmount.subtract(new BigDecimal(paymentRequest.getPayAmount())).compareTo(BigDecimal.ZERO)==1){//有转账交易
+				AllowNoPwdPayResponse allowNoPwdPayResponse = isAllowNoPwdPay(paymentRequest.getUserid(),totalAmount.toString());
+				if(!allowNoPwdPayResponse.isAllowNoPwdPay()){
+					TitanUserBindInfoDTO  titanUserBindInfoDTO = new TitanUserBindInfoDTO();
+					if(StringUtil.isValidString(paymentRequest.getFcUserid())){
+						titanUserBindInfoDTO.setFcuserid(Long.parseLong(paymentRequest.getFcUserid()));
+					}else{
+						titanUserBindInfoDTO.setTfsuserid(Integer.parseInt(getTfsUserId()));
+					}
+					titanUserBindInfoDTO = titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+					if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid()!=null){
+						paymentRequest.setPayPassword(RSADecryptString.decryptString(paymentRequest.getPayPassword(),request));
+						//验证支付密码
+						
+						boolean flag = titanFinancialUserService.checkPayPassword(paymentRequest.getPayPassword(),titanUserBindInfoDTO.getTfsuserid().toString());
+					   if(!flag){
+					   	resultMap.put(CommonConstant.MSG, "支付密码错误");
+					   	return resultMap;
+					   }
+					}else{
+					   	resultMap.put(CommonConstant.MSG, "用户不存在");
+					   	return resultMap;
+					}
 				}
 			}
+			
 			if(financialOrderResponse !=null){
 				boolean isExit = accountIsExist(paymentRequest);
 				if(!isExit){

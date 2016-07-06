@@ -40,8 +40,8 @@ public class CommonConstant {
     //'全国'的编码
     public static final String COUNTRY_CODE = "00";
     
-    //注册验证码有效时长，单位：分钟
-    public static final Integer REG_CODE_TIME_OUT_MIMUTE = 10 ;
+    //注册验证码有效时长，单位：小时
+    public static final Integer REG_CODE_TIME_OUT_HOUR = 1 ;
     
     public static final String MODEL_ERROR_MSG_KEY = "errormsg";
     

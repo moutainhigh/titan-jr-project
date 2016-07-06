@@ -35,9 +35,6 @@
       <if test="finaccountid != null" >
         finaccountid = #{finaccountid,jdbcType=VARCHAR},
       </if>
-      <if test="userid != null" >
-        userid = #{userid,jdbcType=VARCHAR},
-      </if>
       <if test="accountcode != null" >
         accountcode = #{accountcode,jdbcType=VARCHAR},
       </if>
@@ -93,12 +90,6 @@
       </if>
        <if test="userid !=null">
         and userid = #{userid}
-      </if>
-       <if test="finaccountid !=null">
-        and finaccountid = #{finaccountid}
-      </if>
-       <if test="accountcode !=null">
-        and accountcode = #{accountcode}
       </if>
     </where>
   </update>

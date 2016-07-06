@@ -29,7 +29,6 @@ import com.fangcang.titanjr.web.pojo.WithDrawRequest;
 import com.fangcang.titanjr.web.util.CommonConstant;
 import com.fangcang.titanjr.web.util.RSADecryptString;
 import com.fangcang.util.DateUtil;
-import com.fangcang.util.PasswordUtil;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;

@@ -4,222 +4,152 @@
 <html>
 <head>
 <meta charset="utf-8">
-    <title>个人基本信息-泰坦金融</title>
+    <title>支付密码-泰坦金融</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 </head>
   
-  <body class="backdrop">
-<div class="TFS" style="width: 1332px">
-    <div class="clearfix create">        
-        <div class="create_step create_s1">
-            <ul>
-                <li class="on">创建账户</li>
-                <li class="on1">填写基本信息</li>
-                <li class="p_l42">完成</li>
-            </ul>
-        </div>
-        <div class="clearfix create_c">
-	        <form action="" id="info_form" method="post">
-	        	<!-- 新增时使用 -->
-	        	<input type="hidden" name="userLoginName" value="${regUserLoginInfo.userLoginName}"/>
-	        	<input type="hidden" name="password" value="${regUserLoginInfo.password}"/>
-	        	<input type="hidden" name="passwordConfirm" value="${regUserLoginInfo.passwordConfirm}"/>
-	        	<input type="hidden" name="regCode" value="${regUserLoginInfo.regCode}"/>
-	        	<!-- 修改时使用 -->
-	        	<input type="hidden" name="imgIds" id="imgIds" />
-	        	<input type="hidden" name="orgId" id="orgId" value="${org.orgId }"/>
-	        	<input type="hidden" name="userType" id="userType" value="1"/>
-	        	<input type="hidden" name="imageType" id="imageType" value="2"/>
-	        	
-	            <div class="clearfix basic">
-	                 <div class="basic_c personage">
-	                   <div class="b_c_t"><i class="tfs_ico"></i>填写个人信息</div>
-	                   <div class="b_c_c clearfix brn">
-	                    <ul>
-	                    <li><p><i class="c_f00">*</i>姓名：</p><input type="text" class="text w_500 " name="orgName" id="orgName" value="${org.orgName }" placeholder="请与证件上的姓名保持一致"  datatype="*" errormsg="姓名不能为空"></li>
-	                        <li><p><i class="c_f00">*</i>身份证号：</p><input type="text" class="text w_500 " name="certificatenumber" id="certificatenumber" value="${org.certificateNumber }" datatype="*" errormsg="身份证号不能为空" afterPassed="checkOrgRegNum"></li>
-	                        <li>
-	                        <div class="fl w_370">
-	                        	<p class="fl"><i class="c_f00">*</i>上传本人持身份证正面照：</p>
-	                         	<span class="fl span_btn w_50" id="img_upload">选择附件<input type="file" class="to_lead" name="img_file" id="img_file" onchange="ajaxFileUpload()"></span>
-		                        <span class="fl span_btn w_50" style="display:none" id="uploading">上传中...</span>  
-	                         	<i class="c_f00" id="upload_error" style="display:none">上传失败！</i>
-	                        </div>
-	                        <div class="fl t_a_c">
-	                         <c:if test="${not empty small_img_10}">
-	                        	<img src="${small_img_10}" width="130" data-src-v="${small_img_10}" height="90" id="img_small" class="cursor J_magnify">
-	                        </c:if>
-	                        <c:if test="${empty small_img_10}">
-	                        	<img src="<%=cssSaasPath%>/images/TFS/tu13.jpg" width="130" id="img_small" class="cursor J_magnify">
-	                        </c:if>
-	                        
-	                        </div>                      
-	                        </li>
-	                    </ul>
-	                   </div>
-	                 </div>
-	            </div>
-	            <div class="create_c_btn">
-	                <a href="<%=basePath %>/organ/showOrgUser.shtml" class="btn btnh">上一步</a>
-	                <a href="javascript:void(0);" class="btn" onclick="regOrg()">下一步</a>           
-	            </div>
-	            <input type="submit" id="reg_btn" style="display:none;"/>
-            </form>
-        </div>
-    </div>
-</div>    
-
+  <body>
+<div id="scroll" >
+		<div class="main_sell clearfix user_title">
+			<div class="p_r30 p_l10">
+				<span>泰坦金服&nbsp;-&nbsp;泰坦金服设置&nbsp;-&nbsp;付款密码设置</span>
+			</div>
+		</div>
+	</div>
+	<div class="scroll_x hide t_56"></div>
+	<div class="main_con p_t56">
+		<div class="TFSpassset">
+			<c:if test="${hasSetPayPass==0}">
+				<h3 class="TFSpassw_title">请设置您的付款密码：</h3>
+				<ul class="TFSpassw_set">
+					<li>
+						<span class="Passname">密码：</span>
+						<div class="sixDigitPassword" id="passwordbox"> 
+							<i><b></b></i>  
+							<i><b></b></i> 
+							<i><b></b></i>
+							<i><b></b></i>
+							<i><b></b></i>
+							<i><b></b></i>
+							<span></span>
+						</div>
+					</li>
+					<li>
+						<span class="Passname">确认密码：</span>
+						<div class="sixDigitPassword" id="passwordbox1"> 
+							<i><b></b></i>  
+							<i><b></b></i> 
+							<i><b></b></i>
+							<i><b></b></i>
+							<i><b></b></i>
+							<i><b></b></i>
+							<span></span>
+						</div>
+					</li>
+				</ul>
+				<div class="Passsure"><span class="btn p_lr30 J_confirm">确定</span></div>
+			
+			</c:if>
+			<c:if test="${hasSetPayPass==1}">
+				<h3 class="TFSpassw_title"><span class="fl">您的付款密码：</span><span class="TFS_changepassword fl"><img src="../images/TFS/lock.png" alt=""><i class="blue undl curpo J_password">修改密码</i></span></h3>
+			</c:if>
+			<div class="TFSpayset">
+				<h3 class="TFSpassw_title fl">小额免支付开关</h3>
+				<div class="glright fl">
+					<span uitype="switch" <c:if test="${allownopwdpay==1}">checked</c:if> class="switch-text" id="J_siwtch_auto"></span>
+					<c:if test="${allownopwdpay==0}"><span class="nopassword tip">未开通小额免密支付，付款时需要密码</span></c:if>
+					<c:if test="${allownopwdpay==1}"><span class="nopassword tip">已开通小额免密支付，1000元以下付款时无需密码</span></c:if>
+				</div>
+			</div>
+		</div>
+	</div>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
-<script type="text/javascript" src="<%=basePath %>/js/ajaxfileupload.js"></script>
-<script type="text/javascript">
-var phone_reg=/^13[0-9]{9}$|^14[0-9]{9}$|^15[0-9]{9}$|^18[0-9]{9}$|^17[0-9]{9}$/;
-var big_img_url="${big_img_50}";
-var vform =new validform('#info_form',{
-	msgAlign: 'bottom'
-});
-
-function ajaxFileUpload() {
-	$("#uploading").show();
-	$("#img_upload").hide();
-	$("#upload_error").hide();
-    $.ajaxFileUpload({
-        	url: '<%=basePath%>/organ/upload.shtml',
-            secureuri: false, 
-            fileElementId: 'img_file', 
-            dataType: 'json', 
-            data:{"imageType":$("#imageType").val()},
-            success: function (result, status){
-            	$("#uploading").hide();
-            	$("#img_upload").show();
-            	if(result.code==1){
-            		$("#img_small").attr({"src":result.data.imgPreview_10});
-            		$("#img_small").attr({"data-src-v":result.data.imgPreview_10});
-            		big_img_url = result.data.imgPreview_50;
-            		$("#imgIds").val(result.data.imgIds);
-            	}else{
-            		$("#upload_error").html(result.msg).show();
-            	}
-            },
-            error: function (data, status, e){
-            	$("#uploading").hide();
-            	$("#img_upload").show();
-            	$("#upload_error").html("证件照上传失败").show();
-            }
+<script>
+//渲染组件
+	F.UI.scan();
+	//自动处理开关
+	$(function(){
+		var sw = F.UI.find(this); 
+	    if(sw.getChecked()){
+	        $(this).next().addClass('tip').html('已开通小额免密支付，1000元以下付款时无需支付密码');
+	    }else{
+	        $(this).next().removeClass('tip').html('未开通小额免密支付，付款时需要支付密码');
+	    }
+	});
+	//展开、收缩表格
+    $.each($('.TFSpayset'), function(){
+        //开关
+        var _this = $(this), siwtchArray = [], siwtchs = F.UI.find(_this.find('*[uitype=switch]'));
+        if(siwtchs){
+            siwtchs.length ? siwtchArray = siwtchs : siwtchArray.push(siwtchs);
+            $.each(siwtchArray, function(k,v){
+                v.dom.on('click',function(e){
+                    var sw = F.UI.find($(this)), isPass = false;
+                    var msg;
+                    if(sw.getChecked()){//切换到开启
+                    	msg = "您选择开通小额免密支付，1000元以下付款时无需密码。";
+                    }else{//切换到关闭
+                    	msg = "您选择关闭小额免密支付，所有付款都需要输入支付密码。";
+                    }
+                    window.top.createConfirm({
+                    	width:310,
+                        content: msg,
+                        ok : function(){
+                            isPass = true;
+                        },
+                        cancel : function(){
+                            isPass = false;
+                        },
+                        onclose : function(){
+                            if(isPass===true){//点击确定 
+                               var swi = 0;
+                               if(!sw.getChecked()){//关闭
+                            	   swi=0;
+                               } else{
+                            	   swi=1;
+                               }
+                               $.ajax({
+	                           		type:"post",
+	                           		url:"<%=basePath%>/setting/set-swicth.shtml",
+	                           		data:{"allownopwdpay":swi},
+	                           		dataType:"json",
+	                           		success:function(result){
+	                           			if(result.code==1){
+		                           			if(!sw.getChecked()){
+		                                  	   $(".nopassword").removeClass('tip').html('未开通小额免密支付，付款时需要支付密码');
+		                                    } else{
+		                                  	   $(".nopassword").addClass('tip').html('已开通小额免密支付，1000元以下付款时无需密码');
+		                                    }
+	                           			}else{
+	                           				new top.Tip({msg : result.msg, type: 2});
+	                           			}
+	                           		},
+	                           		complete:function(){
+	                           			top.F.loading.hide();
+	                           		},
+	                           		error:function(xhr,status){
+	                           			 new top.Tip({msg : '请求失败，请重试', type: 2});
+	                           		}
+	                           	}); 
+                            }else{
+                                //点击取消
+                                sw.setChecked(!sw.getChecked());
+                            }
+                        }
+                    });
+				});
+            });
         }
-    );
-}
-
-//注册
-function regOrg(){
-	var imageV = $("#img_small").attr("data-src-v");
-	if(typeof(imageV)=='undefined'){
-		$("#upload_error").html("请上传证件照").show();
-		return;
-	}
-	if($("#orgId").val().length>0){
-		$("#info_form").attr({"action":"<%=basePath%>/organ/updateOrg.shtml"});
-	}else{
-		$("#info_form").attr({"action":"<%=basePath%>/organ/regOrg.shtml"});
-	}
-	$("#reg_btn").click();
-}
-
-//放大图
-$('.J_magnify').on('click',function(){
-	if(big_img_url){
-		var _html = "<div class=\"clearfix agreement\" id=\"big_img_w\" style=\"width:525px;\">"
-			+"<img src="+big_img_url+"  width=\"525\" id=\"big_img\" class=\"cursor \"></div>";
-		      var d =  window.top.dialog({
-		          title: ' ',
-		          padding: '0',
-		          content: _html,
-		          skin : 'saas_pop saas_hfe',                  
-		          button :false,
-		          close : function(){                        
-		          }
-		      }).showModal();
-	}
-	
-});
-
-//检查注册编码
-function checkOrgRegNum(value, inputDom){
-	var flag = false;
-	$.ajax({
-		async:false,
-		type:'post',
-		data:{"orgId":$("#orgId").val(),"userType":$("#userType").val(),"certificateNumber":value},
-		url : '<%=basePath%>/organ/checkOrgRegNum.shtml',
-		dataType : 'json',
-		success : function(result){
-			if(result.code==1){
-				flag = true;
-			}else{
-				flag = false;
-				//修改错误提示信息
-				vform.setErrormsg(inputDom,result.msg);
-			}
-		},
-		error:function(){
-			flag = true;
-			new top.Tip({msg : '系统错误，请重试', type: 1, timer:2000}); 
-		}
-	});
-	return  flag;
-}
-//还原提示语
-$('#certificatenumber').on('change',function(){
-	vform.setErrormsg('#certificatenumber','身份证号不能为空');
-});
-//获取验证码
-function timeOut(_this){
-    var i=60;
-    var interval=setInterval(function () {                
-         if(i>0){
-             _this.html("重新发送(" + i + ")"); 
-             i--;
-         }else{
-            _this.removeClass("huise").html("获取验证码");
-            clearInterval(interval);
-         };              
-    }, 1000);
-};
-
-$('.verify').on('click',function(){
-	var phoneEle = $("#mobiletel");
-	var receiveAddress = phoneEle.val();
-	if(!phone_reg.test(receiveAddress)){
-		phoneEle.focus();
-		vform.setErrormsg(phoneEle,'手机号码格式不正确');
-		return ;
-	}
-	_this= $(this);
-	$.ajax({
-		async : false,
-		data:{"receiveAddress":receiveAddress},
-		url : '<%=basePath%>/organ/sendRegCode.shtml',
-		dataType : 'json',
-		success : function(result){
-			if(result.code==1){
-				if(!_this.hasClass("huise")){
-			        new top.Tip({msg : '验证码已成功发送,请注意查收！', type: 1, timer:2000});    
-			        _this.addClass('huise');
-			        timeOut(_this);
-			    } 
-			}else{
-				new top.Tip({msg : result.msg, type: 1, timer:2500});
-			}
-		},
-		error : function(){
-			new top.Tip({msg : '网络错误，请重试', type: 1, timer:2000});
-		}
-	});
-      
-});
-
-
+    });
+//点击设置修改密码    
+$(".J_confirm").on('click', function() {
+	new top.Tip({msg : '设置成功！', type: 1 , time:1000});   
+	window.location.href = '金服设置-付款密码设置 - 修改.html';
+});    
+//密码输入框
+var PasswordStr=new sixDigitPassword("passwordbox");
+var PasswordStr=new sixDigitPassword("passwordbox1");
 </script>
-
 </body>
 </html>
