@@ -62,7 +62,7 @@ public class BaseController implements Serializable {
     
     public Map<String, Object> putSuccess(String msg){
     	result.put("code", 1);
-    	result.put("msg", "操作成功");
+    	result.put("msg",msg);
     	return result;
     	
     }

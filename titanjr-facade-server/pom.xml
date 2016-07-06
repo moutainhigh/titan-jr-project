@@ -57,7 +57,10 @@
             <groupId>com.101tec</groupId>
             <artifactId>zkclient</artifactId>
         </dependency>
-
+      <dependency>
+          <groupId>com.oracle</groupId>
+          <artifactId>ojdbc</artifactId>
+      </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
