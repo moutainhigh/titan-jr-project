@@ -279,7 +279,7 @@
 					</a>
 					<a href="<%=basePath%>/account/overview-main.shtml" class="s2" data-parent="false">
 						<span></span>
-						资产概览
+						账户概览
 					</a>
 					<a href="" class="s3" data-parent="false">
 						<span></span>

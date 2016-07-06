@@ -24,7 +24,7 @@ public class TFSTools {
     		
     		Date codeCreateTime = DateUtil.toDataYYYYMMDDHHmmss(timeCode[0]);
     		Date nowDate = new Date();
-    		boolean isExpire = DateUtils.addMinutes(codeCreateTime, CommonConstant.REG_CODE_TIME_OUT_MIMUTE).before(nowDate);
+    		boolean isExpire = DateUtils.addHours(codeCreateTime, CommonConstant.REG_CODE_TIME_OUT_HOUR).before(nowDate);
     		boolean isRightCode = timeCode[1].equals(pageInput);
     		if(!isExpire && isRightCode){
     			return "SUCCESS";
