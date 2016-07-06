@@ -60,7 +60,19 @@ public class CommonConstant {
 	
 	//结算卡
 	public static final String DEBIT_CARD = "1";
+	
+	//提现卡
+	public static final String WITHDRAW_CARD="3";
+	
+	//绑卡正常
+	public static final String BIND_SUCCESS = "1";
+	
+	//审核失败
+	public static final String BIND_FAIL = "4";
+	
+	
 	//短信发送选用服务号
 	public static final String DEFAULT_SMS_PROVIDER_KEY = "3369";
+	
 	
 }

@@ -5,6 +5,21 @@
     select 
     *
     from t_tfs_bankcard
+    <where>
+      <if test="userid !=null">
+        and userid = #{userid}
+      </if>
+      <if test="accountproperty !=null">
+        and accountproperty = #{accountproperty}
+      </if>
+       <if test="status !=null">
+        and status = #{status}
+      </if>
+      <if test="accountpurpose !=null">
+        and accountpurpose = #{accountpurpose}
+      </if>
+    </where>
+    
   </select>
   
   <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanBankcard" >
