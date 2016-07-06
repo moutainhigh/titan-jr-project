@@ -80,7 +80,12 @@ import com.fangcang.util.StringUtil;
 @RequestMapping("/organ")
 public class FinancialOrganController extends BaseController {
 
-    private static final Log log = LogFactory.getLog(FinancialOrganController.class);
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private static final Log log = LogFactory.getLog(FinancialOrganController.class);
 
     @Autowired
     private TitanFinancialOrganService titanFinancialOrganService;
