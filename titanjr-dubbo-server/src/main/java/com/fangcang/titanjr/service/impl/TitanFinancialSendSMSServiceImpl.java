@@ -127,7 +127,7 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 			EmailSenderDTO emailSenderDTO  = new EmailSenderDTO();
 			emailSenderDTO.setTo(sendRegCodeRequest.getReceiveAddress());
 			emailSenderDTO.setContent(sendRegCodeRequest.getContent());
-			emailSenderDTO.setSubject("泰坦金融注册验证码");
+			emailSenderDTO.setSubject(sendRegCodeRequest.getSubject());
 			emailSenderDTO.setFrom(EMAIL_PROVIDER_FROM);
 			emailSenderDTO.setUserName(EMAIL_PROVIDER_FROM);
 			emailSenderDTO.setPassword(EMAIL_PROVIDER_PWD);

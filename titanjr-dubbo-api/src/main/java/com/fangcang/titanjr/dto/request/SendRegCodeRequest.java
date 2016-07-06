@@ -9,6 +9,10 @@ public class SendRegCodeRequest extends BaseRequestDTO {
 	 */
 	private static final long serialVersionUID = -3712765554299486581L;
 	private String receiveAddress;
+	/**
+	 * 邮件主题
+	 */
+	private String subject;
 	private String content;
 	//短信发送选用服务号
 	private String providerkey;
@@ -16,6 +20,15 @@ public class SendRegCodeRequest extends BaseRequestDTO {
 	//商户号
 	private String merchantCode;
 	
+	
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
 	public String getContent() {
 		return content;
 	}
