@@ -306,9 +306,9 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 			if(bankcardList.size()>0){
 				for(TitanBankcard titanBankcard :bankcardList){
 					//查询融数
-					boolean bindStatus = this.queryBindCard(titanBankcard);
-					if(bindStatus){//绑定成功,更新自己代码
-						updateBankCard(titanBankcard);
+					String bindStatus = this.queryBindCard(titanBankcard);
+					if(StringUtil.isValidString(bindStatus)){//绑定成功,更新自己代码
+						updateBankCard(titanBankcard,bindStatus);
 					}
 				}
 			}
@@ -327,8 +327,9 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 	 * @param titanBankcard
 	 * @return
 	 */
-	private boolean queryBindCard(TitanBankcard titanBankcard){
+	private String queryBindCard(TitanBankcard titanBankcard){
 		
+		String status = "";
 		BankCardQueryRequest bankCardQueryRequest = new BankCardQueryRequest();
 		bankCardQueryRequest.setConstid(titanBankcard.getConstid());
 		bankCardQueryRequest.setProductid(titanBankcard.getProductid());
@@ -339,20 +340,26 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		if(bankCardQueryResponse.getBankCardInfoList() !=null && bankCardQueryResponse.getBankCardInfoList().size()>0){
 			for(BankCardInfo bankCardInfo :bankCardQueryResponse.getBankCardInfoList()){
 				if(CommonConstant.WITHDRAW_CARD.equals(bankCardInfo.getAccountpurpose()) 
-						&& CommonConstant.BIND_SUCCESS.equals(bankCardInfo.getStatus()) 
-						&& CommonConstant.ENTERPRISE.equals(bankCardInfo.getAccountproperty())){//对公，提现卡
-					return true;
+					&& CommonConstant.ENTERPRISE.equals(bankCardInfo.getAccountproperty())){//对公，提现卡
+			        if(CommonConstant.BIND_SUCCESS.equals(bankCardInfo.getStatus()) ){
+			        	status = CommonConstant.BIND_SUCCESS;
+			        }else if(CommonConstant.BIND_FAIL.equals(bankCardInfo.getStatus())){//审核失败
+			        	status = CommonConstant.BIND_FAIL;
+			        }
 				}
 			}
 		}
-		return false;
+		return status;
 	}
 	
 	
-	private void updateBankCard(TitanBankcard titanBankcard){
+	private void updateBankCard(TitanBankcard titanBankcard,String status){
 		TitanBankcard bankcard = new TitanBankcard();
 		bankcard.setBankcardid(titanBankcard.getBankcardid());
-		bankcard.setStatus(BindCardStatus.BIND_SUCCESS.status);
+		bankcard.setStatus(BindCardStatus.BIND_FAIL.status);
+		if(status.equals(CommonConstant.BIND_SUCCESS)){
+			bankcard.setStatus(BindCardStatus.BIND_SUCCESS.status);
+		}
 		try{
 			titanBankcardDao.update(bankcard);
 		}catch(Exception e){
