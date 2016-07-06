@@ -10,6 +10,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.fangcang.titanjr.dto.response.*;
+
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +54,7 @@ import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
+import com.fangcang.titanjr.dto.request.CashierDeskInitRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
@@ -92,6 +94,7 @@ import com.fangcang.titanjr.rs.response.AccountUnFreezeResponse;
 import com.fangcang.titanjr.rs.response.BaseResponse;
 import com.fangcang.titanjr.rs.response.CompanyOrgRegResponse;
 import com.fangcang.titanjr.rs.response.PersonOrgRegResponse;
+import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanCodeCenterService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
@@ -122,6 +125,9 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     private RSOrganizationManager rsOrganizationManager;
     @Resource
     private RSAccTradeManager rsAccTradeManager;
+    
+    @Resource
+    private TitanCashierDeskService titanCashierDeskService;
     
     @Resource
     private RSAccountManager rsAccountManager;
@@ -761,6 +767,12 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	            		account.setCreatetime(nowDate);
 	            		titanAccountDao.insert(account);
 	            		
+	            		CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest(); 
+	            		cashierDeskInitRequest.setUserId(newOrgEntity.getUserid());
+	            		cashierDeskInitRequest.setConstId(CommonConstant.RS_FANGCANG_CONST_ID);
+	            		
+	            		titanCashierDeskService.initCashierDesk(cashierDeskInitRequest);
+	            		
 	            		titanOrgCheck.setResultkey(OrgCheckResultEnum.PASS.getResultkey());
 	            		titanOrgCheck.setResultmsg(OrgCheckResultEnum.PASS.getResultmsg());
 	            		titanOrgCheckLog2.setResultkey(OrgCheckResultEnum.PASS.getResultkey());
@@ -787,7 +799,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		} catch (MessageServiceException e) {
 			throw e;
 		}catch (Exception e) {
-			LOGGER.error("机构审核 失败 , param is :"+JSONSerializer.toJSON(organCheckRequest).toString());
+			LOGGER.error("机构审核 失败 , param is organCheckRequest:"+JSONSerializer.toJSON(organCheckRequest).toString());
 			throw new GlobalServiceException("融数账户创建失败",e);
 		}
     	
