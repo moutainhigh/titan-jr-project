@@ -137,12 +137,13 @@ public class SettingPasswordController extends BaseController{
 			putSysError("参数异常");
 			return toJson();
 		}
-		//TODO 只有金服管理员才可以设置
+		
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 		userInfoQueryRequest.setTfsUserId(Integer.valueOf(getTfsUserId()));
 		UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
 		
 		if(userInfoPageResponse.getTitanUserPaginationSupport().getItemList().size()>0){
+			// 只有金服管理员才可以设置
 			TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
 			if(titanUser.getIsadmin()==0){
 				putSysError("只有金融管理员才能执行该操作");
