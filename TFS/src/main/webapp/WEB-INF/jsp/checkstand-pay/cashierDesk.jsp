@@ -96,7 +96,7 @@
             </div>
             <input type="hidden" id="onlinePayAmount" name="onlinePayAmount"><!--通过网银充值并支付的金额-->
               <div class="goldpay_title1" style="border-bottom:#ddd 1px solid;">
-               <c:if test="${ not empty fcUserid}  ">
+               <c:if test="${ not empty fcUserid}">
                 <div class="goldpaytitle1_top" id="not_enough_amount">剩余余额：<!--账户余额不够用余额付款-->
                     <span class="c_f00" id="pay_surplus_amount">${orderDTO.payAmount - accountBalance.balanceusable}</span>元
                     <span class="p_l27">使用以下方式付款：</span>
@@ -582,10 +582,14 @@
     }
     
     function validate_isInput_password(){
-    	if('${paySource}'=='1'){//如果分销商付款不需要输入密码
+    	if('${paySource}'=='1'){//如果分销商付款不需要输入密码，不用余额支付也不需要输入付款密码
     		return true;
     	}
-    	 var flag = false;
+    	if(($("#d_checkbox").attr("checked")=="checked" && '${accountBalance.balanceusable}'=="0")||$("#d_checkbox").attr("checked")!="checked"){
+    		return true;
+    	}
+    	
+    	var flag = false;
        	 $.ajax({
                 dataType: 'json',
                 context: document.body,
@@ -602,7 +606,7 @@
                 }
             });
     	
-    	return flag;
+    	return flag; 
     }
     
     function save_payDate(){
