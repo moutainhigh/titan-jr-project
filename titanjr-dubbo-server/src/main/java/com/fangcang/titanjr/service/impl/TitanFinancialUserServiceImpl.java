@@ -215,6 +215,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         //3.金服添加用户权限
         UserRoleSetRequest userRoleSetRequest = new UserRoleSetRequest();
         userRoleSetRequest.setUserRoleIdMap(new HashMap<Long, List<Long>>());
+        userRoleSetRequest.setDeleteUserRoleIdMap(new HashMap<Long, List<Long>>());
         if (userRegisterRequest.getIsAdminUser() == 1) {
             List<TitanRole> titanRoles = titanRoleDao.queryTitanRoles(new TitanRoleQueryRequest());
             userRoleSetRequest.getUserRoleIdMap().put(Long.valueOf(String.valueOf(tfsUserid)),
