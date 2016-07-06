@@ -6,7 +6,7 @@ import com.fangcang.titanjr.entity.TitanAccount;
 import com.fangcang.titanjr.entity.parameter.TitanAccountParam;
 
 public interface TitanAccountDao {
-	boolean selectForPage(TitanAccountParam condition, PaginationSupport<TitanAccount> paginationSupport) throws DaoException;
+	PaginationSupport<TitanAccount> selectForPage(TitanAccountParam condition, PaginationSupport<TitanAccount> paginationSupport) throws DaoException;
 	int insert(TitanAccount entity) throws DaoException;
 	int update(TitanAccount entity) throws DaoException;
 }

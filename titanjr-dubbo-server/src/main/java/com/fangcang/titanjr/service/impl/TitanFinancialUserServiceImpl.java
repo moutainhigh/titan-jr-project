@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.service.impl;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,8 +51,8 @@ import com.fangcang.titanjr.dao.TitanUserRoleDao;
 import com.fangcang.titanjr.dto.bean.PermissionEnum;
 import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
 import com.fangcang.titanjr.dto.bean.TitanRoleDTO;
-import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
+import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
@@ -83,6 +82,7 @@ import com.fangcang.titanjr.dto.response.TitanRoleResponse;
 import com.fangcang.titanjr.dto.response.UpdateUserResponse;
 import com.fangcang.titanjr.dto.response.UserBindInfoResponse;
 import com.fangcang.titanjr.dto.response.UserFreezeResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
 import com.fangcang.titanjr.dto.response.UserRegisterResponse;
@@ -299,7 +299,6 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     }
 
     @Override
-    @Transactional(propagation = Propagation.SUPPORTS)
     public UserInfoResponse queryFinancialUser(UserInfoQueryRequest userInfoQueryRequest) {
         UserInfoResponse response = new UserInfoResponse();
         List<UserInfoDTO> userInfoDTOs =  titanUserDao.queryTitanUserList(userInfoQueryRequest);
@@ -308,7 +307,26 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         return response;
     }
     
+     
+    
     @Override
+	public UserInfoPageResponse queryUserInfoPage(UserInfoQueryRequest userInfoQueryRequest) {
+    	UserInfoPageResponse userInfoPageResponse = new UserInfoPageResponse();
+    	PaginationSupport<TitanUser> paginationSupport = new PaginationSupport<TitanUser>();
+    	paginationSupport.setPageSize(userInfoQueryRequest.getPageSize());
+    	paginationSupport.setCurrentPage(userInfoQueryRequest.getCurrentPage());
+    	
+    	TitanUserParam condition = new TitanUserParam();
+    	condition.setTfsuserid(userInfoQueryRequest.getTfsUserId());
+    	condition.setOrgcode(userInfoQueryRequest.getOrgCode());
+    	
+    	paginationSupport = titanUserDao.selectForPage(condition, paginationSupport);
+    	userInfoPageResponse.setTitanUserPaginationSupport(paginationSupport);
+    	
+		return userInfoPageResponse;
+	}
+
+	@Override
 	public UserBindInfoResponse queryUserBindInfoDTO(UserBindInfoRequest userBindInfoRequest) {
     	UserBindInfoResponse userBindInfoResponse = new UserBindInfoResponse();
     	TitanUserBindInfoParam param = new TitanUserBindInfoParam();
