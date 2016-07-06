@@ -4,7 +4,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +13,6 @@ import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.AccountUpdateRequest;
-import com.fangcang.titanjr.dto.request.PayPasswordRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.AccountResponse;
 import com.fangcang.titanjr.dto.response.AccountUpdateResponse;
@@ -23,7 +21,6 @@ import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
-import com.fangcang.titanjr.web.controller.admin.OrgController;
 import com.fangcang.titanjr.web.util.CommonConstant;
 import com.fangcang.util.StringUtil;
 
