@@ -177,5 +177,4 @@ public class BankCardInfo {
 		this.open_account_date = open_account_date;
 	}
     
-    
 }
