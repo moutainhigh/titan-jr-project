@@ -422,9 +422,9 @@ public class FinancialOrganController extends BaseController {
     		sendRegCodeRequest.setMerchantCode(RSInvokeConstant.defaultMerchant);
     	}
     	String regCode = setRegCode(receiveAddress);
-    	sendRegCodeRequest.setContent("您在泰坦金融的注册验证码为："+regCode+"，"+CommonConstant.REG_CODE_TIME_OUT_MIMUTE+"分钟内有效。过期请重新获取。");
-    	//TODO 暂时不发送验证码
-    	SendRegCodeResponse sendRegCodeResponse = new SendRegCodeResponse(); //sendSMSService.sendRegCode(sendRegCodeRequest);
+    	sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+CommonConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
+    	
+    	SendRegCodeResponse sendRegCodeResponse = sendSMSService.sendRegCode(sendRegCodeRequest);
     	sendRegCodeResponse.putSuccess();
     	if(sendRegCodeResponse.isResult()){
     		return toJson(putSuccess("验证码发送成功"));
