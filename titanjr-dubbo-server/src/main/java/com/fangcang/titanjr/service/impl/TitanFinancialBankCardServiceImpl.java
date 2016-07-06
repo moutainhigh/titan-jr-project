@@ -6,9 +6,16 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSON;
+import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.BankCardEnum;
+import com.fangcang.titanjr.common.enums.BindCardStatus;
+import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.ReqstatusEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.util.GenericValidate;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -17,25 +24,33 @@ import com.fangcang.titanjr.common.enums.ROPErrorEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.dao.TitanBankcardDao;
+import com.fangcang.titanjr.dto.bean.BankCardDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
+import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
+import com.fangcang.titanjr.dto.request.BankCardRequest;
 import com.fangcang.titanjr.dto.request.CusBankCardBindRequest;
 import com.fangcang.titanjr.dto.request.DeleteBindBankRequest;
+import com.fangcang.titanjr.dto.request.ModifyInvalidWithDrawCardRequest;
 import com.fangcang.titanjr.dto.request.ModifyWithDrawCardRequest;
 import com.fangcang.titanjr.dto.response.CusBankCardBindResponse;
 import com.fangcang.titanjr.dto.response.DeleteBindBankResponse;
+import com.fangcang.titanjr.dto.response.ModifyInvalidWithDrawCardResponse;
 import com.fangcang.titanjr.dto.response.ModifyWithDrawCardResponse;
 import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
 import com.fangcang.titanjr.entity.TitanBankcard;
+import com.fangcang.titanjr.entity.parameter.TitanBankcardParam;
 import com.fangcang.titanjr.rs.dto.BankCardInfo;
 import com.fangcang.titanjr.rs.dto.BankInfo;
 import com.fangcang.titanjr.rs.manager.RSBankCardInfoManager;
 import com.fangcang.titanjr.rs.request.BankCardBindRequest;
 import com.fangcang.titanjr.rs.request.BankCardQueryRequest;
 import com.fangcang.titanjr.rs.request.DeletePersonCardRequest;
+import com.fangcang.titanjr.rs.request.InvalidPubCardModifyRequest;
 import com.fangcang.titanjr.rs.response.BankCardBindResponse;
 import com.fangcang.titanjr.rs.response.BankCardQueryResponse;
 import com.fangcang.titanjr.rs.response.DeletePersonCardResponse;
+import com.fangcang.titanjr.rs.response.InvalidPubCardModifyResponse;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
@@ -113,6 +128,9 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
                     try {//绑定卡成功，本地初始化
                         TitanBankcard titanBankcard = covertToTitanBankcard(cusBankCardBindRequest);
                         if (titanBankcard != null) {
+                        	if(CommonConstant.ENTERPRISE.equals(cusBankCardBindRequest.getAccountProperty())){
+                            	titanBankcard.setStatus(BindCardStatus.BIND_BINDING.status);
+                            }
                             titanBankcardDao.insert(titanBankcard);
                         }
                     } catch (Exception e) {
@@ -140,6 +158,8 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
                         }
                     }
                 }
+                cusBankCardBindResponse.putErrorResult(bankCardBindResponse.getReturnCode(),bankCardBindResponse.getReturnMsg());
+                return cusBankCardBindResponse;
             }
         } catch (Exception e) {
             log.error("绑卡失败" + e.getMessage(), e);
@@ -238,4 +258,145 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
         return null;
     }
 
+	@Override
+	public List<BankCardDTO> queryBankCardDTO(BankCardRequest bankCardRequest) {
+		List<BankCardDTO> bankCardDTOList = new ArrayList<BankCardDTO>();
+		
+		TitanBankcardParam condition = new TitanBankcardParam();
+		PaginationSupport<TitanBankcard> paginationSupport = new PaginationSupport<TitanBankcard>();
+		
+		condition.setStatus(bankCardRequest.getStatus());
+		condition.setAccountproperty(bankCardRequest.getAccountproperty());
+		condition.setUserid(bankCardRequest.getUserId());
+		condition.setAccountpurpose(bankCardRequest.getAccountpurpose());
+		titanBankcardDao.selectForPage(condition, paginationSupport);
+		
+		List<TitanBankcard> titanBankcardList = paginationSupport.getItemList();
+		if(titanBankcardList !=null && titanBankcardList.size()>0){
+			for(TitanBankcard titanBankcard :titanBankcardList){
+				BankCardDTO bankCardDTO = new BankCardDTO();
+				MyBeanUtil.copyBeanProperties(bankCardDTO, titanBankcard);
+				bankCardDTOList.add(bankCardDTO);
+			}
+			return bankCardDTOList;
+		}
+		return null;
+	}
+
+	@Override
+	public void bindBankCardBatch() {//批量修改绑定的银行卡
+		//此处采用第三方分页工具，offset不能为1，因为分页到了最后始终返回最后一条数据，陷入死循环
+		bindBankCard(1,100);
+	}
+
+	private void bindBankCard(int rows,int offset){
+		
+		TitanBankcardParam condition = new TitanBankcardParam();
+		PaginationSupport<TitanBankcard> paginationSupport = new PaginationSupport<TitanBankcard>();
+		condition.setStatus(BindCardStatus.BIND_BINDING.status);
+		condition.setAccountproperty(CommonConstant.ENTERPRISE);
+		condition.setAccountpurpose(CommonConstant.WITHDRAW_CARD);
+		paginationSupport.setCurrentPage(rows);
+		paginationSupport.setPageSize(offset);
+		titanBankcardDao.selectForPage(condition, paginationSupport);
+		
+		if( paginationSupport.getItemList()!=null){
+			List<TitanBankcard> bankcardList  = paginationSupport.getItemList();
+			offset = bankcardList.size();
+			if(bankcardList.size()>0){
+				for(TitanBankcard titanBankcard :bankcardList){
+					//查询融数
+					boolean bindStatus = this.queryBindCard(titanBankcard);
+					if(bindStatus){//绑定成功,更新自己代码
+						updateBankCard(titanBankcard);
+					}
+				}
+			}
+		}
+		
+		if(offset <100){
+			return ;
+		}else{
+			this.bindBankCard(rows+1,offset);
+		}
+		
+	}
+	
+	/**
+	 * 检查该卡是否绑定成功
+	 * @param titanBankcard
+	 * @return
+	 */
+	private boolean queryBindCard(TitanBankcard titanBankcard){
+		
+		BankCardQueryRequest bankCardQueryRequest = new BankCardQueryRequest();
+		bankCardQueryRequest.setConstid(titanBankcard.getConstid());
+		bankCardQueryRequest.setProductid(titanBankcard.getProductid());
+		bankCardQueryRequest.setUserid(titanBankcard.getUserid());
+		bankCardQueryRequest.setObjorlist(CommonConstant.ALLCARD);
+		bankCardQueryRequest.setUsertype(CommonConstant.ENTERPRISE);
+		BankCardQueryResponse bankCardQueryResponse = rsBankCardInfoManager.queryBindCard(bankCardQueryRequest);
+		if(bankCardQueryResponse.getBankCardInfoList() !=null && bankCardQueryResponse.getBankCardInfoList().size()>0){
+			for(BankCardInfo bankCardInfo :bankCardQueryResponse.getBankCardInfoList()){
+				if(CommonConstant.WITHDRAW_CARD.equals(bankCardInfo.getAccountpurpose()) 
+						&& CommonConstant.BIND_SUCCESS.equals(bankCardInfo.getStatus()) 
+						&& CommonConstant.ENTERPRISE.equals(bankCardInfo.getAccountproperty())){//对公，提现卡
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	
+	private void updateBankCard(TitanBankcard titanBankcard){
+		TitanBankcard bankcard = new TitanBankcard();
+		bankcard.setBankcardid(titanBankcard.getBankcardid());
+		bankcard.setStatus(BindCardStatus.BIND_SUCCESS.status);
+		try{
+			titanBankcardDao.update(bankcard);
+		}catch(Exception e){
+			log.error("更新银行卡绑定信息失败："+e.getMessage(),e);
+		}
+	}
+	
+	
+	public ModifyInvalidWithDrawCardResponse modifyinvalidPublicCard(ModifyInvalidWithDrawCardRequest modifyInvalidWithDrawCardRequest){
+		ModifyInvalidWithDrawCardResponse response = new ModifyInvalidWithDrawCardResponse();
+		String accountId = queryAccountid(modifyInvalidWithDrawCardRequest);
+		if(StringUtil.isValidString(accountId)){
+			InvalidPubCardModifyRequest invalidPubCardModifyRequest = new InvalidPubCardModifyRequest();
+			MyBeanUtil.copyProperties(invalidPubCardModifyRequest, modifyInvalidWithDrawCardRequest);
+			InvalidPubCardModifyResponse invalidPubCardModifyResponse = rsBankCardInfoManager.modifyInvalidPublicCard(invalidPubCardModifyRequest);
+			if(invalidPubCardModifyResponse.getOperateStatus().equals(CommonConstant.OPERATE_SUCCESS)){
+				response.putSuccess();
+			}else{
+				response.putErrorResult(invalidPubCardModifyResponse.getReturnCode(), invalidPubCardModifyResponse.getReturnMsg());
+			}
+			return response;
+		}
+		response.putErrorResult("您还未绑定过卡");
+		return response;
+	}
+	
+	private String queryAccountid(ModifyInvalidWithDrawCardRequest modifyInvalidWithDrawCardRequest){
+		BankCardQueryRequest bankCardQueryRequest = new BankCardQueryRequest();
+		bankCardQueryRequest.setConstid(modifyInvalidWithDrawCardRequest.getConstid());
+		bankCardQueryRequest.setProductid(modifyInvalidWithDrawCardRequest.getProductid());
+		bankCardQueryRequest.setUserid(modifyInvalidWithDrawCardRequest.getUserid());
+		bankCardQueryRequest.setObjorlist(CommonConstant.ALLCARD);
+		bankCardQueryRequest.setUsertype(CommonConstant.ENTERPRISE);
+		BankCardQueryResponse bankCardQueryResponse = rsBankCardInfoManager.queryBindCard(bankCardQueryRequest);
+		if(bankCardQueryResponse.getBankCardInfoList() !=null && bankCardQueryResponse.getBankCardInfoList().size()>0){
+			for(BankCardInfo bankCardInfo :bankCardQueryResponse.getBankCardInfoList()){
+				if(CommonConstant.WITHDRAW_CARD.equals(bankCardInfo.getAccountpurpose()) 
+						&& CommonConstant.BIND_FAIL.equals(bankCardInfo.getStatus()) 
+						&& CommonConstant.ENTERPRISE.equals(bankCardInfo.getAccountproperty())){//对公，提现卡
+				        return bankCardInfo.getAccountid();
+				}
+			}
+		}
+		return null;
+	}
+	
 }

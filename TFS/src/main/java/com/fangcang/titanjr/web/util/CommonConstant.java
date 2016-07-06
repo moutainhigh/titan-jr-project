@@ -65,5 +65,41 @@ public class CommonConstant {
     //融数回调时的支付成功的状态
     public static final String PAY_SUCCESS="3";
     
+    //对公的账户
+	public static final String ACCOUNT_PUBLIC ="1";
+	
+	//个人的账户
+    public static final String ACCOUNT_PERSON ="2";
+    
+    
+    //对公账户，绑定失败
+    public static final String ACCOUNT_PUBLIC_FAIL="5";
+    
+    //对公的账户,绑定成功
+   	public static final String ACCOUNT_PUBLIC_SUCCESS ="4";
+   	
+   	//对公账户未绑定
+   	public static final String ACCOUNT_PUBLIC_NO_BIND="3";
+   	
+   	//对公账户审核中
+   	public static final String ACCOUNT_PUBLIC_BINDING="6";
+   	
+       
+	//提现卡
+	public static final String ACCOUNT_PURPOSE_WITHDRAW ="3";
+	
+	//绑定成功
+	public static final Integer BANKCARD_SUCCESS = 1;
+	
+	public static final Integer BANKCARD_BINDING = 2;
+	
+	public static final Integer BANKCARD_FAIL = 0;
+	
+	//绑定提现卡
+	public static final String BIND_BANK_CARD="0";
+	
+	//绑定失败后修改提现卡
+	public static final String MODIFY_BANK_CARD="1";
+    
     
 }

@@ -103,7 +103,7 @@
     </servlet-mapping>
     <!-- end spring mvc 配置 -->
     
-      <!--<servlet>
+      <servlet>
         <servlet-name>RsaKeyServlet</servlet-name>
         <servlet-class>com.fangcang.titanjr.web.servlet.RsaKeyServlet</servlet-class>
         <load-on-startup>3</load-on-startup>
@@ -111,7 +111,7 @@
     <servlet-mapping>
         <servlet-name>RsaKeyServlet</servlet-name>
         <url-pattern>/RsaKeyServlet/*</url-pattern>
-    </servlet-mapping>-->
+    </servlet-mapping>
 
     <session-config>
         <session-timeout>30</session-timeout>
