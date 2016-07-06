@@ -38,6 +38,8 @@ public interface TitanFinancialUserService {
      */
     public UserInfoResponse queryFinancialUser(UserInfoQueryRequest userInfoQueryRequest);
 
+    public UserInfoPageResponse queryUserInfoPage(UserInfoQueryRequest userInfoQueryRequest); 
+    
     public UserBindInfoResponse queryUserBindInfoDTO(UserBindInfoRequest userBindInfoRequest);
     /**
      * 分页查询金服员工信息
