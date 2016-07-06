@@ -29,7 +29,6 @@ import com.fangcang.titanjr.web.pojo.WithDrawRequest;
 import com.fangcang.titanjr.web.util.CommonConstant;
 import com.fangcang.titanjr.web.util.RSADecryptString;
 import com.fangcang.util.DateUtil;
-import com.fangcang.util.PasswordUtil;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -488,6 +487,9 @@ public class FinancialAccountController extends BaseController {
         Map<String, String> map = new HashMap<String, String>();
         if (payPasswordRequest != null && StringUtil.isValidString(payPasswordRequest.getPayPassword())) {
         	payPasswordRequest.setPayPassword(RSADecryptString.decryptString(payPasswordRequest.getPayPassword(),request));
+        	if(StringUtil.isValidString(payPasswordRequest.getOldPassword())){
+        		payPasswordRequest.setOldPassword(RSADecryptString.decryptString(payPasswordRequest.getOldPassword(),request));
+        	}
         	payPasswordRequest.setTfsuserid(getTfsUserId());
             PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
             if (payPasswordResponse.isSaveSuccess()) {
@@ -497,7 +499,7 @@ public class FinancialAccountController extends BaseController {
                 map.put(CommonConstant.MSG, payPasswordResponse.getReturnMessage());
             }
         }
-        map.put("result", "fail");
+        map.put(CommonConstant.RESULT, "fail");
         return map;
     }
 

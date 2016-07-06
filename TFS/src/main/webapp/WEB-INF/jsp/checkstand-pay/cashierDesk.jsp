@@ -255,7 +255,7 @@
        return e = Math.pow(10, Math.max(c, d)), (mul(a, e) - mul(b, e)) / e;
     }
     
-    function mul(a, b) {
+    function mul(a, b) {//改进的乘法
         var c = 0,
             d = a.toString(),
             e = b.toString();

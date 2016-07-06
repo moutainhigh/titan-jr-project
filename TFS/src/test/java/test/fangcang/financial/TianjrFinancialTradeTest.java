@@ -243,13 +243,15 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	try{
     		TransferRequest transferRequest = new TransferRequest();
         	transferRequest.setCreator("admin");
-        	transferRequest.setUserid("PM10000021");										//转出的用户
+        	transferRequest.setUserid("141223100000056");	
+        	transferRequest.setProductId("");
+        	transferRequest.setInterproductid("");//转出的用户
         	transferRequest.setRequestno(OrderGenerateService.genResquestNo());									//业务订单号
         	transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));				//请求时间
-        	transferRequest.setAmount("300000");										//金额 必须是分
+        	transferRequest.setAmount("57900");										//金额 必须是分
         	transferRequest.setUserfee("0");									
         	transferRequest.setUserrelateid("TJM10000087");	                    //接收方用户Id
-        	transferRequest.setOrderid("2016063021292900001");
+        	transferRequest.setOrderid("2016063021292900002");
         	TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
         	if(transferResponse !=null){
 //        		transferRequest
@@ -462,10 +464,10 @@ public class TianjrFinancialTradeTest extends GenericTest{
     }
     
     //获取GDP支付地址
-//    @Test
+    @Test
     public void testGetPaymentUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
-    	paymentUrlRequest.setPayOrderNo("H0199130625164436");
+    	paymentUrlRequest.setPayOrderNo("H0146130713143358");
     	paymentUrlRequest.setPaySource("1");
     	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
     	paymentUrlRequest.setIsEscrowed("1");
@@ -499,7 +501,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     public void testGetMerchantLineUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");
-    	paymentUrlRequest.setPayOrderNo("TW15051906771");
+    	paymentUrlRequest.setPayOrderNo("TW15062908053");
     	paymentUrlRequest.setFcUserid("23298");
     	
     	paymentUrlRequest.setPaySource("2");

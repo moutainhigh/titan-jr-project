@@ -4,7 +4,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +13,6 @@ import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.AccountUpdateRequest;
-import com.fangcang.titanjr.dto.request.PayPasswordRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.AccountResponse;
 import com.fangcang.titanjr.dto.response.AccountUpdateResponse;
@@ -23,7 +21,6 @@ import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
-import com.fangcang.titanjr.web.controller.admin.OrgController;
 import com.fangcang.titanjr.web.util.CommonConstant;
 import com.fangcang.util.StringUtil;
 
@@ -36,6 +33,10 @@ import com.fangcang.util.StringUtil;
 @RequestMapping("/setting")
 public class SettingPasswordController extends BaseController{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final Log LOG = LogFactory.getLog(SettingPasswordController.class);
 	@Resource
 	private TitanFinancialUserService userService;
@@ -99,20 +100,29 @@ public class SettingPasswordController extends BaseController{
 	 * 通过原始密码修改密码
 	 * @return
 	 */
-	@RequestMapping("/pay-set-password")
+	@RequestMapping("/modify-pwd")
 	public String paySetPassword(){
-		return "";
+		return "setting/modify-pwd";
 	}
+	
 	/**
-	 * 检查验证码是否正确
-	 * @return 签名字符串
+	 * 忘记原密码
+	 * @return 
 	 */
-	@RequestMapping("/pay-set-check-code")
-	public String checkCode(){
-		
-		//返回sign = md5(userloginname+time+key)
-		return "";
+	@RequestMapping("/modify-pwd-forget")
+	public String forgetPassword(){
+		return "setting/modify-pwd-forget";
 	}
+	
+	/**
+	 * 忘记原密码
+	 * @return 
+	 */
+	@RequestMapping("/modify-pwd-remember")
+	public String rememberPassword(){
+		return "setting/modify-pwd-remember";
+	}
+	
 	
 	/**
 	 * 通过用户名修改支付密码
