@@ -215,6 +215,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         //3.金服添加用户权限
         UserRoleSetRequest userRoleSetRequest = new UserRoleSetRequest();
         userRoleSetRequest.setUserRoleIdMap(new HashMap<Long, List<Long>>());
+        userRoleSetRequest.setDeleteUserRoleIdMap(new HashMap<Long, List<Long>>());
         if (userRegisterRequest.getIsAdminUser() == 1) {
             List<TitanRole> titanRoles = titanRoleDao.queryTitanRoles(new TitanRoleQueryRequest());
             userRoleSetRequest.getUserRoleIdMap().put(Long.valueOf(String.valueOf(tfsUserid)),
@@ -834,7 +835,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 						TitanUser user = titanUserDao.selectTitanUser(titanUser.getTfsuserid());
 //						如果交易密码已经设置，则需要原密码进行修改交易密码
 						if(user !=null){
-							if(!StringUtil.isValidString(user.getPaypassword())){
+							if(!StringUtil.isValidString(user.getPaypassword()) || StringUtil.isValidString(payPasswordRequest.getPayPassword()) ){
 								titanUser.setPaySalt(paySalt);
 								int row = titanUserDao.update(titanUser);
 								if(row>0){

@@ -52,7 +52,7 @@
 			
 			</c:if>
 			<c:if test="${hasSetPayPass==1}">
-				<h3 class="TFSpassw_title"><span class="fl">您的付款密码：</span><span class="TFS_changepassword fl"><img src="../images/TFS/lock.png" alt=""><i class="blue undl curpo J_password">修改密码</i></span></h3>
+				<h3 class="TFSpassw_title"><span class="fl">您的付款密码：</span><span class="TFS_changepassword fl"><img src="<%=cssSaasPath%>/images/TFS/lock.png" alt=""><i class="blue undl curpo J_password">修改密码</i></span></h3>
 			</c:if>
 			<div class="TFSpayset">
 				<h3 class="TFSpassw_title fl">小额免支付开关</h3>
@@ -142,14 +142,67 @@
             });
         }
     });
-//点击设置修改密码    
+//点击设置密码    
 $(".J_confirm").on('click', function() {
-	new top.Tip({msg : '设置成功！', type: 1 , time:1000});   
-	window.location.href = '金服设置-付款密码设置 - 修改.html';
+	var validate_pay = validate_payPassword();
+	if(validate_pay==true){
+		$.ajax({
+			 type: "post",
+	         url: "<%=basePath%>/account/setPayPassword.action",
+	         data: {
+	        	 payPassword:rsaData(PasswordStr1.returnStr())
+	         },
+	         dataType: "json",
+	         success: function(data){
+	        	 if(data.result=="success"){//密码设置成功
+	        			new top.Tip({msg : '设置成功！', type: 1 , time:1000});   
+	        			  window.location.reload();//刷新当前页面.
+	        	 }
+	         }
+			
+		});
+	}
+
 });    
+
+function validate_payPassword(){
+	var payPassword1 = PasswordStr1.returnStr();
+	var payPassword2 = PasswordStr2.returnStr();
+	if(payPassword1.length!=6||payPassword2.length!=6){
+		new top.Tip({msg : '设置的密码必须为6位！', type: 1 , time:1000}); 
+		return false;
+	}
+	
+	if(payPassword1!=payPassword2){
+		new top.Tip({msg : '两次密码输入不相同！', type: 1 , time:1000});   
+		return false;
+	}
+	return true;
+	
+}
+
+$('.J_password').on('click',function(){
+    top.F.loading.show();
+    $.ajax({
+        dataType : 'html',
+        context: document.body,
+        url : '<%=basePath%>/setting/modify-pwd.shtml',           
+        success : function(html){
+            top.F.loading.hide();
+            var d =  window.top.dialog({
+                title: ' ',
+                padding: '0 0 0px 0',
+                content: html,
+                skin : 'saas_pop' ,
+            }).showModal();
+        }
+    });
+});  
+
+
 //密码输入框
-var PasswordStr=new sixDigitPassword("passwordbox");
-var PasswordStr=new sixDigitPassword("passwordbox1");
+var PasswordStr1=new sixDigitPassword("passwordbox");
+var PasswordStr2=new sixDigitPassword("passwordbox1");
 </script>
 </body>
 </html>

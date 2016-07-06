@@ -33,6 +33,10 @@ import com.fangcang.util.StringUtil;
 @RequestMapping("/setting")
 public class SettingPasswordController extends BaseController{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final Log LOG = LogFactory.getLog(SettingPasswordController.class);
 	@Resource
 	private TitanFinancialUserService userService;
@@ -96,20 +100,29 @@ public class SettingPasswordController extends BaseController{
 	 * 通过原始密码修改密码
 	 * @return
 	 */
-	@RequestMapping("/pay-set-password")
+	@RequestMapping("/modify-pwd")
 	public String paySetPassword(){
-		return "";
+		return "setting/modify-pwd";
 	}
+	
 	/**
-	 * 检查验证码是否正确
-	 * @return 签名字符串
+	 * 忘记原密码
+	 * @return 
 	 */
-	@RequestMapping("/pay-set-check-code")
-	public String checkCode(){
-		
-		//返回sign = md5(userloginname+time+key)
-		return "";
+	@RequestMapping("/modify-pwd-forget")
+	public String forgetPassword(){
+		return "setting/modify-pwd-forget";
 	}
+	
+	/**
+	 * 忘记原密码
+	 * @return 
+	 */
+	@RequestMapping("/modify-pwd-remember")
+	public String rememberPassword(){
+		return "setting/modify-pwd-remember";
+	}
+	
 	
 	/**
 	 * 通过用户名修改支付密码
