@@ -251,8 +251,21 @@
         } catch (f) {
             d = 0;
         }
-        e = Math.pow(10, Math.max(c, d));
-        return(a * e - b * e) / e;
+       
+       return e = Math.pow(10, Math.max(c, d)), (mul(a, e) - mul(b, e)) / e;
+    }
+    
+    function mul(a, b) {
+        var c = 0,
+            d = a.toString(),
+            e = b.toString();
+        try {
+            c += d.split(".")[1].length;
+        } catch (f) {}
+        try {
+            c += e.split(".")[1].length;
+        } catch (f) {}
+        return Number(d.replace(".", "")) * Number(e.replace(".", "")) / Math.pow(10, c);
     }
     
     function checktest() {
@@ -612,6 +625,7 @@
     function save_payDate(){
     	var transferAmount ="0";
     	var payAmount = "0";
+    	
     	if (sub('${orderDTO.payAmount}', '${accountBalance.balanceusable}') <= 0){
     		if($("#d_checkbox").attr("checked")=="checked"){//余额充足二选一
        		    transferAmount = '${orderDTO.payAmount}';
@@ -626,7 +640,6 @@
        	    	payAmount = '${orderDTO.payAmount}';
        	    }
     	}
-    	
     	var recieveOrgName = null;
     	var recieveTitanCode = null;
     	if($("#not_exists_history").is(":visible")==true){
