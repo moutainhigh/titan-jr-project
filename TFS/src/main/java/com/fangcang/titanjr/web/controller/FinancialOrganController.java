@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
+import com.fangcang.titanjr.common.enums.SMSType;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
@@ -427,7 +428,9 @@ public class FinancialOrganController extends BaseController {
     		sendRegCodeRequest.setMerchantCode(RSInvokeConstant.defaultMerchant);
     	}
     	String regCode = setRegCode(receiveAddress);
-    	sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+CommonConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
+		sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+CommonConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
+    	sendRegCodeRequest.setSubject("泰坦金融注册验证码");
+    	 
     	
     	SendRegCodeResponse sendRegCodeResponse = sendSMSService.sendRegCode(sendRegCodeRequest);
     	sendRegCodeResponse.putSuccess();
@@ -438,6 +441,44 @@ public class FinancialOrganController extends BaseController {
     	}
     	
    }
+    @ResponseBody
+   	@RequestMapping(value = "/sendCode")
+    public String sendCode(String receiveAddress,Integer msgType){
+    	SendRegCodeRequest sendRegCodeRequest = new SendRegCodeRequest();
+    	if(StringUtil.isValidString(receiveAddress)){
+    		sendRegCodeRequest.setReceiveAddress(receiveAddress);
+    	}else {
+    		return toJson(putSysError("参数错误"));
+    	}
+    	if(!(Tools.isEmailAddress(receiveAddress)||Tools.isPhone(receiveAddress))){
+    		return toJson(putSysError("参数错误"));
+    	}
+    	String merchantCode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
+    	if(StringUtil.isValidString(merchantCode)){
+    		//TODO 使用正式环境
+    		sendRegCodeRequest.setMerchantCode("M10000001");
+    	}else{
+    		sendRegCodeRequest.setMerchantCode(RSInvokeConstant.defaultMerchant);
+    	}
+    	String regCode = setRegCode(receiveAddress);
+    	if(msgType==null||msgType==SMSType.REG_CODE.getType()){//注册
+    		sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+CommonConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
+        	sendRegCodeRequest.setSubject("泰坦金融注册验证码");
+    	}else if(msgType==SMSType.LOGIN_PASSWORD_MODIFY.getType()){//修改支付密码
+    		sendRegCodeRequest.setContent("尊敬的用户： 您正在修改泰坦金融的支付密码，验证码为："+regCode+"，验证码"+CommonConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
+        	sendRegCodeRequest.setSubject("泰坦金融修改支付密码");
+    	}
+    	
+    	SendRegCodeResponse sendRegCodeResponse = sendSMSService.sendRegCode(sendRegCodeRequest);
+    	sendRegCodeResponse.putSuccess();
+    	if(sendRegCodeResponse.isResult()){
+    		return toJson(putSuccess("验证码发送成功"));
+    	}else{
+    		return toJson(putSysError(sendRegCodeResponse.getReturnMessage()));
+    	}
+    	
+   }
+    
     /**
      * 协议
      * @return
