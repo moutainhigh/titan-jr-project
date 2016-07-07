@@ -77,6 +77,8 @@
 var vform = new validform('#J_form1',{
     msgAlign: 'bottom'
 });
+var email_reg=/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+var phone_reg=/^13[0-9]{9}$|^14[0-9]{9}$|^15[0-9]{9}$|^18[0-9]{9}$|^17[0-9]{9}$/;
 //获取验证码
 function timeOut(_this){
     var i=60;
