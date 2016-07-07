@@ -323,7 +323,7 @@ public class FinancialAccountController extends BaseController {
          bankCardBindRequest.setAccountPurpose(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey());
          bankCardBindRequest.setCertificateType(String.valueOf(0));
          //查询企业营业执照号
-         bankCardBindRequest.setCertificateNumber(this.getTitanOrganDTO().getCertificateNumber());
+         bankCardBindRequest.setCertificateNumber(this.getTitanOrganDTO().getBuslince());
          bankCardBindRequest.setAccountNumber(bindBankCardRequest.getBankCardCode());
          bankCardBindRequest.setAccountName(bindBankCardRequest.getUserName());
          bankCardBindRequest.setBankCode(bindBankCardRequest.getBankCode());
