@@ -150,7 +150,8 @@ function forget_pwd_data(){
 	return{
 		userName:userName,
 		code:code,
-		payPassword:rsaData(payPassword)
+		/* payPassword:rsaData(payPassword) */
+		payPassword:payPassword
 	};
 }
 

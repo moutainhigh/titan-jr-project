@@ -14,8 +14,8 @@
     	<input type="hidden" id="fcUserId" value="${fcUserId }">
     	<div class="TFS_addtitle demo_form" id="J_form1">
     		<ul>
-    			<li><span class="addtitle_left">姓名：</span><input type="text" id="userName" class="text w_180 f_ui-grey-input" datatype="zh1-6" errormsg="请输入1到6位中文字符！"></li>
-    			<li><span class="addtitle_left">手机号码：</span><input type="text" id="receiveAddress" placeholder="请输入手机号码" class="text w_180 f_ui-grey-input"  customFun="checkReceiveAddress" ><span class="c_999 p_l30">此手机号将作为用户名用来登录泰坦金服官网或者APP</span></li>
+    			<li><span class="addtitle_left">姓名：</span><input type="text" id="userName" value="${fcUserName}" class="text w_180 f_ui-grey-input" datatype="s1-30" errormsg="请输入1到30位字符！"></li>
+    			<li><span class="addtitle_left">手机号码：</span><input type="text" id="receiveAddress" placeholder="请输入手机号码" class="text w_180 f_ui-grey-input" value="${fcMobile}"  customFun="checkReceiveAddress" ><span class="c_999 p_l30">此手机号将作为用户名用来登录泰坦金服官网或者APP</span></li>
     			<li><span class="addtitle_left">验证码：</span>
     			<p class="text" style="width: 187px;">
     			<input type="text" id="code" class="TFSother_input w_110" customFun="checkCode">
