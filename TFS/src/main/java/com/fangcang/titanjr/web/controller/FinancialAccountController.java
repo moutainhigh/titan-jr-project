@@ -492,6 +492,7 @@ public class FinancialAccountController extends BaseController {
         		payPasswordRequest.setOldPassword(RSADecryptString.decryptString(payPasswordRequest.getOldPassword(),request));
         	}
         	payPasswordRequest.setTfsuserid(getTfsUserId());
+        	log.info("设置支付密码的传入参数:"+toJson(payPasswordRequest));
             PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
             if (payPasswordResponse.isSaveSuccess()) {
                 map.put(CommonConstant.RESULT, CommonConstant.SUCCESS);
