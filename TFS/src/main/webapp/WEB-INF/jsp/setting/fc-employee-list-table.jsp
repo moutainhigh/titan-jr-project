@@ -9,7 +9,7 @@
 	<td class="tdl">${saasMerchantUserDTO.roleName }</td>
 	<td class="tdl">
 		<c:if test="${saasMerchantUserDTO.isAddTfs==1}"><a class="btn btn_add p_lr30 chose_btn" href="javascript:;">已添加</a></c:if>
-		<c:if test="${saasMerchantUserDTO.isAddTfs==0}"><a class="btn btn_add p_lr30 J_add" href="javascript:;" data-saas-userLoginName="${saasMerchantUserDTO.userLoginName }" data-saas-userid="${saasMerchantUserDTO.userId }">添加</a></c:if>
+		<c:if test="${saasMerchantUserDTO.isAddTfs==0}"><a class="btn btn_add p_lr30 J_add" href="javascript:;" data-saas-userLoginName="${saasMerchantUserDTO.userLoginName }" data-saas-userName="${saasMerchantUserDTO.userName }" data-saas-userid="${saasMerchantUserDTO.userId }">添加</a></c:if>
 	</td>
 </tr>
 </c:forEach>
