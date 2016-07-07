@@ -126,7 +126,7 @@
     //添加日期锻
 
     $(function () {
-        initRequest();
+        initRequest(); 
         initQueryDate();
         initAutoSelectPartner()
     });

@@ -304,7 +304,8 @@ function save_recharge_data(){
 	var data={
 		amount:amount,
 		bankInfo:bankInfo,
-		payPassword:rsaData(payPassword),
+		/* payPassword:rsaData(payPassword), */
+		payPassword:payPassword,
 		linePayType:linePayType
 	};
 	return data;

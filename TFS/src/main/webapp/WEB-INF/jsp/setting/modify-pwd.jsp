@@ -97,8 +97,10 @@ function update_old_pwd(){
 		 type: "post",
          url: "<%=basePath%>/account/setPayPassword.action",
          data: {
-        	 oldPassword:rsaData(PasswordStr3.returnStr()),
-        	 payPassword:rsaData(PasswordStr4.returnStr())
+        	/*  oldPassword:rsaData(PasswordStr3.returnStr()),
+        	 payPassword:rsaData(PasswordStr4.returnStr()) */
+        	 oldPassword:PasswordStr3.returnStr(),
+        	 payPassword:PasswordStr4.returnStr()
          },
          dataType: "json",
          success: function(data){

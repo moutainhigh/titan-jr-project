@@ -150,7 +150,8 @@ $(".J_confirm").on('click', function() {
 			 type: "post",
 	         url: "<%=basePath%>/account/setPayPassword.action",
 	         data: {
-	        	 payPassword:rsaData(PasswordStr1.returnStr())
+	        	 /* payPassword:rsaData(PasswordStr1.returnStr()) */
+	        	 payPassword:PasswordStr1.returnStr()
 	         },
 	         dataType: "json",
 	         success: function(data){
