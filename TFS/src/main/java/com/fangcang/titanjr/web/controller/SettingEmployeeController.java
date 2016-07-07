@@ -95,10 +95,16 @@ public class SettingEmployeeController extends BaseController{
 		UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
 		
 		userInfoQueryRequest.setTfsUserId(null);
+		userInfoQueryRequest.setStatus(null);
+		userInfoQueryRequest.setExcludeStatus(TitanUserEnum.Status.NOT_AVAILABLE.getKey());
 		userInfoQueryRequest.setUserLoginName("".equals(tfsUserLoginName)?null:tfsUserLoginName);
 		userInfoQueryRequest.setUserName("".equals(userName)?null:userName);
 		userInfoQueryRequest.setOrgCode(userInfoResponse.getUserInfoDTOList().get(0).getOrgCode());
-		RoleUserInfoPageResponse roleUserInfoPageResponse = titanFinancialUserService.queryRoleUserInfoPage(userInfoQueryRequest);
+		RoleUserInfoPageResponse roleUserInfoPageResponse =  new RoleUserInfoPageResponse();
+		if(StringUtil.isValidString(userInfoQueryRequest.getOrgCode())){
+			roleUserInfoPageResponse = titanFinancialUserService.queryRoleUserInfoPage(userInfoQueryRequest);
+		}
+		
 		if(roleUserInfoPageResponse.isResult()){
 			model.addAttribute("userInfoDTOPage", roleUserInfoPageResponse.getPaginationSupport());
 		}
