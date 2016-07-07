@@ -50,8 +50,8 @@
 	<td class="td-data" data-tfs-userloginname="${userInfoDTO.userLoginName}" data-tusername="${userInfoDTO.userName}" data-fc-userloginname="${userInfoDTO.userBindInfoDTO.fcLoginName}" data-tfs-userid="${userInfoDTO.tfsUserId}" data-fc-userid="${userInfoDTO.userBindInfoDTO.fcUserId}" >
 		<div class="TFS_frozenset">
 			<c:if test="${userInfoDTO.isAdmin==0 }">
-				<span class="blue undl curpo J_frozen" data-status="2" <c:if test="${userInfoDTO.status==1 }">style="display:none;"</c:if>>冻结</span>
-				<span class="orange undl curpo J_thaw" data-status="1" <c:if test="${userInfoDTO.status==2 }">style="display:none;"</c:if>>解冻</span>
+				<span class="blue undl curpo J_frozen" data-status="2" <c:if test="${userInfoDTO.status==2 }">style="display:none;"</c:if>>冻结</span>
+				<span class="orange undl curpo J_thaw" data-status="1" <c:if test="${userInfoDTO.status==1 }">style="display:none;"</c:if>>解冻</span>
 			</c:if>
 			<span class="blue undl curpo J_modify" >修改</span>
 			<c:if test="${userInfoDTO.isAdmin==0 }">
