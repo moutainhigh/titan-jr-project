@@ -164,7 +164,7 @@ public class FinancialAccountController extends BaseController {
                 model.addAttribute("tradePage", tradeDetailResponse.getTransOrders());
             }
         }
-        return "account-overview/bind-bankcard";
+        return "account-overview/freeze-order-list";
     }
 
     @RequestMapping(value = "/freeze-detail-page", method = RequestMethod.GET)
