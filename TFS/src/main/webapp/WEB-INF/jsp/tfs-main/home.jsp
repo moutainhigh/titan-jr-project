@@ -81,28 +81,11 @@
 		                </ul>
 		            </div>
             	</c:when>
-            	<c:when test="${orgCheckResultKey=='PASS' and orgBindStatus==1}">
-            		<!-- 已通过... -->
-            		<div class="WC">
-		                <img src="<%=cssSaasPath%>/images/TFS/tu01.png">
-		                <p>关注泰坦金融公众号,同步获取账户资产信息</p>
-		            </div>
-            		
-            	</c:when>
-            	<c:otherwise>
-            		<div class="WC">
-		                <img src="<%=cssSaasPath%>/images/TFS/tu01.png">
-		                <p>关注泰坦金融公众号,同步获取账户资产信息</p>
-		            </div>
-            	</c:otherwise>
             </c:choose>
-            
-            <!-- 只有商家管理员才能开通泰坦金融哦 -->
-            <div class="btn1 dn">
-                <a class="tfs_ico b J_admin" href=""></a>
-                <div class="t J_t">已有泰坦金融账号，点击绑定SAAS</div>
+            <div class="WC">
+                <img src="<%=cssSaasPath%>/images/TFS/tu01.png">
+                <p>关注泰坦金融公众号,同步获取账户资产信息</p>
             </div>
-            
         </div>
     </div>
     <div class="product">
@@ -232,7 +215,7 @@ function showBindSaasPage(){
                 title: ' ',
                 padding: '0 0 20px 0',
                 content: html,
-                skin : 'saas_pop',                  
+                skin : 'saas_pop',
                 button : [ 
                     {
                         value: '确认',
