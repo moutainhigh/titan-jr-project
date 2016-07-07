@@ -394,7 +394,6 @@ public class FinancialAccountController extends BaseController {
                 cardNo = withDrawRequest.getOriginalAccount();
             }
         }
-
         Object tfsUserId = session.getAttribute(CommonConstant.SESSION_KEY_JR_TFS_USERID);
         boolean isValid = false;
         if (tfsUserId != null) {
@@ -517,13 +516,13 @@ public class FinancialAccountController extends BaseController {
     	
     	//获取该用户的用户名
     	if(!getUserName().equals(forgetPayPassword.getUserName())){
-    		System.out.println(getUserName());
     		return toJson(putSysError("您输入的用户名错误"));
     	}
     	
     	String rcode = TFSTools.validateRegCode(session,forgetPayPassword.getUserName(), forgetPayPassword.getCode());
-    	
     	if(rcode.equals("SUCCESS")){
+    		//移除session
+    		session.removeAttribute(CommonConstant.SESSION_KEY_REG_CODE+"_"+forgetPayPassword.getUserName());
     		PayPasswordRequest payPasswordRequest  = new PayPasswordRequest();
     		payPasswordRequest.setPayPassword(forgetPayPassword.getPayPassword());
     		payPasswordRequest.setIsForget(com.fangcang.titanjr.common.util.CommonConstant.IS_FORGET_PAYPASSWORD);
