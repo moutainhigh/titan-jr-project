@@ -103,9 +103,12 @@ var ajaxPage = new AjaxPage({
 	}
 });
 $(".J_search").on("click",function(){
+	search();
+});
+function search(){
 	var queryParams ={"tfsUserLoginName":$("#J_tfs_userLoginName").val(),"userName":$("#J_tfs_userName").val()};
 	ajaxPage.load({"queryParams":queryParams});
-});
+}
 //新增员工
 $('.J_addnew').on('click',function(){
     top.F.loading.show();
@@ -124,6 +127,7 @@ $('.J_addnew').on('click',function(){
                             value: '关闭',
                             skin : 'btn p_lr30',
                             callback: function () {
+                            	ajaxPage.load();
                             },
                             autofocus: true
                         }
