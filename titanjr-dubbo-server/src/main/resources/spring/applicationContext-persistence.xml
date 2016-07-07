@@ -112,5 +112,4 @@
 	<bean id="titanDynamicKeyDao" class="com.fangcang.titanjr.dao.impl.TitanDynamicKeyDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanPayMethodConfigDao" class="com.fangcang.titanjr.dao.impl.TitanPayMethodConfigDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanOrderExceptionDao" class="com.fangcang.titanjr.dao.impl.TitanOrderExceptionDaoImpl" parent="baseSqlMapClient"></bean>
-	
 </beans>

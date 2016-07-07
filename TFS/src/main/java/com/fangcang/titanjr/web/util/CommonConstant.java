@@ -100,6 +100,6 @@ public class CommonConstant {
 	
 	//绑定失败后修改提现卡
 	public static final String MODIFY_BANK_CARD="1";
-    
+	
     
 }

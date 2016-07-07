@@ -265,36 +265,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
             log.error("在房仓金服对应商家添加用户失败");
             throw new Exception("在房仓固定商家添加用户失败");
         }
-        
-        //5.SaaS系统新添加的员工绑定权限
-        Long newUserId = null;//添加在金服商家的用户id
-        MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
-        List<String> loginNameList = new ArrayList<String>();
-        loginNameList.add(userRegisterRequest.getLoginUserName());
-        queryDTO.setUserLoginNameList(loginNameList);
-        queryDTO.setMerchantCode(RSInvokeConstant.defaultMerchant);
-        com.fangcang.dao.PaginationSupport pg = merchantUserFacade.queryMerchantUser(queryDTO);
-        if (CollectionUtils.isNotEmpty(pg.getItemList())) {
-            for (MerchantUserDTO userDTO : (List<MerchantUserDTO>)pg.getItemList()) {
-                newUserId = userDTO.getUserId();
-            }
-        }
-        //房仓权限系统的角色
-        Role titanjrRole = getRoleFacade().getRoleById(Integer.valueOf(String.valueOf(RSInvokeConstant.defaultRoleId)));
-        if (userRegisterRequest.getRegisterSource() != 3) {
-            if (null != newUserId) {// 添加权限
-                User newUser = getUserFacade().getUserById(Integer.valueOf(String.valueOf(newUserId)));
-                getUserFacade().addRolesToUser(newUser,new Role[]{titanjrRole});
-               // getUserFacade().deleteRolesFromUser(arg0, arg1);
-            }
-        }
-        //6.SaaS被绑定的员工绑定权限
-        if (userRegisterRequest.getRegisterSource() == LoginSourceEnum.SAAS.getKey()) {
-            if (null != orgiUserId) {//添加权限
-                User orgiUser = getUserFacade().getUserById(Integer.valueOf(String.valueOf(orgiUserId)));
-                getUserFacade().addRolesToUser(orgiUser,new Role[]{titanjrRole});
-            }
-        }
+       
         response.putSuccess();
         return response;
     }
@@ -835,7 +806,9 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 						TitanUser user = titanUserDao.selectTitanUser(titanUser.getTfsuserid());
 //						如果交易密码已经设置，则需要原密码进行修改交易密码
 						if(user !=null){
-							if(!StringUtil.isValidString(user.getPaypassword()) || StringUtil.isValidString(payPasswordRequest.getPayPassword()) ){
+							if(!StringUtil.isValidString(user.getPaypassword()) 
+									|| StringUtil.isValidString(payPasswordRequest.getPayPassword()) 
+									|| CommonConstant.IS_FORGET_PAYPASSWORD.equals(payPasswordRequest.getIsForget()) ){
 								titanUser.setPaySalt(paySalt);
 								int row = titanUserDao.update(titanUser);
 								if(row>0){

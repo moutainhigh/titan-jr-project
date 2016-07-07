@@ -21,6 +21,7 @@ import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.BankCardDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
+import com.fangcang.titanjr.dto.bean.ForgetPayPassword;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
@@ -28,6 +29,7 @@ import com.fangcang.titanjr.service.*;
 import com.fangcang.titanjr.web.pojo.WithDrawRequest;
 import com.fangcang.titanjr.web.util.CommonConstant;
 import com.fangcang.titanjr.web.util.RSADecryptString;
+import com.fangcang.titanjr.web.util.TFSTools;
 import com.fangcang.util.DateUtil;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -503,6 +505,46 @@ public class FinancialAccountController extends BaseController {
         return map;
     }
 
+    @ResponseBody
+    @RequestMapping("forgetPayPassword")
+    public String forgetPayPassword(ForgetPayPassword forgetPayPassword){
+    	if(forgetPayPassword ==null
+    			||!StringUtil.isValidString(forgetPayPassword.getPayPassword())
+    			||!StringUtil.isValidString(forgetPayPassword.getUserName())
+    			||!StringUtil.isValidString(forgetPayPassword.getCode())){
+    		return toJson(putSysError("参数错误"));
+    	}
+    	
+    	//获取该用户的用户名
+    	if(!getUserName().equals(forgetPayPassword.getUserName())){
+    		System.out.println(getUserName());
+    		return toJson(putSysError("您输入的用户名错误"));
+    	}
+    	
+    	String rcode = TFSTools.validateRegCode(session,forgetPayPassword.getUserName(), forgetPayPassword.getCode());
+    	
+    	if(rcode.equals("SUCCESS")){
+    		PayPasswordRequest payPasswordRequest  = new PayPasswordRequest();
+    		payPasswordRequest.setPayPassword(forgetPayPassword.getPayPassword());
+    		payPasswordRequest.setIsForget(com.fangcang.titanjr.common.util.CommonConstant.IS_FORGET_PAYPASSWORD);
+    		payPasswordRequest.setTfsuserid(this.getTfsUserId());
+    	    PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
+    	    if (payPasswordResponse.isSaveSuccess()) {
+    	    	return toJson(putSuccess());
+            } else {
+            	return toJson(putSysError(payPasswordResponse.getReturnMessage()));
+            }
+    	}else if(rcode.equals("EXPIRE")){
+    		return toJson(putSysError("验证码已经过期，请重新获取验证码"));
+    	}else if(rcode.equals("NOTEXIST")){
+    		return toJson(putSysError("验证码错误，请重新获取验证码"));
+    	}else if(rcode.equals("WRONG")){
+    		return toJson(putSysError("验证码错误，请重新输入"));
+    	}else{
+    		return toJson(putSysError("验证码不存在，请重新获取验证码"));
+    	}
+    }
+    
     @ResponseBody
     @RequestMapping("checkIsSetPayPassword")
     public Map<String, String> checkIsSetPayPassword(String fcUserid,HttpServletRequest request) {

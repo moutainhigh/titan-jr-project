@@ -74,5 +74,8 @@ public class CommonConstant {
 	//短信发送选用服务号
 	public static final String DEFAULT_SMS_PROVIDER_KEY = "3369";
 	
+	//是否忘记支付密码
+    public static final String IS_FORGET_PAYPASSWORD="1";
+	
 	
 }
