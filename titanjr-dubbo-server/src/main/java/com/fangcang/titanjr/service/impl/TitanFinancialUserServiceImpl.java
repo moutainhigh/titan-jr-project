@@ -806,7 +806,9 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 						TitanUser user = titanUserDao.selectTitanUser(titanUser.getTfsuserid());
 //						如果交易密码已经设置，则需要原密码进行修改交易密码
 						if(user !=null){
-							if(!StringUtil.isValidString(user.getPaypassword()) || StringUtil.isValidString(payPasswordRequest.getPayPassword()) ){
+							if(!StringUtil.isValidString(user.getPaypassword()) 
+									|| StringUtil.isValidString(payPasswordRequest.getPayPassword()) 
+									|| CommonConstant.IS_FORGET_PAYPASSWORD.equals(payPasswordRequest.getIsForget()) ){
 								titanUser.setPaySalt(paySalt);
 								int row = titanUserDao.update(titanUser);
 								if(row>0){

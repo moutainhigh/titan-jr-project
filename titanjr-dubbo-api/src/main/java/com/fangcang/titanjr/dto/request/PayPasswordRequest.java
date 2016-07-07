@@ -19,6 +19,8 @@ public class PayPasswordRequest implements Serializable{
 	//原密码
 	private String oldPassword;
 	
+	private String isForget;
+	
 	public String getOldPassword() {
 		return oldPassword;
 	}
@@ -50,6 +52,13 @@ public class PayPasswordRequest implements Serializable{
 	public void setPayPassword(String payPassword) {
 		this.payPassword = payPassword;
 	}
-	
+
+	public String getIsForget() {
+		return isForget;
+	}
+
+	public void setIsForget(String isForget) {
+		this.isForget = isForget;
+	}
 	
 }

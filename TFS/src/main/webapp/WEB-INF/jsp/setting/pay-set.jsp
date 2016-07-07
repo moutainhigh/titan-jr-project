@@ -180,7 +180,7 @@ function validate_payPassword(){
 	return true;
 	
 }
-
+var dPop;
 $('.J_password').on('click',function(){
     top.F.loading.show();
     $.ajax({
@@ -189,12 +189,13 @@ $('.J_password').on('click',function(){
         url : '<%=basePath%>/setting/modify-pwd.shtml',           
         success : function(html){
             top.F.loading.hide();
-            var d =  window.top.dialog({
+            dPop =  window.top.dialog({
                 title: ' ',
                 padding: '0 0 0px 0',
                 content: html,
                 skin : 'saas_pop' ,
             }).showModal();
+            
         }
     });
 });  

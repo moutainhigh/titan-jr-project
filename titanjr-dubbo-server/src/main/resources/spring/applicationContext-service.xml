@@ -1,3 +1,4 @@
+
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -41,3 +42,4 @@
     <dubbo:service interface="com.fangcang.titanjr.service.TitanOrderService" ref="titanOrderService" timeout="40000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialBankCardService" ref="titanFinancialBankCardService" timeout="40000" />
 </beans>
+

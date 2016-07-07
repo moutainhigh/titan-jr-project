@@ -851,7 +851,7 @@ public class FinancialTradeController extends BaseController {
 			model.addAttribute("payOrderNo", paymentUrlRequest.getPayOrderNo());
 			model.addAttribute("operator",paymentUrlRequest.getOperater());
 		}else if(CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentUrlRequest.getPaySource())){//充值
-			paymentUrlRequest.setUserid(getUserId());
+			paymentUrlRequest.setUserid(this.getUserId());
 	    	model.addAttribute("tfsUserId",getTfsUserId());
 		}
 		

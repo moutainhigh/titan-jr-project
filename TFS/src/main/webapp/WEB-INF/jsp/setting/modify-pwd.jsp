@@ -31,6 +31,7 @@
 <script>
 //修改密码记得原支付密码
 $('.J_remember').on('click',function(){
+	 IframeBox.dPop.remove();
     top.F.loading.show();
     $.ajax({
         dataType : 'html',
@@ -84,7 +85,7 @@ function validate_payPassword(){
 	}
 	
 	if(payPassword4!=payPassword5){
-		new top.Tip({msg : '两次密码输入不相同！', type: 1 , time:1000});   
+		new top.Tip({msg : '两次新密码输入不相同！', type: 1 , time:1000});   
 		return false;
 	}
 	return true;
@@ -112,11 +113,16 @@ function update_old_pwd(){
          }
 	});
 }
+var IframeBox=document.getElementById('right_con_frm').contentWindow || window.frames['right_con_frm'].contentWindow || window.frames['right_con_frm'];
 
 
 //修改密码忘记原支付密码
 $('.J_forget').on('click',function(){
-    top.F.loading.show();
+/* 	console.log(dPop)
+	parent.dPop.remove();
+ */   	
+   IframeBox.dPop.remove();
+    top.F.loading.show();   
     $.ajax({
         dataType : 'html',
         context: document.body,
@@ -131,7 +137,6 @@ $('.J_forget').on('click',function(){
             }).showModal();
             //点击关闭
 			$(".J_close,.btn_exit").on('click', function() {
-				alert("1111");
 				d.remove();
 			});
             
