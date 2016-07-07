@@ -2,7 +2,7 @@
 <%@ include file="/comm/taglib.jsp"%>
 <c:forEach items="${userInfoDTOPage.itemList}" var="userInfoDTO">
 <tr>
-	<td>${userInfoDTO.userLoginName }</td>
+	<td>${userInfoDTO.userLoginName }<c:if test="${userInfoDTO.isAdmin==1 }">超级管理员</c:if></td>
 	<td>${userInfoDTO.userName }</td>
 	<td>${userInfoDTO.userBindInfoDTO.fcLoginName }</td>
 	<td>
