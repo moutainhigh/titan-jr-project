@@ -623,7 +623,8 @@ public class FinancialTradeController extends BaseController {
 					}
 					titanUserBindInfoDTO = titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
 					if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid()!=null){
-						paymentRequest.setPayPassword(RSADecryptString.decryptString(paymentRequest.getPayPassword(),request));
+//						paymentRequest.setPayPassword(RSADecryptString.decryptString(paymentRequest.getPayPassword(),request));
+						paymentRequest.setPayPassword(paymentRequest.getPayPassword());
 						//验证支付密码
 						
 						boolean flag = titanFinancialUserService.checkPayPassword(paymentRequest.getPayPassword(),titanUserBindInfoDTO.getTfsuserid().toString());
