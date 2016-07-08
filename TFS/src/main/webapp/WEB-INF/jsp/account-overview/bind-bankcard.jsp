@@ -27,7 +27,7 @@
 					</p>
 				</div>
 				<div class="pas_close">
-					<span class="btn p_lr30 J_next">去绑定提现银行卡</span>
+					<span class="btn p_lr30 J_next bindCard">去绑定提现银行卡</span>
 				</div>
 			</div>
 			<div class=" father input_bankinfo" style="display: none;">
@@ -44,7 +44,7 @@
 						<input type="text" class="text w_250" id="name"></li>		
 				</ul>
 				<div class="pas_close">
-					<span class="btn p_lr30 J_next">下一步</span>
+					<span class="btn p_lr30 J_next to_bindCard">下一步</span>
 				</div>
 			</div>
 		
@@ -90,15 +90,25 @@ if('${showBankCardInput}'.length>0){
 	$(".input_bankinfo").show();
 }
 
+$(".bindCard").on('click',function(){
+	 $(this).parents(".father").hide();
+	 $(this).parents(".father").next().show();
+})
+
 //下一步
-$('.J_next').on('click',function(){
+$('.to_bindCard').on('click',function(){
     // $(".passwordf").hide();
     // $(".passwordf_next").show(); 
-    $(this).parents(".father").hide();
    
     if($(this).text()=="下一步"){
     	//ajax提交办卡信息
     	var bankCardData = getBankCardData();
+    	//验证相关的数据
+    	var flag = validate_bankCard_data(bankCardData);
+    	if(!flag){
+    		return ;
+    	}
+    	 $(this).parents(".father").hide();
     	$.ajax({
     	    type: 'post',
     		url:'<%=basePath%>/account/bankCardBind.shtml',
@@ -119,13 +129,37 @@ $('.J_next').on('click',function(){
         			$("#bindBankCardFail").hide();
         			$("#showValidate").show();
         		}
+        		  $(this).parents(".father").next().show();
         	}
     	});
     }
-    $(this).parents(".father").next().show();
-    
-   
 }); 
+
+function validate_bankCard_data(bankCardData){
+	if(typeof bankCardData.bankHeadName =="undifined" || bankCardData.bankHeadName.length<1){
+		new top.Tip({msg : '开户银行不能为空！', type: 1 , time:1000}); 
+	    return false;
+	}
+	
+	if(typeof bankCardData.accountnumber =="undifined" || bankCardData.accountnumber.length<1){
+		new top.Tip({msg : '储蓄卡卡号不能为空！', type: 1 , time:1000}); 
+		return false;
+	}
+	
+	var testNumber  = /^[0-9]*$/;
+	if(!testNumber.test( bankCardData.accountnumber)){
+		new top.Tip({msg : '储蓄卡卡号必须为数字！', type: 1 , time:1000}); 
+		return false;
+	}
+	
+	if(typeof bankCardData.name =="undifined" || bankCardData.name.length<1){
+		new top.Tip({msg : '开户名不能为空！', type: 1 , time:1000}); 
+		return false;
+	}
+	
+	return true;
+}
+
 
 new AutoComplete($('#bankCode'), {
     url : '<%=basePath%>/account/getBankInfoList.shtml',
@@ -142,6 +176,8 @@ new AutoComplete($('#bankCode'), {
 });
 
 function getBankCardData(){
+	
+	
 	return {
 		bankCode : $("#bankCode").attr("data-id"),
 		accountnumber : $("#accountnumber").val(),
