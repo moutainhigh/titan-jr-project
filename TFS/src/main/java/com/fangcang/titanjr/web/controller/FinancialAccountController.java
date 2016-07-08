@@ -431,12 +431,12 @@ public class FinancialAccountController extends BaseController {
             bankCardBindRequest.setCurrency("CNY");
             bankCardBindRequest.setReqSn(String.valueOf(System.currentTimeMillis()));
             bankCardBindRequest.setSubmitTime(DateUtil.dateToString(new Date(),"yyyyMMddHHmmss"));
-            bankCardBindRequest.setAccountProperty(String.valueOf(1));
+            bankCardBindRequest.setAccountProperty(String.valueOf(2));
             bankCardBindRequest.setAccountPurpose(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey());
             if (financialOrganDTO.getUserType() == 1) {
                 bankCardBindRequest.setCertificateType(String.valueOf(TitanOrgEnum.CertificateType.SFZ.getKey()));
-//                bankCardBindRequest.setCertificateNumber(financialOrganDTO.getBuslince());
-                bankCardBindRequest.setCertificateNumber("411381196802185622");
+                bankCardBindRequest.setCertificateNumber(financialOrganDTO.getBuslince());
+//                bankCardBindRequest.setCertificateNumber("411381196802185622");
             } else {
                 bankCardBindRequest.setCertificateType(String.valueOf(financialOrganDTO.getCertificateType()));
                 bankCardBindRequest.setCertificateNumber(String.valueOf(financialOrganDTO.getCertificateNumber()));

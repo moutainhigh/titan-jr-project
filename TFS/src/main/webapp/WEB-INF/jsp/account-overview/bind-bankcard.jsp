@@ -21,7 +21,7 @@
 		<div class="password_set">
 			<div class="passwordf father tipInfo" style="margin-top:40px;">
 				<div class="TFS_bind passwordset_u1">
-					<p class="fl mr25"><img src="images/TFS/kf.png" width="28" height="46" alt=""></p>
+					<p class="fl mr25"><img src="<%=cssSaasPath%>/images/TFS/kf.png" width="28" height="46" alt=""></p>
 					<p class="fl"><strong class="fs16">为了您的账户安全，请先绑定提现银行卡。</strong>
 						<span class="c_tfscolor">一经绑定，不可修改！</span>
 					</p>
