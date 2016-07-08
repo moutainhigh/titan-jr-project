@@ -111,6 +111,7 @@
             $(".TFS_withdrawBoxL_first").show();
             $(".TFS_withdrawBoxL_else").hide();
         }
+        checkIsSetPayPassword();
     })
 
     //点击取消关闭弹框
@@ -148,22 +149,23 @@
 
 
     $('.J_password').on('click',function(){
-//        if (isNaN($("#withDrawNum").val())){
-//            alert("请输入数字金额");
-//            return false;
-//        }
-//        if ($("#bankCode").attr("data-id") == null){
-//            alert("收款银行不能为空");
-//            return false;
-//        }
-//        if ($("#accountName").val() == null){
-//            alert("收款人姓名不能为空");
-//            return false;
-//        }
-//        if ($("#accountNum").val() == null){
-//            alert("收款账号不能为空");
-//            return false;
-//        }
+       /*  if (isNaN($("#withDrawNum").val())){
+            alert("请输入数字金额");
+            return false;
+        }
+        if ($("#bankCode").attr("data-id") == null){
+            alert("收款银行不能为空");
+            return false;
+        }
+        if ($("#accountName").val() == null){
+            alert("收款人姓名不能为空");
+            return false;
+        }
+        if ($("#accountNum").val() == null){
+            alert("收款账号不能为空");
+            return false;
+        } */
+        //验证是否设置支付密码
         $.ajax({
             dataType: 'html',
             context: document.body,
@@ -217,6 +219,80 @@
 
     });
 
+    
+    function checkIsSetPayPassword(){
+   	 $.ajax({
+       	 type: "post",
+            url: "<%=basePath%>/account/checkIsSetPayPassword.action",
+            data: {fcUserid:'${fcUserid}'},
+            dataType: "json",
+            success: function(data){
+           	 if(data.result=="success"){
+           		show_setPayPassword();
+           	 }
+           	}
+           }); 
+   }
+    
+    function show_setPayPassword(){
+    	 $.ajax({
+		        dataType: 'html',
+		        context: document.body,
+		        url: '<%=basePath%>/account/showSetPayPassword.action',
+		        success: function (html) {
+		            var d = dialog({
+		                title: ' ',
+		                padding: '0 0 0px 0 ',
+		                content: html,
+		                skin: 'saas_pop',
+		                button: [
+		                    {
+		                        value: '确定',
+		                        skin: 'btn p_lr30',
+		                        callback: function () {
+		                        	if(PasswordStr.returnStr()==PasswordStr1.returnStr()){
+		                        		if(PasswordStr.returnStr().length==6){
+		                        			set_PayPassword();
+		                        		}
+		                        	}
+		                        },
+		                        autofocus: true
+		                    },
+
+		                ]
+		            }).showModal();
+		        }
+		    });
+    }
+    
+    function set_PayPassword(){
+    	 $.ajax({
+	    	 type: "post",
+	         url: "<%=basePath%>/account/setPayPassword.action",
+	         data: {
+	        	/*  payPassword:rsaData(PasswordStr.returnStr()) */
+	        	 payPassword:PasswordStr.returnStr()
+	         },
+	         dataType: "json",
+	         success: function(data){
+	        	 if(data.result=="success"){
+	        		top.F.loading.show();
+                     setTimeout(function () {
+                         top.F.loading.hide();
+                         new top.Tip({msg: '密码设置成功！', type: 1, time: 1000});
+                     }, 1000);
+	        	 }else{
+	        			top.F.loading.show();
+                         setTimeout(function () {
+                             top.F.loading.hide();
+                             new top.Tip({msg: data.msg, type: 1, time: 1000});
+                         }, 1000);
+	        	 }
+	         }
+	   })
+    }
+    
+    
     function withDrawCallBack(returnMsg,needClose) {
         var contentStr = '<div class="f_14 l_h26 p_l35">' + returnMsg + '</div>';
         new top.createConfirm({
