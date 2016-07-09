@@ -88,7 +88,10 @@ public class BaseController implements Serializable {
     	}
     	return op;
     }
-    
+    /**
+     * 登录者的机构编码（融数）
+     * @return
+     */
     public String getUserId(){
         Object userId = session.getAttribute(CommonConstant.SESSION_KEY_JR_USERID);
         if (null!= userId){
@@ -96,7 +99,10 @@ public class BaseController implements Serializable {
         }
         return null;
     }
-    
+    /**
+     * 登录者金融的用户id
+     * @return
+     */
     public String getTfsUserId(){
     	Object tfsUserId = session.getAttribute(CommonConstant.SESSION_KEY_JR_TFS_USERID);
         if (null!= tfsUserId){
@@ -105,7 +111,10 @@ public class BaseController implements Serializable {
         return null;
     }
     
-    
+    /***
+     * 登录者金融的登录用户名
+     * @return
+     */
     public String getUserName(){
     	Object userName = session.getAttribute(CommonConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
     	if (null!= userName){

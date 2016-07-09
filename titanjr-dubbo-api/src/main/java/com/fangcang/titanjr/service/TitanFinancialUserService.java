@@ -2,9 +2,42 @@ package com.fangcang.titanjr.service;
 
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
-import com.fangcang.titanjr.dto.request.*;
-import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
+import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
+import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
+import com.fangcang.titanjr.dto.request.LoginPasswordModifyRequest;
+import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
+import com.fangcang.titanjr.dto.request.PayPasswordRequest;
+import com.fangcang.titanjr.dto.request.PermissionRequest;
+import com.fangcang.titanjr.dto.request.SaaSUserRoleRequest;
+import com.fangcang.titanjr.dto.request.TitanRoleQueryRequest;
+import com.fangcang.titanjr.dto.request.UpdateUserRequest;
+import com.fangcang.titanjr.dto.request.UserBindInfoRequest;
+import com.fangcang.titanjr.dto.request.UserFreezeRequest;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
+import com.fangcang.titanjr.dto.request.UserLoginNameExistRequest;
+import com.fangcang.titanjr.dto.request.UserRegisterRequest;
+import com.fangcang.titanjr.dto.request.UserRoleSetRequest;
+import com.fangcang.titanjr.dto.response.CancelPermissionResponse;
+import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
+import com.fangcang.titanjr.dto.response.FinancialUserBindResponse;
+import com.fangcang.titanjr.dto.response.FinancialUserUnBindResponse;
+import com.fangcang.titanjr.dto.response.LoginPasswordModifyResponse;
+import com.fangcang.titanjr.dto.response.PayPasswordResponse;
+import com.fangcang.titanjr.dto.response.PermissionResponse;
+import com.fangcang.titanjr.dto.response.RoleUserInfoPageResponse;
+import com.fangcang.titanjr.dto.response.SaaSUserRoleResponse;
+import com.fangcang.titanjr.dto.response.TitanRoleResponse;
+import com.fangcang.titanjr.dto.response.UpdateUserResponse;
+import com.fangcang.titanjr.dto.response.UserBindInfoResponse;
+import com.fangcang.titanjr.dto.response.UserFreezeResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
+import com.fangcang.titanjr.dto.response.UserInfoResponse;
+import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
+import com.fangcang.titanjr.dto.response.UserRegisterResponse;
+import com.fangcang.titanjr.dto.response.UserRoleSetResponse;
 
 /**
  * 金服平台用户相关服务
@@ -136,6 +169,15 @@ public interface TitanFinancialUserService {
    	 * @author fangdaikang
    	 */
    	public PayPasswordResponse saveOrUpdatePayPassword(PayPasswordRequest payPasswordRequest);
+   	
+   	/**
+   	 * 修改登录密码
+   	 * @param loginPasswordRequest
+   	 * @return
+   	 * @throws GlobalServiceException
+   	 * @throws MessageServiceException
+   	 */
+   	public BaseResponseDTO saveLoginPassword(LoginPasswordRequest loginPasswordRequest) throws GlobalServiceException;
    	
    	/**
    	 * 判断交易密码谁否设置

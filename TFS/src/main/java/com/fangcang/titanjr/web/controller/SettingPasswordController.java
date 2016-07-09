@@ -73,29 +73,7 @@ public class SettingPasswordController extends BaseController{
 		}
 		return "setting/pay-set";
 	}
-	/**
-	 * 第一次设置支付密码
-	 * @return
-	 */
-	@RequestMapping("/pay-set-first")
-	public String paySetFirst(String password){
-		//支付密码必须为空，才不需要验证身份
-//		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
-//		userInfoQueryRequest.setTfsUserId(Integer.valueOf(getTfsUserId()));
-//		try {
-//			 
-//					PayPasswordRequest payPasswordRequest = new PayPasswordRequest();
-//					payPasswordRequest.setTfsuserid(getTfsUserId());
-//					payPasswordRequest.setPayPassword(password);
-//					userService.saveOrUpdatePayPassword(payPasswordRequest);
-//			
-//		} catch (Exception e) {
-//			// TODO: handle exception
-//		}
-		
-		
-		return "";
-	}
+	 
 	/**
 	 * 通过原始密码修改密码
 	 * @return
@@ -123,19 +101,7 @@ public class SettingPasswordController extends BaseController{
 		return "setting/modify-pwd-remember";
 	}
 	
-	
-	/**
-	 * 通过用户名修改支付密码
-	 * @return
-	 */
-	@RequestMapping("/pay-set-userloginname")
-	public String paySetUserLoginName(){
-		//校验验证码是否通过 userloginname,time ,sign,
-		// 时效性
-		
-		
-		return "";
-	}
+	 
 	/**
 	 * 设置小额免密支付开关（只有金服管理员才可以设置）
 	 * @return
@@ -171,12 +137,10 @@ public class SettingPasswordController extends BaseController{
 					putSysError(accountUpdateResponse.getReturnMessage());
 				}
 			} catch (GlobalServiceException e) {
-				LOG.error("设置小额免密支付开关失败，参数:allownopwdpay["+allownopwdpay+"]", e);
+				LOG.error("设置小额免密支付开关失败，参数:allownopwdpay["+allownopwdpay+"],tfsuserId["+getTfsUserId()+"]", e);
 				putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
 			}
 		}
-		
-		
 		return toJson();
 	}
 }

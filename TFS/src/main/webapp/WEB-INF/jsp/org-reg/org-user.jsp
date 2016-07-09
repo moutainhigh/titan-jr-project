@@ -255,7 +255,7 @@ function next(){
 			
 		},
 		error:function(){
-			alert("系统错误，请重试!");
+			new top.Tip({msg : '请求错误，请重试', type: 3, timer:2000});
 		}
 	});
 }
@@ -324,7 +324,6 @@ $('.verify').on('click',function(){
     	loginEle.focus();
     	return
     }
-	
 	if(formId=='reg_form_1_qy'||formId=='reg_form_3_email'){
 		if(!email_reg.test(receiveAddress)){
 			getValidate().setErrormsg(loginEle,'邮箱格式不正确');
@@ -352,11 +351,11 @@ $('.verify').on('click',function(){
 			        timeOut(_this);
 			    } 
 			}else{
-				new top.Tip({msg : result.msg, type: 1, timer:2500});
+				new top.Tip({msg : result.msg, type: 3, timer:2500});
 			}
 		},
 		error : function(){
-			new top.Tip({msg : '网络错误，请重试', type: 1, timer:2000});
+			new top.Tip({msg : '请求错误，请重试', type: 3, timer:2000});
 		}
 	});
 });
