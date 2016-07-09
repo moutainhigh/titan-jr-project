@@ -230,7 +230,7 @@ function showPayResult(){
 			padding: '20px 20px 40px',
 			cancelValue : '支付失败',
 	        okValue : '支付成功',		
-	        content : '<div class="f_14 l_h26 rechargeNotice">您正在用.....充值，完成操作后，<br/>请确认结果</div>',
+	        content : '<div class="f_14 l_h26 rechargeNotice">您正在用泰坦金融充值，完成操作后，<br/>请确认结果</div>',
 			ok : function(){	
 				confirmPayResult();
 	        },
