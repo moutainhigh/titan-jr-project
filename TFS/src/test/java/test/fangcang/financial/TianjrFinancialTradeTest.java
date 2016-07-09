@@ -464,7 +464,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     }
     
     //获取GDP支付地址
-    @Test
+//    @Test
     public void testGetPaymentUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setPayOrderNo("H0146130713143358");
@@ -501,12 +501,12 @@ public class TianjrFinancialTradeTest extends GenericTest{
     public void testGetMerchantLineUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");
-    	paymentUrlRequest.setPayOrderNo("TW15062908053");
-    	paymentUrlRequest.setFcUserid("39479");
+    	paymentUrlRequest.setPayOrderNo("TW15040705151");
+    	paymentUrlRequest.setFcUserid("23415");
     	
     	paymentUrlRequest.setPaySource("2");
     	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
-    	paymentUrlRequest.setIsEscrowed("1");
+    	paymentUrlRequest.setIsEscrowed("1");//1.不冻结，0.直接支付
     	paymentUrlRequest.setRecieveMerchantCode("M10000002");
     	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
     	if(paymentUrlResponse !=null){

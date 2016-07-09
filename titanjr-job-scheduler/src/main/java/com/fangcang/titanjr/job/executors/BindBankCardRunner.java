@@ -15,4 +15,6 @@ public class BindBankCardRunner implements Runnable{
 	public void run() {
 		titanFinancialBankCardService.bindBankCardBatch();
 	}
+	
+	
 }
