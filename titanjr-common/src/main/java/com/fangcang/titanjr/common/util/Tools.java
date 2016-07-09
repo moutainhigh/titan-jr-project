@@ -57,7 +57,18 @@ public class Tools {
 	public static String getRegCode(){
 		return RandomStringUtils.random(6, new char[]{'2','3','4','5','6','7','9'});
 	}
-	
+	/**
+	 * 字符串空转null
+	 * @param obj
+	 * @return
+	 */
+	public static String blanktoNull(String obj){
+		if(!StringUtil.isValidString(obj)){
+			return null;
+		}else{
+			return obj;
+		}
+	}
 	public static void main(String[] arg){
 		///System.out.println(getRegCode());
 	}

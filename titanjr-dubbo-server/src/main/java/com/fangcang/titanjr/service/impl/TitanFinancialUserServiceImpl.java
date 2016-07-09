@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.exception.DaoException;
 import com.fangcang.exception.ParameterException;
 import com.fangcang.merchant.api.MerchantFacade;
 import com.fangcang.merchant.api.MerchantUserFacade;
@@ -49,6 +50,7 @@ import com.fangcang.titanjr.dao.TitanRoleDao;
 import com.fangcang.titanjr.dao.TitanUserBindInfoDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dao.TitanUserRoleDao;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.PermissionEnum;
 import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
 import com.fangcang.titanjr.dto.bean.TitanRoleDTO;
@@ -59,6 +61,7 @@ import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
 import com.fangcang.titanjr.dto.request.LoginPasswordModifyRequest;
+import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
 import com.fangcang.titanjr.dto.request.PayPasswordRequest;
 import com.fangcang.titanjr.dto.request.PermissionRequest;
 import com.fangcang.titanjr.dto.request.SaaSUserRoleRequest;
@@ -844,6 +847,28 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 			payPasswordResponse.putSysError();
 		}
 		return payPasswordResponse;
+	}
+	
+	@Override
+	public BaseResponseDTO saveLoginPassword(LoginPasswordRequest loginPasswordRequest)
+			throws GlobalServiceException {
+		BaseResponseDTO response = new BaseResponseDTO();
+		if (!GenericValidate.validate(loginPasswordRequest)) {
+            response.putErrorResult("参数不能为空");
+            return response;
+        }
+		TitanUser entity = new TitanUser();
+		entity.setTfsuserid(loginPasswordRequest.getTfsuserid());
+		entity.setPassword(MD5.MD5Encode(loginPasswordRequest.getNewLoginPassword()));
+		entity.setModifier(loginPasswordRequest.getOperator());
+		entity.setModifytime(new Date());
+		try {
+			titanUserDao.update(entity);
+			response.putSuccess("登录密码修改成功");
+		} catch (DaoException e) {
+			throw new GlobalServiceException("修改登录密码错误，参数loginPasswordRequest:"+JSONSerializer.toJSON(loginPasswordRequest).toString(), e);
+		}
+		return response;
 	}
 
 	public void setTitanUserDao(TitanUserDao titanUserDao) {

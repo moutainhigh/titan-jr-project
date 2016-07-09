@@ -276,9 +276,7 @@
     <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanOrg">
         update t_tfs_org
         <set>
-            <if test="orgcode != null">
-                orgcode = #{orgcode,jdbcType=VARCHAR},
-            </if>
+            
             <if test="orgname != null">
                 orgname = #{orgname,jdbcType=VARCHAR},
             </if>
@@ -383,7 +381,12 @@
             </if>
             
         </set>
-        where orgid = #{orgid,jdbcType=INTEGER}
+        <where>
+        	<if test="orgid != null"> orgid = #{orgid,jdbcType=INTEGER} </if>
+        	<if test="orgcode != null">
+               and  orgcode = #{orgcode,jdbcType=VARCHAR}
+            </if>
+        </where>
     </update>
 
 </mapper>
