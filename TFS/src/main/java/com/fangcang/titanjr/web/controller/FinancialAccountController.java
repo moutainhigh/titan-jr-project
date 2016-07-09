@@ -320,10 +320,13 @@ public class FinancialAccountController extends BaseController {
          bankCardBindRequest.setReqSn(String.valueOf(System.currentTimeMillis()));
          bankCardBindRequest.setSubmitTime(DateUtil.dateToString(new Date(),"yyyyMMddHHmmss"));
          bankCardBindRequest.setAccountProperty(CommonConstant.ACCOUNT_PUBLIC);
+         //暂时改为私人账户
+//         bankCardBindRequest.setAccountProperty(CommonConstant.ACCOUNT_PERSON);
          bankCardBindRequest.setAccountPurpose(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey());
          bankCardBindRequest.setCertificateType(String.valueOf(0));
          //查询企业营业执照号
          bankCardBindRequest.setCertificateNumber(this.getTitanOrganDTO().getBuslince());
+         
          bankCardBindRequest.setAccountNumber(bindBankCardRequest.getBankCardCode());
          bankCardBindRequest.setAccountName(bindBankCardRequest.getUserName());
          bankCardBindRequest.setBankCode(bindBankCardRequest.getBankCode());

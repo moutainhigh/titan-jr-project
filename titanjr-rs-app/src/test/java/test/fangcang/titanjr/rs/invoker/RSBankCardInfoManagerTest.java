@@ -82,8 +82,8 @@ public class RSBankCardInfoManagerTest extends GenericTest {
   @Test 
   public void queryBindCard(){
 	  BankCardQueryRequest req = new BankCardQueryRequest();
-	  req.setUserid("TJM10000116");						// 用户ID
-	  req.setUsertype("2");						// 用户类型(1：商户，2：普通用户)
+	  req.setUserid("TJM10000111");						// 用户ID
+	  req.setUsertype("1");						// 用户类型(1：商户，2：普通用户)
 	  req.setConstid("M000016");					// 机构码
 	  req.setProductid("P000070");				// 产品号
 	  req.setObjorlist("2");						// 查询种类（1：结算卡，2：所有绑定卡）
