@@ -359,7 +359,7 @@ $("#inputeAmount").blur(function(){
 		 $("#inputeAmountError").text("");
 	}
 	
-	var neg = /^([+-]?)((\d{1,3}(,\d{3})*)|(\d+))(\.\d{2})?$/;
+	var neg = /^\d+(\.\d{1,2})?$/;;
 	var flag = neg.test($(this).val());
 	if(flag==false){
 		$("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
