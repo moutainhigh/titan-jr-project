@@ -14,6 +14,8 @@ import com.fangcang.titanjr.common.util.*;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -364,7 +366,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
     public TransferResponse transferAccounts(TransferRequest transferRequest) throws Exception {
-        TransferResponse accTradeResponse = new TransferResponse();
+    	log.info("进入转账，入参"+JSON.toJSONString(transferRequest));
+    	TransferResponse accTradeResponse = new TransferResponse();
     	String payOrderNo = null;
         try {
             AccountTransferRequest accountRequest = transferRequest2AccountTransferRequest(transferRequest);
@@ -397,6 +400,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                         	}
                             if (flag) {
                                 AccountTransferResponse accountTransferResponse = rsAccTradeManager.accountBalanceTransfer(accountRequest);
+                                log.info("转账结果"+JSON.toJSONString(accountTransferResponse));
                                 if (accountTransferResponse != null) {
                                     if (CommonConstant.OPERATE_SUCCESS.equals(accountTransferResponse.getOperateStatus())) {
                                         titanTransferReq.setStatus(TransferReqEnum.Status_2.getStatus());
@@ -623,7 +627,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                             titanOrderPayreqDao.insert(titanOrderPayreq);
                         }
                     }
+                    log.info("充值获取参数的入参:"+JSON.toJSONString(rsPayOrderRequest));
                     RSPayOrderResponse response = rsPayOrderManager.getPayPage(rsPayOrderRequest);
+                    log.info("充值获取参数的结果:"+JSON.toJSONString(response));
                     if (response != null) {
                     	rechargeResponse.putErrorResult(response.getReturnCode(), response.getReturnMsg());
                         if (CommonConstant.OPERATE_SUCCESS.equals(response.getOperateStatus())) {
@@ -690,7 +696,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     /**
      * 将财务工单和调用者传入的参数转换为  落单请求参数
      *
-     * @param financialOrderResponse
+     * @param paymentRequest
      * @return
      * @throws Exception
      */
@@ -846,13 +852,15 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     //获取财务单
     @Override
     public FinancialOrderResponse queryFinanceOrderDetail(FinancialOrderRequest financialOrderRequest) {
-        FinancialOrderResponse financialOrderResp = new FinancialOrderResponse();
+    	FinancialOrderResponse financialOrderResp = new FinancialOrderResponse();
         try {
             FinanceOrderQuery financeOrderQuery = new FinanceOrderQuery();
             if (financialOrderRequest != null) {
                 financeOrderQuery.setMerchantCode(financialOrderRequest.getMerchantcode());//商家编号
                 financeOrderQuery.setFinanceCode(financialOrderRequest.getOrderNo());//支付工单号
+                log.info("获取财务工单入参:"+JSON.toJSONString(financialOrderRequest));
                 FinanceOrderResponse resp = getFinanceSearchRemote().searchOrderFinanceOrder(financeOrderQuery);
+                log.info("获取财务工单结果:"+JSON.toJSONString(resp));
                 if (resp != null) {
                     if (CommonConstant.RETURN_SUCCESS.equals(resp.getResult())) {
                         financialOrderResp = convertToTitanFinancialResp(resp);
@@ -1350,67 +1358,67 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return tradeDetailResponse;
 	}
 
-	@Override
-	public PaymentUrlResponse getPaymentUrl(PaymentUrlRequest paymentUrlRequest) {
-		PaymentUrlResponse paymentUrlResponse =new PaymentUrlResponse();
-		try{
-			if(paymentUrlRequest !=null){
-				if(StringUtil.isValidString(paymentUrlRequest.getPayOrderNo())){
-					//生成一对秘钥
-					String key = MD5.getSalt();
-					//保存加密私钥
-					TitanDynamicKey titanDynamicKey = new TitanDynamicKey();
-					titanDynamicKey.setEncryptionkey(key);
-					titanDynamicKey.setPayorderno(paymentUrlRequest.getPayOrderNo());
-					titanDynamicKeyDao.delete(titanDynamicKey);
-					titanDynamicKeyDao.insert(titanDynamicKey);
-					
-					StringBuffer url = getSignStr(paymentUrlRequest);
-					url.insert(0,CommonConstant.REQUSET_URL); 
-					StringBuffer sign = getSignStr(paymentUrlRequest);
-					sign.append("&key="+key);
-					url.append("&sign="+MD5.MD5Encode(sign.toString(), "UTF-8"));
-					paymentUrlResponse.putSuccess();
-					paymentUrlResponse.setUrl(url.toString());
-					return paymentUrlResponse;
-				}
-			}
-		}catch(Exception e){
-			log.error(e.getMessage(),e);
-		}
-		paymentUrlResponse.putSysError();
-		return paymentUrlResponse;
-	}
-	
-	private StringBuffer getSignStr(PaymentUrlRequest paymentUrlRequest){
-		StringBuffer sign = new StringBuffer();
-		if(StringUtil.isValidString(paymentUrlRequest.getMerchantcode())){
-			sign.append("?merchantcode="+paymentUrlRequest.getMerchantcode());
-		}else{
-			sign.append("?merchantcode="+"");
-		}
-		if(StringUtil.isValidString(paymentUrlRequest.getFcUserid())){
-			sign.append("&fcUserid="+paymentUrlRequest.getFcUserid());
-		}else{
-			sign.append("&fcUserid="+"");
-		}
-		sign.append("&payOrderNo="+paymentUrlRequest.getPayOrderNo());
-		sign.append("&paySource="+paymentUrlRequest.getPaySource());
-		sign.append("&operater="+paymentUrlRequest.getOperater());
-		
-		if(StringUtil.isValidString(paymentUrlRequest.getRecieveMerchantCode())){
-			sign.append("&recieveMerchantCode="+paymentUrlRequest.getRecieveMerchantCode());
-		}else{
-			sign.append("&recieveMerchantCode="+"");
-		}
-		sign.append("&isEscrowed="+paymentUrlRequest.getIsEscrowed());
-		if(StringUtil.isValidString(paymentUrlRequest.getEscrowedDate())){
-			sign.append("&escrowedDate="+paymentUrlRequest.getEscrowedDate());
-		}else{
-			sign.append("&escrowedDate="+"");
-		}
-		return sign;
-	}
+    @Override
+    public PaymentUrlResponse getPaymentUrl(PaymentUrlRequest paymentUrlRequest) {
+        PaymentUrlResponse paymentUrlResponse = new PaymentUrlResponse();
+        if (!GenericValidate.validate(paymentUrlRequest)) {
+            log.error("参数校验失败");
+            paymentUrlResponse.putParamError();
+            return paymentUrlResponse;
+        }
+        //生成一对秘钥
+        String key = MD5.getSalt();
+        //保存加密私钥
+        TitanDynamicKey titanDynamicKey = new TitanDynamicKey();
+        titanDynamicKey.setEncryptionkey(key);
+        titanDynamicKey.setPayorderno(paymentUrlRequest.getPayOrderNo());
+        try {
+            titanDynamicKeyDao.delete(titanDynamicKey);
+            titanDynamicKeyDao.insert(titanDynamicKey);
+        } catch (Exception e) {
+            log.error("金融秘钥设置失败", e);
+            paymentUrlResponse.putErrorResult("dynamicKey_set_error", "金融秘钥设置失败");
+            return paymentUrlResponse;
+        }
+        //构造参数列表拼接收银台地址
+        StringBuffer cashierDeskURL = buildParamList(paymentUrlRequest);
+        cashierDeskURL.append("&key=").append(key);
+        String sign = MD5.MD5Encode(cashierDeskURL.toString(), "UTF-8");
+        cashierDeskURL.append("&sign=").append(sign);
+        cashierDeskURL.insert(0, CommonConstant.REQUSET_URL);
+        paymentUrlResponse.setUrl(cashierDeskURL.toString());
+        paymentUrlResponse.putSuccess();
+        return paymentUrlResponse;
+    }
+
+    private StringBuffer buildParamList(PaymentUrlRequest paymentUrlRequest) {
+        StringBuffer paramList = new StringBuffer();
+        if (StringUtil.isValidString(paymentUrlRequest.getMerchantcode())) {
+            paramList.append("?merchantcode=").append(paymentUrlRequest.getMerchantcode());
+        } else {
+            paramList.append("?merchantcode=");
+        }
+        if (StringUtil.isValidString(paymentUrlRequest.getFcUserid())) {
+            paramList.append("&fcUserid=").append(paymentUrlRequest.getFcUserid());
+        } else {
+            paramList.append("&fcUserid=");
+        }
+        paramList.append("&payOrderNo=").append(paymentUrlRequest.getPayOrderNo());
+        paramList.append("&paySource=").append(paymentUrlRequest.getPaySource());
+        paramList.append("&operater=").append(paymentUrlRequest.getOperater());
+        if (StringUtil.isValidString(paymentUrlRequest.getRecieveMerchantCode())) {
+            paramList.append("&recieveMerchantCode=").append(paymentUrlRequest.getRecieveMerchantCode());
+        } else {
+            paramList.append("&recieveMerchantCode=");
+        }
+        paramList.append("&isEscrowed=").append(paymentUrlRequest.getIsEscrowed());
+        if (StringUtil.isValidString(paymentUrlRequest.getEscrowedDate())) {
+            paramList.append("&escrowedDate=").append(paymentUrlRequest.getEscrowedDate());
+        } else {
+            paramList.append("&escrowedDate=");
+        }
+        return paramList;
+    }
 
 	@Override
 	public LocalAddTransOrderResponse addLocalTransOrder(
@@ -1574,9 +1582,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 	@Override
 	public GDPOrderResponse getGDPOrderDTO(String orderCode) {
+		log.info("GDP查询入参:"+JSON.toJSONString(orderCode));
 		GDPOrderResponse gDPOrderResponse = new GDPOrderResponse();
 		OrderDetailResponseDTO orderDetailResponseDTO = this.getHotelOrderSearchFacade().queryOrderByCode(orderCode);
-	    if(orderDetailResponseDTO !=null){
+	    log.info("GDP查询的结果:"+JSON.toJSONString(orderDetailResponseDTO));
+		if(orderDetailResponseDTO !=null){
 	    	GDPOrderDTO gDPOrderDTO = new GDPOrderDTO();
 	    	if(orderDetailResponseDTO.getCurrency()!=null){
 	    		gDPOrderDTO.setCurrency(orderDetailResponseDTO.getCurrency().getValue());

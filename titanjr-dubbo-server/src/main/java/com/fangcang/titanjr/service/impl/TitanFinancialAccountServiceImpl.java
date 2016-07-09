@@ -403,6 +403,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	//查询账户明细
 	@Override
 	public AccountBalanceResponse queryAccountBalance(AccountBalanceRequest accountBalanceRequest) {
+		log.info("查询账户明细:"+JSON.toJSON(accountBalanceRequest));
 		AccountBalanceResponse accountBalanceResponse = new AccountBalanceResponse();
 		if (accountBalanceRequest != null) {
 			AccountBalanceQueryRequest balanceQueryRequest = new AccountBalanceQueryRequest();
@@ -411,6 +412,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			AccountBalanceQueryResponse balanceQueryResponse = null;
 			try {
 				balanceQueryResponse = rsAccTradeManager.queryAccountBalance(balanceQueryRequest);
+				log.info("查询账户明细结果:"+JSON.toJSON(balanceQueryResponse));
 			} catch (Exception e) {
 				log.error("调用融数查询账户余额异常", e);
 			}

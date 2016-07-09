@@ -36,7 +36,7 @@
                 <i class="freeze_ico" title="供应商确认订单号即可解冻"/>
             </c:if>
         </td>
-        <td class="tdr">${tradeItem.receivedfee /100}/${tradeItem.receivablefee /100}</td>
+        <td class="tdr">${tradeItem.receivedfee /100}</td><!--只展示实收手续费-->
         <td></td>
         <td>
             <c:if test="${tradeItem.statusid == 1}">

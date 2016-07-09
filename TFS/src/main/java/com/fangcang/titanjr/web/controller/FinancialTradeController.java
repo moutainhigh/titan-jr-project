@@ -115,6 +115,7 @@ public class FinancialTradeController extends BaseController {
 		String orderNo = rechargeResultConfirmRequest.getOrderNo();
 		try{
     		if(rechargeResultConfirmRequest !=null){
+    			log.info("融数后台回调成功参数:"+toJson(rechargeResultConfirmRequest));
     			String signMsg = rechargeResultConfirmRequest.getSignMsg();
            	    String sign = RechargeResultConfirmRequest.getSignStr(rechargeResultConfirmRequest);
             	if(!MD5.MD5Encode(sign, "UTF-8").equals(signMsg)){
@@ -156,15 +157,20 @@ public class FinancialTradeController extends BaseController {
                         	        		}
                     	        		}
                     	        		
-                    	        		//冻结操作,如果冻结失败该进行什么操作,立刻通知
-                    					boolean freezeSuccess = freezeAccountBalance(transferRequest,orderNo);
-                    					//修改订单状态
-                    					if(freezeSuccess){//冻结成功改变订单状态
-                    						orderStatusEnum = OrderStatusEnum.Status_3;
-                    					}else{
-                    						OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "冻结失败", OrderExceptionEnum.Freeze_Insert, JSON.toJSONString(transferRequest));
-                        	        		titanOrderService.saveOrderException(orderExceptionDTO);
-                    					}
+                    	        		//冻结操作,如果冻结失败该进行什么操作,
+                    	        		orderStatusEnum = OrderStatusEnum.Status_2;
+                    	        		if(CommonConstant.FREEZE_ORDER.equals(transOrderDTO.getIsEscrowedPayment())){//需要进行冻结操作
+                    	        			boolean freezeSuccess = freezeAccountBalance(transferRequest,orderNo);
+                        					//修改订单状态
+                        					if(freezeSuccess){//冻结成功改变订单状态
+                        						orderStatusEnum = OrderStatusEnum.Status_3;
+                        					}else{
+                        						//TODO 添加部分成功的操作
+                        						OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "冻结失败", OrderExceptionEnum.Freeze_Insert, JSON.toJSONString(transferRequest));
+                            	        		titanOrderService.saveOrderException(orderExceptionDTO);
+                        					}
+                    	        		}
+                    	        		
                     					//记录收款账户
                     					if(StringUtil.isValidString(transOrderDTO.getMerchantcode())){//GDP的账户历史是不需要记录的
                     						if(StringUtil.isValidString(transOrderDTO.getMerchantcode())){
@@ -242,11 +248,18 @@ public class FinancialTradeController extends BaseController {
 				//同一张单是否存在已经充值过
 				if (CommonConstant.TRANSFER_PAYAMOUNT.equals(paymentRequest.getPayAmount())) {//只有转账的交易，银行卡支付金额为空
 					//手动下单，转账
+					log.info("本地下单入参:"+toJson(paymentRequest)+"财务入参:"+toJson(financialOrderResponse));
 					LocalAddTransOrderResponse localOrderResp = titanFinancialTradeService.addLocalTransOrder(paymentRequest, financialOrderResponse);
+					log.info("本地下单结果:"+toJson(localOrderResp));
 					if (localOrderResp.isResult()) {//本地落单成功，转账
 						TransferRequest transferRequest = convertToTransferRequest(paymentRequest);
 						transferRequest.setOrderid(localOrderResp.getOrderNo());
 						TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
+						
+						TransOrderRequest transOrderRequest = new TransOrderRequest();
+    	        		transOrderRequest.setOrderid(localOrderResp.getOrderNo());
+                		TransOrderDTO transOrder= titanOrderService.queryTransOrderDTO(transOrderRequest);
+                		OrderStatusEnum orderStatusEnum = OrderStatusEnum.Status_1;
 						if (transferResponse.isResult()) {//转账成功，流程结束
 							//将转账参数和转账结果
 							TransOrderDTO transOrderDTO = new TransOrderDTO();
@@ -258,28 +271,35 @@ public class FinancialTradeController extends BaseController {
             	        		titanOrderService.saveOrderException(orderExceptionDTO);
         	        		}
 							//冻结操作,如果冻结失败该进行什么操作
-							boolean freezeSuccess = freezeAccountBalance(transferRequest,localOrderResp.getOrderNo());
-							//修改订单状态
-						    if(freezeSuccess){
-						    	boolean updateStatus = this.updateOrderStatus(localOrderResp.getTransid(),OrderStatusEnum.Status_3);
-						    	if(!updateStatus){
-        							OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(localOrderResp.getOrderNo(), "冻结成功 修改订单状态失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(OrderStatusEnum.Status_3));
+        	        		//判断其是否需要冻结
+        	        		orderStatusEnum = OrderStatusEnum.Status_2;
+                    		if(CommonConstant.FREEZE_ORDER.equals(transOrder.getIsEscrowedPayment())){
+                    			boolean freezeSuccess = freezeAccountBalance(transferRequest,localOrderResp.getOrderNo());
+    							//修改订单状态
+                    			if(freezeSuccess){//冻结成功改变订单状态
+            						orderStatusEnum = OrderStatusEnum.Status_3;
+            					}else{
+            						//TODO 添加部分成功的操作
+            						OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(localOrderResp.getOrderNo(), "冻结失败", OrderExceptionEnum.Freeze_Insert, JSON.toJSONString(transferRequest));
                 	        		titanOrderService.saveOrderException(orderExceptionDTO);
-        						}
-						    }else{
-						    	OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(localOrderResp.getOrderNo(), "冻结失败", OrderExceptionEnum.Freeze_Insert, JSON.toJSONString(transferRequest));
-            	        		titanOrderService.saveOrderException(orderExceptionDTO);
-						    }
+            					}
+                    		}
 							//记录收款账户
 							titanFinancialAccountService.addAccountHistory(transferRequest);
 							resultMap.put(CommonConstant.RESULT, CommonConstant.SUCCESS);
 				    		resultMap.put(CommonConstant.MSG, "支付成功");
-							return resultMap;
+							
 						}else{
+							orderStatusEnum = OrderStatusEnum.Status_4;
 							resultMap.put(CommonConstant.RESULT, CommonConstant.FAIL);
 				    		resultMap.put(CommonConstant.MSG, "支付失败");
-							return resultMap;
 						}
+						boolean updateStatus = this.updateOrderStatus(transOrder.getTransid(),orderStatusEnum);
+						if(!updateStatus){
+							OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrder.getOrderid(), "冻结成功 修改订单状态失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(transOrder.getTransid()));
+							titanOrderService.saveOrderException(orderExceptionDTO);
+						}
+						return resultMap;
 					}else{
 						resultMap.put(CommonConstant.RESULT, CommonConstant.FAIL);
 			    		resultMap.put(CommonConstant.MSG, localOrderResp.getReturnMessage());
@@ -293,6 +313,14 @@ public class FinancialTradeController extends BaseController {
 		putSysError(resultMap);
 		return resultMap;
 	}
+	
+//	//修改订单状态
+//	boolean updateStatus = this.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
+//	//修改订单状态
+//	if(!updateStatus){
+//		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "冻结成功 修改订单状态失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(transOrderDTO.getTransid()));
+//		titanOrderService.saveOrderException(orderExceptionDTO);
+//	}
 	
 	/**
 	 * 需要充值的接口
@@ -626,7 +654,6 @@ public class FinancialTradeController extends BaseController {
 //						paymentRequest.setPayPassword(RSADecryptString.decryptString(paymentRequest.getPayPassword(),request));
 						paymentRequest.setPayPassword(paymentRequest.getPayPassword());
 						//验证支付密码
-						
 						boolean flag = titanFinancialUserService.checkPayPassword(paymentRequest.getPayPassword(),titanUserBindInfoDTO.getTfsuserid().toString());
 					   if(!flag){
 					   	resultMap.put(CommonConstant.MSG, "支付密码错误");
@@ -793,6 +820,7 @@ public class FinancialTradeController extends BaseController {
 	
 	@RequestMapping(value = "/showCashierDesk", method = RequestMethod.GET)
 	public String queryOrgInfo(PaymentUrlRequest paymentUrlRequest,HttpServletRequest request, Model model) throws Exception {
+		log.info("获取支付地址入参:"+toJson(paymentUrlRequest));
 		if(!CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentUrlRequest.getPaySource())){
 			boolean flag = validateShowDeskSign(paymentUrlRequest);
 			if(!flag){//签名验证失败

@@ -230,7 +230,7 @@ function showPayResult(){
 			padding: '20px 20px 40px',
 			cancelValue : '支付失败',
 	        okValue : '支付成功',		
-	        content : '<div class="f_14 l_h26 rechargeNotice">您正在用.....充值，完成操作后，<br/>请确认结果</div>',
+	        content : '<div class="f_14 l_h26 rechargeNotice">您正在用泰坦金融充值，完成操作后，<br/>请确认结果</div>',
 			ok : function(){	
 				confirmPayResult();
 	        },
@@ -359,7 +359,7 @@ $("#inputeAmount").blur(function(){
 		 $("#inputeAmountError").text("");
 	}
 	
-	var neg = /^([+-]?)((\d{1,3}(,\d{3})*)|(\d+))(\.\d{2})?$/;
+	var neg = /^\d+(\.\d{1,2})?$/;;
 	var flag = neg.test($(this).val());
 	if(flag==false){
 		$("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
