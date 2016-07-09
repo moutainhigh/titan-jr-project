@@ -22,7 +22,7 @@
      	
      <dubbo:application name="titanjr_facade_consumer" />
 	<!--  group="production" -->
-	<dubbo:protocol port="20881" /><!--本地一台server时使用-->
+	<!--<dubbo:protocol port="20881" />--><!--本地一台server时使用-->
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
 
 	<dubbo:monitor protocol="registry" />
