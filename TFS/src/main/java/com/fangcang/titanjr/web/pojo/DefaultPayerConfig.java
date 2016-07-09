@@ -1,6 +1,6 @@
 package com.fangcang.titanjr.web.pojo;
 
-public class GDPDefaultPayerment {
+public class DefaultPayerConfig {
 	
 	private String userId;
 	
