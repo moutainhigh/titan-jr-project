@@ -168,6 +168,31 @@
 
 
     $('.J_password').on('click',function(){
+    	//验证提现的金额
+    	var withdraw_amount = $("#withDrawNum").val();
+    	var neg = /^([+-]?)((\d{1,3}(,\d{3})*)|(\d+))(\.\d{2}))?$/;
+    	var flag = neg.test(withdraw_amount);
+    	if(flag==false){
+    		$("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
+    		$(this).val("");
+    		$(this).focus();
+    		return ;
+    	}else{
+    		$("#inputeAmountError").text("");
+    	}
+    	
+    	if(withdraw_amount=="0" ||withdraw_amount=="0.0" ||withdraw_amount=="0.00"){
+    		$("#inputeAmountError").text("您的提现额度必须大于0");
+    		return ;
+    	}
+    	
+    	if(withdraw_amount>'${ACCOUNTBALANCE.BALANCEUSABLE}' ||'${ACCOUNTBALANCE.BALANCEUSABLE}'=='0'){
+    		$("#inputeAmountError").text("可用余额不足，不能提现");
+    		return ;
+    	}
+    	
+    
+    	
        /*  if (isNaN($("#withDrawNum").val())){
             alert("请输入数字金额");
             return false;
