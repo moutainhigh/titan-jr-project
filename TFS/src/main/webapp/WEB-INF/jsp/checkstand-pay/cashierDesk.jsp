@@ -412,7 +412,8 @@
             		                        			         url: "<%=basePath%>/account/setPayPassword.action",
             		                        			         data: {
             		                        			        	 fcuserid:'${fcUserid}',
-            		                        			        	 payPassword:rsaData(PasswordStr.returnStr())
+            		                        			        	/*  payPassword:rsaData(PasswordStr.returnStr()) */
+            		                        			        	 payPassword:PasswordStr.returnStr()
             		                        			         },
             		                        			         dataType: "json",
             		                        			         success: function(data){
@@ -657,7 +658,8 @@
          }
     	var payPassword = null;
     	if("undefined" != typeof PasswordStr2){
-    		payPassword = rsaData(PasswordStr2.returnStr());
+    		/* payPassword = rsaData(PasswordStr2.returnStr()); */
+    		payPassword = PasswordStr2.returnStr();
     	}
     	var itemType = $(".bankName:checked").attr("data-index");
     	var linePayType =null;

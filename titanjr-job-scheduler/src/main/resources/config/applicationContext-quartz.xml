@@ -63,7 +63,7 @@
 	<!-- 定义调用对象和调用对象的方法 -->
 	<bean id="bindBankCardJobSchedule"
 		class="org.springframework.scheduling.quartz.JobDetailBean">
-		<property name="jobClass" value="com.fangcang.titanjr.job.UnFreezeTransOrderJob" />
+		<property name="jobClass" value="com.fangcang.titanjr.job.BindBankCardJob" />
 		<property name="jobDataAsMap">
 		  <map>
 		  		<entry key="TitanFinancialBankCardService">

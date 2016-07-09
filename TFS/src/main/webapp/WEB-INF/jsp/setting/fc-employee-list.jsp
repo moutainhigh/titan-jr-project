@@ -19,7 +19,7 @@
           <col width="">
           </colgroup>
           <tr>
-            <td><input  id="show_fc_userLoginName" type="text" class="text w_150 c_666 m_r10" placeholder="用户姓名："/></td>
+            <td><input  id="saasUserName" type="text" class="text w_150 c_666 m_r10" placeholder="用户姓名："/></td>
             <td><span class="settingBtn" id="list_search"><i class="settingBtnIcon serchIcon "></i>查询</span></td><td></td>                     
           </tr>
         </table>
@@ -73,11 +73,12 @@ $(function(){
 
 function load(){
 	top.F.loading.show();
-	var fcUserLoginName = $("#show_fc_userLoginName").val();
+	var saasUserName = $("#saasUserName").val();
+	
 	$.ajax({
 		type:"post",
 		url:"<%=basePath%>/setting/fc-employee-table.shtml",
-		data:{"saasUserLoginName":fcUserLoginName},
+		data:{"saasUserName":saasUserName},
 		dataType:"html",
 		success:function(result){
 			$("#show_fc_employee_list_table").html(result);

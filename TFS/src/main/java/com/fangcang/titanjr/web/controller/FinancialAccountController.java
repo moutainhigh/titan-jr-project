@@ -431,12 +431,12 @@ public class FinancialAccountController extends BaseController {
             bankCardBindRequest.setCurrency("CNY");
             bankCardBindRequest.setReqSn(String.valueOf(System.currentTimeMillis()));
             bankCardBindRequest.setSubmitTime(DateUtil.dateToString(new Date(),"yyyyMMddHHmmss"));
-            bankCardBindRequest.setAccountProperty(String.valueOf(1));
+            bankCardBindRequest.setAccountProperty(String.valueOf(2));
             bankCardBindRequest.setAccountPurpose(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey());
             if (financialOrganDTO.getUserType() == 1) {
                 bankCardBindRequest.setCertificateType(String.valueOf(TitanOrgEnum.CertificateType.SFZ.getKey()));
-//                bankCardBindRequest.setCertificateNumber(financialOrganDTO.getBuslince());
-                bankCardBindRequest.setCertificateNumber("411381196802185622");
+                bankCardBindRequest.setCertificateNumber(financialOrganDTO.getBuslince());
+//                bankCardBindRequest.setCertificateNumber("411381196802185622");
             } else {
                 bankCardBindRequest.setCertificateType(String.valueOf(financialOrganDTO.getCertificateType()));
                 bankCardBindRequest.setCertificateNumber(String.valueOf(financialOrganDTO.getCertificateNumber()));
@@ -487,9 +487,11 @@ public class FinancialAccountController extends BaseController {
     public Map<String, String> setPayPassword(HttpServletRequest request, PayPasswordRequest payPasswordRequest) {
         Map<String, String> map = new HashMap<String, String>();
         if (payPasswordRequest != null && StringUtil.isValidString(payPasswordRequest.getPayPassword())) {
-        	payPasswordRequest.setPayPassword(RSADecryptString.decryptString(payPasswordRequest.getPayPassword(),request));
+//        	payPasswordRequest.setPayPassword(RSADecryptString.decryptString(payPasswordRequest.getPayPassword(),request));
+        	payPasswordRequest.setPayPassword(payPasswordRequest.getPayPassword());
         	if(StringUtil.isValidString(payPasswordRequest.getOldPassword())){
-        		payPasswordRequest.setOldPassword(RSADecryptString.decryptString(payPasswordRequest.getOldPassword(),request));
+//        		payPasswordRequest.setOldPassword(RSADecryptString.decryptString(payPasswordRequest.getOldPassword(),request));
+        		payPasswordRequest.setOldPassword(payPasswordRequest.getOldPassword());
         	}
         	payPasswordRequest.setTfsuserid(getTfsUserId());
         	log.info("设置支付密码的传入参数:"+toJson(payPasswordRequest));
@@ -525,6 +527,7 @@ public class FinancialAccountController extends BaseController {
     		//移除session
     		session.removeAttribute(CommonConstant.SESSION_KEY_REG_CODE+"_"+forgetPayPassword.getUserName());
     		PayPasswordRequest payPasswordRequest  = new PayPasswordRequest();
+//    		payPasswordRequest.setPayPassword(RSADecryptString.decryptString(forgetPayPassword.getPayPassword(),request));
     		payPasswordRequest.setPayPassword(forgetPayPassword.getPayPassword());
     		payPasswordRequest.setIsForget(com.fangcang.titanjr.common.util.CommonConstant.IS_FORGET_PAYPASSWORD);
     		payPasswordRequest.setTfsuserid(this.getTfsUserId());

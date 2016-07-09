@@ -27,6 +27,7 @@ import com.fangcang.merchant.dto.MerchantUserCheckDTO;
 import com.fangcang.merchant.dto.MerchantUserCreateDTO;
 import com.fangcang.merchant.dto.MerchantUserDTO;
 import com.fangcang.merchant.dto.ModifyPWDRequestDTO;
+import com.fangcang.merchant.dto.RoleDTO;
 import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
 import com.fangcang.merchant.query.dto.MerchantUserQueryDTO;
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
@@ -480,6 +481,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         			entity.setUserLoginName(item.getUserLoginName());
         			entity.setUserName(item.getUserName());
         			entity.setMobileNum(item.getMobileNum());
+        			entity.setRoleName(appendRoleName(item.getRoleList()));
         			entity.setIsSMS(item.getIsSMS());
         			entity.setActive(item.getActive());
         			TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
@@ -503,8 +505,21 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     	response.putSuccess();
 		return response;
 	}
-
-     
+	/**
+	 * 角色名称
+	 * @param list
+	 * @return
+	 */
+    private String appendRoleName(List<RoleDTO> list){
+    	String temp = "";
+    	if(list!=null){
+    		for(RoleDTO itemDto : list){
+    			temp += itemDto.getRoleName()+",";
+    		}
+    		temp = temp.substring(0, temp.length()-1);
+    	}
+    	return temp;
+    }
     
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)

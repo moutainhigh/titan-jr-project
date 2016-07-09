@@ -73,7 +73,7 @@
 	</div>
 </div>
 <!--弹窗白色底-->
-<script src="js/password.js"></script>
+<jsp:include page="/comm/static-js.jsp"></jsp:include>
 <script>
 //下一步
 $('.J_next').on('click',function(){
@@ -150,7 +150,8 @@ function forget_pwd_data(){
 	return{
 		userName:userName,
 		code:code,
-		payPassword:rsaData(payPassword)
+		/* payPassword:rsaData(payPassword) */
+		payPassword:payPassword
 	};
 }
 

@@ -64,7 +64,7 @@ public class BaseResponse implements Serializable{
 	private String returnMessage;
 	
 	//调用成功
-	private boolean result;
+	private boolean result = false;
 
 	public String getReturnCode() {
 		return returnCode;

@@ -78,6 +78,7 @@
       LEFT JOIN t_tfs_userbindinfo b ON u.tfsuserid = b.tfsuserid 
     <where>
     	<if test="status !=null"> and u.status = #{status}</if>
+    	<if test="excludeStatus !=null"> and u.status != #{excludeStatus}</if>
 		<if test="userId !=null"> and u.userid = #{userId}</if>
 		<if test="orgCode !=null"> and u.orgcode = #{orgCode}</if>
         <if test="tfsUserId !=null"> and u.tfsuserid = #{tfsUserId}</if>
