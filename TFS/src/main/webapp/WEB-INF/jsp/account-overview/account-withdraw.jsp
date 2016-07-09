@@ -21,7 +21,7 @@
         <div class="gold_pay">
             <div class="TFS_rechargeBox">
                 <div class="TFS_rechargeBoxL fl">
-                    提现金额：<input type="text" id="withDrawNum" class="text w_300"> 元
+                    提现金额：<input type="text" id="withDrawNum" class="text w_300"> 元<span id="inputeAmountError" style="color:red;font-size:13px"></span>
                 </div>
                 <div class="TFS_rechargeBoxR fr">
                     <h3>账户名称/泰坦码：${organ.orgName}/${organ.titanCode }</h3>
@@ -118,6 +118,25 @@
     $(".J_exitKan").on('click', function() {
         top.removeIframeDialog();
         $("#right_con_frm").attr('src', $('#right_con_frm').attr('src'));
+    });
+
+    $("#withDrawNum").blur(function(){
+        var inputeAmount = $(this).val();
+        if($.trim(inputeAmount).length<1){
+            $("#inputeAmountError").text("提现金额不能为空");
+        }else{
+            $("#inputeAmountError").text("");
+        }
+
+        var neg = /^([+-]?)((\d{1,3}(,\d{3})*)|(\d+))(\.\d{2})?$/;
+        var flag = neg.test($(this).val());
+        if(flag==false){
+            $("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
+            $(this).val("");
+            $(this).focus();
+        }else{
+            $("#inputeAmountError").text("");
+        }
     });
 
     //使用新卡提现或者旧卡
