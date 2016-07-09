@@ -115,6 +115,7 @@ public class FinancialTradeController extends BaseController {
 		String orderNo = rechargeResultConfirmRequest.getOrderNo();
 		try{
     		if(rechargeResultConfirmRequest !=null){
+    			log.info("融数后台回调成功参数:"+toJson(rechargeResultConfirmRequest));
     			String signMsg = rechargeResultConfirmRequest.getSignMsg();
            	    String sign = RechargeResultConfirmRequest.getSignStr(rechargeResultConfirmRequest);
             	if(!MD5.MD5Encode(sign, "UTF-8").equals(signMsg)){
@@ -242,7 +243,9 @@ public class FinancialTradeController extends BaseController {
 				//同一张单是否存在已经充值过
 				if (CommonConstant.TRANSFER_PAYAMOUNT.equals(paymentRequest.getPayAmount())) {//只有转账的交易，银行卡支付金额为空
 					//手动下单，转账
+					log.info("本地下单入参:"+toJson(paymentRequest)+"财务入参:"+toJson(financialOrderResponse));
 					LocalAddTransOrderResponse localOrderResp = titanFinancialTradeService.addLocalTransOrder(paymentRequest, financialOrderResponse);
+					log.info("本地下单结果:"+toJson(localOrderResp));
 					if (localOrderResp.isResult()) {//本地落单成功，转账
 						TransferRequest transferRequest = convertToTransferRequest(paymentRequest);
 						transferRequest.setOrderid(localOrderResp.getOrderNo());
@@ -793,6 +796,7 @@ public class FinancialTradeController extends BaseController {
 	
 	@RequestMapping(value = "/showCashierDesk", method = RequestMethod.GET)
 	public String queryOrgInfo(PaymentUrlRequest paymentUrlRequest,HttpServletRequest request, Model model) throws Exception {
+		log.info("获取支付地址入参:"+toJson(paymentUrlRequest));
 		if(!CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentUrlRequest.getPaySource())){
 			boolean flag = validateShowDeskSign(paymentUrlRequest);
 			if(!flag){//签名验证失败
