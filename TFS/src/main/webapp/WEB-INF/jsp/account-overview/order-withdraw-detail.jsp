@@ -37,7 +37,7 @@
 					</p>
 					<dl class="orderDetails-dl">
 						<dt class='fl'>交易内容：</dt>
-						<dd class='fr'>体现到${transOrder.titanWithDrawDTO.bankname}卡</dd>
+						<dd class='fr'>提现到${transOrder.titanWithDrawDTO.bankname}卡</dd>
 						<div class="clear"></div>
 					</dl>
 
@@ -65,10 +65,10 @@
 										处理中
 									</c:if>
 									<c:if test="${transOrder.titanWithDrawDTO.status == 2}">
-										提现成功
+										提现失败
 									</c:if>
 									<c:if test="${transOrder.titanWithDrawDTO.status == 3}">
-										提现失败
+										提现成功
 									</c:if>
 								</td>
 							</tr>
