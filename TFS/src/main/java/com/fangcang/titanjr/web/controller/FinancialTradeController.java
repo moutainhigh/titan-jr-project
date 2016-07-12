@@ -860,7 +860,7 @@ public class FinancialTradeController extends BaseController {
 		if (StringUtil.isValidString(paymentUrlRequest.getRecieveMerchantCode())) {
 			//获取绑定的机构信息
 			OrgDTO orgDTO = queryFinancialOrganDTO(paymentUrlRequest.getRecieveMerchantCode());
-			if (orgDTO == null || StringUtil.isValidString(orgDTO.getOrgcode())) {
+			if (orgDTO == null || !StringUtil.isValidString(orgDTO.getOrgcode())) {
 				model.addAttribute(CommonConstant.MSG, "收款机构不存在");
 				return "checkstand-pay/cashierDeskError";
 			}

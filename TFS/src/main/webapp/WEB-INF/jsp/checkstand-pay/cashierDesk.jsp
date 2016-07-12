@@ -83,7 +83,7 @@
                             <c:if test="${ not empty fcUserid}">
                             <li class="p_l27">
                                 <label class="f_ui-checkbox-c3 p_r10">
-                                    <input type="checkbox" checked="" id="d_checkbox" ><i onclick="checktest()"></i>
+                                    <input type="checkbox" checked="" id="d_checkbox" onclick="checktest()" ><i ></i>
                                     使用账户可用余额付款</label>丨
                                 <span class="p_l10">账户可用余额：${accountBalance.balanceusable }元</span>
                             </li>
