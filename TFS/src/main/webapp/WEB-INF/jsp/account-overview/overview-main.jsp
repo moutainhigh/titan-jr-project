@@ -747,7 +747,7 @@
 					tradeTypeId:index-1,
 					admissionName: data.admissionName,
 					startTimeStr: data.startTimeStr,
-					endTimeStr: data.startTimeStr,
+					endTimeStr: data.endTimeStr,
 					orderAmount: data.orderAmount,
 					orderOperator:data.orderOperator	
 				},
@@ -774,7 +774,7 @@
 					tradeTypeId:index-1,
 					admissionName: data.admissionName,
 					startTimeStr: data.startTimeStr,
-					endTimeStr: data.startTimeStr,
+					endTimeStr: data.endTimeStr,
 					orderAmount: data.orderAmount,
 					orderOperator:data.orderOperator	
 				},
