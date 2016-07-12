@@ -164,7 +164,7 @@ function checkCode(){
 	$.ajax({
 		type:'post',
 		async:false,
-		url: '<%=basePath%>/organ/checkRegCode.shtml',		
+		url: '<%=basePath%>/organ/checkRegCode.shtml',
 		data:{"userLoginName":receiveAddress,"regCode":code},
 		dataType:"json",
 		success:function(result){

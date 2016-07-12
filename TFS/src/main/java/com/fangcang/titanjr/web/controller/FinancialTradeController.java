@@ -35,9 +35,8 @@ import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 import com.fangcang.titanjr.service.*;
-import com.fangcang.titanjr.web.pojo.GDPDefaultPayerment;
+import com.fangcang.titanjr.web.pojo.DefaultPayerConfig;
 import com.fangcang.titanjr.web.util.CommonConstant;
-import com.fangcang.titanjr.web.util.RSADecryptString;
 import com.fangcang.util.StringUtil;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -88,7 +87,7 @@ public class FinancialTradeController extends BaseController {
 	private TitanOrderService titanOrderService;
 	
 	@Resource
-	private GDPDefaultPayerment gDPDefaultPayerment;
+	private DefaultPayerConfig defaultPayerConfig;
 
 	@Resource
 	private TitanFinancialOrganService titanFinancialOrganService;
@@ -342,8 +341,8 @@ public class FinancialTradeController extends BaseController {
 			
 			Map<String,String> result =null;
 			if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentRequest.getPaySource())){
-				paymentRequest.setProductId(gDPDefaultPayerment.getProductId());
-				paymentRequest.setUserid(gDPDefaultPayerment.getUserId());
+				paymentRequest.setProductId(defaultPayerConfig.getProductId());
+				paymentRequest.setUserid(defaultPayerConfig.getUserId());
 				result = validateB2BData(paymentRequest);
 			}else{
 				FinancialOrderResponse financialOrderResponse =null;
@@ -819,36 +818,34 @@ public class FinancialTradeController extends BaseController {
 	}
 	
 	@RequestMapping(value = "/showCashierDesk", method = RequestMethod.GET)
-	public String queryOrgInfo(PaymentUrlRequest paymentUrlRequest,HttpServletRequest request, Model model) throws Exception {
-		log.info("获取支付地址入参:"+toJson(paymentUrlRequest));
-		if(!CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentUrlRequest.getPaySource())){
+	public String showCashierDesk(PaymentUrlRequest paymentUrlRequest,HttpServletRequest request, Model model) throws Exception {
+		log.info("获取支付地址入参:" + toJson(paymentUrlRequest));
+		if (!CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentUrlRequest.getPaySource())) {
 			boolean flag = validateShowDeskSign(paymentUrlRequest);
-			if(!flag){//签名验证失败
-				model.addAttribute(CommonConstant.MSG,"签名验证失败");
+			if (!flag) {//签名验证失败
+				model.addAttribute(CommonConstant.MSG, "签名验证失败");
 				return "checkstand-pay/cashierDeskError";
 			}
 		}
 		
 		if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentUrlRequest.getPaySource())){//GDP付款
 			GDPOrderResponse gDPOrderResponse =titanFinancialTradeService.getGDPOrderDTO(paymentUrlRequest.getPayOrderNo());
-		    if(gDPOrderResponse.isResult()){
-		    	GDPOrderDTO gDPOrderDTO = gDPOrderResponse.getgDPOrderDTO();
-		    	if(gDPOrderDTO !=null){
-		    		if(!"CNY".equals(gDPOrderDTO.getCurrency())){
-		    			model.addAttribute(CommonConstant.MSG,"必须是人民币支付");
-		    			return "checkstand-pay/cashierDeskError";
-		    		}
-		    		model.addAttribute("gDPOrderDTO",gDPOrderDTO);
-		    		model.addAttribute("payOrderNo", paymentUrlRequest.getPayOrderNo());
+		    if(gDPOrderResponse.isResult() && null != gDPOrderResponse.getgDPOrderDTO()){
+				if(!"CNY".equals(gDPOrderResponse.getgDPOrderDTO().getCurrency())){
+		    		model.addAttribute(CommonConstant.MSG,"必须是人民币支付");
+		    		return "checkstand-pay/cashierDeskError";
 		    	}
+		    	model.addAttribute("gDPOrderDTO",gDPOrderResponse.getgDPOrderDTO());
+		    	model.addAttribute("payOrderNo", paymentUrlRequest.getPayOrderNo());
 		    }else{
 	    		model.addAttribute(CommonConstant.MSG,"该订单不存在");
     			return "checkstand-pay/cashierDeskError";
 	    	}
-			paymentUrlRequest.setUserid(gDPDefaultPayerment.getUserId());
+			paymentUrlRequest.setUserid(defaultPayerConfig.getUserId());
 			model.addAttribute("userId", paymentUrlRequest.getUserid());
 		}
-		//将userId查询出来
+
+		//非B2B支付时，将付款方userId查询出来
 		if(StringUtil.isValidString(paymentUrlRequest.getMerchantcode())){
 			String userId = queryUserIdByMerchantCode(paymentUrlRequest.getMerchantcode());
 			if(!StringUtil.isValidString(userId)){
@@ -857,20 +854,21 @@ public class FinancialTradeController extends BaseController {
 			}
 			paymentUrlRequest.setUserid(userId);
 		}
-		//用于GDP收款方
+
+		//用于GDP和商家联盟收款方获取，只允许去付款到对应公司账户
 		String orgCode = null;
-		if(StringUtil.isValidString(paymentUrlRequest.getRecieveMerchantCode())){//如果收款方是商家联盟，则只允许去付款到公司账户
-			//获取绑定信息
+		if (StringUtil.isValidString(paymentUrlRequest.getRecieveMerchantCode())) {
+			//获取绑定的机构信息
 			OrgDTO orgDTO = queryFinancialOrganDTO(paymentUrlRequest.getRecieveMerchantCode());
-			//获取机构信息
-			if(orgDTO ==null && StringUtil.isValidString(orgDTO.getOrgcode())){
-				model.addAttribute(CommonConstant.MSG,"收款机构异常");
-    			return "checkstand-pay/cashierDeskError";
+			if (orgDTO == null || StringUtil.isValidString(orgDTO.getOrgcode())) {
+				model.addAttribute(CommonConstant.MSG, "收款机构不存在");
+				return "checkstand-pay/cashierDeskError";
 			}
 			model.addAttribute("orgDTO", orgDTO);
 			orgCode = orgDTO.getOrgcode();
-			//将解冻时间和是否冻结传入
 		}
+
+		//将解冻时间和是否冻结以及其它参数传入组装
 		model.addAttribute("isEscrowed", paymentUrlRequest.getIsEscrowed());
 		model.addAttribute("escrowedDate", paymentUrlRequest.getEscrowedDate());
 		if(CashierDeskTypeEnum.SUPPLY_DESK.deskCode.equals(paymentUrlRequest.getPaySource())){//商家联盟
@@ -883,11 +881,13 @@ public class FinancialTradeController extends BaseController {
 			paymentUrlRequest.setUserid(this.getUserId());
 	    	model.addAttribute("tfsUserId",getTfsUserId());
 		}
-		
+
+		//开始获取收银台
 		model.addAttribute("paySource",paymentUrlRequest.getPaySource());
 		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
 		cashierDeskQueryRequest.setUserId(paymentUrlRequest.getUserid());
-		if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentUrlRequest.getPaySource())){//GDP支付时用商家的收银台
+		//GDP支付时用商家的收银台
+		if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentUrlRequest.getPaySource())){
 			cashierDeskQueryRequest.setUserId(orgCode);
 		}
 		cashierDeskQueryRequest.setUsedFor(Integer.valueOf(paymentUrlRequest.getPaySource()));
@@ -897,6 +897,7 @@ public class FinancialTradeController extends BaseController {
 			return "checkstand-pay/cashierDeskError";
 		}
 		model.addAttribute("cashierDesk", response.getCashierDeskDTOList().get(0));
+
 		//常用的支付方式
 		if(!CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentUrlRequest.getPaySource())){
 			List<CommonPayMethodDTO> commonPayMethodDTOList = titanCashierDeskService.queryCommonPayMethod(cashierDeskQueryRequest);
@@ -905,29 +906,29 @@ public class FinancialTradeController extends BaseController {
 			}
 			AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
 			accountBalanceRequest.setUserid(paymentUrlRequest.getUserid());
-//			accountBalanceRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
 			AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
 			if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
 				AccountBalance accountBalance = balanceResponse.getAccountBalance().get(0);
-				if(accountBalance.getBalanceusable() !=null){
+				if (accountBalance.getBalanceusable() != null) {
 					accountBalance.setBalanceusable(new BigDecimal(accountBalance.getBalanceusable()).divide(new BigDecimal(100)).toString());
-					model.addAttribute("accountBalance",accountBalance);
-				}else{
-					model.addAttribute(CommonConstant.MSG,"账户异常");
+					model.addAttribute("accountBalance", accountBalance);
+				} else {
+					model.addAttribute(CommonConstant.MSG, "账户资金异常");
 					return "checkstand-pay/cashierDeskError";
 				}
-			}else{
-				model.addAttribute(CommonConstant.MSG,"账户异常");
+			} else {
+				model.addAttribute(CommonConstant.MSG, "账户查询异常");
 				return "checkstand-pay/cashierDeskError";
 			}
-			if(CashierDeskTypeEnum.SUPPLY_DESK.deskCode.equals(paymentUrlRequest.getPaySource())){//充值时不需要查余额，和查财务
+
+			if (CashierDeskTypeEnum.SUPPLY_DESK.deskCode.equals(paymentUrlRequest.getPaySource())) {//充值时不需要查余额，和查财务
 				FinancialOrderRequest financialOrderRequest = new FinancialOrderRequest();
 				financialOrderRequest.setMerchantcode(paymentUrlRequest.getMerchantcode());
 				financialOrderRequest.setOrderNo(paymentUrlRequest.getPayOrderNo());
 				FinancialOrderResponse financialOrderResponse = titanFinancialTradeService.queryFinanceOrderDetail(financialOrderRequest);
-				if (financialOrderResponse.isResult()){
+				if (financialOrderResponse.isResult()) {
 					model.addAttribute("orderDTO", financialOrderResponse);
-					if(!StringUtil.isValidString(paymentUrlRequest.getRecieveMerchantCode())){//如果收款方机构为空时需查历史，否则付款给指定账户
+					if (!StringUtil.isValidString(paymentUrlRequest.getRecieveMerchantCode())) {//如果收款方机构为空时需查历史，否则付款给指定账户
 						AccountHistoryRequest accHistoryRequest = new AccountHistoryRequest();
 						accHistoryRequest.setAccountHistoryDTO(new AccountHistoryDTO());
 						accHistoryRequest.getAccountHistoryDTO().setInaccountcode(financialOrderResponse.getInAccountCode());
@@ -935,18 +936,18 @@ public class FinancialTradeController extends BaseController {
 						accHistoryRequest.getAccountHistoryDTO().setPayeruserid(paymentUrlRequest.getUserid());
 						AccountHistoryResponse accountHistoryResponse = titanFinancialAccountService.queryAccountHistory(accHistoryRequest);
 						if (accountHistoryResponse.isResult() &&
-								CollectionUtils.isNotEmpty(accountHistoryResponse.getAccountHistoryDTOList())){
-							Map<String,FinancialOrganDTO> userIDOrgMap = this.buildUserIdOrganMap(accountHistoryResponse.getAccountHistoryDTOList());
-							model.addAttribute("userIDOrgMap",userIDOrgMap);
+								CollectionUtils.isNotEmpty(accountHistoryResponse.getAccountHistoryDTOList())) {
+							Map<String, FinancialOrganDTO> userIDOrgMap = this.buildUserIdOrganMap(accountHistoryResponse.getAccountHistoryDTOList());
+							model.addAttribute("userIDOrgMap", userIDOrgMap);
 							/*model.addAttribute("accountHistoryList", accountHistoryResponse.getAccountHistoryDTOList());*/
-							model.addAttribute("accountHistory",accountHistoryResponse.getAccountHistoryDTOList().get(0));
+							model.addAttribute("accountHistory", accountHistoryResponse.getAccountHistoryDTOList().get(0));
 						}
 					}
-				}else{
-					model.addAttribute(CommonConstant.MSG,"该订单不存在");
-	    			return "checkstand-pay/cashierDeskError";
+				} else {
+					model.addAttribute(CommonConstant.MSG, "该订单不存在");
+					return "checkstand-pay/cashierDeskError";
 				}
-		    }
+			}
 		}
 		
 		MerchantResponseDTO merchantResponseDTO = null;

@@ -3,6 +3,7 @@ package com.fangcang.titanjr.service;
 
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.request.*;
@@ -167,4 +168,11 @@ public interface TitanFinancialOrganService {
      * @return
      */
     public int countOrg(FinancialOrganQueryRequest financialOrganQueryRequest);
+    /**
+     * 修改机构信息
+     * @param orgUpdateRequest
+     * @return
+     * @throws GlobalServiceException
+     */
+    public BaseResponseDTO updateOrg(OrgUpdateRequest orgUpdateRequest)throws GlobalServiceException;
 }

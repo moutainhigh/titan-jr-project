@@ -1,8 +1,6 @@
 package com.fangcang.titanjr.dto.request;
 
-import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotBlank;
 
 import com.fangcang.titanjr.dto.BaseRequestDTO;
 
