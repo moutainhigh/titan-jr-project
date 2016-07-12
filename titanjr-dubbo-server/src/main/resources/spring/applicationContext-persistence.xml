@@ -31,7 +31,7 @@
 		<property name="url" value="${url}" />
 		<property name="username" value="${username}" />
 		<property name="password" value="${password}" />
-		<!-- &lt;!&ndash; <property name="filters" value="${filters}" /> &ndash;&gt; -->
+		 &lt;!&ndash; <property name="filters" value="${filters}" /> &ndash;&gt;
 		<property name="maxActive" value="${maxActive}" />
 		<property name="initialSize" value="${initialSize}" />
 		<property name="maxWait" value="${maxWait}" />
@@ -41,8 +41,8 @@
 		<property name="maxOpenPreparedStatements" value="${maxOpenPreparedStatements}" />
 		<property name="removeAbandoned" value="${removeAbandoned}" /> 
 		<property name="removeAbandonedTimeout" value="${removeAbandonedTimeout}" /> 
-		<property name="logAbandoned" value="${logAbandoned}" />  -->
-	</bean>
+		<property name="logAbandoned" value="${logAbandoned}" />  
+	</bean>-->
 
 	<!-- 事务管理器-->
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
