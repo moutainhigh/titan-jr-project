@@ -65,7 +65,7 @@ public class OrderGenerateService {
 	
 	public static String genLocalOrderNo(){
 		StringBuffer order = new StringBuffer("L");
-		order.append(DateUtil.formatDataYYYYMMDDHHMMSS(new Date()));
+		order.append(DateUtil.formatDataYYMMDDHHMMSS(new Date()));
 		Random rd = new Random();
 		for(int i=0; i < 4; i ++){
 			order.append(rd.nextInt(random_range));

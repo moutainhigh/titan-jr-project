@@ -225,7 +225,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                                      return orderResponse;
                                  } else if (ReqstatusEnum.Status_1.getStatus() == titanOrderPayreq.getReqstatus()) {//处理中判断落单时间和过期时间
                                      //获取当前时间与订单时间的秒数差
-                                     long times = DateUtil.diffSecondByTime(titanOrderPayreq.getOrderTime(), DateUtil.sdf11.format(new Date()));
+                                     long times = DateUtil.diffSecondByTime(titanOrderPayreq.getOrderTime(), DateUtil.sdf5.format(new Date()));
                                      if ( times < this.getExpireTime(titanOrderPayreq)) {//未过期 获取当前单号
                                          orderid = titanOrderPayreq.getOrderNo();
                                      } else {

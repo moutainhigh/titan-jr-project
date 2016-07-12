@@ -41,7 +41,7 @@ public class DateUtil {
 	public static SimpleDateFormat sdf8 = new SimpleDateFormat("yyyy年MM月dd日");
 	public static SimpleDateFormat sdf9 = new SimpleDateFormat("MM.dd");
 	public static SimpleDateFormat sdf10 = new SimpleDateFormat("yyMMddHHmmss");
-	public static SimpleDateFormat sdf11 = new SimpleDateFormat("YYYYMMddHHmmss");
+//	public static SimpleDateFormat sdf11 = new SimpleDateFormat("YYYYMMddHHmmss");
 	public static SimpleDateFormat sdf12 = new SimpleDateFormat("HH:mm:ss");
 
 	public static Date toDataYYYYMMDD(String str) {
@@ -70,9 +70,9 @@ public class DateUtil {
 		return sdf3.format(date);
 	}
 
-	public static String formatDataYYYYMMDDHHMMSS(Date date) {
-		return sdf11.format(date);
-	}
+//	public static String formatDataYYYYMMDDHHMMSS(Date date) {
+//		return sdf11.format(date);
+//	}
 
 	public static String formatDataYYMMDDHHMMSS(Date date) {
 		return sdf5.format(date);
@@ -306,7 +306,7 @@ public class DateUtil {
 	public static long diffSecondByTime(String registerTime,String nowDate){
 		long diff = 0;
 		try{
-			 diff=  sdf11.parse(nowDate).getTime() - sdf11.parse(registerTime).getTime(); 
+			 diff=  sdf5.parse(nowDate).getTime() - sdf5.parse(registerTime).getTime(); 
 			
 		}catch(Exception e){
 			e.printStackTrace();
