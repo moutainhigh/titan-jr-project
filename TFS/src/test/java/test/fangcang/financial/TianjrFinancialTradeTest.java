@@ -501,7 +501,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     public void testGetMerchantLineUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");
-    	paymentUrlRequest.setPayOrderNo("TW15040705151");
+    	paymentUrlRequest.setPayOrderNo("TW15011504125");
     	paymentUrlRequest.setFcUserid("23415");
     	
     	paymentUrlRequest.setPaySource("2");

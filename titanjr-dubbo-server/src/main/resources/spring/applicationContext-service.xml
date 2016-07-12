@@ -30,6 +30,7 @@
 
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
 
+
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialOrganService" ref="titanOrgService" timeout="20000" /><!--  group="production" -->
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanCashierDeskService" ref="titanCashierDeskService" timeout="20000" />
     <dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialTradeService" ref="titanFinancialTradeService" timeout="800000" />
