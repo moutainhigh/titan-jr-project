@@ -31,7 +31,26 @@ public class TitanTransOrderDaoImpl extends GenericDAOMyBatisImpl implements Tit
     public boolean selectOrderForPage(TitanTransOrderParam condition, PaginationSupport<TitanTransOrder> paginationSupport)
             throws DaoException {
         try {
-            super.selectForPage("com.fangcang.titanjr.dao.TitanTransOrderDao.queryOrderList", condition, paginationSupport);
+            if("1".equals(condition.getStatus())){//付款
+        	
+        		super.selectForPage("com.fangcang.titanjr.dao.TitanTransOrderDao.queryPayOrder", condition, paginationSupport);
+        	
+        	}else if("2".equals(condition.getStatus())){//收款
+        	
+        		super.selectForPage("com.fangcang.titanjr.dao.TitanTransOrderDao.queryGatheringOrder", condition, paginationSupport);
+        	
+        	}else if("3".equals(condition.getStatus())){//充值
+        	
+        		super.selectForPage("com.fangcang.titanjr.dao.TitanTransOrderDao.queryRechargeOrder", condition, paginationSupport);
+        		
+        	}else if("4".equals(condition.getStatus())){//提现
+        		
+        		super.selectForPage("com.fangcang.titanjr.dao.TitanTransOrderDao.queryWithdrawOrder", condition, paginationSupport);
+        		
+        	}else{
+        		super.selectForPage("com.fangcang.titanjr.dao.TitanTransOrderDao.queryAllOrder", condition, paginationSupport);
+        	}
+           
         } catch (Exception e) {
             throw new DaoException(e);
         }

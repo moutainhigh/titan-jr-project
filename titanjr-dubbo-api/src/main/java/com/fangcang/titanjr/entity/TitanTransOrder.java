@@ -38,6 +38,8 @@ public class TitanTransOrder implements java.io.Serializable {
     private Float receivablefee;
     private Float receivedfee;
     private Long tradeamount;
+    private Integer transordertype;
+    
 
     //是否担保支付
     private String isEscrowedPayment;
@@ -350,5 +352,14 @@ public class TitanTransOrder implements java.io.Serializable {
 	public void setInterproductid(String interproductid) {
 		this.interproductid = interproductid;
 	}
+
+	public Integer getTransordertype() {
+		return transordertype;
+	}
+
+	public void setTransordertype(Integer transordertype) {
+		this.transordertype = transordertype;
+	}
+	
     
 }

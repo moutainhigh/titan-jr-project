@@ -97,7 +97,6 @@ public class FinancialAccountController extends BaseController {
         setTransOrderDetail(tradeDetailRequest,model);
         return "account-overview/order-receive-detail";
     }
-
     @RequestMapping(value = "/order-pay-detail", method = RequestMethod.GET)
     public String queryPayOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         setTransOrderDetail(tradeDetailRequest,model);
@@ -220,15 +219,17 @@ public class FinancialAccountController extends BaseController {
     }
     
     @RequestMapping(value = "/toBindAccountWithDrawCard")
-    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model){
+    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName){
     	model.addAttribute("modifyOrBind",CommonConstant.BIND_BANK_CARD);
+    	model.addAttribute("orgName",orgName);
     	return "account-overview/bind-bankcard";
     }
     
     @RequestMapping("update_account-withdraw_info")
-    public String updateAccountWithdrawInfo(HttpServletRequest request, Model model){
+    public String updateAccountWithdrawInfo(HttpServletRequest request, Model model,String orgName){
     	model.addAttribute("showBankCardInput",1);
     	model.addAttribute("modifyOrBind",CommonConstant.MODIFY_BANK_CARD);
+    	model.addAttribute("orgName",  orgName);
     	return "account-overview/bind-bankcard";
     }
     
@@ -320,10 +321,13 @@ public class FinancialAccountController extends BaseController {
          bankCardBindRequest.setReqSn(String.valueOf(System.currentTimeMillis()));
          bankCardBindRequest.setSubmitTime(DateUtil.dateToString(new Date(),"yyyyMMddHHmmss"));
          bankCardBindRequest.setAccountProperty(CommonConstant.ACCOUNT_PUBLIC);
+         //暂时改为私人账户
+//         bankCardBindRequest.setAccountProperty(CommonConstant.ACCOUNT_PERSON);
          bankCardBindRequest.setAccountPurpose(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey());
          bankCardBindRequest.setCertificateType(String.valueOf(0));
          //查询企业营业执照号
          bankCardBindRequest.setCertificateNumber(this.getTitanOrganDTO().getBuslince());
+         
          bankCardBindRequest.setAccountNumber(bindBankCardRequest.getBankCardCode());
          bankCardBindRequest.setAccountName(bindBankCardRequest.getUserName());
          bankCardBindRequest.setBankCode(bindBankCardRequest.getBankCode());

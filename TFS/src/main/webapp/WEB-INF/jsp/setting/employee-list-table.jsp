@@ -3,7 +3,7 @@
 <c:forEach items="${userInfoDTOPage.itemList}" var="userInfoDTO">
 <tr>
 	<td>${userInfoDTO.userLoginName }</td>
-	<td>${userInfoDTO.userName }<c:if test="${userInfoDTO.isAdmin==1 }">超级管理员</c:if></td>
+	<td>${userInfoDTO.userName }<c:if test="${userInfoDTO.isAdmin==1 and (empty userInfoDTO.userName) }">超级管理员</c:if></td>
 	<td>${userInfoDTO.userBindInfoDTO.fcLoginName }</td>
 	<td>
 		<c:forEach items="${userInfoDTO.roleDTOList}" var="roleDTO">

@@ -18,7 +18,7 @@
     <!-- Preserve messages in a local file -->
     <appender name="INFO" class="org.apache.log4j.RollingFileAppender">
         <!--     	<param name="Threshold" value="INFO"/> -->
-        <param name="File" value="./logs/titanjr-dubbo-server/INFO.log"/>
+        <param name="File" value="./logs/titanjr-job-scheduler/INFO.log"/>
         <param name="Append" value="true"/>
         <param name="MaxFileSize" value="20MB"/>
         <param name="MaxBackupIndex" value="5"/>
@@ -33,7 +33,7 @@
 
     <!-- Append messages to the error log file -->
     <appender name="ERROR_LOG" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="./logs/titanjr-dubbo-server/ERROR.log"/>
+        <param name="File" value="./logs/titanjr-job-scheduler/ERROR.log"/>
         <param name="Append" value="true"/>
         <param name="MaxFileSize" value="20MB"/>
         <param name="MaxBackupIndex" value="5"/>
@@ -49,7 +49,7 @@
     <!-- Append messages to the debug log file -->
     <appender name="DEBUG_LOG" class="org.apache.log4j.RollingFileAppender">
         <!--         <param name="Threshold" value="DEBUG"/> -->
-        <param name="File" value="./logs/titanjr-dubbo-server/DEBUG.log"/>
+        <param name="File" value="./logs/titanjr-job-scheduler/DEBUG.log"/>
         <param name="Append" value="true"/>
         <param name="MaxFileSize" value="20MB"/>
         <param name="MaxBackupIndex" value="5"/>

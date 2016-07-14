@@ -40,11 +40,11 @@
 			</p>
 			<p class="f_14">
 				<span class="TFSsu_sleft">实付金额：</span>
-				<span class="c_999">${rechargeResultConfirmRequest.payAmount }CNY</span>
+				<span class="c_999">${rechargeResultConfirmRequest.payAmount/100 }CNY</span>
 			</p>
 			<p class="f_14">
 				<span class="TFSsu_sleft">付款方式：</span>
-				<span class="c_999">网银支付</span>
+				<span class="c_999">${payType}</span>
 			</p>
 			<p class="f_14">
 				<span class="TFSsu_sleft">付款时间：</span>

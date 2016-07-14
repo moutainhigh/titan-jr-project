@@ -112,11 +112,11 @@ public class DemoAPI {
 		//开户信息查询（个人）（支持批量模糊查询） === 无权限，需添加
 //		String requestType = "ruixue.wheatfield.batchquery.person";
 		//绑定银行卡信息接口：再绑就提示已绑定
-//		String requestType = "ruixue.wheatfield.bankaccount.binding";
+		String requestType = "ruixue.wheatfield.bankaccount.binding";
 		//只可以删除提现卡和其他卡：返回账户不存在
 //		String requestType = "ruixue.wheatfield.accountinfo.delete";
 		//检查提现卡信息：存在返回false，不存在返回ture  modityWithDrawCard
-		String requestType = "ruixue.wheatfield.accountnum.ckeck";
+//		String requestType = "ruixue.wheatfield.accountnum.ckeck";
 		//单笔转账操作
 //		String requestType = "ruixue.wheatfield.order.transfer";
 
@@ -250,11 +250,11 @@ public class DemoAPI {
 		String strError = null;
 		try {
 			WheatfieldBankaccountBindingRequest req = new WheatfieldBankaccountBindingRequest();
-			req.setUserid("PM10000021");								// 用户ID  唯一标识
+			req.setUserid("TJM10000010");								// 用户ID  唯一标识
 			req.setUsertype("1");								// 用户类型(1：商户，2：普通用户)
 			req.setConstid("M000016");							// 机构码
 			req.setProductid("P000070");						// 产品号
-			req.setAccountnumber("6222807200881006972");						// 银行卡账号
+			req.setAccountnumber("6222807200881006994");						// 银行卡账号
 			req.setAccounttypeid("00");							// 账号类型 00银行卡，01存折，02信用卡。不填默认为银行卡00。
 			req.setBankheadname("中国建设银行");							// 开户行总行名称
 			req.setCurrency("CNY");								// 币种（CNY）
@@ -264,7 +264,7 @@ public class DemoAPI {
 			
 			req.setAccountpurpose("4");							// 账户目的(1:结算卡，2：其他卡, 3：提现卡,4:结算提现一体卡)
 			req.setAccountproperty("2");						// 账户属性（1：对公，2：对私）
-			req.setCertificatenumnumber("411381196907135674");					// 证件号
+			req.setCertificatenumnumber("51203019550201001X");					// 证件号
 			req.setCertificatetype("0");						// 开户证件类型0：身份证,1: 户口簿，2：护照,3.军官证,4.士兵证，5.
 																// 港澳居民来往内地通行证,6. 台湾同胞来往内地通行证,7.
 																// 临时身份证,8. 外国人居留证,9. 警官证, X.其他证件

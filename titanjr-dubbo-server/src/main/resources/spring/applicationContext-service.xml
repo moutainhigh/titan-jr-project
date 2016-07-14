@@ -19,16 +19,25 @@
            				http://code.alibabatech.com/schema/dubbo/dubbo.xsd"
 		default-autowire="byName">
 
-	<bean id="ftpUtil" class="com.fangcang.titanjr.common.util.FtpUtil">
-		<constructor-arg index="0" value="${static.ftp.server.ip}"/>
-		<constructor-arg index="1" value="21"/>
-		<constructor-arg index="2" value="${static.ftp.username}"/>
-		<constructor-arg index="3" value="${static.ftp.password}"/>
+	 
+	
+	<bean id="dubboServerJDBCProperties"  class="com.fangcang.titanjr.common.util.DubboServerJDBCProperties">
+		<property name="jrEmailServer" value="${jr.email.server}"/>
+		<property name="jrEmailFrom" value="${jr.email.from}"/>
+		<property name="jrEmailUsername" value="${jr.email.username}"/>
+		<property name="jrEmailPassword" value="${jr.email.password}"/>
+		<property name="jrEmailPort" value="${jr.email.port}"/>
+	
+		<property name="ftpServerIp" value="${static.ftp.server.ip}"/>
+		<property name="ftpServerPort" value="21"/>
+		<property name="ftpServerUser" value="${static.ftp.username}"/>
+		<property name="ftpServerPassword" value="${static.ftp.password}"/>
 	</bean>
 	
     <dubbo:application name="titanjr_service_provider" />
 
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
+
 
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialOrganService" ref="titanOrgService" timeout="20000" /><!--  group="production" -->
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanCashierDeskService" ref="titanCashierDeskService" timeout="20000" />

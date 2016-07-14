@@ -83,7 +83,7 @@
                             <c:if test="${ not empty fcUserid}">
                             <li class="p_l27">
                                 <label class="f_ui-checkbox-c3 p_r10">
-                                    <input type="checkbox" checked="" id="d_checkbox" ><i onclick="checktest()"></i>
+                                    <input type="checkbox" checked="" id="d_checkbox" onclick="checktest()" ><i ></i>
                                     使用账户可用余额付款</label>丨
                                 <span class="p_l10">账户可用余额：${accountBalance.balanceusable }元</span>
                             </li>
@@ -209,6 +209,10 @@
     <input name="escrowedDate" id="escrowedDate" type="hidden" value="${escrowedDate}">
   </form>
 </div>
+
+<form action="<%=basePath%>/trade/payConfirmPage.action" id="confirmOrder">
+  <input name="orderNo" id="orderNo" type="hidden">
+</form>
 
 <!--弹窗白色底-->
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
@@ -576,10 +580,11 @@
                	 //如果ajax请求成功则显示回调页面
                	 if(data.result == "success"){
                		new top.Tip({msg: data.msg, type: 1, time: 2000});
-                 	 window.close();
+               		$("#orderNo").val(data.orderNo);
+               		$("#confirmOrder").submit();
                	 }else{
                		 new top.Tip({msg: data.msg, type: 1, time: 2000});
-               		 window.close();
+               		$("#confirmOrder").submit();
                	 }
                 }
                 });

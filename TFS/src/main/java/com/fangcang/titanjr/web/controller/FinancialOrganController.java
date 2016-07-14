@@ -2,7 +2,6 @@ package com.fangcang.titanjr.web.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -593,7 +592,7 @@ public class FinancialOrganController extends BaseController {
      */
     private String setRegCode(String receiveAddress){
     	String regCode = Tools.getRegCode();
-    	System.out.println(receiveAddress+"-----------regCode:"+regCode);
+    	log.info(receiveAddress+"-----------regCode:"+regCode);
     	session.setAttribute(CommonConstant.SESSION_KEY_REG_CODE+"_"+receiveAddress, DateUtil.formatDataToDatetime(new Date())+"_"+regCode);
     	return regCode;
     }

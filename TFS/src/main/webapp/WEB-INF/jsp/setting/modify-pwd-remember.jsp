@@ -62,7 +62,7 @@
   </div>
 </div>
 <!--弹窗白色底--> 
-<script src="js/password.js"></script>
+<jsp:include page="/comm/static-js.jsp"></jsp:include>
 <script>
 //密码输入框
 var PasswordStr3=new sixDigitPassword("passwordbox5");

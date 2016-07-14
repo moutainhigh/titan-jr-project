@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.response.*;
 
 import net.sf.json.JSONSerializer;
@@ -59,6 +60,7 @@ import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
 import com.fangcang.titanjr.dto.request.OrgRegisterValidateRequest;
+import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
 import com.fangcang.titanjr.dto.request.OrganBindRequest;
 import com.fangcang.titanjr.dto.request.OrganCheckRequest;
 import com.fangcang.titanjr.dto.request.OrganFreezeRequest;
@@ -1128,7 +1130,30 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
      	return response;
     }
 
-    public RSInvokeConfigDao getRsInvokeConfigDao() {
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public BaseResponseDTO updateOrg(OrgUpdateRequest orgUpdateRequest) throws GlobalServiceException {
+    	BaseResponseDTO responseDTO = new BaseResponseDTO();
+    	if(!StringUtil.isValidString(orgUpdateRequest.getOrgCode())){
+    		responseDTO.putParamError();
+    		return responseDTO;
+    	}
+    	
+    	TitanOrg titanOrg = new TitanOrg();
+    	titanOrg.setOrgcode(orgUpdateRequest.getOrgCode());
+    	titanOrg.setConnect(orgUpdateRequest.getConnect());
+    	titanOrg.setMobiletel(orgUpdateRequest.getMobiletel());
+    	try {
+    		titanOrgDao.update(titanOrg);
+    		responseDTO.putSuccess();
+		} catch (DaoException e) {
+			throw new GlobalServiceException("更新机构信息失败,param,orgUpdateRequest:"+JSONSerializer.toJSON(orgUpdateRequest).toString(), e);
+		}
+		
+		return responseDTO;
+	}
+
+	public RSInvokeConfigDao getRsInvokeConfigDao() {
         return rsInvokeConfigDao;
     }
 

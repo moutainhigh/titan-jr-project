@@ -537,6 +537,9 @@
 					$.ajax({
 				        dataType : 'html',		      
 				        context: document.body,
+				        data:{
+				        	orgName:'${organ.orgName}'
+				        },
 				        url : '<%=basePath%>/account/update_account-withdraw_info.shtml',
 				        success : function(html){
 				        	var d = window.top.dialog({
@@ -584,6 +587,9 @@
         	$.ajax({
 		        dataType : 'html',		      
 		        context: document.body,
+		        data:{
+		        	orgName:'${organ.orgName}'
+		        },
 		        url : '<%=basePath%>/account/toBindAccountWithDrawCard.shtml',
 		        success : function(html){
 		        	var d = window.top.dialog({
@@ -747,7 +753,7 @@
 					tradeTypeId:index-1,
 					admissionName: data.admissionName,
 					startTimeStr: data.startTimeStr,
-					endTimeStr: data.startTimeStr,
+					endTimeStr: data.endTimeStr,
 					orderAmount: data.orderAmount,
 					orderOperator:data.orderOperator	
 				},
@@ -774,7 +780,7 @@
 					tradeTypeId:index-1,
 					admissionName: data.admissionName,
 					startTimeStr: data.startTimeStr,
-					endTimeStr: data.startTimeStr,
+					endTimeStr: data.endTimeStr,
 					orderAmount: data.orderAmount,
 					orderOperator:data.orderOperator	
 				},

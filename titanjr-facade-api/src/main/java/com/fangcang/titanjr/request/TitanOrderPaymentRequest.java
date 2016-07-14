@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.fangcang.titanjr.dto.EscrowedEnum;
 import com.fangcang.titanjr.dto.PaySourceEnum;
+import com.sun.istack.internal.NotNull;
 
 public class TitanOrderPaymentRequest extends BaseRequest{
 
@@ -18,6 +19,7 @@ public class TitanOrderPaymentRequest extends BaseRequest{
 	private String payOrderNo;
 	
 	//来源
+	@NotNull
 	private PaySourceEnum paySource;
 	
 	//房仓的用户Id
@@ -29,7 +31,8 @@ public class TitanOrderPaymentRequest extends BaseRequest{
 	//接受账户
 	private String recieveMerchantCode;
 	
-	//是否冻结 
+	//是否冻结
+	@NotNull
 	private EscrowedEnum isEscrowed;
 	
 	//解冻日期

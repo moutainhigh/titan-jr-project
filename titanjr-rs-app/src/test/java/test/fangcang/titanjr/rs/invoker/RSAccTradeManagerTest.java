@@ -75,7 +75,7 @@ public class RSAccTradeManagerTest extends GenericTest {
 //    @Test 
     public void testqueryAccountBalance(){
     	AccountBalanceQueryRequest req= new AccountBalanceQueryRequest();
-    	req.setUserid("TJM10000087");								//	用户idPP10000031 1660   PM10000021 606000
+    	req.setUserid("PM10000021");								//	用户idPP10000031 1660   PM10000021 606000
 //		req.setUserid("141223100000056");								//	用户id
 		req.setRootinstcd("M000016");		
 		req.setProductid("P000070");
@@ -96,13 +96,13 @@ public class RSAccTradeManagerTest extends GenericTest {
     	req.setTransfertype("3");								//1:子账户转账				
 		req.setConditioncode("1");								//1:落单
 		req.setMerchantcode("M000016");							//转入方机构号
-		req.setProductid("P000148");							//转入方产品号
+		req.setProductid("P000070");							//转入方产品号
 		req.setUserrelateid("TJM10000087");	                    //接收方用户Id		
-		req.setRequestno("TJR160630192241810");									//业务订单号
+		req.setRequestno("TJR160630192241816");									//业务订单号
 		req.setRequesttime("2016-4-12 22:22:22");				//请求时间
-		req.setAmount("57900");										//金额
+		req.setAmount("10000000");										//金额
 		req.setUserfee("0");		
-		req.setUserid("141223100000056");
+		req.setUserid("TJM10000111");
 		req.setIntermerchantcode("M000016");					//转出方机构号
 		req.setInterproductid("P000070");						//转出方产品号
 

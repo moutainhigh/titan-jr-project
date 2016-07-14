@@ -21,7 +21,7 @@
         <div class="gold_pay">
             <div class="TFS_rechargeBox">
                 <div class="TFS_rechargeBoxL fl">
-                    提现金额：<input type="text" id="withDrawNum" class="text w_300"> 元
+                    提现金额：<input type="text" id="withDrawNum" class="text w_300"> 元<span id="inputeAmountError" style="color:red;font-size:13px"></span>
                 </div>
                 <div class="TFS_rechargeBoxR fr">
                     <h3>账户名称/泰坦码：${organ.orgName}/${organ.titanCode }</h3>
@@ -45,7 +45,7 @@
                             <span><i>*</i>收款账号：</span><input type="text" id="accountNum" class="text w_250">
                         </label>
                         <label>
-                            <span><i>*</i>持卡人姓名：</span><input type="text" id="accountName" class="text w_250">
+                            <span><i>*</i>持卡人姓名：</span><input type="text" id="accountName" class="text w_250" value="${organ.orgName}" disabled>
                         </label>
                         <c:if test="${bindBankCard != null}">
                             <a href="javascript:void(0)" id="withDrawToCurrentCard"
@@ -97,6 +97,7 @@
 </div>
 <!--弹窗白色底-->
 
+<form action="<%=basePath%>/account/overview-main.shtml" id="flashPage" target="right_con_frm"></form>
 <script>
 
     $(function(){
@@ -111,12 +112,32 @@
             $(".TFS_withdrawBoxL_first").show();
             $(".TFS_withdrawBoxL_else").hide();
         }
+        checkIsSetPayPassword();
     })
 
     //点击取消关闭弹框
     $(".J_exitKan").on('click', function() {
         top.removeIframeDialog();
         $("#right_con_frm").attr('src', $('#right_con_frm').attr('src'));
+    });
+
+    $("#withDrawNum").blur(function(){
+        var inputeAmount = $(this).val();
+        if($.trim(inputeAmount).length<1){
+            $("#inputeAmountError").text("提现金额不能为空");
+        }else{
+            $("#inputeAmountError").text("");
+        }
+
+        var neg = /^\d+(\.\d{1,2})?$/;
+        var flag = neg.test($(this).val());
+        if(flag==false){
+            $("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
+            $(this).val("");
+            $(this).focus();
+        }else{
+            $("#inputeAmountError").text("");
+        }
     });
 
     //使用新卡提现或者旧卡
@@ -148,22 +169,49 @@
 
 
     $('.J_password').on('click',function(){
-//        if (isNaN($("#withDrawNum").val())){
-//            alert("请输入数字金额");
-//            return false;
-//        }
-//        if ($("#bankCode").attr("data-id") == null){
-//            alert("收款银行不能为空");
-//            return false;
-//        }
-//        if ($("#accountName").val() == null){
-//            alert("收款人姓名不能为空");
-//            return false;
-//        }
-//        if ($("#accountNum").val() == null){
-//            alert("收款账号不能为空");
-//            return false;
-//        }
+    	//验证提现的金额
+    	var withdraw_amount = $("#withDrawNum").val();
+    	/* var neg = /^([+-]?)((\d{1,3}(,\d{3})*)|(\d+))(\.\d{2}))?$/; */
+        var neg =/^\d+(\.\d{1,2})?$/;
+    	var flag = neg.test(withdraw_amount);
+    	if(flag==false){
+    		$("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
+    		$(this).val("");
+    		$(this).focus();
+    		return ;
+    	}else{
+    		$("#inputeAmountError").text("");
+    	}
+    	
+    	if(withdraw_amount=="0" ||withdraw_amount=="0.0" ||withdraw_amount=="0.00"){
+    		$("#inputeAmountError").text("您的提现额度必须大于0");
+    		return ;
+    	}
+    	
+    	if(withdraw_amount>'${accountBalance.balanceusable / 100 }' ||'${accountBalance.balanceusable / 100 }'=='0'){
+    		$("#inputeAmountError").text("可用余额不足，不能提现");
+    		return ;
+    	}
+    	
+    
+    	
+       /*  if (isNaN($("#withDrawNum").val())){
+            alert("请输入数字金额");
+            return false;
+        }
+        if ($("#bankCode").attr("data-id") == null){
+            alert("收款银行不能为空");
+            return false;
+        }
+        if ($("#accountName").val() == null){
+            alert("收款人姓名不能为空");
+            return false;
+        }
+        if ($("#accountNum").val() == null){
+            alert("收款账号不能为空");
+            return false;
+        } */
+        //验证是否设置支付密码
         $.ajax({
             dataType: 'html',
             context: document.body,
@@ -197,7 +245,8 @@
                                     url: '<%=basePath%>/account/toAccountWithDraw.shtml',
                                     success: function (data) {
                                         if(data.code == 1){
-                                            withDrawCallBack('提现申请已提交，等待银行处理。<br/>预计到账时间：2小时内', 1)
+                                            withDrawCallBack('提现申请已提交，等待银行处理。<br/>预计到账时间：2小时内', 1);
+                                            $("#flashPage").submit();//刷新页面
                                         } else {
                                             if (data.msg == '支付密码不正确请重新输入') {
                                                 withDrawCallBack(data.msg, 0);
@@ -217,6 +266,80 @@
 
     });
 
+    
+    function checkIsSetPayPassword(){
+   	 $.ajax({
+       	 type: "post",
+            url: "<%=basePath%>/account/checkIsSetPayPassword.action",
+            data: {fcUserid:'${fcUserid}'},
+            dataType: "json",
+            success: function(data){
+           	 if(data.result=="success"){
+           		show_setPayPassword();
+           	 }
+           	}
+           }); 
+   }
+    
+    function show_setPayPassword(){
+    	 $.ajax({
+		        dataType: 'html',
+		        context: document.body,
+		        url: '<%=basePath%>/account/showSetPayPassword.action',
+		        success: function (html) {
+		            var d = dialog({
+		                title: ' ',
+		                padding: '0 0 0px 0 ',
+		                content: html,
+		                skin: 'saas_pop',
+		                button: [
+		                    {
+		                        value: '确定',
+		                        skin: 'btn p_lr30',
+		                        callback: function () {
+		                        	if(PasswordStr.returnStr()==PasswordStr1.returnStr()){
+		                        		if(PasswordStr.returnStr().length==6){
+		                        			set_PayPassword();
+		                        		}
+		                        	}
+		                        },
+		                        autofocus: true
+		                    },
+
+		                ]
+		            }).showModal();
+		        }
+		    });
+    }
+    
+    function set_PayPassword(){
+    	 $.ajax({
+	    	 type: "post",
+	         url: "<%=basePath%>/account/setPayPassword.action",
+	         data: {
+	        	/*  payPassword:rsaData(PasswordStr.returnStr()) */
+	        	 payPassword:PasswordStr.returnStr()
+	         },
+	         dataType: "json",
+	         success: function(data){
+	        	 if(data.result=="success"){
+	        		top.F.loading.show();
+                     setTimeout(function () {
+                         top.F.loading.hide();
+                         new top.Tip({msg: '密码设置成功！', type: 1, time: 1000});
+                     }, 1000);
+	        	 }else{
+	        			top.F.loading.show();
+                         setTimeout(function () {
+                             top.F.loading.hide();
+                             new top.Tip({msg: data.msg, type: 1, time: 1000});
+                         }, 1000);
+	        	 }
+	         }
+	   })
+    }
+    
+    
     function withDrawCallBack(returnMsg,needClose) {
         var contentStr = '<div class="f_14 l_h26 p_l35">' + returnMsg + '</div>';
         new top.createConfirm({
