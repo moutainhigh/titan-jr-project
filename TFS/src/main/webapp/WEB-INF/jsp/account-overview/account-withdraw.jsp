@@ -45,7 +45,7 @@
                             <span><i>*</i>收款账号：</span><input type="text" id="accountNum" class="text w_250">
                         </label>
                         <label>
-                            <span><i>*</i>持卡人姓名：</span><input type="text" id="accountName" class="text w_250">
+                            <span><i>*</i>持卡人姓名：</span><input type="text" id="accountName" class="text w_250" value="${organ.orgName}" disabled>
                         </label>
                         <c:if test="${bindBankCard != null}">
                             <a href="javascript:void(0)" id="withDrawToCurrentCard"
@@ -97,6 +97,7 @@
 </div>
 <!--弹窗白色底-->
 
+<form action="<%=basePath%>/account/overview-main.shtml" id="flashPage" target="right_con_frm"></form>
 <script>
 
     $(function(){
@@ -187,7 +188,7 @@
     		return ;
     	}
     	
-    	if(withdraw_amount>'${ACCOUNTBALANCE.BALANCEUSABLE}' ||'${ACCOUNTBALANCE.BALANCEUSABLE}'=='0'){
+    	if(withdraw_amount>'${accountBalance.balanceusable / 100 }' ||'${accountBalance.balanceusable / 100 }'=='0'){
     		$("#inputeAmountError").text("可用余额不足，不能提现");
     		return ;
     	}
@@ -244,7 +245,8 @@
                                     url: '<%=basePath%>/account/toAccountWithDraw.shtml',
                                     success: function (data) {
                                         if(data.code == 1){
-                                            withDrawCallBack('提现申请已提交，等待银行处理。<br/>预计到账时间：2小时内', 1)
+                                            withDrawCallBack('提现申请已提交，等待银行处理。<br/>预计到账时间：2小时内', 1);
+                                            $("#flashPage").submit();//刷新页面
                                         } else {
                                             if (data.msg == '支付密码不正确请重新输入') {
                                                 withDrawCallBack(data.msg, 0);

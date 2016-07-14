@@ -57,7 +57,7 @@
             <c:if test="${tradeItem.tradeType == '收款' or tradeItem.tradeType == '充值'}">
                 +
             </c:if>
-            ${tradeItem.amount /100}
+            ${tradeItem.tradeamount /100}
         </td>
 
         <td class="tdl"><span class="ico_forzen"></span></td>

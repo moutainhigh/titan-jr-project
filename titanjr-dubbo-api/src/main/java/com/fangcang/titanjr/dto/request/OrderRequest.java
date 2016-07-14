@@ -69,6 +69,9 @@ public class OrderRequest implements Serializable{
     //入款账户
     private String payermerchant;
     
+    //交易类型
+    private Integer transordertype;
+    
     public String getPayeemerchant() {
 		return payeemerchant;
 	}
@@ -248,5 +251,12 @@ public class OrderRequest implements Serializable{
 	public void setInterProductid(String interProductid) {
 		this.interProductid = interProductid;
 	}
-	
+
+	public Integer getTransordertype() {
+		return transordertype;
+	}
+
+	public void setTransordertype(Integer transordertype) {
+		this.transordertype = transordertype;
+	}
 }

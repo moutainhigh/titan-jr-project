@@ -135,21 +135,28 @@ public class FinancialTradeController extends BaseController {
                 			}
                 			//查询订单是否成功
                 			boolean flag = validateOrderIsSuccess(transOrderDTO);
+                			log.info("订单是否被执行:"+flag);
                 	        if(flag){    
                 	        	int row = titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.Status_2.getStatus()+"");
                 	        	if(row<1){
                 	        		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "充值成功 修改充值单失败", OrderExceptionEnum.OrderPay_Update, JSON.toJSONString(orderNo));
                 	        		titanOrderService.saveOrderException(orderExceptionDTO);
                 	        	}
-                	        	OrderStatusEnum orderStatusEnum = OrderStatusEnum.Status_1;
+                	        	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARFE_SUCCESS;
                 	        	//判断该交易是支付还是充值
                     			if(StringUtil.isValidString(transOrderDTO.getPayermerchant())){
+                    				
                     				//回调成功，转账，查询出需要的转账账单
                     	        	TransferRequest transferRequest = convertToTransferRequest(transOrderDTO);
+                    	        	log.info("回调开始转账:"+toJson(transferRequest));
                     	        	TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
+                    	        	log.info("回调转账结果:"+toJson(transferResponse));
                     	        	if(transferResponse.isResult()){//转账成功之后需要调用
+                    	        		orderStatusEnum = OrderStatusEnum.TRANSFER_SUCCESS;
                     	        		if(StringUtil.isValidString(transOrderDTO.getMerchantcode())){//GDP的回调
+                    	        			log.info("回调财务:"+toJson(transOrderDTO));
                     	        			boolean confirmFlag =titanFinancialTradeService.confirmFinance(transOrderDTO);
+                    	        			log.info("回调财务结果:"+confirmFlag);
                         	        		if(!confirmFlag){
                         	        			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "转账成功 回调财务失败", OrderExceptionEnum.Finance_Confirm, JSON.toJSONString(transOrderDTO));
                             	        		titanOrderService.saveOrderException(orderExceptionDTO);
@@ -157,14 +164,16 @@ public class FinancialTradeController extends BaseController {
                     	        		}
                     	        		
                     	        		//冻结操作,如果冻结失败该进行什么操作,
-                    	        		orderStatusEnum = OrderStatusEnum.Status_2;
                     	        		if(CommonConstant.FREEZE_ORDER.equals(transOrderDTO.getIsEscrowedPayment())){//需要进行冻结操作
+                    	        			log.info("开始冻结:"+transferRequest);
                     	        			boolean freezeSuccess = freezeAccountBalance(transferRequest,orderNo);
+                    	        			log.info("冻结结果:"+freezeSuccess);
                         					//修改订单状态
                         					if(freezeSuccess){//冻结成功改变订单状态
-                        						orderStatusEnum = OrderStatusEnum.Status_3;
+                        						orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
                         					}else{
                         						//TODO 添加部分成功的操作
+                        						orderStatusEnum = OrderStatusEnum.FREEZE_FAIL;
                         						OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "冻结失败", OrderExceptionEnum.Freeze_Insert, JSON.toJSONString(transferRequest));
                             	        		titanOrderService.saveOrderException(orderExceptionDTO);
                         					}
@@ -176,13 +185,19 @@ public class FinancialTradeController extends BaseController {
                         						titanFinancialAccountService.addAccountHistory(transferRequest);
                         					}
                     					}
+                    					
                     	        	}else{//转账失败记录此次交易失败
-                    	        		orderStatusEnum = OrderStatusEnum.Status_4;
+                    	        		orderStatusEnum = OrderStatusEnum.TRANSFER_FAIL;
                     	        	}
                     			}else{//
-                    				orderStatusEnum= OrderStatusEnum.Status_2;
+                    				orderStatusEnum= OrderStatusEnum.ORDER_SUCCESS;
                     			}
-                    			//修改订单状态
+                    			//修改订单状态,如果转账成功之后未被冻结，则设置该单为成功
+                    			if(orderStatusEnum.getStatus().equals(OrderStatusEnum.TRANSFER_SUCCESS.getStatus())){
+                    				orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
+                    			}
+                    			
+                    			log.info("修改财务单:"+toJson(orderStatusEnum));
                 				boolean updateStatus = this.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
                 				//修改订单状态
                 				if(!updateStatus){
@@ -191,7 +206,7 @@ public class FinancialTradeController extends BaseController {
         						}
                 	        }else{//充值失败
                 	        	titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.Status_3.getStatus()+"");
-                	        	this.updateOrderStatus(transOrderDTO.getTransid(),OrderStatusEnum.Status_4);
+                	        	this.updateOrderStatus(transOrderDTO.getTransid(),OrderStatusEnum.RECHARFE_FAIL);
                 	        }
 					}
                 	unlockOutTradeNoList(orderNo);
@@ -219,8 +234,31 @@ public class FinancialTradeController extends BaseController {
 		        if(financialOrganResponse.isResult()){
 		        	model.addAttribute("financialOrganDTO", financialOrganResponse.getFinancialOrganDTO());
 		        }
+		        
+		        model.addAttribute("payType", "网银支付");
+		        if(!StringUtil.isValidString(rechargeResultConfirmRequest.getPayStatus())){//判断是本地回调
+		        	
+		        	boolean paySuccess = OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid());
+		        	if(transOrderDTO.getTradeamount() !=null){
+	        			rechargeResultConfirmRequest.setPayAmount(transOrderDTO.getTradeamount().toString());
+	        		}
+		        	rechargeResultConfirmRequest.setOrderPayTime(DateUtil.sdf5.format(transOrderDTO.getCreatetime()));
+		        	rechargeResultConfirmRequest.setPayMsg("付款失败");
+		        	if(paySuccess){
+		        		rechargeResultConfirmRequest.setPayStatus("3");
+		        		rechargeResultConfirmRequest.setPayMsg("付款成功");
+		        	}
+		        	model.addAttribute("payType", "余额支付");
+				}
+		        
 			}
+			
+			
+			
 		}
+		
+		
+		
 	    model.addAttribute("rechargeResultConfirmRequest", rechargeResultConfirmRequest);
 		return "checkstand-pay/payResult";
 	}
@@ -249,6 +287,7 @@ public class FinancialTradeController extends BaseController {
 					//手动下单，转账
 					log.info("本地下单入参:"+toJson(paymentRequest)+"财务入参:"+toJson(financialOrderResponse));
 					LocalAddTransOrderResponse localOrderResp = titanFinancialTradeService.addLocalTransOrder(paymentRequest, financialOrderResponse);
+					resultMap.put("orderNo", localOrderResp.getOrderNo());
 					log.info("本地下单结果:"+toJson(localOrderResp));
 					if (localOrderResp.isResult()) {//本地落单成功，转账
 						TransferRequest transferRequest = convertToTransferRequest(paymentRequest);
@@ -258,7 +297,7 @@ public class FinancialTradeController extends BaseController {
 						TransOrderRequest transOrderRequest = new TransOrderRequest();
     	        		transOrderRequest.setOrderid(localOrderResp.getOrderNo());
                 		TransOrderDTO transOrder= titanOrderService.queryTransOrderDTO(transOrderRequest);
-                		OrderStatusEnum orderStatusEnum = OrderStatusEnum.Status_1;
+                		OrderStatusEnum orderStatusEnum = OrderStatusEnum.ORDER_IN_PROCESS;
 						if (transferResponse.isResult()) {//转账成功，流程结束
 							//将转账参数和转账结果
 							TransOrderDTO transOrderDTO = new TransOrderDTO();
@@ -271,13 +310,14 @@ public class FinancialTradeController extends BaseController {
         	        		}
 							//冻结操作,如果冻结失败该进行什么操作
         	        		//判断其是否需要冻结
-        	        		orderStatusEnum = OrderStatusEnum.Status_2;
+        	        		orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
                     		if(CommonConstant.FREEZE_ORDER.equals(transOrder.getIsEscrowedPayment())){
                     			boolean freezeSuccess = freezeAccountBalance(transferRequest,localOrderResp.getOrderNo());
     							//修改订单状态
                     			if(freezeSuccess){//冻结成功改变订单状态
-            						orderStatusEnum = OrderStatusEnum.Status_3;
+            						orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
             					}else{
+            						orderStatusEnum =OrderStatusEnum.FREEZE_FAIL;
             						//TODO 添加部分成功的操作
             						OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(localOrderResp.getOrderNo(), "冻结失败", OrderExceptionEnum.Freeze_Insert, JSON.toJSONString(transferRequest));
                 	        		titanOrderService.saveOrderException(orderExceptionDTO);
@@ -289,7 +329,7 @@ public class FinancialTradeController extends BaseController {
 				    		resultMap.put(CommonConstant.MSG, "支付成功");
 							
 						}else{
-							orderStatusEnum = OrderStatusEnum.Status_4;
+							orderStatusEnum = OrderStatusEnum.TRANSFER_FAIL;
 							resultMap.put(CommonConstant.RESULT, CommonConstant.FAIL);
 				    		resultMap.put(CommonConstant.MSG, "支付失败");
 						}
@@ -336,7 +376,6 @@ public class FinancialTradeController extends BaseController {
 				paymentRequest.setUserid(getUserId());
 				paymentRequest.setOperator(getUserName());
 			}
-			
 			model.addAttribute(CommonConstant.RESULT, CommonConstant.FAIL);
 			
 			Map<String,String> result =null;
@@ -396,75 +435,90 @@ public class FinancialTradeController extends BaseController {
 				return resultMap;
 			}
 			
-            if(OrderStatusEnum.Status_1.getStatus().equals(transOrderDTO.getStatusid())){//订单状态为处理中，查看充值单
-            	TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
-            	titanOrderPayDTO.setTransorderid(transOrderDTO.getTransid());
-                titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
-                if(titanOrderPayDTO !=null){//充值单不为空则查看其状态
-            		if(ReqstatusEnum.Status_3.getStatus()==titanOrderPayDTO.getReqstatus().intValue()){
-            			resultMap.put(CommonConstant.MSG, "支付失败");
-        				return resultMap;
-            		}
-                	
-                    if(CashierDeskTypeEnum.RECHARGE.deskCode.equals(paySource)){//充值请求如果充值成功就返回成功
-                    	if(ReqstatusEnum.Status_2.getStatus()==titanOrderPayDTO.getReqstatus().intValue()){
-                			resultMap.put(CommonConstant.MSG, "充值成功");
-            				return resultMap;
-                		}else{
-                			//查询融数账户信息，查询充值信息和转账信息,如果是充值只查询充值信息
-                			boolean isRechargeSuccess = validateOrderIsSuccess(transOrderDTO);
-                			if(isRechargeSuccess){
-                				resultMap.put(CommonConstant.MSG, "充值成功");
-                				return resultMap;
-                			}
-                		}
-                	}
-                	
-                    if(CashierDeskTypeEnum.SUPPLY_DESK.deskCode.equals(paySource)){//支付请求
-		            	TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
-		            	titanTransferDTO.setTransorderid(transOrderDTO.getTransid());
-		            	titanTransferDTO = titanOrderService.getTitanTransferDTO(titanTransferDTO);
-		            	
-		            	if(titanTransferDTO !=null){//转账单不为空则查看其状态
-		            		if(titanTransferDTO.getStatus() !=null){
-		            			if(TransferReqEnum.Status_3.getStatus()==titanTransferDTO.getStatus().intValue()){
-		                			resultMap.put(CommonConstant.MSG, "支付失败");
-		                			return resultMap;
-		                		}
-		            			if(TransferReqEnum.Status_2.getStatus()==titanTransferDTO.getStatus().intValue()){
-		            				resultMap.put(CommonConstant.MSG, "支付成功");
-		            				return resultMap;
-		            			}
-		            			if(TransferReqEnum.Status_1.getStatus()==titanTransferDTO.getStatus().intValue()){//处理中则在融数去处理
-		            				AccountTransferFlowRequest accountTransferFlowRequest = new AccountTransferFlowRequest();
-		            				accountTransferFlowRequest.setProductId(titanTransferDTO.getProductid());
-		            				accountTransferFlowRequest.setUserId(titanTransferDTO.getUserid());
-		            				titanTransferDTO.setRequestno(titanTransferDTO.getRequestno());
-		            				boolean isTransferSuccess = titanFinancialTradeService.confirmTransAccountSuccess(accountTransferFlowRequest);
-		            			    if(isTransferSuccess){
-		            			    	resultMap.put(CommonConstant.MSG, "支付成功");
-			            				return resultMap;
-		            			    }
-		            			}
-		            		}
-		            	}
-                    }
-                }
-				resultMap.put(CommonConstant.MSG, "支付处理中");
+			//将冻结失败，冻结成功，和订单成功统一认为支付成功
+			if(OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())
+					|| OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())
+					|| OrderStatusEnum.FREEZE_FAIL.getStatus().equals(transOrderDTO.getStatusid())){
+				resultMap.put(CommonConstant.MSG, "支付成功");
 				return resultMap;
 			}
 			
-			if(OrderStatusEnum.Status_4.getStatus().equals(transOrderDTO.getStatusid())||
-					OrderStatusEnum.Status_5.getStatus().equals(transOrderDTO.getStatusid())){
+			//将充值失败，转账失败，和订单失败，统一设置为失败
+			if(OrderStatusEnum.ORDER_FAIL.getStatus().equals(transOrderDTO.getStatusid())
+					||OrderStatusEnum.RECHARFE_FAIL.getStatus().equals(transOrderDTO.getStatusid())
+					||OrderStatusEnum.TRANSFER_FAIL.getStatus().equals(transOrderDTO.getStatusid())){
 				resultMap.put(CommonConstant.MSG, "支付失败");
 				return resultMap;
 			}
 			
-			if(OrderStatusEnum.Status_2.getStatus().equals(transOrderDTO.getStatusid())||
-					OrderStatusEnum.Status_3.getStatus().equals(transOrderDTO.getStatusid())){
-				resultMap.put(CommonConstant.MSG, "支付成功");
+			//处理中是指 充值成功，转账成功视为处理中
+			if(OrderStatusEnum.RECHARFE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())
+					||OrderStatusEnum.TRANSFER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())
+					||OrderStatusEnum.ORDER_IN_PROCESS.getStatus().equals(transOrderDTO.getStatusid())
+					||OrderStatusEnum.RECHARFE_IN_PROCESS.getStatus().equals(transOrderDTO.getStatusid())){
+				resultMap.put(CommonConstant.MSG, "支付处理中");
 				return resultMap;
 			}
+			
+//            if(OrderStatusEnum..getStatus().equals(transOrderDTO.getStatusid())){//订单状态为处理中，查看充值单
+//            	TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+//            	titanOrderPayDTO.setTransorderid(transOrderDTO.getTransid());
+//                titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
+//                if(titanOrderPayDTO !=null){//充值单不为空则查看其状态
+//            		if(ReqstatusEnum.Status_3.getStatus()==titanOrderPayDTO.getReqstatus().intValue()){
+//            			resultMap.put(CommonConstant.MSG, "支付失败");
+//        				return resultMap;
+//            		}
+//                	
+//                    if(CashierDeskTypeEnum.RECHARGE.deskCode.equals(paySource)){//充值请求如果充值成功就返回成功
+//                    	if(ReqstatusEnum.Status_2.getStatus()==titanOrderPayDTO.getReqstatus().intValue()){
+//                			resultMap.put(CommonConstant.MSG, "充值成功");
+//            				return resultMap;
+//                		}else{
+//                			//查询融数账户信息，查询充值信息和转账信息,如果是充值只查询充值信息
+//                			boolean isRechargeSuccess = validateOrderIsSuccess(transOrderDTO);
+//                			if(isRechargeSuccess){
+//                				resultMap.put(CommonConstant.MSG, "充值成功");
+//                				return resultMap;
+//                			}
+//                		}
+//                	}
+//                	
+//                    if(CashierDeskTypeEnum.SUPPLY_DESK.deskCode.equals(paySource)){//支付请求
+//		            	TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
+//		            	titanTransferDTO.setTransorderid(transOrderDTO.getTransid());
+//		            	titanTransferDTO = titanOrderService.getTitanTransferDTO(titanTransferDTO);
+//		            	
+//		            	if(titanTransferDTO !=null){//转账单不为空则查看其状态
+//		            		if(titanTransferDTO.getStatus() !=null){
+//		            			if(TransferReqEnum.Status_3.getStatus()==titanTransferDTO.getStatus().intValue()){
+//		                			resultMap.put(CommonConstant.MSG, "支付失败");
+//		                			return resultMap;
+//		                		}
+//		            			if(TransferReqEnum.Status_2.getStatus()==titanTransferDTO.getStatus().intValue()){
+//		            				resultMap.put(CommonConstant.MSG, "支付成功");
+//		            				return resultMap;
+//		            			}
+//		            			if(TransferReqEnum.Status_1.getStatus()==titanTransferDTO.getStatus().intValue()){//处理中则在融数去处理
+//		            				AccountTransferFlowRequest accountTransferFlowRequest = new AccountTransferFlowRequest();
+//		            				accountTransferFlowRequest.setProductId(titanTransferDTO.getProductid());
+//		            				accountTransferFlowRequest.setUserId(titanTransferDTO.getUserid());
+//		            				titanTransferDTO.setRequestno(titanTransferDTO.getRequestno());
+//		            				boolean isTransferSuccess = titanFinancialTradeService.confirmTransAccountSuccess(accountTransferFlowRequest);
+//		            			    if(isTransferSuccess){
+//		            			    	resultMap.put(CommonConstant.MSG, "支付成功");
+//			            				return resultMap;
+//		            			    }
+//		            			}
+//		            		}
+//		            	}
+//                    }
+//                }
+//				resultMap.put(CommonConstant.MSG, "支付处理中");
+//				return resultMap;
+//			}
+			
+			
 		}
 		resultMap.put(CommonConstant.MSG, "系统错误");
 		return resultMap;

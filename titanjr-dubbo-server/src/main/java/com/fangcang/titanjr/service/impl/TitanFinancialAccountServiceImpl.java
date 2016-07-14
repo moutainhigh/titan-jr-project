@@ -21,6 +21,7 @@ import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.FreezeConditionCodeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.TransOrderTypeEnum;
 import com.fangcang.titanjr.common.enums.WithDrawStatusEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
@@ -520,7 +521,8 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			return withDrawResponse;
 		}
 		try {
-			titanTransOrder.setStatusid(OrderStatusEnum.Status_1.getStatus());
+			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_IN_PROCESS.getStatus());
+			titanTransOrder.setTransordertype(TransOrderTypeEnum.WITHDRAW.type);
 			int rowNum = titanTransOrderDao.insert(titanTransOrder);
 			if (rowNum <= 0) {
 				withDrawResponse.putErrorResult("保存交易单失败");
@@ -549,10 +551,10 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					withDrawResponse.putSuccess();
 					withDrawResponse.setOperateStatus(true);
 					titanWithDrawReq.setStatus(WithDrawStatusEnum.WithDraw_SUCCESSED.getKey());
-					titanTransOrder.setStatusid(OrderStatusEnum.Status_2.getStatus());
+					titanTransOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
 				} else {
 					withDrawResponse.putErrorResult(accountWithDrawResponse.getReturnCode(), accountWithDrawResponse.getReturnMsg());
-					titanTransOrder.setStatusid(OrderStatusEnum.Status_4.getStatus());
+					titanTransOrder.setStatusid(OrderStatusEnum.ORDER_FAIL.getStatus());
 					titanWithDrawReq.setStatus(WithDrawStatusEnum.WithDraw_FAILED.getKey());
 					withDrawResponse.setOperateStatus(false);
 				}
@@ -891,7 +893,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					    	
 					    	//修改系统单号
 					    	TitanTransOrder titanTransOrder = new TitanTransOrder();
-					    	titanTransOrder.setStatusid(OrderStatusEnum.Status_2.getStatus());
+					    	titanTransOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
 					    	titanTransOrder.setOrderid(fundFreezeDTO.getOrderNo());
 					    	try{
 					    		titanTransOrderDao.update(titanTransOrder);

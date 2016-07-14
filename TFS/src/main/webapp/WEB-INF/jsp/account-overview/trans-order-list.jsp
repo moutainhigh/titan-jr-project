@@ -29,7 +29,7 @@
             <c:if test="${tradeItem.tradeType == '收款' or tradeItem.tradeType == '充值'}">
                 +
             </c:if>
-            ${tradeItem.amount /100}
+            ${tradeItem.tradeamount /100}
         </td>
         <td>
             <c:if test="${tradeItem.isEscrowedPayment == 1 and tradeItem.tradeType == '收款'}">
@@ -39,19 +39,19 @@
         <td class="tdr">${tradeItem.receivedfee /100}</td><!--只展示实收手续费-->
         <td></td>
         <td>
-            <c:if test="${tradeItem.statusid == 1}">
+            <c:if test="${tradeItem.statusid == 3 and tradeItem.tradeType !='充值'  or tradeItem.statusid==5}">
                 处理中
             </c:if>
-            <c:if test="${tradeItem.statusid == 2}">
+            <c:if test="${tradeItem.statusid == 8}">
                 已成功
             </c:if>
-            <c:if test="${tradeItem.statusid == 3 and tradeItem.tradeType == '收款'}">
+            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '收款'}">
                 已冻结
             </c:if>
-            <c:if test="${tradeItem.statusid == 3 and tradeItem.tradeType != '收款'}">
+            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType != '收款'}">
                 已成功
             </c:if>
-            <c:if test="${tradeItem.statusid == 4}">
+            <c:if test="${tradeItem.statusid == 9}">
                 <i class="MyAssets_red">交易失败</i>
             </c:if>
         </td>
