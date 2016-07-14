@@ -28,7 +28,7 @@
 		</div>
 	</div>
 	<div class="TFS_agbuton">
-		<span class="btn deepblue mr15">下载</span>
+		<span class="btn deepblue mr15" onclick="window.open('http://static.fangcang.com/static/tfs/titan_finance_protocol.doc')">下载</span>
 		<span class="btn p_lr30" onclick="window.print()">打印</span>
 	</div>
 </body>
