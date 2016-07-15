@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.AccountUpdateRequest;
@@ -21,7 +22,8 @@ import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
-import com.fangcang.titanjr.web.util.CommonConstant;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
+import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
 
 /**
@@ -138,7 +140,7 @@ public class SettingPasswordController extends BaseController{
 				}
 			} catch (GlobalServiceException e) {
 				LOG.error("设置小额免密支付开关失败，参数:allownopwdpay["+allownopwdpay+"],tfsuserId["+getTfsUserId()+"]", e);
-				putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+				putSysError(WebConstant.CONTROLLER_ERROR_MSG);
 			}
 		}
 		return toJson();

@@ -26,7 +26,7 @@ import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.controller.BaseController;
 import com.fangcang.titanjr.web.pojo.OrgPojo;
-import com.fangcang.titanjr.web.util.CommonConstant;
+import com.fangcang.titanjr.web.util.WebConstant;
 
 /**
  * 金融机构审核
@@ -163,7 +163,7 @@ public class OrgController extends BaseController{
 			}
 		} catch (GlobalServiceException e) {
 			logger.error("机构审核失败,参数:orgId["+orgId+"],checkStatus["+checkStatus+"],reason["+reason+"]",e);
-			putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+			putSysError(WebConstant.CONTROLLER_ERROR_MSG);
 			return toJson();
 			
 		} catch (MessageServiceException e) {

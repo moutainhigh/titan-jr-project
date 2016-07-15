@@ -3,7 +3,7 @@ package com.fangcang.titanjr.web.util;
 /**
  * Created by zhaoshan on 2016/4/18.
  */
-public class CommonConstant {
+public class WebConstant {
 	/******* Session  key **************/
     public static final String SESSION_KEY_LOGIN_USER_NAME = "LOGIN_USER_NAME";//用户名
     public static final String SESSION_KEY_LOGIN_USER_ID  = "LOGIN_USER_ID";//用户Id
