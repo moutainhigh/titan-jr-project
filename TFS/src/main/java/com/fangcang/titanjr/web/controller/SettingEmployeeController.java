@@ -40,7 +40,7 @@ import com.fangcang.titanjr.dto.response.UserRegisterResponse;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.pojo.EmployeePojo;
 import com.fangcang.titanjr.web.pojo.FcEmployeeTablePojo;
-import com.fangcang.titanjr.web.util.CommonConstant;
+import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.titanjr.web.util.TFSTools;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
@@ -86,7 +86,7 @@ public class SettingEmployeeController extends BaseController{
 		if(pageNo==null){
 			pageNo = 1;
 		}
-		Integer tfsUserId = (Integer)session.getAttribute(CommonConstant.SESSION_KEY_JR_TFS_USERID);
+		Integer tfsUserId = (Integer)session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 		userInfoQueryRequest.setTfsUserId(tfsUserId);
 		userInfoQueryRequest.setPageSize(pageSize);
@@ -126,7 +126,7 @@ public class SettingEmployeeController extends BaseController{
 	@RequestMapping("/fc-employee-table")
 	public String fcEmployeeTable(FcEmployeeTablePojo  fcEmployeeTablePojo,Model model){
 		SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
-		String merchantCode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+		String merchantCode = (String)session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
 		
 		saaSUserRoleRequest.setMerchantCode(merchantCode);
 		saaSUserRoleRequest.setSaasUserName(fcEmployeeTablePojo.getSaasUserName());
@@ -143,7 +143,7 @@ public class SettingEmployeeController extends BaseController{
 			}
 		} catch (GlobalServiceException e) {
 			log.error("房仓用户数据查询失败,请求参数:"+ToStringBuilder.reflectionToString(fcEmployeeTablePojo), e);
-			model.addAttribute("errormsg", CommonConstant.CONTROLLER_ERROR_MSG);
+			model.addAttribute("errormsg", WebConstant.CONTROLLER_ERROR_MSG);
 			return "error";
 		}
 		return "setting/fc-employee-list-table";
@@ -159,7 +159,7 @@ public class SettingEmployeeController extends BaseController{
 		model.addAttribute("fcUserId", fcUserId);
 		//SAAS员工信息
 		if(fcUserId!=null&&fcUserId>0){
-			String merchantCode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+			String merchantCode = (String)session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
 			SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
 			saaSUserRoleRequest.setFcUserId(fcUserId);
 			saaSUserRoleRequest.setMerchantCode(merchantCode);
@@ -221,8 +221,8 @@ public class SettingEmployeeController extends BaseController{
     	}
 		//TODO 校验待新增的用户是不是属于该商家
 		
-		String merchantCode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
-		String userId = (String)session.getAttribute(CommonConstant.SESSION_KEY_JR_USERID);
+		String merchantCode = (String)session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+		String userId = (String)session.getAttribute(WebConstant.SESSION_KEY_JR_USERID);
 		
 		SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
 		saaSUserRoleRequest.setFcUserId(employeePojo.getFcUserId());
@@ -233,7 +233,7 @@ public class SettingEmployeeController extends BaseController{
 			
 		} catch (GlobalServiceException e) {
 			log.error("查询saas用户失败，参数employeePojo:" +ToStringBuilder.reflectionToString(employeePojo), e);
-			putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+			putSysError(WebConstant.CONTROLLER_ERROR_MSG);
 			return toJson();
 		}
 		SaaSMerchantUserDTO saaSMerchantUserDTO =saaSUserRoleResponse.getPaginationSupport().getItemList().get(0);
@@ -250,7 +250,7 @@ public class SettingEmployeeController extends BaseController{
     	userRegisterRequest.setRoleIdList(toList(employeePojo.getCheckedRoleId()));
     	userRegisterRequest.setUnselectRoleIdList(toList(employeePojo.getUncheckedRoleId()));
     	//TODO 暂时生成一个临时密码
-    	userRegisterRequest.setPassword(MD5.MD5Encode("123456"));
+    	userRegisterRequest.setPassword("666666");
     	userRegisterRequest.setRegisterSource(LoginSourceEnum.SAAS.getKey());
     	userRegisterRequest.setUserId(userId);//金服机构
     	try {
@@ -315,7 +315,7 @@ public class SettingEmployeeController extends BaseController{
 			}
 		} catch (GlobalServiceException e) {
 			log.error("修改时保存员工信息失败，参数employeePojo："+JSONSerializer.toJSON(employeePojo).toString(),e);
-			putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+			putSysError(WebConstant.CONTROLLER_ERROR_MSG);
 		}
 		
 		return toJson();
@@ -347,7 +347,7 @@ public class SettingEmployeeController extends BaseController{
 			}
 		} catch (GlobalServiceException e) {
 			log.error(",冻结或者解冻失败,请求参数：tfsUserId:"+tfsUserId+",status:"+status+",操作发起用户username："+getSAASLoginName(), e);
-			putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+			putSysError(WebConstant.CONTROLLER_ERROR_MSG);
 			return toJson();
 		}
 		
@@ -362,7 +362,7 @@ public class SettingEmployeeController extends BaseController{
 	@ResponseBody
 	@RequestMapping("/cancel-permission")
 	public String cancelPermission(Integer tfsUserId){
-		String merchantcode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+		String merchantcode = (String)session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
 		CancelPermissionRequest cancelPermissionRequest = new CancelPermissionRequest();
 		cancelPermissionRequest.setTfsUserId(tfsUserId);
 		cancelPermissionRequest.setOperator(getSAASLoginName());
@@ -378,7 +378,7 @@ public class SettingEmployeeController extends BaseController{
 			}
 		} catch (GlobalServiceException e) {
 			log.error("解除权限操作失败，操作发起用户username："+getSAASLoginName()+",tfsUserId:"+tfsUserId, e);
-			putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+			putSysError(WebConstant.CONTROLLER_ERROR_MSG);
 			return toJson();
 		} catch (MessageServiceException e) {
 			log.error("解除权限操作失败， 原因：参数错误。操作发起用户username："+getSAASLoginName()+",tfsUserId:"+tfsUserId, e);
