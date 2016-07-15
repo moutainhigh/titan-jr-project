@@ -25,4 +25,21 @@ public class BindBankCardJob extends QuartzJobBean{
         System.out.println(titanFinancialBankCardService + "execute===job");
 	}
 
+	public TitanFinancialBankCardService getTitanFinancialBankCardService() {
+		return titanFinancialBankCardService;
+	}
+
+	public void setTitanFinancialBankCardService(
+			TitanFinancialBankCardService titanFinancialBankCardService) {
+		this.titanFinancialBankCardService = titanFinancialBankCardService;
+	}
+
+	public ThreadPoolTaskExecutor getTitanJobExecutor() {
+		return titanJobExecutor;
+	}
+
+	public void setTitanJobExecutor(ThreadPoolTaskExecutor titanJobExecutor) {
+		this.titanJobExecutor = titanJobExecutor;
+	}
+
 }

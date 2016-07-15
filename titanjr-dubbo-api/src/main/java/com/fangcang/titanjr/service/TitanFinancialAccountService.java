@@ -1,5 +1,6 @@
 package com.fangcang.titanjr.service;
 
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
@@ -16,6 +17,20 @@ public interface TitanFinancialAccountService {
      * @return
      */
     public AccountCreateResponse createAccount(AccountCreateRequest accountCreateRequest);
+    
+    /**
+     * 查询一个
+     * @param accountRequest
+     * @return
+     */
+    public AccountResponse getAccount(AccountRequest accountRequest);
+    
+    /**
+     * 更新账户
+     * @param accountUpdateRequest
+     * @return
+     */
+    public AccountUpdateResponse updateAccount(AccountUpdateRequest accountUpdateRequest) throws GlobalServiceException;
 
     /**
      * 查询账户余额接口

@@ -126,7 +126,7 @@
     //添加日期锻
 
     $(function () {
-        initRequest();
+        initRequest(); 
         initQueryDate();
         initAutoSelectPartner()
     });
@@ -150,7 +150,7 @@
                 currentPage:1,
                 pageSize:size,
                 tradeTypeId:"2",
-                isEscrowedPayment:"1"
+                isEscrowedPayment:"0"
             },
             url : '<%=basePath%>/account/query-freeze-list.shtml',
             success : function(html){

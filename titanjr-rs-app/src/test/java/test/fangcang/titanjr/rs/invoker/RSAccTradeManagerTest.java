@@ -72,13 +72,13 @@ public class RSAccTradeManagerTest extends GenericTest {
     }
 
     //账户可用余额查询
-    @Test 
+//    @Test 
     public void testqueryAccountBalance(){
     	AccountBalanceQueryRequest req= new AccountBalanceQueryRequest();
-    	req.setUserid("141223100000056");								//	用户idPP10000031 1660   PM10000021 606000
+    	req.setUserid("PM10000021");								//	用户idPP10000031 1660   PM10000021 606000
 //		req.setUserid("141223100000056");								//	用户id
 		req.setRootinstcd("M000016");		
-		req.setProductid("P000148");
+		req.setProductid("P000070");
 		AccountBalanceQueryResponse response = rsAccTradeManager.queryAccountBalance(req);
 		System.out.println("------------------"+JSONSerializer.toJSON(response).toString());
 		System.out.println("------------------"+response.getOperateStatus());
@@ -90,21 +90,21 @@ public class RSAccTradeManagerTest extends GenericTest {
     }
     
     //转账
-//    @Test 
+    @Test 
     public void testAccountBalanceTransfer(){
     	AccountTransferRequest req = new AccountTransferRequest();
     	req.setTransfertype("3");								//1:子账户转账				
 		req.setConditioncode("1");								//1:落单
 		req.setMerchantcode("M000016");							//转入方机构号
 		req.setProductid("P000070");							//转入方产品号
-		req.setUserrelateid("TJM10000108");	                    //接收方用户Id		
-		req.setRequestno("TJR160630192241897");									//业务订单号
+		req.setUserrelateid("TJM10000087");	                    //接收方用户Id		
+		req.setRequestno("TJR160630192241816");									//业务订单号
 		req.setRequesttime("2016-4-12 22:22:22");				//请求时间
-		req.setAmount("520");										//金额
-		req.setUserfee("5");		
-		req.setUserid("141223100000056");
+		req.setAmount("10000000");										//金额
+		req.setUserfee("0");		
+		req.setUserid("TJM10000111");
 		req.setIntermerchantcode("M000016");					//转出方机构号
-		req.setInterproductid("P000148");						//转出方产品号
+		req.setInterproductid("P000070");						//转出方产品号
 
 	        
 		AccountTransferResponse response = rsAccTradeManager.accountBalanceTransfer(req);

@@ -95,10 +95,16 @@ public class SettingEmployeeController extends BaseController{
 		UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
 		
 		userInfoQueryRequest.setTfsUserId(null);
+		userInfoQueryRequest.setStatus(null);
+		userInfoQueryRequest.setExcludeStatus(TitanUserEnum.Status.NOT_AVAILABLE.getKey());
 		userInfoQueryRequest.setUserLoginName("".equals(tfsUserLoginName)?null:tfsUserLoginName);
 		userInfoQueryRequest.setUserName("".equals(userName)?null:userName);
 		userInfoQueryRequest.setOrgCode(userInfoResponse.getUserInfoDTOList().get(0).getOrgCode());
-		RoleUserInfoPageResponse roleUserInfoPageResponse = titanFinancialUserService.queryRoleUserInfoPage(userInfoQueryRequest);
+		RoleUserInfoPageResponse roleUserInfoPageResponse =  new RoleUserInfoPageResponse();
+		if(StringUtil.isValidString(userInfoQueryRequest.getOrgCode())){
+			roleUserInfoPageResponse = titanFinancialUserService.queryRoleUserInfoPage(userInfoQueryRequest);
+		}
+		
 		if(roleUserInfoPageResponse.isResult()){
 			model.addAttribute("userInfoDTOPage", roleUserInfoPageResponse.getPaginationSupport());
 		}
@@ -151,6 +157,27 @@ public class SettingEmployeeController extends BaseController{
 		
 		model.addAttribute("tfsUserId", tfsUserId);//新增该变量没有值
 		model.addAttribute("fcUserId", fcUserId);
+		//SAAS员工信息
+		if(fcUserId!=null&&fcUserId>0){
+			String merchantCode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+			SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
+			saaSUserRoleRequest.setFcUserId(fcUserId);
+			saaSUserRoleRequest.setMerchantCode(merchantCode);
+			SaaSUserRoleResponse saaSUserRoleResponse = new SaaSUserRoleResponse();
+			try {
+				saaSUserRoleResponse = titanFinancialUserService.querySaaSUserRolePage(saaSUserRoleRequest);
+				
+			} catch (GlobalServiceException e) {
+				log.error("查询saas用户失败，参数saaSUserRoleRequest:" +ToStringBuilder.reflectionToString(saaSUserRoleRequest), e);
+				model.addAttribute("errormsg", "数据信息不存在");
+				return "error";
+			}
+			SaaSMerchantUserDTO saaSMerchantUserDTO =saaSUserRoleResponse.getPaginationSupport().getItemList().get(0);
+			model.addAttribute("fcUserName", saaSMerchantUserDTO.getUserName());
+			model.addAttribute("fcMobile", saaSMerchantUserDTO.getMobileNum());
+			
+		}
+		
 		if(tfsUserId!=null&&tfsUserId>0){
 			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 			userInfoQueryRequest.setTfsUserId(tfsUserId);
@@ -167,23 +194,6 @@ public class SettingEmployeeController extends BaseController{
 						}
 					}
 					model.addAttribute("roleIds", roleIds);
-				}
-				if(fcUserId!=null&&fcUserId>0){
-					String merchantCode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
-					SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
-					saaSUserRoleRequest.setFcUserId(fcUserId);
-					saaSUserRoleRequest.setMerchantCode(merchantCode);
-					SaaSUserRoleResponse saaSUserRoleResponse = new SaaSUserRoleResponse();
-					try {
-						saaSUserRoleResponse = titanFinancialUserService.querySaaSUserRolePage(saaSUserRoleRequest);
-						
-					} catch (GlobalServiceException e) {
-						log.error("查询saas用户失败，参数saaSUserRoleRequest:" +ToStringBuilder.reflectionToString(saaSUserRoleRequest), e);
-						model.addAttribute("errormsg", "数据信息不存在");
-						return "error";
-					}
-					SaaSMerchantUserDTO saaSMerchantUserDTO =saaSUserRoleResponse.getPaginationSupport().getItemList().get(0);
-					model.addAttribute("fcUserName", saaSMerchantUserDTO.getUserName());
 				}
 				
 				return "setting/employee-update";

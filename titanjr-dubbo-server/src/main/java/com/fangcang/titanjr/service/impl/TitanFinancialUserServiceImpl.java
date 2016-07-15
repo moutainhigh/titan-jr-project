@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.service.impl;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +19,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.exception.DaoException;
 import com.fangcang.exception.ParameterException;
 import com.fangcang.merchant.api.MerchantFacade;
 import com.fangcang.merchant.api.MerchantUserFacade;
@@ -28,6 +28,7 @@ import com.fangcang.merchant.dto.MerchantUserCheckDTO;
 import com.fangcang.merchant.dto.MerchantUserCreateDTO;
 import com.fangcang.merchant.dto.MerchantUserDTO;
 import com.fangcang.merchant.dto.ModifyPWDRequestDTO;
+import com.fangcang.merchant.dto.RoleDTO;
 import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
 import com.fangcang.merchant.query.dto.MerchantUserQueryDTO;
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
@@ -49,16 +50,18 @@ import com.fangcang.titanjr.dao.TitanRoleDao;
 import com.fangcang.titanjr.dao.TitanUserBindInfoDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dao.TitanUserRoleDao;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.PermissionEnum;
 import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
 import com.fangcang.titanjr.dto.bean.TitanRoleDTO;
-import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
+import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
 import com.fangcang.titanjr.dto.request.LoginPasswordModifyRequest;
+import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
 import com.fangcang.titanjr.dto.request.PayPasswordRequest;
 import com.fangcang.titanjr.dto.request.PermissionRequest;
 import com.fangcang.titanjr.dto.request.SaaSUserRoleRequest;
@@ -83,6 +86,7 @@ import com.fangcang.titanjr.dto.response.TitanRoleResponse;
 import com.fangcang.titanjr.dto.response.UpdateUserResponse;
 import com.fangcang.titanjr.dto.response.UserBindInfoResponse;
 import com.fangcang.titanjr.dto.response.UserFreezeResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
 import com.fangcang.titanjr.dto.response.UserRegisterResponse;
@@ -215,6 +219,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         //3.金服添加用户权限
         UserRoleSetRequest userRoleSetRequest = new UserRoleSetRequest();
         userRoleSetRequest.setUserRoleIdMap(new HashMap<Long, List<Long>>());
+        userRoleSetRequest.setDeleteUserRoleIdMap(new HashMap<Long, List<Long>>());
         if (userRegisterRequest.getIsAdminUser() == 1) {
             List<TitanRole> titanRoles = titanRoleDao.queryTitanRoles(new TitanRoleQueryRequest());
             userRoleSetRequest.getUserRoleIdMap().put(Long.valueOf(String.valueOf(tfsUserid)),
@@ -264,42 +269,12 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
             log.error("在房仓金服对应商家添加用户失败");
             throw new Exception("在房仓固定商家添加用户失败");
         }
-        
-        //5.SaaS系统新添加的员工绑定权限
-        Long newUserId = null;//添加在金服商家的用户id
-        MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
-        List<String> loginNameList = new ArrayList<String>();
-        loginNameList.add(userRegisterRequest.getLoginUserName());
-        queryDTO.setUserLoginNameList(loginNameList);
-        queryDTO.setMerchantCode(RSInvokeConstant.defaultMerchant);
-        com.fangcang.dao.PaginationSupport pg = merchantUserFacade.queryMerchantUser(queryDTO);
-        if (CollectionUtils.isNotEmpty(pg.getItemList())) {
-            for (MerchantUserDTO userDTO : (List<MerchantUserDTO>)pg.getItemList()) {
-                newUserId = userDTO.getUserId();
-            }
-        }
-        //房仓权限系统的角色
-        Role titanjrRole = getRoleFacade().getRoleById(Integer.valueOf(String.valueOf(RSInvokeConstant.defaultRoleId)));
-        if (userRegisterRequest.getRegisterSource() != 3) {
-            if (null != newUserId) {// 添加权限
-                User newUser = getUserFacade().getUserById(Integer.valueOf(String.valueOf(newUserId)));
-                getUserFacade().addRolesToUser(newUser,new Role[]{titanjrRole});
-               // getUserFacade().deleteRolesFromUser(arg0, arg1);
-            }
-        }
-        //6.SaaS被绑定的员工绑定权限
-        if (userRegisterRequest.getRegisterSource() == LoginSourceEnum.SAAS.getKey()) {
-            if (null != orgiUserId) {//添加权限
-                User orgiUser = getUserFacade().getUserById(Integer.valueOf(String.valueOf(orgiUserId)));
-                getUserFacade().addRolesToUser(orgiUser,new Role[]{titanjrRole});
-            }
-        }
+       
         response.putSuccess();
         return response;
     }
 
     @Override
-    @Transactional(propagation = Propagation.SUPPORTS)
     public UserInfoResponse queryFinancialUser(UserInfoQueryRequest userInfoQueryRequest) {
         UserInfoResponse response = new UserInfoResponse();
         List<UserInfoDTO> userInfoDTOs =  titanUserDao.queryTitanUserList(userInfoQueryRequest);
@@ -308,7 +283,26 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         return response;
     }
     
+     
+    
     @Override
+	public UserInfoPageResponse queryUserInfoPage(UserInfoQueryRequest userInfoQueryRequest) {
+    	UserInfoPageResponse userInfoPageResponse = new UserInfoPageResponse();
+    	PaginationSupport<TitanUser> paginationSupport = new PaginationSupport<TitanUser>();
+    	paginationSupport.setPageSize(userInfoQueryRequest.getPageSize());
+    	paginationSupport.setCurrentPage(userInfoQueryRequest.getCurrentPage());
+    	
+    	TitanUserParam condition = new TitanUserParam();
+    	condition.setTfsuserid(userInfoQueryRequest.getTfsUserId());
+    	condition.setOrgcode(userInfoQueryRequest.getOrgCode());
+    	
+    	paginationSupport = titanUserDao.selectForPage(condition, paginationSupport);
+    	userInfoPageResponse.setTitanUserPaginationSupport(paginationSupport);
+    	
+		return userInfoPageResponse;
+	}
+
+	@Override
 	public UserBindInfoResponse queryUserBindInfoDTO(UserBindInfoRequest userBindInfoRequest) {
     	UserBindInfoResponse userBindInfoResponse = new UserBindInfoResponse();
     	TitanUserBindInfoParam param = new TitanUserBindInfoParam();
@@ -490,6 +484,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         			entity.setUserLoginName(item.getUserLoginName());
         			entity.setUserName(item.getUserName());
         			entity.setMobileNum(item.getMobileNum());
+        			entity.setRoleName(appendRoleName(item.getRoleList()));
         			entity.setIsSMS(item.getIsSMS());
         			entity.setActive(item.getActive());
         			TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
@@ -513,8 +508,21 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     	response.putSuccess();
 		return response;
 	}
-
-     
+	/**
+	 * 角色名称
+	 * @param list
+	 * @return
+	 */
+    private String appendRoleName(List<RoleDTO> list){
+    	String temp = "";
+    	if(list!=null){
+    		for(RoleDTO itemDto : list){
+    			temp += itemDto.getRoleName()+",";
+    		}
+    		temp = temp.substring(0, temp.length()-1);
+    	}
+    	return temp;
+    }
     
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
@@ -816,7 +824,9 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 						TitanUser user = titanUserDao.selectTitanUser(titanUser.getTfsuserid());
 //						如果交易密码已经设置，则需要原密码进行修改交易密码
 						if(user !=null){
-							if(!StringUtil.isValidString(user.getPaypassword())){
+							if(!StringUtil.isValidString(user.getPaypassword()) 
+									|| StringUtil.isValidString(payPasswordRequest.getPayPassword()) 
+									|| CommonConstant.IS_FORGET_PAYPASSWORD.equals(payPasswordRequest.getIsForget()) ){
 								titanUser.setPaySalt(paySalt);
 								int row = titanUserDao.update(titanUser);
 								if(row>0){
@@ -837,6 +847,28 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 			payPasswordResponse.putSysError();
 		}
 		return payPasswordResponse;
+	}
+	
+	@Override
+	public BaseResponseDTO saveLoginPassword(LoginPasswordRequest loginPasswordRequest)
+			throws GlobalServiceException {
+		BaseResponseDTO response = new BaseResponseDTO();
+		if (!GenericValidate.validate(loginPasswordRequest)) {
+            response.putErrorResult("参数不能为空");
+            return response;
+        }
+		TitanUser entity = new TitanUser();
+		entity.setTfsuserid(loginPasswordRequest.getTfsuserid());
+		entity.setPassword(MD5.MD5Encode(loginPasswordRequest.getNewLoginPassword()));
+		entity.setModifier(loginPasswordRequest.getOperator());
+		entity.setModifytime(new Date());
+		try {
+			titanUserDao.update(entity);
+			response.putSuccess("登录密码修改成功");
+		} catch (DaoException e) {
+			throw new GlobalServiceException("修改登录密码错误，参数loginPasswordRequest:"+JSONSerializer.toJSON(loginPasswordRequest).toString(), e);
+		}
+		return response;
 	}
 
 	public void setTitanUserDao(TitanUserDao titanUserDao) {

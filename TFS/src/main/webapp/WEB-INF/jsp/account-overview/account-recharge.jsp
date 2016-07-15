@@ -157,7 +157,7 @@ $(".J_exitKan").on('click', function() {
 });
 
 //检查是否有交易密码
- $.ajax({
+ <%-- $.ajax({
     	 type: "post",
          url: "<%=basePath%>/account/checkIsSetPayPassword.action",
          dataType: "json",
@@ -173,7 +173,7 @@ $(".J_exitKan").on('click', function() {
         		    });
         	 }
         	}
-        }); 
+        });  --%>
 	
 	
 //设置交易密码
@@ -184,43 +184,45 @@ $('.J_password').on('click',function(){
 		 alert("必须输入金额");
 		 return;
 	 }
-	 var is_Input_Password= validate_isInput_password();
-	 if(is_Input_Password==false){
-		 $.ajax({
-	            dataType: 'html',
-	            context: document.body,
-	            url: '<%=basePath%>/account/showPayPassword.action',
-	            success: function (html) {
-	                var d = dialog({
-	                    title: ' ',
-	                    padding: '0 0 0px 0 ',
-	                    content: html,
-	                    skin: 'saas_pop',
-	                    button: [
-	                        {
-	                            value: '确定',
-	                            skin: 'btn p_lr30',
-	                            callback: function () {
-	                            	//获取密码
-	                            	recharge_Order();
-	                            },
-	                            autofocus: true
-	                        },
-	                        {
-	                            value: '取消',
-	                            skin: 'btn btn_grey btn_exit',
-	                            callback: function () {
-	                                //   alert('c');
-	                            }
-	                        }
-	                    ]
-	                }).showModal();
-	            }
-	        });
-	 }else{
-		 recharge_Order(); 
-	 }
+	 recharge_Order(); 
 });	
+
+<%-- var is_Input_Password= validate_isInput_password();
+if(is_Input_Password==false){
+	 $.ajax({
+           dataType: 'html',
+           context: document.body,
+           url: '<%=basePath%>/account/showPayPassword.action',
+           success: function (html) {
+               var d = dialog({
+                   title: ' ',
+                   padding: '0 0 0px 0 ',
+                   content: html,
+                   skin: 'saas_pop',
+                   button: [
+                       {
+                           value: '确定',
+                           skin: 'btn p_lr30',
+                           callback: function () {
+                           	//获取密码
+                           	recharge_Order();
+                           },
+                           autofocus: true
+                       },
+                       {
+                           value: '取消',
+                           skin: 'btn btn_grey btn_exit',
+                           callback: function () {
+                               //   alert('c');
+                           }
+                       }
+                   ]
+               }).showModal();
+           }
+       });
+}else{ 
+
+}  --%>
 
 function showPayResult(){
 	 new top.createConfirm({
@@ -228,7 +230,7 @@ function showPayResult(){
 			padding: '20px 20px 40px',
 			cancelValue : '支付失败',
 	        okValue : '支付成功',		
-	        content : '<div class="f_14 l_h26 rechargeNotice">您正在用.....充值，完成操作后，<br/>请确认结果</div>',
+	        content : '<div class="f_14 l_h26 rechargeNotice">您正在用泰坦金融充值，完成操作后，<br/>请确认结果</div>',
 			ok : function(){	
 				confirmPayResult();
 	        },
@@ -302,7 +304,8 @@ function save_recharge_data(){
 	var data={
 		amount:amount,
 		bankInfo:bankInfo,
-		payPassword:rsaData(payPassword),
+		/* payPassword:rsaData(payPassword), */
+		payPassword:payPassword,
 		linePayType:linePayType
 	};
 	return data;
@@ -321,7 +324,7 @@ function getRechargePayOrderNo(){
 }
 
 
-function validate_isInput_password(){
+<%-- function validate_isInput_password(){
 	var flag = false;
 	 $.ajax({
 		 dataType: "json",
@@ -338,7 +341,7 @@ function validate_isInput_password(){
          }
      });
 	return flag;
-}
+} --%>
 
 function validate_isBlank(){
 	var inputeAmount = $("#inputeAmount").val();
@@ -356,7 +359,7 @@ $("#inputeAmount").blur(function(){
 		 $("#inputeAmountError").text("");
 	}
 	
-	var neg = /^([+-]?)((\d{1,3}(,\d{3})*)|(\d+))(\.\d{2})?$/;
+	var neg = /^\d+(\.\d{1,2})?$/;;
 	var flag = neg.test($(this).val());
 	if(flag==false){
 		$("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
@@ -368,7 +371,7 @@ $("#inputeAmount").blur(function(){
 });
 
 //设置交易密码
-function setPayPassword(html){
+<%-- function setPayPassword(html){
 	var d = dialog({
         title: ' ',
         padding: '0 0 0px 0 ',
@@ -413,7 +416,7 @@ function setPayPassword(html){
         ]
     }).showModal();
 }
-
+ --%>
 </script>
 </body>
 </html>

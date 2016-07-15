@@ -1,7 +1,5 @@
 package com.fangcang.titanjr.request;
 
-import java.util.Date;
-
 import com.fangcang.titanjr.dto.EscrowedEnum;
 import com.fangcang.titanjr.dto.PaySourceEnum;
 
@@ -29,7 +27,7 @@ public class TitanOrderPaymentRequest extends BaseRequest{
 	//接受账户
 	private String recieveMerchantCode;
 	
-	//是否冻结 
+	//是否冻结
 	private EscrowedEnum isEscrowed;
 	
 	//解冻日期

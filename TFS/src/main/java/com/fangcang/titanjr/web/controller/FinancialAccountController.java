@@ -21,6 +21,7 @@ import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.BankCardDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
+import com.fangcang.titanjr.dto.bean.ForgetPayPassword;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
@@ -28,8 +29,8 @@ import com.fangcang.titanjr.service.*;
 import com.fangcang.titanjr.web.pojo.WithDrawRequest;
 import com.fangcang.titanjr.web.util.CommonConstant;
 import com.fangcang.titanjr.web.util.RSADecryptString;
+import com.fangcang.titanjr.web.util.TFSTools;
 import com.fangcang.util.DateUtil;
-import com.fangcang.util.PasswordUtil;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -96,7 +97,6 @@ public class FinancialAccountController extends BaseController {
         setTransOrderDetail(tradeDetailRequest,model);
         return "account-overview/order-receive-detail";
     }
-
     @RequestMapping(value = "/order-pay-detail", method = RequestMethod.GET)
     public String queryPayOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         setTransOrderDetail(tradeDetailRequest,model);
@@ -163,7 +163,7 @@ public class FinancialAccountController extends BaseController {
                 model.addAttribute("tradePage", tradeDetailResponse.getTransOrders());
             }
         }
-        return "account-overview/bind-bankcard";
+        return "account-overview/freeze-order-list";
     }
 
     @RequestMapping(value = "/freeze-detail-page", method = RequestMethod.GET)
@@ -219,15 +219,17 @@ public class FinancialAccountController extends BaseController {
     }
     
     @RequestMapping(value = "/toBindAccountWithDrawCard")
-    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model){
+    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName){
     	model.addAttribute("modifyOrBind",CommonConstant.BIND_BANK_CARD);
+    	model.addAttribute("orgName",orgName);
     	return "account-overview/bind-bankcard";
     }
     
     @RequestMapping("update_account-withdraw_info")
-    public String updateAccountWithdrawInfo(HttpServletRequest request, Model model){
+    public String updateAccountWithdrawInfo(HttpServletRequest request, Model model,String orgName){
     	model.addAttribute("showBankCardInput",1);
     	model.addAttribute("modifyOrBind",CommonConstant.MODIFY_BANK_CARD);
+    	model.addAttribute("orgName",  orgName);
     	return "account-overview/bind-bankcard";
     }
     
@@ -319,10 +321,13 @@ public class FinancialAccountController extends BaseController {
          bankCardBindRequest.setReqSn(String.valueOf(System.currentTimeMillis()));
          bankCardBindRequest.setSubmitTime(DateUtil.dateToString(new Date(),"yyyyMMddHHmmss"));
          bankCardBindRequest.setAccountProperty(CommonConstant.ACCOUNT_PUBLIC);
+         //暂时改为私人账户
+//         bankCardBindRequest.setAccountProperty(CommonConstant.ACCOUNT_PERSON);
          bankCardBindRequest.setAccountPurpose(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey());
          bankCardBindRequest.setCertificateType(String.valueOf(0));
          //查询企业营业执照号
-         bankCardBindRequest.setCertificateNumber(this.getTitanOrganDTO().getCertificateNumber());
+         bankCardBindRequest.setCertificateNumber(this.getTitanOrganDTO().getBuslince());
+         
          bankCardBindRequest.setAccountNumber(bindBankCardRequest.getBankCardCode());
          bankCardBindRequest.setAccountName(bindBankCardRequest.getUserName());
          bankCardBindRequest.setBankCode(bindBankCardRequest.getBankCode());
@@ -393,7 +398,6 @@ public class FinancialAccountController extends BaseController {
                 cardNo = withDrawRequest.getOriginalAccount();
             }
         }
-
         Object tfsUserId = session.getAttribute(CommonConstant.SESSION_KEY_JR_TFS_USERID);
         boolean isValid = false;
         if (tfsUserId != null) {
@@ -431,12 +435,12 @@ public class FinancialAccountController extends BaseController {
             bankCardBindRequest.setCurrency("CNY");
             bankCardBindRequest.setReqSn(String.valueOf(System.currentTimeMillis()));
             bankCardBindRequest.setSubmitTime(DateUtil.dateToString(new Date(),"yyyyMMddHHmmss"));
-            bankCardBindRequest.setAccountProperty(String.valueOf(1));
+            bankCardBindRequest.setAccountProperty(String.valueOf(2));
             bankCardBindRequest.setAccountPurpose(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey());
             if (financialOrganDTO.getUserType() == 1) {
                 bankCardBindRequest.setCertificateType(String.valueOf(TitanOrgEnum.CertificateType.SFZ.getKey()));
-//                bankCardBindRequest.setCertificateNumber(financialOrganDTO.getBuslince());
-                bankCardBindRequest.setCertificateNumber("411381196802185622");
+                bankCardBindRequest.setCertificateNumber(financialOrganDTO.getBuslince());
+//                bankCardBindRequest.setCertificateNumber("411381196802185622");
             } else {
                 bankCardBindRequest.setCertificateType(String.valueOf(financialOrganDTO.getCertificateType()));
                 bankCardBindRequest.setCertificateNumber(String.valueOf(financialOrganDTO.getCertificateNumber()));
@@ -487,8 +491,14 @@ public class FinancialAccountController extends BaseController {
     public Map<String, String> setPayPassword(HttpServletRequest request, PayPasswordRequest payPasswordRequest) {
         Map<String, String> map = new HashMap<String, String>();
         if (payPasswordRequest != null && StringUtil.isValidString(payPasswordRequest.getPayPassword())) {
-        	payPasswordRequest.setPayPassword(RSADecryptString.decryptString(payPasswordRequest.getPayPassword(),request));
+//        	payPasswordRequest.setPayPassword(RSADecryptString.decryptString(payPasswordRequest.getPayPassword(),request));
+        	payPasswordRequest.setPayPassword(payPasswordRequest.getPayPassword());
+        	if(StringUtil.isValidString(payPasswordRequest.getOldPassword())){
+//        		payPasswordRequest.setOldPassword(RSADecryptString.decryptString(payPasswordRequest.getOldPassword(),request));
+        		payPasswordRequest.setOldPassword(payPasswordRequest.getOldPassword());
+        	}
         	payPasswordRequest.setTfsuserid(getTfsUserId());
+        	log.info("设置支付密码的传入参数:"+toJson(payPasswordRequest));
             PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
             if (payPasswordResponse.isSaveSuccess()) {
                 map.put(CommonConstant.RESULT, CommonConstant.SUCCESS);
@@ -497,10 +507,51 @@ public class FinancialAccountController extends BaseController {
                 map.put(CommonConstant.MSG, payPasswordResponse.getReturnMessage());
             }
         }
-        map.put("result", "fail");
+        map.put(CommonConstant.RESULT, "fail");
         return map;
     }
 
+    @ResponseBody
+    @RequestMapping("forgetPayPassword")
+    public String forgetPayPassword(ForgetPayPassword forgetPayPassword){
+    	if(forgetPayPassword ==null
+    			||!StringUtil.isValidString(forgetPayPassword.getPayPassword())
+    			||!StringUtil.isValidString(forgetPayPassword.getUserName())
+    			||!StringUtil.isValidString(forgetPayPassword.getCode())){
+    		return toJson(putSysError("参数错误"));
+    	}
+    	
+    	//获取该用户的用户名
+    	if(!getUserName().equals(forgetPayPassword.getUserName())){
+    		return toJson(putSysError("您输入的用户名错误"));
+    	}
+    	
+    	String rcode = TFSTools.validateRegCode(session,forgetPayPassword.getUserName(), forgetPayPassword.getCode());
+    	if(rcode.equals("SUCCESS")){
+    		//移除session
+    		session.removeAttribute(CommonConstant.SESSION_KEY_REG_CODE+"_"+forgetPayPassword.getUserName());
+    		PayPasswordRequest payPasswordRequest  = new PayPasswordRequest();
+//    		payPasswordRequest.setPayPassword(RSADecryptString.decryptString(forgetPayPassword.getPayPassword(),request));
+    		payPasswordRequest.setPayPassword(forgetPayPassword.getPayPassword());
+    		payPasswordRequest.setIsForget(com.fangcang.titanjr.common.util.CommonConstant.IS_FORGET_PAYPASSWORD);
+    		payPasswordRequest.setTfsuserid(this.getTfsUserId());
+    	    PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
+    	    if (payPasswordResponse.isSaveSuccess()) {
+    	    	return toJson(putSuccess());
+            } else {
+            	return toJson(putSysError(payPasswordResponse.getReturnMessage()));
+            }
+    	}else if(rcode.equals("EXPIRE")){
+    		return toJson(putSysError("验证码已经过期，请重新获取验证码"));
+    	}else if(rcode.equals("NOTEXIST")){
+    		return toJson(putSysError("验证码错误，请重新获取验证码"));
+    	}else if(rcode.equals("WRONG")){
+    		return toJson(putSysError("验证码错误，请重新输入"));
+    	}else{
+    		return toJson(putSysError("验证码不存在，请重新获取验证码"));
+    	}
+    }
+    
     @ResponseBody
     @RequestMapping("checkIsSetPayPassword")
     public Map<String, String> checkIsSetPayPassword(String fcUserid,HttpServletRequest request) {

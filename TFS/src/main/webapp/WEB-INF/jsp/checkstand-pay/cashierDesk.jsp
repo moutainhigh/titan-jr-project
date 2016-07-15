@@ -83,7 +83,7 @@
                             <c:if test="${ not empty fcUserid}">
                             <li class="p_l27">
                                 <label class="f_ui-checkbox-c3 p_r10">
-                                    <input type="checkbox" checked="" id="d_checkbox" ><i onclick="checktest()"></i>
+                                    <input type="checkbox" checked="" id="d_checkbox" onclick="checktest()" ><i ></i>
                                     使用账户可用余额付款</label>丨
                                 <span class="p_l10">账户可用余额：${accountBalance.balanceusable }元</span>
                             </li>
@@ -96,7 +96,7 @@
             </div>
             <input type="hidden" id="onlinePayAmount" name="onlinePayAmount"><!--通过网银充值并支付的金额-->
               <div class="goldpay_title1" style="border-bottom:#ddd 1px solid;">
-               <c:if test="${ not empty fcUserid}  ">
+               <c:if test="${ not empty fcUserid}">
                 <div class="goldpaytitle1_top" id="not_enough_amount">剩余余额：<!--账户余额不够用余额付款-->
                     <span class="c_f00" id="pay_surplus_amount">${orderDTO.payAmount - accountBalance.balanceusable}</span>元
                     <span class="p_l27">使用以下方式付款：</span>
@@ -210,6 +210,10 @@
   </form>
 </div>
 
+<form action="<%=basePath%>/trade/payConfirmPage.action" id="confirmOrder">
+  <input name="orderNo" id="orderNo" type="hidden">
+</form>
+
 <!--弹窗白色底-->
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
 <script src="<%=cssSaasPath%>/js/password.js"></script>
@@ -251,8 +255,21 @@
         } catch (f) {
             d = 0;
         }
-        e = Math.pow(10, Math.max(c, d));
-        return(a * e - b * e) / e;
+       
+       return e = Math.pow(10, Math.max(c, d)), (mul(a, e) - mul(b, e)) / e;
+    }
+    
+    function mul(a, b) {//改进的乘法
+        var c = 0,
+            d = a.toString(),
+            e = b.toString();
+        try {
+            c += d.split(".")[1].length;
+        } catch (f) {}
+        try {
+            c += e.split(".")[1].length;
+        } catch (f) {}
+        return Number(d.replace(".", "")) * Number(e.replace(".", "")) / Math.pow(10, c);
     }
     
     function checktest() {
@@ -399,7 +416,8 @@
             		                        			         url: "<%=basePath%>/account/setPayPassword.action",
             		                        			         data: {
             		                        			        	 fcuserid:'${fcUserid}',
-            		                        			        	 payPassword:rsaData(PasswordStr.returnStr())
+            		                        			        	/*  payPassword:rsaData(PasswordStr.returnStr()) */
+            		                        			        	 payPassword:PasswordStr.returnStr()
             		                        			         },
             		                        			         dataType: "json",
             		                        			         success: function(data){
@@ -562,10 +580,11 @@
                	 //如果ajax请求成功则显示回调页面
                	 if(data.result == "success"){
                		new top.Tip({msg: data.msg, type: 1, time: 2000});
-                 	 window.close();
+               		$("#orderNo").val(data.orderNo);
+               		$("#confirmOrder").submit();
                	 }else{
                		 new top.Tip({msg: data.msg, type: 1, time: 2000});
-               		 window.close();
+               		$("#confirmOrder").submit();
                	 }
                 }
                 });
@@ -582,10 +601,14 @@
     }
     
     function validate_isInput_password(){
-    	if('${paySource}'=='1'){//如果分销商付款不需要输入密码
+    	if('${paySource}'=='1'){//如果分销商付款不需要输入密码，不用余额支付也不需要输入付款密码
     		return true;
     	}
-    	 var flag = false;
+    	if(($("#d_checkbox").attr("checked")=="checked" && '${accountBalance.balanceusable}'=="0")||$("#d_checkbox").attr("checked")!="checked"){
+    		return true;
+    	}
+    	
+    	var flag = false;
        	 $.ajax({
                 dataType: 'json',
                 context: document.body,
@@ -602,12 +625,13 @@
                 }
             });
     	
-    	return flag;
+    	return flag; 
     }
     
     function save_payDate(){
     	var transferAmount ="0";
     	var payAmount = "0";
+    	
     	if (sub('${orderDTO.payAmount}', '${accountBalance.balanceusable}') <= 0){
     		if($("#d_checkbox").attr("checked")=="checked"){//余额充足二选一
        		    transferAmount = '${orderDTO.payAmount}';
@@ -622,7 +646,6 @@
        	    	payAmount = '${orderDTO.payAmount}';
        	    }
     	}
-    	
     	var recieveOrgName = null;
     	var recieveTitanCode = null;
     	if($("#not_exists_history").is(":visible")==true){
@@ -640,7 +663,8 @@
          }
     	var payPassword = null;
     	if("undefined" != typeof PasswordStr2){
-    		payPassword = rsaData(PasswordStr2.returnStr());
+    		/* payPassword = rsaData(PasswordStr2.returnStr()); */
+    		payPassword = PasswordStr2.returnStr();
     	}
     	var itemType = $(".bankName:checked").attr("data-index");
     	var linePayType =null;

@@ -3,14 +3,10 @@ package com.fangcang.titanjr.common.util;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
-
-import org.apache.commons.io.FileUtils;
 
 /**
  * 图片
@@ -262,25 +258,19 @@ public class ImageResizer {
 	}
 	
 	public static void main(String[] arg) throws IOException{
-//		byte[] buffer = new byte[1024];
-//		InputStream inputStream = new FileInputStream(new File("F:\\a8773912b31bb051be533b24317adab44aede043.jpg"));
-//		InputStream newInputStream = ImageIOExtUtil.createCycleInputStream(inputStream);
-//		sizeImgInputStream(newInputStream,200,200);
-//		newInputStream.reset();
-//		sizeImgInputStream(newInputStream,200,200);
 		
-		BufferedImage sourceImage = ImageIO.read(new File("F:\\a8773912b31bb051be533b24317adab44aede043.jpg"));
-
-		ImageResizer resizer = new ImageResizer(sourceImage);
-		resizer.setTargetSize(200,500);
-		resizer.setCrop(false);
-		resizer.setUpscale(true);
-
-		BufferedImage destinationImage = resizer.resize();
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ImageIO.write(destinationImage, "jpg", out);
-		File cacheFile = new File("F:\\a8773912b31bb051be533b24317adab44aede043-200.jpg");
-		FileUtils.writeByteArrayToFile(cacheFile, out.toByteArray());
+//		BufferedImage sourceImage = ImageIO.read(new File("F:\\2222.png"));
+//
+//		ImageResizer resizer = new ImageResizer(sourceImage);
+//		resizer.setTargetSize(ImgSizeEnum.SIZE_50.getWidth(), ImgSizeEnum.SIZE_50.getHeight());
+//		resizer.setCrop(false);
+//		resizer.setUpscale(true);
+//		resizer.setCropPosition(-1);
+//		BufferedImage destinationImage = resizer.resize();
+//		ByteArrayOutputStream out = new ByteArrayOutputStream();
+//		ImageIO.write(destinationImage, "jpg", out);
+//		File cacheFile = new File("F:\\2222-50.png");
+//		FileUtils.writeByteArrayToFile(cacheFile, out.toByteArray());
 		
 	}
 	 

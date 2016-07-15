@@ -1,18 +1,13 @@
 package com.fangcang.titanjr.service.impl;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.alibaba.fastjson.JSON;
-import com.fangcang.titanjr.common.util.GenericValidate;
-import com.fangcang.titanjr.dto.request.*;
-import com.fangcang.titanjr.dto.response.*;
-import com.fangcang.titanjr.rs.response.AccountWithDrawResponse;
+import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -20,15 +15,18 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.FreezeConditionCodeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.TransOrderTypeEnum;
 import com.fangcang.titanjr.common.enums.WithDrawStatusEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
-import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dao.TitanAccountDao;
@@ -39,11 +37,40 @@ import com.fangcang.titanjr.dao.TitanOrgDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanWithDrawReqDao;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
+import com.fangcang.titanjr.dto.bean.AccountDTO;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
+import com.fangcang.titanjr.dto.request.AccountCheckRequest;
+import com.fangcang.titanjr.dto.request.AccountCreateRequest;
+import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
+import com.fangcang.titanjr.dto.request.AccountRequest;
+import com.fangcang.titanjr.dto.request.AccountUpdateRequest;
+import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
+import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
+import com.fangcang.titanjr.dto.request.FinancialOrderRequest;
+import com.fangcang.titanjr.dto.request.FreezeAccountBalanceRequest;
+import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
+import com.fangcang.titanjr.dto.request.TransOrderRequest;
+import com.fangcang.titanjr.dto.request.TransferRequest;
+import com.fangcang.titanjr.dto.request.UnFreeBalanceBatchRequest;
+import com.fangcang.titanjr.dto.request.UnFreezeAccountBalanceRequest;
+import com.fangcang.titanjr.dto.request.UnFreezeRequest;
+import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
+import com.fangcang.titanjr.dto.response.AccountCheckResponse;
+import com.fangcang.titanjr.dto.response.AccountCreateResponse;
+import com.fangcang.titanjr.dto.response.AccountHistoryResponse;
+import com.fangcang.titanjr.dto.response.AccountResponse;
+import com.fangcang.titanjr.dto.response.AccountUpdateResponse;
+import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
+import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
+import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
+import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
+import com.fangcang.titanjr.dto.response.UnFreezeAccountBalanceResponse;
+import com.fangcang.titanjr.dto.response.UnFreezeResponse;
 import com.fangcang.titanjr.entity.TitanAccount;
 import com.fangcang.titanjr.entity.TitanAccountHistory;
 import com.fangcang.titanjr.entity.TitanFundFreezereq;
@@ -52,6 +79,7 @@ import com.fangcang.titanjr.entity.TitanOrg;
 import com.fangcang.titanjr.entity.TitanTransOrder;
 import com.fangcang.titanjr.entity.TitanWithDrawReq;
 import com.fangcang.titanjr.entity.parameter.TitanAccountHistoryParam;
+import com.fangcang.titanjr.entity.parameter.TitanAccountParam;
 import com.fangcang.titanjr.entity.parameter.TitanFundFreezereqParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgParam;
 import com.fangcang.titanjr.rs.dto.BalanceInfo;
@@ -61,6 +89,7 @@ import com.fangcang.titanjr.rs.request.AccountWithDrawRequest;
 import com.fangcang.titanjr.rs.request.BalanceFreezeRequest;
 import com.fangcang.titanjr.rs.request.BalanceUnFreezeRequest;
 import com.fangcang.titanjr.rs.response.AccountBalanceQueryResponse;
+import com.fangcang.titanjr.rs.response.AccountWithDrawResponse;
 import com.fangcang.titanjr.rs.response.BalanceFreezeResponse;
 import com.fangcang.titanjr.rs.response.BalanceUnFreezeResponse;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
@@ -150,12 +179,68 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
         accountCreateResponse.putSuccess();
         return accountCreateResponse;
     }
+    
+    
 
 //    @Override
 //    public AccountBalanceResponse queryAccountBalance(AccountBalanceRequest accountBalanceRequest) {
 //
 //        return null;
 //    }
+
+	@Override
+	public AccountResponse getAccount(AccountRequest accountRequest) {
+		AccountResponse response = new AccountResponse();
+		if(!StringUtil.isValidString(accountRequest.getUserid())){
+			response.putSysError();
+			return response;
+		}
+		PaginationSupport<TitanAccount> paginationSupport =  new PaginationSupport<TitanAccount>();
+		paginationSupport.setPageSize(accountRequest.getPageSize());
+		paginationSupport.setCurrentPage(accountRequest.getCurrentPage());
+		paginationSupport.setOrderBy(" createtime desc ");
+		TitanAccountParam condition = new TitanAccountParam();
+		condition.setUserid(accountRequest.getUserid());
+		try {
+			paginationSupport = titanAccountDao.selectForPage(condition, paginationSupport);
+			if(paginationSupport.getItemList().size()>0){
+				AccountDTO accountDTO = new AccountDTO();
+				MyBeanUtil.copyProperties(accountDTO, paginationSupport.getItemList().get(0));
+				response.setAccountDTO(accountDTO);
+			}
+			response.putSuccess();
+		} catch (Exception e) {
+			log.error("get account error, param  accountRequest :"+JSONSerializer.toJSON(accountRequest).toString(), e); 
+			response.putErrorResult("查询失败");
+			return response;
+		}
+		return response;
+	}
+
+
+	@Override
+	public AccountUpdateResponse updateAccount(AccountUpdateRequest accountUpdateRequest) throws GlobalServiceException {
+		AccountUpdateResponse response = new AccountUpdateResponse();
+		if(!StringUtil.isValidString(accountUpdateRequest.getUserId())){
+			response.putSysError();
+			return response;
+		}
+		TitanAccount entity = new TitanAccount();
+		entity.setUserid(accountUpdateRequest.getUserId());
+		entity.setStatus(accountUpdateRequest.getStatus());
+		entity.setAllownopwdpay(accountUpdateRequest.getAllownopwdpay());
+		entity.setBalanceoverlimit(accountUpdateRequest.getBalanceOverLimit());
+		entity.setModifier(accountUpdateRequest.getOperator());
+		entity.setModifytime(new Date());
+		try {
+			titanAccountDao.update(entity);
+			response.putSuccess();
+			return response;
+		} catch (Exception e) {
+			throw new GlobalServiceException("更新账户信息失败，参数accountUpdateRequest："+JSONSerializer.toJSON(accountUpdateRequest).toString(),e);
+		}
+	}
+
 
 	@Override
 	public FreezeAccountBalanceResponse freezeAccountBalance(
@@ -319,6 +404,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	//查询账户明细
 	@Override
 	public AccountBalanceResponse queryAccountBalance(AccountBalanceRequest accountBalanceRequest) {
+		log.info("查询账户明细:"+JSON.toJSON(accountBalanceRequest));
 		AccountBalanceResponse accountBalanceResponse = new AccountBalanceResponse();
 		if (accountBalanceRequest != null) {
 			AccountBalanceQueryRequest balanceQueryRequest = new AccountBalanceQueryRequest();
@@ -327,6 +413,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			AccountBalanceQueryResponse balanceQueryResponse = null;
 			try {
 				balanceQueryResponse = rsAccTradeManager.queryAccountBalance(balanceQueryRequest);
+				log.info("查询账户明细结果:"+JSON.toJSON(balanceQueryResponse));
 			} catch (Exception e) {
 				log.error("调用融数查询账户余额异常", e);
 			}
@@ -434,7 +521,8 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			return withDrawResponse;
 		}
 		try {
-			titanTransOrder.setStatusid(OrderStatusEnum.Status_1.getStatus());
+			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_IN_PROCESS.getStatus());
+			titanTransOrder.setTransordertype(TransOrderTypeEnum.WITHDRAW.type);
 			int rowNum = titanTransOrderDao.insert(titanTransOrder);
 			if (rowNum <= 0) {
 				withDrawResponse.putErrorResult("保存交易单失败");
@@ -463,10 +551,10 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					withDrawResponse.putSuccess();
 					withDrawResponse.setOperateStatus(true);
 					titanWithDrawReq.setStatus(WithDrawStatusEnum.WithDraw_SUCCESSED.getKey());
-					titanTransOrder.setStatusid(OrderStatusEnum.Status_2.getStatus());
+					titanTransOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
 				} else {
 					withDrawResponse.putErrorResult(accountWithDrawResponse.getReturnCode(), accountWithDrawResponse.getReturnMsg());
-					titanTransOrder.setStatusid(OrderStatusEnum.Status_4.getStatus());
+					titanTransOrder.setStatusid(OrderStatusEnum.ORDER_FAIL.getStatus());
 					titanWithDrawReq.setStatus(WithDrawStatusEnum.WithDraw_FAILED.getKey());
 					withDrawResponse.setOperateStatus(false);
 				}
@@ -805,7 +893,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					    	
 					    	//修改系统单号
 					    	TitanTransOrder titanTransOrder = new TitanTransOrder();
-					    	titanTransOrder.setStatusid(OrderStatusEnum.Status_2.getStatus());
+					    	titanTransOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
 					    	titanTransOrder.setOrderid(fundFreezeDTO.getOrderNo());
 					    	try{
 					    		titanTransOrderDao.update(titanTransOrder);

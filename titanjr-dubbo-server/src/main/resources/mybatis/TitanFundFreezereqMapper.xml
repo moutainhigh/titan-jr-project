@@ -139,7 +139,7 @@
   <select id="selectUnFreezeOrders" parameterType="com.fangcang.titanjr.dto.request.UnFreezeRequest" resultMap="FundFreezeDTOMap">
    select freeze.userid,freeze.freezereqid,freeze.merchantcode,freeze.authcode,freeze.requestno,freeze.amount,freeze.orderno
     from t_tfs_fundfreezereq freeze inner join t_tfs_transorder orders on orders.orderid=freeze.orderno
-    where orders.isEscrowedPayment=1 and statusid ='3' and escrowedDate=#{unFreezeDate} limit #{offset},#{rows}
+    where orders.isEscrowedPayment=0 and statusid ='3' and escrowedDate=#{unFreezeDate} limit #{offset},#{rows}
   </select>
   
 </mapper>

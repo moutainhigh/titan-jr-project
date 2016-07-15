@@ -11,14 +11,14 @@ import com.fangcang.titanjr.entity.parameter.TitanAccountParam;
 public class TitanAccountDaoImpl extends GenericDAOMyBatisImpl implements TitanAccountDao {
 
 	@Override
-	public boolean selectForPage(TitanAccountParam condition,PaginationSupport<TitanAccount> paginationSupport)
+	public PaginationSupport<TitanAccount> selectForPage(TitanAccountParam condition,PaginationSupport<TitanAccount> paginationSupport)
 			throws DaoException {
 		try {
-			super.selectForPage("com.fangcang.titanjr.dao.TitanAccountDao.queryList", condition, paginationSupport);
+			paginationSupport = super.selectForPage("com.fangcang.titanjr.dao.TitanAccountDao.queryList", condition, paginationSupport);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}
-		return true;
+		return paginationSupport;
 	}
 
 	@Override

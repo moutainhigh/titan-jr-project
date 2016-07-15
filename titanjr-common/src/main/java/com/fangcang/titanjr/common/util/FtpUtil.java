@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.math.RandomUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
@@ -33,10 +32,10 @@ public class FtpUtil {
 	/**
 	 * ftp上传服务器默认配置
 	 */
-	private static final String DEFAULT_FTP_IP = "192.168.2.100";
-	private static final int DEFAULT_FTP_PORT = 21;
-	private static final String DEFAULT_FTP_USERNAME = "fangcang168";
-	private static final String DEFAULT_FTP_PASSWORD = "fangcang168";
+//	private static final String DEFAULT_FTP_IP = "192.168.2.100";
+//	private static final int DEFAULT_FTP_PORT = 21;
+//	private static final String DEFAULT_FTP_USERNAME = "fangcang168";
+//	private static final String DEFAULT_FTP_PASSWORD = "fangcang168";
 	
 	/**
 	 * 用户注册上传的资料
@@ -45,10 +44,10 @@ public class FtpUtil {
 	
 	
 	private FTPClient ftpClient;
-	private String strIp;
-	private int intPort;
-	private String user;
-	private String password;
+	private  String serverIp;
+	private  int serverPort;
+	private  String serverUser;
+	private  String serverPassword;
 	private boolean isLogin;
 
 	public static String baseLocation = "/data/image/upload/images/titanjr/";
@@ -69,6 +68,9 @@ public class FtpUtil {
 		return String.valueOf(r)+String.valueOf(b);
 	}
 	
+	public FtpUtil(){
+		
+	}
 	/**
 	 * FtpUtil构造函数
 	 */
@@ -76,7 +78,6 @@ public class FtpUtil {
 		if (this.isBlank(strIp)) {
 			throw new IllegalArgumentException("ftp ip不能为空");
 		}
-
 		if (this.isBlank(user)) {
 			user = "";
 		}
@@ -85,10 +86,10 @@ public class FtpUtil {
 			password = "";
 		}
 
-		this.strIp = strIp;
-		this.intPort = intPort;
-		this.user = user;
-		this.password = password;
+		this.serverIp = strIp;
+		this.serverPort = intPort;
+		this.serverUser = user;
+		this.serverPassword = password;
 		this.ftpClient = new FTPClient();
 	}
 
@@ -103,21 +104,21 @@ public class FtpUtil {
 			this.ftpClient.setControlEncoding("GBK");
 			this.ftpClient.configure(ftpClientConfig);
 
-			if (this.intPort > 0) {
-				this.ftpClient.connect(this.strIp, this.intPort);
+			if (this.serverPort > 0) {
+				this.ftpClient.connect(this.serverIp, this.serverPort);
 			} else {
-				this.ftpClient.connect(this.strIp);
+				this.ftpClient.connect(this.serverIp);
 			}
 
 			// FTP服务器连接回答
 			int reply = this.ftpClient.getReplyCode();
 			if (!FTPReply.isPositiveCompletion(reply)) {
 				this.ftpClient.disconnect();
-				logger.error("登录FTP服务失败！");
+				logger.error("登录FTP服务失败！ftpServerUser:"+this.serverUser+",ftpServerPassword:"+this.serverPassword+",ftpServerIp:"+this.serverIp+",ftpServerPort:"+this.serverPort);
 				return isLogin;
 			}
 
-			this.ftpClient.login(this.user, this.password);
+			this.ftpClient.login(this.serverUser, this.serverPassword);
 
 			// 设置传输协议
 			this.ftpClient.enterLocalPassiveMode();
@@ -129,7 +130,7 @@ public class FtpUtil {
 			isLogin = true;
 			this.isLogin = isLogin;
 		} catch (Exception e) {
-			logger.error(this.user + "登录FTP服务失败！", e);
+			logger.error("登录FTP服务失败！ftpServerUser:"+this.serverUser+",ftpServerPassword:"+this.serverPassword+",ftpServerIp:"+this.serverIp+",ftpServerPort:"+this.serverPort,e);
 			throw e;
 		}
 
@@ -455,7 +456,7 @@ public class FtpUtil {
 	public static boolean uploadFileExt(File file, String remoteUploadePath) {
 		FtpUtil ftp = null;
 		try {
-			 ftp = new FtpUtil(DEFAULT_FTP_IP, DEFAULT_FTP_PORT, DEFAULT_FTP_USERNAME, DEFAULT_FTP_PASSWORD);
+			ftp = new FtpUtil(DubboServerJDBCProperties.getFtpServerIp(), DubboServerJDBCProperties.getFtpServerPort(), DubboServerJDBCProperties.getFtpServerUser(), DubboServerJDBCProperties.getFtpServerPassword());
 			ftp.ftpLogin();
 			ftp.uploadFile(file, remoteUploadePath);
 			ftp.ftpLogOut();
@@ -484,7 +485,7 @@ public class FtpUtil {
 	public static String uploadStreamExt(String fileName,InputStream inStream, String remoteUploadePath) {
 		FtpUtil ftp = null;
 		try {
-			 ftp = new FtpUtil(DEFAULT_FTP_IP, DEFAULT_FTP_PORT, DEFAULT_FTP_USERNAME, DEFAULT_FTP_PASSWORD);
+			ftp = new FtpUtil(DubboServerJDBCProperties.getFtpServerIp(), DubboServerJDBCProperties.getFtpServerPort(), DubboServerJDBCProperties.getFtpServerUser(), DubboServerJDBCProperties.getFtpServerPassword());
 			ftp.ftpLogin();
 			ftp.uploadStream(fileName, inStream, remoteUploadePath);
 			ftp.ftpLogOut();
@@ -503,7 +504,6 @@ public class FtpUtil {
 		
 		return baseUrlPrefix + remoteUploadePath + "/" + fileName;
 	}
-	
 	
 	public static void main(String[] args) throws Exception {
 		

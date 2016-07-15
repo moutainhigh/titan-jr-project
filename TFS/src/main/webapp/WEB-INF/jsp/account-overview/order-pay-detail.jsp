@@ -11,7 +11,7 @@
     <div class="S_popup_content" style="width: 800px; padding: 20px 20px 10px;">
         <div class="recharge-record-box">
             <p><em><strong>订单金额：</strong><span class="recharge-colorRed fontSize24">
-				<fmt:formatNumber value="${transOrder.amount/100.0 }" pattern="#,##0.00#"/>
+				<fmt:formatNumber value="${transOrder.tradeamount/100.0 }" pattern="#,##0.00#"/>
 			</span>元</em>业务单号：${transOrder.businessordercode }</p><!--业务系统单号-->
             <div class="orderDetails-content">
                 <div class="orderDetails-content1">
@@ -19,24 +19,26 @@
                     <p class="ftSize14"><span class="w_250">收款方：
                         <i class="recharge-colorRed">${transOrder.transTarget }</i></span><span
                             class="w_160">交易类型：付款</span>交易状态：
-                        <c:if test="${transOrder.statusid == 1}">
-                            处理中
-                        </c:if>
-                        <c:if test="${transOrder.statusid == 2}">
-                            已成功
-                        </c:if>
-                        <c:if test="${transOrder.statusid == 3}">
-                            已冻结
-                        </c:if>
-                        <c:if test="${transOrder.statusid == 4}">
-                            交易失败
-                        </c:if>
+                            <c:choose>
+                              <c:when test="${transOrder.statusid == 8}">
+                                                                                    已成功
+                              </c:when>
+                              <c:when test="${transOrder.statusid == 9}">
+                                                                                   交易失败
+                              </c:when>
+                              <c:when test="${transOrder.statusid == 6}">
+                                                                                    已冻结
+                              </c:when>
+                              <c:otherwise>
+                                                                                   处理中
+                              </c:otherwise>
+                            </c:choose>
                     </p>
                     <p class="ftSize14">
                         <span class="w_250">
                         交易创建时间：<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.createtime}"/>
                         </span>
-                        <span class="w_160">创建人：${transOrder.creator}</span>
+                        <span class="w_160">创建人：<c:if test="${transOrder.creator !=null} ">${transOrder.creator}</c:if></span>
                     </p>
                     <dl class="orderDetails-dl">
                         <dt class='fl'>交易内容：</dt>

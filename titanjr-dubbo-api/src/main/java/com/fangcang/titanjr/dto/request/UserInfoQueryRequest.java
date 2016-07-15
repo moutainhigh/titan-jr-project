@@ -26,6 +26,10 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
     private String orgCode;
     
     private Integer status;
+    /**
+     * 要排除的状态
+     */
+    private Integer excludeStatus;
 
     
     public String getOrgCode() {
@@ -99,4 +103,13 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
     public void setMobilePhone(String mobilePhone) {
         this.mobilePhone = mobilePhone;
     }
+
+	public Integer getExcludeStatus() {
+		return excludeStatus;
+	}
+
+	public void setExcludeStatus(Integer excludeStatus) {
+		this.excludeStatus = excludeStatus;
+	}
+    
 }

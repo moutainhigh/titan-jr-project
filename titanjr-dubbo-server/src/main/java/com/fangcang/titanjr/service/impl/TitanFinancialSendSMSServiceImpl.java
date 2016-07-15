@@ -5,7 +5,6 @@ import net.sf.json.JSONSerializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fangcang.message.email.dto.EmailSenderDTO;
@@ -16,6 +15,7 @@ import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.DubboServerJDBCProperties;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.request.SendRegCodeRequest;
 import com.fangcang.titanjr.dto.request.SendSMSRequest;
@@ -26,16 +26,11 @@ import com.fangcang.util.StringUtil;
 
 @Service("titanFinancialSendSMSService")
 public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSService {
-	 private static final Log log = LogFactory.getLog(TitanFinancialSendSMSServiceImpl.class);
+	private static final Log log = LogFactory.getLog(TitanFinancialSendSMSServiceImpl.class);
 	 
-	 private static final String EMAIL_PROVIDER_SERVER_HOST = "smtp.exmail.qq.com";
-	 
-	 private static final String EMAIL_PROVIDER_FROM = "qinglong.luo@fangcang.com";
-	 private static final String EMAIL_PROVIDER_PWD = "Fangcang123";
-	 
-	 private String emailPort ="25" ;
-	 
-	 
+	@Autowired
+	private DubboServerJDBCProperties dubboServerJDBCProperties;
+	
 	@Autowired
     private HessianProxyBeanFactory hessianProxyBeanFactory ;
 
@@ -122,17 +117,22 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 				response.putErrorResult("邮箱地址不正确"); 
 				return response;
 			}
-			//TODO 修改正式环境，地址、主题
+			if(!StringUtil.isValidString(sendRegCodeRequest.getSubject())){
+				response.putErrorResult("邮件主题不能为空"); 
+				return response;
+			}
+			
 			String messageServiceUrl= ProxyFactoryConstants.messageServiceUrl + "emailSendService";
 			EmailSenderDTO emailSenderDTO  = new EmailSenderDTO();
 			emailSenderDTO.setTo(sendRegCodeRequest.getReceiveAddress());
 			emailSenderDTO.setContent(sendRegCodeRequest.getContent());
-			emailSenderDTO.setSubject("泰坦金融注册验证码");
-			emailSenderDTO.setFrom(EMAIL_PROVIDER_FROM);
-			emailSenderDTO.setUserName(EMAIL_PROVIDER_FROM);
-			emailSenderDTO.setPassword(EMAIL_PROVIDER_PWD);
-			emailSenderDTO.setEmailServerHost(EMAIL_PROVIDER_SERVER_HOST);
-			emailSenderDTO.setEmailServerPort(emailPort);
+			emailSenderDTO.setSubject(sendRegCodeRequest.getSubject());
+			emailSenderDTO.setFrom(dubboServerJDBCProperties.getJrEmailFrom());
+			emailSenderDTO.setUserName(dubboServerJDBCProperties.getJrEmailUsername());
+			emailSenderDTO.setPassword(dubboServerJDBCProperties.getJrEmailPassword());
+			emailSenderDTO.setEmailServerHost(dubboServerJDBCProperties.getJrEmailServer());
+			emailSenderDTO.setEmailServerPort(dubboServerJDBCProperties.getJrEmailPort());
+			//TODO 修改正式环境的商家
 			emailSenderDTO.setMerchantCode("M10000181");
 			try {
 				EmailSendService emailSendService = hessianProxyBeanFactory.getHessianProxyBean(EmailSendService.class,messageServiceUrl);

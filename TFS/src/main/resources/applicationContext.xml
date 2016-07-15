@@ -75,7 +75,7 @@
     </bean>
     
     
-    <bean id="gDPDefaultPayerment" class="com.fangcang.titanjr.web.pojo.GDPDefaultPayerment" >   
+    <bean id="defaultPayerConfig" class="com.fangcang.titanjr.web.pojo.DefaultPayerConfig" >
           <property name="userId" value="${gdp_userId}"/> 
           <property name="productId" value="${gdp_productId}"/>
     </bean>

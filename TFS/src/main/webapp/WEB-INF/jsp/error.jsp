@@ -10,6 +10,9 @@
 </head>
   
   <body>
-    ${errormsg },<a href="javascript:;" onclick="history.go(-1)">返回</a>
+  <div style="margin: 150px auto; width: 250px;" class="no_data">
+    <p><i class="blue">${errormsg }</i></p>
+  	<a href="javascript:;" onclick="history.go(-1)">返回</a>
+    </div>
   </body>
 </html>

@@ -1,125 +1,117 @@
 package com.fangcang.titanjr.dto.request;
 
-import java.util.Date;
-
-import javax.validation.constraints.NotNull;
-
 import com.fangcang.titanjr.dto.BaseRequestDTO;
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class PaymentUrlRequest extends BaseRequestDTO {
-	
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private String merchantcode;
 
-	@NotNull
-	private String merchantcode;
-	
-	@NotNull
-	private String payOrderNo;
-	
-	private String userid;
-	
-	private String fcUserid;
-	
-	//来源
-	private String paySource;
-	
-	//接收签名
-	private String sign;
-	
-	//操作者
-	private String operater;
-	
-	//接受账户
-	private String recieveMerchantCode;
-		
-	//是否冻结
-	private String isEscrowed;
-		
-	//解冻日期
-	private String escrowedDate;
+    @NotEmpty
+    private String payOrderNo;
 
-	
-	public String getFcUserid() {
-		return fcUserid;
-	}
+    private String userid;
 
-	public void setFcUserid(String fcUserid) {
-		this.fcUserid = fcUserid;
-	}
+    private String fcUserid;
 
-	public String getMerchantcode() {
-		return merchantcode;
-	}
+    //来源
+    @NotEmpty
+    private String paySource;
 
-	public void setMerchantcode(String merchantcode) {
-		this.merchantcode = merchantcode;
-	}
+    //接收签名
+    private String sign;
 
-	public String getPayOrderNo() {
-		return payOrderNo;
-	}
+    //操作者
+    private String operater;
 
-	public void setPayOrderNo(String payOrderNo) {
-		this.payOrderNo = payOrderNo;
-	}
+    //接受账户
+    private String recieveMerchantCode;
 
-	public String getUserid() {
-		return userid;
-	}
+    //是否冻结
+    @NotEmpty
+    private String isEscrowed;
 
-	public void setUserid(String userid) {
-		this.userid = userid;
-	}
+    //解冻日期
+    private String escrowedDate;
 
-	public String getSign() {
-		return sign;
-	}
 
-	public void setSign(String sign) {
-		this.sign = sign;
-	}
+    public String getFcUserid() {
+        return fcUserid;
+    }
 
-	public String getPaySource() {
-		return paySource;
-	}
+    public void setFcUserid(String fcUserid) {
+        this.fcUserid = fcUserid;
+    }
 
-	public void setPaySource(String paySource) {
-		this.paySource = paySource;
-	}
+    public String getMerchantcode() {
+        return merchantcode;
+    }
 
-	public String getOperater() {
-		return operater;
-	}
+    public void setMerchantcode(String merchantcode) {
+        this.merchantcode = merchantcode;
+    }
 
-	public void setOperater(String operater) {
-		this.operater = operater;
-	}
+    public String getPayOrderNo() {
+        return payOrderNo;
+    }
 
-	public String getRecieveMerchantCode() {
-		return recieveMerchantCode;
-	}
+    public void setPayOrderNo(String payOrderNo) {
+        this.payOrderNo = payOrderNo;
+    }
 
-	public void setRecieveMerchantCode(String recieveMerchantCode) {
-		this.recieveMerchantCode = recieveMerchantCode;
-	}
+    public String getUserid() {
+        return userid;
+    }
 
-	public String getIsEscrowed() {
-		return isEscrowed;
-	}
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
 
-	public void setIsEscrowed(String isEscrowed) {
-		this.isEscrowed = isEscrowed;
-	}
+    public String getSign() {
+        return sign;
+    }
 
-	public String getEscrowedDate() {
-		return escrowedDate;
-	}
+    public void setSign(String sign) {
+        this.sign = sign;
+    }
 
-	public void setEscrowedDate(String escrowedDate) {
-		this.escrowedDate = escrowedDate;
-	}
+    public String getPaySource() {
+        return paySource;
+    }
+
+    public void setPaySource(String paySource) {
+        this.paySource = paySource;
+    }
+
+    public String getOperater() {
+        return operater;
+    }
+
+    public void setOperater(String operater) {
+        this.operater = operater;
+    }
+
+    public String getRecieveMerchantCode() {
+        return recieveMerchantCode;
+    }
+
+    public void setRecieveMerchantCode(String recieveMerchantCode) {
+        this.recieveMerchantCode = recieveMerchantCode;
+    }
+
+    public String getIsEscrowed() {
+        return isEscrowed;
+    }
+
+    public void setIsEscrowed(String isEscrowed) {
+        this.isEscrowed = isEscrowed;
+    }
+
+    public String getEscrowedDate() {
+        return escrowedDate;
+    }
+
+    public void setEscrowedDate(String escrowedDate) {
+        this.escrowedDate = escrowedDate;
+    }
 }
