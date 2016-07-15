@@ -11,7 +11,7 @@
 	<div class="S_popup_content" style="width: 800px; padding: 20px 20px 10px;">
 		<div class="recharge-record-box">
 			<p><em><strong>充值金额：</strong><span class="recharge-colorRed fontSize24">
-				<fmt:formatNumber value="${transOrder.amount/100.0 }" pattern="#,##0.00#"/>
+				<fmt:formatNumber value="${transOrder.tradeamount/100.0 }" pattern="#,##0.00#"/>
 			</span>元</em></p>
 			<div class="orderDetails-content">
 				<div class="orderDetails-content1">
@@ -19,14 +19,8 @@
 					<p class="ftSize14"><span class="w_250">收款账户：
                         <i class="recharge-colorRed">${transOrder.transTarget }</i></span><span
 							class="w_160">交易类型：充值</span>交易状态：
-						<c:if test="${transOrder.statusid == 1}">
-							处理中
-						</c:if>
-						<c:if test="${transOrder.statusid == 2}">
+						<c:if test="${transOrder.statusid == 8}">
 							已成功
-						</c:if>
-						<c:if test="${transOrder.statusid == 4}">
-							交易失败
 						</c:if>
 					</p>
 					<p class="ftSize14">

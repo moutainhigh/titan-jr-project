@@ -86,7 +86,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	try{
     		FinancialOrderRequest financialOrderRequest = new FinancialOrderRequest();
         	financialOrderRequest.setMerchantcode("M10000001");
-        	financialOrderRequest.setOrderNo("TW15051906771");
+        	financialOrderRequest.setOrderNo("TW15110516542");
 
         	FinancialOrderResponse financialOrderResponse =titanFinancialTradeService.queryFinanceOrderDetail(financialOrderRequest);
             if(financialOrderResponse !=null){
@@ -484,11 +484,11 @@ public class TianjrFinancialTradeTest extends GenericTest{
     public void testGetMerchantUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");
-    	paymentUrlRequest.setPayOrderNo("TW15051306188");
+    	paymentUrlRequest.setPayOrderNo("TW16012314411");
     	paymentUrlRequest.setFcUserid("23298");
     	paymentUrlRequest.setPaySource("2");
     	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
-    	paymentUrlRequest.setIsEscrowed("1");
+    	paymentUrlRequest.setIsEscrowed("0");
 //    	paymentUrlRequest.setRecieveMerchantCode("M10000002");
     	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
     	if(paymentUrlResponse !=null){
@@ -501,12 +501,12 @@ public class TianjrFinancialTradeTest extends GenericTest{
     public void testGetMerchantLineUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");
-    	paymentUrlRequest.setPayOrderNo("TW15011504125");
+    	paymentUrlRequest.setPayOrderNo("TW16062417311");
     	paymentUrlRequest.setFcUserid("23415");
     	
     	paymentUrlRequest.setPaySource("2");
     	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
-    	paymentUrlRequest.setIsEscrowed("1");//1.不冻结，0.直接支付
+    	paymentUrlRequest.setIsEscrowed("0");//1.不冻结，0.担保支付
     	paymentUrlRequest.setRecieveMerchantCode("M10000002");
     	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
     	if(paymentUrlResponse !=null){

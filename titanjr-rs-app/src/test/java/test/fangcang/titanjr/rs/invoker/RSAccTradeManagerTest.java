@@ -97,12 +97,12 @@ public class RSAccTradeManagerTest extends GenericTest {
 		req.setConditioncode("1");								//1:落单
 		req.setMerchantcode("M000016");							//转入方机构号
 		req.setProductid("P000070");							//转入方产品号
-		req.setUserrelateid("TJM10000010");	                    //接收方用户Id		
-		req.setRequestno("TJR160630192241814");									//业务订单号
+		req.setUserrelateid("TJM10000087");	                    //接收方用户Id		
+		req.setRequestno("TJR160630192241816");									//业务订单号
 		req.setRequesttime("2016-4-12 22:22:22");				//请求时间
-		req.setAmount("294730");										//金额
+		req.setAmount("10000000");										//金额
 		req.setUserfee("0");		
-		req.setUserid("PM10000021");
+		req.setUserid("TJM10000111");
 		req.setIntermerchantcode("M000016");					//转出方机构号
 		req.setInterproductid("P000070");						//转出方产品号
 

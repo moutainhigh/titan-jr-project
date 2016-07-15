@@ -97,7 +97,6 @@ public class FinancialAccountController extends BaseController {
         setTransOrderDetail(tradeDetailRequest,model);
         return "account-overview/order-receive-detail";
     }
-
     @RequestMapping(value = "/order-pay-detail", method = RequestMethod.GET)
     public String queryPayOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         setTransOrderDetail(tradeDetailRequest,model);
@@ -220,15 +219,17 @@ public class FinancialAccountController extends BaseController {
     }
     
     @RequestMapping(value = "/toBindAccountWithDrawCard")
-    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model){
+    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName){
+    	model.addAttribute("orgName",orgName);
     	model.addAttribute("modifyOrBind",WebConstant.BIND_BANK_CARD);
     	return "account-overview/bind-bankcard";
     }
     
     @RequestMapping("update_account-withdraw_info")
-    public String updateAccountWithdrawInfo(HttpServletRequest request, Model model){
+    public String updateAccountWithdrawInfo(HttpServletRequest request, Model model,String orgName){
     	model.addAttribute("showBankCardInput",1);
     	model.addAttribute("modifyOrBind",WebConstant.MODIFY_BANK_CARD);
+    	model.addAttribute("orgName",  orgName);
     	return "account-overview/bind-bankcard";
     }
     

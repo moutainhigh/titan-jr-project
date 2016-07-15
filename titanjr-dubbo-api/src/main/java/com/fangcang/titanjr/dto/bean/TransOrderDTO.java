@@ -34,6 +34,7 @@ public class TransOrderDTO implements java.io.Serializable {
 
     private String payeemerchant;
     private String payermerchant;
+    
 
     private String remark;
 

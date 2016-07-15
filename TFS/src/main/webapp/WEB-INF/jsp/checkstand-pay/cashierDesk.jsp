@@ -210,6 +210,10 @@
   </form>
 </div>
 
+<form action="<%=basePath%>/trade/payConfirmPage.action" id="confirmOrder">
+  <input name="orderNo" id="orderNo" type="hidden">
+</form>
+
 <!--弹窗白色底-->
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
 <script src="<%=cssSaasPath%>/js/password.js"></script>
@@ -576,10 +580,11 @@
                	 //如果ajax请求成功则显示回调页面
                	 if(data.result == "success"){
                		new top.Tip({msg: data.msg, type: 1, time: 2000});
-                 	 window.close();
+               		$("#orderNo").val(data.orderNo);
+               		$("#confirmOrder").submit();
                	 }else{
                		 new top.Tip({msg: data.msg, type: 1, time: 2000});
-               		 window.close();
+               		$("#confirmOrder").submit();
                	 }
                 }
                 });

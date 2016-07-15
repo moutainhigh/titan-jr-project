@@ -39,4 +39,3 @@
 		<property name="queueCapacity" value="100" />
 	</bean>
 </beans>
-
