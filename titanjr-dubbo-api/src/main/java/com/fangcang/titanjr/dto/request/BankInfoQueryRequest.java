@@ -41,6 +41,6 @@ public class BankInfoQueryRequest extends BaseRequestDTO{
     }
 
     public void setBankCode(String bankCode) {
-        bankCode = bankCode;
+        this.bankCode = bankCode;
     }
 }

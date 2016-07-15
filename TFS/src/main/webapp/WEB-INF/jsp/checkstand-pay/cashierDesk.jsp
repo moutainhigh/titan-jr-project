@@ -324,12 +324,12 @@
                 }).showModal();
                 $(".J_chose").on('click', function() {
                     d.remove();
-                    var textinput='<li>'+
+                    var textinput='<li class="replanceArea">'+
                             ' <div class="goldpay"><div>'+
                             ' <span class="w_160"><i class="c_f00">*</i>收款账户（公司名称）：</span>' +
-                            ' <input type="text"  class="text w_250" ></div><div>' +
+                            ' <input type="text" id="reOrgName" class="text w_250" ></div><div>' +
                             ' 	<span class="w_160"><i class="c_f00">*</i>收款方 - 泰坦码：</span>'+
-                            '  <input type="text"  class="text w_250"></div></div>'	+
+                            '  <input type="text" id="reTitanCode"  class="text w_250"></div></div>'	+
                             '</li>';
                     $(".goldpay_top ul").children('.goldpay_replace').replaceWith(textinput);
                     
@@ -553,7 +553,11 @@
     });
     
     function pay_Order(){
+    	//获取数据
    	    var pay_date=save_payDate();
+    	alert("1111");
+    	alert(pay_date.recieveOrgName);
+    	alert(pay_date.recieveTitanCode);
         if(pay_date.payAmount =="0"){
     		$.ajax({//支付页面
            	 type: "post",
@@ -579,12 +583,18 @@
                 success: function (data) {
                	 //如果ajax请求成功则显示回调页面
                	 if(data.result == "success"){
-               		new top.Tip({msg: data.msg, type: 1, time: 2000});
-               		$("#orderNo").val(data.orderNo);
-               		$("#confirmOrder").submit();
+               		new top.Tip({msg: data.msg, type: 1, timer: 2000});
+               		setTimeout(function(){
+               			$("#orderNo").val(data.orderNo);
+                   		$("#confirmOrder").submit();
+               		},2000);
+               		
                	 }else{
-               		 new top.Tip({msg: data.msg, type: 1, time: 2000});
-               		$("#confirmOrder").submit();
+               		 new top.Tip({msg: data.msg, type: 1, timer: 2000});
+               		setTimeout(function(){
+               			$("#confirmOrder").submit();
+               		},2000);
+               		
                	 }
                 }
                 });
@@ -599,6 +609,7 @@
     		$("#onlinePaymentForm").submit();
     	}  
     }
+    
     
     function validate_isInput_password(){
     	if('${paySource}'=='1'){//如果分销商付款不需要输入密码，不用余额支付也不需要输入付款密码
@@ -648,10 +659,9 @@
     	}
     	var recieveOrgName = null;
     	var recieveTitanCode = null;
-    	if($("#not_exists_history").is(":visible")==true){
+    	if($("#not_exists_history").is(":visible")==true || $(".replanceArea").is(":visible")==true){
     		recieveOrgName = $("#reOrgName").val();
         	recieveTitanCode = $("#reTitanCode").val();
-        	
     	}else{
     		recieveOrgName =  $("#hiddenAccountName").val();
     		recieveTitanCode = $("#hiddenTitanCode").val();

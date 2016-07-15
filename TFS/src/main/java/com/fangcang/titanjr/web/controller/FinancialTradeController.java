@@ -59,6 +59,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 简化controller命名和前缀
@@ -100,7 +101,9 @@ public class FinancialTradeController extends BaseController {
 	@Resource
 	private HessianProxyBeanFactory hessianProxyBeanFactory;
 	
-	private static List<String> orderNoList = new ArrayList<String>();
+//	private static List<String> orderNoList = new ArrayList<String>();
+	
+	private static Map<String,Object> orderNoMap = new  ConcurrentHashMap<String, Object>();
 	
 	/**
 	 * 消息回调接口
@@ -113,6 +116,7 @@ public class FinancialTradeController extends BaseController {
     public void payResultConfirm(RechargeResultConfirmRequest rechargeResultConfirmRequest,HttpServletResponse response) throws IOException{
 		String orderNo = rechargeResultConfirmRequest.getOrderNo();
 		try{
+			response.getWriter().print("returnCode=000000&returnMag=成功");
     		if(rechargeResultConfirmRequest !=null){
     			log.info("融数后台回调成功参数:"+toJson(rechargeResultConfirmRequest));
     			String signMsg = rechargeResultConfirmRequest.getSignMsg();
@@ -373,8 +377,8 @@ public class FinancialTradeController extends BaseController {
 	public String genRechargeData(HttpServletRequest request,PaymentRequest paymentRequest,Model model) throws Exception{
 		if(paymentRequest !=null){
 			if(CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentRequest.getPaySource())){
-				paymentRequest.setUserid(getUserId());
-				paymentRequest.setOperator(getUserName());
+				paymentRequest.setUserid(this.getUserId());
+				paymentRequest.setOperator(this.getUserName());
 			}
 			model.addAttribute(CommonConstant.RESULT, CommonConstant.FAIL);
 			
@@ -685,71 +689,81 @@ public class FinancialTradeController extends BaseController {
 	
     private Map<String,String> validatePaymentDate(PaymentRequest paymentRequest,FinancialOrderResponse financialOrderResponse) throws Exception{
     	Map<String,String> resultMap = new HashMap<String, String>();
-			resultMap.put(CommonConstant.RESULT, CommonConstant.FAIL); 
-			//是否需要免密支付,只有用到余额转账付款的时候才需要验证密码
-			BigDecimal totalAmount = null;
-			totalAmount = new BigDecimal(paymentRequest.getPayAmount());
-			if(StringUtil.isValidString(paymentRequest.getTransferAmount())){
-				totalAmount = new BigDecimal(paymentRequest.getPayAmount()).add(new BigDecimal(paymentRequest.getTransferAmount()));
-			}
-			
-			if(totalAmount.subtract(new BigDecimal(paymentRequest.getPayAmount())).compareTo(BigDecimal.ZERO)==1){//有转账交易
-				AllowNoPwdPayResponse allowNoPwdPayResponse = isAllowNoPwdPay(paymentRequest.getUserid(),totalAmount.toString());
-				if(!allowNoPwdPayResponse.isAllowNoPwdPay()){
-					TitanUserBindInfoDTO  titanUserBindInfoDTO = new TitanUserBindInfoDTO();
-					if(StringUtil.isValidString(paymentRequest.getFcUserid())){
-						titanUserBindInfoDTO.setFcuserid(Long.parseLong(paymentRequest.getFcUserid()));
-					}else{
-						titanUserBindInfoDTO.setTfsuserid(Integer.parseInt(getTfsUserId()));
-					}
-					titanUserBindInfoDTO = titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
-					if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid()!=null){
+		resultMap.put(CommonConstant.RESULT, CommonConstant.FAIL); 
+		
+		
+		//是否需要免密支付,只有用到余额转账付款的时候才需要验证密码
+		BigDecimal totalAmount = null;
+		totalAmount = new BigDecimal(paymentRequest.getPayAmount());
+		if(StringUtil.isValidString(paymentRequest.getTransferAmount())){
+			totalAmount = new BigDecimal(paymentRequest.getPayAmount()).add(new BigDecimal(paymentRequest.getTransferAmount()));
+		}
+		
+		if(totalAmount.subtract(new BigDecimal(paymentRequest.getPayAmount())).compareTo(BigDecimal.ZERO)==1){//有转账交易
+			AllowNoPwdPayResponse allowNoPwdPayResponse = isAllowNoPwdPay(paymentRequest.getUserid(),totalAmount.toString());
+			if(!allowNoPwdPayResponse.isAllowNoPwdPay()){
+				TitanUserBindInfoDTO  titanUserBindInfoDTO = new TitanUserBindInfoDTO();
+				if(StringUtil.isValidString(paymentRequest.getFcUserid())){
+					titanUserBindInfoDTO.setFcuserid(Long.parseLong(paymentRequest.getFcUserid()));
+				}else{
+					titanUserBindInfoDTO.setTfsuserid(Integer.parseInt(getTfsUserId()));
+				}
+				titanUserBindInfoDTO = titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+				if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid()!=null){
 //						paymentRequest.setPayPassword(RSADecryptString.decryptString(paymentRequest.getPayPassword(),request));
-						paymentRequest.setPayPassword(paymentRequest.getPayPassword());
-						//验证支付密码
-						boolean flag = titanFinancialUserService.checkPayPassword(paymentRequest.getPayPassword(),titanUserBindInfoDTO.getTfsuserid().toString());
-					   if(!flag){
-					   	resultMap.put(CommonConstant.MSG, "支付密码错误");
-					   	return resultMap;
-					   }
-					}else{
-					   	resultMap.put(CommonConstant.MSG, "用户不存在");
-					   	return resultMap;
-					}
+					paymentRequest.setPayPassword(paymentRequest.getPayPassword());
+					//验证支付密码
+					boolean flag = titanFinancialUserService.checkPayPassword(paymentRequest.getPayPassword(),titanUserBindInfoDTO.getTfsuserid().toString());
+				   if(!flag){
+				   	resultMap.put(CommonConstant.MSG, "支付密码错误");
+				   	return resultMap;
+				   }
+				}else{
+				   	resultMap.put(CommonConstant.MSG, "用户不存在");
+				   	return resultMap;
 				}
 			}
+		}
+		
+		if(financialOrderResponse !=null){
+			boolean isExit = accountIsExist(paymentRequest);
+			if(!isExit){
+				resultMap.put(CommonConstant.MSG, "收款账户不存在,请认真核实");
+				return resultMap;
+			}
 			
-			if(financialOrderResponse !=null){
-				boolean isExit = accountIsExist(paymentRequest);
-				if(!isExit){
-					resultMap.put(CommonConstant.MSG, "收款账户不存在,请认真核实");
+			if(StringUtil.isValidString(paymentRequest.getUserrelateid())){//收款方不为空，则判断是否自己给自己付款
+				if(paymentRequest.getUserrelateid().equals(paymentRequest.getUserid())){
+					resultMap.put(CommonConstant.MSG, "收款账户不能和付款账户相同");
 					return resultMap;
 				}
-				//获取账户余额
-				AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
-				accountBalanceRequest.setUserid(paymentRequest.getUserid());
-				AccountBalanceResponse accountBalanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
-				BigDecimal balanceAccount = getBalanceAccount(accountBalanceResponse);
-				
-				//验证支付金额准确性，balanceAccount默认等于0 不会为空
-				if (financialOrderResponse.getPayAmount() != null && balanceAccount != null) { //判断转账金额和支付金额的总和是不是等于
-					boolean flag = validatePayAmount(paymentRequest.getTransferAmount(), paymentRequest.getPayAmount(),
-							financialOrderResponse.getPayAmount(), balanceAccount);
-					if (!flag) {
-						resultMap.put(CommonConstant.MSG, "系统错误");
-						return resultMap;
-					}
-				}else{
-						resultMap.put(CommonConstant.MSG, "系统错误");
-						return resultMap;
-				    }
-				 //交易金额
-				paymentRequest.setTradeamount(Long.parseLong(NumberUtil.covertToCents(financialOrderResponse.getPayAmount().toString())));
-			}else{
-				paymentRequest.setTradeamount(Long.parseLong(NumberUtil.covertToCents(paymentRequest.getPayAmount().toString())));
 			}
-			resultMap.put(CommonConstant.RESULT, CommonConstant.SUCCESS);
-			return resultMap;
+			
+			//获取账户余额
+			AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
+			accountBalanceRequest.setUserid(paymentRequest.getUserid());
+			AccountBalanceResponse accountBalanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+			BigDecimal balanceAccount = getBalanceAccount(accountBalanceResponse);
+			
+			//验证支付金额准确性，balanceAccount默认等于0 不会为空
+			if (financialOrderResponse.getPayAmount() != null && balanceAccount != null) { //判断转账金额和支付金额的总和是不是等于
+				boolean flag = validatePayAmount(paymentRequest.getTransferAmount(), paymentRequest.getPayAmount(),
+						financialOrderResponse.getPayAmount(), balanceAccount);
+				if (!flag) {
+					resultMap.put(CommonConstant.MSG, "系统错误");
+					return resultMap;
+				}
+			}else{
+					resultMap.put(CommonConstant.MSG, "系统错误");
+					return resultMap;
+			    }
+			 //交易金额
+			paymentRequest.setTradeamount(Long.parseLong(NumberUtil.covertToCents(financialOrderResponse.getPayAmount().toString())));
+		}else{
+			paymentRequest.setTradeamount(Long.parseLong(NumberUtil.covertToCents(paymentRequest.getPayAmount().toString())));
+		}
+		resultMap.put(CommonConstant.RESULT, CommonConstant.SUCCESS);
+		return resultMap;
 	}
     
     private boolean accountIsExist(PaymentRequest paymentRequest){
@@ -1104,18 +1118,20 @@ public class FinancialTradeController extends BaseController {
 	}
 	
 	private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
-		synchronized (orderNoList) {
-			while(orderNoList.contains(out_trade_no)) {
-				orderNoList.wait();
+		if(orderNoMap.get(out_trade_no)==null){
+			orderNoMap.put(out_trade_no, new Object());
+		}
+		synchronized (orderNoMap.get(out_trade_no)) {
+			while(orderNoMap.containsKey(out_trade_no)) {
+				orderNoMap.get(out_trade_no).wait();
 			}
-			orderNoList.add(out_trade_no);
 		} 
 	}
 	
 	private void unlockOutTradeNoList(String out_trade_no) {
-		synchronized (orderNoList) {
-			orderNoList.remove(out_trade_no);
-			orderNoList.notifyAll();
+		synchronized (orderNoMap.get(out_trade_no)) {
+			orderNoMap.remove(out_trade_no);
+			orderNoMap.get(out_trade_no).notifyAll();
 		}
 	}
 	
