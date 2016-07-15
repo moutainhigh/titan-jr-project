@@ -250,7 +250,7 @@ public class SettingEmployeeController extends BaseController{
     	userRegisterRequest.setRoleIdList(toList(employeePojo.getCheckedRoleId()));
     	userRegisterRequest.setUnselectRoleIdList(toList(employeePojo.getUncheckedRoleId()));
     	//TODO 暂时生成一个临时密码
-    	userRegisterRequest.setPassword(MD5.MD5Encode("123456"));
+    	userRegisterRequest.setPassword("666666");
     	userRegisterRequest.setRegisterSource(LoginSourceEnum.SAAS.getKey());
     	userRegisterRequest.setUserId(userId);//金服机构
     	try {
