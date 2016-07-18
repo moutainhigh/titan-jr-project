@@ -684,15 +684,10 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		}
     	//更新机构的审核状态
 		try {
-			String checkUser = StringUtil.isValidString(organCheckRequest.getOperator())?organCheckRequest.getOperator():CommonConstant.CHECK_ADMIN_RS;
 			Date nowDate = new Date();
 			TitanOrgParam orgParam = new TitanOrgParam();
 			orgParam.setOrgid(organCheckRequest.getOrgId());
 			TitanOrg newOrgEntity = titanOrgDao.selectOne(orgParam);
-//			newOrgEntity.setOrgid(organCheckRequest.getOrgId());
-//			newOrgEntity.setCheckstatus(organCheckRequest.getCheckstatus());
-//			newOrgEntity.setCheckTime(nowDate);
-//	    	titanOrgDao.update(newOrgEntity);
 	    	//机构审核记录
 	    	
 	    	TitanOrgCheckParam param = new TitanOrgCheckParam();
@@ -706,6 +701,9 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	    		titanOrgCheck = addOrgCheck(newOrgEntity.getUserid());
 	    	}else{
 	    		titanOrgCheck = orgCheckPage.getItemList().get(0);
+	    		if(OrgCheckResultEnum.PASS.getResultkey().equals(titanOrgCheck.getResultkey())){
+	    			throw new MessageServiceException("该机构已经审核通过，请不要重复审核");
+	    		}
 	    	}
 	    	
 	    	titanOrgCheck.setResultkey(newOrgCheckResultEnum.getResultkey());
