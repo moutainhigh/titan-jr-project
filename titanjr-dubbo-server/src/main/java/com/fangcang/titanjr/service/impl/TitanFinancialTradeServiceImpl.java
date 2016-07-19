@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import com.alibaba.fastjson.JSON;
 import com.fangcang.order.api.HotelOrderSearchFacade;
 import com.fangcang.order.dto.OrderDetailResponseDTO;
+import com.fangcang.titanjr.common.enums.*;
 import com.fangcang.titanjr.common.util.*;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
@@ -27,15 +28,6 @@ import com.fangcang.finance.remote.FinanceSearchRemote;
 import com.fangcang.finance.request.FinanceOrderConfirmRequest;
 import com.fangcang.finance.request.FinanceOrderQuery;
 import com.fangcang.finance.response.FinanceOrderResponse;
-import com.fangcang.titanjr.common.enums.CashierDeskTypeEnum;
-import com.fangcang.titanjr.common.enums.EscrowedEnum;
-import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
-import com.fangcang.titanjr.common.enums.OrderStatusEnum;
-import com.fangcang.titanjr.common.enums.ROPErrorEnum;
-import com.fangcang.titanjr.common.enums.ReqstatusEnum;
-import com.fangcang.titanjr.common.enums.TradeTypeEnum;
-import com.fangcang.titanjr.common.enums.TransOrderTypeEnum;
-import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.RequestValidationUtil;
@@ -741,7 +733,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                  if(paymentRequest.getUnitprice() !=null){
                  	 orderRequest.setUnitprice(NumberUtil.covertToCents(paymentRequest.getUnitprice()));
                  }
-                 
+
                  if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentRequest.getPaySource())){
            		  GDPOrderResponse gDPOrderResponse =  getGDPOrderDTO(paymentRequest.getPayOrderNo());
            		  if(gDPOrderResponse.getgDPOrderDTO() !=null){//有待扩展
@@ -763,6 +755,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
            		  }
            	  }else{
            		orderRequest.setGoodsname("充值单");
+                     orderRequest.setGoodsdetail("使用" + SupportBankEnum.
+                             getBankDetailByName(paymentRequest.getBankInfo()).bankRemark + "充值");
            	  }
             }
             

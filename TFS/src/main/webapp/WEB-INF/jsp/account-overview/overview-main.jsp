@@ -481,14 +481,6 @@
 			});
 			
 		}
-		
-        //充值
-        $('.rechargeBtn').on('click',function(){
-                window.top.createIframeDialog({
-                    url : 'TFS/充值.html',
-                });
-                return false;
-        });
 
         $('.withdrawBtn').on('click',function(){
         	$.ajax({
@@ -992,7 +984,6 @@
 			if (operator){
 				paraList = paraList + "&orderOperator=" + operator;
 			}
-			alert("<%=basePath%>/account/exportExcel.shtml" + paraList)
 			location.href = "<%=basePath%>/account/exportExcel.shtml" + paraList;
 		}
 

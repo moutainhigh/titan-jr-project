@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.fangcang.titanjr.common.enums.BankCardEnum;
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
@@ -615,45 +616,48 @@ public class FinancialAccountController extends BaseController {
                 HSSFSheet sheet = workbook.createSheet();
                 HSSFRow head = sheet.createRow(0);
                 head.createCell(0).setCellValue("编号");
-                head.createCell(1).setCellValue("业务单号");
-                head.createCell(2).setCellValue("金融交易号");
+                head.createCell(1).setCellValue("金融交易号");
+                head.createCell(2).setCellValue("业务单号");
                 head.createCell(3).setCellValue("财务单号");
-                head.createCell(4).setCellValue("交易时间");
-                head.createCell(5).setCellValue("交易类型");
-                head.createCell(6).setCellValue("交易内容");
-                head.createCell(7).setCellValue("交易对方");
-                head.createCell(8).setCellValue("订单金额");
-                head.createCell(9).setCellValue("手续费");
-                head.createCell(10).setCellValue("交易结果");
+                head.createCell(4).setCellValue("融数单号");
+                head.createCell(5).setCellValue("交易时间");
+                head.createCell(6).setCellValue("交易类型");
+                head.createCell(7).setCellValue("交易内容");
+                head.createCell(8).setCellValue("交易对方");
+                head.createCell(9).setCellValue("订单金额");
+                head.createCell(10).setCellValue("手续费");
+                head.createCell(11).setCellValue("交易结果");
                 List<TransOrderDTO> orderDTOList = tradeDetailResponse.getTransOrders().getItemList();                for (int i = 0; i < orderDTOList.size(); i++) {
                     HSSFRow row = sheet.createRow(i + 1);//创建一行
                     row.createCell(0).setCellValue(i + 1);
-                    row.createCell(1).setCellValue(orderDTOList.get(i).getBusinessordercode());
-                    row.createCell(2).setCellValue(orderDTOList.get(i).getOrderid());
+                    row.createCell(1).setCellValue(orderDTOList.get(i).getUserorderid());
+                    row.createCell(2).setCellValue(orderDTOList.get(i).getBusinessordercode());
                     row.createCell(3).setCellValue(orderDTOList.get(i).getPayorderno());
-                    row.createCell(4).setCellValue(DateUtil.dateToString(orderDTOList.get(i).getCreatetime(),"yyyy-MM-dd HH:mm:ss"));
-                    row.createCell(5).setCellValue(orderDTOList.get(i).getTradeType());
-                    row.createCell(6).setCellValue(orderDTOList.get(i).getGoodsname() + orderDTOList.get(i).getGoodsdetail());
+                    row.createCell(4).setCellValue(orderDTOList.get(i).getOrderid());
+                    row.createCell(5).setCellValue(DateUtil.dateToString(orderDTOList.get(i).getCreatetime(),"yyyy-MM-dd HH:mm:ss"));
+                    row.createCell(6).setCellValue(orderDTOList.get(i).getTradeType());
+                    String tradeContent = orderDTOList.get(i).getGoodsname();
+                    if (StringUtil.isValidString(orderDTOList.get(i).getGoodsdetail())) {
+                        tradeContent = tradeContent + orderDTOList.get(i).getGoodsdetail();
+                    }
+                    row.createCell(7).setCellValue(tradeContent);
                     if (orderDTOList.get(i).getTransTarget() != null) {
-                        row.createCell(7).setCellValue(orderDTOList.get(i).getTransTarget());
+                        row.createCell(8).setCellValue(orderDTOList.get(i).getTransTarget());
                     }
                     if (orderDTOList.get(i).getTradeamount() != null) {
-                        row.createCell(8).setCellValue(orderDTOList.get(i).getTradeamount()/100.0);
+                        double tradeAmount = orderDTOList.get(i).getTradeamount() / 100.0;
+                        if ("付款".equals(orderDTOList.get(i).getTradeType()) ||
+                                "提现".equals(orderDTOList.get(i).getTradeType())){
+                            tradeAmount = 0 - tradeAmount;
+                         }
+                        row.createCell(9).setCellValue(tradeAmount);
                     }
                     if (orderDTOList.get(i).getReceivedfee() != null) {
-                        row.createCell(9).setCellValue(orderDTOList.get(i).getReceivedfee()/100.0);
+                        row.createCell(10).setCellValue(orderDTOList.get(i).getReceivedfee()/100.0);
                     }
-                    String stateStr = "";
-                    if (orderDTOList.get(i).getStatusid().equals("1")){
-                        stateStr = "处理中";
-                    } else if (orderDTOList.get(i).getStatusid().equals("1")){
-                        stateStr = "已成功";
-                    } else if (orderDTOList.get(i).getStatusid().equals("3")){
-                        stateStr = "已冻结";
-                    } else {
-                        stateStr = "交易失败";
+                    if (StringUtil.isValidString(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()))) {
+                        row.createCell(11).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
                     }
-                    row.createCell(10).setCellValue(stateStr);
                 }
                 outputStream = response.getOutputStream();
                 workbook.write(outputStream);

@@ -9,7 +9,7 @@
             </c:if>
         </td>
         <td width="">${tradeItem.tradeType}</td>
-        <td width="" >
+        <td width="">
             <span style="max-width: 253px" title="${tradeItem.goodsname}">
                 ${tradeItem.goodsname}
                 <c:if test="${tradeItem.goodsdetail != null}">
