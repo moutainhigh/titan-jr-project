@@ -11,6 +11,7 @@ import com.fangcang.titanjr.common.enums.ReqstatusEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
@@ -35,6 +36,7 @@ import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 import com.fangcang.titanjr.service.*;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.DefaultPayerConfig;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
@@ -277,6 +279,7 @@ public class FinancialTradeController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping("/showTitanPayPage")
+	
 	public Map<String,String> showTitanPayPage(HttpServletRequest request,PaymentRequest paymentRequest) throws Exception{
 		Map<String,String> resultMap = new HashMap<String,String>();
 		

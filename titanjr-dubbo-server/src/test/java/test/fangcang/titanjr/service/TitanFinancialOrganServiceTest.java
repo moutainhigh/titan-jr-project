@@ -237,10 +237,10 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 	/**
 	 * 审核
 	 */
-	//@Test
+	@Test
 	public void testCheckOrg(){
 		OrganCheckRequest organCheckRequest = new OrganCheckRequest();
-		organCheckRequest.setOrgId(10095);
+		organCheckRequest.setOrgId(10094);
 		organCheckRequest.setCheckstatus(0);
 		organCheckRequest.setOperator("luoqinglong");
 		organCheckRequest.setResultMsg("不清楚");
@@ -333,7 +333,7 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 		System.out.println(new Gson().toJson(response));
 	}
 	
-	@Test
+	//@Test
 	public void testCountOrg(){
 		FinancialOrganQueryRequest financialOrganQueryRequest = new FinancialOrganQueryRequest();
 		financialOrganQueryRequest.setResultKey("FT");
