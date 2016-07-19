@@ -1153,7 +1153,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				TitanAccount titanAccount = paginationSupport.getItemList().get(0);
 				if(titanAccount!=null && titanAccount.getNopwdpaylimit()!=null){
 					//？？有待讨论，和融数的整个数据交互式以分为单位，建议数据库不要使用double等数据形式
-					BigDecimal allowNoPwdPay = new BigDecimal(titanAccount.getNopwdpaylimit());
+					BigDecimal allowNoPwdPay = new BigDecimal(NumberUtil.covertToCents(String.valueOf(titanAccount.getNopwdpaylimit())));
 					BigDecimal money = new BigDecimal(NumberUtil.covertToCents(judgeAllowNoPwdPayRequest.getMoney()));
 					allowNoPwdPayResponse.setAllowNoPwdPay(false);
 					if(allowNoPwdPay.subtract(money).doubleValue()>=0){
