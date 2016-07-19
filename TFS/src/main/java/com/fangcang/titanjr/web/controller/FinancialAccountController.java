@@ -219,17 +219,21 @@ public class FinancialAccountController extends BaseController {
     }
     
     @RequestMapping(value = "/toBindAccountWithDrawCard")
-    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName){
+    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName) throws UnsupportedEncodingException{
     	model.addAttribute("modifyOrBind",CommonConstant.BIND_BANK_CARD);
-    	model.addAttribute("orgName",orgName);
+    	 if (null != this.getUserId()) {
+             model.addAttribute("organ", this.getTitanOrganDTO());
+         }
     	return "account-overview/bind-bankcard";
     }
     
     @RequestMapping("update_account-withdraw_info")
     public String updateAccountWithdrawInfo(HttpServletRequest request, Model model,String orgName){
+    	if (null != this.getUserId()) {
+             model.addAttribute("organ", this.getTitanOrganDTO());
+        }
     	model.addAttribute("showBankCardInput",1);
     	model.addAttribute("modifyOrBind",CommonConstant.MODIFY_BANK_CARD);
-    	model.addAttribute("orgName",  orgName);
     	return "account-overview/bind-bankcard";
     }
     

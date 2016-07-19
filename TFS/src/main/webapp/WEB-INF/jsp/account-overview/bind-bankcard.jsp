@@ -41,7 +41,7 @@
 						<input type="text" placeholder="6666 0000 1111 2222" class="text w_250" id="accountnumber"></li>
 					<li>
 						<span class="reset_pass">公司名称 ：</span>
-						<input type="text" class="text w_250" id="name" value="${orgName}" disabled></li>		
+						<input type="text" class="text w_250" id="name" value="${organ.orgName}" disabled></li>		
 				</ul>
 				<div class="pas_close">
 					<span class="btn p_lr30 J_next to_bindCard">下一步</span>
