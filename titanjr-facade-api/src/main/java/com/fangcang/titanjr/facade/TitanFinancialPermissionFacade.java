@@ -2,6 +2,7 @@ package com.fangcang.titanjr.facade;
 
 import com.fangcang.titanjr.request.CheckPermissionRequest;
 import com.fangcang.titanjr.request.ShowPaymentRequest;
+import com.fangcang.titanjr.response.CheckAccountResponse;
 import com.fangcang.titanjr.response.PermissionResponse;
 import com.fangcang.titanjr.response.ShowPaymentResponse;
 
@@ -25,5 +26,11 @@ public interface TitanFinancialPermissionFacade {
 	 */
 	public ShowPaymentResponse isShowPaymentButton(ShowPaymentRequest showPaymentRequest);
 	
+	/**
+	 * 是否开通金融账户
+	 * @param merchantcode
+	 * @return
+	 */
+	public CheckAccountResponse isFinanceAccount(String merchantcode);
 	
 }
