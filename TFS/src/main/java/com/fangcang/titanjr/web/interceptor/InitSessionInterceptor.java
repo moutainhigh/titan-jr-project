@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,6 +60,8 @@ public class InitSessionInterceptor implements HandlerInterceptor {
                 ProxyFactoryConstants.merchantServerUrl + "merchantFacade");
         // 第一步：用户登录身份的拦截判定
         // 当登录用户和金服来源都为空时候进入判定逻辑
+        System.out.println((UserWrapper)session.getAttribute("onlineRoleUser"));
+        System.out.println((String)session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE));
         if (session.getAttribute("onlineRoleUser") == null || session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE) == null) {
             if (session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER) != null && session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ROLE) == null) {
                 //房仓商家系统用户组装判定
@@ -127,7 +130,17 @@ public class InitSessionInterceptor implements HandlerInterceptor {
                     }
 
                     UserInfoDTO userInfoDTO = userInfoResponse.getUserInfoDTOList().get(0);
-                    session.setAttribute(WebConstant.SESSION_KEY_JR_ROLE_LIST, userInfoDTO.getRoleDTOList());//金服用户角色列表
+                    
+                    if(userInfoDTO.getRoleDTOList()!=null&&userInfoDTO.getRoleDTOList().size()>0){
+                    	List<RoleDTO> activeRoleList = new ArrayList<RoleDTO>();
+                    	for(RoleDTO item : userInfoDTO.getRoleDTOList()){
+                    		if(item.getIsActive()==1){
+                    			activeRoleList.add(item);
+                    		}
+                    	}
+                    	session.setAttribute(WebConstant.SESSION_KEY_JR_ROLE_LIST, activeRoleList);//金服用户角色列表
+                    }
+                    
                     session.setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, userInfoDTO.getUserLoginName());//金服用户登录名
                     session.setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
                     session.setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名

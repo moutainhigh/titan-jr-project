@@ -227,7 +227,7 @@
             $("#exists_history").remove();
             $("#not_exists_history").show();
         }
-        if ('${orderDTO.payAmount}' - '${accountBalance.balanceusable}' < 0){
+        if ('${orderDTO.payAmount}' - '${accountBalance.balanceusable}' <= 0){
             $("#useCashierDeskPay").hide();
             $("#enough_amount").show();
             $("#not_enough_amount").hide();

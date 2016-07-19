@@ -33,6 +33,7 @@ import com.fangcang.util.StringUtil;
  */
 @Controller
 @RequestMapping("/setting")
+@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
 public class SettingPasswordController extends BaseController{
 	
 	/**
@@ -108,8 +109,10 @@ public class SettingPasswordController extends BaseController{
 	 * 设置小额免密支付开关（只有金服管理员才可以设置）
 	 * @return
 	 */
+	
 	@ResponseBody
 	@RequestMapping("/set-swicth")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String setSwitch(Integer allownopwdpay){
 		if(allownopwdpay==null||(allownopwdpay!=0&&allownopwdpay!=1)){
 			putSysError("参数异常");

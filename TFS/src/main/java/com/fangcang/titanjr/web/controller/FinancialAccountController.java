@@ -17,6 +17,7 @@ import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.BankCardDTO;
@@ -27,6 +28,7 @@ import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 import com.fangcang.titanjr.service.*;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.WithDrawRequest;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.titanjr.web.util.RSADecryptString;
@@ -77,22 +79,42 @@ public class FinancialAccountController extends BaseController {
     TitanFinancialBaseInfoService titanFinancialBaseInfoService;
 
     @RequestMapping(value = "/overview-main", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
     public String home(HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
             FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
             organQueryRequest.setUserId(this.getUserId());
             FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
             model.addAttribute("organ", organOrganResponse.getFinancialOrganDTO());
-            AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
-            accountBalanceRequest.setUserid(this.getUserId());
-            AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
-            if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
-                model.addAttribute("accountBalance", balanceResponse.getAccountBalance().get(0));
-            }
+//            AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
+//            accountBalanceRequest.setUserid(this.getUserId());
+//            AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+//            if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
+//                model.addAttribute("accountBalance", balanceResponse.getAccountBalance().get(0));
+//            }
         }
         return "account-overview/overview-main";
     }
-
+    
+    /**
+     * 提供客户端查询当前账户的余额
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/query-account-balance", method = RequestMethod.GET)
+    public String queryAccountBalance()
+    {
+		 AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
+	     accountBalanceRequest.setUserid(this.getUserId());
+	      
+	     AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+	      
+	     if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
+	         return toJson(balanceResponse.getAccountBalance().get(0));
+	     }
+	      return "";
+    }
+    
     @RequestMapping(value = "/order-receive-detail", method = RequestMethod.GET)
     public String queryReceiveOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         setTransOrderDetail(tradeDetailRequest,model);
@@ -220,6 +242,7 @@ public class FinancialAccountController extends BaseController {
     }
     
     @RequestMapping(value = "/toBindAccountWithDrawCard")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
     public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName){
     	model.addAttribute("orgName",orgName);
     	model.addAttribute("modifyOrBind",WebConstant.BIND_BANK_CARD);
@@ -227,6 +250,7 @@ public class FinancialAccountController extends BaseController {
     }
     
     @RequestMapping("update_account-withdraw_info")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
     public String updateAccountWithdrawInfo(HttpServletRequest request, Model model,String orgName){
     	model.addAttribute("showBankCardInput",1);
     	model.addAttribute("modifyOrBind",WebConstant.MODIFY_BANK_CARD);
@@ -236,6 +260,7 @@ public class FinancialAccountController extends BaseController {
     
     
     @RequestMapping(value = "/account-withdraw", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
     public String toAccountWithDrawPage(HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
         	
@@ -271,6 +296,7 @@ public class FinancialAccountController extends BaseController {
 
     @ResponseBody
     @RequestMapping("bankCardBind")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
     public String bankCardBindToPublic(BindBankCardRequest  bindBankCardRequest,Model model){
      	if(!StringUtil.isValidString(bindBankCardRequest.getBankCardCode()) 
     			|| !StringUtil.isValidString(bindBankCardRequest.getBankCardName())
