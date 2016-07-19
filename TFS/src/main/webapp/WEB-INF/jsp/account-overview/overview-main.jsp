@@ -15,8 +15,7 @@
 		<div class="MyAssets_chart_list">
 			<div class="MyAssets_chart_list01 fl">
 				<h3>我的资产</h3>
-				<h4> <i class="MyAssets_greenNotice">
-					<fmt:formatNumber value="${accountBalance.amount/100 }"  pattern="#,##0.00#" /></i>
+				<h4> <i class="MyAssets_greenNotice"  id="amountSpan">0.00</i>
 					元
 				</h4>
 				<table cellpadding="0" cellspacing="0" class="MyAssets_chart_tab01">
@@ -27,13 +26,13 @@
 						</td>
 						<td>
 							<p>
-								<span>现金可用余额：<fmt:formatNumber value="${accountBalance.balanceusable/100 }" pattern="#,##0.00#" /></span>
+								<span>现金可用余额：<i id="balanceusableSpan">0.00</i></span>
 								<a href="javascript:void(0)" class="blue decorationUnderline rechargeBtn">充值</a>
 								<a href="javascript:void(0)" class="blue decorationUnderline withdrawBtn">提现</a>
 							</p>
 							<p>
 								<span>
-									现金冻结余额：<fmt:formatNumber value="${accountBalance.balancefrozon/100 }" pattern="#,#00.00#" />
+									现金冻结余额：<i id="balancefrozonSpan">0.00</i>
 									<i class="MyAssets_noticeIco" title="当联盟分销商付款成功后，供应商未确认订单前资金会冻结，确认后即可解冻"></i>
 								</span>
 								<a href="<%=basePath%>/account/freeze-detail-page.shtml" class="blue decorationUnderline">详情</a>
@@ -1086,7 +1085,7 @@
 		F.UI.scan();
 
 		window.onload = function () {
-			var canvas1 = new scale({id: "can1", numb: 100});
+			loadAccountBalance();
 		}
 
         //充值
@@ -1096,8 +1095,33 @@
                 });
                 return false;
         });
-      
-
+        
+      	
+		//异步加载账户余额信息
+		var errorIndex = 1;
+		function loadAccountBalance()
+		{
+			$.ajax({
+        		dataType : 'json',		      
+		        url : '<%=basePath%>/account/query-account-balance.shtml' ,
+		        success:function(data){
+		        	if(data)
+		        	{
+		        		$('#amountSpan').text(formatCurrency(data.amount/100));
+		        		$('#balanceusableSpan').text(formatCurrency(data.balanceusable/100));
+		        		$('#balancefrozonSpan').text(formatCurrency(data.balancefrozon/100));
+		        	}
+		        	var canvas1 = new scale({id: "can1", numb: 100});
+		        },
+		        error: function()
+		        {
+		        	if(++errorIndex <= 3)
+		        	{
+		        		loadAccountBalance();	
+		        	}
+		        }
+        	});
+		}
 </script>
 </body>
 </html>

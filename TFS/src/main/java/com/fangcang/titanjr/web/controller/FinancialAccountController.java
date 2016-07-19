@@ -85,16 +85,35 @@ public class FinancialAccountController extends BaseController {
             organQueryRequest.setUserId(this.getUserId());
             FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
             model.addAttribute("organ", organOrganResponse.getFinancialOrganDTO());
-            AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
-            accountBalanceRequest.setUserid(this.getUserId());
-            AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
-            if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
-                model.addAttribute("accountBalance", balanceResponse.getAccountBalance().get(0));
-            }
+//            AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
+//            accountBalanceRequest.setUserid(this.getUserId());
+//            AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+//            if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
+//                model.addAttribute("accountBalance", balanceResponse.getAccountBalance().get(0));
+//            }
         }
         return "account-overview/overview-main";
     }
-
+    
+    /**
+     * 提供客户端查询当前账户的余额
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/query-account-balance", method = RequestMethod.GET)
+    public String queryAccountBalance()
+    {
+		 AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
+	     accountBalanceRequest.setUserid(this.getUserId());
+	      
+	     AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+	      
+	     if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
+	         return toJson(balanceResponse.getAccountBalance().get(0));
+	     }
+	      return "";
+    }
+    
     @RequestMapping(value = "/order-receive-detail", method = RequestMethod.GET)
     public String queryReceiveOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         setTransOrderDetail(tradeDetailRequest,model);
