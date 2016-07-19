@@ -253,13 +253,7 @@ public class FinancialTradeController extends BaseController {
 				}
 		        
 			}
-			
-			
-			
 		}
-		
-		
-		
 	    model.addAttribute("rechargeResultConfirmRequest", rechargeResultConfirmRequest);
 		return "checkstand-pay/payResult";
 	}
@@ -374,8 +368,9 @@ public class FinancialTradeController extends BaseController {
 	public String genRechargeData(HttpServletRequest request,PaymentRequest paymentRequest,Model model) throws Exception{
 		if(paymentRequest !=null){
 			if(CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentRequest.getPaySource())){
-				paymentRequest.setUserid(getUserId());
-				paymentRequest.setOperator(getUserName());
+				paymentRequest.setUserid(this.getUserId());
+				paymentRequest.setOperator(this.getUserRealName());
+				paymentRequest.setCreator(this.getUserRealName());
 			}
 			model.addAttribute(CommonConstant.RESULT, CommonConstant.FAIL);
 			
