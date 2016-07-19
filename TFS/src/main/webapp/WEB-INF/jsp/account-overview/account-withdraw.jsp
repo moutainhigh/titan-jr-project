@@ -226,6 +226,7 @@
                         {
                             value: '确定',
                             skin : 'btn btn_grey ',
+                            
                             callback: function () {
                                 $.ajax({
                                     type: "post",

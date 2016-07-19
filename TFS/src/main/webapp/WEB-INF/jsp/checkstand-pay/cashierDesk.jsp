@@ -22,10 +22,10 @@
     <div class="S_popup_Kan clearfix opaque">
         <div class="gold_pay">
            <c:if test="${not empty gDPOrderDTO }">
-              <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount">${gDPOrderDTO.orderSum  }</span>元</div>
+              <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${gDPOrderDTO.orderSum  }"  pattern="#,##0.00#" /></span>元</div>
            </c:if>
            <c:if test="${not empty orderDTO }">
-              <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount">${orderDTO.payAmount  }</span>元</div>
+              <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${orderDTO.payAmount  }"  pattern="#,##0.00#" /></span>元</div>
            </c:if>
             <div class="goldpay_top">
                 <ul>
@@ -85,7 +85,7 @@
                                 <label class="f_ui-checkbox-c3 p_r10">
                                     <input type="checkbox" checked="" id="d_checkbox" onclick="checktest()" ><i ></i>
                                     使用账户可用余额付款</label>丨
-                                <span class="p_l10">账户可用余额：${accountBalance.balanceusable }元</span>
+                                <span class="p_l10">账户可用余额：<fmt:formatNumber value="${accountBalance.balanceusable }"  pattern="#,##0.00#" />元</span>
                             </li>
                             </c:if>
                             
@@ -98,7 +98,7 @@
               <div class="goldpay_title1" style="border-bottom:#ddd 1px solid;">
                <c:if test="${ not empty fcUserid}">
                 <div class="goldpaytitle1_top" id="not_enough_amount">剩余余额：<!--账户余额不够用余额付款-->
-                    <span class="c_f00" id="pay_surplus_amount">${orderDTO.payAmount - accountBalance.balanceusable}</span>元
+                    <span class="c_f00" id="pay_surplus_amount"><fmt:formatNumber value="${orderDTO.payAmount - accountBalance.balanceusable}"  pattern="#,##0.00#" /></span>元
                     <span class="p_l27">使用以下方式付款：</span>
                 </div>
                 </c:if>
@@ -227,7 +227,7 @@
             $("#exists_history").remove();
             $("#not_exists_history").show();
         }
-        if ('${orderDTO.payAmount}' - '${accountBalance.balanceusable}' < 0){
+        if ('${orderDTO.payAmount}' - '${accountBalance.balanceusable}' <= 0){
             $("#useCashierDeskPay").hide();
             $("#enough_amount").show();
             $("#not_enough_amount").hide();
@@ -497,11 +497,11 @@
                success: function (data) {
             	   if(data.result=="success"){
             		   top.F.loading.show();
+            		   new top.Tip({msg: data.msg, type: 1, timer: 2000});
                        setTimeout(function () {
                            top.F.loading.hide();
-                           new top.Tip({msg: data.msg, type: 1, time: 1000});
                            top.removeIframeDialog();
-                       }, 1000);
+                       }, 2000);
             	   }
             	}
         });
@@ -577,14 +577,21 @@
                 },
                 dataType: "json",
                 success: function (data) {
-               	 //如果ajax请求成功则显示回调页面
+                //如果ajax请求成功则显示回调页面
                	 if(data.result == "success"){
-               		new top.Tip({msg: data.msg, type: 1, time: 2000});
-               		$("#orderNo").val(data.orderNo);
-               		$("#confirmOrder").submit();
+               		new top.Tip({msg: data.msg, type: 1, timer: 2000});
+               		setTimeout(function () {
+               			$("#orderNo").val(data.orderNo);
+                   		$("#confirmOrder").submit();
+	                  }, 2000);
                	 }else{
-               		 new top.Tip({msg: data.msg, type: 1, time: 2000});
-               		$("#confirmOrder").submit();
+               		  new top.Tip({msg: data.msg, type: 1, timer: 2000});
+	               	  setTimeout(function () {
+	               		 if(typeof data.orderNo !='undefined'){
+	                			$("#orderNo").val(data.orderNo);
+	                		 }
+	               		 $("#confirmOrder").submit();
+	                  }, 2000);
                	 }
                 }
                 });
