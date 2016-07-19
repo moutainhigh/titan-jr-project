@@ -188,7 +188,7 @@
     		return ;
     	}
     	
-    	if(withdraw_amount>'${accountBalance.balanceusable / 100 }' ||'${accountBalance.balanceusable / 100 }'=='0'){
+    	if(parseFloat(withdraw_amount)>parseFloat('${accountBalance.balanceusable / 100 }') ||'${accountBalance.balanceusable / 100 }'=='0'){
     		$("#inputeAmountError").text("可用余额不足，不能提现");
     		return ;
     	}
