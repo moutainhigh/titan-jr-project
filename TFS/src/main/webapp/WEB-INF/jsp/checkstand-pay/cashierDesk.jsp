@@ -394,58 +394,7 @@
              dataType: "json",
              success: function(data){
             	 if(data.result=="success"){
-            		 $.ajax({
-            		        dataType: 'html',
-            		        context: document.body,
-            		        url: '<%=basePath%>/account/showSetPayPassword.action',
-            		        success: function (html) {
-            		            var d = dialog({
-            		                title: ' ',
-            		                padding: '0 0 0px 0 ',
-            		                content: html,
-            		                skin: 'saas_pop',
-            		                button: [
-            		                    {
-            		                        value: '确定',
-            		                        skin: 'btn p_lr30',
-            		                        callback: function () {
-            		                        	if(PasswordStr.returnStr()==PasswordStr1.returnStr()){
-            		                        		if(PasswordStr.returnStr().length==6){
-            		                        			   $.ajax({
-            		                        			    	 type: "post",
-            		                        			         url: "<%=basePath%>/account/setPayPassword.action",
-            		                        			         data: {
-            		                        			        	 fcuserid:'${fcUserid}',
-            		                        			        	/*  payPassword:rsaData(PasswordStr.returnStr()) */
-            		                        			        	 payPassword:PasswordStr.returnStr()
-            		                        			         },
-            		                        			         dataType: "json",
-            		                        			         success: function(data){
-            		                        			        	 if(data.result=="success"){
-            		                        			        		top.F.loading.show();
-            		                 		                            setTimeout(function () {
-            		                 		                                top.F.loading.hide();
-            		                 		                                new top.Tip({msg: '密码设置成功！', type: 1, time: 1000});
-            		                 		                            }, 1000);
-            		                        			        	 }else{
-            		                        			        			top.F.loading.show();
-                		                 		                            setTimeout(function () {
-                		                 		                                top.F.loading.hide();
-                		                 		                                new top.Tip({msg: data.msg, type: 1, time: 1000});
-                		                 		                            }, 1000);
-            		                        			        	 }
-            		                        			         }
-            		                        			   })
-            		                        		}
-            		                        	}
-            		                        },
-            		                        autofocus: true
-            		                    },
-
-            		                ]
-            		            }).showModal();
-            		        }
-            		    });
+            		 show_set_payPassword();
             	 }
             	}
             }); 
@@ -455,6 +404,72 @@
 		window.close();
 	});
 		
+    
+    function show_set_payPassword(){
+    	 $.ajax({
+		        dataType: 'html',
+		        context: document.body,
+		        url: '<%=basePath%>/account/showSetPayPassword.action',
+		        success: function (html) {
+		            var d = dialog({
+		                title: ' ',
+		                padding: '0 0 0px 0 ',
+		                content: html,
+		                skin: 'saas_pop',
+		                button: [
+		                    {
+		                        value: '确定',
+		                        skin: 'btn p_lr30',
+		                        callback: function () {
+		                        	if(PasswordStr.returnStr()==PasswordStr1.returnStr()){
+		                        		if(PasswordStr.returnStr().length==6){
+		                        			   $.ajax({
+		                        			    	 type: "post",
+		                        			         url: "<%=basePath%>/account/setPayPassword.action",
+		                        			         data: {
+		                        			        	 fcuserid:'${fcUserid}',
+		                        			        	/*  payPassword:rsaData(PasswordStr.returnStr()) */
+		                        			        	 payPassword:PasswordStr.returnStr()
+		                        			         },
+		                        			         dataType: "json",
+		                        			         success: function(data){
+		                        			        	 if(data.result=="success"){
+		                        			        		top.F.loading.show();
+		                 		                            setTimeout(function () {
+		                 		                                top.F.loading.hide();
+		                 		                                new top.Tip({msg: '密码设置成功！', type: 1, timer: 1000});
+		                 		                            }, 1000);
+		                        			        	 }else{
+		                        			        			top.F.loading.show();
+ 		                 		                                setTimeout(function () {
+ 		                 		                                top.F.loading.hide();
+ 		                 		                                new top.Tip({msg: data.msg, type: 1, timer: 1000});
+ 		                 		                            }, 1000);
+		                        			        	 }
+		                        			         }
+		                        			   })
+		                        		}else{
+		                        			 new top.Tip({msg: "密码必须为6位", type: 1, timer: 1000});
+			                        		 setTimeout(function () {
+			                        			 checkIsSetPayPassword();
+	       		                            }, 1000);
+		                        		}
+		                        	}else{
+		                        		 new top.Tip({msg: "两次输入的密码不一致", type: 1, timer: 1000});
+		                        		 setTimeout(function () {
+		                        			 checkIsSetPayPassword();
+       		                            }, 1000);
+		                        		
+		                        	}
+		                        },
+		                        autofocus: true
+		                    },
+
+		                ]
+		            }).showModal();
+		        }
+		    });
+    }
     
     function closeWindow(){
     	var userAgent = navigator.userAgent;
@@ -516,41 +531,73 @@
     	}
     	var flag = validate_isInput_password();
     	if(flag==false){
-    		 $.ajax({
-    	            dataType: 'html',
-    	            context: document.body,
-    	            url: '<%=basePath%>/account/showPayPassword.action',
-    	            success: function (html) {
-    	                var d = dialog({
-    	                    title: ' ',
-    	                    padding: '0 0 0px 0 ',
-    	                    content: html,
-    	                    skin: 'saas_pop',
-    	                    button: [
-    	                        {
-    	                            value: '确定',
-    	                            skin: 'btn p_lr30',
-    	                            callback: function () {
-    	                            	//获取密码
-    	                            	pay_Order();
-    	                            },
-    	                            autofocus: true
-    	                        },
-    	                        {
-    	                            value: '取消',
-    	                            skin: 'btn btn_grey btn_exit',
-    	                            callback: function () {
-    	                                //   alert('c');
-    	                            }
-    	                        }
-    	                    ]
-    	                }).showModal();
-    	            }
-    	        });
+    		show_payPassword();
     	}else{
     		pay_Order(); 
     	}
     });
+    
+    function show_payPassword(){
+    	$.ajax({
+            dataType: 'html',
+            context: document.body,
+            url: '<%=basePath%>/account/showPayPassword.action',
+            success: function (html) {
+                var d = dialog({
+                    title: ' ',
+                    padding: '0 0 0px 0 ',
+                    content: html,
+                    skin: 'saas_pop',
+                    button: [
+                        {
+                            value: '确定',
+                            skin: 'btn p_lr30',
+                            callback: function () {
+                            	//验证支付密码是否准确
+                            	check_payPassword();
+                            	//获取密码
+                            },
+                            autofocus: true
+                        },
+                        {
+                            value: '取消',
+                            skin: 'btn btn_grey btn_exit',
+                            callback: function () {
+                                //   alert('c');
+                            }
+                        }
+                    ]
+                }).showModal();
+            }
+        });
+    }
+    
+    function check_payPassword(){
+    	 $.ajax({
+             type: "post",
+             dataType: 'json',
+             url: '<%=basePath%>/setting/check_payPassword.action',
+             data: {
+            	 payPassword:PasswordStr2.returnStr(),
+            	 fcUserid:'${fcUserid}'
+             },
+             success: function (data) {
+            	 if(data.code=="1"){
+            		 pay_Order();
+            	 }else{
+            		new top.Tip({msg: '输入的密码错误', type: 1, timer: 2000});
+            		  setTimeout(function () {
+            			  show_payPassword();
+                      }, 2000);
+            		
+            	 }
+             },error:function(data){
+            	 alert(data.code);
+            	 alert("344");
+             }
+    	 });
+    }
+    
     
     function pay_Order(){
    	    var pay_date=save_payDate();
@@ -579,11 +626,8 @@
                 success: function (data) {
                 //如果ajax请求成功则显示回调页面
                	 if(data.result == "success"){
-               		new top.Tip({msg: data.msg, type: 1, timer: 2000});
-               		setTimeout(function () {
-               			$("#orderNo").val(data.orderNo);
-                   		$("#confirmOrder").submit();
-	                  }, 2000);
+               		$("#orderNo").val(data.orderNo);
+                   	$("#confirmOrder").submit();
                	 }else{
                		  new top.Tip({msg: data.msg, type: 1, timer: 2000});
 	               	  setTimeout(function () {

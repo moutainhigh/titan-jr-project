@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.AccountUpdateRequest;
@@ -32,7 +33,6 @@ import com.fangcang.util.StringUtil;
 @Controller
 @RequestMapping("/setting")
 public class SettingPasswordController extends BaseController{
-	
 	/**
 	 * 
 	 */
@@ -141,6 +141,35 @@ public class SettingPasswordController extends BaseController{
 				putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
 			}
 		}
+		return toJson();
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("/check_payPassword")
+	public String checkPayPassword(String payPassword,String fcUserid) throws GlobalServiceException{
+		String tfsUserid = null;
+		if(StringUtil.isValidString(fcUserid)){
+			TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
+			titanUserBindInfoDTO.setFcuserid(Long.parseLong(fcUserid));
+			titanUserBindInfoDTO = userService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+			if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid()!=null){
+				tfsUserid = titanUserBindInfoDTO.getTfsuserid().toString();
+			}
+		}else{
+			tfsUserid = this.getTfsUserId();
+		}
+		
+		if(!StringUtil.isValidString(payPassword) || !StringUtil.isValidString(tfsUserid)){
+			putSysError("参数错误");
+			return toJson();
+		}
+		boolean istrue = userService.checkPayPassword(payPassword,tfsUserid);
+		if(!istrue){
+			putSysError("密码错误");
+			return toJson();
+		}
+		putSuccess();
 		return toJson();
 	}
 }

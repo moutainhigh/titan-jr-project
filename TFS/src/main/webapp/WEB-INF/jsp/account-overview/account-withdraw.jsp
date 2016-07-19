@@ -193,7 +193,7 @@
     		return ;
     	}
     	
-    
+    	 showPayPassword();
     	
        /*  if (isNaN($("#withDrawNum").val())){
             alert("请输入数字金额");
@@ -212,7 +212,12 @@
             return false;
         } */
         //验证是否设置支付密码
-        $.ajax({
+        
+
+    });
+
+    function showPayPassword(){
+    	$.ajax({
             dataType: 'html',
             context: document.body,
             url : '<%=basePath%>/account/showPayPassword.shtml',
@@ -226,47 +231,76 @@
                         {
                             value: '确定',
                             skin : 'btn btn_grey ',
-                            
                             callback: function () {
-                                $.ajax({
-                                    type: "post",
-                                    dataType: 'json',
-                                    data: {
-                                        useNewBankCard: $("#useNewBankCard").val(),
-                                        hasBindBanCard: $("#hasBindBanCard").val(),
-                                        bankCode: $("#bankCode").attr("data-id"),
-                                        bankName: $("#bankName").val(),
-                                        accountNum: $("#accountNum").val(),
-                                        accountName: $("#accountName").val(),
-                                        password:PasswordStr2.returnStr(),
-                                        originalAccount:'${bindBankCard.account_number }',
-                                        amount:$("#withDrawNum").val(),
-                                    },
-                                    context: document.body,
-                                    url: '<%=basePath%>/account/toAccountWithDraw.shtml',
-                                    success: function (data) {
-                                        if(data.code == 1){
-                                            withDrawCallBack('提现申请已提交，等待银行处理。<br/>预计到账时间：2小时内', 1);
-                                            $("#flashPage").submit();//刷新页面
-                                        } else {
-                                            if (data.msg == '支付密码不正确请重新输入') {
-                                                withDrawCallBack(data.msg, 0);
-                                            } else {
-                                                withDrawCallBack(data.msg, 1);
-                                            }
-                                        }
-                                    }
-                                });
-
+                            	if(PasswordStr2.returnStr().length==6){
+                            		to_check_payPassword();
+                            	}else{
+                            		new top.Tip({msg: '输入的密码必须为6位', type: 1, timer: 2000});
+                            		setTimeout(function () {
+                          			  showPayPassword();
+                                    }, 2000);
+                            	}
                             }
                         }
                     ]
                 }).showModal();
             }
         });
-
-    });
-
+    }
+    
+    function to_check_payPassword(){
+    	 $.ajax({
+             type: "post",
+             dataType: 'json',
+             url: '<%=basePath%>/setting/check_payPassword.shtml',
+             data: {
+            	 payPassword:PasswordStr2.returnStr()
+             },
+             success: function (data) {
+            	 if(data.code=="1"){
+            		 toAccountWithdraw();
+            	 }else{
+            		new top.Tip({msg: '输入的密码错误', type: 1, timer: 2000});
+            		  setTimeout(function () {
+            			  showPayPassword();
+                      }, 2000);
+            		
+            	 }
+             }
+    	 });
+    }
+    
+    function toAccountWithdraw(){
+    	 $.ajax({
+             type: "post",
+             dataType: 'json',
+             data: {
+                 useNewBankCard: $("#useNewBankCard").val(),
+                 hasBindBanCard: $("#hasBindBanCard").val(),
+                 bankCode: $("#bankCode").attr("data-id"),
+                 bankName: $("#bankName").val(),
+                 accountNum: $("#accountNum").val(),
+                 accountName: $("#accountName").val(),
+                 password:PasswordStr2.returnStr(),
+                 originalAccount:'${bindBankCard.account_number }',
+                 amount:$("#withDrawNum").val(),
+             },
+             context: document.body,
+             url: '<%=basePath%>/account/toAccountWithDraw.shtml',
+             success: function (data) {
+                 if(data.code == 1){
+                     withDrawCallBack('提现申请已提交，等待银行处理。<br/>预计到账时间：2小时内', 1);
+                     $("#flashPage").submit();//刷新页面
+                 } else {
+                     if (data.msg == '支付密码不正确请重新输入') {
+                         withDrawCallBack(data.msg, 0);
+                     } else {
+                         withDrawCallBack(data.msg, 1);
+                     }
+                 }
+             }
+         });
+    }
     
     function checkIsSetPayPassword(){
    	 $.ajax({
@@ -301,7 +335,17 @@
 		                        	if(PasswordStr.returnStr()==PasswordStr1.returnStr()){
 		                        		if(PasswordStr.returnStr().length==6){
 		                        			set_PayPassword();
+		                        		}else{
+		                        			 new top.Tip({msg: "密码必须为6位", type: 1, timer: 1000});
+			                        		 setTimeout(function () {
+			                        			 show_setPayPassword();
+	       		                            }, 1000);
 		                        		}
+		                        	}else{
+		                        		 new top.Tip({msg: "两次输入密码不一致", type: 1, timer: 1000});
+		                        		 setTimeout(function () {
+		                        			 show_setPayPassword();
+       		                            }, 1000);
 		                        	}
 		                        },
 		                        autofocus: true
@@ -327,13 +371,13 @@
 	        		top.F.loading.show();
                      setTimeout(function () {
                          top.F.loading.hide();
-                         new top.Tip({msg: '密码设置成功！', type: 1, time: 1000});
+                         new top.Tip({msg: '密码设置成功！', type: 1, timer: 1000});
                      }, 1000);
 	        	 }else{
 	        			top.F.loading.show();
                          setTimeout(function () {
                              top.F.loading.hide();
-                             new top.Tip({msg: data.msg, type: 1, time: 1000});
+                             new top.Tip({msg: data.msg, type: 1, timer: 1000});
                          }, 1000);
 	        	 }
 	         }
