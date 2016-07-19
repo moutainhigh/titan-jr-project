@@ -15,8 +15,8 @@
         <div class="history fl">您所在位置：我的资产 &gt; 冻结金额详情</div>
     </div>
     <div class="main_con p_b8" style="padding-left:14px;">
-        <div class="MyAssets_top_tip"><i class="ico_frozen fl"></i><span
-                class="fl">当联盟分销商付款成功后，供应商未确认订单前资金会冻结，确认后即可解冻</span>
+        <div class="MyAssets_top_tip" style="display: none"><i class="ico_frozen fl"></i><span
+                class="fl" >当联盟分销商付款成功后，供应商未确认订单前资金会冻结，确认后即可解冻</span>
             <i class="tourism_ico curpo chacha fl J_delete"></i>
         </div>
         <div class="MyAssets_list_Options" style="padding-left:0px;">
@@ -273,6 +273,9 @@
     $(".J_delete").on('click', function (event) {
         $(".MyAssets_top_tip").hide();
         $(".p_t175").css("padding-top", "130px");
+        
+        $.cookie('freezeTip' , 'hide' , { expires: 30 });
+        
     });
 
     //导出提示
@@ -335,6 +338,16 @@
             }
         });
     }
+    
+   
+	(function() {
+		var status = $.cookie('freezeTip');
+		if (status && status == 'hide') {
+			$(".MyAssets_top_tip").hide();
+		} else {
+			$(".MyAssets_top_tip").show();
+		}
+	}());
 </script>
 </body>
 </html>
