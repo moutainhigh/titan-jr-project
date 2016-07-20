@@ -376,8 +376,6 @@ public class FinancialTradeController extends BaseController {
 		if(paymentRequest !=null){
 			if(CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentRequest.getPaySource())){
 				paymentRequest.setUserid(this.getUserId());
-				paymentRequest.setCreator(this.getUserRealName());
-				paymentRequest.setOperator(this.getUserRealName());
 			}
 			model.addAttribute(WebConstant.RESULT, WebConstant.FAIL);
 			
