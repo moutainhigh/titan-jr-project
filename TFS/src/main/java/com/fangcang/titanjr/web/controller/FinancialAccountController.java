@@ -601,10 +601,6 @@ public class FinancialAccountController extends BaseController {
     	}
     }
     
-    
-    
-    
-    
     @ResponseBody
     @RequestMapping("checkIsSetPayPassword")
     public Map<String, String> checkIsSetPayPassword(String fcUserid,HttpServletRequest request) {
