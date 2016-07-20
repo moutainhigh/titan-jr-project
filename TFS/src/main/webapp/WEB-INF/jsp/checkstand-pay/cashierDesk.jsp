@@ -530,17 +530,40 @@
     		return ;
     	}
     	//验证账户是否存在
-    	
-    	
+    	var check_account = check_account_isExit();
+    	if(check_account ==false){
+    		return false;
+    	}
     	
     	var flag = validate_isInput_password();
-    	
     	if(flag==false){
     		show_payPassword();
     	}else{
     		pay_Order(); 
     	}
     });
+    
+    function check_account_isExit(){
+    	var check_account=false;
+    	$.ajax({
+    		type:'post',
+            dataType: 'json',
+            url: '<%=basePath%>/account/check_account.action',
+            async:false,
+            data:{
+            	recieveOrgName:$("#reOrgName").val(),
+            	recieveTitanCode:$("#reTitanCode").val(),
+            },
+            success: function (data) {
+            	if(data.code=="1"){
+            		check_account = true;
+            	}else{
+            		new top.Tip({msg: '该账户不存在', type: 1, timer: 2000});
+            	}
+            }
+        });
+    	return check_account;
+    }
     
     function show_payPassword(){
     	$.ajax({
@@ -597,8 +620,6 @@
             		
             	 }
              },error:function(data){
-            	 alert(data.code);
-            	 alert("344");
              }
     	 });
     }
@@ -607,6 +628,7 @@
     function pay_Order(){
     	//获取数据
    	    var pay_date=save_payDate();
+   	    top.F.loading.show();
         if(pay_date.payAmount =="0"){
     		$.ajax({//支付页面
            	 type: "post",
@@ -632,7 +654,6 @@
                 success: function (data) {
                 //如果ajax请求成功则显示回调页面
 					 if(data.result == "success"){
-
 						$("#orderNo").val(data.orderNo);
 						$("#confirmOrder").submit();
 					 }else{
@@ -645,6 +666,8 @@
 						  }, 2000);
 
 					 }
+                },complete:function(){
+                	top.F.loading.hide();
                 }
                 });
     	}else{

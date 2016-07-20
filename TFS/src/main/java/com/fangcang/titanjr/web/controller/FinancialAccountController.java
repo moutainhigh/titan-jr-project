@@ -785,16 +785,17 @@ public class FinancialAccountController extends BaseController {
 		return "checkstand-pay/selectAccHistory";
 	}
 	
+	@ResponseBody
 	@RequestMapping("/check_account")
-	public String checkRecieveAccount(String recieveAccount,String titanCode){
-		if(!StringUtil.isValidString(recieveAccount)
-				|| !StringUtil.isValidString(titanCode)){
+	public String checkRecieveAccount(String recieveOrgName,String recieveTitanCode){
+		if(!StringUtil.isValidString(recieveOrgName)
+				|| !StringUtil.isValidString(recieveTitanCode)){
 			return toJson(putSysError("账户名和泰坦码不能为空"));
 		}
 		
 		AccountCheckRequest accountCheckRequest = new AccountCheckRequest();
-		accountCheckRequest.setOrgName(recieveAccount);
-		accountCheckRequest.setTitanCode(titanCode);
+		accountCheckRequest.setOrgName(recieveOrgName);
+		accountCheckRequest.setTitanCode(recieveTitanCode);
 		AccountCheckResponse accountCheckResponse = titanFinancialAccountService.checkTitanCode(accountCheckRequest);
 		if(accountCheckResponse.isCheckResult()){
 		   return toJson(putSuccess());

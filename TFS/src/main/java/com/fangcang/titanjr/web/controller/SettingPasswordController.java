@@ -155,6 +155,7 @@ public class SettingPasswordController extends BaseController{
 	
 	@ResponseBody
 	@RequestMapping("/check_payPassword")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String checkPayPassword(String payPassword,String fcUserid) throws GlobalServiceException{
 		String tfsUserid = null;
 		if(StringUtil.isValidString(fcUserid)){

@@ -118,8 +118,6 @@ public class FinancialTradeController extends BaseController {
     public void payResultConfirm(RechargeResultConfirmRequest rechargeResultConfirmRequest,HttpServletResponse response) throws IOException{
 		String orderNo = rechargeResultConfirmRequest.getOrderNo();
 		try{
-			response.getWriter().print("returnCode=000000&returnMsg=che");
-			
     		if(rechargeResultConfirmRequest !=null){
     			response.getWriter().print("returnCode=000000&returnMag=成功");
     			log.info("融数后台回调成功参数:"+toJson(rechargeResultConfirmRequest));
@@ -377,10 +375,8 @@ public class FinancialTradeController extends BaseController {
 		if(paymentRequest !=null){
 			if(CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentRequest.getPaySource())){
 				paymentRequest.setUserid(this.getUserId());
-
 				paymentRequest.setOperator(this.getUserRealName());
 				paymentRequest.setCreator(this.getUserRealName());
-
 			}
 			model.addAttribute(WebConstant.RESULT, WebConstant.FAIL);
 			
@@ -693,7 +689,6 @@ public class FinancialTradeController extends BaseController {
     	Map<String,String> resultMap = new HashMap<String, String>();
 		resultMap.put(WebConstant.RESULT, WebConstant.FAIL); 
 		
-		
 		//是否需要免密支付,只有用到余额转账付款的时候才需要验证密码
 		BigDecimal totalAmount = null;
 		totalAmount = new BigDecimal(paymentRequest.getPayAmount());
@@ -727,12 +722,18 @@ public class FinancialTradeController extends BaseController {
 			}
 		}
 		
-		if(financialOrderResponse !=null){
-			boolean isExit = accountIsExist(paymentRequest);
-			if(!isExit){
-				resultMap.put(WebConstant.MSG, "收款账户不存在,请认真核实");
+		if(financialOrderResponse !=null){//查询账户
+			OrgDTO orgDTO = new OrgDTO();
+			orgDTO.setOrgname(paymentRequest.getRecieveOrgName());
+			orgDTO.setTitancode(paymentRequest.getRecieveTitanCode());
+			orgDTO= titanFinancialOrganService.queryOrg(orgDTO);
+			if(orgDTO ==null){
+				resultMap.put(WebConstant.MSG, "账户不存在");
 				return resultMap;
 			}
+			paymentRequest.setUserrelateid(orgDTO.getUserid());
+			paymentRequest.setInterProductid(orgDTO.getProductid());
+			
 			
 			if(StringUtil.isValidString(paymentRequest.getUserrelateid())){//收款方不为空，则判断是否自己给自己付款
 				if(paymentRequest.getUserrelateid().equals(paymentRequest.getUserid())){
@@ -777,7 +778,6 @@ public class FinancialTradeController extends BaseController {
     		AccountCheckResponse accountCheckResponse = titanFinancialAccountService.checkTitanCode(accountCheckRequest);
     		if(accountCheckResponse.isCheckResult()){
     			paymentRequest.setUserrelateid(accountCheckResponse.getUserid());
-    			paymentRequest.setInterProductid(paymentRequest.getInterProductid());
     			return true;
     		}
     	}
