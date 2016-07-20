@@ -124,7 +124,7 @@ public class BaseController implements Serializable {
     }
     
     public String getUserRealName(){
-    	Object userRealName = session.getAttribute(CommonConstant.SESSION_KEY_LOGIN_USER_NAME);
+    	Object userRealName = session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME);
     	if(null !=userRealName){
     		return userRealName.toString();
     	}

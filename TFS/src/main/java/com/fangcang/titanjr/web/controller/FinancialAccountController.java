@@ -588,7 +588,7 @@ public class FinancialAccountController extends BaseController {
     	
     	String rcode = TFSTools.validateRegCode(session,userName, code);
     	if(rcode.equals("SUCCESS")){
-    		session.removeAttribute(CommonConstant.SESSION_KEY_REG_CODE+"_"+userName);
+    		session.removeAttribute(WebConstant.SESSION_KEY_REG_CODE+"_"+userName);
     		return toJson(putSuccess());
     	}else if(rcode.equals("EXPIRE")){
     		return toJson(putSysError("验证码已经过期，请重新获取验证码"));
