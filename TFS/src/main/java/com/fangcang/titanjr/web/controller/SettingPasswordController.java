@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
+
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
+
 import com.fangcang.titanjr.common.util.CommonConstant;
+
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.AccountUpdateRequest;
@@ -33,8 +37,8 @@ import com.fangcang.util.StringUtil;
  */
 @Controller
 @RequestMapping("/setting")
+@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
 public class SettingPasswordController extends BaseController{
-	
 	/**
 	 * 
 	 */
@@ -108,8 +112,10 @@ public class SettingPasswordController extends BaseController{
 	 * 设置小额免密支付开关（只有金服管理员才可以设置）
 	 * @return
 	 */
+	
 	@ResponseBody
 	@RequestMapping("/set-swicth")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String setSwitch(Integer allownopwdpay){
 		if(allownopwdpay==null||(allownopwdpay!=0&&allownopwdpay!=1)){
 			putSysError("参数异常");
@@ -143,6 +149,36 @@ public class SettingPasswordController extends BaseController{
 				putSysError(WebConstant.CONTROLLER_ERROR_MSG);
 			}
 		}
+		return toJson();
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("/check_payPassword")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	public String checkPayPassword(String payPassword,String fcUserid) throws GlobalServiceException{
+		String tfsUserid = null;
+		if(StringUtil.isValidString(fcUserid)){
+			TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
+			titanUserBindInfoDTO.setFcuserid(Long.parseLong(fcUserid));
+			titanUserBindInfoDTO = userService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+			if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid()!=null){
+				tfsUserid = titanUserBindInfoDTO.getTfsuserid().toString();
+			}
+		}else{
+			tfsUserid = this.getTfsUserId();
+		}
+		
+		if(!StringUtil.isValidString(payPassword) || !StringUtil.isValidString(tfsUserid)){
+			putSysError("参数错误");
+			return toJson();
+		}
+		boolean istrue = userService.checkPayPassword(payPassword,tfsUserid);
+		if(!istrue){
+			putSysError("密码错误");
+			return toJson();
+		}
+		putSuccess();
 		return toJson();
 	}
 }

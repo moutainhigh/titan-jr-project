@@ -95,7 +95,7 @@ public class CommonConstant {
     public static final String ROLECODE_ADMIN = "ADMIN";
     
     //不需要权限
-    public static final String ROLECODE_NO = "NO";
+    public static final String ROLECODE_NO_LIMIT = "NO_LIMIT";
 	
 	
 }

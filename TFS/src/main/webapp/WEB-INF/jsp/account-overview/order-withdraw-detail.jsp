@@ -30,11 +30,20 @@
                         <span class="w_250">
                         交易创建时间：<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.createtime}"/>
                         </span>
-						<span class="w_160">创建人：${transOrder.creator}</span>
+						<span class="w_160">操作人：
+							<c:if test="${transOrder.creator != null}">
+								${transOrder.creator}
+							</c:if>
+						</span>
 					</p>
 					<dl class="orderDetails-dl ">
 						<dt class='fl'>交易内容：</dt>
-						<dd class='fr'>提现到${transOrder.titanWithDrawDTO.bankname}卡</dd>
+						<dd class='fr'>
+							${transOrder.goodsname}
+							<c:if test="${transOrder.goodsdetail != null}">
+								-${transOrder.goodsdetail}
+							</c:if>
+						</dd>
 						<div class="clear"></div>
 					</dl>
 

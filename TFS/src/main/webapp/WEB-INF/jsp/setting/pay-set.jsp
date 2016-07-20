@@ -171,11 +171,13 @@ function validate_payPassword(){
 	var payPassword2 = PasswordStr2.returnStr();
 	if(payPassword1.length!=6||payPassword2.length!=6){
 		new top.Tip({msg : '设置的密码必须为6位！', type: 1 , time:1000}); 
+		add_PayPassword();
 		return false;
 	}
 	
 	if(payPassword1!=payPassword2){
 		new top.Tip({msg : '两次密码输入不相同！', type: 1 , time:1000});   
+		add_PayPassword();
 		return false;
 	}
 	return true;
@@ -201,6 +203,9 @@ $('.J_password').on('click',function(){
     });
 });  
 
+function add_PayPassword(){
+	 window.location.reload();
+}
 
 //密码输入框
 var PasswordStr1=new sixDigitPassword("passwordbox");

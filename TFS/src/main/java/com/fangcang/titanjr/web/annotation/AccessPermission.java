@@ -17,5 +17,5 @@ public @interface AccessPermission {
 	 * 允许访问的角色code
 	 * @return
 	 */
-	String[] allownRoleCode() default {};
+	String[] allowRoleCode() default {};
 }

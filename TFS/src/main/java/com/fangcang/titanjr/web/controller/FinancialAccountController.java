@@ -14,8 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.fangcang.titanjr.common.enums.BankCardEnum;
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.BankCardDTO;
@@ -26,6 +28,7 @@ import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 import com.fangcang.titanjr.service.*;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.WithDrawRequest;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.titanjr.web.util.RSADecryptString;
@@ -76,6 +79,7 @@ public class FinancialAccountController extends BaseController {
     TitanFinancialBaseInfoService titanFinancialBaseInfoService;
 
     @RequestMapping(value = "/overview-main", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
     public String home(HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
             FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
@@ -238,22 +242,32 @@ public class FinancialAccountController extends BaseController {
     }
     
     @RequestMapping(value = "/toBindAccountWithDrawCard")
-    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName){
-    	model.addAttribute("orgName",orgName);
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
+    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName) throws UnsupportedEncodingException{
     	model.addAttribute("modifyOrBind",WebConstant.BIND_BANK_CARD);
+    	 if (null != this.getUserId()) {
+             model.addAttribute("organ", this.getTitanOrganDTO());
+         }
+
     	return "account-overview/bind-bankcard";
     }
     
     @RequestMapping("update_account-withdraw_info")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
     public String updateAccountWithdrawInfo(HttpServletRequest request, Model model,String orgName){
+    	if (null != this.getUserId()) {
+             model.addAttribute("organ", this.getTitanOrganDTO());
+        }
     	model.addAttribute("showBankCardInput",1);
+
     	model.addAttribute("modifyOrBind",WebConstant.MODIFY_BANK_CARD);
-    	model.addAttribute("orgName",  orgName);
+
     	return "account-overview/bind-bankcard";
     }
     
     
     @RequestMapping(value = "/account-withdraw", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
     public String toAccountWithDrawPage(HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
         	
@@ -289,6 +303,7 @@ public class FinancialAccountController extends BaseController {
 
     @ResponseBody
     @RequestMapping("bankCardBind")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
     public String bankCardBindToPublic(BindBankCardRequest  bindBankCardRequest,Model model){
      	if(!StringUtil.isValidString(bindBankCardRequest.getBankCardCode()) 
     			|| !StringUtil.isValidString(bindBankCardRequest.getBankCardName())
@@ -516,7 +531,7 @@ public class FinancialAccountController extends BaseController {
 //        		payPasswordRequest.setOldPassword(RSADecryptString.decryptString(payPasswordRequest.getOldPassword(),request));
         		payPasswordRequest.setOldPassword(payPasswordRequest.getOldPassword());
         	}
-        	payPasswordRequest.setTfsuserid(getTfsUserId());
+        	payPasswordRequest.setTfsuserid(this.getTfsUserId());
         	log.info("设置支付密码的传入参数:"+toJson(payPasswordRequest));
             PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
             if (payPasswordResponse.isSaveSuccess()) {
@@ -536,30 +551,45 @@ public class FinancialAccountController extends BaseController {
     	if(forgetPayPassword ==null
     			||!StringUtil.isValidString(forgetPayPassword.getPayPassword())
     			||!StringUtil.isValidString(forgetPayPassword.getUserName())
-    			||!StringUtil.isValidString(forgetPayPassword.getCode())){
+    			){
     		return toJson(putSysError("参数错误"));
     	}
     	
     	//获取该用户的用户名
-    	if(!getUserName().equals(forgetPayPassword.getUserName())){
+    	if(!this.getUserName().equals(forgetPayPassword.getUserName())){
     		return toJson(putSysError("您输入的用户名错误"));
     	}
     	
-    	String rcode = TFSTools.validateRegCode(session,forgetPayPassword.getUserName(), forgetPayPassword.getCode());
-    	if(rcode.equals("SUCCESS")){
-    		//移除session
-    		session.removeAttribute(WebConstant.SESSION_KEY_REG_CODE+"_"+forgetPayPassword.getUserName());
-    		PayPasswordRequest payPasswordRequest  = new PayPasswordRequest();
+		PayPasswordRequest payPasswordRequest  = new PayPasswordRequest();
+
 //    		payPasswordRequest.setPayPassword(RSADecryptString.decryptString(forgetPayPassword.getPayPassword(),request));
-    		payPasswordRequest.setPayPassword(forgetPayPassword.getPayPassword());
-    		payPasswordRequest.setIsForget(com.fangcang.titanjr.common.util.CommonConstant.IS_FORGET_PAYPASSWORD);
-    		payPasswordRequest.setTfsuserid(this.getTfsUserId());
-    	    PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
-    	    if (payPasswordResponse.isSaveSuccess()) {
-    	    	return toJson(putSuccess());
-            } else {
-            	return toJson(putSysError(payPasswordResponse.getReturnMessage()));
-            }
+		payPasswordRequest.setPayPassword(forgetPayPassword.getPayPassword());
+		payPasswordRequest.setIsForget(com.fangcang.titanjr.common.util.CommonConstant.IS_FORGET_PAYPASSWORD);
+		payPasswordRequest.setTfsuserid(this.getTfsUserId());
+	    PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
+	    if (payPasswordResponse.isSaveSuccess()) {
+	    	return toJson(putSuccess());
+        } else {
+        	return toJson(putSysError(payPasswordResponse.getReturnMessage()));
+        }
+    }
+    
+    @ResponseBody
+    @RequestMapping("check_code")
+    public String checkCode(String userName,String code){
+    	if(!StringUtil.isValidString(userName)||!StringUtil.isValidString(code)){
+    		return toJson(putSysError("参数错误"));
+    	}
+    	//获取该用户的用户名
+    	if(!this.getUserName().equals(userName)){
+    		System.out.println(this.getUserName());
+    		return toJson(putSysError("您输入的用户名错误"));
+    	}
+    	
+    	String rcode = TFSTools.validateRegCode(session,userName, code);
+    	if(rcode.equals("SUCCESS")){
+    		session.removeAttribute(WebConstant.SESSION_KEY_REG_CODE+"_"+userName);
+    		return toJson(putSuccess());
     	}else if(rcode.equals("EXPIRE")){
     		return toJson(putSysError("验证码已经过期，请重新获取验证码"));
     	}else if(rcode.equals("NOTEXIST")){
@@ -634,45 +664,48 @@ public class FinancialAccountController extends BaseController {
                 HSSFSheet sheet = workbook.createSheet();
                 HSSFRow head = sheet.createRow(0);
                 head.createCell(0).setCellValue("编号");
-                head.createCell(1).setCellValue("业务单号");
-                head.createCell(2).setCellValue("金融交易号");
+                head.createCell(1).setCellValue("金融交易号");
+                head.createCell(2).setCellValue("业务单号");
                 head.createCell(3).setCellValue("财务单号");
-                head.createCell(4).setCellValue("交易时间");
-                head.createCell(5).setCellValue("交易类型");
-                head.createCell(6).setCellValue("交易内容");
-                head.createCell(7).setCellValue("交易对方");
-                head.createCell(8).setCellValue("订单金额");
-                head.createCell(9).setCellValue("手续费");
-                head.createCell(10).setCellValue("交易结果");
+                head.createCell(4).setCellValue("融数单号");
+                head.createCell(5).setCellValue("交易时间");
+                head.createCell(6).setCellValue("交易类型");
+                head.createCell(7).setCellValue("交易内容");
+                head.createCell(8).setCellValue("交易对方");
+                head.createCell(9).setCellValue("订单金额");
+                head.createCell(10).setCellValue("手续费");
+                head.createCell(11).setCellValue("交易结果");
                 List<TransOrderDTO> orderDTOList = tradeDetailResponse.getTransOrders().getItemList();                for (int i = 0; i < orderDTOList.size(); i++) {
                     HSSFRow row = sheet.createRow(i + 1);//创建一行
                     row.createCell(0).setCellValue(i + 1);
-                    row.createCell(1).setCellValue(orderDTOList.get(i).getBusinessordercode());
-                    row.createCell(2).setCellValue(orderDTOList.get(i).getOrderid());
+                    row.createCell(1).setCellValue(orderDTOList.get(i).getUserorderid());
+                    row.createCell(2).setCellValue(orderDTOList.get(i).getBusinessordercode());
                     row.createCell(3).setCellValue(orderDTOList.get(i).getPayorderno());
-                    row.createCell(4).setCellValue(DateUtil.dateToString(orderDTOList.get(i).getCreatetime(),"yyyy-MM-dd HH:mm:ss"));
-                    row.createCell(5).setCellValue(orderDTOList.get(i).getTradeType());
-                    row.createCell(6).setCellValue(orderDTOList.get(i).getGoodsname() + orderDTOList.get(i).getGoodsdetail());
+                    row.createCell(4).setCellValue(orderDTOList.get(i).getOrderid());
+                    row.createCell(5).setCellValue(DateUtil.dateToString(orderDTOList.get(i).getCreatetime(),"yyyy-MM-dd HH:mm:ss"));
+                    row.createCell(6).setCellValue(orderDTOList.get(i).getTradeType());
+                    String tradeContent = orderDTOList.get(i).getGoodsname();
+                    if (StringUtil.isValidString(orderDTOList.get(i).getGoodsdetail())) {
+                        tradeContent = tradeContent + orderDTOList.get(i).getGoodsdetail();
+                    }
+                    row.createCell(7).setCellValue(tradeContent);
                     if (orderDTOList.get(i).getTransTarget() != null) {
-                        row.createCell(7).setCellValue(orderDTOList.get(i).getTransTarget());
+                        row.createCell(8).setCellValue(orderDTOList.get(i).getTransTarget());
                     }
                     if (orderDTOList.get(i).getTradeamount() != null) {
-                        row.createCell(8).setCellValue(orderDTOList.get(i).getTradeamount()/100.0);
+                        double tradeAmount = orderDTOList.get(i).getTradeamount() / 100.0;
+                        if ("付款".equals(orderDTOList.get(i).getTradeType()) ||
+                                "提现".equals(orderDTOList.get(i).getTradeType())){
+                            tradeAmount = 0 - tradeAmount;
+                         }
+                        row.createCell(9).setCellValue(tradeAmount);
                     }
                     if (orderDTOList.get(i).getReceivedfee() != null) {
-                        row.createCell(9).setCellValue(orderDTOList.get(i).getReceivedfee()/100.0);
+                        row.createCell(10).setCellValue(orderDTOList.get(i).getReceivedfee()/100.0);
                     }
-                    String stateStr = "";
-                    if (orderDTOList.get(i).getStatusid().equals("1")){
-                        stateStr = "处理中";
-                    } else if (orderDTOList.get(i).getStatusid().equals("1")){
-                        stateStr = "已成功";
-                    } else if (orderDTOList.get(i).getStatusid().equals("3")){
-                        stateStr = "已冻结";
-                    } else {
-                        stateStr = "交易失败";
+                    if (StringUtil.isValidString(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()))) {
+                        row.createCell(11).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
                     }
-                    row.createCell(10).setCellValue(stateStr);
                 }
                 outputStream = response.getOutputStream();
                 workbook.write(outputStream);
@@ -751,5 +784,23 @@ public class FinancialAccountController extends BaseController {
 		}
 		return "checkstand-pay/selectAccHistory";
 	}
+	
+	@ResponseBody
+	@RequestMapping("/check_account")
+	public String checkRecieveAccount(String recieveOrgName,String recieveTitanCode){
+		if(!StringUtil.isValidString(recieveOrgName)
+				|| !StringUtil.isValidString(recieveTitanCode)){
+			return toJson(putSysError("账户名和泰坦码不能为空"));
+		}
+		
+		AccountCheckRequest accountCheckRequest = new AccountCheckRequest();
+		accountCheckRequest.setOrgName(recieveOrgName);
+		accountCheckRequest.setTitanCode(recieveTitanCode);
+		AccountCheckResponse accountCheckResponse = titanFinancialAccountService.checkTitanCode(accountCheckRequest);
+		if(accountCheckResponse.isCheckResult()){
+		   return toJson(putSuccess());
+		}
+		return toJson(putSysError(accountCheckResponse.getReturnMessage()));
+	} 
 	
 }

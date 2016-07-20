@@ -23,7 +23,6 @@ public class DubboServerJDBCProperties {
 		return jrEmailServer;
 	}
 	public  void setJrEmailServer(String jrEmailServer) {
-		System.out.println("--------------------------------------初始化 邮箱服务----------");
 		DubboServerJDBCProperties.jrEmailServer = jrEmailServer;
 	}
 	public  String getJrEmailFrom() {

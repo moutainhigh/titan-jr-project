@@ -35,7 +35,16 @@ public enum OrderStatusEnum {
 	public void setStatusMsg(String statusMsg) {
 		this.statusMsg = statusMsg;
 	}
-	
+
+	public static String getStatusMsgByKey(String key){
+		for (OrderStatusEnum statusEnum : OrderStatusEnum.values()){
+			if (statusEnum.status.equals(key)){
+				return statusEnum.statusMsg;
+			}
+		}
+		return null;
+	}
+
 	public static boolean isRepeatedPay(String status){
 		if(status.equals(OrderStatusEnum.ORDER_IN_PROCESS.getStatus()) 
 				||status.equals(OrderStatusEnum.RECHARFE_IN_PROCESS.getStatus())

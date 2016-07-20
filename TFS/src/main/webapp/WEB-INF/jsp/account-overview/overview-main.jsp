@@ -480,14 +480,6 @@
 			});
 			
 		}
-		
-        //充值
-        $('.rechargeBtn').on('click',function(){
-                window.top.createIframeDialog({
-                    url : 'TFS/充值.html',
-                });
-                return false;
-        });
 
         $('.withdrawBtn').on('click',function(){
         	$.ajax({
@@ -586,9 +578,6 @@
         	$.ajax({
 		        dataType : 'html',		      
 		        context: document.body,
-		        data:{
-		        	orgName:'${organ.orgName}'
-		        },
 		        url : '<%=basePath%>/account/toBindAccountWithDrawCard.shtml',
 		        success : function(html){
 		        	var d = window.top.dialog({
@@ -991,7 +980,6 @@
 			if (operator){
 				paraList = paraList + "&orderOperator=" + operator;
 			}
-			alert("<%=basePath%>/account/exportExcel.shtml" + paraList)
 			location.href = "<%=basePath%>/account/exportExcel.shtml" + paraList;
 		}
 

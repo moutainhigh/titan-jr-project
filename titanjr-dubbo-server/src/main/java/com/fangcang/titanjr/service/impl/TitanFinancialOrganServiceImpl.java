@@ -149,8 +149,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     public FinancialOrganResponse queryFinancialOrgan(FinancialOrganQueryRequest request) {
     	FinancialOrganResponse response = new FinancialOrganResponse();
         try {
-        	if(request.getOrgId()==null&&!StringUtil.isValidString(request.getOrgCode())&&!StringUtil.isValidString(request.getUserId())){
-        		response.putErrorResult("必填参数为空");
+        	if(request.getOrgId()==null&&!StringUtil.isValidString(request.getOrgCode())&&!StringUtil.isValidString(request.getUserId())&&!StringUtil.isValidString(request.getMerchantcode())){
+        		response.putErrorResult("参数错误，必填参数不能为空");
         		return response;
         	}
             PaginationSupport<FinancialOrganDTO> paginationSupport = new PaginationSupport<FinancialOrganDTO>();
@@ -1212,6 +1212,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			condition.setOrgcode(orgDTO.getOrgcode());
 			condition.setOrgid(orgDTO.getOrgid());
 			condition.setTitancode(orgDTO.getTitancode());
+			condition.setOrgname(orgDTO.getOrgname());
 			TitanOrg titanOrg = titanOrgDao.selectOne(condition);
 			if(titanOrg !=null){
 				MyBeanUtil.copyProperties(orgDTO, titanOrg);

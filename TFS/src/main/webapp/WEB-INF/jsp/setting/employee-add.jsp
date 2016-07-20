@@ -15,7 +15,7 @@
     	<div class="TFS_addtitle demo_form" id="J_form1">
     		<ul>
     			<li><span class="addtitle_left">姓名：</span><input type="text" id="userName" value="${fcUserName}" class="text w_180 f_ui-grey-input" datatype="s1-30" errormsg="请输入1到30位字符！"></li>
-    			<li><span class="addtitle_left">手机号码：</span><input type="text" id="receiveAddress" placeholder="请输入手机号码" class="text w_180 f_ui-grey-input" value="${fcMobile}"  customFun="checkReceiveAddress" ><span class="c_999 p_l30">此手机号将作为用户名用来登录泰坦金服官网或者APP</span></li>
+    			<li class="J_phone"><span class="addtitle_left">手机号码：</span><input type="text" id="receiveAddress" placeholder="请输入手机号码" class="text w_180 f_ui-grey-input" value="${fcMobile}"  customFun="checkReceiveAddress" ><span class="c_999 p_l10"></span><span class="blue curpo undl J_switch">切换为邮箱注册</span> (用来登录泰坦金融官网或者APP)</li>
     			<li><span class="addtitle_left">验证码：</span>
     			<p class="text" style="width: 187px;">
     			<input type="text" id="code" class="TFSother_input w_110" customFun="checkCode">
@@ -123,15 +123,25 @@ $('.sendmes').on('click',function(){
 		}
 	});
 });
-
-function checkReceiveAddress(receiveAddress ){
+var showType = "phone";
+//检查是否可以注册
+function checkReceiveAddress(receiveAddress){
 	var flag = false;
 	var receiveAddressEle = $("#receiveAddress");
-	if(!(phone_reg.test(receiveAddress)||email_reg.test(receiveAddress))){
-		vform.setErrormsg(receiveAddressEle,'格式不正确');
-		return false;
+	if(showType=="phone"){
+		if(!phone_reg.test(receiveAddress)){
+			vform.setErrormsg(receiveAddressEle,'手机号码格式不正确');
+			return false;
+		}
 	}
-	//检查是否已经注册
+	
+	if(showType=="email"){
+		if(!email_reg.test(receiveAddress)){
+			vform.setErrormsg(receiveAddressEle,'邮箱格式不正确');
+			return false;
+		}
+	}
+	//格式正确，检查是否已经注册
 	$.ajax({
 		async:false,
 		type:'post',
@@ -145,7 +155,6 @@ function checkReceiveAddress(receiveAddress ){
 				flag = false;
 				vform.setErrormsg(receiveAddressEle,result.msg);
 			}
-			
 		}
 	});
 	return flag;
@@ -218,14 +227,30 @@ function saveEmployee(){
 			        button:false
 			     }); 
 			}
-			
 		},
 		error:function(){
 			new top.Tip({msg : '系统错误，请重试!', type: 3 , time:1500});
 		}
 	});
-	
 	return saveFlag;
-	
 }
+//点击切换手机号和邮箱注册
+$(".J_switch").on('click',function(){
+	var _this=$(this);
+	var re = $("#receiveAddress");
+	re.val('');
+	if(_this.text()=="切换为邮箱注册"){
+		_this.text("切换为手机号码注册");
+		$(this).parent('li').find("input").attr({"placeholder":"请输入邮箱"});
+		$(this).parent('li').find(".addtitle_left").text("邮箱：");
+		showType = "email";
+		return;
+	}else if(_this.text()=="切换为手机号码注册"){
+		_this.text("切换为邮箱注册");
+		$(this).parent('li').find("input").attr({"placeholder":"请输入手机号码"});
+		$(this).parent('li').find(".addtitle_left").text("手机号码：");
+		showType = "phone";
+		return;
+	}
+});
 </script>

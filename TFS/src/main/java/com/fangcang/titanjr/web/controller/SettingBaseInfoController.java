@@ -41,6 +41,7 @@ import com.fangcang.util.StringUtil;
  */
 @Controller
 @RequestMapping("/setting")
+@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
 public class SettingBaseInfoController extends BaseController{
 	/**
 	 * 
@@ -59,6 +60,7 @@ public class SettingBaseInfoController extends BaseController{
 	 * 基础信息
 	 * @return
 	 */
+	
 	@RequestMapping("/base-info")
 	public String baseInfo(Model model){
 		
@@ -223,8 +225,9 @@ public class SettingBaseInfoController extends BaseController{
 	 * 修改企业联系信息
 	 * @return
 	 */
-	@RequestMapping("/set-enterprise-info")
 	@ResponseBody
+	@RequestMapping("/set-enterprise-info")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String setEnterpriseInfo(String connect,String mobile){
 		if(!(StringUtil.isValidString(connect)||StringUtil.isValidString(mobile))){
 			return toJson(putSysError("参数错误"));

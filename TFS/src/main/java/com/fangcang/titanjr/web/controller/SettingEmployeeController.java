@@ -20,6 +20,7 @@ import com.fangcang.titanjr.common.enums.LoginSourceEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
@@ -38,6 +39,7 @@ import com.fangcang.titanjr.dto.response.UserFreezeResponse;
 import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.dto.response.UserRegisterResponse;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.EmployeePojo;
 import com.fangcang.titanjr.web.pojo.FcEmployeeTablePojo;
 import com.fangcang.titanjr.web.util.WebConstant;
@@ -52,6 +54,7 @@ import com.fangcang.util.StringUtil;
  */
 @Controller
 @RequestMapping("/setting")
+@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 public class SettingEmployeeController extends BaseController{
 	private static final Log log = LogFactory.getLog(SettingEmployeeController.class);
     
@@ -61,6 +64,7 @@ public class SettingEmployeeController extends BaseController{
 	 * 左侧菜单（本地调试使用）
 	 * @return
 	 */
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	@RequestMapping("/slidemenu")
 	public String slidemenu(){
 		return "slidemenu/jr-setting-menu";
@@ -393,6 +397,7 @@ public class SettingEmployeeController extends BaseController{
 	 * 收付款费率公示
 	 * @return
 	 */
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
 	@RequestMapping("/fee")
 	public String fee(){
 		return "setting/fee";
@@ -402,6 +407,7 @@ public class SettingEmployeeController extends BaseController{
 	 * 金融协议
 	 * @return
 	 */
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
 	@RequestMapping("/protocol")
 	public String protocol(){
 		return "setting/protocol";
