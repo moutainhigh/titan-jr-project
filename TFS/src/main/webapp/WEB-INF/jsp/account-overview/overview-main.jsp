@@ -578,9 +578,6 @@
         	$.ajax({
 		        dataType : 'html',		      
 		        context: document.body,
-		        data:{
-		        	orgName:'${organ.orgName}'
-		        },
 		        url : '<%=basePath%>/account/toBindAccountWithDrawCard.shtml',
 		        success : function(html){
 		        	var d = window.top.dialog({

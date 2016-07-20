@@ -26,7 +26,7 @@
 					</div>
 					<div class="TFS_rechargeBoxR fr">
 						<h3>账户名称/泰坦码：${financialOrgan.orgName } / ${financialOrgan.titanCode }</h3>
-						<p>账户可用余额：<span class="gdt_red">${accountBalance.balanceusable }</span>元</p>
+						<p>账户可用余额：<span class="gdt_red"><fmt:formatNumber value="${accountBalance.balanceusable }"  pattern="#,##0.00#" /></span>元</p>
 						<!-- <p>泰坦增值宝可用余额：<span class="gdt_red">10,000.00</span>元</p> -->
 					</div>
 					<div class="clear"></div>

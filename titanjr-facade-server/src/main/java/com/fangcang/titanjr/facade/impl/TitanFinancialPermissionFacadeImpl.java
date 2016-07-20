@@ -15,6 +15,7 @@ import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
 import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
 import com.fangcang.titanjr.request.CheckPermissionRequest;
 import com.fangcang.titanjr.request.ShowPaymentRequest;
+import com.fangcang.titanjr.response.CheckAccountResponse;
 import com.fangcang.titanjr.response.PermissionResponse;
 import com.fangcang.titanjr.response.ShowPaymentResponse;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -90,5 +91,29 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
         }
         return showPaymentResponse;
     }
+
+	@Override
+	public CheckAccountResponse isFinanceAccount(
+			String merchantcode) {
+		 CheckAccountResponse checkAccountResponse = new CheckAccountResponse();
+		 checkAccountResponse.setResult(false);
+		 if(!StringUtil.isValidString(merchantcode)){
+			 log.error("商家编码不能为空");
+        	 checkAccountResponse.setReturnMessage("商家编码不能为空");
+		 }
+		 
+		 OrgBindInfo orgBindInfo = new OrgBindInfo();
+         orgBindInfo.setMerchantCode(merchantcode);
+         orgBindInfo = titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
+         if (orgBindInfo == null) {
+        	log.error("当前商家未开通或绑定金服机构");
+         	checkAccountResponse.setReturnMessage("当前商家未开通或绑定金服机构");
+         	return checkAccountResponse;
+         } 
+	            
+         checkAccountResponse.setResult(true);
+		 return checkAccountResponse;
+	}
+
 
 }

@@ -33,7 +33,11 @@
 $('.J_remember').on('click',function(){
 	 IframeBox.dPop.remove();
     top.F.loading.show();
-    $.ajax({
+    modify_pwd();
+});   
+
+function modify_pwd(){
+	$.ajax({
         dataType : 'html',
         context: document.body,
         url : '<%=basePath%>/setting/modify-pwd-remember.shtml',           
@@ -67,7 +71,7 @@ $('.J_remember').on('click',function(){
             }).showModal();
         }
     });
-});   
+}
 
 function validate_payPassword(){
 	var payPassword3 = PasswordStr3.returnStr();
@@ -75,17 +79,26 @@ function validate_payPassword(){
 	var payPassword5 = PasswordStr5.returnStr();
 	
 	if(payPassword3.length!=6){
-		new top.Tip({msg : '原密码必须为6位！', type: 1 , time:1000}); 
+		new top.Tip({msg : '原密码必须为6位！', type: 1 , timer:1000}); 
+		modify_pwd();
 		return false;
 	}
 	
 	if(payPassword4.length!=6||payPassword5.length!=6){
-		new top.Tip({msg : '设置的密码必须为6位！', type: 1 , time:1000}); 
+		new top.Tip({msg : '设置的密码必须为6位！', type: 1 , timer:1000}); 
+		modify_pwd();
 		return false;
 	}
 	
 	if(payPassword4!=payPassword5){
-		new top.Tip({msg : '两次新密码输入不相同！', type: 1 , time:1000});   
+		new top.Tip({msg : '两次新密码输入不相同！', type: 1 , timer:1000});   
+		modify_pwd();
+		return false;
+	}
+	
+	if(payPassword3==payPassword4){
+		new top.Tip({msg : '原密码不能和新密码相同！', type: 1 , timer:1000});   
+		modify_pwd();
 		return false;
 	}
 	return true;
@@ -111,6 +124,9 @@ function update_old_pwd(){
                           top.F.loading.hide();
                           new top.Tip({msg : '设置成功！', type: 1 , time:1000}); 
                       },1000);  
+        	 }else{
+        		 new top.Tip({msg : data.msg, type: 1 , time:1000}); 
+        		 modify_pwd();
         	 }
          }
 	});
