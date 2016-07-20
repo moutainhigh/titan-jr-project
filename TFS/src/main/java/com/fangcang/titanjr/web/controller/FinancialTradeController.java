@@ -121,6 +121,7 @@ public class FinancialTradeController extends BaseController {
 			response.getWriter().print("returnCode=000000&returnMsg=che");
 			
     		if(rechargeResultConfirmRequest !=null){
+    			response.getWriter().print("returnCode=000000&returnMag=成功");
     			log.info("融数后台回调成功参数:"+toJson(rechargeResultConfirmRequest));
     			String signMsg = rechargeResultConfirmRequest.getSignMsg();
            	    String sign = RechargeResultConfirmRequest.getSignStr(rechargeResultConfirmRequest);
@@ -259,13 +260,7 @@ public class FinancialTradeController extends BaseController {
 				}
 		        
 			}
-			
-			
-			
 		}
-		
-		
-		
 	    model.addAttribute("rechargeResultConfirmRequest", rechargeResultConfirmRequest);
 		return "checkstand-pay/payResult";
 	}
@@ -382,7 +377,10 @@ public class FinancialTradeController extends BaseController {
 		if(paymentRequest !=null){
 			if(CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentRequest.getPaySource())){
 				paymentRequest.setUserid(this.getUserId());
-				paymentRequest.setOperator(this.getUserName());
+
+				paymentRequest.setOperator(this.getUserRealName());
+				paymentRequest.setCreator(this.getUserRealName());
+
 			}
 			model.addAttribute(WebConstant.RESULT, WebConstant.FAIL);
 			

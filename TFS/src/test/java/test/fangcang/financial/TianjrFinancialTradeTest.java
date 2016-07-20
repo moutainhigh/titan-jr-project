@@ -484,7 +484,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     public void testGetMerchantUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");
-    	paymentUrlRequest.setPayOrderNo("TW15111312971");
+    	paymentUrlRequest.setPayOrderNo("TW16062817611");
     	paymentUrlRequest.setFcUserid("23298");
     	paymentUrlRequest.setPaySource("2");
     	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));

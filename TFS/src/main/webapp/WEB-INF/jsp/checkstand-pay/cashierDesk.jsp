@@ -514,7 +514,12 @@
     	if(validate==false){
     		return ;
     	}
+    	//验证账户是否存在
+    	
+    	
+    	
     	var flag = validate_isInput_password();
+    	
     	if(flag==false){
     		 $.ajax({
     	            dataType: 'html',
@@ -555,29 +560,26 @@
     function pay_Order(){
     	//获取数据
    	    var pay_date=save_payDate();
-    	alert("1111");
-    	alert(pay_date.recieveOrgName);
-    	alert(pay_date.recieveTitanCode);
         if(pay_date.payAmount =="0"){
     		$.ajax({//支付页面
            	 type: "post",
                 url: "<%=basePath%>/trade/showTitanPayPage.action",
                 data: {
-               	 payPassword:pay_date.payPassword,
-               	 merchantcode:'${merchantcode}',
-               	 payOrderNo:'${payOrderNo}',
-               	 transferAmount:pay_date.transferAmount,
-               	 payAmount:pay_date.payAmount,
-               	 recieveOrgName:pay_date.recieveOrgName,
-               	 recieveTitanCode:pay_date.recieveTitanCode,
-               	 bankInfo:pay_date.bankInfo,
-               	 fcUserid:'${fcUserid}',
-               	 userid:'${userId}',
-               	 deskId:'${deskId}',
-               	 paySource:'${paySource}',
-               	 creator:'${operator}',
-               	 escrowedDate:'${escrowedDate}',
-               	 isEscrowed:'${isEscrowed}'
+	               	 payPassword:pay_date.payPassword,
+	               	 merchantcode:'${merchantcode}',
+	               	 payOrderNo:'${payOrderNo}',
+	               	 transferAmount:pay_date.transferAmount,
+	               	 payAmount:pay_date.payAmount,
+	               	 recieveOrgName:pay_date.recieveOrgName,
+	               	 recieveTitanCode:pay_date.recieveTitanCode,
+	               	 bankInfo:pay_date.bankInfo,
+	               	 fcUserid:'${fcUserid}',
+	               	 userid:'${userId}',
+	               	 deskId:'${deskId}',
+	               	 paySource:'${paySource}',
+	               	 creator:'${operator}',
+	               	 escrowedDate:'${escrowedDate}',
+	               	 isEscrowed:'${isEscrowed}'
                 },
                 dataType: "json",
                 success: function (data) {

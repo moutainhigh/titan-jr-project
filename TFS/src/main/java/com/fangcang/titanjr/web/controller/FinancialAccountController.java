@@ -242,19 +242,26 @@ public class FinancialAccountController extends BaseController {
     }
     
     @RequestMapping(value = "/toBindAccountWithDrawCard")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
-    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName){
-    	model.addAttribute("orgName",orgName);
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
+    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName) throws UnsupportedEncodingException{
     	model.addAttribute("modifyOrBind",WebConstant.BIND_BANK_CARD);
+    	 if (null != this.getUserId()) {
+             model.addAttribute("organ", this.getTitanOrganDTO());
+         }
+
     	return "account-overview/bind-bankcard";
     }
     
     @RequestMapping("update_account-withdraw_info")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
     public String updateAccountWithdrawInfo(HttpServletRequest request, Model model,String orgName){
+    	if (null != this.getUserId()) {
+             model.addAttribute("organ", this.getTitanOrganDTO());
+        }
     	model.addAttribute("showBankCardInput",1);
+
     	model.addAttribute("modifyOrBind",WebConstant.MODIFY_BANK_CARD);
-    	model.addAttribute("orgName",  orgName);
+
     	return "account-overview/bind-bankcard";
     }
     
@@ -524,7 +531,7 @@ public class FinancialAccountController extends BaseController {
 //        		payPasswordRequest.setOldPassword(RSADecryptString.decryptString(payPasswordRequest.getOldPassword(),request));
         		payPasswordRequest.setOldPassword(payPasswordRequest.getOldPassword());
         	}
-        	payPasswordRequest.setTfsuserid(getTfsUserId());
+        	payPasswordRequest.setTfsuserid(this.getTfsUserId());
         	log.info("设置支付密码的传入参数:"+toJson(payPasswordRequest));
             PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
             if (payPasswordResponse.isSaveSuccess()) {
@@ -544,30 +551,45 @@ public class FinancialAccountController extends BaseController {
     	if(forgetPayPassword ==null
     			||!StringUtil.isValidString(forgetPayPassword.getPayPassword())
     			||!StringUtil.isValidString(forgetPayPassword.getUserName())
-    			||!StringUtil.isValidString(forgetPayPassword.getCode())){
+    			){
     		return toJson(putSysError("参数错误"));
     	}
     	
     	//获取该用户的用户名
-    	if(!getUserName().equals(forgetPayPassword.getUserName())){
+    	if(!this.getUserName().equals(forgetPayPassword.getUserName())){
     		return toJson(putSysError("您输入的用户名错误"));
     	}
     	
-    	String rcode = TFSTools.validateRegCode(session,forgetPayPassword.getUserName(), forgetPayPassword.getCode());
-    	if(rcode.equals("SUCCESS")){
-    		//移除session
-    		session.removeAttribute(WebConstant.SESSION_KEY_REG_CODE+"_"+forgetPayPassword.getUserName());
-    		PayPasswordRequest payPasswordRequest  = new PayPasswordRequest();
+		PayPasswordRequest payPasswordRequest  = new PayPasswordRequest();
+
 //    		payPasswordRequest.setPayPassword(RSADecryptString.decryptString(forgetPayPassword.getPayPassword(),request));
-    		payPasswordRequest.setPayPassword(forgetPayPassword.getPayPassword());
-    		payPasswordRequest.setIsForget(com.fangcang.titanjr.common.util.CommonConstant.IS_FORGET_PAYPASSWORD);
-    		payPasswordRequest.setTfsuserid(this.getTfsUserId());
-    	    PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
-    	    if (payPasswordResponse.isSaveSuccess()) {
-    	    	return toJson(putSuccess());
-            } else {
-            	return toJson(putSysError(payPasswordResponse.getReturnMessage()));
-            }
+		payPasswordRequest.setPayPassword(forgetPayPassword.getPayPassword());
+		payPasswordRequest.setIsForget(com.fangcang.titanjr.common.util.CommonConstant.IS_FORGET_PAYPASSWORD);
+		payPasswordRequest.setTfsuserid(this.getTfsUserId());
+	    PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
+	    if (payPasswordResponse.isSaveSuccess()) {
+	    	return toJson(putSuccess());
+        } else {
+        	return toJson(putSysError(payPasswordResponse.getReturnMessage()));
+        }
+    }
+    
+    @ResponseBody
+    @RequestMapping("check_code")
+    public String checkCode(String userName,String code){
+    	if(!StringUtil.isValidString(userName)||!StringUtil.isValidString(code)){
+    		return toJson(putSysError("参数错误"));
+    	}
+    	//获取该用户的用户名
+    	if(!this.getUserName().equals(userName)){
+    		System.out.println(this.getUserName());
+    		return toJson(putSysError("您输入的用户名错误"));
+    	}
+    	
+    	String rcode = TFSTools.validateRegCode(session,userName, code);
+    	if(rcode.equals("SUCCESS")){
+    		session.removeAttribute(WebConstant.SESSION_KEY_REG_CODE+"_"+userName);
+    		return toJson(putSuccess());
     	}else if(rcode.equals("EXPIRE")){
     		return toJson(putSysError("验证码已经过期，请重新获取验证码"));
     	}else if(rcode.equals("NOTEXIST")){
@@ -578,6 +600,8 @@ public class FinancialAccountController extends BaseController {
     		return toJson(putSysError("验证码不存在，请重新获取验证码"));
     	}
     }
+    
+    
     
     @ResponseBody
     @RequestMapping("checkIsSetPayPassword")
@@ -762,5 +786,22 @@ public class FinancialAccountController extends BaseController {
 		}
 		return "checkstand-pay/selectAccHistory";
 	}
+	
+	@RequestMapping("/check_account")
+	public String checkRecieveAccount(String recieveAccount,String titanCode){
+		if(!StringUtil.isValidString(recieveAccount)
+				|| !StringUtil.isValidString(titanCode)){
+			return toJson(putSysError("账户名和泰坦码不能为空"));
+		}
+		
+		AccountCheckRequest accountCheckRequest = new AccountCheckRequest();
+		accountCheckRequest.setOrgName(recieveAccount);
+		accountCheckRequest.setTitanCode(titanCode);
+		AccountCheckResponse accountCheckResponse = titanFinancialAccountService.checkTitanCode(accountCheckRequest);
+		if(accountCheckResponse.isCheckResult()){
+		   return toJson(putSuccess());
+		}
+		return toJson(putSysError(accountCheckResponse.getReturnMessage()));
+	} 
 	
 }
