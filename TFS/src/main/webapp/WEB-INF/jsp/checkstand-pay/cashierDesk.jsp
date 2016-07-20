@@ -544,24 +544,29 @@
     });
     
     function check_account_isExit(){
-    	var check_account=false;
-    	$.ajax({
-    		type:'post',
-            dataType: 'json',
-            url: '<%=basePath%>/account/check_account.action',
-            async:false,
-            data:{
-            	recieveOrgName:$("#reOrgName").val(),
-            	recieveTitanCode:$("#reTitanCode").val(),
-            },
-            success: function (data) {
-            	if(data.code=="1"){
-            		check_account = true;
-            	}else{
-            		new top.Tip({msg: '该账户不存在', type: 1, timer: 2000});
-            	}
-            }
-        });
+    	var recieveOrgName = $("#reOrgName").val();
+    	var recieveTitanCode = $("#reTitanCode").val();
+    	var check_account=true;
+    	if(typeof recieveOrgName !="undefined" && typeof recieveTitanCode !="undefined"){
+    		check_account = false;
+        	$.ajax({
+        		type:'post',
+                dataType: 'json',
+                url: '<%=basePath%>/account/check_account.action',
+                async:false,
+                data:{
+                	recieveOrgName:recieveOrgName,
+                	recieveTitanCode:recieveTitanCode,
+                },
+                success: function (data) {
+                	if(data.code=="1"){
+                		check_account = true;
+                	}else{
+                		new top.Tip({msg: '该账户不存在', type: 1, timer: 2000});
+                	}
+                }
+            });
+    	}
     	return check_account;
     }
     
