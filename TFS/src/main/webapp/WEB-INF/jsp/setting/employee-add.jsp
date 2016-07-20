@@ -15,7 +15,7 @@
     	<div class="TFS_addtitle demo_form" id="J_form1">
     		<ul>
     			<li><span class="addtitle_left">姓名：</span><input type="text" id="userName" value="${fcUserName}" class="text w_180 f_ui-grey-input" datatype="s1-30" errormsg="请输入1到30位字符！"></li>
-    			<li class="J_phone"><span class="addtitle_left">手机号码：</span><input type="text" id="receiveAddress" placeholder="请输入手机号码" class="text w_180 f_ui-grey-input" value="${fcMobile}"  customFun="checkReceiveAddress" ><span class="c_999 p_l10"></span><span class="blue curpo undl J_switch">切换为邮箱注册</span></li>
+    			<li class="J_phone"><span class="addtitle_left">手机号码：</span><input type="text" id="receiveAddress" placeholder="请输入手机号码" class="text w_180 f_ui-grey-input" value="${fcMobile}"  customFun="checkReceiveAddress" ><span class="c_999 p_l10"></span><span class="blue curpo undl J_switch">切换为邮箱注册</span> (用来登录泰坦金融官网或者APP)</li>
     			<li><span class="addtitle_left">验证码：</span>
     			<p class="text" style="width: 187px;">
     			<input type="text" id="code" class="TFSother_input w_110" customFun="checkCode">
