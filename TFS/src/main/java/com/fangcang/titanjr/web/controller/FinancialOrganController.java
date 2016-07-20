@@ -65,7 +65,7 @@ import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.pojo.OrgRegPojo;
 import com.fangcang.titanjr.web.pojo.RegUserLoginInfo;
-import com.fangcang.titanjr.web.util.CommonConstant;
+import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.titanjr.web.util.TFSTools;
 import com.fangcang.util.PasswordUtil;
 import com.fangcang.util.StringUtil;
@@ -185,7 +185,7 @@ public class FinancialOrganController extends BaseController {
 		OrgRegisterValidateResponse orgRegisterValidateResponse = titanFinancialOrganService.validateOrg(orgRegisterValidateRequest);
 		if(orgRegisterValidateResponse.isResult()){
 			//判断机构注册证件的编号和登录者是不是同一个机构
-			Integer tfsUserIdStr = (Integer)session.getAttribute(CommonConstant.SESSION_KEY_JR_TFS_USERID);//金服用户名
+			Integer tfsUserIdStr = (Integer)session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);//金服用户名
 			if(orgRegisterValidateResponse.getOrgDTO()!=null){//如果所填写的证件编码已经存在
 				if(StringUtil.isValidString(orgId)){
 					//修改
@@ -247,16 +247,16 @@ public class FinancialOrganController extends BaseController {
 	    	organRegisterRequest.setMobileTel(orgRegPojo.getMobiletel());
 	    	
 	    	//session中的信息
-	    	String registerSourceStr = (String) session.getAttribute(CommonConstant.SESSION_KEY_JR_RESOURCE);
-	    	int registerSource = StringUtil.isValidString(registerSourceStr)?NumberUtils.toInt(CommonConstant.SESSION_KEY_JR_RESOURCE_2_SAAS):NumberUtils.toInt(registerSourceStr);
+	    	String registerSourceStr = (String) session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE);
+	    	int registerSource = StringUtil.isValidString(registerSourceStr)?NumberUtils.toInt(WebConstant.SESSION_KEY_JR_RESOURCE_2_SAAS):NumberUtils.toInt(registerSourceStr);
 	    	organRegisterRequest.setRegisterSource(registerSource);
 	    	//organRegisterRequest.setUserName(userName);
-	    	String fcLoginUserName = (String)session.getAttribute(CommonConstant.SESSION_KEY_LOGIN_USER_LOGINNAME);
+	    	String fcLoginUserName = (String)session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_LOGINNAME);
 	    	if(StringUtil.isValidString(fcLoginUserName)){
 	    		//从房仓登录过来的
 	    		organRegisterRequest.setFcLoginUserName(fcLoginUserName);
-	    		String merchantCode = (String) session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
-	    		String merchantname = (String) session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
+	    		String merchantCode = (String) session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+	    		String merchantname = (String) session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
 	    		organRegisterRequest.setMerchantCode(merchantCode);
 	        	organRegisterRequest.setMerchantname(merchantname);
 	    	}
@@ -275,17 +275,17 @@ public class FinancialOrganController extends BaseController {
 				refreshSession(regUserLoginInfo.getUserLoginName());
 				return "/org-reg/reg-success";
 			}else{
-				model.addAttribute(CommonConstant.MODEL_ERROR_MSG_KEY, organRegisterResponse.getReturnMessage());
+				model.addAttribute(WebConstant.MODEL_ERROR_MSG_KEY, organRegisterResponse.getReturnMessage());
 				return "error";
 			}
     	} catch (MessageServiceException e) {
-			model.addAttribute(CommonConstant.MODEL_ERROR_MSG_KEY, e.getMessage());
+			model.addAttribute(WebConstant.MODEL_ERROR_MSG_KEY, e.getMessage());
 			log.error("结构注册失败，错误信息："+e.getMessage()+"，输入参数|regUserLoginInfo:"+JSONSerializer.toJSON(regUserLoginInfo).toString()+",orgRegPojo:"+JSONSerializer.toJSON(orgRegPojo).toString(), e);
 		} catch (GlobalServiceException e) {
-			model.addAttribute(CommonConstant.MODEL_ERROR_MSG_KEY, CommonConstant.SERVICE_ERROR_MSG);
+			model.addAttribute(WebConstant.MODEL_ERROR_MSG_KEY, WebConstant.SERVICE_ERROR_MSG);
 			log.error("结构注册失败，输入参数|regUserLoginInfo:"+JSONSerializer.toJSON(regUserLoginInfo).toString()+",orgRegPojo:"+JSONSerializer.toJSON(orgRegPojo).toString(), e);
 		} catch (Exception e) {
-			model.addAttribute(CommonConstant.MODEL_ERROR_MSG_KEY, CommonConstant.CONTROLLER_ERROR_MSG);
+			model.addAttribute(WebConstant.MODEL_ERROR_MSG_KEY, WebConstant.CONTROLLER_ERROR_MSG);
 			log.error("结构注册失败，输入参数|regUserLoginInfo:"+JSONSerializer.toJSON(regUserLoginInfo).toString()+",orgRegPojo:"+JSONSerializer.toJSON(orgRegPojo).toString(), e);
 		}
     	//错误页面
@@ -306,18 +306,18 @@ public class FinancialOrganController extends BaseController {
     		orgBindInfo.setBindStatus(1);
     		orgBindInfo = titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
     		if(orgBindInfo!=null){
-    			session.setAttribute(CommonConstant.SESSION_KEY_JR_BIND_STATUS, "1");
+    			session.setAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS, "1");
     		}else{
-    			session.setAttribute(CommonConstant.SESSION_KEY_JR_BIND_STATUS, "0");
+    			session.setAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS, "0");
     		}
     		
-            session.setAttribute(CommonConstant.SESSION_KEY_JR_ROLE_LIST, userInfoDTO.getRoleDTOList());//金服用户角色列表
-            session.setAttribute(CommonConstant.SESSION_KEY_JR_LOGIN_UESRNAME, userInfoDTO.getUserLoginName());//金服用户登录名
-            session.setAttribute(CommonConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
-            session.setAttribute(CommonConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名
+            session.setAttribute(WebConstant.SESSION_KEY_JR_ROLE_LIST, userInfoDTO.getRoleDTOList());//金服用户角色列表
+            session.setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, userInfoDTO.getUserLoginName());//金服用户登录名
+            session.setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
+            session.setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名
             //如果包含系统运营员，判定当前地址
             if (containsRole(userInfoDTO.getRoleDTOList(), FinancialRoleEnum.OPERATION.roleCode)) {
-                session.setAttribute(CommonConstant.SESSION_KEY_JR_RESOURCE, CommonConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN);
+                session.setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN);
             }
             //将金服所有角色设置进去
             for (FinancialRoleEnum roleEnum : FinancialRoleEnum.values()) {
@@ -326,7 +326,7 @@ public class FinancialOrganController extends BaseController {
                 }
             }
     	}else{
-			session.setAttribute(CommonConstant.SESSION_KEY_JR_BIND_STATUS, "0");
+			session.setAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS, "0");
 		}
         
     }
@@ -394,7 +394,7 @@ public class FinancialOrganController extends BaseController {
 			}
 		} catch (GlobalServiceException e) {
 			log.error("注册时，修改机构信息失败，输入参数orgRegPojo："+JSONSerializer.toJSON(orgRegPojo).toString(), e);
-			model.addAttribute("errormsg", CommonConstant.CONTROLLER_ERROR_MSG);
+			model.addAttribute("errormsg", WebConstant.CONTROLLER_ERROR_MSG);
 			return "error";
 		} catch (MessageServiceException e) {
 			model.addAttribute("errormsg", e.getMessage());
@@ -419,7 +419,7 @@ public class FinancialOrganController extends BaseController {
     	if(!(Tools.isEmailAddress(receiveAddress)||Tools.isPhone(receiveAddress))){
     		return toJson(putSysError("参数错误"));
     	}
-    	String merchantCode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
+    	String merchantCode = (String)session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
     	if(StringUtil.isValidString(merchantCode)){
     		//TODO 使用正式环境
     		sendRegCodeRequest.setMerchantCode("M10000001");
@@ -427,7 +427,7 @@ public class FinancialOrganController extends BaseController {
     		sendRegCodeRequest.setMerchantCode(RSInvokeConstant.defaultMerchant);
     	}
     	String regCode = setRegCode(receiveAddress);
-		sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+CommonConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
+		sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
     	sendRegCodeRequest.setSubject("泰坦金融注册验证码");
     	 
     	
@@ -452,7 +452,7 @@ public class FinancialOrganController extends BaseController {
     	if(!(Tools.isEmailAddress(receiveAddress)||Tools.isPhone(receiveAddress))){
     		return toJson(putSysError("参数错误"));
     	}
-    	String merchantCode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
+    	String merchantCode = (String)session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
     	if(StringUtil.isValidString(merchantCode)){
     		//TODO 使用正式环境
     		sendRegCodeRequest.setMerchantCode("M10000001");
@@ -461,10 +461,10 @@ public class FinancialOrganController extends BaseController {
     	}
     	String regCode = setRegCode(receiveAddress);
     	if(msgType==null||msgType==SMSType.REG_CODE.getType()){//注册
-    		sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+CommonConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
+    		sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
         	sendRegCodeRequest.setSubject("泰坦金融注册验证码");
     	}else if(msgType==SMSType.LOGIN_PASSWORD_MODIFY.getType()){//修改支付密码
-    		sendRegCodeRequest.setContent("尊敬的用户： 您正在修改泰坦金融的支付密码，验证码为："+regCode+"，验证码"+CommonConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
+    		sendRegCodeRequest.setContent("尊敬的用户： 您正在修改泰坦金融的支付密码，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
         	sendRegCodeRequest.setSubject("泰坦金融修改支付密码");
     	}
     	
@@ -593,7 +593,7 @@ public class FinancialOrganController extends BaseController {
     private String setRegCode(String receiveAddress){
     	String regCode = Tools.getRegCode();
     	log.info(receiveAddress+"-----------regCode:"+regCode);
-    	session.setAttribute(CommonConstant.SESSION_KEY_REG_CODE+"_"+receiveAddress, DateUtil.formatDataToDatetime(new Date())+"_"+regCode);
+    	session.setAttribute(WebConstant.SESSION_KEY_REG_CODE+"_"+receiveAddress, DateUtil.formatDataToDatetime(new Date())+"_"+regCode);
     	return regCode;
     }
     
@@ -605,8 +605,8 @@ public class FinancialOrganController extends BaseController {
         response.setContentType("text/html;charset=utf-8");
         response.setHeader("Cache-Control", "no-cache"); 
     	try {
-    		if(file.getBytes().length>(CommonConstant.UPLOAD_IMG_MAX_SIZE_10_M*1000*1000)){
-    			putSysError("文件大小超过了"+CommonConstant.UPLOAD_IMG_MAX_SIZE_10_M+"M，请压缩后再上传");
+    		if(file.getBytes().length>(WebConstant.UPLOAD_IMG_MAX_SIZE_10_M*1000*1000)){
+    			putSysError("文件大小超过了"+WebConstant.UPLOAD_IMG_MAX_SIZE_10_M+"M，请压缩后再上传");
                 PrintWriter out = response.getWriter(); 
                 out.print(toJson());
                 out.flush();
@@ -667,8 +667,8 @@ public class FinancialOrganController extends BaseController {
      */
     @RequestMapping(value = "/toBindSaas")
     public String toBindSaas(HttpServletRequest request, Model model) {
-    	String merchantName = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
-    	String merchantCode = (String)session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
+    	String merchantName = (String)session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+    	String merchantCode = (String)session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
     	model.addAttribute("merchantName", merchantName);
     	model.addAttribute("merchantCode", merchantCode);
 		log.info("打开机构绑定页面");
@@ -696,17 +696,17 @@ public class FinancialOrganController extends BaseController {
 				return toJson(putSysError("用户名密码不匹配，请重新输入"));
 			}
 			OrganBindRequest organBindRequest = new OrganBindRequest();
-			organBindRequest.setFcuserid(Integer.valueOf(session.getAttribute(CommonConstant.SESSION_KEY_LOGIN_USER_ID).toString()));
-			organBindRequest.setMerchantCode((String) session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE));
-			organBindRequest.setFcloginname((String) session.getAttribute(CommonConstant.SESSION_KEY_LOGIN_USER_LOGINNAME));
-			organBindRequest.setFcusername((String) session.getAttribute(CommonConstant.SESSION_KEY_LOGIN_USER_NAME));
-			organBindRequest.setMerchantName(String.valueOf(session.getAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_NAME)));
+			organBindRequest.setFcuserid(Integer.valueOf(session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ID).toString()));
+			organBindRequest.setMerchantCode((String) session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE));
+			organBindRequest.setFcloginname((String) session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_LOGINNAME));
+			organBindRequest.setFcusername((String) session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME));
+			organBindRequest.setMerchantName(String.valueOf(session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_NAME)));
 			organBindRequest.setOperateType(1);
 			organBindRequest.setPassword(request.getParameter("password").toString());
 			organBindRequest.setTfsuserid(userInfoDTO.getTfsUserId());
 			organBindRequest.setUserId(userInfoDTO.getUserId());
 			organBindRequest.setUserloginname(userInfoDTO.getUserLoginName());
-			organBindRequest.setOperator((String) session.getAttribute(CommonConstant.SESSION_KEY_LOGIN_USER_NAME));
+			organBindRequest.setOperator((String) session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME));
 			try {
 				OrganBindResponse organBindResponse = titanFinancialOrganService.bindFinancialOrgan(organBindRequest);
 				if (organBindResponse.isResult()){

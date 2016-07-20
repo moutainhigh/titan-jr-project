@@ -17,6 +17,9 @@ import com.fangcang.titanjr.rs.response.OrgStatusQueryResponse;
 import com.fangcang.titanjr.rs.response.PersOrgInfoQueryResponse;
 import com.fangcang.titanjr.rs.response.PersonOrgRegResponse;
 import com.fangcang.titanjr.rs.response.PersonOrgUpdateResponse;
+import com.fasterxml.jackson.databind.JsonSerializable;
+
+import net.sf.json.JSONSerializer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -146,7 +149,7 @@ public class OrganizationManagerTest extends GenericTest {
 //    @Test
     public void testqueryOrgStatus(){
     	OrgStatusQueryRequest req = new OrgStatusQueryRequest();
-    	req.setUserid("PM10000021");						// 用户ID
+    	req.setUserid("TJM10000010");						// 用户ID
 		req.setUsertype("1");						// 用户类型(1：商户，2：普通用户)
 		req.setConstid("M000016");				// 机构码
 	    req.setProductid("P000070");			// 产品号
@@ -191,7 +194,7 @@ public class OrganizationManagerTest extends GenericTest {
 //    @Test 
     public void testQueryCompOrgInfo(){
     	CompOrgInfoQueryRequest req= new CompOrgInfoQueryRequest();
-		req.setUserid("PM10000023");					// 接入机构中设置的用户ID  不能重复
+		req.setUserid("TJM10000010");					// 接入机构中设置的用户ID  不能重复
 		req.setConstid("M000016");				// 机构码
 	    req.setProductid("P000070");			// 产品号	
 		req.setAcuntopnlince("");						// 开户许可证
@@ -208,6 +211,7 @@ public class OrganizationManagerTest extends GenericTest {
 		CompOrgInfoQueryResponse response = rsOrganizationManager.queryCompOrgInfo(req);
 		System.out.print("--------查询机构信息----------"+response.getReturnCode()+"----------"+response.getReturnMsg());
 		System.out.print("------------------"+response.getOperateStatus());
+		System.out.print("------------------"+JSONSerializer.toJSON(response));
 		if(response.getCompanyOrgList()!=null && response.getCompanyOrgList().size()>0){
 			System.out.println(response.getCompanyOrgList().get(0).getCompanyname());
 		}
@@ -216,13 +220,14 @@ public class OrganizationManagerTest extends GenericTest {
     }
     
     //查询个人信息 success
-//    @Test 
+    @Test 
     public void testQueryPersOrgInfo(){
     	PersOrgInfoQueryRequest req = new PersOrgInfoQueryRequest();
     	req.setConstid("M000016");				// 机构码
         req.setProductid("P000070");			// 产品号			//机构号
-		req.setUserid("PP10000021");
+		req.setUserid("TJM10000010");
 		PersOrgInfoQueryResponse response = rsOrganizationManager.queryPersOrgInfo(req);
+		System.out.print("------------------"+JSONSerializer.toJSON(response));
 		System.out.print("---------查询个人信息---------"+response.getReturnCode()+"----------"+response.getReturnMsg());
 		System.out.print("------------------"+response.getOperateStatus());
 		if(response.getPersonOrgList()!=null && response.getPersonOrgList().size()>0){

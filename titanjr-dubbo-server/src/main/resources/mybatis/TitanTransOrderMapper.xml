@@ -49,7 +49,7 @@
                    from t_tfs_transorder o
                     <where>
                       <include refid="sqlWhere"/>
-                      and (((transordertype=1 or transordertype=2) and statusid =8) or transordertype=3)
+                      and (((transordertype=1 or transordertype=2) and statusid =8) or (transordertype=3 and statusid !=10))
                       <if test="partner !=null">
                          and ((payermerchant=#{userid} and payeemerchant=#{partner}) or 
                              (payeemerchant = #{userid} and payermerchant=#{partner}))
@@ -97,7 +97,8 @@
 		                    and payeemerchant = #{partner}
 		                 </if>
                          and transordertype=#{transordertype}
-		                 and payermerchant =#{userid} order by createtime desc
+		                 and payermerchant =#{userid} 
+		                 and statusid !=10 order by createtime desc
                      </where>
      </select>
      
@@ -113,7 +114,9 @@
                        and payermerchant = #{partner}
                     </if>
                     and transordertype=#{transordertype}
-                    and payeemerchant =#{userid} order by createtime desc
+                    and payeemerchant =#{userid} 
+                    and statusid !=10 
+                    order by createtime desc
                    </where>
                    
      </select>

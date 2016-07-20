@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanCashierDeskDao">
+
+    <resultMap id="cashierDeskMap" type="com.fangcang.titanjr.dto.bean.CashierDeskDTO">
+        <result property="deskId" column="deskid"/>
+        <result property="constId" column="constid"/>
+        <result property="userId" column="userid"/>
+        <result property="deskName" column="deskname"/>
+        <result property="usedFor" column="usedfor"/>
+        <result property="payType" column="paytype"/>
+
+        <collection property="cashierDeskItemDTOList" ofType="com.fangcang.titanjr.dto.bean.CashierDeskItemDTO">
+            <result property="itemId" column="itemid"/>
+            <result property="itemName" column="itemname"/>
+            <result property="itemType" column="itemtype"/>
+
+            <collection property="cashierItemBankDTOList" ofType="com.fangcang.titanjr.dto.bean.CashierItemBankDTO">
+                <result property="bankMark" column="bankmark"/>
+                <result property="bankName" column="bankname"/>
+                <result property="bankImage" column="bankimage"/>
+            </collection>
+            <collection property="rateConfigDTOList" ofType="com.fangcang.titanjr.dto.bean.RateConfigDTO">
+                <result property="rateConfigId" column="rateconfigid"/>
+                <result property="cashierItemId" column="cashieritemid"/>
+                <result property="busType" column="bustype"/>
+                <result property="rateType" column="ratetype"/>
+                <result property="rsRate" column="rsrate"/>
+                <result property="standRate" column="standrate"/>
+                <result property="executionRate" column="executionrate"/>
+                <result property="description" column="description"/>
+                <result property="expiration" column="expiration"/>
+                <result property="userId" column="userid"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="queryCashierDesk" parameterType="com.fangcang.titanjr.dto.request.CashierDeskQueryRequest"
+            resultMap="cashierDeskMap">
+    SELECT
+	    d.deskid,
+	    d.constid,
+	    d.userid,
+	    d.deskname,
+	    d.usedfor,
+	    d.paytype,
+	    i.itemid,
+	    i.itemname,
+	    i.itemtype,
+	    b.bankmark,
+	    b.bankname,
+  	    b.bankimage,
+    	c.rateconfigid,
+	    c.cashieritemid,
+	    c.bustype,
+	    c.ratetype,
+	    c.rsrate,
+	    c.standrate,
+	    c.executionrate,
+	    c.description,
+	    c.expiration
+    FROM
+	  t_tfs_cashierdesk d
+        LEFT JOIN t_tfs_cashierdeskitem i ON d.deskid = i.deskid
+        LEFT JOIN t_tfs_rateconfig c ON i.itemid = c.cashieritemid
+        LEFT JOIN t_tfs_cashieritembank b ON i.itemid = b.itemid
+        <where>
+            <if test="userId !=null"> d.userid = #{userId}</if>
+            <if test="deskId !=null"> and  d.deskid = #{deskId}</if>
+            <if test="usedFor !=null"> and  d.usedfor = #{usedFor}</if>
+        </where>
+  </select>
+
+
+    <insert id="saveCashierDesk" parameterType="com.fangcang.titanjr.entity.TitanCashierDesk" keyProperty="deskid"
+            useGeneratedKeys="true">
+      insert into t_tfs_cashierdesk (
+        constid,
+        userid,
+        deskname,
+        usedfor,
+        paytype,
+        creator,
+        createtime)
+      values (
+        #{constid,jdbcType=VARCHAR},
+        #{userid,jdbcType=VARCHAR},
+        #{deskname,jdbcType=VARCHAR},
+        #{usedfor,jdbcType=INTEGER},
+        #{paytype,jdbcType=INTEGER},
+        #{creator,jdbcType=VARCHAR},
+        #{createtime}
+      )
+  </insert>
+
+
+    <update id="updateCashierDesk" parameterType="com.fangcang.titanjr.entity.TitanCashierDesk">
+        update t_tfs_cashierdesk
+        <set>
+            <if test="constid != null">
+                constid = #{constid,jdbcType=VARCHAR},
+            </if>
+            <if test="userid != null">
+                userid = #{userid,jdbcType=VARCHAR},
+            </if>
+            <if test="deskname != null">
+                deskname = #{deskname,jdbcType=VARCHAR},
+            </if>
+            <if test="usedfor != null">
+                usedfor = #{usedfor,jdbcType=INTEGER},
+            </if>
+            <if test="paytype != null">
+                paytype = #{paytype,jdbcType=INTEGER},
+            </if>
+            <if test="creator != null">
+                creator = #{creator,jdbcType=VARCHAR},
+            </if>
+            <if test="createtime != null">
+                createtime = #{createtime},
+            </if>
+        </set>
+        where deskid = #{deskid,jdbcType=INTEGER}
+    </update>
+    
+    <select id="queryCommonPayMethodDesk" parameterType="com.fangcang.titanjr.dto.request.CashierDeskQueryRequest"></select>
+    
+</mapper>

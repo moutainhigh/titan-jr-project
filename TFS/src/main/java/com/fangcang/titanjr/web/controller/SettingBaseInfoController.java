@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
@@ -29,7 +30,8 @@ import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
-import com.fangcang.titanjr.web.util.CommonConstant;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
+import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.titanjr.web.util.TFSTools;
 import com.fangcang.util.StringUtil;
 /**
@@ -39,7 +41,13 @@ import com.fangcang.util.StringUtil;
  */
 @Controller
 @RequestMapping("/setting")
+@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
 public class SettingBaseInfoController extends BaseController{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private static final Log LOG = LogFactory.getLog(SettingBaseInfoController.class);
 	
 	@Resource
@@ -52,6 +60,7 @@ public class SettingBaseInfoController extends BaseController{
 	 * 基础信息
 	 * @return
 	 */
+	
 	@RequestMapping("/base-info")
 	public String baseInfo(Model model){
 		
@@ -150,7 +159,7 @@ public class SettingBaseInfoController extends BaseController{
 					errorMap.put("oldLoginPassword", oldLoginPassword);
 					errorMap.put("newLoginPassword", newLoginPassword);
 					LOG.error("通过原始密码修改登录密码错误，参数:"+JSONSerializer.toJSON(errorMap).toString(), e);
-					putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+					putSysError(WebConstant.CONTROLLER_ERROR_MSG);
 				}
 				return toJson();
 			}else{
@@ -179,7 +188,7 @@ public class SettingBaseInfoController extends BaseController{
     	String rcode = TFSTools.validateRegCode(session,getUserName(), code);
     	if(rcode.equals("SUCCESS")){
     		//移除session
-    		session.removeAttribute(CommonConstant.SESSION_KEY_REG_CODE+"_"+getUserName());
+    		session.removeAttribute(WebConstant.SESSION_KEY_REG_CODE+"_"+getUserName());
     		int tfsUserId = Integer.valueOf(getTfsUserId());
     		LoginPasswordRequest loginPasswordRequest = new LoginPasswordRequest();
 			loginPasswordRequest.setTfsuserid(tfsUserId);
@@ -198,7 +207,7 @@ public class SettingBaseInfoController extends BaseController{
 				errorMap.put("code", code);
 				errorMap.put("newLoginPassword", newLoginPassword);
 				LOG.error("通过原始密码修改登录密码错误，参数:"+JSONSerializer.toJSON(errorMap).toString(), e);
-				putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+				putSysError(WebConstant.CONTROLLER_ERROR_MSG);
 			}
     	}else if(rcode.equals("EXPIRE")){
     		return toJson(putSysError("验证码已经过期，请重新获取验证码"));
@@ -216,8 +225,9 @@ public class SettingBaseInfoController extends BaseController{
 	 * 修改企业联系信息
 	 * @return
 	 */
-	@RequestMapping("/set-enterprise-info")
 	@ResponseBody
+	@RequestMapping("/set-enterprise-info")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String setEnterpriseInfo(String connect,String mobile){
 		if(!(StringUtil.isValidString(connect)||StringUtil.isValidString(mobile))){
 			return toJson(putSysError("参数错误"));
@@ -247,7 +257,7 @@ public class SettingBaseInfoController extends BaseController{
 			errorMap.put("tfsuserId", getTfsUserId());
 			errorMap.put("orgCode", titanUser.getOrgcode());
 			LOG.error("修改企业联系信息，参数:"+JSONSerializer.toJSON(errorMap).toString(), e);
-			putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+			putSysError(WebConstant.CONTROLLER_ERROR_MSG);
 		}
 		return toJson();
 	}

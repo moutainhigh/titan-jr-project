@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanCityInfoDao" >
+   <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanCityInfo" parameterType="com.fangcang.titanjr.entity.parameter.TitanCityInfoParam" >
+    select 
+    *
+    from t_tfs_cityinfo
+  </select>
+  <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanCityInfo" >
+    insert into t_tfs_cityinfo (cityinfoid, country, citycode, 
+      cityname, datatype, parentcode, 
+      fcdatacode, createtime, modifytime
+      )
+    values (#{cityinfoid,jdbcType=INTEGER}, #{country,jdbcType=VARCHAR}, #{citycode,jdbcType=VARCHAR}, 
+      #{cityname,jdbcType=VARCHAR}, #{datatype,jdbcType=INTEGER}, #{parentcode,jdbcType=VARCHAR}, 
+      #{fcdatacode,jdbcType=VARCHAR}, #{createtime}, #{modifytime}
+      )
+  </insert>
+  <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanCityInfo" >
+    update t_tfs_cityinfo
+    <set >
+      <if test="country != null" >
+        country = #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="citycode != null" >
+        citycode = #{citycode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityname != null" >
+        cityname = #{cityname,jdbcType=VARCHAR},
+      </if>
+      <if test="datatype != null" >
+        datatype = #{datatype,jdbcType=INTEGER},
+      </if>
+      <if test="parentcode != null" >
+        parentcode = #{parentcode,jdbcType=VARCHAR},
+      </if>
+      <if test="fcdatacode != null" >
+        fcdatacode = #{fcdatacode,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        createtime = #{createtime},
+      </if>
+      <if test="modifytime != null" >
+        modifytime = #{modifytime},
+      </if>
+    </set>
+    where cityinfoid = #{cityinfoid,jdbcType=INTEGER}
+  </update>
+    <!-- 批量插入 -->
+  <insert id="insertBatch" parameterType="java.util.List"> 	     
+        insert into t_tfs_cityinfo  
+        (country,citycode,cityname,datatype,parentcode,fcdatacode,createtime,modifytime) values 
+    <foreach collection="list" item="item" index="index" separator=",">     
+         (#{item.country},
+          #{item.citycode},
+          #{item.cityname},
+          #{item.datatype},
+          #{item.parentcode},
+          #{item.fcdatacode},
+          #{item.createtime},
+          #{item.modifytime}) 
+    </foreach>
+  </insert>  
+  
+  <delete id="deleteTitanCitys">
+    delete from t_tfs_cityinfo ;
+  </delete>
+  
+</mapper>

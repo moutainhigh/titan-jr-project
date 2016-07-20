@@ -76,6 +76,26 @@ public class CommonConstant {
 	
 	//是否忘记支付密码
     public static final String IS_FORGET_PAYPASSWORD="1";
+	// 付款权限
+    public static final String ROLECODE_PAY_38 = "PAY";
+    //查看权限
+    public static final String ROLECODE_VIEW_39 = "VIEW";
+    // 充值和提现权限
+    public static final String ROLECODE_RECHARGE_40 = "RECHARGE";
+    //理财权限
+    public static final String ROLECODE_FINANCING_41 = "FINANCING";
+    //贷款权限
+    public static final String ROLECODE_LOAN_42 = "LOAN";
+    //消息提醒权限
+    public static final String ROLECODE_MESSAGE_43 = "MESSAGE";
+    //系统运营员权限
+    public static final String ROLECODE_OPERATION_44 = "OPERATION";
+    
+    //系统管理员
+    public static final String ROLECODE_ADMIN = "ADMIN";
+    
+    //不需要权限
+    public static final String ROLECODE_NO_LIMIT = "NO_LIMIT";
 	
 	
 }

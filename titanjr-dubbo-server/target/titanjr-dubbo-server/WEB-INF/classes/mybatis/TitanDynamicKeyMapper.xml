@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanDynamicKeyDao" >
+   <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanDynamicKey" parameterType="com.fangcang.titanjr.entity.parameter.TitanDynamicKeyParam" >
+    select 
+    *
+    from t_tfs_dynamic_key
+    <where>
+      <if test="payorderno !=null">
+        payorderno = #{payorderno}
+      </if>
+    </where>
+  </select>
+  
+  <select id="selectKeyByPayOrderNo" resultType="java.lang.String" parameterType="com.fangcang.titanjr.entity.TitanDynamicKey" >
+    select 
+    encryptionkey
+    from t_tfs_dynamic_key
+    <where>
+      <if test="payorderno !=null">
+        payorderno = #{payorderno}
+      </if>
+    </where>
+  </select>
+  
+  <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanDynamicKey" >
+    insert into t_tfs_dynamic_key(encryptionkey,payorderno)values(#{encryptionkey},#{payorderno})
+  </insert>
+  
+  <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanDynamicKey" >
+    update t_tfs_dynamic_key
+    <set >
+      <if test="encryptionkey != null" >
+        encryptionkey = #{encryptionkey},
+      </if>
+      <if test="payorderno != null" >
+        payorderno = #{payorderno},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="deleteDynamicKeyByPayOrderNo" parameterType="com.fangcang.titanjr.entity.TitanDynamicKey">
+    delete from t_tfs_dynamic_key where payorderno = #{payorderno}
+  </delete>
+  
+</mapper>

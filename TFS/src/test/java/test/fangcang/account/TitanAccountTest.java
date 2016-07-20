@@ -10,7 +10,7 @@ import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
-import com.fangcang.titanjr.web.util.CommonConstant;
+import com.fangcang.titanjr.web.util.WebConstant;
 
 public class TitanAccountTest extends GenericTest{
 
@@ -29,8 +29,8 @@ public class TitanAccountTest extends GenericTest{
     	try{
     		BankCardRequest bankCardRequest = new BankCardRequest();
         	bankCardRequest.setUserId("TJM10000108");
-        	bankCardRequest.setStatus(CommonConstant.BANKCARD_SUCCESS);
-        	bankCardRequest.setAccountproperty(CommonConstant.ACCOUNT_PUBLIC);
+        	bankCardRequest.setStatus(WebConstant.BANKCARD_SUCCESS);
+        	bankCardRequest.setAccountproperty(WebConstant.ACCOUNT_PUBLIC);
         	titanFinancialBankCardService.queryBankCardDTO(bankCardRequest);
     	}catch(Exception e){
     		e.printStackTrace();

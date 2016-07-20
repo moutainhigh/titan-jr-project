@@ -14,8 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.fangcang.titanjr.common.enums.BankCardEnum;
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.BankCardDTO;
@@ -26,8 +28,9 @@ import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 import com.fangcang.titanjr.service.*;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.WithDrawRequest;
-import com.fangcang.titanjr.web.util.CommonConstant;
+import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.titanjr.web.util.RSADecryptString;
 import com.fangcang.titanjr.web.util.TFSTools;
 import com.fangcang.util.DateUtil;
@@ -76,22 +79,42 @@ public class FinancialAccountController extends BaseController {
     TitanFinancialBaseInfoService titanFinancialBaseInfoService;
 
     @RequestMapping(value = "/overview-main", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
     public String home(HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
             FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
             organQueryRequest.setUserId(this.getUserId());
             FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
             model.addAttribute("organ", organOrganResponse.getFinancialOrganDTO());
-            AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
-            accountBalanceRequest.setUserid(this.getUserId());
-            AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
-            if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
-                model.addAttribute("accountBalance", balanceResponse.getAccountBalance().get(0));
-            }
+//            AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
+//            accountBalanceRequest.setUserid(this.getUserId());
+//            AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+//            if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
+//                model.addAttribute("accountBalance", balanceResponse.getAccountBalance().get(0));
+//            }
         }
         return "account-overview/overview-main";
     }
-
+    
+    /**
+     * 提供客户端查询当前账户的余额
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/query-account-balance", method = RequestMethod.GET)
+    public String queryAccountBalance()
+    {
+		 AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
+	     accountBalanceRequest.setUserid(this.getUserId());
+	      
+	     AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+	      
+	     if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
+	         return toJson(balanceResponse.getAccountBalance().get(0));
+	     }
+	      return "";
+    }
+    
     @RequestMapping(value = "/order-receive-detail", method = RequestMethod.GET)
     public String queryReceiveOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         setTransOrderDetail(tradeDetailRequest,model);
@@ -176,7 +199,7 @@ public class FinancialAccountController extends BaseController {
     @RequestMapping("validate_person_Enterprise")
     public String validatePersonOrEnterprise(HttpServletRequest request, Model model){
     	Map<String,String> resultMap = new HashMap<String, String>();
-    	resultMap.put(CommonConstant.RESULT,CommonConstant.FAIL);
+    	resultMap.put(WebConstant.RESULT,WebConstant.FAIL);
     	//判断是否为对公账户
     	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
     	organQueryRequest.setUserId(this.getUserId());
@@ -184,61 +207,67 @@ public class FinancialAccountController extends BaseController {
         if(response.isResult()){
         	FinancialOrganDTO financialOrganDTO = response.getFinancialOrganDTO();
         	if(financialOrganDTO !=null && financialOrganDTO.getUserType()!=null){
-        		resultMap.put(CommonConstant.RESULT,CommonConstant.SUCCESS);
-        		if(CommonConstant.ACCOUNT_PUBLIC.equals(financialOrganDTO.getUserType().toString())){
+        		resultMap.put(WebConstant.RESULT,WebConstant.SUCCESS);
+        		if(WebConstant.ACCOUNT_PUBLIC.equals(financialOrganDTO.getUserType().toString())){
         			BankCardRequest bankCardRequest = new BankCardRequest();
         	    	bankCardRequest.setUserId(this.getUserId());
-        	    	bankCardRequest.setAccountproperty(CommonConstant.ACCOUNT_PUBLIC);
-        	    	bankCardRequest.setAccountpurpose(CommonConstant.ACCOUNT_PURPOSE_WITHDRAW);
+        	    	bankCardRequest.setAccountproperty(WebConstant.ACCOUNT_PUBLIC);
+        	    	bankCardRequest.setAccountpurpose(WebConstant.ACCOUNT_PURPOSE_WITHDRAW);
         	    	List<BankCardDTO> bankCardDTOList = titanFinancialBankCardService.queryBankCardDTO(bankCardRequest);
         	    	if(bankCardDTOList !=null && bankCardDTOList.size()>0){
         	    		BankCardDTO bankCardDTO = bankCardDTOList.get(0);
         	    		if(bankCardDTO !=null && bankCardDTO.getStatus()!=null){
-        	    			if(CommonConstant.BANKCARD_SUCCESS.intValue()==bankCardDTO.getStatus().intValue()){//对公且绑定失败
-        	    				resultMap.put(CommonConstant.MSG, CommonConstant.ACCOUNT_PUBLIC_SUCCESS);
-        	        		}else if(CommonConstant.BANKCARD_BINDING.intValue()==bankCardDTO.getStatus().intValue()){
-        	        			resultMap.put(CommonConstant.MSG, CommonConstant.ACCOUNT_PUBLIC_BINDING);
+        	    			if(WebConstant.BANKCARD_SUCCESS.intValue()==bankCardDTO.getStatus().intValue()){//对公且绑定失败
+        	    				resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_SUCCESS);
+        	        		}else if(WebConstant.BANKCARD_BINDING.intValue()==bankCardDTO.getStatus().intValue()){
+        	        			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_BINDING);
         	        		}else{
-        	        			resultMap.put(CommonConstant.MSG, CommonConstant.ACCOUNT_PUBLIC_FAIL);
+        	        			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_FAIL);
         	        		}
         	    			return toJson(resultMap);
         	    		}
         	    	}else{
-        	    		resultMap.put(CommonConstant.MSG, CommonConstant.ACCOUNT_PUBLIC_NO_BIND);
+        	    		resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_NO_BIND);
         	    		return toJson(resultMap);
         	    	}
         			
         		}else{
-        			resultMap.put(CommonConstant.MSG, CommonConstant.ACCOUNT_PERSON);
+        			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PERSON);
         		}
         		return toJson(resultMap);
         	}
         }
-    	resultMap.put(CommonConstant.MSG, "系统错误");
+    	resultMap.put(WebConstant.MSG, "系统错误");
     	return toJson(resultMap);
     }
     
     @RequestMapping(value = "/toBindAccountWithDrawCard")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
     public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName) throws UnsupportedEncodingException{
-    	model.addAttribute("modifyOrBind",CommonConstant.BIND_BANK_CARD);
+    	model.addAttribute("modifyOrBind",WebConstant.BIND_BANK_CARD);
     	 if (null != this.getUserId()) {
              model.addAttribute("organ", this.getTitanOrganDTO());
          }
+
     	return "account-overview/bind-bankcard";
     }
     
     @RequestMapping("update_account-withdraw_info")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
     public String updateAccountWithdrawInfo(HttpServletRequest request, Model model,String orgName){
     	if (null != this.getUserId()) {
              model.addAttribute("organ", this.getTitanOrganDTO());
         }
     	model.addAttribute("showBankCardInput",1);
-    	model.addAttribute("modifyOrBind",CommonConstant.MODIFY_BANK_CARD);
+
+    	model.addAttribute("modifyOrBind",WebConstant.MODIFY_BANK_CARD);
+
     	return "account-overview/bind-bankcard";
     }
     
     
     @RequestMapping(value = "/account-withdraw", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
     public String toAccountWithDrawPage(HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
         	
@@ -274,6 +303,7 @@ public class FinancialAccountController extends BaseController {
 
     @ResponseBody
     @RequestMapping("bankCardBind")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
     public String bankCardBindToPublic(BindBankCardRequest  bindBankCardRequest,Model model){
      	if(!StringUtil.isValidString(bindBankCardRequest.getBankCardCode()) 
     			|| !StringUtil.isValidString(bindBankCardRequest.getBankCardName())
@@ -284,12 +314,12 @@ public class FinancialAccountController extends BaseController {
     		return toJson(putSysError("参数不能为空"));
     	}
      	
-     	if(CommonConstant.BIND_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//绑卡
+     	if(WebConstant.BIND_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//绑卡
      		CusBankCardBindResponse cardBindResponse = bindBindCardToPublic(bindBankCardRequest);
      		 if (!cardBindResponse.isResult()){
                  return toJson(putSysError(cardBindResponse.getReturnMessage()));
              }
-     	}else if(CommonConstant.MODIFY_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//失败修改绑卡
+     	}else if(WebConstant.MODIFY_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//失败修改绑卡
      		ModifyInvalidWithDrawCardResponse modifyInvalidWithDrawCardResponse = modifyBindCard(bindBankCardRequest);
      	    if(!modifyInvalidWithDrawCardResponse.isResult()){
      	    	  return toJson(putSysError(modifyInvalidWithDrawCardResponse.getReturnMessage()));
@@ -324,7 +354,7 @@ public class FinancialAccountController extends BaseController {
          bankCardBindRequest.setCurrency("CNY");
          bankCardBindRequest.setReqSn(String.valueOf(System.currentTimeMillis()));
          bankCardBindRequest.setSubmitTime(DateUtil.dateToString(new Date(),"yyyyMMddHHmmss"));
-         bankCardBindRequest.setAccountProperty(CommonConstant.ACCOUNT_PUBLIC);
+         bankCardBindRequest.setAccountProperty(WebConstant.ACCOUNT_PUBLIC);
          //暂时改为私人账户
 //         bankCardBindRequest.setAccountProperty(CommonConstant.ACCOUNT_PERSON);
          bankCardBindRequest.setAccountPurpose(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey());
@@ -402,7 +432,7 @@ public class FinancialAccountController extends BaseController {
                 cardNo = withDrawRequest.getOriginalAccount();
             }
         }
-        Object tfsUserId = session.getAttribute(CommonConstant.SESSION_KEY_JR_TFS_USERID);
+        Object tfsUserId = session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
         boolean isValid = false;
         if (tfsUserId != null) {
             isValid = titanFinancialUserService.checkPayPassword(withDrawRequest.getPassword(),
@@ -466,7 +496,7 @@ public class FinancialAccountController extends BaseController {
         balanceWithDrawRequest.setProductid(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_PRODUCT_ID);
         balanceWithDrawRequest.setAmount(withDrawRequest.getAmount());
         balanceWithDrawRequest.setCardNo(cardNo);
-        balanceWithDrawRequest.setCreator(session.getAttribute(CommonConstant.SESSION_KEY_LOGIN_USER_LOGINNAME).toString());
+        balanceWithDrawRequest.setCreator(session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_LOGINNAME).toString());
         balanceWithDrawRequest.setOrderDate(DateUtil.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss"));
         balanceWithDrawRequest.setUserorderid(OrderGenerateService.genResquestNo());
         balanceWithDrawRequest.setUserFee(0L);
@@ -505,13 +535,13 @@ public class FinancialAccountController extends BaseController {
         	log.info("设置支付密码的传入参数:"+toJson(payPasswordRequest));
             PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
             if (payPasswordResponse.isSaveSuccess()) {
-                map.put(CommonConstant.RESULT, CommonConstant.SUCCESS);
+                map.put(WebConstant.RESULT, WebConstant.SUCCESS);
                 return map;
             } else {
-                map.put(CommonConstant.MSG, payPasswordResponse.getReturnMessage());
+                map.put(WebConstant.MSG, payPasswordResponse.getReturnMessage());
             }
         }
-        map.put(CommonConstant.RESULT, "fail");
+        map.put(WebConstant.RESULT, "fail");
         return map;
     }
 
@@ -531,6 +561,7 @@ public class FinancialAccountController extends BaseController {
     	}
     	
 		PayPasswordRequest payPasswordRequest  = new PayPasswordRequest();
+
 //    		payPasswordRequest.setPayPassword(RSADecryptString.decryptString(forgetPayPassword.getPayPassword(),request));
 		payPasswordRequest.setPayPassword(forgetPayPassword.getPayPassword());
 		payPasswordRequest.setIsForget(com.fangcang.titanjr.common.util.CommonConstant.IS_FORGET_PAYPASSWORD);
@@ -580,7 +611,7 @@ public class FinancialAccountController extends BaseController {
         map.put("result", "false");
         flag = titanFinancialUserService.checkIsSetPayPassword(fcUserid,getTfsUserId());
         if (flag) {
-            map.put(CommonConstant.RESULT, CommonConstant.SUCCESS);
+            map.put(WebConstant.RESULT, WebConstant.SUCCESS);
         }
         return map;
     }
@@ -635,45 +666,48 @@ public class FinancialAccountController extends BaseController {
                 HSSFSheet sheet = workbook.createSheet();
                 HSSFRow head = sheet.createRow(0);
                 head.createCell(0).setCellValue("编号");
-                head.createCell(1).setCellValue("业务单号");
-                head.createCell(2).setCellValue("金融交易号");
+                head.createCell(1).setCellValue("金融交易号");
+                head.createCell(2).setCellValue("业务单号");
                 head.createCell(3).setCellValue("财务单号");
-                head.createCell(4).setCellValue("交易时间");
-                head.createCell(5).setCellValue("交易类型");
-                head.createCell(6).setCellValue("交易内容");
-                head.createCell(7).setCellValue("交易对方");
-                head.createCell(8).setCellValue("订单金额");
-                head.createCell(9).setCellValue("手续费");
-                head.createCell(10).setCellValue("交易结果");
+                head.createCell(4).setCellValue("融数单号");
+                head.createCell(5).setCellValue("交易时间");
+                head.createCell(6).setCellValue("交易类型");
+                head.createCell(7).setCellValue("交易内容");
+                head.createCell(8).setCellValue("交易对方");
+                head.createCell(9).setCellValue("订单金额");
+                head.createCell(10).setCellValue("手续费");
+                head.createCell(11).setCellValue("交易结果");
                 List<TransOrderDTO> orderDTOList = tradeDetailResponse.getTransOrders().getItemList();                for (int i = 0; i < orderDTOList.size(); i++) {
                     HSSFRow row = sheet.createRow(i + 1);//创建一行
                     row.createCell(0).setCellValue(i + 1);
-                    row.createCell(1).setCellValue(orderDTOList.get(i).getBusinessordercode());
-                    row.createCell(2).setCellValue(orderDTOList.get(i).getOrderid());
+                    row.createCell(1).setCellValue(orderDTOList.get(i).getUserorderid());
+                    row.createCell(2).setCellValue(orderDTOList.get(i).getBusinessordercode());
                     row.createCell(3).setCellValue(orderDTOList.get(i).getPayorderno());
-                    row.createCell(4).setCellValue(DateUtil.dateToString(orderDTOList.get(i).getCreatetime(),"yyyy-MM-dd HH:mm:ss"));
-                    row.createCell(5).setCellValue(orderDTOList.get(i).getTradeType());
-                    row.createCell(6).setCellValue(orderDTOList.get(i).getGoodsname() + orderDTOList.get(i).getGoodsdetail());
+                    row.createCell(4).setCellValue(orderDTOList.get(i).getOrderid());
+                    row.createCell(5).setCellValue(DateUtil.dateToString(orderDTOList.get(i).getCreatetime(),"yyyy-MM-dd HH:mm:ss"));
+                    row.createCell(6).setCellValue(orderDTOList.get(i).getTradeType());
+                    String tradeContent = orderDTOList.get(i).getGoodsname();
+                    if (StringUtil.isValidString(orderDTOList.get(i).getGoodsdetail())) {
+                        tradeContent = tradeContent + orderDTOList.get(i).getGoodsdetail();
+                    }
+                    row.createCell(7).setCellValue(tradeContent);
                     if (orderDTOList.get(i).getTransTarget() != null) {
-                        row.createCell(7).setCellValue(orderDTOList.get(i).getTransTarget());
+                        row.createCell(8).setCellValue(orderDTOList.get(i).getTransTarget());
                     }
                     if (orderDTOList.get(i).getTradeamount() != null) {
-                        row.createCell(8).setCellValue(orderDTOList.get(i).getTradeamount()/100.0);
+                        double tradeAmount = orderDTOList.get(i).getTradeamount() / 100.0;
+                        if ("付款".equals(orderDTOList.get(i).getTradeType()) ||
+                                "提现".equals(orderDTOList.get(i).getTradeType())){
+                            tradeAmount = 0 - tradeAmount;
+                         }
+                        row.createCell(9).setCellValue(tradeAmount);
                     }
                     if (orderDTOList.get(i).getReceivedfee() != null) {
-                        row.createCell(9).setCellValue(orderDTOList.get(i).getReceivedfee()/100.0);
+                        row.createCell(10).setCellValue(orderDTOList.get(i).getReceivedfee()/100.0);
                     }
-                    String stateStr = "";
-                    if (orderDTOList.get(i).getStatusid().equals("1")){
-                        stateStr = "处理中";
-                    } else if (orderDTOList.get(i).getStatusid().equals("1")){
-                        stateStr = "已成功";
-                    } else if (orderDTOList.get(i).getStatusid().equals("3")){
-                        stateStr = "已冻结";
-                    } else {
-                        stateStr = "交易失败";
+                    if (StringUtil.isValidString(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()))) {
+                        row.createCell(11).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
                     }
-                    row.createCell(10).setCellValue(stateStr);
                 }
                 outputStream = response.getOutputStream();
                 workbook.write(outputStream);

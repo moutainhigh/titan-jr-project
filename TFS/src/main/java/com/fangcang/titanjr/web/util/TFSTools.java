@@ -18,13 +18,13 @@ public class TFSTools {
     	if(!(StringUtil.isValidString(receiveAddress)&&StringUtil.isValidString(pageInput))){
     		return "WRONG";
     	}
-    	String regcode_time = (String)session.getAttribute(CommonConstant.SESSION_KEY_REG_CODE+"_"+receiveAddress);
+    	String regcode_time = (String)session.getAttribute(WebConstant.SESSION_KEY_REG_CODE+"_"+receiveAddress);
     	if(StringUtil.isValidString(regcode_time)){
     		String[] timeCode = regcode_time.split("_");
     		
     		Date codeCreateTime = DateUtil.toDataYYYYMMDDHHmmss(timeCode[0]);
     		Date nowDate = new Date();
-    		boolean isExpire = DateUtils.addHours(codeCreateTime, CommonConstant.REG_CODE_TIME_OUT_HOUR).before(nowDate);
+    		boolean isExpire = DateUtils.addHours(codeCreateTime, WebConstant.REG_CODE_TIME_OUT_HOUR).before(nowDate);
     		boolean isRightCode = timeCode[1].equals(pageInput);
     		if(!isExpire && isRightCode){
     			return "SUCCESS";

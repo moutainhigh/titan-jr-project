@@ -43,4 +43,13 @@ public enum SupportBankEnum {
         this.bankName = bankName;
         this.bankRemark = bankRemark;
     }
+
+    public static SupportBankEnum getBankDetailByName(String bankName){
+        for (SupportBankEnum supportBankEnum : SupportBankEnum.values()){
+            if (supportBankEnum.bankName.equals(bankName)){
+                return supportBankEnum;
+            }
+        }
+        return null;
+    }
 }

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanOrgBindinfoDao" >
+   <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanOrgBindinfo" parameterType="com.fangcang.titanjr.entity.parameter.TitanOrgBindinfoParam" >
+    select 
+    *
+    from t_tfs_orgbindinfo
+    <where>
+    	<if test="userid != null"> userid = #{userid}</if>
+    	<if test="merchantcode != null"> and  merchantcode = #{merchantcode}</if>
+    	<if test="orgcode != null"> and  orgcode = #{orgcode}</if>
+    	<if test="bindstatus != null"> and  bindstatus = #{bindstatus}</if>
+    </where>
+  </select>
+  <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanOrgBindinfo" >
+    insert into t_tfs_orgbindinfo (userid, merchantcode, orgcode, 
+      merchantname, bindstatus,  creator, 
+      createtime, modifier, modifytime
+      )
+    values (#{userid,jdbcType=VARCHAR}, #{merchantcode,jdbcType=VARCHAR}, #{orgcode,jdbcType=VARCHAR}, 
+      #{merchantname,jdbcType=VARCHAR}, #{bindstatus,jdbcType=INTEGER},  #{creator,jdbcType=VARCHAR}, 
+      #{createtime}, #{modifier,jdbcType=VARCHAR}, #{modifytime}
+      )
+  </insert>
+  <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanOrgBindinfo" >
+    update t_tfs_orgbindinfo
+    <set >
+      <if test="orgcode != null" >
+        orgcode = #{orgcode,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantname != null" >
+        merchantname = #{merchantname,jdbcType=VARCHAR},
+      </if>
+      <if test="bindstatus != null" >
+        bindstatus = #{bindstatus,jdbcType=INTEGER},
+      </if>
+      <if test="creator != null" >
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        createtime = #{createtime},
+      </if>
+      <if test="modifier != null" >
+        modifier = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="modifytime != null" >
+        modifytime = #{modifytime},
+      </if>
+    </set>
+    <where>
+    	<if test="userid != null">userid = #{userid,jdbcType=VARCHAR}</if>
+    	<if test="merchantcode != null"> and merchantcode = #{merchantcode,jdbcType=VARCHAR}</if>
+    </where>
+  </update>
+  
+  <select id="selectTitanOrgBindinfoByUserid" parameterType="com.fangcang.titanjr.entity.TitanOrgBindinfo" resultType="com.fangcang.titanjr.entity.TitanOrgBindinfo">
+     select userid, merchantcode, orgcode, merchantname, bindstatus,  creator, 
+      createtime, modifier, modifytime from t_tfs_orgbindinfo  
+      <where>
+      	bindstatus = 1
+	      <if test="userid != null">
+	        and userid=#{userid}
+	      </if>
+	      <if test="orgcode != null">
+	        and orgcode=#{orgcode}
+	      </if>
+	      <if test="merchantcode !=null">
+	        and merchantcode = #{merchantcode}
+	      </if>
+	  </where>
+  </select>
+</mapper>

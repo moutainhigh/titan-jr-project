@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanBankinfoDao">
+
+    <select id="queryBankInfoList" resultType="com.fangcang.titanjr.dto.bean.BankInfoDTO"
+            parameterType="com.fangcang.titanjr.dto.request.BankInfoQueryRequest">
+        SELECT
+          bankCode,
+          bankName,
+          bankCity,
+          updateBatch,
+          bankType,
+          statusId,
+          parentCode
+        FROM
+          t_tfs_bankinfo
+        WHERE
+          1 = 1
+          <if test="bankCity != null">
+              and bankCity = #{bankCity,jdbcType=VARCHAR}
+          </if>
+          <if test="bankType != null">
+              and bankType = #{bankType,jdbcType=INTEGER}
+          </if>
+          <if test="bankName != null">
+              and bankName like concat('%',#{bankName},'%')
+          </if>
+          <if test="bankCode != null">
+              and bankCode = #{bankCode,jdbcType=VARCHAR}
+          </if>
+    </select>
+
+    <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanBankinfo">
+    insert into t_tfs_bankinfo (bankid, bankcode, bankname, 
+      bankcity, updatebatch, banktype, 
+      statusid, parentcode,
+      createtime, updatetime)
+    values (#{bankid,jdbcType=INTEGER}, #{bankcode,jdbcType=VARCHAR}, #{bankname,jdbcType=VARCHAR}, 
+      #{bankcity,jdbcType=VARCHAR}, #{updatebatch,jdbcType=VARCHAR}, #{banktype,jdbcType=INTEGER}, 
+      #{statusid,jdbcType=INTEGER}, #{parentcode,jdbcType=VARCHAR},
+      #{createtime}, #{updatetime})
+  </insert>
+
+    <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanBankinfo">
+        update t_tfs_bankinfo
+        <set>
+            <if test="bankcode != null">
+                bankcode = #{bankcode,jdbcType=VARCHAR},
+            </if>
+            <if test="bankname != null">
+                bankname = #{bankname,jdbcType=VARCHAR},
+            </if>
+            <if test="bankcity != null">
+                bankcity = #{bankcity,jdbcType=VARCHAR},
+            </if>
+            <if test="updatebatch != null">
+                updatebatch = #{updatebatch,jdbcType=VARCHAR},
+            </if>
+            <if test="banktype != null">
+                banktype = #{banktype,jdbcType=INTEGER},
+            </if>
+            <if test="statusid != null">
+                statusid = #{statusid,jdbcType=INTEGER},
+            </if>
+            <if test="parentcode != null">
+                parentcode = #{parentcode,jdbcType=VARCHAR},
+            </if>
+            <if test="createtime != null">
+                createtime = #{createtime},
+            </if>
+            <if test="updatetime != null">
+                updatetime = #{updatetime},
+            </if>
+        </set>
+        where bankid = #{bankid,jdbcType=INTEGER}
+    </update>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into t_tfs_bankinfo (bankid, bankcode, bankname,
+        bankcity, updatebatch, banktype, statusid, parentcode, createtime, updatetime) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.bankid,jdbcType=INTEGER}, #{item.bankcode,jdbcType=VARCHAR}, #{item.bankname,jdbcType=VARCHAR},
+            #{item.bankcity,jdbcType=VARCHAR}, #{item.updatebatch,jdbcType=VARCHAR}, #{item.banktype,jdbcType=INTEGER},
+            #{item.statusid,jdbcType=INTEGER}, #{item.parentcode,jdbcType=VARCHAR},
+            #{item.createtime}, #{item.updatetime})
+        </foreach>
+    </insert>
+    
+    <delete id="deleteTitanBanks">
+      delete from t_tfs_bankinfo
+    </delete>
+
+</mapper>

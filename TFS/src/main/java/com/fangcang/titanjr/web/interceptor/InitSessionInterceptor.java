@@ -17,7 +17,7 @@ import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.user.RoleWrapper;
 import com.fangcang.titanjr.web.user.UserWrapper;
-import com.fangcang.titanjr.web.util.CommonConstant;
+import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.titanjr.web.util.TranslateUtil;
 
 import org.acegisecurity.Authentication;
@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,10 +60,12 @@ public class InitSessionInterceptor implements HandlerInterceptor {
                 ProxyFactoryConstants.merchantServerUrl + "merchantFacade");
         // 第一步：用户登录身份的拦截判定
         // 当登录用户和金服来源都为空时候进入判定逻辑
-        if (session.getAttribute("onlineRoleUser") == null || session.getAttribute(CommonConstant.SESSION_KEY_JR_RESOURCE) == null) {
-            if (session.getAttribute(CommonConstant.SESSION_KEY_LOGIN_USER) != null && session.getAttribute(CommonConstant.SESSION_KEY_LOGIN_USER_ROLE) == null) {
+        System.out.println((UserWrapper)session.getAttribute("onlineRoleUser"));
+        System.out.println((String)session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE));
+        if (session.getAttribute("onlineRoleUser") == null || session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE) == null) {
+            if (session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER) != null && session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ROLE) == null) {
                 //房仓商家系统用户组装判定
-                UserInfo userInfo = (UserInfo) session.getAttribute(CommonConstant.SESSION_KEY_LOGIN_USER);
+                UserInfo userInfo = (UserInfo) session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER);
                 UserWrapper roleUser = null;
                 SecurityContext ctx = SecurityContextHolder.getContext();
                 if (null != ctx) {
@@ -81,39 +84,39 @@ public class InitSessionInterceptor implements HandlerInterceptor {
                         }
                     }
                 }
-                session.setAttribute(CommonConstant.SESSION_KEY_LOGIN_IS_ADMIN, roleUser.getAdmin());//是否管理员
-                session.setAttribute(CommonConstant.SESSION_KEY_LOGIN_USER_LOGINNAME, roleUser.getLoginName());//用户登录名
-                session.setAttribute(CommonConstant.SESSION_KEY_LOGIN_USER_NAME, roleUser.getName());//用户名
-                session.setAttribute(CommonConstant.SESSION_KEY_LOGIN_USER_ID, roleUser.getId());//用户Id，必须
+                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_IS_ADMIN, roleUser.getAdmin());//是否管理员
+                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_LOGINNAME, roleUser.getLoginName());//用户登录名
+                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME, roleUser.getName());//用户名
+                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ID, roleUser.getId());//用户Id，必须
                 //session.setAttribute("LOGIN_USER_PASSWORD",roleUser.getPassword());
                 RoleWrapper userRole = new RoleWrapper();
                 userRole.setRoleList(userInfo.getRoles());
-                session.setAttribute(CommonConstant.SESSION_KEY_LOGIN_USER_ROLE, userRole);//登录用户角色
+                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ROLE, userRole);//登录用户角色
                 MerchantDetailQueryDTO queryDTO = new MerchantDetailQueryDTO();
                 queryDTO.setMerchantCode(userInfo.getMerchantCode());
                 MerchantResponseDTO response = merchantFacade.queryMerchantDetail(queryDTO);
                 if (response != null) {
-                    session.setAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_ID, response.getMerchantId());//当前商家id
-                    session.setAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_CODE, response.getMerchantCode());//当前商家编码
-                    session.setAttribute(CommonConstant.SESSION_KEY_CURRENT_MERCHANT_NAME, response.getCompany());//当前商家名称
-                    session.setAttribute(CommonConstant.SESSION_KEY_CURRENT_THEME, response.getTheme());//商家主题
-                    session.setAttribute(CommonConstant.SESSION_KEY_CURRENT_LogoUrl, response.getLogoUrl());//商家logo地址
+                    session.setAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_ID, response.getMerchantId());//当前商家id
+                    session.setAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE, response.getMerchantCode());//当前商家编码
+                    session.setAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_NAME, response.getCompany());//当前商家名称
+                    session.setAttribute(WebConstant.SESSION_KEY_CURRENT_THEME, response.getTheme());//商家主题
+                    session.setAttribute(WebConstant.SESSION_KEY_CURRENT_LogoUrl, response.getLogoUrl());//商家logo地址
                 }
 
                 //当来源为2时候，需要判定是否绑定
                 //JR_RESOURCE === 标示登录来源
                 if (response.getMerchantCode().equals(RSInvokeConstant.defaultMerchant)) {
                 	//从金服官网登录
-                    session.setAttribute(CommonConstant.SESSION_KEY_JR_RESOURCE, CommonConstant.SESSION_KEY_JR_RESOURCE_1_TFS);
+                    session.setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_1_TFS);
                 } else {
                 	//从Saas登录
-                    session.setAttribute(CommonConstant.SESSION_KEY_JR_RESOURCE, CommonConstant.SESSION_KEY_JR_RESOURCE_2_SAAS);
+                    session.setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_2_SAAS);
                 }
 
                 //参数说明：若是SAAS登录，来源为2，SaaS登录名作为request的登录名，
                 //来源为1时，saas登录名作为request中的绑定用户名查询
                 UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
-                if (CommonConstant.SESSION_KEY_JR_RESOURCE_2_SAAS.equals(session.getAttribute(CommonConstant.SESSION_KEY_JR_RESOURCE))) {
+                if (WebConstant.SESSION_KEY_JR_RESOURCE_2_SAAS.equals(session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE))) {
                     userInfoQueryRequest.setBindLoginName(roleUser.getLoginName());//SAAS商家的用户名
                 } else {
                     userInfoQueryRequest.setUserLoginName(roleUser.getLoginName());//SAAS商家用户名也是金服的 用户名
@@ -122,18 +125,28 @@ public class InitSessionInterceptor implements HandlerInterceptor {
               //JR_BIND_STATUS标示是否绑定，在登录来源为2时判定是否绑定
                 UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
                 if (CollectionUtils.isNotEmpty(userInfoResponse.getUserInfoDTOList())) {
-                    if (session.getAttribute(CommonConstant.SESSION_KEY_JR_RESOURCE).equals(CommonConstant.SESSION_KEY_JR_RESOURCE_2_SAAS)) {//表明已经绑定成功
-                        session.setAttribute(CommonConstant.SESSION_KEY_JR_BIND_STATUS, "1");
+                    if (session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE).equals(WebConstant.SESSION_KEY_JR_RESOURCE_2_SAAS)) {//表明已经绑定成功
+                        session.setAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS, "1");
                     }
 
                     UserInfoDTO userInfoDTO = userInfoResponse.getUserInfoDTOList().get(0);
-                    session.setAttribute(CommonConstant.SESSION_KEY_JR_ROLE_LIST, userInfoDTO.getRoleDTOList());//金服用户角色列表
-                    session.setAttribute(CommonConstant.SESSION_KEY_JR_LOGIN_UESRNAME, userInfoDTO.getUserLoginName());//金服用户登录名
-                    session.setAttribute(CommonConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
-                    session.setAttribute(CommonConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名
+                    
+                    if(userInfoDTO.getRoleDTOList()!=null&&userInfoDTO.getRoleDTOList().size()>0){
+                    	List<RoleDTO> activeRoleList = new ArrayList<RoleDTO>();
+                    	for(RoleDTO item : userInfoDTO.getRoleDTOList()){
+                    		if(item.getIsActive()==1){
+                    			activeRoleList.add(item);
+                    		}
+                    	}
+                    	session.setAttribute(WebConstant.SESSION_KEY_JR_ROLE_LIST, activeRoleList);//金服用户角色列表
+                    }
+                    
+                    session.setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, userInfoDTO.getUserLoginName());//金服用户登录名
+                    session.setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
+                    session.setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名
                     //如果包含系统运营员，判定当前地址
                     if (containsRole(userInfoDTO.getRoleDTOList(), FinancialRoleEnum.OPERATION.roleCode)) {
-                        session.setAttribute(CommonConstant.SESSION_KEY_JR_RESOURCE, CommonConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN);
+                        session.setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN);
                     }
                     //将金服所有角色设置进去
                     for (FinancialRoleEnum roleEnum : FinancialRoleEnum.values()) {
@@ -142,9 +155,9 @@ public class InitSessionInterceptor implements HandlerInterceptor {
                         }
                     }
                 } else {//当查询不到时，判定来源是否为2
-                    if (session.getAttribute(CommonConstant.SESSION_KEY_JR_RESOURCE).equals(CommonConstant.SESSION_KEY_JR_RESOURCE_2_SAAS)) {
+                    if (session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE).equals(WebConstant.SESSION_KEY_JR_RESOURCE_2_SAAS)) {
                         //当bindStatus为0时，JR_ROLE_LIST JR_LOGIN_UESRNAME JR_USERID JR_TFS_USERID 以及权限标示全部为空
-                        session.setAttribute(CommonConstant.SESSION_KEY_JR_BIND_STATUS, "0");
+                        session.setAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS, "0");
                     } else {//若不是saas登录进来，一定能查到，查不到需重新登录
                         log.error("用户信息设置有误，请检查后重新登录。");
                         httpServletResponse.sendRedirect("/TFS/j_acegi_logout?wait=y");
@@ -161,16 +174,16 @@ public class InitSessionInterceptor implements HandlerInterceptor {
         //第二步：根据访问地址进行权限判定
         //1.判定金服运营员
         if (httpServletRequest.getRequestURL().indexOf("/admin") >0) {
-	        if (!session.getAttribute(CommonConstant.SESSION_KEY_JR_RESOURCE).equals(CommonConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN)) {//所有金服后台管理以admin进去
+	        if (!session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE).equals(WebConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN)) {//所有金服后台管理以admin进去
 	                //转到无权限页面
 	            	//httpServletResponse.sendRedirect("/TFS/accessDenied.jsp");
-	        	log.info("该用户没有权限访问，登录用户SESSION_KEY_JR_USERID："+session.getAttribute(CommonConstant.SESSION_KEY_JR_USERID));
+	        	log.info("该用户没有权限访问，登录用户SESSION_KEY_JR_USERID："+session.getAttribute(WebConstant.SESSION_KEY_JR_USERID));
 	            httpServletRequest.getRequestDispatcher("/accessDenied.jsp").forward(httpServletRequest, httpServletResponse);
 	            return false;
 	        }
         }
         //2.判定金服官网用户
-        if (session.getAttribute(CommonConstant.SESSION_KEY_JR_RESOURCE).equals(CommonConstant.SESSION_KEY_JR_RESOURCE_1_TFS)) {//金服官网页面以merchant进去
+        if (session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE).equals(WebConstant.SESSION_KEY_JR_RESOURCE_1_TFS)) {//金服官网页面以merchant进去
             if (httpServletRequest.getRequestURL().indexOf("/merchant") < 0) {
                 //转到无权限页面
             }

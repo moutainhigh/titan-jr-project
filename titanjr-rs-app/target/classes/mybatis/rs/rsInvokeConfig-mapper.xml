@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.fangcang.titanjr.rs.dao.RSInvokeConfigDao">
+
+    <select id="queryRSInvokeConfig" parameterType="Map" resultType="com.fangcang.titanjr.rs.entity.RSInvokeConfig">
+        SELECT
+			t.appKey,
+			t.appSecret,
+			t.invokeURL,
+			t.sessionKey,
+			t.updateTime,
+			t.defaultMerchant,
+			t.defaultRoleId
+		FROM
+			t_tfs_rxinvokecfg t
+			<where>
+				<if test="appKey!=null"> appKey = #{appKey}</if>
+				<if test="appSecret!=null"> and  appSecret = #{appSecret}</if>
+			</where>
+    </select>
+
+	<update id="updateRSInvokeConfig" parameterType="com.fangcang.titanjr.rs.entity.RSInvokeConfig" >
+		update t_tfs_rxinvokecfg
+		<set >
+			<if test="sessionkey != null" >
+				sessionkey = #{sessionkey,jdbcType=VARCHAR},
+			</if>
+			<if test="updatetime != null" >
+				updatetime = #{updatetime},
+			</if>
+		</set>
+		where appkey = #{appkey,jdbcType=VARCHAR}
+	</update>
+</mapper>

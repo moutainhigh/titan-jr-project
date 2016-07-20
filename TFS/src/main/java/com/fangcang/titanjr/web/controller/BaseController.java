@@ -14,7 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import com.fangcang.titanjr.web.util.CommonConstant;
+import com.fangcang.titanjr.web.util.WebConstant;
 
 /**
  * 公共的controller
@@ -82,7 +82,7 @@ public class BaseController implements Serializable {
      * @return
      */
     protected String getSAASLoginName(){
-    	String op = (String)session.getAttribute(CommonConstant.SESSION_KEY_LOGIN_USER_NAME);
+    	String op = (String)session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME);
     	if(op==null){
     		return "";
     	}
@@ -93,7 +93,7 @@ public class BaseController implements Serializable {
      * @return
      */
     public String getUserId(){
-        Object userId = session.getAttribute(CommonConstant.SESSION_KEY_JR_USERID);
+        Object userId = session.getAttribute(WebConstant.SESSION_KEY_JR_USERID);
         if (null!= userId){
             return userId.toString();
         }
@@ -104,7 +104,7 @@ public class BaseController implements Serializable {
      * @return
      */
     public String getTfsUserId(){
-    	Object tfsUserId = session.getAttribute(CommonConstant.SESSION_KEY_JR_TFS_USERID);
+    	Object tfsUserId = session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
         if (null!= tfsUserId){
             return tfsUserId.toString();
         }
@@ -116,7 +116,7 @@ public class BaseController implements Serializable {
      * @return
      */
     public String getUserName(){
-    	Object userName = session.getAttribute(CommonConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
+    	Object userName = session.getAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
     	if (null!= userName){
             return userName.toString();
         }

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanRoleDao">
+	<select id="queryList" parameterType="com.fangcang.titanjr.entity.parameter.TitanRoleParam" resultType="com.fangcang.titanjr.entity.TitanRole">
+		select * from t_tfs_role 
+		<where>
+			<if test="isactive != null"> isactive = #{isactive}</if>
+			<if test="roleid != null"> and  roleid = #{roleid}</if>
+			<if test="rolecode != null"> and  rolecode = #{rolecode}</if>
+			<if test="fcroleid != null"> and  fcroleid = #{fcroleid}</if>
+			<if test="rolename != null"> and  rolename = #{rolename}</if>
+		</where>
+	
+	</select>
+
+    <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanRole">
+    insert into t_tfs_role (rolecode, fcroleid,
+      rolename, roleremark,
+      isactive, creator,
+      createtime, modifier, modifytime
+      )
+    values (#{rolecode,jdbcType=VARCHAR}, #{fcroleid,jdbcType=INTEGER},
+      #{rolename,jdbcType=VARCHAR}, #{roleremark,jdbcType=VARCHAR}, #{isactive,jdbcType=INTEGER},
+      #{creator,jdbcType=VARCHAR}, #{createtime}, #{modifier,jdbcType=VARCHAR}, #{modifytime}
+      )
+  </insert>
+
+    <insert id="batchSaveRole" parameterType="java.util.List">
+        insert into t_tfs_role
+        (rolecode, fcroleid,
+        rolename, roleremark,
+        isactive, creator,
+        createtime, modifier, modifytime
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.rolecode,jdbcType=VARCHAR}, #{item.fcroleid,jdbcType=INTEGER},
+            #{item.rolename,jdbcType=VARCHAR}, #{item.roleremark,jdbcType=VARCHAR}, #{item.isactive,jdbcType=INTEGER},
+            #{item.creator,jdbcType=VARCHAR}, #{item.createtime}, #{item.modifier,jdbcType=VARCHAR}, #{item.modifytime}
+            )
+        </foreach>
+    </insert>
+
+    <select id="queryTitanRoles" parameterType="com.fangcang.titanjr.dto.request.TitanRoleQueryRequest"
+            resultType="com.fangcang.titanjr.entity.TitanRole">
+        select
+          roleid,
+          rolecode,
+          fcroleid,
+          rolename,
+          roleremark,
+          isactive,
+          creator,
+          createtime
+        from t_tfs_role t where 1=1
+         <if test="roleCodes != null">
+              and rolecode in
+              <foreach item="item" index="index" collection="roleCodes" open="(" separator="," close=")">
+                #{item}
+              </foreach>
+          </if>
+          <if test="fcRoleId != null">
+              and fcroleid = #{fcRoleId}
+          </if>
+    </select>
+    
+     <select id="queryTitanRolesById" parameterType="com.fangcang.titanjr.dto.request.TitanRoleQueryRequest"
+            resultType="com.fangcang.titanjr.entity.TitanRole">
+        select
+          roleid,
+          rolecode,
+          fcroleid,
+          rolename,
+          roleremark,
+          isactive,
+          creator,
+          createtime
+        from t_tfs_role t where 1=1
+         <if test="roleids!= null">
+              and roleid in
+              <foreach item="item" index="index" collection="roleids" open="(" separator="," close=")">
+                #{item}
+              </foreach>
+          </if>
+    </select>
+</mapper>

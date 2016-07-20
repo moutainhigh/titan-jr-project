@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/jee
+    http://www.springframework.org/schema/jee/spring-jee-2.5.xsd"
+       default-autowire="byName" default-lazy-init="false" >
+
+	<!-- 系统所需定时器的触发器的定义 -->
+    <bean name="titanjrJobTriggers" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				  <ref bean="unFreezeTransOrderTrigger" />
+				  <ref bean="bindBankCardJobTrigger" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- 下架当天 触发时间  半小时执行一次，下午14-24点之间执行-->
+	<bean id="unFreezeTransOrderTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="unFreezeTransOrderSchedule" />
+		<property name="cronExpression">
+			<!-- 测试配置 -->
+			<value>0 0/1 * * * ?</value>
+			<!-- 发布配置 每3分钟执行一次 -->
+			<!--<value>0 0/30 * * * ?</value>-->
+		</property>
+	</bean>
+	
+	<!-- 下架当天 触发时间  半小时执行一次，下午14-24点之间执行-->
+	<bean id="bindBankCardJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="bindBankCardJobSchedule" />
+		<property name="cronExpression">
+			<!-- 测试配置 -->
+			<value>0 0/1 * * * ?</value>
+			<!-- 发布配置 每3分钟执行一次 -->
+			<!--<value>0 0/30 * * * ?</value>-->
+		</property>
+	</bean>
+	
+	<!-- 定义调用对象和调用对象的方法 -->
+	<bean id="unFreezeTransOrderSchedule"
+		class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.fangcang.titanjr.job.UnFreezeTransOrderJob" />
+		<property name="jobDataAsMap">
+		  <map>
+		  		<entry key="titanFinancialTradeService">
+		  			<ref bean="titanFinancialTradeService"/>
+		  		</entry>
+			  <entry key="titanFinancialAccountService">
+				  <ref bean="titanFinancialAccountService"/>
+			  </entry>
+			  <entry key="titanJobExecutor">
+				  <ref bean="titanJobExecutor"/>
+			  </entry>
+		  </map>
+	    </property>
+	</bean>
+	
+	
+	<!-- 定义调用对象和调用对象的方法 -->
+	<bean id="bindBankCardJobSchedule"
+		class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.fangcang.titanjr.job.BindBankCardJob" />
+		<property name="jobDataAsMap">
+		  <map>
+		  		<entry key="TitanFinancialBankCardService">
+		  			<ref bean="titanFinancialBankCardService"/>
+		  		</entry>
+			  <entry key="titanJobExecutor">
+				  <ref bean="titanJobExecutor"/>
+			  </entry>
+		  </map>
+	    </property>
+	</bean>
+	
+
+</beans>

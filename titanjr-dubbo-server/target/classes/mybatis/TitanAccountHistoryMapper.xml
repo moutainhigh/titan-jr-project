@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanAccountHistoryDao" >
+   <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanAccountHistory" parameterType="com.fangcang.titanjr.entity.parameter.TitanAccountHistoryParam" >
+    select 
+    *
+    from t_tfs_accounthistory 
+    <where>
+      <if test="payeruserid !=null">
+       and payeruserid = #{payeruserid}
+      </if>
+       <if test="payeeuserid !=null">
+       and payeeuserid = #{payeeuserid}
+      </if>
+       <if test="outaccountcode !=null">
+       and outaccountcode = #{outaccountcode}
+      </if>
+       <if test="inaccountcode !=null">
+       and inaccountcode = #{inaccountcode}
+      </if>
+      <if test="accountid !=null">
+       and accountid = #{accountid}
+      </if>
+       <if test="accountcode !=null">
+       and accountcode = #{accountcode}
+      </if>
+       <if test="accountname !=null">
+       and accountname = #{accountname}
+      </if>
+    </where>
+    
+    
+  </select>
+  <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanAccountHistory" >
+    insert into t_tfs_accounthistory (payeruserid, payeeuserid, inaccountcode, 
+      outaccountcode, accountid, accountcode, 
+      accountname, creator, createtime
+      )
+    values (#{payeruserid,jdbcType=VARCHAR}, #{payeeuserid,jdbcType=VARCHAR}, #{inaccountcode,jdbcType=VARCHAR}, 
+      #{outaccountcode,jdbcType=VARCHAR}, #{accountid,jdbcType=INTEGER}, #{accountcode,jdbcType=VARCHAR}, 
+      #{accountname,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{createtime}
+      )
+  </insert>
+  <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanAccountHistory" >
+    update t_tfs_accounthistory
+    <set >
+      <if test="inaccountcode != null" >
+        inaccountcode = #{inaccountcode,jdbcType=VARCHAR},
+      </if>
+      <if test="outaccountcode != null" >
+        outaccountcode = #{outaccountcode,jdbcType=VARCHAR},
+      </if>
+      <if test="accountid != null" >
+        accountid = #{accountid,jdbcType=INTEGER},
+      </if>
+      <if test="accountcode != null" >
+        accountcode = #{accountcode,jdbcType=VARCHAR},
+      </if>
+      <if test="accountname != null" >
+        accountname = #{accountname,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        createtime = #{createtime},
+      </if>
+    </set>
+    where payeruserid = #{payeruserid,jdbcType=VARCHAR}
+      and payeeuserid = #{payeeuserid,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="queryAccountHistory" parameterType="com.fangcang.titanjr.dto.bean.AccountHistoryDTO" 
+                                   resultType="com.fangcang.titanjr.dto.bean.AccountHistoryDTO">
+  select 
+	  accHis.payeruserid, 
+	  accHis.payeeuserid, 
+	  accHis.inaccountcode, 
+	  accHis.outaccountcode, 
+	  accHis.accountid, 
+	  accHis.accountcode, 
+	  accHis.accountname, 
+	  accHis.creator, 
+	  accHis.createtime,
+	  org.titancode, 
+	  org.orgname
+	  from t_tfs_accounthistory accHis inner join t_tfs_org org  on org.orgcode=accHis.payeeuserid
+	  <where>
+	    <if test="payeruserid !=null">
+	      and payeruserid=#{payeruserid}
+	    </if>
+	    <if test="inaccountcode !=null">
+	      and inaccountcode=#{inaccountcode}
+	    </if>
+	    <if test="outaccountcode !=null">
+	      and outaccountcode=#{outaccountcode}
+	    </if>
+	  </where>
+  </select>
+  
+  <delete id="deleteAccountHistory" parameterType="com.fangcang.titanjr.dto.bean.AccountHistoryDTO">
+    delete from t_tfs_accounthistory 
+    <where>
+       <if test="payeruserid !=null">
+	      and payeruserid=#{payeruserid}
+	    </if>
+	    <if test="inaccountcode !=null">
+	      and inaccountcode=#{inaccountcode}
+	    </if>
+	    <if test="outaccountcode !=null">
+	      and outaccountcode=#{outaccountcode}
+	    </if>
+    </where>
+  </delete>
+  
+</mapper>

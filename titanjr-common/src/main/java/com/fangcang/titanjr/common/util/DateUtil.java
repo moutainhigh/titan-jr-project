@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -777,24 +778,11 @@ public class DateUtil {
         return cal.getTime();
     } 
 	
+	
+	
 	public static void main(String[] args) {
-
-		// System.out.println(getCurPeriod());
-		// System.out.println(getBeforeMonth(getCurPeriod()));
-		// System.out.println(getBeforeMonth("201501"));
-		/*
-		 * String[] m = getBeforeMonthsNoCurMonth(12);
-		 * 
-		 * for (int i = 0; i < m.length; i++) { System.out.println(m[i]); }
-		 */
-		// 获得当前日期只有N个月的时间
-		/*
-		 * SimpleDateFormat formt=new SimpleDateFormat("YYYY-MM-dd");
-		 * System.out.println(formt.format(new Date()));
-		 * System.out.println(formt.format(getAddMonthDate(new Date(),6)));
-		 * System.out.println(differDaysWithoutRigor(new
-		 * Date(),getAddMonthDate(new Date(),6)));
-		 */
+		
+		
 		System.out.println(new Date().getTime());
 
 		try {

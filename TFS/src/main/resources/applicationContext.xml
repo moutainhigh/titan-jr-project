@@ -67,6 +67,12 @@
 
             <bean class="com.fangcang.titanjr.web.interceptor.InitSessionInterceptor"></bean>
         </mvc:interceptor>
+        <mvc:interceptor>
+        	<mvc:mapping path="/*"/>
+            <mvc:mapping path="/**/*"/>
+        	<bean class="com.fangcang.titanjr.web.interceptor.AccessPermissionInterceptor"></bean>
+        
+        </mvc:interceptor>
     </mvc:interceptors>
     
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">   

@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+						http://www.springframework.org/schema/tx
+    					http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+						http://www.springframework.org/schema/aop
+	       				http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+	       				http://www.springframework.org/schema/context
+           				http://www.springframework.org/schema/context/spring-context-4.2.xsd
+	       				http://www.springframework.org/schema/mvc
+           				http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+           				http://code.alibabatech.com/schema/dubbo
+           				http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- 启动时扫描所有的controller层 -->
+    <context:component-scan base-package="com.fangcang.titanjr.web.controller"/>
+    <context:component-scan base-package="com.fangcang.titanjr.web.interceptor"/>
+
+    <mvc:annotation-driven />
+    <!--<mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/plain;charset=UTF-8</value>
+                        &lt;!&ndash; 指定 @ResponseBody注解使用UTF-8编码，避免中文乱码 &ndash;&gt;
+                        <value>text/html;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>-->
+
+    <!-- 拦截器 -->
+
+	<mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/*"/>
+            <mvc:mapping path="/**/*"/>
+            <mvc:exclude-mapping path="/trade/showCashierDesk.action"/>
+            <mvc:exclude-mapping path="/trade/showTitanPayPage.action"/>
+            <mvc:exclude-mapping path="/trade/genRechargeData.action"/>
+            <mvc:exclude-mapping path="/trade/testNotify.action"/>
+            <mvc:exclude-mapping path="/trade/notify.action"/>
+            <mvc:exclude-mapping path="/trade/test.action"/>
+            <mvc:exclude-mapping path="/trade/allownopwdpay.action"/>
+            <mvc:exclude-mapping path="/trade/confirmedTrade.action"/>
+            <mvc:exclude-mapping path="/trade/genLoacalPayOrderNo.action"/>
+            <mvc:exclude-mapping path="/trade/payConfirmPage.action"/>
+            
+            <mvc:exclude-mapping path="/account/selectAccHistory.action"/>
+            <mvc:exclude-mapping path="/account/checkIsSetPayPassword.action"/>
+            <mvc:exclude-mapping path="/account/setPayPassword.action"/>
+            <mvc:exclude-mapping path="/account/showSetPayPassword.action"/>
+            <mvc:exclude-mapping path="/account/deleteAccountHistory.action"/>
+            <mvc:exclude-mapping path="/account/showPayPassword.action"/>
+           
+            
+            
+
+            <bean class="com.fangcang.titanjr.web.interceptor.InitSessionInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+    
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">   
+          <property name="maxUploadSize"><value>10000000</value></property> 
+          <property name="defaultEncoding"><value>UTF-8</value></property> 
+    </bean>
+    
+    
+    <bean id="defaultPayerConfig" class="com.fangcang.titanjr.web.pojo.DefaultPayerConfig" >
+          <property name="userId" value="${gdp_userId}"/> 
+          <property name="productId" value="${gdp_productId}"/>
+    </bean>
+
+    <bean class="com.fangcang.titanjr.web.handler.GlobalExceptionHandler" />
+
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>text/html; charset=UTF-8</value>
+                            <value>text/plain;charset=UTF-8</value>
+                            <value>application/json;charset=UTF-8</value>
+                        </list>
+                    </property>
+                </bean>
+
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>text/html; charset=UTF-8</value>
+                            <value>text/plain;charset=UTF-8</value>
+                            <value>application/json;charset=UTF-8</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!--<bean class="com.fangcang.framework.web.exception.GlobalExceptionHandler"/>-->
+    <!-- 配置js,css等静态文件直接映射到对应的文件夹，不被DispatcherServlet处理 -->
+    <!--<mvc:resources mapping="/resource/**" location="/resource"/>-->
+
+    <!-- jsp页面解析器(视图编辑器)，当Controller返回XXX字符串时，先通过拦截器，然后该类就会在/WEB-INF/views/目录下，查找XXX.jsp文件 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>-->
+
+    <!-- 自动扫描注解，无需显式配置  bean 了  -->
+    <context:annotation-config/>
+    <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+
+
+    <import resource="applicationContext-service.xml"/>
+    <import resource="applicationContext-hessian.xml"/>
+
+</beans>

@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanTransOrderDao">
+
+    <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanTransOrder"
+            parameterType="com.fangcang.titanjr.entity.parameter.TitanTransOrderParam">
+        select
+        *
+        from t_tfs_transorder
+        <where>
+            <if test="userid !=null ">userid=#{userid}</if>
+            <if test="transid !=null">transid =#{transid}</if>
+            <if test="orderid !=null">orderid =#{orderid}</if>
+            <if test="businessordercode !=null">businessordercode =#{businessordercode}</if>
+            <if test="payorderno !=null">payorderno =#{payorderno}</if>
+        </where>
+    </select>
+    
+    <sql id="sqlWhere">
+       <if test="userid != null">
+          and (payeemerchant = #{userid} or payermerchant =#{userid} )
+       </if>
+       <if test="userorderid != null">
+         and (userorderid = #{userorderid})
+       </if>
+       <if test="startTime !=null">
+         <![CDATA[ and o.createtime >= #{startTime}  ]]>
+       </if>
+       <if test="endTime !=null">
+           <![CDATA[and o.createtime <=#{endTime}  ]]>
+       </if>
+       <if test="creator !=null">
+           <![CDATA[and o.creator LIKE concat('%',#{creator},'%') ]]>
+       </if>
+       <if test="tradeamount !=null">
+           <![CDATA[and o.tradeamount = #{tradeamount} ]]>
+       </if>
+       <if test="businessordercode !=null">
+           and businessordercode = #{businessordercode}
+       </if>
+       <if test="isEscrowedPayment !=null">
+           and isEscrowedPayment = #{isEscrowedPayment}
+       </if>
+    </sql>
+
+    <select id="queryAllOrder" resultType="com.fangcang.titanjr.entity.TitanTransOrder"
+            parameterType="com.fangcang.titanjr.entity.parameter.TitanTransOrderParam" >
+            select o.*
+                   from t_tfs_transorder o
+                    <where>
+                      <include refid="sqlWhere"/>
+                      and (((transordertype=1 or transordertype=2) and statusid =8) or transordertype=3)
+                      <if test="partner !=null">
+                         and ((payermerchant=#{userid} and payeemerchant=#{partner}) or 
+                             (payeemerchant = #{userid} and payermerchant=#{partner}))
+                      </if>
+                    </where>
+     </select>
+     
+     <!-- 充值 -->
+     <select id="queryRechargeOrder" resultType="com.fangcang.titanjr.entity.TitanTransOrder"
+                                     parameterType="com.fangcang.titanjr.entity.parameter.TitanTransOrderParam">
+             select o.* ,p.bankInfo 
+                    from 
+                    t_tfs_transorder o inner join t_tfs_orderpayreq p 
+                    on o.transid = p.transorderid
+                    <where>
+                      <include refid="sqlWhere"/>
+                        and transordertype=#{transordertype} and statusid=8 order by createtime desc
+                    </where>
+     </select>
+     
+     <!-- 提现 -->
+     <select id="queryWithdrawOrder" resultType="com.fangcang.titanjr.entity.TitanTransOrder"
+                                     parameterType="com.fangcang.titanjr.entity.parameter.TitanTransOrderParam">
+             select o.* ,w.bankname,w.bankcode
+                    from
+                    t_tfs_transorder o inner join t_tfs_withdrawreq w
+                    on o.transid = w.transorderid
+                    <where>
+                      <include refid="sqlWhere"/>
+                        and transordertype=#{transordertype} and statusid=8 order by createtime desc
+                    </where>
+     </select>
+     
+     
+     
+     <!-- 付款 -->
+     <select id="queryPayOrder" resultType="com.fangcang.titanjr.entity.TitanTransOrder"
+                                parameterType="com.fangcang.titanjr.entity.parameter.TitanTransOrderParam">
+              select o.*  
+                     from 
+                     t_tfs_transorder o
+                     <where>
+                       <include refid="sqlWhere"/>
+		                 <if test="partner != null">
+		                    and payeemerchant = #{partner}
+		                 </if>
+                         and transordertype=#{transordertype}
+		                 and payermerchant =#{userid} order by createtime desc
+                     </where>
+     </select>
+     
+     <!-- 收款 -->
+     <select id="queryGatheringOrder" resultType="com.fangcang.titanjr.entity.TitanTransOrder"
+                                parameterType="com.fangcang.titanjr.entity.parameter.TitanTransOrderParam">
+             select o.* 
+                    from 
+                    t_tfs_transorder o
+                    <where>
+                     <include refid="sqlWhere"/>
+                     <if test="partner != null">
+                       and payermerchant = #{partner}
+                    </if>
+                    and transordertype=#{transordertype}
+                    and payeemerchant =#{userid} order by createtime desc
+                   </where>
+                   
+     </select>
+<!-- 
+    <select id="queryOrderList" resultType="com.fangcang.titanjr.entity.TitanTransOrder"
+            parameterType="com.fangcang.titanjr.entity.parameter.TitanTransOrderParam">
+        select o.* 
+        <choose>
+            <when test="status ==3">
+                  ,p.bankInfo
+                from
+                  t_tfs_transorder o
+                inner join
+                  t_tfs_orderpayreq p
+                on
+                  o.transid = p.transorderid
+            </when>
+            <when test="status ==4">
+                  ,w.bankname,w.bankcode
+                from
+                  t_tfs_transorder o
+                inner join
+                  t_tfs_withdrawreq w
+                on
+                  o.transid = w.transorderid
+            </when>
+            <otherwise>
+                from t_tfs_transorder o
+            </otherwise>
+        </choose>
+        <where>
+            1 = 1
+            <if test="userid != null">
+                and (payeemerchant = #{userid} or payermerchant =#{userid} )
+            </if>
+            <if test="userorderid != null">
+                and (userorderid = #{userorderid})
+            </if>
+            <if test="status ==1">
+                and payermerchant =#{userid}
+                <if test="partner != null">
+                    and payeemerchant = #{partner}
+                </if>
+            </if>
+            <if test="status ==2">
+                and payeemerchant =#{userid}
+                <if test="partner != null">
+                    and payermerchant = #{partner}
+                </if>
+            </if>
+            <if test="status ==3">  
+              and transordertype==1 and statusid=8
+            </if>
+            <if test="status ==4">
+              and transordertype=2 and statusid=8
+            </if> 
+            <if test="status==0">
+                and (((transordertype=1 or transordertype=2) and statusid =8) or transordertype=3)
+            </if>
+            <if test="status==0 and partner != null">
+                and ((payermerchant=#{userid} and payeemerchant=#{partner}) or 
+                (payeemerchant = #{userid} and payermerchant=#{partner}))
+            </if>
+            <if test="startTime !=null">
+                <![CDATA[ and o.createtime >= #{startTime}  ]]>
+            </if>
+            <if test="endTime !=null">
+                <![CDATA[and o.createtime <=#{endTime}  ]]>
+            </if>
+            <if test="creator !=null">
+                <![CDATA[and o.creator LIKE concat('%',#{creator},'%') ]]>
+            </if>
+            <if test="tradeamount !=null">
+                <![CDATA[and o.tradeamount = #{tradeamount} ]]>
+            </if>
+            <if test="businessordercode !=null">
+                and businessordercode = #{businessordercode}
+            </if>
+            <if test="isEscrowedPayment !=null">
+                and isEscrowedPayment = #{isEscrowedPayment}
+            </if>
+            <if test="transordertype !=null and status!=0">
+               and transordertype=#{transordertype}
+            </if>
+          
+        </where>
+    </select> -->
+    <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanTransOrder" useGeneratedKeys="true"
+            keyProperty="transid">
+    insert into t_tfs_transorder (transid, constid, userid, 
+      ordertypeid, productid, orderid, 
+      userorderid, businessordercode, orderdate, 
+      ordertime, provider, userrelateid, 
+      amount, goodsname, goodsdetail, 
+      goodscnt, unitprice, statusid, 
+      adjusttype, adjustcontent, creator, 
+      receivablefee, createtime, receivedfee,isEscrowedPayment,
+      escrowedDate,payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype
+      )
+    values (#{transid,jdbcType=INTEGER}, #{constid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, 
+      #{ordertypeid,jdbcType=VARCHAR}, #{productid,jdbcType=VARCHAR}, #{orderid,jdbcType=VARCHAR}, 
+      #{userorderid,jdbcType=VARCHAR}, #{businessordercode,jdbcType=VARCHAR}, #{orderdate}, 
+      #{ordertime}, #{provider,jdbcType=VARCHAR}, #{userrelateid,jdbcType=VARCHAR}, 
+      #{amount,jdbcType=DOUBLE}, #{goodsname,jdbcType=VARCHAR}, #{goodsdetail,jdbcType=VARCHAR}, 
+      #{goodscnt,jdbcType=INTEGER}, #{unitprice,jdbcType=DOUBLE}, #{statusid,jdbcType=VARCHAR}, 
+      #{adjusttype,jdbcType=VARCHAR}, #{adjustcontent,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{receivablefee}, #{createtime}, #{receivedfee},#{isEscrowedPayment},#{escrowedDate},
+      #{payeemerchant},#{payermerchant},#{payorderno},#{merchantcode},#{tradeamount},#{transordertype}
+      )
+  </insert>
+
+    <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanTransOrder">
+        update t_tfs_transorder
+        <set>
+            <if test="provider != null">
+                provider = #{provider,jdbcType=VARCHAR},
+            </if>
+            <if test="userrelateid != null">
+                userrelateid = #{userrelateid,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsdetail != null">
+                goodsdetail = #{goodsdetail,jdbcType=VARCHAR},
+            </if>
+            <if test="goodscnt != null">
+                goodscnt = #{goodscnt,jdbcType=INTEGER},
+            </if>
+            <if test="unitprice != null">
+                unitprice = #{unitprice,jdbcType=DOUBLE},
+            </if>
+            <if test="statusid != null">
+                statusid = #{statusid,jdbcType=VARCHAR},
+            </if>
+            <if test="adjusttype != null">
+                adjusttype = #{adjusttype,jdbcType=VARCHAR},
+            </if>
+            <if test="adjustcontent != null">
+                adjustcontent = #{adjustcontent,jdbcType=VARCHAR},
+            </if>
+            <if test="receivablefee != null">
+                receivablefee = #{receivablefee},
+            </if>
+            <if test="receivedfee != null">
+                receivedfee = #{receivedfee},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        <where>
+          <if test="userorderid !=null">
+            and userorderid = #{userorderid,jdbcType=VARCHAR}
+          </if>
+          <if test="transid !=null">
+            and transid=#{transid}
+          </if>
+          <if test="orderid !=null">
+           and orderid = #{orderid}
+          </if>
+        </where>
+    </update>
+
+    <select id="selectTitanTransOrder" parameterType="com.fangcang.titanjr.dto.request.TransOrderRequest"
+            resultType="com.fangcang.titanjr.dto.bean.TransOrderDTO">
+        select transid, constid, userid, ordertypeid, productid, orderid, userorderid, businessordercode, orderdate,
+        ordertime, provider, userrelateid,amount, goodsname, goodsdetail, goodscnt, unitprice, statusid,
+        adjusttype, adjustcontent, creator,receivablefee, createtime, receivedfee,escrowedDate,isEscrowedPayment,
+        payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype from t_tfs_transorder
+        <where>
+            <if test="transid != null">
+                and transid = #{transid}
+            </if>
+            <if test="orderid != null">
+                and orderid = #{orderid}
+            </if>
+            <if test="userorderid != null">
+                and userorderid = #{userorderid}
+            </if>
+            <if test="businessordercode != null">
+                and businessordercode = #{businessordercode}
+            </if>
+            <if test="userid != null">
+                and userid = #{userid}
+            </if>
+            <if test="payorderno != null">
+                and payorderno = #{payorderno}
+            </if>
+        </where>
+        order by createtime desc
+    </select>
+
+</mapper>

@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
+
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
+
+import com.fangcang.titanjr.common.util.CommonConstant;
+
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.AccountUpdateRequest;
@@ -22,7 +26,8 @@ import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
-import com.fangcang.titanjr.web.util.CommonConstant;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
+import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
 
 /**
@@ -32,6 +37,7 @@ import com.fangcang.util.StringUtil;
  */
 @Controller
 @RequestMapping("/setting")
+@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
 public class SettingPasswordController extends BaseController{
 	/**
 	 * 
@@ -106,8 +112,10 @@ public class SettingPasswordController extends BaseController{
 	 * 设置小额免密支付开关（只有金服管理员才可以设置）
 	 * @return
 	 */
+	
 	@ResponseBody
 	@RequestMapping("/set-swicth")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String setSwitch(Integer allownopwdpay){
 		if(allownopwdpay==null||(allownopwdpay!=0&&allownopwdpay!=1)){
 			putSysError("参数异常");
@@ -138,7 +146,7 @@ public class SettingPasswordController extends BaseController{
 				}
 			} catch (GlobalServiceException e) {
 				LOG.error("设置小额免密支付开关失败，参数:allownopwdpay["+allownopwdpay+"],tfsuserId["+getTfsUserId()+"]", e);
-				putSysError(CommonConstant.CONTROLLER_ERROR_MSG);
+				putSysError(WebConstant.CONTROLLER_ERROR_MSG);
 			}
 		}
 		return toJson();
