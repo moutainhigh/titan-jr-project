@@ -898,7 +898,7 @@ public class FinancialTradeController extends BaseController {
 		return flag;
 	}
 	
-	@RequestMapping(value = "/showCashierDesk", method = RequestMethod.GET)
+	@RequestMapping(value = "/showCashierDesk", method = {RequestMethod.GET, RequestMethod.POST})
 	public String showCashierDesk(PaymentUrlRequest paymentUrlRequest,HttpServletRequest request, Model model) throws Exception {
 		log.info("获取支付地址入参:" + toJson(paymentUrlRequest));
 		if (!CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentUrlRequest.getPaySource())) {
