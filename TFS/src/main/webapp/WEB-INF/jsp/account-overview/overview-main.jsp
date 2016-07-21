@@ -656,44 +656,59 @@
 
 		//初始化联想查询框
 		function initAutoSelectPartner() {
-			new AutoComplete($('#partner_1'), {
-				url : '<%=basePath%>/account/getOrgList.shtml',
-				source : 'organDTOList',
-				key : 'userId',  //数据源中，做为key的字段
-				val : 'orgName', //数据源中，做为val的字段
-				width : 240,
-				height : 300,
-				autoSelect : false,
-				clickEvent : function(d, input){
-					input.attr('data-id', d.key);
-				}
-			});
+			$.ajax({
+        		dataType : 'json',		      
+		        url : '<%=basePath%>/account/getOrgList.shtml?date=' + new Date().getTime(),
+		        success:function(data){
+		        	
+		        	if(data && data.organDTOList)
+		        	{
+		        		var dataArr = new Array();
+		        		for(i = 0 ; i <data.organDTOList.length;i++)
+		        		{
+		        			dataArr[dataArr.length] = {key:data.organDTOList[i].userId , val:data.organDTOList[i].orgName};
+		        		}
+		        		
+		        		new AutoComplete($('#partner_1'), {
+		        			data : dataArr,
+							key : 'userId',  //数据源中，做为key的字段
+							val : 'orgName', //数据源中，做为val的字段
+							width : 240,
+							height : 300,
+							autoSelect : false,
+							clickEvent : function(d, input){
+								input.attr('data-id', d.key);
+							}
+						});
 
-			new AutoComplete($('#partner_2'), {
-				url : '<%=basePath%>/account/getOrgList.shtml',
-				source : 'organDTOList',
-				key : 'userId',  //数据源中，做为key的字段
-				val : 'orgName', //数据源中，做为val的字段
-				width : 240,
-				height : 300,
-				autoSelect : false,
-				clickEvent : function(d, input){
-					input.attr('data-id', d.key);
-				}
-			});
+						new AutoComplete($('#partner_2'), {
+							data : dataArr,
+							key : 'userId',  //数据源中，做为key的字段
+							val : 'orgName', //数据源中，做为val的字段
+							width : 240,
+							height : 300,
+							autoSelect : false,
+							clickEvent : function(d, input){
+								input.attr('data-id', d.key);
+							}
+						});
 
-			new AutoComplete($('#partner_3'), {
-				url : '<%=basePath%>/account/getOrgList.shtml',
-				source : 'organDTOList',
-				key : 'userId',  //数据源中，做为key的字段
-				val : 'orgName', //数据源中，做为val的字段
-				width : 240,
-				height : 300,
-				autoSelect : false,
-				clickEvent : function(d, input){
-					input.attr('data-id', d.key);
-				}
-			});
+						new AutoComplete($('#partner_3'), {
+							data : dataArr,
+							key : 'userId',  //数据源中，做为key的字段
+							val : 'orgName', //数据源中，做为val的字段
+							width : 240,
+							height : 300,
+							autoSelect : false,
+							clickEvent : function(d, input){
+								input.attr('data-id', d.key);
+							}
+						});
+		        	}
+		        	
+		    		
+		        }
+        	});
 		}
 
 		//页签切换请求
@@ -1091,7 +1106,7 @@
 		{
 			$.ajax({
         		dataType : 'json',		      
-		        url : '<%=basePath%>/account/query-account-balance.shtml' ,
+		        url : '<%=basePath%>/account/query-account-balance.shtml?date=' + new Date().getTime() ,
 		        success:function(data){
 		        	if(data)
 		        	{
