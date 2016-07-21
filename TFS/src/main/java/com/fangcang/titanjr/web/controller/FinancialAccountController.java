@@ -17,6 +17,7 @@ import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
@@ -24,6 +25,7 @@ import com.fangcang.titanjr.dto.bean.BankCardDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.ForgetPayPassword;
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
@@ -496,7 +498,7 @@ public class FinancialAccountController extends BaseController {
         balanceWithDrawRequest.setProductid(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_PRODUCT_ID);
         balanceWithDrawRequest.setAmount(withDrawRequest.getAmount());
         balanceWithDrawRequest.setCardNo(cardNo);
-        balanceWithDrawRequest.setCreator(session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_LOGINNAME).toString());
+        balanceWithDrawRequest.setCreator(this.getUserNameByUserId());
         balanceWithDrawRequest.setOrderDate(DateUtil.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss"));
         balanceWithDrawRequest.setUserorderid(OrderGenerateService.genResquestNo());
         balanceWithDrawRequest.setUserFee(0L);
@@ -508,6 +510,22 @@ public class FinancialAccountController extends BaseController {
         return toJson(putSuccess());
     }
 
+    private String getUserNameByUserId(){
+    	if(StringUtil.isValidString(this.getTfsUserId())){
+    		TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
+    		titanUserBindInfoDTO.setTfsuserid(Integer.parseInt(this.getTfsUserId()));
+    		try{
+    			titanUserBindInfoDTO = titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+    		}catch(Exception e){
+    			 log.error("查询用户名失败:"+e.getMessage());
+    		}
+            if(titanUserBindInfoDTO !=null){
+            	return titanUserBindInfoDTO.getUsername();
+            }
+    	}
+    	return null;
+    }
+    
     @RequestMapping(value = "/order-remark", method = RequestMethod.GET)
     public String toOrderRemark(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
