@@ -155,10 +155,10 @@ public class FinancialAccountController extends BaseController {
                 tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
             }
             if (StringUtil.isValidString(tradeDetailRequest.getStartTimeStr())) {
-                tradeDetailRequest.setStartTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr()));
+                tradeDetailRequest.setStartTime(com.fangcang.titanjr.common.util.DateUtil.getDayBeginTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr())));
             }
             if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
-                tradeDetailRequest.setEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr()));
+                tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
             }
             TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
             if (tradeDetailResponse.isResult()) {
@@ -178,10 +178,10 @@ public class FinancialAccountController extends BaseController {
                 tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
             }
             if (StringUtil.isValidString(tradeDetailRequest.getStartTimeStr())) {
-                tradeDetailRequest.setStartTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr()));
+                tradeDetailRequest.setStartTime(com.fangcang.titanjr.common.util.DateUtil.getDayBeginTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr())));
             }
             if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
-                tradeDetailRequest.setEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr()));
+                tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
             }
             TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
             if (tradeDetailResponse.isResult()) {
@@ -657,10 +657,10 @@ public class FinancialAccountController extends BaseController {
                 tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
             }
             if (StringUtil.isValidString(tradeDetailRequest.getStartTimeStr())) {
-                tradeDetailRequest.setStartTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr()));
+                tradeDetailRequest.setStartTime(com.fangcang.titanjr.common.util.DateUtil.getDayBeginTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr())));
             }
             if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
-                tradeDetailRequest.setEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr()));
+                tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
             }
             tradeDetailRequest.setPageSize(100000);
             tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
