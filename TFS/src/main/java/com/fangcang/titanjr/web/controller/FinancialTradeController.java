@@ -104,9 +104,9 @@ public class FinancialTradeController extends BaseController {
 	@Resource
 	private HessianProxyBeanFactory hessianProxyBeanFactory;
 	
-	private static List<String> orderNoList = new ArrayList<String>();
+//	private static List<String> orderNoList = new ArrayList<String>();
 	
-	//private static Map<String,Object> orderNoMap = new  ConcurrentHashMap<String, Object>();
+	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	
 	/**
 	 * 消息回调接口
@@ -1130,21 +1130,43 @@ public class FinancialTradeController extends BaseController {
 		return false;
 	}
 	
+//	private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
+//		synchronized (orderNoList) {
+//			while(orderNoList.contains(out_trade_no)) {
+//				orderNoList.wait();
+//			}
+//			orderNoList.add(out_trade_no);
+//		} 
+//	}
+//	
+//	private void unlockOutTradeNoList(String out_trade_no) {
+//		synchronized (orderNoList) {
+//			orderNoList.remove(out_trade_no);
+//			orderNoList.notifyAll();
+//		}
+//	}
+
 	private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
-		synchronized (orderNoList) {
-			while(orderNoList.contains(out_trade_no)) {
-				orderNoList.wait();
+		synchronized (mapLock) {
+			if(mapLock.containsKey(out_trade_no)) {
+				synchronized (mapLock.get(out_trade_no)) 
+				{
+					mapLock.get(out_trade_no).wait();
+				}
 			}
-			orderNoList.add(out_trade_no);
-		} 
+			else{
+				mapLock.put(out_trade_no, new Object());
+			}
+			
+		}
 	}
 	
 	private void unlockOutTradeNoList(String out_trade_no) {
-		synchronized (orderNoList) {
-			orderNoList.remove(out_trade_no);
-			orderNoList.notifyAll();
+		if(mapLock.containsKey(out_trade_no)){
+			synchronized (mapLock.get(out_trade_no)) {
+				mapLock.remove(out_trade_no).notifyAll();
+			}
 		}
 	}
-
 	
 }
