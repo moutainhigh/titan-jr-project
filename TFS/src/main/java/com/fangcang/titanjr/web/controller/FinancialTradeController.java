@@ -119,7 +119,7 @@ public class FinancialTradeController extends BaseController {
     public void payResultConfirm(RechargeResultConfirmRequest rechargeResultConfirmRequest,HttpServletResponse response) throws IOException{
 		String orderNo = rechargeResultConfirmRequest.getOrderNo();
 		try{
-    		if(rechargeResultConfirmRequest !=null){
+    		if(StringUtil.isValidString(orderNo)){
     			response.getWriter().print("returnCode=000000&returnMag=成功");
     			log.info("融数后台回调成功参数:"+toJson(rechargeResultConfirmRequest));
     			String signMsg = rechargeResultConfirmRequest.getSignMsg();
@@ -692,7 +692,9 @@ public class FinancialTradeController extends BaseController {
 		TitanUserBindInfoDTO titanUserBindInfoDTO = getTitanUserBindInfo(paymentRequest.getFcUserid());
 		if(titanUserBindInfoDTO !=null ){
 			paymentRequest.setCreator(titanUserBindInfoDTO.getUsername());
-			paymentRequest.setOperator(titanUserBindInfoDTO.getUsername());
+			if(!StringUtil.isValidString(paymentRequest.getOperator())){
+				paymentRequest.setOperator(titanUserBindInfoDTO.getUsername());
+			}
 		}
 		
 		//是否需要免密支付,只有用到余额转账付款的时候才需要验证密码
@@ -898,7 +900,7 @@ public class FinancialTradeController extends BaseController {
 		return flag;
 	}
 	
-	@RequestMapping(value = "/showCashierDesk", method = RequestMethod.GET)
+	@RequestMapping(value = "/showCashierDesk", method = {RequestMethod.GET, RequestMethod.POST})
 	public String showCashierDesk(PaymentUrlRequest paymentUrlRequest,HttpServletRequest request, Model model) throws Exception {
 		log.info("获取支付地址入参:" + toJson(paymentUrlRequest));
 		if (!CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentUrlRequest.getPaySource())) {

@@ -129,8 +129,10 @@
             $("#inputeAmountError").text("");
         }
 
-        var neg = /^\d+(\.\d{1,2})?$/;
-        var flag = neg.test($(this).val());
+        var neg = /^[1-9]{1}\d+(\.\d{1,2})?$/;
+        var neg2 = /^[0]{1}(\.\d{1,2})?$/;
+        
+        var flag = neg.test($(this).val())||neg2.test($(this).val());
         if(flag==false){
             $("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
             $(this).val("");
