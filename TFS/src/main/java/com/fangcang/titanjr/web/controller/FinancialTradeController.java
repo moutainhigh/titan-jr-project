@@ -104,9 +104,9 @@ public class FinancialTradeController extends BaseController {
 	@Resource
 	private HessianProxyBeanFactory hessianProxyBeanFactory;
 	
-	private static List<String> orderNoList = new ArrayList<String>();
+//	private static List<String> orderNoList = new ArrayList<String>();
 	
-	//private static Map<String,Object> orderNoMap = new  ConcurrentHashMap<String, Object>();
+	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	
 	/**
 	 * 消息回调接口
@@ -119,7 +119,7 @@ public class FinancialTradeController extends BaseController {
     public void payResultConfirm(RechargeResultConfirmRequest rechargeResultConfirmRequest,HttpServletResponse response) throws IOException{
 		String orderNo = rechargeResultConfirmRequest.getOrderNo();
 		try{
-    		if(rechargeResultConfirmRequest !=null){
+    		if(StringUtil.isValidString(orderNo)){
     			response.getWriter().print("returnCode=000000&returnMag=成功");
     			log.info("融数后台回调成功参数:"+toJson(rechargeResultConfirmRequest));
     			String signMsg = rechargeResultConfirmRequest.getSignMsg();
@@ -692,7 +692,9 @@ public class FinancialTradeController extends BaseController {
 		TitanUserBindInfoDTO titanUserBindInfoDTO = getTitanUserBindInfo(paymentRequest.getFcUserid());
 		if(titanUserBindInfoDTO !=null ){
 			paymentRequest.setCreator(titanUserBindInfoDTO.getUsername());
-			paymentRequest.setOperator(titanUserBindInfoDTO.getUsername());
+			if(!StringUtil.isValidString(paymentRequest.getOperator())){
+				paymentRequest.setOperator(titanUserBindInfoDTO.getUsername());
+			}
 		}
 		
 		//是否需要免密支付,只有用到余额转账付款的时候才需要验证密码
@@ -898,7 +900,7 @@ public class FinancialTradeController extends BaseController {
 		return flag;
 	}
 	
-	@RequestMapping(value = "/showCashierDesk", method = RequestMethod.GET)
+	@RequestMapping(value = "/showCashierDesk", method = {RequestMethod.GET, RequestMethod.POST})
 	public String showCashierDesk(PaymentUrlRequest paymentUrlRequest,HttpServletRequest request, Model model) throws Exception {
 		log.info("获取支付地址入参:" + toJson(paymentUrlRequest));
 		if (!CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentUrlRequest.getPaySource())) {
@@ -1130,21 +1132,43 @@ public class FinancialTradeController extends BaseController {
 		return false;
 	}
 	
+//	private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
+//		synchronized (orderNoList) {
+//			while(orderNoList.contains(out_trade_no)) {
+//				orderNoList.wait();
+//			}
+//			orderNoList.add(out_trade_no);
+//		} 
+//	}
+//	
+//	private void unlockOutTradeNoList(String out_trade_no) {
+//		synchronized (orderNoList) {
+//			orderNoList.remove(out_trade_no);
+//			orderNoList.notifyAll();
+//		}
+//	}
+
 	private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
-		synchronized (orderNoList) {
-			while(orderNoList.contains(out_trade_no)) {
-				orderNoList.wait();
+		synchronized (mapLock) {
+			if(mapLock.containsKey(out_trade_no)) {
+				synchronized (mapLock.get(out_trade_no)) 
+				{
+					mapLock.get(out_trade_no).wait();
+				}
 			}
-			orderNoList.add(out_trade_no);
-		} 
+			else{
+				mapLock.put(out_trade_no, new Object());
+			}
+			
+		}
 	}
 	
 	private void unlockOutTradeNoList(String out_trade_no) {
-		synchronized (orderNoList) {
-			orderNoList.remove(out_trade_no);
-			orderNoList.notifyAll();
+		if(mapLock.containsKey(out_trade_no)){
+			synchronized (mapLock.get(out_trade_no)) {
+				mapLock.remove(out_trade_no).notifyAll();
+			}
 		}
 	}
-
 	
 }

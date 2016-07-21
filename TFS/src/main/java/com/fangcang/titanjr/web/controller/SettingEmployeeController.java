@@ -3,6 +3,9 @@ package com.fangcang.titanjr.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -21,7 +24,6 @@ import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
-import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
@@ -42,8 +44,8 @@ import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.EmployeePojo;
 import com.fangcang.titanjr.web.pojo.FcEmployeeTablePojo;
-import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.titanjr.web.util.TFSTools;
+import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
 
@@ -90,7 +92,7 @@ public class SettingEmployeeController extends BaseController{
 		if(pageNo==null){
 			pageNo = 1;
 		}
-		Integer tfsUserId = (Integer)session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+		Integer tfsUserId = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 		userInfoQueryRequest.setTfsUserId(tfsUserId);
 		userInfoQueryRequest.setPageSize(pageSize);
@@ -128,9 +130,9 @@ public class SettingEmployeeController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping("/fc-employee-table")
-	public String fcEmployeeTable(FcEmployeeTablePojo  fcEmployeeTablePojo,Model model){
+	public String fcEmployeeTable(HttpServletRequest request,FcEmployeeTablePojo  fcEmployeeTablePojo,Model model){
 		SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
-		String merchantCode = (String)session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+		String merchantCode = (String)request.getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
 		
 		saaSUserRoleRequest.setMerchantCode(merchantCode);
 		saaSUserRoleRequest.setSaasUserName(fcEmployeeTablePojo.getSaasUserName());
@@ -163,7 +165,7 @@ public class SettingEmployeeController extends BaseController{
 		model.addAttribute("fcUserId", fcUserId);
 		//SAAS员工信息
 		if(fcUserId!=null&&fcUserId>0){
-			String merchantCode = (String)session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+			String merchantCode = (String)getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
 			SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
 			saaSUserRoleRequest.setFcUserId(fcUserId);
 			saaSUserRoleRequest.setMerchantCode(merchantCode);
@@ -219,14 +221,14 @@ public class SettingEmployeeController extends BaseController{
 	@RequestMapping("/save-employee")
 	public String saveEmployee(EmployeePojo employeePojo){
 		//检验验证码
-		String rcode = TFSTools.validateRegCode(session,employeePojo.getReceiveAddress(),employeePojo.getCode());
+		String rcode = TFSTools.validateRegCode(getSession(),employeePojo.getReceiveAddress(),employeePojo.getCode());
     	if(!rcode.equals("SUCCESS")){
     		return toJson(putSysError("验证码错误,请重新输入"));
     	}
 		//TODO 校验待新增的用户是不是属于该商家
 		
-		String merchantCode = (String)session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
-		String userId = (String)session.getAttribute(WebConstant.SESSION_KEY_JR_USERID);
+		String merchantCode = (String)getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+		String userId = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID);
 		
 		SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
 		saaSUserRoleRequest.setFcUserId(employeePojo.getFcUserId());
@@ -366,7 +368,7 @@ public class SettingEmployeeController extends BaseController{
 	@ResponseBody
 	@RequestMapping("/cancel-permission")
 	public String cancelPermission(Integer tfsUserId){
-		String merchantcode = (String)session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
+		String merchantcode = (String)getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
 		CancelPermissionRequest cancelPermissionRequest = new CancelPermissionRequest();
 		cancelPermissionRequest.setTfsUserId(tfsUserId);
 		cancelPermissionRequest.setOperator(getSAASLoginName());

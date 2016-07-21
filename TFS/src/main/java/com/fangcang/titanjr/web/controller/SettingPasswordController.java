@@ -10,11 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
-
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
-
 import com.fangcang.titanjr.common.util.CommonConstant;
-
+import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.AccountUpdateRequest;
@@ -116,12 +114,15 @@ public class SettingPasswordController extends BaseController{
 	@ResponseBody
 	@RequestMapping("/set-swicth")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
-	public String setSwitch(Integer allownopwdpay){
+	public String setSwitch(Integer allownopwdpay,String payPassword){
 		if(allownopwdpay==null||(allownopwdpay!=0&&allownopwdpay!=1)){
 			putSysError("参数异常");
 			return toJson();
 		}
-		
+		if(allownopwdpay==1&&(!StringUtil.isValidString(payPassword))){
+			putSysError("参数异常");
+			return toJson();
+		}
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 		userInfoQueryRequest.setTfsUserId(Integer.valueOf(getTfsUserId()));
 		UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
@@ -133,6 +134,18 @@ public class SettingPasswordController extends BaseController{
 				putSysError("只有金融管理员才能执行该操作");
 				return toJson();
 			}
+			if(allownopwdpay==1){
+				//未设置支付密码
+				if(!StringUtil.isValidString(titanUser.getPaypassword())){
+					return toJson(putSysError("请先设置支付密码"));
+				}
+				boolean istrue = userService.checkPayPassword(payPassword,getTfsUserId());
+				//密码是否正确
+				if(istrue==false){
+					return toJson(putSysError("支付密码错误"));
+				}
+			}
+			
 			AccountUpdateRequest accountUpdateRequest = new AccountUpdateRequest();
 			accountUpdateRequest.setUserId(getUserId());
 			accountUpdateRequest.setAllownopwdpay(allownopwdpay);

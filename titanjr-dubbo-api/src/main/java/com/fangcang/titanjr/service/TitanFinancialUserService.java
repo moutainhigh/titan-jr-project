@@ -182,8 +182,8 @@ public interface TitanFinancialUserService {
    	/**
    	 * 判断交易密码谁否设置
    	 * @param fcUserid
-   	 * @return
-   	 * @author fangdaikang
+   	 * @return true：没有设置密码，false:设置了密码
+   	 * @author fangdaikang 
    	 */
    	public boolean checkIsSetPayPassword(String fcUserid,String tfsUserId);
    	/**

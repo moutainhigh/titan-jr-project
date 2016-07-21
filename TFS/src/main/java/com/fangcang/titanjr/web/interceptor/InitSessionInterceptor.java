@@ -62,6 +62,7 @@ public class InitSessionInterceptor implements HandlerInterceptor {
         // 当登录用户和金服来源都为空时候进入判定逻辑
         System.out.println((UserWrapper)session.getAttribute("onlineRoleUser"));
         System.out.println((String)session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE));
+        
         if (session.getAttribute("onlineRoleUser") == null || session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE) == null) {
             if (session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER) != null && session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ROLE) == null) {
                 //房仓商家系统用户组装判定

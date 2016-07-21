@@ -41,10 +41,10 @@ public class FinancialMainController extends BaseController {
 
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String home(HttpServletRequest request, Model model) throws Exception {
-    	Integer isAdmin = (Integer)session.getAttribute(WebConstant.SESSION_KEY_LOGIN_IS_ADMIN);
-    	String jrUserLoginName = (String)session.getAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
+    	Integer isAdmin = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_IS_ADMIN);
+    	String jrUserLoginName = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
     	//暂时统一从session中取
-    	String orgBindStatus = (String)session.getAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS);
+    	String orgBindStatus = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS);
     	
     	String orgCheckResultKey = "";
     	String orgCheckResultMsg = "";

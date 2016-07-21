@@ -185,10 +185,10 @@ public class SettingBaseInfoController extends BaseController{
 			return toJson(putSysError("参数错误"));
 		}
     	
-    	String rcode = TFSTools.validateRegCode(session,getUserName(), code);
+    	String rcode = TFSTools.validateRegCode(getSession(),getUserName(), code);
     	if(rcode.equals("SUCCESS")){
     		//移除session
-    		session.removeAttribute(WebConstant.SESSION_KEY_REG_CODE+"_"+getUserName());
+    		getSession().removeAttribute(WebConstant.SESSION_KEY_REG_CODE+"_"+getUserName());
     		int tfsUserId = Integer.valueOf(getTfsUserId());
     		LoginPasswordRequest loginPasswordRequest = new LoginPasswordRequest();
 			loginPasswordRequest.setTfsuserid(tfsUserId);
