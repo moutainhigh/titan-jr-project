@@ -205,7 +205,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
                 }
             }
             TitanUserBindInfo bindInfo = new TitanUserBindInfo();
-            bindInfo.setUsername("");
+            bindInfo.setUsername(userRegisterRequest.getUserName());
             bindInfo.setLoginname(userRegisterRequest.getLoginUserName());
             bindInfo.setFcloginname(userRegisterRequest.getFcLoginUserName());
             bindInfo.setIsactive(1);
@@ -515,7 +515,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 	 */
     private String appendRoleName(List<RoleDTO> list){
     	String temp = "";
-    	if(list!=null){
+    	if(list!=null&&list.size()>0){
     		for(RoleDTO itemDto : list){
     			temp += itemDto.getRoleName()+",";
     		}
@@ -1005,6 +1005,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 			if(StringUtil.isValidString(tfsUserId)){
 				TitanUser user = titanUserDao.selectTitanUser(Integer.parseInt(tfsUserId));
 				if(user !=null && !StringUtil.isValidString(user.getPaypassword())){
+					//没有设置
 				   return true;
 				}
 			}
@@ -1012,6 +1013,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		}catch(Exception e){
 			log.error("检查密码失败"+e.getMessage(),e);
 		}
+		//设置了密码
 		return false;
 	}
 

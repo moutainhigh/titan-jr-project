@@ -30,7 +30,7 @@
                         <span class="w_250">
                         交易创建时间：<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.createtime}"/>
                         </span>
-                        <c:if test="${not empty transOrder.creator ">
+                        <c:if test="${not empty transOrder.creator }">
 						<span class="w_160">操作人：
 							${transOrder.creator}
 						</span>

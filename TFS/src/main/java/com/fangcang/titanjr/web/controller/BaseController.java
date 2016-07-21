@@ -10,71 +10,97 @@ import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONSerializer;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.fangcang.titanjr.web.util.WebConstant;
 
 /**
  * 公共的controller
- * 需维护公共的方法，获取applicationContext等
+ * 
  */
 public class BaseController implements Serializable {
-	protected String returnCode;
-    /**
-     * 返回的信息
-     */
-    protected String returnMessage;
-    private static final Log log = LogFactory.getLog(BaseController.class);
 
     private static final long serialVersionUID = -2808661158418693093L;
 
-    protected HttpServletRequest request;
-    protected HttpServletResponse response;
-    protected HttpSession session;
-    protected Map<String, Object> result = new HashMap<String, Object>();
+    ThreadLocal<Map<String, Object>> resultLocal = new ThreadLocal<Map<String,Object>>();
+    ThreadLocal<HttpServletRequest> requestLocal = new ThreadLocal<HttpServletRequest>();
+    ThreadLocal<HttpServletResponse> responseLocal = new ThreadLocal<HttpServletResponse>();
     
     @ModelAttribute
     public void setReqAndRes(HttpServletRequest request, HttpServletResponse response) {
-        this.request = request;
-        this.response = response;
-        this.session = request.getSession(true);
+    	requestLocal.set(request);
+    	responseLocal.set(response);
+   }
+    
+    protected HttpServletRequest getRequest(){
+    	
+    	return requestLocal.get();
     }
+    
+    protected HttpServletResponse getResponse(){
+    	
+    	return responseLocal.get();
+    }
+    
+    protected HttpSession getSession(){
+    	return getRequest().getSession();
+    }
+    
     
     public String toJson(Object object){
     	return JSONSerializer.toJSON(object).toString();
     }
     
     public String toJson(){
-    	if(result.isEmpty()){
+    	
+    	 Map<String, Object> result = resultLocal.get();
+    	if(result == null ){
     		putSysError("返回值错误");
     	}
     	return JSONSerializer.toJSON(result).toString();
     }
     
     public Map<String, Object> putSuccess(){
+    	Map<String, Object> result = new HashMap<String, Object>();
     	result.put("code", 1);
     	result.put("msg", "操作成功");
+    	resultLocal.set(result);
     	return result;
     	
     }
     
     public Map<String, Object> putSuccess(String msg){
+    	Map<String, Object> result = new HashMap<String, Object>();
     	result.put("code", 1);
     	result.put("msg",msg);
+    	resultLocal.set(result);
     	return result;
     	
     }
+    
+    public Map<String, Object> putSuccess(String msg , Object data){
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	result.put("code", 1);
+    	result.put("msg",msg);
+    	result.put("data",data);
+    	resultLocal.set(result);
+    	return result;
+    	
+    }
+    
     public Map<String, Object> putSysError(){
+    	Map<String, Object> result = new HashMap<String, Object>();
     	result.put("code", -1);
     	result.put("msg", "系统错误");
+    	resultLocal.set(result);
     	return result;
     }
     
     public Map<String, Object> putSysError(String msg){
+    	Map<String, Object> result = new HashMap<String, Object>();
     	result.put("code", -1);
     	result.put("msg", msg);
+    	resultLocal.set(result);
     	return result;
     }
     /***
@@ -82,7 +108,7 @@ public class BaseController implements Serializable {
      * @return
      */
     protected String getSAASLoginName(){
-    	String op = (String)session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME);
+    	String op = (String)getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME);
     	if(op==null){
     		return "";
     	}
@@ -93,7 +119,7 @@ public class BaseController implements Serializable {
      * @return
      */
     public String getUserId(){
-        Object userId = session.getAttribute(WebConstant.SESSION_KEY_JR_USERID);
+        Object userId = getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID);
         if (null!= userId){
             return userId.toString();
         }
@@ -104,7 +130,7 @@ public class BaseController implements Serializable {
      * @return
      */
     public String getTfsUserId(){
-    	Object tfsUserId = session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+    	Object tfsUserId = getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
         if (null!= tfsUserId){
             return tfsUserId.toString();
         }
@@ -116,7 +142,7 @@ public class BaseController implements Serializable {
      * @return
      */
     public String getUserName(){
-    	Object userName = session.getAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
+    	Object userName = getSession().getAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
     	if (null!= userName){
             return userName.toString();
         }
@@ -124,7 +150,7 @@ public class BaseController implements Serializable {
     }
     
     public String getUserRealName(){
-    	Object userRealName = session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME);
+    	Object userRealName = getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME);
     	if(null !=userRealName){
     		return userRealName.toString();
     	}

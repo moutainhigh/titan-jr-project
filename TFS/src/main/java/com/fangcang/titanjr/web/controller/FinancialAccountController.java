@@ -434,7 +434,7 @@ public class FinancialAccountController extends BaseController {
                 cardNo = withDrawRequest.getOriginalAccount();
             }
         }
-        Object tfsUserId = session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+        Object tfsUserId = getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
         boolean isValid = false;
         if (tfsUserId != null) {
             isValid = titanFinancialUserService.checkPayPassword(withDrawRequest.getPassword(),
@@ -498,6 +498,7 @@ public class FinancialAccountController extends BaseController {
         balanceWithDrawRequest.setProductid(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_PRODUCT_ID);
         balanceWithDrawRequest.setAmount(withDrawRequest.getAmount());
         balanceWithDrawRequest.setCardNo(cardNo);
+ 
         balanceWithDrawRequest.setCreator(this.getUserNameByUserId());
         balanceWithDrawRequest.setOrderDate(DateUtil.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss"));
         balanceWithDrawRequest.setUserorderid(OrderGenerateService.genResquestNo());
@@ -604,9 +605,9 @@ public class FinancialAccountController extends BaseController {
     		return toJson(putSysError("您输入的用户名错误"));
     	}
     	
-    	String rcode = TFSTools.validateRegCode(session,userName, code);
+    	String rcode = TFSTools.validateRegCode(getSession(),userName, code);
     	if(rcode.equals("SUCCESS")){
-    		session.removeAttribute(WebConstant.SESSION_KEY_REG_CODE+"_"+userName);
+    		getSession().removeAttribute(WebConstant.SESSION_KEY_REG_CODE+"_"+userName);
     		return toJson(putSuccess());
     	}else if(rcode.equals("EXPIRE")){
     		return toJson(putSysError("验证码已经过期，请重新获取验证码"));
