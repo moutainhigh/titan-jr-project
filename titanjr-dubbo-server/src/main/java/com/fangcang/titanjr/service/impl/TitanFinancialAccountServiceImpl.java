@@ -659,9 +659,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					+ balanceWithDrawRequest.getCardNo() + ")");
 			titanTransOrder.setOrdertime(new Date());
 			titanTransOrder.setOrderdate(new Date());
-			if(StringUtil.isValidString(balanceWithDrawRequest.getAmount())){
-				titanTransOrder.setTradeamount(Long.parseLong(balanceWithDrawRequest.getAmount()));
-			}
+			titanTransOrder.setTradeamount(titanTransOrder.getAmount());
 			
 			//付款账户
 			titanTransOrder.setPayermerchant(balanceWithDrawRequest.getUserId());
