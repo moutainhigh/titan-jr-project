@@ -738,6 +738,10 @@
 					$("#id_" + index).html(html);
 					var total = $("#id_" + index + " #tradePageTotal").val();
 					pageGo(page, total, size,index);
+					
+				},
+				complete:function()
+				{
 					F.loading.hide();
 				}
 			});
@@ -765,6 +769,9 @@
 					$("#id_" + index).empty();
 					$("#id_" + index).html(html);
 					var total4 = $("#id_" + index +" #tradePageTotal").val();
+				},
+				complete:function()
+				{
 					F.loading.hide();
 				}
 			});
@@ -793,6 +800,10 @@
 					$("#id_" + index).html(html);
 					var total = $("#id_" + index + " #tradePageTotal").val();
 					pageGo(page,total,size,index);
+					
+				},
+				complete:function()
+				{
 					F.loading.hide();
 				}
 			});
@@ -903,6 +914,9 @@
 					var total1 = $("#id_1 #tradePageTotal").val();
 					var page1 = $("#id_1 #tradePageCurrent").val();
 					pageGo(page1,total1,size1,1);
+				},
+				complete:function()
+				{
 					F.loading.hide();
 				}
 			});

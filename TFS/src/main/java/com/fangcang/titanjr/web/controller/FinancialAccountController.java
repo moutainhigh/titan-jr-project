@@ -144,12 +144,12 @@ public class FinancialAccountController extends BaseController {
     public String queryForPage(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
             model.addAttribute("organ", this.getTitanOrganDTO());
-            AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
-            accountBalanceRequest.setUserid(this.getUserId());
-            AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
-            if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
-                model.addAttribute("accountBalance", balanceResponse.getAccountBalance().get(0));
-            }
+//            AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
+//            accountBalanceRequest.setUserid(this.getUserId());
+//            AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+//            if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
+//                model.addAttribute("accountBalance", balanceResponse.getAccountBalance().get(0));
+//            }
             tradeDetailRequest.setUserid(this.getUserId());
             if (StringUtil.isValidString(tradeDetailRequest.getTradeTypeId())) {
                 tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
