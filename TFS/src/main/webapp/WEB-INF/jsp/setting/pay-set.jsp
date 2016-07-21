@@ -58,7 +58,7 @@
 				<h3 class="TFSpassw_title fl">小额免支付开关</h3>
 				<div class="glright fl">
 					<span uitype="switch" <c:if test="${allownopwdpay==1}">checked</c:if> class="switch-text" id="J_siwtch_auto"></span>
-					<c:if test="${allownopwdpay==0}"><span class="nopassword tip">未开通小额免密支付，付款时需要密码</span></c:if>
+					<c:if test="${allownopwdpay==0}"><span class="nopassword">未开通小额免密支付，付款时需要密码</span></c:if>
 					<c:if test="${allownopwdpay==1}"><span class="nopassword tip">已开通小额免密支付，1000元以下付款时无需密码</span></c:if>
 				</div>
 			</div>
@@ -68,18 +68,8 @@
 <script>
 //渲染组件
 	F.UI.scan();
-	//自动处理开关
-	$(function(){
-		//debugger;
-		//var sw = $(".TFSpayset span[uitype=switch]");
-	   // if(sw.getChecked()){
-	    //    $(this).next().addClass('tip').html('已开通小额免密支付，1000元以下付款时无需支付密码');
-	   // }else{
-	    //    $(this).next().removeClass('tip').html('未开通小额免密支付，付款时需要支付密码');
-	   // }
-	});
 	//展开、收缩表格
-	var msg, isPass = false,sw;
+	var msg,sw,payDialog,toState;
     $.each($('.TFSpayset'), function(){
         var _this = $(this), siwtchArray = [], siwtchs = F.UI.find(_this.find('*[uitype=switch]'));
         if(siwtchs){
@@ -87,12 +77,15 @@
             $.each(siwtchArray, function(k,v){
                 v.dom.on('click',function(e){
                 	sw = F.UI.find($(this));
-                    if(sw.getChecked()){//切换到开启
+                	toState = sw.getChecked();
+                	//还原状态
+                	sw.setChecked(!toState);
+                    if(toState){//切换到开启
                     	msg = "您选择开通小额免密支付，1000元以下付款时无需密码。";
                     }else{//切换到关闭
                     	msg = "您选择关闭小额免密支付，所有付款都需要输入支付密码。";
                     }
-                	if(sw.getChecked()){//切换到开启
+                	if(toState){//切换到开启
                 		//是否设置了支付密码
                     	if(checkIsSetPayPassword()){
                     		new top.Tip({msg : '请先设置支付密码', type: 2});
@@ -112,50 +105,38 @@ function showConfirm(){
      	width:310,
          content: msg,
          ok : function(){
-             isPass = true;
-         },
-         cancel : function(){
-             isPass = false;
-         },
-         onclose : function(){
-             if(isPass===true){//点击确定 
-                var swi = 0;
-                if(!sw.getChecked()){//关闭
-             	   swi=0;
-                } else{
-             	   swi=1;
-                }
-                $.ajax({
-                		type:"post",
-                		url:"<%=basePath%>/setting/set-swicth.shtml",
-                		data:{"allownopwdpay":swi},
-                		dataType:"json",
-                		success:function(result){
-                			if(result.code==1){
-                    			if(!sw.getChecked()){
-                           	   $(".nopassword").removeClass('tip').html('未开通小额免密支付，付款时需要支付密码');
-                             } else{
-                           	   $(".nopassword").addClass('tip').html('已开通小额免密支付，1000元以下付款时无需密码');
-                             }
-                			}else{
-                				new top.Tip({msg : result.msg, type: 2});
-                			}
-                		},
-                		complete:function(){
-                			top.F.loading.hide();
-                		},
-                		error:function(xhr,status){
-                			 new top.Tip({msg : '请求失败，请重试', type: 2});
-                		}
-                	}); 
-             }else{
-                 //点击取消
-                 sw.setChecked(!sw.getChecked());
+             var swi = toState?1:0;
+             var pay="";
+             if(toState){
+            	 pay = PasswordStr2.returnStr();
              }
+             $.ajax({
+             		type:"post",
+             		url:"<%=basePath%>/setting/set-swicth.shtml",
+             		data:{"allownopwdpay":swi,"payPassword":pay},
+             		dataType:"json",
+             		success:function(result){
+             			if(result.code==1){
+                 			if(toState){
+                 				$(".nopassword").addClass('tip').html('已开通小额免密支付，1000元以下付款时无需密码');
+                        	 } else{
+                        	   	$(".nopassword").removeClass('tip').html('未开通小额免密支付，付款时需要支付密码');
+                        	 }
+                 			 sw.setChecked(toState);
+             			}else{
+             				new top.Tip({msg : result.msg, type: 2});
+             			}
+             		},
+             		complete:function(){
+             			top.F.loading.hide();
+             		},
+             		error:function(xhr,status){
+             			 new top.Tip({msg : '请求失败，请重试', type: 2});
+             		}
+             	}); 
+             
          }
-		
 	});
-	
 }	
 	
 //检查是否设置了密码
@@ -184,7 +165,7 @@ function showPayPassword(){
            context: document.body,
            url : '<%=basePath%>/account/showPayPassword.shtml',
            success : function(html){
-               var d =  dialog({
+        	   payDialog =  dialog({
                    title: ' ',
                    padding: '0 0 0px 0 ',
                    content: html,
@@ -199,15 +180,16 @@ function showPayPassword(){
                            			return true;
                            		}
                            		$(".ui-dialog-content").html(html);
+                           		payDialog.focus();
                            		return false;
                            	}else{
-                           		new top.Tip({msg: '输入的密码必须为6位', type: 1, timer: 2000});
+                           		new top.Tip({msg: '请输入6位付款密码', type: 1, timer: 2000});
                            		return false;
                            	}
                            }
                        }
                    ]
-               }).showModal();
+               }).showModal().focus();
            }
        });
    }
@@ -215,6 +197,7 @@ function showPayPassword(){
  
 //检查密码是否正确
 function to_check_payPassword(){
+	var flag=false;
 	 $.ajax({
 		async:false, 
         type: "post",
@@ -226,19 +209,14 @@ function to_check_payPassword(){
         success: function (data) {
        	 if(data.code=="1"){
        		showConfirm();
-			return true;
-       		 // 
+       		flag = true;
        	 }else{
-       		new top.Tip({msg: '输入的密码错误', type: 1, timer: 2000});
-       		return false;
-       		  //setTimeout(function () {
-       			//  showPayPassword();
-               //  }, 2000);
-       		
+       		new top.Tip({msg: '输入的付款密码错误', type: 1, timer: 2000});
+       		flag = false;
        	 }
         }
 	 });
-	 return false;
+	 return flag;
 }
 //点击设置密码    
 $(".J_confirm").on('click', function() {
@@ -248,7 +226,6 @@ $(".J_confirm").on('click', function() {
 			 type: "post",
 	         url: "<%=basePath%>/account/setPayPassword.action",
 	         data: {
-	        	 /* payPassword:rsaData(PasswordStr1.returnStr()) */
 	        	 payPassword:PasswordStr1.returnStr()
 	         },
 	         dataType: "json",
@@ -306,7 +283,6 @@ function add_PayPassword(){
 }
 
 //密码输入框
-var PasswordStr1=new sixDigitPassword("passwordbox");
 var PasswordStr2=new sixDigitPassword("passwordbox1");
 </script>
 </body>
