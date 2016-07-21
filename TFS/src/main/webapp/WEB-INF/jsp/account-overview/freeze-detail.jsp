@@ -16,7 +16,7 @@
     </div>
     <div class="main_con p_b8" style="padding-left:14px;">
         <div class="MyAssets_top_tip" style="display: none"><i class="ico_frozen fl"></i><span
-                class="fl" >当联盟分销商付款成功后，供应商未确认订单前资金会冻结，确认后即可解冻</span>
+                class="fl" >交易平台在线收款默认为担保支付，在订单离店日后1天款项自动解冻</span>
             <i class="tourism_ico curpo chacha fl J_delete"></i>
         </div>
         <div class="MyAssets_list_Options" style="padding-left:0px;">

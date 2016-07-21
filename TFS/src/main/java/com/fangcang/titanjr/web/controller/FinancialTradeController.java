@@ -9,6 +9,7 @@ import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.ReqstatusEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;
@@ -105,7 +106,7 @@ public class FinancialTradeController extends BaseController {
 	
 	private static List<String> orderNoList = new ArrayList<String>();
 	
-	//private static Map<String,Object> orderNoMap = new  ConcurrentHashMap<String, Object>();
+//	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	
 	/**
 	 * 消息回调接口
@@ -118,8 +119,6 @@ public class FinancialTradeController extends BaseController {
     public void payResultConfirm(RechargeResultConfirmRequest rechargeResultConfirmRequest,HttpServletResponse response) throws IOException{
 		String orderNo = rechargeResultConfirmRequest.getOrderNo();
 		try{
-			response.getWriter().print("returnCode=000000&returnMsg=che");
-			
     		if(rechargeResultConfirmRequest !=null){
     			response.getWriter().print("returnCode=000000&returnMag=成功");
     			log.info("融数后台回调成功参数:"+toJson(rechargeResultConfirmRequest));
@@ -377,10 +376,6 @@ public class FinancialTradeController extends BaseController {
 		if(paymentRequest !=null){
 			if(CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentRequest.getPaySource())){
 				paymentRequest.setUserid(this.getUserId());
-
-				paymentRequest.setOperator(this.getUserRealName());
-				paymentRequest.setCreator(this.getUserRealName());
-
 			}
 			model.addAttribute(WebConstant.RESULT, WebConstant.FAIL);
 			
@@ -641,7 +636,7 @@ public class FinancialTradeController extends BaseController {
 	public Map<String,String> validateIsAllowAoAwdpay(String userid,String totalAmount){
 		Map<String,String> resultMap = new HashMap<String, String>();
 		if(!StringUtil.isValidString(userid)){
-			userid = getUserId();
+			userid = this.getUserId();
 		}
 		if(StringUtil.isValidString(userid)){
 			AllowNoPwdPayResponse allowNoPwdPayResponse = isAllowNoPwdPay(userid,totalAmount);
@@ -693,6 +688,12 @@ public class FinancialTradeController extends BaseController {
     	Map<String,String> resultMap = new HashMap<String, String>();
 		resultMap.put(WebConstant.RESULT, WebConstant.FAIL); 
 		
+		//查询付款方信息
+		TitanUserBindInfoDTO titanUserBindInfoDTO = getTitanUserBindInfo(paymentRequest.getFcUserid());
+		if(titanUserBindInfoDTO !=null ){
+			paymentRequest.setCreator(titanUserBindInfoDTO.getUsername());
+			paymentRequest.setOperator(titanUserBindInfoDTO.getUsername());
+		}
 		
 		//是否需要免密支付,只有用到余额转账付款的时候才需要验证密码
 		BigDecimal totalAmount = null;
@@ -704,13 +705,6 @@ public class FinancialTradeController extends BaseController {
 		if(totalAmount.subtract(new BigDecimal(paymentRequest.getPayAmount())).compareTo(BigDecimal.ZERO)==1){//有转账交易
 			AllowNoPwdPayResponse allowNoPwdPayResponse = isAllowNoPwdPay(paymentRequest.getUserid(),totalAmount.toString());
 			if(!allowNoPwdPayResponse.isAllowNoPwdPay()){
-				TitanUserBindInfoDTO  titanUserBindInfoDTO = new TitanUserBindInfoDTO();
-				if(StringUtil.isValidString(paymentRequest.getFcUserid())){
-					titanUserBindInfoDTO.setFcuserid(Long.parseLong(paymentRequest.getFcUserid()));
-				}else{
-					titanUserBindInfoDTO.setTfsuserid(Integer.parseInt(getTfsUserId()));
-				}
-				titanUserBindInfoDTO = titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
 				if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid()!=null){
 //						paymentRequest.setPayPassword(RSADecryptString.decryptString(paymentRequest.getPayPassword(),request));
 					paymentRequest.setPayPassword(paymentRequest.getPayPassword());
@@ -727,12 +721,18 @@ public class FinancialTradeController extends BaseController {
 			}
 		}
 		
-		if(financialOrderResponse !=null){
-			boolean isExit = accountIsExist(paymentRequest);
-			if(!isExit){
-				resultMap.put(WebConstant.MSG, "收款账户不存在,请认真核实");
+		if(financialOrderResponse !=null){//查询账户
+			OrgDTO orgDTO = new OrgDTO();
+			orgDTO.setOrgname(paymentRequest.getRecieveOrgName());
+			orgDTO.setTitancode(paymentRequest.getRecieveTitanCode());
+			orgDTO= titanFinancialOrganService.queryOrg(orgDTO);
+			if(orgDTO ==null){
+				resultMap.put(WebConstant.MSG, "账户不存在");
 				return resultMap;
 			}
+			paymentRequest.setUserrelateid(orgDTO.getUserid());
+			paymentRequest.setInterProductid(orgDTO.getProductid());
+			
 			
 			if(StringUtil.isValidString(paymentRequest.getUserrelateid())){//收款方不为空，则判断是否自己给自己付款
 				if(paymentRequest.getUserrelateid().equals(paymentRequest.getUserid())){
@@ -768,6 +768,18 @@ public class FinancialTradeController extends BaseController {
 		return resultMap;
 	}
     
+    private TitanUserBindInfoDTO getTitanUserBindInfo(String fcUserId) throws GlobalServiceException{
+    	TitanUserBindInfoDTO  titanUserBindInfoDTO = new TitanUserBindInfoDTO();
+		if(StringUtil.isValidString(fcUserId)){
+			titanUserBindInfoDTO.setFcuserid(Long.parseLong(fcUserId));
+		}else if(null !=this.getTfsUserId()){
+			titanUserBindInfoDTO.setTfsuserid(Integer.parseInt(this.getTfsUserId()));
+		}else{
+			return null;
+		}
+		return titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+    }
+    
     private boolean accountIsExist(PaymentRequest paymentRequest){
     	if(StringUtil.isValidString(paymentRequest.getRecieveOrgName())&&
     			StringUtil.isValidString(paymentRequest.getRecieveTitanCode())){
@@ -777,7 +789,6 @@ public class FinancialTradeController extends BaseController {
     		AccountCheckResponse accountCheckResponse = titanFinancialAccountService.checkTitanCode(accountCheckRequest);
     		if(accountCheckResponse.isCheckResult()){
     			paymentRequest.setUserrelateid(accountCheckResponse.getUserid());
-    			paymentRequest.setInterProductid(paymentRequest.getInterProductid());
     			return true;
     		}
     	}
@@ -1135,5 +1146,27 @@ public class FinancialTradeController extends BaseController {
 		}
 	}
 
+//	private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
+//		synchronized (mapLock) {
+//			if(mapLock.containsKey(out_trade_no)) {
+//				synchronized (mapLock.get(out_trade_no)) 
+//				{
+//					mapLock.get(out_trade_no).wait();
+//				}
+//			}
+//			else{
+//				mapLock.put(out_trade_no, new Object());
+//			}
+//			
+//		}
+//	}
+//	
+//	private void unlockOutTradeNoList(String out_trade_no) {
+//		if(mapLock.containsKey(out_trade_no)){
+//			synchronized (mapLock.get(out_trade_no)) {
+//				mapLock.remove(out_trade_no).notifyAll();
+//			}
+//		}
+//	}
 	
 }

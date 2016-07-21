@@ -1,6 +1,13 @@
 package com.fangcang.titanjr.request;
 
-public class PayPasswordRequest {
+import java.io.Serializable;
+
+public class PayPasswordRequest implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String fcuserid;
 	

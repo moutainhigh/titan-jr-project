@@ -17,6 +17,7 @@ import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
@@ -24,6 +25,7 @@ import com.fangcang.titanjr.dto.bean.BankCardDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.ForgetPayPassword;
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
@@ -153,10 +155,10 @@ public class FinancialAccountController extends BaseController {
                 tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
             }
             if (StringUtil.isValidString(tradeDetailRequest.getStartTimeStr())) {
-                tradeDetailRequest.setStartTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr()));
+                tradeDetailRequest.setStartTime(com.fangcang.titanjr.common.util.DateUtil.getDayBeginTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr())));
             }
             if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
-                tradeDetailRequest.setEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr()));
+                tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
             }
             TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
             if (tradeDetailResponse.isResult()) {
@@ -176,10 +178,10 @@ public class FinancialAccountController extends BaseController {
                 tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
             }
             if (StringUtil.isValidString(tradeDetailRequest.getStartTimeStr())) {
-                tradeDetailRequest.setStartTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr()));
+                tradeDetailRequest.setStartTime(com.fangcang.titanjr.common.util.DateUtil.getDayBeginTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr())));
             }
             if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
-                tradeDetailRequest.setEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr()));
+                tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
             }
             TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
             if (tradeDetailResponse.isResult()) {
@@ -496,7 +498,8 @@ public class FinancialAccountController extends BaseController {
         balanceWithDrawRequest.setProductid(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_PRODUCT_ID);
         balanceWithDrawRequest.setAmount(withDrawRequest.getAmount());
         balanceWithDrawRequest.setCardNo(cardNo);
-        balanceWithDrawRequest.setCreator(getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_LOGINNAME).toString());
+ 
+        balanceWithDrawRequest.setCreator(this.getUserNameByUserId());
         balanceWithDrawRequest.setOrderDate(DateUtil.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss"));
         balanceWithDrawRequest.setUserorderid(OrderGenerateService.genResquestNo());
         balanceWithDrawRequest.setUserFee(0L);
@@ -508,6 +511,22 @@ public class FinancialAccountController extends BaseController {
         return toJson(putSuccess());
     }
 
+    private String getUserNameByUserId(){
+    	if(StringUtil.isValidString(this.getTfsUserId())){
+    		TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
+    		titanUserBindInfoDTO.setTfsuserid(Integer.parseInt(this.getTfsUserId()));
+    		try{
+    			titanUserBindInfoDTO = titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+    		}catch(Exception e){
+    			 log.error("查询用户名失败:"+e.getMessage());
+    		}
+            if(titanUserBindInfoDTO !=null){
+            	return titanUserBindInfoDTO.getUsername();
+            }
+    	}
+    	return null;
+    }
+    
     @RequestMapping(value = "/order-remark", method = RequestMethod.GET)
     public String toOrderRemark(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
@@ -639,10 +658,10 @@ public class FinancialAccountController extends BaseController {
                 tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
             }
             if (StringUtil.isValidString(tradeDetailRequest.getStartTimeStr())) {
-                tradeDetailRequest.setStartTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr()));
+                tradeDetailRequest.setStartTime(com.fangcang.titanjr.common.util.DateUtil.getDayBeginTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr())));
             }
             if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
-                tradeDetailRequest.setEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr()));
+                tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
             }
             tradeDetailRequest.setPageSize(100000);
             tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
@@ -785,16 +804,17 @@ public class FinancialAccountController extends BaseController {
 		return "checkstand-pay/selectAccHistory";
 	}
 	
+	@ResponseBody
 	@RequestMapping("/check_account")
-	public String checkRecieveAccount(String recieveAccount,String titanCode){
-		if(!StringUtil.isValidString(recieveAccount)
-				|| !StringUtil.isValidString(titanCode)){
+	public String checkRecieveAccount(String recieveOrgName,String recieveTitanCode){
+		if(!StringUtil.isValidString(recieveOrgName)
+				|| !StringUtil.isValidString(recieveTitanCode)){
 			return toJson(putSysError("账户名和泰坦码不能为空"));
 		}
 		
 		AccountCheckRequest accountCheckRequest = new AccountCheckRequest();
-		accountCheckRequest.setOrgName(recieveAccount);
-		accountCheckRequest.setTitanCode(titanCode);
+		accountCheckRequest.setOrgName(recieveOrgName);
+		accountCheckRequest.setTitanCode(recieveTitanCode);
 		AccountCheckResponse accountCheckResponse = titanFinancialAccountService.checkTitanCode(accountCheckRequest);
 		if(accountCheckResponse.isCheckResult()){
 		   return toJson(putSuccess());
