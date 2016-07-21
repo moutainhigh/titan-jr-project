@@ -9,28 +9,32 @@
             <c:if test="${tradeItem.tradeType == '收款'}">
                 <span class="blue undl curpo J_orderDetails" onclick="showReceiveDetail(this);"
                   id="${tradeItem.businessordercode}">
-                    ${tradeItem.userorderid}-${tradeItem.businessordercode}
+                   <%--  ${tradeItem.userorderid}-${tradeItem.businessordercode} --%>
+                    ${tradeItem.userorderid}
                 </span>
             </c:if>
 
             <c:if test="${tradeItem.tradeType == '付款'}">
                 <span class="blue undl curpo J_orderDetails" onclick="showPayDetail(this);"
                   id="${tradeItem.businessordercode}">
-                    ${tradeItem.userorderid}-${tradeItem.businessordercode}
+                  <%--   ${tradeItem.userorderid}-${tradeItem.businessordercode} --%>
+                  ${tradeItem.userorderid}
                 </span>
             </c:if>
 
             <c:if test="${tradeItem.tradeType == '充值'}">
                 <span class="blue undl curpo J_orderDetails" onclick="showRechargeDetail(this);"
                   id="${tradeItem.userorderid}">
-                    ${tradeItem.userorderid}-${tradeItem.businessordercode}
+                    <%-- ${tradeItem.userorderid}-${tradeItem.businessordercode} --%>
+                    ${tradeItem.userorderid}
                 </span>
             </c:if>
 
             <c:if test="${tradeItem.tradeType == '提现'}">
                 <span class="blue undl curpo J_orderDetails" onclick="showWithDrawDetail(this);"
                   id="${tradeItem.userorderid}">
-                    ${tradeItem.userorderid}-${tradeItem.businessordercode}
+                   <%--  ${tradeItem.userorderid}-${tradeItem.businessordercode} --%>
+                   ${tradeItem.userorderid}
                 </span>
             </c:if>
         </td>

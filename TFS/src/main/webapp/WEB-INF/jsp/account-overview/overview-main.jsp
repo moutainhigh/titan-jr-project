@@ -33,7 +33,7 @@
 							<p>
 								<span>
 									现金冻结余额：<i id="balancefrozonSpan">0.00</i>
-									<i class="MyAssets_noticeIco" title="当联盟分销商付款成功后，供应商未确认订单前资金会冻结，确认后即可解冻"></i>
+									<i class="MyAssets_noticeIco" title="交易平台在线收款默认为担保支付，在订单离店日后1天款项自动解冻"></i>
 								</span>
 								<a href="<%=basePath%>/account/freeze-detail-page.shtml" class="blue decorationUnderline">详情</a>
 							</p>

@@ -38,12 +38,12 @@
                         <span class="w_250">
                         交易创建时间：<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.createtime}"/>
                         </span>
-                        <span class="w_160">创建人：<c:if test="${transOrder.creator !=null} ">${transOrder.creator}</c:if></span>
+                       <c:if test="${not empty transOrder.creator} "> <span class="w_160">操作人：${transOrder.creator}</span></c:if>
                     </p>
                     <dl class="orderDetails-dl">
                         <dt class='fl'>交易内容：</dt>
                         <dd class='fr'>${transOrder.goodsname}
-                            <c:if test="${transOrder.goodsdetail != null}">
+                            <c:if test="${not empty transOrder.goodsdetail }">
                             -${transOrder.goodsdetail}
                             </c:if></dd>
                         <div class="clear"></div>

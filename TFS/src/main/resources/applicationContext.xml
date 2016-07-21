@@ -62,6 +62,8 @@
             <mvc:exclude-mapping path="/account/deleteAccountHistory.action"/>
             <mvc:exclude-mapping path="/account/showPayPassword.action"/>
             <mvc:exclude-mapping path="/account/check_account.action"/>
+            
+            <mvc:exclude-mapping path="/setting/check_payPassword.action"/>
            
             
             

@@ -32,14 +32,14 @@
             ${tradeItem.tradeamount /100}
         </td>
         <td>
-            <c:if test="${tradeItem.isEscrowedPayment == 1 and tradeItem.tradeType == '收款'}">
+            <c:if test="${tradeItem.isEscrowedPayment == 0 and tradeItem.tradeType == '收款'}">
                 <i class="freeze_ico" title="供应商确认订单号即可解冻"/>
             </c:if>
         </td>
         <td class="tdr">${tradeItem.receivedfee /100}</td><!--只展示实收手续费-->
         <td></td>
         <td>
-            <c:if test="${tradeItem.statusid == 3 and tradeItem.tradeType !='充值'  or tradeItem.statusid==5}">
+            <c:if test="${(tradeItem.statusid == 0 or tradeItem.statusid==3) and tradeItem.tradeType !='充值'  or tradeItem.statusid==5 }">
                 处理中
             </c:if>
             <c:if test="${tradeItem.statusid == 8}">
