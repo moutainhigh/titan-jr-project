@@ -28,4 +28,9 @@
 		<property name="mapperInterface" value="com.fangcang.titanjr.rs.dao.RSPayMethodDao"></property>
 		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
 	</bean>
+
+	<bean id="callBackConfigDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.fangcang.titanjr.rs.dao.CallBackConfigDao"></property>
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
 </beans>
