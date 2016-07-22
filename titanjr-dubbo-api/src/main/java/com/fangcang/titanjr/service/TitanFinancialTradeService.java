@@ -141,7 +141,7 @@ public interface TitanFinancialTradeService {
 	 * @return
 	 * @author fangdaikang
 	 */
-	public boolean confirmFinance(TransOrderDTO transOrderDTO);
+	public void confirmFinance(TransOrderDTO transOrderDTO);
 	
 	/**
 	 * 确认转账是否成功

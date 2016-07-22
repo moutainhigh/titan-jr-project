@@ -180,10 +180,16 @@ function showPayPassword(){
                            			return true;
                            		}
                            		$(".ui-dialog-content").html(html);
-                           		payDialog.focus();
+                           		
+                           		setTimeout(function(){
+                           			$('#passwordbox').click();
+                           		},500);
                            		return false;
                            	}else{
                            		new top.Tip({msg: '请输入6位付款密码', type: 1, timer: 2000});
+                           		setTimeout(function(){
+                           			$('#passwordbox').click();
+                           		},500);
                            		return false;
                            	}
                            }
@@ -283,7 +289,29 @@ function add_PayPassword(){
 }
 
 //密码输入框
+var PasswordStr1=new sixDigitPassword("passwordbox");
 var PasswordStr2=new sixDigitPassword("passwordbox1");
+
+var timeIndex = 0;
+
+function clickPassword()
+{
+	$('#passwordbox').click();
+  		timeIndex = setInterval(function(){
+  			try
+  			{
+  				if($('#passwordbox i:last b:first-child').attr('style').indexOf('inherit') != -1)
+  				{
+  					$('#passwordbox1').click();
+  					clearInterval(timeIndex);
+  				}
+  			}catch(e)
+  			{}
+	},100);
+}
+clickPassword();
+
+
 </script>
 </body>
 </html>

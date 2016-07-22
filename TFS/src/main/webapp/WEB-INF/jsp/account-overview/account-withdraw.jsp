@@ -244,7 +244,9 @@
         
 
     });
-
+	
+    var pwdHtml = '';
+    
     function showPayPassword(){
     	$.ajax({
             dataType: 'html',
@@ -261,13 +263,17 @@
                             value: '确定',
                             skin : 'btn btn_grey ',
                             callback: function () {
+                            	pwdHtml = html;
                             	if(PasswordStr2.returnStr().length==6){
-                            		to_check_payPassword();
+                            		return to_check_payPassword();
                             	}else{
                             		new top.Tip({msg: '输入的密码必须为6位', type: 1, timer: 2000});
-                            		setTimeout(function () {
-                          			  showPayPassword();
-                                    }, 2000);
+                            		
+                            		 $(".ui-dialog-content").html(html);
+                           			setTimeout(function(){
+                                  			$('#passwordbox').click();
+                                  		},500);
+                           			return false;
                             	}
                             }
                         }
@@ -278,25 +284,31 @@
     }
     
     function to_check_payPassword(){
+    	var result = false;
     	 $.ajax({
              type: "post",
              dataType: 'json',
+             async:false,
              url: '<%=basePath%>/setting/check_payPassword.shtml',
              data: {
             	 payPassword:PasswordStr2.returnStr()
              },
              success: function (data) {
             	 if(data.code=="1"){
+            		 result=true;
             		 toAccountWithdraw();
+            		 
             	 }else{
             		new top.Tip({msg: '输入的密码错误', type: 1, timer: 2000});
-            		  setTimeout(function () {
-            			  showPayPassword();
-                      }, 2000);
-            		
+            		 $(".ui-dialog-content").html(pwdHtml);
+            			setTimeout(function(){
+                   			$('#passwordbox').click();
+                   		 },500);
             	 }
              }
     	 });
+    	 
+    	 return result;
     }
     
     function toAccountWithdraw(){
@@ -345,12 +357,30 @@
            }); 
    }
     
+    var timeIndex = 0;
+    function clickPassword()
+    {
+    	$('#passwordbox').click();
+      		timeIndex = setInterval(function(){
+      			try
+      			{
+      				if($('#passwordbox i:last b:first-child').attr('style').indexOf('inherit') != -1)
+      				{
+      					$('#passwordbox1').click();
+      					clearInterval(timeIndex);
+      				}
+      			}catch(e)
+      			{}
+    	},100);
+    }
+
     function show_setPayPassword(){
     	 $.ajax({
 		        dataType: 'html',
 		        context: document.body,
 		        url: '<%=basePath%>/account/showSetPayPassword.action',
 		        success: function (html) {
+		        	clickPassword();
 		            var d = dialog({
 		                title: ' ',
 		                padding: '0 0 0px 0 ',
@@ -363,19 +393,33 @@
 		                        callback: function () {
 		                        	if(PasswordStr.returnStr()==PasswordStr1.returnStr()){
 		                        		if(PasswordStr.returnStr().length==6){
-		                        			set_PayPassword();
+		                        			if(!set_PayPassword())
+		                        			{
+		                        				 $(".ui-dialog-content").html(html);
+		                             			setTimeout(function(){
+		                             				clickPassword();
+		                                    		 },500);
+		                        				return false;
+		                        			}
+		                        			return true;
 		                        		}else{
 		                        			 new top.Tip({msg: "密码必须为6位", type: 1, timer: 1000});
-			                        		 setTimeout(function () {
-			                        			 show_setPayPassword();
-	       		                            }, 1000);
+		                        			 
+		                        			 $(".ui-dialog-content").html(html);
+		                         			setTimeout(function(){
+		                         				clickPassword();
+		                                		 },500);
+			                        		
 		                        		}
 		                        	}else{
 		                        		 new top.Tip({msg: "两次输入密码不一致", type: 1, timer: 1000});
-		                        		 setTimeout(function () {
-		                        			 show_setPayPassword();
-       		                            }, 1000);
+		                        		 $(".ui-dialog-content").html(html);
+		                     			setTimeout(function(){
+		                     				clickPassword();
+		                            		 },500);
 		                        	}
+		                        	
+		                        	 return false;
 		                        },
 		                        autofocus: true
 		                    },
@@ -387,9 +431,11 @@
     }
     
     function set_PayPassword(){
+    	var result = false;
     	 $.ajax({
 	    	 type: "post",
 	         url: "<%=basePath%>/account/setPayPassword.action",
+	         async:false,
 	         data: {
 	        	/*  payPassword:rsaData(PasswordStr.returnStr()) */
 	        	 payPassword:PasswordStr.returnStr()
@@ -397,6 +443,7 @@
 	         dataType: "json",
 	         success: function(data){
 	        	 if(data.result=="success"){
+	        		 result = true;
 	        		top.F.loading.show();
                      setTimeout(function () {
                          top.F.loading.hide();
@@ -410,7 +457,8 @@
                          }, 1000);
 	        	 }
 	         }
-	   })
+	   });
+    	 return result;
     }
     
     

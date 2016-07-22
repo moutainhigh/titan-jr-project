@@ -162,12 +162,7 @@ public class FinancialTradeController extends BaseController {
                     	        		orderStatusEnum = OrderStatusEnum.TRANSFER_SUCCESS;
                     	        		if(StringUtil.isValidString(transOrderDTO.getMerchantcode())){//GDP的回调
                     	        			log.info("回调财务:"+toJson(transOrderDTO));
-                    	        			boolean confirmFlag =titanFinancialTradeService.confirmFinance(transOrderDTO);
-                    	        			log.info("回调财务结果:"+confirmFlag);
-                        	        		if(!confirmFlag){
-                        	        			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "转账成功 回调财务失败", OrderExceptionEnum.Finance_Confirm, JSON.toJSONString(transOrderDTO));
-                            	        		titanOrderService.saveOrderException(orderExceptionDTO);
-                        	        		}
+                    	        			titanFinancialTradeService.confirmFinance(transOrderDTO);
                     	        		}
                     	        		
                     	        		//冻结操作,如果冻结失败该进行什么操作,
@@ -302,15 +297,7 @@ public class FinancialTradeController extends BaseController {
                 		OrderStatusEnum orderStatusEnum = OrderStatusEnum.ORDER_IN_PROCESS;
 						if (transferResponse.isResult()) {//转账成功，流程结束
 							//将转账参数和转账结果
-							TransOrderDTO transOrderDTO = new TransOrderDTO();
-							transOrderDTO.setMerchantcode(paymentRequest.getMerchantcode());
-							transOrderDTO.setPayorderno(paymentRequest.getPayOrderNo());
-							boolean confirmFlag =titanFinancialTradeService.confirmFinance(transOrderDTO);
-        	        		if(!confirmFlag){
-        	        			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(localOrderResp.getOrderNo(), "余额转账成功 回调财务失败", OrderExceptionEnum.Finance_Confirm, JSON.toJSONString(transOrderDTO));
-            	        		titanOrderService.saveOrderException(orderExceptionDTO);
-        	        		}
-							//冻结操作,如果冻结失败该进行什么操作
+							titanFinancialTradeService.confirmFinance(transOrder);
         	        		//判断其是否需要冻结
         	        		orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
                     		if(WebConstant.FREEZE_ORDER.equals(transOrder.getIsEscrowedPayment())){

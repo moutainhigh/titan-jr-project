@@ -403,7 +403,24 @@
     $('.J_exitKan').on('click',function(){
 		window.close();
 	});
-		
+	
+    var timeIndex = 0;
+    function clickPassword()
+    {
+    	$('#passwordbox').click();
+      		timeIndex = setInterval(function(){
+      			try
+      			{
+      				if($('#passwordbox i:last b:first-child').attr('style').indexOf('inherit') != -1)
+      				{
+      					$('#passwordbox1').click();
+      					clearInterval(timeIndex);
+      				}
+      			}catch(e)
+      			{}
+    	},100);
+    }
+
     
     function show_set_payPassword(){
     	 $.ajax({
@@ -411,6 +428,7 @@
 		        context: document.body,
 		        url: '<%=basePath%>/account/showSetPayPassword.action',
 		        success: function (html) {
+		        	clickPassword()
 		            var d = dialog({
 		                title: ' ',
 		                padding: '0 0 0px 0 ',
@@ -447,18 +465,22 @@
  		                 		                            }, 1000);
 		                        			        	 }
 		                        			         }
-		                        			   })
+		                        			   });
 		                        		}else{
 		                        			 new top.Tip({msg: "密码必须为6位", type: 1, timer: 1000});
-			                        		 setTimeout(function () {
-			                        			 checkIsSetPayPassword();
-	       		                            }, 1000);
+		                        			 $(".ui-dialog-content").html(html);
+			                         			setTimeout(function(){
+			                         				clickPassword();
+			                                		 },500);
+			                         			return false;
 		                        		}
 		                        	}else{
 		                        		 new top.Tip({msg: "两次输入的密码不一致", type: 1, timer: 1000});
-		                        		 setTimeout(function () {
-		                        			 checkIsSetPayPassword();
-       		                            }, 1000);
+		                        		 $(".ui-dialog-content").html(html);
+		                         			setTimeout(function(){
+		                         				clickPassword();
+		                                		 },500);
+		                         			return false;
 		                        		
 		                        	}
 		                        },
@@ -587,7 +609,15 @@
                             skin: 'btn p_lr30',
                             callback: function () {
                             	//验证支付密码是否准确
-                            	check_payPassword();
+                            	if(! check_payPassword())
+                            	{
+                            		 $(".ui-dialog-content").html(html);
+                            			setTimeout(function(){
+                                   			$('#passwordbox').click();
+                                   		},500);
+                            		return false;
+                            	}
+                            	return true;
                             	//获取密码
                             },
                             autofocus: true
@@ -606,8 +636,10 @@
     }
     
     function check_payPassword(){
+    	var result = false;
     	 $.ajax({
              type: "post",
+             async:false,
              dataType: 'json',
              url: '<%=basePath%>/setting/check_payPassword.action',
              data: {
@@ -616,17 +648,15 @@
              },
              success: function (data) {
             	 if(data.code=="1"){
+            		 result = true;
             		 pay_Order();
             	 }else{
             		new top.Tip({msg: '输入的密码错误', type: 1, timer: 2000});
-            		  setTimeout(function () {
-            			  show_payPassword();
-                      }, 2000);
-            		
             	 }
              },error:function(data){
              }
     	 });
+    	 return result;
     }
     
     

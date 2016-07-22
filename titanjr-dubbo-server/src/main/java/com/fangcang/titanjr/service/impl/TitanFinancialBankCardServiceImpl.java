@@ -51,6 +51,7 @@ import com.fangcang.titanjr.rs.response.BankCardBindResponse;
 import com.fangcang.titanjr.rs.response.BankCardQueryResponse;
 import com.fangcang.titanjr.rs.response.DeletePersonCardResponse;
 import com.fangcang.titanjr.rs.response.InvalidPubCardModifyResponse;
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
@@ -154,6 +155,9 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
                                     cusBankCardBindResponse.putSuccess();
                                     return cusBankCardBindResponse;
                                 }
+                                
+                                
+                                
                             }
                         }
                     }
@@ -405,5 +409,5 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		}
 		return null;
 	}
-	
+
 }

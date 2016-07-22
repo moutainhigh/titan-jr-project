@@ -110,7 +110,25 @@ $('.J_next').on('click',function(){
 	data.code = code;
 	check_code(data);
 	
-}); 
+});
+
+var timeIndex = 0;
+
+function clickPassword()
+{
+	$('#passwordbox3').click();
+  		timeIndex = setInterval(function(){
+  			try
+  			{
+  				if($('#passwordbox3 i:last b:first-child').attr('style').indexOf('inherit') != -1)
+  				{
+  					$('#passwordbox4').click();
+  					clearInterval(timeIndex);
+  				}
+  			}catch(e)
+  			{}
+	},100);
+}
 
 function check_code(data){
 	 top.F.loading.show();
@@ -125,7 +143,11 @@ function check_code(data){
         success: function(data){
        	 if(data.code=="1"){//短信发送成功
        		$(".passwordf").hide();
-       		$(".passwordf_next").show(); 
+       		$(".passwordf_next").show();
+       		
+       		clickPassword();
+       		
+
        	 }else{
        		 new top.Tip({msg : data.msg, type: 1 , time:1000});   
        	 }
@@ -173,6 +195,11 @@ function forget_pwd_data(){
 		$('.passwordset_u1').html(pwd3);
 		 PasswordStr6=new sixDigitPassword("passwordbox3");
 		 PasswordStr7=new sixDigitPassword("passwordbox4");
+		 
+		 setTimeout(function(){
+			 clickPassword();
+    			
+    		},200);
 		return;
 	}
 	if(payPassword2 !=payPassword){
@@ -180,6 +207,9 @@ function forget_pwd_data(){
 		$('.passwordset_u1').html(pwd3);
 		 PasswordStr6=new sixDigitPassword("passwordbox3");
 		 PasswordStr7=new sixDigitPassword("passwordbox4");
+		 setTimeout(function(){
+			 clickPassword();
+    		},200);
 		return;
 	}
 	
