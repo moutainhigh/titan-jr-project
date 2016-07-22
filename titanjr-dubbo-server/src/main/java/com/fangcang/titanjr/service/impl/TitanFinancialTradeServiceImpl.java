@@ -1460,7 +1460,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			OrderRequest orderRequest = convertorToTitanOrderRequest(paymentRequest);
 			TitanTransOrder titanTransOrder = orderRequest2TitanTransOrder(orderRequest);
 			titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
-			titanTransOrder.setStatusid(OrderStatusEnum.RECHARFE_IN_PROCESS.getStatus());
+			titanTransOrder.setStatusid(OrderStatusEnum.RECHARGE_IN_PROCESS.getStatus());
 			//融数下单
 			
 			if(titanTransOrderDao.insert(titanTransOrder)>0?true:false){
