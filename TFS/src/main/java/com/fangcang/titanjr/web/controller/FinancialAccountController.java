@@ -489,7 +489,7 @@ public class FinancialAccountController extends BaseController {
             bankCardBindRequest.setBankProvince("");
             CusBankCardBindResponse cardBindResponse = titanFinancialBankCardService.bankCardBind(bankCardBindRequest);
             if (!cardBindResponse.isResult()){
-                return toJson(putSysError("使用新卡提现,绑定新体现卡失败"));
+                return toJson(putSysError("使用新卡提现,绑定新提现卡失败"));
             }
         }
 

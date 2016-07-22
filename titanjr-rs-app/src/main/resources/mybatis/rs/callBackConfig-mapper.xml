@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.fangcang.titanjr.rs.dao.CallBackConfigDao">
+
+    <select id="queryAllCallBackConfig" resultType="com.fangcang.titanjr.rs.entity.TitanCallBackConfig">
+        select t.id,t.paySource,t.callBackURL from t_tfs_callbackconfig t
+    </select>
+
+</mapper>
