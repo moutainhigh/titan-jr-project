@@ -480,8 +480,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         }
         try {
             HttpResponse resp = HttpClient.httpRequest(params, url);
-            HttpEntity entity = resp.getEntity();
-            response = EntityUtils.toString(entity);
+            if(null !=resp){
+            	HttpEntity entity = resp.getEntity();
+                response = EntityUtils.toString(entity);
+            }
         } catch (IOException e) {
             log.error("调用http请求通知支付失败", e);
         }
