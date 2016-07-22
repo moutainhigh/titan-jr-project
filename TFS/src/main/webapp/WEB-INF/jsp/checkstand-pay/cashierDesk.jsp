@@ -428,7 +428,7 @@
 		        context: document.body,
 		        url: '<%=basePath%>/account/showSetPayPassword.action',
 		        success: function (html) {
-		        	clickPassword();
+		        	clickPassword()
 		            var d = dialog({
 		                title: ' ',
 		                padding: '0 0 0px 0 ',
