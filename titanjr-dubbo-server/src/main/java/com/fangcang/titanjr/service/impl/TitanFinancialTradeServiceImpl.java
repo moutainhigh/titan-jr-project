@@ -1356,7 +1356,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				tradeDetailResponse =  tradeDetail;
 				tradeDetailResponse.putSuccess();
 				return tradeDetailResponse;
-			}
+			} else {
+                tradeDetailResponse.putSuccess();
+                return tradeDetailResponse;
+            }
 		}catch(Exception e){
 			log.error("查询单个订单交易记录失败" + e.getMessage(),e);
 		}
