@@ -121,7 +121,7 @@
         $("#right_con_frm").attr('src', $('#right_con_frm').attr('src'));
     });
 
-    $("#withDrawNum").blur(function(){
+   /*  $("#withDrawNum").blur(function(){
         var inputeAmount = $(this).val();
         if($.trim(inputeAmount).length<1){
             $("#inputeAmountError").text("提现金额不能为空");
@@ -129,8 +129,9 @@
             $("#inputeAmountError").text("");
         }
 
-        var neg = /^\d+(\.\d{1,2})?$/;
-        var flag = neg.test($(this).val());
+        var neg = /^[1-9]{1}\d+(\.\d{1,2})?$/;
+        var neg2 = /^[0]{1}(\.\d{1,2})?$/;
+        var flag = neg.test($(this).val())||neg2.test($(this).val());
         if(flag==false){
             $("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
             $(this).val("");
@@ -138,7 +139,7 @@
         }else{
             $("#inputeAmountError").text("");
         }
-    });
+    }); */
 
     //使用新卡提现或者旧卡
     $("#withDrawToNewCard").live('click',function(){
@@ -171,17 +172,23 @@
     $('.J_password').on('click',function(){
     	//验证提现的金额
     	var withdraw_amount = $("#withDrawNum").val();
-    	/* var neg = /^([+-]?)((\d{1,3}(,\d{3})*)|(\d+))(\.\d{2}))?$/; */
-        var neg =/^\d+(\.\d{1,2})?$/;
-    	var flag = neg.test(withdraw_amount);
-    	if(flag==false){
-    		$("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
-    		$(this).val("");
-    		$(this).focus();
-    		return ;
-    	}else{
-    		$("#inputeAmountError").text("");
+    	if(withdraw_amount.length<1){
+    		alert("提现金额不能为空");
+    		return;
     	}
+    	
+    	/* var neg = /^([+-]?)((\d{1,3}(,\d{3})*)|(\d+))(\.\d{2}))?$/; */
+    	  var neg = /^[1-9]{1}\d+(\.\d{1,2})?$/;
+          var neg2 = /^[0]{1}(\.\d{1,2})?$/;
+          var flag = neg.test(withdraw_amount)||neg2.test(withdraw_amount);
+          if(flag==false){
+              $("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
+              $(this).val("");
+              $(this).focus();
+              return;
+          }else{
+              $("#inputeAmountError").text("");
+          }
     	
     	if(withdraw_amount=="0" ||withdraw_amount=="0.0" ||withdraw_amount=="0.00"){
     		$("#inputeAmountError").text("您的提现额度必须大于0");
@@ -193,6 +200,28 @@
     		return ;
     	}
     	
+    	
+    	if($("#accountNum").is(":visible")==true){//如果是需要输入银行卡号
+    		
+    		var bankName= $("#bankName").val();
+        	if(typeof bankName=="undefined"){
+        		alert("收款银行不能为空");
+        		return;
+        	}
+    		
+    		var accountNum = $("#accountNum").val();
+    		 if(accountNum.length<1){
+    	        	alert("银行卡号不能为空");
+    	        	return;
+    	     }else{
+    	    	var neg = /^[0-9]\d*$/
+   	        	if(accountNum.length>20||!neg.test(accountNum)){
+   	        		alert("请输入正确的卡号");
+   	        		return;
+   	        	}
+    	     }
+    	}
+   
     	 showPayPassword();
     	
        /*  if (isNaN($("#withDrawNum").val())){

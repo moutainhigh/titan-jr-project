@@ -119,7 +119,7 @@ public class FinancialTradeController extends BaseController {
     public void payResultConfirm(RechargeResultConfirmRequest rechargeResultConfirmRequest,HttpServletResponse response) throws IOException{
 		String orderNo = rechargeResultConfirmRequest.getOrderNo();
 		try{
-    		if(rechargeResultConfirmRequest !=null){
+    		if(StringUtil.isValidString(orderNo)){
     			response.getWriter().print("returnCode=000000&returnMag=成功");
     			log.info("融数后台回调成功参数:"+toJson(rechargeResultConfirmRequest));
     			String signMsg = rechargeResultConfirmRequest.getSignMsg();
@@ -204,7 +204,7 @@ public class FinancialTradeController extends BaseController {
                     				orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
                     			}
                     			
-                    			log.info("修改财务单:"+toJson(orderStatusEnum));
+                    			log.info("修改单:"+toJson(orderStatusEnum));
                 				boolean updateStatus = this.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
                 				//修改订单状态
                 				if(!updateStatus){
@@ -441,6 +441,7 @@ public class FinancialTradeController extends BaseController {
 					|| OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())
 					|| OrderStatusEnum.FREEZE_FAIL.getStatus().equals(transOrderDTO.getStatusid())){
 				resultMap.put(WebConstant.MSG, "支付成功");
+				
 				return resultMap;
 			}
 			
@@ -692,7 +693,9 @@ public class FinancialTradeController extends BaseController {
 		TitanUserBindInfoDTO titanUserBindInfoDTO = getTitanUserBindInfo(paymentRequest.getFcUserid());
 		if(titanUserBindInfoDTO !=null ){
 			paymentRequest.setCreator(titanUserBindInfoDTO.getUsername());
-			paymentRequest.setOperator(titanUserBindInfoDTO.getUsername());
+			if(!StringUtil.isValidString(paymentRequest.getOperator())){
+				paymentRequest.setOperator(titanUserBindInfoDTO.getUsername());
+			}
 		}
 		
 		//是否需要免密支付,只有用到余额转账付款的时候才需要验证密码

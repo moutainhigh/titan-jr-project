@@ -115,7 +115,11 @@ public class SettingPasswordController extends BaseController{
 	@RequestMapping("/set-swicth")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String setSwitch(Integer allownopwdpay,String payPassword){
-		if(allownopwdpay==null||(allownopwdpay!=0&&allownopwdpay!=1)||(!StringUtil.isValidString(payPassword))){
+		if(allownopwdpay==null||(allownopwdpay!=0&&allownopwdpay!=1)){
+			putSysError("参数异常");
+			return toJson();
+		}
+		if(allownopwdpay==1&&(!StringUtil.isValidString(payPassword))){
 			putSysError("参数异常");
 			return toJson();
 		}
@@ -130,15 +134,16 @@ public class SettingPasswordController extends BaseController{
 				putSysError("只有金融管理员才能执行该操作");
 				return toJson();
 			}
-			
-			//未设置支付密码
-			if(!StringUtil.isValidString(titanUser.getPaypassword())){
-				return toJson(putSysError("请先设置支付密码"));
-			}
-			
-			//密码是否正确
-			if(!titanUser.getPaypassword().equals(MD5.MD5Encode(payPassword+titanUser.getPaySalt()))){
-				return toJson(putSysError("支付密码错误"));
+			if(allownopwdpay==1){
+				//未设置支付密码
+				if(!StringUtil.isValidString(titanUser.getPaypassword())){
+					return toJson(putSysError("请先设置支付密码"));
+				}
+				boolean istrue = userService.checkPayPassword(payPassword,getTfsUserId());
+				//密码是否正确
+				if(istrue==false){
+					return toJson(putSysError("支付密码错误"));
+				}
 			}
 			
 			AccountUpdateRequest accountUpdateRequest = new AccountUpdateRequest();
