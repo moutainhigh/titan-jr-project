@@ -480,8 +480,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         }
         try {
             HttpResponse resp = HttpClient.httpRequest(params, url);
-            HttpEntity entity = resp.getEntity();
-            response = EntityUtils.toString(entity);
+            if(null !=resp){
+            	HttpEntity entity = resp.getEntity();
+                response = EntityUtils.toString(entity);
+            }
         } catch (IOException e) {
             log.error("调用http请求通知支付失败", e);
         }
@@ -1308,6 +1310,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
             PaginationSupport<TitanTransOrder> pgSupport = new PaginationSupport<TitanTransOrder>();
             pgSupport.setPageSize(tradeDetailRequest.getPageSize());
             pgSupport.setCurrentPage(tradeDetailRequest.getCurrentPage());
+            pgSupport.setOrderBy("createtime desc");
             titanTransOrderDao.selectOrderForPage(condition, pgSupport);
             this.initTradeDetailResp(tradeDetailResponse, pgSupport);
             if (CollectionUtils.isNotEmpty(pgSupport.getItemList())) {//查询结果不为空。为空不能算出错

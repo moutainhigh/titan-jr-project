@@ -241,8 +241,15 @@
         }
         
         $(".bankName:first").attr("checked",'0');
+        
+        if('${accountBalance.balanceusable}'=="0.0" 
+        		||'${accountBalance.balanceusable}'=="0.00"
+        		||'${accountBalance.balanceusable}'=="0"){
+        	$("#d_checkbox").attr("checked",false);
+        }
     });
 
+    
     function sub(a, b) {
         var c, d, e;
         try {
@@ -277,17 +284,17 @@
     	if (sub('${orderDTO.payAmount}','${accountBalance.balanceusable}')<= 0){
     		 if($("#d_checkbox").attr("checked")=="checked"){
     			 var arrow = $('.J_payway').find('i');
-    			 var className = arrow.attr("class");
-    			 if(className =="jiantou"){
-    				 conPayWay();
-    			 }
-    			 $(".bankName:first").attr("checked",'0');
-    	       }else{
-    	    	 var arrow = $('.J_payway').find('i');
       			 var className = arrow.attr("class");
       			 if(className !="jiantou"){
       				conPayWay();
       			 }
+    	       }else{
+    	    	  var arrow = $('.J_payway').find('i');
+      			 var className = arrow.attr("class");
+      			 if(className =="jiantou"){
+      				 conPayWay();
+      			 }
+      			 $(".bankName:first").attr("checked",'0');
     	       }
     	}else{//余额不足，将支持两种结合的方式或者选择充值
     		 if($("#d_checkbox").attr("checked")=="checked"){//在线支付剩余余额
@@ -699,7 +706,6 @@
 								 }
 							 $("#confirmOrder").submit();
 						  }, 2000);
-
 					 }
                 },complete:function(){
                 	top.F.loading.hide();
@@ -767,11 +773,11 @@
     	var recieveOrgName = null;
     	var recieveTitanCode = null;
     	if($("#not_exists_history").is(":visible")==true || $(".replanceArea").is(":visible")==true){
-    		recieveOrgName = $("#reOrgName").val();
-        	recieveTitanCode = $("#reTitanCode").val();
+    		recieveOrgName = $.trim($("#reOrgName").val());
+        	recieveTitanCode = $.trim($("#reTitanCode").val());
     	}else{
-    		recieveOrgName =  $("#hiddenAccountName").val();
-    		recieveTitanCode = $("#hiddenTitanCode").val();
+    		recieveOrgName =  $.trim($("#hiddenAccountName").val());
+    		recieveTitanCode =  $.trim($("#hiddenTitanCode").val());
     	}
     	
     	var bankInfo =  $(".bankName:checked").val();
