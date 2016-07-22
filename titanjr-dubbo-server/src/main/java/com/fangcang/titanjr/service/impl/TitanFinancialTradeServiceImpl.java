@@ -1302,10 +1302,12 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
             if (StringUtil.isValidString(tradeDetailRequest.getUserOrderId())){
                 condition.setUserorderid(tradeDetailRequest.getUserOrderId());
             }
+            if(StringUtil.isValidString(tradeDetailRequest.getStatusId())){
+            	condition.setStatusid(tradeDetailRequest.getStatusId());
+            }
             PaginationSupport<TitanTransOrder> pgSupport = new PaginationSupport<TitanTransOrder>();
             pgSupport.setPageSize(tradeDetailRequest.getPageSize());
             pgSupport.setCurrentPage(tradeDetailRequest.getCurrentPage());
-            pgSupport.setOrderBy("createtime desc");
             titanTransOrderDao.selectOrderForPage(condition, pgSupport);
             this.initTradeDetailResp(tradeDetailResponse, pgSupport);
             if (CollectionUtils.isNotEmpty(pgSupport.getItemList())) {//查询结果不为空。为空不能算出错
@@ -1399,7 +1401,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				tradeDetailResponse =  tradeDetail;
 				tradeDetailResponse.putSuccess();
 				return tradeDetailResponse;
-			}
+			} else {
+                tradeDetailResponse.putSuccess();
+                return tradeDetailResponse;
+            }
 		}catch(Exception e){
 			log.error("查询单个订单交易记录失败" + e.getMessage(),e);
 		}
