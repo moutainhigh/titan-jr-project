@@ -48,9 +48,6 @@
             <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '收款'}">
                 已冻结
             </c:if>
-            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType != '收款'}">
-                已成功
-            </c:if>
             <c:if test="${tradeItem.statusid == 9}">
                 <i class="MyAssets_red">交易失败</i>
             </c:if>
