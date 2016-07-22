@@ -501,7 +501,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     public void testGetMerchantLineUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");
-    	paymentUrlRequest.setPayOrderNo("TW15070208151");
+    	paymentUrlRequest.setPayOrderNo("TW16032815436");
     	paymentUrlRequest.setFcUserid("23415");
     	
     	paymentUrlRequest.setPaySource("2");
@@ -573,6 +573,16 @@ public class TianjrFinancialTradeTest extends GenericTest{
 		payMethodConfigRequest.setUserId("TJM10000087");
 		PayMethodConfigDTO payMethodConfigDTO = titanFinancialTradeService.getPayMethodConfigDTO(payMethodConfigRequest);
     }
+    
+//    @Test
+    public void testCallBack(){
+    	TransOrderDTO transOrderDTO = new TransOrderDTO();
+    	transOrderDTO.setUserorderid("TJO160721114348977");
+    	transOrderDTO.setMerchantcode("M10000001");
+    	transOrderDTO.setPayorderno("TW15053107551");
+    	titanFinancialTradeService.confirmFinance(transOrderDTO);
+    }
+    
     
     
     /**

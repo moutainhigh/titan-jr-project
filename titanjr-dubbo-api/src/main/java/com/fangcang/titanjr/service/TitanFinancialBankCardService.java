@@ -60,6 +60,7 @@ public interface TitanFinancialBankCardService {
 	/**
 	 * 定时任务批量绑定银行卡
 	 */
+	
 	public void bindBankCardBatch();
 	
 	/**
@@ -68,4 +69,5 @@ public interface TitanFinancialBankCardService {
 	 * @return
 	 */
 	public ModifyInvalidWithDrawCardResponse  modifyinvalidPublicCard(ModifyInvalidWithDrawCardRequest modifyInvalidWithDrawCardRequest);
+
 }
