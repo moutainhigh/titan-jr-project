@@ -149,7 +149,7 @@ public class FinancialTradeController extends BaseController {
                 	        		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "充值成功 修改充值单失败", OrderExceptionEnum.OrderPay_Update, JSON.toJSONString(orderNo));
                 	        		titanOrderService.saveOrderException(orderExceptionDTO);
                 	        	}
-                	        	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARFE_SUCCESS;
+                	        	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARGE_SUCCESS;
                 	        	//判断该交易是支付还是充值
                     			if(StringUtil.isValidString(transOrderDTO.getPayermerchant())){
                     				
@@ -213,7 +213,7 @@ public class FinancialTradeController extends BaseController {
         						}
                 	        }else{//充值失败
                 	        	titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.Status_3.getStatus()+"");
-                	        	this.updateOrderStatus(transOrderDTO.getTransid(),OrderStatusEnum.RECHARFE_FAIL);
+                	        	this.updateOrderStatus(transOrderDTO.getTransid(),OrderStatusEnum.RECHARGE_FAIL);
                 	        }
 					}
                 	unlockOutTradeNoList(orderNo);
@@ -447,17 +447,17 @@ public class FinancialTradeController extends BaseController {
 			
 			//将充值失败，转账失败，和订单失败，统一设置为失败
 			if(OrderStatusEnum.ORDER_FAIL.getStatus().equals(transOrderDTO.getStatusid())
-					||OrderStatusEnum.RECHARFE_FAIL.getStatus().equals(transOrderDTO.getStatusid())
+					||OrderStatusEnum.RECHARGE_FAIL.getStatus().equals(transOrderDTO.getStatusid())
 					||OrderStatusEnum.TRANSFER_FAIL.getStatus().equals(transOrderDTO.getStatusid())){
 				resultMap.put(WebConstant.MSG, "支付失败");
 				return resultMap;
 			}
 			
 			//处理中是指 充值成功，转账成功视为处理中
-			if(OrderStatusEnum.RECHARFE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())
+			if(OrderStatusEnum.RECHARGE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())
 					||OrderStatusEnum.TRANSFER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())
 					||OrderStatusEnum.ORDER_IN_PROCESS.getStatus().equals(transOrderDTO.getStatusid())
-					||OrderStatusEnum.RECHARFE_IN_PROCESS.getStatus().equals(transOrderDTO.getStatusid())){
+					||OrderStatusEnum.RECHARGE_IN_PROCESS.getStatus().equals(transOrderDTO.getStatusid())){
 				resultMap.put(WebConstant.MSG, "支付处理中");
 				return resultMap;
 			}
