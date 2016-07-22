@@ -39,6 +39,10 @@ public class TradeDetailRequest extends BaseRequestDTO {
 
     //是否冻结
     private String isEscrowedPayment;
+    
+    //状态
+    private String statusId;
+    
 
     public TradeTypeEnum getTradeTypeEnum() {
         return tradeTypeEnum;
@@ -144,4 +148,11 @@ public class TradeDetailRequest extends BaseRequestDTO {
         this.isEscrowedPayment = isEscrowedPayment;
     }
 
+	public String getStatusId() {
+		return statusId;
+	}
+
+	public void setStatusId(String statusId) {
+		this.statusId = statusId;
+	}
 }
