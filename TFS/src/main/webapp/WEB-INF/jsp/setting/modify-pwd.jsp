@@ -36,6 +36,40 @@ $('.J_remember').on('click',function(){
     modify_pwd();
 });   
 
+function clickPassword()
+{
+	$('#passwordbox5').click();
+	
+	function checkPasswordbox5(){
+		try
+		{
+		if($('#passwordbox5 i:last b:first-child').attr('style').indexOf('inherit') != -1)
+			{
+				$('#passwordbox6').click();
+				return;	
+			}
+		}catch(e)
+		{}
+		setTimeout(checkPasswordbox5,100);
+	}
+	
+	function checkPasswordbox6(){
+		try
+		{
+			if($('#passwordbox6 i:last b:first-child').attr('style').indexOf('inherit') != -1)
+			{
+				$('#passwordbox7').click();
+				return;	
+			}
+		}catch(e)
+		{}
+		setTimeout(checkPasswordbox6,100);
+	}
+	
+	setTimeout(checkPasswordbox5,100);
+	setTimeout(checkPasswordbox6,100);
+}
+
 function modify_pwd(){
 	$.ajax({
         dataType : 'html',
@@ -43,6 +77,11 @@ function modify_pwd(){
         url : '<%=basePath%>/setting/modify-pwd-remember.shtml',           
         success : function(html){
             top.F.loading.hide();
+            
+            setTimeout(function(){
+     		   clickPassword();
+       		},500);
+            
             var d =  window.top.dialog({
                 title: ' ',
                 padding: '0 0 0px 0',
@@ -57,6 +96,13 @@ function modify_pwd(){
                                if(validate_password==true){
                             	   update_old_pwd();
                                }
+                               else{
+                            	   $(".ui-dialog-content").html(html);
+                            	   setTimeout(function(){
+                            		   clickPassword();
+                              		},500);
+                               }
+                               return validate_password;
                             },
 					    autofocus: true
                         },
@@ -80,25 +126,25 @@ function validate_payPassword(){
 	
 	if(payPassword3.length!=6){
 		new top.Tip({msg : '原密码必须为6位！', type: 1 , timer:1000}); 
-		modify_pwd();
+// 		modify_pwd();
 		return false;
 	}
 	
 	if(payPassword4.length!=6||payPassword5.length!=6){
 		new top.Tip({msg : '设置的密码必须为6位！', type: 1 , timer:1000}); 
-		modify_pwd();
+// 		modify_pwd();
 		return false;
 	}
 	
 	if(payPassword4!=payPassword5){
 		new top.Tip({msg : '两次新密码输入不相同！', type: 1 , timer:1000});   
-		modify_pwd();
+// 		modify_pwd();
 		return false;
 	}
 	
 	if(payPassword3==payPassword4){
 		new top.Tip({msg : '原密码不能和新密码相同！', type: 1 , timer:1000});   
-		modify_pwd();
+// 		modify_pwd();
 		return false;
 	}
 	return true;

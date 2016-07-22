@@ -587,7 +587,15 @@
                             skin: 'btn p_lr30',
                             callback: function () {
                             	//验证支付密码是否准确
-                            	check_payPassword();
+                            	if(! check_payPassword())
+                            	{
+                            		 $(".ui-dialog-content").html(html);
+                            			setTimeout(function(){
+                                   			$('#passwordbox').click();
+                                   		},500);
+                            		return false;
+                            	}
+                            	return true;
                             	//获取密码
                             },
                             autofocus: true
@@ -606,8 +614,10 @@
     }
     
     function check_payPassword(){
+    	var result = false;
     	 $.ajax({
              type: "post",
+             async:false,
              dataType: 'json',
              url: '<%=basePath%>/setting/check_payPassword.action',
              data: {
@@ -616,17 +626,15 @@
              },
              success: function (data) {
             	 if(data.code=="1"){
+            		 result = true;
             		 pay_Order();
             	 }else{
             		new top.Tip({msg: '输入的密码错误', type: 1, timer: 2000});
-            		  setTimeout(function () {
-            			  show_payPassword();
-                      }, 2000);
-            		
             	 }
              },error:function(data){
              }
     	 });
+    	 return result;
     }
     
     
