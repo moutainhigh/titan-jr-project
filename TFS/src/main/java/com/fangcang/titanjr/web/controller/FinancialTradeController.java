@@ -204,7 +204,7 @@ public class FinancialTradeController extends BaseController {
                     				orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
                     			}
                     			
-                    			log.info("修改财务单:"+toJson(orderStatusEnum));
+                    			log.info("修改单:"+toJson(orderStatusEnum));
                 				boolean updateStatus = this.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
                 				//修改订单状态
                 				if(!updateStatus){
@@ -441,6 +441,7 @@ public class FinancialTradeController extends BaseController {
 					|| OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())
 					|| OrderStatusEnum.FREEZE_FAIL.getStatus().equals(transOrderDTO.getStatusid())){
 				resultMap.put(WebConstant.MSG, "支付成功");
+				
 				return resultMap;
 			}
 			
