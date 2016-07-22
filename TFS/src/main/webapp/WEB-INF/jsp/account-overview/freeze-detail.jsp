@@ -177,7 +177,7 @@
             data:{currentPage:1,
                 pageSize:size,
                 tradeTypeId:"2",
-                isEscrowedPayment:1,
+                isEscrowedPayment:"0",
                 admissionName: partner,
                 startTimeStr: startDate,
                 endTimeStr: endDate,
@@ -254,7 +254,7 @@
             data:{currentPage:page,
                 pageSize:size,
                 tradeTypeId:"2",
-                isEscrowedPayment:1,
+                isEscrowedPayment:"0",
                 admissionName: partner,
                 startTimeStr: startDate,
                 endTimeStr: endDate,
@@ -297,7 +297,7 @@
         if (tradeNo){
             paraList = paraList + "&userOrderId=" + tradeNo;
         }
-        paraList = paraList + "&isEscrowedPayment=1";
+        paraList = paraList + "&isEscrowedPayment=0";
         location.href = "<%=basePath%>/account/exportExcel.shtml" + paraList;
     });
 
@@ -322,7 +322,7 @@
                 currentPage:page,
                 pageSize:size,
                 tradeTypeId:"2",
-                isEscrowedPayment:1,
+                isEscrowedPayment:"0",
                 admissionName: partner,
                 startTimeStr: startDate,
                 endTimeStr: endDate,
