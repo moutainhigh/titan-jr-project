@@ -34,7 +34,7 @@
 </body>
 <script type="text/javascript">
    if('${result}'=="false"){
-	   new top.Tip({msg: '${msg}', type: 1, time: 20000});
+	   new top.Tip({msg: '${msg}', type: 1, timer: 2000});
    }else{
 	   function submitform(){
 		   $("form").submit();

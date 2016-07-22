@@ -37,7 +37,7 @@ public class TitanAccountTest extends GenericTest{
     	}
     }
     
-    @Test
+//    @Test
     public void testAccountBankCardBatch(){
     	titanFinancialBankCardService.bindBankCardBatch();
     }
