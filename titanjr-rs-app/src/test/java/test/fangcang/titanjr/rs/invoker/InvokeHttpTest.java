@@ -46,6 +46,7 @@ public class InvokeHttpTest {
         }
         log.info("调用http请求通知支付支付结果完成：" + response);
         if (!StringUtil.isValidString(response)) {
+        	
             log.info("");
         } else {
 
