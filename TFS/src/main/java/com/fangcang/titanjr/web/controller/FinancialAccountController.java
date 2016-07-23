@@ -725,7 +725,11 @@ public class FinancialAccountController extends BaseController {
                         row.createCell(10).setCellValue(orderDTOList.get(i).getReceivedfee()/100.0);
                     }
                     if (StringUtil.isValidString(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()))) {
-                        row.createCell(11).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
+                        if ("付款".equals(orderDTOList.get(i).getTradeType()) && OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(orderDTOList.get(i).getStatusid())){
+                            row.createCell(11).setCellValue(OrderStatusEnum.ORDER_SUCCESS.getStatusMsg());
+                        } else {
+                            row.createCell(11).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
+                        }
                     }
                 }
                 outputStream = response.getOutputStream();
