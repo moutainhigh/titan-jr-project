@@ -144,12 +144,12 @@ public class FinancialAccountController extends BaseController {
     public String queryForPage(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
             model.addAttribute("organ", this.getTitanOrganDTO());
-            AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
-            accountBalanceRequest.setUserid(this.getUserId());
-            AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
-            if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
-                model.addAttribute("accountBalance", balanceResponse.getAccountBalance().get(0));
-            }
+//            AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
+//            accountBalanceRequest.setUserid(this.getUserId());
+//            AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+//            if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
+//                model.addAttribute("accountBalance", balanceResponse.getAccountBalance().get(0));
+//            }
             tradeDetailRequest.setUserid(this.getUserId());
             if (StringUtil.isValidString(tradeDetailRequest.getTradeTypeId())) {
                 tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
@@ -183,6 +183,8 @@ public class FinancialAccountController extends BaseController {
             if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
                 tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
             }
+            tradeDetailRequest.setStatusId(OrderStatusEnum.FREEZE_SUCCESS.getStatus());
+            
             TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
             if (tradeDetailResponse.isResult()) {
                 model.addAttribute("tradePage", tradeDetailResponse.getTransOrders());
@@ -489,7 +491,7 @@ public class FinancialAccountController extends BaseController {
             bankCardBindRequest.setBankProvince("");
             CusBankCardBindResponse cardBindResponse = titanFinancialBankCardService.bankCardBind(bankCardBindRequest);
             if (!cardBindResponse.isResult()){
-                return toJson(putSysError("使用新卡提现,绑定新体现卡失败"));
+                return toJson(putSysError("使用新卡提现,绑定新提现卡失败"));
             }
         }
 

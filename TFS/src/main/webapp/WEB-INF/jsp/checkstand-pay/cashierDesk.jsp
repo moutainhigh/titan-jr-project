@@ -241,8 +241,15 @@
         }
         
         $(".bankName:first").attr("checked",'0');
+        
+        if('${accountBalance.balanceusable}'=="0.0" 
+        		||'${accountBalance.balanceusable}'=="0.00"
+        		||'${accountBalance.balanceusable}'=="0"){
+        	$("#d_checkbox").attr("checked",false);
+        }
     });
 
+    
     function sub(a, b) {
         var c, d, e;
         try {
@@ -277,17 +284,17 @@
     	if (sub('${orderDTO.payAmount}','${accountBalance.balanceusable}')<= 0){
     		 if($("#d_checkbox").attr("checked")=="checked"){
     			 var arrow = $('.J_payway').find('i');
-    			 var className = arrow.attr("class");
-    			 if(className =="jiantou"){
-    				 conPayWay();
-    			 }
-    			 $(".bankName:first").attr("checked",'0');
-    	       }else{
-    	    	 var arrow = $('.J_payway').find('i');
       			 var className = arrow.attr("class");
       			 if(className !="jiantou"){
       				conPayWay();
       			 }
+    	       }else{
+    	    	  var arrow = $('.J_payway').find('i');
+      			 var className = arrow.attr("class");
+      			 if(className =="jiantou"){
+      				 conPayWay();
+      			 }
+      			 $(".bankName:first").attr("checked",'0');
     	       }
     	}else{//余额不足，将支持两种结合的方式或者选择充值
     		 if($("#d_checkbox").attr("checked")=="checked"){//在线支付剩余余额
@@ -403,7 +410,24 @@
     $('.J_exitKan').on('click',function(){
 		window.close();
 	});
-		
+	
+    var timeIndex = 0;
+    function clickPassword()
+    {
+    	$('#passwordbox').click();
+      		timeIndex = setInterval(function(){
+      			try
+      			{
+      				if($('#passwordbox i:last b:first-child').attr('style').indexOf('inherit') != -1)
+      				{
+      					$('#passwordbox1').click();
+      					clearInterval(timeIndex);
+      				}
+      			}catch(e)
+      			{}
+    	},100);
+    }
+
     
     function show_set_payPassword(){
     	 $.ajax({
@@ -411,6 +435,7 @@
 		        context: document.body,
 		        url: '<%=basePath%>/account/showSetPayPassword.action',
 		        success: function (html) {
+		        	clickPassword()
 		            var d = dialog({
 		                title: ' ',
 		                padding: '0 0 0px 0 ',
@@ -447,18 +472,22 @@
  		                 		                            }, 1000);
 		                        			        	 }
 		                        			         }
-		                        			   })
+		                        			   });
 		                        		}else{
 		                        			 new top.Tip({msg: "密码必须为6位", type: 1, timer: 1000});
-			                        		 setTimeout(function () {
-			                        			 checkIsSetPayPassword();
-	       		                            }, 1000);
+		                        			 $(".ui-dialog-content").html(html);
+			                         			setTimeout(function(){
+			                         				clickPassword();
+			                                		 },500);
+			                         			return false;
 		                        		}
 		                        	}else{
 		                        		 new top.Tip({msg: "两次输入的密码不一致", type: 1, timer: 1000});
-		                        		 setTimeout(function () {
-		                        			 checkIsSetPayPassword();
-       		                            }, 1000);
+		                        		 $(".ui-dialog-content").html(html);
+		                         			setTimeout(function(){
+		                         				clickPassword();
+		                                		 },500);
+		                         			return false;
 		                        		
 		                        	}
 		                        },
@@ -587,7 +616,15 @@
                             skin: 'btn p_lr30',
                             callback: function () {
                             	//验证支付密码是否准确
-                            	check_payPassword();
+                            	if(! check_payPassword())
+                            	{
+                            		 $(".ui-dialog-content").html(html);
+                            			setTimeout(function(){
+                                   			$('#passwordbox').click();
+                                   		},500);
+                            		return false;
+                            	}
+                            	return true;
                             	//获取密码
                             },
                             autofocus: true
@@ -606,8 +643,10 @@
     }
     
     function check_payPassword(){
+    	var result = false;
     	 $.ajax({
              type: "post",
+             async:false,
              dataType: 'json',
              url: '<%=basePath%>/setting/check_payPassword.action',
              data: {
@@ -616,17 +655,15 @@
              },
              success: function (data) {
             	 if(data.code=="1"){
+            		 result = true;
             		 pay_Order();
             	 }else{
             		new top.Tip({msg: '输入的密码错误', type: 1, timer: 2000});
-            		  setTimeout(function () {
-            			  show_payPassword();
-                      }, 2000);
-            		
             	 }
              },error:function(data){
              }
     	 });
+    	 return result;
     }
     
     
@@ -669,7 +706,6 @@
 								 }
 							 $("#confirmOrder").submit();
 						  }, 2000);
-
 					 }
                 },complete:function(){
                 	top.F.loading.hide();
@@ -737,11 +773,11 @@
     	var recieveOrgName = null;
     	var recieveTitanCode = null;
     	if($("#not_exists_history").is(":visible")==true || $(".replanceArea").is(":visible")==true){
-    		recieveOrgName = $("#reOrgName").val();
-        	recieveTitanCode = $("#reTitanCode").val();
+    		recieveOrgName = $.trim($("#reOrgName").val());
+        	recieveTitanCode = $.trim($("#reTitanCode").val());
     	}else{
-    		recieveOrgName =  $("#hiddenAccountName").val();
-    		recieveTitanCode = $("#hiddenTitanCode").val();
+    		recieveOrgName =  $.trim($("#hiddenAccountName").val());
+    		recieveTitanCode =  $.trim($("#hiddenTitanCode").val());
     	}
     	
     	var bankInfo =  $(".bankName:checked").val();

@@ -121,7 +121,7 @@
         $("#right_con_frm").attr('src', $('#right_con_frm').attr('src'));
     });
 
-    $("#withDrawNum").blur(function(){
+   /*  $("#withDrawNum").blur(function(){
         var inputeAmount = $(this).val();
         if($.trim(inputeAmount).length<1){
             $("#inputeAmountError").text("提现金额不能为空");
@@ -129,8 +129,9 @@
             $("#inputeAmountError").text("");
         }
 
-        var neg = /^\d+(\.\d{1,2})?$/;
-        var flag = neg.test($(this).val());
+        var neg = /^[1-9]{1}\d+(\.\d{1,2})?$/;
+        var neg2 = /^[0]{1}(\.\d{1,2})?$/;
+        var flag = neg.test($(this).val())||neg2.test($(this).val());
         if(flag==false){
             $("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
             $(this).val("");
@@ -138,7 +139,7 @@
         }else{
             $("#inputeAmountError").text("");
         }
-    });
+    }); */
 
     //使用新卡提现或者旧卡
     $("#withDrawToNewCard").live('click',function(){
@@ -171,17 +172,23 @@
     $('.J_password').on('click',function(){
     	//验证提现的金额
     	var withdraw_amount = $("#withDrawNum").val();
-    	/* var neg = /^([+-]?)((\d{1,3}(,\d{3})*)|(\d+))(\.\d{2}))?$/; */
-        var neg =/^\d+(\.\d{1,2})?$/;
-    	var flag = neg.test(withdraw_amount);
-    	if(flag==false){
-    		$("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
-    		$(this).val("");
-    		$(this).focus();
-    		return ;
-    	}else{
-    		$("#inputeAmountError").text("");
+    	if(withdraw_amount.length<1){
+    		alert("提现金额不能为空");
+    		return;
     	}
+    	
+    	/* var neg = /^([+-]?)((\d{1,3}(,\d{3})*)|(\d+))(\.\d{2}))?$/; */
+    	  var neg = /^[1-9]{1}\d+(\.\d{1,2})?$/;
+          var neg2 = /^[0]{1}(\.\d{1,2})?$/;
+          var flag = neg.test(withdraw_amount)||neg2.test(withdraw_amount);
+          if(flag==false){
+              $("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
+              $(this).val("");
+              $(this).focus();
+              return;
+          }else{
+              $("#inputeAmountError").text("");
+          }
     	
     	if(withdraw_amount=="0" ||withdraw_amount=="0.0" ||withdraw_amount=="0.00"){
     		$("#inputeAmountError").text("您的提现额度必须大于0");
@@ -193,6 +200,28 @@
     		return ;
     	}
     	
+    	
+    	if($("#accountNum").is(":visible")==true){//如果是需要输入银行卡号
+    		
+    		var bankName= $("#bankName").val();
+        	if(typeof bankName=="undefined"){
+        		alert("收款银行不能为空");
+        		return;
+        	}
+    		
+    		var accountNum = $("#accountNum").val();
+    		 if(accountNum.length<1){
+    	        	alert("银行卡号不能为空");
+    	        	return;
+    	     }else{
+    	    	var neg = /^[0-9]\d*$/
+   	        	if(accountNum.length>20||!neg.test(accountNum)){
+   	        		alert("请输入正确的卡号");
+   	        		return;
+   	        	}
+    	     }
+    	}
+   
     	 showPayPassword();
     	
        /*  if (isNaN($("#withDrawNum").val())){
@@ -215,7 +244,9 @@
         
 
     });
-
+	
+    var pwdHtml = '';
+    
     function showPayPassword(){
     	$.ajax({
             dataType: 'html',
@@ -232,13 +263,17 @@
                             value: '确定',
                             skin : 'btn btn_grey ',
                             callback: function () {
+                            	pwdHtml = html;
                             	if(PasswordStr2.returnStr().length==6){
-                            		to_check_payPassword();
+                            		return to_check_payPassword();
                             	}else{
                             		new top.Tip({msg: '输入的密码必须为6位', type: 1, timer: 2000});
-                            		setTimeout(function () {
-                          			  showPayPassword();
-                                    }, 2000);
+                            		
+                            		 $(".ui-dialog-content").html(html);
+                           			setTimeout(function(){
+                                  			$('#passwordbox').click();
+                                  		},500);
+                           			return false;
                             	}
                             }
                         }
@@ -249,25 +284,31 @@
     }
     
     function to_check_payPassword(){
+    	var result = false;
     	 $.ajax({
              type: "post",
              dataType: 'json',
+             async:false,
              url: '<%=basePath%>/setting/check_payPassword.shtml',
              data: {
             	 payPassword:PasswordStr2.returnStr()
              },
              success: function (data) {
             	 if(data.code=="1"){
+            		 result=true;
             		 toAccountWithdraw();
+            		 
             	 }else{
             		new top.Tip({msg: '输入的密码错误', type: 1, timer: 2000});
-            		  setTimeout(function () {
-            			  showPayPassword();
-                      }, 2000);
-            		
+            		 $(".ui-dialog-content").html(pwdHtml);
+            			setTimeout(function(){
+                   			$('#passwordbox').click();
+                   		 },500);
             	 }
              }
     	 });
+    	 
+    	 return result;
     }
     
     function toAccountWithdraw(){
@@ -316,12 +357,30 @@
            }); 
    }
     
+    var timeIndex = 0;
+    function clickPassword()
+    {
+    	$('#passwordbox').click();
+      		timeIndex = setInterval(function(){
+      			try
+      			{
+      				if($('#passwordbox i:last b:first-child').attr('style').indexOf('inherit') != -1)
+      				{
+      					$('#passwordbox1').click();
+      					clearInterval(timeIndex);
+      				}
+      			}catch(e)
+      			{}
+    	},100);
+    }
+
     function show_setPayPassword(){
     	 $.ajax({
 		        dataType: 'html',
 		        context: document.body,
 		        url: '<%=basePath%>/account/showSetPayPassword.action',
 		        success: function (html) {
+		        	clickPassword();
 		            var d = dialog({
 		                title: ' ',
 		                padding: '0 0 0px 0 ',
@@ -334,19 +393,33 @@
 		                        callback: function () {
 		                        	if(PasswordStr.returnStr()==PasswordStr1.returnStr()){
 		                        		if(PasswordStr.returnStr().length==6){
-		                        			set_PayPassword();
+		                        			if(!set_PayPassword())
+		                        			{
+		                        				 $(".ui-dialog-content").html(html);
+		                             			setTimeout(function(){
+		                             				clickPassword();
+		                                    		 },500);
+		                        				return false;
+		                        			}
+		                        			return true;
 		                        		}else{
 		                        			 new top.Tip({msg: "密码必须为6位", type: 1, timer: 1000});
-			                        		 setTimeout(function () {
-			                        			 show_setPayPassword();
-	       		                            }, 1000);
+		                        			 
+		                        			 $(".ui-dialog-content").html(html);
+		                         			setTimeout(function(){
+		                         				clickPassword();
+		                                		 },500);
+			                        		
 		                        		}
 		                        	}else{
 		                        		 new top.Tip({msg: "两次输入密码不一致", type: 1, timer: 1000});
-		                        		 setTimeout(function () {
-		                        			 show_setPayPassword();
-       		                            }, 1000);
+		                        		 $(".ui-dialog-content").html(html);
+		                     			setTimeout(function(){
+		                     				clickPassword();
+		                            		 },500);
 		                        	}
+		                        	
+		                        	 return false;
 		                        },
 		                        autofocus: true
 		                    },
@@ -358,9 +431,11 @@
     }
     
     function set_PayPassword(){
+    	var result = false;
     	 $.ajax({
 	    	 type: "post",
 	         url: "<%=basePath%>/account/setPayPassword.action",
+	         async:false,
 	         data: {
 	        	/*  payPassword:rsaData(PasswordStr.returnStr()) */
 	        	 payPassword:PasswordStr.returnStr()
@@ -368,6 +443,7 @@
 	         dataType: "json",
 	         success: function(data){
 	        	 if(data.result=="success"){
+	        		 result = true;
 	        		top.F.loading.show();
                      setTimeout(function () {
                          top.F.loading.hide();
@@ -381,7 +457,8 @@
                          }, 1000);
 	        	 }
 	         }
-	   })
+	   });
+    	 return result;
     }
     
     

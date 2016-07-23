@@ -181,7 +181,6 @@ $('.J_password').on('click',function(){
 	//验证是否有交易密码
 	 var validate = validate_isBlank();
 	 if(validate==false){
-		 alert("必须输入金额");
 		 return;
 	 }
 	 recharge_Order(); 
@@ -354,13 +353,23 @@ function validate_isBlank(){
 $("#inputeAmount").blur(function(){
 	var inputeAmount = $(this).val();
 	if($.trim(inputeAmount).length<1){
-		 $("#inputeAmountError").text("收款方泰坦码不能为空");
+		 $("#inputeAmountError").text("充值金额不能为空");
 	}else{
 		 $("#inputeAmountError").text("");
 	}
 	
-	var neg = /^\d+(\.\d{1,2})?$/;;
-	var flag = neg.test($(this).val());
+	var strArry = inputeAmount.split(".");
+	if(strArry[0].length>8){
+		$("#inputeAmountError").text("对不起，本系统支持的最大充值金额为99,999,999");
+		$(this).val("");
+		$(this).focus();
+		return;
+	}
+	
+	/* var neg = /^\d+(\.\d{1,2})?$/; */
+	var neg = /^[1-9]{1}\d{0,7}(\.\d{1,2})?$/;
+	var neg2 = /^[0]{1}(\.\d{1,2})?$/;
+	var flag = neg.test($(this).val())||neg2.test($(this).val());
 	if(flag==false){
 		$("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
 		$(this).val("");

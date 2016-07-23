@@ -76,6 +76,7 @@
 		<mapper resource="mybatis/TitanCodeMapper.xml" />
 		<mapper resource="mybatis/rs/rsInvokeConfig-mapper.xml"/>
 		<mapper resource="mybatis/rs/rsPayMethod-mapper.xml"/>
+		<mapper resource="mybatis/rs/callBackConfig-mapper.xml"/>
 		<mapper resource="mybatis/TitanOrgCheckLogMapper.xml" />
 		<mapper resource="mybatis/TitanAccountCodeMapper.xml" />
 		<mapper resource="mybatis/TitanFundUnFreezereqMapper.xml" />

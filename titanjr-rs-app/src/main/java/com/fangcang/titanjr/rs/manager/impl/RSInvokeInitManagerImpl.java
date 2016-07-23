@@ -3,9 +3,11 @@ package com.fangcang.titanjr.rs.manager.impl;
 import com.Rop.api.DefaultRopClient;
 import com.Rop.api.request.ExternalSessionGetRequest;
 import com.Rop.api.response.ExternalSessionGetResponse;
+import com.fangcang.titanjr.rs.dao.CallBackConfigDao;
 import com.fangcang.titanjr.rs.dao.RSInvokeConfigDao;
 import com.fangcang.titanjr.rs.dao.RSPayMethodDao;
 import com.fangcang.titanjr.rs.entity.RSInvokeConfig;
+import com.fangcang.titanjr.rs.entity.TitanCallBackConfig;
 import com.fangcang.titanjr.rs.entity.TitanPayMethod;
 import com.fangcang.titanjr.rs.entity.TitanPayMethodConfig;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
@@ -25,6 +27,8 @@ public class RSInvokeInitManagerImpl {
     private RSInvokeConfigDao rsInvokeConfigDao;
 
     private RSPayMethodDao rsPayMethodDao;
+
+    private CallBackConfigDao callBackConfigDao;
 
     public void initRopClient() {
         //测试时使用
@@ -59,6 +63,10 @@ public class RSInvokeInitManagerImpl {
             }
         }
         log.info("当前构建的sessionkey是：" + RSInvokeConstant.sessionKey);
+        List<TitanCallBackConfig> callBackConfigs = callBackConfigDao.queryAllCallBackConfig();
+        for (TitanCallBackConfig callBackConfig : callBackConfigs) {
+            RSInvokeConstant.callBackConfigMap.put(callBackConfig.getPaySource(),callBackConfig.getCallBackURL());
+        }
     }
 
     public void initSessionKey(DefaultRopClient ropClient) {
@@ -81,5 +89,9 @@ public class RSInvokeInitManagerImpl {
 
     public void setRsPayMethodDao(RSPayMethodDao rsPayMethodDao) {
         this.rsPayMethodDao = rsPayMethodDao;
+    }
+
+    public void setCallBackConfigDao(CallBackConfigDao callBackConfigDao) {
+        this.callBackConfigDao = callBackConfigDao;
     }
 }

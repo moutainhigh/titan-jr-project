@@ -32,7 +32,7 @@
             ${tradeItem.tradeamount /100}
         </td>
         <td>
-            <c:if test="${tradeItem.isEscrowedPayment == 0 and tradeItem.tradeType == '收款'}">
+            <c:if test="${tradeItem.isEscrowedPayment == 0 and tradeItem.tradeType == '收款' and tradeItem.statusid=='6'}">
                 <i class="freeze_ico" title="供应商确认订单号即可解冻"/>
             </c:if>
         </td>
@@ -47,9 +47,6 @@
             </c:if>
             <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '收款'}">
                 已冻结
-            </c:if>
-            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType != '收款'}">
-                已成功
             </c:if>
             <c:if test="${tradeItem.statusid == 9}">
                 <i class="MyAssets_red">交易失败</i>

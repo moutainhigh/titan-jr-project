@@ -31,4 +31,6 @@ public class RSInvokeConstant {
     public static Long defaultRoleId = null;
     //支付方式配置表，key是userid，value主要包含支付方式回调地址
     public static Map<String, TitanPayMethodConfig> payMethodConfigMap = new HashMap<String, TitanPayMethodConfig>();
+    //金服回调地址配置
+    public static Map<String,String> callBackConfigMap = new HashMap<String, String>();
 }
