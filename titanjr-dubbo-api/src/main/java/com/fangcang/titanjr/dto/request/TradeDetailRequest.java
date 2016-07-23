@@ -15,6 +15,9 @@ public class TradeDetailRequest extends BaseRequestDTO {
     //业务单号
     private String businessordercode;
 
+    //支付单号
+    private String payOrderNo;
+
     //查询类型
     private TradeTypeEnum tradeTypeEnum;
     //交易类型id
@@ -144,4 +147,11 @@ public class TradeDetailRequest extends BaseRequestDTO {
         this.isEscrowedPayment = isEscrowedPayment;
     }
 
+    public String getPayOrderNo() {
+        return payOrderNo;
+    }
+
+    public void setPayOrderNo(String payOrderNo) {
+        this.payOrderNo = payOrderNo;
+    }
 }

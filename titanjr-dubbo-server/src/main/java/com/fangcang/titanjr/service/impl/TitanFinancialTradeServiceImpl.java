@@ -1302,6 +1302,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
             if (StringUtil.isValidString(tradeDetailRequest.getUserOrderId())){
                 condition.setUserorderid(tradeDetailRequest.getUserOrderId());
             }
+            if (StringUtil.isValidString(tradeDetailRequest.getPayOrderNo())){
+                condition.setPayorderno(tradeDetailRequest.getPayOrderNo());
+            }
             PaginationSupport<TitanTransOrder> pgSupport = new PaginationSupport<TitanTransOrder>();
             pgSupport.setPageSize(tradeDetailRequest.getPageSize());
             pgSupport.setCurrentPage(tradeDetailRequest.getCurrentPage());
@@ -1350,7 +1353,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	public TradeDetailResponse getOrderTradeDetail(TradeDetailRequest tradeDetailRequest) {
 		TradeDetailResponse tradeDetailResponse = new TradeDetailResponse();
         if(tradeDetailRequest == null || (!StringUtil.isValidString(tradeDetailRequest.getBusinessordercode()) &&
-                !StringUtil.isValidString(tradeDetailRequest.getUserOrderId()))){
+                !StringUtil.isValidString(tradeDetailRequest.getUserOrderId()) &&
+                !StringUtil.isValidString(tradeDetailRequest.getPayOrderNo()))){
             tradeDetailResponse.putSysError();
             return tradeDetailResponse;
         }

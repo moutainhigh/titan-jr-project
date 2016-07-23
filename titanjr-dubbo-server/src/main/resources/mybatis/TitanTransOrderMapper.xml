@@ -38,6 +38,9 @@
        <if test="businessordercode !=null">
            and businessordercode = #{businessordercode}
        </if>
+        <if test="payorderno !=null">
+            and payorderno = #{payorderno}
+        </if>
        <if test="isEscrowedPayment !=null">
            and isEscrowedPayment = #{isEscrowedPayment}
        </if>
