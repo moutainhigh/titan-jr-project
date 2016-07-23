@@ -3,7 +3,7 @@ var email_reg=/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
 var phone_reg=/^13[0-9]{9}$|^14[0-9]{9}$|^15[0-9]{9}$|^18[0-9]{9}$|^17[0-9]{9}$/;
 function AjaxPage(option){
 	this.defaults = {
-			"pageSize":5,
+			"pageSize":15,
 			"pageNo":1,
 			"url":"",
 			success:function(){},//ajax请求成功的回调函数
@@ -52,7 +52,6 @@ AjaxPage.prototype.setSize=function(){
  * @param option
  */
 AjaxPage.prototype.load=function(){
-	
 	var _ajaxPage = this;
 	var _option;
 	this.option.pageNo=1;

@@ -180,7 +180,6 @@ function showPayPassword(){
                            			return true;
                            		}
                            		$(".ui-dialog-content").html(html);
-                           		payDialog.focus();
                            		return false;
                            	}else{
                            		new top.Tip({msg: '请输入6位付款密码', type: 1, timer: 2000});
