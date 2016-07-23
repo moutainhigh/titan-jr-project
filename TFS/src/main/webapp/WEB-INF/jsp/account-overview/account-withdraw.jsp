@@ -331,7 +331,9 @@
              success: function (data) {
                  if(data.code == 1){
                      withDrawCallBack('提现申请已提交，等待银行处理。<br/>预计到账时间：2小时内', 1);
+                     top.removeIframeDialog();
                      $("#flashPage").submit();//刷新页面
+                     
                  } else {
                      if (data.msg == '支付密码不正确请重新输入') {
                          withDrawCallBack(data.msg, 0);
@@ -472,7 +474,7 @@
             skin : 'saas_confirm_singlebtn',
             ok : function(){
                 if (needClose == 1){
-                    top.removeIframeDialog();
+                   
                     $("#right_con_frm").attr('src','<%=basePath%>/account/overview-main.shtml');
                 }
                 //TODO 需刷新当前提现记录页面
