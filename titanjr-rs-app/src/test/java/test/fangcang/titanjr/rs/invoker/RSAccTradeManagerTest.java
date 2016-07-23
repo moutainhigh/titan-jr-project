@@ -98,9 +98,9 @@ public class RSAccTradeManagerTest extends GenericTest {
 		req.setMerchantcode("M000016");							//转入方机构号
 		req.setProductid("P000070");							//转入方产品号
 		req.setUserrelateid("TJM10000087");	                    //接收方用户Id		
-		req.setRequestno("TJR160630192241816");									//业务订单号
+		req.setRequestno("TJR160630192241819");									//业务订单号
 		req.setRequesttime("2016-4-12 22:22:22");				//请求时间
-		req.setAmount("10000000");										//金额
+		req.setAmount("100");										//金额
 		req.setUserfee("0");		
 		req.setUserid("TJM10000111");
 		req.setIntermerchantcode("M000016");					//转出方机构号
@@ -285,15 +285,15 @@ public class RSAccTradeManagerTest extends GenericTest {
     }
     
     //提现
-//    @Test
+    @Test
     public void testAccountBalanceWithDraw(){
     	AccountWithDrawRequest req = new AccountWithDrawRequest();
     	req.setProductid("P000070");					//产品号
-		req.setAmount("480");							//金额
+		req.setAmount("100");							//金额
 		req.setMerchantcode("M000016");					//机构号
 		req.setOrderdate("2015-04-26 14:18:55");						//订单日期 yyyy-MM-dd hh:mm:ss
-		req.setUserid("TJM10000108");							//用户号
-		req.setUserorderid("kmdlks23sd");						//订单号
+		req.setUserid("TJM10000010");							//用户号
+		req.setUserorderid("kmdlks23sda");						//订单号
 		req.setUserfee((long)0);						//手续费
 		AccountWithDrawResponse response = rsAccTradeManager.accountBalanceWithDraw(req);
 		System.out.print("------------------"+response.getReturnCode()+"----------"+response.getReturnMsg());

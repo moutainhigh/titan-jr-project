@@ -37,7 +37,7 @@
                             </div>
                             <div>
                                 <span class="w_160"><i class="c_f00">*</i>收款方 - 泰坦码：</span>
-                                <input type="text" class="text w_250" id="reTitanCode" dataType="*" errorMsg="泰坦码不能为空"><span id="reTitanCodeError" style="color:red"></span>
+                                <input type="text" class="text w_250" id="reTitanCode" dataType="*" errorMsg="收款泰坦码不能为空"><span id="reTitanCodeError" style="color:red"></span>
                             </div>
                         </div>
                     </li>
@@ -298,9 +298,9 @@
     	       }
     	}else{//余额不足，将支持两种结合的方式或者选择充值
     		 if($("#d_checkbox").attr("checked")=="checked"){//在线支付剩余余额
-    			 $("#pay_surplus_amount").text('${orderDTO.payAmount}');
-    		 }else{//在线支付全款
     			 $("#pay_surplus_amount").text(sub('${orderDTO.payAmount}','${accountBalance.balanceusable}'));
+    		 }else{//在线支付全款
+    			 $("#pay_surplus_amount").text('${orderDTO.payAmount}');
     		 }
     	}
     }
@@ -334,9 +334,9 @@
                     var textinput='<li class="replanceArea">'+
                             ' <div class="goldpay"><div>'+
                             ' <span class="w_160"><i class="c_f00">*</i>收款账户（公司名称）：</span>' +
-                            ' <input type="text" id="reOrgName" class="text w_250" ></div><div>' +
+                            ' <input type="text" id="reOrgName" class="text w_250" ><span id="reOrgNameError" style="color:red"></div><div>' +
                             ' 	<span class="w_160"><i class="c_f00">*</i>收款方 - 泰坦码：</span>'+
-                            '  <input type="text" id="reTitanCode"  class="text w_250"></div></div>'	+
+                            '  <input type="text" id="reTitanCode"  class="text w_250"><span id="reTitanCodeError" style="color:red"></div></div>'	+
                             '</li>';
                     $(".goldpay_top ul").children('.goldpay_replace').replaceWith(textinput);
                     
@@ -807,16 +807,22 @@
     }
     
     function validate_isBlank(){
-    	if($("#not_exists_history").is(":visible")==true){
+    	if($("#not_exists_history").is(":visible")==true || $(".replanceArea").is(":visible")==true){
     		if($.trim($("#reOrgName").val()).length<1){
-        		$("#reOrgNameError").text("收款方泰坦码不能为空");
+        		$("#reOrgNameError").text("收款方账户不能为空");
         		return false;
+        	}else{
+        		$("#reOrgNameError").text("");
         	}
         	if($.trim($("#reTitanCode").val()).length<1){
-        		$("#reTitanCodeError").text("收款方账户不能为空");
+        		$("#reTitanCodeError").text("收款方泰坦码不能为空");
         		return false;
+        	}else{
+        		$("#reTitanCodeError").text("");
         	}
     	}
+    	$("#reOrgNameError").text("");
+    	$("#reTitanCodeError").text("");
     	return true;
     }
     
