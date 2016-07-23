@@ -1,24 +1,11 @@
 package com.fangcang.titanjr.web.interceptor;
 
-import com.fangcang.merchant.api.MerchantFacade;
-import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
-import com.fangcang.merchant.response.dto.MerchantResponseDTO;
-import com.fangcang.security.acegi.user.UserWithDomain;
-import com.fangcang.security.domain.User;
-import com.fangcang.session.UserInfo;
-import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
-import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
-import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
-import com.fangcang.titanjr.dto.bean.RoleDTO;
-import com.fangcang.titanjr.dto.bean.UserInfoDTO;
-import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
-import com.fangcang.titanjr.dto.response.UserInfoResponse;
-import com.fangcang.titanjr.rs.util.RSInvokeConstant;
-import com.fangcang.titanjr.service.TitanFinancialUserService;
-import com.fangcang.titanjr.web.user.RoleWrapper;
-import com.fangcang.titanjr.web.user.UserWrapper;
-import com.fangcang.titanjr.web.util.WebConstant;
-import com.fangcang.titanjr.web.util.TranslateUtil;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContext;
@@ -30,12 +17,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.fangcang.merchant.api.MerchantFacade;
+import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
+import com.fangcang.merchant.response.dto.MerchantResponseDTO;
+import com.fangcang.security.acegi.user.UserWithDomain;
+import com.fangcang.security.domain.User;
+import com.fangcang.session.UserInfo;
+import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
+import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
+import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
+import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.bean.RoleDTO;
+import com.fangcang.titanjr.dto.bean.UserInfoDTO;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
+import com.fangcang.titanjr.dto.response.UserInfoResponse;
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanFinancialUserService;
+import com.fangcang.titanjr.web.user.RoleWrapper;
+import com.fangcang.titanjr.web.user.UserWrapper;
+import com.fangcang.titanjr.web.util.TranslateUtil;
+import com.fangcang.titanjr.web.util.WebConstant;
 
 /**
  * 此拦截器会将cas传过来的用户的角色信息
@@ -51,6 +53,8 @@ public class InitSessionInterceptor implements HandlerInterceptor {
 
     @Autowired
     private TitanFinancialUserService titanFinancialUserService;
+    @Autowired
+    private TitanFinancialOrganService organService;
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
@@ -58,15 +62,9 @@ public class InitSessionInterceptor implements HandlerInterceptor {
         HttpSession session = httpServletRequest.getSession();
         MerchantFacade merchantFacade = hessianProxyBeanFactory.getHessianProxyBean(MerchantFacade.class,
                 ProxyFactoryConstants.merchantServerUrl + "merchantFacade");
-        // 第一步：用户登录身份的拦截判定
-        // 当登录用户和金服来源都为空时候进入判定逻辑
-        System.out.println((UserWrapper)session.getAttribute("onlineRoleUser"));
-        System.out.println((String)session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE));
         
         if (session.getAttribute("onlineRoleUser") == null || session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE) == null) {
             if (session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER) != null && session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ROLE) == null) {
-                //房仓商家系统用户组装判定
-                UserInfo userInfo = (UserInfo) session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER);
                 UserWrapper roleUser = null;
                 SecurityContext ctx = SecurityContextHolder.getContext();
                 if (null != ctx) {
@@ -85,7 +83,9 @@ public class InitSessionInterceptor implements HandlerInterceptor {
                         }
                     }
                 }
-                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_IS_ADMIN, roleUser.getAdmin());//是否管理员
+              //房仓商家系统用户组装判定
+                UserInfo userInfo = (UserInfo) session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER);
+                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_IS_ADMIN, roleUser.getAdmin()==null?0:roleUser.getAdmin());//是否管理员
                 session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_LOGINNAME, roleUser.getLoginName());//用户登录名
                 session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME, roleUser.getName());//用户名
                 session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ID, roleUser.getId());//用户Id，必须
@@ -119,19 +119,21 @@ public class InitSessionInterceptor implements HandlerInterceptor {
                 UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
                 if (WebConstant.SESSION_KEY_JR_RESOURCE_2_SAAS.equals(session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE))) {
                     userInfoQueryRequest.setBindLoginName(roleUser.getLoginName());//SAAS商家的用户名
+                    //绑定状态
+                    OrgBindInfo condition = new OrgBindInfo();
+                    condition.setMerchantCode(userInfo.getMerchantCode());
+                    OrgBindInfo orgBindInfo = organService.queryOrgBindInfoByUserid(condition);
+                    if(orgBindInfo!=null&&orgBindInfo.getBindStatus()==1){
+                    	session.setAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS, "1");
+                    }else{
+                    	session.setAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS, "0");
+                    }
                 } else {
                     userInfoQueryRequest.setUserLoginName(roleUser.getLoginName());//SAAS商家用户名也是金服的 用户名
                 }
-                //TODO 若账号冻结，此处逻辑有问题，查不出不一定是未绑定
-              //JR_BIND_STATUS标示是否绑定，在登录来源为2时判定是否绑定
                 UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
                 if (CollectionUtils.isNotEmpty(userInfoResponse.getUserInfoDTOList())) {
-                    if (session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE).equals(WebConstant.SESSION_KEY_JR_RESOURCE_2_SAAS)) {//表明已经绑定成功
-                        session.setAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS, "1");
-                    }
-
                     UserInfoDTO userInfoDTO = userInfoResponse.getUserInfoDTOList().get(0);
-                    
                     if(userInfoDTO.getRoleDTOList()!=null&&userInfoDTO.getRoleDTOList().size()>0){
                     	List<RoleDTO> activeRoleList = new ArrayList<RoleDTO>();
                     	for(RoleDTO item : userInfoDTO.getRoleDTOList()){
@@ -156,10 +158,7 @@ public class InitSessionInterceptor implements HandlerInterceptor {
                         }
                     }
                 } else {//当查询不到时，判定来源是否为2
-                    if (session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE).equals(WebConstant.SESSION_KEY_JR_RESOURCE_2_SAAS)) {
-                        //当bindStatus为0时，JR_ROLE_LIST JR_LOGIN_UESRNAME JR_USERID JR_TFS_USERID 以及权限标示全部为空
-                        session.setAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS, "0");
-                    } else {//若不是saas登录进来，一定能查到，查不到需重新登录
+                    if (!session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE).equals(WebConstant.SESSION_KEY_JR_RESOURCE_2_SAAS)) {
                         log.error("用户信息设置有误，请检查后重新登录。");
                         httpServletResponse.sendRedirect("/TFS/j_acegi_logout?wait=y");
                         return false;

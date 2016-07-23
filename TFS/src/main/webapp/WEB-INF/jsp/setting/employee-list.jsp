@@ -72,9 +72,9 @@
 	<div class="pagination1">
 		<div class="pagination_r">
 			每页显示酒店数量
-			<i class="on">5</i>
+			<i >5</i>
 			<i>10</i>
-			<i>15</i>
+			<i >15</i>
 			<i>20</i>
 		</div>
 	</div>
