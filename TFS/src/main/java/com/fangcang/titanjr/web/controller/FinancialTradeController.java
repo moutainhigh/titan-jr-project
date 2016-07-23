@@ -36,6 +36,7 @@ import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.*;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.DefaultPayerConfig;
@@ -382,8 +383,9 @@ public class FinancialTradeController extends BaseController {
 			if(!WebConstant.FAIL.equals(result.get(WebConstant.RESULT))){
 				TransOrderCreateResponse transOrderCreateResponse = titanFinancialTradeService.createTitanTransOrder(paymentRequest);
 				if(!transOrderCreateResponse.isResult() || !StringUtil.isValidString(transOrderCreateResponse.getOrderNo()) ){
+					log.error("call createTitanTransOrder fail msg["+ transOrderCreateResponse.getReturnMessage()+"]");
 			    	//下单失败
-					model.addAttribute(WebConstant.MSG, transOrderCreateResponse.getReturnMessage());
+					model.addAttribute(WebConstant.MSG, "创建付款单失败，请重试！");
 			    }else{
 			    	//设置支付方式
 			    	if(StringUtil.isValidString(paymentRequest.getLinePayType())){

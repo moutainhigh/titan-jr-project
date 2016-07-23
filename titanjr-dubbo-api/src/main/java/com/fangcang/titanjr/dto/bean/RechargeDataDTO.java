@@ -63,6 +63,7 @@ public class RechargeDataDTO implements Serializable{
 		//签名字符串
 		private String signMsg;
 		
+		private String gateWayUrl;
 		
 		
 		//测试支付回调接口
@@ -248,5 +249,10 @@ public class RechargeDataDTO implements Serializable{
 		public void setKey(String key) {
 			this.key = key;
 		}
-		
+		public String getGateWayUrl() {
+			return gateWayUrl;
+		}
+		public void setGateWayUrl(String gateWayUrl) {
+			this.gateWayUrl = gateWayUrl;
+		}
 }
