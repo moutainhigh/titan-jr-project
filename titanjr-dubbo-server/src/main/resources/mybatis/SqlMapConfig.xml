@@ -83,6 +83,7 @@
 		<mapper resource="mybatis/TitanDynamicKeyMapper.xml" />
 		<mapper resource="mybatis/TitanPayMethodConfigMapper.xml" />
 		<mapper resource="mybatis/TitanOrderException.xml" />
+		<mapper resource="mybatis/TitanCheckCodeMapper.xml" />
 	</mappers>
 
 </configuration>

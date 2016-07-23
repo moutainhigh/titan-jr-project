@@ -158,6 +158,26 @@ public interface TitanFinancialOrganService {
     public OrgBindInfo queryOrgBindInfoByUserid(OrgBindInfo orgBindInfo);
     
     /**
+     * 获取或者生成验证码
+     * @param getCheckCodeRequest
+     * @return
+     */
+    public GetCheckCodeResponse getCheckCode(GetCheckCodeRequest getCheckCodeRequest) throws GlobalServiceException;
+    
+    /**
+     * 校验验证码
+     * @param verifyCheckCodeRequest
+     * @return
+     */
+    public VerifyCheckCodeResponse verifyCheckCode(VerifyCheckCodeRequest verifyCheckCodeRequest);
+    
+    /**
+     * 使用验证码
+     * @param updateCheckCodeRequest
+     * @return
+     */
+    public BaseResponseDTO useCheckCode(UpdateCheckCodeRequest updateCheckCodeRequest) throws  GlobalServiceException;
+    /**
      * 查询机构信息
      * @param orgDTO
      * @return

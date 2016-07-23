@@ -180,7 +180,6 @@ function showPayPassword(){
                            			return true;
                            		}
                            		$(".ui-dialog-content").html(html);
-                           		
                            		setTimeout(function(){
                            			$('#passwordbox').click();
                            		},500);

@@ -480,15 +480,15 @@ public class TianjrFinancialTradeTest extends GenericTest{
     
     
     //获取商家向酒店支付地址
-//    @Test
+    @Test
     public void testGetMerchantUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");
-    	paymentUrlRequest.setPayOrderNo("TW16070118171");
+    	paymentUrlRequest.setPayOrderNo("TW16033015471");
     	paymentUrlRequest.setFcUserid("23298");
     	paymentUrlRequest.setPaySource("2");
     	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
-    	paymentUrlRequest.setIsEscrowed("1");
+    	paymentUrlRequest.setIsEscrowed("0");
 //    	paymentUrlRequest.setRecieveMerchantCode("M10000002");
     	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
     	if(paymentUrlResponse !=null){
@@ -497,7 +497,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     }
     
     //联盟分销商向联盟供应商付款
-    @Test
+//    @Test
     public void testGetMerchantLineUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");

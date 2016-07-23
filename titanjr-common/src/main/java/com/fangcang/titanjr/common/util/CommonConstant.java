@@ -74,6 +74,7 @@ public class CommonConstant {
 	//短信发送选用服务号
 	public static final String DEFAULT_SMS_PROVIDER_KEY = "3369";
 	
+	/************************************** begin 权限   ****************************/
 	//是否忘记支付密码
     public static final String IS_FORGET_PAYPASSWORD="1";
 	// 付款权限
@@ -96,6 +97,11 @@ public class CommonConstant {
     
     //不需要权限
     public static final String ROLECODE_NO_LIMIT = "NO_LIMIT";
+    
+    /************************************** end 权限   ****************************/
+    
+    //验证码有效时长，单位：小时
+    public static final Integer CODE_TIME_OUT_HOUR = 1 ;
 	
 	
 }

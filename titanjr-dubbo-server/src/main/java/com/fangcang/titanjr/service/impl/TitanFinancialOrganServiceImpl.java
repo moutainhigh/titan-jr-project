@@ -9,11 +9,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.fangcang.titanjr.dto.BaseResponseDTO;
-import com.fangcang.titanjr.dto.response.*;
-
 import net.sf.json.JSONSerializer;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -30,6 +29,7 @@ import com.fangcang.finance.exception.ParameterException;
 import com.fangcang.titanjr.common.enums.ImgSizeEnum;
 import com.fangcang.titanjr.common.enums.LoginSourceEnum;
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
+import com.fangcang.titanjr.common.enums.entity.TitanCheckCodeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgBindinfoEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgImageEnum;
@@ -42,7 +42,9 @@ import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.common.util.ImageIOExtUtil;
 import com.fangcang.titanjr.common.util.ImageResizer;
 import com.fangcang.titanjr.common.util.MD5;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanAccountDao;
+import com.fangcang.titanjr.dao.TitanCheckCodeDao;
 import com.fangcang.titanjr.dao.TitanOrgBindinfoDao;
 import com.fangcang.titanjr.dao.TitanOrgCheckDao;
 import com.fangcang.titanjr.dao.TitanOrgCheckLogDao;
@@ -50,6 +52,7 @@ import com.fangcang.titanjr.dao.TitanOrgDao;
 import com.fangcang.titanjr.dao.TitanOrgImageDao;
 import com.fangcang.titanjr.dao.TitanRoleDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
@@ -59,6 +62,7 @@ import com.fangcang.titanjr.dto.request.CashierDeskInitRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
+import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.OrgRegisterValidateRequest;
 import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
 import com.fangcang.titanjr.dto.request.OrganBindRequest;
@@ -68,8 +72,27 @@ import com.fangcang.titanjr.dto.request.OrganImageRequest;
 import com.fangcang.titanjr.dto.request.OrganImageUploadRequest;
 import com.fangcang.titanjr.dto.request.OrganRegisterRequest;
 import com.fangcang.titanjr.dto.request.OrganRegisterUpdateRequest;
+import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.UserRegisterRequest;
+import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
+import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.FinancialUserBindResponse;
+import com.fangcang.titanjr.dto.response.FinancialUserUnBindResponse;
+import com.fangcang.titanjr.dto.response.GetCheckCodeResponse;
+import com.fangcang.titanjr.dto.response.OrgRegisterValidateResponse;
+import com.fangcang.titanjr.dto.response.OrganBindResponse;
+import com.fangcang.titanjr.dto.response.OrganBriefResponse;
+import com.fangcang.titanjr.dto.response.OrganCheckResponse;
+import com.fangcang.titanjr.dto.response.OrganFreezeResponse;
+import com.fangcang.titanjr.dto.response.OrganImageResponse;
+import com.fangcang.titanjr.dto.response.OrganImageUploadResponse;
+import com.fangcang.titanjr.dto.response.OrganQueryCheckResponse;
+import com.fangcang.titanjr.dto.response.OrganRegisterResponse;
+import com.fangcang.titanjr.dto.response.OrganRegisterUpdateResponse;
+import com.fangcang.titanjr.dto.response.UserRegisterResponse;
+import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
 import com.fangcang.titanjr.entity.TitanAccount;
+import com.fangcang.titanjr.entity.TitanCheckCode;
 import com.fangcang.titanjr.entity.TitanOrg;
 import com.fangcang.titanjr.entity.TitanOrgBindinfo;
 import com.fangcang.titanjr.entity.TitanOrgCheck;
@@ -77,11 +100,11 @@ import com.fangcang.titanjr.entity.TitanOrgCheckLog;
 import com.fangcang.titanjr.entity.TitanOrgImage;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.entity.parameter.TitanAccountParam;
+import com.fangcang.titanjr.entity.parameter.TitanCheckCodeParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgBindinfoParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgCheckParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgImageParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgParam;
-import com.fangcang.titanjr.entity.parameter.TitanRoleParam;
 import com.fangcang.titanjr.entity.parameter.TitanUserParam;
 import com.fangcang.titanjr.rs.dao.RSInvokeConfigDao;
 import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
@@ -142,6 +165,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     
     @Resource
     private TitanRoleDao titanRoleDao;
+    @Resource
+    private TitanCheckCodeDao checkCodeDao;
     @Resource
     private TitanFinancialUserService titanFinancialUserService;
 
@@ -356,6 +381,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	}else{
     		//超级管理员
     		userRegisterRequest.setIsAdminUser(1);
+    		userRegisterRequest.setUserName("管理员");
     	}
     	userRegisterRequest.setFcLoginUserName(organRegisterRequest.getFcLoginUserName());
     	userRegisterRequest.setLoginUserName(organRegisterRequest.getUserloginname());
@@ -365,7 +391,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	userRegisterRequest.setPassword(MD5.MD5Encode(organRegisterRequest.getPassword()));
     	userRegisterRequest.setRegisterSource(organRegisterRequest.getRegisterSource());
     	userRegisterRequest.setUserId(organRegisterRequest.getOrgCode());
-    	UserRegisterResponse respose =titanFinancialUserService.registerFinancialUser(userRegisterRequest);
+    	UserRegisterResponse respose = titanFinancialUserService.registerFinancialUser(userRegisterRequest);
     	if(respose.isResult()==false){
     		LOGGER.info("用户注册失败,错误信息："+respose.getReturnMessage()+",param:"+JSONSerializer.toJSON(userRegisterRequest).toString());
     	}
@@ -1203,6 +1229,134 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			return orgBindInfo;
 		}
 		return null;
+	}
+
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public GetCheckCodeResponse getCheckCode(GetCheckCodeRequest getCheckCodeRequest) throws GlobalServiceException {
+		GetCheckCodeResponse response = new GetCheckCodeResponse();
+		if (!GenericValidate.validate(getCheckCodeRequest)){
+    		LOGGER.info("参数错误， getCheckCodeRequest："+JSONSerializer.toJSON(getCheckCodeRequest).toString());
+			response.putParamError();
+			return response;
+		}
+		TitanCheckCodeParam condition = new TitanCheckCodeParam();
+		condition.setReceiveAddress(getCheckCodeRequest.getReceiveAddress());
+		condition.setIsactive(TitanCheckCodeEnum.Isactive.ACTIVE.getKey());
+		PaginationSupport<TitanCheckCode> paginationSupport= new PaginationSupport<TitanCheckCode>();
+		paginationSupport.setPageSize(PaginationSupport.NO_SPLIT_PAGE_SIZE);
+		paginationSupport.setOrderBy(" expiredTime desc");
+		paginationSupport = checkCodeDao.selectForPage(condition, paginationSupport);
+		Date now = new Date();
+		try {
+			if(paginationSupport.getItemList().size()>0){
+				//取最新的一个记录
+				TitanCheckCode titanCheckCode = paginationSupport.getItemList().get(0);
+				if(now.before(titanCheckCode.getExpiredTime())){
+					//验证码可以用
+					response.setCheckCode(titanCheckCode.getCode());
+					response.putSuccess("可以使用");
+					return response;
+				}else{
+					//如果过期则更改状态
+					TitanCheckCode entityUpdate = new TitanCheckCode();
+					entityUpdate.setCodeId(titanCheckCode.getCodeId());
+					entityUpdate.setIsactive(TitanCheckCodeEnum.Isactive.NOT_ACTIVE.getKey());
+					checkCodeDao.update(entityUpdate);
+				}
+			}
+			//生成一个新的验证码
+			Date expiredTime = DateUtils.addHours(now, CommonConstant.CODE_TIME_OUT_HOUR);
+			TitanCheckCode newCheckCode = new TitanCheckCode();
+			newCheckCode.setReceiveAddress(getCheckCodeRequest.getReceiveAddress());
+			newCheckCode.setCode(Tools.getRegCode());
+			newCheckCode.setCodeType(getCheckCodeRequest.getMsgType());
+			newCheckCode.setIsactive(TitanCheckCodeEnum.Isactive.ACTIVE.getKey());
+			newCheckCode.setCreateTime(now);
+			newCheckCode.setExpiredTime(expiredTime);
+			checkCodeDao.insert(newCheckCode);
+			
+			response.setCheckCode(newCheckCode.getCode());
+			response.putSuccess("验证码获取成功");
+			return response;
+		} catch (DaoException e) {
+			throw new GlobalServiceException("获取验证码失败，param参数getCheckCodeRequest："+JSONSerializer.toJSON(getCheckCodeRequest).toString(),e);
+		}
+		
+	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public VerifyCheckCodeResponse verifyCheckCode(VerifyCheckCodeRequest verifyCheckCodeRequest) {
+		VerifyCheckCodeResponse response = new VerifyCheckCodeResponse();
+		if (!GenericValidate.validate(verifyCheckCodeRequest)){
+    		LOGGER.info("参数错误， verifyCheckCodeRequest："+JSONSerializer.toJSON(verifyCheckCodeRequest).toString());
+			response.putParamError();
+			return response;
+		}
+		TitanCheckCodeParam condition = new TitanCheckCodeParam();
+		condition.setReceiveAddress(verifyCheckCodeRequest.getReceiveAddress());
+		condition.setIsactive(TitanCheckCodeEnum.Isactive.ACTIVE.getKey());
+		PaginationSupport<TitanCheckCode> paginationSupport= new PaginationSupport<TitanCheckCode>();
+		paginationSupport.setPageSize(PaginationSupport.NO_SPLIT_PAGE_SIZE);
+		paginationSupport.setOrderBy(" expiredTime desc");
+		paginationSupport = checkCodeDao.selectForPage(condition, paginationSupport);
+		Date now = new Date();
+		if(paginationSupport.getItemList().size()>0){
+			//取最新的一个记录
+			TitanCheckCode titanCheckCode = paginationSupport.getItemList().get(0);
+			if(now.before(titanCheckCode.getExpiredTime())){
+				//判断验证码是否正确
+				if(titanCheckCode.getCode().equals(verifyCheckCodeRequest.getInputCode())){
+					response.setCodeId(titanCheckCode.getCodeId());
+					response.setReturnCode("SUCCESS");
+					response.setResult(true);
+				}else{
+					response.setReturnCode("WRONG");
+					response.setResult(false);
+				}
+				return response;
+			}else{
+				//如果过期则更改状态
+				TitanCheckCode entityUpdate = new TitanCheckCode();
+				entityUpdate.setCodeId(titanCheckCode.getCodeId());
+				entityUpdate.setIsactive(TitanCheckCodeEnum.Isactive.NOT_ACTIVE.getKey());
+				checkCodeDao.update(entityUpdate);
+				response.setReturnCode("EXPIRE");
+				response.setResult(false);
+				return response;
+			}
+		}else{
+			//接收者不存在
+			response.setReturnCode("NOTEXIST");
+			response.setResult(false);
+			return response;
+		}
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public BaseResponseDTO useCheckCode(UpdateCheckCodeRequest updateCheckCodeRequest) throws  GlobalServiceException{
+		BaseResponseDTO response = new BaseResponseDTO();
+		if(updateCheckCodeRequest.getCodeId()==null||updateCheckCodeRequest.getIsactive()==null){
+			LOGGER.info("参数错误， updateCheckCodeRequest："+ToStringBuilder.reflectionToString(updateCheckCodeRequest).toString());
+			response.putParamError();
+			return response;
+		}
+		
+		TitanCheckCode entityUpdate = new TitanCheckCode();
+		entityUpdate.setCodeId(updateCheckCodeRequest.getCodeId());
+		entityUpdate.setIsactive(updateCheckCodeRequest.getIsactive());
+		entityUpdate.setUseTime(new Date());
+		try {
+			int i = checkCodeDao.update(entityUpdate);
+			response.putSuccess("状态更新成功");
+			return response;
+		} catch (DaoException e) {
+			throw new GlobalServiceException("更新验证码失败，param参数updateCheckCodeRequest："+ToStringBuilder.reflectionToString(updateCheckCodeRequest).toString(),e);
+		}
+		
 	}
 
 	@Override

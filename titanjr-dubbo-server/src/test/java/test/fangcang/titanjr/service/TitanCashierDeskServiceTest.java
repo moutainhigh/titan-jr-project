@@ -20,7 +20,7 @@ public class TitanCashierDeskServiceTest extends SpringTest {
     @Test
     public void initCashierDeskTest() {
         CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest();
-        cashierDeskInitRequest.setUserId("TJM10000111");
+        cashierDeskInitRequest.setUserId("TJM10000110");
         cashierDeskInitRequest.setConstId("M000016");
         cashierDeskInitRequest.setOperator("system");
         try {

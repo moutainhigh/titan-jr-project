@@ -5,18 +5,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Date;
 
 import javax.annotation.Resource;
 
 import net.sf.json.JSONSerializer;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
 import test.fangcang.titanjr.SpringTest;
 
 import com.fangcang.titanjr.common.enums.LoginSourceEnum;
+import com.fangcang.titanjr.common.enums.SMSType;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum.CertificateType;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum.UserType;
@@ -25,19 +26,25 @@ import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.ImageIOExtUtil;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
+import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.OrganBindRequest;
 import com.fangcang.titanjr.dto.request.OrganCheckRequest;
 import com.fangcang.titanjr.dto.request.OrganImageUploadRequest;
 import com.fangcang.titanjr.dto.request.OrganRegisterRequest;
 import com.fangcang.titanjr.dto.request.OrganRegisterUpdateRequest;
+import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
+import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.GetCheckCodeResponse;
 import com.fangcang.titanjr.dto.response.OrganBindResponse;
 import com.fangcang.titanjr.dto.response.OrganCheckResponse;
 import com.fangcang.titanjr.dto.response.OrganImageUploadResponse;
 import com.fangcang.titanjr.dto.response.OrganQueryCheckResponse;
 import com.fangcang.titanjr.dto.response.OrganRegisterResponse;
 import com.fangcang.titanjr.dto.response.OrganRegisterUpdateResponse;
+import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
 import com.fangcang.titanjr.service.TitanCodeCenterService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.google.gson.Gson;
@@ -237,7 +244,7 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 	/**
 	 * 审核
 	 */
-	@Test
+	//@Test
 	public void testCheckOrg(){
 		OrganCheckRequest organCheckRequest = new OrganCheckRequest();
 		organCheckRequest.setOrgId(10094);
@@ -340,5 +347,46 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 		financialOrganQueryRequest.setUserType(2);
 		int count = titanFinancialOrganService.countOrg(financialOrganQueryRequest);
 		System.out.println("---------------------"+count);
+	}
+	//@Test
+	public void testgetCheckCode(){
+		GetCheckCodeRequest getCheckCodeRequest = new GetCheckCodeRequest();
+		getCheckCodeRequest.setMsgType(SMSType.REG_CODE.getType());
+		getCheckCodeRequest.setReceiveAddress("luoqinglong0102@163.com");
+		try {
+			GetCheckCodeResponse response = titanFinancialOrganService.getCheckCode(getCheckCodeRequest);
+			System.out.println(JSONSerializer.toJSON(response).toString());
+			Assert.assertFalse(response.isResult()==false);
+		} catch (GlobalServiceException e) {
+			e.printStackTrace();
+			Assert.assertFalse(1==1);
+		} 
+		
+	}
+	//@Test
+	public void testverifyCheckCode(){
+		VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
+		verifyCheckCodeRequest.setReceiveAddress("luoqinglong0102@163.com");
+		verifyCheckCodeRequest.setInputCode("299534");
+		VerifyCheckCodeResponse response = titanFinancialOrganService.verifyCheckCode(verifyCheckCodeRequest);
+		System.out.println(JSONSerializer.toJSON(response).toString());
+		Assert.assertFalse(response.isResult()==false);
+		 
+	}
+	
+	@Test
+	public void testupdateCheckCode(){
+		UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
+		updateCheckCodeRequest.setCodeId(1);
+		updateCheckCodeRequest.setIsactive(0);
+		try {
+			BaseResponseDTO response = titanFinancialOrganService.useCheckCode(updateCheckCodeRequest);
+			System.out.println(JSONSerializer.toJSON(response).toString());
+			Assert.assertFalse(response.isResult()==false);
+		} catch (GlobalServiceException e) {
+			e.printStackTrace();
+			Assert.assertFalse(1==1);
+		} 
+		
 	}
 }

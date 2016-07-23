@@ -96,7 +96,7 @@ public class DemoAPI {
 //		String requestType = "ruixue.wheatfield.finanace.entrylist.query";
 		//订单基础操作，增删改
 //		String requestType = "ruixue.wheatfield.order.oper"; //==生成订单的orderid   2016041114451400001
-
+		String requestType ="ruixue.wheatfield.order.service.withdrawservice";
 
 		//账户整体冻结 =====输入参数失败。
 //		String requestType = "ruixue.wheatfield.account.freeze";
@@ -112,7 +112,7 @@ public class DemoAPI {
 		//开户信息查询（个人）（支持批量模糊查询） === 无权限，需添加
 //		String requestType = "ruixue.wheatfield.batchquery.person";
 		//绑定银行卡信息接口：再绑就提示已绑定
-		String requestType = "ruixue.wheatfield.bankaccount.binding";
+//		String requestType = "ruixue.wheatfield.bankaccount.binding";
 		//只可以删除提现卡和其他卡：返回账户不存在
 //		String requestType = "ruixue.wheatfield.accountinfo.delete";
 		//检查提现卡信息：存在返回false，不存在返回ture  modityWithDrawCard
@@ -1159,11 +1159,11 @@ public class DemoAPI {
 		try {
 			WheatfieldOrderServiceWithdrawserviceRequest req = new WheatfieldOrderServiceWithdrawserviceRequest();
 			req.setProductid("P000070");					//产品号
-			req.setAmount("xxx");							//金额
+			req.setAmount("100");							//金额
 			req.setMerchantcode("M000016");					//机构号
-			req.setOrderdate("xxx");						//订单日期 yyyy-MM-dd hh:mm:ss
-			req.setUserid("xxx");							//用户号
-			req.setUserorderid("xxx");						//订单号
+			req.setOrderdate("2016-07-21 14:16:22");						//订单日期 yyyy-MM-dd hh:mm:ss
+			req.setUserid("TJM10000010");							//用户号
+			req.setUserorderid("TJO160721100636233");						//订单号
 			req.setUserfee((long)0);						//手续费
 			WheatfieldOrderServiceWithdrawserviceResponse rsp = 
 					ropClient.execute(req, sessionKey);
