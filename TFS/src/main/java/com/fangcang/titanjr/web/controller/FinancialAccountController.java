@@ -183,6 +183,8 @@ public class FinancialAccountController extends BaseController {
             if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
                 tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
             }
+            tradeDetailRequest.setStatusId(OrderStatusEnum.FREEZE_SUCCESS.getStatus());
+            
             TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
             if (tradeDetailResponse.isResult()) {
                 model.addAttribute("tradePage", tradeDetailResponse.getTransOrders());

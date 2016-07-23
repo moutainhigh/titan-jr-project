@@ -23,6 +23,9 @@
        <if test="userorderid != null">
          and (userorderid = #{userorderid})
        </if>
+       <if test="statusid != null">
+         and (statusid = #{statusid})
+       </if>
        <if test="startTime !=null">
          <![CDATA[ and o.createtime >= #{startTime}  ]]>
        </if>
