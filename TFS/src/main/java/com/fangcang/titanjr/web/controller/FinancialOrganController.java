@@ -276,7 +276,6 @@ public class FinancialOrganController extends BaseController {
 	    	String registerSourceStr = (String) getSession().getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE);
 	    	int registerSource = StringUtil.isValidString(registerSourceStr)?NumberUtils.toInt(WebConstant.SESSION_KEY_JR_RESOURCE_2_SAAS):NumberUtils.toInt(registerSourceStr);
 	    	organRegisterRequest.setRegisterSource(registerSource);
-	    	//organRegisterRequest.setUserName(userName);
 	    	String fcLoginUserName = (String)getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_LOGINNAME);
 	    	if(StringUtil.isValidString(fcLoginUserName)){
 	    		//从房仓登录过来的
@@ -285,6 +284,7 @@ public class FinancialOrganController extends BaseController {
 	    		String merchantname = (String) getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
 	    		organRegisterRequest.setMerchantCode(merchantCode);
 	        	organRegisterRequest.setMerchantname(merchantname);
+	        	organRegisterRequest.setOperator(getUserName());
 	    	}
 	    	if(orgRegPojo.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
 	    		//企业
