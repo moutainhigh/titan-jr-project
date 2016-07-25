@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONSerializer;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,6 +25,7 @@ import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
@@ -258,8 +260,8 @@ public class SettingEmployeeController extends BaseController{
     	userRegisterRequest.setOrgCode(userId);
     	userRegisterRequest.setRoleIdList(toList(employeePojo.getCheckedRoleId()));
     	userRegisterRequest.setUnselectRoleIdList(toList(employeePojo.getUncheckedRoleId()));
-    	//TODO 暂时生成一个临时密码
-    	userRegisterRequest.setPassword("666666");
+    	//生成一个密码
+    	userRegisterRequest.setPassword(RandomStringUtils.randomAlphabetic(6));
     	userRegisterRequest.setRegisterSource(LoginSourceEnum.SAAS.getKey());
     	userRegisterRequest.setUserId(userId);//金服机构
     	try {
