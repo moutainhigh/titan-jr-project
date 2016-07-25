@@ -24,7 +24,7 @@
 				<ul class="passwordset_u2">
 					<li>
 						<span class="reset_pass">泰坦金融用户名：</span>
-						<input type="text" class="text w_250" id="userName" placeholder="请输入手机号或邮箱"></li>
+						<input type="text" class="text w_250" id="userName" value="${tfsUserLoginName}" disabled="disabled" placeholder="请输入手机号或邮箱"></li>
 					<li>
 						<span class="reset_pass">验证码：</span>
 						<p class="text w_250">

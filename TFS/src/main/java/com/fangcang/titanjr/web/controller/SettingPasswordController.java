@@ -92,7 +92,14 @@ public class SettingPasswordController extends BaseController{
 	 * @return 
 	 */
 	@RequestMapping("/modify-pwd-forget")
-	public String forgetPassword(){
+	public String forgetPassword(Model model){
+		int tfsUserId = Integer.valueOf(getTfsUserId());
+		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+		userInfoQueryRequest.setTfsUserId(tfsUserId);
+		UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
+		TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+		model.addAttribute("tfsUserLoginName", titanUser.getUserloginname());
+
 		return "setting/modify-pwd-forget";
 	}
 	
