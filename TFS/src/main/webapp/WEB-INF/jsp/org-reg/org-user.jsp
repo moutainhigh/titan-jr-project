@@ -73,7 +73,7 @@
                 <!-- 验证码错误 -->
                 <!-- <a class="btn J_mistake">下一步</a>-->
                 <!-- 企业用户-填写基本信息 -->
-                <a href="javascript:;" class="btn qyyh btn_h next">下一步</a>   
+                <a href="javascript:;" class="btn qyyh next">下一步</a>   
                 <!-- 个人用户-填写基本信息
                 <a href="" class="btn gryh btn_h" style="display: none;">下一步</a>
                  -->
@@ -103,7 +103,7 @@ var loginType = LOGIN_TYPE["email"];
 
 //企业用户 个人用户 
 $('.enterprise').click(function(){
-	$('.next').unbind("click",next);
+	//$('.next').unbind("click",next);
     var qy = $(this).parents('.pour').find('.qy'),
         gr = $(this).parents('.pour').find('.gr');
 
@@ -112,13 +112,13 @@ $('.enterprise').click(function(){
         $(this).addClass('on').siblings().removeClass('on');
 		
         $('.f_ui-checkbox-c3 input[type=checkbox]').attr('checked',false);
-        $('.btn').addClass('btn_h');
+       // $('.btn').addClass('btn_h');
         current_tab = TAB_TYPE["enterprise"];
         loginType = LOGIN_TYPE["email"];
          
 });    
 $('.personage').click(function(){
-		$('.next').unbind("click",next);
+	//	$('.next').unbind("click",next);
         var qy = $(this).parents('.pour').find('.qy'),
         gr = $(this).parents('.pour').find('.gr');
         qy.hide();
@@ -126,7 +126,7 @@ $('.personage').click(function(){
         $(this).addClass('on').siblings().removeClass('on');
 
         $('.f_ui-checkbox-c3 input[type=checkbox]').attr('checked',false);
-        $('.btn').addClass('btn_h');
+       // $('.btn').addClass('btn_h');
         current_tab = TAB_TYPE["personage"];
         loginType = LOGIN_TYPE[$('.personage').attr("data-select-form")];
 });
@@ -135,13 +135,13 @@ $('.personage').click(function(){
 
 
 $('.J_yx').click(function() {
-	$('.next').unbind("click",next);
+	//$('.next').unbind("click",next);
     if($('.yx1').is('.on')){
         $('.yx1').hide().removeClass('on');
         $('.yx2').show().addClass('on');
         $(this).text('使用手机号码注册>>');
         $('.f_ui-checkbox-c3 input[type=checkbox]').attr('checked',false);
-        $('.btn').addClass('btn_h');
+        //$('.btn').addClass('btn_h');
         loginType = LOGIN_TYPE["email"];
         $('.personage').attr({"data-select-form":"email"});
     }else
@@ -150,7 +150,7 @@ $('.J_yx').click(function() {
         $('.yx2').hide().removeClass('on');      
         $(this).text('使用邮箱注册>>');
         $('.f_ui-checkbox-c3 input[type=checkbox]').attr('checked',false);
-        $('.btn').addClass('btn_h');
+        //$('.btn').addClass('btn_h');
         loginType = LOGIN_TYPE["phone"];
         $('.personage').attr({"data-select-form":"phone"});
     }
@@ -228,6 +228,21 @@ function next(){
 	if(!getValidate().validate()){
 		return;
 	}
+	
+	
+	//我已阅读并同意
+	if(!$('.f_ui-checkbox-c3 input[type=checkbox]').is(':checked'))
+	{
+		   new top.createConfirm({
+		        padding:'30px 20px 65px',
+		        width:'330px',
+		        title:'提示',
+		        content : '<div class="f_14 t_a_c">请阅读并勾选《泰坦云金融服务协议》！</div>',      
+		        button:false
+		      }); 
+		   return;
+	}
+	
 	var formId = getCurrentFormId();
 	var loginEle = $("#"+formId+" .ui-loginusername");
 	var regCodeEle = $("#"+formId+" .ui-reg");
@@ -362,19 +377,21 @@ $('.verify').on('click',function(){
  
 
 
-//我已阅读并同意
-$('.f_ui-checkbox-c3 input[type=checkbox]').on('change',function(){
-    var _this = $(this);  
-    if(_this.is(':checked')){
-        $('.btn').removeClass('btn_h'); 
-        $('.next').bind("click",next);
-    }else{
+$('.next').bind("click",next);
+
+// //我已阅读并同意
+// $('.f_ui-checkbox-c3 input[type=checkbox]').on('change',function(){
+//     var _this = $(this);  
+//     if(_this.is(':checked')){
+//         $('.btn').removeClass('btn_h'); 
+//         $('.next').bind("click",next);
+//     }else{
     	
-        $('.btn').addClass('btn_h');
-        $('.next').unbind("click",next);
-    }
-    return false;
-});
+//         $('.btn').addClass('btn_h');
+//         $('.next').unbind("click",next);
+//     }
+//     return false;
+// });
 
 //检查是否已经注册
 function checkExist(value, inputDom){
@@ -397,6 +414,14 @@ function checkExist(value, inputDom){
 	});
 	return  flag;
 }
+
+$('.pass1').bind("cut copy paste", function(e) {  
+    e.preventDefault();  
+});  
+$('.pass2').bind("cut copy paste", function(e) {  
+    e.preventDefault();  
+});  
+
 //还原提示语
 $('.ui-loginusername').on('change',function(){
 	var formId = getCurrentFormId();
