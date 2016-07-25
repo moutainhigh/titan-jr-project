@@ -102,6 +102,10 @@ public class CommonConstant {
     
     //验证码有效时长，单位：小时
     public static final Integer CODE_TIME_OUT_HOUR = 1 ;
+    /**
+     * 商家房仓的编码
+     */
+    public static final String FANGCANG_MERCHANTCODE = "M10000001";
 	
 	
 }

@@ -133,7 +133,7 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 			emailSenderDTO.setEmailServerHost(dubboServerJDBCProperties.getJrEmailServer());
 			emailSenderDTO.setEmailServerPort(dubboServerJDBCProperties.getJrEmailPort());
 			//TODO 修改正式环境的商家
-			emailSenderDTO.setMerchantCode("M10000181");
+			emailSenderDTO.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
 			try {
 				EmailSendService emailSendService = hessianProxyBeanFactory.getHessianProxyBean(EmailSendService.class,messageServiceUrl);
 				boolean  retMessage = emailSendService.send(emailSenderDTO);

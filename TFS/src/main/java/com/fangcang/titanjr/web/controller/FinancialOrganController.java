@@ -31,6 +31,7 @@ import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.ImageIOExtUtil;
@@ -449,7 +450,7 @@ public class FinancialOrganController extends BaseController {
     	String merchantCode = (String)getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
     	if(StringUtil.isValidString(merchantCode)){
     		//TODO 使用正式环境
-    		sendRegCodeRequest.setMerchantCode("M10000001");
+    		sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
     	}else{
     		sendRegCodeRequest.setMerchantCode(RSInvokeConstant.defaultMerchant);
     	}
@@ -482,7 +483,7 @@ public class FinancialOrganController extends BaseController {
     	String merchantCode = (String)getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
     	if(StringUtil.isValidString(merchantCode)){
     		//TODO 使用正式环境
-    		sendRegCodeRequest.setMerchantCode("M10000001");
+    		sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
     	}else{
     		sendRegCodeRequest.setMerchantCode(RSInvokeConstant.defaultMerchant);
     	}
