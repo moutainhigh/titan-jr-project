@@ -44,12 +44,6 @@ $('.J_remember').on('click',function(){
                             		return true;
                             	}
                             	return false;
-                            	
-                               	//top.F.loading.show();        
-                               //	setTimeout(function(){
-                              ////     top.F.loading.hide();
-                                  // new top.Tip({msg : '设置成功！', type: 1 , time:1000}); 
-                              // 	},1000);  
                             },
 					    autofocus: true
                         },
@@ -57,10 +51,6 @@ $('.J_remember').on('click',function(){
                             value: '取消',
                             skin : 'btn btn_grey btn_exit',
                             callback: function () {
-                            //   alert('c');
-                            
-                            
-                            
                             
                             }
                         }	
@@ -71,6 +61,10 @@ $('.J_remember').on('click',function(){
 			top.F.loading.hide();
 		},
 		error:function(xhr,status){
+			if(xhr.status&&xhr.status==403){
+    			new top.Tip({msg : '没有权限访问，请联系管理员', type: 3 , time:2000});
+    			return ;
+    		}
 			 new top.Tip({msg : '请求失败，请重试', type: 2});
 		}
     });
@@ -97,6 +91,10 @@ $('.J_forget').on('click',function(){
 			top.F.loading.hide();
 		},
 		error:function(xhr,status){
+			if(xhr.status&&xhr.status==403){
+    			new top.Tip({msg : '没有权限访问，请联系管理员', type: 3 , time:2000});
+    			return ;
+    		}
 			 new top.Tip({msg : '请求失败，请重试', type: 2});
 		}
     });

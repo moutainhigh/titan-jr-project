@@ -20,7 +20,7 @@
     	<div class="TFS_addtitle demo_form" id="J_form1">
     		<ul>
     			<li><span class="addtitle_left">姓名：</span><input type="text" id="userName" class="text w_180 f_ui-grey-input" datatype="s1-30" errormsg="请输入1到30位字符！" value="${userInfoDTO.userName }"></li>
-    			<li><span class="addtitle_left">手机号码：</span><input type="text" id="receiveAddress" placeholder="请输入手机号码" class="text w_180 f_ui-grey-input" readonly="readonly"  value="${userInfoDTO.userLoginName }"><span class="c_999 p_l30">此手机号将作为用户名用来登录泰坦金服官网或者APP</span></li>
+    			<li><span class="addtitle_left">手机号码：</span><input type="text" id="receiveAddress" placeholder="请输入手机号码" class="text w_180 f_ui-grey-input" readonly="readonly"  value="${userInfoDTO.userLoginName }"><span class="c_999 p_l30">此手机号将作为用户名用来登录泰坦金融官网或者APP</span></li>
     		</ul>
     	</div>
     	<div class="TFS_addbottom">
@@ -39,7 +39,7 @@
     				</td>
     				<td>
     					<div class="TFS_addtabletop"><b>充值&提现</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" name="roleId" value="40"><i></i></label></div>
-    					<p class="TFS_tips">可以为此泰坦金服账户账户充值账户余额可以提现的权限</p>
+    					<p class="TFS_tips">可以为此泰坦金融账户账户充值账户余额可以提现的权限</p>
     					<span class="TFS_tipsproposal">建议用户：财务人员等</span>
     				</td>
     				<td>

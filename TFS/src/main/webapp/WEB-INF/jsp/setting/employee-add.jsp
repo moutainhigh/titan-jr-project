@@ -39,7 +39,7 @@
     				</td>
     				<td>
     					<div class="TFS_addtabletop"><b>充值&提现</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" name="roleId" value="40"><i></i></label></div>
-    					<p class="TFS_tips">可以为此泰坦金服账户账户充值账户余额可以提现的权限</p>
+    					<p class="TFS_tips">可以为此泰坦金融账户账户充值账户余额可以提现的权限</p>
     					<span class="TFS_tipsproposal">建议用户：财务人员等</span>
     				</td>
     				<td>

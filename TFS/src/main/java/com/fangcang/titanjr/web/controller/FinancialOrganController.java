@@ -72,7 +72,7 @@ import com.fangcang.util.PasswordUtil;
 import com.fangcang.util.StringUtil;
 
 /**
- * 泰坦金服机构controller，目的用于后续机构申请提交，查询基础设置等
+ * 泰坦金融机构controller，目的用于后续机构申请提交，查询基础设置等
  * 修改访问路径，每个controller加前置的固定路径
  * 简化controller命名和前缀
  * Created by zhaoshan on 2016/3/30.
@@ -285,6 +285,7 @@ public class FinancialOrganController extends BaseController {
 	    		organRegisterRequest.setMerchantCode(merchantCode);
 	        	organRegisterRequest.setMerchantname(merchantname);
 	        	organRegisterRequest.setOperator(getUserName());
+
 	    	}
 	    	if(orgRegPojo.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
 	    		//企业
@@ -718,7 +719,7 @@ public class FinancialOrganController extends BaseController {
 		if (userInfoResponse != null && userInfoResponse.isResult() && CollectionUtils.isNotEmpty(userInfoResponse.getUserInfoDTOList())){
 			UserInfoDTO userInfoDTO = userInfoResponse.getUserInfoDTOList().get(0);
 			if (userInfoDTO.getIsAdmin() == 0){
-				return toJson(putSysError("输入用户不是金服系统管理员，请重新输入"));
+				return toJson(putSysError("输入用户不是金融系统管理员，请重新输入"));
 			}
 			if (!userInfoDTO.getPassword().equals(PasswordUtil.md5Hex(request.getParameter("password").toString()))){
 				return toJson(putSysError("用户名密码不匹配，请重新输入"));

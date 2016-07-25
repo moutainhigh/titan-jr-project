@@ -463,7 +463,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     
     //回调财务
     @Override
-    public void confirmFinance(TransOrderDTO transOrderDTO){
+    public void confirmFinance(TransOrderDTO transOrderDTO) throws Exception{
+    	log.info("回调财务:"+JSONSerializer.toJSON(transOrderDTO));
 		String response = "";
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("payOrderCode", transOrderDTO.getPayorderno()));
@@ -484,8 +485,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
             	HttpEntity entity = resp.getEntity();
                 response = EntityUtils.toString(entity);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("调用http请求通知支付失败", e);
+            throw e;
         }
         log.info("调用http请求通知支付支付结果完成：" + response);
         if (StringUtil.isValidString(response)) {
@@ -1491,6 +1493,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			FinancialOrderResponse financialOrderResponse) {
 		LocalAddTransOrderResponse localAddTransOrderResponse = new LocalAddTransOrderResponse();
 		try{
+			log.info("本地下单入参:"+JSONSerializer.toJSON(paymentRequest));
 			//判断该支付是否已经下单，处理中的就返回单号，失败返回新单号，成功就拒绝下单
 			TransOrderResponse transOrderResponse = queryTransOrderByCode(paymentRequest.getPayOrderNo());
 			if(transOrderResponse !=null && transOrderResponse.getTransOrder() !=null){
