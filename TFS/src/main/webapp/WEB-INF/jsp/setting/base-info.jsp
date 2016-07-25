@@ -167,6 +167,11 @@ function saveInfo(){
 			top.F.loading.hide();
 		},
 		error:function(xhr,status){
+			 //错误方法增强处理     
+       	 	if(xhr.status&&xhr.status==403){
+    			new top.Tip({msg : '没有权限访问，请联系管理员', type: 3 , time:2000});
+    			return ;
+    		}
 			 new top.Tip({msg : '请求失败，请重试', type: 2});
 		}
     });
