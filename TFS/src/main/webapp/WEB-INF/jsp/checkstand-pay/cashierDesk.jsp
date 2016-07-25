@@ -219,6 +219,7 @@
 <script src="<%=cssSaasPath%>/js/password.js"></script>
 <script>
     $("document").ready(function (){
+    /* 	encodeURIComponent(uriComponent); */
     	//每次刷新只要余额足够，默认选中
         if ('${accountHistory}'.length>0 || '${orgDTO}'.length>0){
             $("#exists_history").show();
