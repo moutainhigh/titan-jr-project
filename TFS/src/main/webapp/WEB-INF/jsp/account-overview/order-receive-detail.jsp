@@ -16,23 +16,29 @@
             <div class="orderDetails-content">
                 <div class="orderDetails-content1">
                     <h3 class="orderDetails-title">基础信息</h3>
-                    <p class="ftSize14"><span class="w_250">付款方：
-                        <i class="recharge-colorRed">${transOrder.transTarget }</i></span><span
-                            class="w_160">交易类型：收款</span>交易状态：
-                       <c:choose>
-                              <c:when test="${transOrder.statusid == 8}">
-                                                                                    已成功
-                              </c:when>
-                              <c:when test="${transOrder.statusid == 9}">
-                                                                                   交易失败
-                              </c:when>
-                              <c:when test="${transOrder.statusid == 6}">
-                                                                                    已冻结
-                              </c:when>
+                    <p class="ftSize14">
+                        <span class="w_250 Province" style="width: 240px">付款方：
+                            <i class="recharge-colorRed" title="${transOrder.transTarget }">${transOrder.transTarget }</i>
+                        </span>
+                        <span class="w_160 Province">
+                            交易类型：收款
+                        </span>
+                        <span class="Province">交易状态：
+                            <c:choose>
+                                <c:when test="${transOrder.statusid == 8}">
+                                    已成功
+                                </c:when>
+                                <c:when test="${transOrder.statusid == 9}">
+                                    交易失败
+                                </c:when>
+                                <c:when test="${transOrder.statusid == 6}">
+                                    已冻结
+                                </c:when>
                               <c:otherwise>
-                                                                                   处理中
+                                处理中
                               </c:otherwise>
                             </c:choose>
+                        </span>
                     </p>
                     <p class="ftSize14">
                         <span class="w_250">
@@ -55,21 +61,22 @@
                     <h3 class="orderDetails-title">交易流水</h3>
                     <p class="ftSize14">交易单号：<span class="color1C">${transOrder.userorderid }</span></p>
                     <table cellpadding="0" cellspacing="0" width="100%" class="orderDetailsTable">
+                        <colgroup>
+                            <col width="150">
+                            <col width="60">
+                            <col width="200">
+                            <col width="200">
+                            <col width="100">
+                            <col width="">
+                        </colgroup>
                         <c:if test="${transOrder.titanOrderPayDTO != null}">
                             <tr>
-                                <td width="20%">
-                                    <fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss"
-                                                    value="${transOrder.titanOrderPayDTO.orderDate }"/></td>
-                                <td width="7.64%">充值</td>
-                                <td width="22%"><span>对方：${transOrder.transTarget}</span></td>
-                                <td width="35%">
-                                    <font>
-                                        <i><fmt:formatNumber value="${transOrder.titanOrderPayDTO.orderAmount/100.0 }"
-                                                             pattern="#,##0.00#"/></i>
-                                        <span>交易单${transOrder.titanOrderPayDTO.orderNo }充值</span>
-                                    </font>
-                                </td>
-                                <td>
+                                <td width=""><span><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.titanOrderPayDTO.orderDate }"/></span></td>
+                                <td width=""><span>充值</span></td>
+                                <td width=""><span style="width:180px" title="对方：${transOrder.transTarget}">对方：${transOrder.transTarget}</span></td>
+                                <td width=""><span style="width:180px" title="交易单${transOrder.titanOrderPayDTO.orderNo }充值">交易单${transOrder.titanOrderPayDTO.orderNo }充值</span></td>
+                                <td><span><fmt:formatNumber value="${transOrder.titanOrderPayDTO.orderAmount/100.0 }" pattern="#,##0.00#"/></span></td>
+                                <td><span>
                                     <c:if test="${transOrder.titanOrderPayDTO.reqstatus == 1}">
                                         处理中
                                     </c:if>
@@ -79,18 +86,18 @@
                                     <c:if test="${transOrder.titanOrderPayDTO.reqstatus == 3}">
                                         充值失败
                                     </c:if>
+                                    </span>
                                 </td>
                             </tr>
                         </c:if>
                         <c:if test="${transOrder.titanTransferDTO != null}">
                             <tr>
-                                <td><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.titanTransferDTO.createtime }"/></td>
-                                <td>转账</td>
-                                <td><span>对方：${transOrder.transTarget}</span></td>
-                                <td><font><i><fmt:formatNumber value="${transOrder.titanTransferDTO.amount / 100.0 }"
-                                                               pattern="#,##0.00#"/></i>
-                                    <span>财务单${transOrder.payorderno }支付</span></font></td>
-                                <td>
+                                <td><span><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.titanTransferDTO.createtime }"/></span></td>
+                                <td><span>转账</span></td>
+                                <td><span style="width:180px" title="对方：${transOrder.transTarget}">对方：${transOrder.transTarget}</span></td>
+                                <td><span style="width:180px" title="财务单${transOrder.payorderno }支付">财务单${transOrder.payorderno }支付</span></td>
+                                <td><span><fmt:formatNumber value="${transOrder.titanTransferDTO.amount / 100.0 }" pattern="#,##0.00#"/></span></td>
+                                <td><span>
                                     <c:if test="${transOrder.titanTransferDTO.status == 1}">
                                         处理中
                                     </c:if>
@@ -99,7 +106,7 @@
                                     </c:if>
                                     <c:if test="${transOrder.titanTransferDTO.status == 3}">
                                         失败
-                                    </c:if>
+                                    </c:if></span>
                                 </td>
                             </tr>
                         </c:if>

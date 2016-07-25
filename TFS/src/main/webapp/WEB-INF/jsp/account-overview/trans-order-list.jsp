@@ -10,7 +10,7 @@
         </td>
         <td width="">${tradeItem.tradeType}</td>
         <td width="">
-            <span style="max-width: 253px" title="${tradeItem.goodsname}">
+            <span style="max-width: 253px" title="${tradeItem.goodsname}-${tradeItem.goodsdetail}">
                 ${tradeItem.goodsname}
                 <c:if test="${tradeItem.goodsdetail != null}">
                     -${tradeItem.goodsdetail}
