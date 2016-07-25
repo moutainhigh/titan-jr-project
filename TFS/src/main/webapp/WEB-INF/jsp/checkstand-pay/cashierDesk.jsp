@@ -107,6 +107,7 @@
                     <span class="payway_other blue">使用其他方式付款</span>
                     <i class="jiantou"></i>
                 </div>
+               
                 <div class="goldpayway" id="useCashierDeskPay">
                   <div class="pay_table">
                     <ul>
@@ -228,7 +229,7 @@
             $("#exists_history").remove();
             $("#not_exists_history").show();
         }
-        if ('${orderDTO.payAmount}' - '${accountBalance.balanceusable}' <= 0){
+        if (('${orderDTO.payAmount}' - '${accountBalance.balanceusable}' <= 0) && '${gDPOrderDTO}'.length<1){
             $("#useCashierDeskPay").hide();
             $("#enough_amount").show();
             $("#not_enough_amount").hide();
@@ -237,8 +238,10 @@
         } else {
             $("#useCashierDeskPay").show();
             $("#enough_amount").hide();
-            $("#not_enough_amount").show();
-            $("#onlinePayAmount").val(sub('${orderDTO.payAmount}', '${accountBalance.balanceusable}'));
+            if('${gDPOrderDTO}'.length<1){
+            	 $("#not_enough_amount").show();
+                 $("#onlinePayAmount").val(sub('${orderDTO.payAmount}', '${accountBalance.balanceusable}'));
+            }
         }
         
         $(".bankName:first").attr("checked",'0');
@@ -247,6 +250,11 @@
         		||'${accountBalance.balanceusable}'=="0.00"
         		||'${accountBalance.balanceusable}'=="0"){
         	$("#d_checkbox").attr("checked",false);
+        }
+        
+        if('${gDPOrderDTO}'.length>0){
+        	 $("#useCashierDeskPay").show();
+             $("#enough_amount").hide();
         }
     });
 
