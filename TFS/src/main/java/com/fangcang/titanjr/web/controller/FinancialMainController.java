@@ -71,7 +71,7 @@ public class FinancialMainController extends BaseController {
         	}
     		
 		} catch (Exception e) {
-			log.error("金服首页错误，登录用户名为:"+jrUserLoginName, e);
+			log.error("金融首页错误，登录用户名为:"+jrUserLoginName, e);
 			throw new Exception(e);
 		}
     	

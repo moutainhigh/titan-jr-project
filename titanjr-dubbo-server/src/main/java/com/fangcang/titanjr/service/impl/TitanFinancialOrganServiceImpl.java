@@ -272,6 +272,13 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	TitanOrg titanOrg = null;
     	try{
 	    	//TODO 必填参数校验
+    		
+    		OrgBindInfo orgBindInfo = new OrgBindInfo();
+            orgBindInfo.setMerchantCode(organRegisterRequest.getMerchantCode());
+            orgBindInfo = this.queryOrgBindInfoByUserid(orgBindInfo);
+    		if(orgBindInfo!=null&&StringUtil.isValidString(orgBindInfo.getOrgcode())){
+    			throw new MessageServiceException("该商家已经开通了金融账号，不允许重复开通");
+    		}
     		titanOrg = addOrg(organRegisterRequest);
     		updateOrgImg(organRegisterRequest.getImageid(),organRegisterRequest.getOrgCode());
 	    	// 注册员工
@@ -566,6 +573,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	}
     	
     	if(organRegisterRequest.getRegisterSource()==LoginSourceEnum.SAAS.getKey()){
+    		
+    		
     		registerFromSaaS(organRegisterRequest);
     		addOrgCheck(organRegisterRequest.getOrgCode(),organRegisterRequest.getOperator());
     	}else if(organRegisterRequest.getRegisterSource()==LoginSourceEnum.TFS.getKey()){
