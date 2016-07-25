@@ -410,7 +410,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
      * @param organRegisterRequest
      */
     private TitanOrg addOrg(OrganRegisterRequest organRegisterRequest){
-    	//TODO 输入必填参数校验
     	TitanOrg titanOrg = new TitanOrg();
     	String titancode = titanCodeCenterService.createTitanCode();
     	String orgcode = titanCodeCenterService.createOrgCode();
@@ -426,7 +425,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	titanOrg.setCreateTime(new Date());
     	organRegisterRequest.setOrgCode(orgcode);
     	if(organRegisterRequest.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
-    		//validateEnterpriseParam(organRegisterRequest);
+    		validateEnterpriseParam(organRegisterRequest);
     		titanOrg.setEmail(organRegisterRequest.getEmail());
     		titanOrg.setUsername(organRegisterRequest.getOrgName());
     		//机构
@@ -438,7 +437,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
         	titanOrg.setMobiletel(organRegisterRequest.getMobileTel());
         	
     	}else if(organRegisterRequest.getUserType()==TitanOrgEnum.UserType.PERSONAL.getKey()){
-    		//validatePersonalParam(organRegisterRequest);
+    		validatePersonalParam(organRegisterRequest);
     		titanOrg.setOrgtype(organRegisterRequest.getOrgType());
         	titanOrg.setOrgname(organRegisterRequest.getOrgName());
         	titanOrg.setPersonengname(organRegisterRequest.getOrgName());
