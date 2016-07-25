@@ -36,6 +36,7 @@ import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.*;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.DefaultPayerConfig;
@@ -57,6 +58,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -160,10 +162,8 @@ public class FinancialTradeController extends BaseController {
                     	        	log.info("回调转账结果:"+toJson(transferResponse));
                     	        	if(transferResponse.isResult()){//转账成功之后需要调用
                     	        		orderStatusEnum = OrderStatusEnum.TRANSFER_SUCCESS;
-                    	        		if(StringUtil.isValidString(transOrderDTO.getMerchantcode())){//GDP的回调
-                    	        			log.info("回调财务:"+toJson(transOrderDTO));
-                    	        			titanFinancialTradeService.confirmFinance(transOrderDTO);
-                    	        		}
+                	        			
+                	        			titanFinancialTradeService.confirmFinance(transOrderDTO);
                     	        		
                     	        		//冻结操作,如果冻结失败该进行什么操作,
                     	        		if(WebConstant.FREEZE_ORDER.equals(transOrderDTO.getIsEscrowedPayment())){//需要进行冻结操作
@@ -525,7 +525,7 @@ public class FinancialTradeController extends BaseController {
 	
 	private TransferRequest convertToTransferRequest(TransOrderDTO transOrderDTO){
 		TransferRequest transferRequest = new TransferRequest();
-		transferRequest.setCreator("system");
+		transferRequest.setCreator(transOrderDTO.getCreator());
     	transferRequest.setUserid(transOrderDTO.getUserid());										//转出的用户
     	transferRequest.setRequestno(OrderGenerateService.genResquestNo());									//业务订单号
     	transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));	//请求时间
@@ -653,7 +653,7 @@ public class FinancialTradeController extends BaseController {
 				commonPayMethodDTO.setDeskid(Integer.parseInt(paymentRequest.getDeskId()));
 			}
 			commonPayMethodDTO.setBankname(paymentRequest.getBankInfo());
-			commonPayMethodDTO.setCreator(paymentRequest.getUserid());
+			commonPayMethodDTO.setCreator(paymentRequest.getCreator());
 			commonPayMethodDTO.setCreatetime(new Date());
 			if(StringUtil.isValidString(paymentRequest.getLinePayType())){
 			   commonPayMethodDTO.setPaytype(Integer.parseInt(paymentRequest.getLinePayType()));
@@ -915,6 +915,7 @@ public class FinancialTradeController extends BaseController {
 	    	}
 			paymentUrlRequest.setUserid(defaultPayerConfig.getUserId());
 			model.addAttribute("userId", paymentUrlRequest.getUserid());
+			model.addAttribute("operator",paymentUrlRequest.getOperater());
 		}
 
 		//非B2B支付时，将付款方userId查询出来
@@ -1099,6 +1100,7 @@ public class FinancialTradeController extends BaseController {
 	private boolean validateShowDeskSign(PaymentUrlRequest paymentUrlRequest)
 			throws Exception {
 		if (paymentUrlRequest != null) {
+			paymentUrlRequest.setOperater(new String(paymentUrlRequest.getOperater().getBytes("iso8859-1"),"UTF-8"));
 			// 获取key
 			String key = titanOrderService.getKeyByPayOrderNo(paymentUrlRequest
 					.getPayOrderNo());
@@ -1112,6 +1114,8 @@ public class FinancialTradeController extends BaseController {
 				sign.append("&isEscrowed="+paymentUrlRequest.getIsEscrowed());
 				sign.append("&escrowedDate="+paymentUrlRequest.getEscrowedDate());
 				sign.append("&key="+key);
+				System.out.println("----sign-----"+sign.toString());
+				System.out.println("----MD5加密-------"+MD5.MD5Encode(sign.toString(), "UTF-8"));
 				if (MD5.MD5Encode(sign.toString(), "UTF-8").equals(
 						paymentUrlRequest.getSign())) {// 验证签名,调用融数下单
                    return true;

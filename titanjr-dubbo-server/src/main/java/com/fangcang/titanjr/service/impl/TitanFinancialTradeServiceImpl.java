@@ -463,7 +463,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     
     //回调财务
     @Override
-    public void confirmFinance(TransOrderDTO transOrderDTO){
+    public void confirmFinance(TransOrderDTO transOrderDTO) throws Exception{
+    	log.info("回调财务:"+JSONSerializer.toJSON(transOrderDTO));
 		String response = "";
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("payOrderCode", transOrderDTO.getPayorderno()));
@@ -484,8 +485,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
             	HttpEntity entity = resp.getEntity();
                 response = EntityUtils.toString(entity);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("调用http请求通知支付失败", e);
+            throw e;
         }
         log.info("调用http请求通知支付支付结果完成：" + response);
         if (StringUtil.isValidString(response)) {
@@ -673,8 +675,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                             rechargeResponse.putSuccess();
                             RechargeDataDTO rechargeDataDTO = new RechargeDataDTO();
                             MyBeanUtil.copyProperties(rechargeDataDTO, response.getRsPayOrderRequest());
+                            rechargeDataDTO.setGateWayUrl(RSInvokeConstant.gateWayURL);
                             rechargeResponse.setRechargeDataDTO(rechargeDataDTO);
                         }
+                        //将网关支付地址返回支付
                         return rechargeResponse;
                     }
                 }
@@ -1193,7 +1197,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				TitanAccount titanAccount = paginationSupport.getItemList().get(0);
 				if(titanAccount!=null && titanAccount.getNopwdpaylimit()!=null){
 					//？？有待讨论，和融数的整个数据交互式以分为单位，建议数据库不要使用double等数据形式
-					BigDecimal allowNoPwdPay = new BigDecimal(NumberUtil.covertToCents(String.valueOf(titanAccount.getNopwdpaylimit())));
+					BigDecimal allowNoPwdPay = new BigDecimal(titanAccount.getNopwdpaylimit());
 					BigDecimal money = new BigDecimal(NumberUtil.covertToCents(judgeAllowNoPwdPayRequest.getMoney()));
 					allowNoPwdPayResponse.setAllowNoPwdPay(false);
 					if(allowNoPwdPay.subtract(money).doubleValue()>=0){
@@ -1489,6 +1493,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			FinancialOrderResponse financialOrderResponse) {
 		LocalAddTransOrderResponse localAddTransOrderResponse = new LocalAddTransOrderResponse();
 		try{
+			log.info("本地下单入参:"+JSONSerializer.toJSON(paymentRequest));
 			//判断该支付是否已经下单，处理中的就返回单号，失败返回新单号，成功就拒绝下单
 			TransOrderResponse transOrderResponse = queryTransOrderByCode(paymentRequest.getPayOrderNo());
 			if(transOrderResponse !=null && transOrderResponse.getTransOrder() !=null){

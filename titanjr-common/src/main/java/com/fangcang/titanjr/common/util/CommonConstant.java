@@ -26,9 +26,9 @@ public class CommonConstant {
 	//返回成功
 	public static final String RETURN_SUCCESS="success";
 	/***
-	 * 免密码支付额度
+	 * 免密码支付额度(单位分)
 	 */
-	public static final Double NO_PWD_PAY_LIMIT = 1000d;
+	public static final Double NO_PWD_PAY_LIMIT = 100000d;
 	//融数充值单默认的失效天数
 	public static final Integer ORDER_EXPIRE_TIME = 5;
 	/******* 审核人*******/

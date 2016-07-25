@@ -9,8 +9,9 @@
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 	</head>
 <body>
-<form action="http://devrsjf.rongcapital.com.cn:8486/checkstand/payment" name="pay_form" id="pay_form" method="post" >
-  <c:if test="${rechargeDataDTO !=null}">
+  <c:if test="${not empty rechargeDataDTO }">
+<form action="${rechargeDataDTO.gateWayUrl}" name="pay_form" id="pay_form" method="post" >
+
     <input name="merchantNo" type="hidden" value="${rechargeDataDTO.merchantNo}"/>
 	<input name="orderNo" type="hidden" value="${rechargeDataDTO.orderNo}"/>
 	<input name="orderAmount" type="hidden" value="${rechargeDataDTO.orderAmount}"/>
@@ -27,9 +28,9 @@
 	<input name="version" type="hidden" value="${rechargeDataDTO.version}"/>
 	<input name="charset" type="hidden" value="${rechargeDataDTO.charset}"/>
 	<input name="signMsg" type="hidden" value="${rechargeDataDTO.signMsg}"/>
-  </c:if>
 
 </form>
+  </c:if>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
 </body>
 <script type="text/javascript">

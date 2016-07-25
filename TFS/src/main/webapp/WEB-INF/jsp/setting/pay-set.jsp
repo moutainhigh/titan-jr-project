@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-    <title>支付密码-泰坦金融</title>
+    <title>付款密码-泰坦金融</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 </head>
@@ -13,7 +13,7 @@
 <div id="scroll" >
 		<div class="main_sell clearfix user_title">
 			<div class="p_r30 p_l10">
-				<span>泰坦金服&nbsp;-&nbsp;泰坦金服设置&nbsp;-&nbsp;付款密码设置</span>
+				<span>泰坦金融&nbsp;-&nbsp;泰坦金融设置&nbsp;-&nbsp;付款密码设置</span>
 			</div>
 		</div>
 	</div>
@@ -55,7 +55,7 @@
 				<h3 class="TFSpassw_title"><span class="fl">您的付款密码：</span><span class="TFS_changepassword fl"><img src="<%=cssSaasPath%>/images/TFS/lock.png" alt=""><i class="blue undl curpo J_password">修改密码</i></span></h3>
 			</c:if>
 			<div class="TFSpayset">
-				<h3 class="TFSpassw_title fl">小额免支付开关</h3>
+				<h3 class="TFSpassw_title fl">小额免密支付开关</h3>
 				<div class="glright fl">
 					<span uitype="switch" <c:if test="${allownopwdpay==1}">checked</c:if> class="switch-text" id="J_siwtch_auto"></span>
 					<c:if test="${allownopwdpay==0}"><span class="nopassword">未开通小额免密支付，付款时需要密码</span></c:if>
