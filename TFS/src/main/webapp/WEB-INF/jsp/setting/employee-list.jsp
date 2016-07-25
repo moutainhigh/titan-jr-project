@@ -13,7 +13,7 @@
 <div id="scroll" >
 		<div class="main_sell clearfix user_title">
 			<div class="p_r30 p_l10">
-				<span>泰坦金服&nbsp;-&nbsp;泰坦金服设置&nbsp;-&nbsp;员工权限设置</span>
+				<span>泰坦金融&nbsp;-&nbsp;泰坦金融设置&nbsp;-&nbsp;员工权限设置</span>
 			</div>
 		</div>
 		<div class="TFS_set">
@@ -22,7 +22,7 @@
 					新增员工权限
 				</span>
 				<div class="fr clearfix">
-					<input type="text" placeholder="泰坦金服用户名：" id="J_tfs_userLoginName" class="text w_180 c_666" name="jinfuUserLoginName">
+					<input type="text" placeholder="泰坦金融用户名：" id="J_tfs_userLoginName" class="text w_180 c_666" name="jinfuUserLoginName">
 					<input type="text" placeholder="姓名：" id="J_tfs_userName" class="text w_140 m_l3 c_666" name="userName">
 					<a href="#" class="btn btn_magnify m_l2 J_search">&nbsp;</a>
 				</div>
@@ -45,7 +45,7 @@
 				<col width="8%">
 				<col width=""></colgroup>
 			<tr class="TFS_setth">
-				<td rowspan="2">泰坦金服用户名</td>
+				<td rowspan="2">泰坦金融用户名</td>
 				<td rowspan="2">姓名</td>
 				<td rowspan="2">关联SAAS用户</td>
 				<td colspan="6">权限</td>

@@ -14,7 +14,7 @@
 <div id="scroll" >
 		<div class="main_sell clearfix user_title">
 			<div class="p_r30 p_l10">
-				<span>泰坦金服&nbsp;-&nbsp;泰坦金服设置&nbsp;-&nbsp;基础信息</span>
+				<span>泰坦金融&nbsp;-&nbsp;泰坦金融设置&nbsp;-&nbsp;基础信息</span>
 			</div>
 		</div>
 		<div class="TFS_set">
@@ -28,8 +28,8 @@
 				<h2>登录信息：</h2>
 				<div class="TFS_basictop">
 					<ul>
-						<li><span class="TFS_basname">泰坦金服用户名：</span>${titanUser.userloginname }</li>
-						<li class="fl"><span class="TFS_basname">泰坦金服登录密码：</span> ······ <span class="J_modify undl curpo blue">修改</span></li>
+						<li><span class="TFS_basname">泰坦金融用户名：</span>${titanUser.userloginname }</li>
+						<li class="fl"><span class="TFS_basname">泰坦金融登录密码：</span> ······ <span class="J_modify undl curpo blue">修改</span></li>
 						<li class="fl"><span class="TFS_basname">泰坦码：</span><strong class="c_f00">${financialOrganDTO.titanCode }</strong></li>
 					</ul>
 				</div>
