@@ -160,6 +160,7 @@ function saveInfo(){
         context: document.body,
         url : '<%=basePath%>/setting/set-enterprise-info.shtml', 
         data:{"connect":connect,"mobile":mobile},
+        type:'post',
         success : function(result){
         	if(result.code==1){
 				 location.href="<%=basePath%>/setting/base-info.shtml";
