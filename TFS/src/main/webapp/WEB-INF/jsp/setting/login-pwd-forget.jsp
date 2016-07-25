@@ -16,7 +16,7 @@
 				<ul class="passwordset_u2">
 					<li>
 						<span class="reset_pass">泰坦金融用户名：</span>
-						<input type="text" class="text w_250" id="userLoginName" placeholder="请输入手机号或邮箱" customFun="mobileCheck" /></li>
+						<input type="text" class="text w_250" id="userLoginName" value="${tfsUserLoginName }" placeholder="请输入手机号或邮箱" customFun="mobileCheck" /></li>
 					<li>
 						<span class="reset_pass">验证码：</span>
 						<p class="text w_250 f_code">
@@ -200,7 +200,11 @@ function savePass(){
 	    complete:function(){
 	    	  top.F.loading.hide();
 	    },
-		error:function(){
+	    error:function(xhr,status){
+			if(xhr.status&&xhr.status==403){
+    			new top.Tip({msg : '没有权限访问，请联系管理员', type: 3 , time:2000});
+    			return ;
+    		}
 			new top.Tip({msg : '系统错误，请重试!', type: 3 , time:1500});
 		}
 	});

@@ -41,7 +41,7 @@ import com.fangcang.util.StringUtil;
  */
 @Controller
 @RequestMapping("/setting")
-@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
+@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 public class SettingBaseInfoController extends BaseController{
 	/**
 	 * 
@@ -62,6 +62,7 @@ public class SettingBaseInfoController extends BaseController{
 	 */
 	
 	@RequestMapping("/base-info")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
 	public String baseInfo(Model model){
 		
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
@@ -105,7 +106,13 @@ public class SettingBaseInfoController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping("/login-pwd-forget")
-	public String loginPwdForget(){
+	public String loginPwdForget(Model model){
+		int tfsUserId = Integer.valueOf(getTfsUserId());
+		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+		userInfoQueryRequest.setTfsUserId(tfsUserId);
+		UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
+		TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+		model.addAttribute("tfsUserLoginName", titanUser.getUserloginname());
 		return "/setting/login-pwd-forget";
 	}
 	/**
