@@ -72,6 +72,7 @@ AjaxPage.prototype.load=function(){
 	
 	$.ajax({
 		dataType : 'html',
+		type:'post',
 		data:_ajaxPage.option.queryParams,
 		url :_ajaxPage.option.url,
 		beforeSend:function(){
