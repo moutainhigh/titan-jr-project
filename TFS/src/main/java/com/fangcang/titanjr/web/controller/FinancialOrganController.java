@@ -457,10 +457,9 @@ public class FinancialOrganController extends BaseController {
     	String regCode = setRegCode(receiveAddress);
 		sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
     	sendRegCodeRequest.setSubject("泰坦金融注册验证码");
-    	 
     	
     	SendRegCodeResponse sendRegCodeResponse = sendSMSService.sendRegCode(sendRegCodeRequest);
-    	sendRegCodeResponse.putSuccess();
+    	
     	if(sendRegCodeResponse.isResult()){
     		return toJson(putSuccess("验证码发送成功"));
     	}else{

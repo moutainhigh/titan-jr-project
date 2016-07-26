@@ -2,6 +2,7 @@ package com.fangcang.titanjr.service.impl;
 
 import net.sf.json.JSONSerializer;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,7 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 				    sendSmsResponse.setReturnMessage(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				    return sendSmsResponse;
 			    }else{
+			    	log.error("send sms ,url:"+messageServiceUrl+",param:"+ToStringBuilder.reflectionToString(smsSendDTO)+",retMessage:"+retMessage);
 			    	sendSmsResponse.setResult(false);
 					sendSmsResponse.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
 					sendSmsResponse.setReturnMessage(retMessage);
@@ -78,7 +80,7 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 	public SendRegCodeResponse sendRegCode(SendRegCodeRequest sendRegCodeRequest) {
 		//参数校验
 		SendRegCodeResponse response = new SendRegCodeResponse();
-		//TODO 枚举类定义邮件类型和内容等信息
+		
 		if(!StringUtil.isValidString(sendRegCodeRequest.getReceiveAddress())){
 			response.putErrorResult("接收地址不能为空"); 
 			return response;
@@ -141,10 +143,11 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 					 response.putSuccess("邮件发送成功");
 					 return response;
 				}else{
+					log.error("send email code ,url:"+messageServiceUrl+",param:"+ToStringBuilder.reflectionToString(emailSenderDTO)+",retMessage:"+retMessage);
 					response.putErrorResult("邮件发送失败");
 				}
 			} catch (Exception e) {
-				log.error("邮件发送失败,sendEmailRequest:"+JSONSerializer.toJSON(sendRegCodeRequest).toString(),e);
+				log.error("邮件发送失败,sendEmailRequest:"+ToStringBuilder.reflectionToString(sendRegCodeRequest),e);
 				response.putErrorResult("服务异常，邮件发送失败");
 			}
 		}

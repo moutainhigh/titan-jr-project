@@ -65,7 +65,8 @@
 		</div>
 	</div>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
-<script>
+<script type="text/javascript">
+var isadmin = '${LOGIN_IS_ADMIN}';
 //渲染组件
 	F.UI.scan();
 	//展开、收缩表格
@@ -80,6 +81,11 @@
                 	toState = sw.getChecked();
                 	//还原状态
                 	sw.setChecked(!toState);
+                	///业务代码写在下面
+                	if(isadmin!='1'){
+                		new top.Tip({msg : '您没有权限操作该功能，请联系管理员', type: 3,timer:3000});
+                		return ;
+                	}
                     if(toState){//切换到开启
                     	msg = "您选择开通小额免密支付，1000元以下付款时无需密码。";
                     }else{//切换到关闭
@@ -131,7 +137,11 @@ function showConfirm(){
              			top.F.loading.hide();
              		},
              		error:function(xhr,status){
-             			 new top.Tip({msg : '请求失败，请重试', type: 2});
+             			if(xhr.status&&xhr.status==403){
+                			new top.Tip({msg : '没有权限访问，请联系管理员', type: 3 , timer:2000});
+                			return ;
+                		}
+             			 new top.Tip({msg : '请求失败，请重试', type: 3});
              		}
              	}); 
              
