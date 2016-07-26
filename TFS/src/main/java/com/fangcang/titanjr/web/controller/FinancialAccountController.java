@@ -409,6 +409,7 @@ public class FinancialAccountController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/toAccountWithDraw")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
     public String accountWithDraw(WithDrawRequest withDrawRequest){
         if (null == this.getUserId()) {
             return toJson(putSysError("会话中用户信息不正确"));

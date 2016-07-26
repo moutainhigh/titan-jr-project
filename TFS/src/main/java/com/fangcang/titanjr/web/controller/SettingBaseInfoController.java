@@ -31,8 +31,8 @@ import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
-import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.titanjr.web.util.TFSTools;
+import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
 /**
  * 基础信息
@@ -73,7 +73,7 @@ public class SettingBaseInfoController extends BaseController{
 			
 			FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 			organQueryRequest.setOrgCode(titanUser.getOrgcode());
-			FinancialOrganResponse financialOrganResponse =organService.queryFinancialOrgan(organQueryRequest);
+			FinancialOrganResponse financialOrganResponse = organService.queryFinancialOrgan(organQueryRequest);
 			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
 			model.addAttribute("financialOrganDTO", financialOrganDTO);
 			for(OrgImageInfo item : financialOrganDTO.getOrgImageInfoList()){
@@ -84,8 +84,14 @@ public class SettingBaseInfoController extends BaseController{
 				}
 			}
 			//登录者信息
-			model.addAttribute("titanUser", titanUser);
-			
+			UserInfoQueryRequest adminRequest = new UserInfoQueryRequest();
+			adminRequest.setOrgCode(titanUser.getOrgcode());
+			adminRequest.setIsadmin(1);
+			UserInfoPageResponse adminResponse = userService.queryUserInfoPage(adminRequest);
+			if(adminResponse.getTitanUserPaginationSupport().getItemList().size()>0){
+				TitanUser adminUser = adminResponse.getTitanUserPaginationSupport().getItemList().get(0);
+				model.addAttribute("adminUser", adminUser);
+			}
 			return "setting/base-info";
 		}else{
 			//登录者没有金服id

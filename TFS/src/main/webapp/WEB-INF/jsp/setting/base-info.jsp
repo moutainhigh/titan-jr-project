@@ -28,8 +28,8 @@
 				<h2>登录信息：</h2>
 				<div class="TFS_basictop">
 					<ul>
-						<li><span class="TFS_basname">泰坦金融用户名：</span>${titanUser.userloginname }</li>
-						<li class="fl"><span class="TFS_basname">泰坦金融登录密码：</span> ······ <span class="J_modify undl curpo blue">修改</span></li>
+						<li><span class="TFS_basname">泰坦金融管理员用户名：</span>${adminUser.userloginname }</li>
+						<li class="fl"><span class="TFS_basname">泰坦金融管理员登录密码：</span> ······ <span class="J_modify undl curpo blue">修改</span></li>
 						<li class="fl"><span class="TFS_basname">泰坦码：</span><strong class="c_f00">${financialOrganDTO.titanCode }</strong></li>
 					</ul>
 				</div>
@@ -129,7 +129,7 @@ $('.J_modify').on('click',function(){
 		},
 		error:function(xhr,status){
       	 	if(xhr.status&&xhr.status==403){
-   				new top.Tip({msg : '没有权限访问，请联系管理员', type: 3 , time:2000});
+   				new top.Tip({msg : '没有权限访问，请联系管理员', type: 3 , timer:2000});
    				return ;
    			}
 			 new top.Tip({msg : '请求失败，请重试', type: 2});

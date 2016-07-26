@@ -49,6 +49,7 @@ $('.J_examine').on('click',function(){
 	top.F.loading.show("mask");
 	$.ajax({
         dataType : 'html',
+        type:'post',
         context: document.body,
         data:{'orgId':orgId,'opt':opt,'tfsLoginUsername':tfsLoginUsername},
         url : '<%=basePath%>/admin/viewOrg.shtml',            

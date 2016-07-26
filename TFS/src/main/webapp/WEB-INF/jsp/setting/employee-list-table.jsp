@@ -238,10 +238,10 @@ $('.J_modify').on('click',function(){
 //解除权限
 $('.J_relieve').on('click',function(){
 	var tdEle = $(this).parents(".td-data");
-	var tUserLoginName = tdEle.attr("data-tfs-userloginname");//$("#tUserLoginName").val();
-	var tUserName = tdEle.attr("data-tusername");//$("#tUserName").val();
-	var fcUserLoginName = tdEle.attr("data-fc-userloginname");//$("#fcUserLoginName").val();
-	var tfsUserId = tdEle.attr("data-tfs-userid");//$("#tfsUserId").val();
+	var tUserLoginName = tdEle.attr("data-tfs-userloginname");
+	var tUserName = tdEle.attr("data-tusername");
+	var fcUserLoginName = tdEle.attr("data-fc-userloginname");
+	var tfsUserId = tdEle.attr("data-tfs-userid");
 	 new top.createConfirm({
 	    title:'提示',
 		padding: '20px 20px 40px',	
@@ -257,10 +257,6 @@ $('.J_relieve').on('click',function(){
 					if(result.code==1){
 						new top.Tip({msg : '操作成功！', type: 1 });
 						top.frames["right_con_frm"].ajaxPage.load();
-						//$(".J_relation").show();
-				        //$(".J_relieve").hide();	
-				      	//$(".J_relieve").parent("h4").find("b").text('');
-				      	 
 					}else{
 						new top.createConfirm({
 					        padding:'30px 20px 65px',
