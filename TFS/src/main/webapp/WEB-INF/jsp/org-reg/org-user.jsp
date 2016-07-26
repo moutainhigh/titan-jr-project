@@ -29,11 +29,11 @@
 	                <div class="pour_c" >
 	                <form action="<c:url value='/organ/showEnterpriseInfo.shtml'/>" id="reg_form_qy">
 	                    <ul>
-	                        <li><div class="title">用 户 名 ：</div><input type="text" class="text w_420 ui-loginusername"  name="userLoginName"  placeholder="请输入您的邮箱地址"  datatype="e" errormsg="邮箱格式不正确" afterPassed="checkExist"></li>
-	                        <li><div class="title">登录密码：</div><input type="password" class="text w_420 pass1" name="password"  placeholder="建议至少使用两种字符组合" datatype="/\w{6,}/" errormsg="密码长度至少6位"><span class="ico eye"></span></li>
-	                        <li><div class="title">确认密码：</div><input type="password" class="text w_420 pass2" name="passwordConfirm" placeholder="请再次输入密码" datatype="/\w{6,}/" errormsg="密码长度至少6位" afterPassed="confirmPass"><span class="ico eye"></span></li>
-	                        <li style="margin-bottom: 10px;"><div class="title">验 证 码 ：</div><input type="text" class="text w_420 ui-reg" name="regCode" placeholder="请输入验证码" datatype="/\w{4,}/" errormsg="验证码长度至少4位"><span class="verify" data-in-form="qy_form">获取验证码</span></li>
-	                        <li><label class="f_ui-checkbox-c3"><input type="checkbox"><i></i> &nbsp;我已阅读并同意</label>  <span class="blue underline cursor J_agreement">《泰坦云金融服务协议》</span></li>
+	                        <li><div class="title">用 户 名 ：</div><input type="text" value="${param.eUserLoginName}" class="text w_420 ui-loginusername"  name="userLoginName"  placeholder="请输入您的邮箱地址"  datatype="e" errormsg="邮箱格式不正确" afterPassed="checkExist"></li>
+	                        <li><div class="title">登录密码：</div><input type="password" value="${param.ePassword}" class="text w_420 pass1" name="password"  placeholder="建议至少使用两种字符组合" datatype="/\w{6,}/" errormsg="密码长度至少6位"><span class="ico eye"></span></li>
+	                        <li><div class="title">确认密码：</div><input type="password" value="${param.ePasswordConfirm}" class="text w_420 pass2" name="passwordConfirm" placeholder="请再次输入密码" datatype="/\w{6,}/" errormsg="密码长度至少6位" afterPassed="confirmPass"><span class="ico eye"></span></li>
+	                        <li style="margin-bottom: 10px;"><div class="title">验 证 码 ：</div><input type="text" value="${param.eRegCode}" class="text w_420 ui-reg" name="regCode" placeholder="请输入验证码" datatype="/\w{4,}/" errormsg="验证码长度至少4位"><span class="verify" data-in-form="qy_form">获取验证码</span></li>
+	                        <li><label class="f_ui-checkbox-c3"><input type="checkbox" ${param.userType =='1'? 'checked':''  } ><i></i> &nbsp;我已阅读并同意</label>  <span class="blue underline cursor J_agreement">《泰坦云金融服务协议》</span></li>
 	                    </ul>
 	                     <input type="submit" class="regbtn" style="display:none;">
                 	 </form>
@@ -43,11 +43,11 @@
 	                <div class="pour_c yx1 on" >
 	                	<form action="<c:url value='/organ/showPersernalInfo.shtml'/>" id="reg_form_phone">
 		                    <ul>
-		                        <li><div class="title">用 户 名 ：</div><input type="text" class="text w_420 ui-loginusername" name="userLoginName" placeholder="请输入您的手机号码"  datatype="m" errormsg="手机号码格式不正确" afterPassed="checkExist"></li>
-		                        <li><div class="title">登录密码：</div><input type="password" class="text w_420 pass1" name="password" placeholder="建议至少使用两种字符组合" datatype="/\w{6,}/" errormsg="密码长度至少6位"><span class="ico eye"></span></li>
-		                        <li><div class="title">确认密码：</div><input type="password" class="text w_420 pass2" name="passwordConfirm" placeholder="请再次输入密码" datatype="/\w{6,}/" errormsg="密码长度至少6位" afterPassed="confirmPass" ><span class="ico eye"></span></li>
-		                        <li style="margin-bottom: 10px;"><div class="title">验 证 码 ：</div><input type="text" class="text w_420 ui-reg" name="regCode" placeholder="请输入验证码" datatype="/\w{4,}/" errormsg="验证码长度至少4位"><span class="verify">获取验证码</span></li>
-		                        <li><label class="f_ui-checkbox-c3"><input type="checkbox"><i></i> &nbsp;我已阅读并同意</label>  <span class="blue underline cursor J_agreement">《泰坦云金融服务协议》</span></li>
+		                        <li><div class="title">用 户 名 ：</div><input type="text" class="text w_420 ui-loginusername"  value="${param.pUserLoginName}" name="userLoginName" placeholder="请输入您的手机号码"  datatype="m" errormsg="手机号码格式不正确" afterPassed="checkExist"></li>
+		                        <li><div class="title">登录密码：</div><input type="password" class="text w_420 pass1"  value="${param.pPassword}" name="password" placeholder="建议至少使用两种字符组合" datatype="/\w{6,}/" errormsg="密码长度至少6位"><span class="ico eye"></span></li>
+		                        <li><div class="title">确认密码：</div><input type="password" class="text w_420 pass2" value="${param.pPasswordConfirm}" name="passwordConfirm" placeholder="请再次输入密码" datatype="/\w{6,}/" errormsg="密码长度至少6位" afterPassed="confirmPass" ><span class="ico eye"></span></li>
+		                        <li style="margin-bottom: 10px;"><div class="title">验 证 码 ：</div><input type="text" value="${param.pRegCode}" class="text w_420 ui-reg" name="regCode" placeholder="请输入验证码" datatype="/\w{4,}/" errormsg="验证码长度至少4位"><span class="verify">获取验证码</span></li>
+		                        <li><label class="f_ui-checkbox-c3"><input type="checkbox" ><i></i> &nbsp;我已阅读并同意</label>  <span class="blue underline cursor J_agreement">《泰坦云金融服务协议》</span></li>
 		                    </ul>
 		                     <input type="submit" class="regbtn" style="display:none;">
 	                	</form>
@@ -55,11 +55,11 @@
 	                <div class="pour_c yx2 " style="display:none;">
 	                	<form action="<c:url value='/organ/showPersernalInfo.shtml'/>" id="reg_form_email">
 		                    <ul>
-		                        <li><div class="title">用 户 名 ：</div><input type="text" class="text w_420 ui-loginusername" name="userLoginName" placeholder="请输入您的邮箱地址"  datatype="e" errormsg="邮箱格式不正确" afterPassed="checkExist"></li>
-		                        <li><div class="title">登录密码：</div><input type="password" class="text w_420 pass1" name="password" placeholder="建议至少使用两种字符组合" datatype="/\w{6,}/" errormsg="密码长度至少6位"><span class="ico eye"></span></li>
-		                        <li><div class="title">确认密码：</div><input type="password" class="text w_420 pass2" name="passwordConfirm" placeholder="请再次输入密码" datatype="/\w{6,}/" errormsg="密码长度至少6位" afterPassed="confirmPass"><span class="ico eye"></span></li>
-		                        <li style="margin-bottom: 10px;"><div class="title">验 证 码 ：</div><input type="text" class="text w_420 ui-reg" name="regCode" placeholder="请输入验证码" datatype="/\w{4,}/" errormsg="验证码长度至少4位"><span class="verify">获取验证码</span></li>
-		                        <li><label class="f_ui-checkbox-c3"><input type="checkbox" ><i></i> &nbsp;我已阅读并同意</label>  <span class="blue underline cursor J_agreement">《泰坦云金融服务协议》</span></li>                    
+		                        <li><div class="title">用 户 名 ：</div><input type="text" class="text w_420 ui-loginusername" value="${param.mUserLoginName}" name="userLoginName" placeholder="请输入您的邮箱地址"  datatype="e" errormsg="邮箱格式不正确" afterPassed="checkExist"></li>
+		                        <li><div class="title">登录密码：</div><input type="password" class="text w_420 pass1"  value="${param.mPassword}" name="password" placeholder="建议至少使用两种字符组合" datatype="/\w{6,}/" errormsg="密码长度至少6位"><span class="ico eye"></span></li>
+		                        <li><div class="title">确认密码：</div><input type="password" class="text w_420 pass2" value="${param.mPasswordConfirm}" name="passwordConfirm" placeholder="请再次输入密码" datatype="/\w{6,}/" errormsg="密码长度至少6位" afterPassed="confirmPass"><span class="ico eye"></span></li>
+		                        <li style="margin-bottom: 10px;"><div class="title">验 证 码 ：</div><input type="text" value="${param.mRegCode}"  class="text w_420 ui-reg" name="regCode" placeholder="请输入验证码" datatype="/\w{4,}/" errormsg="验证码长度至少4位"><span class="verify">获取验证码</span></li>
+		                        <li><label class="f_ui-checkbox-c3"><input type="checkbox"><i></i> &nbsp;我已阅读并同意</label>  <span class="blue underline cursor J_agreement">《泰坦云金融服务协议》</span></li>                    
 		                    </ul>
 		                    <input type="submit" class="regbtn" style="display:none;">
 	                	</form>
@@ -100,6 +100,9 @@ var TAB_TYPE={"enterprise":1,"personage":2};
 var LOGIN_TYPE={"email":1,"phone":2};
 var current_tab = TAB_TYPE["enterprise"];
 var loginType = LOGIN_TYPE["email"];
+
+
+
 
 //企业用户 个人用户 
 $('.enterprise').click(function(){
@@ -436,6 +439,23 @@ $('.ui-loginusername').on('change',function(){
 		return;
 	}
 });
+
+
+if('${param.userType}' == "2")
+{
+	$('.personage').click();
+	
+}
+
+if('${ param.regUserType}'=="2")
+{
+	$('.J_yx').click();
+}
+if('${param.userType}' == "2")
+{
+$('.f_ui-checkbox-c3 input[type=checkbox]').attr('checked',true);
+}
+
 </script>
   </body>
 </html>

@@ -74,7 +74,7 @@
 	                 </div>
 	            </div>
 	            <div class="create_c_btn">
-	                <a href="<%=basePath %>/organ/showOrgUser.shtml" class="btn btnh">上一步</a>
+	                <a href="<%=basePath %>/organ/showOrgUser.shtml?userType=1&eUserLoginName=${regUserLoginInfo.userLoginName}&ePassword=${regUserLoginInfo.password}&ePasswordConfirm=${regUserLoginInfo.passwordConfirm}&eRegCode=${regUserLoginInfo.regCode}" class="btn btnh">上一步</a>
 	                <a href="javasript:void(0);" class="btn" onclick="regOrg()">下一步</a>           
 	            </div>
 	            <input type="submit" id="reg_btn" style="display:none;"/>

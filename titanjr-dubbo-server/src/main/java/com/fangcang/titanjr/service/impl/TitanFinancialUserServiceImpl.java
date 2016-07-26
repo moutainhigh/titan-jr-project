@@ -158,7 +158,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         //不是管理员用户时，金服角色id列表不能为空
         if (userRegisterRequest.getIsAdminUser() != 1) {
             if (CollectionUtils.isEmpty(userRegisterRequest.getRoleIdList())) {
-                response.putErrorResult("角色不能为空");
+                response.putErrorResult("金融权限不能为空");
                 return response;
             }
         }
@@ -241,8 +241,8 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         userRoleSetRequest.getDeleteUserRoleIdMap().put(Long.valueOf(String.valueOf(tfsUserid)),userRegisterRequest.getUnselectRoleIdList());
         UserRoleSetResponse userRoleSetResponse = this.setFinancialUserRole(userRoleSetRequest);
         if (!userRoleSetResponse.isResult()) {
-            log.error("用户角色添加失败，抛出异常回滚");
-            throw new Exception("用户角色初始化失败");
+            log.error("金融权限添加失败，抛出异常回滚");
+            throw new Exception("金融权限初始化失败");
         }
 
         //4.SaaS系统添加员工属于固定金服商家（需配置起来）
@@ -382,7 +382,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 	            }
 	        }
        
-        	//删除无效的角色
+        	//把取消勾选的设置为无效的
     		for (Long tfsUserId : userRoleSetRequest.getDeleteUserRoleIdMap().keySet()) {
                 if (CollectionUtils.isNotEmpty(userRoleSetRequest.getDeleteUserRoleIdMap().get(tfsUserId))) {
                     for (Long roleId : userRoleSetRequest.getDeleteUserRoleIdMap().get(tfsUserId)) {
@@ -396,7 +396,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
                     }
                 }
             }
-         	//添加为有效
+         	//添加所有勾选的
             if (CollectionUtils.isNotEmpty(userRoleList)) {
                 titanUserRoleDao.batchSaveUserRoles(userRoleList);
             }

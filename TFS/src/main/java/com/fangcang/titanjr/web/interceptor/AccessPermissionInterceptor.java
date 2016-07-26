@@ -14,12 +14,16 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
+import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
+import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
@@ -43,6 +47,23 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 		HttpSession session = request.getSession();
 		Integer isadmin = (Integer)session.getAttribute(WebConstant.SESSION_KEY_LOGIN_IS_ADMIN);
 		isadmin = isadmin==null?0:isadmin;
+		Integer tfsUserId = (Integer)session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+		if(tfsUserId!=null){
+			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+			userInfoQueryRequest.setTfsUserId(tfsUserId);
+			UserInfoPageResponse userInfoPage = userService.queryUserInfoPage(userInfoQueryRequest);
+			TitanUser titanUser =userInfoPage.getTitanUserPaginationSupport().getItemList().get(0);
+			if(titanUser.getStatus()==TitanUserEnum.Status.FREEZE.getKey()){
+				setMsg(request, response, "当前用户已冻结，请联系管理员");
+				return false;
+			}
+			if(titanUser.getStatus()==TitanUserEnum.Status.NOT_AVAILABLE.getKey()){
+				setMsg(request, response, "当前用户已注销，请联系管理员");
+				return false;
+			}
+		}
+		
+		
 		if(handler instanceof HandlerMethod){//是请求方法才进行判断
 			HandlerMethod method = (HandlerMethod)handler;
 			AccessPermission accessPermission = method.getMethod().getAnnotation(AccessPermission.class);
@@ -61,7 +82,7 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 			if(excludeRole(allownRoleCode)){
 				return true;
 			}
-			//------------------------以下需要访问权限的业务-------------
+			/****************** 以下需要访问权限的业务 **********************/
 			//是否开通了金融账户
 			if(hasRegister(request, response)==false){
 				return false;
@@ -83,7 +104,7 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 	}
 	
 	/**
-	 * 是否已经注册
+	 * 商家是否已经开通金融账号
 	 * @throws IOException 
 	 * @throws ServletException 
 	 */
@@ -131,7 +152,7 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 		}
 	}
 	/***
-	 * 是否没有权限限制
+	 * 业务方法是否没有权限限制(注解)
 	 */
 	private boolean excludeRole(String[] function){
 		for(String roleCode : function){
@@ -142,7 +163,7 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 		return false;
 	}
 	/**
-	 * 是否允许访问
+	 * 是否允许访问，判断是否含有权限
 	 * @param function 方法访问需要的权限
 	 * @param roleList 用户拥有的权限
 	 * @param isadmin 是否为admin
@@ -160,7 +181,6 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 			if(function.equals(CommonConstant.ROLECODE_ADMIN)&&isadmin==1){
 				return "yes";
 			}
-			
 			for(RoleDTO itemDto : roleList){
 				if(itemDto.getRoleCode().equals(function)){
 					return "yes";
@@ -170,11 +190,15 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 		return "no";
 	}
 	
+	 
+	
+	
+	
+	
 	@Override
 	public void postHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -182,7 +206,6 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 	public void afterCompletion(HttpServletRequest request,
 			HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
-		// TODO Auto-generated method stub
 		
 	}
 	
