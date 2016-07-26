@@ -464,45 +464,81 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     //回调财务
     @Override
     public void confirmFinance(TransOrderDTO transOrderDTO) throws Exception{
-    	log.info("回调财务:"+JSONSerializer.toJSON(transOrderDTO));
+    	
+		if (transOrderDTO == null|| !StringUtil.isValidString(transOrderDTO.getUserorderid())) {
+			return;
+		}
+
 		String response = "";
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("payOrderCode", transOrderDTO.getPayorderno()));
-        params.add(new BasicNameValuePair("merchantCode", transOrderDTO.getMerchantcode()));
+
+		int len = transOrderDTO.getUserorderid().length();
+		String paySource = transOrderDTO.getUserorderid().substring(len - 1,len);
+		List<NameValuePair> params = this.getHttpParams(transOrderDTO,paySource);
+
+		if (params == null) {
+			return;
+		}
+		
+		String url = RSInvokeConstant.callBackConfigMap.get(paySource);
+		try {
+			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params));
+			HttpResponse resp = HttpClient.httpRequest(params, url);
+			if (null != resp) {
+				HttpEntity entity = resp.getEntity();
+				response = EntityUtils.toString(entity);
+			}
+		} catch (Exception e) {
+			log.error("调用http请求通知支付失败", e);
+			throw e;
+		}
+		log.info("调用http请求通知支付支付结果完成：" + response);
+		if (StringUtil.isValidString(response)) {
+			CallBackInfo callBackInfo = analyzeResponse(response);
+			if (!"000".equals(callBackInfo.getCode())) {
+				log.error("回调失败单号:" + transOrderDTO.getUserorderid());
+				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(
+						transOrderDTO.getUserorderid(), "转账成功 回调失败",
+						OrderExceptionEnum.Finance_Confirm,
+						JSON.toJSONString(callBackInfo));
+				titanOrderService.saveOrderException(orderExceptionDTO);
+				return;
+			}
+
+		} else {// 记录异常单
+			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(
+					transOrderDTO.getOrderid(), "回调订单异常",
+					OrderExceptionEnum.Finance_Confirm,
+					JSON.toJSONString(transOrderDTO));
+			titanOrderService.saveOrderException(orderExceptionDTO);
+		}
+    	
+    }
+    
+    private OrgBindInfo getOrgBindInfo(String orgCode){
+    	if(!StringUtil.isValidString(orgCode)){
+    		return null;
+    	}
+    	
+    	OrgBindInfo orgBindInfo = new OrgBindInfo();
+    	orgBindInfo.setOrgcode(orgCode);
+    	return titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
+    }
+    
+    private List<NameValuePair> getHttpParams(TransOrderDTO transOrderDTO,String paySource){
+    	List<NameValuePair> params = new ArrayList<NameValuePair>();
+    	params.add(new BasicNameValuePair("payOrderCode", transOrderDTO.getPayorderno()));
+    	if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paySource)){//GDP回调
+    		OrgBindInfo orgBindInfo = this.getOrgBindInfo(transOrderDTO.getPayeemerchant());
+    		if(null !=orgBindInfo){
+    			params.add(new BasicNameValuePair("merchantCode", orgBindInfo.getMerchantCode()));
+    		}
+    	}else if(CashierDeskTypeEnum.SUPPLY_DESK.deskCode.equals(paySource)){//财务回调
+    		  params.add(new BasicNameValuePair("merchantCode", transOrderDTO.getMerchantcode()));
+    	}
         params.add(new BasicNameValuePair("titanPayOrderCode", transOrderDTO.getUserorderid()));
         params.add(new BasicNameValuePair("payResult", "1"));
         params.add(new BasicNameValuePair("code", "valid"));
-        String url ="";
-      //此处有待商榷，暂时回调的是财务和GDP,可用merchantcode判断,以后可能根据单号判断支付来源
-        if(StringUtil.isValidString(transOrderDTO.getUserorderid())){
-        	int len = transOrderDTO.getUserorderid().length();
-        	String paySource = transOrderDTO.getUserorderid().substring(len-1,len);
-        	url = RSInvokeConstant.callBackConfigMap.get(paySource);
-        }
-        try {
-            HttpResponse resp = HttpClient.httpRequest(params, url);
-            if(null !=resp){
-            	HttpEntity entity = resp.getEntity();
-                response = EntityUtils.toString(entity);
-            }
-        } catch (Exception e) {
-            log.error("调用http请求通知支付失败", e);
-            throw e;
-        }
-        log.info("调用http请求通知支付支付结果完成：" + response);
-        if (StringUtil.isValidString(response)) {
-        	CallBackInfo callBackInfo = analyzeResponse(response);
-        	if(!"000".equals(callBackInfo.getCode())){
-        		log.error("回调失败单号:"+transOrderDTO.getUserorderid());
-			    OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrderDTO.getUserorderid(), "转账成功 回调失败", OrderExceptionEnum.Finance_Confirm, JSON.toJSONString(callBackInfo));
-    		    titanOrderService.saveOrderException(orderExceptionDTO);
-        		return;
-        	}
-        	
-        } else {//记录异常单
-        	OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrderDTO.getOrderid(), "回调订单异常", OrderExceptionEnum.Finance_Confirm, JSON.toJSONString(transOrderDTO));
-    		titanOrderService.saveOrderException(orderExceptionDTO);
-        }
+    	return params;
     }
     
     private CallBackInfo analyzeResponse(String info){
