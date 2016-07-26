@@ -20,7 +20,13 @@
     	<div class="TFS_addtitle demo_form" id="J_form1">
     		<ul>
     			<li><span class="addtitle_left">姓名：</span><input type="text" id="userName" class="text w_180 f_ui-grey-input" datatype="s1-30" errormsg="请输入1到30位字符！" value="${userInfoDTO.userName }"></li>
-    			<li><span class="addtitle_left">手机号码：</span><input type="text" id="receiveAddress" placeholder="请输入手机号码" class="text w_180 f_ui-grey-input" readonly="readonly"  value="${userInfoDTO.userLoginName }"><span class="c_999 p_l30">此手机号将作为用户名用来登录泰坦金融官网或者APP</span></li>
+    			<c:if test="${fn:indexOf(userInfoDTO.userLoginName,'@')>0}">
+    				<li><span class="addtitle_left">邮箱地址：</span><input type="text" id="receiveAddress" class="text w_180 f_ui-grey-input" readonly="readonly"  value="${userInfoDTO.userLoginName }"><span class="c_999 p_l30">此邮箱地址将作为用户名用来登录泰坦金融官网或者APP</span></li>
+    			</c:if>
+    			<c:if test="${fn:indexOf(userInfoDTO.userLoginName,'@')==-1}">
+    				<li><span class="addtitle_left">手机号码：</span><input type="text" id="receiveAddress" class="text w_180 f_ui-grey-input" readonly="readonly"  value="${userInfoDTO.userLoginName }"><span class="c_999 p_l30">此手机号将作为用户名用来登录泰坦金融官网或者APP</span></li>
+    			</c:if>
+    			
     		</ul>
     	</div>
     	<div class="TFS_addbottom">
@@ -33,35 +39,35 @@
     			</colgroup>
     			<tr>
     				<td>
-    					<div class="TFS_addtabletop"><b>付款</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" name="roleId" value="38"><i></i></label></div>
+    					<div class="TFS_addtabletop"><b>付款</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" <c:if test="${userInfoDTO.isAdmin==1 }"> disabled="true"</c:if> name="roleId" value="38"><i></i></label></div>
     					<p class="TFS_tips">付款的权限</p>
     					<span class="TFS_tipsproposal">建议用户：财务人员、预订员等</span>
     				</td>
     				<td>
-    					<div class="TFS_addtabletop"><b>充值&提现</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" name="roleId" value="40"><i></i></label></div>
+    					<div class="TFS_addtabletop"><b>充值&提现</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" <c:if test="${userInfoDTO.isAdmin==1 }"> disabled="true"</c:if> name="roleId" value="40"><i></i></label></div>
     					<p class="TFS_tips">可以为此泰坦金融账户账户充值账户余额可以提现的权限</p>
     					<span class="TFS_tipsproposal">建议用户：财务人员等</span>
     				</td>
-    				<td>
-    					<div class="TFS_addtabletop"><b>查看</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" name="roleId" value="39"><i></i></label></div>
-    					<p class="TFS_tips">查看账户资产总额、资产分布、交易记录、增值宝、购买理财产品情况、购买信贷产品情况
+    				<td >
+    					<div class="TFS_addtabletop"><b>查看</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" name="roleId" <c:if test="${userInfoDTO.isAdmin==1 }">disabled="true"</c:if> value="39"><i></i></label></div>
+    					<p class="TFS_tips" >查看账户资产总额、资产分布、交易记录、增值宝、购买理财产品情况、购买信贷产品情况
     					</p>
     					<span class="TFS_tipsproposal">建议用户：财务总监、副总等</span>
     				</td>
     			</tr>
     			<tr>
     				<td>
-    					<div class="TFS_addtabletop"><b>理财</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" name="roleId" value="41"><i></i></label></div>
+    					<div class="TFS_addtabletop"><b>理财</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" name="roleId" <c:if test="${userInfoDTO.isAdmin==1 }"> disabled="true"</c:if> value="41"><i></i></label></div>
     					<p class="TFS_tips">购买理财产品以及理财产品赎回的权限</p>
     					<span class="TFS_tipsproposal">建议用户：财务人员等</span>
     				</td>
     				<td>
-    					<div class="TFS_addtabletop"><b>信贷</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" name="roleId" value="42"><i></i></label></div>
+    					<div class="TFS_addtabletop"><b>信贷</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" name="roleId" <c:if test="${userInfoDTO.isAdmin==1 }"> disabled="true"</c:if> value="42"><i></i></label></div>
     					<p class="TFS_tips">购买信贷产品以及信贷产品还款的权限</p>
     					<span class="TFS_tipsproposal">建议用户：财务人员等</span>
     				</td>
     				<td>
-    					<div class="TFS_addtabletop"><b>消息提醒</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" name="roleId" value="43"><i></i></label></div>
+    					<div class="TFS_addtabletop"><b>消息提醒</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" name="roleId" <c:if test="${userInfoDTO.isAdmin==1 }"> disabled="true"</c:if> value="43"><i></i></label></div>
     					<p class="TFS_tips">收付款消息提醒
     					</p>
     					<span class="TFS_tipsproposal">建议用户：财务人员、预订员等</span>
