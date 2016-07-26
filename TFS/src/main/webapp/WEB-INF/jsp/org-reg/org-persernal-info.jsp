@@ -61,7 +61,7 @@
 	                 </div>
 	            </div>
 	            <div class="create_c_btn">
-	                <a href="<%=basePath %>/organ/showOrgUser.shtml" class="btn btnh">上一步</a>
+	                <a href="<%=basePath %>/organ/showOrgUser.shtml" id="prevBtn" class="btn btnh">上一步</a>
 	                <a href="javascript:void(0);" class="btn" onclick="regOrg()">下一步</a>           
 	            </div>
 	            <input type="submit" id="reg_btn" style="display:none;"/>
@@ -78,6 +78,26 @@ var big_img_url="${big_img_50}";
 var vform =new validform('#info_form',{
 	msgAlign: 'bottom'
 });
+
+//默认是手机
+var regUserType = 1;
+//检测注册的用户名是邮箱还是手机
+if(!phone_reg.test('${regUserLoginInfo.userLoginName}')){
+	regUserType = 2;
+}
+
+var herf = $('#prevBtn').attr('href');
+if(regUserType == 1)
+{
+ 	 $('#prevBtn').attr('href',herf+"?userType=2&regUserType="+regUserType+"&pUserLoginName=${regUserLoginInfo.userLoginName}&pPassword="+
+ 		 "${regUserLoginInfo.password}&pPasswordConfirm=${regUserLoginInfo.passwordConfirm}&pRegCode=${regUserLoginInfo.regCode}");
+}
+else if(regUserType == 2)
+{
+	 $('#prevBtn').attr('href',herf+"?userType=2&regUserType="+regUserType+"&mUserLoginName=${regUserLoginInfo.userLoginName}&mPassword="+
+			 "${regUserLoginInfo.password}&mPasswordConfirm=${regUserLoginInfo.passwordConfirm}&mRegCode=${regUserLoginInfo.regCode}");
+}
+
 
 function ajaxFileUpload() {
 	$("#uploading").show();
