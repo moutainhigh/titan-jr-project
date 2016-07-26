@@ -7,6 +7,7 @@
     <title>支付密码-泰坦金融</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
+	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
   
   <body>
@@ -62,12 +63,17 @@
   </div>
 </div>
 <!--弹窗白色底--> 
-<jsp:include page="/comm/static-js.jsp"></jsp:include>
 <script>
 //密码输入框
-var PasswordStr3=new sixDigitPassword("passwordbox5");
-var PasswordStr4=new sixDigitPassword("passwordbox6");
-var PasswordStr5=new sixDigitPassword("passwordbox7");
+var PasswordStr3=null;
+var PasswordStr4=null;
+var PasswordStr5=null;
+$("document").ready(function (){
+	PasswordStr3=new sixDigitPassword("passwordbox5");
+	PasswordStr4=new sixDigitPassword("passwordbox6");
+	PasswordStr5=new sixDigitPassword("passwordbox7");
+});
+
 </script>
 </body>
 </html>

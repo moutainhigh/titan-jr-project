@@ -7,6 +7,7 @@
     <title>支付密码-泰坦金融</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
+	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
   
   <body>
@@ -73,12 +74,20 @@
 	</div>
 </div>
 <!--弹窗白色底-->
-<jsp:include page="/comm/static-js.jsp"></jsp:include>
+
+
+
+
 
 
 
 <script>
-
+var PasswordStr6=null;
+var PasswordStr7=null;
+$("document").ready(function (){
+	PasswordStr6 =new sixDigitPassword("passwordbox3");
+	PasswordStr7=new sixDigitPassword("passwordbox4");
+});
 var pwd3 = $('.passwordset_u1').html();
 //下一步
 $('.J_next').on('click',function(){
@@ -283,8 +292,7 @@ function validate_email_or_phone(data){//验证其输入的是不是邮箱或者
 	}
 }
 
-var PasswordStr6=new sixDigitPassword("passwordbox3");
-var PasswordStr7=new sixDigitPassword("passwordbox4");
+
 
 </script>
 
