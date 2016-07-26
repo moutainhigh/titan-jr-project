@@ -118,49 +118,12 @@ AjaxPage.prototype.load=function(){
 };
 //刷新待审核机构数
 function freshCheckCount(){
-	$("#i_encount").html($("#enCount").val());
-	$("#i_percount").html($("#perCount").val());
+	var enCount = parseInt($("#enCount").val());
+	var perCount = parseInt($("#perCount").val());
+	$("#i_encount").html(enCount);
+	$("#i_percount").html(perCount);
+	if($("#head_count")){
+		$("#head_count").html(enCount+perCount);
+	}
+	
 }
-/***
-//重写ajax
-(function($){     
-    //备份jquery的ajax方法     
-    var _ajax=$.ajax;     
-         
-    //重写jquery的ajax方法     
-    $.ajax=function(opt){     
-        //备份opt中error和success方法     
-        var fn = {     
-            error:function(XMLHttpRequest, textStatus, errorThrown){},     
-            success:function(data, textStatus){}     
-         } ;    
-         if(opt.error){     
-             fn.error=opt.error;     
-         }     
-         if(opt.success){     
-             fn.success=opt.success;     
-         }     
-              
-         //扩展增强处理     
-         var _opt = $.extend(opt,{     
-             error:function(XMLHttpRequest, textStatus, errorThrown){     
-                 //错误方法增强处理     
-            	 if(XMLHttpRequest.status&&XMLHttpRequest.status==403){
-         			new top.Tip({msg : '没有权限访问，请联系管理员', type: 3 , time:2000});
-         			return ;
-         		}
-         		if(XMLHttpRequest.status&&XMLHttpRequest.status==604){
-         			new top.Tip({msg : '请先开通金融账号', type: 3 , time:2000});
-         			return ;
-         		}
-                 fn.error(XMLHttpRequest, textStatus, errorThrown);
-                 new top.Tip({msg : '系统错误，请重试!', type: 3 , time:1500}); 
-             },     
-             success:function(data, textStatus){
-                 fn.success(data, textStatus);     
-             }     
-         });     
-         _ajax(_opt);     
-     };     
- })(jQuery);    
-***/

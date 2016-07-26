@@ -10,7 +10,7 @@
 			<li <c:if test="${param.menu=='user'}">class="on"</c:if>>
 				<a href="<%=basePath %>/admin/org.shtml">我的用户</a>
 				<p>
-					<a href="<%=basePath %>/admin/org.shtml">申请审核<i>0</i></a>
+					<a href="<%=basePath %>/admin/org.shtml">申请审核<i id="head_count">0</i></a>
 					<a href="javascript:void(0)">用户管理</a>
 				</p>
 			</li>

@@ -27,6 +27,10 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
     
     private Integer status;
     /**
+     * 是否是管理员
+     */
+    private Integer isadmin;
+    /**
      * 要排除的状态
      */
     private Integer excludeStatus;
@@ -111,5 +115,12 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
 	public void setExcludeStatus(Integer excludeStatus) {
 		this.excludeStatus = excludeStatus;
 	}
-    
+
+	public Integer getIsadmin() {
+		return isadmin;
+	}
+
+	public void setIsadmin(Integer isadmin) {
+		this.isadmin = isadmin;
+	}
 }
