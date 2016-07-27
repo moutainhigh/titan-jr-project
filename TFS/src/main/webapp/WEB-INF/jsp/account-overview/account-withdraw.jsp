@@ -178,7 +178,10 @@
     	}
     	
     	/* var neg = /^([+-]?)((\d{1,3}(,\d{3})*)|(\d+))(\.\d{2}))?$/; */
-    	  var neg = /^[1-9]{1}\d+(\.\d{1,2})?$/;
+    	/*   var neg = /^[1-9]{1}\d{0,10}(\.\d{1,2})?$/;
+	      var neg2 = /^[0]{1}(\.\d{1,2})?$/; */
+    	  
+    	  var neg = /^[1-9]{1}\d{0,20}(\.\d{1,2})?$/;
           var neg2 = /^[0]{1}(\.\d{1,2})?$/;
           var flag = neg.test(withdraw_amount)||neg2.test(withdraw_amount);
           if(flag==false){
