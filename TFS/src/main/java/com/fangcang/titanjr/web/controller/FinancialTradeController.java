@@ -122,7 +122,7 @@ public class FinancialTradeController extends BaseController {
 		String orderNo = rechargeResultConfirmRequest.getOrderNo();
 		try{
     		if(StringUtil.isValidString(orderNo)){
-    			response.getWriter().print("returnCode=000000&returnMag=成功");
+    			response.getWriter().print("returnCode=000000&returnMsg=成功");
     			log.info("融数后台回调成功参数:"+toJson(rechargeResultConfirmRequest));
     			String signMsg = rechargeResultConfirmRequest.getSignMsg();
            	    String sign = RechargeResultConfirmRequest.getSignStr(rechargeResultConfirmRequest);

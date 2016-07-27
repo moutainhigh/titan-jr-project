@@ -125,15 +125,15 @@ $('.sendmes').on('click',function(){
     var raObj = $(".forget_wrap #userLoginName");
     var receiveAddress = raObj.val();
     if(!(phone_reg.test(receiveAddress)||email_reg.test(receiveAddress))){
-    	new top.Tip({msg : '请输入正确的手机号码和邮箱', type: 1, timer:2000});
+    	new top.Tip({msg : '请输入正确的手机号码或者邮箱', type: 1, timer:2000});
     	raObj.focus();
     	return
     }
     _this = $(this);
     top.F.loading.show();
 	$.ajax({
-		data:{"receiveAddress":receiveAddress},
-		url : '<%=basePath%>/organ/sendRegCode.shtml',
+		data:{"receiveAddress":receiveAddress,"msgType":3},
+		url : '<%=basePath%>/organ/sendCode.shtml',
 		dataType : 'json',
 		success : function(result){
 			if(result.code==1){

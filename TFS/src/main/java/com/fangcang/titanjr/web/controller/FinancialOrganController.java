@@ -17,7 +17,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,33 +41,38 @@ import com.fangcang.titanjr.dto.bean.OrgImageInfo;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
+import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.OrgRegisterValidateRequest;
 import com.fangcang.titanjr.dto.request.OrganBindRequest;
 import com.fangcang.titanjr.dto.request.OrganImageRequest;
 import com.fangcang.titanjr.dto.request.OrganImageUploadRequest;
 import com.fangcang.titanjr.dto.request.OrganRegisterRequest;
 import com.fangcang.titanjr.dto.request.OrganRegisterUpdateRequest;
-import com.fangcang.titanjr.dto.request.SendRegCodeRequest;
+import com.fangcang.titanjr.dto.request.SendCodeRequest;
+import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.request.UserLoginNameExistRequest;
+import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.GetCheckCodeResponse;
 import com.fangcang.titanjr.dto.response.OrgRegisterValidateResponse;
 import com.fangcang.titanjr.dto.response.OrganBindResponse;
 import com.fangcang.titanjr.dto.response.OrganImageResponse;
 import com.fangcang.titanjr.dto.response.OrganImageUploadResponse;
 import com.fangcang.titanjr.dto.response.OrganRegisterResponse;
 import com.fangcang.titanjr.dto.response.OrganRegisterUpdateResponse;
-import com.fangcang.titanjr.dto.response.SendRegCodeResponse;
+import com.fangcang.titanjr.dto.response.SendCodeResponse;
 import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
+import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.pojo.OrgRegPojo;
 import com.fangcang.titanjr.web.pojo.RegUserLoginInfo;
-import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.titanjr.web.util.TFSTools;
+import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.PasswordUtil;
 import com.fangcang.util.StringUtil;
 
@@ -251,10 +255,20 @@ public class FinancialOrganController extends BaseController {
     @RequestMapping(value = "/regOrg")
     public String regOrg(RegUserLoginInfo regUserLoginInfo,OrgRegPojo orgRegPojo,Model model){
     	try {
+    		int codeId = 0;
 	    	//企业用户
     		if(orgRegPojo.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
-    			String infoFlag = TFSTools.validateRegCode(getSession(),orgRegPojo.getMobiletel(), orgRegPojo.getSmsRegCode());
-    	    	if(!"SUCCESS".equals(infoFlag)){
+    			VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
+    	    	verifyCheckCodeRequest.setReceiveAddress(orgRegPojo.getMobiletel());
+    	    	verifyCheckCodeRequest.setInputCode(orgRegPojo.getSmsRegCode());
+    	    	VerifyCheckCodeResponse verifyCheckCodeResponse = titanFinancialOrganService.verifyCheckCode(verifyCheckCodeRequest);
+    	    	if(verifyCheckCodeResponse.isResult()){
+    	    		codeId = verifyCheckCodeResponse.getCodeId();
+    	    	}else{
+    	    		return toJson(putSysError(verifyCheckCodeResponse.getReturnMessage()));
+    	    	}
+    			//String infoFlag = TFSTools.validateRegCode(getSession(),orgRegPojo.getMobiletel(), orgRegPojo.getSmsRegCode());
+    	    	if(!"SUCCESS".equals(verifyCheckCodeResponse.getReturnCode())){
     	    		model.addAttribute("errormsg", "验证码错误");
     	    		return "error";
     	    	}
@@ -301,6 +315,13 @@ public class FinancialOrganController extends BaseController {
 			if(organRegisterResponse.isResult()){
 				// 成功刷新InitSessionInterceptor中的session
 				refreshSession(regUserLoginInfo.getUserLoginName());
+				// 删除验证码
+				if(codeId>0){
+					UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
+					updateCheckCodeRequest.setCodeId(codeId);
+					updateCheckCodeRequest.setIsactive(0);
+					titanFinancialOrganService.useCheckCode(updateCheckCodeRequest);
+				}
 				return "/org-reg/reg-success";
 			}else{
 				model.addAttribute(WebConstant.MODEL_ERROR_MSG_KEY, organRegisterResponse.getReturnMessage());
@@ -438,7 +459,7 @@ public class FinancialOrganController extends BaseController {
     @ResponseBody
    	@RequestMapping(value = "/sendRegCode")
     public String sendRegCode(String receiveAddress){
-    	SendRegCodeRequest sendRegCodeRequest = new SendRegCodeRequest();
+    	SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
     	if(StringUtil.isValidString(receiveAddress)){
     		sendRegCodeRequest.setReceiveAddress(receiveAddress);
     	}else {
@@ -454,11 +475,26 @@ public class FinancialOrganController extends BaseController {
     	}else{
     		sendRegCodeRequest.setMerchantCode(RSInvokeConstant.defaultMerchant);
     	}
-    	String regCode = setRegCode(receiveAddress);
+    	String regCode;
+    	try {
+    		GetCheckCodeRequest getCheckCodeRequest = new GetCheckCodeRequest();
+        	getCheckCodeRequest.setMsgType(SMSType.REG_CODE.getType());
+        	getCheckCodeRequest.setReceiveAddress(receiveAddress);
+			GetCheckCodeResponse getCheckCodeResponse = titanFinancialOrganService.getCheckCode(getCheckCodeRequest);
+			if(getCheckCodeResponse.isResult()){
+				regCode = getCheckCodeResponse.getCheckCode();
+			}else{
+				return toJson(putSysError(getCheckCodeResponse.getReturnMessage()));
+			}
+		} catch (GlobalServiceException e) {
+			log.error("send reg code fail ,param|receiveAddress:"+receiveAddress, e);
+			return toJson(putSysError("验证码获取失败"));
+		}
+    	//String regCode = setRegCode(receiveAddress);
 		sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
     	sendRegCodeRequest.setSubject("泰坦金融注册验证码");
     	
-    	SendRegCodeResponse sendRegCodeResponse = sendSMSService.sendRegCode(sendRegCodeRequest);
+    	SendCodeResponse sendRegCodeResponse = sendSMSService.sendCode(sendRegCodeRequest);
     	
     	if(sendRegCodeResponse.isResult()){
     		return toJson(putSuccess("验证码发送成功"));
@@ -470,7 +506,7 @@ public class FinancialOrganController extends BaseController {
     @ResponseBody
    	@RequestMapping(value = "/sendCode")
     public String sendCode(String receiveAddress,Integer msgType){
-    	SendRegCodeRequest sendRegCodeRequest = new SendRegCodeRequest();
+    	SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
     	if(StringUtil.isValidString(receiveAddress)){
     		sendRegCodeRequest.setReceiveAddress(receiveAddress);
     	}else {
@@ -486,8 +522,25 @@ public class FinancialOrganController extends BaseController {
     	}else{
     		sendRegCodeRequest.setMerchantCode(RSInvokeConstant.defaultMerchant);
     	}
-    	String regCode = setRegCode(receiveAddress);
-    	if(msgType==null||msgType==SMSType.REG_CODE.getType()){//注册
+    	msgType = msgType==null?SMSType.REG_CODE.getType():msgType;
+    	GetCheckCodeRequest getCheckCodeRequest = new GetCheckCodeRequest();
+    	getCheckCodeRequest.setMsgType(msgType);
+    	getCheckCodeRequest.setReceiveAddress(receiveAddress);
+    	String regCode;
+    	try {
+			GetCheckCodeResponse getCheckCodeResponse = titanFinancialOrganService.getCheckCode(getCheckCodeRequest);
+			if(getCheckCodeResponse.isResult()){
+				regCode = getCheckCodeResponse.getCheckCode();
+			}else{
+				return toJson(putSysError(getCheckCodeResponse.getReturnMessage()));
+			}
+		} catch (GlobalServiceException e) {
+			log.error("send code fail ,param|receiveAddress:"+receiveAddress+",msgType:"+msgType, e);
+			return toJson(putSysError("验证码获取失败"));
+		}
+    	
+    	//String regCode = setRegCode(receiveAddress);
+    	if(msgType==SMSType.REG_CODE.getType()){//注册
     		sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
         	sendRegCodeRequest.setSubject("泰坦金融注册验证码");
     	}else if(msgType==SMSType.LOGIN_PASSWORD_MODIFY.getType()){//修改登录密码
@@ -498,7 +551,7 @@ public class FinancialOrganController extends BaseController {
         	sendRegCodeRequest.setSubject("泰坦金融修改付款密码");
     	}
     	
-    	SendRegCodeResponse sendRegCodeResponse = sendSMSService.sendRegCode(sendRegCodeRequest);
+    	SendCodeResponse sendRegCodeResponse = sendSMSService.sendCode(sendRegCodeRequest);
     	sendRegCodeResponse.putSuccess();
     	if(sendRegCodeResponse.isResult()){
     		return toJson(putSuccess("验证码发送成功"));
@@ -596,8 +649,23 @@ public class FinancialOrganController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/checkRegCode")
-    public String checkRegCode(String userLoginName,String regCode){
-    	String rcode = TFSTools.validateRegCode(getSession(),userLoginName,regCode);
+    public String checkRegCode(String userLoginName,String code){
+    	if((!StringUtil.isValidString(userLoginName))||(!StringUtil.isValidString(code))){
+    		putSysError("参数错误");
+    		return toJson();
+    		
+    	}
+    	VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
+    	verifyCheckCodeRequest.setReceiveAddress(userLoginName);
+    	verifyCheckCodeRequest.setInputCode(code);
+    	String rcode;
+    	VerifyCheckCodeResponse verifyCheckCodeResponse = titanFinancialOrganService.verifyCheckCode(verifyCheckCodeRequest);
+    	if(verifyCheckCodeResponse.isResult()){
+    		rcode = verifyCheckCodeResponse.getReturnCode();
+    	}else{
+    		return toJson(putSysError(verifyCheckCodeResponse.getReturnMessage()));
+    	}
+    		//	TFSTools.validateRegCode(getSession(),userLoginName,regCode);
     	if(rcode.equals("SUCCESS")){
     		return toJson(putSuccess("验证成功"));
     	}else if(rcode.equals("EXPIRE")){

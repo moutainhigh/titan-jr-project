@@ -18,23 +18,23 @@
 		</property>
 	</bean>
 
-	<!-- 下架当天 触发时间  半小时执行一次，下午14-24点之间执行-->
+	<!--解冻触发时间  每天凌晨两点执行一次-->
 	<bean id="unFreezeTransOrderTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="unFreezeTransOrderSchedule" />
 		<property name="cronExpression">
 			<!-- 测试配置 -->
-			<value>0 0/1 * * * ?</value>
+			<value>0 0 2 * * ?</value>
 			<!-- 发布配置 每3分钟执行一次 -->
 			<!--<value>0 0/30 * * * ?</value>-->
 		</property>
 	</bean>
 	
-	<!-- 下架当天 触发时间  半小时执行一次，下午14-24点之间执行-->
+	<!-- 银行卡绑定时间 每天早上八点执行一次-->
 	<bean id="bindBankCardJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="bindBankCardJobSchedule" />
 		<property name="cronExpression">
 			<!-- 测试配置 -->
-			<value>0 0/1 * * * ?</value>
+			<value>0 0 8 * * ?</value>
 			<!-- 发布配置 每3分钟执行一次 -->
 			<!--<value>0 0/30 * * * ?</value>-->
 		</property>

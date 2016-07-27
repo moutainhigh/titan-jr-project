@@ -178,7 +178,10 @@
     	}
     	
     	/* var neg = /^([+-]?)((\d{1,3}(,\d{3})*)|(\d+))(\.\d{2}))?$/; */
-    	  var neg = /^[1-9]{1}\d+(\.\d{1,2})?$/;
+    	/*   var neg = /^[1-9]{1}\d{0,10}(\.\d{1,2})?$/;
+	      var neg2 = /^[0]{1}(\.\d{1,2})?$/; */
+    	  
+    	  var neg = /^[1-9]{1}\d{0,20}(\.\d{1,2})?$/;
           var neg2 = /^[0]{1}(\.\d{1,2})?$/;
           var flag = neg.test(withdraw_amount)||neg2.test(withdraw_amount);
           if(flag==false){
@@ -312,6 +315,7 @@
     }
     
     function toAccountWithdraw(){
+    	top.F.loading.show();
     	 $.ajax({
              type: "post",
              dataType: 'json',
@@ -329,10 +333,11 @@
              context: document.body,
              url: '<%=basePath%>/account/toAccountWithDraw.shtml',
              success: function (data) {
-                 if(data.code == 1){
+                 if(data.code == "1"){
+                	 top.F.loading.hide();
                      withDrawCallBack('提现申请已提交，等待银行处理。<br/>预计到账时间：2小时内', 1);
-                     top.removeIframeDialog();
                      $("#flashPage").submit();//刷新页面
+                     top.removeIframeDialog();
                      
                  } else {
                      if (data.msg == '支付密码不正确请重新输入') {
@@ -341,6 +346,9 @@
                          withDrawCallBack(data.msg, 1);
                      }
                  }
+             },
+             complete:function(){
+            	 top.F.loading.hide();
              }
          });
     }
@@ -474,8 +482,9 @@
             skin : 'saas_confirm_singlebtn',
             ok : function(){
                 if (needClose == 1){
-                   
-                    $("#right_con_frm").attr('src','<%=basePath%>/account/overview-main.shtml');
+                	 
+                <%-- 	$(window.parent.frames["right_con_frm"]).attr('src','<%=basePath%>/account/overview-main.shtml'); --%>
+                    <%--  $("#right_con_frm").attr('src','<%=basePath%>/account/overview-main.shtml'); --%>
                 }
                 //TODO 需刷新当前提现记录页面
 //                $.ajax({

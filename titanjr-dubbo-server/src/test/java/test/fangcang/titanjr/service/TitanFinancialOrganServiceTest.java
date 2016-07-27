@@ -131,13 +131,13 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 	/***
 	 * SAAS注册机构
 	 */
-	//@Test
+	@Test
 	public void testRegisterOrg_2(){
 		OrganRegisterRequest organRegisterRequest = new OrganRegisterRequest();
 		organRegisterRequest.setRegisterSource(LoginSourceEnum.SAAS.getKey());
-		organRegisterRequest.setImageid("32,33,34");
+		organRegisterRequest.setImageid("342,343,344");
 		organRegisterRequest.setCertificateType(CertificateType.SFZ.getKey()+"");
-		organRegisterRequest.setCertificateNumber("430426199011133123456");
+		organRegisterRequest.setCertificateNumber("4304261990111331123");
 		organRegisterRequest.setOrgName("春秋旅游");
 		organRegisterRequest.setUserName("春秋旅游");
 		organRegisterRequest.setUserloginname("luoqinglong@etxing.com");
@@ -247,7 +247,7 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 	//@Test
 	public void testCheckOrg(){
 		OrganCheckRequest organCheckRequest = new OrganCheckRequest();
-		organCheckRequest.setOrgId(10094);
+		organCheckRequest.setOrgId(10102);
 		organCheckRequest.setCheckstatus(0);
 		organCheckRequest.setOperator("luoqinglong");
 		organCheckRequest.setResultMsg("不清楚");
@@ -363,7 +363,7 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 		} 
 		
 	}
-	//@Test
+	@Test
 	public void testverifyCheckCode(){
 		VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
 		verifyCheckCodeRequest.setReceiveAddress("luoqinglong0102@163.com");
@@ -374,7 +374,7 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 		 
 	}
 	
-	@Test
+	//@Test
 	public void testupdateCheckCode(){
 		UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
 		updateCheckCodeRequest.setCodeId(1);
