@@ -9,9 +9,9 @@ import org.junit.Test;
 
 import test.fangcang.titanjr.SpringTest;
 
-import com.fangcang.titanjr.dto.request.SendRegCodeRequest;
+import com.fangcang.titanjr.dto.request.SendCodeRequest;
 import com.fangcang.titanjr.dto.request.SendSMSRequest;
-import com.fangcang.titanjr.dto.response.SendRegCodeResponse;
+import com.fangcang.titanjr.dto.response.SendCodeResponse;
 import com.fangcang.titanjr.dto.response.SendSmsResponse;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 
@@ -43,12 +43,12 @@ public class TitanFinancialSendSMSServiceTest extends SpringTest  {
     @Test
     public void testSendEmail(){
     	try{
-    		SendRegCodeRequest sendRegCodeRequest = new SendRegCodeRequest();
+    		SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
     		sendRegCodeRequest.setContent("验证码123456");
     		sendRegCodeRequest.setSubject("主题455");
     		sendRegCodeRequest.setMerchantCode("M10000181");
     		sendRegCodeRequest.setReceiveAddress("2637799268@qq.com");
-    		SendRegCodeResponse response = titanFinancialSendSMSService.sendRegCode(sendRegCodeRequest);
+    		SendCodeResponse response = titanFinancialSendSMSService.sendRegCode(sendRegCodeRequest);
 	    	System.out.println(JSONSerializer.toJSON(response).toString());
 			Assert.assertFalse(response.isResult()==false);
 			} catch (Exception e) {

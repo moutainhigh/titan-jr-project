@@ -1,7 +1,5 @@
 package com.fangcang.titanjr.service.impl;
 
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,9 +16,9 @@ import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DubboServerJDBCProperties;
 import com.fangcang.titanjr.common.util.Tools;
-import com.fangcang.titanjr.dto.request.SendRegCodeRequest;
+import com.fangcang.titanjr.dto.request.SendCodeRequest;
 import com.fangcang.titanjr.dto.request.SendSMSRequest;
-import com.fangcang.titanjr.dto.response.SendRegCodeResponse;
+import com.fangcang.titanjr.dto.response.SendCodeResponse;
 import com.fangcang.titanjr.dto.response.SendSmsResponse;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.util.StringUtil;
@@ -37,7 +35,6 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 
 	@Override
 	public SendSmsResponse sendSMS(SendSMSRequest sendSMSRequest) {
-
 		SendSmsResponse sendSmsResponse = new SendSmsResponse();
 		try{
 			if(sendSMSRequest !=null){
@@ -77,32 +74,32 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 	}
 
 	@Override
-	public SendRegCodeResponse sendRegCode(SendRegCodeRequest sendRegCodeRequest) {
+	public SendCodeResponse sendCode(SendCodeRequest sendCodeRequest) {
 		//参数校验
-		SendRegCodeResponse response = new SendRegCodeResponse();
+		SendCodeResponse response = new SendCodeResponse();
 		
-		if(!StringUtil.isValidString(sendRegCodeRequest.getReceiveAddress())){
+		if(!StringUtil.isValidString(sendCodeRequest.getReceiveAddress())){
 			response.putErrorResult("接收地址不能为空"); 
 			return response;
 		}
-		if(!StringUtil.isValidString(sendRegCodeRequest.getMerchantCode())){
+		if(!StringUtil.isValidString(sendCodeRequest.getMerchantCode())){
 			response.putErrorResult("发送方的商家编码不能为空"); 
 			return response;
 		}
-		int sendType = sendRegCodeRequest.getReceiveAddress().indexOf("@")>-1?2:1;
+		int sendType = sendCodeRequest.getReceiveAddress().indexOf("@")>-1?2:1;
 		
 		//1.短信
 		if(sendType==1){
-			if(Tools.isNotPhone(sendRegCodeRequest.getReceiveAddress())){
+			if(Tools.isNotPhone(sendCodeRequest.getReceiveAddress())){
 				response.putErrorResult("手机号码格式不正确"); 
 				return response;
 			}
 			SendSMSRequest sendSMSRequest = new SendSMSRequest();
-			sendSMSRequest.setContent(sendRegCodeRequest.getContent());
-			sendSMSRequest.setMerchantCode(sendRegCodeRequest.getMerchantCode());
-			sendSMSRequest.setMobilePhone(sendRegCodeRequest.getReceiveAddress());
-			if(StringUtil.isValidString(sendRegCodeRequest.getProviderkey())){
-				sendSMSRequest.setProviderkey(sendRegCodeRequest.getProviderkey());
+			sendSMSRequest.setContent(sendCodeRequest.getContent());
+			sendSMSRequest.setMerchantCode(sendCodeRequest.getMerchantCode());
+			sendSMSRequest.setMobilePhone(sendCodeRequest.getReceiveAddress());
+			if(StringUtil.isValidString(sendCodeRequest.getProviderkey())){
+				sendSMSRequest.setProviderkey(sendCodeRequest.getProviderkey());
 			}else{
 				sendSMSRequest.setProviderkey(CommonConstant.DEFAULT_SMS_PROVIDER_KEY);
 			}
@@ -115,20 +112,20 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 			return response;
 		}else {
 			//邮件
-			if(Tools.isNotEmailAddress(sendRegCodeRequest.getReceiveAddress())){
+			if(Tools.isNotEmailAddress(sendCodeRequest.getReceiveAddress())){
 				response.putErrorResult("邮箱地址不正确"); 
 				return response;
 			}
-			if(!StringUtil.isValidString(sendRegCodeRequest.getSubject())){
+			if(!StringUtil.isValidString(sendCodeRequest.getSubject())){
 				response.putErrorResult("邮件主题不能为空"); 
 				return response;
 			}
 			
 			String messageServiceUrl= ProxyFactoryConstants.messageServiceUrl + "emailSendService";
 			EmailSenderDTO emailSenderDTO  = new EmailSenderDTO();
-			emailSenderDTO.setTo(sendRegCodeRequest.getReceiveAddress());
-			emailSenderDTO.setContent(sendRegCodeRequest.getContent());
-			emailSenderDTO.setSubject(sendRegCodeRequest.getSubject());
+			emailSenderDTO.setTo(sendCodeRequest.getReceiveAddress());
+			emailSenderDTO.setContent(sendCodeRequest.getContent());
+			emailSenderDTO.setSubject(sendCodeRequest.getSubject());
 			emailSenderDTO.setFrom(dubboServerJDBCProperties.getJrEmailFrom());
 			emailSenderDTO.setUserName(dubboServerJDBCProperties.getJrEmailUsername());
 			emailSenderDTO.setPassword(dubboServerJDBCProperties.getJrEmailPassword());
@@ -147,7 +144,7 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 					response.putErrorResult("邮件发送失败");
 				}
 			} catch (Exception e) {
-				log.error("邮件发送失败,sendEmailRequest:"+ToStringBuilder.reflectionToString(sendRegCodeRequest),e);
+				log.error("邮件发送失败,sendEmailRequest:"+ToStringBuilder.reflectionToString(sendCodeRequest),e);
 				response.putErrorResult("服务异常，邮件发送失败");
 			}
 		}

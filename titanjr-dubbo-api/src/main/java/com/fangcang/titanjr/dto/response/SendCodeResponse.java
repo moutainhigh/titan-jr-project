@@ -7,6 +7,6 @@ import com.fangcang.titanjr.dto.BaseResponseDTO;
  * @author luoqinglong
  * @2016年5月31日
  */
-public class SendRegCodeResponse extends BaseResponseDTO{
+public class SendCodeResponse extends BaseResponseDTO{
 
 }

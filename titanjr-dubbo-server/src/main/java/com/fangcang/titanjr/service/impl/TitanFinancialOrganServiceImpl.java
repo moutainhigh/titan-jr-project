@@ -1266,19 +1266,20 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		try {
 			if(paginationSupport.getItemList().size()>0){
 				//取最新的一个记录
-				TitanCheckCode titanCheckCode = paginationSupport.getItemList().get(0);
-				if(now.before(titanCheckCode.getExpiredTime())){
-					//验证码可以用
-					response.setCheckCode(titanCheckCode.getCode());
-					response.putSuccess("可以使用");
-					return response;
-				}else{
+//				TitanCheckCode titanCheckCode = paginationSupport.getItemList().get(0);
+//				if(now.before(titanCheckCode.getExpiredTime())){
+//					//验证码可以用
+//					response.setCheckCode(titanCheckCode.getCode());
+//					response.putSuccess("可以使用");
+//					return response;
+//				}else{
 					//如果过期则更改状态
 					TitanCheckCode entityUpdate = new TitanCheckCode();
-					entityUpdate.setCodeId(titanCheckCode.getCodeId());
+					//entityUpdate.setCodeId(titanCheckCode.getCodeId());
+					entityUpdate.setReceiveAddress(getCheckCodeRequest.getReceiveAddress());
 					entityUpdate.setIsactive(TitanCheckCodeEnum.Isactive.NOT_ACTIVE.getKey());
 					checkCodeDao.update(entityUpdate);
-				}
+				//}
 			}
 			//生成一个新的验证码
 			Date expiredTime = DateUtils.addHours(now, CommonConstant.CODE_TIME_OUT_HOUR);
