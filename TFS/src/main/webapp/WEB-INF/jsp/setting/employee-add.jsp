@@ -14,7 +14,7 @@
     	<input type="hidden" id="fcUserId" value="${fcUserId }">
     	<div class="TFS_addtitle demo_form" id="J_form1">
     		<ul>
-    			<li><span class="addtitle_left">姓名：</span><input type="text" id="userName" value="${fcUserName}" class="text w_180 f_ui-grey-input" datatype="s1-30" errormsg="请输入1到30位字符！"></li>
+    			<li><span class="addtitle_left">姓名：</span><input type="text" id="userName" value="${fcUserName}" customFun="checkUserName" class="text w_180 f_ui-grey-input" maxlength="30"></li>
     			<li class="J_phone"><span class="addtitle_left">手机号码：</span><input type="text" id="receiveAddress" placeholder="请输入手机号码" class="text w_180 f_ui-grey-input" value="${fcMobile}"  customFun="checkReceiveAddress" ><span class="c_999 p_l10"></span><span class="blue curpo undl J_switch">切换为邮箱注册</span> (用来登录泰坦金融官网或者APP)</li>
     			<li><span class="addtitle_left">验证码：</span>
     			<p class="text" style="width: 187px;">
@@ -123,12 +123,32 @@ $('.sendmes').on('click',function(){
 		}
 	});
 });
+
+function checkUserName()
+{
+	var userName = $("#employee_add #userName").val();
+	if(userName ==null || $.trim(userName) =='')
+	{
+		vform.setErrormsg( $("#employee_add #userName"),'姓名不能为空');
+		return false;
+	}
+	return true;
+}
+
 var showType = "phone";
 //检查是否可以注册
 function checkReceiveAddress(receiveAddress){
 	var flag = false;
 	var receiveAddressEle = $("#receiveAddress");
+	
 	if(showType=="phone"){
+		
+		if(receiveAddress == null || receiveAddress =="")
+		{
+			vform.setErrormsg(receiveAddressEle,'手机号码不能为空');
+			return false;
+		}
+		
 		if(!phone_reg.test(receiveAddress)){
 			vform.setErrormsg(receiveAddressEle,'手机号码格式不正确');
 			return false;
@@ -136,6 +156,11 @@ function checkReceiveAddress(receiveAddress){
 	}
 	
 	if(showType=="email"){
+		if(receiveAddress == null || receiveAddress =="")
+		{
+			vform.setErrormsg(receiveAddressEle,'邮箱地址不能为空');
+			return false;
+		}
 		if(!email_reg.test(receiveAddress)){
 			vform.setErrormsg(receiveAddressEle,'邮箱格式不正确');
 			return false;
@@ -205,6 +230,7 @@ function saveEmployee(){
         	 uncheckedRoleId += $(this).val()+",";
          }
      });
+	
 	if(!vform.validate()){
 		return;
 	}

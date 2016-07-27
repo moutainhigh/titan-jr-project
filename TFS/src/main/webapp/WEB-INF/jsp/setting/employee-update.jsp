@@ -19,7 +19,7 @@
     	<input type="hidden" id="fcUserLoginName" value="${userInfoDTO.userBindInfoDTO.fcLoginName}">
     	<div class="TFS_addtitle demo_form" id="J_form1">
     		<ul>
-    			<li><span class="addtitle_left">姓名：</span><input type="text" id="userName" class="text w_180 f_ui-grey-input" datatype="s1-30" errormsg="请输入1到30位字符！" value="${userInfoDTO.userName }"></li>
+    			<li><span class="addtitle_left">姓名：</span><input type="text" id="userName" class="text w_180 f_ui-grey-input"  value="${userInfoDTO.userName }" customFun="checkUserName" maxlength="30"></li>
     			<c:if test="${fn:indexOf(userInfoDTO.userLoginName,'@')>0}">
     				<li><span class="addtitle_left">邮箱地址：</span><input type="text" id="receiveAddress" class="text w_180 f_ui-grey-input" readonly="readonly"  value="${userInfoDTO.userLoginName }"><span class="c_999 p_l30">此邮箱地址将作为用户名用来登录泰坦金融官网或者APP</span></li>
     			</c:if>
@@ -101,11 +101,29 @@ function initRole(){
 }
 
 
+function checkUserName()
+{
+	var userName = $("#employee_add #userName").val();
+	if(userName ==null || $.trim(userName) =='')
+	{
+		vform.setErrormsg( $("#employee_add #userName"),'姓名不能为空！');
+		return false;
+	}
+	return true;
+}
+
+
 //保存员工
 function saveUpdateEmployee(){
 	var userName = $("#employee_add #userName").val();
 	var tfsUserId = $("#tfsUserId").val();
-	var checkedRoleId="",uncheckedRoleId=""; 
+	var checkedRoleId="",uncheckedRoleId="";
+	
+	if(userName ==null || userName =='')
+	{
+		vform.setErrormsg( $("#employee_add #userName"),'用户名不能为空');
+		return false;
+	}
 	
 	$("input[name='roleId']:checkbox").each(function(){ 
          if($(this).attr("checked")){
