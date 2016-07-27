@@ -4,7 +4,7 @@
 <c:forEach items="${saasUserRoleList}" var="saasMerchantUserDTO">
  <tr <c:if test="${saasMerchantUserDTO.isAddTfs==1}">class='chose'</c:if>>
 	<td class="tdl"><div class="Province ml10" style="max-width: 170px;" title="${saasMerchantUserDTO.userLoginName }">${saasMerchantUserDTO.userLoginName }</div></td>
-	<td class="tdl">${saasMerchantUserDTO.userName }</td>
+	<td class="tdl"><div class="Province" style="max-width:90px;" title="${saasMerchantUserDTO.userName }">${saasMerchantUserDTO.userName }</div></td>
 	<td class="tdl">${saasMerchantUserDTO.mobileNum }</td>
 	<td class="tdl">${saasMerchantUserDTO.roleName }</td>
 	<td class="tdl">
