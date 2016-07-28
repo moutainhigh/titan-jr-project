@@ -45,8 +45,7 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 			HttpServletResponse response, Object handler) throws Exception {
 		
 		HttpSession session = request.getSession();
-		Integer isadmin = (Integer)session.getAttribute(WebConstant.SESSION_KEY_LOGIN_IS_ADMIN);
-		isadmin = isadmin==null?0:isadmin;
+		Integer isadmin = 0;
 		Integer tfsUserId = (Integer)session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
 		if(tfsUserId!=null){
 			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
@@ -61,8 +60,8 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 				setMsg(request, response, "当前用户已注销，请联系管理员");
 				return false;
 			}
+			isadmin = titanUser.getIsadmin();
 		}
-		
 		
 		if(handler instanceof HandlerMethod){//是请求方法才进行判断
 			HandlerMethod method = (HandlerMethod)handler;
@@ -152,7 +151,7 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 		}
 	}
 	/***
-	 * 业务方法是否没有权限限制(注解)
+	 * 业务方法是否没有无权限限制注解
 	 */
 	private boolean excludeRole(String[] function){
 		for(String roleCode : function){
@@ -189,9 +188,6 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 		}
 		return "no";
 	}
-	
-	 
-	
 	
 	
 	

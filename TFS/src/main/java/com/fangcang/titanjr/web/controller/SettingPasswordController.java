@@ -75,6 +75,7 @@ public class SettingPasswordController extends BaseController{
 		}else{
 			model.addAttribute("allownopwdpay","0");//关闭
 		}
+		model.addAttribute("isJrAdmin",userInfo.getIsAdmin());//开启
 		return "setting/pay-set";
 	}
 	 

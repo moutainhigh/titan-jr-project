@@ -66,7 +66,7 @@
 	</div>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
 <script type="text/javascript">
-var isadmin = '${LOGIN_IS_ADMIN}';
+var isadmin = '${isJrAdmin}';
 //渲染组件
 	F.UI.scan();
 	//展开、收缩表格
@@ -83,7 +83,7 @@ var isadmin = '${LOGIN_IS_ADMIN}';
                 	sw.setChecked(!toState);
                 	///业务代码写在下面
                 	if(isadmin!='1'){
-                		new top.Tip({msg : '您没有权限操作该功能，请联系管理员', type: 3,timer:3000});
+                		new top.Tip({msg : '只有管理员才能操作该功能', type: 3,timer:3000});
                 		return ;
                 	}
                     if(toState){//切换到开启
