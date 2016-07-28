@@ -29,7 +29,7 @@
             <c:if test="${tradeItem.tradeType == '收款' or tradeItem.tradeType == '充值'}">
                 +
             </c:if>
-            ${tradeItem.tradeamount /100}
+            <fmt:formatNumber value="${tradeItem.tradeamount /100}"  pattern="#,##0.00#" />
         </td>
         <td>
             <c:if test="${tradeItem.isEscrowedPayment == 0 and tradeItem.tradeType == '收款' and tradeItem.statusid=='6'}">
