@@ -47,4 +47,13 @@
     </set>
     where codeId = #{codeId,jdbcType=INTEGER}
   </update>
+  <update id="disableIsactive" parameterType="com.fangcang.titanjr.entity.TitanCheckCode">
+    update t_tfs_checkcode
+    <set>
+      <if test="isactive != null">
+        isactive = #{isactive,jdbcType=TINYINT},
+      </if>
+    </set>
+    where receiveAddress = #{receiveAddress,jdbcType=INTEGER}
+  </update>
 </mapper>

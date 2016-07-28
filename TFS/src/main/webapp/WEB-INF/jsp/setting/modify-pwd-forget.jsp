@@ -252,7 +252,7 @@ $('.sendmes').on('click',function(){
 		         url: "<%=basePath%>/organ/sendCode.shtml",
 		         data: {
 		        	 receiveAddress:phoneOrEmail.userName,
-		        	 msgType:3
+		        	 msgType:2
 		         },
 		         dataType: "json",
 		         success: function(data){

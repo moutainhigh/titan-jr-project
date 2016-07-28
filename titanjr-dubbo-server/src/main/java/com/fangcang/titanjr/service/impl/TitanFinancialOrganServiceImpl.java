@@ -1265,23 +1265,12 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		Date now = new Date();
 		try {
 			if(paginationSupport.getItemList().size()>0){
-				//取最新的一个记录
-//				TitanCheckCode titanCheckCode = paginationSupport.getItemList().get(0);
-//				if(now.before(titanCheckCode.getExpiredTime())){
-//					//验证码可以用
-//					response.setCheckCode(titanCheckCode.getCode());
-//					response.putSuccess("可以使用");
-//					return response;
-//				}else{
-					//如果过期则更改状态
-					TitanCheckCode entityUpdate = new TitanCheckCode();
-					//entityUpdate.setCodeId(titanCheckCode.getCodeId());
-					entityUpdate.setReceiveAddress(getCheckCodeRequest.getReceiveAddress());
-					entityUpdate.setIsactive(TitanCheckCodeEnum.Isactive.NOT_ACTIVE.getKey());
-					checkCodeDao.update(entityUpdate);
-				//}
+				TitanCheckCodeParam entityUpdate = new TitanCheckCodeParam();
+				entityUpdate.setReceiveAddress(getCheckCodeRequest.getReceiveAddress());
+				entityUpdate.setIsactive(TitanCheckCodeEnum.Isactive.NOT_ACTIVE.getKey());
+				checkCodeDao.disableIsactive(entityUpdate);
 			}
-			//生成一个新的验证码
+			//改时间，生成一个新的验证码
 			Date expiredTime = DateUtils.addHours(now, CommonConstant.CODE_TIME_OUT_HOUR);
 			TitanCheckCode newCheckCode = new TitanCheckCode();
 			newCheckCode.setReceiveAddress(getCheckCodeRequest.getReceiveAddress());
@@ -1291,7 +1280,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			newCheckCode.setCreateTime(now);
 			newCheckCode.setExpiredTime(expiredTime);
 			checkCodeDao.insert(newCheckCode);
-			
+			LOGGER.info(getCheckCodeRequest.getReceiveAddress()+"----create new Code:"+newCheckCode.getCode());
 			response.setCheckCode(newCheckCode.getCode());
 			response.putSuccess("验证码获取成功");
 			return response;
@@ -1326,9 +1315,11 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 				if(titanCheckCode.getCode().equals(verifyCheckCodeRequest.getInputCode())){
 					response.setCodeId(titanCheckCode.getCodeId());
 					response.setReturnCode("SUCCESS");
+					response.setReturnMessage("验证成功");
 					response.setResult(true);
 				}else{
 					response.setReturnCode("WRONG");
+					response.setReturnMessage("验证码错误，请重新输入");
 					response.setResult(false);
 				}
 				return response;
@@ -1339,12 +1330,14 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 				entityUpdate.setIsactive(TitanCheckCodeEnum.Isactive.NOT_ACTIVE.getKey());
 				checkCodeDao.update(entityUpdate);
 				response.setReturnCode("EXPIRE");
+				response.setReturnMessage("验证码已经过期，请重新获取验证码");
 				response.setResult(false);
 				return response;
 			}
 		}else{
 			//接收者不存在
 			response.setReturnCode("NOTEXIST");
+			response.setReturnMessage("验证码错误，请重新获取验证码");
 			response.setResult(false);
 			return response;
 		}

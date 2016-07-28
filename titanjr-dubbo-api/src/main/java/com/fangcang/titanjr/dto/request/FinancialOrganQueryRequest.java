@@ -13,11 +13,12 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 	private static final long serialVersionUID = 6211572158966127160L;
 	private String regStartTime;
     private String regEndTime;
+   
+    private Integer orgId;
+    private String orgCode;
     /***
      * 公司名称
      */
-    private Integer orgId;
-    private String orgCode;
     private String orgName;
     private String userId;
     

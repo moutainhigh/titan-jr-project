@@ -14,4 +14,11 @@ public interface TitanCheckCodeDao {
 	PaginationSupport<TitanCheckCode> selectForPage(TitanCheckCodeParam condition, PaginationSupport<TitanCheckCode> paginationSupport) throws DaoException;
 	int insert(TitanCheckCode entity) throws DaoException;
 	int update(TitanCheckCode entity) throws DaoException;
+	/**
+	 * 修改状态
+	 * @param condition
+	 * @return
+	 * @throws DaoException
+	 */
+	int disableIsactive(TitanCheckCodeParam condition)throws DaoException;
 }
