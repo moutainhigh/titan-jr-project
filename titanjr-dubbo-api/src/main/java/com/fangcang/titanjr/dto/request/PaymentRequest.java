@@ -125,6 +125,9 @@ public class PaymentRequest extends BaseRequestDTO {
 	//交易类型
 	private String paySource;
 	
+	//订单号
+	private String businessOrderCode;
+	
 
 	
 	//过期时长
@@ -519,6 +522,14 @@ public class PaymentRequest extends BaseRequestDTO {
 
 	public void setInterProductid(String interProductid) {
 		this.interProductid = interProductid;
+	}
+
+	public String getBusinessOrderCode() {
+		return businessOrderCode;
+	}
+
+	public void setBusinessOrderCode(String businessOrderCode) {
+		this.businessOrderCode = businessOrderCode;
 	}
 	
 }

@@ -208,6 +208,7 @@
     <input name="deskId" id="deskId" type="hidden" value="${cashierDesk.deskId}">
     <input name="isEscrowed" id="isEscrowed" type="hidden" value="${isEscrowed}">
     <input name="escrowedDate" id="escrowedDate" type="hidden" value="${escrowedDate}">
+    <input name="businessOrderCode" id="businessOrderCode" type="hidden" value="${businessOrderCode}">
   </form>
 </div>
 

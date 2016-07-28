@@ -47,7 +47,7 @@ public class OrderRequest implements Serializable{
     private String goodsname;
     //单价
     private String unitprice;
-    //财务单号
+    //订单单号
     private String businessordercode;
     //融数返回的订单号
     private String orderid;
