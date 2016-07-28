@@ -583,8 +583,12 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	transOrderDTO.setUserorderid("TJO160721114348977");
     	transOrderDTO.setMerchantcode("M10000001");
     	transOrderDTO.setPayorderno("TW15053107551");
-    	titanFinancialTradeService.confirmFinance(transOrderDTO);
-    }
+		try {
+			titanFinancialTradeService.confirmFinance(transOrderDTO);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
     
 //    @Test
     public void testConfirmData() throws Exception{
