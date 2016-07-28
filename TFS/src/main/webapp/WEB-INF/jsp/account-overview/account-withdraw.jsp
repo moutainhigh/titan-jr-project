@@ -173,7 +173,7 @@
     	//验证提现的金额
     	var withdraw_amount = $("#withDrawNum").val();
     	if(withdraw_amount.length<1){
-    		alert("提现金额不能为空");
+    		withDrawCallBack("提现金额不能为空",1);
     		return;
     	}
     	
@@ -208,18 +208,18 @@
     		
     		var bankName= $("#bankName").val();
         	if(typeof bankName=="undefined"){
-        		alert("收款银行不能为空");
+        		withDrawCallBack("收款银行不能为空",1);
         		return;
         	}
     		
     		var accountNum = $("#accountNum").val();
     		 if(accountNum.length<1){
-    	        	alert("银行卡号不能为空");
+    	        	withDrawCallBack("银行卡号不能为空",1);
     	        	return;
     	     }else{
     	    	var neg = /^[0-9]\d*$/
-   	        	if(accountNum.length>20||!neg.test(accountNum)){
-   	        		alert("请输入正确的卡号");
+   	        	if(accountNum.length>30||!neg.test(accountNum)){
+   	        		withDrawCallBack("请输入正确的卡号",1);
    	        		return;
    	        	}
     	     }

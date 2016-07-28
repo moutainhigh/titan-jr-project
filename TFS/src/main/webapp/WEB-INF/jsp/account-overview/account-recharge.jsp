@@ -254,7 +254,7 @@ function confirmPayResult(){
         		   top.F.loading.show();
                    setTimeout(function () {
                        top.F.loading.hide();
-                       new top.Tip({msg: data.msg, type: 1, time: 1000});
+                      /*  new top.Tip({msg: data.msg, type: 1, time: 1000}); */
                        top.removeIframeDialog();
                    }, 1000);
                    $("#flashPage").submit();

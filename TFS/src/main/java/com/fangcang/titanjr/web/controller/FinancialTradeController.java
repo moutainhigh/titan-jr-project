@@ -189,7 +189,7 @@ public class FinancialTradeController extends BaseController {
                     					}
                     					
                     	        	}else{//转账失败记录此次交易失败
-                    	        		orderStatusEnum = OrderStatusEnum.TRANSFER_FAIL;
+                    	        		orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
                     	        	}
                     			}else{//
                     				orderStatusEnum= OrderStatusEnum.ORDER_SUCCESS;
@@ -318,7 +318,7 @@ public class FinancialTradeController extends BaseController {
 				    		resultMap.put(WebConstant.MSG, "支付成功");
 							
 						}else{
-							orderStatusEnum = OrderStatusEnum.TRANSFER_FAIL;
+							orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
 							resultMap.put(WebConstant.RESULT, WebConstant.FAIL);
 				    		resultMap.put(WebConstant.MSG, "支付失败");
 						}

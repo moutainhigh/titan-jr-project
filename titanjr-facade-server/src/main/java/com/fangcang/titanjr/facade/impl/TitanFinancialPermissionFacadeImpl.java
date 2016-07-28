@@ -7,6 +7,9 @@ import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.TradeDetailRequest;
 import com.fangcang.titanjr.dto.response.TradeDetailResponse;
+
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,7 +49,8 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
 
     @Override
     public PermissionResponse isPermissionToPayment(CheckPermissionRequest checkPermissionRequest) {
-        PermissionResponse permissionResponse = new PermissionResponse();
+        log.info("验证该用户是否有支付权限:"+JSONSerializer.toJSON(checkPermissionRequest));
+    	PermissionResponse permissionResponse = new PermissionResponse();
         permissionResponse.setResult(false);
         permissionResponse.setPermission(false);
         try {
@@ -54,6 +58,7 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
             permissionRequest.setFcuserid(checkPermissionRequest.getFcuserid());
             permissionRequest.setPermission(checkPermissionRequest.getPermission());
             CheckPermissionResponse checkResponse = titanFinancialUserService.checkUserPermission(permissionRequest);
+            log.info("验证该用户是否有支付权限结果:"+JSONSerializer.toJSON(checkResponse));
             if (checkResponse.isPermission()) {
                 permissionResponse.setPermission(true);
                 permissionResponse.setResult(true);
@@ -69,6 +74,7 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
 
     @Override
     public ShowPaymentResponse isShowPaymentButton(ShowPaymentRequest showPaymentRequest) {
+    	 log.info("验证用户是否开通金融账户的请求参数："+JSONSerializer.toJSON(showPaymentRequest));
         ShowPaymentResponse showPaymentResponse = new ShowPaymentResponse();
         showPaymentResponse.setResult(false);
         if (showPaymentRequest != null && StringUtil.isValidString(showPaymentRequest.getMerchantcode())) {//验证是泰坦金融用户
@@ -76,11 +82,11 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
             orgBindInfo.setMerchantCode(showPaymentRequest.getMerchantcode());
             orgBindInfo = titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
             if (orgBindInfo != null) {
-
                 FinancialOrderRequest financialOrderRequest = new FinancialOrderRequest();
                 financialOrderRequest.setMerchantcode(showPaymentRequest.getMerchantcode());
                 financialOrderRequest.setOrderNo(showPaymentRequest.getPayOrderNo());
                 FinancialOrderResponse financialOrderResponse = titanFinancialTradeService.queryFinanceOrderDetail(financialOrderRequest);
+                
                 TradeDetailRequest tradeDetailRequest = new TradeDetailRequest();
                 tradeDetailRequest.setUserid(orgBindInfo.getUserid());
                 tradeDetailRequest.setPayOrderNo(financialOrderResponse.getFinanceCode());
@@ -133,6 +139,7 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
 	@Override
 	public CheckAccountResponse isFinanceAccount(
 			AccountInfoRequest accountInfoRequest) {
+		 log.info("验证账户的请求参数"+JSONSerializer.toJSON(accountInfoRequest));
 		 CheckAccountResponse checkAccountResponse = new CheckAccountResponse();
 		 checkAccountResponse.setResult(false);
 		 if(accountInfoRequest !=null && !StringUtil.isValidString(accountInfoRequest.getMerchantCode())){
