@@ -481,7 +481,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		
 		String url = RSInvokeConstant.callBackConfigMap.get(paySource);
 		try {
-			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params));
+			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params)+"---url---"+ JSONSerializer.toJSON(url));
 			HttpResponse resp = HttpClient.httpRequest(params, url);
 			if (null != resp) {
 				HttpEntity entity = resp.getEntity();
