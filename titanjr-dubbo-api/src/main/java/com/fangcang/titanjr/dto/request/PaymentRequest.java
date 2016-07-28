@@ -62,7 +62,7 @@ public class PaymentRequest extends BaseRequestDTO {
 	//付款人员
 	private String fcUserid;
 	
-	//支付密码
+	//付款密码
 	private String payPassword;
 	
 	//交易金额

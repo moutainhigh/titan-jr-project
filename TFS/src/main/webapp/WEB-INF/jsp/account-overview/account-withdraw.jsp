@@ -340,7 +340,7 @@
                      top.removeIframeDialog();
                      
                  } else {
-                     if (data.msg == '支付密码不正确请重新输入') {
+                     if (data.msg == '付款密码不正确请重新输入') {
                          withDrawCallBack(data.msg, 0);
                      } else {
                          withDrawCallBack(data.msg, 1);

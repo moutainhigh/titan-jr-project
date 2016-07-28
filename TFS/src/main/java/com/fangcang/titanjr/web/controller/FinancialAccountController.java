@@ -449,7 +449,7 @@ public class FinancialAccountController extends BaseController {
                     tfsUserId.toString());
         }
         if (!isValid){
-            return toJson(putSysError("支付密码不正确请重新输入"));
+            return toJson(putSysError("付款密码不正确请重新输入"));
         }
 
         FinancialOrganDTO financialOrganDTO = this.getTitanOrganDTO();
@@ -559,7 +559,7 @@ public class FinancialAccountController extends BaseController {
         		payPasswordRequest.setOldPassword(payPasswordRequest.getOldPassword());
         	}
         	payPasswordRequest.setTfsuserid(this.getTfsUserId());
-        	log.info("设置支付密码的传入参数:"+toJson(payPasswordRequest));
+        	log.info("设置付款密码的传入参数:"+toJson(payPasswordRequest));
             PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
             if (payPasswordResponse.isSaveSuccess()) {
                 map.put(WebConstant.RESULT, WebConstant.SUCCESS);

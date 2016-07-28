@@ -624,7 +624,7 @@
                             value: '确定',
                             skin: 'btn p_lr30',
                             callback: function () {
-                            	//验证支付密码是否准确
+                            	//验证付款密码是否准确
                             	if(! check_payPassword())
                             	{
                             		 $(".ui-dialog-content").html(html);

@@ -89,12 +89,12 @@ var isadmin = '${isJrAdmin}';
                     if(toState){//切换到开启
                     	msg = "您选择开通小额免密支付，1000元以下付款时无需密码。";
                     }else{//切换到关闭
-                    	msg = "您选择关闭小额免密支付，所有付款都需要输入支付密码。";
+                    	msg = "您选择关闭小额免密支付，所有付款都需要输入付款密码。";
                     }
                 	if(toState){//切换到开启
-                		//是否设置了支付密码
+                		//是否设置了付款密码
                     	if(checkIsSetPayPassword()){
-                    		new top.Tip({msg : '请先设置支付密码', type: 2});
+                    		new top.Tip({msg : '请先设置付款密码', type: 2});
                     		return ;
                     	}
                     	showPayPassword();
@@ -126,7 +126,7 @@ function showConfirm(){
                  			if(toState){
                  				$(".nopassword").addClass('tip').html('已开通小额免密支付，1000元以下付款时无需密码');
                         	 } else{
-                        	   	$(".nopassword").removeClass('tip').html('未开通小额免密支付，付款时需要支付密码');
+                        	   	$(".nopassword").removeClass('tip').html('未开通小额免密支付，付款时需要付款密码');
                         	 }
                  			 sw.setChecked(toState);
              			}else{
@@ -168,7 +168,7 @@ function checkIsSetPayPassword(){
        }); 
   	 return setFlag;
 }
-//显示输入支付密码框
+//显示输入付款密码框
 function showPayPassword(){
    	$.ajax({
            dataType: 'html',

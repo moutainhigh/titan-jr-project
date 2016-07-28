@@ -59,7 +59,7 @@ public class SettingPasswordController extends BaseController{
 		userInfoQueryRequest.setTfsUserId(tfsUserId);
 		UserInfoResponse userInfoResponse = userService.queryFinancialUser(userInfoQueryRequest);
 		UserInfoDTO userInfo = userInfoResponse.getUserInfoDTOList().get(0);
-		//是否设置了支付密码
+		//是否设置了付款密码
 		if(StringUtil.isValidString(userInfo.getPayPassword())){
 			model.addAttribute("hasSetPayPass","1");//已设置
 		}else{
@@ -143,14 +143,14 @@ public class SettingPasswordController extends BaseController{
 				return toJson();
 			}
 			if(allownopwdpay==1){
-				//未设置支付密码
+				//未设置付款密码
 				if(!StringUtil.isValidString(titanUser.getPaypassword())){
-					return toJson(putSysError("请先设置支付密码"));
+					return toJson(putSysError("请先设置付款密码"));
 				}
 				boolean istrue = userService.checkPayPassword(payPassword,getTfsUserId());
 				//密码是否正确
 				if(istrue==false){
-					return toJson(putSysError("支付密码错误"));
+					return toJson(putSysError("付款密码错误"));
 				}
 			}
 			

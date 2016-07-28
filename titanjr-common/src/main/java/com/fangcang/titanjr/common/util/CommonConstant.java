@@ -75,7 +75,7 @@ public class CommonConstant {
 	public static final String DEFAULT_SMS_PROVIDER_KEY = "3369";
 	
 	/************************************** begin 权限   ****************************/
-	//是否忘记支付密码
+	//是否忘记付款密码
     public static final String IS_FORGET_PAYPASSWORD="1";
 	// 付款权限
     public static final String ROLECODE_PAY_38 = "PAY";

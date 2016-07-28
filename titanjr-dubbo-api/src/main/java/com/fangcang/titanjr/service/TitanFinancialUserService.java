@@ -155,7 +155,7 @@ public interface TitanFinancialUserService {
    	 */
    	public CancelPermissionResponse cancelPermission(CancelPermissionRequest cancelPermissionRequest) throws GlobalServiceException,MessageServiceException;
    	/**
-   	 * 检测支付密码是否准确
+   	 * 检测付款密码是否准确
    	 * @param payPassword
    	 * @param tfsuserid
    	 * @return
@@ -163,7 +163,7 @@ public interface TitanFinancialUserService {
    	 */
    	public boolean checkPayPassword(String payPassword,String tfsuserid);
    	/**
-   	 * 保存支付密码
+   	 * 保存付款密码
    	 * @param payPasswordRequest
    	 * @return
    	 * @author fangdaikang

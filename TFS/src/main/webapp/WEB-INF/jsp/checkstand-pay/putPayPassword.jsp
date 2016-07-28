@@ -1,5 +1,5 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
-<!-- 输入支付密码 -->
+<!-- 输入付款密码 -->
 <div class="S_popup clearfix">
 	<div class="S_popup_title">
 		<ul>
