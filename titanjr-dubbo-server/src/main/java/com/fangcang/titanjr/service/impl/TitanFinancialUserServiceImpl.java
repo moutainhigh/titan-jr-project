@@ -1030,8 +1030,6 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		    	titanUserBindInfo = titanUserBindInfoList.get(0);
 		    	MyBeanUtil.copyProperties(userBindInfoDTO, titanUserBindInfo);
 		    	return userBindInfoDTO;
-		    }else{
-		    	log.error("没有找到指定的绑定用户，参数为titanUserBindInfo："+JSONSerializer.toJSON(titanUserBindInfo).toString());
 		    }
 		}catch(Exception e){
 			log.error("根据房仓用户信息查询金融用户信息失败"+e.getMessage(),e);
@@ -1039,7 +1037,5 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		}
 		return null;
 	}
-	
-	
 
 }
