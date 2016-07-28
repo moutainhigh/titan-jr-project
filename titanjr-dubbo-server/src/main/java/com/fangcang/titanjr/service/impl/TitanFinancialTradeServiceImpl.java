@@ -257,7 +257,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                 	}else if(OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())){
                 		   orderResponse.putErrorResult("支付成功，请勿重复支付");
                 		   //回调财务
-                		   confirmFinance(transOrderDTO);
+//                		   this.confirmFinance(transOrderDTO);
                            return orderResponse;
                 	}
                 }
