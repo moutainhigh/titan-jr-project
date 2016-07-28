@@ -24,8 +24,7 @@ public class UserLoginNameExistRequest extends BaseRequestDTO {
 	 * 是否为运营员:0-不是，1-是
 	 */
 	private int isOperator;
-	
-	
+	 
 	public String getUserLoginName() {
 		return userLoginName;
 	}
