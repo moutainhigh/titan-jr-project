@@ -24,14 +24,16 @@ import com.fangcang.titanjr.dto.bean.OrgImageInfo;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
 import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
+import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
+import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
+import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
-import com.fangcang.titanjr.web.util.TFSTools;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
 /**
@@ -198,10 +200,11 @@ public class SettingBaseInfoController extends BaseController{
 			return toJson(putSysError("参数错误"));
 		}
     	
-    	String rcode = TFSTools.validateRegCode(getSession(),getUserName(), code);
-    	if(rcode.equals("SUCCESS")){
-    		//移除session
-    		getSession().removeAttribute(WebConstant.SESSION_KEY_REG_CODE+"_"+getUserName());
+		VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
+    	verifyCheckCodeRequest.setReceiveAddress(getUserName());
+    	verifyCheckCodeRequest.setInputCode(code);
+    	VerifyCheckCodeResponse verifyCheckCodeResponse = organService.verifyCheckCode(verifyCheckCodeRequest);
+    	if(verifyCheckCodeResponse.isResult()){
     		int tfsUserId = Integer.valueOf(getTfsUserId());
     		LoginPasswordRequest loginPasswordRequest = new LoginPasswordRequest();
 			loginPasswordRequest.setTfsuserid(tfsUserId);
@@ -209,6 +212,12 @@ public class SettingBaseInfoController extends BaseController{
 			try {
 				BaseResponseDTO response = userService.saveLoginPassword(loginPasswordRequest);
 				if(response.isResult()){
+					if(verifyCheckCodeResponse.getCodeId()>0){
+						UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
+						updateCheckCodeRequest.setCodeId(verifyCheckCodeResponse.getCodeId());
+						updateCheckCodeRequest.setIsactive(0);
+						organService.useCheckCode(updateCheckCodeRequest);
+					}
 					putSuccess("密码修改成功");
 					return toJson();
 				}else{
@@ -222,16 +231,10 @@ public class SettingBaseInfoController extends BaseController{
 				LOG.error("通过原始密码修改登录密码错误，参数:"+JSONSerializer.toJSON(errorMap).toString(), e);
 				putSysError(WebConstant.CONTROLLER_ERROR_MSG);
 			}
-    	}else if(rcode.equals("EXPIRE")){
-    		return toJson(putSysError("验证码已经过期，请重新获取验证码"));
-    	}else if(rcode.equals("NOTEXIST")){
-    		return toJson(putSysError("验证码错误，请重新获取验证码"));
-    	}else if(rcode.equals("WRONG")){
-    		return toJson(putSysError("验证码错误，请重新输入"));
+    		return toJson(putSuccess("验证成功"));
     	}else{
-    		return toJson(putSysError("验证码不存在，请重新获取验证码"));
+    		return toJson(putSysError(verifyCheckCodeResponse.getReturnMessage()));
     	}
-    	return toJson();
 	}
 	
 	/**

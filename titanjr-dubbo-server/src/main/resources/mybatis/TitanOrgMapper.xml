@@ -236,6 +236,8 @@
 			<where>
 				<if test="isadmin != null"> and U.isadmin = #{isadmin}</if>
 				<if test="isoperator != null"> and U.isoperator = #{isoperator}</if>
+				<if test="orgId != null"> and G.orgid = #{orgId}</if>
+				<if test="statusId != null"> and G.statusid = #{statusId}</if>
 				<if test="orgName != null"> and G.orgname like concat('%',#{orgName},'%')</if>
 				<if test="userloginname != null"> and U.userloginname like concat('%',#{userloginname},'%')</if>
 				<if test="resultKey != null"> and C.resultkey = #{resultKey}</if>

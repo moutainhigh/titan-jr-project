@@ -1,5 +1,9 @@
 package com.fangcang.titanjr.web.pojo;
 
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+
 /**
  * 新金服员工
  * @author luoqinglong
@@ -8,8 +12,11 @@ package com.fangcang.titanjr.web.pojo;
 public class EmployeePojo extends BasePojo{
 	private String userName;
 	private Integer tfsUserId;
+	@NotNull
 	private Integer fcUserId;
+	@NotBlank
 	private String receiveAddress;
+	@NotBlank
 	private String code;
 	/**
 	 * 选中的角色id,格式：1,2,3,4

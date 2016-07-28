@@ -37,5 +37,17 @@ public class TitanCheckCodeDaoImpl extends GenericDAOMyBatisImpl implements Tita
 			throw new DaoException(e);
 		}
 	}
+
+	@Override
+	public int disableIsactive(TitanCheckCodeParam condition)
+			throws DaoException {
+		try {
+			return super.updateEntity("com.fangcang.titanjr.dao.TitanCheckCodeDao.disableIsactive", condition);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+	
+	
 	
 }

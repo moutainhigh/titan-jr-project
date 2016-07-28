@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONSerializer;
 
@@ -25,16 +24,18 @@ import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
-import com.fangcang.titanjr.common.util.MD5;
+import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
 import com.fangcang.titanjr.dto.request.SaaSUserRoleRequest;
+import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.UpdateUserRequest;
 import com.fangcang.titanjr.dto.request.UserFreezeRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.request.UserRegisterRequest;
+import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
 import com.fangcang.titanjr.dto.response.CancelPermissionResponse;
 import com.fangcang.titanjr.dto.response.RoleUserInfoPageResponse;
 import com.fangcang.titanjr.dto.response.SaaSUserRoleResponse;
@@ -42,6 +43,8 @@ import com.fangcang.titanjr.dto.response.UpdateUserResponse;
 import com.fangcang.titanjr.dto.response.UserFreezeResponse;
 import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.dto.response.UserRegisterResponse;
+import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.EmployeePojo;
@@ -64,6 +67,9 @@ public class SettingEmployeeController extends BaseController{
     
     @Autowired
     private TitanFinancialUserService titanFinancialUserService;
+    
+    @Autowired
+    private TitanFinancialOrganService organService;
 	/**
 	 * 左侧菜单（本地调试使用）
 	 * @return
@@ -141,8 +147,6 @@ public class SettingEmployeeController extends BaseController{
 		
 		saaSUserRoleRequest.setMerchantCode(merchantCode);
 		saaSUserRoleRequest.setSaasUserName(fcEmployeeTablePojo.getSaasUserName());
-		//saaSUserRoleRequest.setFcUserId(fcEmployeeTablePojo.get);
-		//saaSUserRoleRequest.setSaasUserName(fcEmployeeTablePojo.getSaasUserName());
 		saaSUserRoleRequest.setPageSize(PaginationSupport.NO_SPLIT_PAGE_SIZE);
 		try {
 			SaaSUserRoleResponse saasUserRoleResponse = titanFinancialUserService.querySaaSUserRolePage(saaSUserRoleRequest);
@@ -225,10 +229,17 @@ public class SettingEmployeeController extends BaseController{
 	@ResponseBody
 	@RequestMapping("/save-employee")
 	public String saveEmployee(EmployeePojo employeePojo){
-		//检验验证码
-		String rcode = TFSTools.validateRegCode(getSession(),employeePojo.getReceiveAddress(),employeePojo.getCode());
-    	if(!rcode.equals("SUCCESS")){
-    		return toJson(putSysError("验证码错误,请重新输入"));
+		
+    	if (!GenericValidate.validate(employeePojo)) {
+            return toJson(putSysError("参数错误,请重新输入"));
+        }
+    	//检验验证码
+    	VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
+    	verifyCheckCodeRequest.setReceiveAddress(employeePojo.getReceiveAddress());
+    	verifyCheckCodeRequest.setInputCode(employeePojo.getCode());
+    	VerifyCheckCodeResponse verifyCheckCodeResponse = organService.verifyCheckCode(verifyCheckCodeRequest);
+    	if(!verifyCheckCodeResponse.isResult()){
+    		return toJson(putSysError(verifyCheckCodeResponse.getReturnMessage()));
     	}
 		//TODO 校验待新增的用户是不是属于该商家
 		
@@ -241,7 +252,6 @@ public class SettingEmployeeController extends BaseController{
 		SaaSUserRoleResponse saaSUserRoleResponse = new SaaSUserRoleResponse();
 		try {
 			saaSUserRoleResponse = titanFinancialUserService.querySaaSUserRolePage(saaSUserRoleRequest);
-			
 		} catch (GlobalServiceException e) {
 			log.error("查询saas用户失败，参数employeePojo:" +ToStringBuilder.reflectionToString(employeePojo), e);
 			putSysError(WebConstant.CONTROLLER_ERROR_MSG);
@@ -267,7 +277,13 @@ public class SettingEmployeeController extends BaseController{
     	try {
 			UserRegisterResponse respose = titanFinancialUserService.registerFinancialUser(userRegisterRequest);
 			if(respose.isResult()){
-				putSuccess();
+				putSuccess("添加成功");
+				if(verifyCheckCodeResponse.getCodeId()>0){
+					UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
+					updateCheckCodeRequest.setCodeId(verifyCheckCodeResponse.getCodeId());
+					updateCheckCodeRequest.setIsactive(0);
+					organService.useCheckCode(updateCheckCodeRequest);
+				}
 			}else{
 				putSysError(respose.getReturnMessage());
 			}
