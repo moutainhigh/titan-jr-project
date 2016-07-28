@@ -101,7 +101,8 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
                         OrderStatusEnum.ORDER_FAIL.getStatus().equals(transOrderDTO.getStatusid()) ||
                         OrderStatusEnum.ORDER_NO_EFFECT.getStatus().equals(transOrderDTO.getStatusid()) ||
                         (OrderStatusEnum.ORDER_IN_PROCESS.getStatus().equals(transOrderDTO.getStatusid()) &&
-                            transOrderDTO.getTitanOrderPayDTO() == null && transOrderDTO.getTitanTransferDTO() == null)){
+                            (transOrderDTO.getTitanOrderPayDTO() == null || transOrderDTO.getTitanOrderPayDTO().getReqstatus() != 2) &&
+                            (transOrderDTO.getTitanTransferDTO() == null || transOrderDTO.getTitanTransferDTO().getStatus() != 2))){
                     //展示在线支付按钮
                     showPaymentResponse.setShowStatus(1);
                 } else {
