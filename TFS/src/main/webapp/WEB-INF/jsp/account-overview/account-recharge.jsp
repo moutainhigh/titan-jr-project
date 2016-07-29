@@ -236,7 +236,8 @@ function showPayResult(){
 	        cancel : function(){
 	        	confirmPayResult();
 	        }
-	      }); 	  
+	      }); 
+	window.top.$(".ui-dialog-close").hide();
 }
 
 //主动确认支付结果
