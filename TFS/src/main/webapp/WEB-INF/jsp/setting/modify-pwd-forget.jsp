@@ -23,8 +23,7 @@
 			<div class="passwordf">
 				<ul class="passwordset_u2">
 					<li>
-						<span class="reset_pass">泰坦金融用户名：</span>
-						<input type="text" class="text w_250" id="userName" value="${tfsUserLoginName}" disabled="disabled" placeholder="请输入手机号或邮箱"></li>
+						<span class="reset_pass">泰坦金融用户名：</span><span id="userName">${tfsUserLoginName }</span>
 					<li>
 						<span class="reset_pass">验证码：</span>
 						<p class="text w_250">
@@ -93,11 +92,6 @@ $('.J_next_btn').on('click',function(){
     //需要验证用户名和验证码
 	var data =  getMessageData();
 	var code = $(".TFSother_input").val();
-	//验证其正确性
-	if( typeof data.userName =="undefined" || data.userName.length<1 ){
-		new top.Tip({msg : '用户名不能为空！', type: 1, timer:2000});      
-		return;
-	}
 	
 	 var flag = validate_email_or_phone(data);
 	 if(!flag){
@@ -192,7 +186,7 @@ $(".J_close").on('click',function(){
 
 
 function forget_pwd_data(){
-	var userName =  $("#userName").val();
+	var userName =  $("#userName").html();
 	var code = $(".TFSother_input").val();
 	var payPassword = PasswordStr6.returnStr();
 	var payPassword2 = PasswordStr7.returnStr();
@@ -271,7 +265,7 @@ $('.sendmes').on('click',function(){
 });
 
 function getMessageData(){
-	var userName = $("#userName").val();
+	var userName = $("#userName").html();
 	if(userName.length>0){
 		return {
 			userName:userName

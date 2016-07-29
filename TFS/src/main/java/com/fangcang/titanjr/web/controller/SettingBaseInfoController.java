@@ -85,7 +85,7 @@ public class SettingBaseInfoController extends BaseController{
 					model.addAttribute("big_img_50", item.getImageURL());
 				}
 			}
-			//登录者信息
+			//管理员信息
 			UserInfoQueryRequest adminRequest = new UserInfoQueryRequest();
 			adminRequest.setOrgCode(titanUser.getOrgcode());
 			adminRequest.setIsadmin(1);
