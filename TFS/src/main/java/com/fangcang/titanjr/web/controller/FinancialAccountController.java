@@ -839,4 +839,9 @@ public class FinancialAccountController extends BaseController {
 		return toJson(putSysError(accountCheckResponse.getReturnMessage()));
 	} 
 	
+	@RequestMapping("/error_cashier")
+	public String returnErrorPage(String msg){
+		return "checkstand-pay/cashierDeskError";
+	}
+	
 }
