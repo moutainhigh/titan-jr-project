@@ -34,7 +34,7 @@
 					</li>
 				</ul>
 				<div class="J_next">
-					<span class="btn p_lr30">下一步</span>
+					<span class="btn p_lr30 J_next_btn">下一步</span>
 				</div>
 			</div>
 			<div class="passwordf_next" style="display: none;">
@@ -89,7 +89,7 @@ $("document").ready(function (){
 });
 var pwd3 = $('.passwordset_u1').html();
 //下一步
-$('.J_next').on('click',function(){
+$('.J_next_btn').on('click',function(){
     //需要验证用户名和验证码
 	var data =  getMessageData();
 	var code = $(".TFSother_input").val();
