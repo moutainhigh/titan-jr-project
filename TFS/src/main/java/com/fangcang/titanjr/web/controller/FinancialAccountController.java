@@ -569,6 +569,7 @@ public class FinancialAccountController extends BaseController {
             }
         }
         map.put(WebConstant.RESULT, "fail");
+        map.put(WebConstant.MSG, "密码不能为空或者空格");
         return map;
     }
 
