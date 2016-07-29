@@ -827,7 +827,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
            		  GDPOrderResponse gDPOrderResponse =  getGDPOrderDTO(paymentRequest.getPayOrderNo());
            		  if(gDPOrderResponse.getgDPOrderDTO() !=null){//有待扩展
            			  orderRequest.setGoodsdetail(gDPOrderResponse.getgDPOrderDTO().getGoodName());
-           			  orderRequest.setBusinessordercode(gDPOrderResponse.getgDPOrderDTO().getOrderCode());
+           			  orderRequest.setBusinessordercode(paymentRequest.getBusinessOrderCode());
            			  orderRequest.setGoodsname("GDP付款单");
            		  }
            	  }else if(CashierDeskTypeEnum.SUPPLY_DESK.deskCode.equals(paymentRequest.getPaySource())){
@@ -1515,11 +1515,21 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         }
         paramList.append("&payOrderNo=").append(paymentUrlRequest.getPayOrderNo());
         paramList.append("&paySource=").append(paymentUrlRequest.getPaySource());
-        paramList.append("&operater=").append(paymentUrlRequest.getOperater());
+        
+        if(StringUtil.isValidString(paymentUrlRequest.getOperater())){
+        	paramList.append("&operater=").append(paymentUrlRequest.getOperater());
+        }else{
+        	paramList.append("&operater=");
+        }
         if (StringUtil.isValidString(paymentUrlRequest.getRecieveMerchantCode())) {
             paramList.append("&recieveMerchantCode=").append(paymentUrlRequest.getRecieveMerchantCode());
         } else {
             paramList.append("&recieveMerchantCode=");
+        }
+        if(StringUtil.isValidString(paymentUrlRequest.getBusinessOrderCode())){
+        	paramList.append("&businessOrderCode=").append(paymentUrlRequest.getBusinessOrderCode());
+        }else{
+        	paramList.append("&businessOrderCode=");
         }
         paramList.append("&isEscrowed=").append(paymentUrlRequest.getIsEscrowed());
         if (StringUtil.isValidString(paymentUrlRequest.getEscrowedDate())) {

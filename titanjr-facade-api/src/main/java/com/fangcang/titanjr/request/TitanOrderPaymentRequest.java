@@ -24,6 +24,9 @@ public class TitanOrderPaymentRequest extends BaseRequest{
 	//操作者
 	private String operater;
 	
+	//订单号
+	private String businessOrderCode;
+	
 	//接受账户
 	private String recieveMerchantCode;
 	
@@ -96,6 +99,14 @@ public class TitanOrderPaymentRequest extends BaseRequest{
 
 	public void setOperater(String operater) {
 		this.operater = operater;
+	}
+
+	public String getBusinessOrderCode() {
+		return businessOrderCode;
+	}
+
+	public void setBusinessOrderCode(String businessOrderCode) {
+		this.businessOrderCode = businessOrderCode;
 	}
 	
 }

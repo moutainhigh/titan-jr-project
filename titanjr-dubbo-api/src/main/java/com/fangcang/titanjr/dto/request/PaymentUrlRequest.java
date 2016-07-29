@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.dto.request;
 
 import com.fangcang.titanjr.dto.BaseRequestDTO;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class PaymentUrlRequest extends BaseRequestDTO {
@@ -26,6 +27,9 @@ public class PaymentUrlRequest extends BaseRequestDTO {
 
     //接受账户
     private String recieveMerchantCode;
+    
+	//订单号
+	private String businessOrderCode;
 
     //是否冻结
     @NotEmpty
@@ -114,4 +118,13 @@ public class PaymentUrlRequest extends BaseRequestDTO {
     public void setEscrowedDate(String escrowedDate) {
         this.escrowedDate = escrowedDate;
     }
+
+	public String getBusinessOrderCode() {
+		return businessOrderCode;
+	}
+
+	public void setBusinessOrderCode(String businessOrderCode) {
+		this.businessOrderCode = businessOrderCode;
+	}
+    
 }
