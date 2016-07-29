@@ -189,7 +189,7 @@ public class FinancialTradeController extends BaseController {
                     					}
                     					
                     	        	}else{//转账失败记录此次交易失败
-                    	        		orderStatusEnum = OrderStatusEnum.TRANSFER_FAIL;
+                    	        		orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
                     	        	}
                     			}else{//
                     				orderStatusEnum= OrderStatusEnum.ORDER_SUCCESS;
@@ -318,7 +318,7 @@ public class FinancialTradeController extends BaseController {
 				    		resultMap.put(WebConstant.MSG, "支付成功");
 							
 						}else{
-							orderStatusEnum = OrderStatusEnum.TRANSFER_FAIL;
+							orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
 							resultMap.put(WebConstant.RESULT, WebConstant.FAIL);
 				    		resultMap.put(WebConstant.MSG, "支付失败");
 						}
@@ -699,10 +699,10 @@ public class FinancialTradeController extends BaseController {
 				if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid()!=null){
 //						paymentRequest.setPayPassword(RSADecryptString.decryptString(paymentRequest.getPayPassword(),request));
 					paymentRequest.setPayPassword(paymentRequest.getPayPassword());
-					//验证支付密码
+					//验证付款密码
 					boolean flag = titanFinancialUserService.checkPayPassword(paymentRequest.getPayPassword(),titanUserBindInfoDTO.getTfsuserid().toString());
 				   if(!flag){
-				   	resultMap.put(WebConstant.MSG, "支付密码错误");
+				   	resultMap.put(WebConstant.MSG, "付款密码错误");
 				   	return resultMap;
 				   }
 				}else{
@@ -916,6 +916,7 @@ public class FinancialTradeController extends BaseController {
 			paymentUrlRequest.setUserid(defaultPayerConfig.getUserId());
 			model.addAttribute("userId", paymentUrlRequest.getUserid());
 			model.addAttribute("operator",paymentUrlRequest.getOperater());
+			model.addAttribute("businessOrderCode",paymentUrlRequest.getBusinessOrderCode());
 		}
 
 		//非B2B支付时，将付款方userId查询出来
@@ -1111,6 +1112,7 @@ public class FinancialTradeController extends BaseController {
 				sign.append("&paySource="+paymentUrlRequest.getPaySource());
 				sign.append("&operater="+paymentUrlRequest.getOperater());
 				sign.append("&recieveMerchantCode="+paymentUrlRequest.getRecieveMerchantCode());
+				sign.append("&businessOrderCode="+paymentUrlRequest.getBusinessOrderCode());
 				sign.append("&isEscrowed="+paymentUrlRequest.getIsEscrowed());
 				sign.append("&escrowedDate="+paymentUrlRequest.getEscrowedDate());
 				sign.append("&key="+key);

@@ -32,7 +32,8 @@
             	<c:when test="${ orgBindStatus==0}">
             		<div class="btn1">
 		                <a class="tfs_ico b J_admin" href="javascript:;"></a>
-		                <div class="t J_t">已有泰坦金融账号，点击绑定SAAS</div>
+		                <!-- 
+		                <div class="t J_t">已有泰坦金融账号，点击绑定SAAS</div> -->
 		            </div>
             	</c:when>
             	<c:when test="${orgCheckResultKey=='FT'}">

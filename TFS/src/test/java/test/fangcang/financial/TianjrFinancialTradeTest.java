@@ -1,4 +1,6 @@
 package test.fangcang.financial;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -465,13 +467,14 @@ public class TianjrFinancialTradeTest extends GenericTest{
     
     //获取GDP支付地址
 //    @Test
-    public void testGetPaymentUrl(){
+    public void testGetPaymentUrl() throws UnsupportedEncodingException{
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
-    	paymentUrlRequest.setPayOrderNo("H0146130713143358");
+    	paymentUrlRequest.setPayOrderNo("H0189130625152426");
     	paymentUrlRequest.setPaySource("1");
     	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
     	paymentUrlRequest.setIsEscrowed("1");
     	paymentUrlRequest.setRecieveMerchantCode("M10000002");
+    	paymentUrlRequest.setOperater("中国人 非常好 ");
     	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
     	if(paymentUrlResponse !=null){
     		System.out.println("-------------"+paymentUrlResponse.getUrl());
@@ -480,11 +483,11 @@ public class TianjrFinancialTradeTest extends GenericTest{
     
     
     //获取商家向酒店支付地址
-    @Test
+//    @Test
     public void testGetMerchantUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");
-    	paymentUrlRequest.setPayOrderNo("TW16033015471");
+    	paymentUrlRequest.setPayOrderNo("TW15112013332");
     	paymentUrlRequest.setFcUserid("23298");
     	paymentUrlRequest.setPaySource("2");
     	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
@@ -501,7 +504,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     public void testGetMerchantLineUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");
-    	paymentUrlRequest.setPayOrderNo("TW16032815436");
+    	paymentUrlRequest.setPayOrderNo("TW15103012513");
     	paymentUrlRequest.setFcUserid("23415");
     	
     	paymentUrlRequest.setPaySource("2");
@@ -575,15 +578,36 @@ public class TianjrFinancialTradeTest extends GenericTest{
     }
     
 //    @Test
-    public void testCallBack(){
+    public void testCallBack() throws Exception{
     	TransOrderDTO transOrderDTO = new TransOrderDTO();
     	transOrderDTO.setUserorderid("TJO160721114348977");
     	transOrderDTO.setMerchantcode("M10000001");
     	transOrderDTO.setPayorderno("TW15053107551");
+		try {
+			titanFinancialTradeService.confirmFinance(transOrderDTO);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+    
+//    @Test
+    public void testConfirmData() throws Exception{
+    	TransOrderDTO transOrderDTO = new TransOrderDTO();
+    	transOrderDTO.setPayeemerchant("TJM10000108");
+    	transOrderDTO.setPayorderno("TW16041215772");
+    	transOrderDTO.setMerchantcode("M10000001");
+    	transOrderDTO.setUserorderid("TJO1607231645058042");
     	titanFinancialTradeService.confirmFinance(transOrderDTO);
+	}
+    
+    @Test
+    public void testGDPOrderDTO(){
+    	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
+    	paymentUrlRequest.setPayOrderNo("H0141160727185050");
+    	titanFinancialTradeService.getGDPOrderDTO(paymentUrlRequest.getPayOrderNo());
     }
     
-    
+   
     
     /**
      * 测试整个支付流程  基础数据  userid :TJM10000087  orgname:腾讯云计算有限公司  泰坦码:10000093

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -974,7 +975,6 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 	        }
 			TitanUserParam param = new TitanUserParam();
 			param.setUserloginname(request.getUserLoginName());
-			param.setIsoperator(request.getIsOperator());
 			param.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
 			PaginationSupport<TitanUser> page = new PaginationSupport<TitanUser>();
 			page = titanUserDao.selectForPage(param, page);
@@ -982,6 +982,15 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 				response.putErrorResult("-100", "该登录用户名已经存在，请使用其他用户名");
 				return response;
 			}
+			//saas 是否已经存在
+			MerchantUserCheckDTO checkDTO = new MerchantUserCheckDTO();
+	        checkDTO.setUserLoginName(request.getUserLoginName());
+	        BaseResultDTO checkResult = getMerchantUserFacade().checkMerchantUser(checkDTO);
+	        if (!checkResult.getIsSuccessed()) {//登录名已存在
+	        	response.putErrorResult("-100", "该登录用户名已经存在，请使用其他用户名");
+	            return response;
+	        }
+			
 		} catch (Exception e) {
 			throw new GlobalServiceException("userLoginNameExist,param:"+JSONSerializer.toJSON(request).toString(),e);
 		}
@@ -990,6 +999,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		return response;
 	}
 
+	
 	@Override
 	public boolean checkIsSetPayPassword(String fcUserid,String tfsUserId) {
 		try{
@@ -1030,8 +1040,6 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		    	titanUserBindInfo = titanUserBindInfoList.get(0);
 		    	MyBeanUtil.copyProperties(userBindInfoDTO, titanUserBindInfo);
 		    	return userBindInfoDTO;
-		    }else{
-		    	log.error("没有找到指定的绑定用户，参数为titanUserBindInfo："+JSONSerializer.toJSON(titanUserBindInfo).toString());
 		    }
 		}catch(Exception e){
 			log.error("根据房仓用户信息查询金融用户信息失败"+e.getMessage(),e);
@@ -1039,7 +1047,5 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		}
 		return null;
 	}
-	
-	
 
 }

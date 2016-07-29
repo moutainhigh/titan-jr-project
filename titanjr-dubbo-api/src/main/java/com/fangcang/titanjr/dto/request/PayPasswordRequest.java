@@ -13,7 +13,7 @@ public class PayPasswordRequest implements Serializable{
 	
 	private String fcuserid;
 	
-	//支付密码
+	//付款密码
 	private String payPassword;
 	
 	//原密码

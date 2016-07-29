@@ -19,7 +19,7 @@
 </div>
 
 <script>
-//修改密码记得原支付密码
+//修改密码记得原付款密码
 $('.J_remember').on('click',function(){
 	var IframeBox=document.getElementById('right_con_frm').contentWindow || window.frames['right_con_frm'].contentWindow || window.frames['right_con_frm'];
     IframeBox.de.remove();
@@ -69,7 +69,7 @@ $('.J_remember').on('click',function(){
 		}
     });
 });   
-//修改密码忘记原支付密码
+//修改密码忘记原付款密码
 var forgetDialog;
 $('.J_forget').on('click',function(){
 	var IframeBox=document.getElementById('right_con_frm').contentWindow || window.frames['right_con_frm'].contentWindow || window.frames['right_con_frm'];

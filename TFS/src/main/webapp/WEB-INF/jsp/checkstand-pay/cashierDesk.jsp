@@ -208,6 +208,7 @@
     <input name="deskId" id="deskId" type="hidden" value="${cashierDesk.deskId}">
     <input name="isEscrowed" id="isEscrowed" type="hidden" value="${isEscrowed}">
     <input name="escrowedDate" id="escrowedDate" type="hidden" value="${escrowedDate}">
+    <input name="businessOrderCode" id="businessOrderCode" type="hidden" value="${businessOrderCode}">
   </form>
 </div>
 
@@ -624,7 +625,7 @@
                             value: '确定',
                             skin: 'btn p_lr30',
                             callback: function () {
-                            	//验证支付密码是否准确
+                            	//验证付款密码是否准确
                             	if(! check_payPassword())
                             	{
                             		 $(".ui-dialog-content").html(html);

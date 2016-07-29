@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-    <title>支付密码-泰坦金融</title>
+    <title>付款密码-泰坦金融</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 </head>
@@ -14,7 +14,7 @@
 	<div class="S_popup_title">
 		<ul>
 			<li class="P_left"></li>
-			<li class="P_centre" style="padding:0 50px;">修改支付密码</li>
+			<li class="P_centre" style="padding:0 50px;">修改付款密码</li>
 			<li class="P_right"></li>
 		</ul>
 	</div>
@@ -34,7 +34,7 @@
 					</li>
 				</ul>
 				<div class="J_next">
-					<span class="btn p_lr30">下一步</span>
+					<span class="btn p_lr30 J_next_btn">下一步</span>
 				</div>
 			</div>
 			<div class="passwordf_next" style="display: none;">
@@ -89,7 +89,7 @@ $("document").ready(function (){
 });
 var pwd3 = $('.passwordset_u1').html();
 //下一步
-$('.J_next').on('click',function(){
+$('.J_next_btn').on('click',function(){
     //需要验证用户名和验证码
 	var data =  getMessageData();
 	var code = $(".TFSother_input").val();

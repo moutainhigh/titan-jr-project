@@ -236,7 +236,8 @@ function showPayResult(){
 	        cancel : function(){
 	        	confirmPayResult();
 	        }
-	      }); 	  
+	      }); 
+	window.top.$(".ui-dialog-close").hide();
 }
 
 //主动确认支付结果
@@ -254,7 +255,7 @@ function confirmPayResult(){
         		   top.F.loading.show();
                    setTimeout(function () {
                        top.F.loading.hide();
-                       new top.Tip({msg: data.msg, type: 1, time: 1000});
+                      /*  new top.Tip({msg: data.msg, type: 1, time: 1000}); */
                        top.removeIframeDialog();
                    }, 1000);
                    $("#flashPage").submit();

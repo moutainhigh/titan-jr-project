@@ -15,7 +15,7 @@ public class ForgetPayPassword extends BaseRequestDTO{
 	//验证码
 	private String code;
 	
-	//支付密码
+	//付款密码
 	private String payPassword;
 
 	public String getUserName() {

@@ -62,7 +62,7 @@ public class PaymentRequest extends BaseRequestDTO {
 	//付款人员
 	private String fcUserid;
 	
-	//支付密码
+	//付款密码
 	private String payPassword;
 	
 	//交易金额
@@ -124,6 +124,9 @@ public class PaymentRequest extends BaseRequestDTO {
 	
 	//交易类型
 	private String paySource;
+	
+	//订单号
+	private String businessOrderCode;
 	
 
 	
@@ -519,6 +522,14 @@ public class PaymentRequest extends BaseRequestDTO {
 
 	public void setInterProductid(String interProductid) {
 		this.interProductid = interProductid;
+	}
+
+	public String getBusinessOrderCode() {
+		return businessOrderCode;
+	}
+
+	public void setBusinessOrderCode(String businessOrderCode) {
+		this.businessOrderCode = businessOrderCode;
 	}
 	
 }

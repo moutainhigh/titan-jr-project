@@ -48,7 +48,7 @@ public class TitanFinancialSendSMSServiceTest extends SpringTest  {
     		sendRegCodeRequest.setSubject("主题455");
     		sendRegCodeRequest.setMerchantCode("M10000181");
     		sendRegCodeRequest.setReceiveAddress("2637799268@qq.com");
-    		SendCodeResponse response = titanFinancialSendSMSService.sendRegCode(sendRegCodeRequest);
+    		SendCodeResponse response = titanFinancialSendSMSService.sendCode(sendRegCodeRequest);
 	    	System.out.println(JSONSerializer.toJSON(response).toString());
 			Assert.assertFalse(response.isResult()==false);
 			} catch (Exception e) {

@@ -257,7 +257,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                 	}else if(OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())){
                 		   orderResponse.putErrorResult("支付成功，请勿重复支付");
                 		   //回调财务
-                		   confirmFinance(transOrderDTO);
+//                		   this.confirmFinance(transOrderDTO);
                            return orderResponse;
                 	}
                 }
@@ -481,7 +481,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		
 		String url = RSInvokeConstant.callBackConfigMap.get(paySource);
 		try {
-			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params));
+			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params)+"---url---"+url);
 			HttpResponse resp = HttpClient.httpRequest(params, url);
 			if (null != resp) {
 				HttpEntity entity = resp.getEntity();
@@ -527,14 +527,18 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     private List<NameValuePair> getHttpParams(TransOrderDTO transOrderDTO,String paySource){
     	List<NameValuePair> params = new ArrayList<NameValuePair>();
     	params.add(new BasicNameValuePair("payOrderCode", transOrderDTO.getPayorderno()));
+    	params.add(new BasicNameValuePair("businessOrderCode", transOrderDTO.getBusinessordercode()));
+    	
     	if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paySource)){//GDP回调
     		OrgBindInfo orgBindInfo = this.getOrgBindInfo(transOrderDTO.getPayeemerchant());
     		if(null !=orgBindInfo){
     			params.add(new BasicNameValuePair("merchantCode", orgBindInfo.getMerchantCode()));
     		}
+    		params.add(new BasicNameValuePair("operator", transOrderDTO.getCreator()));
     	}else if(CashierDeskTypeEnum.SUPPLY_DESK.deskCode.equals(paySource)){//财务回调
     		  params.add(new BasicNameValuePair("merchantCode", transOrderDTO.getMerchantcode()));
     	}
+    	
         params.add(new BasicNameValuePair("titanPayOrderCode", transOrderDTO.getUserorderid()));
         params.add(new BasicNameValuePair("payResult", "1"));
         params.add(new BasicNameValuePair("code", "valid"));
@@ -824,7 +828,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
            		  GDPOrderResponse gDPOrderResponse =  getGDPOrderDTO(paymentRequest.getPayOrderNo());
            		  if(gDPOrderResponse.getgDPOrderDTO() !=null){//有待扩展
            			  orderRequest.setGoodsdetail(gDPOrderResponse.getgDPOrderDTO().getGoodName());
-           			  orderRequest.setBusinessordercode(gDPOrderResponse.getgDPOrderDTO().getOrderCode());
+           			  orderRequest.setBusinessordercode(paymentRequest.getBusinessOrderCode());
            			  orderRequest.setGoodsname("GDP付款单");
            		  }
            	  }else if(CashierDeskTypeEnum.SUPPLY_DESK.deskCode.equals(paymentRequest.getPaySource())){
@@ -1368,7 +1372,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                         if (isPayerValid(transOrderDTO)) {//付款方也存在
                             if (isPayeeOrg(tradeDetailRequest, transOrderDTO)) { //当前机构等于收款方
                                 transOrderDTO.setTradeType("收款");
-                                transOrderDTO.setTransTarget(getTransTarget(transOrderDTO.getPayermerchant()));//付款方
+                                if(("141223100000056").equals(transOrderDTO.getPayeemerchant())){//有待改进,将GDP默认商家放到数据库
+                                	transOrderDTO.setTransTarget(transOrderDTO.getCreator());
+                                }else{
+                                	 transOrderDTO.setTransTarget(getTransTarget(transOrderDTO.getPayermerchant()));//付款方
+                                }
                             } else if (isPayerOrg(tradeDetailRequest, transOrderDTO)) {//当前机构等于付款方
                                 transOrderDTO.setTradeType("付款");
                                 transOrderDTO.setTransTarget(getTransTarget(transOrderDTO.getPayeemerchant()));//收款方
@@ -1508,11 +1516,21 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         }
         paramList.append("&payOrderNo=").append(paymentUrlRequest.getPayOrderNo());
         paramList.append("&paySource=").append(paymentUrlRequest.getPaySource());
-        paramList.append("&operater=").append(paymentUrlRequest.getOperater());
+        
+        if(StringUtil.isValidString(paymentUrlRequest.getOperater())){
+        	paramList.append("&operater=").append(paymentUrlRequest.getOperater());
+        }else{
+        	paramList.append("&operater=");
+        }
         if (StringUtil.isValidString(paymentUrlRequest.getRecieveMerchantCode())) {
             paramList.append("&recieveMerchantCode=").append(paymentUrlRequest.getRecieveMerchantCode());
         } else {
             paramList.append("&recieveMerchantCode=");
+        }
+        if(StringUtil.isValidString(paymentUrlRequest.getBusinessOrderCode())){
+        	paramList.append("&businessOrderCode=").append(paymentUrlRequest.getBusinessOrderCode());
+        }else{
+        	paramList.append("&businessOrderCode=");
         }
         paramList.append("&isEscrowed=").append(paymentUrlRequest.getIsEscrowed());
         if (StringUtil.isValidString(paymentUrlRequest.getEscrowedDate())) {
@@ -1686,20 +1704,22 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		GDPOrderResponse gDPOrderResponse = new GDPOrderResponse();
 		OrderDetailResponseDTO orderDetailResponseDTO = this.getHotelOrderSearchFacade().queryOrderByCode(orderCode);
 	    log.info("GDP查询的结果:"+JSON.toJSONString(orderDetailResponseDTO));
-		if(orderDetailResponseDTO !=null){
-	    	GDPOrderDTO gDPOrderDTO = new GDPOrderDTO();
-	    	if(orderDetailResponseDTO.getCurrency()!=null){
-	    		gDPOrderDTO.setCurrency(orderDetailResponseDTO.getCurrency().getValue());
-	    	}
-	    	gDPOrderDTO.setHotelName(orderDetailResponseDTO.getHotelName());
-	    	gDPOrderDTO.setOrderSum(orderDetailResponseDTO.getOrderSum());
-	    	gDPOrderDTO.setGoodName(orderDetailResponseDTO.getCommondityName());
-	    	gDPOrderDTO.setOrderCode(orderDetailResponseDTO.getOrderCode());
-	    	gDPOrderResponse.setgDPOrderDTO(gDPOrderDTO);
-	    	gDPOrderResponse.putSuccess();
+	    if(orderDetailResponseDTO ==null || !StringUtil.isValidString(orderDetailResponseDTO.getOrderCode())){
+	    	gDPOrderResponse.putSysError();
 	    	return gDPOrderResponse;
 	    }
-	    gDPOrderResponse.putSysError();
+	    
+    	GDPOrderDTO gDPOrderDTO = new GDPOrderDTO();
+    	if(orderDetailResponseDTO.getCurrency()!=null){
+    		gDPOrderDTO.setCurrency(orderDetailResponseDTO.getCurrency().getValue());
+    	}
+    	gDPOrderDTO.setHotelName(orderDetailResponseDTO.getHotelName());
+    	gDPOrderDTO.setOrderSum(orderDetailResponseDTO.getOrderSum());
+    	gDPOrderDTO.setGoodName(orderDetailResponseDTO.getCommondityName());
+    	gDPOrderDTO.setOrderCode(orderDetailResponseDTO.getOrderCode());
+    	gDPOrderResponse.setgDPOrderDTO(gDPOrderDTO);
+    	gDPOrderResponse.putSuccess();
+	    
 		return gDPOrderResponse;
 	}
 	

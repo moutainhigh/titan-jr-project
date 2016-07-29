@@ -28,7 +28,7 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
     public TitanOrderPaymentResponse getOrderPaymentUrl(TitanOrderPaymentRequest titanOrderPaymentRequest) {
         TitanOrderPaymentResponse titanOrderPaymentResponse = new TitanOrderPaymentResponse();
         if (!GenericValidate.validate(titanOrderPaymentRequest)) {
-            titanOrderPaymentResponse.putErrorResult(ReturnCode.CODE_PARAM_ERROR.getCode(), "请求出参数校验错误");
+            titanOrderPaymentResponse.putErrorResult(ReturnCode.CODE_PARAM_ERROR.getCode(), "请求参数校验错误");
             return titanOrderPaymentResponse;
         }
         try {
@@ -72,6 +72,7 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
         paymentUrlRequest.setEscrowedDate(titanOrderPaymentRequest.getEscrowedDate());
         paymentUrlRequest.setRecieveMerchantCode(titanOrderPaymentRequest.getRecieveMerchantCode());
         paymentUrlRequest.setIsEscrowed(titanOrderPaymentRequest.getIsEscrowed().key);
+        paymentUrlRequest.setBusinessOrderCode(titanOrderPaymentRequest.getBusinessOrderCode());
         return paymentUrlRequest;
     }
 

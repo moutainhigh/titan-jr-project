@@ -20,7 +20,7 @@ public class GetCheckCodeRequest extends BaseRequestDTO{
 	@NotBlank
 	private String receiveAddress;
 	/**
-	 * 验证码类型：1-注册，2-修改支付密码，3-修改登录密码
+	 * 验证码类型：1-注册，2-修改付款密码，3-修改登录密码
 	 */
 	@NotNull
 	private Integer msgType;

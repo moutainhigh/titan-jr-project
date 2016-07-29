@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-    <title>支付密码-泰坦金融</title>
+    <title>付款密码-泰坦金融</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 </head>
@@ -14,7 +14,7 @@
   <div class="S_popup_title">
     <ul>
       <li class="P_left"></li>
-      <li class="P_centre" style="padding:0 50px;">修改支付密码</li>
+      <li class="P_centre" style="padding:0 50px;">修改付款密码</li>
       <li class="P_right"></li>
     </ul>
   </div>

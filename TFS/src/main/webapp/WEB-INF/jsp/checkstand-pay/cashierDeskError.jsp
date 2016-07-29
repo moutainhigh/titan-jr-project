@@ -19,7 +19,15 @@
 	<div class="TFSsu_content">
 	      <div class="TFSsu_contenttop c_red"> 
 			<i class="TFSpay_ico TFSsb"></i>
-			 ${msg}
+			<c:choose>
+			  <c:when test="${not empty msg}">
+			     ${msg}
+			  </c:when>
+			  <c:otherwise>
+			      系统错误
+			  </c:otherwise>
+			</c:choose>
+			 
 		  </div>
 		<div class="TFSsu_contentfoot">
 			<span class="btn btn_exit J_exitKan">关闭</span>

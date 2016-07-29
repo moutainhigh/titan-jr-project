@@ -108,7 +108,7 @@ $(".J_mody").on('click',function(){
 	parentW.next("input").show();
 	$(".TFS_basicbutton").show();
 });
-//修改支付密码
+//修改付款密码
 $('.J_modify').on('click',function(){
     top.F.loading.show();
     $.ajax({
