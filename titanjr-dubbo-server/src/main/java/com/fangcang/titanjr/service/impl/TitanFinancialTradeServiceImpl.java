@@ -527,6 +527,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     private List<NameValuePair> getHttpParams(TransOrderDTO transOrderDTO,String paySource){
     	List<NameValuePair> params = new ArrayList<NameValuePair>();
     	params.add(new BasicNameValuePair("payOrderCode", transOrderDTO.getPayorderno()));
+    	params.add(new BasicNameValuePair("businessOrderCode", transOrderDTO.getBusinessordercode()));
     	
     	if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paySource)){//GDP回调
     		OrgBindInfo orgBindInfo = this.getOrgBindInfo(transOrderDTO.getPayeemerchant());
