@@ -580,7 +580,7 @@ public class FinancialAccountController extends BaseController {
     			||!StringUtil.isValidString(forgetPayPassword.getPayPassword())
     			||!StringUtil.isValidString(forgetPayPassword.getUserName())
     			){
-    		return toJson(putSysError("参数错误"));
+    		return toJson(putSysError("密码不能空格或者空"));
     	}
     	
     	//获取该用户的用户名

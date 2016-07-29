@@ -38,7 +38,7 @@
                           <input type="hidden" id="bankName" >
 					<li>
 						<span class="reset_pass">收款账号：</span>
-						<input type="text" placeholder="6666 0000 1111 2222" class="text w_250" id="accountnumber"></li>
+						<input type="text" placeholder="" class="text w_250" id="accountnumber"></li>
 					<li>
 						<span class="reset_pass">公司名称 ：</span>
 						<input type="text" class="text w_250" id="name" value="${organ.orgName}" disabled></li>		
