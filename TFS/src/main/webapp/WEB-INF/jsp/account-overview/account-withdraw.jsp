@@ -112,7 +112,11 @@
             $(".TFS_withdrawBoxL_first").show();
             $(".TFS_withdrawBoxL_else").hide();
         }
+        
+        window.focus();
         checkIsSetPayPassword();
+        
+        
     })
 
     //点击取消关闭弹框
@@ -390,7 +394,7 @@
 		        context: document.body,
 		        url: '<%=basePath%>/account/showSetPayPassword.action',
 		        success: function (html) {
-		        	clickPassword();
+		        
 		            var d = dialog({
 		                title: ' ',
 		                padding: '0 0 0px 0 ',
@@ -436,6 +440,12 @@
 
 		                ]
 		            }).showModal();
+		            
+		          
+		            setTimeout(function(){
+		            	 clickPassword();
+		            },500);
+		            
 		        }
 		    });
     }
