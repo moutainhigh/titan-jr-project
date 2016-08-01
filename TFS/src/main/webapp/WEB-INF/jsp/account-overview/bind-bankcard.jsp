@@ -137,18 +137,18 @@ $('.to_bindCard').on('click',function(){
 
 function validate_bankCard_data(bankCardData){
 	if(typeof bankCardData.bankHeadName =="undifined" || bankCardData.bankHeadName.length<1){
-		new top.Tip({msg : '开户银行不能为空！', type: 1 , time:1000}); 
+		new top.Tip({msg : '收款银行不能为空！', type: 1 , time:1000}); 
 	    return false;
 	}
 	
 	if(typeof bankCardData.accountnumber =="undifined" || bankCardData.accountnumber.length<1){
-		new top.Tip({msg : '储蓄卡卡号不能为空！', type: 1 , time:1000}); 
+		new top.Tip({msg : '收款账号不能为空！', type: 1 , time:1000}); 
 		return false;
 	}
 	
 	var testNumber  = /^[0-9]*$/;
 	if(!testNumber.test( bankCardData.accountnumber)){
-		new top.Tip({msg : '储蓄卡卡号必须为数字！', type: 1 , time:1000}); 
+		new top.Tip({msg : '收款账号必须为数字！', type: 1 , time:1000}); 
 		return false;
 	}
 	
