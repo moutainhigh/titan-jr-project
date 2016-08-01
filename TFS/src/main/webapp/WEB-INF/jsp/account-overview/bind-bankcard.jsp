@@ -69,7 +69,7 @@
 		    
 			<div class="passwordf" id="showValidate"style="display: none; margin:40px 0;">
 				<div class="TFS_bind passwordset_u1" style="padding-bottom:40px;">
-					<p class="fl mr25"><img src="images/guidance07.jpg" width="44" height="44" alt=""></p>
+					<p class="fl mr25"><img src="<%=cssSaasPath%>/images/guidance07.jpg" width="44" height="44" alt=""></p>
 					<p class="fl"><strong class="fs16">绑定申请已提交！</strong>
 						<span class="c_999">我们将会在24H内审核完成，请耐心等待。</span>
 					</p>
