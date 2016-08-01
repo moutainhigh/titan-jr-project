@@ -14,17 +14,17 @@
 			<ul class="passwordset_u2 pass_modify clearf" style="margin:0px;">
 				<li>
 					<span class="reset_pass">原密码：</span>
-					<input type="password" class="text w_250 " name="password" id="oldLoginPassword"  datatype="/\w{1,}/" errormsg="请输入原始密码"/>
+					<input type="password" class="text w_250 " name="password" id="oldLoginPassword" readonly="readonly" placeholder="请输入原密码" datatype="/\w{1,}/" errormsg="请输入原始密码"/>
 					<span class="ico eye"></span>
 				</li>
 				<li>
 					<span class="reset_pass">新密码：</span>
-					<input type="password" class="text w_250 " id="newLoginPassword" placeholder="建议至少使用两种字符组合" datatype="/\w{6,}/" errormsg="密码长度至少6位"/>
+					<input type="password" class="text w_250 " id="newLoginPassword" readonly="readonly" placeholder="建议至少使用两种字符组合" datatype="/\w{6,}/" errormsg="密码长度至少6位"/>
 					<span class="ico eye"></span>
 				</li>
 				<li>
 					<span class="reset_pass">确认新密码：</span>
-					<input type="password" class="text w_250 " name="passwordConfirm" id="passwordConfirm" placeholder="请再次输入密码"  customFun="confirmPass"/>
+					<input type="password" class="text w_250 " name="passwordConfirm" id="passwordConfirm" readonly="readonly" placeholder="请再次输入密码"  customFun="confirmPass"/>
 					<span class="ico eye"></span>
 				</li>
 			</ul>
@@ -33,9 +33,16 @@
 </div>
 <!--弹窗白色底--> 
 <script>
-F.UI.scan();
-var passform = new validform('.password_set',{
-	msgAlign: 'bottom'
+var passform ;
+$(function(){
+	F.UI.scan();
+	passform = new validform('.password_set',{
+		msgAlign: 'bottom'
+	});
+	//修复在360下记住了密码bug
+	window.setTimeout(function(){
+		$("input[readonly='readonly']").attr("readonly", false);
+	}, 500);
 });
 
 //显示密码
