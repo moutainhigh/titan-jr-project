@@ -52,7 +52,7 @@
             		<div class="plan plan1">
 		                <ul>
 		                    <li>提交申请</li>
-		                    <li class="w_90"><div class="c_f00">初审</div><p class="Province c_f00" title="未通过(公司名称与营业执照不符)">未通过(${orgCheckResultMsg })</p>
+		                    <li class="w_90"><div class="c_f00">初审</div><p class="Province c_f00" title="未通过(${orgCheckResultMsg })">未通过(${orgCheckResultMsg })</p>
 		                    <c:if test="${userType==1 }">
 			                    <!-- 企业用户-修改 -->
 			                    <a class="blue underline cursor" href="<%=basePath%>/organ/getEnterpriseInfo.shtml?orgId=${orgId}">修改申请信息</a>
