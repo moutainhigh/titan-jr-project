@@ -103,6 +103,11 @@ $('.J_magnify').on('click',function(){
     });
 //点击修改
 $(".J_mody").on('click',function(){
+	var isadmin = "${tfsUser.isadmin}";
+	if(isadmin==0){
+		new top.Tip({msg : '没有权限访问，请联系管理员', type: 3 , timer:2000});
+		return ;
+	}
 	var parentW = $(this).parents(".info_c");
 	parentW.hide();
 	parentW.next("input").show().attr({"data-is-update":"1"});
