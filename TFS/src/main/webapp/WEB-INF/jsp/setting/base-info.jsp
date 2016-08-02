@@ -39,9 +39,9 @@
 				<div class="TFS_basicbottom en_info_wrap">
 					<ul>
 						<li class="fl"><span class="TFS_basname">公司名称：</span>${financialOrganDTO.orgName }</li>
-						<li class="fl"><span class="TFS_basname fl">联系人：</span><div class="info_c"><h3>${financialOrganDTO.connect }</h3><i class="J_mody blue curpo undl">修改</i></div><input type="text" class="text w_180" id="connect" style="display:none;"  ></li>
+						<li class="fl"><span class="TFS_basname fl">联系人：</span><div class="info_c"><h3>${financialOrganDTO.connect }</h3><i class="J_mody blue curpo undl">修改</i></div><input type="text" style="display:none;" data-is-update="0" id="connect" class="text w_180"></li>
 						<li class="fl"><span class="TFS_basname">营业执照：</span>${financialOrganDTO.buslince }</li>
-						<li class="fl"><span class="TFS_basname fl">联系手机：</span><div class="info_c"><h3>${financialOrganDTO.mobileTel }</h3><i class="J_mody blue curpo undl">修改</i></div><input type="text" style="display:none;" id="mobileTel" class="text w_180" ></li>
+						<li class="fl"><span class="TFS_basname fl">联系手机：</span><div class="info_c"><h3>${financialOrganDTO.mobileTel }</h3><i class="J_mody blue curpo undl">修改</i></div><input type="text" style="display:none;" data-is-update="0" id="mobileTel" class="text w_180" ></li>
 						<li class="fl"><span class="TFS_basname fl">上传工商执照注册照片：</span>
 						<p class="fl"><img width="130" height="90" class="cursor J_magnify" src="${small_img_10 }"></p></li>
 					</ul>
@@ -105,7 +105,7 @@ $('.J_magnify').on('click',function(){
 $(".J_mody").on('click',function(){
 	var parentW = $(this).parents(".info_c");
 	parentW.hide();
-	parentW.next("input").show();
+	parentW.next("input").show().attr({"data-is-update":"1"});
 	$(".TFS_basicbutton").show();
 });
 //修改密码
@@ -149,12 +149,24 @@ $(".b_cancel").on('click',function(){
 });
 //保存联系人信息
 function saveInfo(){
-	var connect = $(".en_info_wrap #connect").val();
-	var mobile = $(".en_info_wrap #mobileTel").val();
-	if((!phone_reg.test(mobile))&&mobile.length>0){
-		 new top.Tip({msg : '联系手机格式错误', type: 2});
+	var connectObj = $(".en_info_wrap #connect");
+	var mobileObj = $(".en_info_wrap #mobileTel");
+	
+	var connect = connectObj.val();
+	var mobile = mobileObj.val();
+	if(connectObj.attr("data-is-update")=="1"&&$.trim(connect).length==0){
+		new top.Tip({msg : '联系人不能为空', type: 2});
 		return ;
 	}
+	if(mobileObj.attr("data-is-update")=="1"&&$.trim(mobile).length==0){
+		new top.Tip({msg : '手机号码不能为空', type: 2});
+		return ;
+	}
+	if((!phone_reg.test(mobile))&&mobile.length>0){
+		new top.Tip({msg : '联系手机格式错误', type: 2});
+		return ;
+	}
+	
 	$.ajax({
         dataType : 'json',
         context: document.body,
