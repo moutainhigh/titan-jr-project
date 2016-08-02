@@ -8,8 +8,8 @@
 	<td class="tdl">${saasMerchantUserDTO.mobileNum }</td>
 	<td class="tdl">${saasMerchantUserDTO.roleName }</td>
 	<td class="tdl">
-		<c:if test="${saasMerchantUserDTO.isAddTfs==1}"><a class="btn btn_add p_lr30 chose_btn" href="javascript:;">已添加</a></c:if>
-		<c:if test="${saasMerchantUserDTO.isAddTfs==0}"><a class="btn btn_add p_lr30 J_add" href="javascript:;" data-saas-userLoginName="${saasMerchantUserDTO.userLoginName }" data-saas-userName="${saasMerchantUserDTO.userName }" data-saas-userid="${saasMerchantUserDTO.userId }">添加</a></c:if>
+		<c:if test="${saasMerchantUserDTO.isAddTfs==1}"><a class="btn btn_add p_lr30 chose_btn"  href="javascript:;" data-istfs="${saasMerchantUserDTO.isAddTfs}">已添加</a></c:if>
+		<c:if test="${saasMerchantUserDTO.isAddTfs==0}"><a class="btn btn_add p_lr30 J_add"  href="javascript:;" data-istfs="${saasMerchantUserDTO.isAddTfs}" data-saas-userLoginName="${saasMerchantUserDTO.userLoginName }" data-saas-userName="${saasMerchantUserDTO.userName }" data-saas-userid="${saasMerchantUserDTO.userId }">添加</a></c:if>
 	</td>
 </tr>
 </c:forEach>
@@ -19,6 +19,10 @@
 $('.J_add').on('click',function(){
 	var row = $(this).parent().parent();
     var _this=$(this);
+    var istfs = _this.attr("data-istfs");
+    if(istfs==1){
+    	return;
+    }
     top.F.loading.show();
     $.ajax({
         dataType : 'html',
@@ -39,7 +43,8 @@ $('.J_add').on('click',function(){
                             callback: function () {
                             	if(saveEmployee()){
                             		row.addClass('chose');
-                                	_this		.addClass("chose_btn").text("已添加");
+                                	_this.addClass("chose_btn").text("已添加");
+                                	 _this.attr({"data-istfs":1});
                             		return true;
                             	}
                             	return false;

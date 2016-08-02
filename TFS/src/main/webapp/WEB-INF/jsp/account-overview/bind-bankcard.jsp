@@ -38,7 +38,7 @@
                           <input type="hidden" id="bankName" >
 					<li>
 						<span class="reset_pass">收款账号：</span>
-						<input type="text" placeholder="6666 0000 1111 2222" class="text w_250" id="accountnumber"></li>
+						<input type="text" placeholder="" class="text w_250" id="accountnumber"></li>
 					<li>
 						<span class="reset_pass">公司名称 ：</span>
 						<input type="text" class="text w_250" id="name" value="${organ.orgName}" disabled></li>		
@@ -69,7 +69,7 @@
 		    
 			<div class="passwordf" id="showValidate"style="display: none; margin:40px 0;">
 				<div class="TFS_bind passwordset_u1" style="padding-bottom:40px;">
-					<p class="fl mr25"><img src="images/guidance07.jpg" width="44" height="44" alt=""></p>
+					<p class="fl mr25"><img src="<%=cssSaasPath%>/images/guidance07.jpg" width="44" height="44" alt=""></p>
 					<p class="fl"><strong class="fs16">绑定申请已提交！</strong>
 						<span class="c_999">我们将会在24H内审核完成，请耐心等待。</span>
 					</p>
@@ -137,18 +137,18 @@ $('.to_bindCard').on('click',function(){
 
 function validate_bankCard_data(bankCardData){
 	if(typeof bankCardData.bankHeadName =="undifined" || bankCardData.bankHeadName.length<1){
-		new top.Tip({msg : '开户银行不能为空！', type: 1 , time:1000}); 
+		new top.Tip({msg : '收款银行不能为空！', type: 1 , time:1000}); 
 	    return false;
 	}
 	
 	if(typeof bankCardData.accountnumber =="undifined" || bankCardData.accountnumber.length<1){
-		new top.Tip({msg : '储蓄卡卡号不能为空！', type: 1 , time:1000}); 
+		new top.Tip({msg : '收款账号不能为空！', type: 1 , time:1000}); 
 		return false;
 	}
 	
 	var testNumber  = /^[0-9]*$/;
 	if(!testNumber.test( bankCardData.accountnumber)){
-		new top.Tip({msg : '储蓄卡卡号必须为数字！', type: 1 , time:1000}); 
+		new top.Tip({msg : '收款账号必须为数字！', type: 1 , time:1000}); 
 		return false;
 	}
 	

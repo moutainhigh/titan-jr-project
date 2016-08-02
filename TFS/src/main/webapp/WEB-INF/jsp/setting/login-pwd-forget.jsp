@@ -15,8 +15,7 @@
 			<div class="passwordf pass_userlogin">
 				<ul class="passwordset_u2">
 					<li>
-						<span class="reset_pass">泰坦金融用户名：</span>
-						<input type="text" class="text w_250" id="userLoginName" value="${tfsUserLoginName }" placeholder="请输入手机号或邮箱" customFun="mobileCheck" /></li>
+						<span class="reset_pass">泰坦金融用户名：</span><span id="userLoginName">${tfsUserLoginName }</span>
 					<li>
 						<span class="reset_pass">验证码：</span>
 						<p class="text w_250 f_code">
@@ -60,16 +59,7 @@ var passUserloginForm = new validform('.pass_userlogin',{
 var passNextForm = new validform('.passwordf_next',{
 	msgAlign: 'bottom'
 });
-//检查用户名
-function mobileCheck(){
-	var receiveAddressEle = $(".forget_wrap #userLoginName");
-	var receiveAddress =  receiveAddressEle.val();
-	if(!(phone_reg.test(receiveAddress)||email_reg.test(receiveAddress))){
-		passUserloginForm.setErrormsg(receiveAddressEle,'手机号码或者邮箱地址格式不正确');
-		return false;
-	}
-	return true;
-}
+ 
 //下一步
 $('.forget_next').on('click',function(){
 	
@@ -81,7 +71,7 @@ $('.forget_next').on('click',function(){
 	$.ajax({
 		type:"post",
 		url: '<%=basePath%>/organ/checkRegCode.shtml',		
-		data:{"userLoginName":receiveAddressEle.val(),"regCode":$(".forget_wrap #code").val()},
+		data:{"userLoginName":receiveAddressEle.html(),"regCode":$(".forget_wrap #code").val()},
 		dataType:"json",
 		success:function(result){
 			if(result.code==1){
@@ -123,12 +113,7 @@ function timeOut(_this){
 //验证码发送倒计时
 $('.sendmes').on('click',function(){
     var raObj = $(".forget_wrap #userLoginName");
-    var receiveAddress = raObj.val();
-    if(!(phone_reg.test(receiveAddress)||email_reg.test(receiveAddress))){
-    	new top.Tip({msg : '请输入正确的手机号码或者邮箱', type: 1, timer:2000});
-    	raObj.focus();
-    	return
-    }
+    var receiveAddress = raObj.html();
     _this = $(this);
     top.F.loading.show();
 	$.ajax({
