@@ -178,7 +178,11 @@ function checkReceiveAddress(receiveAddress){
 				flag = true;
 			}else{
 				flag = false;
-				vform.setErrormsg(receiveAddressEle,result.msg);
+				if(showType=="phone"){
+					vform.setErrormsg(receiveAddressEle,"该手机号码已经注册，请使用其他手机号");
+				}else{
+					vform.setErrormsg(receiveAddressEle,"该邮箱已经注册，请使用其他邮箱");
+				}
 			}
 		}
 	});
