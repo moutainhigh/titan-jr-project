@@ -697,15 +697,14 @@ public class FinancialAccountController extends BaseController {
             head.createCell(0).setCellValue("编号");
             head.createCell(1).setCellValue("金融交易号");
             head.createCell(2).setCellValue("业务单号");
-            head.createCell(3).setCellValue("财务单号");
-            head.createCell(4).setCellValue("融数单号");
-            head.createCell(5).setCellValue("交易时间");
-            head.createCell(6).setCellValue("交易类型");
-            head.createCell(7).setCellValue("交易内容");
-            head.createCell(8).setCellValue("交易对方");
-            head.createCell(9).setCellValue("订单金额");
-            head.createCell(10).setCellValue("手续费");
-            head.createCell(11).setCellValue("交易结果");
+            head.createCell(3).setCellValue("外部单号");
+            head.createCell(4).setCellValue("交易时间");
+            head.createCell(5).setCellValue("交易类型");
+            head.createCell(6).setCellValue("交易内容");
+            head.createCell(7).setCellValue("交易对方");
+            head.createCell(8).setCellValue("订单金额");
+            head.createCell(9).setCellValue("手续费");
+            head.createCell(10).setCellValue("交易结果");
             List<TransOrderDTO> orderDTOList = tradeDetailResponse.getTransOrders().getItemList();
             if (tradeDetailResponse != null && tradeDetailResponse.isResult()) {
                 for (int i = 0; i < orderDTOList.size(); i++) {
@@ -714,16 +713,15 @@ public class FinancialAccountController extends BaseController {
                     row.createCell(1).setCellValue(orderDTOList.get(i).getUserorderid());
                     row.createCell(2).setCellValue(orderDTOList.get(i).getBusinessordercode());
                     row.createCell(3).setCellValue(orderDTOList.get(i).getPayorderno());
-                    row.createCell(4).setCellValue(orderDTOList.get(i).getOrderid());
-                    row.createCell(5).setCellValue(DateUtil.dateToString(orderDTOList.get(i).getCreatetime(), "yyyy-MM-dd HH:mm:ss"));
-                    row.createCell(6).setCellValue(orderDTOList.get(i).getTradeType());
+                    row.createCell(4).setCellValue(DateUtil.dateToString(orderDTOList.get(i).getCreatetime(), "yyyy-MM-dd HH:mm:ss"));
+                    row.createCell(5).setCellValue(orderDTOList.get(i).getTradeType());
                     String tradeContent = orderDTOList.get(i).getGoodsname();
                     if (StringUtil.isValidString(orderDTOList.get(i).getGoodsdetail())) {
                         tradeContent = tradeContent + orderDTOList.get(i).getGoodsdetail();
                     }
-                    row.createCell(7).setCellValue(tradeContent);
+                    row.createCell(6).setCellValue(tradeContent);
                     if (orderDTOList.get(i).getTransTarget() != null) {
-                        row.createCell(8).setCellValue(orderDTOList.get(i).getTransTarget());
+                        row.createCell(7).setCellValue(orderDTOList.get(i).getTransTarget());
                     }
                     if (orderDTOList.get(i).getTradeamount() != null) {
                         double tradeAmount = orderDTOList.get(i).getTradeamount() / 100.0;
@@ -731,16 +729,16 @@ public class FinancialAccountController extends BaseController {
                                 "提现".equals(orderDTOList.get(i).getTradeType())) {
                             tradeAmount = 0 - tradeAmount;
                         }
-                        row.createCell(9).setCellValue(tradeAmount);
+                        row.createCell(8).setCellValue(tradeAmount);
                     }
                     if (orderDTOList.get(i).getReceivedfee() != null) {
-                        row.createCell(10).setCellValue(orderDTOList.get(i).getReceivedfee() / 100.0);
+                        row.createCell(9).setCellValue(orderDTOList.get(i).getReceivedfee() / 100.0);
                     }
                     if (StringUtil.isValidString(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()))) {
                         if ("付款".equals(orderDTOList.get(i).getTradeType()) && OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(orderDTOList.get(i).getStatusid())) {
-                            row.createCell(11).setCellValue(OrderStatusEnum.ORDER_SUCCESS.getStatusMsg());
+                            row.createCell(10).setCellValue(OrderStatusEnum.ORDER_SUCCESS.getStatusMsg());
                         } else {
-                            row.createCell(11).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
+                            row.createCell(10).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
                         }
                     }
                 }
