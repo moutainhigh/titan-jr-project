@@ -271,8 +271,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     private TitanOrg registerFromSaaS(OrganRegisterRequest organRegisterRequest) throws MessageServiceException, GlobalServiceException{
     	TitanOrg titanOrg = null;
     	try{
-	    	//TODO 必填参数校验
-    		
     		OrgBindInfo orgBindInfo = new OrgBindInfo();
             orgBindInfo.setMerchantCode(organRegisterRequest.getMerchantCode());
             orgBindInfo = this.queryOrgBindInfoByUserid(orgBindInfo);
@@ -572,8 +570,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	}
     	
     	if(organRegisterRequest.getRegisterSource()==LoginSourceEnum.SAAS.getKey()){
-    		
-    		
     		registerFromSaaS(organRegisterRequest);
     		addOrgCheck(organRegisterRequest.getOrgCode(),organRegisterRequest.getOperator());
     	}else if(organRegisterRequest.getRegisterSource()==LoginSourceEnum.TFS.getKey()){
@@ -677,27 +673,31 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			updateEntity.setBuslince(organRegisterUpdateRequest.getBuslince());
 			updateEntity.setConnect(organRegisterUpdateRequest.getConnect());
 			updateEntity.setMobiletel(organRegisterUpdateRequest.getMobileTel());
-			//if(StringUtil.isValidString(organRegisterUpdateRequest.getResultKey())){
-				//TitanOrgParam orgParam = new TitanOrgParam();
-				//orgParam.setOrgid(organRegisterUpdateRequest.getOrgId());
-				//TitanOrg newOrgEntity = titanOrgDao.selectOne(orgParam);
 				
-				TitanOrgCheck titanOrgCheck = new TitanOrgCheck();
-				TitanOrgCheckParam checkParam = new TitanOrgCheckParam();
-		    	checkParam.setConstid(oldOrg.getConstid());
-		    	checkParam.setUserid(oldOrg.getUserid());
-		    	
-		    	PaginationSupport<TitanOrgCheck> orgCheckPage = new PaginationSupport<TitanOrgCheck>();
-		    	titanOrgCheckDao.selectForPage(checkParam, orgCheckPage);
-		    	titanOrgCheck = orgCheckPage.getItemList().get(0);
-		    	
-		    	titanOrgCheck.setResultkey(OrgCheckResultEnum.FT.getResultkey());
-		    	titanOrgCheck.setResultmsg("修改注册资料，重新注册");
-		    	titanOrgCheck.setCheckuser(organRegisterUpdateRequest.getOperator());
-		    	titanOrgCheck.setChecktime(new Date());
-		    	titanOrgCheckDao.update(titanOrgCheck);
-			//}
-			
+			TitanOrgCheck titanOrgCheck = new TitanOrgCheck();
+			TitanOrgCheckParam checkParam = new TitanOrgCheckParam();
+	    	checkParam.setConstid(oldOrg.getConstid());
+	    	checkParam.setUserid(oldOrg.getUserid());
+	    	
+	    	PaginationSupport<TitanOrgCheck> orgCheckPage = new PaginationSupport<TitanOrgCheck>();
+	    	titanOrgCheckDao.selectForPage(checkParam, orgCheckPage);
+	    	titanOrgCheck = orgCheckPage.getItemList().get(0);
+	    	
+	    	titanOrgCheck.setResultkey(OrgCheckResultEnum.FT.getResultkey());
+	    	titanOrgCheck.setResultmsg("修改注册资料，重新注册");
+	    	titanOrgCheckDao.update(titanOrgCheck);
+	    	//写一条待审核的日志
+	    	TitanOrgCheckLog titanOrgCheckLog = new TitanOrgCheckLog();
+	    	titanOrgCheckLog.setCheckid(titanOrgCheck.getCheckid());
+	    	titanOrgCheckLog.setConstid(titanOrgCheck.getConstid());
+	    	titanOrgCheckLog.setUserid(titanOrgCheck.getUserid());
+	    	titanOrgCheckLog.setResultkey(OrgCheckResultEnum.FT.getResultkey());
+	    	titanOrgCheckLog.setResultmsg(OrgCheckResultEnum.FT.getResultmsg());
+	    	titanOrgCheckLog.setUserid(titanOrgCheck.getUserid());
+	    	titanOrgCheckLog.setOptuser(organRegisterUpdateRequest.getOperator());
+	    	titanOrgCheckLog.setOpttime(new Date());
+	    	titanOrgCheckLogDao.insert(titanOrgCheckLog);
+	    	
 			updateEntity.setCertificatetype(NumberUtils.toInt(organRegisterUpdateRequest.getCertificateType()));
 			updateEntity.setCertificatenumber(organRegisterUpdateRequest.getCertificateNumber());
 			titanOrgDao.update(updateEntity);
