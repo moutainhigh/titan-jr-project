@@ -597,7 +597,14 @@
 						d.remove();
 							 $(".withdrawBtn").text('提现卡审核失败···').removeClass('blue decorationUnderline').css("color","#999"); 
 						});  
-				}
+				},
+		        error:function(xhr,status){
+         			if(xhr.status&&xhr.status==403){
+            			new top.Tip({msg : '没有权限访问，请联系管理员', type: 3 , timer:2000});
+            			return ;
+            		}
+         			 new top.Tip({msg : '请求失败，请重试', type: 3});
+         		}
 
 		    });
         	
