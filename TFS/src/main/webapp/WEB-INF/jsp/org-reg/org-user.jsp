@@ -382,20 +382,6 @@ $('.verify').on('click',function(){
 
 $('.next').bind("click",next);
 
-// //我已阅读并同意
-// $('.f_ui-checkbox-c3 input[type=checkbox]').on('change',function(){
-//     var _this = $(this);  
-//     if(_this.is(':checked')){
-//         $('.btn').removeClass('btn_h'); 
-//         $('.next').bind("click",next);
-//     }else{
-    	
-//         $('.btn').addClass('btn_h');
-//         $('.next').unbind("click",next);
-//     }
-//     return false;
-// });
-
 //检查是否已经注册
 function checkExist(value, inputDom){
 	var flag = false;
