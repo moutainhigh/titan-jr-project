@@ -318,7 +318,7 @@ public class FinancialOrganController extends BaseController {
 	    		String merchantname = (String) getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
 	    		organRegisterRequest.setMerchantCode(merchantCode);
 	        	organRegisterRequest.setMerchantname(merchantname);
-	        	organRegisterRequest.setOperator(getUserName());
+	        	organRegisterRequest.setOperator(getSAASLoginName());
 
 	    	}
 	    	if(orgRegPojo.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){

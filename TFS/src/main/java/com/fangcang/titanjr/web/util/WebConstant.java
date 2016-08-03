@@ -5,9 +5,9 @@ package com.fangcang.titanjr.web.util;
  */
 public class WebConstant {
 	/******* Session  key **************/
-    public static final String SESSION_KEY_LOGIN_USER_NAME = "LOGIN_USER_NAME";//用户名
-    public static final String SESSION_KEY_LOGIN_USER_ID  = "LOGIN_USER_ID";//用户Id
-    public static final String SESSION_KEY_LOGIN_USER_LOGINNAME  = "LOGIN_USER_LOGINNAME";//用户登录名
+    public static final String SESSION_KEY_LOGIN_USER_NAME = "LOGIN_USER_NAME";//SAAS用户名（姓名）
+    public static final String SESSION_KEY_LOGIN_USER_ID  = "LOGIN_USER_ID";//SAAS用户Id
+    public static final String SESSION_KEY_LOGIN_USER_LOGINNAME  = "LOGIN_USER_LOGINNAME";//SAAS用户登录名
     public static final String SESSION_KEY_LOGIN_USER  = "LOGIN_USER";//?????未知
     public static final String SESSION_KEY_LOGIN_USER_ROLE  = "LOGIN_USER_ROLE";//???未知
     public static final String SESSION_KEY_LOGIN_IS_ADMIN = "LOGIN_IS_ADMIN";//是否管理员

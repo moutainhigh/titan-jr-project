@@ -104,10 +104,21 @@ public class BaseController implements Serializable {
     	return result;
     }
     /***
-     * 获取saas当前登录用户名
+     * 获取saas当前登录名
      * @return
      */
     protected String getSAASLoginName(){
+    	String op = (String)getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_LOGINNAME);
+    	if(op==null){
+    		return "";
+    	}
+    	return op;
+    }
+    /***
+     * 获取saas当前者姓名
+     * @return
+     */
+    protected String getSAASUserName(){
     	String op = (String)getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME);
     	if(op==null){
     		return "";
@@ -115,7 +126,7 @@ public class BaseController implements Serializable {
     	return op;
     }
     /**
-     * 登录者的机构编码（融数）
+     * 登录者的机构编码（融数）userid
      * @return
      */
     public String getUserId(){
@@ -148,7 +159,10 @@ public class BaseController implements Serializable {
         }
         return null;
     }
-    
+    /**
+     * 当前登录用户的SAAS 姓名
+     * @return
+     */
     public String getUserRealName(){
     	Object userRealName = getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME);
     	if(null !=userRealName){
