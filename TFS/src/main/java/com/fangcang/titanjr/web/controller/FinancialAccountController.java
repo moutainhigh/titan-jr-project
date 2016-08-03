@@ -566,13 +566,13 @@ public class FinancialAccountController extends BaseController {
             PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
             if (payPasswordResponse.isSaveSuccess()) {
                 map.put(WebConstant.RESULT, WebConstant.SUCCESS);
-                return map;
             } else {
                 map.put(WebConstant.MSG, payPasswordResponse.getReturnMessage());
             }
+            return map;
         }
         map.put(WebConstant.RESULT, "fail");
-        map.put(WebConstant.MSG, "密码不能为空或者空格");
+        map.put(WebConstant.MSG, "系统错误");
         return map;
     }
 
