@@ -480,6 +480,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		}
 		
 		String url = RSInvokeConstant.callBackConfigMap.get(paySource);
+		
 		if(StringUtil.isValidString(transOrderDTO.getNotifyUrl())){
 			url = transOrderDTO.getNotifyUrl();
 		}

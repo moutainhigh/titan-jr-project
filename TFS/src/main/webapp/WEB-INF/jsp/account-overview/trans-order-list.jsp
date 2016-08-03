@@ -39,13 +39,13 @@
         <td class="tdr">${tradeItem.receivedfee /100}</td><!--只展示实收手续费-->
         <td></td>
         <td>
-            <c:if test="${(tradeItem.statusid == 0 or tradeItem.statusid==3) and tradeItem.tradeType !='充值'  or tradeItem.statusid==5 }">
+            <c:if test="${(tradeItem.statusid == 0 or tradeItem.statusid==3) and tradeItem.tradeType !='充值'  or tradeItem.statusid==7 }">
                 处理中
             </c:if>
-            <c:if test="${tradeItem.statusid == 8}">
+            <c:if test="${tradeItem.statusid == 8 }">
                 已成功
             </c:if>
-            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '收款'}">
+            <c:if test="${tradeItem.statusid == 6 }">
                 已冻结
             </c:if>
             <c:if test="${tradeItem.statusid == 9}">
