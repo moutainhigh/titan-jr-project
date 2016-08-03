@@ -39,6 +39,7 @@ public class TitanTransOrder implements java.io.Serializable {
     private Float receivedfee;
     private Long tradeamount;
     private Integer transordertype;
+    private String notifyUrl;
     
 
     //是否担保支付
@@ -64,8 +65,16 @@ public class TitanTransOrder implements java.io.Serializable {
     private String bankInfo;
 
     private String remark;
+    
+    public String getNotifyUrl() {
+		return notifyUrl;
+	}
 
-    public String getIsEscrowedPayment() {
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
+	}
+
+	public String getIsEscrowedPayment() {
         return isEscrowedPayment;
     }
 

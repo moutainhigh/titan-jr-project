@@ -27,6 +27,9 @@ public class TitanOrderPaymentRequest extends BaseRequest{
 	//订单号
 	private String businessOrderCode;
 	
+	//回调地址
+	private String notifyUrl;
+	
 	//接受账户
 	private String recieveMerchantCode;
 	
@@ -107,6 +110,14 @@ public class TitanOrderPaymentRequest extends BaseRequest{
 
 	public void setBusinessOrderCode(String businessOrderCode) {
 		this.businessOrderCode = businessOrderCode;
+	}
+
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
 	}
 	
 }

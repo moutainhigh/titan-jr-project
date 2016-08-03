@@ -209,6 +209,7 @@
     <input name="isEscrowed" id="isEscrowed" type="hidden" value="${isEscrowed}">
     <input name="escrowedDate" id="escrowedDate" type="hidden" value="${escrowedDate}">
     <input name="businessOrderCode" id="businessOrderCode" type="hidden" value="${businessOrderCode}">
+    <input name="notifyUrl" id="notifyUrl" type="hidden" value="${notifyUrl}">
   </form>
 </div>
 

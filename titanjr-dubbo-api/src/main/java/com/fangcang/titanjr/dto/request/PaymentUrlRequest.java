@@ -24,6 +24,9 @@ public class PaymentUrlRequest extends BaseRequestDTO {
 
     //操作者
     private String operater;
+    
+    //后台回调地址
+    private String notifyUrl;
 
     //接受账户
     private String recieveMerchantCode;
@@ -126,5 +129,13 @@ public class PaymentUrlRequest extends BaseRequestDTO {
 	public void setBusinessOrderCode(String businessOrderCode) {
 		this.businessOrderCode = businessOrderCode;
 	}
-    
+
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
+	}
+	
 }

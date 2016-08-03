@@ -465,22 +465,6 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	
     }
     
-    //获取GDP支付地址
-//    @Test
-    public void testGetPaymentUrl() throws UnsupportedEncodingException{
-    	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
-    	paymentUrlRequest.setPayOrderNo("H0189130625152426");
-    	paymentUrlRequest.setPaySource("1");
-    	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
-    	paymentUrlRequest.setIsEscrowed("1");
-    	paymentUrlRequest.setRecieveMerchantCode("M10000002");
-    	paymentUrlRequest.setOperater("中国人 非常好 ");
-    	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
-    	if(paymentUrlResponse !=null){
-    		System.out.println("-------------"+paymentUrlResponse.getUrl());
-    	}
-    }
-    
     
     //获取商家向酒店支付地址
 //    @Test
@@ -517,6 +501,23 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	}
     }
     
+    //获取GDP支付地址
+    @Test
+    public void testGetPaymentUrl() throws UnsupportedEncodingException{
+    	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
+    	paymentUrlRequest.setPayOrderNo("H0177150121144423");
+    	paymentUrlRequest.setPaySource("1");
+    	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
+    	paymentUrlRequest.setIsEscrowed("1");
+    	paymentUrlRequest.setRecieveMerchantCode("M10000002");
+    	paymentUrlRequest.setNotifyUrl("http//:192.168.1.10/TFS");
+    	paymentUrlRequest.setBusinessOrderCode("123456879");
+    	paymentUrlRequest.setOperater("中国人 非常好 ");
+    	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
+    	if(paymentUrlResponse !=null){
+    		System.out.println("-------------"+paymentUrlResponse.getUrl());
+    	}
+    }
     //测试绑定银行卡0
 //    @Test
     public void bindBankCard(){
@@ -600,7 +601,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialTradeService.confirmFinance(transOrderDTO);
 	}
     
-    @Test
+//    @Test
     public void testGDPOrderDTO(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setPayOrderNo("H0141160727185050");

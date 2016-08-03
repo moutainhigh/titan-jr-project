@@ -220,7 +220,7 @@
       goodscnt, unitprice, statusid, 
       adjusttype, adjustcontent, creator, 
       receivablefee, createtime, receivedfee,isEscrowedPayment,
-      escrowedDate,payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype
+      escrowedDate,payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype,notifyUrl
       )
     values (#{transid,jdbcType=INTEGER}, #{constid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, 
       #{ordertypeid,jdbcType=VARCHAR}, #{productid,jdbcType=VARCHAR}, #{orderid,jdbcType=VARCHAR}, 
@@ -230,7 +230,7 @@
       #{goodscnt,jdbcType=INTEGER}, #{unitprice,jdbcType=DOUBLE}, #{statusid,jdbcType=VARCHAR}, 
       #{adjusttype,jdbcType=VARCHAR}, #{adjustcontent,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
       #{receivablefee}, #{createtime}, #{receivedfee},#{isEscrowedPayment},#{escrowedDate},
-      #{payeemerchant},#{payermerchant},#{payorderno},#{merchantcode},#{tradeamount},#{transordertype}
+      #{payeemerchant},#{payermerchant},#{payorderno},#{merchantcode},#{tradeamount},#{transordertype},#{notifyUrl}
       )
   </insert>
 
@@ -270,6 +270,9 @@
             <if test="remark != null">
                 remark = #{remark},
             </if>
+            <if test="notifyUrl !=null">
+               notifyUrl = #{notifyUrl},
+            </if>
         </set>
         <where>
           <if test="userorderid !=null">
@@ -289,7 +292,7 @@
         select transid, constid, userid, ordertypeid, productid, orderid, userorderid, businessordercode, orderdate,
         ordertime, provider, userrelateid,amount, goodsname, goodsdetail, goodscnt, unitprice, statusid,
         adjusttype, adjustcontent, creator,receivablefee, createtime, receivedfee,escrowedDate,isEscrowedPayment,
-        payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype from t_tfs_transorder
+        payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype,notifyUrl from t_tfs_transorder
         <where>
             <if test="transid != null">
                 and transid = #{transid}

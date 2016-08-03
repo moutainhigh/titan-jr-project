@@ -917,6 +917,7 @@ public class FinancialTradeController extends BaseController {
 			model.addAttribute("userId", paymentUrlRequest.getUserid());
 			model.addAttribute("operator",paymentUrlRequest.getOperater());
 			model.addAttribute("businessOrderCode",paymentUrlRequest.getBusinessOrderCode());
+			model.addAttribute("notifyUrl",paymentUrlRequest.getNotifyUrl());
 		}
 
 		//非B2B支付时，将付款方userId查询出来
@@ -1113,6 +1114,7 @@ public class FinancialTradeController extends BaseController {
 				sign.append("&operater="+paymentUrlRequest.getOperater());
 				sign.append("&recieveMerchantCode="+paymentUrlRequest.getRecieveMerchantCode());
 				sign.append("&businessOrderCode="+paymentUrlRequest.getBusinessOrderCode());
+				sign.append("&notifyUrl="+paymentUrlRequest.getNotifyUrl());
 				sign.append("&isEscrowed="+paymentUrlRequest.getIsEscrowed());
 				sign.append("&escrowedDate="+paymentUrlRequest.getEscrowedDate());
 				sign.append("&key="+key);

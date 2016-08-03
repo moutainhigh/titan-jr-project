@@ -480,6 +480,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		}
 		
 		String url = RSInvokeConstant.callBackConfigMap.get(paySource);
+		if(StringUtil.isValidString(transOrderDTO.getNotifyUrl())){
+			url = transOrderDTO.getNotifyUrl();
+		}
 		try {
 			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params)+"---url---"+url);
 			HttpResponse resp = HttpClient.httpRequest(params, url);
@@ -801,6 +804,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                  orderRequest.setPayOrderNo(paymentRequest.getPayOrderNo());
                  orderRequest.setTradeamount(paymentRequest.getTradeamount());
                  orderRequest.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
+                 
+                 if(StringUtil.isValidString(paymentRequest.getNotifyUrl())){
+                	 orderRequest.setNotifyUrl(paymentRequest.getNotifyUrl());
+                 }
                  if(CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentRequest.getPaySource())){
                 	 orderRequest.setTransordertype(TransOrderTypeEnum.RECHARGE.type);
                 	 orderRequest.setPayeemerchant(paymentRequest.getUserid());
@@ -1052,6 +1059,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                 titanTransOrder.setPayermerchant(orderRequest.getPayermerchant());
                 titanTransOrder.setTradeamount(orderRequest.getTradeamount());
                 titanTransOrder.setTransordertype(orderRequest.getTransordertype());
+                titanTransOrder.setNotifyUrl(orderRequest.getNotifyUrl());
             }
         } catch (Exception e) {
             throw new Exception(e);
@@ -1531,6 +1539,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         	paramList.append("&businessOrderCode=").append(paymentUrlRequest.getBusinessOrderCode());
         }else{
         	paramList.append("&businessOrderCode=");
+        }
+        if(StringUtil.isValidString(paymentUrlRequest.getNotifyUrl())){
+        	paramList.append("&notifyUrl=").append(paymentUrlRequest.getNotifyUrl());
+        }else{
+        	paramList.append("&notifyUrl=");
         }
         paramList.append("&isEscrowed=").append(paymentUrlRequest.getIsEscrowed());
         if (StringUtil.isValidString(paymentUrlRequest.getEscrowedDate())) {

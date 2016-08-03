@@ -73,6 +73,7 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
         paymentUrlRequest.setRecieveMerchantCode(titanOrderPaymentRequest.getRecieveMerchantCode());
         paymentUrlRequest.setIsEscrowed(titanOrderPaymentRequest.getIsEscrowed().key);
         paymentUrlRequest.setBusinessOrderCode(titanOrderPaymentRequest.getBusinessOrderCode());
+        paymentUrlRequest.setNotifyUrl(titanOrderPaymentRequest.getNotifyUrl());
         return paymentUrlRequest;
     }
 

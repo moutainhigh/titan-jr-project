@@ -35,6 +35,8 @@ public class TransOrderDTO implements java.io.Serializable {
     private String payeemerchant;
     private String payermerchant;
     
+    private String notifyUrl;
+    
 
     private String remark;
 
@@ -390,4 +392,13 @@ public class TransOrderDTO implements java.io.Serializable {
     public void setIsEscrowedPayment(String isEscrowedPayment) {
         this.isEscrowedPayment = isEscrowedPayment;
     }
+
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
+	}
+    
 }
