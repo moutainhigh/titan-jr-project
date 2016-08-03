@@ -16,7 +16,9 @@ public class WithDrawRequest {
     private String password;
 
     private String originalAccount;
-
+    
+    private String originalBankName;
+    
     private String amount;
 
     public Integer getUseNewBankCard() {
@@ -90,4 +92,13 @@ public class WithDrawRequest {
     public void setAmount(String amount) {
         this.amount = amount;
     }
+
+	public String getOriginalBankName() {
+		return originalBankName;
+	}
+
+	public void setOriginalBankName(String originalBankName) {
+		this.originalBankName = originalBankName;
+	}
+    
 }

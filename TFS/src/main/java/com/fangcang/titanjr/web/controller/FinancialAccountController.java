@@ -512,6 +512,9 @@ public class FinancialAccountController extends BaseController {
         balanceWithDrawRequest.setUserorderid(OrderGenerateService.genResquestNo());
         balanceWithDrawRequest.setUserFee(0L);
         balanceWithDrawRequest.setBankName(withDrawRequest.getBankName());
+        if(StringUtil.isValidString(withDrawRequest.getOriginalBankName())){
+        	balanceWithDrawRequest.setBankName(withDrawRequest.getOriginalBankName());
+        }
         BalanceWithDrawResponse balanceWithDrawResponse = titanFinancialAccountService.accountBalanceWithdraw(balanceWithDrawRequest);
         if (!balanceWithDrawResponse.isResult()){
             return toJson(putSysError("提现操作失败，请联系管理员"));

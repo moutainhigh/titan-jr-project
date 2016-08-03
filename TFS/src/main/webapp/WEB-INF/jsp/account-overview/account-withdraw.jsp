@@ -211,14 +211,14 @@
     	if($("#accountNum").is(":visible")==true){//如果是需要输入银行卡号
     		
     		var bankName= $("#bankName").val();
-        	if(typeof bankName=="undefined"){
+        	if(typeof bankName=="undefined" ||bankName.length<1 ){
         		withDrawCallBack("收款银行不能为空",1);
         		return;
         	}
     		
     		var accountNum = $("#accountNum").val();
     		 if(accountNum.length<1){
-    	        	withDrawCallBack("银行卡号不能为空",1);
+    	        	withDrawCallBack("收款账号不能为空",1);
     	        	return;
     	     }else{
     	    	var neg = /^[0-9]\d*$/
@@ -332,6 +332,7 @@
                  accountName: $("#accountName").val(),
                  password:PasswordStr2.returnStr(),
                  originalAccount:'${bindBankCard.account_number }',
+                 originalBankName:'${bindBankCard.bankheadname}',
                  amount:$("#withDrawNum").val(),
              },
              context: document.body,
