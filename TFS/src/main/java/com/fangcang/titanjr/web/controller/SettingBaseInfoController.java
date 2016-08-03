@@ -85,6 +85,7 @@ public class SettingBaseInfoController extends BaseController{
 					model.addAttribute("big_img_50", item.getImageURL());
 				}
 			}
+			model.addAttribute("tfsUser", titanUser);
 			//管理员信息
 			UserInfoQueryRequest adminRequest = new UserInfoQueryRequest();
 			adminRequest.setOrgCode(titanUser.getOrgcode());

@@ -12,9 +12,7 @@
 		<div class="hostel_hint1">     
        <div class=" p_t10">
          <div class="S_topTitle p_r15">备注内容：</div>
-         <textarea cols="" rows="" id="id_remark_text" class="text textarea_1 w437_h180">
-			 ${transOrder.remark}
-		 </textarea>
+         <textarea cols="" rows="" id="id_remark_text" class="text textarea_1 w437_h180">${transOrder.remark}</textarea>
          </div>
               
          </div>

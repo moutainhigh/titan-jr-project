@@ -4,7 +4,7 @@
     <tr>
         <td width=""><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${tradeItem.createtime}" /></td>
         <td width="tdr">
-            <c:if test="${tradeItem.remark != null }">
+            <c:if test="${tradeItem.remark != null and tradeItem.remark != ''}">
                 <i class="flag_ico J_remark" orderId="${tradeItem.userorderid}" onclick="showRemarkInfo(this)"></i>
             </c:if>
         </td>
@@ -230,6 +230,7 @@
                                     success : function(result){
                                         if(result.code==1){
                                             alert("备注信息更新成功");
+                                            $('.MyAssets_list_tab').find('span.on').click();
                                         }else{
                                             alert("备注信息更新失败：" + result.msg);
                                         }
