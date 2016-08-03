@@ -66,7 +66,7 @@
 	                     <div class="b_c_c brn">
 	                     <ul>
 	                        <li><p><i class="c_f00">*</i>联系人：</p><input type="text" class="text w_420 " name="connect" value="${org.connect }" datatype="*" errormsg="联系人不能为空"></li>
-	                        <li><p><i class="c_f00">*</i>联系手机：</p><input type="text" class="text w_420 " name="mobiletel" value="${org.mobileTel }" id="mobiletel" datatype="m" errormsg="手机号码格式不正确"></li>
+	                        <li><p><i class="c_f00">*</i>联系手机：</p><input type="text" class="text w_420 " name="mobiletel" value="${org.mobileTel }" id="mobiletel" require="true" datatype="m" errormsg="手机号码格式不正确"></li>
 	                        <li><p><i class="c_f00">*</i>短信验证码：</p><input type="text" class="text w_420 " name="smsRegCode" id="smsRegCode" datatype="*" errormsg="短信验证码不能为空">
 	                        <span class="verify">获取验证码</span></li>
 	                     </ul>
