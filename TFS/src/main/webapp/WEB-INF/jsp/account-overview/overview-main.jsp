@@ -560,7 +560,7 @@
         }
         
         function bank_card_binding(){
-        	
+        
         	new top.createConfirm({
 			    title:'提示',
 				padding: '20px 20px 40px',

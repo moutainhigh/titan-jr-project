@@ -78,13 +78,13 @@
                                 <td><span><fmt:formatNumber value="${transOrder.titanOrderPayDTO.orderAmount/100.0 }" pattern="#,##0.00#"/></span></td>
                                 <td><span>
                                     <c:if test="${transOrder.titanOrderPayDTO.reqstatus == 1}">
-                                        处理中
+                                                                                         处理中
                                     </c:if>
                                     <c:if test="${transOrder.titanOrderPayDTO.reqstatus == 2}">
-                                        充值成功
+                                                                                          充值成功
                                     </c:if>
                                     <c:if test="${transOrder.titanOrderPayDTO.reqstatus == 3}">
-                                        充值失败
+                                                                                         充值失败
                                     </c:if>
                                     </span>
                                 </td>

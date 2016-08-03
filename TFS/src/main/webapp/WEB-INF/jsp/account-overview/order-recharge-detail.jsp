@@ -76,11 +76,11 @@
 								</td>
 
 								<td>
-									<span>
+									<span style="width:110px">
 										<fmt:formatNumber value="${transOrder.titanOrderPayDTO.orderAmount/100.0 }" pattern="#,##0.00#"/>
 									</span>
 								</td>
-								<td><span> 
+								<td><span style="width:50px"> 
 									<c:if test="${transOrder.titanOrderPayDTO.reqstatus == 1}">
 										处理中
 									</c:if>

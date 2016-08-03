@@ -40,7 +40,7 @@
 			</p>
 			<p class="f_14">
 				<span class="TFSsu_sleft">实付金额：</span>
-				<span class="c_999">${rechargeResultConfirmRequest.payAmount/100 }CNY</span>
+				<span class="c_999"> <fmt:formatNumber value="${rechargeResultConfirmRequest.payAmount/100 }"  pattern="#,##0.00#" />CNY</span>
 			</p>
 			<p class="f_14">
 				<span class="TFSsu_sleft">付款方式：</span>

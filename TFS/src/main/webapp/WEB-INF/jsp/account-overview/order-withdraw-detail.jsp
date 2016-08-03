@@ -75,15 +75,15 @@
 								<td width=""><span>提现</span></td>
 								<td width=""><span style="width:180px" title="收款账户：${transOrder.transTarget}">收款账户：${transOrder.transTarget}</span></td>
 								<td width="">
-									<span style="width:180px" title="提现到${transOrder.titanWithDrawDTO.bankname}卡">提现到${transOrder.titanWithDrawDTO.bankname}卡</span><!--融数落单单号-->
+									<span style="width:120px" title="提现到${transOrder.titanWithDrawDTO.bankname}卡">提现到${transOrder.titanWithDrawDTO.bankname}卡</span><!--融数落单单号-->
 								</td>
-								<td width="">
-									<span>
+								<td >
+									<span style="width:110px">
 										<fmt:formatNumber value="${transOrder.titanWithDrawDTO.amount/100.0 }" pattern="#,##0.00#"/>
 									</span>
 								</td>
 								<td>
-									<span>
+									<span style="width:50px">
 										<c:if test="${transOrder.titanWithDrawDTO.status == 1}">
 											处理中
 										</c:if>
