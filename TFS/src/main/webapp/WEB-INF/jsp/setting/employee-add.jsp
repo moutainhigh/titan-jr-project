@@ -213,7 +213,7 @@ function checkCode(){
 			}
 		},
 		error:function(){
-			alert("系统错误，请重试!");
+			new top.Tip({msg : '系统错误，请重试!', type: 3 , timer:1500});
 		}
 	});
 	return validateFlag;
@@ -259,7 +259,7 @@ function saveEmployee(){
 			}
 		},
 		error:function(){
-			new top.Tip({msg : '系统错误，请重试!', type: 3 , time:1500});
+			new top.Tip({msg : '系统错误，请重试!', type: 3 , timer:1500});
 		}
 	});
 	return saveFlag;
