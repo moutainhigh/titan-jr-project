@@ -739,11 +739,17 @@ public class FinancialAccountController extends BaseController {
                         row.createCell(9).setCellValue(orderDTOList.get(i).getReceivedfee() / 100.0);
                     }
                     if (StringUtil.isValidString(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()))) {
-                        if ("付款".equals(orderDTOList.get(i).getTradeType()) && OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(orderDTOList.get(i).getStatusid())) {
-                            row.createCell(10).setCellValue(OrderStatusEnum.ORDER_SUCCESS.getStatusMsg());
-                        } else {
-                            row.createCell(10).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
+                        row.createCell(10).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
+                        if(OrderStatusEnum.ORDER_IN_PROCESS.equals(orderDTOList.get(i).getStatusid())
+                        		||OrderStatusEnum.RECHARGE_FAIL.equals(orderDTOList.get(i).getStatusid())
+                        		){
+                        	 row.createCell(10).setCellValue("处理中");
                         }
+//                    	if ("付款".equals(orderDTOList.get(i).getTradeType()) && OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(orderDTOList.get(i).getStatusid())) {
+//                            row.createCell(10).setCellValue(OrderStatusEnum.ORDER_SUCCESS.getStatusMsg());
+//                        } else {
+//                            row.createCell(10).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
+//                        }
                     }
                 }
             }
