@@ -750,19 +750,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	    	
 	    	titanOrgCheck.setCheckuser(organCheckRequest.getOperator());
 	    	titanOrgCheck.setChecktime(nowDate);
-	    	//添加审核日志
-	    	TitanOrgCheckLog titanOrgCheckLog = new TitanOrgCheckLog();
-	    	titanOrgCheckLog.setCheckid(titanOrgCheck.getCheckid());
-	    	titanOrgCheckLog.setConstid(newOrgEntity.getConstid());
-	    	titanOrgCheckLog.setUserid(newOrgEntity.getUserid());
-	    	titanOrgCheckLog.setResultkey(newOrgCheckResultEnum.getResultkey());
-	    	titanOrgCheckLog.setResultmsg(newOrgCheckResultEnum.getResultmsg());
-	    	titanOrgCheckLog.setUserid(newOrgEntity.getUserid());
-	    	titanOrgCheckLog.setOptuser(organCheckRequest.getOperator());
-	    	titanOrgCheckLog.setOpttime(nowDate);
-	    	
-	    	titanOrgCheckLogDao.insert(titanOrgCheckLog);
-	    	
 	    	// 审核通过创建账号 account
 	    	if(organCheckRequest.getCheckstatus()==1){
 	    		PaginationSupport<TitanAccount> accountPage = new PaginationSupport<TitanAccount>();
@@ -773,14 +760,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	        	if(CollectionUtils.isEmpty(accountPage.getItemList())){
 	        		//融数创建账号
 	        		BaseResponse baseResponse = registerRSOrg(organCheckRequest.getOrgId());
-	        		TitanOrgCheckLog titanOrgCheckLog2 = new TitanOrgCheckLog();
-	        		titanOrgCheckLog2.setCheckid(titanOrgCheck.getCheckid());
-	        		titanOrgCheckLog2.setConstid(newOrgEntity.getConstid());
-	        		titanOrgCheckLog2.setUserid(newOrgEntity.getUserid());
-	        		
-	        		titanOrgCheckLog2.setUserid(newOrgEntity.getUserid());
-	        		titanOrgCheckLog2.setOptuser(CommonConstant.CHECK_ADMIN_RS);
-	        		titanOrgCheckLog2.setOpttime(nowDate);
 	        		
 	        		if(CommonConstant.OPERATE_SUCCESS.equals(baseResponse.getOperateStatus())){
 	            		TitanAccount account = new TitanAccount();
@@ -807,9 +786,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	            		
 	            		titanOrgCheck.setResultkey(OrgCheckResultEnum.PASS.getResultkey());
 	            		titanOrgCheck.setResultmsg(OrgCheckResultEnum.PASS.getResultmsg());
-	            		//titanOrgCheckLog2.setResultkey(OrgCheckResultEnum.PASS.getResultkey());
-	            		//titanOrgCheckLog2.setResultmsg(OrgCheckResultEnum.PASS.getResultmsg());
-	            		//titanOrgCheckLogDao.insert(titanOrgCheckLog2);
 	            		titanOrgCheckDao.update(titanOrgCheck);
 	        		}else{//失败抛出异常
 	        			String rsmsg  = baseResponse.getReturnMsg();
@@ -817,10 +793,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		        		titanOrgCheck.setChecktime(nowDate);
 	        			titanOrgCheck.setResultkey(OrgCheckResultEnum.REVIEW.getResultkey());
 	        			titanOrgCheck.setResultmsg(rsmsg);
-	        			//titanOrgCheckLog2.setResultkey(OrgCheckResultEnum.REVIEW.getResultkey());
-	        			//titanOrgCheckLog2.setResultmsg(rsmsg);
-		        		//titanOrgCheckLogDao.insert(titanOrgCheckLog2);
 		        		titanOrgCheckDao.update(titanOrgCheck);
+		        		addOrgCheckLog(titanOrgCheck);
 	        			LOGGER.error("调用融数接口rsOrganizationManager.resigterPersonOrg 失败,request orgId:"+organCheckRequest.getOrgId()+",rs return content[baseResponse]:"+JSONSerializer.toJSON(baseResponse).toString()+"。 organCheckRequest:"+JSONSerializer.toJSON(organCheckRequest).toString()+",response:"+JSONSerializer.toJSON(response).toString());
 	        			response.putErrorResult(baseResponse.getReturnMsg());
 	        			return response;
@@ -829,10 +803,12 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	        		
 	        	}else{
 	        		titanOrgCheckDao.update(titanOrgCheck);
+	        		addOrgCheckLog(titanOrgCheck);
 	        		LOGGER.info("机构审核时， t_tfs_account插入失败,errormsg:该账户已经创建，不需要重复创建,param:"+JSONSerializer.toJSON(organCheckRequest).toString()); 
 	        	}
 	    	}else{
 	    		titanOrgCheckDao.update(titanOrgCheck);
+	    		addOrgCheckLog(titanOrgCheck);
 	    	}
 	    	
 			
@@ -846,7 +822,23 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	response.putSuccess("操作成功");
     	return response;
     }
-	
+	/**
+	 * 添加审核日志
+	 * @param titanOrgCheck
+	 */
+	private void addOrgCheckLog(TitanOrgCheck titanOrgCheck){
+		//添加审核日志
+    	TitanOrgCheckLog titanOrgCheckLog = new TitanOrgCheckLog();
+    	titanOrgCheckLog.setCheckid(titanOrgCheck.getCheckid());
+    	titanOrgCheckLog.setConstid(titanOrgCheck.getConstid());
+    	titanOrgCheckLog.setUserid(titanOrgCheck.getUserid());
+    	titanOrgCheckLog.setResultkey(titanOrgCheck.getResultkey());
+    	titanOrgCheckLog.setResultmsg(titanOrgCheck.getResultmsg());
+    	titanOrgCheckLog.setUserid(titanOrgCheck.getUserid());
+    	titanOrgCheckLog.setOptuser(titanOrgCheck.getCheckuser());
+    	titanOrgCheckLog.setOpttime(titanOrgCheck.getChecktime());
+    	titanOrgCheckLogDao.insert(titanOrgCheckLog);
+	}
 	/***
 	 * 
 	 * @param checkStatus 通过 -1， 不通过-0
