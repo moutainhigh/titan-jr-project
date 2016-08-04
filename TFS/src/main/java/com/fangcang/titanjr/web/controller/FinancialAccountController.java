@@ -251,7 +251,7 @@ public class FinancialAccountController extends BaseController {
     }
     
     @RequestMapping(value = "/toBindAccountWithDrawCard")
-	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName) throws UnsupportedEncodingException{
     	model.addAttribute("modifyOrBind",WebConstant.BIND_BANK_CARD);
     	 if (null != this.getUserId()) {
@@ -262,7 +262,7 @@ public class FinancialAccountController extends BaseController {
     }
     
     @RequestMapping("update_account-withdraw_info")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     public String updateAccountWithdrawInfo(HttpServletRequest request, Model model,String orgName){
     	if (null != this.getUserId()) {
              model.addAttribute("organ", this.getTitanOrganDTO());
@@ -276,7 +276,7 @@ public class FinancialAccountController extends BaseController {
     
     
     @RequestMapping(value = "/account-withdraw", method = RequestMethod.GET)
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     public String toAccountWithDrawPage(HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
         	
@@ -312,7 +312,7 @@ public class FinancialAccountController extends BaseController {
 
     @ResponseBody
     @RequestMapping("bankCardBind")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     public String bankCardBindToPublic(BindBankCardRequest  bindBankCardRequest,Model model){
      	if(!StringUtil.isValidString(bindBankCardRequest.getBankCardCode()) 
     			|| !StringUtil.isValidString(bindBankCardRequest.getBankCardName())
@@ -410,7 +410,7 @@ public class FinancialAccountController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/toAccountWithDraw")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     public String accountWithDraw(WithDrawRequest withDrawRequest){
         if (null == this.getUserId()) {
             return toJson(putSysError("会话中用户信息不正确"));
