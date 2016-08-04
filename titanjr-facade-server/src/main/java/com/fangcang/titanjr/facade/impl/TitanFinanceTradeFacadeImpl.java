@@ -38,7 +38,7 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
                 orgBindInfo.setMerchantCode(titanOrderPaymentRequest.getRecieveMerchantCode());
                 orgBindInfo = titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
                 if (orgBindInfo == null) {
-                    titanOrderPaymentResponse.putErrorResult("PAYEE_ERROR", "指定的收款方未开通泰坦金服账户");
+                    titanOrderPaymentResponse.putErrorResult("PAYEE_ERROR", "指定的收款方未开通泰坦金融账户");
                     return titanOrderPaymentResponse;
                 }
             }
