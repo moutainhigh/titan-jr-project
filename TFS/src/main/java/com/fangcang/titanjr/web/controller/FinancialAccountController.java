@@ -400,7 +400,8 @@ public class FinancialAccountController extends BaseController {
     @RequestMapping("getOrgList")
     public String getOrgInfoList(){
         FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-        OrganBriefResponse organBriefResponse =  titanFinancialOrganService.queryOrganBriefList(organQueryRequest);
+        organQueryRequest.setUserId(this.getUserId());
+        OrganBriefResponse organBriefResponse =  titanFinancialOrganService.queryOrganBriefByUserId(organQueryRequest);
         if (organBriefResponse.isResult() && CollectionUtils.isNotEmpty(organBriefResponse.getOrganDTOList())){
             return toJson(organBriefResponse);
         }

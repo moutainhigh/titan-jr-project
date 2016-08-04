@@ -114,4 +114,14 @@ public class TitanOrgDaoImpl extends GenericDAOMyBatisImpl implements TitanOrgDa
 			throw new DaoException(e);
 		}
 	}
+
+	@Override
+	public List<TitanOrg> queryTitanOrgListByUserId(
+			FinancialOrganQueryRequest organQueryRequest) {
+		try {
+			return super.selectList("com.fangcang.titanjr.dao.TitanOrgDao.queryTitanOrgListByUserId", organQueryRequest);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
 }

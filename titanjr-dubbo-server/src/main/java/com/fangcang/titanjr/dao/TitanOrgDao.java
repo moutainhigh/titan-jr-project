@@ -34,4 +34,6 @@ public interface TitanOrgDao {
 	TitanOrg selectOne(TitanOrgParam condition) throws DaoException;
 	int insert(TitanOrg entity) throws DaoException;
 	int update(TitanOrg entity) throws DaoException;
+	
+	List<TitanOrg> queryTitanOrgListByUserId(FinancialOrganQueryRequest organQueryRequest);
 }

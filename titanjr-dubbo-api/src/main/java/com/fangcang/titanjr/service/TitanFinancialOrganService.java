@@ -195,4 +195,14 @@ public interface TitanFinancialOrganService {
      * @throws GlobalServiceException
      */
     public BaseResponseDTO updateOrg(OrgUpdateRequest orgUpdateRequest)throws GlobalServiceException;
+    
+    
+    /**
+     * 查询对方
+     * @param orgUpdateRequest
+     * @return
+     * @throws GlobalServiceException
+     */
+    public OrganBriefResponse queryOrganBriefByUserId(FinancialOrganQueryRequest organQueryRequest);
+    
 }

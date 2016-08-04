@@ -39,6 +39,27 @@
           <if test="statusId != null">AND productid =#{statusId}</if>
     </select>
     
+    <select id="queryTitanOrgListByUserId" resultType="com.fangcang.titanjr.entity.TitanOrg"
+            parameterType="com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest">
+          SELECT
+          userid,
+          orgname,
+          productid,
+          constid,
+          usertype,
+          statusid,
+          orgtype
+        FROM
+          t_tfs_org 
+           <where>
+            	userid in (
+                  select DISTINCT payeeuserid from t_tfs_accounthistory his where  his.payeruserid =#{userId} 
+                  UNION 
+                  select distinct payeruserid from t_tfs_accounthistory his where  his.payeeuserid =#{userId}
+                  )
+            </where>
+         
+    </select>
     
     <select id="countOrg" parameterType="com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest" resultType="Integer">
     	select count(1) from 
