@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fangcang.message.common.MsgReturn;
 import com.fangcang.message.email.dto.EmailSenderDTO;
 import com.fangcang.message.email.service.EmailSendService;
 import com.fangcang.message.sms.dto.SMSSendDTO;
@@ -131,16 +132,16 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 			emailSenderDTO.setPassword(dubboServerJDBCProperties.getJrEmailPassword());
 			emailSenderDTO.setEmailServerHost(dubboServerJDBCProperties.getJrEmailServer());
 			emailSenderDTO.setEmailServerPort(dubboServerJDBCProperties.getJrEmailPort());
-			//TODO 修改正式环境的商家
-			emailSenderDTO.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+			emailSenderDTO.setMerchantCode(sendCodeRequest.getMerchantCode());
 			try {
+				log.info("send email ,address:"+sendCodeRequest.getReceiveAddress()+",emailSenderDTO:"+ToStringBuilder.reflectionToString(emailSenderDTO));
 				EmailSendService emailSendService = hessianProxyBeanFactory.getHessianProxyBean(EmailSendService.class,messageServiceUrl);
-				boolean  retMessage = emailSendService.send(emailSenderDTO);
-				if(retMessage){
+				MsgReturn msgReturn = emailSendService.sendEmailReturnMsg(emailSenderDTO);
+				if(msgReturn.getState()==1){
 					 response.putSuccess("邮件发送成功");
 					 return response;
 				}else{
-					log.error("send email code ,url:"+messageServiceUrl+",param:"+ToStringBuilder.reflectionToString(emailSenderDTO)+",retMessage:"+retMessage);
+					log.error("send email code ,url:"+messageServiceUrl+",param:"+ToStringBuilder.reflectionToString(emailSenderDTO)+",retMessage:"+msgReturn.getStateInfo());
 					response.putErrorResult("邮件发送失败");
 				}
 			} catch (Exception e) {
