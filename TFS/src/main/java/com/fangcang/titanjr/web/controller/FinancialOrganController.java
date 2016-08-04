@@ -522,9 +522,9 @@ public class FinancialOrganController extends BaseController {
     	if(!(Tools.isEmailAddress(receiveAddress)||Tools.isPhone(receiveAddress))){
     		return toJson(putSysError("参数错误"));
     	}
-    	String merchantCode = (String)getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
+    	String merchantCode = (String)getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
     	if(StringUtil.isValidString(merchantCode)){
-    		//TODO 使用正式环境
+    		//暂时都使用房仓商家
     		sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
     	}else{
     		sendRegCodeRequest.setMerchantCode(RSInvokeConstant.defaultMerchant);
@@ -568,9 +568,9 @@ public class FinancialOrganController extends BaseController {
     	if(!(Tools.isEmailAddress(receiveAddress)||Tools.isPhone(receiveAddress))){
     		return toJson(putSysError("参数错误"));
     	}
-    	String merchantCode = (String)getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_NAME);
+    	String merchantCode = (String)getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);
     	if(StringUtil.isValidString(merchantCode)){
-    		//TODO 使用正式环境
+    		//暂时都使用房仓商家
     		sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
     	}else{
     		sendRegCodeRequest.setMerchantCode(RSInvokeConstant.defaultMerchant);
