@@ -15,7 +15,7 @@
 	</td>
 	<td class="td-data" data-orgId="${orgCheckDTO.orgId}" data-tfsLoginUsername="${orgCheckDTO.userloginname }">
 		<c:if test="${orgCheckDTO.resultkey!='FT'}"><span class="orange cursor undl J_examine" data-opt="view">查看</span></c:if>
-		<c:if test="${orgCheckDTO.resultkey=='FT'}"><span class="c_blue cursor undl J_examine" data-opt="check">审核</span></c:if>
+		<c:if test="${orgCheckDTO.resultkey=='FT' or orgCheckDTO.resultkey=='REVIEW'}"><span class="c_blue cursor undl J_examine" data-opt="check">审核</span></c:if>
 	</td>
 </tr>
 </c:forEach>
