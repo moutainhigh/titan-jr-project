@@ -1,4 +1,20 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%
+	if(request.getCookies() != null)
+	{
+		for(int i=0;i<request.getCookies().length;i++)
+		{
+			if("JSESSIONID".equals(request.getCookies()[i].getName()))
+			{
+				Cookie killMyCookie = new Cookie("JSESSIONID", request.getCookies()[i].getValue());
+				killMyCookie.setHttpOnly(true);
+				killMyCookie.setPath("/");
+				response.addCookie(killMyCookie);
+				response.getHeaderNames();
+			}
+		}
+	}
+%>
 <!-- 输入付款密码 -->
 <div class="S_popup clearfix">
 	<div class="S_popup_title">

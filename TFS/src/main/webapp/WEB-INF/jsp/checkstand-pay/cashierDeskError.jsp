@@ -9,7 +9,22 @@
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 </head>
-  
+<%
+	if(request.getCookies() != null)
+	{
+		for(int i=0;i<request.getCookies().length;i++)
+		{
+			if("JSESSIONID".equals(request.getCookies()[i].getName()))
+			{
+				Cookie killMyCookie = new Cookie("JSESSIONID", request.getCookies()[i].getValue());
+				killMyCookie.setHttpOnly(true);
+				killMyCookie.setPath("/");
+				response.addCookie(killMyCookie);
+				response.getHeaderNames();
+			}
+		}
+	}
+%>
   <body>
     	<div class="TFSsuccess_top">
 		<div class="TFSsu_topc">
