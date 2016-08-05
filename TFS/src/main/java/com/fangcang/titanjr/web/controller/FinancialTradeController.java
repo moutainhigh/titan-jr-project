@@ -124,8 +124,9 @@ public class FinancialTradeController extends BaseController {
     		if(StringUtil.isValidString(orderNo)){
     			response.getWriter().print("returnCode=000000&returnMsg=成功");
     			log.info("融数后台回调成功参数:"+toJson(rechargeResultConfirmRequest));
+    			//getkey
+    			String sign  =titanFinancialTradeService.getSign(rechargeResultConfirmRequest);
     			String signMsg = rechargeResultConfirmRequest.getSignMsg();
-           	    String sign = RechargeResultConfirmRequest.getSignStr(rechargeResultConfirmRequest);
             	if(!MD5.MD5Encode(sign, "UTF-8").equals(signMsg)){
            		   return;
             	}

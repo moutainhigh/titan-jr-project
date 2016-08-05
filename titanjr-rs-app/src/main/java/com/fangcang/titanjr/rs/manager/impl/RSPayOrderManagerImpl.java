@@ -36,7 +36,7 @@ public class RSPayOrderManagerImpl implements RSPayOrderManager{
 				rsPayOrderRequest.setKey(RSInvokeConstant.rsCheckKey);
 				String sign = getSigStr(rsPayOrderRequest);
 				if(sign!=null){
-					rsPayOrderRequest.setSignMsg( getSigStr(sign));
+					rsPayOrderRequest.setSignMsg(getSigStr(sign));
 					response.setSuccess(true);
 					response.setOperateStatus("true");
 					response.setRsPayOrderRequest(rsPayOrderRequest);

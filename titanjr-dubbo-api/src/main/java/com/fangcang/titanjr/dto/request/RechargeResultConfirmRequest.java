@@ -145,31 +145,4 @@ public class RechargeResultConfirmRequest implements Serializable {
 			this.expand2 = expand2;
 		}
 		
-        public static String getSignStr(RechargeResultConfirmRequest payResultConfirmEntity){
-        	StringBuffer stringBuffer = new StringBuffer();
-    		if(payResultConfirmEntity !=null){
-    			stringBuffer.append("merchantNo=");
-    			stringBuffer.append(payResultConfirmEntity.getMerchantNo());
-    			stringBuffer.append("&payType=");
-    			stringBuffer.append(payResultConfirmEntity.getPayType());
-    			stringBuffer.append("&orderNo=");
-    			stringBuffer.append(payResultConfirmEntity.getOrderNo());
-    			stringBuffer.append("&payOrderNo=");
-    			stringBuffer.append(payResultConfirmEntity.getPayOrderNo());
-    			stringBuffer.append("&payStatus=");
-    			stringBuffer.append(payResultConfirmEntity.getPayStatus());
-    			stringBuffer.append("&orderTime=");
-    			stringBuffer.append(payResultConfirmEntity.getOrderTime());
-    			stringBuffer.append("&orderAmount=");
-    			stringBuffer.append(payResultConfirmEntity.getOrderAmount());
-    			stringBuffer.append("&bankCode=");
-    			stringBuffer.append(payResultConfirmEntity.getBankCode());
-    			stringBuffer.append("&orderPayTime=");
-    			stringBuffer.append(payResultConfirmEntity.getOrderPayTime());
-    			stringBuffer.append("&key=");
-    			stringBuffer.append("PCDEFOI8808TFC");
-    		}
-    		return stringBuffer.toString();
-        }
-        
 }

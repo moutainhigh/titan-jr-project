@@ -158,4 +158,11 @@ public interface TitanFinancialTradeService {
 	 */
 	public GDPOrderResponse getGDPOrderDTO(String orderCode);
 	
+	/**
+	 * 获取密文
+	 * @param rechargeResultConfirmRequest
+	 * @return
+	 */
+	public String getSign(RechargeResultConfirmRequest rechargeResultConfirmRequest);
+	
 }
