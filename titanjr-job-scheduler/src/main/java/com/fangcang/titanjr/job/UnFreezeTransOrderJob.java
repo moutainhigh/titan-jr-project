@@ -24,11 +24,9 @@ public class UnFreezeTransOrderJob extends QuartzJobBean {
 
     protected void executeInternal(JobExecutionContext paramJobExecutionContext) throws JobExecutionException {
 
-    	System.out.println("111111111111");
         UnFreezeTransOrderRunner task = new UnFreezeTransOrderRunner(titanFinancialAccountService);
 
         titanJobExecutor.execute(task);
-        System.out.println(titanFinancialTradeService + "execute===job");
     }
 
     

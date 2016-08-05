@@ -18,11 +18,9 @@ public class BindBankCardJob extends QuartzJobBean{
 	protected void executeInternal(JobExecutionContext arg0)
 			throws JobExecutionException {
 
-    	System.out.println("111111111111");
     	BindBankCardRunner task = new BindBankCardRunner(titanFinancialBankCardService);
 
         titanJobExecutor.execute(task);
-        System.out.println(titanFinancialBankCardService + "execute===job");
 	}
 
 	public TitanFinancialBankCardService getTitanFinancialBankCardService() {
