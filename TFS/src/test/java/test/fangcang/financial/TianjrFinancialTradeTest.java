@@ -149,7 +149,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
      * 3拿未支付但是已过时效的单号，4.失败的单号（可以数据库修改状态），5成功的财务单
      * @throws Exception 
      */
-//    @Test
+    @Test
     public void testAddOperate() throws Exception{
     	PaymentRequest paymentRequest = new PaymentRequest();
     	paymentRequest.setMerchantcode("M10000001");
@@ -207,7 +207,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
      * Version
      * Charset
      */
-//    @Test 
+    @Test 
     public void testAddOrderNoandRechargeAccount() throws Exception{
     	RechargePageRequest rechargePageRequest = new RechargePageRequest();
     	rechargePageRequest.setPageUrl("http://192.168.1.96:8088/TFS/order.jsp");
@@ -502,7 +502,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     }
     
     //获取GDP支付地址
-    @Test
+//    @Test
     public void testGetPaymentUrl() throws UnsupportedEncodingException{
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setPayOrderNo("H0177150121144423");
@@ -608,7 +608,12 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialTradeService.getGDPOrderDTO(paymentUrlRequest.getPayOrderNo());
     }
     
-   
+//    @Test
+    public void getSign(){
+    	RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
+    	titanFinancialTradeService.getSign(rechargeResultConfirmRequest);
+    }
+    
     
     /**
      * 测试整个支付流程  基础数据  userid :TJM10000087  orgname:腾讯云计算有限公司  泰坦码:10000093

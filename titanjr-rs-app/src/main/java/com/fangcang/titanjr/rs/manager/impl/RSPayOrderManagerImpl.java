@@ -138,7 +138,6 @@ public class RSPayOrderManagerImpl implements RSPayOrderManager{
 			sign.append(rsPayOrderRequest.getVersion());
 			sign.append("&key=");
 			sign.append(RSInvokeConstant.rsCheckKey);
-			sign.append(")(*");
 		}
 		return sign.toString();
 	}
@@ -161,7 +160,6 @@ public class RSPayOrderManagerImpl implements RSPayOrderManager{
 			sign.append(rsPayOrderRequest.getOrderTime());
 			sign.append("&key=");
 			sign.append(RSInvokeConstant.rsCheckKey);
-			sign.append(")(*");
 		}
 		return sign.toString();
 	}
