@@ -33,6 +33,7 @@ public class RSPayOrderManagerImpl implements RSPayOrderManager{
 			if(rsPayOrderRequest !=null){
 				//校验
 				rsPayOrderRequest.check();
+				rsPayOrderRequest.setKey(RSInvokeConstant.titanjrCheckKey);
 				String sign = getSigStr(rsPayOrderRequest);
 				if(sign!=null){
 					rsPayOrderRequest.setSignMsg( getSigStr(sign));
@@ -63,6 +64,7 @@ public class RSPayOrderManagerImpl implements RSPayOrderManager{
 				//校验
 				rsPayOrderRequest.checkPayResult();
 				Map<String,String> paramMap = RSPayOrderRequest.RSPayOrderRequestToMap(rsPayOrderRequest);
+				
 				String sign = getPaySigStr(rsPayOrderRequest);
 				if(sign!=null){
 					paramMap.put("signMsg", getSigStr(sign));
