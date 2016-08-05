@@ -167,7 +167,7 @@ public class RechargeResultConfirmRequest implements Serializable {
     			stringBuffer.append("&orderPayTime=");
     			stringBuffer.append(payResultConfirmEntity.getOrderPayTime());
     			stringBuffer.append("&key=");
-    			stringBuffer.append("12356780Poi)(*");
+    			stringBuffer.append("PCDEFOI8808TFC");
     		}
     		return stringBuffer.toString();
         }

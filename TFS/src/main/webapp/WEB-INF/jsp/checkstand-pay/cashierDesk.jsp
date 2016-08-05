@@ -1,6 +1,22 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"  session="false" %>
 <%@ include file="/comm/taglib.jsp"%>
 <%@ page isELIgnored="false" %>
+<%
+    if(request.getCookies() != null)
+    {
+        for(int i=0;i<request.getCookies().length;i++)
+        {
+            if("JSESSIONID".equals(request.getCookies()[i].getName()))
+            {
+                Cookie killMyCookie = new Cookie("JSESSIONID", request.getCookies()[i].getValue());
+                killMyCookie.setHttpOnly(true);
+                killMyCookie.setPath("/");
+                response.addCookie(killMyCookie);
+                response.getHeaderNames();
+            }
+        }
+    }
+%>
 <html>
 <head>
     <meta charset="utf-8">
