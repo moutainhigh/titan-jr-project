@@ -33,7 +33,7 @@ public class RSPayOrderManagerImpl implements RSPayOrderManager{
 			if(rsPayOrderRequest !=null){
 				//校验
 				rsPayOrderRequest.check();
-				rsPayOrderRequest.setKey(RSInvokeConstant.titanjrCheckKey);
+				rsPayOrderRequest.setKey(RSInvokeConstant.rsCheckKey);
 				String sign = getSigStr(rsPayOrderRequest);
 				if(sign!=null){
 					rsPayOrderRequest.setSignMsg( getSigStr(sign));
@@ -137,7 +137,7 @@ public class RSPayOrderManagerImpl implements RSPayOrderManager{
 			sign.append("&version=");
 			sign.append(rsPayOrderRequest.getVersion());
 			sign.append("&key=");
-			sign.append(rsPayOrderRequest.getKey());
+			sign.append(RSInvokeConstant.rsCheckKey);
 			sign.append(")(*");
 		}
 		return sign.toString();
@@ -160,7 +160,7 @@ public class RSPayOrderManagerImpl implements RSPayOrderManager{
 			sign.append("&orderTime=");
 			sign.append(rsPayOrderRequest.getOrderTime());
 			sign.append("&key=");
-			sign.append(rsPayOrderRequest.getKey());
+			sign.append(RSInvokeConstant.rsCheckKey);
 			sign.append(")(*");
 		}
 		return sign.toString();
