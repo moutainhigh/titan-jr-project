@@ -82,7 +82,7 @@ public class RSPayOrderRequest {
 	}
 
 	//商户密钥
-	private String key ="12356780Poi";
+	private String key ;
 	public String getMerchantNo() {
 		return merchantNo;
 	}
