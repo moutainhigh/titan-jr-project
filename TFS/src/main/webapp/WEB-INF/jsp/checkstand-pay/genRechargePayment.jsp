@@ -1,5 +1,21 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/comm/taglib.jsp"%>
+<%
+	if(request.getCookies() != null)
+	{
+		for(int i=0;i<request.getCookies().length;i++)
+		{
+			if("JSESSIONID".equals(request.getCookies()[i].getName()))
+			{
+				Cookie killMyCookie = new Cookie("JSESSIONID", request.getCookies()[i].getValue());
+				killMyCookie.setHttpOnly(true);
+				killMyCookie.setPath("/");
+				response.addCookie(killMyCookie);
+				response.getHeaderNames();
+			}
+		}
+	}
+%>
 <!DOCTYPE html>
 <html>
 	<head>
