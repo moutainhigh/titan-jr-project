@@ -134,14 +134,15 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 			emailSenderDTO.setEmailServerPort(dubboServerJDBCProperties.getJrEmailPort());
 			emailSenderDTO.setMerchantCode(sendCodeRequest.getMerchantCode());
 			try {
-				log.info("send email ,address:"+sendCodeRequest.getReceiveAddress()+",emailSenderDTO:"+ToStringBuilder.reflectionToString(emailSenderDTO));
+				log.info("begin send email ,messageServiceUrl:"+messageServiceUrl+",address:"+sendCodeRequest.getReceiveAddress()+",emailSenderDTO:"+ToStringBuilder.reflectionToString(emailSenderDTO));
 				EmailSendService emailSendService = hessianProxyBeanFactory.getHessianProxyBean(EmailSendService.class,messageServiceUrl);
-				MsgReturn msgReturn = emailSendService.sendEmailReturnMsg(emailSenderDTO);
-				if(msgReturn.getState()==1){
-					 response.putSuccess("邮件发送成功");
-					 return response;
+				boolean  sendState = emailSendService.send(emailSenderDTO);
+				if(sendState){
+					log.info("end send email success ,address:"+sendCodeRequest.getReceiveAddress());
+					response.putSuccess("邮件发送成功");
+					return response;
 				}else{
-					log.error("send email code ,url:"+messageServiceUrl+",param:"+ToStringBuilder.reflectionToString(emailSenderDTO)+",retMessage:"+msgReturn.getStateInfo());
+					log.error("end send email fail ,messageServiceUrl:"+messageServiceUrl+",param:"+ToStringBuilder.reflectionToString(emailSenderDTO)+",sendState:"+sendState);
 					response.putErrorResult("邮件发送失败");
 				}
 			} catch (Exception e) {

@@ -1759,6 +1759,35 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			}
 		}
 	}
+
+	@Override
+	public String getSign(
+			RechargeResultConfirmRequest rechargeResultConfirmRequest) {
+        	StringBuffer stringBuffer = new StringBuffer();
+    		if(rechargeResultConfirmRequest !=null){
+    			stringBuffer.append("merchantNo=");
+    			stringBuffer.append(rechargeResultConfirmRequest.getMerchantNo());
+    			stringBuffer.append("&payType=");
+    			stringBuffer.append(rechargeResultConfirmRequest.getPayType());
+    			stringBuffer.append("&orderNo=");
+    			stringBuffer.append(rechargeResultConfirmRequest.getOrderNo());
+    			stringBuffer.append("&payOrderNo=");
+    			stringBuffer.append(rechargeResultConfirmRequest.getPayOrderNo());
+    			stringBuffer.append("&payStatus=");
+    			stringBuffer.append(rechargeResultConfirmRequest.getPayStatus());
+    			stringBuffer.append("&orderTime=");
+    			stringBuffer.append(rechargeResultConfirmRequest.getOrderTime());
+    			stringBuffer.append("&orderAmount=");
+    			stringBuffer.append(rechargeResultConfirmRequest.getOrderAmount());
+    			stringBuffer.append("&bankCode=");
+    			stringBuffer.append(rechargeResultConfirmRequest.getBankCode());
+    			stringBuffer.append("&orderPayTime=");
+    			stringBuffer.append(rechargeResultConfirmRequest.getOrderPayTime());
+    			stringBuffer.append("&key=");
+    			stringBuffer.append(RSInvokeConstant.rsCheckKey);
+    		}
+    		return stringBuffer.toString();
+	}
 	
 	
 }
