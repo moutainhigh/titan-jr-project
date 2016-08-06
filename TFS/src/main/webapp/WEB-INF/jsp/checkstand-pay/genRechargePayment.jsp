@@ -45,11 +45,10 @@
 	<input name="charset" type="hidden" value="${rechargeDataDTO.charset}"/>
 	<input name="signMsg" type="hidden" value="${rechargeDataDTO.signMsg}"/>
 </form>
-
+</c:if>
 <form action="<%=basePath%>/account/error_cashier.shtml" id="errror_cashier" method="post">
   <input name="msg" type="hidden" value="${msg}"/>
 </form>
-  </c:if>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
 </body>
 <script type="text/javascript">
