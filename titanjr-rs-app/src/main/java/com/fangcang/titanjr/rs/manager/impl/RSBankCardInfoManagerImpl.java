@@ -57,7 +57,7 @@ public class RSBankCardInfoManagerImpl implements RSBankCardInfoManager {
 			WheatfieldBankaccountBindingResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.debug("调用bindBankCard返回报文: \n" + rsp.getBody());
+				log.info("调用bindBankCard返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -98,7 +98,7 @@ public class RSBankCardInfoManagerImpl implements RSBankCardInfoManager {
 			WheatfieldAccountinfoQueryResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.debug("调用queryBindCard返回报文: \n" + rsp.getBody());
+				log.info("调用queryBindCard返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -141,7 +141,7 @@ public class RSBankCardInfoManagerImpl implements RSBankCardInfoManager {
 			WheatfieldAccountnumCkeckResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.debug("调用checkBindCardBindStatus返回报文: \n" + rsp.getBody());
+				log.info("调用checkBindCardBindStatus返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -224,7 +224,7 @@ public class RSBankCardInfoManagerImpl implements RSBankCardInfoManager {
 			MyBeanUtil.copyBeanProperties(req, invalidPubCardModifyRequest);
 			WheatfieldAccountUpdateResponse rsp = RSInvokeConstant.ropClient.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.debug("调用modifyInvalidPublicCard返回报文: \n" + rsp.getBody());
+				log.info("调用modifyInvalidPublicCard返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -266,7 +266,7 @@ public class RSBankCardInfoManagerImpl implements RSBankCardInfoManager {
 			WheatfieldAccountinfoDeleteResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.debug("调用deletePersonCard返回报文: \n" + rsp.getBody());
+				log.info("调用deletePersonCard返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -338,9 +338,7 @@ public class RSBankCardInfoManagerImpl implements RSBankCardInfoManager {
 					
 					bankCardInfos.add(bankCardInfo);
 				}
-				
 			}
-			
 		}
 		
 		return bankCardInfos;

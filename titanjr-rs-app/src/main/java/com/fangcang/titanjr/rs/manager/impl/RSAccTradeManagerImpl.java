@@ -74,7 +74,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 			WheatfieldBalanceGetlistResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.debug("调用queryAccountBalance返回报文: \n" + rsp.getBody());
+				log.info("调用queryAccountBalance返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -117,7 +117,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 			WheatfieldOrderServiceAuthcodeserviceResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.debug("调用freezeAccountBalance返回报文: \n" + rsp.getBody());
+				log.info("调用freezeAccountBalance返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -160,7 +160,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 			WheatfieldOrderServiceThawauthcodeResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.debug("调用unFreezeAccountBalance返回报文: \n" + rsp.getBody());
+				log.info("调用unFreezeAccountBalance返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -264,7 +264,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 			WheatfieldOrderServiceMultitransferQueryResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.debug("调用queryOrderTranferFlow返回报文: \n" + rsp.getBody());
+				log.info("调用queryOrderTranferFlow返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -316,10 +316,11 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 				accountTransferRequest.check();
 			}
 			MyBeanUtil.copyProperties(req, accountTransferRequest);
+			log.info("转账的入参dao:"+JSONSerializer.toJSON(req));
 			WheatfieldOrderTransferResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.debug("调用accountBalanceTransfer返回报文: \n" + rsp.getBody());
+				log.info("调用accountBalanceTransfer返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -363,7 +364,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 			WheatfieldOrderServiceWithdrawserviceResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.debug("调用accountBalanceWithDraw返回报文: \n" + rsp.getBody());
+				log.info("调用accountBalanceWithDraw返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {

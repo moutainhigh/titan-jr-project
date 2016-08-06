@@ -1596,7 +1596,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
 			titanTransOrder.setStatusid(OrderStatusEnum.RECHARGE_IN_PROCESS.getStatus());
 			//融数下单
-			
+			log.info("本地落单参数:"+JSONSerializer.toJSON(titanTransOrder));
 			if(titanTransOrderDao.insert(titanTransOrder)>0?true:false){
             	 localAddTransOrderResponse.setTransid(titanTransOrder.getTransid());
             	 localAddTransOrderResponse.setOrderNo(titanTransOrder.getOrderid());
