@@ -5,9 +5,10 @@ import java.util.List;
 
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 
 import com.Rop.api.domain.SHBalanceInfo;
 import com.Rop.api.request.WheatfieldBalanceGetlistRequest;
@@ -200,10 +201,11 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 				orderOperateRequest.check();
 			}
 			MyBeanUtil.copyProperties(req, orderOperateRequest);
+			log.info("调用融数落单的参数dao:"+JSONSerializer.toJSON(req));
 			WheatfieldOrderOperResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.debug("调用operateOrder返回报文: \n" + rsp.getBody());
+				log.info("调用operateOrder返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {

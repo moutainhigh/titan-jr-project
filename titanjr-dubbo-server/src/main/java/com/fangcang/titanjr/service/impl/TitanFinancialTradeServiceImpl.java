@@ -154,6 +154,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     public TransOrderCreateResponse operateRSTransOrder(OrderRequest orderRequest) {
         TransOrderCreateResponse orderResponse = new TransOrderCreateResponse();
         try {
+        	log.info("落单参数"+JSONSerializer.toJSON(orderRequest));
             OrderOperateResponse orderOperateResponse = getOrderId(orderRequest);
             //测试一下
             if (orderOperateResponse != null) {
@@ -204,12 +205,14 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
     public TransOrderCreateResponse createTitanTransOrder(PaymentRequest paymentRequest) throws Exception {
+    	log.info("落单入参:"+JSONSerializer.toJSON(paymentRequest));
         TransOrderCreateResponse orderResponse = new TransOrderCreateResponse();
         try {
             String orderid = null;
             //财务系统单号,充值就是充值的单号
             if (StringUtil.isValidString(paymentRequest.getPayOrderNo())) {
             	TransOrderResponse transOrderResponse = queryTransOrderByCode(paymentRequest.getPayOrderNo());
+            	log.info("查询订单的结果:"+JSONSerializer.toJSON(transOrderResponse));
                 //落单的订单不为null 则用tranid获取充值单
                 if (transOrderResponse != null && null != transOrderResponse.getTransOrder()) {
                 	//查看下单情况
@@ -224,6 +227,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                              titanOrderPayreq = queryOrderPayReqByTransOrderId(titanOrderPayreq);
                              //充值订单不为空，则判断充值单的状态，如果是失败则生成系统单号
                              if (titanOrderPayreq != null) {
+                            	 log.info("支付单查询结果:"+JSONSerializer.toJSON(titanOrderPayreq));
                                  if (ReqstatusEnum.Status_2.getStatus() == titanOrderPayreq.getReqstatus()) { //充值状态成功则直接返回
                                      orderResponse.putErrorResult("充值成功，请勿重复充值");
                                      return orderResponse;

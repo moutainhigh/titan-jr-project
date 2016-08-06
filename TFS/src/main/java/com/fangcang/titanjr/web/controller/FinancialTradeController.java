@@ -362,6 +362,7 @@ public class FinancialTradeController extends BaseController {
 	@RequestMapping("genRechargeData")
 	public String genRechargeData(HttpServletRequest request,PaymentRequest paymentRequest,Model model) throws Exception{
 		if(paymentRequest !=null){
+			log.info("网银支付入参:"+toJson(paymentRequest));
 			if(CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentRequest.getPaySource())){
 				paymentRequest.setUserid(this.getUserId());
 			}
@@ -376,6 +377,7 @@ public class FinancialTradeController extends BaseController {
 				FinancialOrderResponse financialOrderResponse =null;
 				if(CashierDeskTypeEnum.SUPPLY_DESK.deskCode.equals(paymentRequest.getPaySource())){
 					financialOrderResponse = getFinancialOrderResponse(paymentRequest);
+					log.info("查询财务订单结果:"+toJson(financialOrderResponse));
 				}
 				result = validatePaymentDate(paymentRequest,financialOrderResponse);
 			}
@@ -398,6 +400,7 @@ public class FinancialTradeController extends BaseController {
 				    if(rechargeResponse.getRechargeDataDTO()!=null){
 				    	model.addAttribute(WebConstant.RESULT, WebConstant.SUCCESS);
 				    	model.addAttribute("rechargeDataDTO", rechargeResponse.getRechargeDataDTO());
+				    	log.info("支付请求的参数如下:"+toJson(rechargeResponse.getRechargeDataDTO()));
 				    	//保存常用的支付方式
 				    	saveCommonPayMethod(paymentRequest);
 				    }
@@ -657,7 +660,7 @@ public class FinancialTradeController extends BaseController {
 			commonPayMethodDTO.setCreator(paymentRequest.getCreator());
 			commonPayMethodDTO.setCreatetime(new Date());
 			if(StringUtil.isValidString(paymentRequest.getLinePayType())){
-			   commonPayMethodDTO.setPaytype(Integer.parseInt(paymentRequest.getLinePayType()));
+				commonPayMethodDTO.setPaytype(Integer.parseInt(paymentRequest.getLinePayType()));
 			}
 			titanCashierDeskService.saveCommonPayMethod(commonPayMethodDTO);
 		}catch(Exception e){
@@ -839,6 +842,7 @@ public class FinancialTradeController extends BaseController {
 		rechargePageRequest.setOrderExpireTime(45);
 		rechargePageRequest.setBankInfo(paymentRequest.getBankInfo());
 		rechargePageRequest.setUserrelateid(paymentRequest.getUserrelateid());
+		rechargePageRequest.setPayType(paymentRequest.getPayType());
 		return rechargePageRequest;
 	}
 	
