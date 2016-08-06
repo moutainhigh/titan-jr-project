@@ -156,6 +156,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         try {
         	log.info("落单参数"+JSONSerializer.toJSON(orderRequest));
             OrderOperateResponse orderOperateResponse = getOrderId(orderRequest);
+            log.info("落单orderResponse返回结果:"+JSONSerializer.toJSON(orderOperateResponse));
             //测试一下
             if (orderOperateResponse != null) {
                 orderResponse.setResult(false);
@@ -269,6 +270,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                 if ( !StringUtil.isValidString(orderid) ) { //如果订单号为空，则直接生成订单号
                     OrderRequest orderRequest = convertorToTitanOrderRequest(paymentRequest);
                     orderResponse = operateRSTransOrder(orderRequest);
+                    log.info("融数落单返回结果dubbo:"+JSONSerializer.toJSON(orderResponse));
                 } else {
                     orderResponse.setOrderNo(orderid);
                     orderResponse.putSuccess();

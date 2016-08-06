@@ -385,7 +385,7 @@ public class FinancialTradeController extends BaseController {
 			if(!WebConstant.FAIL.equals(result.get(WebConstant.RESULT))){
 				TransOrderCreateResponse transOrderCreateResponse = titanFinancialTradeService.createTitanTransOrder(paymentRequest);
 				if(!transOrderCreateResponse.isResult() || !StringUtil.isValidString(transOrderCreateResponse.getOrderNo()) ){
-					log.error("call createTitanTransOrder fail msg["+ transOrderCreateResponse.getReturnMessage()+"]");
+					log.error("call createTitanTransOrder fail msg["+ toJson(transOrderCreateResponse)+"]");
 			    	//下单失败
 					model.addAttribute(WebConstant.MSG, "创建付款单失败，请重试！");
 			    }else{
