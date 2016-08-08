@@ -841,7 +841,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                  if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentRequest.getPaySource())){
            		  GDPOrderResponse gDPOrderResponse =  getGDPOrderDTO(paymentRequest.getPayOrderNo());
            		  if(gDPOrderResponse.getgDPOrderDTO() !=null){//有待扩展
-           			  orderRequest.setGoodsdetail(gDPOrderResponse.getgDPOrderDTO().getGoodName());
+           			  orderRequest.setGoodsdetail(gDPOrderResponse.getgDPOrderDTO().getGoodDetail());
+           			  
            			  orderRequest.setBusinessordercode(paymentRequest.getBusinessOrderCode());
            			  orderRequest.setGoodsname("GDP付款单");
            		  }
@@ -1737,6 +1738,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     	gDPOrderDTO.setOrderSum(orderDetailResponseDTO.getOrderSum());
     	gDPOrderDTO.setGoodName(orderDetailResponseDTO.getCommondityName());
     	gDPOrderDTO.setOrderCode(orderDetailResponseDTO.getOrderCode());
+    	gDPOrderDTO.setGoodDetail(orderDetailResponseDTO.getOrderCode()+"-"
+    	                         +orderDetailResponseDTO.getHotelName()+"-"
+    			                 +orderDetailResponseDTO.getRoomTypeName()+"-入住日期:"
+    			                 +orderDetailResponseDTO.getCheckIndate()+"-离店日期:"
+    			                 +orderDetailResponseDTO.getCheckOutDate());
     	gDPOrderResponse.setgDPOrderDTO(gDPOrderDTO);
     	gDPOrderResponse.putSuccess();
 	    

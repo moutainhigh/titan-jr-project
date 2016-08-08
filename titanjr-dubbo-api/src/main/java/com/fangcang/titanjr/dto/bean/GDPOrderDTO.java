@@ -20,6 +20,8 @@ public class GDPOrderDTO implements Serializable{
 	private String goodName;
 	
 	private String orderCode;
+	
+	private String goodDetail;
 
 	public BigDecimal getOrderSum() {
 		return orderSum;
@@ -60,5 +62,14 @@ public class GDPOrderDTO implements Serializable{
 	public void setOrderCode(String orderCode) {
 		this.orderCode = orderCode;
 	}
+
+	public String getGoodDetail() {
+		return goodDetail;
+	}
+
+	public void setGoodDetail(String goodDetail) {
+		this.goodDetail = goodDetail;
+	}
+	
 	
 }
