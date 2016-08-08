@@ -146,6 +146,7 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
 		 if(accountInfoRequest !=null && !StringUtil.isValidString(accountInfoRequest.getMerchantCode())){
 			 log.error("商家编码不能为空");
         	 checkAccountResponse.setReturnMessage("商家编码不能为空");
+        	 return checkAccountResponse;
 		 }
 		 
 		 OrgBindInfo orgBindInfo = new OrgBindInfo();
