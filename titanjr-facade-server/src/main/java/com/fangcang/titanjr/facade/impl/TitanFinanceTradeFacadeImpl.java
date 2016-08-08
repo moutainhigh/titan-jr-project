@@ -11,12 +11,16 @@ import com.fangcang.titanjr.response.TitanOrderPaymentResponse;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.util.StringUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 @Service("titanFinanceTradeFacade")
 public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
+
+    private static final Log log = LogFactory.getLog(TitanFinanceTradeFacadeImpl.class);
 
     @Resource
     private TitanFinancialTradeService titanFinancialTradeService;
@@ -26,6 +30,7 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
 
     @Override
     public TitanOrderPaymentResponse getOrderPaymentUrl(TitanOrderPaymentRequest titanOrderPaymentRequest) {
+        log.info("进入获取收银台地址：");
         TitanOrderPaymentResponse titanOrderPaymentResponse = new TitanOrderPaymentResponse();
         if (!GenericValidate.validate(titanOrderPaymentRequest)) {
             titanOrderPaymentResponse.putErrorResult(ReturnCode.CODE_PARAM_ERROR.getCode(), "请求参数校验错误");

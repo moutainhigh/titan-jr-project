@@ -74,7 +74,7 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
 
     @Override
     public ShowPaymentResponse isShowPaymentButton(ShowPaymentRequest showPaymentRequest) {
-    	 log.info("验证用户是否开通金融账户的请求参数："+JSONSerializer.toJSON(showPaymentRequest));
+    	log.info("验证用户是否开通金融账户的请求参数："+JSONSerializer.toJSON(showPaymentRequest));
         ShowPaymentResponse showPaymentResponse = new ShowPaymentResponse();
         showPaymentResponse.setResult(false);
         if (showPaymentRequest != null && StringUtil.isValidString(showPaymentRequest.getMerchantcode())) {//验证是泰坦金融用户
@@ -82,14 +82,10 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
             orgBindInfo.setMerchantCode(showPaymentRequest.getMerchantcode());
             orgBindInfo = titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
             if (orgBindInfo != null) {
-                FinancialOrderRequest financialOrderRequest = new FinancialOrderRequest();
-                financialOrderRequest.setMerchantcode(showPaymentRequest.getMerchantcode());
-                financialOrderRequest.setOrderNo(showPaymentRequest.getPayOrderNo());
-                FinancialOrderResponse financialOrderResponse = titanFinancialTradeService.queryFinanceOrderDetail(financialOrderRequest);
-                
+                log.info("查询得到机构绑定信息，判定展示支付中还是在线支付");
                 TradeDetailRequest tradeDetailRequest = new TradeDetailRequest();
                 tradeDetailRequest.setUserid(orgBindInfo.getUserid());
-                tradeDetailRequest.setPayOrderNo(financialOrderResponse.getFinanceCode());
+                tradeDetailRequest.setPayOrderNo(showPaymentRequest.getPayOrderNo());
                 TradeDetailResponse detailResponse = titanFinancialTradeService.getOrderTradeDetail(tradeDetailRequest);
                 TransOrderDTO transOrderDTO = null;
                 if (null != detailResponse.getTransOrders() && CollectionUtils.isNotEmpty(detailResponse.getTransOrders().getItemList())){
@@ -103,6 +99,7 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
                         }
                     }
                 }
+                log.info("查询得到当前交易工单：" + transOrderDTO);
                 if (transOrderDTO == null ||
                         OrderStatusEnum.ORDER_FAIL.getStatus().equals(transOrderDTO.getStatusid()) ||
                         OrderStatusEnum.ORDER_NO_EFFECT.getStatus().equals(transOrderDTO.getStatusid()) ||
@@ -115,17 +112,8 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
                     //展示支付中按钮
                     showPaymentResponse.setShowStatus(2);
                 }
-                //验证其支付货币是CNY,只有返回true的才判定是否显示按钮
-                //如果去金融查询工单出错，也认为不能进行在线支付
-                if (detailResponse.isResult() && financialOrderResponse.getCurrency() != null
-                        && "RMB".equals(financialOrderResponse.getCurrency().name())) {
-                    showPaymentResponse.setResult(true);
-                    return showPaymentResponse;
-                } else {
-                    log.error("当前不满足支付有要求，币种：" + financialOrderResponse.getCurrency().name() +
-                            "，融数交易单查询结果：" + detailResponse.isResult());
-                    showPaymentResponse.setReturnMessage("当前不满足支付有要求");
-                }
+                showPaymentResponse.setResult(true);
+                log.info("判定权限结束：" + showPaymentResponse.getShowStatus());
             } else {
                 log.error("当前商家未开通或绑定金服机构");
                 showPaymentResponse.setReturnMessage("当前商家未开通或绑定金服机构");
