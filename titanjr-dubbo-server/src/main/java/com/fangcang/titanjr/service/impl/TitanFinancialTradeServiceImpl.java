@@ -1387,7 +1387,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                         if (isPayerValid(transOrderDTO)) {//付款方也存在
                             if (isPayeeOrg(tradeDetailRequest, transOrderDTO)) { //当前机构等于收款方
                                 transOrderDTO.setTradeType("收款");
-                                if(("141223100000056").equals(transOrderDTO.getPayeemerchant())){//有待改进,将GDP默认商家放到数据库
+                                if(("141223100000056").equals(transOrderDTO.getPayermerchant())){//有待改进,将GDP默认商家放到数据库
                                 	transOrderDTO.setTransTarget(transOrderDTO.getCreator());
                                 }else{
                                 	 transOrderDTO.setTransTarget(getTransTarget(transOrderDTO.getPayermerchant()));//付款方
