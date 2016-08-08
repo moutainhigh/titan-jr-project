@@ -48,7 +48,7 @@
 						<ul>
 						<c:if test="${commomPayMethod !=null }">
 							<li>
-								<c:forEach items="${commomPayMethod }" var="commom">
+								<c:forEach items="${commomPayMethod }" var="commom" varStatus="status">
                              <div class="paytable_payway">
                              <div class="payc_left"><label class="f_ui-radio-c3">
                                 <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${commom.bankname}">
@@ -346,8 +346,10 @@ function getRechargePayOrderNo(){
 function validate_isBlank(){
 	var inputeAmount = $("#inputeAmount").val();
 	if($.trim(inputeAmount).length<1){
+		 $("#inputeAmountError").text("充值金额不能为空");
 		return false;
 	}
+	 $("#inputeAmountError").text("");
 	return true;
 }
 
@@ -355,6 +357,7 @@ $("#inputeAmount").blur(function(){
 	var inputeAmount = $(this).val();
 	if($.trim(inputeAmount).length<1){
 		 $("#inputeAmountError").text("充值金额不能为空");
+		 return;
 	}else{
 		 $("#inputeAmountError").text("");
 	}
@@ -362,7 +365,7 @@ $("#inputeAmount").blur(function(){
 	var strArry = inputeAmount.split(".");
 	if(strArry[0].length>8){
 		$("#inputeAmountError").text("对不起，本系统支持的最大充值金额为99,999,999");
-		$(this).val("");
+		 $(this).val(""); 
 		$(this).focus();
 		return;
 	}
@@ -373,8 +376,9 @@ $("#inputeAmount").blur(function(){
 	var flag = neg.test($(this).val())||neg2.test($(this).val());
 	if(flag==false){
 		$("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
-		$(this).val("");
+		 $(this).val(""); 
 		$(this).focus();
+		return
 	}else{
 		$("#inputeAmountError").text("");
 	}

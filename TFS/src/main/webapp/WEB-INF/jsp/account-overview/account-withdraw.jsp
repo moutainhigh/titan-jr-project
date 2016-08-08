@@ -340,7 +340,7 @@
              success: function (data) {
                  if(data.code == "1"){
                 	 top.F.loading.hide();
-                     withDrawCallBack('提现申请已提交，等待银行处理。<br/>预计到账时间：2小时内', 1);
+                     withDrawCallBack('提现申请已提交，等待银行处理。<br/>预计到账时间：t+1个工作日', 1);
                      $("#flashPage").submit();//刷新页面
                      top.removeIframeDialog();
                      
