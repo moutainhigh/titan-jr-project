@@ -156,6 +156,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         try {
         	log.info("落单参数"+JSONSerializer.toJSON(orderRequest));
             OrderOperateResponse orderOperateResponse = getOrderId(orderRequest);
+            log.info("落单orderResponse返回结果:"+JSONSerializer.toJSON(orderOperateResponse));
             //测试一下
             if (orderOperateResponse != null) {
                 orderResponse.setResult(false);
@@ -269,6 +270,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                 if ( !StringUtil.isValidString(orderid) ) { //如果订单号为空，则直接生成订单号
                     OrderRequest orderRequest = convertorToTitanOrderRequest(paymentRequest);
                     orderResponse = operateRSTransOrder(orderRequest);
+                    log.info("融数落单返回结果dubbo:"+JSONSerializer.toJSON(orderResponse));
                 } else {
                     orderResponse.setOrderNo(orderid);
                     orderResponse.putSuccess();
@@ -839,7 +841,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                  if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentRequest.getPaySource())){
            		  GDPOrderResponse gDPOrderResponse =  getGDPOrderDTO(paymentRequest.getPayOrderNo());
            		  if(gDPOrderResponse.getgDPOrderDTO() !=null){//有待扩展
-           			  orderRequest.setGoodsdetail(gDPOrderResponse.getgDPOrderDTO().getGoodName());
+           			  orderRequest.setGoodsdetail(gDPOrderResponse.getgDPOrderDTO().getGoodDetail());
+           			  
            			  orderRequest.setBusinessordercode(paymentRequest.getBusinessOrderCode());
            			  orderRequest.setGoodsname("GDP付款单");
            		  }
@@ -1385,7 +1388,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                         if (isPayerValid(transOrderDTO)) {//付款方也存在
                             if (isPayeeOrg(tradeDetailRequest, transOrderDTO)) { //当前机构等于收款方
                                 transOrderDTO.setTradeType("收款");
-                                if(("141223100000056").equals(transOrderDTO.getPayeemerchant())){//有待改进,将GDP默认商家放到数据库
+                                if(("141223100000056").equals(transOrderDTO.getPayermerchant())){//有待改进,将GDP默认商家放到数据库
                                 	transOrderDTO.setTransTarget(transOrderDTO.getCreator());
                                 }else{
                                 	 transOrderDTO.setTransTarget(getTransTarget(transOrderDTO.getPayermerchant()));//付款方
@@ -1594,7 +1597,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
 			titanTransOrder.setStatusid(OrderStatusEnum.RECHARGE_IN_PROCESS.getStatus());
 			//融数下单
-			
+			log.info("本地落单参数:"+JSONSerializer.toJSON(titanTransOrder));
 			if(titanTransOrderDao.insert(titanTransOrder)>0?true:false){
             	 localAddTransOrderResponse.setTransid(titanTransOrder.getTransid());
             	 localAddTransOrderResponse.setOrderNo(titanTransOrder.getOrderid());
@@ -1735,6 +1738,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     	gDPOrderDTO.setOrderSum(orderDetailResponseDTO.getOrderSum());
     	gDPOrderDTO.setGoodName(orderDetailResponseDTO.getCommondityName());
     	gDPOrderDTO.setOrderCode(orderDetailResponseDTO.getOrderCode());
+    	gDPOrderDTO.setGoodDetail(orderDetailResponseDTO.getOrderCode()+"-"
+    	                         +orderDetailResponseDTO.getHotelName()+"-"
+    			                 +orderDetailResponseDTO.getRoomTypeName()+"-入住日期:"
+    			                 +orderDetailResponseDTO.getCheckIndate()+"-离店日期:"
+    			                 +orderDetailResponseDTO.getCheckOutDate());
     	gDPOrderResponse.setgDPOrderDTO(gDPOrderDTO);
     	gDPOrderResponse.putSuccess();
 	    

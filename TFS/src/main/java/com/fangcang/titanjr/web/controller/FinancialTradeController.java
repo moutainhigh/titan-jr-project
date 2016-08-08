@@ -43,6 +43,8 @@ import com.fangcang.titanjr.web.pojo.DefaultPayerConfig;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -275,6 +277,7 @@ public class FinancialTradeController extends BaseController {
 		
 		if(paymentRequest !=null && StringUtil.isValidString(paymentRequest.getMerchantcode()) 
                 &&StringUtil.isValidString(paymentRequest.getPayOrderNo())){
+			log.info("余额支付入参controller:"+JSONSerializer.toJSON(paymentRequest));
 			
 			FinancialOrderResponse financialOrderResponse = getFinancialOrderResponse(paymentRequest);
 			//验证
@@ -385,7 +388,7 @@ public class FinancialTradeController extends BaseController {
 			if(!WebConstant.FAIL.equals(result.get(WebConstant.RESULT))){
 				TransOrderCreateResponse transOrderCreateResponse = titanFinancialTradeService.createTitanTransOrder(paymentRequest);
 				if(!transOrderCreateResponse.isResult() || !StringUtil.isValidString(transOrderCreateResponse.getOrderNo()) ){
-					log.error("call createTitanTransOrder fail msg["+ transOrderCreateResponse.getReturnMessage()+"]");
+					log.error("call createTitanTransOrder fail msg["+ toJson(transOrderCreateResponse)+"]");
 			    	//下单失败
 					model.addAttribute(WebConstant.MSG, "创建付款单失败，请重试！");
 			    }else{
@@ -683,6 +686,7 @@ public class FinancialTradeController extends BaseController {
 		
 		//查询付款方信息
 		TitanUserBindInfoDTO titanUserBindInfoDTO = getTitanUserBindInfo(paymentRequest.getFcUserid());
+		log.info("查询付款方信息:"+toJson(titanUserBindInfoDTO));
 		if(titanUserBindInfoDTO !=null ){
 			paymentRequest.setCreator(titanUserBindInfoDTO.getUsername());
 			if(!StringUtil.isValidString(paymentRequest.getOperator())){
@@ -705,7 +709,8 @@ public class FinancialTradeController extends BaseController {
 					paymentRequest.setPayPassword(paymentRequest.getPayPassword());
 					//验证付款密码
 					boolean flag = titanFinancialUserService.checkPayPassword(paymentRequest.getPayPassword(),titanUserBindInfoDTO.getTfsuserid().toString());
-				   if(!flag){
+				    log.info("付款密码的验证结果:"+toJson(flag));
+					if(!flag){
 				   	resultMap.put(WebConstant.MSG, "付款密码错误");
 				   	return resultMap;
 				   }
@@ -721,6 +726,7 @@ public class FinancialTradeController extends BaseController {
 			orgDTO.setOrgname(paymentRequest.getRecieveOrgName());
 			orgDTO.setTitancode(paymentRequest.getRecieveTitanCode());
 			orgDTO= titanFinancialOrganService.queryOrg(orgDTO);
+			log.info("查询收款账户的结果:"+toJson(orgDTO));
 			if(orgDTO ==null){
 				resultMap.put(WebConstant.MSG, "账户不存在");
 				return resultMap;
@@ -740,6 +746,7 @@ public class FinancialTradeController extends BaseController {
 			AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
 			accountBalanceRequest.setUserid(paymentRequest.getUserid());
 			AccountBalanceResponse accountBalanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+			log.info("查询账户余额结果："+toJson(accountBalanceResponse));
 			BigDecimal balanceAccount = getBalanceAccount(accountBalanceResponse);
 			
 			//验证支付金额准确性，balanceAccount默认等于0 不会为空

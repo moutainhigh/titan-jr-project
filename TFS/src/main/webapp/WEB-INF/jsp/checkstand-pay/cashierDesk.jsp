@@ -141,7 +141,7 @@
                     <ul>
                      <c:if test="${not empty  commomPayMethod }">
                       <li>
-                          <c:forEach items="${commomPayMethod }" var="commom">
+                          <c:forEach items="${commomPayMethod }" var="commom" varStatus="status">
                              <div class="paytable_payway">
                              <div class="payc_left"><label class="f_ui-radio-c3">
                                 <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${commom.bankname}">
@@ -152,13 +152,13 @@
                                   </span></label>
                               </div>
                               <c:if test="${commom.paytype == 1 }">
-                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（企业银行）</span>
+                                  <span class="payc_title fl"  id="item-${status.index}" data-index="1">（企业银行）</span>
                               </c:if>
                               <c:if test="${commom.paytype == 2 }">
-                                  <span class="payc_title fl" id="item-${status.index }" data-index="${commom.paytype}">（个人银行）</span>
+                                  <span class="payc_title fl" id="item-${status.index }" data-index="2">（个人银行）</span>
                               </c:if>
                               <c:if test="${commom.paytype == 3 }">
-                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡）</span>
+                                  <span class="payc_title fl"  id="item-${status.index}" data-index="3">（信用卡）</span>
                               </c:if>
                              </div>
                            
@@ -168,7 +168,7 @@
                         <c:forEach items="${cashierDesk.cashierDeskItemDTOList }" var="deskItem" varStatus="status">
                             <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 }">
                                 <li>
-                                    <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank">
+                                    <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" >
                                         <div class="paytable_payway">
                                             <div class="payc_left"><label class="f_ui-radio-c3">
                                                 <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${itemBank.bankName}">
