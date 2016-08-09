@@ -27,7 +27,7 @@
         </div>
         <div class="dredge fr">
             <div class="title"><p>TITAN</p> Financial Service</div>
-            <div class="c">泰坦金融是为旅游行业量身定制的在线金融服务平台，致力于为旅游行业提供安全、高收益、定制化的金融服务，将金融服务于旅游行业相结合探索旅游行业全新的互联网金融发展模式。</div>
+            <div class="c">泰坦金融是为旅游行业量身定制的在线金融服务平台，致力于为旅行行业提供安全、高收益、定制化的金融服务。泰坦金融将金融服务与旅游行业相结合，探索行业全新的发展模式。</div>
             <c:choose>
             	<c:when test="${ orgBindStatus==0}">
             		<div class="btn1">
