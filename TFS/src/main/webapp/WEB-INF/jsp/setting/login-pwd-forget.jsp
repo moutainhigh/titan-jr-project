@@ -50,7 +50,8 @@
 	</div>
 </div>
 <!--弹窗白色底-->
-<jsp:include page="/comm/static-js.jsp"></jsp:include>
+<script type="text/javascript" src="<%=cssSaasPath%>/js/password.js"></script>
+<script type="text/javascript" src="<%=basePath%>/js/jquery.cookie.js"></script>
 <script type="text/javascript">
 F.UI.scan();
 var passUserloginForm = new validform('.pass_userlogin',{
