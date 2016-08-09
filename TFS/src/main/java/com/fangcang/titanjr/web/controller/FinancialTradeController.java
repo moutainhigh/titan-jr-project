@@ -390,7 +390,12 @@ public class FinancialTradeController extends BaseController {
 				if(!transOrderCreateResponse.isResult() || !StringUtil.isValidString(transOrderCreateResponse.getOrderNo()) ){
 					log.error("call createTitanTransOrder fail msg["+ toJson(transOrderCreateResponse)+"]");
 			    	//下单失败
-					model.addAttribute(WebConstant.MSG, "创建付款单失败，请重试！");
+					if(StringUtil.isValidString(transOrderCreateResponse.getReturnMessage())){
+						model.addAttribute(WebConstant.MSG, transOrderCreateResponse.getReturnMessage());
+					}else{
+						model.addAttribute(WebConstant.MSG, "创建单失败,请重新下单！");
+					}
+					
 			    }else{
 			    	//设置支付方式
 			    	if(StringUtil.isValidString(paymentRequest.getLinePayType())){

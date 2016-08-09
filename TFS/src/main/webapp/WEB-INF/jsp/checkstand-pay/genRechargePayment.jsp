@@ -46,7 +46,7 @@
 	<input name="signMsg" type="hidden" value="${rechargeDataDTO.signMsg}"/>
 </form>
 </c:if>
-<form action="<%=basePath%>/account/error_cashier.shtml" id="errror_cashier" method="post">
+<form action="<%=basePath%>/account/error_cashier.action" id="errror_cashier" method="post">
   <input name="msg" type="hidden" value="${msg}"/>
 </form>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>

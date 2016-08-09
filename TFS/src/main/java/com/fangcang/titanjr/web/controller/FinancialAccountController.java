@@ -849,7 +849,8 @@ public class FinancialAccountController extends BaseController {
 	} 
 	
 	@RequestMapping("/error_cashier")
-	public String returnErrorPage(String msg){
+	public String returnErrorPage(String msg,Model model){
+		model.addAttribute("msg", msg);
 		return "checkstand-pay/cashierDeskError";
 	}
 	
