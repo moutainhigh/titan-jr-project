@@ -1,9 +1,11 @@
 package com.fangcang.titanjr.rs.response;
 
+import java.io.Serializable;
+
 /**
  * Created by zhaoshan on 2016/4/8.
  */
-public class BaseResponse {
+public class BaseResponse implements Serializable {
 
     private boolean isSuccess = false;
     private String returnCode;
