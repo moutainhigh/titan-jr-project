@@ -171,7 +171,7 @@
                                     <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
                                         <div class="paytable_payway">
                                             <div class="payc_left"><label class="f_ui-radio-c3">
-                                                <input name="r2" type="radio" data-index="${o_status.index }-${i_status.index} class="bankName" value="${itemBank.bankName}">
+                                                <input name="r2" type="radio" data-index="${o_status.index }-${i_status.index}" class="bankName" value="${itemBank.bankName}">
                                                 <i></i>
                                                 <span class="paycleft_img">
                                                     <img src="<%=basePath%>/banks/${itemBank.bankName}.jpg" alt="${itemBank.bankMark}"
@@ -811,6 +811,7 @@
     	if(typeof(bankInfo) == "undefined"){
     		bankInfo =null;
          }
+    	alert(bankInfo);
     	var payPassword = null;
     	if("undefined" != typeof PasswordStr2){
     		/* payPassword = rsaData(PasswordStr2.returnStr()); */
