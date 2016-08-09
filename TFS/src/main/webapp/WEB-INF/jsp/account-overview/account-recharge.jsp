@@ -71,13 +71,13 @@
                           </c:forEach>
 							</li>
 							</c:if>
-							     <c:forEach items="${cashierDesk.cashierDeskItemDTOList }" var="deskItem" varStatus="status">
+							     <c:forEach items="${cashierDesk.cashierDeskItemDTOList }" var="deskItem" varStatus="o_status">
                             <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 }">
                                 <li>
-                                    <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank">
+                                    <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
                                         <div class="paytable_payway">
                                             <div class="payc_left"><label class="f_ui-radio-c3">
-                                                <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${itemBank.bankName}">
+                                                <input name="r2" type="radio" data-index="${o_status.index }-${i_status.index}" class="bankName" value="${itemBank.bankName}">
                                                 <i></i>
                                                 <span class="paycleft_img">
                                                     <img src="<%=basePath%>/banks/${itemBank.bankName}.jpg" alt="${itemBank.bankMark}"
@@ -85,13 +85,13 @@
                                                 </span></label>
                                             </div>
                                             <c:if test="${deskItem.itemType == 1 }">
-                                                <span class="payc_title fl"  id="item-${status.index}" data-index="${deskItem.itemType}">（企业银行）</span>
+                                                <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（企业银行）</span>
                                             </c:if>
                                             <c:if test="${deskItem.itemType == 2 }">
-                                                <span class="payc_title fl" id="item-${status.index }" data-index="${deskItem.itemType}">（个人银行）</span>
+                                                <span class="payc_title fl" id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（个人银行）</span>
                                             </c:if>
                                             <c:if test="${deskItem.itemType == 3 }">
-                                                <span class="payc_title fl"  id="item-${status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
+                                                <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
                                             </c:if>
                                         </div>
                                     </c:forEach>
