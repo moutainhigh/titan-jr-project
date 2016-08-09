@@ -1,9 +1,9 @@
 package com.fangcang.titanjr.rs.manager.impl;
 
-import com.fangcang.redis.dao.LogDataDao;
-import com.fangcang.redis.entity.LogData;
-import com.fangcang.titanjr.rs.response.BaseResponse;
-import com.fangcang.titanjr.rs.task.LogRecordTask;
+import java.lang.reflect.Method;
+import java.util.Date;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.JoinPoint;
@@ -11,8 +11,10 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.lang.reflect.Method;
-import java.util.Date;
+import com.fangcang.redis.dao.LogDataDao;
+import com.fangcang.redis.entity.LogData;
+import com.fangcang.titanjr.rs.response.BaseResponse;
+import com.fangcang.titanjr.rs.task.LogRecordTask;
 
 /**
  * 调用日志记录的manger
@@ -59,10 +61,10 @@ public class InvokeLogRecordManager {
         logData.setIndex("titanjr-rs-app:" + method.getName());
         logData.setAdditional("titanjr");
         if (joinPoint.getArgs().length > 0) {
-            logData.setRequest(joinPoint.getArgs()[0].toString());
+            logData.setRequest(ToStringBuilder.reflectionToString(joinPoint.getArgs()[0]));
         }
         if (null != retVal) {
-            logData.setResponse(retVal.toString());
+            logData.setResponse(ToStringBuilder.reflectionToString(retVal));
         }
         logData.setStatus("1");
         if (retVal instanceof BaseResponse){
