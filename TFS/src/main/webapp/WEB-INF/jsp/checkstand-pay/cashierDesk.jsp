@@ -811,7 +811,6 @@
     	if(typeof(bankInfo) == "undefined"){
     		bankInfo =null;
          }
-    	alert(bankInfo);
     	var payPassword = null;
     	if("undefined" != typeof PasswordStr2){
     		/* payPassword = rsaData(PasswordStr2.returnStr()); */
