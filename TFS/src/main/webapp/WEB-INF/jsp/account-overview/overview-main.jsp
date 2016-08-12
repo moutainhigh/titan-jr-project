@@ -662,6 +662,7 @@
 			new DateSection('#date_select_5',{minDate:dateStr,maxDate:''});
 		}
 
+		var partner_dataSource=null;
 		//初始化联想查询框
 		function initAutoSelectPartner() {
 			$.ajax({
@@ -671,6 +672,7 @@
 		        	
 		        	if(data && data.organDTOList)
 		        	{
+		        		partner_dataSource = data;
 		        		var dataArr = new Array();
 		        		for(i = 0 ; i <data.organDTOList.length;i++)
 		        		{
@@ -817,6 +819,16 @@
 			});
 		}
 
+		function validate_partner(partnerName){
+			for(var i = 0 ; i <partner_dataSource.organDTOList.length;i++)
+    		{
+    			if(partnerName == partner_dataSource.organDTOList[i].orgName){
+    				return true;
+    			}
+    		}
+			return false;
+		}
+		
 		function getQueryOrderData(index){
 			var startDate = $("#startDate_" + index ).attr('data-prev');
 			var endDate = $("#endDate_" + index ).attr('data-prev');
@@ -825,7 +837,11 @@
 			if (index == 1 || index == 2 || index == 3){
 				var partnerName = $("#partner_" + index ).val();
 				if(partnerName.length>0){
-					partner = $("#partner_" + index ).attr('data-id');
+					if(validate_partner(partnerName)==true){
+						partner = $("#partner_" + index ).attr('data-id');
+					}else{//随便输入的账户，
+						partner="lksdjlsk12";
+					}
 				}
 			}
 			var operator = "";
