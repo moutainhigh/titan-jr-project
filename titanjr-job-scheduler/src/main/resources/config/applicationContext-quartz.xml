@@ -14,6 +14,7 @@
 			<list>
 				  <ref bean="unFreezeTransOrderTrigger" />
 				  <ref bean="bindBankCardJobTrigger" />
+				  <ref bean="repairGDPTransferTrigger" />
 			</list>
 		</property>
 	</bean>
@@ -34,11 +35,21 @@
 		<property name="jobDetail" ref="bindBankCardJobSchedule" />
 		<property name="cronExpression">
 			<!-- 测试配置 -->
-			<value>0 0 8 * * ?</value>
+			<value>0 0 9 * * ?</value>
 			<!-- 发布配置 每3分钟执行一次 -->
 			<!--<value>0 0/30 * * * ?</value>-->
 		</property>
 	</bean>
+	
+	<bean id="repairGDPTransferTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="repairGDPTransferJobSchedule" />
+		<property name="cronExpression">
+			<!-- 测试配置 -->
+			<value>0 5 0 * * ?</value>
+			<!-- 发布配置 每3分钟执行一次 -->
+			<!--<value>0 0/30 * * * ?</value>-->
+		</property>
+	</bean> 
 	
 	<!-- 定义调用对象和调用对象的方法 -->
 	<bean id="unFreezeTransOrderSchedule"
@@ -75,6 +86,23 @@
 		  </map>
 	    </property>
 	</bean>
+	
+	 <bean id="repairGDPTransferJobSchedule" 
+	      class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.fangcang.titanjr.job.RepairGDPTransferJob" />
+		<property name="jobDataAsMap">
+		  <map>
+		  		<entry key="TitanFinancialTradeService">
+		  			<ref bean="titanFinancialTradeService"/>
+		  		</entry>
+			  <entry key="titanJobExecutor">
+				  <ref bean="titanJobExecutor"/>
+			  </entry>
+		  </map>
+	    </property>
+	</bean> 
+	
+	
 	
 
 </beans>

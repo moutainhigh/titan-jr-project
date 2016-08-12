@@ -181,4 +181,35 @@
   
   </select>
   
+   <select id="queryOrderByTypeAndStatus" parameterType="com.fangcang.titanjr.dto.request.RepairTransferRequest"
+            resultType="com.fangcang.titanjr.dto.bean.RepairTransferDTO">
+          select 
+             transorder.transid,
+             transorder.isEscrowedPayment,
+             transorder.escrowedDate,
+             transorder.orderid,
+             transorder.tradeamount,
+             transorder.payeemerchant,
+             transorder.payermerchant,
+             transorder.userrelateid as receiveUserId,
+             transorder.productid,
+             transorder.userid,
+             transorder.constid,
+             transfer.transorderid,
+             transfer.amount,
+             transfer.intermerchantcode,
+             transfer.userrelateid,
+             transfer.interproductid,
+             transfer.userfee,
+             transfer.merchantcode,
+             transfer.transfertype,
+             transfer.conditioncode
+             from t_tfs_transorder transorder
+                  inner join t_tfs_orderpayreq orderpay on orderpay.transorderid = transorder.transid
+                  left join t_tfs_transferreq transfer on transorder.transid=transfer.transorderid
+                  where transorder.payermerchant = #{payermerchant} and transorder.statusid=#{status} 
+                  and transfer.status!=#{transferStatus}
+                  and orderpay.reqstatus=#{orderPayStatus}
+    </select>
+  
 </mapper>

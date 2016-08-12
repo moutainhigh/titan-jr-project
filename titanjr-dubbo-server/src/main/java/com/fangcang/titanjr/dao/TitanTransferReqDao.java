@@ -4,6 +4,10 @@ import java.util.List;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
+import com.fangcang.titanjr.dto.bean.RepairTransferDTO;
+import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.RepairTransferRequest;
 import com.fangcang.titanjr.entity.TitanTransferReq;
 import com.fangcang.titanjr.entity.parameter.TitanTransferReqParam;
 
@@ -15,4 +19,6 @@ public interface TitanTransferReqDao {
 	int updateTitanTransferReqByTransorderid(TitanTransferReq titanTransferReq)throws DaoException;
 	
 	List<TitanTransferReq> queryTitanTransferReq(TitanTransferReqParam titanTransferReqParam);
+	
+	List<RepairTransferDTO> queryTitanTransOrderByStatus(RepairTransferRequest repairTransferRequest);
 }
