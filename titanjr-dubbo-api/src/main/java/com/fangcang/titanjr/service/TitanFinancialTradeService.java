@@ -165,4 +165,16 @@ public interface TitanFinancialTradeService {
 	 */
 	public String getSign(RechargeResultConfirmRequest rechargeResultConfirmRequest);
 	
+	/**
+	 * 获取订单
+	 * @param repairTransferRequest
+	 * @return
+	 */
+	public RepairTransferResponse getTransferOrders(RepairTransferRequest repairTransferRequest);
+	
+	/**
+	 * 修复GDP转账失败的单
+	 */
+	public void repairTransferOrder();
+	
 }

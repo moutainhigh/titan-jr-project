@@ -7,6 +7,7 @@ import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.RepairTransferRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.response.TransOrderResponse;
 import com.fangcang.titanjr.entity.TitanTransOrder;
@@ -87,4 +88,6 @@ public class TitanTransOrderDaoImpl extends GenericDAOMyBatisImpl implements Tit
             throw new DaoException(e);
         }
     }
+    
+
 }

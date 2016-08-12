@@ -57,6 +57,7 @@ import com.fangcang.titanjr.dto.bean.OrderTypeEnum;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
+import com.fangcang.titanjr.dto.bean.RepairTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
@@ -136,6 +137,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     
     @Resource 
     private TitanFinancialOrganService titanFinancialOrganService;
+    
+    @Resource 
+    private TitanFinancialAccountService titanFinancialAccountService;
     
     @Resource 
     private TitanPayMethodConfigDao titanPayMethodDao;
@@ -229,10 +233,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                              //充值订单不为空，则判断充值单的状态，如果是失败则生成系统单号
                              if (titanOrderPayreq != null) {
                             	 log.info("支付单查询结果:"+JSONSerializer.toJSON(titanOrderPayreq));
-                                 if (ReqstatusEnum.Status_2.getStatus() == titanOrderPayreq.getReqstatus()) { //充值状态成功则直接返回
+                                 if (ReqstatusEnum.RECHARFE_SUCCESS.getStatus() == titanOrderPayreq.getReqstatus()) { //充值状态成功则直接返回
                                      orderResponse.putErrorResult("充值成功，请勿重复充值");
                                      return orderResponse;
-                                 } else if (ReqstatusEnum.Status_1.getStatus() == titanOrderPayreq.getReqstatus()) {//处理中判断落单时间和过期时间
+                                 } else if (ReqstatusEnum.RECHARFE_IN_PROCESS.getStatus() == titanOrderPayreq.getReqstatus()) {//处理中判断落单时间和过期时间
                                      //获取当前时间与订单时间的秒数差
                                      long times = DateUtil.diffSecondByTime(titanOrderPayreq.getOrderTime(), DateUtil.sdf5.format(new Date()));
                                      if ( times < this.getExpireTime(titanOrderPayreq)) {//未过期 获取当前单号
@@ -401,7 +405,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                         	if(titanTransfer ==null){//判断转账是否已经进行
                         		flag = titanTransferReqDao.insert(titanTransferReq) > 0 ? true : false;
                         	}else{
-                        		if(TransferReqEnum.Status_2.getStatus()!=titanTransfer.getStatus().intValue()){
+                        		if(TransferReqEnum.TRANSFER_SUCCESS.getStatus()!=titanTransfer.getStatus().intValue()){
                         			titanTransferReq.setTransferreqid(titanTransfer.getTransferreqid());
                         			flag = titanTransferReqDao.update(titanTransferReq) > 0 ? true : false;
                         		}
@@ -411,10 +415,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                                 log.info("转账结果"+JSON.toJSONString(accountTransferResponse));
                                 if (accountTransferResponse != null) {
                                     if (CommonConstant.OPERATE_SUCCESS.equals(accountTransferResponse.getOperateStatus())) {
-                                        titanTransferReq.setStatus(TransferReqEnum.Status_2.getStatus());
+                                        titanTransferReq.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
                                         accTradeResponse.putSuccess();
                                     } else {
-                                    	titanTransferReq.setStatus(TransferReqEnum.Status_3.getStatus());
+                                    	titanTransferReq.setStatus(TransferReqEnum.TRANSFER_FAIL.getStatus());
                                         accTradeResponse.putErrorResult(accountTransferResponse.getRetcode(), accountTransferResponse.getRetmsg());
                                     	//转账是否成功，重复佐证  待确认
                                     	ROPErrorEnum ropErrorEnum = ROPErrorEnum.getROPErrorEnumByCode(accountTransferResponse.getReturnCode());
@@ -424,7 +428,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                                         	accountTransferFlowRequest.setProductId(accountRequest.getProductid());
                                         	accountTransferFlowRequest.setUserId(accountRequest.getUserid());
                                         	if(this.confirmTransAccountSuccess(accountTransferFlowRequest)){//确认转账成功
-                                        		  titanTransferReq.setStatus(TransferReqEnum.Status_2.getStatus());
+                                        		  titanTransferReq.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
                                                   accTradeResponse.putSuccess();
                                         	 }
                                         }
@@ -678,7 +682,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                 }
                 titanTransferReq.setUserid(transferRequest.getUserid());
                 titanTransferReq.setUserrelateid(transferRequest.getUserrelateid());
-                titanTransferReq.setStatus(TransferReqEnum.Status_2.getStatus());
+                titanTransferReq.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
                 if (transferRequest.getConditioncode() != null) {
                     titanTransferReq.setConditioncode(Integer.parseInt(transferRequest.getConditioncode().getKey()));
                 }
@@ -712,7 +716,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                     } else {
                         TitanOrderPayreq titanOrderPayreq = convertorToTitanOrderPayReq(rechargeRequest);
                         if (titanOrderPayreq != null) {
-                            titanOrderPayreq.setReqstatus(ReqstatusEnum.Status_1.getStatus());
+                            titanOrderPayreq.setReqstatus(ReqstatusEnum.RECHARFE_IN_PROCESS.getStatus());
                             titanOrderPayreqDao.insert(titanOrderPayreq);
                         }
                     }
@@ -1309,7 +1313,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 								 TitanOrderPayreq titanOrderPayreq = convertorToTitanOrderPayReq(rechargeRequest);
 					             if(rechargeRequest.getTransorderid()!=null){
 					                titanOrderPayreq.setTransorderid(rechargeRequest.getTransorderid());
-						            titanOrderPayreq.setReqstatus(ReqstatusEnum.Status_1.getStatus());
+						            titanOrderPayreq.setReqstatus(ReqstatusEnum.RECHARFE_IN_PROCESS.getStatus());
 			                        titanOrderPayreqDao.insert(titanOrderPayreq);
 					             }
 							}catch(Exception e){
@@ -1800,6 +1804,107 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     		}
     		return stringBuffer.toString();
 	}
+
+	@Override
+	public RepairTransferResponse getTransferOrders(
+			RepairTransferRequest repairTransferRequest) {
+		RepairTransferResponse repairTransferResponse = new RepairTransferResponse();
+		if(!StringUtil.isValidString(repairTransferRequest.getPayermerchant())
+				&& !StringUtil.isValidString(repairTransferRequest.getStatus())){
+			repairTransferResponse.setResult(false);
+			repairTransferResponse.setReturnMessage("参数错误");
+			return repairTransferResponse;
+		}
+		
+		List<RepairTransferDTO> titanTransferDTOList= titanTransferReqDao.queryTitanTransOrderByStatus(repairTransferRequest);
+		repairTransferResponse.setResult(true);
+		repairTransferResponse.setTitanTransferDTOList(titanTransferDTOList);
+		return repairTransferResponse;
+	}
+
+	@Override
+	public void repairTransferOrder() {
+		RepairTransferRequest repairTransferRequest = new RepairTransferRequest();
+    	repairTransferRequest.setStatus(OrderStatusEnum.ORDER_FAIL.getStatus());
+    	repairTransferRequest.setTransferStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
+    	repairTransferRequest.setOrderPayStatus(ReqstatusEnum.RECHARFE_SUCCESS.getStatus());
+    	repairTransferRequest.setPayermerchant("141223100000056");
+    	RepairTransferResponse response = titanFinancialTradeService.getTransferOrders(repairTransferRequest);
+    	
+    	if(!response.isResult()){
+    		log.info(response.getReturnMessage());
+    		return;
+    	}
+    	
+    	List<RepairTransferDTO> repairTransferDTOList = response.getTitanTransferDTOList();
+    	if(repairTransferDTOList !=null && repairTransferDTOList.size()>0){
+    		for(RepairTransferDTO repairTransferDTO :repairTransferDTOList){
+    			TransferRequest transferRequest = new TransferRequest();
+        		transferRequest.setTransfertype(TransfertypeEnum.BRANCH_TRANSFER);								//1:子账户转账				
+        		transferRequest.setConditioncode(ConditioncodeEnum.ADD_OEDER);								//1:落单
+        		transferRequest.setRequestno(OrderGenerateService.genResquestNo());									//业务订单号
+        		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));				//请求时间
+        		transferRequest.setAmount(repairTransferDTO.getTradeamount().toString());										//金额
+        		if(repairTransferDTO.getUserfee() !=null){//GDP付款的费率计算问题
+        			transferRequest.setUserfee(repairTransferDTO.getUserfee().toString());
+        		}
+        		transferRequest.setOrderid(repairTransferDTO.getOrderid());
+        		transferRequest.setUserid(repairTransferDTO.getUserid());                                     //转出方用户Id	
+        		transferRequest.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);							//转出方机构号
+        		transferRequest.setProductId(repairTransferDTO.getProductid());							//转出方产品号
+        			
+        		transferRequest.setIntermerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);					//	接收方机构码
+        		transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);						//	接收方产品号
+        		transferRequest.setUserrelateid(repairTransferDTO.getPayeemerchant());	                    //接收方用户Id	
+    		
+        		try {
+        			TransferResponse  transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
+				    if(!transferResponse.isResult()){
+				    	return ;
+				    }
+				    
+				    OrderStatusEnum orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
+				    //是否需要冻结
+				    if(repairTransferDTO.getIsEscrowedPayment()==0){
+				    	RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
+				    	rechargeResultConfirmRequest.setOrderNo(repairTransferDTO.getOrderid());
+				    	rechargeResultConfirmRequest.setPayAmount(transferRequest.getAmount());
+				    	rechargeResultConfirmRequest.setUserid(transferRequest.getUserrelateid());
+				    	rechargeResultConfirmRequest.setOrderAmount(transferRequest.getAmount());
+				    	FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService.freezeAccountBalance(rechargeResultConfirmRequest);
+				    	orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
+				    	if(!freezeAccountBalanceResponse.isFreezeSuccess()){//冻结不成功
+				    		orderStatusEnum = OrderStatusEnum.FREEZE_FAIL;
+				    		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(repairTransferDTO.getOrderid(), "冻结失败", OrderExceptionEnum.Freeze_Insert, "");
+						    titanOrderService.saveOrderException(orderExceptionDTO);
+						}
+						log.info("修改单:"+JSONSerializer.toJSON(orderStatusEnum));
+				    }
+				   //修改订单
+				    this.updateTransOrder(repairTransferDTO.getTransid(), orderStatusEnum);
+				    
+        		} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		   
+    		}
+    		
+
+//    		transferRequest.s
+    	}
+		
+	}
 	
+	 private void updateTransOrder(Integer transId,OrderStatusEnum orderStatusEnum){
+	    	TransOrderDTO transOrderDTO = new TransOrderDTO();
+			transOrderDTO.setStatusid(orderStatusEnum.getStatus());
+			transOrderDTO.setTransid(transId);
+			boolean updateStatus = titanOrderService.updateTransOrder(transOrderDTO);
+			if(!updateStatus){
+				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transId.toString(), "修改订单失败", OrderExceptionEnum.TransOrder_update, orderStatusEnum.getStatus());
+			    titanOrderService.saveOrderException(orderExceptionDTO);
+			}
+	    }
 	
 }

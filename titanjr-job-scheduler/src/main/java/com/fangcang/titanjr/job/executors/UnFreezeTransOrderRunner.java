@@ -19,7 +19,7 @@ import com.fangcang.titanjr.service.TitanFinancialAccountService;
  */
 public class UnFreezeTransOrderRunner implements Runnable {
 	
-	 private static final Log log = LogFactory.getLog(UnFreezeTransOrderRunner.class);
+	private static final Log log = LogFactory.getLog(UnFreezeTransOrderRunner.class);
 	
 	private TitanFinancialAccountService titanFinancialAccountService;
 	

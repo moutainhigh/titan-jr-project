@@ -149,7 +149,7 @@ public class FinancialTradeController extends BaseController {
                 			boolean flag = validateOrderIsSuccess(transOrderDTO);
                 			log.info("订单是否被执行:"+flag);
                 	        if(flag){    
-                	        	int row = titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.Status_2.getStatus()+"");
+                	        	int row = titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.RECHARFE_SUCCESS.getStatus()+"");
                 	        	if(row<1){
                 	        		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "充值成功 修改充值单失败", OrderExceptionEnum.OrderPay_Update, JSON.toJSONString(orderNo));
                 	        		titanOrderService.saveOrderException(orderExceptionDTO);
@@ -171,7 +171,7 @@ public class FinancialTradeController extends BaseController {
                     	        		//冻结操作,如果冻结失败该进行什么操作,
                     	        		if(WebConstant.FREEZE_ORDER.equals(transOrderDTO.getIsEscrowedPayment())){//需要进行冻结操作
                     	        			log.info("开始冻结:"+transferRequest);
-                    	        			boolean freezeSuccess = freezeAccountBalance(transferRequest,orderNo);
+                    	        			boolean freezeSuccess = this.freezeAccountBalance(transferRequest,orderNo);
                     	        			log.info("冻结结果:"+freezeSuccess);
                         					//修改订单状态
                         					if(freezeSuccess){//冻结成功改变订单状态
@@ -210,7 +210,7 @@ public class FinancialTradeController extends BaseController {
                 	        		titanOrderService.saveOrderException(orderExceptionDTO);
         						}
                 	        }else{//充值失败
-                	        	titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.Status_3.getStatus()+"");
+                	        	titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.RECHARFE_FAIL.getStatus()+"");
                 	        	this.updateOrderStatus(transOrderDTO.getTransid(),OrderStatusEnum.RECHARGE_FAIL);
                 	        }
 					}
@@ -591,7 +591,7 @@ public class FinancialTradeController extends BaseController {
 		if(titanTransferDTOList !=null && titanTransferDTOList.size()>0){
 			for(TitanTransferDTO transferDTO : titanTransferDTOList){
 				if(transferDTO.getStatus() !=null){
-					if(TransferReqEnum.Status_2.getStatus()==transferDTO.getStatus().intValue()){
+					if(TransferReqEnum.TRANSFER_SUCCESS.getStatus()==transferDTO.getStatus().intValue()){
 						return false;
 					}
 				}

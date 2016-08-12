@@ -88,5 +88,12 @@ public interface TitanOrderService {
 	 * @author fangdaikang
 	 */
 	public boolean saveOrderException(OrderExceptionDTO orderExceptionDTO);
+	
+	/**
+	 * 修改转账单的状态
+	 * @param transferDTO
+	 * @return
+	 */
+	public boolean updateTransferOrder(TitanTransferDTO transferDTO);
 
 }

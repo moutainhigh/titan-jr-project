@@ -126,90 +126,7 @@
                    </where>
                    
      </select>
-<!-- 
-    <select id="queryOrderList" resultType="com.fangcang.titanjr.entity.TitanTransOrder"
-            parameterType="com.fangcang.titanjr.entity.parameter.TitanTransOrderParam">
-        select o.* 
-        <choose>
-            <when test="status ==3">
-                  ,p.bankInfo
-                from
-                  t_tfs_transorder o
-                inner join
-                  t_tfs_orderpayreq p
-                on
-                  o.transid = p.transorderid
-            </when>
-            <when test="status ==4">
-                  ,w.bankname,w.bankcode
-                from
-                  t_tfs_transorder o
-                inner join
-                  t_tfs_withdrawreq w
-                on
-                  o.transid = w.transorderid
-            </when>
-            <otherwise>
-                from t_tfs_transorder o
-            </otherwise>
-        </choose>
-        <where>
-            1 = 1
-            <if test="userid != null">
-                and (payeemerchant = #{userid} or payermerchant =#{userid} )
-            </if>
-            <if test="userorderid != null">
-                and (userorderid = #{userorderid})
-            </if>
-            <if test="status ==1">
-                and payermerchant =#{userid}
-                <if test="partner != null">
-                    and payeemerchant = #{partner}
-                </if>
-            </if>
-            <if test="status ==2">
-                and payeemerchant =#{userid}
-                <if test="partner != null">
-                    and payermerchant = #{partner}
-                </if>
-            </if>
-            <if test="status ==3">  
-              and transordertype==1 and statusid=8
-            </if>
-            <if test="status ==4">
-              and transordertype=2 and statusid=8
-            </if> 
-            <if test="status==0">
-                and (((transordertype=1 or transordertype=2) and statusid =8) or transordertype=3)
-            </if>
-            <if test="status==0 and partner != null">
-                and ((payermerchant=#{userid} and payeemerchant=#{partner}) or 
-                (payeemerchant = #{userid} and payermerchant=#{partner}))
-            </if>
-            <if test="startTime !=null">
-                <![CDATA[ and o.createtime >= #{startTime}  ]]>
-            </if>
-            <if test="endTime !=null">
-                <![CDATA[and o.createtime <=#{endTime}  ]]>
-            </if>
-            <if test="creator !=null">
-                <![CDATA[and o.creator LIKE concat('%',#{creator},'%') ]]>
-            </if>
-            <if test="tradeamount !=null">
-                <![CDATA[and o.tradeamount = #{tradeamount} ]]>
-            </if>
-            <if test="businessordercode !=null">
-                and businessordercode = #{businessordercode}
-            </if>
-            <if test="isEscrowedPayment !=null">
-                and isEscrowedPayment = #{isEscrowedPayment}
-            </if>
-            <if test="transordertype !=null and status!=0">
-               and transordertype=#{transordertype}
-            </if>
-          
-        </where>
-    </select> -->
+     
     <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanTransOrder" useGeneratedKeys="true"
             keyProperty="transid">
     insert into t_tfs_transorder (transid, constid, userid, 
@@ -315,5 +232,5 @@
         </where>
         order by createtime desc
     </select>
-
+    
 </mapper>

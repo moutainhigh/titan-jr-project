@@ -131,7 +131,7 @@ public class TitanFinancialUserServiceTest extends SpringTest {
     
 //   @Test
     public void testOrder(){
-    	titanOrderService.updateTitanOrderPayreq("2016061711232000001",ReqstatusEnum.Status_2.getStatus()+"");
+    	titanOrderService.updateTitanOrderPayreq("2016061711232000001",ReqstatusEnum.RECHARFE_SUCCESS.getStatus()+"");
     }
     
 //    @Test

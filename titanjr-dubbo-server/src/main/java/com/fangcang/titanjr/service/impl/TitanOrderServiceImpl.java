@@ -234,5 +234,17 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean updateTransferOrder(TitanTransferDTO transferDTO) {
+		TitanTransferReq titanTransferReq = new TitanTransferReq();
+		titanTransferReq.setTransferreqid(transferDTO.getTransferreqid());
+		titanTransferReq.setStatus(transferDTO.getStatus());
+		int row = titanTransferReqDao.update(titanTransferReq);
+		if(row<1){
+			return false;
+		}
+		return true;
+	}
 	
 }

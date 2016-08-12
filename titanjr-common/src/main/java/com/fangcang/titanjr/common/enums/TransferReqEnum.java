@@ -1,8 +1,8 @@
 package com.fangcang.titanjr.common.enums;
 
 public enum TransferReqEnum {
-	Status_1(1,"处理中"),
-    Status_2(2,"成功"), Status_3(3,"失败");
+	TRANSFER_IN_PROCESS(1,"处理中"),
+	TRANSFER_SUCCESS(2,"成功"), TRANSFER_FAIL(3,"失败");
 
     private int status;
     private String statusMsg;
