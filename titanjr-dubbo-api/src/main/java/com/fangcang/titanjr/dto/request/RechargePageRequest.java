@@ -54,7 +54,7 @@ public class RechargePageRequest extends BaseRequestDTO {
     //单价
     private String unitprice;
 
-    //支付人账号
+    //客户识别号
     private String payerAcount;
 
     //支付人姓名
@@ -86,7 +86,8 @@ public class RechargePageRequest extends BaseRequestDTO {
 
     //扩展字段2
     private String expand2;
-
+    
+    
     //签名类型
     private SignTypeEnum signType = SignTypeEnum.MD5;
 

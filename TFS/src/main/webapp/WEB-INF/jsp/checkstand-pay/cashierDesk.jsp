@@ -160,6 +160,14 @@
                               <c:if test="${commom.paytype == 3 }">
                                   <span class="payc_title fl"  id="item-${status.index}" data-index="3">（信用卡）</span>
                               </c:if>
+                              <c:if test="${commom.bankname=='cmbc'}">
+                                    <div class="clear"></div>
+								    <div class="payc_ms">
+									     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
+									     <input type="text" class="text w_185" placeholder="请输入企业银行客户号" id="customNo-${status.index}">
+								    </div>
+                               </c:if>
+                              
                              </div>
                            
                           </c:forEach>
@@ -187,6 +195,13 @@
                                             <c:if test="${deskItem.itemType == 3 }">
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
                                             </c:if>
+                                            <c:if test="${itemBank.bankName=='cmbc'}">
+				                                    <div class="clear"></div>
+												    <div class="payc_ms">
+													     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
+													     <input type="text" class="text w_185" placeholder="请输入企业银行客户号" id="customNo-${o_status.index }-${i_status.index}">
+												    </div>
+			                                 </c:if>
                                         </div>
                                     </c:forEach>
                                 </li>
@@ -226,6 +241,7 @@
     <input name="escrowedDate" id="escrowedDate" type="hidden" value="${escrowedDate}">
     <input name="businessOrderCode" id="businessOrderCode" type="hidden" value="${businessOrderCode}">
     <input name="notifyUrl" id="notifyUrl" type="hidden" value="${notifyUrl}">
+       <input name="payerAcount" id="payerAcount" type="hidden" value="">
   </form>
 </div>
 
@@ -746,6 +762,7 @@
     		$("#recieveTitanCode").val(pay_date.recieveTitanCode);
     		$("#bankInfo").val(pay_date.bankInfo);
     		$("#linePayType").val(pay_date.linePayType);
+    		$("#payerAcount").val(pay_date.payerAccount)
     		$("#onlinePaymentForm").submit();
     	}  
     }
@@ -821,6 +838,26 @@
     	if("undefined" != typeof itemType){
     		linePayType =   $("#item-"+itemType).attr("data-index");
     	}
+    	
+    	var payerAccount = null;
+    	var value=$('input:radio[name=r2]:checked').val();
+    	if(value=='cmbc'){
+    		var dataIndex = $('input:radio[name=r2]:checked').attr("data-index");
+    		payerAccount = $("#customNo-"+dataIndex).val();
+    		if(payerAccount.length<1){
+    			  new top.createConfirm({
+    		            title:'提示',
+    		            padding: '20px 20px 40px',
+    		            okValue : '关闭',
+    		            content : '民生银行客户识别号不能为空',
+    		            skin : 'saas_confirm_singlebtn',
+    		            ok : function(){
+    		            },
+    		            cancel: false,
+    		        });
+    			  return ;
+    		};
+    	}
     	var data={
     	    transferAmount:transferAmount,	
     	    payAmount:payAmount,
@@ -829,6 +866,7 @@
     	    bankInfo:bankInfo,
     	    payPassword:payPassword,
     	    linePayType:linePayType,
+    	    payerAccount:payerAccount,
     	};
     	return data;
     }
@@ -869,6 +907,37 @@
     	}else{
     		 $("#reTitanCodeError").text("");
     	}
+    });
+    
+    //判断如果是民生银行出现下拉框
+    $('.paytable_payway input').on('change',function(){
+    	var _this=$(this);
+    	var value=$('input:radio[name=r2]:checked').val();
+    	if(value=='cmbc'){
+    		_this.parents('.paytable_payway').find('.payc_ms').slideDown();
+    	}else{
+    		$('.paytable_payway').find('.payc_ms').slideUp();
+    	}
+    	/* if(value=="cmbc"){
+    		$.ajax({
+    	        dataType : 'html',
+    	        context: document.body,
+    	        url : '微信支付.html',			
+    	        success : function(html){
+    				top.F.loading.hide();
+    	            var d =  window.top.dialog({
+    	                title: ' ',
+    	                padding: '0 0 0px 0',
+    					width: 560,
+    	                content: html,
+    	                skin : 'saas_pop',  
+    	            }).showModal();
+    	            $('.wx_close').on('click',function(){
+    	            	d.remove();
+    	            });
+    	        }
+    	    });
+    	} */
     });
     
 </script>

@@ -130,6 +130,7 @@ public class FinancialTradeController extends BaseController {
     			String sign  =titanFinancialTradeService.getSign(rechargeResultConfirmRequest);
     			String signMsg = rechargeResultConfirmRequest.getSignMsg();
             	if(!MD5.MD5Encode(sign, "UTF-8").equals(signMsg)){
+            	   log.info("验签失败:"+toJson(rechargeResultConfirmRequest));
            		   return;
             	}
             	if(WebConstant.PAY_SUCCESS.equals(rechargeResultConfirmRequest.getPayStatus())){//支付成功
@@ -213,9 +214,15 @@ public class FinancialTradeController extends BaseController {
                 	        	titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.RECHARFE_FAIL.getStatus()+"");
                 	        	this.updateOrderStatus(transOrderDTO.getTransid(),OrderStatusEnum.RECHARGE_FAIL);
                 	        }
+					}else{
+						log.info("本地单不存在:"+toJson(rechargeResultConfirmRequest));
 					}
                 	unlockOutTradeNoList(orderNo);
+            	}else{
+            		log.info("充值失败:"+toJson(rechargeResultConfirmRequest));
             	}
+    		}else{
+    			log.info("回调的订单号为空:"+toJson(rechargeResultConfirmRequest));
     		}
     	}catch(Exception e){
     		log.error(e.getMessage());
@@ -855,6 +862,7 @@ public class FinancialTradeController extends BaseController {
 		rechargePageRequest.setBankInfo(paymentRequest.getBankInfo());
 		rechargePageRequest.setUserrelateid(paymentRequest.getUserrelateid());
 		rechargePageRequest.setPayType(paymentRequest.getPayType());
+		rechargePageRequest.setPayerAcount(paymentRequest.getPayerAcount());
 		return rechargePageRequest;
 	}
 	

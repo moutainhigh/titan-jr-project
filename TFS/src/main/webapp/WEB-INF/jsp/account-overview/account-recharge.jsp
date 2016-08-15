@@ -67,6 +67,13 @@
                               <c:if test="${commom.paytype == 3 }">
                                   <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡）</span>
                               </c:if>
+                              <c:if test="${commom.bankname=='cmbc'}">
+                                    <div class="clear"></div>
+								    <div class="payc_ms">
+									     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
+									     <input type="text" class="text w_185" placeholder="请输入企业银行客户号" id="customNo-${status.index}">
+								    </div>
+                               </c:if>
                              </div>
                           </c:forEach>
 							</li>
@@ -83,16 +90,26 @@
                                                     <img src="<%=basePath%>/banks/${itemBank.bankName}.jpg" alt="${itemBank.bankMark}"
                                                          width="159" height="38">
                                                 </span></label>
+                                                
                                             </div>
+                                            
                                             <c:if test="${deskItem.itemType == 1 }">
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（企业银行）</span>
                                             </c:if>
+                                            
                                             <c:if test="${deskItem.itemType == 2 }">
                                                 <span class="payc_title fl" id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（个人银行）</span>
                                             </c:if>
                                             <c:if test="${deskItem.itemType == 3 }">
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
                                             </c:if>
+                                            <c:if test="${itemBank.bankName=='cmbc'}">
+				                                    <div class="clear"></div>
+												    <div class="payc_ms">
+													     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
+													     <input type="text" class="text w_185" placeholder="请输入企业银行客户号" id="customNo-${o_status.index }-${i_status.index}">
+												    </div>
+			                                 </c:if>
                                         </div>
                                     </c:forEach>
                                 </li>
@@ -117,6 +134,7 @@
 	   <input name="linePayType" id="linePayType" type="hidden" value="">
 	   <input name="paySource" id="paySource" type="hidden" value="5">
 	   <input name="payOrderNo" id="payOrderNo" type="hidden" value="">
+	   <input name="payerAcount" id="payerAcount" type="hidden" value="">
 	   <input name="deskId" id="deskId" type="hidden" value="${cashierDesk.deskId}">
 	</form>
 	
@@ -280,6 +298,7 @@ function put_value_to_form(recharge_data){
 	$("#bankInfo").val(recharge_data.bankInfo);
 	$("#linePayType").val(recharge_data.linePayType);
 	$("#payOrderNo").val(payOrderNo);
+	$("#payerAcount").val(recharge_data.payerAccount);
 	$("#rechargeForm").submit(); 
 }
 
@@ -300,13 +319,34 @@ function save_recharge_data(){
 	if("undefined" != typeof itemType){
 		linePayType =   $("#item-"+itemType).attr("data-index");
 	}
+	
+	var payerAccount = null;
+	var value=$('input:radio[name=r2]:checked').val();
+	if(value=='cmbc'){
+		var dataIndex = $('input:radio[name=r2]:checked').attr("data-index");
+		payerAccount = $("#customNo-"+dataIndex).val();
+		if(payerAccount.length<1){
+			  new top.createConfirm({
+		            title:'提示',
+		            padding: '20px 20px 40px',
+		            okValue : '关闭',
+		            content : '民生银行客户识别号不能为空',
+		            skin : 'saas_confirm_singlebtn',
+		            ok : function(){
+		            },
+		            cancel: false,
+		        });
+			  return ;
+		};
+	}
 	//生成一个支付单号
 	var data={
 		amount:amount,
 		bankInfo:bankInfo,
 		/* payPassword:rsaData(payPassword), */
 		payPassword:payPassword,
-		linePayType:linePayType
+		linePayType:linePayType,
+		payerAccount:payerAccount,
 	};
 	return data;
 }
@@ -382,6 +422,38 @@ $("#inputeAmount").blur(function(){
 	}else{
 		$("#inputeAmountError").text("");
 	}
+	
+});
+
+//判断如果是民生银行出现下拉框
+$('.paytable_payway input').on('change',function(){
+	var _this=$(this);
+	var value=_this.val();
+	if(value=='cmbc'){
+		_this.parents('.paytable_payway').find('.payc_ms').slideDown();
+	}else{
+		$('.paytable_payway').find('.payc_ms').slideUp();
+	}
+	/* if(value=="cmbc"){
+		$.ajax({
+	        dataType : 'html',
+	        context: document.body,
+	        url : '微信支付.html',			
+	        success : function(html){
+				top.F.loading.hide();
+	            var d =  window.top.dialog({
+	                title: ' ',
+	                padding: '0 0 0px 0',
+					width: 560,
+	                content: html,
+	                skin : 'saas_pop',  
+	            }).showModal();
+	            $('.wx_close').on('click',function(){
+	            	d.remove();
+	            });
+	        }
+	    });
+	} */
 });
 
 //设置交易密码

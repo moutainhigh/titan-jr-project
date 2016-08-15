@@ -43,6 +43,7 @@
 	<input name="busiCode" type="hidden" value="${rechargeDataDTO.busiCode}"/>
 	<input name="version" type="hidden" value="${rechargeDataDTO.version}"/>
 	<input name="charset" type="hidden" value="${rechargeDataDTO.charset}"/>
+	<input name="payerAcount" type="hidden" value="${rechargeDataDTO.payerAcount}"/>
 	<input name="signMsg" type="hidden" value="${rechargeDataDTO.signMsg}"/>
 </form>
 </c:if>
