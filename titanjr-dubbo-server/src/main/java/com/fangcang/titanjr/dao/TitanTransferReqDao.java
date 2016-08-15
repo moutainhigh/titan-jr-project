@@ -20,5 +20,4 @@ public interface TitanTransferReqDao {
 	
 	List<TitanTransferReq> queryTitanTransferReq(TitanTransferReqParam titanTransferReqParam);
 	
-	List<RepairTransferDTO> queryTitanTransOrderByStatus(RepairTransferRequest repairTransferRequest);
 }

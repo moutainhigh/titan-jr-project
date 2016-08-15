@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fangcang.titanjr.dao.TitanTransOrderDao">
-
     <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanTransOrder"
             parameterType="com.fangcang.titanjr.entity.parameter.TitanTransOrderParam">
         select
@@ -231,6 +230,42 @@
             </if>
         </where>
         order by createtime desc
+    </select>
+    
+     <select id="queryOrderByTypeAndStatus" parameterType="com.fangcang.titanjr.dto.request.RepairTransferRequest"
+            resultType="com.fangcang.titanjr.dto.bean.RepairTransferDTO">
+          select transorder.transid,
+             transorder.isEscrowedPayment,
+             transorder.escrowedDate,
+             transorder.orderid,
+             transorder.tradeamount,
+             transorder.payeemerchant,
+             transorder.payermerchant,
+             transorder.userrelateid,
+             transorder.userorderid,
+             transorder.productid,
+             transorder.userid,
+             transorder.constid,
+             transorder.notifyUrl,
+             transorder.payorderno,
+             transorder.businessordercode,
+             transorder.creator,
+             transfer.transorderid,
+             transfer.status
+             from t_tfs_transorder transorder
+                  inner join t_tfs_orderpayreq orderpay on orderpay.transorderid = transorder.transid
+                  left join t_tfs_transferreq transfer on transorder.transid=transfer.transorderid
+                  <where>
+                    <if test="status !=null">
+                      and transorder.statusid=#{status}
+                    </if>
+                    <if test="payermerchant !=null">
+                      and transorder.payermerchant = #{payermerchant}
+                    </if>
+                    <if test="orderPayStatus !=null">
+                       and orderpay.reqstatus=#{orderPayStatus}
+                    </if>
+                  </where>
     </select>
     
 </mapper>

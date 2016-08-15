@@ -6,6 +6,7 @@ import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
+import com.fangcang.titanjr.dto.bean.RepairTransferDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.RepairTransferRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
@@ -89,5 +90,12 @@ public class TitanTransOrderDaoImpl extends GenericDAOMyBatisImpl implements Tit
         }
     }
     
-
+	@Override
+	public List<RepairTransferDTO> queryTitanTransOrderByStatus(RepairTransferRequest repairTransferRequest){
+		 try {
+	            return super.selectList("com.fangcang.titanjr.dao.TitanTransOrderDao.queryOrderByTypeAndStatus", repairTransferRequest);
+	        } catch (Exception e) {
+	            throw new DaoException(e);
+	        }
+	}
 }

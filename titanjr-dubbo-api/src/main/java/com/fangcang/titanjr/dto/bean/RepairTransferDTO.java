@@ -48,6 +48,21 @@ public class RepairTransferDTO implements Serializable {
 	 
 	 private String constid;
 	 
+	 private String userorderid;
+	 
+	 private String notifyUrl;
+	 
+	 private String creator;
+	 
+	 private String businessordercode;
+	 
+	 private String payorderno;
+	 
+	 //转账的关联ID
+	 private String transorderid;
+	 
+	 //转账是否成功的状态
+	 private String status;
 	 
 	public String getAmount() {
 		return amount;
@@ -162,5 +177,47 @@ public class RepairTransferDTO implements Serializable {
 	}
 	public void setConstid(String constid) {
 		this.constid = constid;
+	}
+	public String getUserorderid() {
+		return userorderid;
+	}
+	public void setUserorderid(String userorderid) {
+		this.userorderid = userorderid;
+	}
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
+	}
+	public String getCreator() {
+		return creator;
+	}
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+	public String getBusinessordercode() {
+		return businessordercode;
+	}
+	public void setBusinessordercode(String businessordercode) {
+		this.businessordercode = businessordercode;
+	}
+	public String getPayorderno() {
+		return payorderno;
+	}
+	public void setPayorderno(String payorderno) {
+		this.payorderno = payorderno;
+	}
+	public String getTransorderid() {
+		return transorderid;
+	}
+	public void setTransorderid(String transorderid) {
+		this.transorderid = transorderid;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

@@ -65,12 +65,4 @@ public class TitanTransferReqDaoImpl extends GenericDAOMyBatisImpl implements Ti
 	}
 	
 
-	@Override
-	public List<RepairTransferDTO> queryTitanTransOrderByStatus(RepairTransferRequest repairTransferRequest){
-		 try {
-	            return super.selectList("com.fangcang.titanjr.dao.TitanTransferReqDao.queryOrderByTypeAndStatus", repairTransferRequest);
-	        } catch (Exception e) {
-	            throw new DaoException(e);
-	        }
-	}
 }

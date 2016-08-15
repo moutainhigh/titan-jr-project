@@ -14,14 +14,15 @@ public class RepairTransferResponse extends BaseResponseDTO{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private List<RepairTransferDTO> titanTransferDTOList;
+	private List<RepairTransferDTO> repairTransferDTOListList;
 
-	public List<RepairTransferDTO> getTitanTransferDTOList() {
-		return titanTransferDTOList;
+	public List<RepairTransferDTO> getRepairTransferDTOListList() {
+		return repairTransferDTOListList;
 	}
 
-	public void setTitanTransferDTOList(List<RepairTransferDTO> titanTransferDTOList) {
-		this.titanTransferDTOList = titanTransferDTOList;
+	public void setRepairTransferDTOListList(
+			List<RepairTransferDTO> repairTransferDTOListList) {
+		this.repairTransferDTOListList = repairTransferDTOListList;
 	}
 
 }
