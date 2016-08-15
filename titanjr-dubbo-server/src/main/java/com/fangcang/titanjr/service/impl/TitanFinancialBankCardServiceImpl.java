@@ -357,8 +357,6 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 			        }else if(CommonConstant.BIND_FAIL.equals(bankCardInfo.getStatus())){//审核失败
 			        	status = CommonConstant.BIND_FAIL;
 			        }
-			        
-			        status = CommonConstant.BIND_SUCCESS;
 				}
 				
 			}
