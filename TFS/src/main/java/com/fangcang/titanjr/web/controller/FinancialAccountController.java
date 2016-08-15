@@ -278,8 +278,7 @@ public class FinancialAccountController extends BaseController {
     @RequestMapping(value = "/checkBindAccountWithDrawCard")
     public String checkBindAccountWithDrawCard(HttpServletRequest request, Model model){
     	titanFinancialBankCardService.bindBankCardForOne(this.getUserId());
-    	 String data = this.validatePersonOrEnterprise(request, model);
-    	 return data;
+    	 return this.validatePersonOrEnterprise(request, model);
     }
     
     @RequestMapping(value = "/account-withdraw", method = RequestMethod.GET)
