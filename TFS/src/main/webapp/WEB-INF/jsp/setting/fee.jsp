@@ -31,12 +31,12 @@
 				<td>执行费率（至2016.10.31）</td>
 			</tr>
 			<tr class="TFS_settd">
-				<td><strong>PC端B2C网银</strong></td>
+				<td><strong>PC端个人网银</strong></td>
 				<td><strong>0.30%</strong></td>
 				<td><strong class="c_f60_1">免费</strong></td>
 			</tr>
 			<tr class="TFS_settd">
-				<td><strong>PC端B2B网银</strong></td>
+				<td><strong>PC端企业网银</strong></td>
 				<td><strong>10元/笔</strong></td>
 				<td><strong class="c_f60_1">免费</strong></td>
 			</tr>
