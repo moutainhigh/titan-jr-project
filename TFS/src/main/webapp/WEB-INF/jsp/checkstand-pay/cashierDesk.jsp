@@ -713,6 +713,9 @@
     function pay_Order(){
     	//获取数据
    	    var pay_date=save_payDate();
+    	if(pay_date==false){
+    		return;
+    	}
    	    top.F.loading.show();
         if(pay_date.payAmount =="0"){
     		$.ajax({//支付页面
@@ -855,7 +858,7 @@
     		            },
     		            cancel: false,
     		        });
-    			  return ;
+    			  return false;
     		};
     	}
     	var data={
