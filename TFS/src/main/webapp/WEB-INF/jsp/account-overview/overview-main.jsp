@@ -560,17 +560,36 @@
         }
         
         function bank_card_binding(){
-        
-        	new top.createConfirm({
-        		title:'提示',
-				padding: '20px 20px 40px',
-				width:400,
-				okValue:'关闭',
-				skin:'saas_confirm_singlebtn',
-		        content : '<div class="l_h26" style="padding-left: 30px;"><i class="mr_ico"></i><span class="TFS_mrtips"><strong class="c_tfscolor f_16">对不起,提现卡绑定审核中</strong>请您稍后查看,我们会在24小时之内审核您的提现卡。</span></div>',
-		        cancel : false
-		      });
-        	window.top.$(".ui-dialog-close").hide();
+        	$.ajax({
+        		dataType : 'json',		      
+		        url : '<%=basePath%>/account/checkBindAccountWithDrawCard.shtml',
+		        success : function(data){
+		        	if(data.result=="success"){
+		        		if(data.msg=="2"|| data.msg=="4"){//对私或者对公已绑定成功
+		        			account_withdraw();
+		        		}else if(data.msg=="5"){//对公，且绑定失败
+		        			 bind_card_fail();
+		        		}else if(data.msg=="6"){
+		        			new top.createConfirm({
+		                		title:'提示',
+		        				padding: '20px 20px 40px',
+		        				width:400,
+		        				okValue:'关闭',
+		        				skin:'saas_confirm_singlebtn',
+		        		        content : '<div class="l_h26" style="padding-left: 30px;"><i class="mr_ico"></i><span class="TFS_mrtips"><strong class="c_tfscolor f_16">对不起,提现卡绑定审核中</strong>请您稍后查看,我们会在24小时之内审核您的提现卡。</span></div>',
+		        		        cancel : false
+		        		      });
+		                	window.top.$(".ui-dialog-close").hide();
+		        		}else{
+		        			 new top.Tip({msg: "系统错误", type: 1, time: 1000});
+		        		}
+		        	}
+		        },
+		        error:function(data){
+		        	console.log(data);
+		        	alert("失败");
+		        }
+        	})
         }        
         
         

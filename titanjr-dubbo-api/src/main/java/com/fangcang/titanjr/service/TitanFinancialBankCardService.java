@@ -64,6 +64,12 @@ public interface TitanFinancialBankCardService {
 	public void bindBankCardBatch();
 	
 	/**
+	 * 个人用户绑卡
+	 * @param userId
+	 */
+	public void bindBankCardForOne(String userId);
+	
+	/**
 	 * 绑定失败后修改提现卡
 	 * @param modifyInvalidWithDrawCardRequest
 	 * @return

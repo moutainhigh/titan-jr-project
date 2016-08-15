@@ -290,16 +290,21 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 	@Override
 	public void bindBankCardBatch() {//批量修改绑定的银行卡
 		//此处采用第三方分页工具，offset不能为1，因为分页到了最后始终返回最后一条数据，陷入死循环
-		bindBankCard(1,100);
+		this.bindBankCard(1,100,null);
 	}
 
-	private void bindBankCard(int rows,int offset){
+	
+	
+	private void bindBankCard(int rows,int offset,String userId){
 		
 		TitanBankcardParam condition = new TitanBankcardParam();
 		PaginationSupport<TitanBankcard> paginationSupport = new PaginationSupport<TitanBankcard>();
 		condition.setStatus(BindCardStatus.BIND_BINDING.status);
 		condition.setAccountproperty(CommonConstant.ENTERPRISE);
 		condition.setAccountpurpose(CommonConstant.WITHDRAW_CARD);
+		if(StringUtil.isValidString(userId)){
+			condition.setUserid(userId);
+		}
 		paginationSupport.setCurrentPage(rows);
 		paginationSupport.setPageSize(offset);
 		titanBankcardDao.selectForPage(condition, paginationSupport);
@@ -321,10 +326,12 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		if(offset <100){
 			return ;
 		}else{
-			this.bindBankCard(rows+1,offset);
+			this.bindBankCard(rows+1,offset,userId);
 		}
 		
 	}
+	
+	
 	
 	/**
 	 * 检查该卡是否绑定成功
@@ -408,6 +415,11 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void bindBankCardForOne(String userId) {
+		this.bindBankCard(0,100,userId);
 	}
 
 }
