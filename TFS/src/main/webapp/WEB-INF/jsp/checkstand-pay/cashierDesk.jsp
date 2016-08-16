@@ -855,7 +855,7 @@
     		}else{
     			var reg = /^([a-z]|[A-Z]|[0-9]){1,32}$/;
     			if(!reg.test(payerAccount)){
-    				errMsg="民生企业银行客户号输入有误";
+    				errMsg="民生企业银行客户号输入有误,只能是数字或字母";
     			};
     		}
     		
