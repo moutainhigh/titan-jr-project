@@ -160,7 +160,7 @@
                               <c:if test="${commom.paytype == 3 }">
                                   <span class="payc_title fl"  id="item-${status.index}" data-index="3">（信用卡）</span>
                               </c:if>
-                              <c:if test="${commom.bankname=='cmbc'}">
+                              <c:if test="${commom.bankname=='cmbc' && commom.paytype == 1 }">
                                     <div class="clear"></div>
 								    <div class="payc_ms">
 									     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
@@ -195,7 +195,8 @@
                                             <c:if test="${deskItem.itemType == 3 }">
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
                                             </c:if>
-                                            <c:if test="${itemBank.bankName=='cmbc'}">
+                                            <c:if test="${itemBank.bankName=='cmbc' && deskItem.itemType == 1}">
+				               
 				                                    <div class="clear"></div>
 												    <div class="payc_ms">
 													     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
@@ -844,15 +845,26 @@
     	
     	var payerAccount = null;
     	var value=$('input:radio[name=r2]:checked').val();
-    	if(value=='cmbc'){
+    	if(value=='cmbc' && linePayType=="1"){
     		var dataIndex = $('input:radio[name=r2]:checked').attr("data-index");
     		payerAccount = $("#customNo-"+dataIndex).val();
+    		
+    		var errMsg ="";
     		if(payerAccount.length<1){
+    			errMsg="民生企业银行客户号不能为空";
+    		}else{
+    			var reg = /^([a-z]|[A-Z]|[0-9]){1,32}$/;
+    			if(!reg.test(payerAccount)){
+    				errMsg="民生企业银行客户号输入有误";
+    			};
+    		}
+    		
+    		if(errMsg.length>0){
     			  new top.createConfirm({
     		            title:'提示',
     		            padding: '20px 20px 40px',
     		            okValue : '关闭',
-    		            content : '民生银行客户识别号不能为空',
+    		            content : errMsg,
     		            skin : 'saas_confirm_singlebtn',
     		            ok : function(){
     		            },
@@ -861,6 +873,7 @@
     			  return false;
     		};
     	}
+    	
     	var data={
     	    transferAmount:transferAmount,	
     	    payAmount:payAmount,
@@ -915,8 +928,11 @@
     //判断如果是民生银行出现下拉框
     $('.paytable_payway input').on('change',function(){
     	var _this=$(this);
-    	var value=$('input:radio[name=r2]:checked').val();
-    	if(value=='cmbc'){
+    	var value=$('input:radio[name=r2]:checked').val();;
+    	//获取
+    	var dataIndex = $('input:radio[name=r2]:checked').attr("data-index");
+    	var linePayType =   $("#item-"+dataIndex).attr("data-index");
+    	if(value=='cmbc' && linePayType==1){
     		_this.parents('.paytable_payway').find('.payc_ms').slideDown();
     	}else{
     		$('.paytable_payway').find('.payc_ms').slideUp();
