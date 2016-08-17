@@ -169,7 +169,16 @@
         var startDate = $("#date_bach_start").attr('data-prev');
         var endDate = $("#date_bach_end").attr('data-prev');
         var tradeNo = $("#userTradeNo").val();
-        var partner = $("#partner").attr('data-id');
+        var partnerName = $("#partner").val();
+        var partner = null;
+        if($.trim(partnerName).length>0){
+        	if(validate_partner(partnerName)==true){
+				partner = $("#partner").attr('data-id');
+			}else{//随便输入的账户，
+				partner="lksdjlsk12";
+			}
+        }
+        
         F.loading.show();
         $.ajax({
             dataType : 'html',
@@ -225,28 +234,68 @@
         });
     }
 
+    var partner_dataSource=null;
     //初始化联想查询框
     function initAutoSelectPartner() {
-        new AutoComplete($('#partner'), {
-            url : '<%=basePath%>/account/getOrgList.shtml',
-            source : 'organDTOList',
-            key : 'userId',  //数据源中，做为key的字段
-            val : 'orgName', //数据源中，做为val的字段
-            width : 240,
-            height : 300,
-            autoSelect : false,
-            clickEvent : function(d, input){
-                input.attr('data-id', d.key);
-            }
-        });
+    	$.ajax({
+    		dataType : 'json',		      
+	        url : '<%=basePath%>/account/getOrgList.shtml?date=' + new Date().getTime(),
+	        success:function(data){
+	        	
+	        	if(data && data.organDTOList)
+	        	{
+	        		partner_dataSource = data;
+	        		var dataArr = new Array();
+	        		for(i = 0 ; i <data.organDTOList.length;i++)
+	        		{
+	        			dataArr[dataArr.length] = {key:data.organDTOList[i].userId , val:data.organDTOList[i].orgName};
+	        		}
+	        		
+	        		new AutoComplete($('#partner'), {
+	        			data : dataArr,
+						key : 'userId',  //数据源中，做为key的字段
+						val : 'orgName', //数据源中，做为val的字段
+						width : 240,
+						height : 300,
+						autoSelect : false,
+						clickEvent : function(d, input){
+							input.attr('data-id', d.key);
+						}
+					});
+	        	}
+	        	
+	    		
+	        }
+    	});
+    	
     }
 
+    function validate_partner(partnerName){
+		for(var i = 0 ; i <partner_dataSource.organDTOList.length;i++)
+		{
+			
+			if(partnerName == partner_dataSource.organDTOList[i].orgName){
+				
+				return true;
+			}
+		}
+		return false;
+	}
+    
     //点击分页页码时调用
     function pageNoChangeRequest(page, size) {
         var startDate = $("#date_bach_start").attr('data-prev');
         var endDate = $("#date_bach_end").attr('data-prev');
         var tradeNo = $("#userTradeNo").val();
-        var partner = $("#partner").attr('data-id');
+        var partnerName = $("#partner").val();
+        var partner = null;
+        if($.trim(partnerName).length>0){
+        	if(validate_partner(partnerName)==true){
+				partner = $("#partner").attr('data-id');
+			}else{//随便输入的账户，
+				partner="lksdjlsk12";
+			}
+        }
         F.loading.show();
         $.ajax({
             dataType : 'html',
@@ -283,7 +332,15 @@
         var startDate = $("#date_bach_start").attr('data-prev');
         var endDate = $("#date_bach_end").attr('data-prev');
         var tradeNo = $("#userTradeNo").val();
-        var partner = $("#partner").attr('data-id');
+        var partnerName = $("#partner").val();
+        var partner = null;
+        if($.trim(partnerName).length>0){
+        	if(validate_partner(partnerName)==true){
+				partner = $("#partner").attr('data-id');
+			}else{//随便输入的账户，
+				partner="lksdjlsk12";
+			}
+        }
         var paraList ="?tradeTypeId=" + (2);
         if (partner){
             paraList = paraList + "&admissionName=" + partner;
@@ -312,7 +369,15 @@
         var startDate = $("#date_bach_start").attr('data-prev');
         var endDate = $("#date_bach_end").attr('data-prev');
         var tradeNo = $("#userTradeNo").val();
-        var partner = $("#partner").attr('data-id');
+        var partnerName = $("#partner").val();
+        var partner = null;
+        if($.trim(partnerName).length>0){
+        	if(validate_partner(partnerName)==true){
+				partner = $("#partner").attr('data-id');
+			}else{//随便输入的账户，
+				partner="lksdjlsk12";
+			}
+        }
 
         F.loading.show();
         $.ajax({
