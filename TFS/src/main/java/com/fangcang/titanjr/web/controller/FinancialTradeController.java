@@ -943,10 +943,13 @@ public class FinancialTradeController extends BaseController {
 			model.addAttribute("operator",paymentUrlRequest.getOperater());
 			model.addAttribute("businessOrderCode",paymentUrlRequest.getBusinessOrderCode());
 			model.addAttribute("notifyUrl",paymentUrlRequest.getNotifyUrl());
+			if(StringUtil.isValidString(paymentUrlRequest.getMerchantcode())){
+				model.addAttribute("merchantcode", paymentUrlRequest.getMerchantcode());
+			}
 		}
 
 		//非B2B支付时，将付款方userId查询出来
-		if(StringUtil.isValidString(paymentUrlRequest.getMerchantcode())){
+		if(StringUtil.isValidString(paymentUrlRequest.getMerchantcode())&& !CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentUrlRequest.getPaySource())){
 			String userId = queryUserIdByMerchantCode(paymentUrlRequest.getMerchantcode());
 			if(!StringUtil.isValidString(userId)){
 				model.addAttribute(WebConstant.MSG,"该机构未绑定账户");

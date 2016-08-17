@@ -49,39 +49,67 @@
 						<c:if test="${commomPayMethod !=null }">
 							<li>
 								<c:forEach items="${commomPayMethod }" var="commom" varStatus="status">
-                             <div class="paytable_payway">
-                             <div class="payc_left"><label class="f_ui-radio-c3">
-                                <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${commom.bankname}">
-                                <i></i>
-                                <span class="paycleft_img">
+								<c:if test="${commom.bankname !='cmbc'}">
+								  <div class="paytable_payway">
+                                    <div class="payc_left"><label class="f_ui-radio-c3">
+                                      <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${commom.bankname}">
+                                      <i></i>
+                                      <span class="paycleft_img">
                                       <img src="<%=basePath%>/banks/${commom.bankname}.jpg" alt="${commom.bankmark}"
                                            width="159" height="38">
-                                  </span></label>
-                              </div>
-                              <c:if test="${commom.paytype == 1 }">
-                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（企业银行）</span>
-                              </c:if>
-                              <c:if test="${commom.paytype == 2 }">
-                                  <span class="payc_title fl" id="item-${status.index }" data-index="${commom.paytype}">（个人银行）</span>
-                              </c:if>
-                              <c:if test="${commom.paytype == 3 }">
-                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡）</span>
-                              </c:if>
-                              <c:if test="${commom.bankname=='cmbc' && commom.paytype==1}">
+                                       </span></label>
+                                    </div>
+	                              <c:if test="${commom.paytype == 1 }">
+	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（企业银行）</span>
+	                              </c:if>
+	                              <c:if test="${commom.paytype == 2 }">
+	                                  <span class="payc_title fl" id="item-${status.index }" data-index="${commom.paytype}">（个人银行）</span>
+	                              </c:if>
+	                              <c:if test="${commom.paytype == 3 }">
+	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡） </span>
+	                              </c:if>
+                               </div>
+						   </c:if>
+                          </c:forEach>
+                         
+                          <c:forEach items="${commomPayMethod }" var="commom"  varStatus="status">
+                               <c:if test="${commom.bankname =='cmbc'}">
+								  <div class="paytable_payway">
+                                    <div class="payc_left"><label class="f_ui-radio-c3">
+                                      <input name="r2" type="radio" data-index="i_${status.index}" class="bankName" value="${commom.bankname}">
+                                      <i></i>
+                                      <span class="paycleft_img">
+                                      <img src="<%=basePath%>/banks/${commom.bankname}.jpg" alt="${commom.bankmark}"
+                                           width="159" height="38">
+                                       </span></label>
+                                    </div>
+	                              <c:if test="${commom.paytype == 1 }">
+	                                  <span class="payc_title fl"  id="item-i_${status.index}" data-index="${commom.paytype}">（企业银行）</span>
+	                              </c:if>
+	                              <c:if test="${commom.paytype == 2 }">
+	                                  <span class="payc_title fl" id="item-i_${status.index }" data-index="${commom.paytype}">（个人银行）</span>
+	                              </c:if>
+	                              <c:if test="${commom.paytype == 3 }">
+	                                  <span class="payc_title fl"  id="item-i_${status.index}" data-index="${commom.paytype}">（信用卡） </span>
+	                              </c:if>
+	                              <c:if test="${commom.bankname =='cmbc' &&commom.paytype==1}">
                                     <div class="clear"></div>
 								    <div class="payc_ms">
 									     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
-									     <input type="text" class="text w_185" placeholder="请输入企业银行客户号" id="customNo-${status.index}">
+									     <input type="text" class="text w_185" placeholder="请输入企业银行客户号" id="customNo-i_${status.index}">
 								    </div>
-                               </c:if>
-                             </div>
-                          </c:forEach>
+							      </c:if>
+                               </div>
+						   </c:if>
+                           </c:forEach>
+
 							</li>
 							</c:if>
-							     <c:forEach items="${cashierDesk.cashierDeskItemDTOList }" var="deskItem" varStatus="o_status">
+						  <c:forEach items="${cashierDesk.cashierDeskItemDTOList }" var="deskItem" varStatus="o_status">
                             <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 }">
                                 <li>
                                     <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
+                                      <c:if test="${itemBank.bankName !='cmbc'}">
                                         <div class="paytable_payway">
                                             <div class="payc_left"><label class="f_ui-radio-c3">
                                                 <input name="r2" type="radio" data-index="${o_status.index }-${i_status.index}" class="bankName" value="${itemBank.bankName}">
@@ -103,15 +131,42 @@
                                             <c:if test="${deskItem.itemType == 3 }">
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
                                             </c:if>
+                                        </div>
+                                       </c:if>
+                                   </c:forEach>
+                                  <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="d_status">
+                                    <c:if test="${itemBank.bankName=='cmbc'}">
+                                        <div class="paytable_payway">
+                                            <div class="payc_left"><label class="f_ui-radio-c3">
+                                                <input name="r2" type="radio" data-index="d_${o_status.index }-${d_status.index}" class="bankName" value="${itemBank.bankName}">
+                                                <i></i>
+                                                <span class="paycleft_img">
+                                                    <img src="<%=basePath%>/banks/${itemBank.bankName}.jpg" alt="${itemBank.bankMark}"
+                                                         width="159" height="38">
+                                                </span></label>
+                                                
+                                            </div>
+                                            
+                                            <c:if test="${deskItem.itemType == 1 }">
+                                                <span class="payc_title fl"  id="item-d_${o_status.index }-${d_status.index}" data-index="${deskItem.itemType}">（企业银行）</span>
+                                            </c:if>
+                                            
+                                            <c:if test="${deskItem.itemType == 2 }">
+                                                <span class="payc_title fl" id="item-d_${o_status.index }-${d_status.index}" data-index="${deskItem.itemType}">（个人银行）</span>
+                                            </c:if>
+                                            <c:if test="${deskItem.itemType == 3 }">
+                                                <span class="payc_title fl"  id="item-d_${o_status.index }-${d_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
+                                            </c:if>
                                             <c:if test="${itemBank.bankName=='cmbc' && deskItem.itemType == 1}">
 				                                    <div class="clear"></div>
 												    <div class="payc_ms">
 													     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
-													     <input type="text" class="text w_185" placeholder="请输入企业银行客户号"  id="customNo-${o_status.index }-${i_status.index}">
+													     <input type="text" class="text w_185" placeholder="请输入企业银行客户号"  id="customNo-d_${o_status.index }-${d_status.index}">
 												    </div>
 			                                 </c:if>
                                         </div>
-                                    </c:forEach>
+                                      </c:if>
+                                   </c:forEach>
                                 </li>
                             </c:if>
                         </c:forEach>
@@ -319,7 +374,6 @@ function save_recharge_data(){
 	if("undefined" != typeof itemType){
 		linePayType =   $("#item-"+itemType).attr("data-index");
 	}
-	
 	var payerAccount = null;
 	var value=$('input:radio[name=r2]:checked').val();
 	if(value=='cmbc' && linePayType=="1"){
@@ -329,10 +383,12 @@ function save_recharge_data(){
 		var errMsg ="";
 		if(payerAccount.length<1){
 			errMsg="民生企业银行客户号不能为空";
+		}else if(payerAccount.length>32){
+			errMsg="民生企业银行客户号不能超过32位";
 		}else{
 			var reg = /^([a-z]|[A-Z]|[0-9]){1,32}$/;
 			if(!reg.test(payerAccount)){
-				errMsg="民生企业银行客户号输入有误,只能是数字或字母";
+				errMsg="民生企业银行客户号输入有误";
 			};
 		}
 		
@@ -444,9 +500,9 @@ $('.paytable_payway input').on('change',function(){
 	var dataIndex = $('input:radio[name=r2]:checked').attr("data-index");
 	var linePayType =   $("#item-"+dataIndex).attr("data-index");
 	if(value=='cmbc' && linePayType==1){
-		_this.parents('.paytable_payway').find('.payc_ms').slideDown();
+		 _this.parents('.paytable_payway').find('.payc_ms').slideDown(); 
 	}else{
-		$('.paytable_payway').find('.payc_ms').slideUp();
+		 $('.paytable_payway').find('.payc_ms').slideUp(); 
 	}
 	/* if(value=="cmbc"){
 		$.ajax({

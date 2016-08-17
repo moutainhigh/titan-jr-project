@@ -711,10 +711,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                     titanOrder.setOrderNo(rechargeRequest.getOrderNo());
                     titanOrder = queryOrderPayReqByTransOrderId(titanOrder);
                     //该单号已经在融数下了充值单则拿以前的充值单，否则新建充值单
+                    TitanOrderPayreq  titanOrderPayreq = convertorToTitanOrderPayReq(rechargeRequest);
                     if (titanOrder != null) {
+                    	titanOrderPayreq.setOrderTime(null);
+                    	titanOrderPayreqDao.updateTitanOrderPayreqByOrderNo(titanOrderPayreq);
                         rsPayOrderRequest.setOrderTime(titanOrder.getOrderTime());
+                        //修改支付单的参数有
                     } else {
-                        TitanOrderPayreq titanOrderPayreq = convertorToTitanOrderPayReq(rechargeRequest);
                         if (titanOrderPayreq != null) {
                             titanOrderPayreq.setReqstatus(ReqstatusEnum.RECHARFE_IN_PROCESS.getStatus());
                             titanOrderPayreqDao.insert(titanOrderPayreq);
@@ -843,12 +846,14 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                  }
 
                  if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentRequest.getPaySource())){
-           		  GDPOrderResponse gDPOrderResponse =  getGDPOrderDTO(paymentRequest.getPayOrderNo());
+           		  GDPOrderResponse gDPOrderResponse =  this.getGDPOrderDTO(paymentRequest.getPayOrderNo());
            		  if(gDPOrderResponse.getgDPOrderDTO() !=null){//有待扩展
            			  orderRequest.setGoodsdetail(gDPOrderResponse.getgDPOrderDTO().getGoodDetail());
-           			  
            			  orderRequest.setBusinessordercode(paymentRequest.getBusinessOrderCode());
            			  orderRequest.setGoodsname("GDP付款单");
+           			  if(StringUtil.isValidString(paymentRequest.getMerchantcode())){
+           				orderRequest.setGoodsname("交易平台付款");
+           			  }
            		  }
            	  }else if(CashierDeskTypeEnum.SUPPLY_DESK.deskCode.equals(paymentRequest.getPaySource())){
            		  FinancialOrderRequest financialOrderRequest = new FinancialOrderRequest();
