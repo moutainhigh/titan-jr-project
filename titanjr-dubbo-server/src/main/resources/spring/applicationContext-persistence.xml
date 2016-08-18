@@ -48,6 +48,16 @@
 		<property name="logAbandoned" value="${logAbandoned}" /> &lt;!&ndash; 关闭abanded连接时输出错误日志 &ndash;&gt;
 	</bean>-->
 
+	<jee:jndi-lookup id="configDataSource" jndi-name="jdbc/cfgDS" />
+
+	<!--<bean id="configDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		  destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.2.38:1521:fangcangdb" />
+		<property name="username" value="config" />
+		<property name="password" value="config" />
+	</bean>-->
+
 	<!-- 事务管理器-->
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource"/>
@@ -69,7 +79,19 @@
 		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
 	</bean>
 
+	<bean id="configSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:mybatis/SqlMapConfig.xml"></property>
+		<property name="dataSource" ref="configDataSource" />
+	</bean>
+
+	<bean id="configSqlMapClient" class="com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl">
+		<property name="sqlSessionFactory" ref="configSessionFactory"></property>
+	</bean>
+
+
 	<!-- dao 定义列表 -->
+	<bean id="domainConfigDao" class="com.fangcang.titanjr.dao.impl.DomainConfigDaoImpl" parent="configSqlMapClient"></bean>
+
 	<bean id="titanOrgCheckDao" class="com.fangcang.titanjr.dao.impl.TitanOrgCheckDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanAccountDao" class="com.fangcang.titanjr.dao.impl.TitanAccountDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanAccountHistoryDao" class="com.fangcang.titanjr.dao.impl.TitanAccountHistoryDaoImpl" parent="baseSqlMapClient"></bean>

@@ -5,19 +5,15 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.fangcang.titanjr.dao.DomainConfigDao;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.rs.dao.RSInvokeConfigDao;
 import com.fangcang.titanjr.rs.entity.RSInvokeConfig;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 import test.fangcang.titanjr.SpringTest;
-
-import com.fangcang.titanjr.rs.dao.RSInvokeConfigDao;
-import com.fangcang.titanjr.rs.entity.RSInvokeConfig;
 
 /**
 * Created by zhaoshan on 2016/4/8.
@@ -28,11 +24,21 @@ public class RSInvokeConfigDaoTest extends SpringTest {
 	@Resource(name="rsInvokeConfigDao")
     RSInvokeConfigDao rsInvokeConfigDao;
 
+    @Resource(name="domainConfigDao")
+    DomainConfigDao domainConfigDao;
+
     @Test
     public void testGetCfgs() {
         List<RSInvokeConfig> list = rsInvokeConfigDao.queryRSInvokeConfig();
         Assert.assertNotNull(list);
         System.out.println(list.size());
+    }
+
+    @Test
+    public void testGetConfigParam(){
+        String result = domainConfigDao.queryCurrentEnvDomain();
+        System.out.println(System.getenv("FC_VERSION"));
+        System.out.println(result);
     }
 
 //    private static RSInvokeConfigDao rsInvokeConfigDao ;
