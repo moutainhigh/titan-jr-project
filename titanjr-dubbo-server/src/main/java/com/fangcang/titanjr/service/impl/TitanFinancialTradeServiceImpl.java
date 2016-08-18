@@ -1905,6 +1905,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				    transOrderDTO.setUserrelateid(repairTransferDTO.getUserrelateid());
 				    transOrderDTO.setCreator(repairTransferDTO.getCreator());
 				    transOrderDTO.setPayorderno(repairTransferDTO.getPayorderno());
+				    transOrderDTO.setNotifyUrl(repairTransferDTO.getNotifyUrl());
 				    
 				    titanFinancialTradeService.confirmFinance(transOrderDTO);
 				    
