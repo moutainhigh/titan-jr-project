@@ -17,7 +17,7 @@
 				<div class="orderDetails-content1">
 					<h3 class="orderDetails-title">基础信息</h3>
 					<p class="ftSize14">
-						<span  class="w_250 Province" style="width: 240px">付款账户：
+						<span  class="w_250 Province" style="width: 330px;margin-right:15px;">付款账户：
                         	<i class="recharge-colorRed" title="${transOrder.transTarget }">${transOrder.transTarget }</i>
 						</span>
 						<span class="w_160 Province">交易类型：提现</span>
@@ -32,7 +32,7 @@
 						</span>
 					</p>
 					<p class="ftSize14">
-                        <span class="w_250">
+                        <span class="w_250" style="width: 346px;">
                         	交易创建时间：<fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.createtime}"/>
                         </span>
                         <c:if test="${not empty transOrder.creator }">
