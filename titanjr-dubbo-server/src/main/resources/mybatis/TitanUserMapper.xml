@@ -82,9 +82,9 @@
 		<if test="userId !=null"> and u.userid = #{userId}</if>
 		<if test="orgCode !=null"> and u.orgcode = #{orgCode}</if>
         <if test="tfsUserId !=null"> and u.tfsuserid = #{tfsUserId}</if>
-      	<if test="userLoginName !=null"> and u.userloginname like concat('%',#{userLoginName},'%')</if>
-      	<if test="bindLoginName !=null"> and b.fcloginname like concat('%',#{bindLoginName},'%')</if>
-      	<if test="bindMerchantCode !=null"> and b.bmerchant = #{bindMerchantCode}</if>
+      	<if test="userLoginName !=null"> and u.userloginname = #{userLoginName}</if>
+      	<if test="bindLoginName !=null"> and b.fcloginname = #{bindLoginName}</if>
+      	<if test="bindMerchantCode !=null"> and b.merchantcode = #{bindMerchantCode}</if>
       	<if test="userName !=null"> and u.username like concat('%',#{userName},'%')</if>
       	<if test="mobilePhone !=null"> and u.mobilephone = #{mobilePhone}</if>
     </where>
