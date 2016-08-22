@@ -16,6 +16,8 @@ import com.fangcang.titanjr.common.enums.ReqstatusEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.util.GenericValidate;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -308,14 +310,16 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		paginationSupport.setCurrentPage(rows);
 		paginationSupport.setPageSize(offset);
 		titanBankcardDao.selectForPage(condition, paginationSupport);
-		
+		log.info("绑卡的查询结果:"+JSONSerializer.toJSON(paginationSupport));
 		if( paginationSupport.getItemList()!=null){
 			List<TitanBankcard> bankcardList  = paginationSupport.getItemList();
 			offset = bankcardList.size();
 			if(bankcardList.size()>0){
 				for(TitanBankcard titanBankcard :bankcardList){
 					//查询融数
+					log.info("查询绑卡的入参:"+JSONSerializer.toJSON(titanBankcard));
 					String bindStatus = this.queryBindCard(titanBankcard);
+					log.info("查询绑卡结果:"+JSONSerializer.toJSON(bindStatus));
 					if(StringUtil.isValidString(bindStatus)){//绑定成功,更新自己代码
 						updateBankCard(titanBankcard,bindStatus);
 					}
@@ -372,6 +376,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		if(status.equals(CommonConstant.BIND_SUCCESS)){
 			bankcard.setStatus(BindCardStatus.BIND_SUCCESS.status);
 		}
+		log.info("更新绑卡信息:"+JSONSerializer.toJSON(bankcard));
 		try{
 			titanBankcardDao.update(bankcard);
 		}catch(Exception e){

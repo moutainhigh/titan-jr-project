@@ -1826,6 +1826,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	@Override
 	public RepairTransferResponse getTransferOrders(
 			RepairTransferRequest repairTransferRequest) {
+		log.info("获取订单参数:"+JSONSerializer.toJSON(repairTransferRequest));
 		RepairTransferResponse repairTransferResponse = new RepairTransferResponse();
 		if(!StringUtil.isValidString(repairTransferRequest.getPayermerchant())
 				&& !StringUtil.isValidString(repairTransferRequest.getStatus())){
@@ -1833,9 +1834,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			repairTransferResponse.setReturnMessage("参数错误");
 			return repairTransferResponse;
 		}
-		
+	
 		List<RepairTransferDTO> repairTransferDTOList= titanTransOrderDao.queryTitanTransOrderByStatus(repairTransferRequest);
-		
 		repairTransferResponse.setResult(true);
 		repairTransferResponse.setRepairTransferDTOListList(repairTransferDTOList);
 		return repairTransferResponse;
@@ -1847,20 +1847,19 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     	repairTransferRequest.setStatus(OrderStatusEnum.ORDER_FAIL.getStatus());
     	repairTransferRequest.setTransferStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
     	repairTransferRequest.setOrderPayStatus(ReqstatusEnum.RECHARFE_SUCCESS.getStatus());
-    	repairTransferRequest.setPayermerchant("141223100000056");
+    	repairTransferRequest.setPayermerchant("141223100000056");//GDP和平台所用的中间账户
     	RepairTransferResponse response = titanFinancialTradeService.getTransferOrders(repairTransferRequest);
-    
     	if(!response.isResult()){
     		log.info(response.getReturnMessage());
     		return;
     	}
-    	
+    	log.info("获取订单详情:"+JSONSerializer.toJSON(response));
     	List<RepairTransferDTO> repairTransferDTOList = response.getRepairTransferDTOListList();
     	if(repairTransferDTOList !=null && repairTransferDTOList.size()>0){
     		for(RepairTransferDTO repairTransferDTO :repairTransferDTOList){
     			if(StringUtil.isValidString(repairTransferDTO.getTransorderid()) 
     					&& StringUtil.isValidString(repairTransferDTO.getStatus())
-    					&& "2".equals(repairTransferDTO.getStatus())){
+    					&& "2".equals(repairTransferDTO.getStatus())){//其中2代表转账成功
     				break;
     			}
     			
@@ -1874,7 +1873,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         		transferRequest.setUserid(repairTransferDTO.getUserid());                                     //转出方用户Id	
         		transferRequest.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);							//转出方机构号
         		transferRequest.setProductId(repairTransferDTO.getProductid());							//转出方产品号
-        		transferRequest.setUserfee("0");
+        		transferRequest.setUserfee("0");//转账费率始终为0
         		transferRequest.setIntermerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);					//	接收方机构码
         		transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);						//	接收方产品号
         		transferRequest.setUserrelateid(repairTransferDTO.getPayeemerchant());	                    //接收方用户Id	
@@ -1886,6 +1885,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				    	return ;
 				    }
 				    
+				    log.info("转账的结果:"+JSONSerializer.toJSON(transferResponse));
 				    OrderStatusEnum orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
 				    //是否需要冻结
 				    if(0==repairTransferDTO.getIsEscrowedPayment()){
@@ -1894,6 +1894,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				    	rechargeResultConfirmRequest.setPayAmount(transferRequest.getAmount());
 				    	rechargeResultConfirmRequest.setUserid(transferRequest.getUserrelateid());
 				    	rechargeResultConfirmRequest.setOrderAmount(transferRequest.getAmount());
+				    	log.info("冻结入参:"+JSONSerializer.toJSON(rechargeResultConfirmRequest));
 				    	FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService.freezeAccountBalance(rechargeResultConfirmRequest);
 				    	orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
 				    	if(!freezeAccountBalanceResponse.isFreezeSuccess()){//冻结不成功
@@ -1920,6 +1921,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				    transOrderDTO.setPayorderno(repairTransferDTO.getPayorderno());
 				    transOrderDTO.setNotifyUrl(repairTransferDTO.getNotifyUrl());
 				    transOrderDTO.setBusinessordercode(repairTransferDTO.getBusinessordercode());
+				    log.info("回调:"+JSONSerializer.toJSON(transOrderDTO));
 				    titanFinancialTradeService.confirmFinance(transOrderDTO);
 				    
         		} catch (Exception e) {

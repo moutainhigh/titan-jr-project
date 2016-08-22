@@ -882,8 +882,10 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				BalanceUnFreezeRequest balanceUnFreezeRequest = convertBalanceUnFreezeRequest(fundFreezeDTO);
 				if(balanceUnFreezeRequest !=null){
 					try{
+						log.info("调用融数解冻:"+JSONSerializer.toJSON(balanceUnFreezeRequest));
 						BalanceUnFreezeResponse balanceUnFreezeResponse = rsAccTradeManager.unFreezeAccountBalance(balanceUnFreezeRequest);
-					    if(CommonConstant.OPERATE_SUCCESS.equals(balanceUnFreezeResponse.getOperateStatus())){
+						log.info("调用融数解冻结果:"+JSONSerializer.toJSON(balanceUnFreezeResponse));
+						if(CommonConstant.OPERATE_SUCCESS.equals(balanceUnFreezeResponse.getOperateStatus())){
 					    	//插入解冻记录
 					    	TitanFundUnFreezereq titanFundUnFreezereq = covertToTitanFundUnFreezereq(fundFreezeDTO);
 					    	try{
