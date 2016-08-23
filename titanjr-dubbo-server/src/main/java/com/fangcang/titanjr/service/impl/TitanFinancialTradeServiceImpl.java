@@ -243,23 +243,24 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                                  } else if (ReqstatusEnum.RECHARFE_IN_PROCESS.getStatus() == titanOrderPayreq.getReqstatus()) {//处理中判断落单时间和过期时间
                                      //获取当前时间与订单时间的秒数差
                                      long times = DateUtil.diffSecondByTime(titanOrderPayreq.getOrderTime(), DateUtil.sdf5.format(new Date()));
-                                     if ( times < this.getExpireTime(titanOrderPayreq)) {//未过期 获取当前单号
+                                     TitanTransOrder titanTransOrder = new TitanTransOrder();
+                                     if ( times < this.getExpireTime(titanOrderPayreq)) {//未过期 获取当前单号,需要优化
                                          orderid = titanOrderPayreq.getOrderNo();
+                                     	 titanTransOrder.setBusinessordercode(paymentRequest.getBusinessOrderCode());
+                                     	 titanTransOrder.setTransid(transOrderResponse.getTransOrder().getTransid());
                                      } else {
-                                     	TitanTransOrder titanTransOrder = new TitanTransOrder();
                                      	titanTransOrder.setStatusid(OrderStatusEnum.ORDER_NO_EFFECT.getStatus());
                                      	titanTransOrder.setTransid(transOrderResponse.getTransOrder().getTransid());
-                                     	int row =0;
-                                     	try{
-                                     		row = titanTransOrderDao.update(titanTransOrder);
-                                     	}catch(Exception e){
-                                     		log.error("该订单失效设置失败"+e.getMessage(),e);
-                                     	}
-                                     	if(row<1){
+                                     }
+                                 	 try{
+                                 		 int row =titanTransOrderDao.update(titanTransOrder);
+                                 	     if(row<1){
                                      		//TODO 写异常单
                                      		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrderDTO.getOrderid(), "下单 设置订单失效", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(titanTransOrder));
                         	        		titanOrderService.saveOrderException(orderExceptionDTO);
-                                     	}
+                                     	 }
+                                 	 }catch(Exception e){
+                                 		log.error("该订单失效设置失败"+e.getMessage(),e);
                                      }
                                  }
                              } else {//订单有效，无充值请求则返回该单号进行充值操作

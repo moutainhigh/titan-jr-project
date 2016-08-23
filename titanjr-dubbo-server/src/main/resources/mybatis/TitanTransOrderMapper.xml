@@ -189,6 +189,9 @@
             <if test="notifyUrl !=null">
                notifyUrl = #{notifyUrl},
             </if>
+            <if test="businessordercode !=null">
+              businessordercode =#{businessordercode}
+            </if>
         </set>
         <where>
           <if test="userorderid !=null">
