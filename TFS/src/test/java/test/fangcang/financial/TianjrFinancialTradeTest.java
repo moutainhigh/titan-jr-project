@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import test.fangcang.GenericTest;
 
+import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
@@ -42,6 +43,7 @@ import com.fangcang.titanjr.dto.request.PaymentRequest;
 import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
 import com.fangcang.titanjr.dto.request.PermissionRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
+import com.fangcang.titanjr.dto.request.TitanOrderRequest;
 import com.fangcang.titanjr.dto.request.TradeDetailRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.dto.request.UnFreezeAccountBalanceRequest;
@@ -614,10 +616,26 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialTradeService.getSign(rechargeResultConfirmRequest);
     }
     
-    @Test
+   // @Test
     public void repairTransferOrder(){
     	titanFinancialTradeService.repairTransferOrder();
     }
+    
+    @Test
+    public void testNewTitanOrder(){
+    	TitanOrderRequest titanOrderRequest =new TitanOrderRequest();
+    	titanOrderRequest.setAmount("100");
+    	titanOrderRequest.setGoodsdetail("喜马拉雅国际大酒店");
+    	titanOrderRequest.setEscrowedDate("2016-08-23");
+    	titanOrderRequest.setGoodsId("TW16010813732");
+    	titanOrderRequest.setName("张三");
+    	titanOrderRequest.setNotify("www.fangcang.com");
+    	titanOrderRequest.setPayerType(PayerTypeEnum.SUPPLY_FINACIAL);
+    	titanOrderRequest.setUserId("33535");
+    	
+    	titanFinancialTradeService.saveTitanTransOrder(titanOrderRequest);
+    }
+    
     
     /**
      * 测试整个支付流程  基础数据  userid :TJM10000087  orgname:腾讯云计算有限公司  泰坦码:10000093

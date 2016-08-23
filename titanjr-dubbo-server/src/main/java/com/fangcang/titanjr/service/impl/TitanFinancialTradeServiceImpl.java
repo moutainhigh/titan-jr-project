@@ -2,6 +2,7 @@ package com.fangcang.titanjr.service.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.fangcang.order.api.HotelOrderSearchFacade;
 import com.fangcang.order.dto.OrderDetailResponseDTO;
 import com.fangcang.titanjr.common.enums.*;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.*;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
@@ -47,6 +49,7 @@ import com.fangcang.titanjr.dao.TitanOrderPayreqDao;
 import com.fangcang.titanjr.dao.TitanPayMethodConfigDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
+import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dto.bean.AmtTypeEnum;
 import com.fangcang.titanjr.dto.bean.CallBackInfo;
 import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
@@ -61,13 +64,16 @@ import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.bean.RepairTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
 import com.fangcang.titanjr.entity.TitanDynamicKey;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.TitanPayMethodConfig;
 import com.fangcang.titanjr.entity.TitanTransOrder;
 import com.fangcang.titanjr.entity.TitanTransferReq;
+import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.entity.parameter.TitanAccountParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
 import com.fangcang.titanjr.entity.parameter.TitanTransOrderParam;
@@ -88,6 +94,7 @@ import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
@@ -129,6 +136,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
     @Resource
     private TitanAccountDao titanAccountDao;
+    
+    @Resource
+    private TitanUserDao titanUserDao;
 
     @Resource
     private TitanDynamicKeyDao titanDynamicKeyDao;
@@ -141,6 +151,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     
     @Resource 
     private TitanFinancialAccountService titanFinancialAccountService;
+    
+    @Resource 
+    private TitanFinancialUserService titanFinancialUserService;
     
     @Resource 
     private DomainConfigDao domainConfigDao;
@@ -1957,5 +1970,124 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		 }
 		 return null;
 	 }
+
+	@Override
+	public TransOrderCreateResponse saveTitanTransOrder(TitanOrderRequest titanOrderRequest) {
+		TransOrderCreateResponse localOrderResponse = new TransOrderCreateResponse();
+		
+		TitanTransOrder titanTransOrder = new TitanTransOrder();
+		
+		if(!StringUtil.isValidString(titanOrderRequest.getUserId())
+				&& !StringUtil.isValidString(titanOrderRequest.getRuserId())){
+			localOrderResponse.putParamError();
+			return localOrderResponse;
+		}
+		
+		localOrderResponse = this.setBaseUserInfo(titanOrderRequest, titanTransOrder);
+		if(!localOrderResponse.isResult()){
+			return localOrderResponse;
+		}
+		
+		titanTransOrder.setGoodscnt(1);
+		titanTransOrder.setTradeamount(Long.parseLong(titanOrderRequest.getAmount()));
+		titanTransOrder.setPayorderno(titanOrderRequest.getGoodsId());
+		titanTransOrder.setGoodsdetail(titanOrderRequest.getGoodsdetail());
+		titanTransOrder.setGoodsname(titanOrderRequest.getGoodsname());
+		titanTransOrder.setNotifyUrl(titanOrderRequest.getNotify());
+		titanTransOrder.setCreator(titanOrderRequest.getName());
+		titanTransOrder.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+		titanTransOrder.setCreatetime(new Date());
+		titanTransOrder.setUserorderid(OrderGenerateService.genSyncUserOrderId());
+		if(null !=titanOrderRequest.getBusinessInfo()){
+			titanTransOrder.setBusinessinfo(JSONSerializer.toJSON(titanOrderRequest.getBusinessInfo()).toString());
+		}
+		try{
+			titanTransOrder.setIsEscrowedPayment("1");
+			if(StringUtil.isValidString(titanOrderRequest.getEscrowedDate())){
+				titanTransOrder.setIsEscrowedPayment("0");
+				titanTransOrder.setEscrowedDate(DateUtil.sdf.parse(titanOrderRequest.getEscrowedDate()));
+			}
+			boolean isSuccess  = titanTransOrderDao.insert(titanTransOrder)>0?true:false;
+			localOrderResponse.setOrderNo(titanTransOrder.getUserorderid());
+			localOrderResponse.putSuccess();
+			if(!isSuccess){
+				localOrderResponse.putErrorResult("订单信息保存失败");
+			}
+		}catch(Exception e){
+			log.error("订单信息保存失败:"+e.getMessage());
+		}
+		
+		return localOrderResponse;
+	}
 	
+	/**
+	 * 只能是fcUSerId 进入
+	 * @param userId
+	 * @param titanTransOrder
+	 * @param isPayerMent
+	 * @return
+	 */
+	private TransOrderCreateResponse setBaseUserInfo(TitanOrderRequest titanOrderRequest,TitanTransOrder titanTransOrder){
+		TransOrderCreateResponse localOrderResponse = new TransOrderCreateResponse();
+		PayerTypeEnum payerTypeEnum = titanOrderRequest.getPayerType();
+		titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
+		if(StringUtil.isValidString(titanOrderRequest.getUserId())){//如果fcUserId为null则不查询
+			if(payerTypeEnum.isFcUserId()){//付款方传入fuUSerId
+				TitanUserBindInfoDTO titanUserBindInfoDTO  = new TitanUserBindInfoDTO();
+				titanUserBindInfoDTO.setFcuserid(Long.parseLong(titanOrderRequest.getUserId()));
+				titanUserBindInfoDTO = titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+				if(titanUserBindInfoDTO ==null || titanUserBindInfoDTO.getTfsuserid()==null){
+					localOrderResponse.putSysError();
+					return localOrderResponse;
+				}
+				TitanUser titanUser = titanUserDao.selectTitanUser(titanUserBindInfoDTO.getTfsuserid());
+				titanTransOrder.setMerchantcode(titanUserBindInfoDTO.getMerchantcode());
+				titanTransOrder.setUserid(titanUser.getUserid());
+				titanTransOrder.setPayermerchant(titanUser.getUserid());
+			}else if(payerTypeEnum.isUserId()){//付款方传入userId
+				titanTransOrder.setUserid(titanOrderRequest.getUserId());
+				titanTransOrder.setPayermerchant(titanOrderRequest.getUserId());
+			}else{
+				localOrderResponse.putSysError();
+				return localOrderResponse;
+			}
+			
+		}
+		
+		if(StringUtil.isValidString(titanOrderRequest.getRuserId())){//收款方如果是merchantcode
+			if(payerTypeEnum.isReicveMerchantCode()){//接收方传入merchantcode
+				OrgBindInfo orgBindInfo= this.queryOrgBindInfo(titanOrderRequest.getRuserId());
+				if(orgBindInfo==null){
+					localOrderResponse.putErrorResult("接收方机构不存在");
+					return localOrderResponse;
+				}
+				titanTransOrder.setUserid(orgBindInfo.getUserid());
+				titanTransOrder.setPayeemerchant(orgBindInfo.getUserid());
+				titanTransOrder.setUserrelateid(orgBindInfo.getUserid());
+				if(payerTypeEnum.isB2BPayment()){
+					titanTransOrder.setMerchantcode(titanOrderRequest.getRuserId());
+					titanTransOrder.setUserid("141223100000056");
+					titanTransOrder.setProductid("P000148");
+				}
+			}else if(payerTypeEnum.isUserId()){//接收方传入userId
+				titanTransOrder.setUserid(titanOrderRequest.getRuserId());
+				titanTransOrder.setPayeemerchant(titanOrderRequest.getRuserId());
+				titanTransOrder.setUserrelateid(titanOrderRequest.getRuserId());
+				titanTransOrder.setTransordertype(TransOrderTypeEnum.RECHARGE.type);
+			}else{
+				localOrderResponse.putSysError();
+				return localOrderResponse;
+			}
+		}
+		
+		localOrderResponse.putSuccess();
+		return localOrderResponse;
+	}
+	
+	
+	private OrgBindInfo queryOrgBindInfo(String merchantCode){
+		OrgBindInfo orgBindInfo = new OrgBindInfo();
+		orgBindInfo.setMerchantCode(merchantCode);
+		return  titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
+	}
 }

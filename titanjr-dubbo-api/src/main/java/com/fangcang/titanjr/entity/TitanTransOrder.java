@@ -40,6 +40,8 @@ public class TitanTransOrder implements java.io.Serializable {
     private Long tradeamount;
     private Integer transordertype;
     private String notifyUrl;
+    //业务信息
+    private String businessinfo;
     
 
     //是否担保支付
@@ -369,6 +371,13 @@ public class TitanTransOrder implements java.io.Serializable {
 	public void setTransordertype(Integer transordertype) {
 		this.transordertype = transordertype;
 	}
-	
+
+	public String getBusinessinfo() {
+		return businessinfo;
+	}
+
+	public void setBusinessinfo(String businessinfo) {
+		this.businessinfo = businessinfo;
+	}
     
 }

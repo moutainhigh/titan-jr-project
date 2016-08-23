@@ -210,5 +210,5 @@ public interface TitanFinancialUserService {
    	 * @throws GlobalServiceException
    	 * @author fangdaikang
    	 */
-    public TitanUserBindInfoDTO getUserBindInfoByFcuserid(TitanUserBindInfoDTO titanUserBindInfoDTO) throws GlobalServiceException;;
+    public TitanUserBindInfoDTO getUserBindInfoByFcuserid(TitanUserBindInfoDTO titanUserBindInfoDTO) ;
 }

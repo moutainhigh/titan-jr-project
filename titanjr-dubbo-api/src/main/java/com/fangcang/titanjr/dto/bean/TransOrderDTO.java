@@ -58,6 +58,9 @@ public class TransOrderDTO implements java.io.Serializable {
     private String isEscrowedPayment;
 
     private Date escrowedDate;
+    
+    //业务信息
+    private String businessinfo;
 
     private TitanOrderPayDTO titanOrderPayDTO;
 
@@ -400,5 +403,12 @@ public class TransOrderDTO implements java.io.Serializable {
 	public void setNotifyUrl(String notifyUrl) {
 		this.notifyUrl = notifyUrl;
 	}
-    
+
+	public String getBusinessinfo() {
+		return businessinfo;
+	}
+
+	public void setBusinessinfo(String businessinfo) {
+		this.businessinfo = businessinfo;
+	}
 }

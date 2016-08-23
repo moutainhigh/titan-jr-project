@@ -1029,7 +1029,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 
 	@Override
 	public TitanUserBindInfoDTO getUserBindInfoByFcuserid(TitanUserBindInfoDTO titanUserBindInfoDTO)
-			throws GlobalServiceException {
+			 {
 		try{
 			TitanUserBindInfo titanUserBindInfo = new TitanUserBindInfo();
 			titanUserBindInfo.setFcuserid(titanUserBindInfoDTO.getFcuserid());
@@ -1043,7 +1043,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		    }
 		}catch(Exception e){
 			log.error("根据房仓用户信息查询金融用户信息失败"+e.getMessage(),e);
-			throw new GlobalServiceException();
+//			throw new GlobalServiceException();
 		}
 		return null;
 	}

@@ -177,4 +177,11 @@ public interface TitanFinancialTradeService {
 	 */
 	public void repairTransferOrder();
 	
+	/**
+	 * 下单
+	 * @param titanOrderRequest
+	 * @return
+	 */
+	public TransOrderCreateResponse saveTitanTransOrder(TitanOrderRequest titanOrderRequest);
+	
 }
