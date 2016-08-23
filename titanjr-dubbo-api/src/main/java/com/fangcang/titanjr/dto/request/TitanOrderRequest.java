@@ -107,7 +107,7 @@ public class TitanOrderRequest implements Serializable{
 	}
 
 	public void setPayerType(PayerTypeEnum payerType) {
-		this.payerType = payerType;
+      this.payerType =payerType;
 	}
 
 	public String getNotify() {
@@ -117,4 +117,5 @@ public class TitanOrderRequest implements Serializable{
 	public void setNotify(String notify) {
 		this.notify = notify;
 	}
+	
 }
