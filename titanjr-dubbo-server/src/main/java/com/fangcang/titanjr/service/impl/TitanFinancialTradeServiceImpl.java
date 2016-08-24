@@ -1991,8 +1991,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		titanTransOrder.setGoodscnt(1);
 		titanTransOrder.setTradeamount(Long.parseLong(titanOrderRequest.getAmount()));
 		titanTransOrder.setPayorderno(titanOrderRequest.getGoodsId());
-		titanTransOrder.setGoodsdetail(titanOrderRequest.getGoodsdetail());
-		titanTransOrder.setGoodsname(titanOrderRequest.getGoodsname());
+		titanTransOrder.setGoodsdetail(titanOrderRequest.getGoodsDetail());
+		titanTransOrder.setGoodsname(titanOrderRequest.getGoodsName());
 		titanTransOrder.setNotifyUrl(titanOrderRequest.getNotify());
 		titanTransOrder.setCreator(titanOrderRequest.getName());
 		titanTransOrder.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
@@ -2047,9 +2047,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			}else if(payerTypeEnum.isUserId()){//付款方传入userId
 				titanTransOrder.setUserid(titanOrderRequest.getUserId());
 				titanTransOrder.setPayermerchant(titanOrderRequest.getUserId());
-			}else{
-				localOrderResponse.putSysError();
-				return localOrderResponse;
 			}
 			
 		}

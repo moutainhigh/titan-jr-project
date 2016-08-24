@@ -19,6 +19,8 @@ public class RSADecryptString {
 	public static String decryptString(String str, String key) 
 	{
 		try {
+			
+			
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA",
 					new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
@@ -30,10 +32,12 @@ public class RSADecryptString {
 			String[] signAr = str.split(" ");
 			StringBuilder strs = new StringBuilder();
 			for (int i = 0; i < signAr.length; i++) {
-				strs.append(new String(JsRSAUtil.decrypt(pkey,
-						signAr[i].getBytes("UTF-8"))));
+				
+				byte[] de_result = JsRSAUtil.decrypt(pkey,JsRSAUtil.hexStringToBytes(signAr[i]));
+				strs.append(new StringBuilder(new String(de_result)).reverse()
+						.toString());
 			}
-			return URLDecoder.decode(strs.toString(), "UTF-8");
+			return URLDecoder.decode(strs.toString(),"UTF-8");
 		} catch (Exception e) {
 			log.error("解密失败" + e.getMessage(), e);
 		}

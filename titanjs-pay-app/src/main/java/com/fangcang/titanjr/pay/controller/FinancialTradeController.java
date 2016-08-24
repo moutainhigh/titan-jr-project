@@ -1,9 +1,9 @@
 package com.fangcang.titanjr.pay.controller;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
-import java.text.ParseException;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -24,10 +24,8 @@ import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
-import com.fangcang.titanjr.common.util.CommonConstant;
-import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.DateUtil;
-import com.fangcang.titanjr.dto.BaseResponseDTO.ReturnCode;
+import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.CashDeskData;
@@ -51,13 +49,13 @@ import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
 import com.fangcang.titanjr.facade.TitanFinancialTradeFacade;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.pay.util.RSADecryptString;
-import com.fangcang.titanjr.service.TitanCashierDeskService;
-import com.fangcang.titanjr.service.TitanFinancialAccountService;
-import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.request.AccountInfoRequest;
 import com.fangcang.titanjr.request.CheckPermissionRequest;
 import com.fangcang.titanjr.response.CheckAccountResponse;
 import com.fangcang.titanjr.response.PermissionResponse;
+import com.fangcang.titanjr.service.TitanCashierDeskService;
+import com.fangcang.titanjr.service.TitanFinancialAccountService;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanOrderService;
 //import com.fangcang.titanjr.web.util.WebConstant;
@@ -146,7 +144,7 @@ public class FinancialTradeController extends BaseController {
 			log.info("auth user is ok .");
 
 			// 检查解析后的参数是否合理
-			if (checkOrderInfo(dto)) {
+			if (!checkOrderInfo(dto)) {
 				log.error("orderInfo check fail!");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED
@@ -156,7 +154,7 @@ public class FinancialTradeController extends BaseController {
 
 			log.info("check order info is ok");
 
-			if (checkPermission(dto)) {
+			if (!checkPermission(dto)) {
 				log.error("checkPermission is fail.");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.PERMISSION_CHECK_FAILED.getResMsg());
@@ -205,9 +203,12 @@ public class FinancialTradeController extends BaseController {
 				return TRADE_PAY_ERROR_PAGE;
 			}
 
-			log.info("get Payment url ok url=" + response.getUrl());
+			log.info("get Payment url ok url="
+					+ this.getRequest().getContextPath() + response.getUrl());
 
-			this.getResponse().sendRedirect(response.getUrl());
+			this.getResponse().sendRedirect(
+					this.getRequest().getContextPath()
+							+ response.getUrl());
 
 		} catch (Exception ex) {
 			log.error("", ex);
@@ -261,13 +262,6 @@ public class FinancialTradeController extends BaseController {
 		return true;
 	}
 
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * 检查订单中的信息是否合法
 	 * 
@@ -322,7 +316,6 @@ public class FinancialTradeController extends BaseController {
 
 		return true;
 	}
-
 	@ResponseBody
 	@RequestMapping(value = "/checkOrderStatus", method = { RequestMethod.GET,
 			RequestMethod.POST })
