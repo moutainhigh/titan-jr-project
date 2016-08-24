@@ -95,10 +95,10 @@ public class FinancialTradeController extends BaseController {
 	
 	@Resource
 	private TitanFinancialAccountService titanFinancialAccountService;
-	@Resource
+//	@Resource
 	private TitanFinancialTradeFacade titanFinancialTradeFacade;
 
-	@Resource
+//	@Resource
 	private TitanFinancialPermissionFacade titanFinancialPermissionFacade;
 
 	/**
@@ -334,7 +334,7 @@ public class FinancialTradeController extends BaseController {
     @RequestMapping("/showCashierDesk")
 	public String showCashierDesk(String orderNo,String sign, Model model){
 		
-		orderNo = "titanjrorder160606162006812";
+		orderNo = "TJO1608181126362212";
 		log.info("获取支付地址入参:" + JsonConversionTool.toJson(orderNo));
 		
 		if(!StringUtil.isValidString(orderNo)){
@@ -414,7 +414,7 @@ public class FinancialTradeController extends BaseController {
 		if(StringUtil.isValidString(transOrderDTO.getMerchantcode())){
 			MerchantResponseDTO merchantResponseDTO = this.getMerchantResponseDTO(transOrderDTO.getMerchantcode());
 			if(null !=merchantResponseDTO){
-				model.addAttribute("CURRENT_THEME",cashDeskData.getCurrentTheme());
+				model.addAttribute("CURRENT_THEME",merchantResponseDTO.getTheme());
 			}
 		}
 	
@@ -436,6 +436,9 @@ public class FinancialTradeController extends BaseController {
 		cashDeskData.setPaySource(PayerTypeEnum.getPaySource(transOrderDTO.getPayerType()).toString());
 		cashDeskData.setMerchantcode(transOrderDTO.getMerchantcode());
 		cashDeskData.setUserId(transOrderDTO.getUserid());
+		if(transOrderDTO.getTradeamount()!=null){
+			cashDeskData.setAmount(transOrderDTO.getTradeamount().toString());
+		}
 		model.addAttribute("cashDeskData", cashDeskData);
 		
 		if(payerTypeEnum.isRechargeCashDesk()){
