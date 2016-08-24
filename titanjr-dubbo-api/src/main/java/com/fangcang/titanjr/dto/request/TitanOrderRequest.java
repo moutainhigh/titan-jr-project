@@ -26,7 +26,7 @@ public class TitanOrderRequest implements Serializable{
 	private String userId;// 付款方身份标示 如果是财务，则建议是FCUSERID
 	private String ruserId;// 收款方身份标示 N ,GDP可以指定接受方的 商家联盟可以指定其FCUSERID,ke
 	private String amount;// 订单金额
-	private PayerTypeEnum payerType;// 付款人类型 财务 GDP 等
+	private String payerType;// 付款人类型 财务 GDP 等
 	private String notify;// 通知地址
 	private Map<String, String> businessInfo = new HashMap<String, String>(); // 存储业务信息
 
@@ -102,11 +102,11 @@ public class TitanOrderRequest implements Serializable{
 		this.amount = amount;
 	}
 
-	public PayerTypeEnum getPayerType() {
+	public String getPayerType() {
 		return payerType;
 	}
 
-	public void setPayerType(PayerTypeEnum payerType) {
+	public void setPayerType(String payerType) {
       this.payerType =payerType;
 	}
 

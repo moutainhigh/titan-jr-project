@@ -2029,7 +2029,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	 */
 	private TransOrderCreateResponse setBaseUserInfo(TitanOrderRequest titanOrderRequest,TitanTransOrder titanTransOrder){
 		TransOrderCreateResponse localOrderResponse = new TransOrderCreateResponse();
-		PayerTypeEnum payerTypeEnum = titanOrderRequest.getPayerType();
+		PayerTypeEnum payerTypeEnum = PayerTypeEnum.getPayerTypeEnumByKey(titanOrderRequest.getPayerType());
 		titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
 		if(StringUtil.isValidString(titanOrderRequest.getUserId())){//如果fcUserId为null则不查询
 			if(payerTypeEnum.isFcUserId()){//付款方传入fuUSerId

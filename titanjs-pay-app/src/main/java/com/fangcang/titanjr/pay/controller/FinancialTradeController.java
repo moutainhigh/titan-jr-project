@@ -3,6 +3,7 @@ package com.fangcang.titanjr.pay.controller;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.text.ParseException;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -25,6 +26,7 @@ import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.dto.BaseResponseDTO.ReturnCode;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
@@ -36,18 +38,26 @@ import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
+import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
 import com.fangcang.titanjr.dto.request.TitanOrderRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.AccountHistoryResponse;
 import com.fangcang.titanjr.dto.response.CashierDeskResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
+import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
+import com.fangcang.titanjr.facade.TitanFinancialTradeFacade;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.pay.util.RSADecryptString;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.request.AccountInfoRequest;
+import com.fangcang.titanjr.request.CheckPermissionRequest;
+import com.fangcang.titanjr.response.CheckAccountResponse;
+import com.fangcang.titanjr.response.PermissionResponse;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanOrderService;
 //import com.fangcang.titanjr.web.util.WebConstant;
@@ -57,21 +67,15 @@ import com.fangcang.util.StringUtil;
 @RequestMapping("/trade")
 public class FinancialTradeController extends BaseController {
 
-	/**
-	 * @fieldName: serialVersionUID
-	 * @fieldType: long
-	 * @Description: TODO
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private static final Log log = LogFactory
 			.getLog(FinancialTradeController.class);
 
 	private static final String TRADE_PAY_ERROR_PAGE = "/checkstand-pay/cashierDeskError";
-	
+
 	private String prv = "30820276020100300d06092a864886f70d0101010500048202603082025c02010002818100d8b6e03dd8f9bf45157f0d14aedf9a696665641da90cab5114a22b7f6c711f22429c32c99ab76e3ce74de00145bcd50b9d2e7c60cd97a4979a5d0ce4ead9ba61baca1495758d69cc1f76e69db43f1ef1f9c33cd2edb8c726ed17c297a7b9fa3f18e58aef9d3f33f8431a41cc3c0ca7bc5151d33a8691e6506e0439363aec0063020301000102818027846d6e89b6bce48d8f6de4b420ad0904357fe492b36f37e941cb19c0bdfdf5e2dc95bc427ca95aecb8bc1caf4948360672f81634d72e99c079b044bbf878ee4c3c6050d319fc545736e392fa7dcf2761d23551663d3844f3f2f61f652bec45eedf6d398a7e0916944bba8c64dd70f770ba4e213764e97c2aeaf46e66a3b591024100f7e35b74120740e22c85c2ddae516bcde62648447f2269b3701503afe4775749d7ffba66eff7024b2b6e879b6b9f3945508eb189d7fe602488575dae609bf151024100dfce5d97595fce458c1769fea32b175bb594a404ea070009c1c139d63907acad0433cc55ffcbf7c81359057efbda4f968813ed34dfedd9edb9079fdfd486c97302406832ad9290b173d89e966b5efb9346197a90c4f7e5e8f53d73f3a1652247f7ed165a6c6430a247d8891d20eb77c5aa3134b7867146d5aa5c30e3688190227cc1024100ad298b8a75d145d4d3aeae0922104e335c0c14d7e486e405a88f2b83cf7e5ba14676196c94cd28faf9d550064f313b9119da691717077e2d8b9315a4e6581f770240177a20e4fc96cb896a899ef9a5bc4c54c24b416e2fda7debf7536e851fb33fdeb95750742b0f09154acd53d73af8750461bca5bd7cc0de58a8fa635453152e78";
 
-	
 	@Resource
 	private TitanFinancialTradeService titanFinancialTradeService;
 	
@@ -91,6 +95,12 @@ public class FinancialTradeController extends BaseController {
 	
 	@Resource
 	private TitanFinancialAccountService titanFinancialAccountService;
+	@Resource
+	private TitanFinancialTradeFacade titanFinancialTradeFacade;
+
+	@Resource
+	private TitanFinancialPermissionFacade titanFinancialPermissionFacade;
+
 	/**
 	 * @Title: titanPay
 	 * @Description: TODO
@@ -103,8 +113,7 @@ public class FinancialTradeController extends BaseController {
 	@RequestMapping(value = "/titanPay", method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public String titanPay(String orderInfo, String businessInfo, Model model) {
-		
-		
+
 		if (!StringUtil.isValidString(orderInfo)) {
 			log.error("orderInfo is not null!");
 			model.addAttribute("msg",
@@ -114,7 +123,6 @@ public class FinancialTradeController extends BaseController {
 
 		try {
 
-
 			String deInfo = RSADecryptString.decryptString(orderInfo, prv);
 			if (!StringUtil.isValidString(deInfo)) {
 				log.error("validate user identity decrypt fail.");
@@ -122,8 +130,7 @@ public class FinancialTradeController extends BaseController {
 						TitanMsgCodeEnum.AUTHENTITCATION_FAILED.getResMsg());
 				return TRADE_PAY_ERROR_PAGE;
 			}
-			
-			
+
 			log.info("decrypt orderInfo is ok .");
 
 			TitanOrderRequest dto = JsonConversionTool.toObject(deInfo,
@@ -135,42 +142,185 @@ public class FinancialTradeController extends BaseController {
 						TitanMsgCodeEnum.AUTHENTITCATION_FAILED.getResMsg());
 				return TRADE_PAY_ERROR_PAGE;
 			}
-			
+
 			log.info("auth user is ok .");
-			
-			Map<String, String> busMap =  JsonConversionTool.toObject(businessInfo, Map.class);
+
+			// 检查解析后的参数是否合理
+			if (checkOrderInfo(dto)) {
+				log.error("orderInfo check fail!");
+				model.addAttribute("msg",
+						TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED
+								.getResMsg());
+				return TRADE_PAY_ERROR_PAGE;
+			}
+
+			log.info("check order info is ok");
+
+			if (checkPermission(dto)) {
+				log.error("checkPermission is fail.");
+				model.addAttribute("msg",
+						TitanMsgCodeEnum.PERMISSION_CHECK_FAILED.getResMsg());
+				return TRADE_PAY_ERROR_PAGE;
+			}
+
+			log.info("check permission  is ok");
+
+			Map<String, String> busMap = JsonConversionTool.toObject(
+					businessInfo, Map.class);
 			dto.setBusinessInfo(busMap);
-			
+
 			log.info("begin sava titan trans order ...");
-			//保存金融订单
+			// 保存金融订单
 			TransOrderCreateResponse orderCreateResponse = titanFinancialTradeService
 					.saveTitanTransOrder(dto);
-			
+
 			if (orderCreateResponse == null
-					|| (!orderCreateResponse.getReturnCode().equals(
-							ReturnCode.CODE_SUCCESS.getCode())) || 
-							!StringUtil.isValidString(orderCreateResponse.getOrderNo())) 
-			{
+					|| (!orderCreateResponse.isResult())
+					|| !StringUtil.isValidString(orderCreateResponse
+							.getOrderNo())) {
 				log.error("orderCreateResponse "
 						+ orderCreateResponse.getReturnCode() + ":"
 						+ orderCreateResponse.getReturnMessage());
-				
+
 				model.addAttribute("msg",
-						TitanMsgCodeEnum.AUTHENTITCATION_FAILED.getResMsg());
-				return TRADE_PAY_ERROR_PAGE;	
+						TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
+				return TRADE_PAY_ERROR_PAGE;
 			}
-			
+
 			log.info("end sava titan trans order... [orderNo: "
 					+ orderCreateResponse.getOrderNo() + "]");
 
+			PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
+			paymentUrlRequest.setPayOrderNo(orderCreateResponse.getOrderNo());
+			paymentUrlRequest.setIsEscrowed("0");
+			paymentUrlRequest.setPaySource(dto.getPayerType());
+			PaymentUrlResponse response = titanFinancialTradeService
+					.getPaymentUrl(paymentUrlRequest);
+
+			if (response == null || !response.isResult()) {
+				log.error("orderCreateResponse "
+						+ orderCreateResponse.getReturnCode() + ":"
+						+ orderCreateResponse.getReturnMessage());
+				model.addAttribute("msg", TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
+				return TRADE_PAY_ERROR_PAGE;
+			}
+
+			log.info("get Payment url ok url=" + response.getUrl());
+
+			this.getResponse().sendRedirect(response.getUrl());
 
 		} catch (Exception ex) {
 			log.error("", ex);
 		}
-		
-		model.addAttribute("msg",
-				TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
+
+		model.addAttribute("msg", TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
 		return TRADE_PAY_ERROR_PAGE;
+	}
+
+	private boolean checkPermission(TitanOrderRequest dto) {
+		PayerTypeEnum pe = PayerTypeEnum.getPayerTypeEnumByKey(dto
+				.getPayerType());
+
+		CheckPermissionRequest permissionRequest = null;
+		PermissionResponse permissionResponse = null;
+
+		if (pe.isFcUserId() && StringUtil.isValidString(dto.getUserId())) {
+			permissionRequest = new CheckPermissionRequest();
+			permissionRequest.setFcuserid(dto.getUserId());
+			permissionRequest.setPermission("1");
+
+			log.info("check permission userId= " + dto.getUserId());
+
+			permissionResponse = titanFinancialPermissionFacade
+					.isPermissionToPayment(permissionRequest);
+
+			if (permissionResponse == null || (!permissionResponse.isResult())) {
+				log.error("checkPermission response  "
+						+ permissionResponse.getReturnCode() + ":"
+						+ permissionResponse.getReturnMessage());
+				return false;
+			}
+		}
+
+		if (pe.isReicveMerchantCode()
+				&& StringUtil.isValidString(dto.getRuserId())) {
+			AccountInfoRequest accountInfo = new AccountInfoRequest();
+			accountInfo.setMerchantCode(dto.getRuserId());
+			log.info("check permission ruserId= " + dto.getRuserId());
+
+			CheckAccountResponse response = titanFinancialPermissionFacade
+					.isFinanceAccount(accountInfo);
+
+			if (response == null || (!response.isResult())) {
+				log.error("checkPermission response  "
+						+ response.getReturnCode() + ":"
+						+ response.getReturnMessage());
+				return false;
+			}
+		}
+		return true;
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * 检查订单中的信息是否合法
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	private boolean checkOrderInfo(TitanOrderRequest dto) {
+		if (!StringUtil.isValidString(dto.getAmount())) {
+			log.error("Amount is null");
+			return false;
+		}
+
+		if (!StringUtil.isValidString(dto.getGoodsId())) {
+			log.error("GoodsId is null");
+			return false;
+		}
+
+		if (!StringUtil.isValidString(dto.getPayerType())) {
+			log.error("PayerType is null");
+			return false;
+		}
+		PayerTypeEnum pe = PayerTypeEnum.getPayerTypeEnumByKey(dto
+				.getPayerType());
+		if (pe == null) {
+			log.error("PayerType convert is null");
+			return false;
+		}
+
+		if (pe.isUserId() && !StringUtil.isValidString(dto.getUserId())) {
+			log.error(pe + "userId is null");
+			return false;
+		}
+
+		if (pe.isFcUserId() && !StringUtil.isValidString(dto.getUserId())) {
+			log.error(pe + "userId is null");
+			return false;
+		}
+
+		if (pe.isB2BPayment() && !StringUtil.isValidString(dto.getRuserId())) {
+			log.error(pe + "RuserId is null");
+			return false;
+		}
+
+		if (StringUtil.isValidString(dto.getEscrowedDate())) {
+			try {
+				DateUtil.sdf.parse(dto.getEscrowedDate());
+			} catch (ParseException e) {
+				log.error("parse escrowedDate fail.");
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	@ResponseBody

@@ -630,7 +630,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanOrderRequest.setGoodsId("TW16010813732");
     	titanOrderRequest.setName("张三");
     	titanOrderRequest.setNotify("www.fangcang.com");
-    	titanOrderRequest.setPayerType(PayerTypeEnum.SUPPLY_FINACIAL);
+    	titanOrderRequest.setPayerType(PayerTypeEnum.SUPPLY_FINACIAL.key);
     	titanOrderRequest.setUserId("33535");
     	
     	titanFinancialTradeService.saveTitanTransOrder(titanOrderRequest);

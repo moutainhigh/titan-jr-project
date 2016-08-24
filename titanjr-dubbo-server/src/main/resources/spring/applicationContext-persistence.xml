@@ -136,3 +136,4 @@
 	<bean id="titanOrderExceptionDao" class="com.fangcang.titanjr.dao.impl.TitanOrderExceptionDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanCheckCodeDao" class="com.fangcang.titanjr.dao.impl.TitanCheckCodeDaoImpl" parent="baseSqlMapClient"></bean>
 </beans>
+

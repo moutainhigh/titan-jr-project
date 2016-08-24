@@ -50,6 +50,7 @@ public enum PayerTypeEnum {
 	  public boolean isRechargeCashDesk(){
 		  return RECHARGE.key.equals(this.key);
 	  }
+
 	  
 	  public boolean isUserId()
 	  {
