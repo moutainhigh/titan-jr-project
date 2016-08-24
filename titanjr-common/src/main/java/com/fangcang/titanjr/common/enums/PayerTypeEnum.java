@@ -21,7 +21,7 @@ public enum PayerTypeEnum {
 		  this.msg=msg;
 	  }
 	  
-	  public PayerTypeEnum getPayerTypeEnumByKey(String key){
+	  public static PayerTypeEnum getPayerTypeEnumByKey(String key){
 		  if(!StringUtil.isValidString(key)){
 			  return null;
 		  }
