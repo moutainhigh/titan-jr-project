@@ -21,11 +21,8 @@
 
     <div class="S_popup_Kan clearfix opaque">
         <div class="gold_pay">
-           <c:if test="${not empty gDPOrderDTO }">
-              <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${gDPOrderDTO.orderSum  }"  pattern="#,##0.00#" /></span>元</div>
-           </c:if>
-           <c:if test="${not empty orderDTO }">
-              <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${orderDTO.payAmount  }"  pattern="#,##0.00#" /></span>元</div>
+           <c:if test="${not empty cashierDesk }">
+              <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${cashierDesk.amount}"  pattern="#,##0.00#" /></span>元</div>
            </c:if>
             <div class="goldpay_top">
                 <ul>

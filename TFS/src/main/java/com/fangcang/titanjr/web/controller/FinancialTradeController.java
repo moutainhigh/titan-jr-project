@@ -7,6 +7,7 @@ import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.CashierDeskTypeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.ReqstatusEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
@@ -19,6 +20,7 @@ import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
+import com.fangcang.titanjr.dto.bean.CashDeskData;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.GDPOrderDTO;
@@ -914,8 +916,22 @@ public class FinancialTradeController extends BaseController {
 		return flag;
 	}
 	
+	
+	
+	/**
+	 * 
+	 *收银台改造开始
+	 */
+	
+		
+		//收银台改造结束
+	
 	@RequestMapping(value = "/showCashierDesk", method = {RequestMethod.GET, RequestMethod.POST})
 	public String showCashierDesk(PaymentUrlRequest paymentUrlRequest,HttpServletRequest request, Model model) throws Exception {
+
+		//查询商家主题
+		
+		
 		log.info("获取支付地址入参:" + toJson(paymentUrlRequest));
 		if (!CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentUrlRequest.getPaySource())) {
 			boolean flag = validateShowDeskSign(paymentUrlRequest);

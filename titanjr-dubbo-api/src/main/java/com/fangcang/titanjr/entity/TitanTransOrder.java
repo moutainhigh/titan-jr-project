@@ -43,6 +43,8 @@ public class TitanTransOrder implements java.io.Serializable {
     //业务信息
     private String businessinfo;
     
+    //付款者类型
+    private String payerType;
 
     //是否担保支付
     private String isEscrowedPayment;
@@ -67,6 +69,7 @@ public class TitanTransOrder implements java.io.Serializable {
     private String bankInfo;
 
     private String remark;
+    
     
     public String getNotifyUrl() {
 		return notifyUrl;
@@ -379,5 +382,12 @@ public class TitanTransOrder implements java.io.Serializable {
 	public void setBusinessinfo(String businessinfo) {
 		this.businessinfo = businessinfo;
 	}
-    
+
+	public String getPayerType() {
+		return payerType;
+	}
+
+	public void setPayerType(String payerType) {
+		this.payerType = payerType;
+	}
 }

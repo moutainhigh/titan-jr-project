@@ -18,4 +18,5 @@ public final class JsonConversionTool {
 	public static String toJson(String object) {
 		return gson.toJson(object);
 	}
+	
 }
