@@ -136,7 +136,8 @@
       goodscnt, unitprice, statusid, 
       adjusttype, adjustcontent, creator, 
       receivablefee, createtime, receivedfee,isEscrowedPayment,
-      escrowedDate,payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype,notifyUrl,businessinfo
+      escrowedDate,payeemerchant,payermerchant,payorderno,merchantcode,
+      tradeamount,transordertype,notifyUrl,businessinfo,payertype
       )
     values (#{transid,jdbcType=INTEGER}, #{constid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, 
       #{ordertypeid,jdbcType=VARCHAR}, #{productid,jdbcType=VARCHAR}, #{orderid,jdbcType=VARCHAR}, 
@@ -146,7 +147,8 @@
       #{goodscnt,jdbcType=INTEGER}, #{unitprice,jdbcType=DOUBLE}, #{statusid,jdbcType=VARCHAR}, 
       #{adjusttype,jdbcType=VARCHAR}, #{adjustcontent,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
       #{receivablefee}, #{createtime}, #{receivedfee},#{isEscrowedPayment},#{escrowedDate},
-      #{payeemerchant},#{payermerchant},#{payorderno},#{merchantcode},#{tradeamount},#{transordertype},#{notifyUrl},#{businessinfo}
+      #{payeemerchant},#{payermerchant},#{payorderno},#{merchantcode},#{tradeamount},#{transordertype},
+      #{notifyUrl},#{businessinfo},#{payerType}
       )
   </insert>
 
@@ -192,6 +194,9 @@
             <if test="businessinfo !=null">
             businessinfo=#{businessinfo}
             </if>
+            <if test=" payerType !=null">
+            payertype =#{payerType}
+            </if>
         </set>
         <where>
           <if test="userorderid !=null">
@@ -211,7 +216,8 @@
         select transid, constid, userid, ordertypeid, productid, orderid, userorderid, businessordercode, orderdate,
         ordertime, provider, userrelateid,amount, goodsname, goodsdetail, goodscnt, unitprice, statusid,
         adjusttype, adjustcontent, creator,receivablefee, createtime, receivedfee,escrowedDate,isEscrowedPayment,
-        payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype,notifyUrl,businessinfo from t_tfs_transorder
+        payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype,notifyUrl,businessinfo,payertype as payerType
+         from t_tfs_transorder
         <where>
             <if test="transid != null">
                 and transid = #{transid}

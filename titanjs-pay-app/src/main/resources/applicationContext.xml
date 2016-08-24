@@ -74,6 +74,7 @@
     <context:annotation-config/>
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
     
+    <import resource="applicationContext-hessian.xml"/>
      <import resource="applicationContext-service.xml"/>
 
 </beans>

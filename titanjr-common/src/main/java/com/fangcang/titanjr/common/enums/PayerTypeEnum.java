@@ -21,7 +21,7 @@ public enum PayerTypeEnum {
 		  this.msg=msg;
 	  }
 	  
-	  public PayerTypeEnum getPayerTypeEnumByKey(String key){
+	  public static PayerTypeEnum getPayerTypeEnumByKey(String key){
 		  if(!StringUtil.isValidString(key)){
 			  return null;
 		  }
@@ -32,6 +32,23 @@ public enum PayerTypeEnum {
 			  }
 		  }
 		  return null;
+	  }
+	  
+	  public static Integer getPaySource(String key){
+		  if(RECHARGE.key.equals(key)){//充值收银台
+			  return 5;
+		  }else if( B2B_PUS.key.equals(key) || B2B_GDP.key.equals(key)){
+			  return 1;
+		  }else if(SUPPLY_FINACIAL.key.equals(key)|| SUPPLY_UNION.key.equals(key)){
+			  return 2;
+		  }else if(ALLIANCE.key.equals(key)){
+			  return 3;
+		  }
+		  return null;
+	  }
+	  
+	  public boolean isRechargeCashDesk(){
+		  return RECHARGE.key.equals(this.key);
 	  }
 	  
 	  public boolean isUserId()

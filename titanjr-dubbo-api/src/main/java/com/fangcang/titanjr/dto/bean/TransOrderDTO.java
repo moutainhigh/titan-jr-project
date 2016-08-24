@@ -61,6 +61,8 @@ public class TransOrderDTO implements java.io.Serializable {
     
     //业务信息
     private String businessinfo;
+    
+    private String payerType;
 
     private TitanOrderPayDTO titanOrderPayDTO;
 
@@ -410,5 +412,13 @@ public class TransOrderDTO implements java.io.Serializable {
 
 	public void setBusinessinfo(String businessinfo) {
 		this.businessinfo = businessinfo;
+	}
+
+	public String getPayerType() {
+		return payerType;
+	}
+
+	public void setPayerType(String payerType) {
+		this.payerType = payerType;
 	}
 }
