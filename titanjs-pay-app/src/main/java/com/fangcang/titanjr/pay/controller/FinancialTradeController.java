@@ -47,6 +47,9 @@ import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
 import com.fangcang.titanjr.facade.TitanFinancialTradeFacade;
+import com.fangcang.titanjr.pay.req.TitanConfirmBussOrderReq;
+import com.fangcang.titanjr.pay.rsp.TianConfirmBussOrderRsp;
+import com.fangcang.titanjr.pay.services.FinancialTradeService;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.pay.util.RSADecryptString;
 import com.fangcang.titanjr.request.AccountInfoRequest;
@@ -58,7 +61,6 @@ import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanOrderService;
-//import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
 
 @Controller
@@ -76,32 +78,35 @@ public class FinancialTradeController extends BaseController {
 
 	@Resource
 	private TitanFinancialTradeService titanFinancialTradeService;
-	
+
 	@Resource
 	private TitanCashierDeskService titanCashierDeskService;
-	
+
 	@Resource
 	private TitanOrderService titanOrderService;
-	
+
 	@Resource
 	private TitanFinancialOrganService titanFinancialOrganService;
 
 	private MerchantFacade merchantFacade;
-	   
+
 	@Resource
 	private HessianProxyBeanFactory hessianProxyBeanFactory;
-	
+
 	@Resource
 	private TitanFinancialAccountService titanFinancialAccountService;
-//	@Resource
+	// @Resource
 	private TitanFinancialTradeFacade titanFinancialTradeFacade;
 
-//	@Resource
+	// @Resource
 	private TitanFinancialPermissionFacade titanFinancialPermissionFacade;
+
+	@Resource
+	private FinancialTradeService financialTradeService;
 
 	/**
 	 * @Title: titanPay
-	 * @Description: TODO
+	 * @Description: 提交订单并对身份进行认证
 	 * @param orderInfo
 	 * @param businessInfo
 	 * @param response
@@ -130,7 +135,8 @@ public class FinancialTradeController extends BaseController {
 			}
 
 			log.info("decrypt orderInfo is ok .");
-
+			
+			//解析订单信息
 			TitanOrderRequest dto = JsonConversionTool.toObject(deInfo,
 					TitanOrderRequest.class);
 
@@ -153,7 +159,7 @@ public class FinancialTradeController extends BaseController {
 			}
 
 			log.info("check order info is ok");
-
+			//检查用户权限
 			if (!checkPermission(dto)) {
 				log.error("checkPermission is fail.");
 				model.addAttribute("msg",
@@ -161,8 +167,19 @@ public class FinancialTradeController extends BaseController {
 				return TRADE_PAY_ERROR_PAGE;
 			}
 
-			log.info("check permission  is ok");
+			log.info("check permission is ok");
+			//确认业务订单信息
+			if (!checkConfirmBussOrder(dto)) {
+				log.error("checkConfirmBussOrder is fail.");
+				model.addAttribute("msg",
+						TitanMsgCodeEnum.BUSS_ORDER_CHANGE_CHECK_FAILED
+								.getResMsg());
+				return TRADE_PAY_ERROR_PAGE;
+			}
 
+			log.info("check buss order is ok");
+			
+			//解析携带的业务信息
 			Map<String, String> busMap = JsonConversionTool.toObject(
 					businessInfo, Map.class);
 			dto.setBusinessInfo(busMap);
@@ -187,7 +204,8 @@ public class FinancialTradeController extends BaseController {
 
 			log.info("end sava titan trans order... [orderNo: "
 					+ orderCreateResponse.getOrderNo() + "]");
-
+			
+			//获取收银台地址
 			PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
 			paymentUrlRequest.setPayOrderNo(orderCreateResponse.getOrderNo());
 			paymentUrlRequest.setIsEscrowed("0");
@@ -199,7 +217,8 @@ public class FinancialTradeController extends BaseController {
 				log.error("orderCreateResponse "
 						+ orderCreateResponse.getReturnCode() + ":"
 						+ orderCreateResponse.getReturnMessage());
-				model.addAttribute("msg", TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
+				model.addAttribute("msg",
+						TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
 				return TRADE_PAY_ERROR_PAGE;
 			}
 
@@ -207,8 +226,7 @@ public class FinancialTradeController extends BaseController {
 					+ this.getRequest().getContextPath() + response.getUrl());
 
 			this.getResponse().sendRedirect(
-					this.getRequest().getContextPath()
-							+ response.getUrl());
+					this.getRequest().getContextPath() + response.getUrl());
 
 		} catch (Exception ex) {
 			log.error("", ex);
@@ -218,6 +236,12 @@ public class FinancialTradeController extends BaseController {
 		return TRADE_PAY_ERROR_PAGE;
 	}
 
+	/**
+	 * 检查付款和付款方的权限
+	 * 
+	 * @param dto
+	 * @return
+	 */
 	private boolean checkPermission(TitanOrderRequest dto) {
 		PayerTypeEnum pe = PayerTypeEnum.getPayerTypeEnumByKey(dto
 				.getPayerType());
@@ -258,6 +282,32 @@ public class FinancialTradeController extends BaseController {
 						+ response.getReturnMessage());
 				return false;
 			}
+		}
+		return true;
+	}
+
+	/**
+	 * 根据指定的URL确认业务订单的金额
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	private boolean checkConfirmBussOrder(TitanOrderRequest dto) {
+		if (StringUtil.isValidString(dto.getCheckOrderUrl())) {
+			TitanConfirmBussOrderReq req = new TitanConfirmBussOrderReq();
+			req.setAmount(dto.getAmount());
+			req.setBussOrderNo(dto.getGoodsId());
+			req.setUrl(dto.getCheckOrderUrl());
+			TianConfirmBussOrderRsp bussOrderRsp = financialTradeService
+					.confirmBussOrder(req);
+
+			if (bussOrderRsp == null || !bussOrderRsp.isSuccess()) {
+				log.error("checkConfirmBussOrder response  "
+						+ bussOrderRsp.getResultCode() + ":"
+						+ bussOrderRsp.getResultMsg());
+				return false;
+			}
+
 		}
 		return true;
 	}
@@ -316,228 +366,268 @@ public class FinancialTradeController extends BaseController {
 
 		return true;
 	}
+
 	@ResponseBody
 	@RequestMapping(value = "/checkOrderStatus", method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public String checkOrderStatus(String orderId) {
 		return "{\"status\":\"0\"}";
 	}
-	
-	//DDDDDD
-    @RequestMapping("/showCashierDesk")
-	public String showCashierDesk(String orderNo,String sign, Model model){
-		
+
+	// DDDDDD
+	@RequestMapping("/showCashierDesk")
+	public String showCashierDesk(String orderNo, String sign, Model model) {
+
 		orderNo = "TJO1608181126362212";
 		log.info("获取支付地址入参:" + JsonConversionTool.toJson(orderNo));
-		
-		if(!StringUtil.isValidString(orderNo)){
+
+		if (!StringUtil.isValidString(orderNo)) {
 			model.addAttribute("msg", "订单流水号不空");
 			return "checkstand-pay/cashierDeskError";
 		}
-		
-		//验证签名
-		
-		//根据payOrderNo查询出相应的订单
-		TransOrderRequest transOrderRequest = new TransOrderRequest(); 
+
+		// 验证签名
+
+		// 根据payOrderNo查询出相应的订单
+		TransOrderRequest transOrderRequest = new TransOrderRequest();
 		transOrderRequest.setUserorderid(orderNo);
-		TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
-		
-		if(null ==transOrderDTO || !StringUtil.isValidString(transOrderDTO.getUserid())){//验证付款方
+		TransOrderDTO transOrderDTO = titanOrderService
+				.queryTransOrderDTO(transOrderRequest);
+
+		if (null == transOrderDTO
+				|| !StringUtil.isValidString(transOrderDTO.getUserid())) {// 验证付款方
 			model.addAttribute("msg", "查无此单,或订单错误");
 			return "checkstand-pay/cashierDeskError";
 		}
-		
-		if(!StringUtil.isValidString(transOrderDTO.getPayerType()) 
-				||null ==PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType())){
+
+		if (!StringUtil.isValidString(transOrderDTO.getPayerType())
+				|| null == PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO
+						.getPayerType())) {
 			model.addAttribute("msg", "系统错误");
 			return "checkstand-pay/cashierDeskError";
 		}
-		
-		PayerTypeEnum payerTypeEnum = PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
-		
+
+		PayerTypeEnum payerTypeEnum = PayerTypeEnum
+				.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
+
 		CashDeskData cashDeskData = new CashDeskData();
-		
-		//查询收款方机构号
-		if(StringUtil.isValidString(transOrderDTO.getPayeemerchant())){
-			FinancialOrganDTO financialOrganDTO = this.getFinancialOrganDTO(transOrderDTO.getPayeemerchant());
-			if(null ==financialOrganDTO ){
+
+		// 查询收款方机构号
+		if (StringUtil.isValidString(transOrderDTO.getPayeemerchant())) {
+			FinancialOrganDTO financialOrganDTO = this
+					.getFinancialOrganDTO(transOrderDTO.getPayeemerchant());
+			if (null == financialOrganDTO) {
 				model.addAttribute("msg", "收款机构信息错误");
 				return "checkstand-pay/cashierDeskError";
 			}
 			cashDeskData.setOrgName(financialOrganDTO.getOrgName());
 			cashDeskData.setTitanCode(financialOrganDTO.getTitanCode());
 		}
-	
-		//查询账户信息，不是中间账户就需要查询
-		
-		if(!"141223100000056".equals(transOrderDTO.getUserid())){//不是中间账户就需要查询账户信息,
-			AccountBalance accountBalance = this.getAccountBalance(transOrderDTO.getUserid());
-			if(accountBalance == null){
+
+		// 查询账户信息，不是中间账户就需要查询
+
+		if (!"141223100000056".equals(transOrderDTO.getUserid())) {// 不是中间账户就需要查询账户信息,
+			AccountBalance accountBalance = this
+					.getAccountBalance(transOrderDTO.getUserid());
+			if (accountBalance == null) {
 				model.addAttribute("msg", "账户信息错误");
 				return "checkstand-pay/cashierDeskError";
 			}
 			cashDeskData.setBalanceusable(accountBalance.getBalanceusable());
-			//查询常用信息，
-			List<CommonPayMethodDTO> commonPayMethodDTOList =  this.getCommonPayMethod(transOrderDTO.getUserid(),PayerTypeEnum.getPaySource(transOrderDTO.getPayerType()));
+			// 查询常用信息，
+			List<CommonPayMethodDTO> commonPayMethodDTOList = this
+					.getCommonPayMethod(transOrderDTO.getUserid(),
+							PayerTypeEnum.getPaySource(transOrderDTO
+									.getPayerType()));
 			cashDeskData.setCommonPayMethodDTOList(commonPayMethodDTOList);
 		}
-		
-		Map<String,String> bussinessInfoMap =null;
-		if(StringUtil.isValidString(transOrderDTO.getBusinessinfo())){
-			bussinessInfoMap = JsonConversionTool.toObject(transOrderDTO.getBusinessinfo(), Map.class);
+
+		Map<String, String> bussinessInfoMap = null;
+		if (StringUtil.isValidString(transOrderDTO.getBusinessinfo())) {
+			bussinessInfoMap = JsonConversionTool.toObject(
+					transOrderDTO.getBusinessinfo(), Map.class);
 		}
-		
-		//查询收款历史
+
+		// 查询收款历史
 		String inAccountCode = "";
-		String outAccountCode="";
-		if(null != bussinessInfoMap){
+		String outAccountCode = "";
+		if (null != bussinessInfoMap) {
 			inAccountCode = bussinessInfoMap.get("inAccountCode");
 			outAccountCode = bussinessInfoMap.get("outAccountCode");
 		}
-		AccountHistoryResponse accountHistoryResponse = this.getAccountHistoryResponse(inAccountCode, 
-				outAccountCode, transOrderDTO.getUserid());
-			if (accountHistoryResponse !=null && accountHistoryResponse.isResult() &&
-			CollectionUtils.isNotEmpty(accountHistoryResponse.getAccountHistoryDTOList())) {
-			Map<String, FinancialOrganDTO> userIDOrgMap = this.buildUserIdOrganMap(accountHistoryResponse.getAccountHistoryDTOList());
-			cashDeskData.setAccountHistoryDTO(accountHistoryResponse.getAccountHistoryDTOList().get(0));
+		AccountHistoryResponse accountHistoryResponse = this
+				.getAccountHistoryResponse(inAccountCode, outAccountCode,
+						transOrderDTO.getUserid());
+		if (accountHistoryResponse != null
+				&& accountHistoryResponse.isResult()
+				&& CollectionUtils.isNotEmpty(accountHistoryResponse
+						.getAccountHistoryDTOList())) {
+			Map<String, FinancialOrganDTO> userIDOrgMap = this
+					.buildUserIdOrganMap(accountHistoryResponse
+							.getAccountHistoryDTOList());
+			cashDeskData.setAccountHistoryDTO(accountHistoryResponse
+					.getAccountHistoryDTOList().get(0));
 			cashDeskData.setUserIDOrgMap(userIDOrgMap);
-			}
-			
-			//设置商家主题]
-		if(StringUtil.isValidString(transOrderDTO.getMerchantcode())){
-			MerchantResponseDTO merchantResponseDTO = this.getMerchantResponseDTO(transOrderDTO.getMerchantcode());
-			if(null !=merchantResponseDTO){
-				model.addAttribute("CURRENT_THEME",merchantResponseDTO.getTheme());
+		}
+
+		// 设置商家主题]
+		if (StringUtil.isValidString(transOrderDTO.getMerchantcode())) {
+			MerchantResponseDTO merchantResponseDTO = this
+					.getMerchantResponseDTO(transOrderDTO.getMerchantcode());
+			if (null != merchantResponseDTO) {
+				model.addAttribute("CURRENT_THEME",
+						merchantResponseDTO.getTheme());
 			}
 		}
-	
-			
+
 		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
 		cashierDeskQueryRequest.setUserId(transOrderDTO.getUserid());
-		//GDP支付时用商家的收银台
-		if(StringUtil.isValidString(cashDeskData.getRecieveOrgCode())){
+		// GDP支付时用商家的收银台
+		if (StringUtil.isValidString(cashDeskData.getRecieveOrgCode())) {
 			cashierDeskQueryRequest.setUserId(cashDeskData.getRecieveOrgCode());
 		}
-		cashierDeskQueryRequest.setUsedFor(PayerTypeEnum.getPaySource(transOrderDTO.getPayerType()));
-		
-		CashierDeskResponse response = titanCashierDeskService.queryCashierDesk(cashierDeskQueryRequest);
-		if (!(response.isResult() && CollectionUtils.isNotEmpty(response.getCashierDeskDTOList()))){
+		cashierDeskQueryRequest.setUsedFor(PayerTypeEnum
+				.getPaySource(transOrderDTO.getPayerType()));
+
+		CashierDeskResponse response = titanCashierDeskService
+				.queryCashierDesk(cashierDeskQueryRequest);
+		if (!(response.isResult() && CollectionUtils.isNotEmpty(response
+				.getCashierDeskDTOList()))) {
 			cashDeskData.putError("收银台不存在");
 			return "checkstand-pay/cashierDeskError";
 		}
-		cashDeskData.setCashierDeskDTO( response.getCashierDeskDTOList().get(0));
-		cashDeskData.setPaySource(PayerTypeEnum.getPaySource(transOrderDTO.getPayerType()).toString());
+		cashDeskData.setCashierDeskDTO(response.getCashierDeskDTOList().get(0));
+		cashDeskData.setPaySource(PayerTypeEnum.getPaySource(
+				transOrderDTO.getPayerType()).toString());
 		cashDeskData.setMerchantcode(transOrderDTO.getMerchantcode());
 		cashDeskData.setUserId(transOrderDTO.getUserid());
-		if(transOrderDTO.getTradeamount()!=null){
+		if (transOrderDTO.getTradeamount() != null) {
 			cashDeskData.setAmount(transOrderDTO.getTradeamount().toString());
 		}
 		model.addAttribute("cashDeskData", cashDeskData);
-		
-		if(payerTypeEnum.isRechargeCashDesk()){
+
+		if (payerTypeEnum.isRechargeCashDesk()) {
 			return "account-overview/account-recharge";
 		}
-	    return "checkstand-pay/cashierDesk";
+		return "checkstand-pay/cashierDesk";
 	}
-	
 
-	private AccountBalance getAccountBalance(String userId){
+	private AccountBalance getAccountBalance(String userId) {
 		AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
 		accountBalanceRequest.setUserid(userId);
-		AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
-		if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
-			AccountBalance accountBalance = balanceResponse.getAccountBalance().get(0);
+		AccountBalanceResponse balanceResponse = titanFinancialAccountService
+				.queryAccountBalance(accountBalanceRequest);
+		if (balanceResponse.isResult()
+				&& CollectionUtils.isNotEmpty(balanceResponse
+						.getAccountBalance())) {
+			AccountBalance accountBalance = balanceResponse.getAccountBalance()
+					.get(0);
 			if (accountBalance.getBalanceusable() != null) {
-				accountBalance.setBalanceusable(new BigDecimal(accountBalance.getBalanceusable()).divide(new BigDecimal(100)).toString());
+				accountBalance.setBalanceusable(new BigDecimal(accountBalance
+						.getBalanceusable()).divide(new BigDecimal(100))
+						.toString());
 				return accountBalance;
-			} 
-		} 
+			}
+		}
 		return null;
 	}
 
-   //查询机构信息
-	private FinancialOrganDTO getFinancialOrganDTO(String userId){
-		if(!StringUtil.isValidString(userId)){
+	// 查询机构信息
+	private FinancialOrganDTO getFinancialOrganDTO(String userId) {
+		if (!StringUtil.isValidString(userId)) {
 			return null;
 		}
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-    	organQueryRequest.setUserId(userId);
-    	FinancialOrganResponse financialOrgan =  titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
-    	if(financialOrgan.isResult()){
-    		return financialOrgan.getFinancialOrganDTO();
-    	}
-    	return null;
+		organQueryRequest.setUserId(userId);
+		FinancialOrganResponse financialOrgan = titanFinancialOrganService
+				.queryFinancialOrgan(organQueryRequest);
+		if (financialOrgan.isResult()) {
+			return financialOrgan.getFinancialOrganDTO();
+		}
+		return null;
 	}
-	
-	//查询账户信息
-	private AccountHistoryResponse getAccountHistoryResponse(String inAccountCode,String outAccountCode,String userId){
-		if(StringUtil.isValidString(inAccountCode) 
+
+	// 查询账户信息
+	private AccountHistoryResponse getAccountHistoryResponse(
+			String inAccountCode, String outAccountCode, String userId) {
+		if (StringUtil.isValidString(inAccountCode)
 				|| StringUtil.isValidString(outAccountCode)
-				||StringUtil.isValidString(userId)){
+				|| StringUtil.isValidString(userId)) {
 			return null;
 		}
 		AccountHistoryRequest accHistoryRequest = new AccountHistoryRequest();
 		accHistoryRequest.setAccountHistoryDTO(new AccountHistoryDTO());
-		accHistoryRequest.getAccountHistoryDTO().setInaccountcode(inAccountCode);
-		accHistoryRequest.getAccountHistoryDTO().setOutaccountcode(outAccountCode);
+		accHistoryRequest.getAccountHistoryDTO()
+				.setInaccountcode(inAccountCode);
+		accHistoryRequest.getAccountHistoryDTO().setOutaccountcode(
+				outAccountCode);
 		accHistoryRequest.getAccountHistoryDTO().setPayeruserid(userId);
-		AccountHistoryResponse accountHistoryResponse = titanFinancialAccountService.queryAccountHistory(accHistoryRequest);
-		if (accountHistoryResponse.isResult() &&
-				CollectionUtils.isNotEmpty(accountHistoryResponse.getAccountHistoryDTOList())) {
+		AccountHistoryResponse accountHistoryResponse = titanFinancialAccountService
+				.queryAccountHistory(accHistoryRequest);
+		if (accountHistoryResponse.isResult()
+				&& CollectionUtils.isNotEmpty(accountHistoryResponse
+						.getAccountHistoryDTOList())) {
 			return accountHistoryResponse;
 		}
 		return null;
 	}
-	
-	//获取常用的支付方式
-	private List<CommonPayMethodDTO> getCommonPayMethod(String userId,Integer userFor){
-		if(!StringUtil.isValidString(userId) || userFor == null){
+
+	// 获取常用的支付方式
+	private List<CommonPayMethodDTO> getCommonPayMethod(String userId,
+			Integer userFor) {
+		if (!StringUtil.isValidString(userId) || userFor == null) {
 			return null;
 		}
 		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
 		cashierDeskQueryRequest.setUsedFor(userFor);
 		cashierDeskQueryRequest.setUserId(userId);
-		List<CommonPayMethodDTO> commonPayMethodDTOList = titanCashierDeskService.queryCommonPayMethod(cashierDeskQueryRequest);
-		if(commonPayMethodDTOList!=null && commonPayMethodDTOList.size()>0){
+		List<CommonPayMethodDTO> commonPayMethodDTOList = titanCashierDeskService
+				.queryCommonPayMethod(cashierDeskQueryRequest);
+		if (commonPayMethodDTOList != null && commonPayMethodDTOList.size() > 0) {
 			return commonPayMethodDTOList;
 		}
 		return null;
 	}
-	
-	private Map<String,FinancialOrganDTO> buildUserIdOrganMap(List<AccountHistoryDTO> historyDTOList){
-		Map<String,FinancialOrganDTO> result = new HashMap<String, FinancialOrganDTO>();
+
+	private Map<String, FinancialOrganDTO> buildUserIdOrganMap(
+			List<AccountHistoryDTO> historyDTOList) {
+		Map<String, FinancialOrganDTO> result = new HashMap<String, FinancialOrganDTO>();
 		for (AccountHistoryDTO accountHistoryDTO : historyDTOList) {
 			FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 			organQueryRequest.setUserId(accountHistoryDTO.getPayeeuserid());
-			FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
-			if (financialOrganResponse.isResult() && financialOrganResponse.getFinancialOrganDTO() != null) {
-				result.put(accountHistoryDTO.getPayeeuserid(), financialOrganResponse.getFinancialOrganDTO());
+			FinancialOrganResponse financialOrganResponse = titanFinancialOrganService
+					.queryFinancialOrgan(organQueryRequest);
+			if (financialOrganResponse.isResult()
+					&& financialOrganResponse.getFinancialOrganDTO() != null) {
+				result.put(accountHistoryDTO.getPayeeuserid(),
+						financialOrganResponse.getFinancialOrganDTO());
 			}
 		}
 		return result;
 	}
-	
-	private MerchantResponseDTO getMerchantResponseDTO(String merchantCode){
+
+	private MerchantResponseDTO getMerchantResponseDTO(String merchantCode) {
 		MerchantDetailQueryDTO queryDTO = new MerchantDetailQueryDTO();
-        queryDTO.setMerchantCode(merchantCode);
-        return this.getMerchantFacade().queryMerchantDetail(queryDTO);
+		queryDTO.setMerchantCode(merchantCode);
+		return this.getMerchantFacade().queryMerchantDetail(queryDTO);
 	}
 
-	private MerchantFacade getMerchantFacade(){
-		if(merchantFacade ==null){
-			merchantFacade = hessianProxyBeanFactory.getHessianProxyBean(MerchantFacade.class,
-		             ProxyFactoryConstants.merchantServerUrl + "merchantFacade");
+	private MerchantFacade getMerchantFacade() {
+		if (merchantFacade == null) {
+			merchantFacade = hessianProxyBeanFactory.getHessianProxyBean(
+					MerchantFacade.class,
+					ProxyFactoryConstants.merchantServerUrl + "merchantFacade");
 		}
-		
+
 		System.out.println(merchantFacade);
-		 return merchantFacade;
+		return merchantFacade;
 	}
-	
+
 	@ResponseBody
 	@RequestMapping("genLoacalPayOrderNo")
-	public Map<String,String> getRechargePayOrderNo(){
-		Map<String,String> resultMap = new HashMap<String, String>();
+	public Map<String, String> getRechargePayOrderNo() {
+		Map<String, String> resultMap = new HashMap<String, String>();
 		resultMap.put("result", OrderGenerateService.genLoacalPayOrderNo());
-	    return resultMap;
+		return resultMap;
 	}
 }

@@ -1,25 +1,21 @@
+var titan_context_name = "titanjs-pay-app";
+var titan_base_url = "www.fangcang.com";
+
+var titan_pub = "d8b6e03dd8f9bf45157f0d14aedf9a696665641da90cab5114a22b7f6c711f22429c32c99ab76e3ce74de00145bcd50b9d2e7c60cd97a4979a5d0ce4ead9ba61baca1495758d69cc1f76e69db43f1ef1f9c33cd2edb8c726ed17c297a7b9fa3f18e58aef9d3f33f8431a41cc3c0ca7bc5151d33a8691e6506e0439363aec0063";
+var titan_expo = "10001";
+
 /*
-
-var orderInfo = {
-
-	merchantCode : "",
-	payOrderNo : "",
-	paySource : "",
-	fcUserid : "",
-	operater : "",
-	businessOrderCode : "",
-	recieveMerchantCode : "",
-	isEscrowed : "",
-	escrowedDate : "",
-	businessInfo : {
-
-	}
-};
-
-var businessInfo
-{
-
-}*/
+ * 
+ * var orderInfo = {
+ * 
+ * merchantCode : "", payOrderNo : "", paySource : "", fcUserid : "", operater :
+ * "", businessOrderCode : "", recieveMerchantCode : "", isEscrowed : "",
+ * escrowedDate : "", businessInfo : {
+ *  } };
+ * 
+ * var businessInfo {
+ *  }
+ */
 var titanPayObj = {};
 
 function initTitanPayObj() {
@@ -29,8 +25,7 @@ function initTitanPayObj() {
 	};
 	// var timeIntervalObj = null;
 	var titan_rsakey = null;
-	
-	
+
 	/**
 	 * 初始化公钥及地址
 	 * 
@@ -41,12 +36,24 @@ function initTitanPayObj() {
 	 * @param module
 	 *            模数titanJrPayRsaObj
 	 */
-	titanPayObj.initTitanPay = function(address, empoent, module) {
-		config.address = address;
-		config.empoent = empoent;
-		config.module = module;
+	titanPayObj.initTitanPay = function(configObj) {
 
-		
+		if (!configObj || !configObj.address) {
+			configObj.address = titan_base_url;
+		}
+
+		if (!configObj || !configObj.empoent) {
+			configObj.empoent = titan_expo;
+		}
+
+		if (!configObj || !configObj.module) {
+			configObj.module = titan_pub;
+		}
+
+		// address, empoent, module titanPayObj.initTitanPay('127.0.0.1:8084',
+		// expo, pub);
+		config = configObj;
+
 		this.createPayForm(address);
 
 	}
@@ -54,7 +61,8 @@ function initTitanPayObj() {
 	titanPayObj.createPayForm = function(address) {
 
 		var elscript = document.createElement("script");
-		elscript.src = "http://" + address + "/titanjs-pay-app/js/rsa/RSA.js";
+		elscript.src = "http://" + address + "/" + titan_context_name
+				+ "/js/rsa/RSA.js";
 		elscript.setAttribute("type", "text/javascript");
 		document.body.appendChild(elscript);
 
@@ -95,14 +103,13 @@ function initTitanPayObj() {
 	 * @param orderInfo
 	 */
 	titanPayObj.titanEncrypted = function(str) {
-		
 
 		if (titan_rsakey == null) {
 			titanJrPayRsaObj.setMaxDigits(129);
 			titan_rsakey = new titanJrPayRsaObj.RSAKeyPair(config.empoent, "",
 					config.module);
 		}
-		
+
 		return titanJrPayRsaObj.encryptedString(titan_rsakey,
 				encodeURIComponent(str));
 	}
@@ -126,9 +133,6 @@ function initTitanPayObj() {
 			document.getElementById('titan_businessInfo').value = JSON
 					.stringify(businessInfo);
 			document.getElementById('titan_pay_form').submit();
-			// $('#titan_orderInfo').val();
-			// $('#titan_businessInfo').val(JSON.stringify(businessInfo));
-			// $('#titan_pay_form').submit();
 		}
 	}
 };

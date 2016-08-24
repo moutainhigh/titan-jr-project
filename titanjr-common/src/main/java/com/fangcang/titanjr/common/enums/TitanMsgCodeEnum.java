@@ -14,9 +14,12 @@ public enum TitanMsgCodeEnum {
 
 	// 身份认证失败
 	AUTHENTITCATION_FAILED(110100002, "身份认证失败，请确认！"),
-	
-	//权限校验
+
+	// 权限校验
 	PERMISSION_CHECK_FAILED(110100003, "权限校验失败，请确认！"),
+
+	// 业务订单信息已经发生变化
+	BUSS_ORDER_CHANGE_CHECK_FAILED(110100004, "业务订单信息已经发生变化，请重新下单!"),
 
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");
