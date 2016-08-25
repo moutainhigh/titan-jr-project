@@ -411,12 +411,11 @@ public class FinancialTradeController extends BaseController {
 				.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
 
 		CashDeskData cashDeskData = new CashDeskData();
-
-		// 查询收款方机构号
-		if (StringUtil.isValidString(transOrderDTO.getPayeemerchant())) {
-			FinancialOrganDTO financialOrganDTO = this
-					.getFinancialOrganDTO(transOrderDTO.getPayeemerchant());
-			if (null == financialOrganDTO) {
+		
+		//查询收款方机构号，如果收款方不为空但是是酒店支付，还是不将收款信息填写
+		if(StringUtil.isValidString(transOrderDTO.getPayeemerchant()) && payerTypeEnum.isMustPayeement()){
+			FinancialOrganDTO financialOrganDTO = this.getFinancialOrganDTO(transOrderDTO.getPayeemerchant());
+			if(null ==financialOrganDTO ){
 				model.addAttribute("msg", "收款机构信息错误");
 				return "checkstand-pay/cashierDeskError";
 			}
@@ -454,6 +453,7 @@ public class FinancialTradeController extends BaseController {
 		if (null != bussinessInfoMap) {
 			inAccountCode = bussinessInfoMap.get("inAccountCode");
 			outAccountCode = bussinessInfoMap.get("outAccountCode");
+			cashDeskData.setFcUserid(bussinessInfoMap.get("partnerId"));
 		}
 		AccountHistoryResponse accountHistoryResponse = this
 				.getAccountHistoryResponse(inAccountCode, outAccountCode,
@@ -482,9 +482,9 @@ public class FinancialTradeController extends BaseController {
 
 		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
 		cashierDeskQueryRequest.setUserId(transOrderDTO.getUserid());
-		// GDP支付时用商家的收银台
-		if (StringUtil.isValidString(cashDeskData.getRecieveOrgCode())) {
-			cashierDeskQueryRequest.setUserId(cashDeskData.getRecieveOrgCode());
+		//GDP支付时用商家的收银台
+		if(payerTypeEnum.isRecieveCashDesk()){//使用收款商家收银台
+			cashierDeskQueryRequest.setUserId(transOrderDTO.getPayeemerchant());
 		}
 		cashierDeskQueryRequest.setUsedFor(PayerTypeEnum
 				.getPaySource(transOrderDTO.getPayerType()));
