@@ -3,6 +3,8 @@ package com.fangcang.titanjr.pay.services;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -18,6 +20,7 @@ import com.fangcang.titanjr.pay.rsp.TianConfirmBussOrderRsp;
 import com.fangcang.titanjr.pay.task.TitanPayResultNotifyTask;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.pay.util.TitanThreadPool;
+import com.fangcang.titanjr.service.TitanFinancialTradeService;
 
 /**
  * 收銀台交易服務實現類
@@ -30,7 +33,10 @@ public class FinancialTradeService {
 
 	private static final Log log = LogFactory
 			.getLog(FinancialTradeService.class);
-
+	
+	@Resource
+	private TitanFinancialTradeService titanFinancialTradeService;
+	
 	/**
 	 * 确认业务的订单信息
 	 * 
@@ -61,6 +67,21 @@ public class FinancialTradeService {
 
 		return null;
 	}
+	
+//	/**
+//	 * 验证订单是否已经产生交易或者是还处于处理中状态
+//	 * @param req
+//	 * @return
+//	 */
+//	public TitanCreateOrderRsp createTitanOrder(
+//			TitanOrderRequest dto) {
+//		
+//		
+//		
+//		
+//		
+//		return null;
+//	}
 
 	/**
 	 * 通知业务付款结果
@@ -74,7 +95,7 @@ public class FinancialTradeService {
 		log.info("notify pay result req =" + reqJson);
 
 		String taskId = MD5.MD5Encode(reqJson + System.currentTimeMillis());
-		
+
 		log.info("gen taskId = " + taskId);
 		TitanPayResultNotifyTask notifyTask = new TitanPayResultNotifyTask();
 		Map<String, String> paramMap = new HashMap<String, String>();

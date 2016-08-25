@@ -46,7 +46,6 @@ import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
-import com.fangcang.titanjr.facade.TitanFinancialTradeFacade;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.req.TitanConfirmBussOrderReq;
 import com.fangcang.titanjr.pay.rsp.TianConfirmBussOrderRsp;
@@ -173,7 +172,7 @@ public class FinancialTradeController extends BaseController {
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
 
-			log.info("check buss order is ok");
+			log.info("confirm buss order is ok");
 
 			// 解析携带的业务信息
 			Map<String, String> busMap = JsonConversionTool.toObject(
@@ -299,8 +298,7 @@ public class FinancialTradeController extends BaseController {
 
 			if (bussOrderRsp == null || !bussOrderRsp.isSuccess()) {
 				log.error("checkConfirmBussOrder response  "
-						+ bussOrderRsp.getResultCode() + ":"
-						+ bussOrderRsp.getResultMsg());
+						+ bussOrderRsp.getResult().getResMsg());
 				return false;
 			}
 

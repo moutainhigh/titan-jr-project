@@ -237,6 +237,9 @@
             <if test="payorderno != null">
                 and payorderno = #{payorderno}
             </if>
+            <if test="payertype != null">
+                and payertype = #{payertype}
+            </if>
         </where>
         order by createtime desc
     </select>

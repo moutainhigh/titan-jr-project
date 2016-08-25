@@ -1,29 +1,29 @@
 package com.fangcang.titanjr.pay.rsp;
 
+import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
+
 public class TitanBaseRsp {
 	public static final int SUCCESS = 0;
 
-	private int resultCode;
+	private TitanMsgCodeEnum result = TitanMsgCodeEnum.TITAN_SUCCESS;
 
-	private String resultMsg;
+	public TitanBaseRsp() {
 
-	public int getResultCode() {
-		return resultCode;
+	}
+
+	public TitanMsgCodeEnum getResult() {
+		return result;
+	}
+
+	public void setResult(TitanMsgCodeEnum result) {
+		this.result = result;
+	}
+
+	public TitanBaseRsp(TitanMsgCodeEnum result) {
+		this.result = result;
 	}
 
 	public boolean isSuccess() {
-		return this.resultCode == TitanBaseRsp.SUCCESS;
-	}
-
-	public void setResultCode(int resultCode) {
-		this.resultCode = resultCode;
-	}
-
-	public String getResultMsg() {
-		return resultMsg;
-	}
-
-	public void setResultMsg(String resultMsg) {
-		this.resultMsg = resultMsg;
+		return result.getCode() == SUCCESS;
 	}
 }
