@@ -15,7 +15,7 @@ public final class JsonConversionTool {
 		return gson.fromJson(json, t);
 	}
 
-	public static String toJson(String object) {
+	public static String toJson(Object object) {
 		return gson.toJson(object);
 	}
 	

@@ -47,6 +47,7 @@ import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
 import com.fangcang.titanjr.facade.TitanFinancialTradeFacade;
+import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.req.TitanConfirmBussOrderReq;
 import com.fangcang.titanjr.pay.rsp.TianConfirmBussOrderRsp;
 import com.fangcang.titanjr.pay.services.FinancialTradeService;
@@ -72,10 +73,6 @@ public class FinancialTradeController extends BaseController {
 	private static final Log log = LogFactory
 			.getLog(FinancialTradeController.class);
 
-	private static final String TRADE_PAY_ERROR_PAGE = "/checkstand-pay/cashierDeskError";
-
-	private String prv = "30820276020100300d06092a864886f70d0101010500048202603082025c02010002818100d8b6e03dd8f9bf45157f0d14aedf9a696665641da90cab5114a22b7f6c711f22429c32c99ab76e3ce74de00145bcd50b9d2e7c60cd97a4979a5d0ce4ead9ba61baca1495758d69cc1f76e69db43f1ef1f9c33cd2edb8c726ed17c297a7b9fa3f18e58aef9d3f33f8431a41cc3c0ca7bc5151d33a8691e6506e0439363aec0063020301000102818027846d6e89b6bce48d8f6de4b420ad0904357fe492b36f37e941cb19c0bdfdf5e2dc95bc427ca95aecb8bc1caf4948360672f81634d72e99c079b044bbf878ee4c3c6050d319fc545736e392fa7dcf2761d23551663d3844f3f2f61f652bec45eedf6d398a7e0916944bba8c64dd70f770ba4e213764e97c2aeaf46e66a3b591024100f7e35b74120740e22c85c2ddae516bcde62648447f2269b3701503afe4775749d7ffba66eff7024b2b6e879b6b9f3945508eb189d7fe602488575dae609bf151024100dfce5d97595fce458c1769fea32b175bb594a404ea070009c1c139d63907acad0433cc55ffcbf7c81359057efbda4f968813ed34dfedd9edb9079fdfd486c97302406832ad9290b173d89e966b5efb9346197a90c4f7e5e8f53d73f3a1652247f7ed165a6c6430a247d8891d20eb77c5aa3134b7867146d5aa5c30e3688190227cc1024100ad298b8a75d145d4d3aeae0922104e335c0c14d7e486e405a88f2b83cf7e5ba14676196c94cd28faf9d550064f313b9119da691717077e2d8b9315a4e6581f770240177a20e4fc96cb896a899ef9a5bc4c54c24b416e2fda7debf7536e851fb33fdeb95750742b0f09154acd53d73af8750461bca5bd7cc0de58a8fa635453152e78";
-
 	@Resource
 	private TitanFinancialTradeService titanFinancialTradeService;
 
@@ -95,10 +92,8 @@ public class FinancialTradeController extends BaseController {
 
 	@Resource
 	private TitanFinancialAccountService titanFinancialAccountService;
-	// @Resource
-	private TitanFinancialTradeFacade titanFinancialTradeFacade;
 
-	// @Resource
+	@Resource
 	private TitanFinancialPermissionFacade titanFinancialPermissionFacade;
 
 	@Resource
@@ -121,22 +116,23 @@ public class FinancialTradeController extends BaseController {
 			log.error("orderInfo is not null!");
 			model.addAttribute("msg",
 					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getResMsg());
-			return TRADE_PAY_ERROR_PAGE;
+			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 		}
 
 		try {
 
-			String deInfo = RSADecryptString.decryptString(orderInfo, prv);
+			String deInfo = RSADecryptString.decryptString(orderInfo,
+					TitanConstantDefine.PRIVATE_KEY);
 			if (!StringUtil.isValidString(deInfo)) {
 				log.error("validate user identity decrypt fail.");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.AUTHENTITCATION_FAILED.getResMsg());
-				return TRADE_PAY_ERROR_PAGE;
+				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
 
 			log.info("decrypt orderInfo is ok .");
-			
-			//解析订单信息
+
+			// 解析订单信息
 			TitanOrderRequest dto = JsonConversionTool.toObject(deInfo,
 					TitanOrderRequest.class);
 
@@ -144,7 +140,7 @@ public class FinancialTradeController extends BaseController {
 				log.error("validate user identity decrypt fail.");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.AUTHENTITCATION_FAILED.getResMsg());
-				return TRADE_PAY_ERROR_PAGE;
+				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
 
 			log.info("auth user is ok .");
@@ -155,31 +151,31 @@ public class FinancialTradeController extends BaseController {
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED
 								.getResMsg());
-				return TRADE_PAY_ERROR_PAGE;
+				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
 
 			log.info("check order info is ok");
-			//检查用户权限
+			// 检查用户权限
 			if (!checkPermission(dto)) {
 				log.error("checkPermission is fail.");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.PERMISSION_CHECK_FAILED.getResMsg());
-				return TRADE_PAY_ERROR_PAGE;
+				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
 
 			log.info("check permission is ok");
-			//确认业务订单信息
+			// 确认业务订单信息
 			if (!checkConfirmBussOrder(dto)) {
 				log.error("checkConfirmBussOrder is fail.");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.BUSS_ORDER_CHANGE_CHECK_FAILED
 								.getResMsg());
-				return TRADE_PAY_ERROR_PAGE;
+				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
 
 			log.info("check buss order is ok");
-			
-			//解析携带的业务信息
+
+			// 解析携带的业务信息
 			Map<String, String> busMap = JsonConversionTool.toObject(
 					businessInfo, Map.class);
 			dto.setBusinessInfo(busMap);
@@ -199,13 +195,13 @@ public class FinancialTradeController extends BaseController {
 
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
-				return TRADE_PAY_ERROR_PAGE;
+				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
 
 			log.info("end sava titan trans order... [orderNo: "
 					+ orderCreateResponse.getOrderNo() + "]");
-			
-			//获取收银台地址
+
+			// 获取收银台地址
 			PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
 			paymentUrlRequest.setPayOrderNo(orderCreateResponse.getOrderNo());
 			paymentUrlRequest.setIsEscrowed("0");
@@ -219,7 +215,7 @@ public class FinancialTradeController extends BaseController {
 						+ orderCreateResponse.getReturnMessage());
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
-				return TRADE_PAY_ERROR_PAGE;
+				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
 
 			log.info("get Payment url ok url="
@@ -233,7 +229,7 @@ public class FinancialTradeController extends BaseController {
 		}
 
 		model.addAttribute("msg", TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
-		return TRADE_PAY_ERROR_PAGE;
+		return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 	}
 
 	/**
@@ -411,11 +407,13 @@ public class FinancialTradeController extends BaseController {
 				.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
 
 		CashDeskData cashDeskData = new CashDeskData();
-		
-		//查询收款方机构号，如果收款方不为空但是是酒店支付，还是不将收款信息填写
-		if(StringUtil.isValidString(transOrderDTO.getPayeemerchant()) && payerTypeEnum.isMustPayeement()){
-			FinancialOrganDTO financialOrganDTO = this.getFinancialOrganDTO(transOrderDTO.getPayeemerchant());
-			if(null ==financialOrganDTO ){
+
+		// 查询收款方机构号，如果收款方不为空但是是酒店支付，还是不将收款信息填写
+		if (StringUtil.isValidString(transOrderDTO.getPayeemerchant())
+				&& payerTypeEnum.isMustPayeement()) {
+			FinancialOrganDTO financialOrganDTO = this
+					.getFinancialOrganDTO(transOrderDTO.getPayeemerchant());
+			if (null == financialOrganDTO) {
 				model.addAttribute("msg", "收款机构信息错误");
 				return "checkstand-pay/cashierDeskError";
 			}
@@ -482,8 +480,8 @@ public class FinancialTradeController extends BaseController {
 
 		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
 		cashierDeskQueryRequest.setUserId(transOrderDTO.getUserid());
-		//GDP支付时用商家的收银台
-		if(payerTypeEnum.isRecieveCashDesk()){//使用收款商家收银台
+		// GDP支付时用商家的收银台
+		if (payerTypeEnum.isRecieveCashDesk()) {// 使用收款商家收银台
 			cashierDeskQueryRequest.setUserId(transOrderDTO.getPayeemerchant());
 		}
 		cashierDeskQueryRequest.setUsedFor(PayerTypeEnum
