@@ -33,10 +33,10 @@ public class FinancialTradeService {
 
 	private static final Log log = LogFactory
 			.getLog(FinancialTradeService.class);
-	
+
 	@Resource
 	private TitanFinancialTradeService titanFinancialTradeService;
-	
+
 	/**
 	 * 确认业务的订单信息
 	 * 
@@ -67,21 +67,21 @@ public class FinancialTradeService {
 
 		return null;
 	}
-	
-//	/**
-//	 * 验证订单是否已经产生交易或者是还处于处理中状态
-//	 * @param req
-//	 * @return
-//	 */
-//	public TitanCreateOrderRsp createTitanOrder(
-//			TitanOrderRequest dto) {
-//		
-//		
-//		
-//		
-//		
-//		return null;
-//	}
+
+	// /**
+	// * 验证订单是否已经产生交易或者是还处于处理中状态
+	// * @param req
+	// * @return
+	// */
+	// public TitanCreateOrderRsp createTitanOrder(
+	// TitanOrderRequest dto) {
+	//
+	//
+	//
+	//
+	//
+	// return null;
+	// }
 
 	/**
 	 * 通知业务付款结果

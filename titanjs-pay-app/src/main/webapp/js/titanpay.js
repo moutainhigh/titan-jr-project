@@ -54,7 +54,7 @@ function initTitanPayObj() {
 		// expo, pub);
 		config = configObj;
 
-		this.createPayForm(address);
+		this.createPayForm(config.address);
 
 	}
 

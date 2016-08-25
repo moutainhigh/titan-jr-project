@@ -188,20 +188,21 @@ public class FinancialTradeController extends BaseController {
 					|| (!orderCreateResponse.isResult())
 					|| !StringUtil.isValidString(orderCreateResponse
 							.getOrderNo())) {
-				log.error("orderCreateResponse "
-						+ orderCreateResponse.getReturnCode() + ":"
-						+ orderCreateResponse.getReturnMessage());
-
-				TitanMsgCodeEnum codeEnum = TitanMsgCodeEnum
-						.findTitanMsgCodeEnum(orderCreateResponse
-								.getReturnCode());
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
 
-				if (codeEnum != null) {
-					model.addAttribute("msg", codeEnum.getResMsg());
-				}
+				if (orderCreateResponse != null) {
+					log.error("orderCreateResponse "
+							+ orderCreateResponse.getReturnCode() + ":"
+							+ orderCreateResponse.getReturnMessage());
 
+					TitanMsgCodeEnum codeEnum = TitanMsgCodeEnum
+							.findTitanMsgCodeEnum(orderCreateResponse
+									.getReturnCode());
+					if (codeEnum != null) {
+						model.addAttribute("msg", codeEnum.getResMsg());
+					}
+				}
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
 
@@ -217,9 +218,11 @@ public class FinancialTradeController extends BaseController {
 					.getPaymentUrl(paymentUrlRequest);
 
 			if (response == null || !response.isResult()) {
-				log.error("orderCreateResponse "
-						+ orderCreateResponse.getReturnCode() + ":"
-						+ orderCreateResponse.getReturnMessage());
+				if (response != null) {
+					log.error("orderCreateResponse "
+							+ orderCreateResponse.getReturnCode() + ":"
+							+ orderCreateResponse.getReturnMessage());
+				}
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
@@ -263,9 +266,11 @@ public class FinancialTradeController extends BaseController {
 					.isPermissionToPayment(permissionRequest);
 
 			if (permissionResponse == null || (!permissionResponse.isResult())) {
-				log.error("checkPermission response  "
-						+ permissionResponse.getReturnCode() + ":"
-						+ permissionResponse.getReturnMessage());
+				if (permissionResponse != null) {
+					log.error("checkPermission response  "
+							+ permissionResponse.getReturnCode() + ":"
+							+ permissionResponse.getReturnMessage());
+				}
 				return false;
 			}
 		}
@@ -280,9 +285,11 @@ public class FinancialTradeController extends BaseController {
 					.isFinanceAccount(accountInfo);
 
 			if (response == null || (!response.isResult())) {
-				log.error("checkPermission response  "
-						+ response.getReturnCode() + ":"
-						+ response.getReturnMessage());
+				if (response != null) {
+					log.error("checkPermission response  "
+							+ response.getReturnCode() + ":"
+							+ response.getReturnMessage());
+				}
 				return false;
 			}
 		}
@@ -305,8 +312,10 @@ public class FinancialTradeController extends BaseController {
 					.confirmBussOrder(req);
 
 			if (bussOrderRsp == null || !bussOrderRsp.isSuccess()) {
-				log.error("checkConfirmBussOrder response  "
-						+ bussOrderRsp.getResult().getResMsg());
+				if (bussOrderRsp != null) {
+					log.error("checkConfirmBussOrder response  "
+							+ bussOrderRsp.getResult().getResMsg());
+				}
 				return false;
 			}
 
@@ -378,12 +387,12 @@ public class FinancialTradeController extends BaseController {
 
 	// DDDDDD
 	@RequestMapping("/showCashierDesk")
-	public String showCashierDesk(String orderNo, String sign, Model model) {
+	public String showCashierDesk(String payOrderNo, String sign, Model model) {
 
-		orderNo = "TJO1608181126362212";
-		log.info("获取支付地址入参:" + JsonConversionTool.toJson(orderNo));
+//		orderNo = "TJO1608181126362212";
+		log.info("获取支付地址入参:" + JsonConversionTool.toJson(payOrderNo));
 
-		if (!StringUtil.isValidString(orderNo)) {
+		if (!StringUtil.isValidString(payOrderNo)) {
 			model.addAttribute("msg", "订单流水号不空");
 			return "checkstand-pay/cashierDeskError";
 		}
@@ -392,7 +401,7 @@ public class FinancialTradeController extends BaseController {
 
 		// 根据payOrderNo查询出相应的订单
 		TransOrderRequest transOrderRequest = new TransOrderRequest();
-		transOrderRequest.setUserorderid(orderNo);
+		transOrderRequest.setUserorderid(payOrderNo);
 		TransOrderDTO transOrderDTO = titanOrderService
 				.queryTransOrderDTO(transOrderRequest);
 

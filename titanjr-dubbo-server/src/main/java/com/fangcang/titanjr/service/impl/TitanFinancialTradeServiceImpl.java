@@ -2410,7 +2410,7 @@ public class TitanFinancialTradeServiceImpl implements
 
 			// 金额不一致,则直接将订单设置为失效
 			if (!titanOrderRequest.getAmount().equals(
-					transOrderDTO.getTradeamount())) {
+					""+transOrderDTO.getTradeamount())) {
 				log.info("order amount happen change.");
 				updateOrderNoEffect(transOrderRequest.getTransid());
 				return null;
@@ -2504,6 +2504,7 @@ public class TitanFinancialTradeServiceImpl implements
 			titanTransOrder.setNotifyUrl(titanOrderRequest.getNotify());
 			titanTransOrder.setCreator(titanOrderRequest.getName());
 			titanTransOrder.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+			titanTransOrder.setPayerType(titanOrderRequest.getPayerType());
 			titanTransOrder.setCreatetime(new Date());
 			titanTransOrder.setUserorderid(OrderGenerateService
 					.genSyncUserOrderId());

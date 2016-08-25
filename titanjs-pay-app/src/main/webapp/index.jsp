@@ -58,10 +58,10 @@
 			goodsName : "dddd",//商品名称 N
 			userId : "122222",//付款方身份标示   如果是财务，则建议是FCUSERID，  如果是GDP，则是用户ID
 			ruserId : "M10021069",//收款方身份标示 N  ,GDP可以指定接受方的   商家联盟可以指定其FCUSERID
-			amount : "100",//订单金额
+			amount : "10000",//订单金额
 			payerType : "1",//付款人类型   财务 GDP 等
 			currencyType : "1",//币种
-			checkOrderUrl : '',//可选
+// 			checkOrderUrl : 'http://www.baidu.com',//可选
 			notify : 'http://www.baidu.com'
 		};
 
