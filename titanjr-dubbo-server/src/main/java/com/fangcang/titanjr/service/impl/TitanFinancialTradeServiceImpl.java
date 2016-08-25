@@ -1991,8 +1991,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		titanTransOrder.setGoodscnt(1);
 		titanTransOrder.setTradeamount(Long.parseLong(titanOrderRequest.getAmount()));
 		titanTransOrder.setPayorderno(titanOrderRequest.getGoodsId());
-		titanTransOrder.setGoodsdetail(titanOrderRequest.getGoodsdetail());
-		titanTransOrder.setGoodsname(titanOrderRequest.getGoodsname());
+		titanTransOrder.setGoodsdetail(titanOrderRequest.getGoodsDetail());
+		titanTransOrder.setGoodsname(titanOrderRequest.getGoodsName());
 		titanTransOrder.setNotifyUrl(titanOrderRequest.getNotify());
 		titanTransOrder.setCreator(titanOrderRequest.getName());
 		titanTransOrder.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
@@ -2007,6 +2007,36 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				titanTransOrder.setIsEscrowedPayment("0");
 				titanTransOrder.setEscrowedDate(DateUtil.sdf.parse(titanOrderRequest.getEscrowedDate()));
 			}
+			
+			//TODO返回单号
+			TransOrderRequest transOrderRequest = new TransOrderRequest();
+			transOrderRequest.setPayorderno(titanTransOrder.getPayorderno());
+			TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
+			
+			if(null != transOrderDTO){//已在融数下单
+				if(!StringUtil.isValidString(transOrderDTO.getOrderid())){
+					//update
+				}else{//融数生成了单
+					
+				}
+				
+				
+				/**
+				 * 1.未下单
+				 * 2.已生成订单，融数未生成,修改单
+				 * 3.已生成，融数已生成
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 */
+				
+			}
+			
 			boolean isSuccess  = titanTransOrderDao.insert(titanTransOrder)>0?true:false;
 			localOrderResponse.setOrderNo(titanTransOrder.getUserorderid());
 			localOrderResponse.putSuccess();
@@ -2044,12 +2074,12 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				titanTransOrder.setMerchantcode(titanUserBindInfoDTO.getMerchantcode());
 				titanTransOrder.setUserid(titanUser.getUserid());
 				titanTransOrder.setPayermerchant(titanUser.getUserid());
+				Map<String,String> bussinessInfo = titanOrderRequest.getBusinessInfo();
+				//接入方的用户在我们系统中对应我们金融Id的唯一标识
+				bussinessInfo.put("partnerId", titanOrderRequest.getUserId());
 			}else if(payerTypeEnum.isUserId()){//付款方传入userId
 				titanTransOrder.setUserid(titanOrderRequest.getUserId());
 				titanTransOrder.setPayermerchant(titanOrderRequest.getUserId());
-			}else{
-				localOrderResponse.putSysError();
-				return localOrderResponse;
 			}
 			
 		}

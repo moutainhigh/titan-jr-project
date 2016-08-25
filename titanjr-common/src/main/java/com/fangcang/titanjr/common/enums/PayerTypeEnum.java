@@ -34,6 +34,7 @@ public enum PayerTypeEnum {
 		  return null;
 	  }
 	  
+	  
 	  public static Integer getPaySource(String key){
 		  if(RECHARGE.key.equals(key)){//充值收银台
 			  return 5;
@@ -51,6 +52,10 @@ public enum PayerTypeEnum {
 		  return RECHARGE.key.equals(this.key);
 	  }
 
+	  //使用收款方收银台
+	  public boolean isRecieveCashDesk(){
+		  return B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key);
+	  }
 	  
 	  public boolean isUserId()
 	  {

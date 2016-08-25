@@ -1,9 +1,9 @@
 package com.fangcang.titanjr.pay.controller;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
-import java.text.ParseException;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -24,10 +24,8 @@ import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
-import com.fangcang.titanjr.common.util.CommonConstant;
-import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.DateUtil;
-import com.fangcang.titanjr.dto.BaseResponseDTO.ReturnCode;
+import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.CashDeskData;
@@ -49,18 +47,20 @@ import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
 import com.fangcang.titanjr.facade.TitanFinancialTradeFacade;
+import com.fangcang.titanjr.pay.req.TitanConfirmBussOrderReq;
+import com.fangcang.titanjr.pay.rsp.TianConfirmBussOrderRsp;
+import com.fangcang.titanjr.pay.services.FinancialTradeService;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.pay.util.RSADecryptString;
-import com.fangcang.titanjr.service.TitanCashierDeskService;
-import com.fangcang.titanjr.service.TitanFinancialAccountService;
-import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.request.AccountInfoRequest;
 import com.fangcang.titanjr.request.CheckPermissionRequest;
 import com.fangcang.titanjr.response.CheckAccountResponse;
 import com.fangcang.titanjr.response.PermissionResponse;
+import com.fangcang.titanjr.service.TitanCashierDeskService;
+import com.fangcang.titanjr.service.TitanFinancialAccountService;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanOrderService;
-//import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
 
 @Controller
@@ -78,32 +78,35 @@ public class FinancialTradeController extends BaseController {
 
 	@Resource
 	private TitanFinancialTradeService titanFinancialTradeService;
-	
+
 	@Resource
 	private TitanCashierDeskService titanCashierDeskService;
-	
+
 	@Resource
 	private TitanOrderService titanOrderService;
-	
+
 	@Resource
 	private TitanFinancialOrganService titanFinancialOrganService;
 
 	private MerchantFacade merchantFacade;
-	   
+
 	@Resource
 	private HessianProxyBeanFactory hessianProxyBeanFactory;
-	
+
 	@Resource
 	private TitanFinancialAccountService titanFinancialAccountService;
-//	@Resource
+	// @Resource
 	private TitanFinancialTradeFacade titanFinancialTradeFacade;
 
-//	@Resource
+	// @Resource
 	private TitanFinancialPermissionFacade titanFinancialPermissionFacade;
+
+	@Resource
+	private FinancialTradeService financialTradeService;
 
 	/**
 	 * @Title: titanPay
-	 * @Description: TODO
+	 * @Description: 提交订单并对身份进行认证
 	 * @param orderInfo
 	 * @param businessInfo
 	 * @param response
@@ -132,7 +135,8 @@ public class FinancialTradeController extends BaseController {
 			}
 
 			log.info("decrypt orderInfo is ok .");
-
+			
+			//解析订单信息
 			TitanOrderRequest dto = JsonConversionTool.toObject(deInfo,
 					TitanOrderRequest.class);
 
@@ -146,7 +150,7 @@ public class FinancialTradeController extends BaseController {
 			log.info("auth user is ok .");
 
 			// 检查解析后的参数是否合理
-			if (checkOrderInfo(dto)) {
+			if (!checkOrderInfo(dto)) {
 				log.error("orderInfo check fail!");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED
@@ -155,16 +159,27 @@ public class FinancialTradeController extends BaseController {
 			}
 
 			log.info("check order info is ok");
-
-			if (checkPermission(dto)) {
+			//检查用户权限
+			if (!checkPermission(dto)) {
 				log.error("checkPermission is fail.");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.PERMISSION_CHECK_FAILED.getResMsg());
 				return TRADE_PAY_ERROR_PAGE;
 			}
 
-			log.info("check permission  is ok");
+			log.info("check permission is ok");
+			//确认业务订单信息
+			if (!checkConfirmBussOrder(dto)) {
+				log.error("checkConfirmBussOrder is fail.");
+				model.addAttribute("msg",
+						TitanMsgCodeEnum.BUSS_ORDER_CHANGE_CHECK_FAILED
+								.getResMsg());
+				return TRADE_PAY_ERROR_PAGE;
+			}
 
+			log.info("check buss order is ok");
+			
+			//解析携带的业务信息
 			Map<String, String> busMap = JsonConversionTool.toObject(
 					businessInfo, Map.class);
 			dto.setBusinessInfo(busMap);
@@ -189,7 +204,8 @@ public class FinancialTradeController extends BaseController {
 
 			log.info("end sava titan trans order... [orderNo: "
 					+ orderCreateResponse.getOrderNo() + "]");
-
+			
+			//获取收银台地址
 			PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
 			paymentUrlRequest.setPayOrderNo(orderCreateResponse.getOrderNo());
 			paymentUrlRequest.setIsEscrowed("0");
@@ -201,13 +217,16 @@ public class FinancialTradeController extends BaseController {
 				log.error("orderCreateResponse "
 						+ orderCreateResponse.getReturnCode() + ":"
 						+ orderCreateResponse.getReturnMessage());
-				model.addAttribute("msg", TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
+				model.addAttribute("msg",
+						TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
 				return TRADE_PAY_ERROR_PAGE;
 			}
 
-			log.info("get Payment url ok url=" + response.getUrl());
+			log.info("get Payment url ok url="
+					+ this.getRequest().getContextPath() + response.getUrl());
 
-			this.getResponse().sendRedirect(response.getUrl());
+			this.getResponse().sendRedirect(
+					this.getRequest().getContextPath() + response.getUrl());
 
 		} catch (Exception ex) {
 			log.error("", ex);
@@ -217,6 +236,12 @@ public class FinancialTradeController extends BaseController {
 		return TRADE_PAY_ERROR_PAGE;
 	}
 
+	/**
+	 * 检查付款和付款方的权限
+	 * 
+	 * @param dto
+	 * @return
+	 */
 	private boolean checkPermission(TitanOrderRequest dto) {
 		PayerTypeEnum pe = PayerTypeEnum.getPayerTypeEnumByKey(dto
 				.getPayerType());
@@ -261,13 +286,32 @@ public class FinancialTradeController extends BaseController {
 		return true;
 	}
 
-	
-	
-	
-	
-	
-	
-	
+	/**
+	 * 根据指定的URL确认业务订单的金额
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	private boolean checkConfirmBussOrder(TitanOrderRequest dto) {
+		if (StringUtil.isValidString(dto.getCheckOrderUrl())) {
+			TitanConfirmBussOrderReq req = new TitanConfirmBussOrderReq();
+			req.setAmount(dto.getAmount());
+			req.setBussOrderNo(dto.getGoodsId());
+			req.setUrl(dto.getCheckOrderUrl());
+			TianConfirmBussOrderRsp bussOrderRsp = financialTradeService
+					.confirmBussOrder(req);
+
+			if (bussOrderRsp == null || !bussOrderRsp.isSuccess()) {
+				log.error("checkConfirmBussOrder response  "
+						+ bussOrderRsp.getResultCode() + ":"
+						+ bussOrderRsp.getResultMsg());
+				return false;
+			}
+
+		}
+		return true;
+	}
+
 	/**
 	 * 检查订单中的信息是否合法
 	 * 
@@ -329,11 +373,11 @@ public class FinancialTradeController extends BaseController {
 	public String checkOrderStatus(String orderId) {
 		return "{\"status\":\"0\"}";
 	}
-	
-	//DDDDDD
-    @RequestMapping("/showCashierDesk")
-	public String showCashierDesk(String orderNo,String sign, Model model){
-		
+
+	// DDDDDD
+	@RequestMapping("/showCashierDesk")
+	public String showCashierDesk(String orderNo, String sign, Model model) {
+
 		orderNo = "TJO1608181126362212";
 		log.info("获取支付地址入参:" + JsonConversionTool.toJson(orderNo));
 		
@@ -364,8 +408,8 @@ public class FinancialTradeController extends BaseController {
 		
 		CashDeskData cashDeskData = new CashDeskData();
 		
-		//查询收款方机构号
-		if(StringUtil.isValidString(transOrderDTO.getPayeemerchant())){
+		//查询收款方机构号，如果收款方不为空但是是酒店支付，还是不将收款信息填写
+		if(StringUtil.isValidString(transOrderDTO.getPayeemerchant()) && payerTypeEnum.isMustPayeement()){
 			FinancialOrganDTO financialOrganDTO = this.getFinancialOrganDTO(transOrderDTO.getPayeemerchant());
 			if(null ==financialOrganDTO ){
 				model.addAttribute("msg", "收款机构信息错误");
@@ -400,6 +444,7 @@ public class FinancialTradeController extends BaseController {
 		if(null != bussinessInfoMap){
 			inAccountCode = bussinessInfoMap.get("inAccountCode");
 			outAccountCode = bussinessInfoMap.get("outAccountCode");
+			cashDeskData.setFcUserid(bussinessInfoMap.get("partnerId"));
 		}
 		AccountHistoryResponse accountHistoryResponse = this.getAccountHistoryResponse(inAccountCode, 
 				outAccountCode, transOrderDTO.getUserid());
@@ -422,8 +467,8 @@ public class FinancialTradeController extends BaseController {
 		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
 		cashierDeskQueryRequest.setUserId(transOrderDTO.getUserid());
 		//GDP支付时用商家的收银台
-		if(StringUtil.isValidString(cashDeskData.getRecieveOrgCode())){
-			cashierDeskQueryRequest.setUserId(cashDeskData.getRecieveOrgCode());
+		if(payerTypeEnum.isRecieveCashDesk()){//使用收款商家收银台
+			cashierDeskQueryRequest.setUserId(transOrderDTO.getPayeemerchant());
 		}
 		cashierDeskQueryRequest.setUsedFor(PayerTypeEnum.getPaySource(transOrderDTO.getPayerType()));
 		
