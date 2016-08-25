@@ -192,8 +192,16 @@ public class FinancialTradeController extends BaseController {
 						+ orderCreateResponse.getReturnCode() + ":"
 						+ orderCreateResponse.getReturnMessage());
 
+				TitanMsgCodeEnum codeEnum = TitanMsgCodeEnum
+						.findTitanMsgCodeEnum(orderCreateResponse
+								.getReturnCode());
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
+
+				if (codeEnum != null) {
+					model.addAttribute("msg", codeEnum.getResMsg());
+				}
+
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
 

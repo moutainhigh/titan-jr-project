@@ -2456,10 +2456,10 @@ public class TitanFinancialTradeServiceImpl implements
 				} else if (OrderStatusEnum.isPaySuccess(transOrderDTO
 						.getStatusid())) {
 					
+					orderCreateResponse.setResult(false);
 					orderCreateResponse.setReturnCode(""
 							+ TitanMsgCodeEnum.PAY_ORDER_SUCCESS.getCode());
-					orderCreateResponse
-							.setReturnMessage(TitanMsgCodeEnum.PAY_ORDER_SUCCESS
+					orderCreateResponse.setReturnMessage(TitanMsgCodeEnum.PAY_ORDER_SUCCESS
 									.getResMsg());
 					
 					return orderCreateResponse;
