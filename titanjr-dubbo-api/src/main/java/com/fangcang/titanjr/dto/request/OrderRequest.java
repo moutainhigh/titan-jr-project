@@ -75,6 +75,8 @@ public class OrderRequest implements Serializable{
     //回调地址
     private String notifyUrl;
     
+    private Integer transid;
+    
     public String getNotifyUrl() {
 		return notifyUrl;
 	}
@@ -270,4 +272,13 @@ public class OrderRequest implements Serializable{
 	public void setTransordertype(Integer transordertype) {
 		this.transordertype = transordertype;
 	}
+
+	public Integer getTransid() {
+		return transid;
+	}
+
+	public void setTransid(Integer transid) {
+		this.transid = transid;
+	}
+	
 }

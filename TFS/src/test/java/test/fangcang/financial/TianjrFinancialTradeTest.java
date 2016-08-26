@@ -625,7 +625,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     public void testNewTitanOrder(){
     	TitanOrderRequest titanOrderRequest =new TitanOrderRequest();
     	titanOrderRequest.setAmount("100");
-    	titanOrderRequest.setGoodsdetail("喜马拉雅国际大酒店");
+    	titanOrderRequest.setGoodsDetail("喜马拉雅国际大酒店");
     	titanOrderRequest.setEscrowedDate("2016-08-23");
     	titanOrderRequest.setGoodsId("TW16010813732");
     	titanOrderRequest.setName("张三");

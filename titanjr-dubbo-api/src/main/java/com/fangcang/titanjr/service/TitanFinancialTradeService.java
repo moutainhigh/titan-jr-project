@@ -24,6 +24,9 @@ public interface TitanFinancialTradeService {
 	 */
 	public TransOrderCreateResponse operateRSTransOrder(OrderRequest orderRequest);
 	
+	
+	 public TransOrderCreateResponse operateRSTransOrder2(OrderRequest orderRequest);
+	
 	/**
 	 * 本地生成订单
 	 * @param localAddTransOrderRequest
@@ -41,6 +44,14 @@ public interface TitanFinancialTradeService {
 	 */
 	public TransOrderCreateResponse createTitanTransOrder(PaymentRequest paymentRequest) throws Exception;
 	
+	
+	/**
+	 * 改造后的接口
+	 * @param paymentRequest
+	 * @return
+	 */
+	public TransOrderCreateResponse createRsOrder(TitanPaymentRequest titanPaymentRequest);
+	
 	/**
 	 * 在收银台支付页面点击确定按钮时，生成充值页面的操作
 	 * @param rechargePageRequest
@@ -48,6 +59,15 @@ public interface TitanFinancialTradeService {
 	 * @author fangdaikang
 	 */
 	public RechargeResponse generateRechargePage(RechargePageRequest rechargePageRequest) throws Exception;
+	
+	
+	/**
+	 * 在收银台支付页面点击确定按钮时，生成充值页面的操作
+	 * @param rechargePageRequest
+	 * @return RechargeResponse 
+	 * @author fangdaikang
+	 */
+	public RechargeResponse packageRechargeData( RechargeRequest rechargeRequest);
 	
 	/**
 	 * 用户进行充值操作(不需要财务单)

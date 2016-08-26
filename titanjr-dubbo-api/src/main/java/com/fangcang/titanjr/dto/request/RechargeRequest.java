@@ -3,6 +3,7 @@ package com.fangcang.titanjr.dto.request;
 import java.util.Date;
 
 public class RechargeRequest {
+	
 	private String userid;
 	//商户号
 	private String merchantNo;
