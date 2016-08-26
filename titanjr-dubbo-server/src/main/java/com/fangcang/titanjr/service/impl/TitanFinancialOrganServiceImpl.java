@@ -349,12 +349,19 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     }
     /**
      * 更新金服机构图片信息
-     * @param organRegisterRequest
+     * @param imageId  机构有效图片的所有imageid,格式：11,22,33
+     * @param orgCode 
      * @throws GlobalServiceException 
      */
     private void updateOrgImg(String imageId,String orgCode) throws GlobalServiceException{
     	if(StringUtils.isNotBlank(imageId)){
     		String[] imgArr = imageId.split(",");
+    		//1、把旧的照片更改为无效
+    		TitanOrgImage titanOrgImage = new TitanOrgImage();
+			titanOrgImage.setOrgcode(orgCode);
+			titanOrgImage.setIsactive(TitanOrgImageEnum.IsActive.NOT_ACTIVE.getKey());
+			titanOrgImageDao.updateIsActiveByOrgCode(titanOrgImage);
+    		//2、新上传的图片置为有效
     		for(String temp: imgArr){
     			int tempImageId = 0;
     			try {
@@ -363,11 +370,13 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 					throw new GlobalServiceException("更新金服机构图片信息错误，tempImageId非法",e);
 				}
     			
-    			TitanOrgImage titanOrgImage = new TitanOrgImage();
-    			titanOrgImage.setImageid(tempImageId);
-    			titanOrgImage.setOrgcode(orgCode);
-    			titanOrgImage.setUserid(orgCode);
-    			titanOrgImageDao.update(titanOrgImage);
+    			TitanOrgImage newTitanOrgImage = new TitanOrgImage();
+    			newTitanOrgImage.setImageid(tempImageId);
+    			newTitanOrgImage.setOrgcode(orgCode);
+    			newTitanOrgImage.setUserid(orgCode);
+    			newTitanOrgImage.setIsactive(TitanOrgImageEnum.IsActive.ACTIVE.getKey());
+    			newTitanOrgImage.setModifytime(new Date());
+    			titanOrgImageDao.update(newTitanOrgImage);
     		}
     	}
     }
