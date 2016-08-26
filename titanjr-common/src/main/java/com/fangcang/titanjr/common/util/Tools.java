@@ -4,6 +4,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fangcang.util.StringUtil;
 import com.google.gson.GsonBuilder;
@@ -14,6 +16,7 @@ import com.google.gson.GsonBuilder;
  * @2016年5月31日
  */
 public class Tools {
+	private static final Logger LOGGER = LoggerFactory.getLogger(Tools.class);
 	public final static String REGEX_EMAILL = "\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
 	public final static String REGEX_PHONE = "^13[0-9]{9}$|^14[0-9]{9}$|^15[0-9]{9}$|^18[0-9]{9}$|^17[0-9]{9}$";
 	
@@ -78,6 +81,7 @@ public class Tools {
 		try {
 			return new GsonBuilder().serializeNulls().create().toJson(object);
 		} catch (Exception e) {
+			LOGGER.info("convert to josn fail , object:"+object);
 			e.printStackTrace();
 		}
 		return ToStringBuilder.reflectionToString(object);

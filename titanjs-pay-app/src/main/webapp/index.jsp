@@ -49,8 +49,8 @@
 
 		var businessInfo = {
 			inAccountCode : "A000003336",
-			outAccountCode : "A000018430"
-		}
+			outAccountCode : "A000018430",
+		};
 
 		document.getElementById('payButton').onclick = function() {
 			titanPayObj.titanPay(orderInfo, businessInfo);
