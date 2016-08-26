@@ -11,12 +11,12 @@ import com.google.gson.Gson;
 public final class JsonConversionTool {
 	private final static Gson gson = new Gson();
 
-	public static <T> T toObject(String json, Class<T> t) {
+	public static <T> T toObject(String json, Class t) {
 		if (json == null) {
 			return null;
 		}
 
-		return gson.fromJson(json, t);
+		return (T) gson.fromJson(json, t);
 	}
 
 	public static String toJson(Object object) {

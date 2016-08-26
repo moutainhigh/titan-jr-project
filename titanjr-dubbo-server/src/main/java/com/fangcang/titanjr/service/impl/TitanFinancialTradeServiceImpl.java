@@ -2271,7 +2271,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			titanTransOrder.setCreatetime(new Date());
 			titanTransOrder.setUserorderid(OrderGenerateService
 					.genSyncUserOrderId());
+			
 			if (null != titanOrderRequest.getBusinessInfo()) {
+				//如果指定了业务编码则将编号并入库
+				titanTransOrder.setBusinessordercode(titanOrderRequest
+						.getBusinessInfo().get("bussCode"));
 				titanTransOrder.setBusinessinfo(JSONSerializer.toJSON(
 						titanOrderRequest.getBusinessInfo()).toString());
 			}
