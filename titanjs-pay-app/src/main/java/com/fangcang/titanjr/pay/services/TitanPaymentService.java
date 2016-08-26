@@ -123,7 +123,7 @@ public class TitanPaymentService {
             rechargeRequest.setTransorderid(transOrderDTO.getTransid());
             rechargeRequest.setOrderAmount(transOrderDTO.getAmount().toString());
             rechargeRequest.setProductName(transOrderDTO.getGoodsname());
-            rechargeRequest.setUserid(titanPaymentRequest.getUserid());
+            rechargeRequest.setUserid(transOrderDTO.getUserid());
             rechargeRequest.setOrderNo(titanPaymentRequest.getOrderid());
             rechargeRequest.setProductNum("1");
             rechargeRequest.setAmtType(AmtTypeEnum.RMB.getKey());

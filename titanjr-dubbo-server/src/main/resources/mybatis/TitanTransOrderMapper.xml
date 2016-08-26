@@ -47,6 +47,112 @@
            and isEscrowedPayment = #{isEscrowedPayment}
        </if>
     </sql>
+    
+    <sql id="sqlUpdate">
+      <if test="constid !=null">
+        constid=#{constid},
+      </if>
+      <if test="userid !=null">
+        userid=#{userid},
+      </if>
+      <if test="ordertypeid !=null">
+        ordertypeid=#{ordertypeid},
+      </if>
+      <if test="productid !=null">
+        productid=#{productid},
+      </if>
+      <if test="orderid !=null">
+        orderid=#{orderid},
+      </if>
+      <if test="userorderid !=null">
+        userorderid=#{userorderid},
+      </if>
+      <if test="businessordercode !=null">
+        businessordercode=#{businessordercode},
+      </if>
+      <if test="orderdate !=null">
+        orderdate=#{orderdate},
+      </if>
+      <if test="ordertime !=null">
+        ordertime=#{ordertime},
+      </if>
+      <if test="provider !=null">
+        provider=#{provider},
+      </if>
+      <if test="userrelateid !=null">
+        userrelateid=#{userrelateid},
+      </if>
+      <if test="amount !=null">
+        amount=#{amount},
+      </if>
+      <if test="goodsname !=null">
+        goodsname=#{goodsname},
+      </if>
+      <if test="goodsdetail !=null">
+        goodsdetail=#{goodsdetail},
+      </if>
+      <if test="goodscnt!=null">
+        goodscnt=#{goodscnt},
+      </if>
+      <if test="unitprice !=null">
+        unitprice=#{unitprice},
+      </if>
+      <if test="statusid !=null">
+        statusid=#{statusid},
+      </if>
+      <if test="adjusttype !=null">
+        adjusttype=#{adjusttype},
+      </if>
+      <if test="adjustcontent !=null">
+        adjustcontent=#{adjustcontent},
+      </if>
+      <if test="creator !=null">
+        creator=#{creator},
+      </if>
+      <if test="receivablefee !=null">
+        receivablefee=#{receivablefee},
+      </if>
+      <if test="createtime !=null">
+        createtime=#{createtime},
+      </if>
+      <if test="receivedfee !=null">
+        receivedfee=#{receivedfee},
+      </if>
+      <if test="isEscrowedPayment !=null">
+        isEscrowedPayment=#{isEscrowedPayment},
+      </if>
+      <if test="escrowedDate !=null">
+        escrowedDate=#{escrowedDate},
+      </if>
+      <if test="payeemerchant !=null">
+        payeemerchant=#{payeemerchant},
+      </if>
+      <if test="payermerchant !=null">
+        payermerchant=#{payermerchant},
+      </if>
+      <if test="payorderno !=null">
+        payorderno=#{payorderno},
+      </if>
+      <if test="merchantcode !=null">
+        merchantcode=#{merchantcode},
+      </if>
+      <if test="tradeamount !=null">
+        tradeamount=#{tradeamount},
+      </if>
+      <if test="transordertype !=null">
+        transordertype=#{transordertype},
+      </if>
+      <if test="notifyUrl !=null">
+        notifyUrl=#{notifyUrl},
+      </if>
+      <if test="businessinfo !=null">
+        businessinfo=#{businessinfo},
+      </if>
+      <if test="payerType !=null">
+        payertype=#{payerType}
+      </if>
+    </sql>
+    
 
     <select id="queryAllOrder" resultType="com.fangcang.titanjr.entity.TitanTransOrder"
             parameterType="com.fangcang.titanjr.entity.parameter.TitanTransOrderParam" >
@@ -152,6 +258,7 @@
       )
   </insert>
 
+
     <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanTransOrder">
         update t_tfs_transorder
         <set>
@@ -209,6 +316,20 @@
            and orderid = #{orderid}
           </if>
         </where>
+    </update>
+    
+    <update id="updateTitanTransOrderByTransId" parameterType="com.fangcang.titanjr.entity.TitanTransOrder">
+       update t_tfs_transorder
+        <set>
+            <include refid="sqlUpdate"/>
+        </set>
+        <where>
+          <if test="transid !=null">
+            and transid=#{transid}
+          </if>
+        </where>
+    
+    
     </update>
 
     <select id="selectTitanTransOrder" parameterType="com.fangcang.titanjr.dto.request.TransOrderRequest"

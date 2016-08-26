@@ -307,7 +307,7 @@ $("document").ready(function (){
     		
     	}else if('${cashDeskData.paySource}'=="2"){//财务
     		//收款账户历史，或者收款方账户存在时
-    		if('${cashDeskData.accountHistoryDTO}'.length>0 ||'cashDeskData.orgName'.length>0){
+    		if('${cashDeskData.accountHistoryDTO}'.length>0 ||'${cashDeskData.orgName}'.length>0){
     			show_history();
     		}else{
     			hide_history();

@@ -98,4 +98,14 @@ public class TitanTransOrderDaoImpl extends GenericDAOMyBatisImpl implements Tit
 	            throw new DaoException(e);
 	        }
 	}
+
+
+	@Override
+	public int updateTitanTransOrderByTransId(TitanTransOrder entity) throws DaoException {
+		try {
+        	 return super.updateEntity("com.fangcang.titanjr.dao.TitanTransOrderDao.updateTitanTransOrderByTransId", entity);
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+	}
 }
