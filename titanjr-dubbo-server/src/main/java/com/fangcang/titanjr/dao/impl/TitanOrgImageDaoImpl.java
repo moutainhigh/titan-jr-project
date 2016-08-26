@@ -37,4 +37,15 @@ public class TitanOrgImageDaoImpl extends GenericDAOMyBatisImpl implements Titan
 			throw new DaoException(e);
 		}
 	}
+
+	@Override
+	public int updateIsActiveByOrgCode(TitanOrgImage entity)
+			throws DaoException {
+		try {
+			return super.updateEntity("com.fangcang.titanjr.dao.TitanOrgImageDao.updateIsActiveByOrgCode", entity);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+	
 }
