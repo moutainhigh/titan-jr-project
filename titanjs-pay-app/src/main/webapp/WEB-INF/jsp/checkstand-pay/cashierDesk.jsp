@@ -273,19 +273,19 @@
 </div>
 
 <div>
-    <form id="onlinePaymentForm" method="post" action="<%=basePath%>/trade/genRechargeData.action">
+    <form id="onlinePaymentForm" method="post" action="<%=basePath%>/payment/packageRechargeData.action">
 	    <input name="payPassword" id="payPassword" type="hidden" value=""/>
 	    <input name="transferAmount" id="transferAmount" type="hidden" value=""/>
 	    <input name="payAmount" id="payAmount" type="hidden" value=""/>
 	    <input name="recieveOrgName" id="recieveOrgName" type="hidden" value=""/>
 	    <input name="recieveTitanCode" id="recieveTitanCode" type="hidden" value=""/>
 	    <input name="bankInfo" type="hidden" id="bankInfo" value=""/>
-	    <input name="fcUserid" type="hidden" value="${fcUserid}"/>
-	    <input name="userid" type="hidden" value="${userId}"/>
 	    <input name="linePayType" id="linePayType" type="hidden" value="">
-	    <input name="paySource" id="paySource" type="hidden" value="${paySource}">
-	    <input name="deskId" id="deskId" type="hidden" value="${cashierDesk.deskId}">
+	    <input name="paySource" id="paySource" type="hidden" value="${cashDeskData.paySource}">
+	    <input name="deskId" id="deskId" type="hidden" value="${cashDeskData.deskId}">
 	    <input name="payerAcount" id="payerAcount" type="hidden" value="">
+	    <input name="payOrderNo" id="payOrderNo" type="hidden" value="${cashDeskData.payOrderNo}">
+	    <input name="tradeAmount" id="tradeAmount" type="hidden" value="${cashDeskData.amount}">
     </form>
 </div>
 
@@ -830,7 +830,7 @@ $("document").ready(function (){
     		$("#recieveTitanCode").val(pay_date.recieveTitanCode);
     		$("#bankInfo").val(pay_date.bankInfo);
     		$("#linePayType").val(pay_date.linePayType);
-    		$("#payerAcount").val(pay_date.payerAccount)
+    		$("#payerAcount").val(pay_date.payerAccount);
     		$("#onlinePaymentForm").submit();
     	}  
     }

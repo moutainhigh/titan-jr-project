@@ -37,6 +37,7 @@
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
 </body>
 <script type="text/javascript">
+alert('${result}');
    if('${result}'=="false"){
 	   function submitform(){
 		   $("#errror_cashier").submit();

@@ -291,7 +291,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     	}
     	
     	TransOrderDTO transOrderDTO = transOrderResponse.getTransOrder();
+    	//是否在融数落单
     	String orderid = "";
+    	//是否需要重新在本地下单
     	boolean isAddOrderAgain = false;
     	try{
     		if(StringUtil.isValidString(transOrderDTO.getOrderid())){//在融数已经落单
@@ -309,6 +311,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                     	 long times = DateUtil.diffSecondByTime(titanOrderPayreq.getOrderTime(), DateUtil.sdf5.format(new Date()));
                          if ( times < this.getExpireTime(titanOrderPayreq)) {//未过期 获取当前单号,需要优化
                              orderid = titanOrderPayreq.getOrderNo();
+                             orderResponse.setOrderNo(orderid);
                          } else {
                         	this.updateOrderNoEffect(transOrderDTO.getTransid());
                         	isAddOrderAgain = true;
@@ -323,80 +326,32 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         	}
     		
     		OrderRequest orderRequest = this.convertorToTitanOrderRequest2(titanPaymentRequest,transOrderDTO);
-    		if(isAddOrderAgain){
-    			orderRequest.setUserorderid(OrderGenerateService.genSyncUserOrderId());
-    		}
     		
-    		OrderOperateResponse orderOperateResponse = this.getOrderId(orderRequest);
-            if(!orderOperateResponse.getOperateStatus().equals(CommonConstant.OPERATE_SUCCESS)){//融数下单成功
-            	orderResponse.putErrorResult(orderOperateResponse.getReturnMsg());
-            	return orderResponse;
-            }
-    		 
-            orderRequest.setOrderid(orderOperateResponse.getOrderid());
-            orderRequest.setTransid(transOrderDTO.getTransid());
-            this.saveOrUpdateTitanTransOrder(orderRequest, isAddOrderAgain);
+    		if(!StringUtil.isValidString(orderid)){//是否在融数落单,
+    			if(isAddOrderAgain){
+    				orderRequest.setUserorderid(OrderGenerateService.genSyncUserOrderId());
+    			}
+    			OrderOperateResponse orderOperateResponse = this.getOrderId(orderRequest);
+        		
+                if(!orderOperateResponse.getOperateStatus().equals(CommonConstant.OPERATE_SUCCESS)){//融数下单不成功
+                	orderResponse.putErrorResult(orderOperateResponse.getReturnMsg());
+                	return orderResponse;
+                }
+                orderRequest.setTransid(transOrderDTO.getTransid());
+                this.saveOrUpdateTitanTransOrder(orderRequest, isAddOrderAgain);
+                orderResponse.setOrderNo(orderOperateResponse.getOrderid());
+    		}
+    			
             log.info("融数落单返回结果dubbo:"+JSONSerializer.toJSON(orderResponse));
+            orderResponse.putSuccess();
+            return orderResponse;
     		
     	}catch(Exception e){
     		log.error("落单失败"+e.getMessage());
+    		orderResponse.putErrorResult("落单异常");
     	}
-    	
-    	
-    	
-    	if(StringUtil.isValidString(orderid)){//重新下单
-    		orderResponse.putSuccess();
-    		orderResponse.setOrderNo(orderid);
-    		return orderResponse;
-    	}
-    	
-    	/**
-    	 * 重新下单，
-    	 * 
-    	 * 
-    	 */
-    	
-    	
-    	
-    	 //判断是否超时
-//        
-//        if ( times < this.getExpireTime(titanOrderPayreq)) {//未过期 获取当前单号
-//            orderid = titanOrderPayreq.getOrderNo();
-//        } else {
-//        	this.updateLocalOrder(transOrderDTO.getTransid());
-//        	int row =0;
-//        	try{
-//        		row = titanTransOrderDao.update(titanTransOrder);
-//        	}catch(Exception e){
-//        		log.error("该订单失效设置失败"+e.getMessage(),e);
-//        	}
-//        	if(row<1){
-//        		//TODO 写异常单
-//        		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrderDTO.getOrderid(), "下单 设置订单失效", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(titanTransOrder));
-//       		titanOrderService.saveOrderException(orderExceptionDTO);
-//        	}
-    	/***
-    	 * 融数下单步骤
-    	 * 1.查看单是否存在，如果不存在就返回null
-    	 * 2.判断该单是否有效
-    	 * 3.判断第二次充值的银行卡是否相同，不同则重新落单，将原单设置为失效
-    	 * 4.判断网银支付金额两次充值是否相同，不同则重新落单，将原单设置为失效
-    	 * 5.
-    	 * 
-    	 * 
-    	 * 
-    	 * 
-    	 * 
-    	 * 
-    	 * 
-    	 * 
-    	 * 
-    	 */
-    	
-    	
-    	return null;
+    	return orderResponse;
     }
-    
     
     private boolean saveOrUpdateTitanTransOrder(OrderRequest orderRequest,boolean isAddOrderAgain){
     	 int row = 0;
@@ -537,7 +492,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     private TransOrderResponse queryTransOrderByCode(String payOrderNo){
     	TransOrderResponse transOrderResponse =null;
     	try{
-    		if(StringUtil.isValidString(payOrderNo)){
+    		if(!StringUtil.isValidString(payOrderNo)){
     			return null;
     		}
     		
@@ -1171,6 +1126,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
   			 orderRequest.setEscrowedDate(transOrderDTO.getEscrowedDate());
   			 orderRequest.setOpertype(OperTypeEnum.Add_Order.key);
              orderRequest.setOrdertypeid(OrderTypeEnum.OrderType_1.key);
+             orderRequest.setUserorderid(transOrderDTO.getUserorderid());
              
         } catch (Exception e) {
             throw new Exception(e);

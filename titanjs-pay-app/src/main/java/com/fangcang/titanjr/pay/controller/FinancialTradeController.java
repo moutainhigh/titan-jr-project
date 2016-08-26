@@ -45,17 +45,10 @@ import com.fangcang.titanjr.dto.response.CashierDeskResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
-import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
-import com.fangcang.titanjr.pay.req.TitanConfirmBussOrderReq;
-import com.fangcang.titanjr.pay.rsp.TianConfirmBussOrderRsp;
 import com.fangcang.titanjr.pay.services.FinancialTradeService;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.pay.util.RSADecryptString;
-import com.fangcang.titanjr.request.AccountInfoRequest;
-import com.fangcang.titanjr.request.CheckPermissionRequest;
-import com.fangcang.titanjr.response.CheckAccountResponse;
-import com.fangcang.titanjr.response.PermissionResponse;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -91,9 +84,6 @@ public class FinancialTradeController extends BaseController {
 
 	@Resource
 	private TitanFinancialAccountService titanFinancialAccountService;
-
-	@Resource
-	private TitanFinancialPermissionFacade titanFinancialPermissionFacade;
 
 	@Resource
 	private FinancialTradeService financialTradeService;
@@ -155,7 +145,7 @@ public class FinancialTradeController extends BaseController {
 
 			log.info("check order info is ok");
 			// 检查用户权限
-			if (!checkPermission(dto)) {
+			if (!financialTradeService.checkPermission(dto)) {
 				log.error("checkPermission is fail.");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.PERMISSION_CHECK_FAILED.getResMsg());
@@ -164,7 +154,7 @@ public class FinancialTradeController extends BaseController {
 
 			log.info("check permission is ok");
 			// 确认业务订单信息
-			if (!checkConfirmBussOrder(dto)) {
+			if (!financialTradeService.checkConfirmBussOrder(dto)) {
 				log.error("checkConfirmBussOrder is fail.");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.BUSS_ORDER_CHANGE_CHECK_FAILED
@@ -228,11 +218,13 @@ public class FinancialTradeController extends BaseController {
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
 
-			log.info("get Payment url ok url="
-					+ this.getRequest().getContextPath() + response.getUrl());
+			log.info("get Payment url ok ");
 
 			this.getResponse().sendRedirect(
 					this.getRequest().getContextPath() + response.getUrl());
+
+			log.info("success goto url = " + this.getRequest().getContextPath()
+					+ response.getUrl());
 
 		} catch (Exception ex) {
 			log.error("", ex);
@@ -240,87 +232,6 @@ public class FinancialTradeController extends BaseController {
 
 		model.addAttribute("msg", TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
 		return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
-	}
-
-	/**
-	 * 检查付款和付款方的权限
-	 * 
-	 * @param dto
-	 * @return
-	 */
-	private boolean checkPermission(TitanOrderRequest dto) {
-		PayerTypeEnum pe = PayerTypeEnum.getPayerTypeEnumByKey(dto
-				.getPayerType());
-
-		CheckPermissionRequest permissionRequest = null;
-		PermissionResponse permissionResponse = null;
-
-		if (pe.isFcUserId() && StringUtil.isValidString(dto.getUserId())) {
-			permissionRequest = new CheckPermissionRequest();
-			permissionRequest.setFcuserid(dto.getUserId());
-			permissionRequest.setPermission("1");
-
-			log.info("check permission userId= " + dto.getUserId());
-
-			permissionResponse = titanFinancialPermissionFacade
-					.isPermissionToPayment(permissionRequest);
-
-			if (permissionResponse == null || (!permissionResponse.isResult())) {
-				if (permissionResponse != null) {
-					log.error("checkPermission response  "
-							+ permissionResponse.getReturnCode() + ":"
-							+ permissionResponse.getReturnMessage());
-				}
-				return false;
-			}
-		}
-
-		if (pe.isReicveMerchantCode()
-				&& StringUtil.isValidString(dto.getRuserId())) {
-			AccountInfoRequest accountInfo = new AccountInfoRequest();
-			accountInfo.setMerchantCode(dto.getRuserId());
-			log.info("check permission ruserId= " + dto.getRuserId());
-
-			CheckAccountResponse response = titanFinancialPermissionFacade
-					.isFinanceAccount(accountInfo);
-
-			if (response == null || (!response.isResult())) {
-				if (response != null) {
-					log.error("checkPermission response  "
-							+ response.getReturnCode() + ":"
-							+ response.getReturnMessage());
-				}
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * 根据指定的URL确认业务订单的金额
-	 * 
-	 * @param dto
-	 * @return
-	 */
-	private boolean checkConfirmBussOrder(TitanOrderRequest dto) {
-		if (StringUtil.isValidString(dto.getCheckOrderUrl())) {
-			TitanConfirmBussOrderReq req = new TitanConfirmBussOrderReq();
-			req.setAmount(dto.getAmount());
-			req.setBussOrderNo(dto.getGoodsId());
-			req.setUrl(dto.getCheckOrderUrl());
-			TianConfirmBussOrderRsp bussOrderRsp = financialTradeService
-					.confirmBussOrder(req);
-
-			if (bussOrderRsp == null || !bussOrderRsp.isSuccess()) {
-				if (bussOrderRsp != null) {
-					log.error("checkConfirmBussOrder response  "
-							+ bussOrderRsp.getResult().getResMsg());
-				}
-				return false;
-			}
-
-		}
-		return true;
 	}
 
 	/**
@@ -378,18 +289,11 @@ public class FinancialTradeController extends BaseController {
 		return true;
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/checkOrderStatus", method = { RequestMethod.GET,
-			RequestMethod.POST })
-	public String checkOrderStatus(String orderId) {
-		return "{\"status\":\"0\"}";
-	}
-
 	// DDDDDD
 	@RequestMapping("/showCashierDesk")
 	public String showCashierDesk(String payOrderNo, String sign, Model model) {
 
-//		orderNo = "TJO1608181126362212";
+		// orderNo = "TJO1608181126362212";
 		log.info("获取支付地址入参:" + JsonConversionTool.toJson(payOrderNo));
 
 		if (!StringUtil.isValidString(payOrderNo)) {
@@ -514,6 +418,10 @@ public class FinancialTradeController extends BaseController {
 				transOrderDTO.getPayerType()).toString());
 		cashDeskData.setMerchantcode(transOrderDTO.getMerchantcode());
 		cashDeskData.setUserId(transOrderDTO.getUserid());
+		cashDeskData.setPayOrderNo(transOrderDTO.getPayorderno());
+		if(response.getCashierDeskDTOList().get(0) !=null){
+			cashDeskData.setDeskId(response.getCashierDeskDTOList().get(0).getDeskId());
+		}
 		if (transOrderDTO.getTradeamount() != null) {
 			cashDeskData.setAmount(transOrderDTO.getTradeamount().toString());
 		}

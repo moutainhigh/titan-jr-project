@@ -7,7 +7,9 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Component;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.dto.bean.AmtTypeEnum;
 import com.fangcang.titanjr.dto.bean.BusiCodeEnum;
@@ -39,6 +41,7 @@ import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 
+@Component
 public class TitanPaymentService {
 	private static final Log log = LogFactory
 			.getLog(FinancialTradeService.class);

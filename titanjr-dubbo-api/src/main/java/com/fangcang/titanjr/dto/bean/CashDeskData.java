@@ -58,6 +58,8 @@ public class CashDeskData implements Serializable{
 	//
 	private String businessOrderCode;
 	
+	private Integer deskId;
+	
 	//收银台
 	private CashierDeskDTO cashierDeskDTO;
 	
@@ -273,6 +275,15 @@ public class CashDeskData implements Serializable{
 
 	public void setBusinessOrderCode(String businessOrderCode) {
 		this.businessOrderCode = businessOrderCode;
+	}
+
+	
+	public Integer getDeskId() {
+		return deskId;
+	}
+
+	public void setDeskId(Integer deskId) {
+		this.deskId = deskId;
 	}
 
 	public CashDeskData putError(String msg){

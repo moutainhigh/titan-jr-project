@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -31,7 +32,8 @@ import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.util.StringUtil;
-
+@Controller
+@RequestMapping("/payment")
 public class TitanPaymentController extends BaseController {
 
 	private static final Log log = LogFactory.getLog(TitanPaymentController.class);
@@ -54,10 +56,9 @@ public class TitanPaymentController extends BaseController {
 	public String packageRechargeData(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model) throws Exception{
 	
 		log.info("网银支付请求参数:"+JsonConversionTool.toJson(titanPaymentRequest));
-		Map<String,String>  resultMap = new HashMap<String, String>();
-		if(null == titanPaymentRequest || StringUtil.isValidString(titanPaymentRequest.getTradeAmount()) 
-				|| StringUtil.isValidString(titanPaymentRequest.getPayAmount())
-				||StringUtil.isValidString(titanPaymentRequest.getUserid())){
+		model.addAttribute("result", "false");
+		if(null == titanPaymentRequest || !StringUtil.isValidString(titanPaymentRequest.getTradeAmount()) 
+				|| !StringUtil.isValidString(titanPaymentRequest.getPayAmount())){
 			model.addAttribute("msg", "参数错误");
 			return "checkstand-pay/genRechargePayment";
 		}
@@ -83,7 +84,6 @@ public class TitanPaymentController extends BaseController {
     	
     	RechargeResponse rechargeResponse = titanPaymentService.packageRechargeData(titanPaymentRequest);
     	if(!rechargeResponse.isResult()){
-    		model.addAttribute("result", "false");
     		model.addAttribute("msg", rechargeResponse.getReturnMessage());
     		return "checkstand-pay/genRechargePayment";
     	}

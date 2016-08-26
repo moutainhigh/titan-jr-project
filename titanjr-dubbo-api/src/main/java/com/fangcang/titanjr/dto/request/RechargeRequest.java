@@ -1,8 +1,14 @@
 package com.fangcang.titanjr.dto.request;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class RechargeRequest {
+public class RechargeRequest implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private String userid;
 	//商户号
