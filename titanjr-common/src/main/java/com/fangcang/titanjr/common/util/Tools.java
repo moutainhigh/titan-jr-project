@@ -1,12 +1,12 @@
 package com.fangcang.titanjr.common.util;
 
-import java.util.Date;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.fangcang.util.StringUtil;
+import com.google.gson.GsonBuilder;
 
 /**
  * 其他无法归类的工具方法
@@ -68,6 +68,20 @@ public class Tools {
 		}else{
 			return obj;
 		}
+	}
+	/**
+	 * object 转json 字符串
+	 * @param object
+	 * @return
+	 */
+	public static String gsonToString(Object object){
+		try {
+			return new GsonBuilder().serializeNulls().create().toJson(object);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ToStringBuilder.reflectionToString(object);
+		
 	}
 	public static void main(String[] arg){
 		///System.out.println(getRegCode());

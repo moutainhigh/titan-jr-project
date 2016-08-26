@@ -310,11 +310,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                          if ( times < this.getExpireTime(titanOrderPayreq)) {//未过期 获取当前单号,需要优化
                              orderid = titanOrderPayreq.getOrderNo();
                          } else {
-                        	this.updateLocalOrder(transOrderDTO.getTransid());
+                        	this.updateOrderNoEffect(transOrderDTO.getTransid());
                         	isAddOrderAgain = true;
                          }
                      }else{
-                    	 this.updateLocalOrder(transOrderDTO.getTransid());
+                    	 this.updateOrderNoEffect(transOrderDTO.getTransid());
                     	 isAddOrderAgain = true;
                      }
         		}else{
@@ -1925,7 +1925,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	private boolean validateIsUpdateOrder(PaymentRequest paymentRequest,TransOrderDTO transOrderDTO) {
 		if(!NumberUtil.covertToCents(paymentRequest.getPayAmount()).equals(transOrderDTO.getAmount().toString())){
 			//直接将本地单作废重新生成新订单
-			return this.updateLocalOrder(transOrderDTO.getTransid());
+			return this.updateOrderNoEffect(transOrderDTO.getTransid());
 		}
 		return true;
 	}
@@ -1966,19 +1966,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return false;
 	}
 
-	//修改本地落单
-	private boolean updateLocalOrder(Integer transid){
-		TitanTransOrder titanTransOrder = new TitanTransOrder();
-		try{
-			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_NO_EFFECT.getStatus());
-			titanTransOrder.setTransid(transid);
-		    titanTransOrderDao.update(titanTransOrder);
-		}catch(Exception e){
-			log.error("修改本地订单失败"+e.getMessage());
-		}
-		return false;
-	}
-	
 	@Override
 	public PayMethodConfigDTO getPayMethodConfigDTO(
 			PayMethodConfigRequest payMethodConfigRequest) {

@@ -3,20 +3,24 @@ package com.fangcang.titanjr.pay.services;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Component;
 
 import com.fangcang.titanjr.common.util.HttpUtils;
+import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.pay.req.TitanConfirmBussOrderReq;
 import com.fangcang.titanjr.pay.req.TitanNotifyPayResultReq;
 import com.fangcang.titanjr.pay.rsp.TianConfirmBussOrderRsp;
-import com.fangcang.titanjr.pay.rsp.TitanNotifyPayResultRsp;
+import com.fangcang.titanjr.pay.task.TitanPayResultNotifyTask;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
+import com.fangcang.titanjr.pay.util.TitanThreadPool;
+import com.fangcang.titanjr.service.TitanFinancialTradeService;
 
 /**
  * 收銀台交易服務實現類
@@ -30,6 +34,9 @@ public class FinancialTradeService {
 	private static final Log log = LogFactory
 			.getLog(FinancialTradeService.class);
 
+	@Resource
+	private TitanFinancialTradeService titanFinancialTradeService;
+
 	/**
 	 * 确认业务的订单信息
 	 * 
@@ -38,20 +45,19 @@ public class FinancialTradeService {
 	 */
 	public TianConfirmBussOrderRsp confirmBussOrder(TitanConfirmBussOrderReq req) {
 
+		log.info("confirm buss order req =" + JsonConversionTool.toJson(req));
+
 		Map<String, String> paramMap = new HashMap<String, String>();
 		paramMap.put("orderNo", req.getBussOrderNo());
 		paramMap.put("orderAmount", req.getAmount());
 
-		log.info("confirm buss order req[" + paramMap + "]" + " url["
-				+ req.getUrl() + "]");
-
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-
 		try {
 			HttpPost post = HttpUtils.buildPostForm(req.getUrl(), paramMap);
-			HttpResponse response = httpclient.execute(post);
+			post.setConfig(HttpUtils.getDefRequestConfig());
+			HttpResponse response = HttpUtils.getHttpClientFactory().execute(
+					post);
 			String resultStr = EntityUtils.toString(response.getEntity());
-			log.info("confirm buss order response content ["+ resultStr +"]");
+			log.info("confirm buss order response content [" + resultStr + "]");
 			return JsonConversionTool.toObject(resultStr,
 					TianConfirmBussOrderRsp.class);
 
@@ -62,10 +68,48 @@ public class FinancialTradeService {
 		return null;
 	}
 
-	public TitanNotifyPayResultRsp notifyPayResult(TitanNotifyPayResultReq req) {
-		
-		
-		
-		return null;
+	// /**
+	// * 验证订单是否已经产生交易或者是还处于处理中状态
+	// * @param req
+	// * @return
+	// */
+	// public TitanCreateOrderRsp createTitanOrder(
+	// TitanOrderRequest dto) {
+	//
+	//
+	//
+	//
+	//
+	// return null;
+	// }
+
+	/**
+	 * 通知业务付款结果
+	 * 
+	 * @param req
+	 */
+	public void notifyPayResult(TitanNotifyPayResultReq req) {
+
+		String reqJson = JsonConversionTool.toJson(req);
+
+		log.info("notify pay result req =" + reqJson);
+
+		String taskId = MD5.MD5Encode(reqJson + System.currentTimeMillis());
+
+		log.info("gen taskId = " + taskId);
+		TitanPayResultNotifyTask notifyTask = new TitanPayResultNotifyTask();
+		Map<String, String> paramMap = new HashMap<String, String>();
+		paramMap.put("resultCode", "" + req.getResultCode());
+		paramMap.put("resultMsg", req.getResultMsg());
+		notifyTask.setTaskId(taskId);
+		notifyTask.setUrl(req.getUrl());
+		if (req.getBussInfos() != null) {
+			paramMap.putAll(req.getBussInfos());
+		}
+		notifyTask.setBussInfos(paramMap);
+
+		log.info("execute pay result notity taskId=" + taskId);
+		TitanThreadPool.executeTask(notifyTask);
+
 	}
 }
