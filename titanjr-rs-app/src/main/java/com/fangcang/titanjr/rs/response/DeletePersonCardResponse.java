@@ -5,14 +5,4 @@ package com.fangcang.titanjr.rs.response;
  */
 public class DeletePersonCardResponse extends BaseResponse {
 
-	private String operateStatus;
-
-	public String getOperateStatus() {
-		return operateStatus;
-	}
-
-	public void setOperateStatus(String operateStatus) {
-		this.operateStatus = operateStatus;
-	}
-	
 }
