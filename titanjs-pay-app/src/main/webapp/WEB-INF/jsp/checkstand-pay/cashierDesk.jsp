@@ -508,7 +508,7 @@ $("document").ready(function (){
              data: {fcUserid:'${cashDeskData.fcUserid}'},
              dataType: "json",
              success: function(data){
-            	 if(data.result=="success"){
+            	 if(data.result=="0"){
             		 show_set_payPassword();
             	 }
             	}
@@ -566,7 +566,7 @@ $("document").ready(function (){
 		                        			         },
 		                        			         dataType: "json",
 		                        			         success: function(data){
-		                        			        	 if(data.result=="success"){
+		                        			        	 if(data.result=="0"){
 		                        			        		top.F.loading.show();
 		                 		                            setTimeout(function () {
 		                 		                                top.F.loading.hide();
@@ -696,7 +696,7 @@ $("document").ready(function (){
                 	recieveTitanCode:recieveTitanCode,
                 },
                 success: function (data) {
-                	if(data.code=="1"){
+                	if(data.result=="0"){
                 		check_account = true;
                 	}else{
                 		new top.Tip({msg: '该账户不存在', type: 1, timer: 2000});

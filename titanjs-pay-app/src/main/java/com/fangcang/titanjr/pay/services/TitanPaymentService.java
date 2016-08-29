@@ -2,15 +2,22 @@ package com.fangcang.titanjr.pay.services;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.NumberUtil;
+import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AmtTypeEnum;
 import com.fangcang.titanjr.dto.bean.BusiCodeEnum;
 import com.fangcang.titanjr.dto.bean.CharsetEnum;
@@ -18,24 +25,31 @@ import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.OrderMarkEnum;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.SignTypeEnum;
+import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.bean.VersionEnum;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
+import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
 import com.fangcang.titanjr.dto.request.PayMethodConfigRequest;
 import com.fangcang.titanjr.dto.request.PaymentRequest;
 import com.fangcang.titanjr.dto.request.RechargePageRequest;
 import com.fangcang.titanjr.dto.request.RechargeRequest;
+import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
+import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
 import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
+import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanOrderService;
@@ -60,6 +74,9 @@ public class TitanPaymentService {
 	
 	@Resource
 	private TitanCashierDeskService titanCashierDeskService;
+	
+	@Resource
+	private TitanFinancialOrganService titanFinancialOrganService;
 	
 	 public boolean accountIsExist(String orgName,String titanCode ){
 	    	if(StringUtil.isValidString(orgName)&&
@@ -151,22 +168,124 @@ public class TitanPaymentService {
 		}
 	 
 	 public void saveCommonPayMethod(TitanPaymentRequest titanPaymentRequest){
-			try{
-				CommonPayMethodDTO commonPayMethodDTO = new CommonPayMethodDTO();
-				if(StringUtil.isValidString(titanPaymentRequest.getDeskId())){
-					commonPayMethodDTO.setDeskid(Integer.parseInt(titanPaymentRequest.getDeskId()));
+		try{
+			CommonPayMethodDTO commonPayMethodDTO = new CommonPayMethodDTO();
+			if(StringUtil.isValidString(titanPaymentRequest.getDeskId())){
+				commonPayMethodDTO.setDeskid(Integer.parseInt(titanPaymentRequest.getDeskId()));
+			}
+			commonPayMethodDTO.setBankname(titanPaymentRequest.getBankInfo());
+			commonPayMethodDTO.setCreator(titanPaymentRequest.getCreator());
+			commonPayMethodDTO.setCreatetime(new Date());
+			if(StringUtil.isValidString(titanPaymentRequest.getLinePayType())){
+				commonPayMethodDTO.setPaytype(Integer.parseInt(titanPaymentRequest.getLinePayType()));
+			}
+			titanCashierDeskService.saveCommonPayMethod(commonPayMethodDTO);
+		}catch(Exception e){
+			log.error("保存常用的支付方式失败"+e.getMessage(),e);
+			e.printStackTrace();
+		}
+	}
+ 
+	 public boolean validateIsConfirmed(Integer transId){
+		TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
+		titanTransferDTO.setTransorderid(transId);
+		List<TitanTransferDTO> titanTransferDTOList = titanOrderService.getTitanTransferDTOList(titanTransferDTO);
+		if(titanTransferDTOList !=null && titanTransferDTOList.size()>0){
+			for(TitanTransferDTO transferDTO : titanTransferDTOList){
+				if(transferDTO.getStatus() !=null){
+					if(TransferReqEnum.TRANSFER_SUCCESS.getStatus()==transferDTO.getStatus().intValue()){
+						return false;
+					}
 				}
-				commonPayMethodDTO.setBankname(titanPaymentRequest.getBankInfo());
-				commonPayMethodDTO.setCreator(titanPaymentRequest.getCreator());
-				commonPayMethodDTO.setCreatetime(new Date());
-				if(StringUtil.isValidString(titanPaymentRequest.getLinePayType())){
-					commonPayMethodDTO.setPaytype(Integer.parseInt(titanPaymentRequest.getLinePayType()));
-				}
-				titanCashierDeskService.saveCommonPayMethod(commonPayMethodDTO);
-			}catch(Exception e){
-				log.error("保存常用的支付方式失败"+e.getMessage(),e);
-				e.printStackTrace();
+				
 			}
 		}
+		return true;
+	}
 	 
+	 public TransferRequest convertToTransferRequest(TransOrderDTO transOrderDTO){
+			TransferRequest transferRequest = new TransferRequest();
+			transferRequest.setCreator(transOrderDTO.getCreator());
+	    	transferRequest.setUserid(transOrderDTO.getUserid());										//转出的用户
+	    	transferRequest.setRequestno(OrderGenerateService.genResquestNo());									//业务订单号
+	    	transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));	//请求时间
+	    	if(transOrderDTO.getTradeamount()!=null ){
+	    		transferRequest.setAmount(transOrderDTO.getTradeamount().toString());
+	    	}
+	    	transferRequest.setUserfee("0");			
+	    	transferRequest.setOrderid(transOrderDTO.getOrderid());
+	    	transferRequest.setUserrelateid(transOrderDTO.getUserrelateid());	
+	    	transferRequest.setProductId(transOrderDTO.getProductid());
+	    	return transferRequest;
+		}
+		
+	//冻结
+		public boolean freezeAccountBalance(TransferRequest transferRequest,String orderNo) {
+			try{
+				RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
+		    	rechargeResultConfirmRequest.setOrderNo(orderNo);
+		    	rechargeResultConfirmRequest.setPayAmount(transferRequest.getAmount());
+		    	rechargeResultConfirmRequest.setUserid(transferRequest.getUserrelateid());
+		    	rechargeResultConfirmRequest.setOrderAmount(transferRequest.getAmount());
+		    	FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService.freezeAccountBalance(rechargeResultConfirmRequest);
+				if(freezeAccountBalanceResponse.isFreezeSuccess()){
+					return true;
+				}
+			}catch(Exception e){
+				log.error("冻结余额失败"+e.getMessage(),e);
+			}
+	    	return false;
+		}
+	 
+		
+		//更新订单状态
+		public boolean updateOrderStatus(Integer transId,OrderStatusEnum orderStatusEnum){
+			try{
+				TransOrderDTO transOrderDTO = new TransOrderDTO();
+				transOrderDTO.setStatusid(orderStatusEnum.getStatus());
+				transOrderDTO.setTransid(transId);
+				boolean flag =  titanOrderService.updateTransOrder(transOrderDTO);
+				return flag;
+			}catch(Exception e){
+				log.error("更新订单失败"+e.getMessage(),e);
+			}
+			return false;
+		}
+		
+		@RequestMapping("payConfirmPage")
+		public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,Model model){
+			if(StringUtil.isValidString(rechargeResultConfirmRequest.getOrderNo())){
+				TransOrderRequest transOrderRequest = new TransOrderRequest();
+				transOrderRequest.setOrderid(rechargeResultConfirmRequest.getOrderNo());
+				TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
+				if(transOrderDTO !=null){
+					model.addAttribute("transOrderDTO", transOrderDTO);
+					FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+					organQueryRequest.setOrgCode(transOrderDTO.getPayeemerchant());
+					FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+			        if(financialOrganResponse.isResult()){
+			        	model.addAttribute("financialOrganDTO", financialOrganResponse.getFinancialOrganDTO());
+			        }
+			        
+			        model.addAttribute("payType", "网银支付");
+			        if(!StringUtil.isValidString(rechargeResultConfirmRequest.getPayStatus())){//判断是本地回调
+			        	
+			        	boolean paySuccess = OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid());
+			        	if(transOrderDTO.getTradeamount() !=null){
+		        			rechargeResultConfirmRequest.setPayAmount(transOrderDTO.getTradeamount().toString());
+		        		}
+			        	rechargeResultConfirmRequest.setOrderPayTime(DateUtil.sdf5.format(transOrderDTO.getCreatetime()));
+			        	rechargeResultConfirmRequest.setPayMsg("付款失败");
+			        	if(paySuccess){
+			        		rechargeResultConfirmRequest.setPayStatus("3");
+			        		rechargeResultConfirmRequest.setPayMsg("付款成功");
+			        	}
+			        	model.addAttribute("payType", "余额支付");
+					}
+			        
+				}
+			}
+		    model.addAttribute("rechargeResultConfirmRequest", rechargeResultConfirmRequest);
+			return "checkstand-pay/payResult";
+		}
 }

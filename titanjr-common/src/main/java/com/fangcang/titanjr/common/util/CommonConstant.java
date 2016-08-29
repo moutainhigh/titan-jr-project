@@ -25,6 +25,9 @@ public class CommonConstant {
 	  
 	//返回成功
 	public static final String RETURN_SUCCESS="success";
+	
+	//融数回调时的支付成功的状态
+    public static final String PAY_SUCCESS="3";
 	/***
 	 * 免密码支付额度(单位分)
 	 */
@@ -106,6 +109,9 @@ public class CommonConstant {
      * 商家房仓的编码
      */
     public static final String FANGCANG_MERCHANTCODE = "M10000001";
+    
+    //冻结订单
+    public static final String FREEZE_ORDER = "0";
 	
 	
 }

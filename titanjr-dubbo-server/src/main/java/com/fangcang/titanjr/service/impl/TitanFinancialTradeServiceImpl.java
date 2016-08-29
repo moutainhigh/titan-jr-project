@@ -1944,8 +1944,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			String domainName = domainConfigDao.queryCurrentEnvDomain();
 			if(StringUtil.isValidString(domainName)){
 				payMethodConfigDTO = new PayMethodConfigDTO();
-				payMethodConfigDTO.setPageurl("http://"+domainName+"/TFS02/trade/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/TFS02/trade/notify.action");
+			//	payMethodConfigDTO.setPageurl("http://"+domainName+"/TFS/trade/payConfirmPage.action");
+		    //	payMethodConfigDTO.setNotifyurl("http://"+domainName+"/TFS/trade/notify.action");
+				payMethodConfigDTO.setPageurl("http://www.fangcang.org/TFS02/payment/payConfirmPage.action");
+				payMethodConfigDTO.setNotifyurl("http://www.fangcang.org/TFS02/payment/notify.action");
+				
 			}
 			return payMethodConfigDTO;
 			
@@ -2467,7 +2470,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					localOrderResponse.putErrorResult("接收方机构不存在");
 					return localOrderResponse;
 				}
-				titanTransOrder.setUserid(orgBindInfo.getUserid());
 				titanTransOrder.setPayeemerchant(orgBindInfo.getUserid());
 				titanTransOrder.setUserrelateid(orgBindInfo.getUserid());
 				if(payerTypeEnum.isB2BPayment()){

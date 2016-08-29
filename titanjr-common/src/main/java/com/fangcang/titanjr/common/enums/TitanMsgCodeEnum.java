@@ -11,6 +11,9 @@ public enum TitanMsgCodeEnum {
 
 	// 成功
 	TITAN_SUCCESS(0, "成功"),
+	
+	//失败
+    TITAN_FAIL(-1, "失败"),
 
 	// 收银台统一 110开通
 	// 参数错误
@@ -36,6 +39,12 @@ public enum TitanMsgCodeEnum {
 
 	// 收银台不存在，请确认
 	CASHIER_DESK_NOT_EXISTS(110100008, "收银台不存在，请确认！"),
+	
+	// 收银台不存在，请确认
+    PAY_PWD_ERROR(110100009, "付款密码错误，请确认！"),
+    
+   // 密码设置失败
+    SET_PAY_PWD_ERROR(110100010, "密码设置失败，请确认！"),
 
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");

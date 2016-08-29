@@ -30,25 +30,24 @@
 	<input name="signMsg" type="hidden" value="${rechargeDataDTO.signMsg}"/>
 </form>
 
-<form action="<%=basePath%>/account/error_cashier.shtml" id="errror_cashier" method="post">
+<form action="<%=basePath%>/account/error_cashier.action" id="error_cashier" method="post">
   <input name="msg" type="hidden" value="${msg}"/>
 </form>
   </c:if>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
 </body>
 <script type="text/javascript">
-alert('${result}');
-   if('${result}'=="false"){
-	   function submitform(){
-		   $("#errror_cashier").submit();
+if('${result}'=="false"){
+	   function submitErrorform(){
+		   $("#error_cashier").submit();
 		}
-	   window.onload = submitform;
-   }else{
+	   window.onload = submitErrorform;
+}else{
 	   function submitform(){
 		   $("#pay_form").submit();
 		}
 		 window.onload = submitform;
-   }
+}
 
 </script>
 
