@@ -57,7 +57,7 @@ public class TitanAccountController {
         map.put("result", "false");
         flag = titanFinancialUserService.checkIsSetPayPassword(fcUserid,tfsUserId);
         if (flag) {
-            map.put(WebConstant.RESULT, WebConstant.SUCCESS);
+            map.put("result", "success");
         }
         return map;
      }
