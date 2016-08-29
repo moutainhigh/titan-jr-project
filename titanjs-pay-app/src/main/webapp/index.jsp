@@ -30,13 +30,13 @@
 		var orderInfo = {
 			name : "1223", //打开收银台人员姓名  N
 			// 			escrowedDate : "",//保证期时间  N
-			goodsId : "TW1510261192",//商品编号，可以是对方的订单号
+			goodsId : "H0101150114115200",//商品编号，可以是对方的订单号
 			goodsDetail : "我是啊好人",//商品描述  N
 			goodsName : "dddd",//商品名称 N
-			userId : "33475",//付款方身份标示   如果是财务，则建议是FCUSERID，  如果是GDP，则是用户ID
-			ruserId : "",//收款方身份标示 N  ,GDP可以指定接受方的   商家联盟可以指定其FCUSERID
+			userId : "",//付款方身份标示   如果是财务，则建议是FCUSERID，  如果是GDP，则是用户ID
+			ruserId : "M10021649",//收款方身份标示 N  ,GDP可以指定接受方的   商家联盟可以指定其FCUSERID
 			amount : "1000",//订单金额
-			payerType : "3",//付款人类型   财务 GDP 等
+			payerType : "1",//付款人类型   财务 GDP 等
 			// 			currencyType : "1",//币种
 			// 			checkOrderUrl : 'http://www.baidu.com',//可选
 			bussCode:'11111',
@@ -46,7 +46,7 @@
 		var businessInfo = {
 			inAccountCode : "A000003336",
 			outAccountCode : "A000018430",
-			bussCode : ""//业务单号
+			bussCode : "123456"//业务单号
 		};
 
 		document.getElementById('payButton').onclick = function() {

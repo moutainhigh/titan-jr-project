@@ -1,5 +1,6 @@
 package com.fangcang.titanjr.common.enums;
 
+
 /**
  * 消息交互码定义
  * 
@@ -47,7 +48,7 @@ public enum TitanMsgCodeEnum {
 		this.code = code;
 		this.key = key;
 	}
-
+	
 	public static TitanMsgCodeEnum findTitanMsgCodeEnum(String code) {
 		for (TitanMsgCodeEnum titanMsgEnum : values()) {
 			if (String.valueOf(titanMsgEnum.getCode()).equals(code)) {
