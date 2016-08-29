@@ -64,7 +64,7 @@ public class TransOrderDTO implements java.io.Serializable {
     
     private String payerType;
     
-    private String transordertype;
+    private Integer transordertype;
 
     private TitanOrderPayDTO titanOrderPayDTO;
 
@@ -424,11 +424,11 @@ public class TransOrderDTO implements java.io.Serializable {
 		this.payerType = payerType;
 	}
 
-	public String getTransordertype() {
+	public Integer getTransordertype() {
 		return transordertype;
 	}
 
-	public void setTransordertype(String transordertype) {
+	public void setTransordertype(Integer transordertype) {
 		this.transordertype = transordertype;
 	}
 	
