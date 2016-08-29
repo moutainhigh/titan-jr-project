@@ -1939,34 +1939,38 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	@Override
 	public PayMethodConfigDTO getPayMethodConfigDTO(
 			PayMethodConfigRequest payMethodConfigRequest) {
-		try{
-			PayMethodConfigDTO payMethodConfigDTO = null;
-			String domainName = domainConfigDao.queryCurrentEnvDomain();
-			if(StringUtil.isValidString(domainName)){
-				payMethodConfigDTO = new PayMethodConfigDTO();
-			//	payMethodConfigDTO.setPageurl("http://"+domainName+"/TFS/trade/payConfirmPage.action");
-		    //	payMethodConfigDTO.setNotifyurl("http://"+domainName+"/TFS/trade/notify.action");
-				payMethodConfigDTO.setPageurl("http://www.fangcang.org/TFS02/payment/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://www.fangcang.org/TFS02/payment/notify.action");
-				
-			}
-			return payMethodConfigDTO;
-			
-//			if(payMethodConfigRequest !=null && StringUtil.isValidString(payMethodConfigRequest.getUserId())){
-//				List<TitanPayMethodConfig> titanPayMethodConfigList = titanPayMethodDao.queryTitanPayMethod(payMethodConfigRequest);
-//		        if(titanPayMethodConfigList.size() ==1){
-//		        	PayMethodConfigDTO payMethodConfigDTO = new PayMethodConfigDTO();
-//		        	MyBeanUtil.copyProperties(payMethodConfigDTO, titanPayMethodConfigList.get(0));
-//		        	return payMethodConfigDTO;
-//		        }else if(titanPayMethodConfigList.size()>1){
-//		        	log.error("查询支付方式的数据重复");
-//		        }
-//			}
-		}catch(Exception e){
-			log.error("查询支付方式的配置出错"+e.getMessage(),e);
-		}
+		PayMethodConfigDTO payMethodConfigDTO  = new PayMethodConfigDTO();
+		payMethodConfigDTO.setPageurl("http://www.fangcang.org/TFS02/payment/payConfirmPage.action");
+		payMethodConfigDTO.setNotifyurl("http://www.fangcang.org/TFS02/payment/notify.action");
 		
-		return null;
+		
+//		try{
+//			PayMethodConfigDTO payMethodConfigDTO = null;
+//			String domainName = domainConfigDao.queryCurrentEnvDomain();
+//			if(StringUtil.isValidString(domainName)){
+//				payMethodConfigDTO = new PayMethodConfigDTO();
+//			//	payMethodConfigDTO.setPageurl("http://"+domainName+"/TFS/trade/payConfirmPage.action");
+//		    //	payMethodConfigDTO.setNotifyurl("http://"+domainName+"/TFS/trade/notify.action");
+//				
+//				
+//			}
+//			return payMethodConfigDTO;
+//			
+////			if(payMethodConfigRequest !=null && StringUtil.isValidString(payMethodConfigRequest.getUserId())){
+////				List<TitanPayMethodConfig> titanPayMethodConfigList = titanPayMethodDao.queryTitanPayMethod(payMethodConfigRequest);
+////		        if(titanPayMethodConfigList.size() ==1){
+////		        	PayMethodConfigDTO payMethodConfigDTO = new PayMethodConfigDTO();
+////		        	MyBeanUtil.copyProperties(payMethodConfigDTO, titanPayMethodConfigList.get(0));
+////		        	return payMethodConfigDTO;
+////		        }else if(titanPayMethodConfigList.size()>1){
+////		        	log.error("查询支付方式的数据重复");
+////		        }
+////			}
+//		}catch(Exception e){
+//			log.error("查询支付方式的配置出错"+e.getMessage(),e);
+//		}
+		
+		return payMethodConfigDTO;
 	}
 
     @Override
