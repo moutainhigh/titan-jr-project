@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
-import com.fangcang.titanjr.pay.util.WebConstant;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.util.StringUtil;

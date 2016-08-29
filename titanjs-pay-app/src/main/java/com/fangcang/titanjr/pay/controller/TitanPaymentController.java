@@ -13,21 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.fangcang.titanjr.common.enums.CashierDeskTypeEnum;
-import com.fangcang.titanjr.common.util.NumberUtil;
-import com.fangcang.titanjr.dto.bean.GDPOrderDTO;
 import com.fangcang.titanjr.dto.bean.PayTypeEnum;
-import com.fangcang.titanjr.dto.request.AccountCheckRequest;
-import com.fangcang.titanjr.dto.request.PaymentRequest;
-import com.fangcang.titanjr.dto.request.RechargePageRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
-import com.fangcang.titanjr.dto.response.AccountCheckResponse;
-import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
-import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
-import com.fangcang.titanjr.dto.response.GDPOrderResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
-import com.fangcang.titanjr.pay.services.FinancialTradeService;
 import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
@@ -35,6 +24,12 @@ import com.fangcang.util.StringUtil;
 @Controller
 @RequestMapping("/payment")
 public class TitanPaymentController extends BaseController {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 
 	private static final Log log = LogFactory.getLog(TitanPaymentController.class);
 	
