@@ -13,7 +13,6 @@ public class AccountBalanceQueryResponse extends BaseResponse {
 
     private List<BalanceInfo> balanceInfoList;
     
-    private String operateStatus;
 
     public List<BalanceInfo> getBalanceInfoList() {
         return balanceInfoList;
@@ -23,19 +22,10 @@ public class AccountBalanceQueryResponse extends BaseResponse {
         this.balanceInfoList = balanceInfoList;
     }
 
-	public String getOperateStatus() {
-		return operateStatus;
-	}
-
-	public void setOperateStatus(String operateStatus) {
-		this.operateStatus = operateStatus;
-	}
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("balanceInfoList", balanceInfoList)
-                .append("operateStatus", operateStatus)
                 .toString();
     }
 }

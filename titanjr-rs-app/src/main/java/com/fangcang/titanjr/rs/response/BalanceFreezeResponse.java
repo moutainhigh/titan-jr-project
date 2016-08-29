@@ -7,7 +7,6 @@ public class BalanceFreezeResponse extends BaseResponse {
 
     private String authcode;
 
-    private String operateStatus;
     
     public String getAuthcode() {
         return authcode;
@@ -16,14 +15,5 @@ public class BalanceFreezeResponse extends BaseResponse {
     public void setAuthcode(String authcode) {
         this.authcode = authcode;
     }
-
-	public String getOperateStatus() {
-		return operateStatus;
-	}
-
-	public void setOperateStatus(String operateStatus) {
-		this.operateStatus = operateStatus;
-	}
-    
     
 }
