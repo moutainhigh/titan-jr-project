@@ -556,6 +556,25 @@ public class FinancialAccountController extends BaseController {
         }
         return "account-overview/order-remark";
     }
+    /**
+     * 交易单备注历史
+     * @param tradeDetailRequest
+     * @param request
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/order-remark-history", method = RequestMethod.GET)
+    public String toOrderRemarkHisotry(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
+        if (null != this.getUserId()) {
+            tradeDetailRequest.setUserid(this.getUserId());
+            TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
+            if (tradeDetailResponse.isResult() && CollectionUtils.isNotEmpty(tradeDetailResponse.getTransOrders().getItemList())) {
+                model.addAttribute("transOrder", tradeDetailResponse.getTransOrders().getItemList().get(0));
+            }
+        }
+        return "account-overview/order-remark-history";
+    }
 
     @ResponseBody
     @RequestMapping("setPayPassword")

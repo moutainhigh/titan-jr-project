@@ -5,7 +5,7 @@
         <td width=""><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${tradeItem.createtime}" /></td>
         <td width="tdr">
             <c:if test="${tradeItem.remark != null and tradeItem.remark != ''}">
-                <i class="flag_ico J_remark" orderId="${tradeItem.userorderid}" onclick="showRemarkInfo(this)"></i>
+                <i class="flag_ico J_remark" orderId="${tradeItem.userorderid}" onclick="showRemark(this)"></i>
             </c:if>
         </td>
         <td width="">${tradeItem.tradeType}</td>
@@ -199,7 +199,36 @@
             }
         });
     }
-
+    //
+	function showRemark(obj){
+		var code = $(obj).attr("orderId");
+        $.ajax({
+            dataType: 'html',
+            context: document.body,
+            data: {userOrderId: code},
+            url: '<%=basePath%>/account/order-remark-history.shtml',
+            success: function (html) {
+                var d = window.top.dialog({
+                    title: ' ',
+                    padding: '0 0 0px 0 ',
+                    content: html,
+                    height:280,
+                    width:590,
+                    skin: 'saas_pop',
+                    button: [
+                        {
+                            value: '关闭',
+                            skin: 'btn btn_grey btn_exit',
+                            callback: function () {
+                                //直接关闭
+                            }
+                        }
+                    ]
+                }).showModal();
+            }
+        });
+	}
+    
     //备注
     function showRemarkInfo(obj) {
         var code = $(obj).attr("orderId");
