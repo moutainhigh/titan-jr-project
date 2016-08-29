@@ -23,13 +23,11 @@ import com.fangcang.titanjr.entity.TitanSysconfig;
 import com.fangcang.titanjr.entity.parameter.TitanSysconfigParam;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 
-@Service("titanSysconfigService")
 public class TitanSysconfigServiceImpl implements TitanSysconfigService {
 	private final static String OBJ_KEY_RSINVOKECONFIG = "RSInvokeConfig";
 	private final static String OBJ_KEY_TITANPAYMETHOD = "TitanPayMethod";
 	private final static String OBJ_KEY_TITANCALLBACKCONFIG = "TitanCallBackConfig";
 	
-	@Resource
 	private TitanSysconfigDao titanSysconfigDao;
 	
 	
