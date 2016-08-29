@@ -3,7 +3,6 @@ package com.fangcang.titanjr.rs.manager.impl;
 import java.lang.reflect.Method;
 import java.util.Date;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.JoinPoint;
@@ -13,6 +12,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.fangcang.redis.dao.LogDataDao;
 import com.fangcang.redis.entity.LogData;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.rs.response.BaseResponse;
 import com.fangcang.titanjr.rs.task.LogRecordTask;
 
@@ -61,10 +61,10 @@ public class InvokeLogRecordManager {
         logData.setIndex("titanjr-rs-app:" + method.getName());
         logData.setAdditional("titanjr");
         if (joinPoint.getArgs().length > 0) {
-            logData.setRequest(ToStringBuilder.reflectionToString(joinPoint.getArgs()[0]));
+            logData.setRequest(Tools.gsonToString(joinPoint.getArgs()[0]));
         }
         if (null != retVal) {
-            logData.setResponse(ToStringBuilder.reflectionToString(retVal));
+            logData.setResponse(Tools.gsonToString(retVal));
         }
         logData.setStatus("1");
         if (retVal instanceof BaseResponse){

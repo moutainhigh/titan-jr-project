@@ -1,13 +1,18 @@
 package com.fangcang.titanjr.rs.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by zhaoshan on 2016/4/8.
  */
-public class RSInvokeConfig {
-
-    private String appKey;
+public class RSInvokeConfig implements Serializable {
+	
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8844161461085568046L;
+	private String appKey;
     private String appSecret;
     private String invokeURL;
     private String sessionKey;

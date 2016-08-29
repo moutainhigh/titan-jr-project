@@ -65,4 +65,26 @@
     </set>
     where imageid = #{imageid,jdbcType=INTEGER}
   </update>
+  <update id="updateIsActiveByOrgCode" parameterType="com.fangcang.titanjr.entity.TitanOrgImage" >
+    update t_tfs_orgimage
+    <set>
+      <if test="imageName != null" >
+        imageName = #{imageName,jdbcType=VARCHAR},
+      </if>
+      <if test="imagetype != null" >
+        imagetype = #{imagetype,jdbcType=INTEGER},
+      </if>
+      <if test="isactive != null" >
+        isactive = #{isactive,jdbcType=INTEGER},
+      </if>
+      <if test="modifier != null" >
+        modifier = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="modifytime != null" >
+        modifytime = #{modifytime},
+      </if>
+    </set>
+    where  orgcode = #{orgcode,jdbcType=VARCHAR}
+  </update>
+  
 </mapper>
