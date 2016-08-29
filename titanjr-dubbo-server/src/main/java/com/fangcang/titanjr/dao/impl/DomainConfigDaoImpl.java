@@ -23,7 +23,7 @@ public class DomainConfigDaoImpl extends GenericDAOMyBatisImpl implements Domain
                 log.error("查询得到当前环境的domain为空，无法完成回调" );
                 return null;
             }
-            log.error("查询得到当前环境的domain为空：" + domain);
+            log.info("查询得到当前环境的domain为：" + domain);
             return domain.toString();
         } catch (Exception e) {
             throw new DaoException(e);

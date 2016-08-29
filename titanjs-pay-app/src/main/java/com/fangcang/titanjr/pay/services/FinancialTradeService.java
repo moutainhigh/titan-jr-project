@@ -27,17 +27,18 @@ import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.TitanOrderRequest;
+import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.AccountHistoryResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
 import com.fangcang.titanjr.pay.req.TitanConfirmBussOrderReq;
-import com.fangcang.titanjr.pay.req.TitanNotifyPayResultReq;
 import com.fangcang.titanjr.pay.rsp.TianConfirmBussOrderRsp;
 import com.fangcang.titanjr.pay.task.TitanPayResultNotifyTask;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
@@ -50,6 +51,7 @@ import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 
 /**
@@ -81,6 +83,9 @@ public class FinancialTradeService {
 
 	@Resource
 	private TitanCashierDeskService titanCashierDeskService;
+
+	@Resource
+	private TitanOrderService titanOrderService;
 
 	/**
 	 * 确认业务的订单信息
@@ -198,25 +203,24 @@ public class FinancialTradeService {
 	 * 
 	 * @param req
 	 */
-	public void notifyPayResult(TitanNotifyPayResultReq req) {
+	public void notifyPayResult(String orderId) {
 
-		String reqJson = JsonConversionTool.toJson(req);
+		log.info("notify pay result req =" + orderId);
 
-		log.info("notify pay result req =" + reqJson);
-
-		String taskId = MD5.MD5Encode(reqJson + System.currentTimeMillis());
+		String taskId = MD5.MD5Encode(orderId + System.currentTimeMillis());
 
 		log.info("gen taskId = " + taskId);
-		TitanPayResultNotifyTask notifyTask = new TitanPayResultNotifyTask();
-		Map<String, String> paramMap = new HashMap<String, String>();
-		paramMap.put("resultCode", "" + req.getResultCode());
-		paramMap.put("resultMsg", req.getResultMsg());
+		
+		TitanPayResultNotifyTask notifyTask = new TitanPayResultNotifyTask(
+				titanFinancialTradeService);
+		
+		TransOrderRequest transOrderRequest = new TransOrderRequest();
+		transOrderRequest.setUserorderid(orderId);
+		TransOrderDTO transOrderDTO = titanOrderService
+				.queryTransOrderDTO(transOrderRequest);
+		
+		notifyTask.setTransOrderDTO(transOrderDTO);
 		notifyTask.setTaskId(taskId);
-		notifyTask.setUrl(req.getUrl());
-		if (req.getBussInfos() != null) {
-			paramMap.putAll(req.getBussInfos());
-		}
-		notifyTask.setBussInfos(paramMap);
 
 		log.info("execute pay result notity taskId=" + taskId);
 		TitanThreadPool.executeTask(notifyTask);
