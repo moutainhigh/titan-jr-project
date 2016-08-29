@@ -1,16 +1,10 @@
 package com.fangcang.titanjr.pay.task;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.util.EntityUtils;
 
-import com.fangcang.titanjr.common.util.HttpUtils;
-import com.fangcang.titanjr.pay.util.TitanThreadPool;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.service.TitanFinancialTradeService;
 
 /**
  * 付款结果通知
@@ -23,25 +17,19 @@ public final class TitanPayResultNotifyTask implements Runnable {
 	private static final Log log = LogFactory
 			.getLog(TitanPayResultNotifyTask.class);
 
-	// 内部计数器
-	private AtomicInteger resetNum = new AtomicInteger(0);
-
 	private String taskId;
-	// 回调地址
-	private String url;
 
-	private Map<String, String> bussInfos = null;
+	private TransOrderDTO transOrderDTO = null;
 
-	public void setUrl(String url) {
-		this.url = url;
+	private TitanFinancialTradeService titanFinancialTradeService;
+
+	public TitanPayResultNotifyTask(
+			TitanFinancialTradeService titanFinancialTradeService) {
+		this.titanFinancialTradeService = titanFinancialTradeService;
 	}
 
-	public void setBussInfos(Map<String, String> bussInfos) {
-		this.bussInfos = bussInfos;
-	}
-
-	public String getTaskId() {
-		return taskId;
+	public void setTransOrderDTO(TransOrderDTO transOrderDTO) {
+		this.transOrderDTO = transOrderDTO;
 	}
 
 	public void setTaskId(String taskId) {
@@ -53,24 +41,20 @@ public final class TitanPayResultNotifyTask implements Runnable {
 		try {
 			log.info("begin execute taskId=" + taskId);
 
-			HttpPost post = HttpUtils.buildPostForm(url, bussInfos);
-			post.setConfig(HttpUtils.getDefRequestConfig());
-			HttpResponse response = HttpUtils.getHttpClientFactory().execute(
-					post);
-			
-			log.info("execute taskId=" + taskId + " buss responseCode= "
-					+ response.getStatusLine().getStatusCode());
-			// 如果状态码为200,就是正常返回
-			if (response.getStatusLine().getStatusCode() == 200) {
-				log.info("execute taskId=" + taskId + " is ok");
-			} else {
-				log.info("reset execute taskId=" + taskId);
-				if (resetNum.incrementAndGet() < 3) {
-					TitanThreadPool.executeTask(this);
-				} else {
-					log.error("execute taskId=" + taskId + " is fail.");
-				}
+			if (titanFinancialTradeService == null) {
+				log.error("trade service is null.");
+				return;
 			}
+
+			if (transOrderDTO == null) {
+				log.error("order dto is null.");
+				return;
+			}
+
+			titanFinancialTradeService.confirmFinance(transOrderDTO);
+
+			log.info("end execute taskId=" + taskId);
+
 		} catch (Exception ex) {
 			log.error("", ex);
 		}
