@@ -78,7 +78,7 @@ public class FinancialTradeController extends BaseController {
 	@RequestMapping(value = "/titanPay", method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public String titanPay(String orderInfo, String businessInfo, Model model) {
-
+		getRequest().getSession();
 		if (!StringUtil.isValidString(orderInfo)) {
 			log.error("orderInfo is not null!");
 			model.addAttribute("msg",
