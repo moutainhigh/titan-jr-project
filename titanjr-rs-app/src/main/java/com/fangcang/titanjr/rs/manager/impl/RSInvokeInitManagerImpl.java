@@ -37,6 +37,8 @@ public class RSInvokeInitManagerImpl {
     private final static String OBJ_KEY_RSINVOKECONFIG = "RSInvokeConfig";
 	private final static String OBJ_KEY_TITANPAYMETHOD = "TitanPayMethod";
 	private final static String OBJ_KEY_TITANCALLBACKCONFIG = "TitanCallBackConfig";
+	private final static String OBJ_KEY_DEFAULTPAYERCONFIG = "DefaultPayerConfig";
+	
 	@Resource(name="rsSysconfigDao")
 	private SysconfigDao sysconfigDao;
 	
@@ -81,7 +83,7 @@ public class RSInvokeInitManagerImpl {
             RSInvokeConstant.callBackConfigMap.put(callBackConfig.getPaySource(),callBackConfig.getCallBackURL());
         }
         log.info("callBackConfig:"+Tools.gsonToString(RSInvokeConstant.callBackConfigMap));
-        
+        getDefaultPayerConfig();
     }
 	/***
 	 * 融数sdk初始化参数
@@ -119,6 +121,29 @@ public class RSInvokeInitManagerImpl {
 		}
 		return null;
 	}
+	/**
+	 * 读取融数中间账户
+	 */
+	private void getDefaultPayerConfig(){
+		Map<String, Object> conditionMap = new HashMap<String, Object>();
+		conditionMap.put("objKey", OBJ_KEY_DEFAULTPAYERCONFIG);
+		List<Sysconfig> list = sysconfigDao.query(conditionMap);
+		if(CollectionUtils.isNotEmpty(list)){
+			for(Sysconfig item : list){
+				if(item.getCfgKey().equals("DefaultPayerConfig_USERID")){
+					RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID = item.getCfgValue();
+					continue;
+				}
+				if(item.getCfgKey().equals("DefaultPayerConfig_PRODUCTID")){
+					RSInvokeConstant.DEFAULTPAYERCONFIG_USERID = item.getCfgValue();
+					continue;
+				}
+			}
+		}else{
+			log.error("OBJ_KEY_DEFAULTPAYERCONFIG 融数中间账户没有配置,请检查t_tfs_sysconfig表 ");
+		}
+	}
+		
 	/**
 	 * 支付成功后，融数的通知泰坦云的地址
 	 * @return

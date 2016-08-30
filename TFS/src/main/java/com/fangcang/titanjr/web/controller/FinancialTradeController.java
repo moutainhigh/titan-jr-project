@@ -39,7 +39,6 @@ import com.fangcang.titanjr.dto.response.*;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.*;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
-import com.fangcang.titanjr.web.pojo.DefaultPayerConfig;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
 
@@ -94,8 +93,6 @@ public class FinancialTradeController extends BaseController {
 	@Resource
 	private TitanOrderService titanOrderService;
 	
-	@Resource
-	private DefaultPayerConfig defaultPayerConfig;
 
 	@Resource
 	private TitanFinancialOrganService titanFinancialOrganService;
@@ -377,11 +374,11 @@ public class FinancialTradeController extends BaseController {
 				paymentRequest.setUserid(this.getUserId());
 			}
 			model.addAttribute(WebConstant.RESULT, WebConstant.FAIL);
-			
+			DefaultPayerConfigResponse defaultPayerConfigResponse = titanFinancialAccountService.getDefaultPayerConfig();
 			Map<String,String> result =null;
 			if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentRequest.getPaySource())){
-				paymentRequest.setProductId(defaultPayerConfig.getProductId());
-				paymentRequest.setUserid(defaultPayerConfig.getUserId());
+				paymentRequest.setProductId(defaultPayerConfigResponse.getProductId());
+				paymentRequest.setUserid(defaultPayerConfigResponse.getUserId());
 				result = validateB2BData(paymentRequest);
 			}else{
 				FinancialOrderResponse financialOrderResponse =null;
@@ -924,6 +921,7 @@ public class FinancialTradeController extends BaseController {
 				return "checkstand-pay/cashierDeskError";
 			}
 		}
+		DefaultPayerConfigResponse defaultPayerConfigResponse = titanFinancialAccountService.getDefaultPayerConfig();
 		
 		if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentUrlRequest.getPaySource())){//GDP付款
 			GDPOrderResponse gDPOrderResponse =titanFinancialTradeService.getGDPOrderDTO(paymentUrlRequest.getPayOrderNo());
@@ -938,7 +936,7 @@ public class FinancialTradeController extends BaseController {
 	    		model.addAttribute(WebConstant.MSG,"该订单不存在");
     			return "checkstand-pay/cashierDeskError";
 	    	}
-			paymentUrlRequest.setUserid(defaultPayerConfig.getUserId());
+			paymentUrlRequest.setUserid(defaultPayerConfigResponse.getUserId());
 			model.addAttribute("userId", paymentUrlRequest.getUserid());
 			model.addAttribute("operator",paymentUrlRequest.getOperater());
 			model.addAttribute("businessOrderCode",paymentUrlRequest.getBusinessOrderCode());

@@ -66,6 +66,7 @@ import com.fangcang.titanjr.dto.response.AccountHistoryResponse;
 import com.fangcang.titanjr.dto.response.AccountResponse;
 import com.fangcang.titanjr.dto.response.AccountUpdateResponse;
 import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
+import com.fangcang.titanjr.dto.response.DefaultPayerConfigResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
@@ -92,6 +93,7 @@ import com.fangcang.titanjr.rs.response.AccountBalanceQueryResponse;
 import com.fangcang.titanjr.rs.response.AccountWithDrawResponse;
 import com.fangcang.titanjr.rs.response.BalanceFreezeResponse;
 import com.fangcang.titanjr.rs.response.BalanceUnFreezeResponse;
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
@@ -949,6 +951,15 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			return titanFundUnFreezereq;
 		}
 		return null;
+	}
+
+	@Override
+	public DefaultPayerConfigResponse getDefaultPayerConfig() {
+		DefaultPayerConfigResponse response = new DefaultPayerConfigResponse();
+		response.setUserId(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+		response.setProductId(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
+		response.putSuccess();
+		return response;
 	}
 
 	

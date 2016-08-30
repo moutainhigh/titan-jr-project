@@ -1407,7 +1407,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                         if (isPayerValid(transOrderDTO)) {//付款方也存在
                             if (isPayeeOrg(tradeDetailRequest, transOrderDTO)) { //当前机构等于收款方
                                 transOrderDTO.setTradeType("收款");
-                                if(("141223100000056").equals(transOrderDTO.getPayermerchant())){//有待改进,将GDP默认商家放到数据库
+                                if(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID.equals(transOrderDTO.getPayermerchant())){//有待改进,将GDP默认商家放到数据库
                                 	transOrderDTO.setTransTarget(transOrderDTO.getCreator());
                                 }else{
                                 	 transOrderDTO.setTransTarget(getTransTarget(transOrderDTO.getPayermerchant()));//付款方
@@ -1853,7 +1853,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     	repairTransferRequest.setStatus(OrderStatusEnum.ORDER_FAIL.getStatus());
     	repairTransferRequest.setTransferStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
     	repairTransferRequest.setOrderPayStatus(ReqstatusEnum.RECHARFE_SUCCESS.getStatus());
-    	repairTransferRequest.setPayermerchant("141223100000056");//GDP和平台所用的中间账户
+    	repairTransferRequest.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);//GDP和平台所用的中间账户
     	RepairTransferResponse response = titanFinancialTradeService.getTransferOrders(repairTransferRequest);
     	if(!response.isResult()){
     		log.info(response.getReturnMessage());
