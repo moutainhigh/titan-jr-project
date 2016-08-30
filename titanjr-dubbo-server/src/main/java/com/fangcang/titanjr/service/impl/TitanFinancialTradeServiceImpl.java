@@ -2436,6 +2436,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							.setTransorderid(transOrderDTO.getTransid());
 					titanOrderPayreq = queryOrderPayReqByTransOrderId(titanOrderPayreq);
 
+					if(null == titanOrderPayreq){//可能是余额转账
+						orderCreateResponse.setOrderNo(transOrderDTO.getUserorderid());
+						orderCreateResponse.putSuccess();
+						return orderCreateResponse;
+					}
 					// 获取订单时间跟当前时间的差
 					long times = DateUtil.diffSecondByTime(
 							titanOrderPayreq.getOrderTime(),
