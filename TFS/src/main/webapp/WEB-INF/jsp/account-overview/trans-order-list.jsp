@@ -253,12 +253,12 @@
                                 $.ajax({
                                     async:false,
                                     type:'post',
-                                    data:{"remark":top.$("#id_remark_text").val(),userOrderId: code},
+                                    data:{"remark":replaceEnterKey(top.$("#id_remark_text").val()),userOrderId: code},
                                     url : '<%=basePath%>/account/updateOrderRemark.shtml',
                                     dataType : 'json',
                                     success : function(result){
                                         if(result.code==1){
-                                            alert("备注信息更新成功");
+                                            new top.Tip({msg : '备注信息更新成功', type: 1 , timer:1500});
                                             $('.MyAssets_list_tab').find('span.on').click();
                                         }else{
                                             alert("备注信息更新失败：" + result.msg);
