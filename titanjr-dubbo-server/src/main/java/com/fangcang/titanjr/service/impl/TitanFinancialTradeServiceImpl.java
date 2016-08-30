@@ -2407,9 +2407,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 		// 表明业务订单号已经重复提交
 		if (null != transOrderDTO) {
-
+			
 			// 金额不一致,则直接将订单设置为失效
-			if (!titanOrderRequest.getAmount().equals(
+			if (!NumberUtil.covertToCents(titanOrderRequest.getAmount()).equals(
 					""+transOrderDTO.getTradeamount())) {
 				log.info("order amount happen change.");
 				updateOrderNoEffect(transOrderRequest.getTransid());
