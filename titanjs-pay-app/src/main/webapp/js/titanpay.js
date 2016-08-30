@@ -36,8 +36,6 @@ function initTitanPayObj() {
 	 */
 	titanPayObj.initTitanPay = function(configObj) {
 		
-
-		
 		
 		if (!configObj) {
 			config.address = window.location.host;
@@ -45,32 +43,23 @@ function initTitanPayObj() {
 			config.module = titan_pub;
 		} else {
 			if (!configObj.address) {
-				config.address = window.location.host;
+				configObj.address = window.location.host;
 			}
 
 			if (!configObj.empoent) {
-				config.empoent = titan_expo;
+				configObj.empoent = titan_expo;
 			}
 
 			if (!configObj.module) {
-				config.module = titan_pub;
+				configObj.module = titan_pub;
 			}
 		}
 		
-//		host = window.location.host;
-//		host2=document.domain; 
-		
-//		alert(host +"    " + host2);
-	
-
-		// address, empoent, module titanPayObj.initTitanPay('127.0.0.1:8084',
-		// expo, pub);
 		if(configObj)
 		{
 			config = configObj;
 		}
 		
-		alert(config.address);
 		this.createPayForm(config.address);
 
 	}

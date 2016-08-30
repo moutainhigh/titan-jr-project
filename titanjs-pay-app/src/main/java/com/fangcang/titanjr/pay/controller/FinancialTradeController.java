@@ -1,5 +1,7 @@
 package com.fangcang.titanjr.pay.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
@@ -259,6 +261,22 @@ public class FinancialTradeController extends BaseController {
 			} catch (ParseException e) {
 				log.error("parse escrowedDate fail.");
 				return false;
+			}
+		}
+		if (StringUtil.isValidString(dto.getNotify())) {
+			try {
+				dto.setNotify(URLDecoder.decode(dto.getNotify(), "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				log.error("notify url URLDecoder fail.");
+			}
+		}
+
+		if (StringUtil.isValidString(dto.getCheckOrderUrl())) {
+			try {
+				dto.setCheckOrderUrl(URLDecoder.decode(dto.getCheckOrderUrl(),
+						"UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				log.error("CheckOrderUrl URLDecoder fail.");
 			}
 		}
 

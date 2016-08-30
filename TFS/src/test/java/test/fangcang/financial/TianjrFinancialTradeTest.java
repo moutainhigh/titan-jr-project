@@ -469,7 +469,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     
     
     //获取商家向酒店支付地址
-//    @Test
+    @Test
     public void testGetMerchantUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");
