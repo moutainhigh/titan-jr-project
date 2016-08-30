@@ -311,7 +311,7 @@ public class TitanPaymentController extends BaseController {
 		}
 		
         Map<String,String> validResult = this.validPaymentData(titanPaymentRequest);
-        if("true".equals(validResult.get("result"))){//合规性验证
+        if(!"true".equals(validResult.get("result"))){//合规性验证
         	model.addAttribute("msg", validResult.get("msg"));
 			return "checkstand-pay/genRechargePayment";
         }
