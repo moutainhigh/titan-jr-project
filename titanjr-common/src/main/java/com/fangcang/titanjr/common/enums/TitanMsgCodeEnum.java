@@ -45,6 +45,10 @@ public enum TitanMsgCodeEnum {
     
    // 密码设置失败
     SET_PAY_PWD_ERROR(110100010, "密码设置失败，请确认！"),
+    
+    ADD_LOCAL_ORDER_ERROR(110100011, "本地落单失败，请确认！"),
+    
+    TRANSFER_FAIL(110100012, "转账失败，请确认！"),
 
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");

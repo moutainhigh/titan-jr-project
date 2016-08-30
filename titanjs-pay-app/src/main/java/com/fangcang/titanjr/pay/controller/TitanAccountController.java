@@ -16,10 +16,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
+import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
 import com.fangcang.titanjr.dto.request.PayPasswordRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
+import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
 import com.fangcang.titanjr.dto.response.PayPasswordResponse;
+import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
@@ -41,6 +47,9 @@ public class TitanAccountController extends BaseController{
 	
 	@Resource
 	private TitanFinancialUserService titanFinancialUserService;
+	
+	@Resource
+	private TitanPaymentService titanPaymentService;
 
 	@ResponseBody
 	@RequestMapping("/check_account")
@@ -102,6 +111,51 @@ public class TitanAccountController extends BaseController{
 		return "checkstand-pay/cashierDeskError";
 	 }
 		
+	 
+	 @ResponseBody
+	 @RequestMapping("/check_payPassword")
+	 public String checkPayPassword(String payPassword,String fcUserid) throws GlobalServiceException{
+		String tfsUserid = null;
+		if(StringUtil.isValidString(fcUserid)){
+			TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
+			titanUserBindInfoDTO.setFcuserid(Long.parseLong(fcUserid));
+			titanUserBindInfoDTO = titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+			if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid()!=null){
+				tfsUserid = titanUserBindInfoDTO.getTfsuserid().toString();
+			}
+		}
+		
+		if(!StringUtil.isValidString(payPassword) || !StringUtil.isValidString(tfsUserid)){
+			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+		}
+		boolean istrue = titanFinancialUserService.checkPayPassword(payPassword,tfsUserid);
+		if(!istrue){
+			return toMsgJson(TitanMsgCodeEnum.PAY_PWD_ERROR);
+		}
+		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS);
+	 }
+	 
+	 
+	 /**
+		 * 确认是否免密支付
+		 * @param userid
+		 * @param totalAmount
+		 * @return
+		 */
+	 @ResponseBody
+	 @RequestMapping("allownopwdpay")
+	 public String validateIsAllowAoAwdpay(String userid,String totalAmount){
+		if(StringUtil.isValidString(userid)){
+			boolean isAllowNoPwdPay= titanPaymentService.isAllowNoPwdPay(userid,totalAmount);
+			if(isAllowNoPwdPay){
+				return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS);
+			}
+		}
+		return toMsgJson(TitanMsgCodeEnum.TITAN_FAIL);
+	 }
+	 
+	
+	 
 	 
 	 @RequestMapping("showSetPayPassword")
 	 public String showSetPayPassword() {

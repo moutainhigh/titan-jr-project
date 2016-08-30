@@ -34,6 +34,7 @@ public interface TitanFinancialTradeService {
 	 */
 	public LocalAddTransOrderResponse addLocalTransOrder(PaymentRequest paymentRequest,FinancialOrderResponse financialOrderResponse);
 	
+	public LocalAddTransOrderResponse addLocalTransOrder(TitanPaymentRequest titanPaymentRequest);
 	/**
 	 * 创建泰坦金服交易单接口
 	 * 在调用支付接口之前判定调用融数落单

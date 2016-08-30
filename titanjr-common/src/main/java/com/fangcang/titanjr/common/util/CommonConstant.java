@@ -112,6 +112,8 @@ public class CommonConstant {
     
     //冻结订单
     public static final String FREEZE_ORDER = "0";
+    
+    public static final String RESULT = "result";
 	
 	
 }

@@ -15,7 +15,7 @@
 
 // 		titanPayObj.initTitanPay();
 
-	 titanPayObj.initTitanPay();
+	 titanPayObj.initTitanPay({});
 	 
 	 /**
 	titanPayObj.initTitanPay({
@@ -30,12 +30,12 @@
 		var orderInfo = {
 			name : "1223", //打开收银台人员姓名  N
 			// 			escrowedDate : "",//保证期时间  N
-			goodsId : "TW15060107595",//商品编号，可以是对方的订单号
+			goodsId : "TW15060107102",//商品编号，可以是对方的订单号
 			goodsDetail : "我是啊好人",//商品描述  N
 			goodsName : "dddd",//商品名称 N
 			userId : "33475",//付款方身份标示   如果是财务，则建议是FCUSERID，  如果是GDP，则是用户ID
 			ruserId : "M10021069",//收款方身份标示 N  ,GDP可以指定接受方的   商家联盟可以指定其FCUSERID
-			amount : "1000",//订单金额
+			amount : "10",//订单金额
 			payerType : "4",//付款人类型   财务 GDP 等
 			// 			currencyType : "1",//币种
 			// 			checkOrderUrl : 'http://www.baidu.com',//可选
