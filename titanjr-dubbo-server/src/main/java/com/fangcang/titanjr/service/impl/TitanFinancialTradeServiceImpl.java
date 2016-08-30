@@ -278,6 +278,66 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         return orderResponse;
     }
     
+    
+    @Override
+	public LocalAddTransOrderResponse addLocalTransOrder(
+			TitanPaymentRequest titanPaymentRequest) {
+		LocalAddTransOrderResponse localAddTransOrderResponse = new LocalAddTransOrderResponse();
+		try{
+			log.info("本地下单入参:"+JSONSerializer.toJSON(titanPaymentRequest));
+			
+			TransOrderResponse transOrderResponse = this.queryTransOrderByCode(titanPaymentRequest.getPayOrderNo());
+			if(null==transOrderResponse || null ==transOrderResponse.getTransOrder()){
+				log.error("the order of query is failed: the orderNo is "+titanPaymentRequest.getPayOrderNo());
+				localAddTransOrderResponse.putErrorResult("订单查询失败");
+				return localAddTransOrderResponse;
+			}
+			TransOrderDTO transOrderDTO = transOrderResponse.getTransOrder();
+			
+			OrderRequest orderRequest = this.convertorToTitanOrderRequest2(titanPaymentRequest,transOrderDTO);
+			TitanTransOrder titanTransOrder = orderRequest2TitanTransOrder(orderRequest);
+			if(OrderStatusEnum.isRepeatedPay(transOrderDTO.getStatusid())){
+				//两次需要充值的金额不等需改订单
+				boolean flag = validateIsUpdateOrder2(titanPaymentRequest,transOrderDTO);
+				if(flag){//充值金额相等则返回该单号，否则生成订单
+					//更新一下订单
+					titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
+					titanTransOrderDao.updateTitanTransOrderByTransId(titanTransOrder);
+					
+					localAddTransOrderResponse.setOrderNo(titanTransOrder.getOrderid());
+					localAddTransOrderResponse.setUserOrderId(titanTransOrder.getUserorderid());
+					localAddTransOrderResponse.putSuccess();
+					return localAddTransOrderResponse;
+				}
+				
+			}else if(OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())){
+				localAddTransOrderResponse.putErrorResult("已支付，请勿重复支付");
+				//再次回调财务
+				return localAddTransOrderResponse;
+			}
+			//未下单
+			titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
+			titanTransOrder.setUserorderid(OrderGenerateService.genSyncUserOrderId());
+			titanTransOrder.setStatusid(OrderStatusEnum.RECHARGE_IN_PROCESS.getStatus());
+			//融数下单
+			log.info("the params of local order :"+JSONSerializer.toJSON(titanTransOrder));
+			if(titanTransOrderDao.insert(titanTransOrder)>0?true:false){
+				 localAddTransOrderResponse.setUserOrderId(titanTransOrder.getUserorderid());
+            	 localAddTransOrderResponse.setOrderNo(titanTransOrder.getOrderid());
+            	 localAddTransOrderResponse.putSuccess();
+            	 return localAddTransOrderResponse;
+             }
+            
+		    //本地落单
+		}catch(Exception e){
+			log.error("add local order is failed"+e.getMessage(),e);
+			localAddTransOrderResponse.putSysError();
+		}
+		return localAddTransOrderResponse;
+	}
+    
+    
+    
     //生成并 保存单
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
     public TransOrderCreateResponse createRsOrder(TitanPaymentRequest titanPaymentRequest){
@@ -2280,8 +2340,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			}
 
 			titanTransOrder.setGoodscnt(1);
-			titanTransOrder.setTradeamount(Long.parseLong(titanOrderRequest
-					.getAmount()));
+			titanTransOrder.setTradeamount(Long.parseLong(NumberUtil.covertToCents(titanOrderRequest
+					.getAmount())));
 			titanTransOrder.setPayorderno(titanOrderRequest.getGoodsId());
 			titanTransOrder.setGoodsdetail(titanOrderRequest.getGoodsDetail());
 			titanTransOrder.setGoodsname(titanOrderRequest.getGoodsName());
@@ -2289,7 +2349,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			titanTransOrder.setCreator(titanOrderRequest.getName());
 			titanTransOrder.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
 			titanTransOrder.setPayerType(titanOrderRequest.getPayerType());
+			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_IN_PROCESS.getStatus());
 			titanTransOrder.setCreatetime(new Date());
+			titanTransOrder.setAmount((long)0);
 			titanTransOrder.setUserorderid(OrderGenerateService
 					.genSyncUserOrderId());
 			

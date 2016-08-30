@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
@@ -33,6 +35,7 @@ import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
+import com.fangcang.titanjr.dto.request.OrderRequest;
 import com.fangcang.titanjr.dto.request.PayMethodConfigRequest;
 import com.fangcang.titanjr.dto.request.PaymentRequest;
 import com.fangcang.titanjr.dto.request.RechargePageRequest;
@@ -44,9 +47,14 @@ import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
 import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
+import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
+import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
+import com.fangcang.titanjr.dto.response.TransOrderResponse;
+import com.fangcang.titanjr.entity.TitanTransOrder;
+import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -78,7 +86,7 @@ public class TitanPaymentService {
 	@Resource
 	private TitanFinancialOrganService titanFinancialOrganService;
 	
-	 public boolean accountIsExist(String orgName,String titanCode ){
+	 public AccountCheckResponse accountIsExist(String orgName,String titanCode ){
 	    	if(StringUtil.isValidString(orgName)&&
 	    			StringUtil.isValidString(titanCode)){
 	    		AccountCheckRequest accountCheckRequest = new AccountCheckRequest();
@@ -86,10 +94,10 @@ public class TitanPaymentService {
 	    		accountCheckRequest.setTitanCode(titanCode);
 	    		AccountCheckResponse accountCheckResponse = titanFinancialAccountService.checkTitanCode(accountCheckRequest);
 	    		if(accountCheckResponse.isCheckResult()){
-	    			return true;
+	    		   return accountCheckResponse;
 	    		}
 	    	}
-			return false;
+			return null;
 	    } 
 	 
 	 public boolean isAllowNoPwdPay(String userid,String totalAmount){
@@ -104,7 +112,7 @@ public class TitanPaymentService {
 		}
 	 
 	 public boolean checkPwd(String pwd, String fcUserId){
-		 if(StringUtil.isValidString(pwd) ||StringUtil.isValidString(fcUserId) ){
+		 if(!StringUtil.isValidString(pwd) || !StringUtil.isValidString(fcUserId) ){
 			 return false;
 		 }
 		 
@@ -288,4 +296,9 @@ public class TitanPaymentService {
 		    model.addAttribute("rechargeResultConfirmRequest", rechargeResultConfirmRequest);
 			return "checkstand-pay/payResult";
 		}
+		
+		
 }
+
+
+
