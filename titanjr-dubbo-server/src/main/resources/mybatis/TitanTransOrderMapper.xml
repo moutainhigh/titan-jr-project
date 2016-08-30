@@ -324,9 +324,7 @@
             <include refid="sqlUpdate"/>
         </set>
         <where>
-          <if test="transid !=null">
-            and transid=#{transid}
-          </if>
+           transid=#{transid}
         </where>
     
     

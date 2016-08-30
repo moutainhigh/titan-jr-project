@@ -807,10 +807,9 @@ $("document").ready(function (){
                 },
                 dataType: "json",
                 success: function (data) {
-                	alert(data.result);
                 //如果ajax请求成功则显示回调页面
 					 if(data.result == "0"){
-						$("#orderNo").val(data.orderNo);
+						$("#orderNo").val(data.data);
 						$("#confirmOrder").submit();
 					 }else{
 						  new top.Tip({msg: data.resultMsg, type: 1, timer: 2000});

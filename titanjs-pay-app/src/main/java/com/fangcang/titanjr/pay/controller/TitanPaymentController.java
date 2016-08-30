@@ -273,7 +273,8 @@ public class TitanPaymentController extends BaseController {
 			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrder.getOrderid(), "冻结成功 修改订单状态失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(transOrder.getTransid()));
 			titanOrderService.saveOrderException(orderExceptionDTO);
 		}
-		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS);
+		
+		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS,transOrder.getOrderid());
 	}
 	
 	
