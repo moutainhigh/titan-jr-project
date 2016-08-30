@@ -37,7 +37,7 @@
 
     <div class="S_popup_Kan clearfix opaque">
         <div class="gold_pay">
-           <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${cashDeskData.amount/100  }"  pattern="#,##0.00#" /></span>元</div>
+           <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${cashDeskData.amount }"  pattern="#,##0.00#" /></span>元</div>
             <div class="goldpay_top">
                 <ul>
                     <li id="not_exists_history">
@@ -96,7 +96,7 @@
                                 <label class="f_ui-checkbox-c3 p_r10">
                                     <input type="checkbox" checked="" id="d_checkbox" onclick="checktest()" ><i ></i>
                                     使用账户可用余额付款</label>丨
-                                <span class="p_l10">账户可用余额：<fmt:formatNumber value="${cashDeskData.balanceusable/100 }"  pattern="#,##0.00#" />元</span>
+                                <span class="p_l10">账户可用余额：<fmt:formatNumber value="${cashDeskData.balanceusable }"  pattern="#,##0.00#" />元</span>
                             </li>
                             </c:if>
                             
@@ -110,7 +110,7 @@
               <div class="goldpay_title1" style="border-bottom:#ddd 1px solid;">
                 <c:if test="${ not empty cashDeskData.fcUserid}">
                 <div class="goldpaytitle1_top" id="not_enough_amount">剩余余额：<!--账户余额不够用余额付款-->
-                    <span class="c_f00" id="pay_surplus_amount"><fmt:formatNumber value="${cashDeskData.amount/100 - cashDeskData.balanceusable/100}"  pattern="#,##0.00#" /></span>元
+                    <span class="c_f00" id="pay_surplus_amount"><fmt:formatNumber value="${cashDeskData.amount - cashDeskData.balanceusable}"  pattern="#,##0.00#" /></span>元
                     <span class="p_l27">使用以下方式付款：</span>
                 </div>
                 </c:if>
@@ -285,7 +285,7 @@
 	    <input name="deskId" id="deskId" type="hidden" value="${cashDeskData.deskId}">
 	    <input name="payerAcount" id="payerAcount" type="hidden" value="">
 	    <input name="payOrderNo" id="payOrderNo" type="hidden" value="${cashDeskData.payOrderNo}">
-	    <input name="tradeAmount" id="tradeAmount" type="hidden" value="${cashDeskData.amount/100}">
+	    <input name="tradeAmount" id="tradeAmount" type="hidden" value="${cashDeskData.amount}">
     </form>
 </div>
 
@@ -347,7 +347,7 @@ $("document").ready(function (){
 		 $("#useCashierDeskPay").hide();
 	    $("#enough_amount").show();
 	    $("#not_enough_amount").hide();
-	    $("#onlinePayAmount").val('${cashDeskData.amount/100}');
+	    $("#onlinePayAmount").val('${cashDeskData.amount}');
 	    $("#d_checkbox").attr("checked",true);
 	}
 
@@ -355,7 +355,7 @@ $("document").ready(function (){
 		 $("#useCashierDeskPay").show();
        $("#enough_amount").hide();
        $("#not_enough_amount").show();
-       $("#onlinePayAmount").val(sub('${cashDeskData.amount/100}', '${cashDeskData.balanceusable/100}'));
+       $("#onlinePayAmount").val(sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}'));
 	}
     function sub(a, b) {
         var c, d, e;
@@ -388,7 +388,7 @@ $("document").ready(function (){
     
     function checktest() {
     	//如果余额足够则只能用余额或者网银付款，二选一，如果余额不足则自由选择
-    	if (sub('${cashDeskData.amount/100}','${cashDeskData.balanceusable/100}')<= 0){
+    	if (sub('${cashDeskData.amount}','${cashDeskData.balanceusable}')<= 0){
    		 if($("#d_checkbox").attr("checked")=="checked"){
    			 var arrow = $('.J_payway').find('i');
      			 var className = arrow.attr("class");
@@ -405,9 +405,9 @@ $("document").ready(function (){
    	       }
 	   	}else{//余额不足，将支持两种结合的方式或者选择充值
 	   		 if($("#d_checkbox").attr("checked")=="checked"){//在线支付剩余余额
-	   			 $("#pay_surplus_amount").text(sub('${cashDeskData.amount/100}','${cashDeskData.balanceusable/100}'));
+	   			 $("#pay_surplus_amount").text(sub('${cashDeskData.amount}','${cashDeskData.balanceusable}'));
 	   		 }else{//在线支付全款
-	   			 $("#pay_surplus_amount").text('${cashDeskData.amount/100}');
+	   			 $("#pay_surplus_amount").text('${cashDeskData.amount}');
 	   		 }
 	   	}
     	
@@ -483,13 +483,13 @@ $("document").ready(function (){
         $(this).next(".goldpayway").toggle();
         arrow.toggleClass('jiantou');
         if(arrow.hasClass("jiantou")){
-        	if('${cashDeskData.amount/100}' - '${cashDeskData.balanceusable/100}' <= 0){//余额充足
+        	if('${cashDeskData.amount}' - '${cashDeskData.balanceusable}' <= 0){//余额充足
         		  $("#d_checkbox").attr("checked",true);
         	}
             $(".payway_other").text('使用其他方式付款');
            
         }else{
-        	if('${cashDeskData.amount/100}' - '${cashDeskData.balanceusable/100}' <= 0){//余额充足
+        	if('${cashDeskData.amount}' - '${cashDeskData.balanceusable}' <= 0){//余额充足
       		  $("#d_checkbox").removeAttr("checked");
       	     }
             $(".payway_other").text('使用其他方式付款');
@@ -802,7 +802,7 @@ $("document").ready(function (){
 	               	 creator:'${cashDeskData.operator}',
 	               	 escrowedDate:'${cashDeskData.escrowedDate}',
 	               	 isEscrowed:'${cashDeskData.isEscrowed}',
-	                 tradeAmount:'${cashDeskData.amount/100}',
+	                 tradeAmount:'${cashDeskData.amount}',
 	               	 
                 },
                 dataType: "json",
@@ -870,18 +870,18 @@ $("document").ready(function (){
     	var transferAmount ="0";
     	var payAmount = "0";
     	
-    	if (sub('${cashDeskData.amount/100}', '${cashDeskData.balanceusable/100}') <= 0){
+    	if (sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}') <= 0){
     		if($("#d_checkbox").attr("checked")=="checked"){//余额充足二选一
-    			transferAmount = '${cashDeskData.amount/100}';
+    			transferAmount = '${cashDeskData.amount}';
        	    }else{
-       	    	payAmount = '${cashDeskData.amount/100}';
+       	    	payAmount = '${cashDeskData.amount}';
        	    }
     	}else{
     		if($("#d_checkbox").attr("checked")=="checked"){//余额不足，任意选择
-    			transferAmount = '${cashDeskData.balanceusable/100}';
-       		    payAmount = sub('${cashDeskData.amount/100}', '${cashDeskData.balanceusable/100}');
+    			transferAmount = '${cashDeskData.balanceusable}';
+       		    payAmount = sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}');
        	    }else{
-       	    	payAmount = '${cashDeskData.amount/100}';
+       	    	payAmount = '${cashDeskData.amount}';
        	    }
     	}
     	var recieveOrgName = null;

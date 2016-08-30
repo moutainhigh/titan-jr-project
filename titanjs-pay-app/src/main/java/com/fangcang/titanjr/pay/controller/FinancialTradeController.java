@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.pay.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -468,7 +469,8 @@ public class FinancialTradeController extends BaseController {
 					.getDeskId());
 		}
 		if (transOrderDTO.getTradeamount() != null) {
-			cashDeskData.setAmount(transOrderDTO.getTradeamount().toString());
+			BigDecimal amount = new BigDecimal(transOrderDTO.getTradeamount()).divide(new BigDecimal(100));
+			cashDeskData.setAmount(amount.toString());
 		}
 
 		model.addAttribute("cashDeskData", cashDeskData);
