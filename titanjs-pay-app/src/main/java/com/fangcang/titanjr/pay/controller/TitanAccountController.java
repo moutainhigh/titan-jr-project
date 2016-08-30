@@ -18,11 +18,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
+import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
 import com.fangcang.titanjr.dto.request.PayPasswordRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
+import com.fangcang.titanjr.dto.response.AccountHistoryResponse;
 import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
 import com.fangcang.titanjr.dto.response.PayPasswordResponse;
 import com.fangcang.titanjr.pay.services.TitanPaymentService;
@@ -154,7 +157,18 @@ public class TitanAccountController extends BaseController{
 		return toMsgJson(TitanMsgCodeEnum.TITAN_FAIL);
 	 }
 	 
-	
+	 @RequestMapping("/selectAccHistory")
+	 public String showAccountHistory(AccountHistoryDTO accountHistoryDTO,Model model){
+		if(accountHistoryDTO !=null ){
+			AccountHistoryRequest accountHistoryRequest = new AccountHistoryRequest();
+			accountHistoryRequest.setAccountHistoryDTO(accountHistoryDTO);
+			AccountHistoryResponse accountHistoryResponse = titanFinancialAccountService.queryAccountHistory(accountHistoryRequest);
+			if(accountHistoryResponse.isResult()){
+				model.addAttribute("accountHistoryResponse", accountHistoryResponse);
+			}
+		}
+		return "checkstand-pay/selectAccHistory";
+	 }
 	 
 	 
 	 @RequestMapping("showSetPayPassword")

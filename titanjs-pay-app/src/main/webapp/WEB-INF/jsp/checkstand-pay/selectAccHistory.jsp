@@ -14,7 +14,7 @@
 			<ul>
 				<c:forEach items="${accountHistoryResponse.accountHistoryDTOList}" var="accHistory">
 					<li>
-						<img class="fl" src="<%=cssSaasPath%>/images/TFS/card.png" alt="">
+<!-- 						<img class="fl" src="<%=cssSaasPath%>/images/TFS/card.png" alt=""> -->
 							<span class="cardinf fl">
 								${accHistory.orgname}<br>${accHistory.titancode }
 							</span>

@@ -283,9 +283,9 @@ public class FinancialTradeService {
 	 */
 	public AccountHistoryResponse getAccountHistoryResponse(
 			String inAccountCode, String outAccountCode, String userId) {
-		if (StringUtil.isValidString(inAccountCode)
-				|| StringUtil.isValidString(outAccountCode)
-				|| StringUtil.isValidString(userId)) {
+		if (!StringUtil.isValidString(inAccountCode)
+				|| !StringUtil.isValidString(outAccountCode)
+				|| !StringUtil.isValidString(userId)) {
 			return null;
 		}
 		AccountHistoryRequest accHistoryRequest = new AccountHistoryRequest();

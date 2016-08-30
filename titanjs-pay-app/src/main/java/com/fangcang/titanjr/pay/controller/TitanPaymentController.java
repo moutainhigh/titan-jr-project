@@ -31,9 +31,11 @@ import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.PayTypeEnum;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.PaymentRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
@@ -174,9 +176,8 @@ public class TitanPaymentController extends BaseController {
 	        		
 	        		//save the trade account
 					if(payerType.isMustPayerment()){
-    				    titanFinancialAccountService.addAccountHistory(transferRequest);
+						titanPaymentService.addAccountHistory(transOrderDTO);
 					}
-	        		
 	        	}
         	}
         	
@@ -266,8 +267,7 @@ public class TitanPaymentController extends BaseController {
         		titanOrderService.saveOrderException(orderExceptionDTO);
 			}
 		}
-		
-		titanFinancialAccountService.addAccountHistory(transferRequest);
+		titanPaymentService.addAccountHistory(transOrder);
 		boolean updateStatus = titanPaymentService.updateOrderStatus(transOrder.getTransid(),orderStatusEnum);
 		if(!updateStatus){
 			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrder.getOrderid(), "冻结成功 修改订单状态失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(transOrder.getTransid()));
@@ -276,6 +276,7 @@ public class TitanPaymentController extends BaseController {
 		
 		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS,transOrder.getOrderid());
 	}
+	
 	
 	
 	private TransferRequest convertToTransferRequest(TitanPaymentRequest titanPaymentRequest){

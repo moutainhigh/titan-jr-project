@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -698,6 +699,44 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	}
 	
 
+	@Override
+	public AccountHistoryResponse addAccountHistory2(AccountHistoryRequest accountHistoryRequest){
+
+		AccountHistoryResponse accountHistoryResponse = new AccountHistoryResponse();
+		try{
+			if(null ==accountHistoryRequest || null==accountHistoryRequest.getAccountHistoryDTO()){
+				accountHistoryResponse.putErrorResult("传入参数错误");
+				return accountHistoryResponse;
+			}
+			
+			TitanAccountHistoryParam condition = new TitanAccountHistoryParam();
+			AccountHistoryDTO accountHistoryDTO = accountHistoryRequest.getAccountHistoryDTO();
+			condition.setPayeeuserid(accountHistoryDTO.getPayeeuserid());
+			condition.setPayeruserid(accountHistoryDTO.getPayeruserid());
+			PaginationSupport<TitanAccountHistory> paginationSupport = new PaginationSupport<TitanAccountHistory>();
+			titanAccountHistoryDao.selectForPage(condition, paginationSupport);  
+			//如果数据了中没有收付款账户记录则插入一条数据，否则直接返回成功
+			if(paginationSupport.getItemList() !=null && paginationSupport.getItemList().size()>0){
+				accountHistoryResponse.putSuccess();
+			}else{
+				TitanAccountHistory titanAccountHistory = new TitanAccountHistory();
+				MyBeanUtil.copyBeanProperties(titanAccountHistory, accountHistoryDTO);
+				int row = titanAccountHistoryDao.insert(titanAccountHistory);
+				if(row >0){
+					accountHistoryResponse.putSuccess();
+				}else{
+					accountHistoryResponse.putSysError();
+				}
+			}			    
+			
+		}catch(Exception e){
+			log.error("添加收款账户历史异常"+e.getMessage(),e);
+			accountHistoryResponse.putSysError();
+		}
+		return accountHistoryResponse;
+		
+	}
+	
 	@Override
 	public AccountHistoryResponse addAccountHistory(
 			TransferRequest transferRequest) {

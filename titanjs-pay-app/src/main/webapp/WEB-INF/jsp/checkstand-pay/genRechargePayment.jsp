@@ -9,7 +9,7 @@
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 	</head>
 <body>
-  <c:if test="${not empty rechargeDataDTO }">
+    <c:if test="${not empty rechargeDataDTO }">
 <form action="${rechargeDataDTO.gateWayUrl}" name="pay_form" id="pay_form" method="post" >
 
     <input name="merchantNo" type="hidden" value="${rechargeDataDTO.merchantNo}"/>
@@ -27,13 +27,13 @@
 	<input name="busiCode" type="hidden" value="${rechargeDataDTO.busiCode}"/>
 	<input name="version" type="hidden" value="${rechargeDataDTO.version}"/>
 	<input name="charset" type="hidden" value="${rechargeDataDTO.charset}"/>
+	<input name="payerAcount" type="hidden" value="${rechargeDataDTO.payerAcount}"/>
 	<input name="signMsg" type="hidden" value="${rechargeDataDTO.signMsg}"/>
 </form>
-
-<form action="<%=basePath%>/account/error_cashier.action" id="error_cashier" method="post">
+</c:if>
+<form action="<%=basePath%>/account/error_cashier.action" name="error_cashier"  id="error_cashier" method="post">
   <input name="msg" type="hidden" value="${msg}"/>
 </form>
-  </c:if>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
 </body>
 <script type="text/javascript">

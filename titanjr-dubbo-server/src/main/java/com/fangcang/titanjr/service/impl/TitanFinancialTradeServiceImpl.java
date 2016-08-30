@@ -1202,7 +1202,12 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
   			 orderRequest.setOpertype(OperTypeEnum.Add_Order.key);
              orderRequest.setOrdertypeid(OrderTypeEnum.OrderType_1.key);
              orderRequest.setUserorderid(transOrderDTO.getUserorderid());
-             
+             orderRequest.setPayeemerchant(titanPaymentRequest.getUserrelateid());
+             orderRequest.setTradeamount(transOrderDTO.getTradeamount());
+             orderRequest.setTransordertype(transOrderDTO.getTransordertype());
+             orderRequest.setPayerType(transOrderDTO.getPayerType());
+             orderRequest.setBussinessInfo(transOrderDTO.getBusinessinfo());
+             orderRequest.setBusinessordercode(transOrderDTO.getBusinessordercode());
         } catch (Exception e) {
             throw new Exception(e);
         }
@@ -1401,12 +1406,19 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                 titanTransOrder.setMerchantcode(orderRequest.getMerchantCode());
                 titanTransOrder.setPayeemerchant(orderRequest.getPayeemerchant());
                 titanTransOrder.setPayermerchant(orderRequest.getPayermerchant());
-                titanTransOrder.setTradeamount(orderRequest.getTradeamount());
-                titanTransOrder.setTransordertype(orderRequest.getTransordertype());
+                if(orderRequest.getTradeamount()!=null){
+                	 titanTransOrder.setTradeamount(orderRequest.getTradeamount());
+                }
+                if(orderRequest.getTransordertype()!=null){
+                	titanTransOrder.setTransordertype(orderRequest.getTransordertype());
+                }
                 titanTransOrder.setNotifyUrl(orderRequest.getNotifyUrl());
                 if(orderRequest.getTransid() !=null){
                 	titanTransOrder.setTransid(orderRequest.getTransid());
                 }
+                titanTransOrder.setPayerType(orderRequest.getPayerType());
+                titanTransOrder.setBusinessinfo(orderRequest.getBussinessInfo());
+                titanTransOrder.setGoodscnt(1);
                 
             }
         } catch (Exception e) {

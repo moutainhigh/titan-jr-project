@@ -72,10 +72,14 @@ public class OrderRequest implements Serializable{
     //交易类型
     private Integer transordertype;
     
+    private String bussinessInfo;
+    
     //回调地址
     private String notifyUrl;
     
     private Integer transid;
+    
+    private String payerType;
     
     public String getNotifyUrl() {
 		return notifyUrl;
@@ -279,6 +283,22 @@ public class OrderRequest implements Serializable{
 
 	public void setTransid(Integer transid) {
 		this.transid = transid;
+	}
+
+	public String getPayerType() {
+		return payerType;
+	}
+
+	public void setPayerType(String payerType) {
+		this.payerType = payerType;
+	}
+
+	public String getBussinessInfo() {
+		return bussinessInfo;
+	}
+
+	public void setBussinessInfo(String bussinessInfo) {
+		this.bussinessInfo = bussinessInfo;
 	}
 	
 }
