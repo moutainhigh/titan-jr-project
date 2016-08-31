@@ -6,8 +6,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -17,16 +15,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
-import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
-import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
 import com.fangcang.titanjr.dto.request.PayPasswordRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
 import com.fangcang.titanjr.dto.response.AccountHistoryResponse;
-import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
 import com.fangcang.titanjr.dto.response.PayPasswordResponse;
 import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;

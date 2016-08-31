@@ -38,7 +38,7 @@ import com.fangcang.titanjr.dto.response.CashierDeskResponse;
 import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
-import com.fangcang.titanjr.pay.services.FinancialTradeService;
+import com.fangcang.titanjr.pay.services.TitanTradeService;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.pay.util.RSADecryptString;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
@@ -65,7 +65,7 @@ public class TitanTradeController extends BaseController {
 	private TitanOrderService titanOrderService;
 
 	@Resource
-	private FinancialTradeService financialTradeService;
+	private TitanTradeService financialTradeService;
 
 	/**
 	 * @Title: titanPay

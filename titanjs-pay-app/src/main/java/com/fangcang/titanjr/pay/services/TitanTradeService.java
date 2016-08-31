@@ -61,10 +61,10 @@ import com.fangcang.util.StringUtil;
  *
  */
 @Component
-public class FinancialTradeService {
+public class TitanTradeService {
 
 	private static final Log log = LogFactory
-			.getLog(FinancialTradeService.class);
+			.getLog(TitanTradeService.class);
 
 	@Resource
 	private TitanFinancialTradeService titanFinancialTradeService;

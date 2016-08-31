@@ -31,29 +31,22 @@ import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
-import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.PayTypeEnum;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
-import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
-import com.fangcang.titanjr.dto.request.PaymentRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
-import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
-import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.dto.response.TransferResponse;
-import com.fangcang.titanjr.pay.services.FinancialTradeService;
 import com.fangcang.titanjr.pay.services.TitanPaymentService;
+import com.fangcang.titanjr.pay.services.TitanTradeService;
 import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
-import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
@@ -82,7 +75,7 @@ public class TitanPaymentController extends BaseController {
 	private TitanFinancialAccountService titanFinancialAccountService;
 	
 	@Resource
-	private FinancialTradeService financialTradeService;
+	private TitanTradeService financialTradeService;
 	
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	

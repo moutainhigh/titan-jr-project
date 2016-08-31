@@ -69,7 +69,7 @@ import com.fangcang.util.StringUtil;
 @Component
 public class TitanPaymentService {
 	private static final Log log = LogFactory
-			.getLog(FinancialTradeService.class);
+			.getLog(TitanTradeService.class);
 	
 	@Resource
 	private TitanFinancialAccountService titanFinancialAccountService;
