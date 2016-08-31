@@ -9,6 +9,8 @@ public class CommonConstant {
     //执行成功
     public static final String OPERATE_SUCCESS = "true";
     
+    public static final String OPERATE_FAIL = "false";
+    
     //待处理
     public static final String WAIT_MOMENT = "wait";
 
@@ -114,6 +116,8 @@ public class CommonConstant {
     public static final String FREEZE_ORDER = "0";
     
     public static final String RESULT = "result";
+    
+    public static final String RETURN_MSG = "msg";
 	
 	
 }

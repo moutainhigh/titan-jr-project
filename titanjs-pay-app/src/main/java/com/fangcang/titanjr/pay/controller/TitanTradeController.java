@@ -23,6 +23,7 @@ import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.CashDeskData;
@@ -215,7 +216,6 @@ public class TitanTradeController extends BaseController {
 
 	/**
 	 * 检查订单中的信息是否合法
-	 * 
 	 * @param dto
 	 * @return
 	 */

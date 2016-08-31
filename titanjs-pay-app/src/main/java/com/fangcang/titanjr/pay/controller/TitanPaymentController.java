@@ -28,6 +28,7 @@ import com.fangcang.titanjr.common.enums.ReqstatusEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
@@ -297,16 +298,16 @@ public class TitanPaymentController extends BaseController {
 	public String packageRechargeData(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model) throws Exception{
 	
 		log.info("网银支付请求参数:"+JsonConversionTool.toJson(titanPaymentRequest));
-		model.addAttribute("result", "false");
+		model.addAttribute(CommonConstant.RESULT, CommonConstant.OPERATE_FAIL);
 		if(null == titanPaymentRequest || !StringUtil.isValidString(titanPaymentRequest.getTradeAmount()) 
 				|| !StringUtil.isValidString(titanPaymentRequest.getPayAmount())){
-			model.addAttribute("msg", "参数错误");
+			model.addAttribute(CommonConstant.RETURN_MSG, "参数错误");
 			return "checkstand-pay/genRechargePayment";
 		}
 		
         Map<String,String> validResult = this.validPaymentData(titanPaymentRequest);
-        if(!"true".equals(validResult.get("result"))){//合规性验证
-        	model.addAttribute("msg", validResult.get("msg"));
+        if(!CommonConstant.OPERATE_SUCCESS.equals(validResult.get(CommonConstant.RESULT))){//合规性验证
+        	model.addAttribute(CommonConstant.RETURN_MSG, validResult.get(CommonConstant.RETURN_MSG));
 			return "checkstand-pay/genRechargePayment";
         }
 		
@@ -325,11 +326,11 @@ public class TitanPaymentController extends BaseController {
     	
     	RechargeResponse rechargeResponse = titanPaymentService.packageRechargeData(titanPaymentRequest);
     	if(!rechargeResponse.isResult()){
-    		model.addAttribute("msg", rechargeResponse.getReturnMessage());
+    		model.addAttribute(CommonConstant.RETURN_MSG, rechargeResponse.getReturnMessage());
     		return "checkstand-pay/genRechargePayment";
     	}
 		
-    	model.addAttribute("result", "success");
+    	model.addAttribute(CommonConstant.RESULT, CommonConstant.RETURN_SUCCESS);
     	model.addAttribute("rechargeDataDTO", rechargeResponse.getRechargeDataDTO());
     	log.info("支付请求的参数如下:"+JsonConversionTool.toJson(rechargeResponse.getRechargeDataDTO()));
     	//保存常用的支付方式
@@ -344,8 +345,8 @@ public class TitanPaymentController extends BaseController {
 				titanPaymentRequest.getRecieveTitanCode());
 		
 		if(null ==accountCheckResponse){
-			resultMap.put("msg", "收款方不存在");
-			resultMap.put("result", "false");
+			resultMap.put(CommonConstant.RETURN_MSG, "收款方不存在");
+			resultMap.put(CommonConstant.RESULT, CommonConstant.OPERATE_FAIL);
 			return resultMap;
 		}
 		
@@ -362,8 +363,8 @@ public class TitanPaymentController extends BaseController {
 	        if(!isAllowNoPwdPay){//不允许免密支付，需要输入密码
 	        	boolean isTrue = titanPaymentService.checkPwd(titanPaymentRequest.getPayPassword(), titanPaymentRequest.getFcUserid());
 	            if(!isTrue){
-	    			resultMap.put("msg", "付款密码不正确");
-	    			resultMap.put("result", "false");
+	    			resultMap.put(CommonConstant.RETURN_MSG, "付款密码不正确");
+	    			resultMap.put(CommonConstant.RESULT, CommonConstant.OPERATE_FAIL);
 	    			return resultMap;
 	            }
 	        }
@@ -371,12 +372,12 @@ public class TitanPaymentController extends BaseController {
 		
 		if(StringUtil.isValidString(titanPaymentRequest.getUserrelateid())){//收款方不为空，则判断是否自己给自己付款
 			if(titanPaymentRequest.getUserrelateid().equals(titanPaymentRequest.getUserid())){
-    			resultMap.put("msg", "收款账户不能和付款账户相同");
-    			resultMap.put("result", "false");
+    			resultMap.put(CommonConstant.RETURN_MSG, "收款账户不能和付款账户相同");
+    			resultMap.put(CommonConstant.RESULT, CommonConstant.OPERATE_FAIL);
     			return resultMap;
 			}
 		}
-		resultMap.put("result", "true");
+		resultMap.put(CommonConstant.RESULT, CommonConstant.OPERATE_SUCCESS);
 		return resultMap;
     }	
     
