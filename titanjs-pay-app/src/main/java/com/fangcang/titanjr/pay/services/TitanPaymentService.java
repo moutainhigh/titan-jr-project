@@ -1,13 +1,10 @@
 package com.fangcang.titanjr.pay.services;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-
-import net.sf.json.JSONSerializer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,11 +12,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.alibaba.dubbo.config.annotation.Service;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
-import com.fangcang.titanjr.common.util.NumberUtil;
+import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.AmtTypeEnum;
@@ -32,32 +28,21 @@ import com.fangcang.titanjr.dto.bean.SignTypeEnum;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.bean.VersionEnum;
-import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
-import com.fangcang.titanjr.dto.request.OrderRequest;
 import com.fangcang.titanjr.dto.request.PayMethodConfigRequest;
-import com.fangcang.titanjr.dto.request.PaymentRequest;
-import com.fangcang.titanjr.dto.request.RechargePageRequest;
 import com.fangcang.titanjr.dto.request.RechargeRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
-import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
 import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
-import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
-import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
-import com.fangcang.titanjr.dto.response.TransOrderResponse;
-import com.fangcang.titanjr.entity.TitanTransOrder;
-import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;

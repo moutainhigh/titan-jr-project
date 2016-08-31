@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.pay.util;
+package com.fangcang.titanjr.common.util;
 
 import com.google.gson.Gson;
 

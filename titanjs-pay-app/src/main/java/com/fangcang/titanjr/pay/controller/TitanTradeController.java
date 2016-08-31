@@ -40,7 +40,6 @@ import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.services.TitanTradeService;
-import com.fangcang.titanjr.pay.util.JsonConversionTool;
 import com.fangcang.titanjr.pay.util.RSADecryptString;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
