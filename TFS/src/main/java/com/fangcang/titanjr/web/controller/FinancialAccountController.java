@@ -20,6 +20,7 @@ import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.BankCardDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
@@ -551,7 +552,10 @@ public class FinancialAccountController extends BaseController {
             tradeDetailRequest.setUserid(this.getUserId());
             TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
             if (tradeDetailResponse.isResult() && CollectionUtils.isNotEmpty(tradeDetailResponse.getTransOrders().getItemList())) {
-                model.addAttribute("transOrder", tradeDetailResponse.getTransOrders().getItemList().get(0));
+            	TransOrderDTO transOrder = tradeDetailResponse.getTransOrders().getItemList().get(0);
+            	transOrder.setRemark(Tools.replaceEnterKeyHTML(transOrder.getRemark())); 
+            	model.addAttribute("transOrder", transOrder);
+                
             }
         }
         return "account-overview/order-remark";
@@ -570,7 +574,9 @@ public class FinancialAccountController extends BaseController {
             tradeDetailRequest.setUserid(this.getUserId());
             TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
             if (tradeDetailResponse.isResult() && CollectionUtils.isNotEmpty(tradeDetailResponse.getTransOrders().getItemList())) {
-                model.addAttribute("transOrder", tradeDetailResponse.getTransOrders().getItemList().get(0));
+            	TransOrderDTO transOrder = tradeDetailResponse.getTransOrders().getItemList().get(0);
+            	transOrder.setRemark(Tools.replaceEnterKeyHTML(transOrder.getRemark())); 
+            	model.addAttribute("transOrder", transOrder);
             }
         }
         return "account-overview/order-remark-history";

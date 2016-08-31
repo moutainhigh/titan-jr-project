@@ -87,7 +87,16 @@ public class Tools {
 		return ToStringBuilder.reflectionToString(object);
 		
 	}
-	public static void main(String[] arg){
-		///System.out.println(getRegCode());
+	/**
+	 * 添加html换行符，防止js中报错
+	 * @param enterKeySrc
+	 * @return
+	 */
+	public static String replaceEnterKeyHTML(String enterKeySrc){
+		if(StringUtil.isValidString(enterKeySrc)){
+			return enterKeySrc.replaceAll("\r\n","<BR/>").replace("\n", "<BR/>");
+		}
+		return enterKeySrc;
 	}
+	 
 }
