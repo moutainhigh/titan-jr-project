@@ -234,7 +234,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 						}
 					}
 					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					response.setReturnMsg(rsp.getMsg());
 				}
 			} else {
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);

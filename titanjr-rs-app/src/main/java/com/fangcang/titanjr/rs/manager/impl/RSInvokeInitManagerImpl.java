@@ -131,11 +131,11 @@ public class RSInvokeInitManagerImpl {
 		if(CollectionUtils.isNotEmpty(list)){
 			for(Sysconfig item : list){
 				if(item.getCfgKey().equals("DefaultPayerConfig_USERID")){
-					RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID = item.getCfgValue();
+					RSInvokeConstant.DEFAULTPAYERCONFIG_USERID = item.getCfgValue();
 					continue;
 				}
 				if(item.getCfgKey().equals("DefaultPayerConfig_PRODUCTID")){
-					RSInvokeConstant.DEFAULTPAYERCONFIG_USERID = item.getCfgValue();
+					RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID = item.getCfgValue();
 					continue;
 				}
 			}
