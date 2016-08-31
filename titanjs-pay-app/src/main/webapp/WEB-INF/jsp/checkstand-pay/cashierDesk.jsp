@@ -75,8 +75,8 @@
                                 <span class="w_160"><i class="c_f00">*</i>收款方 - 泰坦码：</span>
                                  <c:choose>
                                   <c:when test="${ not empty  cashDeskData.accountHistoryDTO}">
-                                     <input type="hidden" id="hiddenTitanCode" value="${userIDOrgMap[cashDeskData.accountHistoryDTO.payeeuserid].titanCode} ">
-                                     <span id="showTitanCode">${userIDOrgMap[cashDeskData.accountHistoryDTO.payeeuserid].titanCode}</span>
+                                     <input type="hidden" id="hiddenTitanCode" value="${cashDeskData.accountHistoryDTO.titancode} ">
+                                     <span id="showTitanCode">${cashDeskData.accountHistoryDTO.titancode}</span>
                                   </c:when>
                                  <c:otherwise>
                                     <c:if test="${not empty  cashDeskData.titanCode}">

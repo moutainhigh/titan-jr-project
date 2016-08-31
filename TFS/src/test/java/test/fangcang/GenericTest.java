@@ -15,4 +15,6 @@ public class GenericTest {
         cfx = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
         System.out.println(cfx);
     }
+    
+    
 }

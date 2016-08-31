@@ -3,6 +3,7 @@ package com.fangcang.titanjr.pay.services;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -20,6 +21,7 @@ import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.AmtTypeEnum;
 import com.fangcang.titanjr.dto.bean.BusiCodeEnum;
 import com.fangcang.titanjr.dto.bean.CharsetEnum;
@@ -33,6 +35,7 @@ import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.bean.VersionEnum;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
+import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
 import com.fangcang.titanjr.dto.request.OrderRequest;
@@ -298,6 +301,34 @@ public class TitanPaymentService {
 		}
 		
 		
+		public void addAccountHistory(TransOrderDTO transOrderDTO){
+			//记录收款历史
+			AccountHistoryRequest accountHistoryRequest = null;
+			AccountHistoryDTO accountHistoryDTO = convertToAccountHistoryDTO(transOrderDTO);
+			if(accountHistoryDTO !=null){
+				accountHistoryRequest = new AccountHistoryRequest();
+				accountHistoryRequest.setAccountHistoryDTO(accountHistoryDTO);
+				 titanFinancialAccountService.addAccountHistory2(accountHistoryRequest);
+			}
+		}
+		
+		private AccountHistoryDTO convertToAccountHistoryDTO(TransOrderDTO transOrderDTO){
+			if(null==transOrderDTO || !StringUtil.isValidString(transOrderDTO.getBusinessinfo())){
+				return null;
+			}
+			AccountHistoryDTO accountHistoryDTO = new AccountHistoryDTO();
+			Map<String,String> bussinessInfoMap = JsonConversionTool.toObject(transOrderDTO.getBusinessinfo(), Map.class);
+			if(bussinessInfoMap !=null){
+				String inAccountCode = bussinessInfoMap.get("inAccountCode");
+				String  outAccountCode = bussinessInfoMap.get("outAccountCode");
+				accountHistoryDTO.setInaccountcode(inAccountCode);
+				accountHistoryDTO.setOutaccountcode(outAccountCode);
+			}
+			accountHistoryDTO.setPayeeuserid(transOrderDTO.getPayeemerchant());
+			accountHistoryDTO.setPayeruserid(transOrderDTO.getPayermerchant());
+			accountHistoryDTO.setCreatetime(new Date());
+			return accountHistoryDTO;
+		}
 }
 
 

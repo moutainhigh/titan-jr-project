@@ -2,6 +2,7 @@ package com.fangcang.titanjr.service;
 
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 
@@ -78,6 +79,14 @@ public interface TitanFinancialAccountService {
 	 * @author fangdaikang
 	 */
 	public AccountHistoryResponse addAccountHistory(TransferRequest transferRequest);
+	
+	/**
+	 * 更新收付款历史记录
+	 * @param transferRequest
+	 * @return
+	 * @author fangdaikang
+	 */
+	public AccountHistoryResponse addAccountHistory2(AccountHistoryRequest accountHistoryRequest);
 	
 	/**
 	 * 获取收付款历史
