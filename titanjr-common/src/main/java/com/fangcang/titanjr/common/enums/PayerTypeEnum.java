@@ -77,7 +77,7 @@ public enum PayerTypeEnum {
 	
 	  public boolean isMustPayeement(){
 		
-		return SUPPLY_UNION.key.equals(this.key)|| B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key);
+		return SUPPLY_UNION.key.equals(this.key)|| B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key)||RECHARGE.key.equals(this.key);
 	  }
 	
     
