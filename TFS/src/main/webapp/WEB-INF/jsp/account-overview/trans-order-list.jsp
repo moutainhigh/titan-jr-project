@@ -253,7 +253,7 @@
                                 $.ajax({
                                     async:false,
                                     type:'post',
-                                    data:{"remark":replaceEnterKey(top.$("#id_remark_text").val()),userOrderId: code},
+                                    data:{"remark":top.$("#id_remark_text").val(),userOrderId: code},
                                     url : '<%=basePath%>/account/updateOrderRemark.shtml',
                                     dataType : 'json',
                                     success : function(result){
