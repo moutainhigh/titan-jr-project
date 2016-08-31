@@ -48,12 +48,12 @@ import com.fangcang.util.StringUtil;
 
 @Controller
 @RequestMapping("/trade")
-public class FinancialTradeController extends BaseController {
+public class TitanTradeController extends BaseController {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final Log log = LogFactory
-			.getLog(FinancialTradeController.class);
+			.getLog(TitanTradeController.class);
 
 	@Resource
 	private TitanFinancialTradeService titanFinancialTradeService;
