@@ -27,6 +27,15 @@ public class RSInvokeConstant {
      * 金服在SAAS系统中的商家编码
      */
     public static String defaultMerchant = null;
+    /**
+     * 融数中间账户
+     */
+    public static String DEFAULTPAYERCONFIG_USERID = null;
+    /**
+     * 融数中间账户
+     */
+    public static String DEFAULTPAYERCONFIG_PRODUCTID = null;
+    
     //默认金服访问权限的角色id
     public static Long defaultRoleId = null;
     //支付方式配置表，key是userid，value主要包含支付方式回调地址

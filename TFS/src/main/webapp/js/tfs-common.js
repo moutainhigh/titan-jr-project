@@ -128,3 +128,18 @@ function freshCheckCount(){
 	}
 	
 }
+//把回车字符替换为br
+function replaceEnterKey(src){
+	var string = src;  
+	try{  
+	    string=string.replace(/\r\n/g,"<BR/>");  
+	    string=string.replace(/\n/g,"<BR/>");  
+	}catch(e) {  
+	    alert(e.message);  
+	}  
+	return string;  
+}
+//把br换为/r/n
+function backEnterKey(src){
+	return src.replace(/\<BR\/\>/gi,"\r\n");  
+}

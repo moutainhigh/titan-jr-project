@@ -144,7 +144,8 @@
           LEFT JOIN t_tfs_orgimage i ON g.userid = i.userid
           LEFT JOIN t_tfs_orgcheck c ON g.userid = c.userid
 		<where>
-			<if test="userId !=null"> g.userId = #{userId}</if>
+			b.bindstatus = 1
+			<if test="userId !=null"> and  g.userId = #{userId}</if>
 			<if test="orgId !=null"> and g.orgid = #{orgId}</if>
 			<if test="orgCode !=null"> and g.orgCode = #{orgCode}</if>
 			<if test="statusId !=null"> and  g.statusId = #{statusId}</if>

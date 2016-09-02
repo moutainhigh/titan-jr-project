@@ -317,9 +317,9 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 			if(bankcardList.size()>0){
 				for(TitanBankcard titanBankcard :bankcardList){
 					//查询融数
-					log.info("查询绑卡的入参:"+JSONSerializer.toJSON(titanBankcard));
+					log.info("查询绑卡的入参titanBankcard:"+JSONSerializer.toJSON(titanBankcard));
 					String bindStatus = this.queryBindCard(titanBankcard);
-					log.info("查询绑卡结果:"+JSONSerializer.toJSON(bindStatus));
+					log.info("查询绑卡结果bindStatus:"+bindStatus);
 					if(StringUtil.isValidString(bindStatus)){//绑定成功,更新自己代码
 						updateBankCard(titanBankcard,bindStatus);
 					}

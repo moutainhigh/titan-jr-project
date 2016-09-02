@@ -22,7 +22,6 @@ public class AccountBalanceQueryResponse extends BaseResponse {
         this.balanceInfoList = balanceInfoList;
     }
 
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)

@@ -221,7 +221,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 					response.setOperateStatus(rsp.getIs_success());
 					response.setOrderid(rsp.getOrderid());
 					//订单查询操作的时候进行xml解析
-					if(orderOperateRequest !=null && "3".equals(orderOperateRequest.getOpertype())){//3代表查询操作
+					if(orderOperateRequest !=null && "3".equals(orderOperateRequest.getOpertype())){
 						Object obj = MyConvertXmlToObject.convertXml2Object(rsp.getBody());
 						if(obj !=null){
 							OrderInfoResponse orderInfoRequest = (OrderInfoResponse)obj;
@@ -234,7 +234,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 						}
 					}
 					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					response.setReturnMsg(rsp.getMsg());
 				}
 			} else {
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
