@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import com.Rop.api.domain.SHBalanceInfo;
 import com.Rop.api.request.WheatfieldBalanceGetlistRequest;
 import com.Rop.api.request.WheatfieldOrderOperRequest;
+import com.Rop.api.request.WheatfieldOrderSaveWithcardRequest;
 import com.Rop.api.request.WheatfieldOrderServiceAuthcodeserviceRequest;
 import com.Rop.api.request.WheatfieldOrderServiceMultitransferQueryRequest;
 import com.Rop.api.request.WheatfieldOrderServiceMultitransferRequest;
@@ -22,6 +23,7 @@ import com.Rop.api.request.WheatfieldOrderTransferRequest;
 import com.Rop.api.response.WheatfieldAccountFreezeResponse;
 import com.Rop.api.response.WheatfieldBalanceGetlistResponse;
 import com.Rop.api.response.WheatfieldOrderOperResponse;
+import com.Rop.api.response.WheatfieldOrderSaveWithcardResponse;
 import com.Rop.api.response.WheatfieldOrderServiceAuthcodeserviceResponse;
 import com.Rop.api.response.WheatfieldOrderServiceMultitransferQueryResponse;
 import com.Rop.api.response.WheatfieldOrderServiceThawauthcodeResponse;
@@ -40,6 +42,7 @@ import com.fangcang.titanjr.rs.request.AccountWithDrawRequest;
 import com.fangcang.titanjr.rs.request.BalanceFreezeRequest;
 import com.fangcang.titanjr.rs.request.BalanceUnFreezeRequest;
 import com.fangcang.titanjr.rs.request.OrderOperateRequest;
+import com.fangcang.titanjr.rs.request.OrderSaveWithCardRequest;
 import com.fangcang.titanjr.rs.request.OrderTransferFlowRequest;
 import com.fangcang.titanjr.rs.response.AccountBalanceQueryResponse;
 import com.fangcang.titanjr.rs.response.AccountTransferResponse;
@@ -48,6 +51,7 @@ import com.fangcang.titanjr.rs.response.BalanceFreezeResponse;
 import com.fangcang.titanjr.rs.response.BalanceUnFreezeResponse;
 import com.fangcang.titanjr.rs.response.OrderInfoResponse;
 import com.fangcang.titanjr.rs.response.OrderOperateResponse;
+import com.fangcang.titanjr.rs.response.OrderSaveWithCardResponse;
 import com.fangcang.titanjr.rs.response.OrderTransferFlowResponse;
 import com.fangcang.titanjr.rs.response.Retbeanlist;
 import com.fangcang.titanjr.rs.util.MyConvertXmlToObject;
@@ -434,6 +438,53 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 
 	public void setRsInvokeInitManager(RSInvokeInitManagerImpl rsInvokeInitManager) {
 		this.rsInvokeInitManager = rsInvokeInitManager;
+	}
+
+	@Override
+	public OrderSaveWithCardResponse orderSaveWithdraw(
+			OrderSaveWithCardRequest orderSaveWithCardRequest) {
+		OrderSaveWithCardResponse response = new OrderSaveWithCardResponse();
+		try{
+			WheatfieldOrderSaveWithcardRequest req = new WheatfieldOrderSaveWithcardRequest();
+			if(needCheckRequest){
+				orderSaveWithCardRequest.check();
+			}
+			MyBeanUtil.copyBeanProperties(req, orderSaveWithCardRequest);
+			WheatfieldOrderSaveWithcardResponse rsp = RSInvokeConstant.ropClient
+					.execute(req, RSInvokeConstant.sessionKey);
+			if (rsp != null) {
+				log.info("调用orderSaveWithCardRequest返回报文: \n" + rsp.getBody());
+				String errorMsg;
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						errorMsg = rsp.getSubMsg();
+					} else {
+						errorMsg = rsp.getMsg();
+					}
+					response.setReturnCode(rsp.getErrorCode());
+					response.setReturnMsg(errorMsg);
+					log.error("调用接口orderSaveWithCardRequest异常：" + errorMsg);
+				} else {
+					response.setSuccess(true);
+					response.setOperateStatus(rsp.getIs_success());
+					response.setReturnMsg(rsp.getMsg());
+					response.setOrderId(rsp.getOrderid());
+					if(rsp.getIs_success().equals(CommonConstant.OPERATE_SUCCESS)){
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}
+				}
+			}else{
+				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
+				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
+			}
+			
+		}catch(Exception e){
+			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+			response.setReturnMsg(e.getMessage());
+			log.error("调用orderSaveWithCardRequest过程出现未知异常", e);
+		}
+		return response;
 	}
 
 }

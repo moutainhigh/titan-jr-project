@@ -42,7 +42,8 @@ public class OrderOperateRequest extends BaseRequest{
     private String goodsname;
     //单价
     private String unitprice;
-
+    
+    
     @Override
     public void check() throws RSValidateException {
         //校验不能为空

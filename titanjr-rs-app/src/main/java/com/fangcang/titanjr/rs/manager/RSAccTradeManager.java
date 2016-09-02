@@ -77,4 +77,11 @@ public interface RSAccTradeManager {
      * @return
      */
     public AccountWithDrawResponse accountBalanceWithDraw(AccountWithDrawRequest accountWithDrawRequest);
+    
+    /**
+     * 绑卡加下单的接口
+     * @param orderSaveWithCardRequest
+     * @return
+     */
+    public OrderSaveWithCardResponse orderSaveWithdraw(OrderSaveWithCardRequest orderSaveWithCardRequest);
 }
