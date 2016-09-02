@@ -440,4 +440,51 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 		this.rsInvokeInitManager = rsInvokeInitManager;
 	}
 
+	@Override
+	public OrderSaveWithCardResponse orderSaveWithdraw(
+			OrderSaveWithCardRequest orderSaveWithCardRequest) {
+		OrderSaveWithCardResponse response = new OrderSaveWithCardResponse();
+		try{
+			WheatfieldOrderSaveWithcardRequest req = new WheatfieldOrderSaveWithcardRequest();
+			if(needCheckRequest){
+				orderSaveWithCardRequest.check();
+			}
+			MyBeanUtil.copyBeanProperties(req, orderSaveWithCardRequest);
+			WheatfieldOrderSaveWithcardResponse rsp = RSInvokeConstant.ropClient
+					.execute(req, RSInvokeConstant.sessionKey);
+			if (rsp != null) {
+				log.info("调用orderSaveWithCardRequest返回报文: \n" + rsp.getBody());
+				String errorMsg;
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						errorMsg = rsp.getSubMsg();
+					} else {
+						errorMsg = rsp.getMsg();
+					}
+					response.setReturnCode(rsp.getErrorCode());
+					response.setReturnMsg(errorMsg);
+					log.error("调用接口orderSaveWithCardRequest异常：" + errorMsg);
+				} else {
+					response.setSuccess(true);
+					response.setOperateStatus(rsp.getIs_success());
+					response.setReturnMsg(rsp.getMsg());
+					response.setOrderId(rsp.getOrderid());
+					if(rsp.getIs_success().equals(CommonConstant.OPERATE_SUCCESS)){
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}
+				}
+			}else{
+				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
+				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
+			}
+			
+		}catch(Exception e){
+			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+			response.setReturnMsg(e.getMessage());
+			log.error("调用orderSaveWithCardRequest过程出现未知异常", e);
+		}
+		return response;
+	}
+	
 }
