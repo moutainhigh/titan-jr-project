@@ -7,7 +7,6 @@ import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.CashierDeskTypeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
-import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.ReqstatusEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
@@ -20,7 +19,6 @@ import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
-import com.fangcang.titanjr.dto.bean.CashDeskData;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.GDPOrderDTO;
@@ -41,7 +39,6 @@ import com.fangcang.titanjr.dto.response.*;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.*;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
-import com.fangcang.titanjr.web.pojo.DefaultPayerConfig;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
 
@@ -96,8 +93,6 @@ public class FinancialTradeController extends BaseController {
 	@Resource
 	private TitanOrderService titanOrderService;
 	
-	@Resource
-	private DefaultPayerConfig defaultPayerConfig;
 
 	@Resource
 	private TitanFinancialOrganService titanFinancialOrganService;
@@ -379,11 +374,11 @@ public class FinancialTradeController extends BaseController {
 				paymentRequest.setUserid(this.getUserId());
 			}
 			model.addAttribute(WebConstant.RESULT, WebConstant.FAIL);
-			
+			DefaultPayerConfigResponse defaultPayerConfigResponse = titanFinancialAccountService.getDefaultPayerConfig();
 			Map<String,String> result =null;
 			if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentRequest.getPaySource())){
-				paymentRequest.setProductId(defaultPayerConfig.getProductId());
-				paymentRequest.setUserid(defaultPayerConfig.getUserId());
+				paymentRequest.setProductId(defaultPayerConfigResponse.getProductId());
+				paymentRequest.setUserid(defaultPayerConfigResponse.getUserId());
 				result = validateB2BData(paymentRequest);
 			}else{
 				FinancialOrderResponse financialOrderResponse =null;
@@ -916,22 +911,8 @@ public class FinancialTradeController extends BaseController {
 		return flag;
 	}
 	
-	
-	
-	/**
-	 * 
-	 *收银台改造开始
-	 */
-	
-		
-		//收银台改造结束
-	
 	@RequestMapping(value = "/showCashierDesk", method = {RequestMethod.GET, RequestMethod.POST})
 	public String showCashierDesk(PaymentUrlRequest paymentUrlRequest,HttpServletRequest request, Model model) throws Exception {
-
-		//查询商家主题
-		
-		
 		log.info("获取支付地址入参:" + toJson(paymentUrlRequest));
 		if (!CashierDeskTypeEnum.RECHARGE.deskCode.equals(paymentUrlRequest.getPaySource())) {
 			boolean flag = validateShowDeskSign(paymentUrlRequest);
@@ -940,6 +921,7 @@ public class FinancialTradeController extends BaseController {
 				return "checkstand-pay/cashierDeskError";
 			}
 		}
+		DefaultPayerConfigResponse defaultPayerConfigResponse = titanFinancialAccountService.getDefaultPayerConfig();
 		
 		if(CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paymentUrlRequest.getPaySource())){//GDP付款
 			GDPOrderResponse gDPOrderResponse =titanFinancialTradeService.getGDPOrderDTO(paymentUrlRequest.getPayOrderNo());
@@ -954,7 +936,7 @@ public class FinancialTradeController extends BaseController {
 	    		model.addAttribute(WebConstant.MSG,"该订单不存在");
     			return "checkstand-pay/cashierDeskError";
 	    	}
-			paymentUrlRequest.setUserid(defaultPayerConfig.getUserId());
+			paymentUrlRequest.setUserid(defaultPayerConfigResponse.getUserId());
 			model.addAttribute("userId", paymentUrlRequest.getUserid());
 			model.addAttribute("operator",paymentUrlRequest.getOperater());
 			model.addAttribute("businessOrderCode",paymentUrlRequest.getBusinessOrderCode());
@@ -1213,3 +1195,4 @@ public class FinancialTradeController extends BaseController {
 	}
 	
 }
+

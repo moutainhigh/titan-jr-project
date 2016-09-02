@@ -19,5 +19,4 @@ public class BankCardQueryResponse extends BaseResponse{
     public void setBankCardInfoList(List<BankCardInfo> bankCardInfoList) {
         this.bankCardInfoList = bankCardInfoList;
     }
-    
 }

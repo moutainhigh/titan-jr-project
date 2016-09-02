@@ -77,6 +77,7 @@
 	    t_tfs_user u
       LEFT JOIN t_tfs_userbindinfo b ON u.tfsuserid = b.tfsuserid 
     <where>
+    	b.isactive = 1
     	<if test="status !=null"> and u.status = #{status}</if>
     	<if test="excludeStatus !=null"> and u.status != #{excludeStatus}</if>
 		<if test="userId !=null"> and u.userid = #{userId}</if>
@@ -193,12 +194,10 @@
     </set>
     where tfsuserid = #{tfsuserid,jdbcType=INTEGER}
   </update>
-  
   <select id="selectTitanUser" parameterType="java.lang.Integer" resultType="com.fangcang.titanjr.entity.TitanUser">
       select tfsuserid, userid, orgcode, username, userloginname, password, department, mobilephone, email, 
       merchantcode, paypassword,paySalt, status, isadmin,creator, createtime, modifier, 
       modifytime from t_tfs_user where tfsuserid =#{tfsuserid}
       
   </select>
-  
 </mapper>

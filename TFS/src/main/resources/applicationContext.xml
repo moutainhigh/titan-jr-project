@@ -84,12 +84,6 @@
           <property name="defaultEncoding"><value>UTF-8</value></property> 
     </bean>
     
-    
-    <bean id="defaultPayerConfig" class="com.fangcang.titanjr.web.pojo.DefaultPayerConfig" >
-          <property name="userId" value="${gdp_userId}"/> 
-          <property name="productId" value="${gdp_productId}"/>
-    </bean>
-
     <bean class="com.fangcang.titanjr.web.handler.GlobalExceptionHandler" />
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>

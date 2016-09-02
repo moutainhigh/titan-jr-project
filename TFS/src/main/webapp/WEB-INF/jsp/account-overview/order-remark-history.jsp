@@ -12,13 +12,16 @@
 	<div class="S_popup_content" style="width: 570px; padding: 10px;">
 		<div class="hostel_hint1">     
        <div class=" p_t10">
-         <div class="S_topTitle p_r15">备注内容：</div>
-         <textarea cols="" rows="" id="id_remark_text" class="text textarea_1 w437_h180"></textarea> 
+         <div class="S_topTitle p_r15" style="width:100px;">备注内容：</div>
+         <div style="float:left;width:380px;" id="r_content"></div>
+         
          </div>
          </div>
+		
 	</div>
 </div>
 <script type="text/javascript">
-	var c = backEnterKey("${transOrder.remark}");
-	$("#id_remark_text").html(c);
+		var c = replaceEnterKey("${transOrder.remark}");
+		$("#r_content").html(c);
 </script>
+

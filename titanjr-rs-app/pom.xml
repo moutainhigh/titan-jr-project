@@ -22,7 +22,6 @@
             <artifactId>RopExSdk</artifactId>
             <version>1.0.0</version>
         </dependency>
-
         <dependency>
             <groupId>com.fangcang</groupId>
             <artifactId>fangcang-core</artifactId>

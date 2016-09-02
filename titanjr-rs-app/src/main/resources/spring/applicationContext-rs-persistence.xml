@@ -33,4 +33,8 @@
 		<property name="mapperInterface" value="com.fangcang.titanjr.rs.dao.CallBackConfigDao"></property>
 		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
 	</bean>
+	<bean id="rsSysconfigDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.fangcang.titanjr.rs.dao.SysconfigDao"></property>
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
 </beans>

@@ -165,7 +165,7 @@
         val : 'bankName', //数据源中，做为val的字段
         width : 240,
         height : 300,
-        autoSelect : false,
+        autoSelectVal : true,
         clickEvent : function(d, input){
             input.attr('data-id', d.key);
             $("#bankName").val(d.val);
