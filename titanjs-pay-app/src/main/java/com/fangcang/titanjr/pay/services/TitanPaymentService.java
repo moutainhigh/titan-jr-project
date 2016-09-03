@@ -80,6 +80,7 @@ public class TitanPaymentService {
 	    		AccountCheckRequest accountCheckRequest = new AccountCheckRequest();
 	    		accountCheckRequest.setOrgName(orgName);
 	    		accountCheckRequest.setTitanCode(titanCode);
+	    		accountCheckRequest.setStatusId(1);//just query active org
 	    		AccountCheckResponse accountCheckResponse = titanFinancialAccountService.checkTitanCode(accountCheckRequest);
 	    		if(accountCheckResponse.isCheckResult()){
 	    		   return accountCheckResponse;

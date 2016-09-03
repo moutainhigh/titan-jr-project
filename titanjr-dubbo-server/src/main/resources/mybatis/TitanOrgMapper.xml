@@ -16,6 +16,7 @@
             <if test="buslince != null"> and buslince = #{buslince}</if>
             <if test="certificatetype != null"> and certificatetype =#{certificatetype}</if>
             <if test="certificatenumber != null"> and certificatenumber =#{certificatenumber}</if>
+            <if test="statusid !=null">and statusid =#{statusid}</if>
         </where>
     </select>
 

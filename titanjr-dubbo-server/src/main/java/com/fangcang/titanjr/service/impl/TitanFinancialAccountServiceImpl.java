@@ -840,6 +840,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			TitanOrgParam condition = new TitanOrgParam();
 			condition.setOrgname(accountCheckRequest.getOrgName());
 			condition.setTitancode(accountCheckRequest.getTitanCode());
+			condition.setStatusid(accountCheckRequest.getStatusId());
 			try {
 				titanOrgDao.selectForPage(condition, paginationSupport);
 			} catch (Exception e) {

@@ -17,6 +17,8 @@ public class AccountCheckRequest extends BaseRequestDTO{
 	@NotNull
 	private String titanCode;
 	
+	private Integer statusId;
+	
 	public String getOrgName() {
 		return orgName;
 	}
@@ -29,5 +31,10 @@ public class AccountCheckRequest extends BaseRequestDTO{
 	public void setTitanCode(String titanCode) {
 		this.titanCode = titanCode;
 	}
-	
+	public Integer getStatusId() {
+		return statusId;
+	}
+	public void setStatusId(Integer statusId) {
+		this.statusId = statusId;
+	}
 }

@@ -1050,33 +1050,33 @@ public class DemoAPI {
 		String strError = null;
 		try {
 			WheatfieldOrderServiceKzhwithholdRequest req = new WheatfieldOrderServiceKzhwithholdRequest();
-			req.setAmount((long)20);					//入账金额
-			req.setOrderamount((long)20);				//订单金额
-			req.setOrdercount(1);						//订单数量
-			req.setFunccode("4014");					//代扣代付
-			req.setProductid("P000070");				//产品号
-			req.setUserfee((long)0);					//用户手续费
-			req.setUserid("xxx");						//用户号
-			req.setIntermerchantcode("xxx");			//中间商户编码 向那个账户发起代付
-			req.setUseripaddress("127.0.0.1");			//用户IP地址 格式 127.0.0.1
-			req.setOrderno("xxx");						//订单号（商户可不填）
-			req.setMerchantcode("M000016");				//商户编码/机构号
-			req.setRequestno("xxx");					//请求号
-			req.setRequesttime(new Date());				//请求时间
-			req.setOrderdate(new Date());				//订单日期 格式 yyyy-MM-dd hh:mm:ss		
-			req.setStatus(1);							//状态
-			
-			//非必输			
-			req.setFeeamount((long)0);					//手续费金额				
-			req.setOrderpackageno("");					//订单包号
-			req.setPaychannelid("");					//支付渠道ID			
-			req.setProfit((long)0);						//利润
-			req.setRemark("");							//备注				
-			req.setTradeflowno("");						//统一交易流水号			
-			req.setBankcode("");						//银行银联编号
-			req.setBusitypeid("");						//业务类型ID
-			req.setErrorcode("");						//错误信息码
-			req.setErrormsg("");						//错误信息
+//			req.setAmount((long)20);					//入账金额
+//			req.setOrderamount((long)20);				//订单金额
+//			req.setOrdercount(1);						//订单数量
+//			req.setFunccode("4014");					//代扣代付
+//			req.setProductid("P000070");				//产品号
+//			req.setUserfee((long)0);					//用户手续费
+//			req.setUserid("xxx");						//用户号
+//			req.setIntermerchantcode("xxx");			//中间商户编码 向那个账户发起代付
+//			req.setUseripaddress("127.0.0.1");			//用户IP地址 格式 127.0.0.1
+//			req.setOrderno("xxx");						//订单号（商户可不填）
+//			req.setMerchantcode("M000016");				//商户编码/机构号
+//			req.setRequestno("xxx");					//请求号
+//			req.setRequesttime(new Date());				//请求时间
+//			req.setOrderdate(new Date());				//订单日期 格式 yyyy-MM-dd hh:mm:ss		
+//			req.setStatus(1);							//状态
+//			
+//			//非必输			
+//			req.setFeeamount((long)0);					//手续费金额				
+//			req.setOrderpackageno("");					//订单包号
+//			req.setPaychannelid("");					//支付渠道ID			
+//			req.setProfit((long)0);						//利润
+//			req.setRemark("");							//备注				
+//			req.setTradeflowno("");						//统一交易流水号			
+//			req.setBankcode("");						//银行银联编号
+//			req.setBusitypeid("");						//业务类型ID
+//			req.setErrorcode("");						//错误信息码
+//			req.setErrormsg("");						//错误信息
 			
 			WheatfieldOrderServiceKzhwithholdResponse rsp = 
 					ropClient.execute(req, sessionKey);

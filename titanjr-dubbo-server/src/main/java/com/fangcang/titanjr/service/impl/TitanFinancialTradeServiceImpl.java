@@ -2372,8 +2372,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			String domainName = domainConfigDao.queryCurrentEnvDomain();
 			if(StringUtil.isValidString(domainName)){
 				payMethodConfigDTO = new PayMethodConfigDTO();
-				payMethodConfigDTO.setPageurl("http://"+domainName+"/TFS/trade/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/TFS/trade/notify.action");
+				payMethodConfigDTO.setPageurl("http://"+domainName+"/TFS/payment/payConfirmPage.action");
+				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/TFS/payment/notify.action");
 			}
 			return payMethodConfigDTO;
 			
