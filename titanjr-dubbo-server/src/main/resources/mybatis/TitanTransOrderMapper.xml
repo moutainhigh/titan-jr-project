@@ -112,6 +112,9 @@
       <if test="receivablefee !=null">
         receivablefee=#{receivablefee},
       </if>
+       <if test="standfee !=null">
+        standfee=#{standfee},
+      </if>
       <if test="createtime !=null">
         createtime=#{createtime},
       </if>
@@ -243,7 +246,7 @@
       adjusttype, adjustcontent, creator, 
       receivablefee, createtime, receivedfee,isEscrowedPayment,
       escrowedDate,payeemerchant,payermerchant,payorderno,merchantcode,
-      tradeamount,transordertype,notifyUrl,businessinfo,payertype
+      tradeamount,transordertype,notifyUrl,businessinfo,payertype,standfee
       )
     values (#{transid,jdbcType=INTEGER}, #{constid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, 
       #{ordertypeid,jdbcType=VARCHAR}, #{productid,jdbcType=VARCHAR}, #{orderid,jdbcType=VARCHAR}, 
@@ -254,7 +257,7 @@
       #{adjusttype,jdbcType=VARCHAR}, #{adjustcontent,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
       #{receivablefee}, #{createtime}, #{receivedfee},#{isEscrowedPayment},#{escrowedDate},
       #{payeemerchant},#{payermerchant},#{payorderno},#{merchantcode},#{tradeamount},#{transordertype},
-      #{notifyUrl},#{businessinfo},#{payerType}
+      #{notifyUrl},#{businessinfo},#{payerType},#{standfee}
       )
   </insert>
 
@@ -291,6 +294,9 @@
             </if>
             <if test="receivedfee != null">
                 receivedfee = #{receivedfee},
+            </if>
+             <if test="standfee != null">
+                standfee = #{standfee},
             </if>
             <if test="remark != null">
                 remark = #{remark},
@@ -334,7 +340,7 @@
             resultType="com.fangcang.titanjr.dto.bean.TransOrderDTO">
         select transid, constid, userid, ordertypeid, productid, orderid, userorderid, businessordercode, orderdate,
         ordertime, provider, userrelateid,amount, goodsname, goodsdetail, goodscnt, unitprice, statusid,
-        adjusttype, adjustcontent, creator,receivablefee, createtime, receivedfee,escrowedDate,isEscrowedPayment,
+        adjusttype, adjustcontent, creator,receivablefee,standfee, createtime, receivedfee,escrowedDate,isEscrowedPayment,
         payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype,notifyUrl,businessinfo,payertype as payerType
          from t_tfs_transorder
         <where>

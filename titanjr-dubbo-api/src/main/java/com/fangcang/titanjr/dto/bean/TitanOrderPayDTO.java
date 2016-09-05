@@ -40,10 +40,35 @@ public class TitanOrderPayDTO implements Serializable {
     private Float standardrate;
     private Float executionrate;
     private Integer ratetype;
-    private Float receivablefee;
-    private Float receivedfee;
+    private Long receivablefee;
+    private Long receivedfee;
+    private Long standfee;
+    
+    public Long getReceivablefee() {
+		return receivablefee;
+	}
 
-    public Integer getOrderpayreqid() {
+	public void setReceivablefee(Long receivablefee) {
+		this.receivablefee = receivablefee;
+	}
+
+	public Long getReceivedfee() {
+		return receivedfee;
+	}
+
+	public void setReceivedfee(Long receivedfee) {
+		this.receivedfee = receivedfee;
+	}
+
+	public Long getStandfee() {
+		return standfee;
+	}
+
+	public void setStandfee(Long standfee) {
+		this.standfee = standfee;
+	}
+
+	public Integer getOrderpayreqid() {
         return orderpayreqid;
     }
 
@@ -298,23 +323,7 @@ public class TitanOrderPayDTO implements Serializable {
     public void setRatetype(Integer ratetype) {
         this.ratetype = ratetype;
     }
-
-    public Float getReceivablefee() {
-        return receivablefee;
-    }
-
-    public void setReceivablefee(Float receivablefee) {
-        this.receivablefee = receivablefee;
-    }
-
-    public Float getReceivedfee() {
-        return receivedfee;
-    }
-
-    public void setReceivedfee(Float receivedfee) {
-        this.receivedfee = receivedfee;
-    }
-
+ 
     public Date getOrderDate() {
         return com.fangcang.util.DateUtil.stringToDate(this.orderTime, "yyyyMMddHHmmss");
     }

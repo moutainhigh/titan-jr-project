@@ -149,6 +149,12 @@ public class TitanPaymentService {
             rechargeRequest.setBusiCode(BusiCodeEnum.MerchantOrder.getKey());
             rechargeRequest.setOrderMark( OrderMarkEnum.InsideOrder.getKey());
             rechargeRequest.setCharset(CharsetEnum.UTF_8.getKey());
+            rechargeRequest.setReceivablefee(Long.parseLong(titanPaymentRequest.getReceivablefee()));
+            rechargeRequest.setReceivedfee(Long.parseLong(titanPaymentRequest.getReceivedfee()));
+            rechargeRequest.setStandfee(Long.parseLong(titanPaymentRequest.getStandfee()));
+            rechargeRequest.setStandardrate(titanPaymentRequest.getStandardrate());
+            rechargeRequest.setExecutionrate(titanPaymentRequest.getExecutionrate());
+            rechargeRequest.setRatetype(titanPaymentRequest.getRateType());
             
             if (titanPaymentRequest.getPayType() != null) {
                 rechargeRequest.setPayType(titanPaymentRequest.getPayType().getKey());

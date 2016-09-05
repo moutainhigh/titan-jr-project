@@ -1,22 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"  session="false" %>
 <%@ include file="/comm/taglib.jsp"%>
 <%@ page isELIgnored="false" %>
-<%
-    if(request.getCookies() != null)
-    {
-        for(int i=0;i<request.getCookies().length;i++)
-        {
-            if("JSESSIONID".equals(request.getCookies()[i].getName()))
-            {
-                Cookie killMyCookie = new Cookie("JSESSIONID", request.getCookies()[i].getValue());
-                killMyCookie.setHttpOnly(true);
-                killMyCookie.setPath("/");
-                response.addCookie(killMyCookie);
-                response.getHeaderNames();
-            }
-        }
-    }
-%>
 <html>
 <head>
     <meta charset="utf-8">
@@ -139,7 +123,7 @@
                       <li>
                       <c:forEach items="${cashDeskData.commonPayMethodDTOList }" var="commom" varStatus="status">
 								<c:if test="${commom.bankname !='cmbc'}">
-								  <div class="paytable_payway">
+								  <div class="paytable_payway" itemType='${commom.paytype}'>
                                     <div class="payc_left"><label class="f_ui-radio-c3">
                                       <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${commom.bankname}">
                                       <i></i>
@@ -163,7 +147,7 @@
                          
                           <c:forEach items="${cashDeskData.commonPayMethodDTOList }" var="commom" varStatus="status">
                                <c:if test="${commom.bankname =='cmbc'}">
-								  <div class="paytable_payway">
+								  <div class="paytable_payway" itemType='${commom.paytype}'>
                                     <div class="payc_left"><label class="f_ui-radio-c3">
                                       <input name="r2" type="radio" data-index="i_${status.index}" class="bankName" value="${commom.bankname}">
                                       <i></i>
@@ -198,7 +182,7 @@
                                 <li>
                                     <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
                                       <c:if test="${itemBank.bankName !='cmbc'}">
-                                        <div class="paytable_payway">
+                                        <div class="paytable_payway" itemType='${deskItem.itemType}'>
                                             <div class="payc_left"><label class="f_ui-radio-c3">
                                                 <input name="r2" type="radio" data-index="${o_status.index }-${i_status.index}" class="bankName" value="${itemBank.bankName}">
                                                 <i></i>
@@ -224,7 +208,7 @@
                                    </c:forEach>
                                    <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="d_status">
                                     <c:if test="${itemBank.bankName=='cmbc'}">
-                                        <div class="paytable_payway">
+                                        <div class="paytable_payway" itemType='${deskItem.itemType}'>
                                             <div class="payc_left"><label class="f_ui-radio-c3">
                                                 <input name="r2" type="radio" data-index="d_${o_status.index }-${d_status.index}" class="bankName" value="${itemBank.bankName}">
                                                 <i></i>
@@ -332,6 +316,46 @@ $("document").ready(function (){
         		||'${cashDeskData.balanceusable}'=="0"){
         	$("#d_checkbox").attr("checked",false);
         }
+        //点击某个银行计算费率
+        $('.paytable_payway').on('click', function(){
+        	
+             var itemType = $(this).attr('itemType');
+             var userId = '${cashDeskData.cashierDeskDTO.userId}';
+             var payAmount = "0";
+         	 var transferAmount ="0";
+         	 if (sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}') <= 0){
+         		if($("#d_checkbox").attr("checked")=="checked"){//余额充足二选一
+         			transferAmount = '${cashDeskData.amount}';
+            	    }else{
+            	    	payAmount = '${cashDeskData.amount}';
+            	    }
+         	 }else{
+         		if($("#d_checkbox").attr("checked")=="checked"){//余额不足，任意选择
+        			transferAmount = '${cashDeskData.balanceusable}';
+           		    payAmount = sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}');
+           	    }else{
+           	    	payAmount = '${cashDeskData.amount}';
+           	    }
+         	 }
+         	 
+         	 $.ajax({
+            	 type: "get",
+                 url: "<%=basePath%>/rate/rateCompute.action?userId="+userId+"&amount="+payAmount+"&payType="+itemType+"&date=" + new Date().getTime(),
+                 dataType: "json",
+                 success: function(data){
+                	 
+                	 $('#pay_totalAmount').text(data.data.amount);
+                	//alert(data.data.amount);
+                 }
+               }); 
+        });
+        
+        $('.paytable_payway').each(function(){
+        	if($(this).find('input:radio[name="r2"]').is(":checked"))
+        	{
+        		$(this).click();
+        	}
+        });
     });
 
 	function show_history(){//如果在才账户历史或者收款方

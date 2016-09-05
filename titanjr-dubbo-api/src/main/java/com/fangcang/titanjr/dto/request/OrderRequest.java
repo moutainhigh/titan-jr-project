@@ -73,13 +73,42 @@ public class OrderRequest implements Serializable{
     private Integer transordertype;
     
     private String bussinessInfo;
-    
+    //应收手续费
+    private String receivablefee;
+    //实收手续费
+    private String receivedfee;
+    //标准费率手续费
+    private String standfee;
     //回调地址
     private String notifyUrl;
     
     private Integer transid;
     
     private String payerType;
+    public String getReceivablefee() {
+		return receivablefee;
+	}
+
+	public void setReceivablefee(String receivablefee) {
+		this.receivablefee = receivablefee;
+	}
+
+	public String getReceivedfee() {
+		return receivedfee;
+	}
+
+	public void setReceivedfee(String receivedfee) {
+		this.receivedfee = receivedfee;
+	}
+
+	public String getStandfee() {
+		return standfee;
+	}
+
+	public void setStandfee(String standfee) {
+		this.standfee = standfee;
+	}
+    
     
     public String getNotifyUrl() {
 		return notifyUrl;
