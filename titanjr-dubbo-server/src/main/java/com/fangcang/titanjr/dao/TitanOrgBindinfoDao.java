@@ -13,5 +13,7 @@ public interface TitanOrgBindinfoDao {
 	int insert(TitanOrgBindinfo entity) throws DaoException;
 	int update(TitanOrgBindinfo entity) throws DaoException;
 	
-	List<TitanOrgBindinfo> selectTitanOrgBindinfoByUserid(TitanOrgBindinfo titanOrgBindinfo)throws DaoException;;
+	List<TitanOrgBindinfo> selectTitanOrgBindinfoByUserid(TitanOrgBindinfo titanOrgBindinfo)throws DaoException;
+	
+	List<TitanOrgBindinfo> selectActiveTitanOrgBindinfo(TitanOrgBindinfo titanOrgBindinfo)throws DaoException;
 }

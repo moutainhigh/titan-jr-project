@@ -158,6 +158,13 @@ public interface TitanFinancialOrganService {
     public OrgBindInfo queryOrgBindInfoByUserid(OrgBindInfo orgBindInfo);
     
     /**
+     * 查询有效账户的绑定信息
+     * @param orgBindInfo
+     * @return
+     */
+    public OrgBindInfo queryActiveOrgBindInfo(OrgBindInfo orgBindInfo);
+    
+    /**
      * 获取或者生成验证码
      * @param getCheckCodeRequest
      * @return
