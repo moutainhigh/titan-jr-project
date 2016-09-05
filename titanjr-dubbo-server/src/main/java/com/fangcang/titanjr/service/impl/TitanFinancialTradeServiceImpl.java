@@ -1309,7 +1309,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				orderRequest.setCreator(paymentRequest.getCreator());
 				orderRequest.setMerchantCode(paymentRequest.getMerchantcode());
 				orderRequest.setPayOrderNo(paymentRequest.getPayOrderNo());
-				// orderRequest.setTradeamount(paymentRequest.getTradeamount());
+				orderRequest.setTradeamount(paymentRequest.getTradeamount());
 				orderRequest.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
 
 				if (StringUtil.isValidString(paymentRequest.getNotifyUrl())) {
