@@ -50,4 +50,15 @@ public class TitanOrgBindinfoDaoImpl extends GenericDAOMyBatisImpl implements Ti
 			throw new DaoException(e);
 		}
 	}
+
+	@Override
+	public List<TitanOrgBindinfo> selectActiveTitanOrgBindinfo(
+			TitanOrgBindinfo titanOrgBindinfo) throws DaoException {
+		try {
+			return getSqlSession().selectList("com.fangcang.titanjr.dao.TitanOrgBindinfoDao.selectActiveTitanOrgBindinfo", titanOrgBindinfo);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+	
 }

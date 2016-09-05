@@ -69,4 +69,21 @@
 	      </if>
 	  </where>
   </select>
+  
+  <select id="selectActiveTitanOrgBindinfo" parameterType="com.fangcang.titanjr.entity.TitanOrgBindinfo" resultType="com.fangcang.titanjr.entity.TitanOrgBindinfo">
+      select 
+	      obi.userid, obi.merchantcode, obi.orgcode, obi.merchantname, 
+	      obi.bindstatus,  obi.creator,obi.createtime, obi.modifier, 
+	      obi.modifytime 
+	  from 
+	      t_tfs_orgbindinfo obi inner join  t_tfs_org org 
+	  on 
+	       org.userid =obi.userid
+      <where>
+          org.statusid=1
+	      <if test="merchantcode !=null">
+	        and merchantcode = #{merchantcode}
+	      </if>
+	  </where>
+  </select>
 </mapper>

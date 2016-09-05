@@ -10,6 +10,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
@@ -88,7 +91,6 @@ public class TitanTradeController extends BaseController {
 		}
 
 		try {
-
 			String deInfo = RSADecryptString.decryptString(orderInfo,
 					TitanConstantDefine.PRIVATE_KEY);
 			if (!StringUtil.isValidString(deInfo)) {
@@ -425,10 +427,13 @@ public class TitanTradeController extends BaseController {
 		}
 
 		// 设置商家主题]
+		log.info("the merchantcode is"+transOrderDTO.getMerchantcode());
 		if (StringUtil.isValidString(transOrderDTO.getMerchantcode())) {
 			MerchantResponseDTO merchantResponseDTO = financialTradeService
 					.getMerchantResponseDTO(transOrderDTO.getMerchantcode());
+			log.info("merchantResponseDTO:"+JSONSerializer.toJSON(merchantResponseDTO));
 			if (null != merchantResponseDTO) {
+				log.info("the merchantcode's theme is "+merchantResponseDTO.getTheme());
 				model.addAttribute("CURRENT_THEME",
 						merchantResponseDTO.getTheme());
 			}

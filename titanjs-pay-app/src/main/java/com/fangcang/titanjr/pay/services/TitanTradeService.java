@@ -348,7 +348,6 @@ public class TitanTradeService {
 				.getHessianProxyBean(MerchantFacade.class,
 						ProxyFactoryConstants.merchantServerUrl
 								+ "merchantFacade");
-
 		return merchantFacade.queryMerchantDetail(queryDTO);
 	}
 }
