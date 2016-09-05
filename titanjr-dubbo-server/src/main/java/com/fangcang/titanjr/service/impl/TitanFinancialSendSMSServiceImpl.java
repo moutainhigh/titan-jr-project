@@ -6,7 +6,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fangcang.message.common.MsgReturn;
 import com.fangcang.message.email.dto.EmailSenderDTO;
 import com.fangcang.message.email.service.EmailSendService;
 import com.fangcang.message.sms.dto.SMSSendDTO;
