@@ -21,7 +21,7 @@
 
     <div class="S_popup_Kan clearfix opaque">
         <div class="gold_pay">
-           <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${cashDeskData.amount }"  pattern="#,##0.00#" /></span>元</div>
+           <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${cashDeskData.amount }"  pattern="#,##0.00#" /></span>元 (<span id="pay_rate"></span>元)</div>
             <div class="goldpay_top">
                 <ul>
                     <li id="not_exists_history">
@@ -344,7 +344,7 @@ $("document").ready(function (){
                  dataType: "json",
                  success: function(data){
                 	 
-                	 $('#pay_totalAmount').text(data.data.amount);
+                	 $('#pay_rate').text(data.data.exRateAmount);
                 	//alert(data.data.amount);
                  }
                }); 
