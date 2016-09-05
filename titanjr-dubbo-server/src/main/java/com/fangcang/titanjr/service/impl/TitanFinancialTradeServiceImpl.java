@@ -1693,9 +1693,15 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				titanTransOrder.setGoodscnt(1);
 
 				//设置费率信息
-				titanTransOrder.setReceivablefee(Long.parseLong(orderRequest.getReceivablefee()));
-				titanTransOrder.setReceivedfee(Long.parseLong(orderRequest.getReceivedfee()));
-				titanTransOrder.setStandfee(Long.parseLong(orderRequest.getStandfee()));
+				if(StringUtil.isValidString(orderRequest.getReceivablefee())){
+					titanTransOrder.setReceivablefee(Long.parseLong(orderRequest.getReceivablefee()));
+				}
+				if(StringUtil.isValidString(orderRequest.getReceivedfee())){
+					titanTransOrder.setReceivedfee(Long.parseLong(orderRequest.getReceivedfee()));
+				}
+				if(StringUtil.isValidString(orderRequest.getStandfee())){
+					titanTransOrder.setStandfee(Long.parseLong(orderRequest.getStandfee()));
+				}
 			}
 		} catch (Exception e) {
 			throw new Exception(e);
