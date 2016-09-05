@@ -24,7 +24,7 @@
       busiCode, version, charset, 
       signMsg, reqstatus, standardrate, 
       executionrate, ratetype, receivablefee, 
-      receivedfee)
+      receivedfee , standfee)
     values (#{orderpayreqid,jdbcType=INTEGER}, #{transorderid,jdbcType=INTEGER}, #{merchantNo,jdbcType=VARCHAR}, 
       #{orderNo,jdbcType=VARCHAR}, #{productNo,jdbcType=VARCHAR}, #{productName,jdbcType=VARCHAR}, 
       #{productDesc,jdbcType=VARCHAR}, #{productNum,jdbcType=INTEGER}, #{orderAmount,jdbcType=DOUBLE}, 
@@ -36,7 +36,7 @@
       #{busiCode,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{charset,jdbcType=INTEGER}, 
       #{signMsg,jdbcType=VARCHAR}, #{reqstatus,jdbcType=INTEGER}, #{standardrate}, 
       #{executionrate}, #{ratetype,jdbcType=INTEGER}, #{receivablefee}, 
-      #{receivedfee})
+      #{receivedfee},#{standfee})
   </insert>
   <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanOrderPayreq" >
     update t_tfs_orderpayreq
@@ -139,6 +139,9 @@
       </if>
       <if test="receivedfee != null" >
         receivedfee = #{receivedfee},
+      </if>
+      <if test="standfee != null" >
+        standfee = #{standfee},
       </if>
     </set>
     where orderpayreqid = #{orderpayreqid,jdbcType=INTEGER}
@@ -245,6 +248,9 @@
       </if>
       <if test="receivedfee != null" >
         receivedfee = #{receivedfee},
+      </if>
+      <if test="standfee != null" >
+        standfee = #{standfee},
       </if>
     </set>
      where orderno = #{orderNo}

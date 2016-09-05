@@ -1442,6 +1442,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			orderRequest.setBussinessInfo(transOrderDTO.getBusinessinfo());
 			orderRequest.setBusinessordercode(transOrderDTO
 					.getBusinessordercode());
+			//设置费率信息
+			orderRequest.setReceivablefee(titanPaymentRequest.getReceivablefee());
+			orderRequest.setReceivedfee(titanPaymentRequest.getReceivedfee());
+			orderRequest.setStandfee(titanPaymentRequest.getStandfee());
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
@@ -1660,8 +1664,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				titanTransOrder.setInterproductid(orderRequest
 						.getInterProductid());
 				titanTransOrder.setUserrelateid(orderRequest.getUserrelateid());
-				titanTransOrder.setReceivablefee(null);
-				titanTransOrder.setReceivedfee(null);
+//				titanTransOrder.setReceivablefee(null);
+//				titanTransOrder.setReceivedfee(null);
 				titanTransOrder.setIsEscrowedPayment(orderRequest
 						.getIsEscrowedPayment());
 				titanTransOrder.setEscrowedDate(orderRequest.getEscrowedDate());
@@ -1688,6 +1692,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						.setBusinessinfo(orderRequest.getBussinessInfo());
 				titanTransOrder.setGoodscnt(1);
 
+				//设置费率信息
+				titanTransOrder.setReceivablefee(Long.parseLong(orderRequest.getReceivablefee()));
+				titanTransOrder.setReceivedfee(Long.parseLong(orderRequest.getReceivedfee()));
+				titanTransOrder.setStandfee(Long.parseLong(orderRequest.getStandfee()));
 			}
 		} catch (Exception e) {
 			throw new Exception(e);
@@ -1751,9 +1759,12 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				titanOrderPayreq.setProductNum(Integer.parseInt(rechargeRequest
 						.getProductNum()));
 			}
-			titanOrderPayreq.setRatetype(null);
-			titanOrderPayreq.setReceivablefee(null);
-			titanOrderPayreq.setReceivedfee(null);
+			titanOrderPayreq.setRatetype(rechargeRequest.getRatetype());
+			titanOrderPayreq.setReceivablefee(rechargeRequest.getReceivablefee());
+			titanOrderPayreq.setStandfee(rechargeRequest.getStandfee());
+			titanOrderPayreq.setReceivedfee(rechargeRequest.getReceivedfee());
+			titanOrderPayreq.setStandardrate(rechargeRequest.getStandardrate());
+			titanOrderPayreq.setExecutionrate(rechargeRequest.getExecutionrate());
 			// 本地秘钥加密还是
 			String sign = getPaySigStr(rechargeRequest);
 			if (sign != null) {
@@ -1764,7 +1775,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				titanOrderPayreq.setSignType(Integer.parseInt(rechargeRequest
 						.getSignType()));
 			}
-			titanOrderPayreq.setStandardrate(null);
+			
 			titanOrderPayreq.setVersion(rechargeRequest.getVersion());
 
 		} catch (Exception e) {

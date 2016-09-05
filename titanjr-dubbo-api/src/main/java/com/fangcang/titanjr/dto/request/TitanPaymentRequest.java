@@ -23,7 +23,22 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	
 	//卡或者第三方支付需要支付金额
     private String payAmount;
-    
+
+	// 应收手续费
+	private String receivablefee = "0";
+	// 实收手续费
+	private String receivedfee = "0";
+	// 标准费率手续费
+	private String standfee = "0";
+	// 标准费率
+	private Float standardrate;
+	// 执行费率
+	private Float executionrate;
+	// 应收费率
+	private Float receivablerate;
+
+	// 费率类型
+	private int rateType;
    //调整类容
   	private String adjustcontent;
   	
@@ -35,9 +50,85 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
   	
     //银行标识
   	private String bankInfo;
-  	
+
+	// 付款者类型
+	private String payerType;
+
+	// 付款源
+	private String paySource;
 	//支付方式 默认个人银行
 	private PayTypeEnum payType = PayTypeEnum.Personal_Banking;
+	public Float getReceivablerate() {
+		return receivablerate;
+	}
+
+	public void setReceivablerate(Float receivablerate) {
+		this.receivablerate = receivablerate;
+	}
+
+	public int getRateType() {
+		return rateType;
+	}
+
+	public void setRateType(int rateType) {
+		this.rateType = rateType;
+	}
+
+	public Float getStandardrate() {
+		return standardrate;
+	}
+
+	public void setStandardrate(Float standardrate) {
+		this.standardrate = standardrate;
+	}
+
+	public Float getExecutionrate() {
+		return executionrate;
+	}
+
+	public void setExecutionrate(Float executionrate) {
+		this.executionrate = executionrate;
+	}
+
+	public String getPaySource() {
+		return paySource;
+	}
+
+	public void setPaySource(String paySource) {
+		this.paySource = paySource;
+	}
+
+	public String getPayerType() {
+		return payerType;
+	}
+
+	public void setPayerType(String payerType) {
+		this.payerType = payerType;
+	}
+
+	public String getReceivablefee() {
+		return receivablefee;
+	}
+
+	public void setReceivablefee(String receivablefee) {
+		this.receivablefee = receivablefee;
+	}
+
+	public String getReceivedfee() {
+		return receivedfee;
+	}
+
+	public void setReceivedfee(String receivedfee) {
+		this.receivedfee = receivedfee;
+	}
+
+	public String getStandfee() {
+		return standfee;
+	}
+
+	public void setStandfee(String standfee) {
+		this.standfee = standfee;
+	}
 
 	public String getLinePayType() {
 		return linePayType;

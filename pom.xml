@@ -23,7 +23,7 @@
         <module>titanjr-dubbo-api</module>
         <module>titanjr-dubbo-server</module>
         <module>titanjr-job-scheduler</module>
-         <module>titanjs-pay-app</module>
+         <module>titanjr-pay-app</module>
         <module>TFS</module>
     </modules>
 

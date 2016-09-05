@@ -67,6 +67,53 @@ public class RechargeRequest implements Serializable{
 	//落单生成的Id
 	private Integer transorderid;
 	
+	// 应收手续费
+	private Long receivablefee;
+	// 实收手续费
+	private Long receivedfee;
+	// 标准费率手续费
+	private Long standfee;
+	private Float standardrate;
+	private Float executionrate;
+	private Integer ratetype;
+	
+	public Integer getRatetype() {
+		return ratetype;
+	}
+	public void setRatetype(Integer ratetype) {
+		this.ratetype = ratetype;
+	}
+	
+	public Long getReceivablefee() {
+		return receivablefee;
+	}
+	public void setReceivablefee(Long receivablefee) {
+		this.receivablefee = receivablefee;
+	}
+	public Long getReceivedfee() {
+		return receivedfee;
+	}
+	public void setReceivedfee(Long receivedfee) {
+		this.receivedfee = receivedfee;
+	}
+	public Long getStandfee() {
+		return standfee;
+	}
+	public void setStandfee(Long standfee) {
+		this.standfee = standfee;
+	}
+	public Float getStandardrate() {
+		return standardrate;
+	}
+	public void setStandardrate(Float standardrate) {
+		this.standardrate = standardrate;
+	}
+	public Float getExecutionrate() {
+		return executionrate;
+	}
+	public void setExecutionrate(Float executionrate) {
+		this.executionrate = executionrate;
+	}
 	public Integer getTransorderid() {
 		return transorderid;
 	}

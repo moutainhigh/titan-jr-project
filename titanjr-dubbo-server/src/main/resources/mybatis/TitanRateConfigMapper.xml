@@ -22,6 +22,24 @@
             #{item.createtime})
         </foreach>
     </insert>
+    <insert id="insertRateRecord" parameterType="com.fangcang.titanjr.entity.TitanRateRecord">
+     	insert  into `t_tfs_raterecord`(`userId`,`accountCode`,`currency`,`creator`,`createTime`,`rateType`,`receivablefee`,`receivedfee`
+     	,`standerdfee`,`standardRate`,`receivableRate`,`receivedRate`,`amount`,`payType`,`usedFor`,`orderNo`)
+		values (#{userId},#{accountCode},#{currency},#{creator},#{createTime},#{rateType},#{receivablefee},#{receivedfee},#{standerdfee},#{standardRate},#{receivableRate},#{receivedRate},#{amount},#{payType},#{usedFor},#{orderNo});
+    </insert>
+    
+    <delete id="deleteRateRecordByOrderNo" parameterType="java.lang.String">
+    	  delete from t_tfs_raterecord where orderNo=#{orderNo}
+    </delete>
+    
+    <select id="queryRateConfigList" resultType="com.fangcang.titanjr.entity.TitanRateConfig"
+					parameterType="com.fangcang.titanjr.entity.parameter.TitanRateConfigParam">
+    	
+    	SELECT t1.* FROM t_tfs_rateconfig t1,(SELECT t1.itemid FROM t_tfs_cashierdeskitem t1 , t_tfs_cashierdesk t2 
+		WHERE t1.deskid = t2.deskid AND t2.userId= #{userid} AND t1.itemtype = #{cashierItemType}) 
+		t2 WHERE t1.cashieritemid = t2.itemid LIMIT 1
+    	
+    </select>
 
     <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanRateConfig">
         update t_tfs_rateconfig
