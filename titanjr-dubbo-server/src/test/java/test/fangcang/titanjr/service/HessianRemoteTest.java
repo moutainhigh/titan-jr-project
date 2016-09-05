@@ -6,6 +6,9 @@ import com.fangcang.finance.remote.FinanceSearchRemote;
 import com.fangcang.finance.request.FinanceOrderConfirmRequest;
 import com.fangcang.finance.request.FinanceOrderQuery;
 import com.fangcang.finance.response.FinanceOrderResponse;
+import com.fangcang.merchant.api.MerchantFacade;
+import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
+import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.order.api.HotelOrderSearchFacade;
 import com.fangcang.order.dto.OrderDetailResponseDTO;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
@@ -77,7 +80,7 @@ public class HessianRemoteTest extends SpringTest {
         System.out.println(GenericValidate.validate(request));
     }
     
-    @Test
+//    @Test
     public void validateOrderService(){
     	HotelOrderSearchFacade hotelOrderSearchFacade = hessianProxyBeanFactory.getHessianProxyBean(
     			HotelOrderSearchFacade.class,
@@ -86,4 +89,25 @@ public class HessianRemoteTest extends SpringTest {
     	OrderDetailResponseDTO oDetailResponseDTO = hotelOrderSearchFacade.queryOrderByCode("H0167130617070623");
         System.out.println(oDetailResponseDTO.getHotelName());
     }
+    
+    @Test
+    public void testCurrentTheme(){
+    	MerchantDetailQueryDTO queryDTO = new MerchantDetailQueryDTO();
+        queryDTO.setMerchantCode("M10029591");
+        try{
+    		MerchantFacade merchantFacade = hessianProxyBeanFactory
+    				.getHessianProxyBean(MerchantFacade.class,
+    						ProxyFactoryConstants.merchantServerUrl
+    								+ "merchantFacade");
+
+    		MerchantResponseDTO merchantResponseDTO =  merchantFacade.queryMerchantDetail(queryDTO);
+        	System.out.println("1111111111111111111"+merchantResponseDTO.getTheme());
+        }catch(Exception e){
+        	e.printStackTrace();
+        }
+       
+        
+       
+    }
+    
 }

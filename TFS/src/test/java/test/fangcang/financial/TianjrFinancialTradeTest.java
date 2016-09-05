@@ -26,6 +26,7 @@ import com.fangcang.titanjr.dto.bean.CharsetEnum;
 import com.fangcang.titanjr.dto.bean.OperTypeEnum;
 import com.fangcang.titanjr.dto.bean.OrderMarkEnum;
 import com.fangcang.titanjr.dto.bean.OrderTypeEnum;
+import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.SignTypeEnum;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
@@ -45,6 +46,7 @@ import com.fangcang.titanjr.dto.request.PermissionRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.TitanOrderRequest;
 import com.fangcang.titanjr.dto.request.TradeDetailRequest;
+import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.dto.request.UnFreezeAccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
@@ -66,8 +68,11 @@ import com.fangcang.titanjr.dto.response.UnFreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
+import com.fangcang.titanjr.service.TitanOrderService;
+import com.fangcang.util.StringUtil;
 
 public class TianjrFinancialTradeTest extends GenericTest{
 	
@@ -75,6 +80,8 @@ public class TianjrFinancialTradeTest extends GenericTest{
 	private TitanFinancialUserService titanFinancialUserService= null;
 	private TitanFinancialAccountService titanFinancialAccountService = null;
 	private TitanFinancialBankCardService titanFinancialBankCardService = null;
+	private TitanFinancialOrganService titanFinancialOrganService=null;
+	private TitanOrderService titanOrderService;
 
     @Before
     public void init(){
@@ -82,6 +89,8 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialUserService = (TitanFinancialUserService)cfx.getBean("titanFinancialUserService");
     	titanFinancialAccountService = (TitanFinancialAccountService)cfx.getBean("titanFinancialAccountService");
     	titanFinancialBankCardService = (TitanFinancialBankCardService)cfx.getBean("titanFinancialBankCardService");
+    	titanFinancialOrganService = (TitanFinancialOrganService)cfx.getBean("titanFinancialOrganService");
+    	titanOrderService = (TitanOrderService)cfx.getBean("titanOrderService");
     }
     
 
@@ -621,7 +630,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialTradeService.repairTransferOrder();
     }
     
-    @Test
+//    @Test
     public void testNewTitanOrder(){
     	TitanOrderRequest titanOrderRequest =new TitanOrderRequest();
     	titanOrderRequest.setAmount("100");
@@ -636,7 +645,24 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialTradeService.saveTitanTransOrder(titanOrderRequest);
     }
     
+//    @Test
+   public void testIsFinanceAccount(){
+	   OrgBindInfo orgBindInfo = new OrgBindInfo();
+	   orgBindInfo.setMerchantCode("M10021509");
+	   orgBindInfo = titanFinancialOrganService.queryActiveOrgBindInfo(orgBindInfo);
+	   if(StringUtil.isValidString(orgBindInfo.getMerchantCode())){
+		   System.out.println(orgBindInfo.getMerchantCode());
+	   }
+   }
     
+    @Test
+    public void testCurrentTheme(){
+    	TransOrderRequest transOrderRequest = new TransOrderRequest();
+		transOrderRequest.setUserorderid("TJO160905160115853");
+		TransOrderDTO transOrderDTO = titanOrderService
+				.queryTransOrderDTO(transOrderRequest);
+		System.out.println(transOrderDTO.getMerchantcode());
+    }
     /**
      * 测试整个支付流程  基础数据  userid :TJM10000087  orgname:腾讯云计算有限公司  泰坦码:10000093
      * 1.查询 tfsuserid： 10046  是否有付款权限  通过 pass
