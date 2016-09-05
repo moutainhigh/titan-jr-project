@@ -1,4 +1,3 @@
-var titan_context_name = "titanjr-pay-app";
 var titan_pub = "d8b6e03dd8f9bf45157f0d14aedf9a696665641da90cab5114a22b7f6c711f22429c32c99ab76e3ce74de00145bcd50b9d2e7c60cd97a4979a5d0ce4ead9ba61baca1495758d69cc1f76e69db43f1ef1f9c33cd2edb8c726ed17c297a7b9fa3f18e58aef9d3f33f8431a41cc3c0ca7bc5151d33a8691e6506e0439363aec0063";
 var titan_expo = "10001";
 
@@ -8,11 +7,9 @@ var titan_expo = "10001";
  * 
  * merchantCode : "", payOrderNo : "", paySource : "", fcUserid : "", operater :
  * "", businessOrderCode : "", recieveMerchantCode : "", isEscrowed : "",
- * escrowedDate : "", businessInfo : {
- *  } };
+ * escrowedDate : "", businessInfo : { } };
  * 
- * var businessInfo {
- *  }
+ * var businessInfo { }
  */
 var titanPayObj = {};
 
@@ -23,6 +20,28 @@ function initTitanPayObj() {
 	};
 	// var timeIntervalObj = null;
 	var titan_rsakey = null;
+
+	// js获取项目根路径，如： http://localhost:8083/uimcardprj
+	titanPayObj.getRootPath = function() {
+		var path = titanPayObj.findScriptTaget();
+		if (path) {
+			path = path.replace('js/titanpay.js', '');
+		}
+		return path;
+
+	}
+
+	titanPayObj.findScriptTaget = function() {
+		var sList = document.getElementsByTagName("script");
+		for (var i = 0; i < sList.length; i++) {
+			var ss = sList[i].getAttribute('src');
+			if (ss && ss != null && ss != '') {
+				if (ss.indexOf('titanpay.js') != -1) {
+					return ss;
+				}
+			}
+		}
+	}
 
 	/**
 	 * 初始化公钥及地址
@@ -35,15 +54,14 @@ function initTitanPayObj() {
 	 *            模数titanJrPayRsaObj
 	 */
 	titanPayObj.initTitanPay = function(configObj) {
-		
-		
 		if (!configObj) {
-			config.address = window.location.host;
+			// config.address = window.location.host;
+			config.address = titanPayObj.getRootPath();
 			config.empoent = titan_expo;
 			config.module = titan_pub;
 		} else {
 			if (!configObj.address) {
-				configObj.address = window.location.host;
+				config.address = titanPayObj.getRootPath();
 			}
 
 			if (!configObj.empoent) {
@@ -54,12 +72,11 @@ function initTitanPayObj() {
 				configObj.module = titan_pub;
 			}
 		}
-		
-		if(configObj)
-		{
+
+		if (configObj) {
 			config = configObj;
 		}
-		
+
 		this.createPayForm(config.address);
 
 	}
@@ -67,14 +84,12 @@ function initTitanPayObj() {
 	titanPayObj.createPayForm = function(address) {
 
 		var elscript = document.createElement("script");
-		elscript.src = "http://" + address + "/" + titan_context_name
-				+ "/js/rsa/RSA.js";
+		elscript.src = config.address + "js/rsa/RSA.js";
 		elscript.setAttribute("type", "text/javascript");
 		document.body.appendChild(elscript);
 
 		var form = document.createElement("form");
-		form.action = 'http://' + address
-				+ '/titanjr-pay-app/trade/titanPay.action';
+		form.action = config.address + 'trade/titanPay.action';
 		form.target = '_blank';
 		form.id = 'titan_pay_form';
 		form.method = 'post';
