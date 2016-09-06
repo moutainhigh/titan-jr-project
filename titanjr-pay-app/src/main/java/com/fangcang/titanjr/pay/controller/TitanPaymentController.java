@@ -333,13 +333,13 @@ public class TitanPaymentController extends BaseController {
 			return "checkstand-pay/genRechargePayment";
 		}
 
-		PayerTypeEnum payerTypeEnum = PayerTypeEnum
-				.getPayerTypeEnumByKey(titanPaymentRequest.getPaySource());
-		if (payerTypeEnum == null) {
-			model.addAttribute(CommonConstant.RETURN_MSG,
-					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
-			return "checkstand-pay/genRechargePayment";
-		}
+//		PayerTypeEnum payerTypeEnum = PayerTypeEnum
+//				.getPayerTypeEnumByKey(titanPaymentRequest.getPaySource());
+//		if (payerTypeEnum == null) {
+//			model.addAttribute(CommonConstant.RETURN_MSG,
+//					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+//			return "checkstand-pay/genRechargePayment";
+//		}
 
 		// 根据收银台ID查询对应的收银台信息
 		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
@@ -386,12 +386,16 @@ public class TitanPaymentController extends BaseController {
     	}
 		
 		CreateTitanRateRecordReq req = new CreateTitanRateRecordReq();
-		req.setAmount(Long.parseLong(NumberUtil.covertToCents(computeReq.getAmount())));
-		req.setReceivablefee(Long.parseLong(titanPaymentRequest.getReceivablefee()));
+		req.setAmount(Long.parseLong(NumberUtil.covertToCents(computeReq
+				.getAmount())));
+		req.setReceivablefee(Long.parseLong(titanPaymentRequest
+				.getReceivablefee()));
 		req.setReceivedfee(Long.parseLong(titanPaymentRequest.getReceivedfee()));
 		req.setStanderdfee(Long.parseLong(titanPaymentRequest.getStandfee()));
 		req.setPayType(Integer.parseInt(cashierItemTypeEnum.itemCode));
-		req.setUsedFor(Integer.parseInt(payerTypeEnum.key));
+		if (StringUtil.isValidString(titanPaymentRequest.getPaySource())) {
+			req.setUsedFor(Integer.parseInt(titanPaymentRequest.getPaySource()));
+		}
 		req.setUserId(computeReq.getUserId());
 		req.setReceivableRate(titanPaymentRequest.getReceivablerate());
 		req.setReceivedRate(titanPaymentRequest.getExecutionrate());
