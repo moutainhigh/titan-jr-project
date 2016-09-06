@@ -181,7 +181,7 @@ public class TitanPaymentController extends BaseController {
 	        		}
 	        		
 	        		//save the trade account
-					if(payerType.isMustPayerment()){
+					if(payerType.isAddAccountHistory()){
 						titanPaymentService.addAccountHistory(transOrderDTO);
 					}
 	        	}
@@ -202,7 +202,7 @@ public class TitanPaymentController extends BaseController {
 			}
         	
     	}catch(Exception e){
-            log.error(e.getMessage());    		
+            log.error("" ,e);    		
     	}finally{
     		unlockOutTradeNoList(orderNo);
     	}
