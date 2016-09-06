@@ -341,14 +341,19 @@ public class TitanTradeService {
 
 	public MerchantResponseDTO getMerchantResponseDTO(String merchantCode) {
 
-		MerchantDetailQueryDTO queryDTO = new MerchantDetailQueryDTO();
-		queryDTO.setMerchantCode(merchantCode);
+		try{
+			MerchantDetailQueryDTO queryDTO = new MerchantDetailQueryDTO();
+			queryDTO.setMerchantCode(merchantCode);
 
-		MerchantFacade merchantFacade = hessianProxyBeanFactory
-				.getHessianProxyBean(MerchantFacade.class,
-						ProxyFactoryConstants.merchantServerUrl
-								+ "merchantFacade");
-
-		return merchantFacade.queryMerchantDetail(queryDTO);
+			MerchantFacade merchantFacade = hessianProxyBeanFactory
+					.getHessianProxyBean(MerchantFacade.class,
+							ProxyFactoryConstants.merchantServerUrl
+									+ "merchantFacade");
+	        log.info("hessionUrl:"+ProxyFactoryConstants.merchantServerUrl);
+			return merchantFacade.queryMerchantDetail(queryDTO);
+		}catch(Exception e){
+			log.error(e.getMessage());
+		}
+		return null;
 	}
 }

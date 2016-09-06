@@ -425,7 +425,7 @@ public class TitanTradeController extends BaseController {
 		}
 
 		// 设置商家主题]
-		log.info("the merchantcode is"+transOrderDTO.getMerchantcode());
+		log.info("the merchantcode is "+transOrderDTO.getMerchantcode());
 		if (StringUtil.isValidString(transOrderDTO.getMerchantcode())) {
 			MerchantResponseDTO merchantResponseDTO = financialTradeService
 					.getMerchantResponseDTO(transOrderDTO.getMerchantcode());
