@@ -12,6 +12,7 @@ public class AccountCheckResponse extends BaseResponseDTO{
 	private boolean checkResult;
 	
 	private String userid;
+	
 
 	public boolean isCheckResult() {
 		return checkResult;
@@ -28,5 +29,6 @@ public class AccountCheckResponse extends BaseResponseDTO{
 	public void setUserid(String userid) {
 		this.userid = userid;
 	}
+
 	
 }

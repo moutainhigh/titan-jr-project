@@ -85,4 +85,8 @@ public enum PayerTypeEnum {
 		
 		return B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key);
 	  }
+	  
+	  public boolean isAddAccountHistory(){
+		  return SUPPLY_FINACIAL.key.equals(this.key);
+	  }
 }
