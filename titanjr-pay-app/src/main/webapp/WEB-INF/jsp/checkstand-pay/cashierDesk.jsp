@@ -21,6 +21,8 @@
 
     <div class="S_popup_Kan clearfix opaque">
         <div class="gold_pay">
+        <div class="clearfix">
+		  <div class="fl w_800">
            <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${cashDeskData.amount }"  pattern="#,##0.00#" /></span>元 (<span id="pay_rate"></span>元)</div>
             <div class="goldpay_top">
                 <ul>
@@ -72,6 +74,8 @@
                             </div> 
                         </div>
                     </li>
+                    
+                  
                      <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem">
                         <c:if test="${deskItem.itemType == 4}">
                             <input type="hidden" id="canUseAccBalance" value="1">
@@ -86,10 +90,18 @@
                             
                         </c:if>
                     </c:forEach>
-
-
                 </ul>
+                
             </div>
+            </div>
+                <div class="TFS_withdrawBoxR fr">
+					<h3>温馨提示</h3>
+					<div class="TFS_withdrawBoxR_content">
+						<p>手续费：</p>
+						<h4><span id="titanRateAmount">0.00</span>元</h4>	
+					</div>
+				</div>
+				</div>
             <input type="hidden" id="onlinePayAmount" name="onlinePayAmount"><!--通过网银充值并支付的金额-->
               <div class="goldpay_title1" style="border-bottom:#ddd 1px solid;">
                 <c:if test="${ not empty cashDeskData.fcUserid}">
@@ -344,7 +356,7 @@ $("document").ready(function (){
                  dataType: "json",
                  success: function(data){
                 	 
-                	 $('#pay_rate').text(data.data.exRateAmount);
+                	 $('#titanRateAmount').text(data.data.exRateAmount);
                 	//alert(data.data.amount);
                  }
                }); 
@@ -419,19 +431,27 @@ $("document").ready(function (){
      			 if(className !="jiantou"){
      				conPayWay();
      			 }
+     			  $('#titanRateAmount').text("0.00");
    	       }else{
    	    	  var arrow = $('.J_payway').find('i');
      			 var className = arrow.attr("class");
      			 if(className =="jiantou"){
      				 conPayWay();
      			 }
-     			 $(".bankName:first").attr("checked",'0');
+     			 
+     		    $(".bankName:first").attr("checked",'0');
+     			$(".paytable_payway:first").click();
+     				
    	       }
 	   	}else{//余额不足，将支持两种结合的方式或者选择充值
 	   		 if($("#d_checkbox").attr("checked")=="checked"){//在线支付剩余余额
 	   			 $("#pay_surplus_amount").text(sub('${cashDeskData.amount}','${cashDeskData.balanceusable}'));
+	   			 $('#titanRateAmount').text("0.00");
 	   		 }else{//在线支付全款
 	   			 $("#pay_surplus_amount").text('${cashDeskData.amount}');
+	   		 
+	   			 $(".bankName:first").attr("checked",'0');
+	   			 $(".paytable_payway:first").click();
 	   		 }
 	   	}
     	
@@ -503,18 +523,28 @@ $("document").ready(function (){
 
     //支付方式下拉显示隐藏
     $('.J_payway').on('click',function(){
+    	
         var arrow = $(this).find('i');
         $(this).next(".goldpayway").toggle();
         arrow.toggleClass('jiantou');
         if(arrow.hasClass("jiantou")){
         	if('${cashDeskData.amount}' - '${cashDeskData.balanceusable}' <= 0){//余额充足
         		  $("#d_checkbox").attr("checked",true);
+        		  $('#titanRateAmount').text("0.00");
         	}
             $(".payway_other").text('使用其他方式付款');
            
         }else{
         	if('${cashDeskData.amount}' - '${cashDeskData.balanceusable}' <= 0){//余额充足
       		  $("#d_checkbox").removeAttr("checked");
+      		  $('.paytable_payway').each(function(){
+	             	if($(this).find('input:radio[name="r2"]').is(":checked"))
+	             	{
+	             		$(this).click();
+	             	}
+              });
+      		  //$(".bankName:first").attr("checked",'0');
+ 			  //$(".paytable_payway:first").click();
       	     }
             $(".payway_other").text('使用其他方式付款');
         }

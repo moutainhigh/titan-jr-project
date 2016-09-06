@@ -2073,6 +2073,22 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                                 }else{
                                 	 transOrderDTO.setTransTarget(getTransTarget(transOrderDTO.getPayermerchant()));//付款方
                                 }
+								// 如果当前机构是收款方并且收款类型为商家联盟，则不考虑费率显示问题
+								if (StringUtil.isValidString(titanTransOrder
+										.getPayerType())) {
+									PayerTypeEnum payerTypeEnum = PayerTypeEnum
+											.getPayerTypeEnumByKey(titanTransOrder
+													.getPayerType());
+
+									// 如果是商家联盟的付款，则收款方不需要展示费率。
+									if (payerTypeEnum != null
+											&& PayerTypeEnum.SUPPLY_UNION.key
+													.equals(payerTypeEnum.key)) {
+
+										transOrderDTO.setReceivedfee(0L);
+									}
+								}
+
                             } else if (isPayerOrg(tradeDetailRequest, transOrderDTO)) {//当前机构等于付款方
                                 transOrderDTO.setTradeType("付款");
                                 transOrderDTO.setTransTarget(getTransTarget(transOrderDTO.getPayeemerchant()));//收款方
