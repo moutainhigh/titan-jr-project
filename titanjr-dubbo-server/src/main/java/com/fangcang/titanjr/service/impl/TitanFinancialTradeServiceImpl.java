@@ -866,17 +866,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 		String response = "";
 
-		int len = transOrderDTO.getUserorderid().length();
-		String paySource = transOrderDTO.getUserorderid().substring(len - 1,
-				len);
-		List<NameValuePair> params = this.getHttpParams(transOrderDTO,
-				paySource);
+		List<NameValuePair> params = this.getHttpParams(transOrderDTO);
 
 		if (params == null) {
 			return;
 		}
 
-		String url = RSInvokeConstant.callBackConfigMap.get(paySource);
+		String url = null;
 
 		if (StringUtil.isValidString(transOrderDTO.getNotifyUrl())) {
 			url = transOrderDTO.getNotifyUrl();
@@ -926,28 +922,34 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
 	}
 
-	private List<NameValuePair> getHttpParams(TransOrderDTO transOrderDTO,
-			String paySource) {
+	private List<NameValuePair> getHttpParams(TransOrderDTO transOrderDTO) {
+		
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("payOrderCode", transOrderDTO
 				.getPayorderno()));
 		params.add(new BasicNameValuePair("businessOrderCode", transOrderDTO
 				.getBusinessordercode()));
 
-		if (CashierDeskTypeEnum.B2B_DESK.deskCode.equals(paySource)) {// GDP回调
+		if(transOrderDTO.getTradeamount()!=null ){
+			params.add(new BasicNameValuePair("amount", transOrderDTO
+					.getTradeamount().toString()));
+		}
+		params.add(new BasicNameValuePair("merchantCode", transOrderDTO
+				.getMerchantcode()));
+		//此段处理逻辑是前一版本收银台的逻辑，新版本之后将舍去
+		PayerTypeEnum payerTypeEnum = PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
+		if(payerTypeEnum.isB2BPayment()){
 			OrgBindInfo orgBindInfo = this.getOrgBindInfo(transOrderDTO
 					.getPayeemerchant());
 			if (null != orgBindInfo) {
 				params.add(new BasicNameValuePair("merchantCode", orgBindInfo
 						.getMerchantCode()));
 			}
-			params.add(new BasicNameValuePair("operator", transOrderDTO
-					.getCreator()));
-		} else if (CashierDeskTypeEnum.SUPPLY_DESK.deskCode.equals(paySource)) {// 财务回调
-			params.add(new BasicNameValuePair("merchantCode", transOrderDTO
-					.getMerchantcode()));
 		}
-
+		//end
+		params.add(new BasicNameValuePair("operator", transOrderDTO
+				.getCreator()));
+		
 		params.add(new BasicNameValuePair("titanPayOrderCode", transOrderDTO
 				.getUserorderid()));
 		params.add(new BasicNameValuePair("payResult", "1"));
@@ -1357,9 +1359,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						orderRequest.setBusinessordercode(paymentRequest
 								.getBusinessOrderCode());
 						orderRequest.setGoodsname("GDP付款单");
+						orderRequest.setPayerType(PayerTypeEnum.B2B_GDP.key);
 						if (StringUtil.isValidString(paymentRequest
 								.getMerchantcode())) {
 							orderRequest.setGoodsname("交易平台付款");
+							orderRequest.setPayerType(PayerTypeEnum.B2B_PUS.key);
 						}
 					}
 				} else if (CashierDeskTypeEnum.SUPPLY_DESK.deskCode
@@ -1389,6 +1393,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							+ SupportBankEnum
 									.getBankDetailByName(paymentRequest
 											.getBankInfo()).bankRemark + "充值");
+					orderRequest.setPayerType(PayerTypeEnum.RECHARGE.key);
 				}
 			}
 
