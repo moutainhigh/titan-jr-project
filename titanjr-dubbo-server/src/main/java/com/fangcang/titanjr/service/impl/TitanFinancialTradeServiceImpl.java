@@ -713,6 +713,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			req.setAdjusttype(orderRequest.getAdjusttype()); // 调整类型
 			req.setAdjustcontent(orderRequest.getAdjustcontent()); // 调整内容
 			req.setUserrelateid(orderRequest.getUserrelateid()); // 关联用户id（若有第三方则必须填写）
+			req.setUnitprice(orderRequest.getReceivedfee());//设置实收的手续费
 			return rsAccTradeManager.operateOrder(req);
 		} catch (Exception e) {
 			throw new Exception(e);

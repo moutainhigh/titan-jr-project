@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.util.NumberUtil;
+import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.TitanRateDto;
 import com.fangcang.titanjr.dto.bean.TitanRateRecordDto;
 import com.fangcang.titanjr.dto.request.AccountRequest;
@@ -61,16 +62,32 @@ public class TitanRateService {
 			computeRsp.setStandRate("" + dto.getStandrate());
 			computeRsp.setRsRate("" + dto.getRsrate());
 			computeRsp.setRateType(dto.getRatetype());
-
+			
 			BigDecimal amountBigDecimal = new BigDecimal(computeReq.getAmount());
+			
 			BigDecimal exBigDecimal = new BigDecimal(""
 					+ dto.getExecutionrate());
 			BigDecimal stBigDecimal = new BigDecimal("" + dto.getStandrate());
 			BigDecimal rsBigDecimal = new BigDecimal("" + dto.getRsrate());
-
+		
 			// 手续费类型1.百分比，2.金额每笔
 			if (dto.getRatetype() == 1) {
+				
+				if (dto.getExecutionrate() > 0) {
+					exBigDecimal = exBigDecimal.divide(new BigDecimal("100"))
+							.setScale(2, BigDecimal.ROUND_HALF_UP);
+				}
 
+				if (dto.getStandrate() > 0) {
+					stBigDecimal = stBigDecimal.divide(new BigDecimal("100"))
+							.setScale(2, BigDecimal.ROUND_HALF_UP);
+				}
+
+				if (dto.getRsrate() > 0) {
+					rsBigDecimal = rsBigDecimal.divide(new BigDecimal("100"))
+							.setScale(2, BigDecimal.ROUND_HALF_UP);
+				}
+				
 				computeRsp.setExRateAmount(amountBigDecimal
 						.multiply(exBigDecimal)
 						.setScale(2, BigDecimal.ROUND_HALF_UP).toString());
@@ -148,9 +165,6 @@ public class TitanRateService {
 	public TitanPaymentRequest setRateAmount(TitanRateComputeReq computeReq,
 			TitanPaymentRequest paymentRequest) {
 
-		PayerTypeEnum payerTypeEnum = PayerTypeEnum
-				.getPayerTypeEnumByKey(paymentRequest.getPaySource());
-
 		// 执行费率计算
 		TitanRateComputeRsp computeRsp = this.rateCompute(computeReq);
 		// 设置费率信息
@@ -180,8 +194,10 @@ public class TitanRateService {
 				paymentRequest.setReceivablerate(Float.parseFloat(computeRsp
 						.getRsRate()));
 			}
+
 			// 如果非B2B付款则付款金额不用加上费率,直接从付款金额中扣除费率
-			if (!payerTypeEnum.isB2BPayment()) {
+			if (!PaySourceEnum.B2B.getDeskCode().equals(
+					paymentRequest.getPaySource())) {
 				paymentRequest.setPayAmount(computeRsp.getAmount());
 			}
 		}
