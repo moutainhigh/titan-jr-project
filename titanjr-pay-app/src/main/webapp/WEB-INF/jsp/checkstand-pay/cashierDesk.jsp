@@ -23,7 +23,7 @@
         <div class="gold_pay">
         <div class="clearfix">
 		  <div class="fl w_800">
-           <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${cashDeskData.amount }"  pattern="#,##0.00#" /></span>元 (<span id="pay_rate"></span>元)</div>
+           <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${cashDeskData.amount }"  pattern="#,##0.00#" /></span>元 </div>
             <div class="goldpay_top">
                 <ul>
                     <li id="not_exists_history">
