@@ -555,42 +555,33 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 										.getStatus() == titanOrderPayreq
 										.getReqstatus()) {// 处理中判断落单时间和过期时间
 									// 获取当前时间与订单时间的秒数差
+									TitanTransOrder titanTransOrder = new TitanTransOrder();
 									long times = DateUtil.diffSecondByTime(
 											titanOrderPayreq.getOrderTime(),
 											DateUtil.sdf5.format(new Date()));
-									if (times < this
-											.getExpireTime(titanOrderPayreq)) {// 未过期
-																				// 获取当前单号
-										orderid = titanOrderPayreq.getOrderNo();
-									} else {
-										TitanTransOrder titanTransOrder = new TitanTransOrder();
-										titanTransOrder
-												.setStatusid(OrderStatusEnum.ORDER_NO_EFFECT
-														.getStatus());
-										titanTransOrder
-												.setTransid(transOrderResponse
-														.getTransOrder()
-														.getTransid());
-										int row = 0;
-										try {
-											row = titanTransOrderDao
-													.update(titanTransOrder);
-										} catch (Exception e) {
-											log.error(
-													"该订单失效设置失败"
-															+ e.getMessage(), e);
-										}
-										if (row < 1) {
-											// TODO 写异常单
-											OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(
-													transOrderDTO.getOrderid(),
-													"下单 设置订单失效",
-													OrderExceptionEnum.TransOrder_update,
-													JSON.toJSONString(titanTransOrder));
-											titanOrderService
-													.saveOrderException(orderExceptionDTO);
-										}
-									}
+									if ( times < this.getExpireTime(titanOrderPayreq)) {//未过期 获取当前单号,需要优化
+                                        orderid = titanOrderPayreq.getOrderNo();
+                                        if(StringUtil.isValidString(paymentRequest.getBusinessOrderCode())){
+                                       	 titanTransOrder.setBusinessordercode(paymentRequest.getBusinessOrderCode());
+                                        	 titanTransOrder.setTransid(transOrderResponse.getTransOrder().getTransid());
+                                        }
+                                    	
+                                    } else {
+                                    	titanTransOrder.setStatusid(OrderStatusEnum.ORDER_NO_EFFECT.getStatus());
+                                    	titanTransOrder.setTransid(transOrderResponse.getTransOrder().getTransid());
+                                    }
+                                	 try{
+                                		 if(titanTransOrder.getTransid()!=null){
+                                			 int row =titanTransOrderDao.update(titanTransOrder);
+                                    	     if(row<1){
+                                        		//TODO 写异常单
+                                        		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrderDTO.getOrderid(), "下单 设置订单失效", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(titanTransOrder));
+                           	        		titanOrderService.saveOrderException(orderExceptionDTO);
+                                        	 }
+                                		 }
+                                	 }catch(Exception e){
+                                		log.error("该订单失效设置失败"+e.getMessage(),e);
+                                    }
 								}
 							} else {// 订单有效，无充值请求则返回该单号进行充值操作
 								orderid = transOrderResponse.getTransOrder()
