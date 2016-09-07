@@ -562,8 +562,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 									if ( times < this.getExpireTime(titanOrderPayreq)) {//未过期 获取当前单号,需要优化
                                         orderid = titanOrderPayreq.getOrderNo();
                                         if(StringUtil.isValidString(paymentRequest.getBusinessOrderCode())){
-                                       	 titanTransOrder.setBusinessordercode(paymentRequest.getBusinessOrderCode());
-                                        	 titanTransOrder.setTransid(transOrderResponse.getTransOrder().getTransid());
+                                       	  titanTransOrder.setBusinessordercode(paymentRequest.getBusinessOrderCode());
+                                          titanTransOrder.setTransid(transOrderResponse.getTransOrder().getTransid());
                                         }
                                     	
                                     } else {
@@ -572,7 +572,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                                     }
                                 	 try{
                                 		 if(titanTransOrder.getTransid()!=null){
-                                			 int row =titanTransOrderDao.update(titanTransOrder);
+                                			 int row =titanTransOrderDao.updateTitanTransOrderByTransId(titanTransOrder);
                                     	     if(row<1){
                                         		//TODO 写异常单
                                         		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrderDTO.getOrderid(), "下单 设置订单失效", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(titanTransOrder));
