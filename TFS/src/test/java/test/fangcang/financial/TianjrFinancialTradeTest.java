@@ -516,13 +516,13 @@ public class TianjrFinancialTradeTest extends GenericTest{
 //    @Test
     public void testGetPaymentUrl() throws UnsupportedEncodingException{
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
-    	paymentUrlRequest.setPayOrderNo("H0177150121144423");
+    	paymentUrlRequest.setPayOrderNo("H0147160902194350");
     	paymentUrlRequest.setPaySource("1");
     	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
     	paymentUrlRequest.setIsEscrowed("1");
     	paymentUrlRequest.setRecieveMerchantCode("M10000002");
     	paymentUrlRequest.setNotifyUrl("http//:192.168.1.10/TFS");
-    	paymentUrlRequest.setBusinessOrderCode("123456879");
+    	paymentUrlRequest.setBusinessOrderCode("1234568790");
     	paymentUrlRequest.setOperater("中国人 非常好 ");
     	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
     	if(paymentUrlResponse !=null){
@@ -625,7 +625,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialTradeService.getSign(rechargeResultConfirmRequest);
     }
     
-   // @Test
+    @Test
     public void repairTransferOrder(){
     	titanFinancialTradeService.repairTransferOrder();
     }
@@ -655,7 +655,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
 	   }
    }
     
-    @Test
+//    @Test
     public void testCurrentTheme(){
     	TransOrderRequest transOrderRequest = new TransOrderRequest();
 		transOrderRequest.setUserorderid("TJO160905160115853");

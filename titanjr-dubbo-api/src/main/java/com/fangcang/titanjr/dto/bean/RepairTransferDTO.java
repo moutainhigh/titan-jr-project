@@ -20,6 +20,8 @@ public class RepairTransferDTO implements Serializable {
 	 
 	 private String userfee;
 	 
+	 private Integer receivedfee;
+	 
 	 private String productid;
 	 
 	 private String userid;
@@ -220,4 +222,11 @@ public class RepairTransferDTO implements Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	public Integer getReceivedfee() {
+		return receivedfee;
+	}
+	public void setReceivedfee(Integer receivedfee) {
+		this.receivedfee = receivedfee;
+	}
+	
 }

@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.service.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -402,44 +401,54 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		boolean isAddOrderAgain = false;
 		try {
 			if (StringUtil.isValidString(transOrderDTO.getOrderid())) {// 在融数已经落单
-				boolean flag = this.validateIsUpdateOrder2(titanPaymentRequest,
-						transOrderDTO);
-				if (flag) {// 暂不需要修改订单
-					TitanOrderPayreq titanOrderPayreq = new TitanOrderPayreq();
-					titanOrderPayreq
-							.setTransorderid(transOrderDTO.getTransid());
-					titanOrderPayreq = this
-							.queryOrderPayReqByTransOrderId(titanOrderPayreq);
-					if (null == titanOrderPayreq) {
-						orderResponse.putErrorResult("系统错误");
-						return orderResponse;
-					}
+				
+				TitanOrderPayreq titanOrderPayreq = new TitanOrderPayreq();
+				titanOrderPayreq
+						.setTransorderid(transOrderDTO.getTransid());
+				titanOrderPayreq = this
+						.queryOrderPayReqByTransOrderId(titanOrderPayreq);
+				if (null == titanOrderPayreq) {
+					orderResponse.putErrorResult("系统错误");
+					return orderResponse;
+				}
 
-					if (ReqstatusEnum.RECHARFE_SUCCESS.getStatus() == titanOrderPayreq
-							.getReqstatus()) {
-						orderResponse.putErrorResult("该单已成功充值,请勿重新充值");
-						return orderResponse;
-					}
-
-					// 两次下单的银行信息不对应
-					if (titanOrderPayreq.getBankInfo().equals(
-							titanPaymentRequest.getBankInfo())) {
-						long times = DateUtil.diffSecondByTime(
-								titanOrderPayreq.getOrderTime(),
-								DateUtil.sdf5.format(new Date()));
-						if (times < this.getExpireTime(titanOrderPayreq)) {// 未过期
-																			// 获取当前单号,需要优化
-							orderid = titanOrderPayreq.getOrderNo();
-							orderResponse.setOrderNo(orderid);
-						} else {
-							this.updateOrderNoEffect(transOrderDTO.getTransid());
-							isAddOrderAgain = true;
-						}
+				if (ReqstatusEnum.RECHARFE_SUCCESS.getStatus() == titanOrderPayreq
+						.getReqstatus()) {
+					orderResponse.putErrorResult("该单已成功充值,请勿重新充值");
+					return orderResponse;
+				}
+				
+				//check the amount is change 
+				boolean isAmountChange =false;
+				if(StringUtil.isValidString(titanPaymentRequest.getPayAmount()) &&transOrderDTO.getAmount()!=null){
+					isAmountChange = NumberUtil.covertToCents(titanPaymentRequest.getPayAmount())
+					.equals(transOrderDTO.getAmount().toString());
+				}
+				
+				boolean isBankInfoChange = false;
+				if(StringUtil.isValidString(titanOrderPayreq.getBankInfo()) && StringUtil.isValidString(titanPaymentRequest.getBankInfo())){
+					isBankInfoChange = titanOrderPayreq.getBankInfo().equals(titanPaymentRequest.getBankInfo());
+				}
+				
+				boolean isPayerAccountChange = true;
+				if(StringUtil.isValidString(titanPaymentRequest.getPayerAcount())){
+					isPayerAccountChange = titanPaymentRequest.getPayerAcount().equals(titanOrderPayreq.getPayerAcount());
+				}
+				
+				if(isAmountChange && isBankInfoChange && isPayerAccountChange){
+					long times = DateUtil.diffSecondByTime(
+							titanOrderPayreq.getOrderTime(),
+							DateUtil.sdf5.format(new Date()));
+					if (times < this.getExpireTime(titanOrderPayreq)) {// 未过期
+																		// 获取当前单号,需要优化
+						orderid = titanOrderPayreq.getOrderNo();
+						orderResponse.setOrderNo(orderid);
 					} else {
 						this.updateOrderNoEffect(transOrderDTO.getTransid());
 						isAddOrderAgain = true;
 					}
 				} else {
+					this.updateOrderNoEffect(transOrderDTO.getTransid());
 					isAddOrderAgain = true;
 				}
 			}
@@ -929,7 +938,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				.getMerchantcode()));
 		//此段处理逻辑是前一版本收银台的逻辑，新版本之后将舍去
 		PayerTypeEnum payerTypeEnum = PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
-		if(payerTypeEnum.isB2BPayment()){
+		if(payerTypeEnum !=null && payerTypeEnum.isB2BPayment()){
 			OrgBindInfo orgBindInfo = this.getOrgBindInfo(transOrderDTO
 					.getPayeemerchant());
 			if (null != orgBindInfo) {
@@ -2073,9 +2082,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 									// 如果是商家联盟的付款，则收款方不需要展示费率。
 									if (payerTypeEnum != null
-											&& PayerTypeEnum.SUPPLY_UNION.key
-													.equals(payerTypeEnum.key)) {
-
+											&& (PayerTypeEnum.SUPPLY_UNION.key
+													.equals(payerTypeEnum.key) || PayerTypeEnum.SUPPLY_FINACIAL.key
+													.equals(payerTypeEnum.key))) {
 										transOrderDTO.setReceivedfee(0L);
 									}
 								}
@@ -2638,12 +2647,17 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         		transferRequest.setConditioncode(ConditioncodeEnum.ADD_OEDER);								//1:落单
         		transferRequest.setRequestno(OrderGenerateService.genResquestNo());									//业务订单号
         		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));				//请求时间
-        		transferRequest.setAmount(repairTransferDTO.getTradeamount().toString());										//金额
+        		transferRequest.setAmount(repairTransferDTO.getTradeamount().toString());
+        		if(repairTransferDTO.getReceivedfee() !=null){
+        			BigDecimal amount  = new BigDecimal(repairTransferDTO.getTradeamount()).subtract(new BigDecimal(repairTransferDTO.getReceivedfee()));
+        			transferRequest.setAmount(amount.toString());
+        		}
         		transferRequest.setOrderid(repairTransferDTO.getOrderid());
         		transferRequest.setUserid(repairTransferDTO.getUserid());                                     //转出方用户Id	
         		transferRequest.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);							//转出方机构号
         		transferRequest.setProductId(repairTransferDTO.getProductid());							//转出方产品号
         		transferRequest.setUserfee("0");//转账费率始终为0
+        		
         		transferRequest.setIntermerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);					//	接收方机构码
         		transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);						//	接收方产品号
         		transferRequest.setUserrelateid(repairTransferDTO.getPayeemerchant());	                    //接收方用户Id	

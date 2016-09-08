@@ -329,10 +329,7 @@
         <set>
             <include refid="sqlUpdate"/>
         </set>
-        <where>
-         transid=#{transid}
-        </where>
-           
+       where transid=#{transid}
     </update>
 
     <select id="selectTitanTransOrder" parameterType="com.fangcang.titanjr.dto.request.TransOrderRequest"
@@ -386,6 +383,7 @@
              transorder.payorderno,
              transorder.businessordercode,
              transorder.creator,
+             transorder.receivedfee,
              transfer.transorderid,
              transfer.status
              from t_tfs_transorder transorder
