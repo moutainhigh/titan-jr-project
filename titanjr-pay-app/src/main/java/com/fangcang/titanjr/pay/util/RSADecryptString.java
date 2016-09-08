@@ -13,19 +13,14 @@ import com.fangcang.titanjr.common.util.rsa.JsRSAUtil;
 public class RSADecryptString {
 	private static final Log log = LogFactory.getLog(RSADecryptString.class);
 
-	private static KeyFactory keyFactory = null;
-
 	public static String decryptString(String str, String key) {
 		try {
-
-			if(keyFactory == null)
-			{
-				keyFactory = KeyFactory.getInstance("RSA",
-						new org.bouncycastle.jce.provider.BouncyCastleProvider());
-			}
 			
-			PKCS8EncodedKeySpec privateSpec = new PKCS8EncodedKeySpec(
-					JsRSAUtil.hexStringToBytes(key));
+			byte[] s = JsRSAUtil.hexStringToBytes(key);
+			
+			KeyFactory 	keyFactory = KeyFactory.getInstance("RSA","BC");
+			
+			PKCS8EncodedKeySpec privateSpec = new PKCS8EncodedKeySpec(s);
 
 			PrivateKey pkey = keyFactory.generatePrivate(privateSpec);
 
