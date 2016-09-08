@@ -2082,9 +2082,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 									// 如果是商家联盟的付款，则收款方不需要展示费率。
 									if (payerTypeEnum != null
-											&& PayerTypeEnum.SUPPLY_UNION.key
-													.equals(payerTypeEnum.key)) {
-
+											&& (PayerTypeEnum.SUPPLY_UNION.key
+													.equals(payerTypeEnum.key) || PayerTypeEnum.SUPPLY_FINACIAL.key
+													.equals(payerTypeEnum.key))) {
 										transOrderDTO.setReceivedfee(0L);
 									}
 								}
