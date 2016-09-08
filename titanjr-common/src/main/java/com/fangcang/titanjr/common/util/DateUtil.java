@@ -808,21 +808,10 @@ public class DateUtil {
 	
 	public static void main(String[] args) {
 		
-		
-		System.out.println(new Date().getTime());
-
 		try {
-//			Calendar cal = Calendar.getInstance(); 
-//	        Date date = new Date(); 
-//	        cal.setTime(date); 
-//            cal.add(cal.DATE, 2); 
-//            System.out.println("下一天的时间是：" + sdf.format(cal.getTime())); 
-//			SimpleDateFormat sss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
-//			String now1 = "2015-07-16 23:51:00 999";
-//			String now2 = "2015-07-17 00:00:01 000";
-//			Date dt1 = sss.parse(now1);
-//			Date dt2 = sss.parse(now2);
-//			int ii = differDays2(dt1, dt2);
+			System.out.println(System.getProperty("user.dir"));
+			  String j2eeHome = System.getProperty("com.sun.enterprise.home");
+			  System.out.println(j2eeHome);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
