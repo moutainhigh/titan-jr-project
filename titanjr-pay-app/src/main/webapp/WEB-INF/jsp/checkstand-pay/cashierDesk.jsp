@@ -321,8 +321,7 @@ $("document").ready(function (){
     		
     	}
     	
-        $(".bankName:first").attr("checked",'0');
-        
+    	    
         if('${cashDeskData.balanceusable}'=="0.0" 
         		||'${cashDeskData.balanceusable}'=="0.00"
         		||'${cashDeskData.balanceusable}'=="0"){
@@ -368,6 +367,9 @@ $("document").ready(function (){
         		$(this).click();
         	}
         });
+        
+        $(".bankName:first").attr("checked",'0');     
+        
     });
 
 	function show_history(){//如果在才账户历史或者收款方
