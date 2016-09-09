@@ -419,7 +419,7 @@ public class TitanPaymentController extends BaseController {
 	
     private Map<String,String> validPaymentData(TitanPaymentRequest titanPaymentRequest){
     	Map<String,String> resultMap = new HashMap<String, String>();
-    	//判断付款方是否存在
+    	//判断收款方是否存在
     	AccountCheckResponse  accountCheckResponse = titanPaymentService.accountIsExist(titanPaymentRequest.getRecieveOrgName(),
 				titanPaymentRequest.getRecieveTitanCode());
 		

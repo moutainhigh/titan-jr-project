@@ -280,6 +280,7 @@
 	    <input name="paySource" id="paySource" type="hidden" value="${cashDeskData.paySource}">
 	    <input name="deskId" id="deskId" type="hidden" value="${cashDeskData.deskId}">
 	    <input name="payerAcount" id="payerAcount" type="hidden" value="">
+	     <input name="userid" id="payerAcount" type="hidden" value="${cashDeskData.userId}">
 	    <input name="payOrderNo" id="payOrderNo" type="hidden" value="${cashDeskData.payOrderNo}">
 	    <input name="tradeAmount" id="tradeAmount" type="hidden" value="${cashDeskData.amount}">
     </form>
@@ -859,7 +860,6 @@ $("document").ready(function (){
 	               	 escrowedDate:'${cashDeskData.escrowedDate}',
 	               	 isEscrowed:'${cashDeskData.isEscrowed}',
 	                 tradeAmount:'${cashDeskData.amount}',
-	               	 
                 },
                 dataType: "json",
                 success: function (data) {
@@ -868,7 +868,8 @@ $("document").ready(function (){
 						$("#orderNo").val(data.data);
 						$("#confirmOrder").submit();
 					 }else{
-						  new top.Tip({msg: data.resultMsg, type: 1, timer: 2000});
+						 alert(data.msg);
+						  new top.Tip({msg: data.msg, type: 1, timer: 2000});
 						  setTimeout(function () {
 							 if(typeof data.orderNo !='undefined'){
 									$("#orderNo").val(data.orderNo);
@@ -879,7 +880,7 @@ $("document").ready(function (){
                 },complete:function(){
                 	top.F.loading.hide();
                 }
-                });
+            });
     	}else{
     		$("#payPassword").val(pay_date.payPassword);
     		$("#transferAmount").val(pay_date.transferAmount);
