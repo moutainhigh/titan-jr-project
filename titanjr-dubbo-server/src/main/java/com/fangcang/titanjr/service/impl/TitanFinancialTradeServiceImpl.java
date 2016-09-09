@@ -370,7 +370,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				localAddTransOrderResponse.putSuccess();
 				return localAddTransOrderResponse;
 			}
-
 			// 本地落单
 		} catch (Exception e) {
 			log.error("add local order is failed" + e.getMessage(), e);
@@ -400,7 +399,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		// 是否需要重新在本地下单
 		boolean isAddOrderAgain = false;
 		try {
-			if (StringUtil.isValidString(transOrderDTO.getOrderid())) {// 在融数已经落单
+			if (this.isRsOrder(transOrderDTO.getOrderid())) {// 在融数已经落单
 				
 				TitanOrderPayreq titanOrderPayreq = new TitanOrderPayreq();
 				titanOrderPayreq
@@ -451,6 +450,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					this.updateOrderNoEffect(transOrderDTO.getTransid());
 					isAddOrderAgain = true;
 				}
+			}else{//余额支付不成功，之后网银支付
+				if(StringUtil.isValidString(transOrderDTO.getOrderid())){
+					this.updateOrderNoEffect(transOrderDTO.getTransid());
+					isAddOrderAgain = true;
+				}
 			}
 
 			OrderRequest orderRequest = this.convertorToTitanOrderRequest2(
@@ -492,6 +496,19 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return orderResponse;
 	}
 
+	//该订单是不是融数单号
+	private boolean isRsOrder(String orderid){
+		if(!StringUtil.isValidString(orderid)){
+			return false;
+		}
+		
+		if(!orderid.substring(0,1).equals(CommonConstant.LOCAL_ORDERNO)){
+			return true;
+		}
+		
+		return false;
+	}
+	
 	private boolean saveOrUpdateTitanTransOrder(OrderRequest orderRequest,
 			boolean isAddOrderAgain) {
 		int row = 0;

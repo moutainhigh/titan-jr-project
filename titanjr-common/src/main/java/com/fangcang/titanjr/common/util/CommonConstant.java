@@ -119,5 +119,6 @@ public class CommonConstant {
     
     public static final String RETURN_MSG = "msg";
 	
+    public static final String LOCAL_ORDERNO="L";
 	
 }
