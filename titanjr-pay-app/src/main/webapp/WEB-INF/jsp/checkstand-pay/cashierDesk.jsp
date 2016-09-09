@@ -868,7 +868,6 @@ $("document").ready(function (){
 						$("#orderNo").val(data.data);
 						$("#confirmOrder").submit();
 					 }else{
-						 alert(data.msg);
 						  new top.Tip({msg: data.msg, type: 1, timer: 2000});
 						  setTimeout(function () {
 							 if(typeof data.orderNo !='undefined'){
