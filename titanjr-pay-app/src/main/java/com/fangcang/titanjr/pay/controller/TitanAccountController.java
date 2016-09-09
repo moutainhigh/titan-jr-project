@@ -165,6 +165,26 @@ public class TitanAccountController extends BaseController{
 	 }
 	 
 	 
+	 @RequestMapping("deleteAccountHistory")
+	 public String deleteAccountHistory(String payerUserid,String inAccountCode,String outAccountCode){
+		 
+		 if(!StringUtil.isValidString(payerUserid) || !StringUtil.isValidString(inAccountCode) 
+				                             || !StringUtil.isValidString(outAccountCode)){
+			 return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+		 }
+		 
+		 AccountHistoryDTO accountHistoryDTO = new AccountHistoryDTO();
+		 accountHistoryDTO.setPayeruserid(payerUserid);
+		 accountHistoryDTO.setInaccountcode(inAccountCode);
+		 accountHistoryDTO.setOutaccountcode(outAccountCode);
+		 int row = titanFinancialAccountService.deleteAccountHistory(accountHistoryDTO);
+		 if(row>0){
+			 return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS);
+		 }
+		 
+		 return toMsgJson(TitanMsgCodeEnum.TITAN_FAIL);
+	 }
+	 
 	 @RequestMapping("showSetPayPassword")
 	 public String showSetPayPassword() {
 		 return "checkstand-pay/setPayPassword";

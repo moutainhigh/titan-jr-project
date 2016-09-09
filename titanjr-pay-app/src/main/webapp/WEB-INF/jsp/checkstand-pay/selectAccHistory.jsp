@@ -34,16 +34,16 @@ $(".J_gold").on('click', function() {
 	//数据库删除记录
 	 $.ajax({
     	 type: "post",
-         data: {payeruserid:'${accountHistoryResponse.accountHistoryDTOList[0].payeruserid}',
-             inaccountcode:'${accountHistoryResponse.accountHistoryDTOList[0].inaccountcode}',
-             outaccountcode:'${accountHistoryResponse.accountHistoryDTOList[0].outaccountcode}'},
+         data: {payerUserid:'${accountHistoryResponse.accountHistoryDTOList[0].payeruserid}',
+        	 inAccountCode:'${accountHistoryResponse.accountHistoryDTOList[0].inaccountcode}',
+        	 outAccountCode:'${accountHistoryResponse.accountHistoryDTOList[0].outaccountcode}'},
          dataType: "json",
          url: "<%=basePath%>/account/deleteAccountHistory.action",
          success: function(data){
-        	 if(data.result=="false"){
+        	 if(data.code=="-1"){
         		 alert("清除账户历史失败");
         	 }
-        	 }
+          }
          });
 	
 	$(".goldtixian").children('ul').slideUp(1000);

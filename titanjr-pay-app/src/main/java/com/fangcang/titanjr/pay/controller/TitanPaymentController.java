@@ -273,7 +273,12 @@ public class TitanPaymentController extends BaseController {
         		titanOrderService.saveOrderException(orderExceptionDTO);
 			}
 		}
-		titanPaymentService.addAccountHistory(transOrder);
+		
+		//中间账户不计历史
+		if(!transOrder.getUserid().equals(titanFinancialAccountService.getDefaultPayerConfig().getUserId())){
+			titanPaymentService.addAccountHistory(transOrder);
+		}
+		
 		boolean updateStatus = titanPaymentService.updateOrderStatus(transOrder.getTransid(),orderStatusEnum);
 		if(!updateStatus){
 			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrder.getOrderid(), "冻结成功 修改订单状态失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(transOrder.getTransid()));
