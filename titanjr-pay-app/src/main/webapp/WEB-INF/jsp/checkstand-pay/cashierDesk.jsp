@@ -330,36 +330,8 @@ $("document").ready(function (){
         }
         //点击某个银行计算费率
         $('.paytable_payway').on('click', function(){
-        	
-             var itemType = $(this).attr('itemType');
-             var userId = '${cashDeskData.cashierDeskDTO.userId}';
-             var payAmount = "0";
-         	 var transferAmount ="0";
-         	 if (sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}') <= 0){
-         		if($("#d_checkbox").attr("checked")=="checked"){//余额充足二选一
-         			transferAmount = '${cashDeskData.amount}';
-            	    }else{
-            	    	payAmount = '${cashDeskData.amount}';
-            	    }
-         	 }else{
-         		if($("#d_checkbox").attr("checked")=="checked"){//余额不足，任意选择
-        			transferAmount = '${cashDeskData.balanceusable}';
-           		    payAmount = sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}');
-           	    }else{
-           	    	payAmount = '${cashDeskData.amount}';
-           	    }
-         	 }
-         	 
-         	 $.ajax({
-            	 type: "get",
-                 url: "<%=basePath%>/rate/rateCompute.action?userId="+userId+"&amount="+payAmount+"&payType="+itemType+"&date=" + new Date().getTime(),
-                 dataType: "json",
-                 success: function(data){
-                	 
-                	 $('#titanRateAmount').text(data.data.exRateAmount);
-                	//alert(data.data.amount);
-                 }
-               }); 
+        	var itemType = $(this).attr("itemType");
+        	paytable_paywayClick(itemType);
         });
         
         $('.paytable_payway').each(function(){
@@ -372,6 +344,40 @@ $("document").ready(function (){
         $(".bankName:first").attr("checked",'0');     
         
     });
+
+
+	function paytable_paywayClick(itemType){
+	     var userId = '${cashDeskData.cashierDeskDTO.userId}';
+	     var payAmount = "0";
+		 var transferAmount ="0";
+		 if (sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}') <= 0){
+			if($("#d_checkbox").attr("checked")=="checked"){//余额充足二选一
+				transferAmount = '${cashDeskData.amount}';
+	   	    }else{
+	   	    	payAmount = '${cashDeskData.amount}';
+	   	    }
+		 }else{
+			if($("#d_checkbox").attr("checked")=="checked"){//余额不足，任意选择
+				transferAmount = '${cashDeskData.balanceusable}';
+	  		    payAmount = sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}');
+	  	    }else{
+	  	    	payAmount = '${cashDeskData.amount}';
+	  	    }
+		 }
+		 
+		 $.ajax({
+	   	 type: "get",
+	        url: "<%=basePath%>/rate/rateCompute.action?userId="+userId+"&amount="+payAmount+"&payType="+itemType+"&date=" + new Date().getTime(),
+	        dataType: "json",
+	        async: false,
+	        success: function(data){
+	       	 
+	       	 $('#titanRateAmount').text(data.data.exRateAmount);
+	       	//alert(data.data.amount);
+	        }
+	      }); 
+	}
+
 
 	function show_history(){//如果在才账户历史或者收款方
 	    $("#exists_history").show();
@@ -394,8 +400,23 @@ $("document").ready(function (){
 		 $("#useCashierDeskPay").show();
        $("#enough_amount").hide();
        $("#not_enough_amount").show();
-       $("#onlinePayAmount").val(sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}'));
+     /*   $("#onlinePayAmount").val(sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}')); */
+       //此处需计算手续费
+       amount_not_enough_rate();
 	}
+	
+	
+	function amount_not_enough_rate(){
+		 var itemType = $(".bankName:first").parents(".paytable_payway").attr("itemType");
+	        paytable_paywayClick(itemType);
+	     
+	       var rateAmount = $("#titanRateAmount").text();
+	       var payAmount = sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}');
+	      
+	       var show_online_payAmount =  (payAmount*100+rateAmount*100)/100;
+	       $("#pay_surplus_amount").text(show_online_payAmount);
+	}
+	
     function sub(a, b) {
         var c, d, e;
         try {
@@ -448,13 +469,19 @@ $("document").ready(function (){
    	       }
 	   	}else{//余额不足，将支持两种结合的方式或者选择充值
 	   		 if($("#d_checkbox").attr("checked")=="checked"){//在线支付剩余余额
-	   			 $("#pay_surplus_amount").text(sub('${cashDeskData.amount}','${cashDeskData.balanceusable}'));
-	   			 $('#titanRateAmount').text("0.00");
+	   			/*  $("#pay_surplus_amount").text(sub('${cashDeskData.amount}','${cashDeskData.balanceusable}'));
+	   			 $('#titanRateAmount').text("0.00"); */
+	   			amount_not_enough_rate();
 	   		 }else{//在线支付全款
 	   			 $("#pay_surplus_amount").text('${cashDeskData.amount}');
-	   		 
 	   			 $(".bankName:first").attr("checked",'0');
 	   			 $(".paytable_payway:first").click();
+	   		     var rateAmount = $("#titanRateAmount").text();
+		         var payAmount = '${cashDeskData.amount}';
+		         var show_online_PayAmount =  (payAmount*100+rateAmount*100)/100;
+		       /*   $("#onlinePayAmount").val(onlinePayAmount); */
+		         $("#pay_surplus_amount").text(show_online_PayAmount);
+	   			 
 	   		 }
 	   	}
     	
@@ -868,10 +895,10 @@ $("document").ready(function (){
 						$("#orderNo").val(data.data);
 						$("#confirmOrder").submit();
 					 }else{
-						  new top.Tip({msg: data.msg, type: 1, timer: 2000});
+						  new top.Tip({msg: data.resultMsg, type: 1, timer: 2000});
 						  setTimeout(function () {
-							 if(typeof data.orderNo !='undefined'){
-									$("#orderNo").val(data.orderNo);
+							 if(typeof data.data !='undefined'){
+									$("#orderNo").val(data.data);
 								 }
 							 $("#confirmOrder").submit();
 						  }, 2000);
