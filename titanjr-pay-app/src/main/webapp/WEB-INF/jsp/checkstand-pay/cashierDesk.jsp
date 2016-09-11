@@ -373,6 +373,8 @@ $("document").ready(function (){
 	        success: function(data){
 	       	 
 	       	 $('#titanRateAmount').text(data.data.exRateAmount);
+	       	 var show_online_payAmount = (payAmount*100+data.data.exRateAmount*100)/100
+	         $("#pay_surplus_amount").text(show_online_payAmount);
 	       	//alert(data.data.amount);
 	        }
 	      }); 
