@@ -394,6 +394,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		}
 
 		TransOrderDTO transOrderDTO = transOrderResponse.getTransOrder();
+		
+		if(OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())){
+			orderResponse.putErrorResult("支付成功,请勿重复支付！");
+			return orderResponse;
+		}
 		// 是否在融数落单
 		String orderid = "";
 		// 是否需要重新在本地下单
@@ -451,6 +456,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					isAddOrderAgain = true;
 				}
 			}else{//余额支付不成功，之后网银支付
+				
 				if(StringUtil.isValidString(transOrderDTO.getOrderid())){
 					this.updateOrderNoEffect(transOrderDTO.getTransid());
 					isAddOrderAgain = true;
