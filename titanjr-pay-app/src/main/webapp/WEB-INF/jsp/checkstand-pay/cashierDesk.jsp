@@ -466,7 +466,8 @@ $("document").ready(function (){
      			 }
      			 
      		    $(".bankName:first").attr("checked",'0');
-     			$(".paytable_payway:first").click();
+     			/* $(".paytable_payway:first").click(); */
+     			 $(".bankName:checked").parents(".paytable_payway").click();
      				
    	       }
 	   	}else{//余额不足，将支持两种结合的方式或者选择充值
@@ -476,8 +477,9 @@ $("document").ready(function (){
 	   			amount_not_enough_rate();
 	   		 }else{//在线支付全款
 	   			 $("#pay_surplus_amount").text('${cashDeskData.amount}');
-	   			 $(".bankName:first").attr("checked",'0');
-	   			 $(".paytable_payway:first").click();
+	   			/*  $(".bankName:first").attr("checked",'0'); */
+	   			/*  $(".paytable_payway:first").click(); */
+	   			 $(".bankName:checked").parents(".paytable_payway").click();
 	   		     var rateAmount = $("#titanRateAmount").text();
 		         var payAmount = '${cashDeskData.amount}';
 		         var show_online_PayAmount =  (payAmount*100+rateAmount*100)/100;
@@ -569,14 +571,14 @@ $("document").ready(function (){
         }else{
         	if('${cashDeskData.amount}' - '${cashDeskData.balanceusable}' <= 0){//余额充足
       		  $("#d_checkbox").removeAttr("checked");
-      		  $('.paytable_payway').each(function(){
+      		/*  $('.paytable_payway').each(function(){
 	             	if($(this).find('input:radio[name="r2"]').is(":checked"))
 	             	{
 	             		$(this).click();
-	             	}
-              });
-      		  //$(".bankName:first").attr("checked",'0');
- 			  //$(".paytable_payway:first").click();
+	             	} 
+              });*/
+      		  $(".bankName:first").attr("checked",'0');
+ 			  $(".paytable_payway:first").click();
       	     }
             $(".payway_other").text('使用其他方式付款');
         }
