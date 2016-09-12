@@ -1,3 +1,4 @@
+
 package com.fangcang.titanjr.pay.controller;
 
 import java.io.UnsupportedEncodingException;
@@ -9,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+
+import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -80,6 +83,7 @@ public class TitanTradeController extends BaseController {
 			RequestMethod.POST })
 	public String titanPay(String orderInfo, String businessInfo, Model model) {
 		getRequest().getSession();
+		
 		if (!StringUtil.isValidString(orderInfo)) {
 			log.error("orderInfo is not null!");
 			model.addAttribute("msg",
@@ -103,7 +107,9 @@ public class TitanTradeController extends BaseController {
 			// 解析订单信息
 			TitanOrderRequest dto = JsonConversionTool.toObject(deInfo,
 					TitanOrderRequest.class);
-
+			
+			log.info("the titanOrderRequest of info is:"+JSONSerializer.toJSON(dto));
+			
 			if (dto == null) {
 				log.error("validate user identity decrypt fail.");
 				model.addAttribute("msg",
