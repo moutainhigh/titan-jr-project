@@ -2786,6 +2786,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			if (!StringUtil.isValidString(titanOrderRequest.getUserId())
 					&& !StringUtil
 							.isValidString(titanOrderRequest.getRuserId())) {
+				log.info("the param is error");
 				localOrderResponse.putParamError();
 				return localOrderResponse;
 			}
@@ -2793,6 +2794,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			localOrderResponse = this.setBaseUserInfo(titanOrderRequest,
 					titanTransOrder);
 			if (!localOrderResponse.isResult()) {
+				log.info("save base userinfo is fail");
 				return localOrderResponse;
 			}
 
@@ -2824,6 +2826,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				titanTransOrder.setIsEscrowedPayment("1");
 				if (StringUtil.isValidString(titanOrderRequest
 						.getEscrowedDate())) {
+					log.info("should escrowed payment");
 					titanTransOrder.setIsEscrowedPayment("0");
 					titanTransOrder.setEscrowedDate(DateUtil.sdf
 							.parse(titanOrderRequest.getEscrowedDate()));
@@ -2834,6 +2837,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				localOrderResponse.setOrderNo(titanTransOrder.getUserorderid());
 				localOrderResponse.putSuccess();
 				if (!isSuccess) {
+					log.info("save order info is fail");
 					localOrderResponse.putErrorResult("订单信息保存失败");
 				}
 			} catch (Exception e) {

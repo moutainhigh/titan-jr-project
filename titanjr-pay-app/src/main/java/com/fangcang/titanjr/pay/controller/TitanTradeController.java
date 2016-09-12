@@ -80,6 +80,10 @@ public class TitanTradeController extends BaseController {
 			RequestMethod.POST })
 	public String titanPay(String orderInfo, String businessInfo, Model model) {
 		getRequest().getSession();
+		
+		log.info("the orderInfo of info is:"+orderInfo);
+		log.info("the businessInfo of info is:"+orderInfo);
+		
 		if (!StringUtil.isValidString(orderInfo)) {
 			log.error("orderInfo is not null!");
 			model.addAttribute("msg",
