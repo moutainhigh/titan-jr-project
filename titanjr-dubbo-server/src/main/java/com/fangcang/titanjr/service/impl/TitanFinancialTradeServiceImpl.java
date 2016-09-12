@@ -319,7 +319,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					|| null == transOrderResponse.getTransOrder()) {
 				log.error("the order of query is failed: the orderNo is "
 						+ titanPaymentRequest.getPayOrderNo());
-				localAddTransOrderResponse.putErrorResult("订单查询失败");
+				localAddTransOrderResponse.putErrorResult("110100013", "订单查询失败");
 				return localAddTransOrderResponse;
 			}
 			TransOrderDTO transOrderDTO = transOrderResponse.getTransOrder();
@@ -349,7 +349,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 			} else if (OrderStatusEnum
 					.isPaySuccess(transOrderDTO.getStatusid())) {
-				localAddTransOrderResponse.putErrorResult("已支付，请勿重复支付");
+				localAddTransOrderResponse.putErrorResult("110100014", "已支付，请勿重复支付");
 				// 再次回调财务
 				return localAddTransOrderResponse;
 			}

@@ -237,7 +237,10 @@ public class TitanPaymentController extends BaseController {
 		
         if (!localOrderResp.isResult()) {
         	log.error("the result of local order was failed");
-        	return toMsgJson(TitanMsgCodeEnum.ADD_LOCAL_ORDER_ERROR);
+        	Map<String, Object> map = new HashMap<String, Object>();
+    		map.put("result", localOrderResp.getReturnCode());
+    		map.put("resultMsg", localOrderResp.getReturnMessage());
+    		return JSONSerializer.toJSON(map).toString();
         }
         titanPaymentRequest.setOrderid(localOrderResp.getOrderNo());
         TransferRequest transferRequest = this.convertToTransferRequest(titanPaymentRequest);

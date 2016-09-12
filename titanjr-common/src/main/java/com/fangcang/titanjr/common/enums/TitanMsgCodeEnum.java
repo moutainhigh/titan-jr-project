@@ -49,6 +49,10 @@ public enum TitanMsgCodeEnum {
     ADD_LOCAL_ORDER_ERROR(110100011, "本地落单失败，请确认！"),
     
     TRANSFER_FAIL(110100012, "转账失败，请确认！"),
+    
+    QUERY_LOCAL_ORDER(110100013, "查询订单失败！"),
+    
+    PAY_SUCCESS_NOT_REPEATE(110100014, "支付成功，请勿重复支付！"),
 
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");
