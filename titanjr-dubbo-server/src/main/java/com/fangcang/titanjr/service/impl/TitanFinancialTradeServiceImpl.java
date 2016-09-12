@@ -1,3 +1,4 @@
+
 package com.fangcang.titanjr.service.impl;
 
 import java.math.BigDecimal;
@@ -319,7 +320,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					|| null == transOrderResponse.getTransOrder()) {
 				log.error("the order of query is failed: the orderNo is "
 						+ titanPaymentRequest.getPayOrderNo());
-				localAddTransOrderResponse.putErrorResult("订单查询失败");
+				localAddTransOrderResponse.putErrorResult("110100013", "订单查询失败");
 				return localAddTransOrderResponse;
 			}
 			TransOrderDTO transOrderDTO = transOrderResponse.getTransOrder();
@@ -349,7 +350,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 			} else if (OrderStatusEnum
 					.isPaySuccess(transOrderDTO.getStatusid())) {
-				localAddTransOrderResponse.putErrorResult("已支付，请勿重复支付");
+				localAddTransOrderResponse.putErrorResult("110100014", "已支付，请勿重复支付");
 				// 再次回调财务
 				return localAddTransOrderResponse;
 			}
@@ -394,6 +395,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		}
 
 		TransOrderDTO transOrderDTO = transOrderResponse.getTransOrder();
+		
+		if(OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())){
+			orderResponse.putErrorResult("支付成功,请勿重复支付！");
+			return orderResponse;
+		}
 		// 是否在融数落单
 		String orderid = "";
 		// 是否需要重新在本地下单
@@ -451,6 +457,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					isAddOrderAgain = true;
 				}
 			}else{//余额支付不成功，之后网银支付
+				
 				if(StringUtil.isValidString(transOrderDTO.getOrderid())){
 					this.updateOrderNoEffect(transOrderDTO.getTransid());
 					isAddOrderAgain = true;
@@ -2428,8 +2435,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			String domainName = domainConfigDao.queryCurrentEnvDomain();
 			if(StringUtil.isValidString(domainName)){
 				payMethodConfigDTO = new PayMethodConfigDTO();
-				payMethodConfigDTO.setPageurl("http://"+domainName+"/TFS/payment/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/TFS/payment/notify.action");
+				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-app/payment/payConfirmPage.action");
+				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-app/payment/notify.action");
 			}
 			return payMethodConfigDTO;
 			
@@ -3088,3 +3095,4 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
 	}
 }
+

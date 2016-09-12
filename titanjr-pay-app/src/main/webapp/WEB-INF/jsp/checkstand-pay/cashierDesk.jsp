@@ -942,7 +942,7 @@ $("document").ready(function (){
                	 userid:'${cashDeskData.userId}'
                 },
                 success: function (data) {
-               	 if(data.code =="0"){
+               	 if(data.result =="0"){
                		 flag =  true;
                	 }
                 }
