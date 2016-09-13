@@ -373,7 +373,7 @@ $("document").ready(function (){
 	        success: function(data){
 	       	 
 	       	 $('#titanRateAmount').text(data.data.exRateAmount);
-	       	 var show_online_payAmount = (payAmount*100+data.data.exRateAmount*100)/100
+	       	 var show_online_payAmount = accAdd(payAmount,data.data.exRateAmount);
 	         $("#pay_surplus_amount").text(show_online_payAmount);
 	       	//alert(data.data.amount);
 	        }
@@ -413,7 +413,7 @@ $("document").ready(function (){
        paytable_paywayClick(itemType);
        var rateAmount = $("#titanRateAmount").text();
        var payAmount = sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}');
-       var show_online_payAmount =  (payAmount*100+rateAmount*100)/100;
+       var show_online_payAmount =  accAdd(payAmount,rateAmount);
        $("#pay_surplus_amount").text(show_online_payAmount);
 	}
 	
@@ -446,6 +446,21 @@ $("document").ready(function (){
         return Number(d.replace(".", "")) * Number(e.replace(".", "")) / Math.pow(10, c);
     }
     
+    function accAdd(a, b) {  
+        var c, d, e;  
+        try {  
+            c = a.toString().split(".")[1].length;  
+        } catch (f) {  
+            c = 0;  
+        }  
+        try {  
+            d = b.toString().split(".")[1].length;  
+        } catch (f) {  
+            d = 0;  
+        }  
+        return e = Math.pow(10, Math.max(c, d)), (mul(a, e) + mul(b, e)) / e;  
+    } 
+    
     function checktest() {
     	//如果余额足够则只能用余额或者网银付款，二选一，如果余额不足则自由选择
     	if (sub('${cashDeskData.amount}','${cashDeskData.balanceusable}')<= 0){
@@ -477,7 +492,7 @@ $("document").ready(function (){
 	   			 $(".bankName:checked").parents(".paytable_payway").click();
 	   		     var rateAmount = $("#titanRateAmount").text();
 		         var payAmount = '${cashDeskData.amount}';
-		         var show_online_PayAmount =  (payAmount*100+rateAmount*100)/100;
+		         var show_online_PayAmount =  accAdd(rateAmount, payAmount);
 		         $("#pay_surplus_amount").text(show_online_PayAmount);
 	   			 
 	   		 }
