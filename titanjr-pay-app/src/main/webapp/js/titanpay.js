@@ -135,6 +135,19 @@ function initTitanPayObj() {
 				encodeURIComponent(str));
 	}
 
+	titanPayObj.getTitanPayUrl = function(orderInfo , businessInfo)
+	{
+		if (this.checkOrder(orderInfo)) {
+			var orderInfo = this.titanEncrypted(JSON.stringify(orderInfo));
+			var businessInfo = JSON.stringify(businessInfo);
+			var url = config.address + 'trade/titanPay.action';
+			url += '?orderInfo=' + encodeURIComponent(orderInfo)
+					+ "&businessInfo=" + encodeURIComponent(businessInfo);
+			return url;
+		}
+		return null;
+	}
+	
 	/**
 	 * 请求支付
 	 * 
