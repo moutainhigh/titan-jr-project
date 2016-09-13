@@ -402,21 +402,19 @@ $("document").ready(function (){
 		 $("#useCashierDeskPay").show();
        $("#enough_amount").hide();
        $("#not_enough_amount").show();
-     /*   $("#onlinePayAmount").val(sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}')); */
-       //此处需计算手续费
-       amount_not_enough_rate();
+       //获取常用第一个银行
+       var itemType = $(".bankName:first").parents(".paytable_payway").attr("itemType");
+       //计算第一个银行的手续费
+       amount_not_enough_rate(itemType);
 	}
 	
 	
-	function amount_not_enough_rate(){
-		 var itemType = $(".bankName:first").parents(".paytable_payway").attr("itemType");
-	        paytable_paywayClick(itemType);
-	     
-	       var rateAmount = $("#titanRateAmount").text();
-	       var payAmount = sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}');
-	      
-	       var show_online_payAmount =  (payAmount*100+rateAmount*100)/100;
-	       $("#pay_surplus_amount").text(show_online_payAmount);
+	function amount_not_enough_rate(itemType){
+       paytable_paywayClick(itemType);
+       var rateAmount = $("#titanRateAmount").text();
+       var payAmount = sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}');
+       var show_online_payAmount =  (payAmount*100+rateAmount*100)/100;
+       $("#pay_surplus_amount").text(show_online_payAmount);
 	}
 	
     function sub(a, b) {
@@ -464,26 +462,22 @@ $("document").ready(function (){
      			 if(className =="jiantou"){
      				 conPayWay();
      			 }
-     			 
+     			//第一个银行选中
      		    $(".bankName:first").attr("checked",'0');
-     			/* $(".paytable_payway:first").click(); */
-     			 $(".bankName:checked").parents(".paytable_payway").click();
+     		    $(".bankName:checked").parents(".paytable_payway").click();
      				
    	       }
 	   	}else{//余额不足，将支持两种结合的方式或者选择充值
 	   		 if($("#d_checkbox").attr("checked")=="checked"){//在线支付剩余余额
-	   			/*  $("#pay_surplus_amount").text(sub('${cashDeskData.amount}','${cashDeskData.balanceusable}'));
-	   			 $('#titanRateAmount').text("0.00"); */
-	   			amount_not_enough_rate();
+	   			 //获取选中银行
+	   			var itemType = $(".bankName:checked").parents(".paytable_payway").attr("itemType");
+	   		  //计算选中银行的手续费
+	   			amount_not_enough_rate(itemType);
 	   		 }else{//在线支付全款
-	   			 $("#pay_surplus_amount").text('${cashDeskData.amount}');
-	   			/*  $(".bankName:first").attr("checked",'0'); */
-	   			/*  $(".paytable_payway:first").click(); */
 	   			 $(".bankName:checked").parents(".paytable_payway").click();
 	   		     var rateAmount = $("#titanRateAmount").text();
 		         var payAmount = '${cashDeskData.amount}';
 		         var show_online_PayAmount =  (payAmount*100+rateAmount*100)/100;
-		       /*   $("#onlinePayAmount").val(onlinePayAmount); */
 		         $("#pay_surplus_amount").text(show_online_PayAmount);
 	   			 
 	   		 }
