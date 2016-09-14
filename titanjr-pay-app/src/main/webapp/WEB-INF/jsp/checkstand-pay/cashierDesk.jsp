@@ -280,9 +280,10 @@
 	    <input name="paySource" id="paySource" type="hidden" value="${cashDeskData.paySource}">
 	    <input name="deskId" id="deskId" type="hidden" value="${cashDeskData.deskId}">
 	    <input name="payerAcount" id="payerAcount" type="hidden" value="">
-	     <input name="userid" id="payerAcount" type="hidden" value="${cashDeskData.userId}">
+	    <input name="userid" id="payerAcount" type="hidden" value="${cashDeskData.userId}">
 	    <input name="payOrderNo" id="payOrderNo" type="hidden" value="${cashDeskData.payOrderNo}">
 	    <input name="tradeAmount" id="tradeAmount" type="hidden" value="${cashDeskData.amount}">
+	    <input name="fcUserid" id="fcUserid" type="hidden" value="${cashDeskData.fcUserid}">
     </form>
 </div>
 
