@@ -305,7 +305,7 @@
                notifyUrl = #{notifyUrl},
             </if>
             <if test="businessinfo !=null">
-            businessinfo=#{businessinfo}
+            businessinfo=#{businessinfo},
             </if>
             <if test=" payerType !=null">
             payertype =#{payerType}
