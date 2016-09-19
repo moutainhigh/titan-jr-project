@@ -228,7 +228,10 @@ public class TitanPaymentController extends BaseController {
 		
 	    Map<String,String> validResult = this.validPaymentData(titanPaymentRequest);
         if(!CommonConstant.OPERATE_SUCCESS.equals(validResult.get(CommonConstant.RESULT))){//合规性验证
-        	return JSONSerializer.toJSON(validResult).toString();
+        	Map<String, Object> map = new HashMap<String, Object>();
+        	map.put("result", validResult.get(CommonConstant.RESULT));
+    		map.put("resultMsg", validResult.get(CommonConstant.RETURN_MSG));
+        	return JSONSerializer.toJSON(map).toString();
         }
 		
         log.info("the params of local order:"+JsonConversionTool.toJson(titanPaymentRequest));
