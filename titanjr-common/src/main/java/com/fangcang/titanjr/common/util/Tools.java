@@ -98,5 +98,15 @@ public class Tools {
 		}
 		return enterKeySrc;
 	}
-	 
+	/**
+	 * 给短信添加【天下房仓】后缀签名
+	 * @param smsContent
+	 * @return
+	 */
+	public static String addSMSSuffix(String smsContent){
+		if(smsContent.indexOf("[")==-1&&smsContent.indexOf("【")==-1){
+			smsContent +=" 【天下房仓】";
+		}
+		return smsContent;
+	}
 }
