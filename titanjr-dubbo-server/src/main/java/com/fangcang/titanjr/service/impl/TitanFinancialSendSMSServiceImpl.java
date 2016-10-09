@@ -38,6 +38,7 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 		SendSmsResponse sendSmsResponse = new SendSmsResponse();
 		try{
 			if(sendSMSRequest !=null){
+				sendSMSRequest.setContent(Tools.addSMSSuffix(sendSMSRequest.getContent()));
 				SMSSendDTO smsSendDTO = new SMSSendDTO();
 				smsSendDTO.setMobiles(sendSMSRequest.getMobilePhone());
 				smsSendDTO.setContent(sendSMSRequest.getContent());
@@ -46,13 +47,14 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 				String messageServiceUrl= ProxyFactoryConstants.messageServiceUrl + "messageSendService";
 				MessageSendService messageSendService = hessianProxyBeanFactory.getHessianProxyBean(MessageSendService.class,messageServiceUrl);
 			    String retMessage = messageSendService.sendSMS(smsSendDTO);
+			    log.info("send sms ,messageServiceUrl:"+messageServiceUrl+",sendSMSRequest  param:"+ToStringBuilder.reflectionToString(sendSMSRequest)+",retMessage:"+retMessage);
+		    	
 			    if(CommonConstant.RETURN_SUCCESS.toUpperCase().equals(retMessage)){
 			    	sendSmsResponse.setResult(true);
 				    sendSmsResponse.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
 				    sendSmsResponse.setReturnMessage(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				    return sendSmsResponse;
 			    }else{
-			    	log.error("send sms ,url:"+messageServiceUrl+",param:"+ToStringBuilder.reflectionToString(smsSendDTO)+",retMessage:"+retMessage);
 			    	sendSmsResponse.setResult(false);
 					sendSmsResponse.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
 					sendSmsResponse.setReturnMessage(retMessage);
@@ -73,6 +75,7 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 		return sendSmsResponse;
 	}
 
+	
 	@Override
 	public SendCodeResponse sendCode(SendCodeRequest sendCodeRequest) {
 		//参数校验
