@@ -60,7 +60,7 @@ import com.fangcang.util.MyBeanUtil;
 public class RSAccTradeManagerImpl implements RSAccTradeManager {
 
 	private static final Log log = LogFactory
-			.getLog(RSOrganizationManagerImpl.class);
+			.getLog(RSAccTradeManagerImpl.class);
 
 	private RSInvokeInitManagerImpl rsInvokeInitManager;
 
