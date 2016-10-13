@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.management.RuntimeErrorException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -17,15 +16,11 @@ import com.Rop.api.DefaultRopClient;
 import com.Rop.api.request.ExternalSessionGetRequest;
 import com.Rop.api.response.ExternalSessionGetResponse;
 import com.fangcang.titanjr.common.util.Tools;
-import com.fangcang.titanjr.rs.dao.CallBackConfigDao;
-import com.fangcang.titanjr.rs.dao.RSInvokeConfigDao;
-import com.fangcang.titanjr.rs.dao.RSPayMethodDao;
 import com.fangcang.titanjr.rs.dao.SysconfigDao;
 import com.fangcang.titanjr.rs.entity.RSInvokeConfig;
 import com.fangcang.titanjr.rs.entity.Sysconfig;
 import com.fangcang.titanjr.rs.entity.TitanCallBackConfig;
 import com.fangcang.titanjr.rs.entity.TitanPayMethod;
-import com.fangcang.titanjr.rs.entity.TitanPayMethodConfig;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 
 /**

@@ -870,26 +870,29 @@
 		
 		
 <script type="text/javascript">
-$(function(){
-	$(".pay_bank_l input[type='radio']").on("click",function(){
-		var bankname = $(this).val();
-		var dataIndex = $(this).attr("data-index");
-		var itemType = $("#item-"+dataIndex).attr("data-index");
-		var bankType= "jjk";
-		$(".bank-limit").addClass("hide");
-		if(itemType==1||itemType==2){
-			bankType= "jjk";
-		}else if(itemType==3){
-			bankType= "xyk";
-		}
-		if($("."+bankname+"-"+bankType).length==0){
-			$(".bank-limit-wrap").hide();
-		}else{
-			$(".bank-limit-wrap").show();
-		}
-		$("."+bankname+"-"+bankType).removeClass("hide");
-	});
-});
+
+/**
+ * 显示相应的限额
+ * rObj : 单选select
+ */
+function bankCheckRadio(rObj){
+	var bankname = $(rObj).val();
+	var dataIndex = $(rObj).attr("data-index");
+	var itemType = $("#item-"+dataIndex).attr("data-index");
+	var bankType= "jjk";
+	$(".bank-limit").addClass("hide");
+	if(itemType==1||itemType==2){
+		bankType= "jjk";
+	}else if(itemType==3){
+		bankType= "xyk";
+	}
+	if($("."+bankname+"-"+bankType).length==0){
+		$(".bank-limit-wrap").hide();
+	}else{
+		$(".bank-limit-wrap").show();
+	}
+	$("."+bankname+"-"+bankType).removeClass("hide");
+}
 
 </script>		
 

@@ -1,4 +1,3 @@
-
 var titan_pub = "d8b6e03dd8f9bf45157f0d14aedf9a696665641da90cab5114a22b7f6c711f22429c32c99ab76e3ce74de00145bcd50b9d2e7c60cd97a4979a5d0ce4ead9ba61baca1495758d69cc1f76e69db43f1ef1f9c33cd2edb8c726ed17c297a7b9fa3f18e58aef9d3f33f8431a41cc3c0ca7bc5151d33a8691e6506e0439363aec0063";
 var titan_expo = "10001";
 
@@ -173,4 +172,3 @@ function initTitanPayObj() {
 };
 
 initTitanPayObj();
-

@@ -65,6 +65,7 @@
             <mvc:exclude-mapping path="/account/error_cashier.action"/>
             
             <mvc:exclude-mapping path="/setting/check_payPassword.action"/>
+            <mvc:exclude-mapping path="/help/**/*"/>
            
             
             

@@ -208,7 +208,12 @@ var payOrderNo = null;
 
 $("document").ready(function (){
 	getRechargePayOrderNo();
-	$(".bankName:first").attr("checked",'0');
+	var firstBank = $(".bankName:first");
+	firstBank.attr("checked","0");
+	bankCheckRadio(firstBank);
+	$(".pay_bank_l input[type='radio']").on("click",function(){
+		bankCheckRadio($(this));
+	});
 });
 
 

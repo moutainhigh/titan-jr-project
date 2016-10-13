@@ -109,4 +109,14 @@ public class Tools {
 		}
 		return smsContent;
 	}
+	/**
+	 * 红色显示关键词
+	 * @param content 全部文本
+	 * @param keyword 关键词
+	 * @return
+	 */
+	public static String redKeyword(String content,String keyword){
+		return	content.replaceAll(keyword, "<span style=\"color:#f00;\">"+keyword+"</span>");
+	}
+	
 }

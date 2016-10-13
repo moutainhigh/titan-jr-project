@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanHelpDao">
+  <select id="queryList" resultType="com.fangcang.titanjr.dto.bean.TitanHelpDTO" parameterType="com.fangcang.titanjr.entity.parameter.TitanHelpParam" >
+    select 
+    *
+    from t_tfs_help
+    <where>
+    	<if test="helpId != null"> helpid = #{helpId}</if>
+    	<if test="helpTitle != null"> and helptitle = #{helpTitle}</if>
+    	<if test="helpContent != null"> and helpcontent = #{helpContent}</if>
+    	<if test="helpType != null"> and helptype = #{helpType}</if>
+    	<if test="isShow != null"> and isshow = #{isShow}</if>
+    </where>
+  </select>
+  <!-- 标题和内容同时模糊搜索 -->
+  <select id="searchList" resultType="com.fangcang.titanjr.dto.bean.HelpWordDTO" parameterType="com.fangcang.titanjr.entity.parameter.TitanHelpParam" >
+    select 
+    	helpid,
+    	helptitle,
+    	helpcontent
+    from t_tfs_help
+    <where>
+    	<if test="helpId != null"> helpid = #{helpId}</if>
+    	<if test="helpTitle != null and helpContent != null"> and (helptitle like CONCAT('%',#{helpTitle},'%')  or helpcontent like CONCAT('%',#{helpContent},'%'))</if>
+    	<if test="helpType != null"> and helptype = #{helpType}</if>
+    	<if test="isShow != null"> and isshow = #{isShow}</if>
+    </where>
+  </select>
+  
+  <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanHelp" useGeneratedKeys="true" keyProperty="helpid">
+    insert into t_tfs_help (
+	    helptitle,
+	    helpcontent, 
+	    helptype, 
+	    orderno, 
+	    isshow, 
+	    creator, 
+	    createtime, 
+	    modifior
+    )values (
+	    #{helpTitle}, 
+	    #{helpContent}, 
+	    #{helpType}, 
+	    #{orderNo}, 
+	    #{isShow},  
+	    #{creator}, 
+	    #{createTime}, 
+	    #{modifior}
+    )
+  </insert>
+  
+  <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanHelp" >
+    update t_tfs_help
+    <set >
+      <if test="helpTitle != null" >
+        helptitle = #{helpTitle},
+      </if>
+      <if test="helpContent != null" >
+        helpcontent = #{helpContent},
+      </if>
+      <if test="helpType != null" >
+        helptype = #{helpType},
+      </if>
+      <if test="orderNo != null" >
+        orderno = #{orderNo},
+      </if>
+      <if test="isShow != null" >
+        isshow = #{isShow},
+      </if>
+      <if test="creator != null" >
+        creator = #{creator},
+      </if>
+      <if test="createTime != null" >
+        createtime = #{createTime},
+      </if>
+      <if test="modifior != null" >
+        modifior = #{modifior},
+      </if>
+      <if test="modifyTime" >
+        modifytime = #{modifyTime},
+      </if>
+    </set>
+    where helpid = #{helpId}
+  </update>
+</mapper>

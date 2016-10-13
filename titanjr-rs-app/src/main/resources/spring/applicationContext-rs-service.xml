@@ -35,6 +35,8 @@
     <bean id="rsPayOrderManager"  class="com.fangcang.titanjr.rs.manager.impl.RSPayOrderManagerImpl"></bean>
     
     <bean id="baseInfoInitManager" class="com.fangcang.titanjr.rs.manager.impl.BaseInfoInitManagerImpl"></bean>
+    
+    <bean id="rsFileManager" class="com.fangcang.titanjr.rs.manager.impl.RSFileManagerImpl"></bean>
 
 	<bean id="invokeLogRecordManager" class="com.fangcang.titanjr.rs.manager.impl.InvokeLogRecordManager"/>
 

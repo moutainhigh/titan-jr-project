@@ -120,7 +120,7 @@
                   <div class="pay_table">
                     <ul>
                          <c:if test="${not empty  cashDeskData.commonPayMethodDTOList}">
-                           <li class="on">常用</li>
+                           <li class="on" id="pay_table_ttt">常用</li>
                         </c:if>
                         <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem">
                             <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 }">
@@ -129,7 +129,7 @@
                          </c:forEach>
                     </ul>
                   </div>
-                  <div class="paytable_content">
+                  <div class="paytable_content pay_bank_l">
                     <ul>
                        <c:if test="${not empty  cashDeskData.commonPayMethodDTOList }">
                       <li>
@@ -265,6 +265,7 @@
                 <a class="btn btn_exit J_exitKan">取消</a>
             </div>
         </div>
+        <jsp:include page="../checkstand-pay/cashierDeskLimit.jsp"></jsp:include>
     </div>
 </div>
 
@@ -342,8 +343,12 @@ $("document").ready(function (){
         	}
         });
         
-        $(".bankName:first").attr("checked",'0');     
-        
+        var firstBank = $(".bankName:first");
+    	firstBank.attr("checked","0");
+    	bankCheckRadio(firstBank);
+    	$(".pay_bank_l input[type='radio']").on("click",function(){
+    		bankCheckRadio($(this));
+    	});
     });
 
 
@@ -466,6 +471,7 @@ $("document").ready(function (){
     	//如果余额足够则只能用余额或者网银付款，二选一，如果余额不足则自由选择
     	if (sub('${cashDeskData.amount}','${cashDeskData.balanceusable}')<= 0){
    		 if($("#d_checkbox").attr("checked")=="checked"){
+   			$(".bank-limit-wrap").hide();
    			 var arrow = $('.J_payway').find('i');
      			 var className = arrow.attr("class");
      			 if(className !="jiantou"){
@@ -481,7 +487,10 @@ $("document").ready(function (){
      			//第一个银行选中
      		    $(".bankName:first").attr("checked",'0');
      		    $(".bankName:checked").parents(".paytable_payway").click();
-     				
+     		   	$($(".pay_table li")[0]).click();
+     		  	$(".bankName:first").click();
+     		  	
+     		  
    	       }
 	   	}else{//余额不足，将支持两种结合的方式或者选择充值
 	   		 if($("#d_checkbox").attr("checked")=="checked"){//在线支付剩余余额
@@ -577,7 +586,7 @@ $("document").ready(function (){
         		  $('#titanRateAmount').text("0.00");
         	}
             $(".payway_other").text('使用其他方式付款');
-           
+            $(".bank-limit-wrap").hide();
         }else{
         	if('${cashDeskData.amount}' - '${cashDeskData.balanceusable}' <= 0){//余额充足
       		  $("#d_checkbox").removeAttr("checked");
@@ -589,6 +598,8 @@ $("document").ready(function (){
               });*/
       		  $(".bankName:first").attr("checked",'0');
  			  $(".paytable_payway:first").click();
+ 				$($(".pay_table li")[0]).click();
+     		  	$(".bankName:first").click();
       	     }
             $(".payway_other").text('使用其他方式付款');
         }
