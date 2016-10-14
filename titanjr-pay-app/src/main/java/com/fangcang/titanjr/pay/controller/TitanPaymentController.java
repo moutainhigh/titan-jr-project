@@ -34,6 +34,7 @@ import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.PayTypeEnum;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
@@ -228,7 +229,10 @@ public class TitanPaymentController extends BaseController {
 		
 	    Map<String,String> validResult = this.validPaymentData(titanPaymentRequest);
         if(!CommonConstant.OPERATE_SUCCESS.equals(validResult.get(CommonConstant.RESULT))){//合规性验证
-        	return JSONSerializer.toJSON(validResult).toString();
+        	Map<String, Object> map = new HashMap<String, Object>();
+        	map.put("result", validResult.get(CommonConstant.RESULT));
+    		map.put("resultMsg", validResult.get(CommonConstant.RETURN_MSG));
+        	return JSONSerializer.toJSON(map).toString();
         }
 		
         log.info("the params of local order:"+JsonConversionTool.toJson(titanPaymentRequest));
@@ -325,11 +329,14 @@ public class TitanPaymentController extends BaseController {
 			return "checkstand-pay/genRechargePayment";
 		}
 		
-        Map<String,String> validResult = this.validPaymentData(titanPaymentRequest);
-        if(!CommonConstant.OPERATE_SUCCESS.equals(validResult.get(CommonConstant.RESULT))){//合规性验证
-        	model.addAttribute(CommonConstant.RETURN_MSG, validResult.get(CommonConstant.RETURN_MSG));
-			return "checkstand-pay/genRechargePayment";
-        }
+		if(!titanPaymentRequest.getPaySource().equals(PaySourceEnum.RECHARDE.getDeskCode()) )
+		{
+	        Map<String,String> validResult = this.validPaymentData(titanPaymentRequest);
+	        if(!CommonConstant.OPERATE_SUCCESS.equals(validResult.get(CommonConstant.RESULT))){//合规性验证
+	        	model.addAttribute(CommonConstant.RETURN_MSG, validResult.get(CommonConstant.RETURN_MSG));
+				return "checkstand-pay/genRechargePayment";
+	        }
+		}
 		// 确认收银台支付类型是否存在
 		CashierItemTypeEnum cashierItemTypeEnum = CashierItemTypeEnum
 				.getCashierItemTypeEnumByKey(titanPaymentRequest
