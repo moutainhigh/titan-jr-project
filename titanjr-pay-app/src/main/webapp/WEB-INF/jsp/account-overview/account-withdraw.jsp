@@ -416,7 +416,7 @@
         var pathName=parent.document.location.pathname;
         var pos=curWwwPath.indexOf(pathName);
         //获取主机地址，如： http://localhost:8083
-        var localhostPaht=curWwwPath.substring(0,pos);
+        var localhostPaht='/TFS/';
         //获取带"/"的项目名，如：/uimcardprj
         var projectName=pathName.substring(0,pathName.substr(1).indexOf('/')+1);
         return(localhostPaht+projectName);
