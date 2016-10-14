@@ -53,7 +53,7 @@
 							<li>
 								<c:forEach items="${cashDeskData.commonPayMethodDTOList }" var="commom" varStatus="status">
 								<c:if test="${commom.bankname !='cmbc'}">
-								  <div class="paytable_payway">
+								  <div class="paytable_payway" itemType='${commom.paytype}'>
                                     <div class="payc_left"><label class="f_ui-radio-c3">
                                       <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${commom.bankname}">
                                       <i></i>
@@ -76,7 +76,7 @@
                           </c:forEach>
                           <c:forEach items="${cashDeskData.commonPayMethodDTOList }" var="commom"  varStatus="status">
                                <c:if test="${commom.bankname =='cmbc'}">
-								  <div class="paytable_payway">
+								  <div class="paytable_payway" itemType='${commom.paytype}'>
                                     <div class="payc_left"><label class="f_ui-radio-c3">
                                       <input name="r2" type="radio" data-index="i_${status.index}" class="bankName" value="${commom.bankname}">
                                       <i></i>
@@ -111,7 +111,7 @@
                                 <li>
                                     <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
                                       <c:if test="${itemBank.bankName !='cmbc'}">
-                                        <div class="paytable_payway">
+                                        <div class="paytable_payway" itemType='${deskItem.itemType}'>
                                             <div class="payc_left"><label class="f_ui-radio-c3">
                                                 <input name="r2" type="radio" data-index="${o_status.index }-${i_status.index}" class="bankName" value="${itemBank.bankName}">
                                                 <i></i>
@@ -137,7 +137,7 @@
                                    </c:forEach>
                                   <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="d_status">
                                     <c:if test="${itemBank.bankName=='cmbc'}">
-                                        <div class="paytable_payway">
+                                        <div class="paytable_payway" itemType='${deskItem.itemType}'>
                                             <div class="payc_left"><label class="f_ui-radio-c3">
                                                 <input name="r2" type="radio" data-index="d_${o_status.index }-${d_status.index}" class="bankName" value="${itemBank.bankName}">
                                                 <i></i>
