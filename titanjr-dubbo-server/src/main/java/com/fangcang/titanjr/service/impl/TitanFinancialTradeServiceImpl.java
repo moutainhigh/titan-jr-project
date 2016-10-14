@@ -482,6 +482,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 				if(PayerTypeEnum.RECHARGE.getKey().equals(transOrderDTO.getPayerType()))
 				{
+					orderRequest.setGoodsdetail("使用"
+							+ SupportBankEnum
+									.getBankDetailByName(titanPaymentRequest
+											.getBankInfo()).bankRemark + "充值");
 					if(StringUtil.isValidString(titanPaymentRequest.getTradeAmount()))
 					{
 						orderRequest.setTradeamount(Long.parseLong(NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount())));
