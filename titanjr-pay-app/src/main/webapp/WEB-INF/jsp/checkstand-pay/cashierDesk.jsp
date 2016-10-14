@@ -94,13 +94,15 @@
                 
             </div>
             </div>
-                <div class="TFS_withdrawBoxR fr">
+                <c:if test="${cashDeskData.paySource}==1">
+                   <div class="TFS_withdrawBoxR fr">
 					<h3>温馨提示</h3>
 					<div class="TFS_withdrawBoxR_content">
 						<p>手续费：</p>
 						<h4><span id="titanRateAmount">0.00</span>元</h4>	
 					</div>
-				</div>
+				  </div>
+                </c:if>
 				</div>
             <input type="hidden" id="onlinePayAmount" name="onlinePayAmount"><!--通过网银充值并支付的金额-->
               <div class="goldpay_title1" style="border-bottom:#ddd 1px solid;">
@@ -336,19 +338,21 @@ $("document").ready(function (){
         	paytable_paywayClick(itemType);
         });
         
-        $('.paytable_payway').each(function(){
-        	if($(this).find('input:radio[name="r2"]').is(":checked"))
-        	{
-        		$(this).click();
-        	}
-        });
-        
         var firstBank = $(".bankName:first");
     	firstBank.attr("checked","0");
     	bankCheckRadio(firstBank);
     	$(".pay_bank_l input[type='radio']").on("click",function(){
     		bankCheckRadio($(this));
     	});
+    	
+   	   $('.paytable_payway').each(function(){
+          	
+          	if($(this).find('input:radio[name="r2"]').is(":checked"))
+          	{
+          		$(this).click();
+          	}
+          });
+    	
     });
 
 
