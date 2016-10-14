@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
@@ -47,6 +48,7 @@ public class TitanHelpServiceImpl implements TitanHelpService {
 	
 	
 	@Override
+	@Transactional
 	public BaseResponseDTO addHelp(HelpRequest helpRequest) throws GlobalServiceException {
 		BaseResponseDTO response = new BaseResponseDTO();
 		int orderno = 1;
