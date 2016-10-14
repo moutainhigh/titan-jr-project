@@ -5,7 +5,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +40,7 @@ import com.fangcang.titanjr.service.TitanHelpService;
  */
 @Service("titanHelpService")
 public class TitanHelpServiceImpl implements TitanHelpService {
-	private static final Logger LOGGER = Logger.getLogger(TitanHelpServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TitanHelpServiceImpl.class);
 	@Resource
 	private TitanHelpDao titanHelpDao;
 	@Resource
