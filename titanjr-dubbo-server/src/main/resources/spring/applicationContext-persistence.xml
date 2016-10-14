@@ -24,17 +24,29 @@
 	<!-- LOB大数据列支持 -->
 	
 	<!-- <bean id="lobHandler" lazy-init="true" class="org.springframework.jdbc.support.lob.DefaultLobHandler" /> -->
-<!-- 	<jee:jndi-lookup id="dataSource" jndi-name="jdbc/titanjr" /> -->
+	<!-- <jee:jndi-lookup id="dataSource" jndi-name="jdbc/titanjr" />  -->
 	<!-- dataSource 定义 -->
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
 		<property name="driverClassName" value="${driverClassName}" />
 		<property name="url" value="${url}" />
 		<property name="username" value="${username}" />
 		<property name="password" value="${password}" />
+		<property name="maxActive" value="${maxActive}" />
+		<property name="initialSize" value="${initialSize}" />
+		<property name="maxWait" value="${maxWait}" />
+		<property name="minIdle" value="${minIdle}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${timeBetweenEvictionRunsMillis}" />
+		<property name="minEvictableIdleTimeMillis" value="${minEvictableIdleTimeMillis}" />
+		 
+		<property name="maxOpenPreparedStatements" value="${maxOpenPreparedStatements}" />
+		<property name="removeAbandoned" value="${removeAbandoned}" />
+		<property name="removeAbandonedTimeout" value="${removeAbandonedTimeout}" />
+		<property name="logAbandoned" value="${logAbandoned}" />
 	</bean>
-
-
-	<bean id="configDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+	<!-- 
+	<jee:jndi-lookup id="configDataSource" jndi-name="jdbc/cfgDS" />
+ 	-->
+	 <bean id="configDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		  destroy-method="close">
 		<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
 		<property name="url" value="jdbc:oracle:thin:@192.168.2.38:1521:fangcangdb" />
