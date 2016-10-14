@@ -480,13 +480,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							.getReturnMsg());
 					return orderResponse;
 				}
-				if(PayerTypeEnum.RECHARGE.getKey().equals(transOrderDTO.getPayerType()))
-				{
-					if(StringUtil.isValidString(titanPaymentRequest.getTradeAmount()))
-					{
-						orderRequest.setTradeamount(Long.parseLong(NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount())));
-					}
-				}
 				orderRequest.setOrderid(orderOperateResponse.getOrderid());
 				orderRequest.setTransid(transOrderDTO.getTransid());
 				boolean isSuccess = this.saveOrUpdateTitanTransOrder(
@@ -2896,20 +2889,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	 */
 	private TransOrderCreateResponse checkTitanTransOrder(
 			TitanOrderRequest titanOrderRequest) {
-		
-//		if(PayerTypeEnum.RECHARGE.getKey().equals(titanOrderRequest.getPayerType())  
-//				|| PayerTypeEnum.WITHDRAW.getKey().equals(titanOrderRequest.getPayerType()))
-//		{
-//			return null;
-//		}
 
 		TransOrderCreateResponse orderCreateResponse = new TransOrderCreateResponse();
-		
+
 		// 根据付款者身份类型和业务订单号确认其是否在本系统产生过订单。
 		TransOrderRequest transOrderRequest = new TransOrderRequest();
 		transOrderRequest.setPayorderno(titanOrderRequest.getGoodsId());
 		transOrderRequest.setPayertype(titanOrderRequest.getPayerType());
-		
 		TransOrderDTO transOrderDTO = titanOrderService
 				.queryTransOrderDTO(transOrderRequest);
 
@@ -3068,11 +3054,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				bussinessInfo.put("partnerId", titanOrderRequest.getUserId());
 			} else if (payerTypeEnum.isUserId()) {// 付款方传入userId
 				titanTransOrder.setUserid(titanOrderRequest.getUserId());
-				if (PayerTypeEnum.WITHDRAW.getKey().equals(
-						payerTypeEnum.getKey())) {
-					titanTransOrder.setPayermerchant(titanOrderRequest
-							.getUserId());
-				}
+				titanTransOrder.setPayermerchant(titanOrderRequest.getUserId());
 			}
 
 		}
@@ -3095,21 +3077,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 			} else if (payerTypeEnum.isUserId()) {// 接收方传入userId
 				titanTransOrder.setUserid(titanOrderRequest.getRuserId());
-				if (PayerTypeEnum.RECHARGE.getKey().equals(payerTypeEnum.getKey()))
-				{
-					titanTransOrder
-							.setPayeemerchant(titanOrderRequest.getRuserId());
-				}
+				titanTransOrder
+						.setPayeemerchant(titanOrderRequest.getRuserId());
 				titanTransOrder.setUserrelateid(titanOrderRequest.getRuserId());
-				
-				if (PayerTypeEnum.WITHDRAW.getKey().equals(
-						payerTypeEnum.getKey())) {
-					titanTransOrder
-							.setTransordertype(TransOrderTypeEnum.WITHDRAW.type);
-				} else {
-					titanTransOrder
-							.setTransordertype(TransOrderTypeEnum.RECHARGE.type);
-				}
+				titanTransOrder
+						.setTransordertype(TransOrderTypeEnum.RECHARGE.type);
 			} else {
 				localOrderResponse.putSysError();
 				return localOrderResponse;
