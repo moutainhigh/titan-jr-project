@@ -41,9 +41,9 @@ public class TitanRateController extends BaseController {
 		CashierItemTypeEnum itemTypeEnum = CashierItemTypeEnum
 				.getCashierItemTypeEnumByKey(payType);
 
-		if (itemTypeEnum == null) {
-			return this.toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
-		}
+//		if (itemTypeEnum == null) {
+//			return this.toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+//		}
 
 		TitanRateComputeReq computeReq = new TitanRateComputeReq();
 		computeReq.setAmount(amount);

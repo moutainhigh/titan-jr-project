@@ -10,11 +10,20 @@ public enum PayerTypeEnum {
 	  SUPPLY_UNION("4","联盟供应商付款"),
 	  ALLIANCE("5","商家联盟"),
 	  MOBILE("6","移动端"),
-	  RECHARGE("7","充值");
+	  RECHARGE("7","充值"),
+	  WITHDRAW("8","提现");
 
 	  public String key;
 	  
-	  public String msg;
+	  public String getKey() {
+		return key;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public String msg;
 	  
 	  private PayerTypeEnum(String key,String msg){
 		  this.key =key;
@@ -59,7 +68,7 @@ public enum PayerTypeEnum {
 	  
 	  public boolean isUserId()
 	  {
-		  return RECHARGE.key.equals(this.key);
+		  return RECHARGE.key.equals(this.key) || WITHDRAW.key.equals(this.key);
 	  }
 	  
 	  public boolean isReicveMerchantCode(){//接收方为机构编码的

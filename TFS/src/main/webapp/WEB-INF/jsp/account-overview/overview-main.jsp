@@ -509,7 +509,7 @@
 
         function account_withdraw(){
       	  window.top.createIframeDialog({
-                url : '<%=basePath%>/account/account-withdraw.shtml',
+                url : '<%=basePath%>/account/goto_cashierDesk.shtml?payType=8',
 					close:function () {
 						/* ALERT("==="); */
 					}
@@ -1151,7 +1151,7 @@
         //充值
         $('.rechargeBtn').on('click',function(){
                 window.top.createIframeDialog({
-                	  url : '<%=basePath%>/trade/showCashierDesk.action?paySource=5',
+                	  url : '<%=basePath%>/account/goto_cashierDesk.shtml?payType=7',
                 });
                 return false;
         });

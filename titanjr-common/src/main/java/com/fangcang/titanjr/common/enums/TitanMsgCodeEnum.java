@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.common.enums;
 
-
 /**
  * 消息交互码定义
  * 
@@ -11,9 +10,9 @@ public enum TitanMsgCodeEnum {
 
 	// 成功
 	TITAN_SUCCESS(0, "成功"),
-	
-	//失败
-    TITAN_FAIL(-1, "失败"),
+
+	// 失败
+	TITAN_FAIL(-1, "失败"),
 
 	// 收银台统一 110开通
 	// 参数错误
@@ -39,20 +38,28 @@ public enum TitanMsgCodeEnum {
 
 	// 收银台不存在，请确认
 	CASHIER_DESK_NOT_EXISTS(110100008, "收银台不存在，请确认！"),
-	
+
 	// 收银台不存在，请确认
-    PAY_PWD_ERROR(110100009, "付款密码错误，请确认！"),
-    
-   // 密码设置失败
-    SET_PAY_PWD_ERROR(110100010, "密码设置失败，请确认！"),
-    
-    ADD_LOCAL_ORDER_ERROR(110100011, "本地落单失败，请确认！"),
-    
-    TRANSFER_FAIL(110100012, "转账失败，请确认！"),
-    
-    QUERY_LOCAL_ORDER(110100013, "查询订单失败！"),
-    
-    PAY_SUCCESS_NOT_REPEATE(110100014, "支付成功，请勿重复支付！"),
+	PAY_PWD_ERROR(110100009, "付款密码错误，请确认！"),
+
+	// 密码设置失败
+	SET_PAY_PWD_ERROR(110100010, "密码设置失败，请确认！"),
+
+	ADD_LOCAL_ORDER_ERROR(110100011, "本地落单失败，请确认！"),
+
+	TRANSFER_FAIL(110100012, "转账失败，请确认！"),
+
+	QUERY_LOCAL_ORDER(110100013, "查询订单失败！"),
+
+	PAY_SUCCESS_NOT_REPEATE(110100014, "支付成功，请勿重复支付！"),
+
+	// 使用新卡提现删除原绑定卡失败
+	USE_NEW_CARD_WITHDRAW_DEL_OLD_CARD_FAIL(110100015, "使用新卡提现删除原绑定卡失败"),
+
+	USE_NEW_CARD_WITHDRAW_BING_CARD_FAIL(110100016, "使用新卡提现,绑定新提现卡失败"),
+
+	// "提现操作失败，请联系管理员"
+	WITHDRAW_OPT_FAIL(110100017, "提现操作失败，请联系管理员"),
 
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");
@@ -65,7 +72,7 @@ public enum TitanMsgCodeEnum {
 		this.code = code;
 		this.key = key;
 	}
-	
+
 	public static TitanMsgCodeEnum findTitanMsgCodeEnum(String code) {
 		for (TitanMsgCodeEnum titanMsgEnum : values()) {
 			if (String.valueOf(titanMsgEnum.getCode()).equals(code)) {

@@ -6,6 +6,14 @@ import com.fangcang.titanjr.dto.BaseRequestDTO;
 
 public class BalanceWithDrawRequest extends BaseRequestDTO {
 
+	/**
+	 * @fieldName: serialVersionUID
+	 * @fieldType: long
+	 * @Description: TODO
+	 */
+	private static final long serialVersionUID = -6716873626800513261L;
+
+
 	//提现金额 单位为分 100分为1元
 	@NotNull
 	private String amount;
@@ -23,8 +31,16 @@ public class BalanceWithDrawRequest extends BaseRequestDTO {
 	private String productid;
 	
 	//------------可选---------
+	
+	private String orderNo;
+	
 	//100 手续费（分）
-	private Long userFee;
+	// 应收手续费
+	private String receivablefee = "0";
+	// 实收手续费
+	private String receivedfee = "0";
+	// 标准费率手续费
+	private String standfee = "0";
 
 	@NotNull
 	private String userId;
@@ -67,16 +83,32 @@ public class BalanceWithDrawRequest extends BaseRequestDTO {
 		this.productid = productid;
 	}
 
-	public Long getUserFee() {
-		return userFee;
-	}
-
-	public void setUserFee(Long userFee) {
-		this.userFee = userFee;
-	}
-
 	public String getUserId() {
 		return userId;
+	}
+
+	public String getReceivablefee() {
+		return receivablefee;
+	}
+
+	public void setReceivablefee(String receivablefee) {
+		this.receivablefee = receivablefee;
+	}
+
+	public String getReceivedfee() {
+		return receivedfee;
+	}
+
+	public void setReceivedfee(String receivedfee) {
+		this.receivedfee = receivedfee;
+	}
+
+	public String getStandfee() {
+		return standfee;
+	}
+
+	public void setStandfee(String standfee) {
+		this.standfee = standfee;
 	}
 
 	public void setUserId(String userId) {
@@ -105,5 +137,13 @@ public class BalanceWithDrawRequest extends BaseRequestDTO {
 
 	public void setBankName(String bankName) {
 		this.bankName = bankName;
+	}
+	
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
 	}
 }

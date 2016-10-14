@@ -35,9 +35,19 @@ public class TitanRateConfigDaoImpl extends GenericDAOMyBatisImpl implements Tit
 	public List<TitanRateConfig> queryTitanRateConfigInfo(
 			TitanRateConfigParam configParam) throws DaoException {
 		try {
-			return super.selectList(
-					"com.fangcang.titanjr.dao.TitanRateConfigDao.queryRateConfigList",
-					configParam);
+			//如果位0则为提现
+			if (configParam.getCashierItemType() == 0) {
+				return  super
+						.selectList(
+								"com.fangcang.titanjr.dao.TitanRateConfigDao.queryRateConfigByWithdraw",
+								configParam);
+			} else {
+
+				return super
+						.selectList(
+								"com.fangcang.titanjr.dao.TitanRateConfigDao.queryRateConfigList",
+								configParam);
+			}
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}

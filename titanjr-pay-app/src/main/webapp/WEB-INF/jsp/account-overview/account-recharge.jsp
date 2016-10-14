@@ -19,19 +19,22 @@
 		</div>
 		<div class="S_popup_Kan clearfix opaque">
 			<div class="gold_pay">
-				
+			
 				<div class="TFS_rechargeBox">
-					<div class="TFS_rechargeBoxL fl">
-						充值金额：<input type="text" class="text w_300" id="inputeAmount"><span id="inputeAmountError" style="color:red;font-size:13px"></span>
-					</div>
-					<div class="TFS_rechargeBoxR fr">
+					
+						<div class="TFS_rechargeBoxL fl" style="padding:0">
+							<div class="goldpay_top" style="padding-top: 20px; height: 130px; width: 740px;margin:0; ">
+							充值金额：<input type="text" class="text w_300" id="inputeAmount"><span id="inputeAmountError" style="color:red;font-size:13px"></span>
+								<div style="padding-left: 88px; padding-top: 7px;" class="c_666 f_14">手续费：<i class="c_f00" id="rateAmount">0.00</i> 元</div>
+							</div>
+						</div>
+					<div class="TFS_rechargeBoxR fr" style="height:110px;">
 						<h3>账户名称/泰坦码：${cashDeskData.orgName } / ${cashDeskData.titanCode }</h3>
 						<p>账户可用余额：<span class="gdt_red">${cashDeskData.balanceusable }<fmt:formatNumber value=""  pattern="#,##0.00#" /></span>元</p>
-						<!-- <p>泰坦增值宝可用余额：<span class="gdt_red">10,000.00</span>元</p> -->
 					</div>
 					<div class="clear"></div>
 				</div>
-				<div class="goldpay_title1">			
+				<div class="goldpay_title1">
 					<div class="pay_table">
 						<ul>
 						<c:if test="${not empty cashDeskData.commonPayMethodDTOList  }">
@@ -44,61 +47,130 @@
 	                        </c:forEach>
 						</ul>
 					</div>
-					<div class="paytable_content">
+					<div class="paytable_content pay_bank_l">
 						<ul>
 						<c:if test="${not empty cashDeskData.commonPayMethodDTOList }">
 							<li>
-								<c:forEach items="${cashDeskData.commonPayMethodDTOList }" var="commom">
-                             <div class="paytable_payway">
-                             <div class="payc_left"><label class="f_ui-radio-c3">
-                                <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${commom.bankname}">
-                                <i></i>
-                                <span class="paycleft_img">
+								<c:forEach items="${cashDeskData.commonPayMethodDTOList }" var="commom" varStatus="status">
+								<c:if test="${commom.bankname !='cmbc'}">
+								  <div class="paytable_payway">
+                                    <div class="payc_left"><label class="f_ui-radio-c3">
+                                      <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${commom.bankname}">
+                                      <i></i>
+                                      <span class="paycleft_img">
                                       <img src="<%=basePath%>/banks/${commom.bankname}.jpg" alt="${commom.bankmark}"
                                            width="159" height="38">
-                                  </span></label>
-                              </div>
-                              <c:if test="${commom.paytype == 1 }">
-                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（企业银行）</span>
-                              </c:if>
-                              <c:if test="${commom.paytype == 2 }">
-                                  <span class="payc_title fl" id="item-${status.index }" data-index="${commom.paytype}">（个人银行）</span>
-                              </c:if>
-                              <c:if test="${commom.paytype == 3 }">
-                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡）</span>
-                              </c:if>
-                             </div>
+                                       </span></label>
+                                    </div>
+	                              <c:if test="${commom.paytype == 1 }">
+	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（企业银行）</span>
+	                              </c:if>
+	                              <c:if test="${commom.paytype == 2 }">
+	                                  <span class="payc_title fl" id="item-${status.index }" data-index="${commom.paytype}">（个人银行）</span>
+	                              </c:if>
+	                              <c:if test="${commom.paytype == 3 }">
+	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡） </span>
+	                              </c:if>
+                               </div>
+						   </c:if>
                           </c:forEach>
+                          <c:forEach items="${cashDeskData.commonPayMethodDTOList }" var="commom"  varStatus="status">
+                               <c:if test="${commom.bankname =='cmbc'}">
+								  <div class="paytable_payway">
+                                    <div class="payc_left"><label class="f_ui-radio-c3">
+                                      <input name="r2" type="radio" data-index="i_${status.index}" class="bankName" value="${commom.bankname}">
+                                      <i></i>
+                                      <span class="paycleft_img">
+                                      <img src="<%=basePath%>/banks/${commom.bankname}.jpg" alt="${commom.bankmark}"
+                                           width="159" height="38">
+                                       </span></label>
+                                    </div>
+	                              <c:if test="${commom.paytype == 1 }">
+	                                  <span class="payc_title fl"  id="item-i_${status.index}" data-index="${commom.paytype}">（企业银行）</span>
+	                              </c:if>
+	                              <c:if test="${commom.paytype == 2 }">
+	                                  <span class="payc_title fl" id="item-i_${status.index }" data-index="${commom.paytype}">（个人银行）</span>
+	                              </c:if>
+	                              <c:if test="${commom.paytype == 3 }">
+	                                  <span class="payc_title fl"  id="item-i_${status.index}" data-index="${commom.paytype}">（信用卡） </span>
+	                              </c:if>
+	                              <c:if test="${commom.bankname =='cmbc' &&commom.paytype==1}">
+                                    <div class="clear"></div>
+								    <div class="payc_ms">
+									     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
+									     <input type="text" class="text w_185" placeholder="请输入企业银行客户号" id="customNo-i_${status.index}">
+								    </div>
+							      </c:if>
+                               </div>
+						   </c:if>
+                           </c:forEach>
 							</li>
 							</c:if>
-							     <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem" varStatus="status">
+							     <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem" varStatus="o_status">
                             <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 }">
                                 <li>
-                                    <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank">
+                                    <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
+                                      <c:if test="${itemBank.bankName !='cmbc'}">
                                         <div class="paytable_payway">
                                             <div class="payc_left"><label class="f_ui-radio-c3">
-                                                <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${itemBank.bankName}">
+                                                <input name="r2" type="radio" data-index="${o_status.index }-${i_status.index}" class="bankName" value="${itemBank.bankName}">
                                                 <i></i>
                                                 <span class="paycleft_img">
                                                     <img src="<%=basePath%>/banks/${itemBank.bankName}.jpg" alt="${itemBank.bankMark}"
                                                          width="159" height="38">
                                                 </span></label>
+                                                
                                             </div>
+                                            
                                             <c:if test="${deskItem.itemType == 1 }">
-                                                <span class="payc_title fl"  id="item-${status.index}" data-index="${deskItem.itemType}">（企业银行）</span>
+                                                <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（企业银行）</span>
                                             </c:if>
+                                            
                                             <c:if test="${deskItem.itemType == 2 }">
-                                                <span class="payc_title fl" id="item-${status.index }" data-index="${deskItem.itemType}">（个人银行）</span>
+                                                <span class="payc_title fl" id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（个人银行）</span>
                                             </c:if>
                                             <c:if test="${deskItem.itemType == 3 }">
-                                                <span class="payc_title fl"  id="item-${status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
+                                                <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
                                             </c:if>
                                         </div>
+                                       </c:if>
+                                   </c:forEach>
+                                  <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="d_status">
+                                    <c:if test="${itemBank.bankName=='cmbc'}">
+                                        <div class="paytable_payway">
+                                            <div class="payc_left"><label class="f_ui-radio-c3">
+                                                <input name="r2" type="radio" data-index="d_${o_status.index }-${d_status.index}" class="bankName" value="${itemBank.bankName}">
+                                                <i></i>
+                                                <span class="paycleft_img">
+                                                    <img src="<%=basePath%>/banks/${itemBank.bankName}.jpg" alt="${itemBank.bankMark}"
+                                                         width="159" height="38">
+                                                </span></label>
+                                                
+                                            </div>
+                                            
+                                            <c:if test="${deskItem.itemType == 1 }">
+                                                <span class="payc_title fl"  id="item-d_${o_status.index }-${d_status.index}" data-index="${deskItem.itemType}">（企业银行）</span>
+                                            </c:if>
+                                            
+                                            <c:if test="${deskItem.itemType == 2 }">
+                                                <span class="payc_title fl" id="item-d_${o_status.index }-${d_status.index}" data-index="${deskItem.itemType}">（个人银行）</span>
+                                            </c:if>
+                                            <c:if test="${deskItem.itemType == 3 }">
+                                                <span class="payc_title fl"  id="item-d_${o_status.index }-${d_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
+                                            </c:if>
+                                            <c:if test="${itemBank.bankName=='cmbc' && deskItem.itemType == 1}">
+				                                    <div class="clear"></div>
+												    <div class="payc_ms">
+													     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
+													     <input type="text" class="text w_185" placeholder="请输入企业银行客户号"  id="customNo-d_${o_status.index }-${d_status.index}">
+												    </div>
+			                                 </c:if>
+                                        </div>
+                                      </c:if>
                                     </c:forEach>
                                 </li>
                             </c:if>
                         </c:forEach>
-							
 						</ul>
 					</div>
 				</div> 
@@ -107,17 +179,20 @@
 				<a class="btn p_lr30 J_password">确定</a>
 				<a class="btn btn_exit J_exitKan">取消</a>
 			</div>
+			<jsp:include page="../checkstand-pay/cashierDeskLimit.jsp"></jsp:include>
  		</div>
 	</div>
 	
-	<form id ="rechargeForm" action="<%=basePath%>/trade/genRechargeData.action" method="post"  target="_blank">
+	<form id ="rechargeForm" action="<%=basePath%>/payment/packageRechargeData.action" method="post"  target="_blank">
+	   <input name="tradeAmount" id="tradeAmount" type="hidden" value="0.00">
 	   <input name="payPassword" id="payPassword" type="hidden" value=""/>
 	   <input name="payAmount" id="payAmount" type="hidden" value=""/>
 	   <input name="bankInfo" type="hidden" id="bankInfo" value=""/>
 	   <input name="linePayType" id="linePayType" type="hidden" value="">
 	   <input name="paySource" id="paySource" type="hidden" value="5">
-	   <input name="payOrderNo" id="payOrderNo" type="hidden" value="">
+	   <input name="payOrderNo" id="payOrderNo" type="hidden" value="${cashDeskData.payOrderNo}">
 	   <input name="deskId" id="deskId" type="hidden" value="${cashDeskData.cashierDeskDTO.deskId}">
+	   <input name="payerAcount" id="payerAcount" type="hidden"/>
 	</form>
 	
 	<form action="<%=basePath%>/account/overview-main.shtml" id="flashPage" target="right_con_frm"></form>
@@ -130,10 +205,71 @@
 //首先获取充值的支付单号
 var payOrderNo = null;
 
+(function($) {
+    $.fn.watch = function(callback) {
+        return this.each(function() {
+            //缓存以前的值
+            $.data(this, 'originVal', $(this).val());
+
+            //event
+            $(this).on('keyup paste', function() {
+                var originVal = $(this, 'originVal');
+                var currentVal = $(this).val();
+
+                if (originVal !== currentVal) {
+                    $.data(this, 'originVal', $(this).val());
+                    callback(currentVal);
+                }
+            });
+        });
+    }
+})(jQuery);
+
 $("document").ready(function (){
-	getRechargePayOrderNo();
-	$(".bankName:first").attr("checked",'0');
+	  //点击某个银行计算费率
+       $('.paytable_payway').on('click', function(){
+       		var itemType = $(this).attr("itemType");
+       		paytable_paywayClick(itemType ,  $('#inputeAmount').val());
+       		bankCheckRadio($(this).find('input:radio[name="r2"]'));
+       });
+	  
+       $("#inputeAmount").watch(function(value) {
+	        $('.paytable_payway').each(function(){
+	           	if($(this).find('input:radio[name="r2"]').is(":checked"))
+	           	{
+	           		$(this).click();
+	           	}
+            });
+       });
+
+	var firstBank = $(".bankName:first");
+	firstBank.attr("checked","0");
+	bankCheckRadio(firstBank);
+// 	$(".pay_bank_l input[type='radio']").on("click",function(){
+		
+// 		bankCheckRadio($(this));
+// 	});
 });
+
+
+
+function paytable_paywayClick(itemType , amount){
+   
+  	if(amount == '' || amount ==  null || parseFloat(amount)<= 0)
+   	{
+  		amount = 0;
+   	}
+	 $.ajax({
+  	   type: "get",
+       url: "<%=basePath%>/rate/rateCompute.action?userId=${cashDeskData.userId}&amount="+amount+"&payType="+itemType+"&date=" + new Date().getTime(),
+       dataType: "json",
+       async: false,
+       success: function(data){
+    	   
+    	   $('#rateAmount').html(data.data.exRateAmount);
+       }
+     }); 
+}
 
 
 function tabChange(tabbtn, tabpannel, tabclass) {
@@ -156,26 +292,6 @@ $(".J_exitKan").on('click', function() {
 	top.removeIframeDialog();
 });
 
-//检查是否有交易密码
- <%-- $.ajax({
-    	 type: "post",
-         url: "<%=basePath%>/account/checkIsSetPayPassword.action",
-         dataType: "json",
-         success: function(data){
-        	 if(data.result=="success"){
-        		 $.ajax({
-        		        dataType: 'html',
-        		        context: document.body,
-        		        url: '<%=basePath%>/account/showSetPayPassword.action',
-        		        success: function (html) {
-        		        	setPayPassword(html);
-        		        }
-        		    });
-        	 }
-        	}
-        });  --%>
-	
-	
 //设置交易密码
 $('.J_password').on('click',function(){	
 	//验证是否有交易密码
@@ -185,43 +301,6 @@ $('.J_password').on('click',function(){
 	 }
 	 recharge_Order(); 
 });	
-
-<%-- var is_Input_Password= validate_isInput_password();
-if(is_Input_Password==false){
-	 $.ajax({
-           dataType: 'html',
-           context: document.body,
-           url: '<%=basePath%>/account/showPayPassword.action',
-           success: function (html) {
-               var d = dialog({
-                   title: ' ',
-                   padding: '0 0 0px 0 ',
-                   content: html,
-                   skin: 'saas_pop',
-                   button: [
-                       {
-                           value: '确定',
-                           skin: 'btn p_lr30',
-                           callback: function () {
-                           	//获取密码
-                           	recharge_Order();
-                           },
-                           autofocus: true
-                       },
-                       {
-                           value: '取消',
-                           skin: 'btn btn_grey btn_exit',
-                           callback: function () {
-                               //   alert('c');
-                           }
-                       }
-                   ]
-               }).showModal();
-           }
-       });
-}else{ 
-
-}  --%>
 
 function showPayResult(){
 	 new top.createConfirm({
@@ -237,6 +316,7 @@ function showPayResult(){
 	        	confirmPayResult();
 	        }
 	      }); 	  
+	window.top.$(".ui-dialog-close").hide();
 }
 
 //主动确认支付结果
@@ -245,7 +325,7 @@ function confirmPayResult(){
       	 type: "post",
            url: "<%=basePath%>/trade/confirmedTrade.action",
            data: {
-        	   payOrderNo:payOrderNo,
+        	   payOrderNo:'${cashDeskData.payOrderNo}',
         	   paySource:'5'
            },
            dataType: "json",
@@ -257,11 +337,28 @@ function confirmPayResult(){
                       /*  new top.Tip({msg: data.msg, type: 1, time: 1000}); */
                        top.removeIframeDialog();
                    }, 1000);
+                   $("#flashPage").attr('action' , getRootPath()+"/account/overview-main.shtml");
                    $("#flashPage").submit();
         	   }
         	}
     });
 }
+
+//js获取项目根路径，如： http://localhost:8083/uimcardprj
+function getRootPath(){
+    //获取当前网址，如： http://localhost:8083/uimcardprj/share/meun.jsp
+    var curWwwPath=parent.document.location.href;
+    //获取主机地址之后的目录，如： uimcardprj/share/meun.jsp
+    var pathName=parent.document.location.pathname;
+    var pos=curWwwPath.indexOf(pathName);
+    //获取主机地址，如： http://localhost:8083
+    var localhostPaht=curWwwPath.substring(0,pos);
+    //获取带"/"的项目名，如：/uimcardprj
+    var projectName=pathName.substring(0,pathName.substr(1).indexOf('/')+1);
+    return(localhostPaht+projectName);
+}
+
+
 
 function recharge_Order(){
 	//封装到form中
@@ -275,10 +372,11 @@ function recharge_Order(){
 function put_value_to_form(recharge_data){
 	var recharge_data=save_recharge_data();
 	$("#payPassword").val(recharge_data.payPassword);
+	$("#tradeAmount").val(recharge_data.amount);
 	$("#payAmount").val(recharge_data.amount);
 	$("#bankInfo").val(recharge_data.bankInfo);
 	$("#linePayType").val(recharge_data.linePayType);
-	$("#payOrderNo").val(payOrderNo);
+	$("#payerAcount").val(recharge_data.payerAccount);
 	$("#rechargeForm").submit(); 
 }
 
@@ -299,13 +397,46 @@ function save_recharge_data(){
 	if("undefined" != typeof itemType){
 		linePayType =   $("#item-"+itemType).attr("data-index");
 	}
+	var payerAccount = null;
+	var value=$('input:radio[name=r2]:checked').val();
+	if(value=='cmbc' && linePayType=="1"){
+		var dataIndex = $('input:radio[name=r2]:checked').attr("data-index");
+		payerAccount = $("#customNo-"+dataIndex).val();
+		
+		var errMsg ="";
+		if(payerAccount.length<1){
+			errMsg="民生企业银行客户号不能为空";
+		}else if(payerAccount.length>32){
+			errMsg="民生企业银行客户号不能超过32位";
+		}else{
+			var reg = /^([a-z]|[A-Z]|[0-9]){1,32}$/;
+			if(!reg.test(payerAccount)){
+				errMsg="民生企业银行客户号输入有误";
+			};
+		}
+		
+		if(errMsg.length>0){
+			  new top.createConfirm({
+		            title:'提示',
+		            padding: '20px 20px 40px',
+		            okValue : '关闭',
+		            content : errMsg,
+		            skin : 'saas_confirm_singlebtn',
+		            ok : function(){
+		            },
+		            cancel: false,
+		        });
+			  return ;
+		};
+	}
 	//生成一个支付单号
 	var data={
 		amount:amount,
 		bankInfo:bankInfo,
 		/* payPassword:rsaData(payPassword), */
 		payPassword:payPassword,
-		linePayType:linePayType
+		linePayType:linePayType,
+		payerAccount:payerAccount
 	};
 	return data;
 }
@@ -323,30 +454,13 @@ function getRechargePayOrderNo(){
 }
 
 
-<%-- function validate_isInput_password(){
-	var flag = false;
-	 $.ajax({
-		 dataType: "json",
-         context: document.body,
-         async:false,
-         url: '<%=basePath%>/trade/allownopwdpay.action',
-         data:{
-        	 totalAmount :$("#inputeAmount").val(),
-         },
-         success: function (data) {
-        	 if(data.result =="success"){
-        		 flag =  true;
-        	 }
-         }
-     });
-	return flag;
-} --%>
-
 function validate_isBlank(){
 	var inputeAmount = $("#inputeAmount").val();
 	if($.trim(inputeAmount).length<1){
+		 $("#inputeAmountError").text("充值金额不能为空");
 		return false;
 	}
+	 $("#inputeAmountError").text("");
 	return true;
 }
 
@@ -354,6 +468,7 @@ $("#inputeAmount").blur(function(){
 	var inputeAmount = $(this).val();
 	if($.trim(inputeAmount).length<1){
 		 $("#inputeAmountError").text("充值金额不能为空");
+		 return;
 	}else{
 		 $("#inputeAmountError").text("");
 	}
@@ -374,58 +489,45 @@ $("#inputeAmount").blur(function(){
 		$("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
 		$(this).val("");
 		$(this).focus();
+		return
 	}else{
 		$("#inputeAmountError").text("");
 	}
 });
 
-//设置交易密码
-<%-- function setPayPassword(html){
-	var d = dialog({
-        title: ' ',
-        padding: '0 0 0px 0 ',
-        content: html,
-        skin: 'saas_pop',
-        button: [
-            {
-                value: '确定',
-                skin: 'btn p_lr30',
-                callback: function () {
-                	if(PasswordStr.returnStr()==PasswordStr1.returnStr()){
-                		if(PasswordStr.returnStr().length==6){
-                			   $.ajax({
-                			    	 type: "post",
-                			         url: "<%=basePath%>/account/setPayPassword.action",
-                			         data: {
-                			        	 payPassword:rsaData(PasswordStr.returnStr())
-                			         },
-                			         dataType: "json",
-                			         success: function(data){
-                			        	 if(data.result=="success"){
-                			        		top.F.loading.show();
-         		                            setTimeout(function () {
-         		                                top.F.loading.hide();
-         		                                new top.Tip({msg: '密码设置成功！', type: 1, time: 1000});
-         		                            }, 1000);
-                			        	 }else{
-                			        			top.F.loading.show();
-             		                            setTimeout(function () {
-             		                                top.F.loading.hide();
-             		                                new top.Tip({msg: data.msg, type: 1, time: 1000});
-             		                            }, 1000);
-                			        	 }
-                			         }
-                			   })
-                		}
-                	}
-                },
-                autofocus: true
-            },
-
-        ]
-    }).showModal();
-}
- --%>
+//判断如果是民生银行出现下拉框
+$('.paytable_payway input').on('change',function(){
+	var _this=$(this);
+	var value=$('input:radio[name=r2]:checked').val();;
+	//获取
+	var dataIndex = $('input:radio[name=r2]:checked').attr("data-index");
+	var linePayType =   $("#item-"+dataIndex).attr("data-index");
+	if(value=='cmbc' && linePayType==1){
+		 _this.parents('.paytable_payway').find('.payc_ms').slideDown(); 
+	}else{
+		 $('.paytable_payway').find('.payc_ms').slideUp(); 
+	}
+	/* if(value=="cmbc"){
+		$.ajax({
+	        dataType : 'html',
+	        context: document.body,
+	        url : '微信支付.html',			
+	        success : function(html){
+				top.F.loading.hide();
+	            var d =  window.top.dialog({
+	                title: ' ',
+	                padding: '0 0 0px 0',
+					width: 560,
+	                content: html,
+	                skin : 'saas_pop',  
+	            }).showModal();
+	            $('.wx_close').on('click',function(){
+	            	d.remove();
+	            });
+	        }
+	    });
+	} */
+});
 </script>
 </body>
 </html>

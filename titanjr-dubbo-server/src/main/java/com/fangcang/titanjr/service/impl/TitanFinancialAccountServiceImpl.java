@@ -518,6 +518,21 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			return withDrawResponse;
 		}
 		TitanTransOrder titanTransOrder = convertToTitanTransOrder(balanceWithDrawRequest);
+		
+		
+		TransOrderDTO orderDTO = null;
+		if (balanceWithDrawRequest.getOrderNo() != null) {
+			TransOrderRequest transOrderRequest = new TransOrderRequest();
+			transOrderRequest.setUserorderid(balanceWithDrawRequest
+					.getOrderNo());
+			 orderDTO = titanOrderService
+					.queryTransOrderDTO(transOrderRequest);
+			if (orderDTO != null) {
+				titanTransOrder.setUserorderid(balanceWithDrawRequest.getOrderNo());
+				titanTransOrder.setTransid(orderDTO.getTransid());
+			}
+		}
+		
 		if (null == titanTransOrder ){
 			withDrawResponse.putErrorResult("构造提现交易单失败");
 			return withDrawResponse;
@@ -525,7 +540,12 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		try {
 			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_IN_PROCESS.getStatus());
 			titanTransOrder.setTransordertype(TransOrderTypeEnum.WITHDRAW.type);
-			int rowNum = titanTransOrderDao.insert(titanTransOrder);
+			int rowNum = 0;
+			if (orderDTO != null) {
+				rowNum =	titanTransOrderDao.updateTitanTransOrderByTransId(titanTransOrder);
+			} else {
+				rowNum = titanTransOrderDao.insert(titanTransOrder);
+			}
 			if (rowNum <= 0) {
 				withDrawResponse.putErrorResult("保存交易单失败");
 				return withDrawResponse;
@@ -539,7 +559,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			//调用融数接口提现
 			AccountWithDrawRequest accountWithDrawRequest = new AccountWithDrawRequest();
 			accountWithDrawRequest.setUserid(balanceWithDrawRequest.getUserId());
-			accountWithDrawRequest.setUserfee(balanceWithDrawRequest.getUserFee());
+			accountWithDrawRequest.setUserfee(Long.parseLong(NumberUtil.covertToCents(balanceWithDrawRequest.getReceivedfee())));
 			accountWithDrawRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
 			accountWithDrawRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
 			accountWithDrawRequest.setOrderdate(balanceWithDrawRequest.getOrderDate());
@@ -645,6 +665,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 
 	private TitanTransOrder convertToTitanTransOrder(BalanceWithDrawRequest balanceWithDrawRequest) {
 		TitanTransOrder titanTransOrder = new TitanTransOrder();
+		
 		if (balanceWithDrawRequest == null || balanceWithDrawRequest.getAmount() == null) {
 			return null;
 		}
@@ -662,7 +683,10 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			titanTransOrder.setOrdertime(new Date());
 			titanTransOrder.setOrderdate(new Date());
 			titanTransOrder.setTradeamount(titanTransOrder.getAmount());
-			
+			//设置费率
+			titanTransOrder.setReceivablefee(Long.parseLong(NumberUtil.covertToCents(balanceWithDrawRequest.getReceivablefee())));
+			titanTransOrder.setReceivedfee(Long.parseLong(NumberUtil.covertToCents(balanceWithDrawRequest.getReceivedfee())));
+			titanTransOrder.setStandfee(Long.parseLong(NumberUtil.covertToCents(balanceWithDrawRequest.getStandfee())));
 			//付款账户
 			titanTransOrder.setPayermerchant(balanceWithDrawRequest.getUserId());
 		} catch (Exception e) {
@@ -685,9 +709,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				titanWithDrawReq.setCreatetime(new Date());
 				titanWithDrawReq.setOrderdate(balanceWithDrawRequest.getOrderDate());
 				titanWithDrawReq.setUserid(balanceWithDrawRequest.getUserId());
-				if(balanceWithDrawRequest.getUserFee() !=null){
-					titanWithDrawReq.setUserfee(balanceWithDrawRequest.getUserFee());
-				}
+				titanWithDrawReq.setUserfee(Long.parseLong(NumberUtil.covertToCents(balanceWithDrawRequest.getReceivedfee())));
 				titanWithDrawReq.setCreator(balanceWithDrawRequest.getCreator());
 				titanWithDrawReq.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
 				titanWithDrawReq.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
