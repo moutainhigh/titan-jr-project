@@ -44,7 +44,7 @@
 	                        </c:forEach>
 						</ul>
 					</div>
-					<div class="paytable_content">
+					<div class="paytable_content pay_bank_l">
 						<ul>
 						<c:if test="${commomPayMethod !=null }">
 							<li>
@@ -179,6 +179,9 @@
 				<a class="btn p_lr30 J_password">确定</a>
 				<a class="btn btn_exit J_exitKan">取消</a>
 			</div>
+			
+			<jsp:include page="../checkstand-pay/cashierDeskLimit.jsp"></jsp:include>
+		
  		</div>
 	</div>
 	
@@ -205,7 +208,12 @@ var payOrderNo = null;
 
 $("document").ready(function (){
 	getRechargePayOrderNo();
-	$(".bankName:first").attr("checked",'0');
+	var firstBank = $(".bankName:first");
+	firstBank.attr("checked","0");
+	bankCheckRadio(firstBank);
+	$(".pay_bank_l input[type='radio']").on("click",function(){
+		bankCheckRadio($(this));
+	});
 });
 
 

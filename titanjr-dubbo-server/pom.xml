@@ -219,6 +219,7 @@
 
     <build>
         <finalName>titanjr-dubbo-server</finalName>
+        <!-- 定义resource 文件和目录 -->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -238,6 +239,7 @@
                     <archive>
                         <addMavenDescriptor>true</addMavenDescriptor>
                     </archive>
+                    <!-- 定义 单独要拷贝的文件-->
                     <webResources>
                         <resource>
                             <directory>src/main/resources/production</directory>

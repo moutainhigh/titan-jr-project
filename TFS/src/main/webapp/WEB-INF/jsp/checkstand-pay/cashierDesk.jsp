@@ -137,7 +137,7 @@
                          </c:forEach>
                     </ul>
                   </div>
-                  <div class="paytable_content">
+                  <div class="paytable_content pay_bank_l">
                     <ul>
                      <c:if test="${not empty  commomPayMethod }">
                       <li>
@@ -273,6 +273,7 @@
                 <a class="btn btn_exit J_exitKan">取消</a>
             </div>
         </div>
+        <jsp:include page="../checkstand-pay/cashierDeskLimit.jsp"></jsp:include>
     </div>
 </div>
 

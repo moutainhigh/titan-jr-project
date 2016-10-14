@@ -19,20 +19,6 @@
            				http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
 	<!-- dao 定义列表 -->
-	<bean id="rsInvokeConfigDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-		<property name="mapperInterface" value="com.fangcang.titanjr.rs.dao.RSInvokeConfigDao"></property>
-		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-	</bean>
-
-	<bean id="rsPayMethodDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-		<property name="mapperInterface" value="com.fangcang.titanjr.rs.dao.RSPayMethodDao"></property>
-		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-	</bean>
-
-	<bean id="callBackConfigDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-		<property name="mapperInterface" value="com.fangcang.titanjr.rs.dao.CallBackConfigDao"></property>
-		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-	</bean>
 	<bean id="rsSysconfigDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="mapperInterface" value="com.fangcang.titanjr.rs.dao.SysconfigDao"></property>
 		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>

@@ -75,6 +75,8 @@
 		<mapper resource="mybatis/TitanUserRoleMapper.xml" />
 		<mapper resource="mybatis/TitanWithDrawReqMapper.xml" />
 		<mapper resource="mybatis/TitanCodeMapper.xml" />
+		<mapper resource="mybatis/TitanHelpMapper.xml" />
+		<mapper resource="mybatis/TitanHelpTypeMapper.xml" />
 		
 		<mapper resource="mybatis/TitanOrgCheckLogMapper.xml" />
 		<mapper resource="mybatis/TitanAccountCodeMapper.xml" />

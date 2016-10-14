@@ -3126,3 +3126,4 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
 	}
 }
+

@@ -28,16 +28,6 @@ public interface TitanFinancialOrganService {
      */
     public FinancialOrganResponse queryFinancialOrgan(FinancialOrganQueryRequest organQueryRequest);
 
-    /**
-     * 查询机构信息,结果返回封装机构信息列表
-     * 可以只返回一条记录，个人和企业机构根据类型来查询，
-     * 以房仓本地数据库数据为准,查询条件需有审核状态。
-     * 查询出的数据应该包括机构基础信息，审核状态，机构图片地址，机构绑定状态四部分信息
-     * @param organQueryRequest
-     * @return
-     */
-    public OrganBriefResponse queryOrganBriefList(FinancialOrganQueryRequest organQueryRequest);
-
 
     /**
      * 分页查询结构信息

@@ -890,8 +890,6 @@ function bankCheckRadio(rObj){
 		$(".bank-limit-wrap").hide();
 		return;
 	}
-	
-	
 	$("."+bankname+"-"+bankType).removeClass("hide");
 	//不存在限额，则隐藏提示
 	if($("."+bankname+"-"+bankType).length==0){

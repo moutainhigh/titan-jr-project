@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanHelpTypeDao">
+  <select id="queryList" resultType="com.fangcang.titanjr.dto.bean.TitanHelpTypeDTO" parameterType="com.fangcang.titanjr.entity.parameter.TitanHelpTypeParam" >
+    select 
+    *
+    from t_tfs_helptype
+    <where>
+    	<if test="helpType != null"> helptype = #{helpType}</if>
+    	<if test="name != null"> and name = #{name}</if>
+    	<if test="isShow != null"> and isshow = #{isShow}</if>
+    </where>
+  </select>
+   
+  
+  <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanHelpType">
+    insert into t_tfs_helptype (
+	    helptype,
+	    name, 
+	    iconimg, 
+	    orderno,
+	    isshow, 
+	    modifior
+    )values (
+	    #{helpType}, 
+	    #{name}, 
+	    #{iconimg}, 
+	    #{orderNo}, 
+	    #{isShow},  
+	    #{modifior}
+    )
+  </insert>
+  
+  <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanHelpType" >
+    update t_tfs_helptype
+    <set >
+      <if test="helpType != null" >
+        helptype = #{helpType},
+      </if>
+      <if test="name != null" >
+        name = #{name},
+      </if>
+      <if test="iconimg != null" >
+        iconimg = #{iconimg},
+      </if>
+      <if test="orderNo != null" >
+        orderno = #{orderNo},
+      </if>
+      <if test="isShow != null" >
+        isshow = #{isShow},
+      </if>
+      <if test="modifior != null" >
+        modifior = #{modifior},
+      </if>
+      <if test="modifyTime !=null" >
+        modifytime = #{modifyTime},
+      </if>
+    </set>
+    where helptype = #{helpType}
+  </update>
+</mapper>

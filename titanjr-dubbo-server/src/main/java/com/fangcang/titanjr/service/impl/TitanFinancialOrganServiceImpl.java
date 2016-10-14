@@ -106,7 +106,6 @@ import com.fangcang.titanjr.entity.parameter.TitanOrgCheckParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgImageParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgParam;
 import com.fangcang.titanjr.entity.parameter.TitanUserParam;
-import com.fangcang.titanjr.rs.dao.RSInvokeConfigDao;
 import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.manager.RSAccountManager;
 import com.fangcang.titanjr.rs.manager.RSOrganizationManager;
@@ -141,7 +140,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     private TitanUserDao titanUserDao;
     @Resource
     private TitanOrgImageDao titanOrgImageDao;
-    private RSInvokeConfigDao rsInvokeConfigDao;
     @Resource
     private TitanOrgBindinfoDao titanOrgBindinfoDao;
     @Resource
@@ -196,37 +194,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
         return response;
     }
 
-	@Override
-	public OrganBriefResponse queryOrganBriefList(FinancialOrganQueryRequest organQueryRequest) {
-		OrganBriefResponse response = new OrganBriefResponse();
-		List<FinancialOrganDTO> organDTOList = new ArrayList<FinancialOrganDTO>();
-		List<TitanOrg> titanOrgs = null;
-		try {
-			titanOrgs = titanOrgDao.queryTitanOrgList(organQueryRequest);
-		} catch (Exception e){
-			response.putErrorResult("查询机构概要信息失败");
-			return response;
-		}
-		if (CollectionUtils.isNotEmpty(titanOrgs)){
-			for (TitanOrg titanOrg : titanOrgs){
-				FinancialOrganDTO organDTO = new FinancialOrganDTO();
-				organDTO.setUserId(titanOrg.getUserid());
-				organDTO.setOrgName(titanOrg.getOrgname());
-				organDTO.setProductId(titanOrg.getProductid());
-				organDTO.setConstId(titanOrg.getConstid());
-				organDTO.setUserType(titanOrg.getUsertype());
-				organDTO.setStatusId(titanOrg.getStatusid());
-				organDTO.setOrgType(titanOrg.getOrgtype());
-				organDTOList.add(organDTO);
-			}
-			response.setOrganDTOList(organDTOList);
-			response.putSuccess();
-			return response;
-		} else {
-			response.putErrorResult("机构列表信息为空");
-			return response;
-		}
-	}
 
 	@Override
     public OrganQueryCheckResponse queryFinancialOrganForPage(FinancialOrganQueryRequest titanOrgQueryDTO) {
@@ -1191,14 +1158,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		
 		return responseDTO;
 	}
-
-	public RSInvokeConfigDao getRsInvokeConfigDao() {
-        return rsInvokeConfigDao;
-    }
-
-    public void setRsInvokeConfigDao(RSInvokeConfigDao rsInvokeConfigDao) {
-        this.rsInvokeConfigDao = rsInvokeConfigDao;
-    }
 
     public RSOrganizationManager getRsOrganizationManager() {
         return rsOrganizationManager;
