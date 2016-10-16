@@ -1,9 +1,7 @@
-package com.fangcang.titanjr.rs.manager.impl;
+package com.fangcang.titanjr.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -16,14 +14,15 @@ import com.Rop.api.DefaultRopClient;
 import com.Rop.api.request.ExternalSessionGetRequest;
 import com.Rop.api.response.ExternalSessionGetResponse;
 import com.fangcang.titanjr.common.util.Tools;
-import com.fangcang.titanjr.rs.dao.SysconfigDao;
-import com.fangcang.titanjr.rs.entity.RSInvokeConfig;
-import com.fangcang.titanjr.rs.entity.Sysconfig;
-import com.fangcang.titanjr.rs.entity.TitanCallBackConfig;
-import com.fangcang.titanjr.rs.entity.TitanPayMethod;
+import com.fangcang.titanjr.dao.TitanSysconfigDao;
+import com.fangcang.titanjr.dto.bean.RSInvokeConfig;
+import com.fangcang.titanjr.dto.bean.TitanCallBackConfig;
+import com.fangcang.titanjr.dto.bean.TitanPayMethod;
+import com.fangcang.titanjr.entity.TitanSysconfig;
+import com.fangcang.titanjr.entity.parameter.TitanSysconfigParam;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 
-/**
+/**o
  * Created by zhaoshan on 2016/4/8.
  */
 public class RSInvokeInitManagerImpl {
@@ -34,8 +33,8 @@ public class RSInvokeInitManagerImpl {
 	private final static String OBJ_KEY_TITANCALLBACKCONFIG = "TitanCallBackConfig";
 	private final static String OBJ_KEY_DEFAULTPAYERCONFIG = "DefaultPayerConfig";
 	
-	@Resource(name="rsSysconfigDao")
-	private SysconfigDao sysconfigDao;
+	@Resource(name="titanSysconfigDao")
+	private TitanSysconfigDao titanSysconfigDao;
 	
     public void initRopClient() {
         //测试时使用
@@ -85,12 +84,12 @@ public class RSInvokeInitManagerImpl {
 	 * @return
 	 */
 	private RSInvokeConfig getRSInvokeConfig() {
-		Map<String, Object> conditionMap = new HashMap<String, Object>();
-		conditionMap.put("objKey", OBJ_KEY_RSINVOKECONFIG);
-		List<Sysconfig> list = sysconfigDao.query(conditionMap);
+		TitanSysconfigParam param = new TitanSysconfigParam();
+		param.setObjKey(OBJ_KEY_RSINVOKECONFIG);
+		List<TitanSysconfig> list = titanSysconfigDao.query(param);
 		if(CollectionUtils.isNotEmpty(list)){
 			RSInvokeConfig invokeConfig = new RSInvokeConfig();
-			for(Sysconfig item : list){
+			for(TitanSysconfig item : list){
 				if(item.getCfgKey().equals("RSInvokeConfig_appKey")){
 					invokeConfig.setAppKey(item.getCfgValue());
 					continue;
@@ -111,6 +110,7 @@ public class RSInvokeInitManagerImpl {
 					invokeConfig.setDefaultRoleId(NumberUtils.toLong(item.getCfgValue()));
 					continue;
 				}
+				break;
 			}
 			return invokeConfig;
 		}
@@ -120,11 +120,11 @@ public class RSInvokeInitManagerImpl {
 	 * 读取融数中间账户
 	 */
 	private void getDefaultPayerConfig(){
-		Map<String, Object> conditionMap = new HashMap<String, Object>();
-		conditionMap.put("objKey", OBJ_KEY_DEFAULTPAYERCONFIG);
-		List<Sysconfig> list = sysconfigDao.query(conditionMap);
+		TitanSysconfigParam param = new TitanSysconfigParam();
+		param.setObjKey(OBJ_KEY_DEFAULTPAYERCONFIG);
+		List<TitanSysconfig> list = titanSysconfigDao.query(param);
 		if(CollectionUtils.isNotEmpty(list)){
-			for(Sysconfig item : list){
+			for(TitanSysconfig item : list){
 				if(item.getCfgKey().equals("DefaultPayerConfig_USERID")){
 					RSInvokeConstant.DEFAULTPAYERCONFIG_USERID = item.getCfgValue();
 					continue;
@@ -133,6 +133,7 @@ public class RSInvokeInitManagerImpl {
 					RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID = item.getCfgValue();
 					continue;
 				}
+				break;
 			}
 		}else{
 			log.error("OBJ_KEY_DEFAULTPAYERCONFIG 融数中间账户没有配置,请检查t_tfs_sysconfig表 ");
@@ -144,12 +145,12 @@ public class RSInvokeInitManagerImpl {
 	 * @return
 	 */
 	private TitanPayMethod getTitanPayMethod() {
-		Map<String, Object> conditionMap = new HashMap<String, Object>();
-		conditionMap.put("objKey", OBJ_KEY_TITANPAYMETHOD);
-		List<Sysconfig> list = sysconfigDao.query(conditionMap);
+		TitanSysconfigParam param = new TitanSysconfigParam();
+		param.setObjKey(OBJ_KEY_TITANPAYMETHOD);
+		List<TitanSysconfig> list = titanSysconfigDao.query(param);
 		if(CollectionUtils.isNotEmpty(list)){
 			TitanPayMethod payMethod = new TitanPayMethod();
-			for(Sysconfig item : list){
+			for(TitanSysconfig item : list){
 				if(item.getCfgKey().equals("TitanPayMethod_gatewayURL")){
 					payMethod.setGatewayURL(item.getCfgValue());
 					continue;
@@ -162,6 +163,7 @@ public class RSInvokeInitManagerImpl {
 					payMethod.setTitanjrCheckKey(item.getCfgValue());
 					continue;
 				}
+				break;
 			}
 			return payMethod;
 		}
@@ -172,12 +174,12 @@ public class RSInvokeInitManagerImpl {
 	 * @return
 	 */
 	public List<TitanCallBackConfig> getTitanCallBackConfig() {
-		Map<String, Object> conditionMap = new HashMap<String, Object>();
-		conditionMap.put("objKey", OBJ_KEY_TITANCALLBACKCONFIG);
-		List<Sysconfig> list = sysconfigDao.query(conditionMap);
+		TitanSysconfigParam param = new TitanSysconfigParam();
+		param.setObjKey(OBJ_KEY_TITANCALLBACKCONFIG);
+		List<TitanSysconfig> list = titanSysconfigDao.query(param);
 		List<TitanCallBackConfig> cList = new ArrayList<TitanCallBackConfig>();
 		if(CollectionUtils.isNotEmpty(list)){
-			for(Sysconfig item : list){
+			for(TitanSysconfig item : list){
 				TitanCallBackConfig callBackConfig = new TitanCallBackConfig();
 				callBackConfig.setPaySource(item.getCfgKey().split("_")[1]);
 				callBackConfig.setCallBackURL(item.getCfgValue());

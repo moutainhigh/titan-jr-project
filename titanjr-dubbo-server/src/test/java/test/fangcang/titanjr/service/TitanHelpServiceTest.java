@@ -94,7 +94,7 @@ public class TitanHelpServiceTest extends SpringTest{
 	
 	@Test
 	public void testqueryPageHelpWord(){
-		QueryPageHelpWordRequest queryPageHelpWordRequest = new QueryPageHelpWordRequest();
+		/*QueryPageHelpWordRequest queryPageHelpWordRequest = new QueryPageHelpWordRequest();
 		queryPageHelpWordRequest.setWord("金融");
 		queryPageHelpWordRequest.setCurrentPage(1);
 		queryPageHelpWordRequest.setIsShow(1);
@@ -102,7 +102,7 @@ public class TitanHelpServiceTest extends SpringTest{
 		QueryPageHelpWordResponse response = helpService.queryPageHelpWord(queryPageHelpWordRequest);
 		
 		System.out.println(Tools.gsonToString(response));
-		Assert.assertTrue(response.isResult());
+		Assert.assertTrue(response.isResult());*/
 		
 	}
 	

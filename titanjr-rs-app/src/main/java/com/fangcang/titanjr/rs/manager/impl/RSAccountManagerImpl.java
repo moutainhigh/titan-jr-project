@@ -33,9 +33,8 @@ import com.fangcang.util.MyBeanUtil;
 
 public class RSAccountManagerImpl implements RSAccountManager {
 	private static final Log log = LogFactory
-			.getLog(RSOrganizationManagerImpl.class);
+			.getLog(RSAccountManagerImpl.class);
 
-	private RSInvokeInitManagerImpl rsInvokeInitManager;
 
 	private static final boolean needCheckRequest = true;// 是否校验请求
 	@Override
@@ -48,8 +47,7 @@ public class RSAccountManagerImpl implements RSAccountManager {
 				accountFreezeRequest.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, accountFreezeRequest);
-			WheatfieldAccountFreezeResponse rsp = RSInvokeConstant.ropClient
-					.execute(req, RSInvokeConstant.sessionKey);
+			WheatfieldAccountFreezeResponse rsp = RSInvokeConstant.ropClient.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.debug("调用freezeAccount返回报文: \n" + rsp.getBody());
 				String errorMsg;
@@ -209,14 +207,6 @@ public class RSAccountManagerImpl implements RSAccountManager {
 			log.error("调用queryAccountFlow过程出现未知异常", e);
 		}
 		return response;
-	}
-
-	public RSInvokeInitManagerImpl getRsInvokeInitManager() {
-		return rsInvokeInitManager;
-	}
-
-	public void setRsInvokeInitManager(RSInvokeInitManagerImpl rsInvokeInitManager) {
-		this.rsInvokeInitManager = rsInvokeInitManager;
 	}
 
 	

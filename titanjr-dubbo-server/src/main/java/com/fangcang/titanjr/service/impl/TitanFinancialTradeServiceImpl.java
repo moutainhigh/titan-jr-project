@@ -40,7 +40,6 @@ import com.fangcang.titanjr.dao.DomainConfigDao;
 import com.fangcang.titanjr.dao.TitanAccountDao;
 import com.fangcang.titanjr.dao.TitanDynamicKeyDao;
 import com.fangcang.titanjr.dao.TitanOrderPayreqDao;
-import com.fangcang.titanjr.dao.TitanPayMethodConfigDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
@@ -150,8 +149,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	@Resource
 	private DomainConfigDao domainConfigDao;
 
-	@Resource
-	private TitanPayMethodConfigDao titanPayMethodDao;
 
 	private FinanceSearchRemote financeSearchRemote;
 

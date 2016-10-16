@@ -21,39 +21,6 @@
 						http://www.springframework.org/schema/jee/spring-jee-2.5.xsd">
 
 
-	<!-- LOB大数据列支持 -->
-	
-	<!-- <bean id="lobHandler" lazy-init="true" class="org.springframework.jdbc.support.lob.DefaultLobHandler" /> -->
-	<!-- <jee:jndi-lookup id="dataSource" jndi-name="jdbc/titanjr" />  -->
-	<!-- dataSource 定义 -->
-	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
-		<property name="driverClassName" value="${db.driverClassName}" />
-		<property name="url" value="${db.url}" />
-		<property name="username" value="${db.username}" />
-		<property name="password" value="${db.password}" />
-		<property name="maxActive" value="${db.maxActive}" />
-		<property name="initialSize" value="${db.initialSize}" />
-		<property name="maxWait" value="${db.maxWait}" />
-		<property name="minIdle" value="${db.minIdle}" />
-		<property name="timeBetweenEvictionRunsMillis" value="${db.timeBetweenEvictionRunsMillis}" />
-		<property name="minEvictableIdleTimeMillis" value="${db.minEvictableIdleTimeMillis}" />
-		 
-		<property name="maxOpenPreparedStatements" value="${db.maxOpenPreparedStatements}" />
-		<property name="removeAbandoned" value="${db.removeAbandoned}" />
-		<property name="removeAbandonedTimeout" value="${db.removeAbandonedTimeout}" />
-		<property name="logAbandoned" value="${db.logAbandoned}" />
-	</bean>
-	<!-- 
-	<jee:jndi-lookup id="configDataSource" jndi-name="jdbc/cfgDS" />
- 	-->
-	 <bean id="configDataSource" class="org.apache.commons.dbcp.BasicDataSource"
-		  destroy-method="close">
-		<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
-		<property name="url" value="jdbc:oracle:thin:@192.168.2.38:1521:fangcangdb" />
-		<property name="username" value="config" />
-		<property name="password" value="config" />
-	</bean>
-
 	<!-- 事务管理器-->
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource"/>
@@ -128,11 +95,12 @@
 	<bean id="titanFundUnFreezereqDao" class="com.fangcang.titanjr.dao.impl.TitanFundUnFreezereqDaoImpl" parent="baseSqlMapClient"></bean>
 	
 	<bean id="titanDynamicKeyDao" class="com.fangcang.titanjr.dao.impl.TitanDynamicKeyDaoImpl" parent="baseSqlMapClient"></bean>
-	<bean id="titanPayMethodConfigDao" class="com.fangcang.titanjr.dao.impl.TitanPayMethodConfigDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanOrderExceptionDao" class="com.fangcang.titanjr.dao.impl.TitanOrderExceptionDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanCheckCodeDao" class="com.fangcang.titanjr.dao.impl.TitanCheckCodeDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanHelpDao" class="com.fangcang.titanjr.dao.impl.TitanHelpDaoImpl" parent="baseSqlMapClient"></bean>
 	
 	<bean id="titanHelpTypeDao" class="com.fangcang.titanjr.dao.impl.TitanHelpTypeDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="titanSysconfigDao" class="com.fangcang.titanjr.dao.impl.TitanSysconfigDaoImpl" parent="baseSqlMapClient"></bean>
+	
 </beans>
 

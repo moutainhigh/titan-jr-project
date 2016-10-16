@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.rs.dto;
 
-import com.fangcang.titanjr.rs.manager.impl.RSInvokeInitManagerImpl;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 
 public class RSPayResultInfo {

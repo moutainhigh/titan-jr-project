@@ -32,8 +32,6 @@ public class RSOrganizationManagerImpl implements RSOrganizationManager {
 	private static final Log log = LogFactory
 			.getLog(RSOrganizationManagerImpl.class);
 
-	private RSInvokeInitManagerImpl rsInvokeInitManager;
-
 	private static final boolean needCheckRequest = true;// 是否校验请求
 
 	@Override
@@ -374,12 +372,4 @@ public class RSOrganizationManagerImpl implements RSOrganizationManager {
 		return response;
 	}
 
-	public RSInvokeInitManagerImpl getRsInvokeInitManager() {
-		return rsInvokeInitManager;
-	}
-
-	public void setRsInvokeInitManager(
-			RSInvokeInitManagerImpl rsInvokeInitManager) {
-		this.rsInvokeInitManager = rsInvokeInitManager;
-	}
 }

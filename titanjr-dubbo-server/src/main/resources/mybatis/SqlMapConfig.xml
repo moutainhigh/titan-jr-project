@@ -45,7 +45,6 @@
 	<!--**************************************** 分页插件    end ****************************************-->
 
 	<mappers>
-		<mapper resource="mybatis/rs/sysconfig-mapper.xml"/>
 		<mapper resource="mybatis/TitanOrgCheckMapper.xml" />
 		<mapper resource="mybatis/TitanAccountHistoryMapper.xml" />
 		<mapper resource="mybatis/TitanAccountItemMapper.xml" />
@@ -77,12 +76,12 @@
 		<mapper resource="mybatis/TitanCodeMapper.xml" />
 		<mapper resource="mybatis/TitanHelpMapper.xml" />
 		<mapper resource="mybatis/TitanHelpTypeMapper.xml" />
+		<mapper resource="mybatis/TitanSysconfigMapper.xml" />
 		
 		<mapper resource="mybatis/TitanOrgCheckLogMapper.xml" />
 		<mapper resource="mybatis/TitanAccountCodeMapper.xml" />
 		<mapper resource="mybatis/TitanFundUnFreezereqMapper.xml" />
 		<mapper resource="mybatis/TitanDynamicKeyMapper.xml" />
-		<mapper resource="mybatis/TitanPayMethodConfigMapper.xml" />
 		<mapper resource="mybatis/TitanOrderException.xml" />
 		<mapper resource="mybatis/TitanCheckCodeMapper.xml" />
 		<mapper resource="mybatis/DomainConfigMapper.xml"/>

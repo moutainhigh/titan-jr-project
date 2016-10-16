@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.rs.entity;
+package com.fangcang.titanjr.dto.bean;
 
 /**
  * Created by zhaoshan on 2016/7/21.
