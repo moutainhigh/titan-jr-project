@@ -422,7 +422,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	balanceWithDrawRequest.setAmount("0.3");
     	balanceWithDrawRequest.setCreator("admin");
     	balanceWithDrawRequest.setOrderDate(DateUtil.sdf4.format(new Date()));
-    	balanceWithDrawRequest.setUserFee((long)0);
+    	//balanceWithDrawRequest.setUserFee((long)0);
     	balanceWithDrawRequest.setUserId("TJM10000087");
     	balanceWithDrawRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
     	balanceWithDrawRequest.setUserorderid(OrderGenerateService.genResquestNo());
