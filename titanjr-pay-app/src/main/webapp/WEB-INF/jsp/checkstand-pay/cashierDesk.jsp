@@ -316,16 +316,15 @@ $("document").ready(function (){
     		
     		var flag = '${cashDeskData.amount}' - '${cashDeskData.balanceusable}' <= 0;
     		if(flag ==true){
-    			amount_not_enough_show();
-    		}else{
     			amount_enough_show();
+    		}else{
+    			amount_not_enough_show();
     		}
     		
     		
     	}else if('${cashDeskData.paySource}'=="4"){//移动端
     		
     	}
-    	
     	    
         if('${cashDeskData.balanceusable}'=="0.0" 
         		||'${cashDeskData.balanceusable}'=="0.00"
@@ -340,7 +339,13 @@ $("document").ready(function (){
         
         var firstBank = $(".bankName:first");
     	firstBank.attr("checked","0");
-    	bankCheckRadio(firstBank);
+    	
+    	if($("#useCashierDeskPay").css("display")=="none"){
+    		$(".bank-limit-wrap").hide();
+    	}else{
+    		$(".bank-limit-wrap").show();
+    	}
+    	
     	$(".pay_bank_l input[type='radio']").on("click",function(){
     		bankCheckRadio($(this));
     	});
@@ -385,7 +390,6 @@ $("document").ready(function (){
 	       	 $('#titanRateAmount').text(data.data.exRateAmount);
 	       	 var show_online_payAmount = accAdd(payAmount,data.data.exRateAmount);
 	         $("#pay_surplus_amount").text(show_online_payAmount);
-	       	//alert(data.data.amount);
 	        }
 	      }); 
 	}
@@ -400,15 +404,16 @@ $("document").ready(function (){
 	   $("#exists_history").remove();
 	   $("#not_exists_history").show();
 	}
-	function amount_not_enough_show(){
-		 $("#useCashierDeskPay").hide();
+	//余额够了
+	function amount_enough_show(){
+		$("#useCashierDeskPay").hide();
 	    $("#enough_amount").show();
 	    $("#not_enough_amount").hide();
 	    $("#onlinePayAmount").val('${cashDeskData.amount}');
 	    $("#d_checkbox").attr("checked",true);
 	}
-
-	function  amount_enough_show(){
+	//余额不够
+	function  amount_not_enough_show(){
 		 $("#useCashierDeskPay").show();
        $("#enough_amount").hide();
        $("#not_enough_amount").show();
