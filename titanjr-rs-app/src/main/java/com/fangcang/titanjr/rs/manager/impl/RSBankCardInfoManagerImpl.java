@@ -40,7 +40,6 @@ import com.fangcang.util.MyBeanUtil;
 public class RSBankCardInfoManagerImpl implements RSBankCardInfoManager {
 	private static final Log log = LogFactory.getLog(RSBankCardInfoManagerImpl.class);
 
-	private RSInvokeInitManagerImpl rsInvokeInitManager;
 
 	private static final boolean needCheckRequest = true;// 是否校验请求
 	

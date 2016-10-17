@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.rs.entity;
+package com.fangcang.titanjr.dto.bean;
 
 import java.util.Date;
 

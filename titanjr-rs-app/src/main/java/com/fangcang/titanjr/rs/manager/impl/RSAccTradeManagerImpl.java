@@ -62,8 +62,6 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 	private static final Log log = LogFactory
 			.getLog(RSAccTradeManagerImpl.class);
 
-	private RSInvokeInitManagerImpl rsInvokeInitManager;
-
 	private static final boolean needCheckRequest = true;// 是否校验请求
 	@Override
 	public AccountBalanceQueryResponse queryAccountBalance(
@@ -432,13 +430,6 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 		return balanceInfos;
 	}
 
-	public RSInvokeInitManagerImpl getRsInvokeInitManager() {
-		return rsInvokeInitManager;
-	}
-
-	public void setRsInvokeInitManager(RSInvokeInitManagerImpl rsInvokeInitManager) {
-		this.rsInvokeInitManager = rsInvokeInitManager;
-	}
 
 	@Override
 	public OrderSaveWithCardResponse orderSaveWithdraw(

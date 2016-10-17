@@ -4,6 +4,11 @@ import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.PayMethod;
 
 public class TitanPayMethodResponse extends BaseResponseDTO {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6279301792365298726L;
 	private PayMethod payMethod;
 
 	public PayMethod getPayMethod() {

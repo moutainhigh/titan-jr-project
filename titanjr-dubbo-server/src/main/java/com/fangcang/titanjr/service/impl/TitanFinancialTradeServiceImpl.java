@@ -40,7 +40,6 @@ import com.fangcang.titanjr.dao.DomainConfigDao;
 import com.fangcang.titanjr.dao.TitanAccountDao;
 import com.fangcang.titanjr.dao.TitanDynamicKeyDao;
 import com.fangcang.titanjr.dao.TitanOrderPayreqDao;
-import com.fangcang.titanjr.dao.TitanPayMethodConfigDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
@@ -150,8 +149,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	@Resource
 	private DomainConfigDao domainConfigDao;
 
-	@Resource
-	private TitanPayMethodConfigDao titanPayMethodDao;
 
 	private FinanceSearchRemote financeSearchRemote;
 
@@ -482,6 +479,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 				if(PayerTypeEnum.RECHARGE.getKey().equals(transOrderDTO.getPayerType()))
 				{
+					orderRequest.setGoodsdetail("使用"
+							+ SupportBankEnum
+									.getBankDetailByName(titanPaymentRequest
+											.getBankInfo()).bankRemark + "充值");
 					if(StringUtil.isValidString(titanPaymentRequest.getTradeAmount()))
 					{
 						orderRequest.setTradeamount(Long.parseLong(NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount())));

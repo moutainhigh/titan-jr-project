@@ -19,15 +19,11 @@
            				http://code.alibabatech.com/schema/dubbo/dubbo.xsd"
 		default-autowire="byName">
 
-               
-	<bean id="rsInvokeInitService" class="com.fangcang.titanjr.rs.manager.impl.RSInvokeInitManagerImpl" init-method="initRopClient" />  
 	
 	<bean id="rsAccountManager" class="com.fangcang.titanjr.rs.manager.impl.RSAccountManagerImpl" />
 	
 	<bean id="rsOrganizationManager" class="com.fangcang.titanjr.rs.manager.impl.RSOrganizationManagerImpl" />  
 	
-    <bean id="rsInvokeInitManager" class="com.fangcang.titanjr.rs.manager.impl.RSInvokeInitManagerImpl"></bean>
-    
     <bean id="rsAccTradeManager" class="com.fangcang.titanjr.rs.manager.impl.RSAccTradeManagerImpl"></bean>
     
     <bean id="rsBankCardInfoManager" class="com.fangcang.titanjr.rs.manager.impl.RSBankCardInfoManagerImpl"></bean>

@@ -1,10 +1,9 @@
 package com.fangcang.titanjr.rs.util;
 
-import com.Rop.api.DefaultRopClient;
-import com.fangcang.titanjr.rs.entity.TitanPayMethodConfig;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.Rop.api.DefaultRopClient;
 
 /**
  * 此类需考虑安全性
@@ -39,7 +38,7 @@ public class RSInvokeConstant {
     //默认金服访问权限的角色id
     public static Long defaultRoleId = null;
     //支付方式配置表，key是userid，value主要包含支付方式回调地址
-    public static Map<String, TitanPayMethodConfig> payMethodConfigMap = new HashMap<String, TitanPayMethodConfig>();
+   // public static Map<String, TitanPayMethodConfig> payMethodConfigMap = new HashMap<String, TitanPayMethodConfig>();
     //金服回调地址配置
     public static Map<String,String> callBackConfigMap = new HashMap<String, String>();
 }
