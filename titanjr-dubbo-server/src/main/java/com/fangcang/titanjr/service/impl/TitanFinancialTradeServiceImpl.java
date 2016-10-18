@@ -965,18 +965,20 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			params.add(new BasicNameValuePair("amount", transOrderDTO
 					.getTradeamount().toString()));
 		}
-		params.add(new BasicNameValuePair("merchantCode", transOrderDTO
-				.getMerchantcode()));
+		NameValuePair nameValuePair = new BasicNameValuePair("merchantCode", transOrderDTO
+				.getMerchantcode());
+		
 		//此段处理逻辑是前一版本收银台的逻辑，新版本之后将舍去
 		PayerTypeEnum payerTypeEnum = PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
 		if(payerTypeEnum !=null && payerTypeEnum.isB2BPayment()){
 			OrgBindInfo orgBindInfo = this.getOrgBindInfo(transOrderDTO
 					.getPayeemerchant());
 			if (null != orgBindInfo) {
-				params.add(new BasicNameValuePair("merchantCode", orgBindInfo
-						.getMerchantCode()));
+				nameValuePair = new BasicNameValuePair("merchantCode", orgBindInfo
+						.getMerchantCode());
 			}
 		}
+		params.add(nameValuePair);
 		//end
 		params.add(new BasicNameValuePair("operator", transOrderDTO
 				.getCreator()));
