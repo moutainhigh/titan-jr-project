@@ -21,7 +21,7 @@
         <div class="gold_pay">
             <div class="TFS_rechargeBox">
                 <div class="TFS_rechargeBoxL fl">
-                    提现金额：<input type="text" id="withDrawNum" class="text w_300"> 元<span id="inputeAmountError" style="color:red;font-size:13px"></span>
+                    提现金额：<input type="text" id="withDrawNum" class="text w_300"> 元<span id="inputeAmountError" style="color:red;font-size:13px;padding-left:20px;"></span>
                 </div>
                 <div class="TFS_rechargeBoxR fr">
                     <h3>账户名称/泰坦码：${organ.orgName}/${organ.titanCode }</h3>
@@ -252,6 +252,12 @@
     		return ;
     	}
     	
+    	if($('#withdrawRate').length >= 1 &&  parseFloat($('#withdrawRate').text()) > parseFloat(withdraw_amount) )
+    	{
+    		withDrawCallBack("提现金额不能少于手续费！",1);
+    		return;
+    	}
+    	
     	
     	if($("#accountNum").is(":visible")==true){//如果是需要输入银行卡号
     		
@@ -326,6 +332,7 @@
                                   			$('#passwordbox').click();
                                   		},500);
                            			return false;
+                           			
                             	}
                             }
                         }
