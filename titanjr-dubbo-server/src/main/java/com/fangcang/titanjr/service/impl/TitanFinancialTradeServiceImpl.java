@@ -3091,8 +3091,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				if (payerTypeEnum.isB2BPayment()) {
 					titanTransOrder.setMerchantcode(titanOrderRequest
 							.getRuserId());
-					titanTransOrder.setUserid("141223100000056");
-					titanTransOrder.setProductid("P000148");
+					titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+					titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
+					titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
 				}
 			} else if (payerTypeEnum.isUserId()) {// 接收方传入userId
 				titanTransOrder.setUserid(titanOrderRequest.getRuserId());
