@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
@@ -214,9 +215,12 @@ public class TitanPaymentService {
 	    	transferRequest.setUserid(transOrderDTO.getUserid());										//转出的用户
 	    	transferRequest.setRequestno(OrderGenerateService.genResquestNo());									//业务订单号
 	    	transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));	//请求时间
-	    	//如果是GDP支付则应该减去手续费
-	    	if(transOrderDTO.getTradeamount()!=null ){
-	    		String amount = new BigDecimal(transOrderDTO.getTradeamount()).subtract(new BigDecimal(transOrderDTO.getReceivedfee())).toString();
+	    	if(transOrderDTO.getTradeamount()!=null ){//如果是GDP支付则应该减去手续费
+	    		String amount = transOrderDTO.getTradeamount().toString();
+	    		if(StringUtil.isValidString(transOrderDTO.getPayerType())&&transOrderDTO.getReceivedfee()!=null&&
+	    				PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType()).isB2BPayment()){
+	    			amount = new BigDecimal(transOrderDTO.getTradeamount()).subtract(new BigDecimal(transOrderDTO.getReceivedfee())).toString();
+	    		}
 	    		transferRequest.setAmount(amount);
 	    	}
 	    	transferRequest.setUserfee("0");			
