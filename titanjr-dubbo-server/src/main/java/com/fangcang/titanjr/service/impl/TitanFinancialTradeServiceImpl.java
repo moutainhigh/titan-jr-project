@@ -965,18 +965,20 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			params.add(new BasicNameValuePair("amount", transOrderDTO
 					.getTradeamount().toString()));
 		}
-		params.add(new BasicNameValuePair("merchantCode", transOrderDTO
-				.getMerchantcode()));
+		NameValuePair nameValuePair = new BasicNameValuePair("merchantCode", transOrderDTO
+				.getMerchantcode());
+		
 		//此段处理逻辑是前一版本收银台的逻辑，新版本之后将舍去
 		PayerTypeEnum payerTypeEnum = PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
 		if(payerTypeEnum !=null && payerTypeEnum.isB2BPayment()){
 			OrgBindInfo orgBindInfo = this.getOrgBindInfo(transOrderDTO
 					.getPayeemerchant());
 			if (null != orgBindInfo) {
-				params.add(new BasicNameValuePair("merchantCode", orgBindInfo
-						.getMerchantCode()));
+				nameValuePair = new BasicNameValuePair("merchantCode", orgBindInfo
+						.getMerchantCode());
 			}
 		}
+		params.add(nameValuePair);
 		//end
 		params.add(new BasicNameValuePair("operator", transOrderDTO
 				.getCreator()));
@@ -3091,8 +3093,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				if (payerTypeEnum.isB2BPayment()) {
 					titanTransOrder.setMerchantcode(titanOrderRequest
 							.getRuserId());
-					titanTransOrder.setUserid("141223100000056");
-					titanTransOrder.setProductid("P000148");
+					titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+					titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
+					titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
 				}
 			} else if (payerTypeEnum.isUserId()) {// 接收方传入userId
 				titanTransOrder.setUserid(titanOrderRequest.getRuserId());

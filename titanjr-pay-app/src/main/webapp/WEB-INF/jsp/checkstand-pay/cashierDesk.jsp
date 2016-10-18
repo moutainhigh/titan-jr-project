@@ -355,6 +355,7 @@ $("document").ready(function (){
           	if($(this).find('input:radio[name="r2"]').is(":checked"))
           	{
           		$(this).click();
+          		$(this).find('input:radio[name="r2"]').click();
           	}
           });
     	

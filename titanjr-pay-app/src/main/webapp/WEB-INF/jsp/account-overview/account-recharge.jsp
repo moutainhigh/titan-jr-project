@@ -24,7 +24,7 @@
 					
 						<div class="TFS_rechargeBoxL fl" style="padding:0">
 							<div class="goldpay_top" style="padding-top: 20px; height: 130px; width: 740px;margin:0; ">
-							充值金额：<input type="text" class="text w_300" id="inputeAmount"><span id="inputeAmountError" style="color:red;font-size:13px"></span>
+							充值金额：<input type="text" class="text w_200" id="inputeAmount"><span id="inputeAmountError" style="color:red;font-size:12px;padding-left:15px"></span>
 								<div style="padding-left: 88px; padding-top: 7px;" class="c_666 f_14">手续费：<i class="c_f00" id="rateAmount">0.00</i> 元</div>
 							</div>
 						</div>
@@ -257,8 +257,17 @@ function paytable_paywayClick(itemType , amount){
    
   	if(amount == '' || amount ==  null || parseFloat(amount)<= 0)
    	{
-  		amount = 0;
+  		 $('#rateAmount').html('0.00');
+  		return;
    	}
+  	
+	var neg = /^[1-9]{1}\d{0,7}(\.\d{1,2})?$/;
+	var neg2 = /^[0]{1}(\.\d{1,2})?$/;
+	var flag = neg.test(amount)||neg2.test(amount);
+	if(flag==false){
+		return
+	}
+  	
 	 $.ajax({
   	   type: "get",
        url: "<%=basePath%>/rate/rateCompute.action?userId=${cashDeskData.userId}&amount="+amount+"&payType="+itemType+"&date=" + new Date().getTime(),
@@ -458,6 +467,7 @@ function validate_isBlank(){
 	var inputeAmount = $("#inputeAmount").val();
 	if($.trim(inputeAmount).length<1){
 		 $("#inputeAmountError").text("充值金额不能为空");
+		 $('#rateAmount').html('0.00');
 		return false;
 	}
 	 $("#inputeAmountError").text("");
@@ -468,6 +478,7 @@ $("#inputeAmount").blur(function(){
 	var inputeAmount = $(this).val();
 	if($.trim(inputeAmount).length<1){
 		 $("#inputeAmountError").text("充值金额不能为空");
+		 $('#rateAmount').html('0.00');
 		 return;
 	}else{
 		 $("#inputeAmountError").text("");
@@ -478,6 +489,7 @@ $("#inputeAmount").blur(function(){
 		$("#inputeAmountError").text("对不起，本系统支持的最大充值金额为99,999,999");
 		$(this).val("");
 		$(this).focus();
+		 $('#rateAmount').html('0.00');
 		return;
 	}
 	
@@ -489,6 +501,7 @@ $("#inputeAmount").blur(function(){
 		$("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
 		$(this).val("");
 		$(this).focus();
+		 $('#rateAmount').html('0.00');
 		return
 	}else{
 		$("#inputeAmountError").text("");
