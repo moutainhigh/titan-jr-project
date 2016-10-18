@@ -153,7 +153,7 @@ public class TitanPaymentController extends BaseController {
         	}
         	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARGE_SUCCESS;
         	
-        	if(!StringUtil.isValidString(transOrderDTO.getPayermerchant())){
+        	if(PayerTypeEnum.RECHARGE.key.equals(payerType.getKey())){
         		orderStatusEnum= OrderStatusEnum.ORDER_SUCCESS;
         	}else{
         		TransferRequest transferRequest = titanPaymentService.convertToTransferRequest(transOrderDTO);
