@@ -1,5 +1,7 @@
 package com.fangcang.titanjr.pay.services;
 
+import java.math.BigDecimal;
+import java.text.Bidi;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -212,8 +214,10 @@ public class TitanPaymentService {
 	    	transferRequest.setUserid(transOrderDTO.getUserid());										//转出的用户
 	    	transferRequest.setRequestno(OrderGenerateService.genResquestNo());									//业务订单号
 	    	transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));	//请求时间
+	    	//如果是GDP支付则应该减去手续费
 	    	if(transOrderDTO.getTradeamount()!=null ){
-	    		transferRequest.setAmount(transOrderDTO.getTradeamount().toString());
+	    		String amount = new BigDecimal(transOrderDTO.getTradeamount()).subtract(new BigDecimal(transOrderDTO.getReceivedfee())).toString();
+	    		transferRequest.setAmount(amount);
 	    	}
 	    	transferRequest.setUserfee("0");			
 	    	transferRequest.setOrderid(transOrderDTO.getOrderid());
