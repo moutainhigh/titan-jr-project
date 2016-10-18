@@ -6,64 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.Rop.api.DefaultRopClient;
-import com.Rop.api.request.ExternalSessionGetRequest;
-import com.Rop.api.request.WheatfieldAccountCheckRequest;
-import com.Rop.api.request.WheatfieldAccountCloseRequest;
-import com.Rop.api.request.WheatfieldAccountFreezeRequest;
-import com.Rop.api.request.WheatfieldAccountOpenRequest;
-import com.Rop.api.request.WheatfieldAccountRmfreezeRequest;
-import com.Rop.api.request.WheatfieldAccountUpdateRequest;
-import com.Rop.api.request.WheatfieldAccountinfoDeleteRequest;
-import com.Rop.api.request.WheatfieldAccountinfoQueryRequest;
-import com.Rop.api.request.WheatfieldAccountinfoUpdateRequest;
-import com.Rop.api.request.WheatfieldAccountnumCkeckRequest;
-import com.Rop.api.request.WheatfieldBalanceGetlistRequest;
-import com.Rop.api.request.WheatfieldBankaccountBindingRequest;
-import com.Rop.api.request.WheatfieldBanknQueryRequest;
-import com.Rop.api.request.WheatfieldBatchqueryCompanyRequest;
-import com.Rop.api.request.WheatfieldBatchqueryPersonRequest;
-import com.Rop.api.request.WheatfieldCityQueryRequest;
-import com.Rop.api.request.WheatfieldEnterpriseEntityaccountoptRequest;
-import com.Rop.api.request.WheatfieldEnterpriseUpdatecompanyinfoRequest;
-import com.Rop.api.request.WheatfieldFinanaceEntrylistQueryRequest;
-import com.Rop.api.request.WheatfieldOrderOperRequest;
-import com.Rop.api.request.WheatfieldOrderServiceAuthcodeserviceRequest;
-import com.Rop.api.request.WheatfieldOrderServiceKzhcollectionRequest;
-import com.Rop.api.request.WheatfieldOrderServiceKzhwithholdRequest;
-import com.Rop.api.request.WheatfieldOrderServiceMultitransferRequest;
-import com.Rop.api.request.WheatfieldOrderServiceThawauthcodeRequest;
-import com.Rop.api.request.WheatfieldOrderServiceWithdrawserviceRequest;
-import com.Rop.api.request.WheatfieldOrderTransferRequest;
-import com.Rop.api.request.WheatfieldPersonAccountoprRequest;
-import com.Rop.api.response.ExternalSessionGetResponse;
-import com.Rop.api.response.WheatfieldAccountCheckResponse;
-import com.Rop.api.response.WheatfieldAccountCloseResponse;
-import com.Rop.api.response.WheatfieldAccountFreezeResponse;
-import com.Rop.api.response.WheatfieldAccountOpenResponse;
-import com.Rop.api.response.WheatfieldAccountRmfreezeResponse;
-import com.Rop.api.response.WheatfieldAccountUpdateResponse;
-import com.Rop.api.response.WheatfieldAccountinfoDeleteResponse;
-import com.Rop.api.response.WheatfieldAccountinfoQueryResponse;
-import com.Rop.api.response.WheatfieldAccountinfoUpdateResponse;
-import com.Rop.api.response.WheatfieldAccountnumCkeckResponse;
-import com.Rop.api.response.WheatfieldBalanceGetlistResponse;
-import com.Rop.api.response.WheatfieldBankaccountBindingResponse;
-import com.Rop.api.response.WheatfieldBanknQueryResponse;
-import com.Rop.api.response.WheatfieldBatchqueryCompanyResponse;
-import com.Rop.api.response.WheatfieldBatchqueryPersonResponse;
-import com.Rop.api.response.WheatfieldCityQueryResponse;
-import com.Rop.api.response.WheatfieldEnterpriseEntityaccountoptResponse;
-import com.Rop.api.response.WheatfieldEnterpriseUpdatecompanyinfoResponse;
-import com.Rop.api.response.WheatfieldFinanaceEntrylistQueryResponse;
-import com.Rop.api.response.WheatfieldOrderOperResponse;
-import com.Rop.api.response.WheatfieldOrderServiceAuthcodeserviceResponse;
-import com.Rop.api.response.WheatfieldOrderServiceKzhcollectionResponse;
-import com.Rop.api.response.WheatfieldOrderServiceKzhwithholdResponse;
-import com.Rop.api.response.WheatfieldOrderServiceMultitransferResponse;
-import com.Rop.api.response.WheatfieldOrderServiceThawauthcodeResponse;
-import com.Rop.api.response.WheatfieldOrderServiceWithdrawserviceResponse;
-import com.Rop.api.response.WheatfieldOrderTransferResponse;
-import com.Rop.api.response.WheatfieldPersonAccountoprResponse;
+import com.Rop.api.request.*;
+import com.Rop.api.response.*;
 import com.ruixue.oss.common.utils.DateUtil;
 
 
@@ -96,7 +40,7 @@ public class DemoAPI {
 //		String requestType = "ruixue.wheatfield.finanace.entrylist.query";
 		//订单基础操作，增删改
 //		String requestType = "ruixue.wheatfield.order.oper"; //==生成订单的orderid   2016041114451400001
-		String requestType ="ruixue.wheatfield.order.service.withdrawservice";
+//		String requestType ="ruixue.wheatfield.order.service.withdrawservice";
 
 		//账户整体冻结 =====输入参数失败。
 //		String requestType = "ruixue.wheatfield.account.freeze";
@@ -119,6 +63,9 @@ public class DemoAPI {
 //		String requestType = "ruixue.wheatfield.accountnum.ckeck";
 		//单笔转账操作
 //		String requestType = "ruixue.wheatfield.order.transfer";
+
+		//查询信贷账户余额 TJM10000087
+		String requestType = "ruixue.wheatfield.balance.getlist";
 
 		if ("ruixue.wheatfield.enterprise.entityaccountopt".equals(requestType)) {
 			//企业账户开户
@@ -536,7 +483,7 @@ public class DemoAPI {
 		String strError = null;
 		try {
 			WheatfieldBalanceGetlistRequest req = new WheatfieldBalanceGetlistRequest();
-			req.setUserid("PM10000021");								//	用户id
+			req.setUserid("TJM10000087");								//	用户id
 //			req.setUserid("141223100000056");								//	用户id
 			req.setRootinstcd("M000016");						// 机构号
 			
@@ -568,10 +515,11 @@ public class DemoAPI {
 		String strError = null;
 		try {
 			WheatfieldAccountinfoQueryRequest req = new WheatfieldAccountinfoQueryRequest();
-			req.setUserid("PM10000021");						// 用户ID
+			req.setUserid("TJM10000087");						// 用户ID
 			req.setUsertype("1");						// 用户类型(1：商户，2：普通用户)
 			req.setConstid("M000016");					// 机构码
-			req.setProductid("P000070");				// 产品号
+//			req.setProductid("P000070");				// 产品号
+			req.setProductid("P000230");				// 产品号
 			req.setObjorlist("2");						// 查询种类（1：结算卡，2：所有绑定卡）
 			// 非必输参数
 			// req.setReferuserid("");
