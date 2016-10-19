@@ -259,6 +259,13 @@
     	}
     	
     	
+    	if($('#withdrawRate').length >= 1 && parseFloat(withdraw_amount) <= parseFloat($('#withdrawRate').text())  )
+    	{
+    		withDrawCallBack("提现金额必须大于费率！",1);
+    		return;
+    	}
+    	
+    	
     	if($("#accountNum").is(":visible")==true){//如果是需要输入银行卡号
     		
     		var bankName= $("#bankName").val();
