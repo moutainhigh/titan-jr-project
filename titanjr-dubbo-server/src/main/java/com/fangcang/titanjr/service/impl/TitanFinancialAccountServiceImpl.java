@@ -559,14 +559,23 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			//调用融数接口提现
 			AccountWithDrawRequest accountWithDrawRequest = new AccountWithDrawRequest();
 			accountWithDrawRequest.setUserid(balanceWithDrawRequest.getUserId());
-			accountWithDrawRequest.setUserfee(Long.parseLong(NumberUtil.covertToCents(balanceWithDrawRequest.getReceivedfee())));
+			accountWithDrawRequest.setUserfee(Long.valueOf(NumberUtil.covertToCents(balanceWithDrawRequest.getReceivedfee())));
 			accountWithDrawRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
 			accountWithDrawRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
 			accountWithDrawRequest.setOrderdate(balanceWithDrawRequest.getOrderDate());
 			accountWithDrawRequest.setCardno(balanceWithDrawRequest.getCardNo());
 			accountWithDrawRequest.setUserorderid(balanceWithDrawRequest.getUserorderid());
 			accountWithDrawRequest.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
-			accountWithDrawRequest.setAmount(NumberUtil.covertToCents(balanceWithDrawRequest.getAmount()));
+			
+			String amount = NumberUtil.covertToCents(balanceWithDrawRequest.getAmount());
+			//将提现金额减去手续费
+			if(accountWithDrawRequest.getUserfee() != null)
+			{
+				amount = String.valueOf((Long.parseLong(amount) - accountWithDrawRequest
+								.getUserfee()));
+			}
+			
+			accountWithDrawRequest.setAmount(amount);
 			AccountWithDrawResponse accountWithDrawResponse = rsAccTradeManager.accountBalanceWithDraw(accountWithDrawRequest);
 			if (accountWithDrawResponse != null) {
 				if (CommonConstant.OPERATE_SUCCESS.equals(accountWithDrawResponse.getOperateStatus())) {

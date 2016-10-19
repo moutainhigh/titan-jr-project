@@ -7,7 +7,9 @@
     <title>SAAS后台管理</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
-	
+	<style>		
+		.grey_bg,.grey_bg:hover,.grey_bg:active{background-color: #bcc8c9 !important;border: 1px solid #acbbbc !important; cursor:auto;}
+	</style>
 </head>
 <body>
 <!--弹窗白色底-->
@@ -23,7 +25,9 @@
         <div class="gold_pay">
         <div class="clearfix">
 		  <div class="fl w_800">
-           <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${cashDeskData.amount }"  pattern="#,##0.00#" /></span>元 </div>
+           <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${cashDeskData.amount }"  pattern="#,##0.00#" /></span>元
+           	<i class="f_12 c_f00 m_l20" style="font-weight: normal; display: none;" id="enBankTitle">付款金额不足1000元，无法使用企业网银付款</i>
+            </div>
             <div class="goldpay_top">
                 <ul>
                     <li id="not_exists_history">
@@ -94,7 +98,7 @@
                 
             </div>
             </div>
-                <c:if test="${cashDeskData.paySource}==1">
+                <c:if test="${cashDeskData.paySource !='1'}">
                    <div class="TFS_withdrawBoxR fr">
 					<h3>温馨提示</h3>
 					<div class="TFS_withdrawBoxR_content">
@@ -264,6 +268,7 @@
         <div class="ysgl_bottombut">
             <div>
                 <a class="btn p_lr30 J_password">确定</a>
+                <a class="btn p_lr30 grey_bg">确定</a>
                 <a class="btn btn_exit J_exitKan">取消</a>
             </div>
         </div>
@@ -361,7 +366,20 @@ $("document").ready(function (){
     	
     });
 
-
+	function chageComfireBut(status)
+	{
+		if(status == 'hide')
+		{
+			 $('.J_password').hide();
+			 $('.grey_bg').show();
+			 $('#enBankTitle').show();
+		}else{
+			 $('.J_password').show();
+			 $('.grey_bg').hide();
+			 $('#enBankTitle').hide();
+		}
+	}
+	
 	function paytable_paywayClick(itemType){
 	     var userId = '${cashDeskData.cashierDeskDTO.userId}';
 	     var payAmount = "0";
@@ -379,6 +397,13 @@ $("document").ready(function (){
 	  	    }else{
 	  	    	payAmount = '${cashDeskData.amount}';
 	  	    }
+		 }
+		 if(itemType ==1 && parseFloat(payAmount) < 1000  &&  '${cashDeskData.paySource}'=='1' && !($("#d_checkbox").attr("checked")=="checked"))
+		 {
+			 chageComfireBut('hide');
+			// $('.J_password').hide();
+		 }else{
+			 chageComfireBut('show');
 		 }
 		 
 		 $.ajax({
@@ -488,6 +513,7 @@ $("document").ready(function (){
      				conPayWay();
      			 }
      			  $('#titanRateAmount').text("0.00");
+     			 chageComfireBut('show');
    	       }else{
    	    	  var arrow = $('.J_payway').find('i');
      			 var className = arrow.attr("class");
