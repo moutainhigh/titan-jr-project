@@ -35,6 +35,7 @@ import com.fangcang.titanjr.dto.response.CusBankCardBindResponse;
 import com.fangcang.titanjr.dto.response.DeleteBindBankResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
+import com.fangcang.titanjr.pay.req.CreateTitanRateRecordReq;
 import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
 import com.fangcang.titanjr.pay.req.WithDrawRequest;
 import com.fangcang.titanjr.pay.rsp.TitanRateComputeRsp;
@@ -322,8 +323,8 @@ public class TitanWithdrawController extends BaseController {
 					.getOriginalBankName());
 		}
 		balanceWithDrawRequest.setOrderNo(withDrawRequest.getOrderNo());
-
-
+		
+		
 		if (computeRsp != null) {
 			balanceWithDrawRequest.setStandfee(computeRsp.getStRateAmount());
 			balanceWithDrawRequest.setReceivablefee(computeRsp
@@ -334,8 +335,28 @@ public class TitanWithdrawController extends BaseController {
 		BalanceWithDrawResponse balanceWithDrawResponse = titanFinancialAccountService
 				.accountBalanceWithdraw(balanceWithDrawRequest);
 		if (!balanceWithDrawResponse.isResult()) {
-			toMsgJson(TitanMsgCodeEnum.WITHDRAW_OPT_FAIL);
+			return toMsgJson(TitanMsgCodeEnum.WITHDRAW_OPT_FAIL);
 		}
+		
+		CreateTitanRateRecordReq req = new CreateTitanRateRecordReq();
+		req.setAmount(Long.parseLong(NumberUtil.covertToCents(computeReq
+				.getAmount())));
+		req.setReceivablefee(Long.parseLong(NumberUtil.covertToCents(computeRsp
+				.getRsRateAmount())));
+		req.setReceivedfee(Long.parseLong(NumberUtil.covertToCents(computeRsp
+				.getExRateAmount())));
+		req.setStanderdfee(Long.parseLong(NumberUtil.covertToCents(computeRsp
+				.getStRateAmount())));
+		req.setPayType(4);
+		req.setUserId(computeReq.getUserId());
+		req.setReceivableRate(Float.parseFloat(computeRsp.getRsRate()));
+		req.setReceivedRate(Float.parseFloat(computeRsp.getExecutionRate()));
+		req.setStandardRate(Float.parseFloat(computeRsp.getStandRate()));
+		req.setRateType(computeRsp.getRateType());
+		req.setOrderNo(balanceWithDrawRequest.getUserorderid());
+		req.setCreator(computeReq.getUserId());
+		titanRateService.addRateRecord(req);
+		
 		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS);
 	}
 	/**

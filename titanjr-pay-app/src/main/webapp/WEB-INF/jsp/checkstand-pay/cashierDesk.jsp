@@ -380,6 +380,12 @@ $("document").ready(function (){
 	  	    	payAmount = '${cashDeskData.amount}';
 	  	    }
 		 }
+		 if(itemType ==1 && parseFloat(payAmount) < 1000  &&  '${cashDeskData.paySource}'=='1' && !($("#d_checkbox").attr("checked")=="checked"))
+		 {
+			 $('.J_password').hide();
+		 }else{
+			 $('.J_password').show();
+		 }
 		 
 		 $.ajax({
 	   	 type: "get",
@@ -488,6 +494,7 @@ $("document").ready(function (){
      				conPayWay();
      			 }
      			  $('#titanRateAmount').text("0.00");
+     			 $('.J_password').show();
    	       }else{
    	    	  var arrow = $('.J_payway').find('i');
      			 var className = arrow.attr("class");
