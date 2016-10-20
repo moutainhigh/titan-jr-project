@@ -98,7 +98,7 @@
                 
             </div>
             </div>
-                <c:if test="${cashDeskData.paySource}==1">
+                <c:if test="${cashDeskData.paySource !='1'}">
                    <div class="TFS_withdrawBoxR fr">
 					<h3>温馨提示</h3>
 					<div class="TFS_withdrawBoxR_content">
