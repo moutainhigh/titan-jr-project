@@ -180,7 +180,6 @@
 				<a class="btn btn_exit J_exitKan">取消</a>
 			</div>
 			
-			<jsp:include page="../checkstand-pay/cashierDeskLimit.jsp"></jsp:include>
 		
  		</div>
 	</div>
@@ -210,10 +209,6 @@ $("document").ready(function (){
 	getRechargePayOrderNo();
 	var firstBank = $(".bankName:first");
 	firstBank.attr("checked","0");
-	bankCheckRadio(firstBank);
-	$(".pay_bank_l input[type='radio']").on("click",function(){
-		bankCheckRadio($(this));
-	});
 });
 
 

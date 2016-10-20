@@ -330,7 +330,7 @@
 				<tr>
 					<td>5,000元</td>
 					<td>5,000元</td>
-					<td class="bank_notice_td01">一卡通支付</td>					
+					<td class="bank_notice_td01">一卡通直付</td>					
 				</tr>			
 			</tbody></table>
 			</div>
@@ -414,7 +414,7 @@
 				<tr>
 					<td>5,000元</td>
 					<td>5,000元</td>
-					<td class="bank_notice_td01">一卡通支付</td>					
+					<td class="bank_notice_td01">浏览器证书支付</td>					
 				</tr>
 				<tr>
 					<td>50万元</td>

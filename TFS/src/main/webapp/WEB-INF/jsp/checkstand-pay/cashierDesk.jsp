@@ -273,7 +273,6 @@
                 <a class="btn btn_exit J_exitKan">取消</a>
             </div>
         </div>
-        <jsp:include page="../checkstand-pay/cashierDeskLimit.jsp"></jsp:include>
     </div>
 </div>
 
