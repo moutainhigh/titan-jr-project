@@ -252,16 +252,16 @@
     		return ;
     	}
     	
-    	if($('#withdrawRate').length >= 1 &&  parseFloat($('#withdrawRate').text()) > parseFloat(withdraw_amount) )
-    	{
-    		withDrawCallBack("提现金额不能少于手续费！",1);
-    		return;
-    	}
+//     	if($('#withdrawRate').length >= 1 &&  parseFloat($('#withdrawRate').text()) > parseFloat(withdraw_amount) )
+//     	{
+//     		withDrawCallBack("提现金额不能少于手续费！",1);
+//     		return;
+//     	}
     	
     	
     	if($('#withdrawRate').length >= 1 && parseFloat(withdraw_amount) <= parseFloat($('#withdrawRate').text())  )
     	{
-    		withDrawCallBack("提现金额必须大于费率！",1);
+    		withDrawCallBack("提现金额必须大于手续费！",1);
     		return;
     	}
     	
