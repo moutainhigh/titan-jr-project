@@ -406,6 +406,11 @@ $("document").ready(function (){
 			 chageComfireBut('show');
 		 }
 		 
+		 if(($("#d_checkbox").attr("checked")=="checked"))
+		 {
+			 $('#titanRateAmount').text("0.00");
+			return;	 
+		 }
 		 $.ajax({
 	   	 type: "get",
 	        url: "<%=basePath%>/rate/rateCompute.action?userId="+userId+"&amount="+payAmount+"&payType="+itemType+"&date=" + new Date().getTime(),
