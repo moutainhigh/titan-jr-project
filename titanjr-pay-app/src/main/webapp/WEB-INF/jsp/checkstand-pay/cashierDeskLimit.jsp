@@ -68,12 +68,12 @@
 				</tr>
 				<tr>
 					<td>500元</td>
-					<td>500元</td>
+					<td>1000元</td>
 					<td class="bank_notice_td01">电子银行口令卡 -- 非手机短信认证客户</td>
 				</tr>
 				<tr>
-					<td>2,000万元</td>
-					<td>2,000万元</td>
+					<td>2,000元</td>
+					<td>5,000元</td>
 					<td class="bank_notice_td01">电子银行口令卡 -- 口令卡手机短信认证客户</td>
 				</tr>
 			</tbody></table>
@@ -330,7 +330,7 @@
 				<tr>
 					<td>5,000元</td>
 					<td>5,000元</td>
-					<td class="bank_notice_td01">一卡通支付</td>					
+					<td class="bank_notice_td01">一卡通直付</td>					
 				</tr>			
 			</tbody></table>
 			</div>
@@ -414,7 +414,7 @@
 				<tr>
 					<td>5,000元</td>
 					<td>5,000元</td>
-					<td class="bank_notice_td01">一卡通支付</td>					
+					<td class="bank_notice_td01">浏览器证书支付</td>					
 				</tr>
 				<tr>
 					<td>50万元</td>
@@ -452,7 +452,7 @@
 				<tr>
 					<td>5,000元</td>
 					<td>5,000元</td>
-					<td class="bank_notice_td01">一卡通支付</td>					
+					<td class="bank_notice_td01">浏览器证书支付</td>					
 				</tr>
 				<tr>
 					<td>50万元</td>

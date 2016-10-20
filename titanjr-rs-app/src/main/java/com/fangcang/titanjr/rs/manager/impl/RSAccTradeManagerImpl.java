@@ -319,8 +319,16 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 			}
 			MyBeanUtil.copyProperties(req, accountTransferRequest);
 			log.info("转账的入参dao:"+JSONSerializer.toJSON(req));
-			WheatfieldOrderTransferResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldOrderTransferResponse rsp =null;
+			
+			if("0".equals(req.getAmount())){//如果转账金额为0.则直接成功
+				rsp =new WheatfieldOrderTransferResponse();
+				rsp.setIs_success(CommonConstant.OPERATE_SUCCESS);
+			}else{
+				rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
+			}
+			
 			if (rsp != null) {
 				log.info("调用accountBalanceTransfer返回报文: \n" + rsp.getBody());
 				String errorMsg;
