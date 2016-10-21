@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
@@ -22,6 +23,7 @@ import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
+import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
@@ -40,6 +42,7 @@ import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
 import com.fangcang.titanjr.pay.req.WithDrawRequest;
 import com.fangcang.titanjr.pay.rsp.TitanRateComputeRsp;
 import com.fangcang.titanjr.pay.services.TitanRateService;
+import com.fangcang.titanjr.pay.services.TitanTradeService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -76,6 +79,12 @@ public class TitanWithdrawController extends BaseController {
 
 	@Resource
 	private TitanRateService titanRateService;
+	
+	@Resource
+	private TitanFinancialOrganService financialOrganService;
+	
+	@Resource
+	private TitanTradeService financialTradeService;
 	
 	/**
 	 * 进入提现操作界面
@@ -119,6 +128,28 @@ public class TitanWithdrawController extends BaseController {
 			brq.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
 			brq.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
 
+			
+			String mCode = null;
+			OrgBindInfo orgBindInfo = new OrgBindInfo();
+			orgBindInfo.setUserid(userId);
+			OrgBindInfo bindInfo = financialOrganService
+					.queryOrgBindInfoByUserid(orgBindInfo);
+			if (bindInfo != null) {
+				mCode = bindInfo.getMerchantCode();
+			}
+
+			// 设置商家主题]
+			log.info("the merchantcode is " + mCode);
+			if (StringUtil.isValidString(mCode)) {
+				MerchantResponseDTO merchantResponseDTO = financialTradeService
+						.getMerchantResponseDTO(mCode);
+				if (null != merchantResponseDTO) {
+					log.info("the theme is" + merchantResponseDTO.getTheme());
+					model.addAttribute("CURRENT_THEME",
+							merchantResponseDTO.getTheme());
+				}
+			}
+			
 			QueryBankCardBindInfoResponse cbr = titanFinancialBankCardService
 					.getBankCardBindInfo(brq);
 

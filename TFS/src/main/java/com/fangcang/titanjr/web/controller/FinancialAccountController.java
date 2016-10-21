@@ -112,7 +112,7 @@ public class FinancialAccountController extends BaseController {
 		    	model.addAttribute("userId", this.getUserId());
 		    	model.addAttribute("payType",enum1.getKey());
 		    	model.addAttribute("payOrderNo", OrderGenerateService.genLoacalPayOrderNo());
-		    	model.addAttribute("userName",this.getUserName());
+		    	model.addAttribute("userName",getUserNameByUserId(this.getTfsUserId()));
 		    	model.addAttribute("payName", enum1.getMsg());
 		    	model.addAttribute("payDesc", enum1.getMsg());
 		    	model.addAttribute("fcUserId", this.getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ID));
@@ -124,7 +124,30 @@ public class FinancialAccountController extends BaseController {
     }
     
     
-    
+    /**
+	 * 根据用户ID查询对应的用户名信息
+	 * @Title: getUserNameByUserId 
+	 * @Description: TODO
+	 * @param tfsUserid
+	 * @return
+	 * @return: String
+	 */
+	private String getUserNameByUserId(String tfsUserid) {
+		if (StringUtil.isValidString(tfsUserid)) {
+			TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
+			titanUserBindInfoDTO.setTfsuserid(Integer.parseInt(tfsUserid));
+			try {
+				titanUserBindInfoDTO = titanFinancialUserService
+						.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+			} catch (Exception e) {
+				log.error("查询用户名失败:" + e.getMessage());
+			}
+			if (titanUserBindInfoDTO != null) {
+				return titanUserBindInfoDTO.getUsername();
+			}
+		}
+		return null;
+	}
     
     /**
      * 提供客户端查询当前账户的余额

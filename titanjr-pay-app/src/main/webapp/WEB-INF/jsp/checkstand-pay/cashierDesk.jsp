@@ -304,8 +304,11 @@
 <script src="<%=cssSaasPath%>/js/password.js"></script>
 <script>
 $("document").ready(function (){
-    /* 	encodeURIComponent(uriComponent); */
-    	//每次刷新只要余额足够，默认选中
+    
+    	
+    	//识别出当前的余额是否足够支付，如果不够支付则位false 足够则为true
+    	var isEnough = false;
+    		
     	if('${cashDeskData.paySource}'=="1"){//GDP支付的逻辑控制
     		show_history();
     		$("#useCashierDeskPay").show();
@@ -318,9 +321,10 @@ $("document").ready(function (){
     		}else{
     			hide_history();
     		}
+    	
+    		isEnough = ('${cashDeskData.amount}' - '${cashDeskData.balanceusable}') <= 0;
     		
-    		var flag = '${cashDeskData.amount}' - '${cashDeskData.balanceusable}' <= 0;
-    		if(flag ==true){
+    		if(isEnough){
     			amount_enough_show();
     		}else{
     			amount_not_enough_show();
@@ -354,8 +358,9 @@ $("document").ready(function (){
     	$(".pay_bank_l input[type='radio']").on("click",function(){
     		bankCheckRadio($(this));
     	});
-    	
-   	   $('.paytable_payway').each(function(){
+    	if(!isEnough)
+    	{
+   	     $('.paytable_payway').each(function(){
           	
           	if($(this).find('input:radio[name="r2"]').is(":checked"))
           	{
@@ -363,6 +368,7 @@ $("document").ready(function (){
           		$(this).find('input:radio[name="r2"]').click();
           	}
           });
+    	}
     	
     });
 
@@ -406,11 +412,11 @@ $("document").ready(function (){
 			 chageComfireBut('show');
 		 }
 		 
-		 if(($("#d_checkbox").attr("checked")=="checked"))
-		 {
-			 $('#titanRateAmount').text("0.00");
-			return;	 
-		 }
+// 		 if(($("#d_checkbox").attr("checked")=="checked"))
+// 		 {
+// 			 $('#titanRateAmount').text("0.00");
+// 			return;	 
+// 		 }
 		 $.ajax({
 	   	 type: "get",
 	        url: "<%=basePath%>/rate/rateCompute.action?userId="+userId+"&amount="+payAmount+"&payType="+itemType+"&date=" + new Date().getTime(),
