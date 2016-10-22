@@ -268,7 +268,7 @@
         <div class="ysgl_bottombut">
             <div>
                 <a class="btn p_lr30 J_password">确定</a>
-                <a class="btn p_lr30 grey_bg">确定</a>
+                <a class="btn p_lr30 grey_bg" style="display:none;">确定</a>
                 <a class="btn btn_exit J_exitKan">取消</a>
             </div>
         </div>
