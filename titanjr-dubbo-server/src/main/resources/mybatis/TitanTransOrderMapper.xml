@@ -295,6 +295,9 @@
             <if test="receivedfee != null">
                 receivedfee = #{receivedfee},
             </if>
+            <if test="businessordercode != null">
+                businessordercode = #{businessordercode},
+            </if>
              <if test="standfee != null">
                 standfee = #{standfee},
             </if>
