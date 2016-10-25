@@ -129,6 +129,11 @@ public interface TitanFinancialAccountService {
 	public UnFreezeResponse queryUnFreezeData(UnFreezeRequest unFreezeRequest);
 	
 	/**
+	 * 解冻所有交易订单
+	 */
+	 public int unFreezeOrder(int offset,int rows);
+	
+	/**
 	 * 批量解冻
 	 * @param unFreeBalanceBatchRequest
 	 */

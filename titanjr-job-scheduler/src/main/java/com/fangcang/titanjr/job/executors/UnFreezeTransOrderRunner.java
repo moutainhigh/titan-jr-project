@@ -7,6 +7,9 @@ import net.sf.json.JSONSerializer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.dto.request.UnFreeBalanceBatchRequest;
@@ -29,35 +32,19 @@ public class UnFreezeTransOrderRunner implements Runnable {
 
     @Override
     public void run() {
-    	unFreezeOrder(0, 100);
+    	this.unFreezeAllTransOrder();
     }
     
-    private String unFreezeOrder(int offset,int rows){
-    	if(rows<100){
-    		return "success";
-    	}
-    	UnFreezeRequest unFreezeRequest = new UnFreezeRequest();
-    	unFreezeRequest.setOffset(offset);
-    	unFreezeRequest.setRows(rows);
-    	Date date = new Date();
-    	String dateStr = DateUtil.sdf.format(date);
+    private void unFreezeAllTransOrder(){
 		try {
-			unFreezeRequest.setUnFreezeDate(DateUtil.sdf.parse(dateStr));
-		} catch (ParseException e) {
-			e.printStackTrace();
+			int offset=0;
+			int row =100;
+			do{
+				 row = titanFinancialAccountService.unFreezeOrder(offset,row);
+				 offset = (offset+1)*row;
+			}while(row>0);
+			
+		} catch (Exception e) {
 		}
-		log.info("解冻时入参:"+JSONSerializer.toJSON(unFreezeRequest));
-		UnFreezeResponse unFreezeResponse =  titanFinancialAccountService.queryUnFreezeData(unFreezeRequest);
-		log.info("解冻查询结果:"+JSONSerializer.toJSON(unFreezeResponse));
-		if(unFreezeResponse.getFundFreezeDTO() !=null && unFreezeResponse.getFundFreezeDTO().size()>0){
-			rows = unFreezeResponse.getFundFreezeDTO().size();
-			//调用解冻操作
-			UnFreeBalanceBatchRequest unFreeBalanceBatchRequest = new UnFreeBalanceBatchRequest();
-			unFreeBalanceBatchRequest.setFundFreezeDTOList(unFreezeResponse.getFundFreezeDTO());
-			titanFinancialAccountService.unfreezeAccountBalanceBatch(unFreeBalanceBatchRequest);
-			unFreezeOrder((offset+1)*rows,rows);
-		}
-		return "success";
-    }
-    
+	}
 }

@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.service.impl;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.fangcang.corenut.dao.PaginationSupport;
@@ -26,6 +30,7 @@ import com.fangcang.titanjr.common.enums.WithDrawStatusEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
@@ -142,6 +147,9 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     
     @Resource
     private TitanFinancialBankCardService titanFinancialBankCardService;
+    
+    @Resource
+    private TitanFinancialAccountService titanFinancialAccountService;
     
 
     @Override
@@ -946,6 +954,36 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		return unFreezeResponse;
 	}
 
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    @Override
+    public int unFreezeOrder(int offset,int rows) {
+    	UnFreezeRequest unFreezeRequest = new UnFreezeRequest();
+    	unFreezeRequest.setOffset(offset);
+    	unFreezeRequest.setRows(rows);
+    	Date date = new Date();
+    	String dateStr = DateUtil.sdf.format(date);
+		try {
+			unFreezeRequest.setUnFreezeDate(DateUtil.sdf.parse(dateStr));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		log.info("解冻时入参:"+JSONSerializer.toJSON(unFreezeRequest));
+		UnFreezeResponse unFreezeResponse =  this.queryUnFreezeData(unFreezeRequest);
+		System.out.println("**********************************************");
+		System.out.println(Thread.currentThread().getName());
+		System.out.println("**********************************************");
+		log.info("解冻查询结果:"+JSONSerializer.toJSON(unFreezeResponse));
+		if(unFreezeResponse.getFundFreezeDTO() !=null && unFreezeResponse.getFundFreezeDTO().size()>0){
+			rows = unFreezeResponse.getFundFreezeDTO().size();
+			//调用解冻操作
+			UnFreeBalanceBatchRequest unFreeBalanceBatchRequest = new UnFreeBalanceBatchRequest();
+			unFreeBalanceBatchRequest.setFundFreezeDTOList(unFreezeResponse.getFundFreezeDTO());
+			this.unfreezeAccountBalanceBatch(unFreeBalanceBatchRequest);
+			return rows;
+		}
+		return 0;
+    }
+	
 	@Override
 	public void unfreezeAccountBalanceBatch(
 			UnFreeBalanceBatchRequest unFreezeBalanceBatchRequest) {
