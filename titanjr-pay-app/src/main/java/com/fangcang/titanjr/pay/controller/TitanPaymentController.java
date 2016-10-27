@@ -211,6 +211,11 @@ public class TitanPaymentController extends BaseController {
     	
 	}
 	
+	@RequestMapping("notifyPayResult")
+	public void notifyPayResult(String userOrderId){
+		financialTradeService.notifyPayResult(userOrderId);
+	}
+	
 	/**
 	 * 只有转账操作的controller
 	 * @param request
