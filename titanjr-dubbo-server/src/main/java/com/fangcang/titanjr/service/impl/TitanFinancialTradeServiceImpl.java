@@ -148,7 +148,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 	@Resource
 	private DomainConfigDao domainConfigDao;
-
+	
 
 	private FinanceSearchRemote financeSearchRemote;
 
@@ -2999,7 +2999,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					orderCreateResponse
 							.setReturnMessage(TitanMsgCodeEnum.PAY_ORDER_SUCCESS
 									.getResMsg());
-
+					try {
+						this.confirmFinance(transOrderDTO);
+					} catch (Exception e) {
+						log.error("回调失败");
+					}
 					return orderCreateResponse;
 				}
 			}

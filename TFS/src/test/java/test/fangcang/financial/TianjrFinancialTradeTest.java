@@ -10,6 +10,8 @@ import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 
 import net.sf.json.JSONSerializer;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -478,7 +480,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     
     
     //获取商家向酒店支付地址
-    @Test
+//    @Test
     public void testGetMerchantUrl(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setMerchantcode("M10000001");
@@ -589,12 +591,18 @@ public class TianjrFinancialTradeTest extends GenericTest{
 		PayMethodConfigDTO payMethodConfigDTO = titanFinancialTradeService.getPayMethodConfigDTO(payMethodConfigRequest);
     }
     
-//    @Test
+    @Test
     public void testCallBack() throws Exception{
     	TransOrderDTO transOrderDTO = new TransOrderDTO();
-    	transOrderDTO.setUserorderid("TJO160721114348977");
-    	transOrderDTO.setMerchantcode("M10000001");
-    	transOrderDTO.setPayorderno("TW15053107551");
+    	
+    	
+      	transOrderDTO.setPayorderno("BA092159");
+    	transOrderDTO.setBusinessordercode("1000000000040871");
+    	transOrderDTO.setTradeamount((long)2);
+    	transOrderDTO.setMerchantcode("M10082926");
+    	transOrderDTO.setCreator("测试(meimei000)");
+    	transOrderDTO.setUserorderid("TJO161023004819378"); 	
+    	transOrderDTO.setNotifyUrl("http://193.167.10.38:39010/GDP/billpay_return.shtml");
 		try {
 			titanFinancialTradeService.confirmFinance(transOrderDTO);
 		} catch (Exception e) {
