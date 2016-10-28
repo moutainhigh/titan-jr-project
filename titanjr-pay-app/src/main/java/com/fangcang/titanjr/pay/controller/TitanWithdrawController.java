@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
@@ -40,6 +41,7 @@ import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
 import com.fangcang.titanjr.pay.req.WithDrawRequest;
 import com.fangcang.titanjr.pay.rsp.TitanRateComputeRsp;
 import com.fangcang.titanjr.pay.services.TitanRateService;
+import com.fangcang.titanjr.pay.services.TitanTradeService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;

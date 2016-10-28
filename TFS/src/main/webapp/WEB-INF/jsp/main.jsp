@@ -301,6 +301,10 @@
 						<span></span>
 						付款页面
 					</a>
+					<a href="<%=basePath%>/help/index.action" class="s8" data-parent="false">
+						<span></span>
+						帮助中心
+					</a>
 				</div>
 			</li>
 

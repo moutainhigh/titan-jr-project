@@ -1,17 +1,30 @@
 package test.fangcang.titanjr.rs.invoker.loancredit;
 
-import com.Rop.api.DefaultRopClient;
-import com.Rop.api.request.*;
-import com.Rop.api.response.*;
-import com.fangcang.util.DateUtil;
-import net.sf.json.JSON;
-import net.sf.json.JSONSerializer;
-import test.fangcang.titanjr.rs.invoker.loancredit.*;
-
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import net.sf.json.JSON;
+import net.sf.json.JSONSerializer;
+
+import com.Rop.api.DefaultRopClient;
+import com.Rop.api.request.FsFileUploadRequest;
+import com.Rop.api.request.FsFileurlGetRequest;
+import com.Rop.api.request.WheatfieldInterestRepaymentQueryborrowinfoRequest;
+import com.Rop.api.request.WheatfieldOprsystemCreditCompanyRequest;
+import com.Rop.api.request.WheatfieldOrderMixserviceCreditapplicationRequest;
+import com.Rop.api.request.WheatfieldOrderMixserviceCreditmerchantinfoqueryRequest;
+import com.Rop.api.request.WheatfieldOrderServiceAgreementconfirmRequest;
+import com.Rop.api.request.WheatfieldOrderServiceNewloanapplyRequest;
+import com.Rop.api.response.FsFileUploadResponse;
+import com.Rop.api.response.FsFileurlGetResponse;
+import com.Rop.api.response.WheatfieldInterestRepaymentQueryborrowinfoResponse;
+import com.Rop.api.response.WheatfieldOprsystemCreditCompanyResponse;
+import com.Rop.api.response.WheatfieldOrderMixserviceCreditapplicationResponse;
+import com.Rop.api.response.WheatfieldOrderMixserviceCreditmerchantinfoqueryResponse;
+import com.Rop.api.response.WheatfieldOrderServiceAgreementconfirmResponse;
+import com.Rop.api.response.WheatfieldOrderServiceNewloanapplyResponse;
 
 /**
  * Created by zhaoshan on 2016/10/9.
@@ -35,14 +48,24 @@ public class LoanDemoTest {
         String strMsg = null;
 
 //        文件上传API接口 "ruixue.fs.file.upload";
-//        strMsg = doFsFileUpload(session);
+    //    strMsg = doFsFileUpload(session);
 //        已上传文件下载地址获取 "ruixue.fs.fileurl.get";
-//        strMsg = doFsFileUrlGet(session);
+        //strMsg = doFsFileUrlGet(session);
         /*ruixue.wheatfield.oprsystem.credit.company 机构授信申请接口*/
-//        strMsg = doWheatfieldOprsystemCreditCompany(session);
-
-        /*ruixue.wheatfield.order.mixservice.creditmerchantinfoquery 机构授信信息查询*/
-//        strMsg = doWheatfieldOrderMixserviceCreditmerchantinfoquery(session);
+       // strMsg = doWheatfieldOprsystemCreditCompany(session);//上传企业资料
+        
+        //doWheatfieldOrderMixserviceCreditapplication(session);//授信申请
+        /* 7 ruixue.wheatfield.order.service.agreementconfirm  7 协议确认*/
+        //doWheatfieldOrderServiceAgreementconfirm(session);//
+        
+        /*9 ruixue.wheatfield.order.mixservice.creditmerchantinfoquery 机构授信信息查询*/
+       // strMsg = doWheatfieldOrderMixserviceCreditmerchantinfoquery(session);
+        
+     ///   strMsg = doWheatfieldOrderServiceNewloanapply(session);//贷款
+        
+        
+       //查询待还款记录
+        doqueryborrowinfo(session);
 //        System.out.println(strMsg);
 
     }
@@ -52,9 +75,12 @@ public class LoanDemoTest {
     private static String doFsFileUpload(String session) {
         String strError = null;
         try {
+        	//rsa加密
+        	
+        	
             FsFileUploadRequest req = new FsFileUploadRequest();
             req.setBatch("");
-            req.setPath("d:/temp.zip");
+            req.setPath("f:/dk-123456-encryptFile.zip");
             req.setType(73);
             req.setInvoice_date(com.fangcang.util.DateUtil.dateFormat(new Date(),"yyyy-MM-dd"));
             FsFileUploadResponse rsp = ropClient.execute(req,session);
@@ -66,6 +92,9 @@ public class LoanDemoTest {
                     } else {
                         strError = rsp.getMsg();
                     }
+                    
+                }else{
+                	return rsp.getUrl_key();
                 }
             }
         } catch (Exception e) {
@@ -74,6 +103,7 @@ public class LoanDemoTest {
         } finally {
         }
         //af165cd4-4434-49c8-980f-7a652471c7d7
+        //ffff,c7d7ea2a-e7a5-49ff-8621-61aceeffaf5c
         return strError;
     }
 
@@ -82,7 +112,7 @@ public class LoanDemoTest {
         String strError = null;
         try {
             FsFileurlGetRequest req = new FsFileurlGetRequest();
-            req.setUrl_key("af165cd4-4434-49c8-980f-7a652471c7d7");
+            req.setUrl_key("c7d7ea2a-e7a5-49ff-8621-61aceeffaf5c");
             FsFileurlGetResponse rsp = ropClient.execute(req,session);
             if (rsp != null) {
                 System.out.println("返回报文: \n" + rsp.getBody());
@@ -91,6 +121,7 @@ public class LoanDemoTest {
                         strError = rsp.getSubMsg();
                     } else {
                         strError = rsp.getMsg();
+                       
                     }
                 }
             }
@@ -119,7 +150,7 @@ public class LoanDemoTest {
             req.setCompanytype(1); 										//企业类型1.有限责任公司；2.股份有限公司；3.内资；4.国有全资；5.集体全资；
             //6.国外投资股份有限公司；99.其它；
             req.setRegistfinance("100000000");         					//注册资本
-            req.setAddress("深圳市福田区创业花园");										//企业地址
+            req.setAddress("深圳市福田区创业花园");							//企业地址
             req.setCorporatename("张三丰");  								//法人姓名
             req.setCertificatetype(1);									//法人证件类型1.身份证;2.护照;8.户口本;21.军官证;22.士兵证;23.回乡证;
             //24.台湾居民往来大陆通行证;25.香港居民往来大陆通行证;99.其他;
@@ -140,6 +171,7 @@ public class LoanDemoTest {
                         strError = rsp.getMsg();
                     }
                 }
+                
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -164,18 +196,13 @@ public class LoanDemoTest {
             req.setReqesttime("999");										//申请期限 单位 月
             req.setOrderplatformname("腾讯云计算有限公司1");						//申请者单位名称
             req.setRequestdate("2016-10-09 12:12:12");					//申请时间 yyyy-MM-dd HH:mm:ss
-            req.setRatetemplrate("12548");					//费率模板 为融数的费率模板id
+            req.setRatetemplrate("RA201610141100001");					//费率模板 为融数的费率模板id
 //			req.setJsondata("{\"propertyLastYear\":\"10000\",\"debtLastYear\":\"10000\",\"averageSalary\":\"100\"}");
-            req.setJsondata("{" + "'propertyLastYear':'10000', "//拯救大兵测试机构082202
-                    + "'debtLastYear':'10000',"
-                    + "'averageSalary':'100',"
-                    + "'areaClassroom':'1000',"
-                    + "'frequencyLastYear':'100000',"
-                    + "'revenueLastYear':'10000',"
-                    + "'foundation':'2015-08-24 12:12:12'}");
+            req.setJsondata(testGetCreditJsonData());
+            
+            req.setCreditype("2");//房仓的都是零售商
             //申请明细信息json串 如果为空 请传 {}
-            req.setUrlkey("1212");										//授信申请资料上传urlkey
-
+            req.setUrlkey("af165cd4-4434-49c8-980f-7a652471c7d7");					//授信申请资料上传urlkey
             //可选
             req.setUserrelateid("");					//关联用户id
             req.setRemark("");							//备注
@@ -185,7 +212,7 @@ public class LoanDemoTest {
                 System.out.println("返回报文: \n" + rsp.getBody());
                 if (rsp.isSuccess() != true) {
                     if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
-                        strError = rsp.getSubMsg();
+                        strError = rsp.getOrderid();//Orderid:2016102815250400001
                     } else {
                         strError = rsp.getMsg();
                     }
@@ -208,10 +235,10 @@ public class LoanDemoTest {
             req.setUrlkeyb("b");					//应收账款融资申请书(userflag 为1时必须)
             req.setUrlkeyc("c");					//应收账款债权转让通知书回执(userflag 为1时必须)
             req.setUrlkeyd("d");					//应收账款债权转让通知书(userflag 为1时必须)
-            req.setUserorderid("xxx");		//应收账款申请商户流水   是贷款申请的userorderid
+            req.setUserorderid("UD4865100054");		//应收账款申请商户流水   是贷款申请的userorderid
             req.setRootinstcd("M000016");			//机构号
-            req.setUserid("bbzx_xy_14");			//用户id
-            req.setUserflag("1");					//用户标识 1学生 2机构
+            req.setUserid("TJM10000087");			//用户id
+            req.setUserflag("2");					//用户标识 1学生 2机构
             req.setMerchanturlkey("e");				//机构保理合同(userflag 为2时必须)
             WheatfieldOrderServiceAgreementconfirmResponse rsp = ropClient.execute(req,
                     session);
@@ -271,47 +298,18 @@ public class LoanDemoTest {
         try {
             WheatfieldOrderServiceNewloanapplyRequest req = new WheatfieldOrderServiceNewloanapplyRequest();
             //必输
-            req.setUserid("xxx");										//申请人id
-            req.setUserorderid("xxx");							//交易流水
+            req.setUserid("TJM10000087");										//申请人id
+            req.setUserorderid("TJO2016102599977");							//交易流水
             req.setAmount("100");												//申请金额
             req.setProductid("P000070");										//产品id
             req.setRootinstcd("M000016");										//机构码
-            req.setUserrelateid("xxx");									//申请的机构
-            req.setUsername("xxx");											//申请人姓名
+            req.setUserrelateid("TJM10000110");									//申请的机构
+            req.setUsername("罗庆龙");											//申请人姓名
             req.setRequestdate("2016-07-27 12:12:12");							//申请时间
-            req.setRatetemplate("xxx");							//费率模板
-//			req.setJsondata("{\"premiumWay\":\"RA201607191100017\",\"loanApplySource\":\"0\",\"courseOpenTime\":\"20160823\",\"coursePeriod\":\"1500\"}");
-            //申请明细信息json串
-            req.setJsondata("{" + "'corporation':'拯救大兵测试机构082305', "//拯救大兵测试机构082202
-                    + "'courseName':'英语',"
-                    + "'coursePrice':'100',"
-                    + "'loanApplySource':'0',"
-                    + "'amount':'100',"
-                    + "'premiumWay':'RA201404060000001',"
-                    + "'corporationName':'拯救大兵测试机构082202',"
-                    + "'corporationAddress':'华尔街地址：酒仙桥路',"
-                    + "'corporationContact':'010-88888888',"
-                    + "'primaryContactName':'第一联系人pipipapa酱',"
-                    + "'primaryContactPhone':'13881061020',"
-                    + "'primaryContactRelation':'夫妻',"
-                    + "'secondaryContactName':'第二联系人papi酱',"
-                    + "'secondaryContactPhone':'13991061020',"
-                    + "'applicateName':'',"
-                    + "'applicateCardId':'',"
-                    + "'applyLoanSource':'3',"// 贷款申请来源  0 pc 1 ios 2 安卓 3 未知
-                    + "'applyadviser':'课程顾问',"
-                    + "'applyadvisertelnumber':'课程顾问电话',"
-                    + "'gps':'gps经纬度',"
-                    + "'validityStart':'2016-08-03',"//身份证有效期起始
-                    + "'validityEnd':'2026-08-02',"//身份证有效期截止
-                    + "'classInfo':' 班级信息',"
-                    + "'dogId':'456京东号',"
-                    + "'catId':' 123宝号',"
-//					+ "'courseOpenTime':'20160823',"//开课时间
-//					+ "'coursePeriod':'1500',"//开课时长
-                    + "'QQ':'179854857',"
-                    + "'secondaryContactRelation':'父女'}");//申请明细信息json串
-            req.setUrlkey("123");												//贷款申请资料上传urlkey
+            req.setRatetemplate("RA201610141100001");							//费率模板
+            
+            req.setJsondata(getMoneyCreditJsonData());
+            req.setUrlkey("af165cd4-4434-49c8-980f-7a652471c7d7");	//贷款申请资料上传urlkey
 
             //可选
             req.setReqesttime("");												//申请期限
@@ -322,7 +320,7 @@ public class LoanDemoTest {
                 System.out.println("返回报文: \n" + rsp.getBody());
                 if (rsp.isSuccess() != true) {
                     if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
-                        strError = rsp.getSubMsg();
+                        strError = rsp.getOrderid();// orderid:2016102816291600001
                     } else {
                         strError = rsp.getMsg();
                     }
@@ -336,97 +334,184 @@ public class LoanDemoTest {
         return strError;
     }
 
-    //提供接受推送结果的接口（接受授信申请：终审通过31，开通通过41）（接受贷款申请：批贷通过31，放款通过41）
-
+    
+    //查询贷款信息
+    /** ruixue.wheatfield.interest.repayment.queryborrowinfo **/
+    public static String doqueryborrowinfo(String session){
+    	 String strError = null;
+    	 try {
+    			WheatfieldInterestRepaymentQueryborrowinfoRequest request = new WheatfieldInterestRepaymentQueryborrowinfoRequest();
+    			request.setRootinstcd("M000016");
+    			request.setProductid("P000070");
+    			request.setUserid("TJM10000087");
+    			//request.setUserorderid(s);
+    			WheatfieldInterestRepaymentQueryborrowinfoResponse rsp = ropClient.execute(request,
+    	                 session);
+    	         if (rsp != null) {
+    	             System.out.println("返回报文: \n" + rsp.getBody());
+    	             if (rsp.isSuccess() != true) {
+    	                 if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+    	                     strError = rsp.getIs_success();
+    	                 } else {
+    	                     strError = rsp.getMsg();
+    	                 }
+    	             }
+    	         }
+		} catch (Exception e) {
+			 System.out.println(e);
+	         return "error";
+		}
+    
+    	return strError;
+    } 
+    
+    
     //测试构造授信申请所需json串
-    public  static void testGetCreditJsonData(){
+    public  static String testGetCreditJsonData(){
         CreditJsonData creditJsonData = new CreditJsonData();
-        BusinessPlace businessPlace = new BusinessPlace();
-        businessPlace.setCoveredArea("150");
-        businessPlace.setLeaseAddress("向荣大厦");
-        businessPlace.setLeaseTime("2");
-        businessPlace.setPayMethod(3);
-        businessPlace.setPropertyType(2);
-        businessPlace.setRemark("租赁");
-        businessPlace.setRentAmount(BigDecimal.valueOf(15000d));
-        creditJsonData.setBusinessPlace(businessPlace);
+        creditJsonData.setRootInstCd("M000016");
+        creditJsonData.setPassportNumber("27889998987");///*****************无法提供
+        creditJsonData.setWorkPhone("0755-88884444");
+        
+        creditJsonData.setPlatformRegistTime("2015-01-10 00:00:00");
+        creditJsonData.setPlatformOperaNo("M10000001");
+        creditJsonData.setOperatNumberEmployees("50");
+        creditJsonData.setLeaseTerm("2");
+        creditJsonData.setLeaseAddress("向荣大厦");
+        creditJsonData.setHousingArea("1000");
+        creditJsonData.setRental("130000");
+        creditJsonData.setPaymentMethod("网上转账");
+        creditJsonData.setRemark("经营信息");
+        //主营信息
+        MainBusinessData mainBusinessData= new MainBusinessData();
+        
+        mainBusinessData.setMainProductsOrService("互联网");
+        mainBusinessData.setMainAnnualSale("1200000");
+        mainBusinessData.setMainSaleProportion("12%");
+        
+        List<MainBusinessData> mainBusinessDataList = new ArrayList<MainBusinessData>();
+        creditJsonData.setMainBusinessData(mainBusinessDataList);
+        
+        //合作企业信息
+        CooperationCompanyInfo cooperationCompanyInfo = new CooperationCompanyInfo();
+        cooperationCompanyInfo.setCooperationName("深圳悦翔旅游有限公司");
+        cooperationCompanyInfo.setYearAnnualSale("1300000");
+        cooperationCompanyInfo.setSaleProportion("30%");
+        cooperationCompanyInfo.setSettlement("现金");
+        cooperationCompanyInfo.setCooperation("供应商");
+        cooperationCompanyInfo.setCooperationYears("4年");
+        
+        List<CooperationCompanyInfo> cooperationCompanyInfoList = new ArrayList<CooperationCompanyInfo>();
+        cooperationCompanyInfoList.add(cooperationCompanyInfo);
+        creditJsonData.setCooperationCompanyInfo(cooperationCompanyInfoList);
+        
+        //股东信息 
+        ControllData controllData = new ControllData();
+        controllData.setShareholderName("周小夏");
+        controllData.setContributionAmount("500000");
+        controllData.setEquityRatio("10%");
+        
+        List<ControllData> controllDataList = new ArrayList<ControllData>();
+        controllDataList.add(controllData);
+        creditJsonData.setControllData(controllDataList);
+        
+        
+        //法人
+        creditJsonData.setCompanyName_c("深圳市鼎力集团");
+        creditJsonData.setBusinessExpire_c("2020-10-10");
+        creditJsonData.setCompanyType_c("上市公司");
+        creditJsonData.setRegisteredCapital_c("50000000");
+        creditJsonData.setEmployeesNumber_c("500");
+        creditJsonData.setRegisteredAddress_c("深圳市福田区");
+        creditJsonData.setOfficeAddress_c("深圳市罗湖区总部");
+        creditJsonData.setSetUpDate_c("2011-10-10");
+        creditJsonData.setBusinessLicenseNumber_c("59699878443305");
+        creditJsonData.setTaxregCard_c("44433225666");
+        creditJsonData.setOrganizaCertificateNo_c("");
+        creditJsonData.setPlatformOperaNo_c("");
+        creditJsonData.setPlatformRegistTime_c("");
+        creditJsonData.setLegalPersonName_c("刘丽红");
+        creditJsonData.setPersonCertificate_c("1");
+        creditJsonData.setApplicateCardId_c("444569998625744");
+        creditJsonData.setPrimaryContactName_c("刘小红");
+        creditJsonData.setPrimaryContactPhoneNumber("13366669999");
+        
+        
+        ///自然人担保
+        creditJsonData.setApplicateName_p("陈晓晓");
+        creditJsonData.setApplicateCardId_p("563589195610204521");
+        creditJsonData.setWorkUnit_p("深圳市平安银行");
+        creditJsonData.setWorkStatus_p("金融");
+        creditJsonData.setOccupation_p("行长");
+        creditJsonData.setCourseOpenTime_p("15年");
+        creditJsonData.setAnnualIncome_p("1000000");
+        creditJsonData.setPhoneNumber_p("13356987854");
+        creditJsonData.setFamilyFixed_p("075588889999");
+        creditJsonData.setPlaceOfOrigin_p("北京");
+        creditJsonData.setEmail_p("llluo@eeee.com");
+        creditJsonData.setAcademy_p("北京大学");
+        creditJsonData.setEducation_p("博士");
+        creditJsonData.setAddress_p("深圳市宝安区翻身路");
+        creditJsonData.setHouseNature_p("买房");
+        creditJsonData.setMarriageStatus_p("已婚");
+        creditJsonData.setChildrenStatus_p("有子女");
+        creditJsonData.setFirstContactName_p("李小琳");
+        creditJsonData.setFirstContactPhone_p("13599998888");
+        creditJsonData.setFirstContactRelations_p("母女");
+        creditJsonData.setSecondContactName_p("李小桦");
+        creditJsonData.setSecondContactPhone_p("13523458888");
+        creditJsonData.setSecondContactRelations_p("母女");
+        creditJsonData.setRoomSituation_p("有房");
+        creditJsonData.setCarBrandModel_p("奔驰");
+        creditJsonData.setCarValue_p("1000000");
+        creditJsonData.setBuyCarYear_p("2016");
+        creditJsonData.setOtherAssets("");
+        creditJsonData.setRelatedNote("");
+        
 
-        CompanyGuarantee companyGuarantee = new CompanyGuarantee();
-        companyGuarantee.setBusinessLicense("4403900847984003");
-        companyGuarantee.setCompanyName("房仓测试旅行社");
-        companyGuarantee.setContactName("David");
-        companyGuarantee.setContactPhone("18600000000");
-        companyGuarantee.setEnterpriseScale("500");
-        companyGuarantee.setFoundDate(DateUtil.dateFormat(new Date(), "yyyy-MM-dd"));
-        companyGuarantee.setLegalPersonCertificateNumber("450231198006185623");
-        companyGuarantee.setLegalPersonCertificateType(1);
-        companyGuarantee.setLegalPersonName("张三丰");
-        companyGuarantee.setOfficeAddress("向荣大厦");
-        companyGuarantee.setOrgCodeCertificate("OrgCode1234");
-        companyGuarantee.setRegisterAccount("zhangsanfeng");
-        companyGuarantee.setRegisterAddress("深圳福田");
-        companyGuarantee.setRegisterDate(DateUtil.dateFormat(new Date(), "yyyy-MM-dd"));
-        companyGuarantee.setTaxRegisterCode("001TaxCode002");
-        creditJsonData.setCompanyGuarantee(companyGuarantee);
 
-        PersonGuarantee personGuarantee = new PersonGuarantee();
-        personGuarantee.setOfficeAddress("向荣大厦");
-        personGuarantee.setCarBrand("宝马");
-        personGuarantee.setCarPropertyType(1);//"有车无贷"
-        personGuarantee.setCarPurchaseTime("2016-06-04");
-        personGuarantee.setCurrentLiveAddress("福田");
-        personGuarantee.setFirstContactName("张三1");
-        personGuarantee.setFirstContactPhone("13100000000");
-        personGuarantee.setGraduateSchool("深圳大学");
-        personGuarantee.setHaveChildren(0);//无子女
-        personGuarantee.setHighestEducation(2);//硕士
-        personGuarantee.setHousePropertyType(1);//有房无贷
-        personGuarantee.setIndustry("互联网");
-        personGuarantee.setMarriageStatus(1);//已婚
-        personGuarantee.setMobileNumber("18100000000");
-        personGuarantee.setNationalIdentityNumber("62032198111062206");
-        personGuarantee.setNativePlace("广西");
-        personGuarantee.setOtherProperty("股票基金");
-        personGuarantee.setPersonName("张三丰");
-        personGuarantee.setPresentOccupation("总经理");
-        personGuarantee.setPropertyRemark("所有资产如上");
-        personGuarantee.setRelationToGuarantee1(1);//同事
-        personGuarantee.setRelationToGuarantee2(4);//父母
-        personGuarantee.setSecondContactName("张三2");
-        personGuarantee.setSecondContactPhone("13200000000");
-        personGuarantee.setWorkCompany("五百强平安");
-        personGuarantee.setWorkTelephone("075512345678");
-        personGuarantee.setYearsOfWorking("15年以上");
-        creditJsonData.setPersonGuarantee(personGuarantee);
-
-
-        CooperativeEnterprise cooperativeEnterprise = new CooperativeEnterprise();
-        cooperativeEnterprise.setCompanyName("XY国际旅行社");
-        cooperativeEnterprise.setCooperativeType(1);//f分销商
-        cooperativeEnterprise.setCooperativeYears("3");
-        cooperativeEnterprise.setSettlementMethod(1);//"月结"
-        cooperativeEnterprise.setYearlyTradeAmount(BigDecimal.valueOf(15600));
-        cooperativeEnterprise.setYearlyTradeRatio("28%");
-        creditJsonData.setCooperativeEnterprises(new ArrayList<CooperativeEnterprise>());
-        creditJsonData.getCooperativeEnterprises().add(cooperativeEnterprise);
-
-        MainBusiness mainBusiness = new MainBusiness();
-        mainBusiness.setBusinessName("酒店预订");
-        mainBusiness.setYearlySaleAmount(BigDecimal.valueOf(56000));
-        mainBusiness.setYearlySaleRatio("20%");
-        creditJsonData.setMainBusinesses(new ArrayList<MainBusiness>());
-        creditJsonData.getMainBusinesses().add(mainBusiness);
-
-        StockHolder stockHolder = new StockHolder();
-        stockHolder.setContributionAmount(BigDecimal.valueOf(1000000));
-        stockHolder.setEquityRatio("33%");
-        stockHolder.setName("武当山实业有限公司");
-        creditJsonData.setStockHolders(new ArrayList<StockHolder>());
-        creditJsonData.getStockHolders().add(stockHolder);
+//        ControllData stockHolder = new ControllData();
+//        stockHolder.setContributionAmount(BigDecimal.valueOf(1000000));
+//        stockHolder.setEquityRatio("33%");
+//        stockHolder.setName("武当山实业有限公司");
+//        creditJsonData.setStockHolders(new ArrayList<ControllData>());
+//        creditJsonData.getStockHolders().add(stockHolder);
 
         JSON result = JSONSerializer.toJSON(creditJsonData);
         System.out.println(result.toString());
-        String testJson = result.toString();
+        ///String testJson = result.toString();
+        return result.toString();
+    }
+    
+    /**
+     * 申请贷款时用到的jsondata
+     * @return
+     */
+    public static String getMoneyCreditJsonData(){
+    	
+    	MoneyCreditJsonData moneyCreditJsonData = new MoneyCreditJsonData();
+    	moneyCreditJsonData.setLoanApplicateName("陈晓新");
+    	moneyCreditJsonData.setInParty("深圳市五星科技有限公司");
+    	moneyCreditJsonData.setUserOrderId("201610261000123654");
+    	moneyCreditJsonData.setOrderTime("2016-10-25 00:00:00");
+    	moneyCreditJsonData.setProductName("10日长隆酒店包房贷");
+    	moneyCreditJsonData.setInBankAccount("招商银行");
+    	moneyCreditJsonData.setInBankAccountNo("62253395446877456666");
+    	moneyCreditJsonData.setDeliveryStatus("");
+    	moneyCreditJsonData.setReceivingState("");
+    	moneyCreditJsonData.setReceiptAddress("深圳市宝安区");
+    	moneyCreditJsonData.setCode("10000000000009");
+    	moneyCreditJsonData.setUnitPrice("800");
+    	moneyCreditJsonData.setNumber("10");
+    	moneyCreditJsonData.setOrderAmount("8000");
+    	moneyCreditJsonData.setOrderType("");
+    	moneyCreditJsonData.setRootInstCd("M000016");
+    	moneyCreditJsonData.setLoanTerm("60");
+    	
+    	
+    	JSON result = JSONSerializer.toJSON(moneyCreditJsonData);
+        System.out.println(result.toString());
+        return result.toString();
     }
 
     //设计收银台如何调用运营贷来付款：经历申请贷款和放款的过程

@@ -29,6 +29,8 @@ import com.fangcang.titanjr.service.TitanHelpService;
 @Controller
 @RequestMapping("/help")
 public class HelpController extends BaseController {
+	private static final int HELP_PAGE_SIZE = 10;
+	
 	@Resource
 	private TitanHelpService helpService;
 	
@@ -58,7 +60,6 @@ public class HelpController extends BaseController {
 		QueryPageHelpWordRequest queryPageHelpWordRequest = new QueryPageHelpWordRequest();
 		queryPageHelpWordRequest.setCurrentPage(pn);
 		queryPageHelpWordRequest.setWord(w);
-		queryPageHelpWordRequest.setPageSize(2);
 		QueryPageHelpWordResponse res = helpService.queryPageHelpWord(queryPageHelpWordRequest);
 		model.addAttribute("w", w);
 		model.addAttribute("helpPage", res.getPage());
@@ -94,26 +95,26 @@ public class HelpController extends BaseController {
 		return "/help/help-list";
 	}
 	
-	@Deprecated
-	@RequestMapping("/help-type-table")
-	public String helpTypeTable(Integer ht,Integer pn, Model model){
-		if(ht==null||ht<1){
-			return "error";
-		}
-		if(pn==null||pn<1){
-			pn = 1;
-		}
-		//分类下的帮助列表
-		QueryPageHelpResponse helpResponse = getPageHelpResponse(pn,ht,1);
-		model.addAttribute("helpTypePage", helpResponse.getPage());
-		return "/help/help-type-table";
-	}
+//	@Deprecated
+//	@RequestMapping("/help-type-table")
+//	public String helpTypeTable(Integer ht,Integer pn, Model model){
+//		if(ht==null||ht<1){
+//			return "error";
+//		}
+//		if(pn==null||pn<1){
+//			pn = 1;
+//		}
+//		//分类下的帮助列表
+//		QueryPageHelpResponse helpResponse = getPageHelpResponse(pn,ht,1);
+//		model.addAttribute("helpTypePage", helpResponse.getPage());
+//		return "/help/help-type-table";
+//	}
 	
 	private QueryPageHelpResponse getPageHelpResponse(Integer pn,Integer ht,Integer isShow){
 		HelpRequest helpRequest = new HelpRequest();
 		helpRequest.setCurrentPage(pn);
-		helpRequest.setPageSize(2);
 		helpRequest.setHelpType(ht);
+		helpRequest.setPageSize(HELP_PAGE_SIZE);
 		helpRequest.setIsShow(isShow);
 		QueryPageHelpResponse helpResponse = helpService.queryPageHelp(helpRequest);
 		return helpResponse;

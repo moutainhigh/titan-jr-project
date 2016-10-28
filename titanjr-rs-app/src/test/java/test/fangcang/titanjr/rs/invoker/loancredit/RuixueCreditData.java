@@ -1,6 +1,7 @@
 package test.fangcang.titanjr.rs.invoker.loancredit;
 
 /**
+ * 授信申请
  * Created by zhaoshan on 2016/10/17.
  */
 public class RuixueCreditData {
