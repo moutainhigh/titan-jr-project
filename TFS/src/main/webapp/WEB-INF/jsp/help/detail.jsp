@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-    <title>帮组中心-泰坦金融</title>
+    <title>帮助中心-泰坦金融</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 	<style type="text/css">
@@ -24,7 +24,7 @@
 			<img src="<%=cssSaasPath%>/images/TFS/help_logo.jpg">帮助中心
 		</h3>
 		<div class="help_box_search">
-			<input type="text" class="text h_28 w_542 help_inp01" placeholder="请输入问题关键字"> <a href="金服设置-帮助中心-搜索.html" class="help_searchBtn">搜索</a>	
+			<input type="text" class="text h_28 w_542 help_inp01" value="${w }" id="s_word" placeholder="请输入问题关键字"> <a href="javascript:;" onclick="sch()" class="help_searchBtn">搜索</a>	
 		</div>
 		<div class="help_box_content clearfix">
 			<div class="help_box_list fl">
@@ -50,5 +50,11 @@
 		</div>
 	</div>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
+	<script type="text/javascript">
+	function sch(){
+		 var w = $("#s_word").val();
+		 window.location.href = "<%=basePath %>/help/search.action?w="+w;
+	}
+	</script>
   </body>
 </html>
