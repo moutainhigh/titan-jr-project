@@ -3000,6 +3000,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							.setReturnMessage(TitanMsgCodeEnum.PAY_ORDER_SUCCESS
 									.getResMsg());
 					try {
+						if(titanOrderRequest.getBusinessInfo()!=null 
+								&& StringUtil.isValidString(titanOrderRequest.getBusinessInfo().get("bussCode"))){
+							transOrderDTO.setBusinessordercode(titanOrderRequest.getBusinessInfo().get("bussCode"));
+						}
 						this.confirmFinance(transOrderDTO);
 					} catch (Exception e) {
 						log.error("回调失败");

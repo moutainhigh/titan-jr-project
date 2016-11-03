@@ -40,9 +40,10 @@ public class UnFreezeTransOrderRunner implements Runnable {
 			int offset=0;
 			int row =100;
 			do{
+				System.out.println("开始执行定时:"+Thread.currentThread().getName());
 				 row = titanFinancialAccountService.unFreezeOrder(offset,row);
 				 offset = (offset+1)*row;
-			}while(row>0);
+			}while(row==100);
 			
 		} catch (Exception e) {
 		}

@@ -23,7 +23,8 @@
 		<property name="jobDetail" ref="unFreezeTransOrderSchedule" />
 		<property name="cronExpression">
 			<!-- 测试配置 -->
-			<value>0 0 2 * * ?</value>
+			<!-- <value>0 0 2 * * ?</value> -->
+			<value>0 */10 * * * ?</value>
 			<!-- 发布配置 每3分钟执行一次 -->
 			<!--<value>0 0/30 * * * ?</value>-->
 		</property>
