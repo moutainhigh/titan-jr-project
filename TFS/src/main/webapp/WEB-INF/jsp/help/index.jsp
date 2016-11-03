@@ -63,7 +63,7 @@
 						<h3 class="help_ico05">充值提现与绑卡</h3>
 						<p><a href="<%=basePath %>/help/detail.action?hid=1027" target="_blank">如何对账户进行充值？</a></p>
 						<p><a href="<%=basePath %>/help/detail.action?hid=1028" target="_blank">为什么需要绑卡，绑卡有什么要求？</a></p>
-						<p><a href="<%=basePath %>/help/detail.action?hid=1029" target="_blank">提现时效，有什么要求？</a></p>
+						<p><a href="<%=basePath %>/help/detail.action?hid=1029" target="_blank">提现后，资金多长时间到帐?</a></p>
 						<h4><a href="<%=basePath %>/help/help-list.action?ht=5" target="_blank" class="blue">更多 >></a></h4>
 					</li>
 					<li>
