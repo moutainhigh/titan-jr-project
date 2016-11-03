@@ -904,7 +904,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
             response.setImageId(imgIdString);
             response.putSuccess();
 		} catch (Exception e) {
-			throw new GlobalServiceException("upload org img error,param:"+JSONSerializer.toJSON(request).toString(),e);
+			throw new GlobalServiceException("upload org img error,param:imageType["+request.getImageType()+"],filename["+request.getFileName()+"]",e);
 		}finally{
 			if(inStream!=null){
 				try {
