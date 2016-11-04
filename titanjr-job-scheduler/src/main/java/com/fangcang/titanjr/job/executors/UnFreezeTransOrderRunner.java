@@ -36,13 +36,12 @@ public class UnFreezeTransOrderRunner implements Runnable {
     }
     
     private void unFreezeAllTransOrder(){
-		try {
+		try {//每次查0到100,因为当查询0到100,查询完成之后就会更改订单状态。
 			int offset=0;
 			int row =100;
 			do{
-				System.out.println("开始执行定时:"+Thread.currentThread().getName());
 				 row = titanFinancialAccountService.unFreezeOrder(offset,row);
-				 offset = (offset+1)*row;
+				 log.info("解冻的条数："+row);
 			}while(row==100);
 			
 		} catch (Exception e) {
