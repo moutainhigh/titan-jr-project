@@ -2,6 +2,7 @@ package com.fangcang.titanjr.web.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.ImageIOExtUtil;
 import com.fangcang.titanjr.common.util.Tools;
@@ -347,6 +349,7 @@ public class FinancialOrganController extends BaseController {
 					updateCheckCodeRequest.setIsactive(0);
 					titanFinancialOrganService.useCheckCode(updateCheckCodeRequest);
 				}
+				sendCheckAlarm(orgRegPojo.getOrgName());
 				return "/org-reg/reg-success";
 			}else{
 				model.addAttribute(WebConstant.MODEL_ERROR_MSG_KEY, organRegisterResponse.getReturnMessage());
@@ -489,6 +492,7 @@ public class FinancialOrganController extends BaseController {
 					updateCheckCodeRequest.setIsactive(0);
 					titanFinancialOrganService.useCheckCode(updateCheckCodeRequest);
 				}
+				sendCheckAlarm(orgRegPojo.getOrgName());
 				return "/org-reg/reg-success";
 			}else{
 				model.addAttribute("errormsg", organRegisterUpdateResponse.getReturnMessage());
@@ -503,6 +507,22 @@ public class FinancialOrganController extends BaseController {
 			return "error";
 		}
 
+    }
+    /**
+     * 发送提醒,峰哥去审核金融开通申请（临时使用）
+     */
+    private void sendCheckAlarm(String orgName){
+    	SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
+    	sendRegCodeRequest.setReceiveAddress("13543309695");//峰哥手机
+    	sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+    	sendRegCodeRequest.setContent(orgName+",正在提交金融账户开通申请，请及时审核。提交时间："+DateUtil.formatDataToDatetime(new Date()));
+    	sendRegCodeRequest.setSubject("泰坦金融账号开通申请待审通知");
+    	try {
+    		sendSMSService.sendCode(sendRegCodeRequest);
+		} catch (Exception e) {
+			log.info("给运营人员发送泰坦金融账号开通申请待审通知失败", e);
+		}
+    	
     }
     /**
      * 发送邮件或者手机验证码(---废弃该方法)

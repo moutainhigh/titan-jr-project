@@ -116,22 +116,22 @@
 		</div>
 		
 		<div class="help_content03">
-			<h3>联系客服</h3>
+			<h3>咨询方式</h3>
 			<div class="help_contact clearfix">
-				<dl class="clearfix help_qq">
+				<!-- <dl class="clearfix help_qq">
 					<dt>在线客服</dt>
 					<dd>
 						<p><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=455605838&site=qq&menu=yes">12345678912</a></p>
 						<p><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=455605838&site=qq&menu=yes">12345678912</a></p>
 						<p><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=455605838&site=qq&menu=yes">12345678912</a></p>
 					</dd>
-				</dl>
+				</dl> -->
 				<dl class="clearfix help_tel">
 					<dt>联系电话</dt>
 					<dd>
-						<p>0755-12345678</p>
-						<p>138 8888 8888</p>
-						<p>138 8888 8888</p>
+						<p>13543309695</p>
+						<!-- <p>138 8888 8888</p>
+						<p>138 8888 8888</p> -->
 					</dd>
 				</dl>
 			</div>
