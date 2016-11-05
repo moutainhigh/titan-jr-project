@@ -22,4 +22,6 @@ public class BFCreditLoan {
     private String rootInstCd;//机构号码
     private String loanTerm;//贷款期限（天）
     
+    
+    
 }
