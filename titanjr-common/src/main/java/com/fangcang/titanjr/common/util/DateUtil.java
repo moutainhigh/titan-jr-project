@@ -1,9 +1,17 @@
 package com.fangcang.titanjr.common.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -806,12 +814,54 @@ public class DateUtil {
 	
 	
 	
+	
+	
 	public static void main(String[] args) {
 		
 		try {
-			System.out.println(System.getProperty("user.dir"));
-			  String j2eeHome = System.getProperty("com.sun.enterprise.home");
-			  System.out.println(j2eeHome);
+			File file =new File("C:/Users/Administrator/Desktop/text.txt");
+			InputStream in = new FileInputStream(file);
+			Reader reader = new InputStreamReader(in);
+			
+			OutputStream out = new FileOutputStream("C:/Users/Administrator/Desktop/11.txt");
+			
+			
+			
+			//Char 是定长的。
+//		    char[] c = new char[1024];
+//		    reader.read(c);
+//		    
+//		    System.out.println();
+//		    
+//		    String f = new String(c);
+//		    String d = "13";
+//		    String g = new String("13");
+//		    
+//		    System.out.println(f.indexOf("\t"));
+//		    
+//		    System.out.println(d.equals(f)); 
+//		    System.out.println(f);
+//		    System.out.println(g.equals(d)); 
+//		    System.out.println(c.length);
+		    
+		    
+		   //将字符转换成流
+		    
+		    
+//		    Pattern p = Pattern.compile("\\s*|\t|\r|\n");
+//		    
+//		   Matcher m = p.matcher(input)
+//		  　　Matcher m = p.matcher(str);
+//		   
+//		  　　String after = m.replaceAll("");
+//		   
+//		  　　System.out.println("after:"+after);
+
+		   
+//		    out.write(Byte.valueOf(f));
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

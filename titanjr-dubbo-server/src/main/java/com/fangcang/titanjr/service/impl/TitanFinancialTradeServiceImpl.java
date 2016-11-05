@@ -1,8 +1,10 @@
 package com.fangcang.titanjr.service.impl;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,6 +55,7 @@ import com.fangcang.titanjr.dto.bean.OrderOperateInfoDTO;
 import com.fangcang.titanjr.dto.bean.OrderTypeEnum;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
+import com.fangcang.titanjr.dto.bean.QrCodeDTO;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.bean.RepairTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
@@ -431,9 +434,15 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					isBankInfoChange = titanOrderPayreq.getBankInfo().equals(titanPaymentRequest.getBankInfo());
 				}
 				
+				
 				boolean isPayerAccountChange = true;
 				if(StringUtil.isValidString(titanPaymentRequest.getPayerAcount())){
 					isPayerAccountChange = titanPaymentRequest.getPayerAcount().equals(titanOrderPayreq.getPayerAcount());
+				}
+				
+				//针对移动支付或第三方支付
+				if(!StringUtil.isValidString(titanPaymentRequest.getBankInfo())){
+					isBankInfoChange = true;
 				}
 				
 				if(isAmountChange && isBankInfoChange && isPayerAccountChange){
@@ -2444,8 +2453,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			String domainName = domainConfigDao.queryCurrentEnvDomain();
 			if(StringUtil.isValidString(domainName)){
 				payMethodConfigDTO = new PayMethodConfigDTO();
-				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-app/payment/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-app/payment/notify.action");
+				payMethodConfigDTO.setPageurl("http://"+domainName+"/TFS02/payment/payConfirmPage.action");
+				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/TFS02/payment/notify.action");
 			}
 			return payMethodConfigDTO;
 			
@@ -3137,5 +3146,121 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		orgBindInfo.setMerchantCode(merchantCode);
 		return titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
 	}
+
+	@Override
+	public QrCodeResponse getQrCodeUrl(RechargeDataDTO rechargeDataDTO) {
+		QrCodeResponse qrCodeResponse = new QrCodeResponse();
+		try {
+			List<NameValuePair> params = this.getCommonHttpParams(rechargeDataDTO);
+			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params) );
+			HttpResponse resp = HttpClient.httpRequest(params, rechargeDataDTO.getGateWayUrl());
+			if(resp == null){
+				log.error("调用融数网关失败");
+				qrCodeResponse.putErrorResult("调用融数网关失败");
+			}
+			
+			HttpEntity entity = resp.getEntity();
+			String response = EntityUtils.toString(entity);
+			
+			if(!StringUtil.isValidString(response)){
+				log.error("融数网关返回信息为空");
+				qrCodeResponse.putErrorResult("融数网关返回信息为空");
+			}
+			
+			//解析response
+			QrCodeDTO qr = new QrCodeDTO();
+			qr = (QrCodeDTO)RSConvertFiled2ObjectUtil.convertField2Object(qr.getClass(), response);
+			String payUrl = response.substring(response.indexOf("weixin"), response.length());
+			qr.setRespJs(payUrl);
+			boolean sign = this.validateGateSign(qr);
+			if(!sign){
+				log.error("网关返回签名失败");
+				qrCodeResponse.putErrorResult("签名验证失败");
+			}
+			
+			if(!StringUtil.isValidString(qr.getRespJs())){
+				log.error("网关返回参数异常");
+				qrCodeResponse.putErrorResult("网关返回参数异常");
+				return qrCodeResponse;
+			}
+			
+			qrCodeResponse.putSuccess();
+			qrCodeResponse.setQrCodeDTO(qr);
+			return qrCodeResponse;
+			
+		} catch (Exception e) {
+			log.error("系统异常",e);
+			qrCodeResponse.putErrorResult("系统异常");
+		}
+		return qrCodeResponse;
+	}
+	
+	
+	private <T> List<NameValuePair> getCommonHttpParams(T t) throws IllegalArgumentException, IllegalAccessException{
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		
+		Field[] cls =  t.getClass().getDeclaredFields();
+		for(Field field : cls){
+			field.setAccessible(true);  
+			if(field.get(t) !=null){
+				params.add(new BasicNameValuePair(field.getName(), field.get(t).toString()));
+			}else{
+				params.add(new BasicNameValuePair(field.getName(), null));
+			}
+			
+		}
+		return params;
+	}
+//	private List<NameValuePair> getHttpParams(RechargeDataDTO rechargeDataDTO){
+//		List<NameValuePair> params = new ArrayList<NameValuePair>();
+//		
+//		params.add(new BasicNameValuePair("merchantNo", rechargeDataDTO.getMerchantNo()));
+//		params.add(new BasicNameValuePair("orderNo", rechargeDataDTO.getOrderNo()));
+//		params.add(new BasicNameValuePair("orderAmount", rechargeDataDTO.getOrderAmount()));
+//		params.add(new BasicNameValuePair("amtType", rechargeDataDTO.getAmtType()));
+//		params.add(new BasicNameValuePair("payType", rechargeDataDTO.getPayType()));
+//		params.add(new BasicNameValuePair("bankInfo", rechargeDataDTO.getBankInfo()));
+//		params.add(new BasicNameValuePair("pageUrl", rechargeDataDTO.getPageUrl()));
+//		params.add(new BasicNameValuePair("notifyUrl", rechargeDataDTO.getNotifyUrl()));
+//		params.add(new BasicNameValuePair("orderTime", rechargeDataDTO.getOrderTime()));
+//		params.add(new BasicNameValuePair("orderExpireTime", rechargeDataDTO.getOrderExpireTime()));
+//		params.add(new BasicNameValuePair("orderMark", rechargeDataDTO.getOrderMark()));
+//		params.add(new BasicNameValuePair("signType", rechargeDataDTO.getSignType()));
+//		params.add(new BasicNameValuePair("busiCode", rechargeDataDTO.getBusiCode()));
+//		params.add(new BasicNameValuePair("version", rechargeDataDTO.getVersion()));
+//		params.add(new BasicNameValuePair("charset", rechargeDataDTO.getCharset()));
+//		params.add(new BasicNameValuePair("payerAcount", rechargeDataDTO.getPayerAcount()));
+//		params.add(new BasicNameValuePair("signMsg", this.getMD5Sign(rechargeDataDTO)));
+//		return params;
+//	}
+	
+	private String getMD5Sign(RechargeDataDTO rechargeDataDTO){
+	    StringBuffer signStr = new StringBuffer("merchantNo="+rechargeDataDTO.getMerchantNo());
+	    signStr.append("&orderNo="+rechargeDataDTO.getOrderNo());
+	    signStr.append("&orderAmount="+rechargeDataDTO.getOrderAmount());
+	    signStr.append("&payType="+rechargeDataDTO.getPayType());
+	    signStr.append("&orderTime="+rechargeDataDTO.getOrderTime());
+	    signStr.append("&signType="+rechargeDataDTO.getSignType());
+	    signStr.append("&version="+rechargeDataDTO.getVersion());
+	    signStr.append("&key="+RSInvokeConstant.rsCheckKey);
+	    return MD5.MD5Encode(signStr.toString(), "UTF-8");
+	}
+	
+	private boolean validateGateSign(QrCodeDTO qr){
+	    StringBuffer signStr = new StringBuffer("merchantNo="+qr.getMerchantNo());
+	    signStr.append("&orderNo="+qr.getOrderNo());
+	    signStr.append("&orderAmount="+qr.getOrderAmount());
+	    signStr.append("&orderTime="+qr.getOrderTime());
+	    signStr.append("&payType="+qr.getPayType());
+	    signStr.append("&key="+RSInvokeConstant.rsCheckKey);
+	    String Md5Str = MD5.MD5Encode(signStr.toString(), "UTF-8");
+	    if(Md5Str.equals(qr.getSignMsg())){//51c13905fec3d21223b43f0cf99a8bcf
+	    	return true;
+	    }
+	    return false;
+	}
+
+	
+	
 }
 

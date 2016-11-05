@@ -71,6 +71,9 @@ public class RechargeDataDTO implements Serializable{
 		
 		private String payStatus;
 		
+		//商户密钥
+		private String key ="12356780Poi";
+		
 		public String getPayStatus() {
 			return payStatus;
 		}
@@ -84,8 +87,7 @@ public class RechargeDataDTO implements Serializable{
 			this.payOrderNo = payOrderNo;
 		}
 
-		//商户密钥
-		private String key ="12356780Poi";
+		
 		public String getMerchantNo() {
 			return merchantNo;
 		}

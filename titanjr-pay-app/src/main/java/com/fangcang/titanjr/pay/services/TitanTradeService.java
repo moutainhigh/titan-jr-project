@@ -2,6 +2,7 @@ package com.fangcang.titanjr.pay.services;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,11 +22,15 @@ import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.HttpUtils;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
+import com.fangcang.titanjr.dto.bean.CashierDeskDTO;
+import com.fangcang.titanjr.dto.bean.CashierDeskItemDTO;
+import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
@@ -355,5 +360,49 @@ public class TitanTradeService {
 			log.error(e.getMessage());
 		}
 		return null;
+	}
+	
+	/**
+	 * 将民生银行的企业银行放在最后面
+	 * @param commonPayMethodDTOList
+	 */
+	public void sortBank(List<CommonPayMethodDTO> commonPayMethodDTOList){
+		CommonPayMethodDTO cmbcBank =null;
+		Iterator<CommonPayMethodDTO> iterator = commonPayMethodDTOList.iterator();
+		while(iterator.hasNext()){
+			 CommonPayMethodDTO commonPayMethodDTO = iterator.next();
+			 if(CommonConstant.CMBC.equals(commonPayMethodDTO.getBankname()) && 
+					 commonPayMethodDTO.getPaytype()!=null &&
+					 commonPayMethodDTO.getPaytype().intValue()==CommonConstant.BUS_BANK){
+		    		cmbcBank = commonPayMethodDTO;
+		    		iterator.remove();
+		     }
+		 }
+		if(cmbcBank !=null){
+			commonPayMethodDTOList.add(cmbcBank);
+		}
+		
+	}
+	
+	public void sortBank(CashierDeskDTO cashierDesk){
+		List<CashierDeskItemDTO> cashierDeskItemDTOList = cashierDesk.getCashierDeskItemDTOList();
+		CashierItemBankDTO cmbcBank = null;
+		for(CashierDeskItemDTO cashierDeskItem :cashierDeskItemDTOList){
+			//B2B Item
+			if(cashierDeskItem.getItemType()!=null && cashierDeskItem.getItemType().intValue()==1){
+				List<CashierItemBankDTO> cashierItemBankDTOList = cashierDeskItem.getCashierItemBankDTOList();
+				 Iterator<CashierItemBankDTO> iterator = cashierItemBankDTOList.iterator();
+				 while(iterator.hasNext()){
+					 CashierItemBankDTO cashierItemBankDTO = iterator.next();
+					 if(CommonConstant.CMBC.equals(cashierItemBankDTO.getBankName())){
+				    		cmbcBank = cashierItemBankDTO;
+				    		iterator.remove();
+				    	}
+				 }
+				 if(cmbcBank !=null){
+					 cashierItemBankDTOList.add(cmbcBank);
+				 }
+			}
+		}
 	}
 }

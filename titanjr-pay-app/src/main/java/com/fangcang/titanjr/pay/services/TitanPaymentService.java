@@ -264,7 +264,7 @@ public class TitanPaymentService {
 		}
 		
 		@RequestMapping("payConfirmPage")
-		public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,Model model){
+		public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,String payType,Model model){
 			if(StringUtil.isValidString(rechargeResultConfirmRequest.getOrderNo())){
 				TransOrderRequest transOrderRequest = new TransOrderRequest();
 				transOrderRequest.setOrderid(rechargeResultConfirmRequest.getOrderNo());
@@ -293,6 +293,9 @@ public class TitanPaymentService {
 			        	}
 			        	model.addAttribute("payType", "余额支付");
 					}
+			        if(StringUtil.isValidString(payType)){
+			        	model.addAttribute("payType", payType);
+			        }
 			        
 				}
 			}

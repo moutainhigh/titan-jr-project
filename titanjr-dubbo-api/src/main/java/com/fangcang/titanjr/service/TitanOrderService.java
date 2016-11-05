@@ -95,5 +95,12 @@ public interface TitanOrderService {
 	 * @return
 	 */
 	public boolean updateTransferOrder(TitanTransferDTO transferDTO);
+	
+	
+	/**
+	 * 确认订单是否支付成功
+	 * @return
+	 */
+	public String confirmOrderStatus(String orderNo);
 
 }

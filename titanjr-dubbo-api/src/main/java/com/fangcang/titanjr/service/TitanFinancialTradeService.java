@@ -2,6 +2,7 @@ package com.fangcang.titanjr.service;
 
 
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
+import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
@@ -203,5 +204,12 @@ public interface TitanFinancialTradeService {
 	 * @return
 	 */
 	public TransOrderCreateResponse saveTitanTransOrder(TitanOrderRequest titanOrderRequest);
+	
+	/**
+	 * 获取扫码支付的地址
+	 * @param rechargeDataDTO
+	 * @return
+	 */
+	public QrCodeResponse getQrCodeUrl(RechargeDataDTO rechargeDataDTO );
 	
 }

@@ -246,5 +246,10 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 		}
 		return true;
 	}
+
+	@Override
+	public String confirmOrderStatus(String orderNo) {
+		return titanTransOrderDao.confirmOrderStatus(orderNo)==1?"true":"false";
+	}
 	
 }

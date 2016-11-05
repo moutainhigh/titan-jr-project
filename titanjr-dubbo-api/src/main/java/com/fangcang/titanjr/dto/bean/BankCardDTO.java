@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.dto.bean;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Date;
 
 public class BankCardDTO implements Serializable{

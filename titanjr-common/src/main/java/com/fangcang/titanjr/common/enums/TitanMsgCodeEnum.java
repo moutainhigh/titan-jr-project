@@ -63,9 +63,13 @@ public enum TitanMsgCodeEnum {
 	
 	// "手续费不能大于提现金额！
 	RATE_NOT_MORE_WITHDRAW(110100018, "手续费不能大于提现金额！"),
+	
+	QR_EXCEPTION(110100018,"调用网关接口异常"),
 
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");
+	
+	
 
 	private int code;
 

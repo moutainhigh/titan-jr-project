@@ -108,4 +108,12 @@ public class TitanTransOrderDaoImpl extends GenericDAOMyBatisImpl implements Tit
             throw new DaoException(e);
         }
 	}
+	
+	public int confirmOrderStatus(String  orderNo){
+		try {
+       	 return (Integer) super.selectOne("com.fangcang.titanjr.dao.TitanTransOrderDao.confirmOrderStatus", orderNo);
+       } catch (Exception e) {
+           throw new DaoException(e);
+       }
+	}
 }

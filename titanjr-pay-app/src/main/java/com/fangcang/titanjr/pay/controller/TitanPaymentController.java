@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,6 +20,7 @@ import net.sf.json.JSONSerializer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.xwpf.usermodel.TOC;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +42,7 @@ import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.PayTypeEnum;
+import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
@@ -47,6 +52,7 @@ import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
 import com.fangcang.titanjr.dto.response.CashierDeskResponse;
 import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
+import com.fangcang.titanjr.dto.response.QrCodeResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.dto.response.TransferResponse;
@@ -316,6 +322,12 @@ public class TitanPaymentController extends BaseController {
 		return transferRequest;
 	}
 	
+	@RequestMapping("qrCodePayment")
+	public String qrCodePayment(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model) throws Exception{
+		this.packageRechargeData(request, titanPaymentRequest, model);
+		return CommonConstant.PAY_WX;
+	}
+	
 	/**
 	 * 需要充值的接口
 	 * @param request
@@ -332,7 +344,7 @@ public class TitanPaymentController extends BaseController {
 		if(null == titanPaymentRequest || !StringUtil.isValidString(titanPaymentRequest.getTradeAmount()) 
 				|| !StringUtil.isValidString(titanPaymentRequest.getPayAmount())){
 			model.addAttribute(CommonConstant.RETURN_MSG, "参数错误");
-			return "checkstand-pay/genRechargePayment";
+			return CommonConstant.GATE_WAY_PAYGE;
 		}
 		
 		if(!titanPaymentRequest.getPaySource().equals(PaySourceEnum.RECHARDE.getDeskCode()) )
@@ -340,7 +352,7 @@ public class TitanPaymentController extends BaseController {
 	        Map<String,String> validResult = this.validPaymentData(titanPaymentRequest);
 	        if(!CommonConstant.OPERATE_SUCCESS.equals(validResult.get(CommonConstant.RESULT))){//合规性验证
 	        	model.addAttribute(CommonConstant.RETURN_MSG, validResult.get(CommonConstant.RETURN_MSG));
-				return "checkstand-pay/genRechargePayment";
+				return CommonConstant.GATE_WAY_PAYGE;
 	        }
 		}
 		// 确认收银台支付类型是否存在
@@ -351,16 +363,12 @@ public class TitanPaymentController extends BaseController {
 		if (cashierItemTypeEnum == null) {
 			model.addAttribute(CommonConstant.RETURN_MSG,
 					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
-			return "checkstand-pay/genRechargePayment";
+			return CommonConstant.GATE_WAY_PAYGE;
 		}
-
-//		PayerTypeEnum payerTypeEnum = PayerTypeEnum
-//				.getPayerTypeEnumByKey(titanPaymentRequest.getPaySource());
-//		if (payerTypeEnum == null) {
-//			model.addAttribute(CommonConstant.RETURN_MSG,
-//					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
-//			return "checkstand-pay/genRechargePayment";
-//		}
+		
+		if(cashierItemTypeEnum.itemCode.equals(CashierItemTypeEnum.QR_ITEM.itemCode)){
+			titanPaymentRequest.setBankInfo(null);
+		}
 
 		// 根据收银台ID查询对应的收银台信息
 		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
@@ -374,7 +382,7 @@ public class TitanPaymentController extends BaseController {
 			log.error("cashier desk is null!");
 			model.addAttribute(CommonConstant.RETURN_MSG,
 					TitanMsgCodeEnum.CASHIER_DESK_NOT_EXISTS.getResMsg());
-			return "checkstand-pay/genRechargePayment";
+			return CommonConstant.GATE_WAY_PAYGE;
 		}
 
 		// 开始计算并设置费率
@@ -391,7 +399,7 @@ public class TitanPaymentController extends BaseController {
         if(!transOrderCreateResponse.isResult() || !StringUtil.isValidString(transOrderCreateResponse.getOrderNo()) ){
         	log.error("call createTitanTransOrder fail msg["+ JsonConversionTool.toJson(transOrderCreateResponse)+"]");
         	model.addAttribute("msg", transOrderCreateResponse.getReturnMessage());
-        	return "checkstand-pay/genRechargePayment";
+        	return CommonConstant.GATE_WAY_PAYGE;
         }
         
         //设置支付方式
@@ -403,7 +411,7 @@ public class TitanPaymentController extends BaseController {
     	RechargeResponse rechargeResponse = titanPaymentService.packageRechargeData(titanPaymentRequest);
     	if(!rechargeResponse.isResult()){
     		model.addAttribute(CommonConstant.RETURN_MSG, rechargeResponse.getReturnMessage());
-    		return "checkstand-pay/genRechargePayment";
+    		return CommonConstant.GATE_WAY_PAYGE;
     	}
 		
 		CreateTitanRateRecordReq req = new CreateTitanRateRecordReq();
@@ -425,14 +433,37 @@ public class TitanPaymentController extends BaseController {
 		req.setOrderNo(transOrderCreateResponse.getOrderNo());
 		req.setCreator(computeReq.getUserId());
 		titanRateService.addRateRecord(req);
-    	model.addAttribute(CommonConstant.RESULT, CommonConstant.RETURN_SUCCESS);
+		titanPaymentService.saveCommonPayMethod(titanPaymentRequest);
+		//如果是扫码支付则调用httpClient接口进行
+		if(PayTypeEnum.WECHAT_URL.getLinePayType().equals(titanPaymentRequest.getLinePayType())){
+			return weChat(rechargeResponse, model);
+		}
+		
+		return cyberBank(rechargeResponse,model);
+    	
+	}
+	
+	private String weChat(RechargeResponse rechargeResponse,Model model){
+		RechargeDataDTO rechargeDataDTO = rechargeResponse.getRechargeDataDTO();
+		QrCodeResponse response = titanFinancialTradeService.getQrCodeUrl(rechargeDataDTO);
+		if(!response.isResult()){
+			model.addAttribute(CommonConstant.RETURN_MSG, toMsgJson(TitanMsgCodeEnum.QR_EXCEPTION));
+			return CommonConstant.GATE_WAY_PAYGE;
+		}
+		model.addAttribute(CommonConstant.RESULT, CommonConstant.RETURN_SUCCESS);
+		model.addAttribute(CommonConstant.QRCODE,response.getQrCodeDTO());
+		return CommonConstant.PAY_WX;
+	}
+	
+	//网银支付
+	private String cyberBank(RechargeResponse rechargeResponse,Model model){
+		model.addAttribute(CommonConstant.RESULT, CommonConstant.RETURN_SUCCESS);
     	model.addAttribute("rechargeDataDTO", rechargeResponse.getRechargeDataDTO());
     	log.info("支付请求的参数如下:"+JsonConversionTool.toJson(rechargeResponse.getRechargeDataDTO()));
     	//保存常用的支付方式
-    	titanPaymentService.saveCommonPayMethod(titanPaymentRequest);
-		return "checkstand-pay/genRechargePayment";
+		return CommonConstant.GATE_WAY_PAYGE;
 	}
-	
+ 	
     private Map<String,String> validPaymentData(TitanPaymentRequest titanPaymentRequest){
     	Map<String,String> resultMap = new HashMap<String, String>();
     	//判断收款方是否存在
@@ -478,11 +509,17 @@ public class TitanPaymentController extends BaseController {
     
 
 	@RequestMapping("payConfirmPage")
-	public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,Model model){
-		return titanPaymentService.payConfirmPage(rechargeResultConfirmRequest,model);
+	public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,String payType,Model model) throws NamingException{
+		
+		return titanPaymentService.payConfirmPage(rechargeResultConfirmRequest,payType,model);
 	}
 	
-    
+	@RequestMapping("confirmOrder")
+	@ResponseBody
+    public String confirmOrder(String orderNo){
+    	return titanOrderService.confirmOrderStatus(orderNo);
+    }
+	
     
     private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
 		synchronized (mapLock) {
@@ -506,6 +543,7 @@ public class TitanPaymentController extends BaseController {
 			}
 		}
 	}
+    
     
     
 }

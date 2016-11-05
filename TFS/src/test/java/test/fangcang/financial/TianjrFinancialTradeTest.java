@@ -591,7 +591,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
 		PayMethodConfigDTO payMethodConfigDTO = titanFinancialTradeService.getPayMethodConfigDTO(payMethodConfigRequest);
     }
     
-    @Test
+//    @Test
     public void testCallBack() throws Exception{
     	TransOrderDTO transOrderDTO = new TransOrderDTO();
     	
@@ -633,7 +633,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialTradeService.getSign(rechargeResultConfirmRequest);
     }
     
-    @Test
+//    @Test
     public void repairTransferOrder(){
     	titanFinancialTradeService.repairTransferOrder();
     }
@@ -685,5 +685,9 @@ public class TianjrFinancialTradeTest extends GenericTest{
      * 
      */
     
+    @Test
+    public void confirmOrderStatus(){
+     titanOrderService.confirmOrderStatus("2016102716242500001");
+	}
     
 }

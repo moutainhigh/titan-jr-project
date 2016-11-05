@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,9 @@ import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.CashDeskData;
+import com.fangcang.titanjr.dto.bean.CashierDeskDTO;
+import com.fangcang.titanjr.dto.bean.CashierDeskItemDTO;
+import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
@@ -75,6 +79,9 @@ public class TitanTradeController extends BaseController {
 	
 	@Resource
 	private TitanFinancialOrganService financialOrganService;
+	
+	@Resource
+	private TitanTradeService titanTradeService;
 
 	/**
 	 * @Title: titanPay
@@ -459,7 +466,9 @@ public class TitanTradeController extends BaseController {
 					.getCommonPayMethod(transOrderDTO.getUserid(),
 							PayerTypeEnum.getPaySource(transOrderDTO
 									.getPayerType()));
+			
 
+			titanTradeService.sortBank(commonPayMethodDTOList);
 			cashDeskData.setCommonPayMethodDTOList(commonPayMethodDTOList);
 			log.info("set pay method info is ok.");
 		}
@@ -553,7 +562,11 @@ public class TitanTradeController extends BaseController {
 		}
 
 		log.info("begin set cash desk data ");
-		cashDeskData.setCashierDeskDTO(response.getCashierDeskDTOList().get(0));
+		
+		//将民生银行的企业银行方到最后面
+		CashierDeskDTO cashierDeskDTO = response.getCashierDeskDTOList().get(0);
+		titanTradeService.sortBank(cashierDeskDTO);
+		cashDeskData.setCashierDeskDTO(cashierDeskDTO);
 		cashDeskData.setPaySource(PayerTypeEnum.getPaySource(
 				transOrderDTO.getPayerType()).toString());
 		cashDeskData.setMerchantcode(transOrderDTO.getMerchantcode());
