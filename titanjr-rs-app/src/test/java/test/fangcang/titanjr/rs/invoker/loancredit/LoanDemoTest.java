@@ -11,7 +11,6 @@ import net.sf.json.JSONSerializer;
 import com.Rop.api.DefaultRopClient;
 import com.Rop.api.request.FsFileUploadRequest;
 import com.Rop.api.request.FsFileurlGetRequest;
-import com.Rop.api.request.WheatfieldInterestRepaymentQueryborrowinfoRequest;
 import com.Rop.api.request.WheatfieldOprsystemCreditCompanyRequest;
 import com.Rop.api.request.WheatfieldOrderMixserviceCreditapplicationRequest;
 import com.Rop.api.request.WheatfieldOrderMixserviceCreditmerchantinfoqueryRequest;
@@ -19,7 +18,6 @@ import com.Rop.api.request.WheatfieldOrderServiceAgreementconfirmRequest;
 import com.Rop.api.request.WheatfieldOrderServiceNewloanapplyRequest;
 import com.Rop.api.response.FsFileUploadResponse;
 import com.Rop.api.response.FsFileurlGetResponse;
-import com.Rop.api.response.WheatfieldInterestRepaymentQueryborrowinfoResponse;
 import com.Rop.api.response.WheatfieldOprsystemCreditCompanyResponse;
 import com.Rop.api.response.WheatfieldOrderMixserviceCreditapplicationResponse;
 import com.Rop.api.response.WheatfieldOrderMixserviceCreditmerchantinfoqueryResponse;
@@ -200,7 +198,7 @@ public class LoanDemoTest {
 //			req.setJsondata("{\"propertyLastYear\":\"10000\",\"debtLastYear\":\"10000\",\"averageSalary\":\"100\"}");
             req.setJsondata(testGetCreditJsonData());
             
-            req.setCreditype("2");//房仓的都是零售商
+//            req.setCreditype("2");//房仓的都是零售商
             //申请明细信息json串 如果为空 请传 {}
             req.setUrlkey("af165cd4-4434-49c8-980f-7a652471c7d7");					//授信申请资料上传urlkey
             //可选
@@ -340,23 +338,23 @@ public class LoanDemoTest {
     public static String doqueryborrowinfo(String session){
     	 String strError = null;
     	 try {
-    			WheatfieldInterestRepaymentQueryborrowinfoRequest request = new WheatfieldInterestRepaymentQueryborrowinfoRequest();
-    			request.setRootinstcd("M000016");
-    			request.setProductid("P000070");
-    			request.setUserid("TJM10000087");
-    			//request.setUserorderid(s);
-    			WheatfieldInterestRepaymentQueryborrowinfoResponse rsp = ropClient.execute(request,
-    	                 session);
-    	         if (rsp != null) {
-    	             System.out.println("返回报文: \n" + rsp.getBody());
-    	             if (rsp.isSuccess() != true) {
-    	                 if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
-    	                     strError = rsp.getIs_success();
-    	                 } else {
-    	                     strError = rsp.getMsg();
-    	                 }
-    	             }
-    	         }
+//    			WheatfieldInterestRepaymentQueryborrowinfoRequest request = new WheatfieldInterestRepaymentQueryborrowinfoRequest();
+//    			request.setRootinstcd("M000016");
+//    			request.setProductid("P000070");
+//    			request.setUserid("TJM10000087");
+//    			//request.setUserorderid(s);
+//    			WheatfieldInterestRepaymentQueryborrowinfoResponse rsp = ropClient.execute(request,
+//    	                 session);
+//    	         if (rsp != null) {
+//    	             System.out.println("返回报文: \n" + rsp.getBody());
+//    	             if (rsp.isSuccess() != true) {
+//    	                 if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+//    	                     strError = rsp.getIs_success();
+//    	                 } else {
+//    	                     strError = rsp.getMsg();
+//    	                 }
+//    	             }
+//    	         }
 		} catch (Exception e) {
 			 System.out.println(e);
 	         return "error";
