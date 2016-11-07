@@ -19,7 +19,7 @@
 	</div>
 	<div class="S_popup_content adjust_c">
 		<div class="wx_fk fl">
-			<h3>微信扫描二维码支付</h3>
+			<h3 style="margin-left: -12px;">微信扫描二维码支付</h3>
 			<div id="qrcode"> 
 			<!-- <p><span class="c_f00" id="Time"></span>后此二维码过期</p> -->
 			</div>
@@ -31,7 +31,7 @@
   </c:if>
   
  <form action="<%=basePath%>/account/error_cashier.action" name="error_cashier"  id="error_cashier" method="post">
-  <input name="msg" type="hidden" value="${msg}"/>
+  <input name="msg" id="msg" type="hidden" value="${msg}"/>
 </form>
 	
 	
@@ -52,7 +52,10 @@
 			  });
 			  closeWin('${qrCode.orderNo}');
 		}else{
-			$("#error_cashier").submit();
+			eval('var obj = ${msg}');
+			alert(obj.resultMsg);
+			$("#msg").val(obj.resultMsg);
+			$("#error_cashier").submit();s
 		}
 		 
 	});

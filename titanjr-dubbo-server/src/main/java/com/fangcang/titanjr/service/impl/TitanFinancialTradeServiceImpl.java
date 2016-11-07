@@ -3157,6 +3157,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			if(resp == null){
 				log.error("调用融数网关失败");
 				qrCodeResponse.putErrorResult("调用融数网关失败");
+				return qrCodeResponse;
 			}
 			
 			HttpEntity entity = resp.getEntity();
@@ -3165,17 +3166,22 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			if(!StringUtil.isValidString(response)){
 				log.error("融数网关返回信息为空");
 				qrCodeResponse.putErrorResult("融数网关返回信息为空");
+				return qrCodeResponse;
 			}
 			
 			//解析response
 			QrCodeDTO qr = new QrCodeDTO();
 			qr = (QrCodeDTO)RSConvertFiled2ObjectUtil.convertField2Object(qr.getClass(), response);
-			String payUrl = response.substring(response.indexOf("weixin"), response.length());
+			String payUrl =null;
+			if(response.indexOf("weixin")!=-1){
+				payUrl = response.substring(response.indexOf("weixin"), response.length());
+			}
 			qr.setRespJs(payUrl);
 			boolean sign = this.validateGateSign(qr);
 			if(!sign){
 				log.error("网关返回签名失败");
 				qrCodeResponse.putErrorResult("签名验证失败");
+				return qrCodeResponse;
 			}
 			
 			if(!StringUtil.isValidString(qr.getRespJs())){

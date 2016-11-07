@@ -448,7 +448,7 @@ public class TitanPaymentController extends BaseController {
 		QrCodeResponse response = titanFinancialTradeService.getQrCodeUrl(rechargeDataDTO);
 		if(!response.isResult()){
 			model.addAttribute(CommonConstant.RETURN_MSG, toMsgJson(TitanMsgCodeEnum.QR_EXCEPTION));
-			return CommonConstant.GATE_WAY_PAYGE;
+			return CommonConstant.PAY_WX;
 		}
 		model.addAttribute(CommonConstant.RESULT, CommonConstant.RETURN_SUCCESS);
 		model.addAttribute(CommonConstant.QRCODE,response.getQrCodeDTO());
