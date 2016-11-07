@@ -20,6 +20,8 @@ import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 
 public class RSFileManagerImpl implements RSFileManager {
 	private static final Log log = LogFactory.getLog(RSFileManagerImpl.class);
+	private static final boolean needCheckRequest = true;
+	
 	@Override
 	public GetUrlKeyResponse getUrlKey(GetUrlKeyRequest getUrlKeyRequest) {
 		GetUrlKeyResponse response =  new GetUrlKeyResponse();
@@ -27,7 +29,9 @@ public class RSFileManagerImpl implements RSFileManager {
 		fsUrlkeyGetRequest.setType(getUrlKeyRequest.getType());
 		fsUrlkeyGetRequest.setInvoice_date(getUrlKeyRequest.getInvoiceDate());
 		try {
-			 
+			if(needCheckRequest){
+				fsUrlkeyGetRequest.check();
+			}
 			FsUrlkeyGetResponse rsp = RSInvokeConstant.ropClient
 					.execute(fsUrlkeyGetRequest, RSInvokeConstant.sessionKey);
 			 if (rsp != null) {

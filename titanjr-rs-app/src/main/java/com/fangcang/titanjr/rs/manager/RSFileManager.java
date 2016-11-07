@@ -12,6 +12,7 @@ import com.fangcang.titanjr.rs.response.GetUrlKeyResponse;
  */
 public interface RSFileManager {
 	
+	
 	/**
 	 * 获取url_key
 	 * @param getUrlKeyRequest
