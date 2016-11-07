@@ -3152,7 +3152,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		QrCodeResponse qrCodeResponse = new QrCodeResponse();
 		try {
 			List<NameValuePair> params = this.getCommonHttpParams(rechargeDataDTO);
-			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params) );
+			log.info("微信调用网关接口:" + JSONSerializer.toJSON(params) );
 			HttpResponse resp = HttpClient.httpRequest(params, rechargeDataDTO.getGateWayUrl());
 			if(resp == null){
 				log.error("调用融数网关失败");
@@ -3177,6 +3177,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				payUrl = response.substring(response.indexOf("weixin"), response.length());
 			}
 			qr.setRespJs(payUrl);
+			log.info("网关返回参数:"+JSONSerializer.toJSON(qr));
 			boolean sign = this.validateGateSign(qr);
 			if(!sign){
 				log.error("网关返回签名失败");
@@ -3185,7 +3186,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			}
 			
 			if(!StringUtil.isValidString(qr.getRespJs())){
-				log.error("网关返回参数异常");
+				log.error("网关返回参数异常"+qr.getRespJs());
 				qrCodeResponse.putErrorResult("网关返回参数异常");
 				return qrCodeResponse;
 			}
