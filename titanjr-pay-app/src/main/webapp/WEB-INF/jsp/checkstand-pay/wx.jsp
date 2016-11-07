@@ -36,7 +36,7 @@
 	
 	
 	
-<form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder1">
+<form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder1" method="post">
   <input name="orderNo" id="orderNo" value="${qrCode.orderNo}" type="hidden">
   <input name="payType" id="payType" value="微信支付" type="hidden">
 </form>
