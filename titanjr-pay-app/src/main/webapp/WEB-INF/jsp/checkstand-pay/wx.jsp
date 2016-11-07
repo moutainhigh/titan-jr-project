@@ -52,10 +52,10 @@
 			  });
 			  closeWin('${qrCode.orderNo}');
 		}else{
+			alert('${msg}');
 			eval('var obj = ${msg}');
-			alert(obj.resultMsg);
 			$("#msg").val(obj.resultMsg);
-			$("#error_cashier").submit();s
+			$("#error_cashier").submit();
 		}
 		 
 	});
