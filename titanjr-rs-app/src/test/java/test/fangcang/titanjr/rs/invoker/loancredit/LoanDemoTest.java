@@ -346,6 +346,7 @@ public class LoanDemoTest {
         }
         return strError;
     }
+    
     /**
      * 主动还款
      * ruixue.wheatfield.interest.repayment.userinitiativerepament
@@ -406,7 +407,21 @@ public class LoanDemoTest {
     	return strError;
     }
     
+    /**
+     * 贷款订单状态查询接口
+     * ruixue.wheatfield.order.mixservice.queryloanapply
+     */
+    public static String doqueryloanapply(){
+    	return null;
+    }
     
+    /***
+     * 终止贷款
+     * ruixue.wheatfield.order.mixservice.stoploan 
+     */
+    public static String stoploan(){
+    	return null;
+    }
     /***
      * 查询应还款信息
      * ruixue.wheatfield.interest.repayment.queryborrowinfo
