@@ -52,7 +52,6 @@
 			  });
 			  closeWin('${qrCode.orderNo}');
 		}else{
-			alert('${msg}');
 			eval('var obj = ${msg}');
 			$("#msg").val(obj.resultMsg);
 			$("#error_cashier").submit();
