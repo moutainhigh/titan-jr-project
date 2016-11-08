@@ -406,8 +406,8 @@
     </select>
     
     <select id="confirmOrderStatus" parameterType="java.lang.String"
-            resultType="java.lang.Integer">
-            select count(transid) from t_tfs_transorder where orderid=#{orderNo} and (statusid="8" or statusid="6")
+            resultType="java.lang.String">
+            select statusid from t_tfs_transorder where orderid=#{orderNo} order by createtime
     </select>
     
 </mapper>

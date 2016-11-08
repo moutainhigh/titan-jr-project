@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.dao.TitanDynamicKeyDao;
 import com.fangcang.titanjr.dao.TitanOrderExceptionDao;
 import com.fangcang.titanjr.dao.TitanOrderPayreqDao;
@@ -249,7 +250,20 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 
 	@Override
 	public String confirmOrderStatus(String orderNo) {
-		return titanTransOrderDao.confirmOrderStatus(orderNo)==1?"true":"false";
+		
+		List<String> statusId =  titanTransOrderDao.confirmOrderStatus(orderNo);
+		if(statusId.size()==1 && StringUtil.isValidString(statusId.get(0))){
+			if(OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(statusId.get(0)) || OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(statusId.get(0))){
+				return "success";
+			}else if(OrderStatusEnum.ORDER_FAIL.getStatus().equals(statusId.get(0))){
+				return "fail";
+			}else if(OrderStatusEnum.ORDER_NO_EFFECT.getStatus().equals(statusId.get(0))){
+				return "no_effect";
+			}else{
+				return "process";
+			}
+		}
+		return "exception";
 	}
 	
 }

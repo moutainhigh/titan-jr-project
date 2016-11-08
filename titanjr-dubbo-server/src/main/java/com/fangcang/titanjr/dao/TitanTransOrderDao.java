@@ -25,5 +25,5 @@ public interface TitanTransOrderDao {
 	
 	int updateTitanTransOrderByTransId(TitanTransOrder entity)throws DaoException;
 	
-	int confirmOrderStatus(String orderNo);
+	List<String> confirmOrderStatus(String orderNo);
 }

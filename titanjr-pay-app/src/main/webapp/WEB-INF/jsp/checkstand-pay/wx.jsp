@@ -52,8 +52,7 @@
 			  });
 			  closeWin('${qrCode.orderNo}');
 		}else{
-			eval('var obj = ${msg}');
-			$("#msg").val(obj.resultMsg);
+			$("#msg").val('${msg}');
 			$("#error_cashier").submit();
 		}
 		 
@@ -77,9 +76,11 @@
 	function closeWin(_orderNo){
 		var interval=setInterval(function () {   
 			var status = confirmOrder(_orderNo);
-			if(status ==true){
+			if(status =="success"||status=="fail"){
 				 clearInterval(interval);
 				 $("#confirmOrder1").submit();
+			}else if(status=="no_effect" || status=="exception"){
+				 clearInterval(interval);
 			}
 		},5000);
 	}
@@ -93,7 +94,8 @@
              dataType: "json",
              async:false,
              success: function(data){
-            	 status = data;
+            	 console.log(data);
+            	 status = data.msg;
              }
 		});
 		return status;

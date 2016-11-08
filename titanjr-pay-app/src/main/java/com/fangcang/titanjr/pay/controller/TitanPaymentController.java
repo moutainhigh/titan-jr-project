@@ -338,7 +338,6 @@ public class TitanPaymentController extends BaseController {
 	 */
 	@RequestMapping("packageRechargeData")
 	public String packageRechargeData(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model) throws Exception{
-	
 		log.info("网银支付请求参数:"+JsonConversionTool.toJson(titanPaymentRequest));
 		model.addAttribute(CommonConstant.RESULT, CommonConstant.OPERATE_FAIL);
 		if(null == titanPaymentRequest || !StringUtil.isValidString(titanPaymentRequest.getTradeAmount()) 
@@ -447,7 +446,8 @@ public class TitanPaymentController extends BaseController {
 		RechargeDataDTO rechargeDataDTO = rechargeResponse.getRechargeDataDTO();
 		QrCodeResponse response = titanFinancialTradeService.getQrCodeUrl(rechargeDataDTO);
 		if(!response.isResult()){
-			model.addAttribute(CommonConstant.RETURN_MSG, toMsgJson(TitanMsgCodeEnum.QR_EXCEPTION));
+			log.error("微信支付获取地址失败");
+			model.addAttribute(CommonConstant.RETURN_MSG, TitanMsgCodeEnum.QR_EXCEPTION.getKey());
 			return CommonConstant.PAY_WX;
 		}
 		model.addAttribute(CommonConstant.RESULT, CommonConstant.RETURN_SUCCESS);
@@ -516,8 +516,10 @@ public class TitanPaymentController extends BaseController {
 	
 	@RequestMapping("confirmOrder")
 	@ResponseBody
-    public String confirmOrder(String orderNo){
-    	return titanOrderService.confirmOrderStatus(orderNo);
+    public Map<String,String> confirmOrder(String orderNo){
+		Map<String,String> resultMap = new HashMap<String, String>();
+		resultMap.put(CommonConstant.RETURN_MSG, titanOrderService.confirmOrderStatus(orderNo));
+    	return resultMap;
     }
 	
     

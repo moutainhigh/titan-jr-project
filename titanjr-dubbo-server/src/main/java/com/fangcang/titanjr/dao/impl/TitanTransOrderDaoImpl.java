@@ -109,9 +109,9 @@ public class TitanTransOrderDaoImpl extends GenericDAOMyBatisImpl implements Tit
         }
 	}
 	
-	public int confirmOrderStatus(String  orderNo){
+	public List<String> confirmOrderStatus(String  orderNo){
 		try {
-       	 return (Integer) super.selectOne("com.fangcang.titanjr.dao.TitanTransOrderDao.confirmOrderStatus", orderNo);
+       	 return super.selectList("com.fangcang.titanjr.dao.TitanTransOrderDao.confirmOrderStatus", orderNo);
        } catch (Exception e) {
            throw new DaoException(e);
        }
