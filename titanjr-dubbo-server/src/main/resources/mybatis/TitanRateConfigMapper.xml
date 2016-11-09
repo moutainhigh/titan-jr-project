@@ -37,13 +37,13 @@
     	SELECT * FROM t_tfs_rateconfig 
     	<where>
     	  <if test="userid !=null">
-    	    userId= #{userid}
+    	    and userId= #{userid}
     	  </if>
     	  <if test="bustype !=null">
-    	    bustype=#{bustype}
+    	    and bustype=#{bustype}
     	  </if>
     	  <if test="rateconfigid !=null">
-    	    rateconfigid=#{rateconfigid}
+    	    and rateconfigid=#{rateconfigid}
     	  </if>
     	  
     	</where>

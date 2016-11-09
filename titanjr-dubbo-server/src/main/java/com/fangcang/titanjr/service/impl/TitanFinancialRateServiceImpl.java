@@ -127,7 +127,7 @@ public class TitanFinancialRateServiceImpl implements TitanFinancialRateService 
 	         
 	         
 	         TitanRateConfig rateConfigQR = new TitanRateConfig();
-	         rateConfigQR.setBustype(BusTypeEnum.CREDIT_RATE.type);//1表示付款费率
+	         rateConfigQR.setBustype(BusTypeEnum.QR_RATE.type);//1表示付款费率
 	         rateConfigQR.setDescription("第三方支付费率");
 	         rateConfigQR.setRatetype(1);//按百分比
 	         rateConfigQR.setRsrate(0.4f);//千分之一点五
@@ -140,7 +140,7 @@ public class TitanFinancialRateServiceImpl implements TitanFinancialRateService 
 	         
 	         
 	         TitanRateConfig rateConfigWITHDRAW = new TitanRateConfig();
-	         rateConfigWITHDRAW.setBustype(BusTypeEnum.CREDIT_RATE.type);//1表示付款费率
+	         rateConfigWITHDRAW.setBustype(BusTypeEnum.WITHDRAW_RATE.type);//1表示付款费率
 	         rateConfigWITHDRAW.setDescription("账户提现费率");
 	         rateConfigWITHDRAW.setRatetype(2);//按笔收费
 	         rateConfigWITHDRAW.setRsrate(3f);//每笔3元
