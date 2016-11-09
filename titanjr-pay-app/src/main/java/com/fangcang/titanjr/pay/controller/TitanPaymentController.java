@@ -361,14 +361,10 @@ public class TitanPaymentController extends BaseController {
 
 		if (cashierItemTypeEnum == null) {
 			model.addAttribute(CommonConstant.RETURN_MSG,
-					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getKey());
 			return CommonConstant.GATE_WAY_PAYGE;
 		}
 		
-		if(cashierItemTypeEnum.itemCode.equals(CashierItemTypeEnum.QR_ITEM.itemCode)){
-			titanPaymentRequest.setBankInfo(null);
-		}
-
 		// 根据收银台ID查询对应的收银台信息
 		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
 		cashierDeskQueryRequest.setDeskId(Long.parseLong(titanPaymentRequest

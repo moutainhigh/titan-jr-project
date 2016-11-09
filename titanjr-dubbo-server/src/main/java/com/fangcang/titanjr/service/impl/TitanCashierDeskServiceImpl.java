@@ -135,8 +135,8 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
             titanCashierDeskItemDao.saveCashierDeskItem(creditsitem);
             titanCashierDeskItemDao.saveCashierDeskItem(balancesitem);
             titanCashierDeskItemDao.saveCashierDeskItem(balanceaitem);
-            titanCashierDeskItemDao.saveCashierDeskItem(b2bitem);
-            titanCashierDeskItemDao.saveCashierDeskItem(b2bitem);
+            titanCashierDeskItemDao.saveCashierDeskItem(b2britem);
+            titanCashierDeskItemDao.saveCashierDeskItem(b2critem);
             titanCashierDeskItemDao.saveCashierDeskItem(qritem);
             titanCashierDeskItemDao.saveCashierDeskItem(qrsitem);
             //充值
@@ -243,7 +243,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
     	List<TitanCashierItemBank> result = new ArrayList<TitanCashierItemBank>();
     	TitanCashierItemBank bank = new TitanCashierItemBank();
         bank.setItemid(bankItemId);
-        bank.setBankmark("wx");
+        bank.setBankmark("微信");
         bank.setBankname("wx");
         bank.setCreator("system");
         bank.setCreatetime(new Date());

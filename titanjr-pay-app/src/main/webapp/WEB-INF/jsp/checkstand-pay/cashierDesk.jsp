@@ -159,6 +159,9 @@
 	                              <c:if test="${commom.paytype == 3 }">
 	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡） </span>
 	                              </c:if>
+	                              <c:if test="${commom.paytype == 9 }">
+	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（微信支付） </span>
+                                  </c:if>
                                </div>
 						   </c:if>
                           </c:forEach>

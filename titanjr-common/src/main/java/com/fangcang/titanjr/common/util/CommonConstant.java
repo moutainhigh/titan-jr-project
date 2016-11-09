@@ -133,5 +133,10 @@ public class CommonConstant {
     
     //企业银行
     public static final int BUS_BANK = 1;
+    
+    //微信支付的bankName
+    public static final String WXPAY = "wx";
+    
+    public static final String ALIPAY = "alipay";
 	
 }

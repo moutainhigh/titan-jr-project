@@ -441,7 +441,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 				
 				//针对移动支付或第三方支付
-				if(!StringUtil.isValidString(titanPaymentRequest.getBankInfo())){
+				if(StringUtil.isValidString(titanPaymentRequest.getBankInfo()) &&
+						(titanPaymentRequest.getBankInfo().equals(CommonConstant.WXPAY)||titanPaymentRequest.getBankInfo().equals(CommonConstant.ALIPAY))){
 					isBankInfoChange = true;
 				}
 				

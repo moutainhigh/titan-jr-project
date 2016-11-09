@@ -282,10 +282,10 @@ public class TitanPaymentService {
 			        if(!StringUtil.isValidString(rechargeResultConfirmRequest.getPayStatus())){//判断是本地回调
 			        	
 			        	boolean paySuccess = OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid());
-			        	if(transOrderDTO.getTradeamount() !=null){
-			        		String amount = transOrderDTO.getTradeamount().toString();
+			        	if(transOrderDTO.getAmount() !=null){
+			        		String amount = transOrderDTO.getAmount().toString();
 			        		if(transOrderDTO.getReceivedfee()!=null){
-			        			amount = new BigDecimal(transOrderDTO.getTradeamount()).add(new BigDecimal(transOrderDTO.getReceivedfee())).toString(); 
+			        			amount = new BigDecimal(transOrderDTO.getAmount()).add(new BigDecimal(transOrderDTO.getReceivedfee())).toString(); 
 			        		}
 		        			rechargeResultConfirmRequest.setPayAmount(amount);
 		        		}

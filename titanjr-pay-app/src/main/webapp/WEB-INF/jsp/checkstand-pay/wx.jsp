@@ -94,7 +94,6 @@
              dataType: "json",
              async:false,
              success: function(data){
-            	 console.log(data);
             	 status = data.msg;
              }
 		});

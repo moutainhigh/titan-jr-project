@@ -37,6 +37,7 @@ import com.fangcang.titanjr.dto.request.AccountCheckRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.AllowNoPwdPayRequest;
 import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
+import com.fangcang.titanjr.dto.request.CashierDeskInitRequest;
 import com.fangcang.titanjr.dto.request.CusBankCardBindRequest;
 import com.fangcang.titanjr.dto.request.DeleteBindBankRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrderRequest;
@@ -68,6 +69,7 @@ import com.fangcang.titanjr.dto.response.TradeDetailResponse;
 import com.fangcang.titanjr.dto.response.TransferResponse;
 import com.fangcang.titanjr.dto.response.UnFreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
+import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -84,6 +86,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
 	private TitanFinancialBankCardService titanFinancialBankCardService = null;
 	private TitanFinancialOrganService titanFinancialOrganService=null;
 	private TitanOrderService titanOrderService;
+	private TitanCashierDeskService titanCashierDeskService=null;
 
     @Before
     public void init(){
@@ -93,6 +96,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialBankCardService = (TitanFinancialBankCardService)cfx.getBean("titanFinancialBankCardService");
     	titanFinancialOrganService = (TitanFinancialOrganService)cfx.getBean("titanFinancialOrganService");
     	titanOrderService = (TitanOrderService)cfx.getBean("titanOrderService");
+    	titanCashierDeskService = (TitanCashierDeskService)cfx.getBean("titanCashierDeskService");
     }
     
 
@@ -685,9 +689,17 @@ public class TianjrFinancialTradeTest extends GenericTest{
      * 
      */
     
-    @Test
+//    @Test
     public void confirmOrderStatus(){
      titanOrderService.confirmOrderStatus("2016102716242500001");
 	}
+    
+    @Test
+    public void initCashDesk() throws Exception{
+    	CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest();
+    	cashierDeskInitRequest.setConstId("M000016");
+    	cashierDeskInitRequest.setUserId("TJM10000096");
+    	titanCashierDeskService.initCashierDesk(cashierDeskInitRequest);
+    }
     
 }
