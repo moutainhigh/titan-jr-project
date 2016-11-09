@@ -1,5 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/comm/taglib.jsp"%>
+<div class="bank_notice red_tips">
+	<h2 class="bank_notice_top c_f00"></h2>
+</div>
 <div class="bank_notice bank-limit-wrap">
 			<h3 class="bank_notice_h3">付款金额可能超限，限额如下：</h3>
 			<!-- 工商银行（借记卡） -->
@@ -882,12 +885,19 @@ function bankCheckRadio(rObj){
 	var itemType = $("#item-"+dataIndex).attr("data-index");
 	var bankType= "jjk";
 	$(".bank-limit").addClass("hide");
+	//隐藏红色提示
+	$(".red_tips").hide();
 	if(itemType==2){//个人银行
 		bankType= "jjk";
 	}else if(itemType==3){//信用卡
 		bankType= "xyk";
-	}else if(itemType==1){//企业银行
+	}else if(itemType==1){//企业银行，隐藏限额
 		$(".bank-limit-wrap").hide();
+		//工商银行u盾提示
+		if(bankname=='icbc'){
+			$(".red_tips").find("h2").html("温馨提示：请登录有提交权限的企业U盾后才可正常进入工商银行企业网银。");
+			$(".red_tips").show();
+		}
 		return;
 	}
 	$("."+bankname+"-"+bankType).removeClass("hide");
