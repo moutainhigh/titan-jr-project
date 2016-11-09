@@ -34,12 +34,27 @@
     
     <select id="queryRateConfigList" resultType="com.fangcang.titanjr.entity.TitanRateConfig"
 					parameterType="com.fangcang.titanjr.entity.parameter.TitanRateConfigParam">
+    	SELECT * FROM t_tfs_rateconfig 
+    	<where>
+    	  <if test="userid !=null">
+    	    userId= #{userid}
+    	  </if>
+    	  <if test="bustype !=null">
+    	    bustype=#{bustype}
+    	  </if>
+    	  <if test="rateconfigid !=null">
+    	    rateconfigid=#{rateconfigid}
+    	  </if>
+    	  
+    	</where>
     	
-    	SELECT t1.* FROM t_tfs_rateconfig t1,(SELECT t1.itemid FROM t_tfs_cashierdeskitem t1 , t_tfs_cashierdesk t2 
+    	<!-- SELECT t1.* FROM t_tfs_rateconfig t1,(SELECT t1.itemid FROM t_tfs_cashierdeskitem t1 , t_tfs_cashierdesk t2 
 		WHERE t1.deskid = t2.deskid AND t2.userId= #{userid} AND t1.itemtype = #{cashierItemType}) 
-		t2 WHERE t1.cashieritemid = t2.itemid LIMIT 1
+		t2 WHERE t1.cashieritemid = t2.itemid LIMIT 1 -->
     	
     </select>
+    
+    
     
      <select id="queryRateConfigByWithdraw" resultType="com.fangcang.titanjr.entity.TitanRateConfig"
 					parameterType="com.fangcang.titanjr.entity.parameter.TitanRateConfigParam">	
@@ -80,4 +95,8 @@
         </set>
         where rateconfigid = #{rateconfigid,jdbcType=INTEGER}
     </update>
+    
+    <select id="queryAllUserId" resultType="java.lang.String">
+      select distinct userid from t_tfs_rateconfig
+    </select>
 </mapper>

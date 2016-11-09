@@ -21,4 +21,6 @@ public interface TitanRateConfigDao {
 	int insertRateRecord(TitanRateRecord titanRateRecord);
 	
 	int deleteRateRecordByOrderNo(String orderNo);
+	
+	List<String> queryAllUserId();
 }

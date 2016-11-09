@@ -53,4 +53,6 @@ public interface TitanFinancialRateService
 	 * @return: CreateRateRecordResponse
 	 */
 	public CreateRateRecordResponse createRateRecord(CreateRateRecordRequest req);
+	
+	public void initRateData();
 }

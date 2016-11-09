@@ -1,16 +1,21 @@
 package com.fangcang.titanjr.common.enums;
 
+import com.fangcang.util.StringUtil;
+
 public enum BusTypeEnum {
 
-	B2B_RATE(3, "企业网银"), B2C_RATE(4, "个人网银"), CREDIT_RATE(5, "信用卡"), QR_RATE(6, "第三方支付"),WITHDRAW_RATE(7,"提现手续费");
+	B2B_RATE(3, "企业网银","1"), B2C_RATE(4, "个人网银","2"), CREDIT_RATE(5, "信用卡","3"), QR_RATE(6, "第三方支付","9"),WITHDRAW_RATE(7,"提现手续费","0");
 	
 	public int type;
 	
 	public String msg;
 	
-	private BusTypeEnum(int type,String msg){
+	public String cashierItemType;
+	
+	private BusTypeEnum(int type,String msg,String cashierItemType){
 		this.type=type;
 		this.msg=msg;
+		this.cashierItemType= cashierItemType;
 	}
 	
 	public boolean isB2B(){
@@ -33,4 +38,16 @@ public enum BusTypeEnum {
 		return this.type==WITHDRAW_RATE.type;
 	}
 	
+	public static Integer getBusTypeByItemType(String cashierItemType){
+		if(!StringUtil.isValidString(cashierItemType)){
+			return null;
+		}
+		
+		for(BusTypeEnum bus :BusTypeEnum.values()){
+			if(bus.cashierItemType.equals(cashierItemType)){
+				return bus.type;
+			}
+		}
+		return null;
+	}
 }

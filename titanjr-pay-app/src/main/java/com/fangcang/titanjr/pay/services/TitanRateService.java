@@ -49,9 +49,9 @@ public class TitanRateService {
 		RateConfigRequest req = new RateConfigRequest();
 		req.setUserId(computeReq.getUserId());
 		req.setPayType(computeReq.getItemTypeEnum());
-
 		RateConfigResponse rateConfigResponse = titanFinancialRateService
 				.getRateConfigInfos(req);
+		
 
 		if (rateConfigResponse != null
 				&& rateConfigResponse.getRateInfoList() != null
@@ -204,4 +204,8 @@ public class TitanRateService {
 		return paymentRequest;
 	}
 
+	
+	public void initRateData(){
+		
+	}
 }
