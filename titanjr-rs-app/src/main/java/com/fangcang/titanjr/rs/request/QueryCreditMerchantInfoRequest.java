@@ -21,7 +21,12 @@ public class QueryCreditMerchantInfoRequest extends BaseRequest {
 	 */
 	@NotNull
 	private String userorderid;
-
+	/**
+	 * 	机构码 融数分配
+	 */
+	@NotNull
+	private String rootinstcd;
+	
 	public String getUserorderid() {
 		return userorderid;
 	}
@@ -30,10 +35,20 @@ public class QueryCreditMerchantInfoRequest extends BaseRequest {
 		this.userorderid = userorderid;
 	}
 
+	public String getRootinstcd() {
+		return rootinstcd;
+	}
+
+	public void setRootinstcd(String rootinstcd) {
+		this.rootinstcd = rootinstcd;
+	}
+
 	@Override
 	public void check() throws RSValidateException {
 		//校验不能为空
 		RequestValidationUtil.check(this);
+		RequestValidationUtil.checkNotEmpty(getUserid(), "userid");
+		RequestValidationUtil.checkNotEmpty(getProductid(), "productid");
 	}
 	
 }

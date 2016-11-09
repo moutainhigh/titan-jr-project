@@ -36,6 +36,11 @@ import com.Rop.api.response.WheatfieldOrderMixserviceStoploanResponse;
 import com.Rop.api.response.WheatfieldOrderServiceAgreementconfirmResponse;
 import com.Rop.api.response.WheatfieldOrderServiceNewloanapplyResponse;
 import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.rs.dto.ControllData;
+import com.fangcang.titanjr.rs.dto.CooperationCompanyInfo;
+import com.fangcang.titanjr.rs.dto.CreditApplicationJsonData;
+import com.fangcang.titanjr.rs.dto.MainBusinessData;
+import com.fangcang.titanjr.rs.dto.NewLoanApplyJsonData;
 
 /**
  * Created by zhaoshan on 2016/10/9.
@@ -539,7 +544,7 @@ public class LoanDemoTest {
    
     //测试构造授信申请所需json串
     public  static String testGetCreditJsonData(){
-        CreditJsonData creditJsonData = new CreditJsonData();
+    	CreditApplicationJsonData creditJsonData = new CreditApplicationJsonData();
         creditJsonData.setRootInstCd("M000016");
         creditJsonData.setPassportNumber("27889998987");///*****************无法提供
         creditJsonData.setWorkPhone("0755-88884444");
@@ -658,7 +663,7 @@ public class LoanDemoTest {
      */
     public static String getMoneyCreditJsonData(){
     	
-    	MoneyCreditJsonData moneyCreditJsonData = new MoneyCreditJsonData();
+    	NewLoanApplyJsonData moneyCreditJsonData = new NewLoanApplyJsonData();
     	moneyCreditJsonData.setLoanApplicateName("陈晓新");
     	moneyCreditJsonData.setInParty("深圳市五星科技有限公司");
     	moneyCreditJsonData.setUserOrderId("201610261000123654");

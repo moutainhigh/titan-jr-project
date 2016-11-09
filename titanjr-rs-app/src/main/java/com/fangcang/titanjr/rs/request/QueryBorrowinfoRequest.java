@@ -17,6 +17,11 @@ public class QueryBorrowinfoRequest extends  BaseRequest {
 	 */
 	private static final long serialVersionUID = -2266941927069913137L;
 	/**
+	 * 	机构码 融数分配
+	 */
+	@NotNull
+	private String rootinstcd;
+	/**
 	 * 用户订单ID
 	 */
 	@NotNull
@@ -36,6 +41,8 @@ public class QueryBorrowinfoRequest extends  BaseRequest {
 	public void check() throws RSValidateException {
 		//校验不能为空
 		RequestValidationUtil.check(this);
+		RequestValidationUtil.checkNotEmpty(getUserid(), "userid");
+		RequestValidationUtil.checkNotEmpty(getProductid(), "productid");
 	}
 	
 }

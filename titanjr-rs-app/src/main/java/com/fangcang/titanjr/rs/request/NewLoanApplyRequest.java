@@ -17,6 +17,11 @@ public class NewLoanApplyRequest extends BaseRequest{
 	 */
 	private static final long serialVersionUID = -8881755759081181264L;
 	/**
+	 * 	机构码 融数分配
+	 */
+	@NotNull
+	private String rootinstcd;
+	/**
 	 * 	交易流水
 	 */
 	@NotNull
@@ -69,8 +74,18 @@ public class NewLoanApplyRequest extends BaseRequest{
 	public void check() throws RSValidateException {
 		//校验不能为空
 		RequestValidationUtil.check(this);
-		
+		RequestValidationUtil.checkNotEmpty(getUserid(), "userid");
+		RequestValidationUtil.checkNotEmpty(getProductid(), "productid");
 	}
+	
+	public String getRootinstcd() {
+		return rootinstcd;
+	}
+
+	public void setRootinstcd(String rootinstcd) {
+		this.rootinstcd = rootinstcd;
+	}
+
 	public String getUserorderid() {
 		return userorderid;
 	}

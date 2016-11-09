@@ -22,6 +22,11 @@ public class OrderMixserviceCreditapplicationRequest extends BaseRequest{
 	@NotNull
 	private String userorderid;
 	/**
+	 * 	机构码 融数分配
+	 */
+	@NotNull
+	private String rootinstcd;
+	/**
 	 * 申请金额 单位:分
 	 */
 	@NotNull
@@ -74,8 +79,18 @@ public class OrderMixserviceCreditapplicationRequest extends BaseRequest{
 	public void check() throws RSValidateException {
 		//校验不能为空
 		RequestValidationUtil.check(this);
+		RequestValidationUtil.checkNotEmpty(getUserid(), "userid");
 		
 	}
+	
+	public String getRootinstcd() {
+		return rootinstcd;
+	}
+
+	public void setRootinstcd(String rootinstcd) {
+		this.rootinstcd = rootinstcd;
+	}
+
 	public String getUserorderid() {
 		return userorderid;
 	}

@@ -28,7 +28,8 @@ public class QueryUserInitiativeRepaymentRequest extends BaseRequest {
 	
 	@Override
 	public void check() throws RSValidateException {
-		RequestValidationUtil.checkNotEmpty(this.getUserid(), "userid");
+		RequestValidationUtil.checkNotEmpty(getUserid(), "userid");
+		RequestValidationUtil.checkNotEmpty(getProductid(), "productid");
 		RequestValidationUtil.check(this);
 	}
 

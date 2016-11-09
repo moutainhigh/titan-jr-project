@@ -1,10 +1,14 @@
 package com.fangcang.titanjr.rs.manager.impl;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.Rop.api.ApiException;
+import com.Rop.api.domain.UserRepayment;
 import com.Rop.api.request.WheatfieldInterestRepaymentQueryborrowinfoRequest;
 import com.Rop.api.request.WheatfieldInterestRepaymentQueryuserinitiativerepaymentRequest;
 import com.Rop.api.request.WheatfieldInterestRepaymentQueryuserrepaymentRequest;
@@ -29,6 +33,7 @@ import com.Rop.api.response.WheatfieldOrderServiceAgreementconfirmResponse;
 import com.Rop.api.response.WheatfieldOrderServiceNewloanapplyResponse;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.rs.dto.TUserRepayment;
 import com.fangcang.titanjr.rs.manager.RSCreditManager;
 import com.fangcang.titanjr.rs.request.NewLoanApplyRequest;
 import com.fangcang.titanjr.rs.request.OprsystemCreditCompanyRequest;
@@ -559,8 +564,7 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(errorMsg);
 				} else {
 					response.setSuccess(true);
-					//TODO 
-					//rop2QueryLoanApplyResponse(response,rsp);
+					rop2QueryUserRepaymentResponse(response,rsp);
 					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
@@ -577,8 +581,22 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			response.setReturnMsg(RSInvokeErrorEnum.UNKNOWN_ERROR.returnMsg);
 			log.error("queryUserRepayment方法(查询贷款的还款状态及历史)调用异常,参数QueryUserRepaymentRequest:"+Tools.gsonToString(request),e);
 		}
-		
 		return response;
 	}
-	
+	/**
+	 * 用户还款信息
+	 * @param response
+	 * @param rsp
+	 */
+	private void rop2QueryUserRepaymentResponse(QueryUserRepaymentResponse response,WheatfieldInterestRepaymentQueryuserrepaymentResponse rsp){
+		List<TUserRepayment> tUserRepaymentList = new ArrayList<TUserRepayment>();
+		if(rsp.getUserrepayments()!=null&&rsp.getUserrepayments().size()>0){
+			for(UserRepayment item : rsp.getUserrepayments()){
+				TUserRepayment entity = new TUserRepayment();
+				MyBeanUtil.copyBeanProperties(entity, item);
+				tUserRepaymentList.add(entity);
+			}
+		}
+		response.settUserRepaymentList(tUserRepaymentList);
+	}
 }

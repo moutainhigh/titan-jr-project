@@ -28,11 +28,27 @@ public class QueryUserRepaymentRequest extends BaseRequest {
 	@NotNull
 	private String userorderid;
 	
-	
 	@Override
 	public void check() throws RSValidateException {
 		RequestValidationUtil.checkNotEmpty(this.getUserid(), "userid");
+		RequestValidationUtil.checkNotEmpty(getProductid(), "productid");
 		RequestValidationUtil.check(this);
+	}
+
+	public String getRootinstcd() {
+		return rootinstcd;
+	}
+
+	public void setRootinstcd(String rootinstcd) {
+		this.rootinstcd = rootinstcd;
+	}
+
+	public String getUserorderid() {
+		return userorderid;
+	}
+
+	public void setUserorderid(String userorderid) {
+		this.userorderid = userorderid;
 	}
 	
 }
