@@ -5,7 +5,7 @@ package com.fangcang.titanjr.rs.response;
  * @author luoqinglong
  * @2016年10月31日
  */
-public class OrderMixserviceCreditmerchantinfoqueryResponse extends BaseResponse{
+public class QueryCreditMerchantInfoResponse extends BaseResponse{
 	
 	/**
 	 * 

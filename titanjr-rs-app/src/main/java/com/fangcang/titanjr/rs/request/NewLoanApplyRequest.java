@@ -10,7 +10,7 @@ import com.fangcang.titanjr.common.util.RequestValidationUtil;
  * @author luoqinglong
  * @2016年10月31日
  */
-public class OrderServiceNewloanapplyRequest extends BaseRequest{
+public class NewLoanApplyRequest extends BaseRequest{
 	
 	/**
 	 * 

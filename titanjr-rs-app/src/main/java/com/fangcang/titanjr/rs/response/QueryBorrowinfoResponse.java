@@ -3,8 +3,12 @@ package com.fangcang.titanjr.rs.response;
 import com.Rop.api.domain.BorrowRepayment;
 import com.fangcang.titanjr.rs.dto.TBorrowRepayment;
 import com.fangcang.util.MyBeanUtil;
-
-public class InterestRepaymentQueryborrowinfoResponse extends BaseResponse {
+/**
+ * 查询应还款信息
+ * @author luoqinglong
+ * @2016年11月8日
+ */
+public class QueryBorrowinfoResponse extends BaseResponse {
 	
 	/**
 	 * 

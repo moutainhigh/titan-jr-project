@@ -12,23 +12,27 @@ import com.Rop.api.DefaultRopClient;
 import com.Rop.api.request.FsFileUploadRequest;
 import com.Rop.api.request.FsFileurlGetRequest;
 import com.Rop.api.request.WheatfieldInterestRepaymentQueryborrowinfoRequest;
-import com.Rop.api.request.WheatfieldInterestRepaymentQuerypartyinitiativerepaymentRequest;
+import com.Rop.api.request.WheatfieldInterestRepaymentQueryuserinitiativerepaymentRequest;
 import com.Rop.api.request.WheatfieldInterestRepaymentQueryuserrepaymentRequest;
 import com.Rop.api.request.WheatfieldInterestRepaymentUserinitiativerepamentRequest;
 import com.Rop.api.request.WheatfieldOprsystemCreditCompanyRequest;
 import com.Rop.api.request.WheatfieldOrderMixserviceCreditapplicationRequest;
 import com.Rop.api.request.WheatfieldOrderMixserviceCreditmerchantinfoqueryRequest;
+import com.Rop.api.request.WheatfieldOrderMixserviceQueryloanapplyRequest;
+import com.Rop.api.request.WheatfieldOrderMixserviceStoploanRequest;
 import com.Rop.api.request.WheatfieldOrderServiceAgreementconfirmRequest;
 import com.Rop.api.request.WheatfieldOrderServiceNewloanapplyRequest;
 import com.Rop.api.response.FsFileUploadResponse;
 import com.Rop.api.response.FsFileurlGetResponse;
 import com.Rop.api.response.WheatfieldInterestRepaymentQueryborrowinfoResponse;
-import com.Rop.api.response.WheatfieldInterestRepaymentQuerypartyinitiativerepaymentResponse;
+import com.Rop.api.response.WheatfieldInterestRepaymentQueryuserinitiativerepaymentResponse;
 import com.Rop.api.response.WheatfieldInterestRepaymentQueryuserrepaymentResponse;
 import com.Rop.api.response.WheatfieldInterestRepaymentUserinitiativerepamentResponse;
 import com.Rop.api.response.WheatfieldOprsystemCreditCompanyResponse;
 import com.Rop.api.response.WheatfieldOrderMixserviceCreditapplicationResponse;
 import com.Rop.api.response.WheatfieldOrderMixserviceCreditmerchantinfoqueryResponse;
+import com.Rop.api.response.WheatfieldOrderMixserviceQueryloanapplyResponse;
+import com.Rop.api.response.WheatfieldOrderMixserviceStoploanResponse;
 import com.Rop.api.response.WheatfieldOrderServiceAgreementconfirmResponse;
 import com.Rop.api.response.WheatfieldOrderServiceNewloanapplyResponse;
 import com.fangcang.titanjr.common.util.Tools;
@@ -347,6 +351,37 @@ public class LoanDemoTest {
         return strError;
     }
     
+    /***
+     * 终止贷款
+     * ruixue.wheatfield.order.mixservice.stoploan 
+     */
+    public static String stoploan(){
+    	String strError = null;
+    	WheatfieldOrderMixserviceStoploanRequest request = new WheatfieldOrderMixserviceStoploanRequest();
+    	request.setUserid("TJM10000087");	
+    	request.setRootinstcd("M000016");										//机构码
+    	request.setUserorderid("2016110215302100001");  						//	商户id
+    	request.setOper(0);												//2. 续议 0.拒绝
+    	try {
+    		WheatfieldOrderMixserviceStoploanResponse rsp = ropClient.execute(request,session);
+    		 System.out.println("返回报文: \n" + rsp.getBody());
+    		 System.out.println("rsp:" + Tools.gsonToString(rsp));
+             if (rsp.isSuccess() != true) {
+                 if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+                     strError = rsp.getSubMsg();
+                 } else {
+                     strError = rsp.getMsg();
+                 }
+             }else{
+            	 strError = rsp.getErrorCode();
+             }
+		} catch (Exception e) {
+			 System.out.println(e);
+	         return "error";
+		}
+    	return strError;
+    }
+    
     /**
      * 主动还款
      * ruixue.wheatfield.interest.repayment.userinitiativerepament
@@ -384,21 +419,23 @@ public class LoanDemoTest {
      */
     public static String doqueryuserinitiativerepayment(String session){
     	String strError = null;
-    	WheatfieldInterestRepaymentQuerypartyinitiativerepaymentRequest request = new WheatfieldInterestRepaymentQuerypartyinitiativerepaymentRequest();
+    	WheatfieldInterestRepaymentQueryuserinitiativerepaymentRequest request = new WheatfieldInterestRepaymentQueryuserinitiativerepaymentRequest();
     	request.setUserid("TJM10000087");	
     	
     	request.setProductid("P000070");										//产品id
     	request.setRootinstcd("M000016");										//机构码
     	request.setUserorderid("2016110215302100001");  						//用户订单id
     	try {
-    		WheatfieldInterestRepaymentQuerypartyinitiativerepaymentResponse rsp = ropClient.execute(request,session);
+    		WheatfieldInterestRepaymentQueryuserinitiativerepaymentResponse rsp = ropClient.execute(request,session);
     		 System.out.println("返回报文: \n" + rsp.getBody());
              if (rsp.isSuccess() != true) {
                  if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
-                     strError = rsp.getIs_success();
+                     strError = rsp.getSubMsg();
                  } else {
                      strError = rsp.getMsg();
                  }
+             }else{
+            	 strError = rsp.getIs_success();
              }
 		} catch (Exception e) {
 			 System.out.println(e);
@@ -412,16 +449,32 @@ public class LoanDemoTest {
      * ruixue.wheatfield.order.mixservice.queryloanapply
      */
     public static String doqueryloanapply(){
-    	return null;
+    	String strError = null;
+    	WheatfieldOrderMixserviceQueryloanapplyRequest request = new WheatfieldOrderMixserviceQueryloanapplyRequest();
+    	request.setUserid("TJM10000087");	
+    	request.setRootinstcd("M000016");										//机构码
+    	request.setUserorderid("2016110215302100001");  						//	商户id
+    	try {
+    		WheatfieldOrderMixserviceQueryloanapplyResponse rsp = ropClient.execute(request,session);
+    		 System.out.println("返回报文: \n" + rsp.getBody());
+    		 System.out.println("rsp:" + Tools.gsonToString(rsp));
+             if (rsp.isSuccess() != true) {
+                 if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+                     strError = rsp.getSubMsg();
+                 } else {
+                     strError = rsp.getMsg();
+                 }
+             }else{
+            	 strError = rsp.getErrorCode();
+             }
+		} catch (Exception e) {
+			 System.out.println(e);
+	         return "error";
+		}
+    	return strError;
     }
     
-    /***
-     * 终止贷款
-     * ruixue.wheatfield.order.mixservice.stoploan 
-     */
-    public static String stoploan(){
-    	return null;
-    }
+   
     /***
      * 查询应还款信息
      * ruixue.wheatfield.interest.repayment.queryborrowinfo
