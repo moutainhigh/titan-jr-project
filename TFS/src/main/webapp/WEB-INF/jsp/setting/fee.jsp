@@ -28,28 +28,24 @@
 			<tr class="TFS_setth">
 				<td>付款方式</td>
 				<td>基础费率</td>
-				<td>执行费率（至2016.10.31）</td>
+				<td>执行费率（至2016.12.31）</td>
 			</tr>
-			<tr class="TFS_settd">
-				<td><strong>PC端个人网银</strong></td>
-				<td><strong>0.30%</strong></td>
-				<td><strong class="c_f60_1">免费</strong></td>
-			</tr>
-			<tr class="TFS_settd">
-				<td><strong>PC端企业网银</strong></td>
-				<td><strong>10元/笔</strong></td>
-				<td><strong class="c_f60_1">免费</strong></td>
-			</tr>
-			<tr class="TFS_settd">
-				<td><strong>PC端信用卡</strong></td>
-				<td><strong>0.30%</strong></td>
-				<td><strong class="c_f60_1">免费</strong></td>
-			</tr>
-			<tr class="TFS_settd">
-				<td><strong>提现</strong></td>
-				<td><strong>5元/笔</strong></td>
-				<td><strong class="c_f60_1">免费</strong></td>
-			</tr>
+			<c:forEach items="${rateInfoList}" var="rateInfo">
+				<tr class="TFS_settd">
+					<td><strong>${rateInfo.description }</strong></td>
+					<td><strong>${rateInfo.standrate }
+						<c:if test="${rateInfo.ratetype==1}">%</c:if>
+						<c:if test="${rateInfo.ratetype==2}">元/笔</c:if>
+					</strong></td>
+					<td><strong class="c_f60_1">
+						<c:if test="${rateInfo.executionrate == 0.0}">免费</c:if>
+						<c:if test="${rateInfo.executionrate != 0.0}">${rateInfo.executionrate}
+							<c:if test="${rateInfo.ratetype==1}">%</c:if>
+							<c:if test="${rateInfo.ratetype==2}">元/笔</c:if>
+						</c:if>
+					</strong></td>
+				</tr>
+			</c:forEach>
 		</table>
 	</div>
 </div>

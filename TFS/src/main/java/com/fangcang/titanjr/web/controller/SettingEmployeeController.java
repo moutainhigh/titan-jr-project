@@ -5,6 +5,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fangcang.titanjr.common.enums.BusTypeEnum;
+import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
+import com.fangcang.titanjr.dto.bean.TitanRateDto;
+import com.fangcang.titanjr.dto.request.*;
+import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.service.TitanFinancialRateService;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -28,22 +34,6 @@ import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
-import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
-import com.fangcang.titanjr.dto.request.SaaSUserRoleRequest;
-import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
-import com.fangcang.titanjr.dto.request.UpdateUserRequest;
-import com.fangcang.titanjr.dto.request.UserFreezeRequest;
-import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
-import com.fangcang.titanjr.dto.request.UserRegisterRequest;
-import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
-import com.fangcang.titanjr.dto.response.CancelPermissionResponse;
-import com.fangcang.titanjr.dto.response.RoleUserInfoPageResponse;
-import com.fangcang.titanjr.dto.response.SaaSUserRoleResponse;
-import com.fangcang.titanjr.dto.response.UpdateUserResponse;
-import com.fangcang.titanjr.dto.response.UserFreezeResponse;
-import com.fangcang.titanjr.dto.response.UserInfoResponse;
-import com.fangcang.titanjr.dto.response.UserRegisterResponse;
-import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
@@ -70,6 +60,10 @@ public class SettingEmployeeController extends BaseController{
     
     @Autowired
     private TitanFinancialOrganService organService;
+
+	@Autowired
+	private TitanFinancialRateService titanFinancialRateService;
+
 	/**
 	 * 左侧菜单（本地调试使用）
 	 * @return
@@ -422,7 +416,33 @@ public class SettingEmployeeController extends BaseController{
 	 */
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
 	@RequestMapping("/fee")
-	public String fee(){
+	public String fee(HttpServletRequest request,Model model){
+		List<TitanRateDto> rateInfoList = new ArrayList<TitanRateDto>();
+		RateConfigRequest rateConfigRequest = new RateConfigRequest();
+		rateConfigRequest.setUserId(String.valueOf(getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID)));
+		rateConfigRequest.setPayType(CashierItemTypeEnum.B2B_ITEM);
+		RateConfigResponse rateConfigResponse = null;
+		rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
+		rateInfoList.addAll(rateConfigResponse.getRateInfoList());
+		rateConfigRequest.setPayType(CashierItemTypeEnum.B2C_ITEM);
+		rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
+		rateInfoList.addAll(rateConfigResponse.getRateInfoList());
+		rateConfigRequest.setPayType(CashierItemTypeEnum.CREDIT_ITEM);
+		rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
+		rateInfoList.addAll(rateConfigResponse.getRateInfoList());
+		rateConfigRequest.setPayType(CashierItemTypeEnum.QR_ITEM);
+		rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
+		rateInfoList.addAll(rateConfigResponse.getRateInfoList());
+		rateConfigRequest.setPayType(null);
+		rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
+		rateInfoList.addAll(rateConfigResponse.getRateInfoList());
+		model.addAttribute("rateInfoList", rateInfoList);
+		for(TitanRateDto rateDto : rateInfoList){
+			rateDto.setDescription(rateDto.getDescription().replace("费率",""));
+			if (!rateDto.getBustype().equals(BusTypeEnum.QR_RATE.type)){
+				rateDto.setDescription(rateDto.getDescription().replace("支付",""));
+			}
+		}
 		return "setting/fee";
 	}
 	
