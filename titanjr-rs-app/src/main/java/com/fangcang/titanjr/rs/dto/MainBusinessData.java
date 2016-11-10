@@ -1,4 +1,4 @@
-package test.fangcang.titanjr.rs.invoker.loancredit;
+package com.fangcang.titanjr.rs.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

@@ -1,18 +1,18 @@
-package test.fangcang.titanjr.rs.invoker.loancredit;
+package com.fangcang.titanjr.rs.dto;
 
 import java.io.Serializable;
 
 /**
- * 贷款申请的jsondata
+ * 个人申请贷款jsondata
  * @author luoqinglong
- * @2016年10月26日
+ * @2016年11月9日
  */
-public class MoneyCreditJsonData implements Serializable{
+public class NewLoanApplyJsonData implements Serializable {
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8432554941784930837L;
+	private static final long serialVersionUID = 3835243369426563201L;
 	private String loanApplicateName;//申请人
 	private String inParty;//收款方
 	private String userOrderId;//订单编号
@@ -92,6 +92,12 @@ public class MoneyCreditJsonData implements Serializable{
 	public void setReceiptAddress(String receiptAddress) {
 		this.receiptAddress = receiptAddress;
 	}
+	public String getOrderStatus() {
+		return orderStatus;
+	}
+	public void setOrderStatus(String orderStatus) {
+		this.orderStatus = orderStatus;
+	}
 	public String getCode() {
 		return code;
 	}
@@ -134,13 +140,6 @@ public class MoneyCreditJsonData implements Serializable{
 	public void setLoanTerm(String loanTerm) {
 		this.loanTerm = loanTerm;
 	}
-	public String getOrderStatus() {
-		return orderStatus;
-	}
-	public void setOrderStatus(String orderStatus) {
-		this.orderStatus = orderStatus;
-	}
-	
 	
 	
 }

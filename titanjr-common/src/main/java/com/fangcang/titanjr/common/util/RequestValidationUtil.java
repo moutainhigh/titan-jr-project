@@ -3,9 +3,14 @@ package com.fangcang.titanjr.common.util;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.exception.RSValidateException;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * 请求参数常规校验工具类
@@ -36,7 +41,28 @@ public class RequestValidationUtil {
 			}
 		}
     }
-
+    /**
+     * 根据注解检查属性值是否非空
+     * @param obj
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws RSValidateException
+     */
+    public static void check(Object obj) throws RSValidateException{
+		Field[] f = obj.getClass().getDeclaredFields();
+		for(Field fieldItem : f){
+			NotNull notNull = fieldItem.getAnnotation(NotNull.class);
+			if(notNull!=null){//有注解，开始检查
+				try {
+					RequestValidationUtil.checkNotEmpty(fieldItem.get(obj), fieldItem.getName());
+				} catch (IllegalArgumentException e) {
+					throw new RSValidateException(obj.getClass()+"->"+fieldItem.getName()+",error get ",e);
+				} catch (IllegalAccessException e) {
+					throw new RSValidateException(obj.getClass()+"->"+fieldItem.getName()+",error get ",e);
+				}
+			}
+		}
+	}
     /**
      * 长度校验，校验字段不超过最大长度
      *
