@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.LoanCreditOrderDao">
+	
+	
+    <resultMap id="loanCreditOrder" type="com.fangcang.titanjr.entity.LoanCreditOrder">
+        <result property="orderNo" column="orderno"/>
+        <result property="orgCode" column="orgcode"/>
+        <result property="dayLimit" column="daylimit"/>
+        <result property="amount" column="amount"/>
+        <result property="actualAmount" column="actualamount"/>
+        <result property="reqTime" column="reqtime"/>
+        <result property="rateTem" column="ratetem"/>
+        <result property="rspId" column="rspid"/>
+        <result property="rsorgId" column="rsorgid"/>
+        <result property="createTime" column="createtime"/>
+        <result property="urlKey" column="urlkey"/>
+        <result property="status" column="status"/>
+        <result property="assureType" column="assuretype"/>
+        <result property="firstAuditTime" column="firstaudittime"/>
+        <result property="lastAuditTime" column="lastaudittime"/>
+        <result property="auditPass" column="auditpass"/>
+        <result property="reqJson" column="reqjson"/>
+    </resultMap>
+
+
+    <select id="queryloanCreditOrder" resultMap="loanCreditOrder"
+            parameterType="com.fangcang.titanjr.entity.LoanCreditOrder">
+            select `id`, 
+            `orderno`, 
+            `orgcode`, 
+            `daylimit`, 
+            `amount`, 
+            `actualamount`,
+             `reqtime`,
+              `ratetem`, 
+              `rspid`,
+               `rsorgid`, 
+               `createtime`, 
+               `urlkey`,
+                `status`,
+                 `assuretype`,
+                  `firstaudittime`,
+                   `lastaudittime`,
+                    `auditpass`,
+                     `reqjson`
+                     form t_loan_creditorder
+	        <where>
+	            <if test="userId !=null">
+	                and orderno = #{orderNo}
+	            </if>
+	            <if test="companyName !=null">
+	                and status = #{status}
+	            </if>
+	            <if test="businessLicense !=null">
+	                and orgcode = #{orgCode}
+	            </if>
+	        </where>
+
+    </select>
+
+    <update id="updateLoanCreditOrder" parameterType="com.fangcang.titanjr.entity.LoanCreditOrder">
+        update t_loan_creditorder
+        <set>
+            <if test="dayLimit != null">daylimit= #{dayLimit},</if>
+            <if test="amount != null">amount= #{amount},</if>
+            <if test="actualAmount != null">actualamount= #{actualAmount},</if>
+            <if test="reqtTme != null">reqttme= #{reqTime},</if>
+            <if test="rateTem != null">ratetem= #{rateTem},</if>
+            <if test="rspId != null">rspid= #{rspId},</if>
+            <if test="rsorgId != null">rsorgid= #{rsorgId},</if>
+            <if test="createTime != null">createtime= #{createTime},</if>
+            <if test="urlKey != null">urlkey= #{urlKey},</if>
+            <if test="status != null">  status= #{status},  </if>
+            <if test="assureType != null">assuretype=#{assureType},</if>
+            <if test="firstAuditTime != null">firstaudittime= #{firstAuditTime},</if>
+            <if test="lastAuditTime != null">lastaudittime= #{lastAuditTime},</if>
+            <if test="auditPass != null">auditpass= #{auditPass},</if>
+            <if test="reqJson != null">reqjson= #{reqJson},</if>
+            <if test="orderNo != null">orderno= #{orderNo}</if>
+        </set>
+        <where>
+            orderno = #{orderNo} <!--orderNo一定不为空-->
+        </where>
+    </update>
+
+    <insert id="insertLoanCreditOrder" parameterType="com.fangcang.titanjr.entity.LoanCreditOrder">
+	  INSERT INTO `t_loan_creditorder` (
+	   `orderno`, 
+	   `orgcode`, 
+	   `daylimit`, 
+	   `amount`, 
+	   `actualamount`, 
+	   `reqtime`, 
+	   `ratetem`, 
+	   `rspid`, 
+	   `rsorgid`, 
+	   `createtime`, 
+	   `urlkey`, 
+	   `status`,
+	    `assuretype`, 
+	    `firstaudittime`,
+	     `lastaudittime`, 
+	     `auditpass`, 
+	     `reqjson`
+     )
+     VALUES
+     	(
+     		#{orderNo},
+     		#{orgCode},
+     		#{dayLimit},
+     		#{amount},
+     		#{actualAmount},
+     		#{reqTime},
+     		#{rateTem},
+     		#{rspId},
+     		#{rsorgId},
+     		#{createTime},
+     		#{urlKey},
+     		#{status},
+     		#{assureType},
+     		#{firstAuditTime},
+     		#{lastAuditTime},
+     		#{auditPass},
+     		#{reqJson}
+     	)
+    </insert>
+
+</mapper>
