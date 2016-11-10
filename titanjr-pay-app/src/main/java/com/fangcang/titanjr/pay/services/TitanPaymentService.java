@@ -283,11 +283,7 @@ public class TitanPaymentService {
 			        	
 			        	boolean paySuccess = OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid());
 			        	if(transOrderDTO.getAmount() !=null){
-			        		String amount = transOrderDTO.getAmount().toString();
-			        		if(transOrderDTO.getReceivedfee()!=null){
-			        			amount = new BigDecimal(transOrderDTO.getAmount()).add(new BigDecimal(transOrderDTO.getReceivedfee())).toString(); 
-			        		}
-		        			rechargeResultConfirmRequest.setPayAmount(amount);
+		        			rechargeResultConfirmRequest.setPayAmount(transOrderDTO.getAmount().toString());
 		        		}
 			        	rechargeResultConfirmRequest.setOrderPayTime(DateUtil.sdf5.format(transOrderDTO.getCreatetime()));
 			        	rechargeResultConfirmRequest.setPayMsg("付款失败");
