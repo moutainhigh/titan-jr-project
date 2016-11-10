@@ -2,8 +2,12 @@ package com.fangcang.titanjr.rs.response;
 
 import java.util.List;
 
-import com.Rop.api.domain.FileUrl;
-
+import com.fangcang.titanjr.rs.dto.TFileUrl;
+/**
+ * 获取url_key
+ * @author luoqinglong
+ * @2016年11月10日
+ */
 
 public class GetUrlKeyResponse extends BaseResponse {
 	
@@ -14,12 +18,13 @@ public class GetUrlKeyResponse extends BaseResponse {
 	/**
 	 * 文件存储信息
 	 */
-	List<FileUrl> fileUrlList;
-	public List<FileUrl> getFileUrlList() {
-		return fileUrlList;
+	List<TFileUrl> tFileUrlList;
+	
+	public List<TFileUrl> gettFileUrlList() {
+		return tFileUrlList;
 	}
-	public void setFileUrlList(List<FileUrl> fileUrlList) {
-		this.fileUrlList = fileUrlList;
+	public void settFileUrlList(List<TFileUrl> tFileUrlList) {
+		this.tFileUrlList = tFileUrlList;
 	}
 	
 	

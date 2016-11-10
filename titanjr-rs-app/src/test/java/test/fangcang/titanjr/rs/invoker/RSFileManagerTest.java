@@ -1,7 +1,6 @@
 package test.fangcang.titanjr.rs.invoker;
 
 import java.text.ParseException;
-import java.util.Date;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.Before;
@@ -27,7 +26,7 @@ public class RSFileManagerTest extends GenericTest{
 		GetUrlKeyRequest getUrlKeyRequest = new GetUrlKeyRequest();
 		getUrlKeyRequest.setType(58);
 		try {
-			getUrlKeyRequest.setInvoiceDate(DateUtil.sdf.parse("2016-08-13"));
+			getUrlKeyRequest.setInvoice_date(DateUtil.sdf.parse("2016-08-13"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -35,7 +34,7 @@ public class RSFileManagerTest extends GenericTest{
 		System.out.println("GetUrlKeyResponse:"+ToStringBuilder.reflectionToString(response));
 		/***********************/
 		GetFileUrlRequest getFileUrlRequest = new GetFileUrlRequest();
-		getFileUrlRequest.setUrlKey(response.getFileUrlList().get(0).getUrl_key());
+		getFileUrlRequest.setUrlKey(response.gettFileUrlList().get(0).getUrl_key());
 		GetFileUrlResponse getFileUrlResponse = rsFileManager.getFileUrl(getFileUrlRequest);
 		System.out.println("getFileUrlResponse:"+getFileUrlResponse.getFile_url());
 	}
