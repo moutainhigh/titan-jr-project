@@ -1,261 +1,292 @@
 package com.fangcang.titanjr.dto.bean;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by zhaoshan on 2016/11/4.
  */
 public class LoanCreditCompany {
-    private Long id;
-    private String creditorderNo;
-    private String name;
-    private Date startDate;
-    private String regAddress;
-    private String officeAddress;
-    private Integer orgSize;
-    private String license;
-    private String taxRegNo;
-    private String orgCode;
-    private String regAccount;
-    private Date regDate;
-    private Integer empSize;
-    private String legalName;
-    private Integer legalceType;
-    private String legalNo;
-    private String contactName;
-    private String contactPhone;
-    private String waterEmail;
-    private String appendInfo;
-    private String licenseUrl;
-    private String legalNoUrl;
-    private String officeNoUrl;
-    private String accountUrl;
-    private String creditUrl;
-    private String officeUrl;
-    private String waterUrl;
-    private Integer isPush;
+	private Long id;
+	private String creditorderNo;
+	private String name;
+	private Date startDate;
+	private String regAddress;
+	private String officeAddress;
+	private Integer orgSize;
+	private String license;
+	private String taxRegNo;
+	private String orgCode;
+	private String regAccount;
+	private Date regDate;
+	private Integer empSize;
+	private String legalName;
+	private Integer legalceType;
+	private String legalNo;
+	private String contactName;
+	private String contactPhone;
+	private String waterEmail;
+	// private String appendInfo;
+	private String licenseUrl;
+	private String legalNoUrl;
+	private String officeNoUrl;
+	private String accountUrl;
+	private String creditUrl;
+	private String officeUrl;
+	private String waterUrl;
+	private Integer isPush;
 
-    public Long getId() {
-        return id;
-    }
+	private List<LoanControllData> controllDatas;
+	private List<LoanCooperationCompanyInfo> cooperationCompanyInfos;
+	private List<LoanMainBusinessData> mainBusinessDatas;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public List<LoanControllData> getControllDatas() {
+		return controllDatas;
+	}
 
-    public String getCreditorderNo() {
-        return creditorderNo;
-    }
+	public void setControllDatas(List<LoanControllData> controllDatas) {
+		this.controllDatas = controllDatas;
+	}
 
-    public void setCreditorderNo(String creditorderNo) {
-        this.creditorderNo = creditorderNo;
-    }
+	public List<LoanCooperationCompanyInfo> getCooperationCompanyInfos() {
+		return cooperationCompanyInfos;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setCooperationCompanyInfos(
+			List<LoanCooperationCompanyInfo> cooperationCompanyInfos) {
+		this.cooperationCompanyInfos = cooperationCompanyInfos;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public List<LoanMainBusinessData> getMainBusinessDatas() {
+		return mainBusinessDatas;
+	}
 
-    public Date getStartDate() {
-        return startDate;
-    }
+	public void setMainBusinessDatas(
+			List<LoanMainBusinessData> mainBusinessDatas) {
+		this.mainBusinessDatas = mainBusinessDatas;
+	}
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public String getRegAddress() {
-        return regAddress;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setRegAddress(String regAddress) {
-        this.regAddress = regAddress;
-    }
+	public String getCreditorderNo() {
+		return creditorderNo;
+	}
 
-    public String getOfficeAddress() {
-        return officeAddress;
-    }
+	public void setCreditorderNo(String creditorderNo) {
+		this.creditorderNo = creditorderNo;
+	}
 
-    public void setOfficeAddress(String officeAddress) {
-        this.officeAddress = officeAddress;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Integer getOrgSize() {
-        return orgSize;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setOrgSize(Integer orgSize) {
-        this.orgSize = orgSize;
-    }
+	public Date getStartDate() {
+		return startDate;
+	}
 
-    public String getLicense() {
-        return license;
-    }
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
 
-    public void setLicense(String license) {
-        this.license = license;
-    }
+	public String getRegAddress() {
+		return regAddress;
+	}
 
-    public String getTaxRegNo() {
-        return taxRegNo;
-    }
+	public void setRegAddress(String regAddress) {
+		this.regAddress = regAddress;
+	}
 
-    public void setTaxRegNo(String taxRegNo) {
-        this.taxRegNo = taxRegNo;
-    }
+	public String getOfficeAddress() {
+		return officeAddress;
+	}
 
-    public String getOrgCode() {
-        return orgCode;
-    }
+	public void setOfficeAddress(String officeAddress) {
+		this.officeAddress = officeAddress;
+	}
 
-    public void setOrgCode(String orgCode) {
-        this.orgCode = orgCode;
-    }
+	public Integer getOrgSize() {
+		return orgSize;
+	}
 
-    public String getRegAccount() {
-        return regAccount;
-    }
+	public void setOrgSize(Integer orgSize) {
+		this.orgSize = orgSize;
+	}
 
-    public void setRegAccount(String regAccount) {
-        this.regAccount = regAccount;
-    }
+	public String getLicense() {
+		return license;
+	}
 
-    public Date getRegDate() {
-        return regDate;
-    }
+	public void setLicense(String license) {
+		this.license = license;
+	}
 
-    public void setRegDate(Date regDate) {
-        this.regDate = regDate;
-    }
+	public String getTaxRegNo() {
+		return taxRegNo;
+	}
 
-    public Integer getEmpSize() {
-        return empSize;
-    }
+	public void setTaxRegNo(String taxRegNo) {
+		this.taxRegNo = taxRegNo;
+	}
 
-    public void setEmpSize(Integer empSize) {
-        this.empSize = empSize;
-    }
+	public String getOrgCode() {
+		return orgCode;
+	}
 
-    public String getLegalName() {
-        return legalName;
-    }
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}
 
-    public void setLegalName(String legalName) {
-        this.legalName = legalName;
-    }
+	public String getRegAccount() {
+		return regAccount;
+	}
 
-    public Integer getLegalceType() {
-        return legalceType;
-    }
+	public void setRegAccount(String regAccount) {
+		this.regAccount = regAccount;
+	}
 
-    public void setLegalceType(Integer legalceType) {
-        this.legalceType = legalceType;
-    }
+	public Date getRegDate() {
+		return regDate;
+	}
 
-    public String getLegalNo() {
-        return legalNo;
-    }
+	public void setRegDate(Date regDate) {
+		this.regDate = regDate;
+	}
 
-    public void setLegalNo(String legalNo) {
-        this.legalNo = legalNo;
-    }
+	public Integer getEmpSize() {
+		return empSize;
+	}
 
-    public String getContactName() {
-        return contactName;
-    }
+	public void setEmpSize(Integer empSize) {
+		this.empSize = empSize;
+	}
 
-    public void setContactName(String contactName) {
-        this.contactName = contactName;
-    }
+	public String getLegalName() {
+		return legalName;
+	}
 
-    public String getContactPhone() {
-        return contactPhone;
-    }
+	public void setLegalName(String legalName) {
+		this.legalName = legalName;
+	}
 
-    public void setContactPhone(String contactPhone) {
-        this.contactPhone = contactPhone;
-    }
+	public Integer getLegalceType() {
+		return legalceType;
+	}
 
-    public String getWaterEmail() {
-        return waterEmail;
-    }
+	public void setLegalceType(Integer legalceType) {
+		this.legalceType = legalceType;
+	}
 
-    public void setWaterEmail(String waterEmail) {
-        this.waterEmail = waterEmail;
-    }
+	public String getLegalNo() {
+		return legalNo;
+	}
 
-    public String getAppendInfo() {
-        return appendInfo;
-    }
+	public void setLegalNo(String legalNo) {
+		this.legalNo = legalNo;
+	}
 
-    public void setAppendInfo(String appendInfo) {
-        this.appendInfo = appendInfo;
-    }
+	public String getContactName() {
+		return contactName;
+	}
 
-    public String getLicenseUrl() {
-        return licenseUrl;
-    }
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
+	}
 
-    public void setLicenseUrl(String licenseUrl) {
-        this.licenseUrl = licenseUrl;
-    }
+	public String getContactPhone() {
+		return contactPhone;
+	}
 
-    public String getLegalNoUrl() {
-        return legalNoUrl;
-    }
+	public void setContactPhone(String contactPhone) {
+		this.contactPhone = contactPhone;
+	}
 
-    public void setLegalNoUrl(String legalNoUrl) {
-        this.legalNoUrl = legalNoUrl;
-    }
+	public String getWaterEmail() {
+		return waterEmail;
+	}
 
-    public String getOfficeNoUrl() {
-        return officeNoUrl;
-    }
+	public void setWaterEmail(String waterEmail) {
+		this.waterEmail = waterEmail;
+	}
 
-    public void setOfficeNoUrl(String officeNoUrl) {
-        this.officeNoUrl = officeNoUrl;
-    }
+	// public String getAppendInfo() {
+	// return appendInfo;
+	// }
+	//
+	// public void setAppendInfo(String appendInfo) {
+	// this.appendInfo = appendInfo;
+	// }
 
-    public String getAccountUrl() {
-        return accountUrl;
-    }
+	public String getLicenseUrl() {
+		return licenseUrl;
+	}
 
-    public void setAccountUrl(String accountUrl) {
-        this.accountUrl = accountUrl;
-    }
+	public void setLicenseUrl(String licenseUrl) {
+		this.licenseUrl = licenseUrl;
+	}
 
-    public String getCreditUrl() {
-        return creditUrl;
-    }
+	public String getLegalNoUrl() {
+		return legalNoUrl;
+	}
 
-    public void setCreditUrl(String creditUrl) {
-        this.creditUrl = creditUrl;
-    }
+	public void setLegalNoUrl(String legalNoUrl) {
+		this.legalNoUrl = legalNoUrl;
+	}
 
-    public String getOfficeUrl() {
-        return officeUrl;
-    }
+	public String getOfficeNoUrl() {
+		return officeNoUrl;
+	}
 
-    public void setOfficeUrl(String officeUrl) {
-        this.officeUrl = officeUrl;
-    }
+	public void setOfficeNoUrl(String officeNoUrl) {
+		this.officeNoUrl = officeNoUrl;
+	}
 
-    public String getWaterUrl() {
-        return waterUrl;
-    }
+	public String getAccountUrl() {
+		return accountUrl;
+	}
 
-    public void setWaterUrl(String waterUrl) {
-        this.waterUrl = waterUrl;
-    }
+	public void setAccountUrl(String accountUrl) {
+		this.accountUrl = accountUrl;
+	}
 
-    public Integer getIsPush() {
-        return isPush;
-    }
+	public String getCreditUrl() {
+		return creditUrl;
+	}
 
-    public void setIsPush(Integer isPush) {
-        this.isPush = isPush;
-    }
+	public void setCreditUrl(String creditUrl) {
+		this.creditUrl = creditUrl;
+	}
+
+	public String getOfficeUrl() {
+		return officeUrl;
+	}
+
+	public void setOfficeUrl(String officeUrl) {
+		this.officeUrl = officeUrl;
+	}
+
+	public String getWaterUrl() {
+		return waterUrl;
+	}
+
+	public void setWaterUrl(String waterUrl) {
+		this.waterUrl = waterUrl;
+	}
+
+	public Integer getIsPush() {
+		return isPush;
+	}
+
+	public void setIsPush(Integer isPush) {
+		this.isPush = isPush;
+	}
 }
