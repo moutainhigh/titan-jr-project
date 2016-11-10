@@ -2709,7 +2709,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         		try {
         			TransferResponse  transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
 				    if(!transferResponse.isResult()){
-				    	return ;
+				    	break ;
 				    }
 				    
 				    log.info("转账的结果:"+JSONSerializer.toJSON(transferResponse));
