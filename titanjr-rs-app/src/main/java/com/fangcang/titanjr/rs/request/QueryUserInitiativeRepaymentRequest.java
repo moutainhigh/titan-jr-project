@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fangcang.titanjr.common.exception.RSValidateException;
 import com.fangcang.titanjr.common.util.RequestValidationUtil;
+import com.fangcang.util.StringUtil;
 /**
  * 查询主动还款
  * @author luoqinglong
@@ -33,11 +34,19 @@ public class QueryUserInitiativeRepaymentRequest extends BaseRequest {
 		RequestValidationUtil.check(this);
 	}
 
+	/**
+	 * 兼容父类的constid
+	 * @return
+	 */
 	public String getRootinstcd() {
-		return rootinstcd;
+		if(StringUtil.isValidString(rootinstcd)){
+			return rootinstcd;
+		}
+		return getConstid();
 	}
 
 	public void setRootinstcd(String rootinstcd) {
+		this.setConstid(rootinstcd);
 		this.rootinstcd = rootinstcd;
 	}
 

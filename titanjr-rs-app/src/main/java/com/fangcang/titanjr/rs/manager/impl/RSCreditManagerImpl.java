@@ -76,8 +76,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, request);
 			WheatfieldOprsystemCreditCompanyResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
-			log.info("调用oprsystemCreditCompany方法(上报企业资料信息)--请求参数OprsystemCreditCompanyRequest："+Tools.gsonToString(request)+",返回报文WheatfieldOprsystemCreditCompanyResponse: \n :"+Tools.gsonToString(rsp));
 			if (rsp != null) {
+				log.info("调用oprsystemCreditCompany方法(上报企业资料信息)--请求参数OprsystemCreditCompanyRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
 				if (rsp.isSuccess() != true) {
 					String errorMsg;
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -94,13 +94,14 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
 			} else {
+				log.error("调用oprsystemCreditCompany方法(上报企业资料信息)--请求参数OprsystemCreditCompanyRequest："+Tools.gsonToString(request)+",返回值:WheatfieldOprsystemCreditCompanyResponse is null");
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
 		
 		} catch (ApiException e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("第三方接口调用异常");
+			response.setReturnMsg("接口调用异常");
 			log.error("oprsystemCreditCompany接口(上报企业资料信息)调用异常,参数OprsystemCreditCompanyRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
@@ -122,8 +123,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, request);
 			WheatfieldOrderMixserviceCreditapplicationResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
-			log.info("调用orderMixserviceCreditapplication方法(申请授信)--请求参数OrderMixserviceCreditapplicationRequest："+Tools.gsonToString(request)+",返回报文WheatfieldOrderMixserviceCreditapplicationResponse: \n :"+Tools.gsonToString(rsp));
 			if (rsp != null) {
+				log.info("调用orderMixserviceCreditapplication方法(申请授信)--请求参数OrderMixserviceCreditapplicationRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
 				if (rsp.isSuccess() != true) {
 					String errorMsg;
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -141,12 +142,13 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
 			} else {
+				log.error("调用orderMixserviceCreditapplication方法(申请授信)--请求参数OrderMixserviceCreditapplicationRequest："+Tools.gsonToString(request)+",返回值：WheatfieldOrderMixserviceCreditapplicationResponse  is null");
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
 		} catch (ApiException e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("第三方接口调用异常");
+			response.setReturnMsg("接口调用异常");
 			log.error("orderMixserviceCreditapplication接口(申请授信)调用异常,参数OrderMixserviceCreditapplicationRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
@@ -169,8 +171,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, request);
 			WheatfieldOrderServiceAgreementconfirmResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
-			log.info("调用agreementConfirm方法(协议确认)--请求参数OrderServiceAgreementconfirmRequest："+Tools.gsonToString(request)+",返回报文WheatfieldOrderServiceAgreementconfirmResponse: \n :"+Tools.gsonToString(rsp));
 			if (rsp != null) {
+				log.info("调用agreementConfirm方法(协议确认)--请求参数OrderServiceAgreementconfirmRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
 				if (rsp.isSuccess() != true) {
 					String errorMsg;
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -187,12 +189,13 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
 			} else {
+				log.error("调用agreementConfirm方法(协议确认)--请求参数OrderServiceAgreementconfirmRequest："+Tools.gsonToString(request)+",返回值：WheatfieldOrderServiceAgreementconfirmResponse is null ");
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
 		} catch (ApiException e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("第三方接口调用异常");
+			response.setReturnMsg("接口调用异常");
 			log.error("agreementConfirm接口(协议确认)调用异常,参数OrderServiceAgreementconfirmRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
@@ -214,8 +217,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, request);
 			WheatfieldOrderMixserviceCreditmerchantinfoqueryResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
-			log.info("调用queryCreditMerchantInfo方法(机构授信信息查询)--请求参数QueryCreditMerchantInfoRequest："+Tools.gsonToString(request)+",返回报文WheatfieldOrderMixserviceCreditmerchantinfoqueryResponse: \n :"+Tools.gsonToString(rsp));
 			if (rsp != null) {
+				log.info("调用queryCreditMerchantInfo方法(机构授信信息查询)--请求参数QueryCreditMerchantInfoRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
 				if (rsp.isSuccess() != true) {
 					String errorMsg;
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -232,12 +235,13 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
 			} else {
+				log.error("调用queryCreditMerchantInfo方法(机构授信信息查询)--请求参数QueryCreditMerchantInfoRequest："+Tools.gsonToString(request)+",返回值: WheatfieldOrderMixserviceCreditmerchantinfoqueryResponse is null ");
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
 		} catch (ApiException e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("第三方接口调用异常");
+			response.setReturnMsg("接口调用异常");
 			log.error("queryCreditMerchantInfo接口(机构授信信息查询)调用异常,参数QueryCreditMerchantInfoRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
@@ -259,8 +263,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, request);
 			WheatfieldOrderServiceNewloanapplyResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
-			log.info("调用newLoanApply方法(个人贷款申请)--请求参数NewLoanApplyRequest："+Tools.gsonToString(request)+",返回报文WheatfieldOrderServiceNewloanapplyResponse: \n :"+Tools.gsonToString(rsp));
 			if (rsp != null) {
+				log.info("调用newLoanApply方法(个人贷款申请)--请求参数NewLoanApplyRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
 				if (rsp.isSuccess() != true) {
 					String errorMsg;
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -278,12 +282,13 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
 			} else {
+				log.error("调用newLoanApply方法(个人贷款申请)--请求参数NewLoanApplyRequest："+Tools.gsonToString(request)+",返回值:WheatfieldOrderServiceNewloanapplyResponse is null");
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
 		} catch (ApiException e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("第三方接口调用异常");
+			response.setReturnMsg("接口调用异常");
 			log.error("newLoanApply方法(个人贷款申请)调用异常,参数NewLoanApplyRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
@@ -306,8 +311,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, request);
 			WheatfieldInterestRepaymentQueryborrowinfoResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
-			log.info("调用queryBorrowinfo方法(查询应还款信息)--请求参数QueryBorrowinfoRequest："+Tools.gsonToString(request)+",返回WheatfieldInterestRepaymentQueryborrowinfoResponse: \n :"+Tools.gsonToString(rsp));
 			if (rsp != null) {
+				log.info("调用queryBorrowinfo方法(查询应还款信息)--请求参数QueryBorrowinfoRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
 				if (rsp.isSuccess() != true) {
 					String errorMsg;
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -325,12 +330,13 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
 			} else {
+				log.error("调用queryBorrowinfo方法(查询应还款信息)--请求参数QueryBorrowinfoRequest："+Tools.gsonToString(request)+",返回值: WheatfieldInterestRepaymentQueryborrowinfoResponse is null ");
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
 		} catch (ApiException e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("第三方接口调用异常");
+			response.setReturnMsg("接口调用异常");
 			log.error("queryBorrowinfo方法(查询应还款信息)调用异常,参数QueryBorrowinfoRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
@@ -352,8 +358,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, request);
 			WheatfieldOrderMixserviceStoploanResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
-			log.info("调用stopLoan方法(终止贷款)--请求参数StopLoanRequest："+Tools.gsonToString(request)+",返回报文WheatfieldOrderMixserviceStoploanResponse: \n :"+Tools.gsonToString(rsp));
 			if (rsp != null) {
+				log.info("调用stopLoan方法(终止贷款)--请求参数StopLoanRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
 				if (rsp.isSuccess() != true) {
 					String errorMsg;
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -370,12 +376,13 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
 			} else {
+				log.error("调用stopLoan方法(终止贷款)--请求参数StopLoanRequest："+Tools.gsonToString(request)+",返回值: WheatfieldOrderMixserviceStoploanResponse is null ");
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
 		} catch (ApiException e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("第三方接口调用异常");
+			response.setReturnMsg("接口调用异常");
 			log.error("stopLoan方法(终止贷款)调用异常,参数StopLoanRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
@@ -397,8 +404,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, request);
 			WheatfieldInterestRepaymentUserinitiativerepamentResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
-			log.info("调用userInitiativeRepament方法(终止贷款)--请求参数UserInitiativeRepamentRequest："+Tools.gsonToString(request)+",返回报文WheatfieldInterestRepaymentUserinitiativerepamentResponse: \n :"+Tools.gsonToString(rsp));
 			if (rsp != null) {
+				log.info("调用userInitiativeRepament方法(终止贷款)--请求参数UserInitiativeRepamentRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
 				if (rsp.isSuccess() != true) {
 					String errorMsg;
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -415,12 +422,13 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
 			} else {
+				log.error("调用userInitiativeRepament方法(终止贷款)--请求参数UserInitiativeRepamentRequest："+Tools.gsonToString(request)+",返回值: WheatfieldInterestRepaymentUserinitiativerepamentResponse is null ");
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
 		} catch (ApiException e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("第三方接口调用异常");
+			response.setReturnMsg("接口调用异常");
 			log.error("userInitiativeRepament方法((主动还款)调用异常,参数UserInitiativeRepamentRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
@@ -442,8 +450,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, request);
 			WheatfieldInterestRepaymentQueryuserinitiativerepaymentResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
-			log.info("调用queryUserInitiativeRepayment方法(查询主动还款)--请求参数QueryUserInitiativeRepaymentRequest："+Tools.gsonToString(request)+",返回报文WheatfieldInterestRepaymentQueryuserinitiativerepaymentResponse: \n :"+Tools.gsonToString(rsp));
 			if (rsp != null) {
+				log.info("调用queryUserInitiativeRepayment方法(查询主动还款)--请求参数QueryUserInitiativeRepaymentRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
 				if (rsp.isSuccess() != true) {
 					String errorMsg;
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -460,12 +468,13 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
 			} else {
+				log.error("调用queryUserInitiativeRepayment方法(查询主动还款)--请求参数QueryUserInitiativeRepaymentRequest："+Tools.gsonToString(request)+",返回值: WheatfieldInterestRepaymentQueryuserinitiativerepaymentResponse is null");
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
 		} catch (ApiException e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("第三方接口调用异常");
+			response.setReturnMsg("接口调用异常");
 			log.error("queryUserInitiativeRepayment方法(查询主动还款)调用异常,参数QueryUserInitiativeRepaymentRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
@@ -487,8 +496,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, request);
 			WheatfieldOrderMixserviceQueryloanapplyResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
-			log.info("调用queryLoanApply方法(查询贷款订单状态)--请求参数QueryLoanApplyRequest："+Tools.gsonToString(request)+",返回报文WheatfieldOrderMixserviceQueryloanapplyResponse: \n :"+Tools.gsonToString(rsp));
 			if (rsp != null) {
+				log.info("调用queryLoanApply方法(查询贷款订单状态)--请求参数QueryLoanApplyRequest："+Tools.gsonToString(request)+",返回报文: \n "+rsp.getBody());
 				if (rsp.isSuccess() != true) {
 					String errorMsg;
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -505,12 +514,13 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
 			} else {
+				log.error("调用queryLoanApply方法(查询贷款订单状态)--请求参数QueryLoanApplyRequest："+Tools.gsonToString(request)+",返回值: WheatfieldOrderMixserviceQueryloanapplyResponse is null. ");
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
 		} catch (ApiException e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("第三方接口调用异常");
+			response.setReturnMsg("接口调用异常");
 			log.error("queryLoanApply方法(查询贷款订单状态)调用异常,参数QueryLoanApplyRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
@@ -551,8 +561,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, request);
 			WheatfieldInterestRepaymentQueryuserrepaymentResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
-			log.info("调用queryUserRepayment方法(查询贷款的还款状态及历史)--请求参数QueryUserRepaymentRequest："+Tools.gsonToString(request)+",返回报文WheatfieldInterestRepaymentQueryuserrepaymentResponse: \n :"+Tools.gsonToString(rsp));
 			if (rsp != null) {
+				log.info("调用queryUserRepayment方法(查询贷款的还款状态及历史)--请求参数QueryUserRepaymentRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
 				if (rsp.isSuccess() != true) {
 					String errorMsg;
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -569,12 +579,13 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
 			} else {
+				log.error("调用queryUserRepayment方法(查询贷款的还款状态及历史)--请求参数QueryUserRepaymentRequest："+Tools.gsonToString(request)+",返回值: WheatfieldInterestRepaymentQueryuserrepaymentResponse is null.");
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
 		} catch (ApiException e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("第三方接口调用异常");
+			response.setReturnMsg("接口调用异常");
 			log.error("queryUserRepayment方法(查询贷款的还款状态及历史)调用异常,参数QueryUserRepaymentRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
