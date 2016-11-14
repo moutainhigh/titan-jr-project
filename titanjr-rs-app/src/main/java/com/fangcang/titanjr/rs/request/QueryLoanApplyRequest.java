@@ -57,9 +57,4 @@ public class QueryLoanApplyRequest extends BaseRequest {
 	public void setUserorderid(String userorderid) {
 		this.userorderid = userorderid;
 	}
-	public static void main(String[] arg){
-		String v = "";
-		
-		System.out.println(StringUtil.isValidString(v));
-	}
 }
