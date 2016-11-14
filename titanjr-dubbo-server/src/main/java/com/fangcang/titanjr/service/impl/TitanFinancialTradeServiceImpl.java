@@ -2682,7 +2682,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     			if(StringUtil.isValidString(repairTransferDTO.getTransorderid()) 
     					&& StringUtil.isValidString(repairTransferDTO.getStatus())
     					&& "2".equals(repairTransferDTO.getStatus())){//其中2代表转账成功
-    				break;
+    				continue;
     			}
     			
     			TransferRequest transferRequest = new TransferRequest();
@@ -2709,7 +2709,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         		try {
         			TransferResponse  transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
 				    if(!transferResponse.isResult()){
-				    	break ;
+				    	continue ;
 				    }
 				    
 				    log.info("转账的结果:"+JSONSerializer.toJSON(transferResponse));
