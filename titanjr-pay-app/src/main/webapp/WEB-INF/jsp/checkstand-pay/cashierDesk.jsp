@@ -978,7 +978,7 @@ $("document").ready(function (){
  				$("#payType").val("微信支付");
  				 $("#confirmOrder").submit();
  			}
-    	 }, 2000);
+    	 }, 4000);
     }
 	
     
