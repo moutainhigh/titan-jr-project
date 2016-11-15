@@ -52,7 +52,6 @@ public class TitanRateService {
 		RateConfigResponse rateConfigResponse = titanFinancialRateService
 				.getRateConfigInfos(req);
 		
-
 		if (rateConfigResponse != null
 				&& rateConfigResponse.getRateInfoList() != null
 				&& rateConfigResponse.getRateInfoList().size() > 0) {

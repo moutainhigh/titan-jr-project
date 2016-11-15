@@ -1,12 +1,17 @@
 package com.fangcang.titanjr.common.util;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.CharArrayReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringBufferInputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -813,54 +818,40 @@ public class DateUtil {
 	}
 	
 	
-	
-	
-	
 	public static void main(String[] args) {
 		
 		try {
-			File file =new File("C:/Users/Administrator/Desktop/text.txt");
-			InputStream in = new FileInputStream(file);
-			Reader reader = new InputStreamReader(in);
 			
-			OutputStream out = new FileOutputStream("C:/Users/Administrator/Desktop/11.txt");
+//			BufferedWriter w = new BufferedWriter(new FileWriter("C:/Users/Administrator/Desktop/text.txt"));
+//			char[] buf = "asdfas asd的说法是 阿斯蒂芬  阿斯顿发  ".toCharArray();
+//            for(int i=0;i<buf.length;i++){
+//            	System.out.println(buf[i]);
+//            	w.write(buf[i]);
+//            }			
+//            
+//            byte[] buf = "asdfas asd的说法是 阿斯蒂芬  阿斯顿发  ".getBytes();
+//            File f = new File("C:/Users/Administrator/Desktop/text.txt");
+//            OutputStream out = new FileOutputStream(f);
+//            for(int i=0;i<buf.length;i++){
+//            	System.out.println(buf[i]);
+//            	 out.write(buf[i]);
+//            }
+           
+//            byte[] b = "康".getBytes();
+//            for(int i=0;i<b.length;i++){
+//            	System.out.println(b[i]);
+//            }
+          
+            
+			for(int i=0;i<10;i++){
+				if(i%2==0){
+					System.out.println(i);
+					continue;
+				}
+				
+			}
 			
-			
-			
-			//Char 是定长的。
-//		    char[] c = new char[1024];
-//		    reader.read(c);
-//		    
-//		    System.out.println();
-//		    
-//		    String f = new String(c);
-//		    String d = "13";
-//		    String g = new String("13");
-//		    
-//		    System.out.println(f.indexOf("\t"));
-//		    
-//		    System.out.println(d.equals(f)); 
-//		    System.out.println(f);
-//		    System.out.println(g.equals(d)); 
-//		    System.out.println(c.length);
-		    
-		    
-		   //将字符转换成流
-		    
-		    
-//		    Pattern p = Pattern.compile("\\s*|\t|\r|\n");
-//		    
-//		   Matcher m = p.matcher(input)
-//		  　　Matcher m = p.matcher(str);
-//		   
-//		  　　String after = m.replaceAll("");
-//		   
-//		  　　System.out.println("after:"+after);
-
-		   
-//		    out.write(Byte.valueOf(f));
-			
-			
+            
 			
 		} catch (Exception e) {
 			e.printStackTrace();

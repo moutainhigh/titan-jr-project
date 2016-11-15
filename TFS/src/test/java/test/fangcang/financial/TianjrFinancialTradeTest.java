@@ -614,13 +614,13 @@ public class TianjrFinancialTradeTest extends GenericTest{
 		}
 	}
     
-//    @Test
+    @Test
     public void testConfirmData() throws Exception{
     	TransOrderDTO transOrderDTO = new TransOrderDTO();
-    	transOrderDTO.setPayeemerchant("TJM10000108");
-    	transOrderDTO.setPayorderno("TW16041215772");
-    	transOrderDTO.setMerchantcode("M10000001");
-    	transOrderDTO.setUserorderid("TJO1607231645058042");
+    	transOrderDTO.setNotifyUrl("http://192.168.0.90:8088/titanjr-pay-app/quickPayment/http.action");
+    	transOrderDTO.setBusinessordercode("1032353636");
+    	transOrderDTO.setPayorderno("秀月");
+    	transOrderDTO.setUserorderid("422423154");
     	titanFinancialTradeService.confirmFinance(transOrderDTO);
 	}
     
@@ -694,7 +694,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
      titanOrderService.confirmOrderStatus("2016102716242500001");
 	}
     
-    @Test
+//    @Test
     public void initCashDesk() throws Exception{
     	CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest();
     	cashierDeskInitRequest.setConstId("M000016");
