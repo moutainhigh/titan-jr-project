@@ -42,8 +42,10 @@
 </form>
 </body>
 <script>
+    var _orderNo = null;
 	$("document").ready(function (){
 		if('${result}'=="success"){
+			_orderNo = '${qrCode.orderNo}';
 			 $("#qrcode").qrcode({
 				  render:"table",
 				  width:150,
@@ -71,7 +73,6 @@
 	    }, 1000);
 	}
 	timeOut($('#Time'));
-	
 	
 	function closeWin(_orderNo){
 		var interval=setInterval(function () {   

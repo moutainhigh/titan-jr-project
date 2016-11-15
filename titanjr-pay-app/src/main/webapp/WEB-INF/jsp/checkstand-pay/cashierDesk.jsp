@@ -941,6 +941,7 @@ $("document").ready(function (){
     }
     
     //微信支付
+   //微信支付
     function qrPayment(pay_date){
     	$.ajax({//支付页面
     		type: "post",
@@ -955,14 +956,25 @@ $("document").ready(function (){
    	                padding: '0 0 0px 0',
    					width: 560,
    	                content: html,
-   	                skin : 'saas_pop',  
+   	                skin : 'saas_pop', 
+   	            	onclose: function () {
+   	            		toWxPayPage();
+   	          		},
    	            }).showModal();
    	            $('.wx_close').on('click',function(){
    	            	d.remove();
+   	            	toWxPayPage();
    	            });
    	        }
            });
     }
+    
+    function toWxPayPage(){
+    	 setTimeout(function(){
+    		 closeWin(_orderNo);
+    	 }, 2000);
+    }
+	
     
      //到结果页面
     function toResultPage(data){
