@@ -145,7 +145,7 @@ function initCashierData(data){
 	
 	cashierData.form = function(){
 		var form = document.createElement("form");
-		form.action = '<%=basePath%>/payment/packageRechargeData.action';
+		form.action = '../payment/packageRechargeData.action';
 		form.target = '_blank';
 		form.id = 'onlinePaymentForm';
 		form.method = 'post';
@@ -171,13 +171,13 @@ function initCashierData(data){
 			recieveOrgName.type = 'hidden';
 			recieveOrgName.name = 'recieveOrgName';
 			recieveOrgName.id = 'recieveOrgName';
-			form.appendChild(payAmount);
+			form.appendChild(recieveOrgName);
 		
 			var recieveTitanCode = document.createElement("input");
 			recieveTitanCode.type = 'hidden';
 			recieveTitanCode.name = 'recieveTitanCode';
 			recieveTitanCode.id = 'recieveTitanCode';
-			form.appendChild(payAmount);
+			form.appendChild(recieveTitanCode);
 			
 			var bankInfo = document.createElement("input");
 			bankInfo.type = 'hidden';
@@ -236,9 +236,11 @@ function initCashierData(data){
 	};
 	
 	cashierData.submit = function(){
+		cashierData.form();
 		document.getElementById('payPassword').value=cashierData.payPassword();
 		document.getElementById('transferAmount').value=cashierData.transferAmount();
 		document.getElementById('payAmount').value=cashierData.payAmount();
+		
 		document.getElementById('recieveOrgName').value=cashierData.recieveOrgName();
 		document.getElementById('recieveTitanCode').value=cashierData.recieveTitanCode();
 		document.getElementById('bankInfo').value=cashierData.bankInfo();

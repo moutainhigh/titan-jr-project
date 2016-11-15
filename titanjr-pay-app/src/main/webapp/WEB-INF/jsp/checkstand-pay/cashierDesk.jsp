@@ -515,9 +515,9 @@
     		return ;
     	}
    	    top.F.loading.show();
-        if(cashierData.payAmount =="0"){//余额支付
+        if(cashierData.payAmount() =="0"){//余额支付
         	balancePayment();
-    	}else if(pay_date.linePayType=='9'){//微信支付
+    	}else if(cashierData.linePayType()=='9'){//微信支付
     		qrPayment();
     	}else{//有网银支付
     		cashierData.submit();

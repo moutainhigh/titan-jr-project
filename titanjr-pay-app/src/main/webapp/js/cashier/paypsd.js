@@ -18,7 +18,7 @@ function initPayPassword(){
                             skin: 'btn p_lr30',
                             callback: function () {
                             	//验证付款密码是否准确
-                            	if(! check_payPassword())
+                            	if(! payPasswordObj.check_payPassword())
                             	{
                             		 $(".ui-dialog-content").html(html);
                             			setTimeout(function(){
@@ -53,7 +53,7 @@ function initPayPassword(){
 	            url: '../account/check_payPassword.action',
 	            data: {
 	           	 payPassword:PasswordStr2.returnStr(),
-	           	 fcUserid:'${cashDeskData.fcUserid}'
+	           	 fcUserid:cashierData.fcUserid
 	            },
 	            success: function (data) {
 	           	 if(data.result=="0"){
@@ -72,11 +72,11 @@ function initPayPassword(){
 		 $.ajax({
         	 type: "post",
              url: "../account/checkIsSetPayPassword.action",
-             data: {fcUserid:'${cashDeskData.fcUserid}'},
+             data: {fcUserid:cashierData.fcUserid},
              dataType: "json",
              success: function(data){
             	 if(data.result=="0"){
-            		 show_set_payPassword();
+            		 payPasswordObj.show_set_payPassword();
             	 }
             	}
             }); 
@@ -88,7 +88,7 @@ function initPayPassword(){
 		        context: document.body,
 		        url: '../account/showSetPayPassword.action',
 		        success: function (html) {
-		        	clickPassword()
+		        	payPasswordObj.clickPassword();
 		            var d = dialog({
 		                title: ' ',
 		                padding: '0 0 0px 0 ',
@@ -105,7 +105,7 @@ function initPayPassword(){
 		                        			    	 type: "post",
 		                        			         url: "../account/setPayPassword.action",
 		                        			         data: {
-		                        			        	 fcuserid:cashierData.fcUserid(),
+		                        			        	 fcuserid:cashierData.fcUserid,
 		                        			        	 payPassword:PasswordStr.returnStr()
 		                        			         },
 		                        			         dataType: "json",
@@ -169,10 +169,10 @@ function initPayPassword(){
 	
 	 //验证是否输入密码
 	payPasswordObj.validate_isInput_password = function(){
-		if(cashierData.paySource()=='1'){//如果分销商付款不需要输入密码，不用余额支付也不需要输入付款密码
+		if(cashierData.paySource=='1'){//如果分销商付款不需要输入密码，不用余额支付也不需要输入付款密码
     		return true;
     	}
-    	if(($("#d_checkbox").attr("checked")=="checked" && cashierData.bbalanceusable()=="0")||$("#d_checkbox").attr("checked")!="checked"){
+    	if(($("#d_checkbox").attr("checked")=="checked" && cashierData.bbalanceusable=="0")||$("#d_checkbox").attr("checked")!="checked"){
     		return true;
     	}
     	var flag = false;
@@ -183,7 +183,7 @@ function initPayPassword(){
                 url: '../account/allownopwdpay.action',
                 data:{
                	 totalAmount :cashierData.pay_totalAmount(),
-               	 userid:cashierData.userid()
+               	 userid:cashierData.userid
                 },
                 success: function (data) {
                	 if(data.result =="0"){
@@ -191,7 +191,6 @@ function initPayPassword(){
                	 }
                 }
             });
-    	
     	return flag; 
 	};
 };
