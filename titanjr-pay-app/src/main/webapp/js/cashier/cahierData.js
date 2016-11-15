@@ -1,6 +1,6 @@
 var cashierData = {};
 
-function initCadhierData(){
+function initCashierData(){
 	cashierData.merchantcode= function(){
 		return '${cashDeskData.merchantcode}';
 	};

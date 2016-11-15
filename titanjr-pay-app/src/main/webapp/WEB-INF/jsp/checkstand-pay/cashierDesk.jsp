@@ -233,7 +233,7 @@
 <script>
 	$("document").ready(function (){
 		//初始化收银台数据集合
-		initCadhierData();
+		initCashierData();
 		//初始化密码函数
 		initPayPassword();
 		//初始化收银台相关
