@@ -440,11 +440,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					isPayerAccountChange = titanPaymentRequest.getPayerAcount().equals(titanOrderPayreq.getPayerAcount());
 				}
 				
-				//针对移动支付或第三方支付
-				if(StringUtil.isValidString(titanPaymentRequest.getBankInfo()) &&
-						(titanPaymentRequest.getBankInfo().equals(CommonConstant.WXPAY)||titanPaymentRequest.getBankInfo().equals(CommonConstant.ALIPAY))){
-					isBankInfoChange = true;
-				}
 				
 				if(isAmountChange && isBankInfoChange && isPayerAccountChange){
 					long times = DateUtil.diffSecondByTime(
