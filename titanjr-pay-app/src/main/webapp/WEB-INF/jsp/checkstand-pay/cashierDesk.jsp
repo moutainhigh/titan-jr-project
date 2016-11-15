@@ -237,8 +237,9 @@
     </form>
 </div>
 
-<form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder">
+<form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder" method="post">
   <input name="orderNo" id="orderNo" type="hidden">
+  <input name="payType" id="payType"  type="hidden">
 </form>
 
 <!--弹窗白色底-->
@@ -971,7 +972,12 @@ $("document").ready(function (){
     
     function toWxPayPage(){
     	 setTimeout(function(){
-    		 closeWin(_orderNo);
+    		var status = confirmOrder(_orderNo);
+ 			if(status =="success"||status=="fail"){
+ 				$("#orderNo").val(_orderNo);
+ 				$("#payType").val("微信支付");
+ 				 $("#confirmOrder").submit();
+ 			}
     	 }, 2000);
     }
 	
