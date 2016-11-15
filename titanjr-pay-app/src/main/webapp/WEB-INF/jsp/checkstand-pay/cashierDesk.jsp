@@ -218,8 +218,9 @@
     </div>
 </div>
 
-<form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder">
+<form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder" method="post">
   <input name="orderNo" id="orderNo" type="hidden">
+  <input name="payType" id="payType" type="hidden">
 </form>
 
 <!--弹窗白色底-->
@@ -233,13 +234,32 @@
 <script>
 	$("document").ready(function (){
 		//初始化收银台数据集合
-		initCashierData();
+		initData();
 		//初始化密码函数
 		initPayPassword();
 		//初始化收银台相关
 		initCashierDesk();	
 	}); 
 
+	
+	function initData(){
+		initCashierData({
+			merchantcode:'${cashDeskData.merchantcode}',
+			payOrderNo:'${cashDeskData.payOrderNo}',
+			fcUserid:'${cashDeskData.fcUserid}',
+			userid:'${cashDeskData.userId}',
+			deskId:'${cashDeskData.cashierDeskDTO.deskId}',
+			paySource:'${cashDeskData.paySource}',
+			creator:'${cashDeskData.operator}',
+			escrowedDate:'${cashDeskData.escrowedDate}',
+			isEscrowed:'${cashDeskData.isEscrowed}',
+			tradeAmount:'${cashDeskData.amount}',
+			balanceusable:'${cashDeskData.balanceusable}',
+			accountHistoryDTO:'${cashDeskData.accountHistoryDTO}',
+			orgName:'${cashDeskData.orgName}',
+		});
+		
+	}
     //点击使用余额支付
     function checktest() {
     	//如果余额足够则只能用余额或者网银付款，二选一，如果余额不足则自由选择
@@ -521,12 +541,12 @@
     }
     
     //微信支付
-    function qrPayment(){
+   function qrPayment(pay_date){
     	$.ajax({//支付页面
     		type: "post",
             dataType : 'html',
    	        context: document.body,
-   	     	data: cashierData.onlinePayData(),
+   	     	data: potGateData(pay_date),
    	        url : '<%=basePath%>/payment/qrCodePayment.action',			
    	        success : function(html){
    				top.F.loading.hide();
@@ -535,15 +555,30 @@
    	                padding: '0 0 0px 0',
    					width: 560,
    	                content: html,
-   	                skin : 'saas_pop',  
+   	                skin : 'saas_pop', 
+   	            	onclose: function () {
+   	            		toWxPayPage();
+   	          		},
    	            }).showModal();
    	            $('.wx_close').on('click',function(){
    	            	d.remove();
+   	            	toWxPayPage();
    	            });
    	        }
            });
     }
     
+    function toWxPayPage(){
+    	 setTimeout(function(){
+    		var status = confirmOrder(_orderNo);
+    		alert(status);
+ 			if(status =="success"||status=="fail"){
+ 				$("#orderNo").val(_orderNo);
+ 				$("#payType").val("微信支付");
+ 				 $("#confirmOrder").submit();
+ 			}
+    	 }, 2000);
+    }
      //到结果页面
     function toResultPage(data){
    	 	if(data.result == "0"){

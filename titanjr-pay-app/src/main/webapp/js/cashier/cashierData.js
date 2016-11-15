@@ -1,54 +1,8 @@
 var cashierData = {};
 
-function initCadhierData(){
-	cashierData.merchantcode= function(){
-		return '${cashDeskData.merchantcode}';
-	};
+function initCashierData(data){
+	cashierData = data;
 	
-	cashierData.payOrderNo= function(){
-		return '${cashDeskData.payOrderNo}';
-	};
-	
-	cashierData.fcUserid= function(){
-		return '${cashDeskData.fcUserid}';
-	};
-	
-	cashierData.userid= function(){
-		return '${cashDeskData.userId}';
-	};
-	
-	cashierData.deskId = function(){
-		return '${cashDeskData.cashierDeskDTO.deskId}';
-	};
-	
-	cashierData.paySource= function(){
-		return '${cashDeskData.paySource}';
-	};
-	
-	cashierData.creator= function(){
-		return '${cashDeskData.operator}';
-	};
-	
-	cashierData.escrowedDate= function(){
-		return '${cashDeskData.escrowedDate}';
-	};
-	
-	cashierData.isEscrowed= function(){
-		return '${cashDeskData.isEscrowed}';
-	};
-	
-	cashierData.tradeAmount= function(){
-		return '${cashDeskData.amount}';
-	};
-	
-	cashierData.balanceusable= function(){
-		return '${cashDeskData.balanceusable}';
-	};
-	
-	cashierData.creator = function(){
-		return '${cashDeskData.operator}';
-	};
-
 	cashierData.checkBoxIsChecked = function(){
 		if($("#d_checkbox").attr("checked")=="checked"){
 			return true;
@@ -154,27 +108,27 @@ function initCadhierData(){
 	
 	cashierData.onlinePayData = function(){
 		var data= {
-				 payPassword:cashierData.payPassword(),
-		       	 merchantcode:cashierData.merchantcode(),
-		       	 payOrderNo:cashierData.payOrderNo(),
+		       	 merchantcode:cashierData.merchantcode,
+		       	 payOrderNo:cashierData.payOrderNo,
+		       	 fcUserid:cashierData.fcUserid,
+		       	 userid:cashierData.userid,
+		       	 deskId:cashierData.deskId,
+		         paySource:cashierData.paySource,
+		         creator:cashierData.creator,
+		         escrowedDate:cashierData.escrowedDate,
+		       	 isEscrowed:cashierData.isEscrowed,
+		       	 tradeAmount:cashierData.tradeAmount,
+		       	 
 		       	 transferAmount:cashierData.transferAmount(),
 		       	 payAmount:cashierData.payAmount(),
 		       	 recieveOrgName:cashierData.recieveOrgName(),
 		       	 recieveTitanCode:cashierData.recieveTitanCode(),
 		       	 bankInfo:cashierData.bankInfo(),
-		   		 fcUserid:cashierData.fcUserid(),
-		       	 userid:cashierData.userid(),
-		       	 deskId:cashierData.deskId(),
-		       	 paySource:cashierData.paySource(),
-		       	 creator:cashierData.creator(),
-		       	 escrowedDate:cashierData.escrowedDate(),
-		       	 isEscrowed:cashierData.isEscrowed(),
-		         tradeAmount:cashierData.tradeAmount(),
-		         linePayType:cashierData.linePayType()	
+		         linePayType:cashierData.linePayType(),	
+		         payPassword:cashierData.payPassword(),
 		};
 		return data;
 	};
-	
 	
 	cashierData.window = function(errMsg){
 		 new top.createConfirm({
@@ -290,12 +244,12 @@ function initCadhierData(){
 		document.getElementById('bankInfo').value=cashierData.bankInfo();
 		document.getElementById('linePayType').value=cashierData.linePayType();
 		document.getElementById('payerAcount').value=cashierData.payerAccount();
-		document.getElementById('paySource').value=cashierData.paySource();
-		document.getElementById('deskId').value=cashierData.deskId();
-		document.getElementById('userid').value=cashierData.userid();
-		document.getElementById('payOrderNo').value=cashierData.payOrderNo();
-		document.getElementById('tradeAmount').value=cashierData.tradeAmount();
-		document.getElementById('fcUserid').value=cashierData.fcUserid();
+		document.getElementById('paySource').value=cashierData.paySource;
+		document.getElementById('deskId').value=cashierData.deskId;
+		document.getElementById('userid').value=cashierData.userid;
+		document.getElementById('payOrderNo').value=cashierData.payOrderNo;
+		document.getElementById('tradeAmount').value=cashierData.tradeAmount;
+		document.getElementById('fcUserid').value=cashierData.fcUserid;
 		document.getElementById('onlinePaymentForm').submit();
 	};
 	

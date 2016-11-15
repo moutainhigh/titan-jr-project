@@ -367,6 +367,9 @@ public class TitanTradeService {
 	 * @param commonPayMethodDTOList
 	 */
 	public void sortBank(List<CommonPayMethodDTO> commonPayMethodDTOList){
+		if(commonPayMethodDTOList ==null ||commonPayMethodDTOList.size()==0){
+			return ;
+		}
 		CommonPayMethodDTO cmbcBank =null;
 		Iterator<CommonPayMethodDTO> iterator = commonPayMethodDTOList.iterator();
 		while(iterator.hasNext()){
@@ -386,12 +389,19 @@ public class TitanTradeService {
 	
 	public void sortBank(CashierDeskDTO cashierDesk){
 		List<CashierDeskItemDTO> cashierDeskItemDTOList = cashierDesk.getCashierDeskItemDTOList();
+		if(cashierDeskItemDTOList==null || cashierDeskItemDTOList.size()==0){
+			return;
+		}
+		
 		CashierItemBankDTO cmbcBank = null;
 		for(CashierDeskItemDTO cashierDeskItem :cashierDeskItemDTOList){
 			//B2B Item
 			if(cashierDeskItem.getItemType()!=null && cashierDeskItem.getItemType().intValue()==1){
 				List<CashierItemBankDTO> cashierItemBankDTOList = cashierDeskItem.getCashierItemBankDTOList();
-				 Iterator<CashierItemBankDTO> iterator = cashierItemBankDTOList.iterator();
+				if(cashierItemBankDTOList ==null || cashierItemBankDTOList.size()==0){
+					continue;
+				} 
+				Iterator<CashierItemBankDTO> iterator = cashierItemBankDTOList.iterator();
 				 while(iterator.hasNext()){
 					 CashierItemBankDTO cashierItemBankDTO = iterator.next();
 					 if(CommonConstant.CMBC.equals(cashierItemBankDTO.getBankName())){

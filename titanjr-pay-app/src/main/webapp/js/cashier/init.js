@@ -1,8 +1,6 @@
 function initCashierDesk(){
 	//识别出当前的余额是否足够支付，如果不够支付则位false 足够则为true
 	var isEnough = false;
-	alert(isGDP());
-	alert(isFinance());
 	if(isGDP()){//GDP支付的逻辑控制
 		show_history();
 		$("#useCashierDeskPay").show();
@@ -11,13 +9,13 @@ function initCashierDesk(){
 	
 	if(isFinance()){//财务中需要显示历史,显示余额充足或者不充足。
 		//收款账户历史，或者收款方账户存在时
-		if('${cashDeskData.accountHistoryDTO}'.length>0 ||'${cashDeskData.orgName}'.length>0){
+		if(cashierData.accountHistoryDTO.length>0 ||cashierData.orgName.length>0){
 			show_history();
 		}else{
 			hide_history();
 		}
 	
-		isEnough = ('${cashDeskData.amount}' - '${cashDeskData.balanceusable}') <= 0;
+		isEnough = (cashierData.tradeAmount - cashierData.balanceusable) <= 0;
 		
 		if(isEnough){
 			amount_enough_show();
@@ -27,9 +25,9 @@ function initCashierDesk(){
 	}
 	 
 	//账户可用余额为0的时候不能让复选按钮选中
-    if('${cashDeskData.balanceusable}'=="0.0" 
-    		||'${cashDeskData.balanceusable}'=="0.00"
-    		||'${cashDeskData.balanceusable}'=="0"){
+    if(cashierData.balanceusable=="0.0" 
+    		||cashierData.balanceusable=="0.00"
+    		||cashierData.balanceusable=="0"){
     	$("#d_checkbox").attr("checked",false);
     }
     
@@ -40,7 +38,7 @@ function initCashierDesk(){
     });
     
     //判断网银是否展开
-    var isShow = $(".useCashierDeskPay").is(":visible");
+    var isShow = $("#useCashierDeskPay").is(":visible");
     if(isShow){
     	 //默认选中第一个银行
     	var firstBank = $(".bankName:first");
@@ -65,14 +63,14 @@ function initCashierDesk(){
 		bankCheckRadio($(this));
 	});
 	
-    if(cashierData.paySource()!="1"){
+    if(cashierData.paySource!="1"){
     	payPasswordObj.checkIsSetPayPassword();
     }
 }
 
 //GDP
 function isGDP(){
-	if('${cashDeskData.paySource}'=="1"){
+	if(cashierData.paySource=="1"){
 		return true;
 	}
 	return false;
@@ -80,7 +78,7 @@ function isGDP(){
 
 //财务
 function isFinance(){
-	if('${cashDeskData.paySource}'=="2"){
+	if(cashierData.paySource=="2"){
 		return true;
 	}
 	return false;
@@ -103,7 +101,7 @@ function amount_enough_show(){
 	$("#useCashierDeskPay").hide();
     $("#enough_amount").show();
     $("#not_enough_amount").hide();
-    $("#onlinePayAmount").val('${cashDeskData.amount}');
+    $("#onlinePayAmount").val(cashierData.tradeAmount);
     $("#d_checkbox").attr("checked",true);
 }
 //余额不够
@@ -120,7 +118,7 @@ function  amount_not_enough_show(){
 function amount_not_enough_rate(itemType){
     paytable_paywayClick(itemType);
     var rateAmount = $("#titanRateAmount").text();
-    var payAmount = sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}');
+    var payAmount = sub(cashierData.amount, cashierData.balanceusable);
     var show_online_payAmount =  accAdd(payAmount,rateAmount);
     $("#pay_surplus_amount").text(show_online_payAmount);
 }
