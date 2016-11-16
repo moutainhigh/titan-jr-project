@@ -47,7 +47,6 @@ public class OrgController extends BaseController{
 	 */
 	@RequestMapping(value = "/org")
 	public String org(Integer userType,Model model){
-		//count(model);
 		if(userType==null||userType==1){
 			//企业
 			return "admin/org/en-verify-org-list";
