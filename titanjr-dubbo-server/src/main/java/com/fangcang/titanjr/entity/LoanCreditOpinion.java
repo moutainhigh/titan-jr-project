@@ -9,6 +9,8 @@ import java.util.Date;
  */
 public class LoanCreditOpinion 
 {
+	private Long id;
+
 	private String orderNo;//授信单号
 	
 	private String creater;//创建人
@@ -17,9 +19,17 @@ public class LoanCreditOpinion
 	
 	private String content;//企业内容
 	
-	private int status;//1 未修改 2 已修改
+	private Integer status;//1 未修改 2 已修改
 	
-	private int result;//0 未知 1 通过 2 不通过
+	private Integer result;//0 未知 1 通过 2 不通过
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getOrderNo() {
 		return orderNo;
@@ -53,19 +63,19 @@ public class LoanCreditOpinion
 		this.content = content;
 	}
 
-	public int getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 
-	public int getResult() {
+	public Integer getResult() {
 		return result;
 	}
 
-	public void setResult(int result) {
+	public void setResult(Integer result) {
 		this.result = result;
 	}
 	

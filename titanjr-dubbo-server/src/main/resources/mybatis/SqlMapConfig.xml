@@ -89,6 +89,8 @@
 		<!--信贷相关-->
 		<mapper resource="mybatis/LoanCompanyEnsure.xml"/>
 		<mapper resource="mybatis/LoanCreditCompany.xml"/>
+		<mapper resource="mybatis/LoanCreditOrder.xml"/>
+		<mapper resource="mybatis/LoanCreditOpinion.xml"/>
 	</mappers>
 
 </configuration>

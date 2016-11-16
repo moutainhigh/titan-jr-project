@@ -24,11 +24,10 @@
     </resultMap>
 
 
-    <select id="queryloanCreditOrder" resultMap="loanCreditOrder"
+    <select id="queryLoanCreditOrder" resultMap="loanCreditOrder"
             parameterType="com.fangcang.titanjr.entity.LoanCreditOrder">
             select `id`, 
-            `orderno`, 
-            `orgcode`, 
+            `orderno`,
             `daylimit`, 
             `amount`, 
             `actualamount`,
@@ -44,16 +43,16 @@
                    `lastaudittime`,
                     `auditpass`,
                      `reqjson`
-                     form t_loan_creditorder
+                     from t_loan_creditorder
 	        <where>
-	            <if test="userId !=null">
+	            <if test="orderNo !=null">
 	                and orderno = #{orderNo}
 	            </if>
-	            <if test="companyName !=null">
+	            <if test="status !=null">
 	                and status = #{status}
 	            </if>
-	            <if test="businessLicense !=null">
-	                and orgcode = #{orgCode}
+	            <if test="rsorgId !=null">
+	                and rsorgid = #{rsorgId}
 	            </if>
 	        </where>
 
@@ -65,7 +64,7 @@
             <if test="dayLimit != null">daylimit= #{dayLimit},</if>
             <if test="amount != null">amount= #{amount},</if>
             <if test="actualAmount != null">actualamount= #{actualAmount},</if>
-            <if test="reqtTme != null">reqttme= #{reqTime},</if>
+            <if test="reqTime != null">reqtime= #{reqTime},</if>
             <if test="rateTem != null">ratetem= #{rateTem},</if>
             <if test="rspId != null">rspid= #{rspId},</if>
             <if test="rsorgId != null">rsorgid= #{rsorgId},</if>
@@ -77,7 +76,6 @@
             <if test="lastAuditTime != null">lastaudittime= #{lastAuditTime},</if>
             <if test="auditPass != null">auditpass= #{auditPass},</if>
             <if test="reqJson != null">reqjson= #{reqJson},</if>
-            <if test="orderNo != null">orderno= #{orderNo}</if>
         </set>
         <where>
             orderno = #{orderNo} <!--orderNo一定不为空-->
@@ -86,8 +84,8 @@
 
     <insert id="insertLoanCreditOrder" parameterType="com.fangcang.titanjr.entity.LoanCreditOrder">
 	  INSERT INTO `t_loan_creditorder` (
-	   `orderno`, 
-	   `orgcode`, 
+	   `orderno`,
+	   `orgcode`,
 	   `daylimit`, 
 	   `amount`, 
 	   `actualamount`, 

@@ -105,5 +105,7 @@
 	<!--信贷产品-->
 	<bean id="loanCompanyEnsureDao" class="com.fangcang.titanjr.dao.impl.LoanCompanyEnsureDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="loanCreditCompanyDao" class="com.fangcang.titanjr.dao.impl.LoanCreditCompanyDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="loanCreditOrderDao" class="com.fangcang.titanjr.dao.impl.LoanCreditOrderDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="loanCreditOpinionDao" class="com.fangcang.titanjr.dao.impl.LoanCreditOpinionDaoImpl" parent="baseSqlMapClient"></bean>
 </beans>
 

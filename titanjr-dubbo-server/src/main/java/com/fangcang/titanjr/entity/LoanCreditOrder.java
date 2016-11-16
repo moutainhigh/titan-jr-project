@@ -9,7 +9,7 @@ public class LoanCreditOrder {
 
 	private String orderNo;// 授信单号
 
-	private String orgCode;// 授信金融机构ID
+	private String orgCode;//机构编码
 
 	private int dayLimit;// 授信期限
 
@@ -25,11 +25,11 @@ public class LoanCreditOrder {
 
 	private String rsorgId;// 融数机构编号
 
-	private String createTime;// 创建时间
+	private Date createTime;// 创建时间
 
 	private String urlKey;// 授信资料key
 
-	private int status;// 1 草稿 2 授信初审 3 授信终审 4 审核失败 5 授信成功
+	private Integer status;// 1 草稿 2 授信初审 3 授信终审 4 审核失败 5 授信成功
 
 	private int assureType;// 担保 1 个人 2 企业
 
@@ -113,11 +113,11 @@ public class LoanCreditOrder {
 		this.rsorgId = rsorgId;
 	}
 
-	public String getCreateTime() {
+	public Date getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(String createTime) {
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
 
@@ -129,11 +129,11 @@ public class LoanCreditOrder {
 		this.urlKey = urlKey;
 	}
 
-	public int getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 
