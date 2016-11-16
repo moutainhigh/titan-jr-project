@@ -66,7 +66,7 @@ public class TUserArepayment implements Serializable {
 	 */
 	private String islimit;
 	/**
-	 * 状态
+	 * 状态:0未扣款,1全部还款成功,2还款失败,4部分还款成功
 	 */
 	private String statusid;
 	/**
