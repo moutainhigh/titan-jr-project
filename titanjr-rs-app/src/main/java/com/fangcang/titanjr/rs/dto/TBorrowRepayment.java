@@ -2,7 +2,6 @@ package com.fangcang.titanjr.rs.dto;
 
 import java.io.Serializable;
 
-import com.Rop.api.domain.BorrowRepayment;
 
 /**
  * 查询应还款信息
