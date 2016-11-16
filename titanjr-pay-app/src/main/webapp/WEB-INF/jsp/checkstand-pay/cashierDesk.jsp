@@ -571,14 +571,15 @@
     function toWxPayPage(){
     	 setTimeout(function(){
     		var status = confirmOrder(_orderNo);
-    		alert(status);
  			if(status =="success"||status=="fail"){
  				$("#orderNo").val(_orderNo);
  				$("#payType").val("微信支付");
  				 $("#confirmOrder").submit();
  			}
-    	 }, 2000);
+    	 }, 4000);
     }
+	
+    
      //到结果页面
     function toResultPage(data){
    	 	if(data.result == "0"){

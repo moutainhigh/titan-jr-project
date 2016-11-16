@@ -440,11 +440,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					isPayerAccountChange = titanPaymentRequest.getPayerAcount().equals(titanOrderPayreq.getPayerAcount());
 				}
 				
-				//针对移动支付或第三方支付
-				if(StringUtil.isValidString(titanPaymentRequest.getBankInfo()) &&
-						(titanPaymentRequest.getBankInfo().equals(CommonConstant.WXPAY)||titanPaymentRequest.getBankInfo().equals(CommonConstant.ALIPAY))){
-					isBankInfoChange = true;
-				}
 				
 				if(isAmountChange && isBankInfoChange && isPayerAccountChange){
 					long times = DateUtil.diffSecondByTime(
@@ -3219,28 +3214,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		}
 		return params;
 	}
-//	private List<NameValuePair> getHttpParams(RechargeDataDTO rechargeDataDTO){
-//		List<NameValuePair> params = new ArrayList<NameValuePair>();
-//		
-//		params.add(new BasicNameValuePair("merchantNo", rechargeDataDTO.getMerchantNo()));
-//		params.add(new BasicNameValuePair("orderNo", rechargeDataDTO.getOrderNo()));
-//		params.add(new BasicNameValuePair("orderAmount", rechargeDataDTO.getOrderAmount()));
-//		params.add(new BasicNameValuePair("amtType", rechargeDataDTO.getAmtType()));
-//		params.add(new BasicNameValuePair("payType", rechargeDataDTO.getPayType()));
-//		params.add(new BasicNameValuePair("bankInfo", rechargeDataDTO.getBankInfo()));
-//		params.add(new BasicNameValuePair("pageUrl", rechargeDataDTO.getPageUrl()));
-//		params.add(new BasicNameValuePair("notifyUrl", rechargeDataDTO.getNotifyUrl()));
-//		params.add(new BasicNameValuePair("orderTime", rechargeDataDTO.getOrderTime()));
-//		params.add(new BasicNameValuePair("orderExpireTime", rechargeDataDTO.getOrderExpireTime()));
-//		params.add(new BasicNameValuePair("orderMark", rechargeDataDTO.getOrderMark()));
-//		params.add(new BasicNameValuePair("signType", rechargeDataDTO.getSignType()));
-//		params.add(new BasicNameValuePair("busiCode", rechargeDataDTO.getBusiCode()));
-//		params.add(new BasicNameValuePair("version", rechargeDataDTO.getVersion()));
-//		params.add(new BasicNameValuePair("charset", rechargeDataDTO.getCharset()));
-//		params.add(new BasicNameValuePair("payerAcount", rechargeDataDTO.getPayerAcount()));
-//		params.add(new BasicNameValuePair("signMsg", this.getMD5Sign(rechargeDataDTO)));
-//		return params;
-//	}
 	
 	private String getMD5Sign(RechargeDataDTO rechargeDataDTO){
 	    StringBuffer signStr = new StringBuffer("merchantNo="+rechargeDataDTO.getMerchantNo());
