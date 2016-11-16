@@ -107,5 +107,8 @@
 	<bean id="loanCreditCompanyDao" class="com.fangcang.titanjr.dao.impl.LoanCreditCompanyDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="loanCreditOrderDao" class="com.fangcang.titanjr.dao.impl.LoanCreditOrderDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="loanCreditOpinionDao" class="com.fangcang.titanjr.dao.impl.LoanCreditOpinionDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="loanOrderDao" class="com.fangcang.titanjr.dao.impl.LoanOrderDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="loanPersonEnsureDao" class="com.fangcang.titanjr.dao.impl.LoanPersonEnsureDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="loanRoomPackSpecDao" class="com.fangcang.titanjr.dao.impl.LoanRoomPackSpecDaoImpl" parent="baseSqlMapClient"></bean>
 </beans>
 

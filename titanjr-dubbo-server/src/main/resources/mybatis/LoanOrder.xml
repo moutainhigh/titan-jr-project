@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fangcang.titanjr.dao.LoanOrderDao">
-	
+
     <resultMap id="loanApplyOrder" type="com.fangcang.titanjr.entity.LoanApplyOrder">
         <result property="orderNo" column="orderno"/>
         <result property="creditOrderNo" column="creditorderno"/>
@@ -31,42 +31,42 @@
 
     <select id="queryLoanApplyOrder" resultMap="loanApplyOrder"
             parameterType="com.fangcang.titanjr.entity.LoanApplyOrder">
-            select `id`, 
-            `orderno`, 
-            `creditorderno`,
-             `orgcode`,
-              `amount`, 
-              `actualamount`,
-               `rate`, 
-               `rspid`, 
-               `rsorgid`, 
-               `producttype`, 
-               `productId`, 
-               `createtime`, 
-               `ratetmp`, 
-               `status`, 
-               `errormsg`, 
-               `relmoneytime`,
-                `productspecId`, 
-                `repaymenttype`,
-                 `actualrepaymentdate`,
-                  `lastrepaymentdate`, 
-                  `repaymentprincipal`, 
-                  `repaymentinterest`, 
-                  `shouldcapital`,
-                   `shouldinterest`
-                     form t_loan_order
-	        <where>
-	            <if test="userId !=null">
-	                and orderno = #{orderNo}
-	            </if>
-	            <if test="companyName !=null">
-	                and status = #{status}
-	            </if>
-	            <if test="businessLicense !=null">
-	                and orgcode = #{orgCode}
-	            </if>
-	        </where>
+        select `id`,
+        `orderno`,
+        `creditorderno`,
+        `orgcode`,
+        `amount`,
+        `actualamount`,
+        `rate`,
+        `rspid`,
+        `rsorgid`,
+        `producttype`,
+        `productId`,
+        `createtime`,
+        `ratetmp`,
+        `status`,
+        `errormsg`,
+        `relmoneytime`,
+        `productspecId`,
+        `repaymenttype`,
+        `actualrepaymentdate`,
+        `lastrepaymentdate`,
+        `repaymentprincipal`,
+        `repaymentinterest`,
+        `shouldcapital`,
+        `shouldinterest`
+        from t_loan_order
+        <where>
+            <if test="orderNo !=null">
+                and orderno = #{orderNo}
+            </if>
+            <if test="status !=null">
+                and status = #{status}
+            </if>
+            <if test="orgCode !=null">
+                and orgcode = #{orgCode}
+            </if>
+        </where>
 
     </select>
 
@@ -80,11 +80,11 @@
             <if test="rsorgId != null">rsorgid= #{rsorgId},</if>
             <if test="productType != null">producttype= #{productType},</if>
             <if test="productId != null">productid= #{productId},</if>
-            <if test="createTime != null">  createtime= #{createTime},  </if>
+            <if test="createTime != null">createtime= #{createTime},</if>
             <if test="rateTmp != null">ratetmp=#{rateTmp},</if>
             <if test="status != null">status= #{status},</if>
             <if test="errorMsg != null">errormsg= #{errorMsg},</if>
-            <if test="relmoneyTime != null">relmoneytime= #{relmoneyTime},</if>
+            <if test="relMoneyTime != null">relmoneytime= #{relMoneyTime},</if>
             <if test="productSpecId != null">productspecId= #{productSpecId},</if>
             <if test="repaymentType != null">repaymenttype= #{repaymentType},</if>
             <if test="actualRepaymentDate != null">actualrepaymentdate= #{actualRepaymentDate},</if>
@@ -93,7 +93,6 @@
             <if test="repaymentInterest != null">repaymentinterest= #{repaymentInterest},</if>
             <if test="shouldCapital != null">shouldcapital= #{shouldCapital},</if>
             <if test="shouldInterest != null">shouldinterest= #{shouldInterest},</if>
-            <if test="orderNo != null">orderno= #{orderNo}</if>
         </set>
         <where>
             orderno = #{orderNo} <!--orderNo一定不为空-->
@@ -105,32 +104,32 @@
 		`orderno`,
 	 	`creditorderno`, 
 	 	`orgcode`,
-	 	 `amount`, 
+	 	`amount`,
 	 	`actualamount`,
 	  	`rate`,
 	   	`rspid`, 
 	  	`rsorgid`, 
-	 	 `producttype`, 
+	 	`producttype`,
 	  	`productId`,
 	   	`createtime`, 
-	  	 `ratetmp`, 
+	  	`ratetmp`,
 	   	`status`, 
 	   	`errormsg`, 
-	   `relmoneytime`,
-	    `productspecId`, 
-	    `repaymenttype`, 
-	    `actualrepaymentdate`,
+	    `relmoneytime`,
+	     `productspecId`,
+	     `repaymenttype`,
+	     `actualrepaymentdate`,
 	     `lastrepaymentdate`, 
 	     `repaymentprincipal`,
-	      `repaymentinterest`,
-	       `shouldcapital`,
-	        `shouldinterest`
+	     `repaymentinterest`,
+	     `shouldcapital`,
+	     `shouldinterest`
      )
      VALUES
      	(
      		#{orderNo},
-     		#{creditorderno},
-     		#{orgcode},
+     		#{creditOrderNo},
+     		#{orgCode},
      		#{amount},
      		#{actualAmount},
      		#{rate},
@@ -152,5 +151,6 @@
      		#{shouldCapital},
      		#{shouldInterest}
      	)
-    </insert> 
+    </insert>
+
 </mapper>

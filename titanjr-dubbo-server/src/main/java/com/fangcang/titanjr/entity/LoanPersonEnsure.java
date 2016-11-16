@@ -12,7 +12,7 @@ public class LoanPersonEnsure {
 
 	private String nationalIdentityNumber;// 身份证
 
-	private String mobilenNmber;// 手机号码
+	private String mobileNumber;// 手机号码
 
 	private int marriageStatus;// 1 未婚 2 已婚
 
@@ -20,7 +20,7 @@ public class LoanPersonEnsure {
 
 	private String nativePlace;// 籍贯
 
-	private String currentLiveaAdress;// 现居住地址
+	private String currentLiveAddress;// 现居住地址
 
 	private String graduateSchool;// 毕业院校
 
@@ -32,7 +32,7 @@ public class LoanPersonEnsure {
 
 	private String occupation;// 现任职务
 
-	private String worktelePhone;// 工作电话
+	private String workTelephone;// 工作电话
 
 	private String officeAddress;// 办公地址
 
@@ -50,13 +50,13 @@ public class LoanPersonEnsure {
 
 	private String firstContactPhone;// 第一联系人电话
 
-	private int relationToguarantee1;// 1 父母 2 子女 3 配偶 4 朋友 5 同时 6 其他
+	private int relationToGuarantee1;// 1 父母 2 子女 3 配偶 4 朋友 5 同时 6 其他
 
 	private String secondContactName;// 第二联系人姓名
 
 	private String secondContactPhone;// 第二联系人电话
 
-	private int relationToguarantee2;// 1 父母 2 子女 3 配偶 4 朋友 5 同时 6 其他
+	private int relationToGuarantee2;// 1 父母 2 子女 3 配偶 4 朋友 5 同时 6 其他
 
 	private String idCardUrl;// 担保人身份证URL
 
@@ -92,14 +92,6 @@ public class LoanPersonEnsure {
 		this.nationalIdentityNumber = nationalIdentityNumber;
 	}
 
-	public String getMobilenNmber() {
-		return mobilenNmber;
-	}
-
-	public void setMobilenNmber(String mobilenNmber) {
-		this.mobilenNmber = mobilenNmber;
-	}
-
 	public int getMarriageStatus() {
 		return marriageStatus;
 	}
@@ -124,12 +116,48 @@ public class LoanPersonEnsure {
 		this.nativePlace = nativePlace;
 	}
 
-	public String getCurrentLiveaAdress() {
-		return currentLiveaAdress;
+	public String getMobileNumber() {
+		return mobileNumber;
 	}
 
-	public void setCurrentLiveaAdress(String currentLiveaAdress) {
-		this.currentLiveaAdress = currentLiveaAdress;
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
+	public String getCurrentLiveAddress() {
+		return currentLiveAddress;
+	}
+
+	public void setCurrentLiveAddress(String currentLiveAddress) {
+		this.currentLiveAddress = currentLiveAddress;
+	}
+
+	public String getWorkTelephone() {
+		return workTelephone;
+	}
+
+	public void setWorkTelephone(String workTelephone) {
+		this.workTelephone = workTelephone;
+	}
+
+	public int getRelationToGuarantee1() {
+		return relationToGuarantee1;
+	}
+
+	public void setRelationToGuarantee1(int relationToGuarantee1) {
+		this.relationToGuarantee1 = relationToGuarantee1;
+	}
+
+	public void setSecondContactPhone(String secondContactPhone) {
+		this.secondContactPhone = secondContactPhone;
+	}
+
+	public int getRelationToGuarantee2() {
+		return relationToGuarantee2;
+	}
+
+	public void setRelationToGuarantee2(int relationToGuarantee2) {
+		this.relationToGuarantee2 = relationToGuarantee2;
 	}
 
 	public String getGraduateSchool() {
@@ -170,14 +198,6 @@ public class LoanPersonEnsure {
 
 	public void setOccupation(String occupation) {
 		this.occupation = occupation;
-	}
-
-	public String getWorktelePhone() {
-		return worktelePhone;
-	}
-
-	public void setWorktelePhone(String worktelePhone) {
-		this.worktelePhone = worktelePhone;
 	}
 
 	public String getOfficeAddress() {
@@ -244,14 +264,6 @@ public class LoanPersonEnsure {
 		this.firstContactPhone = firstContactPhone;
 	}
 
-	public int getRelationToguarantee1() {
-		return relationToguarantee1;
-	}
-
-	public void setRelationToguarantee1(int relationToguarantee1) {
-		this.relationToguarantee1 = relationToguarantee1;
-	}
-
 	public String getSecondContactName() {
 		return secondContactName;
 	}
@@ -262,18 +274,6 @@ public class LoanPersonEnsure {
 
 	public String getSecondContactPhone() {
 		return secondContactPhone;
-	}
-
-	public void setSecondContactPhone(String secondContactPhone) {
-		this.secondContactPhone = secondContactPhone;
-	}
-
-	public int getRelationToguarantee2() {
-		return relationToguarantee2;
-	}
-
-	public void setRelationToguarantee2(int relationToguarantee2) {
-		this.relationToguarantee2 = relationToguarantee2;
 	}
 
 	public String getIdCardUrl() {

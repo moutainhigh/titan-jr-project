@@ -91,6 +91,9 @@
 		<mapper resource="mybatis/LoanCreditCompany.xml"/>
 		<mapper resource="mybatis/LoanCreditOrder.xml"/>
 		<mapper resource="mybatis/LoanCreditOpinion.xml"/>
+		<mapper resource="mybatis/LoanOrder.xml"/>
+		<mapper resource="mybatis/LoanPersonEnsure.xml"/>
+		<mapper resource="mybatis/LoanRoomPackSpec.xml"/>
 	</mappers>
 
 </configuration>

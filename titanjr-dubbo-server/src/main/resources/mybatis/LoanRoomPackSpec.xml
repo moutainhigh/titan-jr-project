@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fangcang.titanjr.dao.LoanRoomPackSpecDao">
-	
-	
+
+
     <resultMap id="loanRoomPackSpec" type="com.fangcang.titanjr.entity.LoanRoomPackSpec">
         <result property="id" column="id"/>
         <result property="orderNo" column="orderno"/>
-        <result property="hotleName" column="hotlename"/>
+        <result property="hotelName" column="hotelname"/>
         <result property="beginDate" column="begindate"/>
         <result property="endDate" column="enddate"/>
         <result property="roomNights" column="roomnights"/>
@@ -19,31 +19,28 @@
 
     <select id="queryLoanRoomPackSpec" resultMap="loanRoomPackSpec"
             parameterType="com.fangcang.titanjr.entity.LoanRoomPackSpec">
-            select `id`, `orderno`, `hotlename`, `begindate`, `enddate`, `roomnights`, `accountname`, `account`, `bank`, `contracturl`
-                     form t_loan_roompackspec
-	        <where>
-	            <if test="userId !=null">
-	                and orderno = #{orderNo}
-	            </if>
-	            <if test="companyName !=null">
-	                and status = #{status}
-	            </if>
-	        </where>
+        select `id`, `orderno`, `hotelname`, `begindate`, `enddate`, `roomnights`, `accountname`, `account`, `bank`,
+        `contracturl`
+        FROM t_loan_roompackspec
+        <where>
+            <if test="orderNo !=null">
+                and orderno = #{orderNo}
+            </if>
+        </where>
 
     </select>
 
     <update id="updateLoanRoomPackSpec" parameterType="com.fangcang.titanjr.entity.LoanRoomPackSpec">
         update t_loan_roompackspec
         <set>
-            <if test="hotleName != null">hotleName= #{hotleName},</if>
-            <if test="beginDate != null">beginDate= #{beginDate},</if>
-            <if test="endDate != null">endDate= #{endDate},</if>
-            <if test="roomNights != null">roomNights= #{roomNights},</if>
-            <if test="accountName != null">accountName= #{accountName},</if>
-            <if test="account != null">accountName= #{account},</if>
-            <if test="bank != null">accountName= #{bank},</if>
-            <if test="contractUrl != null">accountName= #{contractUrl},</if>
-            <if test="orderno != null">orderno= #{orderno}</if>
+            <if test="hotelName != null">hotelname= #{hotelName},</if>
+            <if test="beginDate != null">begindate= #{beginDate},</if>
+            <if test="endDate != null">enddate= #{endDate},</if>
+            <if test="roomNights != null">roomnights= #{roomNights},</if>
+            <if test="accountName != null">accountname= #{accountName},</if>
+            <if test="account != null">account= #{account},</if>
+            <if test="bank != null">bank= #{bank},</if>
+            <if test="contractUrl != null">contracturl= #{contractUrl},</if>
         </set>
         <where>
             orderno = #{orderNo} <!--orderNo一定不为空-->
@@ -52,13 +49,13 @@
 
     <insert id="insertLoanRoomPackSpec" parameterType="com.fangcang.titanjr.entity.LoanRoomPackSpec">
 	  INSERT INTO `t_loan_roompackspec` ( `orderno`, 
-	  `hotlename`, `begindate`, `enddate`, `roomnights`, 
+	  `hotelname`, `begindate`, `enddate`, `roomnights`,
 	  `accountname`, `account`, `bank`, `contracturl`
      )
      VALUES
      	(
      		#{orderNo},
-     		#{hotleName},
+     		#{hotelName},
      		#{beginDate},
      		#{endDate},
      		#{roomNights},

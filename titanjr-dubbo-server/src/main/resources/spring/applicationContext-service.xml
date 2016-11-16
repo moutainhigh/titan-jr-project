@@ -39,19 +39,19 @@
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
 
 
-	<!--<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialOrganService" ref="titanOrgService" timeout="20000" />&lt;!&ndash;  group="production" &ndash;&gt;-->
-	<!--<dubbo:service interface="com.fangcang.titanjr.service.TitanCashierDeskService" ref="titanCashierDeskService" timeout="20000" />-->
-    <!--<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialTradeService" ref="titanFinancialTradeService" timeout="800000" />-->
-    <!--<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialBaseInfoService" ref="titanFinancialBaseInfoService" timeout="800000" />-->
-	<!--<dubbo:service interface="com.fangcang.titanjr.service.TitanCodeCenterService" ref="titanCodeCenterService" timeout="20000" />&lt;!&ndash;  group="production" &ndash;&gt;-->
-	<!--<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialSendSMSService" ref="titanFinancialSendSMSService" timeout="40000" />-->
-    <!--<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialAccountService" ref="titanFinancialAccountService" timeout="40000" />-->
-    <!--<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialUserService" ref="titanFinancialUserService" timeout="40000" />-->
-    <!--<dubbo:service interface="com.fangcang.titanjr.service.TitanOrderService" ref="titanOrderService" timeout="40000" />-->
-	<!--<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialBankCardService" ref="titanFinancialBankCardService" timeout="40000" />-->
-	<!--<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialRateService" ref="titanFinancialRateService" timeout="40000" />-->
-	<!--<dubbo:service interface="com.fangcang.titanjr.service.TitanHelpService" ref="titanHelpService" timeout="40000" />-->
-	<!--<bean id="rSInvokeInitManagerImpl" class="com.fangcang.titanjr.service.impl.RSInvokeInitManagerImpl" init-method="initRopClient" />  -->
-	<!---->
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialOrganService" ref="titanOrgService" timeout="20000" /><!--  group="production" -->
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanCashierDeskService" ref="titanCashierDeskService" timeout="20000" />
+    <dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialTradeService" ref="titanFinancialTradeService" timeout="800000" />
+    <dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialBaseInfoService" ref="titanFinancialBaseInfoService" timeout="800000" />
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanCodeCenterService" ref="titanCodeCenterService" timeout="20000" /><!--  group="production" -->
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialSendSMSService" ref="titanFinancialSendSMSService" timeout="40000" />
+    <dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialAccountService" ref="titanFinancialAccountService" timeout="40000" />
+    <dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialUserService" ref="titanFinancialUserService" timeout="40000" />
+    <dubbo:service interface="com.fangcang.titanjr.service.TitanOrderService" ref="titanOrderService" timeout="40000" />
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialBankCardService" ref="titanFinancialBankCardService" timeout="40000" />
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialRateService" ref="titanFinancialRateService" timeout="40000" />
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanHelpService" ref="titanHelpService" timeout="40000" />
+	<bean id="rSInvokeInitManagerImpl" class="com.fangcang.titanjr.service.impl.RSInvokeInitManagerImpl" init-method="initRopClient" />
+
 </beans>
 

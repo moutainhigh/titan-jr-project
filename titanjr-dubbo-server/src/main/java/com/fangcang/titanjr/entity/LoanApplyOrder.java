@@ -10,15 +10,17 @@ import java.util.Date;
  */
 public class LoanApplyOrder {
 
+	private Long id;
+
 	private String orderNo;// 贷款单号
 
 	private String creditOrderNo;// 授信单号
 
 	private String orgCode;// 泰坦金融企业编号
 
-	private String amount;// 申请贷款金额
+	private Long amount;// 申请贷款金额
 
-	private String actualAmount;// 实际贷款金额
+	private Long actualAmount;// 实际贷款金额
 
 	private float rate;// 贷款利率
 
@@ -34,7 +36,7 @@ public class LoanApplyOrder {
 
 	private String rateTmp;// 费率模板
 
-	private int status;// 0 无效贷款 1 贷款申请中 2 贷款成功等待放款 3 放款成功 4 放款失败 5 贷款失败
+	private Integer status;// 0 无效贷款 1 贷款申请中 2 贷款成功等待放款 3 放款成功 4 放款失败 5 贷款失败
 
 	private String errorMsg;// 贷款失败原因
 
@@ -56,6 +58,14 @@ public class LoanApplyOrder {
 	private long shouldCapital;// 应还本金
 
 	private long shouldInterest;// 应还利息
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getOrderNo() {
 		return orderNo;
@@ -81,19 +91,19 @@ public class LoanApplyOrder {
 		this.orgCode = orgCode;
 	}
 
-	public String getAmount() {
+	public Long getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(Long amount) {
 		this.amount = amount;
 	}
 
-	public String getActualAmount() {
+	public Long getActualAmount() {
 		return actualAmount;
 	}
 
-	public void setActualAmount(String actualAmount) {
+	public void setActualAmount(Long actualAmount) {
 		this.actualAmount = actualAmount;
 	}
 
@@ -153,11 +163,11 @@ public class LoanApplyOrder {
 		this.rateTmp = rateTmp;
 	}
 
-	public int getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 

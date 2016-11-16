@@ -16,7 +16,7 @@ public class LoanOrderDaoImpl extends GenericDAOMyBatisImpl implements LoanOrder
     @Override
     public int saveLoanApplyOrder(LoanApplyOrder loanApplyOrder) {
         try {
-            return super.insertEntity("com.fangcang.titanjr.dao.LoanApplyOrderDao.insertLoanApplyOrder", loanApplyOrder);
+            return super.insertEntity("com.fangcang.titanjr.dao.LoanOrderDao.insertLoanApplyOrder", loanApplyOrder);
         } catch (Exception e) {
             log.error("saveLoanApplyOrder Error" , e);
             throw new DaoException(e);
@@ -26,7 +26,7 @@ public class LoanOrderDaoImpl extends GenericDAOMyBatisImpl implements LoanOrder
     @Override
     public List<LoanApplyOrder> queryLoanApplyOrder(LoanApplyOrder loanApplyOrder) {
         try {
-            return super.selectList("com.fangcang.titanjr.dao.LoanApplyOrderDao.queryLoanApplyOrder", loanApplyOrder);
+            return super.selectList("com.fangcang.titanjr.dao.LoanOrderDao.queryLoanApplyOrder", loanApplyOrder);
         } catch (Exception e) {
             log.error("queryLoanApplyOrder Error" , e);
             throw new DaoException(e);
@@ -36,7 +36,7 @@ public class LoanOrderDaoImpl extends GenericDAOMyBatisImpl implements LoanOrder
     @Override
     public int updateLoanApplyOrder(LoanApplyOrder loanApplyOrder) {
         try {
-            return super.updateEntity("com.fangcang.titanjr.dao.LoanApplyOrderDao.updateLoanApplyOrder", loanApplyOrder);
+            return super.updateEntity("com.fangcang.titanjr.dao.LoanOrderDao.updateLoanApplyOrder", loanApplyOrder);
         } catch (Exception e) {
             log.error("updateLoanApplyOrder Error" , e);
             throw new DaoException(e);

@@ -10,9 +10,11 @@ import java.util.Date;
  */
 public class LoanRoomPackSpec
 {
+	private Long id;
+
 	private String orderNo;// 贷款单号
 	
-	private String hotleName;//酒店名称
+	private String hotelName;//酒店名称
 	
 	private Date beginDate;//包房开始时间
 	
@@ -28,6 +30,14 @@ public class LoanRoomPackSpec
 	
 	private String contractUrl;//合同地址（多个以分号分割）
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getOrderNo() {
 		return orderNo;
 	}
@@ -36,12 +46,12 @@ public class LoanRoomPackSpec
 		this.orderNo = orderNo;
 	}
 
-	public String getHotleName() {
-		return hotleName;
+	public String getHotelName() {
+		return hotelName;
 	}
 
-	public void setHotleName(String hotleName) {
-		this.hotleName = hotleName;
+	public void setHotelName(String hotelName) {
+		this.hotelName = hotelName;
 	}
 
 	public Date getBeginDate() {

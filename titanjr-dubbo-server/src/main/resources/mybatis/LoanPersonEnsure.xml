@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fangcang.titanjr.dao.LoanPersonEnsureDao">
-	
-	
+
+
     <resultMap id="loanPersonEnsure" type="com.fangcang.titanjr.entity.LoanPersonEnsure">
         <result property="orderNo" column="orderno"/>
         <result property="personName" column="personname"/>
         <result property="nationalIdentityNumber" column="nationalidentitynumber"/>
-        <result property="mobilenNmber" column="mobilennmber"/>
+        <result property="mobileNumber" column="mobilennmber"/>
         <result property="marriageStatus" column="marriagestatus"/>
         <result property="haveChildren" column="havechildren"/>
         <result property="nativePlace" column="nativeplace"/>
-        <result property="currentLiveaAdress" column="currentliveaadress"/>
+        <result property="currentLiveAddress" column="currentliveaddress"/>
         <result property="graduateSchool" column="graduateschool"/>
         <result property="highestEducation" column="highesteducation"/>
         <result property="yearsWorking" column="yearsworking"/>
         <result property="workCompany" column="workcompany"/>
         <result property="occupation" column="occupation"/>
-        <result property="worktelePhone" column="worktelephone"/>
+        <result property="workTelephone" column="worktelephone"/>
         <result property="officeAddress" column="officeaddress"/>
         <result property="industry" column="industry"/>
         <result property="carPropertyType" column="carpropertytype"/>
@@ -26,10 +26,10 @@
         <result property="propertyRemark" column="propertyremark"/>
         <result property="firstContactName" column="firstcontactname"/>
         <result property="firstContactPhone" column="firstcontactphone"/>
-        <result property="relationToguarantee1" column="relationtoguarantee1"/>
+        <result property="relationToGuarantee1" column="relationtoguarantee1"/>
         <result property="secondContactName" column="secondcontactname"/>
         <result property="secondContactPhone" column="secondcontactphone"/>
-        <result property="relationToguarantee2" column="relationtoguarantee2"/>
+        <result property="relationToGuarantee2" column="relationtoguarantee2"/>
         <result property="idCardUrl" column="idcardurl"/>
         <result property="registeredUrl" column="registeredurl"/>
         <result property="spouseRegisteredUrl" column="spouseregisteredurl"/>
@@ -40,21 +40,21 @@
 
     <select id="queryLoanPersonEnsure" resultMap="loanPersonEnsure"
             parameterType="com.fangcang.titanjr.entity.LoanPersonEnsure">
-            select `id`, `orderno`, `personname`, `nationalidentitynumber`,
-             `mobilenumber`, `marriagestatus`, `havechildren`, `nativeplace`, 
-             `currentliveaddress`, `graduateschool`, `highesteducation`,
-              `yearsworking`, `workcompany`, `occupation`, `worktelephone`,
-               `officeaddress`, `industry`, `carpropertytype`, `housepropertytype`,
-                `otherproperty`, `propertyremark`, `firstcontactname`, 
-                `firstcontactphone`, `relationtoguarantee1`,
-                 `secondcontactname`, `secondcontactphone`, 
-                 `relationtoguarantee2`, `idcardurl`, `registeredurl`, 
-                 `spouseregisteredurl`, `spouseidcardurl`,
-                  `marriageurl`
-                     form t_loan_personensure
-	        <where>
-	               orderno = #{orderNo}
-	        </where>
+        select `id`, `orderno`, `personname`, `nationalidentitynumber`,
+        `mobilenumber`, `marriagestatus`, `havechildren`, `nativeplace`,
+        `currentliveaddress`, `graduateschool`, `highesteducation`,
+        `yearsworking`, `workcompany`, `occupation`, `worktelephone`,
+        `officeaddress`, `industry`, `carpropertytype`, `housepropertytype`,
+        `otherproperty`, `propertyremark`, `firstcontactname`,
+        `firstcontactphone`, `relationtoguarantee1`,
+        `secondcontactname`, `secondcontactphone`,
+        `relationtoguarantee2`, `idcardurl`, `registeredurl`,
+        `spouseregisteredurl`, `spouseidcardurl`,
+        `marriageurl`
+        from t_loan_personensure
+        <where>
+            orderno = #{orderNo}
+        </where>
 
     </select>
 
@@ -64,35 +64,35 @@
         <set>
             <if test="personName != null">personname= #{personName},</if>
             <if test="nationalIdentityNumber != null">nationalidentitynumber= #{nationalIdentityNumber},</if>
-            <if test="mobilenNmber != null">mobilennmber= #{mobilenNmber},</if>
+            <if test="mobileNumber != null">mobilenumber= #{mobileNumber},</if>
             <if test="marriageStatus != null">marriagestatus= #{marriageStatus},</if>
             <if test="haveChildren != null">havechildren= #{haveChildren},</if>
             <if test="nativePlace != null">nativeplace= #{nativePlace},</if>
-            <if test="currentLiveaAdress != null">currentliveaadress= #{currentLiveaAdress},</if>
+            <if test="currentLiveAddress != null">currentliveaddress= #{currentLiveAddress},</if>
             <if test="graduateSchool != null">graduateschool= #{graduateSchool},</if>
-            <if test="highestEducation != null">  highesteducation= #{highestEducation},  </if>
+            <if test="highestEducation != null">highesteducation= #{highestEducation},</if>
             <if test="yearsWorking != null">yearsworking=#{yearsWorking},</if>
             <if test="workCompany != null">workcompany= #{workCompany},</if>
             <if test="occupation != null">occupation= #{occupation},</if>
-            <if test="worktelePhone != null">worktelephone= #{worktelePhone},</if>
+            <if test="workTelephone != null">worktelephone= #{workTelephone},</if>
             <if test="officeAddress != null">officeaddress= #{officeAddress},</if>
             <if test="industry != null">industry= #{industry},</if>
             <if test="carPropertyType != null">carpropertytype= #{carPropertyType},</if>
             <if test="housePropertyType != null">housepropertytype= #{housePropertyType},</if>
             <if test="otherProperty != null">otherproperty= #{otherProperty},</if>
-             <if test="propertyRemark != null">propertyremark= #{propertyRemark},</if>
-             <if test="firstContactName != null">firstcontactname= #{firstContactName},</if>
-             <if test="firstContactPhone != null">firstcontactphone= #{firstContactPhone},</if>
-              <if test="relationToguarantee1 != null">propertyremark= #{relationToguarantee1},</if>
-              <if test="secondContactName != null">secondcontactname= #{secondContactName},</if>
-              <if test="secondContactPhone != null">secondcontactphone= #{secondContactPhone},</if>
-                <if test="relationToguarantee2 != null">relationtoguarantee2= #{relationToguarantee2},</if>
-              <if test="idCardUrl != null">idcardurl= #{idCardUrl},</if>
-                 <if test="registeredUrl != null">registeredurl= #{registeredUrl},</if>
-              <if test="spouseRegisteredUrl != null">spouseregisteredurl= #{spouseRegisteredUrl},</if>
-                 <if test="spouseIdCardUrl != null">spouseidcardurl= #{spouseIdCardUrl},</if>
-              <if test="marriageUrl != null">marriageurl= #{marriageUrl},</if>
-              <if test="orderNo != null">orderno= #{orderNo}</if>
+            <if test="propertyRemark != null">propertyremark= #{propertyRemark},</if>
+            <if test="firstContactName != null">firstcontactname= #{firstContactName},</if>
+            <if test="firstContactPhone != null">firstcontactphone= #{firstContactPhone},</if>
+            <if test="relationToGuarantee1 != null">relationtoguarantee1= #{relationToGuarantee1},</if>
+            <if test="secondContactName != null">secondcontactname= #{secondContactName},</if>
+            <if test="secondContactPhone != null">secondcontactphone= #{secondContactPhone},</if>
+            <if test="relationToGuarantee2 != null">relationtoguarantee2= #{relationToGuarantee2},</if>
+            <if test="idCardUrl != null">idcardurl= #{idCardUrl},</if>
+            <if test="registeredUrl != null">registeredurl= #{registeredUrl},</if>
+            <if test="spouseRegisteredUrl != null">spouseregisteredurl= #{spouseRegisteredUrl},</if>
+            <if test="spouseIdCardUrl != null">spouseidcardurl= #{spouseIdCardUrl},</if>
+            <if test="marriageUrl != null">marriageurl= #{marriageUrl},</if>
+            <if test="orderNo != null">orderno= #{orderNo}</if>
         </set>
         <where>
             orderno = #{orderNo} <!--orderNo一定不为空-->
@@ -101,54 +101,54 @@
 
     <insert id="insertLoanPersonEnsure" parameterType="com.fangcang.titanjr.entity.LoanPersonEnsure">
 	  INSERT INTO `t_loan_personensure` (
-
 	   `orderno`,
-	    `personname`,
-	     `nationalidentitynumber`, 
-	     `mobilenumber`, 
-	     `marriagestatus`,
-	      `havechildren`, `nativeplace`,
-	       `currentliveaddress`,
-	        `graduateschool`, 
-	        `highesteducation`,
-	         `yearsworking`, 
-	         `workcompany`, 
-	         `occupation`,
-	          `worktelephone`,
-	           `officeaddress`, 
-	           `industry`,
-	            `carpropertytype`,
-	             `housepropertytype`,
-	              `otherproperty`,
-	               `propertyremark`, 
-	               `firstcontactname`, 
-	               `firstcontactphone`,
-	                `relationtoguarantee1`,
-	                 `secondcontactname`,
-	                  `secondcontactphone`, 
-	                  `relationtoguarantee2`, 
-	                  `idcardurl`,
-	                   `registeredurl`, 
-	                   `spouseregisteredurl`,
-	                    `spouseidcardurl`,
-	                     `marriageurl`
+	   `personname`,
+	   `nationalidentitynumber`,
+	   `mobilenumber`,
+	   `marriagestatus`,
+	   `havechildren`,
+	   `nativeplace`,
+	   `currentliveaddress`,
+	   `graduateschool`,
+	   `highesteducation`,
+	   `yearsworking`,
+	   `workcompany`,
+	   `occupation`,
+	   `worktelephone`,
+	   `officeaddress`,
+	   `industry`,
+	   `carpropertytype`,
+	   `housepropertytype`,
+	   `otherproperty`,
+	   `propertyremark`,
+	   `firstcontactname`,
+	   `firstcontactphone`,
+	   `relationtoguarantee1`,
+	   `secondcontactname`,
+	   `secondcontactphone`,
+	   `relationtoguarantee2`,
+	   `idcardurl`,
+	   `registeredurl`,
+	   `spouseregisteredurl`,
+	   `spouseidcardurl`,
+	   `marriageurl`
      )
      VALUES
      	(
      	 	#{orderNo},
      		#{personName},
      		#{nationalIdentityNumber},
-     		#{mobilenNmber},
+     		#{mobileNumber},
      		#{marriageStatus},
      		#{haveChildren},
      		#{nativePlace},
-     		#{currentLiveaAdress},
+     		#{currentLiveAddress},
      		#{graduateSchool},
      		#{highestEducation},
      		#{yearsWorking},
      		#{workCompany},
      		#{occupation},
-     		#{worktelePhone},
+     		#{workTelephone},
      		#{officeAddress},
      		#{industry},
      		#{carPropertyType},
@@ -157,10 +157,10 @@
      		#{propertyRemark},
      		#{firstContactName},
      		#{firstContactPhone},
-     		#{relationToguarantee1},
+     		#{relationToGuarantee1},
      		#{secondContactName},
      		#{secondContactPhone},
-     		#{relationToguarantee2},
+     		#{relationToGuarantee2},
      		#{idCardUrl},
      		#{registeredUrl},
      		#{spouseRegisteredUrl},
