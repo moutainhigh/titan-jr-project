@@ -29,6 +29,7 @@ function initCashierDesk(){
     		||cashierData.balanceusable=="0.00"
     		||cashierData.balanceusable=="0"){
     	$("#d_checkbox").attr("checked",false);
+    	$("#d_checkbox").attr('disabled',true);
     }
     
     //点击某个银行计算费率

@@ -407,6 +407,17 @@ public class FinancialAccountController extends BaseController {
         
     }
     
+    @ResponseBody
+    @RequestMapping("getBankInfoList")
+    public String getBankInfo(){
+        BankInfoQueryRequest bankInfoQueryRequest = new BankInfoQueryRequest();
+        bankInfoQueryRequest.setBankType(1);
+        BankInfoResponse bankInfoResponse =  titanFinancialBaseInfoService.queryBankInfoList(bankInfoQueryRequest);
+        if (bankInfoResponse.isResult() && CollectionUtils.isNotEmpty(bankInfoResponse.getBankInfoDTOList())){
+            return toJson(bankInfoResponse);
+        }
+        return null;
+    }
 
     @ResponseBody
     @RequestMapping("getOrgList")
@@ -420,6 +431,7 @@ public class FinancialAccountController extends BaseController {
         return null;
     }
 
+    
     @RequestMapping(value = "/order-remark", method = RequestMethod.GET)
     public String toOrderRemark(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
@@ -456,6 +468,31 @@ public class FinancialAccountController extends BaseController {
         return "account-overview/order-remark-history";
     }
 
+    @ResponseBody
+    @RequestMapping("setPayPassword")
+    public Map<String, String> setPayPassword(HttpServletRequest request, PayPasswordRequest payPasswordRequest) {
+        Map<String, String> map = new HashMap<String, String>();
+        if (payPasswordRequest != null && StringUtil.isValidString(payPasswordRequest.getPayPassword())) {
+//        	payPasswordRequest.setPayPassword(RSADecryptString.decryptString(payPasswordRequest.getPayPassword(),request));
+        	payPasswordRequest.setPayPassword(payPasswordRequest.getPayPassword());
+        	if(StringUtil.isValidString(payPasswordRequest.getOldPassword())){
+//        		payPasswordRequest.setOldPassword(RSADecryptString.decryptString(payPasswordRequest.getOldPassword(),request));
+        		payPasswordRequest.setOldPassword(payPasswordRequest.getOldPassword());
+        	}
+        	payPasswordRequest.setTfsuserid(this.getTfsUserId());
+        	log.info("设置付款密码的传入参数:"+toJson(payPasswordRequest));
+            PayPasswordResponse payPasswordResponse = titanFinancialUserService.saveOrUpdatePayPassword(payPasswordRequest);
+            if (payPasswordResponse.isSaveSuccess()) {
+                map.put(WebConstant.RESULT, WebConstant.SUCCESS);
+            } else {
+                map.put(WebConstant.MSG, payPasswordResponse.getReturnMessage());
+            }
+            return map;
+        }
+        map.put(WebConstant.RESULT, "fail");
+        map.put(WebConstant.MSG, "系统错误");
+        return map;
+    }
 
     @ResponseBody
     @RequestMapping("forgetPayPassword")
@@ -513,6 +550,18 @@ public class FinancialAccountController extends BaseController {
     	}
     }
     
+    @ResponseBody
+    @RequestMapping("checkIsSetPayPassword")
+    public Map<String, String> checkIsSetPayPassword(String fcUserid,HttpServletRequest request) {
+    	boolean flag = false;
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("result", "false");
+        flag = titanFinancialUserService.checkIsSetPayPassword(fcUserid,getTfsUserId());
+        if (flag) {
+            map.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        }
+        return map;
+    }
 
     @RequestMapping(value = "/updateOrderRemark")
     @ResponseBody
@@ -641,6 +690,17 @@ public class FinancialAccountController extends BaseController {
         }
     }
 
+    @RequestMapping("showSetPayPassword")
+    public String showSetPayPassword() {
+        return "checkstand-pay/setPayPassword";
+    }
+
+    @RequestMapping("showPayPassword")
+    public String showPayPassword() {
+        return "checkstand-pay/putPayPassword";
+    }
+
+
     private boolean setTransOrderDetail(TradeDetailRequest tradeDetailRequset, Model model) {
         if (null != this.getUserId()) {
             tradeDetailRequset.setUserid(this.getUserId());
@@ -674,4 +734,41 @@ public class FinancialAccountController extends BaseController {
         return  null;
     }
     
+	@RequestMapping("/selectAccHistory")
+	public String showAccountHistory(AccountHistoryDTO accountHistoryDTO,Model model){
+		if(accountHistoryDTO !=null ){
+			AccountHistoryRequest accountHistoryRequest = new AccountHistoryRequest();
+			accountHistoryRequest.setAccountHistoryDTO(accountHistoryDTO);
+			AccountHistoryResponse accountHistoryResponse = titanFinancialAccountService.queryAccountHistory(accountHistoryRequest);
+			if(accountHistoryResponse.isResult()){
+				model.addAttribute("accountHistoryResponse", accountHistoryResponse);
+			}
+		}
+		return "checkstand-pay/selectAccHistory";
+	}
+	
+	@ResponseBody
+	@RequestMapping("/check_account")
+	public String checkRecieveAccount(String recieveOrgName,String recieveTitanCode){
+		if(!StringUtil.isValidString(recieveOrgName)
+				|| !StringUtil.isValidString(recieveTitanCode)){
+			return toJson(putSysError("账户名和泰坦码不能为空"));
+		}
+		
+		AccountCheckRequest accountCheckRequest = new AccountCheckRequest();
+		accountCheckRequest.setOrgName(recieveOrgName);
+		accountCheckRequest.setTitanCode(recieveTitanCode);
+		AccountCheckResponse accountCheckResponse = titanFinancialAccountService.checkTitanCode(accountCheckRequest);
+		if(accountCheckResponse.isCheckResult()){
+		   return toJson(putSuccess());
+		}
+		return toJson(putSysError(accountCheckResponse.getReturnMessage()));
+	} 
+	
+	@RequestMapping("/error_cashier")
+	public String returnErrorPage(String msg,Model model){
+		model.addAttribute("msg", msg);
+		return "checkstand-pay/cashierDeskError";
+	}
+	
 }

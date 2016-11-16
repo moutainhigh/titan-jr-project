@@ -147,7 +147,6 @@ function initCashierData(data){
 	cashierData.form = function(){
 		var form = document.createElement("form");
 		form.action = '../payment/packageRechargeData.action';
-		form.target = '_blank';
 		form.id = 'onlinePaymentForm';
 		form.method = 'post';
 			var payPassword = document.createElement("input");

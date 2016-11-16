@@ -48,15 +48,15 @@
                             <div>
                                 <span class="w_160"><i class="c_f00">*</i>收款账户（公司名称）：</span>
                                 <c:choose>
-                                  <c:when test="${ not empty cashDeskData.accountHistoryDTO }">
-                                    <input type="hidden" id="hiddenAccountName" value="${cashDeskData.accountHistoryDTO.orgname}">
-                                    <span id="showAccountName">${cashDeskData.accountHistoryDTO.orgname}</span> 
-                                    <span class="blue p_l18 curpo J_payother">付款给其他账户&gt;&gt;</span>
+                                  <c:when test="${not empty  cashDeskData.orgName}">
+                                     <input type="hidden" id="hiddenAccountName" value="${cashDeskData.orgName}">
+                                     <span id="showAccountName">${cashDeskData.orgName}</span> 
                                   </c:when>
                                   <c:otherwise>
-                                    <c:if test="${not empty  cashDeskData.orgName}">
-                                      <input type="hidden" id="hiddenAccountName" value="${cashDeskData.orgName}">
-                                       <span id="showAccountName">${cashDeskData.orgName}</span> 
+                                    <c:if test="${ not empty cashDeskData.accountHistoryDTO}">
+                                       <input type="hidden" id="hiddenAccountName" value="${cashDeskData.accountHistoryDTO.orgname}">
+                                   	   <span id="showAccountName">${cashDeskData.accountHistoryDTO.orgname}</span> 
+                                       <span class="blue p_l18 curpo J_payother">付款给其他账户&gt;&gt;</span>
                                     </c:if>
                                   </c:otherwise> 
                                 </c:choose>
@@ -64,15 +64,15 @@
                           <div>
                                 <span class="w_160"><i class="c_f00">*</i>收款方 - 泰坦码：</span>
                                  <c:choose>
-                                  <c:when test="${ not empty  cashDeskData.accountHistoryDTO}">
-                                     <input type="hidden" id="hiddenTitanCode" value="${cashDeskData.accountHistoryDTO.titancode} ">
-                                     <span id="showTitanCode">${cashDeskData.accountHistoryDTO.titancode}</span>
+                                  <c:when test="${not empty  cashDeskData.titanCode}">
+                                     <input type="hidden" id="hiddenTitanCode" value="${cashDeskData.titanCode} ">
+                                     <span id="showTitanCode">${cashDeskData.titanCode}</span>
                                   </c:when>
                                  <c:otherwise>
-                                    <c:if test="${not empty  cashDeskData.titanCode}">
-                                       <input type="hidden" id="hiddenTitanCode" value="${cashDeskData.titanCode} ">
-                                     <span id="showTitanCode">${cashDeskData.titanCode}</span>
-                                    </c:if>
+                                     <c:if test="${not empty  cashDeskData.accountHistoryDTO}">
+	                                     <input type="hidden" id="hiddenTitanCode" value="${cashDeskData.accountHistoryDTO.titancode} ">
+	                                     <span id="showTitanCode">${cashDeskData.accountHistoryDTO.titancode}</span>
+                                     </c:if>
                                   </c:otherwise>
                                 </c:choose>
                             </div> 
@@ -263,7 +263,7 @@
     //点击使用余额支付
     function checktest() {
     	//如果余额足够则只能用余额或者网银付款，二选一，如果余额不足则自由选择
-    	if (sub('${cashDeskData.amount}','${cashDeskData.balanceusable}')<= 0){
+    	if (sub(cashierData.tradeAmount,cashierData.balanceusable)<= 0){
    		 if($("#d_checkbox").attr("checked")=="checked"){
    			$(".bank-limit-wrap").hide();
    			 var arrow = $('.J_payway').find('i');
@@ -290,12 +290,16 @@
 	   	}else{//余额不足，将支持两种结合的方式或者选择充值
 	   		 if($("#d_checkbox").attr("checked")=="checked"){//在线支付剩余余额
 	   			 //获取选中银行
+	   			 
 	   			var itemType = $(".bankName:checked").parents(".paytable_payway").attr("itemType");
+	   			paytable_paywayClick(itemType);
 	   		  //计算选中银行的手续费
-	   			amount_not_enough_rate(itemType);
+	   			//amount_not_enough_rate(itemType);
 	   		 }else{//在线支付全款
 	   			 $(".bankName:checked").parents(".paytable_payway").click();
-		         var show_online_PayAmount =  accAdd(cashierData.pay_totalAmount(), cashierData.payAmount());
+	   		     var rateAmount = $("#titanRateAmount").text();
+
+		         var show_online_PayAmount =  accAdd(rateAmount, cashierData.payAmount());
 		         $("#pay_surplus_amount").text(show_online_PayAmount);
 	   		 }
 	   	}
@@ -546,7 +550,7 @@
     		type: "post",
             dataType : 'html',
    	        context: document.body,
-   	     	data: potGateData(pay_date),
+   	     	data: cashierData.onlinePayData(),
    	        url : '<%=basePath%>/payment/qrCodePayment.action',			
    	        success : function(html){
    	            var d =  window.top.dialog({
