@@ -20,6 +20,7 @@ import com.Rop.api.request.WheatfieldOrderMixserviceCreditapplicationRequest;
 import com.Rop.api.request.WheatfieldOrderMixserviceCreditmerchantinfoqueryRequest;
 import com.Rop.api.request.WheatfieldOrderMixserviceQueryloanapplyRequest;
 import com.Rop.api.request.WheatfieldOrderMixserviceStoploanRequest;
+import com.Rop.api.request.WheatfieldOrderOperRequest;
 import com.Rop.api.request.WheatfieldOrderServiceAgreementconfirmRequest;
 import com.Rop.api.request.WheatfieldOrderServiceNewloanapplyRequest;
 import com.Rop.api.response.FsFileUploadResponse;
@@ -33,6 +34,7 @@ import com.Rop.api.response.WheatfieldOrderMixserviceCreditapplicationResponse;
 import com.Rop.api.response.WheatfieldOrderMixserviceCreditmerchantinfoqueryResponse;
 import com.Rop.api.response.WheatfieldOrderMixserviceQueryloanapplyResponse;
 import com.Rop.api.response.WheatfieldOrderMixserviceStoploanResponse;
+import com.Rop.api.response.WheatfieldOrderOperResponse;
 import com.Rop.api.response.WheatfieldOrderServiceAgreementconfirmResponse;
 import com.Rop.api.response.WheatfieldOrderServiceNewloanapplyResponse;
 import com.fangcang.titanjr.common.util.Tools;
@@ -93,7 +95,7 @@ public class LoanDemoTest {
         
          // doqueryuserinitiativerepayment(session);//主动还款查询
          doqueryloanapply();//贷款订单状态查询接口
-        
+        //  queryOrderOper();//查询叮当
        // doqueryuserrepayment();//查询贷款的还款状态及历史
 		// stoploan();//终止贷款
 
@@ -363,6 +365,41 @@ public class LoanDemoTest {
         }
         return strError;
     }
+    /**
+     * 查询订单
+     * @return
+     */
+    public static String queryOrderOper(){
+    	String strError = null;
+		try {
+			WheatfieldOrderOperRequest req = new WheatfieldOrderOperRequest();
+			// 必输项
+			req.setUserid("TJM10000087");								// 接入机构中设置的用户ID
+			req.setConstid("M000016");							// 机构码
+			req.setOrdertypeid("M20001");							// 基础业务为B，扩展业务待定 M70001棉庄订金支付,M20001:贷款订单
+			req.setProductid("P000070");						// 产品号
+			req.setOpertype("3");								// 操作类型（修改：2,新增：1,取消4,查询3）
+			
+			WheatfieldOrderOperResponse rsp = ropClient.execute(req, session);
+			if (rsp != null) {
+				System.out.println("返回报文: \n" + rsp.getBody());
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						strError = rsp.getSubMsg();
+					} else {
+						strError = rsp.getMsg();
+					}
+				}
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return "error";
+		} 
+		return strError;
+    	
+    }
+    
+    
     
     /***
      * 终止贷款:对于还未放款且已经终审通过的贷款提供终止贷款接口，可选择将该笔贷款的状态更新为续议或拒绝
@@ -466,7 +503,7 @@ public class LoanDemoTest {
     	WheatfieldOrderMixserviceQueryloanapplyRequest request = new WheatfieldOrderMixserviceQueryloanapplyRequest();
     	request.setUserid("TJM10000087");	
     	request.setRootinstcd("M000016");										//机构码
-    	//request.setUserorderid("TJO20161025333");  						        //	商户id
+    	request.setUserorderid("TJO201610255555");  						        //	商户id
     	try {
     		WheatfieldOrderMixserviceQueryloanapplyResponse rsp = ropClient.execute(request,session);
     		 System.out.println("返回报文: \n" + rsp.getBody());
