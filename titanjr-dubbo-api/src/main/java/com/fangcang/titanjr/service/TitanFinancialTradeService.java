@@ -15,36 +15,15 @@ import com.fangcang.titanjr.dto.response.*;
  */
 public interface TitanFinancialTradeService {
 
-	/**
-	 * 落单操作,泰坦金服生成交易工单
-	 * 融数交易工单操作接口
-	 * @param orderRequest
-	 * @return
-	 * @author fangdaikang
-	 */
-	public TransOrderCreateResponse operateRSTransOrder(OrderRequest orderRequest);
 	
-	
-	 public TransOrderCreateResponse operateRSTransOrder2(OrderRequest orderRequest);
+//	 public TransOrderCreateResponse operateRSTransOrder2(OrderRequest orderRequest);
 	
 	/**
 	 * 本地生成订单
 	 * @param localAddTransOrderRequest
 	 * @return
 	 */
-	public LocalAddTransOrderResponse addLocalTransOrder(PaymentRequest paymentRequest,FinancialOrderResponse financialOrderResponse);
-	
 	public LocalAddTransOrderResponse addLocalTransOrder(TitanPaymentRequest titanPaymentRequest);
-	/**
-	 * 创建泰坦金服交易单接口
-	 * 在调用支付接口之前判定调用融数落单
-	 * 保存泰坦交易工单
-	 * @param paymentRequest
-	 * @return
-	 * @author fangdaikang
-	 */
-	public TransOrderCreateResponse createTitanTransOrder(PaymentRequest paymentRequest) throws Exception;
-	
 	
 	/**
 	 * 改造后的接口
@@ -59,27 +38,8 @@ public interface TitanFinancialTradeService {
 	 * @return RechargeResponse 
 	 * @author fangdaikang
 	 */
-	public RechargeResponse generateRechargePage(RechargePageRequest rechargePageRequest) throws Exception;
-	
-	
-	/**
-	 * 在收银台支付页面点击确定按钮时，生成充值页面的操作
-	 * @param rechargePageRequest
-	 * @return RechargeResponse 
-	 * @author fangdaikang
-	 */
 	public RechargeResponse packageRechargeData( RechargeRequest rechargeRequest);
 	
-	/**
-	 * 用户进行充值操作(不需要财务单)
-	 * @param rechargePageRequest
-	 * @return
-	 * @throws Exception
-	 * @author fangdaikang
-	 */
-	public RechargeResponse generateOrderNoAndRechargePage(RechargePageRequest rechargePageRequest)throws Exception;
-
-
 	/**
 	 * 转账 将已经充入账户余额的资金转到对方账户
 	 * @param transferRequest
@@ -87,15 +47,6 @@ public interface TitanFinancialTradeService {
 	 * @throws Exception
 	 */
 	public TransferResponse transferAccounts(TransferRequest transferRequest) throws Exception;
-	
-	/**
-	 * 查询财务工单信息
-	 * 对调用financeSearchRemote进行财务工单查询的封装
-	 * @param financialOrderRequest
-	 * @return
-	 * @author fangdaikang
-	 */
-	public FinancialOrderResponse queryFinanceOrderDetail(FinancialOrderRequest financialOrderRequest);
 	
 	/**
 	 * 开通或关闭免密支付

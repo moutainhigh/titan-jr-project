@@ -510,8 +510,8 @@
     //提交表单
     function pay_Order(){
     	//获取数据
-    	if(cashierData.validatePayerAccount.length>0){
-    		cashierData.window(cashierData.validatePayerAccount);
+    	if(cashierData.validatePayerAccount().length>0){
+    		cashierData.window(cashierData.validatePayerAccount());
     		return ;
     	}
    	    top.F.loading.show();
@@ -549,7 +549,6 @@
    	     	data: potGateData(pay_date),
    	        url : '<%=basePath%>/payment/qrCodePayment.action',			
    	        success : function(html){
-   				top.F.loading.hide();
    	            var d =  window.top.dialog({
    	                title: ' ',
    	                padding: '0 0 0px 0',
@@ -564,7 +563,9 @@
    	            	d.remove();
    	            	toWxPayPage();
    	            });
-   	        }
+   	        },complete:function(){
+               	top.F.loading.hide();
+            }
            });
     }
     

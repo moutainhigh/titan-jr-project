@@ -172,7 +172,7 @@ function initPayPassword(){
 		if(cashierData.paySource=='1'){//如果分销商付款不需要输入密码，不用余额支付也不需要输入付款密码
     		return true;
     	}
-    	if(($("#d_checkbox").attr("checked")=="checked" && cashierData.bbalanceusable=="0")||$("#d_checkbox").attr("checked")!="checked"){
+    	if(($("#d_checkbox").attr("checked")=="checked" && cashierData.balanceusable=="0")||$("#d_checkbox").attr("checked")!="checked"){
     		return true;
     	}
     	var flag = false;

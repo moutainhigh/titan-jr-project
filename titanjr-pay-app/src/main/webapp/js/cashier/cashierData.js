@@ -15,23 +15,24 @@ function initCashierData(data){
 	
 	cashierData.transferAmount=function(){
 		if(sub(cashierData.tradeAmount, cashierData.balanceusable) <= 0){
-			if(cashierData.checkBoxIsChecked){
+			if(cashierData.checkBoxIsChecked()){
 				return cashierData.tradeAmount;
 			}
 		}else{
-			if(cashierData.checkBoxIsChecked){
+			if(cashierData.checkBoxIsChecked()){
 				return cashierData.balanceusable;
 			}
 		}
 		return "0";
 	};
+	
 	cashierData.payAmount = function(){
 		if(sub(cashierData.tradeAmount, cashierData.balanceusable) <= 0){
-			if(!cashierData.checkBoxIsChecked){
+			if(!cashierData.checkBoxIsChecked()){
 				return cashierData.tradeAmount;
 			}
 		}else{
-			if(cashierData.checkBoxIsChecked){
+			if(cashierData.checkBoxIsChecked()){
 				return sub(cashierData.tradeAmount, cashierData.balanceusable);
 			}else{
 				return cashierData.tradeAmount;
@@ -93,12 +94,12 @@ function initCashierData(data){
 	
 	cashierData.validatePayerAccount = function(){
 		var errMsg ="";
-		if(cashierData.payerAccount !=null){
-    		if(payerAccount.length<1){
+		if(cashierData.payerAccount() !=null){
+    		if(cashierData.payerAccount().length<1){
     			errMsg="民生企业银行客户号不能为空";
     		}else{
     			var reg = /^([a-z]|[A-Z]|[0-9]){1,32}$/;
-    			if(!reg.test(payerAccount)){
+    			if(!reg.test(cashierData.payerAccount())){
     				errMsg="民生企业银行客户号输入有误,只能是数字或字母";
     			};
     		}

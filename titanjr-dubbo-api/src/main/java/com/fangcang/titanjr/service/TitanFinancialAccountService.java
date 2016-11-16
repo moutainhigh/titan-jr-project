@@ -78,14 +78,6 @@ public interface TitanFinancialAccountService {
 	 * @return
 	 * @author fangdaikang
 	 */
-	public AccountHistoryResponse addAccountHistory(TransferRequest transferRequest);
-	
-	/**
-	 * 更新收付款历史记录
-	 * @param transferRequest
-	 * @return
-	 * @author fangdaikang
-	 */
 	public AccountHistoryResponse addAccountHistory2(AccountHistoryRequest accountHistoryRequest);
 	
 	/**

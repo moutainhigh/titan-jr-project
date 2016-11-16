@@ -17,6 +17,7 @@
 	  	    	payAmount = cashierData.tradeAmount;
 	  	    }
 		 }
+		 
 		 if(itemType ==1 && parseFloat(payAmount) < 1000  &&  cashierData.paySource=='1' && !($("#d_checkbox").attr("checked")=="checked"))
 		 {
 			 chageComfireBut('hide');
@@ -30,7 +31,6 @@
 	        dataType: "json",
 	        async: false,
 	        success: function(data){
-	        	alert(data.data.exRateAmount);
 	       	 $('#titanRateAmount').text(data.data.exRateAmount);
 	       	 var show_online_payAmount = accAdd(payAmount,data.data.exRateAmount);
 	         $("#pay_surplus_amount").text(show_online_payAmount);
