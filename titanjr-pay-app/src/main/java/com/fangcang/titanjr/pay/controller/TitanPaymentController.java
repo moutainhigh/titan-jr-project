@@ -479,9 +479,9 @@ public class TitanPaymentController extends BaseController {
     
 
 	@RequestMapping("payConfirmPage")
-	public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,String payType,Model model) throws NamingException{
+	public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,String payTypeMsg,Model model) throws NamingException{
 		
-		return titanPaymentService.payConfirmPage(rechargeResultConfirmRequest,payType,model);
+		return titanPaymentService.payConfirmPage(rechargeResultConfirmRequest,payTypeMsg,model);
 	}
 	
 	@RequestMapping("confirmOrder")

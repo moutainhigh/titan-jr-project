@@ -249,7 +249,7 @@
 
 <form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder" method="post">
   <input name="orderNo" id="orderNo" type="hidden">
-  <input name="payType" id="payType"  type="hidden">
+  <input name="payTypeMsg" id="payTypeMsg"  type="hidden">
 </form>
 
 <!--弹窗白色底-->
@@ -970,7 +970,7 @@ $("document").ready(function (){
    	                skin : 'saas_pop', 
    	            	onclose: function () {
    	            		toWxPayPage();
-   	          		},
+   	          		}
    	            }).showModal();
    	            $('.wx_close').on('click',function(){
    	            	d.remove();
@@ -985,7 +985,7 @@ $("document").ready(function (){
     		var status = confirmOrder(_orderNo);
  			if(status =="success"||status=="fail"){
  				$("#orderNo").val(_orderNo);
- 				$("#payType").val("微信支付");
+ 				$("#payTypeMsg").val("微信支付");
  				 $("#confirmOrder").submit();
  			}
     	 }, 4000);
