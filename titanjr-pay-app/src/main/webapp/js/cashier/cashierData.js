@@ -85,7 +85,7 @@ function initCashierData(data){
 	cashierData.payerAccount = function(){
 		var payerAccount = null;
 		var value=$('input:radio[name=r2]:checked').val();
-		if(value=='cmbc' && linePayType=="1"){
+		if(value=='cmbc' && cashierData.linePayType()=="1"){
 			var dataIndex = $('input:radio[name=r2]:checked').attr("data-index");
 			payerAccount = $("#customNo-"+dataIndex).val();
 		}

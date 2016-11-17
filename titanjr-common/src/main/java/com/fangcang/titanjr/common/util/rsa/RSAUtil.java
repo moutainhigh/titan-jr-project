@@ -1,8 +1,13 @@
 package com.fangcang.titanjr.common.util.rsa;
 
+import java.io.ByteArrayOutputStream;
+import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,8 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.crypto.Cipher;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+
+
 
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.util.StringUtil;
@@ -43,6 +53,17 @@ public class RSAUtil {
 	public final static String RSCODE = "rsCode";
 	public final static String RSMEG = "rsMsg";
 	
+    /** *//**
+     * RSA最大加密明文大小
+     */
+    private static final int MAX_ENCRYPT_BLOCK = 117;
+    
+    /** *//**
+     * RSA最大解密密文大小
+     */
+    private static final int MAX_DECRYPT_BLOCK = 128;
+
+	
     
     /**
      * 生成字符串类型的公钥、私钥对
@@ -62,6 +83,25 @@ public class RSAUtil {
     	keysMap.put(RSAUtil.PRIVATE_KEY, priKeyXml);
     	return keysMap;
     }
+    
+    
+    /**
+     * 生成公私钥对
+     * @return
+     * @throws Exception
+     */
+    public static Map<String,String>generateStringKsys()throws Exception{
+    	Map<String, String> keysMap = new HashMap<String, String>();
+    	KeyPair kp = RsaHelper.generateRSAKeyPair();
+    	PublicKey pubKey = kp.getPublic();
+        PrivateKey priKey = kp.getPrivate();
+        String publicKey = Base64Helper.encode(pubKey.getEncoded());
+        String privateKey = Base64Helper.encode(priKey.getEncoded());
+        keysMap.put(RSAUtil.PUBLIC_KEY, publicKey);
+    	keysMap.put(RSAUtil.PRIVATE_KEY, privateKey);
+    	return keysMap;
+    }
+    
     
     /** *//** 
      * <p> 
@@ -225,10 +265,101 @@ public class RSAUtil {
     }
 	
 	
+	 /** *//**
+     * <p>
+     * 公钥加密
+     * </p>
+     * 
+     * @param data 源数据
+     * @param publicKey 公钥(BASE64编码)
+     * @return
+     * @throws Exception
+     */
+    public static byte[] encryptByPublicKey(byte[] data, String publicKey)
+            throws Exception {
+        byte[] keyBytes = Base64Helper.decode(publicKey);
+        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
+        Key publicK = keyFactory.generatePublic(x509KeySpec);
+        // 对数据加密
+        Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+        cipher.init(Cipher.ENCRYPT_MODE, publicK);
+        int inputLen = data.length;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int offSet = 0;
+        byte[] cache;
+        int i = 0;
+        // 对数据分段加密
+        while (inputLen - offSet > 0) {
+            if (inputLen - offSet > MAX_ENCRYPT_BLOCK) {
+                cache = cipher.doFinal(data, offSet, MAX_ENCRYPT_BLOCK);
+            } else {
+                cache = cipher.doFinal(data, offSet, inputLen - offSet);
+            }
+            out.write(cache, 0, cache.length);
+            i++;
+            offSet = i * MAX_ENCRYPT_BLOCK;
+        }
+        byte[] encryptedData = out.toByteArray();
+        out.close();
+        return encryptedData;
+    }
+
+    /** *//**
+     * <P>
+     * 私钥解密
+     * </p>
+     * 
+     * @param encryptedData 已加密数据
+     * @param privateKey 私钥(BASE64编码)
+     * @return
+     * @throws Exception
+     */
+    public static byte[] decryptByPrivateKey(byte[] encryptedData, String privateKey)
+            throws Exception {
+        byte[] keyBytes = Base64Helper.decode(privateKey);
+        PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
+        Key privateK = keyFactory.generatePrivate(pkcs8KeySpec);
+        Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+        cipher.init(Cipher.DECRYPT_MODE, privateK);
+        int inputLen = encryptedData.length;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int offSet = 0;
+        byte[] cache;
+        int i = 0;
+        // 对数据分段解密
+        while (inputLen - offSet > 0) {
+            if (inputLen - offSet > MAX_DECRYPT_BLOCK) {
+                cache = cipher.doFinal(encryptedData, offSet, MAX_DECRYPT_BLOCK);
+            } else {
+                cache = cipher.doFinal(encryptedData, offSet, inputLen - offSet);
+            }
+            out.write(cache, 0, cache.length);
+            i++;
+            offSet = i * MAX_DECRYPT_BLOCK;
+        }
+        byte[] decryptedData = out.toByteArray();
+        out.close();
+        return decryptedData;
+    }
+
+	
+	
 	public static void main(String[] args){
 		try {
-			String sign ="merchantNo=M000016&payType=11&orderNo=2016062921073800001&payOrderNo=OP20160629210738002&payStatus=3&orderTime=20160629210619&orderAmount=4000&bankCode=105100000017&orderPayTime=20160629210720&key=12356780Poi)(*";
-			System.out.println(MD5.MD5Encode(sign, "UTF-8"));
+			Map<String,String> keyMap = generateStringKsys();
+			String apc = "sds";
+			byte[] encryptMsg =  encryptByPublicKey(apc.getBytes(), keyMap.get(RSAUtil.PUBLIC_KEY));
+			
+			byte[] decryptMsg = decryptByPrivateKey(encryptMsg, keyMap.get(RSAUtil.PRIVATE_KEY));
+			
+			System.out.println(keyMap.get(RSAUtil.PRIVATE_KEY).length());
+			String ss = new String(decryptMsg,"UTF-8");
+			System.out.println(ss);
+			
+			
+			
 			//"a130f9254fbb388bab50330d9c6a0f8c
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

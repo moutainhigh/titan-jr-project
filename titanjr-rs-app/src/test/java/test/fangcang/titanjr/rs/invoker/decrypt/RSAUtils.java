@@ -1,6 +1,7 @@
 package test.fangcang.titanjr.rs.invoker.decrypt;
 
 import javax.crypto.Cipher;
+
 import java.io.ByteArrayOutputStream;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
@@ -313,6 +314,13 @@ public class RSAUtils {
             throws Exception {
         Key key = (Key) keyMap.get(PUBLIC_KEY);
         return Base64Utils.encode(key.getEncoded());
+    }
+    
+    public  static void main(String[] args) throws Exception{
+    	Map<String, Object> map = genKeyPair();
+    	System.out.println(getPrivateKey(map));
+    	System.out.println(getPublicKey(map));
+    	
     }
 
 }

@@ -140,38 +140,42 @@
                        <c:if test="${not empty  cashDeskData.commonPayMethodDTOList }">
                       <li>
                       <c:forEach items="${cashDeskData.commonPayMethodDTOList }" var="commom" varStatus="status">
-								<c:if test="${commom.bankname !='cmbc'}">
-								  <div class="paytable_payway" itemType='${commom.paytype}'>
-                                    <div class="payc_left"><label class="f_ui-radio-c3">
-                                      <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${commom.bankname}">
-                                      <i></i>
-                                      <span class="paycleft_img">
-                                      <img src="<%=basePath%>/banks/${commom.bankname}.jpg" alt="${commom.bankmark}"
-                                           width="159" height="38">
-                                       </span></label>
-                                    </div>
-	                              <c:if test="${commom.paytype == 1 }">
-	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（企业银行）</span>
-	                              </c:if>
-	                              <c:if test="${commom.paytype == 2 }">
-	                                  <span class="payc_title fl" id="item-${status.index }" data-index="${commom.paytype}">（个人银行）</span>
-	                              </c:if>
-	                              <c:if test="${commom.paytype == 3 }">
-	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡） </span>
-	                              </c:if>
-	                              <c:if test="${commom.paytype == 9 }">
-	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（微信支付） </span>
-                                  </c:if>
-                               </div>
-						   </c:if>
-                          </c:forEach>
-                          </li>
-                         </c:if>
+						  <div class="paytable_payway" itemType='${commom.paytype}'>
+                                  <div class="payc_left"><label class="f_ui-radio-c3">
+                                    <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${commom.bankname}">
+                                    <i></i>
+                                    <span class="paycleft_img">
+                                    <img src="<%=basePath%>/banks/${commom.bankname}.jpg" alt="${commom.bankmark}"
+                                         width="159" height="38">
+                                     </span></label>
+                                  </div>
+                             <c:if test="${commom.paytype == 1 }">
+                                 <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（企业银行）</span>
+                             </c:if>
+                             <c:if test="${commom.paytype == 2 }">
+                                 <span class="payc_title fl" id="item-${status.index }" data-index="${commom.paytype}">（个人银行）</span>
+                             </c:if>
+                             <c:if test="${commom.paytype == 3 }">
+                                 <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡） </span>
+                             </c:if>
+                             <c:if test="${commom.paytype == 9 }">
+                                 <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（微信支付） </span>
+                                </c:if>
+                                <c:if test="${commom.bankname =='cmbc' &&commom.paytype==1}">
+                                  <div class="clear"></div>
+						    <div class="payc_ms">
+							     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
+							     <input type="text" class="text w_185" placeholder="请输入企业银行客户号" id="customNo-${status.index}">
+						    </div>
+					      </c:if>
+                        </div>
+                      </c:forEach>
+                    </li>
+                      </c:if>
                          <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem" varStatus="o_status">
                             <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9 }">
                                 <li>
                                     <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
-                                      <c:if test="${itemBank.bankName !='cmbc'}">
                                         <div class="paytable_payway" itemType='${deskItem.itemType}'>
                                             <div class="payc_left"><label class="f_ui-radio-c3">
                                                 <input name="r2" type="radio" data-index="${o_status.index }-${i_status.index}" class="bankName" value="${itemBank.bankName}">
@@ -196,8 +200,15 @@
                                             <c:if test="${deskItem.itemType == 9 }">
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（微信支付）</span>
                                             </c:if>
+                                            <c:if test="${itemBank.bankName=='cmbc' && deskItem.itemType == 1}">
+				                                    <div class="clear"></div>
+												    <div class="payc_ms">
+													     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
+													     <input type="text" class="text w_185" placeholder="请输入企业银行客户号"  id="customNo-${o_status.index }-${i_status.index}">
+												    </div>
+			                                 </c:if>
+                                            
                                         </div>
-                                       </c:if>
                                    </c:forEach>
                                 </li>
                             </c:if>
