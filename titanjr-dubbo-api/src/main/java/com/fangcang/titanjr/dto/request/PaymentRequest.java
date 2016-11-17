@@ -6,14 +6,7 @@ import java.util.Date;
 import com.fangcang.titanjr.common.enums.EscrowedEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dto.BaseRequestDTO;
-import com.fangcang.titanjr.dto.bean.BusiCodeEnum;
-import com.fangcang.titanjr.dto.bean.CharsetEnum;
-import com.fangcang.titanjr.dto.bean.OperTypeEnum;
-import com.fangcang.titanjr.dto.bean.OrderMarkEnum;
-import com.fangcang.titanjr.dto.bean.OrderTypeEnum;
-import com.fangcang.titanjr.dto.bean.PayTypeEnum;
-import com.fangcang.titanjr.dto.bean.SignTypeEnum;
-import com.fangcang.titanjr.dto.bean.VersionEnum;
+import com.fangcang.titanjr.enums.*;
 
 public class PaymentRequest extends BaseRequestDTO {
 

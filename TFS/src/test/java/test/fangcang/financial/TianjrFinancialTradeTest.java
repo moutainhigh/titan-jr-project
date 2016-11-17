@@ -1,21 +1,4 @@
 package test.fangcang.financial;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-
-import com.fangcang.titanjr.dto.request.RechargePageRequest;
-import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
-
-import net.sf.json.JSONSerializer;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.junit.Before;
-import org.junit.Test;
-
-import test.fangcang.GenericTest;
 
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
@@ -23,60 +6,23 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
-import com.fangcang.titanjr.dto.bean.BusiCodeEnum;
-import com.fangcang.titanjr.dto.bean.CharsetEnum;
-import com.fangcang.titanjr.dto.bean.OperTypeEnum;
-import com.fangcang.titanjr.dto.bean.OrderMarkEnum;
-import com.fangcang.titanjr.dto.bean.OrderTypeEnum;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
-import com.fangcang.titanjr.dto.bean.SignTypeEnum;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
-import com.fangcang.titanjr.dto.request.AccountCheckRequest;
-import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
-import com.fangcang.titanjr.dto.request.AllowNoPwdPayRequest;
-import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
-import com.fangcang.titanjr.dto.request.CashierDeskInitRequest;
-import com.fangcang.titanjr.dto.request.CusBankCardBindRequest;
-import com.fangcang.titanjr.dto.request.DeleteBindBankRequest;
-import com.fangcang.titanjr.dto.request.FinancialOrderRequest;
-import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
-import com.fangcang.titanjr.dto.request.PayMethodConfigRequest;
-import com.fangcang.titanjr.dto.request.PaymentRequest;
-import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
-import com.fangcang.titanjr.dto.request.PermissionRequest;
-import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
-import com.fangcang.titanjr.dto.request.TitanOrderRequest;
-import com.fangcang.titanjr.dto.request.TradeDetailRequest;
-import com.fangcang.titanjr.dto.request.TransOrderRequest;
-import com.fangcang.titanjr.dto.request.TransferRequest;
-import com.fangcang.titanjr.dto.request.UnFreezeAccountBalanceRequest;
-import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
-import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
-import com.fangcang.titanjr.dto.response.AccountCheckResponse;
-import com.fangcang.titanjr.dto.response.AccountHistoryResponse;
-import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
-import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
-import com.fangcang.titanjr.dto.response.CusBankCardBindResponse;
-import com.fangcang.titanjr.dto.response.DeleteBindBankResponse;
-import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
-import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
-import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
-import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
-import com.fangcang.titanjr.dto.response.RechargeResponse;
-import com.fangcang.titanjr.dto.response.TradeDetailResponse;
-import com.fangcang.titanjr.dto.response.TransferResponse;
-import com.fangcang.titanjr.dto.response.UnFreezeAccountBalanceResponse;
-import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
-import com.fangcang.titanjr.service.TitanCashierDeskService;
-import com.fangcang.titanjr.service.TitanFinancialAccountService;
-import com.fangcang.titanjr.service.TitanFinancialBankCardService;
-import com.fangcang.titanjr.service.TitanFinancialOrganService;
-import com.fangcang.titanjr.service.TitanFinancialTradeService;
-import com.fangcang.titanjr.service.TitanFinancialUserService;
-import com.fangcang.titanjr.service.TitanOrderService;
+import com.fangcang.titanjr.dto.request.*;
+import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.enums.*;
+import com.fangcang.titanjr.service.*;
 import com.fangcang.util.StringUtil;
+import net.sf.json.JSONSerializer;
+import org.junit.Before;
+import org.junit.Test;
+import test.fangcang.GenericTest;
+
+import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
 
 public class TianjrFinancialTradeTest extends GenericTest{
 	
@@ -631,7 +577,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialTradeService.getGDPOrderDTO(paymentUrlRequest.getPayOrderNo());
     }
     
-//    @Test
+//    @Tenst
     public void getSign(){
     	RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
     	titanFinancialTradeService.getSign(rechargeResultConfirmRequest);

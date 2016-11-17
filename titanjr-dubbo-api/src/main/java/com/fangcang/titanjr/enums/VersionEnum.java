@@ -1,13 +1,14 @@
-package com.fangcang.titanjr.dto.bean;
+package com.fangcang.titanjr.enums;
 
-public enum OrderMarkEnum {
-    InsideOrder("1","内部订单"),OutsideOrder("0","外部订单");
+public enum VersionEnum {
+	
+    Version_1("v1.0","版本1");
 	
 	public String key;
 	
 	public String value;
 	
-	private OrderMarkEnum(String key, String value) {
+	private VersionEnum(String key, String value) {
 		this.key = key;
 		this.value = value;
 	}

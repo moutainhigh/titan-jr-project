@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.dto.bean;
+package com.fangcang.titanjr.enums;
 /**
  * 订单操作类型 （修改：2,新增：1,取消4,查询3）
  * @author fangdaikang,

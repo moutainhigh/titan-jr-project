@@ -1,26 +1,13 @@
 package com.fangcang.titanjr.facade.impl;
 
-import javax.annotation.Resource;
-
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
-import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.request.TradeDetailRequest;
-import com.fangcang.titanjr.dto.response.TradeDetailResponse;
-
-import net.sf.json.JSONSerializer;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
-
-import com.fangcang.titanjr.dto.bean.AmtTypeEnum;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
-import com.fangcang.titanjr.dto.request.FinancialOrderRequest;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.PermissionRequest;
+import com.fangcang.titanjr.dto.request.TradeDetailRequest;
 import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
-import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
+import com.fangcang.titanjr.dto.response.TradeDetailResponse;
 import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
 import com.fangcang.titanjr.request.AccountInfoRequest;
 import com.fangcang.titanjr.request.CheckPermissionRequest;
@@ -32,6 +19,13 @@ import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.util.StringUtil;
+import net.sf.json.JSONSerializer;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 @Service("titanFinancialPermissionFacade")
 public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermissionFacade {

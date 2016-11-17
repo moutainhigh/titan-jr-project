@@ -52,7 +52,7 @@ import com.fangcang.titanjr.dao.TitanUserBindInfoDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dao.TitanUserRoleDao;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
-import com.fangcang.titanjr.dto.bean.PermissionEnum;
+import com.fangcang.titanjr.enums.PermissionEnum;
 import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
 import com.fangcang.titanjr.dto.bean.TitanRoleDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;

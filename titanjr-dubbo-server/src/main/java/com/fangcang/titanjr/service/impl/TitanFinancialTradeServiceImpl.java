@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,14 +44,12 @@ import com.fangcang.titanjr.dao.TitanOrderPayreqDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
-import com.fangcang.titanjr.dto.bean.AmtTypeEnum;
 import com.fangcang.titanjr.dto.bean.CallBackInfo;
 import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.GDPOrderDTO;
-import com.fangcang.titanjr.dto.bean.OperTypeEnum;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.OrderOperateInfoDTO;
-import com.fangcang.titanjr.dto.bean.OrderTypeEnum;
+import com.fangcang.titanjr.enums.*;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.QrCodeDTO;
@@ -2865,7 +2862,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	/**
 	 * 更新订单中携带的业务信息
 	 * 
-	 * @param titanOrderRequest
+	 * @param newBusinessInfo
 	 */
 	private void updateTransOrderBussInfo(Integer transId,
 			String newBusinessInfo, String oldBussInfo) {
@@ -3047,9 +3044,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	/**
 	 * 只能是fcUSerId 进入
 	 * 
-	 * @param userId
 	 * @param titanTransOrder
-	 * @param isPayerMent
+	 * @param titanTransOrder
 	 * @return
 	 */
 	private TransOrderCreateResponse setBaseUserInfo(

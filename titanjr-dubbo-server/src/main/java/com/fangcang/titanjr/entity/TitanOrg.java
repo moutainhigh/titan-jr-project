@@ -1,5 +1,4 @@
 package com.fangcang.titanjr.entity;
-// default package
 
 import java.util.Date;
 
@@ -9,11 +8,6 @@ import java.util.Date;
 
 public class TitanOrg implements java.io.Serializable {
 
-	// Fields
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 234016678702765480L;
 	private Integer orgid;
 	private String orgcode;
@@ -81,8 +75,6 @@ public class TitanOrg implements java.io.Serializable {
 	/** default constructor */
 	public TitanOrg() {
 	}
-
-	// Property accessors
 
 	public Integer getOrgid() {
 		return this.orgid;

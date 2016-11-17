@@ -1,14 +1,13 @@
-package com.fangcang.titanjr.dto.bean;
+package com.fangcang.titanjr.enums;
 
-public enum SignTypeEnum {
-   
-	MD5("1","md5加密");
-		
+public enum OrderMarkEnum {
+    InsideOrder("1","内部订单"),OutsideOrder("0","外部订单");
+	
 	public String key;
 	
 	public String value;
 	
-	private SignTypeEnum(String key, String value) {
+	private OrderMarkEnum(String key, String value) {
 		this.key = key;
 		this.value = value;
 	}
@@ -28,5 +27,4 @@ public enum SignTypeEnum {
 	public void setValue(String value) {
 		this.value = value;
 	}
-
 }

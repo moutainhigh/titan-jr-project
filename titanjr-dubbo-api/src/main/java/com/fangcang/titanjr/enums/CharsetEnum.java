@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.dto.bean;
+package com.fangcang.titanjr.enums;
 
 public enum CharsetEnum {
 	UTF_8("1","utf-8编码");

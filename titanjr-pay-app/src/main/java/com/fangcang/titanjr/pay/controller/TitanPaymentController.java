@@ -1,61 +1,16 @@
 
 package com.fangcang.titanjr.pay.controller;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.Resource;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import net.sf.json.JSONSerializer;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.poi.xwpf.usermodel.TOC;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.alibaba.fastjson.JSON;
-import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
-import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
-import com.fangcang.titanjr.common.enums.OrderStatusEnum;
-import com.fangcang.titanjr.common.enums.PayerTypeEnum;
-import com.fangcang.titanjr.common.enums.ReqstatusEnum;
-import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
-import com.fangcang.titanjr.common.util.CommonConstant;
-import com.fangcang.titanjr.common.util.DateUtil;
-import com.fangcang.titanjr.common.util.JsonConversionTool;
-import com.fangcang.titanjr.common.util.MD5;
-import com.fangcang.titanjr.common.util.NumberUtil;
-import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.enums.*;
+import com.fangcang.titanjr.common.util.*;
 import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
-import com.fangcang.titanjr.dto.bean.PayTypeEnum;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
-import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
-import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
-import com.fangcang.titanjr.dto.request.TransOrderRequest;
-import com.fangcang.titanjr.dto.request.TransferRequest;
-import com.fangcang.titanjr.dto.response.AccountCheckResponse;
-import com.fangcang.titanjr.dto.response.CashierDeskResponse;
-import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
-import com.fangcang.titanjr.dto.response.QrCodeResponse;
-import com.fangcang.titanjr.dto.response.RechargeResponse;
-import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
-import com.fangcang.titanjr.dto.response.TransferResponse;
+import com.fangcang.titanjr.dto.request.*;
+import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.enums.PayTypeEnum;
 import com.fangcang.titanjr.pay.req.CreateTitanRateRecordReq;
 import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
 import com.fangcang.titanjr.pay.services.TitanPaymentService;
@@ -66,6 +21,25 @@ import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
+import net.sf.json.JSONSerializer;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 @Controller
 @RequestMapping("/payment")
 public class TitanPaymentController extends BaseController {
@@ -225,7 +199,7 @@ public class TitanPaymentController extends BaseController {
 	/**
 	 * 只有转账操作的controller
 	 * @param request
-	 * @param paymentRequest
+	 * @param titanPaymentRequest
 	 * @return
 	 * @throws Exception
 	 */

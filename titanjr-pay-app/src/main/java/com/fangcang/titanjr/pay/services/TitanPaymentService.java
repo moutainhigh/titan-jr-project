@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.fangcang.titanjr.enums.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
@@ -21,13 +22,8 @@ import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
-import com.fangcang.titanjr.dto.bean.AmtTypeEnum;
-import com.fangcang.titanjr.dto.bean.BusiCodeEnum;
-import com.fangcang.titanjr.dto.bean.CharsetEnum;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
-import com.fangcang.titanjr.dto.bean.OrderMarkEnum;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
-import com.fangcang.titanjr.dto.bean.SignTypeEnum;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;

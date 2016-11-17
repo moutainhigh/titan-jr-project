@@ -618,7 +618,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			BankCardBindInfoRequest bankCardBindInfoRequest = new BankCardBindInfoRequest();
 			//查询是商户还是个人
 			TitanOrgParam condition = new TitanOrgParam();
-			condition.setUserid(balanceWithDrawRequest.getUserId());
+			condition.setUserId(balanceWithDrawRequest.getUserId());
 			TitanOrg titanOrg = titanOrgDao.selectOne(condition);
 			if(titanOrg !=null){
 				bankCardBindInfoRequest.setUsertype(CommonConstant.PERSONAL);
@@ -877,9 +877,9 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		accountCheckResponse.putErrorResult("对不起，您输入的账户不存在");
 		if (accountCheckRequest != null) {
 			TitanOrgParam condition = new TitanOrgParam();
-			condition.setOrgname(accountCheckRequest.getOrgName());
-			condition.setTitancode(accountCheckRequest.getTitanCode());
-			condition.setStatusid(accountCheckRequest.getStatusId());
+			condition.setOrgName(accountCheckRequest.getOrgName());
+			condition.setTitanCode(accountCheckRequest.getTitanCode());
+			condition.setStatusId(accountCheckRequest.getStatusId());
 			try {
 				titanOrgDao.selectForPage(condition, paginationSupport);
 			} catch (Exception e) {

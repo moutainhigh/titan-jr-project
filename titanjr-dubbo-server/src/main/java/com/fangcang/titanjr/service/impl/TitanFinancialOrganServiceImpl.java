@@ -499,7 +499,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     }
     /***
      * 注册的时增加第一条待审核记录
-     * @param organRegisterRequest
+     * @param orgUserId
      */
     private TitanOrgCheck addOrgCheck(String orgUserId,String creator){
     	TitanOrgCheck entity = new TitanOrgCheck();
@@ -582,8 +582,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 				return response;
 			}
 			TitanOrgParam condition = new TitanOrgParam();
-			condition.setCertificatetype(NumberUtils.toInt(request.getCertificatetype()));
-			condition.setCertificatenumber(request.getCertificateNumber());
+			condition.setCertificateType(NumberUtils.toInt(request.getCertificatetype()));
+			condition.setCertificateNumber(request.getCertificateNumber());
 			titanOrg = titanOrgDao.selectOne(condition);
 		}else if(request.getUsertype()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
 			if(!StringUtil.isValidString(request.getBuslince())){
@@ -591,7 +591,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 				return response;
 			}
 			TitanOrgParam condition = new TitanOrgParam();
-			condition.setBuslince(request.getBuslince());
+			condition.setBusLince(request.getBuslince());
 			titanOrg = titanOrgDao.selectOne(condition);
 		}else {
 			response.putParamError();
@@ -637,7 +637,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		
 		try {
 			TitanOrgParam param = new TitanOrgParam();
-			param.setOrgid(organRegisterUpdateRequest.getOrgId());
+			param.setOrgId(organRegisterUpdateRequest.getOrgId());
 			TitanOrg oldOrg = titanOrgDao.selectOne(param);
 			if(StringUtil.isValidString(organRegisterUpdateRequest.getImageid())){
 				updateOrgImg(organRegisterUpdateRequest.getImageid(),oldOrg.getOrgcode());
@@ -697,7 +697,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		try {
 			Date nowDate = new Date();
 			TitanOrgParam orgParam = new TitanOrgParam();
-			orgParam.setOrgid(organCheckRequest.getOrgId());
+			orgParam.setOrgId(organCheckRequest.getOrgId());
 			TitanOrg newOrgEntity = titanOrgDao.selectOne(orgParam);
 	    	//机构审核记录
 	    	
@@ -818,7 +818,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	/***
 	 * 
 	 * @param checkStatus 通过 -1， 不通过-0
-	 * @param lastState 审核前的状态
+	 * @param checkStatus 审核前的状态
 	 * @return
 	 */
 	private OrgCheckResultEnum convertCheckResultEnum(int checkStatus){
@@ -837,7 +837,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	private BaseResponse registerRSOrg(int tfsOrgId){
 		PaginationSupport<TitanOrg> pagePaginationSupport = new PaginationSupport<TitanOrg>();
     	TitanOrgParam orgParam = new TitanOrgParam();
-    	orgParam.setOrgid(tfsOrgId);
+    	orgParam.setOrgId(tfsOrgId);
     	titanOrgDao.selectForPage(orgParam, pagePaginationSupport);
     	TitanOrg newOrg = pagePaginationSupport.getItemList().get(0);
 		if(newOrg.getUsertype()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
@@ -1331,10 +1331,10 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	public OrgDTO queryOrg(OrgDTO orgDTO) {
 		if(orgDTO !=null){
 			TitanOrgParam condition = new TitanOrgParam();
-			condition.setOrgcode(orgDTO.getOrgcode());
-			condition.setOrgid(orgDTO.getOrgid());
-			condition.setTitancode(orgDTO.getTitancode());
-			condition.setOrgname(orgDTO.getOrgname());
+			condition.setOrgCode(orgDTO.getOrgcode());
+			condition.setOrgId(orgDTO.getOrgid());
+			condition.setTitanCode(orgDTO.getTitancode());
+			condition.setOrgName(orgDTO.getOrgname());
 			TitanOrg titanOrg = titanOrgDao.selectOne(condition);
 			if(titanOrg !=null){
 				MyBeanUtil.copyProperties(orgDTO, titanOrg);
