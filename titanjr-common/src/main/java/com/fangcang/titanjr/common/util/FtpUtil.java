@@ -477,9 +477,9 @@ public class FtpUtil {
 	
 	/***
 	 * 上传图片  
-	 * @param fileName
+	 * @param fileName ,如：123654.jpg
 	 * @param inStream
-	 * @param remoteUploadePath
+	 * @param remoteUploadePath 上传文件存放的目录(相对于ftp可访问的路径下),如：/org_register/20161111
 	 * @return  格式：http://image.fangcang.com/upload/titanjr/org_register/123.jpg
 	 */
 	public static String uploadStreamExt(String fileName,InputStream inStream, String remoteUploadePath) {
