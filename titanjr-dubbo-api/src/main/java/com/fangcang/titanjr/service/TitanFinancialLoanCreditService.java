@@ -33,7 +33,8 @@ public interface TitanFinancialLoanCreditService {
 	
 	/**
 	 * 保存授信单信息
-	 * 
+	 * 1.判定orderNo，若为空，则生成编码并保存，不为空，则更新
+	 * 2.LoanCreditCompany中的controllDatas做了调整，方便存储；
 	 * @param req 请求对象
 	 * @return
 	 */
