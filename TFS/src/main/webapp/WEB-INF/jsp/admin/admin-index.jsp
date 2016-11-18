@@ -11,6 +11,6 @@
   <jsp:include page="/comm/admin/admin-head.jsp">
   	<jsp:param  name="menu" value="home"></jsp:param>
   </jsp:include>
-  主页
+  首页
   </body>
 </html>

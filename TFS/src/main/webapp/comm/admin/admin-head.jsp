@@ -1,5 +1,6 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%@ include file="/comm/taglib.jsp"%>
+ <jsp:include page="/comm/admin/admin-static-js.jsp"></jsp:include>
 <div class="home_top"></div>
 	<div class="nav">
 		<ul>
@@ -24,15 +25,20 @@
 		</ul>
 	</div>
 	<script type="text/javascript">
+	//刷新账户开通申请待审核数
 	$.ajax({
         dataType : 'json',
         type:'post',
         url : '<%=basePath%>/admin/data.shtml',
         success : function(result){
-            alert(result.enCount);
+        	var enCount = parseInt(result.enCount);
+        	var perCount = parseInt(result.perCount);
+        	if($("#head_count")){
+        		$("#head_count").html(enCount+perCount);
+        	}
         },
         error:function(){
-        	new top.Tip({msg : '请求失败，请重试', type: 3 , time:1500});
+        	new top.Tip({msg : '请求失败，请重试', type: 3 , timer:1500});
         }
     });
 	
