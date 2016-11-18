@@ -30,6 +30,7 @@ import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.rsa.RSAUtil;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.CashDeskData;
 import com.fangcang.titanjr.dto.bean.CashierDeskDTO;
@@ -38,6 +39,7 @@ import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
 import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
@@ -96,7 +98,7 @@ public class TitanTradeController extends BaseController {
 			RequestMethod.POST })
 	public String titanPay(String orderInfo, String businessInfo, Model model) {
 		getRequest().getSession();
-
+		
 		if (!StringUtil.isValidString(orderInfo)) {
 			log.error("orderInfo is not null!");
 			model.addAttribute("msg",
@@ -105,9 +107,30 @@ public class TitanTradeController extends BaseController {
 		}
 
 		try {
+			// 解析携带的业务信息
+			Map<String, String> busMap = JsonConversionTool.toObject(
+								businessInfo, Map.class);
+			String ruserId =null;
+			if(busMap !=null){
+				ruserId = busMap.get("ruserId");
+			}
+			
+			String deInfo = null;
+			if(StringUtil.isValidString(ruserId)){
+				//查询私钥
+				TitanOpenOrgDTO openOrgDTO = financialTradeService.queryOpenOrg(ruserId);
+				if(openOrgDTO==null){
+					model.addAttribute("msg",
+							TitanMsgCodeEnum.TITAN_ACCOUNT_NOT_EXISTS.getResMsg());
+					return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+				}
+				
+				deInfo = RSAUtil.decryptRSAToString(orderInfo, openOrgDTO.getPrivatekey());
+			}else{
+				deInfo = RSADecryptString.decryptString(orderInfo,
+						TitanConstantDefine.PRIVATE_KEY);
+			}
 
-			String deInfo = RSADecryptString.decryptString(orderInfo,
-					TitanConstantDefine.PRIVATE_KEY);
 			if (!StringUtil.isValidString(deInfo)) {
 				log.error("validate user identity decrypt fail.");
 				model.addAttribute("msg",
@@ -163,9 +186,6 @@ public class TitanTradeController extends BaseController {
 
 			log.info("confirm buss order is ok");
 
-			// 解析携带的业务信息
-			Map<String, String> busMap = JsonConversionTool.toObject(
-					businessInfo, Map.class);
 			dto.setBusinessInfo(busMap);
 
 			log.info("begin sava titan trans order ...");

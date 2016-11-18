@@ -23,6 +23,8 @@ import org.apache.commons.logging.LogFactory;
 
 
 
+
+
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.util.StringUtil;
 
@@ -315,6 +317,14 @@ public class RSAUtil {
      * @return
      * @throws Exception
      */
+    
+    public static String decryptRSAToString(String encryptedData, String privateKey) throws Exception{
+    	byte[] encrypted = encryptedData.getBytes();
+    	byte[] result = decryptByPrivateKey(encrypted, privateKey);
+    	return new String(result);
+    	
+    }
+    
     public static byte[] decryptByPrivateKey(byte[] encryptedData, String privateKey)
             throws Exception {
         byte[] keyBytes = Base64Helper.decode(privateKey);

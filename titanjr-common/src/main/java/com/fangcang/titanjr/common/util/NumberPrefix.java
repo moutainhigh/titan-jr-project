@@ -10,12 +10,18 @@ public class NumberPrefix {
 	         'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
 	         'w', 'x', 'y', 'z'};
 	
-	public static String getPayOrderCodePrefix(String basrStr){
+	/**
+	 * 主要作用是加在商家的付款单号前，保证不同的商家其传入的付款单号是唯一的
+	 * @param basrStr
+	 * @return
+	 * @throws Exception
+	 */
+	public static String getPayOrderCodePrefix(String basrStr) throws Exception{
 		String nextStr = "";
 		char[] cs = basrStr.toCharArray();
 		if(cs[1]=='z'){
 			if(cs[0]=='z'){
-				System.out.println("错误");
+				throw new Exception("标识商家的支付单号的前缀已用完,请扩展");
 			}else{
 				for(int i=0;i<ch.length;i++){
 					if(ch[i]==cs[0]){
@@ -34,7 +40,7 @@ public class NumberPrefix {
 		return 	nextStr;
 	}
 	
-	public static void main(String[] args){
+	public static void main(String[] args) throws Exception{
 		System.out.println(getPayOrderCodePrefix("Az"));
 	}
 }

@@ -11,7 +11,8 @@ public enum PayerTypeEnum {
 	  ALLIANCE("5","商家联盟"),
 	  MOBILE("6","移动端"),
 	  RECHARGE("7","充值"),
-	  WITHDRAW("8","提现");
+	  WITHDRAW("8","提现"),
+	  OPEN_ORG("1001","对外开放平台");
 
 	  public String key;
 	  
@@ -53,6 +54,8 @@ public enum PayerTypeEnum {
 			  return 2;
 		  }else if(ALLIANCE.key.equals(key)){
 			  return 3;
+		  }else if(OPEN_ORG.key.equals(key)){
+			  return 6;
 		  }
 		  return null;
 	  }
@@ -63,12 +66,12 @@ public enum PayerTypeEnum {
 
 	  //使用收款方收银台
 	  public boolean isRecieveCashDesk(){
-		  return B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key);
+		  return B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key) ||OPEN_ORG.key.equals(this.key);
 	  }
 	  
 	  public boolean isUserId()
 	  {
-		  return RECHARGE.key.equals(this.key) || WITHDRAW.key.equals(this.key);
+		  return RECHARGE.key.equals(this.key) || WITHDRAW.key.equals(this.key)||OPEN_ORG.key.equals(this.key);
 	  }
 	  
 	  public boolean isReicveMerchantCode(){//接收方为机构编码的
@@ -97,5 +100,9 @@ public enum PayerTypeEnum {
 	  
 	  public boolean isAddAccountHistory(){
 		  return SUPPLY_FINACIAL.key.equals(this.key);
+	  }
+	  
+	  public boolean isOpenOrg(){
+		  return OPEN_ORG.key.equals(this.key);
 	  }
 }

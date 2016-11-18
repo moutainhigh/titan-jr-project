@@ -33,6 +33,7 @@ import com.fangcang.titanjr.dto.bean.CashierDeskItemDTO;
 import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
+import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
@@ -174,6 +175,14 @@ public class TitanTradeService {
 				return false;
 			}
 		}
+		
+		if(pe.isOpenOrg() && StringUtil.isValidString(dto.getRuserId())){
+			if(StringUtil.isValidString(dto.getUserId())){
+				log.error("对外商户传入的参数不合法");
+				return false;
+			}
+		}
+		
 		return true;
 	}
 
@@ -414,5 +423,9 @@ public class TitanTradeService {
 				 }
 			}
 		}
+	}
+	
+	public TitanOpenOrgDTO queryOpenOrg(String userId){
+		return titanFinancialOrganService.queryTitanOpenOrgDTO(userId);
 	}
 }

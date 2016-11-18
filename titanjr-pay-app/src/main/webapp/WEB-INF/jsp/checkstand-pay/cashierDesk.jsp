@@ -86,7 +86,7 @@
                             <c:if test="${ not empty cashDeskData.balanceusable}">
                             <li class="p_l27">
                                 <label class="f_ui-checkbox-c3 p_r10">
-                                    <input type="checkbox" checked="" id="d_checkbox" onclick="checktest()" ><i ></i>
+                                    <input type="checkbox" checked="" id="d_checkbox" onclick="checkedBalance()" ><i ></i>
                                     使用账户可用余额付款</label>丨
                                 <span class="p_l10">账户可用余额：<fmt:formatNumber value="${cashDeskData.balanceusable }"  pattern="#,##0.00#" />元</span>
                             </li>
@@ -231,7 +231,7 @@
 
 <form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder" method="post">
   <input name="orderNo" id="orderNo" type="hidden">
-  <input name="payType" id="payType" type="hidden">
+  <input name="payTypeMsg" id="payTypeMsg" type="hidden">
 </form>
 
 <!--弹窗白色底-->
@@ -272,7 +272,7 @@
 		
 	}
     //点击使用余额支付
-    function checktest() {
+    function checkedBalance() {
     	//如果余额足够则只能用余额或者网银付款，二选一，如果余额不足则自由选择
     	if (sub(cashierData.tradeAmount,cashierData.balanceusable)<= 0){
    		 if($("#d_checkbox").attr("checked")=="checked"){
@@ -589,7 +589,7 @@
     		var status = confirmOrder(_orderNo);
  			if(status =="success"||status=="fail"){
  				$("#orderNo").val(_orderNo);
- 				$("#payType").val("微信支付");
+ 				$("#payTypeMsg").val("微信支付");
  				 $("#confirmOrder").submit();
  			}
     	 }, 4000);

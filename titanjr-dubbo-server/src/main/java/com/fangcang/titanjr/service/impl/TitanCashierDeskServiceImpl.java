@@ -102,6 +102,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
             TitanCashierDesk supplyCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.SUPPLY_DESK);
             TitanCashierDesk allianceCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.ALLIANCE_DESK);
             TitanCashierDesk rechargeCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.RECHARGE);
+            TitanCashierDesk openOrgCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.OPEN_ORG);
             //批量插入初始化收银台
             titanCashierDeskDao.saveCashierDesk(b2bCashierDesk);
             titanCashierDeskDao.saveCashierDesk(supplyCashierDesk);

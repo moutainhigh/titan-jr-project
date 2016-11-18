@@ -2358,6 +2358,15 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					titanTransOrder
 							.setTransordertype(TransOrderTypeEnum.RECHARGE.type);
 				}
+				
+				if(payerTypeEnum.isOpenOrg()){
+					titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+					titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
+					titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+					titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
+				}
+				
+				
 			} else {
 				localOrderResponse.putSysError();
 				return localOrderResponse;

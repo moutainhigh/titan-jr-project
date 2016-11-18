@@ -6,6 +6,7 @@ import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
+import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 
@@ -202,4 +203,10 @@ public interface TitanFinancialOrganService {
      */
     public OrganBriefResponse queryOrganBriefByUserId(FinancialOrganQueryRequest organQueryRequest);
     
+    /**
+     * 查询秘钥
+     * @param userId
+     * @return
+     */
+    public TitanOpenOrgDTO queryTitanOpenOrgDTO(String userId); 
 }
