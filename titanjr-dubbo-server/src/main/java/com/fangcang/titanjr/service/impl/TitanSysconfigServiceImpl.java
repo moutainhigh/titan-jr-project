@@ -1,10 +1,14 @@
 package com.fangcang.titanjr.service.impl;
 
 
+import org.springframework.stereotype.Service;
+
 import com.fangcang.titanjr.common.util.DubboServerJDBCProperties;
 import com.fangcang.titanjr.dto.response.FTPConfigResponse;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 
+
+@Service("titanSysconfigService")
 public class TitanSysconfigServiceImpl implements TitanSysconfigService {
 	
 	@Override
