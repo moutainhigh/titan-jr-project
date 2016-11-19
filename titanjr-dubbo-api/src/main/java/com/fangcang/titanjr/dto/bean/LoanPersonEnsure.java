@@ -6,6 +6,10 @@ package com.fangcang.titanjr.dto.bean;
  */
 public class LoanPersonEnsure {
 
+	//融数机构标示id，可以不用存进数据库，跟企业担保实体一样道理
+	//新增时若此字段为空，则不处理
+	private String userId;
+
 	private String orderNo;// 授信单号
 
 	private String personName;// 姓名
@@ -67,6 +71,14 @@ public class LoanPersonEnsure {
 	private String spouseIdCardUrl;// 配偶身份证
 
 	private String marriageUrl;// 结婚证
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
 	public String getOrderNo() {
 		return orderNo;
