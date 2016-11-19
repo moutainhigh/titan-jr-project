@@ -2865,7 +2865,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	 * @param newBusinessInfo
 	 */
 	private void updateTransOrderBussInfo(Integer transId,
-			String newBusinessInfo, String oldBussInfo) {
+			String newBusinessInfo, String oldBussInfo,String notifyUrl) {
 
 		if (StringUtil.isValidString(newBusinessInfo)) {
 			TitanTransOrder titanTransOrder = new TitanTransOrder();
@@ -2889,6 +2889,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				titanTransOrder.setBusinessinfo(JsonConversionTool
 						.toJson(upBussMap));
 			}
+			titanTransOrder.setNotifyUrl(notifyUrl);
 			titanTransOrderDao.update(titanTransOrder);
 		}
 	}
@@ -2937,7 +2938,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				updateTransOrderBussInfo(transOrderDTO.getTransid(),
 						JsonConversionTool.toJson(titanOrderRequest
 								.getBusinessInfo()),
-						transOrderDTO.getBusinessinfo());
+						transOrderDTO.getBusinessinfo(),titanOrderRequest.getNotify());
 
 				orderCreateResponse.setOrderNo(transOrderDTO.getUserorderid());
 				orderCreateResponse.putSuccess();
@@ -2959,7 +2960,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						updateTransOrderBussInfo(transOrderDTO.getTransid(),
 								JsonConversionTool.toJson(titanOrderRequest
 										.getBusinessInfo()),
-								transOrderDTO.getBusinessinfo());
+								transOrderDTO.getBusinessinfo(),titanOrderRequest.getNotify());
 						
 						orderCreateResponse.setOrderNo(transOrderDTO
 								.getUserorderid());
@@ -2981,7 +2982,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						updateTransOrderBussInfo(transOrderDTO.getTransid(),
 								JsonConversionTool.toJson(titanOrderRequest
 										.getBusinessInfo()),
-								transOrderDTO.getBusinessinfo());
+								transOrderDTO.getBusinessinfo(),titanOrderRequest.getNotify());
 						
 						orderCreateResponse.setOrderNo(transOrderDTO
 								.getUserorderid());

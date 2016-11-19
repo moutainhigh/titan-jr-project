@@ -967,7 +967,7 @@ $("document").ready(function (){
    	                padding: '0 0 0px 0',
    					width: 560,
    	                content: html,
-   	                skin : 'saas_pop', 
+   	                skin : 'saas_pop wx_close', 
    	            	onclose: function () {
    	            		toWxPayPage();
    	          		}
