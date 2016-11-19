@@ -24,8 +24,7 @@ import com.fangcang.titanjr.web.pojo.HelpTypePojo;
 public class MLoanController extends BaseController{
 	private static final Log logger = LogFactory.getLog(MLoanController.class);
 	
-	@Resource
-	private TitanHelpService titanHelpService;
 	
+	public String 
 	 
 }

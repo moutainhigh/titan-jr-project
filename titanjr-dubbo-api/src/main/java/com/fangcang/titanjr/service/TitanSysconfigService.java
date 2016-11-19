@@ -1,11 +1,6 @@
 package com.fangcang.titanjr.service;
 
-import com.fangcang.titanjr.dto.request.RSInvokeConfigRequest;
-import com.fangcang.titanjr.dto.request.TitanCallBackConfigRequest;
-import com.fangcang.titanjr.dto.request.TitanPayMethodRequest;
-import com.fangcang.titanjr.dto.response.RSInvokeConfigResponse;
-import com.fangcang.titanjr.dto.response.TitanCallBackConfigResponse;
-import com.fangcang.titanjr.dto.response.TitanPayMethodResponse;
+import com.fangcang.titanjr.dto.response.FTPConfigResponse;
 
 /**
  * 配置文件
@@ -14,21 +9,9 @@ import com.fangcang.titanjr.dto.response.TitanPayMethodResponse;
  */
 public interface TitanSysconfigService {
 	/**
-	 * 获取融数sdk配置信息
+	 * 获取ftp配置信息
 	 * @param request
 	 * @return
 	 */
-	RSInvokeConfigResponse getRSInvokeConfig(RSInvokeConfigRequest request);
-	/***
-	 * 获取融数支付参数
-	 * @param request
-	 * @return
-	 */
-	TitanPayMethodResponse getTitanPayMethod(TitanPayMethodRequest request);
-	/***
-	 * 获取支付成功后通知第三方的地址
-	 * @param request
-	 * @return
-	 */
-	TitanCallBackConfigResponse getTitanCallBackConfig(TitanCallBackConfigRequest request);
+	FTPConfigResponse getFTPConfig();
 }
