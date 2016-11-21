@@ -18,7 +18,7 @@ function initTitanPayObj() {
         }
         this.createPayForm(config.address);
         return "Success";
-    }
+    };
     titanPayObj.createPayForm = function(address) {
         var elscript = document.createElement("script");
         elscript.src = config.address + "/titanjr-pay-app/js/rsa/RSA.js";
@@ -40,17 +40,18 @@ function initTitanPayObj() {
         form.appendChild(orderInfo);
         form.appendChild(businessInfo);
         document.body.appendChild(form);
-    }
+    };
     titanPayObj.checkOrder = function(orderInfo) {
         return true;
-    }
+    };
     titanPayObj.titanEncrypted = function(str) {
         if (titan_rsakey == null) {
             titanJrPayRsaObj.setMaxDigits(129);
             titan_rsakey = new titanJrPayRsaObj.RSAKeyPair(config.empoent, "", config.module);
         }
         return titanJrPayRsaObj.encryptedString(titan_rsakey, encodeURIComponent(str));
-    }
+    
+    };
     titanPayObj.getTitanPayUrl = function(orderInfo, businessInfo) {
         if (this.checkOrder(orderInfo)) {
             var orderInfo = this.titanEncrypted(JSON.stringify(orderInfo));
@@ -60,13 +61,13 @@ function initTitanPayObj() {
             return url;
         }
         return null;
-    }
+    };
     titanPayObj.titanPay = function(orderInfo, businessInfo) {
         if (this.checkOrder(orderInfo)) {
             document.getElementById('titan_orderInfo').value = this.titanEncrypted(JSON.stringify(orderInfo));
             document.getElementById('titan_businessInfo').value = JSON.stringify(businessInfo);
             document.getElementById('titan_pay_form').submit();
         }
-    }
+    };
 };
 initTitanPayObj();

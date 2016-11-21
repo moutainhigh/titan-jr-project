@@ -822,6 +822,9 @@ public class DateUtil {
 		
 		try {
 			
+			String payOrdeNo = "AAAddd";
+			System.out.println(payOrdeNo.substring(1));
+			
 //			BufferedWriter w = new BufferedWriter(new FileWriter("C:/Users/Administrator/Desktop/text.txt"));
 //			char[] buf = "asdfas asd的说法是 阿斯蒂芬  阿斯顿发  ".toCharArray();
 //            for(int i=0;i<buf.length;i++){

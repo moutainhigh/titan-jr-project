@@ -5,7 +5,8 @@
     INSERT INTO t_tfs_openorg(
 	    userid,
 	    privatekey,
-	    publickey,
+	    module,
+	    empoent,
 	    merchcode,
 	    prefix
 	) 
@@ -13,7 +14,8 @@
     (
     	#{userid},
     	#{privatekey},
-    	#{publickey},
+    	#{module},
+	    #{empoent},
     	#{merchcode},
     	#{prefix}
     )
@@ -28,7 +30,8 @@
      	id,
      	userid,
 	    privatekey,
-	    publickey,
+	    module,
+	    empoent,
 	    merchcode,
 	    prefix
 	from 

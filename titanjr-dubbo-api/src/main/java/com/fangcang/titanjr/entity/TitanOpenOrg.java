@@ -15,8 +15,11 @@ public class TitanOpenOrg  implements java.io.Serializable{
 	//rsa私钥
 	private String privatekey;
 	
-	//rsa公钥
-	private String publickey;
+	//rsa的 module 进制16
+	private String module;
+	
+	//
+	private String empoent;
 	
 	//商户编码
 	private String merchcode;
@@ -48,12 +51,20 @@ public class TitanOpenOrg  implements java.io.Serializable{
 		this.privatekey = privatekey;
 	}
 
-	public String getPublickey() {
-		return publickey;
+	public String getModule() {
+		return module;
 	}
 
-	public void setPublickey(String publickey) {
-		this.publickey = publickey;
+	public void setModule(String module) {
+		this.module = module;
+	}
+
+	public String getEmpoent() {
+		return empoent;
+	}
+
+	public void setEmpoent(String empoent) {
+		this.empoent = empoent;
 	}
 
 	public String getMerchcode() {

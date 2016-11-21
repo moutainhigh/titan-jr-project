@@ -9,17 +9,19 @@ public class TitanOpenOrgDTO implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-
-	private Integer id;
+private Integer id;
 	
 	//金融用户
-	private String userId;
+	private String userid;
 	
 	//rsa私钥
 	private String privatekey;
 	
-	//rsa公钥
-	private String publickey;
+	//rsa的 module 进制16
+	private String module;
+	
+	//
+	private String empoent;
 	
 	//商户编码
 	private String merchcode;
@@ -35,12 +37,12 @@ public class TitanOpenOrgDTO implements Serializable{
 		this.id = id;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getUserid() {
+		return userid;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUserid(String userid) {
+		this.userid = userid;
 	}
 
 	public String getPrivatekey() {
@@ -51,12 +53,20 @@ public class TitanOpenOrgDTO implements Serializable{
 		this.privatekey = privatekey;
 	}
 
-	public String getPublickey() {
-		return publickey;
+	public String getModule() {
+		return module;
 	}
 
-	public void setPublickey(String publickey) {
-		this.publickey = publickey;
+	public void setModule(String module) {
+		this.module = module;
+	}
+
+	public String getEmpoent() {
+		return empoent;
+	}
+
+	public void setEmpoent(String empoent) {
+		this.empoent = empoent;
 	}
 
 	public String getMerchcode() {
@@ -74,5 +84,5 @@ public class TitanOpenOrgDTO implements Serializable{
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
-
+	
 }

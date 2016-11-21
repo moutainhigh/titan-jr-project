@@ -56,11 +56,13 @@ import com.fangcang.titanjr.dto.response.QrCodeResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.dto.response.TransferResponse;
+import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.req.CreateTitanRateRecordReq;
 import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
 import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.pay.services.TitanRateService;
 import com.fangcang.titanjr.pay.services.TitanTradeService;
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
@@ -366,26 +368,29 @@ public class TitanPaymentController extends BaseController {
 		}
 		
 		// 根据收银台ID查询对应的收银台信息
-		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
-		cashierDeskQueryRequest.setDeskId(Long.parseLong(titanPaymentRequest
-				.getDeskId()));
-		CashierDeskResponse response = titanCashierDeskService
-				.queryCashierDesk(cashierDeskQueryRequest);
-
-		if (!(response.isResult() && CollectionUtils.isNotEmpty(response
-				.getCashierDeskDTOList()))) {
-			log.error("cashier desk is null!");
-			model.addAttribute(CommonConstant.RETURN_MSG,
-					TitanMsgCodeEnum.CASHIER_DESK_NOT_EXISTS.getResMsg());
-			return CommonConstant.GATE_WAY_PAYGE;
-		}
+//		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
+//		cashierDeskQueryRequest.setDeskId(Long.parseLong(titanPaymentRequest
+//				.getDeskId()));
+//		CashierDeskResponse response = titanCashierDeskService
+//				.queryCashierDesk(cashierDeskQueryRequest);
+//
+//		if (!(response.isResult() && CollectionUtils.isNotEmpty(response
+//				.getCashierDeskDTOList()))) {
+//			log.error("cashier desk is null!");
+//			model.addAttribute(CommonConstant.RETURN_MSG,
+//					TitanMsgCodeEnum.CASHIER_DESK_NOT_EXISTS.getResMsg());
+//			return CommonConstant.GATE_WAY_PAYGE;
+//		}
 
 		// 开始计算并设置费率
 		TitanRateComputeReq computeReq = new TitanRateComputeReq();
 		computeReq.setAmount(titanPaymentRequest.getPayAmount());
 		computeReq.setItemTypeEnum(cashierItemTypeEnum);
-		computeReq.setUserId(response.getCashierDeskDTOList().get(0)
-				.getUserId());
+		computeReq.setUserId(titanPaymentRequest.getUserid());
+		if(titanPaymentRequest.getUserid().equals(TitanConstantDefine.EXTERNAL_PAYMENT_ACCOUNT)){
+			computeReq.setUserId(titanPaymentRequest.getUserrelateid());
+		}
+		
 		//设置费率信息
 		titanPaymentRequest = titanRateService.setRateAmount(computeReq,
 				titanPaymentRequest);

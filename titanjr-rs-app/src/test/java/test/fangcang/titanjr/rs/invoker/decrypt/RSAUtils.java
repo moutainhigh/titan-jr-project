@@ -317,6 +317,9 @@ public class RSAUtils {
     }
     
     public  static void main(String[] args) throws Exception{
+    	
+    	
+    	
     	Map<String, Object> map = genKeyPair();
     	System.out.println(getPrivateKey(map));
     	System.out.println(getPublicKey(map));

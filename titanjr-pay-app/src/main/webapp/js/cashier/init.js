@@ -21,7 +21,13 @@ function initCashierDesk(){
 			amount_enough_show();
 		}else{
 			amount_not_enough_show();
-		}
+		}   
+	}
+	
+	if(isOpenOrg()){
+		show_history();
+		$("#useCashierDeskPay").show();
+        $("#enough_amount").hide();
 	}
 	 
 	//账户可用余额为0的时候不能让复选按钮选中
@@ -38,6 +44,17 @@ function initCashierDesk(){
     	paytable_paywayClick(itemType);
     });
     
+  //单选框选中是触发限额显示
+	$(".pay_bank_l input[type='radio']").on("click",function(){
+		bankCheckRadio($(this));
+	});
+    
+	if($("#useCashierDeskPay").css("display")=="none"){
+		$(".bank-limit-wrap").hide();
+	}else{
+		$(".bank-limit-wrap").show();
+	}
+	
     //判断网银是否展开
     var isShow = $("#useCashierDeskPay").is(":visible");
     if(isShow){
@@ -53,16 +70,6 @@ function initCashierDesk(){
 	         });
     }
     
-	if($("#useCashierDeskPay").css("display")=="none"){
-		$(".bank-limit-wrap").hide();
-	}else{
-		$(".bank-limit-wrap").show();
-	}
-	
-	//单选框选中是触发限额显示
-	$(".pay_bank_l input[type='radio']").on("click",function(){
-		bankCheckRadio($(this));
-	});
 	
     if(cashierData.paySource!="1"){
     	payPasswordObj.checkIsSetPayPassword();
@@ -80,6 +87,13 @@ function isGDP(){
 //财务
 function isFinance(){
 	if(cashierData.paySource=="2"){
+		return true;
+	}
+	return false;
+}
+
+function isOpenOrg(){
+	if(cashierData.paySource=="6"){
 		return true;
 	}
 	return false;

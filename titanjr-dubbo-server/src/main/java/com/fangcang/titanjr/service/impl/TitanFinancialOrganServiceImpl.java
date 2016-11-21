@@ -1430,7 +1430,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			openOrg.setPrefix(NumberPrefix.getPayOrderCodePrefix(prefix));
 			Map<String,String> rsaMap= RSAUtil.generateStringKsys();
 			openOrg.setPrivatekey(rsaMap.get(RSAUtil.PRIVATE_KEY));
-			openOrg.setPublickey(rsaMap.get(RSAUtil.PUBLIC_KEY));
+			openOrg.setModule(rsaMap.get(RSAUtil.PUBLIC_KEY_MODULE));
+			openOrg.setEmpoent(rsaMap.get(RSAUtil.PUBLIC_KEY_EMPOENT));
 			openOrg.setUserid(userId);
 		    titanOpenOrgDao.insert(openOrg);
 			
@@ -1454,6 +1455,18 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		}
 		LOGGER.error("该商家没有开通金融账户或账户秘钥信息");
 		return null;
+	}
+	
+	
+	@Override
+	public void test() throws Exception{
+//		CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest(); 
+//		cashierDeskInitRequest.setUserId("TJM10000109");
+//		cashierDeskInitRequest.setConstId(CommonConstant.RS_FANGCANG_CONST_ID);
+//		titanCashierDeskService.initCashierDesk(cashierDeskInitRequest);
+		
+		initKeyInfo("TJM10000109");
+
 	}
 	
 }

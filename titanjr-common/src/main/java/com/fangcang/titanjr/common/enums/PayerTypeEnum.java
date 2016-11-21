@@ -71,7 +71,7 @@ public enum PayerTypeEnum {
 	  
 	  public boolean isUserId()
 	  {
-		  return RECHARGE.key.equals(this.key) || WITHDRAW.key.equals(this.key)||OPEN_ORG.key.equals(this.key);
+		  return RECHARGE.key.equals(this.key) || WITHDRAW.key.equals(this.key);
 	  }
 	  
 	  public boolean isReicveMerchantCode(){//接收方为机构编码的
@@ -89,7 +89,7 @@ public enum PayerTypeEnum {
 	
 	  public boolean isMustPayeement(){
 		
-		return SUPPLY_UNION.key.equals(this.key)|| B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key)||RECHARGE.key.equals(this.key);
+		return SUPPLY_UNION.key.equals(this.key)|| B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key)||RECHARGE.key.equals(this.key) || OPEN_ORG.key.equals(this.key);
 	  }
 	
     

@@ -1,12 +1,16 @@
 package com.fangcang.titanjr.common.util.rsa;
 
 import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +23,11 @@ import javax.crypto.Cipher;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+
+
+
+
 
 
 
@@ -47,6 +56,10 @@ public class RSAUtil {
      * 获取私钥的key 
      */  
 	public static final String PRIVATE_KEY = "RSAPrivateKey";
+	
+	public static final String PUBLIC_KEY_MODULE = "module";
+	
+	public static final String PUBLIC_KEY_EMPOENT = "empoent";
 	
 	public static final String QSTRING_EQUAL = "=";
 	public static final String QSTRING_SPLIT = "&";
@@ -77,6 +90,7 @@ public class RSAUtil {
     	KeyPair kp = RsaHelper.generateRSAKeyPair();
     	PublicKey pubKey = kp.getPublic();
         PrivateKey priKey = kp.getPrivate();
+        
     	String pubKeyXml = RsaHelper.encodePublicKeyToXml(pubKey);
         String priKeyXml = RsaHelper.encodePrivateKeyToXml(priKey);
 //        String pubKeyXml = RsaHelper.encode64PublicKeyString(pubKey);
@@ -97,9 +111,15 @@ public class RSAUtil {
     	KeyPair kp = RsaHelper.generateRSAKeyPair();
     	PublicKey pubKey = kp.getPublic();
         PrivateKey priKey = kp.getPrivate();
-        String publicKey = Base64Helper.encode(pubKey.getEncoded());
         String privateKey = Base64Helper.encode(priKey.getEncoded());
-        keysMap.put(RSAUtil.PUBLIC_KEY, publicKey);
+        RSAPublicKey rsaPukey = (RSAPublicKey)pubKey;
+        
+//        String publicKey = Base64Helper.encode(pubKey.getEncoded());
+//        keysMap.put(RSAUtil.PUBLIC_KEY, publicKey);
+//    	keysMap.put(RSAUtil.PRIVATE_KEY, privateKey);
+    	
+        keysMap.put(RSAUtil.PUBLIC_KEY_MODULE, rsaPukey.getModulus().toString(16));
+        keysMap.put(RSAUtil.PUBLIC_KEY_EMPOENT, rsaPukey.getPublicExponent().toString(16));
     	keysMap.put(RSAUtil.PRIVATE_KEY, privateKey);
     	return keysMap;
     }
@@ -327,9 +347,11 @@ public class RSAUtil {
     
     public static byte[] decryptByPrivateKey(byte[] encryptedData, String privateKey)
             throws Exception {
+    	
+    	
         byte[] keyBytes = Base64Helper.decode(privateKey);
         PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
+        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM , "BC");
         Key privateK = keyFactory.generatePrivate(pkcs8KeySpec);
         Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
         cipher.init(Cipher.DECRYPT_MODE, privateK);
@@ -358,19 +380,17 @@ public class RSAUtil {
 	
 	public static void main(String[] args){
 		try {
+			
 			Map<String,String> keyMap = generateStringKsys();
-			String apc = "sds";
+			String apc = "{\"name\":\"zhangsan\",\"escrowedDate\":\"2016-12-03\",\"goodsId\":\"201611141238596002654\",\"goodsDetail\":\"预定日本签证，加急，5张....\",\"goodsName\":\"签证预定单\",\"userId\":\"\",\"ruserId\":\"TJM10000109\",\"amount\":\"889\",\"payerType\":\"1001\",\"currencyType\":\"1\",\"checkOrderUrl\":\"\",\"notify\":\"http://localhost:8080/CashierDesk/payCallBack\"}";
+//			RSAPublicKey publicKey = new RSAPublicKeySpec(new BigInteger(keyMap.get(RSAUtil.PUBLIC_KEY_MODULE)),new BigInteger(keyMap.get(RSAUtil.PUBLIC_KEY_EMPOENT)));
+			
 			byte[] encryptMsg =  encryptByPublicKey(apc.getBytes(), keyMap.get(RSAUtil.PUBLIC_KEY));
 			
 			byte[] decryptMsg = decryptByPrivateKey(encryptMsg, keyMap.get(RSAUtil.PRIVATE_KEY));
 			
-			System.out.println(keyMap.get(RSAUtil.PRIVATE_KEY).length());
 			String ss = new String(decryptMsg,"UTF-8");
 			System.out.println(ss);
-			
-			
-			
-			//"a130f9254fbb388bab50330d9c6a0f8c
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.out.println("11");

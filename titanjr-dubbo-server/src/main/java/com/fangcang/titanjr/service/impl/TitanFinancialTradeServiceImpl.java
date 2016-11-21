@@ -772,7 +772,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("payOrderCode", transOrderDTO
-				.getPayorderno()));
+				.getPayorderno().substring(2)));
 		params.add(new BasicNameValuePair("businessOrderCode", transOrderDTO
 				.getBusinessordercode()));
 
@@ -2359,15 +2359,14 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							.setTransordertype(TransOrderTypeEnum.RECHARGE.type);
 				}
 				
-				if(payerTypeEnum.isOpenOrg()){
+			} else if(payerTypeEnum.isOpenOrg()){
 					titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
 					titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
 					titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
 					titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
-				}
-				
-				
-			} else {
+					titanTransOrder.setUserrelateid(titanOrderRequest.getRuserId());
+					titanTransOrder.setPayeemerchant(titanOrderRequest.getRuserId());
+			}else {
 				localOrderResponse.putSysError();
 				return localOrderResponse;
 			}

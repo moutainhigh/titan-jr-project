@@ -3,6 +3,7 @@ package com.fangcang.titanjr.pay.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -30,6 +31,8 @@ import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.rsa.Base64Helper;
+import com.fangcang.titanjr.common.util.rsa.JsRSAUtil;
 import com.fangcang.titanjr.common.util.rsa.RSAUtil;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.CashDeskData;
@@ -116,17 +119,21 @@ public class TitanTradeController extends BaseController {
 			}
 			
 			String deInfo = null;
+			TitanOpenOrgDTO openOrgDTO =null;
 			if(StringUtil.isValidString(ruserId)){
 				//查询私钥
-				TitanOpenOrgDTO openOrgDTO = financialTradeService.queryOpenOrg(ruserId);
+				openOrgDTO = financialTradeService.queryOpenOrg(ruserId);
 				if(openOrgDTO==null){
 					model.addAttribute("msg",
 							TitanMsgCodeEnum.TITAN_ACCOUNT_NOT_EXISTS.getResMsg());
 					return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 				}
 				
-				deInfo = RSAUtil.decryptRSAToString(orderInfo, openOrgDTO.getPrivatekey());
+				deInfo = RSADecryptString.decryptString(orderInfo,
+						new BigInteger(Base64Helper.decode(openOrgDTO.getPrivatekey())).toString(16));
+			
 			}else{
+				
 				deInfo = RSADecryptString.decryptString(orderInfo,
 						TitanConstantDefine.PRIVATE_KEY);
 			}
@@ -143,6 +150,7 @@ public class TitanTradeController extends BaseController {
 			// 解析订单信息
 			TitanOrderRequest dto = JsonConversionTool.toObject(deInfo,
 					TitanOrderRequest.class);
+			
 
 			log.info("the titanOrderRequest of info is:"
 					+ JSONSerializer.toJSON(dto));
@@ -164,7 +172,7 @@ public class TitanTradeController extends BaseController {
 								.getResMsg());
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
-
+			
 			log.info("check order info is ok");
 			// 检查用户权限
 			if (!financialTradeService.checkPermission(dto)) {
@@ -190,6 +198,12 @@ public class TitanTradeController extends BaseController {
 
 			log.info("begin sava titan trans order ...");
 			
+			//给goodsid加上前缀，标识其唯一性，对于没有在金融环境生成前缀的，统一加上AA
+			if(openOrgDTO !=null && StringUtil.isValidString(openOrgDTO.getPrefix())){
+				dto.setGoodsId(openOrgDTO.getPrefix()+dto.getGoodsId());
+			}else{
+				dto.setGoodsId("AA"+dto.getGoodsId());
+			}
 			// 保存金融订单
 			TransOrderCreateResponse orderCreateResponse = titanFinancialTradeService
 					.saveTitanTransOrder(dto);
@@ -309,6 +323,11 @@ public class TitanTradeController extends BaseController {
 		}
 
 		if (pe.isB2BPayment() && !StringUtil.isValidString(dto.getRuserId())) {
+			log.error(pe + "RuserId is null");
+			return false;
+		}
+		
+		if(pe.isOpenOrg() && !StringUtil.isValidString(dto.getRuserId())){
 			log.error(pe + "RuserId is null");
 			return false;
 		}
@@ -533,7 +552,7 @@ public class TitanTradeController extends BaseController {
 
 		}
 		String mCode =  transOrderDTO.getMerchantcode();
-		if (payerTypeEnum .isUserId()) 
+		if (payerTypeEnum .isUserId() || payerTypeEnum.isOpenOrg()) 
 		{
 			String userid = StringUtil.isValidString(transOrderDTO
 					.getPayeemerchant()) ? transOrderDTO.getPayeemerchant()

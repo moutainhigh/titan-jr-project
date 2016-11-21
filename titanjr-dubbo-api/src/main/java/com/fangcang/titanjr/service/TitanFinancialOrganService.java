@@ -209,4 +209,7 @@ public interface TitanFinancialOrganService {
      * @return
      */
     public TitanOpenOrgDTO queryTitanOpenOrgDTO(String userId); 
+    
+    
+    public void test()throws Exception;
 }

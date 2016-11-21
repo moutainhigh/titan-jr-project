@@ -98,7 +98,7 @@
                 
             </div>
             </div>
-                <c:if test="${cashDeskData.paySource !='1'}">
+                <c:if test="${cashDeskData.paySource =='2' }">
                    <div class="TFS_withdrawBoxR fr">
 					<h3>温馨提示</h3>
 					<div class="TFS_withdrawBoxR_content">
@@ -377,13 +377,16 @@
             $(this).addClass(tabclass).siblings().removeClass(tabclass);
             var index = $div_li.index(this);
             $(tabpannel).eq(index).show().siblings().hide();
+            $($(tabpannel).eq(index).find("input")[0]).click(); 
+            $($(tabpannel).eq(index).find(".paytable_payway")[0]).click(); 
         });
     }
-    $(function () {
+    
+   $(function () {
         //tab
         tabChange($(".pay_table li"), $(".paytable_content ul li"), "on");
-        tabChange($(".pay_table li"), $(".paytable_content ul li"), "on");
-    });
+       /*  tabChange($(".pay_table li"), $(".paytable_content ul li"), "on"); */
+    }); 
 
     //支付方式下拉显示隐藏
     $('.J_payway').on('click',function(){
