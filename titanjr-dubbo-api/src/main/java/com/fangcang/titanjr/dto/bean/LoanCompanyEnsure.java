@@ -10,7 +10,7 @@ public class LoanCompanyEnsure {
     //增加机构编码
     private String userId;
     private String companyName;
-    private Date foundDate;
+    private String foundDate;
     //企业规模 1 1-50 2 50-100 3 100-500 4 500-1000 5 1000以上
     private Integer enterpriseScale;
     //营业执照
@@ -22,14 +22,20 @@ public class LoanCompanyEnsure {
     //平台注册账号
     private String registerAccount;
     //平台注册日期
-    private Date registerDate;
+    private String registerDate;
     //法人姓名
     private String legalPersonName;
     //法人证件类型
     private Integer legalPersonCertificateType;
     //法人证件号码
     private String legalPersonCertificateNumber;
-    //联系人姓名
+    //企业办公地址
+    private String officeAddress;
+    //企业注册地址
+    private String regAddress;
+    
+
+	//联系人姓名
     private String contactName;
     //联系人电话
     private String contactPhone;
@@ -43,6 +49,22 @@ public class LoanCompanyEnsure {
     private String licenseUrl;
     //法人身份证地址--不一定是身份证可能是护照
     private String legalPersonUrl;
+    
+    public String getOfficeAddress() {
+		return officeAddress;
+	}
+
+	public void setOfficeAddress(String officeAddress) {
+		this.officeAddress = officeAddress;
+	}
+
+	public String getRegAddress() {
+		return regAddress;
+	}
+
+	public void setRegAddress(String regAddress) {
+		this.regAddress = regAddress;
+	}
 
     public String getUserId() {
         return userId;
@@ -68,11 +90,11 @@ public class LoanCompanyEnsure {
         this.companyName = companyName;
     }
 
-    public Date getFoundDate() {
+    public String getFoundDate() {
         return foundDate;
     }
 
-    public void setFoundDate(Date foundDate) {
+    public void setFoundDate(String foundDate) {
         this.foundDate = foundDate;
     }
 
@@ -116,11 +138,11 @@ public class LoanCompanyEnsure {
         this.registerAccount = registerAccount;
     }
 
-    public Date getRegisterDate() {
+    public String getRegisterDate() {
         return registerDate;
     }
 
-    public void setRegisterDate(Date registerDate) {
+    public void setRegisterDate(String registerDate) {
         this.registerDate = registerDate;
     }
 

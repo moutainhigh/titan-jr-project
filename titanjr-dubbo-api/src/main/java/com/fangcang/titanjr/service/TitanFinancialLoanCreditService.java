@@ -3,14 +3,15 @@ package com.fangcang.titanjr.service;
 import com.fangcang.titanjr.dto.request.ApplyLoanCreditRequest;
 import com.fangcang.titanjr.dto.request.AuditCreidtOrderRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
+import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
 import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
-import com.fangcang.titanjr.dto.request.QueryCreditCompanyInfoRequest;
+import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanCreditResponse;
 import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
+import com.fangcang.titanjr.dto.response.GetCreditOrderCountResponse;
 import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
-import com.fangcang.titanjr.dto.response.QueryCreditCompanyInfoResponse;
-
+import com.fangcang.titanjr.dto.response.PageCreditCompanyInfoResponse;
 /**
  * 授信业务接口定义
  * 
@@ -36,7 +37,7 @@ public interface TitanFinancialLoanCreditService {
 	 * 查询授信申请公司信息
 	 * @return
 	 */
-	public QueryCreditCompanyInfoResponse queryCreditCompanyInfo(QueryCreditCompanyInfoRequest req);
+	public PageCreditCompanyInfoResponse queryPageCreditCompanyInfo(QueryPageCreditCompanyInfoRequest req);
 	/**
 	 * 保存授信单信息
 	 * 1.判定orderNo，若为空，则生成编码并保存，不为空，则更新
@@ -54,6 +55,12 @@ public interface TitanFinancialLoanCreditService {
 	 */
 	public ApplyLoanCreditResponse applyLoanCredit(ApplyLoanCreditRequest req);
 
+	/**
+	 * 授信申请数量
+	 * @param request
+	 * @return
+	 */
+	public GetCreditOrderCountResponse getCreditOrderCount(GetCreditOrderCountRequest request);
 	
-
+	
 }

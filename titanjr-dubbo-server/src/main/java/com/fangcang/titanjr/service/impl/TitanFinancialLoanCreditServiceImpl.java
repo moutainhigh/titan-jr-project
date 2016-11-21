@@ -1,10 +1,17 @@
 package com.fangcang.titanjr.service.impl;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
+import com.fangcang.merchant.api.MerchantFacade;
+import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
+import com.fangcang.merchant.response.dto.MerchantResponseDTO;
+import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
+import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dao.LoanCompanyEnsureDao;
 import com.fangcang.titanjr.dao.LoanCreditCompanyDao;
 import com.fangcang.titanjr.dao.LoanCreditOrderDao;
 import com.fangcang.titanjr.dao.LoanPersonEnsureDao;
+import com.fangcang.titanjr.dao.impl.LoanCreditOpinionDaoImpl;
 import com.fangcang.titanjr.dto.bean.AppendInfo;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
@@ -19,14 +26,19 @@ import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.annotation.Resource;
+
 import java.util.List;
 
 /**
  * Created by zhaoshan on 2016/11/18.
  */
 public class TitanFinancialLoanCreditServiceImpl implements TitanFinancialLoanCreditService {
+
+    private static final Log log = LogFactory.getLog(TitanFinancialLoanCreditServiceImpl.class);
 
     @Resource
     private LoanCreditOrderDao loanCreditOrderDao;
@@ -46,6 +58,11 @@ public class TitanFinancialLoanCreditServiceImpl implements TitanFinancialLoanCr
     @Resource
     private TitanFinancialOrganService titanFinancialOrganService;
 
+    private MerchantFacade merchantFacade;
+
+    @Resource
+    private HessianProxyBeanFactory hessianProxyBeanFactory;
+
     @Override
     public AuditCreidtOrderResponse auditCreditOrder(AuditCreidtOrderRequest req) {
         return null;
@@ -53,183 +70,195 @@ public class TitanFinancialLoanCreditServiceImpl implements TitanFinancialLoanCr
 
     @Override
     public GetCreditInfoResponse getCreditOrderInfo(GetCreditInfoRequest req) {
+        log.info("请求参数为,授信单号："+ req.getOrderNo() +",当前机构：" + req.getOrgCode());
         GetCreditInfoResponse creditInfoResponse = new GetCreditInfoResponse();
-        if (StringUtil.isValidString(req.getOrderNo())){
-            //返回失败
+        if (StringUtil.isValidString(req.getOrderNo())) {//不为空才查询
+            LoanCreditOrder loanCreditOrder = new LoanCreditOrder();
+            loanCreditOrder.setOrderNo(req.getOrderNo());
+            loanCreditOrder.setRsorgId(req.getOrgCode());
+            List<LoanCreditOrder> creditOrders = loanCreditOrderDao.queryLoanCreditOrder(loanCreditOrder);
+            if (null != creditOrders && creditOrders.size() == 1) {//只有仅存一个授信申请单才处理
+                LoanCreditOrder creditOrder = creditOrders.get(0);
+                creditInfoResponse.setOrderNo(creditOrder.getOrderNo());
+                creditInfoResponse.setCreditOrder(new com.fangcang.titanjr.dto.bean.LoanCreditOrder());
+
+                creditInfoResponse.getCreditOrder().setDayLimit(creditOrder.getDayLimit());//
+                creditInfoResponse.getCreditOrder().setAmount(creditOrder.getAmount());
+                creditInfoResponse.getCreditOrder().setActualAmount(creditOrder.getActualAmount());
+                creditInfoResponse.getCreditOrder().setReqTime(creditOrder.getReqTime());
+                creditInfoResponse.getCreditOrder().setRateTem(creditOrder.getRateTem());//
+                creditInfoResponse.getCreditOrder().setRspId(creditOrder.getRspId());//
+                creditInfoResponse.getCreditOrder().setRsorgId(creditOrder.getRsorgId());
+                creditInfoResponse.getCreditOrder().setCreateTime(DateUtil.dateToString(creditOrder.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+                creditInfoResponse.getCreditOrder().setUrlKey(creditOrder.getUrlKey());
+                creditInfoResponse.getCreditOrder().setStatus(creditOrder.getStatus());
+                creditInfoResponse.getCreditOrder().setAssureType(creditOrder.getAssureType());
+                creditInfoResponse.getCreditOrder().setFirstAuditTime(creditOrder.getFirstAuditTime());
+                creditInfoResponse.getCreditOrder().setLastAuditTime(creditOrder.getLastAuditTime());
+                creditInfoResponse.getCreditOrder().setAuditPass(creditOrder.getAuditPass());
+                //creditInfoResponse.getCreditOrder().setReqJson();//==审核时发起授信申请到融数，才补充进去；
+                creditInfoResponse.getCreditOrder().setOrgCode(creditOrder.getOrgCode());
+
+                LoanCreditCompany loanCreditCompany = new LoanCreditCompany();
+                loanCreditCompany.setCreditorderNo(creditOrder.getOrderNo());
+                List<LoanCreditCompany> creditCompanies = loanCreditCompanyDao.queryLoanCreditCompany(loanCreditCompany);
+                if (null != creditCompanies && creditCompanies.size() == 1) {
+                    creditInfoResponse.setCreditCompany(new com.fangcang.titanjr.dto.bean.LoanCreditCompany());
+                    //基本信息
+                    creditInfoResponse.getCreditCompany().setCreditOrderNo(creditOrder.getOrderNo());
+                    creditInfoResponse.getCreditCompany().setName(creditCompanies.get(0).getName());
+                    creditInfoResponse.getCreditCompany().setStartDate(DateUtil.dateToString(creditCompanies.get(0).getStartDate()));
+                    creditInfoResponse.getCreditCompany().setRegAddress(creditCompanies.get(0).getRegAddress());
+                    creditInfoResponse.getCreditCompany().setOfficeAddress(creditCompanies.get(0).getOfficeAddress());
+                    creditInfoResponse.getCreditCompany().setOrgSize(creditCompanies.get(0).getOrgSize());
+                    creditInfoResponse.getCreditCompany().setLicense(creditCompanies.get(0).getLicense());
+                    creditInfoResponse.getCreditCompany().setTaxRegNo(creditCompanies.get(0).getTaxRegNo());
+                    //泰坦云注册信息
+                    creditInfoResponse.getCreditCompany().setOrgCode(creditCompanies.get(0).getOrgCode());
+                    creditInfoResponse.getCreditCompany().setRegAccount(creditCompanies.get(0).getRegAccount());
+                    creditInfoResponse.getCreditCompany().setRegDate(DateUtil.dateToString(creditCompanies.get(0).getRegDate()));
+                    //法人
+                    creditInfoResponse.getCreditCompany().setEmpSize(creditCompanies.get(0).getEmpSize());
+                    creditInfoResponse.getCreditCompany().setLegalName(creditCompanies.get(0).getLegalName());
+                    creditInfoResponse.getCreditCompany().setLegalceType(creditCompanies.get(0).getLegalceType());
+                    creditInfoResponse.getCreditCompany().setLegalNo(creditCompanies.get(0).getLegalNo());
+                    //联系人
+                    creditInfoResponse.getCreditCompany().setContactName(creditCompanies.get(0).getContactName());
+                    creditInfoResponse.getCreditCompany().setContactPhone(creditCompanies.get(0).getContactPhone());
+                    creditInfoResponse.getCreditCompany().setWaterEmail(creditCompanies.get(0).getWaterEmail());
+                    //附加信息
+                    JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON(creditCompanies.get(0).getAppendInfo());
+                    creditInfoResponse.getCreditCompany().setAppendInfo((AppendInfo) JSONSerializer.toJava(jsonObject));
+                    //证件图片
+                    creditInfoResponse.getCreditCompany().setLicenseUrl(creditCompanies.get(0).getLicenseUrl());
+                    creditInfoResponse.getCreditCompany().setLegalNoUrl(creditCompanies.get(0).getLegalNoUrl());
+                    creditInfoResponse.getCreditCompany().setOfficeNoUrl(creditCompanies.get(0).getOfficeNoUrl());
+                    creditInfoResponse.getCreditCompany().setAccountUrl(creditCompanies.get(0).getAccountUrl());
+                    creditInfoResponse.getCreditCompany().setCreditUrl(creditCompanies.get(0).getCreditUrl());
+                    creditInfoResponse.getCreditCompany().setOfficeUrl(creditCompanies.get(0).getOfficeUrl());
+                    creditInfoResponse.getCreditCompany().setWaterUrl(creditCompanies.get(0).getWaterUrl());
+                    //是否推送
+                    creditInfoResponse.getCreditCompany().setIsPush(creditCompanies.get(0).getIsPush());
+                } else {
+                    //如果大于两个，报错,若为空，不处理
+                    if (creditCompanies.size() > 1){
+                        log.error("授信机构信息只能有一个");
+                        creditInfoResponse.putErrorResult("COMPANY_ERROR", "授信机构信息只能有一个");
+                        return creditInfoResponse;
+                    }
+                }
+
+                LoanCompanyEnsure loanCompanyEnsure = new LoanCompanyEnsure();
+                loanCompanyEnsure.setUserId(creditOrder.getRsorgId());
+                List<LoanCompanyEnsure> companyEnsures = loanCompanyEnsureDao.queryLoanCompanyEnsure(loanCompanyEnsure);
+                if (creditOrder.getAssureType() == 2 && null != companyEnsures && companyEnsures.size() == 1) {
+                    creditInfoResponse.setCompanyEnsure(new com.fangcang.titanjr.dto.bean.LoanCompanyEnsure());
+                    //基本信息
+                    creditInfoResponse.getCompanyEnsure().setUserId(companyEnsures.get(0).getUserId());
+                    creditInfoResponse.getCompanyEnsure().setCompanyName(companyEnsures.get(0).getCompanyName());
+                    creditInfoResponse.getCompanyEnsure().setFoundDate(DateUtil.dateToString(companyEnsures.get(0).getFoundDate()));
+                    creditInfoResponse.getCompanyEnsure().setEnterpriseScale(companyEnsures.get(0).getEnterpriseScale());
+                    creditInfoResponse.getCompanyEnsure().setBusinessLicense(companyEnsures.get(0).getBusinessLicense());
+                    creditInfoResponse.getCompanyEnsure().setTaxRegisterCode(companyEnsures.get(0).getTaxRegisterCode());
+                    creditInfoResponse.getCompanyEnsure().setOrgCodeCertificate(companyEnsures.get(0).getOrgCodeCertificate());
+                    //平台注册信息
+                    creditInfoResponse.getCompanyEnsure().setRegisterAccount(companyEnsures.get(0).getRegisterAccount());
+                    creditInfoResponse.getCompanyEnsure().setRegisterDate(DateUtil.dateToString(companyEnsures.get(0).getRegisterDate()));
+                    //法人
+                    creditInfoResponse.getCompanyEnsure().setLegalPersonName(companyEnsures.get(0).getLegalPersonName());
+                    creditInfoResponse.getCompanyEnsure().setLegalPersonCertificateType(companyEnsures.get(0).getLegalPersonCertificateType());
+                    creditInfoResponse.getCompanyEnsure().setLegalPersonCertificateNumber(companyEnsures.get(0).getLegalPersonCertificateNumber());
+                    //联系人
+                    creditInfoResponse.getCompanyEnsure().setContactName(companyEnsures.get(0).getContactName());
+                    creditInfoResponse.getCompanyEnsure().setContactPhone(companyEnsures.get(0).getContactPhone());
+                    //图片证件
+                    creditInfoResponse.getCompanyEnsure().setBusinessLicenseUrl(companyEnsures.get(0).getBusinessLicenseUrl());
+                    creditInfoResponse.getCompanyEnsure().setOrgCodeCertificateUrl(companyEnsures.get(0).getOrgCodeCertificateUrl());
+                    creditInfoResponse.getCompanyEnsure().setTaxRegisterCodeUrl(companyEnsures.get(0).getTaxRegisterCodeUrl());
+                    creditInfoResponse.getCompanyEnsure().setLicenseUrl(companyEnsures.get(0).getLicenseUrl());
+                    creditInfoResponse.getCompanyEnsure().setLegalPersonUrl(companyEnsures.get(0).getLegalPersonUrl());
+                } else {
+                    //如果大于两个，报错,若为空，不处理
+                }
+
+                LoanPersonEnsure loanPersonEnsure = new LoanPersonEnsure();
+                loanPersonEnsure.setOrderNo(creditOrder.getOrderNo());
+                List<LoanPersonEnsure> personEnsures = loanPersonEnsureDao.queryLoanPersonEnsure(loanPersonEnsure);
+                if (creditOrder.getAssureType() == 1 && null != personEnsures && personEnsures.size() == 1) {
+                    creditInfoResponse.setLoanPersonEnsure(new com.fangcang.titanjr.dto.bean.LoanPersonEnsure());
+                    //基本信息
+                    creditInfoResponse.getLoanPersonEnsure().setOrderNo(creditOrder.getOrderNo());
+                    creditInfoResponse.getLoanPersonEnsure().setPersonName(personEnsures.get(0).getPersonName());
+                    creditInfoResponse.getLoanPersonEnsure().setNationalIdentityNumber(personEnsures.get(0).getNationalIdentityNumber());
+                    creditInfoResponse.getLoanPersonEnsure().setMobilenNmber(personEnsures.get(0).getMobileNumber());
+                    creditInfoResponse.getLoanPersonEnsure().setMarriageStatus(personEnsures.get(0).getMarriageStatus());
+                    creditInfoResponse.getLoanPersonEnsure().setHaveChildren(personEnsures.get(0).getHaveChildren());
+                    creditInfoResponse.getLoanPersonEnsure().setNativePlace(personEnsures.get(0).getNativePlace());
+                    creditInfoResponse.getLoanPersonEnsure().setCurrentLiveaAdress(personEnsures.get(0).getCurrentLiveAddress());
+                    //学历
+                    creditInfoResponse.getLoanPersonEnsure().setGraduateSchool(personEnsures.get(0).getGraduateSchool());
+                    creditInfoResponse.getLoanPersonEnsure().setHighestEducation(personEnsures.get(0).getHighestEducation());
+                    //工作
+                    creditInfoResponse.getLoanPersonEnsure().setYearsWorking(personEnsures.get(0).getYearsWorking());
+                    creditInfoResponse.getLoanPersonEnsure().setWorkCompany(personEnsures.get(0).getWorkCompany());
+                    creditInfoResponse.getLoanPersonEnsure().setOccupation(personEnsures.get(0).getOccupation());
+                    creditInfoResponse.getLoanPersonEnsure().setWorktelePhone(personEnsures.get(0).getWorkTelephone());
+                    creditInfoResponse.getLoanPersonEnsure().setOfficeAddress(personEnsures.get(0).getOfficeAddress());
+                    creditInfoResponse.getLoanPersonEnsure().setIndustry(personEnsures.get(0).getIndustry());
+                    //资产
+                    creditInfoResponse.getLoanPersonEnsure().setCarPropertyType(personEnsures.get(0).getCarPropertyType());
+                    creditInfoResponse.getLoanPersonEnsure().setHousePropertyType(personEnsures.get(0).getHousePropertyType());
+                    creditInfoResponse.getLoanPersonEnsure().setOtherProperty(personEnsures.get(0).getOtherProperty());
+                    creditInfoResponse.getLoanPersonEnsure().setPropertyRemark(personEnsures.get(0).getPropertyRemark());
+                    //联系人
+                    creditInfoResponse.getLoanPersonEnsure().setFirstContactName(personEnsures.get(0).getFirstContactName());
+                    creditInfoResponse.getLoanPersonEnsure().setFirstContactPhone(personEnsures.get(0).getFirstContactPhone());
+                    creditInfoResponse.getLoanPersonEnsure().setRelationToguarantee1(personEnsures.get(0).getRelationToGuarantee1());
+                    creditInfoResponse.getLoanPersonEnsure().setSecondContactName(personEnsures.get(0).getSecondContactName());
+                    creditInfoResponse.getLoanPersonEnsure().setSecondContactPhone(personEnsures.get(0).getSecondContactPhone());
+                    creditInfoResponse.getLoanPersonEnsure().setRelationToguarantee2(personEnsures.get(0).getRelationToGuarantee2());
+                    //图片信息
+                    creditInfoResponse.getLoanPersonEnsure().setIdCardUrl(personEnsures.get(0).getIdCardUrl());
+                    creditInfoResponse.getLoanPersonEnsure().setRegisteredUrl(personEnsures.get(0).getRegisteredUrl());
+                    creditInfoResponse.getLoanPersonEnsure().setSpouseRegisteredUrl(personEnsures.get(0).getSpouseRegisteredUrl());
+                    creditInfoResponse.getLoanPersonEnsure().setSpouseIdCardUrl(personEnsures.get(0).getSpouseIdCardUrl());
+                    creditInfoResponse.getLoanPersonEnsure().setMarriageUrl(personEnsures.get(0).getMarriageUrl());
+                } else {
+                    //如果大于两个，报错,若为空，不处理
+                }
+            } else {
+                //传入单号，但是查询记录不正确，终止操作
+                creditInfoResponse.putErrorResult("ORG_ERROR","无法查出机构授信申请单");
+                return creditInfoResponse;
+            }
         }
-        LoanCreditOrder loanCreditOrder = new LoanCreditOrder();
-        loanCreditOrder.setOrderNo(req.getOrderNo());
-        loanCreditOrder.setRsorgId(req.getOrgCode());
-        List<LoanCreditOrder> creditOrders = loanCreditOrderDao.queryLoanCreditOrder(loanCreditOrder);
-        if (null != creditOrders && creditOrders.size() == 1){//按出错处理
-            LoanCreditOrder creditOrder = creditOrders.get(0);
-            creditInfoResponse.setOrderNo(creditOrder.getOrderNo());
-            creditInfoResponse.setCreditOrder(new com.fangcang.titanjr.dto.bean.LoanCreditOrder());
-
-            creditInfoResponse.getCreditOrder().setDayLimit(creditOrder.getDayLimit());//
-            creditInfoResponse.getCreditOrder().setAmount(creditOrder.getAmount());
-            creditInfoResponse.getCreditOrder().setActualAmount(creditOrder.getActualAmount());
-            creditInfoResponse.getCreditOrder().setReqTime(creditOrder.getReqTime());
-            creditInfoResponse.getCreditOrder().setRateTem(creditOrder.getRateTem());//
-            creditInfoResponse.getCreditOrder().setRspId(creditOrder.getRspId());//
-            creditInfoResponse.getCreditOrder().setRsorgId(creditOrder.getRsorgId());
-            creditInfoResponse.getCreditOrder().setCreateTime(DateUtil.dateToString(creditOrder.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
-            creditInfoResponse.getCreditOrder().setUrlKey(creditOrder.getUrlKey());
-            creditInfoResponse.getCreditOrder().setStatus(creditOrder.getStatus());
-            creditInfoResponse.getCreditOrder().setAssureType(creditOrder.getAssureType());
-            creditInfoResponse.getCreditOrder().setFirstAuditTime(creditOrder.getFirstAuditTime());
-            creditInfoResponse.getCreditOrder().setLastAuditTime(creditOrder.getLastAuditTime());
-            creditInfoResponse.getCreditOrder().setAuditPass(creditOrder.getAuditPass());
-            //creditInfoResponse.getCreditOrder().setReqJson();//==审核时发起授信申请到融数，才补充进去；
-            creditInfoResponse.getCreditOrder().setOrgCode(creditOrder.getOrgCode());
-
-            LoanCreditCompany loanCreditCompany = new LoanCreditCompany();
-            loanCreditCompany.setCreditorderNo(creditOrder.getOrderNo());
-            List<LoanCreditCompany> creditCompanies = loanCreditCompanyDao.queryLoanCreditCompany(loanCreditCompany);
-            if (null != creditCompanies && creditCompanies.size() == 1){
-                creditInfoResponse.setCreditCompany(new com.fangcang.titanjr.dto.bean.LoanCreditCompany());
-                //基本信息
-                creditInfoResponse.getCreditCompany().setCreditOrderNo(creditOrder.getOrderNo());
-                creditInfoResponse.getCreditCompany().setName(creditCompanies.get(0).getName());
-                creditInfoResponse.getCreditCompany().setStartDate(creditCompanies.get(0).getStartDate());
-                creditInfoResponse.getCreditCompany().setRegAddress(creditCompanies.get(0).getRegAddress());
-                creditInfoResponse.getCreditCompany().setOfficeAddress(creditCompanies.get(0).getOfficeAddress());
-                creditInfoResponse.getCreditCompany().setOrgSize(creditCompanies.get(0).getOrgSize());
-                creditInfoResponse.getCreditCompany().setLicense(creditCompanies.get(0).getLicense());
-                creditInfoResponse.getCreditCompany().setTaxRegNo(creditCompanies.get(0).getTaxRegNo());
-                //泰坦云注册信息
-                creditInfoResponse.getCreditCompany().setOrgCode(creditCompanies.get(0).getOrgCode());
-                creditInfoResponse.getCreditCompany().setRegAccount(creditCompanies.get(0).getRegAccount());
-                creditInfoResponse.getCreditCompany().setRegDate(creditCompanies.get(0).getRegDate());
-                //法人
-                creditInfoResponse.getCreditCompany().setEmpSize(creditCompanies.get(0).getEmpSize());
-                creditInfoResponse.getCreditCompany().setLegalName(creditCompanies.get(0).getLegalName());
-                creditInfoResponse.getCreditCompany().setLegalceType(creditCompanies.get(0).getLegalceType());
-                creditInfoResponse.getCreditCompany().setLegalNo(creditCompanies.get(0).getLegalNo());
-                //联系人
-                creditInfoResponse.getCreditCompany().setContactName(creditCompanies.get(0).getContactName());
-                creditInfoResponse.getCreditCompany().setContactPhone(creditCompanies.get(0).getContactPhone());
-                creditInfoResponse.getCreditCompany().setWaterEmail(creditCompanies.get(0).getWaterEmail());
-                //附加信息
-                JSONObject jsonObject = (JSONObject) JSONSerializer.toJSON(creditCompanies.get(0).getAppendInfo());
-                creditInfoResponse.getCreditCompany().setAppendInfo((AppendInfo)JSONSerializer.toJava(jsonObject));
-                //证件图片
-                creditInfoResponse.getCreditCompany().setLicenseUrl(creditCompanies.get(0).getLicenseUrl());
-                creditInfoResponse.getCreditCompany().setLegalNoUrl(creditCompanies.get(0).getLegalNoUrl());
-                creditInfoResponse.getCreditCompany().setOfficeNoUrl(creditCompanies.get(0).getOfficeNoUrl());
-                creditInfoResponse.getCreditCompany().setAccountUrl(creditCompanies.get(0).getAccountUrl());
-                creditInfoResponse.getCreditCompany().setCreditUrl(creditCompanies.get(0).getCreditUrl());
-                creditInfoResponse.getCreditCompany().setOfficeUrl(creditCompanies.get(0).getOfficeUrl());
-                creditInfoResponse.getCreditCompany().setWaterUrl(creditCompanies.get(0).getWaterUrl());
-                //是否推送
-                creditInfoResponse.getCreditCompany().setIsPush(creditCompanies.get(0).getIsPush());
-            } else {
-
-            }
-
-            LoanCompanyEnsure loanCompanyEnsure = new LoanCompanyEnsure();
-            loanCompanyEnsure.setUserId(creditOrder.getRsorgId());
-            List<LoanCompanyEnsure> companyEnsures = loanCompanyEnsureDao.queryLoanCompanyEnsure(loanCompanyEnsure);
-            if (null != companyEnsures && companyEnsures.size() == 1){
-                creditInfoResponse.setCompanyEnsure(new com.fangcang.titanjr.dto.bean.LoanCompanyEnsure());
-                //基本信息
-                creditInfoResponse.getCompanyEnsure().setUserId(companyEnsures.get(0).getUserId());
-                creditInfoResponse.getCompanyEnsure().setCompanyName(companyEnsures.get(0).getCompanyName());
-                creditInfoResponse.getCompanyEnsure().setFoundDate(companyEnsures.get(0).getFoundDate());
-                creditInfoResponse.getCompanyEnsure().setEnterpriseScale(companyEnsures.get(0).getEnterpriseScale());
-                creditInfoResponse.getCompanyEnsure().setBusinessLicense(companyEnsures.get(0).getBusinessLicense());
-                creditInfoResponse.getCompanyEnsure().setTaxRegisterCode(companyEnsures.get(0).getTaxRegisterCode());
-                creditInfoResponse.getCompanyEnsure().setOrgCodeCertificate(companyEnsures.get(0).getOrgCodeCertificate());
-                //平台注册信息
-                creditInfoResponse.getCompanyEnsure().setRegisterAccount(companyEnsures.get(0).getRegisterAccount());
-                creditInfoResponse.getCompanyEnsure().setRegisterDate(companyEnsures.get(0).getRegisterDate());
-                //法人
-                creditInfoResponse.getCompanyEnsure().setLegalPersonName(companyEnsures.get(0).getLegalPersonName());
-                creditInfoResponse.getCompanyEnsure().setLegalPersonCertificateType(companyEnsures.get(0).getLegalPersonCertificateType());
-                creditInfoResponse.getCompanyEnsure().setLegalPersonCertificateNumber(companyEnsures.get(0).getLegalPersonCertificateNumber());
-                //联系人
-                creditInfoResponse.getCompanyEnsure().setContactName(companyEnsures.get(0).getContactName());
-                creditInfoResponse.getCompanyEnsure().setContactPhone(companyEnsures.get(0).getContactPhone());
-                //图片证件
-                creditInfoResponse.getCompanyEnsure().setBusinessLicenseUrl(companyEnsures.get(0).getBusinessLicenseUrl());
-                creditInfoResponse.getCompanyEnsure().setOrgCodeCertificateUrl(companyEnsures.get(0).getOrgCodeCertificateUrl());
-                creditInfoResponse.getCompanyEnsure().setTaxRegisterCodeUrl(companyEnsures.get(0).getTaxRegisterCodeUrl());
-                creditInfoResponse.getCompanyEnsure().setLicenseUrl(companyEnsures.get(0).getLicenseUrl());
-                creditInfoResponse.getCompanyEnsure().setLegalPersonUrl(companyEnsures.get(0).getLegalPersonUrl());
-            } else {
-
-            }
-
-            LoanPersonEnsure loanPersonEnsure = new LoanPersonEnsure();
-            loanPersonEnsure.setOrderNo(creditOrder.getOrderNo());
-            List<LoanPersonEnsure> personEnsures = loanPersonEnsureDao.queryLoanPersonEnsure(loanPersonEnsure);
-            if (null != personEnsures && personEnsures.size() == 1){
-                creditInfoResponse.setLoanPersonEnsure(new com.fangcang.titanjr.dto.bean.LoanPersonEnsure());
-                //基本信息
-                creditInfoResponse.getLoanPersonEnsure().setOrderNo(creditOrder.getOrderNo());
-                creditInfoResponse.getLoanPersonEnsure().setPersonName(personEnsures.get(0).getPersonName());
-                creditInfoResponse.getLoanPersonEnsure().setNationalIdentityNumber(personEnsures.get(0).getNationalIdentityNumber());
-                creditInfoResponse.getLoanPersonEnsure().setMobilenNmber(personEnsures.get(0).getMobileNumber());
-                creditInfoResponse.getLoanPersonEnsure().setMarriageStatus(personEnsures.get(0).getMarriageStatus());
-                creditInfoResponse.getLoanPersonEnsure().setHaveChildren(personEnsures.get(0).getHaveChildren());
-                creditInfoResponse.getLoanPersonEnsure().setNativePlace(personEnsures.get(0).getNativePlace());
-                creditInfoResponse.getLoanPersonEnsure().setCurrentLiveaAdress(personEnsures.get(0).getCurrentLiveAddress());
-                //学历
-                creditInfoResponse.getLoanPersonEnsure().setGraduateSchool(personEnsures.get(0).getGraduateSchool());
-                creditInfoResponse.getLoanPersonEnsure().setHighestEducation(personEnsures.get(0).getHighestEducation());
-                //工作
-                creditInfoResponse.getLoanPersonEnsure().setYearsWorking(personEnsures.get(0).getYearsWorking());
-                creditInfoResponse.getLoanPersonEnsure().setWorkCompany(personEnsures.get(0).getWorkCompany());
-                creditInfoResponse.getLoanPersonEnsure().setOccupation(personEnsures.get(0).getOccupation());
-                creditInfoResponse.getLoanPersonEnsure().setWorktelePhone(personEnsures.get(0).getWorkTelephone());
-                creditInfoResponse.getLoanPersonEnsure().setOfficeAddress(personEnsures.get(0).getOfficeAddress());
-                creditInfoResponse.getLoanPersonEnsure().setIndustry(personEnsures.get(0).getIndustry());
-                //资产
-                creditInfoResponse.getLoanPersonEnsure().setCarPropertyType(personEnsures.get(0).getCarPropertyType());
-                creditInfoResponse.getLoanPersonEnsure().setHousePropertyType(personEnsures.get(0).getHousePropertyType());
-                creditInfoResponse.getLoanPersonEnsure().setOtherProperty(personEnsures.get(0).getOtherProperty());
-                creditInfoResponse.getLoanPersonEnsure().setPropertyRemark(personEnsures.get(0).getPropertyRemark());
-                //联系人
-                creditInfoResponse.getLoanPersonEnsure().setFirstContactName(personEnsures.get(0).getFirstContactName());
-                creditInfoResponse.getLoanPersonEnsure().setFirstContactPhone(personEnsures.get(0).getFirstContactPhone());
-                creditInfoResponse.getLoanPersonEnsure().setRelationToguarantee1(personEnsures.get(0).getRelationToGuarantee1());
-                creditInfoResponse.getLoanPersonEnsure().setSecondContactName(personEnsures.get(0).getSecondContactName());
-                creditInfoResponse.getLoanPersonEnsure().setSecondContactPhone(personEnsures.get(0).getSecondContactPhone());
-                creditInfoResponse.getLoanPersonEnsure().setRelationToguarantee2(personEnsures.get(0).getRelationToGuarantee2());
-                //图片信息
-                creditInfoResponse.getLoanPersonEnsure().setIdCardUrl(personEnsures.get(0).getIdCardUrl());
-                creditInfoResponse.getLoanPersonEnsure().setRegisteredUrl(personEnsures.get(0).getRegisteredUrl());
-                creditInfoResponse.getLoanPersonEnsure().setSpouseRegisteredUrl(personEnsures.get(0).getSpouseRegisteredUrl());
-                creditInfoResponse.getLoanPersonEnsure().setSpouseIdCardUrl(personEnsures.get(0).getSpouseIdCardUrl());
-                creditInfoResponse.getLoanPersonEnsure().setMarriageUrl(personEnsures.get(0).getMarriageUrl());
-            } else {
-
-            }
-        } else {
-
-        }
+        //以下针对首次进入授信审核带出所有参数列表值
         FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
         organQueryRequest.setUserId(req.getOrgCode());
         FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
 
         if (null == creditInfoResponse.getCreditOrder()){
             creditInfoResponse.setCreditOrder(new com.fangcang.titanjr.dto.bean.LoanCreditOrder());
-//            creditInfoResponse.getCreditOrder().setDayLimit();
-//            creditInfoResponse.getCreditOrder().setOrgCode();
-//            creditInfoResponse.getCreditOrder().setAmount();
-//            creditInfoResponse.getCreditOrder().setRateTem();
-//            creditInfoResponse.getCreditOrder().setRspId();
+            creditInfoResponse.getCreditOrder().setDayLimit(90);//返回后需更新
+            creditInfoResponse.getCreditOrder().setOrgCode(req.getOrgCode());
+            creditInfoResponse.getCreditOrder().setAmount(financialOrganResponse.getFinancialOrganDTO().getMaxLoanAmount());
+            creditInfoResponse.getCreditOrder().setRateTem("RA201610141100001");//费率模板需配置在t_tfs_sysconfig
+            creditInfoResponse.getCreditOrder().setRspId(CommonConstant.RS_FANGCANG_PRODUCT_ID);
             creditInfoResponse.getCreditOrder().setRsorgId(req.getOrgCode());
         }
 
+        MerchantDetailQueryDTO queryDTO = new MerchantDetailQueryDTO();
+        queryDTO.setMerchantCode(financialOrganResponse.getFinancialOrganDTO().getOrgBindInfo().getMerchantCode());
+        MerchantResponseDTO merchantResponseDTO = this.getMerchantFacade().queryMerchantDetail(queryDTO);
+
         if (null == creditInfoResponse.getCreditCompany()){
             creditInfoResponse.setCreditCompany(new com.fangcang.titanjr.dto.bean.LoanCreditCompany());
-//            creditInfoResponse.getCreditCompany().setRegAccount();
-//            creditInfoResponse.getCreditCompany().setRegDate();
+            creditInfoResponse.getCreditCompany().setRegAccount(merchantResponseDTO.getMerchantCode());
+            creditInfoResponse.getCreditCompany().setRegDate(DateUtil.dateToString(merchantResponseDTO.getCreatedate()));
             creditInfoResponse.getCreditCompany().setName(financialOrganResponse.getFinancialOrganDTO().getOrgName());
             creditInfoResponse.getCreditCompany().setLicense(financialOrganResponse.getFinancialOrganDTO().getBuslince());
         }
-
+        creditInfoResponse.putSuccess();
         return creditInfoResponse;
     }
 
@@ -325,13 +354,21 @@ public class TitanFinancialLoanCreditServiceImpl implements TitanFinancialLoanCr
         return null;
     }
 
-
     @Override
-    public QueryCreditCompanyInfoResponse queryCreditCompanyInfo(QueryCreditCompanyInfoRequest req) {
-        return null;
-    }
+	public PageCreditCompanyInfoResponse queryPageCreditCompanyInfo(
+			QueryPageCreditCompanyInfoRequest req) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    private LoanCreditOrder getLoanCreditOrder(LoanCreditSaveRequest loanCreditSaveRequest) {
+	@Override
+	public GetCreditOrderCountResponse getCreditOrderCount(
+			GetCreditOrderCountRequest request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private LoanCreditOrder getLoanCreditOrder(LoanCreditSaveRequest loanCreditSaveRequest) {
         //传过来机构一定不能为空
         if (null == loanCreditSaveRequest.getCreditOrder() ||
                 !StringUtil.isValidString(loanCreditSaveRequest.getCreditOrder().getOrgCode())) {
@@ -368,7 +405,7 @@ public class TitanFinancialLoanCreditServiceImpl implements TitanFinancialLoanCr
         //基本信息
         loanCreditCompany.setCreditorderNo(loanCreditSaveRequest.getOrderNo());
         loanCreditCompany.setName(loanCreditSaveRequest.getCreditCompany().getName());
-        loanCreditCompany.setStartDate(loanCreditSaveRequest.getCreditCompany().getStartDate());
+        loanCreditCompany.setStartDate(DateUtil.stringToDate(loanCreditSaveRequest.getCreditCompany().getStartDate()));
         loanCreditCompany.setRegAddress(loanCreditSaveRequest.getCreditCompany().getRegAddress());
         loanCreditCompany.setOfficeAddress(loanCreditSaveRequest.getCreditCompany().getOfficeAddress());
         loanCreditCompany.setOrgSize(loanCreditSaveRequest.getCreditCompany().getOrgSize());
@@ -377,7 +414,7 @@ public class TitanFinancialLoanCreditServiceImpl implements TitanFinancialLoanCr
         //泰坦云注册信息
         loanCreditCompany.setOrgCode(loanCreditSaveRequest.getCreditCompany().getOrgCode());
         loanCreditCompany.setRegAccount(loanCreditSaveRequest.getCreditCompany().getRegAccount());
-        loanCreditCompany.setRegDate(loanCreditSaveRequest.getCreditCompany().getRegDate());
+        loanCreditCompany.setRegDate(DateUtil.stringToDate(loanCreditSaveRequest.getCreditCompany().getRegDate()));
         //法人
         loanCreditCompany.setEmpSize(loanCreditSaveRequest.getCreditCompany().getEmpSize());
         loanCreditCompany.setLegalName(loanCreditSaveRequest.getCreditCompany().getLegalName());
@@ -411,14 +448,14 @@ public class TitanFinancialLoanCreditServiceImpl implements TitanFinancialLoanCr
         //基本信息
         loanCompanyEnsure.setUserId(loanCreditSaveRequest.getCompanyEnsure().getUserId());
         loanCompanyEnsure.setCompanyName(loanCreditSaveRequest.getCompanyEnsure().getCompanyName());
-        loanCompanyEnsure.setFoundDate(loanCreditSaveRequest.getCompanyEnsure().getFoundDate());
+        loanCompanyEnsure.setFoundDate(DateUtil.stringToDate(loanCreditSaveRequest.getCompanyEnsure().getFoundDate()));
         loanCompanyEnsure.setEnterpriseScale(loanCreditSaveRequest.getCompanyEnsure().getEnterpriseScale());
         loanCompanyEnsure.setBusinessLicense(loanCreditSaveRequest.getCompanyEnsure().getBusinessLicense());
         loanCompanyEnsure.setTaxRegisterCode(loanCreditSaveRequest.getCompanyEnsure().getTaxRegisterCode());
         loanCompanyEnsure.setOrgCodeCertificate(loanCreditSaveRequest.getCompanyEnsure().getOrgCodeCertificate());
         //平台注册信息
         loanCompanyEnsure.setRegisterAccount(loanCreditSaveRequest.getCompanyEnsure().getRegisterAccount());
-        loanCompanyEnsure.setRegisterDate(loanCreditSaveRequest.getCompanyEnsure().getRegisterDate());
+        loanCompanyEnsure.setRegisterDate(DateUtil.stringToDate(loanCreditSaveRequest.getCompanyEnsure().getRegisterDate()));
         //法人
         loanCompanyEnsure.setLegalPersonName(loanCreditSaveRequest.getCompanyEnsure().getLegalPersonName());
         loanCompanyEnsure.setLegalPersonCertificateType(loanCreditSaveRequest.getCompanyEnsure().getLegalPersonCertificateType());
@@ -481,4 +518,13 @@ public class TitanFinancialLoanCreditServiceImpl implements TitanFinancialLoanCr
         loanPersonEnsure.setMarriageUrl(loanCreditSaveRequest.getLoanPersonEnsure().getMarriageUrl());
         return loanPersonEnsure;
     }
+
+    private MerchantFacade getMerchantFacade(){
+        if (null == merchantFacade){
+            merchantFacade = hessianProxyBeanFactory.getHessianProxyBean(MerchantFacade.class,
+                    ProxyFactoryConstants.merchantServerUrl + "merchantFacade");
+        }
+        return merchantFacade;
+    }
+
 }

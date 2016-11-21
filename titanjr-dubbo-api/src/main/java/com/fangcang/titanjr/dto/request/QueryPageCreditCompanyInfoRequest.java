@@ -7,7 +7,7 @@ import com.fangcang.titanjr.dto.BaseRequestDTO;
  * @author luoqinglong
  *
  */
-public class QueryCreditCompanyInfoRequest extends BaseRequestDTO {
+public class QueryPageCreditCompanyInfoRequest extends BaseRequestDTO {
 	
 	/**
 	 * 
