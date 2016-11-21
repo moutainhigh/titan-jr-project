@@ -15,9 +15,11 @@ import com.fangcang.titanjr.service.TitanCodeCenterService;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
+
 import net.sf.json.JSONSerializer;
 
 import javax.annotation.Resource;
+
 import java.util.List;
 
 /**
@@ -142,13 +144,21 @@ public class TitanFinancialLoanCreditServiceImpl implements TitanFinancialLoanCr
         return null;
     }
 
-
     @Override
-    public QueryCreditCompanyInfoResponse queryCreditCompanyInfo(QueryCreditCompanyInfoRequest req) {
-        return null;
-    }
+	public PageCreditCompanyInfoResponse queryPageCreditCompanyInfo(
+			QueryPageCreditCompanyInfoRequest req) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    private LoanCreditOrder getLoanCreditOrder(LoanCreditSaveRequest loanCreditSaveRequest) {
+	@Override
+	public GetCreditOrderCountResponse getCreditOrderCount(
+			GetCreditOrderCountRequest request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private LoanCreditOrder getLoanCreditOrder(LoanCreditSaveRequest loanCreditSaveRequest) {
         //传过来机构一定不能为空
         if (null == loanCreditSaveRequest.getCreditOrder() ||
                 !StringUtil.isValidString(loanCreditSaveRequest.getCreditOrder().getOrgCode())) {

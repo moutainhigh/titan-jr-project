@@ -7,16 +7,21 @@ import java.io.Serializable;
  * @author luoqinglong
  *
  */
-public class QueryCreditCompanyInfoDTO implements Serializable {
+public class CreditCompanyInfoDTO implements Serializable {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3641222913433391514L;
+	
+	/**
+	 * 授信申请单号
+	 */
+	private String orderNo;
 	/**
 	 * 申请时间(创建时间)
 	 */
-	private String createtime;
+	private String createTime;
 	/**
 	 * 授信申请联系人
 	 */
@@ -34,13 +39,21 @@ public class QueryCreditCompanyInfoDTO implements Serializable {
 	 * 授信申请手机号码
 	 */
 	private String contactPhone;
-
-	public String getCreatetime() {
-		return createtime;
+	
+	public String getOrderNo() {
+		return orderNo;
 	}
 
-	public void setCreatetime(String createtime) {
-		this.createtime = createtime;
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
+
+	public String getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
 	}
 
 	public String getContactName() {
