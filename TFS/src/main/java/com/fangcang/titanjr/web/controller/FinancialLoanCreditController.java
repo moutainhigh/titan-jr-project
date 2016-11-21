@@ -242,7 +242,6 @@ public class FinancialLoanCreditController extends BaseController {
 		creditCompany.setName("taogegege");
 		creditCompany.setContactName("xcxcxc");
 		creditCompany.setContactPhone("13544411111");
-		creditCompany.setCreditorderNo("444477744444");
 		creditCompany.setOrgSize(2);
 		creditCompany.setLegalceType(2);
 		creditCompany.setLegalName("taoge");
