@@ -37,8 +37,14 @@ public class LoanPersonEnsure {
 	private String officeAddress;// 办公地址
 
 	private String industry;// 所处行业
+	
 
 	private int carPropertyType;// 车产情况，1 无车， 2有车无贷，3有车有贷
+	
+	private String carPurchaseDate;//汽车购买年份
+	
+	
+	private String carBrand;//汽车品牌
 
 	private int housePropertyType;// 1 无房 2 有房有贷 3 有房无贷
 
@@ -67,6 +73,23 @@ public class LoanPersonEnsure {
 	private String spouseIdCardUrl;// 配偶身份证
 
 	private String marriageUrl;// 结婚证
+	
+	
+	public String getCarPurchaseDate() {
+		return carPurchaseDate;
+	}
+
+	public void setCarPurchaseDate(String carPurchaseDate) {
+		this.carPurchaseDate = carPurchaseDate;
+	}
+
+	public String getCarBrand() {
+		return carBrand;
+	}
+
+	public void setCarBrand(String carBrand) {
+		this.carBrand = carBrand;
+	}
 
 	public String getOrderNo() {
 		return orderNo;
