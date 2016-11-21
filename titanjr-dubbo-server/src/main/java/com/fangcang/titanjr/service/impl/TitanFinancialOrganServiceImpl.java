@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -15,6 +16,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.bouncycastle.jcajce.provider.asymmetric.RSA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -42,9 +44,12 @@ import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.common.util.ImageIOExtUtil;
 import com.fangcang.titanjr.common.util.ImageResizer;
 import com.fangcang.titanjr.common.util.MD5;
+import com.fangcang.titanjr.common.util.NumberPrefix;
 import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.common.util.rsa.RSAUtil;
 import com.fangcang.titanjr.dao.TitanAccountDao;
 import com.fangcang.titanjr.dao.TitanCheckCodeDao;
+import com.fangcang.titanjr.dao.TitanOpenOrgDao;
 import com.fangcang.titanjr.dao.TitanOrgBindinfoDao;
 import com.fangcang.titanjr.dao.TitanOrgCheckDao;
 import com.fangcang.titanjr.dao.TitanOrgCheckLogDao;
@@ -58,6 +63,7 @@ import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
+import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
 import com.fangcang.titanjr.dto.request.CashierDeskInitRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
@@ -93,6 +99,7 @@ import com.fangcang.titanjr.dto.response.UserRegisterResponse;
 import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
 import com.fangcang.titanjr.entity.TitanAccount;
 import com.fangcang.titanjr.entity.TitanCheckCode;
+import com.fangcang.titanjr.entity.TitanOpenOrg;
 import com.fangcang.titanjr.entity.TitanOrg;
 import com.fangcang.titanjr.entity.TitanOrgBindinfo;
 import com.fangcang.titanjr.entity.TitanOrgCheck;
@@ -167,6 +174,9 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     private TitanCheckCodeDao checkCodeDao;
     @Resource
     private TitanFinancialUserService titanFinancialUserService;
+    
+    @Resource
+    private TitanOpenOrgDao titanOpenOrgDao;
 
     @Override
     public FinancialOrganResponse queryFinancialOrgan(FinancialOrganQueryRequest request) {
@@ -758,7 +768,11 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	            		cashierDeskInitRequest.setUserId(newOrgEntity.getUserid());
 	            		cashierDeskInitRequest.setConstId(CommonConstant.RS_FANGCANG_CONST_ID);
 	            		
+	            		//初始化收银台
 	            		titanCashierDeskService.initCashierDesk(cashierDeskInitRequest);
+	            		
+	            		//给商家分配密钥对以及前缀
+	            		this.initKeyInfo(newOrgEntity.getUserid());
 	            		
 	            		titanOrgCheck.setResultkey(OrgCheckResultEnum.PASS.getResultkey());
 	            		titanOrgCheck.setResultmsg(OrgCheckResultEnum.PASS.getResultmsg());
@@ -1399,5 +1413,60 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		return null;
 	}
 	
+	//为商家分配秘钥对
+	private void initKeyInfo(String userId){
+		if(!StringUtil.isValidString(userId)){
+			return ;
+		}
+		TitanOpenOrg openOrg = new TitanOpenOrg();
+		try{
+			String prefix = "";
+			List<String> prefixs = titanOpenOrgDao.selectMaxPrefix();
+			if(prefixs==null || prefixs.size()==0){
+				prefix="AA";
+			}else{
+				prefix = prefixs.get(0);
+			}
+			openOrg.setPrefix(NumberPrefix.getPayOrderCodePrefix(prefix));
+			Map<String,String> rsaMap= RSAUtil.generateStringKsys();
+			openOrg.setPrivatekey(rsaMap.get(RSAUtil.PRIVATE_KEY));
+			openOrg.setModule(rsaMap.get(RSAUtil.PUBLIC_KEY_MODULE));
+			openOrg.setEmpoent(rsaMap.get(RSAUtil.PUBLIC_KEY_EMPOENT));
+			openOrg.setUserid(userId);
+		    titanOpenOrgDao.insert(openOrg);
+			
+		}catch(Exception e){
+			LOGGER.error("初始化密钥对失败",e);
+		}
+	}
+
+
+	@Override
+	public TitanOpenOrgDTO queryTitanOpenOrgDTO(String userId) {
+		try{
+			TitanOpenOrg openOrg = new TitanOpenOrg();
+			openOrg.setUserid(userId);
+			List<TitanOpenOrgDTO> titanOpenOrgDTOList =  titanOpenOrgDao.selectList(openOrg);
+		    if(titanOpenOrgDTOList!=null && titanOpenOrgDTOList.size()==1){
+		    	return titanOpenOrgDTOList.get(0);
+		    }
+		}catch(Exception e){
+			LOGGER.error("初始化密钥对失败",e);
+		}
+		LOGGER.error("该商家没有开通金融账户或账户秘钥信息");
+		return null;
+	}
+	
+	
+	@Override
+	public void test() throws Exception{
+//		CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest(); 
+//		cashierDeskInitRequest.setUserId("TJM10000109");
+//		cashierDeskInitRequest.setConstId(CommonConstant.RS_FANGCANG_CONST_ID);
+//		titanCashierDeskService.initCashierDesk(cashierDeskInitRequest);
+		
+		initKeyInfo("TJM10000109");
+
+	}
 	
 }

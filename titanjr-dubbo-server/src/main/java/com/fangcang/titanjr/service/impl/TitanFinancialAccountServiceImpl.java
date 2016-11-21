@@ -778,61 +778,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	}
 	
 	@Override
-	public AccountHistoryResponse addAccountHistory(
-			TransferRequest transferRequest) {
-		AccountHistoryResponse accountHistoryResponse = new AccountHistoryResponse();
-		try{
-			if(transferRequest !=null && StringUtil.isValidString(transferRequest.getOrderid())){
-				TransOrderRequest transOrderRequest = new TransOrderRequest();
-				transOrderRequest.setOrderid(transferRequest.getOrderid());
-				List<TransOrderDTO> transOrderResponseList =  titanOrderService.queryTransOrder(transOrderRequest);
-				if(transOrderResponseList !=null && transOrderResponseList.size()>0){
-					TransOrderDTO transOrderDTO = transOrderResponseList.get(0);
-					if(transOrderDTO !=null){
-						FinancialOrderRequest financialOrderRequest = new FinancialOrderRequest();
-						financialOrderRequest.setMerchantcode(transOrderDTO.getMerchantcode());
-						financialOrderRequest.setOrderNo(transOrderDTO.getPayorderno());
-						FinancialOrderResponse financialOrderResponse = titanFinancialTradeService.queryFinanceOrderDetail(financialOrderRequest);
-						 if(financialOrderResponse !=null){
-						    TitanAccountHistory titanAccountHistory = new TitanAccountHistory();
-						    titanAccountHistory.setInaccountcode(financialOrderResponse.getInAccountCode());
-						    titanAccountHistory.setOutaccountcode(financialOrderResponse.getOutAccountCode());
-						    titanAccountHistory.setAccountname(financialOrderResponse.getInAccountName());
-						    titanAccountHistory.setCreatetime(new Date());
-						    titanAccountHistory.setCreator(transferRequest.getCreator());
-						    titanAccountHistory.setPayeeuserid(transferRequest.getUserrelateid());
-						    titanAccountHistory.setPayeruserid(transferRequest.getUserid());
-						    
-							TitanAccountHistoryParam condition = new TitanAccountHistoryParam();
-							condition.setPayeeuserid(titanAccountHistory.getPayeeuserid());
-							condition.setPayeruserid(titanAccountHistory.getPayeruserid());
-							PaginationSupport<TitanAccountHistory> paginationSupport = new PaginationSupport<TitanAccountHistory>();
-							titanAccountHistoryDao.selectForPage(condition, paginationSupport);
-							//如果数据了中没有收付款账户记录则插入一条数据，否则直接返回成功
-							if(paginationSupport.getItemList() !=null && paginationSupport.getItemList().size()>0){
-								accountHistoryResponse.putSuccess();
-							}else{
-								int row = titanAccountHistoryDao.insert(titanAccountHistory);
-								if(row >0){
-									accountHistoryResponse.putSuccess();
-								}else{
-									accountHistoryResponse.putSysError();
-								}
-							}
-						 }
-					}
-				}
-			}
-			
-		}catch(Exception e){
-			log.error("添加收款账户历史异常"+e.getMessage(),e);
-			accountHistoryResponse.putSysError();
-		}
-		return accountHistoryResponse;
-	}
-
-	
-	@Override
 	public AccountHistoryResponse getAccountHistory(
 			AccountHistoryRequest accountHistoryRequest) {
 		AccountHistoryResponse accountHistoryResponse = new AccountHistoryResponse();

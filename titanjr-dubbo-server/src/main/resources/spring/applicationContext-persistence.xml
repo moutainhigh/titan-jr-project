@@ -101,6 +101,7 @@
 	
 	<bean id="titanHelpTypeDao" class="com.fangcang.titanjr.dao.impl.TitanHelpTypeDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanSysconfigDao" class="com.fangcang.titanjr.dao.impl.TitanSysconfigDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="titanOpenOrgDao" class="com.fangcang.titanjr.dao.impl.TitanOpenOrgDaoImpl" parent="baseSqlMapClient"></bean>
 	
 </beans>
 

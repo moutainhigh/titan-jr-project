@@ -102,17 +102,21 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
             TitanCashierDesk supplyCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.SUPPLY_DESK);
             TitanCashierDesk allianceCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.ALLIANCE_DESK);
             TitanCashierDesk rechargeCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.RECHARGE);
+            TitanCashierDesk openOrgCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.OPEN_ORG);
             //批量插入初始化收银台
             titanCashierDeskDao.saveCashierDesk(b2bCashierDesk);
             titanCashierDeskDao.saveCashierDesk(supplyCashierDesk);
             titanCashierDeskDao.saveCashierDesk(allianceCashierDesk);
             titanCashierDeskDao.saveCashierDesk(rechargeCashierDesk);
+            titanCashierDeskDao.saveCashierDesk(openOrgCashierDesk);
 
             //B2B的收银台有下面三个选项
             TitanCashierDeskItem b2bitem = buildCahsierDesk(b2bCashierDesk.getDeskid(), CashierItemTypeEnum.B2B_ITEM);
             TitanCashierDeskItem b2citem = buildCahsierDesk(b2bCashierDesk.getDeskid(), CashierItemTypeEnum.B2C_ITEM);
             TitanCashierDeskItem creditItem = buildCahsierDesk(b2bCashierDesk.getDeskid(), CashierItemTypeEnum.CREDIT_ITEM);
             TitanCashierDeskItem qritem =  buildCahsierDesk(b2bCashierDesk.getDeskid(), CashierItemTypeEnum.QR_ITEM);
+            
+            
             //分销商付款给供应商以及账单结算时有下面四个选项
             TitanCashierDeskItem b2bsitem = buildCahsierDesk(supplyCashierDesk.getDeskid(), CashierItemTypeEnum.B2B_ITEM);
             TitanCashierDeskItem b2csitem = buildCahsierDesk(supplyCashierDesk.getDeskid(), CashierItemTypeEnum.B2C_ITEM);
@@ -126,6 +130,11 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
             TitanCashierDeskItem b2britem = buildCahsierDesk(rechargeCashierDesk.getDeskid(), CashierItemTypeEnum.B2B_ITEM);
             TitanCashierDeskItem b2critem = buildCahsierDesk(rechargeCashierDesk.getDeskid(), CashierItemTypeEnum.B2C_ITEM);
 
+            TitanCashierDeskItem openOrg2bitem = buildCahsierDesk(openOrgCashierDesk.getDeskid(), CashierItemTypeEnum.B2B_ITEM);
+            TitanCashierDeskItem openOrg2citem = buildCahsierDesk(openOrgCashierDesk.getDeskid(), CashierItemTypeEnum.B2C_ITEM);
+            TitanCashierDeskItem openOrgCritem = buildCahsierDesk(openOrgCashierDesk.getDeskid(), CashierItemTypeEnum.CREDIT_ITEM);
+            TitanCashierDeskItem openOrgQritem = buildCahsierDesk(openOrgCashierDesk.getDeskid(), CashierItemTypeEnum.QR_ITEM);
+            
             //批量插入初始化收银台子项
             titanCashierDeskItemDao.saveCashierDeskItem(b2bitem);
             titanCashierDeskItemDao.saveCashierDeskItem(b2citem);
@@ -139,6 +148,11 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
             titanCashierDeskItemDao.saveCashierDeskItem(b2critem);
             titanCashierDeskItemDao.saveCashierDeskItem(qritem);
             titanCashierDeskItemDao.saveCashierDeskItem(qrsitem);
+            
+            titanCashierDeskItemDao.saveCashierDeskItem(openOrg2bitem);
+            titanCashierDeskItemDao.saveCashierDeskItem(openOrg2citem);
+            titanCashierDeskItemDao.saveCashierDeskItem(openOrgCritem);
+            titanCashierDeskItemDao.saveCashierDeskItem(openOrgQritem);
             //充值
          
 
@@ -147,17 +161,23 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
             allItemBanks.addAll(buildItemBankList(b2bitem.getItemid(), "B2B"));
             allItemBanks.addAll(buildItemBankList(b2bsitem.getItemid(), "B2B"));
             allItemBanks.addAll(buildItemBankList(b2britem.getItemid(), "B2B"));
+            allItemBanks.addAll(buildItemBankList(openOrg2bitem.getItemid(), "B2B"));
 
             allItemBanks.addAll(buildItemBankList(b2citem.getItemid(), "B2C"));
             allItemBanks.addAll(buildItemBankList(b2csitem.getItemid(), "B2C"));
             allItemBanks.addAll(buildItemBankList(b2critem.getItemid(), "B2C"));
+            allItemBanks.addAll(buildItemBankList(openOrg2citem.getItemid(), "B2C"));
 
             allItemBanks.addAll(buildItemBankList(creditItem.getItemid(), "Credit"));
             allItemBanks.addAll(buildItemBankList(creditsitem.getItemid(), "Credit"));
+            allItemBanks.addAll(buildItemBankList(openOrgCritem.getItemid(), "Credit"));
+            
             
             //第三方支付
             allItemBanks.addAll(buildQRBankList(qritem.getItemid()));
             allItemBanks.addAll(buildQRBankList(qrsitem.getItemid()));
+            allItemBanks.addAll(buildQRBankList(openOrgQritem.getItemid()));
+            
 
             
             titanCashierItemBankDao.batchSaveItemBanks(allItemBanks);

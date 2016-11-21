@@ -7,7 +7,7 @@ package com.fangcang.titanjr.dto;
  */
 public enum PaySourceEnum {
 	    B2B("1","B2B"), SUPPLY("2","财务供应端"),
-	    ALLIANCE("3","商家联盟"),MOBILE("4","移动端"),RECHARDE("5","充值");
+	    ALLIANCE("3","商家联盟"),MOBILE("4","移动端"),RECHARDE("5","充值"),OPEN_ORG("6","对外开放用户");
 
 	    private String deskCode;
 	    private String deskName;
