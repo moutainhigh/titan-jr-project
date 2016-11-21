@@ -26,4 +26,11 @@ public interface TitanCodeCenterService {
 	 * @throws ServiceException
 	 */
 	public String createTitanAccountCode() throws ServiceException;
+
+	/**
+	 * 生成信贷授信申请单号编码
+	 * @return
+	 * @throws ServiceException
+	 */
+	public String createLoanCreditOrderNo() throws ServiceException;
 }

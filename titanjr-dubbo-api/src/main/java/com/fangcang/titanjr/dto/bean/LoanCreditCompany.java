@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class LoanCreditCompany {
 	private Long id;
-	private String creditorderNo;
+	private String creditOrderNo;
 	private String name;
 	private String startDate;
 	private String regAddress;
@@ -26,7 +26,7 @@ public class LoanCreditCompany {
 	private String contactName;
 	private String contactPhone;
 	private String waterEmail;
-	// private String appendInfo;
+	private AppendInfo appendInfo;
 	private String licenseUrl;
 	private String legalNoUrl;
 	private String officeNoUrl;
@@ -39,7 +39,6 @@ public class LoanCreditCompany {
 	private Integer isPush;
 	
 	
-
 	private LoanCompanyLease companyLease;
 	private List<LoanControllData> controllDatas;
 	private List<LoanCooperationCompanyInfo> cooperationCompanyInfos;
@@ -93,7 +92,6 @@ public class LoanCreditCompany {
 			List<LoanMainBusinessData> mainBusinessDatas) {
 		this.mainBusinessDatas = mainBusinessDatas;
 	}
-
 	public Long getId() {
 		return id;
 	}
@@ -102,12 +100,12 @@ public class LoanCreditCompany {
 		this.id = id;
 	}
 
-	public String getCreditorderNo() {
-		return creditorderNo;
+	public String getCreditOrderNo() {
+		return creditOrderNo;
 	}
 
-	public void setCreditorderNo(String creditorderNo) {
-		this.creditorderNo = creditorderNo;
+	public void setCreditOrderNo(String creditOrderNo) {
+		this.creditOrderNo = creditOrderNo;
 	}
 
 	public String getName() {
@@ -164,6 +162,14 @@ public class LoanCreditCompany {
 
 	public void setTaxRegNo(String taxRegNo) {
 		this.taxRegNo = taxRegNo;
+	}
+
+	public AppendInfo getAppendInfo() {
+		return appendInfo;
+	}
+
+	public void setAppendInfo(AppendInfo appendInfo) {
+		this.appendInfo = appendInfo;
 	}
 
 	public String getOrgCode() {
@@ -245,14 +251,6 @@ public class LoanCreditCompany {
 	public void setWaterEmail(String waterEmail) {
 		this.waterEmail = waterEmail;
 	}
-
-	// public String getAppendInfo() {
-	// return appendInfo;
-	// }
-	//
-	// public void setAppendInfo(String appendInfo) {
-	// this.appendInfo = appendInfo;
-	// }
 
 	public String getLicenseUrl() {
 		return licenseUrl;

@@ -9,7 +9,7 @@ public class LoanCreditOrder {
 
 	private String orgCode;// 授信金融机构ID
 
-	private int dayLimit;// 授信期限
+	private int dayLimit;// 授信期限--应该在service中设置
 
 	private long amount;// 申请授信金额
 
@@ -17,11 +17,11 @@ public class LoanCreditOrder {
 
 	private Date reqTime;// 申请时间;
 
-	private String rateTem;// 费率模板编号;
+	private String rateTem;// 费率模板编号;--应该在service中设置，固定的
 
-	private String rspId;// 融数产品编号
+	private String rspId;// 融数产品编号--应该在service中设置
 
-	private String rsorgId;// 融数机构编号
+	private String rsorgId;// 融数机构编号--应该在service中设置
 
 	private String createTime;// 创建时间
 

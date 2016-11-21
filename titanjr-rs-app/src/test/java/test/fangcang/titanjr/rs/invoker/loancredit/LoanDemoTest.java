@@ -87,16 +87,16 @@ public class LoanDemoTest {
 		/* 9 ruixue.wheatfield.order.mixservice.creditmerchantinfoquery 机构授信信息查询 */
 		// strMsg = doWheatfieldOrderMixserviceCreditmerchantinfoquery(session);
 
-		 // strMsg = doWheatfieldOrderServiceNewloanapply();//申请贷款
+		  //strMsg = doWheatfieldOrderServiceNewloanapply();//申请贷款
 
-		 // doqueryborrowinfo(session);//查询待还款记录
+		 //  doqueryborrowinfo(session);//查询待还款记录
         
          // douserinitiativerepament(session);// 主动还款
         
          // doqueryuserinitiativerepayment(session);//主动还款查询
-         doqueryloanapply();//贷款订单状态查询接口
-        //  queryOrderOper();//查询叮当
-       // doqueryuserrepayment();//查询贷款的还款状态及历史
+        //  doqueryloanapply();//贷款订单状态查询接口
+        //   queryOrderOper();//查询订单
+        // doqueryuserrepayment();//查询贷款的还款状态及历史
 		// stoploan();//终止贷款
 
     }
@@ -535,7 +535,7 @@ public class LoanDemoTest {
     			request.setRootinstcd("M000016");
     			request.setProductid("P000070");
     			request.setUserid("TJM10000087");
-    			request.setUserorderid("TJO20161025333");//,TJO2016102599977,TJO20161025333
+    			request.setUserorderid("TJO201610255555");//,TJO2016102599977,TJO20161025333,TJO201610255555
     			WheatfieldInterestRepaymentQueryborrowinfoResponse rsp = ropClient.execute(request,
     	                 session);
     	         if (rsp != null) {
@@ -567,7 +567,7 @@ public class LoanDemoTest {
     	request.setRootinstcd("M000016");
 		request.setProductid("P000070");
 		request.setUserid("TJM10000087");
-		request.setUserorderid("TJO20161025333");
+		request.setUserorderid("TJO2016102599977");
     	try {
     		WheatfieldInterestRepaymentQueryuserrepaymentResponse rsp = ropClient.execute(request,session);
     		 System.out.println("返回报文: \n" + rsp.getBody());

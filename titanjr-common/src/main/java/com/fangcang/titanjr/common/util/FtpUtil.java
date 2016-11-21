@@ -9,7 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.math.RandomUtils;
@@ -41,6 +43,8 @@ public class FtpUtil {
 	 * 用户注册上传的资料
 	 */
 	public static final String UPLOAD_PATH_ORG_REGISTER = "/org_register";
+	
+	public static final String UPLOAD_PATH_CREDIT_APPLY = "/credit_apply";
 	
 	
 	private FTPClient ftpClient;
@@ -194,6 +198,24 @@ public class FtpUtil {
 			throw e;
 		}
 	}
+	
+	public List<String> listFiles(String folderPath)throws Exception
+	{
+		List<String> list = new ArrayList<String>();
+		try {
+			String folder = baseLocation + folderPath;
+			 FTPFile[] ftpFile = ftpClient.listFiles(folder);
+			 for (FTPFile ftpFile2 : ftpFile) {
+				 list.add(ftpFile2.getName()); 
+			}
+		} catch (IOException e) {
+			logger.error("文件列表访问失败:",e);
+			throw e;
+			
+		}
+		return list;
+	}
+	
 	/**
 	 * 
 	 * @param folderPath 格式:/person/im
@@ -215,7 +237,7 @@ public class FtpUtil {
 			return false;
 		}
 		try {
-			this.ftpClient.deleteFile(filePath);
+			this.ftpClient.deleteFile(baseLocation + filePath);
 			return true;
 		} catch (Exception e) {
 			logger.error("删除文件失败[" + filePath + "]", e);
@@ -485,7 +507,8 @@ public class FtpUtil {
 	public static String uploadStreamExt(String fileName,InputStream inStream, String remoteUploadePath) {
 		FtpUtil ftp = null;
 		try {
-			ftp = new FtpUtil(DubboServerJDBCProperties.getFtpServerIp(), DubboServerJDBCProperties.getFtpServerPort(), DubboServerJDBCProperties.getFtpServerUser(), DubboServerJDBCProperties.getFtpServerPassword());
+			//ftp = new FtpUtil(DubboServerJDBCProperties.getFtpServerIp(), DubboServerJDBCProperties.getFtpServerPort(), DubboServerJDBCProperties.getFtpServerUser(), DubboServerJDBCProperties.getFtpServerPassword());
+			ftp = new FtpUtil("192.168.2.100", 21, "fangcang168", "fangcang168");
 			ftp.ftpLogin();
 			ftp.uploadStream(fileName, inStream, remoteUploadePath);
 			ftp.ftpLogOut();
