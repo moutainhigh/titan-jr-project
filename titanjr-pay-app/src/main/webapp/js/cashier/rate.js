@@ -18,7 +18,7 @@
 	  	    }
 		 }
 		 
-		 if(itemType ==1 && parseFloat(payAmount) < 1000  &&  cashierData.paySource=='1' && !($("#d_checkbox").attr("checked")=="checked"))
+		 if(itemType ==1 && parseFloat(payAmount) < 1000  &&  cashierData.paySource!='2'  && !($("#d_checkbox").attr("checked")=="checked"))
 		 {
 			 chageComfireBut('hide');
 			// $('.J_password').hide();

@@ -124,17 +124,5 @@ function  amount_not_enough_show(){
    $("#useCashierDeskPay").show();
    $("#enough_amount").hide();
    $("#not_enough_amount").show();
-   //获取常用第一个银行
-  /* var itemType = $(".bankName:first").parents(".paytable_payway").attr("itemType");*/
-   //计算第一个银行的手续费
-   /*amount_not_enough_rate(itemType);*/
 }
-
-/*function amount_not_enough_rate(itemType){
-    paytable_paywayClick(itemType);
-    var rateAmount = $("#titanRateAmount").text();
-    var payAmount = sub(cashierData.tradeAmount, cashierData.balanceusable);
-    var show_online_payAmount =  accAdd(payAmount,rateAmount);
-    $("#pay_surplus_amount").text(show_online_payAmount);
-}*/
 
