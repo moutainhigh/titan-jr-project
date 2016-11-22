@@ -140,12 +140,15 @@
 	   <input name="payOrderNo" id="payOrderNo" type="hidden" value="${cashDeskData.payOrderNo}">
 	   <input name="deskId" id="deskId" type="hidden" value="${cashDeskData.cashierDeskDTO.deskId}">
 	   <input name="payerAcount" id="payerAcount" type="hidden"/>
+	   <input name="userid" id="userid" type="hidden" value="${cashDeskData.userId}"/>
 	</form>
 	
 	<form action="<%=basePath%>/account/overview-main.shtml" id="flashPage" target="right_con_frm"></form>
 	 
 <!--弹窗白色底-->
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
+
+
 <script>
 //Run_tab切换
 
