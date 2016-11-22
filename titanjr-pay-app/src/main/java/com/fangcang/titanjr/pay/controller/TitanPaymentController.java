@@ -367,7 +367,7 @@ public class TitanPaymentController extends BaseController {
 		computeReq.setAmount(titanPaymentRequest.getPayAmount());
 		computeReq.setItemTypeEnum(cashierItemTypeEnum);
 		computeReq.setUserId(titanPaymentRequest.getUserid());
-		if(titanPaymentRequest.getUserid().equals(TitanConstantDefine.EXTERNAL_PAYMENT_ACCOUNT)){
+		if(TitanConstantDefine.EXTERNAL_PAYMENT_ACCOUNT.equals(titanPaymentRequest.getUserid())){
 			computeReq.setUserId(titanPaymentRequest.getUserrelateid());
 		}
 		
