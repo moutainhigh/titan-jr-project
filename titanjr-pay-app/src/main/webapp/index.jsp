@@ -73,7 +73,7 @@
         $(document).ready(function () {
             var configObj = {};
             configObj.module = "9ae037870540fb4820c4d69c494096f09dbdd2dca06022b56a93695ae06db35d9a6923e1690825e5ba9e711cb2ee75dd39ed647cc8c7687574449c7cb95cf686c9bc4f873df31e27b2678c9ce6f6d82e19dd76ccdea7ce8fe2733330d70a63e2f11f0be7dbcd3793f22329c5445491e91beb83416ba4cded0b0f07b9d35ee88b";
-            configObj.address = "http://www.fangcang.org";
+            configObj.address = "http://192.168.0.90:8088";
             configObj.empoent="10001";
             var result = titanPayObj.initTitanPay(configObj);
         });
@@ -127,7 +127,7 @@
             </tr>
             <tr>
                 <td class="tdr">业务订单号</td>
-                <td><input type="text" id="goodsId" value="201611141238596002658" name="goodsId"/>
+                <td><input type="text" id="goodsId" value="201611141238596002662" name="goodsId"/>
                 </td>
             </tr>
             <tr>
@@ -181,8 +181,7 @@
             <tr>
                 <td class="tdr">支付通知接口地址</td>
                 <td>
-                    <input type="text" value="http://localhost:8080/CashierDesk/payCallBack" id="notify" name="notify"/>
-                    <input type="text" value="http://www.fangcang.org/titanjr-pay-app/testCallBack" id="notify" name="notify"/>
+                    <input type="text" value="http://localhost:8088/titanjr-pay-app/quickPayment/customerNotify.action" id="notify" name="notify"/>
                 </td>
             </tr>
             <tr>
