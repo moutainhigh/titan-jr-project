@@ -76,7 +76,7 @@
 			<if test="status !=null"> and status = #{status}</if>
 		</where>
 	</select>
-	<select id="getCreditOrderCount" parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
+	<select id="getCreditOrderCount" resultType="Integer" parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
 		select 
 			count(1) 
 		from t_loan_creditorder
