@@ -9,7 +9,6 @@ import net.sf.json.JSONSerializer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
@@ -22,7 +21,7 @@ import com.fangcang.titanjr.dao.LoanCreditCompanyDao;
 import com.fangcang.titanjr.dao.LoanCreditOrderDao;
 import com.fangcang.titanjr.dao.LoanPersonEnsureDao;
 import com.fangcang.titanjr.dto.bean.AppendInfo;
-<<<<<<< HEAD
+import com.fangcang.titanjr.dto.bean.CreditCompanyInfoDTO;
 import com.fangcang.titanjr.dto.bean.LoanCompanyEnsureBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditCompanyBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
@@ -35,18 +34,6 @@ import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanCreditResponse;
 import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
-=======
-import com.fangcang.titanjr.dto.bean.CreditCompanyInfoDTO;
-import com.fangcang.titanjr.dto.request.ApplyLoanCreditRequest;
-import com.fangcang.titanjr.dto.request.AuditCreidtOrderRequest;
-import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
-import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
-import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
-import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
-import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
-import com.fangcang.titanjr.dto.response.ApplyLoanCreditResponse;
-import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
-import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
 import com.fangcang.titanjr.dto.response.GetCreditOrderCountResponse;
 import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
@@ -502,7 +489,6 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	public PageCreditCompanyInfoResponse queryPageCreditCompanyInfo(
 			QueryPageCreditCompanyInfoRequest req) {
 		PageCreditCompanyInfoResponse response = new PageCreditCompanyInfoResponse();
-    	PageCreditCompanyInfoResponse response = new PageCreditCompanyInfoResponse();
     	LoanCreditOrderParam condition = new LoanCreditOrderParam();
     	condition.setName(req.getName());
     	condition.setStatus(req.getStatus());
