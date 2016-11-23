@@ -1,7 +1,7 @@
 package com.fangcang.titanjr.dto.request;
 
 import com.fangcang.titanjr.dto.BaseRequestDTO;
-import com.fangcang.titanjr.dto.bean.LoanApplyOrder;
+import com.fangcang.titanjr.dto.bean.LoanApplyOrderBean;
 
 /**
  * 请求保存更新贷款单信息
@@ -20,7 +20,7 @@ public class SaveLoanOrderInfoRequest extends BaseRequestDTO {
 	private String orgCode;
 	
 	//贷款信息
-	private LoanApplyOrder orderInfo;
+	private LoanApplyOrderBean orderInfo;
 
 	public String getOrderNo() {
 		return orderNo;
@@ -38,11 +38,11 @@ public class SaveLoanOrderInfoRequest extends BaseRequestDTO {
 		this.orgCode = orgCode;
 	}
 
-	public LoanApplyOrder getOrderInfo() {
+	public LoanApplyOrderBean getOrderInfo() {
 		return orderInfo;
 	}
 
-	public void setOrderInfo(LoanApplyOrder orderInfo) {
+	public void setOrderInfo(LoanApplyOrderBean orderInfo) {
 		this.orderInfo = orderInfo;
 	}
 }

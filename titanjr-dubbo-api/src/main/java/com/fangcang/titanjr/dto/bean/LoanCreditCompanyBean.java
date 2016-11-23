@@ -1,12 +1,15 @@
 package com.fangcang.titanjr.dto.bean;
 
-import java.util.Date;
 import java.util.List;
 
 /**
  * Created by zhaoshan on 2016/11/4.
  */
-public class LoanCreditCompany {
+public class LoanCreditCompanyBean implements java.io.Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String creditOrderNo;
 	private String name;
@@ -39,10 +42,10 @@ public class LoanCreditCompany {
 	private Integer isPush;
 	
 	
-	private LoanCompanyLease companyLease;
-	private List<LoanControllData> controllDatas;
-	private List<LoanCooperationCompanyInfo> cooperationCompanyInfos;
-	private List<LoanMainBusinessData> mainBusinessDatas;
+	private LoanCompanyLeaseBean companyLease;
+	private List<LoanControllDataBean> controllDatas;
+	private List<LoanCooperationCompanyBean> cooperationCompanyInfos;
+	private List<LoanMainBusinessDataBean> mainBusinessDatas;
 	
 	public String getTaxRegUrl() {
 		return taxRegUrl;
@@ -60,36 +63,36 @@ public class LoanCreditCompany {
 		this.orgCodeUrl = orgCodeUrl;
 	}
 	
-	public LoanCompanyLease getCompanyLease() {
+	public LoanCompanyLeaseBean getCompanyLease() {
 		return companyLease;
 	}
 
-	public void setCompanyLease(LoanCompanyLease companyLease) {
+	public void setCompanyLease(LoanCompanyLeaseBean companyLease) {
 		this.companyLease = companyLease;
 	}
-	public List<LoanControllData> getControllDatas() {
+	public List<LoanControllDataBean> getControllDatas() {
 		return controllDatas;
 	}
 
-	public void setControllDatas(List<LoanControllData> controllDatas) {
+	public void setControllDatas(List<LoanControllDataBean> controllDatas) {
 		this.controllDatas = controllDatas;
 	}
 
-	public List<LoanCooperationCompanyInfo> getCooperationCompanyInfos() {
+	public List<LoanCooperationCompanyBean> getCooperationCompanyInfos() {
 		return cooperationCompanyInfos;
 	}
 
 	public void setCooperationCompanyInfos(
-			List<LoanCooperationCompanyInfo> cooperationCompanyInfos) {
+			List<LoanCooperationCompanyBean> cooperationCompanyInfos) {
 		this.cooperationCompanyInfos = cooperationCompanyInfos;
 	}
 
-	public List<LoanMainBusinessData> getMainBusinessDatas() {
+	public List<LoanMainBusinessDataBean> getMainBusinessDatas() {
 		return mainBusinessDatas;
 	}
 
 	public void setMainBusinessDatas(
-			List<LoanMainBusinessData> mainBusinessDatas) {
+			List<LoanMainBusinessDataBean> mainBusinessDatas) {
 		this.mainBusinessDatas = mainBusinessDatas;
 	}
 	public Long getId() {

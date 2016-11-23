@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -18,16 +19,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
-import com.fangcang.titanjr.dto.bean.LoanCompanyEnsure;
-import com.fangcang.titanjr.dto.bean.LoanCompanyLease;
-import com.fangcang.titanjr.dto.bean.LoanControllData;
-import com.fangcang.titanjr.dto.bean.LoanCooperationCompanyInfo;
-import com.fangcang.titanjr.dto.bean.LoanCreditCompany;
-import com.fangcang.titanjr.dto.bean.LoanCreditOrder;
-import com.fangcang.titanjr.dto.bean.LoanMainBusinessData;
-import com.fangcang.titanjr.dto.bean.LoanPersonEnsure;
+import com.fangcang.titanjr.dto.bean.LoanCompanyEnsureBean;
+import com.fangcang.titanjr.dto.bean.LoanCompanyLeaseBean;
+import com.fangcang.titanjr.dto.bean.LoanControllDataBean;
+import com.fangcang.titanjr.dto.bean.LoanCooperationCompanyBean;
+import com.fangcang.titanjr.dto.bean.LoanCreditCompanyBean;
+import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
+import com.fangcang.titanjr.dto.bean.LoanMainBusinessDataBean;
+import com.fangcang.titanjr.dto.bean.LoanPersonEnsureBean;
+import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
 import com.fangcang.titanjr.dto.response.FTPConfigResponse;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
+import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
+import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 
 /**
@@ -45,6 +49,9 @@ public class FinancialLoanCreditController extends BaseController {
 
 	@Resource
 	private TitanSysconfigService sysconfigService;
+
+	@Resource
+	private TitanFinancialLoanCreditService financialLoanCreditService;
 	/**
 	 * 
 	 */
@@ -231,14 +238,15 @@ public class FinancialLoanCreditController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/getCreditData", method = RequestMethod.GET)
 	public String getCreditData() {
+
 		// LoanCreditCompany company = new LoanCreditCompany();
 		GetCreditInfoResponse company = new GetCreditInfoResponse();
-		
-		LoanCreditOrder creditOrder = new LoanCreditOrder();
+
+		LoanCreditOrderBean creditOrder = new LoanCreditOrderBean();
 		creditOrder.setAssureType(2);
 		company.setCreditOrder(creditOrder);
-		
-		LoanCreditCompany creditCompany = new LoanCreditCompany();
+
+		LoanCreditCompanyBean creditCompany = new LoanCreditCompanyBean();
 		creditCompany.setName("taogegege");
 		creditCompany.setContactName("xcxcxc");
 		creditCompany.setContactPhone("13544411111");
@@ -255,7 +263,7 @@ public class FinancialLoanCreditController extends BaseController {
 		creditCompany.setRegAddress("内蒙古/呼和浩特/新城区/45345");
 		creditCompany.setRegDate("2011-11-21");
 		creditCompany.setStartDate("2012-12-11");
-		
+
 		creditCompany.setAccountUrl("account.jpg");
 		creditCompany.setOfficeUrl("office.jpg");
 		creditCompany.setCreditUrl("credit.jpg");
@@ -266,7 +274,7 @@ public class FinancialLoanCreditController extends BaseController {
 		creditCompany.setOrgCodeUrl("orgcode.jpg");
 		creditCompany.setTaxRegUrl("taxregno.jpg");
 
-		LoanCompanyLease companyLease = new LoanCompanyLease();
+		LoanCompanyLeaseBean companyLease = new LoanCompanyLeaseBean();
 		companyLease.setLeaseType("1");
 		companyLease.setBeginLeaseDate("2012-10");
 		companyLease.setEndLeaseDate("2013-10");
@@ -275,14 +283,13 @@ public class FinancialLoanCreditController extends BaseController {
 		companyLease.setLeaseAddress("江西/南昌/东湖区/2345234523");
 		companyLease.setPaymentMethod("dsafsdf");
 		companyLease.setRental("xxxxx");
-		
-		
+
 		creditCompany.setCompanyLease(companyLease);
 
-		List<LoanControllData> controllDatas = new ArrayList<LoanControllData>();
+		List<LoanControllDataBean> controllDatas = new ArrayList<LoanControllDataBean>();
 
 		for (int i = 0; i < 5; i++) {
-			LoanControllData d = new LoanControllData();
+			LoanControllDataBean d = new LoanControllDataBean();
 			d.setContributionAmount("1000" + i);
 			d.setEquityRatio("22222" + i);
 			d.setShareholderName("zxczxczcx" + i);
@@ -290,10 +297,10 @@ public class FinancialLoanCreditController extends BaseController {
 		}
 		creditCompany.setControllDatas(controllDatas);
 
-		List<LoanCooperationCompanyInfo> cooperationCompanyInfos = new ArrayList<LoanCooperationCompanyInfo>();
+		List<LoanCooperationCompanyBean> cooperationCompanyInfos = new ArrayList<LoanCooperationCompanyBean>();
 
 		for (int i = 0; i < 6; i++) {
-			LoanCooperationCompanyInfo d = new LoanCooperationCompanyInfo();
+			LoanCooperationCompanyBean d = new LoanCooperationCompanyBean();
 			d.setCooperation("1");
 			d.setCooperationName("zxcdsfds" + i);
 			d.setCooperationYears("2011" + i);
@@ -304,10 +311,10 @@ public class FinancialLoanCreditController extends BaseController {
 		}
 		creditCompany.setCooperationCompanyInfos(cooperationCompanyInfos);
 
-		List<LoanMainBusinessData> mainBusinessDatas = new ArrayList<LoanMainBusinessData>();
+		List<LoanMainBusinessDataBean> mainBusinessDatas = new ArrayList<LoanMainBusinessDataBean>();
 
 		for (int i = 0; i < 3; i++) {
-			LoanMainBusinessData d = new LoanMainBusinessData();
+			LoanMainBusinessDataBean d = new LoanMainBusinessDataBean();
 			d.setMainAnnualSale("adsfasd" + i);
 			d.setMainProductsOrService("zxc" + i);
 			d.setMainSaleProportion("444444" + i);
@@ -315,10 +322,9 @@ public class FinancialLoanCreditController extends BaseController {
 		}
 		creditCompany.setMainBusinessDatas(mainBusinessDatas);
 
-
 		company.setCreditCompany(creditCompany);
-		
-		LoanPersonEnsure loanPersonEnsure = new LoanPersonEnsure();
+
+		LoanPersonEnsureBean loanPersonEnsure = new LoanPersonEnsureBean();
 		loanPersonEnsure.setCarBrand("3asdfa");
 		loanPersonEnsure.setCarPropertyType(2);
 		loanPersonEnsure.setCarPurchaseDate("2012-12");
@@ -352,10 +358,10 @@ public class FinancialLoanCreditController extends BaseController {
 		loanPersonEnsure.setWorkCompany("asdfasd");
 		loanPersonEnsure.setWorktelePhone("asdfasdfa");
 		loanPersonEnsure.setYearsWorking(1);
-		
+
 		company.setLoanPersonEnsure(loanPersonEnsure);
-		
-		LoanCompanyEnsure companyEnsure = new LoanCompanyEnsure();
+
+		LoanCompanyEnsureBean companyEnsure = new LoanCompanyEnsureBean();
 		companyEnsure.setBusinessLicense("asdfa");
 		companyEnsure.setBusinessLicenseUrl("c_bulicense.jpg");
 		companyEnsure.setCompanyName("taogeg");
@@ -377,15 +383,14 @@ public class FinancialLoanCreditController extends BaseController {
 		companyEnsure.setTaxRegisterCode("werqwe");
 		companyEnsure.setTaxRegisterCodeUrl("c_taxregno.jpg");
 		companyEnsure.setUserId("tdddddd");
-		
+
 		company.setCompanyEnsure(companyEnsure);
-//		// 企业担保信息
-//		private LoanCompanyEnsure companyEnsure;
-//
-//		// 授信企业信息
-//		private LoanCreditCompany creditCompany;
-		
-		
+		// // 企业担保信息
+		// private LoanCompanyEnsure companyEnsure;
+		//
+		// // 授信企业信息
+		// private LoanCreditCompany creditCompany;
+
 		return JsonConversionTool.toJson(company);
 	}
 
@@ -398,12 +403,48 @@ public class FinancialLoanCreditController extends BaseController {
 	@RequestMapping(value = "/saveCreditData", method = RequestMethod.POST)
 	public String saveCreditData(String companyData, String companyAppendData,
 			String companyEnsureData, String companyAccessoryData) {
-		System.out.println(companyData);
-		System.out.println(companyAppendData);
-		System.out.println(companyEnsureData);
-		System.out.println(companyAccessoryData);
 
-		putSuccess();
+		LoanCreditCompanyBean companyBean = JsonConversionTool.toObject(
+				companyData, LoanCreditCompanyBean.class);
+		LoanCreditSaveRequest req = new LoanCreditSaveRequest();
+
+		req.setCreditCompany(companyBean);
+
+		LoanCreditSaveResponse saveResponse = financialLoanCreditService
+				.saveCreditOrder(req);
+
+		if (!saveResponse.isResult()) {
+			putSysError(saveResponse.getReturnMessage());
+		} else {
+			putSuccess();
+		}
+		// Map<String, String> map1 =
+		// JsonConversionTool.toObject(companyAppendData, Map.class);
+		//
+		//
+		// String companyJson = JsonConversionTool.mergeJson(companyData);
+		//
+		//
+		//
+		// System.out.println(companyData);
+		//
+		//
+		// Map<String, String> map = JsonConversionTool.toObject(companyData,
+		// Map.class);
+		//
+		// System.out.println(map);
+		//
+		// System.out.println(companyAppendData);
+		// if(companyAppendData != null)
+		// {
+		// Map<String, String> map1 =
+		// JsonConversionTool.toObject(companyAppendData, Map.class);
+		//
+		// System.out.println(map1);
+		// }
+		//
+		// System.out.println(companyEnsureData);
+		// System.out.println(companyAccessoryData);
 
 		return this.toJson();
 	}
@@ -420,4 +461,3 @@ public class FinancialLoanCreditController extends BaseController {
 		return "/loan/credit-apply/credit-apply-result";
 	}
 }
-

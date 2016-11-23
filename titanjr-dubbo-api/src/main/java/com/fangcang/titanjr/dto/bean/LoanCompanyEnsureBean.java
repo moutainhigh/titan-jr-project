@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Created by zhaoshan on 2016/11/3.
  */
-public class LoanCompanyEnsure {
+public class LoanCompanyEnsureBean {
     private Long id;
     //增加机构编码
     private String userId;

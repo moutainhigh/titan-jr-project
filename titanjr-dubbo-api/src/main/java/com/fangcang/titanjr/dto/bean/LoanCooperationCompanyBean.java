@@ -7,7 +7,7 @@ import java.math.BigDecimal;
  * Created by zhaoshan on 2016/10/9.
  * 合作企业信息
  */
-public class LoanCooperationCompanyInfo  implements Serializable{
+public class LoanCooperationCompanyBean  implements Serializable{
 	
     /**
 	 * 

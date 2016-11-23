@@ -2,7 +2,7 @@ package com.fangcang.titanjr.dto.bean;
 
 import java.util.Date;
 
-public class LoanRepaymentInfo 
+public class LoanRepaymentBean 
 {
 	//還款單號
 	private String orderNo;

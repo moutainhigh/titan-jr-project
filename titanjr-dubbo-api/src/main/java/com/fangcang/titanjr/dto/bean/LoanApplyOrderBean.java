@@ -8,7 +8,7 @@ import java.util.Date;
  * @author Administrator
  *
  */
-public class LoanApplyOrder {
+public class LoanApplyOrderBean {
 
 	private String orderNo;// 贷款单号
 
@@ -57,13 +57,13 @@ public class LoanApplyOrder {
 
 	private long shouldInterest;// 应还利息
 	
-	private LoanSpec loanSpec;//貸款規格
+	private LoanSpecBean loanSpec;//貸款規格
 
-	public LoanSpec getLoanSpec() {
+	public LoanSpecBean getLoanSpec() {
 		return loanSpec;
 	}
 
-	public void setLoanSpec(LoanSpec loanSpec) {
+	public void setLoanSpec(LoanSpecBean loanSpec) {
 		this.loanSpec = loanSpec;
 	}
 

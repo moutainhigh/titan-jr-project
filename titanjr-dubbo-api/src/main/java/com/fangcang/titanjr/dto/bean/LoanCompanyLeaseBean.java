@@ -1,6 +1,6 @@
 package com.fangcang.titanjr.dto.bean;
 
-public class LoanCompanyLease {
+public class LoanCompanyLeaseBean {
 	
 	private String leaseType;
 	// 经营信息

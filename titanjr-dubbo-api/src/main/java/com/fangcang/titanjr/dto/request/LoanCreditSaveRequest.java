@@ -1,10 +1,10 @@
 package com.fangcang.titanjr.dto.request;
 
 import com.fangcang.titanjr.dto.BaseRequestDTO;
-import com.fangcang.titanjr.dto.bean.LoanCompanyEnsure;
-import com.fangcang.titanjr.dto.bean.LoanCreditCompany;
-import com.fangcang.titanjr.dto.bean.LoanCreditOrder;
-import com.fangcang.titanjr.dto.bean.LoanPersonEnsure;
+import com.fangcang.titanjr.dto.bean.LoanCompanyEnsureBean;
+import com.fangcang.titanjr.dto.bean.LoanCreditCompanyBean;
+import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
+import com.fangcang.titanjr.dto.bean.LoanPersonEnsureBean;
 
 /**
  * 授信数据保存请求
@@ -17,62 +17,60 @@ public class LoanCreditSaveRequest extends BaseRequestDTO {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	
 
-	// 授信单号
-	private String orderNo;
+	// 组织编号
+	private String orgCode;
 
 	// 授信单基本信息
-	private LoanCreditOrder creditOrder;
+	private LoanCreditOrderBean creditOrder;
 
 	// 企业担保信息
-	private LoanCompanyEnsure companyEnsure;
+	private LoanCompanyEnsureBean companyEnsure;
 
 	// 授信企业信息
-	private LoanCreditCompany creditCompany;
+	private LoanCreditCompanyBean creditCompany;
 
 	// 个人担保信息
-	private LoanPersonEnsure loanPersonEnsure;
+	private LoanPersonEnsureBean loanPersonEnsure;
 
-	public String getOrderNo() {
-		return orderNo;
+	public String getOrgCode() {
+		return orgCode;
 	}
 
-	public void setOrderNo(String orderNo) {
-		this.orderNo = orderNo;
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
 	}
 
-	public LoanCreditOrder getCreditOrder() {
+	public LoanCreditOrderBean getCreditOrder() {
 		return creditOrder;
 	}
 
-	public void setCreditOrder(LoanCreditOrder creditOrder) {
+	public void setCreditOrder(LoanCreditOrderBean creditOrder) {
 		this.creditOrder = creditOrder;
 	}
 
-	public LoanCompanyEnsure getCompanyEnsure() {
+	public LoanCompanyEnsureBean getCompanyEnsure() {
 		return companyEnsure;
 	}
 
-	public void setCompanyEnsure(LoanCompanyEnsure companyEnsure) {
+	public void setCompanyEnsure(LoanCompanyEnsureBean companyEnsure) {
 		this.companyEnsure = companyEnsure;
 	}
 
-	public LoanCreditCompany getCreditCompany() {
+	public LoanCreditCompanyBean getCreditCompany() {
 		return creditCompany;
 	}
 
-	public void setCreditCompany(LoanCreditCompany creditCompany) {
+	public void setCreditCompany(LoanCreditCompanyBean creditCompany) {
 		this.creditCompany = creditCompany;
 	}
 
-	public LoanPersonEnsure getLoanPersonEnsure() {
+	public LoanPersonEnsureBean getLoanPersonEnsure() {
 		return loanPersonEnsure;
 	}
 
-	public void setLoanPersonEnsure(LoanPersonEnsure loanPersonEnsure) {
+	public void setLoanPersonEnsure(LoanPersonEnsureBean loanPersonEnsure) {
 		this.loanPersonEnsure = loanPersonEnsure;
 	}
-	
+
 }

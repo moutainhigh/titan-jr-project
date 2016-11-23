@@ -1,5 +1,8 @@
 package com.fangcang.titanjr.common.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gson.Gson;
 
 /**
@@ -27,4 +30,13 @@ public final class JsonConversionTool {
 		return gson.toJson(object);
 	}
 
+	public static String mergeJson(String... jsonStrs) {
+
+		Map<String, String> summaryMap = new HashMap<String, String>();
+		for (String str : jsonStrs) {
+			Map<String, String> object = toObject(str, Map.class);
+			summaryMap.putAll(object);
+		}
+		return toJson(summaryMap);
+	}
 }

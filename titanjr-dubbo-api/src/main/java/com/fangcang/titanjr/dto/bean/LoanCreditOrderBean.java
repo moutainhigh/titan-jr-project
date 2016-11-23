@@ -5,7 +5,12 @@ import java.util.Date;
  * 贷款授信单
  * @author wengxitao
  */
-public class LoanCreditOrder {
+public class LoanCreditOrderBean implements java.io.Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -397916317083742463L;
 
 	private String orgCode;// 授信金融机构ID
 

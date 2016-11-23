@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by zhaoshan on 2016/10/9.
  * 股东信息列表
  */
-public class LoanControllData implements Serializable {
+public class LoanControllDataBean implements Serializable {
 	
     /**
 	 * 

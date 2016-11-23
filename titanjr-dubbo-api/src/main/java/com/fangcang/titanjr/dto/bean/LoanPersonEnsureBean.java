@@ -4,7 +4,7 @@ package com.fangcang.titanjr.dto.bean;
  * @author wengxitao
  *
  */
-public class LoanPersonEnsure {
+public class LoanPersonEnsureBean {
 
 	//融数机构标示id，可以不用存进数据库，跟企业担保实体一样道理
 	//新增时若此字段为空，则不处理

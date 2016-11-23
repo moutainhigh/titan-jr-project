@@ -1,7 +1,7 @@
 package com.fangcang.titanjr.dto.response;
 
 import com.fangcang.titanjr.dto.BaseRequestDTO;
-import com.fangcang.titanjr.dto.bean.LoanApplyOrder;
+import com.fangcang.titanjr.dto.bean.LoanApplyOrderBean;
 
 public class GetLoanOrderInfoResponse extends BaseRequestDTO {
 
@@ -9,13 +9,13 @@ public class GetLoanOrderInfoResponse extends BaseRequestDTO {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private LoanApplyOrder applyOrderInfo;
+	private LoanApplyOrderBean applyOrderInfo;
 
-	public LoanApplyOrder getApplyOrderInfo() {
+	public LoanApplyOrderBean getApplyOrderInfo() {
 		return applyOrderInfo;
 	}
 
-	public void setApplyOrderInfo(LoanApplyOrder applyOrderInfo) {
+	public void setApplyOrderInfo(LoanApplyOrderBean applyOrderInfo) {
 		this.applyOrderInfo = applyOrderInfo;
 	}
 }

@@ -36,4 +36,6 @@
 	<dubbo:reference id="titanHelpService" interface="com.fangcang.titanjr.service.TitanHelpService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
 	<dubbo:reference id="titanSysconfigService" interface="com.fangcang.titanjr.service.TitanSysconfigService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
 	
+	<dubbo:reference id="titanFinancialLoanCreditService" interface="com.fangcang.titanjr.service.TitanFinancialLoanCreditService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
+	
 </beans>

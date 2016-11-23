@@ -2,7 +2,7 @@ package com.fangcang.titanjr.dto.request;
 
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
 import com.fangcang.titanjr.dto.BaseRequestDTO;
-import com.fangcang.titanjr.dto.bean.LoanSpec;
+import com.fangcang.titanjr.dto.bean.LoanSpecBean;
 
 public class ApplyLoanRequest extends BaseRequestDTO {
 	
@@ -13,7 +13,7 @@ public class ApplyLoanRequest extends BaseRequestDTO {
 	//金服机构编码
 	private String orgCode;
 	//贷款规格
-	private LoanSpec lcanSpec;
+	private LoanSpecBean lcanSpec;
 
 	public LoanProductEnum getProductType() {
 		return productType;
@@ -31,11 +31,11 @@ public class ApplyLoanRequest extends BaseRequestDTO {
 		this.orgCode = orgCode;
 	}
 
-	public LoanSpec getLcanSpec() {
+	public LoanSpecBean getLcanSpec() {
 		return lcanSpec;
 	}
 
-	public void setLcanSpec(LoanSpec lcanSpec) {
+	public void setLcanSpec(LoanSpecBean lcanSpec) {
 		this.lcanSpec = lcanSpec;
 	}
 }

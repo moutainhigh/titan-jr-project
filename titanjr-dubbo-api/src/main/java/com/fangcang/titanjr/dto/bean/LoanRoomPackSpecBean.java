@@ -8,7 +8,7 @@ import java.util.Date;
  * @author wengxitao
  *
  */
-public class LoanRoomPackSpec extends LoanSpec {
+public class LoanRoomPackSpecBean extends LoanSpecBean {
 	private String hotleName;// 酒店名称
 
 	private Date beginDate;// 包房开始时间
