@@ -1,9 +1,14 @@
 package com.fangcang.titanjr.dao.impl;
 
+import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.LoanCreditOrderDao;
+import com.fangcang.titanjr.dto.bean.CreditCompanyInfoDTO;
 import com.fangcang.titanjr.entity.LoanCreditOrder;
+import com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,4 +47,23 @@ public class LoanCreditOrderDaoImpl extends GenericDAOMyBatisImpl implements Loa
             throw new DaoException(e);
         }
     }
+
+	@Override
+	public PaginationSupport<CreditCompanyInfoDTO> selectForPage(
+			LoanCreditOrderParam condition,
+			PaginationSupport<CreditCompanyInfoDTO> paginationSupport)
+			throws DaoException {
+			try {
+				return super.selectForPage("com.fangcang.titanjr.dao.LoanCreditOrderDao.queryLoanCreditCompanyOrder", condition, paginationSupport);
+			} catch (Exception e) {
+				log.error("selectForPage Error,LoanCreditOrderParam:" +Tools.gsonToString(condition), e);
+				throw new DaoException(e);
+			}
+	}
+
+	@Override
+	public int getCreditOrderCount(LoanCreditOrderParam condition) {
+		return (Integer)super.selectOne("com.fangcang.titanjr.dao.LoanCreditOrderDao.getCreditOrderCount",condition);
+	}
+    
 }

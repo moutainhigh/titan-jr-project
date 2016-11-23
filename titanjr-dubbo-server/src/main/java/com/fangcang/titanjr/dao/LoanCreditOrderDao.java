@@ -1,12 +1,23 @@
 package com.fangcang.titanjr.dao;
 
 
-import com.fangcang.titanjr.entity.LoanCreditOrder;
-
 import java.util.List;
+
+import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.exception.DaoException;
+import com.fangcang.titanjr.dto.bean.CreditCompanyInfoDTO;
+import com.fangcang.titanjr.entity.LoanCreditOrder;
+import com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam;
 
 public interface LoanCreditOrderDao {
 
+	/**
+     * 查询
+     * @param LoanCreditOrderParam
+     * @return
+     */
+	PaginationSupport<CreditCompanyInfoDTO> selectForPage(LoanCreditOrderParam condition, PaginationSupport<CreditCompanyInfoDTO> paginationSupport) throws DaoException;
+	
     /**
      * 插入
      * @param loanCreditOrder
@@ -27,4 +38,11 @@ public interface LoanCreditOrderDao {
      * @return
      */
     int updateLoanCreditOrder(LoanCreditOrder loanCreditOrder);
+    
+    /**
+     * 授信申请数量
+     * @param loanCreditOrderParam
+     * @return
+     */
+    public int getCreditOrderCount(LoanCreditOrderParam loanCreditOrderParam);
 }
