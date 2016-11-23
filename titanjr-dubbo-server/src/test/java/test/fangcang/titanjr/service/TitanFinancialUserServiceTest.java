@@ -47,6 +47,7 @@ public class TitanFinancialUserServiceTest extends SpringTest {
     @Resource
     TitanOrderService titanOrderService;
 
+    
     //@Test
     public void registerTitanUserTest() throws Exception{
         UserRegisterRequest userRegisterRequest = new UserRegisterRequest();

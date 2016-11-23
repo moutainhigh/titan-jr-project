@@ -1,26 +1,39 @@
 package com.fangcang.titanjr.service.impl;
 
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import net.sf.json.JSONSerializer;
+
 import com.alibaba.dubbo.common.utils.CollectionUtils;
+import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.dao.LoanCompanyEnsureDao;
 import com.fangcang.titanjr.dao.LoanCreditCompanyDao;
 import com.fangcang.titanjr.dao.LoanCreditOrderDao;
 import com.fangcang.titanjr.dao.LoanPersonEnsureDao;
-import com.fangcang.titanjr.dto.request.*;
-import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.dto.bean.CreditCompanyInfoDTO;
+import com.fangcang.titanjr.dto.request.ApplyLoanCreditRequest;
+import com.fangcang.titanjr.dto.request.AuditCreidtOrderRequest;
+import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
+import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
+import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
+import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
+import com.fangcang.titanjr.dto.response.ApplyLoanCreditResponse;
+import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
+import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
+import com.fangcang.titanjr.dto.response.GetCreditOrderCountResponse;
+import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
+import com.fangcang.titanjr.dto.response.PageCreditCompanyInfoResponse;
 import com.fangcang.titanjr.entity.LoanCompanyEnsure;
 import com.fangcang.titanjr.entity.LoanCreditCompany;
 import com.fangcang.titanjr.entity.LoanCreditOrder;
 import com.fangcang.titanjr.entity.LoanPersonEnsure;
+import com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam;
 import com.fangcang.titanjr.service.TitanCodeCenterService;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
-
-import net.sf.json.JSONSerializer;
-
-import javax.annotation.Resource;
-
-import java.util.List;
 
 /**
  * Created by zhaoshan on 2016/11/18.
@@ -147,15 +160,27 @@ public class TitanFinancialLoanCreditServiceImpl implements TitanFinancialLoanCr
     @Override
 	public PageCreditCompanyInfoResponse queryPageCreditCompanyInfo(
 			QueryPageCreditCompanyInfoRequest req) {
-		// TODO Auto-generated method stub
-		return null;
+    	PageCreditCompanyInfoResponse response = new PageCreditCompanyInfoResponse();
+    	LoanCreditOrderParam condition = new LoanCreditOrderParam();
+    	condition.setName(req.getName());
+    	condition.setStatus(req.getStatus());
+    	PaginationSupport<CreditCompanyInfoDTO> paginationSupport = new PaginationSupport<CreditCompanyInfoDTO>();
+    	paginationSupport.setCurrentPage(req.getCurrentPage());
+    	paginationSupport.setOrderBy(" createTime desc ");
+    	paginationSupport = loanCreditOrderDao.selectForPage(condition,paginationSupport);
+    	response.setPageCreditCompanyInfoDTO(paginationSupport);
+    	return response;
 	}
 
 	@Override
 	public GetCreditOrderCountResponse getCreditOrderCount(
 			GetCreditOrderCountRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		GetCreditOrderCountResponse response = new GetCreditOrderCountResponse();
+		LoanCreditOrderParam condition = new LoanCreditOrderParam();
+		condition.setStatus(request.getStatus());
+		int count = loanCreditOrderDao.getCreditOrderCount(condition);
+		response.setCount(count);
+		return response;
 	}
 
 	private LoanCreditOrder getLoanCreditOrder(LoanCreditSaveRequest loanCreditSaveRequest) {

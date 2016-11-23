@@ -57,7 +57,38 @@
 	        </where>
 
     </select>
+    
+	<resultMap type="" id="">
+	
+	
+	</resultMap>
 
+	<select id="queryLoanCreditCompanyOrder" parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
+		select 
+			C.name,
+			C.contactname,
+			C.contactphone,
+			O.orderno,
+			O.reqtime,
+			O.status
+		from t_loan_creditorder O 
+			left join t_loan_creditcompany C 
+			on O.orderno = C.creditorderno 
+		<where>
+			<if test="name !=null">name like concat('%',#{name},'%') </if>
+			<if test="status !=null"> and status = #{status}</if>
+		</where>
+	</select>
+	<select id="getCreditOrderCount" parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
+		select 
+			count(1) 
+		from t_loan_creditorder
+			<where>
+				<if test="name !=null">name like concat('%',#{name},'%') </if>
+				<if test="status !=null"> and status = #{status}</if>
+			</where>
+	</select>
+	
     <update id="updateLoanCreditOrder" parameterType="com.fangcang.titanjr.entity.LoanCreditOrder">
         update t_loan_creditorder
         <set>
