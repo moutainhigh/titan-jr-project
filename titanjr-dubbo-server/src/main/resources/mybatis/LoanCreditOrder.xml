@@ -58,12 +58,9 @@
 
     </select>
     
-	<resultMap type="" id="">
-	
-	
-	</resultMap>
+	 
 
-	<select id="queryLoanCreditCompanyOrder" parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
+	<select id="queryLoanCreditCompanyOrder" resultType="com.fangcang.titanjr.dto.bean.CreditCompanyInfoDTO" parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
 		select 
 			C.name,
 			C.contactname,
