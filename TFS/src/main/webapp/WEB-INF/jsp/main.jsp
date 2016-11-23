@@ -289,7 +289,7 @@
 						<span></span>
 						我的理财
 					</a>
-					<a href="" class="s6" data-parent="false">
+					<a href="<%=basePath %>/loan/loanMain.shtml" class="s6" data-parent="false" data-url="">
 						<span></span>
 						我的贷款
 					</a>

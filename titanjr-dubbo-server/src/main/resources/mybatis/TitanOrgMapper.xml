@@ -115,7 +115,7 @@
         <result property="fixTel" column="fixTel"/>
         <result property="email" column="email"/>
         <result property="titanCode" column="titancode"/>
-
+        <result property="maxLoanAmount" column="maxloanamount"/>
         <association property="checkStatus" javaType="com.fangcang.titanjr.dto.bean.CheckStatus">
             <result property="checkResultKey" column="resultkey" />
             <result property="checkResultMsg" column="resultmsg" />
@@ -195,6 +195,7 @@
 	      g.email,
 	      g.titancode,
 	      g.createTime,
+          g.maxloanamount,
 	      i.imageName,
 	      i.imagetype,
 	      i.sizetype,
@@ -404,7 +405,10 @@
             <if test="email != null">
                 email = #{email,jdbcType=VARCHAR},
             </if>
-            
+            <if test="maxLoanAmount != null">
+                maxloanamount = #{maxLoanAmount},
+            </if>
+
         </set>
         <where>
         	<if test="orgid != null"> orgid = #{orgid,jdbcType=INTEGER} </if>

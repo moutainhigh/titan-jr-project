@@ -10,7 +10,7 @@ public class LoanCreditCompany {
 	private Long id;
 	private String creditOrderNo;
 	private String name;
-	private Date startDate;
+	private String startDate;
 	private String regAddress;
 	private String officeAddress;
 	private Integer orgSize;
@@ -18,7 +18,7 @@ public class LoanCreditCompany {
 	private String taxRegNo;
 	private String orgCode;
 	private String regAccount;
-	private Date regDate;
+	private String regDate;
 	private Integer empSize;
 	private String legalName;
 	private Integer legalceType;
@@ -34,8 +34,64 @@ public class LoanCreditCompany {
 	private String creditUrl;
 	private String officeUrl;
 	private String waterUrl;
+	private String taxRegUrl;
+	private String orgCodeUrl;
 	private Integer isPush;
+	
+	
+	private LoanCompanyLease companyLease;
+	private List<LoanControllData> controllDatas;
+	private List<LoanCooperationCompanyInfo> cooperationCompanyInfos;
+	private List<LoanMainBusinessData> mainBusinessDatas;
+	
+	public String getTaxRegUrl() {
+		return taxRegUrl;
+	}
 
+	public void setTaxRegUrl(String taxRegUrl) {
+		this.taxRegUrl = taxRegUrl;
+	}
+
+	public String getOrgCodeUrl() {
+		return orgCodeUrl;
+	}
+
+	public void setOrgCodeUrl(String orgCodeUrl) {
+		this.orgCodeUrl = orgCodeUrl;
+	}
+	
+	public LoanCompanyLease getCompanyLease() {
+		return companyLease;
+	}
+
+	public void setCompanyLease(LoanCompanyLease companyLease) {
+		this.companyLease = companyLease;
+	}
+	public List<LoanControllData> getControllDatas() {
+		return controllDatas;
+	}
+
+	public void setControllDatas(List<LoanControllData> controllDatas) {
+		this.controllDatas = controllDatas;
+	}
+
+	public List<LoanCooperationCompanyInfo> getCooperationCompanyInfos() {
+		return cooperationCompanyInfos;
+	}
+
+	public void setCooperationCompanyInfos(
+			List<LoanCooperationCompanyInfo> cooperationCompanyInfos) {
+		this.cooperationCompanyInfos = cooperationCompanyInfos;
+	}
+
+	public List<LoanMainBusinessData> getMainBusinessDatas() {
+		return mainBusinessDatas;
+	}
+
+	public void setMainBusinessDatas(
+			List<LoanMainBusinessData> mainBusinessDatas) {
+		this.mainBusinessDatas = mainBusinessDatas;
+	}
 	public Long getId() {
 		return id;
 	}
@@ -60,11 +116,11 @@ public class LoanCreditCompany {
 		this.name = name;
 	}
 
-	public Date getStartDate() {
+	public String getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate) {
+	public void setStartDate(String startDate) {
 		this.startDate = startDate;
 	}
 
@@ -132,11 +188,11 @@ public class LoanCreditCompany {
 		this.regAccount = regAccount;
 	}
 
-	public Date getRegDate() {
+	public String getRegDate() {
 		return regDate;
 	}
 
-	public void setRegDate(Date regDate) {
+	public void setRegDate(String regDate) {
 		this.regDate = regDate;
 	}
 
