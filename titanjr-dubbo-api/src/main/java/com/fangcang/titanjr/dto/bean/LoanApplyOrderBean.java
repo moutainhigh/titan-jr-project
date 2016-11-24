@@ -8,7 +8,12 @@ import java.util.Date;
  * @author Administrator
  *
  */
-public class LoanApplyOrderBean {
+public class LoanApplyOrderBean implements java.io.Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String orderNo;// 贷款单号
 
@@ -20,13 +25,13 @@ public class LoanApplyOrderBean {
 
 	private String actualAmount;// 实际贷款金额
 
-	private float rate;// 贷款利率
+	private Float rate;// 贷款利率
 
 	private String rspId;// 融数产品编号
 
 	private String rsorgId;// 融数机构编号
 
-	private int productType;// 1 包房贷 2 运营贷
+	private Integer productType;// 1 包房贷 2 运营贷
 
 	private String productId;// 产品编号
 
@@ -34,7 +39,7 @@ public class LoanApplyOrderBean {
 
 	private String rateTmp;// 费率模板
 
-	private int status;// 0 无效贷款  1 贷款申请中  2 待放款   3 已放款  4 放款失败  5 贷款失败  6 已逾期 7 已结清
+	private Integer status;// 0 无效贷款  1 贷款申请中  2 待放款   3 已放款  4 放款失败  5 贷款失败  6 已逾期 7 已结清
 
 	private String errorMsg;// 贷款失败原因
 
@@ -42,20 +47,20 @@ public class LoanApplyOrderBean {
 
 	private String productSpecId;// 产品规格 ID
 
-	private int repaymentType;// 1 按日计利，随借随还
+	private Integer repaymentType;// 1 按日计利，随借随还
 
 	private Date actualRepaymentDate;// 用户还款到期日
 
 
 	private Date lastRepaymentDate;// 最后一次还款时间
 
-	private long repaymentPrincipal;// 已还本金
+	private Long repaymentPrincipal;// 已还本金
 
-	private long repaymentInterest;// 已还利息
+	private Long repaymentInterest;// 已还利息
 
-	private long shouldCapital;// 应还本金
+	private Long shouldCapital;// 应还本金
 
-	private long shouldInterest;// 应还利息
+	private Long shouldInterest;// 应还利息
 	
 	private LoanSpecBean loanSpec;//貸款規格
 
@@ -107,11 +112,11 @@ public class LoanApplyOrderBean {
 		this.actualAmount = actualAmount;
 	}
 
-	public float getRate() {
+	public Float getRate() {
 		return rate;
 	}
 
-	public void setRate(float rate) {
+	public void setRate(Float rate) {
 		this.rate = rate;
 	}
 
@@ -131,11 +136,11 @@ public class LoanApplyOrderBean {
 		this.rsorgId = rsorgId;
 	}
 
-	public int getProductType() {
+	public Integer getProductType() {
 		return productType;
 	}
 
-	public void setProductType(int productType) {
+	public void setProductType(Integer productType) {
 		this.productType = productType;
 	}
 
@@ -163,11 +168,11 @@ public class LoanApplyOrderBean {
 		this.rateTmp = rateTmp;
 	}
 
-	public int getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 
@@ -195,11 +200,11 @@ public class LoanApplyOrderBean {
 		this.productSpecId = productSpecId;
 	}
 
-	public int getRepaymentType() {
+	public Integer getRepaymentType() {
 		return repaymentType;
 	}
 
-	public void setRepaymentType(int repaymentType) {
+	public void setRepaymentType(Integer repaymentType) {
 		this.repaymentType = repaymentType;
 	}
 
@@ -220,35 +225,35 @@ public class LoanApplyOrderBean {
 		this.lastRepaymentDate = lastRepaymentDate;
 	}
 
-	public long getRepaymentPrincipal() {
+	public Long getRepaymentPrincipal() {
 		return repaymentPrincipal;
 	}
 
-	public void setRepaymentPrincipal(long repaymentPrincipal) {
+	public void setRepaymentPrincipal(Long repaymentPrincipal) {
 		this.repaymentPrincipal = repaymentPrincipal;
 	}
 
-	public long getRepaymentInterest() {
+	public Long getRepaymentInterest() {
 		return repaymentInterest;
 	}
 
-	public void setRepaymentInterest(long repaymentInterest) {
+	public void setRepaymentInterest(Long repaymentInterest) {
 		this.repaymentInterest = repaymentInterest;
 	}
 
-	public long getShouldCapital() {
+	public Long getShouldCapital() {
 		return shouldCapital;
 	}
 
-	public void setShouldCapital(long shouldCapital) {
+	public void setShouldCapital(Long shouldCapital) {
 		this.shouldCapital = shouldCapital;
 	}
 
-	public long getShouldInterest() {
+	public Long getShouldInterest() {
 		return shouldInterest;
 	}
 
-	public void setShouldInterest(long shouldInterest) {
+	public void setShouldInterest(Long shouldInterest) {
 		this.shouldInterest = shouldInterest;
 	}
 }

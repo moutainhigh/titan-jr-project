@@ -9,6 +9,11 @@ import java.util.Date;
  *
  */
 public class LoanRoomPackSpecBean extends LoanSpecBean {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private String hotleName;// 酒店名称
 
 	private Date beginDate;// 包房开始时间

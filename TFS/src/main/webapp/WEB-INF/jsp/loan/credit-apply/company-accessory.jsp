@@ -734,6 +734,7 @@
     	  $(".J_delete_upload").live('click',function(){
     		  var obj =  $(this);
     		  var ids = $(this).parent().parent().find('input').attr("id");
+    		  F.loading.show();
     		  $.ajax({
     				type:"post",
     				url: contextPath+'/loan/credit/delAccessory.shtml',	
@@ -749,6 +750,9 @@
     					
     				},
     				error:function(){
+    				},
+    				complete: function(){
+    					 F.loading.hide();
     				}
     		 });
          });

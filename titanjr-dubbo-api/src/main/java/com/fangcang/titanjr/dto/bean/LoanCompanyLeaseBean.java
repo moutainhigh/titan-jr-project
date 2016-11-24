@@ -1,7 +1,11 @@
 package com.fangcang.titanjr.dto.bean;
 
-public class LoanCompanyLeaseBean {
+public class LoanCompanyLeaseBean implements java.io.Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String leaseType;
 	// 经营信息
 	private String beginLeaseDate;// 租赁期限

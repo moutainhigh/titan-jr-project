@@ -4,7 +4,7 @@
 
     <resultMap id="resultMapLoanCreditCompany" type="com.fangcang.titanjr.entity.LoanCreditCompany">
         <result property="id" column="id"/>
-        <result property="creditorderNo" column="creditorderno"/>
+        <result property="creditOrderNo" column="creditorderno"/>
         <result property="name" column="name"/>
         <result property="startDate" column="startdate"/>
         <result property="regAddress" column="regaddress"/>
@@ -30,6 +30,10 @@
         <result property="creditUrl" column="crediturl"/>
         <result property="officeUrl" column="officeurl"/>
         <result property="waterUrl" column="waterurl"/>
+        
+        <result property="taxRegUrl" column="taxregurl"/>
+        <result property="orgCodeUrl" column="orgcodeurl"/>
+        
         <result property="isPush" column="ispush"/>
     </resultMap>
 
@@ -64,12 +68,14 @@
         `crediturl` ,
         `officeurl` ,
         `waterurl` ,
+        `taxregurl` ,
+        `orgcodeurl` ,
         `ispush`
         from
         t_loan_creditcompany
         <where>
-            <if test="creditorderNo !=null">
-                and creditorderno = #{creditorderNo}
+            <if test="creditOrderNo !=null">
+                and creditorderno = #{creditOrderNo}
             </if>
         </where>
 
@@ -103,10 +109,12 @@
             <if test="creditUrl != null">crediturl= #{creditUrl},</if>
             <if test="officeUrl != null">officeurl= #{officeUrl},</if>
             <if test="waterUrl != null">waterurl= #{waterUrl},</if>
+             <if test="taxRegUrl != null">taxregurl= #{taxRegUrl},</if>
+              <if test="orgCodeUrl != null">orgcodeurl= #{orgCodeUrl},</if>
             <if test="isPush != null">ispush= #{isPush}</if>
         </set>
         <where>
-            creditorderno = #{creditorderNo} <!--userId一定不为空-->
+            creditorderno = #{creditOrderNo} <!--userId一定不为空-->
             <!--<if test="userId != null"> userid = #{userId} </if>-->
         </where>
     </update>
@@ -139,11 +147,13 @@
       	`crediturl`,
       	`officeurl`,
       	`waterurl`,
+      	`taxregurl` ,
+        `orgcodeurl` ,
       	`ispush`
       )
       VALUES
       	(
-      		#{creditorderNo},
+      		#{creditOrderNo},
       		#{name},
       		#{startDate},
       		#{regAddress},
@@ -169,6 +179,8 @@
       		#{creditUrl},
       		#{officeUrl},
       		#{waterUrl},
+      		#{taxRegUrl},
+      		#{orgCodeUrl},
       		#{isPush}
       	)
     </insert>

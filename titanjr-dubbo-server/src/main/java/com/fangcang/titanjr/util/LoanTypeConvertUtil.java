@@ -1,7 +1,10 @@
 package com.fangcang.titanjr.util;
 
-import net.sf.json.JSONSerializer;
+import java.util.Date;
 
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.dto.bean.LoanCompanyAppendInfo;
 import com.fangcang.titanjr.dto.bean.LoanCompanyEnsureBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditCompanyBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
@@ -14,7 +17,21 @@ import com.fangcang.util.DateUtil;
 
 public final class LoanTypeConvertUtil {
 
-	public static LoanCreditOrder getLoanCreditOrder(String orderNo,
+	public static LoanCreditOrder createDefaultCreditOrder(String orderNo,
+			String orgCode) {
+
+		LoanCreditOrder creditOrder = new LoanCreditOrder();
+		creditOrder.setOrderNo(orderNo);
+		creditOrder.setOrgCode(orgCode);
+		creditOrder.setCreateTime(new Date());
+		creditOrder.setRateTem("RA201610141100001");
+		creditOrder.setRspId(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+		creditOrder.setRsorgId(CommonConstant.RS_FANGCANG_CONST_ID);
+		creditOrder.setDayLimit(90);
+		return creditOrder;
+	}
+
+	public static LoanCreditOrder getLoanCreditOrder(
 			LoanCreditOrderBean lco) {
 		// 传过来机构一定不能为空
 		if (null == lco) {
@@ -38,12 +55,11 @@ public final class LoanTypeConvertUtil {
 		loanCreditOrder.setAuditPass(lco.getAuditPass());
 		// loanCreditOrder.setReqJson();//==审核时发起授信申请到融数，才补充进去；
 		loanCreditOrder.setOrgCode(lco.getOrgCode());
-		loanCreditOrder.setOrderNo(orderNo);
 		return loanCreditOrder;
 	}
 
 	public static LoanCreditCompany getLoanCreditCompany(
-			LoanCreditCompanyBean lcc) {
+			LoanCreditCompanyBean lcc, LoanCompanyAppendInfo appendInfo) {
 		// 传过来机构一定不能为空
 		if (null == lcc) {
 			return null;
@@ -51,7 +67,6 @@ public final class LoanTypeConvertUtil {
 
 		LoanCreditCompany loanCreditCompany = new LoanCreditCompany();
 		// 基本信息
-		loanCreditCompany.setCreditorderNo(lcc.getCreditOrderNo());
 
 		loanCreditCompany.setName(lcc.getName());
 		loanCreditCompany
@@ -74,9 +89,6 @@ public final class LoanTypeConvertUtil {
 		loanCreditCompany.setContactName(lcc.getContactName());
 		loanCreditCompany.setContactPhone(lcc.getContactPhone());
 		loanCreditCompany.setWaterEmail(lcc.getWaterEmail());
-		// 附加信息
-		loanCreditCompany.setAppendInfo(JSONSerializer.toJSON(
-				lcc.getAppendInfo()).toString());
 		// 证件图片
 		loanCreditCompany.setLicenseUrl(lcc.getLicenseUrl());
 		loanCreditCompany.setLegalNoUrl(lcc.getLegalNoUrl());
@@ -85,8 +97,16 @@ public final class LoanTypeConvertUtil {
 		loanCreditCompany.setCreditUrl(lcc.getCreditUrl());
 		loanCreditCompany.setOfficeUrl(lcc.getOfficeUrl());
 		loanCreditCompany.setWaterUrl(lcc.getWaterUrl());
+		loanCreditCompany.setTaxRegUrl(lcc.getTaxRegUrl());
+		loanCreditCompany.setOrgCodeUrl(lcc.getOrgCodeUrl());
 		// 是否推送
 		loanCreditCompany.setIsPush(lcc.getIsPush());
+
+		if (appendInfo != null) {
+			loanCreditCompany.setAppendInfo(JsonConversionTool
+					.toJson(appendInfo));
+		}
+
 		return loanCreditCompany;
 	}
 
@@ -99,7 +119,7 @@ public final class LoanTypeConvertUtil {
 
 		LoanCompanyEnsure loanCompanyEnsure = new LoanCompanyEnsure();
 		// 基本信息
-		loanCompanyEnsure.setUserId(lc.getUserId());
+		loanCompanyEnsure.setOrgCode(lc.getOrgCode());
 		loanCompanyEnsure.setCompanyName(lc.getCompanyName());
 		loanCompanyEnsure
 				.setFoundDate(DateUtil.stringToDate(lc.getFoundDate()));
@@ -127,6 +147,8 @@ public final class LoanTypeConvertUtil {
 		loanCompanyEnsure.setTaxRegisterCodeUrl(lc.getTaxRegisterCodeUrl());
 		loanCompanyEnsure.setLicenseUrl(lc.getLicenseUrl());
 		loanCompanyEnsure.setLegalPersonUrl(lc.getLegalPersonUrl());
+		loanCompanyEnsure.setRegAddress(lc.getRegAddress());
+		loanCompanyEnsure.setOfficeAddress(lc.getOfficeAddress());
 		return loanCompanyEnsure;
 	}
 
@@ -173,6 +195,9 @@ public final class LoanTypeConvertUtil {
 		loanPersonEnsure.setSpouseRegisteredUrl(lp.getSpouseRegisteredUrl());
 		loanPersonEnsure.setSpouseIdCardUrl(lp.getSpouseIdCardUrl());
 		loanPersonEnsure.setMarriageUrl(lp.getMarriageUrl());
+		loanPersonEnsure.setCarPurchaseDate(lp.getCarPurchaseDate());
+		loanPersonEnsure.setCarBrand(lp.getCarBrand());
+
 		return loanPersonEnsure;
 	}
 }

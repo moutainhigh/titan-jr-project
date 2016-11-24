@@ -28,6 +28,7 @@
             parameterType="com.fangcang.titanjr.entity.LoanCreditOrder">
             select `id`, 
             `orderno`,
+            `orgcode`,
             `daylimit`, 
             `amount`, 
             `actualamount`,
@@ -51,17 +52,13 @@
 	            <if test="status !=null">
 	                and status = #{status}
 	            </if>
-	            <if test="rsorgId !=null">
-	                and rsorgid = #{rsorgId}
+	            <if test="orgCode !=null">
+	                and orgcode = #{orgCode}
 	            </if>
 	        </where>
 
     </select>
     
-	<resultMap type="" id="">
-	
-	
-	</resultMap>
 
 	<select id="queryLoanCreditCompanyOrder" parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
 		select 

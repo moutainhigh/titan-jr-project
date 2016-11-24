@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.dto.bean.LoanCompanyAppendInfo;
 import com.fangcang.titanjr.dto.bean.LoanCompanyEnsureBean;
 import com.fangcang.titanjr.dto.bean.LoanCompanyLeaseBean;
 import com.fangcang.titanjr.dto.bean.LoanControllDataBean;
@@ -27,12 +29,14 @@ import com.fangcang.titanjr.dto.bean.LoanCreditCompanyBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanMainBusinessDataBean;
 import com.fangcang.titanjr.dto.bean.LoanPersonEnsureBean;
+import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
 import com.fangcang.titanjr.dto.response.FTPConfigResponse;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
 import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
+import com.fangcang.util.StringUtil;
 
 /**
  * 贷款授信控制器
@@ -239,159 +243,176 @@ public class FinancialLoanCreditController extends BaseController {
 	@RequestMapping(value = "/getCreditData", method = RequestMethod.GET)
 	public String getCreditData() {
 
-		// LoanCreditCompany company = new LoanCreditCompany();
-		GetCreditInfoResponse company = new GetCreditInfoResponse();
+		GetCreditInfoRequest req = new GetCreditInfoRequest();
+		req.setOrgCode(this.getUserId());
 
-		LoanCreditOrderBean creditOrder = new LoanCreditOrderBean();
-		creditOrder.setAssureType(2);
-		company.setCreditOrder(creditOrder);
+		GetCreditInfoResponse creditInfoResponse = financialLoanCreditService
+				.getCreditOrderInfo(req);
 
-		LoanCreditCompanyBean creditCompany = new LoanCreditCompanyBean();
-		creditCompany.setName("taogegege");
-		creditCompany.setContactName("xcxcxc");
-		creditCompany.setContactPhone("13544411111");
-		creditCompany.setOrgSize(2);
-		creditCompany.setLegalceType(2);
-		creditCompany.setLegalName("taoge");
-		creditCompany.setTaxRegNo("32423423");
-		creditCompany.setLicense("55555555555555");
-		creditCompany.setRegAccount("3453453433#@333.com");
-		creditCompany.setOrgCode("333333");
-		creditCompany.setEmpSize(150);
-		creditCompany.setLegalNo("228828383883");
-		creditCompany.setOfficeAddress("河北/石家庄/长安区/3453");
-		creditCompany.setRegAddress("内蒙古/呼和浩特/新城区/45345");
-		creditCompany.setRegDate("2011-11-21");
-		creditCompany.setStartDate("2012-12-11");
+		return JsonConversionTool.toJson(creditInfoResponse);
+	}
 
-		creditCompany.setAccountUrl("account.jpg");
-		creditCompany.setOfficeUrl("office.jpg");
-		creditCompany.setCreditUrl("credit.jpg");
-		creditCompany.setLegalNoUrl("legalno.jpg");
-		creditCompany.setLicenseUrl("license.jpg");
-		creditCompany.setOfficeNoUrl("officeno.jpg");
-		creditCompany.setWaterUrl("water.jpg");
-		creditCompany.setOrgCodeUrl("orgcode.jpg");
-		creditCompany.setTaxRegUrl("taxregno.jpg");
+	private LoanCreditSaveRequest getLoanCreditSaveReq(String companyData,
+			String companyAppendData, String companyEnsureData,
+			String companyAccessoryData) {
+		LoanCreditSaveRequest req = new LoanCreditSaveRequest();
 
-		LoanCompanyLeaseBean companyLease = new LoanCompanyLeaseBean();
-		companyLease.setLeaseType("1");
-		companyLease.setBeginLeaseDate("2012-10");
-		companyLease.setEndLeaseDate("2013-10");
-		companyLease.setHousingArea("10");
-		companyLease.setRemark("zczxcz");
-		companyLease.setLeaseAddress("江西/南昌/东湖区/2345234523");
-		companyLease.setPaymentMethod("dsafsdf");
-		companyLease.setRental("xxxxx");
-
-		creditCompany.setCompanyLease(companyLease);
-
-		List<LoanControllDataBean> controllDatas = new ArrayList<LoanControllDataBean>();
-
-		for (int i = 0; i < 5; i++) {
-			LoanControllDataBean d = new LoanControllDataBean();
-			d.setContributionAmount("1000" + i);
-			d.setEquityRatio("22222" + i);
-			d.setShareholderName("zxczxczcx" + i);
-			controllDatas.add(d);
+		req.setOrgCode(this.getUserId());
+		// 企业信息
+		if (StringUtil.isValidString(companyData)) {
+			LoanCreditCompanyBean companyBean = JsonConversionTool.toObject(
+					companyData, LoanCreditCompanyBean.class);
+			req.setCreditCompany(companyBean);
 		}
-		creditCompany.setControllDatas(controllDatas);
 
-		List<LoanCooperationCompanyBean> cooperationCompanyInfos = new ArrayList<LoanCooperationCompanyBean>();
+		// 企业附加信息
+		if (StringUtil.isValidString(companyAppendData)) {
+			LoanCompanyAppendInfo appendInfo = new LoanCompanyAppendInfo();
 
-		for (int i = 0; i < 6; i++) {
-			LoanCooperationCompanyBean d = new LoanCooperationCompanyBean();
-			d.setCooperation("1");
-			d.setCooperationName("zxcdsfds" + i);
-			d.setCooperationYears("2011" + i);
-			d.setSaleProportion("xczx" + i);
-			d.setSettlement("zxczcxz" + i);
-			d.setYearAnnualSale("rewrwqerwqe" + i);
-			cooperationCompanyInfos.add(d);
+			Map<String, String> jsonMap = JsonConversionTool.toObject(
+					companyAppendData, Map.class);
+
+			Object contorlObj = jsonMap.get("controllDatas");
+
+			String controllDatasJson = contorlObj instanceof List ? JsonConversionTool
+					.toJson(contorlObj) : JsonConversionTool
+					.toJson(new Object[] { contorlObj });
+
+			Object cooObj = jsonMap.get("cooperationCompanyInfos");
+
+			String cooperationCompanyInfosJson = cooObj instanceof List ? JsonConversionTool
+					.toJson(cooObj) : JsonConversionTool
+					.toJson(new Object[] { cooObj });
+
+			Object mainObj = jsonMap.get("mainBusinessDatas");
+
+			String mainBusinessDatasJson = mainObj instanceof List ? JsonConversionTool
+					.toJson(mainObj) : JsonConversionTool
+					.toJson(new Object[] { mainObj });
+
+			String companyLease = JsonConversionTool.toJson(jsonMap
+					.get("companyLease"));
+
+			if (StringUtil.isValidString(controllDatasJson)) {
+				List<LoanControllDataBean> controllDataBeans = JsonConversionTool
+						.toObjectList(controllDatasJson,
+								LoanControllDataBean.class);
+				if (CollectionUtils.isNotEmpty(controllDataBeans)) {
+					appendInfo.setControllDatas(controllDataBeans);
+				}
+			}
+
+			if (StringUtil.isValidString(cooperationCompanyInfosJson)) {
+				List<LoanCooperationCompanyBean> cooperationBeans = JsonConversionTool
+						.toObjectList(cooperationCompanyInfosJson,
+								LoanCooperationCompanyBean.class);
+				if (CollectionUtils.isNotEmpty(cooperationBeans)) {
+					appendInfo.setCooperationCompanyInfos(cooperationBeans);
+				}
+			}
+
+			if (StringUtil.isValidString(mainBusinessDatasJson)) {
+				List<LoanMainBusinessDataBean> mainBusinessBeans = JsonConversionTool
+						.toObjectList(mainBusinessDatasJson,
+								LoanMainBusinessDataBean.class);
+				if (CollectionUtils.isNotEmpty(mainBusinessBeans)) {
+					appendInfo.setMainBusinessDatas(mainBusinessBeans);
+				}
+			}
+
+			if (StringUtil.isValidString(companyLease)) {
+				LoanCompanyLeaseBean leaseBean = JsonConversionTool.toObject(
+						companyLease, LoanCompanyLeaseBean.class);
+				if (leaseBean != null) {
+					appendInfo.setCompanyLease(leaseBean);
+				}
+			}
+			req.setCompanyAppendInfo(appendInfo);
 		}
-		creditCompany.setCooperationCompanyInfos(cooperationCompanyInfos);
-
-		List<LoanMainBusinessDataBean> mainBusinessDatas = new ArrayList<LoanMainBusinessDataBean>();
-
-		for (int i = 0; i < 3; i++) {
-			LoanMainBusinessDataBean d = new LoanMainBusinessDataBean();
-			d.setMainAnnualSale("adsfasd" + i);
-			d.setMainProductsOrService("zxc" + i);
-			d.setMainSaleProportion("444444" + i);
-			mainBusinessDatas.add(d);
+		String assureType = null;
+		// 企业担保信息
+		if (StringUtil.isValidString(companyEnsureData)) {
+			Map<String, String> jsonMap = JsonConversionTool.toObject(
+					companyEnsureData, Map.class);
+			assureType = jsonMap.get("assureType");
+			if (StringUtil.isValidString(assureType)) {
+				String loanPersonEnsure = JsonConversionTool.toJson(jsonMap
+						.get("loanPersonEnsure"));
+				String companyEnsure = JsonConversionTool.toJson(jsonMap
+						.get("companyEnsure"));
+				// 自然人担保
+				if ("1".equals(assureType)) {
+					if (StringUtil.isValidString(loanPersonEnsure)) {
+						LoanPersonEnsureBean loanPersonEnsureBean = JsonConversionTool
+								.toObject(loanPersonEnsure,
+										LoanPersonEnsureBean.class);
+						req.setLoanPersonEnsure(loanPersonEnsureBean);
+					}
+					// 企业担保
+				} else if ("2".equals(assureType)) {
+					if (StringUtil.isValidString(companyEnsure)) {
+						LoanCompanyEnsureBean loanCompanyEnsureBean = JsonConversionTool
+								.toObject(companyEnsure,
+										LoanCompanyEnsureBean.class);
+						req.setCompanyEnsure(loanCompanyEnsureBean);
+					}
+				}
+			}
 		}
-		creditCompany.setMainBusinessDatas(mainBusinessDatas);
 
-		company.setCreditCompany(creditCompany);
+		// 企业担保信息
+		if (StringUtil.isValidString(companyAccessoryData)) {
+			Map<String, String> jsonMap = JsonConversionTool.toObject(
+					companyAccessoryData, Map.class);
 
-		LoanPersonEnsureBean loanPersonEnsure = new LoanPersonEnsureBean();
-		loanPersonEnsure.setCarBrand("3asdfa");
-		loanPersonEnsure.setCarPropertyType(2);
-		loanPersonEnsure.setCarPurchaseDate("2012-12");
-		loanPersonEnsure.setCurrentLiveaAdress("江西/南昌/东湖区/2345234523");
-		loanPersonEnsure.setFirstContactName("asdfasd");
-		loanPersonEnsure.setFirstContactPhone("1254122111");
-		loanPersonEnsure.setGraduateSchool("3452345234");
-		loanPersonEnsure.setHaveChildren(1);
-		loanPersonEnsure.setHighestEducation(2);
-		loanPersonEnsure.setHousePropertyType(2);
-		loanPersonEnsure.setIdCardUrl("p_idcard.jpg");
-		loanPersonEnsure.setIndustry("sdfasd");
-		loanPersonEnsure.setMarriageStatus(2);
-		loanPersonEnsure.setMarriageUrl("p_marriage.jpg");
-		loanPersonEnsure.setMobilenNmber("12441111111");
-		loanPersonEnsure.setNationalIdentityNumber("sadfas");
-		loanPersonEnsure.setNativePlace("asdaaa");
-		loanPersonEnsure.setOccupation("zxczxc");
-		loanPersonEnsure.setOfficeAddress("内蒙古/呼和浩特/新城区/45345");
-		loanPersonEnsure.setOrderNo("asfdasd");
-		loanPersonEnsure.setOtherProperty("asdfasd");
-		loanPersonEnsure.setPersonName("taogege");
-		loanPersonEnsure.setPropertyRemark("aaaddd");
-		loanPersonEnsure.setRegisteredUrl("p_registered.jpg");
-		loanPersonEnsure.setRelationToguarantee1(1);
-		loanPersonEnsure.setRelationToguarantee2(2);
-		loanPersonEnsure.setSecondContactName("zczxc");
-		loanPersonEnsure.setSecondContactPhone("12544444");
-		loanPersonEnsure.setSpouseIdCardUrl("p_spouseidcard.jpg");
-		loanPersonEnsure.setSpouseRegisteredUrl("p_spousereg.jpg");
-		loanPersonEnsure.setWorkCompany("asdfasd");
-		loanPersonEnsure.setWorktelePhone("asdfasdfa");
-		loanPersonEnsure.setYearsWorking(1);
+			String creditCompany = JsonConversionTool.toJson(jsonMap
+					.get("creditCompany"));
+			String loanPersonEnsure = JsonConversionTool.toJson(jsonMap
+					.get("loanPersonEnsure"));
+			String companyEnsure = JsonConversionTool.toJson(jsonMap
+					.get("companyEnsure"));
+			// 贷款企业信息
+			if (StringUtil.isValidString(creditCompany)) {
 
-		company.setLoanPersonEnsure(loanPersonEnsure);
+				creditCompany = JsonConversionTool.mergeJson(companyData,
+						creditCompany);
+				LoanCreditCompanyBean companyBean = JsonConversionTool
+						.toObject(creditCompany, LoanCreditCompanyBean.class);
+				req.setCreditCompany(companyBean);
+			}
 
-		LoanCompanyEnsureBean companyEnsure = new LoanCompanyEnsureBean();
-		companyEnsure.setBusinessLicense("asdfa");
-		companyEnsure.setBusinessLicenseUrl("c_bulicense.jpg");
-		companyEnsure.setCompanyName("taogeg");
-		companyEnsure.setContactPhone("zxczxcz");
-		companyEnsure.setEnterpriseScale(1);
-		companyEnsure.setFoundDate("2012-12-1");
-		companyEnsure.setLegalPersonCertificateNumber("sadfas");
-		companyEnsure.setLegalPersonCertificateType(2);
-		companyEnsure.setLegalPersonName("asdfa");
-		companyEnsure.setLegalPersonUrl("c_legalidcard.jpg");
-		companyEnsure.setLicenseUrl("c_license.jpg");
-		companyEnsure.setContactName("adddddddddd");
-		companyEnsure.setOfficeAddress("内蒙古/呼和浩特/新城区/45345");
-		companyEnsure.setOrgCodeCertificate("asdfasdfa");
-		companyEnsure.setOrgCodeCertificateUrl("c_orgcode.jpg");
-		companyEnsure.setRegAddress("内蒙古/呼和浩特/新城区/45345");
-		companyEnsure.setRegisterAccount("dsfas");
-		companyEnsure.setRegisterDate("2012-11-22");
-		companyEnsure.setTaxRegisterCode("werqwe");
-		companyEnsure.setTaxRegisterCodeUrl("c_taxregno.jpg");
-		companyEnsure.setUserId("tdddddd");
+			String loanPersonEnsureJson = null;
+			String companyEnsureJson = null;
+			if (StringUtil.isValidString(companyEnsureData)) {
+				jsonMap = JsonConversionTool.toObject(companyEnsureData,
+						Map.class);
+				loanPersonEnsureJson = JsonConversionTool.toJson(jsonMap
+						.get("loanPersonEnsure"));
+				companyEnsureJson = JsonConversionTool.toJson(jsonMap
+						.get("companyEnsure"));
+			}
+			// 担保自然人附件信息
+			if ((assureType == null || "1".equals(assureType))
+					&& StringUtil.isValidString(loanPersonEnsure)) {
 
-		company.setCompanyEnsure(companyEnsure);
-		// // 企业担保信息
-		// private LoanCompanyEnsure companyEnsure;
-		//
-		// // 授信企业信息
-		// private LoanCreditCompany creditCompany;
+				loanPersonEnsure = JsonConversionTool.mergeJson(
+						loanPersonEnsureJson, loanPersonEnsure);
+				LoanPersonEnsureBean loanPersonEnsureBean = JsonConversionTool
+						.toObject(loanPersonEnsure, LoanPersonEnsureBean.class);
+				req.setLoanPersonEnsure(loanPersonEnsureBean);
+			}
+			// 担保企业附件信息
+			if ((assureType == null || "2".equals(assureType))
+					&& StringUtil.isValidString(companyEnsure)) {
 
-		return JsonConversionTool.toJson(company);
+				companyEnsure = JsonConversionTool.mergeJson(companyEnsureJson,
+						companyEnsure);
+				LoanCompanyEnsureBean loanCompanyEnsureBean = JsonConversionTool
+						.toObject(companyEnsure, LoanCompanyEnsureBean.class);
+				req.setCompanyEnsure(loanCompanyEnsureBean);
+			}
+		}
+		return req;
 	}
 
 	/**
@@ -404,48 +425,16 @@ public class FinancialLoanCreditController extends BaseController {
 	public String saveCreditData(String companyData, String companyAppendData,
 			String companyEnsureData, String companyAccessoryData) {
 
-		LoanCreditCompanyBean companyBean = JsonConversionTool.toObject(
-				companyData, LoanCreditCompanyBean.class);
-		LoanCreditSaveRequest req = new LoanCreditSaveRequest();
-
-		req.setCreditCompany(companyBean);
-
 		LoanCreditSaveResponse saveResponse = financialLoanCreditService
-				.saveCreditOrder(req);
+				.saveCreditOrder(this.getLoanCreditSaveReq(companyData,
+						companyAppendData, companyEnsureData,
+						companyAccessoryData));
 
 		if (!saveResponse.isResult()) {
 			putSysError(saveResponse.getReturnMessage());
 		} else {
 			putSuccess();
 		}
-		// Map<String, String> map1 =
-		// JsonConversionTool.toObject(companyAppendData, Map.class);
-		//
-		//
-		// String companyJson = JsonConversionTool.mergeJson(companyData);
-		//
-		//
-		//
-		// System.out.println(companyData);
-		//
-		//
-		// Map<String, String> map = JsonConversionTool.toObject(companyData,
-		// Map.class);
-		//
-		// System.out.println(map);
-		//
-		// System.out.println(companyAppendData);
-		// if(companyAppendData != null)
-		// {
-		// Map<String, String> map1 =
-		// JsonConversionTool.toObject(companyAppendData, Map.class);
-		//
-		// System.out.println(map1);
-		// }
-		//
-		// System.out.println(companyEnsureData);
-		// System.out.println(companyAccessoryData);
-
 		return this.toJson();
 	}
 
@@ -454,10 +443,21 @@ public class FinancialLoanCreditController extends BaseController {
 			String companyAppendData, String companyEnsureData,
 			String companyAccessoryData) {
 
-		System.out.println(companyData);
-		System.out.println(companyAppendData);
-		System.out.println(companyEnsureData);
-		System.out.println(companyAccessoryData);
+		LoanCreditSaveRequest creditSaveRequest = this.getLoanCreditSaveReq(
+				companyData, companyAppendData, companyEnsureData,
+				companyAccessoryData);
+		LoanCreditOrderBean creditOrder = new LoanCreditOrderBean();
+		creditOrder.setStatus(2);
+		creditSaveRequest.setCreditOrder(creditOrder);
+		LoanCreditSaveResponse saveResponse = financialLoanCreditService
+				.saveCreditOrder(creditSaveRequest);
+
+		if (!saveResponse.isResult()) {
+			putSysError(saveResponse.getReturnMessage());
+		} else {
+			putSuccess();
+		}
+
 		return "/loan/credit-apply/credit-apply-result";
 	}
 }

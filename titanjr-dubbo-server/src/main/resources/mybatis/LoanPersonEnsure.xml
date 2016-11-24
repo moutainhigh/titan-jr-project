@@ -4,6 +4,7 @@
 
 
     <resultMap id="loanPersonEnsure" type="com.fangcang.titanjr.entity.LoanPersonEnsure">
+    	  <result property="orgCode" column="orgcode"/>
         <result property="orderNo" column="orderno"/>
         <result property="personName" column="personname"/>
         <result property="nationalIdentityNumber" column="nationalidentitynumber"/>
@@ -35,6 +36,8 @@
         <result property="spouseRegisteredUrl" column="spouseregisteredurl"/>
         <result property="spouseIdCardUrl" column="spouseidcardurl"/>
         <result property="marriageUrl" column="marriageurl"/>
+        <result property="carPurchaseDate" column="carpurchasedate"/>
+        <result property="carBrand" column="carbrand"/>
     </resultMap>
 
 
@@ -50,10 +53,16 @@
         `secondcontactname`, `secondcontactphone`,
         `relationtoguarantee2`, `idcardurl`, `registeredurl`,
         `spouseregisteredurl`, `spouseidcardurl`,
-        `marriageurl`
-        from t_loan_personensure
+        `marriageurl`,`carpurchasedate`,`carbrand`
+        from t_loan_personensure  
         <where>
-            orderno = #{orderNo}
+        	1=1
+             <if test="orgCode !=null">
+                and orgcode = #{orgCode}
+            </if>
+              <if test="orderNo !=null">
+                and orderno = #{orderNo}
+            </if>
         </where>
 
     </select>
@@ -92,16 +101,23 @@
             <if test="spouseRegisteredUrl != null">spouseregisteredurl= #{spouseRegisteredUrl},</if>
             <if test="spouseIdCardUrl != null">spouseidcardurl= #{spouseIdCardUrl},</if>
             <if test="marriageUrl != null">marriageurl= #{marriageUrl},</if>
+             <if test="carPurchaseDate != null">carpurchasedate= #{carPurchaseDate},</if>
+              <if test="carBrand != null">carbrand= #{carBrand},</if>
+            
             <if test="orderNo != null">orderno= #{orderNo}</if>
         </set>
         <where>
             orderno = #{orderNo} <!--orderNo一定不为空-->
+              <if test="orgCode !=null">
+                and orgcode = #{orgCode}
+            </if>
         </where>
     </update>
 
     <insert id="insertLoanPersonEnsure" parameterType="com.fangcang.titanjr.entity.LoanPersonEnsure">
 	  INSERT INTO `t_loan_personensure` (
 	   `orderno`,
+	   `orgcode`,
 	   `personname`,
 	   `nationalidentitynumber`,
 	   `mobilenumber`,
@@ -131,11 +147,14 @@
 	   `registeredurl`,
 	   `spouseregisteredurl`,
 	   `spouseidcardurl`,
-	   `marriageurl`
+	   `marriageurl`,
+	   `carpurchasedate`,
+	   `carbrand`
      )
      VALUES
      	(
      	 	#{orderNo},
+     	 	#{orgCode},
      		#{personName},
      		#{nationalIdentityNumber},
      		#{mobileNumber},
@@ -165,7 +184,9 @@
      		#{registeredUrl},
      		#{spouseRegisteredUrl},
      		#{spouseIdCardUrl},
-     		#{marriageUrl}
+     		#{marriageUrl},
+     		#{carPurchaseDate},
+     		#{carBrand}
      	)
     </insert>
 

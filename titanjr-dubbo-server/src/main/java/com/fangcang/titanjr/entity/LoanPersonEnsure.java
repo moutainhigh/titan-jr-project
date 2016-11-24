@@ -1,6 +1,8 @@
 package com.fangcang.titanjr.entity;
+
 /**
  * 个人担保实体对象
+ * 
  * @author wengxitao
  *
  */
@@ -8,15 +10,17 @@ public class LoanPersonEnsure {
 
 	private String orderNo;// 授信单号
 
+	private String orgCode;
+
 	private String personName;// 姓名
 
 	private String nationalIdentityNumber;// 身份证
 
 	private String mobileNumber;// 手机号码
 
-	private int marriageStatus;// 1 未婚 2 已婚
+	private Integer marriageStatus;// 1 未婚 2 已婚
 
-	private int haveChildren;// 1 无子女 2 有子女
+	private Integer haveChildren;// 1 无子女 2 有子女
 
 	private String nativePlace;// 籍贯
 
@@ -24,9 +28,9 @@ public class LoanPersonEnsure {
 
 	private String graduateSchool;// 毕业院校
 
-	private int highestEducation;// 1 小学 2 初中 3高中 4 中专 5 大专 6 本科 6 硕士 7 博士
+	private Integer highestEducation;// 1 小学 2 初中 3高中 4 中专 5 大专 6 本科 6 硕士 7 博士
 
-	private int yearsWorking;// 1 1-3 2 3-5 3 5-10 4 10以上
+	private Integer yearsWorking;// 1 1-3 2 3-5 3 5-10 4 10以上
 
 	private String workCompany; // 工作单位
 
@@ -38,9 +42,9 @@ public class LoanPersonEnsure {
 
 	private String industry;// 所处行业
 
-	private int carPropertyType;// 车产情况，1 无车， 2有车无贷，3有车有贷
+	private Integer carPropertyType;// 车产情况，1 无车， 2有车无贷，3有车有贷
 
-	private int housePropertyType;// 1 无房 2 有房有贷 3 有房无贷
+	private Integer housePropertyType;// 1 无房 2 有房有贷 3 有房无贷
 
 	private String otherProperty;// 其他资产
 
@@ -50,13 +54,13 @@ public class LoanPersonEnsure {
 
 	private String firstContactPhone;// 第一联系人电话
 
-	private int relationToGuarantee1;// 1 父母 2 子女 3 配偶 4 朋友 5 同时 6 其他
+	private Integer relationToGuarantee1;// 1 父母 2 子女 3 配偶 4 朋友 5 同时 6 其他
 
 	private String secondContactName;// 第二联系人姓名
 
 	private String secondContactPhone;// 第二联系人电话
 
-	private int relationToGuarantee2;// 1 父母 2 子女 3 配偶 4 朋友 5 同时 6 其他
+	private Integer relationToGuarantee2;// 1 父母 2 子女 3 配偶 4 朋友 5 同时 6 其他
 
 	private String idCardUrl;// 担保人身份证URL
 
@@ -67,6 +71,34 @@ public class LoanPersonEnsure {
 	private String spouseIdCardUrl;// 配偶身份证
 
 	private String marriageUrl;// 结婚证
+
+	private String carPurchaseDate;// 汽车购买年份
+
+	private String carBrand;// 汽车品牌
+
+	public String getCarPurchaseDate() {
+		return carPurchaseDate;
+	}
+
+	public void setCarPurchaseDate(String carPurchaseDate) {
+		this.carPurchaseDate = carPurchaseDate;
+	}
+
+	public String getCarBrand() {
+		return carBrand;
+	}
+
+	public void setCarBrand(String carBrand) {
+		this.carBrand = carBrand;
+	}
+
+	public String getOrgCode() {
+		return orgCode;
+	}
+
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}
 
 	public String getOrderNo() {
 		return orderNo;
@@ -92,19 +124,19 @@ public class LoanPersonEnsure {
 		this.nationalIdentityNumber = nationalIdentityNumber;
 	}
 
-	public int getMarriageStatus() {
+	public Integer getMarriageStatus() {
 		return marriageStatus;
 	}
 
-	public void setMarriageStatus(int marriageStatus) {
+	public void setMarriageStatus(Integer marriageStatus) {
 		this.marriageStatus = marriageStatus;
 	}
 
-	public int getHaveChildren() {
+	public Integer getHaveChildren() {
 		return haveChildren;
 	}
 
-	public void setHaveChildren(int haveChildren) {
+	public void setHaveChildren(Integer haveChildren) {
 		this.haveChildren = haveChildren;
 	}
 
@@ -140,11 +172,11 @@ public class LoanPersonEnsure {
 		this.workTelephone = workTelephone;
 	}
 
-	public int getRelationToGuarantee1() {
+	public Integer getRelationToGuarantee1() {
 		return relationToGuarantee1;
 	}
 
-	public void setRelationToGuarantee1(int relationToGuarantee1) {
+	public void setRelationToGuarantee1(Integer relationToGuarantee1) {
 		this.relationToGuarantee1 = relationToGuarantee1;
 	}
 
@@ -152,11 +184,11 @@ public class LoanPersonEnsure {
 		this.secondContactPhone = secondContactPhone;
 	}
 
-	public int getRelationToGuarantee2() {
+	public Integer getRelationToGuarantee2() {
 		return relationToGuarantee2;
 	}
 
-	public void setRelationToGuarantee2(int relationToGuarantee2) {
+	public void setRelationToGuarantee2(Integer relationToGuarantee2) {
 		this.relationToGuarantee2 = relationToGuarantee2;
 	}
 
@@ -168,19 +200,19 @@ public class LoanPersonEnsure {
 		this.graduateSchool = graduateSchool;
 	}
 
-	public int getHighestEducation() {
+	public Integer getHighestEducation() {
 		return highestEducation;
 	}
 
-	public void setHighestEducation(int highestEducation) {
+	public void setHighestEducation(Integer highestEducation) {
 		this.highestEducation = highestEducation;
 	}
 
-	public int getYearsWorking() {
+	public Integer getYearsWorking() {
 		return yearsWorking;
 	}
 
-	public void setYearsWorking(int yearsWorking) {
+	public void setYearsWorking(Integer yearsWorking) {
 		this.yearsWorking = yearsWorking;
 	}
 
@@ -216,19 +248,19 @@ public class LoanPersonEnsure {
 		this.industry = industry;
 	}
 
-	public int getCarPropertyType() {
+	public Integer getCarPropertyType() {
 		return carPropertyType;
 	}
 
-	public void setCarPropertyType(int carPropertyType) {
+	public void setCarPropertyType(Integer carPropertyType) {
 		this.carPropertyType = carPropertyType;
 	}
 
-	public int getHousePropertyType() {
+	public Integer getHousePropertyType() {
 		return housePropertyType;
 	}
 
-	public void setHousePropertyType(int housePropertyType) {
+	public void setHousePropertyType(Integer housePropertyType) {
 		this.housePropertyType = housePropertyType;
 	}
 

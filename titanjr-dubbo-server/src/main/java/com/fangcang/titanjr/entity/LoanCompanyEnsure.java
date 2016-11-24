@@ -6,201 +6,235 @@ import java.util.Date;
  * Created by zhaoshan on 2016/11/3.
  */
 public class LoanCompanyEnsure {
-    private Long id;
-    //增加机构编码
-    private String userId;
-    private String companyName;
-    private Date foundDate;
-    //企业规模 1 1-50 2 50-100 3 100-500 4 500-1000 5 1000以上
-    private Integer enterpriseScale;
-    //营业执照
-    private String businessLicense;
-    //税务登记证
-    private String taxRegisterCode;
-    //组织机构代码证
-    private String orgCodeCertificate;
-    //平台注册账号
-    private String registerAccount;
-    //平台注册日期
-    private Date registerDate;
-    //法人姓名
-    private String legalPersonName;
-    //法人证件类型
-    private Integer legalPersonCertificateType;
-    //法人证件号码
-    private String legalPersonCertificateNumber;
-    //联系人姓名
-    private String contactName;
-    //联系人电话
-    private String contactPhone;
-    //营业执照地址
-    private String businessLicenseUrl;
-    //机构代码证地址
-    private String orgCodeCertificateUrl;
-    //税务登记证地址
-    private String taxRegisterCodeUrl;
-    //开户许可证地址
-    private String licenseUrl;
-    //法人身份证地址--不一定是身份证可能是护照
-    private String legalPersonUrl;
 
-    public String getUserId() {
-        return userId;
-    }
+	private Long id;
+	// 授信单号
+	private String orderNo;
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+	// 增加机构编码
+	private String orgCode;
+	private String companyName;
+	private Date foundDate;
+	// 企业规模 1 1-50 2 50-100 3 100-500 4 500-1000 5 1000以上
+	private Integer enterpriseScale;
+	// 营业执照
+	private String businessLicense;
+	// 税务登记证
+	private String taxRegisterCode;
+	// 组织机构代码证
+	private String orgCodeCertificate;
+	// 平台注册账号
+	private String registerAccount;
+	// 平台注册日期
+	private Date registerDate;
+	// 法人姓名
+	private String legalPersonName;
+	// 法人证件类型
+	private Integer legalPersonCertificateType;
+	// 法人证件号码
+	private String legalPersonCertificateNumber;
+	// 联系人姓名
+	private String contactName;
+	// 联系人电话
+	private String contactPhone;
+	// 营业执照地址
+	private String businessLicenseUrl;
+	// 机构代码证地址
+	private String orgCodeCertificateUrl;
+	// 税务登记证地址
+	private String taxRegisterCodeUrl;
+	// 开户许可证地址
+	private String licenseUrl;
+	// 法人身份证地址--不一定是身份证可能是护照
+	private String legalPersonUrl;
 
-    public Long getId() {
-        return id;
-    }
+	// 企业办公地址
+	private String officeAddress;
+	// 企业注册地址
+	private String regAddress;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public String getOfficeAddress() {
+		return officeAddress;
+	}
 
-    public String getCompanyName() {
-        return companyName;
-    }
+	public void setOfficeAddress(String officeAddress) {
+		this.officeAddress = officeAddress;
+	}
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
+	public String getRegAddress() {
+		return regAddress;
+	}
 
-    public Date getFoundDate() {
-        return foundDate;
-    }
+	public void setRegAddress(String regAddress) {
+		this.regAddress = regAddress;
+	}
 
-    public void setFoundDate(Date foundDate) {
-        this.foundDate = foundDate;
-    }
+	public String getOrderNo() {
+		return orderNo;
+	}
 
-    public Integer getEnterpriseScale() {
-        return enterpriseScale;
-    }
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
 
-    public void setEnterpriseScale(Integer enterpriseScale) {
-        this.enterpriseScale = enterpriseScale;
-    }
+	public String getOrgCode() {
+		return orgCode;
+	}
 
-    public String getBusinessLicense() {
-        return businessLicense;
-    }
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}
 
-    public void setBusinessLicense(String businessLicense) {
-        this.businessLicense = businessLicense;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public String getTaxRegisterCode() {
-        return taxRegisterCode;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setTaxRegisterCode(String taxRegisterCode) {
-        this.taxRegisterCode = taxRegisterCode;
-    }
+	public String getCompanyName() {
+		return companyName;
+	}
 
-    public String getOrgCodeCertificate() {
-        return orgCodeCertificate;
-    }
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
 
-    public void setOrgCodeCertificate(String orgCodeCertificate) {
-        this.orgCodeCertificate = orgCodeCertificate;
-    }
+	public Date getFoundDate() {
+		return foundDate;
+	}
 
-    public String getRegisterAccount() {
-        return registerAccount;
-    }
+	public void setFoundDate(Date foundDate) {
+		this.foundDate = foundDate;
+	}
 
-    public void setRegisterAccount(String registerAccount) {
-        this.registerAccount = registerAccount;
-    }
+	public Integer getEnterpriseScale() {
+		return enterpriseScale;
+	}
 
-    public Date getRegisterDate() {
-        return registerDate;
-    }
+	public void setEnterpriseScale(Integer enterpriseScale) {
+		this.enterpriseScale = enterpriseScale;
+	}
 
-    public void setRegisterDate(Date registerDate) {
-        this.registerDate = registerDate;
-    }
+	public String getBusinessLicense() {
+		return businessLicense;
+	}
 
-    public String getLegalPersonName() {
-        return legalPersonName;
-    }
+	public void setBusinessLicense(String businessLicense) {
+		this.businessLicense = businessLicense;
+	}
 
-    public void setLegalPersonName(String legalPersonName) {
-        this.legalPersonName = legalPersonName;
-    }
+	public String getTaxRegisterCode() {
+		return taxRegisterCode;
+	}
 
-    public Integer getLegalPersonCertificateType() {
-        return legalPersonCertificateType;
-    }
+	public void setTaxRegisterCode(String taxRegisterCode) {
+		this.taxRegisterCode = taxRegisterCode;
+	}
 
-    public void setLegalPersonCertificateType(Integer legalPersonCertificateType) {
-        this.legalPersonCertificateType = legalPersonCertificateType;
-    }
+	public String getOrgCodeCertificate() {
+		return orgCodeCertificate;
+	}
 
-    public String getLegalPersonCertificateNumber() {
-        return legalPersonCertificateNumber;
-    }
+	public void setOrgCodeCertificate(String orgCodeCertificate) {
+		this.orgCodeCertificate = orgCodeCertificate;
+	}
 
-    public void setLegalPersonCertificateNumber(String legalPersonCertificateNumber) {
-        this.legalPersonCertificateNumber = legalPersonCertificateNumber;
-    }
+	public String getRegisterAccount() {
+		return registerAccount;
+	}
 
-    public String getContactName() {
-        return contactName;
-    }
+	public void setRegisterAccount(String registerAccount) {
+		this.registerAccount = registerAccount;
+	}
 
-    public void setContactName(String contactName) {
-        this.contactName = contactName;
-    }
+	public Date getRegisterDate() {
+		return registerDate;
+	}
 
-    public String getContactPhone() {
-        return contactPhone;
-    }
+	public void setRegisterDate(Date registerDate) {
+		this.registerDate = registerDate;
+	}
 
-    public void setContactPhone(String contactPhone) {
-        this.contactPhone = contactPhone;
-    }
+	public String getLegalPersonName() {
+		return legalPersonName;
+	}
 
-    public String getBusinessLicenseUrl() {
-        return businessLicenseUrl;
-    }
+	public void setLegalPersonName(String legalPersonName) {
+		this.legalPersonName = legalPersonName;
+	}
 
-    public void setBusinessLicenseUrl(String businessLicenseUrl) {
-        this.businessLicenseUrl = businessLicenseUrl;
-    }
+	public Integer getLegalPersonCertificateType() {
+		return legalPersonCertificateType;
+	}
 
-    public String getOrgCodeCertificateUrl() {
-        return orgCodeCertificateUrl;
-    }
+	public void setLegalPersonCertificateType(Integer legalPersonCertificateType) {
+		this.legalPersonCertificateType = legalPersonCertificateType;
+	}
 
-    public void setOrgCodeCertificateUrl(String orgCodeCertificateUrl) {
-        this.orgCodeCertificateUrl = orgCodeCertificateUrl;
-    }
+	public String getLegalPersonCertificateNumber() {
+		return legalPersonCertificateNumber;
+	}
 
-    public String getTaxRegisterCodeUrl() {
-        return taxRegisterCodeUrl;
-    }
+	public void setLegalPersonCertificateNumber(
+			String legalPersonCertificateNumber) {
+		this.legalPersonCertificateNumber = legalPersonCertificateNumber;
+	}
 
-    public void setTaxRegisterCodeUrl(String taxRegisterCodeUrl) {
-        this.taxRegisterCodeUrl = taxRegisterCodeUrl;
-    }
+	public String getContactName() {
+		return contactName;
+	}
 
-    public String getLicenseUrl() {
-        return licenseUrl;
-    }
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
+	}
 
-    public void setLicenseUrl(String licenseUrl) {
-        this.licenseUrl = licenseUrl;
-    }
+	public String getContactPhone() {
+		return contactPhone;
+	}
 
-    public String getLegalPersonUrl() {
-        return legalPersonUrl;
-    }
+	public void setContactPhone(String contactPhone) {
+		this.contactPhone = contactPhone;
+	}
 
-    public void setLegalPersonUrl(String legalPersonUrl) {
-        this.legalPersonUrl = legalPersonUrl;
-    }
+	public String getBusinessLicenseUrl() {
+		return businessLicenseUrl;
+	}
+
+	public void setBusinessLicenseUrl(String businessLicenseUrl) {
+		this.businessLicenseUrl = businessLicenseUrl;
+	}
+
+	public String getOrgCodeCertificateUrl() {
+		return orgCodeCertificateUrl;
+	}
+
+	public void setOrgCodeCertificateUrl(String orgCodeCertificateUrl) {
+		this.orgCodeCertificateUrl = orgCodeCertificateUrl;
+	}
+
+	public String getTaxRegisterCodeUrl() {
+		return taxRegisterCodeUrl;
+	}
+
+	public void setTaxRegisterCodeUrl(String taxRegisterCodeUrl) {
+		this.taxRegisterCodeUrl = taxRegisterCodeUrl;
+	}
+
+	public String getLicenseUrl() {
+		return licenseUrl;
+	}
+
+	public void setLicenseUrl(String licenseUrl) {
+		this.licenseUrl = licenseUrl;
+	}
+
+	public String getLegalPersonUrl() {
+		return legalPersonUrl;
+	}
+
+	public void setLegalPersonUrl(String legalPersonUrl) {
+		this.legalPersonUrl = legalPersonUrl;
+	}
 }
