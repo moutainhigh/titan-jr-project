@@ -59,7 +59,6 @@
 
     </select>
     
-
 	<select id="queryLoanCreditCompanyOrder" resultType="com.fangcang.titanjr.dto.bean.CreditCompanyInfoDTO"  parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
 		select 
 			C.name,
@@ -76,6 +75,7 @@
 			<if test="status !=null"> and status = #{status}</if>
 		</where>
 	</select>
+	
 	<select id="getCreditOrderCount" resultType="Integer" parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
 		select 
 			count(1) 
