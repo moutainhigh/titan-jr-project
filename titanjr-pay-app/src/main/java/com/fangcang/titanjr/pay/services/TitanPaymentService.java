@@ -265,6 +265,7 @@ public class TitanPaymentService {
 				transOrderRequest.setOrderid(rechargeResultConfirmRequest.getOrderNo());
 				TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
 				if(transOrderDTO !=null){
+	        		rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getTradeamount()).add(new BigDecimal(transOrderDTO.getReceivedfee())).toString());
 					model.addAttribute("transOrderDTO", transOrderDTO);
 					FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 					organQueryRequest.setOrgCode(transOrderDTO.getPayeemerchant());
@@ -277,9 +278,6 @@ public class TitanPaymentService {
 			        if(!StringUtil.isValidString(rechargeResultConfirmRequest.getPayStatus())){//判断是本地回调
 			        	
 			        	boolean paySuccess = OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid());
-			        	if(transOrderDTO.getAmount() !=null){
-		        			rechargeResultConfirmRequest.setPayAmount(transOrderDTO.getAmount().toString());
-		        		}
 			        	rechargeResultConfirmRequest.setOrderPayTime(DateUtil.sdf5.format(transOrderDTO.getCreatetime()));
 			        	rechargeResultConfirmRequest.setPayMsg("付款失败");
 			        	if(paySuccess){

@@ -150,77 +150,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	private static Map<String, Object> mapLock = new ConcurrentHashMap<String, Object>();
 
 
-//	// 落单
-//	@Override
-//	public TransOrderCreateResponse operateRSTransOrder2(
-//			OrderRequest orderRequest) {
-//		TransOrderCreateResponse orderResponse = new TransOrderCreateResponse();
-//		try {
-//			log.info("落单参数" + JSONSerializer.toJSON(orderRequest));
-//			OrderOperateResponse orderOperateResponse = this
-//					.getOrderId(orderRequest);
-//			log.info("落单orderResponse返回结果:"
-//					+ JSONSerializer.toJSON(orderOperateResponse));
-//			// 测试一下
-//			if (orderOperateResponse != null) {
-//				orderResponse.setResult(false);
-//				orderResponse.setReturnCode(orderOperateResponse
-//						.getReturnCode());
-//				orderResponse.setReturnMessage(orderOperateResponse
-//						.getReturnMsg());
-//				if ((CommonConstant.OPERATE_SUCCESS)
-//						.equals(orderOperateResponse.getOperateStatus())) {
-//					if (StringUtil.isValidString(orderOperateResponse
-//							.getOrderid())) {
-//						if (orderRequest.getOpertype().equals(
-//								OperTypeEnum.Add_Order.getKey())) {// 添加订单
-//							orderRequest.setOrderid(orderOperateResponse
-//									.getOrderid());
-//							TitanTransOrder titanTransOrder = orderRequest2TitanTransOrder(orderRequest);
-//							orderResponse.setOrderNo(orderOperateResponse
-//									.getOrderid());
-//							int row = 0;
-//							try {
-//								row = titanTransOrderDao
-//										.insert(titanTransOrder);
-//							} catch (Exception e) {
-//								log.error("融数成功,本地操作订单失败" + e.getMessage(), e);
-//							}
-//							if (row < 1) {
-//								OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(
-//										titanTransOrder.getOrderid(),
-//										"融数落单成功 本地记录失败",
-//										OrderExceptionEnum.TransOrder_Insert,
-//										JSON.toJSONString(titanTransOrder));
-//								titanOrderService
-//										.saveOrderException(orderExceptionDTO);
-//							}
-//						}
-//
-//					} else if (orderOperateResponse.getOrderOperateInfoList() != null) {
-//						List<OrderOperateInfoDTO> orderOperateInfoList = new ArrayList<OrderOperateInfoDTO>();
-//						for (OrderOperateInfo OrderOperateInfo : orderOperateResponse
-//								.getOrderOperateInfoList()) {
-//							OrderOperateInfoDTO orderOperateInfoDTO = new OrderOperateInfoDTO();
-//							MyBeanUtil.copyProperties(orderOperateInfoDTO,
-//									OrderOperateInfo);
-//							orderOperateInfoList.add(orderOperateInfoDTO);
-//							orderResponse
-//									.setOrderOperateInfoList(orderOperateInfoList);
-//						}
-//					}
-//
-//					orderResponse.putSuccess();
-//				}
-//				return orderResponse;
-//			}
-//			orderResponse.putSysError();
-//		} catch (Exception e) {
-//			log.error(e.getMessage(), e);
-//		}
-//		return orderResponse;
-//	}
-
 	@Override
 	public LocalAddTransOrderResponse addLocalTransOrder(
 			TitanPaymentRequest titanPaymentRequest) {
@@ -1735,7 +1664,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		}catch(Exception e){
 			log.error("查询支付方式的配置出错"+e.getMessage(),e);
 		}
-		
 		return null;
 	}
 
