@@ -347,21 +347,6 @@ public class TitanPaymentController extends BaseController {
 			return CommonConstant.GATE_WAY_PAYGE;
 		}
 		
-		// 根据收银台ID查询对应的收银台信息
-//		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
-//		cashierDeskQueryRequest.setDeskId(Long.parseLong(titanPaymentRequest
-//				.getDeskId()));
-//		CashierDeskResponse response = titanCashierDeskService
-//				.queryCashierDesk(cashierDeskQueryRequest);
-//
-//		if (!(response.isResult() && CollectionUtils.isNotEmpty(response
-//				.getCashierDeskDTOList()))) {
-//			log.error("cashier desk is null!");
-//			model.addAttribute(CommonConstant.RETURN_MSG,
-//					TitanMsgCodeEnum.CASHIER_DESK_NOT_EXISTS.getResMsg());
-//			return CommonConstant.GATE_WAY_PAYGE;
-//		}
-
 		// 开始计算并设置费率
 		TitanRateComputeReq computeReq = new TitanRateComputeReq();
 		computeReq.setAmount(titanPaymentRequest.getPayAmount());

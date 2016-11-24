@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONSerializer;
 
@@ -99,7 +100,7 @@ public class TitanTradeController extends BaseController {
 	 */
 	@RequestMapping(value = "/titanPay", method = { RequestMethod.GET,
 			RequestMethod.POST })
-	public String titanPay(String orderInfo, String businessInfo, Model model) {
+	public String titanPay(String orderInfo, String businessInfo, Model model,HttpServletRequest request) {
 		getRequest().getSession();
 		
 		if (!StringUtil.isValidString(orderInfo)) {
@@ -126,6 +127,12 @@ public class TitanTradeController extends BaseController {
 				if(openOrgDTO==null){
 					model.addAttribute("msg",
 							TitanMsgCodeEnum.TITAN_ACCOUNT_NOT_EXISTS.getResMsg());
+					return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+				}
+				
+				if(!StringUtil.isValidString(openOrgDTO.getIp())||!openOrgDTO.getIp().equals(titanTradeService.getIp(request))){
+					model.addAttribute("msg",
+							TitanMsgCodeEnum.NO_PERMISSION.getResMsg());
 					return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 				}
 				
