@@ -14,11 +14,11 @@ public class LoanCreditOrderBean implements java.io.Serializable{
 
 	private String orgCode;// 授信金融机构ID
 
-	private int dayLimit;// 授信期限--应该在service中设置
+	private Integer dayLimit;// 授信期限--应该在service中设置
 
-	private long amount;// 申请授信金额
+	private Long amount;// 申请授信金额
 
-	private long actualAmount;// 实际授信金额
+	private Long actualAmount;// 实际授信金额
 
 	private Date reqTime;// 申请时间;
 
@@ -32,9 +32,9 @@ public class LoanCreditOrderBean implements java.io.Serializable{
 
 	private String urlKey;// 授信资料key
 
-	private int status;// 1 草稿 2 授信初审 3 授信终审 4 审核失败 5 授信成功
+	private Integer status;// 1 草稿 2 授信初审 3 授信终审 4 审核失败 5 授信成功
 
-	private int assureType;// 担保 1 个人 2 企业
+	private Integer assureType;// 担保 1 个人 2 企业
 
 	private Date firstAuditTime;// 初审通过时间
 
@@ -51,27 +51,27 @@ public class LoanCreditOrderBean implements java.io.Serializable{
 		this.orgCode = orgCode;
 	}
 
-	public int getDayLimit() {
+	public Integer getDayLimit() {
 		return dayLimit;
 	}
 
-	public void setDayLimit(int dayLimit) {
+	public void setDayLimit(Integer dayLimit) {
 		this.dayLimit = dayLimit;
 	}
 
-	public long getAmount() {
+	public Long getAmount() {
 		return amount;
 	}
 
-	public void setAmount(long amount) {
+	public void setAmount(Long amount) {
 		this.amount = amount;
 	}
 
-	public long getActualAmount() {
+	public Long getActualAmount() {
 		return actualAmount;
 	}
 
-	public void setActualAmount(long actualAmount) {
+	public void setActualAmount(Long actualAmount) {
 		this.actualAmount = actualAmount;
 	}
 
@@ -123,19 +123,19 @@ public class LoanCreditOrderBean implements java.io.Serializable{
 		this.urlKey = urlKey;
 	}
 
-	public int getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 
-	public int getAssureType() {
+	public Integer getAssureType() {
 		return assureType;
 	}
 
-	public void setAssureType(int assureType) {
+	public void setAssureType(Integer assureType) {
 		this.assureType = assureType;
 	}
 

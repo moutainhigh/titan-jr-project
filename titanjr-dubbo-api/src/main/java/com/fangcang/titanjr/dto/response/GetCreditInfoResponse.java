@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.dto.response;
 
 import com.fangcang.titanjr.dto.BaseResponseDTO;
+import com.fangcang.titanjr.dto.bean.LoanCompanyAppendInfo;
 import com.fangcang.titanjr.dto.bean.LoanCompanyEnsureBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditCompanyBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
@@ -17,8 +18,6 @@ public class GetCreditInfoResponse extends BaseResponseDTO {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	
 
 	// 授信单号
 	private String orderNo;
@@ -29,11 +28,21 @@ public class GetCreditInfoResponse extends BaseResponseDTO {
 	// 企业担保信息
 	private LoanCompanyEnsureBean companyEnsure;
 
+	private LoanCompanyAppendInfo companyAppendInfo;
+
 	// 授信企业信息
 	private LoanCreditCompanyBean creditCompany;
 
 	// 个人担保信息
 	private LoanPersonEnsureBean loanPersonEnsure;
+
+	public LoanCompanyAppendInfo getCompanyAppendInfo() {
+		return companyAppendInfo;
+	}
+
+	public void setCompanyAppendInfo(LoanCompanyAppendInfo companyAppendInfo) {
+		this.companyAppendInfo = companyAppendInfo;
+	}
 
 	public String getOrderNo() {
 		return orderNo;
@@ -74,5 +83,5 @@ public class GetCreditInfoResponse extends BaseResponseDTO {
 	public void setLoanPersonEnsure(LoanPersonEnsureBean loanPersonEnsure) {
 		this.loanPersonEnsure = loanPersonEnsure;
 	}
-	
+
 }

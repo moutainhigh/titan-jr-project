@@ -4,11 +4,16 @@ package com.fangcang.titanjr.dto.bean;
  * @author wengxitao
  *
  */
-public class LoanPersonEnsureBean {
+public class LoanPersonEnsureBean implements java.io.Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	//融数机构标示id，可以不用存进数据库，跟企业担保实体一样道理
 	//新增时若此字段为空，则不处理
-	private String userId;
+	private String orgCode;
 
 	private String orderNo;// 授信单号
 
@@ -18,9 +23,9 @@ public class LoanPersonEnsureBean {
 
 	private String mobilenNmber;// 手机号码
 
-	private int marriageStatus;// 1 未婚 2 已婚
+	private Integer marriageStatus;// 1 未婚 2 已婚
 
-	private int haveChildren;// 1 无子女 2 有子女
+	private Integer haveChildren;// 1 无子女 2 有子女
 
 	private String nativePlace;// 籍贯
 
@@ -28,9 +33,9 @@ public class LoanPersonEnsureBean {
 
 	private String graduateSchool;// 毕业院校
 
-	private int highestEducation;// 1 小学 2 初中 3高中 4 中专 5 大专 6 本科 6 硕士 7 博士
+	private Integer highestEducation;// 1 小学 2 初中 3高中 4 中专 5 大专 6 本科 6 硕士 7 博士
 
-	private int yearsWorking;// 1 1-3 2 3-5 3 5-10 4 10以上
+	private Integer yearsWorking;// 1 1-3 2 3-5 3 5-10 4 10以上
 
 	private String workCompany; // 工作单位
 
@@ -43,14 +48,14 @@ public class LoanPersonEnsureBean {
 	private String industry;// 所处行业
 	
 
-	private int carPropertyType;// 车产情况，1 无车， 2有车无贷，3有车有贷
+	private Integer carPropertyType;// 车产情况，1 无车， 2有车无贷，3有车有贷
 	
 	private String carPurchaseDate;//汽车购买年份
 	
 	
 	private String carBrand;//汽车品牌
 
-	private int housePropertyType;// 1 无房 2 有房有贷 3 有房无贷
+	private Integer housePropertyType;// 1 无房 2 有房有贷 3 有房无贷
 
 	private String otherProperty;// 其他资产
 
@@ -60,13 +65,13 @@ public class LoanPersonEnsureBean {
 
 	private String firstContactPhone;// 第一联系人电话
 
-	private int relationToguarantee1;// 1 父母 2 子女 3 配偶 4 朋友 5 同时 6 其他
+	private Integer relationToguarantee1;// 1 父母 2 子女 3 配偶 4 朋友 5 同时 6 其他
 
 	private String secondContactName;// 第二联系人姓名
 
 	private String secondContactPhone;// 第二联系人电话
 
-	private int relationToguarantee2;// 1 父母 2 子女 3 配偶 4 朋友 5 同时 6 其他
+	private Integer relationToguarantee2;// 1 父母 2 子女 3 配偶 4 朋友 5 同时 6 其他
 
 	private String idCardUrl;// 担保人身份证URL
 
@@ -95,12 +100,14 @@ public class LoanPersonEnsureBean {
 		this.carBrand = carBrand;
 	}
 
-	public String getUserId() {
-		return userId;
+	
+
+	public String getOrgCode() {
+		return orgCode;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
 	}
 
 	public String getOrderNo() {
@@ -135,19 +142,19 @@ public class LoanPersonEnsureBean {
 		this.mobilenNmber = mobilenNmber;
 	}
 
-	public int getMarriageStatus() {
+	public Integer getMarriageStatus() {
 		return marriageStatus;
 	}
 
-	public void setMarriageStatus(int marriageStatus) {
+	public void setMarriageStatus(Integer marriageStatus) {
 		this.marriageStatus = marriageStatus;
 	}
 
-	public int getHaveChildren() {
+	public Integer getHaveChildren() {
 		return haveChildren;
 	}
 
-	public void setHaveChildren(int haveChildren) {
+	public void setHaveChildren(Integer haveChildren) {
 		this.haveChildren = haveChildren;
 	}
 
@@ -175,19 +182,19 @@ public class LoanPersonEnsureBean {
 		this.graduateSchool = graduateSchool;
 	}
 
-	public int getHighestEducation() {
+	public Integer getHighestEducation() {
 		return highestEducation;
 	}
 
-	public void setHighestEducation(int highestEducation) {
+	public void setHighestEducation(Integer highestEducation) {
 		this.highestEducation = highestEducation;
 	}
 
-	public int getYearsWorking() {
+	public Integer getYearsWorking() {
 		return yearsWorking;
 	}
 
-	public void setYearsWorking(int yearsWorking) {
+	public void setYearsWorking(Integer yearsWorking) {
 		this.yearsWorking = yearsWorking;
 	}
 
@@ -231,19 +238,19 @@ public class LoanPersonEnsureBean {
 		this.industry = industry;
 	}
 
-	public int getCarPropertyType() {
+	public Integer getCarPropertyType() {
 		return carPropertyType;
 	}
 
-	public void setCarPropertyType(int carPropertyType) {
+	public void setCarPropertyType(Integer carPropertyType) {
 		this.carPropertyType = carPropertyType;
 	}
 
-	public int getHousePropertyType() {
+	public Integer getHousePropertyType() {
 		return housePropertyType;
 	}
 
-	public void setHousePropertyType(int housePropertyType) {
+	public void setHousePropertyType(Integer housePropertyType) {
 		this.housePropertyType = housePropertyType;
 	}
 
@@ -279,11 +286,11 @@ public class LoanPersonEnsureBean {
 		this.firstContactPhone = firstContactPhone;
 	}
 
-	public int getRelationToguarantee1() {
+	public Integer getRelationToguarantee1() {
 		return relationToguarantee1;
 	}
 
-	public void setRelationToguarantee1(int relationToguarantee1) {
+	public void setRelationToguarantee1(Integer relationToguarantee1) {
 		this.relationToguarantee1 = relationToguarantee1;
 	}
 
@@ -303,11 +310,11 @@ public class LoanPersonEnsureBean {
 		this.secondContactPhone = secondContactPhone;
 	}
 
-	public int getRelationToguarantee2() {
+	public Integer getRelationToguarantee2() {
 		return relationToguarantee2;
 	}
 
-	public void setRelationToguarantee2(int relationToguarantee2) {
+	public void setRelationToguarantee2(Integer relationToguarantee2) {
 		this.relationToguarantee2 = relationToguarantee2;
 	}
 

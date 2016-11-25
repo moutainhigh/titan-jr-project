@@ -7,7 +7,7 @@ package com.fangcang.titanjr.dto.request;
  * @author wengxitao
  *
  */
-public class GetCreditInfoRequest{
+public class GetCreditInfoRequest implements java.io.Serializable{
 	/**
 	 * 
 	 */

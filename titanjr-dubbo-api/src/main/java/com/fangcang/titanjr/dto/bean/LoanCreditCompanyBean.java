@@ -1,17 +1,12 @@
 package com.fangcang.titanjr.dto.bean;
 
-import java.util.List;
 
 /**
  * Created by zhaoshan on 2016/11/4.
  */
-public class LoanCreditCompanyBean implements java.io.Serializable{
-	/**
-	 * 
-	 */
+public class LoanCreditCompanyBean implements java.io.Serializable {
+
 	private static final long serialVersionUID = 1L;
-	private Long id;
-	private String creditOrderNo;
 	private String name;
 	private String startDate;
 	private String regAddress;
@@ -29,7 +24,6 @@ public class LoanCreditCompanyBean implements java.io.Serializable{
 	private String contactName;
 	private String contactPhone;
 	private String waterEmail;
-	private AppendInfo appendInfo;
 	private String licenseUrl;
 	private String legalNoUrl;
 	private String officeNoUrl;
@@ -40,13 +34,7 @@ public class LoanCreditCompanyBean implements java.io.Serializable{
 	private String taxRegUrl;
 	private String orgCodeUrl;
 	private Integer isPush;
-	
-	
-	private LoanCompanyLeaseBean companyLease;
-	private List<LoanControllDataBean> controllDatas;
-	private List<LoanCooperationCompanyBean> cooperationCompanyInfos;
-	private List<LoanMainBusinessDataBean> mainBusinessDatas;
-	
+
 	public String getTaxRegUrl() {
 		return taxRegUrl;
 	}
@@ -61,54 +49,6 @@ public class LoanCreditCompanyBean implements java.io.Serializable{
 
 	public void setOrgCodeUrl(String orgCodeUrl) {
 		this.orgCodeUrl = orgCodeUrl;
-	}
-	
-	public LoanCompanyLeaseBean getCompanyLease() {
-		return companyLease;
-	}
-
-	public void setCompanyLease(LoanCompanyLeaseBean companyLease) {
-		this.companyLease = companyLease;
-	}
-	public List<LoanControllDataBean> getControllDatas() {
-		return controllDatas;
-	}
-
-	public void setControllDatas(List<LoanControllDataBean> controllDatas) {
-		this.controllDatas = controllDatas;
-	}
-
-	public List<LoanCooperationCompanyBean> getCooperationCompanyInfos() {
-		return cooperationCompanyInfos;
-	}
-
-	public void setCooperationCompanyInfos(
-			List<LoanCooperationCompanyBean> cooperationCompanyInfos) {
-		this.cooperationCompanyInfos = cooperationCompanyInfos;
-	}
-
-	public List<LoanMainBusinessDataBean> getMainBusinessDatas() {
-		return mainBusinessDatas;
-	}
-
-	public void setMainBusinessDatas(
-			List<LoanMainBusinessDataBean> mainBusinessDatas) {
-		this.mainBusinessDatas = mainBusinessDatas;
-	}
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getCreditOrderNo() {
-		return creditOrderNo;
-	}
-
-	public void setCreditOrderNo(String creditOrderNo) {
-		this.creditOrderNo = creditOrderNo;
 	}
 
 	public String getName() {
@@ -165,14 +105,6 @@ public class LoanCreditCompanyBean implements java.io.Serializable{
 
 	public void setTaxRegNo(String taxRegNo) {
 		this.taxRegNo = taxRegNo;
-	}
-
-	public AppendInfo getAppendInfo() {
-		return appendInfo;
-	}
-
-	public void setAppendInfo(AppendInfo appendInfo) {
-		this.appendInfo = appendInfo;
 	}
 
 	public String getOrgCode() {

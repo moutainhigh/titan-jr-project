@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.dto.request;
 
 import com.fangcang.titanjr.dto.BaseRequestDTO;
+import com.fangcang.titanjr.dto.bean.LoanCompanyAppendInfo;
 import com.fangcang.titanjr.dto.bean.LoanCompanyEnsureBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditCompanyBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
@@ -32,6 +33,17 @@ public class LoanCreditSaveRequest extends BaseRequestDTO {
 
 	// 个人担保信息
 	private LoanPersonEnsureBean loanPersonEnsure;
+
+	// 企业附加信息
+	private LoanCompanyAppendInfo companyAppendInfo;
+
+	public LoanCompanyAppendInfo getCompanyAppendInfo() {
+		return companyAppendInfo;
+	}
+
+	public void setCompanyAppendInfo(LoanCompanyAppendInfo companyAppendInfo) {
+		this.companyAppendInfo = companyAppendInfo;
+	}
 
 	public String getOrgCode() {
 		return orgCode;

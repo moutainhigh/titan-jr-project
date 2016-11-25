@@ -38,6 +38,7 @@
 <script type="text/javascript" src="<%=basePath %>/js/ajaxfileupload.js"></script>
 </body>
 <script type="text/javascript">
+
 	var creditBasePath = '<%=basePath%>';
 	var imageBasePath = '<%=cssSaasPath%>';
 	
@@ -55,10 +56,10 @@
 					
 					if(data['creditCompany'])
 					{
-						navObj.navList[1]['data']["controllDatas"] = data['creditCompany']['controllDatas'];
-						navObj.navList[1]['data']["cooperationCompanyInfos"] = data['creditCompany']['cooperationCompanyInfos'];
-						navObj.navList[1]['data']["mainBusinessDatas"] = data['creditCompany']['mainBusinessDatas'];
-						navObj.navList[1]['data']["companyLease"] = data['creditCompany']['companyLease'];
+						navObj.navList[1]['data']["controllDatas"] = data['companyAppendInfo']['controllDatas'];
+						navObj.navList[1]['data']["cooperationCompanyInfos"] = data['companyAppendInfo']['cooperationCompanyInfos'];
+						navObj.navList[1]['data']["mainBusinessDatas"] = data['companyAppendInfo']['mainBusinessDatas'];
+						navObj.navList[1]['data']["companyLease"] = data['companyAppendInfo']['companyLease'];
 					}
 					
 					if(data['creditOrder'])
@@ -73,13 +74,19 @@
 						navObj.navList[3]['data']["companyEnsure"] = data['companyEnsure'];
 						navObj.navList[3]['data']["loanPersonEnsure"] = data['loanPersonEnsure'];
 					}
+					
+					
 				}
 			}
 		});
+		
 		navObj.show();
+		
 	});
 	
+	//F.loading.show();
 
+	//F.loading.hide();
 	
 	//导航对象
 	var navObj = {
@@ -105,6 +112,7 @@
 						eval(obj["showEventHandle"]+"()");
 					}
 				}else{
+					F.loading.show();
 				 	 $.ajax({
 				        dataType : 'html',
 				        context: document.body,
@@ -136,8 +144,8 @@
 			 					 {
 			 						eval(obj["afterDone"]+"()");
 			 					 }
-								 
-							 } , 200);
+								 F.loading.hide();
+							 } , 1000);
 				        }
 				    });
 				}
@@ -393,7 +401,6 @@
 						result = true;
 					} else {
 						result = false;
-
 					}
 				}
 			});

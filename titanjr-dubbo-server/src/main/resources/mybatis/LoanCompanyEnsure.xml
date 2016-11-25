@@ -4,7 +4,8 @@
 
     <resultMap id="resultMapCompanyEnsure" type="com.fangcang.titanjr.entity.LoanCompanyEnsure">
         <result property="id" column="id"/>
-        <result property="userId" column="userid"/>
+        <result property="orgCode" column="orgCode"/>
+        <result property="orderNo" column="orderno"/>
         <result property="companyName" column="companyname"/>
         <result property="foundDate" column="founddate"/>
         <result property="enterpriseScale" column="enterprisescale"/>
@@ -22,7 +23,8 @@
         <result property="orgCodeCertificateUrl" column="orgcodecertificateurl"/>
         <result property="taxRegisterCodeUrl" column="taxregistercodeurl"/>
         <result property="licenseUrl" column="licenseurl"/>
-        <result property="legalPersonUrl" column="legalpersonurl"/>
+        <result property="officeAddress" column="officeaddress"/>
+        <result property="regAddress" column="regaddress"/>
     </resultMap>
 
 
@@ -30,7 +32,8 @@
             parameterType="com.fangcang.titanjr.entity.LoanCompanyEnsure">
         select
         `id`,
-        `userid`,
+        `orgcode`,
+        `orderno`,
         `companyname`,
         `founddate`,
         `enterprisescale`,
@@ -48,12 +51,18 @@
         `orgcodecertificateurl`,
         `taxregistercodeurl`,
         `licenseurl`,
-        `legalpersonurl`
+        `legalpersonurl`,
+        `officeaddress`,
+        `regaddress`
         from
         t_loan_companyensure
         <where>
-            <if test="userId !=null">
-                and userid = #{userId}
+        	1=1
+            <if test="orgCode !=null">
+                and orgcode = #{orgCode}
+            </if>
+              <if test="orderNo !=null">
+                and orderno = #{orderNo}
             </if>
             <if test="companyName !=null">
                 and companyname = #{companyName}
@@ -89,17 +98,23 @@
             <if test="orgCodeCertificateUrl != null">orgcodecertificateurl= #{orgCodeCertificateUrl},</if>
             <if test="taxRegisterCodeUrl != null">taxregistercodeurl= #{taxRegisterCodeUrl},</if>
             <if test="licenseUrl != null">licenseurl= #{licenseUrl},</if>
-            <if test="legalPersonUrl != null">legalpersonurl= #{legalPersonUrl}</if>
+            <if test="legalPersonUrl != null">legalpersonurl= #{legalPersonUrl},</if>
+            <if test="officeAddress != null">officeaddress= #{officeAddress},</if>
+            <if test="regAddress != null">regaddress= #{regAddress},</if>
+            <if test="orgCode != null">orgcode= #{orgCode}</if>
         </set>
         <where>
-            userid = #{userId} <!--userId一定不为空-->
-            <!--<if test="userId != null"> userid = #{userId} </if>-->
+               orgcode = #{orgCode}
+              <if test="orderNo !=null">
+                and orderno = #{orderNo}
+            </if>
         </where>
     </update>
 
     <insert id="insertCompanyEnsure" parameterType="com.fangcang.titanjr.entity.LoanCompanyEnsure">
 	  INSERT INTO `t_loan_companyensure` (
-      	`userid`,
+      	`orgcode`,
+      	`orderno`,
       	`companyname`,
       	`founddate`,
       	`enterprisescale`,
@@ -117,11 +132,14 @@
       	`orgcodecertificateurl`,
       	`taxregistercodeurl`,
       	`licenseurl`,
-      	`legalpersonurl`
+      	`legalpersonurl`,
+      	 `officeaddress`,
+        `regaddress`
      )
      VALUES
      	(
-     		#{userId},
+     		#{orgCode},
+     		#{orderNo},
      		#{companyName},
      		#{foundDate},
      		#{enterpriseScale},
@@ -139,7 +157,9 @@
      		#{orgCodeCertificateUrl},
      		#{taxRegisterCodeUrl},
      		#{licenseUrl},
-     		#{legalPersonUrl}
+     		#{legalPersonUrl},
+     		#{officeAddress},
+     		#{regAddress}
      	)
     </insert>
 

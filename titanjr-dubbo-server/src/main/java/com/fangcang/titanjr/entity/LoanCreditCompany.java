@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public class LoanCreditCompany {
     private Long id;
-    private String creditorderNo;
+    private String creditOrderNo;
     private String name;
     private Date startDate;
     private String regAddress;
@@ -33,7 +33,26 @@ public class LoanCreditCompany {
     private String creditUrl;
     private String officeUrl;
     private String waterUrl;
-    private Integer isPush;
+	private String taxRegUrl;
+	private String orgCodeUrl;
+	
+    public String getTaxRegUrl() {
+		return taxRegUrl;
+	}
+
+	public void setTaxRegUrl(String taxRegUrl) {
+		this.taxRegUrl = taxRegUrl;
+	}
+
+	public String getOrgCodeUrl() {
+		return orgCodeUrl;
+	}
+
+	public void setOrgCodeUrl(String orgCodeUrl) {
+		this.orgCodeUrl = orgCodeUrl;
+	}
+
+	private Integer isPush;
 
     public Long getId() {
         return id;
@@ -43,15 +62,16 @@ public class LoanCreditCompany {
         this.id = id;
     }
 
-    public String getCreditorderNo() {
-        return creditorderNo;
-    }
+   
+    public String getCreditOrderNo() {
+		return creditOrderNo;
+	}
 
-    public void setCreditorderNo(String creditorderNo) {
-        this.creditorderNo = creditorderNo;
-    }
+	public void setCreditOrderNo(String creditOrderNo) {
+		this.creditOrderNo = creditOrderNo;
+	}
 
-    public String getName() {
+	public String getName() {
         return name;
     }
 

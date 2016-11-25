@@ -28,6 +28,7 @@
             parameterType="com.fangcang.titanjr.entity.LoanCreditOrder">
             select `id`, 
             `orderno`,
+            `orgcode`,
             `daylimit`, 
             `amount`, 
             `actualamount`,
@@ -51,16 +52,14 @@
 	            <if test="status !=null">
 	                and status = #{status}
 	            </if>
-	            <if test="rsorgId !=null">
-	                and rsorgid = #{rsorgId}
+	            <if test="orgCode !=null">
+	                and orgcode = #{orgCode}
 	            </if>
 	        </where>
 
     </select>
     
-	 
-
-	<select id="queryLoanCreditCompanyOrder" resultType="com.fangcang.titanjr.dto.bean.CreditCompanyInfoDTO" parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
+	<select id="queryLoanCreditCompanyOrder" resultType="com.fangcang.titanjr.dto.bean.CreditCompanyInfoDTO"  parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
 		select 
 			C.name,
 			C.contactname,
@@ -78,6 +77,7 @@
 			<if test="status !=null"> and status = #{status}</if>
 		</where>
 	</select>
+	
 	<select id="getCreditOrderCount" resultType="Integer" parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
 		select 
 			count(1) 

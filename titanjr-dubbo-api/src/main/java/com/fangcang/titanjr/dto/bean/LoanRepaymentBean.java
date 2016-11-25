@@ -2,8 +2,12 @@ package com.fangcang.titanjr.dto.bean;
 
 import java.util.Date;
 
-public class LoanRepaymentBean 
+public class LoanRepaymentBean implements java.io.Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	//還款單號
 	private String orderNo;
 	//還款日期
