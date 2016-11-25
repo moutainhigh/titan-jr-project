@@ -115,7 +115,7 @@
         <result property="fixTel" column="fixTel"/>
         <result property="email" column="email"/>
         <result property="titanCode" column="titancode"/>
-        <result property="lastUpdateDate" column="lastUpdateDate"/>
+        <result property="lastUpdateDate" column="lastupdatedate"/>
         <result property="maxLoanAmount" column="maxloanamount"/>
         <association property="checkStatus" javaType="com.fangcang.titanjr.dto.bean.CheckStatus">
             <result property="checkResultKey" column="resultkey" />
@@ -196,6 +196,7 @@
 	      g.email,
 	      g.titancode,
 	      g.createTime,
+	      g.lastupdatedate,
           g.maxloanamount,
 	      i.imageName,
 	      i.imagetype,
