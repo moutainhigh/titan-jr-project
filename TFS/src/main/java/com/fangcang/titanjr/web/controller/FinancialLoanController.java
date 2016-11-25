@@ -54,6 +54,7 @@ public class FinancialLoanController extends BaseController
 		return "/loan/loan-apply/loan-apply";
 	}
 	
+<<<<<<< HEAD
 	@ResponseBody
 	@RequestMapping(value="/loanApplyOrderNo")
 	public Map<String,Object> getLoanApplyOrderNo(){

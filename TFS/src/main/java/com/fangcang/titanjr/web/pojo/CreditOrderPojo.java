@@ -19,9 +19,14 @@ public class CreditOrderPojo extends BasePojo implements Serializable {
 	 */
 	private Integer status;
 	/**
-	 * 机构姓名
+	 * 公司名称
 	 */
-	private String orgName;
+	private String companyName;
+	
+	/**
+	 * 联系人姓名
+	 */
+	private String contactName;
 
 	public Integer getStatus() {
 		return status;
@@ -31,15 +36,20 @@ public class CreditOrderPojo extends BasePojo implements Serializable {
 		this.status = status;
 	}
 
-	public String getOrgName() {
-		return orgName;
+	public String getCompanyName() {
+		return companyName;
 	}
 
-	public void setOrgName(String orgName) {
-		this.orgName = orgName;
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
-	
-	
-	
+
+	public String getContactName() {
+		return contactName;
+	}
+
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
+	}
 	
 }

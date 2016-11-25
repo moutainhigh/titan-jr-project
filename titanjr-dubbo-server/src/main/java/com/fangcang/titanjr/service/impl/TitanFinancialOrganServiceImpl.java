@@ -1149,6 +1149,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	titanOrg.setOrgcode(orgUpdateRequest.getOrgCode());
     	titanOrg.setConnect(orgUpdateRequest.getConnect());
     	titanOrg.setMobiletel(orgUpdateRequest.getMobiletel());
+    	titanOrg.setLastUpdateDate(orgUpdateRequest.getLastUpdateDate());
+    	titanOrg.setMaxLoanAmount(orgUpdateRequest.getMaxLoanAmount());
     	try {
     		titanOrgDao.update(titanOrg);
     		responseDTO.putSuccess();

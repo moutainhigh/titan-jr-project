@@ -15,24 +15,26 @@
 		<div class="mya_title">
 			<strong>授信审核</strong>
 			<p>
-				<a class="on" href="javascript:void(0)">授信审核<i>8</i></a>			
+				<a class="on" href="javascript:void(0)">授信审核<i id="i_to_check_count">0</i></a>			
 			</p>	
 		</div>		
 		<div class="acount">
 			<div class="table_top">
 				<div class="fr">
-					<input type="text" class="textinput w200 fl" placeholder="用户名：">
-					<input type="text" class="textinput w200 fl" placeholder="公司名称：">
+					<input type="text" class="textinput w200 fl" id="contactName" placeholder="联系人：">
+					<input type="text" class="textinput w200 fl" id="companyName" placeholder="公司名称：">
 					<div class="selecttit fl">
-						<div class="selecttop text w200 J_seltype cursor">审核状态：<span class="J_chosed" data-value="">未通过</span><i class="ico"></i></div>
+						<div class="selecttop text w200 J_seltype cursor">审核状态：<span class="J_chosed" id="status" data-value="">全部</span><i class="ico"></i></div>
 						<div class="selectcon">
-							<p data-value="1">全部</p>
+							<p data-value="">全部</p>
+							<p data-value="1">草稿</p>
 							<p data-value="2">待审核</p>
-							<p data-value="3">未通过</p>
-							<p data-value="4">已通过</p>
+							<p data-value="3">审核未通过</p>
+							<p data-value="4">已提交复审</p>
+							<p data-value="5">审核已通过</p>
 						</div>
 					</div>
-					<input type="button" class="search fl" value="搜索">
+					<input type="button" class="search fl" onclick="search()" value="搜索">
 				</div>
 			</div>	
 			<div class="clear"></div>
@@ -85,22 +87,19 @@
   //加载数据表格
     var ajaxPage = new AjaxPage({
     	pageSize:15,
-    	url:"<%=basePath%>/admin/orgTable.shtml",
+    	url:"<%=basePath%>/admin/credit-order-table.shtml",
     	success:function(html){
     		$("#t_body").html(html);
-    		freshCreditCount();
+    		freshCreditOrderCount();
     	}
     });
   
   //授信申请未审核数量
   function freshCreditOrderCount(){
-	  
-	  
-	  
+	  $("#i_to_check_count").html($("#creditOrderCount").val());
   }
     function search(){
-    	var resultKey = $("#resultKey").attr("data-value");
-    	var queryParams ={"userType":$("#userType").val(),"userLoginName":$("#userLoginName").val(),"orgName":$("#orgName").val(),"resultKey":resultKey};
+    	var queryParams ={"companyName":$("#companyName").val(),"status":$("#status").attr("data-value"),"contactName":$("#contactName").val()};
     	ajaxPage.load({"queryParams":queryParams});
     }
     </script>

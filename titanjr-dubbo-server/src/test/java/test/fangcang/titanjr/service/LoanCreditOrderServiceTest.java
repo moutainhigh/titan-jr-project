@@ -25,7 +25,7 @@ public class LoanCreditOrderServiceTest extends SpringTest {
 	@Resource
 	TitanFinancialLoanCreditService loanCreditService;
 	
-	@Test
+	
 	public void testgetCreditOrderCount(){
 		try{
 			GetCreditOrderCountRequest request = new GetCreditOrderCountRequest();
@@ -38,11 +38,12 @@ public class LoanCreditOrderServiceTest extends SpringTest {
 		}
 	}
 	
+	@Test
 	public void testqueryPageCreditCompanyInfo(){
 		try{
 			QueryPageCreditCompanyInfoRequest req = new QueryPageCreditCompanyInfoRequest();
-			req.setName("测试");
-			req.setStatus(1);;
+			//req.setName("测试");
+			//req.setStatus(1);;
 			req.setCurrentPage(1);
 			PageCreditCompanyInfoResponse response = loanCreditService.queryPageCreditCompanyInfo(req);
 			System.out.println(JSONSerializer.toJSON(response).toString());

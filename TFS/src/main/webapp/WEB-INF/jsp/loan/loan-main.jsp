@@ -28,7 +28,7 @@
         月均交易额超过100万，在房仓SAAS平台连续6个月有交易记录；<br/>
         公司法人或实际控制人为华籍；</p>
         <h4>自申请之日起，5个工作日内可获取申请结果</h4>
-        <a href="<%=basePath%>/loan/credit/applyCredit.shtml" class="bacth_export_hotel My_loanNum_step_btn01">马上申请授信<em>></em></a>
+        <a href="<%=basePath%>/loan/applyCredit.shtml" class="bacth_export_hotel My_loanNum_step_btn01">马上申请授信<em>></em></a>
     </div>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
 <script type="text/javascript">

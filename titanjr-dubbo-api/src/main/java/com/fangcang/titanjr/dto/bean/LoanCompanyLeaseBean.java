@@ -1,5 +1,9 @@
 package com.fangcang.titanjr.dto.bean;
-
+/***
+ * 经营场所信息
+ * @author luoqinglong
+ * @date   2016年11月24日
+ */
 public class LoanCompanyLeaseBean implements java.io.Serializable{
 	
 	/**

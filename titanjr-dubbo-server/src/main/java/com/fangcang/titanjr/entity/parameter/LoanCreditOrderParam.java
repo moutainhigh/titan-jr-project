@@ -13,11 +13,20 @@ public class LoanCreditOrderParam implements Serializable {
 	 * 公司名称
 	 */
 	private String name;
+	
+	private String contactName;
 	/**
 	 * 审核状态
 	 */
 	private Integer status;
 	
+	
+	public String getContactName() {
+		return contactName;
+	}
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
+	}
 	public String getName() {
 		return name;
 	}

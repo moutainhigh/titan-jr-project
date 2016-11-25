@@ -24,14 +24,42 @@ public class LoanCreditCompanyBean implements java.io.Serializable {
 	private String contactName;
 	private String contactPhone;
 	private String waterEmail;
+	/**
+	 * 营业执照URL
+	 */
 	private String licenseUrl;
+	/**
+	 * 法人身份证
+	 */
+	
 	private String legalNoUrl;
+	/**
+	 * 经营场所证明
+	 */
 	private String officeNoUrl;
+	/**
+	 * 开户许可证
+	 */
 	private String accountUrl;
+	/**
+	 * 信用报告
+	 */
 	private String creditUrl;
+	/**
+	 * 经营产所照片
+	 */
 	private String officeUrl;
+	/**
+	 * 企业流水
+	 */
 	private String waterUrl;
+	/**
+	 * 税务登记URL
+	 */
 	private String taxRegUrl;
+	/**
+	 * 组织编码
+	 */
 	private String orgCodeUrl;
 	private Integer isPush;
 

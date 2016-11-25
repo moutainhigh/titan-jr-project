@@ -496,16 +496,18 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	public PageCreditCompanyInfoResponse queryPageCreditCompanyInfo(
 			QueryPageCreditCompanyInfoRequest req) {
 		PageCreditCompanyInfoResponse response = new PageCreditCompanyInfoResponse();
-		LoanCreditOrderParam condition = new LoanCreditOrderParam();
-		condition.setName(req.getName());
-		condition.setStatus(req.getStatus());
-		PaginationSupport<CreditCompanyInfoDTO> paginationSupport = new PaginationSupport<CreditCompanyInfoDTO>();
-		paginationSupport.setCurrentPage(req.getCurrentPage());
-		paginationSupport.setOrderBy(" createTime desc ");
-		paginationSupport = loanCreditOrderDao.selectForPage(condition,
-				paginationSupport);
-		response.setPageCreditCompanyInfoDTO(paginationSupport);
-		return response;
+    	LoanCreditOrderParam condition = new LoanCreditOrderParam();
+    	condition.setName(req.getName());
+    	condition.setContactName(req.getContactName());
+    	condition.setStatus(req.getStatus());
+    	PaginationSupport<CreditCompanyInfoDTO> paginationSupport = new PaginationSupport<CreditCompanyInfoDTO>();
+    	paginationSupport.setCurrentPage(req.getCurrentPage());
+    	paginationSupport.setOrderBy(" createTime desc ");
+    	paginationSupport = loanCreditOrderDao.selectForPage(condition,paginationSupport);
+    	response.setPageCreditCompanyInfoDTO(paginationSupport);
+    	response.setResult(true);
+    	return response;
+ 
 	}
 
 	@Override

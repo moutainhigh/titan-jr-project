@@ -74,6 +74,11 @@ public class TitanOrg implements java.io.Serializable {
 	private String email;
 	private Date createTime;
 	private Date updateTime;
+	/**
+	 * 授信金额估算时间
+	 */
+	private Date lastUpdateDate;
+	
 	//最大可申请授信额度
 	private Long maxLoanAmount;
 
@@ -396,4 +401,13 @@ public class TitanOrg implements java.io.Serializable {
 	public void setMaxLoanAmount(Long maxLoanAmount) {
 		this.maxLoanAmount = maxLoanAmount;
 	}
+
+	public Date getLastUpdateDate() {
+		return lastUpdateDate;
+	}
+
+	public void setLastUpdateDate(Date lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
+	}
+	
 }
