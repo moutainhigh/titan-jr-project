@@ -483,9 +483,9 @@
 							</colgroup>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>联系人姓名：</td>
-								<td>某某某</td>
+								<td>${getCreditInfoResponse.companyEnsure.contactName}</td>
 								<td class="bg_f2"><i class="c_f00">*</i>联系电话：</td>
-								<td>132 1456 7894</td>								
+								<td>${getCreditInfoResponse.companyEnsure.contactPhone}</td>								
 							</tr>								
 						</table>
 					</div>
@@ -499,36 +499,36 @@
 					<div class="clc_c">
 						<ul>
 							<li><p><i class="c_f00">*</i>企业营业执照</p>
-							<img src="images/zhizhao.jpg" class="J_see"></li>
+							<img src="${getCreditInfoResponse.companyEnsure.licenseUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>税务登记证</p>
-							<img src="images/zhizhao.jpg" class="J_see"></li>
+							<img src="${getCreditInfoResponse.companyEnsure.taxRegUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>组织机构代码证</p>
-							<img src="images/zhizhao.jpg" class="J_see"></li>
+							<img src="${getCreditInfoResponse.companyEnsure.orgCodeUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>开户许可证</p>
-							<img src="images/zhizhao.jpg" class="J_see"></li>
+							<img src="${getCreditInfoResponse.companyEnsure.accountUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>法人身份证</p>
-							<img src="images/zhizhao.jpg" class="J_see"></li>
+							<img src="${getCreditInfoResponse.companyEnsure.legalNoUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>企业信用报告</p>
-							<img src="images/zhizhao.jpg" class="J_see"></li>
+							<img src="${getCreditInfoResponse.companyEnsure.creditUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>企业银行流水</p>
-							<img src="images/zhizhao.jpg" class="J_see"></li>
+							<img src="${getCreditInfoResponse.companyEnsure.waterUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>经营场所证明</p>
 							<div class="download">
 									<i class="PDF"></i>
-									<span title="企业银行流企业银行流">企业银行流企业银行流</span>
-									<a href="javascript:void(0)">下载</a>
+									<span title="经营场所证明">经营场所证明</span>
+									<a href="${getCreditInfoResponse.companyEnsure.officeNoUrl}">下载</a>
 								</div></li>
 							<li><p><i class="c_f00">*</i>经营场所照片</p>
 							<div class="download">
 									<i class="RAR"></i>
-									<span title="企业银行流">企业银行流</span>
-									<a href="javascript:void(0)">下载</a>
+									<span title="经营场所照片">经营场所照片</span>
+									<a href="${getCreditInfoResponse.companyEnsure.officeUrl}">下载</a>
 								</div></li>
 							<li><p><i class="c_f00">*</i>其他附件</p>
 								<div class="download">
 									<i class="ZIP"></i>
 									<span title="企业银行流">企业银行流</span>
-									<a href="javascript:void(0)">下载</a>
+									<a href="${getCreditInfoResponse.companyEnsure.officeUrl}">下载</a>
 								</div>
 							</li>
 						</ul>
