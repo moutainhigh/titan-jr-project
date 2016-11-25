@@ -30,9 +30,9 @@ public class FinancialLoanController
 		return "/loan/loan-apply/loan-apply";
 	}
 	
-	@RequestMapping(value="/applyLoanMain", method = RequestMethod.GET)
-	public String applyLoan(HttpServletRequest request,Model model)
-	{
-		return null;
-	}
+//	@RequestMapping(value="/applyLoanMain", method = RequestMethod.GET)
+//	public String applyLoan(HttpServletRequest request,Model model)
+//	{
+//		return null;
+//	}
 }
