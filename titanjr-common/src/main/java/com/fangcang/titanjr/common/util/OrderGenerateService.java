@@ -84,6 +84,20 @@ public class OrderGenerateService {
 	}
 	
 	/**
+	 * 生成贷款申请单号,每日生成1000个
+	 * @return
+	 */
+	public static String genLoanApplyOrderNo(){
+		StringBuffer order = new StringBuffer("ln");
+		order.append(DateUtil.formatDataYYMMDDHHMMSS(new Date()));
+		Random rd = new Random();
+		for(int i=0; i < 4; i ++){
+			order.append(rd.nextInt(random_range));
+		}
+		return order.toString();
+	}
+	
+	/**
 	 * 生成交易工单流水号
 	 * @return
 	 */

@@ -46,6 +46,8 @@ public class FtpUtil {
 	
 	public static final String UPLOAD_PATH_CREDIT_APPLY = "/credit_apply";
 	
+	public static final String UPLOAD_PATH_LOAN_APPLY="/loan_apply";
+	
 	
 	private FTPClient ftpClient;
 	private  String serverIp;
