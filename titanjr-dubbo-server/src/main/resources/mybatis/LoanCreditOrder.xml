@@ -67,12 +67,14 @@
 			C.contactphone,
 			O.orderno,
 			O.reqtime,
+			O.createtime,
 			O.status
 		from t_loan_creditorder O 
 			left join t_loan_creditcompany C 
 			on O.orderno = C.creditorderno 
 		<where>
 			<if test="name !=null">name like concat('%',#{name},'%') </if>
+			<if test="contactName !=null">and contactname like concat('%',#{contactName},'%') </if>
 			<if test="status !=null"> and status = #{status}</if>
 		</where>
 	</select>

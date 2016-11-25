@@ -8,7 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fangcang.titanjr.common.enums.LoanCreditOrderEnum;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
+import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
 import com.fangcang.titanjr.dto.response.PageCreditCompanyInfoResponse;
@@ -38,7 +40,7 @@ public class MLoanController extends BaseController{
 	@RequestMapping(value = "/credit-order")
 	public String queryCreditOrder(Model model){
 		
-		return "credit-order";
+		return "admin/loan/credit-order";
 	}
 	
 	/**
@@ -49,20 +51,29 @@ public class MLoanController extends BaseController{
 	 */
 	@RequestMapping(value = "/credit-order-table")
 	public String creditOrderTable(CreditOrderPojo creditOrderPojo,Model model){
-		if(!StringUtils.isValidString(creditOrderPojo.getOrgName())){
-			creditOrderPojo.setOrgName(null);
+		if(!StringUtils.isValidString(creditOrderPojo.getCompanyName())){
+			creditOrderPojo.setCompanyName(null);
+		}
+		if(!StringUtils.isValidString(creditOrderPojo.getContactName())){
+			creditOrderPojo.setContactName(null);
 		}
 		
 		QueryPageCreditCompanyInfoRequest queryCreditCompanyInfoRequest  = new QueryPageCreditCompanyInfoRequest();
 		
-		queryCreditCompanyInfoRequest.setName(creditOrderPojo.getOrgName());
+		queryCreditCompanyInfoRequest.setName(creditOrderPojo.getCompanyName());
+		queryCreditCompanyInfoRequest.setContactName(creditOrderPojo.getContactName());
 		queryCreditCompanyInfoRequest.setStatus(creditOrderPojo.getStatus());
 		queryCreditCompanyInfoRequest.setCurrentPage(creditOrderPojo.getPageNo());
 		
 		PageCreditCompanyInfoResponse queryPageCreditCompanyInfoResponse = loanCreditService.queryPageCreditCompanyInfo(queryCreditCompanyInfoRequest);
-		model.addAttribute("pageCreditCompanyInfoDTO", queryPageCreditCompanyInfoResponse.getPageCreditCompanyInfoDTO());
+		GetCreditOrderCountRequest countRequest = new GetCreditOrderCountRequest();
+		countRequest.setStatus(LoanCreditOrderEnum.Status.TO_CHECK.getValue());
 		
-		return "credit-order-table";
+		model.addAttribute("pageCreditCompanyInfoDTO", queryPageCreditCompanyInfoResponse.getPageCreditCompanyInfoDTO());
+		model.addAttribute("creditOrderCount", loanCreditService.getCreditOrderCount(countRequest).getCount());
+		
+		
+		return "admin/loan/credit-order-table";
 	}
 	
 	/**
@@ -81,6 +92,6 @@ public class MLoanController extends BaseController{
 		GetCreditInfoResponse getCreditInfoResponse = loanCreditService.getCreditOrderInfo(getCreditInfoRequest);
 		model.addAttribute("getCreditInfoResponse", getCreditInfoResponse);
 		
-		return "credit-order-detail";
+		return "admin/loan/credit-order-detail";
 	}
 }

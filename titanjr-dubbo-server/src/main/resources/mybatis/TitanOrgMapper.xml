@@ -405,6 +405,9 @@
             <if test="email != null">
                 email = #{email,jdbcType=VARCHAR},
             </if>
+            <if test="lastUpdateDate != null">
+                lastupdatedate = #{lastUpdateDate},
+            </if>
             <if test="maxLoanAmount != null">
                 maxloanamount = #{maxLoanAmount},
             </if>

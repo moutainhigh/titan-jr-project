@@ -7,7 +7,7 @@
 			<li <c:if test="${param.menu=='home'}">class="on"</c:if>><a href="<%=basePath %>/admin/index.shtml">首页</a></li>
 			<li <c:if test="${param.menu==''}">class="on"</c:if>><a href="javascript:void(0)" >收付款管理</a></li>
 			<li <c:if test="${param.menu==''}">class="on"</c:if>><a href="javascript:void(0)">理财产品 </a></li>
-			<li <c:if test="${param.menu=='loan'}">class="on"</c:if>><a href="javascript:void(0)">信贷产品</a></li>
+			<li <c:if test="${param.menu=='loan'}">class="on"</c:if>><a href="<%=basePath %>/admin/credit-order.shtml">信贷产品</a></li>
 			<li <c:if test="${param.menu=='user'}">class="on"</c:if>>
 				<a href="<%=basePath %>/admin/org.shtml">我的用户</a>
 				<p>

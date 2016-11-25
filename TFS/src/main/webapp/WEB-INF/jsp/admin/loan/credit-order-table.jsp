@@ -7,8 +7,18 @@
 	<td class="tdl">${creditCompanyInfoDTO.contactName }</td>
 	<td class="tdl">${creditCompanyInfoDTO.contactPhone }</td>
 	<td class="tdl">小明明</td>
-	<td class="tdl"><span class="c_red">${creditCompanyInfoDTO.status }</span></td>
-	<td class="tdl"><a href="" data-opt="view" data-order-no="${creditCompanyInfoDTO.orderNo }" class="c_blue cursor undl">审核</a></td>		
+	<td class="tdl">
+	<c:if test="${creditCompanyInfoDTO.status ==1}">草稿</c:if>
+	<c:if test="${creditCompanyInfoDTO.status ==2}"><span class="c_red">待审核</span></c:if>
+	<c:if test="${creditCompanyInfoDTO.status ==3}">审核未通过</c:if>
+	<c:if test="${creditCompanyInfoDTO.status ==4}">已提交复审</c:if>
+	<c:if test="${creditCompanyInfoDTO.status ==5}">审核已通过</c:if>
+	</td>
+	<td class="tdl">
+	<c:if test="${creditCompanyInfoDTO.status ==2}"><a href="" data-opt="check" data-order-no="${creditCompanyInfoDTO.orderNo }" class="c_blue cursor undl">审核</a></c:if>
+	<c:if test="${creditCompanyInfoDTO.status !=2}"><a href="" data-opt="view" data-order-no="${creditCompanyInfoDTO.orderNo }" class="c_blue cursor undl">查看</a></c:if>
+	
+	</td>		
 </tr> 
 </c:forEach>
 <c:if test="${pageCreditCompanyInfoDTO.totalPage==0 }">
