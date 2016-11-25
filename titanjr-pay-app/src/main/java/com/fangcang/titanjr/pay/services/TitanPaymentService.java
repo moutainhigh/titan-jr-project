@@ -265,7 +265,15 @@ public class TitanPaymentService {
 				transOrderRequest.setOrderid(rechargeResultConfirmRequest.getOrderNo());
 				TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
 				if(transOrderDTO !=null){
-	        		rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getTradeamount()).add(new BigDecimal(transOrderDTO.getReceivedfee())).toString());
+					if(StringUtil.isValidString(transOrderDTO.getPayerType())){
+						PayerTypeEnum payerType = PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
+					    if(payerType.isRecieveCashDesk()){
+					    	rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getTradeamount()).toString());
+					    }else{
+					    	rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getTradeamount()).add(new BigDecimal(transOrderDTO.getReceivedfee())).toString());
+					    }
+					}
+					
 					model.addAttribute("transOrderDTO", transOrderDTO);
 					FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 					organQueryRequest.setOrgCode(transOrderDTO.getPayeemerchant());

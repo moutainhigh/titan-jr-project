@@ -130,12 +130,15 @@ public class TitanTradeController extends BaseController {
 					return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 				}
 				
-				if(!StringUtil.isValidString(openOrgDTO.getIp())||!openOrgDTO.getIp().equals(titanTradeService.getIp(request))){
-					model.addAttribute("msg",
-							TitanMsgCodeEnum.NO_PERMISSION.getResMsg());
-					return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
-				}
-				
+				/**
+				 * 验证IP
+				 */
+//				if(!StringUtil.isValidString(openOrgDTO.getIp())||!openOrgDTO.getIp().equals(titanTradeService.getIp(request))){
+//					model.addAttribute("msg",
+//							TitanMsgCodeEnum.NO_PERMISSION.getResMsg());
+//					return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+//				}
+//				
 				deInfo = RSADecryptString.decryptString(orderInfo,
 						new BigInteger(Base64Helper.decode(openOrgDTO.getPrivatekey())).toString(16));
 			
