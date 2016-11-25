@@ -1,6 +1,9 @@
 package com.fangcang.titanjr.web.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -19,5 +22,17 @@ public class FinancialLoanController
 	public String loanMain()
 	{
 		return "/loan/loan-main";
+	}
+	
+	@RequestMapping(value="/applyLoanMain", method = RequestMethod.GET)
+	public String applyLoanMain()
+	{
+		return "/loan/loan-apply/loan-apply";
+	}
+	
+	@RequestMapping(value="/applyLoanMain", method = RequestMethod.GET)
+	public String applyLoan(HttpServletRequest request,Model model)
+	{
+		return null;
 	}
 }
