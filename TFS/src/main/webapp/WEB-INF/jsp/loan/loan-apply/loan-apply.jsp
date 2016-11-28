@@ -198,25 +198,39 @@
 	<script type="text/javascript" src="<%=basePath %>/js/ajaxfileupload.js"></script>
 
 	<script type="text/javascript">   
-	var static_path="http://image.fangcang.com/upload/images/titanjr/loan_apply/${JR_USERID}/";
-        $.ajax({
-        	 type: "post",
-             url: "<%=basePath%>/loan/loanApplyOrderNo.action",
-             dataType: "json",
-             success: function(data){
-            	 if(data.code==1){
-            		 $("#loanApplyOrderNo").val(data.data);
-            		 static_path = static_path+$("#loanApplyOrderNo").val()+"/";
-            	 }
-            	}
-            }); 
-  
+	var initData = new init_loanApply_obj();
+	initData.init_data();
+	
+	var init_loanApply_obj = {
+			static_path:"http://image.fangcang.com/upload/images/titanjr/loan_apply/${JR_USERID}/",
+			init_loanApply_OrderNo:function(){
+				var loanApplyOrderNo = "";
+				 $.ajax({
+		        	 type: "post",
+		             url: "<%=basePath%>/loan/loanApplyOrderNo.action",
+		             dataType: "json",
+		             async:false,
+		             success: function(data){
+		            	 if(data.code==1){
+		            		 loanApplyOrderNo =  data.data;
+		            	 }
+		            }
+		        }); 
+				 return  loanApplyOrderNo;
+			},
+			
+			init_data:function(){
+				var orderNo = this.init_loanApply_OrderNo();
+				this.static_path = static_path+orderNo+"/";
+				$("#loanApplyOrderNo").val(orderNo);
+			}
+	};
+	
 		var dateSelect = new datePickerAdd($("#dataS"), $("#dataE"), function(
 				dateText, inst) {
 		}, function(dateText, inst) { //结束日期回调            
 		}, "", "", "", true);
 
-  
 		//放大tupian
 		function bigImgShow() {
 			var _index = 0;
