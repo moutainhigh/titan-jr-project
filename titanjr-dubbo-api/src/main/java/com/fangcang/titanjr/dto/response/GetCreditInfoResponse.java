@@ -27,7 +27,7 @@ public class GetCreditInfoResponse extends BaseResponseDTO {
 
 	// 企业担保信息
 	private LoanCompanyEnsureBean companyEnsure;
-
+	// 企业补充信息
 	private LoanCompanyAppendInfo companyAppendInfo;
 
 	// 授信企业信息

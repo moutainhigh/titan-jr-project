@@ -58,23 +58,23 @@
 							</tr>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>税务登记号：</td>
-								<td>${getCreditInfoResponse.creditCompany.taxregno }</td>
+								<td>${getCreditInfoResponse.creditCompany.taxRegNo }</td>
 								<td class="bg_f2"><i class="c_f00">*</i>组织机构代码：</td>
-								<td>${getCreditInfoResponse.creditCompany.orgcode }</td>
+								<td>${getCreditInfoResponse.creditCompany.orgCode }</td>
 							</tr>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>平台注册账号：</td>
-								<td>${getCreditInfoResponse.creditCompany.regaccount }</td>
+								<td>${getCreditInfoResponse.creditCompany.regAccount }</td>
 								<td class="bg_f2"><i class="c_f00">*</i>平台注册日期：</td>
-								<td>${getCreditInfoResponse.creditCompany.regdate }</td>
+								<td>${getCreditInfoResponse.creditCompany.regDate }</td>
 							</tr>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>企业注册地址：</td>
-								<td colspan="3">${getCreditInfoResponse.creditCompany.regaddress }</td>
+								<td colspan="3">${getCreditInfoResponse.creditCompany.regAddress }</td>
 							</tr>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>企业办公地址：</td>
-								<td colspan="3">${getCreditInfoResponse.creditCompany.officeaddress }</td>
+								<td colspan="3">${getCreditInfoResponse.creditCompany.officeAddress }</td>
 							</tr>
 						</table>
 					</div>
@@ -91,9 +91,9 @@
 							</colgroup>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>法人姓名：</td>
-								<td>${getCreditInfoResponse.creditCompany.legalname }</td>
+								<td>${getCreditInfoResponse.creditCompany.legalName }</td>
 								<td class="bg_f2"><i class="c_f00">*</i>法人证件号：</td>
-								<td><c:if test="${getCreditInfoResponse.creditCompany.legalno ==1}">身份证</c:if> <c:if test="${getCreditInfoResponse.creditCompany.legalno ==2}">护照</c:if>	${getCreditInfoResponse.creditCompany.legalno }</td>
+								<td><c:if test="${getCreditInfoResponse.creditCompany.legalNo ==1}">身份证</c:if> <c:if test="${getCreditInfoResponse.creditCompany.legalNo ==2}">护照</c:if>	${getCreditInfoResponse.creditCompany.legalNo }</td>
 							</tr>							
 						</table>
 					</div>
@@ -110,9 +110,9 @@
 							</colgroup>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>联系人姓名：</td>
-								<td>${getCreditInfoResponse.creditCompany.contactname }</td>
+								<td>${getCreditInfoResponse.creditCompany.contactName }</td>
 								<td class="bg_f2"><i class="c_f00">*</i>联系电话：</td>
-								<td>${getCreditInfoResponse.creditCompany.contactphone }</td>
+								<td>${getCreditInfoResponse.creditCompany.contactPhone }</td>
 							</tr>							
 						</table>
 					</div>
@@ -122,16 +122,16 @@
 						<i></i>股东信息
 					</div>
 					<div class="clc_c">
-						<table border="0" cellspacing="0" width="100%">
-							<colgroup>
-								<col width="125">
-								<col width="">
-								<col width="110">
-								<col width="100">
-								<col width="132">
-								<col width="100">
-							</colgroup>
-							<c:forEach items="${getCreditInfoResponse.creditCompany.controllDatas}" var="loanControllDataBean">
+						<c:forEach items="${getCreditInfoResponse.companyAppendInfo.controllDatas}" var="loanControllDataBean">
+							<table border="0" cellspacing="0" width="100%">
+								<colgroup>
+									<col width="125">
+									<col width="">
+									<col width="110">
+									<col width="100">
+									<col width="132">
+									<col width="100">
+								</colgroup>
 								<tr>
 									<td class="bg_f2"><i class="c_f00">*</i>股东名称：</td>
 									<td>${loanControllDataBean.shareholderName }</td>
@@ -140,66 +140,67 @@
 									<td class="bg_f2"><i class="c_f00">*</i>股权比例：</td>
 									<td>${loanControllDataBean.equityRatio}</td>
 								</tr>		
-							</c:forEach>					
-						</table>
+							</table>
+						</c:forEach>
 					</div>
 					<div class="clc_t">
 						<i></i>主营业务信息
 					</div>
 					<div class="clc_c">
-						<table border="0" cellspacing="0" width="100%">
-							<colgroup>
-								<col width="125">
-								<col width="">
-								<col width="110">
-								<col width="100">
-								<col width="132">
-								<col width="100">
-							</colgroup>
-							<c:forEach items="${getCreditInfoResponse.creditCompany.mainBusinessDatas}" var="loanMainBusinessDataBean">
-							<tr>
-								<td class="bg_f2"><i class="c_f00">*</i>主要产品/服务：</td>
-								<td>${loanMainBusinessDataBean.mainProductsOrService }</td>
-								<td class="bg_f2"><i class="c_f00">*</i>年销售规模：</td>
-								<td>${loanMainBusinessDataBean.mainAnnualSale }</td>
-								<td class="bg_f2"><i class="c_f00">*</i>占总销售额比例：</td>
-								<td>${loanMainBusinessDataBean.mainSaleProportion }</td>
-							</tr>	
-							</c:forEach>						
-						</table>
+						<c:forEach items="${getCreditInfoResponse.companyAppendInfo.mainBusinessDatas}" var="loanMainBusinessDataBean">
+							<table border="0" cellspacing="0" width="100%">
+								<colgroup>
+									<col width="125">
+									<col width="">
+									<col width="110">
+									<col width="100">
+									<col width="132">
+									<col width="100">
+								</colgroup>
+								<tr>
+									<td class="bg_f2"><i class="c_f00">*</i>主要产品/服务：</td>
+									<td>${loanMainBusinessDataBean.mainProductsOrService }</td>
+									<td class="bg_f2"><i class="c_f00">*</i>年销售规模：</td>
+									<td>${loanMainBusinessDataBean.mainAnnualSale }</td>
+									<td class="bg_f2"><i class="c_f00">*</i>占总销售额比例：</td>
+									<td>${loanMainBusinessDataBean.mainSaleProportion }</td>
+								</tr>	
+							</table>
+						</c:forEach>
 					</div>
 					<div class="clc_t">
 						<i></i>合作企业信息
 					</div>
 					<div class="clc_c">
-						<table border="0" cellspacing="0" width="100%">
-							<colgroup>
-								<col width="125">
-								<col width="">
-								<col width="110">
-								<col width="100">
-								<col width="132">
-								<col width="100">
-							</colgroup>
-							<c:forEach items="${getCreditInfoResponse.creditCompany.cooperationCompanyInfos}" var="loanCooperationCompanyBean">
-							<tr>
-								<td class="bg_f2"><i class="c_f00">*</i>合作企业名称：</td>
-								<td>${loanCooperationCompanyBean.cooperationName }</td>
-								<td class="bg_f2"><i class="c_f00">*</i>年交易额：</td>
-								<td>${loanCooperationCompanyBean.yearAnnualSale }</td>
-								<td class="bg_f2"><i class="c_f00">*</i>占总销售额比例：</td>
-								<td>${loanCooperationCompanyBean.saleProportion }</td>
-							</tr>	
-							<tr>
-								<td class="bg_f2"><i class="c_f00">*</i>结算方式：</td>
-								<td>${loanCooperationCompanyBean.settlement }</td>
-								<td class="bg_f2"><i class="c_f00">*</i>合作年限：</td>
-								<td>${loanCooperationCompanyBean.cooperationYears }</td>
-								<td class="bg_f2"><i class="c_f00">*</i>合作关系：</td>
-								<td>${loanCooperationCompanyBean.cooperation }</td>
-							</tr>	
-							</c:forEach>					
-						</table>
+						<c:forEach items="${getCreditInfoResponse.companyAppendInfo.cooperationCompanyInfos}" var="loanCooperationCompanyBean">
+							<table border="0" cellspacing="0" width="100%">
+								<colgroup>
+									<col width="125">
+									<col width="">
+									<col width="110">
+									<col width="100">
+									<col width="132">
+									<col width="100">
+								</colgroup>
+								<tr>
+									<td class="bg_f2"><i class="c_f00">*</i>合作企业名称：</td>
+									<td>${loanCooperationCompanyBean.cooperationName }</td>
+									<td class="bg_f2"><i class="c_f00">*</i>年交易额：</td>
+									<td>${loanCooperationCompanyBean.yearAnnualSale }</td>
+									<td class="bg_f2"><i class="c_f00">*</i>占总销售额比例：</td>
+									<td>${loanCooperationCompanyBean.saleProportion }</td>
+								</tr>	
+								<tr>
+									<td class="bg_f2"><i class="c_f00">*</i>结算方式：</td>
+									<td>${loanCooperationCompanyBean.settlement }</td>
+									<td class="bg_f2"><i class="c_f00">*</i>合作年限：</td>
+									<td>${loanCooperationCompanyBean.cooperationYears }</td>
+									<td class="bg_f2"><i class="c_f00">*</i>合作关系：</td>
+									<td>${loanCooperationCompanyBean.cooperation }</td>
+								</tr>	
+											
+							</table>
+						</c:forEach>		
 					</div>
 					<div class="clc_t">
 						<i></i>经营场所信息
@@ -215,29 +216,29 @@
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>经营场所：</td>
 								<td colspan="3">
-									<label class="f_ui-radio-c3 m_r15"><input name="r1" type="radio" checked=""><i></i> &nbsp;自有产权 </label>
-									<label class="f_ui-radio-c3"><input name="r1" type="radio" /><i></i> &nbsp;租赁房屋</label>
+									<label class="f_ui-radio-c3 m_r15"><input name="r1" type="radio"   <c:if test="${getCreditInfoResponse.companyAppendInfo.companyLease.leaseType==1 }">checked="checked"</c:if>><i></i> &nbsp;自有产权 </label>
+									<label class="f_ui-radio-c3"><input name="r1" type="radio"   <c:if test="${getCreditInfoResponse.companyAppendInfo.companyLease.leaseType==2 }">checked="checked"</c:if>/><i></i> &nbsp;租赁房屋</label>
 								</td>
 							</tr>	
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>租赁期限：</td>
-								<td>${getCreditInfoResponse.creditCompany.companyLease.beginLeaseDate} - ${getCreditInfoResponse.creditCompany.companyLease.endLeaseDate} </td>
+								<td>${getCreditInfoResponse.companyAppendInfo.companyLease.beginLeaseDate} - ${getCreditInfoResponse.companyAppendInfo.companyLease.endLeaseDate} </td>
 								<td class="bg_f2"><i class="c_f00">*</i>建筑面积：</td>
-								<td>${getCreditInfoResponse.creditCompany.companyLease.housingArea}</td>								
+								<td>${getCreditInfoResponse.companyAppendInfo.companyLease.housingArea}</td>								
 							</tr>	
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>租金：</td>
-								<td>${getCreditInfoResponse.creditCompany.companyLease.rental}</td>
+								<td>${getCreditInfoResponse.companyAppendInfo.companyLease.rental}</td>
 								<td class="bg_f2"><i class="c_f00">*</i>支付方式：</td>
-								<td>${getCreditInfoResponse.creditCompany.companyLease.paymentMethod}</td>								
+								<td>${getCreditInfoResponse.companyAppendInfo.companyLease.paymentMethod}</td>								
 							</tr>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>租赁地址：</td>
-								<td colspan="3">${getCreditInfoResponse.creditCompany.companyLease.leaseAddress}</td>															
+								<td colspan="3">${getCreditInfoResponse.companyAppendInfo.companyLease.leaseAddress}</td>															
 							</tr>	
 							<tr>
 								<td class="bg_f2">备注</td>
-								<td colspan="3">${getCreditInfoResponse.creditCompany.companyLease.remark}</td>															
+								<td colspan="3">${getCreditInfoResponse.companyAppendInfo.companyLease.remark}</td>															
 							</tr>					
 						</table>
 					</div>
@@ -255,12 +256,13 @@
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>担保人类型：</td>
 								<td >
-									<label class="f_ui-radio-c3 m_r15"><input name="r2" type="radio" checked="" value="1"><i></i> &nbsp;自然人担保 </label>
-									<label class="f_ui-radio-c3"><input name="r2" type="radio" value="2"/><i></i> &nbsp;企业担保</label>
+									<label class="f_ui-radio-c3 m_r15"><input name="r2" type="radio" <c:if test="${getCreditInfoResponse.creditOrder.assureType==1}">checked="checked"</c:if> value="1"/><i></i> &nbsp;自然人担保 </label>
+									<label class="f_ui-radio-c3"><input name="r2" type="radio"  <c:if test="${getCreditInfoResponse.creditOrder.assureType==2}">checked="checked"</c:if> value="2"/><i></i> &nbsp;企业担保</label>
 								</td>
 							</tr>
 						</table>
 					</div>
+					<c:if test="${getCreditInfoResponse.creditOrder.assureType==1}">
 					<div class="surety">
 					<div class="clc_t">
 						<i></i>担保人基本信息
@@ -398,8 +400,9 @@
 						</table>
 					</div>
 					</div>	
-
-					<div class="surety1 dn">
+					</c:if>
+					<c:if test="${getCreditInfoResponse.creditOrder.assureType==2}">
+					<div class="surety1">
 					<div class="clc_t">
 						<i></i>基本信息
 					</div>
@@ -490,7 +493,7 @@
 						</table>
 					</div>
 					</div>
-
+					</c:if>
 				</div>
 				<div class="cl_c dn">
 					<div class="clc_t">
@@ -499,36 +502,36 @@
 					<div class="clc_c">
 						<ul>
 							<li><p><i class="c_f00">*</i>企业营业执照</p>
-							<img src="${getCreditInfoResponse.companyEnsure.licenseUrl}" class="J_see"></li>
+							<img src="${getCreditInfoResponse.creditCompany.licenseUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>税务登记证</p>
-							<img src="${getCreditInfoResponse.companyEnsure.taxRegUrl}" class="J_see"></li>
+							<img src="${getCreditInfoResponse.creditCompany.taxRegUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>组织机构代码证</p>
-							<img src="${getCreditInfoResponse.companyEnsure.orgCodeUrl}" class="J_see"></li>
+							<img src="${getCreditInfoResponse.creditCompany.orgCodeUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>开户许可证</p>
-							<img src="${getCreditInfoResponse.companyEnsure.accountUrl}" class="J_see"></li>
+							<img src="${getCreditInfoResponse.creditCompany.accountUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>法人身份证</p>
-							<img src="${getCreditInfoResponse.companyEnsure.legalNoUrl}" class="J_see"></li>
+							<img src="${getCreditInfoResponse.creditCompany.legalNoUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>企业信用报告</p>
-							<img src="${getCreditInfoResponse.companyEnsure.creditUrl}" class="J_see"></li>
+							<img src="${getCreditInfoResponse.creditCompany.creditUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>企业银行流水</p>
-							<img src="${getCreditInfoResponse.companyEnsure.waterUrl}" class="J_see"></li>
+							<img src="${getCreditInfoResponse.creditCompany.waterUrl}" class="J_see"></li>
 							<li><p><i class="c_f00">*</i>经营场所证明</p>
 							<div class="download">
 									<i class="PDF"></i>
 									<span title="经营场所证明">经营场所证明</span>
-									<a href="${getCreditInfoResponse.companyEnsure.officeNoUrl}">下载</a>
+									<a href="${getCreditInfoResponse.creditCompany.officeNoUrl}">下载</a>
 								</div></li>
 							<li><p><i class="c_f00">*</i>经营场所照片</p>
 							<div class="download">
 									<i class="RAR"></i>
 									<span title="经营场所照片">经营场所照片</span>
-									<a href="${getCreditInfoResponse.companyEnsure.officeUrl}">下载</a>
+									<a href="${getCreditInfoResponse.creditCompany.officeUrl}">下载</a>
 								</div></li>
 							<li><p><i class="c_f00">*</i>其他附件</p>
 								<div class="download">
 									<i class="ZIP"></i>
 									<span title="企业银行流">企业银行流</span>
-									<a href="${getCreditInfoResponse.companyEnsure.officeUrl}">下载</a>
+									<a href="${getCreditInfoResponse.creditCompany.officeUrl}">下载</a>
 								</div>
 							</li>
 						</ul>
@@ -537,21 +540,42 @@
 					<div class="clc_t">
 						<i></i>担保人证件资料
 					</div>
-					<div class="clc_c">
-						<ul>
-							<li><p><i class="c_f00">*</i>企业营业执照</p>
-							<img src="images/zhizhao.jpg" class="J_see"></li>
-							<li><p><i class="c_f00">*</i>税务登记证</p>
-							<img src="images/zhizhao.jpg" class="J_see"></li>
-							<li><p><i class="c_f00">*</i>组织机构代码证</p>
-							<img src="images/zhizhao.jpg" class="J_see"></li>
-							<li><p><i class="c_f00">*</i>开户许可证</p>
-							<img src="images/zhizhao.jpg" class="J_see"></li>
-							<li><p><i class="c_f00">*</i>法人身份证</p>
-							<img src="images/zhizhao.jpg" class="J_see"></li>							
-						</ul>
-						<div class="clear" ></div>
-					</div>
+					<c:if test="${getCreditInfoResponse.companyEnsure!=null}">
+						<!-- 企业担保 -->
+						<div class="clc_c">
+							<ul>
+								<li><p><i class="c_f00">*</i>企业营业执照</p>
+								<img src="${getCreditInfoResponse.companyEnsure.businessLicenseUrl}" class="J_see"></li>
+								<li><p><i class="c_f00">*</i>税务登记证</p>
+								<img src="${getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl}" class="J_see"></li>
+								<li><p><i class="c_f00">*</i>组织机构代码证</p>
+								<img src="${getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl}" class="J_see"></li>
+								<li><p><i class="c_f00">*</i>开户许可证</p>
+								<img src="${getCreditInfoResponse.companyEnsure.licenseUrl}" class="J_see"></li>
+								<li><p><i class="c_f00">*</i>法人身份证</p>
+								<img src="${getCreditInfoResponse.companyEnsure.legalPersonUrl}" class="J_see"></li>							
+							</ul>
+							<div class="clear" ></div>
+						</div>
+					</c:if>
+					<c:if test="${getCreditInfoResponse.loanPersonEnsure!=null}">
+						<!-- 个人担保 -->
+						<div class="clc_c">
+							<ul>
+								<li><p><i class="c_f00">*</i>担保人身份证</p>
+								<img src="${getCreditInfoResponse.loanPersonEnsure.idCardUrl}" class="J_see"></li>
+								<li><p><i class="c_f00">*</i>担保人户口本</p>
+								<img src="${getCreditInfoResponse.loanPersonEnsure.registeredUrl}" class="J_see"></li>
+								<li><p><i class="c_f00">*</i>配偶户口本</p>
+								<img src="${getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl}" class="J_see"></li>
+								<li><p><i class="c_f00">*</i>配偶身份证</p>
+								<img src="${getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl}" class="J_see"></li>
+								<li><p><i class="c_f00">*</i>结婚证</p>
+								<img src="${getCreditInfoResponse.loanPersonEnsure.marriageUrl}" class="J_see"></li>							
+							</ul>
+							<div class="clear" ></div>
+						</div>
+					</c:if>
 				</div>
 			</div>
 			<div class="c_right">
@@ -603,16 +627,16 @@
 	scrollCon();
 
 	$(".clc_surety input[type=radio]").on('change',function(){
-		var value = $(this).val();			
-		if(value==1 ){
-			$('.surety').show();
-			$('.surety1').hide();
-		}else{
-			$('.surety').hide();
-			$('.surety1').show();
-		}
-		scrollCon();
-	})
+		///var value = $(this).val();			
+		//if(value==1 ){
+		//	$('.surety').show();
+		//	$('.surety1').hide();
+		//}else{
+		//	$('.surety').hide();
+		//	$('.surety1').show();
+		//}
+		//scrollCon();
+	});
 
 	//查看
 	$('.J_see').on('click',function(){

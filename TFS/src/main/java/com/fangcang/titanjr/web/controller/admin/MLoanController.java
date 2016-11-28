@@ -81,8 +81,8 @@ public class MLoanController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(value = "/credit-order-detail")
-	public String creditOrderDetail(String orderNo, Model model){
-		if(StringUtils.isValidString(orderNo)){
+	public String creditOrderDetail(String orderNo,String opt, Model model){
+		if(!StringUtils.isValidString(orderNo)){
 			model.addAttribute("errormsg", "参数错误");
 			return "error";
 		}
