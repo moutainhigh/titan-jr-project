@@ -105,6 +105,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 
 		LoanCreditOrder loanCreditOrder = new LoanCreditOrder();
 		loanCreditOrder.setOrgCode(req.getOrgCode());
+		loanCreditOrder.setOrderNo(req.getOrderNo());
 
 		List<LoanCreditOrder> creditOrders = loanCreditOrderDao
 				.queryLoanCreditOrder(loanCreditOrder);

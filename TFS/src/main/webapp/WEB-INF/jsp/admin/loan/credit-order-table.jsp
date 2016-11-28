@@ -15,8 +15,8 @@
 	<c:if test="${creditCompanyInfoDTO.status ==5}">审核已通过</c:if>
 	</td>
 	<td class="tdl">
-	<c:if test="${creditCompanyInfoDTO.status ==2}"><a href="" data-opt="check" data-order-no="${creditCompanyInfoDTO.orderNo }" class="c_blue cursor undl">审核</a></c:if>
-	<c:if test="${creditCompanyInfoDTO.status !=2}"><a href="" data-opt="view" data-order-no="${creditCompanyInfoDTO.orderNo }" class="c_blue cursor undl">查看</a></c:if>
+	<c:if test="${creditCompanyInfoDTO.status ==2}"><a href="<%=basePath%>/admin/credit-order-detail.shtml?orderNo=${creditCompanyInfoDTO.orderNo }&opt=check" class="c_blue cursor undl j_loan_check">审核</a></c:if>
+	<c:if test="${creditCompanyInfoDTO.status !=2}"><a href="<%=basePath%>/admin/credit-order-detail.shtml?orderNo=${creditCompanyInfoDTO.orderNo }&opt=check" class="c_blue cursor undl j_loan_check">查看</a></c:if>
 	
 	</td>		
 </tr> 
@@ -42,18 +42,16 @@
 
 <script type="text/javascript">
 //查看/审核操作
-$('.J_examine').on('click',function(){
+$('.j_loan_check').on('click',function(){
 	var opt = $(this).attr("data-opt");
-	var tEle = $(this).parents(".td-data");
-	var orgId = tEle.attr("data-orgid");
-	var tfsLoginUsername = tEle.attr("data-tfsLoginUsername");
+	var orderno = $(this).attr("data-order-no");
 	top.F.loading.show("mask");
 	$.ajax({
         dataType : 'html',
         type:'post',
         context: document.body,
-        data:{'orgId':orgId,'opt':opt,'tfsLoginUsername':tfsLoginUsername},
-        url : '<%=basePath%>/admin/viewOrg.shtml',            
+        data:{'orderNo':orderno,'opt':opt},
+        url : '<%=basePath%>/admin/credit-order-detail.shtml',            
         success : function(html){
             var d =  window.top.dialog({
                 title: '账户管理  >  申请审核  >  企业用户  >  快速审核',
