@@ -42,11 +42,12 @@
 	var creditBasePath = '<%=basePath%>';
 	var imageBasePath = '<%=cssSaasPath%>';
 	
+	
+	
+	
+	
 	$(function(){
 	
-		
-		
-		
 		$.ajax({
 			async : false,
 			type : 'get',
@@ -80,16 +81,14 @@
 					
 					
 				}
+			},
+			error:function(){
+					new Tip({msg : '数据加载失败！',type : 3 });
 			}
 		});
-		
 		navObj.show();
-		
 	});
 	
-	//F.loading.show();
-
-	//F.loading.hide();
 	
 	//导航对象
 	var navObj = {
@@ -121,17 +120,18 @@
 				        context: document.body,
 				        url : obj.url+"?DateTime="+new Date().getTime() ,
 				        success : function(html){
+				        	
 				        	 $('#' + obj.zoneId).html(html);
 				        	 $('div[isload=true]').hide();
 				        	 
 				        	 if(obj.render)
 				        	 {
-				        		 try  {
+// 				        		 try  {
 				        	 		eval(obj.render+"('"+JSON.stringify( obj.data)+"','"+creditBasePath+"')");
-								 }catch(e)
-								 {
-									 alert(e);
-								 }
+// 								 }catch(e)
+// 								 {
+// 									 alert(e);
+// 								 }
 				        	 }
 				        	 
 				        	 if(obj["showEventHandle"] && obj["showEventHandle"] !='')
@@ -149,6 +149,9 @@
 			 					 }
 								 F.loading.hide();
 							 } , 1000);
+				        },
+				        error:function(){
+				        	new Tip({msg : '页面加载失败！',type : 3 });
 				        }
 				    });
 				}
@@ -408,13 +411,17 @@
 				},
 				url : creditBasePath + '/loan/credit/saveCreditData.shtml'+"?DateTime="+new Date().getTime(),
 				dataType : 'json',
-				success : function(msg) {
-					if (msg.code == 1) {
+				success : function(obj) {
+					if (obj.code == 1) {
 						result = true;
 					} else {
 						result = false;
+						new Tip({msg :obj.msg,type : 3 });
 					}
-				}
+				},
+		        error:function(){
+		        	new Tip({msg : '数据保存失败！',type : 3 });
+		        }
 			});
 			return result;
 		}

@@ -693,7 +693,7 @@
              $.ajax({
                 dataType : 'html',
                 context: document.body,
-                url : '我的贷款协议.html',
+                url : contextPath+'/loan/credit/creditProtocol.shtml',
                 success : function(html){
                     var d =  window.top.dialog({
                         title: ' ',

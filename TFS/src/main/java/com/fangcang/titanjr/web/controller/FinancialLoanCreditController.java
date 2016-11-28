@@ -77,11 +77,17 @@ public class FinancialLoanCreditController extends BaseController {
 	 */
 	@RequestMapping(value = "/checkCreditStatus", method = RequestMethod.GET)
 	public String checkCreditStatus(Model model) {
+
+		log.info("check credit status userID = " + this.getUserId());
+
 		GetCreditInfoRequest req = new GetCreditInfoRequest();
 		req.setOrgCode(this.getUserId());
 
 		GetCreditInfoResponse creditInfoResponse = financialLoanCreditService
 				.getCreditOrderInfo(req);
+
+		log.info("get credit data = "
+				+ JsonConversionTool.toJson(creditInfoResponse));
 
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 		organQueryRequest.setOrgCode(this.getUserId());
@@ -93,6 +99,9 @@ public class FinancialLoanCreditController extends BaseController {
 
 			FinancialOrganDTO financialOrganDTO = financialOrganResponse
 					.getFinancialOrganDTO();
+
+			log.info("get Organ info ="
+					+ JsonConversionTool.toJson(financialOrganDTO));
 
 			model.addAttribute("userType", financialOrganDTO.getUserType());
 
@@ -111,6 +120,9 @@ public class FinancialLoanCreditController extends BaseController {
 
 			GetAuditEvaluationResponse auditEvaluationResponse = financialLoanCreditService
 					.getAuditEvaluationInfo(request);
+
+			log.info("get audit evaluation info ="
+					+ JsonConversionTool.toJson(auditEvaluationResponse));
 
 			model.addAttribute("creditOpinion",
 					auditEvaluationResponse.getCreditOpinionBean());
@@ -133,6 +145,17 @@ public class FinancialLoanCreditController extends BaseController {
 		this.putSuccess();
 		return this.toJson();
 	}
+	
+	/**
+	 * 授信协议
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/creditProtocol", method = RequestMethod.GET)
+	public String loanCreditProtocol() {
+		return "/loan/credit-apply/credit-protocol";
+	}
+
 
 	/**
 	 * 授信申请企业页面
@@ -316,176 +339,202 @@ public class FinancialLoanCreditController extends BaseController {
 	@RequestMapping(value = "/getCreditData", method = RequestMethod.GET)
 	public String getCreditData() {
 
+		log.info("get credit data userId=" + this.getUserId());
+
 		GetCreditInfoRequest req = new GetCreditInfoRequest();
 		req.setOrgCode(this.getUserId());
 
 		GetCreditInfoResponse creditInfoResponse = financialLoanCreditService
 				.getCreditOrderInfo(req);
 
-		return JsonConversionTool.toJson(creditInfoResponse);
+		String jsonData = JsonConversionTool.toJson(creditInfoResponse);
+
+		log.info("get credit data resp=" + jsonData);
+
+		return jsonData;
 	}
 
 	private LoanCreditSaveRequest getLoanCreditSaveReq(String companyData,
 			String companyAppendData, String companyEnsureData,
 			String companyAccessoryData) {
-		LoanCreditSaveRequest req = new LoanCreditSaveRequest();
 
-		req.setOrgCode(this.getUserId());
-		// 企业信息
-		if (StringUtil.isValidString(companyData)) {
-			LoanCreditCompanyBean companyBean = JsonConversionTool.toObject(
-					companyData, LoanCreditCompanyBean.class);
-			req.setCreditCompany(companyBean);
-		}
+		log.info("create credit save request companyData=" + companyData);
+		log.info("create credit save request companyAppendData="
+				+ companyAppendData);
+		log.info("create credit save request companyEnsureData="
+				+ companyEnsureData);
+		log.info("create credit save request companyAccessoryData="
+				+ companyAccessoryData);
 
-		// 企业附加信息
-		if (StringUtil.isValidString(companyAppendData)) {
-			LoanCompanyAppendInfo appendInfo = new LoanCompanyAppendInfo();
+		try {
 
-			Map<String, String> jsonMap = JsonConversionTool.toObject(
-					companyAppendData, Map.class);
+			LoanCreditSaveRequest req = new LoanCreditSaveRequest();
 
-			Object contorlObj = jsonMap.get("controllDatas");
+			req.setOrgCode(this.getUserId());
 
-			String controllDatasJson = contorlObj instanceof List ? JsonConversionTool
-					.toJson(contorlObj) : JsonConversionTool
-					.toJson(new Object[] { contorlObj });
+			// 企业信息
+			if (StringUtil.isValidString(companyData)) {
+				LoanCreditCompanyBean companyBean = JsonConversionTool
+						.toObject(companyData, LoanCreditCompanyBean.class);
+				req.setCreditCompany(companyBean);
+			}
 
-			Object cooObj = jsonMap.get("cooperationCompanyInfos");
+			// 企业附加信息
+			if (StringUtil.isValidString(companyAppendData)) {
+				LoanCompanyAppendInfo appendInfo = new LoanCompanyAppendInfo();
 
-			String cooperationCompanyInfosJson = cooObj instanceof List ? JsonConversionTool
-					.toJson(cooObj) : JsonConversionTool
-					.toJson(new Object[] { cooObj });
+				Map<String, String> jsonMap = JsonConversionTool.toObject(
+						companyAppendData, Map.class);
 
-			Object mainObj = jsonMap.get("mainBusinessDatas");
+				Object contorlObj = jsonMap.get("controllDatas");
 
-			String mainBusinessDatasJson = mainObj instanceof List ? JsonConversionTool
-					.toJson(mainObj) : JsonConversionTool
-					.toJson(new Object[] { mainObj });
+				String controllDatasJson = contorlObj instanceof List ? JsonConversionTool
+						.toJson(contorlObj) : JsonConversionTool
+						.toJson(new Object[] { contorlObj });
 
-			String companyLease = JsonConversionTool.toJson(jsonMap
-					.get("companyLease"));
+				Object cooObj = jsonMap.get("cooperationCompanyInfos");
 
-			if (StringUtil.isValidString(controllDatasJson)) {
-				List<LoanControllDataBean> controllDataBeans = JsonConversionTool
-						.toObjectList(controllDatasJson,
-								LoanControllDataBean.class);
-				if (CollectionUtils.isNotEmpty(controllDataBeans)) {
-					appendInfo.setControllDatas(controllDataBeans);
+				String cooperationCompanyInfosJson = cooObj instanceof List ? JsonConversionTool
+						.toJson(cooObj) : JsonConversionTool
+						.toJson(new Object[] { cooObj });
+
+				Object mainObj = jsonMap.get("mainBusinessDatas");
+
+				String mainBusinessDatasJson = mainObj instanceof List ? JsonConversionTool
+						.toJson(mainObj) : JsonConversionTool
+						.toJson(new Object[] { mainObj });
+
+				String companyLease = JsonConversionTool.toJson(jsonMap
+						.get("companyLease"));
+
+				if (StringUtil.isValidString(controllDatasJson)) {
+					List<LoanControllDataBean> controllDataBeans = JsonConversionTool
+							.toObjectList(controllDatasJson,
+									LoanControllDataBean.class);
+					if (CollectionUtils.isNotEmpty(controllDataBeans)) {
+						appendInfo.setControllDatas(controllDataBeans);
+					}
+				}
+
+				if (StringUtil.isValidString(cooperationCompanyInfosJson)) {
+					List<LoanCooperationCompanyBean> cooperationBeans = JsonConversionTool
+							.toObjectList(cooperationCompanyInfosJson,
+									LoanCooperationCompanyBean.class);
+					if (CollectionUtils.isNotEmpty(cooperationBeans)) {
+						appendInfo.setCooperationCompanyInfos(cooperationBeans);
+					}
+				}
+
+				if (StringUtil.isValidString(mainBusinessDatasJson)) {
+					List<LoanMainBusinessDataBean> mainBusinessBeans = JsonConversionTool
+							.toObjectList(mainBusinessDatasJson,
+									LoanMainBusinessDataBean.class);
+					if (CollectionUtils.isNotEmpty(mainBusinessBeans)) {
+						appendInfo.setMainBusinessDatas(mainBusinessBeans);
+					}
+				}
+
+				if (StringUtil.isValidString(companyLease)) {
+					LoanCompanyLeaseBean leaseBean = JsonConversionTool
+							.toObject(companyLease, LoanCompanyLeaseBean.class);
+					if (leaseBean != null) {
+						appendInfo.setCompanyLease(leaseBean);
+					}
+				}
+				req.setCompanyAppendInfo(appendInfo);
+			}
+			String assureType = null;
+			// 企业担保信息
+			if (StringUtil.isValidString(companyEnsureData)) {
+				Map<String, String> jsonMap = JsonConversionTool.toObject(
+						companyEnsureData, Map.class);
+				assureType = jsonMap.get("assureType");
+				if (StringUtil.isValidString(assureType)) {
+					String loanPersonEnsure = JsonConversionTool.toJson(jsonMap
+							.get("loanPersonEnsure"));
+					String companyEnsure = JsonConversionTool.toJson(jsonMap
+							.get("companyEnsure"));
+					// 自然人担保
+					if ("1".equals(assureType)) {
+						if (StringUtil.isValidString(loanPersonEnsure)) {
+							LoanPersonEnsureBean loanPersonEnsureBean = JsonConversionTool
+									.toObject(loanPersonEnsure,
+											LoanPersonEnsureBean.class);
+							req.setLoanPersonEnsure(loanPersonEnsureBean);
+						}
+						// 企业担保
+					} else if ("2".equals(assureType)) {
+						if (StringUtil.isValidString(companyEnsure)) {
+							LoanCompanyEnsureBean loanCompanyEnsureBean = JsonConversionTool
+									.toObject(companyEnsure,
+											LoanCompanyEnsureBean.class);
+							req.setCompanyEnsure(loanCompanyEnsureBean);
+						}
+					}
 				}
 			}
 
-			if (StringUtil.isValidString(cooperationCompanyInfosJson)) {
-				List<LoanCooperationCompanyBean> cooperationBeans = JsonConversionTool
-						.toObjectList(cooperationCompanyInfosJson,
-								LoanCooperationCompanyBean.class);
-				if (CollectionUtils.isNotEmpty(cooperationBeans)) {
-					appendInfo.setCooperationCompanyInfos(cooperationBeans);
-				}
-			}
+			// 企业担保信息
+			if (StringUtil.isValidString(companyAccessoryData)) {
+				Map<String, String> jsonMap = JsonConversionTool.toObject(
+						companyAccessoryData, Map.class);
 
-			if (StringUtil.isValidString(mainBusinessDatasJson)) {
-				List<LoanMainBusinessDataBean> mainBusinessBeans = JsonConversionTool
-						.toObjectList(mainBusinessDatasJson,
-								LoanMainBusinessDataBean.class);
-				if (CollectionUtils.isNotEmpty(mainBusinessBeans)) {
-					appendInfo.setMainBusinessDatas(mainBusinessBeans);
-				}
-			}
-
-			if (StringUtil.isValidString(companyLease)) {
-				LoanCompanyLeaseBean leaseBean = JsonConversionTool.toObject(
-						companyLease, LoanCompanyLeaseBean.class);
-				if (leaseBean != null) {
-					appendInfo.setCompanyLease(leaseBean);
-				}
-			}
-			req.setCompanyAppendInfo(appendInfo);
-		}
-		String assureType = null;
-		// 企业担保信息
-		if (StringUtil.isValidString(companyEnsureData)) {
-			Map<String, String> jsonMap = JsonConversionTool.toObject(
-					companyEnsureData, Map.class);
-			assureType = jsonMap.get("assureType");
-			if (StringUtil.isValidString(assureType)) {
+				String creditCompany = JsonConversionTool.toJson(jsonMap
+						.get("creditCompany"));
 				String loanPersonEnsure = JsonConversionTool.toJson(jsonMap
 						.get("loanPersonEnsure"));
 				String companyEnsure = JsonConversionTool.toJson(jsonMap
 						.get("companyEnsure"));
-				// 自然人担保
-				if ("1".equals(assureType)) {
-					if (StringUtil.isValidString(loanPersonEnsure)) {
-						LoanPersonEnsureBean loanPersonEnsureBean = JsonConversionTool
-								.toObject(loanPersonEnsure,
-										LoanPersonEnsureBean.class);
-						req.setLoanPersonEnsure(loanPersonEnsureBean);
-					}
-					// 企业担保
-				} else if ("2".equals(assureType)) {
-					if (StringUtil.isValidString(companyEnsure)) {
-						LoanCompanyEnsureBean loanCompanyEnsureBean = JsonConversionTool
-								.toObject(companyEnsure,
-										LoanCompanyEnsureBean.class);
-						req.setCompanyEnsure(loanCompanyEnsureBean);
-					}
+				// 贷款企业信息
+				if (StringUtil.isValidString(creditCompany)) {
+
+					creditCompany = JsonConversionTool.mergeJson(companyData,
+							creditCompany);
+					LoanCreditCompanyBean companyBean = JsonConversionTool
+							.toObject(creditCompany,
+									LoanCreditCompanyBean.class);
+					req.setCreditCompany(companyBean);
+				}
+
+				String loanPersonEnsureJson = null;
+				String companyEnsureJson = null;
+				if (StringUtil.isValidString(companyEnsureData)) {
+					jsonMap = JsonConversionTool.toObject(companyEnsureData,
+							Map.class);
+					loanPersonEnsureJson = JsonConversionTool.toJson(jsonMap
+							.get("loanPersonEnsure"));
+					companyEnsureJson = JsonConversionTool.toJson(jsonMap
+							.get("companyEnsure"));
+				}
+				// 担保自然人附件信息
+				if ((assureType == null || "1".equals(assureType))
+						&& StringUtil.isValidString(loanPersonEnsure)) {
+
+					loanPersonEnsure = JsonConversionTool.mergeJson(
+							loanPersonEnsureJson, loanPersonEnsure);
+					LoanPersonEnsureBean loanPersonEnsureBean = JsonConversionTool
+							.toObject(loanPersonEnsure,
+									LoanPersonEnsureBean.class);
+					req.setLoanPersonEnsure(loanPersonEnsureBean);
+				}
+				// 担保企业附件信息
+				if ((assureType == null || "2".equals(assureType))
+						&& StringUtil.isValidString(companyEnsure)) {
+
+					companyEnsure = JsonConversionTool.mergeJson(
+							companyEnsureJson, companyEnsure);
+					LoanCompanyEnsureBean loanCompanyEnsureBean = JsonConversionTool
+							.toObject(companyEnsure,
+									LoanCompanyEnsureBean.class);
+					req.setCompanyEnsure(loanCompanyEnsureBean);
 				}
 			}
+			return req;
+		} catch (Exception ex) {
+			log.error("", ex);
 		}
 
-		// 企业担保信息
-		if (StringUtil.isValidString(companyAccessoryData)) {
-			Map<String, String> jsonMap = JsonConversionTool.toObject(
-					companyAccessoryData, Map.class);
-
-			String creditCompany = JsonConversionTool.toJson(jsonMap
-					.get("creditCompany"));
-			String loanPersonEnsure = JsonConversionTool.toJson(jsonMap
-					.get("loanPersonEnsure"));
-			String companyEnsure = JsonConversionTool.toJson(jsonMap
-					.get("companyEnsure"));
-			// 贷款企业信息
-			if (StringUtil.isValidString(creditCompany)) {
-
-				creditCompany = JsonConversionTool.mergeJson(companyData,
-						creditCompany);
-				LoanCreditCompanyBean companyBean = JsonConversionTool
-						.toObject(creditCompany, LoanCreditCompanyBean.class);
-				req.setCreditCompany(companyBean);
-			}
-
-			String loanPersonEnsureJson = null;
-			String companyEnsureJson = null;
-			if (StringUtil.isValidString(companyEnsureData)) {
-				jsonMap = JsonConversionTool.toObject(companyEnsureData,
-						Map.class);
-				loanPersonEnsureJson = JsonConversionTool.toJson(jsonMap
-						.get("loanPersonEnsure"));
-				companyEnsureJson = JsonConversionTool.toJson(jsonMap
-						.get("companyEnsure"));
-			}
-			// 担保自然人附件信息
-			if ((assureType == null || "1".equals(assureType))
-					&& StringUtil.isValidString(loanPersonEnsure)) {
-
-				loanPersonEnsure = JsonConversionTool.mergeJson(
-						loanPersonEnsureJson, loanPersonEnsure);
-				LoanPersonEnsureBean loanPersonEnsureBean = JsonConversionTool
-						.toObject(loanPersonEnsure, LoanPersonEnsureBean.class);
-				req.setLoanPersonEnsure(loanPersonEnsureBean);
-			}
-			// 担保企业附件信息
-			if ((assureType == null || "2".equals(assureType))
-					&& StringUtil.isValidString(companyEnsure)) {
-
-				companyEnsure = JsonConversionTool.mergeJson(companyEnsureJson,
-						companyEnsure);
-				LoanCompanyEnsureBean loanCompanyEnsureBean = JsonConversionTool
-						.toObject(companyEnsure, LoanCompanyEnsureBean.class);
-				req.setCompanyEnsure(loanCompanyEnsureBean);
-			}
-		}
-		return req;
+		return null;
 	}
 
 	/**
@@ -498,10 +547,18 @@ public class FinancialLoanCreditController extends BaseController {
 	public String saveCreditData(String companyData, String companyAppendData,
 			String companyEnsureData, String companyAccessoryData) {
 
+		LoanCreditSaveRequest creditSaveRequest = this.getLoanCreditSaveReq(
+				companyData, companyAppendData, companyEnsureData,
+				companyAccessoryData);
+
+		log.info("save credit applay req["
+				+ JsonConversionTool.toJson(creditSaveRequest) + "]");
+
 		LoanCreditSaveResponse saveResponse = financialLoanCreditService
-				.saveCreditOrder(this.getLoanCreditSaveReq(companyData,
-						companyAppendData, companyEnsureData,
-						companyAccessoryData));
+				.saveCreditOrder(creditSaveRequest);
+
+		log.info("save credit applay resp["
+				+ JsonConversionTool.toJson(saveResponse) + "]");
 
 		if (!saveResponse.isResult()) {
 			putSysError(saveResponse.getReturnMessage());
@@ -519,6 +576,15 @@ public class FinancialLoanCreditController extends BaseController {
 		LoanCreditSaveRequest creditSaveRequest = this.getLoanCreditSaveReq(
 				companyData, companyAppendData, companyEnsureData,
 				companyAccessoryData);
+
+		log.info("submit credit apply req["
+				+ JsonConversionTool.toJson(creditSaveRequest) + "]");
+
+		if (creditSaveRequest == null) {
+			model.addAttribute("errorMsg", "授信单提交失败,请重试！");
+			return "/loan/credit-apply/credit-apply-result";
+		}
+
 		LoanCreditOrderBean creditOrder = new LoanCreditOrderBean();
 		creditOrder.setStatus(2);
 		creditOrder.setReqTime(new Date());
@@ -526,10 +592,11 @@ public class FinancialLoanCreditController extends BaseController {
 		LoanCreditSaveResponse saveResponse = financialLoanCreditService
 				.saveCreditOrder(creditSaveRequest);
 
+		log.info("submit credit apply result = "
+				+ JsonConversionTool.toJson(saveResponse));
+
 		if (!saveResponse.isResult()) {
-			putSysError(saveResponse.getReturnMessage());
-		} else {
-			putSuccess();
+			model.addAttribute("errorMsg", "授信单提交失败,请重试！");
 		}
 
 		model.addAttribute("reqTime",
