@@ -38,23 +38,26 @@
 <script type="text/javascript" src="<%=basePath %>/js/ajaxfileupload.js"></script>
 </body>
 <script type="text/javascript">
-
+	
 	var creditBasePath = '<%=basePath%>';
 	var imageBasePath = '<%=cssSaasPath%>';
 	
 	$(function(){
+	
+		
+		
 		
 		$.ajax({
 			async : false,
 			type : 'get',
-			url : creditBasePath + '/loan/credit/getCreditData.shtml',
+			url : creditBasePath + '/loan/credit/getCreditData.shtml'+"?DateTime="+new Date().getTime(),
 			dataType : 'json',
 			success : function(data) {
 				if(data)
 				{
 					navObj.navList[0]['data'] =  data['creditCompany'];
 					
-					if(data['creditCompany'])
+					if(data['companyAppendInfo'])
 					{
 						navObj.navList[1]['data']["controllDatas"] = data['companyAppendInfo']['controllDatas'];
 						navObj.navList[1]['data']["cooperationCompanyInfos"] = data['companyAppendInfo']['cooperationCompanyInfos'];
@@ -116,7 +119,7 @@
 				 	 $.ajax({
 				        dataType : 'html',
 				        context: document.body,
-				        url : obj.url,
+				        url : obj.url+"?DateTime="+new Date().getTime() ,
 				        success : function(html){
 				        	 $('#' + obj.zoneId).html(html);
 				        	 $('div[isload=true]').hide();
@@ -153,7 +156,7 @@
 		},
 		
 		backMain: function(){
-			window.location.href=creditBasePath+'/loan/loanMain.shtml';
+			window.location.href=creditBasePath+'/loan/credit/checkCreditStatus.shtml'+"?DateTime="+new Date().getTime();
 		},
 		
 		next : function() {
@@ -235,6 +238,15 @@
 				$('input[name="'+groupName+'"][value="'+newValue+'"]').change();
 			}else
 			{
+				
+				if(newValue != null &&  newValue != "" && obj.is('select') && typeof(newValue)=='string')
+				{
+					if(newValue.substring(0 , 1) == '0')
+					{
+						newValue = parseInt(newValue);
+					}
+				}
+				
 				obj.val(newValue);
 				if(obj.is('select'))
 				{
@@ -394,7 +406,7 @@
 					"companyEnsureData" : data['companyEnsure'],
 					"companyAccessoryData" : data['companyAccessory']
 				},
-				url : creditBasePath + '/loan/credit/saveCreditData.shtml',
+				url : creditBasePath + '/loan/credit/saveCreditData.shtml'+"?DateTime="+new Date().getTime(),
 				dataType : 'json',
 				success : function(msg) {
 					if (msg.code == 1) {
