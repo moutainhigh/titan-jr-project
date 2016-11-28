@@ -88,7 +88,7 @@ public class OrderGenerateService {
 	 * @return
 	 */
 	public static String genLoanApplyOrderNo(){
-		StringBuffer order = new StringBuffer("ln");
+		StringBuffer order = new StringBuffer("D");
 		order.append(DateUtil.formatDataYYMMDDHHMMSS(new Date()));
 		Random rd = new Random();
 		for(int i=0; i < 4; i ++){

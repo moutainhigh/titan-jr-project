@@ -143,3 +143,28 @@ function replaceEnterKey(src){
 function backEnterKey(src){
 	return src.replace(/\<BR\/\>/gi,"\r\n");  
 }
+
+var tfs_common_valid = {
+		
+		validAmount :function(src){
+			var decimals_reg = /^[1-9]{1}\d{0,7}(\.\d{1,2})?$/;
+			var number_reg = /^[0]{1}(\.\d{1,2})?$/;
+			return decimals_reg.test(src)||number_reg.test(src);
+		},
+		
+		isBlank :function(src){
+			if(src === undefined || $.trim(src).length<1){
+				return true;
+			}
+			return false;
+		},
+		
+		idBankCard :function(src){
+			var neg = /^[0-9]\d*$/;
+   	        if(src.length>30||!neg.test(src)){
+   	        	return true;
+   	        }
+			return false;
+		}
+}
+

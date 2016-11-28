@@ -66,18 +66,29 @@
 						<div class="w_400">
 							<i class="c_f00">*</i>开户行： <select
 								class="select b_fff m_l10 w_150" name="bank" id="bank">
-								<option value="0">开户行</option>
-								<option value="1">开户行</option>
-								<option value="2">开户行</option>
+								<option value="招商银行" >招商银行</option>
+								<option value="中国工商银行" selected="selected">中国工商银行</option>
+								<option value="中国建设银行">中国建设银行</option>
+								<option value="中国农业银行">中国农业银行</option>
+								<option value="中国民生银行">中国民生银行</option>
+								<option value="光大银行">中国光大银行</option>
+								
+								<option value="交通银行">交通银行</option>
+								<option value="中国银行">中国银行</option>
+								<option value="兴业银行">兴业银行</option>
+								<option value="中国建设银行">中国建设银行</option>
+								<option value="中国建设银行">中国民生银行</option>
 							</select>
 						</div> <input type="hidden" class="text w_250  c_666 "
 						name="contactNames" id="contactNames"></li>
 					<li class="clearfix p_l83"><div class="tit">包房合同</div>
 						<div class="p_l25">请至少上传一张包房合同附件，附件格式支持PDF、JPG、JPEG、PNG、ZIP、RAR，大小不超过5M</div>
+						<input type="hidden" name="contractNames" id="contractNames"/>
 						<dl>
 							<dd class="RC_c_dd">
 								<div class="TFSaddImg"></div>
 								<input type="file" name="compartment_contract" id="compartment_contract1">
+								<input type="hidden" name="compartment_contract1_name" id="compartment_contract1_name">
 								<div class="TFSuploading TFSupload_ZIP hidden">
 									<p class="TFSuploading1">
 										<span></span>
@@ -104,6 +115,7 @@
 							<dd class="RC_c_dd">
 								<div class="TFSaddImg"></div>
 								<input type="file" name="compartment_contract" id="compartment_contract2">
+								<input type="hidden" name="compartment_contract2_name" id="compartment_contract2_name">
 								<div class="TFSuploading TFSupload_ZIP hidden">
 									<p class="TFSuploading1">
 										<span></span>
@@ -130,6 +142,7 @@
 							<dd class="RC_c_dd">
 								<div class="TFSaddImg"></div>
 								<input type="file" name="compartment_contract" id="compartment_contract3">
+								<input type="hidden" name="compartment_contract3_name" id="compartment_contract3_name">
 								<div class="TFSuploading TFSupload_ZIP hidden">
 									<p class="TFSuploading1">
 										<span></span>
@@ -156,6 +169,7 @@
 							<dd class="RC_c_dd">
 								<div class="TFSaddImg"></div>
 								<input type="file" name="compartment_contract" id="compartment_contract4">
+								<input type="hidden" name="compartment_contract4_name" id="compartment_contract4_name">
 								<div class="TFSuploading TFSupload_ZIP hidden">
 									<p class="TFSuploading1">
 										<span></span>
@@ -189,7 +203,7 @@
 
 	<div style="height: 60px"></div>
 	<div class="TFS_data_button">
-		<a class="btn btnNext" href="泰坦金融-我的贷款首页-包房贷款申请已提交.html">提交申请</a> <a
+		<a class="btn btnNext" onclick="form_submit.submit()">提交申请</a> <a
 			class=" btn_exit_long bnt_exit_padding12"
 			href="javascript:history.go(-1)">取消</a>
 	</div>
@@ -198,16 +212,14 @@
 	<script type="text/javascript" src="<%=basePath %>/js/ajaxfileupload.js"></script>
 
 	<script type="text/javascript">   
-	var initData = new init_loanApply_obj();
-	initData.init_data();
-	
+	/* var initData = new init_loanApply_obj(); */
 	var init_loanApply_obj = {
 			static_path:"http://image.fangcang.com/upload/images/titanjr/loan_apply/${JR_USERID}/",
 			init_loanApply_OrderNo:function(){
 				var loanApplyOrderNo = "";
 				 $.ajax({
 		        	 type: "post",
-		             url: "<%=basePath%>/loan/loanApplyOrderNo.action",
+		             url: "<%=basePath%>/loan_apply/orderNo.action",
 		             dataType: "json",
 		             async:false,
 		             success: function(data){
@@ -221,9 +233,130 @@
 			
 			init_data:function(){
 				var orderNo = this.init_loanApply_OrderNo();
-				this.static_path = static_path+orderNo+"/";
+				this.static_path = this.static_path+orderNo+"/";
 				$("#loanApplyOrderNo").val(orderNo);
 			}
+	};
+	
+	init_loanApply_obj.init_data();
+	
+	var form_submit = {
+		submit:function(){
+			if(!this.validateData(this.queryData())){
+				return false;
+			}
+			//开启旋转按钮
+			top.F.loading.show();
+			$.ajax({
+				type:"post",
+				url:"<%=basePath%>/loan_apply/apply.action",
+				dataType:'json',
+				data:this.queryData(),
+				success:function(data){
+					console.log(data);
+					alert("111");
+				},
+				complete:function(){
+					top.F.loading.hide();
+				}
+				
+			});
+		},
+		
+		queryData:function(){
+			return {
+				loanOrderNo:$("#loanApplyOrderNo").val(),
+				amount:$("#amount").val(),
+				hotelName:$("#hotelName").val(),
+				beginDate:$("#dataS").val(),
+				endDate:$("#dataE").val(),
+				roomNights:$("#roomNights").val(),
+				accountName:$("#accountName").val(),
+				account:$("#account").val(),
+				bank:$("#bank").val(),
+				contactNames:this.addContactName(),
+			};
+		},
+		validateData:function(data){
+			if(tfs_common_valid.isBlank(data.amount)){
+				new top.Tip({msg: '贷款金额不能为空', type: 1, timer: 2000});
+				return false;
+			}
+			
+			if(!tfs_common_valid.validAmount(data.amount)){
+				new top.Tip({msg: '贷款金额格式不正确,可保留一位或两位小数', type: 1, timer: 2000});
+				return false;
+			}
+			
+			if(tfs_common_valid.isBlank(data.hotelName)){
+				new top.Tip({msg: '酒店名称不能为空', type: 1, timer: 2000});
+				return false;
+			}
+			
+			if(tfs_common_valid.isBlank(data.beginDate)){
+				new top.Tip({msg: '包房时段的开始时间不能为空', type: 1, timer: 2000});
+				return false;
+			}
+			
+			if(tfs_common_valid.isBlank(data.endDate)){
+				new top.Tip({msg: '包房时段的结束时间不能为空', type: 1, timer: 2000});
+				return false;
+			}
+			
+			if(tfs_common_valid.isBlank(data.roomNights)){
+				new top.Tip({msg: '间夜数不能为空', type: 1, timer: 2000});
+				return false;
+			}
+			
+			if(tfs_common_valid.isBlank(data.accountName)){
+				new top.Tip({msg: '账户名不能为空', type: 1, timer: 2000});
+				return false;
+			}
+			
+			
+			if(tfs_common_valid.isBlank(data.account)){
+				new top.Tip({msg: '银行卡号不能为空', type: 1, timer: 2000});
+				return false;
+			}
+			
+			if(tfs_common_valid.idBankCard(data.account)){
+				new top.Tip({msg: '银行卡号输入不正确', type: 1, timer: 2000});
+				return false;
+			}
+			
+			if(tfs_common_valid.isBlank(data.bank)){
+				new top.Tip({msg: '开户行不能为空', type: 1, timer: 2000});
+				return false;
+			}
+			
+			if(tfs_common_valid.isBlank(data.contactNames)){
+				new top.Tip({msg: '包房合同不能为空', type: 1, timer: 2000});
+				return false;
+			}
+			
+			return true;
+		},
+		addContactName:function(){
+			var contactNames ="";
+			if($.trim($("#compartment_contract1_name").val()).length>1){
+				contactNames += $.trim($("#compartment_contract1_name").val())+",";
+			}
+			
+			if($.trim($("#compartment_contract2_name").val()).length>1){
+				contactNames+=$.trim($("#compartment_contract2_name").val())+",";
+			}
+			
+			if($.trim($("#compartment_contract3_name").val()).length>1){
+				contactNames+=$.trim($("#compartment_contract3_name").val())+",";
+			}
+			
+			if($.trim($("#compartment_contract4_name").val()).length>1){
+				contactNames+=$.trim($("#compartment_contract4_name").val());
+			}
+			return contactNames;
+		} 
+		
+		
 	};
 	
 		var dateSelect = new datePickerAdd($("#dataS"), $("#dataE"), function(
@@ -376,7 +509,7 @@
        	 	$(this).parent().find(".TFSuploading").removeClass("hidden");
        	 	
        	    $.ajaxFileUpload({
-   	        	url: '<%=basePath%>/loan/upload.shtml',
+   	        	url: '<%=basePath%>/loan_apply/upload.shtml',
    	            secureuri: false, 
    	            fileElementId: $(this).attr('id'), 
    	            data:{loanApplyOrderNo:$("#loanApplyOrderNo").val(),fileName:ids},
@@ -390,11 +523,14 @@
 	   	            	 }
 	   	            	 //假装让进度条走到100
 	   	            	loadingOver($('#' + ids).parent().find(".TFSuploading") , function(){
+	   	            		$("#"+ids+"_name").val(result.data);
+	   	            		$("#"+ids+"_error").hide();
 	   	            		uploadSucess(ids , result.data);
 	   	            	});
    					}
    	            	else
    	            	{alert("#"+ids+"_error");
+   	            		$("#"+ids+"_error").show();
    	            		$("#"+ids+"_error").text(result.msg);
    						uploadError(ids);
    					}
@@ -434,14 +570,14 @@
 			if(imgList.indexOf(postf.toLowerCase()) !=-1)
 			{
 				$('#'+ids).parent().find('.TFSimgOn').addClass('TFSimgOnBig');
-				$('#'+ids).parent().find('.TFSimgOn').find('img').attr("src",static_path+fileName);
+				$('#'+ids).parent().find('.TFSimgOn').find('img').attr("src",init_loanApply_obj.static_path+fileName);
 				bigImgShow();
 			}else
 			{
 				$('#'+ids).parent().find('.TFSimgOn').find('img').attr("src",'<%=cssSaasPath%>/images/TFS/help_logo.jpg');
 			
 				$('#'+ids).parent().find('.TFSimgOn').find("img").click(function(){
-					 window.open(static_path+fileName);
+					 window.open(init_loanApply_obj.static_path+fileName);
 				 });
 			}
 			

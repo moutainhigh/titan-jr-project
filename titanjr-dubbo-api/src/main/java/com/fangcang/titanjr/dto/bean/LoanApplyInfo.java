@@ -11,6 +11,9 @@ public class LoanApplyInfo implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
+	//贷款单号
+	private String loanOrderNo;
+	
 	//申请金额
 	private String amount;
 	
@@ -109,4 +112,13 @@ public class LoanApplyInfo implements Serializable{
 	public void setContactNames(String contactNames) {
 		this.contactNames = contactNames;
 	}
+
+	public String getLoanOrderNo() {
+		return loanOrderNo;
+	}
+
+	public void setLoanOrderNo(String loanOrderNo) {
+		this.loanOrderNo = loanOrderNo;
+	}
+	
 }
