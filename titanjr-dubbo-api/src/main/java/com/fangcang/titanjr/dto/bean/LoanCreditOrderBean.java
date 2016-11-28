@@ -1,16 +1,20 @@
 package com.fangcang.titanjr.dto.bean;
 
 import java.util.Date;
+
 /**
  * 贷款授信单
+ * 
  * @author wengxitao
  */
-public class LoanCreditOrderBean implements java.io.Serializable{
+public class LoanCreditOrderBean implements java.io.Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -397916317083742463L;
+
+	private String orderNo;
 
 	private String orgCode;// 授信金融机构ID
 
@@ -42,6 +46,13 @@ public class LoanCreditOrderBean implements java.io.Serializable{
 
 	private Date auditPass;// 审核通过时间
 
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
 
 	public String getOrgCode() {
 		return orgCode;

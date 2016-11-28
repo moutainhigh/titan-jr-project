@@ -2,7 +2,7 @@ package com.fangcang.titanjr.web.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,8 +19,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.LoanCompanyAppendInfo;
 import com.fangcang.titanjr.dto.bean.LoanCompanyEnsureBean;
 import com.fangcang.titanjr.dto.bean.LoanCompanyLeaseBean;
@@ -29,12 +33,18 @@ import com.fangcang.titanjr.dto.bean.LoanCreditCompanyBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanMainBusinessDataBean;
 import com.fangcang.titanjr.dto.bean.LoanPersonEnsureBean;
+import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
+import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
+import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
 import com.fangcang.titanjr.dto.response.FTPConfigResponse;
+import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.GetAuditEvaluationResponse;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
 import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.StringUtil;
 
@@ -48,6 +58,8 @@ import com.fangcang.util.StringUtil;
 @RequestMapping("loan/credit")
 public class FinancialLoanCreditController extends BaseController {
 
+	private static final long serialVersionUID = 1L;
+
 	private static final Log log = LogFactory
 			.getLog(FinancialLoanCreditController.class);
 
@@ -56,10 +68,71 @@ public class FinancialLoanCreditController extends BaseController {
 
 	@Resource
 	private TitanFinancialLoanCreditService financialLoanCreditService;
+
+	@Resource
+	private TitanFinancialOrganService financialOrganService;
+
 	/**
-	 * 
+	 * 进入贷款主页
 	 */
-	private static final long serialVersionUID = 1L;
+	@RequestMapping(value = "/checkCreditStatus", method = RequestMethod.GET)
+	public String checkCreditStatus(Model model) {
+		GetCreditInfoRequest req = new GetCreditInfoRequest();
+		req.setOrgCode(this.getUserId());
+
+		GetCreditInfoResponse creditInfoResponse = financialLoanCreditService
+				.getCreditOrderInfo(req);
+
+		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+		organQueryRequest.setOrgCode(this.getUserId());
+
+		FinancialOrganResponse financialOrganResponse = financialOrganService
+				.queryFinancialOrgan(organQueryRequest);
+
+		if (financialOrganResponse.getFinancialOrganDTO() != null) {
+
+			FinancialOrganDTO financialOrganDTO = financialOrganResponse
+					.getFinancialOrganDTO();
+
+			model.addAttribute("userType", financialOrganDTO.getUserType());
+
+			model.addAttribute("lastUpdateDate",
+					financialOrganDTO.getLastUpdateDate());
+
+			model.addAttribute("maxLoanAmount",
+					financialOrganDTO.getMaxLoanAmount());
+		}
+
+		model.addAttribute("creditOrder", creditInfoResponse.getCreditOrder());
+
+		if (creditInfoResponse.getCreditOrder() != null) {
+			GetAuditEvaluationRequest request = new GetAuditEvaluationRequest();
+			request.setOrderNo(creditInfoResponse.getCreditOrder().getOrderNo());
+
+			GetAuditEvaluationResponse auditEvaluationResponse = financialLoanCreditService
+					.getAuditEvaluationInfo(request);
+
+			model.addAttribute("creditOpinion",
+					auditEvaluationResponse.getCreditOpinionBean());
+		}
+
+		return "/loan/loan-main";
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/updateLoanAmountDate", method = RequestMethod.GET)
+	public String updateLoanAmountDate() {
+		OrgUpdateRequest orgUpdateRequest = new OrgUpdateRequest();
+		orgUpdateRequest.setLastUpdateDate(new Date());
+		orgUpdateRequest.setOrgCode(this.getUserId());
+		try {
+			financialOrganService.updateOrg(orgUpdateRequest);
+		} catch (GlobalServiceException e) {
+			log.error("", e);
+		}
+		this.putSuccess();
+		return this.toJson();
+	}
 
 	/**
 	 * 授信申请企业页面
@@ -441,13 +514,14 @@ public class FinancialLoanCreditController extends BaseController {
 	@RequestMapping(value = "/submitCreditApply", method = RequestMethod.POST)
 	public String submitCreditApply(String companyData,
 			String companyAppendData, String companyEnsureData,
-			String companyAccessoryData) {
+			String companyAccessoryData, Model model) {
 
 		LoanCreditSaveRequest creditSaveRequest = this.getLoanCreditSaveReq(
 				companyData, companyAppendData, companyEnsureData,
 				companyAccessoryData);
 		LoanCreditOrderBean creditOrder = new LoanCreditOrderBean();
 		creditOrder.setStatus(2);
+		creditOrder.setReqTime(new Date());
 		creditSaveRequest.setCreditOrder(creditOrder);
 		LoanCreditSaveResponse saveResponse = financialLoanCreditService
 				.saveCreditOrder(creditSaveRequest);
@@ -458,6 +532,8 @@ public class FinancialLoanCreditController extends BaseController {
 			putSuccess();
 		}
 
+		model.addAttribute("reqTime",
+				DateUtil.sdf4.format(creditOrder.getReqTime()));
 		return "/loan/credit-apply/credit-apply-result";
 	}
 }

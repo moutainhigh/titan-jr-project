@@ -535,9 +535,7 @@
     function bigImgShow(){              
         var _index=0; 
         var leftBtn,rightBtn,ulDiv;
-        
         $(".TFSimgOnBig").find("img").unbind("click"); 
-        
        $(".TFSimgOnBig").find("img").click(function(){
           var _div='<div tabindex="0" style=" position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; overflow: hidden; -webkit-user-select: none; z-index: 1024; background-color: rgba(0, 0, 0,0.7);" class="bigImgShow_box_bg"><span class="left_btn"></span><span class="right_btn"></span><div class="bigImgShow_box"><span class="close_btn"></span><ul>';     
           _index=$(".TFSimgOnBig").find("img").index($(this));   
@@ -587,8 +585,7 @@
          ulDiv.find(".MissionRoom_annexList_li").hide().eq(_index).show(); 
         } 
       };   
-      new bigImgShow(); 
-      
+      new bigImgShow();    
         //开始装B
        function loading(obj , callBack){
            var l1=obj.find("span");
@@ -602,8 +599,7 @@
                 if(i==90){
                     clearInterval(loadingJ);
                 }
-                i++;
-        　　},50);
+                i++;},50);
            return loadingJ;
        }
        //OK 装B完成
@@ -620,8 +616,7 @@
                  if(i == 100){
                      clearInterval(loadingN);
                  }
-                 i++;
-         　　	},20);
+                 i++;},20);
            
            setTimeout(function(){
         	  

@@ -18,15 +18,15 @@
                         <i class="redNotice">*</i>企业名称：
                     </td>
                     <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" placeholder="请输入企业名称" datatype="s1-50" errormsg="企业名称不能为空，并且最长只能50个字符！" field="name">
+                        <input type="text" value="" readonly="readonly" class="loanInformation_inp01" placeholder="请输入企业名称" datatype="s1-50" errormsg="企业名称不能为空，并且最长只能50个字符！" field="name">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>企业成立日期：
                     </td>
                     <td class="loanInformation_td02" id="dateSelector" fields="startDate" split="-"  >
-                       <select item='year'  id="idYear" name="idYear" class="select loanInformation_se01" data=""></select>
-                       <select item='month'  class="select loanInformation_se01" id="idMonth" name="idMonth" data="12"></select>
-                       <select item='day'  id="idDay" name="idDay" class="select loanInformation_se01" data="1"></select>
+                       <select item='year'  id="idYear" name="idYear" class="select loanInformation_se01" data="" datatype="*"></select>
+                       <select item='month'  class="select loanInformation_se01" id="idMonth" name="idMonth" data="12" datatype="*"></select>
+                       <select item='day'  id="idDay" name="idDay" class="select loanInformation_se01" data="1" datatype="*"></select>
                     </td>
                 </tr>
                  <tr>
@@ -34,7 +34,7 @@
                         <i class="redNotice">*</i>企业规模：
                     </td>
                     <td class="loanInformation_td02">
-                        <select class="select loanInformation_se02"  field="orgSize">
+                        <select class="select loanInformation_se02"  field="orgSize" datatype="*">
                             <option>请选择</option>
                             <option value='1'>1 - 50人</option>
                             <option value='2'>50 - 100人</option>
@@ -47,7 +47,7 @@
                          <i class="redNotice">*</i>营业执照号/社会信用代码：
                     </td>
                     <td class="loanInformation_td02">
-                         <input type="text" class="loanInformation_inp01" placeholder="请输入营业执照号/社会信用代码"  field="license">
+                         <input type="text" class="loanInformation_inp01" placeholder="请输入营业执照号/社会信用代码"  field="license" value="" readonly="readonly">
                     </td>
                 </tr>
                 <tr>
@@ -55,13 +55,13 @@
                         <i class="redNotice">*</i>税务登记号：
                     </td>
                     <td class="loanInformation_td02">
-                         <input type="text" class="loanInformation_inp01" placeholder="请输入税务登记号" field="taxRegNo">
+                         <input type="text" class="loanInformation_inp01" placeholder="请输入税务登记号" field="taxRegNo" value="">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>组织机构代码：
                     </td>
                     <td class="loanInformation_td02">
-                         <input type="text" class="loanInformation_inp01" placeholder="请输入组织机构代码" field="orgCode">
+                         <input type="text" class="loanInformation_inp01" placeholder="请输入组织机构代码" field="orgCode" value="">
                     </td>
                 </tr>
                 <tr>
@@ -69,15 +69,13 @@
                         <i class="redNotice">*</i>平台注册账号：
                     </td>
                     <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" placeholder="请输入平台注册账号" field="regAccount">
+                        <input type="text" class="loanInformation_inp01" placeholder="请输入平台注册账号" field="regAccount" value="" readonly="readonly">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>平台注册日期：
                     </td>
-                    <td class="loanInformation_td02" id="dateSelector1" fields="regDate" split="-" >
-                       <select  item='year' id="idYear1" name="idYear1" class="select loanInformation_se01" data=""></select>
-                       <select  item='month' class="select loanInformation_se01" id="idMonth1" name="idMonth1" data="12"></select>
-                       <select  item='day' id="idDay1" name="idDay1" class="select loanInformation_se01" data="1"></select>
+                     <td class="loanInformation_td02">
+                        <input type="text" class="loanInformation_inp01" placeholder="" field="regDate" value="" readonly="readonly">
                     </td>
                 </tr>
                 <tr>
@@ -96,10 +94,10 @@
                         <i class="redNotice">*</i>企业办公地址：
                     </td>                  
                     <td class="loanInformation_td02" id="city2" colspan="3"  fields="officeAddress" split="/">
-                        <select item="prov" class="prov select loanInformation_se01"></select> 
-                        <select item="city"  class="city select loanInformation_se01" disabled="disabled"></select>
-                        <select item="dist" class="dist select loanInformation_se01" disabled="disabled"></select>
-                        <input item="address" type="text" class="loanInformation_inp03" placeholder="请输入详细地址">
+                        <select item="prov" class="prov select loanInformation_se01" datatype="*"></select> 
+                        <select item="city"  class="city select loanInformation_se01" disabled="disabled" datatype="*"></select>
+                        <select item="dist" class="dist select loanInformation_se01" disabled="disabled" datatype="*"></select>
+                        <input item="address" type="text" class="loanInformation_inp03" placeholder="请输入详细地址" datatype="*">
                     </td>
                 </tr>
             </table>
@@ -116,17 +114,17 @@
                         <i class="redNotice">*</i>法人姓名：
                     </td>
                     <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" field='legalName' placeholder="请输入法人姓名">
+                        <input type="text" class="loanInformation_inp01" field='legalName' placeholder="请输入法人姓名" value="">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>法人证件号：
                     </td>
                     <td class="loanInformation_td02">
                        <select class="select loanInformation_se01" field='legalceType'>
-                           <option value="1">身份证</option>
+                           <option value="1" selected="selected">身份证</option>
                            <option value="2">护照</option>
                        </select>
-                       <input type="text" class="loanInformation_inp04" placeholder="请输入证件号码" field='legalNo'>
+                       <input type="text" class="loanInformation_inp04" placeholder="请输入证件号码" field='legalNo' value="">
                     </td>
                 </tr>
               </table>  
@@ -143,13 +141,13 @@
                         <i class="redNotice">*</i>联系人姓名：
                     </td>
                     <td class="loanInformation_td02">
-                        <input  type="text" class="loanInformation_inp01" placeholder="请输入联系人姓名" field='contactName' >
+                        <input  type="text" class="loanInformation_inp01" placeholder="请输入联系人姓名" field='contactName' value="" >
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>联系电话：
                     </td>
                     <td class="loanInformation_td02">
-                       <input  type="text" class="loanInformation_inp01" placeholder="请输入联系电话" field='contactPhone'>
+                       <input  type="text" class="loanInformation_inp01" placeholder="请输入联系电话" field='contactPhone' value="">
                     </td>
                 </tr>
               </table> 
@@ -166,9 +164,19 @@
 	
 	function companyRender(dataObj ,  contextPath)
 	{
-		new validform('#J_form1', {
-			msgTooltip : true
+		
+		//初始化
+		var companyForm =  new validform('#company',{
+		    msgTooltip : true
 		});
+		
+		
+		
+		  if(companyForm.validate()){
+		     
+		    }
+		
+		
 
 		$("#city1").citySelect({
 			url : contextPath+'/js/city.min.js',
