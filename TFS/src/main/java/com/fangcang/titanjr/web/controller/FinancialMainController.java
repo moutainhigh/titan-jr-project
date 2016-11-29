@@ -38,9 +38,30 @@ public class FinancialMainController extends BaseController {
 
         return "main";
     }
-
+    /***
+     * 主页
+     * @param request
+     * @param model
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String home(HttpServletRequest request, Model model) throws Exception {
+    	try {
+    		queryOrgInfo(model);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+    	
+        return "tfs-main/home";
+    }
+    
+    /***
+     * 查询机构信息
+     * @param model
+     * @throws Exception
+     */
+    private void queryOrgInfo(Model model) throws Exception{
     	Integer isAdmin = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_IS_ADMIN);
     	String jrUserLoginName = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
     	//暂时统一从session中取
@@ -48,7 +69,6 @@ public class FinancialMainController extends BaseController {
     	
     	String orgCheckResultKey = "";
     	String orgCheckResultMsg = "";
-    	
     	try {
     		if(StringUtil.isValidString(jrUserLoginName)){//查询机构审核状态
         		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
@@ -74,13 +94,58 @@ public class FinancialMainController extends BaseController {
 			log.error("金融首页错误，登录用户名为:"+jrUserLoginName, e);
 			throw new Exception(e);
 		}
-    	
     	model.addAttribute("orgCheckResultKey", orgCheckResultKey);
     	model.addAttribute("orgCheckResultMsg", orgCheckResultMsg);
     	model.addAttribute("isAdmin", isAdmin==null?0:isAdmin);
     	model.addAttribute("orgBindStatus", orgBindStatus==null?0:orgBindStatus);
-        return "tfs-main/home";
     }
+    
+    /**
+     * 信贷
+     * @return
+     * @throws Exception 
+     */
+    @RequestMapping(value = "/loan", method = RequestMethod.GET)
+    public String loan(Model model) throws Exception{
+    	try {
+    		queryOrgInfo(model);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+        return "tfs-main/loan";
+    }
+    
+    /**
+     * 收款介绍
+     * @return
+     * @throws Exception 
+     */
+    @RequestMapping(value = "/receipt", method = RequestMethod.GET)
+    public String receipt(Model model) throws Exception{
+    	try {
+    		queryOrgInfo(model);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+        return "tfs-main/receipt";
+    }
+    
+    /**
+     * 付款介绍
+     * @return
+     * @throws Exception 
+     */
+    @RequestMapping(value = "/pay", method = RequestMethod.GET)
+    public String pay(Model model) throws Exception{
+    	try {
+    		queryOrgInfo(model);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+        return "tfs-main/pay";
+    }
+    
+    
     
     
     @RequestMapping(value = "/common/clickToPay", method = RequestMethod.GET)

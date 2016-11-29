@@ -356,6 +356,11 @@ public class JsRSAUtil {
 		RSAPrivateKey rsapri = (RSAPrivateKey) JsRSAUtil.generateKeyPair()
 				.getPrivate();
 
+		rsapri.getEncoded();
+		
+		System.out.println(rsap.getModulus());
+		System.out.println(rsapri.getModulus());
+		
 		// RSAPublicKey rsap = (RSAPublicKey)getKeyPair().getPublic();
 		// String test = "huangweiweiweiweiweiwei";
 		// byte[] en_test = encrypt(getKeyPair().getPublic(), test.getBytes());

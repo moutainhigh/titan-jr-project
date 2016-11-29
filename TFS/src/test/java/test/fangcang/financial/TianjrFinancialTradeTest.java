@@ -1,21 +1,4 @@
 package test.fangcang.financial;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-
-import com.fangcang.titanjr.dto.request.RechargePageRequest;
-import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
-
-import net.sf.json.JSONSerializer;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.junit.Before;
-import org.junit.Test;
-
-import test.fangcang.GenericTest;
 
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
@@ -23,58 +6,23 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
-import com.fangcang.titanjr.dto.bean.BusiCodeEnum;
-import com.fangcang.titanjr.dto.bean.CharsetEnum;
-import com.fangcang.titanjr.dto.bean.OperTypeEnum;
-import com.fangcang.titanjr.dto.bean.OrderMarkEnum;
-import com.fangcang.titanjr.dto.bean.OrderTypeEnum;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
-import com.fangcang.titanjr.dto.bean.SignTypeEnum;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
-import com.fangcang.titanjr.dto.request.AccountCheckRequest;
-import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
-import com.fangcang.titanjr.dto.request.AllowNoPwdPayRequest;
-import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
-import com.fangcang.titanjr.dto.request.CusBankCardBindRequest;
-import com.fangcang.titanjr.dto.request.DeleteBindBankRequest;
-import com.fangcang.titanjr.dto.request.FinancialOrderRequest;
-import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
-import com.fangcang.titanjr.dto.request.PayMethodConfigRequest;
-import com.fangcang.titanjr.dto.request.PaymentRequest;
-import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
-import com.fangcang.titanjr.dto.request.PermissionRequest;
-import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
-import com.fangcang.titanjr.dto.request.TitanOrderRequest;
-import com.fangcang.titanjr.dto.request.TradeDetailRequest;
-import com.fangcang.titanjr.dto.request.TransOrderRequest;
-import com.fangcang.titanjr.dto.request.TransferRequest;
-import com.fangcang.titanjr.dto.request.UnFreezeAccountBalanceRequest;
-import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
-import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
-import com.fangcang.titanjr.dto.response.AccountCheckResponse;
-import com.fangcang.titanjr.dto.response.AccountHistoryResponse;
-import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
-import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
-import com.fangcang.titanjr.dto.response.CusBankCardBindResponse;
-import com.fangcang.titanjr.dto.response.DeleteBindBankResponse;
-import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
-import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
-import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
-import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
-import com.fangcang.titanjr.dto.response.RechargeResponse;
-import com.fangcang.titanjr.dto.response.TradeDetailResponse;
-import com.fangcang.titanjr.dto.response.TransferResponse;
-import com.fangcang.titanjr.dto.response.UnFreezeAccountBalanceResponse;
-import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
-import com.fangcang.titanjr.service.TitanFinancialAccountService;
-import com.fangcang.titanjr.service.TitanFinancialBankCardService;
-import com.fangcang.titanjr.service.TitanFinancialOrganService;
-import com.fangcang.titanjr.service.TitanFinancialTradeService;
-import com.fangcang.titanjr.service.TitanFinancialUserService;
-import com.fangcang.titanjr.service.TitanOrderService;
+import com.fangcang.titanjr.dto.request.*;
+import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.enums.*;
+import com.fangcang.titanjr.service.*;
 import com.fangcang.util.StringUtil;
+import net.sf.json.JSONSerializer;
+import org.junit.Before;
+import org.junit.Test;
+import test.fangcang.GenericTest;
+
+import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
 
 public class TianjrFinancialTradeTest extends GenericTest{
 	
@@ -84,6 +32,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
 	private TitanFinancialBankCardService titanFinancialBankCardService = null;
 	private TitanFinancialOrganService titanFinancialOrganService=null;
 	private TitanOrderService titanOrderService;
+	private TitanCashierDeskService titanCashierDeskService=null;
 
     @Before
     public void init(){
@@ -93,27 +42,10 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialBankCardService = (TitanFinancialBankCardService)cfx.getBean("titanFinancialBankCardService");
     	titanFinancialOrganService = (TitanFinancialOrganService)cfx.getBean("titanFinancialOrganService");
     	titanOrderService = (TitanOrderService)cfx.getBean("titanOrderService");
+    	titanCashierDeskService = (TitanCashierDeskService)cfx.getBean("titanCashierDeskService");
     }
     
 
-//    @Test
-    public void testgetFinanceOrderData(){
-    	try{
-    		FinancialOrderRequest financialOrderRequest = new FinancialOrderRequest();
-        	financialOrderRequest.setMerchantcode("M10000001");
-        	financialOrderRequest.setOrderNo("TW15110516542");
-
-        	FinancialOrderResponse financialOrderResponse =titanFinancialTradeService.queryFinanceOrderDetail(financialOrderRequest);
-            if(financialOrderResponse !=null){
-            	System.out.println(financialOrderResponse.getFinanceCode()+"----"+financialOrderResponse.getOrderCode());
-            }
-    	}catch(Exception e){
-    		e.printStackTrace();
-    	
-    	}
-    	
-    }
-    
 //    @Test
     public void testPay2Merchant(){
     	try{
@@ -142,145 +74,6 @@ public class TianjrFinancialTradeTest extends GenericTest{
 //    	pay2Merchant(PaymentRequest paymentRequest)
     }
     
-    /**
-     * 测试第一次落单，
-     * 必须传入的参数
-     * OrderNo
-     * Merchantcode
-     * Userid
-     * Ordertypeid
-     * OperType 
-     * 
-     * 不是必须
-     * Number
-     * CreateDate
-     * Adjustcontent
-     * Ordertype
-     * Unitprice
-     * Creators
-     * 测试步骤，1.用新的财务单，判断整个下单过程，2.拿已下过单且为支付的财务单测试，
-     * 3拿未支付但是已过时效的单号，4.失败的单号（可以数据库修改状态），5成功的财务单
-     * @throws Exception 
-     */
-//    @Test
-    public void testAddOperate() throws Exception{
-    	PaymentRequest paymentRequest = new PaymentRequest();
-    	paymentRequest.setMerchantcode("M10000001");
-    	paymentRequest.setPayOrderNo("TW16050616113");
-    	paymentRequest.setUserid("PM10000021"); //TJM10000087
-    	//是否担保支付
-    	paymentRequest.setEscrowedDate("2016-05-26");
-		TransOrderCreateResponse orderResponse = titanFinancialTradeService.createTitanTransOrder(paymentRequest);
-    	if(orderResponse !=null){
-    		System.out.println(orderResponse.getOrderNo()+"-----------------");
-    	}
-    }
-    
-    
-//    public void testOperateRSTransOrder(){
-//    	orderRequest
-//    	titanFinancialTradeService.operateRSTransOrder(orderRequest);
-//    }
-    /**
-     * PageUrl
-     * NotifyUrl
-     * OrderTime
-     * OrderMark
-     * SignType
-     * BusiCode
-     * Version
-     * Charset
-     */
-//    @Test 
-    public void testRecharge2Account() throws Exception{
-    	RechargePageRequest rechargePageRequest = new RechargePageRequest();
-    	rechargePageRequest.setPageUrl("http://192.168.1.96:8088/TFS/order.jsp");
-    	rechargePageRequest.setNotifyUrl("www.fangcang.com");
-    	rechargePageRequest.setUserid("TJM10000087");
-//    	                           2016051710502500001
-    	rechargePageRequest.setOrderid("2016052515452200001");
-    	rechargePageRequest.setOrderExpireTime(null);
-    	rechargePageRequest.setBankInfo("icbc");
-    	rechargePageRequest.setUserrelateid("PM10000021");
-//    	merchantNo=M000016&orderNo=2016051617183000001&orderAmount=540&payType=null&orderTime=20160516171830&signType=1&version=v1.0&key=12356780Poi)(*
-    	RechargeResponse orderResponse = titanFinancialTradeService.generateRechargePage(rechargePageRequest);
-    	if(orderResponse !=null){
-//    		System.out.println(orderResponse.getRechargePage());
-    		
-    	}
-    }
-    
-    /**
-     * PageUrl
-     * NotifyUrl
-     * OrderTime
-     * OrderMark
-     * SignType
-     * BusiCode
-     * Version
-     * Charset
-     */
-//    @Test 
-    public void testAddOrderNoandRechargeAccount() throws Exception{
-    	RechargePageRequest rechargePageRequest = new RechargePageRequest();
-    	rechargePageRequest.setPageUrl("http://192.168.1.96:8088/TFS/order.jsp");
-    	rechargePageRequest.setNotifyUrl("www.fangcang.com");
-    	rechargePageRequest.setUserid("TJM10000087");
-    	rechargePageRequest.setRechargeAmount("10000.0");             
-    	rechargePageRequest.setOrderExpireTime(null);
-    	rechargePageRequest.setBankInfo("icbc");
-    	rechargePageRequest.setUserorderid(OrderGenerateService.genSyncUserOrderId());
-    	
-//    	merchantNo=M000016&orderNo=2016051617183000001&orderAmount=540&payType=null&orderTime=20160516171830&signType=1&version=v1.0&key=12356780Poi)(*
-    	RechargeResponse orderResponse = titanFinancialTradeService.generateOrderNoAndRechargePage(rechargePageRequest);
-    	if(orderResponse !=null){
-//    		System.out.println(orderResponse.getRechargePage());
-    	}
-    }
-    
-    /**
-     * userid
-     * productid
-     * requestno 请求号
-     * merchantcode 机构编码
-     * transfertype 
-     * conditioncode 业务订单落单，不落单
-     * requesttime
-     * amount
-     * userfee 手续费
-     * intermerchantcode  接收方机构号
-     * interproductid     接收方产品号
-     * userrelateid      接收方用户id
-     * @throws Exception 
-     */
-//    @Test
-    public void testTransfer2Account() throws Exception{
-    	try{
-    		TransferRequest transferRequest = new TransferRequest();
-        	transferRequest.setCreator("admin");
-        	transferRequest.setUserid("141223100000056");	
-        	transferRequest.setProductId("");
-        	transferRequest.setInterproductid("");//转出的用户
-        	transferRequest.setRequestno(OrderGenerateService.genResquestNo());									//业务订单号
-        	transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));				//请求时间
-        	transferRequest.setAmount("57900");										//金额 必须是分
-        	transferRequest.setUserfee("0");									
-        	transferRequest.setUserrelateid("TJM10000087");	                    //接收方用户Id
-        	transferRequest.setOrderid("2016063021292900002");
-        	TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
-        	if(transferResponse !=null){
-//        		transferRequest
-        		System.out.println(transferResponse.getReturnCode()+"-------"+transferResponse.getReturnMessage());
-        		//添加账户历史操作
-        		AccountHistoryResponse accountHistoryResponse = titanFinancialAccountService.addAccountHistory(transferRequest);
-        		System.out.println(transferResponse.getReturnCode()+"-------"+transferResponse.getReturnMessage());
-        		System.out.println(accountHistoryResponse.getReturnCode()+"-------"+accountHistoryResponse.getReturnMessage());
-        	}
-    	}catch(Exception e){
-    		e.printStackTrace();
-    	}
-    	
-    }
     
     //测试免密支付设置
 //    @Test
@@ -301,16 +94,6 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	AllowNoPwdPayResponse allowNoPwdPayResponse = titanFinancialTradeService.isAllowNoPwdPay(judgeAllowNoPwdPayRequest);
         if(allowNoPwdPayResponse !=null){
         	System.out.println(allowNoPwdPayResponse.isAllowNoPwdPay());
-        }
-    }
-    
-    //测试增加账户交易历史
-   // @Test
-    public void testAddAccountHistory(TransferRequest transferRequest){
-    	
-    	AccountHistoryResponse accountHistoryResponse = titanFinancialAccountService.addAccountHistory(transferRequest);
-        if(accountHistoryResponse !=null){
-        	System.out.println(accountHistoryResponse.getReturnMessage());
         }
     }
     
@@ -584,13 +367,6 @@ public class TianjrFinancialTradeTest extends GenericTest{
         }
     }
     
-//    @Test
-    public void testPayMethod(){
-    	PayMethodConfigRequest payMethodConfigRequest = new PayMethodConfigRequest();
-		payMethodConfigRequest.setUserId("TJM10000087");
-		PayMethodConfigDTO payMethodConfigDTO = titanFinancialTradeService.getPayMethodConfigDTO(payMethodConfigRequest);
-    }
-    
     @Test
     public void testCallBack() throws Exception{
     	TransOrderDTO transOrderDTO = new TransOrderDTO();
@@ -602,7 +378,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	transOrderDTO.setMerchantcode("M10082926");
     	transOrderDTO.setCreator("测试(meimei000)");
     	transOrderDTO.setUserorderid("TJO161023004819378"); 	
-    	transOrderDTO.setNotifyUrl("http://193.167.10.38:39010/GDP/billpay_return.shtml");
+    	transOrderDTO.setNotifyUrl("http://172.16.21.15:19010/GDP/fcjr_pay.shtml");
 		try {
 			titanFinancialTradeService.confirmFinance(transOrderDTO);
 		} catch (Exception e) {
@@ -610,13 +386,13 @@ public class TianjrFinancialTradeTest extends GenericTest{
 		}
 	}
     
-//    @Test
+    //@Test
     public void testConfirmData() throws Exception{
     	TransOrderDTO transOrderDTO = new TransOrderDTO();
-    	transOrderDTO.setPayeemerchant("TJM10000108");
-    	transOrderDTO.setPayorderno("TW16041215772");
-    	transOrderDTO.setMerchantcode("M10000001");
-    	transOrderDTO.setUserorderid("TJO1607231645058042");
+    	transOrderDTO.setNotifyUrl("http://192.168.0.90:8088/titanjr-pay-app/quickPayment/http.action");
+    	transOrderDTO.setBusinessordercode("1032353636");
+    	transOrderDTO.setPayorderno("秀月");
+    	transOrderDTO.setUserorderid("422423154");
     	titanFinancialTradeService.confirmFinance(transOrderDTO);
 	}
     
@@ -627,13 +403,13 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialTradeService.getGDPOrderDTO(paymentUrlRequest.getPayOrderNo());
     }
     
-//    @Test
+//    @Tenst
     public void getSign(){
     	RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
     	titanFinancialTradeService.getSign(rechargeResultConfirmRequest);
     }
     
-    @Test
+//    @Test
     public void repairTransferOrder(){
     	titanFinancialTradeService.repairTransferOrder();
     }
@@ -685,5 +461,17 @@ public class TianjrFinancialTradeTest extends GenericTest{
      * 
      */
     
+//    @Test
+    public void confirmOrderStatus(){
+     titanOrderService.confirmOrderStatus("2016102716242500001");
+	}
+    
+//    @Test
+    public void initCashDesk() throws Exception{
+    	CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest();
+    	cashierDeskInitRequest.setConstId("M000016");
+    	cashierDeskInitRequest.setUserId("TJM10000096");
+    	titanCashierDeskService.initCashierDesk(cashierDeskInitRequest);
+    }
     
 }

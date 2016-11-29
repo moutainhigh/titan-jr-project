@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.dto.request;
 
-import com.fangcang.titanjr.dto.bean.PayTypeEnum;
+
+import com.fangcang.titanjr.enums.PayTypeEnum;
 
 public class TitanPaymentRequest extends TradeBaseParamRequest {
 

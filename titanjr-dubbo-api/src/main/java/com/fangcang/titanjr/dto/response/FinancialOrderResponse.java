@@ -1,13 +1,11 @@
 package com.fangcang.titanjr.dto.response;
 
+import com.fangcang.titanjr.dto.BaseResponseDTO;
+import com.fangcang.titanjr.enums.AmtTypeEnum;
+
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import com.fangcang.titanjr.dto.BaseRequestDTO;
-import com.fangcang.titanjr.dto.BaseResponseDTO;
-import com.fangcang.titanjr.dto.bean.AmtTypeEnum;
 
 
 public class FinancialOrderResponse extends BaseResponseDTO{

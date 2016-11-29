@@ -509,8 +509,7 @@ public class FtpUtil {
 	public static String uploadStreamExt(String fileName,InputStream inStream, String remoteUploadePath) {
 		FtpUtil ftp = null;
 		try {
-			//ftp = new FtpUtil(DubboServerJDBCProperties.getFtpServerIp(), DubboServerJDBCProperties.getFtpServerPort(), DubboServerJDBCProperties.getFtpServerUser(), DubboServerJDBCProperties.getFtpServerPassword());
-			ftp = new FtpUtil("192.168.2.100", 21, "fangcang168", "fangcang168");
+			ftp = new FtpUtil(DubboServerJDBCProperties.getFtpServerIp(), DubboServerJDBCProperties.getFtpServerPort(), DubboServerJDBCProperties.getFtpServerUser(), DubboServerJDBCProperties.getFtpServerPassword());
 			ftp.ftpLogin();
 			ftp.uploadStream(fileName, inStream, remoteUploadePath);
 			ftp.ftpLogOut();

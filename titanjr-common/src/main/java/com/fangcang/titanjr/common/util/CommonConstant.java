@@ -121,5 +121,23 @@ public class CommonConstant {
     public static final String RETURN_MSG = "msg";
 	
     public static final String LOCAL_ORDERNO="L";
+    
+    //支付地址
+    public static final String QRCODE="qrCode";
+    
+    public static final String GATE_WAY_PAYGE="checkstand-pay/genRechargePayment";
+    
+    public static final String PAY_WX="checkstand-pay/wx";
+    
+    //中国民生银行简写
+    public static final String CMBC = "cmbc";
+    
+    //企业银行
+    public static final int BUS_BANK = 1;
+    
+    //微信支付的bankName
+    public static final String WXPAY = "wx";
+    
+    public static final String ALIPAY = "alipay";
 	
 }

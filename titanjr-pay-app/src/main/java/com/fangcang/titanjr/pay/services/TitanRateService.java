@@ -49,10 +49,9 @@ public class TitanRateService {
 		RateConfigRequest req = new RateConfigRequest();
 		req.setUserId(computeReq.getUserId());
 		req.setPayType(computeReq.getItemTypeEnum());
-
 		RateConfigResponse rateConfigResponse = titanFinancialRateService
 				.getRateConfigInfos(req);
-
+		
 		if (rateConfigResponse != null
 				&& rateConfigResponse.getRateInfoList() != null
 				&& rateConfigResponse.getRateInfoList().size() > 0) {
@@ -74,18 +73,15 @@ public class TitanRateService {
 			if (dto.getRatetype() == 1) {
 				
 				if (dto.getExecutionrate() > 0) {
-					exBigDecimal = exBigDecimal.divide(new BigDecimal("100"))
-							.setScale(2, BigDecimal.ROUND_HALF_UP);
+					exBigDecimal = exBigDecimal.divide(new BigDecimal("100"));
 				}
 
 				if (dto.getStandrate() > 0) {
-					stBigDecimal = stBigDecimal.divide(new BigDecimal("100"))
-							.setScale(2, BigDecimal.ROUND_HALF_UP);
+					stBigDecimal = stBigDecimal.divide(new BigDecimal("100"));
 				}
 
 				if (dto.getRsrate() > 0) {
-					rsBigDecimal = rsBigDecimal.divide(new BigDecimal("100"))
-							.setScale(2, BigDecimal.ROUND_HALF_UP);
+					rsBigDecimal = rsBigDecimal.divide(new BigDecimal("100"));
 				}
 				
 				computeRsp.setExRateAmount(amountBigDecimal
@@ -204,4 +200,8 @@ public class TitanRateService {
 		return paymentRequest;
 	}
 
+	
+	public void initRateData(){
+		
+	}
 }

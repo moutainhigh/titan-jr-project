@@ -3,13 +3,16 @@ package com.fangcang.titanjr.pay.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONSerializer;
 
@@ -29,11 +32,18 @@ import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.rsa.Base64Helper;
+import com.fangcang.titanjr.common.util.rsa.JsRSAUtil;
+import com.fangcang.titanjr.common.util.rsa.RSAUtil;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.CashDeskData;
+import com.fangcang.titanjr.dto.bean.CashierDeskDTO;
+import com.fangcang.titanjr.dto.bean.CashierDeskItemDTO;
+import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
 import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
@@ -75,6 +85,9 @@ public class TitanTradeController extends BaseController {
 	
 	@Resource
 	private TitanFinancialOrganService financialOrganService;
+	
+	@Resource
+	private TitanTradeService titanTradeService;
 
 	/**
 	 * @Title: titanPay
@@ -87,9 +100,9 @@ public class TitanTradeController extends BaseController {
 	 */
 	@RequestMapping(value = "/titanPay", method = { RequestMethod.GET,
 			RequestMethod.POST })
-	public String titanPay(String orderInfo, String businessInfo, Model model) {
+	public String titanPay(String orderInfo, String businessInfo, Model model,HttpServletRequest request) {
 		getRequest().getSession();
-
+		
 		if (!StringUtil.isValidString(orderInfo)) {
 			log.error("orderInfo is not null!");
 			model.addAttribute("msg",
@@ -98,9 +111,34 @@ public class TitanTradeController extends BaseController {
 		}
 
 		try {
+			// 解析携带的业务信息
+			Map<String, String> busMap = JsonConversionTool.toObject(
+								businessInfo, Map.class);
+			String ruserId =null;
+			if(busMap !=null){
+				ruserId = busMap.get("ruserId");
+			}
+			
+			String deInfo = null;
+			TitanOpenOrgDTO openOrgDTO =null;
+			if(StringUtil.isValidString(ruserId)){
+				//查询私钥
+				openOrgDTO = financialTradeService.queryOpenOrg(ruserId);
+				if(openOrgDTO==null){
+					model.addAttribute("msg",
+							TitanMsgCodeEnum.TITAN_ACCOUNT_NOT_EXISTS.getResMsg());
+					return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+				}
+				
+				deInfo = RSADecryptString.decryptString(orderInfo,
+						new BigInteger(Base64Helper.decode(openOrgDTO.getPrivatekey())).toString(16));
+			
+			}else{
+				
+				deInfo = RSADecryptString.decryptString(orderInfo,
+						TitanConstantDefine.PRIVATE_KEY);
+			}
 
-			String deInfo = RSADecryptString.decryptString(orderInfo,
-					TitanConstantDefine.PRIVATE_KEY);
 			if (!StringUtil.isValidString(deInfo)) {
 				log.error("validate user identity decrypt fail.");
 				model.addAttribute("msg",
@@ -113,6 +151,7 @@ public class TitanTradeController extends BaseController {
 			// 解析订单信息
 			TitanOrderRequest dto = JsonConversionTool.toObject(deInfo,
 					TitanOrderRequest.class);
+			
 
 			log.info("the titanOrderRequest of info is:"
 					+ JSONSerializer.toJSON(dto));
@@ -134,7 +173,7 @@ public class TitanTradeController extends BaseController {
 								.getResMsg());
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
-
+			
 			log.info("check order info is ok");
 			// 检查用户权限
 			if (!financialTradeService.checkPermission(dto)) {
@@ -156,13 +195,16 @@ public class TitanTradeController extends BaseController {
 
 			log.info("confirm buss order is ok");
 
-			// 解析携带的业务信息
-			Map<String, String> busMap = JsonConversionTool.toObject(
-					businessInfo, Map.class);
 			dto.setBusinessInfo(busMap);
 
 			log.info("begin sava titan trans order ...");
 			
+			//给goodsid加上前缀，标识其唯一性，对于没有在金融环境生成前缀的，统一加上AA
+			if(openOrgDTO !=null && StringUtil.isValidString(openOrgDTO.getPrefix())){
+				dto.setGoodsId(openOrgDTO.getPrefix()+dto.getGoodsId());
+			}else{
+				dto.setGoodsId("AA"+dto.getGoodsId());
+			}
 			// 保存金融订单
 			TransOrderCreateResponse orderCreateResponse = titanFinancialTradeService
 					.saveTitanTransOrder(dto);
@@ -282,6 +324,11 @@ public class TitanTradeController extends BaseController {
 		}
 
 		if (pe.isB2BPayment() && !StringUtil.isValidString(dto.getRuserId())) {
+			log.error(pe + "RuserId is null");
+			return false;
+		}
+		
+		if(pe.isOpenOrg() && !StringUtil.isValidString(dto.getRuserId())){
 			log.error(pe + "RuserId is null");
 			return false;
 		}
@@ -459,7 +506,9 @@ public class TitanTradeController extends BaseController {
 					.getCommonPayMethod(transOrderDTO.getUserid(),
 							PayerTypeEnum.getPaySource(transOrderDTO
 									.getPayerType()));
+			
 
+			titanTradeService.sortBank(commonPayMethodDTOList);
 			cashDeskData.setCommonPayMethodDTOList(commonPayMethodDTOList);
 			log.info("set pay method info is ok.");
 		}
@@ -504,7 +553,7 @@ public class TitanTradeController extends BaseController {
 
 		}
 		String mCode =  transOrderDTO.getMerchantcode();
-		if (payerTypeEnum .isUserId()) 
+		if (payerTypeEnum .isUserId() || payerTypeEnum.isOpenOrg()) 
 		{
 			String userid = StringUtil.isValidString(transOrderDTO
 					.getPayeemerchant()) ? transOrderDTO.getPayeemerchant()
@@ -553,7 +602,11 @@ public class TitanTradeController extends BaseController {
 		}
 
 		log.info("begin set cash desk data ");
-		cashDeskData.setCashierDeskDTO(response.getCashierDeskDTOList().get(0));
+		
+		//将民生银行的企业银行方到最后面
+		CashierDeskDTO cashierDeskDTO = response.getCashierDeskDTOList().get(0);
+		titanTradeService.sortBank(cashierDeskDTO);
+		cashDeskData.setCashierDeskDTO(cashierDeskDTO);
 		cashDeskData.setPaySource(PayerTypeEnum.getPaySource(
 				transOrderDTO.getPayerType()).toString());
 		cashDeskData.setMerchantcode(transOrderDTO.getMerchantcode());

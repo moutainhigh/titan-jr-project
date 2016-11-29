@@ -29,8 +29,6 @@ public class UnFreezeTransOrderJob extends QuartzJobBean {
 
         titanJobExecutor.execute(task);
     }
-//1.为什么只有spring注入的对象，才适用于事物？spring封装了mybatis的事物是封装jdbc。那这样的话想用spring上下文的资源，就必须纳入spring的容器。
-    
    
     public void setTitanFinancialTradeService(TitanFinancialTradeService titanFinancialTradeService) {
         this.titanFinancialTradeService = titanFinancialTradeService;

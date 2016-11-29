@@ -35,19 +35,12 @@ public class TitanRateConfigDaoImpl extends GenericDAOMyBatisImpl implements Tit
 	public List<TitanRateConfig> queryTitanRateConfigInfo(
 			TitanRateConfigParam configParam) throws DaoException {
 		try {
-			//如果位0则为提现
-			if (configParam.getCashierItemType() == 0) {
-				return  super
-						.selectList(
-								"com.fangcang.titanjr.dao.TitanRateConfigDao.queryRateConfigByWithdraw",
-								configParam);
-			} else {
-
-				return super
-						.selectList(
-								"com.fangcang.titanjr.dao.TitanRateConfigDao.queryRateConfigList",
-								configParam);
-			}
+			
+			return  super
+					.selectList(
+							"com.fangcang.titanjr.dao.TitanRateConfigDao.queryRateConfigList",
+							configParam);
+			
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}
@@ -66,6 +59,15 @@ public class TitanRateConfigDaoImpl extends GenericDAOMyBatisImpl implements Tit
 	public int deleteRateRecordByOrderNo(String orderNo) {
 		try {
 			return super.delete("com.fangcang.titanjr.dao.TitanRateConfigDao.deleteRateRecordByOrderNo", orderNo);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+
+	@Override
+	public List<String> queryAllUserId() {
+		try {
+			return super.selectList("com.fangcang.titanjr.dao.TitanRateConfigDao.queryAllUserId");
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}

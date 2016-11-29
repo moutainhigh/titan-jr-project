@@ -48,11 +48,10 @@
 						</ul>
 					</div>
 					<div class="paytable_content pay_bank_l">
-						<ul>
-						<c:if test="${not empty cashDeskData.commonPayMethodDTOList }">
-							<li>
-								<c:forEach items="${cashDeskData.commonPayMethodDTOList }" var="commom" varStatus="status">
-								<c:if test="${commom.bankname !='cmbc'}">
+                    <ul>
+                       <c:if test="${not empty  cashDeskData.commonPayMethodDTOList }">
+                      <li>
+                      <c:forEach items="${cashDeskData.commonPayMethodDTOList }" var="commom" varStatus="status">
 								  <div class="paytable_payway" itemType='${commom.paytype}'>
                                     <div class="payc_left"><label class="f_ui-radio-c3">
                                       <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${commom.bankname}">
@@ -71,46 +70,21 @@
 	                              <c:if test="${commom.paytype == 3 }">
 	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡） </span>
 	                              </c:if>
-                               </div>
-						   </c:if>
-                          </c:forEach>
-                          <c:forEach items="${cashDeskData.commonPayMethodDTOList }" var="commom"  varStatus="status">
-                               <c:if test="${commom.bankname =='cmbc'}">
-								  <div class="paytable_payway" itemType='${commom.paytype}'>
-                                    <div class="payc_left"><label class="f_ui-radio-c3">
-                                      <input name="r2" type="radio" data-index="i_${status.index}" class="bankName" value="${commom.bankname}">
-                                      <i></i>
-                                      <span class="paycleft_img">
-                                      <img src="<%=basePath%>/banks/${commom.bankname}.jpg" alt="${commom.bankmark}"
-                                           width="159" height="38">
-                                       </span></label>
-                                    </div>
-	                              <c:if test="${commom.paytype == 1 }">
-	                                  <span class="payc_title fl"  id="item-i_${status.index}" data-index="${commom.paytype}">（企业银行）</span>
-	                              </c:if>
-	                              <c:if test="${commom.paytype == 2 }">
-	                                  <span class="payc_title fl" id="item-i_${status.index }" data-index="${commom.paytype}">（个人银行）</span>
-	                              </c:if>
-	                              <c:if test="${commom.paytype == 3 }">
-	                                  <span class="payc_title fl"  id="item-i_${status.index}" data-index="${commom.paytype}">（信用卡） </span>
-	                              </c:if>
-	                              <c:if test="${commom.bankname =='cmbc' &&commom.paytype==1}">
+                                  <c:if test="${commom.bankname =='cmbc' &&commom.paytype==1}">
                                     <div class="clear"></div>
 								    <div class="payc_ms">
 									     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
-									     <input type="text" class="text w_185" placeholder="请输入企业银行客户号" id="customNo-i_${status.index}">
+									     <input type="text" class="text w_185" placeholder="请输入企业银行客户号" id="customNo-${status.index}">
 								    </div>
 							      </c:if>
                                </div>
-						   </c:if>
-                           </c:forEach>
-							</li>
-							</c:if>
-							     <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem" varStatus="o_status">
+                          </c:forEach>
+                          </li>
+                         </c:if>
+                         <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem" varStatus="o_status">
                             <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 }">
                                 <li>
                                     <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
-                                      <c:if test="${itemBank.bankName !='cmbc'}">
                                         <div class="paytable_payway" itemType='${deskItem.itemType}'>
                                             <div class="payc_left"><label class="f_ui-radio-c3">
                                                 <input name="r2" type="radio" data-index="${o_status.index }-${i_status.index}" class="bankName" value="${itemBank.bankName}">
@@ -132,47 +106,20 @@
                                             <c:if test="${deskItem.itemType == 3 }">
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
                                             </c:if>
-                                        </div>
-                                       </c:if>
-                                   </c:forEach>
-                                  <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="d_status">
-                                    <c:if test="${itemBank.bankName=='cmbc'}">
-                                        <div class="paytable_payway" itemType='${deskItem.itemType}'>
-                                            <div class="payc_left"><label class="f_ui-radio-c3">
-                                                <input name="r2" type="radio" data-index="d_${o_status.index }-${d_status.index}" class="bankName" value="${itemBank.bankName}">
-                                                <i></i>
-                                                <span class="paycleft_img">
-                                                    <img src="<%=basePath%>/banks/${itemBank.bankName}.jpg" alt="${itemBank.bankMark}"
-                                                         width="159" height="38">
-                                                </span></label>
-                                                
-                                            </div>
-                                            
-                                            <c:if test="${deskItem.itemType == 1 }">
-                                                <span class="payc_title fl"  id="item-d_${o_status.index }-${d_status.index}" data-index="${deskItem.itemType}">（企业银行）</span>
-                                            </c:if>
-                                            
-                                            <c:if test="${deskItem.itemType == 2 }">
-                                                <span class="payc_title fl" id="item-d_${o_status.index }-${d_status.index}" data-index="${deskItem.itemType}">（个人银行）</span>
-                                            </c:if>
-                                            <c:if test="${deskItem.itemType == 3 }">
-                                                <span class="payc_title fl"  id="item-d_${o_status.index }-${d_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
-                                            </c:if>
                                             <c:if test="${itemBank.bankName=='cmbc' && deskItem.itemType == 1}">
 				                                    <div class="clear"></div>
 												    <div class="payc_ms">
 													     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
-													     <input type="text" class="text w_185" placeholder="请输入企业银行客户号"  id="customNo-d_${o_status.index }-${d_status.index}">
+													     <input type="text" class="text w_185" placeholder="请输入企业银行客户号"  id="customNo-${o_status.index }-${i_status.index}">
 												    </div>
 			                                 </c:if>
                                         </div>
-                                      </c:if>
-                                    </c:forEach>
+                                   </c:forEach>
                                 </li>
                             </c:if>
                         </c:forEach>
-						</ul>
-					</div>
+                    </ul>
+                  </div>
 				</div> 
 			</div>
 			<div class="ysgl_bottombut">
@@ -193,12 +140,15 @@
 	   <input name="payOrderNo" id="payOrderNo" type="hidden" value="${cashDeskData.payOrderNo}">
 	   <input name="deskId" id="deskId" type="hidden" value="${cashDeskData.cashierDeskDTO.deskId}">
 	   <input name="payerAcount" id="payerAcount" type="hidden"/>
+	   <input name="userid" id="userid" type="hidden" value="${cashDeskData.userId}"/>
 	</form>
 	
 	<form action="<%=basePath%>/account/overview-main.shtml" id="flashPage" target="right_con_frm"></form>
 	 
 <!--弹窗白色底-->
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
+
+
 <script>
 //Run_tab切换
 
@@ -281,19 +231,23 @@ function paytable_paywayClick(itemType , amount){
 }
 
 
+//Run_tab切换
 function tabChange(tabbtn, tabpannel, tabclass) {
     var $div_li = tabbtn;
-    $div_li.click(function() {
+    $div_li.click(function () {
         $(this).addClass(tabclass).siblings().removeClass(tabclass);
         var index = $div_li.index(this);
         $(tabpannel).eq(index).show().siblings().hide();
+        $($(tabpannel).eq(index).find("input")[0]).click(); 
+        $($(tabpannel).eq(index).find(".paytable_payway")[0]).click(); 
     });
 }
-$(function(){
+
+$(function () {
     //tab
-	tabChange($(".pay_table li"),$(".paytable_content ul li"), "on");	
-	tabChange($(".pay_table li"),$(".paytable_content ul li"), "on");
-});
+    tabChange($(".pay_table li"), $(".paytable_content ul li"), "on");
+   /*  tabChange($(".pay_table li"), $(".paytable_content ul li"), "on"); */
+}); 
 
 
 //点击取消关闭弹框

@@ -22,9 +22,6 @@ public class RateConfigRequest extends BaseRequestDTO
 	/** 金服的用户ID */
 	private String userId;
 
-	/** 付款源类型枚举 */
-	private CashierDeskTypeEnum parSourceType;
-
 	/** 付款类型 **/
 	private CashierItemTypeEnum payType;
 
@@ -34,14 +31,6 @@ public class RateConfigRequest extends BaseRequestDTO
 
 	public void setUserId(String userId) {
 		this.userId = userId;
-	}
-
-	public CashierDeskTypeEnum getParSourceType() {
-		return parSourceType;
-	}
-
-	public void setParSourceType(CashierDeskTypeEnum parSourceType) {
-		this.parSourceType = parSourceType;
 	}
 
 	public CashierItemTypeEnum getPayType() {

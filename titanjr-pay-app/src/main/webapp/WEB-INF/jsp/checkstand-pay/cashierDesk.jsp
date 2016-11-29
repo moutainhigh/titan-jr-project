@@ -48,15 +48,15 @@
                             <div>
                                 <span class="w_160"><i class="c_f00">*</i>收款账户（公司名称）：</span>
                                 <c:choose>
-                                  <c:when test="${ not empty cashDeskData.accountHistoryDTO }">
-                                    <input type="hidden" id="hiddenAccountName" value="${cashDeskData.accountHistoryDTO.orgname}">
-                                    <span id="showAccountName">${cashDeskData.accountHistoryDTO.orgname}</span> 
-                                    <span class="blue p_l18 curpo J_payother">付款给其他账户&gt;&gt;</span>
+                                  <c:when test="${not empty  cashDeskData.orgName}">
+                                     <input type="hidden" id="hiddenAccountName" value="${cashDeskData.orgName}">
+                                     <span id="showAccountName">${cashDeskData.orgName}</span> 
                                   </c:when>
                                   <c:otherwise>
-                                    <c:if test="${not empty  cashDeskData.orgName}">
-                                      <input type="hidden" id="hiddenAccountName" value="${cashDeskData.orgName}">
-                                       <span id="showAccountName">${cashDeskData.orgName}</span> 
+                                    <c:if test="${ not empty cashDeskData.accountHistoryDTO}">
+                                       <input type="hidden" id="hiddenAccountName" value="${cashDeskData.accountHistoryDTO.orgname}">
+                                   	   <span id="showAccountName">${cashDeskData.accountHistoryDTO.orgname}</span> 
+                                       <span class="blue p_l18 curpo J_payother">付款给其他账户&gt;&gt;</span>
                                     </c:if>
                                   </c:otherwise> 
                                 </c:choose>
@@ -64,15 +64,15 @@
                           <div>
                                 <span class="w_160"><i class="c_f00">*</i>收款方 - 泰坦码：</span>
                                  <c:choose>
-                                  <c:when test="${ not empty  cashDeskData.accountHistoryDTO}">
-                                     <input type="hidden" id="hiddenTitanCode" value="${cashDeskData.accountHistoryDTO.titancode} ">
-                                     <span id="showTitanCode">${cashDeskData.accountHistoryDTO.titancode}</span>
+                                  <c:when test="${not empty  cashDeskData.titanCode}">
+                                     <input type="hidden" id="hiddenTitanCode" value="${cashDeskData.titanCode} ">
+                                     <span id="showTitanCode">${cashDeskData.titanCode}</span>
                                   </c:when>
                                  <c:otherwise>
-                                    <c:if test="${not empty  cashDeskData.titanCode}">
-                                       <input type="hidden" id="hiddenTitanCode" value="${cashDeskData.titanCode} ">
-                                     <span id="showTitanCode">${cashDeskData.titanCode}</span>
-                                    </c:if>
+                                     <c:if test="${not empty  cashDeskData.accountHistoryDTO}">
+	                                     <input type="hidden" id="hiddenTitanCode" value="${cashDeskData.accountHistoryDTO.titancode} ">
+	                                     <span id="showTitanCode">${cashDeskData.accountHistoryDTO.titancode}</span>
+                                     </c:if>
                                   </c:otherwise>
                                 </c:choose>
                             </div> 
@@ -86,7 +86,7 @@
                             <c:if test="${ not empty cashDeskData.balanceusable}">
                             <li class="p_l27">
                                 <label class="f_ui-checkbox-c3 p_r10">
-                                    <input type="checkbox" checked="" id="d_checkbox" onclick="checktest()" ><i ></i>
+                                    <input type="checkbox" checked="" id="d_checkbox" onclick="checkedBalance()" ><i ></i>
                                     使用账户可用余额付款</label>丨
                                 <span class="p_l10">账户可用余额：<fmt:formatNumber value="${cashDeskData.balanceusable }"  pattern="#,##0.00#" />元</span>
                             </li>
@@ -98,7 +98,7 @@
                 
             </div>
             </div>
-                <c:if test="${cashDeskData.paySource !='1'}">
+                <c:if test="${cashDeskData.paySource =='2' }">
                    <div class="TFS_withdrawBoxR fr">
 					<h3>温馨提示</h3>
 					<div class="TFS_withdrawBoxR_content">
@@ -129,7 +129,7 @@
                            <li class="on" id="pay_table_ttt">常用</li>
                         </c:if>
                         <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem">
-                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 }">
+                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9 }">
                                 <li>${deskItem.itemName}</li>
                             </c:if>
                          </c:forEach>
@@ -140,7 +140,6 @@
                        <c:if test="${not empty  cashDeskData.commonPayMethodDTOList }">
                       <li>
                       <c:forEach items="${cashDeskData.commonPayMethodDTOList }" var="commom" varStatus="status">
-								<c:if test="${commom.bankname !='cmbc'}">
 								  <div class="paytable_payway" itemType='${commom.paytype}'>
                                     <div class="payc_left"><label class="f_ui-radio-c3">
                                       <input name="r2" type="radio" data-index="${status.index}" class="bankName" value="${commom.bankname}">
@@ -159,47 +158,24 @@
 	                              <c:if test="${commom.paytype == 3 }">
 	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡） </span>
 	                              </c:if>
-                               </div>
-						   </c:if>
-                          </c:forEach>
-                         
-                          <c:forEach items="${cashDeskData.commonPayMethodDTOList }" var="commom" varStatus="status">
-                               <c:if test="${commom.bankname =='cmbc'}">
-								  <div class="paytable_payway" itemType='${commom.paytype}'>
-                                    <div class="payc_left"><label class="f_ui-radio-c3">
-                                      <input name="r2" type="radio" data-index="i_${status.index}" class="bankName" value="${commom.bankname}">
-                                      <i></i>
-                                      <span class="paycleft_img">
-                                      <img src="<%=basePath%>/banks/${commom.bankname}.jpg" alt="${commom.bankmark}"
-                                           width="159" height="38">
-                                       </span></label>
-                                    </div>
-	                              <c:if test="${commom.paytype == 1 }">
-	                                  <span class="payc_title fl"  id="item-i_${status.index}" data-index="${commom.paytype}">（企业银行）</span>
-	                              </c:if>
-	                              <c:if test="${commom.paytype == 2 }">
-	                                  <span class="payc_title fl" id="item-i_${status.index }" data-index="${commom.paytype}">（个人银行）</span>
-	                              </c:if>
-	                              <c:if test="${commom.paytype == 3 }">
-	                                  <span class="payc_title fl"  id="item-i_${status.index}" data-index="${commom.paytype}">（信用卡） </span>
-	                              </c:if>
-	                              <c:if test="${commom.bankname =='cmbc' &&commom.paytype==1}">
+	                              <c:if test="${commom.paytype == 9 }">
+	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（微信支付） </span>
+                                  </c:if>
+                                  <c:if test="${commom.bankname =='cmbc' &&commom.paytype==1}">
                                     <div class="clear"></div>
 								    <div class="payc_ms">
 									     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
-									     <input type="text" class="text w_185" placeholder="请输入企业银行客户号" id="customNo-i_${status.index}">
+									     <input type="text" class="text w_185" placeholder="请输入企业银行客户号" id="customNo-${status.index}">
 								    </div>
 							      </c:if>
                                </div>
-						   </c:if>
-                           </c:forEach>
+                          </c:forEach>
                           </li>
                          </c:if>
                          <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem" varStatus="o_status">
-                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 }">
+                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9 }">
                                 <li>
                                     <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
-                                      <c:if test="${itemBank.bankName !='cmbc'}">
                                         <div class="paytable_payway" itemType='${deskItem.itemType}'>
                                             <div class="payc_left"><label class="f_ui-radio-c3">
                                                 <input name="r2" type="radio" data-index="${o_status.index }-${i_status.index}" class="bankName" value="${itemBank.bankName}">
@@ -221,41 +197,17 @@
                                             <c:if test="${deskItem.itemType == 3 }">
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
                                             </c:if>
-                                        </div>
-                                       </c:if>
-                                   </c:forEach>
-                                   <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="d_status">
-                                    <c:if test="${itemBank.bankName=='cmbc'}">
-                                        <div class="paytable_payway" itemType='${deskItem.itemType}'>
-                                            <div class="payc_left"><label class="f_ui-radio-c3">
-                                                <input name="r2" type="radio" data-index="d_${o_status.index }-${d_status.index}" class="bankName" value="${itemBank.bankName}">
-                                                <i></i>
-                                                <span class="paycleft_img">
-                                                    <img src="<%=basePath%>/banks/${itemBank.bankName}.jpg" alt="${itemBank.bankMark}"
-                                                         width="159" height="38">
-                                                </span></label>
-                                                
-                                            </div>
-                                            
-                                            <c:if test="${deskItem.itemType == 1 }">
-                                                <span class="payc_title fl"  id="item-d_${o_status.index }-${d_status.index}" data-index="${deskItem.itemType}">（企业银行）</span>
-                                            </c:if>
-                                            
-                                            <c:if test="${deskItem.itemType == 2 }">
-                                                <span class="payc_title fl" id="item-d_${o_status.index }-${d_status.index}" data-index="${deskItem.itemType}">（个人银行）</span>
-                                            </c:if>
-                                            <c:if test="${deskItem.itemType == 3 }">
-                                                <span class="payc_title fl"  id="item-d_${o_status.index }-${d_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
+                                            <c:if test="${deskItem.itemType == 9 }">
+                                                <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（微信支付）</span>
                                             </c:if>
                                             <c:if test="${itemBank.bankName=='cmbc' && deskItem.itemType == 1}">
 				                                    <div class="clear"></div>
 												    <div class="payc_ms">
 													     <h3><i class="c_f00 mr5">*</i>企业银行客户号：</h3>
-													     <input type="text" class="text w_185" placeholder="请输入企业银行客户号"  id="customNo-d_${o_status.index }-${d_status.index}">
+													     <input type="text" class="text w_185" placeholder="请输入企业银行客户号"  id="customNo-${o_status.index }-${i_status.index}">
 												    </div>
 			                                 </c:if>
                                         </div>
-                                      </c:if>
                                    </c:forEach>
                                 </li>
                             </c:if>
@@ -276,246 +228,52 @@
     </div>
 </div>
 
-<div>
-    <form id="onlinePaymentForm" method="post" action="<%=basePath%>/payment/packageRechargeData.action">
-	    <input name="payPassword" id="payPassword" type="hidden" value=""/>
-	    <input name="transferAmount" id="transferAmount" type="hidden" value=""/>
-	    <input name="payAmount" id="payAmount" type="hidden" value=""/>
-	    <input name="recieveOrgName" id="recieveOrgName" type="hidden" value=""/>
-	    <input name="recieveTitanCode" id="recieveTitanCode" type="hidden" value=""/>
-	    <input name="bankInfo" type="hidden" id="bankInfo" value=""/>
-	    <input name="linePayType" id="linePayType" type="hidden" value="">
-	    <input name="paySource" id="paySource" type="hidden" value="${cashDeskData.paySource}">
-	    <input name="deskId" id="deskId" type="hidden" value="${cashDeskData.deskId}">
-	    <input name="payerAcount" id="payerAcount" type="hidden" value="">
-	    <input name="userid" id="payerAcount" type="hidden" value="${cashDeskData.userId}">
-	    <input name="payOrderNo" id="payOrderNo" type="hidden" value="${cashDeskData.payOrderNo}">
-	    <input name="tradeAmount" id="tradeAmount" type="hidden" value="${cashDeskData.amount}">
-	    <input name="fcUserid" id="fcUserid" type="hidden" value="${cashDeskData.fcUserid}">
-    </form>
-</div>
-
-<form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder">
+<form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder" method="post">
   <input name="orderNo" id="orderNo" type="hidden">
+  <input name="payTypeMsg" id="payTypeMsg"  type="hidden">
 </form>
 
 <!--弹窗白色底-->
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
 <script src="<%=cssSaasPath%>/js/password.js"></script>
+<script type="text/javascript" src="<%=basePath%>/js/common.js"></script>
+<script type="text/javascript" src="<%=basePath%>/js/cashier/paypsd.js"></script>
+<script type="text/javascript" src="<%=basePath%>/js/cashier/rate.js"></script>
+<script type="text/javascript" src="<%=basePath%>/js/cashier/cashierData.js"></script>
+<script type="text/javascript" src="<%=basePath%>/js/cashier/init.js"></script>
 <script>
-$("document").ready(function (){
-    
-    	
-    	//识别出当前的余额是否足够支付，如果不够支付则位false 足够则为true
-    	var isEnough = false;
-    		
-    	if('${cashDeskData.paySource}'=="1"){//GDP支付的逻辑控制
-    		show_history();
-    		$("#useCashierDeskPay").show();
-            $("#enough_amount").hide();
-    		
-    	}else if('${cashDeskData.paySource}'=="2"){//财务
-    		//收款账户历史，或者收款方账户存在时
-    		if('${cashDeskData.accountHistoryDTO}'.length>0 ||'${cashDeskData.orgName}'.length>0){
-    			show_history();
-    		}else{
-    			hide_history();
-    		}
-    	
-    		isEnough = ('${cashDeskData.amount}' - '${cashDeskData.balanceusable}') <= 0;
-    		
-    		if(isEnough){
-    			amount_enough_show();
-    		}else{
-    			amount_not_enough_show();
-    		}
-    		
-    		
-    	}else if('${cashDeskData.paySource}'=="4"){//移动端
-    		
-    	}
-    	    
-        if('${cashDeskData.balanceusable}'=="0.0" 
-        		||'${cashDeskData.balanceusable}'=="0.00"
-        		||'${cashDeskData.balanceusable}'=="0"){
-        	$("#d_checkbox").attr("checked",false);
-        }
-        //点击某个银行计算费率
-        $('.paytable_payway').on('click', function(){
-        	var itemType = $(this).attr("itemType");
-        	paytable_paywayClick(itemType);
-        });
-        
-        var firstBank = $(".bankName:first");
-    	firstBank.attr("checked","0");
-    	
-    	if($("#useCashierDeskPay").css("display")=="none"){
-    		$(".bank-limit-wrap").hide();
-    	}else{
-    		$(".bank-limit-wrap").show();
-    	}
-    	
-    	$(".pay_bank_l input[type='radio']").on("click",function(){
-    		bankCheckRadio($(this));
-    	});
-    	if(!isEnough)
-    	{
-   	     $('.paytable_payway').each(function(){
-          	
-          	if($(this).find('input:radio[name="r2"]').is(":checked"))
-          	{
-          		$(this).click();
-          		$(this).find('input:radio[name="r2"]').click();
-          	}
-          });
-    	}
-    	
-    });
+	$("document").ready(function (){
+		//初始化收银台数据集合
+		initData();
+		//初始化密码函数
+		initPayPassword();
+		//初始化收银台相关
+		initCashierDesk();	
+	}); 
 
-	function chageComfireBut(status)
-	{
-		if(status == 'hide')
-		{
-			 $('.J_password').hide();
-			 $('.grey_bg').show();
-			 $('#enBankTitle').show();
-		}else{
-			 $('.J_password').show();
-			 $('.grey_bg').hide();
-			 $('#enBankTitle').hide();
-		}
-	}
 	
-	function paytable_paywayClick(itemType){
-	     var userId = '${cashDeskData.cashierDeskDTO.userId}';
-	     var payAmount = "0";
-		 var transferAmount ="0";
-		 if (sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}') <= 0){
-			if($("#d_checkbox").attr("checked")=="checked"){//余额充足二选一
-				transferAmount = '${cashDeskData.amount}';
-	   	    }else{
-	   	    	payAmount = '${cashDeskData.amount}';
-	   	    }
-		 }else{
-			if($("#d_checkbox").attr("checked")=="checked"){//余额不足，任意选择
-				transferAmount = '${cashDeskData.balanceusable}';
-	  		    payAmount = sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}');
-	  	    }else{
-	  	    	payAmount = '${cashDeskData.amount}';
-	  	    }
-		 }
-		 if(itemType ==1 && parseFloat(payAmount) < 1000  &&  '${cashDeskData.paySource}'=='1' && !($("#d_checkbox").attr("checked")=="checked"))
-		 {
-			 chageComfireBut('hide');
-			// $('.J_password').hide();
-		 }else{
-			 chageComfireBut('show');
-		 }
-		 
-// 		 if(($("#d_checkbox").attr("checked")=="checked"))
-// 		 {
-// 			 $('#titanRateAmount').text("0.00");
-// 			return;	 
-// 		 }
-		 $.ajax({
-	   	 type: "get",
-	        url: "<%=basePath%>/rate/rateCompute.action?userId="+userId+"&amount="+payAmount+"&payType="+itemType+"&date=" + new Date().getTime(),
-	        dataType: "json",
-	        async: false,
-	        success: function(data){
-	       	 
-	       	 $('#titanRateAmount').text(data.data.exRateAmount);
-	       	 var show_online_payAmount = accAdd(payAmount,data.data.exRateAmount);
-	         $("#pay_surplus_amount").text(show_online_payAmount);
-	        }
-	      }); 
+	function initData(){
+		initCashierData({
+			merchantcode:'${cashDeskData.merchantcode}',
+			payOrderNo:'${cashDeskData.payOrderNo}',
+			fcUserid:'${cashDeskData.fcUserid}',
+			userid:'${cashDeskData.userId}',
+			deskId:'${cashDeskData.cashierDeskDTO.deskId}',
+			paySource:'${cashDeskData.paySource}',
+			creator:'${cashDeskData.operator}',
+			escrowedDate:'${cashDeskData.escrowedDate}',
+			isEscrowed:'${cashDeskData.isEscrowed}',
+			tradeAmount:'${cashDeskData.amount}',
+			balanceusable:'${cashDeskData.balanceusable}',
+			accountHistoryDTO:'${cashDeskData.accountHistoryDTO}',
+			orgName:'${cashDeskData.orgName}',
+		});
+		
 	}
-
-
-	function show_history(){//如果在才账户历史或者收款方
-	    $("#exists_history").show();
-	    $("#not_exists_history").remove();
-	}
-	
-	function hide_history(){
-	   $("#exists_history").remove();
-	   $("#not_exists_history").show();
-	}
-	//余额够了
-	function amount_enough_show(){
-		$("#useCashierDeskPay").hide();
-	    $("#enough_amount").show();
-	    $("#not_enough_amount").hide();
-	    $("#onlinePayAmount").val('${cashDeskData.amount}');
-	    $("#d_checkbox").attr("checked",true);
-	}
-	//余额不够
-	function  amount_not_enough_show(){
-		 $("#useCashierDeskPay").show();
-       $("#enough_amount").hide();
-       $("#not_enough_amount").show();
-       //获取常用第一个银行
-       var itemType = $(".bankName:first").parents(".paytable_payway").attr("itemType");
-       //计算第一个银行的手续费
-       amount_not_enough_rate(itemType);
-	}
-	
-	
-	function amount_not_enough_rate(itemType){
-       paytable_paywayClick(itemType);
-       var rateAmount = $("#titanRateAmount").text();
-       var payAmount = sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}');
-       var show_online_payAmount =  accAdd(payAmount,rateAmount);
-       $("#pay_surplus_amount").text(show_online_payAmount);
-	}
-	
-    function sub(a, b) {
-        var c, d, e;
-        try {
-            c = a.toString().split(".")[1].length;
-        } catch (f) {
-            c = 0;
-        }
-        try {
-            d = b.toString().split(".")[1].length;
-        } catch (f) {
-            d = 0;
-        }
-       
-       return e = Math.pow(10, Math.max(c, d)), (mul(a, e) - mul(b, e)) / e;
-    }
-    
-    function mul(a, b) {//改进的乘法
-        var c = 0,
-            d = a.toString(),
-            e = b.toString();
-        try {
-            c += d.split(".")[1].length;
-        } catch (f) {}
-        try {
-            c += e.split(".")[1].length;
-        } catch (f) {}
-        return Number(d.replace(".", "")) * Number(e.replace(".", "")) / Math.pow(10, c);
-    }
-    
-    function accAdd(a, b) {  
-        var c, d, e;  
-        try {  
-            c = a.toString().split(".")[1].length;  
-        } catch (f) {  
-            c = 0;  
-        }  
-        try {  
-            d = b.toString().split(".")[1].length;  
-        } catch (f) {  
-            d = 0;  
-        }  
-        return e = Math.pow(10, Math.max(c, d)), (mul(a, e) + mul(b, e)) / e;  
-    } 
-    
-    function checktest() {
+    //点击使用余额支付
+    function checkedBalance() {
     	//如果余额足够则只能用余额或者网银付款，二选一，如果余额不足则自由选择
-    	if (sub('${cashDeskData.amount}','${cashDeskData.balanceusable}')<= 0){
+    	if (sub(cashierData.tradeAmount,cashierData.balanceusable)<= 0){
    		 if($("#d_checkbox").attr("checked")=="checked"){
    			$(".bank-limit-wrap").hide();
    			 var arrow = $('.J_payway').find('i');
@@ -542,21 +300,23 @@ $("document").ready(function (){
 	   	}else{//余额不足，将支持两种结合的方式或者选择充值
 	   		 if($("#d_checkbox").attr("checked")=="checked"){//在线支付剩余余额
 	   			 //获取选中银行
+	   			 
 	   			var itemType = $(".bankName:checked").parents(".paytable_payway").attr("itemType");
+	   			paytable_paywayClick(itemType);
 	   		  //计算选中银行的手续费
-	   			amount_not_enough_rate(itemType);
+	   			//amount_not_enough_rate(itemType);
 	   		 }else{//在线支付全款
 	   			 $(".bankName:checked").parents(".paytable_payway").click();
 	   		     var rateAmount = $("#titanRateAmount").text();
-		         var payAmount = '${cashDeskData.amount}';
-		         var show_online_PayAmount =  accAdd(rateAmount, payAmount);
+
+		         var show_online_PayAmount =  accAdd(rateAmount, cashierData.payAmount());
 		         $("#pay_surplus_amount").text(show_online_PayAmount);
-	   			 
 	   		 }
 	   	}
     	
     }
 
+    //控制显示的样式
     function conPayWay(){
     	  var arrow = $(".J_payway").find('i');
 	      $(".J_payway").next(".goldpayway").toggle();
@@ -564,6 +324,7 @@ $("document").ready(function (){
 	      $(".payway_other").text('使用其他方式付款');
     }
     
+    //展示付款历史
     $(".J_payother").on('click', function() {
         var backcont=null;
         $.ajax({
@@ -606,6 +367,8 @@ $("document").ready(function (){
             }
         });
     });
+    
+    
     //Run_tab切换
     function tabChange(tabbtn, tabpannel, tabclass) {
         var $div_li = tabbtn;
@@ -613,13 +376,16 @@ $("document").ready(function (){
             $(this).addClass(tabclass).siblings().removeClass(tabclass);
             var index = $div_li.index(this);
             $(tabpannel).eq(index).show().siblings().hide();
+            $($(tabpannel).eq(index).find("input")[0]).click(); 
+            $($(tabpannel).eq(index).find(".paytable_payway")[0]).click(); 
         });
     }
-    $(function () {
+    
+   $(function () {
         //tab
         tabChange($(".pay_table li"), $(".paytable_content ul li"), "on");
-        tabChange($(".pay_table li"), $(".paytable_content ul li"), "on");
-    });
+       /*  tabChange($(".pay_table li"), $(".paytable_content ul li"), "on"); */
+    }); 
 
     //支付方式下拉显示隐藏
     $('.J_payway').on('click',function(){
@@ -637,12 +403,6 @@ $("document").ready(function (){
         }else{
         	if('${cashDeskData.amount}' - '${cashDeskData.balanceusable}' <= 0){//余额充足
       		  $("#d_checkbox").removeAttr("checked");
-      		/*  $('.paytable_payway').each(function(){
-	             	if($(this).find('input:radio[name="r2"]').is(":checked"))
-	             	{
-	             		$(this).click();
-	             	} 
-              });*/
       		  $(".bankName:first").attr("checked",'0');
  			  $(".paytable_payway:first").click();
  				$($(".pay_table li")[0]).click();
@@ -653,169 +413,15 @@ $("document").ready(function (){
         return false;
     });
    
-    if('${cashDeskData.paySource}'!="1"){
-    	checkIsSetPayPassword();
-    }
     
-   function checkIsSetPayPassword(){
-    	 $.ajax({
-        	 type: "post",
-             url: "<%=basePath%>/account/checkIsSetPayPassword.action",
-             data: {fcUserid:'${cashDeskData.fcUserid}'},
-             dataType: "json",
-             success: function(data){
-            	 if(data.result=="0"){
-            		 show_set_payPassword();
-            	 }
-            	}
-            }); 
-    }
-  
+    //点击取消关闭页面
     $('.J_exitKan').on('click',function(){
 		window.close();
 	});
 	
     var timeIndex = 0;
-    function clickPassword()
-    {
-    	$('#passwordbox').click();
-      		timeIndex = setInterval(function(){
-      			try
-      			{
-      				if($('#passwordbox i:last b:first-child').attr('style').indexOf('inherit') != -1)
-      				{
-      					$('#passwordbox1').click();
-      					clearInterval(timeIndex);
-      				}
-      			}catch(e)
-      			{}
-    	},100);
-    }
-
     
-    function show_set_payPassword(){
-    	 $.ajax({
-		        dataType: 'html',
-		        context: document.body,
-		        url: '<%=basePath%>/account/showSetPayPassword.action',
-		        success: function (html) {
-		        	clickPassword()
-		            var d = dialog({
-		                title: ' ',
-		                padding: '0 0 0px 0 ',
-		                content: html,
-		                skin: 'saas_pop',
-		                button: [
-		                    {
-		                        value: '确定',
-		                        skin: 'btn p_lr30',
-		                        callback: function () {
-		                        	if(PasswordStr.returnStr()==PasswordStr1.returnStr()){
-		                        		if(PasswordStr.returnStr().length==6){
-		                        			   $.ajax({
-		                        			    	 type: "post",
-		                        			         url: "<%=basePath%>/account/setPayPassword.action",
-		                        			         data: {
-		                        			        	 fcuserid:'${cashDeskData.fcUserid}',
-		                        			        	/*  payPassword:rsaData(PasswordStr.returnStr()) */
-		                        			        	 payPassword:PasswordStr.returnStr()
-		                        			         },
-		                        			         dataType: "json",
-		                        			         success: function(data){
-		                        			        	 if(data.result=="0"){
-		                        			        		top.F.loading.show();
-		                 		                            setTimeout(function () {
-		                 		                                top.F.loading.hide();
-		                 		                                new top.Tip({msg: '密码设置成功！', type: 1, timer: 1000});
-		                 		                            }, 1000);
-		                        			        	 }else{
-		                        			        			top.F.loading.show();
- 		                 		                                setTimeout(function () {
- 		                 		                                top.F.loading.hide();
- 		                 		                                new top.Tip({msg: data.msg, type: 1, timer: 1000});
- 		                 		                            }, 1000);
-		                        			        	 }
-		                        			         }
-		                        			   });
-		                        		}else{
-		                        			 new top.Tip({msg: "密码必须为6位", type: 1, timer: 1000});
-		                        			 $(".ui-dialog-content").html(html);
-			                         			setTimeout(function(){
-			                         				clickPassword();
-			                                		 },500);
-			                         			return false;
-		                        		}
-		                        	}else{
-		                        		 new top.Tip({msg: "两次输入的密码不一致", type: 1, timer: 1000});
-		                        		 $(".ui-dialog-content").html(html);
-		                         			setTimeout(function(){
-		                         				clickPassword();
-		                                		 },500);
-		                         			return false;
-		                        		
-		                        	}
-		                        },
-		                        autofocus: true
-		                    },
-
-		                ]
-		            }).showModal();
-		        }
-		    });
-    }
-    
-    function closeWindow(){
-    	var userAgent = navigator.userAgent;
-        if (userAgent.indexOf("Firefox") != -1 || userAgent.indexOf("Chrome") !=-1) {
-        	   window.location.href="about:blank";
-        	   window.close();
-        } else {
-           window.opener = null;
-           window.open("", "_self");
-           window.close();
-        }
-    }
-    
-    function showPayResultDialog(){
-    	  new top.createConfirm({
-              title: '提示',
-              padding: '20px 20px 40px',
-              cancelValue: '支付失败',
-              okValue: '支付成功',
-              content: '<div class="f_14 l_h26 rechargeNotice">您正在用.....支付，完成操作后，<br/>请确认结果</div>',
-              ok: function () {
-              	confirmPayResult();
-              },
-              cancel: function () {
-              	confirmPayResult();
-              }
-          });
-    }
-    
-    //主动确认支付结果
-    function confirmPayResult(){
-    	$.ajax({//支付页面
-          	 type: "post",
-               url: "<%=basePath%>/trade/confirmedTrade.action",
-               data: {
-            	   payOrderNo:'${cashDeskData.payOrderNo}',
-            	   paySource:'${cashDeskData.paySource}'
-               },
-               dataType: "json",
-               success: function (data) {
-            	   if(data.result=="success"){
-            		   top.F.loading.show();
-            		   new top.Tip({msg: data.msg, type: 1, timer: 2000});
-                       setTimeout(function () {
-                           top.F.loading.hide();
-                           top.removeIframeDialog();
-                       }, 2000);
-            	   }
-            	}
-        });
-    }
-    
-    //点击确定弹出输入密码
+    //点击确定弹出输入密码 ，提交
     $(".J_password").on('click', function () {
     	//验证收款账户和泰坦码
         var validate = validate_isBlank();
@@ -828,14 +434,15 @@ $("document").ready(function (){
     		return false;
     	}
     	
-    	var flag = validate_isInput_password();
+    	var flag = payPasswordObj.validate_isInput_password();
     	if(flag==false){
-    		show_payPassword();
+    		payPasswordObj.show_payPassword();
     	}else{
     		pay_Order(); 
     	}
     });
     
+    //检查账户是否存在
     function check_account_isExit(){
     	var recieveOrgName = $("#reOrgName").val();
     	var recieveTitanCode = $("#reTitanCode").val();
@@ -863,250 +470,7 @@ $("document").ready(function (){
     	return check_account;
     }
     
-    function show_payPassword(){
-    	$.ajax({
-            dataType: 'html',
-            context: document.body,
-            url: '<%=basePath%>/account/showPayPassword.action',
-            success: function (html) {
-                var d = dialog({
-                    title: ' ',
-                    padding: '0 0 0px 0 ',
-                    content: html,
-                    skin: 'saas_pop',
-                    button: [
-                        {
-                            value: '确定',
-                            skin: 'btn p_lr30',
-                            callback: function () {
-                            	//验证付款密码是否准确
-                            	if(! check_payPassword())
-                            	{
-                            		 $(".ui-dialog-content").html(html);
-                            			setTimeout(function(){
-                                   			$('#passwordbox').click();
-                                   		},500);
-                            		return false;
-                            	}
-                            	return true;
-                            	//获取密码
-                            },
-                            autofocus: true
-                        },
-                        {
-                            value: '取消',
-                            skin: 'btn btn_grey btn_exit',
-                            callback: function () {
-                                //   alert('c');
-                            }
-                        }
-                    ]
-                }).showModal();
-            }
-        });
-    }
-    
-    function check_payPassword(){
-    	var result = false;
-    	 $.ajax({
-             type: "post",
-             async:false,
-             dataType: 'json',
-             url: '<%=basePath%>/account/check_payPassword.action',
-             data: {
-            	 payPassword:PasswordStr2.returnStr(),
-            	 fcUserid:'${cashDeskData.fcUserid}'
-             },
-             success: function (data) {
-            	 if(data.result=="0"){
-            		 result = true;
-            		 pay_Order();
-            	 }else{
-            		new top.Tip({msg: '输入的密码错误', type: 1, timer: 2000});
-            	 }
-             },error:function(data){
-             }
-    	 });
-    	 return result;
-    }
-    
-    
-    function pay_Order(){
-    	//获取数据
-   	    var pay_date=save_payDate();
-    	if(pay_date==false){
-    		return;
-    	}
-   	    top.F.loading.show();
-        if(pay_date.payAmount =="0"){
-    		$.ajax({//支付页面
-           	 type: "post",
-                url: "<%=basePath%>/payment/showTitanPayPage.action",
-                data: {
-	               	 payPassword:pay_date.payPassword,
-	               	 merchantcode:'${cashDeskData.merchantcode}',
-	               	 payOrderNo:'${cashDeskData.payOrderNo}',
-	               	 transferAmount:pay_date.transferAmount,
-	               	 payAmount:pay_date.payAmount,
-	               	 recieveOrgName:pay_date.recieveOrgName,
-	               	 recieveTitanCode:pay_date.recieveTitanCode,
-	               	 bankInfo:pay_date.bankInfo,
-               		 fcUserid:'${cashDeskData.fcUserid}',
-	               	 userid:'${cashDeskData.userId}',
-	               	 deskId:'${cashDeskData.cashierDeskDTO.deskId}',
-	               	 paySource:'${cashDeskData.paySource}',
-	               	 creator:'${cashDeskData.operator}',
-	               	 escrowedDate:'${cashDeskData.escrowedDate}',
-	               	 isEscrowed:'${cashDeskData.isEscrowed}',
-	                 tradeAmount:'${cashDeskData.amount}',
-                },
-                dataType: "json",
-                success: function (data) {
-                //如果ajax请求成功则显示回调页面
-					 if(data.result == "0"){
-						$("#orderNo").val(data.data);
-						$("#confirmOrder").submit();
-					 }else{
-						  new top.Tip({msg: data.resultMsg, type: 1, timer: 2000});
-						  setTimeout(function () {
-							 if(typeof data.data !='undefined'){
-									$("#orderNo").val(data.data);
-								 }
-							 $("#confirmOrder").submit();
-						  }, 2000);
-					 }
-                },complete:function(){
-                	top.F.loading.hide();
-                }
-            });
-    	}else{
-    		$("#payPassword").val(pay_date.payPassword);
-    		$("#transferAmount").val(pay_date.transferAmount);
-    		$("#payAmount").val(pay_date.payAmount);
-    		$("#recieveOrgName").val(pay_date.recieveOrgName);
-    		$("#recieveTitanCode").val(pay_date.recieveTitanCode);
-    		$("#bankInfo").val(pay_date.bankInfo);
-    		$("#linePayType").val(pay_date.linePayType);
-    		$("#payerAcount").val(pay_date.payerAccount);
-    		$("#onlinePaymentForm").submit();
-    	}  
-    }
-    
-    
-    function validate_isInput_password(){
-    	if('${paySource}'=='1'){//如果分销商付款不需要输入密码，不用余额支付也不需要输入付款密码
-    		return true;
-    	}
-    	if(($("#d_checkbox").attr("checked")=="checked" && '${cashDeskData.balanceusable}'=="0")||$("#d_checkbox").attr("checked")!="checked"){
-    		return true;
-    	}
-    	
-    	var flag = false;
-       	 $.ajax({
-                dataType: 'json',
-                context: document.body,
-                async:false,
-                url: '<%=basePath%>/account/allownopwdpay.action',
-                data:{
-               	 totalAmount :$("#pay_totalAmount").text(),
-               	 userid:'${cashDeskData.userId}'
-                },
-                success: function (data) {
-               	 if(data.result =="0"){
-               		 flag =  true;
-               	 }
-                }
-            });
-    	
-    	return flag; 
-    }
-    
-    function save_payDate(){
-    	var transferAmount ="0";
-    	var payAmount = "0";
-    	
-    	if (sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}') <= 0){
-    		if($("#d_checkbox").attr("checked")=="checked"){//余额充足二选一
-    			transferAmount = '${cashDeskData.amount}';
-       	    }else{
-       	    	payAmount = '${cashDeskData.amount}';
-       	    }
-    	}else{
-    		if($("#d_checkbox").attr("checked")=="checked"){//余额不足，任意选择
-    			transferAmount = '${cashDeskData.balanceusable}';
-       		    payAmount = sub('${cashDeskData.amount}', '${cashDeskData.balanceusable}');
-       	    }else{
-       	    	payAmount = '${cashDeskData.amount}';
-       	    }
-    	}
-    	var recieveOrgName = null;
-    	var recieveTitanCode = null;
-    	if($("#not_exists_history").is(":visible")==true || $(".replanceArea").is(":visible")==true){
-    		recieveOrgName = $.trim($("#reOrgName").val());
-        	recieveTitanCode = $.trim($("#reTitanCode").val());
-    	}else{
-    		recieveOrgName =  $.trim($("#hiddenAccountName").val());
-    		recieveTitanCode =  $.trim($("#hiddenTitanCode").val());
-    	}
-    	
-    	var bankInfo =  $(".bankName:checked").val();
-    	if(typeof(bankInfo) == "undefined"){
-    		bankInfo =null;
-         }
-    	var payPassword = null;
-    	if("undefined" != typeof PasswordStr2){
-    		/* payPassword = rsaData(PasswordStr2.returnStr()); */
-    		payPassword = PasswordStr2.returnStr();
-    	}
-    	var itemType = $(".bankName:checked").attr("data-index");
-    	var linePayType =null;
-    	if("undefined" != typeof itemType){
-    		linePayType =   $("#item-"+itemType).attr("data-index");
-    	}
-    	var payerAccount = null;
-    	var value=$('input:radio[name=r2]:checked').val();
-    	if(value=='cmbc' && linePayType=="1"){
-    		var dataIndex = $('input:radio[name=r2]:checked').attr("data-index");
-    		payerAccount = $("#customNo-"+dataIndex).val();
-    		
-    		var errMsg ="";
-    		if(payerAccount.length<1){
-    			errMsg="民生企业银行客户号不能为空";
-    		}else{
-    			var reg = /^([a-z]|[A-Z]|[0-9]){1,32}$/;
-    			if(!reg.test(payerAccount)){
-    				errMsg="民生企业银行客户号输入有误,只能是数字或字母";
-    			};
-    		}
-    		
-    		if(errMsg.length>0){
-    			  new top.createConfirm({
-    		            title:'提示',
-    		            padding: '20px 20px 40px',
-    		            okValue : '关闭',
-    		            content : errMsg,
-    		            skin : 'saas_confirm_singlebtn',
-    		            ok : function(){
-    		            },
-    		            cancel: false,
-    		        });
-    			  return false;
-    		};
-    	}
-    	
-    	var data={
-    	    transferAmount:transferAmount,	
-    	    payAmount:payAmount,
-    	    recieveOrgName:recieveOrgName,
-    	    recieveTitanCode:recieveTitanCode,
-    	    bankInfo:bankInfo,
-    	    payPassword:payPassword,
-    	    linePayType:linePayType,
-    	    payerAccount:payerAccount,
-    	};
-    	return data;
-    }
-    
+     //验证是否部分为空
     function validate_isBlank(){
     	if($("#not_exists_history").is(":visible")==true || $(".replanceArea").is(":visible")==true){
     		if($.trim($("#reOrgName").val()).length<1){
@@ -1157,27 +521,98 @@ $("document").ready(function (){
     	}else{
     		$('.paytable_payway').find('.payc_ms').slideUp();
     	}
-    	/* if(value=="cmbc"){
-    		$.ajax({
-    	        dataType : 'html',
-    	        context: document.body,
-    	        url : '微信支付.html',			
-    	        success : function(html){
-    				top.F.loading.hide();
-    	            var d =  window.top.dialog({
-    	                title: ' ',
-    	                padding: '0 0 0px 0',
-    					width: 560,
-    	                content: html,
-    	                skin : 'saas_pop',  
-    	            }).showModal();
-    	            $('.wx_close').on('click',function(){
-    	            	d.remove();
-    	            });
-    	        }
-    	    });
-    	} */
     });
+    
+    /** 支付相关开始 **/
+    //提交表单
+    function pay_Order(){
+    	//获取数据
+    	if(cashierData.validatePayerAccount().length>0){
+    		cashierData.window(cashierData.validatePayerAccount());
+    		return ;
+    	}
+   	    top.F.loading.show();
+        if(cashierData.payAmount() =="0"){//余额支付
+        	balancePayment();
+    	}else if(cashierData.linePayType()=='9'){//微信支付
+    		qrPayment();
+    	}else{//有网银支付
+    		cashierData.submit();
+    	}  
+    }
+    
+    //余额支付
+    function balancePayment(){
+    	$.ajax({//支付页面
+          	 type: "post",
+               url: "<%=basePath%>/payment/showTitanPayPage.action",
+               data: cashierData.onlinePayData(),
+               dataType: "json",
+               success: function (data) {
+               //如果ajax请求成功则显示回调页面
+               	toResultPage(data);
+               },complete:function(){
+               	top.F.loading.hide();
+               }
+         });
+    }
+    
+    //微信支付
+   function qrPayment(pay_date){
+    	$.ajax({//支付页面
+    		type: "post",
+            dataType : 'html',
+   	        context: document.body,
+   	     	data: cashierData.onlinePayData(),
+   	        url : '<%=basePath%>/payment/qrCodePayment.action',			
+   	        success : function(html){
+   	            var d =  window.top.dialog({
+   	                title: ' ',
+   	                padding: '0 0 0px 0',
+   					width: 560,
+   	                content: html,
+   	                skin : 'saas_pop wx_close', 
+   	            	onclose: function () {
+   	            		toWxPayPage();
+   	          		}
+   	            }).showModal();
+   	            $('.wx_close').on('click',function(){
+   	            	d.remove();
+   	            	toWxPayPage();
+   	            });
+   	        },complete:function(){
+               	top.F.loading.hide();
+            }
+           });
+    }
+    
+    function toWxPayPage(){
+    	 setTimeout(function(){
+    		var status = confirmOrder(_orderNo);
+ 			if(status =="success"||status=="fail"){
+ 				$("#orderNo").val(_orderNo);
+ 				$("#payTypeMsg").val("微信支付");
+ 				 $("#confirmOrder").submit();
+ 			}
+    	 }, 4000);
+    }
+	
+    
+     //到结果页面
+    function toResultPage(data){
+   	 	if(data.result == "0"){
+			$("#orderNo").val(data.data);
+			$("#confirmOrder").submit();
+		 }else{
+			  new top.Tip({msg: data.resultMsg, type: 1, timer: 2000});
+			  setTimeout(function () {
+				 if(typeof data.data !='undefined'){
+						$("#orderNo").val(data.data);
+					 }
+				 $("#confirmOrder").submit();
+			  }, 2000);
+		 }
+    }
     
 </script>
 </body>

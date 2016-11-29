@@ -7,16 +7,16 @@
         *
         from t_tfs_org
         <where>
-            <if test="orgid != null">orgid = #{orgid}</if>
-            <if test="orgcode != null"> and orgcode = #{orgcode}</if>
-            <if test="userid != null"> and userid =#{userid}</if>
-            <if test="productid != null"> and productid =#{productid}</if>
-            <if test="orgname !=null"> and orgname = #{orgname}</if>
-            <if test="titancode !=null"> and titancode = #{titancode}</if>
-            <if test="buslince != null"> and buslince = #{buslince}</if>
-            <if test="certificatetype != null"> and certificatetype =#{certificatetype}</if>
-            <if test="certificatenumber != null"> and certificatenumber =#{certificatenumber}</if>
-            <if test="statusid !=null">and statusid =#{statusid}</if>
+            <if test="orgId != null">orgid = #{orgId}</if>
+            <if test="orgCode != null"> and orgcode = #{orgCode}</if>
+            <if test="userId != null"> and userid =#{userId}</if>
+            <if test="productId != null"> and productid =#{productId}</if>
+            <if test="orgName !=null"> and orgname = #{orgName}</if>
+            <if test="titanCode !=null"> and titancode = #{titanCode}</if>
+            <if test="busLince != null"> and buslince = #{busLince}</if>
+            <if test="certificateType != null"> and certificatetype =#{certificateType}</if>
+            <if test="certificateNumber != null"> and certificatenumber =#{certificateNumber}</if>
+            <if test="statusId !=null">and statusid =#{statusId}</if>
         </where>
     </select>
 

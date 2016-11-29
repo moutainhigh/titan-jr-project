@@ -61,7 +61,7 @@ function initTitanPayObj() {
 			config.module = titan_pub;
 		} else {
 			if (!configObj.address) {
-				config.address = titanPayObj.getRootPath();
+				configObj.address = titanPayObj.getRootPath();
 			}
 
 			if (!configObj.empoent) {

@@ -2,10 +2,12 @@ package com.fangcang.titanjr.pay.services;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -21,13 +23,18 @@ import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.HttpUtils;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
+import com.fangcang.titanjr.dto.bean.CashierDeskDTO;
+import com.fangcang.titanjr.dto.bean.CashierDeskItemDTO;
+import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
+import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
@@ -169,6 +176,14 @@ public class TitanTradeService {
 				return false;
 			}
 		}
+		
+		if(pe.isOpenOrg() && StringUtil.isValidString(dto.getRuserId())){
+			if(StringUtil.isValidString(dto.getUserId())){
+				log.error("对外商户传入的参数不合法");
+				return false;
+			}
+		}
+		
 		return true;
 	}
 
@@ -355,5 +370,81 @@ public class TitanTradeService {
 			log.error(e.getMessage());
 		}
 		return null;
+	}
+	
+	/**
+	 * 将民生银行的企业银行放在最后面
+	 * @param commonPayMethodDTOList
+	 */
+	public void sortBank(List<CommonPayMethodDTO> commonPayMethodDTOList){
+		if(commonPayMethodDTOList ==null ||commonPayMethodDTOList.size()==0){
+			return ;
+		}
+		CommonPayMethodDTO cmbcBank =null;
+		Iterator<CommonPayMethodDTO> iterator = commonPayMethodDTOList.iterator();
+		while(iterator.hasNext()){
+			 CommonPayMethodDTO commonPayMethodDTO = iterator.next();
+			 if(CommonConstant.CMBC.equals(commonPayMethodDTO.getBankname()) && 
+					 commonPayMethodDTO.getPaytype()!=null &&
+					 commonPayMethodDTO.getPaytype().intValue()==CommonConstant.BUS_BANK){
+		    		cmbcBank = commonPayMethodDTO;
+		    		iterator.remove();
+		     }
+		 }
+		if(cmbcBank !=null){
+			commonPayMethodDTOList.add(cmbcBank);
+		}
+		
+	}
+	
+	public void sortBank(CashierDeskDTO cashierDesk){
+		List<CashierDeskItemDTO> cashierDeskItemDTOList = cashierDesk.getCashierDeskItemDTOList();
+		if(cashierDeskItemDTOList==null || cashierDeskItemDTOList.size()==0){
+			return;
+		}
+		
+		CashierItemBankDTO cmbcBank = null;
+		for(CashierDeskItemDTO cashierDeskItem :cashierDeskItemDTOList){
+			//B2B Item
+			if(cashierDeskItem.getItemType()!=null && cashierDeskItem.getItemType().intValue()==1){
+				List<CashierItemBankDTO> cashierItemBankDTOList = cashierDeskItem.getCashierItemBankDTOList();
+				if(cashierItemBankDTOList ==null || cashierItemBankDTOList.size()==0){
+					continue;
+				} 
+				Iterator<CashierItemBankDTO> iterator = cashierItemBankDTOList.iterator();
+				 while(iterator.hasNext()){
+					 CashierItemBankDTO cashierItemBankDTO = iterator.next();
+					 if(CommonConstant.CMBC.equals(cashierItemBankDTO.getBankName())){
+				    		cmbcBank = cashierItemBankDTO;
+				    		iterator.remove();
+				    	}
+				 }
+				 if(cmbcBank !=null){
+					 cashierItemBankDTOList.add(cmbcBank);
+				 }
+			}
+		}
+	}
+	
+	public TitanOpenOrgDTO queryOpenOrg(String userId){
+		return titanFinancialOrganService.queryTitanOpenOrgDTO(userId);
+	}
+	
+	public String getIp(HttpServletRequest request) {
+		String ip = request.getHeader("X-Forwarded-For");
+		if (StringUtil.isValidString(ip) && !"unKnown".equalsIgnoreCase(ip)) {
+			// 多次反向代理后会有多个ip值，第一个ip才是真实ip
+			int index = ip.indexOf(",");
+			if (index != -1) {
+				return ip.substring(0, index);
+			} else {
+				return ip;
+			}
+		}
+		ip = request.getHeader("X-Real-IP");
+		if (StringUtil.isValidString(ip) && !"unKnown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+		return request.getRemoteAddr();
 	}
 }

@@ -24,4 +24,6 @@ public interface TitanTransOrderDao {
 	List<RepairTransferDTO> queryTitanTransOrderByStatus(RepairTransferRequest repairTransferRequest);
 	
 	int updateTitanTransOrderByTransId(TitanTransOrder entity)throws DaoException;
+	
+	List<String> confirmOrderStatus(String orderNo);
 }

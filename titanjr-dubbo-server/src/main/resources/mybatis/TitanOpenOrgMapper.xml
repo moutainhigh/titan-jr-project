@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanOpenOrgDao" >
+  <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanOpenOrg" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO t_tfs_openorg(
+	    userid,
+	    privatekey,
+	    module,
+	    empoent,
+	    merchcode,
+	    prefix,
+	    ip
+	) 
+    VALUES 
+    (
+    	#{userid},
+    	#{privatekey},
+    	#{module},
+	    #{empoent},
+    	#{merchcode},
+    	#{prefix},
+    	#{ip}
+    )
+  </insert>
+  
+  <delete id="delete" parameterType="com.fangcang.titanjr.entity.TitanOpenOrg">
+    delete from t_tfs_openorg where userid=#{userid}
+  </delete>
+  
+  <select id="queryList" parameterType="com.fangcang.titanjr.entity.TitanOpenOrg" resultType="com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO">
+    select 
+     	id,
+     	userid,
+	    privatekey,
+	    module,
+	    empoent,
+	    merchcode,
+	    prefix,
+	    ip
+	from 
+	t_tfs_openorg
+	<where>
+	  <if test="userid !=null">
+	    and userid=#{userid}
+	  </if>
+	  <if test="merchcode !=null">
+	    and merchcode=#{merchcode}
+	  </if>
+	  <if test="prefix !=null">
+	    and prefix=#{prefix}
+	  </if>
+	</where>
+  </select>
+  
+  <select id="queryMaxPrifix" resultType="java.lang.String">
+    select prefix from t_tfs_openorg where id =(select max(id) from t_tfs_openorg)
+  </select>
+  
+</mapper>

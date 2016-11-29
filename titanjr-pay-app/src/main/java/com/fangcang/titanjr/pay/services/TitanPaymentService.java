@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.fangcang.titanjr.enums.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
@@ -21,13 +22,8 @@ import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
-import com.fangcang.titanjr.dto.bean.AmtTypeEnum;
-import com.fangcang.titanjr.dto.bean.BusiCodeEnum;
-import com.fangcang.titanjr.dto.bean.CharsetEnum;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
-import com.fangcang.titanjr.dto.bean.OrderMarkEnum;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
-import com.fangcang.titanjr.dto.bean.SignTypeEnum;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
@@ -263,8 +259,7 @@ public class TitanPaymentService {
 			return false;
 		}
 		
-		@RequestMapping("payConfirmPage")
-		public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,Model model){
+		public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,String payTypeMsg,Model model){
 			if(StringUtil.isValidString(rechargeResultConfirmRequest.getOrderNo())){
 				TransOrderRequest transOrderRequest = new TransOrderRequest();
 				transOrderRequest.setOrderid(rechargeResultConfirmRequest.getOrderNo());
@@ -282,17 +277,19 @@ public class TitanPaymentService {
 			        if(!StringUtil.isValidString(rechargeResultConfirmRequest.getPayStatus())){//判断是本地回调
 			        	
 			        	boolean paySuccess = OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid());
-			        	if(transOrderDTO.getTradeamount() !=null){
-		        			rechargeResultConfirmRequest.setPayAmount(transOrderDTO.getTradeamount().toString());
-		        		}
 			        	rechargeResultConfirmRequest.setOrderPayTime(DateUtil.sdf5.format(transOrderDTO.getCreatetime()));
 			        	rechargeResultConfirmRequest.setPayMsg("付款失败");
 			        	if(paySuccess){
 			        		rechargeResultConfirmRequest.setPayStatus("3");
 			        		rechargeResultConfirmRequest.setPayMsg("付款成功");
+			        		rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getTradeamount()).toString());
 			        	}
 			        	model.addAttribute("payType", "余额支付");
 					}
+			        if(StringUtil.isValidString(payTypeMsg)){
+			        	rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getAmount()).toString());
+			        	model.addAttribute("payType", payTypeMsg);
+			        }
 			        
 				}
 			}

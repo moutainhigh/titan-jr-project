@@ -405,4 +405,9 @@
                   </where>
     </select>
     
+    <select id="confirmOrderStatus" parameterType="java.lang.String"
+            resultType="java.lang.String">
+            select statusid from t_tfs_transorder where orderid=#{orderNo} order by createtime
+    </select>
+    
 </mapper>

@@ -33,7 +33,7 @@ public class HttpClient {
 	        RequestConfig requestConfig = RequestConfig.copy(defaultRequestConfig).build();
 	        HttpPost httpPost = new HttpPost(url);
 	        httpPost.setConfig(requestConfig);
-	        httpPost.setHeader("Content-Type", "text/xml; charset=UTF-8");
+	        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 	        HttpResponse response = null;
 	        try {
 	            if (CollectionUtils.isNotEmpty(params)) {

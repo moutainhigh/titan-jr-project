@@ -8,6 +8,7 @@ import test.fangcang.GenericTest;
 import com.fangcang.titanjr.dto.request.BankCardRequest;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
+import com.fangcang.titanjr.service.TitanFinancialRateService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.util.WebConstant;
@@ -18,10 +19,12 @@ public class TitanAccountTest extends GenericTest{
 	
 	private TitanFinancialBankCardService titanFinancialBankCardService= null;
 
+	private TitanFinancialRateService titanFinancialRateService=null;
     @Before
     public void init(){
     	titanFinancialAccountService = (TitanFinancialAccountService)cfx.getBean("titanFinancialAccountService");
     	titanFinancialBankCardService=(TitanFinancialBankCardService)cfx.getBean("titanFinancialBankCardService");
+    	titanFinancialRateService = (TitanFinancialRateService)cfx.getBean("titanFinancialRateService");
     }
     
 //    @Test
@@ -38,6 +41,12 @@ public class TitanAccountTest extends GenericTest{
     }
     
     @Test
+    public void test(){
+    	titanFinancialRateService.initRateData();
+    }
+    
+    
+//    @Test
     public void testAccountBankCardBatch(){
     	
     	Runnable s1 = new Runnable() {
@@ -85,6 +94,7 @@ public class TitanAccountTest extends GenericTest{
 		} catch (Exception e) {
 		}
 	}
+	
 	
     
 }
