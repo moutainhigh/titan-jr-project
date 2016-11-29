@@ -199,12 +199,6 @@ public class TitanTradeController extends BaseController {
 
 			log.info("begin sava titan trans order ...");
 			
-			//给goodsid加上前缀，标识其唯一性，对于没有在金融环境生成前缀的，统一加上AA
-			if(openOrgDTO !=null && StringUtil.isValidString(openOrgDTO.getPrefix())){
-				dto.setGoodsId(openOrgDTO.getPrefix()+dto.getGoodsId());
-			}else{
-				dto.setGoodsId("AA"+dto.getGoodsId());
-			}
 			// 保存金融订单
 			TransOrderCreateResponse orderCreateResponse = titanFinancialTradeService
 					.saveTitanTransOrder(dto);

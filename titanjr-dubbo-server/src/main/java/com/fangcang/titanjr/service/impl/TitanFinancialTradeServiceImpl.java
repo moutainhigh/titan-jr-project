@@ -700,7 +700,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("payOrderCode", transOrderDTO
-				.getPayorderno().substring(2)));
+				.getPayorderno()));
 		params.add(new BasicNameValuePair("businessOrderCode", transOrderDTO
 				.getBusinessordercode()));
 
@@ -2108,7 +2108,26 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 			// 如果在融数已经存在订单并且，订单状态为处理中的，则需要考虑订单在融数端是否超时
 			if (StringUtil.isValidString(transOrderDTO.getOrderid())) {
-				if (OrderStatusEnum.isRepeatedPay(transOrderDTO.getStatusid())) {
+				if (OrderStatusEnum.isPaySuccess(transOrderDTO
+						.getStatusid())) {
+
+					orderCreateResponse.setResult(false);
+					orderCreateResponse.setReturnCode(""
+							+ TitanMsgCodeEnum.PAY_ORDER_SUCCESS.getCode());
+					orderCreateResponse
+							.setReturnMessage(TitanMsgCodeEnum.PAY_ORDER_SUCCESS
+									.getResMsg());
+					try {
+						if(titanOrderRequest.getBusinessInfo()!=null 
+								&& StringUtil.isValidString(titanOrderRequest.getBusinessInfo().get("bussCode"))){
+							transOrderDTO.setBusinessordercode(titanOrderRequest.getBusinessInfo().get("bussCode"));
+						}
+						this.confirmFinance(transOrderDTO);
+					} catch (Exception e) {
+						log.error("回调失败");
+					}
+					return orderCreateResponse;
+				}else if (OrderStatusEnum.isRepeatedPay(transOrderDTO.getStatusid())) {
 					// 查询融数网关支付的订单
 					TitanOrderPayreq titanOrderPayreq = new TitanOrderPayreq();
 					titanOrderPayreq
@@ -2152,26 +2171,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						// 订单已经过期
 						updateOrderNoEffect(transOrderRequest.getTransid());
 					}
-				} else if (OrderStatusEnum.isPaySuccess(transOrderDTO
-						.getStatusid())) {
-
-					orderCreateResponse.setResult(false);
-					orderCreateResponse.setReturnCode(""
-							+ TitanMsgCodeEnum.PAY_ORDER_SUCCESS.getCode());
-					orderCreateResponse
-							.setReturnMessage(TitanMsgCodeEnum.PAY_ORDER_SUCCESS
-									.getResMsg());
-					try {
-						if(titanOrderRequest.getBusinessInfo()!=null 
-								&& StringUtil.isValidString(titanOrderRequest.getBusinessInfo().get("bussCode"))){
-							transOrderDTO.setBusinessordercode(titanOrderRequest.getBusinessInfo().get("bussCode"));
-						}
-						this.confirmFinance(transOrderDTO);
-					} catch (Exception e) {
-						log.error("回调失败");
-					}
-					return orderCreateResponse;
-				}
+				} 
 			}
 
 		}
