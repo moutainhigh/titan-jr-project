@@ -110,7 +110,6 @@
     <div class="pay">
         <input type="hidden" id="inAccountCode" name="inAccountCode"/>
         <input type="hidden" id="outAccountCode" name="outAccountCode"/>
-        <input type="hidden" id="bussCode" name="bussCode" value="skdhjskdjl"/>
 
         <table cellspacing="0" border="0">
             <tbody>
@@ -183,6 +182,13 @@
                     <input type="text" value="http://localhost:8088/titanjr-pay-app/quickPayment/customerNotify.action" id="notify" name="notify"/>
                 </td>
             </tr>
+            <tr>
+               <td class="tdr">业务单号</td>
+               <td>
+                   <input type="text" id="bussCode" name="bussCode" value="skdhjskdjl"/>
+               </td>
+            </tr>
+            
             <tr>
                 <td class="tdr"></td>
                 <td><input type="button" class="input_b01" value="收银台付款" onClick="testOrderPay()"/></td>
