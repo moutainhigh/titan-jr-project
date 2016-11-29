@@ -2,6 +2,10 @@ package test.fangcang.titanjr.rs.invoker.loancredit;
 
 import java.util.List;
 
+import com.fangcang.titanjr.rs.dto.ControllData;
+import com.fangcang.titanjr.rs.dto.CooperationCompanyInfo;
+import com.fangcang.titanjr.rs.dto.MainBusinessData;
+
 /**
  * 授信申请
  * Created by zhaoshan on 2016/10/9.
@@ -28,7 +32,7 @@ public class CreditJsonData {
 	//主营业务
     private List<MainBusinessData> mainBusinessData;
 	
-    //合作企业信息
+    //合作企业信息o
     private List<CooperationCompanyInfo> cooperationCompanyInfo;
 	
     //股东信息 

@@ -85,7 +85,6 @@
 		<mapper resource="mybatis/TitanOrderException.xml" />
 		<mapper resource="mybatis/TitanCheckCodeMapper.xml" />
 		<mapper resource="mybatis/DomainConfigMapper.xml"/>
-<<<<<<< HEAD
 
 		<!--信贷相关-->
 		<mapper resource="mybatis/LoanCompanyEnsure.xml"/>
@@ -95,9 +94,8 @@
 		<mapper resource="mybatis/LoanOrder.xml"/>
 		<mapper resource="mybatis/LoanPersonEnsure.xml"/>
 		<mapper resource="mybatis/LoanRoomPackSpec.xml"/>
-=======
 		<mapper resource="mybatis/TitanOpenOrgMapper.xml"/>
->>>>>>> dev
+
 	</mappers>
 
 </configuration>
