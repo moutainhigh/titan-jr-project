@@ -2129,8 +2129,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						return orderCreateResponse;
 					}
 					
-					
-					
 					// 获取订单时间跟当前时间的差
 					long times = DateUtil.diffSecondByTime(
 							titanOrderPayreq.getOrderTime(),
@@ -2248,7 +2246,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							.getUserId());
 				}
 			}
-
 		}
 
 		if (StringUtil.isValidString(titanOrderRequest.getRuserId())) {// 收款方如果是merchantcode

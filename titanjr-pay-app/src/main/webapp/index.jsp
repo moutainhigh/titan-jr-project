@@ -1,4 +1,4 @@
- <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%-- <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <html>
 <head>
 <script type="text/javascript" src="js/titanpay.js"></script>
@@ -30,13 +30,13 @@
 		var orderInfo = {
 			name : "zhang", //打开收银台人员姓名  N
 			escrowedDate : "2016-08-31",//保证期时间  N
-			goodsId : "dfadfs004",//商品编号，可以是对方的订单号
+			goodsId : "dfadfs005",//商品编号，可以是对方的订单号
 			goodsDetail : "我是啊好人",//商品描述  N
 			goodsName : "提现最帅了！",//商品名称 N
 			userId : "23298",//付款方身份标示   如果是财务，则建议是FCUSERID，  如果是GDP，则是用户ID
-			ruserId : "",//收款方身份标示 N  ,GDP可以指定接受方的   商家联盟可以指定其FCUSERID
+			ruserId : "M10021069",//收款方身份标示 N  ,GDP可以指定接受方的   商家联盟可以指定其FCUSERID
 			amount : "400",//订单金额
-			payerType : "3",//付款人类型   财务 GDP 等
+			payerType : "4",//付款人类型   财务 GDP 等
 			// 			currencyType : "1",//币种
 			// 			checkOrderUrl : 'http://www.baidu.com',//可选
 			notify : 'http://www.baidu.com'
@@ -55,13 +55,13 @@
 
 	}
 </script>
-</html>
+</html> --%>
  
 
 
 
 <!-- 对外收银台的对接 -->
-<%-- <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+ <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>测试收银台</title>
@@ -71,8 +71,8 @@
     <script>
         $(document).ready(function () {
             var configObj = {};
-            configObj.module = "9ae037870540fb4820c4d69c494096f09dbdd2dca06022b56a93695ae06db35d9a6923e1690825e5ba9e711cb2ee75dd39ed647cc8c7687574449c7cb95cf686c9bc4f873df31e27b2678c9ce6f6d82e19dd76ccdea7ce8fe2733330d70a63e2f11f0be7dbcd3793f22329c5445491e91beb83416ba4cded0b0f07b9d35ee88b";
-            configObj.address = "http://192.168.0.90:8088";
+            configObj.module = "96508c28878b7bf90fc498c49809ece17089cfba58140239259960b7bd52b717d6e37aadfae683a98b8b4dab6a9c694a41a3bacb054dcbdd82b9df3178aeece429c5aa3f355cc5243fee88ae32a8a31ae9926a555e0d510a3a688c43111f7a797443344dc0d5d02a3df66cfcbe51fa687f3ab5d1cc9f6e9fce0ae4aafe31d2d5";
+            configObj.address = "http://www.fangcang.org";
             configObj.empoent="10001";
             var result = titanPayObj.initTitanPay(configObj);
         });
@@ -150,7 +150,7 @@
             <tr>
                 <td class="tdr">收款方机构编码</td>
                 <td>
-                    <input type="text" value="TJM10000109" id="ruserId" name="ruserId"/>
+                    <input type="text" value="TJM10000039" id="ruserId" name="ruserId"/>
                 </td>
             </tr>
             <tr>
@@ -193,4 +193,4 @@
 </form>
 
 </body>
-</html> --%>
+</html> 

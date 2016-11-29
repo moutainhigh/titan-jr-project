@@ -382,15 +382,17 @@ public class RSAUtil {
 		try {
 			
 			Map<String,String> keyMap = generateStringKsys();
-			String apc = "{\"name\":\"zhangsan\",\"escrowedDate\":\"2016-12-03\",\"goodsId\":\"201611141238596002654\",\"goodsDetail\":\"预定日本签证，加急，5张....\",\"goodsName\":\"签证预定单\",\"userId\":\"\",\"ruserId\":\"TJM10000109\",\"amount\":\"889\",\"payerType\":\"1001\",\"currencyType\":\"1\",\"checkOrderUrl\":\"\",\"notify\":\"http://localhost:8080/CashierDesk/payCallBack\"}";
+//			String apc = "{\"name\":\"zhangsan\",\"escrowedDate\":\"2016-12-03\",\"goodsId\":\"201611141238596002654\",\"goodsDetail\":\"预定日本签证，加急，5张....\",\"goodsName\":\"签证预定单\",\"userId\":\"\",\"ruserId\":\"TJM10000109\",\"amount\":\"889\",\"payerType\":\"1001\",\"currencyType\":\"1\",\"checkOrderUrl\":\"\",\"notify\":\"http://localhost:8080/CashierDesk/payCallBack\"}";
 //			RSAPublicKey publicKey = new RSAPublicKeySpec(new BigInteger(keyMap.get(RSAUtil.PUBLIC_KEY_MODULE)),new BigInteger(keyMap.get(RSAUtil.PUBLIC_KEY_EMPOENT)));
 			
-			byte[] encryptMsg =  encryptByPublicKey(apc.getBytes(), keyMap.get(RSAUtil.PUBLIC_KEY));
+//			byte[] encryptMsg =  encryptByPublicKey(apc.getBytes(), keyMap.get(RSAUtil.PUBLIC_KEY));
 			
-			byte[] decryptMsg = decryptByPrivateKey(encryptMsg, keyMap.get(RSAUtil.PRIVATE_KEY));
+//			byte[] decryptMsg = decryptByPrivateKey(encryptMsg, keyMap.get(RSAUtil.PRIVATE_KEY));
 			
-			String ss = new String(decryptMsg,"UTF-8");
-			System.out.println(ss);
+//			String ss = new String(decryptMsg,"UTF-8");
+			System.out.println(keyMap.get(RSAUtil.PUBLIC_KEY_MODULE));
+			System.out.println(keyMap.get(RSAUtil.PUBLIC_KEY_EMPOENT));
+			System.out.println(keyMap.get(RSAUtil.PRIVATE_KEY));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.out.println("11");
