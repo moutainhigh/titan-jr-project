@@ -94,4 +94,15 @@ public class MLoanController extends BaseController{
 		
 		return "admin/loan/credit-order-detail";
 	}
+	
+	/**
+	 * 审核授信申请单
+	 * @return
+	 */
+	@RequestMapping(value = "/check-credit-order")
+	public String checkCreditOrder(){
+		
+		
+		return "";	
+	}
 }

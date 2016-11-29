@@ -501,39 +501,156 @@
 					</div>
 					<div class="clc_c">
 						<ul>
-							<li><p><i class="c_f00">*</i>企业营业执照</p>
-							<img src="${getCreditInfoResponse.creditCompany.licenseUrl}" class="J_see"></li>
-							<li><p><i class="c_f00">*</i>税务登记证</p>
-							<img src="${getCreditInfoResponse.creditCompany.taxRegUrl}" class="J_see"></li>
-							<li><p><i class="c_f00">*</i>组织机构代码证</p>
-							<img src="${getCreditInfoResponse.creditCompany.orgCodeUrl}" class="J_see"></li>
-							<li><p><i class="c_f00">*</i>开户许可证</p>
-							<img src="${getCreditInfoResponse.creditCompany.accountUrl}" class="J_see"></li>
-							<li><p><i class="c_f00">*</i>法人身份证</p>
-							<img src="${getCreditInfoResponse.creditCompany.legalNoUrl}" class="J_see"></li>
-							<li><p><i class="c_f00">*</i>企业信用报告</p>
-							<img src="${getCreditInfoResponse.creditCompany.creditUrl}" class="J_see"></li>
-							<li><p><i class="c_f00">*</i>企业银行流水</p>
-							<img src="${getCreditInfoResponse.creditCompany.waterUrl}" class="J_see"></li>
-							<li><p><i class="c_f00">*</i>经营场所证明</p>
-							<div class="download">
-									<i class="PDF"></i>
-									<span title="经营场所证明">经营场所证明</span>
-									<a href="${getCreditInfoResponse.creditCompany.officeNoUrl}">下载</a>
-								</div></li>
-							<li><p><i class="c_f00">*</i>经营场所照片</p>
-							<div class="download">
-									<i class="RAR"></i>
-									<span title="经营场所照片">经营场所照片</span>
-									<a href="${getCreditInfoResponse.creditCompany.officeUrl}">下载</a>
-								</div></li>
-							<li><p><i class="c_f00">*</i>其他附件</p>
-								<div class="download">
-									<i class="ZIP"></i>
-									<span title="企业银行流">企业银行流</span>
-									<a href="${getCreditInfoResponse.creditCompany.officeUrl}">下载</a>
-								</div>
-							</li>
+							 <c:choose>
+								<c:when test="${fn:endsWith(getCreditInfoResponse.creditCompany.licenseUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.creditCompany.licenseUrl, '.zip') or fn:endsWith(getCreditInfoResponse.creditCompany.licenseUrl, '.rar')}">
+									<li><p><i class="c_f00">*</i>企业营业执照</p>
+										<div class="download">
+											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.licenseUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.licenseUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.licenseUrl, '.rar')}">class='RAR'</c:if>></i>
+											<span title=""></span>
+											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.licenseUrl}">下载</a>
+										</div>
+									</li>
+								</c:when>
+								<c:otherwise>
+									<!-- 直接显示图片资源 -->
+									<li><p><i class="c_f00">*</i>企业营业执照</p>
+									<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.licenseUrl}" class="J_see"></li>
+								</c:otherwise>
+							</c:choose>
+							
+							<c:choose>
+								<c:when test="${fn:endsWith(getCreditInfoResponse.creditCompany.taxRegUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.creditCompany.taxRegUrl, '.zip') or fn:endsWith(getCreditInfoResponse.creditCompany.taxRegUrl, '.rar')}">
+									<li><p><i class="c_f00">*</i>税务登记证</p>
+										<div class="download">
+											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.taxRegUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.taxRegUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.taxRegUrl, '.rar')}">class='RAR'</c:if>></i>
+											<span title=""></span>
+											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.taxRegUrl}">下载</a>
+										</div>
+									</li>
+								</c:when>
+								<c:otherwise>
+									<!-- 直接显示图片资源 -->
+									<li><p><i class="c_f00">*</i>税务登记证</p>
+									<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.taxRegUrl}" class="J_see"></li>
+								</c:otherwise>
+							</c:choose>
+							<c:choose>
+								<c:when test="${fn:endsWith(getCreditInfoResponse.creditCompany.orgCodeUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.creditCompany.orgCodeUrl, '.zip') or fn:endsWith(getCreditInfoResponse.creditCompany.orgCodeUrl, '.rar')}">
+									<li><p><i class="c_f00">*</i>组织机构代码证</p>
+										<div class="download">
+											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.orgCodeUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.orgCodeUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.orgCodeUrl, '.rar')}">class='RAR'</c:if>></i>
+											<span title=""></span>
+											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.orgCodeUrl}">下载</a>
+										</div>
+									</li>
+								</c:when>
+								<c:otherwise>
+									<!-- 直接显示图片资源 -->
+									<li><p><i class="c_f00">*</i>组织机构代码证</p>
+									<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.orgCodeUrl}" class="J_see"></li>
+								</c:otherwise>
+							</c:choose>
+							<c:choose>
+								<c:when test="${fn:endsWith(getCreditInfoResponse.creditCompany.accountUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.creditCompany.accountUrl, '.zip') or fn:endsWith(getCreditInfoResponse.creditCompany.accountUrl, '.rar')}">
+									<li><p><i class="c_f00">*</i>开户许可证</p>
+										<div class="download">
+											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.accountUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.accountUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.accountUrl, '.rar')}">class='RAR'</c:if>></i>
+											<span title=""></span>
+											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.accountUrl}">下载</a>
+										</div>
+									</li>
+								</c:when>
+								<c:otherwise>
+									<!-- 直接显示图片资源 -->
+									<li><p><i class="c_f00">*</i>开户许可证</p>
+									<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.accountUrl}" class="J_see"></li>
+								</c:otherwise>
+							</c:choose>
+							
+							<c:choose>
+								<c:when test="${fn:endsWith(getCreditInfoResponse.creditCompany.legalNoUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.creditCompany.legalNoUrl, '.zip') or fn:endsWith(getCreditInfoResponse.creditCompany.legalNoUrl, '.rar')}">
+									<li><p><i class="c_f00">*</i>法人身份证</p>
+										<div class="download">
+											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.legalNoUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.legalNoUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.legalNoUrl, '.rar')}">class='RAR'</c:if>></i>
+											<span title=""></span>
+											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.legalNoUrl}">下载</a>
+										</div>
+									</li>
+								</c:when>
+								<c:otherwise>
+									<!-- 直接显示图片资源 -->
+									<li><p><i class="c_f00">*</i>法人身份证</p>
+									<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.legalNoUrl}" class="J_see"></li>
+								</c:otherwise>
+							</c:choose>
+							
+							<c:choose>
+								<c:when test="${fn:endsWith(getCreditInfoResponse.creditCompany.creditUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.creditCompany.creditUrl, '.zip') or fn:endsWith(getCreditInfoResponse.creditCompany.creditUrl, '.rar')}">
+									<li><p><i class="c_f00">*</i>企业信用报告</p>
+										<div class="download">
+											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.creditUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.creditUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.creditUrl, '.rar')}">class='RAR'</c:if>></i>
+											<span title=""></span>
+											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.creditUrl}">下载</a>
+										</div>
+									</li>
+								</c:when>
+								<c:otherwise>
+									<!-- 直接显示图片资源 -->
+									<li><p><i class="c_f00">*</i>企业信用报告</p>
+									<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.creditUrl}" class="J_see"></li>
+								</c:otherwise>
+							</c:choose>
+							
+							<c:choose>
+								<c:when test="${fn:endsWith(getCreditInfoResponse.creditCompany.waterUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.creditCompany.waterUrl, '.zip') or fn:endsWith(getCreditInfoResponse.creditCompany.waterUrl, '.rar')}">
+									<li><p><i class="c_f00">*</i>企业银行流水</p>
+										<div class="download">
+											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.waterUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.waterUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.waterUrl, '.rar')}">class='RAR'</c:if>></i>
+											<span title=""></span>
+											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.waterUrl}">下载</a>
+										</div>
+									</li>
+								</c:when>
+								<c:otherwise>
+									<!-- 直接显示图片资源 -->
+									<li><p><i class="c_f00">*</i>企业银行流水</p>
+									<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.waterUrl}" class="J_see"></li>
+								</c:otherwise>
+							</c:choose>
+							
+							<c:choose>
+								<c:when test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeNoUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.creditCompany.officeNoUrl, '.zip') or fn:endsWith(getCreditInfoResponse.creditCompany.officeNoUrl, '.rar')}">
+									<li><p><i class="c_f00">*</i>经营场所证明</p>
+										<div class="download">
+											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeNoUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeNoUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeNoUrl, '.rar')}">class='RAR'</c:if>></i>
+											<span title=""></span>
+											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.officeNoUrl}">下载</a>
+										</div>
+									</li>
+								</c:when>
+								<c:otherwise>
+									<!-- 直接显示图片资源 -->
+									<li><p><i class="c_f00">*</i>经营场所证明</p>
+									<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.officeNoUrl}" class="J_see"></li>
+								</c:otherwise>
+							</c:choose>
+							<c:choose>
+								<c:when test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.creditCompany.officeUrl, '.zip') or fn:endsWith(getCreditInfoResponse.creditCompany.officeUrl, '.rar')}">
+									<li><p><i class="c_f00">*</i>经营场所照片</p>
+										<div class="download">
+											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeUrl, '.rar')}">class='RAR'</c:if>></i>
+											<span title=""></span>
+											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.officeUrl}">下载</a>
+										</div>
+									</li>
+								</c:when>
+								<c:otherwise>
+									<!-- 直接显示图片资源 -->
+									<li><p><i class="c_f00">*</i>经营场所照片</p>
+									<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.officeUrl}" class="J_see"></li>
+								</c:otherwise>
+							</c:choose>
+							
 						</ul>
 						<div class="clear" ></div>
 					</div>	
@@ -544,16 +661,91 @@
 						<!-- 企业担保 -->
 						<div class="clc_c">
 							<ul>
-								<li><p><i class="c_f00">*</i>企业营业执照</p>
-								<img src="${getCreditInfoResponse.companyEnsure.businessLicenseUrl}" class="J_see"></li>
-								<li><p><i class="c_f00">*</i>税务登记证</p>
-								<img src="${getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl}" class="J_see"></li>
-								<li><p><i class="c_f00">*</i>组织机构代码证</p>
-								<img src="${getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl}" class="J_see"></li>
-								<li><p><i class="c_f00">*</i>开户许可证</p>
-								<img src="${getCreditInfoResponse.companyEnsure.licenseUrl}" class="J_see"></li>
-								<li><p><i class="c_f00">*</i>法人身份证</p>
-								<img src="${getCreditInfoResponse.companyEnsure.legalPersonUrl}" class="J_see"></li>							
+								<c:choose>
+									<c:when test="${fn:endsWith(getCreditInfoResponse.companyEnsure.businessLicenseUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.companyEnsure.businessLicenseUrl, '.zip') or fn:endsWith(getCreditInfoResponse.companyEnsure.businessLicenseUrl, '.rar')}">
+										<li><p><i class="c_f00">*</i>企业营业执照</p>
+											<div class="download">
+												<i <c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.businessLicenseUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.businessLicenseUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.businessLicenseUrl, '.rar')}">class='RAR'</c:if>></i>
+												<span title=""></span>
+												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.businessLicenseUrl}">下载</a>
+											</div>
+										</li>
+									</c:when>
+									<c:otherwise>
+										<!-- 直接显示图片资源 -->
+										<li><p><i class="c_f00">*</i>企业营业执照</p>
+										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.businessLicenseUrl}" class="J_see"></li>
+									</c:otherwise>
+								</c:choose>
+							
+								<c:choose>
+									<c:when test="${fn:endsWith(getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl, '.zip') or fn:endsWith(getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl, '.rar')}">
+										<li><p><i class="c_f00">*</i>税务登记证</p>
+											<div class="download">
+												<i <c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl, '.rar')}">class='RAR'</c:if>></i>
+												<span title=""></span>
+												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl}">下载</a>
+											</div>
+										</li>
+									</c:when>
+									<c:otherwise>
+										<!-- 直接显示图片资源 -->
+										<li><p><i class="c_f00">*</i>税务登记证</p>
+										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl}" class="J_see"></li>
+									</c:otherwise>
+								</c:choose>
+								
+								<c:choose>
+									<c:when test="${fn:endsWith(getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl, '.zip') or fn:endsWith(getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl, '.rar')}">
+										<li><p><i class="c_f00">*</i>组织机构代码证</p>
+											<div class="download">
+												<i <c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl, '.rar')}">class='RAR'</c:if>></i>
+												<span title=""></span>
+												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl}">下载</a>
+											</div>
+										</li>
+									</c:when>
+									<c:otherwise>
+										<!-- 直接显示图片资源 -->
+										<li><p><i class="c_f00">*</i>组织机构代码证</p>
+										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl}" class="J_see"></li>
+									</c:otherwise>
+								</c:choose>
+								
+								<c:choose>
+									<c:when test="${fn:endsWith(getCreditInfoResponse.companyEnsure.licenseUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.companyEnsure.licenseUrl, '.zip') or fn:endsWith(getCreditInfoResponse.companyEnsure.licenseUrl, '.rar')}">
+										<li><p><i class="c_f00">*</i>开户许可证</p>
+											<div class="download">
+												<i <c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.licenseUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.licenseUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.licenseUrl, '.rar')}">class='RAR'</c:if>></i>
+												<span title=""></span>
+												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.licenseUrl}">下载</a>
+											</div>
+										</li>
+									</c:when>
+									<c:otherwise>
+										<!-- 直接显示图片资源 -->
+										<li><p><i class="c_f00">*</i>开户许可证</p>
+										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.licenseUrl}" class="J_see"></li>
+									</c:otherwise>
+								</c:choose>
+								
+								<c:choose>
+									<c:when test="${fn:endsWith(getCreditInfoResponse.companyEnsure.legalPersonUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.companyEnsure.legalPersonUrl, '.zip') or fn:endsWith(getCreditInfoResponse.companyEnsure.legalPersonUrl, '.rar')}">
+										<li><p><i class="c_f00">*</i>法人身份证</p>
+											<div class="download">
+												<i <c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.legalPersonUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.legalPersonUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.legalPersonUrl, '.rar')}">class='RAR'</c:if>></i>
+												<span title=""></span>
+												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.legalPersonUrl}">下载</a>
+											</div>
+										</li>
+									</c:when>
+									<c:otherwise>
+										<!-- 直接显示图片资源 -->
+										<li><p><i class="c_f00">*</i>法人身份证</p>
+										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.legalPersonUrl}" class="J_see"></li>
+									</c:otherwise>
+								</c:choose>
+								
 							</ul>
 							<div class="clear" ></div>
 						</div>
@@ -562,16 +754,91 @@
 						<!-- 个人担保 -->
 						<div class="clc_c">
 							<ul>
-								<li><p><i class="c_f00">*</i>担保人身份证</p>
-								<img src="${getCreditInfoResponse.loanPersonEnsure.idCardUrl}" class="J_see"></li>
-								<li><p><i class="c_f00">*</i>担保人户口本</p>
-								<img src="${getCreditInfoResponse.loanPersonEnsure.registeredUrl}" class="J_see"></li>
-								<li><p><i class="c_f00">*</i>配偶户口本</p>
-								<img src="${getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl}" class="J_see"></li>
-								<li><p><i class="c_f00">*</i>配偶身份证</p>
-								<img src="${getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl}" class="J_see"></li>
-								<li><p><i class="c_f00">*</i>结婚证</p>
-								<img src="${getCreditInfoResponse.loanPersonEnsure.marriageUrl}" class="J_see"></li>							
+								<c:choose>
+									<c:when test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.idCardUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.idCardUrl, '.zip') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.idCardUrl, '.rar')}">
+										<li><p><i class="c_f00">*</i>担保人身份证</p>
+											<div class="download">
+												<i <c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.idCardUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.idCardUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.idCardUrl, '.rar')}">class='RAR'</c:if>></i>
+												<span title=""></span>
+												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.idCardUrl}">下载</a>
+											</div>
+										</li>
+									</c:when>
+									<c:otherwise>
+										<!-- 直接显示图片资源 -->
+										<li><p><i class="c_f00">*</i>担保人身份证</p>
+										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.idCardUrl}" class="J_see"></li>
+									</c:otherwise>
+								</c:choose>
+							
+								<c:choose>
+									<c:when test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.registeredUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.registeredUrl, '.zip') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.registeredUrl, '.rar')}">
+										<li><p><i class="c_f00">*</i>担保人户口本</p>
+											<div class="download">
+												<i <c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.registeredUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.registeredUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.registeredUrl, '.rar')}">class='RAR'</c:if>></i>
+												<span title=""></span>
+												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.registeredUrl}">下载</a>
+											</div>
+										</li>
+									</c:when>
+									<c:otherwise>
+										<!-- 直接显示图片资源 -->
+										<li><p><i class="c_f00">*</i>担保人户口本</p>
+										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.registeredUrl}" class="J_see"></li>
+									</c:otherwise>
+								</c:choose>
+							
+								<c:choose>
+									<c:when test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl, '.zip') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl, '.rar')}">
+										<li><p><i class="c_f00">*</i>配偶户口本</p>
+											<div class="download">
+												<i <c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl, '.rar')}">class='RAR'</c:if>></i>
+												<span title=""></span>
+												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl}">下载</a>
+											</div>
+										</li>
+									</c:when>
+									<c:otherwise>
+										<!-- 直接显示图片资源 -->
+										<li><p><i class="c_f00">*</i>配偶户口本</p>
+										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl}" class="J_see"></li>
+									</c:otherwise>
+								</c:choose>
+								
+								<c:choose>
+									<c:when test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl, '.zip') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl, '.rar')}">
+										<li><p><i class="c_f00">*</i>配偶身份证</p>
+											<div class="download">
+												<i <c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl, '.rar')}">class='RAR'</c:if>></i>
+												<span title=""></span>
+												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl}">下载</a>
+											</div>
+										</li>
+									</c:when>
+									<c:otherwise>
+										<!-- 直接显示图片资源 -->
+										<li><p><i class="c_f00">*</i>配偶身份证</p>
+										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl}" class="J_see"></li>
+									</c:otherwise>
+								</c:choose>
+								
+								<c:choose>
+									<c:when test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.marriageUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.marriageUrl, '.zip') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.marriageUrl, '.rar')}">
+										<li><p><i class="c_f00">*</i>结婚证</p>
+											<div class="download">
+												<i <c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.marriageUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.marriageUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.marriageUrl, '.rar')}">class='RAR'</c:if>></i>
+												<span title=""></span>
+												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.marriageUrl}">下载</a>
+											</div>
+										</li>
+									</c:when>
+									<c:otherwise>
+										<!-- 直接显示图片资源 -->
+										<li><p><i class="c_f00">*</i>结婚证</p>
+										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.marriageUrl}" class="J_see"></li>
+									</c:otherwise>
+								</c:choose>
+								
 							</ul>
 							<div class="clear" ></div>
 						</div>
@@ -627,36 +894,26 @@
 	scrollCon();
 
 	$(".clc_surety input[type=radio]").on('change',function(){
-		///var value = $(this).val();			
-		//if(value==1 ){
-		//	$('.surety').show();
-		//	$('.surety1').hide();
-		//}else{
-		//	$('.surety').hide();
-		//	$('.surety1').show();
-		//}
-		//scrollCon();
+		
 	});
 
 	//查看
 	$('.J_see').on('click',function(){
-	    $.ajax({
-	        dataType : 'html',
-	        context: document.body,
-	        url : '信贷-授信审核-查看.html',            
-	        success : function(html){
-	           	var d =  window.top.dialog({
-	                title: '企业营业执照',
-	                padding: '0 0 0px 0',
-	                width: 740,
-	                content: html,
-	                skin : 'saas_pop'  
-	            }).showModal();
-	           
-	        }
-	    });
+    	var img_url = $(this).attr("src");
+        var _html = "<div class=\"S_popup clearfix S_popTop\">"
+    				+"<div style=\"padding: 20px;\">"
+    				+"<img src=\""+img_url+"\" width=\"700\" height=\"500\">"
+    				+"</div>"
+    				+"</div>";
+        var d =  window.top.dialog({
+              title: '图片预览',
+              padding: '0 0 0px 0',
+              width: 740,
+              content: _html,
+              skin : 'saas_pop'  
+         }).showModal();
 	}); 
-    
+    //刷新待审核数
 	$("#i_to_check_count").html($("#creditOrderCount").val());
     
    </script>

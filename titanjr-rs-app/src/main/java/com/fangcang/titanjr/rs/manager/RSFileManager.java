@@ -2,8 +2,10 @@ package com.fangcang.titanjr.rs.manager;
 
 import com.fangcang.titanjr.rs.request.GetFileUrlRequest;
 import com.fangcang.titanjr.rs.request.GetUrlKeyRequest;
+import com.fangcang.titanjr.rs.request.RSFsFileUploadRequest;
 import com.fangcang.titanjr.rs.response.GetFileUrlResponse;
 import com.fangcang.titanjr.rs.response.GetUrlKeyResponse;
+import com.fangcang.titanjr.rs.response.RSFsFileUploadResponse;
 
 /**
  * 融数文件管理
@@ -25,5 +27,13 @@ public interface RSFileManager {
 	 * @return
 	 */
 	GetFileUrlResponse getFileUrl(GetFileUrlRequest getFileUrlRequest);
+	
+	/**
+	 * 上传私密文件
+	 * @param rsFsFileUploadRequest
+	 * @return
+	 */
+	RSFsFileUploadResponse fsFileUpload(RSFsFileUploadRequest rsFsFileUploadRequest);
+	
 	
 }
