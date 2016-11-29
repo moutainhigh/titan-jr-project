@@ -27,8 +27,6 @@ public class TitanOpenOrg  implements java.io.Serializable{
 	//前缀
 	private String prefix;
 	
-	//ip
-	private String ip;
 
 	public Integer getId() {
 		return id;
@@ -86,12 +84,4 @@ public class TitanOpenOrg  implements java.io.Serializable{
 		this.prefix = prefix;
 	}
 
-	public String getIp() {
-		return ip;
-	}
-
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-	
 }

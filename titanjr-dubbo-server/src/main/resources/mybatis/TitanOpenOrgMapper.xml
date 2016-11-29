@@ -8,8 +8,7 @@
 	    module,
 	    empoent,
 	    merchcode,
-	    prefix,
-	    ip
+	    prefix
 	) 
     VALUES 
     (
@@ -18,8 +17,7 @@
     	#{module},
 	    #{empoent},
     	#{merchcode},
-    	#{prefix},
-    	#{ip}
+    	#{prefix}
     )
   </insert>
   
@@ -35,8 +33,7 @@
 	    module,
 	    empoent,
 	    merchcode,
-	    prefix,
-	    ip
+	    prefix
 	from 
 	t_tfs_openorg
 	<where>
