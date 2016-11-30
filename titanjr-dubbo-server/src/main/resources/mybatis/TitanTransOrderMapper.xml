@@ -316,9 +316,7 @@
             <if test="businessinfo !=null">
            	   businessinfo=#{businessinfo},
             </if>
-            <if test="escrowedDate !=null">
                escrowedDate=#{escrowedDate},
-            </if>
             <if test="isEscrowedPayment !=null">
                isEscrowedPayment=#{isEscrowedPayment},
             </if>
