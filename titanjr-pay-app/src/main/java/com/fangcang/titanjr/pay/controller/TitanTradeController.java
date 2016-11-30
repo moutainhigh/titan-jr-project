@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -340,6 +341,13 @@ public class TitanTradeController extends BaseController {
 
 		if (StringUtil.isValidString(dto.getEscrowedDate())) {
 			try {
+				
+				 String regex = "([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8])))";
+			     boolean flg = Pattern.matches(regex, dto.getEscrowedDate()); 
+			     if(!flg){
+			    	 log.error("parse escrowedDate fail.");
+			    	 return false;
+			     }
 				DateUtil.sdf.parse(dto.getEscrowedDate());
 			} catch (ParseException e) {
 				log.error("parse escrowedDate fail.");
