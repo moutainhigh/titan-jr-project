@@ -850,23 +850,23 @@
 				<h3>审核结果</h3>
 				<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核人：</span>王峰</p>
 				<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核结果：</span>
-					<select name="" class="w100 select w135 J_nothroght">
+					<select name="auditResult" id="auditResult" class="w100 select w135 J_nothroght">
 						<option value="">请选择</option>
-						<option value="">通过</option>
-						<option value="">不通过</option>
+						<option value="1">通过</option>
+						<option value="2">不通过</option>
 					</select>
 				</p>
 				<p class="ptb9 showhide"><span class="w80"><i class="c_fc2020">*</i>未通过原因：</span>
-					<textarea name="" class="textarea " placeholder="请输入未通过原因。"></textarea>
+					<textarea name="content" id="au_content" class="textarea " placeholder="请输入未通过原因。"></textarea>
 				</p>	
 				</div>	
 				<div class="examine_bobut">
-					<span class=" cursor w85 btn_red fs16">保存</span>				
+					<span class=" cursor w85 btn_red fs16 " id="btn_save">保存</span>				
 				</div>
 			</div>
 		</div>		
 	</div>
-  
+  <input type="hidden" value="${getCreditInfoResponse.orderNo }" id="credit_orderNo"/>
   <jsp:include page="/comm/admin/admin-static-js.jsp"></jsp:include>
     <script type="text/javascript">
   //选择未通过出现文本域
@@ -878,6 +878,33 @@
 			_this.parent("p").next().hide();
 		}
 	});
+  	//保存
+  	$("#btn_save").on("click",function(){
+  		//TODO 校验
+  		$.ajax({
+  	        type:"post",
+  	        data:{'orderNo':$("#credit_orderNo").val(),'auditResult':$("#auditResult").val(),'content':$("#au_content").val()},
+  	        url : '<%=basePath%>/admin/check-credit-order.shtml',  
+  	      	dataType : 'json',
+  	      	beforeSend : function(){
+  	      		top.F.loading.show();
+  	      	},
+  	        success : function(result){
+  	           if(result.code==1){
+  	        	   flag = true;
+  	           }else{
+  	        	   new top.Tip({msg : result.msg, type: 3 , timer:2000});
+  	           }
+  	        },
+  	        error:function(){
+  	        	new top.Tip({msg : '请求失败，请重试', type: 3 , timer:2000});
+  	        },
+  	        complete:function(){
+  	        	top.F.loading.hide();
+  	        }
+  			
+  		});
+  	});
 
 	$('.cl_title li').on('click',function(){
 		var _this = $(this),

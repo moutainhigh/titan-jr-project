@@ -1,5 +1,7 @@
 package com.fangcang.titanjr.service.impl;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -13,8 +15,12 @@ import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.merchant.api.MerchantFacade;
 import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
+import com.fangcang.titanjr.common.enums.AuditResultEnum;
+import com.fangcang.titanjr.common.enums.entity.LoanCreditOrderEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.dao.LoanCompanyEnsureDao;
 import com.fangcang.titanjr.dao.LoanCreditCompanyDao;
@@ -38,6 +44,7 @@ import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanCreditResponse;
 import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
+import com.fangcang.titanjr.dto.response.FTPConfigResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.GetAuditEvaluationResponse;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
@@ -50,9 +57,13 @@ import com.fangcang.titanjr.entity.LoanCreditOpinion;
 import com.fangcang.titanjr.entity.LoanCreditOrder;
 import com.fangcang.titanjr.entity.LoanPersonEnsure;
 import com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam;
+import com.fangcang.titanjr.rs.manager.RSCreditManager;
+import com.fangcang.titanjr.rs.request.OprsystemCreditCompanyRequest;
+import com.fangcang.titanjr.rs.request.OrderMixserviceCreditapplicationRequest;
 import com.fangcang.titanjr.service.TitanCodeCenterService;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.util.LoanTypeConvertUtil;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
@@ -92,11 +103,138 @@ public class TitanFinancialLoanCreditServiceImpl implements
 
 	@Resource
 	private LoanCreditOpinionDao loanCreditOpinionDao;
-
+	
+	@Resource
+	private RSCreditManager rsCreditManager;
+	
+	@Resource
+	private TitanSysconfigService titanSysconfigService;
+	
 	@Override
 	public AuditCreidtOrderResponse auditCreditOrder(AuditCreidtOrderRequest req) {
-		return null;
+		AuditCreidtOrderResponse response = new AuditCreidtOrderResponse();
+		if(!StringUtil.isValidString(req.getOrderNo())){
+			response.putErrorResult("参数[授信申请单号(orderNo)]不能为空");
+			return response;
+		}
+		if(req.getAuditResult()==null){
+			response.putErrorResult("参数[审核状态(auditResult)]不能为空");
+			return response;
+		}
+		//TODO 校验申请单号是否存在
+		
+		LoanCreditOrder loanCreditOrderParam = new LoanCreditOrder();
+		loanCreditOrderParam.setOrderNo(req.getOrderNo());
+		List<LoanCreditOrder> loanCreditOrderList = loanCreditOrderDao.queryLoanCreditOrder(loanCreditOrderParam);
+		LoanCreditOrder loanCreditOrder = loanCreditOrderList.get(0);
+		
+		
+		if(req.getAuditResult()==AuditResultEnum.NO_PASS){
+			//TODO 数据库记录原因
+			
+			response.putSuccess();
+			return response;
+		}else if(req.getAuditResult()==AuditResultEnum.PASS){
+			//1-提交企业资料
+			
+			OprsystemCreditCompanyRequest creditCompanyRequest = new OprsystemCreditCompanyRequest();
+			creditCompanyRequest.setUserid(loanCreditOrder.getOrgCode());
+			creditCompanyRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+			//rsCreditManager.oprsystemCreditCompany(creditCompanyRequest);
+			
+			
+			//2-上传申请附件
+			//申请资料附件
+			LoanCreditCompany loanCreditCompanyParam = new LoanCreditCompany();
+			loanCreditCompanyParam.setCreditOrderNo(req.getOrderNo());
+			List<LoanCreditCompany> loanCreditCompanyList = loanCreditCompanyDao.queryLoanCreditCompany(loanCreditCompanyParam);
+			
+			if(CollectionUtils.isEmpty(loanCreditCompanyList)){
+				response.putErrorResult("申请授信单没有找到对应的企业资料");
+				return response;
+			}
+			//授信申请公司文件
+			List<String> companyFilesList = new ArrayList<String>();
+			
+			LoanCreditCompany loanCreditCompany = loanCreditCompanyList.get(0);
+			
+			companyFilesList.add(loanCreditCompany.getLicenseUrl());
+			companyFilesList.add(loanCreditCompany.getLegalNoUrl());
+			companyFilesList.add(loanCreditCompany.getOfficeNoUrl());
+			companyFilesList.add(loanCreditCompany.getAccountUrl());
+			companyFilesList.add(loanCreditCompany.getCreditUrl());
+			companyFilesList.add(loanCreditCompany.getOfficeUrl());
+			companyFilesList.add(loanCreditCompany.getWaterUrl());
+			companyFilesList.add(loanCreditCompany.getTaxRegUrl());
+			companyFilesList.add(loanCreditCompany.getOrgCodeUrl());
+			
+			//担保人文件 
+			List<String> ensureFilesList = new ArrayList<String>();
+			//个人
+			if(loanCreditOrder.getAssureType()==LoanCreditOrderEnum.AssureType.PERSON.getType()){
+				LoanPersonEnsure loanPersonEnsureParam = new LoanPersonEnsure();
+				loanPersonEnsureParam.setOrderNo(req.getOrderNo());
+				List<LoanPersonEnsure> loanPersonEnsureList = loanPersonEnsureDao.queryLoanPersonEnsure(loanPersonEnsureParam);
+				if(CollectionUtils.isEmpty(loanPersonEnsureList)){
+					response.putErrorResult("个人担保资料不存在，请补充担保资料");
+					return response;
+				}
+				LoanPersonEnsure loanPersonEnsure = loanPersonEnsureList.get(0);
+				ensureFilesList.add(loanPersonEnsure.getIdCardUrl());
+				ensureFilesList.add(loanPersonEnsure.getRegisteredUrl());
+				ensureFilesList.add(loanPersonEnsure.getSpouseRegisteredUrl());
+				ensureFilesList.add(loanPersonEnsure.getSpouseIdCardUrl());
+				ensureFilesList.add(loanPersonEnsure.getMarriageUrl());
+			}
+			
+			//企业
+			if(loanCreditOrder.getAssureType()==LoanCreditOrderEnum.AssureType.ENTERPRISE.getType()){
+				LoanCompanyEnsure loanCompanyEnsureParam = new LoanCompanyEnsure();
+				loanCompanyEnsureParam.setOrderNo(req.getOrderNo());
+				List<LoanCompanyEnsure> loanCompanyEnsureList = loanCompanyEnsureDao.queryLoanCompanyEnsure(loanCompanyEnsureParam);
+				if(CollectionUtils.isEmpty(loanCompanyEnsureList)){
+					response.putErrorResult("企业担保资料不存在，请补充担保资料");
+					return response;
+				}
+				LoanCompanyEnsure loanCompanyEnsure = loanCompanyEnsureList.get(0);
+				ensureFilesList.add(loanCompanyEnsure.getBusinessLicenseUrl());
+				ensureFilesList.add(loanCompanyEnsure.getOrgCodeCertificateUrl());
+				ensureFilesList.add(loanCompanyEnsure.getTaxRegisterCodeUrl());
+				ensureFilesList.add(loanCompanyEnsure.getLicenseUrl());
+				ensureFilesList.add(loanCompanyEnsure.getLegalPersonUrl());
+			}
+			
+			//下载文件，并加密上传到融数
+			
+			try {
+				FTPConfigResponse ftpConfigResponse = titanSysconfigService.getFTPConfig();
+				FtpUtil ftpUtil = new FtpUtil(ftpConfigResponse.getFtpServerIp(),ftpConfigResponse.getFtpServerPort(),ftpConfigResponse.getFtpServerUser(),ftpConfigResponse.getFtpServerPassword());
+				ftpUtil.ftpLogin();
+				for(String file : companyFilesList){
+					
+					ftpUtil.downloadFile(file, TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath(), FtpUtil.baseLocation+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY);
+					
+					
+				}
+				ftpUtil.ftpLogOut();
+			} catch (Exception e) {
+				e.printStackTrace();
+				response.putErrorResult("上传失败");
+				
+			}
+			
+			
+			//3-授信申请接口
+			OrderMixserviceCreditapplicationRequest orderMixserviceCreditapplicationRequest = new OrderMixserviceCreditapplicationRequest();
+			
+			//rsCreditManager.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
+			
+			
+		}
+		
+		return response;
 	}
+	
 
 	@Override
 	public GetCreditInfoResponse getCreditOrderInfo(GetCreditInfoRequest req) {

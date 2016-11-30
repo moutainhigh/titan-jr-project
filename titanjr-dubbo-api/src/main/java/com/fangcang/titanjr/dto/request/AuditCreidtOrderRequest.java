@@ -2,7 +2,11 @@ package com.fangcang.titanjr.dto.request;
 
 import com.fangcang.titanjr.common.enums.AuditResultEnum;
 import com.fangcang.titanjr.dto.BaseRequestDTO;
-
+/**
+ * 授信申请单审核
+ * @author luoqinglong
+ * @date   2016年11月29日
+ */
 public class AuditCreidtOrderRequest extends BaseRequestDTO {
 
 	private static final long serialVersionUID = 1L;

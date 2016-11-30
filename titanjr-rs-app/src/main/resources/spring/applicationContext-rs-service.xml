@@ -35,6 +35,8 @@
     <bean id="rsFileManager" class="com.fangcang.titanjr.rs.manager.impl.RSFileManagerImpl"></bean>
 
 	<bean id="invokeLogRecordManager" class="com.fangcang.titanjr.rs.manager.impl.InvokeLogRecordManager"/>
+	
+	<bean id="rsCreditManager" class="com.fangcang.titanjr.rs.manager.impl.RSCreditManagerImpl"></bean>
 
 	<!--避免aop中写日志的速度慢，交给线程处理-->
 	<bean id="rsLogRecordExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
