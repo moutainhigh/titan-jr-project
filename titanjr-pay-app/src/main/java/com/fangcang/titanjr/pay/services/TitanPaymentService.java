@@ -213,9 +213,11 @@ public class TitanPaymentService {
 	    	transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));	//请求时间
 	    	if(transOrderDTO.getTradeamount()!=null ){//如果是GDP支付则应该减去手续费
 	    		String amount = transOrderDTO.getTradeamount().toString();
-	    		if(StringUtil.isValidString(transOrderDTO.getPayerType())&&transOrderDTO.getReceivedfee()!=null&&
-	    				PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType()).isB2BPayment()){
-	    			amount = new BigDecimal(transOrderDTO.getTradeamount()).subtract(new BigDecimal(transOrderDTO.getReceivedfee())).toString();
+	    		if(StringUtil.isValidString(transOrderDTO.getPayerType())&&transOrderDTO.getReceivedfee()!=null){
+	    			PayerTypeEnum payerTypeEnum = PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
+	    			if(payerTypeEnum.isB2BPayment()||payerTypeEnum.isOpenOrg()){
+	    				amount = new BigDecimal(transOrderDTO.getTradeamount()).subtract(new BigDecimal(transOrderDTO.getReceivedfee())).toString();
+	    			}
 	    		}
 	    		transferRequest.setAmount(amount);
 	    	}

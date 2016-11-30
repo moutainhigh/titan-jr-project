@@ -21,7 +21,7 @@ public class HttpClient {
 	
     private static final Log log = LogFactory.getLog(HttpClient.class);
 
-	 public static HttpResponse httpRequest(List<NameValuePair> params, String url) {
+	 public static HttpResponse httpRequest(List<NameValuePair> params, String url , HttpPost httpPost) {
 	        RequestConfig defaultRequestConfig = RequestConfig.custom()
 	                .setSocketTimeout(10000)
 	                .setConnectTimeout(10000)
@@ -31,9 +31,10 @@ public class HttpClient {
 	                .setDefaultRequestConfig(defaultRequestConfig)
 	                .build();
 	        RequestConfig requestConfig = RequestConfig.copy(defaultRequestConfig).build();
-	        HttpPost httpPost = new HttpPost(url);
-	        httpPost.setConfig(requestConfig);
+//	        HttpPost httpPost = new HttpPost(url);
+//	        httpPost.setConfig(requestConfig);
 	        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+	        httpPost.setConfig(requestConfig);
 	        HttpResponse response = null;
 	        try {
 	            if (CollectionUtils.isNotEmpty(params)) {

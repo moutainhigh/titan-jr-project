@@ -1,5 +1,11 @@
 package com.fangcang.titanjr.service.impl;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.WriteAbortedException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
@@ -654,10 +661,19 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		try {
 			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params) + "---url---"
 					+ url);
-			HttpResponse resp = HttpClient.httpRequest(params, url);
+			   HttpPost httpPost = new HttpPost(url);
+		        HttpResponse resp = HttpClient.httpRequest(params, url ,  httpPost);
 			if (null != resp) {
-				HttpEntity entity = resp.getEntity();
-				response = EntityUtils.toString(entity);
+				InputStream in = resp.getEntity().getContent();
+				byte b[] = new byte[1024];
+				
+				int length = 0;
+				if((length = in.read(b)) !=-1){
+					byte d[] = new byte[length];
+					System.arraycopy(b, 0, d, 0, length);
+					response = new String(d , "UTF-8");
+				}
+				httpPost.releaseConnection();
 			}
 		} catch (Exception e) {
 			log.error("调用http请求通知支付失败", e);
@@ -1657,8 +1673,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			String domainName = domainConfigDao.queryCurrentEnvDomain();
 			if(StringUtil.isValidString(domainName)){
 				payMethodConfigDTO = new PayMethodConfigDTO();
-				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-app/payment/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-app/payment/notify.action");
+				payMethodConfigDTO.setPageurl("http://"+domainName+"/TFS02/payment/payConfirmPage.action");
+				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/TFS02/payment/notify.action");
 			}
 			return payMethodConfigDTO;
 		}catch(Exception e){
@@ -2083,6 +2099,26 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		// 表明业务订单号已经重复提交
 		if (null != transOrderDTO) {
 
+			if (OrderStatusEnum.isPaySuccess(transOrderDTO
+					.getStatusid())) {
+
+				orderCreateResponse.setResult(false);
+				orderCreateResponse.setReturnCode(""
+						+ TitanMsgCodeEnum.PAY_ORDER_SUCCESS.getCode());
+				orderCreateResponse
+						.setReturnMessage(TitanMsgCodeEnum.PAY_ORDER_SUCCESS
+								.getResMsg());
+				try {
+					if(titanOrderRequest.getBusinessInfo()!=null 
+							&& StringUtil.isValidString(titanOrderRequest.getBusinessInfo().get("bussCode"))){
+						transOrderDTO.setBusinessordercode(titanOrderRequest.getBusinessInfo().get("bussCode"));
+					}
+					this.confirmFinance(transOrderDTO);
+				} catch (Exception e) {
+					log.error("回调失败");
+				}
+				return orderCreateResponse;
+			}
 			// 金额不一致,则直接将订单设置为失效
 			if (!NumberUtil.covertToCents(titanOrderRequest.getAmount())
 					.equals("" + transOrderDTO.getTradeamount())) {
@@ -2108,26 +2144,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 			// 如果在融数已经存在订单并且，订单状态为处理中的，则需要考虑订单在融数端是否超时
 			if (StringUtil.isValidString(transOrderDTO.getOrderid())) {
-				if (OrderStatusEnum.isPaySuccess(transOrderDTO
-						.getStatusid())) {
-
-					orderCreateResponse.setResult(false);
-					orderCreateResponse.setReturnCode(""
-							+ TitanMsgCodeEnum.PAY_ORDER_SUCCESS.getCode());
-					orderCreateResponse
-							.setReturnMessage(TitanMsgCodeEnum.PAY_ORDER_SUCCESS
-									.getResMsg());
-					try {
-						if(titanOrderRequest.getBusinessInfo()!=null 
-								&& StringUtil.isValidString(titanOrderRequest.getBusinessInfo().get("bussCode"))){
-							transOrderDTO.setBusinessordercode(titanOrderRequest.getBusinessInfo().get("bussCode"));
-						}
-						this.confirmFinance(transOrderDTO);
-					} catch (Exception e) {
-						log.error("回调失败");
-					}
-					return orderCreateResponse;
-				}else if (OrderStatusEnum.isRepeatedPay(transOrderDTO.getStatusid())) {
+				
+				if (OrderStatusEnum.isRepeatedPay(transOrderDTO.getStatusid())) {
 					// 查询融数网关支付的订单
 					TitanOrderPayreq titanOrderPayreq = new TitanOrderPayreq();
 					titanOrderPayreq
@@ -2312,7 +2330,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		try {
 			List<NameValuePair> params = this.getCommonHttpParams(rechargeDataDTO);
 			log.info("微信调用网关接口参数:" + JSONSerializer.toJSON(params) );
-			HttpResponse resp = HttpClient.httpRequest(params, rechargeDataDTO.getGateWayUrl());
+			
+			   HttpPost httpPost = new HttpPost(rechargeDataDTO.getGateWayUrl());
+//		        httpPost.setConfig(requestConfig);
+		        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			HttpResponse resp = HttpClient.httpRequest(params, rechargeDataDTO.getGateWayUrl() , httpPost);
 			if(resp == null){
 				log.error("调用融数网关失败");
 				qrCodeResponse.putErrorResult("调用融数网关失败");
