@@ -37,19 +37,19 @@
                             <i class="redNotice">*</i>姓名：
                         </td>
                         <td class="loanInformation_td02">
-                            <input type="text" class="loanInformation_inp01" placeholder="请输入担保人姓名" field='personName'>
+                            <input type="text" class="loanInformation_inp01" placeholder="请输入担保人姓名" field='personName' datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
                         </td>
                         <td class="loanInformation_td01">
                              <i class="redNotice">*</i>身份证号：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人身份证号" field='nationalIdentityNumber'>
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人身份证号" field='nationalIdentityNumber' datatype="s1-30" errormsg="必填项，并且最长只能30个字符！">
                         </td>
                          <td class="loanInformation_td01">
                              <i class="redNotice">*</i>手机号码：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人手机号码" field='mobilenNmber'>
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人手机号码" field='mobilenNmber' datatype="s1-20" errormsg="必填项，并且最长只能20个字符！">
                         </td>
                     </tr>  
                     <tr>
@@ -57,7 +57,7 @@
                             <i class="redNotice">*</i>婚姻状况：
                         </td>
                         <td class="loanInformation_td02">
-                            <select class="select loanInformation_se02" field='marriageStatus'>
+                            <select class="select loanInformation_se02" field='marriageStatus'  customFun="validateSelect" errormsg="请选择婚姻情况！" >
                                 <option>请选择</option>
                                 <option value="1">已婚</option>
                                 <option value="2">未婚</option>
@@ -67,7 +67,7 @@
                              <i class="redNotice">*</i>有无子女：
                         </td>
                         <td class="loanInformation_td03">
-                           <select class="select loanInformation_se02" field='haveChildren'>
+                           <select class="select loanInformation_se02" field='haveChildren'  customFun="validateSelect" errormsg="请选择有无子女！" >
                                 <option>请选择</option>
                                 <option value="1">有子女</option>
                                 <option value="2">无子女</option>
@@ -77,7 +77,7 @@
                              <i class="redNotice">*</i>籍贯：
                         </td>
                         <td class="loanInformation_td03" id="city_1Ensure">
-                           <select class="select loanInformation_se02 prov" field='nativePlace'>
+                           <select class="select loanInformation_se02 prov" field='nativePlace'  customFun="validateSelect" errormsg="请选择籍贯！">
                                 <option>请选择</option>
                             </select>
                             <select class="city hidden"></select>
@@ -99,13 +99,13 @@
                             <i class="redNotice">*</i>毕业学校：
                         </td>
                         <td class="loanInformation_td02">
-                            <input type="text" class="loanInformation_inp01" placeholder="请输入担保人毕业学校"  field='graduateSchool'>
+                            <input type="text" class="loanInformation_inp01" placeholder="请输入担保人毕业学校"  field='graduateSchool' datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                         </td>
                         <td class="loanInformation_td01">
                              <i class="redNotice">*</i>最高学历：
                         </td>
                         <td class="loanInformation_td03">
-                           <select class="select loanInformation_se02"  field='highestEducation'>
+                           <select class="select loanInformation_se02"  field='highestEducation' customFun="validateSelect" errormsg="请选择学历！">
                                 <option>请选择</option>
                                 <option value="1">小学</option>
                                 <option value="2">初中</option>
@@ -121,7 +121,7 @@
                              <i class="redNotice">*</i>工作年限：
                         </td>
                         <td class="loanInformation_td03">
-                           <select class="select loanInformation_se02" field='yearsWorking'>
+                           <select class="select loanInformation_se02" field='yearsWorking' customFun="validateSelect" errormsg="请选择工作年限！">
                                 <option>请选择</option>
                                 <option value="1">1 - 3年</option>
                                 <option value="2">3 - 5年</option>
@@ -135,19 +135,19 @@
                             <i class="redNotice">*</i>工作单位：
                         </td>
                         <td class="loanInformation_td02">
-                            <input type="text" class="loanInformation_inp01" placeholder="请输入担保人工作单位" field='workCompany'>
+                            <input type="text" class="loanInformation_inp01" placeholder="请输入担保人工作单位" field='workCompany' datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                         </td>
                         <td class="loanInformation_td01">
                              <i class="redNotice">*</i>现任职务：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人现任职务" field='occupation'>
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人现任职务" field='occupation' datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                         </td>
                          <td class="loanInformation_td01">
                              <i class="redNotice">*</i>工作电话：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人工作电话" field='worktelePhone'>
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人工作电话" field='worktelePhone' datatype="s1-20" errormsg="必填项，并且最长只能20个字符！">
                         </td>
                     </tr>  
                     <tr>
@@ -164,7 +164,7 @@
                              <i class="redNotice">*</i>所处行业：
                         </td>
                         <td class="loanInformation_td03" >
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人所处行业" field='industry'>
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人所处行业" field='industry' datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                         </td>
                     </tr>             
                 </table>
@@ -191,7 +191,7 @@
                                 </colgroup>  
                                 <tr>
                                     <td class="loanInformation_td02">
-                                        <select class="select loanInformation_se02" style="width: 319px;" id="carStatus" field="carPropertyType">
+                                        <select class="select loanInformation_se02" style="width: 319px;" id="carStatus" field="carPropertyType" customFun="validateSelect" errormsg="请选择车产情况！">
                                             <option>请选择</option>
                                             <option value="1">无车</option>
                                             <option value="2">有车无车贷</option>
@@ -203,15 +203,15 @@
                                     </td>
                                     <td class="loanInformation_td02 loanInformation_car" fields="carPurchaseDate" split="-">
                                        <span id="dateSelectorEnsure">
-                                            <select id="idYearEnsure" name="idYearEnsure" class="select loanInformation_se01" data="" item="1"></select>
-                                           <select class="select loanInformation_se01" id="idMonthEnsure" name="idMonthEnsure" data="12" item="2"></select>
+                                             <select id="idYearEnsure" name="idYearEnsure" class="select loanInformation_se01" data="" item="1"></select>
+                                           	 <select class="select loanInformation_se01" id="idMonthEnsure" name="idMonthEnsure" data="12" item="2" ></select>
                                         </span>
                                     </td>    
                                     <td class="loanInformation_td01 loanInformation_car">
                                         <i class="redNotice">*</i>汽车品牌：
                                     </td>
                                     <td class="loanInformation_td02 loanInformation_car">
-                                        <input type="text" class="loanInformation_inp01" placeholder="请输入担保人汽车品牌" field="carBrand">
+                                        <input type="text" class="loanInformation_inp01" placeholder="请输入担保人汽车品牌" field="carBrand" customFun="validateTextValue"  errormsg="请输入担保人汽车品牌!">
                                     </td>    
                                 </tr>
                             </table>
@@ -225,7 +225,7 @@
                             <i class="redNotice">*</i>房产情况：
                         </td>
                         <td class="loanInformation_td02">
-                            <select class="select loanInformation_se02" style="width: 319px;" field="housePropertyType">
+                            <select class="select loanInformation_se02" style="width: 319px;" field="housePropertyType"  customFun="validateSelect" errormsg="请选择房产情况！">
                                 <option>请选择</option>
                                 <option value="1">无房</option>
                                 <option value="2">有房无房贷</option>
@@ -236,7 +236,7 @@
                             其他资产：
                         </td>
                         <td class="loanInformation_td02">
-                            <input type="text" class="loanInformation_inp01" placeholder="" field="otherProperty">
+                            <input type="text" class="loanInformation_inp01" placeholder="" field="otherProperty" datatype="*1-500" errormsg="必填项，并且最长只能500个字符！">
                         </td>                  
                     </tr>  
                     <tr>
@@ -244,7 +244,7 @@
                             补充说明：
                         </td>                  
                         <td class="loanInformation_td02" colspan="3">
-                           <input type="text" class="loanInformation_inp01" placeholder=""  field="propertyRemark">
+                           <input type="text" class="loanInformation_inp01" placeholder=""  field="propertyRemark" datatype="*1-500" errormsg="必填项，并且最长只能500个字符！">
                         </td>
                     </tr> 
                   </table>  
@@ -264,19 +264,19 @@
                             <i class="redNotice">*</i>第一联系人姓名：
                         </td>
                         <td class="loanInformation_td02">
-                             <input type="text" class="loanInformation_inp01" placeholder="请输入第一联系人姓名" field="firstContactName">
+                             <input type="text" class="loanInformation_inp01" placeholder="请输入第一联系人姓名" field="firstContactName" datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
                         </td>    
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i>第一联系人电话：
                         </td>
                         <td class="loanInformation_td02">
-                            <input type="text" class="loanInformation_inp01" placeholder="请输入第一联系人电话" field="firstContactPhone">
+                            <input type="text" class="loanInformation_inp01" placeholder="请输入第一联系人电话" field="firstContactPhone" datatype="s1-20" errormsg="必填项，并且最长只能20个字符！">
                         </td>  
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i>与担保人关系：
                         </td>
                         <td class="loanInformation_td03">
-                            <select class="select loanInformation_se02" field="relationToguarantee1">
+                            <select class="select loanInformation_se02" field="relationToguarantee1" customFun="validateSelect" errormsg="请选择担保人关系！">
                                 <option>请选择</option>
                                 <option value="1">父母</option>
                                 <option value="2">子女</option>
@@ -292,19 +292,19 @@
                             <i class="redNotice">*</i>第二联系人姓名：
                         </td>
                         <td class="loanInformation_td02">
-                             <input type="text" class="loanInformation_inp01" placeholder="请输入第二联系人姓名" field="secondContactName">
+                             <input type="text" class="loanInformation_inp01" placeholder="请输入第二联系人姓名" field="secondContactName" datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
                         </td>    
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i>第二联系人电话：
                         </td>
                         <td class="loanInformation_td02">
-                            <input type="text" class="loanInformation_inp01" placeholder="请输入第二联系人电话" field="secondContactPhone">
+                            <input type="text" class="loanInformation_inp01" placeholder="请输入第二联系人电话" field="secondContactPhone"  datatype="s1-20" errormsg="必填项，并且最长只能20个字符！">
                         </td>  
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i>与担保人关系：
                         </td>
                         <td class="loanInformation_td03">
-                            <select class="select loanInformation_se02" field="relationToguarantee2">
+                            <select class="select loanInformation_se02" field="relationToguarantee2" customFun="validateSelect" errormsg="请选择担保人关系！">
                                 <option>请选择</option>
                                  <option value="1">父母</option>
                                 <option value="2">子女</option>
@@ -332,15 +332,17 @@
                             <i class="redNotice">*</i>企业名称：
                         </td>
                         <td class="loanInformation_td02">
-                            <input type="text" class="loanInformation_inp01" placeholder="请输入企业名称" field="companyName">
+                            <input type="text" class="loanInformation_inp01" placeholder="请输入企业名称" field="companyName" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！">
                         </td>
                         <td class="loanInformation_td01">
                              <i class="redNotice">*</i>企业成立日期：
                         </td>
                         <td class="loanInformation_td02" id="dateSelector1Ensure" fields="foundDate" split="-">
-                           <select id="idYear1Ensure" name="idYear1Ensure" class="select loanInformation_se01" data="" item="1"></select>
-                           <select class="select loanInformation_se01" id="idMonth1Ensure" name="idMonth1Ensure" data="12" item="2"></select>
-                           <select id="idDay1Ensure" name="idDay1Ensure" class="select loanInformation_se01" data="1" item="3"></select>
+                        	<div customFun="validateSelects" errormsg="请选择企业成立日期!"  style="display:inline-block;" >
+		                         <select id="idYear1Ensure" name="idYear1Ensure" class="select loanInformation_se01" data="" item="1" onblur="$(this).parent().blur();"></select>
+		                         <select class="select loanInformation_se01" id="idMonth1Ensure" name="idMonth1Ensure" data="12" item="2" onblur="$(this).parent().blur();"></select>
+		                         <select id="idDay1Ensure" name="idDay1Ensure" class="select loanInformation_se01" data="1" item="3" onblur="$(this).parent().blur();"></select>
+                           </div>
                         </td>                    
                     </tr>  
                     <tr>
@@ -348,7 +350,7 @@
                             <i class="redNotice">*</i>企业规模：
                         </td>
                         <td class="loanInformation_td03">
-                            <select class="select loanInformation_se02" field="enterpriseScale">
+                            <select class="select loanInformation_se02" field="enterpriseScale" customFun="validateSelect" errormsg="请选择企业规模！">
                                 <option>请选择</option>
                                 <option value="1">1 - 50人</option>
                                 <option value="2">50 - 100人</option>
@@ -361,7 +363,7 @@
                              <i class="redNotice">*</i>营业执照号/社会信用代码：
                         </td>
                         <td class="loanInformation_td02">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入营业执照号/社会信用代码" field="businessLicense">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入营业执照号/社会信用代码" field="businessLicense" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！">
                         </td>                    
                     </tr> 
                     <tr>
@@ -369,13 +371,13 @@
                             <i class="redNotice">*</i>税务登记号：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入税务登记号" field="taxRegisterCode">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入税务登记号" field="taxRegisterCode" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！">
                         </td>
                         <td class="loanInformation_td01">
                              <i class="redNotice">*</i>组织机构代码：
                         </td>
                         <td class="loanInformation_td02">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入组织机构代码" field="orgCodeCertificate">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入组织机构代码" field="orgCodeCertificate" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！">
                         </td>                    
                     </tr> 
                     <tr>
@@ -383,26 +385,30 @@
                             <i class="redNotice">*</i>平台注册账号：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入平台注册账号" field="registerAccount">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入平台注册账号" field="registerAccount" datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                         </td>
                         <td class="loanInformation_td01">
                              <i class="redNotice">*</i>平台注册日期：
                         </td>
                          <td class="loanInformation_td02" id="dateSelector2Ensure" fields="registerDate" split="-">
-                           <select id="idYear2Ensure" name="idYear2Ensure" class="select loanInformation_se01" data="" item="1"></select>
-                           <select class="select loanInformation_se01" id="idMonth2Ensure" name="idMonth2Ensure" data="12" item="2"></select>
-                           <select id="idDay2Ensure" name="idDay2Ensure" class="select loanInformation_se01" data="1" item="3"></select>
-                        </td>                      
+                         	<div customFun="validateSelects" errormsg="请选择平台注册日期!"  style="display:inline-block;" >
+	                           <select id="idYear2Ensure" name="idYear2Ensure" class="select loanInformation_se01" data="" item="1" onblur="$(this).parent().blur();"></select>
+	                           <select class="select loanInformation_se01" id="idMonth2Ensure" name="idMonth2Ensure" data="12" item="2" onblur="$(this).parent().blur();"></select>
+	                           <select id="idDay2Ensure" name="idDay2Ensure" class="select loanInformation_se01" data="1" item="3" onblur="$(this).parent().blur();"></select>
+                           </div>
+                        </td>
                     </tr> 
                     <tr>
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i>企业注册地址：
                         </td>                  
                         <td class="loanInformation_td02" id="city3Ensure" colspan="3" fields="officeAddress" split="/">
-                            <select class="prov select loanInformation_se01" item="1"></select> 
-                            <select class="city select loanInformation_se01" disabled="disabled" item="2"></select>
-                            <select class="dist select loanInformation_se01" disabled="disabled" item="3"></select>
-                            <input type="text" class="loanInformation_inp03" placeholder="请输入详细地址" item="4">
+                        	<div customFun="validateSelects" errormsg="请选择企业注册地址!"  style="display:inline-block;" >
+	                            <select class="prov select loanInformation_se01" item="1" onblur="$(this).parent().blur();"></select> 
+	                            <select class="city select loanInformation_se01" disabled="disabled" item="2" onblur="$(this).parent().blur();"></select>
+	                            <select class="dist select loanInformation_se01" disabled="disabled" item="3" onblur="$(this).parent().blur();"></select>
+	                            <input type="text" class="loanInformation_inp03" placeholder="请输入详细地址" item="4" onblur="$(this).parent().blur();">
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -410,10 +416,12 @@
                             <i class="redNotice">*</i>企业办公地址：
                         </td>                  
                         <td class="loanInformation_td02" id="city4Ensure" colspan="3" fields="regAddress" split="/">
-                            <select class="prov select loanInformation_se01" item="1"></select> 
-                            <select class="city select loanInformation_se01" disabled="disabled" item="2"></select>
-                            <select class="dist select loanInformation_se01" disabled="disabled" item="3"></select>
-                            <input type="text" class="loanInformation_inp03" placeholder="请输入详细地址" item="4">
+                        	<div customFun="validateSelects" errormsg="请选择企业办公地址!"  style="display:inline-block;" >
+	                            <select class="prov select loanInformation_se01" item="1" onblur="$(this).parent().blur();"></select> 
+	                            <select class="city select loanInformation_se01" disabled="disabled" item="2" onblur="$(this).parent().blur();"></select>
+	                            <select class="dist select loanInformation_se01" disabled="disabled" item="3" onblur="$(this).parent().blur();"></select>
+	                            <input type="text" class="loanInformation_inp03" placeholder="请输入详细地址" item="4" onblur="$(this).parent().blur();">
+                            </div>
                         </td>
                     </tr>
                 </table>
@@ -430,7 +438,7 @@
                         <i class="redNotice">*</i>法人姓名：
                     </td>
                     <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" placeholder="请输入法人姓名"  field="legalPersonName">
+                        <input type="text" class="loanInformation_inp01" placeholder="请输入法人姓名"  field="legalPersonName" datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>法人证件号：
@@ -440,7 +448,7 @@
                            <option value="1">身份证</option>
                            <option value="2">护照</option>
                        </select>
-                       <input type="text" class="loanInformation_inp04" placeholder="请输入证件号码" field="legalPersonCertificateNumber">
+                       <input type="text" class="loanInformation_inp04" placeholder="请输入证件号码" field="legalPersonCertificateNumber" datatype="s1-30" errormsg="必填项，并且最长只能30个字符！">
                     </td>
                 </tr>
               </table>  
@@ -457,13 +465,13 @@
                         <i class="redNotice">*</i>联系人姓名：
                     </td>
                     <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" placeholder="请输入联系人姓名"  field="contactName">
+                        <input type="text" class="loanInformation_inp01" placeholder="请输入联系人姓名"  field="contactName"  datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>联系电话：
                     </td>
                     <td class="loanInformation_td02">
-                       <input type="text" class="loanInformation_inp01" placeholder="请输入联系电话"  field="contactPhone">
+                       <input type="text" class="loanInformation_inp01" placeholder="请输入联系电话"  field="contactPhone"  datatype="s1-30" errormsg="必填项，并且最长只能30个字符！">
                     </td>
                 </tr>
               </table>  
@@ -477,12 +485,31 @@
     </div>
     <div style="height: 100px"></div>
 <script type="text/javascript">
-
 	
+	var companyEnsureValidate = null;
+	
+	function vlidateCompanyEnsure()
+	{
+		if(companyEnsureValidate == null)
+		{
+			return true;
+		}
+		return companyEnsureValidate.validate();
+	}
+
+	function afterDoneCompanyEnsure()
+	{
+		//初始化
+		companyEnsureValidate = new validform($(".dbrInfirmation").eq($('input[name="assureType"]:checked').val()-1), {
+			msgTooltip : true
+		});
+	}
+	 
     function companyEnsureRender(dataObj ,  contextPath){
         $(".dbrInfirmation").eq($('input[name="assureType"]:checked').val()-1).show();
         $("input[name='assureType']").change(function(){
             $(".dbrInfirmation").hide().eq($('input[name="assureType"]:checked').val()-1).show();
+            afterDoneCompanyEnsure();
         })
         
         $("#carStatus").change(function(){

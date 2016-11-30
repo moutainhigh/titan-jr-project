@@ -478,7 +478,9 @@ public class FinancialLoanCreditController extends BaseController {
 			if (StringUtil.isValidString(companyAccessoryData)) {
 				Map<String, String> jsonMap = JsonConversionTool.toObject(
 						companyAccessoryData, Map.class);
-
+				
+				assureType = jsonMap.get("assureType");
+				
 				String creditCompany = JsonConversionTool.toJson(jsonMap
 						.get("creditCompany"));
 				String loanPersonEnsure = JsonConversionTool.toJson(jsonMap
