@@ -42,10 +42,6 @@
 	var creditBasePath = '<%=basePath%>';
 	var imageBasePath = '<%=cssSaasPath%>';
 	
-	
-	
-	
-	
 	$(function(){
 	
 		$.ajax({
@@ -95,10 +91,14 @@
 		
 		 currIndex: 0,
 			
-		 navList : [{zoneId:'company' , url:creditBasePath+'/loan/credit/applyCompany.shtml' ,showEventHandle:'', render:'companyRender', afterDone :"" , data:{}} ,
-		            {zoneId:'companyAppend' , url:creditBasePath+'/loan/credit/applyCompanyAppend.shtml', showEventHandle:'', render:'companyAppendRender' ,  afterDone :"",data:{}} , 
-		            {zoneId:'companyEnsure' , url:creditBasePath+'/loan/credit/applyCompanyEnsure.shtml' , showEventHandle:'', render:'companyEnsureRender',afterDone :"",data:{}} , 
-		            {zoneId:'companyAccessory' , url:creditBasePath+'/loan/credit/applyCompanyAccessory.shtml' ,showEventHandle:'companyAccessoryShow', render:'companyAccessoryRender',afterDone :"afterDoneAccessory",data:{}}],
+		 navList : [{zoneId:'company' , url:creditBasePath+'/loan/credit/applyCompany.shtml' ,showEventHandle:'', 
+			 		render:'companyRender', afterDone :"afterDoneCompany",dataVlidate:'vlidateCompany' , data:{} } ,
+		            {zoneId:'companyAppend' , url:creditBasePath+'/loan/credit/applyCompanyAppend.shtml', showEventHandle:'',
+			 			render:'companyAppendRender' ,  afterDone :"afterDoneCompanyAppend",dataVlidate:'vlidateCompanyAppend' ,data:{}} , 
+		            {zoneId:'companyEnsure' , url:creditBasePath+'/loan/credit/applyCompanyEnsure.shtml' , showEventHandle:'', 
+			 				render:'companyEnsureRender',afterDone :"afterDoneCompanyEnsure",dataVlidate:'vlidateCompanyEnsure' ,data:{}} , 
+		            {zoneId:'companyAccessory' , url:creditBasePath+'/loan/credit/applyCompanyAccessory.shtml' ,showEventHandle:'companyAccessoryShow',
+			 					render:'companyAccessoryRender',afterDone :"afterDoneAccessory", dataVlidate:'vlidateCompanyAccessory' ,data:{}}],
 		            
 		show: function()
 		{
@@ -171,6 +171,17 @@
 			var result = true;
 			if(data[obj.zoneId]  != obj['data'])
 			{
+				if(obj["dataVlidate"])
+				{
+					try
+					{
+						eval("var vlidateResult = "+obj["dataVlidate"]+"()");
+						if(vlidateResult === false)
+						{
+							return;
+						}
+					}catch(e){}
+				}
 				result = dataHandleObj.saveData(data)
 			}
 			
@@ -189,7 +200,18 @@
 			var result = true;
 			if(data[obj.zoneId]  != obj['data'])
 			{
-				result = dataHandleObj.saveData(data)
+				if(obj["dataVlidate"])
+				{
+					try
+					{
+						eval("var vlidateResult = "+obj["dataVlidate"]+"()");
+						if(vlidateResult === false)
+						{
+							return;
+						}
+					}catch(e){}
+				}
+				result = dataHandleObj.saveData(data);
 			}
 			
 			if(result)
@@ -427,14 +449,84 @@
 		}
 	};
 	
+	
+	
+	function validateSelects(value, customArgs, inputDom)
+	{
+		var result = true;
+		
+		if ($(inputDom).is(":hidden")) {
+			return result;
+		}
+
+		$(inputDom).find("[item]").each(function() {
+
+			if ($(this).is(":hidden") || $(this).parents().is(":hidden")) {
+				return;
+			}
+			var value = $(this).val();
+			if (value == '' || value == '请选择' || value == null) {
+				result = false;
+				return result
+			}
+		});
+		return result;
+	}
+
+	function validateTextValue(value, customArgs, inputDom)
+	{
+		if ($(inputDom).is(":hidden")
+				|| $(inputDom).parents().is(":hidden")) {
+			return true;
+		}
+		
+		if(customArgs !=null && customArgs !='')
+		{
+			eval('var pattern=' + customArgs);
+			if(pattern.test(value))
+			{
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		if (value == '' || value == null) {
+			return false;
+		}
+		return true;
+	}
+	
+	function validateSelect(value, customArgs, inputDom) {
+		
+		if ($(inputDom).is(":hidden") 
+				|| $(inputDom).parents().is(":hidden")) {
+			return true;
+		}
+		
+		if (value == '' || value == '请选择' || value == null) {
+			return false;
+		}
+		return true;
+	}
+
 	function submitCrditApply()
 	{
 		$("#companyData").val(dataHandleObj.serializeData('company'));
 		$("#companyAppendData").val(dataHandleObj.serializeData('companyAppend'));
 		$("#companyEnsureData").val(dataHandleObj.serializeData('companyEnsure'));
 		$("#companyAccessoryData").val(dataHandleObj.serializeData('companyAccessory'));
+		
+		
+		try {
+			eval("var vlidateResult = vlidateCompanyAccessory()");
+			if (vlidateResult === false) {
+				return;
+			}
+		} catch (e) {
+		}
+
 		$('#crditApplyForm').submit();
-	}	
-	
+	}
 </script>
 </html>

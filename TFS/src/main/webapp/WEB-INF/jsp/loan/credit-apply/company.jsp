@@ -1,5 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<style>
 
+</style>
     <div class="loanBox">
         <div class="loanStep">
             <span class="cur">1. 填写企业基本信息<i></i></span><span>2. 填写企业补充信息<i></i></span><span>3. 填写担保人信息<i></i></span><span>4. 上传资料<i></i></span><span>5. 提交授信申请</span>
@@ -18,15 +20,17 @@
                         <i class="redNotice">*</i>企业名称：
                     </td>
                     <td class="loanInformation_td02">
-                        <input type="text" value="" readonly="readonly" class="loanInformation_inp01" placeholder="请输入企业名称" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！" field="name">
+                        <input type="text" value="" readonly="readonly" class="loanInformation_inp01"  placeholder="请输入企业名称" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！" field="name">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>企业成立日期：
                     </td>
-                    <td class="loanInformation_td02" id="dateSelector" fields="startDate" split="-" customFun="validateSelects" errormsg="企业成立日期必须选择！"  >
-                       <select item='year'  id="idYear" name="idYear" class="select loanInformation_se01" data="" datatype="*"></select>
-                       <select item='month'  class="select loanInformation_se01" id="idMonth" name="idMonth" data="12" datatype="*"></select>
-                       <select item='day'  id="idDay" name="idDay" class="select loanInformation_se01" data="1" datatype="*"></select>
+                    <td class="loanInformation_td02" id="dateSelector" fields="startDate" split="-" >
+                    	<div customFun="validateSelects" errormsg="企业成立日期必须选择！"  style="display:inline-block;">
+	                       <select item='year'  id="idYear" name="idYear" class="select loanInformation_se01" data="" onblur="$(this).parent().blur();"></select>
+	                       <select item='month'  class="select loanInformation_se01" id="idMonth" name="idMonth" data="12" onblur="$(this).parent().blur();"></select>
+	                       <select item='day'  id="idDay" name="idDay" class="select loanInformation_se01" data="1" onblur="$(this).parent().blur();"></select>
+                       </div>
                     </td>
                 </tr>
                  <tr>
@@ -47,7 +51,7 @@
                          <i class="redNotice">*</i>营业执照号/社会信用代码：
                     </td>
                     <td class="loanInformation_td02">
-                         <input type="text" class="loanInformation_inp01" placeholder="请输入营业执照号/社会信用代码"  field="license" value="" readonly="readonly" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！">
+                         <input type="text" class="loanInformation_inp01" placeholder="请输入营业执照号/社会信用代码"  field="license" value="" readonly="readonly" datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                     </td>
                 </tr>
                 <tr>
@@ -55,13 +59,13 @@
                         <i class="redNotice">*</i>税务登记号：
                     </td>
                     <td class="loanInformation_td02">
-                         <input type="text" class="loanInformation_inp01" placeholder="请输入税务登记号" field="taxRegNo" value=""  datatype="s1-50" errormsg="必填项，并且最长只能50个字符！">
+                         <input type="text" class="loanInformation_inp01" placeholder="请输入税务登记号" field="taxRegNo" value=""  datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>组织机构代码：
                     </td>
                     <td class="loanInformation_td02">
-                         <input type="text" class="loanInformation_inp01" placeholder="请输入组织机构代码" field="orgCode" value="" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！">
+                         <input type="text" class="loanInformation_inp01" placeholder="请输入组织机构代码"  field="orgCode" value="" datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                     </td>
                 </tr>
                 <tr>
@@ -69,7 +73,7 @@
                         <i class="redNotice">*</i>平台注册账号：
                     </td>
                     <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" placeholder="请输入平台注册账号" field="regAccount" value="" readonly="readonly" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！">
+                        <input type="text" class="loanInformation_inp01" placeholder="请输入平台注册账号" field="regAccount" value="" readonly="readonly" datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>平台注册日期：
@@ -82,22 +86,28 @@
                     <td class="loanInformation_td01">
                         <i class="redNotice">*</i>企业注册地址：
                     </td>                  
-                    <td class="loanInformation_td02" id="city1" colspan="3" fields="regAddress" split="/" customFun="validateSelects" errormsg="请选择企业注册地址!">
-                        <select item="prov" class="prov select loanInformation_se01"></select> 
-                        <select item="city"  class="city select loanInformation_se01" disabled="disabled"></select>
-                        <select item="dist" class="dist select loanInformation_se01" disabled="disabled"></select>
-                        <input item="address" type="text" class="loanInformation_inp03" placeholder="请输入详细地址">
+                    <td class="loanInformation_td02" id="city1" colspan="3" fields="regAddress" split="/" >
+                    	<div  customFun="validateSelects" errormsg="请选择企业注册地址!"  style="display:inline-block;">
+                    	
+	                        <select item="prov" class="prov select loanInformation_se01"   onblur="$(this).parent().blur();"></select> 
+	                        <select item="city"  class="city select loanInformation_se01" disabled="disabled"  onblur="$(this).parent().blur();"></select>
+	                        <select item="dist" class="dist select loanInformation_se01" disabled="disabled"  onblur="$(this).parent().blur();"></select>
+	                        <input item="address" type="text" class="loanInformation_inp03" placeholder="请输入详细地址"   onblur="$(this).parent().blur();">
+                       
+                        </div>
                     </td>
                 </tr>
                 <tr>
                     <td class="loanInformation_td01">
                         <i class="redNotice">*</i>企业办公地址：
-                    </td>                  
-                    <td class="loanInformation_td02" id="city2" colspan="3"  fields="officeAddress" split="/"  customFun="validateSelects" errormsg="请选择企业办公地址!">
-                        <select item="prov" class="prov select loanInformation_se01"></select> 
-                        <select item="city"  class="city select loanInformation_se01" disabled="disabled"></select>
-                        <select item="dist" class="dist select loanInformation_se01" disabled="disabled" ></select>
-                        <input item="address" type="text" class="loanInformation_inp03" placeholder="请输入详细地址">
+                    </td> 
+                    <td class="loanInformation_td02" id="city2" colspan="3"  fields="officeAddress" split="/"  >
+                    	<div customFun="validateSelects" errormsg="请选择企业办公地址!" style="display:inline-block;">
+	                        <select item="prov" class="prov select loanInformation_se01"  onblur="$(this).parent().blur();"></select> 
+	                        <select item="city"  class="city select loanInformation_se01" disabled="disabled"  onblur="$(this).parent().blur();"></select>
+	                        <select item="dist" class="dist select loanInformation_se01" disabled="disabled"  onblur="$(this).parent().blur();"></select>
+	                        <input item="address" type="text" class="loanInformation_inp03" placeholder="请输入详细地址"  onblur="$(this).parent().blur();">
+                        </div>
                     </td>
                 </tr>
             </table>
@@ -124,7 +134,7 @@
                            <option value="1" selected="selected">身份证</option>
                            <option value="2">护照</option>
                        </select>
-                       <input type="text" class="loanInformation_inp04" placeholder="请输入证件号码" field='legalNo' value="" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！">
+                       <input type="text" class="loanInformation_inp04" placeholder="请输入证件号码" field='legalNo' value="" datatype="*1-50" errormsg="并且最长只能50个字符！">
                     </td>
                 </tr>
               </table>  
@@ -147,7 +157,7 @@
                          <i class="redNotice">*</i>联系电话：
                     </td>
                     <td class="loanInformation_td02">
-                       <input  type="text" class="loanInformation_inp01" placeholder="请输入联系电话" field='contactPhone' value="" datatype="s1-20" errormsg="必填项，并且最长只能20个字符！">
+                       <input  type="text" class="loanInformation_inp01" placeholder="请输入联系电话" field='contactPhone' value="" datatype="*1-20" errormsg="必填项，并且最长只能20个字符！">
                     </td>
                 </tr>
               </table> 
@@ -160,82 +170,62 @@
     <div style="height: 100px"></div>
     
 <script type="text/javascript">
+
+	var companyForm = null;
 	
-	
-	function validateSelects(value, customArgs, inputDom)
-	{
-		var result = true;
-		$(inputDom).find("[item]").each(function(){
-			
-			var value = $(this).val();
-			
-			if(value == '' || value=='请选择' || value == null)
-			{
-				result = false;
-				return result
-			}
-		});
-		return  result;
-	}
-	
-	function  validateSelect(value, customArgs, inputDom)
-	{
-		if(value == '' || value=='请选择' || value == null)
-		{
-			return false;
-		}
-		return true;
-	}
-	
-	function companyRender(dataObj ,  contextPath)
+	function afterDoneCompany()
 	{
 		//初始化
-		var companyForm =  new validform('#company',{
-		    msgTooltip : true
+	 companyForm = new validform('#company', {
+			msgTooltip : true
 		});
-		
-		
-		
-		  if(companyForm.validate()){
-		     
-		    }
-		
-		
+	}
+	
+	function vlidateCompany()
+	{
+		if(companyForm == null)
+		{
+			return true;
+		}
+		return companyForm.validate();
+	}
+	
+	function companyRender(dataObj, contextPath) {
 
 		$("#city1").citySelect({
-			url : contextPath+'/js/city.min.js',
-            prov:"请选择", 
-            city:"请选择",
-            dist:"请选择",
-            nodata:"none"
-        }); 
-         $("#city2").citySelect({
-        	url:contextPath+'/js/city.min.js',
-            prov:"请选择", 
-            city:"请选择",
-            dist:"请选择",
-            nodata:"none"
-        }); 
-         var myDate = new Date();
-        $("#dateSelector").DateSelector({
-                ctlYearId: 'idYear',
-                ctlMonthId: 'idMonth',
-                ctlDayId: 'idDay',
-                defYear: myDate.getFullYear(),
-                defMonth: (myDate.getMonth()+1),
-                defDay: myDate.getDate(),
-                minYear: 1800,
-                maxYear: 2100
-        });
-        $("#dateSelector1").DateSelector({
-                ctlYearId: 'idYear1',
-                ctlMonthId: 'idMonth1',
-                ctlDayId: 'idDay1',
-                defYear: myDate.getFullYear(),
-                defMonth: (myDate.getMonth()+1),
-                defDay: myDate.getDate(),
-                minYear: 1800,
-                maxYear: 2100
-        });
+			url : contextPath + '/js/city.min.js',
+			prov : "请选择",
+			city : "请选择",
+			dist : "请选择",
+			nodata : "none"
+		});
+		$("#city2").citySelect({
+			url : contextPath + '/js/city.min.js',
+			prov : "请选择",
+			city : "请选择",
+			dist : "请选择",
+			nodata : "none"
+		});
+		var myDate = new Date();
+		$("#dateSelector").DateSelector({
+			ctlYearId : 'idYear',
+			ctlMonthId : 'idMonth',
+			ctlDayId : 'idDay',
+			defYear : myDate.getFullYear(),
+			defMonth : (myDate.getMonth() + 1),
+			defDay : myDate.getDate(),
+			minYear : 1800,
+			maxYear : 2100
+		});
+		$("#dateSelector1").DateSelector({
+			ctlYearId : 'idYear1',
+			ctlMonthId : 'idMonth1',
+			ctlDayId : 'idDay1',
+			defYear : myDate.getFullYear(),
+			defMonth : (myDate.getMonth() + 1),
+			defDay : myDate.getDate(),
+			minYear : 1800,
+			maxYear : 2100
+		});
 	}
 </script>
