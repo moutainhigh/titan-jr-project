@@ -16,10 +16,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fangcang.titanjr.common.enums.LoanProductEnum;
+import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.LoanApplyInfo;
+import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
+import com.fangcang.titanjr.dto.bean.LoanSpecBean;
+import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
+import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.FTPConfigResponse;
+import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.StringUtil;
 
@@ -33,10 +40,13 @@ public class FinancialLoanApplyController extends BaseController{
 	private static final long serialVersionUID = 1L;
 	
 	private static final Log log = LogFactory
-			.getLog(FinancialLoanCreditController.class);
+			.getLog(FinancialLoanApplyController.class);
 	
 	@Resource
 	private TitanSysconfigService sysconfigService;
+	
+//	@Resource
+	private TitanFinancialLoanService titanFinancialLoanService;
 	
 	
 	@RequestMapping(value="/main", method = RequestMethod.GET)
@@ -57,9 +67,37 @@ public class FinancialLoanApplyController extends BaseController{
 			return this.toJson();
 		}
 		
-		
-		
-		return null;
+		try{
+			//申请贷款
+			LoanRoomPackSpecBean loanSpecBean = new LoanRoomPackSpecBean();
+			loanSpecBean.setAmount(info.getAmount());
+			loanSpecBean.setLoanOrderNo(info.getLoanOrderNo());
+			loanSpecBean.setAccount(info.getAccount());
+			loanSpecBean.setAccountName(info.getAccountName());
+			loanSpecBean.setBank(info.getBank());
+			loanSpecBean.setBeginDate(DateUtil.sdf4.parse(info.getBeginDate()));
+			loanSpecBean.setContractUrl(info.getContactNames());
+			loanSpecBean.setEndDate(DateUtil.sdf4.parse(info.getEndDate()));
+			loanSpecBean.setHotleName(info.getHotelName());
+			if(StringUtil.isValidString(info.getRoomNights())){
+				loanSpecBean.setRoomNights(Integer.parseInt(info.getRoomNights()));
+			}
+			
+			ApplyLoanRequest request = new ApplyLoanRequest();
+			request.setProductType(LoanProductEnum.ROOM_PACK);
+			request.setLcanSpec(loanSpecBean);
+			request.setOrgCode(this.getUserId());
+			ApplyLoanResponse response = titanFinancialLoanService.applyLoan(request);
+			if(!response.isResult()){
+				this.putSysError(response.getReturnMessage());
+				return toJson();
+			}
+			this.putSuccess();
+		}catch(Exception e){
+			this.putSysError();
+			log.error("包房贷申请失败",e);
+		}
+		return toJson();
 	} 
 	
 	@ResponseBody

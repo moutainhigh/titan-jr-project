@@ -43,9 +43,13 @@ public class FtpUtil {
 	 * 用户注册上传的资料
 	 */
 	public static final String UPLOAD_PATH_ORG_REGISTER = "/org_register";
-	
+	/**
+	 * 授信申请上传的文件资料
+	 */
 	public static final String UPLOAD_PATH_CREDIT_APPLY = "/credit_apply";
-	
+	/**
+	 * 贷款申请上传的文件资料
+	 */
 	public static final String UPLOAD_PATH_LOAN_APPLY="/loan_apply";
 	
 	

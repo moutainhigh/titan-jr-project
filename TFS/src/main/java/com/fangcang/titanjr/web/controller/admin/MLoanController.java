@@ -6,9 +6,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fangcang.titanjr.common.enums.AuditResultEnum;
 import com.fangcang.titanjr.common.enums.LoanCreditOrderEnum;
+import com.fangcang.titanjr.dto.request.AuditCreidtOrderRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
@@ -99,10 +103,18 @@ public class MLoanController extends BaseController{
 	 * 审核授信申请单
 	 * @return
 	 */
+	@ResponseBody
 	@RequestMapping(value = "/check-credit-order")
-	public String checkCreditOrder(){
+	public String checkCreditOrder(String orderNo,Integer auditResult,String content){
+		//TODO 检查参数
 		
+		AuditCreidtOrderRequest auditCreidtOrderRequest = new AuditCreidtOrderRequest();
 		
-		return "";	
+		auditCreidtOrderRequest.setOrderNo(orderNo);
+		auditCreidtOrderRequest.setAuditResult(AuditResultEnum.getEnumByStatus(auditResult));
+		auditCreidtOrderRequest.setContent(content);
+		loanCreditService.auditCreditOrder(auditCreidtOrderRequest);
+		
+		return toJson(putSuccess("成功"));	
 	}
 }
