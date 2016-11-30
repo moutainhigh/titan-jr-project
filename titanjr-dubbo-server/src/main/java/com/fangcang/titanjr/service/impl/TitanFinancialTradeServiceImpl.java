@@ -2082,6 +2082,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				titanTransOrder.setCreator(titanOrderRequest.getName());
 				titanTransOrder.setGoodsdetail(titanOrderRequest.getGoodsDetail());
 				titanTransOrder.setGoodsname(titanOrderRequest.getGoodsName());
+				titanTransOrder.setIsEscrowedPayment("1");
 				if(StringUtil.isValidString(titanOrderRequest.getEscrowedDate())){
 					titanTransOrder.setEscrowedDate(DateUtil.sdf.parse(titanOrderRequest.getEscrowedDate()));
 					titanTransOrder.setIsEscrowedPayment("0");
