@@ -30,7 +30,7 @@ public interface TitanFinancialLoanService {
 	 * @param req
 	 * @return
 	 */
-	public ApplyLoanResponse applyLoan(ApplyLoanRequest req);
+	public ApplyLoanResponse applyLoan(ApplyLoanRequest req) throws Exception;
 
 	/**
 	 * 取消贷款请求

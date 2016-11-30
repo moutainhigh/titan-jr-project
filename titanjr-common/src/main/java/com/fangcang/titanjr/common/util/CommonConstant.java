@@ -140,4 +140,5 @@ public class CommonConstant {
     
     public static final String ALIPAY = "alipay";
 	
+    public static final String RATE_TEMPLETE = "RA201611011800001";
 }

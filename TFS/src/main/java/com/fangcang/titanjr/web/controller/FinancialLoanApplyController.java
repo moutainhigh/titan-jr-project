@@ -70,6 +70,8 @@ public class FinancialLoanApplyController extends BaseController{
 		try{
 			//申请贷款
 			LoanRoomPackSpecBean loanSpecBean = new LoanRoomPackSpecBean();
+			loanSpecBean.setAmount(info.getAmount());
+			loanSpecBean.setLoanOrderNo(info.getLoanOrderNo());
 			loanSpecBean.setAccount(info.getAccount());
 			loanSpecBean.setAccountName(info.getAccountName());
 			loanSpecBean.setBank(info.getBank());
@@ -84,6 +86,7 @@ public class FinancialLoanApplyController extends BaseController{
 			ApplyLoanRequest request = new ApplyLoanRequest();
 			request.setProductType(LoanProductEnum.ROOM_PACK);
 			request.setLcanSpec(loanSpecBean);
+			request.setOrgCode(this.getUserId());
 			ApplyLoanResponse response = titanFinancialLoanService.applyLoan(request);
 			if(!response.isResult()){
 				this.putSysError(response.getReturnMessage());

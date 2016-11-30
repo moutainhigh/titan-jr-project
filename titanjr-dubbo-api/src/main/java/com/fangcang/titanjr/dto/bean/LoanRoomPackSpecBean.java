@@ -29,6 +29,10 @@ public class LoanRoomPackSpecBean extends LoanSpecBean {
 	private String bank;// 开户银行
 
 	private String contractUrl;// 合同地址（多个以分号分割）
+	
+	private String amount;//贷款金额
+	
+	private String loanOrderNo;//贷款单号
 
 	public String getHotleName() {
 		return hotleName;
@@ -94,4 +98,20 @@ public class LoanRoomPackSpecBean extends LoanSpecBean {
 		this.contractUrl = contractUrl;
 	}
 
+	public String getAmount() {
+		return amount;
+	}
+
+	public void setAmount(String amount) {
+		this.amount = amount;
+	}
+
+	public String getLoanOrderNo() {
+		return loanOrderNo;
+	}
+
+	public void setLoanOrderNo(String loanOrderNo) {
+		this.loanOrderNo = loanOrderNo;
+	}
+	
 }
