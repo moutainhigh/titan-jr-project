@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.WriteAbortedException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -1673,8 +1674,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			String domainName = domainConfigDao.queryCurrentEnvDomain();
 			if(StringUtil.isValidString(domainName)){
 				payMethodConfigDTO = new PayMethodConfigDTO();
-				payMethodConfigDTO.setPageurl("http://"+domainName+"/TFS02/payment/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/TFS02/payment/notify.action");
+				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-app/payment/payConfirmPage.action");
+				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-app/payment/notify.action");
 			}
 			return payMethodConfigDTO;
 		}catch(Exception e){
@@ -2047,34 +2048,50 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	 * 更新订单中携带的业务信息
 	 * 
 	 * @param newBusinessInfo
+	 * @throws ParseException 
 	 */
 	private void updateTransOrderBussInfo(Integer transId,
-			String newBusinessInfo, String oldBussInfo,String notifyUrl) {
+			TitanOrderRequest titanOrderRequest , String oldBussInfo) {
 
-		if (StringUtil.isValidString(newBusinessInfo)) {
-			TitanTransOrder titanTransOrder = new TitanTransOrder();
-			titanTransOrder.setTransid(transId);
-			Map<String, String> upBussMap = null;
+		if (StringUtil.isValidString(JsonConversionTool.toJson(titanOrderRequest
+				.getBusinessInfo()))){
+			try{
+				TitanTransOrder titanTransOrder = new TitanTransOrder();
+				titanTransOrder.setTransid(transId);
+				Map<String, String> upBussMap = null;
 
-			Map<String, String> newBussMap = JsonConversionTool.toObject(
-					newBusinessInfo, Map.class);
+				Map<String, String> newBussMap = JsonConversionTool.toObject(
+						JsonConversionTool.toJson(titanOrderRequest
+								.getBusinessInfo()), Map.class);
 
-			if (newBussMap != null && newBussMap.get("bussCode") != null) {
-				titanTransOrder
-						.setBusinessordercode(newBussMap.get("bussCode"));
+				if (newBussMap != null && newBussMap.get("bussCode") != null) {
+					titanTransOrder
+							.setBusinessordercode(newBussMap.get("bussCode"));
+				}
+
+				if (StringUtil.isValidString(oldBussInfo)) {
+					upBussMap = JsonConversionTool.toObject(oldBussInfo,
+							Map.class);
+					upBussMap.putAll(newBussMap);
+				}
+				if (upBussMap != null) {
+					titanTransOrder.setBusinessinfo(JsonConversionTool
+							.toJson(upBussMap));
+				}
+				titanTransOrder.setNotifyUrl(titanOrderRequest.getNotify());
+				titanTransOrder.setCreator(titanOrderRequest.getName());
+				titanTransOrder.setGoodsdetail(titanOrderRequest.getGoodsDetail());
+				titanTransOrder.setGoodsname(titanOrderRequest.getGoodsName());
+				if(StringUtil.isValidString(titanOrderRequest.getEscrowedDate())){
+					titanTransOrder.setEscrowedDate(DateUtil.sdf.parse(titanOrderRequest.getEscrowedDate()));
+					titanTransOrder.setIsEscrowedPayment("0");
+				}
+				titanTransOrder.setPayerType(titanOrderRequest.getPayerType());
+				titanTransOrderDao.update(titanTransOrder);
+			}catch(Exception e){
+				log.error("更新订单失败",e);
 			}
-
-			if (StringUtil.isValidString(oldBussInfo)) {
-				upBussMap = JsonConversionTool.toObject(oldBussInfo,
-						Map.class);
-				upBussMap.putAll(newBussMap);
-			}
-			if (upBussMap != null) {
-				titanTransOrder.setBusinessinfo(JsonConversionTool
-						.toJson(upBussMap));
-			}
-			titanTransOrder.setNotifyUrl(notifyUrl);
-			titanTransOrderDao.update(titanTransOrder);
+		
 		}
 	}
 
@@ -2133,9 +2150,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						+ transOrderDTO.getUserorderid());
 
 				updateTransOrderBussInfo(transOrderDTO.getTransid(),
-						JsonConversionTool.toJson(titanOrderRequest
-								.getBusinessInfo()),
-						transOrderDTO.getBusinessinfo(),titanOrderRequest.getNotify());
+						titanOrderRequest,
+						transOrderDTO.getBusinessinfo());
 
 				orderCreateResponse.setOrderNo(transOrderDTO.getUserorderid());
 				orderCreateResponse.putSuccess();
@@ -2156,9 +2172,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					if (null == titanOrderPayreq ||ReqstatusEnum.RECHARFE_SUCCESS.getStatus()==titanOrderPayreq.getReqstatus().intValue()) {// 可能是余额转账
 						
 						updateTransOrderBussInfo(transOrderDTO.getTransid(),
-								JsonConversionTool.toJson(titanOrderRequest
-										.getBusinessInfo()),
-								transOrderDTO.getBusinessinfo(),titanOrderRequest.getNotify());
+								titanOrderRequest,
+								transOrderDTO.getBusinessinfo());
 						
 						orderCreateResponse.setOrderNo(transOrderDTO
 								.getUserorderid());
@@ -2176,9 +2191,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 								+ titanOrderPayreq.getOrderNo());
 						
 						updateTransOrderBussInfo(transOrderDTO.getTransid(),
-								JsonConversionTool.toJson(titanOrderRequest
-										.getBusinessInfo()),
-								transOrderDTO.getBusinessinfo(),titanOrderRequest.getNotify());
+								titanOrderRequest,
+								transOrderDTO.getBusinessinfo());
 						
 						orderCreateResponse.setOrderNo(transOrderDTO
 								.getUserorderid());

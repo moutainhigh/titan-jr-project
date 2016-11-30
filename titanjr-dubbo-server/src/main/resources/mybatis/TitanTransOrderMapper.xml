@@ -304,11 +304,23 @@
             <if test="remark != null">
                 remark = #{remark},
             </if>
+            <if test="creator !=null">
+                creator=#{creator},
+            </if>
+            <if test="goodsname !=null">
+               goodsname=#{goodsname},
+            </if>
             <if test="notifyUrl !=null">
                notifyUrl = #{notifyUrl},
             </if>
             <if test="businessinfo !=null">
-            businessinfo=#{businessinfo},
+           	   businessinfo=#{businessinfo},
+            </if>
+            <if test="escrowedDate !=null">
+               escrowedDate=#{escrowedDate},
+            </if>
+            <if test="isEscrowedPayment !=null">
+               isEscrowedPayment=#{isEscrowedPayment},
             </if>
             <if test=" payerType !=null">
             payertype =#{payerType}

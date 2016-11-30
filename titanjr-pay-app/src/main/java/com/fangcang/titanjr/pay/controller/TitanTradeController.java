@@ -29,6 +29,7 @@ import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
@@ -299,6 +300,16 @@ public class TitanTradeController extends BaseController {
 
 		if (!pe.isUserId() && !StringUtil.isValidString(dto.getAmount())) {
 			log.error("Amount is null");
+			return false;
+		}
+		
+		if(new BigDecimal(dto.getAmount()).compareTo(BigDecimal.ZERO)==-1){
+			log.error("Amount not regular ");
+			return false;
+		}
+		
+		if(StringUtil.isValidString(dto.getCurrencyType()) && !dto.getCurrencyType().equals(CommonConstant.CURRENT_TYPE)){
+			log.error("Currency type must RMB ");
 			return false;
 		}
 

@@ -138,5 +138,7 @@ public class CommonConstant {
     public static final String WXPAY = "wx";
     
     public static final String ALIPAY = "alipay";
+    
+    public static final String CURRENT_TYPE="1";
 	
 }
