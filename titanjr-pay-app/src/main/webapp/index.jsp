@@ -150,7 +150,7 @@
             <tr>
                 <td class="tdr">收款方机构编码</td>
                 <td>
-                    <input type="text" value="TJM10000039" id="ruserId" name="ruserId"/>
+                    <input type="text" value="TJM10000024" id="ruserId" name="ruserId"/>
                 </td>
             </tr>
             <tr>
