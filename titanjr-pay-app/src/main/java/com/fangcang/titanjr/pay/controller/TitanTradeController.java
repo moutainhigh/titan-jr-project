@@ -303,14 +303,24 @@ public class TitanTradeController extends BaseController {
 			log.error("Amount is null");
 			return false;
 		}
+		if(StringUtil.isValidString(dto.getAmount())){
+			String neg = "(^[1-9]{1}\\d{0,20}(\\.\\d{1,2})?$)";
+			String neg2 = "(^[0]{1}(\\.\\d{1,2})?$)";
+			if(!(Pattern.matches(neg, dto.getAmount())||Pattern.matches(neg2, dto.getAmount()))){
+        	  log.error("传入金额格式错误");
+  			  return false;
+          }
+		}
 		
-		if(new BigDecimal(dto.getAmount()).compareTo(BigDecimal.ZERO)==-1){
+		if(new BigDecimal(dto.getAmount()).compareTo(BigDecimal.ZERO)<1){
 			log.error("Amount not regular ");
 			return false;
 		}
 		
+		
+		
 		if(StringUtil.isValidString(dto.getCurrencyType()) && !dto.getCurrencyType().equals(CommonConstant.CURRENT_TYPE)){
-			log.error("Currency type must RMB ");
+			log.error("Currency type must be RMB ");
 			return false;
 		}
 
