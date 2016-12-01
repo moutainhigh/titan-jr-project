@@ -316,9 +316,14 @@
             <if test="businessinfo !=null">
            	   businessinfo=#{businessinfo},
             </if>
-               escrowedDate=#{escrowedDate},
             <if test="isEscrowedPayment !=null">
-               isEscrowedPayment=#{isEscrowedPayment},
+                <if  test="isEscrowedPayment =='1'">
+                 escrowedDate='',
+                </if>
+                <if test="isEscrowedPayment=='0'">
+                 escrowedDate=#{escrowedDate},
+                </if>
+                  isEscrowedPayment=#{isEscrowedPayment},
             </if>
             <if test=" payerType !=null">
             payertype =#{payerType}

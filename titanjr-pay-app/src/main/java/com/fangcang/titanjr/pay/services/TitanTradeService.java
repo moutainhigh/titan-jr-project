@@ -389,6 +389,7 @@ public class TitanTradeService {
 					 commonPayMethodDTO.getPaytype().intValue()==CommonConstant.BUS_BANK){
 		    		cmbcBank = commonPayMethodDTO;
 		    		iterator.remove();
+		    		break;
 		     }
 		 }
 		if(cmbcBank !=null){
