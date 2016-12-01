@@ -27,8 +27,6 @@ import com.fangcang.util.StringUtil;
 /**
  * ftp文件上传下载帮助类
  * 引用其他开发者使用的类
- * @author: liuquan
- * @date: 2015年1月4日 上午11:50:26
  */
 public class FtpUtil {
 	/**
@@ -51,7 +49,10 @@ public class FtpUtil {
 	 * 贷款申请上传的文件资料
 	 */
 	public static final String UPLOAD_PATH_LOAN_APPLY="/loan_apply";
+	//TODO 这个后面要删除掉最后的斜杠
+	public static String baseLocation = "/data/image/upload/images/titanjr/";
 	
+	public static String baseUrlPrefix = "http://image.fangcang.com/upload/images/titanjr";
 	
 	private FTPClient ftpClient;
 	private  String serverIp;
@@ -59,10 +60,7 @@ public class FtpUtil {
 	private  String serverUser;
 	private  String serverPassword;
 	private boolean isLogin;
-
-	public static String baseLocation = "/data/image/upload/images/titanjr/";
 	
-	public static String baseUrlPrefix = "http://image.fangcang.com/upload/images/titanjr";
 
 	private static final Log logger = LogFactory.getLog(FtpUtil.class);
 
@@ -169,6 +167,11 @@ public class FtpUtil {
 				}
 			}
 		}
+	}
+
+	public static void makeLocalDirectory(String path){
+		File file = new File(path);
+		file.mkdirs();
 	}
 
 	/**
@@ -343,9 +346,9 @@ public class FtpUtil {
 	/**
 	 * 下载文件
 	 *
-	 * @param remoteFileName     待下载的ftp文件名称
-	 * @param localDires         本地磁盘路径
-	 * @param remoteDownLoadPath ftp文件所在的磁盘路径
+	 * @param remoteFileName     待下载的ftp文件名称,如：aaa.jpg
+	 * @param localDires         本地磁盘路径,如:/data/10001
+	 * @param remoteDownLoadPath ftp文件所在的磁盘路径,/data/person
 	 */
 
 	public boolean downloadFile(String remoteFileName, String localDires,
@@ -356,12 +359,11 @@ public class FtpUtil {
 			return false;
 		}
 
-		String strFilePath = localDires + remoteFileName;
+		String strFilePath = localDires +"/"+ remoteFileName;
 		BufferedOutputStream outStream = null;
 		boolean success = false;
 		try {
-			this.ftpClient.changeWorkingDirectory(remoteDownLoadPath);//改变工作目录
-
+			boolean dirStatus = this.ftpClient.changeWorkingDirectory(remoteDownLoadPath);//改变工作目录
 			outStream = new BufferedOutputStream(new FileOutputStream(strFilePath));
 
 			logger.info(remoteFileName + "开始下载....");
@@ -392,7 +394,7 @@ public class FtpUtil {
 		}
 		return success;
 	}
-
+	
 	/**
 	 * 上传文件夹
 	 *
@@ -534,6 +536,18 @@ public class FtpUtil {
 	}
 	
 	public static void main(String[] args) throws Exception {
+		String localEnterpriseDocumentInfoPath = "F:/creditimg";//TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"/tmp"+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+File.separator+loanCreditOrder.getOrgCode()+File.separator+"EnterpriseCreditPackage"+File.separator+"EnterpriseDocumentInfo";
+		//担保人证件资料本地路径
+		String localGuarantorDocumentsInfoPath = "F:/creditimg";//TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"/tmp"+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+File.separator+loanCreditOrder.getOrgCode()+File.separator+"EnterpriseCreditPackage"+File.separator+"GuarantorDocumentsInfo";
+		
+		//先删除文件
+		
+		FtpUtil ftpUtil = new FtpUtil("192.168.2.100",21,"fangcang168","fangcang168");
+		ftpUtil.ftpLogin();
+		//boolean s = ftpUtil.ftpClient.changeWorkingDirectory("/data/image/upload/images/titanjr/credit_apply\TJM10000109");
+		ftpUtil.downloadFile("license.jpg", localEnterpriseDocumentInfoPath+"/", FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+"TJM10000109");
+		
+		ftpUtil.ftpLogOut();
 		
 		//uploadFileExt(new File("F:\\aa7c2b8f77beb251c2156b32a56ee78f.jpg"),"/enterprise_account");
 		//String orgUrl = uploadStreamExt("123.png",new FileInputStream(new File("F:\\20160524164934.png")) ,UPLOAD_PATH_ORG_REGISTER);

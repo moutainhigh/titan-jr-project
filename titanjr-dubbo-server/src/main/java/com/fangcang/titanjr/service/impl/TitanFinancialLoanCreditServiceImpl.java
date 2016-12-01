@@ -20,8 +20,10 @@ import com.fangcang.titanjr.common.enums.entity.LoanCreditOrderEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.FileHelp;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.common.util.rsa.RSAUtil;
 import com.fangcang.titanjr.dao.LoanCompanyEnsureDao;
 import com.fangcang.titanjr.dao.LoanCreditCompanyDao;
 import com.fangcang.titanjr.dao.LoanCreditOpinionDao;
@@ -58,8 +60,10 @@ import com.fangcang.titanjr.entity.LoanCreditOrder;
 import com.fangcang.titanjr.entity.LoanPersonEnsure;
 import com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam;
 import com.fangcang.titanjr.rs.manager.RSCreditManager;
+import com.fangcang.titanjr.rs.manager.RSFileManager;
 import com.fangcang.titanjr.rs.request.OprsystemCreditCompanyRequest;
 import com.fangcang.titanjr.rs.request.OrderMixserviceCreditapplicationRequest;
+import com.fangcang.titanjr.rs.request.RSFsFileUploadRequest;
 import com.fangcang.titanjr.service.TitanCodeCenterService;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -106,6 +110,9 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	
 	@Resource
 	private RSCreditManager rsCreditManager;
+	
+	@Resource
+	private RSFileManager rsFileManager;
 	
 	@Resource
 	private TitanSysconfigService titanSysconfigService;
@@ -204,25 +211,67 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				ensureFilesList.add(loanCompanyEnsure.getLegalPersonUrl());
 			}
 			
-			//下载文件，并加密上传到融数
+			 
 			
 			try {
+				
+				//企业证件资料本地路径
+				String orgCreditFileRootDir = TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"/tmp"+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+loanCreditOrder.getOrgCode();
+				String orgCreditDir = "EnterpriseCreditPackage";
+				String localEnterpriseDocumentInfoPath = orgCreditFileRootDir+"/"+orgCreditDir+"/"+"EnterpriseDocumentInfo";
+				
+				String localGuarantorDocumentsInfoPath =  orgCreditFileRootDir+"/"+orgCreditDir+"/"+"GuarantorDocumentsInfo";
+				//先删除旧的临时文件
+				FileHelp.deleteFile(orgCreditFileRootDir);
+				
+				FtpUtil.makeLocalDirectory(localEnterpriseDocumentInfoPath);
+				FtpUtil.makeLocalDirectory(localGuarantorDocumentsInfoPath);
+				
+				
+				//下载文件
 				FTPConfigResponse ftpConfigResponse = titanSysconfigService.getFTPConfig();
 				FtpUtil ftpUtil = new FtpUtil(ftpConfigResponse.getFtpServerIp(),ftpConfigResponse.getFtpServerPort(),ftpConfigResponse.getFtpServerUser(),ftpConfigResponse.getFtpServerPassword());
 				ftpUtil.ftpLogin();
+				//公司证件资料
 				for(String file : companyFilesList){
-					
-					ftpUtil.downloadFile(file, TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath(), FtpUtil.baseLocation+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY);
-					
-					
+					ftpUtil.downloadFile(file, localEnterpriseDocumentInfoPath, FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+loanCreditOrder.getOrgCode());
 				}
+				//担保人证件资料
+				for(String file : ensureFilesList){
+					ftpUtil.downloadFile(file, localGuarantorDocumentsInfoPath, FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+loanCreditOrder.getOrgCode());
+				}
+				
 				ftpUtil.ftpLogOut();
+				
+				//压缩
+				File srcZipFile = FileHelp.zipFile(orgCreditFileRootDir+"/"+orgCreditDir,orgCreditDir+"_src.zip");
+				
+				//加密
+				String encryptFilePath = orgCreditFileRootDir+"/"+orgCreditDir+".zip";
+				FileHelp.encryptRSFile(srcZipFile, encryptFilePath);
+				
+				//上传到融数
+				RSFsFileUploadRequest rsFsFileUploadRequest = new RSFsFileUploadRequest();
+				rsFsFileUploadRequest.setUserid(loanCreditOrder.getOrgCode());
+				rsFsFileUploadRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+				rsFsFileUploadRequest.setProductid(productid);
+				rsFsFileUploadRequest.setType(type);
+				rsFsFileUploadRequest.setInvoiceDate(invoiceDate);
+				
+				rsFileManager.fsFileUpload(rsFsFileUploadRequest)
+				
+				
+				//TODO
+				
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				response.putErrorResult("上传失败");
 				
 			}
 			
+			
+			response.putSuccess();
 			
 			//3-授信申请接口
 			OrderMixserviceCreditapplicationRequest orderMixserviceCreditapplicationRequest = new OrderMixserviceCreditapplicationRequest();
