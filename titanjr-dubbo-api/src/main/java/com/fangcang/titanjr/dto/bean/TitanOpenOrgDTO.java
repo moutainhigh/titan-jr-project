@@ -29,6 +29,9 @@ private Integer id;
 	//前缀
 	private String prefix;
 	
+	//公钥
+	private String publicKey;
+	
 
 	public Integer getId() {
 		return id;
@@ -84,6 +87,14 @@ private Integer id;
 
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
+	}
+
+	public String getPublicKey() {
+		return publicKey;
+	}
+
+	public void setPublicKey(String publicKey) {
+		this.publicKey = publicKey;
 	}
 
 }

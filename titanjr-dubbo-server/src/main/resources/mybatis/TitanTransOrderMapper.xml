@@ -317,12 +317,7 @@
            	   businessinfo=#{businessinfo},
             </if>
             <if test="isEscrowedPayment !=null">
-                <if  test="isEscrowedPayment =='1'">
-                 escrowedDate='',
-                </if>
-                <if test="isEscrowedPayment=='0'">
-                 escrowedDate=#{escrowedDate},
-                </if>
+               	  escrowedDate=#{escrowedDate},
                   isEscrowedPayment=#{isEscrowedPayment},
             </if>
             <if test=" payerType !=null">

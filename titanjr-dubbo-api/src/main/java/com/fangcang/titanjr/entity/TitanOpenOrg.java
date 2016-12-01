@@ -15,6 +15,9 @@ public class TitanOpenOrg  implements java.io.Serializable{
 	//rsa私钥
 	private String privatekey;
 	
+	//公钥
+	private String publicKey;
+	
 	//rsa的 module 进制16
 	private String module;
 	
@@ -82,6 +85,14 @@ public class TitanOpenOrg  implements java.io.Serializable{
 
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
+	}
+
+	public String getPublicKey() {
+		return publicKey;
+	}
+
+	public void setPublicKey(String publicKey) {
+		this.publicKey = publicKey;
 	}
 
 }

@@ -8,7 +8,8 @@
 	    module,
 	    empoent,
 	    merchcode,
-	    prefix
+	    prefix,
+	    publicKey
 	) 
     VALUES 
     (
@@ -17,7 +18,8 @@
     	#{module},
 	    #{empoent},
     	#{merchcode},
-    	#{prefix}
+    	#{prefix},
+    	#{publicKey}
     )
   </insert>
   
@@ -33,7 +35,8 @@
 	    module,
 	    empoent,
 	    merchcode,
-	    prefix
+	    prefix,
+	    publicKey
 	from 
 	t_tfs_openorg
 	<where>

@@ -112,15 +112,13 @@ public class RSAUtil {
     	PublicKey pubKey = kp.getPublic();
         PrivateKey priKey = kp.getPrivate();
         String privateKey = Base64Helper.encode(priKey.getEncoded());
+        String publicKey = Base64Helper.encode(pubKey.getEncoded());
         RSAPublicKey rsaPukey = (RSAPublicKey)pubKey;
-        
-//        String publicKey = Base64Helper.encode(pubKey.getEncoded());
-//        keysMap.put(RSAUtil.PUBLIC_KEY, publicKey);
-//    	keysMap.put(RSAUtil.PRIVATE_KEY, privateKey);
     	
         keysMap.put(RSAUtil.PUBLIC_KEY_MODULE, rsaPukey.getModulus().toString(16));
         keysMap.put(RSAUtil.PUBLIC_KEY_EMPOENT, rsaPukey.getPublicExponent().toString(16));
     	keysMap.put(RSAUtil.PRIVATE_KEY, privateKey);
+    	keysMap.put(RSAUtil.PUBLIC_KEY, publicKey);
     	return keysMap;
     }
     

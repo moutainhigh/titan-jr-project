@@ -381,17 +381,16 @@ public class TitanTradeService {
 			return ;
 		}
 		CommonPayMethodDTO cmbcBank =null;
-		Iterator<CommonPayMethodDTO> iterator = commonPayMethodDTOList.iterator();
-		while(iterator.hasNext()){
-			 CommonPayMethodDTO commonPayMethodDTO = iterator.next();
-			 if(CommonConstant.CMBC.equals(commonPayMethodDTO.getBankname()) && 
+		for(CommonPayMethodDTO commonPayMethodDTO :commonPayMethodDTOList){
+			if(CommonConstant.CMBC.equals(commonPayMethodDTO.getBankname()) && 
 					 commonPayMethodDTO.getPaytype()!=null &&
 					 commonPayMethodDTO.getPaytype().intValue()==CommonConstant.BUS_BANK){
 		    		cmbcBank = commonPayMethodDTO;
-		    		iterator.remove();
+		    		commonPayMethodDTOList.remove(commonPayMethodDTO);
 		    		break;
 		     }
-		 }
+		}
+		
 		if(cmbcBank !=null){
 			commonPayMethodDTOList.add(cmbcBank);
 		}
@@ -412,17 +411,17 @@ public class TitanTradeService {
 				if(cashierItemBankDTOList ==null || cashierItemBankDTOList.size()==0){
 					continue;
 				} 
-				Iterator<CashierItemBankDTO> iterator = cashierItemBankDTOList.iterator();
-				 while(iterator.hasNext()){
-					 CashierItemBankDTO cashierItemBankDTO = iterator.next();
+				
+				for( CashierItemBankDTO cashierItemBankDTO :cashierItemBankDTOList){
 					 if(CommonConstant.CMBC.equals(cashierItemBankDTO.getBankName())){
-				    		cmbcBank = cashierItemBankDTO;
-				    		iterator.remove();
-				    	}
-				 }
-				 if(cmbcBank !=null){
+						 cmbcBank = cashierItemBankDTO;
+						 cashierItemBankDTOList.remove(cashierItemBankDTO);
+				    	 break;
+					}
+				}
+				if(cmbcBank !=null){
 					 cashierItemBankDTOList.add(cmbcBank);
-				 }
+				}
 			}
 		}
 	}

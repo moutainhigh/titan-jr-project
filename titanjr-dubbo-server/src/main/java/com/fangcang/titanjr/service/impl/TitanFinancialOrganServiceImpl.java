@@ -1432,6 +1432,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			openOrg.setPrivatekey(rsaMap.get(RSAUtil.PRIVATE_KEY));
 			openOrg.setModule(rsaMap.get(RSAUtil.PUBLIC_KEY_MODULE));
 			openOrg.setEmpoent(rsaMap.get(RSAUtil.PUBLIC_KEY_EMPOENT));
+			openOrg.setPublicKey(rsaMap.get(RSAUtil.PUBLIC_KEY));
 			openOrg.setUserid(userId);
 		    titanOpenOrgDao.insert(openOrg);
 			
@@ -1465,7 +1466,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 //		cashierDeskInitRequest.setConstId(CommonConstant.RS_FANGCANG_CONST_ID);
 //		titanCashierDeskService.initCashierDesk(cashierDeskInitRequest);
 		
-		initKeyInfo("TJM10000109");
+		initKeyInfo("TJM10000110");
 
 	}
 	
