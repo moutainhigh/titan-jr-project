@@ -71,8 +71,8 @@
     <script>
         $(document).ready(function () {
             var configObj = {};
-            configObj.module = "96508c28878b7bf90fc498c49809ece17089cfba58140239259960b7bd52b717d6e37aadfae683a98b8b4dab6a9c694a41a3bacb054dcbdd82b9df3178aeece429c5aa3f355cc5243fee88ae32a8a31ae9926a555e0d510a3a688c43111f7a797443344dc0d5d02a3df66cfcbe51fa687f3ab5d1cc9f6e9fce0ae4aafe31d2d5";
-            configObj.address = "http://www.fangcang.org";
+            configObj.module = "c5243fee88ae32a8a31ae9926a555e0d510a3a688c43111f7a797443344dc0d5d02a3df66cfcbe51fa687f3ab5d1cc9f6e9fce0ae4aafe31d2d5";
+            configObj.address = "http://yfb.fangcang.com";
             configObj.empoent="10001";
             var result = titanPayObj.initTitanPay(configObj);
         });
