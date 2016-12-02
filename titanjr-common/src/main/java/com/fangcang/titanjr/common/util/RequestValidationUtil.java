@@ -54,11 +54,12 @@ public class RequestValidationUtil {
 			NotNull notNull = fieldItem.getAnnotation(NotNull.class);
 			if(notNull!=null){//有注解，开始检查
 				try {
+					fieldItem.setAccessible(true);
 					RequestValidationUtil.checkNotEmpty(fieldItem.get(obj), fieldItem.getName());
 				} catch (IllegalArgumentException e) {
-					throw new RSValidateException(obj.getClass()+"->"+fieldItem.getName()+",error get ",e);
+					throw new RSValidateException(obj.getClass()+"，param:["+fieldItem.getName()+"] is null, must have value ",e);
 				} catch (IllegalAccessException e) {
-					throw new RSValidateException(obj.getClass()+"->"+fieldItem.getName()+",error get ",e);
+					throw new RSValidateException(obj.getClass()+"，param:["+fieldItem.getName()+"] is error ",e);
 				}
 			}
 		}

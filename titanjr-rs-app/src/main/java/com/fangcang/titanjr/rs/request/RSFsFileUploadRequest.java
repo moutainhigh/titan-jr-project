@@ -1,7 +1,8 @@
 package com.fangcang.titanjr.rs.request;
 
 
-import java.sql.Date;
+
+import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
@@ -34,7 +35,7 @@ public class RSFsFileUploadRequest extends BaseRequest {
 	@NotNull
 	private Date invoiceDate;
 	/**
-	 * 批次
+	 * 批次,通常不加批次的话 每个账期只能上传一个文件
 	 */
 	private String bacth;
 	

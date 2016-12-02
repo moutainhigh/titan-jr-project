@@ -144,15 +144,18 @@ public class RSFileManagerImpl implements RSFileManager {
 		RSFsFileUploadResponse  response = new RSFsFileUploadResponse();
 		FsFileUploadRequest fsFileUploadRequest = new FsFileUploadRequest();
 		try {
-			fsFileUploadRequest.check();
+			rsFsFileUploadRequest.check();
 			fsFileUploadRequest.setPath(rsFsFileUploadRequest.getPath());
 			fsFileUploadRequest.setType(rsFsFileUploadRequest.getType());
 			fsFileUploadRequest.setInvoice_date(rsFsFileUploadRequest.getInvoiceDate());
 			fsFileUploadRequest.setBatch(rsFsFileUploadRequest.getBacth());
 			
+			log.info("调用fsFileUpload方法(上传私密文件) 开始上传文件--请求参数RSFsFileUploadRequest："+Tools.gsonToString(rsFsFileUploadRequest));
 			FsFileUploadResponse  rsp =  RSInvokeConstant.ropClient.execute(fsFileUploadRequest, RSInvokeConstant.sessionKey);
+			
 			if (rsp != null) {
-				log.info("调用fsFileUpload方法(上传私密文件)--请求参数RSFsFileUploadRequest："+Tools.gsonToString(rsFsFileUploadRequest)+",返回报文: \n :"+rsp.getBody());
+				log.info("调用fsFileUpload方法(上传私密文件) 上传文件完成--请求参数RSFsFileUploadRequest："+Tools.gsonToString(rsFsFileUploadRequest)+",返回报文: \n "+rsp.getBody());
+				
 				if (rsp.isSuccess() != true) {
 					String errorMsg;
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -169,7 +172,7 @@ public class RSFileManagerImpl implements RSFileManager {
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
 			} else {
-				log.info("调用fsFileUpload方法(上传私密文件)--请求参数RSFsFileUploadRequest："+Tools.gsonToString(rsFsFileUploadRequest)+",返回FsFileUploadResponse is null");
+				log.info("调用fsFileUpload方法(上传私密文件) 上传文件完成--请求参数RSFsFileUploadRequest："+Tools.gsonToString(rsFsFileUploadRequest)+",返回FsFileUploadResponse is null");
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
