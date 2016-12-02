@@ -47,7 +47,8 @@ public class LoanApplyOrder {
 	private int repaymentType;// 1 按日计利，随借随还
 
 	private Date actualRepaymentDate;// 用户还款到期日
-
+	
+	private String orderid;//融数返回单号
 
 	private Date lastRepaymentDate;// 最后一次还款时间
 
@@ -250,4 +251,13 @@ public class LoanApplyOrder {
 	public void setShouldInterest(long shouldInterest) {
 		this.shouldInterest = shouldInterest;
 	}
+
+	public String getOrderid() {
+		return orderid;
+	}
+
+	public void setOrderid(String orderid) {
+		this.orderid = orderid;
+	}
+	
 }

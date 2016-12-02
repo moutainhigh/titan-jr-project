@@ -111,6 +111,14 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService{
 				log.error(loanResponse.getReturnCode()+":"+loanResponse.getReturnMsg());
 				throw new Exception(loanResponse.getReturnCode()+":"+loanResponse.getReturnMsg());
 			}
+			
+			//更新融数返回的贷款单号
+			LoanApplyOrder loanOrder = new LoanApplyOrder();
+			loanOrder.setOrderid(loanResponse.getOrderid());
+			loanOrder.setOrderNo(request.getUserorderid());
+			this.updateLoanOrderBean(loanOrder);
+			
+			
 			response.putSuccess();
 			return response;
 			
@@ -142,6 +150,16 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService{
 			throw e;
 		}
 	}
+	
+	private void updateLoanOrderBean(LoanApplyOrder loanApplyOrder){
+		try{
+			loanOrderDao.updateLoanApplyOrder(loanApplyOrder);
+		}catch(Exception e){
+			log.error("保存融数返回贷款单号失败："+loanApplyOrder.getOrderid()+":"+e);
+		}
+		
+	}
+	
 	
 	private boolean saveLoanOrderBean(LoanSpecBean loanSpecBean,Integer type,String orgCode) throws Exception{
 		LoanApplyOrder loanApplyOrder = new LoanApplyOrder();
@@ -196,12 +214,12 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService{
 				loanRoomPackSpecBean = (LoanRoomPackSpecBean)loanSpecBean;
 				request.setAmount(loanRoomPackSpecBean.getAmount());
 				request.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
-				request.setProductid(LoanApplyOrderEnum.ProductId.LOAN_PRODUCTID.productId);
+				request.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
 				request.setRatetemplate(CommonConstant.RATE_TEMPLETE);
-				request.setReqesttime(DateUtil.sdf4.format(new Date()));
+				request.setReqesttime("");
 				request.setRequestdate(DateUtil.sdf4.format(new Date()));
 				request.setUserid(orgCode);
-				request.setUserorderid(OrderGenerateService.genSyncUserOrderId());
+				request.setUserorderid(loanRoomPackSpecBean.getLoanOrderNo());
 				//暂时还未确定TODO
 				request.setUserrelateid("TJM10000110");
 				request.setUsername("罗庆龙");

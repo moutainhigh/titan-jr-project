@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.Rop.api.ApiException;
+import com.Rop.api.DefaultRopClient;
 import com.Rop.api.domain.UserRepayment;
 import com.Rop.api.request.WheatfieldInterestRepaymentQueryborrowinfoRequest;
 import com.Rop.api.request.WheatfieldInterestRepaymentQueryuserinitiativerepaymentRequest;
@@ -64,6 +65,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 	
 	private static final Log log = LogFactory.getLog(RSCreditManagerImpl.class);
 	private static final boolean needCheckRequest = true;// 是否校验请求
+	
+	
 	
 	@Override
 	public OprsystemCreditCompanyResponse oprsystemCreditCompany(
@@ -252,9 +255,11 @@ public class RSCreditManagerImpl implements RSCreditManager {
 		return response;
 	}
 
+
 	@Override
 	public NewLoanApplyResponse newLoanApply(
 			NewLoanApplyRequest request) {
+		
 		NewLoanApplyResponse response = new NewLoanApplyResponse();
 		WheatfieldOrderServiceNewloanapplyRequest req = new WheatfieldOrderServiceNewloanapplyRequest();
 		try {
@@ -262,7 +267,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 				request.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, request);
-			WheatfieldOrderServiceNewloanapplyResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
+			DefaultRopClient ropClientLoans = this.getDefaultRopClient();
+			WheatfieldOrderServiceNewloanapplyResponse rsp = ropClientLoans.execute(req,RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用newLoanApply方法(个人贷款申请)--请求参数NewLoanApplyRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
 				if (rsp.isSuccess() != true) {
@@ -299,6 +305,15 @@ public class RSCreditManagerImpl implements RSCreditManager {
 		return response;
 	}
 		
+	
+	private DefaultRopClient getDefaultRopClient(){
+		DefaultRopClient ropClientLoans = null;
+		if(ropClientLoans == null){
+			ropClientLoans = new DefaultRopClient("https://api.open.ruixuesoft.com:30005/ropapi", "C5CE632E-FDA6-436A-B4DF-1DE93A2C72C3",
+					"D7787ED2-0465-42C7-9CF8-25D5CC6ACA34", "xml");
+		}
+		return ropClientLoans;
+	}
 
 	@Override
 	public QueryBorrowinfoResponse queryBorrowinfo(
