@@ -298,31 +298,31 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				orderMixserviceCreditapplicationRequest.setUserid(loanCreditOrder.getOrgCode());
 				orderMixserviceCreditapplicationRequest.setUserorderid(req.getOrderNo());
 				orderMixserviceCreditapplicationRequest.setAmount(loanCreditOrder.getAmount()!=null?loanCreditOrder.getAmount().toString():"0");
-				orderMixserviceCreditapplicationRequest.setReqesttime(reqesttime);
+				//orderMixserviceCreditapplicationRequest.setReqesttime(reqesttime);
 				orderMixserviceCreditapplicationRequest.setOrderplatformname(loanCreditCompany.getName());
 				orderMixserviceCreditapplicationRequest.setRequestdate(DateUtil.dateToString(new Date()));
-				orderMixserviceCreditapplicationRequest.setRatetemplrate(ratetemplrate);
-				orderMixserviceCreditapplicationRequest.setJsondata(jsondata);
+				//orderMixserviceCreditapplicationRequest.setRatetemplrate(ratetemplrate);
+				//orderMixserviceCreditapplicationRequest.setJsondata(jsondata);
 				orderMixserviceCreditapplicationRequest.setUrlkey(rsFsFileUploadResponse.getUrlKey());
 				orderMixserviceCreditapplicationRequest.setCreditype("2");
 				//jsondata
 				
 				
-				LoanCreditCompany loanCreditCompany = new LoanCreditCompany();
-				loanCreditCompany.setCreditOrderNo(qCrditOrderInfo.getOrderNo());
-				List<LoanCreditCompany> creditCompanies = loanCreditCompanyDao
-						.queryLoanCreditCompany(loanCreditCompany);
-
-				if (CollectionUtils.isNotEmpty(creditCompanies)) {
-					LoanCreditCompany creditCompany = creditCompanies.get(0);
-
-					LoanCreditCompanyBean companyBean = LoanTypeConvertUtil
-							.getLoanCreditCompanyBean(creditCompany);
-					LoanCompanyAppendInfo companyAppendInfo = LoanTypeConvertUtil
-							.getCompanyAppendInfo(creditCompany.getAppendInfo());
-
-
-				}
+//				LoanCreditCompany loanCreditCompany = new LoanCreditCompany();
+//				loanCreditCompany.setCreditOrderNo(qCrditOrderInfo.getOrderNo());
+//				List<LoanCreditCompany> creditCompanies = loanCreditCompanyDao
+//						.queryLoanCreditCompany(loanCreditCompany);
+//
+//				if (CollectionUtils.isNotEmpty(creditCompanies)) {
+//					LoanCreditCompany creditCompany = creditCompanies.get(0);
+//
+//					LoanCreditCompanyBean companyBean = LoanTypeConvertUtil
+//							.getLoanCreditCompanyBean(creditCompany);
+//					LoanCompanyAppendInfo companyAppendInfo = LoanTypeConvertUtil
+//							.getCompanyAppendInfo(creditCompany.getAppendInfo());
+//
+//
+//				}
 				
 				
 				
@@ -371,7 +371,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
         creditJsonData.setPaymentMethod("网上转账");
         creditJsonData.setRemark("经营信息");
 		
-		
+		return "";
 	}
 	
 	

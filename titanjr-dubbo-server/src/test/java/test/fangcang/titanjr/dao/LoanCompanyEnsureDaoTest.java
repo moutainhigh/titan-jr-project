@@ -21,7 +21,7 @@ public class LoanCompanyEnsureDaoTest extends SpringTest {
     @Test
     public void testSaveCompanyEnsure() {
         LoanCompanyEnsure loanCompanyEnsure = new LoanCompanyEnsure();
-        loanCompanyEnsure.setUserId("TJM000088");//哪个机构的担保
+//        loanCompanyEnsure.setUserId("TJM000088");//哪个机构的担保
         loanCompanyEnsure.setCompanyName("测试担保公司名称");
         loanCompanyEnsure.setFoundDate(DateUtil.getDate(new Date(), -18));
         loanCompanyEnsure.setEnterpriseScale(3);
@@ -53,7 +53,7 @@ public class LoanCompanyEnsureDaoTest extends SpringTest {
     @Test
     public void testUpdateLoanCompanyEnsure(){
         LoanCompanyEnsure loanCompanyEnsure = new LoanCompanyEnsure();
-        loanCompanyEnsure.setUserId("TJM000088");//哪个机构的担保
+//        loanCompanyEnsure.setUserId("TJM000088");//哪个机构的担保
         loanCompanyEnsure.setCompanyName("测试担保公司名称003");
         loanCompanyEnsure.setFoundDate(DateUtil.getDate(new Date(), -17));
         loanCompanyEnsure.setEnterpriseScale(4);

@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
+import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.LoanApplyInfo;
 import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
@@ -45,7 +46,7 @@ public class FinancialLoanApplyController extends BaseController{
 	@Resource
 	private TitanSysconfigService sysconfigService;
 	
-//	@Resource
+	@Resource
 	private TitanFinancialLoanService titanFinancialLoanService;
 	
 	
@@ -70,14 +71,14 @@ public class FinancialLoanApplyController extends BaseController{
 		try{
 			//申请贷款
 			LoanRoomPackSpecBean loanSpecBean = new LoanRoomPackSpecBean();
-			loanSpecBean.setAmount(info.getAmount());
+			loanSpecBean.setAmount(NumberUtil.covertToCents(info.getAmount()));
 			loanSpecBean.setLoanOrderNo(info.getLoanOrderNo());
 			loanSpecBean.setAccount(info.getAccount());
 			loanSpecBean.setAccountName(info.getAccountName());
 			loanSpecBean.setBank(info.getBank());
-			loanSpecBean.setBeginDate(DateUtil.sdf4.parse(info.getBeginDate()));
+			loanSpecBean.setBeginDate(DateUtil.sdf.parse(info.getBeginDate()));
 			loanSpecBean.setContractUrl(info.getContactNames());
-			loanSpecBean.setEndDate(DateUtil.sdf4.parse(info.getEndDate()));
+			loanSpecBean.setEndDate(DateUtil.sdf.parse(info.getEndDate()));
 			loanSpecBean.setHotleName(info.getHotelName());
 			if(StringUtil.isValidString(info.getRoomNights())){
 				loanSpecBean.setRoomNights(Integer.parseInt(info.getRoomNights()));

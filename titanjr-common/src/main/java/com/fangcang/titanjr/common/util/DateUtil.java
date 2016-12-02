@@ -1,8 +1,13 @@
 package com.fangcang.titanjr.common.util;
 
+import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.CharArrayReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -822,39 +827,25 @@ public class DateUtil {
 		
 		try {
 			
-			String payOrdeNo = "AAAddd";
-			System.out.println(payOrdeNo.substring(1));
+			String url = "www.fangcang.com";
 			
-//			BufferedWriter w = new BufferedWriter(new FileWriter("C:/Users/Administrator/Desktop/text.txt"));
-//			char[] buf = "asdfas asd的说法是 阿斯蒂芬  阿斯顿发  ".toCharArray();
-//            for(int i=0;i<buf.length;i++){
-//            	System.out.println(buf[i]);
-//            	w.write(buf[i]);
-//            }			
-//            
-//            byte[] buf = "asdfas asd的说法是 阿斯蒂芬  阿斯顿发  ".getBytes();
-//            File f = new File("C:/Users/Administrator/Desktop/text.txt");
-//            OutputStream out = new FileOutputStream(f);
-//            for(int i=0;i<buf.length;i++){
-//            	System.out.println(buf[i]);
-//            	 out.write(buf[i]);
-//            }
-           
-//            byte[] b = "康".getBytes();
-//            for(int i=0;i<b.length;i++){
-//            	System.out.println(b[i]);
-//            }
-          
-            
-			for(int i=0;i<10;i++){
-				if(i%2==0){
-					System.out.println(i);
-					continue;
-				}
-				
-			}
 			
-            
+			
+//			DataInputStream dataIn  = new DataInputStream(in);
+//			int length = 0;
+//			while((length = dataIn.read())!=-1){
+//				System.out.println((char)length);
+//				
+//				System.out.println(dataIn.readDouble());
+//			}
+			
+			
+			
+			
+			
+			
+			
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
