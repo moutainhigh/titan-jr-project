@@ -30,11 +30,16 @@
         <result property="creditUrl" column="crediturl"/>
         <result property="officeUrl" column="officeurl"/>
         <result property="waterUrl" column="waterurl"/>
-        
         <result property="taxRegUrl" column="taxregurl"/>
         <result property="orgCodeUrl" column="orgcodeurl"/>
-        
         <result property="isPush" column="ispush"/>
+        
+        <result property="certificateStartDate" column="certificatestartdate"/>
+        <result property="certificateExpireDate" column="certificateexpiredate"/>
+        <result property="companyType" column="companytype"/>
+        <result property="registFinance" column="registfinance"/>
+        
+        
     </resultMap>
 
 
@@ -70,7 +75,11 @@
         `waterurl` ,
         `taxregurl` ,
         `orgcodeurl` ,
-        `ispush`
+        `ispush`,
+        certificateStartDate,
+        certificateExpireDate,
+        companyType,
+        registFinance
         from
         t_loan_creditcompany
         <where>
@@ -109,9 +118,13 @@
             <if test="creditUrl != null">crediturl= #{creditUrl},</if>
             <if test="officeUrl != null">officeurl= #{officeUrl},</if>
             <if test="waterUrl != null">waterurl= #{waterUrl},</if>
-             <if test="taxRegUrl != null">taxregurl= #{taxRegUrl},</if>
-              <if test="orgCodeUrl != null">orgcodeurl= #{orgCodeUrl},</if>
-            <if test="isPush != null">ispush= #{isPush}</if>
+            <if test="taxRegUrl != null">taxregurl= #{taxRegUrl},</if>
+            <if test="orgCodeUrl != null">orgcodeurl= #{orgCodeUrl},</if>
+            <if test="isPush != null">ispush= #{isPush},</if>
+            <if test="certificateStartDate != null">certificatestartdate= #{certificateStartDate},</if>
+            <if test="certificateExpireDate != null">certificateexpiredate= #{certificateExpireDate},</if>
+            <if test="companyType != null">companytype= #{companyType},</if>
+            <if test="registFinance != null">registfinance= #{registFinance}</if>
         </set>
         <where>
             creditorderno = #{creditOrderNo} <!--userId一定不为空-->
@@ -149,7 +162,11 @@
       	`waterurl`,
       	`taxregurl` ,
         `orgcodeurl` ,
-      	`ispush`
+      	`ispush`,
+      	certificatestartdate,
+      	certificateexpiredate,
+      	companytype,
+      	registfinance
       )
       VALUES
       	(
@@ -181,7 +198,11 @@
       		#{waterUrl},
       		#{taxRegUrl},
       		#{orgCodeUrl},
-      		#{isPush}
+      		#{isPush},
+      		#{certificateStartDate},
+      		#{certificateExpireDate},
+      		#{companyType},
+      		#{registFinance}
       	)
     </insert>
 

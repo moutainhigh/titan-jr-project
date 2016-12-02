@@ -117,8 +117,45 @@ public class LoanCreditCompany {
      * 组织编码
      */
     private String orgCodeUrl;
+    
+    private Date certificateStartDate;
+	private Date certificateExpireDate;
+	private Integer companyType;
+	private String registFinance;
 	
-    public String getTaxRegUrl() {
+    public Date getCertificateStartDate() {
+		return certificateStartDate;
+	}
+
+	public void setCertificateStartDate(Date certificateStartDate) {
+		this.certificateStartDate = certificateStartDate;
+	}
+
+	public Date getCertificateExpireDate() {
+		return certificateExpireDate;
+	}
+
+	public void setCertificateExpireDate(Date certificateExpireDate) {
+		this.certificateExpireDate = certificateExpireDate;
+	}
+
+	public Integer getCompanyType() {
+		return companyType;
+	}
+
+	public void setCompanyType(Integer companyType) {
+		this.companyType = companyType;
+	}
+
+	public String getRegistFinance() {
+		return registFinance;
+	}
+
+	public void setRegistFinance(String registFinance) {
+		this.registFinance = registFinance;
+	}
+
+	public String getTaxRegUrl() {
 		return taxRegUrl;
 	}
 

@@ -76,7 +76,7 @@
                         <div class="loanInformation_upload_list_img">
                             <div class="TFSaddImg"></div>
                             <input type="file"  name="credit_file" id="orgCodeUrl" errorMsg="请上传组织机构代码证"/>
-                            <div class="TFSuploading TFSupload_ZIP hidden">
+                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
                                      <span></span>
                                  </p>    
@@ -119,7 +119,7 @@
                         <div class="loanInformation_upload_list_img">
                             <div class="TFSaddImg"></div>
                               <input type="file"  name="credit_file" id="accountUrl"  errorMsg="请上传开户许可证"/>
-                            <div class="TFSuploading TFSupload_ZIP hidden">
+                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
                                      <span></span>
                                  </p>    
@@ -161,7 +161,7 @@
                         <div class="loanInformation_upload_list_img">
                             <div class="TFSaddImg"></div>
                             <input type="file"  name="credit_file" id="creditUrl" errorMsg="请上传信用报告"/>
-                            <div class="TFSuploading TFSupload_PDF hidden">
+                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
                                      <span></span>
                                  </p>    
@@ -182,7 +182,7 @@
                         <div class="loanInformation_upload_list_img">
                             <div class="TFSaddImg"></div>
                              <input type="file"  name="credit_file" id="waterUrl"  errorMsg="请上传企业银行流水"/>
-                            <div class="TFSuploading TFSupload_PDF hidden">
+                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
                                      <span></span>
                                  </p>    
@@ -203,7 +203,7 @@
                         <div class="loanInformation_upload_list_img">
                             <div class="TFSaddImg"></div>
                               <input type="file"  name="credit_file" id="officeNoUrl" errorMsg="请上传经营场所证明"/>
-                            <div class="TFSuploading TFSupload_PDF hidden">
+                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
                                      <span></span>
                                  </p>    
@@ -224,7 +224,7 @@
                         <div class="loanInformation_upload_list_img">
                             <div class="TFSaddImg"></div>
                               <input type="file"  name="credit_file" id="officeUrl" errorMsg="请上传经营场所照片"/>
-                            <div class="TFSuploading TFSupload_PDF hidden">
+                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
                                      <span></span>
                                  </p>    
@@ -280,7 +280,7 @@
                         <div class="loanInformation_upload_list_img">
                             <div class="TFSaddImg"></div>
                                <input type="file"  name="credit_file" id="registeredUrl" errorMsg="请上传担保人户口本"/>
-                            <div class="TFSuploading TFSupload_ZIP hidden">
+                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
                                      <span></span>
                                  </p>    
@@ -322,7 +322,7 @@
                         <div class="loanInformation_upload_list_img">
                             <div class="TFSaddImg"></div>
                               <input type="file"  name="credit_file" id="spouseIdCardUrl"  errorMsg="请上传配偶身份证"/>
-                            <div class="TFSuploading TFSupload_ZIP hidden">
+                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
                                      <span></span>
                                  </p>    
@@ -366,7 +366,7 @@
                             <div class="TFSaddImg"></div>
                             
                               <input type="file"  name="credit_file" id="ensureBusinesslicenseUrl" errorMsg="请上传企业营业执照"/>
-                            <div class="TFSuploading TFSupload_PDF hidden">
+                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
                                      <span></span>
                                  </p>    
@@ -388,7 +388,7 @@
                         <div class="loanInformation_upload_list_img">
                             <div class="TFSaddImg"></div>
                              <input type="file"  name="credit_file" id="ensureOrgCodeCertificateUrl"  errorMsg="请上传组织机构代码证"/>
-                            <div class="TFSuploading TFSupload_PDF hidden">
+                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
                                      <span></span>
                                  </p>    
@@ -410,7 +410,7 @@
                         <div class="loanInformation_upload_list_img">
                             <div class="TFSaddImg"></div>
                               <input type="file"  name="credit_file" id="ensureTaxRegisterCodeUrl" errorMsg="请上传税务登记证"/>
-                            <div class="TFSuploading TFSupload_PDF hidden">
+                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
                                      <span></span>
                                  </p>    
@@ -432,7 +432,7 @@
                         <div class="loanInformation_upload_list_img">
                             <div class="TFSaddImg"></div>
                                <input type="file"  name="credit_file" id="ensureLicenseUrl"  errorMsg="请上传开户许可证"/>
-                            <div class="TFSuploading TFSupload_PDF hidden">
+                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
                                      <span></span>
                                  </p>    
@@ -454,7 +454,7 @@
                         <div class="loanInformation_upload_list_img">
                             <div class="TFSaddImg"></div>
                              <input type="file"  name="credit_file" id="ensureLegalPersonUrl" errorMsg="请上传法人身份证"/>
-                            <div class="TFSuploading TFSupload_PDF hidden">
+                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
                                      <span></span>
                                  </p>    
