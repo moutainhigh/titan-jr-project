@@ -3,27 +3,79 @@ package com.fangcang.titanjr.entity;
 import java.util.Date;
 
 /**
+ * 授信申请公司资料
  * Created by zhaoshan on 2016/11/4.
  */
 public class LoanCreditCompany {
     private Long id;
     private String creditOrderNo;
+    /**
+     * 企业名称
+     */
     private String name;
+    /**
+     * 成立日期
+     */
     private Date startDate;
+    /**
+     * 注册地址
+     */
     private String regAddress;
+    /**
+     * 办公地址
+     */
     private String officeAddress;
+    /**
+     * 企业规模1 1-50 2 50-100 3 100-500 4 500-1000 5 1000以上
+     */
     private Integer orgSize;
+    /**
+     * 营业执照
+     */
     private String license;
+    /**
+     * 税务登记号
+     */
     private String taxRegNo;
+    /**
+     * 
+     */
     private String orgCode;
+    /**
+     * 平台注册账号
+     */
     private String regAccount;
+    /**
+     * 平台注册时间
+     */
     private Date regDate;
+    /**
+     * 员工人数
+     */
     private Integer empSize;
+    /**
+     * 法人名称
+     */
     private String legalName;
+    /**
+     * 1.身份证; 2.护照; 8.户口本; 21.军官证;
+     */
     private Integer legalceType;
+    /**
+     * 法人证件号
+     */
     private String legalNo;
+    /**
+     * 联系人姓名
+     */
     private String contactName;
+    /**
+     * 联系人电话
+     */
     private String contactPhone;
+    /**
+     * 流水发送邮件地址
+     */
     private String waterEmail;
     /**
      * 企业补充信息

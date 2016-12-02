@@ -22,7 +22,8 @@ import com.fangcang.titanjr.common.util.rsa.RSAUtil;
  */
 public class FileHelp {
 	public static void main(String[] arg) {
-		deleteFile("G:\\apache-tomcat-8.0.21-8030\\webapps\\titanjr-dubbo-server\\WEB-INF\\classes\\tmp\\credit_apply\\TJM10000109");
+		System.out.println(getFileName("data/fdfdf/22131.jpg"));
+		//deleteFile("G:\\apache-tomcat-8.0.21-8030\\webapps\\titanjr-dubbo-server\\WEB-INF\\classes\\tmp\\credit_apply\\TJM10000109");
 	}
 
 	/**
@@ -270,7 +271,13 @@ public class FileHelp {
 				RSAUtil.UPLOAD_FILE_RSA_PUBLIC_KEY);
 		writeToFile(destFileByte, new File(destFileName));
 	}
+	/**
+	 * 只截取文件名
+	 * @param filePathName   /data/person/123.jpg
+	 * @return 123.jpg
+	 */
+	public static String getFileName(String filePathName){
+		return filePathName.substring(filePathName.lastIndexOf("/")+1);
+	}
 	
-	public static void 
-
 }

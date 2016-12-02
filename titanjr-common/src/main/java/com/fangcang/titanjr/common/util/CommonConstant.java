@@ -17,6 +17,9 @@ public class CommonConstant {
 
     public static final String RS_FANGCANG_CONST_ID = "M000016";//机构号
     public static final String RS_FANGCANG_PRODUCT_ID = "P000070";//产品id
+    
+    public static final String RS_FANGCANG_PRODUCT_ID_230 = "P000230";//贷款产品
+    
     public static final String ORG_CODE_PREFIX = "TJM";//机构编码前缀
     public static final String ACCOUNT_CODE_PREFIX = "TJA";//accountCode编码前缀
     public static final String LOAN_CREDIT_NO_PREFIX = "CR";//accountCode编码前缀
