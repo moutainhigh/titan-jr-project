@@ -82,6 +82,58 @@
                         <input type="text" class="loanInformation_inp01" placeholder="" field="regDate" value="" readonly="readonly">
                     </td>
                 </tr>
+                
+                
+                 <tr>
+                    <td class="loanInformation_td01">
+                        <i class="redNotice">*</i>营业执照生效日期：
+                    </td>
+                   <td class="loanInformation_td02" id="certificateStartDate" fields="certificateStartDate" split="-" >
+                    	<div customFun="validateSelects" errormsg="企业成立日期必须选择！"  style="display:inline-block;">
+	                       <select item='year'  id="CertificateStartYear" name="idYear" class="select loanInformation_se01" data="" onblur="$(this).parent().blur();"></select>
+	                       <select item='month'  class="select loanInformation_se01" id="CertificateStartMonth" name="idMonth" data="12" onblur="$(this).parent().blur();"></select>
+	                       <select item='day'  id="CertificateStartDay" name="idDay" class="select loanInformation_se01" data="1" onblur="$(this).parent().blur();"></select>
+                       </div>
+                    </td>
+                    <td class="loanInformation_td01">
+                         <i class="redNotice">*</i>营业执照失效日期：
+                    </td>
+                     <td class="loanInformation_td02" id="certificateExpireDate" fields="certificateExpireDate" split="-" >
+                    	<div customFun="validateSelects" errormsg="企业成立日期必须选择！"  style="display:inline-block;">
+	                       <select item='year'  id="CertificateExpireYear" name="idYear" class="select loanInformation_se01" data="" onblur="$(this).parent().blur();"></select>
+	                       <select item='month'  class="select loanInformation_se01" id="CertificateExpireMonth" name="idMonth" data="12" onblur="$(this).parent().blur();"></select>
+	                       <select item='day'  id="CertificateExpireDay" name="idDay" class="select loanInformation_se01" data="1" onblur="$(this).parent().blur();"></select>
+                       </div>
+                    </td>
+                </tr>
+                
+                
+                  <tr>
+                    <td class="loanInformation_td01">
+                        <i class="redNotice">*</i>企业类型：
+                    </td>
+                     <td class="loanInformation_td02">
+                        <select class="select loanInformation_se02"  field="companyType"   customFun="validateSelect" errormsg="请选择企业类型！" >
+                            <option>请选择</option>
+                            <option value='1'>有限责任公司</option>
+                            <option value='2'>股份有限公司</option>
+                            <option value='3'>内资</option>
+                            <option value='4'>国有全资</option>
+                            <option value='5'>集资全资</option>
+                            <option value='6'>国外投资股份有限公司</option>
+                            <option value='99'>其他</option>
+                            
+                        </select> 
+                    </td>
+                    <td class="loanInformation_td01">
+                         <i class="redNotice">*</i>注册金额：
+                    </td>
+                     <td class="loanInformation_td02">
+                        <input type="text" class="loanInformation_inp01" placeholder="" field="registFinance" value="" readonly="readonly" datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
+                    </td>
+                </tr>
+                
+                
                 <tr>
                     <td class="loanInformation_td01">
                         <i class="redNotice">*</i>企业注册地址：
@@ -221,6 +273,28 @@
 			ctlYearId : 'idYear1',
 			ctlMonthId : 'idMonth1',
 			ctlDayId : 'idDay1',
+			defYear : myDate.getFullYear(),
+			defMonth : (myDate.getMonth() + 1),
+			defDay : myDate.getDate(),
+			minYear : 1800,
+			maxYear : 2100
+		});
+		
+		
+		$("#certificateStartDate").DateSelector({
+			ctlYearId : 'CertificateStartYear',
+			ctlMonthId : 'CertificateStartMonth',
+			ctlDayId : 'CertificateStartDay',
+			defYear : myDate.getFullYear(),
+			defMonth : (myDate.getMonth() + 1),
+			defDay : myDate.getDate(),
+			minYear : 1800,
+			maxYear : 2100
+		});
+		$("#certificateExpireDate").DateSelector({
+			ctlYearId : 'CertificateExpireYear',
+			ctlMonthId : 'CertificateExpireMonth',
+			ctlDayId : 'CertificateExpireDay',
 			defYear : myDate.getFullYear(),
 			defMonth : (myDate.getMonth() + 1),
 			defDay : myDate.getDate(),

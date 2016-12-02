@@ -175,6 +175,15 @@ public final class LoanTypeConvertUtil {
 		// 是否推送
 		companyBean.setIsPush(creditCompany.getIsPush());
 
+		companyBean.setCertificateExpireDate(DateUtil.dateToString(
+				creditCompany.getCertificateExpireDate(), "yyyy-MM-dd"));
+		companyBean.setCertificateStartDate(DateUtil.dateToString(
+				creditCompany.getCertificateStartDate(), "yyyy-MM-dd"));
+
+		companyBean.setCompanyType(creditCompany.getCompanyType());
+
+		companyBean.setRegistFinance(creditCompany.getRegistFinance());
+
 		return companyBean;
 	}
 
@@ -275,6 +284,15 @@ public final class LoanTypeConvertUtil {
 			loanCreditCompany.setAppendInfo(JsonConversionTool
 					.toJson(appendInfo));
 		}
+
+		loanCreditCompany.setCertificateExpireDate(DateUtil.stringToDate(
+				lcc.getCertificateExpireDate(), "yyyy-MM-dd"));
+		loanCreditCompany.setCertificateStartDate(DateUtil.stringToDate(
+				lcc.getCertificateStartDate(), "yyyy-MM-dd"));
+
+		loanCreditCompany.setCompanyType(lcc.getCompanyType());
+
+		loanCreditCompany.setRegistFinance(lcc.getRegistFinance());
 
 		return loanCreditCompany;
 	}

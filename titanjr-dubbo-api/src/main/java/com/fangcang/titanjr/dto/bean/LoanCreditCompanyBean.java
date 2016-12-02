@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.dto.bean;
 
-
 /**
  * Created by zhaoshan on 2016/11/4.
  */
@@ -24,6 +23,44 @@ public class LoanCreditCompanyBean implements java.io.Serializable {
 	private String contactName;
 	private String contactPhone;
 	private String waterEmail;
+
+	private String certificateStartDate;
+	private String certificateExpireDate;
+	private Integer companyType;
+	private String registFinance;
+
+	public String getCertificateStartDate() {
+		return certificateStartDate;
+	}
+
+	public void setCertificateStartDate(String certificateStartDate) {
+		this.certificateStartDate = certificateStartDate;
+	}
+
+	public String getCertificateExpireDate() {
+		return certificateExpireDate;
+	}
+
+	public void setCertificateExpireDate(String certificateExpireDate) {
+		this.certificateExpireDate = certificateExpireDate;
+	}
+
+	public Integer getCompanyType() {
+		return companyType;
+	}
+
+	public void setCompanyType(Integer companyType) {
+		this.companyType = companyType;
+	}
+
+	public String getRegistFinance() {
+		return registFinance;
+	}
+
+	public void setRegistFinance(String registFinance) {
+		this.registFinance = registFinance;
+	}
+
 	/**
 	 * 营业执照URL
 	 */
@@ -31,7 +68,7 @@ public class LoanCreditCompanyBean implements java.io.Serializable {
 	/**
 	 * 法人身份证
 	 */
-	
+
 	private String legalNoUrl;
 	/**
 	 * 经营场所证明
