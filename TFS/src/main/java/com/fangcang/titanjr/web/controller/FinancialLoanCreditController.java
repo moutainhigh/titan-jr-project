@@ -145,7 +145,7 @@ public class FinancialLoanCreditController extends BaseController {
 		this.putSuccess();
 		return this.toJson();
 	}
-	
+
 	/**
 	 * 授信协议
 	 * 
@@ -155,7 +155,6 @@ public class FinancialLoanCreditController extends BaseController {
 	public String loanCreditProtocol() {
 		return "/loan/credit-apply/credit-protocol";
 	}
-
 
 	/**
 	 * 授信申请企业页面
@@ -216,10 +215,22 @@ public class FinancialLoanCreditController extends BaseController {
 		getResponse().setContentType("text/html;charset=utf-8");
 		getResponse().setHeader("Cache-Control", "no-cache");
 
+		String dir = "";
+		String fileName = typeId;
+		if (StringUtil.isValidString(typeId)) {
+			if (typeId.indexOf("/") != -1) {
+				String[] sp = typeId.split("/");
+				if (sp.length > 1) {
+					dir = sp[0] + "/";
+					fileName = sp[1];
+				}
+			}
+		}
+
 		PrintWriter out = getResponse().getWriter();
 
-		String newName = this
-				.getNewFileName(file.getOriginalFilename(), typeId);
+		String newName = this.getNewFileName(file.getOriginalFilename(),
+				fileName);
 		FtpUtil util = null;
 		try {
 
@@ -239,29 +250,31 @@ public class FinancialLoanCreditController extends BaseController {
 
 			List<String> fileList = util
 					.listFiles(FtpUtil.UPLOAD_PATH_CREDIT_APPLY + "/"
-							+ this.getUserId() + "/");
+							+ this.getUserId() + "/" + dir);
 
 			log.info("list ftp files fileList=" + fileList);
 
 			// 检查文件是否已经上传过，如果上传过则需要把旧的文件先干掉，在上传新的哦 亲
 			if (fileList != null) {
 				for (int i = 0; i < fileList.size(); i++) {
-					if (fileList.get(i).indexOf(typeId + ".") != -1) {
+					if (fileList.get(i).indexOf(fileName + ".") != -1) {
 						util.deleteFile(FtpUtil.UPLOAD_PATH_CREDIT_APPLY + "/"
-								+ this.getUserId() + "/" + fileList.get(i));
+								+ this.getUserId() + "/" + dir
+								+ fileList.get(i));
 					}
 				}
 			}
 
 			util.uploadStream(newName, file.getInputStream(),
 					FtpUtil.UPLOAD_PATH_CREDIT_APPLY + "/" + this.getUserId()
-							+ "/");
+							+ "/" + dir);
 
 			log.info("upload to ftp success fileName=" + newName);
 
 			util.ftpLogOut();
 
-			this.putSuccess("fileName", newName);
+			this.putSuccess("fileName",
+					this.getNewFileName(file.getOriginalFilename(), typeId));
 
 		} catch (Exception e) {
 			this.putSysError();
@@ -478,9 +491,9 @@ public class FinancialLoanCreditController extends BaseController {
 			if (StringUtil.isValidString(companyAccessoryData)) {
 				Map<String, String> jsonMap = JsonConversionTool.toObject(
 						companyAccessoryData, Map.class);
-				
+
 				assureType = jsonMap.get("assureType");
-				
+
 				String creditCompany = JsonConversionTool.toJson(jsonMap
 						.get("creditCompany"));
 				String loanPersonEnsure = JsonConversionTool.toJson(jsonMap

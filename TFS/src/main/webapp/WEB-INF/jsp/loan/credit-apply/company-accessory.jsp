@@ -10,7 +10,7 @@
 	    	<input type="hidden" field="orgCodeUrl" fileId="orgCodeUrl" typeId="organization_code" name="orgCodeUrl" value=""/>
 	    	<input type="hidden" field="taxRegUrl" fileId="taxRegUrl"  typeId="tax_registration_certificate" name="taxRegUrl" value=""/>
 	    	<input type="hidden" field="accountUrl" fileId="accountUrl" typeId="account_opening_license" name="accountUrl" value=""/>
-	    	<input type="hidden" field="legalNoUrl" fileId="legalnoUrl" typeId="corporate_identity_card" name="legalnoUrl" value=""/>
+	    	<input type="hidden" field="legalNoUrl" fileId="legalnoUrl" typeId="idCardUrl" name="legalnoUrl" value=""/>
 	    	<input type="hidden" field="creditUrl" fileId="creditUrl"  typeId="credit_report"  name="creditUrl" value=""/>
 	    	<input type="hidden" field="waterUrl" fileId="waterUrl"   typeId="bank_statements"   name="waterUrl" value=""/>
 	    	<input type="hidden" field="officeNoUrl" fileId="officeNoUrl" typeId="proof_of_business_premises"  name="officeNoUrl" value=""/>
@@ -18,20 +18,20 @@
     	</div>
     	<div fieldObj="loanPersonEnsure" style="display:none">
 	    	<!-- 个人担保 -->
-	    	<input type="hidden" ensureType="1" field="idCardUrl" fileId="idCardUrl" typeId="p_idcard"  name="idCardUrl" value=""/>
-	    	<input type="hidden" ensureType="1" field="registeredUrl" fileId="registeredUrl" typeId="p_registered"  name="registeredUrl" value=""/>
-	    	<input type="hidden" ensureType="1" field="spouseRegisteredUrl" fileId="spouseRegisteredUrl"  typeId="p_spousereg" name="spouseRegisteredUrl" value=""/>
-	    	<input type="hidden" ensureType="1" field="spouseIdCardUrl" fileId="spouseIdCardUrl" typeId="p_spouseidcard"  name="spouseIdCardUrl" value=""/>
-	    	<input type="hidden" ensureType="1" field="marriageUrl" fileId="marriageUrl"   typeId="p_marriage" name="marriageUrl" value=""/>
+	    	<input type="hidden" ensureType="1" field="idCardUrl" fileId="idCardUrl" typeId="guarantor/idcard"  name="idCardUrl" value=""/>
+	    	<input type="hidden" ensureType="1" field="registeredUrl" fileId="registeredUrl" typeId="guarantor/family_register"  name="registeredUrl" value=""/>
+	    	<input type="hidden" ensureType="1" field="spouseRegisteredUrl" fileId="spouseRegisteredUrl"  typeId="guarantor/spouse_account_book" name="spouseRegisteredUrl" value=""/>
+	    	<input type="hidden" ensureType="1" field="spouseIdCardUrl" fileId="spouseIdCardUrl" typeId="guarantor/spouse_idcard"  name="spouseIdCardUrl" value=""/>
+	    	<input type="hidden" ensureType="1" field="marriageUrl" fileId="marriageUrl"   typeId="guarantor/marriage_certificate" name="marriageUrl" value=""/>
     	</div>
     	
     	<div fieldObj="companyEnsure" style="display:none">
 	    	<!-- 企业担保 -->
-	    	<input type="hidden" ensureType="2" field="businessLicenseUrl" fileId="ensureBusinesslicenseUrl" typeId="c_bulicense"  name="ensureBusinesslicenseUrl" value=""/>
-	    	<input type="hidden" ensureType="2" field="orgCodeCertificateUrl" fileId="ensureOrgCodeCertificateUrl" typeId="c_orgcode"  name="ensureOrgCodeCertificateUrl" value=""/>
-	    	<input type="hidden" ensureType="2" field="taxRegisterCodeUrl" fileId="ensureTaxRegisterCodeUrl"  typeId="c_taxregno" name="ensureTaxRegisterCodeUrl" value=""/>
-	    	<input type="hidden" ensureType="2" field="licenseUrl" fileId="ensureLicenseUrl"  typeId="c_license" name="ensureLicenseUrl" value=""/>
-	    	<input type="hidden" ensureType="2" field="legalPersonUrl" fileId="ensureLegalPersonUrl" typeId="c_legalidcard"   name="ensureLegalPersonUrl" value=""/>
+	    	<input type="hidden" ensureType="2" field="businessLicenseUrl" fileId="ensureBusinesslicenseUrl" typeId="guarantor/business_license"  name="ensureBusinesslicenseUrl" value=""/>
+	    	<input type="hidden" ensureType="2" field="orgCodeCertificateUrl" fileId="ensureOrgCodeCertificateUrl" typeId="guarantor/organization_code"  name="ensureOrgCodeCertificateUrl" value=""/>
+	    	<input type="hidden" ensureType="2" field="taxRegisterCodeUrl" fileId="ensureTaxRegisterCodeUrl"  typeId="guarantor/tax_registration_certificate" name="ensureTaxRegisterCodeUrl" value=""/>
+	    	<input type="hidden" ensureType="2" field="licenseUrl" fileId="ensureLicenseUrl"  typeId="guarantor/account_opening_license" name="ensureLicenseUrl" value=""/>
+	    	<input type="hidden" ensureType="2" field="legalPersonUrl" fileId="ensureLegalPersonUrl" typeId="guarantor/idcard"   name="ensureLegalPersonUrl" value=""/>
     	</div>
     	
     	

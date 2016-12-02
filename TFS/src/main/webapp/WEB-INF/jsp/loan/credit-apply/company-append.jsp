@@ -126,7 +126,7 @@
                          <i class="redNotice">*</i>合作关系：
                     </td>
                     <td class="loanInformation_td03">
-                       <select class="select loanInformation_se02" field='cooperation'  customFun="validateSelect" errormsg="请选择合作关系!" >
+                       <select class="select loanInformation_se02" field='cooperation'  customFun="validateSelect" errormsg="请选择合作关系!" style="width: 143px;">
                             <option>请选择</option>
                             <option value="1">供应商</option>
                             <option value="2">分销商</option>
@@ -194,7 +194,7 @@
                         <i class="redNotice">*</i>支付方式：
                     </td>
                     <td class="loanInformation_td03" colspan="3">
-                        <input type="text" class="loanInformation_inp01" placeholder="请输入支付方式"  field='paymentMethod'  customFun="validateTextValue" errormsg="必填项，并且最长只能10个字符！"> 
+                        <input type="text" style="width: 348px;" class="loanInformation_inp01" placeholder="请输入支付方式"  field='paymentMethod'  customFun="validateTextValue" errormsg="必填项，并且最长只能10个字符！"> 
                     </td>                 
                 </tr>
                 <tr class="dnTypeTms">

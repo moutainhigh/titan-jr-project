@@ -43,13 +43,13 @@
                              <i class="redNotice">*</i>身份证号：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人身份证号" field='nationalIdentityNumber' datatype="s1-30" errormsg="必填项，并且最长只能30个字符！">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人身份证号" field='nationalIdentityNumber' datatype="s1-30" errormsg="必填项，并且最长只能30个字符！" style="width: 162px;">
                         </td>
                          <td class="loanInformation_td01">
                              <i class="redNotice">*</i>手机号码：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人手机号码" field='mobilenNmber' datatype="s1-20" errormsg="必填项，并且最长只能20个字符！">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人手机号码" field='mobilenNmber' datatype="s1-20" errormsg="必填项，并且最长只能20个字符！" style="width: 143px;">
                         </td>
                     </tr>  
                     <tr>
@@ -67,7 +67,7 @@
                              <i class="redNotice">*</i>有无子女：
                         </td>
                         <td class="loanInformation_td03">
-                           <select class="select loanInformation_se02" field='haveChildren'  customFun="validateSelect" errormsg="请选择有无子女！" >
+                           <select class="select loanInformation_se02" field='haveChildren'  customFun="validateSelect" errormsg="请选择有无子女！" style="width: 162px;">
                                 <option>请选择</option>
                                 <option value="1">有子女</option>
                                 <option value="2">无子女</option>
@@ -77,7 +77,7 @@
                              <i class="redNotice">*</i>籍贯：
                         </td>
                         <td class="loanInformation_td03" id="city_1Ensure">
-                           <select class="select loanInformation_se02 prov" field='nativePlace'  customFun="validateSelect" errormsg="请选择籍贯！">
+                           <select class="select loanInformation_se02 prov" field='nativePlace'  customFun="validateSelect" errormsg="请选择籍贯！"  style="width: 143px;">
                                 <option>请选择</option>
                             </select>
                             <select class="city hidden"></select>
@@ -105,7 +105,7 @@
                              <i class="redNotice">*</i>最高学历：
                         </td>
                         <td class="loanInformation_td03">
-                           <select class="select loanInformation_se02"  field='highestEducation' customFun="validateSelect" errormsg="请选择学历！">
+                           <select class="select loanInformation_se02"  field='highestEducation' customFun="validateSelect" errormsg="请选择学历！" style="width: 162px;">
                                 <option>请选择</option>
                                 <option value="1">小学</option>
                                 <option value="2">初中</option>
@@ -121,7 +121,7 @@
                              <i class="redNotice">*</i>工作年限：
                         </td>
                         <td class="loanInformation_td03">
-                           <select class="select loanInformation_se02" field='yearsWorking' customFun="validateSelect" errormsg="请选择工作年限！">
+                           <select class="select loanInformation_se02" field='yearsWorking' customFun="validateSelect" errormsg="请选择工作年限！"  style="width: 143px;">
                                 <option>请选择</option>
                                 <option value="1">1 - 3年</option>
                                 <option value="2">3 - 5年</option>
@@ -141,13 +141,13 @@
                              <i class="redNotice">*</i>现任职务：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人现任职务" field='occupation' datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人现任职务" field='occupation' datatype="*1-50" errormsg="必填项，并且最长只能50个字符！" style="width: 162px;">
                         </td>
                          <td class="loanInformation_td01">
                              <i class="redNotice">*</i>工作电话：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人工作电话" field='worktelePhone' datatype="s1-20" errormsg="必填项，并且最长只能20个字符！">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人工作电话" field='worktelePhone' datatype="s1-20" errormsg="必填项，并且最长只能20个字符！"  style="width: 143px;">
                         </td>
                     </tr>  
                     <tr>
@@ -164,7 +164,7 @@
                              <i class="redNotice">*</i>所处行业：
                         </td>
                         <td class="loanInformation_td03" >
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人所处行业" field='industry' datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人所处行业" field='industry' datatype="*1-50" errormsg="必填项，并且最长只能50个字符！"  style="width: 143px;">
                         </td>
                     </tr>             
                 </table>
@@ -276,7 +276,7 @@
                             <i class="redNotice">*</i>与担保人关系：
                         </td>
                         <td class="loanInformation_td03">
-                            <select class="select loanInformation_se02" field="relationToguarantee1" customFun="validateSelect" errormsg="请选择担保人关系！">
+                            <select class="select loanInformation_se02" field="relationToguarantee1" customFun="validateSelect" errormsg="请选择担保人关系！" style="width: 129px;">
                                 <option>请选择</option>
                                 <option value="1">父母</option>
                                 <option value="2">子女</option>
@@ -304,7 +304,7 @@
                             <i class="redNotice">*</i>与担保人关系：
                         </td>
                         <td class="loanInformation_td03">
-                            <select class="select loanInformation_se02" field="relationToguarantee2" customFun="validateSelect" errormsg="请选择担保人关系！">
+                            <select class="select loanInformation_se02" field="relationToguarantee2" customFun="validateSelect" errormsg="请选择担保人关系！"  style="width: 129px;">
                                 <option>请选择</option>
                                  <option value="1">父母</option>
                                 <option value="2">子女</option>
@@ -350,7 +350,7 @@
                             <i class="redNotice">*</i>企业规模：
                         </td>
                         <td class="loanInformation_td03">
-                            <select class="select loanInformation_se02" field="enterpriseScale" customFun="validateSelect" errormsg="请选择企业规模！">
+                            <select class="select loanInformation_se02" field="enterpriseScale" customFun="validateSelect" errormsg="请选择企业规模！" style="width: 407px;">
                                 <option>请选择</option>
                                 <option value="1">1 - 50人</option>
                                 <option value="2">50 - 100人</option>
@@ -371,7 +371,7 @@
                             <i class="redNotice">*</i>税务登记号：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入税务登记号" field="taxRegisterCode" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入税务登记号" field="taxRegisterCode" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！"  style="width: 407px;">
                         </td>
                         <td class="loanInformation_td01">
                              <i class="redNotice">*</i>组织机构代码：
@@ -385,7 +385,7 @@
                             <i class="redNotice">*</i>平台注册账号：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入平台注册账号" field="registerAccount" datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入平台注册账号" field="registerAccount" datatype="*1-50" errormsg="必填项，并且最长只能50个字符！"  style="width: 407px;">
                         </td>
                         <td class="loanInformation_td01">
                              <i class="redNotice">*</i>平台注册日期：
