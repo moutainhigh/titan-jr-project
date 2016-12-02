@@ -75,7 +75,7 @@ public class OprsystemCreditCompanyRequest extends BaseRequest {
 	@NotNull
 	private String corporatename;
 	/**
-	 * 法人证件类型 1.身份证; 2.护照; 8.户口本; 21.军官证;
+	 * 法人证件类型 1.身份证; 2.护照; 8.户口本; 21.军官证; 22.士兵证; 23.回乡证; 24.台湾居民往来大陆通行证; 25.香港居民往来大陆通行证; 99.其他
 	 */
 	@NotNull
 	private String certificatetype;

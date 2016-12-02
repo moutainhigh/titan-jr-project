@@ -359,7 +359,7 @@ public class FtpUtil {
 			return false;
 		}
 
-		String strFilePath = localDires +"/"+ remoteFileName;
+		String strFilePath = localDires +"/"+ FileHelp.getFileName(remoteFileName);
 		BufferedOutputStream outStream = null;
 		boolean success = false;
 		try {
