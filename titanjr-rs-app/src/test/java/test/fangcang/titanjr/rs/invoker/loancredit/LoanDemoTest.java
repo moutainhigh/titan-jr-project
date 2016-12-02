@@ -55,7 +55,7 @@ public class LoanDemoTest {
 //    private static String session = "1460355562856409835";
     
     
-    private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
+	private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
 	private static String appKey = "C5CE632E-FDA6-436A-B4DF-1DE93A2C72C3";
 	private static String appSecret = "D7787ED2-0465-42C7-9CF8-25D5CC6ACA34";
 	private static String session = "1478056836773639888";
@@ -72,7 +72,8 @@ public class LoanDemoTest {
     public static void main(String[] args) {
         
         String strMsg = null;
-
+        doFsFileUrlGet(session);
+        
 		// 文件上传API接口 "ruixue.fs.file.upload";
 		// strMsg = doFsFileUpload(session);
 		// 已上传文件下载地址获取 "ruixue.fs.fileurl.get";
@@ -108,7 +109,7 @@ public class LoanDemoTest {
         try {
         	//rsa加密
             FsFileUploadRequest req = new FsFileUploadRequest();
-            req.setBatch("2016-11-02");
+           // req.setBatch("2016-11-02");
             req.setPath("f:/dk-123456-encryptFile.zip");
             req.setType(73);
             req.setInvoice_date(com.fangcang.util.DateUtil.dateFormat(new Date(),"yyyy-MM-dd"));
@@ -143,7 +144,7 @@ public class LoanDemoTest {
         String strError = null;
         try {
             FsFileurlGetRequest req = new FsFileurlGetRequest();
-            req.setUrl_key("c7d7ea2a-e7a5-49ff-8621-61aceeffaf5c");
+            req.setUrl_key("df422a73-d45c-4c99-b785-068f83789fc7");
             FsFileurlGetResponse rsp = ropClient.execute(req,session);
             if (rsp != null) {
                 System.out.println("返回报文: \n" + rsp.getBody());
