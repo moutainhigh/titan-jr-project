@@ -57,7 +57,7 @@ public class LoanCreditOrderDaoTest extends SpringTest {
         LoanCreditOrder loanCreditOrder = new LoanCreditOrder();
         loanCreditOrder.setDayLimit(9022);
         loanCreditOrder.setAmount(1000022L);
-        loanCreditOrder.setActualAmount(022);
+//        loanCreditOrder.setActualAmount(022);
         loanCreditOrder.setReqTime(DateUtil.stringToDate("2016-01-01"));
         loanCreditOrder.setRateTem("RT00022");
         loanCreditOrder.setRspId("P0002322");

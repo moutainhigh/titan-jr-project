@@ -21,7 +21,7 @@ public class LoanCreditCompanyDaoTest  extends SpringTest {
     @Test
     public void testSaveCompanyEnsure() {
         LoanCreditCompany loanCreditCompany = new LoanCreditCompany();
-        loanCreditCompany.setCreditorderNo("CR001");
+//        loanCreditCompany.setCreditorderNo("CR001");
         loanCreditCompany.setName("测试公司");
         loanCreditCompany.setStartDate(DateUtil.getDate(new Date(), -20));
         loanCreditCompany.setRegAddress("深圳市龙华新区");
@@ -62,7 +62,7 @@ public class LoanCreditCompanyDaoTest  extends SpringTest {
     @Test
     public void testUpdateCompanyEnsure() {
         LoanCreditCompany loanCreditCompany = new LoanCreditCompany();
-        loanCreditCompany.setCreditorderNo("CR001");
+//        loanCreditCompany.setCreditorderNo("CR001");
         loanCreditCompany.setName("测试公司-");
         loanCreditCompany.setStartDate(DateUtil.getDate(new Date(), -10));
         loanCreditCompany.setRegAddress("深圳市龙华新区-");

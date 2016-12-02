@@ -254,11 +254,11 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				RSFsFileUploadRequest rsFsFileUploadRequest = new RSFsFileUploadRequest();
 				rsFsFileUploadRequest.setUserid(loanCreditOrder.getOrgCode());
 				rsFsFileUploadRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-				rsFsFileUploadRequest.setProductid(productid);
-				rsFsFileUploadRequest.setType(type);
-				rsFsFileUploadRequest.setInvoiceDate(invoiceDate);
-				
-				rsFileManager.fsFileUpload(rsFsFileUploadRequest)
+//				rsFsFileUploadRequest.setProductid(productid);
+//				rsFsFileUploadRequest.setType(type);
+//				rsFsFileUploadRequest.setInvoiceDate(invoiceDate);
+//				
+//				rsFileManager.fsFileUpload(rsFsFileUploadRequest)
 				
 				
 				//TODO

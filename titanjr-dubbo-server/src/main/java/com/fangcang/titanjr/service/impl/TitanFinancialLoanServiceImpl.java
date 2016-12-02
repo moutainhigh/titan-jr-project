@@ -10,6 +10,7 @@ import net.sf.json.JSONSerializer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +52,7 @@ import com.fangcang.titanjr.rs.response.NewLoanApplyResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.util.StringUtil;
 
+@Service("titanFinancialLoanService")
 public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService{
 	
 	private static final Log log = LogFactory
@@ -129,6 +131,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService{
 			loanRoomPackSpec.setContractUrl(loanSpecBean.getContractUrl());
 			loanRoomPackSpec.setHotelName(loanSpecBean.getHotleName());
 			loanRoomPackSpec.setRoomNights(loanSpecBean.getRoomNights());
+			loanRoomPackSpec.setOrderNo(loanSpecBean.getLoanOrderNo());
 			int row = loanRoomPackSpecDao.saveLoanRoomPackSpec(loanRoomPackSpec);
 			if(row>0){
 				return true;
@@ -155,7 +158,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService{
 			loanCreditOrder =  loanCreditOrderList.get(0);
 			if(LoanProductEnum.ROOM_PACK.getCode()==type.intValue()){
 				loanRoomPackSpecBean = (LoanRoomPackSpecBean)loanSpecBean;
-				loanApplyOrder.setCreditOrderNo(loanApplyOrder.getCreditOrderNo());
+				loanApplyOrder.setCreditOrderNo(loanCreditOrder.getOrderNo());
 				loanApplyOrder.setOrderNo(loanRoomPackSpecBean.getLoanOrderNo());
 				if(StringUtil.isValidString(loanRoomPackSpecBean.getAmount())){
 					loanApplyOrder.setAmount(Long.parseLong(loanRoomPackSpecBean.getAmount()));
