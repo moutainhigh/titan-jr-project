@@ -191,7 +191,6 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			}
 			//授信申请公司文件
 			List<String> companyFilesList = new ArrayList<String>();
-			
 			LoanCreditCompany loanCreditCompany = loanCreditCompanyList.get(0);
 			
 			companyFilesList.add(loanCreditCompany.getLicenseUrl());
@@ -241,8 +240,6 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				ensureFilesList.add(loanCompanyEnsure.getLicenseUrl());
 				ensureFilesList.add(loanCompanyEnsure.getLegalPersonUrl());
 			}
-			
-			 
 			//企业证件资料本地路径
 			String orgCreditFileRootDir = "";
 			try {
@@ -251,7 +248,6 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				orgCreditFileRootDir = TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"/tmp"+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+loanCreditOrder.getOrgCode();
 				String orgCreditDir = "EnterpriseCreditPackage";
 				String localEnterpriseDocumentInfoPath = orgCreditFileRootDir+"/"+orgCreditDir+"/"+"EnterpriseDocumentInfo";
-				
 				String localGuarantorDocumentsInfoPath =  orgCreditFileRootDir+"/"+orgCreditDir+"/"+"GuarantorDocumentsInfo";
 				//先删除旧的临时文件
 				FileHelp.deleteFile(orgCreditFileRootDir);
@@ -259,18 +255,21 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				FtpUtil.makeLocalDirectory(localEnterpriseDocumentInfoPath);
 				FtpUtil.makeLocalDirectory(localGuarantorDocumentsInfoPath);
 				
-				
 				//下载文件
 				FTPConfigResponse ftpConfigResponse = titanSysconfigService.getFTPConfig();
 				FtpUtil ftpUtil = new FtpUtil(ftpConfigResponse.getFtpServerIp(),ftpConfigResponse.getFtpServerPort(),ftpConfigResponse.getFtpServerUser(),ftpConfigResponse.getFtpServerPassword());
 				ftpUtil.ftpLogin();
 				//公司证件资料
 				for(String file : companyFilesList){
-					ftpUtil.downloadFile(file, localEnterpriseDocumentInfoPath, FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+loanCreditOrder.getOrgCode());
+					if(StringUtil.isValidString(file)){
+						ftpUtil.downloadFile(file, localEnterpriseDocumentInfoPath, FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+loanCreditOrder.getOrgCode());
+					}
 				}
 				//担保人证件资料
 				for(String file : ensureFilesList){
-					ftpUtil.downloadFile(file, localGuarantorDocumentsInfoPath, FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+loanCreditOrder.getOrgCode());
+					if(StringUtil.isValidString(file)){
+						ftpUtil.downloadFile(file, localGuarantorDocumentsInfoPath, FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+loanCreditOrder.getOrgCode());
+					}
 				}
 				
 				ftpUtil.ftpLogOut();
@@ -295,6 +294,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				RSFsFileUploadResponse rsFsFileUploadResponse = rsFileManager.fsFileUpload(rsFsFileUploadRequest);
 				if((!StringUtil.isValidString(rsFsFileUploadResponse.getUrlKey()))||rsFsFileUploadResponse.isSuccess()==false){
 					response.putErrorResult(rsFsFileUploadResponse.getReturnMsg());
+					log.error("上传授信文件压缩包到融数失败,请求参数为rsFsFileUploadRequest:"+Tools.gsonToString(rsFsFileUploadRequest));
 					return response;
 				}
 				System.out.println("urlkey："+rsFsFileUploadResponse.getUrlKey());
@@ -318,6 +318,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				OprsystemCreditCompanyResponse oprsystemCreditCompanyResponse = rsCreditManager.oprsystemCreditCompany(creditCompanyRequest);
 				if(oprsystemCreditCompanyResponse.isSuccess()==false){
 					response.putErrorResult(oprsystemCreditCompanyResponse.getReturnMsg());
+					log.error("授信申请时上报企业资料信息给融数失败,企业信息为creditCompanyRequest:"+Tools.gsonToString(creditCompanyRequest));
 					return response;
 				}
 				//3-授信申请接口
@@ -354,6 +355,15 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		
 		response.putSuccess();
 		return response;
+	}
+	
+	/**
+	 *  打包文件
+	 * @return 本地加密文件的地址
+	 */
+	private String downloadCreditFile(){
+		//TODO 下载文件，加密，删除文件，
+		return "";
 	}
 	
 	/**
