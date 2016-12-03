@@ -7,10 +7,16 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSON;
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.fangcang.corenut.dao.PaginationSupport;
@@ -19,13 +25,17 @@ import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.AuditResultEnum;
 import com.fangcang.titanjr.common.enums.FileTypeEnum;
+import com.fangcang.titanjr.common.enums.entity.LoanCompanyEnsureEnum;
+import com.fangcang.titanjr.common.enums.entity.LoanCreditCompanyEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanCreditOrderEnum;
+import com.fangcang.titanjr.common.enums.entity.LoanPersonEnsureEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.FileHelp;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.LoanCompanyEnsureDao;
 import com.fangcang.titanjr.dao.LoanCreditCompanyDao;
 import com.fangcang.titanjr.dao.LoanCreditOpinionDao;
@@ -34,6 +44,7 @@ import com.fangcang.titanjr.dao.LoanPersonEnsureDao;
 import com.fangcang.titanjr.dto.bean.CreditCompanyInfoDTO;
 import com.fangcang.titanjr.dto.bean.LoanCompanyAppendInfo;
 import com.fangcang.titanjr.dto.bean.LoanCompanyEnsureBean;
+import com.fangcang.titanjr.dto.bean.LoanCreditApplicationJsonDataBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditCompanyBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOpinionBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
@@ -61,7 +72,6 @@ import com.fangcang.titanjr.entity.LoanCreditOpinion;
 import com.fangcang.titanjr.entity.LoanCreditOrder;
 import com.fangcang.titanjr.entity.LoanPersonEnsure;
 import com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam;
-import com.fangcang.titanjr.rs.dto.CreditApplicationJsonData;
 import com.fangcang.titanjr.rs.manager.RSCreditManager;
 import com.fangcang.titanjr.rs.manager.RSFileManager;
 import com.fangcang.titanjr.rs.request.OprsystemCreditCompanyRequest;
@@ -123,6 +133,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	private TitanSysconfigService titanSysconfigService;
 	
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
 	public AuditCreidtOrderResponse auditCreditOrder(AuditCreidtOrderRequest req) {
 		AuditCreidtOrderResponse response = new AuditCreidtOrderResponse();
 		if(!StringUtil.isValidString(req.getOrderNo())){
@@ -133,24 +144,42 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			response.putErrorResult("参数[审核状态(auditResult)]不能为空");
 			return response;
 		}
-		//TODO 校验申请单号是否存在
-		
+		//校验申请单号是否存在
 		LoanCreditOrder loanCreditOrderParam = new LoanCreditOrder();
 		loanCreditOrderParam.setOrderNo(req.getOrderNo());
 		List<LoanCreditOrder> loanCreditOrderList = loanCreditOrderDao.queryLoanCreditOrder(loanCreditOrderParam);
-		LoanCreditOrder loanCreditOrder = loanCreditOrderList.get(0);
 		
-		
-		if(req.getAuditResult()==AuditResultEnum.NO_PASS){
-			//TODO 数据库记录原因
-			
-			response.putSuccess();
+		if(CollectionUtils.isEmpty(loanCreditOrderList)){
+			response.putErrorResult("["+req.getOrderNo()+"]授信申请记录不存在,请检查数据是否正确");
 			return response;
+		}
+		LoanCreditOrder loanCreditOrder = loanCreditOrderList.get(0);
+		Date now = new Date(); 
+		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();
+		boolean auditResult = false;
+		if(req.getAuditResult()==AuditResultEnum.NO_PASS){
+			auditResult = false;
 		}else if(req.getAuditResult()==AuditResultEnum.PASS){
-			
-			
-			
-			//2-上传申请附件
+			updateLoanCreditOrderParam.setFirstAuditTime(now);
+			auditResult = true;
+		}
+		
+		//改申请单状态
+		updateLoanCreditOrderParam.setOrderNo(req.getOrderNo());
+		updateLoanCreditOrderParam.setStatus(req.getAuditResult().getStatus());
+		loanCreditOrderDao.updateLoanCreditOrder(updateLoanCreditOrderParam);
+		
+		//添加审核记录
+		LoanCreditOpinion loanCreditOpinion = new LoanCreditOpinion();
+		loanCreditOpinion.setOrderNo(req.getOrderNo());
+		loanCreditOpinion.setResult(req.getAuditResult().getStatus());
+		loanCreditOpinion.setContent(req.getContent());
+		loanCreditOpinion.setCreateTime(now);
+		loanCreditOpinionDao.saveLoanCreditOpinion(loanCreditOpinion);
+		
+		//通过后给融数处理	
+		if(auditResult){
+			//1-上传申请附件
 			//申请资料附件
 			LoanCreditCompany loanCreditCompanyParam = new LoanCreditCompany();
 			loanCreditCompanyParam.setCreditOrderNo(req.getOrderNo());
@@ -178,6 +207,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			//担保人文件 
 			List<String> ensureFilesList = new ArrayList<String>();
 			//个人
+			LoanPersonEnsure loanPersonEnsure = null;
 			if(loanCreditOrder.getAssureType()==LoanCreditOrderEnum.AssureType.PERSON.getType()){
 				LoanPersonEnsure loanPersonEnsureParam = new LoanPersonEnsure();
 				loanPersonEnsureParam.setOrderNo(req.getOrderNo());
@@ -186,7 +216,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					response.putErrorResult("个人担保资料不存在，请补充担保资料");
 					return response;
 				}
-				LoanPersonEnsure loanPersonEnsure = loanPersonEnsureList.get(0);
+				loanPersonEnsure = loanPersonEnsureList.get(0);
 				ensureFilesList.add(loanPersonEnsure.getIdCardUrl());
 				ensureFilesList.add(loanPersonEnsure.getRegisteredUrl());
 				ensureFilesList.add(loanPersonEnsure.getSpouseRegisteredUrl());
@@ -195,6 +225,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			}
 			
 			//企业
+			LoanCompanyEnsure loanCompanyEnsure = null;
 			if(loanCreditOrder.getAssureType()==LoanCreditOrderEnum.AssureType.ENTERPRISE.getType()){
 				LoanCompanyEnsure loanCompanyEnsureParam = new LoanCompanyEnsure();
 				loanCompanyEnsureParam.setOrderNo(req.getOrderNo());
@@ -203,7 +234,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					response.putErrorResult("企业担保资料不存在，请补充担保资料");
 					return response;
 				}
-				LoanCompanyEnsure loanCompanyEnsure = loanCompanyEnsureList.get(0);
+				loanCompanyEnsure = loanCompanyEnsureList.get(0);
 				ensureFilesList.add(loanCompanyEnsure.getBusinessLicenseUrl());
 				ensureFilesList.add(loanCompanyEnsure.getOrgCodeCertificateUrl());
 				ensureFilesList.add(loanCompanyEnsure.getTaxRegisterCodeUrl());
@@ -267,23 +298,22 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					return response;
 				}
 				System.out.println("urlkey："+rsFsFileUploadResponse.getUrlKey());
-				//1-提交企业资料
-				
+				//2-提交企业资料
 				OprsystemCreditCompanyRequest creditCompanyRequest = new OprsystemCreditCompanyRequest();
 				creditCompanyRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
 				creditCompanyRequest.setUserid(loanCreditOrder.getOrgCode());
 				
 				creditCompanyRequest.setCompanyname(loanCreditCompany.getName());
 				creditCompanyRequest.setBusinesslicense(loanCreditCompany.getLicense());
-				//TODO 四个参数暂时都写死，后面再动态取
-				creditCompanyRequest.setCertificatestartdate(DateUtil.dateToString(new Date(), "yyyy-MM-dd"));
-				creditCompanyRequest.setCertificateexpiredate(DateUtil.dateToString(DateUtils.addYears(new Date(), 10), "yyyy-MM-dd"));
-				creditCompanyRequest.setCompanytype("1");
-				creditCompanyRequest.setRegistfinance("10000000");
+				
+				creditCompanyRequest.setCertificatestartdate(DateUtil.dateToString(loanCreditCompany.getCertificateStartDate(), "yyyy-MM-dd"));
+				creditCompanyRequest.setCertificateexpiredate(DateUtil.dateToString(loanCreditCompany.getCertificateExpireDate(), "yyyy-MM-dd"));
+				creditCompanyRequest.setCompanytype(LoanCreditCompanyEnum.CompanyType.getEnumByType(loanCreditCompany.getCompanyType()).getDes());
+				creditCompanyRequest.setRegistfinance(loanCreditCompany.getRegistFinance());
 				creditCompanyRequest.setAddress(loanCreditCompany.getRegAddress());
 				creditCompanyRequest.setTaxregcard(loanCreditCompany.getTaxRegNo());
 				
-				creditCompanyRequest.setCertificatetype(loanCreditCompany.getLegalceType().toString());
+				creditCompanyRequest.setCertificatetype(LoanCreditCompanyEnum.CertificateType.getEnumByKey(loanCreditCompany.getLegalceType()).getDes());
 				creditCompanyRequest.setCertificatenumber(loanCreditCompany.getLegalNo());
 				OprsystemCreditCompanyResponse oprsystemCreditCompanyResponse = rsCreditManager.oprsystemCreditCompany(creditCompanyRequest);
 				if(oprsystemCreditCompanyResponse.isSuccess()==false){
@@ -291,87 +321,129 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					return response;
 				}
 				//3-授信申请接口
+				LoanCompanyAppendInfo companyAppendInfo = LoanTypeConvertUtil.getCompanyAppendInfo(loanCreditCompany.getAppendInfo());
+				String creditApplicationJsonData = creditApplicationJson(loanCreditCompany,companyAppendInfo,loanPersonEnsure,loanCompanyEnsure);
+				
 				OrderMixserviceCreditapplicationRequest orderMixserviceCreditapplicationRequest = new OrderMixserviceCreditapplicationRequest();
-				
-				
 				orderMixserviceCreditapplicationRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
 				orderMixserviceCreditapplicationRequest.setUserid(loanCreditOrder.getOrgCode());
 				orderMixserviceCreditapplicationRequest.setUserorderid(req.getOrderNo());
 				orderMixserviceCreditapplicationRequest.setAmount(loanCreditOrder.getAmount()!=null?loanCreditOrder.getAmount().toString():"0");
-				//orderMixserviceCreditapplicationRequest.setReqesttime(reqesttime);
+				orderMixserviceCreditapplicationRequest.setReqesttime(CommonConstant.RS_LOAN_CREDIT_REQUEST_TIME);
 				orderMixserviceCreditapplicationRequest.setOrderplatformname(loanCreditCompany.getName());
 				orderMixserviceCreditapplicationRequest.setRequestdate(DateUtil.dateToString(new Date()));
-				//orderMixserviceCreditapplicationRequest.setRatetemplrate(ratetemplrate);
-				//orderMixserviceCreditapplicationRequest.setJsondata(jsondata);
+				orderMixserviceCreditapplicationRequest.setRatetemplrate(CommonConstant.RS_LOAN_CREDIT_RATETEMPL_RATE);
+				orderMixserviceCreditapplicationRequest.setJsondata(creditApplicationJsonData);
 				orderMixserviceCreditapplicationRequest.setUrlkey(rsFsFileUploadResponse.getUrlKey());
 				orderMixserviceCreditapplicationRequest.setCreditype("2");
-				//jsondata
-				
-				
-//				LoanCreditCompany loanCreditCompany = new LoanCreditCompany();
-//				loanCreditCompany.setCreditOrderNo(qCrditOrderInfo.getOrderNo());
-//				List<LoanCreditCompany> creditCompanies = loanCreditCompanyDao
-//						.queryLoanCreditCompany(loanCreditCompany);
-//
-//				if (CollectionUtils.isNotEmpty(creditCompanies)) {
-//					LoanCreditCompany creditCompany = creditCompanies.get(0);
-//
-//					LoanCreditCompanyBean companyBean = LoanTypeConvertUtil
-//							.getLoanCreditCompanyBean(creditCompany);
-//					LoanCompanyAppendInfo companyAppendInfo = LoanTypeConvertUtil
-//							.getCompanyAppendInfo(creditCompany.getAppendInfo());
-//
-//
-//				}
-				
-				
-				
 				
 				//rsCreditManager.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
 				
 				
 			} catch (Exception e) {
-				e.printStackTrace();
-				response.putErrorResult("上传失败");
-				
+				log.error("授信文件上传失败:"+Tools.gsonToString(req), e);
+				response.putErrorResult("授信文件上传失败");
+				return response;
 			}finally{
 				// 删除本地文件
 				if(StringUtil.isValidString(orgCreditFileRootDir)){
 					FileHelp.deleteFile(orgCreditFileRootDir);
 				}
-				
 			}
-			
-			
-			response.putSuccess();
-			
-			
-			
-			
-		}
+		}	
 		
+		response.putSuccess();
 		return response;
 	}
 	
-	private String json(LoanCompanyAppendInfo companyAppendInfo){
+	/**
+	 * 组装授信申请jsondata
+	 * @param loanCreditCompany
+	 * @param companyAppendInfo
+	 * @param loanPersonEnsure
+	 * @param loanCompanyEnsure
+	 * @return
+	 */
+	private String creditApplicationJson(LoanCreditCompany loanCreditCompany,LoanCompanyAppendInfo companyAppendInfo,LoanPersonEnsure loanPersonEnsure,LoanCompanyEnsure loanCompanyEnsure){
 		
-		CreditApplicationJsonData creditJsonData = new CreditApplicationJsonData();
+		LoanCreditApplicationJsonDataBean creditJsonData = new LoanCreditApplicationJsonDataBean();
 		
 		creditJsonData.setRootInstCd(CommonConstant.RS_FANGCANG_CONST_ID);
         creditJsonData.setPassportNumber("27889998987");///*****************无法提供
-        creditJsonData.setWorkPhone("0755-88884444");
+        creditJsonData.setWorkPhone(loanCreditCompany.getContactPhone());
         
-        creditJsonData.setPlatformRegistTime("2015-01-10 00:00:00");
-        creditJsonData.setPlatformOperaNo("M10000001");
-        creditJsonData.setOperatNumberEmployees("50");
-        creditJsonData.setLeaseTerm("2");
-        creditJsonData.setLeaseAddress("向荣大厦");
-        creditJsonData.setHousingArea("1000");
-        creditJsonData.setRental("130000");
-        creditJsonData.setPaymentMethod("网上转账");
-        creditJsonData.setRemark("经营信息");
+        creditJsonData.setPlatformRegistTime(DateUtil.dateToString(loanCreditCompany.getRegDate()));
+        creditJsonData.setPlatformOperaNo(loanCreditCompany.getOrgCode());
+        creditJsonData.setOperatNumberEmployees(LoanCreditCompanyEnum.OrgSize.getEnumBySizeType(loanCreditCompany.getOrgSize()).getDes());
+        creditJsonData.setLeaseTerm(companyAppendInfo.getCompanyLease().getBeginLeaseDate()+" 到 "+companyAppendInfo.getCompanyLease().getEndLeaseDate() );
+        creditJsonData.setLeaseAddress(companyAppendInfo.getCompanyLease().getLeaseAddress());
+        
+        creditJsonData.setHousingArea(companyAppendInfo.getCompanyLease().getHousingArea());
+        creditJsonData.setRental(companyAppendInfo.getCompanyLease().getRental()+"元/年");
+        creditJsonData.setPaymentMethod(companyAppendInfo.getCompanyLease().getPaymentMethod());
+        creditJsonData.setRemark(companyAppendInfo.getCompanyLease().getRemark());
 		
-		return "";
+        
+        creditJsonData.setMainBusinessData(companyAppendInfo.getMainBusinessDatas());
+        creditJsonData.setCooperationCompanyInfo(companyAppendInfo.getCooperationCompanyInfos());
+        creditJsonData.setControllData(companyAppendInfo.getControllDatas());
+        //个人担保
+        if(loanPersonEnsure!=null){
+        	creditJsonData.setApplicateName_p(loanPersonEnsure.getPersonName());
+            creditJsonData.setApplicateCardId_p(loanPersonEnsure.getNationalIdentityNumber());
+            creditJsonData.setWorkUnit_p(loanPersonEnsure.getWorkCompany());
+            creditJsonData.setWorkStatus_p(loanPersonEnsure.getIndustry());
+            creditJsonData.setOccupation_p(loanPersonEnsure.getOccupation());
+            creditJsonData.setCourseOpenTime_p(LoanPersonEnsureEnum.YearsWorking.getEnumByType(loanPersonEnsure.getYearsWorking()).getDes());
+            creditJsonData.setAnnualIncome_p("");//暂无提供
+            creditJsonData.setPhoneNumber_p(loanPersonEnsure.getMobileNumber());
+            creditJsonData.setFamilyFixed_p(loanPersonEnsure.getWorkTelephone());
+            creditJsonData.setPlaceOfOrigin_p(loanPersonEnsure.getNativePlace());
+            creditJsonData.setEmail_p("");//暂无提供
+            creditJsonData.setAcademy_p(loanPersonEnsure.getGraduateSchool());
+            creditJsonData.setEducation_p(LoanPersonEnsureEnum.HighestEducation.getEnumByType(loanPersonEnsure.getHighestEducation()).getDes());
+            creditJsonData.setAddress_p(loanPersonEnsure.getCurrentLiveAddress());
+            creditJsonData.setHouseNature_p(LoanPersonEnsureEnum.HousePropertyType.getEnumByType(loanPersonEnsure.getHousePropertyType()).getDes());
+            creditJsonData.setMarriageStatus_p(LoanPersonEnsureEnum.MarriageStatus.getEnumByStatus(loanPersonEnsure.getMarriageStatus()).getDes());
+            creditJsonData.setChildrenStatus_p(LoanPersonEnsureEnum.HaveChildren.getEnumByType(loanPersonEnsure.getHaveChildren()).getDes());
+            creditJsonData.setFirstContactName_p(loanPersonEnsure.getFirstContactName());
+            creditJsonData.setFirstContactPhone_p(loanPersonEnsure.getFirstContactPhone());
+            creditJsonData.setFirstContactRelations_p(LoanPersonEnsureEnum.RelationToGuarantee.getEnumByType(loanPersonEnsure.getRelationToGuarantee1()).getDes());
+            creditJsonData.setSecondContactName_p(loanPersonEnsure.getSecondContactName());
+            creditJsonData.setSecondContactPhone_p(loanPersonEnsure.getSecondContactPhone());
+            creditJsonData.setSecondContactRelations_p(LoanPersonEnsureEnum.RelationToGuarantee.getEnumByType(loanPersonEnsure.getRelationToGuarantee2()).getDes());
+            creditJsonData.setRoomSituation_p(LoanPersonEnsureEnum.CarPropertyType.getEnumByType(loanPersonEnsure.getCarPropertyType()).getDes());
+            creditJsonData.setCarBrandModel_p(loanPersonEnsure.getCarBrand());
+            creditJsonData.setCarValue_p("");//暂无提供
+            creditJsonData.setBuyCarYear_p("");//暂无提供
+            creditJsonData.setOtherAssets(loanPersonEnsure.getOtherProperty());
+            creditJsonData.setRelatedNote(loanPersonEnsure.getPropertyRemark());
+        	
+        }
+        //企业担保
+        if(loanCompanyEnsure!=null){
+        	creditJsonData.setCompanyName_c(loanCompanyEnsure.getCompanyName());
+            creditJsonData.setBusinessExpire_c("");//暂无提供
+            creditJsonData.setCompanyType_c("");//暂无提供
+            creditJsonData.setRegisteredCapital_c("");//暂无提供
+            creditJsonData.setEmployeesNumber_c(LoanCreditCompanyEnum.OrgSize.getEnumBySizeType(loanCompanyEnsure.getEnterpriseScale()).getDes());
+            creditJsonData.setRegisteredAddress_c(loanCompanyEnsure.getRegAddress());
+            creditJsonData.setOfficeAddress_c(loanCompanyEnsure.getOfficeAddress());
+            creditJsonData.setSetUpDate_c(DateUtil.dateToString(loanCompanyEnsure.getFoundDate()));
+            creditJsonData.setBusinessLicenseNumber_c(loanCompanyEnsure.getBusinessLicense());
+            creditJsonData.setTaxregCard_c(loanCompanyEnsure.getTaxRegisterCode());
+            creditJsonData.setOrganizaCertificateNo_c(loanCompanyEnsure.getOrgCodeCertificate());
+            creditJsonData.setPlatformOperaNo_c(loanCompanyEnsure.getRegisterAccount());
+            creditJsonData.setPlatformRegistTime_c(DateUtil.dateToString(loanCompanyEnsure.getRegisterDate()));
+            creditJsonData.setLegalPersonName_c(loanCompanyEnsure.getLegalPersonName());
+            creditJsonData.setPersonCertificate_c(LoanCreditCompanyEnum.CertificateType.getEnumByKey(loanCompanyEnsure.getLegalPersonCertificateType()).getDes());
+            creditJsonData.setApplicateCardId_c(loanCompanyEnsure.getLegalPersonCertificateNumber());
+            creditJsonData.setPrimaryContactName_c(loanCompanyEnsure.getContactName());
+            creditJsonData.setPrimaryContactPhoneNumber(loanCompanyEnsure.getContactPhone());
+        	
+        }
+        JSON result = JSONSerializer.toJSON(creditJsonData);
+        return result.toString();
 	}
 	
 	

@@ -38,10 +38,6 @@ import com.Rop.api.response.WheatfieldOrderOperResponse;
 import com.Rop.api.response.WheatfieldOrderServiceAgreementconfirmResponse;
 import com.Rop.api.response.WheatfieldOrderServiceNewloanapplyResponse;
 import com.fangcang.titanjr.common.util.Tools;
-import com.fangcang.titanjr.rs.dto.ControllData;
-import com.fangcang.titanjr.rs.dto.CooperationCompanyInfo;
-import com.fangcang.titanjr.rs.dto.CreditApplicationJsonData;
-import com.fangcang.titanjr.rs.dto.MainBusinessData;
 import com.fangcang.titanjr.rs.dto.NewLoanApplyJsonData;
 
 /**
@@ -611,6 +607,7 @@ public class LoanDemoTest {
         mainBusinessData.setMainSaleProportion("12%");
         
         List<MainBusinessData> mainBusinessDataList = new ArrayList<MainBusinessData>();
+        mainBusinessDataList.add(mainBusinessData);
         creditJsonData.setMainBusinessData(mainBusinessDataList);
         
         //合作企业信息

@@ -2,10 +2,6 @@ package test.fangcang.titanjr.rs.invoker.loancredit;
 
 import java.util.List;
 
-import com.fangcang.titanjr.rs.dto.ControllData;
-import com.fangcang.titanjr.rs.dto.CooperationCompanyInfo;
-import com.fangcang.titanjr.rs.dto.MainBusinessData;
-
 /**
  * 授信申请
  * Created by zhaoshan on 2016/10/9.

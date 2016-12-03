@@ -29,7 +29,7 @@ public class LoanCreditOrder {
 
 	private String urlKey;// 授信资料key
 
-	private Integer status;// 1 草稿 2 授信初审 3 授信终审 4 审核失败 5 授信成功
+	private Integer status;// 1 草稿 2 授信初审(待审核) 3 授信终审(初审通过) 4 审核失败(初审不通过) 5 授信成功
 
 	private Integer assureType;// 担保 1 个人 2 企业
 

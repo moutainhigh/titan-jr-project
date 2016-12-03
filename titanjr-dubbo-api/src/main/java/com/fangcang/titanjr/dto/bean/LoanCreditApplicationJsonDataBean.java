@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.rs.dto;
+package com.fangcang.titanjr.dto.bean;
 
 import java.io.Serializable;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
  * @author luoqinglong
  * @2016年11月9日
  */
-public class CreditApplicationJsonData implements Serializable {
+public class LoanCreditApplicationJsonDataBean implements Serializable {
 	
 		/**
 	 * 
@@ -31,16 +31,12 @@ public class CreditApplicationJsonData implements Serializable {
 		private String paymentMethod;//支付方式
 		private String remark;//备注
 		
-		//主营业务
-	    private List<MainBusinessData> mainBusinessData;
-		
-	    //合作企业信息
-	    private List<CooperationCompanyInfo> cooperationCompanyInfo;
-		
 	    //股东信息 
-	    private List<ControllData> controllData;
-	    
-
+		private List<LoanControllDataBean> controllData;
+		//合作企业信息
+		private List<LoanCooperationCompanyBean> cooperationCompanyInfo;
+		//主营业务
+		private List<LoanMainBusinessDataBean> mainBusinessData;
 	    //企业担保人信息
 	    //private CompanyGuarantee companyGuarantee;
 	    private String companyName_c;// 企业名称
@@ -166,24 +162,25 @@ public class CreditApplicationJsonData implements Serializable {
 		public void setRemark(String remark) {
 			this.remark = remark;
 		}
-		public List<MainBusinessData> getMainBusinessData() {
-			return mainBusinessData;
+		
+		public List<LoanControllDataBean> getControllData() {
+			return controllData;
 		}
-		public void setMainBusinessData(List<MainBusinessData> mainBusinessData) {
-			this.mainBusinessData = mainBusinessData;
+		public void setControllData(List<LoanControllDataBean> controllData) {
+			this.controllData = controllData;
 		}
-		public List<CooperationCompanyInfo> getCooperationCompanyInfo() {
+		public List<LoanCooperationCompanyBean> getCooperationCompanyInfo() {
 			return cooperationCompanyInfo;
 		}
 		public void setCooperationCompanyInfo(
-				List<CooperationCompanyInfo> cooperationCompanyInfo) {
+				List<LoanCooperationCompanyBean> cooperationCompanyInfo) {
 			this.cooperationCompanyInfo = cooperationCompanyInfo;
 		}
-		public List<ControllData> getControllData() {
-			return controllData;
+		public List<LoanMainBusinessDataBean> getMainBusinessData() {
+			return mainBusinessData;
 		}
-		public void setControllData(List<ControllData> controllData) {
-			this.controllData = controllData;
+		public void setMainBusinessData(List<LoanMainBusinessDataBean> mainBusinessData) {
+			this.mainBusinessData = mainBusinessData;
 		}
 		public String getCompanyName_c() {
 			return companyName_c;

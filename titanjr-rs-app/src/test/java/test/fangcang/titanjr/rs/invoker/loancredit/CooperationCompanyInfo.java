@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.rs.dto;
+package test.fangcang.titanjr.rs.invoker.loancredit;
 
 import java.io.Serializable;
 

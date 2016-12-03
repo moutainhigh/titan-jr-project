@@ -852,8 +852,8 @@
 				<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核结果：</span>
 					<select name="auditResult" id="auditResult" class="w100 select w135 J_nothroght">
 						<option value="">请选择</option>
-						<option value="1">通过</option>
-						<option value="2">不通过</option>
+						<option value="3">通过</option>
+						<option value="4">不通过</option>
 					</select>
 				</p>
 				<p class="ptb9 showhide"><span class="w80"><i class="c_fc2020">*</i>未通过原因：</span>
