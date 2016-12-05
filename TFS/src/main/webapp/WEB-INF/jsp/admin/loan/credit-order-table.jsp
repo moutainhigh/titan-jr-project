@@ -10,13 +10,13 @@
 	<td class="tdl">
 	<c:if test="${creditCompanyInfoDTO.status ==1}">草稿</c:if>
 	<c:if test="${creditCompanyInfoDTO.status ==2}"><span class="c_red">待审核</span></c:if>
-	<c:if test="${creditCompanyInfoDTO.status ==3}">审核未通过</c:if>
-	<c:if test="${creditCompanyInfoDTO.status ==4}">已提交复审</c:if>
+	<c:if test="${creditCompanyInfoDTO.status ==3}">初审通过</c:if>
+	<c:if test="${creditCompanyInfoDTO.status ==4}">初审未通过</c:if>
 	<c:if test="${creditCompanyInfoDTO.status ==5}">审核已通过</c:if>
 	</td>
 	<td class="tdl">
 	<c:if test="${creditCompanyInfoDTO.status ==2}"><a href="<%=basePath%>/admin/credit-order-detail.shtml?orderNo=${creditCompanyInfoDTO.orderNo }&opt=check" class="c_blue cursor undl j_loan_check">审核</a></c:if>
-	<c:if test="${creditCompanyInfoDTO.status !=2}"><a href="<%=basePath%>/admin/credit-order-detail.shtml?orderNo=${creditCompanyInfoDTO.orderNo }&opt=check" class="c_blue cursor undl j_loan_check">查看</a></c:if>
+	<c:if test="${creditCompanyInfoDTO.status !=2}"><a href="<%=basePath%>/admin/credit-order-detail.shtml?orderNo=${creditCompanyInfoDTO.orderNo }&opt=view" class="c_blue cursor undl j_loan_check">查看</a></c:if>
 	
 	</td>		
 </tr> 

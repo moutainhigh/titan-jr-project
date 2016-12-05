@@ -1,6 +1,8 @@
 package com.fangcang.titanjr.rs.request;
 
 
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 
 import com.fangcang.titanjr.common.exception.RSValidateException;
@@ -36,17 +38,17 @@ public class OprsystemCreditCompanyRequest extends BaseRequest {
 	 * 营业照生效日期
 	 */
 	@NotNull
-	private String certificatestartdate;
+	private Date certificatestartdate;
 	/**
 	 * 营业照失效日期
 	 */
 	@NotNull
-	private String certificateexpiredate;
+	private Date certificateexpiredate;
 	/**
 	 * 企业类型1.有限责任公司； 2.股份有限公司； 3.内资； 4.国有全资； 5.集体全资； 6.国外投资股份有限公司； 99.其它；
 	 */
 	@NotNull
-	private String companytype;
+	private Integer companytype;
 	/**
 	 * 注册资本
 	 */
@@ -78,7 +80,7 @@ public class OprsystemCreditCompanyRequest extends BaseRequest {
 	 * 法人证件类型 1.身份证; 2.护照; 8.户口本; 21.军官证; 22.士兵证; 23.回乡证; 24.台湾居民往来大陆通行证; 25.香港居民往来大陆通行证; 99.其他
 	 */
 	@NotNull
-	private String certificatetype;
+	private Integer certificatetype;
 	/**
 	 * 法人证件号码
 	 */
@@ -104,18 +106,7 @@ public class OprsystemCreditCompanyRequest extends BaseRequest {
 	}
 
 
-	public String getCertificatestartdate() {
-		return certificatestartdate;
-	}
-
-	public void setCertificatestartdate(String certificatestartdate) {
-		this.certificatestartdate = certificatestartdate;
-	}
-
-
-	public String getCertificateexpiredate() {
-		return certificateexpiredate;
-	}
+	 
 
 
 	public String getCompanyname() {
@@ -132,19 +123,6 @@ public class OprsystemCreditCompanyRequest extends BaseRequest {
 
 	public void setBusinesslicense(String businesslicense) {
 		this.businesslicense = businesslicense;
-	}
-
-
-	public void setCertificateexpiredate(String certificateexpiredate) {
-		this.certificateexpiredate = certificateexpiredate;
-	}
-
-	public String getCompanytype() {
-		return companytype;
-	}
-
-	public void setCompanytype(String companytype) {
-		this.companytype = companytype;
 	}
 
 	public String getRegistfinance() {
@@ -169,14 +147,6 @@ public class OprsystemCreditCompanyRequest extends BaseRequest {
 
 	public void setCorporatename(String corporatename) {
 		this.corporatename = corporatename;
-	}
-
-	public String getCertificatetype() {
-		return certificatetype;
-	}
-
-	public void setCertificatetype(String certificatetype) {
-		this.certificatetype = certificatetype;
 	}
 
 	public String getCertificatenumber() {
@@ -211,4 +181,46 @@ public class OprsystemCreditCompanyRequest extends BaseRequest {
 		this.organcertificate = organcertificate;
 	}
 
+
+	public Date getCertificatestartdate() {
+		return certificatestartdate;
+	}
+
+
+	public void setCertificatestartdate(Date certificatestartdate) {
+		this.certificatestartdate = certificatestartdate;
+	}
+
+
+	public Date getCertificateexpiredate() {
+		return certificateexpiredate;
+	}
+
+
+	public void setCertificateexpiredate(Date certificateexpiredate) {
+		this.certificateexpiredate = certificateexpiredate;
+	}
+
+
+	public Integer getCompanytype() {
+		return companytype;
+	}
+
+
+	public void setCompanytype(Integer companytype) {
+		this.companytype = companytype;
+	}
+
+
+	public Integer getCertificatetype() {
+		return certificatetype;
+	}
+
+
+	public void setCertificatetype(Integer certificatetype) {
+		this.certificatetype = certificatetype;
+	}
+
+	
+	
 }

@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -16,6 +15,7 @@ import com.fangcang.titanjr.dto.request.AuditCreidtOrderRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
+import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
 import com.fangcang.titanjr.dto.response.PageCreditCompanyInfoResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
@@ -106,15 +106,20 @@ public class MLoanController extends BaseController{
 	@ResponseBody
 	@RequestMapping(value = "/check-credit-order")
 	public String checkCreditOrder(String orderNo,Integer auditResult,String content){
-		//TODO 检查参数
-		
+		if(StringUtils.isEmpty(orderNo)||auditResult==null){
+			return toJson(putSysError("参数不能为空"));
+		}
 		AuditCreidtOrderRequest auditCreidtOrderRequest = new AuditCreidtOrderRequest();
 		
 		auditCreidtOrderRequest.setOrderNo(orderNo);
 		auditCreidtOrderRequest.setAuditResult(AuditResultEnum.getEnumByStatus(auditResult));
 		auditCreidtOrderRequest.setContent(content);
-		loanCreditService.auditCreditOrder(auditCreidtOrderRequest);
-		
-		return toJson(putSuccess("成功"));	
+		AuditCreidtOrderResponse auditCreidtOrderResponse = loanCreditService.auditCreditOrder(auditCreidtOrderRequest);
+		if(auditCreidtOrderResponse.isResult()){
+			putSuccess("审核成功");
+		}else{
+			putSysError(auditCreidtOrderResponse.getReturnMessage());
+		}
+		return toJson();	
 	}
 }

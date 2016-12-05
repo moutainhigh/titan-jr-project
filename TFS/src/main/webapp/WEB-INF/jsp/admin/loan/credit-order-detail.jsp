@@ -891,6 +891,7 @@
   	      	},
   	        success : function(result){
   	           if(result.code==1){
+  	        	   location.href="<%=basePath %>/admin/credit-order.shtml";
   	        	   flag = true;
   	           }else{
   	        	   new top.Tip({msg : result.msg, type: 3 , timer:2000});

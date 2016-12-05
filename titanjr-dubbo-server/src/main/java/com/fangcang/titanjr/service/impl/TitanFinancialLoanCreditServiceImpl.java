@@ -10,7 +10,6 @@ import javax.annotation.Resource;
 import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -78,6 +77,7 @@ import com.fangcang.titanjr.rs.request.OprsystemCreditCompanyRequest;
 import com.fangcang.titanjr.rs.request.OrderMixserviceCreditapplicationRequest;
 import com.fangcang.titanjr.rs.request.RSFsFileUploadRequest;
 import com.fangcang.titanjr.rs.response.OprsystemCreditCompanyResponse;
+import com.fangcang.titanjr.rs.response.OrderMixserviceCreditapplicationResponse;
 import com.fangcang.titanjr.rs.response.RSFsFileUploadResponse;
 import com.fangcang.titanjr.service.TitanCodeCenterService;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
@@ -137,11 +137,11 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	public AuditCreidtOrderResponse auditCreditOrder(AuditCreidtOrderRequest req) {
 		AuditCreidtOrderResponse response = new AuditCreidtOrderResponse();
 		if(!StringUtil.isValidString(req.getOrderNo())){
-			response.putErrorResult("参数[授信申请单号(orderNo)]不能为空");
+			response.putErrorResult("[授信申请单号(orderNo)]不能为空");
 			return response;
 		}
 		if(req.getAuditResult()==null){
-			response.putErrorResult("参数[审核状态(auditResult)]不能为空");
+			response.putErrorResult("[审核状态(auditResult)]不能为空");
 			return response;
 		}
 		//校验申请单号是否存在
@@ -177,10 +177,9 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		loanCreditOpinion.setCreateTime(now);
 		loanCreditOpinionDao.saveLoanCreditOpinion(loanCreditOpinion);
 		
-		//通过后给融数处理	
+		//通过后,调用融数处理	
 		if(auditResult){
 			//1-上传申请附件
-			//申请资料附件
 			LoanCreditCompany loanCreditCompanyParam = new LoanCreditCompany();
 			loanCreditCompanyParam.setCreditOrderNo(req.getOrderNo());
 			List<LoanCreditCompany> loanCreditCompanyList = loanCreditCompanyDao.queryLoanCreditCompany(loanCreditCompanyParam);
@@ -203,9 +202,8 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			companyFilesList.add(loanCreditCompany.getTaxRegUrl());
 			companyFilesList.add(loanCreditCompany.getOrgCodeUrl());
 			
-			//担保人文件 
 			List<String> ensureFilesList = new ArrayList<String>();
-			//个人
+			//个人担保文件  
 			LoanPersonEnsure loanPersonEnsure = null;
 			if(loanCreditOrder.getAssureType()==LoanCreditOrderEnum.AssureType.PERSON.getType()){
 				LoanPersonEnsure loanPersonEnsureParam = new LoanPersonEnsure();
@@ -223,7 +221,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				ensureFilesList.add(loanPersonEnsure.getMarriageUrl());
 			}
 			
-			//企业
+			//企业担保文件  
 			LoanCompanyEnsure loanCompanyEnsure = null;
 			if(loanCreditOrder.getAssureType()==LoanCreditOrderEnum.AssureType.ENTERPRISE.getType()){
 				LoanCompanyEnsure loanCompanyEnsureParam = new LoanCompanyEnsure();
@@ -240,116 +238,80 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				ensureFilesList.add(loanCompanyEnsure.getLicenseUrl());
 				ensureFilesList.add(loanCompanyEnsure.getLegalPersonUrl());
 			}
-			//企业证件资料本地路径
-			String orgCreditFileRootDir = "";
-			try {
-				
-				//企业证件资料本地路径
-				orgCreditFileRootDir = TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"/tmp"+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+loanCreditOrder.getOrgCode();
-				String orgCreditDir = "EnterpriseCreditPackage";
-				String localEnterpriseDocumentInfoPath = orgCreditFileRootDir+"/"+orgCreditDir+"/"+"EnterpriseDocumentInfo";
-				String localGuarantorDocumentsInfoPath =  orgCreditFileRootDir+"/"+orgCreditDir+"/"+"GuarantorDocumentsInfo";
-				//先删除旧的临时文件
-				FileHelp.deleteFile(orgCreditFileRootDir);
-				
-				FtpUtil.makeLocalDirectory(localEnterpriseDocumentInfoPath);
-				FtpUtil.makeLocalDirectory(localGuarantorDocumentsInfoPath);
-				
-				//下载文件
-				FTPConfigResponse ftpConfigResponse = titanSysconfigService.getFTPConfig();
-				FtpUtil ftpUtil = new FtpUtil(ftpConfigResponse.getFtpServerIp(),ftpConfigResponse.getFtpServerPort(),ftpConfigResponse.getFtpServerUser(),ftpConfigResponse.getFtpServerPassword());
-				ftpUtil.ftpLogin();
-				//公司证件资料
-				for(String file : companyFilesList){
-					if(StringUtil.isValidString(file)){
-						ftpUtil.downloadFile(file, localEnterpriseDocumentInfoPath, FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+loanCreditOrder.getOrgCode());
-					}
-				}
-				//担保人证件资料
-				for(String file : ensureFilesList){
-					if(StringUtil.isValidString(file)){
-						ftpUtil.downloadFile(file, localGuarantorDocumentsInfoPath, FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+loanCreditOrder.getOrgCode());
-					}
-				}
-				
-				ftpUtil.ftpLogOut();
-				
-				//压缩打包文件
-				File srcZipFile = FileHelp.zipFile(orgCreditFileRootDir+"/"+orgCreditDir,orgCreditDir+"_src.zip");
-				
-				//加密
-				String encryptFilePath = orgCreditFileRootDir+"/"+orgCreditDir+".zip";
-				FileHelp.encryptRSFile(srcZipFile, encryptFilePath);
-				
-				//上传到融数
-				RSFsFileUploadRequest rsFsFileUploadRequest = new RSFsFileUploadRequest();
-				rsFsFileUploadRequest.setUserid(loanCreditOrder.getOrgCode());
-				rsFsFileUploadRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-				rsFsFileUploadRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID_230);
-				rsFsFileUploadRequest.setType(FileTypeEnum.UPLOAD_FILE_73.getFileType());
-				rsFsFileUploadRequest.setInvoiceDate(DateUtil.getCurrentDate());
-				rsFsFileUploadRequest.setPath(encryptFilePath);
-				rsFsFileUploadRequest.setBacth(loanCreditOrder.getOrgCode()+DateUtil.getCurrentDate().getTime());
-				
-				RSFsFileUploadResponse rsFsFileUploadResponse = rsFileManager.fsFileUpload(rsFsFileUploadRequest);
-				if((!StringUtil.isValidString(rsFsFileUploadResponse.getUrlKey()))||rsFsFileUploadResponse.isSuccess()==false){
-					response.putErrorResult(rsFsFileUploadResponse.getReturnMsg());
-					log.error("上传授信文件压缩包到融数失败,请求参数为rsFsFileUploadRequest:"+Tools.gsonToString(rsFsFileUploadRequest));
-					return response;
-				}
-				System.out.println("urlkey："+rsFsFileUploadResponse.getUrlKey());
-				//2-提交企业资料
-				OprsystemCreditCompanyRequest creditCompanyRequest = new OprsystemCreditCompanyRequest();
-				creditCompanyRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-				creditCompanyRequest.setUserid(loanCreditOrder.getOrgCode());
-				
-				creditCompanyRequest.setCompanyname(loanCreditCompany.getName());
-				creditCompanyRequest.setBusinesslicense(loanCreditCompany.getLicense());
-				
-				creditCompanyRequest.setCertificatestartdate(DateUtil.dateToString(loanCreditCompany.getCertificateStartDate(), "yyyy-MM-dd"));
-				creditCompanyRequest.setCertificateexpiredate(DateUtil.dateToString(loanCreditCompany.getCertificateExpireDate(), "yyyy-MM-dd"));
-				creditCompanyRequest.setCompanytype(LoanCreditCompanyEnum.CompanyType.getEnumByType(loanCreditCompany.getCompanyType()).getDes());
-				creditCompanyRequest.setRegistfinance(loanCreditCompany.getRegistFinance());
-				creditCompanyRequest.setAddress(loanCreditCompany.getRegAddress());
-				creditCompanyRequest.setTaxregcard(loanCreditCompany.getTaxRegNo());
-				
-				creditCompanyRequest.setCertificatetype(LoanCreditCompanyEnum.CertificateType.getEnumByKey(loanCreditCompany.getLegalceType()).getDes());
-				creditCompanyRequest.setCertificatenumber(loanCreditCompany.getLegalNo());
-				OprsystemCreditCompanyResponse oprsystemCreditCompanyResponse = rsCreditManager.oprsystemCreditCompany(creditCompanyRequest);
-				if(oprsystemCreditCompanyResponse.isSuccess()==false){
-					response.putErrorResult(oprsystemCreditCompanyResponse.getReturnMsg());
-					log.error("授信申请时上报企业资料信息给融数失败,企业信息为creditCompanyRequest:"+Tools.gsonToString(creditCompanyRequest));
-					return response;
-				}
-				//3-授信申请接口
-				LoanCompanyAppendInfo companyAppendInfo = LoanTypeConvertUtil.getCompanyAppendInfo(loanCreditCompany.getAppendInfo());
-				String creditApplicationJsonData = creditApplicationJson(loanCreditCompany,companyAppendInfo,loanPersonEnsure,loanCompanyEnsure);
-				
-				OrderMixserviceCreditapplicationRequest orderMixserviceCreditapplicationRequest = new OrderMixserviceCreditapplicationRequest();
-				orderMixserviceCreditapplicationRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
-				orderMixserviceCreditapplicationRequest.setUserid(loanCreditOrder.getOrgCode());
-				orderMixserviceCreditapplicationRequest.setUserorderid(req.getOrderNo());
-				orderMixserviceCreditapplicationRequest.setAmount(loanCreditOrder.getAmount()!=null?loanCreditOrder.getAmount().toString():"0");
-				orderMixserviceCreditapplicationRequest.setReqesttime(CommonConstant.RS_LOAN_CREDIT_REQUEST_TIME);
-				orderMixserviceCreditapplicationRequest.setOrderplatformname(loanCreditCompany.getName());
-				orderMixserviceCreditapplicationRequest.setRequestdate(DateUtil.dateToString(new Date()));
-				orderMixserviceCreditapplicationRequest.setRatetemplrate(CommonConstant.RS_LOAN_CREDIT_RATETEMPL_RATE);
-				orderMixserviceCreditapplicationRequest.setJsondata(creditApplicationJsonData);
-				orderMixserviceCreditapplicationRequest.setUrlkey(rsFsFileUploadResponse.getUrlKey());
-				orderMixserviceCreditapplicationRequest.setCreditype("2");
-				
-				//rsCreditManager.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
-				
-				
-			} catch (Exception e) {
-				log.error("授信文件上传失败:"+Tools.gsonToString(req), e);
-				response.putErrorResult("授信文件上传失败");
+			
+			//本地加密上传的文件
+			String encryptRSFilePath = encryptRSFile(companyFilesList,ensureFilesList,loanCreditOrder.getOrgCode());
+			if(!StringUtil.isValidString(encryptRSFilePath)){
+				response.putErrorResult("授信文件上传融数时失败");
 				return response;
-			}finally{
-				// 删除本地文件
-				if(StringUtil.isValidString(orgCreditFileRootDir)){
-					FileHelp.deleteFile(orgCreditFileRootDir);
-				}
+			}
+			
+			//上传到融数
+			RSFsFileUploadRequest rsFsFileUploadRequest = new RSFsFileUploadRequest();
+			rsFsFileUploadRequest.setUserid(loanCreditOrder.getOrgCode());
+			rsFsFileUploadRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+			rsFsFileUploadRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID_230);
+			rsFsFileUploadRequest.setType(FileTypeEnum.UPLOAD_FILE_73.getFileType());
+			rsFsFileUploadRequest.setInvoiceDate(DateUtil.getCurrentDate());
+			rsFsFileUploadRequest.setPath(encryptRSFilePath);
+			rsFsFileUploadRequest.setBacth(loanCreditOrder.getOrgCode()+DateUtil.getCurrentDate().getTime());
+			
+			RSFsFileUploadResponse rsFsFileUploadResponse = rsFileManager.fsFileUpload(rsFsFileUploadRequest);
+			if((!StringUtil.isValidString(rsFsFileUploadResponse.getUrlKey()))||rsFsFileUploadResponse.isSuccess()==false){
+				response.putErrorResult(rsFsFileUploadResponse.getReturnMsg());
+				log.error("上传授信文件压缩包到融数失败,请求参数为rsFsFileUploadRequest:"+Tools.gsonToString(rsFsFileUploadRequest));
+				return response;
+			}
+			System.out.println("urlkey："+rsFsFileUploadResponse.getUrlKey());
+			//2-提交企业资料
+			OprsystemCreditCompanyRequest creditCompanyRequest = new OprsystemCreditCompanyRequest();
+			creditCompanyRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+			creditCompanyRequest.setUserid(loanCreditOrder.getOrgCode());
+			
+			creditCompanyRequest.setCompanyname(loanCreditCompany.getName());
+			creditCompanyRequest.setBusinesslicense(loanCreditCompany.getLicense());
+			
+			creditCompanyRequest.setCertificatestartdate(loanCreditCompany.getCertificateStartDate());
+			creditCompanyRequest.setCertificateexpiredate(loanCreditCompany.getCertificateExpireDate());
+			creditCompanyRequest.setCompanytype(loanCreditCompany.getCompanyType());
+			creditCompanyRequest.setRegistfinance(loanCreditCompany.getRegistFinance());
+			creditCompanyRequest.setAddress(loanCreditCompany.getRegAddress());
+			creditCompanyRequest.setTaxregcard(loanCreditCompany.getTaxRegNo());
+			
+			creditCompanyRequest.setCorporatename(loanCreditCompany.getLegalName());
+			creditCompanyRequest.setCertificatetype(loanCreditCompany.getLegalceType());
+			creditCompanyRequest.setCertificatenumber(loanCreditCompany.getLegalNo());
+			
+			OprsystemCreditCompanyResponse oprsystemCreditCompanyResponse = rsCreditManager.oprsystemCreditCompany(creditCompanyRequest);
+			if(oprsystemCreditCompanyResponse.isSuccess()==false){
+				response.putErrorResult(oprsystemCreditCompanyResponse.getReturnMsg());
+				log.error("授信申请时上报企业资料信息给融数失败,企业信息为creditCompanyRequest:"+Tools.gsonToString(creditCompanyRequest));
+				return response;
+			}
+			//3-授信申请接口
+			LoanCompanyAppendInfo companyAppendInfo = LoanTypeConvertUtil.getCompanyAppendInfo(loanCreditCompany.getAppendInfo());
+			String creditApplicationJsonData = creditApplicationJson(loanCreditCompany,companyAppendInfo,loanPersonEnsure,loanCompanyEnsure);
+			
+			OrderMixserviceCreditapplicationRequest orderMixserviceCreditapplicationRequest = new OrderMixserviceCreditapplicationRequest();
+			orderMixserviceCreditapplicationRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+			orderMixserviceCreditapplicationRequest.setUserid(loanCreditOrder.getOrgCode());
+			orderMixserviceCreditapplicationRequest.setUserorderid(req.getOrderNo());
+			orderMixserviceCreditapplicationRequest.setAmount(loanCreditOrder.getAmount()!=null?loanCreditOrder.getAmount().toString():"0");
+			orderMixserviceCreditapplicationRequest.setReqesttime(CommonConstant.RS_LOAN_CREDIT_REQUEST_TIME);
+			orderMixserviceCreditapplicationRequest.setOrderplatformname(loanCreditCompany.getName());
+			orderMixserviceCreditapplicationRequest.setRequestdate(DateUtil.dateToString(new Date()));
+			orderMixserviceCreditapplicationRequest.setRatetemplrate(CommonConstant.RS_LOAN_CREDIT_RATETEMPL_RATE);
+			orderMixserviceCreditapplicationRequest.setJsondata(creditApplicationJsonData);
+			//0d1fb818-6dd0-44b7-be7f-14bfdc2c7d24
+			//TODO 删除调试代码
+			orderMixserviceCreditapplicationRequest.setUrlkey(rsFsFileUploadResponse.getUrlKey());
+			//orderMixserviceCreditapplicationRequest.setUrlkey("0d1fb818-6dd0-44b7-be7f-14bfdc2c7d24");
+			orderMixserviceCreditapplicationRequest.setCreditype("2");
+			OrderMixserviceCreditapplicationResponse orderMixserviceCreditapplicationResponse = rsCreditManager.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
+			if(orderMixserviceCreditapplicationResponse.isSuccess()==false){
+				response.putErrorResult(orderMixserviceCreditapplicationResponse.getReturnMsg());
+				log.error("授信申请时融数接口失败,OrgCode:"+loanCreditCompany.getOrgCode());
+				return response;
 			}
 		}	
 		
@@ -357,13 +319,65 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		return response;
 	}
 	
-	/**
-	 *  打包文件
+	/***
+	 * *  打包加密文件
+	 * @param companyFilesList  企业证明文件名ftp路径 /org/123.jpg
+	 * @param ensureFilesList	
+	 * @param orgCode
 	 * @return 本地加密文件的地址
 	 */
-	private String downloadCreditFile(){
-		//TODO 下载文件，加密，删除文件，
-		return "";
+	private String encryptRSFile(List<String> companyFilesList,List<String> ensureFilesList,String orgCode){
+		//下载文件，加密，删除文件，
+		//企业证件资料本地路径
+		String orgCreditFileRootDir = "";
+		orgCreditFileRootDir = TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"/tmp"+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+orgCode;
+		String orgCreditDir = "EnterpriseCreditPackage";
+		//法人担保
+		String localEnterpriseDocumentInfoPath = orgCreditFileRootDir+"/"+orgCreditDir+"/"+"EnterpriseDocumentInfo";
+		//个人担保
+		String localGuarantorDocumentsInfoPath =  orgCreditFileRootDir+"/"+orgCreditDir+"/"+"GuarantorDocumentsInfo";
+		//先删除旧的临时文件
+		FileHelp.deleteFile(orgCreditFileRootDir);
+		
+		FtpUtil.makeLocalDirectory(localEnterpriseDocumentInfoPath);
+		FtpUtil.makeLocalDirectory(localGuarantorDocumentsInfoPath);
+		try {
+			//下载文件
+			FTPConfigResponse ftpConfigResponse = titanSysconfigService.getFTPConfig();
+			FtpUtil ftpUtil = new FtpUtil(ftpConfigResponse.getFtpServerIp(),ftpConfigResponse.getFtpServerPort(),ftpConfigResponse.getFtpServerUser(),ftpConfigResponse.getFtpServerPassword());
+			ftpUtil.ftpLogin();
+			//公司证件资料
+			for(String file : companyFilesList){
+				if(StringUtil.isValidString(file)){
+					ftpUtil.downloadFile(file, localEnterpriseDocumentInfoPath, FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+orgCode);
+				}
+			}
+			//担保人证件资料
+			for(String file : ensureFilesList){
+				if(StringUtil.isValidString(file)){
+					ftpUtil.downloadFile(file, localGuarantorDocumentsInfoPath, FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+orgCode);
+				}
+			}
+			
+			ftpUtil.ftpLogOut();
+		} catch (Exception e) {
+			log.error("下载ftp文件失败，路径："+FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+orgCode+"，文件为："+Tools.gsonToString(companyFilesList)+","+Tools.gsonToString(ensureFilesList),e);
+			return "";
+		}
+		//压缩打包文件
+		File srcZipFile = FileHelp.zipFile(orgCreditFileRootDir+"/"+orgCreditDir,orgCreditDir+"_src.zip");
+		//加密
+		String encryptFilePath = orgCreditFileRootDir+"/"+orgCreditDir+".zip";
+		try {
+			FileHelp.encryptRSFile(srcZipFile, encryptFilePath);
+		} catch (Exception e) {
+			log.error("encryptRSFile，融数授信申请资料文件加密失败，原文件路径srcZipFile："+srcZipFile, e);
+			return "";
+		}
+		
+		//TODO 暂时不删除文件 FileHelp.deleteFile(orgCreditFileRootDir);
+		
+		return encryptFilePath;
 	}
 	
 	/**
