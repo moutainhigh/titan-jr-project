@@ -262,7 +262,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				log.error("上传授信文件压缩包到融数失败,请求参数为rsFsFileUploadRequest:"+Tools.gsonToString(rsFsFileUploadRequest));
 				return response;
 			}
-			System.out.println("urlkey："+rsFsFileUploadResponse.getUrlKey());
+			//System.out.println("urlkey："+rsFsFileUploadResponse.getUrlKey());
 			//2-提交企业资料
 			OprsystemCreditCompanyRequest creditCompanyRequest = new OprsystemCreditCompanyRequest();
 			creditCompanyRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
@@ -294,18 +294,17 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			
 			OrderMixserviceCreditapplicationRequest orderMixserviceCreditapplicationRequest = new OrderMixserviceCreditapplicationRequest();
 			orderMixserviceCreditapplicationRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+			orderMixserviceCreditapplicationRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
 			orderMixserviceCreditapplicationRequest.setUserid(loanCreditOrder.getOrgCode());
 			orderMixserviceCreditapplicationRequest.setUserorderid(req.getOrderNo());
 			orderMixserviceCreditapplicationRequest.setAmount(loanCreditOrder.getAmount()!=null?loanCreditOrder.getAmount().toString():"0");
 			orderMixserviceCreditapplicationRequest.setReqesttime(CommonConstant.RS_LOAN_CREDIT_REQUEST_TIME);
 			orderMixserviceCreditapplicationRequest.setOrderplatformname(loanCreditCompany.getName());
-			orderMixserviceCreditapplicationRequest.setRequestdate(DateUtil.dateToString(new Date()));
+			orderMixserviceCreditapplicationRequest.setRequestdate(DateUtil.dateToString(new Date(),"yyyy-MM-DD HH:mm:ss"));
 			orderMixserviceCreditapplicationRequest.setRatetemplrate(CommonConstant.RS_LOAN_CREDIT_RATETEMPL_RATE);
 			orderMixserviceCreditapplicationRequest.setJsondata(creditApplicationJsonData);
 			//0d1fb818-6dd0-44b7-be7f-14bfdc2c7d24
-			//TODO 删除调试代码
 			orderMixserviceCreditapplicationRequest.setUrlkey(rsFsFileUploadResponse.getUrlKey());
-			//orderMixserviceCreditapplicationRequest.setUrlkey("0d1fb818-6dd0-44b7-be7f-14bfdc2c7d24");
 			orderMixserviceCreditapplicationRequest.setCreditype("2");
 			OrderMixserviceCreditapplicationResponse orderMixserviceCreditapplicationResponse = rsCreditManager.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
 			if(orderMixserviceCreditapplicationResponse.isSuccess()==false){
@@ -375,7 +374,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			return "";
 		}
 		
-		//TODO 暂时不删除文件 FileHelp.deleteFile(orgCreditFileRootDir);
+		FileHelp.deleteFile(orgCreditFileRootDir);
 		
 		return encryptFilePath;
 	}

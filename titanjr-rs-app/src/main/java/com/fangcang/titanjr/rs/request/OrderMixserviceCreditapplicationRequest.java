@@ -81,6 +81,7 @@ public class OrderMixserviceCreditapplicationRequest extends BaseRequest{
 		//校验不能为空
 		RequestValidationUtil.check(this);
 		RequestValidationUtil.checkNotEmpty(getUserid(), "userid");
+		RequestValidationUtil.checkNotEmpty(getProductid(), "productid");
 		
 	}
 	
