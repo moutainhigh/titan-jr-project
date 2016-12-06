@@ -1,5 +1,6 @@
 package com.fangcang.titanjr.service.impl;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -15,15 +16,17 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fangcang.titanjr.common.enums.FileTypeEnum;
 import com.fangcang.titanjr.common.enums.LoanApplyOrderEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
-import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.FileHelp;
+import com.fangcang.titanjr.common.util.FtpUtil;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.LoanCreditOrderDao;
 import com.fangcang.titanjr.dao.LoanOrderDao;
 import com.fangcang.titanjr.dao.LoanRoomPackSpecDao;
-import com.fangcang.titanjr.dto.bean.LoanOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
 import com.fangcang.titanjr.dto.bean.LoanSpecBean;
 import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
@@ -36,6 +39,7 @@ import com.fangcang.titanjr.dto.request.RepaymentLoanRequest;
 import com.fangcang.titanjr.dto.request.SaveLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.CancelLoanResponse;
+import com.fangcang.titanjr.dto.response.FTPConfigResponse;
 import com.fangcang.titanjr.dto.response.GetHistoryRepaymentListResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoListResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoResponse;
@@ -47,9 +51,13 @@ import com.fangcang.titanjr.entity.LoanCreditOrder;
 import com.fangcang.titanjr.entity.LoanRoomPackSpec;
 import com.fangcang.titanjr.rs.dto.NewLoanApplyJsonData;
 import com.fangcang.titanjr.rs.manager.RSCreditManager;
+import com.fangcang.titanjr.rs.manager.RSFileManager;
 import com.fangcang.titanjr.rs.request.NewLoanApplyRequest;
+import com.fangcang.titanjr.rs.request.RSFsFileUploadRequest;
 import com.fangcang.titanjr.rs.response.NewLoanApplyResponse;
+import com.fangcang.titanjr.rs.response.RSFsFileUploadResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
+import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.StringUtil;
 
 @Service("titanFinancialLoanService")
@@ -69,6 +77,12 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService{
 	
 	@Resource 
 	private RSCreditManager rsCreditManager;
+	
+	@Resource
+	private TitanSysconfigService titanSysconfigService;
+	
+	@Resource
+	private RSFileManager rsFileManager;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
@@ -79,9 +93,13 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService{
 				response.putErrorResult("参数错误");
 				return response;
 			}
+			String loanApplyOrderNo ="";
+			String contactNames ="";
 			LoanProductEnum productType = req.getProductType();
 			if(LoanProductEnum.ROOM_PACK.getCode()==productType.getCode()){
 				LoanRoomPackSpecBean LoanSpecBean  = (LoanRoomPackSpecBean)req.getLcanSpec();
+				loanApplyOrderNo = LoanSpecBean.getLoanOrderNo();
+				contactNames = LoanSpecBean.getContractUrl();
 				//保存相关数据
 				boolean flag = this.saveLoanRoomPackSpecBean(LoanSpecBean);
 				if(!flag){
@@ -100,7 +118,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService{
 			}
 			
 			//上传文件到融数，并且获取相应的urlKey
-			String urlKey = "150a15fa-b2fa-4c72-95b5-20f173c47814";
+			String urlKey = getApplyLoanUrlKey(req.getOrgCode(),loanApplyOrderNo,1,contactNames);
 			
 			//申请贷款
 			NewLoanApplyRequest request = this.convertToNewLoanApplyRequest(req.getLcanSpec(), productType.getCode(), req.getOrgCode());
@@ -126,6 +144,90 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService{
 			log.error("贷款申请异常",e);
 			throw e;
 		}
+	}
+	/**
+	 * 上传包房贷文件
+	 * @param contactNames 文件名数组， 如：123.jpg,3333.jpg,4444.jpg
+	 * @param loanApplyOrderNo 包房贷申请订单号
+	 * @param Loantype  贷款类型：1-企业，2-个人
+	 * @return
+	 * @throws Exception 
+	 */
+	private String getApplyLoanUrlKey(String orgCode,String loanApplyOrderNo,Integer Loantype,String contactNames) throws Exception{
+		if(!StringUtil.isValidString(contactNames)){
+			throw new Exception("包房贷申请没有上传申请合同文件");
+		}
+		String orgLoanFileRootDir = TitanFinancialLoanServiceImpl.class.getClassLoader().getResource("").getPath()+"tmp"+FtpUtil.UPLOAD_PATH_LOAN_APPLY+"/"+orgCode+"/"+loanApplyOrderNo;
+		String localFileDir;
+		String localFather;
+		if(Loantype==1){
+			localFather = "EnterpriseLoanPackage";
+			//企业
+			localFileDir = "/"+localFather+"/DocumentInfo";
+		}else{
+			localFather = "PersonalLoanPackage";
+			//个人
+			localFileDir = "/"+localFather+"/PersonalDocumentInfo";
+		}
+		
+		//清理环境
+		FileHelp.deleteFile(orgLoanFileRootDir);
+		//创建目录
+		FtpUtil.makeLocalDirectory(orgLoanFileRootDir+localFileDir);
+		//下载
+		try {
+			FTPConfigResponse ftpConfigResponse = titanSysconfigService.getFTPConfig();
+			FtpUtil ftpUtil = new FtpUtil(ftpConfigResponse.getFtpServerIp(),ftpConfigResponse.getFtpServerPort(),ftpConfigResponse.getFtpServerUser(),ftpConfigResponse.getFtpServerPassword());
+			ftpUtil.ftpLogin();
+			String[] fileNames = contactNames.split(",");
+			for(String file : fileNames){
+				if(StringUtil.isValidString(file)){
+					ftpUtil.downloadFile(file, orgLoanFileRootDir+localFileDir, FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_LOAN_APPLY+"/"+orgCode+"/"+loanApplyOrderNo);
+				}
+			}
+			
+			ftpUtil.ftpLogOut();
+		} catch (Exception e) {
+			log.error("下载ftp文件失败，路径："+FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_LOAN_APPLY+"/"+orgCode+"/"+loanApplyOrderNo+"，文件为："+contactNames,e);
+			throw new Exception("文件下载失败", e);
+		}
+		
+		File srcZipFile = FileHelp.zipFile(orgLoanFileRootDir+"/"+localFather,localFather+"_src.zip");
+		long zipFileLength = srcZipFile.length()/1024;
+		log.info("包房贷申请文件("+srcZipFile.getName()+")压缩后大小："+zipFileLength+" KB,包房订单号是[loanApplyOrderNo]:"+loanApplyOrderNo);
+		//小于10K，则表示文件不存在或者下载失败
+		if(zipFileLength<10){
+			log.error("从ftp下载文件时，文件太小或者不存在，原文件路径srcZipFile："+srcZipFile.getAbsolutePath());
+			throw new Exception("包房贷申请的文件下载失败或者文件太小");
+		}
+		//加密
+		String encryptFilePath = orgLoanFileRootDir+"/"+localFather+".zip";
+		try {
+			FileHelp.encryptRSFile(srcZipFile, encryptFilePath);
+		} catch (Exception e) {
+			log.error("encryptRSFile，融数授信申请资料文件加密失败，原文件路径srcZipFile："+srcZipFile.getAbsolutePath(), e);
+			throw new Exception("文件rsa加密失败", e);
+		}
+		
+		//上传到融数
+		RSFsFileUploadRequest rsFsFileUploadRequest = new RSFsFileUploadRequest();
+		rsFsFileUploadRequest.setUserid(orgCode);
+		rsFsFileUploadRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+		rsFsFileUploadRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+		rsFsFileUploadRequest.setType(FileTypeEnum.UPLOAD_FILE_73.getFileType());
+		rsFsFileUploadRequest.setInvoiceDate(com.fangcang.util.DateUtil.getCurrentDate());
+		rsFsFileUploadRequest.setPath(encryptFilePath);
+		rsFsFileUploadRequest.setBacth(orgCode+com.fangcang.util.DateUtil.getCurrentDate().getTime());
+		
+		RSFsFileUploadResponse rsFsFileUploadResponse = rsFileManager.fsFileUpload(rsFsFileUploadRequest);
+		//上传失败
+		if(rsFsFileUploadResponse.isSuccess()==false||(!StringUtil.isValidString(rsFsFileUploadResponse.getUrlKey()))){
+			log.error("包房贷单号loanApplyOrderNo:"+loanApplyOrderNo+",上传包房贷压缩包文件到融数失败,"+Tools.gsonToString(rsFsFileUploadRequest));
+			throw new Exception("文件上传失败,错误信息:"+rsFsFileUploadResponse.getReturnMsg());
+		}
+		
+		FileHelp.deleteFile(orgLoanFileRootDir);
+		return rsFsFileUploadResponse.getUrlKey();
 	}
 	
 	private boolean saveLoanRoomPackSpecBean(LoanRoomPackSpecBean loanSpecBean) throws Exception{
