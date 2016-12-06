@@ -163,12 +163,16 @@ public class FileHelp {
 	}
 
 	/**
-	 * 删除文件
+	 * 删除文件或者目录
 	 */
 	public static void deleteFile(String fileName) {
 		deleteFile(new File(fileName));
 	}
-
+	
+	/**
+	 * 删除文件或者目录
+	 * @param file
+	 */
 	public static void deleteFile(File file) {
 		if(file==null){
 			return ; 
@@ -255,7 +259,7 @@ public class FileHelp {
 	 * @param srcFileName
 	 *            源文件
 	 * @param destFileName
-	 *            加密后的目标文件
+	 *            加密后的目标文件，例如：/data/file/222.zip
 	 * @return
 	 * @throws Exception
 	 */

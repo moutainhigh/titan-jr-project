@@ -154,6 +154,10 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			return response;
 		}
 		LoanCreditOrder loanCreditOrder = loanCreditOrderList.get(0);
+		if(loanCreditOrder.getStatus()==AuditResultEnum.PASS.getStatus()){
+			response.putErrorResult("该申请已经审核通过，不能重复审核");
+			return response;
+		}
 		Date now = new Date(); 
 		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();
 		boolean auditResult = false;
@@ -174,6 +178,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		loanCreditOpinion.setOrderNo(req.getOrderNo());
 		loanCreditOpinion.setResult(req.getAuditResult().getStatus());
 		loanCreditOpinion.setContent(req.getContent());
+		loanCreditOpinion.setCreater(req.getOperator());
 		loanCreditOpinion.setCreateTime(now);
 		loanCreditOpinionDao.saveLoanCreditOpinion(loanCreditOpinion);
 		
@@ -250,7 +255,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			RSFsFileUploadRequest rsFsFileUploadRequest = new RSFsFileUploadRequest();
 			rsFsFileUploadRequest.setUserid(loanCreditOrder.getOrgCode());
 			rsFsFileUploadRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-			rsFsFileUploadRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID_230);
+			rsFsFileUploadRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
 			rsFsFileUploadRequest.setType(FileTypeEnum.UPLOAD_FILE_73.getFileType());
 			rsFsFileUploadRequest.setInvoiceDate(DateUtil.getCurrentDate());
 			rsFsFileUploadRequest.setPath(encryptRSFilePath);
@@ -262,7 +267,6 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				log.error("上传授信文件压缩包到融数失败,请求参数为rsFsFileUploadRequest:"+Tools.gsonToString(rsFsFileUploadRequest));
 				return response;
 			}
-			//System.out.println("urlkey："+rsFsFileUploadResponse.getUrlKey());
 			//2-提交企业资料
 			OprsystemCreditCompanyRequest creditCompanyRequest = new OprsystemCreditCompanyRequest();
 			creditCompanyRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
@@ -303,23 +307,24 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			orderMixserviceCreditapplicationRequest.setRequestdate(DateUtil.dateToString(new Date(),"yyyy-MM-DD HH:mm:ss"));
 			orderMixserviceCreditapplicationRequest.setRatetemplrate(CommonConstant.RS_LOAN_CREDIT_RATETEMPL_RATE);
 			orderMixserviceCreditapplicationRequest.setJsondata(creditApplicationJsonData);
-			//0d1fb818-6dd0-44b7-be7f-14bfdc2c7d24
+			//f8f0ab4b-d5b2-4bee-b898-6a63da3c2070
 			orderMixserviceCreditapplicationRequest.setUrlkey(rsFsFileUploadResponse.getUrlKey());
-			orderMixserviceCreditapplicationRequest.setCreditype("2");
+			//orderMixserviceCreditapplicationRequest.setUrlkey("f8f0ab4b-d5b2-4bee-b898-6a63da3c2070");
+			orderMixserviceCreditapplicationRequest.setCreditype("2");//零售商授信申请（房仓）
 			OrderMixserviceCreditapplicationResponse orderMixserviceCreditapplicationResponse = rsCreditManager.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
 			if(orderMixserviceCreditapplicationResponse.isSuccess()==false){
 				response.putErrorResult(orderMixserviceCreditapplicationResponse.getReturnMsg());
 				log.error("授信申请时融数接口失败,OrgCode:"+loanCreditCompany.getOrgCode());
 				return response;
 			}
-		}	
+		}
 		
 		response.putSuccess();
 		return response;
 	}
 	
 	/***
-	 * *  打包加密文件
+	 * *  打包加密授信申请文件
 	 * @param companyFilesList  企业证明文件名ftp路径 /org/123.jpg
 	 * @param ensureFilesList	
 	 * @param orgCode
@@ -328,14 +333,13 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	private String encryptRSFile(List<String> companyFilesList,List<String> ensureFilesList,String orgCode){
 		//下载文件，加密，删除文件，
 		//企业证件资料本地路径
-		String orgCreditFileRootDir = "";
-		orgCreditFileRootDir = TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"/tmp"+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+orgCode;
+		String orgCreditFileRootDir = TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"tmp"+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+orgCode;
 		String orgCreditDir = "EnterpriseCreditPackage";
 		//法人担保
 		String localEnterpriseDocumentInfoPath = orgCreditFileRootDir+"/"+orgCreditDir+"/"+"EnterpriseDocumentInfo";
 		//个人担保
 		String localGuarantorDocumentsInfoPath =  orgCreditFileRootDir+"/"+orgCreditDir+"/"+"GuarantorDocumentsInfo";
-		//先删除旧的临时文件
+		//先删除本地旧的临时文件
 		FileHelp.deleteFile(orgCreditFileRootDir);
 		
 		FtpUtil.makeLocalDirectory(localEnterpriseDocumentInfoPath);
@@ -365,12 +369,13 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		}
 		//压缩打包文件
 		File srcZipFile = FileHelp.zipFile(orgCreditFileRootDir+"/"+orgCreditDir,orgCreditDir+"_src.zip");
+		log.info("授信申请文件("+srcZipFile.getName()+")压缩后大小："+srcZipFile.length()/1024+" KB,orgCode:"+orgCode);
 		//加密
 		String encryptFilePath = orgCreditFileRootDir+"/"+orgCreditDir+".zip";
 		try {
 			FileHelp.encryptRSFile(srcZipFile, encryptFilePath);
 		} catch (Exception e) {
-			log.error("encryptRSFile，融数授信申请资料文件加密失败，原文件路径srcZipFile："+srcZipFile, e);
+			log.error("encryptRSFile，融数授信申请资料文件加密失败，原文件路径srcZipFile："+srcZipFile.getAbsolutePath(), e);
 			return "";
 		}
 		
@@ -392,7 +397,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		LoanCreditApplicationJsonDataBean creditJsonData = new LoanCreditApplicationJsonDataBean();
 		
 		creditJsonData.setRootInstCd(CommonConstant.RS_FANGCANG_CONST_ID);
-        creditJsonData.setPassportNumber("27889998987");///*****************无法提供
+        creditJsonData.setPassportNumber("");//无法提供，暂时不传
         creditJsonData.setWorkPhone(loanCreditCompany.getContactPhone());
         
         creditJsonData.setPlatformRegistTime(DateUtil.dateToString(loanCreditCompany.getRegDate()));
@@ -436,9 +441,9 @@ public class TitanFinancialLoanCreditServiceImpl implements
             creditJsonData.setSecondContactPhone_p(loanPersonEnsure.getSecondContactPhone());
             creditJsonData.setSecondContactRelations_p(LoanPersonEnsureEnum.RelationToGuarantee.getEnumByType(loanPersonEnsure.getRelationToGuarantee2()).getDes());
             creditJsonData.setRoomSituation_p(LoanPersonEnsureEnum.CarPropertyType.getEnumByType(loanPersonEnsure.getCarPropertyType()).getDes());
-            creditJsonData.setCarBrandModel_p(loanPersonEnsure.getCarBrand());
+            creditJsonData.setCarBrandModel_p(loanPersonEnsure.getCarBrand());//界面暂无提供
             creditJsonData.setCarValue_p("");//暂无提供
-            creditJsonData.setBuyCarYear_p("");//暂无提供
+            creditJsonData.setBuyCarYear_p(loanPersonEnsure.getCarPurchaseDate());//暂无提供
             creditJsonData.setOtherAssets(loanPersonEnsure.getOtherProperty());
             creditJsonData.setRelatedNote(loanPersonEnsure.getPropertyRemark());
         	

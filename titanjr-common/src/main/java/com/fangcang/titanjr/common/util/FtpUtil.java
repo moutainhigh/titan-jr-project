@@ -50,7 +50,7 @@ public class FtpUtil {
 	 */
 	public static final String UPLOAD_PATH_LOAN_APPLY="/loan_apply";
 	//TODO 这个后面要删除掉最后的斜杠
-	public static String baseLocation = "/data/image/upload/images/titanjr/";
+	public static String baseLocation = "/data/image/upload/images/titanjr";
 	
 	public static String baseUrlPrefix = "http://image.fangcang.com/upload/images/titanjr";
 	
@@ -177,7 +177,7 @@ public class FtpUtil {
 	/**
 	 * 创建远程目录
 	 *
-	 * @param romoteUploadePath 远程目录
+	 * @param romoteUploadePath 远程目录 ,如/data
 	 */
 	public boolean makeDirectory(String romoteUploadePath) throws Exception {
 		if (this.isBlank(romoteUploadePath)) {
@@ -246,6 +246,9 @@ public class FtpUtil {
 			return false;
 		}
 		try {
+			if(!filePath.startsWith("/")){
+				filePath ="/"+filePath;
+			}
 			this.ftpClient.deleteFile(baseLocation + filePath);
 			return true;
 		} catch (Exception e) {
@@ -366,16 +369,16 @@ public class FtpUtil {
 			boolean dirStatus = this.ftpClient.changeWorkingDirectory(remoteDownLoadPath);//改变工作目录
 			outStream = new BufferedOutputStream(new FileOutputStream(strFilePath));
 
-			logger.info(remoteFileName + "开始下载....");
+			logger.info(remoteDownLoadPath+"/"+remoteFileName + "开始下载....");
 
 			success = this.ftpClient.retrieveFile(remoteFileName, outStream);
 
 			if (success == true) {
-				logger.info(remoteFileName + "成功下载到" + strFilePath);
+				logger.info(remoteDownLoadPath+"/"+remoteFileName + "成功下载到" + strFilePath);
 				return success;
 			}
 		} catch (Exception e) {
-			logger.error(remoteFileName + "下载失败", e);
+			logger.error(remoteDownLoadPath+"/"+remoteFileName + "下载失败", e);
 			throw e;
 		} finally {
 			if (null != outStream) {

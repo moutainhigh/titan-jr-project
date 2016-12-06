@@ -22,13 +22,13 @@ public class LoanApplyOrder {
 
 	private Long actualAmount;// 实际贷款金额
 
-	private float rate;// 贷款利率
+	private Float rate;// 贷款利率
 
 	private String rspId;// 融数产品编号
 
 	private String rsorgId;// 融数机构编号
 
-	private int productType;// 1 包房贷 2 运营贷
+	private Integer productType;// 1 包房贷 2 运营贷
 
 	private String productId;// 产品编号
 
@@ -44,7 +44,7 @@ public class LoanApplyOrder {
 
 	private String productSpecId;// 产品规格 ID
 
-	private int repaymentType;// 1 按日计利，随借随还
+	private Integer repaymentType;// 1 按日计利，随借随还
 
 	private Date actualRepaymentDate;// 用户还款到期日
 	
@@ -52,13 +52,13 @@ public class LoanApplyOrder {
 
 	private Date lastRepaymentDate;// 最后一次还款时间
 
-	private long repaymentPrincipal;// 已还本金
+	private Long repaymentPrincipal;// 已还本金
 
-	private long repaymentInterest;// 已还利息
+	private Long repaymentInterest;// 已还利息
 
-	private long shouldCapital;// 应还本金
+	private Long shouldCapital;// 应还本金
 
-	private long shouldInterest;// 应还利息
+	private Long shouldInterest;// 应还利息
 
 	public Long getId() {
 		return id;
@@ -108,11 +108,11 @@ public class LoanApplyOrder {
 		this.actualAmount = actualAmount;
 	}
 
-	public float getRate() {
+	public Float getRate() {
 		return rate;
 	}
 
-	public void setRate(float rate) {
+	public void setRate(Float rate) {
 		this.rate = rate;
 	}
 
@@ -132,11 +132,11 @@ public class LoanApplyOrder {
 		this.rsorgId = rsorgId;
 	}
 
-	public int getProductType() {
+	public Integer getProductType() {
 		return productType;
 	}
 
-	public void setProductType(int productType) {
+	public void setProductType(Integer productType) {
 		this.productType = productType;
 	}
 
@@ -196,11 +196,11 @@ public class LoanApplyOrder {
 		this.productSpecId = productSpecId;
 	}
 
-	public int getRepaymentType() {
+	public Integer getRepaymentType() {
 		return repaymentType;
 	}
 
-	public void setRepaymentType(int repaymentType) {
+	public void setRepaymentType(Integer repaymentType) {
 		this.repaymentType = repaymentType;
 	}
 
@@ -212,6 +212,14 @@ public class LoanApplyOrder {
 		this.actualRepaymentDate = actualRepaymentDate;
 	}
 
+	public String getOrderid() {
+		return orderid;
+	}
+
+	public void setOrderid(String orderid) {
+		this.orderid = orderid;
+	}
+
 	public Date getLastRepaymentDate() {
 		return lastRepaymentDate;
 	}
@@ -220,44 +228,36 @@ public class LoanApplyOrder {
 		this.lastRepaymentDate = lastRepaymentDate;
 	}
 
-	public long getRepaymentPrincipal() {
+	public Long getRepaymentPrincipal() {
 		return repaymentPrincipal;
 	}
 
-	public void setRepaymentPrincipal(long repaymentPrincipal) {
+	public void setRepaymentPrincipal(Long repaymentPrincipal) {
 		this.repaymentPrincipal = repaymentPrincipal;
 	}
 
-	public long getRepaymentInterest() {
+	public Long getRepaymentInterest() {
 		return repaymentInterest;
 	}
 
-	public void setRepaymentInterest(long repaymentInterest) {
+	public void setRepaymentInterest(Long repaymentInterest) {
 		this.repaymentInterest = repaymentInterest;
 	}
 
-	public long getShouldCapital() {
+	public Long getShouldCapital() {
 		return shouldCapital;
 	}
 
-	public void setShouldCapital(long shouldCapital) {
+	public void setShouldCapital(Long shouldCapital) {
 		this.shouldCapital = shouldCapital;
 	}
 
-	public long getShouldInterest() {
+	public Long getShouldInterest() {
 		return shouldInterest;
 	}
 
-	public void setShouldInterest(long shouldInterest) {
+	public void setShouldInterest(Long shouldInterest) {
 		this.shouldInterest = shouldInterest;
-	}
-
-	public String getOrderid() {
-		return orderid;
-	}
-
-	public void setOrderid(String orderid) {
-		this.orderid = orderid;
 	}
 	
 }
