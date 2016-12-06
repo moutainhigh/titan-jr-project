@@ -75,6 +75,36 @@ public class LoanPersonEnsure {
 	private String carPurchaseDate;// 汽车购买年份
 
 	private String carBrand;// 汽车品牌
+	
+	private String carWorth;//汽车价值
+	
+	private String email;//邮箱
+	
+	private String yearIncome;//年收入
+
+	public String getCarWorth() {
+		return carWorth;
+	}
+
+	public void setCarWorth(String carWorth) {
+		this.carWorth = carWorth;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getYearIncome() {
+		return yearIncome;
+	}
+
+	public void setYearIncome(String yearIncome) {
+		this.yearIncome = yearIncome;
+	}
 
 	public String getCarPurchaseDate() {
 		return carPurchaseDate;

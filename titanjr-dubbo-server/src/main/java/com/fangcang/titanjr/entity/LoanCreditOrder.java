@@ -40,6 +40,16 @@ public class LoanCreditOrder {
 	private Date auditPass;// 审核通过时间
 
 	private String reqJson;// 授信请求json串
+	
+	private Date expireTime;//过期时间
+
+	public Date getExpireTime() {
+		return expireTime;
+	}
+
+	public void setExpireTime(Date expireTime) {
+		this.expireTime = expireTime;
+	}
 
 	public String getOrderNo() {
 		return orderNo;

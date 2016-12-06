@@ -149,7 +149,10 @@
                         <td class="loanInformation_td03">
                            <input type="text" class="loanInformation_inp01" placeholder="请输入担保人工作电话" field='worktelePhone' datatype="s1-20" errormsg="必填项，并且最长只能20个字符！"  style="width: 143px;">
                         </td>
-                    </tr>  
+                    </tr>
+                    
+                      
+                    
                     <tr>
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i> 办公地址：
@@ -166,16 +169,31 @@
                         <td class="loanInformation_td03" >
                            <input type="text" class="loanInformation_inp01" placeholder="请输入担保人所处行业" field='industry' datatype="*1-50" errormsg="必填项，并且最长只能50个字符！"  style="width: 143px;">
                         </td>
-                    </tr>             
+                    </tr> 
+                    
+                    <tr>
+                        <td class="loanInformation_td01">
+                            <i class="redNotice">*</i>邮箱地址：
+                        </td>
+                        <td class="loanInformation_td02">
+                            <input type="text" class="loanInformation_inp01" placeholder="请输入担保人邮箱！" field='email' datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
+                        </td>
+                        <td class="loanInformation_td01">
+                             <i class="redNotice">*</i>年收入：
+                        </td>
+                        <td class="loanInformation_td02" colspan="3">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人年收入！" field='yearIncome' datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
+                        </td>
+                    </tr>              
                 </table>
                  <h3 class="loanInformation_title">资产情况</h3>
                 <table cellspacing="0" cellspacing="0" width="100%" class="loanInformation_tab">
                     <colgroup>
                         <col width="160">
-                        <col width="370">
-                        <col width="148">
+                        <col width="140">
+                        <col width="100">
                         <col>
-                    </colgroup>              
+                    </colgroup>          
                     <tr>
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i>车产情况：
@@ -183,15 +201,17 @@
                         <td class="loanInformation_td02" colspan="5" style="padding: 0px;border-width: 1px 1px 0px 0px;">
                             <table cellspacing="0" cellspacing="0" width="100%" class="loanInformation_tab02">
                                 <colgroup>
-                                    <col width="369">
-                                    <col width="148">
+                                    <col width="140">
+                                    <col width="100">
                                     <col width="200">
-                                    <col width="148">
-                                    <col>
-                                </colgroup>  
+                                    <col width="100">
+                                    <col width="170">
+                                    <col width="100">
+                                    <col width="">
+                                </colgroup>
                                 <tr>
                                     <td class="loanInformation_td02">
-                                        <select class="select loanInformation_se02" style="width: 319px;" id="carStatus" field="carPropertyType" customFun="validateSelect" errormsg="请选择车产情况！">
+                                        <select class="select loanInformation_se02" style="width: 140px;" id="carStatus" field="carPropertyType" customFun="validateSelect" errormsg="请选择车产情况！">
                                             <option>请选择</option>
                                             <option value="1">无车</option>
                                             <option value="2">有车无车贷</option>
@@ -210,9 +230,16 @@
                                     <td class="loanInformation_td01 loanInformation_car">
                                         <i class="redNotice">*</i>汽车品牌：
                                     </td>
-                                    <td class="loanInformation_td02 loanInformation_car">
+                                    <td class="loanInformation_td02 loanInformation_car" style="display: table-cell;">
                                         <input type="text" class="loanInformation_inp01" placeholder="请输入担保人汽车品牌" field="carBrand" customFun="validateTextValue"  errormsg="请输入担保人汽车品牌!">
-                                    </td>    
+                                    </td>
+                                    
+                                    <td class="loanInformation_td01 loanInformation_car">
+                                        <i class="redNotice">*</i>汽车价值：
+                                    </td>
+                                    <td class="loanInformation_td02 loanInformation_car" style="display: table-cell;">
+                                        <input type="text" class="loanInformation_inp01" placeholder="请输入担保人汽车价值" field="carWorth" customFun="validateTextValue"  errormsg="请输入担保人汽车价值">
+                                    </td>       
                                 </tr>
                             </table>
                             
@@ -225,7 +252,7 @@
                             <i class="redNotice">*</i>房产情况：
                         </td>
                         <td class="loanInformation_td02">
-                            <select class="select loanInformation_se02" style="width: 319px;" field="housePropertyType"  customFun="validateSelect" errormsg="请选择房产情况！">
+                            <select class="select loanInformation_se02" style="width: 140px;" field="housePropertyType"  customFun="validateSelect" errormsg="请选择房产情况！">
                                 <option>请选择</option>
                                 <option value="1">无房</option>
                                 <option value="2">有房无房贷</option>
@@ -397,7 +424,59 @@
 	                           <select id="idDay2Ensure" name="idDay2Ensure" class="select loanInformation_se01" data="1" item="3" onblur="$(this).parent().blur();"></select>
                            </div>
                         </td>
-                    </tr> 
+                    </tr>
+                    
+                        <tr>
+                    <td class="loanInformation_td01">
+                        <i class="redNotice">*</i>营业执照生效日期：
+                    </td>
+                   <td class="loanInformation_td02" id="ENcertificateStartDate" fields="certificateStartDate" split="-" >
+                    	<div customFun="validateSelects" errormsg="企业成立日期必须选择！"  style="display:inline-block;">
+	                       <select item='year'  id="ENCertificateStartYear" name="idYear" class="select loanInformation_se01" data="" onblur="$(this).parent().blur();"></select>
+	                       <select item='month'  class="select loanInformation_se01" id="ENCertificateStartMonth" name="idMonth" data="12" onblur="$(this).parent().blur();"></select>
+	                       <select item='day'  id="ENCertificateStartDay" name="idDay" class="select loanInformation_se01" data="1" onblur="$(this).parent().blur();"></select>
+                       </div>
+                    </td>
+                    <td class="loanInformation_td01">
+                         <i class="redNotice">*</i>营业执照失效日期：
+                    </td>
+                     <td class="loanInformation_td02" id="ENcertificateExpireDate" fields="certificateExpireDate" split="-" >
+                    	<div customFun="validateSelects" errormsg="企业成立日期必须选择！"  style="display:inline-block;">
+	                       <select item='year'  id="ENCertificateExpireYear" name="idYear" class="select loanInformation_se01" data="" onblur="$(this).parent().blur();"></select>
+	                       <select item='month'  class="select loanInformation_se01" id="ENCertificateExpireMonth" name="idMonth" data="12" onblur="$(this).parent().blur();"></select>
+	                       <select item='day'  id="ENCertificateExpireDay" name="idDay" class="select loanInformation_se01" data="1" onblur="$(this).parent().blur();"></select>
+                       </div>
+                    </td>
+                </tr>
+                
+                
+                  <tr>
+                    <td class="loanInformation_td01">
+                        <i class="redNotice">*</i>企业类型：
+                    </td>
+                     <td class="loanInformation_td02">
+                        <select class="select loanInformation_se02"  field="companyType"   customFun="validateSelect" errormsg="请选择企业类型！" >
+                            <option>请选择</option>
+                            <option value='1'>有限责任公司</option>
+                            <option value='2'>股份有限公司</option>
+                            <option value='3'>内资</option>
+                            <option value='4'>国有全资</option>
+                            <option value='5'>集资全资</option>
+                            <option value='6'>国外投资股份有限公司</option>
+                            <option value='99'>其他</option>
+                            
+                        </select> 
+                    </td>
+                    <td class="loanInformation_td01">
+                         <i class="redNotice">*</i>注册金额：
+                    </td>
+                     <td class="loanInformation_td02">
+                        <input type="text" class="loanInformation_inp01" placeholder="" field="registFinance" value=""  datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
+                    </td>
+                </tr>
+                
+                    
+                    
                     <tr>
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i>企业注册地址：
@@ -587,5 +666,26 @@
                 minYear: 1800,
                 maxYear: 2100
         });
+        
+        $("#ENcertificateStartDate").DateSelector({
+			ctlYearId : 'ENCertificateStartYear',
+			ctlMonthId : 'ENCertificateStartMonth',
+			ctlDayId : 'ENCertificateStartDay',
+			defYear : myDate.getFullYear(),
+			defMonth : (myDate.getMonth() + 1),
+			defDay : myDate.getDate(),
+			minYear : 1800,
+			maxYear : 2100
+		});
+		$("#ENcertificateExpireDate").DateSelector({
+			ctlYearId : 'ENCertificateExpireYear',
+			ctlMonthId : 'ENCertificateExpireMonth',
+			ctlDayId : 'ENCertificateExpireDay',
+			defYear : myDate.getFullYear(),
+			defMonth : (myDate.getMonth() + 1),
+			defDay : myDate.getDate(),
+			minYear : 1800,
+			maxYear : 2100
+		});
     }
 </script>

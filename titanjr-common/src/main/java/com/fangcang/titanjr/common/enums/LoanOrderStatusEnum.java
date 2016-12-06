@@ -19,9 +19,28 @@ public enum LoanOrderStatusEnum {
 
 	LOAN_FINISH(7, "已結清");
 
+	public int getKey() {
+		return key;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
 	int key;
 
 	String desc;
+	
+	public static LoanOrderStatusEnum  getEnumByStatus(int status){
+		LoanOrderStatusEnum entity = null;
+		for(LoanOrderStatusEnum item : LoanOrderStatusEnum.values()) {
+			if(item.key == status) {
+				entity = item;
+				break;
+			}
+		}
+		return entity;
+	}
 
 	LoanOrderStatusEnum(int key, String desc) {
 		this.key = key;

@@ -83,7 +83,37 @@ public class LoanPersonEnsureBean implements java.io.Serializable{
 
 	private String marriageUrl;// 结婚证
 	
+	private String carWorth;//汽车价值
 	
+	private String email;//邮箱
+	
+	private String yearIncome;//年收入
+	
+	
+	public String getCarWorth() {
+		return carWorth;
+	}
+
+	public void setCarWorth(String carWorth) {
+		this.carWorth = carWorth;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getYearIncome() {
+		return yearIncome;
+	}
+
+	public void setYearIncome(String yearIncome) {
+		this.yearIncome = yearIncome;
+	}
+
 	public String getCarPurchaseDate() {
 		return carPurchaseDate;
 	}

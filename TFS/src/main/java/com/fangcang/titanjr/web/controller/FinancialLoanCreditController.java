@@ -604,6 +604,7 @@ public class FinancialLoanCreditController extends BaseController {
 		creditOrder.setStatus(2);
 		creditOrder.setReqTime(new Date());
 		creditSaveRequest.setCreditOrder(creditOrder);
+		creditSaveRequest.setOrgCode(this.getUserId());
 		LoanCreditSaveResponse saveResponse = financialLoanCreditService
 				.saveCreditOrder(creditSaveRequest);
 

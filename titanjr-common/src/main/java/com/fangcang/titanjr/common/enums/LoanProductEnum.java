@@ -17,6 +17,17 @@ public enum LoanProductEnum {
 		this.desc = desc;
 	}
 
+	public static LoanProductEnum getEnumByKey(int key) {
+		LoanProductEnum entity = null;
+		for (LoanProductEnum item : LoanProductEnum.values()) {
+			if (item.code == key) {
+				entity = item;
+				break;
+			}
+		}
+		return entity;
+	}
+
 	public int getCode() {
 		return code;
 	}

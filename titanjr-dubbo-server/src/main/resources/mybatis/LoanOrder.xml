@@ -27,10 +27,30 @@
         <result property="shouldCapital" column="shouldcapital"/>
         <result property="shouldInterest" column="shouldinterest"/>
     </resultMap>
-
+    
+    
+    
+	
+	<select id="queryLoanExpiryStat" resultType="com.fangcang.titanjr.entity.LoanExpiryStat" parameterType="java.lang.String">
+		SELECT  COUNT(t.id) AS expiryNum,(SUM(t.shouldcapital) + SUM(t.shouldinterest)) AS expiryAmount FROM t_loan_order t
+ 				WHERE t.status = 6 AND t.`orgcode`=#{orgCode}
+	</select>
+	
+	
+	<select id="queryLoanSevenDaysStat" resultType="com.fangcang.titanjr.entity.LoanSevenDaysStat" parameterType="java.lang.String">
+		SELECT COUNT(t.id) AS sevenDaysNum,(SUM(t.shouldcapital) + SUM(t.shouldinterest)) AS sevenDaysAmount FROM t_loan_order t
+ 				WHERE t.status IN (3 ,6) AND  t.actualrepaymentdate &lt;= DATE_ADD(NOW(), INTERVAL 7 DAY) AND t.`orgcode`=#{orgCode}
+	</select>
+	
+	
+	
+	<select id="queryProductTypeAmount" resultType="com.fangcang.titanjr.entity.LoanProductAmountStat" parameterType="java.lang.String">
+		SELECT  t.producttype as productId  ,  SUM(t.shouldcapital) AS amount  
+			FROM t_loan_order t WHERE t.status IN (3 ,6) AND t.`orgcode`=#{orgCode} GROUP BY t.producttype;
+	</select>
 
     <select id="queryLoanApplyOrder" resultMap="loanApplyOrder"
-            parameterType="com.fangcang.titanjr.entity.LoanApplyOrder">
+            parameterType="com.fangcang.titanjr.entity.parameter.LoanQueryConditions">
         select `id`,
         `orderno`,
         `creditorderno`,
@@ -57,12 +77,52 @@
         `shouldinterest`
         from t_loan_order
         <where>
+        	1=1
+        	
             <if test="orderNo !=null">
                 and orderno = #{orderNo}
             </if>
-            <if test="status !=null">
-                and status = #{status}
+            
+            <if test="productType !=null">
+                and producttype = #{productType}
             </if>
+            
+            <if test="orderStatusEnum !=null">
+            	and status in
+			    <foreach collection="orderStatusEnum" index="index" item="item" open="(" separator="," close=")">  
+			            #{item}   
+			    </foreach>  
+            </if>
+            
+            <if test="beginActualRepaymentDate != null">
+		    	AND actualrepaymentdate &gt;= #{beginActualRepaymentDate}
+		    </if> 
+		    <if test="endActualRepaymentDate != null">
+		    	AND actualrepaymentdate &lt;= #{endActualRepaymentDate}
+		    </if>
+		    
+		    <if test="beginCreateTime != null">
+		    	AND createtime &gt;= #{beginCreateTime}
+		    </if> 
+		    <if test="endCreateTime != null">
+		    	AND createtime &lt;= #{endCreateTime}
+		    </if>
+		    
+		    
+		    <if test="beginLastRepaymentDate != null">
+		    	AND lastrepaymentdate &gt;= #{beginLastRepaymentDate}
+		    </if> 
+		    <if test="endLastRepaymentDate != null">
+		    	AND lastrepaymentdate &lt;= #{endLastRepaymentDate}
+		    </if>
+		    
+		    <if test="beginRelMoneyTime != null">
+		    	AND relmoneytime &gt;= #{beginRelMoneyTime}
+		    </if> 
+		    <if test="endRelMoneyTime != null">
+		    	AND relmoneytime &lt;= #{endRelMoneyTime}
+		    </if>
+		    
             <if test="orgCode !=null">
                 and orgcode = #{orgCode}
             </if>

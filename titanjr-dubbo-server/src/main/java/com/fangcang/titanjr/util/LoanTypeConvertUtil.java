@@ -77,6 +77,11 @@ public final class LoanTypeConvertUtil {
 		ensureBean.setMarriageUrl(personEnsure.getMarriageUrl());
 		ensureBean.setCarBrand(personEnsure.getCarBrand());
 		ensureBean.setCarPurchaseDate(personEnsure.getCarPurchaseDate());
+		
+		
+		ensureBean.setCarWorth(personEnsure.getCarWorth());
+		ensureBean.setEmail(personEnsure.getEmail());
+		ensureBean.setYearIncome(personEnsure.getYearIncome());
 
 		return ensureBean;
 	}
@@ -123,6 +128,12 @@ public final class LoanTypeConvertUtil {
 		companyEnsureBean.setLegalPersonUrl(companyEnsure.getLegalPersonUrl());
 		companyEnsureBean.setRegAddress(companyEnsure.getRegAddress());
 		companyEnsureBean.setOfficeAddress(companyEnsure.getOfficeAddress());
+		
+		
+		companyEnsureBean.setCertificateExpireDate(DateUtil.dateToString(companyEnsure.getCertificateExpireDate(), "yyyy-MM-dd"));
+		companyEnsureBean.setCertificateStartDate(DateUtil.dateToString(companyEnsure.getCertificateStartDate(), "yyyy-MM-dd"));
+		companyEnsureBean.setRegistFinance(companyEnsure.getRegistFinance());
+		companyEnsureBean.setCompanyType(companyEnsure.getCompanyType());
 
 		return companyEnsureBean;
 
@@ -207,6 +218,7 @@ public final class LoanTypeConvertUtil {
 		creditOrderBean.setLastAuditTime(qCrditOrderInfo.getLastAuditTime());
 		creditOrderBean.setAuditPass(qCrditOrderInfo.getAuditPass());
 		creditOrderBean.setOrgCode(qCrditOrderInfo.getOrgCode());
+		creditOrderBean.setExpireTime(qCrditOrderInfo.getExpireTime());
 		return creditOrderBean;
 	}
 
@@ -336,6 +348,12 @@ public final class LoanTypeConvertUtil {
 		loanCompanyEnsure.setLegalPersonUrl(lc.getLegalPersonUrl());
 		loanCompanyEnsure.setRegAddress(lc.getRegAddress());
 		loanCompanyEnsure.setOfficeAddress(lc.getOfficeAddress());
+		
+		loanCompanyEnsure.setCertificateExpireDate(DateUtil.stringToDate(lc.getCertificateExpireDate(), "yyyy-MM-dd"));
+		loanCompanyEnsure.setCertificateStartDate(DateUtil.stringToDate(lc.getCertificateStartDate(), "yyyy-MM-dd"));
+		loanCompanyEnsure.setRegistFinance(lc.getRegistFinance());
+		loanCompanyEnsure.setCompanyType(lc.getCompanyType());
+		
 		return loanCompanyEnsure;
 	}
 
@@ -384,6 +402,11 @@ public final class LoanTypeConvertUtil {
 		loanPersonEnsure.setMarriageUrl(lp.getMarriageUrl());
 		loanPersonEnsure.setCarPurchaseDate(lp.getCarPurchaseDate());
 		loanPersonEnsure.setCarBrand(lp.getCarBrand());
+		
+		loanPersonEnsure.setCarWorth(lp.getCarWorth());
+		loanPersonEnsure.setEmail(lp.getEmail());
+		loanPersonEnsure.setYearIncome(lp.getYearIncome());
+		
 
 		return loanPersonEnsure;
 	}

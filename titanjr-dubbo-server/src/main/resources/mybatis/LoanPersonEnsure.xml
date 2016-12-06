@@ -38,6 +38,11 @@
         <result property="marriageUrl" column="marriageurl"/>
         <result property="carPurchaseDate" column="carpurchasedate"/>
         <result property="carBrand" column="carbrand"/>
+        
+        <result property="carWorth" column="carworth"/>
+        <result property="email" column="email"/>
+        <result property="yearIncome" column="yearincome"/>
+        
     </resultMap>
 
 
@@ -53,7 +58,7 @@
         `secondcontactname`, `secondcontactphone`,
         `relationtoguarantee2`, `idcardurl`, `registeredurl`,
         `spouseregisteredurl`, `spouseidcardurl`,
-        `marriageurl`,`carpurchasedate`,`carbrand`
+        `marriageurl`,`carpurchasedate`,`carbrand`,carworth , email , yearincome
         from t_loan_personensure  
         <where>
         	1=1
@@ -102,8 +107,10 @@
             <if test="spouseIdCardUrl != null">spouseidcardurl= #{spouseIdCardUrl},</if>
             <if test="marriageUrl != null">marriageurl= #{marriageUrl},</if>
              <if test="carPurchaseDate != null">carpurchasedate= #{carPurchaseDate},</if>
-              <if test="carBrand != null">carbrand= #{carBrand},</if>
-            
+             <if test="carBrand != null">carbrand= #{carBrand},</if>
+             <if test="carWorth != null">carworth= #{carWorth},</if>
+             <if test="email != null">email= #{email},</if>
+            <if test="yearIncome != null">yearIncome= #{yearIncome},</if>
             <if test="orderNo != null">orderno= #{orderNo}</if>
         </set>
         <where>
@@ -149,7 +156,10 @@
 	   `spouseidcardurl`,
 	   `marriageurl`,
 	   `carpurchasedate`,
-	   `carbrand`
+	   `carbrand`,
+	   carworth,
+	   email,
+	   yearincome
      )
      VALUES
      	(
@@ -186,7 +196,11 @@
      		#{spouseIdCardUrl},
      		#{marriageUrl},
      		#{carPurchaseDate},
-     		#{carBrand}
+     		#{carBrand},
+     		#{carWorth},
+     		#{email},
+     		#{yearIncome}
+     		
      	)
     </insert>
 

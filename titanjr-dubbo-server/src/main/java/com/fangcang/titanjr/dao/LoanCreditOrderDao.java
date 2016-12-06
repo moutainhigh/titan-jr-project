@@ -45,4 +45,7 @@ public interface LoanCreditOrderDao {
      * @return
      */
     public int getCreditOrderCount(LoanCreditOrderParam loanCreditOrderParam);
+    
+    
+    
 }

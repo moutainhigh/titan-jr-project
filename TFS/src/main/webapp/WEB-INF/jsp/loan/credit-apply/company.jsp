@@ -129,7 +129,7 @@
                          <i class="redNotice">*</i>注册金额：
                     </td>
                      <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" placeholder="" field="registFinance" value="" readonly="readonly" datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
+                        <input type="text" class="loanInformation_inp01" placeholder="" field="registFinance" value=""  datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
                     </td>
                 </tr>
                 

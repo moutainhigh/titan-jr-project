@@ -1,47 +1,59 @@
-package com.fangcang.titanjr.dto.request;
+package com.fangcang.titanjr.web.pojo;
 
-import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
-import com.fangcang.titanjr.common.enums.LoanProductEnum;
-import com.fangcang.titanjr.dto.BaseRequestDTO;
-
-public class GetLoanOrderInfoListRequest extends BaseRequestDTO {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	private String orgCode;
-
-	private String orderNo;
-
-	private LoanOrderStatusEnum orderStatusEnum[];
-	
-	//还款到期日时间段
+/**
+ * 贷款查询条件
+ * 
+ * @author Administrator
+ *
+ */
+public class LoanQueryConditions {
+	// 还款到期日时间段
 	private String beginActualRepaymentDate;
 	private String endActualRepaymentDate;
-	
-	//贷款申请时间段
+
+	// 贷款申请时间段
 	private String beginCreateTime;
 	private String endCreateTime;
-	
-	//最后一次还款的时间
+
+	// 最后一次还款的时间
 	private String beginLastRepaymentDate;
 	private String endLastRepaymentDate;
-	
-	//放款时间
+
+	// 放款时间
 	private String beginRelMoneyTime;
 	private String endRelMoneyTime;
-	
-	//贷款产品类型
-	private LoanProductEnum productEnum;
-	
+
+	// 产品类型
+	private String productType;
+	// 贷款状态
+	private String loanStatus;
+	//分页
+	private String currPage;
+	//跳转位置
+	private String pageKey;
+
 	public String getBeginActualRepaymentDate() {
 		return beginActualRepaymentDate;
 	}
 
 	public void setBeginActualRepaymentDate(String beginActualRepaymentDate) {
 		this.beginActualRepaymentDate = beginActualRepaymentDate;
+	}
+
+	public String getCurrPage() {
+		return currPage;
+	}
+
+	public void setCurrPage(String currPage) {
+		this.currPage = currPage;
+	}
+
+	public String getPageKey() {
+		return pageKey;
+	}
+
+	public void setPageKey(String pageKey) {
+		this.pageKey = pageKey;
 	}
 
 	public String getEndActualRepaymentDate() {
@@ -100,35 +112,20 @@ public class GetLoanOrderInfoListRequest extends BaseRequestDTO {
 		this.endRelMoneyTime = endRelMoneyTime;
 	}
 
-	public LoanProductEnum getProductEnum() {
-		return productEnum;
+	public String getProductType() {
+		return productType;
 	}
 
-	public void setProductEnum(LoanProductEnum productEnum) {
-		this.productEnum = productEnum;
+	public void setProductType(String productType) {
+		this.productType = productType;
 	}
 
-	public LoanOrderStatusEnum[] getOrderStatusEnum() {
-		return orderStatusEnum;
+	public String getLoanStatus() {
+		return loanStatus;
 	}
 
-	public void setOrderStatusEnum(LoanOrderStatusEnum... orderStatusEnum) {
-		this.orderStatusEnum = orderStatusEnum;
+	public void setLoanStatus(String loanStatus) {
+		this.loanStatus = loanStatus;
 	}
 
-	public String getOrgCode() {
-		return orgCode;
-	}
-
-	public void setOrgCode(String orgCode) {
-		this.orgCode = orgCode;
-	}
-
-	public String getOrderNo() {
-		return orderNo;
-	}
-
-	public void setOrderNo(String orderNo) {
-		this.orderNo = orderNo;
-	}
 }

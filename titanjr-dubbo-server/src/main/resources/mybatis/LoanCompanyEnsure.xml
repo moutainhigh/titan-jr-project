@@ -25,6 +25,12 @@
         <result property="licenseUrl" column="licenseurl"/>
         <result property="officeAddress" column="officeaddress"/>
         <result property="regAddress" column="regaddress"/>
+        
+        <result property="certificateStartDate" column="certificatestartdate"/>
+        <result property="certificateExpireDate" column="certificateexpiredate"/>
+        <result property="companyType" column="companytype"/>
+        <result property="registFinance" column="registfinance"/>
+        
     </resultMap>
 
 
@@ -53,7 +59,11 @@
         `licenseurl`,
         `legalpersonurl`,
         `officeaddress`,
-        `regaddress`
+        `regaddress`,
+        certificatestartdate,
+        certificateexpiredate,
+        companytype,
+        registfinance
         from
         t_loan_companyensure
         <where>
@@ -101,7 +111,10 @@
             <if test="legalPersonUrl != null">legalpersonurl= #{legalPersonUrl},</if>
             <if test="officeAddress != null">officeaddress= #{officeAddress},</if>
             <if test="regAddress != null">regaddress= #{regAddress},</if>
-            <if test="orgCode != null">orgcode= #{orgCode}</if>
+            <if test="certificateStartDate != null">certificatestartdate= #{certificateStartDate},</if>
+            <if test="certificateExpireDate != null">certificateexpiredate= #{certificateExpireDate},</if>
+            <if test="companyType != null">companytype= #{companyType},</if>
+            <if test="registFinance != null">registfinance= #{registFinance},</if>
         </set>
         <where>
                orgcode = #{orgCode}
@@ -134,7 +147,11 @@
       	`licenseurl`,
       	`legalpersonurl`,
       	 `officeaddress`,
-        `regaddress`
+        `regaddress`,
+          certificatestartdate,
+        certificateexpiredate,
+        companytype,
+        registfinance
      )
      VALUES
      	(
@@ -159,7 +176,11 @@
      		#{licenseUrl},
      		#{legalPersonUrl},
      		#{officeAddress},
-     		#{regAddress}
+     		#{regAddress},
+     		#{certificateStartDate},
+     		#{certificateExpireDate},
+     		#{companyType},
+     		#{registFinance}
      	)
     </insert>
 

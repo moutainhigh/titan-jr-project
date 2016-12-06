@@ -53,6 +53,55 @@ public class LoanCompanyEnsure {
 	// 企业注册地址
 	private String regAddress;
 
+	/**
+	 * 营业照生效日期
+	 */
+	private Date certificateStartDate;
+	/**
+	 * 营业照失效日期
+	 */
+	private Date certificateExpireDate;
+	/**
+	 * 企业类型：'1 有限责任公司 2 股份有限公司 3 内资 4 国有全资 5 集资全资 6 国外投资股份有限公司 99 其他'
+	 */
+	private Integer companyType;
+	/**
+	 * 注册资本
+	 */
+	private String registFinance;
+
+	public Date getCertificateStartDate() {
+		return certificateStartDate;
+	}
+
+	public void setCertificateStartDate(Date certificateStartDate) {
+		this.certificateStartDate = certificateStartDate;
+	}
+
+	public Date getCertificateExpireDate() {
+		return certificateExpireDate;
+	}
+
+	public void setCertificateExpireDate(Date certificateExpireDate) {
+		this.certificateExpireDate = certificateExpireDate;
+	}
+
+	public Integer getCompanyType() {
+		return companyType;
+	}
+
+	public void setCompanyType(Integer companyType) {
+		this.companyType = companyType;
+	}
+
+	public String getRegistFinance() {
+		return registFinance;
+	}
+
+	public void setRegistFinance(String registFinance) {
+		this.registFinance = registFinance;
+	}
+
 	public String getOfficeAddress() {
 		return officeAddress;
 	}

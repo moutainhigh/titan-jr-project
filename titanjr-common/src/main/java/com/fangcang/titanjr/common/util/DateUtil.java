@@ -802,6 +802,10 @@ public class DateUtil {
 	 */
 	public static Date getDayEndTime(Date date) 
 	{
+		if(date == null)
+		{
+			return null;
+		}
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.set(Calendar.HOUR_OF_DAY, 23);
@@ -813,6 +817,10 @@ public class DateUtil {
 
 	public static Date getDayBeginTime(Date date) 
 	{
+		if(date == null)
+		{
+			return null;
+		}
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.set(Calendar.HOUR_OF_DAY, 0);

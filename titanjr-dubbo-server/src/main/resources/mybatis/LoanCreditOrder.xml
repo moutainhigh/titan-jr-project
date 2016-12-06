@@ -21,6 +21,7 @@
         <result property="lastAuditTime" column="lastaudittime"/>
         <result property="auditPass" column="auditpass"/>
         <result property="reqJson" column="reqjson"/>
+        <result property="expireTime" column="expiretime"/>
     </resultMap>
 
 
@@ -43,7 +44,8 @@
                   `firstaudittime`,
                    `lastaudittime`,
                     `auditpass`,
-                     `reqjson`
+                     `reqjson`,
+                     expiretime
                      from t_loan_creditorder
 	        <where>
 	            <if test="orderNo !=null">
@@ -106,6 +108,7 @@
             <if test="lastAuditTime != null">lastaudittime= #{lastAuditTime},</if>
             <if test="auditPass != null">auditpass= #{auditPass},</if>
             <if test="reqJson != null">reqjson= #{reqJson},</if>
+             <if test="expireTime != null">expiretime= #{expireTime},</if>
         </set>
         <where>
             orderno = #{orderNo} <!--orderNo一定不为空-->
@@ -130,7 +133,8 @@
 	    `firstaudittime`,
 	     `lastaudittime`, 
 	     `auditpass`, 
-	     `reqjson`
+	     `reqjson`,
+	     expiretime
      )
      VALUES
      	(
@@ -150,7 +154,8 @@
      		#{firstAuditTime},
      		#{lastAuditTime},
      		#{auditPass},
-     		#{reqJson}
+     		#{reqJson},
+     		#{expireTime}
      	)
     </insert>
 

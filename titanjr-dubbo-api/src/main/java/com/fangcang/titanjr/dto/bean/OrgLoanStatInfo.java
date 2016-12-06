@@ -10,7 +10,11 @@ import com.fangcang.titanjr.common.enums.LoanProductEnum;
  * @author Administrator
  *
  */
-public class OrgLoanStatInfo {
+public class OrgLoanStatInfo implements java.io.Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// 貸款總額
 	private long loanAmount;
 	// 將總額劃分到各個產品
