@@ -163,4 +163,12 @@ public interface TitanFinancialTradeService {
 	 */
 	public QrCodeResponse getQrCodeUrl(RechargeDataDTO rechargeDataDTO );
 	
+	/**
+	 * 下单并绑卡
+	 * @param request
+	 * @return
+	 */
+	public  OrderSaveAndBindCardResponse saveTransOrderAndBindCard(OrderSaveAndBindCardRequest request);
+	
+
 }

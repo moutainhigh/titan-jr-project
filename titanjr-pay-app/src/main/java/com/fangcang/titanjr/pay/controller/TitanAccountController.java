@@ -1,9 +1,11 @@
 package com.fangcang.titanjr.pay.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import org.apache.commons.collections.CollectionUtils;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
@@ -38,16 +41,15 @@ public class TitanAccountController extends BaseController {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	private static final Log log = LogFactory
-			.getLog(TitanAccountController.class);
+	
+	private static final Log log = LogFactory.getLog(TitanAccountController.class);
 
 	@Resource
 	private TitanFinancialAccountService titanFinancialAccountService;
-
+	
 	@Resource
 	private TitanFinancialUserService titanFinancialUserService;
-
+	
 	@Resource
 	private TitanPaymentService titanPaymentService;
 

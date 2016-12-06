@@ -63,5 +63,12 @@ public class BaseController implements Serializable {
 		map.put("resultMsg", codeEnum.getResMsg());
 		return JSONSerializer.toJSON(map).toString();
 	}
+	
+	public String toMsgJson(String code,Object msg){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("result", code);
+		map.put("resultMsg", msg);
+		return JSONSerializer.toJSON(map).toString();
+	}
 
 }

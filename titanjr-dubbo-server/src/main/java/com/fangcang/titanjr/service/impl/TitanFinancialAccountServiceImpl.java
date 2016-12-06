@@ -58,7 +58,9 @@ import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
 import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrderRequest;
 import com.fangcang.titanjr.dto.request.FreezeAccountBalanceRequest;
+import com.fangcang.titanjr.dto.request.QueryCertificationRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
+import com.fangcang.titanjr.dto.request.SaveCertificationRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.dto.request.UnFreeBalanceBatchRequest;
@@ -75,6 +77,8 @@ import com.fangcang.titanjr.dto.response.DefaultPayerConfigResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
+import com.fangcang.titanjr.dto.response.QueryCertificationResponse;
+import com.fangcang.titanjr.dto.response.SaveCertificationResponse;
 import com.fangcang.titanjr.dto.response.UnFreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.UnFreezeResponse;
 import com.fangcang.titanjr.entity.TitanAccount;
@@ -1013,6 +1017,24 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		response.setProductId(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
 		response.putSuccess();
 		return response;
+	}
+
+
+
+	@Override
+	public QueryCertificationResponse queryCertificationInfo(
+			QueryCertificationRequest queryCertificationRequest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public SaveCertificationResponse saveCertificationInfo(
+			SaveCertificationRequest saveCertificationRequest) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

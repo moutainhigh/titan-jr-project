@@ -9,7 +9,10 @@ public enum OrderStatusEnum {
 	TRANSFER_SUCCESS("4","转账成功"),TRANSFER_FAIL("5","转账失败"),
 	FREEZE_SUCCESS("6","冻结成功"),FREEZE_FAIL("7","冻结失败"),
 	ORDER_SUCCESS("8","成功"),ORDER_FAIL("9","失败"),
-	ORDER_NO_EFFECT("10","订单失效");
+	ORDER_NO_EFFECT("10","订单失效"),
+	REFUND_IN_PROCESS("11","退款中"),
+	REFUND_SUCCESS("12","退款成功"),
+	REFUND_FAIL("13","退款失败");
   
     private String status;
     

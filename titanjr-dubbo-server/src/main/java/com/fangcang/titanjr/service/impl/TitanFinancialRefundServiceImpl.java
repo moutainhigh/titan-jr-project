@@ -16,6 +16,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
@@ -38,38 +39,39 @@ import com.fangcang.titanjr.dao.TitanFundFreezereqDao;
 import com.fangcang.titanjr.dao.TitanRefundDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
-import com.fangcang.titanjr.dto.bean.BusiCodeEnum;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.RefundDTO;
-import com.fangcang.titanjr.dto.bean.SignTypeEnum;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.bean.VersionEnum;
 import com.fangcang.titanjr.dto.request.FreezeAccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.NotifyRefundRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.RefundConfirmRequest;
 import com.fangcang.titanjr.dto.request.RefundOrderRequest;
+import com.fangcang.titanjr.dto.request.RefundRequest;
 import com.fangcang.titanjr.dto.request.TitanJrRefundRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.NotifyRefundResponse;
 import com.fangcang.titanjr.dto.response.RefundOrderResponse;
+import com.fangcang.titanjr.dto.response.RefundResponse;
 import com.fangcang.titanjr.dto.response.TitanJrRefundResponse;
 import com.fangcang.titanjr.dto.response.TitanPayMethodResponse;
 import com.fangcang.titanjr.entity.TitanRefund;
 import com.fangcang.titanjr.entity.TitanTransferReq;
+import com.fangcang.titanjr.enums.BusiCodeEnum;
+import com.fangcang.titanjr.enums.SignTypeEnum;
+import com.fangcang.titanjr.enums.VersionEnum;
 import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.request.AccountTransferRequest;
-import com.fangcang.titanjr.rs.request.RefundRequest;
+import com.fangcang.titanjr.rs.request.RSRefundRequest;
 import com.fangcang.titanjr.rs.response.AccountTransferResponse;
-import com.fangcang.titanjr.rs.response.RefundResponse;
+import com.fangcang.titanjr.rs.response.RsRefundResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialRefundService;
 import com.fangcang.titanjr.service.TitanOrderService;
-import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.JsonUtil;
 import com.fangcang.util.StringUtil;
 
@@ -347,8 +349,8 @@ public class TitanFinancialRefundServiceImpl implements
 				StringUtil.isValidString(refundOrderRequest.getOrderId())){
 			refundOrderResponse.putErrorResult(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED); 
 		}
-		RefundRequest refundRequest = this.convertToRefundRequest(refundOrderRequest);
-		RefundResponse refundResponse = rsAccTradeManager.addOrderRefund(refundRequest);
+		RSRefundRequest  refundRequest = this.convertToRefundRequest(refundOrderRequest);
+		RsRefundResponse refundResponse = rsAccTradeManager.addOrderRefund(refundRequest);
 		if(!CommonConstant.OPERATE_SUCCESS.equals(refundResponse.getOperateStatus())){
 			log.error("下退款单失败:"+refundResponse.getReturnCode()+":"+refundResponse.getReturnMsg());
 			refundOrderResponse.putErrorResult(TitanMsgCodeEnum.RS_ADD_REFUND_ORDER_FAIL);
@@ -374,8 +376,8 @@ public class TitanFinancialRefundServiceImpl implements
 		return refundOrderResponse;
 	}
 
-	private RefundRequest convertToRefundRequest(RefundOrderRequest refundOrderRequest){
-		RefundRequest refundRequest = new RefundRequest();
+	private RSRefundRequest convertToRefundRequest(RefundOrderRequest refundOrderRequest){
+		RSRefundRequest   refundRequest = new RSRefundRequest();
 		refundRequest.setAmount(refundOrderRequest.getAmount());
 		refundRequest.setOrderid(refundOrderRequest.getOrderId());
 		refundRequest.setUserorderid(refundOrderRequest.getUserOrderId());
@@ -391,7 +393,8 @@ public class TitanFinancialRefundServiceImpl implements
 		}
 		List<NameValuePair> params = this.getGateawayParam(notifyRefundRequest);
 		String response ="";
-		HttpResponse resp = HttpClient.httpRequest(params, RSInvokeConstant.gateWayURL);
+		HttpPost httpPost = new HttpPost();
+		HttpResponse resp = HttpClient.httpRequest(params, RSInvokeConstant.gateWayURL,httpPost);
 		if (null != resp) {
 			HttpEntity entity = resp.getEntity();
 			try {

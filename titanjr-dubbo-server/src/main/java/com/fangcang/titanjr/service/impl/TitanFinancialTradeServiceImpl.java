@@ -77,11 +77,13 @@ import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.manager.RSPayOrderManager;
 import com.fangcang.titanjr.rs.request.AccountTransferRequest;
 import com.fangcang.titanjr.rs.request.OrderOperateRequest;
+import com.fangcang.titanjr.rs.request.OrderSaveWithCardRequest;
 import com.fangcang.titanjr.rs.request.OrderTransferFlowRequest;
 import com.fangcang.titanjr.rs.request.RSPayOrderRequest;
 import com.fangcang.titanjr.rs.response.AccountTransferResponse;
 import com.fangcang.titanjr.rs.response.OrderOperateInfo;
 import com.fangcang.titanjr.rs.response.OrderOperateResponse;
+import com.fangcang.titanjr.rs.response.OrderSaveWithCardResponse;
 import com.fangcang.titanjr.rs.response.OrderTransferFlowResponse;
 import com.fangcang.titanjr.rs.response.RSPayOrderResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
@@ -2428,5 +2430,62 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	    }
 	    return false;
 	}
+	
+	@Override
+	public OrderSaveAndBindCardResponse saveTransOrderAndBindCard(
+			OrderSaveAndBindCardRequest request) {
+		OrderSaveAndBindCardResponse orderSaveAndBindCardResponse = new OrderSaveAndBindCardResponse();
+		if(null == request){
+			orderSaveAndBindCardResponse.putErrorResult(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+			return orderSaveAndBindCardResponse;
+		}
+		
+		OrderSaveWithCardRequest orderSaveWithCardRequest = this.convertToOrderSaveWithCardRequest(request);
+		OrderSaveWithCardResponse orderSaveWithCardResponse = rsAccTradeManager.orderSaveWithdraw(orderSaveWithCardRequest);
+		
+		if(CommonConstant.OPERATE_SUCCESS.equals(orderSaveWithCardResponse.getOperateStatus())){
+			orderSaveAndBindCardResponse.setOrderId(orderSaveWithCardResponse.getOrderId());
+			
+			orderSaveAndBindCardResponse.putSuccess();
+			return orderSaveAndBindCardResponse;
+		}
+		
+		log.error("落单+绑卡失败:"+orderSaveWithCardResponse.getReturnMsg());
+		orderSaveAndBindCardResponse.putErrorResult(TitanMsgCodeEnum.OPER_ORDER_AND_BIND_CARD_FAIL);
+		return orderSaveAndBindCardResponse;
+	}
+	
+	/**
+	 * @param request
+	 * @return
+	 */
+	private OrderSaveWithCardRequest convertToOrderSaveWithCardRequest(OrderSaveAndBindCardRequest request){
+		OrderSaveWithCardRequest orderSaveWithCardRequest = new OrderSaveWithCardRequest();
+		orderSaveWithCardRequest.setAccountname(request.getAccountName());
+		orderSaveWithCardRequest.setAccountnumber(request.getAccountNumber());
+		orderSaveWithCardRequest.setAccountproperty(request.getAccountProperty());
+		orderSaveWithCardRequest.setAccountpurpose(request.getAccountPurpose());
+		orderSaveWithCardRequest.setAccounttypeid(request.getAccountTypeId());
+		orderSaveWithCardRequest.setAmount(request.getAmount());
+		
+		orderSaveWithCardRequest.setBankhead(request.getBankHead());
+		orderSaveWithCardRequest.setBankheadname(request.getBankHeadName());
+		orderSaveWithCardRequest.setCertificatenumber(request.getCertificateNumber());
+		orderSaveWithCardRequest.setCertificatetype(request.getCertificateType());
+		orderSaveWithCardRequest.setConstid(request.getConstId());
+		orderSaveWithCardRequest.setCurrency(request.getCurrency());
+		
+		orderSaveWithCardRequest.setGoodsdetail(request.getGoodsDetail());
+		orderSaveWithCardRequest.setGoodsname(request.getGoodsName());
+		orderSaveWithCardRequest.setOrdertypeid(request.getOrderTypeId());
+		orderSaveWithCardRequest.setOrdertime(request.getOrderTime());
+		
+		orderSaveWithCardRequest.setProductid(request.getProductId());
+		orderSaveWithCardRequest.setUserid(request.getUserId());
+		orderSaveWithCardRequest.setUserorderid(request.getUserOrderId());
+		
+		return orderSaveWithCardRequest;
+	}
+	
 }
 

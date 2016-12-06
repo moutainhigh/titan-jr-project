@@ -16,7 +16,6 @@ import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
-import com.fangcang.titanjr.dto.bean.BusiCodeEnum;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
@@ -31,6 +30,7 @@ import com.fangcang.titanjr.dto.request.UnFreeBalanceBatchRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.RefundResponse;
 import com.fangcang.titanjr.dto.response.TitanJrRefundResponse;
+import com.fangcang.titanjr.enums.BusiCodeEnum;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialRefundService;
 import com.fangcang.titanjr.service.TitanOrderService;
@@ -70,7 +70,7 @@ public class TitanRefundService {
 			if(null !=fundFreezeDTOList && fundFreezeDTOList.size()==1){
 				UnFreeBalanceBatchRequest unFreeBalanceBatchRequest = new UnFreeBalanceBatchRequest();
 				unFreeBalanceBatchRequest.setFundFreezeDTOList(fundFreezeDTOList);
-				titanFinancialAccountService.unFreezeAccountBalanceBatch(unFreeBalanceBatchRequest);
+				titanFinancialAccountService.unfreezeAccountBalanceBatch(unFreeBalanceBatchRequest);
 				//标识该订单有解冻操作
 				refundRequest.setFreeze(true);
 			}

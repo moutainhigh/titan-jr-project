@@ -1,5 +1,6 @@
 package com.fangcang.titanjr.common.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.CharArrayReader;
@@ -7,11 +8,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringBufferInputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -822,44 +827,80 @@ public class DateUtil {
 		
 		try {
 			
-			String payOrdeNo = "AAAddd";
-			System.out.println(payOrdeNo.substring(1));
-			
-//			BufferedWriter w = new BufferedWriter(new FileWriter("C:/Users/Administrator/Desktop/text.txt"));
-//			char[] buf = "asdfas asd的说法是 阿斯蒂芬  阿斯顿发  ".toCharArray();
-//            for(int i=0;i<buf.length;i++){
-//            	System.out.println(buf[i]);
-//            	w.write(buf[i]);
-//            }			
-//            
-//            byte[] buf = "asdfas asd的说法是 阿斯蒂芬  阿斯顿发  ".getBytes();
-//            File f = new File("C:/Users/Administrator/Desktop/text.txt");
-//            OutputStream out = new FileOutputStream(f);
-//            for(int i=0;i<buf.length;i++){
-//            	System.out.println(buf[i]);
-//            	 out.write(buf[i]);
-//            }
-           
-//            byte[] b = "康".getBytes();
-//            for(int i=0;i<b.length;i++){
-//            	System.out.println(b[i]);
-//            }
-          
-            
-			for(int i=0;i<10;i++){
-				if(i%2==0){
-					System.out.println(i);
-					continue;
+			Runnable r1 = new Runnable() {
+				@Override
+				public void run() {
+					//socket的服务器端
+					try {
+						ServerSocket socket = new ServerSocket(50000);
+						Socket s  = socket.accept();
+						
+						InputStream in =  s.getInputStream();
+						OutputStream out = s.getOutputStream();
+						
+						BufferedReader reader = new BufferedReader(new InputStreamReader(in),100);
+						
+						System.out.println(reader.readLine());
+						
+						
+						
+						out.write("I have accepted \r\n".getBytes());
+						out.flush();
+						
+//						while(reader.readLine()!=null){
+//							System.out.println(reader.readLine());
+//							out.write("I have accepted".getBytes());
+//							out.flush();
+//						}
+						
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-				
-			}
+			};
 			
             
+			Runnable r2 = new Runnable() {
+				
+				@Override
+				public void run() {
+					try{
+						Socket socket = new Socket("192.168.0.90", 50000);
+						
+						BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+						writer.write("I love you  ddddddas  vvvkfdj  ");
+						writer.flush();
+//						
+//						BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//						
+//						String s = null;
+//						while((s=reader.readLine()) !=null){
+//							System.out.print(s);
+//						}
+						
+						
+						
+						
+					}catch(Exception e){
+						
+					}
+				}
+			};
+			
+//			
+			Thread t1= new Thread(r1);
+			t1.start();
+			Thread t2 = new Thread(r2);
+			t2.start();
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
+	
+	
 	
 }

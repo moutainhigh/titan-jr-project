@@ -2,6 +2,7 @@ package com.fangcang.titanjr.service;
 
 import java.util.List;
 
+import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
@@ -26,6 +27,13 @@ public interface TitanOrderService {
 	 * @return
 	 */
 	public TransOrderDTO queryTransOrderDTO(TransOrderRequest transOrderRequest);
+	
+	
+	/**
+	 * 查询需要解冻
+	 * @return
+	 */
+	public List<FundFreezeDTO> queryFundFreezeDTO(FundFreezeDTO fundFreezeDTO);
 	
 	/**
 	 * 更新支付单 状态
