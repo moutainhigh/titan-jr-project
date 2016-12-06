@@ -157,7 +157,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService{
 		if(!StringUtil.isValidString(contactNames)){
 			throw new Exception("包房贷申请没有上传申请合同文件");
 		}
-		String orgLoanFileRootDir = TitanFinancialLoanServiceImpl.class.getClassLoader().getResource("").getPath()+"/tmp"+FtpUtil.UPLOAD_PATH_LOAN_APPLY+"/"+orgCode+"/"+loanApplyOrderNo;
+		String orgLoanFileRootDir = TitanFinancialLoanServiceImpl.class.getClassLoader().getResource("").getPath()+"tmp"+FtpUtil.UPLOAD_PATH_LOAN_APPLY+"/"+orgCode+"/"+loanApplyOrderNo;
 		String localFileDir;
 		String localFather;
 		if(Loantype==1){

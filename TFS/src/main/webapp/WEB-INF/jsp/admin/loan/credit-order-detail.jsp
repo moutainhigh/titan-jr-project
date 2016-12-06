@@ -15,7 +15,7 @@
 		<div class="mya_title">
 			<strong>授信审核</strong>
 			<p>
-				<a class="on" href="javascript:void(0)">授信审核<i id="i_to_check_count">0</i></a>			
+				<a class="on" href="javascript:void(0)">授信审核<i id="i_to_check_count">${creditOrderToCheckCount }</i></a>			
 			</p>	
 		</div>	
 		<div class="crumbs">

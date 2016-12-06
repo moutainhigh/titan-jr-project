@@ -32,7 +32,7 @@
 </c:if>
 <tr style="display:none">
 		<td colspan="8">
-			<input type="hidden" id="creditOrderCount" value="${creditOrderCount}"/>
+			<input type="hidden" id="creditOrderToCheckCount" value="${creditOrderToCheckCount}"/>
 			<input type="hidden" name="totalPage" class="totalPage" value="${pageCreditCompanyInfoDTO.totalPage}"/>
 			<input type="hidden" name="pageSize" class="pageSize" value="${pageCreditCompanyInfoDTO.pageSize}"/>
 			<input type="hidden" name="currentPage" class="currentPage" value="${pageCreditCompanyInfoDTO.currentPage}"/>

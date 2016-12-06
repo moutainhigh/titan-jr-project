@@ -178,6 +178,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		loanCreditOpinion.setOrderNo(req.getOrderNo());
 		loanCreditOpinion.setResult(req.getAuditResult().getStatus());
 		loanCreditOpinion.setContent(req.getContent());
+		loanCreditOpinion.setCreater(req.getOperator());
 		loanCreditOpinion.setCreateTime(now);
 		loanCreditOpinionDao.saveLoanCreditOpinion(loanCreditOpinion);
 		
@@ -332,7 +333,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	private String encryptRSFile(List<String> companyFilesList,List<String> ensureFilesList,String orgCode){
 		//下载文件，加密，删除文件，
 		//企业证件资料本地路径
-		String orgCreditFileRootDir = TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"/tmp"+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+orgCode;
+		String orgCreditFileRootDir = TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"tmp"+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+orgCode;
 		String orgCreditDir = "EnterpriseCreditPackage";
 		//法人担保
 		String localEnterpriseDocumentInfoPath = orgCreditFileRootDir+"/"+orgCreditDir+"/"+"EnterpriseDocumentInfo";
