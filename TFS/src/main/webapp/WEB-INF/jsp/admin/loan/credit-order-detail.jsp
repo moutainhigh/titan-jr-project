@@ -867,7 +867,7 @@
 						<span class=" cursor w85 btn_red fs16 " id="btn_save">保存</span>				
 					</div>
 				</c:if>
-				<c:if test="${getCreditInfoResponse.creditOrder.status==3}">
+				<c:if test="${getCreditInfoResponse.creditOrder.status==3 or getCreditInfoResponse.creditOrder.status==5}">
 					<!-- 初审通过 -->
 					<div class="examine_righttop">
 						<h3>审核结果</h3>
