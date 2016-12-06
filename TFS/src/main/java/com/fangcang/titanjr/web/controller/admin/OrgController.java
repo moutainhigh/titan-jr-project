@@ -115,7 +115,7 @@ public class OrgController extends BaseController{
 			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
 			model.addAttribute("financialOrganDTO", financialOrganDTO);
 			model.addAttribute("orgImgUrl", financialOrganDTO.getOrgImageInfoList().get(0).getImageURL());
-			model.addAttribute("operatorName", getSAASLoginName());
+			model.addAttribute("operatorName", getSAASLoginName());//TODO 这里是个bug,应该从数据库里面拿
 			model.addAttribute("tfsLoginUsername", tfsLoginUsername);
 			
 			if(financialOrganDTO.getUserType()==1){

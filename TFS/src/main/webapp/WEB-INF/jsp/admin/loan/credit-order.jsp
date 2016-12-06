@@ -96,7 +96,7 @@
   
   //授信申请未审核数量
   function freshCreditOrderCount(){
-	  $("#i_to_check_count").html($("#creditOrderCount").val());
+	  $("#i_to_check_count").html($("#creditOrderToCheckCount").val());
   }
     function search(){
     	var queryParams ={"companyName":$("#companyName").val(),"status":$("#status").attr("data-value"),"contactName":$("#contactName").val()};

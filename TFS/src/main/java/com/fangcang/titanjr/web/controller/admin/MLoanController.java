@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fangcang.titanjr.common.enums.AuditResultEnum;
 import com.fangcang.titanjr.common.enums.LoanCreditOrderEnum;
 import com.fangcang.titanjr.dto.request.AuditCreidtOrderRequest;
+import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
 import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
+import com.fangcang.titanjr.dto.response.GetAuditEvaluationResponse;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
 import com.fangcang.titanjr.dto.response.PageCreditCompanyInfoResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
@@ -74,7 +76,7 @@ public class MLoanController extends BaseController{
 		countRequest.setStatus(LoanCreditOrderEnum.Status.TO_CHECK.getValue());
 		
 		model.addAttribute("pageCreditCompanyInfoDTO", queryPageCreditCompanyInfoResponse.getPageCreditCompanyInfoDTO());
-		model.addAttribute("creditOrderCount", loanCreditService.getCreditOrderCount(countRequest).getCount());
+		model.addAttribute("creditOrderToCheckCount", loanCreditService.getCreditOrderCount(countRequest).getCount());
 		
 		
 		return "admin/loan/credit-order-table";
@@ -94,7 +96,21 @@ public class MLoanController extends BaseController{
 		getCreditInfoRequest.setOrderNo(orderNo);
 		
 		GetCreditInfoResponse getCreditInfoResponse = loanCreditService.getCreditOrderInfo(getCreditInfoRequest);
+		GetAuditEvaluationRequest getAuditEvaluationRequest = new GetAuditEvaluationRequest();
+		getAuditEvaluationRequest.setOrderNo(orderNo);
+		GetAuditEvaluationResponse getAuditEvaluationResponse = loanCreditService.getAuditEvaluationInfo(getAuditEvaluationRequest);
+		
+		
 		model.addAttribute("getCreditInfoResponse", getCreditInfoResponse);
+		model.addAttribute("operatorName", getSAASLoginName());
+		if(getAuditEvaluationResponse.getCreditOpinionBean()!=null){
+			model.addAttribute("creditOpinionBean", getAuditEvaluationResponse.getCreditOpinionBean());
+		}
+		
+		GetCreditOrderCountRequest countRequest = new GetCreditOrderCountRequest();
+		countRequest.setStatus(LoanCreditOrderEnum.Status.TO_CHECK.getValue());
+		
+		model.addAttribute("creditOrderToCheckCount", loanCreditService.getCreditOrderCount(countRequest).getCount());
 		
 		return "admin/loan/credit-order-detail";
 	}
@@ -110,7 +126,7 @@ public class MLoanController extends BaseController{
 			return toJson(putSysError("参数不能为空"));
 		}
 		AuditCreidtOrderRequest auditCreidtOrderRequest = new AuditCreidtOrderRequest();
-		
+		auditCreidtOrderRequest.setOperator(getSAASLoginName());
 		auditCreidtOrderRequest.setOrderNo(orderNo);
 		auditCreidtOrderRequest.setAuditResult(AuditResultEnum.getEnumByStatus(auditResult));
 		auditCreidtOrderRequest.setContent(content);

@@ -50,7 +50,7 @@ public class LoanDemoTest {
 //    private static String appSecret = "8B6E8EEF-48CC-4CCF-94C6-55C4AA2FE9F24";
 //    private static String session = "1460355562856409835";
     
-    
+    //融数商户联调环境
 	private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
 	private static String appKey = "C5CE632E-FDA6-436A-B4DF-1DE93A2C72C3";
 	private static String appSecret = "D7787ED2-0465-42C7-9CF8-25D5CC6ACA34";
