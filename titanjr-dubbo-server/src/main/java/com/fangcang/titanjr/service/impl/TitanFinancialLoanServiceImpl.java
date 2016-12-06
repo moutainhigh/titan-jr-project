@@ -1,8 +1,13 @@
 package com.fangcang.titanjr.service.impl;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -16,6 +21,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.FileTypeEnum;
 import com.fangcang.titanjr.common.enums.LoanApplyOrderEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
@@ -27,8 +33,10 @@ import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.LoanCreditOrderDao;
 import com.fangcang.titanjr.dao.LoanOrderDao;
 import com.fangcang.titanjr.dao.LoanRoomPackSpecDao;
+import com.fangcang.titanjr.dto.bean.LoanApplyOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
 import com.fangcang.titanjr.dto.bean.LoanSpecBean;
+import com.fangcang.titanjr.dto.bean.OrgLoanStatInfo;
 import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
 import com.fangcang.titanjr.dto.request.CancelLoanRequest;
 import com.fangcang.titanjr.dto.request.GetHistoryRepaymentListRequest;
@@ -48,7 +56,11 @@ import com.fangcang.titanjr.dto.response.RepaymentLoanResponse;
 import com.fangcang.titanjr.dto.response.SaveLoanOrderInfoResponse;
 import com.fangcang.titanjr.entity.LoanApplyOrder;
 import com.fangcang.titanjr.entity.LoanCreditOrder;
+import com.fangcang.titanjr.entity.LoanExpiryStat;
+import com.fangcang.titanjr.entity.LoanProductAmountStat;
 import com.fangcang.titanjr.entity.LoanRoomPackSpec;
+import com.fangcang.titanjr.entity.LoanSevenDaysStat;
+import com.fangcang.titanjr.entity.parameter.LoanQueryConditions;
 import com.fangcang.titanjr.rs.dto.NewLoanApplyJsonData;
 import com.fangcang.titanjr.rs.manager.RSCreditManager;
 import com.fangcang.titanjr.rs.manager.RSFileManager;
@@ -380,18 +392,182 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService{
 		return null;
 	}
 
+	/**
+	 * 对字符为空的日期统一转成NULL
+	 * @param dateStr
+	 * @return
+	 */
+	private Date convertDateUtil(String dateStr) {
+		if (StringUtil.isValidString(dateStr)) {
+			try {
+				return DateUtil.sdf.parse(dateStr);
+			} catch (ParseException e) {
+				log.error("", e);
+			}
+		}
+		return null;
+	}
+	/**
+	 * 将请求转换呈查询条件对象
+	 * @param req
+	 * @return
+	 */
+	private LoanQueryConditions getLoanQueryConditions(
+			GetLoanOrderInfoListRequest req) {
+		LoanQueryConditions conditions = new LoanQueryConditions();
+
+		
+		conditions.setBeginActualRepaymentDate(DateUtil
+				.getDayBeginTime(convertDateUtil(req
+						.getBeginActualRepaymentDate())));
+		conditions.setBeginCreateTime(DateUtil
+				.getDayBeginTime(convertDateUtil(req.getBeginCreateTime())));
+		conditions.setBeginLastRepaymentDate(DateUtil
+				.getDayBeginTime(convertDateUtil(req
+						.getBeginLastRepaymentDate())));
+		conditions.setBeginRelMoneyTime(DateUtil
+				.getDayBeginTime(convertDateUtil(req.getBeginRelMoneyTime())));
+
+		conditions
+				.setEndActualRepaymentDate(DateUtil
+						.getDayEndTime(convertDateUtil(req
+								.getEndActualRepaymentDate())));
+		conditions.setEndCreateTime(DateUtil.getDayEndTime(convertDateUtil(req
+				.getEndCreateTime())));
+		conditions.setEndLastRepaymentDate(DateUtil
+				.getDayEndTime(convertDateUtil(req.getEndLastRepaymentDate())));
+		conditions.setEndRelMoneyTime(DateUtil
+				.getDayEndTime(convertDateUtil(req.getEndRelMoneyTime())));
+
+		if (req.getProductEnum() != null) {
+			conditions.setProductType(req.getProductEnum().getCode());
+		}
+
+		if (req.getOrderStatusEnum() != null
+				&& req.getOrderStatusEnum().length > 0) {
+			Integer is[] = new Integer[req.getOrderStatusEnum().length];
+			for (int i = 0; i < is.length; i++) {
+				is[i] = req.getOrderStatusEnum()[i].getKey();
+			}
+			conditions.setOrderStatusEnum(is);
+		}
+		return conditions;
+	}
+	/**
+	 * 根据指定的查询条件查询对于的贷款单信息
+	 */
 	@Override
 	public GetLoanOrderInfoListResponse getLoanOrderInfoList(
 			GetLoanOrderInfoListRequest req) {
-		// TODO Auto-generated method stub
-		return null;
+
+		GetLoanOrderInfoListResponse infoListResponse = new GetLoanOrderInfoListResponse();
+
+		LoanQueryConditions conditions = getLoanQueryConditions(req);
+		
+		PaginationSupport<LoanApplyOrder> paginationSupport = new PaginationSupport<LoanApplyOrder>();
+		paginationSupport.setCurrentPage(req.getCurrentPage());
+		paginationSupport.setOrderBy(" createTime desc ");
+
+		paginationSupport = loanOrderDao.queryLoanApplyOrder(conditions,
+				paginationSupport);
+
+		List<LoanApplyOrder> loanApplyOrders = paginationSupport.getItemList();
+
+		List<LoanApplyOrderBean> loanApplyOrderBeans = new ArrayList<LoanApplyOrderBean>();
+
+		for (LoanApplyOrder loanApplyOrder : loanApplyOrders) {
+			LoanApplyOrderBean applyOrderBean = new LoanApplyOrderBean();
+			applyOrderBean.setActualAmount(""
+					+ loanApplyOrder.getActualAmount());
+			applyOrderBean.setActualRepaymentDate(loanApplyOrder
+					.getActualRepaymentDate());
+			applyOrderBean.setAmount("" + loanApplyOrder.getAmount());
+			applyOrderBean.setCreateTime(loanApplyOrder.getCreateTime());
+			applyOrderBean.setCreditOrderNo(loanApplyOrder.getCreditOrderNo());
+			applyOrderBean.setErrorMsg(loanApplyOrder.getErrorMsg());
+			applyOrderBean.setLastRepaymentDate(loanApplyOrder
+					.getLastRepaymentDate());
+			applyOrderBean.setOrderNo(loanApplyOrder.getOrderNo());
+			applyOrderBean.setOrgCode(loanApplyOrder.getOrgCode());
+			applyOrderBean.setProductId(loanApplyOrder.getProductId());
+			applyOrderBean.setProductSpecId(loanApplyOrder.getProductSpecId());
+			applyOrderBean.setProductType(loanApplyOrder.getProductType());
+			applyOrderBean.setRate(loanApplyOrder.getRate());
+			applyOrderBean.setRateTmp(loanApplyOrder.getRateTmp());
+			applyOrderBean.setRelMoneyTime(loanApplyOrder.getRelMoneyTime());
+			applyOrderBean.setRepaymentInterest(loanApplyOrder
+					.getRepaymentInterest());
+			applyOrderBean.setRepaymentPrincipal(loanApplyOrder
+					.getRepaymentPrincipal());
+			applyOrderBean.setRepaymentType(loanApplyOrder.getRepaymentType());
+			applyOrderBean.setRsorgId(loanApplyOrder.getRsorgId());
+			applyOrderBean.setRspId(loanApplyOrder.getRspId());
+			applyOrderBean.setShouldCapital(loanApplyOrder.getShouldCapital());
+			applyOrderBean
+					.setShouldInterest(loanApplyOrder.getShouldInterest());
+			applyOrderBean.setStatus(loanApplyOrder.getStatus());
+
+			loanApplyOrderBeans.add(applyOrderBean);
+		}
+		infoListResponse.setPageSize(paginationSupport.getPageSize());
+		infoListResponse.setTotalCount(paginationSupport.getTotalCount());
+		infoListResponse.setCurrentPage(paginationSupport.getCurrentPage());
+		infoListResponse.setApplyOrderInfo(loanApplyOrderBeans);
+		infoListResponse.setResult(true);
+		return infoListResponse;
 	}
 
 	@Override
 	public GetOrgLoanStatInfoResponse getOrgLoanStatInfo(
 			GetOrgLoanStatInfoRequest req) {
-		// TODO Auto-generated method stub
-		return null;
+
+		log.info("get loan stat info by orgCode=" + req.getOrgCode());
+
+		GetOrgLoanStatInfoResponse rsp = new GetOrgLoanStatInfoResponse();
+
+		OrgLoanStatInfo info = new OrgLoanStatInfo();
+
+		rsp.setOrgLoanStatInfo(info);
+
+		LoanExpiryStat expiryStat = loanOrderDao.queryLoanExpiryStat(req
+				.getOrgCode());
+
+		log.info("query expiry info [" + expiryStat + "]");
+
+		LoanSevenDaysStat loanSevenDaysStat = loanOrderDao
+				.queryLoanSevenDaysStat(req.getOrgCode());
+
+		log.info("query SevenDay info [" + loanSevenDaysStat + "]");
+
+		List<LoanProductAmountStat> amountStats = loanOrderDao
+				.queryLoanProductAmountStat(req.getOrgCode());
+
+		log.info("query product amount info [" + amountStats + "]");
+
+		if (expiryStat != null) {
+			info.setExpiryNum(expiryStat.getExpiryNum());
+			info.setExpiryAmount(expiryStat.getExpiryAmount());
+		}
+
+		if (loanSevenDaysStat != null) {
+			info.setSevenDaysAmount(loanSevenDaysStat.getSevenDaysAmount());
+			info.setSevenDaysNum(loanSevenDaysStat.getSevenDaysNum());
+		}
+
+		if (amountStats != null && amountStats.size() > 0) {
+			Map<LoanProductEnum, Long> statMap = new HashMap<LoanProductEnum, Long>();
+			BigDecimal totalAmount = new BigDecimal(0);
+			for (LoanProductAmountStat loanProductAmountStat : amountStats) {
+				totalAmount = totalAmount.add(new BigDecimal(
+						loanProductAmountStat.getAmount()));
+				statMap.put(LoanProductEnum.getEnumByKey(loanProductAmountStat
+						.getProductId()), loanProductAmountStat.getAmount());
+			}
+			info.setLoanAmount(totalAmount.longValue());
+			info.setProductAmount(statMap);
+		}
+
+		return rsp;
 	}
 
 	@Override
