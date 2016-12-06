@@ -26,7 +26,7 @@
 			<div class="LH_c ">
 				<div class="xi"></div>
 				<dl>
-					<dd><p>包房贷待还本金：</p><p>4,000,000  元</p><p><a href="泰坦金融-我的贷款首页-申请包房贷款.html" class="blue ">申请包房贷</a></p></dd>
+					<dd><p>包房贷待还本金：</p><p>4,000,000  元</p><p><a href="<%=basePath %>/loan_apply/main.shtml" class="blue ">申请包房贷</a></p></dd>
 					<dd><p>运营贷待还本金：</p><p>4,000,000  元</p></dd>
 				</dl>
 			</div>

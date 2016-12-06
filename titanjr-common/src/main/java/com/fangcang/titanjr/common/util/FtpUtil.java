@@ -366,16 +366,16 @@ public class FtpUtil {
 			boolean dirStatus = this.ftpClient.changeWorkingDirectory(remoteDownLoadPath);//改变工作目录
 			outStream = new BufferedOutputStream(new FileOutputStream(strFilePath));
 
-			logger.info(remoteFileName + "开始下载....");
+			logger.info(remoteDownLoadPath+"/"+remoteFileName + "开始下载....");
 
 			success = this.ftpClient.retrieveFile(remoteFileName, outStream);
 
 			if (success == true) {
-				logger.info(remoteFileName + "成功下载到" + strFilePath);
+				logger.info(remoteDownLoadPath+"/"+remoteFileName + "成功下载到" + strFilePath);
 				return success;
 			}
 		} catch (Exception e) {
-			logger.error(remoteFileName + "下载失败", e);
+			logger.error(remoteDownLoadPath+"/"+remoteFileName + "下载失败", e);
 			throw e;
 		} finally {
 			if (null != outStream) {

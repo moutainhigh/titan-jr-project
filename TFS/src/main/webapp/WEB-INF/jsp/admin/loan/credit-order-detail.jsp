@@ -846,23 +846,53 @@
 				</div>
 			</div>
 			<div class="c_right">
-				<div class="examine_righttop">
-				<h3>审核结果</h3>
-				<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核人：</span>王峰</p>
-				<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核结果：</span>
-					<select name="auditResult" id="auditResult" class="w100 select w135 J_nothroght">
-						<option value="">请选择</option>
-						<option value="3">通过</option>
-						<option value="4">不通过</option>
-					</select>
-				</p>
-				<p class="ptb9 showhide"><span class="w80"><i class="c_fc2020">*</i>未通过原因：</span>
-					<textarea name="content" id="au_content" class="textarea " placeholder="请输入未通过原因。"></textarea>
-				</p>	
-				</div>	
-				<div class="examine_bobut">
-					<span class=" cursor w85 btn_red fs16 " id="btn_save">保存</span>				
-				</div>
+				<c:if test="${getCreditInfoResponse.creditOrder.status==2}">
+					<!-- 待审核  -->
+				
+					<div class="examine_righttop">
+					<h3>审核结果</h3>
+					<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核人：</span>${operatorName }</p>
+					<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核结果：</span>
+						<select name="auditResult" id="auditResult" class="w100 select w135 J_nothroght">
+							<option value="">请选择</option>
+							<option value="3">通过</option>
+							<option value="4">不通过</option>
+						</select>
+					</p>
+					<p class="ptb9 showhide"><span class="w80"><i class="c_fc2020">*</i>未通过原因：</span>
+						<textarea name="content" id="au_content" class="textarea " placeholder="请输入未通过原因。"></textarea>
+					</p>	
+					</div>	
+					<div class="examine_bobut">
+						<span class=" cursor w85 btn_red fs16 " id="btn_save">保存</span>				
+					</div>
+				</c:if>
+				<c:if test="${getCreditInfoResponse.creditOrder.status==3}">
+					<!-- 初审通过 -->
+					<div class="examine_righttop">
+						<h3>审核结果</h3>
+						<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核人：</span>${creditOpinionBean.creater }</p>
+						<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核结果：</span>
+							通过
+						</p>
+							
+					</div>	
+				</c:if>
+				<c:if test="${getCreditInfoResponse.creditOrder.status==4}">
+					<!-- 初审通过 -->
+					<div class="examine_righttop">
+						<h3>审核结果</h3>
+						<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核人：</span>${creditOpinionBean.creater }</p>
+						<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核结果：</span>
+							未通过
+						</p>
+						<p class="ptb9 "><span class="w80"><i class="c_fc2020">*</i>未通过原因：</span>
+							<p class="" style="max-height:315px;overflow: auto; ">
+								${creditOpinionBean.content }
+							</p>	
+						</p>
+					</div>	
+				</c:if>
 			</div>
 		</div>		
 	</div>

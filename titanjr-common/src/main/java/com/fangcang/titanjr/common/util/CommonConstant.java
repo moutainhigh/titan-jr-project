@@ -18,7 +18,6 @@ public class CommonConstant {
     public static final String RS_FANGCANG_CONST_ID = "M000016";//机构号
     public static final String RS_FANGCANG_PRODUCT_ID = "P000070";//产品id
     
-    public static final String RS_FANGCANG_PRODUCT_ID_230 = "P000230";//贷款产品
     
     public static final String RS_LOAN_CREDIT_REQUEST_TIME = "36";//授信申请有效期，时限,单位月
     
