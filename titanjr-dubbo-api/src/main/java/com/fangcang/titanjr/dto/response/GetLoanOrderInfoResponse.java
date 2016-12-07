@@ -1,9 +1,9 @@
 package com.fangcang.titanjr.dto.response;
 
-import com.fangcang.titanjr.dto.BaseRequestDTO;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.LoanApplyOrderBean;
 
-public class GetLoanOrderInfoResponse extends BaseRequestDTO {
+public class GetLoanOrderInfoResponse extends BaseResponseDTO {
 
 	/**
 	 */
