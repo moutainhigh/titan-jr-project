@@ -19,7 +19,7 @@ public class QueryUserInitiativeRepaymentResponse extends BaseResponse {
 	/**
 	 * 用户主动还款对象信息
 	 */
-	List<TUserArepayment> tUserArepaymentList;
+	private List<TUserArepayment> tUserArepaymentList;
 
 	public List<TUserArepayment> gettUserArepaymentList() {
 		return tUserArepaymentList;
