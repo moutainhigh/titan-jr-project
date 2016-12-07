@@ -4,18 +4,81 @@ import java.util.Date;
 
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.dto.bean.LoanApplyOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanCompanyAppendInfo;
 import com.fangcang.titanjr.dto.bean.LoanCompanyEnsureBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditCompanyBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanPersonEnsureBean;
+import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
+import com.fangcang.titanjr.entity.LoanApplyOrder;
 import com.fangcang.titanjr.entity.LoanCompanyEnsure;
 import com.fangcang.titanjr.entity.LoanCreditCompany;
 import com.fangcang.titanjr.entity.LoanCreditOrder;
 import com.fangcang.titanjr.entity.LoanPersonEnsure;
+import com.fangcang.titanjr.entity.LoanRoomPackSpec;
 import com.fangcang.util.DateUtil;
 
 public final class LoanTypeConvertUtil {
+
+	public static LoanRoomPackSpecBean getLoanRoomPackSpecBean(
+			LoanRoomPackSpec packSpec) {
+		if (packSpec == null) {
+			return null;
+		}
+
+		LoanRoomPackSpecBean packSpecBean = new LoanRoomPackSpecBean();
+		packSpecBean.setAccount(packSpec.getAccount());
+		packSpecBean.setAccountName(packSpec.getAccountName());
+		packSpecBean.setBank(packSpec.getBank());
+		packSpecBean.setBeginDate(packSpec.getBeginDate());
+		packSpecBean.setContractUrl(packSpec.getContractUrl());
+		packSpecBean.setEndDate(packSpec.getEndDate());
+		packSpecBean.setHotleName(packSpec.getHotelName());
+		packSpecBean.setLoanOrderNo(packSpec.getOrderNo());
+		packSpecBean.setRoomNights(packSpec.getRoomNights());
+		return packSpecBean;
+	}
+
+	public static LoanApplyOrderBean getApplyOrderBean(
+			LoanApplyOrder loanApplyOrder) {
+
+		if (loanApplyOrder == null) {
+			return null;
+		}
+
+		LoanApplyOrderBean applyOrderBean = new LoanApplyOrderBean();
+		applyOrderBean.setActualAmount("" + loanApplyOrder.getActualAmount());
+		applyOrderBean.setActualRepaymentDate(loanApplyOrder
+				.getActualRepaymentDate());
+		applyOrderBean.setAmount("" + loanApplyOrder.getAmount());
+		applyOrderBean.setCreateTime(loanApplyOrder.getCreateTime());
+		applyOrderBean.setCreditOrderNo(loanApplyOrder.getCreditOrderNo());
+		applyOrderBean.setErrorMsg(loanApplyOrder.getErrorMsg());
+		applyOrderBean.setLastRepaymentDate(loanApplyOrder
+				.getLastRepaymentDate());
+		applyOrderBean.setOrderNo(loanApplyOrder.getOrderNo());
+		applyOrderBean.setOrgCode(loanApplyOrder.getOrgCode());
+		applyOrderBean.setProductId(loanApplyOrder.getProductId());
+		applyOrderBean.setProductSpecId(loanApplyOrder.getProductSpecId());
+		applyOrderBean.setProductType(loanApplyOrder.getProductType());
+		applyOrderBean.setRate(loanApplyOrder.getRate());
+		applyOrderBean.setRateTmp(loanApplyOrder.getRateTmp());
+		applyOrderBean.setRelMoneyTime(loanApplyOrder.getRelMoneyTime());
+		applyOrderBean.setRepaymentInterest(loanApplyOrder
+				.getRepaymentInterest());
+		applyOrderBean.setRepaymentPrincipal(loanApplyOrder
+				.getRepaymentPrincipal());
+		applyOrderBean.setRepaymentType(loanApplyOrder.getRepaymentType());
+		applyOrderBean.setRsorgId(loanApplyOrder.getRsorgId());
+		applyOrderBean.setRspId(loanApplyOrder.getRspId());
+		applyOrderBean.setShouldCapital(loanApplyOrder.getShouldCapital());
+		applyOrderBean.setShouldInterest(loanApplyOrder.getShouldInterest());
+		applyOrderBean.setStatus(loanApplyOrder.getStatus());
+
+		return applyOrderBean;
+
+	}
 
 	public static LoanCreditOrder createDefaultCreditOrder(String orderNo,
 			String orgCode) {
@@ -77,8 +140,7 @@ public final class LoanTypeConvertUtil {
 		ensureBean.setMarriageUrl(personEnsure.getMarriageUrl());
 		ensureBean.setCarBrand(personEnsure.getCarBrand());
 		ensureBean.setCarPurchaseDate(personEnsure.getCarPurchaseDate());
-		
-		
+
 		ensureBean.setCarWorth(personEnsure.getCarWorth());
 		ensureBean.setEmail(personEnsure.getEmail());
 		ensureBean.setYearIncome(personEnsure.getYearIncome());
@@ -128,10 +190,11 @@ public final class LoanTypeConvertUtil {
 		companyEnsureBean.setLegalPersonUrl(companyEnsure.getLegalPersonUrl());
 		companyEnsureBean.setRegAddress(companyEnsure.getRegAddress());
 		companyEnsureBean.setOfficeAddress(companyEnsure.getOfficeAddress());
-		
-		
-		companyEnsureBean.setCertificateExpireDate(DateUtil.dateToString(companyEnsure.getCertificateExpireDate(), "yyyy-MM-dd"));
-		companyEnsureBean.setCertificateStartDate(DateUtil.dateToString(companyEnsure.getCertificateStartDate(), "yyyy-MM-dd"));
+
+		companyEnsureBean.setCertificateExpireDate(DateUtil.dateToString(
+				companyEnsure.getCertificateExpireDate(), "yyyy-MM-dd"));
+		companyEnsureBean.setCertificateStartDate(DateUtil.dateToString(
+				companyEnsure.getCertificateStartDate(), "yyyy-MM-dd"));
 		companyEnsureBean.setRegistFinance(companyEnsure.getRegistFinance());
 		companyEnsureBean.setCompanyType(companyEnsure.getCompanyType());
 
@@ -348,12 +411,14 @@ public final class LoanTypeConvertUtil {
 		loanCompanyEnsure.setLegalPersonUrl(lc.getLegalPersonUrl());
 		loanCompanyEnsure.setRegAddress(lc.getRegAddress());
 		loanCompanyEnsure.setOfficeAddress(lc.getOfficeAddress());
-		
-		loanCompanyEnsure.setCertificateExpireDate(DateUtil.stringToDate(lc.getCertificateExpireDate(), "yyyy-MM-dd"));
-		loanCompanyEnsure.setCertificateStartDate(DateUtil.stringToDate(lc.getCertificateStartDate(), "yyyy-MM-dd"));
+
+		loanCompanyEnsure.setCertificateExpireDate(DateUtil.stringToDate(
+				lc.getCertificateExpireDate(), "yyyy-MM-dd"));
+		loanCompanyEnsure.setCertificateStartDate(DateUtil.stringToDate(
+				lc.getCertificateStartDate(), "yyyy-MM-dd"));
 		loanCompanyEnsure.setRegistFinance(lc.getRegistFinance());
 		loanCompanyEnsure.setCompanyType(lc.getCompanyType());
-		
+
 		return loanCompanyEnsure;
 	}
 
@@ -402,11 +467,10 @@ public final class LoanTypeConvertUtil {
 		loanPersonEnsure.setMarriageUrl(lp.getMarriageUrl());
 		loanPersonEnsure.setCarPurchaseDate(lp.getCarPurchaseDate());
 		loanPersonEnsure.setCarBrand(lp.getCarBrand());
-		
+
 		loanPersonEnsure.setCarWorth(lp.getCarWorth());
 		loanPersonEnsure.setEmail(lp.getEmail());
 		loanPersonEnsure.setYearIncome(lp.getYearIncome());
-		
 
 		return loanPersonEnsure;
 	}
