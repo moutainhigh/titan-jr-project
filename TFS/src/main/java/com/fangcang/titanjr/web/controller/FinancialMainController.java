@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
@@ -151,6 +152,15 @@ public class FinancialMainController extends BaseController {
     @RequestMapping(value = "/common/clickToPay", method = RequestMethod.GET)
     public String testPay(HttpServletRequest request, Model model) {
         return "checkstand-pay/clickToPayPage";
+    }
+    
+    /**
+     * 心跳
+     */
+    @ResponseBody
+    @RequestMapping(value = "/beat")
+    public String beat(){
+    	return toJson(putSuccess("心跳"));
     }
 
 //    @RequestMapping(value = "/testValExcp", method = RequestMethod.GET)

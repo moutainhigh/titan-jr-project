@@ -38,7 +38,7 @@
 <script type="text/javascript" src="<%=basePath %>/js/ajaxfileupload.js"></script>
 </body>
 <script type="text/javascript">
-	
+	beat();//心跳
 	var creditBasePath = '<%=basePath%>';
 	var imageBasePath = '<%=cssSaasPath%>';
 	

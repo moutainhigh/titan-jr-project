@@ -143,7 +143,16 @@ function replaceEnterKey(src){
 function backEnterKey(src){
 	return src.replace(/\<BR\/\>/gi,"\r\n");  
 }
-
+//心跳,每5分钟请求一次
+function beat(){
+	window.setInterval(function(){
+		$.ajax({
+			url:js_base_path+"/beat.action",
+			type:"post",
+			dataType:"json"
+		});
+	}, 5*60*1000);
+}
 var tfs_common_valid = {
 		
 		validAmount :function(src){
