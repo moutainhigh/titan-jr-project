@@ -745,6 +745,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		
 		params.add(new BasicNameValuePair("titanPayOrderCode", transOrderDTO
 				.getUserorderid()));
+		params.add(new BasicNameValuePair("businessinfo", transOrderDTO.getBusinessinfo()));
+		
 		params.add(new BasicNameValuePair("payResult", "1"));
 		params.add(new BasicNameValuePair("code", "valid"));
 		return params;
