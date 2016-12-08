@@ -1,4 +1,4 @@
-<%-- <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <html>
 <head>
 <script type="text/javascript" src="js/titanpay.js"></script>
@@ -46,22 +46,31 @@
 			inAccountCode : "A000003337",
 			outAccountCode : "A000018432",
 			bussCode : "566322565",//业务单号
-			fcUserId:"31975"
+		};
+		var refundInfo ={
+				orderNo:"TW15060107282",
+				payPassword:"123456",
+				userId:"sdfj"
 		};
 
-		document.getElementById('payButton').onclick = function() {
+		/* document.getElementById('payButton').onclick = function() {
 			titanPayObj.titanPay(orderInfo, businessInfo);
-		}
+		}; */
+		
+		 document.getElementById('payButton').onclick = function(){
+				
+			   window.location=titanPayObj.getRefund(refundInfo);
+			};
 
 	}
 </script>
-</html> --%>
+</html> 
  
 
 
 
 <!-- 对外收银台的对接 -->
- <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%--  <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>测试收银台</title>
@@ -193,4 +202,4 @@
 </form>
 
 </body>
-</html> 
+</html>  --%>

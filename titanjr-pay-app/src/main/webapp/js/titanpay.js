@@ -148,6 +148,12 @@ function initTitanPayObj() {
 		return null;
 	}
 	
+	titanPayObj.getRefund = function(refundInfo){
+		var refundInfo = this.titanEncrypted(JSON.stringify(refundInfo));
+		var url = config.address + 'refund/orderRefund.action';
+		url += '?refundInfo=' + encodeURIComponent(refundInfo);
+		return url;
+	}
 	/**
 	 * 请求支付
 	 * 

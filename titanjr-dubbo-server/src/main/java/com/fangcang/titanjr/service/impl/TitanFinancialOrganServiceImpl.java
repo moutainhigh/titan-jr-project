@@ -1349,6 +1349,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			condition.setOrgId(orgDTO.getOrgid());
 			condition.setTitanCode(orgDTO.getTitancode());
 			condition.setOrgName(orgDTO.getOrgname());
+			condition.setStatusId(orgDTO.getStatusId());
 			TitanOrg titanOrg = titanOrgDao.selectOne(condition);
 			if(titanOrg !=null){
 				MyBeanUtil.copyProperties(orgDTO, titanOrg);

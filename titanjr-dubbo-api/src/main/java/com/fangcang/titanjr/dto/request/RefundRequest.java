@@ -16,6 +16,8 @@ public class RefundRequest implements Serializable{
 	
 	private String payPassword;
 	
+	private String tfsUserid;
+	
 	private String userId;
 	
 	private boolean isFreeze = false;
@@ -50,6 +52,14 @@ public class RefundRequest implements Serializable{
 
 	public void setFreeze(boolean isFreeze) {
 		this.isFreeze = isFreeze;
+	}
+
+	public String getTfsUserid() {
+		return tfsUserid;
+	}
+
+	public void setTfsUserid(String tfsUserid) {
+		this.tfsUserid = tfsUserid;
 	}
 	
 }

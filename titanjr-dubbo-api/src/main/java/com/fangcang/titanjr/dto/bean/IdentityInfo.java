@@ -25,6 +25,7 @@ public class IdentityInfo implements Serializable{
 	
 	//所属商家
 	private String merchantCode;
+	
 
 	public String getCertificateNumber() {
 		return certificateNumber;
@@ -57,5 +58,5 @@ public class IdentityInfo implements Serializable{
 	public void setMerchantCode(String merchantCode) {
 		this.merchantCode = merchantCode;
 	}
-	
+
 }

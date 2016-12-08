@@ -893,7 +893,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		CheckPermissionResponse checkPermissionResponse = new CheckPermissionResponse();
 		try{
 			if(permissionRequest != null && StringUtil.isValidString(permissionRequest.getPermission())){
-				PermissionResponse permissionResponse = getUserPermission(permissionRequest);
+				PermissionResponse permissionResponse = this.getUserPermission(permissionRequest);
 				if(CollectionUtils.isNotEmpty(permissionResponse.getTitanRoleDtoList())){
 					for(TitanRoleDTO titanRoleDto: permissionResponse.getTitanRoleDtoList()){
 						String per = PermissionEnum.getValueByKey(permissionRequest.getPermission());

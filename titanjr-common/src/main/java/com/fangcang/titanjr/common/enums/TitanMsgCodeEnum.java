@@ -84,25 +84,27 @@ public enum TitanMsgCodeEnum {
     
     TRANSFER_SUCCESS_UPDATE_LOACL_FAIL(110100027,"退款转账成功，更新本地单失败！"),
     
-    ORDER_NOT_REFUND(110100027,"该订单不存在或者未支付成功，不能退款"),
     
-    ACCOUNT_BALANCE_NOT_ENOUGH(110100028,"账户余额不足，请充值"),
+    ORDER_NOT_REFUND(110100028,"该订单不存在或者未支付成功，不能退款"),
     
-    BALANCE_ACCOUNT_NOT_ENOUGH(110100028,"收益子账户余额不足!"),
+    ACCOUNT_BALANCE_NOT_ENOUGH(110100029,"账户余额不足，请充值"),
     
-    REFUND_FAIL(110100029,"退款失败"),
+    BALANCE_ACCOUNT_NOT_ENOUGH(110100030,"收益子账户余额不足!"),
+    
+    REFUND_FAIL(110100031,"退款失败"),
     
   //订单信息不存在
-    QUERY_ORDER_FAIL(110100030,"订单不存在！"),
+    QUERY_ORDER_FAIL(110100032,"订单不存在！"),
     
-   RS_SUCCESS_SAVELOCA_FAIL(110100031,"融数下单成功，本地保存失败"),
+   RS_SUCCESS_SAVELOCA_FAIL(110100033,"融数下单成功，本地保存失败"),
     
-    PACKAGE_RECHARGE_DATA_FAIL(110100032,"封装网关数据失败"),
+    PACKAGE_RECHARGE_DATA_FAIL(110100034,"封装网关数据失败"),
     
-    ACCOUNT_NOT_EXIST(110100033,"该账户未注册！"),
+    ACCOUNT_NOT_EXIST(110100035,"该账户未注册！"),
   //落单+绑卡失败
-    OPER_ORDER_AND_BIND_CARD_FAIL(110100034,"落单绑卡失败！"),
+    OPER_ORDER_AND_BIND_CARD_FAIL(110100036,"落单绑卡失败！"),
 	
+    ORDER_REFUNND_IN_PROCESS(110100037,"该订单正在退款，请勿重复退款"),
 
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");

@@ -5,7 +5,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.Model;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
@@ -18,21 +21,28 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
+import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
+import com.fangcang.titanjr.dto.request.PermissionRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.RefundRequest;
 import com.fangcang.titanjr.dto.request.TitanJrRefundRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.UnFreeBalanceBatchRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
+import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
 import com.fangcang.titanjr.dto.response.RefundResponse;
 import com.fangcang.titanjr.dto.response.TitanJrRefundResponse;
 import com.fangcang.titanjr.enums.BusiCodeEnum;
+import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
+import com.fangcang.titanjr.pay.controller.TitanTradeController;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialRefundService;
+import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 
@@ -45,9 +55,18 @@ public class TitanRefundService {
 	@Resource
 	private TitanFinancialAccountService titanFinancialAccountService;
 	
+	@Resource 
+	private TitanFinancialOrganService titanFinancialOrganService;
+	
 	@Resource
 	private TitanFinancialRefundService titanFinancialRefundService;
 	
+	@Resource
+	private TitanFinancialUserService titanFinancialUserService;
+	
+	
+	private static final Log log = LogFactory
+			.getLog(TitanTradeController.class);
 	
 	public RefundResponse orderRefund(RefundRequest refundRequest){
 		RefundResponse response = new RefundResponse();
@@ -187,6 +206,146 @@ public class TitanRefundService {
 		}
 		
 		return fundFreezeDTOList;
+	}
+	
+	
+	
+	/**
+	 * 验证是否具有退款的权限
+	 * @param userid
+	 * @param tfsUserid
+	 * @return
+	 */
+	private boolean validateIsPassRefund(String userid,String tfsUserid){
+		
+		boolean orgCheck = this.validateIsTitanOrg(userid);
+		
+		if(!orgCheck){
+			log.error("验证机构不存在");
+			return false;
+		}
+		
+		boolean perssionCheck  = this.validatePerssion(tfsUserid);
+		
+		if(!perssionCheck){
+			log.error("验证该员工无付款权限");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private boolean validateIsTitanOrg(String userid){
+		OrgDTO orgDTO = new OrgDTO();
+		orgDTO.setOrgcode(userid);
+		orgDTO.setStatusId(1);
+		orgDTO = titanFinancialOrganService.queryOrg(orgDTO);
+		if(StringUtil.isValidString(orgDTO.getUserid())){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean validatePerssion(String tfsUserId){
+		 PermissionRequest permissionRequest = new PermissionRequest();
+         permissionRequest.setTfsuserid(tfsUserId);
+         permissionRequest.setPermission("1");
+         CheckPermissionResponse checkResponse = titanFinancialUserService.checkUserPermission(permissionRequest);
+		 if(checkResponse.isPermission()){
+			 return true;
+		 }
+         return false;
+	}
+	
+	
+	public String refundRequest(RefundRequest refundRequest,Model model){
+		//验证机构和支付人权限
+		boolean isRefund = this.validateIsPassRefund(refundRequest.getUserId(), refundRequest.getTfsUserid());
+		
+		if(!isRefund){
+			log.error("验证机构或权限失败");
+			model.addAttribute("msg",
+					TitanMsgCodeEnum.PERMISSION_CHECK_FAILED.getResMsg());
+			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+		}
+		
+		//根据payOrderNo查询相关的单
+		TransOrderRequest transOrderRequest = new TransOrderRequest();
+		transOrderRequest.setPayorderno(refundRequest.getOrderNo());
+		TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
+		
+		if(transOrderDTO ==null){
+			log.error("订单不存在");
+			model.addAttribute("msg",
+					TitanMsgCodeEnum.QUERY_LOCAL_ORDER.getResMsg());
+			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+		}
+		
+		
+		if(OrderStatusEnum.REFUND_IN_PROCESS.getStatus().equals(transOrderDTO.getStatusid())){
+			log.error("该订单正在退款中，不能重复退款");
+			model.addAttribute("msg",
+					TitanMsgCodeEnum.ORDER_REFUNND_IN_PROCESS.getResMsg());
+			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+		}
+		
+		if(OrderStatusEnum.REFUND_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())){
+			log.error("该订单退款成功，不能重复退款");
+			model.addAttribute("msg",
+					TitanMsgCodeEnum.TRANSFER_SUCCESS_UPDATE_LOACL_FAIL.getResMsg());
+			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+		}
+		
+		
+		if(!(OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()) || OrderStatusEnum.FREEZE_SUCCESS.equals(transOrderDTO.getStatusid()))){
+			log.error("该订单为支付成功，不能退款");
+			model.addAttribute("msg",
+					TitanMsgCodeEnum.ORDER_NOT_REFUND.getResMsg());
+			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+		}
+		
+		//查询商家的账户余额，看是否能满足退款
+		AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
+		accountBalanceRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+		accountBalanceRequest.setUserid(refundRequest.getUserId());
+		AccountBalanceResponse accountBalanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+		
+		if(!accountBalanceResponse.isResult()){
+			log.error("账户异常");
+			model.addAttribute("msg",
+					TitanMsgCodeEnum.ORDER_NOT_REFUND.getResMsg());
+			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+		}
+		
+		List<AccountBalance> accountBalanceList  = accountBalanceResponse.getAccountBalance();
+		String accountBalance = "";
+		String refundAmount = transOrderDTO.getTradeamount().toString();
+		for(AccountBalance balance :accountBalanceList){
+			if(balance.getProductid().equals(CommonConstant.RS_FANGCANG_PRODUCT_ID)){
+				accountBalance = balance.getBalanceusable();
+			}
+		}
+		
+		TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
+		titanTransferDTO.setTransorderid(transOrderDTO.getTransid());
+		titanTransferDTO = titanOrderService.getTitanTransferDTO(titanTransferDTO);
+		if(titanTransferDTO !=null && titanTransferDTO.getAmount()!=null){
+			refundAmount = titanTransferDTO.getAmount().toString();
+		}
+		
+		
+		if(new BigDecimal(accountBalance).compareTo(new BigDecimal(refundAmount))==-1){
+			log.error("账户余额不足,请充值后再退款");
+			model.addAttribute("msg",
+					TitanMsgCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH.getResMsg());
+			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+		}
+		
+		
+		model.addAttribute("transOrderDTO", transOrderDTO);
+		model.addAttribute("refundRequest", refundRequest);
+		
+		return TitanConstantDefine.REFUND_MAIN_PAGE;
 	}
 	
 }

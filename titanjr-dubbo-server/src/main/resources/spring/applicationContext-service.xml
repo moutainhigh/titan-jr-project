@@ -51,6 +51,8 @@
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialBankCardService" ref="titanFinancialBankCardService" timeout="40000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialRateService" ref="titanFinancialRateService" timeout="40000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanHelpService" ref="titanHelpService" timeout="40000" />
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialRefundService" ref="titanFinancialRefundService"></dubbo:service>
+	
 	<bean id="rSInvokeInitManagerImpl" class="com.fangcang.titanjr.service.impl.RSInvokeInitManagerImpl" init-method="initRopClient" />  
 	
 </beans>

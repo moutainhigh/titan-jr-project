@@ -23,6 +23,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -822,83 +832,65 @@ public class DateUtil {
 		return c.getTime();
 	}
 	
+//	@XmlAccessorType(XmlAccessType.FIELD)
+//	@XmlType(name="",propOrder={"name"})
+//	@XmlRootElement(name="Student")
+//	static class Student {
+//		
+//		@XmlElement(required=true)
+//		private String id;
+//		
+//		@XmlAttribute
+//		private String name;
+//		
+//		@XmlAttribute
+//		private Integer age;
+//
+//		public String getId() {
+//			return id;
+//		}
+//
+//		public void setId(String id) {
+//			this.id = id;
+//		}
+//
+//		public String getName() {
+//			return name;
+//		}
+//
+//		public void setName(String name) {
+//			this.name = name;
+//		}
+//
+//		public Integer getAge() {
+//			return age;
+//		}
+//
+//		public void setAge(Integer age) {
+//			this.age = age;
+//		}
+//		
+//	}
 	
-	public static void main(String[] args) {
+	
+	
+	public static void main(String[] args) throws JAXBException {
+//		DateUtil.Student student = new DateUtil.Student();
+//		File file = new File("C:/Users/Administrator/Desktop/xmlTest.xml");
+//		
+//		student.setAge(30);
+//		student.setName("张三");
+//		student.setId("0102");
+//		
+//		JAXBContext context = JAXBContext.newInstance(DateUtil.Student.class);
+//		Marshaller marshaller = context.createMarshaller();
+//		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+//		marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+//		marshaller.marshal(student, file);
+//		
+//		DateUtil.Student stu = (DateUtil.Student)context.createUnmarshaller().unmarshal(file);
+//		System.out.println(stu.getName()+"---"+stu.getId()+"---"+stu.getAge());
 		
-		try {
-			
-			Runnable r1 = new Runnable() {
-				@Override
-				public void run() {
-					//socket的服务器端
-					try {
-						ServerSocket socket = new ServerSocket(50000);
-						Socket s  = socket.accept();
-						
-						InputStream in =  s.getInputStream();
-						OutputStream out = s.getOutputStream();
-						
-						BufferedReader reader = new BufferedReader(new InputStreamReader(in),100);
-						
-						System.out.println(reader.readLine());
-						
-						
-						
-						out.write("I have accepted \r\n".getBytes());
-						out.flush();
-						
-//						while(reader.readLine()!=null){
-//							System.out.println(reader.readLine());
-//							out.write("I have accepted".getBytes());
-//							out.flush();
-//						}
-						
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			};
-			
-            
-			Runnable r2 = new Runnable() {
-				
-				@Override
-				public void run() {
-					try{
-						Socket socket = new Socket("192.168.0.90", 50000);
-						
-						BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-						writer.write("I love you  ddddddas  vvvkfdj  ");
-						writer.flush();
-//						
-//						BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//						
-//						String s = null;
-//						while((s=reader.readLine()) !=null){
-//							System.out.print(s);
-//						}
-						
-						
-						
-						
-					}catch(Exception e){
-						
-					}
-				}
-			};
-			
-//			
-			Thread t1= new Thread(r1);
-			t1.start();
-			Thread t2 = new Thread(r2);
-			t2.start();
-			
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 	}
 	
 	

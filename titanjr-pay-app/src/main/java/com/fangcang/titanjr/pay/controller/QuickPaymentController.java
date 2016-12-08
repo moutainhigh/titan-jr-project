@@ -1,6 +1,15 @@
 package com.fangcang.titanjr.pay.controller;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +45,9 @@ public class QuickPaymentController extends BaseController{
 	
 	@Resource
 	private QuickPaymentService quickPaymentService;
+	
+	
+	
 	
 	
 
