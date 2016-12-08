@@ -150,7 +150,7 @@ function initTitanPayObj() {
 	
 	titanPayObj.getRefund = function(refundInfo){
 		var refundInfo = this.titanEncrypted(JSON.stringify(refundInfo));
-		var url = config.address + 'refund/orderRefund.action';
+		var url = config.address + 'refund/refundRequest.action';
 		url += '?refundInfo=' + encodeURIComponent(refundInfo);
 		return url;
 	}

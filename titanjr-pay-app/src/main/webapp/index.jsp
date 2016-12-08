@@ -50,7 +50,8 @@
 		var refundInfo ={
 				orderNo:"TW15060107282",
 				payPassword:"123456",
-				userId:"sdfj"
+				userId:"TJM10000108",
+				tfsUserid:"10048"
 		};
 
 		/* document.getElementById('payButton').onclick = function() {
