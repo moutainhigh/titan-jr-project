@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
@@ -46,6 +47,7 @@ import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.util.StringUtil;
 
 /**
@@ -76,6 +78,7 @@ public class FinancialLoanCreditController extends BaseController {
 	 * 进入贷款主页
 	 */
 	@RequestMapping(value = "/checkCreditStatus", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String checkCreditStatus(Model model) {
 
 		log.info("check credit status userID = " + this.getUserId());
@@ -133,6 +136,7 @@ public class FinancialLoanCreditController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = "/updateLoanAmountDate", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String updateLoanAmountDate() {
 		OrgUpdateRequest orgUpdateRequest = new OrgUpdateRequest();
 		orgUpdateRequest.setLastUpdateDate(new Date());
@@ -152,6 +156,7 @@ public class FinancialLoanCreditController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/creditProtocol", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String loanCreditProtocol() {
 		return "/loan/credit-apply/credit-protocol";
 	}
@@ -162,6 +167,7 @@ public class FinancialLoanCreditController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/applyCredit", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String loanCreditApply() {
 		return "/loan/credit-apply/framework";
 	}
@@ -172,6 +178,7 @@ public class FinancialLoanCreditController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/applyCompany", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String creditCompanyApply() {
 		return "/loan/credit-apply/company";
 	}
@@ -182,6 +189,7 @@ public class FinancialLoanCreditController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/applyCompanyEnsure", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String creditCompanyEnsureApply() {
 		return "/loan/credit-apply/company-ensure";
 	}
@@ -192,6 +200,7 @@ public class FinancialLoanCreditController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/applyCompanyAppend", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String creditCompanyAppendApply() {
 		return "/loan/credit-apply/company-append";
 	}
@@ -202,6 +211,7 @@ public class FinancialLoanCreditController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/applyCompanyAccessory", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String creditCompanyAccessoryApply() {
 		return "/loan/credit-apply/company-accessory";
 	}
@@ -350,6 +360,7 @@ public class FinancialLoanCreditController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getCreditData", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String getCreditData() {
 
 		log.info("get credit data userId=" + this.getUserId());
@@ -559,6 +570,7 @@ public class FinancialLoanCreditController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/saveCreditData", method = RequestMethod.POST)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String saveCreditData(String companyData, String companyAppendData,
 			String companyEnsureData, String companyAccessoryData) {
 
@@ -584,6 +596,7 @@ public class FinancialLoanCreditController extends BaseController {
 	}
 
 	@RequestMapping(value = "/submitCreditApply", method = RequestMethod.POST)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String submitCreditApply(String companyData,
 			String companyAppendData, String companyEnsureData,
 			String companyAccessoryData, Model model) {

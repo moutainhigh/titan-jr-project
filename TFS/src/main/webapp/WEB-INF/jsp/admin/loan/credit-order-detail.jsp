@@ -93,7 +93,7 @@
 								<td class="bg_f2"><i class="c_f00">*</i>法人姓名：</td>
 								<td>${getCreditInfoResponse.creditCompany.legalName }</td>
 								<td class="bg_f2"><i class="c_f00">*</i>法人证件号：</td>
-								<td><c:if test="${getCreditInfoResponse.creditCompany.legalNo ==1}">身份证</c:if> <c:if test="${getCreditInfoResponse.creditCompany.legalNo ==2}">护照</c:if>	${getCreditInfoResponse.creditCompany.legalNo }</td>
+								<td><c:if test="${getCreditInfoResponse.creditCompany.legalceType ==1}">身份证</c:if> <c:if test="${getCreditInfoResponse.creditCompany.legalceType ==2}">护照</c:if>	${getCreditInfoResponse.creditCompany.legalNo }</td>
 							</tr>							
 						</table>
 					</div>

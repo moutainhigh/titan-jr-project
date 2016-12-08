@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoRequest;
@@ -27,6 +28,7 @@ import com.fangcang.titanjr.dto.response.GetLoanOrderInfoResponse;
 import com.fangcang.titanjr.dto.response.GetOrgLoanStatInfoResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.LoanQueryConditions;
 import com.fangcang.util.StringUtil;
 
@@ -78,6 +80,7 @@ public class FinancialLoanController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getLoanDetailsInfo", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String getLoanDetailsInfo(String orderNo, Model model) {
 		if (!StringUtil.isValidString(orderNo)) {
 			log.error("loan detail orderNo is null");
@@ -110,6 +113,7 @@ public class FinancialLoanController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = "/loanStatInfo", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String getLoanStatInfo() {
 		log.info("get loan stat info ");
 		GetOrgLoanStatInfoRequest req = new GetOrgLoanStatInfoRequest();
@@ -126,6 +130,7 @@ public class FinancialLoanController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getLoanInfoList", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String getLoanInfoList(LoanQueryConditions loanQueryConditions,
 			Model model) {
 
