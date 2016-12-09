@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoRequest;
@@ -52,32 +53,33 @@ public class FinancialLoanController extends BaseController {
 	@Resource
 	private TitanSysconfigService sysconfigService;
 
-	private final static Map<String, Object> statusMap = new HashMap<String, Object>();
+	private final static Map<String, Object> initDataMap = new HashMap<String, Object>();
 
 	static {
-		statusMap.put("loan-all-status", LoanOrderStatusEnum.values());
-		statusMap.put("loan-all-orderby", "createTime,status");
+		initDataMap.put("loan-all-status", LoanOrderStatusEnum.values());
+		initDataMap.put("loan-all-orderby", "createTime,status");
 
-		statusMap.put("loan-audit-status",
-				new LoanOrderStatusEnum[] { LoanOrderStatusEnum.LOAN_REQ_ING });
-		statusMap.put("loan-audit-orderby", "createTime");
+		initDataMap.put("loan-audit-status",
+				new LoanOrderStatusEnum[] { LoanOrderStatusEnum.LOAN_REQ_ING , LoanOrderStatusEnum.LENDING_ING });
+		initDataMap.put("loan-audit-orderby", "createTime");
 
-		statusMap.put("loan-over-status",
+		initDataMap.put("loan-over-status",
 				new LoanOrderStatusEnum[] { LoanOrderStatusEnum.LOAN_FINISH });
-		statusMap.put("loan-over-orderby", "createTime");
+		initDataMap.put("loan-over-orderby", "createTime");
 
-		statusMap.put("loan-payment-status",
+		initDataMap.put("loan-payment-status",
 				new LoanOrderStatusEnum[] { LoanOrderStatusEnum.HAVE_LOAN,
 						LoanOrderStatusEnum.LOAN_EXPIRY });
-		statusMap.put("loan-payment-orderby", "createTime");
+		initDataMap.put("loan-payment-orderby", "createTime");
 
-		statusMap
-				.put("" + LoanProductEnum.ROOM_PACK.getCode(), "loan-roompack");
-		statusMap.put("" + LoanProductEnum.OPERACTION.getCode(), "");
+		initDataMap.put("" + LoanProductEnum.ROOM_PACK.getCode(),
+				"loan-roompack");
+		initDataMap.put("" + LoanProductEnum.OPERACTION.getCode(), "");
 
 	}
 
 	@RequestMapping(value = "/getLoanDetailsInfo", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String getLoanDetailsInfo(String orderNo, Model model) {
 		if (!StringUtil.isValidString(orderNo)) {
 			log.error("loan detail orderNo is null");
@@ -97,6 +99,15 @@ public class FinancialLoanController extends BaseController {
 			model.addAttribute("errormsg", "查询贷款信息失败，请稍后再试!");
 			return "error";
 		}
+		
+		Object pageKey = initDataMap.get(String.valueOf(infoResponse
+				.getApplyOrderInfo().getProductType()));
+		if(pageKey == null || "".equals(pageKey))
+		{
+			log.error("product type pageKey is null");
+			model.addAttribute("errormsg", "产品类型不支持查看详情，请确认！");
+			return "error";
+		}
 		model.addAttribute("loanOrderInfo", infoResponse.getApplyOrderInfo());
 		if (infoResponse.getApplyOrderInfo() != null) {
 			model.addAttribute("loanSpecInfo", infoResponse.getApplyOrderInfo()
@@ -104,12 +115,12 @@ public class FinancialLoanController extends BaseController {
 		}
 
 		return "/loan/product-info/"
-				+ statusMap.get(String.valueOf(infoResponse.getApplyOrderInfo()
-						.getProductType()));
+				+ pageKey;
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/loanStatInfo", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String getLoanStatInfo() {
 		log.info("get loan stat info ");
 		GetOrgLoanStatInfoRequest req = new GetOrgLoanStatInfoRequest();
@@ -129,6 +140,13 @@ public class FinancialLoanController extends BaseController {
 	public String getLoanInfoList(LoanQueryConditions loanQueryConditions,
 			Model model) {
 
+		if (loanQueryConditions == null
+				|| !StringUtil.isValidString(loanQueryConditions.getPageKey())) {
+			log.error("page key is null");
+			model.addAttribute("errormsg", "错误的查询方式，请确认!");
+			return "error";
+		}
+		
 		GetLoanOrderInfoListRequest req = new GetLoanOrderInfoListRequest();
 
 		// 设置查询条件
@@ -157,11 +175,11 @@ public class FinancialLoanController extends BaseController {
 			req.setProductEnum(LoanProductEnum.getEnumByKey(Integer
 					.parseInt(loanQueryConditions.getProductType())));
 		}
-
+		//按照套路给查询分配过滤的状态
 		List<LoanOrderStatusEnum> statusList = new ArrayList<LoanOrderStatusEnum>(
-				Arrays.asList((LoanOrderStatusEnum[]) statusMap
+				Arrays.asList((LoanOrderStatusEnum[]) initDataMap
 						.get(loanQueryConditions.getPageKey() + "-status")));
-
+		//如果页面指定了要查询的状态，那么就需要按照页面的要求来
 		if (StringUtil.isValidString(loanQueryConditions.getLoanStatus())) {
 			LoanOrderStatusEnum tempEnum = LoanOrderStatusEnum
 					.getEnumByStatus(Integer.parseInt(loanQueryConditions
@@ -174,7 +192,7 @@ public class FinancialLoanController extends BaseController {
 		// 设置要过滤的状态
 		req.setOrderStatusEnum(statusList.toArray(new LoanOrderStatusEnum[0]));
 		// 设置排序条件
-		Object orderBy = statusMap.get(loanQueryConditions.getPageKey()
+		Object orderBy = initDataMap.get(loanQueryConditions.getPageKey()
 				+ "-orderby");
 		if (orderBy != null) {
 			req.setOrderBy(orderBy.toString());
