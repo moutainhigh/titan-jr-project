@@ -3,13 +3,13 @@ package com.fangcang.titanjr.rs.manager.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.CollectionUtils;
 
 import com.Rop.api.ApiException;
-import com.Rop.api.DefaultRopClient;
 import com.Rop.api.domain.UserArepayment;
 import com.Rop.api.domain.UserRepayment;
 import com.Rop.api.request.WheatfieldInterestRepaymentQueryborrowinfoRequest;
@@ -61,6 +61,7 @@ import com.fangcang.titanjr.rs.response.QueryUserInitiativeRepaymentResponse;
 import com.fangcang.titanjr.rs.response.QueryUserRepaymentResponse;
 import com.fangcang.titanjr.rs.response.StopLoanResponse;
 import com.fangcang.titanjr.rs.response.UserInitiativeRepamentResponse;
+import com.fangcang.titanjr.rs.util.MyConvertXmlToObject;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.util.MyBeanUtil;
 
@@ -237,11 +238,12 @@ public class RSCreditManagerImpl implements RSCreditManager {
 				} else {
 					response.setSuccess(true);
 					response.setOperateStatus(rsp.getIs_success());
-					response.setUserid(rsp.getUserid());
-					response.setName(rsp.getName());
-					response.setCreditlimit(rsp.getCreditlimit());
-					response.setCreditdeadline(rsp.getCreditdeadline());
-					response.setCreditavailability(rsp.getCreditavailability());
+					Map<String, Object>  bodyMap = MyConvertXmlToObject.xml2map(rsp.getBody());
+					response.setUserid(bodyMap.get("userId").toString());
+					response.setName(bodyMap.get("name").toString());
+					response.setCreditlimit(bodyMap.get("creditLimit").toString());
+					response.setCreditdeadline(bodyMap.get("creditDeadLine").toString());
+					response.setCreditavailability(bodyMap.get("creditAvailability").toString());
 					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
