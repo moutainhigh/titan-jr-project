@@ -1,5 +1,6 @@
 package com.fangcang.titanjr.util;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.fangcang.titanjr.common.util.CommonConstant;
@@ -10,6 +11,7 @@ import com.fangcang.titanjr.dto.bean.LoanCompanyEnsureBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditCompanyBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanPersonEnsureBean;
+import com.fangcang.titanjr.dto.bean.LoanRepaymentBean;
 import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
 import com.fangcang.titanjr.entity.LoanApplyOrder;
 import com.fangcang.titanjr.entity.LoanCompanyEnsure;
@@ -17,9 +19,40 @@ import com.fangcang.titanjr.entity.LoanCreditCompany;
 import com.fangcang.titanjr.entity.LoanCreditOrder;
 import com.fangcang.titanjr.entity.LoanPersonEnsure;
 import com.fangcang.titanjr.entity.LoanRoomPackSpec;
+import com.fangcang.titanjr.rs.dto.TUserArepayment;
 import com.fangcang.util.DateUtil;
 
 public final class LoanTypeConvertUtil {
+
+	public static LoanRepaymentBean getLoanRepaymentBean(
+			TUserArepayment arepayment) {
+		if (arepayment == null) {
+			return null;
+		}
+
+		LoanRepaymentBean repaymentBean = new LoanRepaymentBean();
+
+		// 计算利息
+		BigDecimal repaymentInterest = new BigDecimal(
+				arepayment.getActiveinterest());
+		repaymentInterest = repaymentInterest.add(new BigDecimal(arepayment
+				.getActiveoverduefine()));
+		repaymentInterest = repaymentInterest.add(new BigDecimal(arepayment
+				.getActiveoverdueinterest()));
+
+		// 计算还款总额
+		BigDecimal totalAmount = new BigDecimal(arepayment.getActiveinterest());
+		totalAmount = totalAmount.add(repaymentInterest);
+
+		repaymentBean.setRepaymentTotalAmount(totalAmount.longValue());
+		repaymentBean.setRepaymentAmount(Long.parseLong(arepayment
+				.getActivecapital()));
+		repaymentBean.setRepaymentInterest(repaymentInterest.longValue());
+
+		// repaymentBean.setRepaymentDate(arepayment.getActiverepaymentdate());
+
+		return repaymentBean;
+	}
 
 	public static LoanRoomPackSpecBean getLoanRoomPackSpecBean(
 			LoanRoomPackSpec packSpec) {

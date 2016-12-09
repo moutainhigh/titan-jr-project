@@ -49,9 +49,8 @@
 						
 						<td width="">1</td>
 						<td width=""><fmt:formatDate value="${loanInfoItem.lastRepaymentDate}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
-						<td class="tdr">${loanInfoItem.repaymentPrincipal}</td>
-						
-						<td class="tdr">${loanInfoItem.repaymentPrincipal + loanInfoItem.repaymentInterest} </td>
+						<td class="tdr"><fmt:formatNumber value="${loanInfoItem.repaymentPrincipal /100}"  pattern="#,##0.00#" /></td>
+						<td class="tdr"><fmt:formatNumber value="${(loanInfoItem.repaymentPrincipal + loanInfoItem.repaymentInterest) / 100}"  pattern="#,##0.00#" /> </td>
 						<td></td>
 						<td width="" >
 							<c:if test="${loanInfoItem.productType==10001}">
@@ -67,7 +66,7 @@
 							</c:if>
 						</span></td>
 						<td width=""><fmt:formatDate value="${loanInfoItem.relMoneyTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>					
-						<td class=""><a class="blue decorationUnderline m_r10" href="泰坦金融-我的贷款首页-已还清.html">详情</a> </td>
+						<td class=""><a class="blue decorationUnderline m_r10" href="<%=basePath%>/loan/getLoanDetailsInfo.shtml?orderNo=${loanInfoItem.orderNo}">详情</a> </td>
 					</tr>
 				</c:forEach>
 			</table>

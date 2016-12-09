@@ -17,7 +17,9 @@ public enum LoanOrderStatusEnum {
 
 	LOAN_EXPIRY(6, "已逾期"),
 
-	LOAN_FINISH(7, "已結清");
+	LOAN_FINISH(7, "已結清"),
+	
+	LOAN_UNDO(8, "已撤销");
 
 	public int getKey() {
 		return key;

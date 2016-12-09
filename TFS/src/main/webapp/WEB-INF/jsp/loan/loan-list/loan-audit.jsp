@@ -45,7 +45,7 @@
 				<tr>
 					<td width="">1</td>
 					<td width=""><fmt:formatDate value="${loanInfoItem.createTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
-					<td class="tdr">${loanInfoItem.amount}</td>
+					<td class="tdr"><fmt:formatNumber value="${loanInfoItem.amount /100}"  pattern="#,##0.00#" /></td>
 					<td></td>
 					<td width="">
 						<c:if test="${loanInfoItem.productType==10001}">
@@ -87,7 +87,7 @@
 						</c:if>
 					</td>
 					<td class=""><a class="blue decorationUnderline m_r10"
-						href="泰坦金融-我的贷款首页-详情-审核中.html">详情</a> <a
+						href="<%=basePath%>/loan/getLoanDetailsInfo.shtml?orderNo=${loanInfoItem.orderNo}">详情</a> <a
 						class="blue decorationUnderline J_revocation">撤销申请</a></td>
 				</tr>
 			</c:forEach>

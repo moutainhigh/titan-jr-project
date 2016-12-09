@@ -6,6 +6,7 @@ import com.fangcang.titanjr.dto.request.GetHistoryRepaymentListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.request.GetOrgLoanStatInfoRequest;
+import com.fangcang.titanjr.dto.request.RepaymentAmountComputeRequest;
 import com.fangcang.titanjr.dto.request.RepaymentLoanRequest;
 import com.fangcang.titanjr.dto.request.SaveLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
@@ -14,6 +15,7 @@ import com.fangcang.titanjr.dto.response.GetHistoryRepaymentListResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoListResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoResponse;
 import com.fangcang.titanjr.dto.response.GetOrgLoanStatInfoResponse;
+import com.fangcang.titanjr.dto.response.RepaymentAmountComputeResponse;
 import com.fangcang.titanjr.dto.response.RepaymentLoanResponse;
 import com.fangcang.titanjr.dto.response.SaveLoanOrderInfoResponse;
 
@@ -79,6 +81,13 @@ public interface TitanFinancialLoanService {
 	public GetHistoryRepaymentListResponse getHistoryRepaymentList(
 			GetHistoryRepaymentListRequest req);
 
+	/**
+	 * 根據還款金額對還款進行分類
+	 * @param req
+	 * @return
+	 */
+	public RepaymentAmountComputeResponse repaymentAmountCompute(
+			RepaymentAmountComputeRequest req);
 	/**
 	 * 保存贷款单信息
 	 * 
