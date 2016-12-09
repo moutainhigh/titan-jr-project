@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.NumberUtil;
@@ -29,8 +30,13 @@ import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.FTPConfigResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.util.StringUtil;
-
+/**
+ * 贷款申请
+ * @author luoqinglong
+ * @date   2016年12月8日
+ */
 @Controller
 @RequestMapping("loan_apply")
 public class FinancialLoanApplyController extends BaseController{
@@ -56,8 +62,13 @@ public class FinancialLoanApplyController extends BaseController{
 		return "/loan/loan-apply/loan-apply";
 	}
 	
-	
+	/**
+	 * 申请包房贷
+	 * @param info
+	 * @return
+	 */
 	@RequestMapping("apply")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String loanApply(LoanApplyInfo info){
 		if(info ==null || !StringUtil.isValidString(info.getLoanOrderNo()) 
 					   || !StringUtil.isValidString(info.getAccountName())
@@ -102,8 +113,13 @@ public class FinancialLoanApplyController extends BaseController{
 		return toJson();
 	} 
 	
+	/**
+	 * 生成贷款单号
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value="/orderNo")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public Map<String,Object> getLoanApplyOrderNo(){
 		return this.putSuccess("orderNo", OrderGenerateService.genLoanApplyOrderNo());
 	}

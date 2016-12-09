@@ -366,16 +366,12 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 			loanApplyOrder.setCreateTime(new Date());
 			loanApplyOrder.setOrgCode(orgCode);
-			loanApplyOrder
-					.setProductId(LoanApplyOrderEnum.ProductId.LOAN_PRODUCTID.productId);
+			loanApplyOrder.setProductId(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
 			loanApplyOrder.setRateTmp(CommonConstant.RATE_TEMPLETE);
 			loanApplyOrder.setProductType(type);
-			loanApplyOrder.setRsorgId(CommonConstant.RS_FANGCANG_CONST_ID);
-			loanApplyOrder
-					.setRspId(LoanApplyOrderEnum.ProductId.LOAN_PRODUCTID.productId);
-			loanApplyOrder
-					.setStatus(LoanApplyOrderEnum.LoanOrderStatus.LOAN_APPLYING.status);
-
+			loanApplyOrder.setRsorgId(orgCode);
+			loanApplyOrder.setRspId(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+			loanApplyOrder.setStatus(LoanApplyOrderEnum.LoanOrderStatus.LOAN_APPLYING.status);
 			int row = loanOrderDao.saveLoanApplyOrder(loanApplyOrder);
 			if (row > 0) {
 				return true;

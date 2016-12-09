@@ -28,6 +28,7 @@ import com.fangcang.titanjr.dto.response.GetLoanOrderInfoResponse;
 import com.fangcang.titanjr.dto.response.GetOrgLoanStatInfoResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.LoanQueryConditions;
 import com.fangcang.util.StringUtil;
 
@@ -137,6 +138,7 @@ public class FinancialLoanController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getLoanInfoList", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String getLoanInfoList(LoanQueryConditions loanQueryConditions,
 			Model model) {
 

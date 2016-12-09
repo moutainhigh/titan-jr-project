@@ -6,9 +6,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.CollectionUtils;
 
 import com.Rop.api.ApiException;
 import com.Rop.api.DefaultRopClient;
+import com.Rop.api.domain.UserArepayment;
 import com.Rop.api.domain.UserRepayment;
 import com.Rop.api.request.WheatfieldInterestRepaymentQueryborrowinfoRequest;
 import com.Rop.api.request.WheatfieldInterestRepaymentQueryuserinitiativerepaymentRequest;
@@ -34,6 +36,7 @@ import com.Rop.api.response.WheatfieldOrderServiceAgreementconfirmResponse;
 import com.Rop.api.response.WheatfieldOrderServiceNewloanapplyResponse;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.rs.dto.TUserArepayment;
 import com.fangcang.titanjr.rs.dto.TUserRepayment;
 import com.fangcang.titanjr.rs.manager.RSCreditManager;
 import com.fangcang.titanjr.rs.request.NewLoanApplyRequest;
@@ -479,6 +482,7 @@ public class RSCreditManagerImpl implements RSCreditManager {
 				} else {
 					response.setSuccess(true);
 					response.setOperateStatus(rsp.getIs_success());
+					rop2QueryUserInitiativeRepaymentResponse(response,rsp);
 					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
@@ -499,7 +503,25 @@ public class RSCreditManagerImpl implements RSCreditManager {
 		
 		return response;
 	}
-
+	/**
+	 * 主动还款查询响应对象转换
+	 * @param response
+	 * @param rsp
+	 */
+	private void rop2QueryUserInitiativeRepaymentResponse(QueryUserInitiativeRepaymentResponse response, WheatfieldInterestRepaymentQueryuserinitiativerepaymentResponse rsp){
+		if(!CollectionUtils.isEmpty(rsp.getUserarepayments())){
+			List<TUserArepayment> tUserArepaymentList = new ArrayList<TUserArepayment>();
+			for(UserArepayment item : rsp.getUserarepayments()){
+				TUserArepayment entity = new TUserArepayment();
+				MyBeanUtil.copyBeanProperties(entity, item);
+				tUserArepaymentList.add(entity);
+			}
+			response.settUserArepaymentList(tUserArepaymentList);
+		}
+	}
+	
+	
+	
 	@Override
 	public QueryLoanApplyResponse queryLoanApply(
 			QueryLoanApplyRequest request) {
@@ -546,7 +568,7 @@ public class RSCreditManagerImpl implements RSCreditManager {
 		return response;
 	}
 	/**
-	 * 对象转换
+	 * 贷款订单对象转换
 	 * @param response
 	 * @param rsp
 	 */
