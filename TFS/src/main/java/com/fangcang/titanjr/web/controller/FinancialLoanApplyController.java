@@ -70,6 +70,7 @@ public class FinancialLoanApplyController extends BaseController{
 	 * @param info
 	 * @return
 	 */
+	@ResponseBody
 	@RequestMapping("apply")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String loanApply(LoanApplyInfo info){

@@ -143,7 +143,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			
 			
 			QueryCreditMerchantInfoRequest qcrequest = new QueryCreditMerchantInfoRequest();
-			qcrequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+			qcrequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
 			qcrequest.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
 			qcrequest.setUserid(req.getOrgCode());
 			qcrequest.setUserorderid(loanCreditOrderNo);
@@ -412,6 +412,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			loanApplyOrder.setOrgCode(orgCode);
 			loanApplyOrder.setProductId(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
 			loanApplyOrder.setRateTmp(CommonConstant.RATE_TEMPLETE);
+			loanApplyOrder.setActualAmount(0L);
 			loanApplyOrder.setProductType(type);
 			loanApplyOrder.setRsorgId(orgCode);
 			loanApplyOrder.setRspId(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
