@@ -555,16 +555,25 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		
 		TBorrowRepayment borrowRepayment = brsp.gettBorrowRepayment();
 		
-		if("1".equals(borrowRepayment.getUseroverdueflag()))
-		{
-			
+		// 表示逾期
+		if ("1".equals(borrowRepayment.getUseroverdueflag())) {
+			loanApplyOrder.setStatus(LoanOrderStatusEnum.LOAN_EXPIRY.getKey());
 		}
-		
+		// 设置用户还款到期日
+		if (StringUtil.isValidString(borrowRepayment
+				.getUsershouldrepaymentdate())) {
+			try {
+				loanApplyOrder.setActualRepaymentDate(DateUtil.sdf
+						.parse(borrowRepayment.getUsershouldrepaymentdate()));
+			} catch (ParseException e) {
+				log.error("", e);
+			}
+		}
 		// 融数方指定的特殊状态位，表示状态已经结束
 		if ("贷款已结束".equals(rsp.getStatustring())) {
 			loanApplyOrder.setStatus(LoanOrderStatusEnum.LOAN_FINISH.getKey());
 		}
-		
+
 		if (StringUtil.isValidString(rsp.getLoandate())) {
 			try {
 				loanApplyOrder.setRelMoneyTime(DateUtil.sdf.parse(rsp
@@ -577,8 +586,6 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		if (StringUtil.isValidString(rsp.getLoanmoney())) {
 			loanApplyOrder.setActualAmount(Long.parseLong(rsp.getLoanmoney()));
 		}
-		
-		
 	
 	}
 
