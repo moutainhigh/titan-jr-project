@@ -6,8 +6,8 @@
         </div>
         <div class="loanInformation">
             <h3 class="loanInformation_title">股东信息</h3>
-            <div class="loanInformation_tabBox">
-                <table cellspacing="0" cellspacing="0" width="100%" class="loanInformation_tab">
+            <div class="loanInformation_tabBox" id="controllDatas">
+                <table  cellspacing="0" cellspacing="0" width="100%" class="loanInformation_tab">
                     <colgroup>
                         <col width="160">
                         <col width="370">
@@ -42,8 +42,8 @@
             <a href="javascript:void(0)" class="blue J_addBtnTFS" id="addControllDatas">添加股东信息</a>
             
             <h3 class="loanInformation_title">主营业务信息</h3>
-            <div class="loanInformation_tabBox">
-            <table cellspacing="0" cellspacing="0" width="100%" class="loanInformation_tab">
+            <div class="loanInformation_tabBox" id="mainBusinessDatas">
+            <table  cellspacing="0" cellspacing="0" width="100%" class="loanInformation_tab">
                 <colgroup>
                     <col width="160">
                     <col width="370">
@@ -77,7 +77,7 @@
             </div>
             <a href="javascript:void(0)" class="blue J_addBtnTFS" id="addMainBusinessDatas">添加主营业务</a>
             <h3 class="loanInformation_title">合作企业信息</h3>
-            <div class="loanInformation_tabBox">
+            <div class="loanInformation_tabBox" id="cooperationCompanyInfos">
             
             <table cellspacing="0" cellspacing="0" width="100%" class="loanInformation_tab loanInformation_tab1" >
                 <colgroup>
@@ -226,8 +226,10 @@
     </div>
     <div style="height: 100px"></div>
 <script type="text/javascript">
-
+	
 	var companyAppendValidate = null;
+	
+	
 	
 	function afterDoneCompanyAppend()
 	{	
@@ -249,6 +251,9 @@
 	}
 	
    function companyAppendRender(dataObj ,  contextPath){
+	   
+	   var appendHtmlObj ={"controllDatas" :$('#controllDatas').html() , "mainBusinessDatas" : $('#mainBusinessDatas').html() , "addCooperationCompanyInfos": $('#addCooperationCompanyInfos').html() };k
+	   
         if($('input[name="leaseType"]:checked').val()=="2"){
             $(".dnTypeTms").show();
         }else{
@@ -267,11 +272,14 @@
             }
         });
         $(".J_addBtnTFS").live('click',function(){
-            var _tr=$('<table cellspacing="0" width="100%" class="loanInformation_tab" ></table>');
+    //        var _tr=$('<table cellspacing="0" width="100%" class="loanInformation_tab" ></table>');
             var _thisPre=$(this).prev(".loanInformation_tabBox");
-            var _trn=_thisPre.find("table").eq(0).html();
-            _tr.html(_trn);
-            _thisPre.append(_tr);
+            
+            _thisPre.append( appendHtmlObj[ _thisPre.attr('id')]);
+            
+        //    var _trn=_thisPre.find("table").eq(0).html();
+           // _tr.html(_trn);
+          //  
             _thisPre.find(".J_deleteBtnTFS").show();
             afterDoneCompanyAppend();
         });
