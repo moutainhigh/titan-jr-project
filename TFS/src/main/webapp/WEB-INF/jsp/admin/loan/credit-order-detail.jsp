@@ -52,9 +52,15 @@
 							</tr>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>企业规模：</td>
-								<td>${getCreditInfoResponse.creditCompany.orgSize }</td>
+								<td>
+								<c:if test="${getCreditInfoResponse.creditCompany.orgSize ==1}">1-50人</c:if>
+								<c:if test="${getCreditInfoResponse.creditCompany.orgSize ==2}">51-100人</c:if>
+								<c:if test="${getCreditInfoResponse.creditCompany.orgSize ==3}">101-500人</c:if>
+								<c:if test="${getCreditInfoResponse.creditCompany.orgSize ==4}">501-1000人</c:if>
+								<c:if test="${getCreditInfoResponse.creditCompany.orgSize ==5}">1000人以上</c:if>
+								</td>
 								<td class="bg_f2"><i class="c_f00">*</i>营业执照号/社会信用代码：</td>
-								<td>${getCreditInfoResponse.creditCompany.orgSize }</td>
+								<td>${getCreditInfoResponse.creditCompany.license }</td>
 							</tr>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>税务登记号：</td>
@@ -93,7 +99,7 @@
 								<td class="bg_f2"><i class="c_f00">*</i>法人姓名：</td>
 								<td>${getCreditInfoResponse.creditCompany.legalName }</td>
 								<td class="bg_f2"><i class="c_f00">*</i>法人证件号：</td>
-								<td><c:if test="${getCreditInfoResponse.creditCompany.legalNo ==1}">身份证</c:if> <c:if test="${getCreditInfoResponse.creditCompany.legalNo ==2}">护照</c:if>	${getCreditInfoResponse.creditCompany.legalNo }</td>
+								<td><c:if test="${getCreditInfoResponse.creditCompany.legalceType ==1}">身份证</c:if> <c:if test="${getCreditInfoResponse.creditCompany.legalceType ==2}">护照</c:if>	${getCreditInfoResponse.creditCompany.legalNo }</td>
 							</tr>							
 						</table>
 					</div>

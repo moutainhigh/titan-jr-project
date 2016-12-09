@@ -6,8 +6,8 @@
         </div>
         <div class="loanInformation">
             <h3 class="loanInformation_title">股东信息</h3>
-            <div class="loanInformation_tabBox">
-                <table cellspacing="0" cellspacing="0" width="100%" class="loanInformation_tab">
+            <div class="loanInformation_tabBox" id="controllDatas">
+                <table  cellspacing="0" cellspacing="0" width="100%" class="loanInformation_tab">
                     <colgroup>
                         <col width="160">
                         <col width="370">
@@ -21,7 +21,7 @@
                             <i class="redNotice">*</i>股东名称：
                         </td>
                         <td class="loanInformation_td02">
-                            <input type="text" class="loanInformation_inp01" placeholder="请输入股东名称" field='shareholderName' datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
+                            <input type="text" class="loanInformation_inp01" placeholder="请输入股东名称" field='shareholderName' datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
                         </td>
                         <td class="loanInformation_td01">
                              <i class="redNotice">*</i>出资金额：
@@ -42,8 +42,8 @@
             <a href="javascript:void(0)" class="blue J_addBtnTFS" id="addControllDatas">添加股东信息</a>
             
             <h3 class="loanInformation_title">主营业务信息</h3>
-            <div class="loanInformation_tabBox">
-            <table cellspacing="0" cellspacing="0" width="100%" class="loanInformation_tab">
+            <div class="loanInformation_tabBox" id="mainBusinessDatas">
+            <table  cellspacing="0" cellspacing="0" width="100%" class="loanInformation_tab">
                 <colgroup>
                     <col width="160">
                     <col width="370">
@@ -77,7 +77,7 @@
             </div>
             <a href="javascript:void(0)" class="blue J_addBtnTFS" id="addMainBusinessDatas">添加主营业务</a>
             <h3 class="loanInformation_title">合作企业信息</h3>
-            <div class="loanInformation_tabBox">
+            <div class="loanInformation_tabBox" id="cooperationCompanyInfos">
             
             <table cellspacing="0" cellspacing="0" width="100%" class="loanInformation_tab loanInformation_tab1" >
                 <colgroup>
@@ -97,7 +97,7 @@
                         <input type="text" class="loanInformation_inp01" placeholder="请输入合作企业名称" field='cooperationName' datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                     </td>
                     <td class="loanInformation_td01">
-                         <i class="redNotice">*</i>年销售规模：
+                         <i class="redNotice">*</i>年交易额：
                     </td>
                     <td class="loanInformation_td03">
                        <input type="text" class="loanInformation_inp02" placeholder="" field='yearAnnualSale' datatype="/^([1-9][\d]{0,7}|0)(\.[\d]{1,2})?$/" errormsg="必填项，并且最多只能保留2位小数！"> 万元
@@ -114,13 +114,13 @@
                         <i class="redNotice">*</i>结算方式：
                     </td>
                     <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" placeholder="请输入结算方式" field='settlement' datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
+                        <input type="text" class="loanInformation_inp01" placeholder="请输入结算方式" field='settlement' datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
                     </td>
                     <td class="loanInformation_td01">
-                         <i class="redNotice">*</i>年销售规模：
+                         <i class="redNotice">*</i>合作年限：
                     </td>
                     <td class="loanInformation_td03">
-                       <input type="text" class="loanInformation_inp02" placeholder="" field='cooperationYears' datatype="s1-10" errormsg="必填项，并且最长只能10个字符！"> 年&nbsp;&nbsp;&nbsp;
+                       <input type="text" class="loanInformation_inp02" placeholder="" field='cooperationYears' datatype="*1-10" errormsg="必填项，并且最长只能10个字符！"> 年&nbsp;&nbsp;&nbsp;
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>合作关系：
@@ -214,7 +214,7 @@
                     <td class="loanInformation_td01"> 备注
                     </td>                  
                     <td class="loanInformation_td02" colspan="3">
-                       <input type="text" class="loanInformation_inp01" placeholder="请输入备注内容" field='remark' customFun="validateTextValue" errormsg="必填项，并且最长只能100个字符！">
+                       <input type="text" class="loanInformation_inp01" placeholder="请输入备注内容" field='remark' >
                     </td>
                 </tr>         
             </table>
@@ -226,8 +226,10 @@
     </div>
     <div style="height: 100px"></div>
 <script type="text/javascript">
-
+	
 	var companyAppendValidate = null;
+	
+	
 	
 	function afterDoneCompanyAppend()
 	{	
@@ -249,6 +251,9 @@
 	}
 	
    function companyAppendRender(dataObj ,  contextPath){
+	   
+	   var appendHtmlObj ={"controllDatas" :$('#controllDatas').html() , "mainBusinessDatas" : $('#mainBusinessDatas').html() , "addCooperationCompanyInfos": $('#addCooperationCompanyInfos').html() };
+	   
         if($('input[name="leaseType"]:checked').val()=="2"){
             $(".dnTypeTms").show();
         }else{
@@ -267,11 +272,14 @@
             }
         });
         $(".J_addBtnTFS").live('click',function(){
-            var _tr=$('<table cellspacing="0" width="100%" class="loanInformation_tab" ></table>');
+    //        var _tr=$('<table cellspacing="0" width="100%" class="loanInformation_tab" ></table>');
             var _thisPre=$(this).prev(".loanInformation_tabBox");
-            var _trn=_thisPre.find("table").eq(0).html();
-            _tr.html(_trn);
-            _thisPre.append(_tr);
+            
+            _thisPre.append( appendHtmlObj[ _thisPre.attr('id')]);
+            
+        //    var _trn=_thisPre.find("table").eq(0).html();
+           // _tr.html(_trn);
+          //  
             _thisPre.find(".J_deleteBtnTFS").show();
             afterDoneCompanyAppend();
         });

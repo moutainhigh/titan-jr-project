@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -835,20 +836,7 @@ public class DateUtil {
 		
 		try {
 			
-			String url = "www.fangcang.com";
-			
-			
-			
-//			DataInputStream dataIn  = new DataInputStream(in);
-//			int length = 0;
-//			while((length = dataIn.read())!=-1){
-//				System.out.println((char)length);
-//				
-//				System.out.println(dataIn.readDouble());
-//			}
-			
-			
-			
+//			List<String> list = ["张三","李四"];
 			
 			
 			

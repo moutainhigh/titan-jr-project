@@ -200,17 +200,17 @@
 			var result = true;
 			if(data[obj.zoneId]  != obj['data'])
 			{
-				if(obj["dataVlidate"])
-				{
-					try
-					{
-						eval("var vlidateResult = "+obj["dataVlidate"]+"()");
-						if(vlidateResult === false)
-						{
-							return;
-						}
-					}catch(e){}
-				}
+// 				if(obj["dataVlidate"])
+// 				{
+// 					try
+// 					{
+// 						eval("var vlidateResult = "+obj["dataVlidate"]+"()");
+// 						if(vlidateResult === false)
+// 						{
+// 							return;
+// 						}
+// 					}catch(e){}
+// 				}
 				result = dataHandleObj.saveData(data);
 			}
 			

@@ -20,7 +20,7 @@
                         <i class="redNotice">*</i>企业名称：
                     </td>
                     <td class="loanInformation_td02">
-                        <input type="text" value="" readonly="readonly" class="loanInformation_inp01"  placeholder="请输入企业名称" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！" field="name">
+                        <input type="text" value="" readonly="readonly" class="loanInformation_inp01"  placeholder="请输入企业名称" datatype="*1-50" errormsg="必填项，并且最长只能50个字符！" field="name">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>企业成立日期：
@@ -176,7 +176,7 @@
                         <i class="redNotice">*</i>法人姓名：
                     </td>
                     <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" field='legalName' placeholder="请输入法人姓名" value="" datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
+                        <input type="text" class="loanInformation_inp01" field='legalName' placeholder="请输入法人姓名" value="" datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>法人证件号：
@@ -203,7 +203,7 @@
                         <i class="redNotice">*</i>联系人姓名：
                     </td>
                     <td class="loanInformation_td02">
-                        <input  type="text" class="loanInformation_inp01" placeholder="请输入联系人姓名" field='contactName' value=""  datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
+                        <input  type="text" class="loanInformation_inp01" placeholder="请输入联系人姓名" field='contactName' value=""  datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>联系电话：

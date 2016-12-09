@@ -1,11 +1,13 @@
 package com.fangcang.titanjr.service;
 
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.dto.request.ApplyLoanCreditRequest;
 import com.fangcang.titanjr.dto.request.AuditCreidtOrderRequest;
 import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
 import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
+import com.fangcang.titanjr.dto.request.NotifyRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanCreditResponse;
 import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
@@ -13,6 +15,7 @@ import com.fangcang.titanjr.dto.response.GetAuditEvaluationResponse;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
 import com.fangcang.titanjr.dto.response.GetCreditOrderCountResponse;
 import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
+import com.fangcang.titanjr.dto.response.NotifyResponse;
 import com.fangcang.titanjr.dto.response.PageCreditCompanyInfoResponse;
 
 /**
@@ -82,5 +85,12 @@ public interface TitanFinancialLoanCreditService {
 	 */
 	public GetCreditOrderCountResponse getCreditOrderCount(
 			GetCreditOrderCountRequest request);
+	/**
+	 * 授信申请结果通知
+	 * @param notifyRequest
+	 * @return
+	 * @throws GlobalServiceException
+	 */
+	public NotifyResponse loanCreditNotify(NotifyRequest notifyRequest) throws GlobalServiceException;
 
 }

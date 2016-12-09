@@ -2,10 +2,10 @@ package com.fangcang.titanjr.dto.response;
 
 import java.util.List;
 
-import com.fangcang.titanjr.dto.BaseRequestDTO;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.LoanRepaymentBean;
 
-public class GetHistoryRepaymentListResponse extends BaseRequestDTO 
+public class GetHistoryRepaymentListResponse extends BaseResponseDTO 
 {
 	/**
 	 * 

@@ -24,16 +24,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.FileTypeEnum;
 import com.fangcang.titanjr.common.enums.LoanApplyOrderEnum;
+import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FileHelp;
 import com.fangcang.titanjr.common.util.FtpUtil;
+import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.LoanCreditOrderDao;
 import com.fangcang.titanjr.dao.LoanOrderDao;
 import com.fangcang.titanjr.dao.LoanRoomPackSpecDao;
 import com.fangcang.titanjr.dto.bean.LoanApplyOrderBean;
+import com.fangcang.titanjr.dto.bean.LoanRepaymentBean;
 import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
 import com.fangcang.titanjr.dto.bean.LoanSpecBean;
 import com.fangcang.titanjr.dto.bean.OrgLoanStatInfo;
@@ -43,6 +46,7 @@ import com.fangcang.titanjr.dto.request.GetHistoryRepaymentListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.request.GetOrgLoanStatInfoRequest;
+import com.fangcang.titanjr.dto.request.RepaymentAmountComputeRequest;
 import com.fangcang.titanjr.dto.request.RepaymentLoanRequest;
 import com.fangcang.titanjr.dto.request.SaveLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
@@ -52,6 +56,7 @@ import com.fangcang.titanjr.dto.response.GetHistoryRepaymentListResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoListResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoResponse;
 import com.fangcang.titanjr.dto.response.GetOrgLoanStatInfoResponse;
+import com.fangcang.titanjr.dto.response.RepaymentAmountComputeResponse;
 import com.fangcang.titanjr.dto.response.RepaymentLoanResponse;
 import com.fangcang.titanjr.dto.response.SaveLoanOrderInfoResponse;
 import com.fangcang.titanjr.entity.LoanApplyOrder;
@@ -62,14 +67,24 @@ import com.fangcang.titanjr.entity.LoanRoomPackSpec;
 import com.fangcang.titanjr.entity.LoanSevenDaysStat;
 import com.fangcang.titanjr.entity.parameter.LoanQueryConditions;
 import com.fangcang.titanjr.rs.dto.NewLoanApplyJsonData;
+import com.fangcang.titanjr.rs.dto.TBorrowRepayment;
+import com.fangcang.titanjr.rs.dto.TUserArepayment;
 import com.fangcang.titanjr.rs.manager.RSCreditManager;
 import com.fangcang.titanjr.rs.manager.RSFileManager;
 import com.fangcang.titanjr.rs.request.NewLoanApplyRequest;
 import com.fangcang.titanjr.rs.request.QueryCreditMerchantInfoRequest;
+import com.fangcang.titanjr.rs.request.QueryBorrowinfoRequest;
+import com.fangcang.titanjr.rs.request.QueryLoanApplyRequest;
+import com.fangcang.titanjr.rs.request.QueryUserInitiativeRepaymentRequest;
 import com.fangcang.titanjr.rs.request.RSFsFileUploadRequest;
+import com.fangcang.titanjr.rs.request.UserInitiativeRepamentRequest;
 import com.fangcang.titanjr.rs.response.NewLoanApplyResponse;
 import com.fangcang.titanjr.rs.response.QueryCreditMerchantInfoResponse;
+import com.fangcang.titanjr.rs.response.QueryBorrowinfoResponse;
+import com.fangcang.titanjr.rs.response.QueryLoanApplyResponse;
+import com.fangcang.titanjr.rs.response.QueryUserInitiativeRepaymentResponse;
 import com.fangcang.titanjr.rs.response.RSFsFileUploadResponse;
+import com.fangcang.titanjr.rs.response.UserInitiativeRepamentResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.util.LoanTypeConvertUtil;
@@ -98,8 +113,6 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 	@Resource
 	private RSFileManager rsFileManager;
-	
-	
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
@@ -480,10 +493,235 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		return null;
 	}
 
+	private LoanApplyOrder getBaseLoanApplyInfo(String orderNo, String orgCode) {
+
+		LoanQueryConditions conditions = new LoanQueryConditions();
+		conditions.setOrderNo(orderNo);
+		conditions.setOrgCode(orgCode);
+
+		PaginationSupport<LoanApplyOrder> paginationSupport = new PaginationSupport<LoanApplyOrder>();
+		paginationSupport = loanOrderDao.queryLoanApplyOrder(conditions,
+				paginationSupport);
+
+		for (LoanApplyOrder tempApplyOrder : paginationSupport.getItemList()) {
+			return tempApplyOrder;
+		}
+
+		return null;
+	}
+
+	public void synLoanOrderInfo(String orderNo, String orgCode) {
+
+		LoanApplyOrder loanApplyOrder = getBaseLoanApplyInfo(orderNo, orgCode);
+
+		if (loanApplyOrder == null) {
+			log.error("query loan apply order is null  [ orderNo = " + orgCode
+					+ "  orgCode=" + orderNo + "]");
+			return;
+		}
+
+		QueryLoanApplyRequest request = new QueryLoanApplyRequest();
+		request.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+		request.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+		request.setUserorderid(request.getUserorderid());
+		request.setUserid(orgCode);
+
+		QueryLoanApplyResponse rsp = rsCreditManager.queryLoanApply(request);
+
+		if (!rsp.isSuccess()) {
+
+			log.error("query Loan Apply info fail.  [ orderNo = " + orderNo
+					+ "  orgCode=" + orgCode + "]");
+			return;
+		}
+		
+		QueryBorrowinfoRequest bReq = new QueryBorrowinfoRequest();
+		bReq.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+		bReq.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+		bReq.setUserid(orgCode);
+		bReq.setUserorderid(loanApplyOrder.getOrderid());
+
+		QueryBorrowinfoResponse brsp = rsCreditManager.queryBorrowinfo(bReq);
+
+		if (!brsp.isSuccess() || brsp.gettBorrowRepayment() == null) {
+
+			log.error("query borrow info fail.  [ orderNo = " + orderNo
+					+ "  orgCode=" + orgCode + "]");
+			return;
+		}
+		
+		log.info("query loan apply result " + JsonConversionTool.toJson(rsp));
+		log.info("query borrow info result " + JsonConversionTool.toJson(brsp));
+
+		
+		// 融数方指定的特殊状态位，表示状态已经结束
+		if ("贷款已结束".equals(rsp.getStatustring())) {
+			loanApplyOrder.setStatus(LoanOrderStatusEnum.LOAN_FINISH.getKey());
+		}
+		
+//		/**
+//		 * 放款金额
+//		 */
+//		private String loanmoney;
+//		/**
+//		 * 	放款日期
+//		 */
+//		private String loandate;
+		
+		//:yyyy-MM-dd HH:mm:ss 终审通过时间
+		if (StringUtil.isValidString(rsp.getLastappealtime())) {
+			
+		}
+	}
+
+	/**
+	 * 對還款的金額進行預分析
+	 */
+	public RepaymentAmountComputeResponse repaymentAmountCompute(
+			RepaymentAmountComputeRequest req) {
+
+		RepaymentAmountComputeResponse loanResponse = new RepaymentAmountComputeResponse();
+
+		if (req == null || !StringUtil.isValidString(req.getOrderNo())
+				|| !StringUtil.isValidString(req.getOrgCode())) {
+			log.error("request param is null [ orderNo = " + req.getOrderNo()
+					+ "  orgCode=" + req.getOrgCode() + "]");
+			loanResponse.putParamError();
+			return loanResponse;
+		}
+
+		LoanApplyOrder loanApplyOrder = getBaseLoanApplyInfo(req.getOrderNo(),
+				req.getOrgCode());
+
+		if (loanApplyOrder == null) {
+			log.error("query loan apply order is null  [ orderNo = "
+					+ req.getOrderNo() + "  orgCode=" + req.getOrgCode() + "]");
+			loanResponse.putSysError();
+			return loanResponse;
+		}
+
+		QueryBorrowinfoRequest bReq = new QueryBorrowinfoRequest();
+		bReq.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+		bReq.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+		bReq.setUserid(req.getOrgCode());
+		bReq.setUserorderid(loanApplyOrder.getOrderid());
+
+		QueryBorrowinfoResponse brsp = rsCreditManager.queryBorrowinfo(bReq);
+
+		if (!brsp.isSuccess() || brsp.gettBorrowRepayment() == null) {
+
+			log.error("query borrow info fail.  [ orderNo = "
+					+ req.getOrderNo() + "  orgCode=" + req.getOrgCode() + "]");
+			loanResponse.putSysError();
+			return loanResponse;
+		}
+
+		BigDecimal amount = new BigDecimal(req.getAmount());
+
+		TBorrowRepayment repayment = brsp.gettBorrowRepayment();
+		loanResponse.setRealoverdueinterestAmount(amountCompute(amount,
+				new BigDecimal(repayment.getUseroverdueinterest())));// 逾期利息还款金额
+		loanResponse.setRealoverduecapitalAmount(amountCompute(amount,
+				new BigDecimal(repayment.getUseroverduefine())));// 逾期本金还款金额
+		loanResponse.setRealinterestAmount(amountCompute(amount,
+				new BigDecimal(repayment.getUsershouldinterest())));// 利息还款金额
+		loanResponse.setRealcapitalAmount(amountCompute(amount, new BigDecimal(
+				repayment.getUsershouldcapital())));// 本金
+
+		return loanResponse;
+	}
+
+	/**
+	 * 金额计算方法
+	 * 
+	 * @param amount
+	 * @param bAmount
+	 * @return
+	 */
+	private Long amountCompute(BigDecimal amount, BigDecimal bAmount) {
+		// 如果金额已经等于小于0了，那么标示已经被分配完毕
+		if (amount.longValue() <= 0) {
+			return 0l;
+		}
+		// 为分配完毕则继续减去
+		BigDecimal tempBigDecimal = amount.subtract(bAmount);
+
+		// 如果减去后小于等于0，那么标示剩余的金额分配了
+		if (tempBigDecimal.longValue() <= 0) {
+			Long ramount = amount.longValue();
+			amount = new BigDecimal(0);
+			return ramount;
+		}
+		// 标示还有剩下
+		if (tempBigDecimal.longValue() > 0) {
+			amount = tempBigDecimal;
+		}
+		return bAmount.longValue();
+	}
+
 	@Override
 	public RepaymentLoanResponse repaymentLoan(RepaymentLoanRequest req) {
-		// TODO Auto-generated method stub
-		return null;
+
+		RepaymentLoanResponse loanResponse = new RepaymentLoanResponse();
+
+		if (req == null || !StringUtil.isValidString(req.getOrderNo())
+				|| !StringUtil.isValidString(req.getOrgCode())) {
+			log.error("request param is null [ orderNo = " + req.getOrderNo()
+					+ "  orgCode=" + req.getOrgCode() + "]");
+			loanResponse.putParamError();
+			return loanResponse;
+		}
+
+		UserInitiativeRepamentRequest request = new UserInitiativeRepamentRequest();
+		request.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+		request.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+		request.setUserid(req.getOrgCode());
+
+		LoanApplyOrder loanApplyOrder = getBaseLoanApplyInfo(req.getOrderNo(),
+				req.getOrgCode());
+
+		if (loanApplyOrder == null) {
+			log.error("query loan apply order is null  [ orderNo = "
+					+ req.getOrderNo() + "  orgCode=" + req.getOrgCode() + "]");
+			loanResponse.putSysError();
+			return loanResponse;
+		}
+		RepaymentAmountComputeRequest cReq = new RepaymentAmountComputeRequest();
+		cReq.setAmount(req.getAmount());
+		cReq.setOrderNo(req.getOrderNo());
+		cReq.setOrgCode(req.getOrgCode());
+
+		RepaymentAmountComputeResponse computeResponse = repaymentAmountCompute(cReq);
+
+		if (!computeResponse.isResult()) {
+			log.error("repayment amount compute fail.[ orderNo = "
+					+ req.getOrderNo() + "  orgCode=" + req.getOrgCode() + "]");
+			loanResponse.putSysError();
+			return loanResponse;
+		}
+
+		request.setRealoverdueinterestamount(""
+				+ computeResponse.getRealoverdueinterestAmount());// 逾期利息还款金额
+		request.setRealoverduecapitalamount(""
+				+ computeResponse.getRealoverduecapitalAmount());// 逾期本金还款金额
+		request.setRealinterestamount(""
+				+ computeResponse.getRealinterestAmount());// 利息还款金额
+		request.setRealcapitalamount(""
+				+ computeResponse.getRealcapitalAmount());// 本金
+
+		UserInitiativeRepamentResponse response = rsCreditManager
+				.userInitiativeRepament(request);
+
+		if (!response.isSuccess()) {
+
+			log.error("initiative repament fail ! request["
+					+ JsonConversionTool.toJson(request) + "] response["
+					+ JsonConversionTool.toJson(response) + "]");
+
+			loanResponse.putSysError();
+			return loanResponse;
+		}
+		return loanResponse;
 	}
 
 	@Override
@@ -501,20 +739,19 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 		for (LoanApplyOrder loanApplyOrder : paginationSupport.getItemList()) {
 
-			LoanApplyOrderBean loanRoomPackSpec =  LoanTypeConvertUtil
-			.getApplyOrderBean(loanApplyOrder);
-			
+			LoanApplyOrderBean loanRoomPackSpec = LoanTypeConvertUtil
+					.getApplyOrderBean(loanApplyOrder);
+
 			infoResponse.setApplyOrderInfo(loanRoomPackSpec);
-			
-			if(LoanProductEnum.ROOM_PACK.getCode() ==
-						loanRoomPackSpec.getProductType().intValue())
-			{
+
+			if (LoanProductEnum.ROOM_PACK.getCode() == loanRoomPackSpec
+					.getProductType().intValue()) {
 				LoanRoomPackSpec packSpec = new LoanRoomPackSpec();
 				packSpec.setOrderNo(loanRoomPackSpec.getOrderNo());
-				
+
 				List<LoanRoomPackSpec> packSpecs = loanRoomPackSpecDao
 						.queryLoanRoomPackSpec(packSpec);
-				
+
 				if (packSpecs != null && packSpecs.size() > 0) {
 					loanRoomPackSpec.setLoanSpec(LoanTypeConvertUtil
 							.getLoanRoomPackSpecBean(packSpecs.get(0)));
@@ -556,11 +793,14 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		conditions.setBeginActualRepaymentDate(DateUtil
 				.getDayBeginTime(convertDateUtil(req
 						.getBeginActualRepaymentDate())));
+
 		conditions.setBeginCreateTime(DateUtil
 				.getDayBeginTime(convertDateUtil(req.getBeginCreateTime())));
+
 		conditions.setBeginLastRepaymentDate(DateUtil
 				.getDayBeginTime(convertDateUtil(req
 						.getBeginLastRepaymentDate())));
+
 		conditions.setBeginRelMoneyTime(DateUtil
 				.getDayBeginTime(convertDateUtil(req.getBeginRelMoneyTime())));
 
@@ -568,10 +808,13 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				.setEndActualRepaymentDate(DateUtil
 						.getDayEndTime(convertDateUtil(req
 								.getEndActualRepaymentDate())));
+
 		conditions.setEndCreateTime(DateUtil.getDayEndTime(convertDateUtil(req
 				.getEndCreateTime())));
+
 		conditions.setEndLastRepaymentDate(DateUtil
 				.getDayEndTime(convertDateUtil(req.getEndLastRepaymentDate())));
+
 		conditions.setEndRelMoneyTime(DateUtil
 				.getDayEndTime(convertDateUtil(req.getEndRelMoneyTime())));
 
@@ -680,8 +923,55 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 	@Override
 	public GetHistoryRepaymentListResponse getHistoryRepaymentList(
 			GetHistoryRepaymentListRequest req) {
-		// TODO Auto-generated method stub
-		return null;
+
+		GetHistoryRepaymentListResponse listResponse = new GetHistoryRepaymentListResponse();
+
+		if (req == null || !StringUtil.isValidString(req.getOrderNo())
+				|| !StringUtil.isValidString(req.getOrgCode())) {
+			log.error("request param is null [ orderNo = " + req.getOrderNo()
+					+ "  orgCode=" + req.getOrgCode() + "]");
+			listResponse.putParamError();
+			return listResponse;
+		}
+
+		QueryUserInitiativeRepaymentRequest request = new QueryUserInitiativeRepaymentRequest();
+		request.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+		request.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+		request.setUserid(req.getOrgCode());
+
+		LoanApplyOrder loanApplyOrder = getBaseLoanApplyInfo(req.getOrderNo(),
+				req.getOrgCode());
+
+		if (loanApplyOrder == null) {
+			log.error("query loan apply order is null  [ orderNo = "
+					+ req.getOrderNo() + "  orgCode=" + req.getOrgCode() + "]");
+			listResponse.putSysError();
+			return listResponse;
+		}
+
+		request.setUserorderid(req.getOrderNo());
+		QueryUserInitiativeRepaymentResponse response = rsCreditManager
+				.queryUserInitiativeRepayment(request);
+
+		LoanRepaymentBean repaymentBean = null;
+
+		// 实际贷款金额拿出来，然后按照每次还款减去对应的还款本金，计算出每次还款后剩下的本金
+		BigDecimal actualAmount = new BigDecimal(
+				loanApplyOrder.getActualAmount());
+
+		for (TUserArepayment arepayment : response.gettUserArepaymentList()) {
+			repaymentBean = LoanTypeConvertUtil
+					.getLoanRepaymentBean(arepayment);
+
+			repaymentBean.setOrderNo(loanApplyOrder.getOrderNo());
+			actualAmount = actualAmount.subtract(new BigDecimal(repaymentBean
+					.getRepaymentAmount()));
+
+			repaymentBean.setRemainAmount(actualAmount.longValue());
+		}
+
+		listResponse.setResult(true);
+		return listResponse;
 	}
 
 	@Override
