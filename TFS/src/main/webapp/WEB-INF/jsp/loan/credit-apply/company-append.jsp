@@ -252,7 +252,7 @@
 	
    function companyAppendRender(dataObj ,  contextPath){
 	   
-	   var appendHtmlObj ={"controllDatas" :$('#controllDatas').html() , "mainBusinessDatas" : $('#mainBusinessDatas').html() , "addCooperationCompanyInfos": $('#addCooperationCompanyInfos').html() };
+	   var appendHtmlObj ={"controllDatas" :$('#controllDatas').html() , "mainBusinessDatas" : $('#mainBusinessDatas').html() , "cooperationCompanyInfos": $('#cooperationCompanyInfos').html() };
 	   
         if($('input[name="leaseType"]:checked').val()=="2"){
             $(".dnTypeTms").show();
