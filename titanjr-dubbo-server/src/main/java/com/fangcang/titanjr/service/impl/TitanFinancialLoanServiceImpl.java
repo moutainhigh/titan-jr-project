@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.FileTypeEnum;
 import com.fangcang.titanjr.common.enums.LoanApplyOrderEnum;
+import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
@@ -490,7 +491,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 					+ "  orgCode=" + orgCode + "]");
 			return;
 		}
-
+		
 		QueryBorrowinfoRequest bReq = new QueryBorrowinfoRequest();
 		bReq.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
 		bReq.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
@@ -505,7 +506,29 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 					+ "  orgCode=" + orgCode + "]");
 			return;
 		}
+		
+		log.info("query loan apply result " + JsonConversionTool.toJson(rsp));
+		log.info("query borrow info result " + JsonConversionTool.toJson(brsp));
 
+		
+		// 融数方指定的特殊状态位，表示状态已经结束
+		if ("贷款已结束".equals(rsp.getStatustring())) {
+			loanApplyOrder.setStatus(LoanOrderStatusEnum.LOAN_FINISH.getKey());
+		}
+		
+//		/**
+//		 * 放款金额
+//		 */
+//		private String loanmoney;
+//		/**
+//		 * 	放款日期
+//		 */
+//		private String loandate;
+		
+		//:yyyy-MM-dd HH:mm:ss 终审通过时间
+		if (StringUtil.isValidString(rsp.getLastappealtime())) {
+			
+		}
 	}
 
 	/**
