@@ -64,6 +64,7 @@ import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderInfo;
 import com.fangcang.titanjr.entity.TitanDynamicKey;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.TitanTransOrder;
@@ -73,16 +74,19 @@ import com.fangcang.titanjr.entity.parameter.TitanAccountParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
 import com.fangcang.titanjr.entity.parameter.TitanTransOrderParam;
 import com.fangcang.titanjr.entity.parameter.TitanTransferReqParam;
+import com.fangcang.titanjr.rs.dto.Transorderinfo;
 import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.manager.RSPayOrderManager;
 import com.fangcang.titanjr.rs.request.AccountTransferRequest;
 import com.fangcang.titanjr.rs.request.OrderOperateRequest;
 import com.fangcang.titanjr.rs.request.OrderTransferFlowRequest;
+import com.fangcang.titanjr.rs.request.OrdernQueryRequest;
 import com.fangcang.titanjr.rs.request.RSPayOrderRequest;
 import com.fangcang.titanjr.rs.response.AccountTransferResponse;
 import com.fangcang.titanjr.rs.response.OrderOperateInfo;
 import com.fangcang.titanjr.rs.response.OrderOperateResponse;
 import com.fangcang.titanjr.rs.response.OrderTransferFlowResponse;
+import com.fangcang.titanjr.rs.response.OrdernQueryResponse;
 import com.fangcang.titanjr.rs.response.RSPayOrderResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
@@ -2429,6 +2433,34 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	    	return true;
 	    }
 	    return false;
+	}
+
+	@Override
+	public ConfirmOrdernQueryResponse ordernQuery(
+			ConfirmOrdernQueryRequest confirmOrdernQueryRequest) {
+		
+		ConfirmOrdernQueryResponse response = new ConfirmOrdernQueryResponse();
+		OrdernQueryRequest ordernQueryRequest = new OrdernQueryRequest();
+		ordernQueryRequest.setOrderno(confirmOrdernQueryRequest.getOrderNo());
+		ordernQueryRequest.setMerchantcode(confirmOrdernQueryRequest.getMerchantcode());
+		
+		OrdernQueryResponse ordernQueryResponse = rsAccTradeManager.ordernQuery(ordernQueryRequest);
+		if(!ordernQueryResponse.isSuccess()){
+			log.error("查询订单失败:"+ordernQueryResponse.getReturnCode()+":"+ordernQueryResponse.getReturnMsg());
+			response.putErrorResult(ordernQueryResponse.getReturnCode(), ordernQueryResponse.getReturnMsg());
+		    return response;
+		}
+		
+		List<Transorderinfo> transorderinfos = ordernQueryResponse.getTransorderinfo();
+		List<TransOrderInfo> orderInfo = new ArrayList<TransOrderInfo>();
+		for(Transorderinfo info :transorderinfos){
+			TransOrderInfo order = new TransOrderInfo();
+			MyBeanUtil.copyBeanProperties(order, info);
+			orderInfo.add(order);
+		}
+		response.setTransOrderInfos(orderInfo);
+		response.putSuccess();
+		return response;
 	}
 }
 
