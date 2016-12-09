@@ -257,7 +257,7 @@
                     <li fileId="idCardUrl">
                         <h3 class="loanInformation_upload_list_title">担保人身份证</h3>
                         <div class="loanInformation_upload_list_img">
-                            <div class="TFSaddImg hidden"></div>
+                            <div class="TFSaddImg"></div>
                              <input type="file"  name="credit_file" id="idCardUrl" errorMsg="请上传担保人身份证"/>
                             <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
@@ -299,7 +299,7 @@
                     <li fileId="spouseRegisteredUrl">
                         <h3 class="loanInformation_upload_list_title">配偶户口本</h3>
                         <div class="loanInformation_upload_list_img">
-                            <div class="TFSaddImg hidden"></div>
+                            <div class="TFSaddImg"></div>
                              <input type="file"  name="credit_file" id="spouseRegisteredUrl"  errorMsg="请上传配偶户口本"/>
                            <div class="TFSuploading TFSupload_JPG hidden">
                                  <p class="TFSuploading1">
