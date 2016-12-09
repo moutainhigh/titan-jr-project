@@ -169,19 +169,20 @@
 			var obj = navObj.navList[navObj.currIndex];
 			data[obj.zoneId] = dataHandleObj.serializeData(obj.zoneId);
 			var result = true;
+			
+			if(obj["dataVlidate"])
+			{
+				try
+				{
+					eval("var vlidateResult = "+obj["dataVlidate"]+"()");
+					if(vlidateResult === false)
+					{
+						return;
+					}
+				}catch(e){}
+			}
 			if(data[obj.zoneId]  != obj['data'])
 			{
-				if(obj["dataVlidate"])
-				{
-					try
-					{
-						eval("var vlidateResult = "+obj["dataVlidate"]+"()");
-						if(vlidateResult === false)
-						{
-							return;
-						}
-					}catch(e){}
-				}
 				result = dataHandleObj.saveData(data)
 			}
 			
