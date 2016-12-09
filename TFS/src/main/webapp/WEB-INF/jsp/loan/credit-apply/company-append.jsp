@@ -21,7 +21,7 @@
                             <i class="redNotice">*</i>股东名称：
                         </td>
                         <td class="loanInformation_td02">
-                            <input type="text" class="loanInformation_inp01" placeholder="请输入股东名称" field='shareholderName' datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
+                            <input type="text" class="loanInformation_inp01" placeholder="请输入股东名称" field='shareholderName' datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
                         </td>
                         <td class="loanInformation_td01">
                              <i class="redNotice">*</i>出资金额：
@@ -97,7 +97,7 @@
                         <input type="text" class="loanInformation_inp01" placeholder="请输入合作企业名称" field='cooperationName' datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                     </td>
                     <td class="loanInformation_td01">
-                         <i class="redNotice">*</i>年销售规模：
+                         <i class="redNotice">*</i>年交易额：
                     </td>
                     <td class="loanInformation_td03">
                        <input type="text" class="loanInformation_inp02" placeholder="" field='yearAnnualSale' datatype="/^([1-9][\d]{0,7}|0)(\.[\d]{1,2})?$/" errormsg="必填项，并且最多只能保留2位小数！"> 万元
@@ -114,13 +114,13 @@
                         <i class="redNotice">*</i>结算方式：
                     </td>
                     <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" placeholder="请输入结算方式" field='settlement' datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
+                        <input type="text" class="loanInformation_inp01" placeholder="请输入结算方式" field='settlement' datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
                     </td>
                     <td class="loanInformation_td01">
-                         <i class="redNotice">*</i>年销售规模：
+                         <i class="redNotice">*</i>合作年限：
                     </td>
                     <td class="loanInformation_td03">
-                       <input type="text" class="loanInformation_inp02" placeholder="" field='cooperationYears' datatype="s1-10" errormsg="必填项，并且最长只能10个字符！"> 年&nbsp;&nbsp;&nbsp;
+                       <input type="text" class="loanInformation_inp02" placeholder="" field='cooperationYears' datatype="*1-10" errormsg="必填项，并且最长只能10个字符！"> 年&nbsp;&nbsp;&nbsp;
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>合作关系：
@@ -214,7 +214,7 @@
                     <td class="loanInformation_td01"> 备注
                     </td>                  
                     <td class="loanInformation_td02" colspan="3">
-                       <input type="text" class="loanInformation_inp01" placeholder="请输入备注内容" field='remark' customFun="validateTextValue" errormsg="必填项，并且最长只能100个字符！">
+                       <input type="text" class="loanInformation_inp01" placeholder="请输入备注内容" field='remark' >
                     </td>
                 </tr>         
             </table>

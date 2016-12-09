@@ -269,7 +269,7 @@
                                 <i class="J_re_upload loanInformation_upload_btn">重新上传</i>
                                 <p>上传失败</p>
                             </div>
-                            <div class="TFSimgOn">
+                            <div class="TFSimgOn hidden">
                                 <i class="J_delete_upload loanInformation_upload_btn">删除</i>
                                 <img src="../images/TFS/help_logo.jpg">
                             </div>
@@ -307,7 +307,7 @@
                                  </p>    
                                  <p class="TFSuploading2"> 已上传<i>0</i>% </p>                                
                             </div>
-                            <div class="TFSuploaderror">
+                            <div class="TFSuploaderror hidden">
                                 <i class="J_re_upload loanInformation_upload_btn">重新上传</i>
                                 <p>上传失败</p>
                             </div>
