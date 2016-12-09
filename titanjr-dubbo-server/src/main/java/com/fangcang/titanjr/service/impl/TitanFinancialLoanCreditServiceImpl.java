@@ -28,6 +28,7 @@ import com.fangcang.titanjr.common.enums.entity.LoanCompanyEnsureEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanCreditCompanyEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanCreditOrderEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanPersonEnsureEnum;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;
@@ -55,6 +56,7 @@ import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
 import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
+import com.fangcang.titanjr.dto.request.NotifyRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanCreditResponse;
 import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
@@ -64,6 +66,7 @@ import com.fangcang.titanjr.dto.response.GetAuditEvaluationResponse;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
 import com.fangcang.titanjr.dto.response.GetCreditOrderCountResponse;
 import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
+import com.fangcang.titanjr.dto.response.NotifyResponse;
 import com.fangcang.titanjr.dto.response.PageCreditCompanyInfoResponse;
 import com.fangcang.titanjr.entity.LoanCompanyEnsure;
 import com.fangcang.titanjr.entity.LoanCreditCompany;
@@ -163,25 +166,19 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		boolean auditResult = false;
 		if(req.getAuditResult()==AuditResultEnum.NO_PASS){
 			auditResult = false;
+			//添加批注记录
+			LoanCreditOpinion loanCreditOpinion = new LoanCreditOpinion();
+			loanCreditOpinion.setOrderNo(req.getOrderNo());
+			loanCreditOpinion.setResult(req.getAuditResult().getStatus());
+			loanCreditOpinion.setContent(req.getContent());
+			loanCreditOpinion.setStatus(1);//1：新添加，没有修改过，2：修改过
+			loanCreditOpinion.setCreater(req.getOperator());
+			loanCreditOpinion.setCreateTime(now);
+			loanCreditOpinionDao.saveLoanCreditOpinion(loanCreditOpinion);
 		}else if(req.getAuditResult()==AuditResultEnum.PASS){
 			updateLoanCreditOrderParam.setFirstAuditTime(now);
 			auditResult = true;
 		}
-		
-		//改申请单状态
-		updateLoanCreditOrderParam.setOrderNo(req.getOrderNo());
-		updateLoanCreditOrderParam.setStatus(req.getAuditResult().getStatus());
-		loanCreditOrderDao.updateLoanCreditOrder(updateLoanCreditOrderParam);
-		
-		//添加审核记录
-		LoanCreditOpinion loanCreditOpinion = new LoanCreditOpinion();
-		loanCreditOpinion.setOrderNo(req.getOrderNo());
-		loanCreditOpinion.setResult(req.getAuditResult().getStatus());
-		loanCreditOpinion.setContent(req.getContent());
-		loanCreditOpinion.setCreater(req.getOperator());
-		loanCreditOpinion.setCreateTime(now);
-		loanCreditOpinionDao.saveLoanCreditOpinion(loanCreditOpinion);
-		
 		//通过后,调用融数处理	
 		if(auditResult){
 			//1-上传申请附件
@@ -314,12 +311,15 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			OrderMixserviceCreditapplicationResponse orderMixserviceCreditapplicationResponse = rsCreditManager.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
 			if(orderMixserviceCreditapplicationResponse.isSuccess()==false){
 				response.putErrorResult(orderMixserviceCreditapplicationResponse.getReturnMsg());
-				log.error("授信申请时融数接口失败,OrgCode:"+loanCreditCompany.getOrgCode());
+				log.error("授信申请时融数接口失败,OrgCode:"+loanCreditOrder.getOrgCode());
 				return response;
 			}
 		}
-		
-		response.putSuccess();
+		//改申请单状态
+		updateLoanCreditOrderParam.setOrderNo(req.getOrderNo());
+		updateLoanCreditOrderParam.setStatus(req.getAuditResult().getStatus());
+		loanCreditOrderDao.updateLoanCreditOrder(updateLoanCreditOrderParam);
+		response.putSuccess("审核成功");
 		return response;
 	}
 	
@@ -333,7 +333,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	private String encryptRSFile(List<String> companyFilesList,List<String> ensureFilesList,String orgCode){
 		//下载文件，加密，删除文件，
 		//企业证件资料本地路径
-		String orgCreditFileRootDir = TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"tmp"+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+orgCode;
+		String orgCreditFileRootDir = TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"tmp"+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+orgCode;
 		String orgCreditDir = "EnterpriseCreditPackage";
 		//法人担保
 		String localEnterpriseDocumentInfoPath = orgCreditFileRootDir+"/"+orgCreditDir+"/"+"EnterpriseDocumentInfo";
@@ -803,5 +803,14 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		}
 		return auditEvaluationResponse;
 	}
+
+	@Override
+	public NotifyResponse loanCreditNotify(NotifyRequest notifyRequest)
+			throws GlobalServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 
 }

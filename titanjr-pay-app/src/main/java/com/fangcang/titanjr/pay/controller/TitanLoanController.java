@@ -101,8 +101,17 @@ public class TitanLoanController extends BaseController {
 			return JSONSerializer.toJSON(result).toString();
 		}
 		//所有验证都通过
+		if(buessNo.startsWith("CR")){
+			//授信申请
+			
+			
+		}else if(buessNo.startsWith("D")){
+			//贷款
+			
+			
+		}
 		
-		
+		//
 		
 		
 		
