@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -25,8 +26,10 @@ import com.fangcang.titanjr.dto.bean.LoanApplyInfo;
 import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
 import com.fangcang.titanjr.dto.bean.LoanSpecBean;
 import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
+import com.fangcang.titanjr.dto.request.GetLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.FTPConfigResponse;
+import com.fangcang.titanjr.dto.response.GetLoanOrderInfoResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.StringUtil;
@@ -69,6 +72,11 @@ public class FinancialLoanApplyController extends BaseController{
 		}
 		
 		try{
+			
+			if(!checkLoanApplyInfo(info)){
+				return this.toJson();
+			}
+			
 			//申请贷款
 			LoanRoomPackSpecBean loanSpecBean = new LoanRoomPackSpecBean();
 			loanSpecBean.setAmount(NumberUtil.covertToCents(info.getAmount()));
@@ -101,6 +109,97 @@ public class FinancialLoanApplyController extends BaseController{
 		}
 		return toJson();
 	} 
+	
+	
+	private boolean checkLoanApplyInfo(LoanApplyInfo info){
+		String neg = "(^[1-9]{1}\\d{0,20}(\\.\\d{1,2})?$)";
+		String neg2 = "(^[0]{1}(\\.\\d{1,2})?$)";
+		if(!(Pattern.matches(neg, info.getAmount())||Pattern.matches(neg2, info.getAmount()))){
+			log.error("传入金额格式错误");
+			this.putSysError("传入金额格式错误");
+			return false;
+		}
+		
+		//验证getLoanOrderNo
+		GetLoanOrderInfoRequest req = new GetLoanOrderInfoRequest();
+		req.setOrderNo(info.getLoanOrderNo());
+		GetLoanOrderInfoResponse response =titanFinancialLoanService.getLoanOrderInfo(req);
+		if(null !=response.getApplyOrderInfo()){
+			log.error("该贷款单已被申请,请重新申请");
+			this.putSysError("该贷款单已被申请,请重新申请");
+			return false;
+		}
+		
+		
+		
+		if(!StringUtil.isValidString(info.getBeginDate())){
+			log.error("开始时间为空");
+			this.putSysError("开始时间为空");
+			return false;
+		}
+		
+		if(!StringUtil.isValidString(info.getEndDate())){
+			log.error("结束时间为空");
+			this.putSysError("结束时间为空");
+			return false;
+		}
+		
+		try {
+				String regex = "([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8])))";
+				boolean beginFlg = Pattern.matches(regex, info.getBeginDate()); 
+				boolean endFlag = Pattern.matches(regex, info.getEndDate()); 
+				if(!beginFlg || !endFlag){
+					log.error("时间格式不正确");
+					this.putSysError("时间格式不正确");
+				    return false;
+				}
+				Long times = DateUtil.sdf.parse(info.getEndDate()).getTime()-DateUtil.sdf.parse(info.getBeginDate()).getTime();
+		        if(times <=0){
+		        	log.error("结束时间必须大于开始时间");
+		        	this.putSysError("结束时间必须大于开始时间");
+				    return false;
+		        }	
+		
+		} catch (Exception e) {
+				log.error("开始时间格式不正确");
+				this.putSysError("开始时间格式不正确");
+				return false;
+		}
+		
+		if(!StringUtil.isValidString(info.getRoomNights())){
+			log.error("间夜数不能为空");
+			this.putSysError("间夜数不能为空");
+			return false;
+		}
+		
+		String rex="^\\+?[1-9][0-9]*$";
+		boolean vRoomNight =Pattern.matches(rex, info.getRoomNights());
+		if(!vRoomNight){
+			log.error("间夜数必须为正整数");
+			this.putSysError("间夜数必须为正整数");
+			return false;
+		}
+		
+		if(info.getRoomNights().length()>11){
+			log.error("间夜数太大");
+			this.putSysError("间夜数太大");
+			return false;
+		}
+		
+		if(!StringUtil.isValidString(info.getHotelName())){
+			log.error("酒店名称不能为空");
+			this.putSysError("酒店名称不能为空");
+			return false;
+		}
+		
+		if(!StringUtil.isValidString(info.getBank())){
+			log.error("银行不能为空");
+			this.putSysError("银行不能为空");
+			return false;
+		}
+		
+		return true;
+	}
 	
 	@ResponseBody
 	@RequestMapping(value="/orderNo")
