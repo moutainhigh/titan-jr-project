@@ -3,13 +3,13 @@ package com.fangcang.titanjr.rs.manager.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.CollectionUtils;
 
 import com.Rop.api.ApiException;
-import com.Rop.api.DefaultRopClient;
 import com.Rop.api.domain.UserArepayment;
 import com.Rop.api.domain.UserRepayment;
 import com.Rop.api.request.WheatfieldInterestRepaymentQueryborrowinfoRequest;
@@ -61,6 +61,7 @@ import com.fangcang.titanjr.rs.response.QueryUserInitiativeRepaymentResponse;
 import com.fangcang.titanjr.rs.response.QueryUserRepaymentResponse;
 import com.fangcang.titanjr.rs.response.StopLoanResponse;
 import com.fangcang.titanjr.rs.response.UserInitiativeRepamentResponse;
+import com.fangcang.titanjr.rs.util.MyConvertXmlToObject;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.util.MyBeanUtil;
 
@@ -237,6 +238,12 @@ public class RSCreditManagerImpl implements RSCreditManager {
 				} else {
 					response.setSuccess(true);
 					response.setOperateStatus(rsp.getIs_success());
+					Map<String, Object>  bodyMap = MyConvertXmlToObject.xml2map(rsp.getBody());
+					response.setUserid(bodyMap.get("userId").toString());
+					response.setName(bodyMap.get("name").toString());
+					response.setCreditlimit(bodyMap.get("creditLimit").toString());
+					response.setCreditdeadline(bodyMap.get("creditDeadLine").toString());
+					response.setCreditavailability(bodyMap.get("creditAvailability").toString());
 					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
 				}
@@ -270,8 +277,7 @@ public class RSCreditManagerImpl implements RSCreditManager {
 				request.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, request);
-			DefaultRopClient ropClientLoans = this.getDefaultRopClient();
-			WheatfieldOrderServiceNewloanapplyResponse rsp = ropClientLoans.execute(req,RSInvokeConstant.sessionKey);
+			WheatfieldOrderServiceNewloanapplyResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用newLoanApply方法(个人贷款申请)--请求参数NewLoanApplyRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
 				if (rsp.isSuccess() != true) {
@@ -308,16 +314,6 @@ public class RSCreditManagerImpl implements RSCreditManager {
 		return response;
 	}
 		
-	
-	private DefaultRopClient getDefaultRopClient(){
-		DefaultRopClient ropClientLoans = null;
-		if(ropClientLoans == null){
-			ropClientLoans = new DefaultRopClient("https://api.open.ruixuesoft.com:30005/ropapi", "C5CE632E-FDA6-436A-B4DF-1DE93A2C72C3",
-					"D7787ED2-0465-42C7-9CF8-25D5CC6ACA34", "xml");
-		}
-		return ropClientLoans;
-	}
-
 	@Override
 	public QueryBorrowinfoResponse queryBorrowinfo(
 			QueryBorrowinfoRequest request) {

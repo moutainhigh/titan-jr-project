@@ -137,6 +137,7 @@
             <if test="actualAmount != null">actualamount= #{actualAmount},</if>
             <if test="rate != null">rate= #{rate},</if>
             <if test="rspId != null">rspid= #{rspId},</if>
+            <if test="orderid != null">orderid= #{orderid},</if>
             <if test="rsorgId != null">rsorgid= #{rsorgId},</if>
             <if test="productType != null">producttype= #{productType},</if>
             <if test="productId != null">productid= #{productId},</if>

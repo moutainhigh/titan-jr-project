@@ -252,9 +252,8 @@
 				url:"<%=basePath%>/loan_apply/apply.action",
 				dataType:'json',
 				data:this.queryData(),
-				success:function(data){
-					console.log(data);
-					alert("111");
+				success:function(result){
+					console.log(result);
 				},
 				complete:function(){
 					top.F.loading.hide();
