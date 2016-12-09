@@ -72,12 +72,14 @@ import com.fangcang.titanjr.rs.dto.TUserArepayment;
 import com.fangcang.titanjr.rs.manager.RSCreditManager;
 import com.fangcang.titanjr.rs.manager.RSFileManager;
 import com.fangcang.titanjr.rs.request.NewLoanApplyRequest;
+import com.fangcang.titanjr.rs.request.QueryCreditMerchantInfoRequest;
 import com.fangcang.titanjr.rs.request.QueryBorrowinfoRequest;
 import com.fangcang.titanjr.rs.request.QueryLoanApplyRequest;
 import com.fangcang.titanjr.rs.request.QueryUserInitiativeRepaymentRequest;
 import com.fangcang.titanjr.rs.request.RSFsFileUploadRequest;
 import com.fangcang.titanjr.rs.request.UserInitiativeRepamentRequest;
 import com.fangcang.titanjr.rs.response.NewLoanApplyResponse;
+import com.fangcang.titanjr.rs.response.QueryCreditMerchantInfoResponse;
 import com.fangcang.titanjr.rs.response.QueryBorrowinfoResponse;
 import com.fangcang.titanjr.rs.response.QueryLoanApplyResponse;
 import com.fangcang.titanjr.rs.response.QueryUserInitiativeRepaymentResponse;
@@ -122,9 +124,58 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				response.putErrorResult("参数错误");
 				return response;
 			}
+			
+			LoanCreditOrder loanCreditOrder = new LoanCreditOrder();
+			loanCreditOrder.setOrgCode(req.getOrgCode());
+			List<LoanCreditOrder> loanCreditOrderList = loanCreditOrderDao
+					.queryLoanCreditOrder(loanCreditOrder);
+			if (loanCreditOrderList.size() != 1) {
+				throw new Exception("查询授信申请单失败");
+			}
+			loanCreditOrder = loanCreditOrderList.get(0);
+			
+			String loanCreditOrderNo = loanCreditOrder.getOrderNo();
+			if(!StringUtil.isValidString(loanCreditOrderNo)){
+				log.error("授信申请单位空");
+				response.putErrorResult("授信申请单位空");
+				return response;
+			}
+			
+			
+			QueryCreditMerchantInfoRequest qcrequest = new QueryCreditMerchantInfoRequest();
+			qcrequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+			qcrequest.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+			qcrequest.setUserid(req.getOrgCode());
+			qcrequest.setUserorderid(loanCreditOrderNo);
+			QueryCreditMerchantInfoResponse qcResponse = rsCreditManager.queryCreditMerchantInfo(qcrequest);			
+			
+			if(!qcResponse.isSuccess() || !StringUtil.isValidString(qcResponse.getCreditavailability())){
+				log.error("授信申请查询失败");
+				response.putErrorResult("授信申请查询失败");
+				return response;
+			}
+			
+			String amount ="";
+			LoanProductEnum productType = req.getProductType();
+			if (LoanProductEnum.ROOM_PACK.getCode() == productType.getCode()) {
+				LoanRoomPackSpecBean LoanSpecBean = (LoanRoomPackSpecBean) req
+						.getLcanSpec();
+				amount = LoanSpecBean.getAmount();
+			}else{
+				amount ="";
+			}
+			
+			boolean isEnough= new BigDecimal(qcResponse.getCreditavailability()).subtract(new BigDecimal(amount)).compareTo(BigDecimal.ZERO)==-1;
+			if(isEnough){
+				log.error("授信额度不足");
+				response.putErrorResult("授信额度不足");
+				return response;
+			}
+			
+			
 			String loanApplyOrderNo = "";
 			String contactNames = "";
-			LoanProductEnum productType = req.getProductType();
+			
 			if (LoanProductEnum.ROOM_PACK.getCode() == productType.getCode()) {
 				LoanRoomPackSpecBean LoanSpecBean = (LoanRoomPackSpecBean) req
 						.getLcanSpec();
@@ -143,7 +194,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 			// 保存贷款申请单
 			boolean flag = saveLoanOrderBean(req.getLcanSpec(),
-					productType.getCode(), req.getOrgCode());
+					productType.getCode(), req.getOrgCode(),loanCreditOrderNo);
 			if (!flag) {
 				throw new Exception("保存订单失败");
 			}
@@ -338,23 +389,15 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 	}
 
 	private boolean saveLoanOrderBean(LoanSpecBean loanSpecBean, Integer type,
-			String orgCode) throws Exception {
+			String orgCode,String creditNo) throws Exception {
 		LoanApplyOrder loanApplyOrder = new LoanApplyOrder();
 		try {
 
 			LoanRoomPackSpecBean loanRoomPackSpecBean = null;
 
-			LoanCreditOrder loanCreditOrder = new LoanCreditOrder();
-			loanCreditOrder.setOrgCode(orgCode);
-			List<LoanCreditOrder> loanCreditOrderList = loanCreditOrderDao
-					.queryLoanCreditOrder(loanCreditOrder);
-			if (loanCreditOrderList.size() != 1) {
-				throw new Exception("查询授信申请单失败");
-			}
-			loanCreditOrder = loanCreditOrderList.get(0);
 			if (LoanProductEnum.ROOM_PACK.getCode() == type.intValue()) {
 				loanRoomPackSpecBean = (LoanRoomPackSpecBean) loanSpecBean;
-				loanApplyOrder.setCreditOrderNo(loanCreditOrder.getOrderNo());
+				loanApplyOrder.setCreditOrderNo(creditNo);
 				loanApplyOrder
 						.setOrderNo(loanRoomPackSpecBean.getLoanOrderNo());
 				if (StringUtil.isValidString(loanRoomPackSpecBean.getAmount())) {
