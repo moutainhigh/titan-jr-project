@@ -509,26 +509,34 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		
 		log.info("query loan apply result " + JsonConversionTool.toJson(rsp));
 		log.info("query borrow info result " + JsonConversionTool.toJson(brsp));
-
+		
+		TBorrowRepayment borrowRepayment = brsp.gettBorrowRepayment();
+		
+		if("1".equals(borrowRepayment.getUseroverdueflag()))
+		{
+			
+		}
 		
 		// 融数方指定的特殊状态位，表示状态已经结束
 		if ("贷款已结束".equals(rsp.getStatustring())) {
 			loanApplyOrder.setStatus(LoanOrderStatusEnum.LOAN_FINISH.getKey());
 		}
 		
-//		/**
-//		 * 放款金额
-//		 */
-//		private String loanmoney;
-//		/**
-//		 * 	放款日期
-//		 */
-//		private String loandate;
-		
-		//:yyyy-MM-dd HH:mm:ss 终审通过时间
-		if (StringUtil.isValidString(rsp.getLastappealtime())) {
-			
+		if (StringUtil.isValidString(rsp.getLoandate())) {
+			try {
+				loanApplyOrder.setRelMoneyTime(DateUtil.sdf.parse(rsp
+						.getLoandate()));
+			} catch (ParseException e) {
+				log.error("", e);
+			}
 		}
+
+		if (StringUtil.isValidString(rsp.getLoanmoney())) {
+			loanApplyOrder.setActualAmount(Long.parseLong(rsp.getLoanmoney()));
+		}
+		
+		
+	
 	}
 
 	/**
