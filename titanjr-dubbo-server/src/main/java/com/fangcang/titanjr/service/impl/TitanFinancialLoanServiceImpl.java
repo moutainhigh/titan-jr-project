@@ -505,9 +505,6 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 					+ "  orgCode=" + orgCode + "]");
 			return;
 		}
-		
-		loanApplyOrder.set
-		
 
 	}
 
