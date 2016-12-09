@@ -36,7 +36,7 @@ public class LoanApplyOrder {
 
 	private String rateTmp;// 费率模板
 
-	private Integer status;// 0 无效贷款 1 贷款申请中 2 贷款成功等待放款 3 放款成功 4 放款失败 5 贷款失败
+	private Integer status;// 0 无效贷款  1 贷款申请中  2 待放款   3 已放款  4 放款失败  5 贷款失败  6 已逾期 7 已结清 8 已撤销
 
 	private String errorMsg;// 贷款失败原因
 
