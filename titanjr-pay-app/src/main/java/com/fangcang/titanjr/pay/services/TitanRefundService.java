@@ -298,7 +298,7 @@ public class TitanRefundService {
 		
 		
 		if(!(OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()) || OrderStatusEnum.FREEZE_SUCCESS.equals(transOrderDTO.getStatusid()))){
-			log.error("该订单为支付成功，不能退款");
+			log.error("该订单未支付成功，不能退款");
 			model.addAttribute("msg",
 					TitanMsgCodeEnum.ORDER_NOT_REFUND.getResMsg());
 			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
@@ -333,15 +333,14 @@ public class TitanRefundService {
 			refundAmount = titanTransferDTO.getAmount().toString();
 		}
 		
+//		if(new BigDecimal(accountBalance).compareTo(new BigDecimal(refundAmount))==-1){
+//			log.error("账户余额不足,请充值后再退款");
+//			model.addAttribute("msg",
+//					TitanMsgCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH.getResMsg());
+//			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+//		}
 		
-		if(new BigDecimal(accountBalance).compareTo(new BigDecimal(refundAmount))==-1){
-			log.error("账户余额不足,请充值后再退款");
-			model.addAttribute("msg",
-					TitanMsgCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH.getResMsg());
-			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
-		}
-		
-		
+		model.addAttribute("balanceAmount",accountBalance);
 		model.addAttribute("transOrderDTO", transOrderDTO);
 		model.addAttribute("refundRequest", refundRequest);
 		
