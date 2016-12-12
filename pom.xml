@@ -23,8 +23,9 @@
         <module>titanjr-dubbo-api</module>
         <module>titanjr-dubbo-server</module>
         <module>titanjr-job-scheduler</module>
-         <module>titanjr-pay-app</module>
+        <module>titanjr-pay-app</module>
         <module>TFS</module>
+        <module>TWS</module>
     </modules>
 
     <properties>
