@@ -32,6 +32,9 @@ public class QueryBorrowinfoResponse extends BaseResponse {
 	 * @param borrowRepayment
 	 */
 	public void settBorrowRepayment(BorrowRepayment borrowRepayment){
+		if(borrowRepayment==null ){
+			return ;
+		}
 		if(tBorrowRepayment==null){
 			tBorrowRepayment = new TBorrowRepayment();
 		}
