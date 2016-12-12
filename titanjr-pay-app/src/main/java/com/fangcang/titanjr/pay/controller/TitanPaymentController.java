@@ -139,17 +139,18 @@ public class TitanPaymentController extends BaseController {
 				return ;
 			}
         	
-			if(validateOrderStatus(orderNo)){
-    			log.error("实在没办法,狗日的钱没到账，不能转账");
-    			return ;
-    		}
-    		
         	// update recharge order
 			int row = titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.RECHARFE_SUCCESS.getStatus()+"");
         	if(row<1){
         		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "充值成功 修改充值单失败", OrderExceptionEnum.OrderPay_Update, JSON.toJSONString(orderNo));
         		titanOrderService.saveOrderException(orderExceptionDTO);
         	}
+        	
+        	if(!validateOrderStatus(orderNo)){
+    			log.error("实在没办法,钱没到账，不能转账");
+    			return ;
+    		}
+        	
         	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARGE_SUCCESS;
         	
         	if(PayerTypeEnum.RECHARGE.key.equals(payerType.getKey())){
@@ -228,7 +229,12 @@ public class TitanPaymentController extends BaseController {
 					|| null == response.getTransOrderInfos()
 					|| response.getTransOrderInfos().size() != 1) {
 				log.error("confirem ordern query is null");
-				return false;
+				try {//线程等待
+					Thread.sleep(200 * (2<<i));
+				} catch (InterruptedException e) {
+					log.error("", e);
+				}
+				continue;
 			}
 
 			order = response.getTransOrderInfos().get(0);
