@@ -146,12 +146,13 @@ public class TitanPaymentController extends BaseController {
         		titanOrderService.saveOrderException(orderExceptionDTO);
         	}
         	
+        	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARGE_SUCCESS;
         	if(!validateOrderStatus(orderNo)){
     			log.error("实在没办法,钱没到账，不能转账");
+    			orderStatusEnum = OrderStatusEnum.ORDER_DELAY;
+    			titanPaymentService.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
     			return ;
     		}
-        	
-        	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARGE_SUCCESS;
         	
         	if(PayerTypeEnum.RECHARGE.key.equals(payerType.getKey())){
         		orderStatusEnum= OrderStatusEnum.ORDER_SUCCESS;
