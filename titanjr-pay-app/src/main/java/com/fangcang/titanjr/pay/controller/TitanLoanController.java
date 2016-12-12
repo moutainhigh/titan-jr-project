@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fangcang.titanjr.common.enums.AuditResultEnum;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.pay.req.LoanNotifyReq;
@@ -42,8 +44,8 @@ public class TitanLoanController extends BaseController {
 	private static final Log log = LogFactory
 			.getLog(TitanLoanController.class);
 	
-	@Resource(name = "titanLoanService")
-	private TitanLoanServiceListener titanLoanServiceListener;
+	//@Resource(name = "titanLoanService")
+	//private TitanLoanServiceListener titanLoanServiceListener;
 	
 	@Resource(name = "titanCreditService")
 	private TitanCreditServiceListener titanCreditServiceListener;
@@ -54,7 +56,7 @@ public class TitanLoanController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "notify")
+	@RequestMapping(value = "/notify")
 	public String loanNotify(LoanNotifyReq req) 
 	{
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -101,24 +103,33 @@ public class TitanLoanController extends BaseController {
 			return JSONSerializer.toJSON(result).toString();
 		}
 		//所有验证都通过
-		if(buessNo.startsWith("CR")){
-			//授信申请
-			
-			
-		}else if(buessNo.startsWith("D")){
-			//贷款
-			
-			
+		try {
+			if(buessNo.startsWith("CR")){
+				//授信申请订单
+				int state = 1;
+				if("31".equals(req.getStatus())){
+					state = AuditResultEnum.PASS.getStatus();
+					titanCreditServiceListener.creditSucceed(orderNo,state);
+				}else{
+					state = AuditResultEnum.NO_PASS.getStatus();
+					titanCreditServiceListener.creditFailure(orderNo,state, req.getMsg());
+				}
+				result.put("result", "0");
+				result.put("resultMsg", "通知处理成功");
+			}else if(buessNo.startsWith("D")){
+				//TODO 贷款
+				
+				
+			}
+			log.info("无效订单:"+Tools.gsonToString(req));
+		} catch (GlobalServiceException e) {
+			log.error("通知处理失败,参数LoanNotifyReq："+Tools.gsonToString(req), e); 
+			result.put("result", "-1");
+			result.put("resultMsg", "通知处理失败");
+			return JSONSerializer.toJSON(result).toString();
 		}
 		
-		//
-		
-		
-		
-		
-		
-		 
-		return "";
+		return JSONSerializer.toJSON(result).toString();
 	}
 
 }
