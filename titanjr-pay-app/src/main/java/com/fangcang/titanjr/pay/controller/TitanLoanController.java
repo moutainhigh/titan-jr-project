@@ -67,17 +67,19 @@ public class TitanLoanController extends BaseController {
 			result.put("resultMsg", "Create_time不能为空");
 			return JSONSerializer.toJSON(result).toString();
 		}
+		
 		if(!StringUtil.isValidString(req.getToken())){
 			result.put("result", "-1");
 			result.put("resultMsg", "token不能为空");
 			return JSONSerializer.toJSON(result).toString();
 		}
 		//判断token是否相同
-		String myToken = MD5.MD5Encode(TOKEN_KEY_STRING+req.getCreate_time()).toUpperCase();
+		String mtoken = TOKEN_KEY_STRING+req.getCreate_time();
+		String myToken = MD5.MD5Encode(mtoken).toUpperCase();
 		if(!myToken.equals(req.getToken())){
 			result.put("result", "-1");
 			result.put("resultMsg", "token不正确");
-			log.error("融数通知接口notify.action请求的信息,token不正确。请求参数LoanNotifyReq："+Tools.gsonToString(req));
+			log.error("融数通知接口notify.action请求的信息,token不正确。明码token:"+mtoken+",本地md5后myToken："+myToken+",请求参数LoanNotifyReq："+Tools.gsonToString(req));
 			return JSONSerializer.toJSON(result).toString();
 		}
 		
@@ -92,27 +94,32 @@ public class TitanLoanController extends BaseController {
 		if((!StringUtil.isValidString(sign))||(!StringUtil.isValidString(type))||(!StringUtil.isValidString(orderNo))||(!StringUtil.isValidString(buessNo))||(!StringUtil.isValidString(userId))){
 			result.put("result", "-1");
 			result.put("resultMsg", "参数不能为空");
+			
 			return JSONSerializer.toJSON(result).toString();
 		}
-		String dataSign = MD5.MD5Encode(orderNo+buessNo+userId+req.getCreate_time()).toUpperCase();
+		String string = orderNo+buessNo+userId+req.getCreate_time();
+		String dataSign = MD5.MD5Encode(string).toUpperCase();
 		
 		if(!dataSign.equals(sign)){
-			log.error("融数通知接口notify.action请求的信息,sign不正确。请求参数LoanNotifyReq："+Tools.gsonToString(req));
+			log.error("融数通知接口notify.action请求的信息,sign不正确。明文的sign:"+string+",本地md5后dataSign："+dataSign+"请求参数LoanNotifyReq："+Tools.gsonToString(req));
 			result.put("result", "-1");
 			result.put("resultMsg", "sign不正确");
+			
 			return JSONSerializer.toJSON(result).toString();
 		}
 		//所有验证都通过
+		log.info("融数通知接口notify.action所有参数通过校验，该请求是合法请求。请求参数LoanNotifyReq："+Tools.gsonToString(req));
+		
 		try {
 			if(buessNo.startsWith("CR")){
 				//授信申请订单
 				int state = 1;
 				if("31".equals(req.getStatus())){
-					state = AuditResultEnum.PASS.getStatus();
-					titanCreditServiceListener.creditSucceed(orderNo,state);
+					state = AuditResultEnum.REVIEW_PASS.getStatus();
+					titanCreditServiceListener.creditSucceed(buessNo,state);
 				}else{
 					state = AuditResultEnum.NO_PASS.getStatus();
-					titanCreditServiceListener.creditFailure(orderNo,state, req.getMsg());
+					titanCreditServiceListener.creditFailure(buessNo,state, req.getMsg());
 				}
 				result.put("result", "0");
 				result.put("resultMsg", "通知处理成功");
@@ -120,8 +127,10 @@ public class TitanLoanController extends BaseController {
 				//TODO 贷款
 				
 				
+			}else {
+				log.info("无效订单:"+Tools.gsonToString(req));
 			}
-			log.info("无效订单:"+Tools.gsonToString(req));
+			
 		} catch (GlobalServiceException e) {
 			log.error("通知处理失败,参数LoanNotifyReq："+Tools.gsonToString(req), e); 
 			result.put("result", "-1");

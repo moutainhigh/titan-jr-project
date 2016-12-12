@@ -4,7 +4,7 @@ package com.fangcang.titanjr.common.enums;
  * @author wengxitao
  */
 public enum AuditResultEnum {
-	PASS(3, "初审通过"), NO_PASS(4, "初审不通过");
+	PASS(3, "初审通过"), NO_PASS(4, "初审不通过"),REVIEW_PASS(5,"融数终审通过");
 
 	int status;
 	String desc;

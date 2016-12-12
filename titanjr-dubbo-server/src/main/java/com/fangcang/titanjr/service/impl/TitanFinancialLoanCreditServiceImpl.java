@@ -352,6 +352,10 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			//公司证件资料
 			for(String file : companyFilesList){
 				if(StringUtil.isValidString(file)){
+					//if(){
+						//waterurl	
+						//
+					//}
 					ftpUtil.downloadFile(file, localEnterpriseDocumentInfoPath, FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+orgCode);
 				}
 			}
@@ -383,6 +387,10 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		
 		return encryptFilePath;
 	}
+	
+	//private boolean sendEmail(){
+		
+	//}
 	
 	/**
 	 * 组装授信申请jsondata
@@ -805,12 +813,46 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
 	public NotifyResponse loanCreditNotify(NotifyRequest notifyRequest)
 			throws GlobalServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		NotifyResponse response = new NotifyResponse();
+		if(!StringUtil.isValidString(notifyRequest.getBuessNo())){
+			response.putErrorResult("BuessNo 不能为空");
+			return response;
+		}
+		if(notifyRequest.getStatus()==null){
+			response.putErrorResult("Status 不能为空");
+			return response;
+		}
+		Date now = new Date();
+		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();
+		updateLoanCreditOrderParam.setOrderNo(notifyRequest.getBuessNo());
+		updateLoanCreditOrderParam.setStatus(notifyRequest.getStatus());
+		
+		try {
+			if(notifyRequest.getStatus()==5){
+				//通过
+				updateLoanCreditOrderParam.setLastAuditTime(now);
+			}else{
+				//不通过
+				//添加批注记录
+				LoanCreditOpinion loanCreditOpinion = new LoanCreditOpinion();
+				loanCreditOpinion.setOrderNo(notifyRequest.getBuessNo());
+				loanCreditOpinion.setResult(notifyRequest.getStatus());
+				loanCreditOpinion.setContent(notifyRequest.getMsg());
+				loanCreditOpinion.setStatus(1);//1：新添加，没有修改过，2：修改过
+				loanCreditOpinion.setCreater(CommonConstant.CHECK_ADMIN_RS);
+				loanCreditOpinion.setCreateTime(now);
+				loanCreditOpinionDao.saveLoanCreditOpinion(loanCreditOpinion);
+			}
+			loanCreditOrderDao.updateLoanCreditOrder(updateLoanCreditOrderParam);
+			response.putSuccess("数据保存成功");
+		} catch (Exception e) {
+			log.error("loanCreditNotify()系统处理融数的授信申请通知失败！,参数notifyRequest:"+Tools.gsonToString(notifyRequest));
+			throw new GlobalServiceException("授信申请的通知处理失败", e);
+		}
+		return response;
 	}
-	
-	
 
 }
