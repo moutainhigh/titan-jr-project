@@ -230,7 +230,9 @@ public class TitanPaymentController extends BaseController {
 					|| response.getTransOrderInfos().size() != 1) {
 				log.error("confirem ordern query is null");
 				try {//线程等待
-					Thread.sleep(200 * (2<<i));
+					if(i<2){
+						Thread.sleep(400 * (2<<i));
+					}
 				} catch (InterruptedException e) {
 					log.error("", e);
 				}
@@ -245,7 +247,10 @@ public class TitanPaymentController extends BaseController {
 				return true;
 			}
 			try {
-				Thread.sleep(200 * (2<<i));
+				if(i<2){
+					Thread.sleep(400 * (2<<i));
+				}
+				
 			} catch (InterruptedException e) {
 				log.error("", e);
 			}
