@@ -92,6 +92,7 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					} else {
 						errorMsg = rsp.getMsg();
 					}
+					response.setSuccess(false);
 					response.setReturnCode(rsp.getErrorCode());
 					response.setReturnMsg(errorMsg);
 				} else {
@@ -102,6 +103,7 @@ public class RSCreditManagerImpl implements RSCreditManager {
 				}
 			} else {
 				log.error("调用oprsystemCreditCompany方法(上报企业资料信息)--请求参数OprsystemCreditCompanyRequest："+Tools.gsonToString(request)+",返回值:WheatfieldOprsystemCreditCompanyResponse is null");
+				response.setSuccess(false);
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
@@ -302,10 +304,12 @@ public class RSCreditManagerImpl implements RSCreditManager {
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
 		} catch (ApiException e) {
+			response.setSuccess(false);
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
 			response.setReturnMsg("接口调用异常");
 			log.error("newLoanApply方法(个人贷款申请)调用异常,参数NewLoanApplyRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
+			response.setSuccess(false);
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
 			response.setReturnMsg(RSInvokeErrorEnum.UNKNOWN_ERROR.returnMsg);
 			log.error("newLoanApply方法(个人贷款申请)调用异常,参数NewLoanApplyRequest:"+Tools.gsonToString(request),e);
@@ -336,23 +340,28 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					}
 					response.setReturnCode(rsp.getErrorCode());
 					response.setReturnMsg(errorMsg);
+					return response;
 				} else {
 					response.setSuccess(true);
 					response.settBorrowRepayment(rsp.getBorrowrepayment());
 					response.setOperateStatus(rsp.getIs_success());
 					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
 					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					return response;
 				}
 			} else {
+				response.setSuccess(false);
 				log.error("调用queryBorrowinfo方法(查询应还款信息)--请求参数QueryBorrowinfoRequest："+Tools.gsonToString(request)+",返回值: WheatfieldInterestRepaymentQueryborrowinfoResponse is null ");
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
 			}
 		} catch (ApiException e) {
+			response.setSuccess(false);
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
 			response.setReturnMsg("接口调用异常");
 			log.error("queryBorrowinfo方法(查询应还款信息)调用异常,参数QueryBorrowinfoRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
+			response.setSuccess(false);
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
 			response.setReturnMsg(RSInvokeErrorEnum.UNKNOWN_ERROR.returnMsg);
 			log.error("queryBorrowinfo方法(查询应还款信息)调用异常,参数QueryBorrowinfoRequest:"+Tools.gsonToString(request),e);
