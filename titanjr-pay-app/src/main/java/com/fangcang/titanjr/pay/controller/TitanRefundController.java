@@ -67,11 +67,21 @@ public class TitanRefundController extends BaseController{
 	
 		
 		if(null == refundRequest || !StringUtil.isValidString(refundRequest.getOrderNo())
-//				||!StringUtil.isValidString(refundRequest.getPayPassword())
-//				||!StringUtil.isValidString(refundRequest.getUserId())
+				||!StringUtil.isValidString(refundRequest.getPayPassword())
+				||!StringUtil.isValidString(refundRequest.getUserId())
+				||!StringUtil.isValidString(refundRequest.getTfsUserid())
 				){
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+			
 		}
+		
+		//查询单
+		
+		//验证userid //验证tfsUserid
+		
+		//验证密码
+		
+		
 		RefundResponse response = titanRefundService.orderRefund(refundRequest);
 		return JsonUtil.objectToJson(response);
 		

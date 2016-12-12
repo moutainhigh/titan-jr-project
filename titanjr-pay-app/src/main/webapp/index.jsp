@@ -48,10 +48,9 @@
 			bussCode : "566322565",//业务单号
 		};
 		var refundInfo ={
-				orderNo:"TW15060107282",
-				payPassword:"123456",
-				userId:"TJM10000108",
-				tfsUserid:"10048"
+				orderNo:"20161114123859600268",
+				userId:"TJM10000109",
+				tfsUserid:"10062"
 		};
 
 		/* document.getElementById('payButton').onclick = function() {
