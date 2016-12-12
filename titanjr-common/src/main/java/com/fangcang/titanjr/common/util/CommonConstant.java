@@ -143,5 +143,7 @@ public class CommonConstant {
     
     //融数订单状态。1为正常
     public static final String RS_ORDER_STATUS="1";
+    
+    public static final String ORDER_DELAY = "001_001";
 	
 }

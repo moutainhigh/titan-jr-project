@@ -39,6 +39,7 @@
 <form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder1" method="post">
   <input name="orderNo" id="orderNo" value="${qrCode.orderNo}" type="hidden">
   <input name="payTypeMsg" id="payTypeMsg" value="微信支付" type="hidden">
+  <input name="expand" id="expand" type="hidden">
 </form>
 </body>
 <script>
@@ -82,6 +83,10 @@
 				 $("#confirmOrder1").submit();
 			}else if(status=="no_effect" || status=="exception"){
 				 clearInterval(interval);
+			}else if(status=="delay"){
+				clearInterval(interval);
+				$("#expand").val("001_001");
+				$("#confirmOrder1").submit();
 			}
 		},5000);
 	}
