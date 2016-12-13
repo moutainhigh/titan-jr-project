@@ -404,10 +404,10 @@ public class RSCreditManagerImpl implements RSCreditManager {
 		return response;
 	}
 	//TODO 临时用，都是改为融数的sdk
+
 	private void rop2TBorrowRepayment(QueryBorrowinfoResponse response,Map<String, Object> bodyMap){
   		TBorrowRepayment tBorrowRepayment = new TBorrowRepayment();
   		Map<String, Object> borrowrepayment = (Map<String, Object>)bodyMap.get("borrowRepayments");
-		
 		tBorrowRepayment.setUsershouldcapital(borrowrepayment.get("usershouldcapital").toString());
 		tBorrowRepayment.setUsershouldinterest(borrowrepayment.get("usershouldinterest").toString());
 		tBorrowRepayment.setUsershouldamount(borrowrepayment.get("usershouldamount").toString());

@@ -4,10 +4,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 
+import com.Rop.api.ApiException;
 import com.Rop.api.DefaultRopClient;
 import com.Rop.api.request.FsFileUploadRequest;
 import com.Rop.api.request.FsFileurlGetRequest;
@@ -37,8 +39,15 @@ import com.Rop.api.response.WheatfieldOrderMixserviceStoploanResponse;
 import com.Rop.api.response.WheatfieldOrderOperResponse;
 import com.Rop.api.response.WheatfieldOrderServiceAgreementconfirmResponse;
 import com.Rop.api.response.WheatfieldOrderServiceNewloanapplyResponse;
+import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.rs.dto.NewLoanApplyJsonData;
+import com.fangcang.titanjr.rs.dto.TBorrowRepayment;
+import com.fangcang.titanjr.rs.request.QueryBorrowinfoRequest;
+import com.fangcang.titanjr.rs.response.QueryBorrowinfoResponse;
+import com.fangcang.titanjr.rs.util.MyConvertXmlToObject;
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+import com.fangcang.util.MyBeanUtil;
 
 /**
  * Created by zhaoshan on 2016/10/9.
@@ -68,7 +77,7 @@ public class LoanDemoTest {
     public static void main(String[] args) {
         
         String strMsg = null;
-        doFsFileUrlGet(session);
+       // doFsFileUrlGet(session);
         
 		// 文件上传API接口 "ruixue.fs.file.upload";
 		// strMsg = doFsFileUpload(session);
@@ -82,11 +91,11 @@ public class LoanDemoTest {
 		// doWheatfieldOrderServiceAgreementconfirm(session);//
 
 		/* 9 ruixue.wheatfield.order.mixservice.creditmerchantinfoquery 机构授信信息查询 */
-		// strMsg = doWheatfieldOrderMixserviceCreditmerchantinfoquery(session);
+	// strMsg = doWheatfieldOrderMixserviceCreditmerchantinfoquery(session);
 
 		  //strMsg = doWheatfieldOrderServiceNewloanapply();//申请贷款
 
-		 //  doqueryborrowinfo(session);//查询待还款记录
+		 doqueryborrowinfo(session);//查询待还款记录
         
          // douserinitiativerepament(session);// 主动还款
         
@@ -526,33 +535,32 @@ public class LoanDemoTest {
      * ruixue.wheatfield.interest.repayment.queryborrowinfo
      */
     public static String doqueryborrowinfo(String session){
-    	 String strError = null;
-    	 try {
-    			WheatfieldInterestRepaymentQueryborrowinfoRequest request = new WheatfieldInterestRepaymentQueryborrowinfoRequest();
-    			request.setRootinstcd("M000016");
-    			request.setProductid("P000070");
-    			request.setUserid("TJM10000087");
-    			request.setUserorderid("TJO201610255555");//,TJO2016102599977,TJO20161025333,TJO201610255555
-    			WheatfieldInterestRepaymentQueryborrowinfoResponse rsp = ropClient.execute(request,
-    	                 session);
-    	         if (rsp != null) {
-    	             System.out.println("params:"+Tools.gsonToString(rsp.getParams())+",返回报文: \n" + rsp.getBody());
-    	             if (rsp.isSuccess() != true) {
-    	                 if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
-    	                     strError = rsp.getIs_success();
-    	                 } else {
-    	                     strError = rsp.getMsg();
-    	                 }
-    	             }
-    	         }
+   	 String strError = null;
+   	 try {
+   			WheatfieldInterestRepaymentQueryborrowinfoRequest request = new WheatfieldInterestRepaymentQueryborrowinfoRequest();
+   			request.setRootinstcd("M000016");
+   			request.setProductid("P000070");
+   			request.setUserid("TJM10000087");
+   			request.setUserorderid("TJO201610255555");//,TJO2016102599977,TJO20161025333,TJO201610255555
+   			WheatfieldInterestRepaymentQueryborrowinfoResponse rsp = ropClient.execute(request,
+   	                 session);
+   	         if (rsp != null) {
+   	             System.out.println("params:"+Tools.gsonToString(rsp.getParams())+",返回报文: \n" + rsp.getBody());
+   	             if (rsp.isSuccess() != true) {
+   	                 if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+   	                     strError = rsp.getIs_success();
+   	                 } else {
+   	                     strError = rsp.getMsg();
+   	                 }
+   	             }
+   	         }
 		} catch (Exception e) {
 			 System.out.println(e);
 	         return "error";
 		}
-    
-    	return strError;
-    } 
-    
+   
+   	return strError;
+   } 
     /***
      * 查询贷款的还款状态及历史
      * ruixue.wheatfield.interest.repayment.queryuserrepayment
