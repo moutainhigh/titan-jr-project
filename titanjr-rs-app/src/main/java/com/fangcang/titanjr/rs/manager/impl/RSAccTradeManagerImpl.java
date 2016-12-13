@@ -504,7 +504,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 			WheatfieldOrdernQueryResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.info("调用orderSaveWithCardRequest返回报文: \n" + rsp.getBody());
+				log.info("调用ordernQuery返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
