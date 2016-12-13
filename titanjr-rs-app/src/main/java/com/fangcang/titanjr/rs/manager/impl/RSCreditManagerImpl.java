@@ -482,7 +482,7 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			MyBeanUtil.copyBeanProperties(req, request);
 			WheatfieldInterestRepaymentUserinitiativerepamentResponse rsp = RSInvokeConstant.ropClient.execute(req,RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.info("调用userInitiativeRepament方法(终止贷款)--请求参数UserInitiativeRepamentRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
+				log.info("调用userInitiativeRepament方法(主动还款)--请求参数UserInitiativeRepamentRequest："+Tools.gsonToString(request)+",返回报文: \n :"+rsp.getBody());
 				if (rsp.isSuccess() != true) {
 					String errorMsg;
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
@@ -501,7 +501,7 @@ public class RSCreditManagerImpl implements RSCreditManager {
 				}
 				return response;
 			} else {
-				log.error("调用userInitiativeRepament方法(终止贷款)--请求参数UserInitiativeRepamentRequest："+Tools.gsonToString(request)+",返回值: WheatfieldInterestRepaymentUserinitiativerepamentResponse is null ");
+				log.error("调用userInitiativeRepament方法(主动还款)--请求参数UserInitiativeRepamentRequest："+Tools.gsonToString(request)+",返回值: WheatfieldInterestRepaymentUserinitiativerepamentResponse is null ");
 				response.setSuccess(false);
 				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
 				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
