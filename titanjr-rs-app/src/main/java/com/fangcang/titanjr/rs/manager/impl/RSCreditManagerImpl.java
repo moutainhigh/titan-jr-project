@@ -410,11 +410,13 @@ public class RSCreditManagerImpl implements RSCreditManager {
   		Map<String, Object> borrowrepayment = (Map<String, Object>)bodyMap.get("borrowRepayments");
 		tBorrowRepayment.setUsershouldcapital(borrowrepayment.get("usershouldcapital").toString());
 		tBorrowRepayment.setUsershouldinterest(borrowrepayment.get("usershouldinterest").toString());
+		tBorrowRepayment.setUsershouldrepaymentdate(borrowrepayment.get("usershouldrepaymentdate").toString());
 		tBorrowRepayment.setUsershouldamount(borrowrepayment.get("usershouldamount").toString());
 		tBorrowRepayment.setUseroverdueflag(borrowrepayment.get("useroverdueflag").toString());
 		tBorrowRepayment.setUseroverduefine(borrowrepayment.get("useroverduefine").toString());
 		tBorrowRepayment.setUseroverdueinterest(borrowrepayment.get("useroverdueinterest").toString());
 		tBorrowRepayment.setUseroverdueshouldamount(borrowrepayment.get("useroverdueshouldamount").toString());
+		 
 		response.settBorrowRepayment(tBorrowRepayment);
 	}
 
