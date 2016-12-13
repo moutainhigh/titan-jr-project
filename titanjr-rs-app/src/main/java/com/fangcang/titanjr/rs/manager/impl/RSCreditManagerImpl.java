@@ -35,6 +35,7 @@ import com.Rop.api.response.WheatfieldOrderMixserviceStoploanResponse;
 import com.Rop.api.response.WheatfieldOrderServiceAgreementconfirmResponse;
 import com.Rop.api.response.WheatfieldOrderServiceNewloanapplyResponse;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.rs.dto.TBorrowRepayment;
 import com.fangcang.titanjr.rs.dto.TUserArepayment;
@@ -98,10 +99,16 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(errorMsg);
 					return response;
 				} else {
-					response.setSuccess(true);
 					response.setOperateStatus(rsp.getIs_success());
-					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					if(CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
+						response.setSuccess(true);
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}else{
+						response.setSuccess(false);
+						response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+						response.setReturnMsg(rsp.getRetmsg());
+					}
 					return response;
 				}
 			} else {
@@ -114,8 +121,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 		
 		} catch (ApiException e) {
 			response.setSuccess(false);
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("接口调用异常");
+			response.setReturnCode(RSInvokeErrorEnum.API_ERROR.returnCode);
+			response.setReturnMsg(RSInvokeErrorEnum.API_ERROR.returnMsg);
 			log.error("oprsystemCreditCompany接口(上报企业资料信息)调用异常,参数OprsystemCreditCompanyRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -152,11 +159,17 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(errorMsg);
 					return response;
 				} else {
-					response.setSuccess(true);
-					response.setOrderid(rsp.getOrderid());
 					response.setOperateStatus(rsp.getIs_success());
-					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					if(CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
+						response.setOrderid(rsp.getOrderid());
+						response.setSuccess(true);
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}else{
+						response.setSuccess(false);
+						response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+						response.setReturnMsg(rsp.getRetmsg());
+					}
 					return response;
 				}
 			} else {
@@ -168,8 +181,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 		} catch (ApiException e) {
 			response.setSuccess(false);
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("接口调用异常");
+			response.setReturnCode(RSInvokeErrorEnum.API_ERROR.returnCode);
+			response.setReturnMsg(RSInvokeErrorEnum.API_ERROR.returnMsg);
 			log.error("orderMixserviceCreditapplication接口(申请授信)调用异常,参数OrderMixserviceCreditapplicationRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -207,10 +220,16 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(errorMsg);
 					return response;
 				} else {
-					response.setSuccess(true);
 					response.setOperateStatus(rsp.getIs_success());
-					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					if(CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
+						response.setSuccess(true);
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}else{
+						response.setSuccess(false);
+						response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+						response.setReturnMsg(rsp.getRetmsg());
+					}
 					return response;
 				}
 			} else {
@@ -222,8 +241,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 		} catch (ApiException e) {
 			response.setSuccess(false);
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("接口调用异常");
+			response.setReturnCode(RSInvokeErrorEnum.API_ERROR.returnCode);
+			response.setReturnMsg(RSInvokeErrorEnum.API_ERROR.returnMsg);
 			log.error("agreementConfirm接口(协议确认)调用异常,参数OrderServiceAgreementconfirmRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -260,16 +279,23 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(errorMsg);
 					return response;
 				} else {
-					response.setSuccess(true);
 					response.setOperateStatus(rsp.getIs_success());
-					Map<String, Object>  bodyMap = MyConvertXmlToObject.xml2map(rsp.getBody());
-					response.setUserid(bodyMap.get("userId").toString());
-					response.setName(bodyMap.get("name").toString());
-					response.setCreditlimit(bodyMap.get("creditLimit").toString());
-					response.setCreditdeadline(bodyMap.get("creditDeadLine").toString());
-					response.setCreditavailability(bodyMap.get("creditAvailability").toString());
-					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					if(CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
+						Map<String, Object>  bodyMap = MyConvertXmlToObject.xml2map(rsp.getBody());
+						response.setUserid(bodyMap.get("userId").toString());
+						response.setName(bodyMap.get("name").toString());
+						response.setCreditlimit(bodyMap.get("creditLimit").toString());
+						response.setCreditdeadline(bodyMap.get("creditDeadLine").toString());
+						response.setCreditavailability(bodyMap.get("creditAvailability").toString());
+						response.setSuccess(true);
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}else{
+						response.setSuccess(false);
+						response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+						response.setReturnMsg(rsp.getRetmsg());
+					}
+					
 					return response;
 				}
 			} else {
@@ -281,8 +307,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 		} catch (ApiException e) {
 			response.setSuccess(false);
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("接口调用异常");
+			response.setReturnCode(RSInvokeErrorEnum.API_ERROR.returnCode);
+			response.setReturnMsg(RSInvokeErrorEnum.API_ERROR.returnMsg);
 			log.error("queryCreditMerchantInfo接口(机构授信信息查询)调用异常,参数QueryCreditMerchantInfoRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -321,11 +347,17 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(errorMsg);
 					return response;
 				} else {
-					response.setSuccess(true);
-					response.setOrderid(rsp.getOrderid());
 					response.setOperateStatus(rsp.getIs_success());
-					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					if(CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
+						response.setOrderid(rsp.getOrderid());
+						response.setSuccess(true);
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}else{
+						response.setSuccess(false);
+						response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+						response.setReturnMsg(rsp.getRetmsg());
+					}
 					return response;
 				}
 			} else {
@@ -337,8 +369,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 		} catch (ApiException e) {
 			response.setSuccess(false);
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("接口调用异常");
+			response.setReturnCode(RSInvokeErrorEnum.API_ERROR.returnCode);
+			response.setReturnMsg(RSInvokeErrorEnum.API_ERROR.returnMsg);
 			log.error("newLoanApply方法(个人贷款申请)调用异常,参数NewLoanApplyRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -375,11 +407,18 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnMsg(errorMsg);
 					return response;
 				} else {
-					response.setSuccess(true);
-					rop2TBorrowRepayment(response,MyConvertXmlToObject.xml2map(rsp.getBody()));
+					
 					response.setOperateStatus(rsp.getIs_success());
-					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					if(CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
+						rop2TBorrowRepayment(response,MyConvertXmlToObject.xml2map(rsp.getBody()));
+						response.setSuccess(true);
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}else{
+						response.setSuccess(false);
+						response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+						response.setReturnMsg(rsp.getRtn_msg());
+					}
 					return response;
 				}
 			} else {
@@ -391,8 +430,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			}
 		} catch (ApiException e) {
 			response.setSuccess(false);
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("接口调用异常");
+			response.setReturnCode(RSInvokeErrorEnum.API_ERROR.returnCode);
+			response.setReturnMsg(RSInvokeErrorEnum.API_ERROR.returnMsg);
 			log.error("queryBorrowinfo方法(查询应还款信息)调用异常,参数QueryBorrowinfoRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -444,10 +483,16 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnCode(rsp.getErrorCode());
 					response.setReturnMsg(errorMsg);
 				} else {
-					response.setSuccess(true);
 					response.setOperateStatus(rsp.getIs_success());
-					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					if(CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
+						response.setSuccess(true);
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}else{
+						response.setSuccess(false);
+						response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+						response.setReturnMsg(rsp.getRetmsg());
+					}
 				}
 				return response;
 			} else {
@@ -459,8 +504,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			return response;
 		} catch (ApiException e) {
 			response.setSuccess(false);
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("接口调用异常");
+			response.setReturnCode(RSInvokeErrorEnum.API_ERROR.returnCode);
+			response.setReturnMsg(RSInvokeErrorEnum.API_ERROR.returnMsg);
 			log.error("stopLoan方法(终止贷款)调用异常,参数StopLoanRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -496,10 +541,16 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnCode(rsp.getErrorCode());
 					response.setReturnMsg(errorMsg);
 				} else {
-					response.setSuccess(true);
 					response.setOperateStatus(rsp.getIs_success());
-					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					if(CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
+						response.setSuccess(true);
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}else{
+						response.setSuccess(false);
+						response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+						response.setReturnMsg(rsp.getRtn_msg());
+					}
 				}
 				return response;
 			} else {
@@ -511,8 +562,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			return response;
 		} catch (ApiException e) {
 			response.setSuccess(false);
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("接口调用异常");
+			response.setReturnCode(RSInvokeErrorEnum.API_ERROR.returnCode);
+			response.setReturnMsg(RSInvokeErrorEnum.API_ERROR.returnMsg);
 			log.error("userInitiativeRepament方法((主动还款)调用异常,参数UserInitiativeRepamentRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -548,11 +599,17 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnCode(rsp.getErrorCode());
 					response.setReturnMsg(errorMsg);
 				} else {
-					response.setSuccess(true);
 					response.setOperateStatus(rsp.getIs_success());
-					rop2QueryUserInitiativeRepaymentResponse(response,rsp);
-					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					if(CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
+						rop2QueryUserInitiativeRepaymentResponse(response,rsp);
+						response.setSuccess(true);
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}else{
+						response.setSuccess(false);
+						response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+						response.setReturnMsg(rsp.getRtn_msg());
+					}
 				}
 				return response;
 			} else {
@@ -564,8 +621,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			return response;
 		} catch (ApiException e) {
 			response.setSuccess(false);
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("接口调用异常");
+			response.setReturnCode(RSInvokeErrorEnum.API_ERROR.returnCode);
+			response.setReturnMsg(RSInvokeErrorEnum.API_ERROR.returnMsg);
 			log.error("queryUserInitiativeRepayment方法(查询主动还款)调用异常,参数QueryUserInitiativeRepaymentRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -633,8 +690,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			return response;
 		} catch (ApiException e) {
 			response.setSuccess(false);
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("接口调用异常");
+			response.setReturnCode(RSInvokeErrorEnum.API_ERROR.returnCode);
+			response.setReturnMsg(RSInvokeErrorEnum.API_ERROR.returnMsg);
 			log.error("queryLoanApply方法(查询贷款订单状态)调用异常,参数QueryLoanApplyRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setSuccess(false);
@@ -689,10 +746,17 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					response.setReturnCode(rsp.getErrorCode());
 					response.setReturnMsg(errorMsg);
 				} else {
-					response.setSuccess(true);
-					rop2QueryUserRepaymentResponse(response,rsp);
-					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					response.setOperateStatus(rsp.getIs_success());
+					if(CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
+						rop2QueryUserRepaymentResponse(response,rsp);
+						response.setSuccess(true);
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}else{
+						response.setSuccess(false);
+						response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+						response.setReturnMsg(rsp.getRtn_msg());
+					}
 				}
 				return response;
 			} else {
@@ -704,8 +768,8 @@ public class RSCreditManagerImpl implements RSCreditManager {
 			return response;
 		} catch (ApiException e) {
 			response.setSuccess(false);
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg("接口调用异常");
+			response.setReturnCode(RSInvokeErrorEnum.API_ERROR.returnCode);
+			response.setReturnMsg(RSInvokeErrorEnum.API_ERROR.returnMsg);
 			log.error("queryUserRepayment方法(查询贷款的还款状态及历史)调用异常,参数QueryUserRepaymentRequest:"+Tools.gsonToString(request),e);
 		} catch (Exception e) {
 			response.setSuccess(false);
