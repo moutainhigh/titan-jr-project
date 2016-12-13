@@ -1955,13 +1955,18 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						titanOrderService.saveOrderException(orderExceptionDTO);
 					}
 				   
-				    transOrderDTO.setPayeemerchant(repairTransferDTO.getPayeemerchant());
-				    transOrderDTO.setUserorderid(repairTransferDTO.getUserorderid());
-				    transOrderDTO.setUserrelateid(repairTransferDTO.getUserrelateid());
-				    transOrderDTO.setCreator(repairTransferDTO.getCreator());
-				    transOrderDTO.setPayorderno(repairTransferDTO.getPayorderno());
-				    transOrderDTO.setNotifyUrl(repairTransferDTO.getNotifyUrl());
-				    transOrderDTO.setBusinessordercode(repairTransferDTO.getBusinessordercode());
+					TransOrderRequest transOrderRequest = new TransOrderRequest();
+					transOrderRequest.setUserorderid(repairTransferDTO.getUserorderid());
+					transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
+					
+					
+//				    transOrderDTO.setPayeemerchant(repairTransferDTO.getPayeemerchant());
+//				    transOrderDTO.setUserorderid(repairTransferDTO.getUserorderid());
+//				    transOrderDTO.setUserrelateid(repairTransferDTO.getUserrelateid());
+//				    transOrderDTO.setCreator(repairTransferDTO.getCreator());
+//				    transOrderDTO.setPayorderno(repairTransferDTO.getPayorderno());
+//				    transOrderDTO.setNotifyUrl(repairTransferDTO.getNotifyUrl());
+//				    transOrderDTO.setBusinessordercode(repairTransferDTO.getBusinessordercode());
 				    log.info("回调:"+JSONSerializer.toJSON(transOrderDTO));
 				    titanFinancialTradeService.confirmFinance(transOrderDTO);
 				    
