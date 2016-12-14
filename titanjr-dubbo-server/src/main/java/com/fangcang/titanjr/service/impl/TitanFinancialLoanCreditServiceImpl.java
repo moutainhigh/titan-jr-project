@@ -833,7 +833,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		updateLoanCreditOrderParam.setStatus(notifyRequest.getStatus());
 		
 		try {
-			if(notifyRequest.getStatus()==5){
+			if(notifyRequest.getStatus()==AuditResultEnum.REVIEW_PASS.getStatus()){
 				//通过
 				updateLoanCreditOrderParam.setLastAuditTime(now);
 			}else{
