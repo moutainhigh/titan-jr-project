@@ -56,7 +56,7 @@ public class TitanLoanController extends BaseController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/notify")
+	@RequestMapping(value = "/notify", produces = {"application/json;charset=UTF-8"})
 	public String loanNotify(LoanNotifyReq req) 
 	{
 		Map<String, Object> result = new HashMap<String, Object>();
