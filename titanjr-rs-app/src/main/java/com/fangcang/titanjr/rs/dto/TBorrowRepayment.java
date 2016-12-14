@@ -216,7 +216,7 @@ public class TBorrowRepayment implements Serializable {
 	 */
 	private String useriseffective;
 	/**
-	 * 用户扣款状态
+	 * 用户扣款状态:0未扣款,1全部还款成功,2还款失败,4部分还款成功
 	 */
 	private String userstatusid;
 	
