@@ -11,7 +11,7 @@ public class LoanRepaymentBean implements java.io.Serializable
 	//還款單號
 	private String orderNo;
 	//還款日期
-	private Date repaymentDate;
+	private String repaymentDate;
 	//還款總金額
 	private long repaymentTotalAmount;
 	//還款本金
@@ -27,10 +27,10 @@ public class LoanRepaymentBean implements java.io.Serializable
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
 	}
-	public Date getRepaymentDate() {
+	public String getRepaymentDate() {
 		return repaymentDate;
 	}
-	public void setRepaymentDate(Date repaymentDate) {
+	public void setRepaymentDate(String repaymentDate) {
 		this.repaymentDate = repaymentDate;
 	}
 	public long getRepaymentTotalAmount() {

@@ -21,6 +21,7 @@ import com.fangcang.titanjr.entity.LoanPersonEnsure;
 import com.fangcang.titanjr.entity.LoanRoomPackSpec;
 import com.fangcang.titanjr.rs.dto.TUserArepayment;
 import com.fangcang.util.DateUtil;
+import com.fangcang.util.StringUtil;
 
 public final class LoanTypeConvertUtil {
 
@@ -41,7 +42,7 @@ public final class LoanTypeConvertUtil {
 				.getActiveoverdueinterest()));
 
 		// 计算还款总额
-		BigDecimal totalAmount = new BigDecimal(arepayment.getActiveinterest());
+		BigDecimal totalAmount = new BigDecimal(arepayment.getActivecapital());
 		totalAmount = totalAmount.add(repaymentInterest);
 
 		repaymentBean.setRepaymentTotalAmount(totalAmount.longValue());
@@ -49,7 +50,11 @@ public final class LoanTypeConvertUtil {
 				.getActivecapital()));
 		repaymentBean.setRepaymentInterest(repaymentInterest.longValue());
 
-		// repaymentBean.setRepaymentDate(arepayment.getActiverepaymentdate());
+		if (StringUtil.isValidString(arepayment.getActiverepaymentdate())) {
+
+			repaymentBean
+					.setRepaymentDate(arepayment.getActiverepaymentdate());
+		}
 
 		return repaymentBean;
 	}
@@ -81,10 +86,15 @@ public final class LoanTypeConvertUtil {
 		}
 
 		LoanApplyOrderBean applyOrderBean = new LoanApplyOrderBean();
-		applyOrderBean.setActualAmount("" + loanApplyOrder.getActualAmount());
+		if (loanApplyOrder.getActualAmount() != null) {
+			applyOrderBean.setActualAmount(""
+					+ loanApplyOrder.getActualAmount());
+		}
 		applyOrderBean.setActualRepaymentDate(loanApplyOrder
 				.getActualRepaymentDate());
-		applyOrderBean.setAmount("" + loanApplyOrder.getAmount());
+		if (loanApplyOrder.getAmount() != null) {
+			applyOrderBean.setAmount("" + loanApplyOrder.getAmount());
+		}
 		applyOrderBean.setCreateTime(loanApplyOrder.getCreateTime());
 		applyOrderBean.setCreditOrderNo(loanApplyOrder.getCreditOrderNo());
 		applyOrderBean.setErrorMsg(loanApplyOrder.getErrorMsg());

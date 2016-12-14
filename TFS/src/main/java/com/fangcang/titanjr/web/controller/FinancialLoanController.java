@@ -20,9 +20,13 @@ import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.dto.request.CancelLoanRequest;
+import com.fangcang.titanjr.dto.request.GetHistoryRepaymentListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.request.GetOrgLoanStatInfoRequest;
+import com.fangcang.titanjr.dto.response.CancelLoanResponse;
+import com.fangcang.titanjr.dto.response.GetHistoryRepaymentListResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoListResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoResponse;
 import com.fangcang.titanjr.dto.response.GetOrgLoanStatInfoResponse;
@@ -60,8 +64,9 @@ public class FinancialLoanController extends BaseController {
 		initDataMap.put("loan-all-status", LoanOrderStatusEnum.values());
 		initDataMap.put("loan-all-orderby", "createTime,status");
 
-		initDataMap.put("loan-audit-status",
-				new LoanOrderStatusEnum[] { LoanOrderStatusEnum.LOAN_REQ_ING , LoanOrderStatusEnum.LENDING_ING });
+		initDataMap.put("loan-audit-status", new LoanOrderStatusEnum[] {
+				LoanOrderStatusEnum.LOAN_REQ_ING,
+				LoanOrderStatusEnum.LENDING_ING });
 		initDataMap.put("loan-audit-orderby", "createTime");
 
 		initDataMap.put("loan-over-status",
@@ -80,7 +85,7 @@ public class FinancialLoanController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getLoanDetailsInfo", method = RequestMethod.GET)
-	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
+	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_LOAN_42 })
 	public String getLoanDetailsInfo(String orderNo, Model model) {
 		if (!StringUtil.isValidString(orderNo)) {
 			log.error("loan detail orderNo is null");
@@ -100,11 +105,10 @@ public class FinancialLoanController extends BaseController {
 			model.addAttribute("errormsg", "查询贷款信息失败，请稍后再试!");
 			return "error";
 		}
-		
+
 		Object pageKey = initDataMap.get(String.valueOf(infoResponse
 				.getApplyOrderInfo().getProductType()));
-		if(pageKey == null || "".equals(pageKey))
-		{
+		if (pageKey == null || "".equals(pageKey)) {
 			log.error("product type pageKey is null");
 			model.addAttribute("errormsg", "产品类型不支持查看详情，请确认！");
 			return "error";
@@ -115,13 +119,32 @@ public class FinancialLoanController extends BaseController {
 					.getLoanSpec());
 		}
 
-		return "/loan/product-info/"
-				+ pageKey;
+		return "/loan/product-info/" + pageKey;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getRepaymentList", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_LOAN_42 })
+	public String getRepaymentList(String orderNo) {
+		log.info("get repayment List info ");
+
+		GetHistoryRepaymentListRequest listRequest = new GetHistoryRepaymentListRequest();
+		listRequest.setOrderNo(orderNo);
+		listRequest.setOrgCode(this.getUserId());
+
+		GetHistoryRepaymentListResponse listResponse = financialLoanService
+				.getHistoryRepaymentList(listRequest);
+
+		log.info("repayment List = "
+				+ JsonConversionTool.toJson(listResponse
+						.getLoanRepaymentInfos()));
+
+		return toJson(listResponse.getLoanRepaymentInfos());
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/loanStatInfo", method = RequestMethod.GET)
-	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
+	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_LOAN_42 })
 	public String getLoanStatInfo() {
 		log.info("get loan stat info ");
 		GetOrgLoanStatInfoRequest req = new GetOrgLoanStatInfoRequest();
@@ -136,9 +159,36 @@ public class FinancialLoanController extends BaseController {
 
 		return toJson(loanStatInfoResponse.getOrgLoanStatInfo());
 	}
+	
+	
+	@ResponseBody
+	@RequestMapping(value = "/stopLoan", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_LOAN_42 })
+	public String stopLoan(String orderNo) 
+	{
+		log.info("stop loan orderNo=" + orderNo);
+		
+		CancelLoanRequest req = new CancelLoanRequest();
+		req.setOrderNo(orderNo);
+		req.setOrgCode(this.getUserId());
+		CancelLoanResponse loanResponse = financialLoanService.cancelLoan(req);
+		
+		log.info("stopLoan = "
+				+ JsonConversionTool.toJson(loanResponse));
+		
+		if(loanResponse != null && loanResponse.isResult())
+		{
+			putSuccess();
+		}else{
+			putSysError("取消贷款单失败，请稍后再试！");
+		}
 
+		return toJson();
+	}
+
+	
 	@RequestMapping(value = "/getLoanInfoList", method = RequestMethod.GET)
-	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
+	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_LOAN_42 })
 	public String getLoanInfoList(LoanQueryConditions loanQueryConditions,
 			Model model) {
 
@@ -148,7 +198,7 @@ public class FinancialLoanController extends BaseController {
 			model.addAttribute("errormsg", "错误的查询方式，请确认!");
 			return "error";
 		}
-		
+
 		GetLoanOrderInfoListRequest req = new GetLoanOrderInfoListRequest();
 
 		// 设置查询条件
@@ -177,11 +227,11 @@ public class FinancialLoanController extends BaseController {
 			req.setProductEnum(LoanProductEnum.getEnumByKey(Integer
 					.parseInt(loanQueryConditions.getProductType())));
 		}
-		//按照套路给查询分配过滤的状态
+		// 按照套路给查询分配过滤的状态
 		List<LoanOrderStatusEnum> statusList = new ArrayList<LoanOrderStatusEnum>(
 				Arrays.asList((LoanOrderStatusEnum[]) initDataMap
 						.get(loanQueryConditions.getPageKey() + "-status")));
-		//如果页面指定了要查询的状态，那么就需要按照页面的要求来
+		// 如果页面指定了要查询的状态，那么就需要按照页面的要求来
 		if (StringUtil.isValidString(loanQueryConditions.getLoanStatus())) {
 			LoanOrderStatusEnum tempEnum = LoanOrderStatusEnum
 					.getEnumByStatus(Integer.parseInt(loanQueryConditions

@@ -25,6 +25,7 @@
         <result property="repaymentPrincipal" column="repaymentprincipal"/>
         <result property="repaymentInterest" column="repaymentinterest"/>
         <result property="shouldCapital" column="shouldcapital"/>
+        <result property="orderid" column="orderid"/>
         <result property="shouldInterest" column="shouldinterest"/>
     </resultMap>
     
@@ -74,6 +75,7 @@
         `repaymentprincipal`,
         `repaymentinterest`,
         `shouldcapital`,
+        `orderid`,
         `shouldinterest`
         from t_loan_order
         <where>

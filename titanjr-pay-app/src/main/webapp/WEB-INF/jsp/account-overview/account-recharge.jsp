@@ -300,7 +300,8 @@ function confirmPayResult(){
                       /*  new top.Tip({msg: data.msg, type: 1, time: 1000}); */
                        top.removeIframeDialog();
                    }, 1000);
-                   $("#flashPage").attr('action' , getRootPath()+"/account/overview-main.shtml");
+                   
+                   	$("#flashPage").attr('action' , $('#right_con_frm')[0].contentWindow.location.href);
                    $("#flashPage").submit();
         	   }
         	}

@@ -85,10 +85,13 @@
 						<c:if test="${loanInfoItem.status==7}">
 							已结清
 						</c:if>
+						<c:if test="${loanInfoItem.status==8}">
+							已撤銷
+						</c:if>
 					</td>
 					<td class=""><a class="blue decorationUnderline m_r10"
-						href="<%=basePath%>/loan/getLoanDetailsInfo.shtml?orderNo=${loanInfoItem.orderNo}">详情</a> <a
-						class="blue decorationUnderline J_revocation">撤销申请</a></td>
+						href="<%=basePath%>/loan/getLoanDetailsInfo.shtml?orderNo=${loanInfoItem.orderNo}">详情</a>
+						 <a class="blue decorationUnderline J_revocation" orderNo="${loanInfoItem.orderNo}" href="javascript:void(0)">撤销申请</a></td>
 				</tr>
 			</c:forEach>
 		</table>
@@ -121,4 +124,45 @@
 			return false;
 		}
 	});
+	
+	
+	//撤销申请
+	$('.J_revocation') .on( 'click',
+		function() {
+		
+			var orderNo = $(this).attr("orderNo");
+			
+			window.top.createConfirm({
+						title : '提示',
+						content : '<div style="font-size:15px;line-height:30px;">确定要撤销贷款申请吗？</div>',
+						okValue : '确定',
+						cancelValue : '取消',
+						ok : function() {
+						top.F.loading.show();
+						$.ajax({
+							type : 'get',
+							url :  '<%=basePath%>/loan/stopLoan.shtml'+"?DateTime="+new Date().getTime() +"&orderNo=" +orderNo,
+							dataType : 'json',
+							success : function(result) {
+									if(result.code==1){
+										setTimeout(function() {
+											new window.top.Tip({
+												msg : '贷款申请已撤销'
+											});
+										}, 1000);
+										
+									}else{
+										new top.Tip({msg : result.msg, type: 3, timer:2500});
+									}
+									
+									top.F.loading.hide();
+								}
+							});
+							 
+						},
+						cancel : function() {
+
+						}
+			});
+		});
 </script>

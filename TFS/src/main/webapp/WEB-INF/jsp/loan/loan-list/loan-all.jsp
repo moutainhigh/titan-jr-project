@@ -62,13 +62,13 @@
 				<tr>				
 					<td width="">1</td>
 					<td width=""><fmt:formatDate value="${loanInfoItem.createTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
-					<td class="tdr"><fmt:formatNumber value="${loanInfoItem.actualAmount/100}"  pattern="#,##0.00#" /></td>
+					<td class="tdr"><fmt:formatNumber value="${loanInfoItem.actualAmount  /100}"  pattern="#,##0.00#" /></td>
 					
-					<td class="tdr"><fmt:formatNumber value="${loanInfoItem.repaymentPrincipal/100}"  pattern="#,##0.00#" /></td>
+					<td class="tdr"><fmt:formatNumber value="${loanInfoItem.repaymentPrincipal /100}"  pattern="#,##0.00#" /></td>
 					
-					<td class="tdr"><fmt:formatNumber value="${loanInfoItem.repaymentInterest/100}"  pattern="#,##0.00#" /></td>
+					<td class="tdr"><fmt:formatNumber value="${loanInfoItem.repaymentInterest /100}"  pattern="#,##0.00#" /></td>
 					
-					<td class="tdr"><fmt:formatNumber value="${loanInfoItem.shouldCapital/100}"  pattern="#,##0.00#" /></td>
+					<td class="tdr"><fmt:formatNumber value="${loanInfoItem.shouldCapital /100}"  pattern="#,##0.00#" /></td>
 					<td></td>
 					<td width="" >
 						<c:if test="${loanInfoItem.productType==10001}">
@@ -110,8 +110,24 @@
 						<c:if test="${loanInfoItem.status==7}">
 							已结清
 						</c:if>
+						<c:if test="${loanInfoItem.status==8}">
+							已撤銷
+						</c:if>
 					</td>				
-					<td class=""><a class="blue decorationUnderline m_r10 " href="<%=basePath%>/loan/getLoanDetailsInfo.shtml?orderNo=${loanInfoItem.orderNo}">详情</a> </td>
+					<td class=""><a class="blue decorationUnderline m_r10 " href="<%=basePath%>/loan/getLoanDetailsInfo.shtml?orderNo=${loanInfoItem.orderNo}">详情</a> 
+					
+					
+						<c:if test="${loanInfoItem.status==1}">
+							 <a class="blue decorationUnderline J_revocation" orderNo="${loanInfoItem.orderNo}" href="javascript:void(0)">撤销申请</a>
+						</c:if>
+						<c:if test="${loanInfoItem.status==2 || loanInfoItem.status==3}">
+							<a class="blue decorationUnderline" href="<%=basePath%>/loan/repayment/repaymentPer.shtml?orderNo=${loanInfoItem.orderNo}">还款</a>
+						</c:if>
+						
+						
+					
+					
+					</td>
 				</tr>
 				</c:forEach>
 			</table>
@@ -146,5 +162,44 @@
 	});
 	
 	
+	//撤销申请
+	$('.J_revocation') .on( 'click',
+		function() {
+		
+			var orderNo = $(this).attr("orderNo");
+			
+			window.top.createConfirm({
+						title : '提示',
+						content : '<div style="font-size:15px;line-height:30px;">确定要撤销贷款申请吗？</div>',
+						okValue : '确定',
+						cancelValue : '取消',
+						ok : function() {
+						top.F.loading.show();
+						$.ajax({
+							type : 'get',
+							url :  '<%=basePath%>/loan/stopLoan.shtml'+"?DateTime="+new Date().getTime() +"&orderNo=" +orderNo,
+							dataType : 'json',
+							success : function(result) {
+									if(result.code==1){
+										setTimeout(function() {
+											new window.top.Tip({
+												msg : '贷款申请已撤销'
+											});
+										}, 1000);
+										
+									}else{
+										new top.Tip({msg : result.msg, type: 3, timer:2500});
+									}
+									
+									top.F.loading.hide();
+								}
+							});
+							 
+						},
+						cancel : function() {
+
+						}
+			});
+		});
 	
 </script>

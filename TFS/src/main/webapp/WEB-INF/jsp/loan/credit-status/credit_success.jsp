@@ -348,29 +348,7 @@
 			});
 		});
 		
-		//撤销申请
-		$('.J_revocation')
-				.on( 'click',
-						function() {
-							window.top.createConfirm({
-										title : '提示',
-										content : '<div style="font-size:15px;line-height:30px;">确定要撤销贷款申请吗？</div>',
-										okValue : '确定',
-										cancelValue : '取消',
-										ok : function() {
-											top.F.loading.show();
-											setTimeout(function() {
-												top.F.loading.hide();
-												new window.top.Tip({
-													msg : '贷款申请已撤销'
-												});
-											}, 1000)
-										},
-										cancel : function() {
-
-										}
-									});
-						})
+	
 	</script>
 </body>
 </html>

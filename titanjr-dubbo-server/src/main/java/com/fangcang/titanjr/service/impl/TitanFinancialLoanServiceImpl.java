@@ -77,6 +77,7 @@ import com.fangcang.titanjr.rs.request.QueryBorrowinfoRequest;
 import com.fangcang.titanjr.rs.request.QueryLoanApplyRequest;
 import com.fangcang.titanjr.rs.request.QueryUserInitiativeRepaymentRequest;
 import com.fangcang.titanjr.rs.request.RSFsFileUploadRequest;
+import com.fangcang.titanjr.rs.request.StopLoanRequest;
 import com.fangcang.titanjr.rs.request.UserInitiativeRepamentRequest;
 import com.fangcang.titanjr.rs.response.NewLoanApplyResponse;
 import com.fangcang.titanjr.rs.response.QueryCreditMerchantInfoResponse;
@@ -84,6 +85,7 @@ import com.fangcang.titanjr.rs.response.QueryBorrowinfoResponse;
 import com.fangcang.titanjr.rs.response.QueryLoanApplyResponse;
 import com.fangcang.titanjr.rs.response.QueryUserInitiativeRepaymentResponse;
 import com.fangcang.titanjr.rs.response.RSFsFileUploadResponse;
+import com.fangcang.titanjr.rs.response.StopLoanResponse;
 import com.fangcang.titanjr.rs.response.UserInitiativeRepamentResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
@@ -124,7 +126,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				response.putErrorResult("参数错误");
 				return response;
 			}
-			
+
 			LoanCreditOrder loanCreditOrder = new LoanCreditOrder();
 			loanCreditOrder.setOrgCode(req.getOrgCode());
 			List<LoanCreditOrder> loanCreditOrderList = loanCreditOrderDao
@@ -133,49 +135,53 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				throw new Exception("查询授信申请单失败");
 			}
 			loanCreditOrder = loanCreditOrderList.get(0);
-			
+
 			String loanCreditOrderNo = loanCreditOrder.getOrderNo();
-			if(!StringUtil.isValidString(loanCreditOrderNo)){
+			if (!StringUtil.isValidString(loanCreditOrderNo)) {
 				log.error("授信申请单位空");
 				response.putErrorResult("授信申请单位空");
 				return response;
 			}
-			
-			
+
 			QueryCreditMerchantInfoRequest qcrequest = new QueryCreditMerchantInfoRequest();
 			qcrequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
-			qcrequest.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+			qcrequest
+					.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
 			qcrequest.setUserid(req.getOrgCode());
 			qcrequest.setUserorderid(loanCreditOrderNo);
-			QueryCreditMerchantInfoResponse qcResponse = rsCreditManager.queryCreditMerchantInfo(qcrequest);			
-			
-			if(!qcResponse.isSuccess() || !StringUtil.isValidString(qcResponse.getCreditavailability())){
+			QueryCreditMerchantInfoResponse qcResponse = rsCreditManager
+					.queryCreditMerchantInfo(qcrequest);
+
+			if (!qcResponse.isSuccess()
+					|| !StringUtil.isValidString(qcResponse
+							.getCreditavailability())) {
 				log.error("授信申请查询失败");
 				response.putErrorResult("授信申请查询失败");
 				return response;
 			}
-			
-			String amount ="";
+
+			String amount = "";
 			LoanProductEnum productType = req.getProductType();
 			if (LoanProductEnum.ROOM_PACK.getCode() == productType.getCode()) {
 				LoanRoomPackSpecBean LoanSpecBean = (LoanRoomPackSpecBean) req
 						.getLcanSpec();
 				amount = LoanSpecBean.getAmount();
-			}else{
-				amount ="";
+			} else {
+				amount = "";
 			}
-			
-			boolean isEnough= new BigDecimal(qcResponse.getCreditavailability()).subtract(new BigDecimal(amount)).compareTo(BigDecimal.ZERO)==-1;
-			if(isEnough){
+
+			boolean isEnough = new BigDecimal(
+					qcResponse.getCreditavailability()).subtract(
+					new BigDecimal(amount)).compareTo(BigDecimal.ZERO) == -1;
+			if (isEnough) {
 				log.error("授信额度不足");
 				response.putErrorResult("授信额度不足");
 				return response;
 			}
-			
-			
+
 			String loanApplyOrderNo = "";
 			String contactNames = "";
-			
+
 			if (LoanProductEnum.ROOM_PACK.getCode() == productType.getCode()) {
 				LoanRoomPackSpecBean LoanSpecBean = (LoanRoomPackSpecBean) req
 						.getLcanSpec();
@@ -194,7 +200,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 			// 保存贷款申请单
 			boolean flag = saveLoanOrderBean(req.getLcanSpec(),
-					productType.getCode(), req.getOrgCode(),loanCreditOrderNo);
+					productType.getCode(), req.getOrgCode(), loanCreditOrderNo);
 			if (!flag) {
 				throw new Exception("保存订单失败");
 			}
@@ -389,7 +395,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 	}
 
 	private boolean saveLoanOrderBean(LoanSpecBean loanSpecBean, Integer type,
-			String orgCode,String creditNo) throws Exception {
+			String orgCode, String creditNo) throws Exception {
 		LoanApplyOrder loanApplyOrder = new LoanApplyOrder();
 		try {
 
@@ -410,13 +416,16 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 			loanApplyOrder.setCreateTime(new Date());
 			loanApplyOrder.setOrgCode(orgCode);
-			loanApplyOrder.setProductId(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+			loanApplyOrder
+					.setProductId(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
 			loanApplyOrder.setRateTmp(CommonConstant.RATE_TEMPLETE);
 			loanApplyOrder.setActualAmount(0L);
 			loanApplyOrder.setProductType(type);
 			loanApplyOrder.setRsorgId(orgCode);
-			loanApplyOrder.setRspId(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
-			loanApplyOrder.setStatus(LoanApplyOrderEnum.LoanOrderStatus.LOAN_APPLYING.status);
+			loanApplyOrder
+					.setRspId(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+			loanApplyOrder
+					.setStatus(LoanApplyOrderEnum.LoanOrderStatus.LOAN_APPLYING.status);
 			int row = loanOrderDao.saveLoanApplyOrder(loanApplyOrder);
 			if (row > 0) {
 				return true;
@@ -490,8 +499,42 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 	@Override
 	public CancelLoanResponse cancelLoan(CancelLoanRequest req) {
-		// TODO Auto-generated method stub
-		return null;
+
+		CancelLoanResponse loanResponse = new CancelLoanResponse();
+
+		if (req == null || !StringUtil.isValidString(req.getOrderNo())
+				|| !StringUtil.isValidString(req.getOrgCode())) {
+			log.error("request param is null [ orderNo = " + req.getOrderNo()
+					+ "  orgCode=" + req.getOrgCode() + "]");
+			loanResponse.putParamError();
+			return loanResponse;
+		}
+
+		StopLoanRequest request = new StopLoanRequest();
+		request.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+		request.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+		request.setUserorderid(req.getOrderNo());
+		request.setUserid(req.getOrgCode());
+		request.setOper(2);
+
+		StopLoanResponse response = rsCreditManager.stopLoan(request);
+
+		log.info("stop loan result " + JsonConversionTool.toJson(response));
+
+		if (response != null && response.isSuccess()) {
+			LoanApplyOrder applyOrder = getBaseLoanApplyInfo(req.getOrderNo(),
+					req.getOrgCode());
+			applyOrder.setStatus(LoanOrderStatusEnum.LOAN_UNDO.getKey());
+			loanOrderDao.updateLoanApplyOrder(applyOrder);
+			
+			loanResponse.putSuccess();
+
+			return loanResponse;
+		}
+
+		loanResponse.putErrorResult("stop loan fail!");
+
+		return loanResponse;
 	}
 
 	private LoanApplyOrder getBaseLoanApplyInfo(String orderNo, String orgCode) {
@@ -520,11 +563,11 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 					+ "  orgCode=" + orderNo + "]");
 			return;
 		}
-
+		// 查询贷款单信息
 		QueryLoanApplyRequest request = new QueryLoanApplyRequest();
 		request.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
 		request.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
-		request.setUserorderid(request.getUserorderid());
+		request.setUserorderid(orderNo);
 		request.setUserid(orgCode);
 
 		QueryLoanApplyResponse rsp = rsCreditManager.queryLoanApply(request);
@@ -533,14 +576,15 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 			log.error("query Loan Apply info fail.  [ orderNo = " + orderNo
 					+ "  orgCode=" + orgCode + "]");
-			return;
 		}
-		
+
+		log.info("query loan apply result " + JsonConversionTool.toJson(rsp));
+		// 查询贷款应还信息
 		QueryBorrowinfoRequest bReq = new QueryBorrowinfoRequest();
 		bReq.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
 		bReq.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
 		bReq.setUserid(orgCode);
-		bReq.setUserorderid(loanApplyOrder.getOrderid());
+		bReq.setUserorderid(orderNo);
 
 		QueryBorrowinfoResponse brsp = rsCreditManager.queryBorrowinfo(bReq);
 
@@ -548,28 +592,115 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 			log.error("query borrow info fail.  [ orderNo = " + orderNo
 					+ "  orgCode=" + orgCode + "]");
-			return;
 		}
-		
-		log.info("query loan apply result " + JsonConversionTool.toJson(rsp));
+
 		log.info("query borrow info result " + JsonConversionTool.toJson(brsp));
-		
-		TBorrowRepayment borrowRepayment = brsp.gettBorrowRepayment();
-		
-		// 表示逾期
-		if ("1".equals(borrowRepayment.getUseroverdueflag())) {
-			loanApplyOrder.setStatus(LoanOrderStatusEnum.LOAN_EXPIRY.getKey());
+
+		// 查询主动还款信息
+		QueryUserInitiativeRepaymentRequest ureq = new QueryUserInitiativeRepaymentRequest();
+		ureq.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+		ureq.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+		ureq.setUserid(orgCode);
+		ureq.setUserorderid(orderNo);
+		QueryUserInitiativeRepaymentResponse response = rsCreditManager
+				.queryUserInitiativeRepayment(ureq);
+
+		if (!response.isSuccess() || response.gettUserArepaymentList() == null) {
+
+			log.error("query User Initiative fail.  [ orderNo = " + orderNo
+					+ "  orgCode=" + orgCode + "]");
 		}
-		// 设置用户还款到期日
-		if (StringUtil.isValidString(borrowRepayment
-				.getUsershouldrepaymentdate())) {
-			try {
-				loanApplyOrder.setActualRepaymentDate(DateUtil.sdf
-						.parse(borrowRepayment.getUsershouldrepaymentdate()));
-			} catch (ParseException e) {
-				log.error("", e);
+
+		log.info("query User Initiative result "
+				+ JsonConversionTool.toJson(response));
+
+		TBorrowRepayment borrowRepayment = brsp.gettBorrowRepayment();
+
+		BigDecimal autoAmount = null;// 被自动扣款得本金
+		BigDecimal autoInterest = null;// 被自动扣款得利息
+
+		// 计算应还信息
+		if (borrowRepayment != null) {
+			BigDecimal interestAmount = new BigDecimal(
+					borrowRepayment.getUsershouldinterest());
+			interestAmount = interestAmount.add(new BigDecimal(borrowRepayment
+					.getUseroverduefine()).add(new BigDecimal(borrowRepayment
+					.getUseroverdueinterest())));
+
+			// 部分还款成功 或 全部还款成功,需计算出这个应还信息跟上一次得应还信息之间得差，作为自动扣款得金额
+			if ("4".equals(borrowRepayment.getUserstatusid())
+					|| "1".equals(borrowRepayment.getUserstatusid())) {
+
+				BigDecimal autoAmountTemp = new BigDecimal(
+						loanApplyOrder.getShouldCapital());
+				BigDecimal autoInterestTemp = new BigDecimal(
+						loanApplyOrder.getShouldInterest());
+
+				if (autoAmountTemp.longValue() > 0) {
+					autoAmount = autoAmountTemp.subtract(new BigDecimal(
+							borrowRepayment.getUsershouldcapital()));
+				}
+
+				if (autoInterestTemp.longValue() > 0) {
+					autoInterest = autoInterestTemp.subtract(interestAmount);
+				}
+			}
+
+			loanApplyOrder.setShouldCapital(Long.valueOf(borrowRepayment
+					.getUsershouldcapital()));
+			loanApplyOrder.setShouldInterest(interestAmount.longValue());
+
+			// 表示逾期
+			if ("1".equals(borrowRepayment.getUseroverdueflag())) {
+				loanApplyOrder.setStatus(LoanOrderStatusEnum.LOAN_EXPIRY
+						.getKey());
+			}
+
+			// 设置用户还款到期日
+			if (StringUtil.isValidString(borrowRepayment
+					.getUsershouldrepaymentdate())) {
+				try {
+					loanApplyOrder
+							.setActualRepaymentDate(DateUtil.sdf
+									.parse(borrowRepayment
+											.getUsershouldrepaymentdate()));
+				} catch (ParseException e) {
+					log.error("", e);
+				}
 			}
 		}
+
+		// 设置已还款信息
+		if (response.gettUserArepaymentList() != null
+				&& response.gettUserArepaymentList().size() > 0) {
+
+			BigDecimal arepayAmount = new BigDecimal(0);
+			BigDecimal arepayInterest = new BigDecimal(0);
+
+			for (TUserArepayment arepayment : response.gettUserArepaymentList()) {
+				arepayAmount = arepayAmount.add(new BigDecimal(arepayment
+						.getActivecapital()));
+				arepayInterest = arepayAmount.add(new BigDecimal(arepayment
+						.getActiveinterest()));
+
+				arepayInterest = arepayInterest.add(new BigDecimal(arepayment
+						.getActiveoverduefine()).add(new BigDecimal(arepayment
+						.getActiveoverdueinterest())));
+			}
+
+			// 加上主动扣款得金额
+			if (autoAmount != null) {
+				arepayAmount = arepayAmount.add(autoAmount);
+			}
+
+			// 加上主动扣款得利息
+			if (autoInterest != null) {
+				arepayInterest = arepayInterest.add(autoInterest);
+			}
+			loanApplyOrder.setRepaymentPrincipal(arepayAmount.longValue());
+			loanApplyOrder.setRepaymentInterest(arepayInterest.longValue());
+		}
+
 		// 融数方指定的特殊状态位，表示状态已经结束
 		if ("贷款已结束".equals(rsp.getStatustring())) {
 			loanApplyOrder.setStatus(LoanOrderStatusEnum.LOAN_FINISH.getKey());
@@ -587,7 +718,8 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		if (StringUtil.isValidString(rsp.getLoanmoney())) {
 			loanApplyOrder.setActualAmount(Long.parseLong(rsp.getLoanmoney()));
 		}
-	
+
+		loanOrderDao.updateLoanApplyOrder(loanApplyOrder);
 	}
 
 	/**
@@ -620,7 +752,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		bReq.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
 		bReq.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
 		bReq.setUserid(req.getOrgCode());
-		bReq.setUserorderid(loanApplyOrder.getOrderid());
+		bReq.setUserorderid(req.getOrderNo());
 
 		QueryBorrowinfoResponse brsp = rsCreditManager.queryBorrowinfo(bReq);
 
@@ -635,14 +767,35 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		BigDecimal amount = new BigDecimal(req.getAmount());
 
 		TBorrowRepayment repayment = brsp.gettBorrowRepayment();
-		loanResponse.setRealoverdueinterestAmount(amountCompute(amount,
-				new BigDecimal(repayment.getUseroverdueinterest())));// 逾期利息还款金额
-		loanResponse.setRealoverduecapitalAmount(amountCompute(amount,
-				new BigDecimal(repayment.getUseroverduefine())));// 逾期本金还款金额
-		loanResponse.setRealinterestAmount(amountCompute(amount,
-				new BigDecimal(repayment.getUsershouldinterest())));// 利息还款金额
-		loanResponse.setRealcapitalAmount(amountCompute(amount, new BigDecimal(
-				repayment.getUsershouldcapital())));// 本金
+
+		BigDecimal realoverduecapitalAmount = amountCompute(amount,
+				new BigDecimal(repayment.getUseroverduefine()));
+		amount = amount.subtract(realoverduecapitalAmount);
+		loanResponse.setRealoverduecapitalAmount(realoverduecapitalAmount
+				.longValue());// 逾期罚金还款金额
+
+		BigDecimal realoverdueinterestAmount = amountCompute(amount,
+				new BigDecimal(repayment.getUseroverdueinterest()));
+		amount = amount.subtract(realoverdueinterestAmount);
+		loanResponse.setRealoverdueinterestAmount(realoverdueinterestAmount
+				.longValue());// 逾期利息还款金额
+
+		BigDecimal usershouldinterest = amountCompute(amount, new BigDecimal(
+				repayment.getUsershouldinterest()));
+		amount = amount.subtract(usershouldinterest);
+		loanResponse.setRealinterestAmount(usershouldinterest.longValue());// 利息还款金额
+
+		BigDecimal usershouldcapital = amountCompute(amount, new BigDecimal(
+				repayment.getUsershouldcapital()));
+		amount = amount.subtract(usershouldcapital);
+		loanResponse.setRealcapitalAmount(usershouldcapital.longValue());// 本金
+
+		loanResponse.setUseroverduefine(repayment.getUseroverduefine());
+		loanResponse.setUseroverdueinterest(repayment.getUseroverdueinterest());
+		loanResponse.setUsershouldcapital(repayment.getUsershouldcapital());
+		loanResponse.setUsershouldinterest(repayment.getUsershouldinterest());
+
+		loanResponse.putSuccess();
 
 		return loanResponse;
 	}
@@ -654,25 +807,27 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 	 * @param bAmount
 	 * @return
 	 */
-	private Long amountCompute(BigDecimal amount, BigDecimal bAmount) {
-		// 如果金额已经等于小于0了，那么标示已经被分配完毕
-		if (amount.longValue() <= 0) {
-			return 0l;
+	private BigDecimal amountCompute(BigDecimal amount, BigDecimal bAmount) {
+
+		if (bAmount.longValue() <= 0 || amount.longValue() <= 0) {
+			return new BigDecimal(0);
 		}
+
 		// 为分配完毕则继续减去
 		BigDecimal tempBigDecimal = amount.subtract(bAmount);
 
 		// 如果减去后小于等于0，那么标示剩余的金额分配了
 		if (tempBigDecimal.longValue() <= 0) {
-			Long ramount = amount.longValue();
-			amount = new BigDecimal(0);
-			return ramount;
+			return amount;
 		}
-		// 标示还有剩下
-		if (tempBigDecimal.longValue() > 0) {
-			amount = tempBigDecimal;
+		return bAmount;
+	}
+
+	private String convetRepaymentAmount(long amount) {
+		if (amount <= 0) {
+			return null;
 		}
-		return bAmount.longValue();
+		return String.valueOf(amount);
 	}
 
 	@Override
@@ -692,6 +847,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		request.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
 		request.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
 		request.setUserid(req.getOrgCode());
+		request.setUserorderid(req.getOrderNo());
 
 		LoanApplyOrder loanApplyOrder = getBaseLoanApplyInfo(req.getOrderNo(),
 				req.getOrgCode());
@@ -716,14 +872,17 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			return loanResponse;
 		}
 
-		request.setRealoverdueinterestamount(""
-				+ computeResponse.getRealoverdueinterestAmount());// 逾期利息还款金额
-		request.setRealoverduecapitalamount(""
-				+ computeResponse.getRealoverduecapitalAmount());// 逾期本金还款金额
-		request.setRealinterestamount(""
-				+ computeResponse.getRealinterestAmount());// 利息还款金额
-		request.setRealcapitalamount(""
-				+ computeResponse.getRealcapitalAmount());// 本金
+		request.setRealoverduecapitalamount(convetRepaymentAmount(computeResponse
+				.getRealoverduecapitalAmount()));// 逾期本金还款金额
+
+		request.setRealoverdueinterestamount(convetRepaymentAmount(+computeResponse
+				.getRealoverdueinterestAmount()));// 逾期利息还款金额
+
+		request.setRealinterestamount(convetRepaymentAmount(+computeResponse
+				.getRealinterestAmount()));// 利息还款金额
+
+		request.setRealcapitalamount(convetRepaymentAmount(+computeResponse
+				.getRealcapitalAmount()));// 本金
 
 		UserInitiativeRepamentResponse response = rsCreditManager
 				.userInitiativeRepament(request);
@@ -737,6 +896,10 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			loanResponse.putSysError();
 			return loanResponse;
 		}
+
+		this.synLoanOrderInfo(req.getOrderNo(), req.getOrgCode());
+		loanResponse.putSuccess();
+
 		return loanResponse;
 	}
 
@@ -805,6 +968,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 	private LoanQueryConditions getLoanQueryConditions(
 			GetLoanOrderInfoListRequest req) {
 		LoanQueryConditions conditions = new LoanQueryConditions();
+		conditions.setOrgCode(req.getOrgCode());
 
 		conditions.setBeginActualRepaymentDate(DateUtil
 				.getDayBeginTime(convertDateUtil(req
@@ -970,22 +1134,26 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				.queryUserInitiativeRepayment(request);
 
 		LoanRepaymentBean repaymentBean = null;
-
+		List<LoanRepaymentBean> loanRepaymentInfos = new ArrayList<LoanRepaymentBean>();
 		// 实际贷款金额拿出来，然后按照每次还款减去对应的还款本金，计算出每次还款后剩下的本金
 		BigDecimal actualAmount = new BigDecimal(
 				loanApplyOrder.getActualAmount());
 
 		for (TUserArepayment arepayment : response.gettUserArepaymentList()) {
-			repaymentBean = LoanTypeConvertUtil
-					.getLoanRepaymentBean(arepayment);
+			if ("1".equals(arepayment.getStatusid())
+					|| "4".equals(arepayment.getStatusid())) {
+				repaymentBean = LoanTypeConvertUtil
+						.getLoanRepaymentBean(arepayment);
 
-			repaymentBean.setOrderNo(loanApplyOrder.getOrderNo());
-			actualAmount = actualAmount.subtract(new BigDecimal(repaymentBean
-					.getRepaymentAmount()));
+				repaymentBean.setOrderNo(loanApplyOrder.getOrderNo());
+				actualAmount = actualAmount.subtract(new BigDecimal(
+						repaymentBean.getRepaymentAmount()));
 
-			repaymentBean.setRemainAmount(actualAmount.longValue());
+				repaymentBean.setRemainAmount(actualAmount.longValue());
+				loanRepaymentInfos.add(repaymentBean);
+			}
 		}
-
+		listResponse.setLoanRepaymentInfos(loanRepaymentInfos);
 		listResponse.setResult(true);
 		return listResponse;
 	}

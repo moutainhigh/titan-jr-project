@@ -100,10 +100,13 @@
 					<c:if test="${loanInfoItem.status==7}">
 						已结清
 					</c:if>
+					<c:if test="${loanInfoItem.status==8}">
+							已撤銷
+						</c:if>
 				</td>
 				<td class=""><a class="blue decorationUnderline m_r10"
 					href="<%=basePath%>/loan/getLoanDetailsInfo.shtml?orderNo=${loanInfoItem.orderNo}">详情</a> <a
-					class="blue decorationUnderline" href="泰坦金融-我的贷款首页-还款.html">还款</a></td>
+					class="blue decorationUnderline" href="<%=basePath%>/loan/repayment/repaymentPer.shtml?orderNo=${loanInfoItem.orderNo}">还款</a></td>
 			</tr>
 		</c:forEach>
 	</table>

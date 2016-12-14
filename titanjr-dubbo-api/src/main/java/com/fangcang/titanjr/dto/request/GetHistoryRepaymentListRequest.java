@@ -4,8 +4,13 @@ package com.fangcang.titanjr.dto.request;
  * @author wengxitao
  *
  */
-public class GetHistoryRepaymentListRequest {
+public class GetHistoryRepaymentListRequest implements java.io.Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5692654155074493850L;
+
 	private String orgCode;
 	
 	private String orderNo;

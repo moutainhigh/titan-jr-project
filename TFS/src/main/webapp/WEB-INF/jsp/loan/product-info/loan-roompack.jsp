@@ -75,12 +75,12 @@
 				<span class="w_105">还款记录</span>
 				<span class="w_240">还款到期日：<fmt:formatDate value="${loanOrderInfo.actualRepaymentDate}" pattern="yyyy-MM-dd" /></span>
 				<span class="w_240">剩余待还本息：<fmt:formatNumber value="${loanOrderInfo.shouldCapital/100}"  pattern="#,##0.00#" /> 元</span>		
-				<a class="btn" href="泰坦金融-我的贷款首页-还款1.html">马上还款</a>
+				<a class="btn" href="<%=basePath%>/loan/repayment/repaymentPer.shtml?orderNo=${loanOrderInfo.orderNo}">马上还款</a>
 			</div>
 		</c:if>
 		<c:if test="${loanOrderInfo.status==6 || loanOrderInfo.status==7 || loanOrderInfo.status==3}">
 		<div class="RC_c1 RC_c2 clearfix">
-			<table cellpadding="0" cellspacing="0" width="900">
+			<table cellpadding="0" cellspacing="0" width="900" id="repaymentList">
 				<colgroup>
 					<col width="85">
 					<col width="">
@@ -97,38 +97,7 @@
 					<td class="tdr"><i>付利息（元）</i></td>
 					<td class="tdr"><i>剩余本金（元）</i></td>
 				</tr>
-				<tr>
-					<td>1</td>
-					<td>2016-09-10</td>
-					<td class="tdr">8,345.00</td>
-					<td class="tdr">8,345.00</td>
-					<td class="tdr">345.00</td>
-					<td class="tdr">8,345.00</td>
-				</tr>
-				<tr>
-					<td>2</td>
-					<td>2016-09-10</td>
-					<td class="tdr">8,345.00</td>
-					<td class="tdr">8,345.00</td>
-					<td class="tdr">345.00</td>
-					<td class="tdr">8,345.00</td>
-				</tr>
-				<tr>
-					<td>3</td>
-					<td>2016-09-10</td>
-					<td class="tdr">8,345.00</td>
-					<td class="tdr">8,345.00</td>
-					<td class="tdr">345.00</td>
-					<td class="tdr">8,345.00</td>
-				</tr>
-				<tr>
-					<td>4</td>
-					<td>2016-09-10</td>
-					<td class="tdr">8,345.00</td>
-					<td class="tdr">8,345.00</td>
-					<td class="tdr">345.00</td>
-					<td class="tdr">8,345.00</td>
-				</tr>
+				
 			</table>
 		</div>
 		</c:if>
@@ -172,7 +141,7 @@ var staticPath  ="http://image.fangcang.com/upload/images/titanjr/loan_apply/${J
 	 		var imgsrcs = imgList.split(",");
 	 		for(var i=0;i<imgsrcs.length;i++)
 	 		{
-	 			if(imgsrcs[i]!= null)
+	 			if(imgsrcs[i]!= null &&  imgsrcs[i] != '')
 	 			{
 	 				var src = staticPath+ imgsrcs[i];
 	 				$('#imgList').append('<dd class="TFSimgOnBig"><div class="dd_img"><img src="'+src+'">'
@@ -180,6 +149,27 @@ var staticPath  ="http://image.fangcang.com/upload/images/titanjr/loan_apply/${J
 	 			}
 	 		}
 	 	}
+	 	
+	 	
+	 	$.ajax({
+			dataType : 'json',		      
+	        url : '<%=basePath%>/loan/getRepaymentList.shtml?date=' + new Date().getTime() +'&orderNo=${loanOrderInfo.orderNo}' ,
+	        success:function(data){
+	        	if(data)
+	        	{
+	        		var tr="";
+	        		for(var i=0;i<data.length;i++)
+	        		{
+	        			tr='<tr><td>'+(i+1)+'</td><td>'+data[i]['repaymentDate']+'</td><td class="tdr">'
+	        			+formatCurrency(data[i]['repaymentTotalAmount']/100)+'</td><td class="tdr">'
+	        			+formatCurrency(data[i]['repaymentAmount']/100)+'</td><td class="tdr">'
+	        			+formatCurrency(data[i]['repaymentInterest']/100)+'</td><td class="tdr">'
+	        			+formatCurrency(data[i]['remainAmount']/100)+'</td></tr>';
+	        			$('#repaymentList').append(tr);
+	        		}
+	        	}
+	        }
+		});
 	 	
 	 
         function bigImgShow(){              
