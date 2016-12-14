@@ -75,12 +75,6 @@ public class TitanRefundController extends BaseController{
 			
 		}
 		
-		//查询单
-		
-		//验证userid //验证tfsUserid
-		
-		//验证密码
-		
 		
 		RefundResponse response = titanRefundService.orderRefund(refundRequest);
 		return JsonUtil.objectToJson(response);

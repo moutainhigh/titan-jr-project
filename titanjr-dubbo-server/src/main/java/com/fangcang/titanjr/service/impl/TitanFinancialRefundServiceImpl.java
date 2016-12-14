@@ -216,7 +216,7 @@ public class TitanFinancialRefundServiceImpl implements
 			refundOrderRequest.setOrderTime(refundRequest.getOrderTime());
 			RefundOrderResponse refundOrderResponse = this.addRefundOrder(refundOrderRequest);
 			if(!refundOrderResponse.isResult()){
-				log.error("下退款单失败");
+				log.error("下退款单失败"+refundOrderResponse.getReturnMessage());
 				reverseTransfer(accountTransfer, refundRequest);
 				reverseTransfer(balanceAccountTransfer, refundRequest);
 				//记录退款失败单

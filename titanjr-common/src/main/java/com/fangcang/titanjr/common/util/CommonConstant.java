@@ -153,4 +153,7 @@ public class CommonConstant {
     public static final String REFUND_IN_PROCESS="0";
 	
 	public static final String IS_BIND_CARD = "0";
+	
+	//商户有效
+	public static final Integer IS_ACTIVE = 1;
 }

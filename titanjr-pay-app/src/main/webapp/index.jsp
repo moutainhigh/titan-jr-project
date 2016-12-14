@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%-- <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <html>
 <head>
 <script type="text/javascript" src="js/titanpay.js"></script>
@@ -12,7 +12,6 @@
 
 		var pub = "d8b6e03dd8f9bf45157f0d14aedf9a696665641da90cab5114a22b7f6c711f22429c32c99ab76e3ce74de00145bcd50b9d2e7c60cd97a4979a5d0ce4ead9ba61baca1495758d69cc1f76e69db43f1ef1f9c33cd2edb8c726ed17c297a7b9fa3f18e58aef9d3f33f8431a41cc3c0ca7bc5151d33a8691e6506e0439363aec0063";
 		var expo = "10001";
-
 // 		titanPayObj.initTitanPay();
 
 	 titanPayObj.initTitanPay();
@@ -48,7 +47,7 @@
 			bussCode : "566322565",//业务单号
 		};
 		var refundInfo ={
-				orderNo:"20161114123859600268",
+				orderNo:"2016111412385960025",
 				userId:"TJM10000109",
 				tfsUserid:"10062"
 		};
@@ -65,12 +64,12 @@
 	}
 </script>
 </html> 
- 
+  --%>
 
 
 
 <!-- 对外收银台的对接 -->
-<%--  <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+   <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>测试收银台</title>
@@ -80,8 +79,8 @@
     <script>
         $(document).ready(function () {
             var configObj = {};
-            configObj.module = "96508c28878b7bf90fc498c49809ece17089cfba58140239259960b7bd52b717d6e37aadfae683a98b8b4dab6a9c694a41a3bacb054dcbdd82b9df3178aeece429c5aa3f355cc5243fee88ae32a8a31ae9926a555e0d510a3a688c43111f7a797443344dc0d5d02a3df66cfcbe51fa687f3ab5d1cc9f6e9fce0ae4aafe31d2d5";
-            configObj.address = "http://yfb.fangcang.com";
+            configObj.module = "c7051ab21f7356dbd454aa3ea6e49e5e2f7186ea9000496d977539ba70d580ce63544ca43b0de147e9f2e4d103abe2e6caf00ed18b708dbab92581845ee22d681afd1d08947aa9e3345bb41eda1411f24ed6bdccd909b824e11f5cc30fbab764eeabd381256bae2e557ab142dea389bb69d5a33a1bb5b3f285bcff1c32aefd65";
+            configObj.address = "http://192.168.0.90:8088";
             configObj.empoent="10001";
             var result = titanPayObj.initTitanPay(configObj);
         });
@@ -159,7 +158,7 @@
             <tr>
                 <td class="tdr">收款方机构编码</td>
                 <td>
-                    <input type="text" value="TJM10000024" id="ruserId" name="ruserId"/>
+                    <input type="text" value="TJM10000098" id="ruserId" name="ruserId"/>
                 </td>
             </tr>
             <tr>
@@ -202,4 +201,5 @@
 </form>
 
 </body>
-</html>  --%>
+</html>  
+ --%>

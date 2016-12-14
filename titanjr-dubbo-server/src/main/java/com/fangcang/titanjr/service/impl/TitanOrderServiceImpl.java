@@ -210,6 +210,7 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 				condition.setTransferreqid(titanTransferDTO.getTransferreqid());
 				condition.setTransorderid(titanTransferDTO.getTransorderid());
 				condition.setRequestno(titanTransferDTO.getRequestno());
+				condition.setPayorderno(titanTransferDTO.getPayOrderNo());
 				PaginationSupport<TitanTransferReq> paginationSupport = new PaginationSupport<TitanTransferReq>();
 				titanTransferReqDao.selectForPage(condition, paginationSupport);
 				List<TitanTransferDTO> titanTransferDTOList = new ArrayList<TitanTransferDTO>();

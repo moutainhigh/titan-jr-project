@@ -4,7 +4,7 @@ var payPassdword = {
 			$.ajax({
 	            dataType: 'html',
 	            context: document.body,
-	            url: url+"/account/check_payPassword.action",
+	            url: url+"/account/showPayPassword.action",
 	            success: function (html) {
 	                var d = dialog({
 	                    title: ' ',
@@ -15,9 +15,9 @@ var payPassdword = {
 	                        {
 	                            value: '确定',
 	                            skin: 'btn p_lr30',
-	                            callback: function (url,data) {
+	                            callback: function () {
 	                            	//验证付款密码是否准确
-	                            	if(! check_payPassword())
+	                            	if(! payPassdword.check_pasword(url,data))
 	                            	{
 	                            		 $(".ui-dialog-content").html(html);
 	                            			setTimeout(function(){
@@ -54,6 +54,7 @@ var payPassdword = {
 		            success: function (data) {
 		           	 if(data.result=="0"){
 		           		 result = true;
+		           		 refundObj.submitObj();
 		           	 }else{
 		           		new top.Tip({msg: '输入的密码错误', type: 1, timer: 2000});
 		           	 }
@@ -63,7 +64,5 @@ var payPassdword = {
 		   	 return result;
 		}
 		
-
-
 
 }

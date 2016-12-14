@@ -57,7 +57,7 @@
 									  </c:choose>
 									
 									</li>
-									<li><span>泰坦金融总余额：</span><i class="colorRed"><fmt:parseNumber  pattern="#,##0.00#" value="${accountBalance/100}"></fmt:parseNumber></i>元<b class="mar_10 balanceTip">(请先充值后进行退款)</b></li>
+									<li><span>泰坦金融总余额：</span><i class="colorRed"><fmt:parseNumber  pattern="#,##0.00#" value="${balanceAmount/100}"></fmt:parseNumber></i>元<b class="mar_10 balanceTip" hidden="hidden">(请先充值后进行退款)</b></li>
 								</ul>
 							</div>
 							
@@ -75,51 +75,50 @@
 					</div>
 	
 				<p class="rtn_item">
-					<button class="sure_btn,J_password" >确定</button><button class="def_btn">取消</button>
+					<button class="sure_btn" onclick="refundObj.submitRequest()">确定</button><button class="def_btn">取消</button>
 				</p>
 								
 			</div>
 		</div>
 		<jsp:include page="/comm/static-js.jsp"></jsp:include>
 		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/psd.js"></script>
 		<script>
+		
+		
 		  var refundObj = {
-				  refundAmount:function(){
-					  return 
-				  },
 				  enoughBalance:function(){
-					  var amount  = sub('${balance}', '${(transOrderDTO.tradeamount+transOrderDTO.receivedfee)}');
+					  var amount  = sub('${balanceAmount}', '${(transOrderDTO.tradeamount+transOrderDTO.receivedfee)}');
 					  if(amount<0){
 				    	  $(".balanceTip").show();
-				    	  $(".sure_btn").attr("disabled","disabled");
+				    	  $(".sure_btn").hide();
 				      }else{
 				    	  $(".balanceTip").hide();
+				    	  $(".sure_btn").show();
 				      }
-				  
 				  },
-				  payPasswordObj:function(){
-					  $(".J_password").bind("click",function(){
-						  var url = "<%=basePath%>";
-						  var flag = payPassdword.show_psd(url, {
-							  tfsUserid:refundRequest.payPassword
-						  });
-						  if(flag){
-							  
-						  }
-						  
-					  })
+				  submitRequest:function(){
+					  var url = "<%=basePath%>";
+					  var data = {tfsUserid:${refundRequest.tfsUserid}};
+					  payPassdword.show_psd(url, data); 
 				  },
 				  submitObj:function(){
-					  
 					  $.ajax({
 						 url:"<%=basePath%>/refund/orderRefund.action",
 						 type:"post",
 						 dataType:"json",
 						 data:{
-							 tfsUserid:RefundRequest.tfsUserid,
-							 
+							 tfsUserid:'${refundRequest.tfsUserid}',
+							 orderNo:'${transOrderDTO.userorderid}',
+							 payPassword:PasswordStr2.returnStr(),
+							 userId:'${transOrderDTO.userrelateid}'
 						 },
-						 success:function(){
+						 success:function(data){
+							 if(data.result ==true){
+								 new top.Tip({msg: '退款成功', type: 1, timer: 2000});
+							 }else{
+								 new top.Tip({msg: data.returnMessage, type: 1, timer: 3000});
+							 }
 							 
 						 }
 						  
@@ -128,13 +127,9 @@
 		  };
 		  
 		  refundObj.enoughBalance();
-		  refundObj.submitObj();
-		  
-		  
-		  
+		 
 		  
 		</script>
 		
 	</body>
-
 </html>

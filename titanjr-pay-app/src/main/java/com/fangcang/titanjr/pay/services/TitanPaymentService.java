@@ -100,7 +100,7 @@ public class TitanPaymentService {
 		}
 	 
 	 public boolean checkPwd(String pwd, String fcUserId){
-		 if(!StringUtil.isValidString(pwd) || !StringUtil.isValidString(fcUserId) ){
+		 if(!StringUtil.isValidString(pwd) || !StringUtil.isValidString(fcUserId)){
 			 return false;
 		 }
 		 
