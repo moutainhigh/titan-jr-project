@@ -85,19 +85,40 @@ public class TitanLoanController extends BaseController {
 		
 		//判断sign是否相同
 		JSONObject data = JSONObject.fromObject(req.getData());
-		String orderNo = data.getString("orderNo");
-		String buessNo = data.getString("buessNo");
-		String userId = data.getString("userId");
-		String type = data.getString("type");
-		String sign = data.getString("sign");
-						
-		if((!StringUtil.isValidString(sign))||(!StringUtil.isValidString(type))||(!StringUtil.isValidString(orderNo))||(!StringUtil.isValidString(buessNo))||(!StringUtil.isValidString(userId))){
+		String orderNo="";
+		String buessNo="";
+		String userId="";
+		String type="";
+		String sign="";
+		
+		
+		try {
+			 orderNo = data.getString("orderNo");
+		} catch (Exception e) {
+		}
+		try {
+			 buessNo = data.getString("buessNo");
+		} catch (Exception e) {
+		}
+		try {
+			 userId = data.getString("userId");
+		} catch (Exception e) {
+		}
+		try {
+			 type = data.getString("type");
+		} catch (Exception e) {
+		}
+		try {
+			 sign = data.getString("sign");
+		} catch (Exception e) {
+		}			
+		if((!StringUtil.isValidString(sign))||(!StringUtil.isValidString(type))||(!StringUtil.isValidString(orderNo))||(!StringUtil.isValidString(buessNo))){
 			result.put("result", "-1");
 			result.put("resultMsg", "参数不能为空");
 			
 			return JSONSerializer.toJSON(result).toString();
 		}
-		String string = orderNo+buessNo+userId+req.getCreate_time();
+		String string = orderNo+buessNo+TOKEN_KEY_STRING+req.getCreate_time();
 		String dataSign = MD5.MD5Encode(string).toUpperCase();
 		
 		if(!dataSign.equals(sign)){
