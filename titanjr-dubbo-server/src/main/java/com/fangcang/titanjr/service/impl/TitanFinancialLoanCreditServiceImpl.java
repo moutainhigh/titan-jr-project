@@ -259,11 +259,15 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			rsFsFileUploadRequest.setBacth(loanCreditOrder.getOrgCode()+DateUtil.getCurrentDate().getTime());
 			
 			RSFsFileUploadResponse rsFsFileUploadResponse = rsFileManager.fsFileUpload(rsFsFileUploadRequest);
+			// 删除文件
+			FileHelp.deleteFile(encryptRSFilePath.substring(0, encryptRSFilePath.lastIndexOf("/")));
 			if((!StringUtil.isValidString(rsFsFileUploadResponse.getUrlKey()))||rsFsFileUploadResponse.isSuccess()==false){
 				response.putErrorResult(rsFsFileUploadResponse.getReturnMsg());
 				log.error("上传授信文件压缩包到融数失败,请求参数为rsFsFileUploadRequest:"+Tools.gsonToString(rsFsFileUploadRequest));
 				return response;
 			}
+			
+			
 			//2-提交企业资料
 			OprsystemCreditCompanyRequest creditCompanyRequest = new OprsystemCreditCompanyRequest();
 			creditCompanyRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
@@ -382,8 +386,6 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			log.error("encryptRSFile，融数授信申请资料文件加密失败，原文件路径srcZipFile："+srcZipFile.getAbsolutePath(), e);
 			return "";
 		}
-		
-		FileHelp.deleteFile(orgCreditFileRootDir);
 		
 		return encryptFilePath;
 	}
