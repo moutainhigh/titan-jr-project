@@ -72,11 +72,10 @@
         $(document).ready(function () {
             var configObj = {};
             configObj.module = "96508c28878b7bf90fc498c49809ece17089cfba58140239259960b7bd52b717d6e37aadfae683a98b8b4dab6a9c694a41a3bacb054dcbdd82b9df3178aeece429c5aa3f355cc5243fee88ae32a8a31ae9926a555e0d510a3a688c43111f7a797443344dc0d5d02a3df66cfcbe51fa687f3ab5d1cc9f6e9fce0ae4aafe31d2d5";
-            configObj.address = "http://www.fangcang.org";
+            configObj.address = "http://yfb.fangcang.com";
             configObj.empoent="10001";
             var result = titanPayObj.initTitanPay(configObj);
         });
-
         function testOrderPay() {
             var tempwindow = window.open();
             var orderInfo;
@@ -110,6 +109,7 @@
     <div class="pay">
         <input type="hidden" id="inAccountCode" name="inAccountCode"/>
         <input type="hidden" id="outAccountCode" name="outAccountCode"/>
+        <input type="hidden" id="bussCode" name="bussCode" value="skdhjskdjl"/>
 
         <table cellspacing="0" border="0">
             <tbody>
@@ -149,7 +149,7 @@
             <tr>
                 <td class="tdr">收款方机构编码</td>
                 <td>
-                    <input type="text" value="TJM10000039" id="ruserId" name="ruserId"/>
+                    <input type="text" value="TJM10000024" id="ruserId" name="ruserId"/>
                 </td>
             </tr>
             <tr>
@@ -182,13 +182,6 @@
                     <input type="text" value="http://localhost:8088/titanjr-pay-app/quickPayment/customerNotify.action" id="notify" name="notify"/>
                 </td>
             </tr>
-            <tr>
-               <td class="tdr">业务单号</td>
-               <td>
-                   <input type="text" id="bussCode" name="bussCode" value="skdhjskdjl"/>
-               </td>
-            </tr>
-            
             <tr>
                 <td class="tdr"></td>
                 <td><input type="button" class="input_b01" value="收银台付款" onClick="testOrderPay()"/></td>
