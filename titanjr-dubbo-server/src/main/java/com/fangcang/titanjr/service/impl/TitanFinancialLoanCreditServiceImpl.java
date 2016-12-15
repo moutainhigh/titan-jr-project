@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,7 @@ import com.fangcang.titanjr.dto.bean.LoanCreditCompanyBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOpinionBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanPersonEnsureBean;
+import com.fangcang.titanjr.dto.request.AgreementConfirmRequest;
 import com.fangcang.titanjr.dto.request.ApplyLoanCreditRequest;
 import com.fangcang.titanjr.dto.request.AuditCreidtOrderRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
@@ -58,6 +60,7 @@ import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
 import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
 import com.fangcang.titanjr.dto.request.NotifyRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
+import com.fangcang.titanjr.dto.response.AgreementConfirmResponse;
 import com.fangcang.titanjr.dto.response.ApplyLoanCreditResponse;
 import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
 import com.fangcang.titanjr.dto.response.FTPConfigResponse;
@@ -78,9 +81,13 @@ import com.fangcang.titanjr.rs.manager.RSCreditManager;
 import com.fangcang.titanjr.rs.manager.RSFileManager;
 import com.fangcang.titanjr.rs.request.OprsystemCreditCompanyRequest;
 import com.fangcang.titanjr.rs.request.OrderMixserviceCreditapplicationRequest;
+import com.fangcang.titanjr.rs.request.OrderServiceAgreementConfirmRequest;
+import com.fangcang.titanjr.rs.request.QueryCreditMerchantInfoRequest;
 import com.fangcang.titanjr.rs.request.RSFsFileUploadRequest;
 import com.fangcang.titanjr.rs.response.OprsystemCreditCompanyResponse;
 import com.fangcang.titanjr.rs.response.OrderMixserviceCreditapplicationResponse;
+import com.fangcang.titanjr.rs.response.OrderServiceAgreementConfirmResponse;
+import com.fangcang.titanjr.rs.response.QueryCreditMerchantInfoResponse;
 import com.fangcang.titanjr.rs.response.RSFsFileUploadResponse;
 import com.fangcang.titanjr.service.TitanCodeCenterService;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
@@ -835,7 +842,33 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		try {
 			if(notifyRequest.getStatus()==AuditResultEnum.REVIEW_PASS.getStatus()){
 				//通过
-				updateLoanCreditOrderParam.setLastAuditTime(now);
+				
+				LoanCreditOrder loanCreditOrder = new LoanCreditOrder();
+				loanCreditOrder.setOrderNo(notifyRequest.getBuessNo());
+				
+				List<LoanCreditOrder> loanCreditOrderList = loanCreditOrderDao.queryLoanCreditOrder(loanCreditOrder);
+				if(loanCreditOrderList==null||loanCreditOrderList.size()==0){
+					response.putErrorResult("授信申请单不存在");
+					return response;
+				}
+				
+				//授信结构信息
+				QueryCreditMerchantInfoRequest request = new QueryCreditMerchantInfoRequest();
+				request.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+				request.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+				request.setUserorderid(notifyRequest.getBuessNo());
+				request.setUserid(loanCreditOrderList.get(0).getOrgCode());
+				QueryCreditMerchantInfoResponse queryCreditMerchantInfoResponse = rsCreditManager.queryCreditMerchantInfo(request);
+				
+				int dayLimit = Integer.valueOf(queryCreditMerchantInfoResponse.getCreditdeadline());
+				long actualAmount = Long.valueOf(queryCreditMerchantInfoResponse.getCreditlimit());
+				Date expireTime= DateUtils.addMonths(loanCreditOrderList.get(0).getFirstAuditTime(), dayLimit);
+				
+				updateLoanCreditOrderParam.setDayLimit(dayLimit);
+				updateLoanCreditOrderParam.setAuditPass(now);
+				updateLoanCreditOrderParam.setExpireTime(expireTime);
+				updateLoanCreditOrderParam.setActualAmount(actualAmount);
+			
 			}else{
 				//不通过
 				//添加批注记录
@@ -855,6 +888,43 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			throw new GlobalServiceException("授信申请的通知处理失败", e);
 		}
 		return response;
+	}
+
+	@Override
+	public AgreementConfirmResponse agreementConfirm(
+			AgreementConfirmRequest agreementConfirmRequest) {
+		AgreementConfirmResponse  agreementConfirmResponse = new AgreementConfirmResponse();
+		if(!StringUtil.isValidString(agreementConfirmRequest.getBuessNo())){
+			agreementConfirmResponse.putErrorResult("授信申请单号[buessNo]不能为空");
+			return agreementConfirmResponse;
+		}
+		LoanCreditOrder loanCreditOrder = new LoanCreditOrder();
+		loanCreditOrder.setOrderNo(agreementConfirmRequest.getBuessNo());
+		
+		List<LoanCreditOrder> loanCreditOrderList = loanCreditOrderDao.queryLoanCreditOrder(loanCreditOrder);
+		if(loanCreditOrderList==null||loanCreditOrderList.size()==0){
+			agreementConfirmResponse.putErrorResult("授信申请单不存在");
+			return agreementConfirmResponse;
+		}
+		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();
+		updateLoanCreditOrderParam.setOrderNo(agreementConfirmRequest.getBuessNo());
+		updateLoanCreditOrderParam.setLastAuditTime(new Date());
+		loanCreditOrderDao.updateLoanCreditOrder(updateLoanCreditOrderParam);
+		//协议确认
+		OrderServiceAgreementConfirmRequest orderServiceAgreementConfirmRequest = new OrderServiceAgreementConfirmRequest();
+		orderServiceAgreementConfirmRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+		orderServiceAgreementConfirmRequest.setUserid(loanCreditOrderList.get(0).getOrgCode());
+		orderServiceAgreementConfirmRequest.setUserorderid(agreementConfirmRequest.getBuessNo());
+		orderServiceAgreementConfirmRequest.setUserflag("2");
+		orderServiceAgreementConfirmRequest.setMerchanturlkey("xxxxxx");//暂时不用传
+		OrderServiceAgreementConfirmResponse orderServiceAgreementConfirmResponse = rsCreditManager.agreementConfirm(orderServiceAgreementConfirmRequest);
+		if(!orderServiceAgreementConfirmResponse.isSuccess()){
+			log.error("授信申请单确认失败(AgreementConfirm)，申请单号BuessNo："+agreementConfirmRequest.getBuessNo());
+			agreementConfirmResponse.putErrorResult(orderServiceAgreementConfirmResponse.getReturnMsg());
+			return agreementConfirmResponse;
+		}
+		agreementConfirmResponse.putSuccess("协议确认成功");
+		return agreementConfirmResponse;
 	}
 
 }

@@ -21,6 +21,7 @@ import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.pay.req.LoanNotifyReq;
 import com.fangcang.titanjr.pay.services.listener.TitanCreditServiceListener;
 import com.fangcang.titanjr.pay.services.listener.TitanLoanServiceListener;
+import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.util.StringUtil;
 
 /**
@@ -49,7 +50,8 @@ public class TitanLoanController extends BaseController {
 	
 	@Resource(name = "titanCreditService")
 	private TitanCreditServiceListener titanCreditServiceListener;
-	
+	@Resource
+	private TitanFinancialLoanCreditService titanFinancialLoanCreditService;
 	/**
 	 * 融数授信审核和放款通知接口
 	 * @param req
@@ -133,12 +135,16 @@ public class TitanLoanController extends BaseController {
 		
 		try {
 			if(buessNo.startsWith("CR")){
+				
 				//授信申请订单
 				int state = 1;
 				if("31".equals(req.getStatus())){
+					//协议确认
+					titanCreditServiceListener.agreementConfirm(buessNo);
+				}else if("41".equals(req.getStatus())){
 					state = AuditResultEnum.REVIEW_PASS.getStatus();
 					titanCreditServiceListener.creditSucceed(buessNo,state);
-				}else{
+				}else {
 					state = AuditResultEnum.NO_PASS.getStatus();
 					titanCreditServiceListener.creditFailure(buessNo,state, req.getMsg());
 				}

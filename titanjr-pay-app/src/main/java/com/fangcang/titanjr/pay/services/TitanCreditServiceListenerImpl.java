@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.dto.request.AgreementConfirmRequest;
 import com.fangcang.titanjr.dto.request.NotifyRequest;
 import com.fangcang.titanjr.pay.services.listener.TitanCreditServiceListener;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
@@ -31,6 +32,14 @@ public class TitanCreditServiceListenerImpl implements
 		notifyRequest.setStatus(status);
 		notifyRequest.setMsg(msg);
 		titanFinancialLoanCreditService.loanCreditNotify(notifyRequest);
+		
+	}
+
+	@Override
+	public void agreementConfirm(String buessNo) {
+		AgreementConfirmRequest agreementConfirmRequest = new AgreementConfirmRequest();
+		agreementConfirmRequest.setBuessNo(buessNo);
+		titanFinancialLoanCreditService.agreementConfirm(agreementConfirmRequest);
 		
 	}
 	
