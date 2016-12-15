@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ include file="/comm/path-param.jsp" %>
+ <%@ include file="/comm/taglib.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -32,6 +32,23 @@
 	<div id="companyAccessory">
 	
 	</div>
+	
+	<c:if test="${creditOrder.status == 4}">
+	   <div style="height: 100px"></div>
+		
+	    <div class="NoCause">
+	    <div class="NoCause_img"></div>    
+	    <div class="NoCause_list" style="right: -190px;">
+	        <h3>
+	            <i>&gt;</i>未通过原因
+	        </h3>
+	        <div class="NCL_c">   
+	            <ul>
+	                <li>${creditOpinion.content}</li>  
+	            </ul>
+	        </div>
+	    </div>
+	</c:if> 
 
 </form>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
@@ -43,6 +60,18 @@
 	var imageBasePath = '<%=cssSaasPath%>';
 	
 	$(function(){
+		
+		
+		//未通过原因
+		$('.NoCause_img').on('click',function(){
+		     $(".NoCause_list").animate({'right':'0' })
+		     $(this).animate({'right':'-50' })
+		})
+		$('.NoCause_list i').on('click',function(){
+		     $(".NoCause_list").animate({'right':'-190' })
+		     $('.NoCause_img').animate({'right':'0' })
+		})
+
 	
 		$.ajax({
 			async : false,

@@ -210,8 +210,9 @@
 	            </div>
 	
 	            <a class="btn btn_magnify m_l2 fl ml10 MyAssets_Search" href="javascript:void(0)" onclick="loadLoanInfiList('loan-all')">&nbsp;</a>	
-				<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export">
-					<img src="../images/TFS/tfs_c01.png"></a>			
+				<a href="javascript:void(0)" onclick="exportExcel('loan-all');" class="MyAssets_Export fr bacth_export_hotel J_export" target="_blank">
+					<img src="<%=cssSaasPath %>/images/TFS/tfs_c01.png"></a>			
+					
 			</div>
 			
 			
@@ -233,7 +234,21 @@
 	</div>
 
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
-	<script type="text/javascript">  
+	<script type="text/javascript"> 
+	
+	function exportExcel(pageKey)
+	{
+		var reqParam = "";
+		$('.MyAssets_list_Options[key='+pageKey+']').find('[field]').each(function(){
+			
+			if($(this).val() != null && $(this).val() != '')
+			{
+				reqParam += '&'+$(this).attr('field')+'='+$(this).val();
+			}
+		});
+		window.open('<%=basePath%>/loan/exportExcel.shtml'+"?DateTime="+new Date().getTime()+"&pageKey=" + pageKey+reqParam);
+		
+	}
 	var currPageKey = "";
 	function loadLoanInfiList(pageKey, callBack)
 	{

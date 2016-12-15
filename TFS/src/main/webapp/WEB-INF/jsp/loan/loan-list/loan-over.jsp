@@ -44,10 +44,10 @@
 					<col width="15%">			
 					<col width="">
 				</colgroup>
-				<c:forEach items="${loanInfoList}" var="loanInfoItem">
+				<c:forEach items="${loanInfoList}" var="loanInfoItem" varStatus="status">
 					<tr>
 						
-						<td width="">1</td>
+						<td width="">${status.index +1}</td>
 						<td width=""><fmt:formatDate value="${loanInfoItem.lastRepaymentDate}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
 						<td class="tdr"><fmt:formatNumber value="${loanInfoItem.repaymentPrincipal /100}"  pattern="#,##0.00#" /></td>
 						<td class="tdr"><fmt:formatNumber value="${(loanInfoItem.repaymentPrincipal + loanInfoItem.repaymentInterest) / 100}"  pattern="#,##0.00#" /> </td>

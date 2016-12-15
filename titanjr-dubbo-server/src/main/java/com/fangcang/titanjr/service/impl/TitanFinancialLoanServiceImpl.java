@@ -422,6 +422,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			loanApplyOrder.setActualAmount(0L);
 			loanApplyOrder.setProductType(type);
 			loanApplyOrder.setRsorgId(orgCode);
+			loanApplyOrder.setRepaymentType(1);
 			loanApplyOrder
 					.setRspId(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
 			loanApplyOrder
@@ -1025,6 +1026,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		LoanQueryConditions conditions = getLoanQueryConditions(req);
 
 		PaginationSupport<LoanApplyOrder> paginationSupport = new PaginationSupport<LoanApplyOrder>();
+		paginationSupport.setPageSize(req.getPageSize());
 		paginationSupport.setCurrentPage(req.getCurrentPage());
 		paginationSupport.setOrderBy(req.getOrderBy());
 

@@ -18,30 +18,25 @@
 
 <div class="Refund clearfix">
 	
-
-	
 	<div class="R_title"><i></i>贷款详情</div>
-	
-	
+
 	<div class="R_c clearfix">
-	<c:if test="${loanOrderInfo.status==1}">
+	
+	<c:if test="${loanOrderInfo.status==1 || loanOrderInfo.status==2 || loanOrderInfo.status==3 || loanOrderInfo.status==5}">
 		<div class="RC_img RC_img03"></div>
 	</c:if>
-	<c:if test="${loanOrderInfo.status==2}">
-		<div class="RC_img RC_img03"></div>
-	</c:if>
-	<c:if test="${loanOrderInfo.status==4}">
+	
+	<c:if test="${loanOrderInfo.status==4 || loanOrderInfo.status==7 || loanOrderInfo.status==8}">
 		<div class="RC_img RC_img01"></div>
 	</c:if>
-	<c:if test="${loanOrderInfo.status==5}">
-		<div class="RC_img RC_img01"></div>
-	</c:if>
-	<c:if test="${loanOrderInfo.status==8}">
+	
+	<c:if test="${loanOrderInfo.status==11}">
 		<div class="RC_img RC_img02"></div>
 	</c:if>
-	<c:if test="${loanOrderInfo.status==7}">
+	<c:if test="${loanOrderInfo.status==10}">
 		<div class="RC_img"></div>
 	</c:if>	
+	
 		<div class="RC_t">
 			<ul>
 				<li>贷款类型：包房贷</li>
@@ -70,7 +65,9 @@
 				</li>
 			</ul>
 		</div>
-		<c:if test="${loanOrderInfo.status==3 || loanOrderInfo.status==6}">
+		
+		
+		<c:if test="${loanOrderInfo.status==6 || loanOrderInfo.status==9}">
 			<div class="RC_t1 p_t10">
 				<span class="w_105">还款记录</span>
 				<span class="w_240">还款到期日：<fmt:formatDate value="${loanOrderInfo.actualRepaymentDate}" pattern="yyyy-MM-dd" /></span>
@@ -78,31 +75,34 @@
 				<a class="btn" href="<%=basePath%>/loan/repayment/repaymentPer.shtml?orderNo=${loanOrderInfo.orderNo}">马上还款</a>
 			</div>
 		</c:if>
-		<c:if test="${loanOrderInfo.status==6 || loanOrderInfo.status==7 || loanOrderInfo.status==3}">
-		<div class="RC_c1 RC_c2 clearfix">
-			<table cellpadding="0" cellspacing="0" width="900" id="repaymentList">
-				<colgroup>
-					<col width="85">
-					<col width="">
-					<col width="">
-					<col width="">
-					<col width="">
-					<col width="">
-				</colgroup>
-				<tr>
-					<td><i>序号</i></td>
-					<td><i>还款日期</i></td>
-					<td class="tdr"><i>还款金额（元）</i></td>
-					<td class="tdr"><i>还本金（元）</i></td>
-					<td class="tdr"><i>付利息（元）</i></td>
-					<td class="tdr"><i>剩余本金（元）</i></td>
-				</tr>
-				
-			</table>
-		</div>
+		
+		
+		<c:if test="${loanOrderInfo.status==6 || loanOrderInfo.status==9 || loanOrderInfo.status==10}">
+			<div class="RC_c1 RC_c2 clearfix">
+				<table cellpadding="0" cellspacing="0" width="900" id="repaymentList">
+					<colgroup>
+						<col width="85">
+						<col width="">
+						<col width="">
+						<col width="">
+						<col width="">
+						<col width="">
+					</colgroup>
+					<tr>
+						<td><i>序号</i></td>
+						<td><i>还款日期</i></td>
+						<td class="tdr"><i>还款金额（元）</i></td>
+						<td class="tdr"><i>还本金（元）</i></td>
+						<td class="tdr"><i>付利息（元）</i></td>
+						<td class="tdr"><i>剩余本金（元）</i></td>
+					</tr>
+					
+				</table>
+			</div>
 		</c:if>
 		
-		<c:if test="${loanOrderInfo.status==6}">
+
+		<c:if test="${loanOrderInfo.status==4 || loanOrderInfo.status==7 || loanOrderInfo.status==8}">
 			<div class="RC_t1 ">
 				<span class="w_105 c_fe2b2b">未通过原因</span>
 				<span class="c_fe2b2b">贷款金额过大</span>
@@ -114,14 +114,13 @@
 	
 <div style="height: 60px"></div>
 <div class="TFS_data_button">
-
-	<c:if test="${loanOrderInfo.status==8}">
+	<c:if test="${loanOrderInfo.status==4 || loanOrderInfo.status==7 || loanOrderInfo.status==8}">
 		<a class="btn btnNext" href="<%=basePath %>/loan_apply/main.shtml">重新申请</a>
 	</c:if>
 	
-	<c:if test="${loanOrderInfo.status==1 || loanOrderInfo.status==2}">
+	<c:if test="${loanOrderInfo.status==1 || loanOrderInfo.status==2 || loanOrderInfo.status==3 || loanOrderInfo.status==5}">
 	
-		<a class="btn btnNext" href="泰坦金融-我的贷款首页-申请包房贷款.html">撤销申请</a>
+		<a class="btn btnNext" id="stopLoan" href="javascript:void();">撤销申请</a>
 		
 	</c:if>
 	
@@ -145,10 +144,17 @@ var staticPath  ="http://image.fangcang.com/upload/images/titanjr/loan_apply/${J
 	 			{
 	 				var src = staticPath+ imgsrcs[i];
 	 				$('#imgList').append('<dd class="TFSimgOnBig"><div class="dd_img"><img src="'+src+'">'
-	 				+'<div class="hover">下载</div></div><div class="dd_text" title="附件附件">附件附件.jpg</div></dd>');
+	 				+'<div class="hover download" resourceName="'+imgsrcs[i]+'">下载</div></div><div class="dd_text" title="附件附件">合同附件</div></dd>');
 	 			}
 	 		}
+	 		
+	 		$(".download").click(function(){
+	 			 window.open(staticPath+$(this).attr("resourceName"));
+	 		});
+	 		
 	 	}
+	 	
+	 	
 	 	
 	 	
 	 	$.ajax({
@@ -167,9 +173,51 @@ var staticPath  ="http://image.fangcang.com/upload/images/titanjr/loan_apply/${J
 	        			+formatCurrency(data[i]['remainAmount']/100)+'</td></tr>';
 	        			$('#repaymentList').append(tr);
 	        		}
+	        		
 	        	}
 	        }
 		});
+	 	
+	 	
+		//撤销申请
+		$('#stopLoan') .on( 'click',
+			function() {
+			
+				var orderNo = $(this).attr("orderNo");
+				
+				window.top.createConfirm({
+							title : '提示',
+							content : '<div style="font-size:15px;line-height:30px;">确定要撤销贷款申请吗？</div>',
+							okValue : '确定',
+							cancelValue : '取消',
+							ok : function() {
+							top.F.loading.show();
+							$.ajax({
+								type : 'get',
+								url :  '<%=basePath%>/loan/stopLoan.shtml'+"?DateTime="+new Date().getTime() +"&orderNo=${loanOrderInfo.orderNo}",
+								dataType : 'json',
+								success : function(result) {
+										if(result.code==1){
+											setTimeout(function() {
+												new window.top.Tip({
+													msg : '贷款申请已撤销'
+												});
+											}, 1000);
+											
+										}else{
+											new top.Tip({msg : result.msg, type: 3, timer:2500});
+										}
+										
+										top.F.loading.hide();
+									}
+								});
+								 
+							},
+							cancel : function() {
+
+							}
+				});
+			});
 	 	
 	 
         function bigImgShow(){              

@@ -41,9 +41,9 @@
 				<col width="15%">
 				<col width="">
 			</colgroup>
-			<c:forEach items="${loanInfoList}" var="loanInfoItem">
+			<c:forEach items="${loanInfoList}" var="loanInfoItem" varStatus="status">
 				<tr>
-					<td width="">1</td>
+					<td width="">${status.index +1}</td>
 					<td width=""><fmt:formatDate value="${loanInfoItem.createTime}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
 					<td class="tdr"><fmt:formatNumber value="${loanInfoItem.amount /100}"  pattern="#,##0.00#" /></td>
 					<td></td>
@@ -62,32 +62,46 @@
 					</span></td>
 					<td>
 						<c:if test="${loanInfoItem.status==0}">
-							无效贷款
-						</c:if>
-						<c:if test="${loanInfoItem.status==1}">
-							<span class="MyAssets_red">审核中</span>
-						</c:if>
-						<c:if test="${loanInfoItem.status==2}">
-							待放款
-						</c:if>
-						<c:if test="${loanInfoItem.status==3}">
-							待还款
-						</c:if>
-						<c:if test="${loanInfoItem.status==4}">
-							放款失败
-						</c:if>
-						<c:if test="${loanInfoItem.status==5}">
-							贷款失败
-						</c:if>
-						<c:if test="${loanInfoItem.status==6}">
-							<span class="MyAssets_red">已逾期</span>
-						</c:if>
-						<c:if test="${loanInfoItem.status==7}">
-							已结清
-						</c:if>
-						<c:if test="${loanInfoItem.status==8}">
+						无效贷款
+					</c:if>
+					<c:if test="${loanInfoItem.status==1}">
+						审核中
+					</c:if>
+					
+					<c:if test="${loanInfoItem.status==2}">
+						待终审
+					</c:if>
+					
+					<c:if test="${loanInfoItem.status==3}">
+						终审通过
+					</c:if>
+					
+					<c:if test="${loanInfoItem.status==4}">
+						 终审失败
+					</c:if>
+					
+					<c:if test="${loanInfoItem.status==5}">
+						待放款
+					</c:if>
+					
+					<c:if test="${loanInfoItem.status==6}">
+						待还款
+					</c:if>
+					<c:if test="${loanInfoItem.status==7}">
+						放款失败
+					</c:if>
+					<c:if test="${loanInfoItem.status==8}">
+						贷款失败
+					</c:if>
+					<c:if test="${loanInfoItem.status==9}">
+						<span class="MyAssets_red">已逾期</span>
+					</c:if>
+					<c:if test="${loanInfoItem.status==10}">
+						已结清
+					</c:if>
+					<c:if test="${loanInfoItem.status==11}">
 							已撤銷
-						</c:if>
+					</c:if>
 					</td>
 					<td class=""><a class="blue decorationUnderline m_r10"
 						href="<%=basePath%>/loan/getLoanDetailsInfo.shtml?orderNo=${loanInfoItem.orderNo}">详情</a>
@@ -129,7 +143,7 @@
 	//撤销申请
 	$('.J_revocation') .on( 'click',
 		function() {
-		
+			
 			var orderNo = $(this).attr("orderNo");
 			
 			window.top.createConfirm({
@@ -152,7 +166,17 @@
 										}, 1000);
 										
 									}else{
-										new top.Tip({msg : result.msg, type: 3, timer:2500});
+										window.top.createConfirm({
+											title:'提示',
+											content : '<div style="font-size:15px;line-height:30px;">撤销贷款失败，请联系</div>',
+											okValue:'确定',	
+											skin : 'saas_confirm_singlebtn ',			
+											ok : function(){
+												
+											},
+											cancel : false  
+										}); 
+
 									}
 									
 									top.F.loading.hide();

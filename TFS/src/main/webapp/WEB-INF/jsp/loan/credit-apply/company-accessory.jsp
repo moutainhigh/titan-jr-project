@@ -512,11 +512,31 @@
 		
 		if(index >0)
  		{
- 			alert(errorMsg);
+			window.top.createConfirm({
+				title:'提示',
+				content : '<div style="font-size:15px;line-height:30px;">'+errorMsg+'</div>',
+				okValue:'确定',	
+				skin : 'saas_confirm_singlebtn ',			
+				ok : function(){
+					
+				},
+				cancel : false  
+			}); 
+
  		}
 		else if(!$("#protocolCheck").is(':checked'))
 		{
-			alert("请勾选并确认已经阅读用户须知并同意数据推送协议！");
+			
+			window.top.createConfirm({
+				title:'提示',
+				content : '<div style="font-size:15px;line-height:30px;">请勾选并确认已经阅读用户须知并同意数据推送协议！</div>',
+				okValue:'确定',	
+				skin : 'saas_confirm_singlebtn ',			
+				ok : function(){
+					
+				},
+				cancel : false  
+			}); 
 			result = false;
 		}
 		

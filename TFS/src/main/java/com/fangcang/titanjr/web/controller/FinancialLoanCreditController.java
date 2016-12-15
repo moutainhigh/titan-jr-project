@@ -168,7 +168,32 @@ public class FinancialLoanCreditController extends BaseController {
 	 */
 	@RequestMapping(value = "/applyCredit", method = RequestMethod.GET)
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
-	public String loanCreditApply() {
+	public String loanCreditApply(Model model) {
+		
+		GetCreditInfoRequest req = new GetCreditInfoRequest();
+		req.setOrgCode(this.getUserId());
+
+		GetCreditInfoResponse creditInfoResponse = financialLoanCreditService
+				.getCreditOrderInfo(req);
+
+		log.info("get credit data = "
+				+ JsonConversionTool.toJson(creditInfoResponse));
+
+		model.addAttribute("creditOrder", creditInfoResponse.getCreditOrder());
+
+		if (creditInfoResponse.getCreditOrder() != null) {
+			GetAuditEvaluationRequest request = new GetAuditEvaluationRequest();
+			request.setOrderNo(creditInfoResponse.getCreditOrder().getOrderNo());
+
+			GetAuditEvaluationResponse auditEvaluationResponse = financialLoanCreditService
+					.getAuditEvaluationInfo(request);
+
+			log.info("get audit evaluation info ="
+					+ JsonConversionTool.toJson(auditEvaluationResponse));
+
+			model.addAttribute("creditOpinion",
+					auditEvaluationResponse.getCreditOpinionBean());
+		}
 		return "/loan/credit-apply/framework";
 	}
 
