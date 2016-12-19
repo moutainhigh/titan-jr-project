@@ -1,10 +1,20 @@
 package com.fangcang.titanjr.job.executors;
 
-public class RefundConfirmRunner implements Runnable{
+import com.fangcang.titanjr.service.TitanFinancialRefundService;
+import com.fangcang.titanjr.service.TitanFinancialTradeService;
 
+public class RefundConfirmRunner implements Runnable{
+	
+	private TitanFinancialRefundService titanFinancialRefundService;
+
+	public RefundConfirmRunner(TitanFinancialRefundService titanFinancialRefundService){
+		this.titanFinancialRefundService = titanFinancialRefundService;
+	};
+	
 	@Override
 	public void run() {
-		
+		System.out.println("执行退款查询");
+		titanFinancialRefundService.refundConfirm(null);
 	}
 
 	

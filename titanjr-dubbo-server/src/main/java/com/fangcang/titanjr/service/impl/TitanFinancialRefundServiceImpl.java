@@ -21,6 +21,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 
+import com.fangcang.enums.RefundStateEnum;
 import com.fangcang.titanjr.common.enums.ConditioncodeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
@@ -594,18 +595,23 @@ public class TitanFinancialRefundServiceImpl implements
 			notifyRefundRequest.setSignType(SignTypeEnum.MD5.getKey());
 			
 			NotifyRefundResponse notifyRefundResponse = this.notifyGateawayRefund(notifyRefundRequest);
+			log.error("退款单"+notifyRefundResponse.getOrderNo()+"状态是:"+notifyRefundResponse.getRefundStatus());
 			if(notifyRefundResponse.isResult()){
 				TransOrderDTO transOrderDTO = new TransOrderDTO();
 				transOrderDTO.setOrderid(refundDTO.getOrderNo());
 				String status = notifyRefundResponse.getRefundStatus();
-				if(CommonConstant.REFUND_SUCCESS.equals(status)){
+				if(RefundStatusEnum.REFUND_SUCCESS.status==Integer.parseInt(status)){
 					transOrderDTO.setStatusid(OrderStatusEnum.REFUND_SUCCESS.getStatus());
-				
-			    }else if(CommonConstant.REFUND_IN_PROCESS.equals(status)){
+					refundDTO.setStatus(RefundStatusEnum.REFUND_SUCCESS.status);
+			    }else if(RefundStatusEnum.REFUND_FAILURE.status==Integer.parseInt(status)
+			    		|| RefundStatusEnum.REFUND_PROCESS_FAILURE.status==Integer.parseInt(status) 
+			    		|| RefundStatusEnum.REFUND_AFAINST.status==Integer.parseInt(status) ){
 			    	transOrderDTO.setStatusid(OrderStatusEnum.REFUND_FAIL.getStatus());
+			    	refundDTO.setStatus(Integer.parseInt(status));
 			    }	
 				try{
 					titanOrderService.updateTransOrder(transOrderDTO);
+					titanRefundDao.updateRefundDTO(refundDTO);
 				}catch(Exception e){
 					log.error("定时器更新订单状态失败"+e.getMessage());
 					OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(refundDTO.getOrderNo(), "定时器更新订单状态失败", OrderExceptionEnum.REFUND_UPDATE_TRANSORDER, refundDTO.getOrderNo());
@@ -617,7 +623,6 @@ public class TitanFinancialRefundServiceImpl implements
 
 	@Override
 	public RefundDTO queryRefundRequest(RefundDTO refundDTO) {
-		
 		
 		return null;
 	}

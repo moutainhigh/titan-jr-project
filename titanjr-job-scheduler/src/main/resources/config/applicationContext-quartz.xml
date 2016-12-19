@@ -50,6 +50,17 @@
 		</property>
 	</bean> 
 	
+	<bean id="refundConfirmTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	  <property name="jobDetail" ref="refundConfirmJobSchedule" />
+		<property name="cronExpression">
+			<!-- 测试配置 -->
+			<!-- <value>0 0 2 * * ?</value> -->
+			<value>0 */2 * * * ?</value>
+			<!-- 发布配置 每3分钟执行一次 -->
+			<!--<value>0 0/30 * * * ?</value>-->
+		</property>
+	</bean>
+	
 	<!-- 定义调用对象和调用对象的方法 -->
 	<bean id="unFreezeTransOrderSchedule"
 		class="org.springframework.scheduling.quartz.JobDetailBean">
@@ -100,4 +111,20 @@
 		  </map>
 	    </property>
 	</bean> 
+	
+	 <bean id="refundConfirmJobSchedule" 
+	      class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.fangcang.titanjr.job.RefundConfirmJob" />
+		<property name="jobDataAsMap">
+		  <map>
+		  		<entry key="TitanFinancialRefundService">
+		  			<ref bean="titanFinancialRefundService"/>
+		  		</entry>
+			  <entry key="titanJobExecutor">
+				  <ref bean="titanJobExecutor"/>
+			  </entry>
+		  </map>
+	    </property>
+	</bean> 
+	
 </beans>

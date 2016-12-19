@@ -2,7 +2,7 @@ package com.fangcang.titanjr.common.enums;
 
 public enum RefundStatusEnum {
 
-	REFUND_IN_PROCESS(0,"处理中"),REFUND_SUCCESS(1,"处理成功"),REFUND_FAILURE(2,"处理失败");
+	REFUND_IN_PROCESS(0,"退款中"),REFUND_PROCESS_FAILURE(1,"审核失败"),REFUND_SUCCESS(2,"退款成功"),REFUND_FAILURE(3,"退款失败"),REFUND_AFAINST(4,"退款冲销");
 	
 	public Integer status;
 	
@@ -12,7 +12,6 @@ public enum RefundStatusEnum {
 		this.status = status;
 		this.msg = msg;
 	}
-	
 	
 	
 }
