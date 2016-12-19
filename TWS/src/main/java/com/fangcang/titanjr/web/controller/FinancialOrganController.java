@@ -518,6 +518,8 @@ public class FinancialOrganController extends BaseController {
     	}
     	
    }
+    
+    
     @ResponseBody
    	@RequestMapping(value = "/sendCode")
     public String sendCode(String receiveAddress,Integer msgType){
@@ -530,6 +532,7 @@ public class FinancialOrganController extends BaseController {
     	if(!(Tools.isEmailAddress(receiveAddress)||Tools.isPhone(receiveAddress))){
     		return toJson(putSysError("参数错误"));
     	}
+    	sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
     	msgType = msgType==null?SMSType.REG_CODE.getType():msgType;
     	GetCheckCodeRequest getCheckCodeRequest = new GetCheckCodeRequest();
     	getCheckCodeRequest.setMsgType(msgType);

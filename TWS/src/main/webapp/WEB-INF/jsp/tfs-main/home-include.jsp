@@ -16,7 +16,7 @@
 		泰坦金融将金融服务与旅游行业相结合，探索行业全新的发展模式，提供账户托管、收付款管理以及供应链融资金融服务。<br/>
 	</div>
 	<c:choose>
-    	<c:when test="${ orgBindStatus==0}">
+    	<c:when test="${ 1==1}">
 			<!-- 注册 -->
 			<div class="enroll ">
 				<a href="#" class="btn1 J_admin">注册</a>

@@ -38,18 +38,7 @@ var swiper = new Swiper('.swiper-container', {
  
 //只有商家管理员才能开通泰坦金融哦 
 $('.J_admin').on('click',function(){
-	if(isAdmin==1){
-		location = "<%=basePath%>"+"/organ/showOrgUser.shtml";
-	}else{
-		new top.createConfirm({
-	        padding:'30px 20px 65px',
-	        width:'330px',
-	        title:'提示',
-	        content : '<div class="f_14 t_a_c">只有商家管理员才能开通泰坦金融哦~</div>',      
-	        button:false
-	      }); 
-	}
-        
+	location = "<%=basePath%>"+"/organ/showOrgUser.shtml";
 });
 //已有泰坦金融账号，点击绑定SAAS
 $('.J_t').on('click',function(){

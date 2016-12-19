@@ -242,8 +242,8 @@ $('.verify').on('click',function(){
 	_this= $(this);
 	$.ajax({
 		async : false,
-		data:{"receiveAddress":receiveAddress},
-		url : '<%=basePath%>/organ/sendRegCode.shtml',
+		data:{"receiveAddress":receiveAddress,"msgType":1},
+		url : '<%=basePath%>/organ/sendCode.shtml',
 		dataType : 'json',
 		success : function(result){
 			if(result.code==1){
