@@ -410,7 +410,7 @@ public class RSCreditManagerImpl implements RSCreditManager {
 					
 					response.setOperateStatus(rsp.getIs_success());
 					if(CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
-						rop2TBorrowRepayment(response,MyConvertXmlToObject.xml2map(rsp.getBody()));
+						response.settBorrowRepayment(rsp.getBorrowrepayment());
 						response.setSuccess(true);
 						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
 						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
