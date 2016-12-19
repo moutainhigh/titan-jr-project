@@ -23,7 +23,6 @@ public class TitanFinancialOrganServiceTest extends BaseTest{
 	
 	@Test
 	public void testTitanOpenOrg() throws Exception{
-		titanOrgService.test();
 	}
 	
 

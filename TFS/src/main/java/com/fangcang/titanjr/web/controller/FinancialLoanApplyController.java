@@ -2,6 +2,7 @@ package com.fangcang.titanjr.web.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -11,6 +12,7 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -108,19 +110,35 @@ public class FinancialLoanApplyController extends BaseController{
 			request.setProductType(LoanProductEnum.ROOM_PACK);
 			request.setLcanSpec(loanSpecBean);
 			request.setOrgCode(this.getUserId());
-			//request.setOrgCode("TJM10000087");
 			ApplyLoanResponse response = titanFinancialLoanService.applyLoan(request);
 			if(!response.isResult()){
 				this.putSysError(response.getReturnMessage());
 				return toJson();
 			}
-			this.putSuccess();
+			Map<String, String> jsonMap = new HashMap<String, String>();
+			jsonMap.put("orderNo", response.getOrderNo());
+			jsonMap.put("orderCreateTime", response.getOrderCreateTime());
+			this.putSuccess("贷款申请已经提交成功",jsonMap);
 		}catch(Exception e){
 			this.putSysError();
 			log.error("包房贷申请失败",e);
 		}
 		return toJson();
 	} 
+	
+	/***
+	 * 贷款申请提交成功页
+	 * @param orderNo
+	 * @param orderCreateTime
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("apply-succ")
+	public String applySucc(String orderNo,String orderCreateTime,Model model){
+		model.addAttribute("orderNo", orderNo);
+		model.addAttribute("orderCreateTime", orderCreateTime);
+		return "/loan/loan-apply/apply-succ";
+	}
 	
 	private boolean checkLoanApplyInfo(LoanApplyInfo info){
 		String neg = "(^[1-9]{1}\\d{0,20}(\\.\\d{1,2})?$)";

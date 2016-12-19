@@ -12,7 +12,7 @@
 	<div id="scroll">
 		<div class="main_top clearfix headline bg_bom">
 			<div class="main_return fl">
-				<a href="javascript:history.go(-1)"><i></i>返回上一页</a>
+				<a href="<%=basePath %>/loan/credit/checkCreditStatus.shtml"><i></i>返回上一页</a>
 			</div>
 			<div class="history fl">我的贷款 > 申请包房贷款</div>
 		</div>
@@ -253,7 +253,11 @@
 				dataType:'json',
 				data:this.queryData(),
 				success:function(result){
-					console.log(result);
+					if(result.code==1){
+						location.href="<%=basePath%>/loan_apply/apply-succ.shtml?orderNo="+result.data.orderNo+"&orderCreateTime="+result.data.orderCreateTime;
+					}else{
+						new top.Tip({msg:result.msg, type: 3, timer: 2000});
+					}
 				},
 				complete:function(){
 					top.F.loading.hide();

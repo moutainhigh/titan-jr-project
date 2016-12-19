@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.dto.bean;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /***
  * 授信申请公司资料
@@ -19,9 +20,13 @@ public class CreditCompanyInfoDTO implements Serializable {
 	 */
 	private String orderNo;
 	/**
-	 * 申请时间(创建时间)
+	 * 创建时间
 	 */
 	private String createTime;
+	/**
+	 * 授信申请时间
+	 */
+	private Date reqTime;
 	/**
 	 * 授信申请联系人
 	 */
@@ -40,6 +45,15 @@ public class CreditCompanyInfoDTO implements Serializable {
 	 */
 	private String contactPhone;
 	
+
+	public Date getReqTime() {
+		return reqTime;
+	}
+
+	public void setReqTime(Date reqTime) {
+		this.reqTime = reqTime;
+	}
+
 	public String getOrderNo() {
 		return orderNo;
 	}

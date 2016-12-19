@@ -39,6 +39,8 @@ import com.fangcang.titanjr.dto.bean.LoanApplyOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanRepaymentBean;
 import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
 import com.fangcang.titanjr.dto.bean.LoanSpecBean;
+import com.fangcang.titanjr.dto.bean.NewLoanApplyJsonDataBean;
+import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.OrgLoanStatInfo;
 import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
 import com.fangcang.titanjr.dto.request.CancelLoanRequest;
@@ -66,28 +68,28 @@ import com.fangcang.titanjr.entity.LoanProductAmountStat;
 import com.fangcang.titanjr.entity.LoanRoomPackSpec;
 import com.fangcang.titanjr.entity.LoanSevenDaysStat;
 import com.fangcang.titanjr.entity.parameter.LoanQueryConditions;
-import com.fangcang.titanjr.rs.dto.NewLoanApplyJsonData;
 import com.fangcang.titanjr.rs.dto.TBorrowRepayment;
 import com.fangcang.titanjr.rs.dto.TUserArepayment;
 import com.fangcang.titanjr.rs.manager.RSCreditManager;
 import com.fangcang.titanjr.rs.manager.RSFileManager;
 import com.fangcang.titanjr.rs.request.NewLoanApplyRequest;
-import com.fangcang.titanjr.rs.request.QueryCreditMerchantInfoRequest;
 import com.fangcang.titanjr.rs.request.QueryBorrowinfoRequest;
+import com.fangcang.titanjr.rs.request.QueryCreditMerchantInfoRequest;
 import com.fangcang.titanjr.rs.request.QueryLoanApplyRequest;
 import com.fangcang.titanjr.rs.request.QueryUserInitiativeRepaymentRequest;
 import com.fangcang.titanjr.rs.request.RSFsFileUploadRequest;
 import com.fangcang.titanjr.rs.request.StopLoanRequest;
 import com.fangcang.titanjr.rs.request.UserInitiativeRepamentRequest;
 import com.fangcang.titanjr.rs.response.NewLoanApplyResponse;
-import com.fangcang.titanjr.rs.response.QueryCreditMerchantInfoResponse;
 import com.fangcang.titanjr.rs.response.QueryBorrowinfoResponse;
+import com.fangcang.titanjr.rs.response.QueryCreditMerchantInfoResponse;
 import com.fangcang.titanjr.rs.response.QueryLoanApplyResponse;
 import com.fangcang.titanjr.rs.response.QueryUserInitiativeRepaymentResponse;
 import com.fangcang.titanjr.rs.response.RSFsFileUploadResponse;
 import com.fangcang.titanjr.rs.response.StopLoanResponse;
 import com.fangcang.titanjr.rs.response.UserInitiativeRepamentResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.util.LoanTypeConvertUtil;
 import com.fangcang.util.StringUtil;
@@ -112,6 +114,9 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 	@Resource
 	private TitanSysconfigService titanSysconfigService;
+	
+	@Resource
+	private TitanFinancialOrganService organService;
 
 	@Resource
 	private RSFileManager rsFileManager;
@@ -138,7 +143,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 			String loanCreditOrderNo = loanCreditOrder.getOrderNo();
 			if (!StringUtil.isValidString(loanCreditOrderNo)) {
-				log.error("授信申请单位空");
+				log.error("授信申请单位空,机构编码OrgCode："+req.getOrgCode());
 				response.putErrorResult("授信申请单位空");
 				return response;
 			}
@@ -155,7 +160,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			if (!qcResponse.isSuccess()
 					|| !StringUtil.isValidString(qcResponse
 							.getCreditavailability())) {
-				log.error("授信申请查询失败");
+				log.error("授信申请查询失败,贷款申请单号loanCreditOrderNo："+loanCreditOrderNo);
 				response.putErrorResult("授信申请查询失败");
 				return response;
 			}
@@ -174,7 +179,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 					qcResponse.getCreditavailability()).subtract(
 					new BigDecimal(amount)).compareTo(BigDecimal.ZERO) == -1;
 			if (isEnough) {
-				log.error("授信额度不足");
+				log.error("授信额度不足，贷款申请单号loanCreditOrderNo："+loanCreditOrderNo);
 				response.putErrorResult("授信额度不足");
 				return response;
 			}
@@ -208,7 +213,10 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			// 上传文件到融数，并且获取相应的urlKey
 			String urlKey = getApplyLoanUrlKey(req.getOrgCode(),
 					loanApplyOrderNo, 1, contactNames);
-
+			if(!StringUtil.isValidString(urlKey)){
+				log.error("贷款申请订单证明资料上传失败，orgcode:"+req.getOrgCode());
+				throw new Exception("保存订单失败");
+			}
 			// 申请贷款
 			NewLoanApplyRequest request = this.convertToNewLoanApplyRequest(
 					req.getLcanSpec(), productType.getCode(), req.getOrgCode());
@@ -229,7 +237,8 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			loanOrder.setOrderid(loanResponse.getOrderid());
 			loanOrder.setOrderNo(request.getUserorderid());
 			this.updateLoanOrderBean(loanOrder);
-
+			response.setOrderNo(request.getUserorderid());
+			response.setOrderCreateTime(DateUtil.dateToString(new Date(), "yyyy-MM-dd HH:mm"));
 			response.putSuccess();
 			return response;
 
@@ -442,6 +451,9 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			LoanSpecBean loanSpecBean, Integer type, String orgCode)
 			throws Exception {
 		try {
+			OrgDTO  param = new OrgDTO();
+			param.setOrgcode(orgCode);
+			param = organService.queryOrg(param);
 			NewLoanApplyRequest request = new NewLoanApplyRequest();
 			LoanRoomPackSpecBean loanRoomPackSpecBean = null;
 			if (LoanProductEnum.ROOM_PACK.getCode() == type.intValue()) {
@@ -453,10 +465,11 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				request.setReqesttime("");
 				request.setRequestdate(DateUtil.sdf4.format(new Date()));
 				request.setUserid(orgCode);
+				request.setUsername(param.getOrgname());
 				request.setUserorderid(loanRoomPackSpecBean.getLoanOrderNo());
 				// 暂时还未确定TODO
 				request.setUserrelateid("TJM10000110");
-				request.setUsername("罗庆龙");
+				
 			} else if (LoanProductEnum.OPERACTION.getCode() == type.intValue()) {
 
 			}
@@ -469,7 +482,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 	private void packLoanJSonData(NewLoanApplyRequest request,
 			LoanSpecBean loanSpecBean, Integer type) {
-		NewLoanApplyJsonData moneyCreditJsonData = new NewLoanApplyJsonData();
+		NewLoanApplyJsonDataBean moneyCreditJsonData = new NewLoanApplyJsonDataBean();
 		LoanRoomPackSpecBean loanRoomPackSpecBean = null;
 		if (LoanProductEnum.ROOM_PACK.getCode() == type.intValue()) {
 			loanRoomPackSpecBean = (LoanRoomPackSpecBean) loanSpecBean;
@@ -496,6 +509,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		moneyCreditJsonData.setLoanTerm("60");
 		JSON result = JSONSerializer.toJSON(moneyCreditJsonData);
 		request.setJsondata(result.toString());
+		
 	}
 
 	@Override

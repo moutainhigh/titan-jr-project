@@ -4,12 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 
-import com.Rop.api.ApiException;
 import com.Rop.api.DefaultRopClient;
 import com.Rop.api.request.FsFileUploadRequest;
 import com.Rop.api.request.FsFileurlGetRequest;
@@ -39,15 +37,7 @@ import com.Rop.api.response.WheatfieldOrderMixserviceStoploanResponse;
 import com.Rop.api.response.WheatfieldOrderOperResponse;
 import com.Rop.api.response.WheatfieldOrderServiceAgreementconfirmResponse;
 import com.Rop.api.response.WheatfieldOrderServiceNewloanapplyResponse;
-import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.util.Tools;
-import com.fangcang.titanjr.rs.dto.NewLoanApplyJsonData;
-import com.fangcang.titanjr.rs.dto.TBorrowRepayment;
-import com.fangcang.titanjr.rs.request.QueryBorrowinfoRequest;
-import com.fangcang.titanjr.rs.response.QueryBorrowinfoResponse;
-import com.fangcang.titanjr.rs.util.MyConvertXmlToObject;
-import com.fangcang.titanjr.rs.util.RSInvokeConstant;
-import com.fangcang.util.MyBeanUtil;
 
 /**
  * Created by zhaoshan on 2016/10/9.
