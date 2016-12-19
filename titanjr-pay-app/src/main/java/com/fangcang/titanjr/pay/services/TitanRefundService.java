@@ -1,6 +1,8 @@
 package com.fangcang.titanjr.pay.services;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -13,12 +15,15 @@ import org.springframework.ui.Model;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
+import com.fangcang.titanjr.common.enums.FreezeConditionCodeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.RefundTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
@@ -36,6 +41,7 @@ import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.UnFreeBalanceBatchRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
+import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.OrganBriefResponse;
 import com.fangcang.titanjr.dto.response.RefundResponse;
 import com.fangcang.titanjr.dto.response.TitanJrRefundResponse;
@@ -73,156 +79,175 @@ public class TitanRefundService {
 	
 	public RefundResponse orderRefund(RefundRequest refundRequest){
 		RefundResponse response = new RefundResponse();
-		//可以验证该身份
-		boolean flag = this.validateUserId(refundRequest.getUserId());
+		try{
+			//可以验证该身份
+			boolean flag = this.validateUserId(refundRequest.getUserId());
+			
+			if(!flag){
+				log.error("该账户不存在");
+				response.putErrorResult(TitanMsgCodeEnum.AUTHENTITCATION_FAILED);
+				return response;
+			}
+			
+			flag = this.validatePsd(refundRequest.getTfsUserid(), refundRequest.getPayPassword());
+			
+			
+			if(!flag){
+				log.error("付款密码错误");
+				response.putErrorResult(TitanMsgCodeEnum.PAY_PWD_ERROR);
+				return response;
+			}
+			
+			
+			//获取该订单
+			TransOrderRequest transOrderRequest = new TransOrderRequest();
+			transOrderRequest.setUserorderid(refundRequest.getOrderNo());
+			
+			//该订单不存在或者该单没有支付成功
+			TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
+			if(null == transOrderDTO || !OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())){
+				log.error("该订单不存在或者该单没有支付成功");
+				response.putErrorResult(TitanMsgCodeEnum.ORDER_NOT_REFUND);
+				return response;
+			}
+			
+			//查询账户转账金额
+			TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
+			titanTransferDTO.setPayOrderNo(transOrderDTO.getPayorderno());
+			titanTransferDTO.setUserid(transOrderDTO.getUserid());
+			titanTransferDTO.setUserrelateid(transOrderDTO.getUserrelateid());
+			titanTransferDTO.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
+			titanTransferDTO = titanOrderService.getTitanTransferDTO(titanTransferDTO);
+			if(null ==titanTransferDTO){
+				log.error("查询账户转账金额失败");
+				response.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
+				return response;
+			}
+			BigDecimal tradeAmount  = new BigDecimal(titanTransferDTO.getAmount());
+			
+			if(!OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())){//如果没有解冻操作则需要查询余额
+				AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
+			    accountBalanceRequest.setUserid(transOrderDTO.getUserrelateid());
+			    AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+			    if(!balanceResponse.isResult() || null == balanceResponse.getAccountBalance() || null == balanceResponse.getAccountBalance().get(0)){
+					log.error("查询余额失败");
+			    	response.putErrorResult(TitanMsgCodeEnum.TITAN_ACCOUNT_NOT_EXISTS);
+					return response;
+				}
+			    
+			    //账户余额不足不能退款
+			    AccountBalance accountBalace =  balanceResponse.getAccountBalance().get(0);
+				BigDecimal balance = new BigDecimal(accountBalace.getBalanceusable());
+				
+				
+				if(balance.subtract(tradeAmount).compareTo(BigDecimal.ZERO)==-1){
+					log.error("查询余额不足");
+					response.putErrorResult(TitanMsgCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH);
+					return response;
+				}
+			}
+			
+			Long fee = transOrderDTO.getReceivedfee();
+			if(null == fee){
+				fee = (long)0;
+			}
 		
-		if(!flag){
-			log.error("该账户不存在");
-			response.putErrorResult(TitanMsgCodeEnum.AUTHENTITCATION_FAILED);
-			return response;
-		}
-		
-		flag = this.validatePsd(refundRequest.getTfsUserid(), refundRequest.getPayPassword());
-		
-		if(!flag){
-			log.error("付款密码错误");
-			response.putErrorResult(TitanMsgCodeEnum.PAY_PWD_ERROR);
-			return response;
-		}
-		
-		
-		//获取该订单
-		TransOrderRequest transOrderRequest = new TransOrderRequest();
-		transOrderRequest.setUserorderid(refundRequest.getOrderNo());
-		
-		//该订单不存在或者该单没有支付成功
-		TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
-		if(null == transOrderDTO || !OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())){
-			log.error("该订单不存在或者该单没有支付成功");
-			response.putErrorResult(TitanMsgCodeEnum.ORDER_NOT_REFUND);
-			return response;
-		}
-		
-		//如果是冻结的需要立即解冻
-		if(OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())){//立即解冻
-			List<FundFreezeDTO>  fundFreezeDTOList =  getUnFreezeAccountBalanceRequest(transOrderDTO.getOrderid());
-			if(null !=fundFreezeDTOList && fundFreezeDTOList.size()==1){
+			TitanJrRefundRequest titanJrRefundRequest  = new TitanJrRefundRequest();
+			titanJrRefundRequest.setInterMerchantCode(transOrderDTO.getConstid());
+			titanJrRefundRequest.setMerchantCode(transOrderDTO.getConstid());
+			titanJrRefundRequest.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+			titanJrRefundRequest.setInterProductId(transOrderDTO.getProductid());
+			titanJrRefundRequest.setUserId(transOrderDTO.getUserrelateid());
+			titanJrRefundRequest.setUserRelateId(transOrderDTO.getUserid());
+			titanJrRefundRequest.setTradeAmount(tradeAmount.toString());
+			titanJrRefundRequest.setPayOrderNo(transOrderDTO.getPayorderno());
+			titanJrRefundRequest.setTransorderid(transOrderDTO.getTransid());
+			titanJrRefundRequest.setFee(fee.toString());
+			titanJrRefundRequest.setFreeze(refundRequest.isFreeze());
+			titanJrRefundRequest.setTfsUerId(refundRequest.getTfsUserid());
+			//查看是否有充值单
+			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+			titanOrderPayDTO.setTransorderid(transOrderDTO.getTransid());
+			titanOrderPayDTO.setOrderNo(transOrderDTO.getOrderid());
+			titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
+			
+			if(null !=titanOrderPayDTO){//有充值单
+				titanJrRefundRequest.setOrderNo(transOrderDTO.getOrderid());
+				titanJrRefundRequest.setRefundAmount(transOrderDTO.getAmount().toString());
+				titanJrRefundRequest.setBusiCode(BusiCodeEnum.MerchantRefund.getKey());
+				titanJrRefundRequest.setOrderTime(titanOrderPayDTO.getOrderTime());
+				titanJrRefundRequest.setVersion(titanOrderPayDTO.getVersion());
+				titanJrRefundRequest.setSignType(titanOrderPayDTO.getSignType().toString());
+				
+				BigDecimal orderAmount = new BigDecimal(titanOrderPayDTO.getOrderAmount());
+				//只有充值
+				if(tradeAmount.subtract(orderAmount).compareTo(BigDecimal.ZERO)!=1 ){//交易金额比充值金额小(有手续费时)，或者相等
+					titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_BANKCARD.type);
+					
+				}
+				//充值和余额支付并存
+		        if(tradeAmount.subtract(orderAmount).compareTo(BigDecimal.ZERO)==1){
+		        	titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_BANKCARD_ACCOUNT.type);
+				}
+			}
+			
+			//直接进行账户退款,退款到账户余额
+			if(null == titanOrderPayDTO){
+				titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_ACCOUNT.type);
+			}
+			
+			
+			//解冻操作
+			if(OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())){//立即解冻
+				List<FundFreezeDTO>  fundFreezeDTOList =  getUnFreezeAccountBalanceRequest(transOrderDTO.getOrderid());
+				if(null ==fundFreezeDTOList || fundFreezeDTOList.size()!=1){
+					log.error("冻结单查询失败");
+			    	response.putErrorResult(TitanMsgCodeEnum.REFUND_FAIL);
+			    	return response;
+				}
+				
 				UnFreeBalanceBatchRequest unFreeBalanceBatchRequest = new UnFreeBalanceBatchRequest();
 				unFreeBalanceBatchRequest.setFundFreezeDTOList(fundFreezeDTOList);
-				titanFinancialAccountService.unfreezeAccountBalanceBatch(unFreeBalanceBatchRequest);
+				flag = titanFinancialAccountService.unfreezeAccountBalanceOne(unFreeBalanceBatchRequest);
+				if(!flag){
+					log.error("资金解冻失败");
+			    	response.putErrorResult(TitanMsgCodeEnum.REFUND_UNFREEZE_FAIL);
+			    	return response;
+				}
 				//标识该订单有解冻操作
 				refundRequest.setFreeze(true);
 			}
-		}
-		
-		//查询余额
-		AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
-	    accountBalanceRequest.setUserid(transOrderDTO.getUserrelateid());
-	    AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
-	    if(!balanceResponse.isResult() || null == balanceResponse.getAccountBalance() || null == balanceResponse.getAccountBalance().get(0)){
-			log.error("查询余额失败");
-	    	response.putErrorResult(TitanMsgCodeEnum.TITAN_ACCOUNT_NOT_EXISTS);
-			return response;
-		}
-	    
-	    //账户余额不足不能退款
-	    AccountBalance accountBalace =  balanceResponse.getAccountBalance().get(0);
-		BigDecimal balance = new BigDecimal(accountBalace.getBalanceusable());
-		Long fee = transOrderDTO.getReceivedfee();
-		if(null == fee){
-			fee = (long)0;
-		}
-		
-		//查询账户转账金额
-		TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
-		titanTransferDTO.setPayOrderNo(transOrderDTO.getPayorderno());
-		titanTransferDTO.setUserid(transOrderDTO.getUserid());
-		titanTransferDTO.setUserrelateid(transOrderDTO.getUserrelateid());
-		titanTransferDTO.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
-		titanTransferDTO = titanOrderService.getTitanTransferDTO(titanTransferDTO);
-		if(null ==titanTransferDTO){
-			log.error("查询账户转账金额失败");
-			response.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
-			return response;
-		}
-		
-		BigDecimal tradeAmount  = new BigDecimal(titanTransferDTO.getAmount());
-		if(balance.subtract(tradeAmount).compareTo(BigDecimal.ZERO)==-1){
-			log.error("查询余额不足");
-			response.putErrorResult(TitanMsgCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH);
-			return response;
-		}
-		
-		TitanJrRefundRequest titanJrRefundRequest  = new TitanJrRefundRequest();
-		titanJrRefundRequest.setInterMerchantCode(transOrderDTO.getConstid());
-		titanJrRefundRequest.setMerchantCode(transOrderDTO.getConstid());
-		titanJrRefundRequest.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-		titanJrRefundRequest.setInterProductId(transOrderDTO.getProductid());
-		titanJrRefundRequest.setUserId(transOrderDTO.getUserrelateid());
-		titanJrRefundRequest.setUserRelateId(transOrderDTO.getUserid());
-		titanJrRefundRequest.setTradeAmount(tradeAmount.toString());
-		titanJrRefundRequest.setPayOrderNo(transOrderDTO.getPayorderno());
-		titanJrRefundRequest.setTransorderid(transOrderDTO.getTransid());
-		titanJrRefundRequest.setFee(fee.toString());
-		titanJrRefundRequest.setFreeze(refundRequest.isFreeze());
-		//查看是否有充值单
-		TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
-		titanOrderPayDTO.setTransorderid(transOrderDTO.getTransid());
-		titanOrderPayDTO.setOrderNo(transOrderDTO.getOrderid());
-		titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
-		
-		if(null !=titanOrderPayDTO){//有充值单
-			titanJrRefundRequest.setOrderNo(transOrderDTO.getOrderid());
-			titanJrRefundRequest.setRefundAmount(transOrderDTO.getAmount().toString());
-			titanJrRefundRequest.setBusiCode(BusiCodeEnum.MerchantRefund.getKey());
-			titanJrRefundRequest.setOrderTime(titanOrderPayDTO.getOrderTime());
-			titanJrRefundRequest.setVersion(titanOrderPayDTO.getVersion());
-			titanJrRefundRequest.setSignType(titanOrderPayDTO.getSignType().toString());
 			
-			BigDecimal orderAmount = new BigDecimal(titanOrderPayDTO.getOrderAmount());
-			//只有充值
-			if(tradeAmount.subtract(orderAmount).compareTo(BigDecimal.ZERO)!=1 ){//交易金额比充值金额小(有手续费时)，或者相等
-				titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_BANKCARD.type);
-				
-			}
-			//充值和余额支付并存
-	        if(tradeAmount.subtract(orderAmount).compareTo(BigDecimal.ZERO)==1){
-	        	titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_BANKCARD_ACCOUNT.type);
-			}
+	        TitanJrRefundResponse titanJrRefundResponse = titanFinancialRefundService.refund(titanJrRefundRequest);
+		    if(!titanJrRefundResponse.isResult()){
+		    	log.error("退款操作失败:"+titanJrRefundResponse.getReturnMessage());
+		    	response.putErrorResult(TitanMsgCodeEnum.REFUND_FAIL);
+		    	return response;
+		    }
+		    
+		    TransOrderDTO order = new TransOrderDTO();
+		    order.setStatusid(OrderStatusEnum.RECHARGE_IN_PROCESS.getStatus());
+		    order.setTransid(transOrderDTO.getTransid());
+		    flag = titanOrderService.updateTransOrder(order);
+		    if(!flag){
+		    	OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrderDTO.getOrderid(), "退款请求更新本地单失败", OrderExceptionEnum.REFUND_UPDATE_TRANSORDER, JSON.toJSONString(transOrderDTO));
+	    		titanOrderService.saveOrderException(orderExceptionDTO);
+		    }
+		    response.putSuccess();
+		    return response;			
+		}catch(Exception e){
+			log.error(e.getMessage());
 		}
-		
-		//直接进行账户退款,退款到账户余额
-		if(null == titanOrderPayDTO){
-			titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_ACCOUNT.type);
-		}
-		
-        TitanJrRefundResponse titanJrRefundResponse = titanFinancialRefundService.refund(titanJrRefundRequest);
-	    if(!titanJrRefundResponse.isResult()){
-	    	//如果有解冻操作需要重新冻结
-	    	log.error("如果有解冻操作需要重新冻结");
-	    	 response.putErrorResult(TitanMsgCodeEnum.REFUND_FAIL);
-	    	 return response;
-	    }
-	    
-	    //修改transOrderDTO
-	    transOrderDTO.setStatusid(OrderStatusEnum.REFUND_IN_PROCESS.getStatus());
-	    transOrderDTO.setAmount((long)0);
-	    flag = titanOrderService.updateTransOrder(transOrderDTO);
-	    if(!flag){
-	    	OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrderDTO.getOrderid(), "退款请求更新本地单失败", OrderExceptionEnum.REFUND_UPDATE_TRANSORDER, JSON.toJSONString(transOrderDTO));
-    		titanOrderService.saveOrderException(orderExceptionDTO);
-	    }
-	    
-	    response.putSuccess();
-	    return response;
+		response.putSysError();
+		return response;		
 	}
 	
 	private boolean validateUserId(String userId){
-		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-        organQueryRequest.setUserId(userId);
-        organQueryRequest.setStatusId(CommonConstant.IS_ACTIVE);
-        OrganBriefResponse organBriefResponse =  titanFinancialOrganService.queryOrganBriefByUserId(organQueryRequest);
-        if (organBriefResponse.isResult() && CollectionUtils.isNotEmpty(organBriefResponse.getOrganDTOList())){
+		OrgDTO orgDTO = new OrgDTO();
+		orgDTO.setOrgcode(userId);
+		orgDTO.setStatusId(CommonConstant.IS_ACTIVE);
+		orgDTO =  titanFinancialOrganService.queryOrg(orgDTO);
+        if (orgDTO !=null && userId.equals(orgDTO.getUserid())){
             return true;
         }
 		return false;
@@ -335,12 +360,35 @@ public class TitanRefundService {
 		}
 		
 		
-		if(!(OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()) || OrderStatusEnum.FREEZE_SUCCESS.equals(transOrderDTO.getStatusid()))){
+		if(!(OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()) || OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()))){
 			log.error("该订单未支付成功，不能退款");
 			model.addAttribute("msg",
 					TitanMsgCodeEnum.ORDER_NOT_REFUND.getResMsg());
 			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 		}
+		
+		//判断订单是否超过退款时间，
+		if(transOrderDTO.getAmount() !=null && transOrderDTO.getAmount()>0 ){
+			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+			titanOrderPayDTO.setOrderNo(transOrderDTO.getOrderid());
+			TitanOrderPayDTO payOrder = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
+			if(payOrder !=null  && StringUtil.isValidString(payOrder.getOrderTime())){
+				try {
+					Long orderDate = DateUtil.sdf5.parse(payOrder.getOrderTime()).getTime();
+					Long nowDate = new Date().getTime();
+					if(nowDate-orderDate>CommonConstant.MS){
+						log.error("该订单已超出退款时限");
+						model.addAttribute("msg",
+								TitanMsgCodeEnum.ORDER_OUT_TIME.getResMsg());
+						return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+					}
+					
+				} catch (ParseException e) {
+					log.error("时间转换异常:"+e.getMessage());
+				}
+			}
+		}
+		
 		
 		//查询商家的账户余额，看是否能满足退款
 		AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();

@@ -184,5 +184,8 @@
   
   </select>
   
+  <delete id="delete" parameterType="com.fangcang.titanjr.entity.TitanTransferReq">
+    delete from t_tfs_transferreq where transferreqid=#{transferreqid}
+  </delete>
   
 </mapper>

@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
+import com.Rop.api.domain.Refund;
 import com.alibaba.fastjson.JSON;
 import com.fangcang.order.api.HotelOrderSearchFacade;
 import com.fangcang.order.dto.OrderDetailResponseDTO;
@@ -40,6 +41,7 @@ import com.fangcang.titanjr.dao.DomainConfigDao;
 import com.fangcang.titanjr.dao.TitanAccountDao;
 import com.fangcang.titanjr.dao.TitanDynamicKeyDao;
 import com.fangcang.titanjr.dao.TitanOrderPayreqDao;
+import com.fangcang.titanjr.dao.TitanRefundDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
@@ -52,6 +54,7 @@ import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.QrCodeDTO;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
+import com.fangcang.titanjr.dto.bean.RefundDTO;
 import com.fangcang.titanjr.dto.bean.RepairTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
@@ -148,6 +151,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 	@Resource
 	private DomainConfigDao domainConfigDao;
+	
+	@Resource
+	private TitanRefundDao titanRefundDao;
 
 	private HotelOrderSearchFacade hotelOrderSearchFacade;
 
@@ -659,7 +665,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params) + "---url---"
 					+ url);
 			   HttpPost httpPost = new HttpPost(url);
-		        HttpResponse resp = HttpClient.httpRequest(params, url ,  httpPost);
+		        HttpResponse resp = HttpClient.httpRequest(params,  httpPost);
 			if (null != resp) {
 				InputStream in = resp.getEntity().getContent();
 				byte b[] = new byte[1024];
@@ -1470,6 +1476,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 								.getTransid());
 						titanTransferDTO = titanOrderService
 								.getTitanTransferDTO(titanTransferDTO);
+						//查询退款
+						transOrderDTO.setRefundDTO(this.getRefundDTO(transOrderDTO.getOrderid()));
 						transOrderDTO.setTitanTransferDTO(titanTransferDTO);
 					} else if (transOrderDTO.getTradeType().equals("付款")) {// 付款记录
 						TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
@@ -1486,6 +1494,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 						transOrderDTO.setTitanOrderPayDTO(titanOrderPayDTO);
 						transOrderDTO.setTitanTransferDTO(titanTransferDTO);
+						transOrderDTO.setRefundDTO(this.getRefundDTO(transOrderDTO.getOrderid()));
 
 					} else if (transOrderDTO.getTradeType().equals("充值")) {// 获取提现记录
 						TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
@@ -1528,6 +1537,25 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return tradeDetailResponse;
 	}
 
+	
+	private RefundDTO getRefundDTO(String orderId){
+		RefundDTO refundDTO = new RefundDTO();
+		refundDTO.setOrderNo(orderId);
+		List<RefundDTO> refundList = titanRefundDao.queryRefundDTO(refundDTO);
+		if(refundList !=null){
+			refundDTO =  refundList.get(0);
+			if(StringUtil.isValidString(refundDTO.getOrderTime())){
+				try {
+					refundDTO.setCreatetime(DateUtil.sdf5.parse(refundDTO.getOrderTime()));
+					return refundDTO;
+				} catch (ParseException e) {
+					log.error("时间转换失败",e);
+				}
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public PaymentUrlResponse getPaymentUrl(PaymentUrlRequest paymentUrlRequest) {
 		PaymentUrlResponse paymentUrlResponse = new PaymentUrlResponse();
@@ -2345,7 +2373,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			   HttpPost httpPost = new HttpPost(rechargeDataDTO.getGateWayUrl());
 //		        httpPost.setConfig(requestConfig);
 		        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-			HttpResponse resp = HttpClient.httpRequest(params, rechargeDataDTO.getGateWayUrl() , httpPost);
+			HttpResponse resp = HttpClient.httpRequest(params, httpPost);
 			if(resp == null){
 				log.error("调用融数网关失败");
 				qrCodeResponse.putErrorResult("调用融数网关失败");

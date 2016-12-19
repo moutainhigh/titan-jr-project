@@ -1,7 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <html>
 <head>
+    <script type="text/javascript" src="http://hres.fangcang.com/js/common/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="http://hres.fangcang.com/js/common/jquery/jquery.form.js"></script>
 <script type="text/javascript" src="js/titanpay.js"></script>
+
 </head>
 <body>
 	<h2>Hello World!</h2>
@@ -17,16 +20,16 @@
             <tr align="left">
                 <td class="tdr">退款单号</td>
                 <td>
-                    <input type="text" name="orderNo"  id="orderNo" value="2016111412385960025" class="input_t01"/>
+                    <input type="text" name="orderNo"  id="orderNo" value="20161114125" class="input_t01"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">金融账号</td>
-                <td><input type="text" id="userId" value="TJM10000109" name="userId"/></td>
+                <td><input type="text" id="userId" value="TJM10000038" name="userId"/></td>
             </tr>
             <tr>
                 <td class="tdr">操作人ID</td>
-                <td><input type="text" id="tfsUserid" value="10062" name="tfsUserid"/>
+                <td><input type="text" id="tfsUserid" value="10127" name="tfsUserid"/>
                 </td>
             </tr>
             </tbody>

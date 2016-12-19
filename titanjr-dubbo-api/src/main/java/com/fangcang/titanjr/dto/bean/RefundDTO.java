@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.dto.bean;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 public class RefundDTO implements Serializable{
@@ -9,6 +10,8 @@ public class RefundDTO implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private String refundId ;
 	
 	private String merchantNo;
 	
@@ -25,6 +28,12 @@ public class RefundDTO implements Serializable{
 	private String version;
 	
 	private String signType;
+	
+	private String creator;
+	
+	private Integer status;
+	
+	private Date createtime;
 
 	public String getMerchantNo() {
 		return merchantNo;
@@ -89,6 +98,37 @@ public class RefundDTO implements Serializable{
 	public void setSignType(String signType) {
 		this.signType = signType;
 	}
-	
 
+	public String getRefundId() {
+		return refundId;
+	}
+
+	public void setRefundId(String refundId) {
+		this.refundId = refundId;
+	}
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public Date getCreatetime() {
+		return createtime;
+	}
+
+	public void setCreatetime(Date createtime) {
+		this.createtime = createtime;
+	}
+	
 }

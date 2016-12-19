@@ -89,7 +89,7 @@
 		  var refundObj = {
 				  enoughBalance:function(){
 					  var amount  = sub('${balanceAmount}', '${(transOrderDTO.tradeamount+transOrderDTO.receivedfee)}');
-					  if(amount<0){
+					  if(amount<0 && !refundObj.isFreeze()){
 				    	  $(".balanceTip").show();
 				    	  $(".sure_btn").hide();
 				      }else{
@@ -101,6 +101,12 @@
 					  var url = "<%=basePath%>";
 					  var data = {tfsUserid:${refundRequest.tfsUserid}};
 					  payPassdword.show_psd(url, data); 
+				  },
+				  isFreeze:function(){
+					  if('${transOrderDTO.statusid}'=='6'){
+						  return true;
+					  }
+					  return false;
 				  },
 				  submitObj:function(){
 					  $.ajax({

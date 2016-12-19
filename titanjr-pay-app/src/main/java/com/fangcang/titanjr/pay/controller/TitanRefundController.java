@@ -75,7 +75,6 @@ public class TitanRefundController extends BaseController{
 			
 		}
 		
-		
 		RefundResponse response = titanRefundService.orderRefund(refundRequest);
 		return JsonUtil.objectToJson(response);
 		

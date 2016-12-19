@@ -20,6 +20,10 @@ public class TitanRefund implements java.io.Serializable{
 	private Date createTime;
 	
 	private String orderTime;
+	
+	private String creator;
+	
+	private Integer status;
 
 	public Integer getRefundid() {
 		return refundid;
@@ -67,6 +71,22 @@ public class TitanRefund implements java.io.Serializable{
 
 	public void setOrderTime(String orderTime) {
 		this.orderTime = orderTime;
+	}
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 	
 }

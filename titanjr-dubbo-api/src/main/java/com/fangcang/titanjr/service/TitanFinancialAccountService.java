@@ -131,6 +131,11 @@ public interface TitanFinancialAccountService {
 	 */
 	public void  unfreezeAccountBalanceBatch (UnFreeBalanceBatchRequest unFreeBalanceBatchRequest);
 	
+	
+	public boolean  unfreezeAccountBalanceOne (UnFreeBalanceBatchRequest unFreeBalanceBatchRequest);
+	
+	
+	
 	public DefaultPayerConfigResponse getDefaultPayerConfig();
 	
 	public QueryCertificationResponse queryCertificationInfo(

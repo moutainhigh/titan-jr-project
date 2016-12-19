@@ -273,16 +273,29 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 						if(CommonConstant.OPERATE_SUCCESS.equals(balanceFreezeResponse.getOperateStatus())){
 							freezeAccountBalanceResponse.setAuthcode(balanceFreezeResponse.getAuthcode());
 							//将冻结的信息插入数据库
-							TitanFundFreezereq titanFundFreezereq = convertToTitanFundFreezereq(freezeAccountBalanceRequest);
-							if(titanFundFreezereq !=null){
+							if(rechargeResultConfirmRequest.getFreezereqId()==null){
+								TitanFundFreezereq titanFundFreezereq = convertToTitanFundFreezereq(freezeAccountBalanceRequest);
+								if(titanFundFreezereq !=null){
+									titanFundFreezereq.setAuthcode(balanceFreezeResponse.getAuthcode());
+									int row = titanFundFreezereqDao.insert(titanFundFreezereq);
+									if(row<1){
+										log.error("插入冻结单失败");
+										throw new Exception();
+									}
+								}
+							}else{
+								TitanFundFreezereq titanFundFreezereq = new TitanFundFreezereq();
+								titanFundFreezereq.setFreezereqid(rechargeResultConfirmRequest.getFreezereqId());
 								titanFundFreezereq.setAuthcode(balanceFreezeResponse.getAuthcode());
-								int row = titanFundFreezereqDao.insert(titanFundFreezereq);
+								int row = titanFundFreezereqDao.update(titanFundFreezereq);
 								if(row<1){
+									log.error("修改冻结单失败");
 									throw new Exception();
 								}
 							}
 							freezeAccountBalanceResponse.setFreezeSuccess(true);
 							freezeAccountBalanceResponse.putSuccess();
+							return freezeAccountBalanceResponse;
 						}
 					}
 					freezeAccountBalanceResponse.putErrorResult(balanceFreezeResponse.getReturnCode(), balanceFreezeResponse.getReturnMsg());
@@ -938,45 +951,68 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			UnFreeBalanceBatchRequest unFreezeBalanceBatchRequest) {
 		if(unFreezeBalanceBatchRequest.getFundFreezeDTOList() !=null){
 			for(FundFreezeDTO fundFreezeDTO :unFreezeBalanceBatchRequest.getFundFreezeDTOList()){
-				BalanceUnFreezeRequest balanceUnFreezeRequest = convertBalanceUnFreezeRequest(fundFreezeDTO);
-				if(balanceUnFreezeRequest !=null){
-					try{
-						log.info("调用融数解冻:"+JSONSerializer.toJSON(balanceUnFreezeRequest));
-						BalanceUnFreezeResponse balanceUnFreezeResponse = rsAccTradeManager.unFreezeAccountBalance(balanceUnFreezeRequest);
-						log.info("调用融数解冻结果:"+JSONSerializer.toJSON(balanceUnFreezeResponse));
-						if(CommonConstant.OPERATE_SUCCESS.equals(balanceUnFreezeResponse.getOperateStatus())){
-					    	//插入解冻记录
-					    	TitanFundUnFreezereq titanFundUnFreezereq = covertToTitanFundUnFreezereq(fundFreezeDTO);
-					    	try{
-					    		titanFundUnFreezereqDao.insert(titanFundUnFreezereq);
-					    	}catch(Exception e){
-					    		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻资金记录插入失败", OrderExceptionEnum.UNFREEZE_RECORD_INSERT, JSON.toJSONString(titanFundUnFreezereq));
-		    	        		titanOrderService.saveOrderException(orderExceptionDTO);
-					    	}
-					    	
-					    	//修改系统单号
-					    	TitanTransOrder titanTransOrder = new TitanTransOrder();
-					    	titanTransOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
-					    	titanTransOrder.setOrderid(fundFreezeDTO.getOrderNo());
-					    	try{
-					    		titanTransOrderDao.update(titanTransOrder);
-					    	}catch(Exception e){
-					    		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻资金之后，修改订单失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(titanTransOrder));
-		    	        		titanOrderService.saveOrderException(orderExceptionDTO);
-					    	}
-					    	
-					    }else{
-					    	OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻失败", OrderExceptionEnum.UNFREEZE_INSERT, JSON.toJSONString(fundFreezeDTO));
-	    	        		titanOrderService.saveOrderException(orderExceptionDTO);
-					    }
-					}catch(Exception e){
-						OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻失败", OrderExceptionEnum.UNFREEZE_INSERT, JSON.toJSONString(fundFreezeDTO));
-    	        		titanOrderService.saveOrderException(orderExceptionDTO);
-					}
-				}
+				this.fundFreezeOrder(fundFreezeDTO);
 			}
 		}
 	}
+	
+	@Override
+	public boolean unfreezeAccountBalanceOne(UnFreeBalanceBatchRequest unFreezeBalanceBatchRequest){
+		List<FundFreezeDTO> funfFreezeList = unFreezeBalanceBatchRequest.getFundFreezeDTOList();
+		if(funfFreezeList ==null ||funfFreezeList.size()!=1){
+			log.error("解冻参数不正确");
+			return false;
+		}
+		 return fundFreezeOrder(funfFreezeList.get(0));
+	}
+	
+	
+	private boolean fundFreezeOrder(FundFreezeDTO fundFreezeDTO ){
+		BalanceUnFreezeRequest balanceUnFreezeRequest = convertBalanceUnFreezeRequest(fundFreezeDTO);
+		if(balanceUnFreezeRequest !=null){
+			try{
+				log.info("调用融数解冻:"+JSONSerializer.toJSON(balanceUnFreezeRequest));
+				BalanceUnFreezeResponse balanceUnFreezeResponse = rsAccTradeManager.unFreezeAccountBalance(balanceUnFreezeRequest);
+				log.info("调用融数解冻结果:"+JSONSerializer.toJSON(balanceUnFreezeResponse));
+				if(CommonConstant.OPERATE_SUCCESS.equals(balanceUnFreezeResponse.getOperateStatus())){
+			    	//插入解冻记录
+			    	TitanFundUnFreezereq titanFundUnFreezereq = covertToTitanFundUnFreezereq(fundFreezeDTO);
+			    	try{
+			    		titanFundUnFreezereqDao.insert(titanFundUnFreezereq);
+			    	}catch(Exception e){
+			    		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻资金记录插入失败", OrderExceptionEnum.UNFREEZE_RECORD_INSERT, JSON.toJSONString(titanFundUnFreezereq));
+    	        		titanOrderService.saveOrderException(orderExceptionDTO);
+    	        		return false;
+			    	}
+			    	
+			    	//修改系统单号
+			    	TitanTransOrder titanTransOrder = new TitanTransOrder();
+			    	titanTransOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
+			    	titanTransOrder.setOrderid(fundFreezeDTO.getOrderNo());
+			    	try{
+			    		titanTransOrderDao.update(titanTransOrder);
+			    	}catch(Exception e){
+			    		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻资金之后，修改订单失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(titanTransOrder));
+    	        		titanOrderService.saveOrderException(orderExceptionDTO);
+    	        		return false;
+			    	}
+			    	
+			    }else{
+			    	OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻失败", OrderExceptionEnum.UNFREEZE_INSERT, JSON.toJSONString(fundFreezeDTO));
+	        		titanOrderService.saveOrderException(orderExceptionDTO);
+	        		return false;
+			    }
+			}catch(Exception e){
+				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻失败", OrderExceptionEnum.UNFREEZE_INSERT, JSON.toJSONString(fundFreezeDTO));
+        		titanOrderService.saveOrderException(orderExceptionDTO);
+        		return false;
+			}
+		}
+		return true;
+	}
+	
+	
+	
 	
 	private BalanceUnFreezeRequest convertBalanceUnFreezeRequest(FundFreezeDTO fundFreezeDTO){
 		if(fundFreezeDTO !=null){

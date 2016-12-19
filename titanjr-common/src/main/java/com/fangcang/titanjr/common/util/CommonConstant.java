@@ -156,4 +156,7 @@ public class CommonConstant {
 	
 	//商户有效
 	public static final Integer IS_ACTIVE = 1;
+	
+	//30天所对应的毫秒数
+	public static final Long MS = (long)30*24*60*60*1000;
 }

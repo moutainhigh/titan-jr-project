@@ -15,12 +15,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringBufferInputStream;
+import java.math.BigDecimal;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
@@ -874,7 +876,13 @@ public class DateUtil {
 	
 	
 	
-	public static void main(String[] args) throws JAXBException {
+	public static void main(String[] args) throws JAXBException, ParseException {
+		
+//		Long orderDate = DateUtil.sdf5.parse("20161122144728").getTime();
+//		Long nowDate = new Date().getTime();
+//		System.out.println((long)(nowDate-orderDate));
+//		System.out.println((long)30*24*60*60*1000);
+		
 //		DateUtil.Student student = new DateUtil.Student();
 //		File file = new File("C:/Users/Administrator/Desktop/xmlTest.xml");
 //		
@@ -891,8 +899,19 @@ public class DateUtil {
 //		DateUtil.Student stu = (DateUtil.Student)context.createUnmarshaller().unmarshal(file);
 //		System.out.println(stu.getName()+"---"+stu.getId()+"---"+stu.getAge());
 		
+//		BigDecimal j=new BigDecimal(1);
+//		BigDecimal k = new BigDecimal(1024);
+//		for(int i=0;i<1024;i++){
+//			j=j.multiply(k);
+//		}
+//		
+//		System.out.println(j.toString());
+//		System.out.println(10*10*10*10);
+//		System.out.println(10<<2);
+		
+		System.out.println(new BigDecimal(1024<<10).toString());
 	}
-	
+
 	
 	
 }

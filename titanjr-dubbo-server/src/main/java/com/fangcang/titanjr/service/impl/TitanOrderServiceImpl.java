@@ -190,6 +190,7 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 			TitanTransOrder titanTransOrder = new TitanTransOrder();
 			titanTransOrder.setTransid(transOrderDTO.getTransid());
 			titanTransOrder.setStatusid(transOrderDTO.getStatusid());
+			titanTransOrder.setOrderid(transOrderDTO.getOrderid());
 			int row = titanTransOrderDao.update(titanTransOrder);
 			if(row>0){
 				return true;

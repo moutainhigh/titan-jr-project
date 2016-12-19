@@ -23,6 +23,16 @@ public class RefundOrderRequest extends BaseRequestDTO {
 	
 	//业务订单号
 	private String userOrderId;
+	
+	private String creator;
+	
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
 
 	public String getOrderId() {
 		return orderId;
@@ -63,4 +73,6 @@ public class RefundOrderRequest extends BaseRequestDTO {
 	public void setOrderTime(String orderTime) {
 		this.orderTime = orderTime;
 	}
+	
+	
 }

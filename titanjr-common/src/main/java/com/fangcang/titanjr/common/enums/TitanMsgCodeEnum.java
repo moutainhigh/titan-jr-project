@@ -105,6 +105,10 @@ public enum TitanMsgCodeEnum {
     OPER_ORDER_AND_BIND_CARD_FAIL(110100036,"落单绑卡失败！"),
 	
     ORDER_REFUNND_IN_PROCESS(110100037,"该订单正在退款，请勿重复退款"),
+    
+    ORDER_OUT_TIME(110100038,"该订单已超出退款时间"),
+    
+    REFUND_UNFREEZE_FAIL(110100039,"资金解冻失败"),
 
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");

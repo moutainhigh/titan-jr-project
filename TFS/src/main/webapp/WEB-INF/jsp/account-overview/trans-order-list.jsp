@@ -48,6 +48,15 @@
             <c:if test="${tradeItem.statusid == 6 }">
                 已冻结
             </c:if>
+            <c:if test="${tradeItem.statusid == 12 }">
+            退款中
+            </c:if>
+            <c:if test="${tradeItem.statusid == 13 }">
+            退款成功
+            </c:if>
+            <c:if test="${tradeItem.statusid == 14 }">
+            退款失败
+            </c:if>
             <c:if test="${tradeItem.statusid == 9}">
                 <i class="MyAssets_red">交易失败</i>
             </c:if>

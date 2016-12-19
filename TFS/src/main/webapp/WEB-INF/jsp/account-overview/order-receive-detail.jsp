@@ -34,6 +34,15 @@
                                 <c:when test="${transOrder.statusid == 6}">
                                     已冻结
                                 </c:when>
+                                <c:when test="${transOrder.statusid == 12 }">
+                                退款中
+                                </c:when>
+                                <c:when test="${transOrder.statusid == 13 }">
+                                 退款成功
+                                </c:when>
+                                <c:when test="${transOrder.statusid == 14 }">
+                                退款失败
+                                </c:when>
                               <c:otherwise>
                                 处理中
                               </c:otherwise>
@@ -105,6 +114,34 @@
                                         转账成功
                                     </c:if>
                                     <c:if test="${transOrder.titanTransferDTO.status == 3}">
+                                        失败
+                                    </c:if></span>
+                                </td>
+                            </tr>
+                        </c:if>
+                        <c:if test="${transOrder.refundDTO != null}">
+                        	<tr>
+                                <td>
+                                    <span><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.refundDTO.createtime }"/></span>
+                                </td>
+                                <td><span>退款</span></td>
+
+                                <td><span style="width:180px" title="退款人：${transOrder.refundDTO.creator}">退款人：${transOrder.refundDTO.creator}</span></td>
+
+                                <td>
+                                    <span style="width:180px" title="财务单${transOrder.payorderno }退款">财务单${transOrder.payorderno }退款</span>
+                                </td><!--房仓财务系统单号-->
+
+                                <td><span>-<fmt:formatNumber value="${transOrder.refundDTO.refundAmount / 100.0 }" pattern="#,##0.00#"/></span></td>
+
+                                <td><span>
+                                    <c:if test="${transOrder.refundDTO.status == 0}">
+                                        处理中
+                                    </c:if>
+                                    <c:if test="${transOrder.refundDTO.status == 1}">
+                                        转账成功
+                                    </c:if>
+                                    <c:if test="${transOrder.refundDTO.status == 2}">
                                         失败
                                     </c:if></span>
                                 </td>

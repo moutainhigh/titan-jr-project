@@ -1,8 +1,54 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
 <mapper namespace="com.fangcang.titanjr.dao.TitanRefundDao" >
   <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanRefund" >
-    insert into t_tfs_refund ( orderid, refundOrderno, createtime,refundAmount,orderTime)
-    values (#{orderid,jdbcType=VARCHAR}, #{refundOrderno,jdbcType=VARCHAR}, #{createTime},#{refundAmount},#{orderTime})
+    insert into t_tfs_refund ( orderid, refundOrderno, createtime,refundAmount,orderTime,creator,status)
+    values (#{orderid,jdbcType=VARCHAR}, #{refundOrderno,jdbcType=VARCHAR}, #{createTime},#{refundAmount},#{orderTime},#{creator},#{status})
   </insert>
+  
+  <resultMap id="refundDTOMapper" type="com.fangcang.titanjr.dto.bean.RefundDTO" >
+    <result property="refundId" column="refundid"/>
+    <result property="orderNo" column="orderid"/>
+    <result property="refundAmount" column="refundAmount"/>
+    <result property="refundOrderno" column="refundOrderno"/>
+    <result property="orderTime" column="orderTime"/>
+    <result property="creator" column="creator"/>
+  </resultMap>
+  
+  
+  <select id="queryList" parameterType="com.fangcang.titanjr.dto.bean.RefundDTO" resultMap="refundDTOMapper">
+     select refundid,orderid,refundAmount,refundOrderno,orderTime,creator,status from t_tfs_refund 
+     <where>
+       <if test="refundId !=null">
+       refundid = #{refundId}
+       </if>
+       <if test="orderNo !=null">
+         orderid =#{orderNo}
+       </if>
+       <if test="refundOrderno !=null">
+         refundOrderno =#{refundOrderno}
+       </if>
+       <if test="status !=null">
+        status =#{status}
+       </if>
+     </where>
+  </select>
+  
+  <update id="updateEntity" parameterType="com.fangcang.titanjr.dto.bean.RefundDTO">
+    update t_tfs_refund set status = #{status} 
+    <where>
+       <if test="refundId !=null">
+         refundid = #{refundId}
+       </if>
+       <if test="orderNo !=null">
+         orderid =#{orderNo}
+       </if>
+       <if test="refundOrderno !=null">
+         refundOrderno =#{refundOrderno}
+       </if>
+    </where>
+  </update>
+  
+  
 </mapper>

@@ -359,7 +359,6 @@ public class TitanPaymentController extends BaseController {
 		//设置费率信息
 		titanPaymentRequest = titanRateService.setRateAmount(computeReq,
 				titanPaymentRequest);
-		
         TransOrderCreateResponse transOrderCreateResponse = titanFinancialTradeService.createRsOrder(titanPaymentRequest);
         if(!transOrderCreateResponse.isResult() || !StringUtil.isValidString(transOrderCreateResponse.getOrderNo()) ){
         	log.error("call createTitanTransOrder fail msg["+ JsonConversionTool.toJson(transOrderCreateResponse)+"]");

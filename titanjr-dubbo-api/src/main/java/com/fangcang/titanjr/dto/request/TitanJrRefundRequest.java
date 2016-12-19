@@ -9,56 +9,58 @@ public class TitanJrRefundRequest extends BaseRequestDTO {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	//Ö§¸¶µ¥ºÅ
+	//æ”¯ä»˜å•å·
 	private String payOrderNo;
 	
-	//ÊÕ¿î·½ÕË»§
+	//ï¿½Õ¿î·½ï¿½Ë»ï¿½
 	private String userRelateId;
 	
-	//ÊÕ¿î·½»ú¹¹ºÅ
+	//ï¿½Õ¿î·½ï¿½ï¿½ï¿½
 	private String interMerchantCode;
 	
-	//ÊÕ¿î·½²úÆ·ºÅ
+	//ï¿½Õ¿î·½ï¿½ï¿½Æ·ï¿½ï¿½
 	private String interProductId;
 	
-	//¸¶¿î·½ÕË»§
+	//ï¿½ï¿½ï¿½î·½ï¿½Ë»ï¿½
 	private String userId;
 	
-	//¸¶¿î·½²úÆ·ºÅ
+	//ï¿½ï¿½ï¿½î·½ï¿½ï¿½Æ·ï¿½ï¿½
 	private String productId;
 	
-	//¸¶¿î·½»ú¹¹ºÅ
+	//ï¿½ï¿½ï¿½î·½ï¿½ï¿½ï¿½
 	private String merchantCode;
 	
-	//ÍË¿î½ğ¶î(ÍË¿îµ½ÒøĞĞ¿¨)
+	//ï¿½Ë¿ï¿½ï¿½ï¿½(ï¿½Ë¿îµ½ï¿½ï¿½ï¿½Ğ¿ï¿½)
 	private String refundAmount;
 	
-	//ÍË¿îµ½ÒøĞĞ¿¨»òÕßÕË»§Óà¶î
+	//ï¿½Ë¿îµ½ï¿½ï¿½ï¿½Ğ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë»ï¿½ï¿½ï¿½ï¿½
 	private String toBankCardOrAccount;
 	
-	//ÒµÎñºÅ
+	//Òµï¿½ï¿½ï¿½
 	private String busiCode;
 	
-	//Ô­¶©µ¥ºÅ,ÈÚÊı¶©µ¥ºÅ
+	//Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½
 	private String orderNo;
 	
-	//ÏÂµ¥Ê±¼ä
+	//ï¿½Âµï¿½Ê±ï¿½ï¿½
 	private String orderTime;
 	
-	//°æ±¾ºÅ
+	//ï¿½æ±¾ï¿½ï¿½
 	private String version;
 	
-	//Ç©ÃûÀàĞÍ
+	//Ç©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	private String signType;
 	
-	//Ç©Ãû×Ö·û´®
+	//Ç©ï¿½ï¿½ï¿½Ö·ï¿½
 	private String signMsg;
 	
-	//½»Ò×½ğ¶î£¬ÊÇÖ¸ÉÌ¼ÒÍË¿îµ½¸¶¿îÕË»§µÄ½ğ¶î
+	//ï¿½ï¿½ï¿½×½ï¿½î£¬ï¿½ï¿½Ö¸ï¿½Ì¼ï¿½ï¿½Ë¿îµ½ï¿½ï¿½ï¿½ï¿½ï¿½Ë»ï¿½ï¿½Ä½ï¿½ï¿½
 	private String tradeAmount;
 	
-	//ÊÖĞø·Ñ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½
 	private String fee;
+	
+	private String tfsUerId;
 	
 	private Integer transorderid;
 	
@@ -215,5 +217,13 @@ public class TitanJrRefundRequest extends BaseRequestDTO {
 	public void setFreeze(boolean isFreeze) {
 		this.isFreeze = isFreeze;
 	}
-	
+
+	public String getTfsUerId() {
+		return tfsUerId;
+	}
+
+	public void setTfsUerId(String tfsUerId) {
+		this.tfsUerId = tfsUerId;
+	}
+
 }
