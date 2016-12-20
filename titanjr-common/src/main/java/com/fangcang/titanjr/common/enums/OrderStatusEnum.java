@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.common.enums;
+﻿package com.fangcang.titanjr.common.enums;
 
 public enum OrderStatusEnum {
 	
@@ -10,6 +10,7 @@ public enum OrderStatusEnum {
 	FREEZE_SUCCESS("6","冻结成功"),FREEZE_FAIL("7","冻结失败"),
 	ORDER_SUCCESS("8","成功"),ORDER_FAIL("9","失败"),
 	ORDER_NO_EFFECT("10","订单失效"),
+	ORDER_DELAY("11","支付延迟到账"),
 	REFUND_IN_PROCESS("12","退款中"),
 	REFUND_SUCCESS("13","退款成功"),
 	REFUND_FAIL("14","退款失败");

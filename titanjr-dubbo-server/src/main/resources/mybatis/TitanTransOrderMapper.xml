@@ -404,7 +404,7 @@
                   left join t_tfs_transferreq transfer on transorder.transid=transfer.transorderid
                   <where>
                     <if test="status !=null">
-                      and transorder.statusid=#{status}
+                      and (transorder.statusid=#{status} or transorder.statusid = '11')
                     </if>
                     <if test="payermerchant !=null">
                       and transorder.payermerchant = #{payermerchant}

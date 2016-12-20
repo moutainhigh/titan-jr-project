@@ -1,4 +1,4 @@
-package test.fangcang.financial;
+﻿package test.fangcang.financial;
 
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
@@ -9,6 +9,7 @@ import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderInfo;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 import com.fangcang.titanjr.enums.*;
@@ -372,7 +373,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
         }
     }
     
-    @Test
+//    @Test
     public void testCallBack() throws Exception{
     	TransOrderDTO transOrderDTO = new TransOrderDTO();
     	transOrderDTO.setPayorderno("H0119161216185842");
@@ -475,6 +476,45 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	cashierDeskInitRequest.setConstId("M000016");
     	cashierDeskInitRequest.setUserId("TJM10000096");
     	titanCashierDeskService.initCashierDesk(cashierDeskInitRequest);
+    }
+    
+    @Test
+    public void testValidate(){
+    	ConfirmOrdernQueryRequest request = new ConfirmOrdernQueryRequest();
+		request.setOrderNo("OP20161209163000001");
+		request.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
+		
+		ConfirmOrdernQueryResponse response = null;
+		
+		TransOrderInfo order = null;
+		// 重试三次
+		for (int i = 0; i < 3; i++) {
+
+			response = titanFinancialTradeService.ordernQuery(request);
+
+			if (response == null || !response.isResult()
+					|| null == response.getTransOrderInfos()
+					|| response.getTransOrderInfos().size() != 1) {
+//				log.error("confirem ordern query is null");
+				return ;
+			}
+
+			order = response.getTransOrderInfos().get(0);
+
+//			log.info(orderNo + "订单状态:" + i + ":" + order.getOrderstatus());
+
+			order.setOrderstatus("3");
+			if (CommonConstant.RS_ORDER_STATUS.equals(order.getOrderstatus())) {
+				return ;
+			}
+			try {
+				Thread.sleep(200 * (2<<i));
+			} catch (InterruptedException e) {
+//				log.error("", e);
+			}
+		}
+		return ;
+		
     }
     
 }

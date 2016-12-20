@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.service;
+﻿package com.fangcang.titanjr.service;
 
 
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
@@ -6,7 +6,6 @@ import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
-
 /**
  * 金服交易相关服务
  * 交易工单，交易请求，交易流水等逻辑
@@ -171,4 +170,9 @@ public interface TitanFinancialTradeService {
 	public  OrderSaveAndBindCardResponse saveTransOrderAndBindCard(OrderSaveAndBindCardRequest request);
 	
 
+	 * 确认订单支付成功
+	 * @param ordernQueryRequest
+	 * @return
+	 */
+	public ConfirmOrdernQueryResponse ordernQuery(ConfirmOrdernQueryRequest ordernQueryRequest);	
 }

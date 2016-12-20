@@ -145,6 +145,11 @@ public class CommonConstant {
     public static final String ALIPAY = "alipay";
     
     public static final String CURRENT_TYPE="1";
+    
+    //融数订单状态。1为正常
+    public static final String RS_ORDER_STATUS="1";
+    
+    public static final String ORDER_DELAY = "001_001";
 	
 	    //退款成功
     public static final String REFUND_SUCCESS="2";

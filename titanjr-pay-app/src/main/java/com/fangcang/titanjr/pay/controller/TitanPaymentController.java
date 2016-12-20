@@ -8,12 +8,15 @@ import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderInfo;
 import com.fangcang.titanjr.enums.PayTypeEnum;
+import com.fangcang.titanjr.dto.request.ConfirmOrdernQueryRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
+import com.fangcang.titanjr.dto.response.ConfirmOrdernQueryResponse;
 import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
 import com.fangcang.titanjr.dto.response.QrCodeResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
@@ -30,7 +33,9 @@ import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
+
 import net.sf.json.JSONSerializer;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -42,6 +47,7 @@ import javax.annotation.Resource;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -113,7 +119,7 @@ public class TitanPaymentController extends BaseController {
     	
     	try{
     		lockOutTradeNoList(orderNo);
-        	
+    		
         	TransOrderRequest transOrderRequest = new TransOrderRequest();
     		transOrderRequest.setOrderid(orderNo);
     		TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
@@ -139,7 +145,14 @@ public class TitanPaymentController extends BaseController {
         		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "充值成功 修改充值单失败", OrderExceptionEnum.OrderPay_Update, JSON.toJSONString(orderNo));
         		titanOrderService.saveOrderException(orderExceptionDTO);
         	}
+        	
         	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARGE_SUCCESS;
+        	if(!validateOrderStatus(orderNo)){
+    			log.error("实在没办法,钱没到账，不能转账");
+    			orderStatusEnum = OrderStatusEnum.ORDER_DELAY;
+    			titanPaymentService.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
+    			return ;
+    		}
         	
         	if(PayerTypeEnum.RECHARGE.key.equals(payerType.getKey())){
         		orderStatusEnum= OrderStatusEnum.ORDER_SUCCESS;
@@ -197,6 +210,53 @@ public class TitanPaymentController extends BaseController {
     		unlockOutTradeNoList(orderNo);
     	}
     	
+	}
+	
+	private boolean validateOrderStatus(String orderNo){
+
+		ConfirmOrdernQueryRequest request = new ConfirmOrdernQueryRequest();
+		request.setOrderNo(orderNo);
+		request.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
+		
+		ConfirmOrdernQueryResponse response = null;
+		
+		TransOrderInfo order = null;
+		// 重试三次
+		for (int i = 0; i < 3; i++) {
+
+			response = titanFinancialTradeService.ordernQuery(request);
+
+			if (response == null || !response.isResult()
+					|| null == response.getTransOrderInfos()
+					|| response.getTransOrderInfos().size() != 1) {
+				log.error("confirem ordern query is null");
+				try {//线程等待
+					if(i<2){
+						Thread.sleep(500 * (2<<i));
+					}
+				} catch (InterruptedException e) {
+					log.error("", e);
+				}
+				continue;
+			}
+
+			order = response.getTransOrderInfos().get(0);
+
+			log.info(orderNo + "订单状态:" + i + ":" + order.getOrderstatus());
+
+			if (CommonConstant.RS_ORDER_STATUS.equals(order.getOrderstatus())) {
+				return true;
+			}
+			try {
+				if(i<2){
+					Thread.sleep(500 * (2<<i));
+				}
+				
+			} catch (InterruptedException e) {
+				log.error("", e);
+			}
+		}
+		return false;
 	}
 	
 	@RequestMapping("notifyPayResult")

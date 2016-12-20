@@ -35,7 +35,7 @@
 	</bean>
 	
     <dubbo:application name="titanjr_service_provider" />
-
+ 	<dubbo:monitor protocol="registry" /> 
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
 
 

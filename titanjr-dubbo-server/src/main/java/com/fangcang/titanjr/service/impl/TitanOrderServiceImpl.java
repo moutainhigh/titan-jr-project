@@ -267,6 +267,8 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 				return "fail";
 			}else if(OrderStatusEnum.ORDER_NO_EFFECT.getStatus().equals(statusId.get(0))){
 				return "no_effect";
+			}else if(OrderStatusEnum.ORDER_DELAY.getStatus().equals(statusId.get(0))){
+				return "delay";
 			}else{
 				return "process";
 			}
