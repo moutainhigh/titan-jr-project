@@ -63,8 +63,16 @@ public class InitSessionInterceptor implements HandlerInterceptor {
         MerchantFacade merchantFacade = hessianProxyBeanFactory.getHessianProxyBean(MerchantFacade.class,
                 ProxyFactoryConstants.merchantServerUrl + "merchantFacade");
         
+        UserInfo userInfos = new UserInfo();
+//        userInfos.setMerchantCode("M10032612");
+//        userInfos.setLoginName("jinrong08");
+        userInfos.setMerchantCode("M10031355");
+        userInfos.setLoginName("jinrong07");
+        session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER, userInfos);
+        
         if (session.getAttribute("onlineRoleUser") == null || session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE) == null) {
-            if (session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER) != null && session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ROLE) == null) {
+        	//&& session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ROLE) == null
+            if (session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER) != null ) {
                 UserWrapper roleUser = null;
                 SecurityContext ctx = SecurityContextHolder.getContext();
                 if (null != ctx) {
@@ -84,14 +92,16 @@ public class InitSessionInterceptor implements HandlerInterceptor {
                     }
                 }
               //房仓商家系统用户组装判定
+                
                 UserInfo userInfo = (UserInfo) session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER);
-                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_IS_ADMIN, roleUser.getAdmin()==null?0:roleUser.getAdmin());//是否管理员
-                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_LOGINNAME, roleUser.getLoginName());//用户登录名
-                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME, roleUser.getName());//用户名
-                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ID, roleUser.getId());//用户Id，必须
+                
+//                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_IS_ADMIN, roleUser.getAdmin()==null?0:roleUser.getAdmin());//是否管理员
+//                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_LOGINNAME, roleUser.getLoginName());//用户登录名
+//                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_NAME, roleUser.getName());//用户名
+//                session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ID, roleUser.getId());//用户Id，必须
                 //session.setAttribute("LOGIN_USER_PASSWORD",roleUser.getPassword());
                 RoleWrapper userRole = new RoleWrapper();
-                userRole.setRoleList(userInfo.getRoles());
+//                userRole.setRoleList(userInfo.getRoles());
                 session.setAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ROLE, userRole);//登录用户角色
                 MerchantDetailQueryDTO queryDTO = new MerchantDetailQueryDTO();
                 queryDTO.setMerchantCode(userInfo.getMerchantCode());
@@ -118,7 +128,8 @@ public class InitSessionInterceptor implements HandlerInterceptor {
                 //来源为1时，saas登录名作为request中的绑定用户名查询
                 UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
                 if (WebConstant.SESSION_KEY_JR_RESOURCE_2_SAAS.equals(session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE))) {
-                    userInfoQueryRequest.setBindLoginName(roleUser.getLoginName());//SAAS商家的用户名
+//                    userInfoQueryRequest.setBindLoginName("jinrong08");//SAAS商家的用户名
+                	 userInfoQueryRequest.setBindLoginName("jinrong07");//SAAS商家的用户名
                     //绑定状态
                     OrgBindInfo condition = new OrgBindInfo();
                     condition.setMerchantCode(userInfo.getMerchantCode());
@@ -129,7 +140,8 @@ public class InitSessionInterceptor implements HandlerInterceptor {
                     	session.setAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS, "0");
                     }
                 } else {
-                    userInfoQueryRequest.setUserLoginName(roleUser.getLoginName());//SAAS商家用户名也是金服的 用户名
+//                	userInfoQueryRequest.setUserLoginName("jinrong08");//SAAS商家用户名也是金服的 用户名
+                    userInfoQueryRequest.setUserLoginName("jinrong07");//SAAS商家用户名也是金服的 用户名
                 }
                 UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
                 if (CollectionUtils.isNotEmpty(userInfoResponse.getUserInfoDTOList())) {

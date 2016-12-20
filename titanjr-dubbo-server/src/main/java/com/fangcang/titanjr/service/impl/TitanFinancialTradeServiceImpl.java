@@ -1542,7 +1542,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		RefundDTO refundDTO = new RefundDTO();
 		refundDTO.setOrderNo(orderId);
 		List<RefundDTO> refundList = titanRefundDao.queryRefundDTO(refundDTO);
-		if(refundList !=null){
+		if(refundList !=null && refundList.size()>0){
 			refundDTO =  refundList.get(0);
 			if(StringUtil.isValidString(refundDTO.getOrderTime())){
 				try {

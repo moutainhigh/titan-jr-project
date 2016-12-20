@@ -42,10 +42,10 @@
          refundid = #{refundId}
        </if>
        <if test="orderNo !=null">
-         orderid =#{orderNo}
+         and orderid =#{orderNo}
        </if>
        <if test="refundOrderno !=null">
-         refundOrderno =#{refundOrderno}
+         and refundOrderno =#{refundOrderno}
        </if>
     </where>
   </update>

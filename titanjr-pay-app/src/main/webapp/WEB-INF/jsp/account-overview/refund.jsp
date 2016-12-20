@@ -109,6 +109,7 @@
 					  return false;
 				  },
 				  submitObj:function(){
+					  top.F.loading.show();
 					  $.ajax({
 						 url:"<%=basePath%>/refund/orderRefund.action",
 						 type:"post",
@@ -122,10 +123,14 @@
 						 success:function(data){
 							 if(data.result ==true){
 								 new top.Tip({msg: '退款成功', type: 1, timer: 2000});
+								 window.close();
 							 }else{
 								 new top.Tip({msg: data.returnMessage, type: 1, timer: 3000});
+								 window.close();
 							 }
 							 
+						 },complete:function(){
+							 top.F.loading.hide();
 						 }
 						  
 					  });

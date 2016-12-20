@@ -171,9 +171,14 @@ public class TitanRefundService {
 			titanOrderPayDTO.setOrderNo(transOrderDTO.getOrderid());
 			titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
 			
+			titanJrRefundRequest.setOrderNo(transOrderDTO.getOrderid());
+			if(transOrderDTO.getTradeamount() !=null){
+				titanJrRefundRequest.setRefundAmount(transOrderDTO.getTradeamount().toString());
+			}
 			if(null !=titanOrderPayDTO){//有充值单
-				titanJrRefundRequest.setOrderNo(transOrderDTO.getOrderid());
-				titanJrRefundRequest.setRefundAmount(transOrderDTO.getAmount().toString());
+				if(transOrderDTO.getAmount()!=null){
+					titanJrRefundRequest.setRefundAmount(transOrderDTO.getAmount().toString());
+				}
 				titanJrRefundRequest.setBusiCode(BusiCodeEnum.MerchantRefund.getKey());
 				titanJrRefundRequest.setOrderTime(titanOrderPayDTO.getOrderTime());
 				titanJrRefundRequest.setVersion(titanOrderPayDTO.getVersion());
@@ -183,7 +188,6 @@ public class TitanRefundService {
 				//只有充值
 				if(tradeAmount.subtract(orderAmount).compareTo(BigDecimal.ZERO)!=1 ){//交易金额比充值金额小(有手续费时)，或者相等
 					titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_BANKCARD.type);
-					
 				}
 				//充值和余额支付并存
 		        if(tradeAmount.subtract(orderAmount).compareTo(BigDecimal.ZERO)==1){
@@ -195,8 +199,6 @@ public class TitanRefundService {
 			if(null == titanOrderPayDTO){
 				titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_ACCOUNT.type);
 			}
-			
-			
 			//解冻操作
 			if(OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())){//立即解冻
 				List<FundFreezeDTO>  fundFreezeDTOList =  getUnFreezeAccountBalanceRequest(transOrderDTO.getOrderid());
@@ -224,9 +226,12 @@ public class TitanRefundService {
 		    	response.putErrorResult(TitanMsgCodeEnum.REFUND_FAIL);
 		    	return response;
 		    }
-		    
 		    TransOrderDTO order = new TransOrderDTO();
-		    order.setStatusid(OrderStatusEnum.RECHARGE_IN_PROCESS.getStatus());
+		    order.setStatusid(OrderStatusEnum.REFUND_IN_PROCESS.getStatus());
+		    if(StringUtil.isValidString(titanJrRefundRequest.getToBankCardOrAccount()) && 
+		    		titanJrRefundRequest.getToBankCardOrAccount().equals(RefundTypeEnum.REFUND_ACCOUNT.type)){
+		    	 order.setStatusid(OrderStatusEnum.REFUND_SUCCESS.getStatus());
+		    }
 		    order.setTransid(transOrderDTO.getTransid());
 		    flag = titanOrderService.updateTransOrder(order);
 		    if(!flag){

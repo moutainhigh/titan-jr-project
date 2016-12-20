@@ -715,6 +715,11 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	    	TitanOrgCheck titanOrgCheck = new TitanOrgCheck();
 	    	param.setConstid(newOrgEntity.getConstid());
 	    	param.setUserid(newOrgEntity.getUserid());
+	    	
+	    	
+	    	
+	    	
+	    	
 	    	PaginationSupport<TitanOrgCheck> orgCheckPage = new PaginationSupport<TitanOrgCheck>();
 	    	titanOrgCheckDao.selectForPage(param, orgCheckPage);
 	    	OrgCheckResultEnum newOrgCheckResultEnum = convertCheckResultEnum(organCheckRequest.getCheckstatus());

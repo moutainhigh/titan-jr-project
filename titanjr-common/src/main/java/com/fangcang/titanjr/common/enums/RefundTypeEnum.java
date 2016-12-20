@@ -2,7 +2,7 @@ package com.fangcang.titanjr.common.enums;
 
 public enum RefundTypeEnum {
 
-	REFUND_BANKCARD("0","~{MK?n5=RxPP?(~}"),REFUND_ACCOUNT("1","~{MK?n5=UK;'~}"),REFUND_BANKCARD_ACCOUNT("2","~{MK?n5=UK;':MRxPP?(~}");
+	REFUND_BANKCARD("0","退款到银行"),REFUND_ACCOUNT("1","退款到账户"),REFUND_BANKCARD_ACCOUNT("2","退款到银行和账户");
 	
 	public String type;
 	

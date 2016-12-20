@@ -133,16 +133,21 @@
                                 </td><!--房仓财务系统单号-->
 
                                 <td><span>-<fmt:formatNumber value="${transOrder.refundDTO.refundAmount / 100.0 }" pattern="#,##0.00#"/></span></td>
-
                                 <td><span>
                                     <c:if test="${transOrder.refundDTO.status == 0}">
                                         处理中
                                     </c:if>
                                     <c:if test="${transOrder.refundDTO.status == 1}">
-                                        转账成功
+                                        审核失败
                                     </c:if>
                                     <c:if test="${transOrder.refundDTO.status == 2}">
-                                        失败
+                                        退款成功
+                                    </c:if>
+                                    <c:if test="${transOrder.refundDTO.status == 3}">
+                                        退款失败
+                                    </c:if>
+                                    <c:if test="${transOrder.refundDTO.status == 4}">
+                                        退款冲销
                                     </c:if></span>
                                 </td>
                             </tr>
