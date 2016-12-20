@@ -36,16 +36,16 @@ public class GetLoanOrderInfoListRequest extends BaseRequestDTO {
 	//贷款产品类型
 	private LoanProductEnum productEnum;
 	
-	//排序字字段
-	private String orderBy;
-	
-	public String getOrderBy() {
-		return orderBy;
-	}
-
-	public void setOrderBy(String orderBy) {
-		this.orderBy = orderBy;
-	}
+//	//排序字字段
+//	private String orderBy;
+//	
+//	public String getOrderBy() {
+//		return orderBy;
+//	}
+//
+//	public void setOrderBy(String orderBy) {
+//		this.orderBy = orderBy;
+//	}
 
 	public String getBeginActualRepaymentDate() {
 		return beginActualRepaymentDate;

@@ -249,7 +249,51 @@ public class FinancialLoanCreditController extends BaseController {
 		getResponse().setCharacterEncoding("utf-8"); // 这里不设置编码会有乱码
 		getResponse().setContentType("text/html;charset=utf-8");
 		getResponse().setHeader("Cache-Control", "no-cache");
+		
+		PrintWriter out = getResponse().getWriter();
+		
+		String supperImgSuffix = "png;jpg;jpeg;pdf";
+		String supperZipSuffix = " zip;rar";
+		
+		if ((file.getOriginalFilename() != null)
+				&& (file.getOriginalFilename().length() > 0)) {
+			int dot = file.getOriginalFilename().lastIndexOf('.');
+			if ((dot > -1) && (dot < (file.getOriginalFilename().length() - 1))) {
+				String suffix = file.getOriginalFilename().substring(dot + 1);
+				if (supperZipSuffix.indexOf(suffix.toLowerCase()) == -1
+						&& supperImgSuffix.indexOf(suffix.toLowerCase()) == -1) {
 
+					putSysError("上传文件格式不符合要求!");
+					out.print(toJson());
+					out.flush();
+					out.close();
+					return;
+				}
+				long zipFileMaxSize = 20971520;
+				long imgFileMaxSize = 5242880;
+				if (supperZipSuffix.indexOf(suffix.toLowerCase()) != -1) {
+					if (file.getSize() > zipFileMaxSize) {
+						putSysError("压缩包大小不能大于20兆");
+						out.print(toJson());
+						out.flush();
+						out.close();
+						return;
+					}
+				}
+
+				if (supperImgSuffix.indexOf(suffix.toLowerCase()) != -1) {
+					if (file.getSize() > imgFileMaxSize) {
+						putSysError("图片及PDF大小不能大于5兆");
+						out.print(toJson());
+						out.flush();
+						out.close();
+						return;
+					}
+				}
+			}
+		}
+		
+		
 		String dir = "";
 		String fileName = typeId;
 		if (StringUtil.isValidString(typeId)) {
@@ -262,7 +306,7 @@ public class FinancialLoanCreditController extends BaseController {
 			}
 		}
 
-		PrintWriter out = getResponse().getWriter();
+		
 
 		String newName = this.getNewFileName(file.getOriginalFilename(),
 				fileName);

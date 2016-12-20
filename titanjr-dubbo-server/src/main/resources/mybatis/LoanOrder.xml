@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fangcang.titanjr.dao.LoanOrderDao">
-
+	
+	 <cache 
+          eviction="LRU"
+          flushInterval="60000"
+          size="1024"
+         readOnly="true"/> 
+	
+	
     <resultMap id="loanApplyOrder" type="com.fangcang.titanjr.entity.LoanApplyOrder">
         <result property="orderNo" column="orderno"/>
         <result property="creditOrderNo" column="creditorderno"/>
@@ -46,7 +53,7 @@
 	
 	
 	<select id="queryProductTypeAmount" resultType="com.fangcang.titanjr.entity.LoanProductAmountStat" parameterType="java.lang.String">
-		SELECT  t.producttype as productId  ,  SUM(t.shouldcapital) AS amount  
+		SELECT  t.producttype as productId  ,  SUM(t.shouldcapital)  AS amount , SUM(t.shouldcapital) + SUM(t.shouldinterest) as actualAmount  
 			FROM t_loan_order t WHERE t.status IN (6 ,9) AND t.`orgcode`=#{orgCode} GROUP BY t.producttype;
 	</select>
 

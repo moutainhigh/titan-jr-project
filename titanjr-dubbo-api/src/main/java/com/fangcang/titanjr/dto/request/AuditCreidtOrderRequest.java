@@ -1,31 +1,32 @@
 package com.fangcang.titanjr.dto.request;
 
+import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
 import com.fangcang.titanjr.dto.BaseRequestDTO;
 /**
  * 授信申请单审核
  * @author luoqinglong
  * @date   2016年11月29日
  */
-public class AuditCreditOrderRequest extends BaseRequestDTO {
+public class AuditCreidtOrderRequest extends BaseRequestDTO {
 
 	private static final long serialVersionUID = 1L;
 	//考慮到審核人是後台用戶，則這個字段則為用戶ID
-	//private String userId;
+	private String userId;
 
 	// 授信单号
 	private String orderNo;
 
-	private AuditResultEnum auditResult;
+	private LoanCreditStatusEnum auditResult;
 
 	private String content;
 
-//	public String getUserId() {
-//		return userId;
-//	}
-//
-//	public void setUserId(String userId) {
-//		this.userId = userId;
-//	}
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
 	public String getOrderNo() {
 		return orderNo;
@@ -35,11 +36,11 @@ public class AuditCreditOrderRequest extends BaseRequestDTO {
 		this.orderNo = orderNo;
 	}
 
-	public AuditResultEnum getAuditResult() {
+	public LoanCreditStatusEnum getAuditResult() {
 		return auditResult;
 	}
 
-	public void setAuditResult(AuditResultEnum auditResult) {
+	public void setAuditResult(LoanCreditStatusEnum auditResult) {
 		this.auditResult = auditResult;
 	}
 

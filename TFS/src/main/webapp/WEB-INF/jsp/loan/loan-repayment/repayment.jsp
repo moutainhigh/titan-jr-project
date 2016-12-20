@@ -81,7 +81,7 @@
 	
 <div style="height: 60px"></div>
 <div class="TFS_data_button">	
-	<a class="btn btnNext J_password" href="javascript:void(0);">确定还款</a>
+	<a class="btn btnNext J_password" href="javascript:void(0);" style="display: none">确定还款</a>
     <a class=" btn_exit_long bnt_exit_padding12" href="javascript:history.go(-1)">取消</a>
 </div>
 
@@ -147,7 +147,7 @@ function loadReapymentAmount()
 		url :  '<%=basePath%>/loan/repayment/checkRepaymentOrder.shtml'+"?DateTime="+new Date().getTime(),
 		dataType : 'json',
 		success : function(obj) {
-			if(obj)
+			if(obj.result == 1)
 			{
 				for(var name in obj)
 				{
@@ -161,6 +161,10 @@ function loadReapymentAmount()
 						$('#'+name).html(amount);
 					}
 				}
+				 $(".J_password").show();
+			}
+			else{
+				new top.Tip({msg : obj.msg, type: 3, timer:5000});
 			}
 		},
         error:function(){
@@ -517,6 +521,7 @@ function loadAccountBalance(isAsync)
  }
  
  function to_check_payPassword(){
+	 
  	var result = false;
  	 $.ajax({
           type: "post",
@@ -527,10 +532,12 @@ function loadAccountBalance(isAsync)
          	 payPassword:PasswordStr2.returnStr()
           },
           success: function (data) {
+        	  
          	 if(data.code=="1"){
          		 result=true;
-         		
          		 
+         		top.F.loading.show();
+         		
          		$.ajax({
 	    			async : false,
 	    			type : 'get',
@@ -541,6 +548,7 @@ function loadAccountBalance(isAsync)
 	    			url :  '<%=basePath%>/loan/repayment/repayment.shtml'+"?DateTime="+new Date().getTime(),
 	    			dataType : 'json',
 	    			success : function(result) {
+	    				top.F.loading.hide();
 	    				if(result.code == 1){
 	    					window.location.href="<%=basePath %>/loan/repayment/repayment-success.shtml?orderNo="+orderNo　+"&amount="+$("#repaymentAmount").val() ;
 	    				}else{
@@ -548,6 +556,7 @@ function loadAccountBalance(isAsync)
 	    				}
 	    			},
 	    	        error:function(){
+	    	        	top.F.loading.hide();
 	    	        	new Tip({msg : '还款失败！',type : 3 });
 	    	        }
 		    	});

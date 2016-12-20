@@ -23,8 +23,9 @@ import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.merchant.api.MerchantFacade;
 import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
-import com.fangcang.titanjr.common.enums.AuditResultEnum;
 import com.fangcang.titanjr.common.enums.FileTypeEnum;
+import com.fangcang.titanjr.common.enums.LoanApplyOrderEnum;
+import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanCreditCompanyEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanCreditOrderEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanPersonEnsureEnum;
@@ -59,6 +60,7 @@ import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
 import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
 import com.fangcang.titanjr.dto.request.NotifyRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
+import com.fangcang.titanjr.dto.request.SynLoanCreditOrderRequest;
 import com.fangcang.titanjr.dto.response.AgreementConfirmResponse;
 import com.fangcang.titanjr.dto.response.ApplyLoanCreditResponse;
 import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
@@ -70,6 +72,7 @@ import com.fangcang.titanjr.dto.response.GetCreditOrderCountResponse;
 import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
 import com.fangcang.titanjr.dto.response.NotifyResponse;
 import com.fangcang.titanjr.dto.response.PageCreditCompanyInfoResponse;
+import com.fangcang.titanjr.dto.response.SynLoanCreditOrderResponse;
 import com.fangcang.titanjr.entity.LoanCompanyEnsure;
 import com.fangcang.titanjr.entity.LoanCreditCompany;
 import com.fangcang.titanjr.entity.LoanCreditOpinion;
@@ -163,14 +166,14 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			return response;
 		}
 		LoanCreditOrder loanCreditOrder = loanCreditOrderList.get(0);
-		if(loanCreditOrder.getStatus()==AuditResultEnum.PASS.getStatus()){
+		if(loanCreditOrder.getStatus()==LoanCreditStatusEnum.PASS.getStatus()){
 			response.putErrorResult("该申请已经审核通过，不能重复审核");
 			return response;
 		}
 		Date now = new Date(); 
 		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();
 		boolean auditResult = false;
-		if(req.getAuditResult()==AuditResultEnum.NO_PASS){
+		if(req.getAuditResult()==LoanCreditStatusEnum.NO_PASS){
 			auditResult = false;
 			//添加批注记录
 			LoanCreditOpinion loanCreditOpinion = new LoanCreditOpinion();
@@ -181,7 +184,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			loanCreditOpinion.setCreater(req.getOperator());
 			loanCreditOpinion.setCreateTime(now);
 			loanCreditOpinionDao.saveLoanCreditOpinion(loanCreditOpinion);
-		}else if(req.getAuditResult()==AuditResultEnum.PASS){
+		}else if(req.getAuditResult()==LoanCreditStatusEnum.PASS){
 			updateLoanCreditOrderParam.setFirstAuditTime(now);
 			auditResult = true;
 		}
@@ -496,6 +499,83 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	}
 	
 	
+	
+	public SynLoanCreditOrderResponse synLoanCreditOrder(
+			SynLoanCreditOrderRequest creditOrderRequest) {
+
+		SynLoanCreditOrderResponse creditOrderResponse = new SynLoanCreditOrderResponse();
+
+		String orgCode = creditOrderRequest.getOrgCode();
+		String orderNo = creditOrderRequest.getOrderNo();
+
+		LoanCreditOrder loanCreditOrder = new LoanCreditOrder();
+		loanCreditOrder.setOrgCode(orgCode);
+		loanCreditOrder.setOrderNo(orderNo);
+
+		List<LoanCreditOrder> creditOrders = loanCreditOrderDao
+				.queryLoanCreditOrder(loanCreditOrder);
+
+		LoanCreditOrder qCrditOrderInfo = null;
+		if (CollectionUtils.isNotEmpty(creditOrders)) {
+			qCrditOrderInfo = creditOrders.get(0);
+		}
+
+		log.info("query credit for database info = "
+				+ JsonConversionTool.toJson(qCrditOrderInfo));
+
+		QueryCreditMerchantInfoRequest request = new QueryCreditMerchantInfoRequest();
+		request.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+		request.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+		request.setUserid(orgCode);
+		request.setUserorderid(orderNo);
+
+		log.info("query rs credit merchant req = "
+				+ JsonConversionTool.toJson(request));
+
+		QueryCreditMerchantInfoResponse response = rsCreditManager
+				.queryCreditMerchantInfo(request);
+
+		log.info("query rs credit merchant info  result = "
+				+ JsonConversionTool.toJson(response));
+
+		if (response != null && response.isSuccess()) {
+			int dayLimit = Integer.valueOf(response.getCreditdeadline());
+			Date expireTime = DateUtils.addMonths(
+					qCrditOrderInfo.getFirstAuditTime(), dayLimit);
+			qCrditOrderInfo.setActualAmount(Long.valueOf(response
+					.getCreditavailability()));
+			qCrditOrderInfo.setAmount(Long.valueOf(response.getCreditlimit()));
+			qCrditOrderInfo.setDayLimit(dayLimit);
+			qCrditOrderInfo.setExpireTime(expireTime);
+
+			if (qCrditOrderInfo.getExpireTime() != null) {
+				if (System.currentTimeMillis() > qCrditOrderInfo
+						.getExpireTime().getTime()) {
+					log.warn("credit order expire time  [orderNo="
+							+ qCrditOrderInfo.getOrderNo() + " orgCode="
+							+ qCrditOrderInfo.getOrgCode() + "]");
+
+					qCrditOrderInfo.setStatus(LoanCreditStatusEnum.EXPIRE
+							.getStatus());
+				}
+			}
+
+			log.info("update credit order info = "
+					+ JsonConversionTool.toJson(qCrditOrderInfo));
+
+			loanCreditOrderDao.updateLoanCreditOrder(qCrditOrderInfo);
+
+			creditOrderResponse.putSuccess();
+
+			return creditOrderResponse;
+		}
+		creditOrderResponse.putSysError();
+		return creditOrderResponse;
+	}
+
+	/**
+	 * 获取单个授信信息
+	 */
 	@Override
 	public GetCreditInfoResponse getCreditOrderInfo(GetCreditInfoRequest req) {
 
@@ -633,7 +713,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				.getLoanCreditOrder(req.getCreditOrder());
 
 		String orderNo = null;
-
+		//如果外部没指定，而且该用户也未创建授信单，那么给他一个默认的授信单哦 亲
 		if (creditOrder == null && qCrditOrderInfo == null) {
 
 			orderNo = titanCodeCenterService.createLoanCreditOrderNo();
@@ -844,7 +924,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		updateLoanCreditOrderParam.setStatus(notifyRequest.getStatus());
 		
 		try {
-			if(notifyRequest.getStatus()==AuditResultEnum.REVIEW_PASS.getStatus()){
+			if(notifyRequest.getStatus()==LoanCreditStatusEnum.REVIEW_PASS.getStatus()){
 				//通过
 				
 				LoanCreditOrder loanCreditOrder = new LoanCreditOrder();

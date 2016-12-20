@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import test.fangcang.titanjr.SpringTest;
 
-import com.fangcang.titanjr.common.enums.AuditResultEnum;
+import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.request.AuditCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
@@ -60,8 +60,9 @@ public class LoanCreditOrderServiceTest extends SpringTest {
 	
 	@Test
 	public void testauditCreditOrder(){
-		AuditCreditOrderRequest request = new AuditCreditOrderRequest();
-		request.setAuditResult(AuditResultEnum.PASS);
+
+		AuditCreidtOrderRequest request = new AuditCreidtOrderRequest();
+		request.setAuditResult(LoanCreditStatusEnum.PASS);
 		request.setOrderNo("CR20161128112423613722");
 		try {
 			AuditCreidtOrderResponse response = loanCreditService.auditCreditOrder(request);

@@ -205,7 +205,16 @@ var staticPath  ="http://image.fangcang.com/upload/images/titanjr/loan_apply/${J
 											}, 1000);
 											
 										}else{
-											new top.Tip({msg : result.msg, type: 3, timer:2500});
+											window.top.createConfirm({
+												title:'提示',
+												content : '<div style="font-size:15px;line-height:30px;">撤销贷款失败，请等待审核进入终审通过后再取消</div>',
+												okValue:'确定',	
+												skin : 'saas_confirm_singlebtn ',			
+												ok : function(){
+													
+												},
+												cancel : false  
+											});
 										}
 										
 										top.F.loading.hide();

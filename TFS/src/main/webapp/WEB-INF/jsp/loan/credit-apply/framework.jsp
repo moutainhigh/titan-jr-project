@@ -188,6 +188,7 @@
 		},
 		
 		backMain: function(){
+			
 			window.location.href=creditBasePath+'/loan/credit/checkCreditStatus.shtml'+"?DateTime="+new Date().getTime();
 		},
 		
@@ -224,32 +225,32 @@
 		},
 
 		prev : function() {
-			var data = {};
-			var obj = navObj.navList[navObj.currIndex];
-			data[obj.zoneId] = dataHandleObj.serializeData(obj.zoneId);
-			var result = true;
-			if(data[obj.zoneId]  != obj['data'])
-			{
-// 				if(obj["dataVlidate"])
-// 				{
-// 					try
-// 					{
-// 						eval("var vlidateResult = "+obj["dataVlidate"]+"()");
-// 						if(vlidateResult === false)
-// 						{
-// 							return;
-// 						}
-// 					}catch(e){}
-// 				}
-				result = dataHandleObj.saveData(data);
-			}
+// 			var data = {};
+// 			var obj = navObj.navList[navObj.currIndex];
+// 			data[obj.zoneId] = dataHandleObj.serializeData(obj.zoneId);
+// 			var result = true;
+// 			if(data[obj.zoneId]  != obj['data'])
+// 			{
+// // 				if(obj["dataVlidate"])
+// // 				{
+// // 					try
+// // 					{
+// // 						eval("var vlidateResult = "+obj["dataVlidate"]+"()");
+// // 						if(vlidateResult === false)
+// // 						{
+// // 							return;
+// // 						}
+// // 					}catch(e){}
+// // 				}
+// 				result = dataHandleObj.saveData(data);
+// 			}
 			
-			if(result)
-			{
-				obj['data'] = data[obj.zoneId];
+// 			if(result)
+// 			{
+// 				obj['data'] = data[obj.zoneId];
 				navObj.currIndex--;
 				navObj.show();
-			}
+// 			}
 		}
 	};
 
@@ -449,7 +450,15 @@
 		{
 			dataHandleObj.restoreObj(obj, $('#' + zoneId));
 		},
-
+		
+		saveCurrZone: function()
+		{
+			var data = {};
+			var obj = navObj.navList[navObj.currIndex];
+			data[obj.zoneId] = dataHandleObj.serializeData(obj.zoneId);
+			dataHandleObj.saveData(data);
+			
+		},
 		saveData : function(data) {
 			var result = false;
 			$.ajax({
