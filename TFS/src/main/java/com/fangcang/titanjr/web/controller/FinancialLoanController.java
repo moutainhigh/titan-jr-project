@@ -14,7 +14,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,26 +26,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
-import com.fangcang.titanjr.common.enums.OrderStatusEnum;
-import com.fangcang.titanjr.common.enums.TradeTypeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.dto.bean.LoanApplyOrderBean;
-import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
 import com.fangcang.titanjr.dto.request.CancelLoanRequest;
+import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.GetHistoryRepaymentListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.request.GetOrgLoanStatInfoRequest;
-import com.fangcang.titanjr.dto.request.TradeDetailRequest;
 import com.fangcang.titanjr.dto.response.CancelLoanResponse;
+import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
 import com.fangcang.titanjr.dto.response.GetHistoryRepaymentListResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoListResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoResponse;
 import com.fangcang.titanjr.dto.response.GetOrgLoanStatInfoResponse;
-import com.fangcang.titanjr.dto.response.TradeDetailResponse;
+import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
@@ -75,6 +74,9 @@ public class FinancialLoanController extends BaseController {
 
 	@Resource
 	private TitanSysconfigService sysconfigService;
+	
+	@Resource
+	private TitanFinancialLoanCreditService financialLoanCreditService;
 
 	private final static Map<String, Object> initDataMap = new HashMap<String, Object>();
 
@@ -104,6 +106,13 @@ public class FinancialLoanController extends BaseController {
 
 	}
 
+	/**
+	 * 获取具体贷款的详细信息
+	 * 
+	 * @param orderNo
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value = "/getLoanDetailsInfo", method = RequestMethod.GET)
 	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_LOAN_42 })
 	public String getLoanDetailsInfo(String orderNo, Model model) {
@@ -142,6 +151,12 @@ public class FinancialLoanController extends BaseController {
 		return "/loan/product-info/" + pageKey;
 	}
 
+	/**
+	 * 获取某个贷款单号的还款列表
+	 * 
+	 * @param orderNo
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/getRepaymentList", method = RequestMethod.GET)
 	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_LOAN_42 })
@@ -162,10 +177,47 @@ public class FinancialLoanController extends BaseController {
 		return toJson(listResponse.getLoanRepaymentInfos());
 	}
 
+	/**
+	 * 检查用户是否授信
+	 * 
+	 * @return
+	 */
+	private boolean checkUserIsCredit() {
+		GetCreditInfoRequest req = new GetCreditInfoRequest();
+		req.setOrgCode(this.getUserId());
+
+		GetCreditInfoResponse response = financialLoanCreditService
+				.getCreditOrderInfo(req);
+
+		if (response == null || !response.isResult()
+				|| response.getCreditOrder() == null) {
+
+			log.error("query credit fail!");
+			return false;
+		}
+
+		LoanCreditOrderBean creditOrderBean = response.getCreditOrder();
+
+		if (LoanCreditStatusEnum.REVIEW_PASS.getStatus() == creditOrderBean
+				.getStatus()) {
+			return true;
+		}
+		
+		log.error("credit status exception!");
+
+		return false;
+	}
+
 	@ResponseBody
 	@RequestMapping(value = "/loanStatInfo", method = RequestMethod.GET)
 	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_LOAN_42 })
 	public String getLoanStatInfo() {
+		
+		if (!checkUserIsCredit()) {
+			putSysError("用户未进行贷款授信！");
+			return toJson();
+		}
+
 		log.info("get loan stat info ");
 		GetOrgLoanStatInfoRequest req = new GetOrgLoanStatInfoRequest();
 
@@ -180,6 +232,12 @@ public class FinancialLoanController extends BaseController {
 		return toJson(loanStatInfoResponse.getOrgLoanStatInfo());
 	}
 
+	/**
+	 * 取消具体的一笔贷款
+	 * 
+	 * @param orderNo
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/stopLoan", method = RequestMethod.GET)
 	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_LOAN_42 })
@@ -202,6 +260,13 @@ public class FinancialLoanController extends BaseController {
 		return toJson();
 	}
 
+	/**
+	 * 查询某个用户的贷款列表
+	 * 
+	 * @param loanQueryConditions
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value = "/getLoanInfoList", method = RequestMethod.GET)
 	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_LOAN_42 })
 	public String getLoanInfoList(LoanQueryConditions loanQueryConditions,
@@ -283,6 +348,13 @@ public class FinancialLoanController extends BaseController {
 		return format.format(Float.valueOf(amount.toString()) / 100);
 	}
 
+	/**
+	 * 导出excel
+	 * 
+	 * @param loanQueryConditions
+	 * @param request
+	 * @param response
+	 */
 	@RequestMapping("exportExcel")
 	public void exportExcel(LoanQueryConditions loanQueryConditions,
 			HttpServletRequest request, HttpServletResponse response) {
@@ -366,16 +438,6 @@ public class FinancialLoanController extends BaseController {
 			head.createCell(8).setCellValue("贷款状态");
 
 			if (infoListResponse != null && infoListResponse.isResult()) {
-				//
-				// long totalPage = (infoListResponse.getTotalCount() %
-				// infoListResponse
-				// .getPageSize()) == 0 ? infoListResponse.getTotalCount()
-				// / infoListResponse.getPageSize() : (infoListResponse
-				// .getTotalCount() / infoListResponse.getPageSize()) + 1;
-				//
-				// for (int page = 1; page <= totalPage; page++) {
-				//
-				// }
 
 				List<LoanApplyOrderBean> applyOrderBeans = infoListResponse
 						.getApplyOrderInfo();

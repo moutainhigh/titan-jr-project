@@ -46,7 +46,7 @@
 	
 	
 	<select id="queryProductTypeAmount" resultType="com.fangcang.titanjr.entity.LoanProductAmountStat" parameterType="java.lang.String">
-		SELECT  t.producttype as productId  ,  SUM(t.shouldcapital) AS amount  
+		SELECT  t.producttype as productId  ,  SUM(t.shouldcapital)  AS amount , SUM(t.shouldcapital) + SUM(t.shouldinterest) as actualAmount  
 			FROM t_loan_order t WHERE t.status IN (6 ,9) AND t.`orgcode`=#{orgCode} GROUP BY t.producttype;
 	</select>
 

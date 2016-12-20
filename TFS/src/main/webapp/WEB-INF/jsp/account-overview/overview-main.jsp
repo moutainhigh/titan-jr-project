@@ -41,6 +41,41 @@
 					</tr>
 				</table>
 			</div>
+			
+			<div class="MyAssets_chart_list01 fr" id="loanAccountZone" style="display: none;">
+				<h3>我的负债</h3>
+				<h4>
+					<i class="MyAssets_redNotice"><aa id="loanAmount">0.00</aa></i>
+					元
+				</h4>
+				<table cellpadding="0" cellspacing="0" class="MyAssets_chart_tab01">
+					<tr>
+						<td width="75" class="MyAssets_chart_td01">
+							<canvas id="can4" class="canvasBox"  height="60" width="60"></canvas>
+							<span></span>
+						</td>
+						<td>
+							<p>
+								<span>运营贷总欠款：<aa id="OPERACTION">0.00</aa></span>
+								<a href="泰坦金融-我的贷款首页.html#ID1" class="c_666 decorationUnderline">还款</a>
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td width="75" class="MyAssets_chart_td01">
+							<canvas id="can5" class="canvasBox"  height="60" width="60"></canvas>
+							<span></span>
+						</td>
+						<td>
+							<p>
+								<span>包房专项贷款：<aa id="ROOM_PACK">0.00</aa></span>
+								<a href="泰坦金融-我的贷款首页.html#ID1" class="c_666 decorationUnderline">还款</a>
+							</p>
+						</td>
+					</tr>
+				</table>
+			</div>
+			
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -1181,6 +1216,78 @@
 		        	}
 		        }
         	});
+		}
+		
+		loadLoanAccountInfo();
+		
+		function loadLoanAccountInfo()
+		{
+			  $.ajax({
+					type : 'get',
+					url :  '<%=basePath%>/loan/loanStatInfo.shtml'+"?DateTime="+new Date().getTime(),
+					dataType : 'json',
+					success : function(obj) {
+							
+						   if(obj['code'] && obj['msg'])
+						   {
+							   return;
+						   }
+						   
+						   
+						   $('#loanAccountZone').show();
+						   
+						   
+						   var roomPackNum = 0;
+						   var operationNum = 0;
+						   
+						   if(obj['productAmount'])
+						   {
+							   if(obj['productAmount']['ROOM_PACK'])
+							   {
+								   roomPackNum = Math.round((obj['productAmount']['ROOM_PACK'] / obj['loanAmount'] ) * 100);
+								   $('#ROOM_PACK').text(formatCurrency(obj['productAmount']['ROOM_PACK']/100)  );
+							   }
+							   
+							   if(obj['productAmount']['OPERACTION'])
+							   {
+								   operationNum = Math.round((obj['productAmount']['OPERACTION'] / obj['loanAmount'] ) * 100);
+								   $('#OPERACTION').text(formatCurrency(obj['productAmount']['OPERACTION']/100));
+							   }
+						   }
+						   
+						   if(obj['productActualAmount'])
+						   {
+							   if(obj['productActualAmount']['ROOM_PACK'])
+							   {
+								  // alert(formatCurrency(obj['productActualAmount']['ROOM_PACK']/100));
+							   }
+							   
+							   if(obj['productActualAmount']['OPERACTION'])
+							   {
+								   //alert(formatCurrency(obj['productActualAmount']['OPERACTION']/100));
+							   }
+						   }
+						   
+						   
+						   if(obj['loanAmount'])
+							{
+							   $('#loanAmount').text(formatCurrency(obj['loanAmount']/100) );
+							}
+						   
+						   
+						   new scale({id: "can5", numb: roomPackNum });
+						   new scale({id: "can4", numb: operationNum});
+						   
+							
+
+						},
+						error : function() {
+							new Tip({
+								msg : '查询贷款数据失败！',
+								type : 3
+							});
+						}
+					});
 		}
 </script>
 </body>

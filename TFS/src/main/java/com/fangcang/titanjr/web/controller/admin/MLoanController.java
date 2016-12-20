@@ -9,7 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fangcang.titanjr.common.enums.AuditResultEnum;
+import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanCreditOrderEnum;
 import com.fangcang.titanjr.dto.request.AuditCreidtOrderRequest;
 import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
@@ -128,7 +128,7 @@ public class MLoanController extends BaseController{
 		AuditCreidtOrderRequest auditCreidtOrderRequest = new AuditCreidtOrderRequest();
 		auditCreidtOrderRequest.setOperator(getSAASLoginName());
 		auditCreidtOrderRequest.setOrderNo(orderNo);
-		auditCreidtOrderRequest.setAuditResult(AuditResultEnum.getEnumByStatus(auditResult));
+		auditCreidtOrderRequest.setAuditResult(LoanCreditStatusEnum.getEnumByStatus(auditResult));
 		auditCreidtOrderRequest.setContent(content);
 		AuditCreidtOrderResponse auditCreidtOrderResponse = loanCreditService.auditCreditOrder(auditCreidtOrderRequest);
 		if(auditCreidtOrderResponse.isResult()){

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fangcang.titanjr.common.enums.AuditResultEnum;
+import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.Tools;
@@ -142,10 +142,10 @@ public class TitanLoanController extends BaseController {
 					//协议确认
 					titanCreditServiceListener.agreementConfirm(buessNo);
 				}else if("41".equals(req.getStatus())){
-					state = AuditResultEnum.REVIEW_PASS.getStatus();
+					state = LoanCreditStatusEnum.REVIEW_PASS.getStatus();
 					titanCreditServiceListener.creditSucceed(buessNo,state);
 				}else {
-					state = AuditResultEnum.NO_PASS.getStatus();
+					state = LoanCreditStatusEnum.NO_PASS.getStatus();
 					titanCreditServiceListener.creditFailure(buessNo,state, req.getMsg());
 				}
 				result.put("result", "0");

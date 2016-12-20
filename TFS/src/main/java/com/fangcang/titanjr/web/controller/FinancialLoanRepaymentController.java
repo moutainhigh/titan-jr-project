@@ -21,10 +21,12 @@ import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.RepaymentAmountComputeRequest;
 import com.fangcang.titanjr.dto.request.RepaymentLoanRequest;
+import com.fangcang.titanjr.dto.request.SynLoanOrderRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.RepaymentAmountComputeResponse;
 import com.fangcang.titanjr.dto.response.RepaymentLoanResponse;
+import com.fangcang.titanjr.dto.response.SynLoanOrderResponse;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -49,6 +51,13 @@ public class FinancialLoanRepaymentController extends BaseController {
 	@Resource
 	private TitanFinancialOrganService titanFinancialOrganService;
 	
+	/**
+	 * 还款成功后进入还款成功界面
+	 * @param orderNo
+	 * @param amount
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value = "/repayment-success", method = RequestMethod.GET)
 	public String repaymentSuccess(String orderNo , String amount, Model model) {
 		
@@ -56,10 +65,15 @@ public class FinancialLoanRepaymentController extends BaseController {
 		model.addAttribute("repaymentOrderNo", orderNo);
 		model.addAttribute("repaymentDate", DateUtil.sdf4.format(new Date()));
 		model.addAttribute("repaymentAmount",amount);
-		
 		return "loan/loan-repayment/repayment-success";
 	}
 	
+	/**
+	 * 进入还款界面
+	 * @param orderNo
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value = "/repaymentPer", method = RequestMethod.GET)
 	public String repaymentPer(String orderNo, Model model) {
 
@@ -84,9 +98,12 @@ public class FinancialLoanRepaymentController extends BaseController {
 		}
 		return "loan/loan-repayment/repayment";
 	}
-
+	
 	/**
-	 * 检查还款顺序
+	 * 根据贷款单号计算出用户应还款的金额及还款顺序
+	 * @param orderNo
+	 * @param amount
+	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/checkRepaymentOrder", method = RequestMethod.GET)
@@ -112,7 +129,7 @@ public class FinancialLoanRepaymentController extends BaseController {
 
 		if (computeResponse == null || !computeResponse.isResult()) {
 			log.error("repayment order result fail! ");
-			putSuccess("计算还款顺序失败！");
+			putSysError("计算还款信息失败，有可能是未生成还款计划，建议放款第二天后才能进行还款！");
 			return toJson();
 		}
 
@@ -124,7 +141,7 @@ public class FinancialLoanRepaymentController extends BaseController {
 	}
 
 	/**
-	 * 贷款还款
+	 * 用户任性了有钱了，主动还款
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/repayment", method = RequestMethod.GET)
@@ -176,7 +193,21 @@ public class FinancialLoanRepaymentController extends BaseController {
 			putSysError("还款失败，请稍后再试！");
 			return toJson();
 		}
-
+		
+		//还款成功后需要同步一下贷款单信息，如果同步失败建议手工同步
+		SynLoanOrderRequest synReq = new SynLoanOrderRequest();
+		synReq.setOrderNo(orderNo);
+		synReq.setOrgCode(this.getUserId());
+		
+		SynLoanOrderResponse synRsp = financialLoanService
+				.synLoanOrderInfo(synReq);
+		
+		if(!synRsp.isResult())
+		{
+			putSysError("还款成功但是同步贷款单信息失败，请稍后再试！");
+			return toJson();
+		}
+		
 		putSuccess();
 		return toJson();
 	}

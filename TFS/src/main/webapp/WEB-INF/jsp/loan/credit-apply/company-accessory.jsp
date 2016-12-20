@@ -567,7 +567,7 @@
 		if(imgList.indexOf(postf.toLowerCase()) !=-1)
 		{
 			$('#'+ids).parent().find('.TFSimgOn').addClass('TFSimgOnBig');
-			$('#'+ids).parent().find('.TFSimgOn').find('img').attr("src",static_path+fileName);
+			$('#'+ids).parent().find('.TFSimgOn').find('img').attr("src",static_path+fileName +"?DateTime=" + new Date().getTime());
 			bigImgShow();
 		}else
 		{
@@ -792,6 +792,10 @@
     						obj.parent().addClass("hidden").removeClass("TFSimgOnBig");
        						obj.parent().parent().find(".TFSaddImg").removeClass("hidden");
        						$('[fileId='+ids+']').val("");
+       						
+       						dataHandleObj.saveCurrZone();
+       						
+       						
     					}else{
     					}
     					
@@ -832,6 +836,8 @@
 	   	            	loadingOver($('#' + ids).parent().find(".TFSuploading") , function(){
 	   	            				
 	   	            		uploadSucess(ids , result.data);
+	   	            		
+	   	            		dataHandleObj.saveCurrZone();
 	   	            	});
    					}
    	            	else

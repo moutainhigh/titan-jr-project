@@ -23,7 +23,7 @@ import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.merchant.api.MerchantFacade;
 import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
-import com.fangcang.titanjr.common.enums.AuditResultEnum;
+import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
 import com.fangcang.titanjr.common.enums.FileTypeEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanCompanyEnsureEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanCreditCompanyEnum;
@@ -164,14 +164,14 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			return response;
 		}
 		LoanCreditOrder loanCreditOrder = loanCreditOrderList.get(0);
-		if(loanCreditOrder.getStatus()==AuditResultEnum.PASS.getStatus()){
+		if(loanCreditOrder.getStatus()==LoanCreditStatusEnum.PASS.getStatus()){
 			response.putErrorResult("该申请已经审核通过，不能重复审核");
 			return response;
 		}
 		Date now = new Date(); 
 		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();
 		boolean auditResult = false;
-		if(req.getAuditResult()==AuditResultEnum.NO_PASS){
+		if(req.getAuditResult()==LoanCreditStatusEnum.NO_PASS){
 			auditResult = false;
 			//添加批注记录
 			LoanCreditOpinion loanCreditOpinion = new LoanCreditOpinion();
@@ -182,7 +182,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			loanCreditOpinion.setCreater(req.getOperator());
 			loanCreditOpinion.setCreateTime(now);
 			loanCreditOpinionDao.saveLoanCreditOpinion(loanCreditOpinion);
-		}else if(req.getAuditResult()==AuditResultEnum.PASS){
+		}else if(req.getAuditResult()==LoanCreditStatusEnum.PASS){
 			updateLoanCreditOrderParam.setFirstAuditTime(now);
 			auditResult = true;
 		}
@@ -840,7 +840,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		updateLoanCreditOrderParam.setStatus(notifyRequest.getStatus());
 		
 		try {
-			if(notifyRequest.getStatus()==AuditResultEnum.REVIEW_PASS.getStatus()){
+			if(notifyRequest.getStatus()==LoanCreditStatusEnum.REVIEW_PASS.getStatus()){
 				//通过
 				
 				LoanCreditOrder loanCreditOrder = new LoanCreditOrder();

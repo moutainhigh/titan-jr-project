@@ -19,6 +19,10 @@ public class OrgLoanStatInfo implements java.io.Serializable{
 	private long loanAmount;
 	// 將總額劃分到各個產品
 	private Map<LoanProductEnum, Long> productAmount;
+	
+	// 將總額劃分到各個產品
+	private Map<LoanProductEnum, Long> productActualAmount;
+	
 	// 七天還款筆數
 	private int sevenDaysNum;
 	// 七天待還款金額
@@ -27,6 +31,15 @@ public class OrgLoanStatInfo implements java.io.Serializable{
 	private int expiryNum;
 	// 逾期金額
 	private int expiryAmount;
+	
+	public Map<LoanProductEnum, Long> getProductActualAmount() {
+		return productActualAmount;
+	}
+
+	public void setProductActualAmount(
+			Map<LoanProductEnum, Long> productActualAmount) {
+		this.productActualAmount = productActualAmount;
+	}
 
 	public long getLoanAmount() {
 		return loanAmount;

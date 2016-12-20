@@ -9,6 +9,7 @@ import com.fangcang.titanjr.dto.request.GetOrgLoanStatInfoRequest;
 import com.fangcang.titanjr.dto.request.RepaymentAmountComputeRequest;
 import com.fangcang.titanjr.dto.request.RepaymentLoanRequest;
 import com.fangcang.titanjr.dto.request.SaveLoanOrderInfoRequest;
+import com.fangcang.titanjr.dto.request.SynLoanOrderRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.CancelLoanResponse;
 import com.fangcang.titanjr.dto.response.GetHistoryRepaymentListResponse;
@@ -18,6 +19,7 @@ import com.fangcang.titanjr.dto.response.GetOrgLoanStatInfoResponse;
 import com.fangcang.titanjr.dto.response.RepaymentAmountComputeResponse;
 import com.fangcang.titanjr.dto.response.RepaymentLoanResponse;
 import com.fangcang.titanjr.dto.response.SaveLoanOrderInfoResponse;
+import com.fangcang.titanjr.dto.response.SynLoanOrderResponse;
 
 /**
  * 贷款业务接口定义
@@ -66,28 +68,39 @@ public interface TitanFinancialLoanService {
 	 */
 	public GetLoanOrderInfoListResponse getLoanOrderInfoList(
 			GetLoanOrderInfoListRequest req);
+
 	/**
 	 * 根據組織機構ID查詢對於的貸款統計信息
+	 * 
 	 * @param req
 	 * @return
 	 */
 	public GetOrgLoanStatInfoResponse getOrgLoanStatInfo(
 			GetOrgLoanStatInfoRequest req);
-	
-	
+
 	/**
-	 *查尋還款歷史列表
+	 * 查尋還款歷史列表
 	 */
 	public GetHistoryRepaymentListResponse getHistoryRepaymentList(
 			GetHistoryRepaymentListRequest req);
 
 	/**
 	 * 根據還款金額對還款進行分類
+	 * 
 	 * @param req
 	 * @return
 	 */
 	public RepaymentAmountComputeResponse repaymentAmountCompute(
 			RepaymentAmountComputeRequest req);
+
+	/**
+	 * 同步指定的单款单信息
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public SynLoanOrderResponse synLoanOrderInfo(SynLoanOrderRequest req);
+
 	/**
 	 * 保存贷款单信息
 	 * 

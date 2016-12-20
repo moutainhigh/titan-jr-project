@@ -26,8 +26,8 @@
 			<div class="LH_c ">
 				<div class="xi"></div>
 				<dl>
-					<dd><p>包房贷待还本金：</p><p  id="ROOM_PACK" amount="#,##0.00#"></p><p><a href="<%=basePath %>/loan_apply/main.shtml" class="blue ">申请包房贷</a></p></dd>
-					<dd><p>运营贷待还本金：</p><p  id="OPERACTION" amount="#,##0.00#"></p></dd>
+					<dd><p>包房贷待还本金：</p><p  id="ROOM_PACK" amount="#,##0.00#">0.00 元</p><p><a href="<%=basePath %>/loan_apply/main.shtml" class="blue ">申请包房贷</a></p></dd>
+					<dd><p>运营贷待还本金：</p><p  id="OPERACTION" amount="#,##0.00#">0.00 元</p></dd>
 				</dl>
 			</div>
 		</li>

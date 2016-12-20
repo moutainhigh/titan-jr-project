@@ -168,14 +168,14 @@
 									}else{
 										window.top.createConfirm({
 											title:'提示',
-											content : '<div style="font-size:15px;line-height:30px;">撤销贷款失败，请联系</div>',
+											content : '<div style="font-size:15px;line-height:30px;">撤销贷款失败，请等待审核进入终审通过后再取消</div>',
 											okValue:'确定',	
 											skin : 'saas_confirm_singlebtn ',			
 											ok : function(){
 												
 											},
 											cancel : false  
-										}); 
+										});
 
 									}
 									
