@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.rs.dto;
+package com.fangcang.titanjr.dto.bean;
 
 import java.io.Serializable;
 
@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @author luoqinglong
  * @2016年11月9日
  */
-public class NewLoanApplyJsonData implements Serializable {
+public class NewLoanApplyJsonDataBean implements Serializable {
 	
 	/**
 	 * 

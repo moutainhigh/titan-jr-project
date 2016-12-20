@@ -2,7 +2,7 @@
 <%@ include file="/comm/taglib.jsp"%>
 <c:forEach items="${pageCreditCompanyInfoDTO.itemList}" var="creditCompanyInfoDTO">
 <tr>
-    <td class="tdl"><span class="pl12">${creditCompanyInfoDTO.createTime}</span></td>
+    <td class="tdl"><span class="pl12"><fmt:formatDate value="${creditCompanyInfoDTO.reqTime}" pattern="yyyy-MM-dd HH:mm:ss"/></span></td>
 	<td class="tdl"><span class="textleng" style="max-width:200px;" title="${creditCompanyInfoDTO.name }">${creditCompanyInfoDTO.name }</span></td>
 	<td class="tdl">${creditCompanyInfoDTO.contactName }</td>
 	<td class="tdl">${creditCompanyInfoDTO.contactPhone }</td>
