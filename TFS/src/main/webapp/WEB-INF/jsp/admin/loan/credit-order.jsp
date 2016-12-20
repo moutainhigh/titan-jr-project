@@ -29,8 +29,8 @@
 							<p data-value="">全部</p>
 							<p data-value="1">草稿</p>
 							<p data-value="2">待审核</p>
-							<p data-value="3">审核未通过</p>
-							<p data-value="4">已提交复审</p>
+							<p data-value="3">初审通过</p>
+							<p data-value="4">审核未通过</p>
 							<p data-value="5">审核已通过</p>
 						</div>
 					</div>

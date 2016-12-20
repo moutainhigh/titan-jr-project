@@ -50,12 +50,18 @@ public class LoanDemoTest {
 //    private static String session = "1460355562856409835";
     
     //融数商户联调环境
+	//private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
+	//private static String appKey = "C5CE632E-FDA6-436A-B4DF-1DE93A2C72C3";
+	//private static String appSecret = "D7787ED2-0465-42C7-9CF8-25D5CC6ACA34";
+	//private static String session = "1478056836773639888";
+	
+	//融数UAT 环境
 	private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
-	private static String appKey = "C5CE632E-FDA6-436A-B4DF-1DE93A2C72C3";
-	private static String appSecret = "D7787ED2-0465-42C7-9CF8-25D5CC6ACA34";
+	private static String appKey = "762DF53A-4DFD-427A-88F8-C4EEF26195A3";
+	private static String appSecret = "6461B23C-3ABE-4BE2-8E2C-D3FF4B2F5415";
 	private static String session = "1478056836773639888";
 	
-
+	
     static DefaultRopClient ropClient = new DefaultRopClient(ropUrl, appKey,
             appSecret, "xml");
     //文件
@@ -85,12 +91,12 @@ public class LoanDemoTest {
 
 		  //strMsg = doWheatfieldOrderServiceNewloanapply();//申请贷款
 
-		 doqueryborrowinfo(session);//查询待还款记录
+		// doqueryborrowinfo(session);//查询待还款记录
         
          // douserinitiativerepament(session);// 主动还款
         
          // doqueryuserinitiativerepayment(session);//主动还款查询
-        //  doqueryloanapply();//贷款订单状态查询接口
+          doqueryloanapply();//贷款订单状态查询接口
         //   queryOrderOper();//查询订单
         // doqueryuserrepayment();//查询贷款的还款状态及历史
 		// stoploan();//终止贷款
@@ -497,9 +503,9 @@ public class LoanDemoTest {
     public static String doqueryloanapply(){
     	String strError = null;
     	WheatfieldOrderMixserviceQueryloanapplyRequest request = new WheatfieldOrderMixserviceQueryloanapplyRequest();
-    	request.setUserid("TJM10000087");	
+    	request.setUserid("TJM10030146");	
     	request.setRootinstcd("M000016");										//机构码
-    	request.setUserorderid("TJO201610255555");  						        //	商户id
+    	request.setUserorderid("D201612191604419465");  						        //	商户id
     	try {
     		WheatfieldOrderMixserviceQueryloanapplyResponse rsp = ropClient.execute(request,session);
     		 System.out.println("返回报文: \n" + rsp.getBody());

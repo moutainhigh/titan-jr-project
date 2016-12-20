@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.LoanOrderDao;
 import com.fangcang.titanjr.entity.LoanApplyOrder;
 import com.fangcang.titanjr.entity.LoanExpiryStat;
@@ -65,6 +66,19 @@ public class LoanOrderDaoImpl extends GenericDAOMyBatisImpl implements
 							orgCode);
 		} catch (Exception e) {
 			log.error("queryLoanSevenDaysStat Error", e);
+			throw new DaoException(e);
+		}
+	}
+
+	
+	@Override
+	public List<LoanApplyOrder> listLoanApplyOrder(
+			LoanQueryConditions loanQueryConditions) {
+		
+		try {
+			return super.selectList("com.fangcang.titanjr.dao.LoanOrderDao.queryLoanApplyOrder",loanQueryConditions);
+		} catch (Exception e) {
+			log.error("listLoanApplyOrder Error,loanQueryConditions:"+Tools.gsonToString(loanQueryConditions), e);
 			throw new DaoException(e);
 		}
 	}

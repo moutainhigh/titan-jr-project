@@ -7,13 +7,13 @@ import com.fangcang.titanjr.common.exception.GlobalServiceException;
  */
 public interface TitanCreditServiceListener 
 {
-	public void creditSucceed(String orderNo, int status) throws GlobalServiceException;
+	public void creditSucceed(String buessNo, int status) throws GlobalServiceException;
 
-	public void creditFailure(String orderNo, int status,String msg) throws GlobalServiceException;
+	public void creditFailure(String buessNo, int status,String msg) throws GlobalServiceException;
 	
 	/**
 	 * 协议确认
-	 * @param orderNo 授信申请单号(金融的)
+	 * @param buessNo 授信申请单号(金融的)
 	 */
-	public void agreementConfirm(String orderNo);
+	public void agreementConfirm(String buessNo);
 }

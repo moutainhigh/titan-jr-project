@@ -19,9 +19,12 @@ public class CommonConstant {
     public static final String RS_FANGCANG_PRODUCT_ID = "P000070";//产品id
     
     
-    public static final String RS_LOAN_CREDIT_REQUEST_TIME = "36";//授信申请有效期，时限,单位月
+    
     
     public static final String RS_LOAN_CREDIT_RATETEMPL_RATE = "RA201611011800001";//贷款费率模板
+    public static final String RS_LOAN_CREDIT_REQUEST_TIME = "36";//授信申请有效期，时限,单位月
+    public static final int RS_LOAN_REPAYMENT_TIME = 90;//贷款还款到期时长,单位：天
+    
     
     public static final String ORG_CODE_PREFIX = "TJM";//机构编码前缀
     public static final String ACCOUNT_CODE_PREFIX = "TJA";//accountCode编码前缀

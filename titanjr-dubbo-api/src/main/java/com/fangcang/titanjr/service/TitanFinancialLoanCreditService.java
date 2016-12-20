@@ -3,7 +3,7 @@ package com.fangcang.titanjr.service;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.dto.request.AgreementConfirmRequest;
 import com.fangcang.titanjr.dto.request.ApplyLoanCreditRequest;
-import com.fangcang.titanjr.dto.request.AuditCreidtOrderRequest;
+import com.fangcang.titanjr.dto.request.AuditCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
@@ -33,7 +33,7 @@ public interface TitanFinancialLoanCreditService {
 	 * 
 	 * @param 审核对象
 	 */
-	public AuditCreidtOrderResponse auditCreditOrder(AuditCreidtOrderRequest req);
+	public AuditCreidtOrderResponse auditCreditOrder(AuditCreditOrderRequest req);
 
 	/**
 	 * 获取授信单的审核评价信息

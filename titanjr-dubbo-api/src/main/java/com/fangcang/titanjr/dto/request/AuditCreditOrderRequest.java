@@ -7,11 +7,11 @@ import com.fangcang.titanjr.dto.BaseRequestDTO;
  * @author luoqinglong
  * @date   2016年11月29日
  */
-public class AuditCreidtOrderRequest extends BaseRequestDTO {
+public class AuditCreditOrderRequest extends BaseRequestDTO {
 
 	private static final long serialVersionUID = 1L;
 	//考慮到審核人是後台用戶，則這個字段則為用戶ID
-	private String userId;
+	//private String userId;
 
 	// 授信单号
 	private String orderNo;
@@ -20,13 +20,13 @@ public class AuditCreidtOrderRequest extends BaseRequestDTO {
 
 	private String content;
 
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+//	public String getUserId() {
+//		return userId;
+//	}
+//
+//	public void setUserId(String userId) {
+//		this.userId = userId;
+//	}
 
 	public String getOrderNo() {
 		return orderNo;
