@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fangcang.titanjr.dao.LoanOrderDao">
-
+	
+	 <cache 
+          eviction="LRU"
+          flushInterval="60000"
+          size="1024"
+         readOnly="true"/> 
+	
+	
     <resultMap id="loanApplyOrder" type="com.fangcang.titanjr.entity.LoanApplyOrder">
         <result property="orderNo" column="orderno"/>
         <result property="creditOrderNo" column="creditorderno"/>

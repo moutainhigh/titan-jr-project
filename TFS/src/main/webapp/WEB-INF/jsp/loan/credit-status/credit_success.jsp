@@ -55,7 +55,7 @@
 	<div class="MyAssets_list m_t35 LoanHome_list" id="ID1">
 		<h3 class="MyAssets_list_tab">
 			<span class="on" key="loan-payment">
-				待还款
+				<A name="zkback">待还款</A>
 				<i></i>
 			</span>
 			<span key="loan-audit">
@@ -204,8 +204,8 @@
 	                <select class="select w_120" field="loanStatus">
 	                <option value="">贷款状态</option>
 	                <option value="1">审核中</option>
-	                <option value="3">已放款</option>
-	                <option value="4">未通过</option>
+	                <option value="6">已放款</option>
+	                <option value="7">未通过</option>
 	              </select>         
 	            </div>
 	
@@ -235,6 +235,19 @@
 
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 	<script type="text/javascript"> 
+	
+	window.onload = function()
+	{
+		var reqUrl  = window.location.href;
+		
+		if(reqUrl.indexOf("#zkback") != -1)
+		{
+			setTimeout(function(){
+				window.location.href=window.location.href;
+			} , 500);
+			
+		}
+	}
 	
 	function exportExcel(pageKey)
 	{

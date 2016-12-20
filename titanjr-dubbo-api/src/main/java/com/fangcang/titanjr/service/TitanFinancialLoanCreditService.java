@@ -10,6 +10,7 @@ import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
 import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
 import com.fangcang.titanjr.dto.request.NotifyRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
+import com.fangcang.titanjr.dto.request.SynLoanCreditOrderRequest;
 import com.fangcang.titanjr.dto.response.AgreementConfirmResponse;
 import com.fangcang.titanjr.dto.response.ApplyLoanCreditResponse;
 import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
@@ -19,6 +20,7 @@ import com.fangcang.titanjr.dto.response.GetCreditOrderCountResponse;
 import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
 import com.fangcang.titanjr.dto.response.NotifyResponse;
 import com.fangcang.titanjr.dto.response.PageCreditCompanyInfoResponse;
+import com.fangcang.titanjr.dto.response.SynLoanCreditOrderResponse;
 
 /**
  * 授信业务接口定义
@@ -87,18 +89,32 @@ public interface TitanFinancialLoanCreditService {
 	 */
 	public GetCreditOrderCountResponse getCreditOrderCount(
 			GetCreditOrderCountRequest request);
+
 	/**
 	 * 授信申请结果通知
+	 * 
 	 * @param notifyRequest
 	 * @return
 	 * @throws GlobalServiceException
 	 */
-	public NotifyResponse loanCreditNotify(NotifyRequest notifyRequest) throws GlobalServiceException;
+	public NotifyResponse loanCreditNotify(NotifyRequest notifyRequest)
+			throws GlobalServiceException;
 
 	/**
 	 * 协议确认
+	 * 
 	 * @param agreementConfirmRequest
 	 * @return
 	 */
-	public AgreementConfirmResponse agreementConfirm(AgreementConfirmRequest agreementConfirmRequest);
+	public AgreementConfirmResponse agreementConfirm(
+			AgreementConfirmRequest agreementConfirmRequest);
+
+	/**
+	 * 同步授信单号
+	 * 
+	 * @param creditOrderRequest
+	 * @return
+	 */
+	public SynLoanCreditOrderResponse synLoanCreditOrder(
+			SynLoanCreditOrderRequest creditOrderRequest);
 }

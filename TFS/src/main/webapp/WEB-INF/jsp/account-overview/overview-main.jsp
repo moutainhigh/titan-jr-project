@@ -55,10 +55,17 @@
 							<span></span>
 						</td>
 						<td>
-							<p>
-								<span>运营贷总欠款：<aa id="OPERACTION">0.00</aa></span>
-								<a href="泰坦金融-我的贷款首页.html#ID1" class="c_666 decorationUnderline">还款</a>
+							<div class="fl" >
+							<p style="line-height: 24px;">
+								<span>运营贷总欠款：<a id="OPERACTION">0.00</a></span>															
 							</p>
+							<p class="c_999 " style="line-height: 24px;">
+								<span class="f_12">
+								<i class="fl">参考待还本金：<a id="OPERACTION_SUM">0.00</a></i> <i class="MyAssets_noticeIco m_t3 fl" title="参考待还本息为定时更新贷款订单应还本息之和，实际还款本息以还款时显示应还本息为准。"></i>
+								</span>
+							</p>	
+							</div>
+							<a href="<%=basePath %>/loan/credit/checkCreditStatus.shtml#zkback" class="blue decorationUnderline fl m_t15">还款</a>
 						</td>
 					</tr>
 					<tr>
@@ -67,10 +74,18 @@
 							<span></span>
 						</td>
 						<td>
-							<p>
-								<span>包房专项贷款：<aa id="ROOM_PACK">0.00</aa></span>
-								<a href="泰坦金融-我的贷款首页.html#ID1" class="c_666 decorationUnderline">还款</a>
+							<div class="fl" >
+							<p style="line-height: 24px;">
+								<span>包房专项贷款：<a id="ROOM_PACK">0.00</a></span>
 							</p>
+							<p class="c_999 " style="line-height: 24px;">
+								<span class="f_12">
+								<i class="fl">参考待还本金：<a id="ROOM_PACK_SUM">0.00</a></i> <i class="MyAssets_noticeIco m_t3 fl" title="参考待还本息为定时更新贷款订单应还本息之和，实际还款本息以还款时显示应还本息为准。"></i>
+								</span>								
+							</p>
+							</div>	
+							<a href="<%=basePath %>/loan/credit/checkCreditStatus.shtml#zkback" class="blue decorationUnderline fl m_t15">还款</a>
+						
 						</td>
 					</tr>
 				</table>
@@ -1259,12 +1274,13 @@
 						   {
 							   if(obj['productActualAmount']['ROOM_PACK'])
 							   {
-								  // alert(formatCurrency(obj['productActualAmount']['ROOM_PACK']/100));
+								   
+								   $('#ROOM_PACK_SUM').text(formatCurrency(obj['productActualAmount']['ROOM_PACK']/100)  );
 							   }
 							   
 							   if(obj['productActualAmount']['OPERACTION'])
 							   {
-								   //alert(formatCurrency(obj['productActualAmount']['OPERACTION']/100));
+								   $('#OPERACTION_SUM').text(formatCurrency(obj['productActualAmount']['OPERACTION']/100));
 							   }
 						   }
 						   

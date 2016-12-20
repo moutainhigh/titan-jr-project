@@ -89,7 +89,7 @@ public class FinancialLoanController extends BaseController {
 				LoanOrderStatusEnum.WAIT_AUDIT, LoanOrderStatusEnum.AUDIT_PASS,
 				LoanOrderStatusEnum.LENDING_ING });
 
-		initDataMap.put("loan-audit-orderby", "createTime");
+		initDataMap.put("loan-audit-orderby", "createTime desc");
 
 		initDataMap.put("loan-over-status",
 				new LoanOrderStatusEnum[] { LoanOrderStatusEnum.LOAN_FINISH });
@@ -98,7 +98,7 @@ public class FinancialLoanController extends BaseController {
 		initDataMap.put("loan-payment-status",
 				new LoanOrderStatusEnum[] { LoanOrderStatusEnum.HAVE_LOAN,
 						LoanOrderStatusEnum.LOAN_EXPIRY });
-		initDataMap.put("loan-payment-orderby", "createTime");
+		initDataMap.put("loan-payment-orderby", "status desc , createTime desc");
 
 		initDataMap.put("" + LoanProductEnum.ROOM_PACK.getCode(),
 				"loan-roompack");
