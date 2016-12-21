@@ -85,6 +85,7 @@
 		<mapper resource="mybatis/TitanOrderException.xml" />
 		<mapper resource="mybatis/TitanCheckCodeMapper.xml" />
 		<mapper resource="mybatis/DomainConfigMapper.xml"/>
+		<mapper resource="mybatis/TitanOpenOrgMapper.xml"/>
 		<mapper resource="mybatis/TitanRefundMapper.xml"/>
 	</mappers>
 

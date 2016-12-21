@@ -49,7 +49,7 @@ function initTitanPayObj() {
             titanJrPayRsaObj.setMaxDigits(129);
             titan_rsakey = new titanJrPayRsaObj.RSAKeyPair(config.empoent, "", config.module);
         }
-        return titanJrPayRsaObj.encryptedString(titan_rsakey, encodeURIComponent(str ,"gbk"));
+        return titanJrPayRsaObj.encryptedString(titan_rsakey, encodeURIComponent(str));
     
     };
     titanPayObj.getTitanPayUrl = function(orderInfo, businessInfo) {
