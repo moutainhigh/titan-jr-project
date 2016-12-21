@@ -3,8 +3,9 @@
 
 <mapper namespace="com.fangcang.titanjr.dao.TitanRefundDao" >
   <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanRefund" >
-    insert into t_tfs_refund ( orderid, refundOrderno, createtime,refundAmount,orderTime,creator,status)
-    values (#{orderid,jdbcType=VARCHAR}, #{refundOrderno,jdbcType=VARCHAR}, #{createTime},#{refundAmount},#{orderTime},#{creator},#{status})
+    insert into t_tfs_refund ( orderid, refundOrderno, createtime,refundAmount,orderTime,creator,status,transferAmount,fee)
+    values (#{orderid,jdbcType=VARCHAR}, #{refundOrderno,jdbcType=VARCHAR}, #{createTime},#{refundAmount},
+    		#{orderTime},#{creator},#{status},#{transferAmount},#{fee})
   </insert>
   
   <resultMap id="refundDTOMapper" type="com.fangcang.titanjr.dto.bean.RefundDTO" >
@@ -14,11 +15,13 @@
     <result property="refundOrderno" column="refundOrderno"/>
     <result property="orderTime" column="orderTime"/>
     <result property="creator" column="creator"/>
+    <result property="transferAmount" column="transferAmount"/>
+    <result property="fee" column="fee"/>
   </resultMap>
   
   
   <select id="queryList" parameterType="com.fangcang.titanjr.dto.bean.RefundDTO" resultMap="refundDTOMapper">
-     select refundid,orderid,refundAmount,refundOrderno,orderTime,creator,status from t_tfs_refund 
+     select refundid,orderid,refundAmount,refundOrderno,orderTime,creator,status,transferAmount,fee from t_tfs_refund 
      <where>
        <if test="refundId !=null">
        refundid = #{refundId}

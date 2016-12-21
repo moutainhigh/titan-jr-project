@@ -12,52 +12,36 @@ public class TitanJrRefundRequest extends BaseRequestDTO {
 	//支付单号
 	private String payOrderNo;
 	
-	//�տ�˻�
 	private String userRelateId;
 	
-	//�տ���
 	private String interMerchantCode;
 	
-	//�տ��Ʒ��
 	private String interProductId;
 	
-	//����˻�
 	private String userId;
 	
-	//�����Ʒ��
 	private String productId;
 	
-	//������
 	private String merchantCode;
 	
-	//�˿���(�˿���п�)
 	private String refundAmount;
 	
-	//�˿���п������˻����
 	private String toBankCardOrAccount;
 	
-	//ҵ���
 	private String busiCode;
 	
-	//ԭ������,�����
 	private String orderNo;
 	
-	//�µ�ʱ��
 	private String orderTime;
 	
-	//�汾��
 	private String version;
 	
-	//ǩ������
 	private String signType;
 	
-	//ǩ���ַ�
 	private String signMsg;
 	
-	//���׽���ָ�̼��˿�����˻��Ľ��
 	private String tradeAmount;
 	
-	//�����
 	private String fee;
 	
 	private String tfsUerId;
@@ -65,6 +49,9 @@ public class TitanJrRefundRequest extends BaseRequestDTO {
 	private Integer transorderid;
 	
 	private boolean isFreeze;
+	
+	private String transferAmount;
+	
 
 	public String getPayOrderNo() {
 		return payOrderNo;
@@ -226,4 +213,11 @@ public class TitanJrRefundRequest extends BaseRequestDTO {
 		this.tfsUerId = tfsUerId;
 	}
 
+	public String getTransferAmount() {
+		return transferAmount;
+	}
+
+	public void setTransferAmount(String transferAmount) {
+		this.transferAmount = transferAmount;
+	}
 }

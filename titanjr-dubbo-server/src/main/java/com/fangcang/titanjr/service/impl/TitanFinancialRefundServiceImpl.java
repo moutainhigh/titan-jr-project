@@ -176,6 +176,7 @@ public class TitanFinancialRefundServiceImpl implements
 				isFreeze = true;
 				return response;
 			}
+			refundRequest.setTransferAmount(accountTransfer.getAmount());
 			
 			//收益账户转账
 			AccountTransferRequest balanceAccountTransfer =null;
@@ -219,6 +220,8 @@ public class TitanFinancialRefundServiceImpl implements
 			refundOrderRequest.setAmount(refundRequest.getRefundAmount());
 			refundOrderRequest.setOrderId(refundRequest.getOrderNo());
 			refundOrderRequest.setOrderTime(refundRequest.getOrderTime());
+			refundOrderRequest.setTransferAmount(refundRequest.getTransferAmount());
+			refundOrderRequest.setFee(refundRequest.getFee());
 			if(StringUtil.isValidString(refundRequest.getTfsUerId())){
 				TitanUser user = titanUserDao.selectTitanUser(Integer.parseInt(refundRequest.getTfsUerId()));
 			    if(user !=null){
@@ -280,6 +283,8 @@ public class TitanFinancialRefundServiceImpl implements
 		titanRefund.setOrderTime(DateUtil.sdf5.format(new Date()));
 		titanRefund.setCreator(refundOrderRequest.getCreator());
 		titanRefund.setStatus(RefundStatusEnum.REFUND_SUCCESS.status);
+		titanRefund.setTransferAmount(refundOrderRequest.getAmount());
+		titanRefund.setFee("0");
 		try{
 			titanRefundDao.insert(titanRefund);
 		}catch(Exception e){
@@ -425,6 +430,8 @@ public class TitanFinancialRefundServiceImpl implements
 		titanRefund.setCreateTime(new Date());
 		titanRefund.setOrderTime(refundOrderRequest.getOrderTime());
 		titanRefund.setCreator(refundOrderRequest.getCreator());
+		titanRefund.setTransferAmount(refundOrderRequest.getTransferAmount());
+		titanRefund.setFee(refundOrderRequest.getFee());
 		titanRefund.setStatus(RefundStatusEnum.REFUND_IN_PROCESS.status);
 		try{
 			titanRefundDao.insert(titanRefund);

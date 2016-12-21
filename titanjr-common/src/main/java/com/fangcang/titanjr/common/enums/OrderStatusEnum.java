@@ -55,7 +55,8 @@ public enum OrderStatusEnum {
 				||status.equals(OrderStatusEnum.RECHARGE_FAIL.getStatus())
 				||status.equals(OrderStatusEnum.ORDER_FAIL.getStatus())
 				||status.equals(OrderStatusEnum.TRANSFER_FAIL.getStatus())
-				||status.equals(OrderStatusEnum.ORDER_NO_EFFECT.getStatus())){
+				||status.equals(OrderStatusEnum.ORDER_NO_EFFECT.getStatus())
+				){
 			return true;
 		}
         return false;
@@ -65,7 +66,11 @@ public enum OrderStatusEnum {
 		if(status.equals(OrderStatusEnum.TRANSFER_SUCCESS.getStatus())
 				||status.equals(OrderStatusEnum.FREEZE_SUCCESS.getStatus())
 				||status.equals(OrderStatusEnum.FREEZE_FAIL.getStatus())
-				||status.equals(OrderStatusEnum.ORDER_SUCCESS.getStatus())){
+				||status.equals(OrderStatusEnum.ORDER_SUCCESS.getStatus())
+				||status.equals(OrderStatusEnum.ORDER_DELAY.getStatus())
+				||status.equals(OrderStatusEnum.REFUND_IN_PROCESS.getStatus())
+				||status.equals(OrderStatusEnum.REFUND_SUCCESS.getStatus())
+				||status.equals(OrderStatusEnum.REFUND_FAIL.getStatus())){
 			return true;
 		}
 		return false;

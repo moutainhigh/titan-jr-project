@@ -34,6 +34,10 @@ public class RefundDTO implements Serializable{
 	private Integer status;
 	
 	private Date createtime;
+	
+	private String transferAmount;
+	
+	private String fee;
 
 	public String getMerchantNo() {
 		return merchantNo;
@@ -130,5 +134,20 @@ public class RefundDTO implements Serializable{
 	public void setCreatetime(Date createtime) {
 		this.createtime = createtime;
 	}
-	
+
+	public String getTransferAmount() {
+		return transferAmount;
+	}
+
+	public void setTransferAmount(String transferAmount) {
+		this.transferAmount = transferAmount;
+	}
+
+	public String getFee() {
+		return fee;
+	}
+
+	public void setFee(String fee) {
+		this.fee = fee;
+	}
 }

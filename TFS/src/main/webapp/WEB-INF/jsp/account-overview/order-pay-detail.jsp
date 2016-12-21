@@ -160,14 +160,14 @@
                                     <span style="width:180px" title="财务单${transOrder.payorderno }退款">财务单${transOrder.payorderno }退款</span>
                                 </td><!--房仓财务系统单号-->
 
-                                <td><span>+<fmt:formatNumber value="${transOrder.refundDTO.refundAmount / 100.0 }" pattern="#,##0.00#"/></span></td>
+                                <td><span>+<fmt:formatNumber value="${(transOrder.refundDTO.transferAmount+transOrder.refundDTO.fee) / 100.0 }" pattern="#,##0.00#"/></span></td>
 
                                 <td><span>
                                      <c:if test="${transOrder.refundDTO.status == 0}">
-                                        处理中
+                                        退款处理中
                                     </c:if>
                                     <c:if test="${transOrder.refundDTO.status == 1}">
-                                        审核失败
+                                        退款审核失败
                                     </c:if>
                                     <c:if test="${transOrder.refundDTO.status == 2}">
                                         退款成功

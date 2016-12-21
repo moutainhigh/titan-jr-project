@@ -176,7 +176,7 @@ public class TitanRefundService {
 				titanJrRefundRequest.setRefundAmount(transOrderDTO.getTradeamount().toString());
 			}
 			if(null !=titanOrderPayDTO){//有充值单
-				if(transOrderDTO.getAmount()!=null){
+				if(transOrderDTO.getAmount()!=null){//充值的钱
 					titanJrRefundRequest.setRefundAmount(transOrderDTO.getAmount().toString());
 				}
 				titanJrRefundRequest.setBusiCode(BusiCodeEnum.MerchantRefund.getKey());

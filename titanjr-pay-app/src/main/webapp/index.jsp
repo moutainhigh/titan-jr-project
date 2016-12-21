@@ -146,15 +146,14 @@
                     <input type="text" value="http://localhost:8088/titanjr-pay-app/quickPayment/customerNotify.action" id="notify" name="notify"/>
                 </td>
             </tr>
-            <tr>
-                <td class="tdr"></td>
-                <td><button value="asdfadfasd" id="payButton">去支付</button></td>
-            </tr>
             </tbody>
         </table>
     </div>
 </form>
-	
+	 <tr>
+                <td class="tdr"></td>
+                <td><button value="asdfadfasd" id="payButton">去支付</button></td>
+            </tr>
 		
 	
 	
@@ -181,15 +180,15 @@
                 <td><input type="text" id="retfsUserid" value="10122" name="retfsUserid"/>
                 </td>
             </tr>
-            <tr>
-                <td class="tdr"></td>
-                <td><button value="asdfadfasd" id="refundButton">退款</button></td>
-            </tr>
+            
             </tbody>
         </table>
     </div>
 </form>
-	
+	<tr>
+                <td class="tdr"></td>
+                <td><button value="asdfadfasd" id="refundButton">退款</button></td>
+            </tr>
 	
 </body>
 

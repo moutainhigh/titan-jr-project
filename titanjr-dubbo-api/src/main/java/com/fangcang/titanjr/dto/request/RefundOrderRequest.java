@@ -26,6 +26,10 @@ public class RefundOrderRequest extends BaseRequestDTO {
 	
 	private String creator;
 	
+	private String transferAmount;
+	
+	private String fee;
+	
 	public String getCreator() {
 		return creator;
 	}
@@ -73,6 +77,21 @@ public class RefundOrderRequest extends BaseRequestDTO {
 	public void setOrderTime(String orderTime) {
 		this.orderTime = orderTime;
 	}
-	
+
+	public String getTransferAmount() {
+		return transferAmount;
+	}
+
+	public void setTransferAmount(String transferAmount) {
+		this.transferAmount = transferAmount;
+	}
+
+	public String getFee() {
+		return fee;
+	}
+
+	public void setFee(String fee) {
+		this.fee = fee;
+	}
 	
 }

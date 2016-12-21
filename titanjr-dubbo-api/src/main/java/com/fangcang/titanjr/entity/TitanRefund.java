@@ -26,6 +26,10 @@ public class TitanRefund implements java.io.Serializable{
 	private Integer status;
 	
 	private String userorderid;
+	
+	private String transferAmount;
+	
+	private String fee;
 
 	public Integer getRefundid() {
 		return refundid;
@@ -98,4 +102,21 @@ public class TitanRefund implements java.io.Serializable{
 	public void setUserorderid(String userorderid) {
 		this.userorderid = userorderid;
 	}
+
+	public String getTransferAmount() {
+		return transferAmount;
+	}
+
+	public void setTransferAmount(String transferAmount) {
+		this.transferAmount = transferAmount;
+	}
+
+	public String getFee() {
+		return fee;
+	}
+
+	public void setFee(String fee) {
+		this.fee = fee;
+	}
+	
 }

@@ -169,8 +169,8 @@ public interface TitanFinancialTradeService {
 	 */
 	public  OrderSaveAndBindCardResponse saveTransOrderAndBindCard(OrderSaveAndBindCardRequest request);
 	
-
-	 * 确认订单支付成功
+/*
+	* 确认订单支付成功
 	 * @param ordernQueryRequest
 	 * @return
 	 */
