@@ -8,31 +8,31 @@ public class NotifyRefundRequest extends BaseRequestDTO{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	//»ú¹¹ºÅ
+	//æœºæ„å·
 	private String merchantNo;
 	
-	//ÒµÎñºÅ
+	//ä¸šåŠ¡å·
 	private String busiCode;
 	
-	//Ô­¶©µ¥ºÅ
+	//åŸè®¢å•å·
 	private String orderNo;
 	
-	//ÍË¿îµ¥ºÅ
+	//é€€æ¬¾å•å·
 	private String refundAmount;
 	
-	//ÏÂµ¥Ê±¼ä
+	//ä¸‹å•æ—¶é—´
 	private String orderTime;
 	
-	//ÍË¿îµ¥ºÅ
+	//é€€æ¬¾å•å·
 	private String refundOrderno;
 	
-	//°æ±¾ºÅ
+	//ç‰ˆæœ¬å·
 	private String version;
 	
-	//Ç©ÃûÀàĞÍ
+	//ç­¾åç±»å‹
 	private String signType;
 	
-	//Ç©Ãû×Ö·û´®
+	//ç­¾åå­—ç¬¦ä¸²
 	private String signMsg;
 
 	public String getMerchantNo() {

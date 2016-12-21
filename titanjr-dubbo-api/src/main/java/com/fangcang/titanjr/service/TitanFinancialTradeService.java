@@ -1,4 +1,4 @@
-﻿package com.fangcang.titanjr.service;
+package com.fangcang.titanjr.service;
 
 
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;

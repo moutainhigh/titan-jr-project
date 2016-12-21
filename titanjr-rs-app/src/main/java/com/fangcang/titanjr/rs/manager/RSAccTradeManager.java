@@ -1,4 +1,4 @@
-﻿package com.fangcang.titanjr.rs.manager;
+package com.fangcang.titanjr.rs.manager;
 
 import com.fangcang.titanjr.rs.request.*;
 import com.fangcang.titanjr.rs.response.*;

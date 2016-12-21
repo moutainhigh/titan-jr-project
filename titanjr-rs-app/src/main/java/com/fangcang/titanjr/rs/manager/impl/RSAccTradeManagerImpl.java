@@ -1,4 +1,4 @@
-﻿package com.fangcang.titanjr.rs.manager.impl;
+package com.fangcang.titanjr.rs.manager.impl;
 
 import java.util.ArrayList;
 import java.util.List;
