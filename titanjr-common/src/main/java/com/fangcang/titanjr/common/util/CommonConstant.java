@@ -164,4 +164,8 @@ public class CommonConstant {
 	
 	//30天所对应的毫秒数
 	public static final Long MS = (long)30*24*60*60*1000;
+	
+	public static final String ISRECIEVEDESK = "1";
+	
+	
 }

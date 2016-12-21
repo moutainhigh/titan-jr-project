@@ -36,7 +36,17 @@
 						<div class="fl w_800">
 							<div class="goldpay_title">
 								付款金额：
-								<span class="gdt_red"><fmt:parseNumber value="${(transOrderDTO.tradeamount+transOrderDTO.receivedfee)/100}" pattern="#,##0.00#"></fmt:parseNumber></span> 元 
+								
+								<span class="gdt_red">
+								  <c:choose>
+								    <c:when test="${paySourceMark =='1' }">
+								     <fmt:parseNumber value="${(transOrderDTO.tradeamount)/100}" pattern="#,##0.00#"></fmt:parseNumber>
+								    </c:when>
+								    <c:otherwise>
+								     <fmt:parseNumber value="${(transOrderDTO.tradeamount+transOrderDTO.receivedfee)/100}" pattern="#,##0.00#"></fmt:parseNumber>
+								    </c:otherwise>
+								  </c:choose>
+								</span> 元 
 							</div>
 							<div class="refund_main">
 								<ul>
@@ -88,7 +98,13 @@
 		
 		  var refundObj = {
 				  enoughBalance:function(){
-					  var amount  = sub('${balanceAmount}', '${(transOrderDTO.tradeamount+transOrderDTO.receivedfee)}');
+					  var refundAmount = null;
+					  if('${paySourceMark}'=='1'){
+						  refundAmount = transOrderDTO.tradeamount;
+					  }else{
+						  refundAmount = '${(transOrderDTO.tradeamount+transOrderDTO.receivedfee)}';
+					  }
+					  var amount  = sub('${balanceAmount}', refundAmount);
 					  if(amount<0 && !refundObj.isFreeze()){
 				    	  $(".balanceTip").show();
 				    	  $(".sure_btn").hide();

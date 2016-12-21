@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSON;
 import com.fangcang.titanjr.common.enums.FreezeConditionCodeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.RefundTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
@@ -430,6 +431,11 @@ public class TitanRefundService {
 //					TitanMsgCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH.getResMsg());
 //			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 //		}
+		
+		PayerTypeEnum payerType= PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
+		if(payerType !=null && payerType.isRecieveCashDesk()){
+			model.addAttribute("paySourceMark", CommonConstant.ISRECIEVEDESK);
+		}
 		
 		model.addAttribute("balanceAmount",accountBalance);
 		model.addAttribute("transOrderDTO", transOrderDTO);
