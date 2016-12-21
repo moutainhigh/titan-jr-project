@@ -21,6 +21,8 @@
 	<dubbo:application name="titanjr_service_consumer" />
 	<!--  group="production" -->
 
+	<dubbo:consumer check="false"/>
+
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
 	<dubbo:monitor protocol="registry" /> 
 
