@@ -201,8 +201,6 @@ public class TitanFinancialRefundServiceImpl implements
 			
 			//修改退款转账订单
 			titanTransferReq.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
-			BigDecimal tradeAmount = new BigDecimal(refundRequest.getFee()).add(new BigDecimal(refundRequest.getTradeAmount()));
-			titanTransferReq.setAmount(tradeAmount.doubleValue());
 			int uprow = titanTransferReqDao.update(titanTransferReq);
 			if(uprow!=1){
 				log.error("更新退款转账单失败");
