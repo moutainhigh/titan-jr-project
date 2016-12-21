@@ -1,5 +1,6 @@
 package com.fangcang.titanjr.common.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.CharArrayReader;
@@ -7,16 +8,32 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringBufferInputStream;
+import java.math.BigDecimal;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -817,49 +834,84 @@ public class DateUtil {
 		return c.getTime();
 	}
 	
+//	@XmlAccessorType(XmlAccessType.FIELD)
+//	@XmlType(name="",propOrder={"name"})
+//	@XmlRootElement(name="Student")
+//	static class Student {
+//		
+//		@XmlElement(required=true)
+//		private String id;
+//		
+//		@XmlAttribute
+//		private String name;
+//		
+//		@XmlAttribute
+//		private Integer age;
+//
+//		public String getId() {
+//			return id;
+//		}
+//
+//		public void setId(String id) {
+//			this.id = id;
+//		}
+//
+//		public String getName() {
+//			return name;
+//		}
+//
+//		public void setName(String name) {
+//			this.name = name;
+//		}
+//
+//		public Integer getAge() {
+//			return age;
+//		}
+//
+//		public void setAge(Integer age) {
+//			this.age = age;
+//		}
+//		
+//	}
 	
-	public static void main(String[] args) {
+	
+	
+	public static void main(String[] args) throws JAXBException, ParseException {
 		
-		try {
-			
-			String payOrdeNo = "AAAddd";
-			System.out.println(payOrdeNo.substring(1));
-			
-//			BufferedWriter w = new BufferedWriter(new FileWriter("C:/Users/Administrator/Desktop/text.txt"));
-//			char[] buf = "asdfas asd的说法是 阿斯蒂芬  阿斯顿发  ".toCharArray();
-//            for(int i=0;i<buf.length;i++){
-//            	System.out.println(buf[i]);
-//            	w.write(buf[i]);
-//            }			
-//            
-//            byte[] buf = "asdfas asd的说法是 阿斯蒂芬  阿斯顿发  ".getBytes();
-//            File f = new File("C:/Users/Administrator/Desktop/text.txt");
-//            OutputStream out = new FileOutputStream(f);
-//            for(int i=0;i<buf.length;i++){
-//            	System.out.println(buf[i]);
-//            	 out.write(buf[i]);
-//            }
-           
-//            byte[] b = "康".getBytes();
-//            for(int i=0;i<b.length;i++){
-//            	System.out.println(b[i]);
-//            }
-          
-            
-			for(int i=0;i<10;i++){
-				if(i%2==0){
-					System.out.println(i);
-					continue;
-				}
-				
-			}
-			
-            
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+//		Long orderDate = DateUtil.sdf5.parse("20161122144728").getTime();
+//		Long nowDate = new Date().getTime();
+//		System.out.println((long)(nowDate-orderDate));
+//		System.out.println((long)30*24*60*60*1000);
+		
+//		DateUtil.Student student = new DateUtil.Student();
+//		File file = new File("C:/Users/Administrator/Desktop/xmlTest.xml");
+//		
+//		student.setAge(30);
+//		student.setName("张三");
+//		student.setId("0102");
+//		
+//		JAXBContext context = JAXBContext.newInstance(DateUtil.Student.class);
+//		Marshaller marshaller = context.createMarshaller();
+//		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+//		marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+//		marshaller.marshal(student, file);
+//		
+//		DateUtil.Student stu = (DateUtil.Student)context.createUnmarshaller().unmarshal(file);
+//		System.out.println(stu.getName()+"---"+stu.getId()+"---"+stu.getAge());
+		
+//		BigDecimal j=new BigDecimal(1);
+//		BigDecimal k = new BigDecimal(1024);
+//		for(int i=0;i<1024;i++){
+//			j=j.multiply(k);
+//		}
+//		
+//		System.out.println(j.toString());
+//		System.out.println(10*10*10*10);
+//		System.out.println(10<<2);
+		
+		System.out.println(new BigDecimal(1024<<10).toString());
 	}
+
+	
 	
 }

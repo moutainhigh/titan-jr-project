@@ -11,12 +11,15 @@ import org.springframework.stereotype.Service;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.dao.TitanDynamicKeyDao;
+import com.fangcang.titanjr.dao.TitanFundFreezereqDao;
 import com.fangcang.titanjr.dao.TitanOrderExceptionDao;
 import com.fangcang.titanjr.dao.TitanOrderPayreqDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanWithDrawReqDao;
+import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
@@ -25,11 +28,13 @@ import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.response.TransOrderResponse;
 import com.fangcang.titanjr.entity.TitanDynamicKey;
+import com.fangcang.titanjr.entity.TitanFundFreezereq;
 import com.fangcang.titanjr.entity.TitanOrderException;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.TitanTransOrder;
 import com.fangcang.titanjr.entity.TitanTransferReq;
 import com.fangcang.titanjr.entity.TitanWithDrawReq;
+import com.fangcang.titanjr.entity.parameter.TitanFundFreezereqParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
 import com.fangcang.titanjr.entity.parameter.TitanTransferReqParam;
 import com.fangcang.titanjr.entity.parameter.TitanWithDrawReqParam;
@@ -60,7 +65,8 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 	@Resource
 	private TitanOrderExceptionDao titanOrderExceptionDao;
 	
-	
+	@Resource
+	private TitanFundFreezereqDao titanFundFreezereqDao;
 	
 	@Override
 	public List<TransOrderDTO> queryTransOrder(TransOrderRequest transOrderRequest) {
@@ -184,6 +190,7 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 			TitanTransOrder titanTransOrder = new TitanTransOrder();
 			titanTransOrder.setTransid(transOrderDTO.getTransid());
 			titanTransOrder.setStatusid(transOrderDTO.getStatusid());
+			titanTransOrder.setOrderid(transOrderDTO.getOrderid());
 			int row = titanTransOrderDao.update(titanTransOrder);
 			if(row>0){
 				return true;
@@ -204,6 +211,7 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 				condition.setTransferreqid(titanTransferDTO.getTransferreqid());
 				condition.setTransorderid(titanTransferDTO.getTransorderid());
 				condition.setRequestno(titanTransferDTO.getRequestno());
+				condition.setPayorderno(titanTransferDTO.getPayOrderNo());
 				PaginationSupport<TitanTransferReq> paginationSupport = new PaginationSupport<TitanTransferReq>();
 				titanTransferReqDao.selectForPage(condition, paginationSupport);
 				List<TitanTransferDTO> titanTransferDTOList = new ArrayList<TitanTransferDTO>();
@@ -266,6 +274,35 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 			}
 		}
 		return "exception";
+	}
+	
+	
+	@Override
+	public List<FundFreezeDTO> queryFundFreezeDTO(FundFreezeDTO fundFreezeDTO) {
+		
+		TitanFundFreezereqParam condition = new TitanFundFreezereqParam();
+		condition.setOrderno(fundFreezeDTO.getOrderNo());
+		PaginationSupport<TitanFundFreezereq> paginationSupport = new PaginationSupport<TitanFundFreezereq>();
+		titanFundFreezereqDao.selectForPage(condition, paginationSupport);
+		if(null == paginationSupport.getItemList() || paginationSupport.getItemList().size()<1){
+			return null;
+		}
+		
+		List<FundFreezeDTO> freeDTOList = new ArrayList<FundFreezeDTO>();
+		for(TitanFundFreezereq fundFreezereq :paginationSupport.getItemList()){
+			FundFreezeDTO freezeDTO = new FundFreezeDTO();
+			freezeDTO.setAuthCode(fundFreezereq.getAuthcode());
+			freezeDTO.setAmount(fundFreezereq.getAmount().toString());
+			freezeDTO.setMerchantCode(fundFreezereq.getMerchantcode());
+			freezeDTO.setRequestNo(fundFreezereq.getRequestno());
+			freezeDTO.setRequestTime(DateUtil.sdf4.format(fundFreezereq.getRequesttime()));
+			freezeDTO.setUserId(fundFreezereq.getUserid());
+			freezeDTO.setOrderNo(fundFreezereq.getOrderno());
+			freezeDTO.setFreezereqId(fundFreezereq.getFreezereqid());
+			freeDTOList.add(freezeDTO);
+		}
+		
+		return freeDTOList;
 	}
 	
 }

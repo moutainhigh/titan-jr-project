@@ -15,6 +15,8 @@ public class OrgDTO implements Serializable{
 	private String userid;
 	private String productid;
 	private String titancode;
+	private Integer statusId;
+	
 	
 	
 	public Integer getOrgid() {
@@ -58,6 +60,12 @@ public class OrgDTO implements Serializable{
 	}
 	public void setTitancode(String titancode) {
 		this.titancode = titancode;
+	}
+	public Integer getStatusId() {
+		return statusId;
+	}
+	public void setStatusId(Integer statusId) {
+		this.statusId = statusId;
 	}
 	
 }

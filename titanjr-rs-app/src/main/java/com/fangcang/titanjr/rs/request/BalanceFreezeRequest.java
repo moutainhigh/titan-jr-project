@@ -69,10 +69,10 @@ public class BalanceFreezeRequest extends BaseRequest{
          RequestValidationUtil.checkNotEmpty(this.getAmount(),"amount");
          RequestValidationUtil.checkNotEmpty(this.getFunccode(),"funccode");
          RequestValidationUtil.checkNotEmpty(this.getMerchantcode(),"merchantcode");
-         RequestValidationUtil.checkNotEmpty(this.getOrderamount(),"orderamount");
+//         RequestValidationUtil.checkNotEmpty(this.getOrderamount(),"orderamount");
          RequestValidationUtil.checkNotEmpty(this.getStatus(),"status");
          RequestValidationUtil.checkNotEmpty(this.getRequestno(),"requestno");
-         RequestValidationUtil.checkNotEmpty(this.getOrderno(),"orderno");
+//         RequestValidationUtil.checkNotEmpty(this.getOrderno(),"orderno");
          RequestValidationUtil.checkNotEmpty(this.getOrdercount(),"ordercount");
          RequestValidationUtil.checkNotEmpty(this.getUserfee(),"userfee");
     }

@@ -54,6 +54,10 @@ public class CommonConstant {
 	//测试使用路径
 	public static final String REQUSET_URL = "/trade/showCashierDesk.action";
 	
+	public static final String QUICK_PAYMENT_URL = "/quickPayment/showQuickPayment.action";
+	
+	public static final String QUICK_PAYMENT = "6";
+	
 	//商户
 	public static final String ENTERPRISE = "1";
 	
@@ -121,6 +125,7 @@ public class CommonConstant {
 	
     public static final String LOCAL_ORDERNO="L";
     
+	public static final String ACCOUNT_TYPE_ID = "00";
     //支付地址
     public static final String QRCODE="qrCode";
     
@@ -146,4 +151,17 @@ public class CommonConstant {
     
     public static final String ORDER_DELAY = "001_001";
 	
+	    //退款成功
+    public static final String REFUND_SUCCESS="2";
+    
+    //退款审理中
+    public static final String REFUND_IN_PROCESS="0";
+	
+	public static final String IS_BIND_CARD = "0";
+	
+	//商户有效
+	public static final Integer IS_ACTIVE = 1;
+	
+	//30天所对应的毫秒数
+	public static final Long MS = (long)30*24*60*60*1000;
 }

@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.rs.manager;
+﻿package com.fangcang.titanjr.rs.manager;
 
 import com.fangcang.titanjr.rs.request.*;
 import com.fangcang.titanjr.rs.response.*;
@@ -85,10 +85,20 @@ public interface RSAccTradeManager {
      */
     public OrderSaveWithCardResponse orderSaveWithdraw(OrderSaveWithCardRequest orderSaveWithCardRequest);
 
+    
+    /**
+     * 下退款订单
+     * @param refundRequest
+     * @return
+     */
+    public RsRefundResponse addOrderRefund(RSRefundRequest refundRequest);
+    
+
     /**
      * 订单状态查询
      * @param ordernQueryRequest
      * @return
      */
 	public OrdernQueryResponse ordernQuery(OrdernQueryRequest ordernQueryRequest);
+
 }

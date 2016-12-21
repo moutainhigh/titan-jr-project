@@ -40,4 +40,7 @@
     
     <dubbo:reference id="titanFinancialPermissionFacade" interface="com.fangcang.titanjr.facade.TitanFinancialPermissionFacade" retries="0" timeout="40000"/>
     <dubbo:reference id="titanFinanceTradeFacade" interface="com.fangcang.titanjr.facade.TitanFinancialTradeFacade" retries="0" timeout="40000"/>
+    <dubbo:reference id="titanFinancialRefundService"  interface="com.fangcang.titanjr.service.TitanFinancialRefundService" retries="0" timeout="40000"/>
+    
+    
 </beans>

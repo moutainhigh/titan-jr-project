@@ -715,6 +715,11 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	    	TitanOrgCheck titanOrgCheck = new TitanOrgCheck();
 	    	param.setConstid(newOrgEntity.getConstid());
 	    	param.setUserid(newOrgEntity.getUserid());
+	    	
+	    	
+	    	
+	    	
+	    	
 	    	PaginationSupport<TitanOrgCheck> orgCheckPage = new PaginationSupport<TitanOrgCheck>();
 	    	titanOrgCheckDao.selectForPage(param, orgCheckPage);
 	    	OrgCheckResultEnum newOrgCheckResultEnum = convertCheckResultEnum(organCheckRequest.getCheckstatus());
@@ -1349,6 +1354,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			condition.setOrgId(orgDTO.getOrgid());
 			condition.setTitanCode(orgDTO.getTitancode());
 			condition.setOrgName(orgDTO.getOrgname());
+			condition.setStatusId(orgDTO.getStatusId());
 			TitanOrg titanOrg = titanOrgDao.selectOne(condition);
 			if(titanOrg !=null){
 				MyBeanUtil.copyProperties(orgDTO, titanOrg);

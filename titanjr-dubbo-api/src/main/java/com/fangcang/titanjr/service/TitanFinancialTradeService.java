@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.service;
+﻿package com.fangcang.titanjr.service;
 
 
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
@@ -163,6 +163,13 @@ public interface TitanFinancialTradeService {
 	public QrCodeResponse getQrCodeUrl(RechargeDataDTO rechargeDataDTO );
 	
 	/**
+	 * 下单并绑卡
+	 * @param request
+	 * @return
+	 */
+	public  OrderSaveAndBindCardResponse saveTransOrderAndBindCard(OrderSaveAndBindCardRequest request);
+	
+
 	 * 确认订单支付成功
 	 * @param ordernQueryRequest
 	 * @return

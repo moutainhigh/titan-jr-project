@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+﻿<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%@ include file="/comm/taglib.jsp"%>
 <c:forEach items="${tradePage.itemList}" var="tradeItem">
     <tr>
@@ -48,7 +48,17 @@
             <c:if test="${tradeItem.statusid == 6 }">
                 已冻结
             </c:if>
-          
+
+            <c:if test="${tradeItem.statusid == 12 }">
+            退款中
+            </c:if>
+            <c:if test="${tradeItem.statusid == 13 }">
+            退款成功
+            </c:if>
+            <c:if test="${tradeItem.statusid == 14 }">
+            退款失败
+            </c:if>
+
             <c:if test="${tradeItem.statusid == 9}">
                 <i class="MyAssets_red">交易失败</i>
             </c:if>

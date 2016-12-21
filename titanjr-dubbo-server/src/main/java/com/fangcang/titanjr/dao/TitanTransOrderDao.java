@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
+import com.fangcang.titanjr.dto.bean.RefundDTO;
 import com.fangcang.titanjr.dto.bean.RepairTransferDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.RepairTransferRequest;
@@ -24,6 +25,9 @@ public interface TitanTransOrderDao {
 	List<RepairTransferDTO> queryTitanTransOrderByStatus(RepairTransferRequest repairTransferRequest);
 	
 	int updateTitanTransOrderByTransId(TitanTransOrder entity)throws DaoException;
+	
+	List<RefundDTO> selectTitanTransOrderAndRefund(TransOrderRequest transOrderRequest)throws DaoException;
+	
 	
 	List<String> confirmOrderStatus(String orderNo);
 }

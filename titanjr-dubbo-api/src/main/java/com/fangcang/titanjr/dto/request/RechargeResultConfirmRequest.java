@@ -42,6 +42,8 @@ public class RechargeResultConfirmRequest implements Serializable {
 		//二级机构标识
 		private String userid;
 		
+		private Integer freezereqId;
+		
 		public String getUserid() {
 			return userid;
 		}
@@ -144,5 +146,10 @@ public class RechargeResultConfirmRequest implements Serializable {
 		public void setExpand2(String expand2) {
 			this.expand2 = expand2;
 		}
-		
+		public Integer getFreezereqId() {
+			return freezereqId;
+		}
+		public void setFreezereqId(Integer freezereqId) {
+			this.freezereqId = freezereqId;
+		}
 }

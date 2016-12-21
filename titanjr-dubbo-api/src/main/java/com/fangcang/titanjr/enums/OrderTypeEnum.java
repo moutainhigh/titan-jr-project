@@ -7,7 +7,7 @@ import com.fangcang.util.StringUtil;
  *
  */
 public enum OrderTypeEnum {
-	   OrderType_1("B1","基础业务为B");
+	   OrderType_1("B1","基础业务为B"),OrderType_BindCard("BX1","下单加绑卡"),OrderType_QUICK("B13","一定支付再次下单");
 		
 		public String key;
 		

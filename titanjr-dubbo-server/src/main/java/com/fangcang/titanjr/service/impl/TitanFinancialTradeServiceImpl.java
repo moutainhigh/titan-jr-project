@@ -1,11 +1,6 @@
-package com.fangcang.titanjr.service.impl;
+﻿package com.fangcang.titanjr.service.impl;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.WriteAbortedException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -17,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
+import com.Rop.api.domain.Refund;
 import com.alibaba.fastjson.JSON;
 import com.fangcang.order.api.HotelOrderSearchFacade;
 import com.fangcang.order.dto.OrderDetailResponseDTO;
@@ -45,6 +41,7 @@ import com.fangcang.titanjr.dao.DomainConfigDao;
 import com.fangcang.titanjr.dao.TitanAccountDao;
 import com.fangcang.titanjr.dao.TitanDynamicKeyDao;
 import com.fangcang.titanjr.dao.TitanOrderPayreqDao;
+import com.fangcang.titanjr.dao.TitanRefundDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
@@ -52,12 +49,12 @@ import com.fangcang.titanjr.dto.bean.CallBackInfo;
 import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.GDPOrderDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
-import com.fangcang.titanjr.dto.bean.OrderOperateInfoDTO;
 import com.fangcang.titanjr.enums.*;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.QrCodeDTO;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
+import com.fangcang.titanjr.dto.bean.RefundDTO;
 import com.fangcang.titanjr.dto.bean.RepairTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
@@ -79,12 +76,14 @@ import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.manager.RSPayOrderManager;
 import com.fangcang.titanjr.rs.request.AccountTransferRequest;
 import com.fangcang.titanjr.rs.request.OrderOperateRequest;
+import com.fangcang.titanjr.rs.request.OrderSaveWithCardRequest;
 import com.fangcang.titanjr.rs.request.OrderTransferFlowRequest;
 import com.fangcang.titanjr.rs.request.OrdernQueryRequest;
 import com.fangcang.titanjr.rs.request.RSPayOrderRequest;
 import com.fangcang.titanjr.rs.response.AccountTransferResponse;
 import com.fangcang.titanjr.rs.response.OrderOperateInfo;
 import com.fangcang.titanjr.rs.response.OrderOperateResponse;
+import com.fangcang.titanjr.rs.response.OrderSaveWithCardResponse;
 import com.fangcang.titanjr.rs.response.OrderTransferFlowResponse;
 import com.fangcang.titanjr.rs.response.OrdernQueryResponse;
 import com.fangcang.titanjr.rs.response.RSPayOrderResponse;
@@ -156,6 +155,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 	@Resource
 	private DomainConfigDao domainConfigDao;
+	
+	@Resource
+	private TitanRefundDao titanRefundDao;
 
 	private HotelOrderSearchFacade hotelOrderSearchFacade;
 
@@ -667,7 +669,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params) + "---url---"
 					+ url);
 			   HttpPost httpPost = new HttpPost(url);
-		        HttpResponse resp = HttpClient.httpRequest(params, url ,  httpPost);
+		        HttpResponse resp = HttpClient.httpRequest(params,  httpPost);
 			if (null != resp) {
 				InputStream in = resp.getEntity().getContent();
 				byte b[] = new byte[1024];
@@ -1480,6 +1482,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 								.getTransid());
 						titanTransferDTO = titanOrderService
 								.getTitanTransferDTO(titanTransferDTO);
+						//查询退款
+						transOrderDTO.setRefundDTO(this.getRefundDTO(transOrderDTO.getOrderid()));
 						transOrderDTO.setTitanTransferDTO(titanTransferDTO);
 					} else if (transOrderDTO.getTradeType().equals("付款")) {// 付款记录
 						TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
@@ -1496,6 +1500,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 						transOrderDTO.setTitanOrderPayDTO(titanOrderPayDTO);
 						transOrderDTO.setTitanTransferDTO(titanTransferDTO);
+						transOrderDTO.setRefundDTO(this.getRefundDTO(transOrderDTO.getOrderid()));
 
 					} else if (transOrderDTO.getTradeType().equals("充值")) {// 获取提现记录
 						TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
@@ -1538,6 +1543,25 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return tradeDetailResponse;
 	}
 
+	
+	private RefundDTO getRefundDTO(String orderId){
+		RefundDTO refundDTO = new RefundDTO();
+		refundDTO.setOrderNo(orderId);
+		List<RefundDTO> refundList = titanRefundDao.queryRefundDTO(refundDTO);
+		if(refundList !=null && refundList.size()>0){
+			refundDTO =  refundList.get(0);
+			if(StringUtil.isValidString(refundDTO.getOrderTime())){
+				try {
+					refundDTO.setCreatetime(DateUtil.sdf5.parse(refundDTO.getOrderTime()));
+					return refundDTO;
+				} catch (ParseException e) {
+					log.error("时间转换失败",e);
+				}
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public PaymentUrlResponse getPaymentUrl(PaymentUrlRequest paymentUrlRequest) {
 		PaymentUrlResponse paymentUrlResponse = new PaymentUrlResponse();
@@ -2360,7 +2384,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			   HttpPost httpPost = new HttpPost(rechargeDataDTO.getGateWayUrl());
 //		        httpPost.setConfig(requestConfig);
 		        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-			HttpResponse resp = HttpClient.httpRequest(params, rechargeDataDTO.getGateWayUrl() , httpPost);
+			HttpResponse resp = HttpClient.httpRequest(params, httpPost);
 			if(resp == null){
 				log.error("调用融数网关失败");
 				qrCodeResponse.putErrorResult("调用融数网关失败");
@@ -2439,7 +2463,63 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	    }
 	    return false;
 	}
-
+	
+	@Override
+	public OrderSaveAndBindCardResponse saveTransOrderAndBindCard(
+			OrderSaveAndBindCardRequest request) {
+		OrderSaveAndBindCardResponse orderSaveAndBindCardResponse = new OrderSaveAndBindCardResponse();
+		if(null == request){
+			orderSaveAndBindCardResponse.putErrorResult(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+			return orderSaveAndBindCardResponse;
+		}
+		
+		OrderSaveWithCardRequest orderSaveWithCardRequest = this.convertToOrderSaveWithCardRequest(request);
+		OrderSaveWithCardResponse orderSaveWithCardResponse = rsAccTradeManager.orderSaveWithdraw(orderSaveWithCardRequest);
+		
+		if(CommonConstant.OPERATE_SUCCESS.equals(orderSaveWithCardResponse.getOperateStatus())){
+			orderSaveAndBindCardResponse.setOrderId(orderSaveWithCardResponse.getOrderId());
+			
+			orderSaveAndBindCardResponse.putSuccess();
+			return orderSaveAndBindCardResponse;
+		}
+		
+		log.error("落单+绑卡失败:"+orderSaveWithCardResponse.getReturnMsg());
+		orderSaveAndBindCardResponse.putErrorResult(TitanMsgCodeEnum.OPER_ORDER_AND_BIND_CARD_FAIL);
+		return orderSaveAndBindCardResponse;
+	}
+	
+	/**
+	 * @param request
+	 * @return
+	 */
+	private OrderSaveWithCardRequest convertToOrderSaveWithCardRequest(OrderSaveAndBindCardRequest request){
+		OrderSaveWithCardRequest orderSaveWithCardRequest = new OrderSaveWithCardRequest();
+		orderSaveWithCardRequest.setAccountname(request.getAccountName());
+		orderSaveWithCardRequest.setAccountnumber(request.getAccountNumber());
+		orderSaveWithCardRequest.setAccountproperty(request.getAccountProperty());
+		orderSaveWithCardRequest.setAccountpurpose(request.getAccountPurpose());
+		orderSaveWithCardRequest.setAccounttypeid(request.getAccountTypeId());
+		orderSaveWithCardRequest.setAmount(request.getAmount());
+		
+		orderSaveWithCardRequest.setBankhead(request.getBankHead());
+		orderSaveWithCardRequest.setBankheadname(request.getBankHeadName());
+		orderSaveWithCardRequest.setCertificatenumber(request.getCertificateNumber());
+		orderSaveWithCardRequest.setCertificatetype(request.getCertificateType());
+		orderSaveWithCardRequest.setConstid(request.getConstId());
+		orderSaveWithCardRequest.setCurrency(request.getCurrency());
+		
+		orderSaveWithCardRequest.setGoodsdetail(request.getGoodsDetail());
+		orderSaveWithCardRequest.setGoodsname(request.getGoodsName());
+		orderSaveWithCardRequest.setOrdertypeid(request.getOrderTypeId());
+		orderSaveWithCardRequest.setOrdertime(request.getOrderTime());
+		
+		orderSaveWithCardRequest.setProductid(request.getProductId());
+		orderSaveWithCardRequest.setUserid(request.getUserId());
+		orderSaveWithCardRequest.setUserorderid(request.getUserOrderId());
+		
+		return orderSaveWithCardRequest;
+	}
+	
 	@Override
 	public ConfirmOrdernQueryResponse ordernQuery(
 			ConfirmOrdernQueryRequest confirmOrdernQueryRequest) {

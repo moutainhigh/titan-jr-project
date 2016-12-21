@@ -1,4 +1,4 @@
-package test.fangcang.financial;
+﻿package test.fangcang.financial;
 
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
@@ -18,6 +18,8 @@ import com.fangcang.util.StringUtil;
 
 import net.sf.json.JSONSerializer;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -374,15 +376,13 @@ public class TianjrFinancialTradeTest extends GenericTest{
 //    @Test
     public void testCallBack() throws Exception{
     	TransOrderDTO transOrderDTO = new TransOrderDTO();
-    	
-    	
-      	transOrderDTO.setPayorderno("BA092159");
-    	transOrderDTO.setBusinessordercode("1000000000040871");
-    	transOrderDTO.setTradeamount((long)2);
-    	transOrderDTO.setMerchantcode("M10082926");
-    	transOrderDTO.setCreator("测试(meimei000)");
-    	transOrderDTO.setUserorderid("TJO161023004819378"); 	
-    	transOrderDTO.setNotifyUrl("http://172.16.21.15:19010/GDP/fcjr_pay.shtml");
+    	transOrderDTO.setPayorderno("H0119161216185842");
+    	transOrderDTO.setBusinessordercode("1000000000042316");
+    	transOrderDTO.setMerchantcode("M10001841");
+    	transOrderDTO.setCreator("张庆(13005776300)");
+    	transOrderDTO.setUserorderid("TJO161216185858054");
+    	transOrderDTO.setTradeamount((long)179900);
+    	transOrderDTO.setNotifyUrl("http://192.168.130.33:39010/GDP/fcjr_pay.shtml");
 		try {
 			titanFinancialTradeService.confirmFinance(transOrderDTO);
 		} catch (Exception e) {

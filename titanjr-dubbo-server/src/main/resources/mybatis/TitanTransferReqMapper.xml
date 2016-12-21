@@ -18,6 +18,9 @@
        <if test="userrelateid !=null">
         and userrelateid = #{userrelateid}
       </if>
+      <if test="payorderno !=null">
+        and payorderno= #{payorderno}
+      </if>
       order by createtime desc
     </where>
   </select>
@@ -181,5 +184,8 @@
   
   </select>
   
+  <delete id="delete" parameterType="com.fangcang.titanjr.entity.TitanTransferReq">
+    delete from t_tfs_transferreq where transferreqid=#{transferreqid}
+  </delete>
   
 </mapper>

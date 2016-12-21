@@ -175,7 +175,7 @@ public class FinancialAccountController extends BaseController {
     }
     @RequestMapping(value = "/order-pay-detail", method = RequestMethod.GET)
     public String queryPayOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
-        setTransOrderDetail(tradeDetailRequest,model);
+    	setTransOrderDetail(tradeDetailRequest,model);
         //付款时需查出当前机构
         FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
         organQueryRequest.setUserId(this.getUserId());

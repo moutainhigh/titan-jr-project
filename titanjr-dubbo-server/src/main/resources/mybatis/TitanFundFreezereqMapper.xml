@@ -23,6 +23,11 @@
     </where>
     
   </select>
+  
+  <select id="queryFreezeOrder"  resultMap="FundFreezeDTOMap" parameterType="java.lang.String" >
+    select * from t_tfs_fundfreezereq freeze inner join t_tfs_fundunfreezereq unfreeze on freeze.freezereqid= unfreeze.fundFreezereqid  where orderno =#{orderno} order by unfreeze.requesttime 
+  </select>
+  
   <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanFundFreezereq" >
     insert into t_tfs_fundfreezereq (freezereqid, userid, amount, 
       feeamount, funccode, intermerchantcode, 
