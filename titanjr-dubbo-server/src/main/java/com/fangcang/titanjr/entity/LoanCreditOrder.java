@@ -13,9 +13,9 @@ public class LoanCreditOrder {
 
 	private Integer dayLimit;// 授信期限
 
-	private Long amount;// 申请授信金额
+	private Long amount;// 申请授信总额度
 
-	private Long actualAmount;// 实际授信金额
+	private Long actualAmount;// 剩余可用授信金额
 
 	private Date reqTime;// 申请时间;
 

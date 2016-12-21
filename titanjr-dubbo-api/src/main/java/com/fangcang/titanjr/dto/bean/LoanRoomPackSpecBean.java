@@ -33,6 +33,16 @@ public class LoanRoomPackSpecBean extends LoanSpecBean {
 	private String amount;//贷款金额
 	
 	private String loanOrderNo;//贷款单号
+	
+	private String titanCode;
+
+	public String getTitanCode() {
+		return titanCode;
+	}
+
+	public void setTitanCode(String titanCode) {
+		this.titanCode = titanCode;
+	}
 
 	public String getHotleName() {
 		return hotleName;

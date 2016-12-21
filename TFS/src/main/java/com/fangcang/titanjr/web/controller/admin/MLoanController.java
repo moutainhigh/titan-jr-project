@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanCreditOrderEnum;
-import com.fangcang.titanjr.dto.request.AuditCreidtOrderRequest;
+import com.fangcang.titanjr.dto.request.AuditCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
@@ -125,7 +125,7 @@ public class MLoanController extends BaseController{
 		if(StringUtils.isEmpty(orderNo)||auditResult==null){
 			return toJson(putSysError("参数不能为空"));
 		}
-		AuditCreidtOrderRequest auditCreidtOrderRequest = new AuditCreidtOrderRequest();
+		AuditCreditOrderRequest auditCreidtOrderRequest = new AuditCreditOrderRequest();
 		auditCreidtOrderRequest.setOperator(getSAASLoginName());
 		auditCreidtOrderRequest.setOrderNo(orderNo);
 		auditCreidtOrderRequest.setAuditResult(LoanCreditStatusEnum.getEnumByStatus(auditResult));

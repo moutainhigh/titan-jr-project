@@ -52,7 +52,7 @@ import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanPersonEnsureBean;
 import com.fangcang.titanjr.dto.request.AgreementConfirmRequest;
 import com.fangcang.titanjr.dto.request.ApplyLoanCreditRequest;
-import com.fangcang.titanjr.dto.request.AuditCreidtOrderRequest;
+import com.fangcang.titanjr.dto.request.AuditCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
@@ -146,7 +146,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-	public AuditCreidtOrderResponse auditCreditOrder(AuditCreidtOrderRequest req) {
+	public AuditCreidtOrderResponse auditCreditOrder(AuditCreditOrderRequest req) {
 		AuditCreidtOrderResponse response = new AuditCreidtOrderResponse();
 		if(!StringUtil.isValidString(req.getOrderNo())){
 			response.putErrorResult("[授信申请单号(orderNo)]不能为空");
@@ -302,6 +302,11 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				log.error("授信申请时上报企业资料信息给融数失败,企业信息为creditCompanyRequest:"+Tools.gsonToString(creditCompanyRequest));
 				return response;
 			}
+			FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+			organQueryRequest.setUserId(loanCreditOrder.getOrgCode());
+			FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+			
+			Long maxLoanAmount = financialOrganResponse.getFinancialOrganDTO().getMaxLoanAmount();
 			//3-授信申请接口
 			LoanCompanyAppendInfo companyAppendInfo = LoanTypeConvertUtil.getCompanyAppendInfo(loanCreditCompany.getAppendInfo());
 			String creditApplicationJsonData = creditApplicationJson(loanCreditCompany,companyAppendInfo,loanPersonEnsure,loanCompanyEnsure);
@@ -311,7 +316,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			orderMixserviceCreditapplicationRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
 			orderMixserviceCreditapplicationRequest.setUserid(loanCreditOrder.getOrgCode());
 			orderMixserviceCreditapplicationRequest.setUserorderid(req.getOrderNo());
-			orderMixserviceCreditapplicationRequest.setAmount(loanCreditOrder.getAmount()!=null?loanCreditOrder.getAmount().toString():"0");
+			orderMixserviceCreditapplicationRequest.setAmount(maxLoanAmount!=null?maxLoanAmount.toString():"0");
 			orderMixserviceCreditapplicationRequest.setReqesttime(CommonConstant.RS_LOAN_CREDIT_REQUEST_TIME);
 			orderMixserviceCreditapplicationRequest.setOrderplatformname(loanCreditCompany.getName());
 			orderMixserviceCreditapplicationRequest.setRequestdate(DateUtil.dateToString(new Date(),"yyyy-MM-DD HH:mm:ss"));
@@ -320,7 +325,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			//f8f0ab4b-d5b2-4bee-b898-6a63da3c2070
 			orderMixserviceCreditapplicationRequest.setUrlkey(rsFsFileUploadResponse.getUrlKey());
 			//orderMixserviceCreditapplicationRequest.setUrlkey("f8f0ab4b-d5b2-4bee-b898-6a63da3c2070");
-			orderMixserviceCreditapplicationRequest.setCreditype("2");//零售商授信申请（房仓）
+			orderMixserviceCreditapplicationRequest.setCreditype("2");//2：零售商授信申请（房仓）
 			OrderMixserviceCreditapplicationResponse orderMixserviceCreditapplicationResponse = rsCreditManager.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
 			if(orderMixserviceCreditapplicationResponse.isSuccess()==false){
 				response.putErrorResult(orderMixserviceCreditapplicationResponse.getReturnMsg());
@@ -940,13 +945,15 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				QueryCreditMerchantInfoResponse queryCreditMerchantInfoResponse = rsCreditManager.queryCreditMerchantInfo(request);
 				
 				int dayLimit = Integer.valueOf(queryCreditMerchantInfoResponse.getCreditdeadline());
-				long actualAmount = Long.valueOf(queryCreditMerchantInfoResponse.getCreditlimit());
+				long amount = Long.valueOf(queryCreditMerchantInfoResponse.getCreditlimit());
+				long actualAmount = Long.valueOf(queryCreditMerchantInfoResponse.getCreditavailability());
 				Date expireTime= DateUtils.addMonths(loanCreditOrderList.get(0).getFirstAuditTime(), dayLimit);
 				
 				updateLoanCreditOrderParam.setDayLimit(dayLimit);
 				updateLoanCreditOrderParam.setAuditPass(now);
 				updateLoanCreditOrderParam.setExpireTime(expireTime);
-				updateLoanCreditOrderParam.setActualAmount(actualAmount);
+				updateLoanCreditOrderParam.setAmount(amount);//授信总额度
+				updateLoanCreditOrderParam.setActualAmount(actualAmount);//剩余可用额度
 			
 			}else{
 				//不通过

@@ -18,6 +18,8 @@ public interface LoanOrderDao {
 	 */
 	int saveLoanApplyOrder(LoanApplyOrder loanOrder);
 
+	List<LoanApplyOrder> listLoanApplyOrder(LoanQueryConditions loanQueryConditions);
+	 
 	/**
 	 * 查询
 	 * 

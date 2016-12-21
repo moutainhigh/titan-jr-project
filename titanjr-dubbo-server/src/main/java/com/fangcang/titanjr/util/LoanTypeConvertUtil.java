@@ -2,6 +2,7 @@ package com.fangcang.titanjr.util;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Map;
 
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
@@ -13,12 +14,13 @@ import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanPersonEnsureBean;
 import com.fangcang.titanjr.dto.bean.LoanRepaymentBean;
 import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
+import com.fangcang.titanjr.dto.bean.LoanSpecificationBean;
 import com.fangcang.titanjr.entity.LoanApplyOrder;
 import com.fangcang.titanjr.entity.LoanCompanyEnsure;
 import com.fangcang.titanjr.entity.LoanCreditCompany;
 import com.fangcang.titanjr.entity.LoanCreditOrder;
 import com.fangcang.titanjr.entity.LoanPersonEnsure;
-import com.fangcang.titanjr.entity.LoanRoomPackSpec;
+import com.fangcang.titanjr.entity.LoanSpecification;
 import com.fangcang.titanjr.rs.dto.TUserArepayment;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
@@ -59,8 +61,26 @@ public final class LoanTypeConvertUtil {
 		return repaymentBean;
 	}
 
+	public static LoanSpecificationBean getLoanSpecBean(
+			LoanSpecification packSpec ) {
+		if (packSpec == null) {
+			return null;
+		}
+
+		LoanSpecificationBean packSpecBean = new LoanSpecificationBean();
+		packSpecBean.setAccount(packSpec.getAccount());
+		packSpecBean.setAccountName(packSpec.getAccountName());
+		packSpecBean.setBank(packSpec.getBank());
+		packSpecBean.setAccessory(packSpec.getAccessory());
+		packSpecBean.setOrderNo(packSpec.getOrderNo());
+		packSpecBean.setTitanCode(packSpec.getTitanCode());
+		packSpecBean.setContent(packSpec.getContent());
+		return packSpecBean;
+	}
+	
+	
 	public static LoanRoomPackSpecBean getLoanRoomPackSpecBean(
-			LoanRoomPackSpec packSpec) {
+			LoanSpecification packSpec ) {
 		if (packSpec == null) {
 			return null;
 		}
@@ -69,12 +89,30 @@ public final class LoanTypeConvertUtil {
 		packSpecBean.setAccount(packSpec.getAccount());
 		packSpecBean.setAccountName(packSpec.getAccountName());
 		packSpecBean.setBank(packSpec.getBank());
-		packSpecBean.setBeginDate(packSpec.getBeginDate());
-		packSpecBean.setContractUrl(packSpec.getContractUrl());
-		packSpecBean.setEndDate(packSpec.getEndDate());
-		packSpecBean.setHotleName(packSpec.getHotelName());
+		packSpecBean.setContractUrl(packSpec.getAccessory());
 		packSpecBean.setLoanOrderNo(packSpec.getOrderNo());
-		packSpecBean.setRoomNights(packSpec.getRoomNights());
+		packSpecBean.setTitanCode(packSpec.getTitanCode());
+		
+		if(StringUtil.isValidString(packSpec.getContent()))
+		{
+			Map<String, String> map = JsonConversionTool.toObject(
+					packSpec.getContent(), Map.class);
+
+			packSpecBean.setHotleName(map.get("hotelName"));
+
+			if (StringUtil.isValidString(map.get("roomNights"))) {
+				packSpecBean.setRoomNights(Integer.valueOf(map
+						.get("roomNights")));
+			}
+			if (StringUtil.isValidString(map.get("beginDate"))) {
+				packSpecBean.setBeginDate(DateUtil.stringToDate(
+						map.get("beginDate"), "yyyy-MM-dd"));
+			}
+			if (StringUtil.isValidString(map.get("endDate"))) {
+				packSpecBean.setEndDate(DateUtil.stringToDate(
+						map.get("endDate"), "yyyy-MM-dd"));
+			}
+		}
 		return packSpecBean;
 	}
 

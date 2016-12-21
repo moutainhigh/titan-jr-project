@@ -11,7 +11,7 @@
 	<c:if test="${creditCompanyInfoDTO.status ==1}">草稿</c:if>
 	<c:if test="${creditCompanyInfoDTO.status ==2}"><span class="c_red">待审核</span></c:if>
 	<c:if test="${creditCompanyInfoDTO.status ==3}">初审通过</c:if>
-	<c:if test="${creditCompanyInfoDTO.status ==4}">初审未通过</c:if>
+	<c:if test="${creditCompanyInfoDTO.status ==4}">审核未通过</c:if>
 	<c:if test="${creditCompanyInfoDTO.status ==5}">审核已通过</c:if>
 	</td>
 	<td class="tdl">

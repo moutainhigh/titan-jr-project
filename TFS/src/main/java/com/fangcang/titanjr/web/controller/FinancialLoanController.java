@@ -74,7 +74,7 @@ public class FinancialLoanController extends BaseController {
 
 	@Resource
 	private TitanSysconfigService sysconfigService;
-	
+
 	@Resource
 	private TitanFinancialLoanCreditService financialLoanCreditService;
 
@@ -98,11 +98,13 @@ public class FinancialLoanController extends BaseController {
 		initDataMap.put("loan-payment-status",
 				new LoanOrderStatusEnum[] { LoanOrderStatusEnum.HAVE_LOAN,
 						LoanOrderStatusEnum.LOAN_EXPIRY });
-		initDataMap.put("loan-payment-orderby", "status desc , createTime desc");
+		initDataMap
+				.put("loan-payment-orderby", "status desc , createTime desc");
 
-		initDataMap.put("" + LoanProductEnum.ROOM_PACK.getCode(),
-				"loan-roompack");
-		initDataMap.put("" + LoanProductEnum.OPERACTION.getCode(), "");
+		// initDataMap.put("" + LoanProductEnum.ROOM_PACK.getCode(),
+		// "loan-spec");
+		// initDataMap.put("" + LoanProductEnum.OPERACTION.getCode(),
+		// "loan-spec");
 
 	}
 
@@ -135,20 +137,20 @@ public class FinancialLoanController extends BaseController {
 			return "error";
 		}
 
-		Object pageKey = initDataMap.get(String.valueOf(infoResponse
-				.getApplyOrderInfo().getProductType()));
-		if (pageKey == null || "".equals(pageKey)) {
-			log.error("product type pageKey is null");
-			model.addAttribute("errormsg", "产品类型不支持查看详情，请确认！");
-			return "error";
-		}
+		// Object pageKey = initDataMap.get(String.valueOf(infoResponse
+		// .getApplyOrderInfo().getProductType()));
+		// if (pageKey == null || "".equals(pageKey)) {
+		// log.error("product type pageKey is null");
+		// model.addAttribute("errormsg", "产品类型不支持查看详情，请确认！");
+		// return "error";
+		// }
 		model.addAttribute("loanOrderInfo", infoResponse.getApplyOrderInfo());
 		if (infoResponse.getApplyOrderInfo() != null) {
 			model.addAttribute("loanSpecInfo", infoResponse.getApplyOrderInfo()
 					.getLoanSpec());
 		}
 
-		return "/loan/product-info/" + pageKey;
+		return "/loan/product-info/loan-spec";
 	}
 
 	/**
@@ -202,7 +204,7 @@ public class FinancialLoanController extends BaseController {
 				.getStatus()) {
 			return true;
 		}
-		
+
 		log.error("credit status exception!");
 
 		return false;
@@ -212,7 +214,7 @@ public class FinancialLoanController extends BaseController {
 	@RequestMapping(value = "/loanStatInfo", method = RequestMethod.GET)
 	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_LOAN_42 })
 	public String getLoanStatInfo() {
-		
+
 		if (!checkUserIsCredit()) {
 			putSysError("用户未进行贷款授信！");
 			return toJson();
