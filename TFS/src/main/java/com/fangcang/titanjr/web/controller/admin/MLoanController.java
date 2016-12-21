@@ -128,7 +128,7 @@ public class MLoanController extends BaseController{
 		AuditCreditOrderRequest auditCreidtOrderRequest = new AuditCreditOrderRequest();
 		auditCreidtOrderRequest.setOperator(getSAASLoginName());
 		auditCreidtOrderRequest.setOrderNo(orderNo);
-		auditCreidtOrderRequest.setAuditResult(LoanCreditStatusEnum.getEnumByStatus(auditResult));
+		auditCreidtOrderRequest.setLoanCreditStatusEnum(LoanCreditStatusEnum.getEnumByStatus(auditResult));
 		auditCreidtOrderRequest.setContent(content);
 		AuditCreidtOrderResponse auditCreidtOrderResponse = loanCreditService.auditCreditOrder(auditCreidtOrderRequest);
 		if(auditCreidtOrderResponse.isResult()){

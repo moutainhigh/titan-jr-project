@@ -152,7 +152,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			response.putErrorResult("[授信申请单号(orderNo)]不能为空");
 			return response;
 		}
-		if(req.getAuditResult()==null){
+		if(req.getLoanCreditStatusEnum()==null){
 			response.putErrorResult("[审核状态(auditResult)]不能为空");
 			return response;
 		}
@@ -173,18 +173,18 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		Date now = new Date(); 
 		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();
 		boolean auditResult = false;
-		if(req.getAuditResult()==LoanCreditStatusEnum.NO_PASS){
+		if(req.getLoanCreditStatusEnum()==LoanCreditStatusEnum.NO_PASS){
 			auditResult = false;
 			//添加批注记录
 			LoanCreditOpinion loanCreditOpinion = new LoanCreditOpinion();
 			loanCreditOpinion.setOrderNo(req.getOrderNo());
-			loanCreditOpinion.setResult(req.getAuditResult().getStatus());
+			loanCreditOpinion.setResult(req.getLoanCreditStatusEnum().getStatus());
 			loanCreditOpinion.setContent(req.getContent());
 			loanCreditOpinion.setStatus(1);//1：新添加，没有修改过，2：修改过
 			loanCreditOpinion.setCreater(req.getOperator());
 			loanCreditOpinion.setCreateTime(now);
 			loanCreditOpinionDao.saveLoanCreditOpinion(loanCreditOpinion);
-		}else if(req.getAuditResult()==LoanCreditStatusEnum.PASS){
+		}else if(req.getLoanCreditStatusEnum()==LoanCreditStatusEnum.PASS){
 			updateLoanCreditOrderParam.setFirstAuditTime(now);
 			auditResult = true;
 		}
@@ -335,7 +335,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		}
 		//改申请单状态
 		updateLoanCreditOrderParam.setOrderNo(req.getOrderNo());
-		updateLoanCreditOrderParam.setStatus(req.getAuditResult().getStatus());
+		updateLoanCreditOrderParam.setStatus(req.getLoanCreditStatusEnum().getStatus());
 		loanCreditOrderDao.updateLoanCreditOrder(updateLoanCreditOrderParam);
 		response.putSuccess("审核成功");
 		return response;

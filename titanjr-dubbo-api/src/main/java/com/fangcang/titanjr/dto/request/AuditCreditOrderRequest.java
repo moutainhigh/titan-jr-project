@@ -1,5 +1,6 @@
 package com.fangcang.titanjr.dto.request;
 
+import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
 import com.fangcang.titanjr.dto.BaseRequestDTO;
 /**
  * 授信申请单审核
@@ -15,7 +16,7 @@ public class AuditCreditOrderRequest extends BaseRequestDTO {
 	// 授信单号
 	private String orderNo;
 
-	private AuditResultEnum auditResult;
+	private LoanCreditStatusEnum loanCreditStatusEnum;
 
 	private String content;
 
@@ -35,12 +36,12 @@ public class AuditCreditOrderRequest extends BaseRequestDTO {
 		this.orderNo = orderNo;
 	}
 
-	public AuditResultEnum getAuditResult() {
-		return auditResult;
+	public LoanCreditStatusEnum getLoanCreditStatusEnum() {
+		return loanCreditStatusEnum;
 	}
 
-	public void setAuditResult(AuditResultEnum auditResult) {
-		this.auditResult = auditResult;
+	public void setLoanCreditStatusEnum(LoanCreditStatusEnum loanCreditStatusEnum) {
+		this.loanCreditStatusEnum = loanCreditStatusEnum;
 	}
 
 	public String getContent() {

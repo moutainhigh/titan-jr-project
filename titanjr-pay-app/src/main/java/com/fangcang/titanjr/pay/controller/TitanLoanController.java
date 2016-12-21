@@ -17,12 +17,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-<<<<<<< HEAD
-import com.fangcang.titanjr.common.enums.AuditResultEnum;
 import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
-=======
 import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
->>>>>>> branch 'dev_loan' of git@192.168.2.94:/srv/git/titan-jr-project.git
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.Tools;
@@ -105,50 +101,11 @@ public class TitanLoanController extends BaseController {
 			JSONArray dataJsonArray = JSONArray.fromObject(req.getData());
 			notifyDataBeanList.addAll(JSONArray.toList(dataJsonArray, NotifyDataObject.class));
 		}
-<<<<<<< HEAD
 		//开始循环处理
 		List<Map<String, Object>> dataReasult = new ArrayList<Map<String, Object>>();
 		for(NotifyDataObject item : notifyDataBeanList){
 			if(!StringUtil.isValidString(item.getStatus())){
 				item.setStatus(req.getStatus());
-=======
-		String string = orderNo+buessNo+TOKEN_KEY_STRING+req.getCreate_time();
-		String dataSign = MD5.MD5Encode(string).toUpperCase();
-		
-		if(!dataSign.equals(sign)){
-			log.error("融数通知接口notify.action请求的信息,sign不正确。明文的sign:"+string+",本地md5后dataSign："+dataSign+"请求参数LoanNotifyReq："+Tools.gsonToString(req));
-			result.put("result", "-1");
-			result.put("resultMsg", "sign不正确");
-			
-			return JSONSerializer.toJSON(result).toString();
-		}
-		//所有验证都通过
-		log.info("融数通知接口notify.action所有参数通过校验，该请求是合法请求。请求参数LoanNotifyReq："+Tools.gsonToString(req));
-		
-		try {
-			if(buessNo.startsWith("CR")){
-				
-				//授信申请订单
-				int state = 1;
-				if("31".equals(req.getStatus())){
-					//协议确认
-					titanCreditServiceListener.agreementConfirm(buessNo);
-				}else if("41".equals(req.getStatus())){
-					state = LoanCreditStatusEnum.REVIEW_PASS.getStatus();
-					titanCreditServiceListener.creditSucceed(buessNo,state);
-				}else {
-					state = LoanCreditStatusEnum.NO_PASS.getStatus();
-					titanCreditServiceListener.creditFailure(buessNo,state, req.getMsg());
-				}
-				result.put("result", "0");
-				result.put("resultMsg", "通知处理成功");
-			}else if(buessNo.startsWith("D")){
-				//TODO 贷款
-				
-				
-			}else {
-				log.info("无效订单:"+Tools.gsonToString(req));
->>>>>>> branch 'dev_loan' of git@192.168.2.94:/srv/git/titan-jr-project.git
 			}
 			if(!StringUtil.isValidString(item.getMsg())){
 				item.setMsg(req.getMsg());
@@ -189,10 +146,10 @@ public class TitanLoanController extends BaseController {
 					//协议确认
 					titanCreditServiceListener.agreementConfirm(notifyDataObject.getBuessNo());
 				}else if("41".equals(notifyDataObject.getStatus())){//开通
-					state = AuditResultEnum.REVIEW_PASS.getStatus();
+					state = LoanCreditStatusEnum.REVIEW_PASS.getStatus();
 					titanCreditServiceListener.creditSucceed(notifyDataObject.getBuessNo(),state);
 				}else {
-					state = AuditResultEnum.NO_PASS.getStatus();
+					state = LoanCreditStatusEnum.NO_PASS.getStatus();
 					titanCreditServiceListener.creditFailure(notifyDataObject.getBuessNo(),state, notifyDataObject.getMsg());
 				}
 				result.put("dataState", "0");
@@ -237,8 +194,5 @@ public class TitanLoanController extends BaseController {
 			result.put("dataMsg", "通知处理失败");
 			return result;
 		}
-		
 	}
-	
-
 }
