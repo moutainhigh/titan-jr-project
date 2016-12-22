@@ -296,9 +296,9 @@ public class TitanFinancialLoanCreditServiceImpl implements
 
 			RSFsFileUploadResponse rsFsFileUploadResponse = rsFileManager
 					.fsFileUpload(rsFsFileUploadRequest);
-			// 删除文件
-			FileHelp.deleteFile(encryptRSFilePath.substring(0,
-					encryptRSFilePath.lastIndexOf("/")));
+			//TODO  删除文件
+			//FileHelp.deleteFile(encryptRSFilePath.substring(0,
+			//		encryptRSFilePath.lastIndexOf("/")));
 			if ((!StringUtil.isValidString(rsFsFileUploadResponse.getUrlKey()))
 					|| rsFsFileUploadResponse.isSuccess() == false) {
 				response.putErrorResult(rsFsFileUploadResponse.getReturnMsg());

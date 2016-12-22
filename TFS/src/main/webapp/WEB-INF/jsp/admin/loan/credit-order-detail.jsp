@@ -914,33 +914,39 @@
 			_this.parent("p").next().hide();
 		}
 	});
+	var canSubmit = true;  	
   	//保存
   	$("#btn_save").on("click",function(){
   		//TODO 校验
-  		$.ajax({
-  	        type:"post",
-  	        data:{'orderNo':$("#credit_orderNo").val(),'auditResult':$("#auditResult").val(),'content':$("#au_content").val()},
-  	        url : '<%=basePath%>/admin/check-credit-order.shtml',  
-  	      	dataType : 'json',
-  	      	beforeSend : function(){
-  	      		top.F.loading.show();
-  	      	},
-  	        success : function(result){
-  	           if(result.code==1){
-  	        	   location.href="<%=basePath %>/admin/credit-order.shtml";
-  	        	   flag = true;
-  	           }else{
-  	        	   new top.Tip({msg : result.msg, type: 3 , timer:2000});
-  	           }
-  	        },
-  	        error:function(){
-  	        	new top.Tip({msg : '请求失败，请重试', type: 3 , timer:2000});
-  	        },
-  	        complete:function(){
-  	        	top.F.loading.hide();
-  	        }
-  			
-  		});
+  		if(canSubmit){
+  			$.ajax({
+  	  	        type:"post",
+  	  	        data:{'orderNo':$("#credit_orderNo").val(),'auditResult':$("#auditResult").val(),'content':$("#au_content").val()},
+  	  	        url : '<%=basePath%>/admin/check-credit-order.shtml',  
+  	  	      	dataType : 'json',
+  	  	      	beforeSend : function(){
+  	  	      		top.F.loading.show();
+  	  	      		canSubmit = false;
+  	  	      	},
+  	  	        success : function(result){
+  	  	           if(result.code==1){
+  	  	        	   location.href="<%=basePath %>/admin/credit-order.shtml";
+  	  	        	   flag = true;
+  	  	           }else{
+  	  	        	   new top.Tip({msg : result.msg, type: 3 , timer:2000});
+  	  	           }
+  	  	        },
+  	  	        error:function(){
+  	  	        	new top.Tip({msg : '请求失败，请重试', type: 3 , timer:2000});
+  	  	        },
+  	  	        complete:function(){
+  	  	        	top.F.loading.hide();
+  	  	        	canSubmit = true;
+  	  	        }
+  	  			
+  	  		});
+  		}
+  		
   	});
 
 	$('.cl_title li').on('click',function(){
