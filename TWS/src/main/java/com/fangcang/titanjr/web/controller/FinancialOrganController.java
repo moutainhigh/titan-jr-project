@@ -72,6 +72,7 @@ import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.OrgRegPojo;
 import com.fangcang.titanjr.web.pojo.RegUserLoginInfo;
 import com.fangcang.titanjr.web.util.WebConstant;
@@ -129,6 +130,7 @@ public class FinancialOrganController extends BaseController {
      */
     @ResponseBody
 	@RequestMapping(value = "/checkUserLoginName")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String checkUserLoginName(String userLoginName,int isOperator)
 	{
     	UserLoginNameExistRequest request = new UserLoginNameExistRequest();
@@ -157,6 +159,7 @@ public class FinancialOrganController extends BaseController {
      */
     @ResponseBody
 	@RequestMapping(value = "/checkOrgRegNum")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String checkOrgRegNum(int userType,String orgId,String buslince,String certificateNumber){
     	try {
 			int code = checkRegInfo(userType, orgId, buslince, certificateNumber);
@@ -227,6 +230,7 @@ public class FinancialOrganController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/regOrg")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String regOrg(RegUserLoginInfo regUserLoginInfo,OrgRegPojo orgRegPojo,Model model){
     	try {
     		//联系人验证

@@ -1,5 +1,18 @@
 package com.fangcang.titanjr.web.interceptor;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
@@ -10,22 +23,12 @@ import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.util.WebConstant;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * 金融访问权限拦截器
  * @author luoqinglong
  * @2016年7月14日
+ * @version 1.1
  */
 public class AccessPermissionInterceptor  implements HandlerInterceptor {
 	@Resource
@@ -59,18 +62,16 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 		if(handler instanceof HandlerMethod){//是请求方法才进行判断
 			HandlerMethod method = (HandlerMethod)handler;
 			AccessPermission accessPermission = method.getMethod().getAnnotation(AccessPermission.class);
-			//是否有访问权限限制
+			//默认全部限制
 			if(accessPermission==null){//无
-				accessPermission = method.getBean().getClass().getAnnotation(AccessPermission.class);
-				if(accessPermission==null){//类上也无权限限制
-					return true;
-				}
+				setMsg(request, response, "当前用户没有权限访问该功能，请联系管理员");
+				return false;
 			}
 			String[] allownRoleCode = accessPermission.allowRoleCode();
-			if(allownRoleCode.length==0){//不需要特殊访问权限
-				return true;
-			}
-			//无权限限制
+//			if(allownRoleCode.length==0){//不需要特殊访问权限
+//				return true;
+//			}
+			//无权限限制访问
 			if(excludeRole(allownRoleCode)){
 				return true;
 			}
@@ -80,6 +81,16 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 				return false;
 			}
 			//是否拥有该方法的访问权限
+//			List<RoleDTO> tfsRoleDTOList = (List<RoleDTO>)session.getAttribute(WebConstant.SESSION_KEY_JR_ROLE_LIST);
+//			String hasPermission = isAllow(allownRoleCode, tfsRoleDTOList,isadmin);
+//			if(hasPermission.equals("no")){
+//				setMsg(request, response, "当前用户没有权限访问，请联系管理员");
+//				return false;
+//			}
+//			if(hasPermission.equals("no_admin")){
+//				setMsg(request, response, "只有管理员才能访问该功能，请联系管理员");
+//				return false;
+//			}
 		}
 		return true;
 	}

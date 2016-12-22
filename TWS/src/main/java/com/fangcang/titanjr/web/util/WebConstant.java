@@ -5,6 +5,7 @@ package com.fangcang.titanjr.web.util;
  */
 public class WebConstant {
 	/******* Session  key **************/
+	public static final String SESSION_KEY_JR_ROLE_LIST  = "JR_ROLE_LIST";//金服用户角色列表
     public static final String SESSION_KEY_JR_LOGIN_UESRNAME  = "JR_LOGIN_UESRNAME";//金服用户登录名
     public static final String SESSION_KEY_JR_USERID  = "JR_USERID";//金服机构id标示
     public static final String SESSION_KEY_JR_TFS_USERID  = "JR_TFS_USERID";//金服用户名id
