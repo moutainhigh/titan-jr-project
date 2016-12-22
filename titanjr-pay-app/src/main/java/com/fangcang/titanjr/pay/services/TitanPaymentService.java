@@ -217,7 +217,7 @@ public class TitanPaymentService {
 	    		String amount = transOrderDTO.getTradeamount().toString();
 	    		if(StringUtil.isValidString(transOrderDTO.getPayerType())&&transOrderDTO.getReceivedfee()!=null){
 	    			PayerTypeEnum payerTypeEnum = PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
-	    			if(payerTypeEnum.isB2BPayment()||payerTypeEnum.isOpenOrg()){
+	    			if(payerTypeEnum.isB2BPayment()||payerTypeEnum.isOpenOrg()||payerTypeEnum.isTTMAlL()){
 	    				amount = new BigDecimal(transOrderDTO.getTradeamount()).subtract(new BigDecimal(transOrderDTO.getReceivedfee())).toString();
 	    			}
 	    		}

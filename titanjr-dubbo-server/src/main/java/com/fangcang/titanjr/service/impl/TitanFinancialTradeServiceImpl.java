@@ -2326,7 +2326,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 				titanTransOrder.setPayeemerchant(orgBindInfo.getUserid());
 				titanTransOrder.setUserrelateid(orgBindInfo.getUserid());
-				if (payerTypeEnum.isB2BPayment()) {
+				if (payerTypeEnum.isB2BPayment() ||payerTypeEnum.isTTMAlL()) {
 					titanTransOrder.setMerchantcode(titanOrderRequest
 							.getRuserId());
 					titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);

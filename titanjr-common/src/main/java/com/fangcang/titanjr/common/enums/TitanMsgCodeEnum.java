@@ -109,6 +109,8 @@ public enum TitanMsgCodeEnum {
     ORDER_OUT_TIME(110100038,"该订单已超出退款时间"),
     
     REFUND_UNFREEZE_FAIL(110100039,"资金解冻失败"),
+    
+    REFUND_CONCERT_FAIL(110100040,"商家未绑定金融账户或操作人为绑定金融用户"),
 
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");

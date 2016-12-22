@@ -12,7 +12,8 @@ public enum PayerTypeEnum {
 	  MOBILE("6","移动端"),
 	  RECHARGE("7","充值"),
 	  WITHDRAW("8","提现"),
-	  OPEN_ORG("1001","对外开放平台");
+	  OPEN_ORG("1001","对外开放平台"),
+	  TT_MALL("1024","TTMALL收银台");
 
 	  public String key;
 	  
@@ -56,6 +57,8 @@ public enum PayerTypeEnum {
 			  return 3;
 		  }else if(OPEN_ORG.key.equals(key)){
 			  return 6;
+		  }else if(TT_MALL.key.equals(key)){
+			  return 7;
 		  }
 		  return null;
 	  }
@@ -66,7 +69,7 @@ public enum PayerTypeEnum {
 
 	  //使用收款方收银台
 	  public boolean isRecieveCashDesk(){
-		  return B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key) ||OPEN_ORG.key.equals(this.key);
+		  return B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key) ||OPEN_ORG.key.equals(this.key)||TT_MALL.key.equals(this.key);
 	  }
 	  
 	  public boolean isUserId()
@@ -75,7 +78,7 @@ public enum PayerTypeEnum {
 	  }
 	  
 	  public boolean isReicveMerchantCode(){//接收方为机构编码的
-		  return B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key)||SUPPLY_UNION.key.equals(this.key);
+		  return B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key)||SUPPLY_UNION.key.equals(this.key)||TT_MALL.key.equals(this.key);
 	  }
 	  
 	  public boolean isFcUserId(){
@@ -89,7 +92,8 @@ public enum PayerTypeEnum {
 	
 	  public boolean isMustPayeement(){
 		
-		return SUPPLY_UNION.key.equals(this.key)|| B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key)||RECHARGE.key.equals(this.key) || OPEN_ORG.key.equals(this.key);
+		return SUPPLY_UNION.key.equals(this.key)|| B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key)
+				||RECHARGE.key.equals(this.key) || OPEN_ORG.key.equals(this.key)|| TT_MALL.key.equals(this.key);
 	  }
 	
     
@@ -105,4 +109,9 @@ public enum PayerTypeEnum {
 	  public boolean isOpenOrg(){
 		  return OPEN_ORG.key.equals(this.key);
 	  }
+	  
+	  public boolean isTTMAlL(){
+		  return TT_MALL.key.equals(this.key);
+	  }
+	  
 }

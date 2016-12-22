@@ -20,6 +20,8 @@ public class RefundRequest implements Serializable{
 	
 	private String userId;
 	
+	private String isMerchCode;
+	
 	private boolean isFreeze = false;
 
 	public String getOrderNo() {
@@ -61,5 +63,13 @@ public class RefundRequest implements Serializable{
 	public void setTfsUserid(String tfsUserid) {
 		this.tfsUserid = tfsUserid;
 	}
-	
+
+	public String getIsMerchCode() {
+		return isMerchCode;
+	}
+
+	public void setIsMerchCode(String isMerchCode) {
+		this.isMerchCode = isMerchCode;
+	}
+
 }

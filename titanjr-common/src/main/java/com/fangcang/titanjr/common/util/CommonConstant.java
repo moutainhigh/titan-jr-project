@@ -167,5 +167,8 @@ public class CommonConstant {
 	
 	public static final String ISRECIEVEDESK = "1";
 	
+	//是否是商家编码
+	public static final String ISMERCHCODE = "1";
+	
 	
 }

@@ -105,7 +105,13 @@
                                 <td><span>转账</span></td>
                                 <td><span style="width:180px" title="对方：${transOrder.transTarget}">对方：${transOrder.transTarget}</span></td>
                                 <td><span style="width:180px" title="财务单${transOrder.payorderno }支付">财务单${transOrder.payorderno }支付</span></td>
-                                <td><span><fmt:formatNumber value="${transOrder.titanTransferDTO.amount / 100.0 }" pattern="#,##0.00#"/></span></td>
+                                <td>
+                                	<span>+<fmt:formatNumber value="${(transOrder.titanTransferDTO.amount +transOrder.receivedfee) / 100.0 }" pattern="#,##0.00#"/></span>
+                                    <c:if test="${transOrder.receivedfee!=null}">
+	                                 &nbsp;
+	                                <span>-<fmt:formatNumber value="${transOrder.receivedfee / 100.0 }" pattern="#,##0.00#"/></span>
+	                                </c:if>
+	                                </td>
                                 <td><span>
                                     <c:if test="${transOrder.titanTransferDTO.status == 1}">
                                         处理中
@@ -132,7 +138,13 @@
                                     <span style="width:180px" title="财务单${transOrder.payorderno }退款">财务单${transOrder.payorderno }退款</span>
                                 </td><!--房仓财务系统单号-->
 
-                                <td><span>-<fmt:formatNumber value="${transOrder.refundDTO.transferAmount / 100.0 }" pattern="#,##0.00#"/></span></td>
+                                <td>
+                                    <span>-<fmt:formatNumber value="${(transOrder.refundDTO.transferAmount+transOrder.refundDTO.fee) / 100.0 }" pattern="#,##0.00#"/></span>
+	                               <c:if test="${transOrder.refundDTO.fee !=null }">
+	                                &nbsp;
+	                                <span>+<fmt:formatNumber value="${transOrder.refundDTO.fee / 100.0 }" pattern="#,##0.00#"/></span>
+	                               </c:if>
+	                               </td>
                                 <td><span>
                                     <c:if test="${transOrder.refundDTO.status == 0}">
                                            退款处理中

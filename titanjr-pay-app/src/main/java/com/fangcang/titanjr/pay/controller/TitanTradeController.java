@@ -342,10 +342,11 @@ public class TitanTradeController extends BaseController {
 			return false;
 		}
 		
-		if(pe.isOpenOrg() && !StringUtil.isValidString(dto.getRuserId())){
+		if(pe.isRecieveCashDesk() && !StringUtil.isValidString(dto.getRuserId())){
 			log.error(pe + "RuserId is null");
 			return false;
 		}
+		
 
 		if (StringUtil.isValidString(dto.getEscrowedDate())) {
 			try {

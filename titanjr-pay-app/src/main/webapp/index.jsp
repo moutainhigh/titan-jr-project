@@ -14,6 +14,10 @@
 		var expo = "10001";
 // 		titanPayObj.initTitanPay();
 
+
+       
+
+
 	 titanPayObj.initTitanPay();
 	 
 	 /**
@@ -57,13 +61,21 @@
 			var refundInfo ={
 					orderNo:$("#reorderNo").val(),
 					userId:$("#reuserId").val(),
-					tfsUserid:$("#retfsUserid").val()
+					tfsUserid:$("#retfsUserid").val(),
+					isMerchCode:'1'
 			};
 			
 			   window.location=titanPayObj.getRefund(refundInfo);
 		 };
+		 
+		 
+		
 
 	};
+	
+	
+	 
+	 
 </script>
 
 <body>

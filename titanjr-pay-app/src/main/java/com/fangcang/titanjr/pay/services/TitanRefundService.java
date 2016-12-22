@@ -31,6 +31,7 @@ import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
@@ -40,12 +41,15 @@ import com.fangcang.titanjr.dto.request.RefundRequest;
 import com.fangcang.titanjr.dto.request.TitanJrRefundRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.UnFreeBalanceBatchRequest;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.OrganBriefResponse;
 import com.fangcang.titanjr.dto.response.RefundResponse;
 import com.fangcang.titanjr.dto.response.TitanJrRefundResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
+import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.enums.BusiCodeEnum;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.controller.TitanTradeController;
@@ -328,9 +332,21 @@ public class TitanRefundService {
 	
 	
 	public String refundRequest(RefundRequest refundRequest,Model model){
+		
+		//将传入的信息转换为金融信息
+		if(CommonConstant.ISMERCHCODE.equals(refundRequest.getIsMerchCode())){
+			if(this.saasToJr(refundRequest)==null){
+				log.error("商家未绑定金融账户或操作人为绑定金融用户");
+				model.addAttribute("msg",
+						TitanMsgCodeEnum.REFUND_CONCERT_FAIL.getResMsg());
+				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+			}
+		}
+		
+		
 		//验证机构和支付人权限
 		boolean isRefund = this.validateIsPassRefund(refundRequest.getUserId(), refundRequest.getTfsUserid());
-		
+
 		if(!isRefund){
 			log.error("验证机构或权限失败");
 			model.addAttribute("msg",
@@ -442,6 +458,39 @@ public class TitanRefundService {
 		model.addAttribute("refundRequest", refundRequest);
 		
 		return TitanConstantDefine.REFUND_MAIN_PAGE;
+	}
+	
+	private RefundRequest saasToJr(RefundRequest refundRequest){
+		TitanUserBindInfoDTO bindInfo = new TitanUserBindInfoDTO();
+		bindInfo.setFcuserid(Long.parseLong(refundRequest.getTfsUserid()));
+		bindInfo.setMerchantcode(refundRequest.getUserId());
+		bindInfo = titanFinancialUserService.getUserBindInfoByFcuserid(bindInfo);
+		if(bindInfo ==null || bindInfo.getTfsuserid()==null){
+			return null;
+		}
+		
+		UserInfoQueryRequest request = new UserInfoQueryRequest();
+		request.setTfsUserId(bindInfo.getTfsuserid());
+		UserInfoPageResponse response = titanFinancialUserService.queryUserInfoPage(request);
+		if(response ==null ){
+			return null;
+		}
+		
+		List<TitanUser> userList = response.getTitanUserPaginationSupport().getItemList();
+		
+		if(userList == null || userList.size() !=1 || userList.get(0)==null){
+			return null;
+		}
+		
+		TitanUser user = userList.get(0);
+		
+		if(user.getTfsuserid() ==null || !StringUtil.isValidString(user.getUserid())){
+			return null;
+		}
+		
+		refundRequest.setTfsUserid(user.getTfsuserid().toString());
+		refundRequest.setUserId(user.getUserid());
+		return refundRequest;
 	}
 	
 }

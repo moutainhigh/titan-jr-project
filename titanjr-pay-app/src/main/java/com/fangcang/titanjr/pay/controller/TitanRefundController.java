@@ -102,6 +102,7 @@ public class TitanRefundController extends BaseController{
 
 		RefundRequest refundRequest = JsonConversionTool.toObject(deInfo,
 			RefundRequest.class);
+		log.info("退款的参数"+JSONSerializer.toJSON(refundRequest));
 	
 		if(null == refundRequest || !StringUtil.isValidString(refundRequest.getOrderNo())
 					||!StringUtil.isValidString(refundRequest.getUserId())

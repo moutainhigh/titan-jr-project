@@ -67,7 +67,7 @@
 									  </c:choose>
 									
 									</li>
-									<li><span>泰坦金融总余额：</span><i class="colorRed"><fmt:parseNumber  pattern="#,##0.00#" value="${balanceAmount/100}"></fmt:parseNumber></i>元<b class="mar_10 balanceTip" hidden="hidden">(请先充值后进行退款)</b></li>
+									<li class="balanceTip" hidden="hidden"><span>泰坦金融总余额：</span><i class="colorRed"><fmt:parseNumber  pattern="#,##0.00#" value="${balanceAmount/100}"></fmt:parseNumber></i>元<b class="mar_10" >(请先充值后进行退款)</b></li>
 								</ul>
 							</div>
 							

@@ -192,9 +192,10 @@ public class TitanRateService {
 			}
 
 			// 如果非B2B付款则付款金额不用加上费率,直接从付款金额中扣除费率
-			if (!PaySourceEnum.B2B.getDeskCode().equals(
-					paymentRequest.getPaySource()) && !PaySourceEnum.OPEN_ORG.getDeskCode().equals(
-							paymentRequest.getPaySource())) {
+			String paySource = paymentRequest.getPaySource();
+			if (!PaySourceEnum.B2B.getDeskCode().equals(paySource) 
+					&& !PaySourceEnum.OPEN_ORG.getDeskCode().equals(paySource)
+					&& !PaySourceEnum.TT_MALL.getDeskCode().equals(paySource)) {
 				paymentRequest.setPayAmount(computeRsp.getAmount());
 			}
 		}
