@@ -15,7 +15,7 @@ import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -54,6 +54,7 @@ import com.fangcang.titanjr.dto.request.LoanOrderNotifyRequest;
 import com.fangcang.titanjr.dto.request.RepaymentAmountComputeRequest;
 import com.fangcang.titanjr.dto.request.RepaymentLoanRequest;
 import com.fangcang.titanjr.dto.request.SaveLoanOrderInfoRequest;
+import com.fangcang.titanjr.dto.request.SynLoanCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.SynLoanOrderRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.CancelLoanResponse;
@@ -94,6 +95,7 @@ import com.fangcang.titanjr.rs.response.QueryUserInitiativeRepaymentResponse;
 import com.fangcang.titanjr.rs.response.RSFsFileUploadResponse;
 import com.fangcang.titanjr.rs.response.StopLoanResponse;
 import com.fangcang.titanjr.rs.response.UserInitiativeRepamentResponse;
+import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
@@ -126,6 +128,9 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 	@Resource
 	private RSFileManager rsFileManager;
+	
+	@Resource
+	private TitanFinancialLoanCreditService loanCreditService;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
@@ -1256,16 +1261,22 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			LoanQueryConditions loanQueryConditions = new LoanQueryConditions();
 			loanQueryConditions.setOrderNo(req.getOrderNo());
 			List<LoanApplyOrder> loanApplyOrderList = loanOrderDao.listLoanApplyOrder(loanQueryConditions);
-			//TODO
+			
 			if(CollectionUtils.isEmpty(loanApplyOrderList)){
 				log.info("贷款通知订单不存在，OrderNo:"+req.getOrderNo());
 				loanOrderNotifyResponse.putErrorResult("贷款订单不存在");
 				return loanOrderNotifyResponse;
 			}
 			
+			LoanApplyOrder  loanApplyOrder = loanApplyOrderList.get(0);
+			SynLoanCreditOrderRequest creditOrderRequest = new SynLoanCreditOrderRequest();
+			creditOrderRequest.setOrgCode(loanApplyOrder.getOrgCode());
+			creditOrderRequest.setOrderNo(loanApplyOrder.getCreditOrderNo());
+			loanCreditService.synLoanCreditOrder(creditOrderRequest);
+			
 			QueryLoanApplyRequest  queryLoanApplyRequest = new QueryLoanApplyRequest();
 			queryLoanApplyRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
-			queryLoanApplyRequest.setUserid(loanApplyOrderList.get(0).getOrgCode());
+			queryLoanApplyRequest.setUserid(loanApplyOrder.getOrgCode());
 			queryLoanApplyRequest.setUserorderid(req.getOrderNo());
 			QueryLoanApplyResponse queryLoanApplyResponse = rsCreditManager.queryLoanApply(queryLoanApplyRequest);
 			if(!queryLoanApplyResponse.isSuccess()){
@@ -1273,6 +1284,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				loanOrderNotifyResponse.putErrorResult(queryLoanApplyResponse.getReturnMsg());
 				return loanOrderNotifyResponse;
 			}
+			paramApplyOrder.setShouldCapital(Long.valueOf(queryLoanApplyResponse.getLoanmoney()));
 			paramApplyOrder.setRelMoneyTime(DateUtil.toDataYYYYMMDDHHmmss(queryLoanApplyResponse.getLoandate()));//放款时间
 			paramApplyOrder.setActualAmount(Long.valueOf(queryLoanApplyResponse.getLoanmoney()));//实际放款金额
 			Date rDate = DateUtils.addDays(DateUtil.toDataYYYYMMDDHHmmss(queryLoanApplyResponse.getLoandate()), CommonConstant.RS_LOAN_REPAYMENT_TIME);

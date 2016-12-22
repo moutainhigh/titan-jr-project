@@ -47,11 +47,21 @@
 		</div>
 		<div class="RC_c clearfix">
 			<ul>
-				<li class="clearfix"><div class="tit">贷款金额</div><i class="c_666 f_20"><fmt:formatNumber value="${loanOrderInfo.actualAmount/100}"  pattern="#,##0.00#" /></i> <i class="c_666 ">元</i> <i class="c_999 m_l50">贷款最长期限为90天，日费率0.5‰，到期日前随借随还</i></li>
+			<c:choose>
+				<c:when test="${loanOrderInfo.status==1 || loanOrderInfo.status==2 || loanOrderInfo.status==3 || loanOrderInfo.status==5}">
+					<li class="clearfix"><div class="tit">贷款金额</div><i class="c_666 f_20"><fmt:formatNumber value="${loanOrderInfo.amount/100}"  pattern="#,##0.00#" /></i> <i class="c_666 ">元</i> <i class="c_999 m_l50">贷款最长期限为90天，日费率0.5‰，到期日前随借随还</i></li>		
+				</c:when>
+				<c:otherwise>
+						<li class="clearfix"><div class="tit">贷款金额</div><i class="c_666 f_20"><fmt:formatNumber value="${loanOrderInfo.actualAmount/100}"  pattern="#,##0.00#" /></i> <i class="c_666 ">元</i> <i class="c_999 m_l50">贷款最长期限为90天，日费率0.5‰，到期日前随借随还</i></li>
+				</c:otherwise>
+			</c:choose>
 				<li class="clearfix"><div class="tit">收款信息</div>
 					<div class="w_290" title="账户名：烈扬旅游">账户名：${loanSpecInfo.accountName}</div>
+					<div class="w_360">泰坦码：${loanSpecInfo.titanCode}</div>
+					<!-- 
 					<div class="w_360">银行账号：${loanSpecInfo.account}</div>
 					<div class="w_400">开户行：${loanSpecInfo.bank}</div>
+					 -->
 				</li>
 				<li class="clearfix"><div class="tit">贷款内容</div>
 					<div class="w_300">酒店名称：${loanSpecInfo.hotleName}</div>

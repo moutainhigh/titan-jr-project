@@ -187,6 +187,7 @@ public class TitanLoanController extends BaseController {
 				result.put("dataState", "-1");
 				result.put("dataMsg", "通知不处理，无效订单");
 			}
+			log.info("贷款订单通知处理完成,"+notifyDataObject.getBuessNo()+",result:"+Tools.gsonToString(result));
 			return result;
 		} catch (GlobalServiceException e) {
 			log.error("通知处理失败,参数notifyDataObject："+Tools.gsonToString(notifyDataObject)+",createTime:"+createTime, e); 
