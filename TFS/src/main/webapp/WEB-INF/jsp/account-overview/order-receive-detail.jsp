@@ -73,17 +73,18 @@
                         <colgroup>
                             <col width="150">
                             <col width="60">
+                            <col width="140">
                             <col width="200">
-                            <col width="200">
-                            <col width="100">
+                            <col width="60">
+                            <col width="30">
                             <col width="">
                         </colgroup>
                         <c:if test="${transOrder.titanOrderPayDTO != null}">
                             <tr>
                                 <td width=""><span><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.titanOrderPayDTO.orderDate }"/></span></td>
                                 <td width=""><span>充值</span></td>
-                                <td width=""><span style="width:180px" title="对方：${transOrder.transTarget}">对方：${transOrder.transTarget}</span></td>
-                                <td width=""><span style="width:180px" title="交易单${transOrder.titanOrderPayDTO.orderNo }充值">交易单${transOrder.titanOrderPayDTO.orderNo }充值</span></td>
+                                <td width=""><span title="对方：${transOrder.transTarget}">对方：${transOrder.transTarget}</span></td>
+                                <td width=""><span title="交易单${transOrder.titanOrderPayDTO.orderNo }充值">交易单${transOrder.titanOrderPayDTO.orderNo }充值</span></td>
                                 <td><span><fmt:formatNumber value="${transOrder.titanOrderPayDTO.orderAmount/100.0 }" pattern="#,##0.00#"/></span></td>
                                 <td><span>
                                     <c:if test="${transOrder.titanOrderPayDTO.reqstatus == 1}">
@@ -101,17 +102,18 @@
                         </c:if>
                         <c:if test="${transOrder.titanTransferDTO != null}">
                             <tr>
-                                <td><span><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.titanTransferDTO.createtime }"/></span></td>
+                                <td style="width:160px"><span><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.titanTransferDTO.createtime }"/></span></td>
                                 <td><span>转账</span></td>
-                                <td><span style="width:180px" title="对方：${transOrder.transTarget}">对方：${transOrder.transTarget}</span></td>
-                                <td><span style="width:180px" title="财务单${transOrder.payorderno }支付">财务单${transOrder.payorderno }支付</span></td>
+                                <td><span  style="width:160px" title="对方：${transOrder.transTarget}">对方：${transOrder.transTarget}</span></td>
+                                <td><span   style="width:160px" title="财务单${transOrder.payorderno }支付">财务单${transOrder.payorderno }支付</span></td>
                                 <td>
                                 	<span>+<fmt:formatNumber value="${(transOrder.titanTransferDTO.amount +transOrder.receivedfee) / 100.0 }" pattern="#,##0.00#"/></span>
+	                            </td>
+	                             <td style="width:50px">
                                     <c:if test="${transOrder.receivedfee!=null}">
-	                                 &nbsp;
 	                                <span>-<fmt:formatNumber value="${transOrder.receivedfee / 100.0 }" pattern="#,##0.00#"/></span>
 	                                </c:if>
-	                                </td>
+	                            </td>
                                 <td><span>
                                     <c:if test="${transOrder.titanTransferDTO.status == 1}">
                                         处理中
@@ -127,21 +129,22 @@
                         </c:if>
                         <c:if test="${transOrder.refundDTO != null}">
                         	<tr>
-                                <td>
+                                <td style="width:160px">
                                     <span><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.refundDTO.createtime }"/></span>
                                 </td>
                                 <td><span>退款</span></td>
 
-                                <td><span style="width:180px" title="退款人：${transOrder.refundDTO.creator}">退款人：${transOrder.refundDTO.creator}</span></td>
+                                <td><span  style="width:160px" title="退款人：${transOrder.refundDTO.creator}">退款人：${transOrder.refundDTO.creator}</span></td>
 
                                 <td>
-                                    <span style="width:180px" title="财务单${transOrder.payorderno }退款">财务单${transOrder.payorderno }退款</span>
+                                    <span  style="width:160px" title="财务单${transOrder.payorderno }退款">财务单${transOrder.payorderno }退款</span>
                                 </td><!--房仓财务系统单号-->
 
-                                <td>
+                                  <td>
                                     <span>-<fmt:formatNumber value="${(transOrder.refundDTO.transferAmount+transOrder.refundDTO.fee) / 100.0 }" pattern="#,##0.00#"/></span>
+	                               </td>
+	                               <td style="width:50px">
 	                               <c:if test="${transOrder.refundDTO.fee !=null }">
-	                                &nbsp;
 	                                <span>+<fmt:formatNumber value="${transOrder.refundDTO.fee / 100.0 }" pattern="#,##0.00#"/></span>
 	                               </c:if>
 	                               </td>
