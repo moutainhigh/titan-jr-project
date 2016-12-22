@@ -60,9 +60,10 @@
 								type="text" value="">
 						</div>
 						<div class="w_360">
-							<i class="c_f00">*</i>银行卡号：<input name="account" id="account"
+							<i class="c_f00">*</i>泰坦码：<input name="titanCode" id="titanCode"
 								class="text w_265 c_666" placeholder="" type="text" value="">
 						</div>
+						<!-- 
 						<div class="w_400">
 							<i class="c_f00">*</i>开户行： <select
 								class="select b_fff m_l10 w_150" name="bank" id="bank">
@@ -79,7 +80,7 @@
 								<option value="中国建设银行">中国建设银行</option>
 								<option value="中国建设银行">中国民生银行</option>
 							</select>
-						</div> <input type="hidden" class="text w_250  c_666 "
+						</div>  --><input type="hidden" class="text w_250  c_666 "
 						name="contactNames" id="contactNames"></li>
 					<li class="clearfix p_l83"><div class="tit">包房合同</div>
 						<div class="p_l25">请至少上传一张包房合同附件，附件格式支持PDF、JPG、JPEG、PNG、ZIP、RAR，大小不超过5M</div>
@@ -275,65 +276,65 @@
 				endDate:$("#dataE").val(),
 				roomNights:$("#roomNights").val(),
 				accountName:$("#accountName").val(),
-				account:$("#account").val(),
-				bank:$("#bank").val(),
-				contactNames:this.addContactName(),
+				titanCode:$("#titanCode").val(),
+				//bank:$("#bank").val(),
+				contactNames:this.addContactName()
 			};
 		},
 		validateData:function(data){
 			if(tfs_common_valid.isBlank(data.amount)){
-				new top.Tip({msg: '贷款金额不能为空', type: 1, timer: 2000});
+				new top.Tip({msg: '贷款金额不能为空', type: 3, timer: 2000});
 				return false;
 			}
 			
 			if(!tfs_common_valid.validAmount(data.amount)){
-				new top.Tip({msg: '贷款金额格式不正确,可保留一位或两位小数', type: 1, timer: 2000});
+				new top.Tip({msg: '贷款金额格式不正确,可保留一位或两位小数', type: 3, timer: 2000});
 				return false;
 			}
 			
 			if(tfs_common_valid.isBlank(data.hotelName)){
-				new top.Tip({msg: '酒店名称不能为空', type: 1, timer: 2000});
+				new top.Tip({msg: '酒店名称不能为空', type: 3, timer: 2000});
 				return false;
 			}
 			
 			if(tfs_common_valid.isBlank(data.beginDate)){
-				new top.Tip({msg: '包房时段的开始时间不能为空', type: 1, timer: 2000});
+				new top.Tip({msg: '包房时段的开始时间不能为空', type: 3, timer: 2000});
 				return false;
 			}
 			
 			if(tfs_common_valid.isBlank(data.endDate)){
-				new top.Tip({msg: '包房时段的结束时间不能为空', type: 1, timer: 2000});
+				new top.Tip({msg: '包房时段的结束时间不能为空', type: 3, timer: 2000});
 				return false;
 			}
 			
 			if(tfs_common_valid.isBlank(data.roomNights)){
-				new top.Tip({msg: '间夜数不能为空', type: 1, timer: 2000});
+				new top.Tip({msg: '间夜数不能为空', type: 3, timer: 2000});
 				return false;
 			}
 			
 			if(tfs_common_valid.isBlank(data.accountName)){
-				new top.Tip({msg: '账户名不能为空', type: 1, timer: 2000});
+				new top.Tip({msg: '账户名不能为空', type: 3, timer: 2000});
 				return false;
 			}
 			
 			
-			if(tfs_common_valid.isBlank(data.account)){
-				new top.Tip({msg: '银行卡号不能为空', type: 1, timer: 2000});
+			if(tfs_common_valid.isBlank(data.titanCode)){
+				new top.Tip({msg: '泰坦码不能为空', type: 3, timer: 2000});
 				return false;
 			}
 			
-			if(tfs_common_valid.idBankCard(data.account)){
-				new top.Tip({msg: '银行卡号输入不正确', type: 1, timer: 2000});
+			if(!tfs_common_valid.isTitanCode(data.titanCode)){
+				new top.Tip({msg: '泰坦码格式不正确', type: 3, timer: 2000});
 				return false;
 			}
 			
-			if(tfs_common_valid.isBlank(data.bank)){
-				new top.Tip({msg: '开户行不能为空', type: 1, timer: 2000});
-				return false;
-			}
+			//if(tfs_common_valid.isBlank(data.bank)){
+			//	new top.Tip({msg: '开户行不能为空', type: 1, timer: 2000});
+			///	return false;
+			//}
 			
 			if(tfs_common_valid.isBlank(data.contactNames)){
-				new top.Tip({msg: '包房合同不能为空', type: 1, timer: 2000});
+				new top.Tip({msg: '包房合同不能为空', type: 3, timer: 2000});
 				return false;
 			}
 			

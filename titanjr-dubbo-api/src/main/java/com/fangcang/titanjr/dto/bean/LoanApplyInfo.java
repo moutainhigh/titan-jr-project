@@ -35,11 +35,21 @@ public class LoanApplyInfo implements Serializable{
 	//银行卡号
 	private String account;
 	
+	private String titanCode;
+	
 	//开户行
 	private String bank;
 	
 	//文件名称
 	private String contactNames;
+
+	public String getTitanCode() {
+		return titanCode;
+	}
+
+	public void setTitanCode(String titanCode) {
+		this.titanCode = titanCode;
+	}
 
 	public String getAmount() {
 		return amount;

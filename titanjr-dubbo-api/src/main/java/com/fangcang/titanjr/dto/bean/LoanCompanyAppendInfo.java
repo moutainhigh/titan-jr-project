@@ -10,9 +10,21 @@ public class LoanCompanyAppendInfo implements java.io.Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	/***
+	 * 股东信息列表
+	 */
 	private List<LoanControllDataBean> controllDatas;
+	/**
+	 * 合作企业信息
+	 */
 	private List<LoanCooperationCompanyBean> cooperationCompanyInfos;
+	/***
+	 * 主营业务信息
+	 */
 	private List<LoanMainBusinessDataBean> mainBusinessDatas;
+	/****
+	 * 经营场所信息
+	 */
 	private LoanCompanyLeaseBean companyLease;
 
 	public LoanCompanyLeaseBean getCompanyLease() {

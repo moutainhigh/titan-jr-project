@@ -193,14 +193,25 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 			String loanApplyOrderNo = "";
 			String contactNames = "";
-
+			String relateOrgCode = "";
 			if (LoanProductEnum.ROOM_PACK.getCode() == productType.getCode()) {
-				LoanRoomPackSpecBean LoanSpecBean = (LoanRoomPackSpecBean) req
+				LoanRoomPackSpecBean loanSpecBean = (LoanRoomPackSpecBean) req
 						.getLcanSpec();
-				loanApplyOrderNo = LoanSpecBean.getLoanOrderNo();
-				contactNames = LoanSpecBean.getContractUrl();
+				loanApplyOrderNo = loanSpecBean.getLoanOrderNo();
+				contactNames = loanSpecBean.getContractUrl();
+				String titanCode = loanSpecBean.getTitanCode();
+				// 校验titanCode和用户名是否一致对应
+				OrgDTO relateOrgDTO = new OrgDTO();
+				relateOrgDTO.setTitancode(titanCode);
+				relateOrgDTO.setOrgname(loanSpecBean.getAccountName());
+				relateOrgDTO = organService.queryOrg(relateOrgDTO);
+				if(relateOrgDTO == null){
+					 response.putErrorResult("泰坦码和账户名不匹配");
+					 return response;
+				}
+				relateOrgCode = relateOrgDTO.getOrgcode();
 				// 保存相关数据
-				boolean flag = this.saveLoanRoomPackSpecBean(LoanSpecBean);
+				boolean flag = this.saveLoanRoomPackSpecBean(loanSpecBean);
 				if (!flag) {
 					log.error("保存包房贷订单失败");
 					throw new Exception("保存包房贷订单失败");
@@ -226,7 +237,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			}
 			// 申请贷款
 			NewLoanApplyRequest request = this.convertToNewLoanApplyRequest(
-					req.getLcanSpec(), productType.getCode(), req.getOrgCode());
+					req.getLcanSpec(), productType.getCode(), req.getOrgCode(),relateOrgCode);
 			request.setUrlkey(urlKey);
 			this.packLoanJSonData(request, req.getLcanSpec(),
 					productType.getCode());
@@ -383,6 +394,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		LoanSpecification specification = new LoanSpecification();
 		try {
 			specification.setAccount(loanSpecBean.getAccount());
+			specification.setTitanCode(loanSpecBean.getTitanCode());
 			specification.setAccountName(loanSpecBean.getAccountName());
 			specification.setBank(loanSpecBean.getBank());
 			specification.setAccessory(loanSpecBean.getContractUrl());
@@ -461,13 +473,23 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		}
 	}
 
+	/**
+	 * 
+	 * @param loanSpecBean
+	 * @param type
+	 * @param orgCode
+	 * @param relateOrgCode 贷款接收方机构编码
+	 * @return
+	 * @throws Exception
+	 */
 	private NewLoanApplyRequest convertToNewLoanApplyRequest(
-			LoanSpecBean loanSpecBean, Integer type, String orgCode)
+			LoanSpecBean loanSpecBean, Integer type, String orgCode,String relateOrgCode)
 			throws Exception {
 		try {
 			OrgDTO param = new OrgDTO();
 			param.setOrgcode(orgCode);
 			param = organService.queryOrg(param);
+			
 			NewLoanApplyRequest request = new NewLoanApplyRequest();
 			LoanRoomPackSpecBean loanRoomPackSpecBean = null;
 			if (LoanProductEnum.ROOM_PACK.getCode() == type.intValue()) {
@@ -481,8 +503,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				request.setUserid(orgCode);
 				request.setUsername(param.getOrgname());
 				request.setUserorderid(loanRoomPackSpecBean.getLoanOrderNo());
-				// 暂时还未确定TODO
-				request.setUserrelateid("TJM10000110");
+				request.setUserrelateid(relateOrgCode);
 
 			} else if (LoanProductEnum.OPERACTION.getCode() == type.intValue()) {
 

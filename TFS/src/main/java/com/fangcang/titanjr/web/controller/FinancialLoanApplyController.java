@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
+import javax.tools.Tool;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +26,7 @@ import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.LoanApplyInfo;
 import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
 import com.fangcang.titanjr.dto.bean.LoanSpecBean;
@@ -78,7 +80,7 @@ public class FinancialLoanApplyController extends BaseController{
 	public String loanApply(LoanApplyInfo info){
 		if(info ==null || !StringUtil.isValidString(info.getLoanOrderNo()) 
 					   || !StringUtil.isValidString(info.getAccountName())
-					   || !StringUtil.isValidString(info.getAccount())
+					   || !StringUtil.isValidString(info.getTitanCode())
 					   || !StringUtil.isValidString(info.getAmount())
 					   || !StringUtil.isValidString(info.getContactNames())){
 			this.putSysError("参数不合法");
@@ -96,6 +98,7 @@ public class FinancialLoanApplyController extends BaseController{
 			loanSpecBean.setAmount(NumberUtil.covertToCents(info.getAmount()));
 			loanSpecBean.setLoanOrderNo(info.getLoanOrderNo());
 			loanSpecBean.setAccount(info.getAccount());
+			loanSpecBean.setTitanCode(info.getTitanCode());
 			loanSpecBean.setAccountName(info.getAccountName());
 			loanSpecBean.setBank(info.getBank());
 			loanSpecBean.setBeginDate(DateUtil.sdf.parse(info.getBeginDate()));
@@ -154,7 +157,7 @@ public class FinancialLoanApplyController extends BaseController{
 		req.setOrderNo(info.getLoanOrderNo());
 		GetLoanOrderInfoResponse response =titanFinancialLoanService.getLoanOrderInfo(req);
 		if(null !=response.getApplyOrderInfo()){
-			log.error("该贷款单已被申请,请重新申请");
+			log.error("该贷款单已被申请,请重新申请,已存在订单信息："+Tools.gsonToString(response.getApplyOrderInfo()));
 			this.putSysError("该贷款单已被申请,请重新申请");
 			return false;
 		}
@@ -162,13 +165,11 @@ public class FinancialLoanApplyController extends BaseController{
 		
 		
 		if(!StringUtil.isValidString(info.getBeginDate())){
-			log.error("开始时间为空");
 			this.putSysError("开始时间为空");
 			return false;
 		}
 		
 		if(!StringUtil.isValidString(info.getEndDate())){
-			log.error("结束时间为空");
 			this.putSysError("结束时间为空");
 			return false;
 		}
@@ -178,25 +179,21 @@ public class FinancialLoanApplyController extends BaseController{
 				boolean beginFlg = Pattern.matches(regex, info.getBeginDate()); 
 				boolean endFlag = Pattern.matches(regex, info.getEndDate()); 
 				if(!beginFlg || !endFlag){
-					log.error("时间格式不正确");
 					this.putSysError("时间格式不正确");
 				    return false;
 				}
 				Long times = DateUtil.sdf.parse(info.getEndDate()).getTime()-DateUtil.sdf.parse(info.getBeginDate()).getTime();
 		        if(times <=0){
-		        	log.error("结束时间必须大于开始时间");
 		        	this.putSysError("结束时间必须大于开始时间");
 				    return false;
 		        }	
 		
 		} catch (Exception e) {
-				log.error("开始时间格式不正确");
 				this.putSysError("开始时间格式不正确");
 				return false;
 		}
 		
 		if(!StringUtil.isValidString(info.getRoomNights())){
-			log.error("间夜数不能为空");
 			this.putSysError("间夜数不能为空");
 			return false;
 		}
@@ -210,22 +207,28 @@ public class FinancialLoanApplyController extends BaseController{
 		}
 		
 		if(info.getRoomNights().length()>11){
-			log.error("间夜数太大");
 			this.putSysError("间夜数太大");
 			return false;
 		}
 		
 		if(!StringUtil.isValidString(info.getHotelName())){
-			log.error("酒店名称不能为空");
 			this.putSysError("酒店名称不能为空");
 			return false;
 		}
 		
-		if(!StringUtil.isValidString(info.getBank())){
-			log.error("银行不能为空");
-			this.putSysError("银行不能为空");
+		if(!StringUtil.isValidString(info.getAccountName())){
+			this.putSysError("账户名不能为空");
 			return false;
 		}
+		if(!StringUtil.isValidString(info.getTitanCode())){
+			this.putSysError("泰坦码不能为空");
+			return false;
+		}
+		//if(!StringUtil.isValidString(info.getBank())){
+		//	log.error("银行不能为空");
+		//	this.putSysError("银行不能为空");
+		//	return false;
+		//}
 		
 		return true;
 	}

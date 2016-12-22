@@ -174,6 +174,13 @@ var tfs_common_valid = {
    	        	return true;
    	        }
 			return false;
+		},
+		isTitanCode: function(src){
+			var neg = /^[0-9]{8}$/;
+   	        if(neg.test(src)){
+   	        	return true;
+   	        }
+			return false;
 		}
 }
 
