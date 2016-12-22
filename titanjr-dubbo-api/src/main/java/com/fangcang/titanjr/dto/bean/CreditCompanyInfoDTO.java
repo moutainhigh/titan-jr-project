@@ -45,6 +45,19 @@ public class CreditCompanyInfoDTO implements Serializable {
 	 */
 	private String contactPhone;
 	
+	/**
+	 * 查询用户ID
+	 */
+	private String orgCode;
+	
+
+	public String getOrgCode() {
+		return orgCode;
+	}
+
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}
 
 	public Date getReqTime() {
 		return reqTime;

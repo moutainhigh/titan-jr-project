@@ -64,6 +64,7 @@
 	<select id="queryLoanCreditCompanyOrder" resultType="com.fangcang.titanjr.dto.bean.CreditCompanyInfoDTO"  parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
 		select 
 			C.name,
+			O.orgcode,
 			C.contactname,
 			C.contactphone,
 			O.orderno,

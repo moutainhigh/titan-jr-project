@@ -18,6 +18,16 @@ public class GetLoanOrderInfoListResponse extends BaseResponseDTO {
 	private int pageSize;
 
 	private int currentPage;
+	
+	private int totalPage;
+
+	public int getTotalPage() {
+		return totalPage;
+	}
+
+	public void setTotalPage(int totalPage) {
+		this.totalPage = totalPage;
+	}
 
 	public long getTotalCount() {
 		return totalCount;

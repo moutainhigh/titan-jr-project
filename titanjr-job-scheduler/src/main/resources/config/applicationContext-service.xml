@@ -32,6 +32,8 @@
 	<dubbo:reference id="titanCashierDeskService" interface="com.fangcang.titanjr.service.TitanCashierDeskService" retries="0" timeout="40000"/>
     <dubbo:reference id="titanOrderService" interface="com.fangcang.titanjr.service.TitanOrderService" retries="0" timeout="40000"/>
     <dubbo:reference id="titanFinancialBankCardService" interface="com.fangcang.titanjr.service.TitanFinancialBankCardService" retries="0" timeout="40000"/>
+    <dubbo:reference id="titanFinancialLoanCreditService" interface="com.fangcang.titanjr.service.TitanFinancialLoanCreditService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
+	<dubbo:reference id="titanFinancialLoanService" interface="com.fangcang.titanjr.service.TitanFinancialLoanService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
 
 	<bean id="titanJobExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 		<property name="corePoolSize" value="10" />

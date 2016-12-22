@@ -16,7 +16,7 @@ import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -56,6 +56,7 @@ import com.fangcang.titanjr.dto.request.LoanOrderNotifyRequest;
 import com.fangcang.titanjr.dto.request.RepaymentAmountComputeRequest;
 import com.fangcang.titanjr.dto.request.RepaymentLoanRequest;
 import com.fangcang.titanjr.dto.request.SaveLoanOrderInfoRequest;
+import com.fangcang.titanjr.dto.request.SynLoanCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.SynLoanOrderRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.CancelLoanResponse;
@@ -96,6 +97,7 @@ import com.fangcang.titanjr.rs.response.QueryUserInitiativeRepaymentResponse;
 import com.fangcang.titanjr.rs.response.RSFsFileUploadResponse;
 import com.fangcang.titanjr.rs.response.StopLoanResponse;
 import com.fangcang.titanjr.rs.response.UserInitiativeRepamentResponse;
+import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
@@ -128,9 +130,15 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 	@Resource
 	private RSFileManager rsFileManager;
+<<<<<<< HEAD
 
 	@Resource
 	private PlatformOrderOprDao platformOrderOprDao;
+=======
+	
+	@Resource
+	private TitanFinancialLoanCreditService loanCreditService;
+>>>>>>> branch 'dev_loan' of git@192.168.2.94:/srv/git/titan-jr-project.git
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
@@ -198,14 +206,25 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 			String loanApplyOrderNo = "";
 			String contactNames = "";
-
+			String relateOrgCode = "";
 			if (LoanProductEnum.ROOM_PACK.getCode() == productType.getCode()) {
-				LoanRoomPackSpecBean LoanSpecBean = (LoanRoomPackSpecBean) req
+				LoanRoomPackSpecBean loanSpecBean = (LoanRoomPackSpecBean) req
 						.getLcanSpec();
-				loanApplyOrderNo = LoanSpecBean.getLoanOrderNo();
-				contactNames = LoanSpecBean.getContractUrl();
+				loanApplyOrderNo = loanSpecBean.getLoanOrderNo();
+				contactNames = loanSpecBean.getContractUrl();
+				String titanCode = loanSpecBean.getTitanCode();
+				// 校验titanCode和用户名是否一致对应
+				OrgDTO relateOrgDTO = new OrgDTO();
+				relateOrgDTO.setTitancode(titanCode);
+				relateOrgDTO.setOrgname(loanSpecBean.getAccountName());
+				relateOrgDTO = organService.queryOrg(relateOrgDTO);
+				if(relateOrgDTO == null){
+					 response.putErrorResult("泰坦码和账户名不匹配");
+					 return response;
+				}
+				relateOrgCode = relateOrgDTO.getOrgcode();
 				// 保存相关数据
-				boolean flag = this.saveLoanRoomPackSpecBean(LoanSpecBean);
+				boolean flag = this.saveLoanRoomPackSpecBean(loanSpecBean);
 				if (!flag) {
 					log.error("保存包房贷订单失败");
 					throw new Exception("保存包房贷订单失败");
@@ -231,7 +250,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			}
 			// 申请贷款
 			NewLoanApplyRequest request = this.convertToNewLoanApplyRequest(
-					req.getLcanSpec(), productType.getCode(), req.getOrgCode());
+					req.getLcanSpec(), productType.getCode(), req.getOrgCode(),relateOrgCode);
 			request.setUrlkey(urlKey);
 			this.packLoanJSonData(request, req.getLcanSpec(),
 					productType.getCode());
@@ -388,6 +407,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		LoanSpecification specification = new LoanSpecification();
 		try {
 			specification.setAccount(loanSpecBean.getAccount());
+			specification.setTitanCode(loanSpecBean.getTitanCode());
 			specification.setAccountName(loanSpecBean.getAccountName());
 			specification.setBank(loanSpecBean.getBank());
 			specification.setAccessory(loanSpecBean.getContractUrl());
@@ -466,13 +486,23 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		}
 	}
 
+	/**
+	 * 
+	 * @param loanSpecBean
+	 * @param type
+	 * @param orgCode
+	 * @param relateOrgCode 贷款接收方机构编码
+	 * @return
+	 * @throws Exception
+	 */
 	private NewLoanApplyRequest convertToNewLoanApplyRequest(
-			LoanSpecBean loanSpecBean, Integer type, String orgCode)
+			LoanSpecBean loanSpecBean, Integer type, String orgCode,String relateOrgCode)
 			throws Exception {
 		try {
 			OrgDTO param = new OrgDTO();
 			param.setOrgcode(orgCode);
 			param = organService.queryOrg(param);
+			
 			NewLoanApplyRequest request = new NewLoanApplyRequest();
 			LoanRoomPackSpecBean loanRoomPackSpecBean = null;
 			if (LoanProductEnum.ROOM_PACK.getCode() == type.intValue()) {
@@ -486,8 +516,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				request.setUserid(orgCode);
 				request.setUsername(param.getOrgname());
 				request.setUserorderid(loanRoomPackSpecBean.getLoanOrderNo());
-				// 暂时还未确定TODO
-				request.setUserrelateid("TJM10000110");
+				request.setUserrelateid(relateOrgCode);
 
 			} else if (LoanProductEnum.OPERACTION.getCode() == type.intValue()) {
 
@@ -1241,20 +1270,40 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			// 查询订单信息
 			LoanQueryConditions loanQueryConditions = new LoanQueryConditions();
 			loanQueryConditions.setOrderNo(req.getOrderNo());
+<<<<<<< HEAD
 			List<LoanApplyOrder> loanApplyOrderList = loanOrderDao
 					.listLoanApplyOrder(loanQueryConditions);
 			// TODO
 			if (CollectionUtils.isEmpty(loanApplyOrderList)) {
 				log.info("贷款通知订单不存在，OrderNo:" + req.getOrderNo());
+=======
+			List<LoanApplyOrder> loanApplyOrderList = loanOrderDao.listLoanApplyOrder(loanQueryConditions);
+			
+			if(CollectionUtils.isEmpty(loanApplyOrderList)){
+				log.info("贷款通知订单不存在，OrderNo:"+req.getOrderNo());
+>>>>>>> branch 'dev_loan' of git@192.168.2.94:/srv/git/titan-jr-project.git
 				loanOrderNotifyResponse.putErrorResult("贷款订单不存在");
 				return loanOrderNotifyResponse;
 			}
+<<<<<<< HEAD
 
 			QueryLoanApplyRequest queryLoanApplyRequest = new QueryLoanApplyRequest();
 			queryLoanApplyRequest
 					.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
 			queryLoanApplyRequest.setUserid(loanApplyOrderList.get(0)
 					.getOrgCode());
+=======
+			
+			LoanApplyOrder  loanApplyOrder = loanApplyOrderList.get(0);
+			SynLoanCreditOrderRequest creditOrderRequest = new SynLoanCreditOrderRequest();
+			creditOrderRequest.setOrgCode(loanApplyOrder.getOrgCode());
+			creditOrderRequest.setOrderNo(loanApplyOrder.getCreditOrderNo());
+			loanCreditService.synLoanCreditOrder(creditOrderRequest);
+			
+			QueryLoanApplyRequest  queryLoanApplyRequest = new QueryLoanApplyRequest();
+			queryLoanApplyRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+			queryLoanApplyRequest.setUserid(loanApplyOrder.getOrgCode());
+>>>>>>> branch 'dev_loan' of git@192.168.2.94:/srv/git/titan-jr-project.git
 			queryLoanApplyRequest.setUserorderid(req.getOrderNo());
 			QueryLoanApplyResponse queryLoanApplyResponse = rsCreditManager
 					.queryLoanApply(queryLoanApplyRequest);
@@ -1265,6 +1314,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 						.getReturnMsg());
 				return loanOrderNotifyResponse;
 			}
+<<<<<<< HEAD
 			paramApplyOrder
 					.setRelMoneyTime(DateUtil
 							.toDataYYYYMMDDHHmmss(queryLoanApplyResponse
@@ -1275,6 +1325,12 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 					DateUtil.toDataYYYYMMDDHHmmss(queryLoanApplyResponse
 							.getLoandate()),
 					CommonConstant.RS_LOAN_REPAYMENT_TIME);
+=======
+			paramApplyOrder.setShouldCapital(Long.valueOf(queryLoanApplyResponse.getLoanmoney()));
+			paramApplyOrder.setRelMoneyTime(DateUtil.toDataYYYYMMDDHHmmss(queryLoanApplyResponse.getLoandate()));//放款时间
+			paramApplyOrder.setActualAmount(Long.valueOf(queryLoanApplyResponse.getLoanmoney()));//实际放款金额
+			Date rDate = DateUtils.addDays(DateUtil.toDataYYYYMMDDHHmmss(queryLoanApplyResponse.getLoandate()), CommonConstant.RS_LOAN_REPAYMENT_TIME);
+>>>>>>> branch 'dev_loan' of git@192.168.2.94:/srv/git/titan-jr-project.git
 			paramApplyOrder.setActualRepaymentDate(rDate);//
 		} else {
 			paramApplyOrder.setErrorMsg(req.getMsg());

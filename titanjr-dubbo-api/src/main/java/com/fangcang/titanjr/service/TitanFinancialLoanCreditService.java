@@ -7,6 +7,7 @@ import com.fangcang.titanjr.dto.request.AuditCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
+import com.fangcang.titanjr.dto.request.LoanAmountEvaluationRequest;
 import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
 import com.fangcang.titanjr.dto.request.NotifyRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
@@ -17,6 +18,7 @@ import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
 import com.fangcang.titanjr.dto.response.GetAuditEvaluationResponse;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
 import com.fangcang.titanjr.dto.response.GetCreditOrderCountResponse;
+import com.fangcang.titanjr.dto.response.LoanAmountEvaluationResponse;
 import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
 import com.fangcang.titanjr.dto.response.NotifyResponse;
 import com.fangcang.titanjr.dto.response.PageCreditCompanyInfoResponse;
@@ -117,4 +119,11 @@ public interface TitanFinancialLoanCreditService {
 	 */
 	public SynLoanCreditOrderResponse synLoanCreditOrder(
 			SynLoanCreditOrderRequest creditOrderRequest);
+	
+	/**
+	 * 计算并设置可贷款金额
+	 * @param request
+	 * @return
+	 */
+	public LoanAmountEvaluationResponse loanAmountEvaluation(LoanAmountEvaluationRequest request);
 }

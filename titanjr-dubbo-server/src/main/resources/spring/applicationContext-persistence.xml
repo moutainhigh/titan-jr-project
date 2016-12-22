@@ -42,18 +42,30 @@
 		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
 	</bean>
 
+
+
 	<bean id="configSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="configLocation" value="classpath:mybatis/SqlMapConfig.xml"></property>
+		<property name="configLocation" value="classpath:mybatis/platform/SqlMapConfig.xml"></property>
 		<property name="dataSource" ref="configDataSource" />
 	</bean>
 
 	<bean id="configSqlMapClient" class="com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl">
 		<property name="sqlSessionFactory" ref="configSessionFactory"></property>
 	</bean>
+	
+	<bean id="orderSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:mybatis/platform/SqlMapConfig.xml"></property>
+		<property name="dataSource" ref="orderDataSource" />
+	</bean>
 
+	<bean id="orderSqlMapClient" class="com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl">
+		<property name="sqlSessionFactory" ref="orderSessionFactory"></property>
+	</bean>
+	
 
 	<!-- dao 定义列表 -->
 	<bean id="domainConfigDao" class="com.fangcang.titanjr.dao.impl.DomainConfigDaoImpl" parent="configSqlMapClient"></bean>
+	<bean id="platformOrderOprDao" class="com.fangcang.titanjr.dao.impl.PlatformOrderOprDaoImpl" parent="orderSqlMapClient"></bean>
 
 	<bean id="titanOrgCheckDao" class="com.fangcang.titanjr.dao.impl.TitanOrgCheckDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanAccountDao" class="com.fangcang.titanjr.dao.impl.TitanAccountDaoImpl" parent="baseSqlMapClient"></bean>

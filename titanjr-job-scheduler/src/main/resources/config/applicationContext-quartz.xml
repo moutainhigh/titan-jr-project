@@ -15,6 +15,11 @@
 				  <ref bean="unFreezeTransOrderTrigger" />
 				  <ref bean="bindBankCardJobTrigger" />
 				  <ref bean="repairGDPTransferTrigger" />
+				  
+				  <ref bean="loanCreditAmountEvaluationTrigger" />
+				  <ref bean="loanCreditSynTrigger" />
+				  <ref bean="loanOrderSynTrigger" />
+				  
 			</list>
 		</property>
 	</bean>
@@ -48,7 +53,46 @@
 			<!-- 发布配置 每3分钟执行一次 -->
 			<!--<value>0 0/30 * * * ?</value>-->
 		</property>
-	</bean> 
+	</bean>
+	
+	
+	
+	 <bean id="loanCreditAmountEvaluationTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="loanCreditAmountEvaluationJobSchedule" />
+		<property name="cronExpression">
+			<!-- 测试配置 -->
+			<value>0 */10 * * * ?</value>
+			<!-- 发布配置 每3分钟执行一次 -->
+			<!--<value>0 0/30 * * * ?</value>-->
+		</property>
+	</bean>
+	
+	
+	 <bean id="loanCreditSynTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="loanCreditSynJobSchedule" />
+		<property name="cronExpression">
+			<!-- 测试配置 -->
+			<value>0 */10 * * * ?</value>
+			<!-- 发布配置 每3分钟执行一次 -->
+			<!--<value>0 0/30 * * * ?</value>-->
+		</property>
+	</bean>
+	
+
+	 <bean id="loanOrderSynTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="loanOrderSynJobSchedule" />
+		<property name="cronExpression">
+			<!-- 测试配置 -->
+			<value>0 */15 * * * ?</value>
+			<!-- 发布配置 每3分钟执行一次 -->
+			<!--<value>0 0/30 * * * ?</value>-->
+		</property>
+	</bean>
+	
+	
+	
+	
+	
 	
 	<!-- 定义调用对象和调用对象的方法 -->
 	<bean id="unFreezeTransOrderSchedule"
@@ -99,5 +143,58 @@
 			  </entry>
 		  </map>
 	    </property>
+	</bean>
+	
+	
+	
+	 <bean id="loanCreditAmountEvaluationJobSchedule" 
+	      class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.fangcang.titanjr.job.LoanCreditAmountEvaluatingJob" />
+		<property name="jobDataAsMap">
+		  <map>
+		  		<entry key="financialOrganService">
+		  			<ref bean="titanFinancialOrganService"/>
+		  		</entry>
+		  		<entry key="titanFinancialLoanCreditService">
+		  			<ref bean="titanFinancialLoanCreditService"/>
+		  		</entry>
+			  <entry key="titanJobExecutor">
+				  <ref bean="titanJobExecutor"/>
+			  </entry>
+		  </map>
+	    </property>
+	</bean>
+	
+		
+	 <bean id="loanCreditSynJobSchedule" 
+	      class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.fangcang.titanjr.job.LoanCreditSynJob" />
+		<property name="jobDataAsMap">
+		  <map>
+		  		<entry key="titanFinancialLoanCreditService">
+		  			<ref bean="titanFinancialLoanCreditService"/>
+		  		</entry>
+			  <entry key="titanJobExecutor">
+				  <ref bean="titanJobExecutor"/>
+			  </entry>
+		  </map>
+	    </property>
+	</bean>
+	
+	 <bean id="loanOrderSynJobSchedule" 
+	      class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.fangcang.titanjr.job.LoanOrderSynJob" />
+		<property name="jobDataAsMap">
+		  <map>
+		  		<entry key="titanFinancialLoanService">
+		  			<ref bean="titanFinancialLoanService"/>
+		  		</entry>
+			  <entry key="titanJobExecutor">
+				  <ref bean="titanJobExecutor"/>
+			  </entry>
+		  </map>
+	    </property>
 	</bean> 
+	
+	
 </beans>
