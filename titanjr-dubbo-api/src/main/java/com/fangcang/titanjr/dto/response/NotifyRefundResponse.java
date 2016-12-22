@@ -9,40 +9,40 @@ public class NotifyRefundResponse extends BaseResponseDTO {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	 	//´íÎó´úÂë
+	 	//é”™è¯¯ä»£ç 
 		private String errCode;
 		
-		//´íÎóÃèÊö
+		//é”™è¯¯æè¿°
 		private String errMsg;
 		
-		//ÉÌ»§ºÅ
+		//å•†æˆ·å·
 		private String merchantNo;
 		
-		//¶©µ¥ºÅ
+		//è®¢å•å·
 		private String orderNo;
 		
-		//ÍË¿î¶©µ¥ºÅ
+		//é€€æ¬¾è®¢å•å·
 		private String refundOrderno;
 		
-		//	¶©µ¥½ğ¶î	
+		//	è®¢å•é‡‘é¢	
 		private String orderAmount;
 		
-		//ÍË¿î×´Ì¬
+		//é€€æ¬¾çŠ¶æ€
 		private String refundStatus;
 		
-		//ÏÂµ¥Ê±¼ä
+		//ä¸‹å•æ—¶é—´
 		private String orderTime;
 		
-		//ÍË¿îÊ±¼ä	
+		//é€€æ¬¾æ—¶é—´	
 		private String refundTime;
 		
-		//°æ±¾
+		//ç‰ˆæœ¬
 		private String version;
 		
-		//Ç©ÃûÀàĞÍ
+		//ç­¾åç±»å‹
 		private String signType;
 		
-		//Ç©Ãû×Ö·û´®
+		//ç­¾åå­—ç¬¦ä¸²
 		private String signMsg;
 
 		public String getErrCode() {
