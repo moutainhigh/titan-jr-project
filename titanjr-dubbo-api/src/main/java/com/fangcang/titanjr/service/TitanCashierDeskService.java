@@ -53,4 +53,7 @@ public interface TitanCashierDeskService {
      */
     public List<CommonPayMethodDTO> queryCommonPayMethod(CashierDeskQueryRequest cashierDeskQueryRequest);
     
+    
+
+    public void initttMallCashDesk();
 }

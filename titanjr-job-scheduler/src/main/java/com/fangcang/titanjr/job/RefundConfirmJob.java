@@ -25,4 +25,26 @@ public class RefundConfirmJob extends QuartzJobBean{
         titanJobExecutor.execute(task);
     }
 
+
+	public ThreadPoolTaskExecutor getTitanJobExecutor() {
+		return titanJobExecutor;
+	}
+
+
+	public void setTitanJobExecutor(ThreadPoolTaskExecutor titanJobExecutor) {
+		this.titanJobExecutor = titanJobExecutor;
+	}
+
+
+	public TitanFinancialRefundService getTitanFinancialRefundService() {
+		return titanFinancialRefundService;
+	}
+
+
+	public void setTitanFinancialRefundService(
+			TitanFinancialRefundService titanFinancialRefundService) {
+		this.titanFinancialRefundService = titanFinancialRefundService;
+	}
+	
+
 }

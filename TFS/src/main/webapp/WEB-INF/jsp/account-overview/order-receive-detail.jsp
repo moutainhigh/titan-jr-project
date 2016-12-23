@@ -75,9 +75,9 @@
                             <col width="60">
                             <col width="140">
                             <col width="200">
-                            <col width="60">
-                            <col width="30">
-                            <col width="">
+                            <col width="100">
+                            <col width="80">
+                            <col width="70">
                         </colgroup>
                         <c:if test="${transOrder.titanOrderPayDTO != null}">
                             <tr>
