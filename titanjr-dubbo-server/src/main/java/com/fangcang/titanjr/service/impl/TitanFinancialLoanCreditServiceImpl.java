@@ -385,6 +385,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					.setUrlkey(rsFsFileUploadResponse.getUrlKey());
 			// orderMixserviceCreditapplicationRequest.setUrlkey("f8f0ab4b-d5b2-4bee-b898-6a63da3c2070");
 			orderMixserviceCreditapplicationRequest.setCreditype("2");// 2：零售商授信申请（房仓）
+			updateLoanCreditOrderParam.setUrlKey(rsFsFileUploadResponse.getUrlKey());
 			OrderMixserviceCreditapplicationResponse orderMixserviceCreditapplicationResponse = rsCreditManager
 					.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
 			if (orderMixserviceCreditapplicationResponse.isSuccess() == false) {
