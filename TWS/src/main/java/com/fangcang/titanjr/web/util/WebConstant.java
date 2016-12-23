@@ -13,9 +13,10 @@ public class WebConstant {
     
     
     
-    public static final String SESSION_KEY_JR_RESOURCE_1_TFS  = "1";//金服官网登录
-    public static final String SESSION_KEY_JR_RESOURCE_2_SAAS  = "2";//SAAS网站登录
-    public static final String SESSION_KEY_JR_RESOURCE_3_ADMIN  = "3";//金服后台管理登录
+    public static final String SESSION_KEY_JR_RESOURCE_1_TFS  = "1";//金服官网登录或者注册
+    public static final String SESSION_KEY_JR_RESOURCE_2_SAAS  = "2";//SAAS网站登录或者注册
+    public static final String SESSION_KEY_JR_RESOURCE_3_ADMIN  = "3";//金服后台管理登录或者注册
+    public static final String SESSION_KEY_JR_RESOURCE_4_TTM  = "4";//TTM登录或者注册
     
     public static final String SESSION_KEY_REG_CODE  = "REG_CODE";//注册时的验证码
    

@@ -6,7 +6,7 @@ package com.fangcang.titanjr.common.enums;
  * @2016年6月3日
  */
 public enum LoginSourceEnum {
-	TFS(1,"金融官网"),SAAS(2,"SAAS"),AUTO(3,"后台自动");
+	TFS(1,"金融官网"),SAAS(2,"SAAS"),AUTO(3,"后台自动"),TTM(4,"TTM");
 	
 	private int key;
 	private String des; 

@@ -164,14 +164,16 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
             }
         }
 
-        //验证用户是否存在当前商家
-        MerchantUserCheckDTO checkDTO = new MerchantUserCheckDTO();
-        checkDTO.setUserLoginName(userRegisterRequest.getLoginUserName());
-        //TODO 检测机制要改变下，如果重复的用户属于金服的商家编码，则允许重复创建。但要修改相应的数据
-        BaseResultDTO checkResult = getMerchantUserFacade().checkMerchantUser(checkDTO);
-        if (!checkResult.getIsSuccessed()) {//登录名已存在
-            response.putErrorResult("USER_EXISTS", "登录用户名已存在");
-            return response;
+        //SAAS验证用户是否存在当前商家,2016-12-23
+        if(userRegisterRequest.getRegisterSource()==LoginSourceEnum.SAAS.getKey()){
+        	 MerchantUserCheckDTO checkDTO = new MerchantUserCheckDTO();
+             checkDTO.setUserLoginName(userRegisterRequest.getLoginUserName());
+             //TODO 检测机制要改变下，如果重复的用户属于金服的商家编码，则允许重复创建。但要修改相应的数据
+             BaseResultDTO checkResult = getMerchantUserFacade().checkMerchantUser(checkDTO);
+             if (!checkResult.getIsSuccessed()) {//登录名已存在
+                 response.putErrorResult("USER_EXISTS", "登录用户名已存在");
+                 return response;
+             }
         }
 
         //1.金服添加用户
@@ -192,19 +194,22 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 
         //2.saas页面注册时金服添加用户绑定关系
         Long orgiUserId = null;//SaaS注册时存在，当前登录的SaaS用户的用户id
-        if (userRegisterRequest.getRegisterSource() == LoginSourceEnum.SAAS.getKey()) {
+        if (userRegisterRequest.getRegisterSource() == LoginSourceEnum.SAAS.getKey()||userRegisterRequest.getRegisterSource() == LoginSourceEnum.TTM.getKey()) {
             //查询房仓金服商家已添加上的用户
-            MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
-            List<String> loginNameList = new ArrayList<String>();
-            loginNameList.add(userRegisterRequest.getFcLoginUserName());
-            queryDTO.setUserLoginNameList(loginNameList);
-            queryDTO.setMerchantCode(userRegisterRequest.getMerchantCode());
-            com.fangcang.dao.PaginationSupport pg = merchantUserFacade.queryMerchantUser(queryDTO);
-            if (CollectionUtils.isNotEmpty(pg.getItemList())) {
-                for (MerchantUserDTO userDTO : (List<MerchantUserDTO>)pg.getItemList()) {
-                    orgiUserId = userDTO.getUserId();
+            if(userRegisterRequest.getRegisterSource() == LoginSourceEnum.SAAS.getKey()){
+            	MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
+                List<String> loginNameList = new ArrayList<String>();
+                loginNameList.add(userRegisterRequest.getFcLoginUserName());
+                queryDTO.setUserLoginNameList(loginNameList);
+                queryDTO.setMerchantCode(userRegisterRequest.getMerchantCode());
+                com.fangcang.dao.PaginationSupport pg = merchantUserFacade.queryMerchantUser(queryDTO);
+                if (CollectionUtils.isNotEmpty(pg.getItemList())) {
+                    for (MerchantUserDTO userDTO : (List<MerchantUserDTO>)pg.getItemList()) {
+                        orgiUserId = userDTO.getUserId();
+                    }
                 }
             }
+            
             TitanUserBindInfo bindInfo = new TitanUserBindInfo();
             bindInfo.setUsername(userRegisterRequest.getUserName());
             bindInfo.setLoginname(userRegisterRequest.getLoginUserName());
@@ -242,35 +247,35 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         userRoleSetRequest.getDeleteUserRoleIdMap().put(Long.valueOf(String.valueOf(tfsUserid)),userRegisterRequest.getUnselectRoleIdList());
         UserRoleSetResponse userRoleSetResponse = this.setFinancialUserRole(userRoleSetRequest);
         if (!userRoleSetResponse.isResult()) {
-            log.error("金融权限添加失败，抛出异常回滚");
+            log.error("金融权限添加失败，抛出异常回滚,userid:"+userRegisterRequest.getUserId());
             throw new Exception("金融权限初始化失败");
         }
-
-        //4.SaaS系统添加员工属于固定金服商家（需配置起来）
-        MerchantDetailQueryDTO merchantDetailQueryDTO = new MerchantDetailQueryDTO();
-        merchantDetailQueryDTO.setMerchantCode(RSInvokeConstant.defaultMerchant);
-        MerchantResponseDTO merchantResponseDTO = getMerchantFacade().queryMerchantDetail(merchantDetailQueryDTO);
-
-        MerchantUserCreateDTO user = new MerchantUserCreateDTO();
-        user.setMerchantId(merchantResponseDTO.getMerchantId());
-        user.setMerchantCode(RSInvokeConstant.defaultMerchant);
-        user.setUserLoginName(userRegisterRequest.getLoginUserName());
-        user.setUserName(userRegisterRequest.getLoginUserName());
-        user.setMobileNum(userRegisterRequest.getMobilePhone());
-        user.setIsSMS(1);
-        if(StringUtil.isValidString(userRegisterRequest.getOperator())){
-        	user.setCreator(userRegisterRequest.getOperator());
-        }else{
-        	user.setCreator(CommonConstant.CHECK_ADMIN_JR);
+        if(userRegisterRequest.getRegisterSource() == LoginSourceEnum.SAAS.getKey()){
+	        //4.SaaS系统添加员工属于固定金服商家（需配置起来）
+	        MerchantDetailQueryDTO merchantDetailQueryDTO = new MerchantDetailQueryDTO();
+	        merchantDetailQueryDTO.setMerchantCode(RSInvokeConstant.defaultMerchant);
+	        MerchantResponseDTO merchantResponseDTO = getMerchantFacade().queryMerchantDetail(merchantDetailQueryDTO);
+	
+	        MerchantUserCreateDTO user = new MerchantUserCreateDTO();
+	        user.setMerchantId(merchantResponseDTO.getMerchantId());
+	        user.setMerchantCode(RSInvokeConstant.defaultMerchant);
+	        user.setUserLoginName(userRegisterRequest.getLoginUserName());
+	        user.setUserName(userRegisterRequest.getLoginUserName());
+	        user.setMobileNum(userRegisterRequest.getMobilePhone());
+	        user.setIsSMS(1);
+	        if(StringUtil.isValidString(userRegisterRequest.getOperator())){
+	        	user.setCreator(userRegisterRequest.getOperator());
+	        }else{
+	        	user.setCreator(CommonConstant.CHECK_ADMIN_JR);
+	        }
+	        user.setCreatedate(new Date());
+	        user.setUserLoginPassword(userRegisterRequest.getPassword());
+	        BaseResultDTO baseResultDTO = merchantUserFacade.addMerchantUser(user);
+	        if (!baseResultDTO.getIsSuccessed()) {
+	            log.error("在房仓金服对应商家添加用户失败");
+	            throw new Exception("在房仓固定商家添加用户失败");
+	        }
         }
-        user.setCreatedate(new Date());
-        user.setUserLoginPassword(userRegisterRequest.getPassword());
-        BaseResultDTO baseResultDTO = merchantUserFacade.addMerchantUser(user);
-        if (!baseResultDTO.getIsSuccessed()) {
-            log.error("在房仓金服对应商家添加用户失败");
-            throw new Exception("在房仓固定商家添加用户失败");
-        }
-       
         response.putSuccess();
         return response;
     }

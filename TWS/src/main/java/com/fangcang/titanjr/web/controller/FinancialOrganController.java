@@ -106,6 +106,7 @@ public class FinancialOrganController extends BaseController {
     private TitanFinancialSendSMSService sendSMSService;
     
     @RequestMapping(value = "/showOrg")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String queryOrgInfo(HttpServletRequest request, Model model) {
         FinancialOrganResponse dto = titanFinancialOrganService.queryFinancialOrgan(new FinancialOrganQueryRequest());
         model.addAttribute("org", dto);
@@ -118,6 +119,7 @@ public class FinancialOrganController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/showOrgUser")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showOrgUser(HttpServletRequest request, Model model) {
     	
         return "org-reg/org-user";
@@ -237,6 +239,8 @@ public class FinancialOrganController extends BaseController {
     		int mobiletelCodeId = 0;
     		//登录用户验证
     		int userLoginCodeId = 0;
+    		log.error("机构注册，输入参数|regUserLoginInfo:"+JSONSerializer.toJSON(regUserLoginInfo).toString()+",orgRegPojo:"+JSONSerializer.toJSON(orgRegPojo).toString());
+    		
     		//校验登录名和验证码
     		if((!StringUtil.isValidString(regUserLoginInfo.getUserLoginName()))||(!StringUtil.isValidString(regUserLoginInfo.getRegCode()))){
 				model.addAttribute("errormsg", "参数错误，请重试");
@@ -285,10 +289,24 @@ public class FinancialOrganController extends BaseController {
 	    	organRegisterRequest.setMobileTel(orgRegPojo.getMobiletel());
 	    	
 	    	//session中的信息
-	    	String registerSourceStr = (String) getSession().getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE);
-	    	int registerSource = StringUtil.isValidString(registerSourceStr)?NumberUtils.toInt(WebConstant.SESSION_KEY_JR_RESOURCE_2_SAAS):NumberUtils.toInt(registerSourceStr);
+	    	//TODO 合作方用户信息，用rsa加密方式传输，TWS不应该从session取，从参数中取
+	    	String registerSourceStr = "1";
+	    	int registerSource = NumberUtils.toInt(registerSourceStr);
 	    	organRegisterRequest.setRegisterSource(registerSource);
-
+	    	String thirdPlatformLoginUserName = "luoqinglongttm";
+	    	if(StringUtil.isValidString(thirdPlatformLoginUserName)){
+	    		organRegisterRequest.setFcLoginUserName(thirdPlatformLoginUserName);
+	    		String merchantCode = "ttt";
+	    		organRegisterRequest.setMerchantCode(merchantCode);
+	    	}
+	    	if(orgRegPojo.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
+	    		//企业
+	    		organRegisterRequest.setBuslince(orgRegPojo.getBuslince());
+	    	}else{
+	    		//个人
+	    		organRegisterRequest.setCertificateNumber(orgRegPojo.getCertificatenumber());
+	    		organRegisterRequest.setCertificateType("0");//身份证
+	    	}
 			OrganRegisterResponse organRegisterResponse = titanFinancialOrganService.registerFinancialOrgan(organRegisterRequest);
 			if(organRegisterResponse.isResult()){
 				// 成功刷新InitSessionInterceptor中的session
@@ -314,13 +332,13 @@ public class FinancialOrganController extends BaseController {
 			}
     	} catch (MessageServiceException e) {
 			model.addAttribute(WebConstant.MODEL_ERROR_MSG_KEY, e.getMessage());
-			log.error("结构注册失败，错误信息："+e.getMessage()+"，输入参数|regUserLoginInfo:"+JSONSerializer.toJSON(regUserLoginInfo).toString()+",orgRegPojo:"+JSONSerializer.toJSON(orgRegPojo).toString(), e);
+			log.error("机构注册失败，错误信息："+e.getMessage()+"，输入参数|regUserLoginInfo:"+JSONSerializer.toJSON(regUserLoginInfo).toString()+",orgRegPojo:"+JSONSerializer.toJSON(orgRegPojo).toString(), e);
 		} catch (GlobalServiceException e) {
 			model.addAttribute(WebConstant.MODEL_ERROR_MSG_KEY, WebConstant.SERVICE_ERROR_MSG);
-			log.error("结构注册失败，输入参数|regUserLoginInfo:"+JSONSerializer.toJSON(regUserLoginInfo).toString()+",orgRegPojo:"+JSONSerializer.toJSON(orgRegPojo).toString(), e);
+			log.error("机构注册失败，输入参数|regUserLoginInfo:"+JSONSerializer.toJSON(regUserLoginInfo).toString()+",orgRegPojo:"+JSONSerializer.toJSON(orgRegPojo).toString(), e);
 		} catch (Exception e) {
 			model.addAttribute(WebConstant.MODEL_ERROR_MSG_KEY, WebConstant.CONTROLLER_ERROR_MSG);
-			log.error("结构注册失败，输入参数|regUserLoginInfo:"+JSONSerializer.toJSON(regUserLoginInfo).toString()+",orgRegPojo:"+JSONSerializer.toJSON(orgRegPojo).toString(), e);
+			log.error("机构注册失败，输入参数|regUserLoginInfo:"+JSONSerializer.toJSON(regUserLoginInfo).toString()+",orgRegPojo:"+JSONSerializer.toJSON(orgRegPojo).toString(), e);
 		}
     	//错误页面
     	return "error";
@@ -377,6 +395,7 @@ public class FinancialOrganController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/updateOrg")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String updateOrg(OrgRegPojo orgRegPojo,Model model){
     	
     	try {
@@ -526,6 +545,7 @@ public class FinancialOrganController extends BaseController {
     
     @ResponseBody
    	@RequestMapping(value = "/sendCode")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String sendCode(String receiveAddress,Integer msgType){
     	SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
     	if(StringUtil.isValidString(receiveAddress)){
@@ -534,7 +554,7 @@ public class FinancialOrganController extends BaseController {
     		return toJson(putSysError("参数错误"));
     	}
     	if(!(Tools.isEmailAddress(receiveAddress)||Tools.isPhone(receiveAddress))){
-    		return toJson(putSysError("参数错误"));
+    		return toJson(putSysError("手机号码或者邮箱地址格式不正确"));
     	}
     	sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
     	msgType = msgType==null?SMSType.REG_CODE.getType():msgType;
@@ -580,6 +600,7 @@ public class FinancialOrganController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/showAgreement")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showAgreement(){
     	return "org-reg/agreement";
     }
@@ -588,6 +609,7 @@ public class FinancialOrganController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/getEnterpriseInfo")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String getEnterpriseInfo(int orgId,Model model){
     	if(orgId <=0){
     		model.addAttribute("errormsg", "参数错误");
@@ -604,6 +626,7 @@ public class FinancialOrganController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/getPersernalInfo")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String getPersernalInfo(int orgId,Model model){
     	if(orgId <=0){
     		model.addAttribute("errormsg", "参数错误");
@@ -641,6 +664,7 @@ public class FinancialOrganController extends BaseController {
     * @return
     */
     @RequestMapping(value = "/showEnterpriseInfo")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showEnterpriseInfo(RegUserLoginInfo pojo, Model model){
     	model.addAttribute(pojo);
     	
@@ -652,6 +676,7 @@ public class FinancialOrganController extends BaseController {
      * 
      */
     @RequestMapping(value = "/showPersernalInfo")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showPersernalInfo(RegUserLoginInfo pojo, Model model){
     	model.addAttribute(pojo);
     	model.addAttribute("regUserLoginInfo", pojo);
@@ -663,6 +688,7 @@ public class FinancialOrganController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/checkRegCode")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String checkRegCode(String userLoginName,String regCode){
     	if((!StringUtil.isValidString(userLoginName))||(!StringUtil.isValidString(regCode))){
     		putSysError("参数错误");
@@ -681,6 +707,7 @@ public class FinancialOrganController extends BaseController {
     }
     
     @RequestMapping(value = "/upload")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public void upload(@RequestParam(value = "img_file", required = false) MultipartFile file,int imageType) throws IOException{
     	Map<String, Object> resultMap = new HashMap<String, Object>();
  

@@ -407,6 +407,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	titanOrg.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
     	titanOrg.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
     	titanOrg.setCreateTime(new Date());
+    	titanOrg.setRegChannel(organRegisterRequest.getRegisterSource());
     	organRegisterRequest.setOrgCode(orgcode);
     	if(organRegisterRequest.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
     		validateEnterpriseParam(organRegisterRequest);
@@ -537,7 +538,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	//公共参数校验,密码校验
     	if (!(GenericValidate.validate(organRegisterRequest)&&StringUtil.isValidString(organRegisterRequest.getPassword()))){
     		LOGGER.info("参数错误，organRegisterRequest："+JSONSerializer.toJSON(organRegisterRequest).toString());
-			response.putParamError();
+			response.putErrorResult("必填参数不能为空");
 			return response;
 		}
     	//判断是否可以注册
@@ -555,7 +556,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			return response;
     	}
     	
-    	if(organRegisterRequest.getRegisterSource()==LoginSourceEnum.SAAS.getKey()){
+    	if(organRegisterRequest.getRegisterSource()==LoginSourceEnum.SAAS.getKey()||organRegisterRequest.getRegisterSource()==LoginSourceEnum.TTM.getKey()){
     		registerFromSaaS(organRegisterRequest);
     		addOrgCheck(organRegisterRequest.getOrgCode(),organRegisterRequest.getOperator());
     	}else if(organRegisterRequest.getRegisterSource()==LoginSourceEnum.TFS.getKey()){

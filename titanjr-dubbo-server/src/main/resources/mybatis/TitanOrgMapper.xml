@@ -283,7 +283,7 @@
       loancard, acuntopnlince, corporatename, 
       personengname, persontype, personsex, 
       birthday, fixTel, titancode, 
-      email,createTime)
+      email,regchannel,createTime)
     values (#{orgid,jdbcType=INTEGER}, #{orgcode,jdbcType=VARCHAR}, #{orgname,jdbcType=VARCHAR}, 
       #{constid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, #{productid,jdbcType=VARCHAR}, 
       #{role,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{usertype,jdbcType=INTEGER}, 
@@ -296,7 +296,7 @@
       #{loancard,jdbcType=VARCHAR}, #{acuntopnlince,jdbcType=VARCHAR}, #{corporatename,jdbcType=VARCHAR}, 
       #{personengname,jdbcType=VARCHAR}, #{persontype,jdbcType=VARCHAR}, #{personsex,jdbcType=VARCHAR}, 
       #{birthday}, #{fixTel,jdbcType=VARCHAR}, #{titancode,jdbcType=VARCHAR}, 
-      #{email,jdbcType=VARCHAR},#{createTime})
+      #{email,jdbcType=VARCHAR},#{regChannel},#{createTime})
   </insert>
     <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanOrg">
         update t_tfs_org

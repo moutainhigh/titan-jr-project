@@ -68,7 +68,10 @@ public class TitanOrg implements java.io.Serializable {
 	private String email;
 	private Date createTime;
 	private Date updateTime;
-	
+	/**
+	 * 注册渠道:1-金融官网，2-SAAS,4-TTM'
+	 */
+	private Integer regChannel;
 
 	// Constructors
 
@@ -379,5 +382,14 @@ public class TitanOrg implements java.io.Serializable {
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
+
+	public Integer getRegChannel() {
+		return regChannel;
+	}
+
+	public void setRegChannel(Integer regChannel) {
+		this.regChannel = regChannel;
+	}
+	
 
 }

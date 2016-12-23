@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
@@ -18,6 +19,7 @@ import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
 
@@ -34,6 +36,7 @@ public class FinancialMainController extends BaseController {
     private TitanFinancialUserService titanFinancialUserService;
     
     @RequestMapping(value = "/common/main", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String toIndex(HttpServletRequest request, Model model) {
 
         return "main";
@@ -46,6 +49,7 @@ public class FinancialMainController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/home", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String home(HttpServletRequest request, Model model) throws Exception {
     	try {
     		queryOrgInfo(model);
