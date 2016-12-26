@@ -38,6 +38,13 @@ public class RefundDTO implements Serializable{
 	private String transferAmount;
 	
 	private String fee;
+	
+	private String payOrderNo;
+	
+	private String notifyUrl;
+	
+	private String userOrderId;
+	
 
 	public String getMerchantNo() {
 		return merchantNo;
@@ -150,4 +157,29 @@ public class RefundDTO implements Serializable{
 	public void setFee(String fee) {
 		this.fee = fee;
 	}
+
+	public String getPayOrderNo() {
+		return payOrderNo;
+	}
+
+	public void setPayOrderNo(String payOrderNo) {
+		this.payOrderNo = payOrderNo;
+	}
+
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
+	}
+
+	public String getUserOrderId() {
+		return userOrderId;
+	}
+
+	public void setUserOrderId(String userOrderId) {
+		this.userOrderId = userOrderId;
+	}
+
 }

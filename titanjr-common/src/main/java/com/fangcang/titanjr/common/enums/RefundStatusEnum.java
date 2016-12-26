@@ -13,5 +13,17 @@ public enum RefundStatusEnum {
 		this.msg = msg;
 	}
 	
+	public static RefundStatusEnum getRefundStatusEnumByStatus(Integer status){
+		if(null == status){
+			return null;
+		}
+		
+		for(RefundStatusEnum st :RefundStatusEnum.values()){
+			if(st.status == status){
+				return st;
+			}
+		}
+		return null;
+	}
 	
 }

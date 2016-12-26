@@ -32,6 +32,27 @@ public enum PayTypeEnum {
 		return null;
 	}
 	
+	public static PayTypeEnum getPayTypeEnumByKey(String key){
+		if(StringUtil.isValidString(key)){
+			for(PayTypeEnum payTypeEnum:PayTypeEnum.values()){
+				if(key.equals(payTypeEnum.key)){
+					return payTypeEnum;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static boolean isRealTimeToAccount(String key){
+		if(!StringUtil.isValidString(key)){
+			return false;
+		}
+		if(PayTypeEnum.WECHAT_URL.key.equals(key)){
+			return true;
+		}
+		return false;
+	}
+	
 	public String getKey() {
 		return key;
 	}

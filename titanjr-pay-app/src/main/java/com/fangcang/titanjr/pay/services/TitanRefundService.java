@@ -51,6 +51,7 @@ import com.fangcang.titanjr.dto.response.TitanJrRefundResponse;
 import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.enums.BusiCodeEnum;
+import com.fangcang.titanjr.enums.PayTypeEnum;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.controller.TitanTradeController;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
@@ -170,6 +171,8 @@ public class TitanRefundService {
 			titanJrRefundRequest.setFee(fee.toString());
 			titanJrRefundRequest.setFreeze(refundRequest.isFreeze());
 			titanJrRefundRequest.setTfsUerId(refundRequest.getTfsUserid());
+			titanJrRefundRequest.setUserOrderId(transOrderDTO.getUserorderid());
+			titanJrRefundRequest.setNotifyUrl(refundRequest.getNotifyUrl());
 			//查看是否有充值单
 			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
 			titanOrderPayDTO.setTransorderid(transOrderDTO.getTransid());
@@ -188,6 +191,10 @@ public class TitanRefundService {
 				titanJrRefundRequest.setOrderTime(titanOrderPayDTO.getOrderTime());
 				titanJrRefundRequest.setVersion(titanOrderPayDTO.getVersion());
 				titanJrRefundRequest.setSignType(titanOrderPayDTO.getSignType().toString());
+				titanJrRefundRequest.setIsRealTime(CommonConstant.NOT_REAL_TIME);
+				if(PayTypeEnum.isRealTimeToAccount(titanOrderPayDTO.getPayType())){
+					titanJrRefundRequest.setIsRealTime(CommonConstant.REAL_TIME);
+				}
 				
 				BigDecimal orderAmount = new BigDecimal(titanOrderPayDTO.getOrderAmount());
 				//只有充值
@@ -236,7 +243,10 @@ public class TitanRefundService {
 		    if(StringUtil.isValidString(titanJrRefundRequest.getToBankCardOrAccount()) && 
 		    		titanJrRefundRequest.getToBankCardOrAccount().equals(RefundTypeEnum.REFUND_ACCOUNT.type)){
 		    	 order.setStatusid(OrderStatusEnum.REFUND_SUCCESS.getStatus());
+		    }else if(titanJrRefundRequest.getIsRealTime()==CommonConstant.REAL_TIME){
+		    	order.setStatusid(OrderStatusEnum.REFUND_SUCCESS.getStatus());
 		    }
+		    log.info("退款成功修改订单状态:"+order.getTransid()+":"+order.getStatusid());
 		    order.setTransid(transOrderDTO.getTransid());
 		    flag = titanOrderService.updateTransOrder(order);
 		    if(!flag){

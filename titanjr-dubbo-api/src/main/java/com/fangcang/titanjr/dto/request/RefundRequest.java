@@ -22,6 +22,8 @@ public class RefundRequest implements Serializable{
 	
 	private String isMerchCode;
 	
+	private String notifyUrl;
+	
 	private boolean isFreeze = false;
 
 	public String getOrderNo() {
@@ -70,6 +72,14 @@ public class RefundRequest implements Serializable{
 
 	public void setIsMerchCode(String isMerchCode) {
 		this.isMerchCode = isMerchCode;
+	}
+
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
 	}
 
 }

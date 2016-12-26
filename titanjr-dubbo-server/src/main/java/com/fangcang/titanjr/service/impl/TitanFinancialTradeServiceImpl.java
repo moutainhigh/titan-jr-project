@@ -16,6 +16,7 @@ import com.Rop.api.domain.Refund;
 import com.alibaba.fastjson.JSON;
 import com.fangcang.order.api.HotelOrderSearchFacade;
 import com.fangcang.order.dto.OrderDetailResponseDTO;
+import com.fangcang.titanjr.common.bean.CallBackInfo;
 import com.fangcang.titanjr.common.enums.*;
 import com.fangcang.titanjr.common.util.*;
 import com.fangcang.titanjr.dto.request.*;
@@ -37,6 +38,7 @@ import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
+import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
 import com.fangcang.titanjr.dao.DomainConfigDao;
 import com.fangcang.titanjr.dao.TitanAccountDao;
 import com.fangcang.titanjr.dao.TitanDynamicKeyDao;
@@ -45,7 +47,6 @@ import com.fangcang.titanjr.dao.TitanRefundDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
-import com.fangcang.titanjr.dto.bean.CallBackInfo;
 import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.GDPOrderDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
@@ -212,22 +213,22 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				return localAddTransOrderResponse;
 			}
 			// 未下单
-			titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
-			titanTransOrder.setUserorderid(OrderGenerateService
-					.genSyncUserOrderId());
-			titanTransOrder.setStatusid(OrderStatusEnum.RECHARGE_IN_PROCESS
-					.getStatus());
-			// 融数下单
-			log.info("the params of local order :"
-					+ JSONSerializer.toJSON(titanTransOrder));
-			if (titanTransOrderDao.insert(titanTransOrder) > 0 ? true : false) {
-				localAddTransOrderResponse.setUserOrderId(titanTransOrder
-						.getUserorderid());
-				localAddTransOrderResponse.setOrderNo(titanTransOrder
-						.getOrderid());
-				localAddTransOrderResponse.putSuccess();
-				return localAddTransOrderResponse;
-			}
+//			titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
+//			titanTransOrder.setUserorderid(OrderGenerateService
+//					.genSyncUserOrderId());
+//			titanTransOrder.setStatusid(OrderStatusEnum.RECHARGE_IN_PROCESS
+//					.getStatus());
+//			// 融数下单
+//			log.info("the params of local order :"
+//					+ JSONSerializer.toJSON(titanTransOrder));
+//			if (titanTransOrderDao.insert(titanTransOrder) > 0 ? true : false) {
+//				localAddTransOrderResponse.setUserOrderId(titanTransOrder
+//						.getUserorderid());
+//				localAddTransOrderResponse.setOrderNo(titanTransOrder
+//						.getOrderid());
+//				localAddTransOrderResponse.putSuccess();
+//				return localAddTransOrderResponse;
+//			}
 			// 本地落单
 		} catch (Exception e) {
 			log.error("add local order is failed" + e.getMessage(), e);
@@ -688,7 +689,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		}
 		log.info("调用http请求通知支付支付结果完成：" + response);
 		if (StringUtil.isValidString(response)) {
-			CallBackInfo callBackInfo = this.analyzeResponse(response);
+			CallBackInfo callBackInfo = TitanjrHttpTools.analyzeResponse(response);
 			if (!"000".equals(callBackInfo.getCode())) {
 				log.error("回调失败单号:" + transOrderDTO.getUserorderid());
 				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(
@@ -758,24 +759,24 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return params;
 	}
 
-	private CallBackInfo analyzeResponse(String info) {
-		CallBackInfo callBackInfo = new CallBackInfo();
-		String[] sourceStrArray = info.split("&");
-		if (sourceStrArray != null && sourceStrArray.length > 0) {
-			String[] code = sourceStrArray[0].split("=");
-			if (null != code && code.length == 2) {
-				callBackInfo.setCode(code[1]);
-			}
-			if (sourceStrArray.length == 2) {
-				String[] msg = sourceStrArray[1].split("=");
-				if (null != msg && msg.length == 2) {
-					callBackInfo.setMsg(msg[1]);
-				}
-			}
-			return callBackInfo;
-		}
-		return null;
-	}
+//	private CallBackInfo analyzeResponse(String info) {
+//		CallBackInfo callBackInfo = new CallBackInfo();
+//		String[] sourceStrArray = info.split("&");
+//		if (sourceStrArray != null && sourceStrArray.length > 0) {
+//			String[] code = sourceStrArray[0].split("=");
+//			if (null != code && code.length == 2) {
+//				callBackInfo.setCode(code[1]);
+//			}
+//			if (sourceStrArray.length == 2) {
+//				String[] msg = sourceStrArray[1].split("=");
+//				if (null != msg && msg.length == 2) {
+//					callBackInfo.setMsg(msg[1]);
+//				}
+//			}
+//			return callBackInfo;
+//		}
+//		return null;
+//	}
 
 	// 查询转账
 	@Override
@@ -2434,7 +2435,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	}
 	
 	
-	private <T> List<NameValuePair> getCommonHttpParams(T t) throws IllegalArgumentException, IllegalAccessException{
+	protected <T> List<NameValuePair> getCommonHttpParams(T t) throws Exception{
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		
 		Field[] cls =  t.getClass().getDeclaredFields();
@@ -2547,5 +2548,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		response.putSuccess();
 		return response;
 	}
+	
 }
 

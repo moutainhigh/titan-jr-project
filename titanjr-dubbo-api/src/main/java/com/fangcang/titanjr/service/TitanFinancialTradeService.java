@@ -1,6 +1,10 @@
 package com.fangcang.titanjr.service;
 
 
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
@@ -175,4 +179,5 @@ public interface TitanFinancialTradeService {
 	 * @return
 	 */
 	public ConfirmOrdernQueryResponse ordernQuery(ConfirmOrdernQueryRequest ordernQueryRequest);	
+	
 }

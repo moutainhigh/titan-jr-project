@@ -30,6 +30,12 @@ public class RefundOrderRequest extends BaseRequestDTO {
 	
 	private String fee;
 	
+	private String notifyUrl;
+	
+	private String payOrderNo;
+	
+	private Integer isRealTime;
+	
 	public String getCreator() {
 		return creator;
 	}
@@ -93,5 +99,28 @@ public class RefundOrderRequest extends BaseRequestDTO {
 	public void setFee(String fee) {
 		this.fee = fee;
 	}
-	
+
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
+	}
+
+	public String getPayOrderNo() {
+		return payOrderNo;
+	}
+
+	public void setPayOrderNo(String payOrderNo) {
+		this.payOrderNo = payOrderNo;
+	}
+
+	public Integer getIsRealTime() {
+		return isRealTime;
+	}
+
+	public void setIsRealTime(Integer isRealTime) {
+		this.isRealTime = isRealTime;
+	}
 }

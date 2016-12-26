@@ -62,7 +62,8 @@
 					orderNo:$("#reorderNo").val(),
 					userId:$("#reuserId").val(),
 					tfsUserid:$("#retfsUserid").val(),
-					isMerchCode:'1'
+					isMerchCode:$("#isMerchCode").val(),
+					notifyUrl:$("#notifyUrl").val()
 			};
 			
 			   window.location=titanPayObj.getRefund(refundInfo);
@@ -190,6 +191,16 @@
             <tr>
                 <td class="tdr">操作人ID</td>
                 <td><input type="text" id="retfsUserid" value="10122" name="retfsUserid"/>
+                </td>
+            </tr>
+             <tr>
+                <td class="tdr">是否为商家编码</td>
+                <td><input type="text" id="isMerchCode" value="10122" name="isMerchCode"/>1,商家编码，0金融账号
+                </td>
+            </tr>
+             <tr>
+                <td class="tdr">回调地址</td>
+                <td><input type="text" id="notifyUrl" value="10122" name="notifyUrl"/>
                 </td>
             </tr>
             

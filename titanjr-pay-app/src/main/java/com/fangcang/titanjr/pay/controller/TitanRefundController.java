@@ -66,10 +66,12 @@ public class TitanRefundController extends BaseController{
 	public String orderRefund(RefundRequest refundRequest,Model model){
 	
 		
-		if(null == refundRequest || !StringUtil.isValidString(refundRequest.getOrderNo())
+		if(null == refundRequest 
+				||!StringUtil.isValidString(refundRequest.getOrderNo())
 				||!StringUtil.isValidString(refundRequest.getPayPassword())
 				||!StringUtil.isValidString(refundRequest.getUserId())
 				||!StringUtil.isValidString(refundRequest.getTfsUserid())
+				||!StringUtil.isValidString(refundRequest.getNotifyUrl())
 				){
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 			
@@ -107,6 +109,7 @@ public class TitanRefundController extends BaseController{
 		if(null == refundRequest || !StringUtil.isValidString(refundRequest.getOrderNo())
 					||!StringUtil.isValidString(refundRequest.getUserId())
 					||!StringUtil.isValidString(refundRequest.getTfsUserid())
+					||!StringUtil.isValidString(refundRequest.getNotifyUrl())
 				){
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}

@@ -147,16 +147,16 @@ public class TitanPaymentController extends BaseController {
         	}
         	
         	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARGE_SUCCESS;
-        	if(!validateOrderStatus(orderNo)){
+        	if(!validateOrderStatus(orderNo)){//发出三次确认订单成功到帐
     			log.error("实在没办法,钱没到账，不能转账");
     			orderStatusEnum = OrderStatusEnum.ORDER_DELAY;
     			titanPaymentService.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
     			return ;
     		}
         	
-        	if(PayerTypeEnum.RECHARGE.key.equals(payerType.getKey())){
+        	if(PayerTypeEnum.RECHARGE.key.equals(payerType.getKey())){//如果是充值则置订单为成功
         		orderStatusEnum= OrderStatusEnum.ORDER_SUCCESS;
-        	}else{
+        	}else{//不是充值操作，就需要转帐
         		TransferRequest transferRequest = titanPaymentService.convertToTransferRequest(transOrderDTO);
 	        	log.info("begin to transfer:"+JsonConversionTool.toJson(transferRequest));
 	        	TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);

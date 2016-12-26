@@ -52,6 +52,13 @@ public class TitanJrRefundRequest extends BaseRequestDTO {
 	
 	private String transferAmount;
 	
+	private String userOrderId;
+	
+	private String notifyUrl;
+	
+	//0实时，1延时
+	private Integer isRealTime = 1;
+	
 
 	public String getPayOrderNo() {
 		return payOrderNo;
@@ -219,5 +226,29 @@ public class TitanJrRefundRequest extends BaseRequestDTO {
 
 	public void setTransferAmount(String transferAmount) {
 		this.transferAmount = transferAmount;
+	}
+
+	public String getUserOrderId() {
+		return userOrderId;
+	}
+
+	public void setUserOrderId(String userOrderId) {
+		this.userOrderId = userOrderId;
+	}
+
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
+	}
+
+	public Integer getIsRealTime() {
+		return isRealTime;
+	}
+
+	public void setIsRealTime(Integer isRealTime) {
+		this.isRealTime = isRealTime;
 	}
 }

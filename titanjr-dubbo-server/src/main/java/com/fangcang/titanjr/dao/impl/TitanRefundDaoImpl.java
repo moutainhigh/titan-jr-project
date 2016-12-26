@@ -25,7 +25,8 @@ public class TitanRefundDaoImpl  extends GenericDAOMyBatisImpl implements TitanR
 		try {
 			if(!StringUtil.isValidString(refundDTO.getRefundId()) && 
 				!StringUtil.isValidString(refundDTO.getOrderNo()) &&
-				!StringUtil.isValidString(refundDTO.getRefundOrderno())){
+				!StringUtil.isValidString(refundDTO.getRefundOrderno())&&
+				!StringUtil.isValidString(refundDTO.getUserOrderId())){
 				return null;
 			}
 			return super.selectList("com.fangcang.titanjr.dao.TitanRefundDao.queryList", refundDTO);
@@ -39,7 +40,8 @@ public class TitanRefundDaoImpl  extends GenericDAOMyBatisImpl implements TitanR
 		try {
 			if(!StringUtil.isValidString(refundDTO.getRefundId()) && 
 				!StringUtil.isValidString(refundDTO.getOrderNo()) &&
-				!StringUtil.isValidString(refundDTO.getRefundOrderno())){
+				!StringUtil.isValidString(refundDTO.getRefundOrderno())&&
+				!StringUtil.isValidString(refundDTO.getUserOrderId())){
 				return 0;
 			}
 			return super.updateEntity("com.fangcang.titanjr.dao.TitanRefundDao.updateEntity", refundDTO);

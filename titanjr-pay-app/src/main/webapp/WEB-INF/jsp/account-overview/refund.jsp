@@ -134,7 +134,8 @@
 							 tfsUserid:'${refundRequest.tfsUserid}',
 							 orderNo:'${transOrderDTO.userorderid}',
 							 payPassword:PasswordStr2.returnStr(),
-							 userId:'${transOrderDTO.userrelateid}'
+							 userId:'${transOrderDTO.userrelateid}',
+							 notifyUrl:'${refundRequest.notifyUrl}'
 						 },
 						 success:function(data){
 							 if(data.result ==true){

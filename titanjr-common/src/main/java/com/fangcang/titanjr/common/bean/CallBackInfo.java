@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.dto.bean;
+package com.fangcang.titanjr.common.bean;
 
 import java.io.Serializable;
 

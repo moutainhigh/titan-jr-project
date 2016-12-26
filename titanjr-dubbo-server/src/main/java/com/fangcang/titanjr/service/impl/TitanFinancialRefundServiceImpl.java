@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.service.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +10,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
+
+import net.sf.json.JSONSerializer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,7 +24,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.fangcang.enums.RefundStateEnum;
+import com.fangcang.titanjr.common.bean.CallBackInfo;
+import com.fangcang.titanjr.common.bean.NotifyBean;
 import com.fangcang.titanjr.common.enums.ConditioncodeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
@@ -37,6 +43,7 @@ import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
 import com.fangcang.titanjr.common.util.RequestValidationUtil;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
+import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
 import com.fangcang.titanjr.dao.TitanFundFreezereqDao;
 import com.fangcang.titanjr.dao.TitanRefundDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
@@ -78,6 +85,7 @@ import com.fangcang.titanjr.service.TitanFinancialRefundService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.JsonUtil;
 import com.fangcang.util.StringUtil;
+import com.sun.jdi.Method;
 
 @Service("titanFinancialRefundService")
 public class TitanFinancialRefundServiceImpl implements
@@ -220,6 +228,10 @@ public class TitanFinancialRefundServiceImpl implements
 			refundOrderRequest.setOrderTime(refundRequest.getOrderTime());
 			refundOrderRequest.setTransferAmount(refundRequest.getTransferAmount());
 			refundOrderRequest.setFee(refundRequest.getFee());
+			refundOrderRequest.setPayOrderNo(refundRequest.getPayOrderNo());
+			refundOrderRequest.setUserOrderId(refundRequest.getUserOrderId());
+			refundOrderRequest.setNotifyUrl(refundRequest.getNotifyUrl());
+			refundOrderRequest.setIsRealTime(refundRequest.getIsRealTime());
 			if(StringUtil.isValidString(refundRequest.getTfsUerId())){
 				TitanUser user = titanUserDao.selectTitanUser(Integer.parseInt(refundRequest.getTfsUerId()));
 			    if(user !=null){
@@ -257,6 +269,11 @@ public class TitanFinancialRefundServiceImpl implements
 				return response;
 			}
 			response.putSuccess();
+			RefundStatusEnum refundStatus = RefundStatusEnum.REFUND_IN_PROCESS;
+			if(refundRequest.getIsRealTime()==CommonConstant.REAL_TIME){
+				refundStatus = RefundStatusEnum.REFUND_SUCCESS;
+			}
+			this.threadNotify(refundOrderRequest.getOrderId(),refundStatus);
 			this.unlockOutTradeNoList(refundRequest.getPayOrderNo());
 			return response;
 		}catch(Exception e){
@@ -420,7 +437,6 @@ public class TitanFinancialRefundServiceImpl implements
 			refundOrderResponse.putErrorResult(TitanMsgCodeEnum.RS_ADD_REFUND_ORDER_FAIL);
 			return refundOrderResponse;
 		}
-		
 		TitanRefund titanRefund = new TitanRefund();
 		titanRefund.setOrderid(refundOrderRequest.getOrderId());
 		titanRefund.setRefundOrderno(refundResponse.getRefundOrderNo());
@@ -431,6 +447,12 @@ public class TitanFinancialRefundServiceImpl implements
 		titanRefund.setTransferAmount(refundOrderRequest.getTransferAmount());
 		titanRefund.setFee(refundOrderRequest.getFee());
 		titanRefund.setStatus(RefundStatusEnum.REFUND_IN_PROCESS.status);
+		if(refundOrderRequest.getIsRealTime() == CommonConstant.REAL_TIME){
+			titanRefund.setStatus(RefundStatusEnum.REFUND_SUCCESS.status);
+		}
+		titanRefund.setNotifyUrl(refundOrderRequest.getNotifyUrl());
+		titanRefund.setUserorderid(refundOrderRequest.getUserOrderId());
+		titanRefund.setPayOrderNo(refundOrderRequest.getPayOrderNo());
 		try{
 			titanRefundDao.insert(titanRefund);
 		}catch(Exception e){
@@ -639,6 +661,7 @@ public class TitanFinancialRefundServiceImpl implements
 			    }	
 				try{
 					if(isUpdate){
+						this.threadNotify(refundDTO.getOrderNo(),RefundStatusEnum.getRefundStatusEnumByStatus(refundDTO.getStatus()));
 						titanOrderService.updateTransOrder(transOrderDTO);
 						titanRefundDao.updateRefundDTO(refundDTO);
 					}
@@ -653,7 +676,58 @@ public class TitanFinancialRefundServiceImpl implements
 
 	@Override
 	public RefundDTO queryRefundRequest(RefundDTO refundDTO) {
-		
 		return null;
 	}
+	
+	
+	private void notifyTTMall(NotifyBean bean){
+		HttpPost httpPost = new HttpPost(bean.getNotifyUrl());
+		String response = "";
+		try{
+			response = TitanjrHttpTools.confirmRefund(bean, httpPost);
+			if(!StringUtil.isValidString(response)){
+				log.error("回调退款单失败:" + bean.getUserOrderId());
+				throw new Exception("回调异常");
+			}
+			CallBackInfo callBackInfo = TitanjrHttpTools.analyzeResponse(response);
+			if (!"000".equals(callBackInfo.getCode())) {
+				log.error("回调异常，TTMALL返回失败");
+				throw new Exception("回调异常，TTMALL返回失败");
+			}
+			
+			log.info("回调TTMALL成功");
+			
+		}catch(Exception e){
+			log.error("退款回调失败",e);
+			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(
+					bean.getUserOrderId(), "",
+					OrderExceptionEnum.Finance_Confirm,
+					response);
+			titanOrderService.saveOrderException(orderExceptionDTO);
+		}
+	}
+	
+	private void threadNotify(final String orderNo,final RefundStatusEnum refundStatus){
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				RefundDTO refund = new RefundDTO();
+				refund.setOrderNo(orderNo);
+				List<RefundDTO> reFundList= titanRefundDao.queryRefundDTO(refund);
+				if(null==reFundList || reFundList.size()!=1 || reFundList.get(0)==null){
+					log.error("查询退款单异常："+orderNo);
+					return;
+				}
+				refund = reFundList.get(0);
+				NotifyBean bean = new NotifyBean();
+				bean.setPayOrderNo(refund.getPayOrderNo());
+				bean.setNotifyUrl(refund.getNotifyUrl());
+				bean.setUserOrderId(refund.getUserOrderId());
+				bean.setCode(refundStatus.status.toString());
+				notifyTTMall(bean);
+			}
+		});
+		t.start();
+	}
+	
 }
