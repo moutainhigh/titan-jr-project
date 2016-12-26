@@ -91,9 +91,14 @@
 			</where>
 	</select>
 	
+	
+	
+	
     <update id="updateLoanCreditOrder" parameterType="com.fangcang.titanjr.entity.LoanCreditOrder">
         update t_loan_creditorder
         <set>
+        	
+        	<if test="newOrderNo != null">orderNo= #{newOrderNo},</if>
             <if test="dayLimit != null">daylimit= #{dayLimit},</if>
             <if test="amount != null">amount= #{amount},</if>
             <if test="actualAmount != null">actualamount= #{actualAmount},</if>

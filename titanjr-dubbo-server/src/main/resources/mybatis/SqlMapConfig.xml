@@ -94,6 +94,9 @@
 		<mapper resource="mybatis/LoanPersonEnsure.xml"/>
 		<mapper resource="mybatis/LoanSpecification.xml"/>
 		<mapper resource="mybatis/TitanOpenOrgMapper.xml"/>
+		
+		<mapper resource="mybatis/TitanOpenOrgMapper.xml"/>
+		<mapper resource="mybatis/LoanCreditOrderDiscardMapper.xml"/>
 
 	</mappers>
 

@@ -8,6 +8,8 @@ import java.util.Date;
 public class LoanCompanyEnsure {
 
 	private Long id;
+	// 新授信单号
+	private String newOrderNo;
 	// 授信单号
 	private String orderNo;
 
@@ -69,6 +71,16 @@ public class LoanCompanyEnsure {
 	 * 注册资本
 	 */
 	private String registFinance;
+
+	
+	
+	public String getNewOrderNo() {
+		return newOrderNo;
+	}
+
+	public void setNewOrderNo(String newOrderNo) {
+		this.newOrderNo = newOrderNo;
+	}
 
 	public Date getCertificateStartDate() {
 		return certificateStartDate;

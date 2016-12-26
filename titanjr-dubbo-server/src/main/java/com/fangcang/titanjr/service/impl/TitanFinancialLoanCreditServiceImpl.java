@@ -15,6 +15,7 @@ import net.sf.json.JSONSerializer;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.jcajce.provider.symmetric.AES.OFB;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -43,8 +44,10 @@ import com.fangcang.titanjr.dao.LoanCompanyEnsureDao;
 import com.fangcang.titanjr.dao.LoanCreditCompanyDao;
 import com.fangcang.titanjr.dao.LoanCreditOpinionDao;
 import com.fangcang.titanjr.dao.LoanCreditOrderDao;
+import com.fangcang.titanjr.dao.LoanCreditOrderDiscardDao;
 import com.fangcang.titanjr.dao.LoanPersonEnsureDao;
 import com.fangcang.titanjr.dao.PlatformOrderOprDao;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.CreditCompanyInfoDTO;
 import com.fangcang.titanjr.dto.bean.LoanCompanyAppendInfo;
 import com.fangcang.titanjr.dto.bean.LoanCompanyEnsureBean;
@@ -62,6 +65,7 @@ import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
 import com.fangcang.titanjr.dto.request.LoanAmountEvaluationRequest;
+import com.fangcang.titanjr.dto.request.LoanCreditOrderDiscardRequest;
 import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
 import com.fangcang.titanjr.dto.request.NotifyRequest;
 import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
@@ -84,6 +88,7 @@ import com.fangcang.titanjr.entity.LoanCompanyEnsure;
 import com.fangcang.titanjr.entity.LoanCreditCompany;
 import com.fangcang.titanjr.entity.LoanCreditOpinion;
 import com.fangcang.titanjr.entity.LoanCreditOrder;
+import com.fangcang.titanjr.entity.LoanCreditOrderDiscard;
 import com.fangcang.titanjr.entity.LoanPersonEnsure;
 import com.fangcang.titanjr.entity.PlatformOrderStat;
 import com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam;
@@ -143,6 +148,9 @@ public class TitanFinancialLoanCreditServiceImpl implements
 
 	@Resource
 	private LoanCreditOpinionDao loanCreditOpinionDao;
+	
+	@Resource
+	private LoanCreditOrderDiscardDao loanCreditOrderDiscardDao;
 
 	@Resource
 	private RSCreditManager rsCreditManager;
@@ -1080,27 +1088,26 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		updateLoanCreditOrderParam.setStatus(notifyRequest.getStatus());
 
 		try {
+			LoanCreditOrder loanCreditOrderParam = new LoanCreditOrder();
+			loanCreditOrderParam.setOrderNo(notifyRequest.getBuessNo());
+
+			List<LoanCreditOrder> loanCreditOrderList = loanCreditOrderDao
+					.queryLoanCreditOrder(loanCreditOrderParam);
+			if (loanCreditOrderList == null
+					|| loanCreditOrderList.size() == 0) {
+				response.putErrorResult("授信申请单不存在");
+				return response;
+			}
+			LoanCreditOrder loanCreditOrder = loanCreditOrderList.get(0);
 			if (notifyRequest.getStatus() == LoanCreditStatusEnum.REVIEW_PASS
 					.getStatus()) {
 				// 通过
-
-				LoanCreditOrder loanCreditOrder = new LoanCreditOrder();
-				loanCreditOrder.setOrderNo(notifyRequest.getBuessNo());
-
-				List<LoanCreditOrder> loanCreditOrderList = loanCreditOrderDao
-						.queryLoanCreditOrder(loanCreditOrder);
-				if (loanCreditOrderList == null
-						|| loanCreditOrderList.size() == 0) {
-					response.putErrorResult("授信申请单不存在");
-					return response;
-				}
-
 				// 授信结构信息
 				QueryCreditMerchantInfoRequest request = new QueryCreditMerchantInfoRequest();
 				request.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
 				request.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
 				request.setUserorderid(notifyRequest.getBuessNo());
-				request.setUserid(loanCreditOrderList.get(0).getOrgCode());
+				request.setUserid(loanCreditOrder.getOrgCode());
 				QueryCreditMerchantInfoResponse queryCreditMerchantInfoResponse = rsCreditManager
 						.queryCreditMerchantInfo(request);
 
@@ -1120,17 +1127,52 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				updateLoanCreditOrderParam.setAmount(amount);// 授信总额度
 				updateLoanCreditOrderParam.setActualAmount(actualAmount);// 剩余可用额度
 
-			} else {
-				// 不通过
+			} else if(notifyRequest.getStatus() == LoanCreditStatusEnum.NO_PASS.getStatus()) {
+				// 融数审核不通过
+				//更新授信申请订单号
+				LoanCreditOrder updateNoLoanCreditOrderParam = new LoanCreditOrder();
+				String newOrderNo = titanCodeCenterService.createLoanCreditOrderNo();
+				updateNoLoanCreditOrderParam.setNewOrderNo(newOrderNo);
+				updateNoLoanCreditOrderParam.setOrderNo(notifyRequest.getBuessNo());
+				loanCreditOrderDao.updateLoanCreditOrder(updateNoLoanCreditOrderParam);
+				
+				LoanCompanyEnsure loanCompanyEnsureParam = new LoanCompanyEnsure();
+				loanCompanyEnsureParam.setOrgCode(loanCreditOrder.getOrgCode());
+				loanCompanyEnsureParam.setOrderNo(notifyRequest.getBuessNo());
+				loanCompanyEnsureParam.setNewOrderNo(newOrderNo);
+				loanCompanyEnsureDao.updateCompanyEnsure(loanCompanyEnsureParam);
+				
+				LoanCreditCompany loanCreditCompanyParam = new LoanCreditCompany();
+				loanCreditCompanyParam.setCreditOrderNo(notifyRequest.getBuessNo());
+				loanCreditCompanyParam.setNewOrderNo(newOrderNo);
+				loanCreditCompanyDao.updateCreditCompany(loanCreditCompanyParam);
+				
+				LoanPersonEnsure loanPersonEnsureParam = new LoanPersonEnsure();
+				loanPersonEnsureParam.setOrderNo(notifyRequest.getBuessNo());
+				loanPersonEnsureParam.setNewOrderNo(newOrderNo);
+				loanPersonEnsureDao.updateLoanPersonEnsure(loanPersonEnsureParam);
+				
+				
 				// 添加批注记录
 				LoanCreditOpinion loanCreditOpinion = new LoanCreditOpinion();
-				loanCreditOpinion.setOrderNo(notifyRequest.getBuessNo());
+				loanCreditOpinion.setOrderNo(newOrderNo);
 				loanCreditOpinion.setResult(notifyRequest.getStatus());
 				loanCreditOpinion.setContent(notifyRequest.getMsg());
 				loanCreditOpinion.setStatus(1);// 1：新添加，没有修改过，2：修改过
 				loanCreditOpinion.setCreater(CommonConstant.CHECK_ADMIN_RS);
 				loanCreditOpinion.setCreateTime(now);
 				loanCreditOpinionDao.saveLoanCreditOpinion(loanCreditOpinion);
+				
+				//记录授信申请单废弃历史
+				LoanCreditOrderDiscard entity = new LoanCreditOrderDiscard();
+				entity.setNewOrderNo(newOrderNo);
+				entity.setOldOrderNo(notifyRequest.getBuessNo());
+				entity.setRsorderNo(notifyRequest.getOrderNo());
+				entity.setOrgCode(loanCreditOrder.getOrgCode());
+				entity.setDiscardMsg(notifyRequest.getMsg());
+				entity.setDiscardTime(now);
+				loanCreditOrderDiscardDao.insert(entity);
+				
 			}
 			loanCreditOrderDao
 					.updateLoanCreditOrder(updateLoanCreditOrderParam);
@@ -1248,4 +1290,28 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		evaluationResponse.putSuccess();
 		return evaluationResponse;
 	}
+
+	@Override
+	public BaseResponseDTO insertLoanCreditOrderDiscard(
+			LoanCreditOrderDiscardRequest request) {
+		BaseResponseDTO responseDTO = new BaseResponseDTO();
+		LoanCreditOrderDiscard entity = new LoanCreditOrderDiscard();
+		entity.setNewOrderNo(request.getNewOrderNo());
+		entity.setOldOrderNo(request.getOldOrderNo());
+		entity.setOrgCode(request.getOrgCode());
+		entity.setRsorderNo(request.getRsorderNo());
+		entity.setDiscardMsg(request.getDiscardMsg());
+		entity.setRemark(request.getRemark());
+		
+		int i =  loanCreditOrderDiscardDao.insert(entity);
+		if(i==1){
+			responseDTO.putSuccess();
+		}else{
+			responseDTO.putErrorResult("数据保存失败");
+		}
+		
+		return responseDTO;
+	}
+	
+	
 }

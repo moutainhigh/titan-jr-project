@@ -87,6 +87,7 @@
     <update id="updateCompanyEnsure" parameterType="com.fangcang.titanjr.entity.LoanCompanyEnsure">
         update t_loan_companyensure
         <set>
+        	<if test="newOrderNo != null">orderNo= #{newOrderNo},</if>
             <if test="companyName != null">companyname= #{companyName},</if>
             <if test="foundDate != null">founddate= #{foundDate},</if>
             <if test="enterpriseScale != null">enterprisescale= #{enterpriseScale},</if>

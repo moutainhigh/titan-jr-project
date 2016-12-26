@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.service;
 
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.request.AgreementConfirmRequest;
 import com.fangcang.titanjr.dto.request.ApplyLoanCreditRequest;
 import com.fangcang.titanjr.dto.request.AuditCreditOrderRequest;
@@ -8,6 +9,7 @@ import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.GetCreditOrderCountRequest;
 import com.fangcang.titanjr.dto.request.LoanAmountEvaluationRequest;
+import com.fangcang.titanjr.dto.request.LoanCreditOrderDiscardRequest;
 import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
 import com.fangcang.titanjr.dto.request.NotifyRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
@@ -123,7 +125,14 @@ public interface TitanFinancialLoanCreditService {
 	/**
 	 * 计算并设置可贷款金额
 	 * @param request
-	 * @return
+	 * @returno
 	 */
 	public LoanAmountEvaluationResponse loanAmountEvaluation(LoanAmountEvaluationRequest request);
+
+	/**
+	 * 授信申请废弃单（续议或者不通过的单）
+	 * @param request
+	 * @return
+	 */
+	public BaseResponseDTO insertLoanCreditOrderDiscard(LoanCreditOrderDiscardRequest request);
 }

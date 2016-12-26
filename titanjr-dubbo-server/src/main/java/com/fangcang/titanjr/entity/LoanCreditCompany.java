@@ -8,6 +8,11 @@ import java.util.Date;
  */
 public class LoanCreditCompany {
     private Long id;
+    /**
+     * 新授信单号
+     */
+    private String newOrderNo;
+    
     private String creditOrderNo;
     /**
      * 企业名称
@@ -134,7 +139,16 @@ public class LoanCreditCompany {
 	 */
 	private String registFinance;
 	
-    public Date getCertificateStartDate() {
+	
+    public String getNewOrderNo() {
+		return newOrderNo;
+	}
+
+	public void setNewOrderNo(String newOrderNo) {
+		this.newOrderNo = newOrderNo;
+	}
+
+	public Date getCertificateStartDate() {
 		return certificateStartDate;
 	}
 

@@ -60,6 +60,8 @@ public class LoanApplyOrder {
 
 	private Long shouldInterest;// 应还利息
 
+	
+
 	public Long getId() {
 		return id;
 	}

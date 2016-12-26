@@ -93,6 +93,7 @@
     <update id="updateCreditCompany" parameterType="com.fangcang.titanjr.entity.LoanCreditCompany">
         update t_loan_creditcompany
         <set>
+        	<if test="newOrderNo != null">creditOrderNo= #{newOrderNo},</if>
             <if test="name != null">name= #{name},</if>
             <if test="startDate != null">startdate= #{startDate},</if>
             <if test="regAddress != null">regaddress= #{regAddress},</if>

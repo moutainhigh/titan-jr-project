@@ -27,6 +27,11 @@ public class NotifyRequest implements Serializable {
 	 */
 	@NotNull
 	private String buessNo;
+	/**
+	 * 融数订单号
+	 */
+	@NotNull
+	private String orderNo;
 	
 	
 	public Integer getStatus() {
@@ -47,6 +52,11 @@ public class NotifyRequest implements Serializable {
 	public void setBuessNo(String buessNo) {
 		this.buessNo = buessNo;
 	}
-	
+	public String getOrderNo() {
+		return orderNo;
+	}
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
 	
 }

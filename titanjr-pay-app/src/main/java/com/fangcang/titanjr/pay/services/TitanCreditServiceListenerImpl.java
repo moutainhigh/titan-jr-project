@@ -17,18 +17,20 @@ public class TitanCreditServiceListenerImpl implements
 	private TitanFinancialLoanCreditService titanFinancialLoanCreditService;
 
 	@Override
-	public void creditSucceed(String orderNo, int status) throws GlobalServiceException {
+	public void creditSucceed(String orderNo, String buessNo, int status) throws GlobalServiceException {
 		NotifyRequest notifyRequest = new NotifyRequest();
-		notifyRequest.setBuessNo(orderNo);
+		notifyRequest.setOrderNo(orderNo);
+		notifyRequest.setBuessNo(buessNo);
 		notifyRequest.setStatus(status);
 		titanFinancialLoanCreditService.loanCreditNotify(notifyRequest);
 		
 	}
 
 	@Override
-	public void creditFailure(String orderNo, int status, String msg) throws GlobalServiceException {
+	public void creditFailure(String orderNo, String buessNo, int status, String msg) throws GlobalServiceException {
 		NotifyRequest notifyRequest = new NotifyRequest();
-		notifyRequest.setBuessNo(orderNo);
+		notifyRequest.setOrderNo(orderNo);
+		notifyRequest.setBuessNo(buessNo);
 		notifyRequest.setStatus(status);
 		notifyRequest.setMsg(msg);
 		titanFinancialLoanCreditService.loanCreditNotify(notifyRequest);

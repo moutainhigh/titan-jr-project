@@ -6,7 +6,8 @@ import java.util.Date;
  * @author wengxitao
  */
 public class LoanCreditOrder {
-
+	private String newOrderNo;//新单单号
+	
 	private String orderNo;// 授信单号
 
 	private String orgCode;//机构编码
@@ -42,6 +43,15 @@ public class LoanCreditOrder {
 	private String reqJson;// 授信请求json串
 	
 	private Date expireTime;//过期时间
+
+	
+	public String getNewOrderNo() {
+		return newOrderNo;
+	}
+
+	public void setNewOrderNo(String newOrderNo) {
+		this.newOrderNo = newOrderNo;
+	}
 
 	public Date getExpireTime() {
 		return expireTime;

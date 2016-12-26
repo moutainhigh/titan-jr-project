@@ -7,7 +7,9 @@ package com.fangcang.titanjr.entity;
  *
  */
 public class LoanPersonEnsure {
-
+	
+	private String newOrderNo;// 新授信单号
+	
 	private String orderNo;// 授信单号
 
 	private String orgCode;
@@ -81,6 +83,15 @@ public class LoanPersonEnsure {
 	private String email;//邮箱
 	
 	private String yearIncome;//年收入
+
+	
+	public String getNewOrderNo() {
+		return newOrderNo;
+	}
+
+	public void setNewOrderNo(String newOrderNo) {
+		this.newOrderNo = newOrderNo;
+	}
 
 	public String getCarWorth() {
 		return carWorth;

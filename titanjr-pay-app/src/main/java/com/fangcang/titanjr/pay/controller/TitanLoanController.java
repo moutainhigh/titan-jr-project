@@ -147,10 +147,10 @@ public class TitanLoanController extends BaseController {
 					titanCreditServiceListener.agreementConfirm(notifyDataObject.getBuessNo());
 				}else if("41".equals(notifyDataObject.getStatus())){//开通
 					state = LoanCreditStatusEnum.REVIEW_PASS.getStatus();
-					titanCreditServiceListener.creditSucceed(notifyDataObject.getBuessNo(),state);
+					titanCreditServiceListener.creditSucceed(notifyDataObject.getOrderNo(),notifyDataObject.getBuessNo(),state);
 				}else if(notifyDataObject.getStatus().endsWith("2")||notifyDataObject.getStatus().endsWith("0")){//不通过
 					state = LoanCreditStatusEnum.NO_PASS.getStatus();
-					titanCreditServiceListener.creditFailure(notifyDataObject.getBuessNo(),state, notifyDataObject.getMsg());
+					titanCreditServiceListener.creditFailure(notifyDataObject.getOrderNo(),notifyDataObject.getBuessNo(),state, notifyDataObject.getMsg());
 				}else{
 					//其他状态暂时不处理。
 				}

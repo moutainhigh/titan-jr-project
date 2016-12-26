@@ -7,9 +7,9 @@ import com.fangcang.titanjr.common.exception.GlobalServiceException;
  */
 public interface TitanCreditServiceListener 
 {
-	public void creditSucceed(String buessNo, int status) throws GlobalServiceException;
+	public void creditSucceed(String orderNo, String buessNo, int status) throws GlobalServiceException;
 
-	public void creditFailure(String buessNo, int status,String msg) throws GlobalServiceException;
+	public void creditFailure(String orderNo, String buessNo, int status,String msg) throws GlobalServiceException;
 	
 	/**
 	 * 协议确认

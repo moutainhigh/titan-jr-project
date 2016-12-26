@@ -76,6 +76,7 @@
     <update id="updateLoanPersonEnsure" parameterType="com.fangcang.titanjr.entity.LoanPersonEnsure">
         update t_loan_personensure
         <set>
+        	<if test="newOrderNo != null">orderNo= #{newOrderNo},</if>
             <if test="personName != null">personname= #{personName},</if>
             <if test="nationalIdentityNumber != null">nationalidentitynumber= #{nationalIdentityNumber},</if>
             <if test="mobileNumber != null">mobilenumber= #{mobileNumber},</if>

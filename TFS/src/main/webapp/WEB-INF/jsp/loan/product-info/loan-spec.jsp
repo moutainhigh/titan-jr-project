@@ -115,7 +115,7 @@
 		<c:if test="${loanOrderInfo.status==4 || loanOrderInfo.status==7 || loanOrderInfo.status==8}">
 			<div class="RC_t1 ">
 				<span class="w_105 c_fe2b2b">未通过原因</span>
-				<span class="c_fe2b2b">贷款金额过大</span>
+				<span class="c_fe2b2b">${loanOrderInfo.errorMsg}</span>
 			</div>
 		</c:if>
 	</div>
