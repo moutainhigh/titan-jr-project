@@ -148,9 +148,11 @@ public class TitanLoanController extends BaseController {
 				}else if("41".equals(notifyDataObject.getStatus())){//开通
 					state = LoanCreditStatusEnum.REVIEW_PASS.getStatus();
 					titanCreditServiceListener.creditSucceed(notifyDataObject.getBuessNo(),state);
-				}else {
+				}else if(notifyDataObject.getStatus().endsWith("2")||notifyDataObject.getStatus().endsWith("0")){//不通过
 					state = LoanCreditStatusEnum.NO_PASS.getStatus();
 					titanCreditServiceListener.creditFailure(notifyDataObject.getBuessNo(),state, notifyDataObject.getMsg());
+				}else{
+					//其他状态暂时不处理。
 				}
 				result.put("dataState", "0");
 				result.put("dataMsg", "通知处理成功");
@@ -164,15 +166,17 @@ public class TitanLoanController extends BaseController {
 				}else if("51".equals(notifyDataObject.getStatus())){//成功放款
 					state = LoanOrderStatusEnum.HAVE_LOAN.getKey();
 					resultState = titanLoanServiceListener.loanSucceed(notifyDataObject.getBuessNo(),state);
-				}else {//不通过
-					if(notifyDataObject.getStatus().startsWith("3")){
+				}else if(notifyDataObject.getStatus().endsWith("2")||notifyDataObject.getStatus().endsWith("0")){//不通过
+					if(notifyDataObject.getStatus().startsWith("2")||notifyDataObject.getStatus().startsWith("3")||notifyDataObject.getStatus().startsWith("4")){
 						state = LoanOrderStatusEnum.AUDIT_FIAL.getKey();
 					}else if(notifyDataObject.getStatus().startsWith("5")){
 						state = LoanOrderStatusEnum.LENDING_FAIL.getKey();
 					}else{
-						state = LoanOrderStatusEnum.LOAN_FAIL.getKey();
+						state = LoanOrderStatusEnum.LENDING_FAIL.getKey();
 					}
 					resultState = titanLoanServiceListener.loanFailure(notifyDataObject.getBuessNo(),state, notifyDataObject.getMsg());
+				}else{
+					//其他状态暂时不处理。
 				}
 				if(resultState){
 					result.put("dataState", "0");
