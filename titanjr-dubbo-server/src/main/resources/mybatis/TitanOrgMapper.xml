@@ -153,6 +153,7 @@
 			<if test="resultKey !=null"> and  c.resultkey = #{resultKey}</if>
 			<if test="orgType !=null"> and  g.orgType = #{orgType}</if>
 			<if test="merchantcode !=null"> and  b.merchantcode = #{merchantcode}</if>
+            <if test="regchannel !=null"> and  g.regchannel = #{regchannel}</if>
 		</where>
 		group by g.orgid
 	</select>

@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.fangcang.titanjr.dto.request.*;
+import com.fangcang.titanjr.dto.response.*;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -58,40 +60,6 @@ import com.fangcang.titanjr.dto.bean.TitanRoleDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
-import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
-import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
-import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
-import com.fangcang.titanjr.dto.request.LoginPasswordModifyRequest;
-import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
-import com.fangcang.titanjr.dto.request.PayPasswordRequest;
-import com.fangcang.titanjr.dto.request.PermissionRequest;
-import com.fangcang.titanjr.dto.request.SaaSUserRoleRequest;
-import com.fangcang.titanjr.dto.request.TitanRoleQueryRequest;
-import com.fangcang.titanjr.dto.request.UpdateUserRequest;
-import com.fangcang.titanjr.dto.request.UserBindInfoRequest;
-import com.fangcang.titanjr.dto.request.UserFreezeRequest;
-import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
-import com.fangcang.titanjr.dto.request.UserLoginNameExistRequest;
-import com.fangcang.titanjr.dto.request.UserRegisterRequest;
-import com.fangcang.titanjr.dto.request.UserRoleSetRequest;
-import com.fangcang.titanjr.dto.response.CancelPermissionResponse;
-import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
-import com.fangcang.titanjr.dto.response.FinancialUserBindResponse;
-import com.fangcang.titanjr.dto.response.FinancialUserUnBindResponse;
-import com.fangcang.titanjr.dto.response.LoginPasswordModifyResponse;
-import com.fangcang.titanjr.dto.response.PayPasswordResponse;
-import com.fangcang.titanjr.dto.response.PermissionResponse;
-import com.fangcang.titanjr.dto.response.RoleUserInfoPageResponse;
-import com.fangcang.titanjr.dto.response.SaaSUserRoleResponse;
-import com.fangcang.titanjr.dto.response.TitanRoleResponse;
-import com.fangcang.titanjr.dto.response.UpdateUserResponse;
-import com.fangcang.titanjr.dto.response.UserBindInfoResponse;
-import com.fangcang.titanjr.dto.response.UserFreezeResponse;
-import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
-import com.fangcang.titanjr.dto.response.UserInfoResponse;
-import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
-import com.fangcang.titanjr.dto.response.UserRegisterResponse;
-import com.fangcang.titanjr.dto.response.UserRoleSetResponse;
 import com.fangcang.titanjr.entity.TitanRole;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.entity.TitanUserBindInfo;
@@ -1050,6 +1018,16 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 			log.error("根据房仓用户信息查询金融用户信息失败"+e.getMessage(),e);
 //			throw new GlobalServiceException();
 		}
+		return null;
+	}
+
+	@Override
+	public PassLoginResponse passLogin(PassLoginRequest passLoginRequest) throws GlobalServiceException {
+		return null;
+	}
+
+	@Override
+	public SmsLoginResponse smsLogin(SmsLoginRequest smsLoginRequest) throws GlobalServiceException {
 		return null;
 	}
 

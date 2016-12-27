@@ -6,7 +6,9 @@ import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
 import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.facade.TitanFinancialTradeFacade;
+import com.fangcang.titanjr.request.AccountBalanceRequest;
 import com.fangcang.titanjr.request.TitanOrderPaymentRequest;
+import com.fangcang.titanjr.response.AccountBalanceResponse;
 import com.fangcang.titanjr.response.TitanOrderPaymentResponse;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
@@ -63,6 +65,11 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
             titanOrderPaymentResponse.putErrorResult(ReturnCode.CODE_SYS_ERROR.getCode(), "系统错误");
         }
         return titanOrderPaymentResponse;
+    }
+
+    @Override
+    public AccountBalanceResponse queryAccountBalance(AccountBalanceRequest accountBalanceRequest) {
+        return null;
     }
 
     private PaymentUrlRequest convertToPaymentUrlRequest(TitanOrderPaymentRequest titanOrderPaymentRequest) {
