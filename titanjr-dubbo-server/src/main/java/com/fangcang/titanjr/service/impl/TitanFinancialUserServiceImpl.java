@@ -63,9 +63,11 @@ import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
 import com.fangcang.titanjr.dto.request.LoginPasswordModifyRequest;
 import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
+import com.fangcang.titanjr.dto.request.PassLoginRequest;
 import com.fangcang.titanjr.dto.request.PayPasswordRequest;
 import com.fangcang.titanjr.dto.request.PermissionRequest;
 import com.fangcang.titanjr.dto.request.SaaSUserRoleRequest;
+import com.fangcang.titanjr.dto.request.SmsLoginRequest;
 import com.fangcang.titanjr.dto.request.TitanRoleQueryRequest;
 import com.fangcang.titanjr.dto.request.UpdateUserRequest;
 import com.fangcang.titanjr.dto.request.UserBindInfoRequest;
@@ -79,10 +81,12 @@ import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
 import com.fangcang.titanjr.dto.response.FinancialUserBindResponse;
 import com.fangcang.titanjr.dto.response.FinancialUserUnBindResponse;
 import com.fangcang.titanjr.dto.response.LoginPasswordModifyResponse;
+import com.fangcang.titanjr.dto.response.PassLoginResponse;
 import com.fangcang.titanjr.dto.response.PayPasswordResponse;
 import com.fangcang.titanjr.dto.response.PermissionResponse;
 import com.fangcang.titanjr.dto.response.RoleUserInfoPageResponse;
 import com.fangcang.titanjr.dto.response.SaaSUserRoleResponse;
+import com.fangcang.titanjr.dto.response.SmsLoginResponse;
 import com.fangcang.titanjr.dto.response.TitanRoleResponse;
 import com.fangcang.titanjr.dto.response.UpdateUserResponse;
 import com.fangcang.titanjr.dto.response.UserBindInfoResponse;
@@ -1053,4 +1057,20 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		return null;
 	}
 
+	@Override
+	public PassLoginResponse passLogin(PassLoginRequest passLoginRequest)
+			throws GlobalServiceException {
+		//UserInfoQueryRequest userInfoQueryRequest
+		//titanUserDao.queryTitanUserList(userInfoQueryRequest)
+		return null;
+	}
+
+	@Override
+	public SmsLoginResponse smsLogin(SmsLoginRequest smsLoginRequest)
+			throws GlobalServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 }
