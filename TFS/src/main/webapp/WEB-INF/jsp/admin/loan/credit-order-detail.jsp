@@ -912,16 +912,7 @@
 			_this.parent("p").next().hide();
 		}
 	});
-	$("#carStatus").change(function(){
-        console.log($(this).find("option:selected").html())
-        if($(this).find("option:selected").html()=="有车无车贷"||$(this).find("option:selected").html()=="有车有车贷"){
-            $(this).parent().removeAttr("colspan");
-            $(this).parents("tr").find(".loanInformation_car").show();
-        }else{
-            $(this).parent().attr("colspan","5");
-            $(this).parents("tr").find(".loanInformation_car").hide();
-        }
-    })
+	 
 	var canSubmit = true;  	
   	//保存
   	$("#btn_save").on("click",function(){
