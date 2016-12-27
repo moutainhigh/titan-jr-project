@@ -899,7 +899,7 @@
 					<!-- 初审通过 -->
 					<div class="examine_righttop">
 						<h3>审核结果</h3>
-						<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核人：</span>${creditOpinionBean.creater }</p>
+						<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核人：</span>${getCreditInfoResponse.creditOrder.firstAuditor }</p>
 						<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核结果：</span>
 							通过
 						</p>
@@ -907,10 +907,10 @@
 					</div>	
 				</c:if>
 				<c:if test="${getCreditInfoResponse.creditOrder.status==4}">
-					<!-- 初审通过 -->
+					<!-- 初审未通过 -->
 					<div class="examine_righttop">
 						<h3>审核结果</h3>
-						<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核人：</span>${creditOpinionBean.creater }</p>
+						<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核人：</span>${getCreditInfoResponse.creditOrder.firstAuditor }</p>
 						<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核结果：</span>
 							未通过
 						</p>

@@ -39,7 +39,7 @@ public class LoanCreditOrderBean implements java.io.Serializable {
 	private Integer status;//1 草稿 2 授信初审  3 授信终审 4 审核失败 5 授信成功 6 授信单过期  7 授信失效
 
 	private Integer assureType;// 担保 1 个人 2 企业
-
+	private String firstAuditor;// 审核人
 	private Date firstAuditTime;// 初审通过时间
 
 	private Date lastAuditTime;// 终审通过时间
@@ -50,6 +50,14 @@ public class LoanCreditOrderBean implements java.io.Serializable {
 	
 	public Date getExpireTime() {
 		return expireTime;
+	}
+
+	public String getFirstAuditor() {
+		return firstAuditor;
+	}
+
+	public void setFirstAuditor(String firstAuditor) {
+		this.firstAuditor = firstAuditor;
 	}
 
 	public void setExpireTime(Date expireTime) {

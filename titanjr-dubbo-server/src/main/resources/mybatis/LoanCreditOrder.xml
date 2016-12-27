@@ -17,6 +17,7 @@
         <result property="urlKey" column="urlkey"/>
         <result property="status" column="status"/>
         <result property="assureType" column="assuretype"/>
+         <result property="firstAuditor" column="firstauditor"/>
         <result property="firstAuditTime" column="firstaudittime"/>
         <result property="lastAuditTime" column="lastaudittime"/>
         <result property="auditPass" column="auditpass"/>
@@ -41,6 +42,7 @@
                `urlkey`,
                 `status`,
                  `assuretype`,
+                 `firstauditor`,
                   `firstaudittime`,
                    `lastaudittime`,
                     `auditpass`,
@@ -68,6 +70,7 @@
 			C.contactname,
 			C.contactphone,
 			O.orderno,
+			O.firstauditor,
 			O.reqtime,
 			O.createtime,
 			O.status
@@ -110,6 +113,7 @@
             <if test="urlKey != null">urlkey= #{urlKey},</if>
             <if test="status != null">  status= #{status},  </if>
             <if test="assureType != null">assuretype=#{assureType},</if>
+            <if test="firstAuditor != null">firstauditor= #{firstAuditor},</if>
             <if test="firstAuditTime != null">firstaudittime= #{firstAuditTime},</if>
             <if test="lastAuditTime != null">lastaudittime= #{lastAuditTime},</if>
             <if test="auditPass != null">auditpass= #{auditPass},</if>

@@ -380,6 +380,7 @@ public final class LoanTypeConvertUtil {
 		creditOrderBean.setUrlKey(qCrditOrderInfo.getUrlKey());
 		creditOrderBean.setStatus(qCrditOrderInfo.getStatus());
 		creditOrderBean.setAssureType(qCrditOrderInfo.getAssureType());
+		creditOrderBean.setFirstAuditor(qCrditOrderInfo.getFirstAuditor());
 		creditOrderBean.setFirstAuditTime(qCrditOrderInfo.getFirstAuditTime());
 		creditOrderBean.setLastAuditTime(qCrditOrderInfo.getLastAuditTime());
 		creditOrderBean.setAuditPass(qCrditOrderInfo.getAuditPass());

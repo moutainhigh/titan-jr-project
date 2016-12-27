@@ -6,7 +6,7 @@
 	<td class="tdl"><span class="textleng" style="max-width:200px;" title="${creditCompanyInfoDTO.name }">${creditCompanyInfoDTO.name }</span></td>
 	<td class="tdl">${creditCompanyInfoDTO.contactName }</td>
 	<td class="tdl">${creditCompanyInfoDTO.contactPhone }</td>
-	<td class="tdl">小明明</td>
+	<td class="tdl">${creditCompanyInfoDTO.firstAuditor }</td>
 	<td class="tdl">
 	<c:if test="${creditCompanyInfoDTO.status ==1}">草稿</c:if>
 	<c:if test="${creditCompanyInfoDTO.status ==2}"><span class="c_red">待审核</span></c:if>
