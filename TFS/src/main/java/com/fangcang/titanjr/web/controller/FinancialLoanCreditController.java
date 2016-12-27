@@ -24,6 +24,7 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.LoanCompanyAppendInfo;
 import com.fangcang.titanjr.dto.bean.LoanCompanyEnsureBean;
@@ -126,7 +127,9 @@ public class FinancialLoanCreditController extends BaseController {
 
 			log.info("get audit evaluation info ="
 					+ JsonConversionTool.toJson(auditEvaluationResponse));
-
+			if(StringUtil.isValidString(auditEvaluationResponse.getCreditOpinionBean().getContent())){
+				auditEvaluationResponse.getCreditOpinionBean().setContent(Tools.replaceEnterKeyHTML(auditEvaluationResponse.getCreditOpinionBean().getContent()));
+			}
 			model.addAttribute("creditOpinion",
 					auditEvaluationResponse.getCreditOpinionBean());
 		}
