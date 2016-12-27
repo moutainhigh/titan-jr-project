@@ -28,7 +28,9 @@ public class TransferRequest extends BaseRequestDTO {
 	private String intermerchantcode;
 	// 接收方产品号
 	private String interproductid =CommonConstant.RS_FANGCANG_PRODUCT_ID;
-	// 接收方用户id
+	//付款方 机构id
+	private String userid;
+	//接收方 机构id
 	private String userrelateid;
 	
 	private String productId =CommonConstant.RS_FANGCANG_PRODUCT_ID; 
@@ -38,7 +40,7 @@ public class TransferRequest extends BaseRequestDTO {
 	 * 下面是保存到数据库所用的字段
 	 */
 	
-	private String userid;
+	
 	//创建人
 	private String creator;
 	//状态

@@ -54,9 +54,9 @@
 								<td class="bg_f2"><i class="c_f00">*</i>企业规模：</td>
 								<td>
 								<c:if test="${getCreditInfoResponse.creditCompany.orgSize ==1}">1-50人</c:if>
-								<c:if test="${getCreditInfoResponse.creditCompany.orgSize ==2}">51-100人</c:if>
-								<c:if test="${getCreditInfoResponse.creditCompany.orgSize ==3}">101-500人</c:if>
-								<c:if test="${getCreditInfoResponse.creditCompany.orgSize ==4}">501-1000人</c:if>
+								<c:if test="${getCreditInfoResponse.creditCompany.orgSize ==2}">50-100人</c:if>
+								<c:if test="${getCreditInfoResponse.creditCompany.orgSize ==3}">100-500人</c:if>
+								<c:if test="${getCreditInfoResponse.creditCompany.orgSize ==4}">500-1000人</c:if>
 								<c:if test="${getCreditInfoResponse.creditCompany.orgSize ==5}">1000人以上</c:if>
 								</td>
 								<td class="bg_f2"><i class="c_f00">*</i>营业执照号/社会信用代码：</td>
@@ -73,6 +73,26 @@
 								<td>${getCreditInfoResponse.creditCompany.regAccount }</td>
 								<td class="bg_f2"><i class="c_f00">*</i>平台注册日期：</td>
 								<td>${getCreditInfoResponse.creditCompany.regDate }</td>
+							</tr>
+							<tr>
+								<td class="bg_f2"><i class="c_f00">*</i>营业执照生效日期：</td>
+								<td>${getCreditInfoResponse.creditCompany.certificateStartDate }</td>
+								<td class="bg_f2"><i class="c_f00">*</i>营业执照失效日期：</td>
+								<td>${getCreditInfoResponse.creditCompany.certificateExpireDate }</td>
+							</tr>
+							<tr>
+								<td class="bg_f2"><i class="c_f00">*</i>企业类型：</td>
+								<td>
+								<c:if test="${getCreditInfoResponse.creditCompany.companyType==1 }">有限责任公司</c:if>
+								<c:if test="${getCreditInfoResponse.creditCompany.companyType==2 }">股份有限公司</c:if>
+								<c:if test="${getCreditInfoResponse.creditCompany.companyType==3 }">内资</c:if>
+								<c:if test="${getCreditInfoResponse.creditCompany.companyType==4 }">国有全资</c:if>
+								<c:if test="${getCreditInfoResponse.creditCompany.companyType==5 }">集资全资</c:if>
+								<c:if test="${getCreditInfoResponse.creditCompany.companyType==6 }">国外投资股份有限公司</c:if>
+								<c:if test="${getCreditInfoResponse.creditCompany.companyType==99 }">其他</c:if>
+								</td>
+								<td class="bg_f2"><i class="c_f00">*</i>注册金额：</td>
+								<td>${getCreditInfoResponse.creditCompany.registFinance }</td>
 							</tr>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>企业注册地址：</td>
@@ -142,9 +162,9 @@
 									<td class="bg_f2"><i class="c_f00">*</i>股东名称：</td>
 									<td>${loanControllDataBean.shareholderName }</td>
 									<td class="bg_f2"><i class="c_f00">*</i>出资金额：</td>
-									<td>${loanControllDataBean.contributionAmount }</td>
+									<td>${loanControllDataBean.contributionAmount } 万元</td>
 									<td class="bg_f2"><i class="c_f00">*</i>股权比例：</td>
-									<td>${loanControllDataBean.equityRatio}</td>
+									<td>${loanControllDataBean.equityRatio}%</td>
 								</tr>		
 							</table>
 						</c:forEach>
@@ -167,9 +187,9 @@
 									<td class="bg_f2"><i class="c_f00">*</i>主要产品/服务：</td>
 									<td>${loanMainBusinessDataBean.mainProductsOrService }</td>
 									<td class="bg_f2"><i class="c_f00">*</i>年销售规模：</td>
-									<td>${loanMainBusinessDataBean.mainAnnualSale }</td>
+									<td>${loanMainBusinessDataBean.mainAnnualSale } 万元</td>
 									<td class="bg_f2"><i class="c_f00">*</i>占总销售额比例：</td>
-									<td>${loanMainBusinessDataBean.mainSaleProportion }</td>
+									<td>${loanMainBusinessDataBean.mainSaleProportion }%</td>
 								</tr>	
 							</table>
 						</c:forEach>
@@ -192,17 +212,21 @@
 									<td class="bg_f2"><i class="c_f00">*</i>合作企业名称：</td>
 									<td>${loanCooperationCompanyBean.cooperationName }</td>
 									<td class="bg_f2"><i class="c_f00">*</i>年交易额：</td>
-									<td>${loanCooperationCompanyBean.yearAnnualSale }</td>
+									<td>${loanCooperationCompanyBean.yearAnnualSale } 万元</td>
 									<td class="bg_f2"><i class="c_f00">*</i>占总销售额比例：</td>
-									<td>${loanCooperationCompanyBean.saleProportion }</td>
+									<td>${loanCooperationCompanyBean.saleProportion }%</td>
 								</tr>	
 								<tr>
 									<td class="bg_f2"><i class="c_f00">*</i>结算方式：</td>
 									<td>${loanCooperationCompanyBean.settlement }</td>
 									<td class="bg_f2"><i class="c_f00">*</i>合作年限：</td>
-									<td>${loanCooperationCompanyBean.cooperationYears }</td>
+									<td>${loanCooperationCompanyBean.cooperationYears } 年</td>
 									<td class="bg_f2"><i class="c_f00">*</i>合作关系：</td>
-									<td>${loanCooperationCompanyBean.cooperation }</td>
+									<td>
+										<c:if test="${loanCooperationCompanyBean.cooperation==1 }">供应商</c:if>
+										<c:if test="${loanCooperationCompanyBean.cooperation==2 }">分销商</c:if>
+									
+									</td>
 								</tr>	
 											
 							</table>
@@ -226,22 +250,26 @@
 									<label class="f_ui-radio-c3"><input name="r1" type="radio"   <c:if test="${getCreditInfoResponse.companyAppendInfo.companyLease.leaseType==2 }">checked="checked"</c:if>/><i></i> &nbsp;租赁房屋</label>
 								</td>
 							</tr>	
-							<tr>
+							<c:if test="${getCreditInfoResponse.companyAppendInfo.companyLease.leaseType==2 }">
+								<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>租赁期限：</td>
 								<td>${getCreditInfoResponse.companyAppendInfo.companyLease.beginLeaseDate} - ${getCreditInfoResponse.companyAppendInfo.companyLease.endLeaseDate} </td>
 								<td class="bg_f2"><i class="c_f00">*</i>建筑面积：</td>
-								<td>${getCreditInfoResponse.companyAppendInfo.companyLease.housingArea}</td>								
+								<td>${getCreditInfoResponse.companyAppendInfo.companyLease.housingArea} 平方米</td>								
 							</tr>	
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>租金：</td>
-								<td>${getCreditInfoResponse.companyAppendInfo.companyLease.rental}</td>
+								<td>${getCreditInfoResponse.companyAppendInfo.companyLease.rental} 万/年</td>
 								<td class="bg_f2"><i class="c_f00">*</i>支付方式：</td>
 								<td>${getCreditInfoResponse.companyAppendInfo.companyLease.paymentMethod}</td>								
 							</tr>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>租赁地址：</td>
 								<td colspan="3">${getCreditInfoResponse.companyAppendInfo.companyLease.leaseAddress}</td>															
-							</tr>	
+							</tr>
+							
+							</c:if>
+								
 							<tr>
 								<td class="bg_f2">备注</td>
 								<td colspan="3">${getCreditInfoResponse.companyAppendInfo.companyLease.remark}</td>															
@@ -293,9 +321,14 @@
 							</tr>	
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>婚姻状况：</td>
-								<td>${getCreditInfoResponse.loanPersonEnsure.marriageStatus}</td>
+								<td><c:if test="${getCreditInfoResponse.loanPersonEnsure.marriageStatus==1}">已婚</c:if>
+								<c:if test="${getCreditInfoResponse.loanPersonEnsure.marriageStatus==2}">未婚</c:if>
+								</td>
 								<td class="bg_f2"><i class="c_f00">*</i>有无子女：</td>
-								<td>${getCreditInfoResponse.loanPersonEnsure.haveChildren}</td>
+								<td>
+									<c:if test="${getCreditInfoResponse.loanPersonEnsure.haveChildren==1}">有子女</c:if>
+									<c:if test="${getCreditInfoResponse.loanPersonEnsure.haveChildren==2}">无子女</c:if>
+								</td>
 								<td class="bg_f2"><i class="c_f00">*</i>籍贯：</td>
 								<td>${getCreditInfoResponse.loanPersonEnsure.nativePlace}</td>
 							</tr>
@@ -307,9 +340,24 @@
 								<td class="bg_f2"><i class="c_f00">*</i>毕业学校：</td>
 								<td>${getCreditInfoResponse.loanPersonEnsure.graduateSchool}</td>
 								<td class="bg_f2"><i class="c_f00">*</i>最高学历：</td>
-								<td>${getCreditInfoResponse.loanPersonEnsure.highestEducation}</td>
+								<td>
+								<c:if test="${getCreditInfoResponse.loanPersonEnsure.highestEducation==1}">小学</c:if>
+								<c:if test="${getCreditInfoResponse.loanPersonEnsure.highestEducation==2}">初中</c:if>
+								<c:if test="${getCreditInfoResponse.loanPersonEnsure.highestEducation==3}">高中</c:if>
+								<c:if test="${getCreditInfoResponse.loanPersonEnsure.highestEducation==4}">中专</c:if>
+								<c:if test="${getCreditInfoResponse.loanPersonEnsure.highestEducation==5}">大专</c:if>
+								<c:if test="${getCreditInfoResponse.loanPersonEnsure.highestEducation==6}">本科</c:if>
+								<c:if test="${getCreditInfoResponse.loanPersonEnsure.highestEducation==7}">硕士</c:if>
+								<c:if test="${getCreditInfoResponse.loanPersonEnsure.highestEducation==8}">博士</c:if>
+								</td>
 								<td class="bg_f2"><i class="c_f00">*</i>工作年限：</td>
-								<td>${getCreditInfoResponse.loanPersonEnsure.yearsWorking}</td>
+								<td>
+								<c:if test="${getCreditInfoResponse.loanPersonEnsure.yearsWorking==1}">1 - 3年</c:if>
+								<c:if test="${getCreditInfoResponse.loanPersonEnsure.yearsWorking==2}">3 - 5年</c:if>
+								<c:if test="${getCreditInfoResponse.loanPersonEnsure.yearsWorking==3}">5 - 10年</c:if>
+								<c:if test="${getCreditInfoResponse.loanPersonEnsure.yearsWorking==4}">10年以上</c:if>
+								
+								</td>
 							</tr>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>工作单位：</td>
@@ -325,6 +373,12 @@
 								<td class="bg_f2"><i class="c_f00">*</i>所处行业：</td>
 								<td>${getCreditInfoResponse.loanPersonEnsure.industry}</td>
 							</tr>
+							<tr>
+								<td class="bg_f2"><i class="c_f00">*</i>邮箱地址：</td>
+								<td>${getCreditInfoResponse.loanPersonEnsure.email}</td>
+								<td class="bg_f2"><i class="c_f00">*</i>年收入：</td>
+								<td colspan="3">${getCreditInfoResponse.loanPersonEnsure.yearIncome}</td>
+							</tr>
 						</table>
 					</div>
 					<div class="clc_t">
@@ -335,28 +389,40 @@
 							<colgroup>
 								<col width="105">
 								<col width="">
-								<col width="95">
-								<col width="170">
-								<col width="95">
-								<col width="120">
+								<col width="100">
+								<col width="100">
+								<col width="100">
+								<col width="130">
+								<col width="100">
+								<col width="80">
 							</colgroup>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>车产情况：</td>
-								<td><c:if test="${getCreditInfoResponse.loanPersonEnsure.carPropertyType==1}">无车</c:if><c:if test="${getCreditInfoResponse.loanPersonEnsure.carPropertyType==2}">有车无贷</c:if><c:if test="${getCreditInfoResponse.loanPersonEnsure.carPropertyType==3}">有车有贷</c:if></td>
-								<td class="bg_f2"><i class="c_f00">*</i>购车年份：</td>
-								<td>${getCreditInfoResponse.loanPersonEnsure.carPurchaseDate}</td>
-								<td class="bg_f2"><i class="c_f00">*</i>汽车品牌：</td>
-								<td>${getCreditInfoResponse.loanPersonEnsure.carBrand}</td>
+								
+								<c:choose>
+									<c:when test="${getCreditInfoResponse.loanPersonEnsure.carPropertyType==1}">
+										<td colspan="7">无车</td>
+									</c:when>
+									<c:otherwise>
+										<td><c:if test="${getCreditInfoResponse.loanPersonEnsure.carPropertyType==2}">有车无贷</c:if><c:if test="${getCreditInfoResponse.loanPersonEnsure.carPropertyType==3}">有车有贷</c:if></td>
+									<td class="bg_f2"><i class="c_f00">*</i>购车年份：</td>
+									<td>${getCreditInfoResponse.loanPersonEnsure.carPurchaseDate}</td>
+									<td class="bg_f2"><i class="c_f00">*</i>汽车品牌：</td>
+									<td>${getCreditInfoResponse.loanPersonEnsure.carBrand}</td>
+									<td class="bg_f2"><i class="c_f00">*</i>汽车价值：</td>
+									<td>${getCreditInfoResponse.loanPersonEnsure.carWorth}</td>
+									</c:otherwise>
+								</c:choose>
 							</tr>	
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>房产情况：</td>
 								<td><c:if test="${getCreditInfoResponse.loanPersonEnsure.housePropertyType==1}">无房</c:if><c:if test="${getCreditInfoResponse.loanPersonEnsure.housePropertyType==2}">有房有贷</c:if><c:if test="${getCreditInfoResponse.loanPersonEnsure.housePropertyType==3}">有房无贷</c:if></td>
 								<td class="bg_f2"><i class="c_f00">*</i>其他资产：</td>
-								<td colspan="3">${getCreditInfoResponse.loanPersonEnsure.otherProperty}</td>
+								<td colspan="5">${getCreditInfoResponse.loanPersonEnsure.otherProperty}</td>
 							</tr>
 							<tr>
 								<td class="bg_f2">补充说明：</td>
-								<td colspan="5">${getCreditInfoResponse.loanPersonEnsure.propertyRemark}</td>
+								<td colspan="7">${getCreditInfoResponse.loanPersonEnsure.propertyRemark}</td>
 							</tr>
 						</table>
 					</div>	
@@ -760,91 +826,23 @@
 						<!-- 个人担保 -->
 						<div class="clc_c">
 							<ul>
-								<c:choose>
-									<c:when test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.idCardUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.idCardUrl, '.zip') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.idCardUrl, '.rar')}">
-										<li><p><i class="c_f00">*</i>担保人身份证</p>
-											<div class="download">
-												<i <c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.idCardUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.idCardUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.idCardUrl, '.rar')}">class='RAR'</c:if>></i>
-												<span title=""></span>
-												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.idCardUrl}">下载</a>
-											</div>
-										</li>
-									</c:when>
-									<c:otherwise>
-										<!-- 直接显示图片资源 -->
 										<li><p><i class="c_f00">*</i>担保人身份证</p>
 										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.idCardUrl}" class="J_see"></li>
-									</c:otherwise>
-								</c:choose>
-							
-								<c:choose>
-									<c:when test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.registeredUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.registeredUrl, '.zip') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.registeredUrl, '.rar')}">
-										<li><p><i class="c_f00">*</i>担保人户口本</p>
-											<div class="download">
-												<i <c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.registeredUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.registeredUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.registeredUrl, '.rar')}">class='RAR'</c:if>></i>
-												<span title=""></span>
-												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.registeredUrl}">下载</a>
-											</div>
-										</li>
-									</c:when>
-									<c:otherwise>
-										<!-- 直接显示图片资源 -->
+										
 										<li><p><i class="c_f00">*</i>担保人户口本</p>
 										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.registeredUrl}" class="J_see"></li>
-									</c:otherwise>
-								</c:choose>
 							
-								<c:choose>
-									<c:when test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl, '.zip') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl, '.rar')}">
-										<li><p><i class="c_f00">*</i>配偶户口本</p>
-											<div class="download">
-												<i <c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl, '.rar')}">class='RAR'</c:if>></i>
-												<span title=""></span>
-												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl}">下载</a>
-											</div>
-										</li>
-									</c:when>
-									<c:otherwise>
+								 	<c:if test="${getCreditInfoResponse.loanPersonEnsure.marriageStatus==1 }">
 										<!-- 直接显示图片资源 -->
 										<li><p><i class="c_f00">*</i>配偶户口本</p>
 										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.spouseRegisteredUrl}" class="J_see"></li>
-									</c:otherwise>
-								</c:choose>
-								
-								<c:choose>
-									<c:when test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl, '.zip') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl, '.rar')}">
-										<li><p><i class="c_f00">*</i>配偶身份证</p>
-											<div class="download">
-												<i <c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl, '.rar')}">class='RAR'</c:if>></i>
-												<span title=""></span>
-												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl}">下载</a>
-											</div>
-										</li>
-									</c:when>
-									<c:otherwise>
 										<!-- 直接显示图片资源 -->
 										<li><p><i class="c_f00">*</i>配偶身份证</p>
 										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.spouseIdCardUrl}" class="J_see"></li>
-									</c:otherwise>
-								</c:choose>
-								
-								<c:choose>
-									<c:when test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.marriageUrl, '.pdf') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.marriageUrl, '.zip') or fn:endsWith(getCreditInfoResponse.loanPersonEnsure.marriageUrl, '.rar')}">
-										<li><p><i class="c_f00">*</i>结婚证</p>
-											<div class="download">
-												<i <c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.marriageUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.marriageUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.loanPersonEnsure.marriageUrl, '.rar')}">class='RAR'</c:if>></i>
-												<span title=""></span>
-												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.marriageUrl}">下载</a>
-											</div>
-										</li>
-									</c:when>
-									<c:otherwise>
 										<!-- 直接显示图片资源 -->
 										<li><p><i class="c_f00">*</i>结婚证</p>
 										<img src="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.loanPersonEnsure.marriageUrl}" class="J_see"></li>
-									</c:otherwise>
-								</c:choose>
-								
+								</c:if>
 							</ul>
 							<div class="clear" ></div>
 						</div>
@@ -914,6 +912,16 @@
 			_this.parent("p").next().hide();
 		}
 	});
+	$("#carStatus").change(function(){
+        console.log($(this).find("option:selected").html())
+        if($(this).find("option:selected").html()=="有车无车贷"||$(this).find("option:selected").html()=="有车有车贷"){
+            $(this).parent().removeAttr("colspan");
+            $(this).parents("tr").find(".loanInformation_car").show();
+        }else{
+            $(this).parent().attr("colspan","5");
+            $(this).parents("tr").find(".loanInformation_car").hide();
+        }
+    })
 	var canSubmit = true;  	
   	//保存
   	$("#btn_save").on("click",function(){

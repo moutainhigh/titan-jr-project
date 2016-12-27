@@ -43,7 +43,7 @@ public class LoanCreditCompanyEnum {
 	 * @date   2016年12月2日
 	 */
 	public enum OrgSize{
-		SIZE_1_50(1,"1-50"),SIZE_51_100(2,"51-100"),SIZE_101_500(3,"101-500"),SIZE_501_1000(4,"501-1000"),SIZE_1000(5,"1000以上");
+		SIZE_1_50(1,"1-50"),SIZE_50_100(2,"50-100"),SIZE_100_500(3,"100-500"),SIZE_500_1000(4,"500-1000"),SIZE_1000(5,"1000以上");
 		
 		private int sizeType;
 		private String des;

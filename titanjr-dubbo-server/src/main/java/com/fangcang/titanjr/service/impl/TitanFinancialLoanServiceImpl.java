@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.FileTypeEnum;
@@ -138,6 +138,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 	
 	@Resource
 	private TitanFinancialLoanCreditService loanCreditService;
+	
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
@@ -1315,48 +1316,33 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		LoanApplyOrder paramApplyOrder = new LoanApplyOrder();
 		paramApplyOrder.setOrderNo(req.getOrderNo());
 		paramApplyOrder.setStatus(req.getState());
-
-		if (req.getState() == LoanOrderStatusEnum.AUDIT_PASS.getKey()) {// 终审通过
-
-		} else if (req.getState() == LoanOrderStatusEnum.HAVE_LOAN.getKey()) {// 放款成功
-			// 查询订单信息
+		log.info("贷款通知处理，贷款单号OrderNo:"+req.getOrderNo());
+		if (req.getState() == LoanOrderStatusEnum.AUDIT_PASS.getKey()||req.getState() == LoanOrderStatusEnum.HAVE_LOAN.getKey()) {// 终审通过||放款成功
 			LoanQueryConditions loanQueryConditions = new LoanQueryConditions();
 			loanQueryConditions.setOrderNo(req.getOrderNo());
 			List<LoanApplyOrder> loanApplyOrderList = loanOrderDao
 					.listLoanApplyOrder(loanQueryConditions);
-			
 			if(CollectionUtils.isEmpty(loanApplyOrderList)){
 				log.info("贷款通知订单不存在，OrderNo:"+req.getOrderNo());
 				loanOrderNotifyResponse.putErrorResult("贷款订单不存在");
 				return loanOrderNotifyResponse;
 			}
 			LoanApplyOrder  loanApplyOrder = loanApplyOrderList.get(0);
-			SynLoanCreditOrderRequest creditOrderRequest = new SynLoanCreditOrderRequest();
-			creditOrderRequest.setOrgCode(loanApplyOrder.getOrgCode());
-			creditOrderRequest.setOrderNo(loanApplyOrder.getCreditOrderNo());
-			loanCreditService.synLoanCreditOrder(creditOrderRequest);
-			
-			
-			QueryLoanApplyRequest queryLoanApplyRequest = new QueryLoanApplyRequest();
-			queryLoanApplyRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
-			queryLoanApplyRequest.setUserid(loanApplyOrder.getOrgCode());
-			queryLoanApplyRequest.setUserorderid(req.getOrderNo());
-			QueryLoanApplyResponse queryLoanApplyResponse = rsCreditManager
-					.queryLoanApply(queryLoanApplyRequest);
-			if (!queryLoanApplyResponse.isSuccess()) {
-				log.error("贷款通知处理失败，orderNo：" + req.getOrderNo() + ",msg:"
-						+ queryLoanApplyResponse.getReturnMsg());
-				loanOrderNotifyResponse.putErrorResult(queryLoanApplyResponse
-						.getReturnMsg());
-				return loanOrderNotifyResponse;
+			if(req.getState() == LoanOrderStatusEnum.HAVE_LOAN.getKey()){
+				// 同步剩余可用授信金额
+				SynLoanCreditOrderRequest creditOrderRequest = new SynLoanCreditOrderRequest();
+				creditOrderRequest.setOrgCode(loanApplyOrder.getOrgCode());
+				creditOrderRequest.setOrderNo(loanApplyOrder.getCreditOrderNo());
+				loanCreditService.synLoanCreditOrder(creditOrderRequest);
 			}
- 
-			paramApplyOrder.setShouldCapital(Long.valueOf(queryLoanApplyResponse.getLoanmoney()));
-			paramApplyOrder.setRelMoneyTime(DateUtil.toDataYYYYMMDDHHmmss(queryLoanApplyResponse.getLoandate()));//放款时间
-			paramApplyOrder.setActualAmount(Long.valueOf(queryLoanApplyResponse.getLoanmoney()));//实际放款金额
-			Date rDate = DateUtils.addDays(DateUtil.toDataYYYYMMDDHHmmss(queryLoanApplyResponse.getLoandate()), CommonConstant.RS_LOAN_REPAYMENT_TIME);
-			paramApplyOrder.setActualRepaymentDate(rDate);//
-		} else {
+			
+			SynLoanOrderRequest synLoanOrderRequest = new SynLoanOrderRequest();
+			synLoanOrderRequest.setOrderNo(req.getOrderNo());
+			synLoanOrderRequest.setOrgCode(loanApplyOrder.getOrgCode());
+			
+			this.synLoanOrderInfo(synLoanOrderRequest);
+			log.info("贷款通知处理->同步贷款订单信息完成，贷款单号OrderNo:"+req.getOrderNo());
+		 } else {
 			paramApplyOrder.setErrorMsg(req.getMsg());
 		}
 
