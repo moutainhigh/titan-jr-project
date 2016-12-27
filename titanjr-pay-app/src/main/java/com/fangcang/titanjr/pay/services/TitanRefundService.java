@@ -241,9 +241,9 @@ public class TitanRefundService {
 		    TransOrderDTO order = new TransOrderDTO();
 		    order.setStatusid(OrderStatusEnum.REFUND_IN_PROCESS.getStatus());
 		    if(StringUtil.isValidString(titanJrRefundRequest.getToBankCardOrAccount()) && 
-		    		titanJrRefundRequest.getToBankCardOrAccount().equals(RefundTypeEnum.REFUND_ACCOUNT.type)){
+		    		titanJrRefundRequest.getToBankCardOrAccount().equals(RefundTypeEnum.REFUND_ACCOUNT.type)){//余额支付的退款
 		    	 order.setStatusid(OrderStatusEnum.REFUND_SUCCESS.getStatus());
-		    }else if(titanJrRefundRequest.getIsRealTime()==CommonConstant.REAL_TIME){
+		    }else if(titanJrRefundRequest.getIsRealTime()==CommonConstant.REAL_TIME){//第三方支付等实时到账的退款
 		    	order.setStatusid(OrderStatusEnum.REFUND_SUCCESS.getStatus());
 		    }
 		    log.info("退款成功修改订单状态:"+order.getTransid()+":"+order.getStatusid());
@@ -256,7 +256,7 @@ public class TitanRefundService {
 		    response.putSuccess();
 		    return response;			
 		}catch(Exception e){
-			log.error(e.getMessage());
+			log.error("退款出现异常:"+e.getMessage());
 		}
 		response.putSysError();
 		return response;		
