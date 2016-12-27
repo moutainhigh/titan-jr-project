@@ -150,6 +150,15 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	private static Map<String, Object> mapLock = new ConcurrentHashMap<String, Object>();
 
 
+	public void tt(){
+		
+		
+		//TitanTransOrder titanTransOrder = orderRequest2TitanTransOrder(orderRequest);
+		
+		
+		//titanTransOrderDao.insert(titanTransOrder)
+	}
+	
 	@Override
 	public LocalAddTransOrderResponse addLocalTransOrder(
 			TitanPaymentRequest titanPaymentRequest) {

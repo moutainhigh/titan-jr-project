@@ -102,6 +102,7 @@ import com.fangcang.titanjr.rs.response.UserInitiativeRepamentResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.util.LoanTypeConvertUtil;
 import com.fangcang.util.StringUtil;
@@ -139,6 +140,8 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 	@Resource
 	private TitanFinancialLoanCreditService loanCreditService;
 	
+	@Resource
+	private TitanFinancialTradeService tradeService;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
@@ -1329,6 +1332,12 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			}
 			LoanApplyOrder  loanApplyOrder = loanApplyOrderList.get(0);
 			if(req.getState() == LoanOrderStatusEnum.HAVE_LOAN.getKey()){
+				//下单
+				//tradeService.addLocalTransOrder(titanPaymentRequest)
+				
+				//转账
+				//tradeService.transferAccounts(transferRequest)
+				//,,
 				// 同步剩余可用授信金额
 				SynLoanCreditOrderRequest creditOrderRequest = new SynLoanCreditOrderRequest();
 				creditOrderRequest.setOrgCode(loanApplyOrder.getOrgCode());

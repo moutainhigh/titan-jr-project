@@ -416,7 +416,7 @@
 							</tr>	
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>房产情况：</td>
-								<td><c:if test="${getCreditInfoResponse.loanPersonEnsure.housePropertyType==1}">无房</c:if><c:if test="${getCreditInfoResponse.loanPersonEnsure.housePropertyType==2}">有房有贷</c:if><c:if test="${getCreditInfoResponse.loanPersonEnsure.housePropertyType==3}">有房无贷</c:if></td>
+								<td><c:if test="${getCreditInfoResponse.loanPersonEnsure.housePropertyType==1}">无房</c:if><c:if test="${getCreditInfoResponse.loanPersonEnsure.housePropertyType==2}">有房无房贷</c:if><c:if test="${getCreditInfoResponse.loanPersonEnsure.housePropertyType==3}">有房有房贷</c:if></td>
 								<td class="bg_f2"><i class="c_f00">*</i>其他资产：</td>
 								<td colspan="5">${getCreditInfoResponse.loanPersonEnsure.otherProperty}</td>
 							</tr>
@@ -473,6 +473,7 @@
 					</div>
 					</div>	
 					</c:if>
+					<!-- 企业担保 -->
 					<c:if test="${getCreditInfoResponse.creditOrder.assureType==2}">
 					<div class="surety1">
 					<div class="clc_t">
@@ -510,11 +511,32 @@
 								<td class="bg_f2"><i class="c_f00">*</i>组织机构代码：</td>
 								<td>${getCreditInfoResponse.companyEnsure.orgCodeCertificate}</td>								
 							</tr>
+							<!-- 
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>平台注册账号：</td>
 								<td>${getCreditInfoResponse.companyEnsure.registerAccount}</td>
 								<td class="bg_f2"><i class="c_f00">*</i>平台注册日期：</td>
 								<td>${getCreditInfoResponse.companyEnsure.registerDate}</td>								
+							</tr>
+							 -->
+							<tr>
+								<td class="bg_f2"><i class="c_f00">*</i>营业执照生效日期：</td>
+								<td>${getCreditInfoResponse.companyEnsure.certificateStartDate}</td>
+								<td class="bg_f2"><i class="c_f00">*</i>营业执照失效日期：</td>
+								<td>${getCreditInfoResponse.companyEnsure.certificateExpireDate}</td>								
+							</tr>
+							<tr>
+								<td class="bg_f2"><i class="c_f00">*</i>企业类型：</td>
+								<td>
+								<c:if test="${getCreditInfoResponse.companyEnsure.companyType==1 }">有限责任公司</c:if>
+								<c:if test="${getCreditInfoResponse.companyEnsure.companyType==2 }">股份有限公司</c:if>
+								<c:if test="${getCreditInfoResponse.companyEnsure.companyType==3 }">内资</c:if>
+								<c:if test="${getCreditInfoResponse.companyEnsure.companyType==4 }">国有全资</c:if>
+								<c:if test="${getCreditInfoResponse.companyEnsure.companyType==5 }">集资全资</c:if>
+								<c:if test="${getCreditInfoResponse.companyEnsure.companyType==6 }">国外投资股份有限公司</c:if>
+								<c:if test="${getCreditInfoResponse.companyEnsure.companyType==99 }">其他</c:if></td>
+								<td class="bg_f2"><i class="c_f00">*</i>注册资金：</td>
+								<td>${getCreditInfoResponse.companyEnsure.registFinance}</td>								
 							</tr>
 							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>企业注册地址：</td>
@@ -541,7 +563,9 @@
 								<td class="bg_f2"><i class="c_f00">*</i>法人姓名：</td>
 								<td>${getCreditInfoResponse.companyEnsure.legalPersonName}</td>
 								<td class="bg_f2"><i class="c_f00">*</i>法人证件号：</td>
-								<td>${getCreditInfoResponse.companyEnsure.legalPersonCertificateNumber}</td>								
+								<td>
+								<c:if test="${getCreditInfoResponse.companyEnsure.legalPersonCertificateType==1}">身份证</c:if>
+								<c:if test="${getCreditInfoResponse.companyEnsure.legalPersonCertificateType==2}">护照</c:if>&nbsp;&nbsp;&nbsp;${getCreditInfoResponse.companyEnsure.legalPersonCertificateNumber}</td>								
 							</tr>								
 						</table>
 					</div>	
@@ -579,7 +603,7 @@
 										<div class="download">
 											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.licenseUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.licenseUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.licenseUrl, '.rar')}">class='RAR'</c:if>></i>
 											<span title=""></span>
-											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.licenseUrl}">下载</a>
+											<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.licenseUrl}">下载</a>
 										</div>
 									</li>
 								</c:when>
@@ -596,7 +620,7 @@
 										<div class="download">
 											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.taxRegUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.taxRegUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.taxRegUrl, '.rar')}">class='RAR'</c:if>></i>
 											<span title=""></span>
-											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.taxRegUrl}">下载</a>
+											<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.taxRegUrl}">下载</a>
 										</div>
 									</li>
 								</c:when>
@@ -612,7 +636,7 @@
 										<div class="download">
 											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.orgCodeUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.orgCodeUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.orgCodeUrl, '.rar')}">class='RAR'</c:if>></i>
 											<span title=""></span>
-											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.orgCodeUrl}">下载</a>
+											<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.orgCodeUrl}">下载</a>
 										</div>
 									</li>
 								</c:when>
@@ -628,7 +652,7 @@
 										<div class="download">
 											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.accountUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.accountUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.accountUrl, '.rar')}">class='RAR'</c:if>></i>
 											<span title=""></span>
-											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.accountUrl}">下载</a>
+											<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.accountUrl}">下载</a>
 										</div>
 									</li>
 								</c:when>
@@ -645,7 +669,7 @@
 										<div class="download">
 											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.legalNoUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.legalNoUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.legalNoUrl, '.rar')}">class='RAR'</c:if>></i>
 											<span title=""></span>
-											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.legalNoUrl}">下载</a>
+											<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.legalNoUrl}">下载</a>
 										</div>
 									</li>
 								</c:when>
@@ -662,7 +686,7 @@
 										<div class="download">
 											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.creditUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.creditUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.creditUrl, '.rar')}">class='RAR'</c:if>></i>
 											<span title=""></span>
-											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.creditUrl}">下载</a>
+											<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.creditUrl}">下载</a>
 										</div>
 									</li>
 								</c:when>
@@ -679,7 +703,7 @@
 										<div class="download">
 											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.waterUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.waterUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.waterUrl, '.rar')}">class='RAR'</c:if>></i>
 											<span title=""></span>
-											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.waterUrl}">下载</a>
+											<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.waterUrl}">下载</a>
 										</div>
 									</li>
 								</c:when>
@@ -696,7 +720,7 @@
 										<div class="download">
 											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeNoUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeNoUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeNoUrl, '.rar')}">class='RAR'</c:if>></i>
 											<span title=""></span>
-											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.officeNoUrl}">下载</a>
+											<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.officeNoUrl}">下载</a>
 										</div>
 									</li>
 								</c:when>
@@ -712,7 +736,7 @@
 										<div class="download">
 											<i <c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.creditCompany.officeUrl, '.rar')}">class='RAR'</c:if>></i>
 											<span title=""></span>
-											<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.officeUrl}">下载</a>
+											<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.creditCompany.officeUrl}">下载</a>
 										</div>
 									</li>
 								</c:when>
@@ -739,7 +763,7 @@
 											<div class="download">
 												<i <c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.businessLicenseUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.businessLicenseUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.businessLicenseUrl, '.rar')}">class='RAR'</c:if>></i>
 												<span title=""></span>
-												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.businessLicenseUrl}">下载</a>
+												<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.businessLicenseUrl}">下载</a>
 											</div>
 										</li>
 									</c:when>
@@ -756,7 +780,7 @@
 											<div class="download">
 												<i <c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl, '.rar')}">class='RAR'</c:if>></i>
 												<span title=""></span>
-												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl}">下载</a>
+												<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.taxRegisterCodeUrl}">下载</a>
 											</div>
 										</li>
 									</c:when>
@@ -773,7 +797,7 @@
 											<div class="download">
 												<i <c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl, '.rar')}">class='RAR'</c:if>></i>
 												<span title=""></span>
-												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl}">下载</a>
+												<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.orgCodeCertificateUrl}">下载</a>
 											</div>
 										</li>
 									</c:when>
@@ -790,7 +814,7 @@
 											<div class="download">
 												<i <c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.licenseUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.licenseUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.licenseUrl, '.rar')}">class='RAR'</c:if>></i>
 												<span title=""></span>
-												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.licenseUrl}">下载</a>
+												<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.licenseUrl}">下载</a>
 											</div>
 										</li>
 									</c:when>
@@ -807,7 +831,7 @@
 											<div class="download">
 												<i <c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.legalPersonUrl, '.pdf')}">class='PDF'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.legalPersonUrl, '.zip')}">class='ZIP'</c:if><c:if test="${fn:endsWith(getCreditInfoResponse.companyEnsure.legalPersonUrl, '.rar')}">class='RAR'</c:if>></i>
 												<span title=""></span>
-												<a href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.legalPersonUrl}">下载</a>
+												<a target="_blank" href="http://image.fangcang.com/upload/images/titanjr/credit_apply/${getCreditInfoResponse.creditOrder.orgCode}/${getCreditInfoResponse.companyEnsure.legalPersonUrl}">下载</a>
 											</div>
 										</li>
 									</c:when>
