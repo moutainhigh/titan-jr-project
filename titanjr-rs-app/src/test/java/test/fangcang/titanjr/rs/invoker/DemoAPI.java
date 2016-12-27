@@ -19,11 +19,19 @@ public class DemoAPI {
 	
 	
 	//融数商户联调环境
-	private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
-	private static String appKey = "C5CE632E-FDA6-436A-B4DF-1DE93A2C72C3";
-	private static String appSecret = "D7787ED2-0465-42C7-9CF8-25D5CC6ACA34";
-	private static String session = "1478056836773639888";
+//	private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
+//	private static String appKey = "C5CE632E-FDA6-436A-B4DF-1DE93A2C72C3";
+//	private static String appSecret = "D7787ED2-0465-42C7-9CF8-25D5CC6ACA34";
+//	private static String session = "1478056836773639888";
 	
+	
+	//融数UAT 环境
+		private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
+		private static String appKey = "762DF53A-4DFD-427A-88F8-C4EEF26195A3";
+		private static String appSecret = "6461B23C-3ABE-4BE2-8E2C-D3FF4B2F5415";
+		private static String session = "1478056836773639888";
+		
+		
 	static DefaultRopClient ropClient = new DefaultRopClient(ropUrl, appKey,
 			appSecret, "xml");
 
@@ -491,7 +499,7 @@ public class DemoAPI {
 		String strError = null;
 		try {
 			WheatfieldBalanceGetlistRequest req = new WheatfieldBalanceGetlistRequest();
-			req.setUserid("TJM10000087");								//	用户id
+			req.setUserid("TJM10020002");								//	用户id
 //			req.setUserid("141223100000056");								//	用户id
 			req.setRootinstcd("M000016");						// 机构号
 			

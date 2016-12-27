@@ -96,7 +96,7 @@ public class LoanDemoTest {
          // douserinitiativerepament(session);// 主动还款
         
          // doqueryuserinitiativerepayment(session);//主动还款查询
-          doqueryloanapply();//贷款订单状态查询接口
+        //  doqueryloanapply();//贷款订单状态查询接口
         //   queryOrderOper();//查询订单
         // doqueryuserrepayment();//查询贷款的还款状态及历史
 		// stoploan();//终止贷款
