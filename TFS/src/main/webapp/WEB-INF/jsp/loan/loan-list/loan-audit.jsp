@@ -18,7 +18,7 @@
 				<tr>
 					<td class="tdl">序号</td>
 					<td width="tdl">贷款申请时间</td>
-					<td class="tdr">贷款额度(元)</td>
+					<td class="tdr">申请贷款额度(元)</td>
 					<td></td>
 					<td class="tdl">贷款类型</td>
 					<td class="tdl">还款方式</td>
@@ -105,7 +105,8 @@
 					</td>
 					<td class=""><a class="blue decorationUnderline m_r10"
 						href="<%=basePath%>/loan/getLoanDetailsInfo.shtml?orderNo=${loanInfoItem.orderNo}">详情</a>
-						 <a class="blue decorationUnderline J_revocation" orderNo="${loanInfoItem.orderNo}" href="javascript:void(0)">撤销申请</a></td>
+<%-- 						 <a class="blue decorationUnderline J_revocation" orderNo="${loanInfoItem.orderNo}" href="javascript:void(0)">撤销申请</a> --%>
+						 </td>
 				</tr>
 			</c:forEach>
 		</table>

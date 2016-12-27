@@ -19,7 +19,7 @@
 				<tr>					
 					<td class="tdl">序号</td>
 					<td width="tdl">还款时间</td>
-					<td class="tdr">贷款金额(元)</td>
+					<td class="tdr">放款贷款额度(元)</td>
 				
 					<td class="tdr">本息合计(元)</td>
 					<td></td>

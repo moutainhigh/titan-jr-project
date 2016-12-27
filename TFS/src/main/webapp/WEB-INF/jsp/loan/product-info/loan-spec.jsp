@@ -81,7 +81,7 @@
 			<div class="RC_t1 p_t10">
 				<span class="w_105">还款记录</span>
 				<span class="w_240">还款到期日：<fmt:formatDate value="${loanOrderInfo.actualRepaymentDate}" pattern="yyyy-MM-dd" /></span>
-				<span class="w_240">剩余待还本息：<fmt:formatNumber value="${loanOrderInfo.shouldCapital/100}"  pattern="#,##0.00#" /> 元</span>		
+				<span class="w_240">剩余待还本息：<fmt:formatNumber value="${(loanOrderInfo.shouldCapital + loanOrderInfo.shouldInterest) /100}"  pattern="#,##0.00#" /> 元</span>		
 				<a class="btn" href="<%=basePath%>/loan/repayment/repaymentPer.shtml?orderNo=${loanOrderInfo.orderNo}">马上还款</a>
 			</div>
 		</c:if>
@@ -125,7 +125,7 @@
 <div style="height: 60px"></div>
 <div class="TFS_data_button">
 	<c:if test="${loanOrderInfo.status==4 || loanOrderInfo.status==7 || loanOrderInfo.status==8}">
-		<a class="btn btnNext" href="<%=basePath %>/loan_apply/main.shtml">重新申请</a>
+<%-- 		<a class="btn btnNext" href="<%=basePath %>/loan_apply/main.shtml">重新申请</a> --%>
 	</c:if>
 	
 	<c:if test="${loanOrderInfo.status==1 || loanOrderInfo.status==2 || loanOrderInfo.status==3 || loanOrderInfo.status==5}">

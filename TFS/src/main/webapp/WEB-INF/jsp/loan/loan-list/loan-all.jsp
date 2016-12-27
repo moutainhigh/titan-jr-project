@@ -130,9 +130,9 @@
 					</td>				
 					<td class=""><a class="blue decorationUnderline m_r10 " href="<%=basePath%>/loan/getLoanDetailsInfo.shtml?orderNo=${loanInfoItem.orderNo}">详情</a> 
 						<c:if test="${loanInfoItem.status==1 || loanInfoItem.status==2 || loanInfoItem.status==3 || loanInfoItem.status==5}">
-							 <a class="blue decorationUnderline J_revocation" orderNo="${loanInfoItem.orderNo}" href="javascript:void(0)">撤销申请</a>
+<%-- 							 <a class="blue decorationUnderline J_revocation" orderNo="${loanInfoItem.orderNo}" href="javascript:void(0)">撤销申请</a> --%>
 						</c:if>
-						<c:if test="${loanInfoItem.status==6}">
+						<c:if test="${loanInfoItem.status==6 || loanInfoItem.status==9}">
 							<a class="blue decorationUnderline" href="<%=basePath%>/loan/repayment/repaymentPer.shtml?orderNo=${loanInfoItem.orderNo}">还款</a>
 						</c:if>
 						
