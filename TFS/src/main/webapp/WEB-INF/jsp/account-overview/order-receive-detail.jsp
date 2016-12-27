@@ -110,7 +110,7 @@
                                 	<span>+<fmt:formatNumber value="${(transOrder.titanTransferDTO.amount +transOrder.receivedfee) / 100.0 }" pattern="#,##0.00#"/></span>
 	                            </td>
 	                             <td style="width:50px">
-                                    <c:if test="${transOrder.receivedfee!=null}">
+                                    <c:if test="${transOrder.receivedfee!=null && transOrder.receivedfee!=0.0 && transOrder.receivedfee!=0.00}">
 	                                <span>-<fmt:formatNumber value="${transOrder.receivedfee / 100.0 }" pattern="#,##0.00#"/></span>
 	                                </c:if>
 	                            </td>
@@ -144,7 +144,7 @@
                                     <span>-<fmt:formatNumber value="${(transOrder.refundDTO.transferAmount+transOrder.refundDTO.fee) / 100.0 }" pattern="#,##0.00#"/></span>
 	                               </td>
 	                               <td style="width:50px">
-	                               <c:if test="${transOrder.refundDTO.fee !=null }">
+	                               <c:if test="${transOrder.refundDTO.fee !=null && transOrder.refundDTO.fee!=0.0 &&transOrder.refundDTO.fee!=0.00}">
 	                                <span>+<fmt:formatNumber value="${transOrder.refundDTO.fee / 100.0 }" pattern="#,##0.00#"/></span>
 	                               </c:if>
 	                               </td>

@@ -1797,39 +1797,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return result;
 	}
 
-	@Override
-	public GDPOrderResponse getGDPOrderDTO(String orderCode) {
-		log.info("GDP查询入参:" + JSON.toJSONString(orderCode));
-		GDPOrderResponse gDPOrderResponse = new GDPOrderResponse();
-		OrderDetailResponseDTO orderDetailResponseDTO = this
-				.getHotelOrderSearchFacade().queryOrderByCode(orderCode);
-		log.info("GDP查询的结果:" + JSON.toJSONString(orderDetailResponseDTO));
-		if (orderDetailResponseDTO == null
-				|| !StringUtil.isValidString(orderDetailResponseDTO
-						.getOrderCode())) {
-			gDPOrderResponse.putSysError();
-			return gDPOrderResponse;
-		}
-
-		GDPOrderDTO gDPOrderDTO = new GDPOrderDTO();
-		if (orderDetailResponseDTO.getCurrency() != null) {
-			gDPOrderDTO.setCurrency(orderDetailResponseDTO.getCurrency()
-					.getValue());
-		}
-		gDPOrderDTO.setHotelName(orderDetailResponseDTO.getHotelName());
-		gDPOrderDTO.setOrderSum(orderDetailResponseDTO.getOrderSum());
-		gDPOrderDTO.setGoodName(orderDetailResponseDTO.getCommondityName());
-		gDPOrderDTO.setOrderCode(orderDetailResponseDTO.getOrderCode());
-		gDPOrderDTO.setGoodDetail(orderDetailResponseDTO.getOrderCode() + "-"
-				+ orderDetailResponseDTO.getHotelName() + "-"
-				+ orderDetailResponseDTO.getRoomTypeName() + "-入住日期:"
-				+ orderDetailResponseDTO.getCheckIndate() + "-离店日期:"
-				+ orderDetailResponseDTO.getCheckOutDate());
-		gDPOrderResponse.setgDPOrderDTO(gDPOrderDTO);
-		gDPOrderResponse.putSuccess();
-
-		return gDPOrderResponse;
-	}
 
 	private void lockOutTradeNoList(String out_trade_no)
 			throws InterruptedException {
