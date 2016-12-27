@@ -23,8 +23,11 @@ public class LoanOrderSynRunner implements Runnable {
 
 		GetLoanOrderInfoListRequest req = new GetLoanOrderInfoListRequest();
 		req.setCurrentPage(1);
+		
 		req.setOrderStatusEnum(LoanOrderStatusEnum.HAVE_LOAN,
-				LoanOrderStatusEnum.LOAN_EXPIRY);
+				LoanOrderStatusEnum.LOAN_EXPIRY,
+				LoanOrderStatusEnum.LOAN_REQ_ING,
+				LoanOrderStatusEnum.WAIT_AUDIT);
 
 		GetLoanOrderInfoListResponse listResponse = titanFinancialLoanService
 				.getLoanOrderInfoList(req);
