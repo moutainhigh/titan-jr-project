@@ -1975,6 +1975,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	public TransOrderCreateResponse saveTitanTransOrder(
 			TitanOrderRequest titanOrderRequest) {
 
+		//检查订单是否存在，如果已
 		TransOrderCreateResponse localOrderResponse = checkTitanTransOrder(titanOrderRequest);
 
 		if (localOrderResponse == null) {
@@ -1991,6 +1992,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				return localOrderResponse;
 			}
 
+			//设置收付款方信息
 			localOrderResponse = this.setBaseUserInfo(titanOrderRequest,
 					titanTransOrder);
 			if (!localOrderResponse.isResult()) {
@@ -2100,7 +2102,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	}
 
 	/**
-	 * 检查订单是否已经存在
+	 * 检查订单是否已经存在，存在检查是否支付成功，支付成功就再次回调，
+	 * 支付不成功则查看该订单支付金额是否改变，融数落单且超过45分钟，则返回null，
+	 * 如果未在融数落单，或者已经有充值成功的单，或在融数落单且在45分钟内，则返回原单号
 	 * 
 	 * @param titanOrderRequest
 	 * @return
@@ -2238,7 +2242,12 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	}
 
 	/**
-	 * 只能是fcUSerId 进入
+	 * 保存收付款方相关信息
+	 * 1.付款方不为空且为FcuserId，则查询在金融系统中对应的userId，和merchcode，将相关信息封装
+	 * 2.如果付款方不为空，且为金融机构号，则将付款方设置金融账户
+	 * 3.收款方为merchcode,设置相关收款方信息，如果为GDP或者TTMALL则设置中间账户为付款方
+	 * 4.收款方位金融机构号设置相关信息
+	 * 5.如果为对外开关平台，则设置收付款相关信息
 	 * 
 	 * @param titanTransOrder
 	 * @param titanTransOrder
@@ -2274,7 +2283,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						.getBusinessInfo();
 				// 接入方的用户在我们系统中对应我们金融Id的唯一标识
 				bussinessInfo.put("partnerId", titanOrderRequest.getUserId());
-			} else if (payerTypeEnum.isUserId()) {// 付款方传入userId
+			} else if (payerTypeEnum.isUserId()) {// 付款方传入userId,现在只要提现操作
 				titanTransOrder.setUserid(titanOrderRequest.getUserId());
 				if (PayerTypeEnum.WITHDRAW.getKey().equals(
 						payerTypeEnum.getKey())) {
