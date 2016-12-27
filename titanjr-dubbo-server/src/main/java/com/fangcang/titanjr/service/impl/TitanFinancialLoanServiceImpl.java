@@ -82,6 +82,7 @@ import com.fangcang.titanjr.rs.dto.TUserArepayment;
 import com.fangcang.titanjr.rs.manager.RSCreditManager;
 import com.fangcang.titanjr.rs.manager.RSFileManager;
 import com.fangcang.titanjr.rs.request.NewLoanApplyRequest;
+import com.fangcang.titanjr.rs.request.OrderServiceAgreementConfirmRequest;
 import com.fangcang.titanjr.rs.request.QueryBorrowinfoRequest;
 import com.fangcang.titanjr.rs.request.QueryCreditMerchantInfoRequest;
 import com.fangcang.titanjr.rs.request.QueryLoanApplyRequest;
@@ -90,6 +91,7 @@ import com.fangcang.titanjr.rs.request.RSFsFileUploadRequest;
 import com.fangcang.titanjr.rs.request.StopLoanRequest;
 import com.fangcang.titanjr.rs.request.UserInitiativeRepamentRequest;
 import com.fangcang.titanjr.rs.response.NewLoanApplyResponse;
+import com.fangcang.titanjr.rs.response.OrderServiceAgreementConfirmResponse;
 import com.fangcang.titanjr.rs.response.QueryBorrowinfoResponse;
 import com.fangcang.titanjr.rs.response.QueryCreditMerchantInfoResponse;
 import com.fangcang.titanjr.rs.response.QueryLoanApplyResponse;
@@ -703,7 +705,8 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			interestAmount = interestAmount.add(new BigDecimal(borrowRepayment
 					.getUseroverduefine()).add(new BigDecimal(borrowRepayment
 					.getUseroverdueinterest())));
-
+			
+			//设置应还的金额及利息
 			loanApplyOrder.setShouldCapital(Long.valueOf(borrowRepayment
 					.getUsershouldcapital()));
 			loanApplyOrder.setShouldInterest(interestAmount.longValue());
@@ -759,16 +762,67 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 					log.error("", e);
 				}
 			}
-
+			//设置已还的金额及利息
 			loanApplyOrder.setRepaymentPrincipal(arepayAmount.longValue());
 			loanApplyOrder.setRepaymentInterest(arepayInterest.longValue());
 		}
+		
+		//将融数平台的状态映射成房仓的状态
+		LoanOrderStatusEnum orderStatusEnum = LoanTypeConvertUtil
+				.rsStatusMap(rsp.getStatustring());
+		
+		//如果融数端是终审通过待付款，那么房仓需要检查起贷款状态是否处于申请中或者待终审，如果是则发起确认协议
+		if (orderStatusEnum != null
+				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == orderStatusEnum
+						.getKey() || LoanOrderStatusEnum.LENDING_ING.getKey() == orderStatusEnum
+						.getKey())) {
 
-		// 融数方指定的特殊状态位，表示状态已经结束
-		if ("贷款已结束".equals(rsp.getStatustring())) {
-			loanApplyOrder.setStatus(LoanOrderStatusEnum.LOAN_FINISH.getKey());
+			if (LoanOrderStatusEnum.LOAN_REQ_ING.getKey() == loanApplyOrder
+					.getStatus()
+					|| LoanOrderStatusEnum.WAIT_AUDIT.getKey() == loanApplyOrder
+							.getStatus()) {
+				
+				log.info(" confirm loan order protocol ");
+				//进行协议确认
+				OrderServiceAgreementConfirmRequest cReq = new OrderServiceAgreementConfirmRequest();
+				
+				cReq.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+				cReq.setProductid(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
+				cReq.setUserid(orgCode);
+				cReq.setUserorderid(orderNo);
+				cReq.setUserflag("2");
+				cReq.setMerchanturlkey("xxxxx");
+				
+				OrderServiceAgreementConfirmResponse confirmResponse = rsCreditManager
+						.agreementConfirm(cReq);
+				
+				if(confirmResponse == null || !confirmResponse.isSuccess())
+				{
+					log.error("confirm loan order protocol fail!  "
+							+ JsonConversionTool.toJson(confirmResponse));
+				}
+			}
 		}
-
+		if (orderStatusEnum != null) {
+			loanApplyOrder.setStatus(orderStatusEnum.getKey());
+		}
+		
+		//如果没生成还款计划，需要设置默认值
+		if (borrowRepayment == null) {
+			//还款计划没生成，则设置贷款金额为应还金额
+			if (loanApplyOrder.getShouldCapital() == null) {
+				loanApplyOrder.setShouldCapital(Long.parseLong(rsp
+						.getLoanmoney()));
+			}
+			//如果没生成还款计划的，那么还款日期先采用+90天方式来算
+			if (loanApplyOrder.getActualRepaymentDate() == null) {
+				Date rDate = DateUtils.addDays(
+						DateUtil.toDataYYYYMMDD(rsp.getLoandate()),
+						CommonConstant.RS_LOAN_REPAYMENT_TIME);
+				loanApplyOrder.setActualRepaymentDate(rDate);//
+			}
+		}
+		
 		if (StringUtil.isValidString(rsp.getLoandate())) {
 			try {
 				loanApplyOrder.setRelMoneyTime(DateUtil.sdf4.parse(rsp
@@ -781,9 +835,10 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		if (StringUtil.isValidString(rsp.getLoanmoney())) {
 			loanApplyOrder.setActualAmount(Long.parseLong(rsp.getLoanmoney()));
 		}
+		
 		loanOrderDao.updateLoanApplyOrder(loanApplyOrder);
-
 		orderResponse.putSuccess();
+		
 		return orderResponse;
 	}
 

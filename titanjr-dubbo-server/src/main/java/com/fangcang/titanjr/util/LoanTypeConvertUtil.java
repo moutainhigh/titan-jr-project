@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
+import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.dto.bean.LoanApplyOrderBean;
@@ -26,6 +27,27 @@ import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
 
 public final class LoanTypeConvertUtil {
+	
+	
+	/**
+	 * 融数跟房仓的状态映射
+	 * @param rsStatus
+	 * @return
+	 */
+	public static LoanOrderStatusEnum rsStatusMap(String rsStatus)
+	{
+		if ("贷款已结束".equals(rsStatus)) {
+			return LoanOrderStatusEnum.LOAN_FINISH;
+		} else if ("终审续议".startsWith(rsStatus) || "终审不通过".startsWith(rsStatus)) {
+			return LoanOrderStatusEnum.AUDIT_FIAL;
+		} else if ("待协议确认".equals(rsStatus) || "待放款".equals(rsStatus)) {
+			return LoanOrderStatusEnum.AUDIT_PASS;
+		}else if("已放款".equals(rsStatus)){
+			return LoanOrderStatusEnum.HAVE_LOAN;
+		}
+		return null;
+	}
+	
 
 	public static LoanRepaymentBean getLoanRepaymentBean(
 			TUserArepayment arepayment) {
