@@ -137,7 +137,7 @@
 						 },
 						 success:function(data){
 							 if(data.result ==true){
-								 new top.Tip({msg: '退款成功', type: 1, timer: 2000});
+								 new top.Tip({msg: '退款成功', type: 1, timer: 3000});
 								 setTimeout(function(){
 									 window.close();
 								 }, 2000);
