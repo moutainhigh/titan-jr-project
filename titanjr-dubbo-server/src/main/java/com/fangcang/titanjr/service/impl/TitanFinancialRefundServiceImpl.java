@@ -679,7 +679,6 @@ public class TitanFinancialRefundServiceImpl implements
 		return null;
 	}
 	
-	
 	private void notifyTTMall(NotifyBean bean){
 		HttpPost httpPost = new HttpPost(bean.getNotifyUrl());
 		String response = "";

@@ -12,7 +12,8 @@ public class NotifyBean implements Serializable{
 	//单号
 	private String payOrderNo;
 	
-	//状态0:处理中，1，成功，2.失败
+	//状0:退款中,2:退款成功,其他状态为退款失败;
+
 	private String code;
 	
 	//回调地址

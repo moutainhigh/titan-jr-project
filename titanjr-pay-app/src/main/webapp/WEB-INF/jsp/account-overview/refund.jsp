@@ -94,8 +94,6 @@
 		<script type="text/javascript" src="../js/common.js"></script>
 		<script type="text/javascript" src="../js/psd.js"></script>
 		<script>
-		
-		
 		  var refundObj = {
 				  enoughBalance:function(){
 					  var refundAmount = null;
@@ -140,10 +138,14 @@
 						 success:function(data){
 							 if(data.result ==true){
 								 new top.Tip({msg: '退款成功', type: 1, timer: 2000});
-								 window.close();
+								 setTimeout(function(){
+									 window.close();
+								 }, 2000);
 							 }else{
 								 new top.Tip({msg: data.returnMessage, type: 1, timer: 3000});
-								 window.close();
+								 setTimeout(function(){
+									 window.close();
+								 }, 2000);
 							 }
 							 
 						 },complete:function(){
