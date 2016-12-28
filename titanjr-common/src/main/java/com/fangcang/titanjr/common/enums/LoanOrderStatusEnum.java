@@ -16,7 +16,7 @@ public enum LoanOrderStatusEnum {
 
 	LENDING_ING(5, "等待放款"),
 
-	HAVE_LOAN(6, " 已放款"),
+	HAVE_LOAN(6, "已放款"),
 
 	LENDING_FAIL(7, "放款失敗"),
 

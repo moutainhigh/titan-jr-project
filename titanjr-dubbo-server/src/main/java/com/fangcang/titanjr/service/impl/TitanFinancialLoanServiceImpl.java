@@ -25,15 +25,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.titanjr.common.enums.ConditioncodeEnum;
 import com.fangcang.titanjr.common.enums.FileTypeEnum;
 import com.fangcang.titanjr.common.enums.LoanApplyOrderEnum;
 import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
+import com.fangcang.titanjr.common.enums.TransfertypeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FileHelp;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.LoanCreditOrderDao;
 import com.fangcang.titanjr.dao.LoanOrderDao;
@@ -58,6 +61,7 @@ import com.fangcang.titanjr.dto.request.RepaymentLoanRequest;
 import com.fangcang.titanjr.dto.request.SaveLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.request.SynLoanCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.SynLoanOrderRequest;
+import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.CancelLoanResponse;
 import com.fangcang.titanjr.dto.response.FTPConfigResponse;
@@ -775,6 +779,42 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		LoanOrderStatusEnum orderStatusEnum = LoanTypeConvertUtil
 				.rsStatusMap(rsp.getStatustring());
 		
+		if (orderStatusEnum.getKey() == LoanOrderStatusEnum.HAVE_LOAN.getKey()
+				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == loanApplyOrder
+						.getStatus()
+						|| LoanOrderStatusEnum.LOAN_REQ_ING.getKey() == loanApplyOrder
+								.getStatus() || LoanOrderStatusEnum.WAIT_AUDIT
+						.getKey() == loanApplyOrder.getStatus())) {
+			
+			//TODO 放款成功后，下单，转账逻辑
+			//下单
+			// tradeService.addLocalTransOrder(titanPaymentRequest)
+			
+			//转账
+			
+//			TransferRequest transferRequest = new TransferRequest();
+//			transferRequest.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
+//			transferRequest.setIntermerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
+//			transferRequest.setConditioncode(ConditioncodeEnum.ADD_OEDER);
+//			//
+//			transferRequest.setUserid(OrderGenerateService
+//					.genLocalOrderNo());
+//			transferRequest.setUserrelateid(userrelateid);
+//			transferRequest.setAmount(amount);
+//			transferRequest.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID_230);
+//			transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+//			
+//			transferRequest.setOrderid(OrderGenerateService.genLocalOrderNo());
+//			transferRequest.setRequestno(OrderGenerateService.genResquestNo());
+//			transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));
+//			transferRequest.setStatus(status);
+//			transferRequest.setTransfertype(TransfertypeEnum.BRANCH_TRANSFER);
+//			transferRequest.setUserfee("0");
+//			
+//			
+//			tradeService.transferAccounts(transferRequest);
+			
+		}
 		//如果融数端是终审通过待付款，那么房仓需要检查起贷款状态是否处于申请中或者待终审，如果是则发起确认协议
 		if (orderStatusEnum != null
 				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == orderStatusEnum
@@ -1332,12 +1372,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			}
 			LoanApplyOrder  loanApplyOrder = loanApplyOrderList.get(0);
 			if(req.getState() == LoanOrderStatusEnum.HAVE_LOAN.getKey()){
-				//下单
-				//tradeService.addLocalTransOrder(titanPaymentRequest)
 				
-				//转账
-				//tradeService.transferAccounts(transferRequest)
-				//,,
 				// 同步剩余可用授信金额
 				SynLoanCreditOrderRequest creditOrderRequest = new SynLoanCreditOrderRequest();
 				creditOrderRequest.setOrgCode(loanApplyOrder.getOrgCode());
