@@ -1,17 +1,22 @@
 package com.fangcang.titanjr.facade.impl;
 
+import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.fangcang.titanjr.dto.OrganStatusEnum;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.facade.TitanFinancialOrganFacade;
 import com.fangcang.titanjr.request.OrganInfoQueryRequest;
 import com.fangcang.titanjr.request.OrganStatusRequest;
-import com.fangcang.titanjr.request.OrganUserInfoQueryRequest;
 import com.fangcang.titanjr.response.OrganInfoResponse;
 import com.fangcang.titanjr.response.OrganStatusResponse;
 import com.fangcang.titanjr.response.OrganUserInfoResponse;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.util.StringUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.annotation.Resource;
 
@@ -20,8 +25,13 @@ import javax.annotation.Resource;
  */
 public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade {
 
+    private static final Log log = LogFactory.getLog(TitanFinancialOrganFacadeImpl.class);
+
     @Resource
-    TitanFinancialOrganService titanFinancialOrganService;
+    private TitanFinancialOrganService titanFinancialOrganService;
+
+    @Resource
+    private TitanFinancialUserService titanFinancialUserService;
 
     @Override
     public OrganStatusResponse queryOrganStatus(OrganStatusRequest organStatusRequest) {
@@ -29,6 +39,7 @@ public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade 
         if (null == organStatusRequest.getOrganTypeEnum() || !StringUtil.isValidString(organStatusRequest.getPartnerCode())
                 || !StringUtil.isValidString(organStatusRequest.getTitanOrgCode())){
             statusResponse.putParamError();
+            log.error("参数校验失败");
             return statusResponse;
         }
         FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
@@ -39,6 +50,7 @@ public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade 
         if (null == financialOrganResponse.getFinancialOrganDTO() ||
                 !StringUtil.isValidString(financialOrganResponse.getFinancialOrganDTO().getUserId())){
             statusResponse.putErrorResult("NO_RESULT","查询机构为空");
+            log.error("查询机构为空");
             return statusResponse;
         }
         statusResponse.setResult(true);
@@ -46,16 +58,88 @@ public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade 
         statusResponse.setOrganStatusEnum(OrganStatusEnum.getEnumByCode(financialOrganResponse.getFinancialOrganDTO()
                 .getCheckStatus().getCheckResultKey()));
         statusResponse.setTitanCode(financialOrganResponse.getFinancialOrganDTO().getTitanCode());
+        log.info("状态查询成功");
         return statusResponse;
     }
 
     @Override
     public OrganInfoResponse queryOrganInfoByPartnerUser(OrganInfoQueryRequest organInfoQueryRequest) {
-        return null;
+        OrganInfoResponse infoResponse = new OrganInfoResponse();
+        if (!StringUtil.isValidString(organInfoQueryRequest.getPartnerCode())){
+            infoResponse.putParamError();
+            log.error("参数校验失败");
+            return infoResponse;
+        }
+        //传入的用户信息不为空，先查用户信息再比较并查询机构信息
+        if (StringUtil.isValidString(organInfoQueryRequest.getPartnerLoginName()) || StringUtil.
+                isValidString(organInfoQueryRequest.getPartnerUserId())){
+            UserInfoQueryRequest userInfoQueryRequest =new UserInfoQueryRequest();
+            userInfoQueryRequest.setBindLoginName(organInfoQueryRequest.getPartnerLoginName());
+            userInfoQueryRequest.setBindMerchantCode(organInfoQueryRequest.getPartnerCode());
+            userInfoQueryRequest.setBindUserId(organInfoQueryRequest.getPartnerUserId());
+            UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
+            if (CollectionUtils.isNotEmpty(userInfoResponse.getUserInfoDTOList()) && StringUtil.
+                    isValidString(userInfoResponse.getUserInfoDTOList().get(0).getUserId())){
+                return buildOrganInfoResponse(infoResponse,userInfoResponse.getUserInfoDTOList().get(0).getUserId(),
+                        organInfoQueryRequest.getOrganTypeEnum().typeId);
+            } else {
+                infoResponse.putErrorResult("NO_VALID_RESULT","传入的用户信息查询机构失败");
+                return infoResponse;
+            }
+        } else {
+            return buildOrganInfoResponse(infoResponse,organInfoQueryRequest.getPartnerCode(),
+                    organInfoQueryRequest.getOrganTypeEnum().typeId);
+        }
     }
 
     @Override
-    public OrganUserInfoResponse queryOrganUserByPartnerUser(OrganUserInfoQueryRequest organUserInfoQueryRequest) {
-        return null;
+    public OrganUserInfoResponse queryOrganUserByPartnerUser(OrganInfoQueryRequest organInfoQueryRequest) {
+        OrganUserInfoResponse infoResponse = new OrganUserInfoResponse();
+        //判定条件不一样
+        if (!StringUtil.isValidString(organInfoQueryRequest.getPartnerCode()) || (!StringUtil.isValidString(organInfoQueryRequest.getPartnerLoginName())
+                && !StringUtil.isValidString(organInfoQueryRequest.getPartnerUserId()))){
+            infoResponse.putParamError();
+            log.error("参数校验失败");
+            return infoResponse;
+        }
+        UserInfoQueryRequest userInfoQueryRequest =new UserInfoQueryRequest();
+        userInfoQueryRequest.setBindLoginName(organInfoQueryRequest.getPartnerLoginName());
+        userInfoQueryRequest.setBindUserId(organInfoQueryRequest.getPartnerUserId());
+        userInfoQueryRequest.setBindMerchantCode(organInfoQueryRequest.getPartnerCode());
+        UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
+        if (CollectionUtils.isNotEmpty(userInfoResponse.getUserInfoDTOList()) && StringUtil.
+                isValidString(userInfoResponse.getUserInfoDTOList().get(0).getUserId())){
+            infoResponse.setResult(true);
+            infoResponse.setTitanOrgCode(userInfoResponse.getUserInfoDTOList().get(0).getOrgCode());
+            infoResponse.setTitanUserId(userInfoResponse.getUserInfoDTOList().get(0).getTfsUserId());
+            infoResponse.setTitanUserLoginName(userInfoResponse.getUserInfoDTOList().get(0).getUserLoginName());
+            infoResponse.setTitanUserName(userInfoResponse.getUserInfoDTOList().get(0).getUserName());
+        } else{
+            infoResponse.putErrorResult("NO_VALID_RESULT","查询正确的用户信息失败");
+            return infoResponse;
+        }
+        return infoResponse;
     }
+
+    private OrganInfoResponse buildOrganInfoResponse(OrganInfoResponse infoResponse,String userId,Integer regChannel){
+        FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+        organQueryRequest.setUserId(userId);
+        organQueryRequest.setRegchannel(regChannel);
+        FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+        if (null != financialOrganResponse.getFinancialOrganDTO() && StringUtil.
+                isValidString(financialOrganResponse.getFinancialOrganDTO().getUserId())){
+            infoResponse.setResult(true);
+            infoResponse.setTitanCode(financialOrganResponse.getFinancialOrganDTO().getTitanCode());
+            infoResponse.setOrganStatusEnum(OrganStatusEnum.getEnumByCode(financialOrganResponse.getFinancialOrganDTO()
+                    .getCheckStatus().getCheckResultKey()));
+            infoResponse.setTitanOrgCode(financialOrganResponse.getFinancialOrganDTO().getOrgCode());
+            infoResponse.setTitanOrgId(financialOrganResponse.getFinancialOrganDTO().getOrgId());
+            infoResponse.setTitanOrgName(financialOrganResponse.getFinancialOrganDTO().getOrgName());
+        } else {
+            infoResponse.putErrorResult("BIND_INFO_INVALID","机构绑定信息不合法");
+            return infoResponse;
+        }
+        return  infoResponse;
+    }
+
 }

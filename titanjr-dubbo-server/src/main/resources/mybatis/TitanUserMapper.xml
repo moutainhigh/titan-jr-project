@@ -86,6 +86,7 @@
       	<if test="userLoginName !=null"> and u.userloginname = #{userLoginName}</if>
       	<if test="bindLoginName !=null"> and b.fcloginname = #{bindLoginName}</if>
       	<if test="bindMerchantCode !=null"> and b.merchantcode = #{bindMerchantCode}</if>
+        <if test="bindUserId !=null"> and b.fcuserid = #{bindUserId}</if>
       	<if test="userName !=null"> and u.username like concat('%',#{userName},'%')</if>
       	<if test="mobilePhone !=null"> and u.mobilephone = #{mobilePhone}</if>
     </where>

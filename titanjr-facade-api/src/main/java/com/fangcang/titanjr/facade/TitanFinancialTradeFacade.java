@@ -1,8 +1,8 @@
 package com.fangcang.titanjr.facade;
 
-import com.fangcang.titanjr.request.AccountBalanceRequest;
+import com.fangcang.titanjr.request.BalanceQueryRequest;
 import com.fangcang.titanjr.request.TitanOrderPaymentRequest;
-import com.fangcang.titanjr.response.AccountBalanceResponse;
+import com.fangcang.titanjr.response.BalanceQueryResponse;
 import com.fangcang.titanjr.response.TitanOrderPaymentResponse;
 
 
@@ -23,6 +23,6 @@ public interface TitanFinancialTradeFacade {
 	 * @param accountBalanceRequest
 	 * @return
      */
-	public AccountBalanceResponse queryAccountBalance(AccountBalanceRequest accountBalanceRequest);
+	public BalanceQueryResponse queryAccountBalance(BalanceQueryRequest accountBalanceRequest);
 
 }

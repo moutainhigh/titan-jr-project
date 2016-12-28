@@ -8,7 +8,7 @@ import com.fangcang.titanjr.dto.OrganTypeEnum;
 public class OrganStatusRequest extends BaseRequest {
 
     /**
-     * 机构类型，若不为3，必须传partnerCode
+     * 机构类型，必须传
      */
     private OrganTypeEnum organTypeEnum;
 

@@ -2,7 +2,6 @@ package com.fangcang.titanjr.facade;
 
 import com.fangcang.titanjr.request.OrganInfoQueryRequest;
 import com.fangcang.titanjr.request.OrganStatusRequest;
-import com.fangcang.titanjr.request.OrganUserInfoQueryRequest;
 import com.fangcang.titanjr.response.OrganInfoResponse;
 import com.fangcang.titanjr.response.OrganStatusResponse;
 import com.fangcang.titanjr.response.OrganUserInfoResponse;
@@ -24,17 +23,17 @@ public interface TitanFinancialOrganFacade {
     public OrganStatusResponse queryOrganStatus(OrganStatusRequest organStatusRequest);
 
     /**
-     * 根据合作方用户信息查询金融机构信息
+     * 根据合作方用户或机构信息查询金融机构信息
      * @param organInfoQueryRequest
      * @return
      */
     public OrganInfoResponse queryOrganInfoByPartnerUser(OrganInfoQueryRequest organInfoQueryRequest);
 
     /**
-     * 根据合作方用户信息查询金融用户信息
-     * @param organUserInfoQueryRequest
+     * 根据合作方用户和机构信息查询金融用户信息
+     * @param organInfoQueryRequest
      * @return
      */
-    public OrganUserInfoResponse queryOrganUserByPartnerUser(OrganUserInfoQueryRequest organUserInfoQueryRequest);
+    public OrganUserInfoResponse queryOrganUserByPartnerUser(OrganInfoQueryRequest organInfoQueryRequest);
 
 }

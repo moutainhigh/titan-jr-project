@@ -14,6 +14,9 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
     private Integer tfsUserId;
     //金服用户登录名
     private String userLoginName;
+
+    //绑定的用户id
+    private String bindUserId;
     //房仓绑定用户名
     private String bindLoginName;
     //房仓绑定商家编码
@@ -123,4 +126,12 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
 	public void setIsadmin(Integer isadmin) {
 		this.isadmin = isadmin;
 	}
+
+    public String getBindUserId() {
+        return bindUserId;
+    }
+
+    public void setBindUserId(String bindUserId) {
+        this.bindUserId = bindUserId;
+    }
 }
