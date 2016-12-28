@@ -27,6 +27,7 @@ import com.fangcang.util.StringUtil;
  * Created by zhaoshan on 2016/5/21.
  */
 @Controller
+@RequestMapping("main")
 public class FinancialMainController extends BaseController {
 
     private static final Log log = LogFactory.getLog(FinancialMainController.class);
@@ -34,13 +35,69 @@ public class FinancialMainController extends BaseController {
     private TitanFinancialOrganService titanFinancialOrganService;
     @Resource
     private TitanFinancialUserService titanFinancialUserService;
+   
+    /*****************************************************************************************
+     * 
+     * 钱包新逻辑代码start
+     * 
+     * 
+     * 
+     */
     
-    @RequestMapping(value = "/common/main", method = RequestMethod.GET)
+    @RequestMapping(value = "/main", method = RequestMethod.GET)
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String toIndex(HttpServletRequest request, Model model) {
 
         return "main";
     }
+    
+    @RequestMapping(value = "/main_detail_one", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String toMainDetailOne(HttpServletRequest request, Model model) {
+
+        return "main/main_detail_one";
+    }
+    
+    @RequestMapping(value = "/main_detail_two", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String toMainDetailTwo(HttpServletRequest request, Model model) {
+
+        return "main/main_detail_two";
+    }
+    
+    @RequestMapping(value = "/main_detail_three", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String toMainDetailThree(HttpServletRequest request, Model model) {
+
+        return "main/main_detail_three";
+    }
+    
+    @RequestMapping(value = "/solution", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String toMainSolution(HttpServletRequest request, Model model) {
+
+        return "main/main_solution";
+    }
+    
+    @RequestMapping(value = "/solution_detail", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String toMainSolutionDetail(HttpServletRequest request, Model model) {
+
+        return "main/main_solution_detail";
+    }
+    
+    
+    
+    /*****************************************************************************************
+     * 
+     * 钱包新逻辑代码end
+     * 
+     * 
+     * 
+     */
+    
+    
+
     /***
      * 主页
      * @param request
