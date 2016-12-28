@@ -220,7 +220,7 @@ public interface TitanFinancialUserService {
      * 密码登录
      * @param passLoginRequest
      * @return
-     * @throws GlobalServiceExceptionOOOO
+     * @throws GlobalServiceException
      */
     public PassLoginResponse passLogin(PassLoginRequest passLoginRequest) throws GlobalServiceException;
     

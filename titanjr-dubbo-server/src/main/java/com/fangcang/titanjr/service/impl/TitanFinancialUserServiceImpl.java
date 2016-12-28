@@ -16,6 +16,7 @@ import com.fangcang.security.facade.RoleFacade;
 import com.fangcang.security.facade.UserFacade;
 import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
 import com.fangcang.titanjr.common.enums.LoginSourceEnum;
+import com.fangcang.titanjr.common.enums.entity.TitanCheckCodeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
@@ -44,7 +45,9 @@ import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
+
 import net.sf.json.JSONSerializer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
@@ -55,6 +58,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -80,7 +84,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     private TitanRoleDao titanRoleDao;
     
     @Resource
-    private TitanFinancialUserService titanFinancialUserService;
+    private TitanFinancialOrganServiceImpl organService;
     
     @Resource
     private HessianProxyBeanFactory hessianProxyBeanFactory;
@@ -710,7 +714,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 				if(StringUtil.isValidString(permissionRequest.getFcuserid())){
 					TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
 					titanUserBindInfoDTO.setFcuserid(Long.parseLong(permissionRequest.getFcuserid()));
-					titanUserBindInfoDTO = titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+					titanUserBindInfoDTO = this.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
 				    if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid()!=null){
 				    	permissionRequest.setTfsuserid(titanUserBindInfoDTO.getTfsuserid().toString());
 				    }
@@ -1015,7 +1019,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		PassLoginResponse  passLoginResponse = new PassLoginResponse();
 		TitanUser titanUser =  getTitanUser(passLoginRequest.getLoginUsername());
 		if(titanUser==null){
-			passLoginResponse.putErrorResult("用户名不存在");
+			passLoginResponse.putErrorResult("用户名或密码错误");
 			return passLoginResponse;
 		}
 		String passswordmd5 = MD5.MD5Encode(passLoginRequest.getPassword());
@@ -1028,7 +1032,11 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		
 		return passLoginResponse;
 	}
-
+	/**
+	 * 查询用户
+	 * @param loginUsername
+	 * @return
+	 */
 	private TitanUser getTitanUser(String loginUsername){
 		TitanUserParam param = new TitanUserParam();
 		param.setUserloginname(loginUsername);
@@ -1041,29 +1049,37 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		}else{
 			return null;
 		}
-		
-		//验证动态码
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 	}
 	
 	
 	public SmsLoginResponse smsLogin(SmsLoginRequest smsLoginRequest)
 			throws GlobalServiceException {
-//		PassLoginResponse  passLoginResponse = new PassLoginResponse();
-//		TitanUser titanUser =  getTitanUser(passLoginRequest.getLoginUsername());
-//		if(titanUser==null){
-//			passLoginResponse.putErrorResult("用户名不存在");
-//			return passLoginResponse;
-//		}
-		return null;
+		SmsLoginResponse smsLoginResponse = new SmsLoginResponse();
+		TitanUser titanUser =  getTitanUser(smsLoginRequest.getLoginUsername());
+		if(titanUser==null){
+			smsLoginResponse.putErrorResult("用户名或密码错误");
+			return smsLoginResponse;
+		}
+		
+		//验证动态码
+		VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
+		verifyCheckCodeRequest.setInputCode(smsLoginRequest.getSmsCode());
+		verifyCheckCodeRequest.setReceiveAddress(smsLoginRequest.getLoginUsername());
+		VerifyCheckCodeResponse  verifyCheckCodeResponse = organService.verifyCheckCode(verifyCheckCodeRequest);
+		if(verifyCheckCodeResponse.isResult()){
+			//使用该验证码后，置为无效。
+			if(verifyCheckCodeResponse.getCodeId()>0){
+				UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
+				updateCheckCodeRequest.setCodeId(verifyCheckCodeResponse.getCodeId());
+				updateCheckCodeRequest.setIsactive(TitanCheckCodeEnum.Isactive.NOT_ACTIVE.getKey());
+				organService.useCheckCode(updateCheckCodeRequest);
+			}
+			smsLoginResponse.putSuccess("登录成功");
+			
+		}else{
+			smsLoginResponse.putErrorResult(verifyCheckCodeResponse.getReturnMessage());
+		}
+		
+		return smsLoginResponse;
 	}
 }
