@@ -1012,14 +1012,58 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 	@Override
 	public PassLoginResponse passLogin(PassLoginRequest passLoginRequest)
 			throws GlobalServiceException {
-		//UserInfoQueryRequest userInfoQueryRequest
-		//titanUserDao.queryTitanUserList(userInfoQueryRequest)
-		return null;
+		PassLoginResponse  passLoginResponse = new PassLoginResponse();
+		TitanUser titanUser =  getTitanUser(passLoginRequest.getLoginUsername());
+		if(titanUser==null){
+			passLoginResponse.putErrorResult("用户名不存在");
+			return passLoginResponse;
+		}
+		String passswordmd5 = MD5.MD5Encode(passLoginRequest.getPassword());
+		if(passswordmd5.equals(titanUser.getPassword())){
+			passLoginResponse.putSuccess("登录成功");
+		}else{
+			passLoginResponse.putErrorResult("密码不正确");
+			return passLoginResponse;
+		}
+		
+		return passLoginResponse;
 	}
 
+	private TitanUser getTitanUser(String loginUsername){
+		TitanUserParam param = new TitanUserParam();
+		param.setUserloginname(loginUsername);
+		param.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
+		PaginationSupport<TitanUser> userPage = new PaginationSupport<TitanUser>();
+		userPage.setPageSize(PaginationSupport.NO_SPLIT_PAGE_SIZE);
+		userPage = titanUserDao.selectForPage(param, userPage);
+		if(CollectionUtils.isNotEmpty(userPage.getItemList())){
+			return userPage.getItemList().get(0);
+		}else{
+			return null;
+		}
+		
+		//验证动态码
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	}
+	
+	
 	public SmsLoginResponse smsLogin(SmsLoginRequest smsLoginRequest)
 			throws GlobalServiceException {
-		// TODO Auto-generated method stub
+//		PassLoginResponse  passLoginResponse = new PassLoginResponse();
+//		TitanUser titanUser =  getTitanUser(passLoginRequest.getLoginUsername());
+//		if(titanUser==null){
+//			passLoginResponse.putErrorResult("用户名不存在");
+//			return passLoginResponse;
+//		}
 		return null;
 	}
 }
