@@ -63,7 +63,8 @@
 					userId:$("#reuserId").val(),
 					tfsUserid:$("#retfsUserid").val(),
 					isMerchCode:$("#isMerchCode").val(),
-					notifyUrl:$("#notifyUrl").val()
+					notifyUrl:$("#notifyUrl").val(),
+					businessInfo:"125sdlkkkl"
 			};
 			
 			   window.location=titanPayObj.getRefund(refundInfo);
