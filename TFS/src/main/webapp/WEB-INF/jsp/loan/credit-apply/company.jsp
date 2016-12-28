@@ -217,13 +217,30 @@
         </div>
     </div>
     <div class="TFS_data_button">
-        <a class=" btn_exit_long bnt_exit_padding12" href="javascript:void(0)" onclick="navObj.backMain()">关闭</a><a class="btn btnNext" href="javascript:void(0)" onclick="navObj.next()">保存并下一步</a>
+        <a class=" btn_exit_long bnt_exit_padding12" href="javascript:void(0)" onclick="closeComfire()">关闭</a><a class="btn btnNext" href="javascript:void(0)" onclick="navObj.next()">保存并下一步</a>
     </div>
     <div style="height: 100px"></div>
     
 <script type="text/javascript">
 
 	var companyForm = null;
+	
+	
+	function closeComfire()
+	{
+		window.top.createConfirm({
+			title : '提示',
+			content : '<div style="font-size:15px;line-height:30px;">确认是否关闭界面？</div>',
+			okValue : '确定',
+			cancelValue : '取消',
+			ok : function() {
+				navObj.backMain();
+			},
+			cancel : function() {
+
+			}
+		});
+	}
 	
 	function afterDoneCompany()
 	{
