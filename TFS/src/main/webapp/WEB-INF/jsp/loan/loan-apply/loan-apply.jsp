@@ -107,7 +107,7 @@
 									<div class="dd_img">
 										<img src="../images/TFS/LH01.jpg">
 									</div>
-									<div class="dd_text" title="附件附件">附件附件.jpg</div>
+									<div class="dd_text" ></div>
 								</div>
 								<div>
 								  <span id="compartment_contract1_error" style="color:red;"></span>
@@ -134,7 +134,7 @@
 									<div class="dd_img">
 										<img src="../images/TFS/help_logo.jpg">
 									</div>
-									<div class="dd_text" title="附件附件">附件附件.jpg</div>
+									<div class="dd_text" ></div>
 								</div>
 								<div>
 								  <span id="compartment_contract2_error" style="color:red;"></span>
@@ -161,7 +161,7 @@
 									<div class="dd_img">
 										<img src="../images/TFS/LH01.jpg">
 									</div>
-									<div class="dd_text" title="附件附件">附件附件.jpg</div>
+									<div class="dd_text" ></div>
 								</div>
 								<div>
 								  <span id="compartment_contract3_error" style="color:red;"></span>
@@ -188,7 +188,7 @@
 									<div class="dd_img">
 										<img src="../images/TFS/LH01.jpg">
 									</div>
-									<div class="dd_text" title="附件附件">附件附件.jpg</div>
+									<div class="dd_text"></div>
 								</div>
 								<div>
 								  <span id="compartment_contract4_error" style="color:red;"></span>
@@ -527,13 +527,13 @@
 	   	            	 }
 	   	            	 //假装让进度条走到100
 	   	            	loadingOver($('#' + ids).parent().find(".TFSuploading") , function(){
-	   	            		$("#"+ids+"_name").val(result.data);
+	   	            		$("#"+ids+"_name").val(result.data.fileName);
 	   	            		$("#"+ids+"_error").hide();
-	   	            		uploadSucess(ids , result.data);
+	   	            		uploadSucess(ids , result.data.fileName);
 	   	            	});
    					}
    	            	else
-   	            	{alert("#"+ids+"_error");
+   	            	{
    	            		$("#"+ids+"_error").show();
    	            		$("#"+ids+"_error").text(result.msg);
    						uploadError(ids);
@@ -566,7 +566,7 @@
 			var index2=fileName.length;
 			var postf=fileName.substring(index1+1,index2);//后缀名
 			var imgList ="/png/jpg/jpeg/";
-			
+			$('#'+ids).parent().find(".dd_text").html(fileName).attr({"title":fileName});
 			$('#'+ids).parent().find('.TFSimgOnBig').find('img').unbind("click");
 			$('#'+ids).parent().find('.TFSimgOn').removeClass('TFSimgOnBig');
 			

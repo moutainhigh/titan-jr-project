@@ -52,7 +52,7 @@ public class FinancialLoanApplyController extends BaseController{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+	private static final long FILE_SIZE_1_MB = 1024*1024;
 	private static final Log log = LogFactory
 			.getLog(FinancialLoanApplyController.class);
 	
@@ -264,8 +264,14 @@ public class FinancialLoanApplyController extends BaseController{
 			out.close();
 			return;
 		}
-		
-
+		if(file.getBytes().length>(5*FILE_SIZE_1_MB)){
+			this.putSysError("文件超过了5M限制，请压缩文件再上传");
+			out.print(toJson());
+			out.flush();
+			out.close();
+			return;
+		}
+		Map<String, String> data = new HashMap<String, String>();
 		String newName = this
 				.getNewFileName(file.getOriginalFilename(), fileName);
 		FtpUtil util = null;
@@ -305,8 +311,8 @@ public class FinancialLoanApplyController extends BaseController{
 			log.info("upload to ftp success fileName=" + newName);
 
 			util.ftpLogOut();
-
-			this.putSuccess("fileName", newName);
+			data.put("fileName", newName);
+			this.putSuccess("文件上传成功",data);
 
 		} catch (Exception e) {
 			this.putSysError();

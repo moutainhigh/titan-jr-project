@@ -2,22 +2,26 @@ package com.fangcang.titanjr.service;
 
 import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
 import com.fangcang.titanjr.dto.request.CancelLoanRequest;
+import com.fangcang.titanjr.dto.request.ConfirmLoanOrderIsAvailableRequest;
 import com.fangcang.titanjr.dto.request.GetHistoryRepaymentListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.request.GetOrgLoanStatInfoRequest;
 import com.fangcang.titanjr.dto.request.LoanOrderNotifyRequest;
+import com.fangcang.titanjr.dto.request.OfflineLoanApplyRequest;
 import com.fangcang.titanjr.dto.request.RepaymentAmountComputeRequest;
 import com.fangcang.titanjr.dto.request.RepaymentLoanRequest;
 import com.fangcang.titanjr.dto.request.SaveLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.request.SynLoanOrderRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.CancelLoanResponse;
+import com.fangcang.titanjr.dto.response.ConfirmLoanOrderIsAvailableResponse;
 import com.fangcang.titanjr.dto.response.GetHistoryRepaymentListResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoListResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoResponse;
 import com.fangcang.titanjr.dto.response.GetOrgLoanStatInfoResponse;
 import com.fangcang.titanjr.dto.response.LoanOrderNotifyResponse;
+import com.fangcang.titanjr.dto.response.OfflineLoanApplyResponse;
 import com.fangcang.titanjr.dto.response.RepaymentAmountComputeResponse;
 import com.fangcang.titanjr.dto.response.RepaymentLoanResponse;
 import com.fangcang.titanjr.dto.response.SaveLoanOrderInfoResponse;
@@ -111,11 +115,28 @@ public interface TitanFinancialLoanService {
 	 */
 	public SaveLoanOrderInfoResponse saveLoanOrderInfo(
 			SaveLoanOrderInfoRequest req);
+
 	/**
 	 * 贷款申请通知
+	 * 
 	 * @param req
 	 * @return
 	 */
-	
+
 	public LoanOrderNotifyResponse loanOrderNotify(LoanOrderNotifyRequest req);
+
+	/**
+	 * 确认贷款单信息在平台是否存在
+	 * @param req
+	 * @return
+	 */
+	public ConfirmLoanOrderIsAvailableResponse confirmLoanOrderIsAvailable(
+			ConfirmLoanOrderIsAvailableRequest req);
+	
+	/**
+	 * 离线贷款申请
+	 * @param req
+	 * @return
+	 */
+	public OfflineLoanApplyResponse offlineLoanApply(OfflineLoanApplyRequest req);
 }

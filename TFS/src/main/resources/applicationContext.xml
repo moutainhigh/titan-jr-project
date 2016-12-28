@@ -66,10 +66,8 @@
             
             <mvc:exclude-mapping path="/setting/check_payPassword.action"/>
             <mvc:exclude-mapping path="/help/**/*"/>
+            <mvc:exclude-mapping path="/loan/offline/**/*"/>
            
-            
-            
-
             <bean class="com.fangcang.titanjr.web.interceptor.InitSessionInterceptor"></bean>
         </mvc:interceptor>
         <mvc:interceptor>

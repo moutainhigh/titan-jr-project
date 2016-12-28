@@ -28,6 +28,10 @@ public class CreditCompanyInfoDTO implements Serializable {
 	 */
 	private Date reqTime;
 	/**
+	 * 审核人
+	 */
+	private String firstAuditor;
+	/**
 	 * 授信申请联系人
 	 */
 	private String contactName;
@@ -50,6 +54,14 @@ public class CreditCompanyInfoDTO implements Serializable {
 	 */
 	private String orgCode;
 	
+
+	public String getFirstAuditor() {
+		return firstAuditor;
+	}
+
+	public void setFirstAuditor(String firstAuditor) {
+		this.firstAuditor = firstAuditor;
+	}
 
 	public String getOrgCode() {
 		return orgCode;

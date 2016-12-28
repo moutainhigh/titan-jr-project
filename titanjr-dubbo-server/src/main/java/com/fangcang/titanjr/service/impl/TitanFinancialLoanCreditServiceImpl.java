@@ -195,6 +195,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		}
 		Date now = new Date();
 		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();
+		updateLoanCreditOrderParam.setFirstAuditor(req.getOperator());
 		boolean auditResult = false;
 		if (req.getLoanCreditStatusEnum() == LoanCreditStatusEnum.NO_PASS) {
 			auditResult = false;

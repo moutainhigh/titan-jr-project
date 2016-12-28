@@ -14,7 +14,6 @@ import javax.annotation.Resource;
 import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,17 +21,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.titanjr.common.enums.ConditioncodeEnum;
 import com.fangcang.titanjr.common.enums.FileTypeEnum;
 import com.fangcang.titanjr.common.enums.LoanApplyOrderEnum;
 import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
+import com.fangcang.titanjr.common.enums.TransfertypeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FileHelp;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.LoanCreditOrderDao;
 import com.fangcang.titanjr.dao.LoanOrderDao;
@@ -60,6 +63,7 @@ import com.fangcang.titanjr.dto.request.RepaymentLoanRequest;
 import com.fangcang.titanjr.dto.request.SaveLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.request.SynLoanCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.SynLoanOrderRequest;
+import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.CancelLoanResponse;
 import com.fangcang.titanjr.dto.response.ConfirmLoanOrderIsAvailableResponse;
@@ -106,6 +110,7 @@ import com.fangcang.titanjr.rs.response.UserInitiativeRepamentResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.util.LoanTypeConvertUtil;
 import com.fangcang.util.StringUtil;
@@ -142,6 +147,9 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 	@Resource
 	private TitanFinancialLoanCreditService loanCreditService;
+	
+	@Resource
+	private TitanFinancialTradeService tradeService;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
@@ -830,7 +838,6 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 //			tradeService.transferAccounts(transferRequest);
 			
 		}
-		// 如果融数端是终审通过待付款，那么房仓需要检查起贷款状态是否处于申请中或者待终审，如果是则发起确认协议
 		if (orderStatusEnum != null
 				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == orderStatusEnum
 						.getKey() || LoanOrderStatusEnum.LENDING_ING.getKey() == orderStatusEnum

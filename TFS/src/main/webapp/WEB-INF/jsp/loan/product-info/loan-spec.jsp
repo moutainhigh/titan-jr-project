@@ -39,7 +39,12 @@
 	
 		<div class="RC_t">
 			<ul>
+				<c:if test="${loanOrderInfo.productType == 10001}">
 				<li>贷款类型：包房贷</li>
+				</c:if>
+				<c:if test="${loanOrderInfo.productType == 10002}">
+					<li>贷款类型：运营贷</li>
+				</c:if>
 				<li>贷款编号：${loanOrderInfo.orderNo}</li>
 				<li>申请时间：<fmt:formatDate value="${loanOrderInfo.createTime}" pattern="yyyy-MM-dd" /></li>
 				<li>放款时间：<fmt:formatDate value="${loanOrderInfo.relMoneyTime}" pattern="yyyy-MM-dd" /></li>
@@ -57,17 +62,30 @@
 			</c:choose>
 				<li class="clearfix"><div class="tit">收款信息</div>
 					<div class="w_290" title="账户名：烈扬旅游">账户名：${loanSpecInfo.accountName}</div>
-					<div class="w_360">泰坦码：${loanSpecInfo.titanCode}</div>
-					<!-- 
-					<div class="w_360">银行账号：${loanSpecInfo.account}</div>
-					<div class="w_400">开户行：${loanSpecInfo.bank}</div>
-					 -->
+					<c:if test="${empty loanSpecInfo.titanCode}">
+						<div class="w_360">银行账号：${loanSpecInfo.account}</div>
+						<div class="w_400">开户行：${loanSpecInfo.bank}</div>
+					</c:if>
+					<c:if test="${!empty loanSpecInfo.titanCode }">
+						<div class="w_360">泰坦码：${loanSpecInfo.titanCode}</div>
+					</c:if>
 				</li>
-				<li class="clearfix"><div class="tit">贷款内容</div>
-					<div class="w_300">酒店名称：${loanSpecInfo.hotleName}</div>
-					<div class="w_360">包房时段：<fmt:formatDate value="${loanSpecInfo.beginDate}" pattern="yyyy-MM-dd" /> -- <fmt:formatDate value="${loanSpecInfo.endDate}" pattern="yyyy-MM-dd" /></div>
-					<div class="w_400">包房数量：${loanSpecInfo.roomNights}间夜</div>
-				</li>
+				
+				<c:if test="${loanOrderInfo.productType == 10001}">
+					<input type="hidden" value ="${loanSpecInfo.contractUrl}" id="urls"/>
+					<li class="clearfix"><div class="tit">贷款内容</div>
+						<div class="w_300">酒店名称：${loanSpecInfo.hotleName}</div>
+						<div class="w_360">包房时段：<fmt:formatDate value="${loanSpecInfo.beginDate}" pattern="yyyy-MM-dd" /> -- <fmt:formatDate value="${loanSpecInfo.endDate}" pattern="yyyy-MM-dd" /></div>
+						<div class="w_400">包房数量：${loanSpecInfo.roomNights}间夜</div>
+					</li>
+				</c:if>
+				
+				<c:if test="${loanOrderInfo.productType == 10002}">
+					<input type="hidden" value ="${loanSpecInfo.accessory}" id="urls"/>
+					<li class="clearfix"><div class="tit">贷款内容</div>
+						${loanSpecInfo.content}
+					</li>
+				</c:if>
 				<li class="clearfix p_l83"><div class="tit">附件信息</div>
 				<dl id="imgList">
 					
@@ -78,6 +96,7 @@
 		
 		
 		<c:if test="${loanOrderInfo.status==6 || loanOrderInfo.status==9}">
+			
 			<div class="RC_t1 p_t10">
 				<span class="w_105">还款记录</span>
 				<span class="w_240">还款到期日：<fmt:formatDate value="${loanOrderInfo.actualRepaymentDate}" pattern="yyyy-MM-dd" /></span>
@@ -142,8 +161,8 @@
 var staticPath  ="http://image.fangcang.com/upload/images/titanjr/loan_apply/${JR_USERID}/${loanOrderInfo.orderNo}/";
 
  $(function(){
-     
-	 	var imgList = "${loanSpecInfo.contractUrl}";
+     	
+	 	var imgList = $('#urls').val();
 	 	
 	 	if(imgList != null && imgList != '')
 	 	{

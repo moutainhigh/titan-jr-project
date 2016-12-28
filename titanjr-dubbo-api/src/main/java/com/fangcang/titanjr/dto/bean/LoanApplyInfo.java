@@ -4,44 +4,75 @@ import java.io.Serializable;
 
 /**
  * 包房信息
+ * 
  * @author fangdaikang
  *
  */
-public class LoanApplyInfo implements Serializable{
+public class LoanApplyInfo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
-	//贷款单号
+
+	// 贷款单号
 	private String loanOrderNo;
-	
-	//申请金额
+
+	// 申请金额
 	private String amount;
-	
-	//酒店名称
+
+	// 酒店名称
 	private String hotelName;
-	
-	//包房开始时间
+
+	// 包房开始时间
 	private String beginDate;
-	
-	//包房结束时间
+
+	// 包房结束时间
 	private String endDate;
-	
-	//间夜数
+
+	// 间夜数
 	private String roomNights;
-	
-	//账户名
+
+	// 账户名
 	private String accountName;
-	
-	//银行卡号
+
+	// 银行卡号
 	private String account;
-	
+
 	private String titanCode;
-	
-	//开户行
+
+	private String content;
+
+	// 开户行
 	private String bank;
-	
-	//文件名称
+
+	// 文件名称
 	private String contactNames;
+
+	private String productType;
+
+	private String orgCode;
+
+	public String getOrgCode() {
+		return orgCode;
+	}
+
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}
+
+	public String getProductType() {
+		return productType;
+	}
+
+	public void setProductType(String productType) {
+		this.productType = productType;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
 
 	public String getTitanCode() {
 		return titanCode;
@@ -130,5 +161,5 @@ public class LoanApplyInfo implements Serializable{
 	public void setLoanOrderNo(String loanOrderNo) {
 		this.loanOrderNo = loanOrderNo;
 	}
-	
+
 }

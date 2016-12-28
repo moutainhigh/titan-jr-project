@@ -20,7 +20,7 @@ public class LoanSpecificationBean extends LoanSpecBean{
 	private String content;
 	
 	private String accessory;
-
+	
 	public String getOrderNo() {
 		return orderNo;
 	}
