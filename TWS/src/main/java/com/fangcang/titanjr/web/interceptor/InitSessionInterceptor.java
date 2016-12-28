@@ -72,7 +72,7 @@ public class InitSessionInterceptor implements HandlerInterceptor {
             }
         } else {//跳转登录
             log.error("用户信息设置有误，请检查后重新登录。");
-            httpServletResponse.sendRedirect("/TFS/j_acegi_logout?wait=y");
+            httpServletResponse.sendRedirect("/TWS/j_acegi_logout?wait=y");
             return false;
         }
         log.info("session中信息正常，直接返回");

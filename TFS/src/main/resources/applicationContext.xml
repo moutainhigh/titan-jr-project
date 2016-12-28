@@ -44,22 +44,12 @@
         <mvc:interceptor>
             <mvc:mapping path="/*"/>
             <mvc:mapping path="/**/*"/>
-            <mvc:exclude-mapping path="/trade/showCashierDesk.action"/>
-            <mvc:exclude-mapping path="/trade/showTitanPayPage.action"/>
-            <mvc:exclude-mapping path="/trade/genRechargeData.action"/>
-            <mvc:exclude-mapping path="/trade/testNotify.action"/>
-            <mvc:exclude-mapping path="/trade/notify.action"/>
-            <mvc:exclude-mapping path="/trade/test.action"/>
             <mvc:exclude-mapping path="/trade/allownopwdpay.action"/>
-            <mvc:exclude-mapping path="/trade/confirmedTrade.action"/>
-            <mvc:exclude-mapping path="/trade/genLoacalPayOrderNo.action"/>
-            <mvc:exclude-mapping path="/trade/payConfirmPage.action"/>
             
             <mvc:exclude-mapping path="/account/selectAccHistory.action"/>
             <mvc:exclude-mapping path="/account/checkIsSetPayPassword.action"/>
             <mvc:exclude-mapping path="/account/setPayPassword.action"/>
             <mvc:exclude-mapping path="/account/showSetPayPassword.action"/>
-            <mvc:exclude-mapping path="/account/deleteAccountHistory.action"/>
             <mvc:exclude-mapping path="/account/showPayPassword.action"/>
             <mvc:exclude-mapping path="/account/check_account.action"/>
             <mvc:exclude-mapping path="/account/error_cashier.action"/>
