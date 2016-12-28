@@ -13,7 +13,10 @@ public class SmsLoginRequest extends BaseRequestDTO {
 	 */
 	private static final long serialVersionUID = 3028481273756786967L;
 	private String loginUsername;
-	private String password;
+	/**
+	 * 验证码
+	 */
+	private String smsCode;
 	
 	public String getLoginUsername() {
 		return loginUsername;
@@ -21,12 +24,13 @@ public class SmsLoginRequest extends BaseRequestDTO {
 	public void setLoginUsername(String loginUsername) {
 		this.loginUsername = loginUsername;
 	}
-	public String getPassword() {
-		return password;
+	public String getSmsCode() {
+		return smsCode;
 	}
-	public void setPassword(String password) {
-		this.password = password;
+	public void setSmsCode(String smsCode) {
+		this.smsCode = smsCode;
 	}
+	
 	
 	
 }

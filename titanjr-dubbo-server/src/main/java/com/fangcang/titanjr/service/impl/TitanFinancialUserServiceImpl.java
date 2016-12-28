@@ -1,36 +1,11 @@
 package com.fangcang.titanjr.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import com.fangcang.titanjr.dto.request.*;
-import com.fangcang.titanjr.dto.response.*;
-import net.sf.json.JSONSerializer;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
 import com.fangcang.exception.ParameterException;
 import com.fangcang.merchant.api.MerchantFacade;
 import com.fangcang.merchant.api.MerchantUserFacade;
-import com.fangcang.merchant.dto.BaseResultDTO;
-import com.fangcang.merchant.dto.MerchantUserCheckDTO;
-import com.fangcang.merchant.dto.MerchantUserCreateDTO;
-import com.fangcang.merchant.dto.MerchantUserDTO;
-import com.fangcang.merchant.dto.ModifyPWDRequestDTO;
+import com.fangcang.merchant.dto.*;
 import com.fangcang.merchant.dto.RoleDTO;
 import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
 import com.fangcang.merchant.query.dto.MerchantUserQueryDTO;
@@ -54,12 +29,9 @@ import com.fangcang.titanjr.dao.TitanUserBindInfoDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dao.TitanUserRoleDao;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
-import com.fangcang.titanjr.enums.PermissionEnum;
-import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
-import com.fangcang.titanjr.dto.bean.TitanRoleDTO;
-import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
-import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
-import com.fangcang.titanjr.dto.bean.UserInfoDTO;
+import com.fangcang.titanjr.dto.bean.*;
+import com.fangcang.titanjr.dto.request.*;
+import com.fangcang.titanjr.dto.response.*;
 import com.fangcang.titanjr.entity.TitanRole;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.entity.TitanUserBindInfo;
@@ -67,10 +39,26 @@ import com.fangcang.titanjr.entity.TitanUserRole;
 import com.fangcang.titanjr.entity.parameter.TitanUserBindInfoParam;
 import com.fangcang.titanjr.entity.parameter.TitanUserParam;
 import com.fangcang.titanjr.entity.parameter.TitanUserRoleParam;
+import com.fangcang.titanjr.enums.PermissionEnum;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
+import net.sf.json.JSONSerializer;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @Service("titanFinancialUserService")
 public class TitanFinancialUserServiceImpl implements TitanFinancialUserService {
@@ -1022,13 +1010,16 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 	}
 
 	@Override
-	public PassLoginResponse passLogin(PassLoginRequest passLoginRequest) throws GlobalServiceException {
+	public PassLoginResponse passLogin(PassLoginRequest passLoginRequest)
+			throws GlobalServiceException {
+		//UserInfoQueryRequest userInfoQueryRequest
+		//titanUserDao.queryTitanUserList(userInfoQueryRequest)
 		return null;
 	}
 
-	@Override
-	public SmsLoginResponse smsLogin(SmsLoginRequest smsLoginRequest) throws GlobalServiceException {
+	public SmsLoginResponse smsLogin(SmsLoginRequest smsLoginRequest)
+			throws GlobalServiceException {
+		// TODO Auto-generated method stub
 		return null;
 	}
-
 }
