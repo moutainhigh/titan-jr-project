@@ -11,19 +11,28 @@ public class RefundRequest implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+	//业务订单号
 	private String orderNo;
 	
+	//支付密码
 	private String payPassword;
 	
+	//用户ID
 	private String tfsUserid;
 	
+	//机构编码
 	private String userId;
 	
+	//是否为商户编码，这个参数是对传入Merchcode的接入方设置的，默认为传入金融机构的id和机构编码
 	private String isMerchCode;
 	
+	//回调地址
 	private String notifyUrl;
 	
+	//业务信息
+	private String businessInfo;
+	
+	//该业务单是否冻结
 	private boolean isFreeze = false;
 
 	public String getOrderNo() {
@@ -82,4 +91,11 @@ public class RefundRequest implements Serializable{
 		this.notifyUrl = notifyUrl;
 	}
 
+	public String getBusinessInfo() {
+		return businessInfo;
+	}
+
+	public void setBusinessInfo(String businessInfo) {
+		this.businessInfo = businessInfo;
+	}
 }

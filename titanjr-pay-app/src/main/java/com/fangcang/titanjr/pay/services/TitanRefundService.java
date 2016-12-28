@@ -173,6 +173,7 @@ public class TitanRefundService {
 			titanJrRefundRequest.setTfsUerId(refundRequest.getTfsUserid());
 			titanJrRefundRequest.setUserOrderId(transOrderDTO.getUserorderid());
 			titanJrRefundRequest.setNotifyUrl(refundRequest.getNotifyUrl());
+			titanJrRefundRequest.setBusinessInfo(refundRequest.getBusinessInfo());
 			//查看是否有充值单
 			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
 			titanOrderPayDTO.setTransorderid(transOrderDTO.getTransid());

@@ -34,6 +34,8 @@ public class TitanRefund implements java.io.Serializable{
 	private String notifyUrl;
 	
 	private String payOrderNo;
+	
+	private String businessInfo;
 
 	public Integer getRefundid() {
 		return refundid;
@@ -137,5 +139,13 @@ public class TitanRefund implements java.io.Serializable{
 
 	public void setPayOrderNo(String payOrderNo) {
 		this.payOrderNo = payOrderNo;
+	}
+
+	public String getBusinessInfo() {
+		return businessInfo;
+	}
+
+	public void setBusinessInfo(String businessInfo) {
+		this.businessInfo = businessInfo;
 	}
 }

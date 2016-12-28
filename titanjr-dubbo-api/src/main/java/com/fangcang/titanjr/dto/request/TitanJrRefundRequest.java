@@ -56,6 +56,8 @@ public class TitanJrRefundRequest extends BaseRequestDTO {
 	
 	private String notifyUrl;
 	
+	private String businessInfo;
+	
 	//0实时，1延时
 	private Integer isRealTime = 1;
 	
@@ -251,4 +253,13 @@ public class TitanJrRefundRequest extends BaseRequestDTO {
 	public void setIsRealTime(Integer isRealTime) {
 		this.isRealTime = isRealTime;
 	}
+
+	public String getBusinessInfo() {
+		return businessInfo;
+	}
+
+	public void setBusinessInfo(String businessInfo) {
+		this.businessInfo = businessInfo;
+	}
+	
 }

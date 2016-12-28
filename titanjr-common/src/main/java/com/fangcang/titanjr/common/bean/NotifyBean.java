@@ -22,6 +22,9 @@ public class NotifyBean implements Serializable{
 	//金融的单号
 	private String userOrderId;
 	
+	//业务单号
+	private String businessInfo;
+	
 	//扩展字段
 	private String expend;
 
@@ -64,5 +67,12 @@ public class NotifyBean implements Serializable{
 	public void setExpend(String expend) {
 		this.expend = expend;
 	}
-	
+
+	public String getBusinessInfo() {
+		return businessInfo;
+	}
+
+	public void setBusinessInfo(String businessInfo) {
+		this.businessInfo = businessInfo;
+	}
 }

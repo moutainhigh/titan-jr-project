@@ -232,6 +232,7 @@ public class TitanFinancialRefundServiceImpl implements
 			refundOrderRequest.setUserOrderId(refundRequest.getUserOrderId());
 			refundOrderRequest.setNotifyUrl(refundRequest.getNotifyUrl());
 			refundOrderRequest.setIsRealTime(refundRequest.getIsRealTime());
+			refundOrderRequest.setBusinessInfo(refundRequest.getBusinessInfo());
 			if(StringUtil.isValidString(refundRequest.getTfsUerId())){
 				TitanUser user = titanUserDao.selectTitanUser(Integer.parseInt(refundRequest.getTfsUerId()));
 			    if(user !=null){
@@ -446,6 +447,7 @@ public class TitanFinancialRefundServiceImpl implements
 		titanRefund.setCreator(refundOrderRequest.getCreator());
 		titanRefund.setTransferAmount(refundOrderRequest.getTransferAmount());
 		titanRefund.setFee(refundOrderRequest.getFee());
+		titanRefund.setBusinessInfo(refundOrderRequest.getBusinessInfo());
 		titanRefund.setStatus(RefundStatusEnum.REFUND_IN_PROCESS.status);
 		if(refundOrderRequest.getIsRealTime() == CommonConstant.REAL_TIME){
 			titanRefund.setStatus(RefundStatusEnum.REFUND_SUCCESS.status);
@@ -723,6 +725,8 @@ public class TitanFinancialRefundServiceImpl implements
 				bean.setNotifyUrl(refund.getNotifyUrl());
 				bean.setUserOrderId(refund.getUserOrderId());
 				bean.setCode(refundStatus.status.toString());
+				bean.setBusinessInfo(refund.getBusinessInfo());
+				log.info("退款单回调的参数："+JSONSerializer.toJSON(bean));
 				notifyTTMall(bean);
 			}
 		});

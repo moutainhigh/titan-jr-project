@@ -36,6 +36,8 @@ public class RefundOrderRequest extends BaseRequestDTO {
 	
 	private Integer isRealTime;
 	
+	private String businessInfo;
+	
 	public String getCreator() {
 		return creator;
 	}
@@ -123,4 +125,13 @@ public class RefundOrderRequest extends BaseRequestDTO {
 	public void setIsRealTime(Integer isRealTime) {
 		this.isRealTime = isRealTime;
 	}
+
+	public String getBusinessInfo() {
+		return businessInfo;
+	}
+
+	public void setBusinessInfo(String businessInfo) {
+		this.businessInfo = businessInfo;
+	}
+	
 }

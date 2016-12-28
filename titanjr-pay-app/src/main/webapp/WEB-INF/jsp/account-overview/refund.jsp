@@ -133,7 +133,8 @@
 							 orderNo:'${transOrderDTO.userorderid}',
 							 payPassword:PasswordStr2.returnStr(),
 							 userId:'${transOrderDTO.userrelateid}',
-							 notifyUrl:'${refundRequest.notifyUrl}'
+							 notifyUrl:'${refundRequest.notifyUrl}',
+							 businessInfo:'${refundRequest.businessInfo}'
 						 },
 						 success:function(data){
 							 if(data.result ==true){

@@ -45,6 +45,15 @@ public class RefundDTO implements Serializable{
 	
 	private String userOrderId;
 	
+	private String businessInfo;
+	
+	public String getBusinessInfo() {
+		return businessInfo;
+	}
+
+	public void setBusinessInfo(String businessInfo) {
+		this.businessInfo = businessInfo;
+	}
 
 	public String getMerchantNo() {
 		return merchantNo;
