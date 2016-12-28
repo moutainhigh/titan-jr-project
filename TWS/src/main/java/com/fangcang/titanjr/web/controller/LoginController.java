@@ -1,9 +1,14 @@
 package com.fangcang.titanjr.web.controller;
 
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.dto.request.PassLoginRequest;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.LoginPojo;
 import com.fangcang.util.StringUtil;
@@ -15,6 +20,9 @@ import com.fangcang.util.StringUtil;
  */
 @Controller
 public class LoginController extends BaseController{
+	
+	@Resource
+	private TitanFinancialUserService userService;
 	
 	/**
 	 * 登录页
@@ -42,7 +50,10 @@ public class LoginController extends BaseController{
 		}
 		
 		//校验用户名和密码
-		
+		PassLoginRequest passLoginRequest = new PassLoginRequest();
+		passLoginRequest.setLoginUsername(login.getLoginUserName());
+		passLoginRequest.setPassword(login.getPassword());
+		//PassLoginResponse passLoginResponse = userService.passLogin(passLoginRequest);
 		
 		//保存登录表示到session
 		
