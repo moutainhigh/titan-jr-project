@@ -1807,9 +1807,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	}
 
 	private void unlockOutTradeNoList(String out_trade_no) {
-		if (mapLock.containsKey(out_trade_no)) {
-			synchronized (mapLock.get(out_trade_no)) {
-				mapLock.remove(out_trade_no).notifyAll();
+		if(out_trade_no!=null){
+			if (mapLock.containsKey(out_trade_no)) {
+				synchronized (mapLock.get(out_trade_no)) {
+					mapLock.remove(out_trade_no).notifyAll();
+				}
 			}
 		}
 	}
@@ -2003,7 +2005,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			titanTransOrder.setAmount((long) 0);
 			titanTransOrder.setUserorderid(OrderGenerateService
 					.genSyncUserOrderId());
-
 			if (null != titanOrderRequest.getBusinessInfo()) {
 				// 如果指定了业务编码则将编号并入库
 				titanTransOrder.setBusinessordercode(titanOrderRequest
@@ -2024,6 +2025,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				boolean isSuccess = titanTransOrderDao.insert(titanTransOrder) > 0 ? true
 						: false;
 				localOrderResponse.setOrderNo(titanTransOrder.getUserorderid());
+				localOrderResponse.setTransId(titanTransOrder.getTransid());
 				localOrderResponse.putSuccess();
 				if (!isSuccess) {
 					log.info("save order info is fail");
@@ -2091,7 +2093,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 		// 表明业务订单号已经重复提交
 		if (null != transOrderDTO) {
-
+			orderCreateResponse.setTransId(transOrderDTO.getTransid());
 			// 金额不一致,则直接将订单设置为失效
 			if (!NumberUtil.covertToCents(titanOrderRequest.getAmount())
 					.equals("" + transOrderDTO.getTradeamount())) {

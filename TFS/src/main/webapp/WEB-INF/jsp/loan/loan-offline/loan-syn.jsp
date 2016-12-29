@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ include file="/comm/path-param.jsp" %>
+ <%@ include file="/comm/taglib.jsp"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,10 +26,23 @@
 			<div class="RC_c clearfix">
 				<ul>
 					<li class="clearfix J_Section"><div class="tit">基础信息</div>
+					
 						<div class="w_290">
-							<i class="c_f00">*</i>机构编码：<input name="orgCode" id="orgCode"
-								class="text w_184 c_666 " placeholder="" type="text" value="" >
-						</div>
+							<i class="c_f00">*</i>机构名称:<select
+								class="select b_fff m_l10 w_150" name="orgCode"  id="orgCode">
+									<c:forEach items="${orgList}" var="orgInfo" varStatus="status">
+										<option value="${orgInfo.orgcode}">${orgInfo.orgname}</option>
+									</c:forEach>
+								
+							</select>
+						</div> 
+						
+<!-- 						<div class="w_290"> -->
+						
+						
+<!-- 							<i class="c_f00">*</i>机构编码：<input name="orgCode" id="orgCode" -->
+<!-- 								class="text w_184 c_666 " placeholder="" type="text" value="" > -->
+<!-- 						</div> -->
 						<div class="w_290">
 							<i class="c_f00">*</i>贷款单号：<input name="orderNo" id="orderNo"
 								class="text w_184 c_666 " placeholder="" type="text" value="">
@@ -313,6 +326,7 @@
 	        		 result = true;
 	        		 $('#checkMsg').text("机构和贷款单号正确，可以进行同步");
 	        		 
+	        		 $('#orgCode').mousedown(function(){return false;});
 	        		 $('#orgCode').attr("readonly","readonly");
 	        		 $('#orderNo').attr("readonly","readonly");
 	        		 $('#orderNo').css({"border-color":"gray"});

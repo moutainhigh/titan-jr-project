@@ -235,14 +235,14 @@
                                         <i class="redNotice">*</i>汽车品牌：
                                     </td>
                                     <td class="loanInformation_td02 loanInformation_car" >
-                                        <input type="text" class="loanInformation_inp01" placeholder="请输入担保人汽车品牌" field="carBrand" customFun="validateTextValue"  errormsg="请输入担保人汽车品牌!">
+                                        <input type="text" class="loanInformation_inp01" style="height:48px;" placeholder="请输入担保人汽车品牌" field="carBrand" customFun="validateTextValue"  errormsg="请输入担保人汽车品牌!">
                                     </td>
                                     
                                     <td class="loanInformation_td01 loanInformation_car">
                                         <i class="redNotice">*</i>汽车价值：
                                     </td>
                                     <td class="loanInformation_td02 loanInformation_car" >
-                                        <input type="text" class="loanInformation_inp01" placeholder="请输入担保人汽车价值" field="carWorth" customFun="validateTextValue"  errormsg="请输入担保人汽车价值">
+                                        <input type="text" class="loanInformation_inp01" style="height:48px;" placeholder="请输入担保人汽车价值" field="carWorth" customFun="validateTextValue"  errormsg="请输入担保人汽车价值">
                                     </td>       
                                 </tr>
                             </table>

@@ -453,6 +453,18 @@
 		$(".J_delete_upload").live('click', function() {
 			$(this).parent().addClass("hidden").removeClass("TFSimgOnBig");
 			$(this).parent().parent().find(".TFSaddImg").removeClass("hidden");
+			
+			
+			$.ajax({
+				url:"",
+				type:"post",
+				data:{loanApplyOrderNo:$("#loanApplyOrderNo").val(),fileName:ids},
+				dataType:"json",
+				
+			});
+			
+			
+			
 		});
 
 		//重新上传

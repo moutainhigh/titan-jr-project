@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,13 +22,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.FileTypeEnum;
 import com.fangcang.titanjr.common.enums.LoanApplyOrderEnum;
 import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
+<<<<<<< HEAD
+=======
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.PayerTypeEnum;
+import com.fangcang.titanjr.common.enums.TransfertypeEnum;
+>>>>>>> branch 'dev_loan' of git@192.168.2.94:/srv/git/titan-jr-project.git
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FileHelp;
@@ -38,6 +44,7 @@ import com.fangcang.titanjr.dao.LoanCreditOrderDao;
 import com.fangcang.titanjr.dao.LoanOrderDao;
 import com.fangcang.titanjr.dao.LoanSpecificationDao;
 import com.fangcang.titanjr.dao.PlatformOrderOprDao;
+import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dto.bean.LoanApplyOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanRepaymentBean;
 import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
@@ -46,6 +53,7 @@ import com.fangcang.titanjr.dto.bean.LoanSpecificationBean;
 import com.fangcang.titanjr.dto.bean.NewLoanApplyJsonDataBean;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.OrgLoanStatInfo;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
 import com.fangcang.titanjr.dto.request.CancelLoanRequest;
 import com.fangcang.titanjr.dto.request.ConfirmLoanOrderIsAvailableRequest;
@@ -60,6 +68,12 @@ import com.fangcang.titanjr.dto.request.RepaymentLoanRequest;
 import com.fangcang.titanjr.dto.request.SaveLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.request.SynLoanCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.SynLoanOrderRequest;
+<<<<<<< HEAD
+=======
+import com.fangcang.titanjr.dto.request.TitanOrderRequest;
+import com.fangcang.titanjr.dto.request.TransOrderRequest;
+import com.fangcang.titanjr.dto.request.TransferRequest;
+>>>>>>> branch 'dev_loan' of git@192.168.2.94:/srv/git/titan-jr-project.git
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.CancelLoanResponse;
 import com.fangcang.titanjr.dto.response.ConfirmLoanOrderIsAvailableResponse;
@@ -74,12 +88,15 @@ import com.fangcang.titanjr.dto.response.RepaymentAmountComputeResponse;
 import com.fangcang.titanjr.dto.response.RepaymentLoanResponse;
 import com.fangcang.titanjr.dto.response.SaveLoanOrderInfoResponse;
 import com.fangcang.titanjr.dto.response.SynLoanOrderResponse;
+import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
+import com.fangcang.titanjr.dto.response.TransferResponse;
 import com.fangcang.titanjr.entity.LoanApplyOrder;
 import com.fangcang.titanjr.entity.LoanCreditOrder;
 import com.fangcang.titanjr.entity.LoanExpiryStat;
 import com.fangcang.titanjr.entity.LoanProductAmountStat;
 import com.fangcang.titanjr.entity.LoanSevenDaysStat;
 import com.fangcang.titanjr.entity.LoanSpecification;
+import com.fangcang.titanjr.entity.TitanTransOrder;
 import com.fangcang.titanjr.entity.parameter.LoanQueryConditions;
 import com.fangcang.titanjr.rs.dto.TBorrowRepayment;
 import com.fangcang.titanjr.rs.dto.TUserArepayment;
@@ -107,6 +124,7 @@ import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.util.LoanTypeConvertUtil;
 import com.fangcang.util.StringUtil;
@@ -140,12 +158,19 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 	@Resource
 	private PlatformOrderOprDao platformOrderOprDao;
+	
+	@Resource
+	private TitanTransOrderDao titanTransOrderDao;
 
 	@Resource
 	private TitanFinancialLoanCreditService loanCreditService;
 	
 	@Resource
+	private TitanOrderService orderService;
+	
+	@Resource
 	private TitanFinancialTradeService tradeService;
+	
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
@@ -807,41 +832,22 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		LoanOrderStatusEnum orderStatusEnum = LoanTypeConvertUtil
 				.rsStatusMap(rsp.getStatustring());
 		
-		if (orderStatusEnum.getKey() == LoanOrderStatusEnum.HAVE_LOAN.getKey()
-				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == loanApplyOrder
-						.getStatus()
-						|| LoanOrderStatusEnum.LOAN_REQ_ING.getKey() == loanApplyOrder
-								.getStatus() || LoanOrderStatusEnum.WAIT_AUDIT
-						.getKey() == loanApplyOrder.getStatus())) {
-			
-			//TODO 放款成功后，下单，转账逻辑
-			//下单
-			// tradeService.addLocalTransOrder(titanPaymentRequest)
-			
-			//转账
-			
-//			TransferRequest transferRequest = new TransferRequest();
-//			transferRequest.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
-//			transferRequest.setIntermerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
-//			transferRequest.setConditioncode(ConditioncodeEnum.ADD_OEDER);
-//			//
-//			transferRequest.setUserid(OrderGenerateService
-//					.genLocalOrderNo());
-//			transferRequest.setUserrelateid(userrelateid);
-//			transferRequest.setAmount(amount);
-//			transferRequest.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID_230);
-//			transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-//			
-//			transferRequest.setOrderid(OrderGenerateService.genLocalOrderNo());
-//			transferRequest.setRequestno(OrderGenerateService.genResquestNo());
-//			transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));
-//			transferRequest.setStatus(status);
-//			transferRequest.setTransfertype(TransfertypeEnum.BRANCH_TRANSFER);
-//			transferRequest.setUserfee("0");
-//			
-//			
-//			tradeService.transferAccounts(transferRequest);
-			
+//		if (orderStatusEnum.getKey() == LoanOrderStatusEnum.HAVE_LOAN.getKey()
+//				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == loanApplyOrder
+//						.getStatus()
+//						|| LoanOrderStatusEnum.LOAN_REQ_ING.getKey() == loanApplyOrder
+//								.getStatus() || LoanOrderStatusEnum.WAIT_AUDIT
+//						.getKey() == loanApplyOrder.getStatus())) {
+		if (orderStatusEnum.getKey() == LoanOrderStatusEnum.HAVE_LOAN.getKey()){
+			// 放款成功后，下单，转账逻辑
+			if(loanApplyOrder.getActualAmount()!=null&&loanApplyOrder.getActualAmount()>0){
+				try {
+					log.info("贷款通知时转账流程->状态达到转账要求，贷款订单号loanOrderNo："+orderNo+",orgCode:"+orgCode);
+					loanPay(orgCode,orderNo,loanApplyOrder.getActualAmount().toString());
+				} catch (Exception e) {
+					log.error("贷款转账失败，付款方机构id:"+orgCode+",贷款申请订单号orderNo："+orderNo,e);
+				}
+			}
 		}
 		if (orderStatusEnum != null
 				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == orderStatusEnum
@@ -925,6 +931,99 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		orderResponse.putSuccess();
 
 		return orderResponse;
+	}
+	/***
+	 * 贷款转账
+	 * @param payOrgCode 付款机构
+	 * @param loanOrderNo 贷款申请订单号
+	 * @param loanActualAmount 实际转账金额
+	 * @return
+	 */
+	private boolean loanPay(String payOrgCode,String loanOrderNo,String loanActualAmount){
+		boolean payState = false;
+		//是否已经转账成功，不能重复转账
+		TransOrderRequest transOrderRequest = new TransOrderRequest();
+		transOrderRequest.setPayorderno(loanOrderNo);
+		TransOrderDTO transOrderDTO = orderService.queryTransOrderDTO(transOrderRequest);
+		
+		if(transOrderDTO==null||(!OrderStatusEnum.TRANSFER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()))){//转账不成功，继续转账
+			log.info("贷款通知时转账流程->未转账或者转账不成功，继续转账，贷款订单号loanOrderNo："+loanOrderNo+",付款方OrgCode:"+payOrgCode);
+			LoanSpecification loanSpecification = new LoanSpecification();
+			loanSpecification.setOrderNo(loanOrderNo);
+			List<LoanSpecification> loanSpecificationList = loanSpecificationDao
+					.queryLoanSpecification(loanSpecification);
+			if (CollectionUtils.isNotEmpty(loanSpecificationList)) {
+				
+				String titanCode = loanSpecificationList.get(0)
+						.getTitanCode();
+				OrgDTO relateOrgDTO = new OrgDTO();
+				relateOrgDTO.setTitancode(titanCode);
+				relateOrgDTO = organService.queryOrg(relateOrgDTO);
+				
+				String orderId = OrderGenerateService.genLocalOrderNo();
+				String requestno = OrderGenerateService.genResquestNo();
+				// 下单
+				TitanOrderRequest titanOrderRequest = new TitanOrderRequest();
+				titanOrderRequest.setAmount(loanActualAmount);
+				titanOrderRequest.setCurrencyType("1");// 人民币
+				titanOrderRequest.setGoodsDetail("贷款付款转账");
+				titanOrderRequest.setGoodsId(loanOrderNo);
+				titanOrderRequest.setGoodsName("贷款");
+				titanOrderRequest.setPayerType(PayerTypeEnum.LOAN.getKey());
+				titanOrderRequest
+						.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID_230);
+				titanOrderRequest.setUserId(payOrgCode);// 付款方
+				titanOrderRequest.setRuserId(relateOrgDTO.getOrgcode());// 接收方
+				TransOrderCreateResponse transOrderCreateResponse = tradeService.saveTitanTransOrder(titanOrderRequest);
+				if(transOrderCreateResponse.isResult()){
+					TitanTransOrder transOrderParam = new TitanTransOrder();
+					transOrderParam.setTransid(transOrderCreateResponse.getTransId());
+					transOrderParam.setOrderid(orderId);
+					titanTransOrderDao.updateTitanTransOrderByTransId(transOrderParam);
+					// 转账
+					TransferRequest transferRequest = new TransferRequest();
+					transferRequest
+							.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
+					transferRequest
+							.setIntermerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
+					transferRequest
+							.setConditioncode(ConditioncodeEnum.ADD_OEDER);
+					transferRequest.setUserid(payOrgCode);
+					transferRequest.setUserrelateid(relateOrgDTO.getOrgcode());
+					transferRequest.setAmount(loanActualAmount);
+					transferRequest
+							.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID_230);
+					transferRequest
+							.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+					transferRequest.setOrderid(orderId);
+					transferRequest.setRequestno(requestno);
+					transferRequest.setRequesttime(DateUtil.sdf4
+							.format(new Date()));
+					transferRequest
+							.setTransfertype(TransfertypeEnum.BRANCH_TRANSFER);
+					transferRequest.setUserfee("0");
+					TransferResponse transferResponse = new TransferResponse();
+					try {
+						transferResponse =  tradeService.transferAccounts(transferRequest);
+						if(transferResponse.isResult()){
+							TransOrderDTO orderStatusidParam = new TransOrderDTO();
+							orderStatusidParam.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
+							orderStatusidParam.setTransid(transOrderCreateResponse.getTransId());
+							orderService.updateTransOrder(orderStatusidParam);
+							log.info("贷款通知时转账流程->转账成功，贷款订单号loanOrderNo："+loanOrderNo+",requestno:"+requestno);
+							payState = true;
+						}else{
+							log.error("贷款转账失败,原因："+transferResponse.getReturnMessage()+",贷款订单号loanOrderNo："+loanOrderNo+",转账参数："+Tools.gsonToString(transferRequest));
+						}
+					} catch (Exception e) {
+						log.error("贷款转账失败loanPay，付款方机构id:"+payOrgCode+",转账参数："+Tools.gsonToString(transferRequest),e);
+					}
+				}
+			}
+		}else{
+			log.info("贷款通知时转账流程->已经转账，本次通知不需要转账，贷款订单号loanOrderNo："+loanOrderNo);
+		}
+		return payState;
 	}
 
 	/**
@@ -1395,9 +1494,9 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			loanOrderNotifyResponse.putErrorResult("贷款申请单号[orderNo]不能为空");
 			return loanOrderNotifyResponse;
 		}
-		LoanApplyOrder paramApplyOrder = new LoanApplyOrder();
-		paramApplyOrder.setOrderNo(req.getOrderNo());
-		paramApplyOrder.setStatus(req.getState());
+		LoanApplyOrder updateApplyOrderParam = new LoanApplyOrder();
+		updateApplyOrderParam.setOrderNo(req.getOrderNo());
+		updateApplyOrderParam.setStatus(req.getState());
 		log.info("贷款通知处理，贷款单号OrderNo:"+req.getOrderNo());
 		if (req.getState() == LoanOrderStatusEnum.AUDIT_PASS.getKey()||req.getState() == LoanOrderStatusEnum.HAVE_LOAN.getKey()) {// 终审通过||放款成功
 			LoanQueryConditions loanQueryConditions = new LoanQueryConditions();
@@ -1426,10 +1525,10 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			this.synLoanOrderInfo(synLoanOrderRequest);
 			log.info("贷款通知处理->同步贷款订单信息完成，贷款单号OrderNo:"+req.getOrderNo());
 		 } else {
-			paramApplyOrder.setErrorMsg(req.getMsg());
+			 updateApplyOrderParam.setErrorMsg(req.getMsg());
 		}
 
-		loanOrderDao.updateLoanApplyOrder(paramApplyOrder);
+		loanOrderDao.updateLoanApplyOrder(updateApplyOrderParam);
 		loanOrderNotifyResponse.putSuccess("通知处理成功");
 		return loanOrderNotifyResponse;
 	}
