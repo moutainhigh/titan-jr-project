@@ -326,7 +326,7 @@ public class FinancialLoanApplyController extends BaseController{
 			util.ftpLogin();
 
 			util.deleteFile(FtpUtil.UPLOAD_PATH_LOAN_APPLY + "/"
-					+ this.getUserId() + "/"+loanApplyOrderNo+"/" + fileName);
+					+ this.getUserId() + "/"+loanApplyOrderNo+"/" + newName);
 
 			util.uploadStream(newName, file.getInputStream(),
 					FtpUtil.UPLOAD_PATH_LOAN_APPLY + "/" + this.getUserId()
