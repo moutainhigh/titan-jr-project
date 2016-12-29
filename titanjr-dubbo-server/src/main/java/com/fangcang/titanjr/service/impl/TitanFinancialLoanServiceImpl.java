@@ -24,21 +24,20 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.titanjr.common.enums.ConditioncodeEnum;
 import com.fangcang.titanjr.common.enums.FileTypeEnum;
 import com.fangcang.titanjr.common.enums.LoanApplyOrderEnum;
 import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
-<<<<<<< HEAD
-=======
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TransfertypeEnum;
->>>>>>> branch 'dev_loan' of git@192.168.2.94:/srv/git/titan-jr-project.git
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FileHelp;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.LoanCreditOrderDao;
 import com.fangcang.titanjr.dao.LoanOrderDao;
@@ -68,12 +67,9 @@ import com.fangcang.titanjr.dto.request.RepaymentLoanRequest;
 import com.fangcang.titanjr.dto.request.SaveLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.request.SynLoanCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.SynLoanOrderRequest;
-<<<<<<< HEAD
-=======
 import com.fangcang.titanjr.dto.request.TitanOrderRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
->>>>>>> branch 'dev_loan' of git@192.168.2.94:/srv/git/titan-jr-project.git
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.CancelLoanResponse;
 import com.fangcang.titanjr.dto.response.ConfirmLoanOrderIsAvailableResponse;
