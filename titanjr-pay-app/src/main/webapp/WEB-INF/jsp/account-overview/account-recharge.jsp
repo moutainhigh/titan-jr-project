@@ -303,14 +303,17 @@ function confirmPayResult(){
                    
                    try
                    {
-                   		$("#flashPage").attr('action' , top.frames["right_con_frm"].location.href);
+                	   top.frames["right_con_frm"].location.reload();
+                	   
+                	//   $("#flashPage").attr('action' , top.frames["right_con_frm"].location.href);
                    }
                    catch(e)
                    {
-                	 	$("#flashPage").attr('action' ,window.frames["right_con_frm"].location.href);
+                	   window.frames["right_con_frm"].location.reload();
+                	 	//$("#flashPage").attr('action' ,window.frames["right_con_frm"].location.href);
                    }
                   
-                   $("#flashPage").submit();
+                  // $("#flashPage").submit();
         	   }
         	}
     });
