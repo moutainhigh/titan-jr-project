@@ -37,6 +37,7 @@ import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FileHelp;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.LoanCreditOrderDao;
@@ -814,18 +815,19 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			loanApplyOrder.setRepaymentPrincipal(arepayAmount.longValue());
 			loanApplyOrder.setRepaymentInterest(arepayInterest.longValue());
 		}
-
+		if (StringUtil.isValidString(rsp.getLoanmoney())) {
+			loanApplyOrder.setActualAmount(Long.parseLong(rsp.getLoanmoney()));
+		}
 		// 将融数平台的状态映射成房仓的状态
 		LoanOrderStatusEnum orderStatusEnum = LoanTypeConvertUtil
 				.rsStatusMap(rsp.getStatustring());
-		
-//		if (orderStatusEnum.getKey() == LoanOrderStatusEnum.HAVE_LOAN.getKey()
-//				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == loanApplyOrder
-//						.getStatus()
-//						|| LoanOrderStatusEnum.LOAN_REQ_ING.getKey() == loanApplyOrder
-//								.getStatus() || LoanOrderStatusEnum.WAIT_AUDIT
-//						.getKey() == loanApplyOrder.getStatus())) {
-		if (orderStatusEnum.getKey() == LoanOrderStatusEnum.HAVE_LOAN.getKey()){
+		// 转账
+		if (orderStatusEnum.getKey() == LoanOrderStatusEnum.HAVE_LOAN.getKey()
+				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == loanApplyOrder
+						.getStatus()
+						|| LoanOrderStatusEnum.LOAN_REQ_ING.getKey() == loanApplyOrder
+								.getStatus() || LoanOrderStatusEnum.WAIT_AUDIT
+						.getKey() == loanApplyOrder.getStatus())) {
 			// 放款成功后，下单，转账逻辑
 			if(loanApplyOrder.getActualAmount()!=null&&loanApplyOrder.getActualAmount()>0){
 				try {
@@ -834,7 +836,11 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				} catch (Exception e) {
 					log.error("贷款转账失败，付款方机构id:"+orgCode+",贷款申请订单号orderNo："+orderNo,e);
 				}
+			}else{
+				log.info("贷款通知时转账流程->放款金额不符合转账要求(没有大于0)，贷款订单号loanOrderNo："+orderNo);
 			}
+		}else{
+			log.info("贷款通知时转账流程->贷款订单状态不符合转账要求，贷款订单号loanOrderNo："+orderNo+",状态:"+orderStatusEnum.getDesc());
 		}
 		if (orderStatusEnum != null
 				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == orderStatusEnum
@@ -901,9 +907,6 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				|| loanApplyOrder.getAmount() <= 0l) {
 			loanApplyOrder.setAmount(Long.parseLong(rsp.getLoanmoney()));
 		}
-		if (StringUtil.isValidString(rsp.getLoanmoney())) {
-			loanApplyOrder.setActualAmount(Long.parseLong(rsp.getLoanmoney()));
-		}
 
 		loanOrderDao.updateLoanApplyOrder(loanApplyOrder);
 		orderResponse.putSuccess();
@@ -923,8 +926,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		TransOrderRequest transOrderRequest = new TransOrderRequest();
 		transOrderRequest.setPayorderno(loanOrderNo);
 		TransOrderDTO transOrderDTO = orderService.queryTransOrderDTO(transOrderRequest);
-		
-		if(transOrderDTO==null||(!OrderStatusEnum.TRANSFER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()))){//转账不成功，继续转账
+		if(transOrderDTO==null||(!OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()))){//转账不成功，继续转账
 			log.info("贷款通知时转账流程->未转账或者转账不成功，继续转账，贷款订单号loanOrderNo："+loanOrderNo+",付款方OrgCode:"+payOrgCode);
 			LoanSpecification loanSpecification = new LoanSpecification();
 			loanSpecification.setOrderNo(loanOrderNo);
@@ -942,7 +944,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				String requestno = OrderGenerateService.genResquestNo();
 				// 下单
 				TitanOrderRequest titanOrderRequest = new TitanOrderRequest();
-				titanOrderRequest.setAmount(loanActualAmount);
+				titanOrderRequest.setAmount(NumberUtil.covertToYuan(loanActualAmount));
 				titanOrderRequest.setCurrencyType("1");// 人民币
 				titanOrderRequest.setGoodsDetail("贷款付款转账");
 				titanOrderRequest.setGoodsId(loanOrderNo);
@@ -1475,20 +1477,20 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		LoanApplyOrder updateApplyOrderParam = new LoanApplyOrder();
 		updateApplyOrderParam.setOrderNo(req.getOrderNo());
 		updateApplyOrderParam.setStatus(req.getState());
-		log.info("贷款通知处理，贷款单号OrderNo:"+req.getOrderNo());
+		log.info("贷款通知处理->贷款通知处理，贷款单号OrderNo:"+req.getOrderNo());
 		if (req.getState() == LoanOrderStatusEnum.AUDIT_PASS.getKey()||req.getState() == LoanOrderStatusEnum.HAVE_LOAN.getKey()) {// 终审通过||放款成功
 			LoanQueryConditions loanQueryConditions = new LoanQueryConditions();
 			loanQueryConditions.setOrderNo(req.getOrderNo());
 			List<LoanApplyOrder> loanApplyOrderList = loanOrderDao
 					.listLoanApplyOrder(loanQueryConditions);
 			if(CollectionUtils.isEmpty(loanApplyOrderList)){
-				log.info("贷款通知订单不存在，OrderNo:"+req.getOrderNo());
+				log.info("贷款通知处理->通知传过来的贷款申请订单不存在，贷款申请单号OrderNo:"+req.getOrderNo());
 				loanOrderNotifyResponse.putErrorResult("贷款订单不存在");
 				return loanOrderNotifyResponse;
 			}
 			LoanApplyOrder  loanApplyOrder = loanApplyOrderList.get(0);
 			if(req.getState() == LoanOrderStatusEnum.HAVE_LOAN.getKey()){
-				
+				log.info("贷款通知处理->开始同步授信申请单信息，贷款单号OrderNo:"+req.getOrderNo()+",授信申请单号CreditOrderNo："+loanApplyOrder.getCreditOrderNo());
 				// 同步剩余可用授信金额
 				SynLoanCreditOrderRequest creditOrderRequest = new SynLoanCreditOrderRequest();
 				creditOrderRequest.setOrgCode(loanApplyOrder.getOrgCode());
@@ -1499,7 +1501,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			SynLoanOrderRequest synLoanOrderRequest = new SynLoanOrderRequest();
 			synLoanOrderRequest.setOrderNo(req.getOrderNo());
 			synLoanOrderRequest.setOrgCode(loanApplyOrder.getOrgCode());
-			
+			log.info("贷款通知处理->同步贷款订单信息开始处理，贷款单号OrderNo:"+req.getOrderNo());
 			this.synLoanOrderInfo(synLoanOrderRequest);
 			log.info("贷款通知处理->同步贷款订单信息完成，贷款单号OrderNo:"+req.getOrderNo());
 		 } else {

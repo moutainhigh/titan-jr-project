@@ -455,15 +455,12 @@
 			$(this).parent().parent().find(".TFSaddImg").removeClass("hidden");
 			
 			
-			$.ajax({
-				url:"",
-				type:"post",
-				data:{loanApplyOrderNo:$("#loanApplyOrderNo").val(),fileName:ids},
-				dataType:"json",
-				
-			});
-			
-			
+			//$.ajax({
+				//url:"",
+				//type:"post",
+				//data:{loanApplyOrderNo:$("#loanApplyOrderNo").val(),fileName:ids},
+				//dataType:"json"
+			//});
 			
 		});
 

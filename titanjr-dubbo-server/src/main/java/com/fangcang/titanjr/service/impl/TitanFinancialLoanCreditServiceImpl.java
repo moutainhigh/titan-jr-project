@@ -1096,6 +1096,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					.queryLoanCreditOrder(loanCreditOrderParam);
 			if (loanCreditOrderList == null
 					|| loanCreditOrderList.size() == 0) {
+				log.info("通知传过来的授信申请单不存在,notifyRequest:"+Tools.gsonToString(notifyRequest));
 				response.putErrorResult("授信申请单不存在");
 				return response;
 			}

@@ -54,10 +54,10 @@
         </td>
         <td class="">
             <c:if test="${tradeItem.tradeType == '收款'}">
-                <a class="J_orderDetails blue decorationUnderline m_r10" onclick="showReceiveDetail(this);" id="${tradeItem.businessordercode}">详情</a>
+                <a class="J_orderDetails blue decorationUnderline m_r10" onclick="showReceiveDetail(this);" id="${tradeItem.userorderid}">详情</a>
             </c:if>
             <c:if test="${tradeItem.tradeType == '付款'}">
-                <a class="J_orderDetails blue decorationUnderline m_r10" onclick="showPayDetail(this);" id="${tradeItem.businessordercode}">详情</a>
+                <a class="J_orderDetails blue decorationUnderline m_r10" onclick="showPayDetail(this);" id="${tradeItem.userorderid}">详情</a>
             </c:if>
             <c:if test="${tradeItem.tradeType == '充值'}">
                 <a class="J_orderDetails blue decorationUnderline m_r10" onclick="showRechargeDetail(this);" id="${tradeItem.userorderid}">详情</a>
@@ -77,7 +77,7 @@
         $.ajax({
             dataType : 'html',
             context: document.body,
-            data:{businessordercode:code},
+            data:{userOrderId:code},
             url : '<%=basePath%>/account/order-receive-detail.shtml',
             success : function(html){
                 var d = window.top.dialog({
@@ -104,7 +104,7 @@
         $.ajax({
             dataType : 'html',
             context: document.body,
-            data:{businessordercode:code},
+            data:{userOrderId:code},
             url : '<%=basePath%>/account/order-pay-detail.shtml',
             success : function(html){
                 var d = window.top.dialog({
