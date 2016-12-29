@@ -791,7 +791,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			String lastRepaymentDate = null;
 
 			for (TUserArepayment arepayment : response.gettUserArepaymentList()) {
-				
+				//识别出有用的还款记录，1 标示全部还款  4标示部分还款
 				if ("1".equals(arepayment.getStatusid())
 						|| "4".equals(arepayment.getStatusid())) {
 					
@@ -828,13 +828,14 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		LoanOrderStatusEnum orderStatusEnum = LoanTypeConvertUtil
 				.rsStatusMap(rsp.getStatustring());
 		
-//		if (orderStatusEnum.getKey() == LoanOrderStatusEnum.HAVE_LOAN.getKey()
-//				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == loanApplyOrder
-//						.getStatus()
-//						|| LoanOrderStatusEnum.LOAN_REQ_ING.getKey() == loanApplyOrder
-//								.getStatus() || LoanOrderStatusEnum.WAIT_AUDIT
-//						.getKey() == loanApplyOrder.getStatus())) {
-		if (orderStatusEnum.getKey() == LoanOrderStatusEnum.HAVE_LOAN.getKey()){
+		//如果房仓的贷款单处于审核中或者终审通过，而融数方的贷款单号已经变成了已放款，那么就需要做一次转账的动作
+		if (orderStatusEnum.getKey() == LoanOrderStatusEnum.HAVE_LOAN.getKey()
+				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == loanApplyOrder
+						.getStatus()
+						|| LoanOrderStatusEnum.LOAN_REQ_ING.getKey() == loanApplyOrder
+								.getStatus() || LoanOrderStatusEnum.WAIT_AUDIT
+						.getKey() == loanApplyOrder.getStatus())) {
+//		if (orderStatusEnum.getKey() == LoanOrderStatusEnum.HAVE_LOAN.getKey()){
 			// 放款成功后，下单，转账逻辑
 			if(loanApplyOrder.getActualAmount()!=null&&loanApplyOrder.getActualAmount()>0){
 				try {
@@ -845,6 +846,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				}
 			}
 		}
+		//融数方是否是终审通过，如果是终审通过那么我方如果是待审核，那么就需要确认一次授信协议哦
 		if (orderStatusEnum != null
 				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == orderStatusEnum
 						.getKey() || LoanOrderStatusEnum.LENDING_ING.getKey() == orderStatusEnum
@@ -914,7 +916,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		}
 		
 	
-		//如果申请贷款的金额为空，那么直接把贷款金额直接设置为用户申请贷款的金额（线下贷款场景）
+		//如果申请贷款的金额为空，那么直接把贷款金额直接设置为用户申请贷款的金额（线下贷款单同步场景）
 		if (loanApplyOrder.getAmount() == null
 				|| loanApplyOrder.getAmount() <= 0l) {
 			loanApplyOrder.setAmount(Long.parseLong(rsp.getLoanmoney()));

@@ -24,7 +24,7 @@
 				<tr>					
 					<td class="tdl">序号</td>
 					<td width="tdl">贷款申请时间</td>
-					<td class="tdr">贷款额度(元)</td>
+					<td class="tdr">放款贷款额度(元)</td>
 					
 					<td class="tdr">已还本金(元)</td>
 					
