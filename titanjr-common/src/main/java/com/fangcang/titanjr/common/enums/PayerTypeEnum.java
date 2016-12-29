@@ -12,7 +12,8 @@ public enum PayerTypeEnum {
 	  MOBILE("6","移动端"),
 	  RECHARGE("7","充值"),
 	  WITHDRAW("8","提现"),
-	  OPEN_ORG("1001","对外开放平台");
+	  OPEN_ORG("1001","对外开放平台"),
+	  LOAN("512","贷款");
 
 	  public String key;
 	  
@@ -71,7 +72,7 @@ public enum PayerTypeEnum {
 	  
 	  public boolean isUserId()
 	  {
-		  return RECHARGE.key.equals(this.key) || WITHDRAW.key.equals(this.key);
+		  return RECHARGE.key.equals(this.key) || WITHDRAW.key.equals(this.key)||LOAN.key.equals(this.key);
 	  }
 	  
 	  public boolean isReicveMerchantCode(){//接收方为机构编码的

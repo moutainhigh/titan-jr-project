@@ -2224,7 +2224,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				.getPayerTypeEnumByKey(titanOrderRequest.getPayerType());
 		titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
 		// 如果存在信贷，需要在此处判断其productId
-		titanTransOrder.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+		titanTransOrder.setProductid(titanOrderRequest.getProductId());
 		if (StringUtil.isValidString(titanOrderRequest.getUserId())) {// 如果fcUserId为null则不查询
 			if (payerTypeEnum.isFcUserId()) {// 付款方传入fuUSerId
 				TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
@@ -2250,7 +2250,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			} else if (payerTypeEnum.isUserId()) {// 付款方传入userId
 				titanTransOrder.setUserid(titanOrderRequest.getUserId());
 				if (PayerTypeEnum.WITHDRAW.getKey().equals(
-						payerTypeEnum.getKey())) {
+						payerTypeEnum.getKey())||PayerTypeEnum.LOAN.getKey().equals(
+								payerTypeEnum.getKey())) {
 					titanTransOrder.setPayermerchant(titanOrderRequest
 							.getUserId());
 				}
@@ -2276,7 +2277,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 			} else if (payerTypeEnum.isUserId()) {// 接收方传入userId
 				titanTransOrder.setUserid(titanOrderRequest.getRuserId());
-				if (PayerTypeEnum.RECHARGE.getKey().equals(payerTypeEnum.getKey()))
+				if (PayerTypeEnum.RECHARGE.getKey().equals(payerTypeEnum.getKey()) || 
+						PayerTypeEnum.LOAN.getKey().equals(payerTypeEnum.getKey()))
 				{
 					titanTransOrder
 							.setPayeemerchant(titanOrderRequest.getRuserId());
@@ -2287,7 +2289,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						payerTypeEnum.getKey())) {
 					titanTransOrder
 							.setTransordertype(TransOrderTypeEnum.WITHDRAW.type);
-				} else {
+				} else if(PayerTypeEnum.RECHARGE.getKey().equals(
+						payerTypeEnum.getKey())){
 					titanTransOrder
 							.setTransordertype(TransOrderTypeEnum.RECHARGE.type);
 				}
