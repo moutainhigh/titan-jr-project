@@ -301,7 +301,15 @@ function confirmPayResult(){
                        top.removeIframeDialog();
                    }, 1000);
                    
-                   	$("#flashPage").attr('action' , $('#right_con_frm')[0].contentWindow.location.href);
+                   try
+                   {
+                   		$("#flashPage").attr('action' , top.frames["right_con_frm"].location.href);
+                   }
+                   catch(e)
+                   {
+                	 	$("#flashPage").attr('action' ,window.frames["right_con_frm"].location.href);
+                   }
+                  
                    $("#flashPage").submit();
         	   }
         	}
