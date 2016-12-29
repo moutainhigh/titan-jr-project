@@ -243,7 +243,47 @@ public class FinancialLoanApplyController extends BaseController{
 	public Map<String,Object> getLoanApplyOrderNo(){
 		return this.putSuccess("orderNo", OrderGenerateService.genLoanApplyOrderNo());
 	}
-	
+	/**
+	 * 删除贷款文件
+	 * @param typeId
+	 * @param loanApplyOrderNo
+	 * @param fileName
+	 * @return
+	 * @throws IOException
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/delLoanPic")
+	public String delAccessory(String typeId, String loanApplyOrderNo,String fileName)
+			throws IOException {
+		FtpUtil util = null;
+		try {
+			FTPConfigResponse configResponse = sysconfigService.getFTPConfig();
+			util = new FtpUtil(configResponse.getFtpServerIp(),
+					configResponse.getFtpServerPort(),
+					configResponse.getFtpServerUser(),
+					configResponse.getFtpServerPassword());
+			util.ftpLogin();
+			util.deleteFile(FtpUtil.UPLOAD_PATH_LOAN_APPLY + "/"
+					+ this.getUserId() + "/"+loanApplyOrderNo+"/" + fileName);
+			util.ftpLogOut();
+
+		} catch (Exception e) {
+			this.putSysError();
+			log.error("", e);
+		} finally {
+			if (util != null) {
+				try {
+					util.ftpLogOut();
+				} catch (Exception e) {
+					this.putSysError();
+					log.error("", e);
+				}
+			}
+		}
+
+		this.putSuccess();
+		return this.toJson();
+	}
 	
 	@RequestMapping(value="/upload")
 	public void upload(@RequestParam(value = "compartment_contract", required = false) MultipartFile file,
@@ -286,30 +326,14 @@ public class FinancialLoanApplyController extends BaseController{
 
 			util.ftpLogin();
 
-			log.info("login ftp success fileName=" + newName);
-
-			List<String> fileList = util
-					.listFiles(FtpUtil.UPLOAD_PATH_LOAN_APPLY + "/"
-							+ this.getUserId() + "/"+loanApplyOrderNo+"/");
-
-			log.info("list ftp files fileList=" + fileList);
-
-			// 检查文件是否已经上传过，如果上传过则需要把旧的文件先干掉，在上传新的哦 亲
-			if (fileList != null) {
-				for (int i = 0; i < fileList.size(); i++) {
-					if (fileList.get(i).indexOf(fileName + ".") != -1) {
-						util.deleteFile(FtpUtil.UPLOAD_PATH_LOAN_APPLY + "/"
-								+ this.getUserId() + "/"+loanApplyOrderNo+"/" + fileList.get(i));
-					}
-				}
-			}
+			util.deleteFile(FtpUtil.UPLOAD_PATH_LOAN_APPLY + "/"
+					+ this.getUserId() + "/"+loanApplyOrderNo+"/" + fileName);
 
 			util.uploadStream(newName, file.getInputStream(),
 					FtpUtil.UPLOAD_PATH_LOAN_APPLY + "/" + this.getUserId()
 							+ "/"+loanApplyOrderNo+"/");
 
 			log.info("upload to ftp success fileName=" + newName);
-
 			util.ftpLogOut();
 			data.put("fileName", newName);
 			this.putSuccess("文件上传成功",data);
