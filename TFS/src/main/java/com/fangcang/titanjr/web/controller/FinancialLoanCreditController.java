@@ -40,6 +40,7 @@ import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
 import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
+import com.fangcang.titanjr.dto.request.SendCodeRequest;
 import com.fangcang.titanjr.dto.response.FTPConfigResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.GetAuditEvaluationResponse;
@@ -47,6 +48,7 @@ import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
 import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.util.StringUtil;
@@ -74,6 +76,9 @@ public class FinancialLoanCreditController extends BaseController {
 
 	@Resource
 	private TitanFinancialOrganService financialOrganService;
+	
+	@Resource
+    private TitanFinancialSendSMSService sendSMSService;
 
 	/**
 	 * 进入贷款主页
@@ -666,6 +671,23 @@ public class FinancialLoanCreditController extends BaseController {
 		}
 		return this.toJson();
 	}
+	
+	  /**
+     * 发送提醒,峰哥去审核金融开通申请（临时使用）
+     */
+    private void sendCheckAlarm(String orgName){
+    	SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
+    	sendRegCodeRequest.setReceiveAddress("13543309695");//峰哥手机
+    	sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+    	sendRegCodeRequest.setContent(orgName+",已经提交泰坦金融授信申请，请及时审核。提交时间："+DateUtil.formatDataToDatetime(new Date()));
+    	sendRegCodeRequest.setSubject("泰坦金融授信申请待审通知");
+    	try {
+    		sendSMSService.sendCode(sendRegCodeRequest);
+		} catch (Exception e) {
+			log.info("给运营人员发送坦金融授信申请待审通知失败", e);
+		}
+    	
+    }
 
 	@RequestMapping(value = "/submitCreditApply", method = RequestMethod.POST)
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
@@ -699,7 +721,11 @@ public class FinancialLoanCreditController extends BaseController {
 		if (!saveResponse.isResult()) {
 			model.addAttribute("errorMsg", "授信单提交失败,请重试！");
 		}
-
+		
+		if(saveResponse != null && saveResponse.isResult())
+		{
+			sendCheckAlarm(creditSaveRequest.getCreditCompany().getName());
+		}
 		model.addAttribute("reqTime",
 				DateUtil.sdf4.format(creditOrder.getReqTime()));
 		return "/loan/credit-apply/credit-apply-result";

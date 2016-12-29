@@ -61,7 +61,7 @@
 							</p>
 							<p class="c_999 " style="line-height: 24px;">
 								<span class="f_12">
-								<i class="fl">参考待还本金：<a id="OPERACTION_SUM">0.00</a></i> <i class="MyAssets_noticeIco m_t3 fl" title="参考待还本息为定时更新贷款订单应还本息之和，实际还款本息以还款时显示应还本息为准。"></i>
+								<i class="fl">参考待还本息：<a id="OPERACTION_SUM">0.00</a></i> <i class="MyAssets_noticeIco m_t3 fl" title="参考待还本息为定时更新贷款订单应还本息之和，实际还款本息以还款时显示应还本息为准。"></i>
 								</span>
 							</p>	
 							</div>
@@ -80,7 +80,7 @@
 							</p>
 							<p class="c_999 " style="line-height: 24px;">
 								<span class="f_12">
-								<i class="fl">参考待还本金：<a id="ROOM_PACK_SUM">0.00</a></i> <i class="MyAssets_noticeIco m_t3 fl" title="参考待还本息为定时更新贷款订单应还本息之和，实际还款本息以还款时显示应还本息为准。"></i>
+								<i class="fl">参考待还本息：<a id="ROOM_PACK_SUM">0.00</a></i> <i class="MyAssets_noticeIco m_t3 fl" title="参考待还本息为定时更新贷款订单应还本息之和，实际还款本息以还款时显示应还本息为准。"></i>
 								</span>								
 							</p>
 							</div>	

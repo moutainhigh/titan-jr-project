@@ -51,7 +51,8 @@
                 </dl>
                 <ul class="loanInformation_upload_list clearfix">
                     <li>
-                        <h3 class="loanInformation_upload_list_title"><i class="redNotice">*</i>企业营业执照</h3>
+                        <h3 class="loanInformation_upload_list_title"><i class="redNotice">*</i>企业营业执照
+                        <div class="J_pattern blue fr cursor">样图</div></h3>
                         <div class="loanInformation_upload_list_img"> 
                             <div class="TFSaddImg"></div>
                             <input type="file"  name="credit_file" id="licenseUrl" errorMsg="请上传企业营业执照"/>

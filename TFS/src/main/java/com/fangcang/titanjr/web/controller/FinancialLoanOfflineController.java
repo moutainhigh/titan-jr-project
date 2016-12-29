@@ -11,11 +11,13 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
@@ -23,6 +25,7 @@ import com.fangcang.titanjr.dto.bean.LoanApplyInfo;
 import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
 import com.fangcang.titanjr.dto.bean.LoanSpecBean;
 import com.fangcang.titanjr.dto.bean.LoanSpecificationBean;
+import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.request.ConfirmLoanOrderIsAvailableRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoRequest;
@@ -33,6 +36,7 @@ import com.fangcang.titanjr.dto.response.FTPConfigResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoResponse;
 import com.fangcang.titanjr.dto.response.OfflineLoanApplyResponse;
+import com.fangcang.titanjr.dto.response.OrganQueryCheckResponse;
 import com.fangcang.titanjr.dto.response.SynLoanOrderResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -65,7 +69,19 @@ public class FinancialLoanOfflineController extends BaseController {
 	private TitanFinancialOrganService financialOrganService;
 
 	@RequestMapping("/page")
-	public String loanOrderOfflinePer() {
+	public String loanOrderOfflinePer(Model model) {
+		
+		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+		organQueryRequest.setCurrentPage(1);
+		organQueryRequest.setPageSize(10000);
+		OrganQueryCheckResponse checkResponse = financialOrganService
+				.queryFinancialOrganForPage(organQueryRequest);
+
+		PaginationSupport<OrgCheckDTO> paginationSupport = checkResponse
+				.getPaginationSupport();
+
+		model.addAttribute("orgList", paginationSupport.getItemList());
+
 		return "/loan/loan-offline/loan-syn";
 	}
 

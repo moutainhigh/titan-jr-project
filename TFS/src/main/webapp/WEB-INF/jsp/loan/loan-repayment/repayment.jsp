@@ -91,7 +91,7 @@
 
 var orderNo = '${orderNo}';
 var currBalanceusable = 0;
-
+var totalAmount = 0;
 
 function validateRepayment()
 {
@@ -118,6 +118,14 @@ function validateRepayment()
     		$("#inputeAmountError").text("您的还款额度必须大于0");
     		return false;
     	}
+    	
+    	
+    	if(parseFloat(repaymentAmount)  > parseFloat(formatCurrency(totalAmount/100)))
+    	{
+    		$("#inputeAmountError").text("还款金额不能大于应还款金额！");
+   			return false;
+    	}
+    	
  		
     	if(parseFloat(repaymentAmount) > parseFloat(currBalanceusable)
     			|| currBalanceusable == 0 
@@ -149,6 +157,7 @@ function loadReapymentAmount()
 		success : function(obj) {
 			if(obj.result == 1)
 			{
+				totalAmount = 0;
 				for(var name in obj)
 				{
 					if($('#'+name).length >= 1)
@@ -158,9 +167,23 @@ function loadReapymentAmount()
 						{
 							amount = 0.00;
 						}
+						
+						if(obj[name] && name.indexOf("user") != -1)
+						{
+							totalAmount +=parseInt(obj[name]);
+						}
+						
 						$('#'+name).html(amount);
 					}
 				}
+				if(($('#repaymentAmount').val() == null || $('#repaymentAmount').val()=='')
+						&& $('#repaymentAmount').attr("init") != 'true')
+				{
+					$('#repaymentAmount').attr("init","true");
+					$('#repaymentAmount').val( formatCurrency(totalAmount/100));
+					setTimeout(function(){loadReapymentAmount()},1000);
+					
+				}				
 				 $(".J_password").show();
 			}
 			else{

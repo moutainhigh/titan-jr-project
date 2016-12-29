@@ -778,7 +778,10 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				}
 			}
 		}
-
+		
+		//保存最后一次主动还款记录，用户后面对还款状态进行判断是否贷款已经结清
+		TUserArepayment lastUserArepayment = null;
+		
 		// 设置已还款信息
 		if (response.gettUserArepaymentList() != null
 				&& response.gettUserArepaymentList().size() > 0) {
@@ -789,17 +792,23 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			String lastRepaymentDate = null;
 
 			for (TUserArepayment arepayment : response.gettUserArepaymentList()) {
-				arepayAmount = arepayAmount.add(new BigDecimal(arepayment
-						.getActivecapital()));
-				
-				arepayInterest = arepayInterest.add(new BigDecimal(arepayment
-						.getActiveinterest()));
-
-				arepayInterest = arepayInterest.add(new BigDecimal(arepayment
-						.getActiveoverduefine()).add(new BigDecimal(arepayment
-						.getActiveoverdueinterest())));
-
-				lastRepaymentDate = arepayment.getActiverepaymentdate();
+				//识别出有用的还款记录，1 标示全部还款  4标示部分还款
+				if ("1".equals(arepayment.getStatusid())
+						|| "4".equals(arepayment.getStatusid())) {
+					
+					arepayAmount = arepayAmount.add(new BigDecimal(arepayment
+							.getActivecapital()));
+					
+					arepayInterest = arepayInterest.add(new BigDecimal(arepayment
+							.getActiveinterest()));
+	
+					arepayInterest = arepayInterest.add(new BigDecimal(arepayment
+							.getActiveoverduefine()).add(new BigDecimal(arepayment
+							.getActiveoverdueinterest())));
+	
+					lastRepaymentDate = arepayment.getActiverepaymentdate();
+					lastUserArepayment = arepayment;
+				}
 			}
 
 			// 设置用户最后一次还款的日期
@@ -842,6 +851,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		}else{
 			log.info("贷款通知时转账流程->贷款订单状态不符合转账要求，贷款订单号loanOrderNo："+orderNo+",状态:"+orderStatusEnum.getDesc());
 		}
+		//融数方是否是终审通过，如果是终审通过那么我方如果是待审核，那么就需要确认一次授信协议哦
 		if (orderStatusEnum != null
 				&& (LoanOrderStatusEnum.AUDIT_PASS.getKey() == orderStatusEnum
 						.getKey() || LoanOrderStatusEnum.LENDING_ING.getKey() == orderStatusEnum
@@ -890,10 +900,17 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 						CommonConstant.RS_LOAN_REPAYMENT_TIME);
 				loanApplyOrder.setActualRepaymentDate(rDate);//
 			}
+			
+			//最后一次还款历史不为空，并且1标示用户已经全部还款，那么订单就结束
+			if (lastUserArepayment != null
+					&& "1".equals(lastUserArepayment.getStatusid())) {
+				//恭喜已经还清贷款了哈
+				loanApplyOrder.setStatus(LoanOrderStatusEnum.LOAN_FINISH.getKey());
+			}
 		}
 		
 		
-		
+		//放款日期以融数的为准哦
 		if (StringUtil.isValidString(rsp.getLoandate())) {
 			try {
 				loanApplyOrder.setRelMoneyTime(DateUtil.sdf4.parse(rsp
@@ -903,6 +920,8 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			}
 		}
 		
+	
+		//如果申请贷款的金额为空，那么直接把贷款金额直接设置为用户申请贷款的金额（线下贷款单同步场景）
 		if (loanApplyOrder.getAmount() == null
 				|| loanApplyOrder.getAmount() <= 0l) {
 			loanApplyOrder.setAmount(Long.parseLong(rsp.getLoanmoney()));
