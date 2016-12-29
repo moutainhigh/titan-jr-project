@@ -245,7 +245,6 @@ public class FinancialLoanApplyController extends BaseController{
 	}
 	/**
 	 * 删除贷款文件
-	 * @param typeId
 	 * @param loanApplyOrderNo
 	 * @param fileName
 	 * @return
@@ -253,7 +252,7 @@ public class FinancialLoanApplyController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/delLoanPic")
-	public String delAccessory(String typeId, String loanApplyOrderNo,String fileName)
+	public String delLoanPic( String loanApplyOrderNo,String fileName)
 			throws IOException {
 		FtpUtil util = null;
 		try {

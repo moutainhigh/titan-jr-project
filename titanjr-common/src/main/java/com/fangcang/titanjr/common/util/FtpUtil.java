@@ -249,8 +249,13 @@ public class FtpUtil {
 			if(!filePath.startsWith("/")){
 				filePath ="/"+filePath;
 			}
-			this.ftpClient.deleteFile(baseLocation + filePath);
-			return true;
+			boolean deleteState = this.ftpClient.deleteFile(baseLocation + filePath);
+			if(deleteState){
+				return true;
+			}else{
+				return false;
+			}
+			
 		} catch (Exception e) {
 			logger.error("删除文件失败[" + filePath + "]", e);
 			throw e;

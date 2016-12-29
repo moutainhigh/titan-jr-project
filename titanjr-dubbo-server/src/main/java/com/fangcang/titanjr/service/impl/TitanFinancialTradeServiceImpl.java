@@ -613,6 +613,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							accTradeResponse.putErrorResult("充值下单失败,业务单可能已经支付");
 						}
 						unlockOutTradeNoList(payOrderNo);
+					}else{
+						accTradeResponse.putErrorResult("订单不存在");
 					}
 				}
 			}
@@ -2036,6 +2038,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 			} catch (Exception e) {
 				log.error("订单信息保存失败:" + e.getMessage());
+				localOrderResponse.putErrorResult("订单下单失败");
 			}
 		}
 		return localOrderResponse;
