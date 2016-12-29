@@ -81,6 +81,20 @@ public class FinancialAccountController extends BaseController {
 
     @Resource
     TitanFinancialBaseInfoService titanFinancialBaseInfoService;
+    
+    
+    
+    /****************************************************************************
+     * 
+     * 
+     * 泰坦钱包使用的Controlller
+     * 
+     * 
+     * 
+     * 
+     */
+    
+    
 
     @RequestMapping(value = "/overview-main", method = RequestMethod.GET)
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
@@ -90,15 +104,29 @@ public class FinancialAccountController extends BaseController {
             organQueryRequest.setUserId(this.getUserId());
             FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
             model.addAttribute("organ", organOrganResponse.getFinancialOrganDTO());
-//            AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
-//            accountBalanceRequest.setUserid(this.getUserId());
-//            AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
-//            if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
-//                model.addAttribute("accountBalance", balanceResponse.getAccountBalance().get(0));
-//            }
         }
         return "account-overview/overview-main";
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     @RequestMapping(value = "/goto_cashierDesk", method = RequestMethod.GET)
