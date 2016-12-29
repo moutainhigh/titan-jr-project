@@ -72,7 +72,7 @@
 		<property name="jobDetail" ref="loanCreditSynJobSchedule" />
 		<property name="cronExpression">
 			<!-- 测试配置 -->
-			<value>0 */60 * * * ?</value>
+			<value>0 */59 * * * ?</value>
 			<!-- 发布配置 每3分钟执行一次 -->
 			<!--<value>0 0/30 * * * ?</value>-->
 		</property>
