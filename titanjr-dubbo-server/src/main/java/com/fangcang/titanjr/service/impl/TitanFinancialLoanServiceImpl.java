@@ -963,11 +963,11 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
 			TitanUser titanUser  = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
 			
-			//管理员
-			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
-			userInfoQueryRequest.setTfsUserId(loanApplyOrder.getCreatorId());
-			UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
-			TitanUser titanUser  = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+			//TODO  管理员
+//			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+//			userInfoQueryRequest.setTfsUserId(loanApplyOrder.getCreatorId());
+//			UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
+//			TitanUser titanUser  = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
 			
 			
 			LoanSpecification loanSpecification = new LoanSpecification();
@@ -977,7 +977,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			try {
 				//发给申请人
 				sendLoanSms(titanUser.getUserloginname(),titanUser.getUsername(),orderNo,loanApplyOrder.getAmount().toString(),LoanSpecification.getAccountName(),loanApplyOrder.getStatus());
-				//发给管理员
+				//TODO 发给管理员
 				
 				
 			} catch (Exception e) {
