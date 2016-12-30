@@ -467,7 +467,7 @@ public class TitanPaymentController extends BaseController {
     	
 	}
 	
-	private String weChat(RechargeResponse rechargeResponse,Model model){
+	private String weChat(RechargeResponse rechargeResponse,Model model) throws Exception{
 		RechargeDataDTO rechargeDataDTO = rechargeResponse.getRechargeDataDTO();
 		QrCodeResponse response = titanFinancialTradeService.getQrCodeUrl(rechargeDataDTO);
 		if(!response.isResult()){
@@ -547,7 +547,15 @@ public class TitanPaymentController extends BaseController {
     	return resultMap;
     }
 	
-    
+	@RequestMapping("wxPicture")
+	public void getWxPicture(String url,HttpServletResponse response){
+		try{
+			Wxutil.createRqCode(url, 170, 170, response.getOutputStream());
+		}catch(Exception e){
+			log.error("微信生成图片错误："+e.getMessage());
+		}
+	}
+	
     private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
 		synchronized (mapLock) {
 			if(mapLock.containsKey(out_trade_no)) {

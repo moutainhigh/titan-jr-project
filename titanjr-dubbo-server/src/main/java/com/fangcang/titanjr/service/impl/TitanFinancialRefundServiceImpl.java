@@ -491,16 +491,17 @@ public class TitanFinancialRefundServiceImpl implements
 			HttpResponse resp = HttpClient.httpRequest(params,httpPost);
 			if (null != resp) {
 				HttpEntity entity = resp.getEntity();
-				
-					response = EntityUtils.toString(entity);
-					notifyRefundResponse = RSConvertFiled2ObjectUtil.convertField2Object(NotifyRefundResponse.class, response);
-					notifyRefundResponse.putSuccess();
-					if(StringUtil.isValidString(notifyRefundResponse.getErrCode()) 
-				    		|| StringUtil.isValidString(notifyRefundResponse.getErrMsg())){//通知退款失败
-						log.error("退款通知异常:"+notifyRefundResponse.getErrMsg());
-						notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
-				    }
-					return notifyRefundResponse;
+				response = EntityUtils.toString(entity);
+				log.info("退款返回信息："+response);
+				notifyRefundResponse = RSConvertFiled2ObjectUtil.convertField2Object(NotifyRefundResponse.class, response);
+				notifyRefundResponse.putSuccess();
+				if(StringUtil.isValidString(notifyRefundResponse.getErrCode()) 
+			    		|| StringUtil.isValidString(notifyRefundResponse.getErrMsg())
+			    		|| !StringUtil.isValidString(notifyRefundResponse.getRefundOrderno())){//通知退款失败
+					log.error("退款通知异常:"+notifyRefundResponse.getErrMsg());
+					notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
+			    }
+				return notifyRefundResponse;
 			}
 		} catch (ParseException e) {
 			notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
@@ -644,7 +645,7 @@ public class TitanFinancialRefundServiceImpl implements
 			notifyRefundRequest.setSignType(SignTypeEnum.MD5.getKey());
 			
 			NotifyRefundResponse notifyRefundResponse = this.notifyGateawayRefund(notifyRefundRequest);
-			log.error("退款单"+notifyRefundResponse.getOrderNo()+"状态是:"+notifyRefundResponse.getRefundStatus());
+			log.info("退款单"+notifyRefundResponse.getOrderNo()+"状态是:"+notifyRefundResponse.getRefundStatus());
 			boolean isUpdate = false;
 			if(notifyRefundResponse.isResult()){
 				TransOrderDTO transOrderDTO = new TransOrderDTO();

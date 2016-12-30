@@ -432,15 +432,15 @@
              inner join t_tfs_refund re on transorder.orderid= re.orderid 
              <where>
                <if test="orderid !=null">
-                 transorder.orderid = #{orderid}
+                and transorder.orderid = #{orderid}
                </if>
                
                 <if test="statusId !=null">
-                 transorder.statusid = #{statusId}
+                and transorder.statusid = #{statusId}
                </if>
                
                <if test="userid !=null">
-                 transorder.userid  = #{userid}
+                and transorder.userid  = #{userid}
                </if>
              </where>
     </select>

@@ -39,6 +39,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
 	private TitanFinancialOrganService titanFinancialOrganService=null;
 	private TitanOrderService titanOrderService;
 	private TitanCashierDeskService titanCashierDeskService=null;
+	private TitanFinancialRefundService titanFinancialRefundService;
 
     @Before
     public void init(){
@@ -49,6 +50,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialOrganService = (TitanFinancialOrganService)cfx.getBean("titanFinancialOrganService");
     	titanOrderService = (TitanOrderService)cfx.getBean("titanOrderService");
     	titanCashierDeskService = (TitanCashierDeskService)cfx.getBean("titanCashierDeskService");
+    	titanFinancialRefundService = (TitanFinancialRefundService)cfx.getBean("titanFinancialRefundService");
     }
     
 
@@ -400,12 +402,6 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialTradeService.confirmFinance(transOrderDTO);
 	}
     
-//    @Test
-    public void testGDPOrderDTO(){
-    	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
-    	paymentUrlRequest.setPayOrderNo("H0141160727185050");
-    	titanFinancialTradeService.getGDPOrderDTO(paymentUrlRequest.getPayOrderNo());
-    }
     
 //    @Tenst
     public void getSign(){
@@ -516,5 +512,6 @@ public class TianjrFinancialTradeTest extends GenericTest{
 		return ;
 		
     }
+    
     
 }
