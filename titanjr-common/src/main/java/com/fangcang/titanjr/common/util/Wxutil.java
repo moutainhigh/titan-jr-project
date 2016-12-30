@@ -36,13 +36,13 @@ public class Wxutil {
 		BitMatrix bitMatrix = new MultiFormatWriter().encode(textOrUrl,
 				BarcodeFormat.QR_CODE, width, height, hints);
 		BufferedImage image = toBufferedImage(bitMatrix);
-		applyLogo(image);// 应用LOGO
+//		applyLogo(image);// 应用LOGO
 		writeToStream(image, FORMAT, toStream);
 	}
 
 	private static void applyLogo(BufferedImage image) throws IOException {
 		Graphics2D gs = image.createGraphics();
-		ClassPathResource resource = new ClassPathResource("/com/fangcang/titanjr/common/util/res/wx.jpg");// logo图片
+		ClassPathResource resource = new ClassPathResource("/com/fangcang/titanjr/common/util/res/wx4.jpg");// logo图片
 		// 载入logo
 		Image img = ImageIO.read(resource.getFile());
 		int left = image.getWidth() / 2 - img.getWidth(null) / 2;
