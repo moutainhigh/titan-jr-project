@@ -83,7 +83,8 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     @Resource
     private TitanRoleDao titanRoleDao;
     
-    @Resource
+    
+//    @Resource  此处互相持有实例 ,需要修改。
     private TitanFinancialOrganServiceImpl organService;
     
     @Resource
