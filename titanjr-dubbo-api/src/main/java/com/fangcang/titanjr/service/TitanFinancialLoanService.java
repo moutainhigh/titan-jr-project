@@ -139,4 +139,9 @@ public interface TitanFinancialLoanService {
 	 * @return
 	 */
 	public OfflineLoanApplyResponse offlineLoanApply(OfflineLoanApplyRequest req);
+	/**
+	 * 贷款发送短信(邮件)通知
+	 * @param orderNo 贷款订单号
+	 */
+	public void sendLoanSms(String orderNo);
 }

@@ -575,7 +575,7 @@
 			var index2=fileName.length;
 			var postf=fileName.substring(index1+1,index2);//后缀名
 			var imgList ="/png/jpg/jpeg/";
-			$('#'+ids).parent().find(".dd_text").html("附件").attr({"title":fileName});
+			$('#'+ids).parent().find(".dd_text").html("合同附件").attr({"title":fileName});
 			$('#'+ids).parent().find('.TFSimgOnBig').find('img').unbind("click");
 			$('#'+ids).parent().find('.TFSimgOn').removeClass('TFSimgOnBig');
 			
