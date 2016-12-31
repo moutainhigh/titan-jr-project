@@ -183,12 +183,12 @@ var staticPath  ="http://image.fangcang.com/upload/images/titanjr/loan_apply/${J
 	 				{
 	 					 src = '<%=cssSaasPath%>/images/TFS/help_logo.jpg';
 	 					$('#imgList').append('<dd class="TFSimgOnBig" type="file"><div class="dd_img"><img src="'+src+'" resourceName="'+imgsrcs[i]+'">'
-	 			 				+'<div class="hover download" resourceName="'+imgsrcs[i]+'">下载</div></div><div class="dd_text" title="'+imgsrcs[i]+'">'+imgsrcs[i]+'</div></dd>');
+	 			 				+'<div class="hover download" resourceName="'+imgsrcs[i]+'">下载</div></div><div class="dd_text" title="'+imgsrcs[i]+'">合同附件</div></dd>');
 	 				}
 	 				else
 	 				{
 	 					$('#imgList').append('<dd class="TFSimgOnBig" type="img"><div class="dd_img"><img src="'+src+'">'
-	 			 				+'<div class="hover download" resourceName="'+imgsrcs[i]+'">下载</div></div><div class="dd_text" title="'+imgsrcs[i]+'">'+imgsrcs[i]+'</div></dd>');
+	 			 				+'</div><div class="dd_text" title="'+imgsrcs[i]+'">合同附件</div></dd>');
 	 				}
 	 				
 	 				
