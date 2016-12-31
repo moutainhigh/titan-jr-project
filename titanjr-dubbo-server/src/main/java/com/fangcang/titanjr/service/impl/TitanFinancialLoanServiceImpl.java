@@ -267,6 +267,10 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 						response.putErrorResult("泰坦码和账户名不匹配");
 						return response;
 					}
+					if(relateOrgDTO.getUserid().equals(req.getOrgCode())){
+						response.putErrorResult("收款方的账户名不允许为贷款申请人账户 ");
+						return response;
+					}
 					relateOrgCode = relateOrgDTO.getOrgcode();
 				}
 				// 保存相关数据
