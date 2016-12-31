@@ -203,9 +203,9 @@
 	            <div class="MyAssets_list_inp01 fl ml10">
 	                <select class="select w_120" field="loanStatus">
 	                <option value="">贷款状态</option>
-	                <option value="1">审核中</option>
-	                <option value="6">已放款</option>
-	                <option value="7">未通过</option>
+	                <option value="1,2,3,5">审核中</option>
+	                <option value="6,9">已放款</option>
+	                <option value="4,7,8">未通过</option>
 	              </select>         
 	            </div>
 	
