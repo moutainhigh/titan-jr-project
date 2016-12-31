@@ -33,6 +33,7 @@ import com.fangcang.titanjr.common.enums.LoanProductEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TransfertypeEnum;
+import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FileHelp;
@@ -950,7 +951,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 	 * 发送贷款通知短信
 	 * @param orderNo 贷款订单号
 	 */
-	public void sendLoanSms(String orderNo){
+	private void sendLoanSms(String orderNo){
 		LoanQueryConditions loanQueryConditions = new LoanQueryConditions();
 		loanQueryConditions.setOrderNo(orderNo);
 		List<LoanApplyOrder> loanApplyOrderList = loanOrderDao.listLoanApplyOrder(loanQueryConditions);
@@ -963,23 +964,26 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
 			TitanUser titanUser  = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
 			
-			//TODO  管理员
-//			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
-//			userInfoQueryRequest.setTfsUserId(loanApplyOrder.getCreatorId());
-//			UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
-//			TitanUser titanUser  = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+			//管理员
+			UserInfoQueryRequest adminUserInfoQueryRequest = new UserInfoQueryRequest();
+			adminUserInfoQueryRequest.setOrgCode(titanUser.getOrgcode());
+			adminUserInfoQueryRequest.setIsadmin(1);
+			adminUserInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
+			UserInfoPageResponse adminUserInfoPageResponse = userService.queryUserInfoPage(adminUserInfoQueryRequest);
+			TitanUser adminTitanUser  = adminUserInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
 			
 			
-			LoanSpecification loanSpecification = new LoanSpecification();
-			loanSpecification.setOrderNo(orderNo);
-			List<LoanSpecification> loanSpecificationList = loanSpecificationDao.queryLoanSpecification(loanSpecification);
-			LoanSpecification LoanSpecification = loanSpecificationList.get(0);
+			LoanSpecification loanSpecificationParam = new LoanSpecification();
+			loanSpecificationParam.setOrderNo(orderNo);
+			List<LoanSpecification> loanSpecificationList = loanSpecificationDao.queryLoanSpecification(loanSpecificationParam);
+			LoanSpecification loanSpecification = loanSpecificationList.get(0);
 			try {
 				//发给申请人
-				sendLoanSms(titanUser.getUserloginname(),titanUser.getUsername(),orderNo,loanApplyOrder.getAmount().toString(),LoanSpecification.getAccountName(),loanApplyOrder.getStatus());
-				//TODO 发给管理员
-				
-				
+				sendLoanSms(titanUser.getUserloginname(),titanUser.getUsername(),orderNo,loanApplyOrder.getAmount().toString(),loanSpecification.getAccountName(),loanApplyOrder.getStatus());
+				if(!titanUser.getUserloginname().equals(adminTitanUser.getUserloginname())){
+					//发给管理员
+					sendLoanSms(adminTitanUser.getUserloginname(),adminTitanUser.getUsername(),orderNo,loanApplyOrder.getAmount().toString(),loanSpecification.getAccountName(),loanApplyOrder.getStatus());
+				}
 			} catch (Exception e) {
 				log.error("贷款通知短信或者邮件发送失败,订单号orderNo："+orderNo, e);
 			}
@@ -1633,14 +1637,15 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			log.info("贷款通知处理->同步贷款订单信息开始处理，贷款单号OrderNo:"+req.getOrderNo());
 			this.synLoanOrderInfo(synLoanOrderRequest);
 			log.info("贷款通知处理->同步贷款订单信息完成，贷款单号OrderNo:"+req.getOrderNo());
-			//发送短信通知
-			sendLoanSms(req.getOrderNo());
+			
 		 } else {
 			 updateApplyOrderParam.setErrorMsg(req.getMsg());
 		}
 
 		loanOrderDao.updateLoanApplyOrder(updateApplyOrderParam);
 		loanOrderNotifyResponse.putSuccess("通知处理成功");
+		//发送短信通知
+		sendLoanSms(req.getOrderNo());
 		return loanOrderNotifyResponse;
 	}
 

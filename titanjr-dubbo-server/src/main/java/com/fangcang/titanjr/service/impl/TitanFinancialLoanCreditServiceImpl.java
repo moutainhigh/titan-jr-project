@@ -2,6 +2,7 @@ package com.fangcang.titanjr.service.impl;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,6 +33,7 @@ import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanCreditCompanyEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanCreditOrderEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanPersonEnsureEnum;
+import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
@@ -39,6 +41,7 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.FileHelp;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.common.util.SMSTemplate;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.LoanCompanyEnsureDao;
 import com.fangcang.titanjr.dao.LoanCreditCompanyDao;
@@ -70,7 +73,9 @@ import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
 import com.fangcang.titanjr.dto.request.NotifyRequest;
 import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
+import com.fangcang.titanjr.dto.request.SendCodeRequest;
 import com.fangcang.titanjr.dto.request.SynLoanCreditOrderRequest;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.AgreementConfirmResponse;
 import com.fangcang.titanjr.dto.response.ApplyLoanCreditResponse;
 import com.fangcang.titanjr.dto.response.AuditCreidtOrderResponse;
@@ -84,6 +89,7 @@ import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
 import com.fangcang.titanjr.dto.response.NotifyResponse;
 import com.fangcang.titanjr.dto.response.PageCreditCompanyInfoResponse;
 import com.fangcang.titanjr.dto.response.SynLoanCreditOrderResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.entity.LoanCompanyEnsure;
 import com.fangcang.titanjr.entity.LoanCreditCompany;
 import com.fangcang.titanjr.entity.LoanCreditOpinion;
@@ -91,6 +97,7 @@ import com.fangcang.titanjr.entity.LoanCreditOrder;
 import com.fangcang.titanjr.entity.LoanCreditOrderDiscard;
 import com.fangcang.titanjr.entity.LoanPersonEnsure;
 import com.fangcang.titanjr.entity.PlatformOrderStat;
+import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam;
 import com.fangcang.titanjr.entity.parameter.PlatformOrderStatConditons;
 import com.fangcang.titanjr.rs.manager.RSCreditManager;
@@ -108,9 +115,12 @@ import com.fangcang.titanjr.rs.response.RSFsFileUploadResponse;
 import com.fangcang.titanjr.service.TitanCodeCenterService;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
+import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.util.LoanTypeConvertUtil;
 import com.fangcang.util.DateUtil;
+import com.fangcang.util.NumberUtil;
 import com.fangcang.util.StringUtil;
 
 /**
@@ -160,7 +170,13 @@ public class TitanFinancialLoanCreditServiceImpl implements
 
 	@Resource
 	private TitanSysconfigService titanSysconfigService;
-
+	
+	@Resource
+    private TitanFinancialSendSMSService sendSMSService;
+	
+	@Resource
+	private TitanFinancialUserService userService;
+	
 	@Resource
 	private PlatformOrderOprDao platformOrderOprDao;
 
@@ -1084,10 +1100,12 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			return response;
 		}
 		Date now = new Date();
+		String orgCode = "";
+		String subject = "";
+		String content = "";
 		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();
 		updateLoanCreditOrderParam.setOrderNo(notifyRequest.getBuessNo());
 		updateLoanCreditOrderParam.setStatus(notifyRequest.getStatus());
-
 		try {
 			LoanCreditOrder loanCreditOrderParam = new LoanCreditOrder();
 			loanCreditOrderParam.setOrderNo(notifyRequest.getBuessNo());
@@ -1101,6 +1119,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				return response;
 			}
 			LoanCreditOrder loanCreditOrder = loanCreditOrderList.get(0);
+			orgCode = loanCreditOrder.getOrgCode();
 			if (notifyRequest.getStatus() == LoanCreditStatusEnum.REVIEW_PASS
 					.getStatus()) {
 				// 通过
@@ -1128,7 +1147,8 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				updateLoanCreditOrderParam.setExpireTime(expireTime);
 				updateLoanCreditOrderParam.setAmount(amount);// 授信总额度
 				updateLoanCreditOrderParam.setActualAmount(actualAmount);// 剩余可用额度
-
+				subject = SMSTemplate.CREDIT_REVIEW_PASS.getSubject();
+				content = MessageFormat.format(SMSTemplate.CREDIT_REVIEW_PASS.getContent(), com.fangcang.titanjr.common.util.NumberUtil.covertToYuan(actualAmount+""));
 			} else if(notifyRequest.getStatus() == LoanCreditStatusEnum.NO_PASS.getStatus()) {
 				// 融数审核不通过
 				//更新授信申请订单号
@@ -1154,7 +1174,6 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				loanPersonEnsureParam.setNewOrderNo(newOrderNo);
 				loanPersonEnsureDao.updateLoanPersonEnsure(loanPersonEnsureParam);
 				
-				
 				// 添加批注记录
 				LoanCreditOpinion loanCreditOpinion = new LoanCreditOpinion();
 				loanCreditOpinion.setOrderNo(newOrderNo);
@@ -1174,7 +1193,9 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				entity.setDiscardMsg(notifyRequest.getMsg());
 				entity.setDiscardTime(now);
 				loanCreditOrderDiscardDao.insert(entity);
-				
+				subject = SMSTemplate.CREDIT_NO_PASS.getSubject();
+				content = MessageFormat.format(SMSTemplate.CREDIT_NO_PASS.getContent(), notifyRequest.getMsg());
+			
 			}
 			loanCreditOrderDao
 					.updateLoanCreditOrder(updateLoanCreditOrderParam);
@@ -1184,7 +1205,40 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					+ Tools.gsonToString(notifyRequest));
 			throw new GlobalServiceException("授信申请的通知处理失败", e);
 		}
+		//发送通过或者不通过短信通知
+		if(StringUtil.isValidString(content)){
+			try {
+				sendCreditSms(orgCode,subject,content);
+			} catch (Exception e) {
+				log.error("授信申请短信通知发送失败，授信申请单号："+notifyRequest.getBuessNo(),e);
+			}
+		}
 		return response;
+	}
+	/**
+	 * 给管理员发送授信申请结果通知(短信或者邮件)
+	 */
+	private void sendCreditSms(String orgCode,String subject,String content){
+		
+		UserInfoQueryRequest adminUserInfoQueryRequest = new UserInfoQueryRequest();
+		adminUserInfoQueryRequest.setOrgCode(orgCode);
+		adminUserInfoQueryRequest.setIsadmin(1);
+		adminUserInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
+		UserInfoPageResponse adminUserInfoPageResponse = userService.queryUserInfoPage(adminUserInfoQueryRequest);
+		TitanUser adminTitanUser  = adminUserInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+		
+		
+		SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
+    	sendRegCodeRequest.setReceiveAddress(adminTitanUser.getUserloginname());
+    	sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+    	sendRegCodeRequest.setSubject(subject);
+    	sendRegCodeRequest.setContent(content);
+    	
+    	try {
+    		sendSMSService.sendCode(sendRegCodeRequest);
+		} catch (Exception e) {
+			log.error("授信申请通知短信或者邮件发送失败,内容content："+content+",接收者receiveAddress:"+adminTitanUser.getUserloginname(), e);
+		}
 	}
 
 	@Override
