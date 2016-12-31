@@ -6,7 +6,7 @@ public enum LoanOrderStatusEnum {
 
 	INVALID(0, "无效贷款"),
 
-	LOAN_REQ_ING(1, "贷款申请中"),
+	LOAN_REQ_ING(1, "审核中"),
 	
 	WAIT_AUDIT(2, "待终审"),
 	
@@ -16,7 +16,7 @@ public enum LoanOrderStatusEnum {
 
 	LENDING_ING(5, "等待放款"),
 
-	HAVE_LOAN(6, "已放款"),
+	HAVE_LOAN(6, "待还款"),
 
 	LENDING_FAIL(7, "放款失敗"),
 

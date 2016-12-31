@@ -149,7 +149,7 @@
 	
 	<c:if test="${loanOrderInfo.status==1 || loanOrderInfo.status==2 || loanOrderInfo.status==3 || loanOrderInfo.status==5}">
 	
-		<a class="btn btnNext" id="stopLoan" href="javascript:void();">撤销申请</a>
+<!-- 		<a class="btn btnNext" id="stopLoan" href="javascript:void();">撤销申请</a> -->
 		
 	</c:if>
 	
@@ -167,15 +167,39 @@ var staticPath  ="http://image.fangcang.com/upload/images/titanjr/loan_apply/${J
 	 	if(imgList != null && imgList != '')
 	 	{
 	 		var imgsrcs = imgList.split(",");
+	 		var imgList ="/png/jpg/jpeg/";
 	 		for(var i=0;i<imgsrcs.length;i++)
 	 		{
 	 			if(imgsrcs[i]!= null &&  imgsrcs[i] != '')
 	 			{
 	 				var src = staticPath+ imgsrcs[i];
-	 				$('#imgList').append('<dd class="TFSimgOnBig"><div class="dd_img"><img src="'+src+'">'
-	 				+'<div class="hover download" resourceName="'+imgsrcs[i]+'">下载</div></div><div class="dd_text" title="附件附件">合同附件</div></dd>');
+	 				
+	 				//'/images/TFS/help_logo.jpg'
+	 				//如果是图片则支持其预览
+	 				var index1=imgsrcs[i].lastIndexOf(".");
+					var index2=imgsrcs[i].length;
+					var postf=imgsrcs[i].substring(index1+1,index2);//后缀名
+	 				if(imgList.indexOf(postf.toLowerCase()) ==-1)
+	 				{
+	 					 src = '<%=cssSaasPath%>/images/TFS/help_logo.jpg';
+	 					$('#imgList').append('<dd class="TFSimgOnBig" type="file"><div class="dd_img"><img src="'+src+'" resourceName="'+imgsrcs[i]+'">'
+	 			 				+'<div class="hover download" resourceName="'+imgsrcs[i]+'">下载</div></div><div class="dd_text" title="'+imgsrcs[i]+'">'+imgsrcs[i]+'</div></dd>');
+	 				}
+	 				else
+	 				{
+	 					$('#imgList').append('<dd class="TFSimgOnBig" type="img"><div class="dd_img"><img src="'+src+'">'
+	 			 				+'<div class="hover download" resourceName="'+imgsrcs[i]+'">下载</div></div><div class="dd_text" title="'+imgsrcs[i]+'">'+imgsrcs[i]+'</div></dd>');
+	 				}
+	 				
+	 				
 	 			}
 	 		}
+	 		
+	 		 $(".TFSimgOnBig[type='file']").find("img").live('click',function(){
+	 			 
+	 			 window.open(staticPath+$(this).attr("resourceName"));
+	 			 
+	 		 });
 	 		
 	 		$(".download").click(function(){
 	 			 window.open(staticPath+$(this).attr("resourceName"));
@@ -261,12 +285,12 @@ var staticPath  ="http://image.fangcang.com/upload/images/titanjr/loan_apply/${J
         function bigImgShow(){              
            var _index=0; 
            var leftBtn,rightBtn,ulDiv;
-            $(".TFSimgOnBig").find("img").live('click',function(){
+            $(".TFSimgOnBig[type='img']").find("img").live('click',function(){
             var _div='<div tabindex="0" style=" position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; overflow: hidden; -webkit-user-select: none; z-index: 1024; background-color: rgba(0, 0, 0,0.7);" class="bigImgShow_box_bg"><span class="left_btn"></span><span class="right_btn"></span><div class="bigImgShow_box"><span class="close_btn"></span><ul>';     
-            _index=$(this).parents(".TFSimgOnBig").index();
+            _index=$(".TFSimgOnBig[type='img']").index($(this).parent().parent());
             console.log()
-            for(var i=0;i< $(".TFSimgOnBig").find("img").length;i++){
-                var img=$(".TFSimgOnBig").eq(i).find("img").attr("src");
+            for(var i=0;i< $(".TFSimgOnBig[type='img']").find("img").length;i++){
+                var img=$(".TFSimgOnBig[type='img']").eq(i).find("img").attr("src");
                  if(i==_index){
                    _div+="<li class='cur MissionRoom_annexList_li'><img src='"+img+"'></li>" 
                 }else{
@@ -283,7 +307,7 @@ var staticPath  ="http://image.fangcang.com/upload/images/titanjr/loan_apply/${J
             if(_index==0){
                 leftBtn.hide();
             };
-            if(_index==$(".TFSimgOnBig").length-1){
+            if(_index==$(".TFSimgOnBig[type='img']").length-1){
                 rightBtn.hide();
             };        
             leftBtn.on('click',function(){
@@ -296,7 +320,7 @@ var staticPath  ="http://image.fangcang.com/upload/images/titanjr/loan_apply/${J
            }); 
            rightBtn.on('click',function(){                 
                _index++;
-               if(_index==$(".TFSimgOnBig").length-1){
+               if(_index==$(".TFSimgOnBig[type='img']").length-1){
                  rightBtn.hide();
                };
                leftBtn.show();

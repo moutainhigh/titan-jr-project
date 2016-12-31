@@ -50,19 +50,17 @@
 						<td class="tdr"><i>应还金额</i></td>
 						<td class="tdr"><i>本次实还金额</i></td>												
 					</tr>	
-					<tr>
-					
-					
+					<tr id="useroverduefine_tr" style="display: none;">
 						<td >逾期罚金</td>
 						<td class="tdr" id="useroverduefine"></td>
 						<td class="tdr" id="realoverduecapitalAmount"></td>
 					</tr>
-					<tr>
+					<tr id="useroverdueinterest_tr" style="display: none;">
 						<td >逾期利息</td>
 						<td class="tdr" id="useroverdueinterest"></td>
 						<td class="tdr" id="realoverdueinterestAmount"></td>
 					</tr>
-					<tr>
+					<tr id="usershouldinterest_tr"  style="display: none;">
 						<td >利息</td>
 						<td class="tdr" id="usershouldinterest"></td>
 						<td class="tdr" id="realinterestAmount"></td>
@@ -173,6 +171,11 @@ function loadReapymentAmount()
 							totalAmount +=parseInt(obj[name]);
 						}
 						
+						 if(parseFloat(amount) > 0)
+						 {
+							 $('#'+name+"_tr").show();
+						 }
+						
 						$('#'+name).html(amount);
 					}
 				}
@@ -231,10 +234,13 @@ function loadAccountBalance(isAsync)
 	 			F.loading.show();
 				if(validateRepayment())
 				{
+					
+					
 					var repaymentAmount = $("#repaymentAmount").val();
+					
+					
 					var bAmount= loadAccountBalance(false);
 			 		
-				     	
 			    	if(parseFloat(repaymentAmount) > parseFloat(bAmount)
 			    			|| bAmount == 0 
 			    			|| bAmount == 0.00)
@@ -243,7 +249,26 @@ function loadAccountBalance(isAsync)
 			   		 F.loading.hide();
 			   			return false;
 			   	    }
-			    	showPayPassword();
+			    	
+			    	
+			    	if((parseFloat(repaymentAmount)  - parseFloat(formatCurrency(totalAmount/100))) == 0)
+					{
+			    		window.top.createConfirm({
+							title : '提示',
+							content : '<div style="font-size:15px;line-height:30px;">确认是否还清贷款 ？ 还清贷款后贷款单状态第二天才能更新！</div>',
+							okValue : '确定',
+							cancelValue : '取消',
+							ok : function() {
+								showPayPassword();
+							},
+							cancel : function() {
+								F.loading.hide();
+							}
+						});
+					}
+			    	else{
+			    		showPayPassword();
+			    	}
 			    
 				}
 				F.loading.hide();
@@ -301,10 +326,20 @@ function loadAccountBalance(isAsync)
 		  
 			   clearTimeout(timeObj);
 			   timeObj = setTimeout(function(){
-				   if(validateRepayment())
-					{
-				  		 loadReapymentAmount();
-					}
+				   
+				   
+				   var repaymentAmount = $("#repaymentAmount").val();
+				   
+				   if(repaymentAmount == null || repaymentAmount == '' || parseFloat(repaymentAmount) <=0.00)
+				   {
+					   loadReapymentAmount();
+				   }
+				   else{
+					   if(validateRepayment())
+						{
+					  		 loadReapymentAmount();
+						}
+				   }
 			   } , 1000);
 			
        });
