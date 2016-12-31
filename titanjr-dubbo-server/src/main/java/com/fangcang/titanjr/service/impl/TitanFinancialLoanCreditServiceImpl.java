@@ -16,7 +16,6 @@ import net.sf.json.JSONSerializer;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.bouncycastle.jcajce.provider.symmetric.AES.OFB;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -73,7 +72,7 @@ import com.fangcang.titanjr.dto.request.LoanCreditSaveRequest;
 import com.fangcang.titanjr.dto.request.NotifyRequest;
 import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
 import com.fangcang.titanjr.dto.request.QueryPageCreditCompanyInfoRequest;
-import com.fangcang.titanjr.dto.request.SendCodeRequest;
+import com.fangcang.titanjr.dto.request.SendMessageRequest;
 import com.fangcang.titanjr.dto.request.SynLoanCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.AgreementConfirmResponse;
@@ -88,6 +87,7 @@ import com.fangcang.titanjr.dto.response.LoanAmountEvaluationResponse;
 import com.fangcang.titanjr.dto.response.LoanCreditSaveResponse;
 import com.fangcang.titanjr.dto.response.NotifyResponse;
 import com.fangcang.titanjr.dto.response.PageCreditCompanyInfoResponse;
+import com.fangcang.titanjr.dto.response.SendMessageResponse;
 import com.fangcang.titanjr.dto.response.SynLoanCreditOrderResponse;
 import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.entity.LoanCompanyEnsure;
@@ -120,7 +120,6 @@ import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.util.LoanTypeConvertUtil;
 import com.fangcang.util.DateUtil;
-import com.fangcang.util.NumberUtil;
 import com.fangcang.util.StringUtil;
 
 /**
@@ -1227,15 +1226,17 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		UserInfoPageResponse adminUserInfoPageResponse = userService.queryUserInfoPage(adminUserInfoQueryRequest);
 		TitanUser adminTitanUser  = adminUserInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
 		
-		
-		SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
-    	sendRegCodeRequest.setReceiveAddress(adminTitanUser.getUserloginname());
-    	sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
-    	sendRegCodeRequest.setSubject(subject);
-    	sendRegCodeRequest.setContent(content);
+		SendMessageRequest sendMessageRequest = new SendMessageRequest();
+		sendMessageRequest.setReceiveAddress(adminTitanUser.getUserloginname());
+		sendMessageRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+		sendMessageRequest.setSubject(subject);
+		sendMessageRequest.setContent(content);
     	
     	try {
-    		sendSMSService.sendCode(sendRegCodeRequest);
+    		SendMessageResponse sendMessageResponse = sendSMSService.sendMessage(sendMessageRequest);
+    		if(!sendMessageResponse.isResult()){
+    			log.info("贷款短信（sendCreditSms）发送失败,错误信息："+sendMessageResponse.getReturnMessage()+",短信参数sendRegCodeRequest："+Tools.gsonToString(sendMessageResponse));
+    		}
 		} catch (Exception e) {
 			log.error("授信申请通知短信或者邮件发送失败,内容content："+content+",接收者receiveAddress:"+adminTitanUser.getUserloginname(), e);
 		}

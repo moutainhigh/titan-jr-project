@@ -113,6 +113,7 @@ public class FinancialLoanApplyController extends BaseController{
 			request.setProductType(LoanProductEnum.ROOM_PACK);
 			request.setLcanSpec(loanSpecBean);
 			request.setOrgCode(this.getUserId());
+			request.setOperator(getTfsUserId());
 			ApplyLoanResponse response = titanFinancialLoanService.applyLoan(request);
 			if(!response.isResult()){
 				this.putSysError(response.getReturnMessage());

@@ -1,9 +1,12 @@
 package com.fangcang.titanjr.dto.request;
 
 import com.fangcang.titanjr.dto.BaseRequestDTO;
-
-@Deprecated
-public class SendCodeRequest extends BaseRequestDTO {
+/**
+ * 发送信息(短信和邮件)
+ * @author luoqinglong
+ * @date   2016年12月31日
+ */
+public class SendMessageRequest extends BaseRequestDTO {
 	
 	/**
 	 * 

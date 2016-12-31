@@ -20,6 +20,7 @@
         <result property="rsorgId" column="rsorgid"/>
         <result property="productType" column="producttype"/>
         <result property="productId" column="productid"/>
+        <result property="creatorId" column="creatorId"/>
         <result property="createTime" column="createtime"/>
         <result property="rateTmp" column="ratetmp"/>
         <result property="status" column="status"/>
@@ -70,6 +71,7 @@
         `rsorgid`,
         `producttype`,
         `productId`,
+        `creatorId`,
         `createtime`,
         `ratetmp`,
         `status`,
@@ -181,6 +183,7 @@
 	  	`rsorgid`, 
 	 	`producttype`,
 	  	`productId`,
+	  	`creatorId`,
 	   	`createtime`, 
 	  	`ratetmp`,
 	   	`status`, 
@@ -207,6 +210,7 @@
      		#{rsorgId},
      		#{productType},
      		#{productId},
+     		#{creatorId},
      		#{createTime},
      		#{rateTmp},
      		#{status},

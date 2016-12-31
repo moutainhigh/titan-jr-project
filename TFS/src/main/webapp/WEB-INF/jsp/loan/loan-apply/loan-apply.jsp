@@ -240,7 +240,7 @@
 	};
 	
 	init_loanApply_obj.init_data();
-	
+		
 	var form_submit = {
 		submit:function(){
 			if(!this.validateData(this.queryData())){
@@ -257,7 +257,7 @@
 					if(result.code==1){
 						location.href="<%=basePath%>/loan_apply/apply-succ.shtml?orderNo="+result.data.orderNo+"&orderCreateTime="+result.data.orderCreateTime;
 					}else{
-						new top.Tip({msg:result.msg, type: 3, timer: 2000});
+						new top.Tip({msg:result.msg, type: 3, timer: 3000});
 					}
 				},
 				complete:function(){
