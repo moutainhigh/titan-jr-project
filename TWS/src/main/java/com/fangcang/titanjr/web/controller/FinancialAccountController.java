@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
+import com.fangcang.titanjr.common.enums.RegchannelEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
@@ -102,6 +103,7 @@ public class FinancialAccountController extends BaseController {
         if (null != this.getUserId()) {
             FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
             organQueryRequest.setUserId(this.getUserId());
+            organQueryRequest.setRegchannel(RegchannelEnum.OFFIAIAL_WEBSITE.source);
             FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
             model.addAttribute("organ", organOrganResponse.getFinancialOrganDTO());
         }
@@ -110,7 +112,25 @@ public class FinancialAccountController extends BaseController {
     
     
     
-    
+    /**
+     * 提供客户端查询当前账户的余额
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/query-account-balance", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String queryAccountBalance()
+    {
+		 AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
+	     accountBalanceRequest.setUserid(this.getUserId());
+	      
+	     AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+	      
+	     if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
+	         return toJson(balanceResponse.getAccountBalance().get(0));
+	     }
+	      return "";
+    }
     
     
     
@@ -176,24 +196,6 @@ public class FinancialAccountController extends BaseController {
 		return null;
 	}
     
-    /**
-     * 提供客户端查询当前账户的余额
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/query-account-balance", method = RequestMethod.GET)
-    public String queryAccountBalance()
-    {
-		 AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
-	     accountBalanceRequest.setUserid(this.getUserId());
-	      
-	     AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
-	      
-	     if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
-	         return toJson(balanceResponse.getAccountBalance().get(0));
-	     }
-	      return "";
-    }
     
     @RequestMapping(value = "/order-receive-detail", method = RequestMethod.GET)
     public String queryReceiveOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {

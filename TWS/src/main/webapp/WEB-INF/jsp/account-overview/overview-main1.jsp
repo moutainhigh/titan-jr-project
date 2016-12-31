@@ -593,6 +593,8 @@
         }        
         
         
+        
+        
         function bind_card_public(this_Object){
         	var _this=this_Object;
         	$.ajax({
