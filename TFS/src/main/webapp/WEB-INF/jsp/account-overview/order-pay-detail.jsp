@@ -12,7 +12,7 @@
         <div class="recharge-record-box">
             <p><em><strong>订单金额：</strong><span class="recharge-colorRed fontSize24">
 				<fmt:formatNumber value="${transOrder.tradeamount/100.0 }" pattern="#,##0.00#"/>
-			</span>元</em>业务单号：${transOrder.businessordercode }</p><!--业务系统单号-->
+			</span>元</em>业务单号：<c:if test="${ empty transOrder.businessordercode }">无</c:if>${transOrder.businessordercode }</p><!--业务系统单号-->
             <div class="orderDetails-content">
                 <div class="orderDetails-content1">
                     <h3 class="orderDetails-title">基础信息</h3>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="orderDetails-content1 orderDetails-content2">
                     <h3 class="orderDetails-title">交易流水</h3>
-                    <p class="ftSize14">交易单号：<span class="color1C">${transOrder.userorderid }</span></p><!--我方生成订单号-->
+                    <p class="ftSize14">流水号：<span class="color1C">${transOrder.userorderid }</span></p><!--我方生成订单号-->
                     
                     <table cellpadding="0" cellspacing="0" width="100%" class="orderDetailsTable">
 			            <colgroup>
@@ -88,7 +88,7 @@
                                 </td>
 
                                 <td width="">
-                                    <span style="width:180px" title="交易单${transOrder.titanOrderPayDTO.orderNo }充值"> 交易单${transOrder.titanOrderPayDTO.orderNo }充值</span><!--融数落单单号-->
+                                    <span style="width:180px" title="交易单号${transOrder.titanOrderPayDTO.orderNo }充值"> 交易单号${transOrder.titanOrderPayDTO.orderNo }充值</span><!--融数落单单号-->
                                 </td>
 
                                 <td width="">
@@ -120,7 +120,7 @@
                                 <td><span style="width:180px" title="对方：${transOrder.transTarget}">对方：${transOrder.transTarget}</span></td>
 
                                 <td>
-                                    <span style="width:180px" title="财务单${transOrder.payorderno }支付">财务单${transOrder.payorderno }支付</span>
+                                    <span style="width:180px" title="交易流水${transOrder.payorderno }支付">交易单号${transOrder.payorderno }支付</span>
                                 </td><!--房仓财务系统单号-->
 
                                 <td><span><fmt:formatNumber value="${transOrder.titanTransferDTO.amount / 100.0 }" pattern="#,##0.00#"/></span></td>
