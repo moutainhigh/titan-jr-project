@@ -823,7 +823,10 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			loanApplyOrder.setRepaymentPrincipal(arepayAmount.longValue());
 			loanApplyOrder.setRepaymentInterest(arepayInterest.longValue());
 		}
-
+		
+		if (StringUtil.isValidString(rsp.getLoanmoney())) {
+			loanApplyOrder.setActualAmount(Long.parseLong(rsp.getLoanmoney()));
+		}
 		// 将融数平台的状态映射成房仓的状态
 		LoanOrderStatusEnum orderStatusEnum = LoanTypeConvertUtil
 				.rsStatusMap(rsp.getStatustring());
@@ -835,7 +838,6 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 						|| LoanOrderStatusEnum.LOAN_REQ_ING.getKey() == loanApplyOrder
 								.getStatus() || LoanOrderStatusEnum.WAIT_AUDIT
 						.getKey() == loanApplyOrder.getStatus())) {
-//		if (orderStatusEnum.getKey() == LoanOrderStatusEnum.HAVE_LOAN.getKey()){
 			// 放款成功后，下单，转账逻辑
 			if(loanApplyOrder.getActualAmount()!=null&&loanApplyOrder.getActualAmount()>0){
 				try {
@@ -844,7 +846,11 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				} catch (Exception e) {
 					log.error("贷款转账失败，付款方机构id:"+orgCode+",贷款申请订单号orderNo："+orderNo,e);
 				}
+			}else{
+				log.info("贷款通知时转账流程->放款金额不符合转账要求(没有大于0)，贷款订单号loanOrderNo："+orderNo);
 			}
+		}else{
+			log.info("贷款通知时转账流程->贷款订单状态不符合转账要求，贷款订单号loanOrderNo："+orderNo+",状态:"+orderStatusEnum.getDesc());
 		}
 		//融数方是否是终审通过，如果是终审通过那么我方如果是待审核，那么就需要确认一次授信协议哦
 		if (orderStatusEnum != null
@@ -892,7 +898,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			if (loanApplyOrder.getActualRepaymentDate() == null) {
 				Date rDate = DateUtils.addDays(
 						DateUtil.toDataYYYYMMDD(rsp.getLoandate()),
-						CommonConstant.RS_LOAN_REPAYMENT_TIME);
+						(CommonConstant.RS_LOAN_REPAYMENT_TIME-1));
 				loanApplyOrder.setActualRepaymentDate(rDate);//
 			}
 			
@@ -920,9 +926,6 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		if (loanApplyOrder.getAmount() == null
 				|| loanApplyOrder.getAmount() <= 0l) {
 			loanApplyOrder.setAmount(Long.parseLong(rsp.getLoanmoney()));
-		}
-		if (StringUtil.isValidString(rsp.getLoanmoney())) {
-			loanApplyOrder.setActualAmount(Long.parseLong(rsp.getLoanmoney()));
 		}
 
 		loanOrderDao.updateLoanApplyOrder(loanApplyOrder);
