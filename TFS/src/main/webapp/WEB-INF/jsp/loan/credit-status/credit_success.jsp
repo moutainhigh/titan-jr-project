@@ -121,8 +121,8 @@
 					<dl class="J_date_list fl">
 						<dd>
 							<label for="" class="fl">贷款申请时间：</label> <input type="text"
-								class="text w_160 text_calendar fl" filed='beginCreateTime'> <label for=""
-								class="S_digit">至</label> <input type="text"  filed='endCreateTime'
+								class="text w_160 text_calendar fl" field='beginCreateTime'> <label for=""
+								class="S_digit">至</label> <input type="text"  field='endCreateTime'
 								class="text w_160 text_calendar fl">
 						</dd>
 					</dl>

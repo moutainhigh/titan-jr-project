@@ -610,8 +610,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						} else {
 							log.error("充值下单失败，对应的落单id："
 									+ titanTransferReq.getTransorderid());
+							accTradeResponse.putErrorResult("充值下单失败,业务单可能已经支付");
 						}
 						unlockOutTradeNoList(payOrderNo);
+					}else{
+						accTradeResponse.putErrorResult("订单不存在");
 					}
 				}
 			}
@@ -659,6 +662,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 		if (StringUtil.isValidString(transOrderDTO.getNotifyUrl())) {
 			url = transOrderDTO.getNotifyUrl();
+		}else{
+			return;
 		}
 		try {
 			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params) + "---url---"
@@ -2033,6 +2038,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 			} catch (Exception e) {
 				log.error("订单信息保存失败:" + e.getMessage());
+				localOrderResponse.putErrorResult("订单下单失败");
 			}
 		}
 		return localOrderResponse;

@@ -96,7 +96,7 @@ public class LoanDemoTest {
          // douserinitiativerepament(session);// 主动还款
         
          // doqueryuserinitiativerepayment(session);//主动还款查询
-        //  doqueryloanapply();//贷款订单状态查询接口
+          doqueryloanapply();//贷款订单状态查询接口
         //   queryOrderOper();//查询订单
         // doqueryuserrepayment();//查询贷款的还款状态及历史
 		// stoploan();//终止贷款
@@ -503,9 +503,9 @@ public class LoanDemoTest {
     public static String doqueryloanapply(){
     	String strError = null;
     	WheatfieldOrderMixserviceQueryloanapplyRequest request = new WheatfieldOrderMixserviceQueryloanapplyRequest();
-    	request.setUserid("TJM10030146");	
+    	request.setUserid("TJM10020002");	
     	request.setRootinstcd("M000016");										//机构码
-    	request.setUserorderid("D201612191604419465");  						        //	商户id
+    	request.setUserorderid("D201612262033278768");  						        //	商户id
     	try {
     		WheatfieldOrderMixserviceQueryloanapplyResponse rsp = ropClient.execute(request,session);
     		 System.out.println("返回报文: \n" + rsp.getBody());

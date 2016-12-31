@@ -31,6 +31,8 @@ public class LoanApplyOrder {
 	private Integer productType;// 1 包房贷 2 运营贷
 
 	private String productId;// 产品编号
+	
+	private Integer creatorId;// 创建人id
 
 	private Date createTime;// 创建日期
 
@@ -60,7 +62,14 @@ public class LoanApplyOrder {
 
 	private Long shouldInterest;// 应还利息
 
-	
+
+	public Integer getCreatorId() {
+		return creatorId;
+	}
+
+	public void setCreatorId(Integer creatorId) {
+		this.creatorId = creatorId;
+	}
 
 	public Long getId() {
 		return id;

@@ -140,10 +140,10 @@
 								  <span id="compartment_contract2_error" style="color:red;"></span>
 								</div>
 							</dd>
-							<dd class="RC_c_dd">
+							<dd class="RC_c_dd" data-file-name="">
 								<div class="TFSaddImg"></div>
 								<input type="file" name="compartment_contract" id="compartment_contract3">
-								<input type="hidden" name="compartment_contract3_name" id="compartment_contract3_name">
+								<input type="hidden" name="compartment_contract3_name"  id="compartment_contract3_name">
 								<div class="TFSuploading TFSupload_ZIP hidden">
 									<p class="TFSuploading1">
 										<span></span>
@@ -453,17 +453,13 @@
 		$(".J_delete_upload").live('click', function() {
 			$(this).parent().addClass("hidden").removeClass("TFSimgOnBig");
 			$(this).parent().parent().find(".TFSaddImg").removeClass("hidden");
-			
-			
+			var fileName = $(this).parent().parent(".RC_c_dd").attr("data-file-name");
 			$.ajax({
-				url:"",
+				url:'<%=basePath%>/loan_apply/delLoanPic.shtml',
 				type:"post",
-				data:{loanApplyOrderNo:$("#loanApplyOrderNo").val(),fileName:ids},
-				dataType:"json",
-				
+				data:{loanApplyOrderNo:$("#loanApplyOrderNo").val(),"fileName":fileName},
+				dataType:"json"
 			});
-			
-			
 			
 		});
 
@@ -540,6 +536,7 @@
 	   	            	 //假装让进度条走到100
 	   	            	loadingOver($('#' + ids).parent().find(".TFSuploading") , function(){
 	   	            		$("#"+ids+"_name").val(result.data.fileName);
+	   	            	 	$("#"+ids+"_name").parent(".RC_c_dd").attr({"data-file-name":result.data.fileName});
 	   	            		$("#"+ids+"_error").hide();
 	   	            		uploadSucess(ids , result.data.fileName);
 	   	            	});
@@ -578,7 +575,7 @@
 			var index2=fileName.length;
 			var postf=fileName.substring(index1+1,index2);//后缀名
 			var imgList ="/png/jpg/jpeg/";
-			$('#'+ids).parent().find(".dd_text").html(fileName).attr({"title":fileName});
+			$('#'+ids).parent().find(".dd_text").html("合同附件").attr({"title":fileName});
 			$('#'+ids).parent().find('.TFSimgOnBig').find('img').unbind("click");
 			$('#'+ids).parent().find('.TFSimgOn').removeClass('TFSimgOnBig');
 			
@@ -586,7 +583,7 @@
 			if(imgList.indexOf(postf.toLowerCase()) !=-1)
 			{
 				$('#'+ids).parent().find('.TFSimgOn').addClass('TFSimgOnBig');
-				$('#'+ids).parent().find('.TFSimgOn').find('img').attr("src",init_loanApply_obj.static_path+fileName);
+				$('#'+ids).parent().find('.TFSimgOn').find('img').attr("src",init_loanApply_obj.static_path+fileName+"?"+Math.random());
 				bigImgShow();
 			}else
 			{
