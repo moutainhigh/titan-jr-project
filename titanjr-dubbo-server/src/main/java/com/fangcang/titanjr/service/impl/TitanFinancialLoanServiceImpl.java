@@ -777,11 +777,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 					.getUsershouldcapital()));
 			loanApplyOrder.setShouldInterest(interestAmount.longValue());
 
-			// 表示逾期
-			if ("1".equals(borrowRepayment.getUseroverdueflag())) {
-				loanApplyOrder.setStatus(LoanOrderStatusEnum.LOAN_EXPIRY
-						.getKey());
-			}
+		
 
 			// 设置用户还款到期日
 			if (StringUtil.isValidString(borrowRepayment
@@ -910,6 +906,12 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		}
 		if (orderStatusEnum != null) {
 			loanApplyOrder.setStatus(orderStatusEnum.getKey());
+		}
+		
+		// 表示逾期
+		if (borrowRepayment != null && "1".equals(borrowRepayment.getUseroverdueflag())) {
+			loanApplyOrder.setStatus(LoanOrderStatusEnum.LOAN_EXPIRY
+					.getKey());
 		}
 
 		// 如果没生成还款计划，需要设置默认值
