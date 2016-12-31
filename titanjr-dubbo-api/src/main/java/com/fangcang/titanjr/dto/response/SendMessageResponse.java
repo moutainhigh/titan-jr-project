@@ -7,7 +7,6 @@ import com.fangcang.titanjr.dto.BaseResponseDTO;
  * @author luoqinglong
  * @2016年5月31日
  */
-@Deprecated
-public class SendCodeResponse extends BaseResponseDTO{
+public class SendMessageResponse extends BaseResponseDTO{
 
 }

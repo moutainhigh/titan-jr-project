@@ -1,7 +1,5 @@
 package com.fangcang.titanjr.service.impl;
 
-import java.text.MessageFormat;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,11 +15,12 @@ import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DubboServerJDBCProperties;
-import com.fangcang.titanjr.common.util.SMSTemplate;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.request.SendCodeRequest;
+import com.fangcang.titanjr.dto.request.SendMessageRequest;
 import com.fangcang.titanjr.dto.request.SendSMSRequest;
 import com.fangcang.titanjr.dto.response.SendCodeResponse;
+import com.fangcang.titanjr.dto.response.SendMessageResponse;
 import com.fangcang.titanjr.dto.response.SendSmsResponse;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.util.StringUtil;
@@ -70,7 +69,7 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 				return sendSmsResponse;
 			}
 		}catch(Exception e){
-			log.error(e.getMessage(),e);
+			log.error("短信发送失败，发送参数sendSMSRequest："+Tools.gsonToString(sendSMSRequest),e);
 		}
 		sendSmsResponse.setResult(false);
 		sendSmsResponse.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
@@ -81,9 +80,25 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 	
 	@Override
 	public SendCodeResponse sendCode(SendCodeRequest sendCodeRequest) {
+		SendCodeResponse sendCodeResponse = new SendCodeResponse();
+		SendMessageRequest sendMessageRequest = new SendMessageRequest();
+		sendMessageRequest.setMerchantCode(sendCodeRequest.getMerchantCode());
+		sendMessageRequest.setProviderkey(sendCodeRequest.getProviderkey());
+		sendMessageRequest.setSubject(sendCodeRequest.getSubject());
+		sendMessageRequest.setContent(sendCodeRequest.getContent());
+		sendMessageRequest.setReceiveAddress(sendCodeRequest.getReceiveAddress());
+		SendMessageResponse sendMessageResponse = this.sendMessage(sendMessageRequest);
+		sendCodeResponse.setReturnCode(sendMessageResponse.getReturnCode());
+		sendCodeResponse.setResult(sendMessageResponse.isResult());
+		sendCodeResponse.setReturnMessage(sendMessageResponse.getReturnMessage());
+		return sendCodeResponse;
+	}
+
+
+	@Override
+	public SendMessageResponse sendMessage(SendMessageRequest sendCodeRequest) {
 		//参数校验
-		SendCodeResponse response = new SendCodeResponse();
-		
+		SendMessageResponse response = new SendMessageResponse();
 		if(!StringUtil.isValidString(sendCodeRequest.getReceiveAddress())){
 			response.putErrorResult("接收地址不能为空"); 
 			return response;
