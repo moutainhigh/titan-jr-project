@@ -954,13 +954,15 @@
   	  	        success : function(result){
   	  	           if(result.code==1){
   	  	        	   location.href="<%=basePath %>/admin/credit-order.shtml";
-  	  	        	   flag = true;
   	  	           }else{
-  	  	        	   new top.Tip({msg : result.msg, type: 3 , timer:2000});
+  	  	        		alert(result.msg);
+  	  	        	  // new top.Tip({msg : result.msg, type: 3 , timer:2000});
   	  	           }
   	  	        },
   	  	        error:function(){
-  	  	        	new top.Tip({msg : '请求失败，请重试', type: 3 , timer:2000});
+  	  	        	alert('请求失败，请重试');
+  	  	        	location.href="<%=basePath %>/admin/credit-order.shtml";
+  	  	        	//new top.Tip({msg : '请求失败，请重试', type: 3 , timer:2000});
   	  	        },
   	  	        complete:function(){
   	  	        	top.F.loading.hide();
