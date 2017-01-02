@@ -135,4 +135,10 @@ public interface TitanFinancialLoanCreditService {
 	 * @return
 	 */
 	public BaseResponseDTO insertLoanCreditOrderDiscard(LoanCreditOrderDiscardRequest request);
+	/**
+	 * 提交授信申请资料到融数
+	 * @param creditOrderNo
+	 * @return
+	 */
+	public BaseResponseDTO pushCreditInfoToRs(String creditOrderNo);
 }
