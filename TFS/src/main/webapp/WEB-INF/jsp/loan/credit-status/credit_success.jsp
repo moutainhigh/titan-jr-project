@@ -121,8 +121,8 @@
 					<dl class="J_date_list fl">
 						<dd>
 							<label for="" class="fl">贷款申请时间：</label> <input type="text"
-								class="text w_160 text_calendar fl" filed='beginCreateTime'> <label for=""
-								class="S_digit">至</label> <input type="text"  filed='endCreateTime'
+								class="text w_160 text_calendar fl" field='beginCreateTime'> <label for=""
+								class="S_digit">至</label> <input type="text"  field='endCreateTime'
 								class="text w_160 text_calendar fl">
 						</dd>
 					</dl>
@@ -203,9 +203,9 @@
 	            <div class="MyAssets_list_inp01 fl ml10">
 	                <select class="select w_120" field="loanStatus">
 	                <option value="">贷款状态</option>
-	                <option value="1">审核中</option>
-	                <option value="6">已放款</option>
-	                <option value="7">未通过</option>
+	                <option value="1,2,3,5">审核中</option>
+	                <option value="6,9">已放款</option>
+	                <option value="4,7,8">未通过</option>
 	              </select>         
 	            </div>
 	

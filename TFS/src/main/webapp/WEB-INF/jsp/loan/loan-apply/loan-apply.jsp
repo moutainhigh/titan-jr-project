@@ -240,7 +240,7 @@
 	};
 	
 	init_loanApply_obj.init_data();
-	
+		
 	var form_submit = {
 		submit:function(){
 			if(!this.validateData(this.queryData())){
@@ -257,7 +257,7 @@
 					if(result.code==1){
 						location.href="<%=basePath%>/loan_apply/apply-succ.shtml?orderNo="+result.data.orderNo+"&orderCreateTime="+result.data.orderCreateTime;
 					}else{
-						new top.Tip({msg:result.msg, type: 3, timer: 2000});
+						new top.Tip({msg:result.msg, type: 3, timer: 3000});
 					}
 				},
 				complete:function(){
@@ -575,7 +575,7 @@
 			var index2=fileName.length;
 			var postf=fileName.substring(index1+1,index2);//后缀名
 			var imgList ="/png/jpg/jpeg/";
-			$('#'+ids).parent().find(".dd_text").html("附件").attr({"title":fileName});
+			$('#'+ids).parent().find(".dd_text").html("合同附件").attr({"title":fileName});
 			$('#'+ids).parent().find('.TFSimgOnBig').find('img').unbind("click");
 			$('#'+ids).parent().find('.TFSimgOn').removeClass('TFSimgOnBig');
 			

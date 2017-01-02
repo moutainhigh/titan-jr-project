@@ -82,7 +82,7 @@ public class FinancialLoanController extends BaseController {
 
 	static {
 		initDataMap.put("loan-all-status", LoanOrderStatusEnum.values());
-		initDataMap.put("loan-all-orderby", "createTime");
+		initDataMap.put("loan-all-orderby", "createTime desc");
 
 		initDataMap.put("loan-audit-status", new LoanOrderStatusEnum[] {
 				LoanOrderStatusEnum.LOAN_REQ_ING,
@@ -93,13 +93,13 @@ public class FinancialLoanController extends BaseController {
 
 		initDataMap.put("loan-over-status",
 				new LoanOrderStatusEnum[] { LoanOrderStatusEnum.LOAN_FINISH });
-		initDataMap.put("loan-over-orderby", "createTime");
+		initDataMap.put("loan-over-orderby", "lastrepaymentdate desc");
 
 		initDataMap.put("loan-payment-status",
 				new LoanOrderStatusEnum[] { LoanOrderStatusEnum.HAVE_LOAN,
 						LoanOrderStatusEnum.LOAN_EXPIRY });
 		initDataMap
-				.put("loan-payment-orderby", "status desc , createTime desc");
+				.put("loan-payment-orderby", "status desc , actualrepaymentdate");
 
 		// initDataMap.put("" + LoanProductEnum.ROOM_PACK.getCode(),
 		// "loan-spec");
@@ -315,12 +315,16 @@ public class FinancialLoanController extends BaseController {
 						.get(loanQueryConditions.getPageKey() + "-status")));
 		// 如果页面指定了要查询的状态，那么就需要按照页面的要求来
 		if (StringUtil.isValidString(loanQueryConditions.getLoanStatus())) {
-			LoanOrderStatusEnum tempEnum = LoanOrderStatusEnum
-					.getEnumByStatus(Integer.parseInt(loanQueryConditions
-							.getLoanStatus()));
-			if (tempEnum != null) {
-				statusList.clear();
-				statusList.add(tempEnum);
+			
+			String status[] = loanQueryConditions.getLoanStatus().split(",");
+			statusList.clear();
+			for (int i = 0; i < status.length; i++) {
+				LoanOrderStatusEnum tempEnum = LoanOrderStatusEnum
+						.getEnumByStatus(Integer.parseInt(status[i]));
+				if (tempEnum != null) {
+
+					statusList.add(tempEnum);
+				}
 			}
 		}
 		// 设置要过滤的状态
