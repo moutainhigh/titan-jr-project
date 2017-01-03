@@ -25,9 +25,11 @@ import com.fangcang.titanjr.dto.request.UserRoleSetRequest;
 import com.fangcang.titanjr.dto.response.RoleUserInfoPageResponse;
 import com.fangcang.titanjr.dto.response.TitanRoleResponse;
 import com.fangcang.titanjr.dto.response.UserFreezeResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.dto.response.UserRegisterResponse;
 import com.fangcang.titanjr.dto.response.UserRoleSetResponse;
+import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanOrderService;
@@ -66,6 +68,17 @@ public class TitanFinancialUserServiceTest extends SpringTest {
         System.out.println(response);
     }
 
+    //@Test
+    public void queryUserInfoPageTest(){
+			TitanUser titanUser  = null;
+			//申请人
+			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+			userInfoQueryRequest.setTfsUserId(10128);
+			UserInfoPageResponse userInfoPageResponse = titanFinancialUserService.queryUserInfoPage(userInfoQueryRequest);
+			titanUser  = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+			
+			System.out.println("-----------------"+titanUser.getOrgcode());
+    }
     //@Test
     public void queryFinancialUserTest(){
         UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
