@@ -389,15 +389,15 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		creditCompanyRequest.setCertificatenumber(loanCreditCompany
 				.getLegalNo());
 
-		//OprsystemCreditCompanyResponse oprsystemCreditCompanyResponse = rsCreditManager
-		//		.oprsystemCreditCompany(creditCompanyRequest);
-		//if (oprsystemCreditCompanyResponse.isSuccess() == false) {
-		//	response.putErrorResult(oprsystemCreditCompanyResponse
-		//				.getReturnMsg());
-		//	log.error("授信申请时上报企业资料信息给融数失败,接口：oprsystemCreditCompany，企业信息为creditCompanyRequest:"
-		//			+ Tools.gsonToString(creditCompanyRequest));
-		//	return response;
-		//}
+		OprsystemCreditCompanyResponse oprsystemCreditCompanyResponse = rsCreditManager
+				.oprsystemCreditCompany(creditCompanyRequest);
+		if (oprsystemCreditCompanyResponse.isSuccess() == false) {
+			response.putErrorResult(oprsystemCreditCompanyResponse
+						.getReturnMsg());
+			log.error("授信申请时上报企业资料信息给融数失败,接口：oprsystemCreditCompany，企业信息为creditCompanyRequest:"
+					+ Tools.gsonToString(creditCompanyRequest));
+			return response;
+		}
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 		organQueryRequest.setUserId(loanCreditOrder.getOrgCode());
 		FinancialOrganResponse financialOrganResponse = titanFinancialOrganService
@@ -437,14 +437,14 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		orderMixserviceCreditapplicationRequest
 				.setUrlkey(rsFsFileUploadResponse.getUrlKey());
 		orderMixserviceCreditapplicationRequest.setCreditype("2");// 2：零售商授信申请（房仓）
-		//OrderMixserviceCreditapplicationResponse orderMixserviceCreditapplicationResponse = rsCreditManager
-		//		.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
-		//if (orderMixserviceCreditapplicationResponse.isSuccess() == false) {
-		//	response.putErrorResult(orderMixserviceCreditapplicationResponse
-		//	.getReturnMsg());
-		//	log.error("授信申请时融数接口(orderMixserviceCreditapplication)失败,OrgCode:" + loanCreditOrder.getOrgCode());
-		//	return response;
-		//}
+		OrderMixserviceCreditapplicationResponse orderMixserviceCreditapplicationResponse = rsCreditManager
+				.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
+		if (orderMixserviceCreditapplicationResponse.isSuccess() == false) {
+			response.putErrorResult(orderMixserviceCreditapplicationResponse
+			.getReturnMsg());
+			log.error("授信申请时融数接口(orderMixserviceCreditapplication)失败,OrgCode:" + loanCreditOrder.getOrgCode());
+			return response;
+		}
 		log.info("金融后台初审通过后，授信申请的资料提交成功，金融机构OrgCode:"+loanCreditOrder.getOrgCode());
 		//把urlkey 保存到数据库。
 		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();

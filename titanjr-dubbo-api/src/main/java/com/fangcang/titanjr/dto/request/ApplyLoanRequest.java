@@ -19,6 +19,17 @@ public class ApplyLoanRequest extends BaseRequestDTO {
 	private String orgCode;
 	//贷款规格
 	private LoanSpecBean lcanSpec;
+	//贷款合同附件urlkey
+	private String urlKey;
+
+	
+	public String getUrlKey() {
+		return urlKey;
+	}
+
+	public void setUrlKey(String urlKey) {
+		this.urlKey = urlKey;
+	}
 
 	public LoanProductEnum getProductType() {
 		return productType;

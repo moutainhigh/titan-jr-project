@@ -75,6 +75,7 @@ import com.fangcang.titanjr.dto.request.SynLoanOrderRequest;
 import com.fangcang.titanjr.dto.request.TitanOrderRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
+import com.fangcang.titanjr.dto.request.UploadApplyLoanFileToRsRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.CancelLoanResponse;
@@ -93,6 +94,7 @@ import com.fangcang.titanjr.dto.response.SendMessageResponse;
 import com.fangcang.titanjr.dto.response.SynLoanOrderResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.dto.response.TransferResponse;
+import com.fangcang.titanjr.dto.response.UploadApplyLoanFileToRsResponse;
 import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.entity.LoanApplyOrder;
 import com.fangcang.titanjr.entity.LoanCreditOrder;
@@ -292,9 +294,9 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			}
 
 			// 上传文件到融数，并且获取相应的urlKey
-			String urlKey = getApplyLoanUrlKey(req.getOrgCode(),
-					loanApplyOrderNo, 1, contactNames);
-			if (!StringUtil.isValidString(urlKey)) {
+			//String urlKey = getApplyLoanUrlKey(req.getOrgCode(),
+				///	loanApplyOrderNo, 1, contactNames);
+			if (!StringUtil.isValidString(req.getUrlKey())) {
 				log.error("贷款申请订单证明资料上传失败，orgcode:" + req.getOrgCode());
 				throw new Exception("保存订单失败");
 			}
@@ -302,7 +304,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			NewLoanApplyRequest request = this.convertToNewLoanApplyRequest(
 					req.getLcanSpec(), productType.getCode(), req.getOrgCode(),
 					relateOrgCode);
-			request.setUrlkey(urlKey);
+			request.setUrlkey(req.getUrlKey());
 			this.packLoanJSonData(request, req.getLcanSpec(),
 					productType.getCode());
 			NewLoanApplyResponse loanResponse = rsCreditManager
@@ -332,6 +334,22 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		}
 	}
 
+	public UploadApplyLoanFileToRsResponse uploadApplyLoanFileToRs(UploadApplyLoanFileToRsRequest uploadApplyLoanFileToRsRequest){
+		UploadApplyLoanFileToRsResponse uploadApplyLoanFileToRsResponse = new UploadApplyLoanFileToRsResponse();
+		String urlKey = null;
+		try {
+			urlKey = getApplyLoanUrlKey(uploadApplyLoanFileToRsRequest.getOrgCode(),uploadApplyLoanFileToRsRequest.getLoanApplyOrderNo(),uploadApplyLoanFileToRsRequest.getLoantype(),uploadApplyLoanFileToRsRequest.getContactNames());
+		} catch (Exception e) {
+			log.error("贷款合同附件上传失败，参数uploadApplyLoanFileToRsRequest："+Tools.gsonToString(uploadApplyLoanFileToRsRequest));
+			uploadApplyLoanFileToRsResponse.putErrorResult("贷款合同附件上传失败");
+			return uploadApplyLoanFileToRsResponse;
+		}
+		if(StringUtil.isValidString(urlKey)){
+			uploadApplyLoanFileToRsResponse.setUrlKey(urlKey);
+			uploadApplyLoanFileToRsResponse.putSuccess("贷款合同附件上传成功");
+		}
+		return uploadApplyLoanFileToRsResponse;
+	}
 	/**
 	 * 上传包房贷文件
 	 * 

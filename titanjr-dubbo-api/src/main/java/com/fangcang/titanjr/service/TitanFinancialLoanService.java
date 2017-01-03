@@ -13,6 +13,7 @@ import com.fangcang.titanjr.dto.request.RepaymentAmountComputeRequest;
 import com.fangcang.titanjr.dto.request.RepaymentLoanRequest;
 import com.fangcang.titanjr.dto.request.SaveLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.request.SynLoanOrderRequest;
+import com.fangcang.titanjr.dto.request.UploadApplyLoanFileToRsRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.CancelLoanResponse;
 import com.fangcang.titanjr.dto.response.ConfirmLoanOrderIsAvailableResponse;
@@ -26,6 +27,7 @@ import com.fangcang.titanjr.dto.response.RepaymentAmountComputeResponse;
 import com.fangcang.titanjr.dto.response.RepaymentLoanResponse;
 import com.fangcang.titanjr.dto.response.SaveLoanOrderInfoResponse;
 import com.fangcang.titanjr.dto.response.SynLoanOrderResponse;
+import com.fangcang.titanjr.dto.response.UploadApplyLoanFileToRsResponse;
 
 /**
  * 贷款业务接口定义
@@ -41,6 +43,12 @@ public interface TitanFinancialLoanService {
 	 * @return
 	 */
 	public ApplyLoanResponse applyLoan(ApplyLoanRequest req) throws Exception;
+	/**
+	 * 上传贷款合同附件
+	 * @param uploadApplyLoanFileToRsRequest
+	 * @return
+	 */
+	public UploadApplyLoanFileToRsResponse uploadApplyLoanFileToRs(UploadApplyLoanFileToRsRequest uploadApplyLoanFileToRsRequest);
 
 	/**
 	 * 取消贷款请求

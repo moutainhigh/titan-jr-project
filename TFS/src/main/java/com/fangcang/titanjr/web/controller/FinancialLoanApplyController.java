@@ -32,9 +32,11 @@ import com.fangcang.titanjr.dto.bean.LoanRoomPackSpecBean;
 import com.fangcang.titanjr.dto.bean.LoanSpecBean;
 import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoRequest;
+import com.fangcang.titanjr.dto.request.UploadApplyLoanFileToRsRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.FTPConfigResponse;
 import com.fangcang.titanjr.dto.response.GetLoanOrderInfoResponse;
+import com.fangcang.titanjr.dto.response.UploadApplyLoanFileToRsResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
@@ -108,12 +110,22 @@ public class FinancialLoanApplyController extends BaseController{
 			if(StringUtil.isValidString(info.getRoomNights())){
 				loanSpecBean.setRoomNights(Integer.parseInt(info.getRoomNights()));
 			}
-			
+			UploadApplyLoanFileToRsRequest uploadApplyLoanFileToRsRequest = new UploadApplyLoanFileToRsRequest();
+			uploadApplyLoanFileToRsRequest.setOrgCode(this.getUserId());
+			uploadApplyLoanFileToRsRequest.setLoantype(1);
+			uploadApplyLoanFileToRsRequest.setContactNames(info.getContactNames());
+			uploadApplyLoanFileToRsRequest.setLoanApplyOrderNo(info.getLoanOrderNo());
+			UploadApplyLoanFileToRsResponse uploadApplyLoanFileToRsResponse = titanFinancialLoanService.uploadApplyLoanFileToRs(uploadApplyLoanFileToRsRequest);
+			if(uploadApplyLoanFileToRsResponse.isResult()==false){
+				this.putSysError(uploadApplyLoanFileToRsResponse.getReturnMessage());
+				return toJson(); 
+			}
 			ApplyLoanRequest request = new ApplyLoanRequest();
 			request.setProductType(LoanProductEnum.ROOM_PACK);
 			request.setLcanSpec(loanSpecBean);
 			request.setOrgCode(this.getUserId());
 			request.setOperator(getTfsUserId());
+			request.setUrlKey(uploadApplyLoanFileToRsResponse.getUrlKey());
 			ApplyLoanResponse response = titanFinancialLoanService.applyLoan(request);
 			if(!response.isResult()){
 				this.putSysError(response.getReturnMessage());
