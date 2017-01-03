@@ -41,6 +41,7 @@ import com.fangcang.titanjr.common.util.FileHelp;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.SMSTemplate;
+import com.fangcang.titanjr.common.util.ThreadPoolUtil;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.LoanCompanyEnsureDao;
 import com.fangcang.titanjr.dao.LoanCreditCompanyDao;
@@ -118,6 +119,7 @@ import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
+import com.fangcang.titanjr.task.CreditLoanRunnable;
 import com.fangcang.titanjr.util.LoanTypeConvertUtil;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
@@ -230,194 +232,8 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		}
 		// 通过后,调用融数处理
 		if (auditResult) {
-			// 1-上传申请附件
-			LoanCreditCompany loanCreditCompanyParam = new LoanCreditCompany();
-			loanCreditCompanyParam.setCreditOrderNo(req.getOrderNo());
-			List<LoanCreditCompany> loanCreditCompanyList = loanCreditCompanyDao
-					.queryLoanCreditCompany(loanCreditCompanyParam);
-
-			if (CollectionUtils.isEmpty(loanCreditCompanyList)) {
-				response.putErrorResult("申请授信单没有找到对应的企业资料");
-				return response;
-			}
-			// 授信申请公司文件
-			List<String> companyFilesList = new ArrayList<String>();
-			LoanCreditCompany loanCreditCompany = loanCreditCompanyList.get(0);
-
-			companyFilesList.add(loanCreditCompany.getLicenseUrl());
-			companyFilesList.add(loanCreditCompany.getLegalNoUrl());
-			companyFilesList.add(loanCreditCompany.getOfficeNoUrl());
-			companyFilesList.add(loanCreditCompany.getAccountUrl());
-			companyFilesList.add(loanCreditCompany.getCreditUrl());
-			companyFilesList.add(loanCreditCompany.getOfficeUrl());
-			companyFilesList.add(loanCreditCompany.getWaterUrl());
-			companyFilesList.add(loanCreditCompany.getTaxRegUrl());
-			companyFilesList.add(loanCreditCompany.getOrgCodeUrl());
-
-			List<String> ensureFilesList = new ArrayList<String>();
-			// 个人担保文件
-			LoanPersonEnsure loanPersonEnsure = null;
-			if (loanCreditOrder.getAssureType() == LoanCreditOrderEnum.AssureType.PERSON
-					.getType()) {
-				LoanPersonEnsure loanPersonEnsureParam = new LoanPersonEnsure();
-				loanPersonEnsureParam.setOrderNo(req.getOrderNo());
-				List<LoanPersonEnsure> loanPersonEnsureList = loanPersonEnsureDao
-						.queryLoanPersonEnsure(loanPersonEnsureParam);
-				if (CollectionUtils.isEmpty(loanPersonEnsureList)) {
-					response.putErrorResult("个人担保资料不存在，请补充担保资料");
-					return response;
-				}
-				loanPersonEnsure = loanPersonEnsureList.get(0);
-				ensureFilesList.add(loanPersonEnsure.getIdCardUrl());
-				ensureFilesList.add(loanPersonEnsure.getRegisteredUrl());
-				ensureFilesList.add(loanPersonEnsure.getSpouseRegisteredUrl());
-				ensureFilesList.add(loanPersonEnsure.getSpouseIdCardUrl());
-				ensureFilesList.add(loanPersonEnsure.getMarriageUrl());
-			}
-
-			// 企业担保文件
-			LoanCompanyEnsure loanCompanyEnsure = null;
-			if (loanCreditOrder.getAssureType() == LoanCreditOrderEnum.AssureType.ENTERPRISE
-					.getType()) {
-				LoanCompanyEnsure loanCompanyEnsureParam = new LoanCompanyEnsure();
-				loanCompanyEnsureParam.setOrderNo(req.getOrderNo());
-				List<LoanCompanyEnsure> loanCompanyEnsureList = loanCompanyEnsureDao
-						.queryLoanCompanyEnsure(loanCompanyEnsureParam);
-				if (CollectionUtils.isEmpty(loanCompanyEnsureList)) {
-					response.putErrorResult("企业担保资料不存在，请补充担保资料");
-					return response;
-				}
-				loanCompanyEnsure = loanCompanyEnsureList.get(0);
-				ensureFilesList.add(loanCompanyEnsure.getBusinessLicenseUrl());
-				ensureFilesList.add(loanCompanyEnsure
-						.getOrgCodeCertificateUrl());
-				ensureFilesList.add(loanCompanyEnsure.getTaxRegisterCodeUrl());
-				ensureFilesList.add(loanCompanyEnsure.getLicenseUrl());
-				ensureFilesList.add(loanCompanyEnsure.getLegalPersonUrl());
-			}
-
-			// 本地加密上传的文件
-			String encryptRSFilePath = encryptRSFile(companyFilesList,
-					ensureFilesList, loanCreditOrder.getOrgCode());
-			if (!StringUtil.isValidString(encryptRSFilePath)) {
-				response.putErrorResult("授信文件上传融数时失败");
-				return response;
-			}
-
-			// 上传到融数
-			RSFsFileUploadRequest rsFsFileUploadRequest = new RSFsFileUploadRequest();
-			rsFsFileUploadRequest.setUserid(loanCreditOrder.getOrgCode());
-			rsFsFileUploadRequest
-					.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-			rsFsFileUploadRequest
-					.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-			rsFsFileUploadRequest.setType(FileTypeEnum.UPLOAD_FILE_73
-					.getFileType());
-			rsFsFileUploadRequest.setInvoiceDate(DateUtil.getCurrentDate());
-			rsFsFileUploadRequest.setPath(encryptRSFilePath);
-			rsFsFileUploadRequest.setBacth(loanCreditOrder.getOrgCode()
-					+ DateUtil.getCurrentDate().getTime());
-
-			RSFsFileUploadResponse rsFsFileUploadResponse = rsFileManager
-					.fsFileUpload(rsFsFileUploadRequest);
-			//TODO  删除文件
-			//FileHelp.deleteFile(encryptRSFilePath.substring(0,
-			//		encryptRSFilePath.lastIndexOf("/")));
-			if ((!StringUtil.isValidString(rsFsFileUploadResponse.getUrlKey()))
-					|| rsFsFileUploadResponse.isSuccess() == false) {
-				response.putErrorResult(rsFsFileUploadResponse.getReturnMsg());
-				log.error("上传授信文件压缩包到融数失败,请求参数为rsFsFileUploadRequest:"
-						+ Tools.gsonToString(rsFsFileUploadRequest));
-				return response;
-			}
-
-			// 2-提交企业资料
-			OprsystemCreditCompanyRequest creditCompanyRequest = new OprsystemCreditCompanyRequest();
-			creditCompanyRequest
-					.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-			creditCompanyRequest.setUserid(loanCreditOrder.getOrgCode());
-
-			creditCompanyRequest.setCompanyname(loanCreditCompany.getName());
-			creditCompanyRequest.setBusinesslicense(loanCreditCompany
-					.getLicense());
-
-			creditCompanyRequest.setCertificatestartdate(loanCreditCompany
-					.getCertificateStartDate());
-			creditCompanyRequest.setCertificateexpiredate(loanCreditCompany
-					.getCertificateExpireDate());
-			creditCompanyRequest.setCompanytype(loanCreditCompany
-					.getCompanyType());
-			creditCompanyRequest.setRegistfinance(loanCreditCompany
-					.getRegistFinance());
-			creditCompanyRequest.setAddress(loanCreditCompany.getRegAddress());
-			creditCompanyRequest.setTaxregcard(loanCreditCompany.getTaxRegNo());
-
-			creditCompanyRequest.setCorporatename(loanCreditCompany
-					.getLegalName());
-			creditCompanyRequest.setCertificatetype(loanCreditCompany
-					.getLegalceType());
-			creditCompanyRequest.setCertificatenumber(loanCreditCompany
-					.getLegalNo());
-
-			OprsystemCreditCompanyResponse oprsystemCreditCompanyResponse = rsCreditManager
-					.oprsystemCreditCompany(creditCompanyRequest);
-			if (oprsystemCreditCompanyResponse.isSuccess() == false) {
-				response.putErrorResult(oprsystemCreditCompanyResponse
-						.getReturnMsg());
-				log.error("授信申请时上报企业资料信息给融数失败,企业信息为creditCompanyRequest:"
-						+ Tools.gsonToString(creditCompanyRequest));
-				return response;
-			}
-			FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-			organQueryRequest.setUserId(loanCreditOrder.getOrgCode());
-			FinancialOrganResponse financialOrganResponse = titanFinancialOrganService
-					.queryFinancialOrgan(organQueryRequest);
-
-			Long maxLoanAmount = financialOrganResponse.getFinancialOrganDTO()
-					.getMaxLoanAmount();
-			// 3-授信申请接口
-			LoanCompanyAppendInfo companyAppendInfo = LoanTypeConvertUtil
-					.getCompanyAppendInfo(loanCreditCompany.getAppendInfo());
-			String creditApplicationJsonData = creditApplicationJson(
-					loanCreditCompany, companyAppendInfo, loanPersonEnsure,
-					loanCompanyEnsure);
-
-			OrderMixserviceCreditapplicationRequest orderMixserviceCreditapplicationRequest = new OrderMixserviceCreditapplicationRequest();
-			orderMixserviceCreditapplicationRequest
-					.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
-			orderMixserviceCreditapplicationRequest
-					.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-			orderMixserviceCreditapplicationRequest.setUserid(loanCreditOrder
-					.getOrgCode());
-			orderMixserviceCreditapplicationRequest.setUserorderid(req
-					.getOrderNo());
-			orderMixserviceCreditapplicationRequest
-					.setAmount(maxLoanAmount != null ? maxLoanAmount.toString()
-							: "0");
-			orderMixserviceCreditapplicationRequest
-					.setReqesttime(CommonConstant.RS_LOAN_CREDIT_REQUEST_TIME);
-			orderMixserviceCreditapplicationRequest
-					.setOrderplatformname(loanCreditCompany.getName());
-			orderMixserviceCreditapplicationRequest.setRequestdate(DateUtil
-					.dateToString(new Date(), "yyyy-MM-DD HH:mm:ss"));
-			orderMixserviceCreditapplicationRequest
-					.setRatetemplrate(CommonConstant.RS_LOAN_CREDIT_RATETEMPL_RATE);
-			orderMixserviceCreditapplicationRequest
-					.setJsondata(creditApplicationJsonData);
-			// f8f0ab4b-d5b2-4bee-b898-6a63da3c2070
-			orderMixserviceCreditapplicationRequest
-					.setUrlkey(rsFsFileUploadResponse.getUrlKey());
-			// orderMixserviceCreditapplicationRequest.setUrlkey("f8f0ab4b-d5b2-4bee-b898-6a63da3c2070");
-			orderMixserviceCreditapplicationRequest.setCreditype("2");// 2：零售商授信申请（房仓）
-			updateLoanCreditOrderParam.setUrlKey(rsFsFileUploadResponse.getUrlKey());
-			OrderMixserviceCreditapplicationResponse orderMixserviceCreditapplicationResponse = rsCreditManager
-					.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
-			if (orderMixserviceCreditapplicationResponse.isSuccess() == false) {
-				response.putErrorResult(orderMixserviceCreditapplicationResponse
-						.getReturnMsg());
-				log.error("授信申请时融数接口失败,OrgCode:" + loanCreditOrder.getOrgCode());
-				return response;
-			}
+			CreditLoanRunnable creditLoanRunnable = new CreditLoanRunnable(this, req.getOrderNo());
+			ThreadPoolUtil.excute(creditLoanRunnable);
 		}
 		// 改申请单状态
 		updateLoanCreditOrderParam.setOrderNo(req.getOrderNo());
@@ -427,7 +243,217 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		response.putSuccess("审核成功");
 		return response;
 	}
+	/***
+	 * 提交申请到融数
+	 * @param creditOrderNo
+	 */
+	public BaseResponseDTO pushCreditInfoToRs(String creditOrderNo){
+		BaseResponseDTO response = new BaseResponseDTO();
+		LoanCreditOrder loanCreditOrderParam = new LoanCreditOrder();
+		loanCreditOrderParam.setOrderNo(creditOrderNo);
+		List<LoanCreditOrder> loanCreditOrderList = loanCreditOrderDao
+				.queryLoanCreditOrder(loanCreditOrderParam);
 
+		if (CollectionUtils.isEmpty(loanCreditOrderList)) {
+			response.putErrorResult("申请授信单不存在");
+			log.error("授信申请记录不存在,请检查授信订单号["+creditOrderNo+"]是否正确");
+			return response;
+		}
+		LoanCreditOrder loanCreditOrder = loanCreditOrderList.get(0);
+		// 1-上传申请附件
+		LoanCreditCompany loanCreditCompanyParam = new LoanCreditCompany();
+		loanCreditCompanyParam.setCreditOrderNo(loanCreditOrder.getOrderNo());
+		List<LoanCreditCompany> loanCreditCompanyList = loanCreditCompanyDao
+				.queryLoanCreditCompany(loanCreditCompanyParam);
+
+		if (CollectionUtils.isEmpty(loanCreditCompanyList)) {
+			response.putErrorResult("申请授信单没有找到对应的企业资料");
+			return response;
+		}
+		// 授信申请公司文件
+		List<String> companyFilesList = new ArrayList<String>();
+		LoanCreditCompany loanCreditCompany = loanCreditCompanyList.get(0);
+
+		companyFilesList.add(loanCreditCompany.getLicenseUrl());
+		companyFilesList.add(loanCreditCompany.getLegalNoUrl());
+		companyFilesList.add(loanCreditCompany.getOfficeNoUrl());
+		companyFilesList.add(loanCreditCompany.getAccountUrl());
+		companyFilesList.add(loanCreditCompany.getCreditUrl());
+		companyFilesList.add(loanCreditCompany.getOfficeUrl());
+		companyFilesList.add(loanCreditCompany.getWaterUrl());
+		companyFilesList.add(loanCreditCompany.getTaxRegUrl());
+		companyFilesList.add(loanCreditCompany.getOrgCodeUrl());
+
+		List<String> ensureFilesList = new ArrayList<String>();
+		// 个人担保文件
+		LoanPersonEnsure loanPersonEnsure = null;
+		if (loanCreditOrder.getAssureType() == LoanCreditOrderEnum.AssureType.PERSON
+				.getType()) {
+			LoanPersonEnsure loanPersonEnsureParam = new LoanPersonEnsure();
+			loanPersonEnsureParam.setOrderNo(loanCreditOrder.getOrderNo());
+			List<LoanPersonEnsure> loanPersonEnsureList = loanPersonEnsureDao
+					.queryLoanPersonEnsure(loanPersonEnsureParam);
+			if (CollectionUtils.isEmpty(loanPersonEnsureList)) {
+				response.putErrorResult("个人担保资料不存在，请补充担保资料");
+				return response;
+			}
+			loanPersonEnsure = loanPersonEnsureList.get(0);
+			ensureFilesList.add(loanPersonEnsure.getIdCardUrl());
+			ensureFilesList.add(loanPersonEnsure.getRegisteredUrl());
+			ensureFilesList.add(loanPersonEnsure.getSpouseRegisteredUrl());
+			ensureFilesList.add(loanPersonEnsure.getSpouseIdCardUrl());
+			ensureFilesList.add(loanPersonEnsure.getMarriageUrl());
+		}
+
+		// 企业担保文件
+		LoanCompanyEnsure loanCompanyEnsure = null;
+		if (loanCreditOrder.getAssureType() == LoanCreditOrderEnum.AssureType.ENTERPRISE
+				.getType()) {
+			LoanCompanyEnsure loanCompanyEnsureParam = new LoanCompanyEnsure();
+			loanCompanyEnsureParam.setOrderNo(loanCreditOrder.getOrderNo());
+			List<LoanCompanyEnsure> loanCompanyEnsureList = loanCompanyEnsureDao
+					.queryLoanCompanyEnsure(loanCompanyEnsureParam);
+			if (CollectionUtils.isEmpty(loanCompanyEnsureList)) {
+				response.putErrorResult("企业担保资料不存在，请补充担保资料");
+				return response;
+			}
+			loanCompanyEnsure = loanCompanyEnsureList.get(0);
+			ensureFilesList.add(loanCompanyEnsure.getBusinessLicenseUrl());
+			ensureFilesList.add(loanCompanyEnsure
+					.getOrgCodeCertificateUrl());
+			ensureFilesList.add(loanCompanyEnsure.getTaxRegisterCodeUrl());
+			ensureFilesList.add(loanCompanyEnsure.getLicenseUrl());
+			ensureFilesList.add(loanCompanyEnsure.getLegalPersonUrl());
+		}
+
+		// 本地加密上传的文件
+		String encryptRSFilePath = encryptRSFile(companyFilesList,
+				ensureFilesList, loanCreditOrder.getOrgCode());
+		if (!StringUtil.isValidString(encryptRSFilePath)) {
+			response.putErrorResult("授信文件上传融数时失败");
+			return response;
+		}
+
+		// 上传到融数
+		RSFsFileUploadRequest rsFsFileUploadRequest = new RSFsFileUploadRequest();
+		rsFsFileUploadRequest.setUserid(loanCreditOrder.getOrgCode());
+		rsFsFileUploadRequest
+				.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+		rsFsFileUploadRequest
+				.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+		rsFsFileUploadRequest.setType(FileTypeEnum.UPLOAD_FILE_73
+				.getFileType());
+		rsFsFileUploadRequest.setInvoiceDate(DateUtil.getCurrentDate());
+		rsFsFileUploadRequest.setPath(encryptRSFilePath);
+		rsFsFileUploadRequest.setBacth(loanCreditOrder.getOrgCode()
+				+ DateUtil.getCurrentDate().getTime());
+
+		RSFsFileUploadResponse rsFsFileUploadResponse = rsFileManager
+				.fsFileUpload(rsFsFileUploadRequest);
+		//TODO  删除文件
+		//FileHelp.deleteFile(encryptRSFilePath.substring(0,
+		//		encryptRSFilePath.lastIndexOf("/")));
+		if ((!StringUtil.isValidString(rsFsFileUploadResponse.getUrlKey()))
+				|| rsFsFileUploadResponse.isSuccess() == false) {
+			response.putErrorResult(rsFsFileUploadResponse.getReturnMsg());
+			log.error("上传授信文件压缩包到融数失败,请求参数为rsFsFileUploadRequest:"
+					+ Tools.gsonToString(rsFsFileUploadRequest));
+			return response;
+		}
+
+		// 2-提交企业资料
+		OprsystemCreditCompanyRequest creditCompanyRequest = new OprsystemCreditCompanyRequest();
+		creditCompanyRequest
+				.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+		creditCompanyRequest.setUserid(loanCreditOrder.getOrgCode());
+
+		creditCompanyRequest.setCompanyname(loanCreditCompany.getName());
+		creditCompanyRequest.setBusinesslicense(loanCreditCompany
+				.getLicense());
+
+		creditCompanyRequest.setCertificatestartdate(loanCreditCompany
+				.getCertificateStartDate());
+		creditCompanyRequest.setCertificateexpiredate(loanCreditCompany
+				.getCertificateExpireDate());
+		creditCompanyRequest.setCompanytype(loanCreditCompany
+				.getCompanyType());
+		creditCompanyRequest.setRegistfinance(loanCreditCompany
+				.getRegistFinance());
+		creditCompanyRequest.setAddress(loanCreditCompany.getRegAddress());
+		creditCompanyRequest.setTaxregcard(loanCreditCompany.getTaxRegNo());
+
+		creditCompanyRequest.setCorporatename(loanCreditCompany
+				.getLegalName());
+		creditCompanyRequest.setCertificatetype(loanCreditCompany
+				.getLegalceType());
+		creditCompanyRequest.setCertificatenumber(loanCreditCompany
+				.getLegalNo());
+
+		//OprsystemCreditCompanyResponse oprsystemCreditCompanyResponse = rsCreditManager
+		//		.oprsystemCreditCompany(creditCompanyRequest);
+		//if (oprsystemCreditCompanyResponse.isSuccess() == false) {
+		//	response.putErrorResult(oprsystemCreditCompanyResponse
+		//				.getReturnMsg());
+		//	log.error("授信申请时上报企业资料信息给融数失败,接口：oprsystemCreditCompany，企业信息为creditCompanyRequest:"
+		//			+ Tools.gsonToString(creditCompanyRequest));
+		//	return response;
+		//}
+		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+		organQueryRequest.setUserId(loanCreditOrder.getOrgCode());
+		FinancialOrganResponse financialOrganResponse = titanFinancialOrganService
+				.queryFinancialOrgan(organQueryRequest);
+
+		Long maxLoanAmount = financialOrganResponse.getFinancialOrganDTO()
+				.getMaxLoanAmount();
+		// 3-授信申请接口
+		LoanCompanyAppendInfo companyAppendInfo = LoanTypeConvertUtil
+				.getCompanyAppendInfo(loanCreditCompany.getAppendInfo());
+		String creditApplicationJsonData = creditApplicationJson(
+				loanCreditCompany, companyAppendInfo, loanPersonEnsure,
+				loanCompanyEnsure);
+
+		OrderMixserviceCreditapplicationRequest orderMixserviceCreditapplicationRequest = new OrderMixserviceCreditapplicationRequest();
+		orderMixserviceCreditapplicationRequest
+				.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+		orderMixserviceCreditapplicationRequest
+				.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+		orderMixserviceCreditapplicationRequest.setUserid(loanCreditOrder
+				.getOrgCode());
+		orderMixserviceCreditapplicationRequest.setUserorderid(loanCreditOrder
+				.getOrderNo());
+		orderMixserviceCreditapplicationRequest
+				.setAmount(maxLoanAmount != null ? maxLoanAmount.toString()
+						: "0");
+		orderMixserviceCreditapplicationRequest
+				.setReqesttime(CommonConstant.RS_LOAN_CREDIT_REQUEST_TIME);
+		orderMixserviceCreditapplicationRequest
+				.setOrderplatformname(loanCreditCompany.getName());
+		orderMixserviceCreditapplicationRequest.setRequestdate(DateUtil
+				.dateToString(new Date(), "yyyy-MM-DD HH:mm:ss"));
+		orderMixserviceCreditapplicationRequest
+				.setRatetemplrate(CommonConstant.RS_LOAN_CREDIT_RATETEMPL_RATE);
+		orderMixserviceCreditapplicationRequest
+				.setJsondata(creditApplicationJsonData);
+		orderMixserviceCreditapplicationRequest
+				.setUrlkey(rsFsFileUploadResponse.getUrlKey());
+		orderMixserviceCreditapplicationRequest.setCreditype("2");// 2：零售商授信申请（房仓）
+		//OrderMixserviceCreditapplicationResponse orderMixserviceCreditapplicationResponse = rsCreditManager
+		//		.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
+		//if (orderMixserviceCreditapplicationResponse.isSuccess() == false) {
+		//	response.putErrorResult(orderMixserviceCreditapplicationResponse
+		//	.getReturnMsg());
+		//	log.error("授信申请时融数接口(orderMixserviceCreditapplication)失败,OrgCode:" + loanCreditOrder.getOrgCode());
+		//	return response;
+		//}
+		log.info("金融后台初审通过后，授信申请的资料提交成功，金融机构OrgCode:"+loanCreditOrder.getOrgCode());
+		//把urlkey 保存到数据库。
+		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();
+		updateLoanCreditOrderParam.setOrderNo(creditOrderNo);
+		updateLoanCreditOrderParam.setUrlKey(rsFsFileUploadResponse.getUrlKey());
+		loanCreditOrderDao.updateLoanCreditOrder(updateLoanCreditOrderParam);
+		response.putSuccess("授信资料提交成功");
+		return response;
+	}
 	/***
 	 * * 打包加密授信申请文件
 	 * 
