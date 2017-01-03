@@ -1039,7 +1039,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 	 * @param creatorName 申请人
 	 * @param createTime 贷款时间
 	 * @param orderNo 贷款订单号
-	 * @param loanAmount 贷款金额
+	 * @param loanAmount 贷款金额(单位：分)
 	 * @param loanReceive 贷款收款方
 	 * @param loanOrderStatus 贷款订单状态
 	 */
@@ -1047,7 +1047,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		
 		String subject = "";
 		String content = "";
-		
+		loanAmount = NumberUtil.covertToYuan(loanAmount);
 		if(loanOrderStatus==LoanOrderStatusEnum.LOAN_REQ_ING.getKey()){//申请提交成功
 			Object[] subjectParam = new Object[]{};
 			subject = MessageFormat.format(SMSTemplate.LOAN_REQ_ING.getSubject(), subjectParam);

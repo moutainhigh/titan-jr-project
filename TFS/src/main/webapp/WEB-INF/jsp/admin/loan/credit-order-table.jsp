@@ -10,13 +10,19 @@
 	<td class="tdl">
 	<c:if test="${creditCompanyInfoDTO.status ==1}">草稿</c:if>
 	<c:if test="${creditCompanyInfoDTO.status ==2}"><span class="c_red">待审核</span></c:if>
-	<c:if test="${creditCompanyInfoDTO.status ==3}">初审通过</c:if>
+	<c:if test="${creditCompanyInfoDTO.status ==3}">复审中</c:if>
+	<c:if test="${creditCompanyInfoDTO.status ==10}">提交中</c:if>
+	<c:if test="${creditCompanyInfoDTO.status ==11}">提交失败</c:if>
 	<c:if test="${creditCompanyInfoDTO.status ==4}">审核未通过</c:if>
 	<c:if test="${creditCompanyInfoDTO.status ==5}">审核已通过</c:if>
 	</td>
 	<td class="tdl">
-	<c:if test="${creditCompanyInfoDTO.status ==2}"><a href="<%=basePath%>/admin/credit-order-detail.shtml?orderNo=${creditCompanyInfoDTO.orderNo }&opt=check" class="c_blue cursor undl j_loan_check">审核</a></c:if>
-	<c:if test="${creditCompanyInfoDTO.status !=2}"><a href="<%=basePath%>/admin/credit-order-detail.shtml?orderNo=${creditCompanyInfoDTO.orderNo }&opt=view" class="c_blue cursor undl j_loan_check">查看</a></c:if>
+	
+	<c:choose>
+		<c:when test="${creditCompanyInfoDTO.status ==2}"><a href="<%=basePath%>/admin/credit-order-detail.shtml?orderNo=${creditCompanyInfoDTO.orderNo }&opt=check" class="c_blue cursor undl j_loan_check">审核</a></c:when>
+		<c:when test="${creditCompanyInfoDTO.status ==11 or creditCompanyInfoDTO.status ==10}"><a href="javascript:;" class="c_blue cursor undl j_loan_check" onclick="commit('${creditCompanyInfoDTO.orderNo }')">提交复审</a></c:when>
+		<c:otherwise><a href="<%=basePath%>/admin/credit-order-detail.shtml?orderNo=${creditCompanyInfoDTO.orderNo }&opt=view" class="c_blue cursor undl j_loan_check">查看</a></c:otherwise>
+	</c:choose>
 	
 	</td>		
 </tr> 

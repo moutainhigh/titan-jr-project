@@ -141,4 +141,9 @@ public interface TitanFinancialLoanCreditService {
 	 * @return
 	 */
 	public BaseResponseDTO pushCreditInfoToRs(String creditOrderNo);
+	/***
+	 * 
+	 * @param creditOrderNo
+	 */
+	public void asynPushCreditInfo(String creditOrderNo);
 }

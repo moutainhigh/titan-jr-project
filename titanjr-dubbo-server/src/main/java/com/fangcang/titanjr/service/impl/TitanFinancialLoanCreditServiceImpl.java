@@ -60,6 +60,7 @@ import com.fangcang.titanjr.dto.bean.LoanCreditOpinionBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanPersonEnsureBean;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.request.AgreementConfirmRequest;
 import com.fangcang.titanjr.dto.request.ApplyLoanCreditRequest;
 import com.fangcang.titanjr.dto.request.AuditCreditOrderRequest;
@@ -189,8 +190,8 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			response.putErrorResult("[授信申请单号(orderNo)]不能为空");
 			return response;
 		}
-		if (req.getLoanCreditStatusEnum() == null) {
-			response.putErrorResult("[审核状态(auditResult)]不能为空");
+		if (req.getCheckState() == null) {
+			response.putErrorResult("审核状态不能为空");
 			return response;
 		}
 		// 校验申请单号是否存在
@@ -214,40 +215,85 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();
 		updateLoanCreditOrderParam.setFirstAuditor(req.getOperator());
 		boolean auditResult = false;
-		if (req.getLoanCreditStatusEnum() == LoanCreditStatusEnum.NO_PASS) {
+		int status = 0;
+		if (req.getCheckState() == 0) {
 			auditResult = false;
+			status = LoanCreditStatusEnum.NO_PASS.getStatus();
 			// 添加批注记录
 			LoanCreditOpinion loanCreditOpinion = new LoanCreditOpinion();
 			loanCreditOpinion.setOrderNo(req.getOrderNo());
-			loanCreditOpinion.setResult(req.getLoanCreditStatusEnum()
-					.getStatus());
+			loanCreditOpinion.setResult(req.getCheckState());
 			loanCreditOpinion.setContent(req.getContent());
 			loanCreditOpinion.setStatus(1);// 1：新添加，没有修改过，2：修改过
 			loanCreditOpinion.setCreater(req.getOperator());
 			loanCreditOpinion.setCreateTime(now);
 			loanCreditOpinionDao.saveLoanCreditOpinion(loanCreditOpinion);
-		} else if (req.getLoanCreditStatusEnum() == LoanCreditStatusEnum.PASS) {
+		} else if (req.getCheckState() == 1) {
 			updateLoanCreditOrderParam.setFirstAuditTime(now);
+			status = LoanCreditStatusEnum.INFO_COMMIT_ING.getStatus();
 			auditResult = true;
 		}
 		// 通过后,调用融数处理
 		if (auditResult) {
-			CreditLoanRunnable creditLoanRunnable = new CreditLoanRunnable(this, req.getOrderNo());
-			ThreadPoolUtil.excute(creditLoanRunnable);
+			asynPushCreditInfo(req.getOrderNo());
 		}
 		// 改申请单状态
 		updateLoanCreditOrderParam.setOrderNo(req.getOrderNo());
-		updateLoanCreditOrderParam.setStatus(req.getLoanCreditStatusEnum()
-				.getStatus());
+		updateLoanCreditOrderParam.setStatus(status);
 		loanCreditOrderDao.updateLoanCreditOrder(updateLoanCreditOrderParam);
 		response.putSuccess("审核成功");
 		return response;
 	}
 	/***
-	 * 提交申请到融数
+	 * 异步推送授信申请资料到融数
+	 * @param creditOrderNo
+	 */
+	public void asynPushCreditInfo(String creditOrderNo){
+		CreditLoanRunnable creditLoanRunnable = new CreditLoanRunnable(this, creditOrderNo);
+		ThreadPoolUtil.excute(creditLoanRunnable);
+	}
+	
+	/***
+	 * 提交申请资料到融数
 	 * @param creditOrderNo
 	 */
 	public BaseResponseDTO pushCreditInfoToRs(String creditOrderNo){
+		BaseResponseDTO response = new BaseResponseDTO();
+		int time = 1;
+		//重试2次
+		while (time<=3) {
+			try {
+				response = this.pushCreditInfoToRsSub(creditOrderNo);
+				if(response.isResult()){
+					log.info("授信申请单["+creditOrderNo+"]------------第["+time+"]次提交授信申请资料到融数----------，结果:成功");
+					break;
+				}else{
+					log.info("授信申请单["+creditOrderNo+"]------------第["+time+"]次提交授信申请资料到融数----------，结果:失败。原因："+response.getReturnMessage());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			time ++;
+		}
+		if(response.isResult()==false){
+			LoanCreditOrder loanCreditOrderParam = new LoanCreditOrder();
+			loanCreditOrderParam.setOrderNo(creditOrderNo);
+			List<LoanCreditOrder> loanCreditOrderList = loanCreditOrderDao
+					.queryLoanCreditOrder(loanCreditOrderParam);
+			OrgDTO orgDTO = new OrgDTO();
+			orgDTO.setOrgcode(loanCreditOrderList.get(0).getOrgCode());
+			orgDTO = titanFinancialOrganService.queryOrg(orgDTO);
+			//发送短信通知运营
+			SendMessageRequest sendMessageRequest = new SendMessageRequest();
+			sendMessageRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+			sendMessageRequest.setContent("["+orgDTO.getOrgname()+"]提交的授信申请，提交复审时失败，请查看服务器日志或者重新提交复审");
+			sendMessageRequest.setReceiveAddress("13543309695");//峰哥手机
+			sendSMSService.sendMessage(sendMessageRequest);
+		}
+		return response;
+	}
+	
+	private BaseResponseDTO pushCreditInfoToRsSub(String creditOrderNo){
 		BaseResponseDTO response = new BaseResponseDTO();
 		LoanCreditOrder loanCreditOrderParam = new LoanCreditOrder();
 		loanCreditOrderParam.setOrderNo(creditOrderNo);
@@ -268,6 +314,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 
 		if (CollectionUtils.isEmpty(loanCreditCompanyList)) {
 			response.putErrorResult("申请授信单没有找到对应的企业资料");
+			updateLoanCreditOrderStatus(loanCreditOrder.getOrderNo(),LoanCreditStatusEnum.INFO_COMMIT_FAIL.getStatus());
 			return response;
 		}
 		// 授信申请公司文件
@@ -295,6 +342,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					.queryLoanPersonEnsure(loanPersonEnsureParam);
 			if (CollectionUtils.isEmpty(loanPersonEnsureList)) {
 				response.putErrorResult("个人担保资料不存在，请补充担保资料");
+				updateLoanCreditOrderStatus(loanCreditOrder.getOrderNo(),LoanCreditStatusEnum.INFO_COMMIT_FAIL.getStatus());
 				return response;
 			}
 			loanPersonEnsure = loanPersonEnsureList.get(0);
@@ -315,6 +363,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					.queryLoanCompanyEnsure(loanCompanyEnsureParam);
 			if (CollectionUtils.isEmpty(loanCompanyEnsureList)) {
 				response.putErrorResult("企业担保资料不存在，请补充担保资料");
+				updateLoanCreditOrderStatus(loanCreditOrder.getOrderNo(),LoanCreditStatusEnum.INFO_COMMIT_FAIL.getStatus());
 				return response;
 			}
 			loanCompanyEnsure = loanCompanyEnsureList.get(0);
@@ -331,6 +380,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				ensureFilesList, loanCreditOrder.getOrgCode());
 		if (!StringUtil.isValidString(encryptRSFilePath)) {
 			response.putErrorResult("授信文件上传融数时失败");
+			updateLoanCreditOrderStatus(loanCreditOrder.getOrderNo(),LoanCreditStatusEnum.INFO_COMMIT_FAIL.getStatus());
 			return response;
 		}
 
@@ -358,6 +408,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			response.putErrorResult(rsFsFileUploadResponse.getReturnMsg());
 			log.error("上传授信文件压缩包到融数失败,请求参数为rsFsFileUploadRequest:"
 					+ Tools.gsonToString(rsFsFileUploadRequest));
+			updateLoanCreditOrderStatus(loanCreditOrder.getOrderNo(),LoanCreditStatusEnum.INFO_COMMIT_FAIL.getStatus());
 			return response;
 		}
 
@@ -396,6 +447,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 						.getReturnMsg());
 			log.error("授信申请时上报企业资料信息给融数失败,接口：oprsystemCreditCompany，企业信息为creditCompanyRequest:"
 					+ Tools.gsonToString(creditCompanyRequest));
+			updateLoanCreditOrderStatus(loanCreditOrder.getOrderNo(),LoanCreditStatusEnum.INFO_COMMIT_FAIL.getStatus());
 			return response;
 		}
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
@@ -440,9 +492,9 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		OrderMixserviceCreditapplicationResponse orderMixserviceCreditapplicationResponse = rsCreditManager
 				.orderMixserviceCreditapplication(orderMixserviceCreditapplicationRequest);
 		if (orderMixserviceCreditapplicationResponse.isSuccess() == false) {
-			response.putErrorResult(orderMixserviceCreditapplicationResponse
-			.getReturnMsg());
+			response.putErrorResult(orderMixserviceCreditapplicationResponse.getReturnMsg());
 			log.error("授信申请时融数接口(orderMixserviceCreditapplication)失败,OrgCode:" + loanCreditOrder.getOrgCode());
+			updateLoanCreditOrderStatus(loanCreditOrder.getOrderNo(),LoanCreditStatusEnum.INFO_COMMIT_FAIL.getStatus());
 			return response;
 		}
 		log.info("金融后台初审通过后，授信申请的资料提交成功，金融机构OrgCode:"+loanCreditOrder.getOrgCode());
@@ -450,9 +502,22 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();
 		updateLoanCreditOrderParam.setOrderNo(creditOrderNo);
 		updateLoanCreditOrderParam.setUrlKey(rsFsFileUploadResponse.getUrlKey());
+		updateLoanCreditOrderParam.setStatus(LoanCreditStatusEnum.PASS.getStatus());
 		loanCreditOrderDao.updateLoanCreditOrder(updateLoanCreditOrderParam);
 		response.putSuccess("授信资料提交成功");
 		return response;
+	}
+	
+	/**
+	 * 授信资料提交失败，则保存失败状态
+	 * @param creditOrderNo
+	 * @param status
+	 */
+	private void updateLoanCreditOrderStatus(String creditOrderNo,Integer status){
+		LoanCreditOrder updateLoanCreditOrderParam = new LoanCreditOrder();
+		updateLoanCreditOrderParam.setOrderNo(creditOrderNo);
+		updateLoanCreditOrderParam.setStatus(status);
+		loanCreditOrderDao.updateLoanCreditOrder(updateLoanCreditOrderParam);
 	}
 	/***
 	 * * 打包加密授信申请文件

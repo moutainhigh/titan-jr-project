@@ -15,8 +15,8 @@ public class AuditCreditOrderRequest extends BaseRequestDTO {
 
 	// 授信单号
 	private String orderNo;
-
-	private LoanCreditStatusEnum loanCreditStatusEnum;
+	//审核状态：0-不通过，1-通过
+	private Integer checkState;
 
 	private String content;
 
@@ -36,12 +36,12 @@ public class AuditCreditOrderRequest extends BaseRequestDTO {
 		this.orderNo = orderNo;
 	}
 
-	public LoanCreditStatusEnum getLoanCreditStatusEnum() {
-		return loanCreditStatusEnum;
+	public Integer getCheckState() {
+		return checkState;
 	}
 
-	public void setLoanCreditStatusEnum(LoanCreditStatusEnum loanCreditStatusEnum) {
-		this.loanCreditStatusEnum = loanCreditStatusEnum;
+	public void setCheckState(Integer checkState) {
+		this.checkState = checkState;
 	}
 
 	public String getContent() {

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
-import com.fangcang.titanjr.common.enums.LoanCreditOrderEnum;
 import com.fangcang.titanjr.dto.request.AuditCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
@@ -73,8 +72,7 @@ public class MLoanController extends BaseController{
 		
 		PageCreditCompanyInfoResponse queryPageCreditCompanyInfoResponse = loanCreditService.queryPageCreditCompanyInfo(queryCreditCompanyInfoRequest);
 		GetCreditOrderCountRequest countRequest = new GetCreditOrderCountRequest();
-		countRequest.setStatus(LoanCreditOrderEnum.Status.TO_CHECK.getValue());
-		
+		countRequest.setStatus(LoanCreditStatusEnum.TO_CHECK.getStatus());
 		model.addAttribute("pageCreditCompanyInfoDTO", queryPageCreditCompanyInfoResponse.getPageCreditCompanyInfoDTO());
 		model.addAttribute("creditOrderToCheckCount", loanCreditService.getCreditOrderCount(countRequest).getCount());
 		
@@ -108,7 +106,7 @@ public class MLoanController extends BaseController{
 		}
 		
 		GetCreditOrderCountRequest countRequest = new GetCreditOrderCountRequest();
-		countRequest.setStatus(LoanCreditOrderEnum.Status.TO_CHECK.getValue());
+		countRequest.setStatus(LoanCreditStatusEnum.TO_CHECK.getStatus());
 		
 		model.addAttribute("creditOrderToCheckCount", loanCreditService.getCreditOrderCount(countRequest).getCount());
 		
@@ -128,7 +126,7 @@ public class MLoanController extends BaseController{
 		AuditCreditOrderRequest auditCreidtOrderRequest = new AuditCreditOrderRequest();
 		auditCreidtOrderRequest.setOperator(getSAASLoginName());
 		auditCreidtOrderRequest.setOrderNo(orderNo);
-		auditCreidtOrderRequest.setLoanCreditStatusEnum(LoanCreditStatusEnum.getEnumByStatus(auditResult));
+		auditCreidtOrderRequest.setCheckState(auditResult);
 		auditCreidtOrderRequest.setContent(content);
 		auditCreidtOrderRequest.setOperator(getSAASLoginName());
 		AuditCreidtOrderResponse auditCreidtOrderResponse = loanCreditService.auditCreditOrder(auditCreidtOrderRequest);
@@ -137,6 +135,22 @@ public class MLoanController extends BaseController{
 		}else{
 			putSysError(auditCreidtOrderResponse.getReturnMessage());
 		}
+		return toJson();	
+	}
+	
+	/***
+	 * 提交复审
+	 * @param orderNo
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/check-commit-info")
+	public String checkCommitInfo(String orderNo){
+		if(StringUtils.isEmpty(orderNo)){
+			return toJson(putSysError("参数不能为空"));
+		}
+		loanCreditService.asynPushCreditInfo(orderNo);
+		putSuccess("正在重新提交复审,请稍后关注审核状态");
 		return toJson();	
 	}
 }

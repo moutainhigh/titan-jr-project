@@ -883,8 +883,8 @@
 					<p class="ptb9"><span class="w80"><i class="c_fc2020">*</i>审核结果：</span>
 						<select name="auditResult" id="auditResult" class="w100 select w135 J_nothroght">
 							<option value="">请选择</option>
-							<option value="3">通过</option>
-							<option value="4">不通过</option>
+							<option value="1">通过</option>
+							<option value="0">不通过</option>
 						</select>
 					</p>
 					<p class="ptb9 showhide"><span class="w80"><i class="c_fc2020">*</i>未通过原因：</span>
@@ -895,7 +895,7 @@
 						<span class=" cursor w85 btn_red fs16 " id="btn_save">保存</span>				
 					</div>
 				</c:if>
-				<c:if test="${getCreditInfoResponse.creditOrder.status==3 or getCreditInfoResponse.creditOrder.status==5}">
+				<c:if test="${getCreditInfoResponse.creditOrder.status==3 or getCreditInfoResponse.creditOrder.status==5 or getCreditInfoResponse.creditOrder.status==10}">
 					<!-- 初审通过 -->
 					<div class="examine_righttop">
 						<h3>审核结果</h3>
