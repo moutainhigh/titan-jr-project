@@ -198,7 +198,9 @@ public class FinancialLoanCreditController extends BaseController {
 
 			log.info("get audit evaluation info ="
 					+ JsonConversionTool.toJson(auditEvaluationResponse));
-
+			if(auditEvaluationResponse.getCreditOpinionBean()!=null){
+				auditEvaluationResponse.getCreditOpinionBean().setContent(Tools.replaceEnterKeyHTML(auditEvaluationResponse.getCreditOpinionBean().getContent()));
+			}
 			model.addAttribute("creditOpinion",
 					auditEvaluationResponse.getCreditOpinionBean());
 		}
