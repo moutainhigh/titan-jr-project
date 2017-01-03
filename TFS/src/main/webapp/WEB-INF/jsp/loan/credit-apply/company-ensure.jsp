@@ -37,19 +37,19 @@
                             <i class="redNotice">*</i>姓名：
                         </td>
                         <td class="loanInformation_td02">
-                            <input type="text" class="loanInformation_inp01" placeholder="请输入担保人姓名" field='personName' datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
+                            <input type="text" class="loanInformation_inp01" placeholder="请输入担保人姓名" field='personName' datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
                         </td>
                         <td class="loanInformation_td01">
                              <i class="redNotice">*</i>身份证号：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人身份证号" field='nationalIdentityNumber' datatype="s1-30" errormsg="必填项，并且最长只能30个字符！" style="width: 162px;">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人身份证号" field='nationalIdentityNumber' datatype="*1-30" errormsg="必填项，并且最长只能30个字符！" style="width: 162px;">
                         </td>
                          <td class="loanInformation_td01">
                              <i class="redNotice">*</i>手机号码：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人手机号码" field='mobilenNmber' datatype="s1-20" errormsg="必填项，并且最长只能20个字符！" style="width: 143px;">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人手机号码" field='mobilenNmber' datatype="*1-20" errormsg="必填项，并且最长只能20个字符！" style="width: 143px;">
                         </td>
                     </tr>  
                     <tr>
@@ -149,7 +149,7 @@
                              <i class="redNotice">*</i>工作电话：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人工作电话" field='worktelePhone' datatype="s1-20" errormsg="必填项，并且最长只能20个字符！"  style="width: 143px;">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入担保人工作电话" field='worktelePhone' datatype="*1-20" errormsg="必填项，并且最长只能20个字符！"  style="width: 143px;">
                         </td>
                     </tr>
                     
@@ -215,8 +215,7 @@
                                 </colgroup>
                                 <tr>
                                     <td class="loanInformation_td02">
-                                        <select class="select loanInformation_se02" style="width: 140px;" id="carStatus" field="carPropertyType" customFun="validateSelect" errormsg="请选择车产情况！">
-                                            <option>请选择</option>
+                                        <select class="select loanInformation_se02" style="width: 140px;" id="carStatus" field="carPropertyType" >
                                             <option value="1">无车</option>
                                             <option value="2">有车无车贷</option>
                                             <option value="3">有车有车贷</option>
@@ -235,14 +234,14 @@
                                         <i class="redNotice">*</i>汽车品牌：
                                     </td>
                                     <td class="loanInformation_td02 loanInformation_car" >
-                                        <input type="text" class="loanInformation_inp01" style="height:48px;" placeholder="请输入担保人汽车品牌" field="carBrand" customFun="validateTextValue"  errormsg="请输入担保人汽车品牌!">
+                                        <input type="text" class="loanInformation_inp01" style="height:48px;" placeholder="请输入担保人汽车品牌" field="carBrand"  maxlength="50" customFun="validateTextValue"  errormsg="请输入担保人汽车品牌!">
                                     </td>
                                     
                                     <td class="loanInformation_td01 loanInformation_car">
                                         <i class="redNotice">*</i>汽车价值：
                                     </td>
                                     <td class="loanInformation_td02 loanInformation_car" >
-                                        <input type="text" class="loanInformation_inp01" style="height:48px;" placeholder="请输入担保人汽车价值" field="carWorth" customFun="validateTextValue"  errormsg="请输入担保人汽车价值">
+                                        <input type="text" class="loanInformation_inp01" style="height:48px;" placeholder="请输入担保人汽车价值" field="carWorth"  maxlength="50" customFun="validateTextValue"  errormsg="请输入担保人汽车价值">
                                     </td>       
                                 </tr>
                             </table>
@@ -295,13 +294,13 @@
                             <i class="redNotice">*</i>第一联系人姓名：
                         </td>
                         <td class="loanInformation_td02">
-                             <input type="text" class="loanInformation_inp01" placeholder="请输入第一联系人姓名" field="firstContactName" datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
+                             <input type="text" class="loanInformation_inp01" placeholder="请输入第一联系人姓名" field="firstContactName" datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
                         </td>    
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i>第一联系人电话：
                         </td>
                         <td class="loanInformation_td02">
-                            <input type="text" class="loanInformation_inp01" placeholder="请输入第一联系人电话" field="firstContactPhone" datatype="s1-20" errormsg="必填项，并且最长只能20个字符！">
+                            <input type="text" class="loanInformation_inp01" placeholder="请输入第一联系人电话" field="firstContactPhone" datatype="*1-20" errormsg="必填项，并且最长只能20个字符！">
                         </td>  
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i>与担保人关系：
@@ -323,13 +322,13 @@
                             <i class="redNotice">*</i>第二联系人姓名：
                         </td>
                         <td class="loanInformation_td02">
-                             <input type="text" class="loanInformation_inp01" placeholder="请输入第二联系人姓名" field="secondContactName" datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
+                             <input type="text" class="loanInformation_inp01" placeholder="请输入第二联系人姓名" field="secondContactName" datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
                         </td>    
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i>第二联系人电话：
                         </td>
                         <td class="loanInformation_td02">
-                            <input type="text" class="loanInformation_inp01" placeholder="请输入第二联系人电话" field="secondContactPhone"  datatype="s1-20" errormsg="必填项，并且最长只能20个字符！">
+                            <input type="text" class="loanInformation_inp01" placeholder="请输入第二联系人电话" field="secondContactPhone"  datatype="*1-20" errormsg="必填项，并且最长只能20个字符！">
                         </td>  
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i>与担保人关系：
@@ -363,7 +362,7 @@
                             <i class="redNotice">*</i>企业名称：
                         </td>
                         <td class="loanInformation_td02">
-                            <input type="text" class="loanInformation_inp01" placeholder="请输入企业名称" field="companyName" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！">
+                            <input type="text" class="loanInformation_inp01" placeholder="请输入企业名称" field="companyName" datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                         </td>
                         <td class="loanInformation_td01">
                              <i class="redNotice">*</i>企业成立日期：
@@ -394,7 +393,7 @@
                              <i class="redNotice">*</i>营业执照号/社会信用代码：
                         </td>
                         <td class="loanInformation_td02">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入营业执照号/社会信用代码" field="businessLicense" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入营业执照号/社会信用代码" field="businessLicense" datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                         </td>                    
                     </tr> 
                     <tr>
@@ -402,13 +401,13 @@
                             <i class="redNotice">*</i>税务登记号：
                         </td>
                         <td class="loanInformation_td03">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入税务登记号" field="taxRegisterCode" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！"  style="width: 407px;">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入税务登记号" field="taxRegisterCode" datatype="*1-50" errormsg="必填项，并且最长只能50个字符！"  style="width: 407px;">
                         </td>
                         <td class="loanInformation_td01">
                              <i class="redNotice">*</i>组织机构代码：
                         </td>
                         <td class="loanInformation_td02">
-                           <input type="text" class="loanInformation_inp01" placeholder="请输入组织机构代码" field="orgCodeCertificate" datatype="s1-50" errormsg="必填项，并且最长只能50个字符！">
+                           <input type="text" class="loanInformation_inp01" placeholder="请输入组织机构代码" field="orgCodeCertificate" datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                         </td>                    
                     </tr> 
                     
@@ -503,7 +502,7 @@
                         <i class="redNotice">*</i>法人姓名：
                     </td>
                     <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" placeholder="请输入法人姓名"  field="legalPersonName" datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
+                        <input type="text" class="loanInformation_inp01" placeholder="请输入法人姓名"  field="legalPersonName" datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>法人证件号：
@@ -513,7 +512,7 @@
                            <option value="1">身份证</option>
                            <option value="2">护照</option>
                        </select>
-                       <input type="text" class="loanInformation_inp04" placeholder="请输入证件号码" field="legalPersonCertificateNumber" datatype="s1-30" errormsg="必填项，并且最长只能30个字符！">
+                       <input type="text" class="loanInformation_inp04" placeholder="请输入证件号码" field="legalPersonCertificateNumber" datatype="*1-30" errormsg="必填项，并且最长只能30个字符！">
                     </td>
                 </tr>
               </table>  
@@ -530,13 +529,13 @@
                         <i class="redNotice">*</i>联系人姓名：
                     </td>
                     <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" placeholder="请输入联系人姓名"  field="contactName"  datatype="s1-10" errormsg="必填项，并且最长只能10个字符！">
+                        <input type="text" class="loanInformation_inp01" placeholder="请输入联系人姓名"  field="contactName"  datatype="*1-10" errormsg="必填项，并且最长只能10个字符！">
                     </td>
                     <td class="loanInformation_td01">
                          <i class="redNotice">*</i>联系电话：
                     </td>
                     <td class="loanInformation_td02">
-                       <input type="text" class="loanInformation_inp01" placeholder="请输入联系电话"  field="contactPhone"  datatype="s1-30" errormsg="必填项，并且最长只能30个字符！">
+                       <input type="text" class="loanInformation_inp01" placeholder="请输入联系电话"  field="contactPhone"  datatype="*1-30" errormsg="必填项，并且最长只能30个字符！">
                     </td>
                 </tr>
               </table>  

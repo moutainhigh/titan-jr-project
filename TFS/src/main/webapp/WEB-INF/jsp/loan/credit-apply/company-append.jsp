@@ -202,7 +202,7 @@
                         <i class="redNotice">*</i>租赁地址：
                     </td>                  
                     <td class="loanInformation_td02" id="cityAppend" colspan="3" fields='leaseAddress' split="/">
-                    	<div customFun="validateSelects" errormsg="请选择租赁地址!"  style="display:inline-block;">
+                    	<div customFun="validateSelects" errormsg="必填项，租赁地址!"  style="display:inline-block;">
 	                        <select class="prov select loanInformation_se01" item='1' onblur="$(this).parent().blur();"></select> 
 	                        <select class="city select loanInformation_se01" disabled="disabled" item='2' onblur="$(this).parent().blur();"></select>
 	                        <select class="dist select loanInformation_se01" disabled="disabled" item='3' onblur="$(this).parent().blur();"></select>
