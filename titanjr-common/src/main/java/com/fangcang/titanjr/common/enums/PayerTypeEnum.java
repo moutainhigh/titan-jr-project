@@ -13,7 +13,7 @@ public enum PayerTypeEnum {
 	  RECHARGE("7","充值"),
 	  WITHDRAW("8","提现"),
 	  OPEN_ORG("1001","对外开放平台"),
-	  TT_MALL("1024","TTMALL收银台");
+	  TT_MALL("1024","TTMALL收银台"),
 	  LOAN("512","贷款");
 
 	  public String key;

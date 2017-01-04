@@ -2140,8 +2140,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 		// 表明业务订单号已经重复提交
 		if (null != transOrderDTO) {
-<<<<<<< HEAD
-
 			if (OrderStatusEnum.isPaySuccess(transOrderDTO
 					.getStatusid())) {
 
@@ -2162,9 +2160,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 				return orderCreateResponse;
 			}
-=======
 			orderCreateResponse.setTransId(transOrderDTO.getTransid());
->>>>>>> dev_loan
 			// 金额不一致,则直接将订单设置为失效
 			if (!NumberUtil.covertToCents(titanOrderRequest.getAmount())
 					.equals("" + transOrderDTO.getTradeamount())) {

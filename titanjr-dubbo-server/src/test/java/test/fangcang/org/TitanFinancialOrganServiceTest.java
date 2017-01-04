@@ -40,5 +40,5 @@ public class TitanFinancialOrganServiceTest extends BaseTest{
 			e.printStackTrace();
 		}
 		
-
+	}
 }

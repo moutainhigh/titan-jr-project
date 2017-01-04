@@ -39,10 +39,10 @@ public class LoanOrderDaoTest extends SpringTest {
         loanApplyOrder.setRepaymentType(1);
         loanApplyOrder.setActualRepaymentDate(new Date());
         loanApplyOrder.setLastRepaymentDate(new Date());
-        loanApplyOrder.setRepaymentPrincipal(600000);
-        loanApplyOrder.setRepaymentInterest(20000);
-        loanApplyOrder.setShouldCapital(60000);
-        loanApplyOrder.setShouldInterest(20000);
+        loanApplyOrder.setRepaymentPrincipal(600000L);
+        loanApplyOrder.setRepaymentInterest(20000L);
+        loanApplyOrder.setShouldCapital(60000L);
+        loanApplyOrder.setShouldInterest(20000L);
 
         loanOrderDao.saveLoanApplyOrder(loanApplyOrder);
     }
@@ -51,8 +51,8 @@ public class LoanOrderDaoTest extends SpringTest {
     public void testQueryApplyOrder() {
         LoanApplyOrder loanApplyOrder = new LoanApplyOrder();
         loanApplyOrder.setOrderNo("LA0254657");
-        List<LoanApplyOrder> list = loanOrderDao.queryLoanApplyOrder(loanApplyOrder);
-        System.out.println(list);
+       // List<LoanApplyOrder> list = loanOrderDao.queryLoanApplyOrder(loanApplyOrder);
+      //  System.out.println(list);
     }
 
     @Test
@@ -77,10 +77,10 @@ public class LoanOrderDaoTest extends SpringTest {
         loanApplyOrder.setRepaymentType(2);
         loanApplyOrder.setActualRepaymentDate(DateUtil.stringToDate("2016-01-01"));
         loanApplyOrder.setLastRepaymentDate(DateUtil.stringToDate("2016-01-01"));
-        loanApplyOrder.setRepaymentPrincipal(6000002);
-        loanApplyOrder.setRepaymentInterest(200002);
-        loanApplyOrder.setShouldCapital(600002);
-        loanApplyOrder.setShouldInterest(200002);
+        loanApplyOrder.setRepaymentPrincipal(6000002L);
+        loanApplyOrder.setRepaymentInterest(200002L);
+        loanApplyOrder.setShouldCapital(600002L);
+        loanApplyOrder.setShouldInterest(200002L);
         loanOrderDao.updateLoanApplyOrder(loanApplyOrder);
     }
 }

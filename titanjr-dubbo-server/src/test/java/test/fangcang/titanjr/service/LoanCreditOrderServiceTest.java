@@ -61,8 +61,8 @@ public class LoanCreditOrderServiceTest extends SpringTest {
 	@Test
 	public void testauditCreditOrder(){
 
-		AuditCreidtOrderRequest request = new AuditCreidtOrderRequest();
-		request.setAuditResult(LoanCreditStatusEnum.PASS);
+		AuditCreditOrderRequest request = new AuditCreditOrderRequest();
+		request.setCheckState(1);
 		request.setOrderNo("CR20161128112423613722");
 		try {
 			AuditCreidtOrderResponse response = loanCreditService.auditCreditOrder(request);

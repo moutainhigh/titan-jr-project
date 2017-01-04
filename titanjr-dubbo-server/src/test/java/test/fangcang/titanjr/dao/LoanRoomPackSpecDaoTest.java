@@ -1,21 +1,23 @@
 package test.fangcang.titanjr.dao;
 
-import com.fangcang.titanjr.dao.LoanRoomPackSpecDao;
-import com.fangcang.titanjr.entity.LoanRoomPackSpec;
-import com.fangcang.util.DateUtil;
-import org.junit.Test;
-import test.fangcang.titanjr.SpringTest;
-
-import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.junit.Test;
+
+import test.fangcang.titanjr.SpringTest;
+
+import com.fangcang.titanjr.entity.LoanRoomPackSpec;
+import com.fangcang.util.DateUtil;
 
 /**
  * Created by zhaoshan on 2016/11/16.
  */
 public class LoanRoomPackSpecDaoTest extends SpringTest {
-    @Resource
-    LoanRoomPackSpecDao loanRoomPackSpecDao;
+    //@Resource
+   // LoanRoomPackSpecDao loanRoomPackSpecDao;
 
     @Test
     public void testSaveRoomPackSpec() {
@@ -29,15 +31,15 @@ public class LoanRoomPackSpecDaoTest extends SpringTest {
         loanRoomPackSpec.setEndDate(new Date());
         loanRoomPackSpec.setHotelName("珠海长隆酒店");
         loanRoomPackSpec.setRoomNights(500);
-        loanRoomPackSpecDao.saveLoanRoomPackSpec(loanRoomPackSpec);
+       // loanRoomPackSpecDao.saveLoanRoomPaockSpec(loanRoomPackSpec);
     }
 
     @Test
     public void testQueryRoomPackSpec() {
         LoanRoomPackSpec loanRoomPackSpec = new LoanRoomPackSpec();
         loanRoomPackSpec.setOrderNo("LA0254657");
-        List<LoanRoomPackSpec> list = loanRoomPackSpecDao.queryLoanRoomPackSpec(loanRoomPackSpec);
-        System.out.println(list);
+       // List<LoanRoomPackSpec> list = loanRoomPackSpecDao.queryLoanRoomPackSpec(loanRoomPackSpec);
+        //System.out.println(list);
     }
 
     @Test
@@ -52,6 +54,6 @@ public class LoanRoomPackSpecDaoTest extends SpringTest {
         loanRoomPackSpec.setEndDate(DateUtil.stringToDate("2016-01-01"));
         loanRoomPackSpec.setHotelName("珠海长隆酒店22");
         loanRoomPackSpec.setRoomNights(5002);
-        loanRoomPackSpecDao.updateLoanRoomPackSpec(loanRoomPackSpec);
+       // loanRoomPackSpecDao.updateLoanRoomPackSpec(loanRoomPackSpec);
     }
 }
