@@ -42,18 +42,30 @@
 		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
 	</bean>
 
+
+
 	<bean id="configSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="configLocation" value="classpath:mybatis/SqlMapConfig.xml"></property>
+		<property name="configLocation" value="classpath:mybatis/platform/SqlMapConfig.xml"></property>
 		<property name="dataSource" ref="configDataSource" />
 	</bean>
 
 	<bean id="configSqlMapClient" class="com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl">
 		<property name="sqlSessionFactory" ref="configSessionFactory"></property>
 	</bean>
+	
+	<bean id="orderSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:mybatis/platform/SqlMapConfig.xml"></property>
+		<property name="dataSource" ref="orderDataSource" />
+	</bean>
 
+	<bean id="orderSqlMapClient" class="com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl">
+		<property name="sqlSessionFactory" ref="orderSessionFactory"></property>
+	</bean>
+	
 
 	<!-- dao 定义列表 -->
 	<bean id="domainConfigDao" class="com.fangcang.titanjr.dao.impl.DomainConfigDaoImpl" parent="configSqlMapClient"></bean>
+	<bean id="platformOrderOprDao" class="com.fangcang.titanjr.dao.impl.PlatformOrderOprDaoImpl" parent="orderSqlMapClient"></bean>
 
 	<bean id="titanOrgCheckDao" class="com.fangcang.titanjr.dao.impl.TitanOrgCheckDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanAccountDao" class="com.fangcang.titanjr.dao.impl.TitanAccountDaoImpl" parent="baseSqlMapClient"></bean>
@@ -101,7 +113,19 @@
 	
 	<bean id="titanHelpTypeDao" class="com.fangcang.titanjr.dao.impl.TitanHelpTypeDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanSysconfigDao" class="com.fangcang.titanjr.dao.impl.TitanSysconfigDaoImpl" parent="baseSqlMapClient"></bean>
+	<!--信贷产品-->
+	<bean id="loanCompanyEnsureDao" class="com.fangcang.titanjr.dao.impl.LoanCompanyEnsureDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="loanCreditCompanyDao" class="com.fangcang.titanjr.dao.impl.LoanCreditCompanyDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="loanCreditOrderDao" class="com.fangcang.titanjr.dao.impl.LoanCreditOrderDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="loanCreditOpinionDao" class="com.fangcang.titanjr.dao.impl.LoanCreditOpinionDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="loanOrderDao" class="com.fangcang.titanjr.dao.impl.LoanOrderDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="loanPersonEnsureDao" class="com.fangcang.titanjr.dao.impl.LoanPersonEnsureDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="loanSpecificationDao" class="com.fangcang.titanjr.dao.impl.LoanSpecificationDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanOpenOrgDao" class="com.fangcang.titanjr.dao.impl.TitanOpenOrgDaoImpl" parent="baseSqlMapClient"></bean>
+<<<<<<< HEAD
 	<bean id="titanRefundDao" class="com.fangcang.titanjr.dao.impl.TitanRefundDaoImpl" parent="baseSqlMapClient"></bean>
+=======
+	<bean id="loanCreditOrderDiscardDao" class="com.fangcang.titanjr.dao.impl.LoanCreditOrderDiscardDaoImpl" parent="baseSqlMapClient"></bean>	
+>>>>>>> dev_loan
 </beans>
 

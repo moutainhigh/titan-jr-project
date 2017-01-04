@@ -1,9 +1,15 @@
 package com.fangcang.titanjr.common.util;
 
+
 import java.io.BufferedInputStream;
+import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.CharArrayReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
@@ -814,6 +821,10 @@ public class DateUtil {
 	 */
 	public static Date getDayEndTime(Date date) 
 	{
+		if(date == null)
+		{
+			return null;
+		}
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.set(Calendar.HOUR_OF_DAY, 23);
@@ -825,6 +836,10 @@ public class DateUtil {
 
 	public static Date getDayBeginTime(Date date) 
 	{
+		if(date == null)
+		{
+			return null;
+		}
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.set(Calendar.HOUR_OF_DAY, 0);
@@ -878,6 +893,7 @@ public class DateUtil {
 	
 	public static void main(String[] args) throws JAXBException, ParseException {
 		
+
 //		Long orderDate = DateUtil.sdf5.parse("20161122144728").getTime();
 //		Long nowDate = new Date().getTime();
 //		System.out.println((long)(nowDate-orderDate));
@@ -910,6 +926,20 @@ public class DateUtil {
 //		System.out.println(10<<2);
 		
 		System.out.println(new BigDecimal(1024<<10).toString());
+
+		try {
+			
+//			List<String> list = ["张三","李四"];
+			
+			
+			
+			
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	

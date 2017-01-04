@@ -47,5 +47,13 @@
 		<property name="username" value="config" />
 		<property name="password" value="config" />
 	</bean>
+	
+	<bean id="orderDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		  destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.2.39:1521:fangcangdb" />
+		<property name="username" value="htl_order" />
+		<property name="password" value="bf83hfo5" />
+	</bean>
 </beans>
 

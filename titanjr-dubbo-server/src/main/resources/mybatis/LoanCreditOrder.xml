@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.LoanCreditOrderDao">
+	
+	
+    <resultMap id="loanCreditOrder" type="com.fangcang.titanjr.entity.LoanCreditOrder">
+        <result property="orderNo" column="orderno"/>
+        <result property="orgCode" column="orgcode"/>
+        <result property="dayLimit" column="daylimit"/>
+        <result property="amount" column="amount"/>
+        <result property="actualAmount" column="actualamount"/>
+        <result property="reqTime" column="reqtime"/>
+        <result property="rateTem" column="ratetem"/>
+        <result property="rspId" column="rspid"/>
+        <result property="rsorgId" column="rsorgid"/>
+        <result property="createTime" column="createtime"/>
+        <result property="urlKey" column="urlkey"/>
+        <result property="status" column="status"/>
+        <result property="assureType" column="assuretype"/>
+         <result property="firstAuditor" column="firstauditor"/>
+        <result property="firstAuditTime" column="firstaudittime"/>
+        <result property="lastAuditTime" column="lastaudittime"/>
+        <result property="auditPass" column="auditpass"/>
+        <result property="reqJson" column="reqjson"/>
+        <result property="expireTime" column="expiretime"/>
+    </resultMap>
+
+
+    <select id="queryLoanCreditOrder" resultMap="loanCreditOrder"
+            parameterType="com.fangcang.titanjr.entity.LoanCreditOrder">
+            select `id`, 
+            `orderno`,
+            `orgcode`,
+            `daylimit`, 
+            `amount`, 
+            `actualamount`,
+             `reqtime`,
+              `ratetem`, 
+              `rspid`,
+               `rsorgid`, 
+               `createtime`, 
+               `urlkey`,
+                `status`,
+                 `assuretype`,
+                 `firstauditor`,
+                  `firstaudittime`,
+                   `lastaudittime`,
+                    `auditpass`,
+                     `reqjson`,
+                     expiretime
+                     from t_loan_creditorder
+	        <where>
+	            <if test="orderNo !=null">
+	                and orderno = #{orderNo}
+	            </if>
+	            <if test="status !=null">
+	                and status = #{status}
+	            </if>
+	            <if test="orgCode !=null">
+	                and orgcode = #{orgCode}
+	            </if>
+	        </where>
+
+    </select>
+    
+	<select id="queryLoanCreditCompanyOrder" resultType="com.fangcang.titanjr.dto.bean.CreditCompanyInfoDTO"  parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
+		select 
+			C.name,
+			O.orgcode,
+			C.contactname,
+			C.contactphone,
+			O.orderno,
+			O.firstauditor,
+			O.reqtime,
+			O.createtime,
+			O.status
+		from t_loan_creditorder O 
+			left join t_loan_creditcompany C 
+			on O.orderno = C.creditorderno 
+		<where>
+			<if test="name !=null">name like concat('%',#{name},'%') </if>
+			<if test="contactName !=null">and contactname like concat('%',#{contactName},'%') </if>
+			<if test="status !=null"> and status = #{status}</if>
+		</where>
+	</select>
+	
+	<select id="getCreditOrderCount" resultType="Integer" parameterType="com.fangcang.titanjr.entity.parameter.LoanCreditOrderParam">
+		select 
+			count(1) 
+		from t_loan_creditorder
+			<where>
+				<if test="name !=null">name like concat('%',#{name},'%') </if>
+				<if test="status !=null"> and status = #{status}</if>
+			</where>
+	</select>
+	
+	
+	
+	
+    <update id="updateLoanCreditOrder" parameterType="com.fangcang.titanjr.entity.LoanCreditOrder">
+        update t_loan_creditorder
+        <set>
+        	
+        	<if test="newOrderNo != null">orderNo= #{newOrderNo},</if>
+            <if test="dayLimit != null">daylimit= #{dayLimit},</if>
+            <if test="amount != null">amount= #{amount},</if>
+            <if test="actualAmount != null">actualamount= #{actualAmount},</if>
+            <if test="reqTime != null">reqtime= #{reqTime},</if>
+            <if test="rateTem != null">ratetem= #{rateTem},</if>
+            <if test="rspId != null">rspid= #{rspId},</if>
+            <if test="rsorgId != null">rsorgid= #{rsorgId},</if>
+            <if test="createTime != null">createtime= #{createTime},</if>
+            <if test="urlKey != null">urlkey= #{urlKey},</if>
+            <if test="status != null">  status= #{status},  </if>
+            <if test="assureType != null">assuretype=#{assureType},</if>
+            <if test="firstAuditor != null">firstauditor= #{firstAuditor},</if>
+            <if test="firstAuditTime != null">firstaudittime= #{firstAuditTime},</if>
+            <if test="lastAuditTime != null">lastaudittime= #{lastAuditTime},</if>
+            <if test="auditPass != null">auditpass= #{auditPass},</if>
+            <if test="reqJson != null">reqjson= #{reqJson},</if>
+             <if test="expireTime != null">expiretime= #{expireTime},</if>
+        </set>
+        <where>
+            orderno = #{orderNo} <!--orderNo一定不为空-->
+        </where>
+    </update>
+
+    <insert id="insertLoanCreditOrder" parameterType="com.fangcang.titanjr.entity.LoanCreditOrder">
+	  INSERT INTO `t_loan_creditorder` (
+	   `orderno`,
+	   `orgcode`,
+	   `daylimit`, 
+	   `amount`, 
+	   `actualamount`, 
+	   `reqtime`, 
+	   `ratetem`, 
+	   `rspid`, 
+	   `rsorgid`, 
+	   `createtime`, 
+	   `urlkey`, 
+	   `status`,
+	    `assuretype`, 
+	    `firstaudittime`,
+	     `lastaudittime`, 
+	     `auditpass`, 
+	     `reqjson`,
+	     expiretime
+     )
+     VALUES
+     	(
+     		#{orderNo},
+     		#{orgCode},
+     		#{dayLimit},
+     		#{amount},
+     		#{actualAmount},
+     		#{reqTime},
+     		#{rateTem},
+     		#{rspId},
+     		#{rsorgId},
+     		#{createTime},
+     		#{urlKey},
+     		#{status},
+     		#{assureType},
+     		#{firstAuditTime},
+     		#{lastAuditTime},
+     		#{auditPass},
+     		#{reqJson},
+     		#{expireTime}
+     	)
+    </insert>
+
+</mapper>

@@ -22,9 +22,9 @@ public class BaseController implements Serializable {
 
     private static final long serialVersionUID = -2808661158418693093L;
 
-    ThreadLocal<Map<String, Object>> resultLocal = new ThreadLocal<Map<String,Object>>();
-    ThreadLocal<HttpServletRequest> requestLocal = new ThreadLocal<HttpServletRequest>();
-    ThreadLocal<HttpServletResponse> responseLocal = new ThreadLocal<HttpServletResponse>();
+    private ThreadLocal<Map<String, Object>> resultLocal = new ThreadLocal<Map<String,Object>>();
+    private ThreadLocal<HttpServletRequest> requestLocal = new ThreadLocal<HttpServletRequest>();
+    private ThreadLocal<HttpServletResponse> responseLocal = new ThreadLocal<HttpServletResponse>();
     
     @ModelAttribute
     public void setReqAndRes(HttpServletRequest request, HttpServletResponse response) {

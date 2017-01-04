@@ -9,7 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.math.RandomUtils;
@@ -25,8 +27,6 @@ import com.fangcang.util.StringUtil;
 /**
  * ftp文件上传下载帮助类
  * 引用其他开发者使用的类
- * @author: liuquan
- * @date: 2015年1月4日 上午11:50:26
  */
 public class FtpUtil {
 	/**
@@ -41,7 +41,18 @@ public class FtpUtil {
 	 * 用户注册上传的资料
 	 */
 	public static final String UPLOAD_PATH_ORG_REGISTER = "/org_register";
+	/**
+	 * 授信申请上传的文件资料
+	 */
+	public static final String UPLOAD_PATH_CREDIT_APPLY = "/credit_apply";
+	/**
+	 * 贷款申请上传的文件资料
+	 */
+	public static final String UPLOAD_PATH_LOAN_APPLY="/loan_apply";
+	//TODO 这个后面要删除掉最后的斜杠
+	public static String baseLocation = "/data/image/upload/images/titanjr";
 	
+	public static String baseUrlPrefix = "http://image.fangcang.com/upload/images/titanjr";
 	
 	private FTPClient ftpClient;
 	private  String serverIp;
@@ -49,10 +60,7 @@ public class FtpUtil {
 	private  String serverUser;
 	private  String serverPassword;
 	private boolean isLogin;
-
-	public static String baseLocation = "/data/image/upload/images/titanjr/";
 	
-	public static String baseUrlPrefix = "http://image.fangcang.com/upload/images/titanjr";
 
 	private static final Log logger = LogFactory.getLog(FtpUtil.class);
 
@@ -161,10 +169,15 @@ public class FtpUtil {
 		}
 	}
 
+	public static void makeLocalDirectory(String path){
+		File file = new File(path);
+		file.mkdirs();
+	}
+
 	/**
 	 * 创建远程目录
 	 *
-	 * @param romoteUploadePath 远程目录
+	 * @param romoteUploadePath 远程目录 ,如/data
 	 */
 	public boolean makeDirectory(String romoteUploadePath) throws Exception {
 		if (this.isBlank(romoteUploadePath)) {
@@ -194,6 +207,24 @@ public class FtpUtil {
 			throw e;
 		}
 	}
+	
+	public List<String> listFiles(String folderPath)throws Exception
+	{
+		List<String> list = new ArrayList<String>();
+		try {
+			String folder = baseLocation + folderPath;
+			 FTPFile[] ftpFile = ftpClient.listFiles(folder);
+			 for (FTPFile ftpFile2 : ftpFile) {
+				 list.add(ftpFile2.getName()); 
+			}
+		} catch (IOException e) {
+			logger.error("文件列表访问失败:",e);
+			throw e;
+			
+		}
+		return list;
+	}
+	
 	/**
 	 * 
 	 * @param folderPath 格式:/person/im
@@ -215,8 +246,16 @@ public class FtpUtil {
 			return false;
 		}
 		try {
-			this.ftpClient.deleteFile(filePath);
-			return true;
+			if(!filePath.startsWith("/")){
+				filePath ="/"+filePath;
+			}
+			boolean deleteState = this.ftpClient.deleteFile(baseLocation + filePath);
+			if(deleteState){
+				return true;
+			}else{
+				return false;
+			}
+			
 		} catch (Exception e) {
 			logger.error("删除文件失败[" + filePath + "]", e);
 			throw e;
@@ -315,9 +354,9 @@ public class FtpUtil {
 	/**
 	 * 下载文件
 	 *
-	 * @param remoteFileName     待下载的ftp文件名称
-	 * @param localDires         本地磁盘路径
-	 * @param remoteDownLoadPath ftp文件所在的磁盘路径
+	 * @param remoteFileName     待下载的ftp文件名称,如：aaa.jpg
+	 * @param localDires         本地磁盘路径,如:/data/10001
+	 * @param remoteDownLoadPath ftp文件所在的磁盘路径,/data/person
 	 */
 
 	public boolean downloadFile(String remoteFileName, String localDires,
@@ -328,24 +367,23 @@ public class FtpUtil {
 			return false;
 		}
 
-		String strFilePath = localDires + remoteFileName;
+		String strFilePath = localDires +"/"+ FileHelp.getFileName(remoteFileName);
 		BufferedOutputStream outStream = null;
 		boolean success = false;
 		try {
-			this.ftpClient.changeWorkingDirectory(remoteDownLoadPath);//改变工作目录
-
+			boolean dirStatus = this.ftpClient.changeWorkingDirectory(remoteDownLoadPath);//改变工作目录
 			outStream = new BufferedOutputStream(new FileOutputStream(strFilePath));
 
-			logger.info(remoteFileName + "开始下载....");
+			logger.info(remoteDownLoadPath+"/"+remoteFileName + "开始下载....");
 
 			success = this.ftpClient.retrieveFile(remoteFileName, outStream);
 
 			if (success == true) {
-				logger.info(remoteFileName + "成功下载到" + strFilePath);
+				logger.info(remoteDownLoadPath+"/"+remoteFileName + "成功下载到" + strFilePath);
 				return success;
 			}
 		} catch (Exception e) {
-			logger.error(remoteFileName + "下载失败", e);
+			logger.error(remoteDownLoadPath+"/"+remoteFileName + "下载失败", e);
 			throw e;
 		} finally {
 			if (null != outStream) {
@@ -364,7 +402,7 @@ public class FtpUtil {
 		}
 		return success;
 	}
-
+	
 	/**
 	 * 上传文件夹
 	 *
@@ -477,9 +515,9 @@ public class FtpUtil {
 	
 	/***
 	 * 上传图片  
-	 * @param fileName ,如：123654.jpg
+	 * @param fileName
 	 * @param inStream
-	 * @param remoteUploadePath 上传文件存放的目录(相对于ftp可访问的路径下),如：/org_register/20161111
+	 * @param remoteUploadePath
 	 * @return  格式：http://image.fangcang.com/upload/titanjr/org_register/123.jpg
 	 */
 	public static String uploadStreamExt(String fileName,InputStream inStream, String remoteUploadePath) {
@@ -506,6 +544,18 @@ public class FtpUtil {
 	}
 	
 	public static void main(String[] args) throws Exception {
+		String localEnterpriseDocumentInfoPath = "F:/creditimg";//TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"/tmp"+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+File.separator+loanCreditOrder.getOrgCode()+File.separator+"EnterpriseCreditPackage"+File.separator+"EnterpriseDocumentInfo";
+		//担保人证件资料本地路径
+		String localGuarantorDocumentsInfoPath = "F:/creditimg";//TitanFinancialLoanCreditServiceImpl.class.getClassLoader().getResource("").getPath()+"/tmp"+File.separator+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+File.separator+loanCreditOrder.getOrgCode()+File.separator+"EnterpriseCreditPackage"+File.separator+"GuarantorDocumentsInfo";
+		
+		//先删除文件
+		
+		FtpUtil ftpUtil = new FtpUtil("192.168.2.100",21,"fangcang168","fangcang168");
+		ftpUtil.ftpLogin();
+		//boolean s = ftpUtil.ftpClient.changeWorkingDirectory("/data/image/upload/images/titanjr/credit_apply\TJM10000109");
+		ftpUtil.downloadFile("license.jpg", localEnterpriseDocumentInfoPath+"/", FtpUtil.baseLocation+FtpUtil.UPLOAD_PATH_CREDIT_APPLY+"/"+"TJM10000109");
+		
+		ftpUtil.ftpLogOut();
 		
 		//uploadFileExt(new File("F:\\aa7c2b8f77beb251c2156b32a56ee78f.jpg"),"/enterprise_account");
 		//String orgUrl = uploadStreamExt("123.png",new FileInputStream(new File("F:\\20160524164934.png")) ,UPLOAD_PATH_ORG_REGISTER);

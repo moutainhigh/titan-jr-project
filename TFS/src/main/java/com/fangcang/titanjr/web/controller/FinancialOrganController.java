@@ -103,33 +103,6 @@ public class FinancialOrganController extends BaseController {
     
     @Resource
     private TitanFinancialSendSMSService sendSMSService;
-
-    
-//    @RequestMapping(value = "/test")
-//    public String test(HttpServletRequest request, Model model) {
-//    	String nameString = getRequest().getParameter("name");
-//    	//putSuccess("11111");
-//    	int i=0;
-//    	while (i<20) {
-//    		try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//    		System.out.println(nameString+"--------");
-//    		i++;
-//		}
-//    	
-//        return "orgManager";
-//    }
-//    
-//    
-//    @RequestMapping(value = "/test2")
-//    public String test2(HttpServletRequest request, Model model) {
-//    	String nameString = getRequest().getParameter("name");
-//    	System.out.println("------name2--"+nameString);
-//        return "orgManager";
-//    }
     
     
     @RequestMapping(value = "/showOrg")
