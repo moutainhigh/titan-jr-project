@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.request.AuditCreditOrderRequest;
 import com.fangcang.titanjr.dto.request.GetAuditEvaluationRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
@@ -102,6 +103,7 @@ public class MLoanController extends BaseController{
 		model.addAttribute("getCreditInfoResponse", getCreditInfoResponse);
 		model.addAttribute("operatorName", getSAASLoginName());
 		if(getAuditEvaluationResponse.getCreditOpinionBean()!=null){
+			getAuditEvaluationResponse.getCreditOpinionBean().setContent(Tools.replaceEnterKeyHTML(getAuditEvaluationResponse.getCreditOpinionBean().getContent()));
 			model.addAttribute("creditOpinionBean", getAuditEvaluationResponse.getCreditOpinionBean());
 		}
 		
