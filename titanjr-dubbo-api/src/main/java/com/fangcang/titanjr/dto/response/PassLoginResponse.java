@@ -8,5 +8,5 @@ import com.fangcang.titanjr.dto.BaseResponseDTO;
  * @date   2016年12月23日
  */
 public class PassLoginResponse extends BaseResponseDTO {
-
+	
 }
