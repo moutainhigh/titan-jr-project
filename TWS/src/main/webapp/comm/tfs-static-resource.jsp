@@ -1,7 +1,6 @@
 <!-- common css-->
 <%@ include file="/comm/path-param.jsp"%>
- 
- <link rel="stylesheet" href="<%=cssSaasPath%>/css/style_TFS.css" data-export="true">
+	<link rel="stylesheet" href="<%=cssSaasPath %>/css/style_TFS.css">
  <script type="text/javascript" src="<%=basePath%>/rsa/Barrett.js"></script>
  <script type="text/javascript" src="<%=basePath%>/rsa/BigInt.js"></script>
  <script type="text/javascript" src="<%=basePath%>/rsa/RSA.js"></script>
@@ -14,6 +13,7 @@
 <script src="<%=cssWalletPath%>/js/jquery-3.1.1.min.js"></script>
 <script src="<%=cssWalletPath%>/js/fangcang.min.js"></script>
 <script src="<%=cssWalletPath%>/js/common.js"></script>
+
 <script src="<%=cssWalletPath%>/js/AD.js"></script>
  
 

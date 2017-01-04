@@ -822,37 +822,29 @@ public class DateUtil {
 		
 		try {
 			
-			String payOrdeNo = "AAAddd";
-			System.out.println(payOrdeNo.substring(1));
+//			String reg = "/\\d{3}-/\\d{5}";
+//			Pattern p = Pattern.compile(reg);
+//			boolean b = p.matcher("2-3").matches();
+//			boolean c = p.matcher("/212-/33621").matches();
+//			boolean d = p.matcher("02-03").matches();
+//			boolean f = p.matcher("20-30").matches();
+//			System.out.println(b+"---"+c+"---"+d+"---"+f);
 			
-//			BufferedWriter w = new BufferedWriter(new FileWriter("C:/Users/Administrator/Desktop/text.txt"));
-//			char[] buf = "asdfas asd的说法是 阿斯蒂芬  阿斯顿发  ".toCharArray();
-//            for(int i=0;i<buf.length;i++){
-//            	System.out.println(buf[i]);
-//            	w.write(buf[i]);
-//            }			
-//            
-//            byte[] buf = "asdfas asd的说法是 阿斯蒂芬  阿斯顿发  ".getBytes();
-//            File f = new File("C:/Users/Administrator/Desktop/text.txt");
-//            OutputStream out = new FileOutputStream(f);
-//            for(int i=0;i<buf.length;i++){
-//            	System.out.println(buf[i]);
-//            	 out.write(buf[i]);
-//            }
-           
-//            byte[] b = "康".getBytes();
-//            for(int i=0;i<b.length;i++){
-//            	System.out.println(b[i]);
-//            }
-          
-            
-			for(int i=0;i<10;i++){
-				if(i%2==0){
-					System.out.println(i);
-					continue;
-				}
-				
-			}
+//			String regex = "^23$";
+//			Pattern pa = Pattern.compile(regex);
+//			boolean  b = pa.matcher("24").matches();
+//			boolean  c = pa.matcher("23").matches();
+//			boolean  d = pa.matcher("25").matches();
+//			System.out.println(b+"---"+c+"---"+d);
+//			
+//			String regex = "^[^289]+3$";
+//			Pattern pa = Pattern.compile(regex);
+//			boolean  b = pa.matcher("2893").matches();
+//			boolean  c = pa.matcher("2894").matches();
+//			boolean  d = pa.matcher("893").matches();
+//			boolean  f = pa.matcher("4563").matches();
+//			System.out.println(b+"---"+c+"---"+d+"---"+f);
+			
 			
             
 			

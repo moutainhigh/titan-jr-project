@@ -132,160 +132,9 @@ public class FinancialAccountController extends BaseController {
 	      return "";
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
-    @RequestMapping(value = "/goto_cashierDesk", method = RequestMethod.GET)
-    public String gotoCashierDesk(String payType , Model model)
-    {
-    	if(StringUtil.isValidString(payType))
-    	{
-    		PayerTypeEnum enum1 =  PayerTypeEnum.getPayerTypeEnumByKey(payType);
-    		if(enum1 != null)
-    		{
-		    	model.addAttribute("userId", this.getUserId());
-		    	model.addAttribute("payType",enum1.getKey());
-		    	model.addAttribute("payOrderNo", OrderGenerateService.genLoacalPayOrderNo());
-		    	model.addAttribute("userName",getUserNameByUserId(this.getTfsUserId()));
-		    	model.addAttribute("payName", enum1.getMsg());
-		    	model.addAttribute("payDesc", enum1.getMsg());
-		    	return "account-overview/goto-cashierDesk";
-    		}
-    	}
-    	
-    	return "";
-    }
-    
-    
-    /**
-	 * 根据用户ID查询对应的用户名信息
-	 * @Title: getUserNameByUserId 
-	 * @Description: TODO
-	 * @param tfsUserid
-	 * @return
-	 * @return: String
-	 */
-	private String getUserNameByUserId(String tfsUserid) {
-		if (StringUtil.isValidString(tfsUserid)) {
-			TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
-			titanUserBindInfoDTO.setTfsuserid(Integer.parseInt(tfsUserid));
-			try {
-				titanUserBindInfoDTO = titanFinancialUserService
-						.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
-			} catch (Exception e) {
-				log.error("查询用户名失败:" + e.getMessage());
-			}
-			if (titanUserBindInfoDTO != null) {
-				return titanUserBindInfoDTO.getUsername();
-			}
-		}
-		return null;
-	}
-    
-    
-    @RequestMapping(value = "/order-receive-detail", method = RequestMethod.GET)
-    public String queryReceiveOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
-        setTransOrderDetail(tradeDetailRequest,model);
-        return "account-overview/order-receive-detail";
-    }
-    @RequestMapping(value = "/order-pay-detail", method = RequestMethod.GET)
-    public String queryPayOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
-        setTransOrderDetail(tradeDetailRequest,model);
-        //付款时需查出当前机构
-        FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-        organQueryRequest.setUserId(this.getUserId());
-        FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
-        model.addAttribute("organ", organOrganResponse.getFinancialOrganDTO());
-        return "account-overview/order-pay-detail";
-    }
-
-    @RequestMapping(value = "/order-recharge-detail", method = RequestMethod.GET)
-    public String queryRechargeOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
-        setTransOrderDetail(tradeDetailRequest,model);
-        return "account-overview/order-recharge-detail";
-    }
-
-    @RequestMapping(value = "/order-withdraw-detail", method = RequestMethod.GET)
-    public String queryWithdrawOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
-        setTransOrderDetail(tradeDetailRequest,model);
-        return "account-overview/order-withdraw-detail";
-    }
-
-    @RequestMapping(value = "/query-org-page", method = RequestMethod.GET)
-    public String queryForPage(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
-        if (null != this.getUserId()) {
-            model.addAttribute("organ", this.getTitanOrganDTO());
-//            AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
-//            accountBalanceRequest.setUserid(this.getUserId());
-//            AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
-//            if (balanceResponse.isResult() && CollectionUtils.isNotEmpty(balanceResponse.getAccountBalance())) {
-//                model.addAttribute("accountBalance", balanceResponse.getAccountBalance().get(0));
-//            }
-            tradeDetailRequest.setUserid(this.getUserId());
-            if (StringUtil.isValidString(tradeDetailRequest.getTradeTypeId())) {
-                tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
-            }
-            if (StringUtil.isValidString(tradeDetailRequest.getStartTimeStr())) {
-                tradeDetailRequest.setStartTime(com.fangcang.titanjr.common.util.DateUtil.getDayBeginTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr())));
-            }
-            if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
-                tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
-            }
-            TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
-            if (tradeDetailResponse.isResult()) {
-                model.addAttribute("tradePage", tradeDetailResponse.getTransOrders());
-            }
-        }
-        return "account-overview/trans-order-list";
-    }
-
-
-    @RequestMapping(value = "/query-freeze-list", method = RequestMethod.GET)
-    public String queryFreezeForPage(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
-        if (null != this.getUserId()) {
-            model.addAttribute("organ", this.getTitanOrganDTO());
-            tradeDetailRequest.setUserid(this.getUserId());
-            if (StringUtil.isValidString(tradeDetailRequest.getTradeTypeId())) {
-                tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
-            }
-            if (StringUtil.isValidString(tradeDetailRequest.getStartTimeStr())) {
-                tradeDetailRequest.setStartTime(com.fangcang.titanjr.common.util.DateUtil.getDayBeginTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr())));
-            }
-            if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
-                tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
-            }
-            tradeDetailRequest.setStatusId(OrderStatusEnum.FREEZE_SUCCESS.getStatus());
-            
-            TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
-            if (tradeDetailResponse.isResult()) {
-                model.addAttribute("tradePage", tradeDetailResponse.getTransOrders());
-            }
-        }
-        return "account-overview/freeze-order-list";
-    }
-
-    @RequestMapping(value = "/freeze-detail-page", method = RequestMethod.GET)
-    public String toFreezeDetailPage(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
-
-        return "account-overview/freeze-detail";
-    }
-
     @ResponseBody
     @RequestMapping("validate_person_Enterprise")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String validatePersonOrEnterprise(HttpServletRequest request, Model model){
     	Map<String,String> resultMap = new HashMap<String, String>();
     	resultMap.put(WebConstant.RESULT,WebConstant.FAIL);
@@ -330,6 +179,397 @@ public class FinancialAccountController extends BaseController {
     	return toJson(resultMap);
     }
     
+    @RequestMapping(value = "/query-org-page", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String queryForPage(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
+        if (null != this.getUserId()) {
+            model.addAttribute("organ", this.getTitanOrganDTO());
+            tradeDetailRequest.setUserid(this.getUserId());
+            if (StringUtil.isValidString(tradeDetailRequest.getTradeTypeId())) {
+                tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
+            }
+            if (StringUtil.isValidString(tradeDetailRequest.getStartTimeStr())) {
+                tradeDetailRequest.setStartTime(com.fangcang.titanjr.common.util.DateUtil.getDayBeginTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr())));
+            }
+            if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
+                tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
+            }
+            TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
+            if (tradeDetailResponse.isResult()) {
+                model.addAttribute("tradePage", tradeDetailResponse.getTransOrders());
+            }
+        }
+        return "account-overview/trans-order-list";
+    }
+    
+    @ResponseBody
+    @RequestMapping("getOrgList")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String getOrgInfoList(){
+        FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+        organQueryRequest.setUserId(this.getUserId());
+        OrganBriefResponse organBriefResponse =  titanFinancialOrganService.queryOrganBriefByUserId(organQueryRequest);
+        if (organBriefResponse.isResult() && CollectionUtils.isNotEmpty(organBriefResponse.getOrganDTOList())){
+            return toJson(organBriefResponse);
+        }
+        return null;
+    }
+    
+    
+    @RequestMapping(value = "/order-receive-detail", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String queryReceiveOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
+        setTransOrderDetail(tradeDetailRequest,model);
+        return "account-overview/order-receive-detail";
+    }
+    @RequestMapping(value = "/order-pay-detail", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String queryPayOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
+        setTransOrderDetail(tradeDetailRequest,model);
+        //付款时需查出当前机构
+        FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+        organQueryRequest.setUserId(this.getUserId());
+        FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+        model.addAttribute("organ", organOrganResponse.getFinancialOrganDTO());
+        return "account-overview/order-pay-detail";
+    }
+
+    @RequestMapping(value = "/order-recharge-detail", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String queryRechargeOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
+        setTransOrderDetail(tradeDetailRequest,model);
+        return "account-overview/order-recharge-detail";
+    }
+
+    @RequestMapping(value = "/order-withdraw-detail", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String queryWithdrawOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
+        setTransOrderDetail(tradeDetailRequest,model);
+        return "account-overview/order-withdraw-detail";
+    }
+
+    @RequestMapping(value = "/order-remark", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String toOrderRemark(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
+        if (null != this.getUserId()) {
+            tradeDetailRequest.setUserid(this.getUserId());
+            TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
+            if (tradeDetailResponse.isResult() && CollectionUtils.isNotEmpty(tradeDetailResponse.getTransOrders().getItemList())) {
+            	TransOrderDTO transOrder = tradeDetailResponse.getTransOrders().getItemList().get(0);
+            	transOrder.setRemark(Tools.replaceEnterKeyHTML(transOrder.getRemark())); 
+            	model.addAttribute("transOrder", transOrder);
+                
+            }
+        }
+        return "account-overview/order-remark";
+    }
+    
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    @RequestMapping(value = "/goto_cashierDesk", method = RequestMethod.GET)
+    public String gotoCashierDesk(String payType , Model model)
+    {
+    	if(StringUtil.isValidString(payType))
+    	{
+    		PayerTypeEnum enum1 =  PayerTypeEnum.getPayerTypeEnumByKey(payType);
+    		if(enum1 != null)
+    		{
+		    	model.addAttribute("userId", this.getUserId());
+		    	model.addAttribute("payType",enum1.getKey());
+		    	model.addAttribute("payOrderNo", OrderGenerateService.genLoacalPayOrderNo());
+		    	model.addAttribute("userName",getUserNameByUserId(this.getTfsUserId()));
+		    	model.addAttribute("payName", enum1.getMsg());
+		    	model.addAttribute("payDesc", enum1.getMsg());
+		    	return "account-overview/goto-cashierDesk";
+    		}
+    	}
+    	
+    	return "";
+    }
+    
+    
+    /**
+     * 交易单备注历史
+     * @param tradeDetailRequest
+     * @param request
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    @RequestMapping(value = "/order-remark-history", method = RequestMethod.GET)
+    public String toOrderRemarkHisotry(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
+        if (null != this.getUserId()) {
+            tradeDetailRequest.setUserid(this.getUserId());
+            TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
+            if (tradeDetailResponse.isResult() && CollectionUtils.isNotEmpty(tradeDetailResponse.getTransOrders().getItemList())) {
+            	TransOrderDTO transOrder = tradeDetailResponse.getTransOrders().getItemList().get(0);
+            	transOrder.setRemark(Tools.replaceEnterKeyHTML(transOrder.getRemark())); 
+            	model.addAttribute("transOrder", transOrder);
+            }
+        }
+        return "account-overview/order-remark-history";
+    }
+    
+    @RequestMapping(value = "/freeze-detail-page", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String toFreezeDetailPage(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
+        return "account-overview/freeze-detail";
+    }
+
+    @RequestMapping(value = "/query-freeze-list", method = RequestMethod.GET)
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String queryFreezeForPage(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
+        if (null != this.getUserId()) {
+            model.addAttribute("organ", this.getTitanOrganDTO());
+            tradeDetailRequest.setUserid(this.getUserId());
+            if (StringUtil.isValidString(tradeDetailRequest.getTradeTypeId())) {
+                tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
+            }
+            if (StringUtil.isValidString(tradeDetailRequest.getStartTimeStr())) {
+                tradeDetailRequest.setStartTime(com.fangcang.titanjr.common.util.DateUtil.getDayBeginTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr())));
+            }
+            if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
+                tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
+            }
+            tradeDetailRequest.setStatusId(OrderStatusEnum.FREEZE_SUCCESS.getStatus());
+            
+            TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
+            if (tradeDetailResponse.isResult()) {
+                model.addAttribute("tradePage", tradeDetailResponse.getTransOrders());
+            }
+        }
+        return "account-overview/freeze-order-list";
+    }
+    
+    @RequestMapping("exportExcel")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public void exportExcel(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, HttpServletResponse response) {
+        TradeDetailResponse tradeDetailResponse = null;
+        if (null != this.getUserId()) {
+            tradeDetailRequest.setUserid(this.getUserId());
+            if (StringUtil.isValidString(tradeDetailRequest.getTradeTypeId())) {
+                tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
+            }
+            if (StringUtil.isValidString(tradeDetailRequest.getStartTimeStr())) {
+                tradeDetailRequest.setStartTime(com.fangcang.titanjr.common.util.DateUtil.getDayBeginTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr())));
+            }
+            if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
+                tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
+            }
+            if ("0".equals(tradeDetailRequest.getIsEscrowedPayment())) {
+                tradeDetailRequest.setStatusId(OrderStatusEnum.FREEZE_SUCCESS.getStatus());
+            }
+            tradeDetailRequest.setPageSize(100000);
+            tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
+        }
+
+
+        HttpSession session = request.getSession();
+        session.setAttribute("state", null);
+        // 生成提示信息，
+        response.setContentType("application/vnd.ms-excel");
+        String codedFileName = "交易记录";
+        OutputStream outputStream = null;
+        try {
+            codedFileName = java.net.URLEncoder.encode(codedFileName, "UTF-8");//进行转码，使其支持中文文件名
+            response.setHeader("content-disposition", "attachment;filename=" + codedFileName + ".xls");
+            // 产生工作簿对象
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            //产生工作表对象
+            HSSFSheet sheet = workbook.createSheet();
+            HSSFRow head = sheet.createRow(0);
+            head.createCell(0).setCellValue("编号");
+            head.createCell(1).setCellValue("金融交易号");
+            head.createCell(2).setCellValue("业务单号");
+            head.createCell(3).setCellValue("外部单号");
+            head.createCell(4).setCellValue("交易时间");
+            head.createCell(5).setCellValue("交易类型");
+            head.createCell(6).setCellValue("交易内容");
+            head.createCell(7).setCellValue("交易对方");
+            head.createCell(8).setCellValue("订单金额");
+            head.createCell(9).setCellValue("手续费");
+            head.createCell(10).setCellValue("交易结果");
+            List<TransOrderDTO> orderDTOList = tradeDetailResponse.getTransOrders().getItemList();
+            if (tradeDetailResponse != null && tradeDetailResponse.isResult()) {
+                for (int i = 0; i < orderDTOList.size(); i++) {
+                    HSSFRow row = sheet.createRow(i + 1);//创建一行
+                    row.createCell(0).setCellValue(i + 1);
+                    row.createCell(1).setCellValue(orderDTOList.get(i).getUserorderid());
+                    row.createCell(2).setCellValue(orderDTOList.get(i).getBusinessordercode());
+                    row.createCell(3).setCellValue(orderDTOList.get(i).getPayorderno());
+                    row.createCell(4).setCellValue(DateUtil.dateToString(orderDTOList.get(i).getCreatetime(), "yyyy-MM-dd HH:mm:ss"));
+                    row.createCell(5).setCellValue(orderDTOList.get(i).getTradeType());
+                    String tradeContent = orderDTOList.get(i).getGoodsname();
+                    if (StringUtil.isValidString(orderDTOList.get(i).getGoodsdetail())) {
+                        tradeContent = tradeContent + orderDTOList.get(i).getGoodsdetail();
+                    }
+                    row.createCell(6).setCellValue(tradeContent);
+                    if (orderDTOList.get(i).getTransTarget() != null) {
+                        row.createCell(7).setCellValue(orderDTOList.get(i).getTransTarget());
+                    }
+                    if (orderDTOList.get(i).getTradeamount() != null) {
+                        double tradeAmount = orderDTOList.get(i).getTradeamount() / 100.0;
+                        if ("付款".equals(orderDTOList.get(i).getTradeType()) ||
+                                "提现".equals(orderDTOList.get(i).getTradeType())) {
+                            tradeAmount = 0 - tradeAmount;
+                        }
+                        row.createCell(8).setCellValue(tradeAmount);
+                    }
+                    if (orderDTOList.get(i).getReceivedfee() != null) {
+                        row.createCell(9).setCellValue(orderDTOList.get(i).getReceivedfee() / 100.0);
+                    }
+                    if (StringUtil.isValidString(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()))) {
+                        row.createCell(10).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
+                        if(OrderStatusEnum.ORDER_IN_PROCESS.equals(orderDTOList.get(i).getStatusid())
+                        		||OrderStatusEnum.RECHARGE_FAIL.equals(orderDTOList.get(i).getStatusid())
+                        		||OrderStatusEnum.FREEZE_FAIL.equals(orderDTOList.get(i).getStatusid())){
+                        	 row.createCell(10).setCellValue("处理中");
+                        }
+//                    	if ("付款".equals(orderDTOList.get(i).getTradeType()) && OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(orderDTOList.get(i).getStatusid())) {
+//                            row.createCell(10).setCellValue(OrderStatusEnum.ORDER_SUCCESS.getStatusMsg());
+//                        } else {
+//                            row.createCell(10).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
+//                        }
+                    }
+                }
+            }
+            outputStream = response.getOutputStream();
+            workbook.write(outputStream);
+            log.info("生成excel文件成功");
+        } catch (UnsupportedEncodingException e1) {
+            log.error("编码错误", e1);
+        } catch (Exception e) {
+            log.error("发生未知异常", e);
+        } finally {
+            if (outputStream != null) {
+                try {
+                    outputStream.flush();
+                    outputStream.close();
+                } catch (IOException e) {
+                    log.error("关闭异常流失败", e);
+                }
+            }
+            session.setAttribute("state", "open");
+        }
+    }
+
+    
+    
+//    绑定提现卡start
+    @RequestMapping("toBindCardStepOne")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String toBindCardStepOne(){
+    	return "account-overview/bind_card_one";
+    }
+    
+    @RequestMapping("toBindCardStepTwo")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String toBindCardStepTwo(Model model){
+    	if (null != this.getUserId()) {
+            model.addAttribute("organ", this.getTitanOrganDTO());
+       }
+    	return "account-overview/bind_card_two";
+    }
+    
+    @RequestMapping("bankCardBind")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String bankCardBindToPublic(BindBankCardRequest  bindBankCardRequest,Model model){
+     	if(!StringUtil.isValidString(bindBankCardRequest.getBankCardCode()) 
+    			|| !StringUtil.isValidString(bindBankCardRequest.getBankCardName())
+    			|| !StringUtil.isValidString(bindBankCardRequest.getUserName())
+    			|| !StringUtil.isValidString(bindBankCardRequest.getBankCode())
+    			|| !StringUtil.isValidString(bindBankCardRequest.getModifyOrBind())){
+     		model.addAttribute("msg", "参数不能为空");
+     		
+    		return "account-overview/bind_card_three";
+    	}
+     	
+     	if(WebConstant.BIND_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//绑卡
+     		CusBankCardBindResponse cardBindResponse = bindBindCardToPublic(bindBankCardRequest);
+     		 if (!cardBindResponse.isResult()){
+                 return toJson(putSysError(cardBindResponse.getReturnMessage()));
+             }
+     	}else if(WebConstant.MODIFY_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//失败修改绑卡
+     		ModifyInvalidWithDrawCardResponse modifyInvalidWithDrawCardResponse = modifyBindCard(bindBankCardRequest);
+     	    if(!modifyInvalidWithDrawCardResponse.isResult()){
+     	    	  return toJson(putSysError(modifyInvalidWithDrawCardResponse.getReturnMessage()));
+     	    }
+     	}else{
+     		return toJson(putSysError("参数错误"));
+     	}
+    	
+		return "account-overview/bind_card_three";
+    }
+    
+    @ResponseBody
+    @RequestMapping("getBankInfoList")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String getBankInfo(){
+        BankInfoQueryRequest bankInfoQueryRequest = new BankInfoQueryRequest();
+        bankInfoQueryRequest.setBankType(1);
+        BankInfoResponse bankInfoResponse =  titanFinancialBaseInfoService.queryBankInfoList(bankInfoQueryRequest);
+        if (bankInfoResponse.isResult() && CollectionUtils.isNotEmpty(bankInfoResponse.getBankInfoDTOList())){
+            return toJson(bankInfoResponse);
+        }
+        return null;
+    }
+    
+
+    
+    
+    
+    
+    
+    
+    
+    /****************************************************************************
+     * 
+     * 
+     * 泰坦钱包使用的Controlller end
+     * 
+     * 
+     * 
+     * 
+     */
+    
+    
+ 
+    
+    /**
+	 * 根据用户ID查询对应的用户名信息
+	 * @Title: getUserNameByUserId 
+	 * @Description: TODO
+	 * @param tfsUserid
+	 * @return
+	 * @return: String
+	 */
+	private String getUserNameByUserId(String tfsUserid) {
+		if (StringUtil.isValidString(tfsUserid)) {
+			TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
+			titanUserBindInfoDTO.setTfsuserid(Integer.parseInt(tfsUserid));
+			try {
+				titanUserBindInfoDTO = titanFinancialUserService
+						.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+			} catch (Exception e) {
+				log.error("查询用户名失败:" + e.getMessage());
+			}
+			if (titanUserBindInfoDTO != null) {
+				return titanUserBindInfoDTO.getUsername();
+			}
+		}
+		return null;
+	}
+    
+    
+    
+    
+
+
+   
+
+  
+   
+    
     @RequestMapping(value = "/toBindAccountWithDrawCard")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName) throws UnsupportedEncodingException{
@@ -362,36 +602,6 @@ public class FinancialAccountController extends BaseController {
     }
     
 
-    @ResponseBody
-    @RequestMapping("bankCardBind")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
-    public String bankCardBindToPublic(BindBankCardRequest  bindBankCardRequest,Model model){
-     	if(!StringUtil.isValidString(bindBankCardRequest.getBankCardCode()) 
-    			|| !StringUtil.isValidString(bindBankCardRequest.getBankCardName())
-    			|| !StringUtil.isValidString(bindBankCardRequest.getUserName())
-    			|| !StringUtil.isValidString(bindBankCardRequest.getBankCode())
-    			|| !StringUtil.isValidString(bindBankCardRequest.getModifyOrBind())){
-    	
-    		return toJson(putSysError("参数不能为空"));
-    	}
-     	
-     	if(WebConstant.BIND_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//绑卡
-     		CusBankCardBindResponse cardBindResponse = bindBindCardToPublic(bindBankCardRequest);
-     		 if (!cardBindResponse.isResult()){
-                 return toJson(putSysError(cardBindResponse.getReturnMessage()));
-             }
-     	}else if(WebConstant.MODIFY_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//失败修改绑卡
-     		ModifyInvalidWithDrawCardResponse modifyInvalidWithDrawCardResponse = modifyBindCard(bindBankCardRequest);
-     	    if(!modifyInvalidWithDrawCardResponse.isResult()){
-     	    	  return toJson(putSysError(modifyInvalidWithDrawCardResponse.getReturnMessage()));
-     	    }
-     	}else{
-     		return toJson(putSysError("参数错误"));
-     	}
-    	
-    	return toJson(putSuccess("提现卡申请审核中"));
-    }
-    
     
     private ModifyInvalidWithDrawCardResponse modifyBindCard(BindBankCardRequest bindBankCardRequest){
     	ModifyInvalidWithDrawCardRequest modifyInvalidWithDrawCardRequest = new ModifyInvalidWithDrawCardRequest();
@@ -436,66 +646,6 @@ public class FinancialAccountController extends BaseController {
         
     }
     
-    @ResponseBody
-    @RequestMapping("getBankInfoList")
-    public String getBankInfo(){
-        BankInfoQueryRequest bankInfoQueryRequest = new BankInfoQueryRequest();
-        bankInfoQueryRequest.setBankType(1);
-        BankInfoResponse bankInfoResponse =  titanFinancialBaseInfoService.queryBankInfoList(bankInfoQueryRequest);
-        if (bankInfoResponse.isResult() && CollectionUtils.isNotEmpty(bankInfoResponse.getBankInfoDTOList())){
-            return toJson(bankInfoResponse);
-        }
-        return null;
-    }
-
-    @ResponseBody
-    @RequestMapping("getOrgList")
-    public String getOrgInfoList(){
-        FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-        organQueryRequest.setUserId(this.getUserId());
-        OrganBriefResponse organBriefResponse =  titanFinancialOrganService.queryOrganBriefByUserId(organQueryRequest);
-        if (organBriefResponse.isResult() && CollectionUtils.isNotEmpty(organBriefResponse.getOrganDTOList())){
-            return toJson(organBriefResponse);
-        }
-        return null;
-    }
-
-    
-    @RequestMapping(value = "/order-remark", method = RequestMethod.GET)
-    public String toOrderRemark(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
-        if (null != this.getUserId()) {
-            tradeDetailRequest.setUserid(this.getUserId());
-            TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
-            if (tradeDetailResponse.isResult() && CollectionUtils.isNotEmpty(tradeDetailResponse.getTransOrders().getItemList())) {
-            	TransOrderDTO transOrder = tradeDetailResponse.getTransOrders().getItemList().get(0);
-            	transOrder.setRemark(Tools.replaceEnterKeyHTML(transOrder.getRemark())); 
-            	model.addAttribute("transOrder", transOrder);
-                
-            }
-        }
-        return "account-overview/order-remark";
-    }
-    /**
-     * 交易单备注历史
-     * @param tradeDetailRequest
-     * @param request
-     * @param model
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "/order-remark-history", method = RequestMethod.GET)
-    public String toOrderRemarkHisotry(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
-        if (null != this.getUserId()) {
-            tradeDetailRequest.setUserid(this.getUserId());
-            TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
-            if (tradeDetailResponse.isResult() && CollectionUtils.isNotEmpty(tradeDetailResponse.getTransOrders().getItemList())) {
-            	TransOrderDTO transOrder = tradeDetailResponse.getTransOrders().getItemList().get(0);
-            	transOrder.setRemark(Tools.replaceEnterKeyHTML(transOrder.getRemark())); 
-            	model.addAttribute("transOrder", transOrder);
-            }
-        }
-        return "account-overview/order-remark-history";
-    }
 
     @ResponseBody
     @RequestMapping("setPayPassword")
@@ -605,117 +755,6 @@ public class FinancialAccountController extends BaseController {
             }
         } else {
             return toJson(putSysError("当前会话机构标示为空"));
-        }
-    }
-
-    @RequestMapping("exportExcel")
-    public void exportExcel(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, HttpServletResponse response) {
-        TradeDetailResponse tradeDetailResponse = null;
-        if (null != this.getUserId()) {
-            tradeDetailRequest.setUserid(this.getUserId());
-            if (StringUtil.isValidString(tradeDetailRequest.getTradeTypeId())) {
-                tradeDetailRequest.setTradeTypeEnum(TradeTypeEnum.getTradeTypeEnumByKey(tradeDetailRequest.getTradeTypeId()));
-            }
-            if (StringUtil.isValidString(tradeDetailRequest.getStartTimeStr())) {
-                tradeDetailRequest.setStartTime(com.fangcang.titanjr.common.util.DateUtil.getDayBeginTime(DateUtil.stringToDate(tradeDetailRequest.getStartTimeStr())));
-            }
-            if (StringUtil.isValidString(tradeDetailRequest.getEndTimeStr())) {
-                tradeDetailRequest.setEndTime(com.fangcang.titanjr.common.util.DateUtil.getDayEndTime(DateUtil.stringToDate(tradeDetailRequest.getEndTimeStr())));
-            }
-            if ("0".equals(tradeDetailRequest.getIsEscrowedPayment())) {
-                tradeDetailRequest.setStatusId(OrderStatusEnum.FREEZE_SUCCESS.getStatus());
-            }
-            tradeDetailRequest.setPageSize(100000);
-            tradeDetailResponse = titanFinancialTradeService.getTradeDetail(tradeDetailRequest);
-        }
-
-
-        HttpSession session = request.getSession();
-        session.setAttribute("state", null);
-        // 生成提示信息，
-        response.setContentType("application/vnd.ms-excel");
-        String codedFileName = "交易记录";
-        OutputStream outputStream = null;
-        try {
-            codedFileName = java.net.URLEncoder.encode(codedFileName, "UTF-8");//进行转码，使其支持中文文件名
-            response.setHeader("content-disposition", "attachment;filename=" + codedFileName + ".xls");
-            // 产生工作簿对象
-            HSSFWorkbook workbook = new HSSFWorkbook();
-            //产生工作表对象
-            HSSFSheet sheet = workbook.createSheet();
-            HSSFRow head = sheet.createRow(0);
-            head.createCell(0).setCellValue("编号");
-            head.createCell(1).setCellValue("金融交易号");
-            head.createCell(2).setCellValue("业务单号");
-            head.createCell(3).setCellValue("外部单号");
-            head.createCell(4).setCellValue("交易时间");
-            head.createCell(5).setCellValue("交易类型");
-            head.createCell(6).setCellValue("交易内容");
-            head.createCell(7).setCellValue("交易对方");
-            head.createCell(8).setCellValue("订单金额");
-            head.createCell(9).setCellValue("手续费");
-            head.createCell(10).setCellValue("交易结果");
-            List<TransOrderDTO> orderDTOList = tradeDetailResponse.getTransOrders().getItemList();
-            if (tradeDetailResponse != null && tradeDetailResponse.isResult()) {
-                for (int i = 0; i < orderDTOList.size(); i++) {
-                    HSSFRow row = sheet.createRow(i + 1);//创建一行
-                    row.createCell(0).setCellValue(i + 1);
-                    row.createCell(1).setCellValue(orderDTOList.get(i).getUserorderid());
-                    row.createCell(2).setCellValue(orderDTOList.get(i).getBusinessordercode());
-                    row.createCell(3).setCellValue(orderDTOList.get(i).getPayorderno());
-                    row.createCell(4).setCellValue(DateUtil.dateToString(orderDTOList.get(i).getCreatetime(), "yyyy-MM-dd HH:mm:ss"));
-                    row.createCell(5).setCellValue(orderDTOList.get(i).getTradeType());
-                    String tradeContent = orderDTOList.get(i).getGoodsname();
-                    if (StringUtil.isValidString(orderDTOList.get(i).getGoodsdetail())) {
-                        tradeContent = tradeContent + orderDTOList.get(i).getGoodsdetail();
-                    }
-                    row.createCell(6).setCellValue(tradeContent);
-                    if (orderDTOList.get(i).getTransTarget() != null) {
-                        row.createCell(7).setCellValue(orderDTOList.get(i).getTransTarget());
-                    }
-                    if (orderDTOList.get(i).getTradeamount() != null) {
-                        double tradeAmount = orderDTOList.get(i).getTradeamount() / 100.0;
-                        if ("付款".equals(orderDTOList.get(i).getTradeType()) ||
-                                "提现".equals(orderDTOList.get(i).getTradeType())) {
-                            tradeAmount = 0 - tradeAmount;
-                        }
-                        row.createCell(8).setCellValue(tradeAmount);
-                    }
-                    if (orderDTOList.get(i).getReceivedfee() != null) {
-                        row.createCell(9).setCellValue(orderDTOList.get(i).getReceivedfee() / 100.0);
-                    }
-                    if (StringUtil.isValidString(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()))) {
-                        row.createCell(10).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
-                        if(OrderStatusEnum.ORDER_IN_PROCESS.equals(orderDTOList.get(i).getStatusid())
-                        		||OrderStatusEnum.RECHARGE_FAIL.equals(orderDTOList.get(i).getStatusid())
-                        		||OrderStatusEnum.FREEZE_FAIL.equals(orderDTOList.get(i).getStatusid())){
-                        	 row.createCell(10).setCellValue("处理中");
-                        }
-//                    	if ("付款".equals(orderDTOList.get(i).getTradeType()) && OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(orderDTOList.get(i).getStatusid())) {
-//                            row.createCell(10).setCellValue(OrderStatusEnum.ORDER_SUCCESS.getStatusMsg());
-//                        } else {
-//                            row.createCell(10).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
-//                        }
-                    }
-                }
-            }
-            outputStream = response.getOutputStream();
-            workbook.write(outputStream);
-            log.info("生成excel文件成功");
-        } catch (UnsupportedEncodingException e1) {
-            log.error("编码错误", e1);
-        } catch (Exception e) {
-            log.error("发生未知异常", e);
-        } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.flush();
-                    outputStream.close();
-                } catch (IOException e) {
-                    log.error("关闭异常流失败", e);
-                }
-            }
-            session.setAttribute("state", "open");
         }
     }
 
