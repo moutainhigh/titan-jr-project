@@ -547,6 +547,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 
 		FtpUtil.makeLocalDirectory(localEnterpriseDocumentInfoPath);
 		FtpUtil.makeLocalDirectory(localGuarantorDocumentsInfoPath);
+		File waterFile = null;//银行流水
 		try {
 			// 下载文件
 			FTPConfigResponse ftpConfigResponse = titanSysconfigService
@@ -559,14 +560,13 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			// 公司证件资料
 			for (String file : companyFilesList) {
 				if (StringUtil.isValidString(file)) {
-					// if(){
-					// waterurl
-					//
-					// }
-					ftpUtil.downloadFile(file, localEnterpriseDocumentInfoPath,
+					boolean downFlag = ftpUtil.downloadFile(file, localEnterpriseDocumentInfoPath,
 							FtpUtil.baseLocation
 									+ FtpUtil.UPLOAD_PATH_CREDIT_APPLY + "/"
 									+ orgCode);
+					if(file.contains("bank_statements.")&&downFlag){
+						waterFile = new File(localEnterpriseDocumentInfoPath+"/"+FileHelp.getFileName(file));
+					}
 				}
 			}
 			// 担保人证件资料
@@ -586,6 +586,22 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					+ "，文件为：" + Tools.gsonToString(companyFilesList) + ","
 					+ Tools.gsonToString(ensureFilesList), e);
 			return "";
+		}
+		if(waterFile!=null){
+			List<File> fileList = new ArrayList<File>();
+			fileList.add(waterFile);
+			SendMessageRequest sendMessageRequest = new SendMessageRequest();
+			//TODO 改成融数的
+			sendMessageRequest.setReceiveAddress("2637799268@qq.com");
+			sendMessageRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+			sendMessageRequest.setSubject("银行流水");
+			sendMessageRequest.setContent("银行流水");
+			sendMessageRequest.setFileList(fileList);
+			try {
+				sendSMSService.sendMessage(sendMessageRequest);
+			} catch (Exception e) {
+				log.error("授信申请时，银行流水邮件发送失败,机构orgCode:"+orgCode);
+			}
 		}
 		// 压缩打包文件
 		File srcZipFile = FileHelp.zipFile(orgCreditFileRootDir + "/"

@@ -153,6 +153,10 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 			emailSenderDTO.setEmailServerHost(dubboServerJDBCProperties.getJrEmailServer());
 			emailSenderDTO.setEmailServerPort(dubboServerJDBCProperties.getJrEmailPort());
 			emailSenderDTO.setMerchantCode(sendCodeRequest.getMerchantCode());
+			if(sendCodeRequest.getFileList()!=null){
+				emailSenderDTO.setAttachFileList(sendCodeRequest.getFileList());
+			}
+			
 			try {
 				log.info("begin send email ,messageServiceUrl:"+messageServiceUrl+",address:"+sendCodeRequest.getReceiveAddress()+",emailSenderDTO:"+ToStringBuilder.reflectionToString(emailSenderDTO));
 				EmailSendService emailSendService = hessianProxyBeanFactory.getHessianProxyBean(EmailSendService.class,messageServiceUrl);

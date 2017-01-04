@@ -1,5 +1,8 @@
 package com.fangcang.titanjr.dto.request;
 
+import java.io.File;
+import java.util.List;
+
 import com.fangcang.titanjr.dto.BaseRequestDTO;
 /**
  * 发送信息(短信和邮件)
@@ -24,6 +27,10 @@ public class SendMessageRequest extends BaseRequestDTO {
 	//商户号
 	private String merchantCode;
 	
+	/**
+	 * 邮件附件
+	 */
+	private List<File> fileList;
 	
 	public String getSubject() {
 		return subject;
@@ -63,6 +70,14 @@ public class SendMessageRequest extends BaseRequestDTO {
 
 	public void setMerchantCode(String merchantCode) {
 		this.merchantCode = merchantCode;
+	}
+
+	public List<File> getFileList() {
+		return fileList;
+	}
+
+	public void setFileList(List<File> fileList) {
+		this.fileList = fileList;
 	}
 	
 	
