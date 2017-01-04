@@ -92,15 +92,15 @@ public class RSInvokeInitManagerImpl {
 			for(TitanSysconfig item : list){
 				//TODO 改为连接uat的贷款环境，上线后改成从数据库取。
 				if(item.getCfgKey().equals("RSInvokeConfig_appKey")){
-					invokeConfig.setAppKey("762DF53A-4DFD-427A-88F8-C4EEF26195A3");
+					invokeConfig.setAppKey(item.getCfgValue());
 					continue;
 				}
 				if(item.getCfgKey().equals("RSInvokeConfig_appSecret")){
-					invokeConfig.setAppSecret("6461B23C-3ABE-4BE2-8E2C-D3FF4B2F5415");
+					invokeConfig.setAppSecret(item.getCfgValue());
 					continue;
 				}
 				if(item.getCfgKey().equals("RSInvokeConfig_invokeURL")){
-					invokeConfig.setInvokeURL("https://api.open.ruixuesoft.com:30005/ropapi");
+					invokeConfig.setInvokeURL(item.getCfgValue());
 					continue;
 				}
 				if(item.getCfgKey().equals("RSInvokeConfig_defaultMerchant")){
