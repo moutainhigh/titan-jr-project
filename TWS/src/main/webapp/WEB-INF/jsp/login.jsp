@@ -19,8 +19,8 @@
 			<div class="lb_title">密码登录</div>
 			<div class="lb_list">
 			<ul>
-				<li class="l_zh "><em class="ico "></em><input type="text" class="text" placeholder="手机号码/邮箱" datatype="*" errormsg="用户名错误"></li>
-				<li class="l_mm "><em class="ico "></em><input type="password" class="text" placeholder="密码" datatype="*" errormsg="密码错误"></li>
+				<li class="l_zh "><em class="ico "></em><input type="text" class="text" placeholder="手机号码/邮箱" datatype="/\w*/" afterPassed="checkUserName" errormsg="必填项"></li>
+				<li class="l_mm "><em class="ico "></em><input type="password" class="text" placeholder="密码" datatype="/\w*/" afterPassed="checkPass" errormsg="必填项"></li>
 				<li class="lb_Rememb">				
 					<span><i class="ico"></i> <em>记住用户名</em></span>
 				</li>
@@ -58,8 +58,7 @@
 	<script charset="utf-8" type="text/javascript" src="http://szcert.ebs.org.cn/govicon.js?id=78ccac39-a97a-452c-9f81-162cd840cff6&amp;width=130&amp;height=50&amp;type=2" id="ebsgovicon"></script>
 </div>
 
-<script src="<%=cssWalletPath%>/js/jquery-3.1.1.min.js"></script>
-<script src="<%=cssWalletPath%>/js/fangcang.min.js"></script>
+<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 <script type="text/javascript">
 //记住用户名
 $('.lb_Rememb span').on('click',function(){
@@ -117,8 +116,30 @@ $(function(){
 	});
 })
 //验证
-new validform('.l_box');
+var valid_l_box_form = new validform('.l_box');
 
+//检查用户名
+function checkUserName(value, inputDom){
+	if(value.length==0){
+		valid_l_box_form.setErrormsg(inputDom,'必填项');
+		return ;
+	}
+	if((!phone_reg.test(value))&&(!email_reg.test(value))){
+		valid_l_box_form.setErrormsg(inputDom,'格式不正确');
+		return ;
+	}
+}
+//检查密码
+function checkPass(value, inputDom){
+	if(value.length==0){
+		valid_l_box_form.setErrormsg(inputDom,'必填项');
+		return ;
+	}
+	if(value.length<6){
+		valid_l_box_form.setErrormsg(inputDom,'密码太简单');
+		return ;
+	}
+}
 </script>
 </body>
 </html>
