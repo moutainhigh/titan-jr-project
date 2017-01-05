@@ -466,7 +466,7 @@
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i>企业注册地址：
                         </td>                  
-                        <td class="loanInformation_td02" id="city3Ensure" colspan="3" fields="officeAddress" split="/">
+                        <td class="loanInformation_td02" id="city3Ensure" colspan="3" fields="regAddress" split="/">
                         	<div customFun="validateSelects" errormsg="企业注册地址必填项!"  style="display:inline-block;" >
 	                            <select class="prov select loanInformation_se01" item="1" onblur="$(this).parent().blur();"></select> 
 	                            <select class="city select loanInformation_se01" disabled="disabled" item="2" onblur="$(this).parent().blur();"></select>
@@ -479,7 +479,7 @@
                         <td class="loanInformation_td01">
                             <i class="redNotice">*</i>企业办公地址：
                         </td>                  
-                        <td class="loanInformation_td02" id="city4Ensure" colspan="3" fields="regAddress" split="/">
+                        <td class="loanInformation_td02" id="city4Ensure" colspan="3" fields="officeAddress" split="/">
                         	<div customFun="validateSelects" errormsg="企业办公地址必填项!"  style="display:inline-block;" >
 	                            <select class="prov select loanInformation_se01" item="1" onblur="$(this).parent().blur();"></select> 
 	                            <select class="city select loanInformation_se01" disabled="disabled" item="2" onblur="$(this).parent().blur();"></select>
