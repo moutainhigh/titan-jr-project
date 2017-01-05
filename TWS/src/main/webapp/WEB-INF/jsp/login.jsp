@@ -7,8 +7,10 @@
     <title>泰坦钱包</title>        
     <link rel="stylesheet" href="<%=cssWalletPath%>/css/fangcang.min.css?v=20161222">
     <link rel="stylesheet" href="<%=cssWalletPath%>/css/style.css?v=20161222">
+    <script type="text/javascript" src="<%=basePath%>/js/jquery.cookie.js"></script>
 </head>
 <body style="min-width: 1300px;" class="bg" >
+<input type="hidden" id="returnUrl" value=""/>
 <div class="login">
 	<div class="l_box">		
 		<!-- 用户密码登录 -->
@@ -19,12 +21,12 @@
 			<div class="lb_title">密码登录</div>
 			<div class="lb_list">
 			<ul>
-				<li class="l_zh "><em class="ico "></em><input type="text" class="text" placeholder="手机号码/邮箱" datatype="/\w*/" afterPassed="checkUserName" errormsg="必填项"></li>
-				<li class="l_mm "><em class="ico "></em><input type="password" class="text" placeholder="密码" datatype="/\w*/" afterPassed="checkPass" errormsg="必填项"></li>
+				<li class="l_zh "><em class="ico "></em><input type="text" class="text" id="username" placeholder="手机号码/邮箱" datatype="/\w*/" afterPassed="checkUserName" errormsg="必填项"></li>
+				<li class="l_mm "><em class="ico "></em><input type="password" class="text" id="password" placeholder="密码" datatype="/\w*/" afterPassed="checkPass" errormsg="必填项"></li>
 				<li class="lb_Rememb">				
-					<span><i class="ico"></i> <em>记住用户名</em></span>
+					<span><i class="ico" id=""></i> <em>记住用户名</em></span>
 				</li>
-				<li class="lb_btn"><a href="">立即登录</a></li>
+				<li class="lb_btn"><a href="javascript:;" onclick="Login.plogin()">立即登录</a></li>
 				<li class="lb_register"><a href="注册.html">免费注册</a><a href="忘记密码.html">忘记密码？</a></li>
 			</ul>
 			</div>
@@ -37,12 +39,12 @@
 			<div class="lb_title">动态验证码登录</div>
 			<div class="lb_list">
 			<ul>
-				<li class="l_zh "><em class="ico "></em><input type="text" class="text" placeholder="手机号码/邮箱" datatype="*" errormsg="用户名错误"></li>
-				<li class="l_mm "><em class="ico "></em><input type="text" class="text" placeholder="验证码" datatype="*" errormsg="验证码错误"><div class="lb_verify">获取验证码</div></li>
+				<li class="l_zh "><em class="ico "></em><input type="text" class="text" id="susername" placeholder="手机号码/邮箱" datatype="*" errormsg="用户名错误"></li>
+				<li class="l_mm "><em class="ico "></em><input type="text" class="text" id="code" placeholder="验证码" datatype="*" errormsg="验证码错误"><div class="lb_verify">获取验证码</div></li>
 				<li class="lb_Rememb">
 					<span><i class="ico"></i> <em>记住用户名</em></span>
 				</li>
-				<li class="lb_btn"><a href="">立即登录</a></li>
+				<li class="lb_btn"><a href="javascript:;" onclick="Login.slogin()">立即登录</a></li>
 				<li class="lb_register"><a href="注册.html">免费注册</a><a href="忘记密码.html">忘记密码？</a></li>
 			</ul>
 			</div>
@@ -60,23 +62,30 @@
 
 <jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 <script type="text/javascript">
+var remFlag = false;
+var cur_plane='user';//当前显示的登录方式，默认为密码
 //记住用户名
 $('.lb_Rememb span').on('click',function(){
 	var _this = $(this),
 		_thisI = _this.find('i');
 	if(_thisI.is('.Ibadd')){
-		_thisI.removeClass('Ibadd')
+		_thisI.removeClass('Ibadd');
+		remFlag = false;
 	}else{
-		_thisI.addClass('Ibadd')
+		_thisI.addClass('Ibadd');
+		remFlag = true;
 	}
 })
+
 //动态验证码登录
 $('.dynamic .lb_cut').on('click',function(){
 	$(this).parent().addClass('dn').siblings().removeClass('dn');
+	 cur_plane='user';
 })
 //用户密码登录
 $('.user .lb_cut').on('click',function(){
 	$(this).parent().addClass('dn').siblings().removeClass('dn');
+	 cur_plane='dynamic';
 })
 //验证码
 function timeOut(_this){
@@ -115,31 +124,124 @@ $(function(){
 		$('.l_mm').removeClass('l_mm_hover');		
 	});
 })
-//验证
-var valid_l_box_form = new validform('.l_box');
 
+var Login ={};
+Login.valid_user_form = new validform('.l_box .user');
+Login.valid_dynamic_form = new validform('.l_box .dynamic');
+Login.getCurPlane = function(){
+	if(cur_plane=='user'){
+		return Login.valid_user_form;
+	}else{
+		return Login.valid_dynamic_form;
+	}
+}
 //检查用户名
-function checkUserName(value, inputDom){
+checkUserName = function(value, inputDom){
 	if(value.length==0){
-		valid_l_box_form.setErrormsg(inputDom,'必填项');
-		return ;
+		Login.getCurPlane().setErrormsg(inputDom,'必填项');
+		return false;
 	}
 	if((!phone_reg.test(value))&&(!email_reg.test(value))){
-		valid_l_box_form.setErrormsg(inputDom,'格式不正确');
-		return ;
+		Login.getCurPlane().setErrormsg(inputDom,'格式不正确');
+		return false;
 	}
+	return true;
 }
 //检查密码
-function checkPass(value, inputDom){
+checkPass = function(value, inputDom){
 	if(value.length==0){
-		valid_l_box_form.setErrormsg(inputDom,'必填项');
-		return ;
+		Login.getCurPlane().setErrormsg(inputDom,'必填项');
+		return false;
 	}
 	if(value.length<6){
-		valid_l_box_form.setErrormsg(inputDom,'密码太简单');
-		return ;
+		Login.getCurPlane().setErrormsg(inputDom,'密码太简单');
+		return false;
+	}
+	return true;
+}
+//密码登录
+Login.plogin = function(){
+	Login.rememberUsername();
+	//检查参数
+	if(!Login.getCurPlane().validate()){
+		return;
+	}
+	$.ajax({
+		url:'<%=basePath%>/passlogin.shtml',
+		type:'post',
+		data:{'loginUserName':$('#username').val(),'password':$("#password").val()},
+		dataType:'json',
+		//beforeSend:function(){
+			
+		//},
+		success:function(json){
+			if(json.code==1){
+				Login.loginRedirect();
+			}else{
+				 new Tip({msg : json.msg, type: 3 , timer:3000});
+			}
+		},
+		error:function(){
+			alert("请求失败，请重试!");
+		}
+	});
+}
+//动态码登录
+Login.slogin = function(){
+	//检查参数
+	if(!Login.getCurPlane().validate()){
+		return;
+	}
+	$.ajax({
+		url:'<%=basePath%>/smslogin.shtml',
+		type:'post',
+		data:{'loginUserName':$('#susername').val(),'password':$("#code").val()},
+		dataType:'json',
+		beforeSend:function(){
+			F.loading.show();
+		},
+		success:function(json){
+			if(json.code==1){
+				Login.loginRedirect();
+			}else{
+				alert(json.msg);
+			}
+		},
+		error:function(){
+			alert("请求失败，请重试!");
+		},
+		complete:function(){
+			F.loading.hide();
+		}
+	});
+}
+//登录后跳转
+Login.loginRedirect = function(){
+	var url = $("#returnUrl").val();
+	if(typeof(url)=='undefinded'||url.length==0){
+		url = "<%=basePath%>/main.shtml";
+	}
+	location.href=url;
+}
+//记住用户名
+Login.rememberUsername = function(){
+	if(remFlag){
+		var n;
+		if(cur_plane=='user'){
+			n=$("#username").val();
+		}else{
+			n=$("#susername").val();
+		}
+		$.cookie("rem_username",n,{expires:10});
+	}else{
+		$.removeCookie("rem_username");
 	}
 }
+Login.putUsername = function(){
+	$("#username").val($.cookie("rem_username"));
+	$("#susername").val($.cookie("rem_username"));
+}
+//Login.putUsername();
 </script>
 </body>
 </html>

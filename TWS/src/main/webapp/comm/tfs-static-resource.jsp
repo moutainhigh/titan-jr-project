@@ -1,6 +1,6 @@
 <!-- common css-->
 <%@ include file="/comm/path-param.jsp"%>
-<script src="<%=cssWalletPath%>/js/jquery-3.1.1.min.js"></script>
+<script src="<%=cssWalletPath%>/js/jquery-1.8.3.min.js"></script>
 <script src="<%=cssWalletPath%>/js/fangcang.min.js"></script>
 <script src="<%=cssWalletPath%>/js/common.js"></script>
 <script src="<%=cssWalletPath%>/js/AD.js"></script>
