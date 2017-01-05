@@ -270,7 +270,7 @@ public class FinancialLoanController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/getLoanInfoList", method = RequestMethod.GET)
-	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_LOAN_42 })
+	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_VIEW_39 })
 	public String getLoanInfoList(LoanQueryConditions loanQueryConditions,
 			Model model) {
 

@@ -66,6 +66,7 @@ public class FinancialLoanApplyController extends BaseController{
 	
 	
 	@RequestMapping(value="/main", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
 	public String applyLoanMain()
 	{
 		return "/loan/loan-apply/loan-apply";
