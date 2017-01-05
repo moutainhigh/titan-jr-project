@@ -51,8 +51,7 @@
                 </dl>
                 <ul class="loanInformation_upload_list clearfix">
                     <li>
-                        <h3 class="loanInformation_upload_list_title"><i class="redNotice">*</i>企业营业执照
-                        <div class="J_pattern blue fr cursor">样图</div></h3>
+                        <h3 class="loanInformation_upload_list_title"><i class="redNotice">*</i>企业营业执照</h3>
                         <div class="loanInformation_upload_list_img"> 
                             <div class="TFSaddImg"></div>
                             <input type="file"  name="credit_file" id="licenseUrl" errorMsg="请上传企业营业执照"/>
@@ -477,7 +476,7 @@
         </div>
         
         <p class="loanInformation_upload_notice1">
-            <label class="f_ui-checkbox-c3"><input id="protocolCheck" type="checkbox"><i></i> &nbsp;</label>我已阅读，<a href="javascript:void(0)" class="blue J_protocol">《用户须知》</a>并同意<a href="javascript:void(0)" class="blue J_protocol">《数据推送协议》</a>
+            <label class="f_ui-checkbox-c3"><input id="protocolCheck" type="checkbox"><i></i> &nbsp;</label>我已阅读，<a href="javascript:void(0)" class="blue J_protocol" id="userNotice">《用户须知》</a>并同意<a href="javascript:void(0)" id="creditProtocol" class="blue J_protocol">《数据推送协议》</a>
         </p>
 
     </div>
@@ -741,8 +740,37 @@
     function companyAccessoryRender(obj , path){
    
       contextPath = path;
+      
+      
+	  $("#userNotice").live('click',function(){
+          $.ajax({
+             dataType : 'html',
+             context: document.body,
+             url : contextPath+'/loan/credit/userNotice.shtml',
+             success : function(html){
+                 var d =  window.top.dialog({
+                     title: ' ',
+                     padding: '0 0 20px 0',
+                     content: html,
+                     skin : 'saas_pop',                  
+                     button : [ 
+                         {
+                             value: '确定',
+                             skin : 'btn p_lr30',
+                             callback: function () {      
+                                 $("#protocolcheckbox").attr("checked",true)
+                             },
+                             autofocus: true
+                         }
+                     ],
+                     close : function(){                        
+                     }
+                 }).showModal();
+             }
+         })
+      });
    
-   	  $(".J_protocol").live('click',function(){
+   	  $("#creditProtocol").live('click',function(){
              $.ajax({
                 dataType : 'html',
                 context: document.body,

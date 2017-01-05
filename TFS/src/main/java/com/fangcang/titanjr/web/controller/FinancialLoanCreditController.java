@@ -168,6 +168,16 @@ public class FinancialLoanCreditController extends BaseController {
 	public String loanCreditProtocol() {
 		return "/loan/credit-apply/credit-protocol";
 	}
+	/**
+	 * 授信协议
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/userNotice", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_LOAN_42})
+	public String loanCreditDataFile() {
+		return "/loan/credit-apply/user-notice";
+	}
 
 	/**
 	 * 授信申请企业页面
