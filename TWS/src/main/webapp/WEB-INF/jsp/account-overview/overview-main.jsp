@@ -63,7 +63,7 @@
 			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(1)">
 				<img src="<%=cssSaasPath%>/images/TFS/tfs_c01.png" ></a>
 		</div>		
-		<div class="label" style="margin-right:17px;margin-left: 17px; margin-bottom: 10px;" >
+		<div class="label">
 				<table  width="100%" cellspacing="0" border="0">
 				<colgroup>	
 				    <col width="145">
@@ -137,7 +137,7 @@
 			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(2)">
 				<img src="<%=cssSaasPath%>/images/TFS/tfs_c01.png"></a>
 		</div>		
-		<div style="margin-right:17px;margin-left: 17px; margin-bottom: 10px;" class="label">
+		<div class="label">
 				<table width="100%" cellspacing="0" border="0">
 				<colgroup>					
 					<col width="145">
@@ -211,7 +211,7 @@
 			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(3)">
 				<img src="<%=cssSaasPath%>/images/TFS/tfs_c01.png"></a>
 		</div>		
-		<div style="margin-right:17px;margin-left: 17px; margin-bottom: 10px;" class="label">
+		<div class="label">
 				<table width="100%" cellspacing="0" border="0">
 				<colgroup>					
 					<col width="145">
@@ -284,7 +284,7 @@
 			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(4)">
 				<img src="<%=cssSaasPath%>/images/TFS/tfs_c01.png"></a>
 		</div>		
-		<div style="margin-right:17px;margin-left: 17px; margin-bottom: 10px;" class="label">
+		<div  class="label">
 				<table width="100%" cellspacing="0" border="0">
 				<colgroup>					
 					<col width="145">
@@ -357,7 +357,7 @@
 			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(5)" >
 				<img src="<%=cssSaasPath%>/images/TFS/tfs_c01.png"></a>
 		</div>		
-		<div style="margin-right:17px;margin-left: 17px; margin-bottom: 10px;" class="label">
+		<div  class="label">
 				<table width="100%" cellspacing="0" border="0">
 				<colgroup>					
 					<col width="145">
