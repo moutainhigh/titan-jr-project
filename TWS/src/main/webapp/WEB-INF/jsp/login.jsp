@@ -169,7 +169,7 @@ Login.plogin = function(){
 	}
 	F.loading.show();
 	$.ajax({
-		url:'<%=basePath%>/passlogin.shtml',
+		url:'<%=basePath%>/ex/passlogin.shtml',
 		type:'post',
 		data:{'loginUserName':$('#username').val(),'password':$("#password").val()},
 		dataType:'json',
@@ -198,7 +198,7 @@ Login.slogin = function(){
 		return;
 	}
 	$.ajax({
-		url:'<%=basePath%>/smslogin.shtml',
+		url:'<%=basePath%>/ex/smslogin.shtml',
 		type:'post',
 		data:{'loginUserName':$('#susername').val(),'password':$("#code").val()},
 		dataType:'json',

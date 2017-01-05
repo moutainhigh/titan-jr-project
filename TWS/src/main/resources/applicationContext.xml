@@ -57,11 +57,12 @@
             
             <mvc:exclude-mapping path="/setting/check_payPassword.action"/>
             <mvc:exclude-mapping path="/help/**/*"/>
-           
+           	<mvc:exclude-mapping path="/ex/**/*"/>
+           	<mvc:exclude-mapping path="/main/**"/>
             
             
 
-            <bean class="com.fangcang.titanjr.web.interceptor.InitSessionInterceptor"></bean>
+            <bean class="com.fangcang.titanjr.web.interceptor.UserLoginInterceptor"></bean>
         </mvc:interceptor>
        <mvc:interceptor>
         	<mvc:mapping path="/*"/>

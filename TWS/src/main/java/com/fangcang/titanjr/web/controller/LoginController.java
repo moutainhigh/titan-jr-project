@@ -21,11 +21,12 @@ import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
 
 /**
- * 登录
+ * 登录,不需要登录就可以访问的controller
  * @author luoqinglong
  * @date   2016年12月23日
  */
 @Controller
+@RequestMapping("/ex")
 public class LoginController extends BaseController{
 	private static final Logger LOGGER = Logger.getLogger(LoginController.class);
 	

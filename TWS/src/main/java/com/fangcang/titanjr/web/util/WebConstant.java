@@ -20,7 +20,7 @@ public class WebConstant {
     
     public static final String SESSION_KEY_REG_CODE  = "REG_CODE";//注册时的验证码
    
-    /**********TWS*******************/
+    /********** TWS *******************/
     
     public static final String TWS_SESSION_LOGIN_USER_NAME = "TWS_SESSION_LOGIN_USER_NAME";//tws登录用户名
     
