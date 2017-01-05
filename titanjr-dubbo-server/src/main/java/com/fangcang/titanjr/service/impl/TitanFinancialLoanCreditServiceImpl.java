@@ -30,6 +30,7 @@ import com.fangcang.titanjr.common.enums.FileTypeEnum;
 import com.fangcang.titanjr.common.enums.LoanApplyOrderEnum;
 import com.fangcang.titanjr.common.enums.LoanCreditStatusEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanCreditCompanyEnum;
+import com.fangcang.titanjr.common.enums.entity.LoanCreditCompanyEnum.CompanyType;
 import com.fangcang.titanjr.common.enums.entity.LoanCreditOrderEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanPersonEnsureEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
@@ -659,7 +660,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				.getLeaseAddress());
 
 		creditJsonData.setHousingArea(companyAppendInfo.getCompanyLease()
-				.getHousingArea());
+				.getHousingArea()+" 平方米");
 		creditJsonData.setRental(companyAppendInfo.getCompanyLease()
 				.getRental() + "元/年");
 		creditJsonData.setPaymentMethod(companyAppendInfo.getCompanyLease()
@@ -735,19 +736,20 @@ public class TitanFinancialLoanCreditServiceImpl implements
 									loanPersonEnsure.getCarPropertyType())
 							.getDes());
 			creditJsonData.setCarBrandModel_p(loanPersonEnsure.getCarBrand());// 界面暂无提供
-			creditJsonData.setCarValue_p("");// 暂无提供
+			creditJsonData.setCarValue_p(loanPersonEnsure.getCarWorth());// 暂无提供
 			creditJsonData.setBuyCarYear_p(loanPersonEnsure
-					.getCarPurchaseDate());// 暂无提供
+					.getCarPurchaseDate());
 			creditJsonData.setOtherAssets(loanPersonEnsure.getOtherProperty());
 			creditJsonData.setRelatedNote(loanPersonEnsure.getPropertyRemark());
 
 		}
+		//TODO 根据字段属性担保判断
 		// 企业担保
 		if (loanCompanyEnsure != null) {
 			creditJsonData.setCompanyName_c(loanCompanyEnsure.getCompanyName());
-			creditJsonData.setBusinessExpire_c("");// 暂无提供
-			creditJsonData.setCompanyType_c("");// 暂无提供
-			creditJsonData.setRegisteredCapital_c("");// 暂无提供
+			creditJsonData.setBusinessExpire_c(loanCompanyEnsure.getCertificateStartDate()+"到"+loanCompanyEnsure.getCertificateExpireDate());
+			creditJsonData.setCompanyType_c(CompanyType.getEnumByType(loanCompanyEnsure.getCompanyType()).getDes());// 暂无提供
+			creditJsonData.setRegisteredCapital_c(loanCompanyEnsure.getRegistFinance()+"元");
 			creditJsonData.setEmployeesNumber_c(LoanCreditCompanyEnum.OrgSize
 					.getEnumBySizeType(loanCompanyEnsure.getEnterpriseScale())
 					.getDes());
