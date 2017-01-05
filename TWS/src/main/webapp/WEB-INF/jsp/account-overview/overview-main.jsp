@@ -615,7 +615,8 @@
         
         $('.withdrawBtn').on('click',function(){
         	$.ajax({
-        		dataType : 'json',		
+        		dataType : 'json',
+        		async:false,
 		        url : '<%=basePath%>/account/validate_person_Enterprise.shtml',
 		        success:function(data){
 		        	if(data.result=="success"){

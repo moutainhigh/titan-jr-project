@@ -6,8 +6,9 @@
 <head>
 	<meta charset="utf-8">
 	<title>泰坦钱包</title>
-	<link rel="stylesheet" href="<%=cssWalletPath%>/css/fangcang.min.css?v=20161222">
-	<link rel="stylesheet" href="<%=cssWalletPath%>/css/style.css">
+	<jsp:include page="/comm/static-resource.jsp"></jsp:include>
+	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
+	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
 	<body style="min-width: 1300px;" class="bg" >
 		<div class="header">
