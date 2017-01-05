@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
@@ -30,6 +31,7 @@ import com.fangcang.titanjr.dto.response.SynLoanOrderResponse;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.util.StringUtil;
 
 @Controller
@@ -75,6 +77,7 @@ public class FinancialLoanRepaymentController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/repaymentPer", method = RequestMethod.GET)
+	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_PAY_38 })
 	public String repaymentPer(String orderNo, Model model) {
 
 		log.info(" repayment per [ orderNo= " + orderNo + "]");
