@@ -4,8 +4,8 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <jsp:include page="/comm/static-resource.jsp"></jsp:include>
     <jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
+    <jsp:include page="/comm/static-resource.jsp"></jsp:include>
     <jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
 <body style="min-width: 1300px;" class="bg" >

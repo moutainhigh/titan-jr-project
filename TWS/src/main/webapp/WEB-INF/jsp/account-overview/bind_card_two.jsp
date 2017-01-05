@@ -26,10 +26,10 @@
 					<div class="r_text">
 						<form id="bank_card_form" method="post" action="<%=basePath%>/account/bankCardBind.shtml">
 							<ul>
-								<li class="r_y1"><div class="rt_title">公司名称</div><input type="text" class="text"  id="name" value="${organ.orgName}" disabled placeholder="请输入公司名称" ></li>
-								<li class="r_y1"><div class="rt_title">卡号</div><input type="text" class="text" id="accountnumber" placeholder="请输入对公卡卡号"></li>
-								<li class="r_y1"><div class="rt_title">开户行</div><input type="text" class="text" id="bankCode" placeholder="请选择开户银行"><input type="hidden" id="bankName" ></li>
-								<li class="lb_btn "><a href="javascript:void(0)" onclick="submitForm();" class="">提交绑卡申请</a></li>
+								<li class="r_y1"><div class="rt_title">公司名称</div><input type="text" class="text" id="userName" disabled value="${organ.orgName}" placeholder="请输入公司名称" ><input type="hidden" name="userName" value="${organ.orgName}"/></li>
+								<li class="r_y1"><div class="rt_title">卡号</div><input type="text" class="text" id="bankCardCode" name="bankCardCode" placeholder="请输入对公卡卡号"></li>
+								<li class="r_y1"><div class="rt_title">开户行</div><input type="text" class="text"  id="bankCardName" name="bankCardName"placeholder="请选择开户银行"><input type="hidden" id="bankCode" name="bankCode" ></li>
+								<li class="lb_btn "><a href="javascript:void(0)" onclick="submitForm();" class="">提交绑卡申请</a> <input type="hidden" name="modifyOrBind" id="modifyOrBind" value="${modifyOrBind}"></li>
 							</ul>
 						</form>
 					</div>
@@ -66,8 +66,8 @@
 		}); 
 		
 		function submitForm(){
-			var bankCode = $("#bankCode").attr("data-id");
-			var accountnumber = $("#accountnumber").val();
+			var bankCode = $("#bankCardName").val();
+			var accountnumber = $("#bankCardCode").val();
 			
 			if(typeof bankCode =="undifined" || bankCode.length<1){
 				new top.Tip({msg : '开户行不能为空！', type: 1 , time:1000}); 
@@ -83,17 +83,16 @@
 		}
 		
 		
-		new AutoComplete($('#bankCode'), {
+		new AutoComplete($('#bankCardName'), {
 		    url : '<%=basePath%>/account/getBankInfoList.shtml',
 		    source : 'bankInfoDTOList',
 		    key : 'bankCode',  //数据源中，做为key的字段
 		    val : 'bankName', //数据源中，做为val的字段
-		    width : 240,
+		    width : 410,
 		    height : 300,
 		    autoSelectVal : true,
 		    clickEvent : function(d, input){
-		        input.attr('data-id', d.key);
-		        $("#bankName").val(d.val);
+		        $("#bankCode").val(d.key);
 		    }
 		});
 		

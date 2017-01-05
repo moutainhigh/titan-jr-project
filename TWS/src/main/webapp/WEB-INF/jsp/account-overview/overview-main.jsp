@@ -425,6 +425,10 @@
 	</div>
 </div>
 </div>
+<form action="<%=basePath%>/account/toBindCardStepOne.shtml" method="post" id="toBindCard" target="_blank">
+  <input type="hidden" name="modifyOrBind" id="modifyOrBind">
+</form>
+
 <div class="h_40"></div>
 <!-- 版权 -->
 <jsp:include page="footer.jsp"/>
@@ -607,8 +611,31 @@
 					}
 				}
 			});
-			
 		}
+        
+        $('.withdrawBtn').on('click',function(){
+        	$.ajax({
+        		dataType : 'json',		
+		        url : '<%=basePath%>/account/validate_person_Enterprise.shtml',
+		        success:function(data){
+		        	if(data.result=="success"){
+		        		if(data.msg=="3"){//对公且未绑定
+		        			$("#toBindCard").submit();
+		        		}else if(data.msg=="2"|| data.msg=="4"){//对私或者对公已绑定成功
+		        			account_withdraw();
+		        		}else if(data.msg=="5"){//对公，且绑定失败
+		        			 bind_card_fail();
+		        		}else if(data.msg=="6"){
+		        			bank_card_binding();
+		        		}else{
+		        			 new top.Tip({msg: "系统错误", type: 1, time: 1000});
+		        		}
+		        	}else{
+		        		 new top.Tip({msg: "系统错误", type: 1, time: 1000});
+		        	}
+		        }
+        	});
+        });
         
         //充值
         $('.rechargeBtn').on('click',function(){
@@ -617,7 +644,14 @@
                 });
                 return false;
         });
-        
+        function account_withdraw(){
+        	  window.top.createIframeDialog({
+                  url : '<%=basePath%>/account/goto_cashierDesk.shtml?payType=8',
+  					close:function () {
+  					}
+              });
+          }
+          
         
     	window.onload = function () {
 			loadAccountBalance();
@@ -655,40 +689,6 @@
         	});
 		}
 		
-		function bind_card_public(this_Object){
-        	var _this=this_Object;
-        	$.ajax({
-		        dataType : 'html',		      
-		        context: document.body,
-		        url : '<%=basePath%>/account/toBindAccountWithDrawCard.shtml',
-		        success : function(html){
-		        	var d = window.top.dialog({
-				        title: ' ',
-				        padding: '0 0 0px 0 ',
-				        content: html,
-				        skin : 'saas_pop',
-				    }).showModal();		
-					//点击关闭
-					window.parent.$(".J_finsh").on('click', function() {
-						d.remove();
-						_this.text('提现卡审核中···').removeClass('blue decorationUnderline').css("color","#999");
-					}); 
-					window.parent.$(".J_finsh_close").on('click', function() {
-						d.remove();
-							 $(".withdrawBtn").text('提现卡审核失败···').removeClass('blue decorationUnderline').css("color","#999"); 
-						});  
-				},
-		        error:function(xhr,status){
-         			if(xhr.status&&xhr.status==403){
-            			new top.Tip({msg : '没有权限访问，请联系管理员', type: 3 , timer:2000});
-            			return ;
-            		}
-         			 new top.Tip({msg : '请求失败，请重试', type: 3});
-         		}
-
-		    });
-        	
-        }
 		
 		//按条件查询
 		function queryTransOrders(index) {
@@ -1019,7 +1019,8 @@
 		        okValue : '修改提现卡信息',		
 		        content : '<div class="l_h26" style="padding-left: 30px;"><i class="mr_ico"></i><span class="TFS_mrtips"><strong class="c_tfscolor f_16">对不起,提现卡绑定失败</strong>失败原因：银行卡信息或持卡人姓名不正确不正正宗确。银行卡信息或持卡人。</span></div>',
 				ok : function(){	
-					window.open().location="<%=basePath%>/account/toBindCardStepOne.shtml";
+					$("#modifyOrBind").val("1");
+					$("#toBindCard").submit();
 		        },
 		        cancel : function(){
 		          	$(".withdrawBtn").text('提现卡绑定失败').removeClass('blue').addClass('MyAssets_red');

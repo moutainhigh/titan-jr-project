@@ -458,16 +458,18 @@ public class FinancialAccountController extends BaseController {
 //    绑定提现卡start
     @RequestMapping("toBindCardStepOne")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String toBindCardStepOne(){
+    public String toBindCardStepOne(String modifyOrBind,Model model){
+    	model.addAttribute("modifyOrBind", modifyOrBind);
     	return "account-overview/bind_card_one";
     }
     
     @RequestMapping("toBindCardStepTwo")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String toBindCardStepTwo(Model model){
+    public String toBindCardStepTwo(String modifyOrBind,Model model){
     	if (null != this.getUserId()) {
             model.addAttribute("organ", this.getTitanOrganDTO());
        }
+    	model.addAttribute("modifyOrBind", modifyOrBind);
     	return "account-overview/bind_card_two";
     }
     
@@ -478,26 +480,26 @@ public class FinancialAccountController extends BaseController {
     			|| !StringUtil.isValidString(bindBankCardRequest.getBankCardName())
     			|| !StringUtil.isValidString(bindBankCardRequest.getUserName())
     			|| !StringUtil.isValidString(bindBankCardRequest.getBankCode())
-    			|| !StringUtil.isValidString(bindBankCardRequest.getModifyOrBind())){
+    			){
      		model.addAttribute("msg", "参数不能为空");
-     		
     		return "account-overview/bind_card_three";
     	}
      	
-     	if(WebConstant.BIND_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//绑卡
+     	if(!StringUtil.isValidString(bindBankCardRequest.getModifyOrBind())){//绑卡
      		CusBankCardBindResponse cardBindResponse = bindBindCardToPublic(bindBankCardRequest);
      		 if (!cardBindResponse.isResult()){
-                 return toJson(putSysError(cardBindResponse.getReturnMessage()));
+     			 log.error("绑卡失败"+cardBindResponse.getReturnMessage());
+     			 model.addAttribute("msg", cardBindResponse.getReturnMessage());
              }
      	}else if(WebConstant.MODIFY_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//失败修改绑卡
      		ModifyInvalidWithDrawCardResponse modifyInvalidWithDrawCardResponse = modifyBindCard(bindBankCardRequest);
      	    if(!modifyInvalidWithDrawCardResponse.isResult()){
-     	    	  return toJson(putSysError(modifyInvalidWithDrawCardResponse.getReturnMessage()));
+     	    	 log.error("绑卡失败"+modifyInvalidWithDrawCardResponse.getReturnMessage());
+     			 model.addAttribute("msg", modifyInvalidWithDrawCardResponse.getReturnMessage());
      	    }
      	}else{
-     		return toJson(putSysError("参数错误"));
+     		model.addAttribute("msg", "参数错误");
      	}
-    	
 		return "account-overview/bind_card_three";
     }
     
@@ -514,7 +516,13 @@ public class FinancialAccountController extends BaseController {
         return null;
     }
     
-
+    @ResponseBody
+    @RequestMapping(value = "/checkBindAccountWithDrawCard")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String checkBindAccountWithDrawCard(HttpServletRequest request, Model model){
+    	titanFinancialBankCardService.bindBankCardForOne(this.getUserId());
+    	 return this.validatePersonOrEnterprise(request, model);
+    }
     
     
     
@@ -594,12 +602,7 @@ public class FinancialAccountController extends BaseController {
     	return "account-overview/bind-bankcard";
     }
     
-    @ResponseBody
-    @RequestMapping(value = "/checkBindAccountWithDrawCard")
-    public String checkBindAccountWithDrawCard(HttpServletRequest request, Model model){
-    	titanFinancialBankCardService.bindBankCardForOne(this.getUserId());
-    	 return this.validatePersonOrEnterprise(request, model);
-    }
+   
     
 
     

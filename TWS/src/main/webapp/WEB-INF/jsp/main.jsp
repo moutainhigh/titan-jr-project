@@ -110,13 +110,7 @@
 
 <script type="text/javascript">
 //我的账户
-$('.hr_login').hover(function(){
-	$(this).find('.hrl_ul').removeClass('dn');
-	$(this).find('.hrl_hover').addClass('l_red');
-},function(){
-	$(this).find('.hrl_ul').addClass('dn');
-	$(this).find('.hrl_hover').removeClass('l_red');
-})
+
 //广告 
 var swiper = new Swiper('.swiper-container', {
         pagination: '.swiper-pagination',

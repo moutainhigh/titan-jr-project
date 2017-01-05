@@ -4,9 +4,6 @@
 	<div class="w_1200">
 		<div class="logo">
 			<div class="l_img"><img src="<%=cssWalletPath%>/images/logo.png"></div>
-			<!-- <div class="l_text">
-				<i class="ico "></i>欢迎注册
-			</div> -->
 		</div>
 		<div class="head_r">
 			<ul>
@@ -35,3 +32,12 @@
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+$('.hr_login').hover(function(){
+	$(this).find('.hrl_ul').removeClass('dn');
+	$(this).find('.hrl_hover').addClass('l_red');
+},function(){
+	$(this).find('.hrl_ul').addClass('dn');
+	$(this).find('.hrl_hover').removeClass('l_red');
+});
+</script >

@@ -33,7 +33,7 @@
 				<div class="r_c ">
 					<div class="r_text">
 						<ul>					
-							<li class="lb_btn "><a href="<%=basePath%>/account/toBindCardStepTwo.shtml" class="">去绑定提现银行卡</a></li>
+							<li class="lb_btn "><a href="<%=basePath%>/account/toBindCardStepTwo.shtml?modifyOrBind=${modifyOrBind}" class="">去绑定提现银行卡</a></li>
 						</ul>
 					</div>			
 				</div>
