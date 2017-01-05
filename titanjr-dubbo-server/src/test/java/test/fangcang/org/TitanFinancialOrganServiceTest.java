@@ -1,10 +1,13 @@
 package test.fangcang.org;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
 import com.fangcang.titanjr.dto.request.RefundConfirmRequest;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
@@ -21,6 +24,7 @@ public class TitanFinancialOrganServiceTest extends BaseTest{
 	@Resource
 	TitanFinancialRefundService titanFinancialRefundService;
 	
+	
 	  @Before
     public void init(){
 		  titanOrgService = (TitanFinancialOrganService)cfx.getBean("titanOrgService");  
@@ -28,7 +32,7 @@ public class TitanFinancialOrganServiceTest extends BaseTest{
     }
 	
 	
-	@Test
+//	@Test
 	public void testRefundComnfirm(){
 		RefundConfirmRequest refundConfirm = new RefundConfirmRequest();
 		refundConfirm.setUserId("141223100000056");
@@ -40,6 +44,27 @@ public class TitanFinancialOrganServiceTest extends BaseTest{
 		}
 		
 	}
+	@Test
+	public void testFacade(){
+		
+		try{
+			OrgBindInfoDTO orgBindDTO = new OrgBindInfoDTO();
+			 orgBindDTO.setMerchantCode("M100000061");
+			 orgBindDTO.setResultKey("PASS");
+			 orgBindDTO.setBindStatus(1);
+		    List<OrgBindInfoDTO> orgBindDTOList = titanOrgService.queryOrgBindInfoDTO(orgBindDTO);
+		    if(null == orgBindDTOList || orgBindDTOList.size()!=1 || orgBindDTOList.get(0)==null){
+		    	System.out.println("11111");
+		    }
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		 
+	}
 	
-
+	 
+	
+	
+	
+	
 }

@@ -86,4 +86,43 @@
 	      </if>
 	  </where>
   </select>
+  
+  <select id="queryOrgBindInfoDTO" 
+ 	 parameterType="com.fangcang.titanjr.dto.bean.OrgBindInfoDTO"
+ 	 resultType="com.fangcang.titanjr.dto.bean.OrgBindInfoDTO">
+ 	  select 
+ 	 	b.merchantcode as merchantCode,
+ 	 	b.merchantname as merchantName,
+ 	 	b.bindstatus as bindStatus,
+ 	 	b.userid,
+ 	 	c.resultkey as resultKey,
+ 	 	c.checkuser as checkUser,
+ 	 	o.titancode as titanCode,
+ 	 	o.buslince,
+ 	 	o.usertype as userType,
+ 	 	o.statusid as statusId
+ 	 from t_tfs_orgbindinfo b inner join t_tfs_orgcheck c on b.userid=c.userid
+ 	 inner join t_tfs_org o on  o.userid =b.userid
+ 	 <where>
+ 	 	<if test="userid !=null">
+ 	 		and b.userid=#{userid}
+ 	 	</if>
+ 	 	<if test="bindStatus !=null">
+ 	 		and b.bindstatus=#{bindStatus}
+ 	 	</if>
+ 	 	<if test="titanCode !=null">
+ 	 		and o.titancode=#{titanCode}
+ 	 	</if>
+ 	 	<if test="statusId !=null">
+ 	 	    and o.statusid =#{statusId}
+ 	 	</if>
+ 	 	<if test="resultKey !=null">
+ 	 	    and c.resultkey =#{resultKey}
+ 	 	</if>
+ 	 	<if test="merchantCode !=null">
+ 	 		and b.merchantcode = #{merchantCode}
+ 	 	</if>
+ 	 </where>
+  </select>
+  
 </mapper>

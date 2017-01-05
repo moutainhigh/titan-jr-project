@@ -1,10 +1,13 @@
 package com.fangcang.titanjr.service;
 
 
+import java.util.List;
+
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
 import com.fangcang.titanjr.dto.request.*;
@@ -148,6 +151,7 @@ public interface TitanFinancialOrganService {
      */
     public OrgBindInfo queryOrgBindInfoByUserid(OrgBindInfo orgBindInfo);
     
+    
     /**
      * 查询有效账户的绑定信息
      * @param orgBindInfo
@@ -210,4 +214,10 @@ public interface TitanFinancialOrganService {
      */
     public TitanOpenOrgDTO queryTitanOpenOrgDTO(String userId); 
     
+    /**
+     * 获取绑定的机构信息
+     * @param orgBindDTO
+     * @return
+     */
+    public List<OrgBindInfoDTO> queryOrgBindInfoDTO(OrgBindInfoDTO orgBindDTO);
 }

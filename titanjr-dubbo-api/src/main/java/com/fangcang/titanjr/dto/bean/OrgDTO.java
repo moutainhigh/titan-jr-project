@@ -17,6 +17,7 @@ public class OrgDTO implements Serializable{
 	private String titancode;
 	private Integer statusId;
 	
+	private String resultkey;
 	
 	
 	public Integer getOrgid() {
@@ -67,5 +68,10 @@ public class OrgDTO implements Serializable{
 	public void setStatusId(Integer statusId) {
 		this.statusId = statusId;
 	}
-	
+	public String getResultkey() {
+		return resultkey;
+	}
+	public void setResultkey(String resultkey) {
+		this.resultkey = resultkey;
+	}
 }

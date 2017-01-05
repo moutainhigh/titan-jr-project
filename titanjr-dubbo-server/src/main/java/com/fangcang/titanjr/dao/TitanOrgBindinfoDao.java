@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
+import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
 //import com.fangcang.titanjr.common.exception.GlobalDaoException;
 import com.fangcang.titanjr.entity.TitanOrgBindinfo;
 import com.fangcang.titanjr.entity.parameter.TitanOrgBindinfoParam;
@@ -16,4 +17,6 @@ public interface TitanOrgBindinfoDao {
 	List<TitanOrgBindinfo> selectTitanOrgBindinfoByUserid(TitanOrgBindinfo titanOrgBindinfo)throws DaoException;
 	
 	List<TitanOrgBindinfo> selectActiveTitanOrgBindinfo(TitanOrgBindinfo titanOrgBindinfo)throws DaoException;
+
+	List<OrgBindInfoDTO> queryOrgBindInfoDTO(OrgBindInfoDTO orgBindDTO);
 }

@@ -60,6 +60,7 @@ import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
@@ -1462,6 +1463,12 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		}
 		LOGGER.error("该商家没有开通金融账户或账户秘钥信息");
 		return null;
+	}
+
+
+	@Override
+	public List<OrgBindInfoDTO> queryOrgBindInfoDTO(OrgBindInfoDTO orgBindDTO) {
+		return titanOrgBindinfoDao.queryOrgBindInfoDTO(orgBindDTO);
 	}
 	
 }
