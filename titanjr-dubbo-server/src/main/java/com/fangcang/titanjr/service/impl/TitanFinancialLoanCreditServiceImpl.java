@@ -287,7 +287,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			//发送短信通知运营
 			SendMessageRequest sendMessageRequest = new SendMessageRequest();
 			sendMessageRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
-			sendMessageRequest.setContent("["+orgDTO.getOrgname()+"]提交的授信申请，提交复审时失败，请查看服务器日志或者重新提交复审");
+			sendMessageRequest.setContent("<"+orgDTO.getOrgname()+">提交的授信申请，提交复审时失败，请查看服务器日志或者重新提交复审");
 			sendMessageRequest.setReceiveAddress("13543309695");//峰哥手机
 			sendSMSService.sendMessage(sendMessageRequest);
 		}
