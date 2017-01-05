@@ -212,7 +212,7 @@ public class FinancialLoanController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = "/loanStatInfo", method = RequestMethod.GET)
-	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_LOAN_42 })
+	@AccessPermission(allowRoleCode = { CommonConstant.ROLECODE_VIEW_39 })
 	public String getLoanStatInfo() {
 
 		if (!checkUserIsCredit()) {
