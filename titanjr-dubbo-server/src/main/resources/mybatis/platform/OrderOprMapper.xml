@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.PlatformOrderOprDao">
+
+    <select id="queryOrderStatInfo" resultType="com.fangcang.titanjr.entity.PlatformOrderStat"
+            parameterType="com.fangcang.titanjr.entity.parameter.PlatformOrderStatConditons">
+   	  select o.currency,
+		       sum((o.checkoutdate - o.checkindate) * o.roomnum) roomNight,
+		       sum(nvl(o.havepaidsum, 0)) paidin,
+		       sum(round(nvl(o.havepaidsum, 0) * nvl(o.rate, 1), 2)) exchangePaidin,
+		       sum(nvl(ar.amount, 0)) receivable,
+		       sum(round(nvl(ar.amount, 0) * nvl(o.rate, 1), 2)) exchangeReceivable,
+		       sum(nvl(ar.amount, 0)) - sum(nvl(o.havepaidsum, 0)) unReceivable,
+		       sum(nvl(supply.payable, 0)) payable,
+		       sum(round(nvl(ar.amount, 0) * nvl(o.rate, 1), 2)) -
+		       sum(nvl(supply.payable, 0)) profit
+		  from htl_order.t_hotel_order o,
+		       htl_order.t_distributor d,
+		       htl_order.t_account_receivable ar,
+		       (select s.orderid, sum(round(nvl(ap.amount, 0) * nvl(s.rate, 1), 2)) payable
+		          from htl_order.t_hotelsupplyorder s,
+		               htl_order.t_account_payable  ap
+		         where s.id = ap.supplyorderid
+		           and s.supplyresult in (1,2)
+		         group by s.orderid) supply
+		 where o.merchantcode =#{merchantCode}
+		   and o.id = d.orderid
+		   and o.paymethod = 2
+		   and o.orderstate in (3,4)
+		   and o.id = ar.orderid(+)
+		   and o.id = supply.orderid(+)
+			 and o.createTime &gt;= to_date(#{beginDate},'yyyy-mm-dd')
+			 and o.createTime &lt;= to_date(#{endDate},'yyyy-mm-dd') and o.currency = 1
+		 group by o.currency
+  </select>
+
+</mapper>

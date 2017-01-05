@@ -35,7 +35,7 @@ public class RSATester {
     }
 
     private static void testFile() throws Exception {
-    	File inputFile = new File("f:/dk-123456.zip");
+    	//File inputFile = new File("f:/dk-123456.zip");
     	File tmpFile = new File("f:/dk-123456-encryptFile.zip");
     	File outputFile = new File("f:/dk-123456-decrypt001.zip");
         //˽Կ���ܹ�Կ����
@@ -46,10 +46,10 @@ public class RSATester {
 //        writeToFile(decodedData, outputFile);
 
         //
-        byte[] data = readFromFile(inputFile);
-        byte[] encodedData = RSAUtils.encryptByPublicKey(data,publicKey);
-        writeToFile(encodedData, tmpFile);
-        byte[] decodedData = RSAUtils.decryptByPrivateKey(encodedData, privateKey);
+        byte[] data = readFromFile(outputFile);
+       // byte[] encodedData = RSAUtils.encryptByPublicKey(data,publicKey);
+      //  writeToFile(encodedData, tmpFile);
+        byte[] decodedData = RSAUtils.decryptByPrivateKey(data, privateKey);
         writeToFile(decodedData, outputFile);
     }
 

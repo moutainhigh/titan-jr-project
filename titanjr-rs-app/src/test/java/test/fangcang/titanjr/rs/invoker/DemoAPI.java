@@ -12,17 +12,33 @@ import com.ruixue.oss.common.utils.DateUtil;
 
 
 public class DemoAPI {
-	private static String ropUrl = "https://testapi.open.ruixuesoft.com:30005/ropapi";
-	private static String appKey = "F1A95B5E-3485-4CEB-8036-F2B9EC53EF65";
-	private static String appSecret = "8B6E8EEF-48CC-4CCF-94C6-55C4AA2FE9F2";
-
+//	private static String ropUrl = "https://testapi.open.ruixuesoft.com:30005/ropapi";
+//	private static String appKey = "F1A95B5E-3485-4CEB-8036-F2B9EC53EF65";
+//	private static String appSecret = "8B6E8EEF-48CC-4CCF-94C6-55C4AA2FE9F2";
+//	private static String session = "1460355562856409835";
+	
+	
+	//融数商户联调环境
+//	private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
+//	private static String appKey = "C5CE632E-FDA6-436A-B4DF-1DE93A2C72C3";
+//	private static String appSecret = "D7787ED2-0465-42C7-9CF8-25D5CC6ACA34";
+//	private static String session = "1478056836773639888";
+	
+	
+	//融数UAT 环境
+		private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
+		private static String appKey = "762DF53A-4DFD-427A-88F8-C4EEF26195A3";
+		private static String appSecret = "6461B23C-3ABE-4BE2-8E2C-D3FF4B2F5415";
+		private static String session = "1478056836773639888";
+		
+		
 	static DefaultRopClient ropClient = new DefaultRopClient(ropUrl, appKey,
 			appSecret, "xml");
 
 	public static void main(String[] args) throws FileNotFoundException {
 		String strMsg = null;
 //		String session = DemoAPI.sessionGet();
-		String session = "1460355562856409835";
+		//String session = "1460355562856409835";
 
 		//查询账户状态
 //		String requestType = "ruixue.wheatfield.account.check";
@@ -483,7 +499,7 @@ public class DemoAPI {
 		String strError = null;
 		try {
 			WheatfieldBalanceGetlistRequest req = new WheatfieldBalanceGetlistRequest();
-			req.setUserid("TJM10000087");								//	用户id
+			req.setUserid("TJM10020002");								//	用户id
 //			req.setUserid("141223100000056");								//	用户id
 			req.setRootinstcd("M000016");						// 机构号
 			
@@ -598,20 +614,20 @@ public class DemoAPI {
 		try {
 			WheatfieldEnterpriseEntityaccountoptRequest req = new WheatfieldEnterpriseEntityaccountoptRequest();
 			// 必输项
-			req.setCompanyname("xxx");				// 企业名称
-			req.setBuslince("xxx");					// 营业执照
-			req.setUserid("xxx");					// 接入机构中设置的用户ID  不能重复
+			req.setCompanyname("天下房仓科技有限公司");				// 企业名称
+			req.setBuslince("企业执照号10000002222");					// 营业执照
+			req.setUserid("TJM10000110");					// 接入机构中设置的用户ID  不能重复
 			req.setUsertype("1");					// 用户类型(1：商户 )
 			req.setConstid("M000016");				// 机构码
 			req.setProductid("P000070");			// 产品号
-			req.setUsername("xxx");					// 用户名称，及接入机构的用户名
+			req.setUsername("天下房仓科技有限公司");					// 用户名称，及接入机构的用户名
 			
 			// 非必输项
 			req.setAcuntopnlince("xxx");			//开户许可证
 			req.setAddress("xxx");					//地址
 			req.setBusplacectf("xxx");				//经营场所实地认证
 			req.setCompanycode("xxx");				//企业编号
-			req.setConnect("xxx");					//联系方式
+			req.setConnect("刘丽");					//联系方式
 			req.setCorporateidentity("xxx");		//法人身份证
 			req.setCorporatename("xxx");			//法人姓名
 			req.setLoancard("");					//贷款卡
@@ -623,7 +639,6 @@ public class DemoAPI {
 			req.setShortname("xxx");				//企业简称
 			req.setTaxregcardf("");					//税务登记证1
 			req.setTaxregcards("");					//税务登记证2
-
 			WheatfieldEnterpriseEntityaccountoptResponse rsp = ropClient
 					.execute(req, sessionKey);
 			if (rsp != null) {

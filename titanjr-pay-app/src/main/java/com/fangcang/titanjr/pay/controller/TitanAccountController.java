@@ -236,4 +236,3 @@ public class TitanAccountController extends BaseController {
 		return null;
 	}
 }
-

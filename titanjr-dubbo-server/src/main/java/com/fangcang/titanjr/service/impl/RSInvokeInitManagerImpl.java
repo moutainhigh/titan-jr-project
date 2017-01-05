@@ -90,6 +90,7 @@ public class RSInvokeInitManagerImpl {
 		if(CollectionUtils.isNotEmpty(list)){
 			RSInvokeConfig invokeConfig = new RSInvokeConfig();
 			for(TitanSysconfig item : list){
+				//TODO 改为连接uat的贷款环境，上线后改成从数据库取。
 				if(item.getCfgKey().equals("RSInvokeConfig_appKey")){
 					invokeConfig.setAppKey(item.getCfgValue());
 					continue;

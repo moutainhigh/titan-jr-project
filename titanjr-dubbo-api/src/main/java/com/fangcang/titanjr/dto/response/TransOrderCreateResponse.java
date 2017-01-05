@@ -10,6 +10,16 @@ public class TransOrderCreateResponse extends BaseResponseDTO{
 	
 	private String orderNo;
 	
+	private Integer transId;
+	
+	public Integer getTransId() {
+		return transId;
+	}
+
+	public void setTransId(Integer transId) {
+		this.transId = transId;
+	}
+
 	private List<OrderOperateInfoDTO> orderOperateInfoList;
 
 	public String getOrderNo() {

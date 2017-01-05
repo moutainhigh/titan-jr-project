@@ -165,6 +165,15 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	private static Map<String, Object> mapLock = new ConcurrentHashMap<String, Object>();
 
 
+	public void tt(){
+		
+		
+		//TitanTransOrder titanTransOrder = orderRequest2TitanTransOrder(orderRequest);
+		
+		
+		//titanTransOrderDao.insert(titanTransOrder)
+	}
+	
 	@Override
 	public LocalAddTransOrderResponse addLocalTransOrder(
 			TitanPaymentRequest titanPaymentRequest) {
@@ -616,8 +625,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						} else {
 							log.error("充值下单失败，对应的落单id："
 									+ titanTransferReq.getTransorderid());
+							accTradeResponse.putErrorResult("充值下单失败,业务单可能已经支付");
 						}
 						unlockOutTradeNoList(payOrderNo);
+					}else{
+						accTradeResponse.putErrorResult("订单不存在");
 					}
 				}
 			}
@@ -665,6 +677,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 		if (StringUtil.isValidString(transOrderDTO.getNotifyUrl())) {
 			url = transOrderDTO.getNotifyUrl();
+		}else{
+			return;
 		}
 		try {
 			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params) + "---url---"
@@ -1705,8 +1719,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			String domainName = domainConfigDao.queryCurrentEnvDomain();
 			if(StringUtil.isValidString(domainName)){
 				payMethodConfigDTO = new PayMethodConfigDTO();
-				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-app/payment/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-app/payment/notify.action");
+				payMethodConfigDTO.setPageurl("http://"+domainName+"/TFS02/payment/payConfirmPage.action");
+				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/TFS02/payment/notify.action");
 			}
 			return payMethodConfigDTO;
 		}catch(Exception e){
@@ -1813,9 +1827,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	}
 
 	private void unlockOutTradeNoList(String out_trade_no) {
-		if (mapLock.containsKey(out_trade_no)) {
-			synchronized (mapLock.get(out_trade_no)) {
-				mapLock.remove(out_trade_no).notifyAll();
+		if(out_trade_no!=null){
+			if (mapLock.containsKey(out_trade_no)) {
+				synchronized (mapLock.get(out_trade_no)) {
+					mapLock.remove(out_trade_no).notifyAll();
+				}
 			}
 		}
 	}
@@ -2016,7 +2032,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			titanTransOrder.setAmount((long) 0);
 			titanTransOrder.setUserorderid(OrderGenerateService
 					.genSyncUserOrderId());
-
 			if (null != titanOrderRequest.getBusinessInfo()) {
 				// 如果指定了业务编码则将编号并入库
 				titanTransOrder.setBusinessordercode(titanOrderRequest
@@ -2037,6 +2052,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				boolean isSuccess = titanTransOrderDao.insert(titanTransOrder) > 0 ? true
 						: false;
 				localOrderResponse.setOrderNo(titanTransOrder.getUserorderid());
+				localOrderResponse.setTransId(titanTransOrder.getTransid());
 				localOrderResponse.putSuccess();
 				if (!isSuccess) {
 					log.info("save order info is fail");
@@ -2044,6 +2060,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 			} catch (Exception e) {
 				log.error("订单信息保存失败:" + e.getMessage());
+				localOrderResponse.putErrorResult("订单下单失败");
 			}
 		}
 		return localOrderResponse;
@@ -2123,7 +2140,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 		// 表明业务订单号已经重复提交
 		if (null != transOrderDTO) {
-
 			if (OrderStatusEnum.isPaySuccess(transOrderDTO
 					.getStatusid())) {
 
@@ -2144,6 +2160,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 				return orderCreateResponse;
 			}
+			orderCreateResponse.setTransId(transOrderDTO.getTransid());
 			// 金额不一致,则直接将订单设置为失效
 			if (!NumberUtil.covertToCents(titanOrderRequest.getAmount())
 					.equals("" + transOrderDTO.getTradeamount())) {
@@ -2260,7 +2277,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				.getPayerTypeEnumByKey(titanOrderRequest.getPayerType());
 		titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
 		// 如果存在信贷，需要在此处判断其productId
-		titanTransOrder.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+		titanTransOrder.setProductid(titanOrderRequest.getProductId());
 		if (StringUtil.isValidString(titanOrderRequest.getUserId())) {// 如果fcUserId为null则不查询
 			if (payerTypeEnum.isFcUserId()) {// 付款方传入fuUSerId
 				TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
@@ -2286,7 +2303,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			} else if (payerTypeEnum.isUserId()) {// 付款方传入userId,现在只要提现操作
 				titanTransOrder.setUserid(titanOrderRequest.getUserId());
 				if (PayerTypeEnum.WITHDRAW.getKey().equals(
-						payerTypeEnum.getKey())) {
+						payerTypeEnum.getKey())||PayerTypeEnum.LOAN.getKey().equals(
+								payerTypeEnum.getKey())) {
 					titanTransOrder.setPayermerchant(titanOrderRequest
 							.getUserId());
 				}
@@ -2312,7 +2330,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 			} else if (payerTypeEnum.isUserId()) {// 接收方传入userId
 				titanTransOrder.setUserid(titanOrderRequest.getRuserId());
-				if (PayerTypeEnum.RECHARGE.getKey().equals(payerTypeEnum.getKey()))
+				if (PayerTypeEnum.RECHARGE.getKey().equals(payerTypeEnum.getKey()) || 
+						PayerTypeEnum.LOAN.getKey().equals(payerTypeEnum.getKey()))
 				{
 					titanTransOrder
 							.setPayeemerchant(titanOrderRequest.getRuserId());
@@ -2323,7 +2342,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						payerTypeEnum.getKey())) {
 					titanTransOrder
 							.setTransordertype(TransOrderTypeEnum.WITHDRAW.type);
-				} else {
+				} else if(PayerTypeEnum.RECHARGE.getKey().equals(
+						payerTypeEnum.getKey())){
 					titanTransOrder
 							.setTransordertype(TransOrderTypeEnum.RECHARGE.type);
 				}

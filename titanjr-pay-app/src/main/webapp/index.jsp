@@ -233,12 +233,13 @@
     <script>
         $(document).ready(function () {
             var configObj = {};
+
             configObj.module = "c7051ab21f7356dbd454aa3ea6e49e5e2f7186ea9000496d977539ba70d580ce63544ca43b0de147e9f2e4d103abe2e6caf00ed18b708dbab92581845ee22d681afd1d08947aa9e3345bb41eda1411f24ed6bdccd909b824e11f5cc30fbab764eeabd381256bae2e557ab142dea389bb69d5a33a1bb5b3f285bcff1c32aefd65";
             configObj.address = "http://www.fangcang.org";
+
             configObj.empoent="10001";
             var result = titanPayObj.initTitanPay(configObj);
         });
-
         function testOrderPay() {
             var tempwindow = window.open();
             var orderInfo;
@@ -313,6 +314,7 @@
                 <td class="tdr">收款方机构编码</td>
                 <td>
                     <input type="text" value="TJM10000098" id="ruserId" name="ruserId"/>
+
                 </td>
             </tr>
             <tr>

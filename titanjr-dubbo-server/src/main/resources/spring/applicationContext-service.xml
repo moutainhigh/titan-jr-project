@@ -33,7 +33,7 @@
 		<property name="ftpServerUser" value="${static.ftp.username}"/>
 		<property name="ftpServerPassword" value="${static.ftp.password}"/>
 	</bean>
-	
+	<bean id="rSInvokeInitManagerImpl" class="com.fangcang.titanjr.service.impl.RSInvokeInitManagerImpl" init-method="initRopClient" />  
     <dubbo:application name="titanjr_service_provider" />
  	<dubbo:monitor protocol="registry" /> 
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
@@ -52,8 +52,9 @@
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialRateService" ref="titanFinancialRateService" timeout="40000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanHelpService" ref="titanHelpService" timeout="40000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialRefundService" ref="titanFinancialRefundService"></dubbo:service>
-	
-	<bean id="rSInvokeInitManagerImpl" class="com.fangcang.titanjr.service.impl.RSInvokeInitManagerImpl" init-method="initRopClient" />  
-	
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanSysconfigService" ref="titanSysconfigService" timeout="40000" />
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialLoanCreditService" ref="titanFinancialLoanCreditService" timeout="300000" />
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialLoanService" ref="titanFinancialLoanService" timeout="300000" />
+
 </beans>
 

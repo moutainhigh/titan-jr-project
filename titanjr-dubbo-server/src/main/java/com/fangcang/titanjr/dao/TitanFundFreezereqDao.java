@@ -17,4 +17,5 @@ public interface TitanFundFreezereqDao {
 	List<FundFreezeDTO> queryFundFreezeDTO(UnFreezeRequest unFreezeRequest) throws DaoException;
 	
 	List<FundFreezeDTO> queryFundFreezeDTOByOrderNo(String orderno) throws DaoException;
+
 }

@@ -213,7 +213,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
             PaginationSupport<OrgCheckDTO> paginationSupport = new PaginationSupport<OrgCheckDTO>();
             paginationSupport.setCurrentPage(titanOrgQueryDTO.getCurrentPage());
             paginationSupport.setPageSize(titanOrgQueryDTO.getPageSize());
-            paginationSupport.setOrderBy(" G.createTime asc ");
+            paginationSupport.setOrderBy(" G.createTime desc ");
             titanOrgDao.queryTitanOrgCheckForPage(titanOrgQueryDTO, paginationSupport);
             responsePageDTO.setPaginationSupport(paginationSupport);
             responsePageDTO.putSuccess();
@@ -1169,6 +1169,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	titanOrg.setOrgcode(orgUpdateRequest.getOrgCode());
     	titanOrg.setConnect(orgUpdateRequest.getConnect());
     	titanOrg.setMobiletel(orgUpdateRequest.getMobiletel());
+    	titanOrg.setLastUpdateDate(orgUpdateRequest.getLastUpdateDate());
+    	titanOrg.setMaxLoanAmount(orgUpdateRequest.getMaxLoanAmount());
     	try {
     		titanOrgDao.update(titanOrg);
     		responseDTO.putSuccess();
@@ -1357,6 +1359,9 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			condition.setOrgName(orgDTO.getOrgname());
 			condition.setStatusId(orgDTO.getStatusId());
 			TitanOrg titanOrg = titanOrgDao.selectOne(condition);
+			if(titanOrg==null){
+				return null;
+			}
 			if(titanOrg !=null){
 				MyBeanUtil.copyProperties(orgDTO, titanOrg);
 			}
