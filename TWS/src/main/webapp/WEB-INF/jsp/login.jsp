@@ -7,7 +7,7 @@
     <title>泰坦钱包</title>        
     <link rel="stylesheet" href="<%=cssWalletPath%>/css/fangcang.min.css?v=20161222">
     <link rel="stylesheet" href="<%=cssWalletPath%>/css/style.css?v=20161222">
-    <script type="text/javascript" src="<%=basePath%>/js/jquery.cookie.js"></script>
+    
 </head>
 <body style="min-width: 1300px;" class="bg" >
 <input type="hidden" id="returnUrl" value=""/>
@@ -61,6 +61,7 @@
 </div>
 
 <jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
+<script type="text/javascript" src="<%=basePath%>/js/jquery.cookie.js"></script>
 <script type="text/javascript">
 var remFlag = false;
 var cur_plane='user';//当前显示的登录方式，默认为密码
@@ -153,10 +154,10 @@ checkPass = function(value, inputDom){
 		Login.getCurPlane().setErrormsg(inputDom,'必填项');
 		return false;
 	}
-	if(value.length<6){
-		Login.getCurPlane().setErrormsg(inputDom,'密码太简单');
-		return false;
-	}
+	//if(value.length<6){
+	//	Login.getCurPlane().setErrormsg(inputDom,'密码太简单');
+	//	return false;
+	//}
 	return true;
 }
 //密码登录
@@ -166,6 +167,7 @@ Login.plogin = function(){
 	if(!Login.getCurPlane().validate()){
 		return;
 	}
+	F.loading.show();
 	$.ajax({
 		url:'<%=basePath%>/passlogin.shtml',
 		type:'post',
@@ -178,11 +180,14 @@ Login.plogin = function(){
 			if(json.code==1){
 				Login.loginRedirect();
 			}else{
-				 new Tip({msg : json.msg, type: 3 , timer:3000});
+				 new Tip({msg : json.msg, type: 2 , timer:3000});
 			}
 		},
 		error:function(){
 			alert("请求失败，请重试!");
+		},
+		complete:function(){
+			F.loading.hide();
 		}
 	});
 }
@@ -219,7 +224,7 @@ Login.slogin = function(){
 Login.loginRedirect = function(){
 	var url = $("#returnUrl").val();
 	if(typeof(url)=='undefinded'||url.length==0){
-		url = "<%=basePath%>/main.shtml";
+		url = "<%=basePath%>/main/main.shtml";
 	}
 	location.href=url;
 }
@@ -241,7 +246,7 @@ Login.putUsername = function(){
 	$("#username").val($.cookie("rem_username"));
 	$("#susername").val($.cookie("rem_username"));
 }
-//Login.putUsername();
+Login.putUsername();
 </script>
 </body>
 </html>

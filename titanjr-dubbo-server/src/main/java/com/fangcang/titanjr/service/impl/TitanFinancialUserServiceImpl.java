@@ -1026,6 +1026,8 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		String passswordmd5 = MD5.MD5Encode(passLoginRequest.getPassword());
 		if(passswordmd5.equals(titanUser.getPassword())){
 			passLoginResponse.putSuccess("登录成功");
+			passLoginResponse.setTfsuserId(titanUser.getTfsuserid());
+			passLoginResponse.setUserLoginName(titanUser.getUserloginname());
 		}else{
 			passLoginResponse.putErrorResult("密码不正确");
 			return passLoginResponse;

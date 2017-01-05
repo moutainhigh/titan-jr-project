@@ -24,6 +24,8 @@ public class WebConstant {
     
     public static final String TWS_SESSION_LOGIN_USER_NAME = "TWS_SESSION_LOGIN_USER_NAME";//tws登录用户名
     
+    public static final String TWS_SESSION_TFS_USER_ID = "TWS_SESSION_TFS_USER_ID";//tws登录用户ID
+    
     //'全国'的编码
     public static final String COUNTRY_CODE = "00";
     

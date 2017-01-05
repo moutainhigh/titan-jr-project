@@ -67,7 +67,8 @@ public class LoginController extends BaseController{
 			if(passLoginResponse.isResult()){
 				putSuccess("登录成功");
 				//保存登录表示到session
-				getSession().setAttribute(WebConstant.TWS_SESSION_LOGIN_USER_NAME, login.getLoginUserName());
+				getSession().setAttribute(WebConstant.TWS_SESSION_LOGIN_USER_NAME, passLoginResponse.getUserLoginName());
+				getSession().setAttribute(WebConstant.TWS_SESSION_TFS_USER_ID, passLoginResponse.getTfsuserId());
 				return toJson();
 			}else{
 				putSysError("用户名或者密码错误");
