@@ -9,7 +9,7 @@
 	<jsp:include page="./credit-status/credit-new.jsp"></jsp:include>
 </c:if>
 
-<c:if test="${creditOrder.status == 2 or creditOrder.status == 3}">
+<c:if test="${creditOrder.status == 2 or creditOrder.status == 3 or creditOrder.status == 10 or creditOrder.status == 11}">
 	<jsp:include page="./credit-status/credit-audit.jsp"></jsp:include>
 </c:if>
 
