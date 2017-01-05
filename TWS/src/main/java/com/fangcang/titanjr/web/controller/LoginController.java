@@ -1,5 +1,8 @@
 package com.fangcang.titanjr.web.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
@@ -69,7 +72,7 @@ public class LoginController extends BaseController{
 				putSuccess("登录成功");
 				//保存登录表示到session
 				getSession().setAttribute(WebConstant.TWS_SESSION_LOGIN_USER_NAME, passLoginResponse.getUserLoginName());
-				getSession().setAttribute(WebConstant.TWS_SESSION_TFS_USER_ID, passLoginResponse.getTfsuserId());
+				getSession().setAttribute(WebConstant.TWS_SESSION_TFS_USER_ID, passLoginResponse.getTfsuserId().toString());
 				return toJson();
 			}else{
 				putSysError("用户名或者密码错误");
@@ -116,5 +119,41 @@ public class LoginController extends BaseController{
 			return toJson();
 		}
 	}
-	
+	/***
+	 * 用户登录状态和登录信息
+	 * @return
+	 */
+	@RequestMapping(value = "/loginService", produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	public String loginService(){
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		String tfsUserId = (String)getSession().getAttribute(WebConstant.TWS_SESSION_TFS_USER_ID);
+		String loginusername = (String)getSession().getAttribute(WebConstant.TWS_SESSION_LOGIN_USER_NAME);
+		if(StringUtil.isValidString(tfsUserId)){
+			dataMap.put("tfsuserId", tfsUserId);
+			dataMap.put("loginusername", loginusername);
+			dataMap.put("islogin", true);
+			putSuccess("已经登录", dataMap);
+		}else{
+			
+			dataMap.put("islogin", false);
+			putSysError("未登录",dataMap);
+		}
+		
+		return toJson();
+	}
+	/**
+	 * 退出
+	 * @return
+	 */
+	@RequestMapping(value = "/loginout", produces = "text/html;charset=UTF-8")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	public String loginout(){
+		//清理资源
+		getSession().removeAttribute(WebConstant.TWS_SESSION_TFS_USER_ID);
+		getSession().removeAttribute(WebConstant.TWS_SESSION_LOGIN_USER_NAME);
+		
+		return "redirect:/ex/login.shtml"; 
+	}
 }

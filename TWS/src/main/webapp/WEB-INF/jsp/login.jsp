@@ -24,7 +24,7 @@
 				<li class="l_zh "><em class="ico "></em><input type="text" class="text" id="username" placeholder="手机号码/邮箱" datatype="/\w*/" afterPassed="checkUserName" errormsg="必填项"></li>
 				<li class="l_mm "><em class="ico "></em><input type="password" class="text" id="password" placeholder="密码" datatype="/\w*/" afterPassed="checkPass" errormsg="必填项"></li>
 				<li class="lb_Rememb">				
-					<span><i class="ico" id=""></i> <em>记住用户名</em></span>
+					<span><i class="ico Ibadd" id=""></i> <em>记住用户名</em></span>
 				</li>
 				<li class="lb_btn"><a href="javascript:;" onclick="Login.plogin()">立即登录</a></li>
 				<li class="lb_register"><a href="注册.html">免费注册</a><a href="忘记密码.html">忘记密码？</a></li>
@@ -42,7 +42,7 @@
 				<li class="l_zh "><em class="ico "></em><input type="text" class="text" id="susername" placeholder="手机号码/邮箱" datatype="*" errormsg="用户名错误"></li>
 				<li class="l_mm "><em class="ico "></em><input type="text" class="text" id="code" placeholder="验证码" datatype="*" errormsg="验证码错误"><div class="lb_verify">获取验证码</div></li>
 				<li class="lb_Rememb">
-					<span><i class="ico"></i> <em>记住用户名</em></span>
+					<span><i class="ico Ibadd"></i> <em>记住用户名</em></span>
 				</li>
 				<li class="lb_btn"><a href="javascript:;" onclick="Login.slogin()">立即登录</a></li>
 				<li class="lb_register"><a href="注册.html">免费注册</a><a href="忘记密码.html">忘记密码？</a></li>

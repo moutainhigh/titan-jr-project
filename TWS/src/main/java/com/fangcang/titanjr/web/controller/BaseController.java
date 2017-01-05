@@ -103,7 +103,20 @@ public class BaseController implements Serializable {
     	resultLocal.set(result);
     	return result;
     }
-
+    /**
+     * 错误
+     * @param msg
+     * @param data 数据
+     * @return
+     */
+    public Map<String, Object> putSysError(String msg,Object data){
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	result.put("code", -1);
+    	result.put("msg", msg);
+    	result.put("data",data);
+    	resultLocal.set(result);
+    	return result;
+    }
     /**
      * 登录者的机构编码（融数）userid
      * @return

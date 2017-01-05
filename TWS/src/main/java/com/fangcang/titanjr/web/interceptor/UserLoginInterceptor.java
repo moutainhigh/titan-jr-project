@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.titanjr.web.util.WebUtil;
+import com.fangcang.util.StringUtil;
 
 public class UserLoginInterceptor implements HandlerInterceptor{
 
@@ -33,8 +34,8 @@ public class UserLoginInterceptor implements HandlerInterceptor{
 	 * @return
 	 */
 	public boolean checkIsLogin(HttpSession session){
-		Integer tfsUserId = (Integer)session.getAttribute(WebConstant.TWS_SESSION_TFS_USER_ID);
-		if(tfsUserId!=null&&tfsUserId>0){
+		String tfsUserId = (String)session.getAttribute(WebConstant.TWS_SESSION_TFS_USER_ID);
+		if(StringUtil.isValidString(tfsUserId)){
 			return true;
 		}
 		return false;

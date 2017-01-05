@@ -24,7 +24,7 @@
 						<div class="hrl_ul dn">
 							<a href="<%=basePath %>/account/overview-main.shtml">资产概览</a>
 							<a href="泰坦钱包设置.html">泰坦钱包设置</a>
-							<a href="<%=basePath %>/login.shtml">退出</a>								
+							<a href="<%=basePath %>/ex/loginout.shtml">退出</a>								
 						</div>
 					</div>
 				</li>
@@ -40,4 +40,5 @@ $('.hr_login').hover(function(){
 	$(this).find('.hrl_ul').addClass('dn');
 	$(this).find('.hrl_hover').removeClass('l_red');
 });
+
 </script >
