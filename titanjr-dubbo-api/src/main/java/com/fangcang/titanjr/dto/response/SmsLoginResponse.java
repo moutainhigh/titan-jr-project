@@ -13,5 +13,25 @@ public class SmsLoginResponse extends BaseResponseDTO {
 	 * 
 	 */
 	private static final long serialVersionUID = -4316811948649052722L;
+	/**
+	 * 金融用户id
+	 */
+	private Integer tfsuserId;
+	/**
+	 * 金融登录用户名
+	 */
+	private String userLoginName;
 	
+	public Integer getTfsuserId() {
+		return tfsuserId;
+	}
+	public void setTfsuserId(Integer tfsuserId) {
+		this.tfsuserId = tfsuserId;
+	}
+	public String getUserLoginName() {
+		return userLoginName;
+	}
+	public void setUserLoginName(String userLoginName) {
+		this.userLoginName = userLoginName;
+	}
 }

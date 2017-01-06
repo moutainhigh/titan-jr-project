@@ -6,17 +6,25 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fangcang.titanjr.common.enums.SMSType;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.PassLoginRequest;
+import com.fangcang.titanjr.dto.request.SendCodeRequest;
 import com.fangcang.titanjr.dto.request.SmsLoginRequest;
+import com.fangcang.titanjr.dto.response.GetCheckCodeResponse;
 import com.fangcang.titanjr.dto.response.PassLoginResponse;
+import com.fangcang.titanjr.dto.response.SendCodeResponse;
 import com.fangcang.titanjr.dto.response.SmsLoginResponse;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.LoginPojo;
@@ -36,6 +44,11 @@ public class LoginController extends BaseController{
 	@Resource
 	private TitanFinancialUserService userService;
 	
+	@Resource
+    private TitanFinancialOrganService organService;
+	
+    @Resource
+    private TitanFinancialSendSMSService sendSMSService;
 	/**
 	 * 登录页
 	 * @return
@@ -107,10 +120,11 @@ public class LoginController extends BaseController{
 			if(smsLoginResponse.isResult()){
 				putSuccess("登录成功");
 				//保存登录表示到session
-				getSession().setAttribute(WebConstant.TWS_SESSION_LOGIN_USER_NAME, login.getLoginUserName());
+				getSession().setAttribute(WebConstant.TWS_SESSION_LOGIN_USER_NAME, smsLoginResponse.getUserLoginName());
+				getSession().setAttribute(WebConstant.TWS_SESSION_TFS_USER_ID, smsLoginResponse.getTfsuserId().toString());
 				return toJson();
 			}else{
-				putSysError("用户名或者密码错误");
+				putSysError("用户名或者验证码错误");
 				return toJson();
 			}
 		} catch (GlobalServiceException e) {
@@ -156,4 +170,64 @@ public class LoginController extends BaseController{
 		
 		return "redirect:/ex/login.shtml"; 
 	}
+	/***
+	 * 发送验证码
+	 * @param receiveAddress
+	 * @param msgType
+	 * @return
+	 */
+	@ResponseBody
+   	@RequestMapping(value = "/sendCode")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String sendCode(String receiveAddress,Integer msgType){
+    	SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
+    	if(StringUtil.isValidString(receiveAddress)){
+    		sendRegCodeRequest.setReceiveAddress(receiveAddress);
+    	}else {
+    		return toJson(putSysError("参数错误"));
+    	}
+    	if(!(Tools.isEmailAddress(receiveAddress)||Tools.isPhone(receiveAddress))){
+    		return toJson(putSysError("手机号码或者邮箱地址格式不正确"));
+    	}
+    	sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+    	msgType = msgType==null?SMSType.REG_CODE.getType():msgType;
+    	GetCheckCodeRequest getCheckCodeRequest = new GetCheckCodeRequest();
+    	getCheckCodeRequest.setMsgType(msgType);
+    	getCheckCodeRequest.setReceiveAddress(receiveAddress);
+    	String regCode;
+    	try {
+			GetCheckCodeResponse getCheckCodeResponse = organService.getCheckCode(getCheckCodeRequest);
+			if(getCheckCodeResponse.isResult()){
+				regCode = getCheckCodeResponse.getCheckCode();
+			}else{
+				return toJson(putSysError(getCheckCodeResponse.getReturnMessage()));
+			}
+		} catch (GlobalServiceException e) {
+			LOGGER.error("send code fail ,param|receiveAddress:"+receiveAddress+",msgType:"+msgType, e);
+			return toJson(putSysError("验证码获取失败"));
+		}
+    	
+    	if(msgType==SMSType.REG_CODE.getType()){//注册
+    		sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
+        	sendRegCodeRequest.setSubject("泰坦金融注册验证码");
+    	}else if(msgType==SMSType.PAY_PASSWORD_MODIFY.getType()){//修改付款密码
+    		sendRegCodeRequest.setContent("尊敬的用户： 您正在修改泰坦金融的付款密码，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。请勿将验证码发给其他人。");
+        	sendRegCodeRequest.setSubject("泰坦金融修改付款密码");
+    	}else if(msgType==SMSType.LOGIN_PASSWORD_MODIFY.getType()){//修改登录密码
+    		sendRegCodeRequest.setContent("尊敬的用户： 您正在修改泰坦金融的登录密码，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。请勿将验证码发给其他人。");
+        	sendRegCodeRequest.setSubject("泰坦金融修改登录密码");
+    	}else if(msgType==SMSType.LOGIN_PASSWORD_MODIFY.getType()){//动态码登录
+    		sendRegCodeRequest.setContent("尊敬的用户： 您正在使用动态验证码登录泰坦金融，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。请勿将验证码发给其他人。");
+        	sendRegCodeRequest.setSubject("动态验证码登录");
+    	}
+    	
+    	SendCodeResponse sendRegCodeResponse = sendSMSService.sendCode(sendRegCodeRequest);
+    	sendRegCodeResponse.putSuccess();
+    	if(sendRegCodeResponse.isResult()){
+    		return toJson(putSuccess("验证码发送成功"));
+    	}else{
+    		return toJson(putSysError(sendRegCodeResponse.getReturnMessage()));
+    	}
+    	
+   }
 }

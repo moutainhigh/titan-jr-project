@@ -4,16 +4,85 @@
 <html>
 <head>
 <meta charset="utf-8">
-    <title>注册申请-泰坦钱包</title>
+    <title>登录信息-泰坦金融</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
-	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
   
   <body>
-   
-   
-   
+    <div class="TFS" style="width: 1332px">
+    <div class="clearfix create">        
+        <div class="create_step ">
+            <ul>
+                <li class="on">创建账户</li>
+                <li>填写基本信息</li>
+                <li class="p_l42">完成</li>
+            </ul>
+        </div>
+        <div class="clearfix create_c">
+            <div class="clearfix pour">
+                <div class="pour_t">
+                    <span class="enterprise on"><i class="ico "></i>企业用户</span>
+                    <span class="personage" data-select-form="phone"><i class="ico "></i>个人用户</span>
+                </div>
+                <div class="qy">
+	                <div class="pour_c" >
+	                <form action="<c:url value='/organ/showEnterpriseInfo.shtml'/>" id="reg_form_qy">
+	                    <ul>
+	                        <li><div class="title">用 户 名 ：</div><input type="text" value="${param.eUserLoginName}" class="text w_420 ui-loginusername"  name="userLoginName"  placeholder="请输入您的邮箱地址，可以用来登录金融官网或者APP" require="true" datatype="e"  errormsg="邮箱格式不正确" afterPassed="checkExist"></li>
+	                        <li><div class="title">登录密码：</div><input type="password" value="${param.ePassword}" class="text w_420 pass1" name="password"  placeholder="建议至少使用两种字符组合" datatype="/\w{6,}/" errormsg="密码长度至少6位"><span class="ico eye"></span></li>
+	                        <li><div class="title">确认密码：</div><input type="password" value="${param.ePasswordConfirm}" class="text w_420 pass2" name="passwordConfirm" placeholder="请再次输入密码" datatype="/\w{6,}/" errormsg="密码长度至少6位" afterPassed="confirmPass"><span class="ico eye"></span></li>
+	                        <li style="margin-bottom: 10px;"><div class="title">验 证 码 ：</div><input type="text" value="${param.eRegCode}" class="text w_420 ui-reg" name="regCode" placeholder="请输入验证码" datatype="/\w{4,}/" errormsg="验证码长度至少4位"><span class="verify" data-in-form="qy_form">获取验证码</span></li>
+	                        <li><label class="f_ui-checkbox-c3"><input type="checkbox" ${param.userType =='1'? 'checked':''  } ><i></i> &nbsp;我已阅读并同意</label>  <span class="blue underline cursor J_agreement">《泰坦云金融服务协议》</span></li>
+	                    </ul>
+	                     <input type="submit" class="regbtn" style="display:none;">
+                	 </form>
+	                </div> 
+                </div>
+                <div class="gr dn">
+	                <div class="pour_c yx1 on" >
+	                	<form action="<c:url value='/organ/showPersernalInfo.shtml'/>" id="reg_form_phone">
+		                    <ul>
+		                        <li><div class="title">用 户 名 ：</div><input type="text" class="text w_420 ui-loginusername"  value="${param.pUserLoginName}" name="userLoginName" placeholder="请输入您的手机号码，可以用来登录金融官网或者APP" require="true" datatype="m"  errormsg="手机号码格式不正确" afterPassed="checkExist"></li>
+		                        <li><div class="title">登录密码：</div><input type="password" class="text w_420 pass1"  value="${param.pPassword}" name="password" placeholder="建议至少使用两种字符组合" datatype="/\w{6,}/" errormsg="密码长度至少6位"><span class="ico eye"></span></li>
+		                        <li><div class="title">确认密码：</div><input type="password" class="text w_420 pass2" value="${param.pPasswordConfirm}" name="passwordConfirm" placeholder="请再次输入密码" datatype="/\w{6,}/" errormsg="密码长度至少6位" afterPassed="confirmPass" ><span class="ico eye"></span></li>
+		                        <li style="margin-bottom: 10px;"><div class="title">验 证 码 ：</div><input type="text" value="${param.pRegCode}" class="text w_420 ui-reg" name="regCode" placeholder="请输入验证码" datatype="/\w{4,}/" errormsg="验证码长度至少4位"><span class="verify">获取验证码</span></li>
+		                        <li><label class="f_ui-checkbox-c3"><input type="checkbox" ><i></i> &nbsp;我已阅读并同意</label>  <span class="blue underline cursor J_agreement">《泰坦云金融服务协议》</span></li>
+		                    </ul>
+		                     <input type="submit" class="regbtn" style="display:none;">
+	                	</form>
+		           </div>
+	                <div class="pour_c yx2 " style="display:none;">
+	                	<form action="<c:url value='/organ/showPersernalInfo.shtml'/>" id="reg_form_email">
+		                    <ul>
+		                        <li><div class="title">用 户 名 ：</div><input type="text" class="text w_420 ui-loginusername" value="${param.mUserLoginName}" name="userLoginName" placeholder="请输入您的邮箱地址，可以用来登录金融官网或者APP" require="true" datatype="e" errormsg="邮箱格式不正确" afterPassed="checkExist"></li>
+		                        <li><div class="title">登录密码：</div><input type="password" class="text w_420 pass1"  value="${param.mPassword}" name="password" placeholder="建议至少使用两种字符组合" datatype="/\w{6,}/" errormsg="密码长度至少6位"><span class="ico eye"></span></li>
+		                        <li><div class="title">确认密码：</div><input type="password" class="text w_420 pass2" value="${param.mPasswordConfirm}" name="passwordConfirm" placeholder="请再次输入密码" datatype="/\w{6,}/" errormsg="密码长度至少6位" afterPassed="confirmPass"><span class="ico eye"></span></li>
+		                        <li style="margin-bottom: 10px;"><div class="title">验 证 码 ：</div><input type="text" value="${param.mRegCode}"  class="text w_420 ui-reg" name="regCode" placeholder="请输入验证码" datatype="/\w{4,}/" errormsg="验证码长度至少4位"><span class="verify">获取验证码</span></li>
+		                        <li><label class="f_ui-checkbox-c3"><input type="checkbox"><i></i> &nbsp;我已阅读并同意</label>  <span class="blue underline cursor J_agreement">《泰坦云金融服务协议》</span></li>                    
+		                    </ul>
+		                    <input type="submit" class="regbtn" style="display:none;">
+	                	</form>
+	                </div>
+	                	
+                	<div class="blue underline cursor J_yx on" style="width:150px;">使用邮箱注册>></div>
+                </div>               
+            </div>
+            <div class="create_c_btn">
+                
+                <!-- 验证码错误 -->
+                <!-- <a class="btn J_mistake">下一步</a>-->
+                <!-- 企业用户-填写基本信息 -->
+                <a href="javascript:;" class="btn qyyh next">下一步</a>   
+                <!-- 个人用户-填写基本信息
+                <a href="" class="btn gryh btn_h" style="display: none;">下一步</a>
+                 -->
+            </div>
+        </div>
+    </div>
+</div>    
+
+<jsp:include page="/comm/static-js.jsp"></jsp:include>
 <script type="text/javascript">
 var email_reg=/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
 var phone_reg=/^13[0-9]{9}$|^14[0-9]{9}$|^15[0-9]{9}$|^18[0-9]{9}$|^17[0-9]{9}$/;

@@ -31,7 +31,4 @@ public class PassLoginResponse extends BaseResponseDTO {
 		this.userLoginName = userLoginName;
 	}
 	
-	
-	
-	
 }

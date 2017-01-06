@@ -543,58 +543,6 @@ public class FinancialOrganController extends BaseController {
    }
     
     
-    @ResponseBody
-   	@RequestMapping(value = "/sendCode")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String sendCode(String receiveAddress,Integer msgType){
-    	SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
-    	if(StringUtil.isValidString(receiveAddress)){
-    		sendRegCodeRequest.setReceiveAddress(receiveAddress);
-    	}else {
-    		return toJson(putSysError("参数错误"));
-    	}
-    	if(!(Tools.isEmailAddress(receiveAddress)||Tools.isPhone(receiveAddress))){
-    		return toJson(putSysError("手机号码或者邮箱地址格式不正确"));
-    	}
-    	sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
-    	msgType = msgType==null?SMSType.REG_CODE.getType():msgType;
-    	GetCheckCodeRequest getCheckCodeRequest = new GetCheckCodeRequest();
-    	getCheckCodeRequest.setMsgType(msgType);
-    	getCheckCodeRequest.setReceiveAddress(receiveAddress);
-    	String regCode;
-    	try {
-			GetCheckCodeResponse getCheckCodeResponse = titanFinancialOrganService.getCheckCode(getCheckCodeRequest);
-			if(getCheckCodeResponse.isResult()){
-				regCode = getCheckCodeResponse.getCheckCode();
-			}else{
-				return toJson(putSysError(getCheckCodeResponse.getReturnMessage()));
-			}
-		} catch (GlobalServiceException e) {
-			log.error("send code fail ,param|receiveAddress:"+receiveAddress+",msgType:"+msgType, e);
-			return toJson(putSysError("验证码获取失败"));
-		}
-    	
-    	if(msgType==SMSType.REG_CODE.getType()){//注册
-    		sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
-        	sendRegCodeRequest.setSubject("泰坦金融注册验证码");
-    	}else if(msgType==SMSType.PAY_PASSWORD_MODIFY.getType()){//修改付款密码
-    		sendRegCodeRequest.setContent("尊敬的用户： 您正在修改泰坦金融的付款密码，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
-        	sendRegCodeRequest.setSubject("泰坦金融修改付款密码");
-    	}else if(msgType==SMSType.LOGIN_PASSWORD_MODIFY.getType()){//修改登录密码
-    		sendRegCodeRequest.setContent("尊敬的用户： 您正在修改泰坦金融的登录密码，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
-        	sendRegCodeRequest.setSubject("泰坦金融修改登录密码");
-    	}
-    	
-    	SendCodeResponse sendRegCodeResponse = sendSMSService.sendCode(sendRegCodeRequest);
-    	sendRegCodeResponse.putSuccess();
-    	if(sendRegCodeResponse.isResult()){
-    		return toJson(putSuccess("验证码发送成功"));
-    	}else{
-    		return toJson(putSysError(sendRegCodeResponse.getReturnMessage()));
-    	}
-    	
-   }
-    
     /**
      * 协议
      * @return

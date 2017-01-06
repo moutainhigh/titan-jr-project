@@ -1,11 +1,33 @@
 package com.fangcang.titanjr.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import net.sf.json.JSONSerializer;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
 import com.fangcang.exception.ParameterException;
 import com.fangcang.merchant.api.MerchantFacade;
 import com.fangcang.merchant.api.MerchantUserFacade;
-import com.fangcang.merchant.dto.*;
+import com.fangcang.merchant.dto.BaseResultDTO;
+import com.fangcang.merchant.dto.MerchantUserCheckDTO;
+import com.fangcang.merchant.dto.MerchantUserCreateDTO;
+import com.fangcang.merchant.dto.MerchantUserDTO;
+import com.fangcang.merchant.dto.ModifyPWDRequestDTO;
 import com.fangcang.merchant.dto.RoleDTO;
 import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
 import com.fangcang.merchant.query.dto.MerchantUserQueryDTO;
@@ -30,9 +52,52 @@ import com.fangcang.titanjr.dao.TitanUserBindInfoDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dao.TitanUserRoleDao;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
-import com.fangcang.titanjr.dto.bean.*;
-import com.fangcang.titanjr.dto.request.*;
-import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
+import com.fangcang.titanjr.dto.bean.TitanRoleDTO;
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
+import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
+import com.fangcang.titanjr.dto.bean.UserInfoDTO;
+import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
+import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
+import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
+import com.fangcang.titanjr.dto.request.LoginPasswordModifyRequest;
+import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
+import com.fangcang.titanjr.dto.request.PassLoginRequest;
+import com.fangcang.titanjr.dto.request.PayPasswordRequest;
+import com.fangcang.titanjr.dto.request.PermissionRequest;
+import com.fangcang.titanjr.dto.request.SaaSUserRoleRequest;
+import com.fangcang.titanjr.dto.request.SmsLoginRequest;
+import com.fangcang.titanjr.dto.request.TitanRoleQueryRequest;
+import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
+import com.fangcang.titanjr.dto.request.UpdateUserRequest;
+import com.fangcang.titanjr.dto.request.UserBindInfoRequest;
+import com.fangcang.titanjr.dto.request.UserFreezeRequest;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
+import com.fangcang.titanjr.dto.request.UserLoginNameExistRequest;
+import com.fangcang.titanjr.dto.request.UserRegisterRequest;
+import com.fangcang.titanjr.dto.request.UserRoleSetRequest;
+import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
+import com.fangcang.titanjr.dto.response.CancelPermissionResponse;
+import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
+import com.fangcang.titanjr.dto.response.FinancialUserBindResponse;
+import com.fangcang.titanjr.dto.response.FinancialUserUnBindResponse;
+import com.fangcang.titanjr.dto.response.LoginPasswordModifyResponse;
+import com.fangcang.titanjr.dto.response.PassLoginResponse;
+import com.fangcang.titanjr.dto.response.PayPasswordResponse;
+import com.fangcang.titanjr.dto.response.PermissionResponse;
+import com.fangcang.titanjr.dto.response.RoleUserInfoPageResponse;
+import com.fangcang.titanjr.dto.response.SaaSUserRoleResponse;
+import com.fangcang.titanjr.dto.response.SmsLoginResponse;
+import com.fangcang.titanjr.dto.response.TitanRoleResponse;
+import com.fangcang.titanjr.dto.response.UpdateUserResponse;
+import com.fangcang.titanjr.dto.response.UserBindInfoResponse;
+import com.fangcang.titanjr.dto.response.UserFreezeResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
+import com.fangcang.titanjr.dto.response.UserInfoResponse;
+import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
+import com.fangcang.titanjr.dto.response.UserRegisterResponse;
+import com.fangcang.titanjr.dto.response.UserRoleSetResponse;
+import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
 import com.fangcang.titanjr.entity.TitanRole;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.entity.TitanUserBindInfo;
@@ -42,27 +107,10 @@ import com.fangcang.titanjr.entity.parameter.TitanUserParam;
 import com.fangcang.titanjr.entity.parameter.TitanUserRoleParam;
 import com.fangcang.titanjr.enums.PermissionEnum;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
-
-import net.sf.json.JSONSerializer;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 @Service("titanFinancialUserService")
 public class TitanFinancialUserServiceImpl implements TitanFinancialUserService {
@@ -83,9 +131,8 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     @Resource
     private TitanRoleDao titanRoleDao;
     
-    
-//    @Resource  此处互相持有实例 ,需要修改。
-    private TitanFinancialOrganServiceImpl organService;
+    @Resource  
+    private TitanFinancialOrganService organService;
     
     @Resource
     private HessianProxyBeanFactory hessianProxyBeanFactory;
@@ -1035,6 +1082,37 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		
 		return passLoginResponse;
 	}
+	
+	public SmsLoginResponse smsLogin(SmsLoginRequest smsLoginRequest)
+			throws GlobalServiceException {
+		SmsLoginResponse smsLoginResponse = new SmsLoginResponse();
+		TitanUser titanUser =  getTitanUser(smsLoginRequest.getLoginUsername());
+		if(titanUser==null){
+			smsLoginResponse.putErrorResult("用户名或密码错误");
+			return smsLoginResponse;
+		}
+		//验证动态码
+		VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
+		verifyCheckCodeRequest.setInputCode(smsLoginRequest.getSmsCode());
+		verifyCheckCodeRequest.setReceiveAddress(smsLoginRequest.getLoginUsername());
+		VerifyCheckCodeResponse  verifyCheckCodeResponse = organService.verifyCheckCode(verifyCheckCodeRequest);
+		if(verifyCheckCodeResponse.isResult()){
+			//使用该验证码后，置为无效。
+			if(verifyCheckCodeResponse.getCodeId()>0){
+				UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
+				updateCheckCodeRequest.setCodeId(verifyCheckCodeResponse.getCodeId());
+				updateCheckCodeRequest.setIsactive(TitanCheckCodeEnum.Isactive.NOT_ACTIVE.getKey());
+				organService.useCheckCode(updateCheckCodeRequest);
+			}
+			smsLoginResponse.putSuccess("登录成功");
+			smsLoginResponse.setTfsuserId(titanUser.getTfsuserid());
+			smsLoginResponse.setUserLoginName(titanUser.getUserloginname());
+		}else{
+			smsLoginResponse.putErrorResult(verifyCheckCodeResponse.getReturnMessage());
+		}
+		
+		return smsLoginResponse;
+	}
 	/**
 	 * 查询用户
 	 * @param loginUsername
@@ -1052,37 +1130,5 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		}else{
 			return null;
 		}
-	}
-	
-	
-	public SmsLoginResponse smsLogin(SmsLoginRequest smsLoginRequest)
-			throws GlobalServiceException {
-		SmsLoginResponse smsLoginResponse = new SmsLoginResponse();
-		TitanUser titanUser =  getTitanUser(smsLoginRequest.getLoginUsername());
-		if(titanUser==null){
-			smsLoginResponse.putErrorResult("用户名或密码错误");
-			return smsLoginResponse;
-		}
-		
-		//验证动态码
-		VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
-		verifyCheckCodeRequest.setInputCode(smsLoginRequest.getSmsCode());
-		verifyCheckCodeRequest.setReceiveAddress(smsLoginRequest.getLoginUsername());
-		VerifyCheckCodeResponse  verifyCheckCodeResponse = organService.verifyCheckCode(verifyCheckCodeRequest);
-		if(verifyCheckCodeResponse.isResult()){
-			//使用该验证码后，置为无效。
-			if(verifyCheckCodeResponse.getCodeId()>0){
-				UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
-				updateCheckCodeRequest.setCodeId(verifyCheckCodeResponse.getCodeId());
-				updateCheckCodeRequest.setIsactive(TitanCheckCodeEnum.Isactive.NOT_ACTIVE.getKey());
-				organService.useCheckCode(updateCheckCodeRequest);
-			}
-			smsLoginResponse.putSuccess("登录成功");
-			
-		}else{
-			smsLoginResponse.putErrorResult(verifyCheckCodeResponse.getReturnMessage());
-		}
-		
-		return smsLoginResponse;
 	}
 }
