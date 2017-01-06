@@ -454,7 +454,6 @@ public class TitanTradeController extends BaseController {
 			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 		}
 
-		// 验证签名
 
 		// 根据payOrderNo查询出相应的订单
 		TransOrderRequest transOrderRequest = new TransOrderRequest();

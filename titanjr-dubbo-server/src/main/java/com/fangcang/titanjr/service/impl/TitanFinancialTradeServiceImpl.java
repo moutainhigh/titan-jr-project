@@ -221,24 +221,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				// 再次回调财务
 				return localAddTransOrderResponse;
 			}
-			// 未下单
-//			titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
-//			titanTransOrder.setUserorderid(OrderGenerateService
-//					.genSyncUserOrderId());
-//			titanTransOrder.setStatusid(OrderStatusEnum.RECHARGE_IN_PROCESS
-//					.getStatus());
-//			// 融数下单
-//			log.info("the params of local order :"
-//					+ JSONSerializer.toJSON(titanTransOrder));
-//			if (titanTransOrderDao.insert(titanTransOrder) > 0 ? true : false) {
-//				localAddTransOrderResponse.setUserOrderId(titanTransOrder
-//						.getUserorderid());
-//				localAddTransOrderResponse.setOrderNo(titanTransOrder
-//						.getOrderid());
-//				localAddTransOrderResponse.putSuccess();
-//				return localAddTransOrderResponse;
-//			}
-			// 本地落单
 		} catch (Exception e) {
 			log.error("add local order is failed" + e.getMessage(), e);
 			localAddTransOrderResponse.putSysError();
@@ -2272,97 +2254,124 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	 */
 	private TransOrderCreateResponse setBaseUserInfo(
 			TitanOrderRequest titanOrderRequest, TitanTransOrder titanTransOrder) {
-		TransOrderCreateResponse localOrderResponse = new TransOrderCreateResponse();
+		TransOrderCreateResponse response = new TransOrderCreateResponse();
+		response.putSuccess();
 		PayerTypeEnum payerTypeEnum = PayerTypeEnum
 				.getPayerTypeEnumByKey(titanOrderRequest.getPayerType());
 		titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
-		// 如果存在信贷，需要在此处判断其productId
-		titanTransOrder.setProductid(titanOrderRequest.getProductId());
-		if (StringUtil.isValidString(titanOrderRequest.getUserId())) {// 如果fcUserId为null则不查询
-			if (payerTypeEnum.isFcUserId()) {// 付款方传入fuUSerId
-				TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
-				titanUserBindInfoDTO.setFcuserid(Long
-						.parseLong(titanOrderRequest.getUserId()));
-				titanUserBindInfoDTO = titanFinancialUserService
-						.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
-				if (titanUserBindInfoDTO == null
-						|| titanUserBindInfoDTO.getTfsuserid() == null) {
-					localOrderResponse.putSysError();
-					return localOrderResponse;
-				}
-				TitanUser titanUser = titanUserDao
-						.selectTitanUser(titanUserBindInfoDTO.getTfsuserid());
-				titanTransOrder.setMerchantcode(titanUserBindInfoDTO
-						.getMerchantcode());
-				titanTransOrder.setUserid(titanUser.getUserid());
-				titanTransOrder.setPayermerchant(titanUser.getUserid());
-				Map<String, String> bussinessInfo = titanOrderRequest
-						.getBusinessInfo();
-				// 接入方的用户在我们系统中对应我们金融Id的唯一标识
-				bussinessInfo.put("partnerId", titanOrderRequest.getUserId());
-			} else if (payerTypeEnum.isUserId()) {// 付款方传入userId,现在只要提现操作
-				titanTransOrder.setUserid(titanOrderRequest.getUserId());
-				if (PayerTypeEnum.WITHDRAW.getKey().equals(
-						payerTypeEnum.getKey())||PayerTypeEnum.LOAN.getKey().equals(
-								payerTypeEnum.getKey())) {
-					titanTransOrder.setPayermerchant(titanOrderRequest
-							.getUserId());
-				}
+		
+		if(payerTypeEnum.isB2BPayment()){//B2B端支付
+			OrgBindInfo orgBindInfo = this
+					.queryOrgBindInfo(titanOrderRequest.getRuserId());
+			if (orgBindInfo == null) {
+				response.putErrorResult("接收方机构不存在");
+				return response;
 			}
+			titanTransOrder.setMerchantcode(titanOrderRequest.getRuserId());
+			titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+			titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
+			titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+			titanTransOrder.setPayeemerchant(orgBindInfo.getUserid());
+			titanTransOrder.setUserrelateid(orgBindInfo.getUserid());
+			return response;
 		}
-
-		if (StringUtil.isValidString(titanOrderRequest.getRuserId())) {// 收款方如果是merchantcode
-			if (payerTypeEnum.isReicveMerchantCode()) {// 接收方传入merchantcode
+		
+		if(payerTypeEnum.isFcUserId()){//财务端付款
+			TitanUserBindInfoDTO titanUserBindInfoDTO = this.getBindInfoDTO(titanOrderRequest.getUserId());
+			if (titanUserBindInfoDTO == null
+					|| titanUserBindInfoDTO.getTfsuserid() == null) {
+				response.putSysError();
+				return response;
+			}
+			TitanUser titanUser = titanUserDao.selectTitanUser(titanUserBindInfoDTO.getTfsuserid());
+			if(titanUser == null){
+				response.putSysError();
+				return response;
+			}
+			
+			titanTransOrder.setMerchantcode(titanUserBindInfoDTO.getMerchantcode());
+			titanTransOrder.setUserid(titanUser.getUserid());
+			titanTransOrder.setPayermerchant(titanUser.getUserid());
+			titanTransOrder.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+			
+			if(payerTypeEnum.isSupplyUnion()){//财务端商家联盟
 				OrgBindInfo orgBindInfo = this
 						.queryOrgBindInfo(titanOrderRequest.getRuserId());
 				if (orgBindInfo == null) {
-					localOrderResponse.putErrorResult("接收方机构不存在");
-					return localOrderResponse;
+					response.putErrorResult("接收方机构不存在");
+					return response;
 				}
 				titanTransOrder.setPayeemerchant(orgBindInfo.getUserid());
 				titanTransOrder.setUserrelateid(orgBindInfo.getUserid());
-				if (payerTypeEnum.isB2BPayment() ||payerTypeEnum.isTTMAlL()) {
-					titanTransOrder.setMerchantcode(titanOrderRequest
-							.getRuserId());
-					titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
-					titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
-					titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
-				}
-			} else if (payerTypeEnum.isUserId()) {// 接收方传入userId
-				titanTransOrder.setUserid(titanOrderRequest.getRuserId());
-				if (PayerTypeEnum.RECHARGE.getKey().equals(payerTypeEnum.getKey()) || 
-						PayerTypeEnum.LOAN.getKey().equals(payerTypeEnum.getKey()))
-				{
-					titanTransOrder
-							.setPayeemerchant(titanOrderRequest.getRuserId());
-				}
-				titanTransOrder.setUserrelateid(titanOrderRequest.getRuserId());
-				
-				if (PayerTypeEnum.WITHDRAW.getKey().equals(
-						payerTypeEnum.getKey())) {
-					titanTransOrder
-							.setTransordertype(TransOrderTypeEnum.WITHDRAW.type);
-				} else if(PayerTypeEnum.RECHARGE.getKey().equals(
-						payerTypeEnum.getKey())){
-					titanTransOrder
-							.setTransordertype(TransOrderTypeEnum.RECHARGE.type);
-				}
-				
-			} else if(payerTypeEnum.isOpenOrg()){
-					titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
-					titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
-					titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
-					titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
-					titanTransOrder.setUserrelateid(titanOrderRequest.getRuserId());
-					titanTransOrder.setPayeemerchant(titanOrderRequest.getRuserId());
-			}else {
-				localOrderResponse.putSysError();
-				return localOrderResponse;
 			}
+			Map<String, String> bussinessInfo = titanOrderRequest
+					.getBusinessInfo();
+			// 接入方的用户在我们系统中对应我们金融Id的唯一标识
+			bussinessInfo.put("partnerId", titanOrderRequest.getUserId());
+			return response;
 		}
-
-		localOrderResponse.putSuccess();
-		return localOrderResponse;
+		
+		if(payerTypeEnum.isRechargeCashDesk()){//充值
+			titanTransOrder.setUserid(titanOrderRequest.getRuserId());
+			titanTransOrder.setPayeemerchant(titanOrderRequest.getRuserId());
+			titanTransOrder.setUserrelateid(titanOrderRequest.getRuserId());
+			titanTransOrder.setTransordertype(TransOrderTypeEnum.RECHARGE.type);
+			titanTransOrder.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+			return response;
+		}
+		
+		if(payerTypeEnum.isWithdraw()){//提现的收付款方
+			titanTransOrder.setUserid(titanOrderRequest.getUserId());
+			titanTransOrder.setPayermerchant(titanOrderRequest.getRuserId());
+			titanTransOrder.setTransordertype(TransOrderTypeEnum.RECHARGE.type);
+			titanTransOrder.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+			return response;
+		}
+		
+		if(payerTypeEnum.isOpenOrg()){//对外开放收银台
+			titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+			titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
+			titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+			titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
+			titanTransOrder.setUserrelateid(titanOrderRequest.getRuserId());
+			titanTransOrder.setPayeemerchant(titanOrderRequest.getRuserId());
+			return response;
+		}
+		
+		if(payerTypeEnum.isTtMall()){
+			titanTransOrder.setMerchantcode(titanOrderRequest.getRuserId());
+			titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+			titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
+			titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+			OrgBindInfo orgBindInfo = this
+					.queryOrgBindInfo(titanOrderRequest.getRuserId());
+			if (orgBindInfo == null) {
+				response.putErrorResult("接收方机构不存在");
+				return response;
+			}
+			titanTransOrder.setPayeemerchant(orgBindInfo.getUserid());
+			titanTransOrder.setUserrelateid(orgBindInfo.getUserid());
+			return response;
+		}
+		
+		if(payerTypeEnum.isLoan()){
+			titanTransOrder.setUserid(titanOrderRequest.getUserId());
+			titanTransOrder.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID_230);
+			titanTransOrder.setPayermerchant(titanOrderRequest.getUserId());
+			titanTransOrder.setPayeemerchant(titanOrderRequest.getRuserId());
+			titanTransOrder.setUserrelateid(titanOrderRequest.getRuserId());
+			return response;
+		}
+		response.putSysError();
+		return response;
+	}
+	
+	private TitanUserBindInfoDTO getBindInfoDTO(String userId){
+		TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
+		titanUserBindInfoDTO.setFcuserid(Long
+				.parseLong(userId));
+		return titanFinancialUserService
+				.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
 	}
 
 	private OrgBindInfo queryOrgBindInfo(String merchantCode) {

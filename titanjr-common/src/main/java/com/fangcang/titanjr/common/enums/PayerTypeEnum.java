@@ -114,5 +114,24 @@ public enum PayerTypeEnum {
 	  public boolean isTTMAlL(){
 		  return TT_MALL.key.equals(this.key);
 	  }
-	  
+
+	  public boolean isWithdraw(){
+ 		  return WITHDRAW.key.equals(this.key);
+ 	  }
+ 	  
+ 	  public boolean isSupplyFinancial(){
+ 		  return SUPPLY_FINACIAL.key.equals(this.key);
+ 	  }
+ 	  
+ 	  public boolean isSupplyUnion(){
+ 		  return SUPPLY_UNION.key.equals(this.key);
+ 	  }
+ 	  
+ 	  public boolean isTtMall(){
+ 		 return TT_MALL.key.equals(this.key);
+ 	  }
+ 	  
+ 	 public boolean isLoan(){
+ 		 return LOAN.key.equals(this.key);
+ 	  }
 }

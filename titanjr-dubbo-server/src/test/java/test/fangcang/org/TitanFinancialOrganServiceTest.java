@@ -47,11 +47,10 @@ public class TitanFinancialOrganServiceTest extends BaseTest{
 	}
 	@Test
 	public void testFacade(){
-		
 		try{
 			OrgBindInfoDTO orgBindDTO = new OrgBindInfoDTO();
 			 orgBindDTO.setMerchantCode("M100000061");
-			 orgBindDTO.setResultKey("PASS");
+			 orgBindDTO.setResultKey("PASSs");
 			 orgBindDTO.setBindStatus(1);
 		    List<OrgBindInfoDTO> orgBindDTOList = titanOrgService.queryOrgBindInfoDTO(orgBindDTO);
 		    if(null == orgBindDTOList || orgBindDTOList.size()!=1 || orgBindDTOList.get(0)==null){
