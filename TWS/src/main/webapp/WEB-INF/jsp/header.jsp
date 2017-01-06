@@ -11,12 +11,12 @@
 				<li><a href="<%=basePath %>/main/solution.shtml" class="Aon">解决方案</a></li>
 				<li class="w_240 li_1">
 					<!-- 登录前 -->
-					<div class="dn">
+					<div class="" id="no_login">
 					<a href="注册.html" class="li_login">免费注册</a>
-					<a class="li_btn1" href="<%=basePath %>/login.shtml">登录</a>
+					<a class="li_btn1" href="<%=basePath %>/ex/login.shtml">登录</a>
 					</div>
 					<!-- 登录后 -->
-					<div class="hr_login">
+					<div class="hr_login dn" id="y_login">
 						<div class="hrl_hover">
 							<i class="ico"></i>
 							我的账户
@@ -41,4 +41,22 @@ $('.hr_login').hover(function(){
 	$(this).find('.hrl_hover').removeClass('l_red');
 });
 
+$(document).ready(function(){
+	$.ajax({
+		url:'<%=basePath%>/ex/loginService.shtml',
+		type:'post',
+		dataType:'json',
+		success:function(json){
+			if(json.code==1){
+				if(json.data.islogin=="1"){
+					$("#y_login").show();
+					$("#no_login").hide();
+				}else{
+					$("#y_login").hide();
+					$("#no_login").show();
+				}
+			}
+		}
+	});
+});
 </script >

@@ -133,11 +133,11 @@ public class LoginController extends BaseController{
 		if(StringUtil.isValidString(tfsUserId)){
 			dataMap.put("tfsuserId", tfsUserId);
 			dataMap.put("loginusername", loginusername);
-			dataMap.put("islogin", true);
+			dataMap.put("islogin", "1");
 			putSuccess("已经登录", dataMap);
 		}else{
 			
-			dataMap.put("islogin", false);
+			dataMap.put("islogin", "0");
 			putSysError("未登录",dataMap);
 		}
 		
