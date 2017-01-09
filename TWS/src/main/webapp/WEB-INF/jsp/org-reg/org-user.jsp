@@ -49,12 +49,12 @@
 					<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" placeholder="设置登录密码" datatype="/\w{6,}/" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1"></em></li>
 					<li class="r_y3"><div class="rt_title">确认密码</div><input type="password" class="text pass2" name="passwordConfirm" placeholder="确认登录密码" datatype="/\w*/" errormsg="长度太短" afterPassed="confirmPass"><i class="ico rt_eye "></i></li>
 					<li class="r_yzm"><div class="rt_title">验证码</div>
-					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\w{4,}/" errormsg="验证码长度至少4位"><div class="r_verify">获取验证码</div>
+					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\w{4,}/" errormsg="长度太短"><div class="r_verify">获取验证码</div>
 					</li>
 					<li class="lb_Rememb">
 						<span class="fl qiye"><i class="ico"></i> 我已阅读并同意</span> <div class="colour m_l14 dib services_terms">《泰坦云金融服务协议》</div>
 					</li>
-					<li class="lb_btn disable"><a href="javascript:;" class="">下一步</a></li>
+					<li class="lb_btn disable"><a href="javascript:;" class="qiye-next">下一步</a></li>
 				</ul>
 				<input type="submit" class="regbtn" style="display:none;">
 			</form>
@@ -71,16 +71,16 @@
 			<div class="r_text" id="reg_person">
 				<form action="<c:url value='/organ/showPersernalInfo.shtml'/>" id="reg_form_phone">
 				<ul>
-					<li class="r_y1"><div class="rt_title">用户名</div><input type="text" class="text ui-loginusername" name="userLoginName" placeholder="邮箱/手机号码" datatype="/\w*/" errormsg="必填项" afterPassed="checkExist"></li>
-					<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" placeholder="设置登录密码" datatype="/\w{6,}/" errormsg="密码长度至少6位"><i class="ico rt_eye"></i><em class="ico hint_1"></em></li>
-					<li class="r_y3"><div class="rt_title">确认密码</div><input type="password" class="text pass2" name="passwordConfirm" placeholder="确认登录密码" datatype="/\w{6,}/" errormsg="密码长度至少6位" afterPassed="confirmPass"><i class="ico rt_eye"></i></li>
+					<li class="r_y1"><div class="rt_title">用户名</div><input type="text" class="text ui-loginusername" name="userLoginName" placeholder="邮箱/手机号码" datatype="/\w*/" errormsg="格式不正确" afterPassed="checkExist"></li>
+					<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" placeholder="设置登录密码" datatype="/\w{6,}/" errormsg="度太短"><i class="ico rt_eye"></i><em class="ico hint_1"></em></li>
+					<li class="r_y3"><div class="rt_title">确认密码</div><input type="password" class="text pass2" name="passwordConfirm" placeholder="确认登录密码" datatype="/\w{6,}/" errormsg="度太短" afterPassed="confirmPass"><i class="ico rt_eye"></i></li>
 					<li class="r_yzm"><div class="rt_title">验证码</div>
-					<input type="text" class="text ui-reg" placeholder="验证码" datatype="/\w{4,}/" errormsg="验证码长度至少4位"><div class="r_verify">获取验证码</div>
+					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\w{4,}/" errormsg="长度太短"><div class="r_verify">获取验证码</div>
 					</li>
 					<li class="lb_Rememb">
 						<span class="fl geren"><i class="ico"></i> 我已阅读并同意</span> <div class="colour m_l14 dib services_terms">《泰坦云金融服务协议》</div>
 					</li>
-					<li class="lb_btn disable"><a href="javascript:;" class="">下一步</a></li>
+					<li class="lb_btn disable"><a href="javascript:;" class="geren-next">下一步</a></li>
 				</ul>
 				<input type="submit" class="regbtn" style="display:none;">
 				</form>
@@ -172,28 +172,32 @@ $('.lb_Rememb span.geren').on('click',function(){
 		_thisI = _this.find('i');
 	if(_thisI.is('.Ibadd')){
 		_thisI.removeClass('Ibadd');
-		_this.parents('.r_text').find('.lb_btn a').attr('href','javascript:;');
+		//_this.parents('.r_text').find('.lb_btn a').attr('href','javascript:;');
 		_this.parents('.r_text').find('.lb_btn').addClass('disable');
+		$('.gere-next').unbind("click",next);
 	}else{
-		_thisI.addClass('Ibadd')
-		_this.parents('.r_text').find('.lb_btn a').attr('href','个人注册.html');
+		_thisI.addClass('Ibadd');
+		//_this.parents('.r_text').find('.lb_btn a').attr('href','个人注册.html');
 		_this.parents('.r_text').find('.lb_btn').removeClass('disable');
+		$('.gere-next').bind("click",next);
 	}
-})
+});
 // 我已阅读并同意 企业
 $('.lb_Rememb span.qiye').on('click',function(){
 	var _this = $(this),
 		_thisI = _this.find('i');
 	if(_thisI.is('.Ibadd')){
-		_thisI.removeClass('Ibadd')
-		_this.parents('.r_text').find('.lb_btn a').attr('href','javascript:;');
+		_thisI.removeClass('Ibadd');
+		//_this.parents('.r_text').find('.lb_btn a').attr('href','javascript:;');
 		_this.parents('.r_text').find('.lb_btn').addClass('disable');
+		$('.qiye-next').unbind("click",next);
 	}else{
 		_thisI.addClass('Ibadd');
-		_this.parents('.r_text').find('.lb_btn a').attr('href','企业注册.html');
+		//_this.parents('.r_text').find('.lb_btn a').attr('href','企业注册.html');
 		_this.parents('.r_text').find('.lb_btn').removeClass('disable');
+		$('.qiye-next').bind("click",next);
 	}
-})
+});
 
 
 //验证码
@@ -433,7 +437,6 @@ $('.verify').on('click',function(){
 });
  
 
-$('.next').bind("click",next);
 //检查是否已经注册
 function checkExist(value, inputDom){
 	var flag = false;
