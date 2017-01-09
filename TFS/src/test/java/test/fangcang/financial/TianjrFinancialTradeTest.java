@@ -1,4 +1,4 @@
-﻿package test.fangcang.financial;
+package test.fangcang.financial;
 
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
