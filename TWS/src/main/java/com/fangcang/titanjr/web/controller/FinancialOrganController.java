@@ -86,7 +86,6 @@ import com.fangcang.util.StringUtil;
  * Created by zhaoshan on 2016/3/30.
  */
 @Controller
-@RequestMapping("/organ")
 public class FinancialOrganController extends BaseController {
 
     /**
@@ -118,7 +117,7 @@ public class FinancialOrganController extends BaseController {
      * @param model
      * @return
      */
-    @RequestMapping(value = "/showOrgUser")
+    @RequestMapping(value = "/ex/organ/showOrgUser")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showOrgUser(HttpServletRequest request, Model model) {
     	
@@ -131,7 +130,7 @@ public class FinancialOrganController extends BaseController {
      * @return
      */
     @ResponseBody
-	@RequestMapping(value = "/checkUserLoginName")
+	@RequestMapping(value = "/ex/organ/checkUserLoginName")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String checkUserLoginName(String userLoginName,int isOperator)
 	{
@@ -143,6 +142,8 @@ public class FinancialOrganController extends BaseController {
 			response = titanFinancialUserService.userLoginNameExist(request);
 			if("1".equals(response.getReturnCode())){
 				putSuccess();
+			}else if("-100".equals(response.getReturnCode())){
+				putSysError("帐号已存在");
 			}else{
 				putSysError(response.getReturnMessage());
 			}
@@ -160,7 +161,7 @@ public class FinancialOrganController extends BaseController {
      * @return
      */
     @ResponseBody
-	@RequestMapping(value = "/checkOrgRegNum")
+	@RequestMapping(value = "/ex/organ/checkOrgRegNum")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String checkOrgRegNum(int userType,String orgId,String buslince,String certificateNumber){
     	try {
@@ -231,7 +232,7 @@ public class FinancialOrganController extends BaseController {
      * 注册
      * @return
      */
-    @RequestMapping(value = "/regOrg")
+    @RequestMapping(value = "/ex/organ/regOrg")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String regOrg(RegUserLoginInfo regUserLoginInfo,OrgRegPojo orgRegPojo,Model model){
     	try {
@@ -394,7 +395,7 @@ public class FinancialOrganController extends BaseController {
      * 注册时修改注册信息
      * @return
      */
-    @RequestMapping(value = "/updateOrg")
+    @RequestMapping(value = "/organ/updateOrg")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String updateOrg(OrgRegPojo orgRegPojo,Model model){
     	
@@ -547,7 +548,7 @@ public class FinancialOrganController extends BaseController {
      * 协议
      * @return
      */
-    @RequestMapping(value = "/showAgreement")
+    @RequestMapping(value = "/ex/showAgreement")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showAgreement(){
     	return "org-reg/agreement";
@@ -556,7 +557,7 @@ public class FinancialOrganController extends BaseController {
      * 显示修改的公司
      * @return
      */
-    @RequestMapping(value = "/getEnterpriseInfo")
+    @RequestMapping(value = "/organ/getEnterpriseInfo")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String getEnterpriseInfo(int orgId,Model model){
     	if(orgId <=0){
@@ -573,7 +574,7 @@ public class FinancialOrganController extends BaseController {
      * 显示修改的个人
      * @return
      */
-    @RequestMapping(value = "/getPersernalInfo")
+    @RequestMapping(value = "/organ/getPersernalInfo")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String getPersernalInfo(int orgId,Model model){
     	if(orgId <=0){
@@ -611,7 +612,7 @@ public class FinancialOrganController extends BaseController {
     *  显示公司信息
     * @return
     */
-    @RequestMapping(value = "/showEnterpriseInfo")
+    @RequestMapping(value = "/organ/showEnterpriseInfo")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showEnterpriseInfo(RegUserLoginInfo pojo, Model model){
     	model.addAttribute(pojo);
@@ -623,7 +624,7 @@ public class FinancialOrganController extends BaseController {
      * 显示个人信息
      * 
      */
-    @RequestMapping(value = "/showPersernalInfo")
+    @RequestMapping(value = "/organ/showPersernalInfo")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showPersernalInfo(RegUserLoginInfo pojo, Model model){
     	model.addAttribute(pojo);
@@ -635,7 +636,7 @@ public class FinancialOrganController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/checkRegCode")
+    @RequestMapping(value = "/ex/checkRegCode")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String checkRegCode(String userLoginName,String regCode){
     	if((!StringUtil.isValidString(userLoginName))||(!StringUtil.isValidString(regCode))){

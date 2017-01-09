@@ -12,7 +12,7 @@
 				<li class="w_240 li_1">
 					<!-- 登录前 -->
 					<div class="" id="no_login">
-					<a href="注册.html" class="li_login">免费注册</a>
+					<a href="<%=basePath %>/ex/organ/showOrgUser.shtml" class="li_login">免费注册</a>
 					<a class="li_btn1" href="<%=basePath %>/ex/login.shtml">登录</a>
 					</div>
 					<!-- 登录后 -->

@@ -27,7 +27,7 @@
 					<span><i class="ico Ibadd" id=""></i> <em>记住用户名</em></span>
 				</li>
 				<li class="lb_btn"><a href="javascript:;" onclick="Login.plogin()">立即登录</a></li>
-				<li class="lb_register"><a href="注册.html">免费注册</a><a href="忘记密码.html">忘记密码？</a></li>
+				<li class="lb_register"><a href="<%=basePath%>/ex/organ/showOrgUser.shtml">免费注册</a><a href="忘记密码.html">忘记密码？</a></li>
 			</ul>
 			</div>
 		</div>
