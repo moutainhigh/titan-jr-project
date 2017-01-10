@@ -504,7 +504,7 @@ public class FinancialOrganController extends BaseController {
      */
     @Deprecated
     @ResponseBody
-   	@RequestMapping(value = "/sendRegCode")
+   	@RequestMapping(value = "/ex/sendRegCode")
     public String sendRegCode(String receiveAddress){
     	SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
     	if(StringUtil.isValidString(receiveAddress)){
@@ -612,7 +612,7 @@ public class FinancialOrganController extends BaseController {
     *  显示公司信息
     * @return
     */
-    @RequestMapping(value = "/organ/showEnterpriseInfo")
+    @RequestMapping(value = "/ex/showEnterpriseInfo")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showEnterpriseInfo(RegUserLoginInfo pojo, Model model){
     	model.addAttribute(pojo);
@@ -624,7 +624,7 @@ public class FinancialOrganController extends BaseController {
      * 显示个人信息
      * 
      */
-    @RequestMapping(value = "/organ/showPersernalInfo")
+    @RequestMapping(value = "/ex/showPersernalInfo")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showPersernalInfo(RegUserLoginInfo pojo, Model model){
     	model.addAttribute(pojo);
@@ -655,7 +655,7 @@ public class FinancialOrganController extends BaseController {
     	}
     }
     
-    @RequestMapping(value = "/upload")
+    @RequestMapping(value = "/ex/organ/upload")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public void upload(@RequestParam(value = "img_file", required = false) MultipartFile file,int imageType) throws IOException{
     	Map<String, Object> resultMap = new HashMap<String, Object>();
