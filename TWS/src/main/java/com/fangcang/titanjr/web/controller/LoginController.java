@@ -94,8 +94,9 @@ public class LoginController extends BaseController{
 			if(passLoginResponse.isResult()){
 				
 				//保存登录表示到session
-				getSession().setAttribute(WebConstant.TWS_SESSION_LOGIN_USER_NAME, passLoginResponse.getUserLoginName());
-				getSession().setAttribute(WebConstant.TWS_SESSION_TFS_USER_ID, passLoginResponse.getTfsuserId().toString());
+				getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, passLoginResponse.getUserId().toString());
+				getSession().setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, passLoginResponse.getUserLoginName());
+				getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, passLoginResponse.getTfsuserId().toString());
 				
 				return checkUser();
 			}else{
@@ -110,7 +111,7 @@ public class LoginController extends BaseController{
 	}
 	private String checkUser() throws GlobalServiceException{
 		//检查用户状态
-		String tfsUserId = (String)getSession().getAttribute(WebConstant.TWS_SESSION_TFS_USER_ID);
+		String tfsUserId = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
 		CheckUserRequest checkUserRequest = new CheckUserRequest();
 		checkUserRequest.setTfsUserId(Integer.valueOf(tfsUserId));
 		CheckUserResponse checkUserResponse = userService.checkUser(checkUserRequest);
@@ -148,8 +149,9 @@ public class LoginController extends BaseController{
 			if(smsLoginResponse.isResult()){
 				putSuccess("登录成功");
 				//保存登录表示到session
-				getSession().setAttribute(WebConstant.TWS_SESSION_LOGIN_USER_NAME, smsLoginResponse.getUserLoginName());
-				getSession().setAttribute(WebConstant.TWS_SESSION_TFS_USER_ID, smsLoginResponse.getTfsuserId().toString());
+				getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, smsLoginResponse.getUserId().toString());
+				getSession().setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, smsLoginResponse.getUserLoginName());
+				getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, smsLoginResponse.getTfsuserId().toString());
 				
 				return checkUser();
 			}else{
@@ -171,8 +173,8 @@ public class LoginController extends BaseController{
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String loginService(){
 		Map<String, Object> dataMap = new HashMap<String, Object>();
-		String tfsUserId = (String)getSession().getAttribute(WebConstant.TWS_SESSION_TFS_USER_ID);
-		String loginusername = (String)getSession().getAttribute(WebConstant.TWS_SESSION_LOGIN_USER_NAME);
+		String tfsUserId = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+		String loginusername = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
 		if(StringUtil.isValidString(tfsUserId)){
 			dataMap.put("tfsuserId", tfsUserId);
 			dataMap.put("loginusername", loginusername);
@@ -194,8 +196,8 @@ public class LoginController extends BaseController{
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String loginout(){
 		//清理资源
-		getSession().removeAttribute(WebConstant.TWS_SESSION_TFS_USER_ID);
-		getSession().removeAttribute(WebConstant.TWS_SESSION_LOGIN_USER_NAME);
+		getSession().removeAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+		getSession().removeAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
 		
 		return "redirect:/ex/login.shtml"; 
 	}

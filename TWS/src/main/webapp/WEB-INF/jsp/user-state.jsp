@@ -32,12 +32,12 @@
 					
 			</div>
 			<div class="r_t_hint">				
-				<a href="首页.html">返回首页 ></a>
+				<a href="<%=basePath%>/main/main.shtml">返回首页 ></a>
 			</div>	
 		</div>
 	</c:if>
 	<!-- 初审不通过 -->
-	<c:if test="${code=='FT_INVALID' }">
+	<c:if test="${code=='ORG_FT_INVALID' }">
 		<div class="r_box">				
 			<div class="r_t_text">
 				<div class="rt_img auditOn"><i class="ico"></i></div>
@@ -57,17 +57,17 @@
 				</div>	
 			</div>
 			<div class="r_t_hint">				
-				<a href="首页.html">返回首页 ></a>
+				<a href="<%=basePath%>/main/main.shtml">返回首页 ></a>
 			</div>	
 		</div>
 	</c:if>
 	<!-- 复审中 -->
-	<c:if test="${code=='FT_INVALID' }">
+	<c:if test="${code=='ORG_REVIEW' }">
 		<div class="r_box">				
 			<div class="r_t_text">
 				<div class="rt_img audit"><i class="ico"></i></div>
 				<div class="rt_c h_70">
-					<p>初审不通过</p>			
+					<p>申请复审中</p>			
 				</div>				
 				<div class="rt_step">
 					<ul>
@@ -79,12 +79,12 @@
 				</div>
 			</div>
 			<div class="r_t_hint">				
-				<a href="首页.html">返回首页 ></a>
+				<a href="<%=basePath%>/main/main.shtml">返回首页 ></a>
 			</div>	
 		</div>
 	</c:if>
 	<!-- 复审不通过 -->
-	<c:if test="${code=='FT_INVALID' }">
+	<c:if test="${code=='ORG_REVIEW_INVALID' }">
 		<div class="r_box">				
 			<div class="r_t_text">
 				<div class="rt_img auditOn"><i class="ico"></i></div>
@@ -104,7 +104,7 @@
 				</div>
 			</div>
 			<div class="r_t_hint">				
-				<a href="首页.html">返回首页 ></a>
+				<a href="<%=basePath%>/main/main.shtml">返回首页 ></a>
 			</div>	
 		</div>
 	</c:if>

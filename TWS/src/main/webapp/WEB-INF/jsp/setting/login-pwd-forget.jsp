@@ -1,7 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%@ include file="/comm/taglib.jsp"%>
 <!-- 忘记登录密码  -->
-<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
+<jsp:include page="/comm/static-js.jsp"></jsp:include>
 <div class="S_popup clearfix S_popTop forget_wrap">
 	<div class="S_popup_title">
 		<ul>

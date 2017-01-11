@@ -43,7 +43,7 @@ public class InitSessionInterceptor implements HandlerInterceptor {
 
         HttpSession session = httpServletRequest.getSession();
 
-        session.setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_1_TFS);
+       // session.setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_1_TFS);
         //参数说明
         UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
         userInfoQueryRequest.setUserId("TJM10000090");

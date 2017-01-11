@@ -32,6 +32,7 @@ import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.*;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.WithDrawRequest;
@@ -100,13 +101,15 @@ public class FinancialAccountController extends BaseController {
     @RequestMapping(value = "/overview-main", method = RequestMethod.GET)
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
     public String home(HttpServletRequest request, Model model) throws Exception {
-        if (null != this.getUserId()) {
-            FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-            organQueryRequest.setUserId(this.getUserId());
-            organQueryRequest.setRegchannel(RegchannelEnum.OFFIAIAL_WEBSITE.source);
-            FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
-            model.addAttribute("organ", organOrganResponse.getFinancialOrganDTO());
-        }
+    	UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+		userInfoQueryRequest.setTfsUserId(Integer.valueOf(getTfsUserId()));
+		UserInfoPageResponse userInfoPageResponse = titanFinancialUserService.queryUserInfoPage(userInfoQueryRequest);
+		TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+        FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+        organQueryRequest.setUserId(titanUser.getUserid());
+        organQueryRequest.setRegchannel(RegchannelEnum.OFFIAIAL_WEBSITE.source);
+        FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+        model.addAttribute("organ", organOrganResponse.getFinancialOrganDTO());
         return "account-overview/overview-main";
     }
     

@@ -81,7 +81,6 @@
 	<div id="kkpager" class="page_turning"></div>
 </div>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
-<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 <script>
 //滚动显示线
     $(window).scroll(function(){

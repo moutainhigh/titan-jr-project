@@ -42,7 +42,7 @@ public class UserLoginInterceptor implements HandlerInterceptor{
 		boolean isLogin = checkIsLogin(request.getSession());
 		if(isLogin){//已经登录
 			//检查用户状态
-			String tfsUserId = (String)request.getSession().getAttribute(WebConstant.TWS_SESSION_TFS_USER_ID);
+			String tfsUserId = (String)request.getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
 			CheckUserRequest checkUserRequest = new CheckUserRequest();
 			checkUserRequest.setTfsUserId(Integer.valueOf(tfsUserId));
 			CheckUserResponse checkUserResponse = userService.checkUser(checkUserRequest);
@@ -65,7 +65,7 @@ public class UserLoginInterceptor implements HandlerInterceptor{
 	 * @return
 	 */
 	public boolean checkIsLogin(HttpSession session){
-		String tfsUserId = (String)session.getAttribute(WebConstant.TWS_SESSION_TFS_USER_ID);
+		String tfsUserId = (String)session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
 		if(StringUtil.isValidString(tfsUserId)){
 			return true;
 		}

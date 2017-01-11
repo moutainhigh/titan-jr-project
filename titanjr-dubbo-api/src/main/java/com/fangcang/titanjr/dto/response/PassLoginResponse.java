@@ -8,6 +8,10 @@ import com.fangcang.titanjr.dto.BaseResponseDTO;
  * @date   2016年12月23日
  */
 public class PassLoginResponse extends BaseResponseDTO {
+	/***
+	 * 金融机构userID
+	 */
+	private String userId;
 	
 	/**
 	 * 金融用户id
@@ -18,6 +22,13 @@ public class PassLoginResponse extends BaseResponseDTO {
 	 */
 	private String userLoginName;
 	
+	
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 	public Integer getTfsuserId() {
 		return tfsuserId;
 	}

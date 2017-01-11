@@ -33,15 +33,16 @@
 	</div>
 </div>
 <script type="text/javascript">
-$('.hr_login').hover(function(){
-	$(this).find('.hrl_ul').removeClass('dn');
-	$(this).find('.hrl_hover').addClass('l_red');
-},function(){
-	$(this).find('.hrl_ul').addClass('dn');
-	$(this).find('.hrl_hover').removeClass('l_red');
-});
+
 
 $(document).ready(function(){
+	$('.hr_login').hover(function(){
+		$(this).find('.hrl_ul').removeClass('dn');
+		$(this).find('.hrl_hover').addClass('l_red');
+	},function(){
+		$(this).find('.hrl_ul').addClass('dn');
+		$(this).find('.hrl_hover').removeClass('l_red');
+	});
 	$.ajax({
 		url:'<%=basePath%>/ex/loginService.shtml',
 		type:'post',

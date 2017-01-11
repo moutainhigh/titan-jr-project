@@ -6,7 +6,6 @@
 	<meta charset="utf-8">
 	<title>金融设置-收付款费率公示</title>
 	<jsp:include page="/comm/static-resource.jsp"></jsp:include>
-	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 <body>
 <div id="scroll" >

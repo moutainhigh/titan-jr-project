@@ -29,7 +29,7 @@ import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
 import com.fangcang.finance.exception.ParameterException;
 import com.fangcang.titanjr.common.enums.ImgSizeEnum;
-import com.fangcang.titanjr.common.enums.LoginSourceEnum;
+import com.fangcang.titanjr.common.enums.UserSourceEnum;
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanCheckCodeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgBindinfoEnum;
@@ -556,13 +556,13 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			return response;
     	}
     	
-    	if(organRegisterRequest.getRegisterSource()==LoginSourceEnum.SAAS.getKey()||organRegisterRequest.getRegisterSource()==LoginSourceEnum.TTM.getKey()){
+    	if(organRegisterRequest.getRegisterSource()==UserSourceEnum.SAAS.getKey()||organRegisterRequest.getRegisterSource()==UserSourceEnum.TTM.getKey()){
     		registerFromSaaS(organRegisterRequest);
     		addOrgCheck(organRegisterRequest.getOrgCode(),organRegisterRequest.getOperator());
-    	}else if(organRegisterRequest.getRegisterSource()==LoginSourceEnum.TFS.getKey()){
+    	}else if(organRegisterRequest.getRegisterSource()==UserSourceEnum.TFS.getKey()){
     		registerFromJinfuSite(organRegisterRequest);
     		addOrgCheck(organRegisterRequest.getOrgCode(),organRegisterRequest.getOperator());
-    	}else if(organRegisterRequest.getRegisterSource()==LoginSourceEnum.AUTO.getKey()){
+    	}else if(organRegisterRequest.getRegisterSource()==UserSourceEnum.AUTO.getKey()){
     		TitanOrg titanOrg = registerFromAuto(organRegisterRequest);
     		addOrgCheck(organRegisterRequest.getOrgCode(),organRegisterRequest.getOperator());
     		OrganCheckRequest organCheckRequest = new OrganCheckRequest();

@@ -5,11 +5,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>泰坦钱包</title>
-	<link rel="stylesheet" href="<%=cssWalletPath%>/css/fangcang.min.css?v=20161222">
-	<link rel="stylesheet" href="<%=cssWalletPath%>/css/AD.css">  
-	<link rel="stylesheet" href="<%=cssWalletPath%>/css/style_TFS.css">
-	<link rel="stylesheet" href="<%=cssWalletPath%>/css/style.css">
-	<link rel="stylesheet" href="<%=cssWalletPath%>/css/jquery-ui-1.9.2.custom.css" >
+	<jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
 <body style="min-width: 1300px;" class="bg" >

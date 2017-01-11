@@ -42,10 +42,10 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 		
 		HttpSession session = request.getSession();
 		Integer isadmin = 0;
-		Integer tfsUserId = (Integer)session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+		String tfsUserId = (String)session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
 		if(tfsUserId!=null){
 			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
-			userInfoQueryRequest.setTfsUserId(tfsUserId);
+			userInfoQueryRequest.setTfsUserId(Integer.valueOf(tfsUserId));
 			UserInfoPageResponse userInfoPage = userService.queryUserInfoPage(userInfoQueryRequest);
 			TitanUser titanUser =userInfoPage.getTitanUserPaginationSupport().getItemList().get(0);
 			if(titanUser.getStatus()==TitanUserEnum.Status.FREEZE.getKey()){

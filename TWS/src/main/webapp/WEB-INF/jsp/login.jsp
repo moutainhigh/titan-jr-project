@@ -45,7 +45,7 @@
 					<span><i class="ico Ibadd"></i> <em>记住用户名</em></span>
 				</li>
 				<li class="lb_btn"><a href="javascript:;" onclick="Login.slogin()">立即登录</a></li>
-				<li class="lb_register"><a href="注册.html">免费注册</a><a href="忘记密码.html">忘记密码？</a></li>
+				<li class="lb_register"><a href="<%=basePath%>/ex/organ/showOrgUser.shtml">免费注册</a><a href="忘记密码.html">忘记密码？</a></li>
 			</ul>
 			</div>
 		</div>
@@ -63,7 +63,7 @@
 
 <script type="text/javascript" src="<%=basePath%>/js/jquery.cookie.js"></script>
 <script type="text/javascript">
-var remFlag = false;
+var remFlag = true;
 var cur_plane='user';//当前显示的登录方式，默认为密码
 //记住用户名
 $('.lb_Rememb span').on('click',function(){
@@ -206,9 +206,13 @@ Login.plogin = function(){
 		},
 		success:function(json){
 			if(json.code==1){
-				Login.loginRedirect(json.data.returnUrl);
+				if(typeof(json.data)=='undefined'||typeof(json.data.returnUrl)=='undefined'){
+					Login.loginRedirect();
+				}else{
+					Login.loginRedirect(json.data.returnUrl);
+				}
 			}else{
-				if(typeof(json.data.returnUrl)=='undefined'){
+				if(typeof(json.data)=='undefined'||typeof(json.data.returnUrl)=='undefined'){
 					new Tip({msg : json.msg, type: 2 , timer:3000});
 				}else{
 					Login.loginRedirect(json.data.returnUrl);
@@ -239,14 +243,17 @@ Login.slogin = function(){
 		},
 		success:function(json){
 			if(json.code==1){
-				Login.loginRedirect(json.data.returnUrl);
+				if(typeof(json.data)=='undefined'||typeof(json.data.returnUrl)=='undefined'){
+					Login.loginRedirect();
+				}else{
+					Login.loginRedirect(json.data.returnUrl);
+				}
 			}else{
-				if(typeof(json.data.returnUrl)=='undefined'){
+				if(typeof(json.data)=='undefined'||typeof(json.data.returnUrl)=='undefined'){
 					new Tip({msg : json.msg, type: 2 , timer:3000});
 				}else{
 					Login.loginRedirect(json.data.returnUrl);
 				}
-				 new Tip({msg : json.msg, type: 2 , timer:3000});
 			}
 		},
 		error:function(){
@@ -259,12 +266,12 @@ Login.slogin = function(){
 }
 //登录后跳转
 Login.loginRedirect = function(reUrl){
-	if(typeof(reUrl)!='undefinded'&&reUrl.length>0){
+	if(typeof(reUrl)!='undefined'&&reUrl.length>0){
 		location.href=reUrl;
 		return ;
 	}
 	var url = $("#returnUrl").val();
-	if(typeof(url)!='undefinded'&&returnUrl.length>0){
+	if(typeof(url)!='undefined'&&returnUrl.length>0){
 		location.href=url;
 		return ;
 	}

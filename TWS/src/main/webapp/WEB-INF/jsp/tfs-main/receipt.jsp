@@ -7,7 +7,8 @@
     <title>收款介绍-泰坦金融</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
     <link rel="stylesheet" href="<%=cssSaasPath%>/css/set_ad.css">
-	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
+	<jsp:include page="/comm/static-js.jsp"></jsp:include>
+
 </head>
 <body class="bg_f5" style="min-width: 1349px;" >
 <jsp:include page="home-include.jsp"></jsp:include>

@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
 import com.fangcang.titanjr.common.enums.SMSType;
+import com.fangcang.titanjr.common.enums.UserSourceEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
@@ -294,11 +295,15 @@ public class FinancialOrganController extends BaseController {
 	    	organRegisterRequest.setConnect(orgRegPojo.getConnect());
 	    	organRegisterRequest.setMobileTel(orgRegPojo.getMobiletel());
 	    	
-	    	//session中的信息
-	    	//TODO 合作方用户信息，用rsa加密方式传输，TWS不应该从session取，从参数中取
-	    	String registerSourceStr = "1";
-	    	int registerSource = NumberUtils.toInt(registerSourceStr);
+	    	//TODO userSource用rsa加密方式传输或者渠道号要用密文
+	    	String userSource = orgRegPojo.getUs();
+	    	int registerSource = UserSourceEnum.TFS.getKey();
+	    	try {
+	    		registerSource = NumberUtils.toInt(userSource);
+			} catch (Exception e) {
+			}
 	    	organRegisterRequest.setRegisterSource(registerSource);
+	    	//TODO 合作方信息
 	    	String thirdPlatformLoginUserName = "luoqinglongttm";
 	    	if(StringUtil.isValidString(thirdPlatformLoginUserName)){
 	    		organRegisterRequest.setFcLoginUserName(thirdPlatformLoginUserName);
@@ -371,15 +376,15 @@ public class FinancialOrganController extends BaseController {
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名
             //如果包含系统运营员，判定当前地址
-            if (containsRole(userInfoDTO.getRoleDTOList(), FinancialRoleEnum.OPERATION.roleCode)) {
-                getSession().setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN);
-            }
+           // if (containsRole(userInfoDTO.getRoleDTOList(), FinancialRoleEnum.OPERATION.roleCode)) {
+                //getSession().setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN);
+            //}
             //将金服所有角色设置进去
-            for (FinancialRoleEnum roleEnum : FinancialRoleEnum.values()) {
-                if (containsRole(userInfoDTO.getRoleDTOList(), roleEnum.roleCode)) {
-                    getSession().setAttribute("JR_" + roleEnum.roleCode, "1");
-                }
-            }
+            //for (FinancialRoleEnum roleEnum : FinancialRoleEnum.values()) {
+            //    if (containsRole(userInfoDTO.getRoleDTOList(), roleEnum.roleCode)) {
+            //        getSession().setAttribute("JR_" + roleEnum.roleCode, "1");
+            //    }
+           // }
     	}else{
 		}
         
@@ -566,7 +571,7 @@ public class FinancialOrganController extends BaseController {
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String userState(Model model){
     	//用户状态
-		String tfsUserId = (String)getSession().getAttribute(WebConstant.TWS_SESSION_TFS_USER_ID);
+		String tfsUserId = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
 		if(!StringUtil.isValidString(tfsUserId)){
 			model.addAttribute("errormsg", "会话失效，请重新登录");
 			return "error";
