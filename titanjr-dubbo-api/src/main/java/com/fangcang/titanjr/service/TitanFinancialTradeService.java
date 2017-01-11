@@ -1,10 +1,6 @@
 package com.fangcang.titanjr.service;
 
 
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
@@ -26,6 +22,8 @@ public interface TitanFinancialTradeService {
 	 * 则修改支付单的orderid为本地落单（本地落单是相对于融数来说的，
 	 * 本地单于融数单号的区别在于orderid前面加了一个L字符）
 	 * @param localAddTransOrderRequest
+	 * 优化建议：放到titanpay的service里面。
+	 * 
 	 * @return
 	 */
 	public LocalAddTransOrderResponse addLocalTransOrder(TitanPaymentRequest titanPaymentRequest);
@@ -49,6 +47,7 @@ public interface TitanFinancialTradeService {
 	 * @param rechargePageRequest
 	 * @return RechargeResponse 
 	 * @author fangdaikang
+	 * 待redis引进之后，提到titanpay的service
 	 */
 	public RechargeResponse packageRechargeData( RechargeRequest rechargeRequest);
 	
@@ -86,7 +85,7 @@ public interface TitanFinancialTradeService {
 	 * 查询交易明细,以该账户为中心，查询其交易记录
 	 * @param tradeDetailRequest
 	 * @return
-	 * @author fangdaikang
+	 * @author fangdaikang，两个方法的命名，看能不能合并
 	 */
 	public TradeDetailResponse getTradeDetail(TradeDetailRequest tradeDetailRequest);
 
@@ -103,6 +102,7 @@ public interface TitanFinancialTradeService {
 	 * @param paymentUrlRequest
 	 * @return
 	 * @author fangdaikang
+	 * 放到util的service
 	 */
 	public PaymentUrlResponse getPaymentUrl(PaymentUrlRequest paymentUrlRequest);
 	
@@ -112,6 +112,7 @@ public interface TitanFinancialTradeService {
 	 * @param payMethodConfigRequest
 	 * @return
 	 * @author fangdaikang
+	 * 放到util的service
 	 */
 	public PayMethodConfigDTO getPayMethodConfigDTO(PayMethodConfigRequest payMethodConfigRequest);
 
@@ -129,6 +130,7 @@ public interface TitanFinancialTradeService {
 	 * @param flag
 	 * @return
 	 * @author fangdaikang
+	 * 把notify拆分为一个service
 	 */
 	public void confirmFinance(TransOrderDTO transOrderDTO)throws Exception;
 	
@@ -137,6 +139,7 @@ public interface TitanFinancialTradeService {
 	 * @param accountTransferRequest
 	 * @return
 	 * @throws Exception
+	 * ，这个不应该提供service
 	 */
 	public boolean confirmTransAccountSuccess(AccountTransferFlowRequest accountTransferFlowRequest);
 	
@@ -145,6 +148,7 @@ public interface TitanFinancialTradeService {
 	 * 获取密文，只是组装密文，
 	 * @param rechargeResultConfirmRequest
 	 * @return
+	 * 能够在TFS中获取key的时候，就不需要这个方法
 	 */
 	public String getSign(RechargeResultConfirmRequest rechargeResultConfirmRequest);
 	
@@ -152,11 +156,13 @@ public interface TitanFinancialTradeService {
 	 * 获取订单
 	 * @param repairTransferRequest
 	 * @return
+	 * 名称要通用一些。在此处不应该提供该方法
 	 */
 	public RepairTransferResponse getTransferOrders(RepairTransferRequest repairTransferRequest);
 	
 	/**
 	 * 修复GDP转账失败的单
+	 * 一次处理一个单，传一个单号
 	 */
 	public void repairTransferOrder();
 	
@@ -185,6 +191,7 @@ public interface TitanFinancialTradeService {
 	* 确认订单支付成功
 	 * @param ordernQueryRequest
 	 * @return
+	 * 通知接口移到dubbo就没有这个了
 	 */
 	public ConfirmOrdernQueryResponse ordernQuery(ConfirmOrdernQueryRequest ordernQueryRequest);	
 	

@@ -8,11 +8,20 @@ import org.junit.Test;
 
 import com.fangcang.titanjr.dao.TitanCityInfoDao;
 import com.fangcang.titanjr.entity.TitanCityInfo;
+import com.fangcang.titanjr.rs.manager.BaseInfoInitManager;
+import com.fangcang.titanjr.rs.response.CityInfoResponse;
+import com.fangcang.titanjr.service.TitanFinancialBaseInfoService;
 
 public class TitanCityInfoServiceTest extends SpringTest{
 
 	@Resource
 	private TitanCityInfoDao tinCityInfoDao;
+	
+	@Resource
+	BaseInfoInitManager baseInfoInitManager;
+	
+	@Resource
+	TitanFinancialBaseInfoService baseInfoService;
 	
 	@Test
 	public void insert(){
@@ -37,4 +46,20 @@ public class TitanCityInfoServiceTest extends SpringTest{
 		
 		tinCityInfoDao.update(entity);
 	}
+	
+	
+	@Test
+	public void queryProvice(){
+		try {
+			baseInfoService.saveRSCityInfo();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("111111111111111");
+	}
+	
+
+	
 }

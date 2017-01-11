@@ -74,4 +74,12 @@ public enum OrderStatusEnum {
 		}
 		return false;
 	}
+	
+	public static boolean isRefund(String status){
+		if(status.equals(OrderStatusEnum.REFUND_IN_PROCESS.status)
+				|| status.equals(REFUND_SUCCESS.REFUND_SUCCESS.status)){
+			return true;
+		}
+		return false;
+	}
 }

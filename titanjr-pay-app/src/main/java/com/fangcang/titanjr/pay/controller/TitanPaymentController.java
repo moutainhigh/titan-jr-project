@@ -135,7 +135,7 @@ public class TitanPaymentController extends BaseController {
         	//validate transfer order 
         	boolean validateResult = titanPaymentService.validateIsConfirmed(transOrderDTO.getTransid());
 			if(!validateResult){
-				log.error("transfer were successed");
+				log.error("该订单已转帐成功");
 				unlockOutTradeNoList(orderNo);
 				return ;
 			}
