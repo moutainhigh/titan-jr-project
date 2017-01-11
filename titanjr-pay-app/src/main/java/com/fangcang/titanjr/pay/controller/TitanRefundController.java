@@ -73,6 +73,7 @@ public class TitanRefundController extends BaseController{
 				||!StringUtil.isValidString(refundRequest.getTfsUserid())
 				||!StringUtil.isValidString(refundRequest.getNotifyUrl())
 				){
+			log.error("参数传入异常");
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 			
 		}
@@ -111,6 +112,7 @@ public class TitanRefundController extends BaseController{
 					||!StringUtil.isValidString(refundRequest.getTfsUserid())
 					||!StringUtil.isValidString(refundRequest.getNotifyUrl())
 				){
+			log.error("参数传入异常");
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
 		

@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -343,7 +345,6 @@ public class TitanRefundService {
 	
 	
 	public String refundRequest(RefundRequest refundRequest,Model model){
-		
 		//将传入的信息转换为金融信息
 		if(CommonConstant.ISMERCHCODE.equals(refundRequest.getIsMerchCode())){
 			if(this.saasToJr(refundRequest)==null){
@@ -472,11 +473,13 @@ public class TitanRefundService {
 	}
 	
 	private RefundRequest saasToJr(RefundRequest refundRequest){
+		
 		TitanUserBindInfoDTO bindInfo = new TitanUserBindInfoDTO();
 		bindInfo.setFcuserid(Long.parseLong(refundRequest.getTfsUserid()));
 		bindInfo.setMerchantcode(refundRequest.getUserId());
 		bindInfo = titanFinancialUserService.getUserBindInfoByFcuserid(bindInfo);
 		if(bindInfo ==null || bindInfo.getTfsuserid()==null){
+			log.error("没有绑定的商家");
 			return null;
 		}
 		
@@ -484,18 +487,21 @@ public class TitanRefundService {
 		request.setTfsUserId(bindInfo.getTfsuserid());
 		UserInfoPageResponse response = titanFinancialUserService.queryUserInfoPage(request);
 		if(response ==null ){
+			log.error("金融信息查询失败");
 			return null;
 		}
 		
 		List<TitanUser> userList = response.getTitanUserPaginationSupport().getItemList();
 		
 		if(userList == null || userList.size() !=1 || userList.get(0)==null){
+			log.error("金融信息为空");
 			return null;
 		}
 		
 		TitanUser user = userList.get(0);
 		
 		if(user.getTfsuserid() ==null || !StringUtil.isValidString(user.getUserid())){
+			log.error("金融用户不存在");
 			return null;
 		}
 		
