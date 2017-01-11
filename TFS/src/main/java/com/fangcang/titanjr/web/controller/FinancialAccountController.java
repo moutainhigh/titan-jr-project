@@ -709,14 +709,14 @@ public class FinancialAccountController extends BaseController {
         	}else{
         		refundAmount = new BigDecimal(order.getTradeamount());
         	}
-    		return "-"+refundAmount.toString();
+    		return "-"+refundAmount.divide(new BigDecimal(100)).toString();
     	}else if("付款".equals(order.getTradeType())){
     		if(payerType.isRecieveCashDesk()){
     			refundAmount = new BigDecimal(order.getTradeamount());
         	}else{
         		refundAmount = new BigDecimal(order.getTradeamount()).add(new BigDecimal(order.getReceivedfee()));
         	}
-    		return "+"+refundAmount.toString();
+    		return "+"+refundAmount.divide(new BigDecimal(100)).toString();
     	}
     	
     	return "0";
