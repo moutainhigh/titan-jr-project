@@ -7,10 +7,10 @@
     <title>泰坦钱包</title>        
     <link rel="stylesheet" href="<%=cssWalletPath%>/css/fangcang.min.css?v=20161222">
     <link rel="stylesheet" href="<%=cssWalletPath%>/css/style.css?v=20161222">
-    
+    <jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
 <body style="min-width: 1300px;" class="bg" >
-<input type="hidden" id="returnUrl" value=""/>
+<input type="hidden" id="returnUrl" value="${returnUrl }"/>
 <div class="login">
 	<div class="l_box">		
 		<!-- 用户密码登录 -->
@@ -60,7 +60,7 @@
 	<script charset="utf-8" type="text/javascript" src="http://szcert.ebs.org.cn/govicon.js?id=78ccac39-a97a-452c-9f81-162cd840cff6&amp;width=130&amp;height=50&amp;type=2" id="ebsgovicon"></script>
 </div>
 
-<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
+
 <script type="text/javascript" src="<%=basePath%>/js/jquery.cookie.js"></script>
 <script type="text/javascript">
 var remFlag = false;
@@ -206,9 +206,13 @@ Login.plogin = function(){
 		},
 		success:function(json){
 			if(json.code==1){
-				Login.loginRedirect();
+				Login.loginRedirect(json.data.returnUrl);
 			}else{
-				 new Tip({msg : json.msg, type: 2 , timer:3000});
+				if(typeof(json.data.returnUrl)=='undefined'){
+					new Tip({msg : json.msg, type: 2 , timer:3000});
+				}else{
+					Login.loginRedirect(json.data.returnUrl);
+				}
 			}
 		},
 		error:function(){
@@ -235,8 +239,13 @@ Login.slogin = function(){
 		},
 		success:function(json){
 			if(json.code==1){
-				Login.loginRedirect();
+				Login.loginRedirect(json.data.returnUrl);
 			}else{
+				if(typeof(json.data.returnUrl)=='undefined'){
+					new Tip({msg : json.msg, type: 2 , timer:3000});
+				}else{
+					Login.loginRedirect(json.data.returnUrl);
+				}
 				 new Tip({msg : json.msg, type: 2 , timer:3000});
 			}
 		},
@@ -249,11 +258,17 @@ Login.slogin = function(){
 	});
 }
 //登录后跳转
-Login.loginRedirect = function(){
-	var url = $("#returnUrl").val();
-	if(typeof(url)=='undefinded'||url.length==0){
-		url = "<%=basePath%>/main/main.shtml";
+Login.loginRedirect = function(reUrl){
+	if(typeof(reUrl)!='undefinded'&&reUrl.length>0){
+		location.href=reUrl;
+		return ;
 	}
+	var url = $("#returnUrl").val();
+	if(typeof(url)!='undefinded'&&returnUrl.length>0){
+		location.href=url;
+		return ;
+	}
+	url = "<%=basePath%>/main/main.shtml";
 	location.href=url;
 }
 //记住用户名

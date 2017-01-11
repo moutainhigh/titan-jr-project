@@ -36,12 +36,14 @@ import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.ImageIOExtUtil;
 import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
+import com.fangcang.titanjr.dto.request.CheckUserRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.OrgRegisterValidateRequest;
@@ -55,6 +57,7 @@ import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.request.UserLoginNameExistRequest;
 import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
+import com.fangcang.titanjr.dto.response.CheckUserResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.GetCheckCodeResponse;
 import com.fangcang.titanjr.dto.response.OrgRegisterValidateResponse;
@@ -65,9 +68,11 @@ import com.fangcang.titanjr.dto.response.OrganQueryCheckResponse;
 import com.fangcang.titanjr.dto.response.OrganRegisterResponse;
 import com.fangcang.titanjr.dto.response.OrganRegisterUpdateResponse;
 import com.fangcang.titanjr.dto.response.SendCodeResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
 import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
+import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
@@ -553,6 +558,39 @@ public class FinancialOrganController extends BaseController {
     public String showAgreement(){
     	return "org-reg/agreement";
     }
+    /**
+     * 机构和用户状态检查
+     * @return
+     */
+    @RequestMapping(value = "/ex/user-state")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String userState(Model model){
+    	//用户状态
+		String tfsUserId = (String)getSession().getAttribute(WebConstant.TWS_SESSION_TFS_USER_ID);
+		if(!StringUtil.isValidString(tfsUserId)){
+			model.addAttribute("errormsg", "会话失效，请重新登录");
+			return "error";
+		}
+		CheckUserRequest checkUserRequest = new CheckUserRequest();
+		checkUserRequest.setTfsUserId(Integer.valueOf(tfsUserId));
+		try {
+			CheckUserResponse checkUserResponse = titanFinancialUserService.checkUser(checkUserRequest);
+			if(checkUserResponse.isResult()){
+				return "redirect:/main/main.shtml";//到首页
+			}else{
+				model.addAttribute("code", checkUserResponse.getReturnCode());
+				model.addAttribute("msg", checkUserResponse.getReturnMessage());
+		    	return "user-state";
+			}
+			
+		} catch (GlobalServiceException e) {
+			e.printStackTrace();
+			model.addAttribute("errormsg", "系统错误，请重试");
+			return "error";
+			
+		}
+    }
+    
     /**
      * 显示修改的公司
      * @return

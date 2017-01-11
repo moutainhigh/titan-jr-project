@@ -4,31 +4,15 @@
 <html>
 <meta charset="utf-8">
     <title>泰坦钱包</title>
-   <jsp:include page="/comm/static-resource.jsp"></jsp:include>
+   <link rel="stylesheet" href="<%=cssWalletPath%>/css/fangcang.min.css?v=20161222">
+	<link rel="stylesheet" href="<%=cssWalletPath%>/css/AD.css"> 
+	<link rel="stylesheet" href="<%=cssWalletPath%>/css/style.css">
+	<link rel="stylesheet" href="<%=cssWalletPath%>/css/jquery-ui-1.9.2.custom.css" >
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 	<script type="text/javascript" src="<%=basePath %>/js/ajaxfileupload.js"></script>
 </head>
 <body style="min-width: 1300px;" class="bg" >
-<div class="header">
-	<div class="w_1200">
-		<div class="logo">
-			<div class="l_img"><img src="<%=cssWalletPath %>/images/logo.png"></div>
-			<div class="l_text">
-				<i class="ico"></i>欢迎注册
-			</div>
-		</div>
-		<div class="head_r">
-			<ul>
-				<!-- <li class="lion">首页</li>
-				<li>解决方案</li> -->
-				<li class="w_240 li_1">
-					已注册，现在就
-					<a class="li_btn" href="<%=basePath%>/ex/login.shtml">登录</a>
-				</li>
-			</ul>
-		</div>
-	</div>
-</div>
+<jsp:include page="org-head.jsp"></jsp:include>
 
 <div class="register r_two r_h680">
 	<div class="r_box ">
@@ -56,17 +40,36 @@
 					<li class="r_uploading">
 						<div class="fl r_u_l">上传营业执照照片：</div>
 						<div class="fl r_u_r">
+							<div class="TFSaddImg "></div>
 							<input type="file" name="img_file" id="img_file" onchange="ajaxFileUpload()">
+							<div class="TFSuploading hidden">
+				                 <p class="TFSuploading1">
+				                     <span></span>
+				                 </p>    
+				                 <p class="TFSuploading2">
+				                    	 已上传<i>0</i>%
+				                 </p>                                
+				            </div>
+				            <div class="TFSuploaderror hidden">
+				                <div class="J_re_upload loanInformation_upload_btn">重新上传</div>
+				                <p>上传失败</p>
+				            </div>
+				            <div class="TFSimgOn hidden">
+				                <div class="J_delete_upload loanInformation_upload_btn">删除</div>
+				                <div class="dd_img">
+									<c:if test="${not empty small_img_10}">
+			                        	<img src="${small_img_10}" id="pre_view" width="180" height="120" data-src-v="${small_img_10}" />
+			                        </c:if>
+			                        <c:if test="${empty small_img_10}">
+			                        	<img src="<%=cssWalletPath%>/images/tu12.jpg" id="pre_view" width="180" height="120" data-src-v=""/>          
+			                        </c:if>         
+				                </div>          
+				                <div class="dd_text" title="营业执照">营业执照</div>                
+				            </div>
 						</div>
 					</li>
 					<li class="lb_btn "><a href="javasript:void(0);" onclick="regOrg()" class="">提交申请</a></li>
 				</ul>
-				<c:if test="${not empty small_img_10}">
-	                        	<img src="${small_img_10}" width="130" height="90" data-src-v="${small_img_10}" id="img_small" class="cursor J_magnify">
-	                        </c:if>
-	                        <c:if test="${empty small_img_10}">
-	                        	<img src="<%=cssWalletPath%>/images/TFS/tu12.jpg" width="130"  id="img_small" class="cursor J_magnify">
-	                        </c:if>  
 			</div>
 		</div>
 	      <input type="submit" id="reg_btn" style="display:none;"/>
@@ -87,6 +90,10 @@
 var big_img_url="${big_img_50}";
 var vform =new validform('#info_form');
 function ajaxFileUpload() {
+	$(".r_u_r input").prev().addClass("hidden");
+    $(".r_u_r input").parent().find(".TFSuploading").removeClass("hidden");
+    $(".r_u_r input").parent().find('.TFSuploaderror').addClass('hidden');
+    loading($(".r_u_r input").parent().find(".TFSuploading"));
     $.ajaxFileUpload({
         	url: '<%=basePath%>/ex/organ/upload.shtml',
             secureuri: false, 
@@ -94,22 +101,27 @@ function ajaxFileUpload() {
             dataType: 'json', 
             data:{"imageType":$("#imageType").val()},
             success: function (result, status){
-            	//$("#uploading").hide();
-            	//$("#img_upload").show();
             	if(result.code==1){
-            		$("#img_small").attr({"src":result.data.imgPreview_10});
-            		$("#img_small").attr({"data-src-v":result.data.imgPreview_10});
             		big_img_url = result.data.imgPreview_50;
             		$("#imgIds").val(result.data.imgIds);
+            		var objTFSuploading = $(".TFSuploading");
+            		objTFSuploading.find("span").css("width","100%");
+            		objTFSuploading.find("i").html(100);
+            		 setTimeout(function(){
+            			$(".TFSuploading").addClass("hidden");
+            			$("#pre_view").attr({"src":result.data.imgPreview_10});
+            			$("#pre_view").attr({"data-src-v":result.data.imgPreview_10});
+            			$("#bigImg_50").attr({"src":result.data.imgPreview_50});
+            			$(".TFSimgOn").removeClass("hidden").addClass("TFSimgOnBig");
+            		   },100);
             	}else{
-            		alert("上传失败");
-            		$("#upload_error").html(result.msg).show();
+            		$(".TFSuploading").addClass("hidden");
+            		$(".TFSuploaderror").removeClass("hidden");
             	}
             },
             error: function (data, status, e){
-            	////$("#uploading").hide();
-            	//$("#img_upload").show();
-            	//$("#upload_error").html("证件照上传失败").show();
+            	$(".TFSuploading").addClass("hidden");
+            	$(".TFSuploaderror").removeClass("hidden");
             }
         }
     );
@@ -120,9 +132,9 @@ function regOrg(){
 	if(!vform.validate()){
 		return;
 	}
-	var imageV = $("#img_small").attr("data-src-v");
+	var imageV = $("#pre_view").attr("data-src-v");
 	if(typeof(imageV)=='undefined'){
-		$("#upload_error").html("请上传证件照").show();
+		new Tip({msg:"请上传证件照",type:2,timer:2000});
 		return;
 	}
 	var smsRegCodeEle = $("#smsRegCode");
@@ -159,25 +171,6 @@ function regOrg(){
 	});
 	
 }
-
-
-//放大图
-$('.J_magnify').on('click',function(){
-	if(big_img_url){
-		var _html = "<div class=\"clearfix agreement\" id=\"big_img_w\" style=\"width:825px;\">"
-			+"<img src="+big_img_url+"  width=\"825\" id=\"big_img\" class=\"cursor \"></div>";
-		      var d =  window.top.dialog({
-		          title: ' ',
-		          padding: '0',
-		          content: _html,
-		          skin : 'saas_pop saas_hfe',                  
-		          button :false,
-		          close : function(){                        
-		          }
-		      }).showModal();
-	}
-	
-});
 //检查注册编码
 function checkOrgRegNum(value, inputDom){
 	var flag = false;
@@ -261,9 +254,7 @@ $('.r_verify').on('click',function(){
       
 });
 
-
 /////tws
-
 //查看示例
 $('.J_example').on('click',function(){  
         var d = dialog({
@@ -276,7 +267,46 @@ $('.J_example').on('click',function(){
         return false;
 }); 
  
+//上传
+$(".TFSaddImg").on('click',function(){
+    $(this).next("input").click();           
+});
 
+//重新上传
+$(".J_re_upload").on('click',function(){
+    $(this).parent().parent().find('input').click();             
+});
+function loading(obj){
+   var l1=obj.find("span");
+   var l2=obj.find("i");
+   var i=0;
+   var loadingJ=setInterval(function(){
+        l1.css("width",i+"%");
+        l2.html(i);
+        if(i==90){
+            clearInterval(loadingJ);
+        }
+        i++;
+　　},20); 
+}
+
+//放大
+$('body,html').on('click','.TFSimgOnBig',function(){  
+    var d = dialog({
+        title: ' ',
+        fixed: true,
+        padding: '0 0 0px 0',
+        content: $('#TFSimgOnBig'),
+        skin : 'wallet_pop'      
+    }).showModal()
+    return false;
+});
+//删除
+$(".J_delete_upload").on('click',function(event){
+	event.stopPropagation();
+    $(this).parent().addClass("hidden").removeClass("TFSimgOnBig");
+    $(this).parent().parent().find(".TFSaddImg").removeClass("hidden");
+});
 </script>
 </body>
 </html>

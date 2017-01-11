@@ -5,6 +5,7 @@ import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
+import com.fangcang.titanjr.dto.request.CheckUserRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
 import com.fangcang.titanjr.dto.request.LoginPasswordModifyRequest;
@@ -24,6 +25,7 @@ import com.fangcang.titanjr.dto.request.UserRegisterRequest;
 import com.fangcang.titanjr.dto.request.UserRoleSetRequest;
 import com.fangcang.titanjr.dto.response.CancelPermissionResponse;
 import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
+import com.fangcang.titanjr.dto.response.CheckUserResponse;
 import com.fangcang.titanjr.dto.response.FinancialUserBindResponse;
 import com.fangcang.titanjr.dto.response.FinancialUserUnBindResponse;
 import com.fangcang.titanjr.dto.response.LoginPasswordModifyResponse;
@@ -231,4 +233,12 @@ public interface TitanFinancialUserService {
      * @throws GlobalServiceException
      */
     public SmsLoginResponse smsLogin(SmsLoginRequest smsLoginRequest) throws GlobalServiceException;
+    
+    /**
+     * 检查金融用户的状态
+     * @param checkUserRequest
+     * @return
+     * @throws GlobalServiceException
+     */
+    public CheckUserResponse checkUser(CheckUserRequest checkUserRequest) throws GlobalServiceException;
 }

@@ -14,9 +14,16 @@ public class OrgDTO implements Serializable{
 	private String constid;
 	private String userid;
 	private String productid;
+	private Integer statusid;
 	private String titancode;
 	
 	
+	public Integer getStatusid() {
+		return statusid;
+	}
+	public void setStatusid(Integer statusid) {
+		this.statusid = statusid;
+	}
 	public Integer getOrgid() {
 		return orgid;
 	}

@@ -5,31 +5,15 @@
 <head>
 <meta charset="utf-8">
     <title>注册申请-泰坦钱包</title>
-    <jsp:include page="/comm/static-resource.jsp"></jsp:include>
+    <link rel="stylesheet" href="<%=cssWalletPath%>/css/fangcang.min.css?v=20161222">
+	<link rel="stylesheet" href="<%=cssWalletPath%>/css/AD.css"> 
+	<link rel="stylesheet" href="<%=cssWalletPath%>/css/style.css">
+	<link rel="stylesheet" href="<%=cssWalletPath%>/css/jquery-ui-1.9.2.custom.css" >
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
   
   <body style="min-width: 1300px;" class="bg" >
-<div class="header">
-	<div class="w_1200">
-		<div class="logo">
-			<div class="l_img"><img src="<%=cssWalletPath %>/images/logo.png"></div>
-			<div class="l_text">
-				<i class="ico"></i>欢迎注册
-			</div>
-		</div>
-		<div class="head_r">
-			<ul>
-				<!-- <li class="lion">首页</li>
-				<li>解决方案</li> -->
-				<li class="w_240 li_1">
-					已注册，现在就
-					<a class="li_btn" href="<%=basePath%>/ex/login.shtml">登录</a>
-				</li>
-			</ul>
-		</div>
-	</div>
-</div>
+<jsp:include page="org-head.jsp"></jsp:include>
 
 <div class="register">
 	<div class="r_box">

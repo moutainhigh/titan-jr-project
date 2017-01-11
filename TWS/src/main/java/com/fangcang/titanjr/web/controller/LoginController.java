@@ -6,23 +6,33 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
 import com.fangcang.titanjr.common.enums.SMSType;
+import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
+import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.dto.bean.CheckStatus;
+import com.fangcang.titanjr.dto.request.CheckUserRequest;
+import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.PassLoginRequest;
 import com.fangcang.titanjr.dto.request.SendCodeRequest;
 import com.fangcang.titanjr.dto.request.SmsLoginRequest;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
+import com.fangcang.titanjr.dto.response.CheckUserResponse;
+import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.GetCheckCodeResponse;
 import com.fangcang.titanjr.dto.response.PassLoginResponse;
 import com.fangcang.titanjr.dto.response.SendCodeResponse;
 import com.fangcang.titanjr.dto.response.SmsLoginResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
+import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
@@ -82,11 +92,12 @@ public class LoginController extends BaseController{
 		try {
 			PassLoginResponse passLoginResponse = userService.passLogin(passLoginRequest);
 			if(passLoginResponse.isResult()){
-				putSuccess("登录成功");
+				
 				//保存登录表示到session
 				getSession().setAttribute(WebConstant.TWS_SESSION_LOGIN_USER_NAME, passLoginResponse.getUserLoginName());
 				getSession().setAttribute(WebConstant.TWS_SESSION_TFS_USER_ID, passLoginResponse.getTfsuserId().toString());
-				return toJson();
+				
+				return checkUser();
 			}else{
 				putSysError("用户名或者密码错误");
 				return toJson();
@@ -97,7 +108,24 @@ public class LoginController extends BaseController{
 			return toJson();
 		}
 	}
-	
+	private String checkUser() throws GlobalServiceException{
+		//检查用户状态
+		String tfsUserId = (String)getSession().getAttribute(WebConstant.TWS_SESSION_TFS_USER_ID);
+		CheckUserRequest checkUserRequest = new CheckUserRequest();
+		checkUserRequest.setTfsUserId(Integer.valueOf(tfsUserId));
+		CheckUserResponse checkUserResponse = userService.checkUser(checkUserRequest);
+		if(checkUserResponse.isResult()){
+			putSuccess("登录成功");
+			return toJson();
+		}else{
+			//账号异常
+			String returnUrl = getRequest().getScheme()+"://"+getRequest().getServerName()+":"+getRequest().getServerPort()+getRequest().getContextPath()+"/ex/user-state.shtml";
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put("returnUrl", returnUrl);
+			putSysError(checkUserResponse.getReturnMessage(), data);
+			return toJson();
+		}
+	}
 	/**
 	 * 动态码登录
 	 * @return
@@ -122,7 +150,8 @@ public class LoginController extends BaseController{
 				//保存登录表示到session
 				getSession().setAttribute(WebConstant.TWS_SESSION_LOGIN_USER_NAME, smsLoginResponse.getUserLoginName());
 				getSession().setAttribute(WebConstant.TWS_SESSION_TFS_USER_ID, smsLoginResponse.getTfsuserId().toString());
-				return toJson();
+				
+				return checkUser();
 			}else{
 				putSysError("用户名或者验证码错误");
 				return toJson();

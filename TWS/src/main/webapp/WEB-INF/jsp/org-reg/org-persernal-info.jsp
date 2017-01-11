@@ -5,32 +5,16 @@
 <head>
 <meta charset="utf-8">
     <title>个人基本信息-泰坦钱包</title>
-   <jsp:include page="/comm/static-resource.jsp"></jsp:include>
+   <link rel="stylesheet" href="<%=cssWalletPath%>/css/fangcang.min.css?v=20161222">
+	<link rel="stylesheet" href="<%=cssWalletPath%>/css/AD.css"> 
+	<link rel="stylesheet" href="<%=cssWalletPath%>/css/style.css">
+	<link rel="stylesheet" href="<%=cssWalletPath%>/css/jquery-ui-1.9.2.custom.css" >
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 	<script type="text/javascript" src="<%=basePath %>/js/ajaxfileupload.js"></script>
 </head>
   
  <body style="min-width: 1300px;" class="bg" >
-<div class="header">
-	<div class="w_1200">
-		<div class="logo">
-			<div class="l_img"><img src="images/logo.png"></div>
-			<div class="l_text">
-				<i class="ico"></i>欢迎注册
-			</div>
-		</div>
-		<div class="head_r">
-			<ul>
-				<!-- <li class="lion">首页</li>
-				<li>解决方案</li> -->
-				<li class="w_240 li_1">
-					已注册，现在就
-					<a class="li_btn" href="登录.html">登录</a>
-				</li>
-			</ul>
-		</div>
-	</div>
-</div>
+<jsp:include page="org-head.jsp"></jsp:include>
 
 <div class="register r_two">
 	<div class="r_box ">
@@ -70,14 +54,20 @@
 			            </div>
 			            <div class="TFSimgOn hidden">
 			                <div class="J_delete_upload loanInformation_upload_btn">删除</div>
-			                <div class="dd_img"><img src="images/tu12.jpg" id="pre_view" width="180" height="120">          
+			                <div class="dd_img">
+			                <c:if test="${not empty small_img_10}">
+	                        	<img src="${small_img_10}" id="pre_view" width="180" height="120" data-src-v="${small_img_10}" />
+	                        </c:if>
+	                        <c:if test="${empty small_img_10}">
+	                        	<img src="<%=cssWalletPath%>/images/tu12.jpg" id="pre_view" width="180" height="120" data-src-v=""/>          
+	                        </c:if>
 			                </div>          
 			                <div class="dd_text" title="身份证">身份证</div>                
 			            </div>
 						</div>
 					</li>
 					
-					<li class="lb_btn "><a href="注册第三步.html" class="">提交申请</a></li>
+					<li class="lb_btn "><a href="javascript:;" class="" onclick="regOrg()">提交申请</a></li>
 				</ul>
 
 			</div>
@@ -92,14 +82,20 @@
 <!-- 查看示例 -->
 <div class="dn" id="example">
 <div class="example" style="max-width: 1000px;">
-	<img src="images/tu01.jpg" alt="" style="max-height: 600px;max-width: 1000px;">
+	<img src="<%=cssWalletPath%>/images/tu01.jpg" alt="" style="max-height: 600px;max-width: 1000px;">
 </div>	
 </div>
 
+<!-- 放大 -->
+<div class="dn" id="TFSimgOnBig">
+<div style="max-width: 1000px;">
+	<img src="images/tu12.jpg" id="bigImg_50" alt="" style="max-height: 600px;max-width: 1000px;">
+</div>	
+</div>
 <script type="text/javascript">
 
 //验证
-new validform('.r_box');
+var vform = new validform('#info_form');
 var big_img_url="${big_img_50}";
 //tws
 function ajaxFileUpload() {
@@ -123,19 +119,20 @@ function ajaxFileUpload() {
             		 setTimeout(function(){
             			$(".TFSuploading").addClass("hidden");
             			$("#pre_view").attr({"src":result.data.imgPreview_10});
+            			$("#pre_view").attr({"data-src-v":result.data.imgPreview_10});
+            			$("#bigImg_50").attr({"src":result.data.imgPreview_50});
             			$(".TFSimgOn").removeClass("hidden").addClass("TFSimgOnBig");
-                 		bigImgShow(); 
             		   },100);
             		
             	}else{
-            		$("#TFSuploaderror").show();
-                	$("#TFSuploading").hide();
+            		$(".TFSuploading").addClass("hidden");
+            		$(".TFSuploaderror").removeClass("hidden");
             	}
             	
             },
             error: function (data, status, e){
-            	$("#TFSuploaderror").show();
-            	$("#TFSuploading").hide();
+            	$(".TFSuploading").addClass("hidden");
+            	$(".TFSuploaderror").removeClass("hidden");
             }
         }
     );
@@ -146,36 +143,19 @@ function regOrg(){
 	if(!vform.validate()){
 		return;
 	}
-	var imageV = $("#img_small").attr("data-src-v");
-	if(typeof(imageV)=='undefined'){
-		$("#upload_error").html("请上传证件照").show();
+	var imageV = $("#pre_view").attr("data-src-v");
+	if($.trim(imageV).length==0){
+		new Tip({msg:"请上传证件照",type:2,timer:2000});
 		return;
 	}
 	if($("#orgId").val().length>0){
 		$("#info_form").attr({"action":"<%=basePath%>/organ/updateOrg.shtml"});
 	}else{
-		$("#info_form").attr({"action":"<%=basePath%>/organ/regOrg.shtml"});
+		$("#info_form").attr({"action":"<%=basePath%>/ex/organ/regOrg.shtml"});
 	}
 	$("#reg_btn").click();
 }
 
-//放大图
-$('.J_magnify').on('click',function(){
-	if(big_img_url){
-		var _html = "<div class=\"clearfix agreement\" id=\"big_img_w\" style=\"width:525px;\">"
-			+"<img src="+big_img_url+"  width=\"525\" id=\"big_img\" class=\"cursor \"></div>";
-		      var d =  window.top.dialog({
-		          title: ' ',
-		          padding: '0',
-		          content: _html,
-		          skin : 'saas_pop saas_hfe',                  
-		          button :false,
-		          close : function(){                        
-		          }
-		      }).showModal();
-	}
-	
-});
 
 //检查注册编码
 function checkOrgRegNum(value, inputDom){
@@ -184,7 +164,7 @@ function checkOrgRegNum(value, inputDom){
 		async:false,
 		type:'post',
 		data:{"orgId":$("#orgId").val(),"userType":$("#userType").val(),"certificateNumber":value},
-		url : '<%=basePath%>/organ/checkOrgRegNum.shtml',
+		url : '<%=basePath%>/ex/organ/checkOrgRegNum.shtml',
 		dataType : 'json',
 		success : function(result){
 			if(result.code==1){
@@ -226,12 +206,7 @@ $(".TFSaddImg").on('click',function(){
     $(this).next("input").click();           
 });
  
-//删除
-$(".J_delete_upload").on('click',function(){
-    $(this).parent().addClass("hidden").removeClass("TFSimgOnBig");
-    $(this).parent().parent().find(".TFSaddImg").removeClass("hidden");
-    e.preventDefault();
-});
+
 //重新上传
 $(".J_re_upload").on('click',function(){
     $(this).parent().parent().find('input').click();             
@@ -250,20 +225,23 @@ function loading(obj){
 	　　},20); 
 	}
 
-	//放大
-	function bigImgShow(){  
-		$('.TFSimgOnBig').on('click',function(){  
-		        var d = dialog({
-		            title: ' ',
-		            fixed: true,
-		            padding: '0 0 0px 0',
-		            content: $('#TFSimgOnBig'),
-		            skin : 'wallet_pop'      
-		        }).showModal()
-		        return false;
-		});
-	}
-	
+//放大
+$('body,html').on('click','.TFSimgOnBig',function(){  
+    var d = dialog({
+        title: ' ',
+        fixed: true,
+        padding: '0 0 0px 0',
+        content: $('#TFSimgOnBig'),
+        skin : 'wallet_pop'      
+    }).showModal()
+    return false;
+});
+	//删除
+	$(".J_delete_upload").on('click',function(event){
+		event.stopPropagation();
+	    $(this).parent().addClass("hidden").removeClass("TFSimgOnBig");
+	    $(this).parent().parent().find(".TFSaddImg").removeClass("hidden");
+	});
 
 </script>
 </body>
