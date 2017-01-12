@@ -8,12 +8,12 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            classpath:applicationContext.xml
-            <!-- classpath:applicationContext-acegi-security.xml, -->
-           <!--  classpath:applicationContext-common-authorization.xml,
-            classpath:applicationContext-common-business.xml -->
+            classpath:applicationContext.xml,
+            classpath:applicationContext-acegi-security.xml,
+            classpath:applicationContext-common-authorization.xml,
+            classpath:applicationContext-common-business.xml
         </param-value>
-    </context-param> 
+    </context-param>
     <!-- start Character Encoding filter -->
     <filter>
         <filter-name>encodingFilter</filter-name>
@@ -49,7 +49,7 @@
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
     <!-- start 安全过滤器 -->
-     <!-- <filter>
+     <filter>
         <filter-name>Acegi_Filter_Chain_Proxy</filter-name>
         <filter-class>
             org.acegisecurity.util.FilterToBeanProxy
@@ -77,7 +77,7 @@
     <filter-mapping>
         <filter-name>Acegi_Filter_Chain_Proxy</filter-name>
         <url-pattern>/j_acegi_logout</url-pattern>
-    </filter-mapping> -->
+    </filter-mapping>
     <!-- end 安全过滤器 -->
     
     
