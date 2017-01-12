@@ -94,7 +94,7 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 			TitanTransferDTO titanTransferDTO) {
 		try{
 			List<TitanTransferDTO> titanTransferDTOList = getTitanTransferDTOList(titanTransferDTO);
-			if(titanTransferDTOList !=null){
+			if(titanTransferDTOList !=null ){
 				return titanTransferDTOList.get(0);
 			}
 		}catch(Exception e){

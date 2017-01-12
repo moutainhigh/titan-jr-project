@@ -1477,15 +1477,18 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
 						titanTransferDTO.setTransorderid(transOrderDTO
 								.getTransid());
+						titanTransferDTO.setUserrelateid(transOrderDTO.getUserrelateid());
 						titanTransferDTO = titanOrderService
 								.getTitanTransferDTO(titanTransferDTO);
+						transOrderDTO.setTitanTransferDTO(titanTransferDTO);
 						//查询退款
 						transOrderDTO.setRefundDTO(this.getRefundDTO(transOrderDTO.getOrderid()));
-						transOrderDTO.setTitanTransferDTO(titanTransferDTO);
 					} else if (transOrderDTO.getTradeType().equals("付款")) {// 付款记录
 						TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
 						titanTransferDTO.setTransorderid(transOrderDTO
 								.getTransid());
+						//查询支付转帐单，而不是退款转帐单
+						titanTransferDTO.setUserrelateid(transOrderDTO.getUserrelateid());
 						titanTransferDTO = titanOrderService
 								.getTitanTransferDTO(titanTransferDTO);
 
@@ -1546,15 +1549,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		refundDTO.setOrderNo(orderId);
 		List<RefundDTO> refundList = titanRefundDao.queryRefundDTO(refundDTO);
 		if(refundList !=null && refundList.size()>0){
-			refundDTO =  refundList.get(0);
-			if(StringUtil.isValidString(refundDTO.getOrderTime())){
-				try {
-					refundDTO.setCreatetime(DateUtil.sdf5.parse(refundDTO.getOrderTime()));
-					return refundDTO;
-				} catch (ParseException e) {
-					log.error("时间转换失败",e);
-				}
-			}
+			return  refundList.get(0);
 		}
 		return null;
 	}

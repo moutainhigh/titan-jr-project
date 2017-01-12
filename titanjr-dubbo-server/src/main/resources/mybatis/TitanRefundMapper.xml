@@ -22,12 +22,13 @@
     <result property="payOrderNo" column="payOrderNo"/>
     <result property="notifyUrl" column="notifyUrl"/>
     <result property="businessInfo" column="businessInfo"/>
+    <result property="createtime" column="createtime"/>
   </resultMap>
   
   
   <select id="queryList" parameterType="com.fangcang.titanjr.dto.bean.RefundDTO" resultMap="refundDTOMapper">
      select refundid,orderid,refundAmount,refundOrderno,orderTime,creator,status,transferAmount,
-            fee,userOrderId,payOrderNo,notifyUrl,businessInfo from t_tfs_refund 
+            fee,userOrderId,payOrderNo,notifyUrl,businessInfo,createtime from t_tfs_refund 
      <where>
        <if test="refundId !=null">
        refundid = #{refundId}
