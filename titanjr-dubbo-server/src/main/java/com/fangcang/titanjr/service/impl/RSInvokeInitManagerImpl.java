@@ -14,12 +14,11 @@ import com.Rop.api.DefaultRopClient;
 import com.Rop.api.request.ExternalSessionGetRequest;
 import com.Rop.api.response.ExternalSessionGetResponse;
 import com.fangcang.titanjr.common.util.Tools;
-import com.fangcang.titanjr.dao.TitanSysconfigDao;
+import com.fangcang.titanjr.dao.TitanSysConfigDao;
 import com.fangcang.titanjr.dto.bean.RSInvokeConfig;
 import com.fangcang.titanjr.dto.bean.TitanCallBackConfig;
 import com.fangcang.titanjr.dto.bean.TitanPayMethod;
-import com.fangcang.titanjr.entity.TitanSysconfig;
-import com.fangcang.titanjr.entity.parameter.TitanSysconfigParam;
+import com.fangcang.titanjr.entity.TitanSysConfig;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 
 /**o
@@ -33,8 +32,8 @@ public class RSInvokeInitManagerImpl {
 	private final static String OBJ_KEY_TITANCALLBACKCONFIG = "TitanCallBackConfig";
 	private final static String OBJ_KEY_DEFAULTPAYERCONFIG = "DefaultPayerConfig";
 	
-	@Resource(name="titanSysconfigDao")
-	private TitanSysconfigDao titanSysconfigDao;
+	@Resource(name="titanSysConfigDao")
+	private TitanSysConfigDao titanSysConfigDao;
 	
     public void initRopClient() {
         //测试时使用
@@ -84,12 +83,12 @@ public class RSInvokeInitManagerImpl {
 	 * @return
 	 */
 	private RSInvokeConfig getRSInvokeConfig() {
-		TitanSysconfigParam param = new TitanSysconfigParam();
+		TitanSysConfig param = new TitanSysConfig();
 		param.setObjKey(OBJ_KEY_RSINVOKECONFIG);
-		List<TitanSysconfig> list = titanSysconfigDao.query(param);
+		List<TitanSysConfig> list = titanSysConfigDao.querySysConfigList(param);
 		if(CollectionUtils.isNotEmpty(list)){
 			RSInvokeConfig invokeConfig = new RSInvokeConfig();
-			for(TitanSysconfig item : list){
+			for(TitanSysConfig item : list){
 				//TODO 改为连接uat的贷款环境，上线后改成从数据库取。
 				if(item.getCfgKey().equals("RSInvokeConfig_appKey")){
 					invokeConfig.setAppKey(item.getCfgValue());
@@ -121,11 +120,11 @@ public class RSInvokeInitManagerImpl {
 	 * 读取融数中间账户
 	 */
 	private void getDefaultPayerConfig(){
-		TitanSysconfigParam param = new TitanSysconfigParam();
+		TitanSysConfig param = new TitanSysConfig();
 		param.setObjKey(OBJ_KEY_DEFAULTPAYERCONFIG);
-		List<TitanSysconfig> list = titanSysconfigDao.query(param);
+		List<TitanSysConfig> list = titanSysConfigDao.querySysConfigList(param);
 		if(CollectionUtils.isNotEmpty(list)){
-			for(TitanSysconfig item : list){
+			for(TitanSysConfig item : list){
 				if(item.getCfgKey().equals("DefaultPayerConfig_USERID")){
 					RSInvokeConstant.DEFAULTPAYERCONFIG_USERID = item.getCfgValue();
 					continue;
@@ -146,12 +145,12 @@ public class RSInvokeInitManagerImpl {
 	 * @return
 	 */
 	private TitanPayMethod getTitanPayMethod() {
-		TitanSysconfigParam param = new TitanSysconfigParam();
+		TitanSysConfig param = new TitanSysConfig();
 		param.setObjKey(OBJ_KEY_TITANPAYMETHOD);
-		List<TitanSysconfig> list = titanSysconfigDao.query(param);
+		List<TitanSysConfig> list = titanSysConfigDao.querySysConfigList(param);
 		if(CollectionUtils.isNotEmpty(list)){
 			TitanPayMethod payMethod = new TitanPayMethod();
-			for(TitanSysconfig item : list){
+			for(TitanSysConfig item : list){
 				if(item.getCfgKey().equals("TitanPayMethod_gatewayURL")){
 					payMethod.setGatewayURL(item.getCfgValue());
 					continue;
@@ -175,12 +174,12 @@ public class RSInvokeInitManagerImpl {
 	 * @return
 	 */
 	public List<TitanCallBackConfig> getTitanCallBackConfig() {
-		TitanSysconfigParam param = new TitanSysconfigParam();
+		TitanSysConfig param = new TitanSysConfig();
 		param.setObjKey(OBJ_KEY_TITANCALLBACKCONFIG);
-		List<TitanSysconfig> list = titanSysconfigDao.query(param);
+		List<TitanSysConfig> list = titanSysConfigDao.querySysConfigList(param);
 		List<TitanCallBackConfig> cList = new ArrayList<TitanCallBackConfig>();
 		if(CollectionUtils.isNotEmpty(list)){
-			for(TitanSysconfig item : list){
+			for(TitanSysConfig item : list){
 				TitanCallBackConfig callBackConfig = new TitanCallBackConfig();
 				callBackConfig.setPaySource(item.getCfgKey().split("_")[1]);
 				callBackConfig.setCallBackURL(item.getCfgValue());
