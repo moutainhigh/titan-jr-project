@@ -157,7 +157,7 @@ public class TitanFinancialRefundServiceImpl implements
 			titanTransferReq.setTransorderid(refundRequest.getTransorderid());
 			titanTransferReq.setPayorderno(refundRequest.getPayOrderNo());
 
-			if(titanTransferDTOList == null){//保存转账订单
+			if(titanTransferDTOList == null){//保存转账订单，
 				int row = titanTransferReqDao.insert(titanTransferReq);
 				if(row<1){
 					log.error("退款保存转账单失败");
@@ -165,7 +165,7 @@ public class TitanFinancialRefundServiceImpl implements
 					isFreeze = true;
 					return response;
 				}
-			}else{
+			}else{//现在这一步基本不会出现，因为对在恢复操作中对退款转账单做了物理删除
 				if(null == titanTransferDTOList.get(0) || null == titanTransferDTOList.get(0).getTransferreqid()){
 					log.error("退款单异常");
 					response.putErrorResult(TitanMsgCodeEnum.REFUND_FAIL);
@@ -182,6 +182,7 @@ public class TitanFinancialRefundServiceImpl implements
 				log.error("退款转账单失败");
 				response.putErrorResult(TitanMsgCodeEnum.REFUND_TRANSFER_FAIL);
 				isFreeze = true;
+				this.deleteRefundTransOrder(titanTransferReq);
 				return response;
 			}
 			refundRequest.setTransferAmount(accountTransfer.getAmount());
@@ -265,6 +266,8 @@ public class TitanFinancialRefundServiceImpl implements
 			if(!notifyRefundResponse.isResult()){
 				log.error("网关退款参数失败");
 				//修改订单状态
+				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(refundOrderRequest.getOrderId(), "通知融数退款失败", OrderExceptionEnum.REFUND_UPDATE_ORDER, refundOrderRequest.getOrderId());
+	    		titanOrderService.saveOrderException(orderExceptionDTO);
 				this.updateTransOrder(OrderStatusEnum.REFUND_FAIL, titanTransferDTO.getTransorderid());
 				response.putErrorResult(TitanMsgCodeEnum.PACKAGE_REFUND_PARAM_FAIL);
 				return response;
@@ -702,8 +705,8 @@ public class TitanFinancialRefundServiceImpl implements
 		}catch(Exception e){
 			log.error("退款回调失败",e);
 			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(
-					bean.getUserOrderId(), "",
-					OrderExceptionEnum.Finance_Confirm,
+					bean.getUserOrderId(), "回调失败",
+					OrderExceptionEnum.NOTIFY_FAILED,
 					response);
 			titanOrderService.saveOrderException(orderExceptionDTO);
 		}
