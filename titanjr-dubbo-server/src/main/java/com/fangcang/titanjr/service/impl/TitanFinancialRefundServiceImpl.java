@@ -614,7 +614,7 @@ public class TitanFinancialRefundServiceImpl implements
 	    		titanOrderService.saveOrderException(orderExceptionDTO);
 			}
 		} catch (Exception e) {
-			log.error("退款之后冻结订单失败"+e.getMessage());
+			log.error("退款之后冻结订单失败",e);
 		}
 		
 	}
@@ -671,7 +671,7 @@ public class TitanFinancialRefundServiceImpl implements
 						titanRefundDao.updateRefundDTO(refundDTO);
 					}
 				}catch(Exception e){
-					log.error("定时器更新订单状态失败"+e.getMessage());
+					log.error("定时器更新订单状态失败",e);
 					OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(refundDTO.getOrderNo(), "定时器更新订单状态失败", OrderExceptionEnum.REFUND_UPDATE_TRANSORDER, refundDTO.getOrderNo());
 		    		titanOrderService.saveOrderException(orderExceptionDTO);
 				}
