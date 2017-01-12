@@ -170,9 +170,9 @@ public class FinancialOrganController extends BaseController {
     @ResponseBody
 	@RequestMapping(value = "/ex/organ/checkOrgRegNum")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String checkOrgRegNum(int userType,String orgId,String buslince,String certificateNumber){
+    public String checkOrgRegNum(int userType,String buslince,String certificateNumber){
     	try {
-			int code = checkRegInfo(userType, orgId, buslince, certificateNumber);
+			int code = checkRegInfo(userType, getUserId(), buslince, certificateNumber);
 			if(code==1){
 				putSuccess("该证件可以注册");
 			}else if(code == -1){
@@ -185,7 +185,7 @@ public class FinancialOrganController extends BaseController {
 			putSysError(e1.getMessage());
 		} catch (Exception e) {
     		putSysError("系统错误");
-			log.error("机构注册校验失败，userType:"+userType+",orgId:"+orgId+",buslince:"+ buslince+",certificateNumber:"+ certificateNumber, e);
+			log.error("机构注册校验失败，userType:"+userType+",orgCode:"+getUserId()+",buslince:"+ buslince+",certificateNumber:"+ certificateNumber, e);
 		}
     	return toJson();
     }
@@ -194,7 +194,7 @@ public class FinancialOrganController extends BaseController {
      * @return
      * @throws MessageServiceException 
      */
-    private int checkRegInfo(int userType,String orgId,String buslince,String certificateNumber) throws MessageServiceException{
+    private int checkRegInfo(int userType,String orgCode,String buslince,String certificateNumber) throws MessageServiceException{
     	OrgRegisterValidateRequest orgRegisterValidateRequest  = new OrgRegisterValidateRequest();
     	orgRegisterValidateRequest.setUsertype(userType);
     	orgRegisterValidateRequest.setBuslince(buslince);
@@ -203,17 +203,22 @@ public class FinancialOrganController extends BaseController {
 		OrgRegisterValidateResponse orgRegisterValidateResponse = titanFinancialOrganService.validateOrg(orgRegisterValidateRequest);
 		if(orgRegisterValidateResponse.isResult()){
 			//判断机构注册证件的编号和登录者是不是同一个机构
-			Integer tfsUserIdStr = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);//金服用户名
 			if(orgRegisterValidateResponse.getOrgDTO()!=null){//如果所填写的证件编码已经存在
-				if(StringUtil.isValidString(orgId)){
+				if(StringUtil.isValidString(orgCode)){
+					Integer tfsUserIdStr = Integer.valueOf((String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID));//金服用户名
 					//修改
 					if((tfsUserIdStr!=null)&&(tfsUserIdStr>0)){
     					OrgDTO orgDTO = orgRegisterValidateResponse.getOrgDTO();
         				UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
             			userInfoQueryRequest.setTfsUserId(tfsUserIdStr);
             			userInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
-            			UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
-            			String userOrgCode = userInfoResponse.getUserInfoDTOList().get(0).getOrgCode();
+            			
+            			UserInfoPageResponse userInfoResponse = titanFinancialUserService.queryUserInfoPage(userInfoQueryRequest);
+            			List<TitanUser> list = userInfoResponse.getTitanUserPaginationSupport().getItemList();
+            			if(CollectionUtils.isEmpty(list)){
+            				return 1;
+            			}
+            			String userOrgCode = list.get(0).getOrgcode();
             			if(userOrgCode.equals(orgDTO.getOrgcode())){
             				//是登录者所属本机构,该证件可以注册
             				return 1;
@@ -302,7 +307,12 @@ public class FinancialOrganController extends BaseController {
 	    	try {
 	    		registerSource = NumberUtils.toInt(userSource);
 			} catch (Exception e) {
+				e.printStackTrace();
+				
 			}
+	    	if(registerSource==0){
+	    		registerSource = UserSourceEnum.TFS.getKey();
+	    	}
 	    	organRegisterRequest.setRegisterSource(registerSource);
 	    	//TODO 合作方信息
 	    	String thirdPlatformLoginUserName = "luoqinglongttm";
@@ -406,7 +416,7 @@ public class FinancialOrganController extends BaseController {
      * 注册时修改注册信息
      * @return
      */
-    @RequestMapping(value = "/organ/updateOrg")
+    @RequestMapping(value = "/reg/organ/updateOrg")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String updateOrg(OrgRegPojo orgRegPojo,Model model){
     	
@@ -597,33 +607,37 @@ public class FinancialOrganController extends BaseController {
 		}
     }
     
-    /**
-     * 显示修改的公司
-     * @return
-     */
-    @RequestMapping(value = "/reg/organ/getEnterpriseInfo")
+    @RequestMapping(value = "/reg/organ/getOrgInfo")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String getEnterpriseInfo(Model model){
-    	int code = getInfo(getUserId(),model);
-    	if(code==0){
-    		return "error";
+    public String getOrgInfo(Model model){
+    	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+    	organQueryRequest.setOrgCode(getUserId());
+    	organQueryRequest.setRegchannel(RegchannelEnum.OFFIAIAL_WEBSITE.source);
+    	FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+    	if(financialOrganResponse.isResult()){
+    		model.addAttribute("org", financialOrganResponse.getFinancialOrganDTO());
+    		if(financialOrganResponse.getFinancialOrganDTO().getOrgImageInfoList().size()>0){
+    			for(OrgImageInfo item : financialOrganResponse.getFinancialOrganDTO().getOrgImageInfoList()){
+    				if(item.getSizeType()==10){
+    					model.addAttribute("small_img_10", item.getImageURL());
+    				}else if(item.getSizeType()==50){
+    					model.addAttribute("big_img_50", item.getImageURL());
+    				}
+    			}
+    			if(financialOrganResponse.getFinancialOrganDTO().getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
+    				return "org-reg/org-enterprise-info";
+    			}else{
+    				return "org-reg/org-persernal-info";
+    			}
+    		}
+    		model.addAttribute("errormsg", "机构没有找到");
+    	}else{
+    		model.addAttribute("errormsg", "机构查询错误");
+    		
     	}
-    	return "org-reg/org-enterprise-info";
+    	return "error";
     }
-    /***
-     * 显示修改的个人
-     * @return
-     */
-    @RequestMapping(value = "/reg/organ/getPersernalInfo")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String getPersernalInfo(Model model){
-    	
-    	int code = getInfo(getUserId(),model);
-    	if(code==0){
-    		return "error";
-    	}
-    	return "org-reg/org-persernal-info";
-    }
+    
     private int getInfo(String orgCode,Model model){
     	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
     	organQueryRequest.setOrgCode(orgCode);

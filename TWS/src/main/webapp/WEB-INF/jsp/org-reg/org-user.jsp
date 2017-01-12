@@ -26,7 +26,7 @@
 		</div>
 		<div class="r_c ">
 			<div class="r_text pour_c" >
-			<form action="<c:url value='/ex/showEnterpriseInfo.shtml'/>" id="reg_form_qy">
+			<form action="<c:url value='/ex/showEnterpriseInfo.shtml'/>" id="reg_form_qy" method="post">
 				<ul>
 					<li class="r_y1"><div class="rt_title">用户名</div><input type="text" class="text ui-loginusername"  name="userLoginName" placeholder="邮箱" datatype="e"  errormsg="格式不正确" afterPassed="checkExist"></li>
 					<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" placeholder="设置登录密码" datatype="/\w{6,}/" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1"></em></li>
@@ -318,21 +318,19 @@ $('.r_verify').on('click',function(){
     
     if($.trim(receiveAddress).length==0){
     	new top.Tip({msg : '用户名不能为空', type: 1, timer:2000});
-    	loginEle.focus();
     	return
     }
 	if(formId=='reg_form_qy'){
 		if(!email_reg.test(receiveAddress)){
-			getValidate().setErrormsg(loginEle,'邮箱格式不正确');
-			loginEle.focus();
+			getValidate().setErrormsg(loginEle,'格式不正确');
 			return ;
 		}
 	}else if(formId=='reg_form_phone'){
-		if(!phone_reg.test(receiveAddress)){
-			getValidate().setErrormsg(loginEle,'手机号码格式不正确');
-			loginEle.focus();
+		if((!phone_reg.test(receiveAddress))&&(!email_reg.test(receiveAddress))){
+			getValidate().setErrormsg(loginEle,'格式不正确');
 			return ;
 		}
+		 
     }
 	_this = $(this);
 	if(!$(this).hasClass("r_huise")){  

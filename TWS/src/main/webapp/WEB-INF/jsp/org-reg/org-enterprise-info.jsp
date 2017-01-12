@@ -95,6 +95,13 @@
 </c:if>
 </div>	
 </div>
+<c:if test="${not empty small_img_10}">
+<script type="text/javascript">
+$(".TFSaddImg").addClass("hidden");
+$(".TFSuploading").addClass("hidden");
+$(".TFSimgOn").removeClass("hidden").addClass("TFSimgOnBig");
+</script>
+</c:if>
 <script type="text/javascript">
 //验证
 var big_img_url="${big_img_50}";
@@ -159,7 +166,7 @@ function regOrg(){
 		success:function(result){
 			if(result.code==1){
 				if($("#orgId").val().length>0){
-					$("#info_form").attr({"action":"<%=basePath%>/organ/updateOrg.shtml"});
+					$("#info_form").attr({"action":"<%=basePath%>/reg/organ/updateOrg.shtml"});
 				}else{
 					$("#info_form").attr({"action":"<%=basePath%>/ex/organ/regOrg.shtml"});
 				}

@@ -77,13 +77,7 @@
 		</form>
 	</div>
 </div>
-<c:if test="${not empty small_img_10}">
-<script type="text/javascript">
-$(".TFSaddImg").addClass("hidden");
-$(".TFSuploading").addClass("hidden");
-$(".TFSimgOn").removeClass("hidden").addClass("TFSimgOnBig");
-</script>
-</c:if>
+
 <jsp:include page="/comm/foot.jsp"></jsp:include>
 <!-- 查看示例 -->
 <div class="dn" id="example">
@@ -103,6 +97,13 @@ $(".TFSimgOn").removeClass("hidden").addClass("TFSimgOnBig");
 </c:if>
 </div>	
 </div>
+<c:if test="${not empty small_img_10}">
+<script type="text/javascript">
+$(".TFSaddImg").addClass("hidden");
+$(".TFSuploading").addClass("hidden");
+$(".TFSimgOn").removeClass("hidden").addClass("TFSimgOnBig");
+</script>
+</c:if>
 <script type="text/javascript">
 
 //验证
@@ -149,7 +150,7 @@ function ajaxFileUpload() {
         }
     );
 }
- 
+var submitingFlag =  false;
 //注册
 function regOrg(){
 	if(!vform.validate()){
@@ -161,11 +162,16 @@ function regOrg(){
 		return;
 	}
 	if($("#orgId").val().length>0){
-		$("#info_form").attr({"action":"<%=basePath%>/organ/updateOrg.shtml"});
+		$("#info_form").attr({"action":"<%=basePath%>/reg/organ/updateOrg.shtml"});
 	}else{
 		$("#info_form").attr({"action":"<%=basePath%>/ex/organ/regOrg.shtml"});
 	}
-	$("#reg_btn").click();
+	//把按钮置灰
+	if(!submitingFlag){
+		$("#reg_btn").click();
+		submitingFlag = true;
+	}
+	
 }
 
 

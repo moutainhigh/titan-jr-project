@@ -4,7 +4,7 @@
 <div class="header">
 	<div class="w_1200">
 		<div class="logo">
-			<div class="l_img"><img src="<%=cssWalletPath %>/images/logo.png"></div>
+			<div class="l_img"><a href="<%=basePath%>/main/main.shtml"><img src="<%=cssWalletPath %>/images/logo.png"></a></div>
 			<div class="l_text">
 				<i class="ico"></i>欢迎注册
 			</div>

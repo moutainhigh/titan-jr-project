@@ -47,7 +47,7 @@
 				</div>
 			</div>
 			<div class="r_t_hint">				
-				<a href="<a class="li_btn" href="<%=basePath%>/ex/login.shtml">登录</a>">立即跳转 ></a>
+				<a href="<%=basePath%>/main/main.shtml">立即跳转 </a>
 			</div>	
 	</div>
 </div>
