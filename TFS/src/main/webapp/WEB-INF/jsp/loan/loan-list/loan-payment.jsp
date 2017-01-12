@@ -56,7 +56,7 @@
 		<c:forEach items="${loanInfoList}" var="loanInfoItem"  varStatus="status">
 			<tr>
 				<td width="">${status.index +1}</td>
-				<td width=""><fmt:formatDate value="${loanInfoItem.actualRepaymentDate}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
+				<td width=""><fmt:formatDate value="${loanInfoItem.actualRepaymentDate}" pattern="yyyy-MM-dd" /></td>
 				<td class="tdr"> <fmt:formatNumber value="${loanInfoItem.shouldCapital /100}"  pattern="#,##0.00#" /> </td>
 				<td class="tdr">  <fmt:formatNumber value="${(loanInfoItem.shouldCapital+loanInfoItem.shouldInterest) /100}"  pattern="#,##0.00#" /> </td>
 				<td></td>
