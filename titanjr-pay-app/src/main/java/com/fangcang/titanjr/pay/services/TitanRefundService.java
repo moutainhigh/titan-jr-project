@@ -198,16 +198,6 @@ public class TitanRefundService {
 				if(PayTypeEnum.isRealTimeToAccount(titanOrderPayDTO.getPayType())){
 					titanJrRefundRequest.setIsRealTime(CommonConstant.REAL_TIME);
 				}
-				
-				BigDecimal orderAmount = new BigDecimal(titanOrderPayDTO.getOrderAmount());
-				//只有充值
-				if(tradeAmount.subtract(orderAmount).compareTo(BigDecimal.ZERO)!=1 ){//交易金额比充值金额小(有手续费时)，或者相等
-					titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_BANKCARD.type);
-				}
-				//充值和余额支付并存
-		        if(tradeAmount.subtract(orderAmount).compareTo(BigDecimal.ZERO)==1){
-		        	titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_BANKCARD_ACCOUNT.type);
-				}
 			}
 			
 			//直接进行账户退款,退款到账户余额
