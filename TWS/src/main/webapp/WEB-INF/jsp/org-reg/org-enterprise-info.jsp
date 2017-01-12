@@ -81,10 +81,20 @@
 <!-- 查看示例 -->
 <div class="dn" id="example">
 <div class="example">
-	<img src="images/tu01.jpg" alt="">
+	<img src="<%=cssWalletPath%>/images/tu01.jpg" alt="">
 </div>	
 </div>
-
+<!-- 放大 -->
+<div class="dn" id="TFSimgOnBig">
+<div style="max-width: 1000px;">
+<c:if test="${not empty big_img_50}">
+	<img src="${big_img_50}" id="bigImg_50" alt="" style="max-height: 600px;max-width: 1000px;"/>
+</c:if>
+<c:if test="${ empty big_img_50}">
+	<img src="<%=cssWalletPath%>/images/tu12.jpg" id="bigImg_50" alt="" style="max-height: 600px;max-width: 1000px;"/>
+</c:if>
+</div>	
+</div>
 <script type="text/javascript">
 //验证
 var big_img_url="${big_img_50}";
