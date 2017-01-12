@@ -83,7 +83,6 @@ import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialRefundService;
 import com.fangcang.titanjr.service.TitanOrderService;
-import com.fangcang.util.JsonUtil;
 import com.fangcang.util.StringUtil;
 import com.sun.jdi.Method;
 
@@ -241,7 +240,7 @@ public class TitanFinancialRefundServiceImpl implements
 			    }
 			}
 			
-			if(refundRequest.getToBankCardOrAccount().equals(RefundTypeEnum.REFUND_ACCOUNT.type)){
+			if(RefundTypeEnum.REFUND_ACCOUNT.type.equals(refundRequest.getToBankCardOrAccount())){
 				log.info("退款到账户完成");
 				this.saveRefundOrder(refundOrderRequest);
 				response.putSuccess();
@@ -307,7 +306,7 @@ public class TitanFinancialRefundServiceImpl implements
 		try{
 			titanRefundDao.insert(titanRefund);
 		}catch(Exception e){
-			log.error("保存退款单下单失败"+e.getMessage()+":data"+JsonUtil.objectToJson(titanRefund));
+			log.error("保存退款单下单失败"+e.getMessage()+":data:"+JSONSerializer.toJSON(titanRefund));
 			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(refundOrderRequest.getOrderId(), "退款落单保存失败", OrderExceptionEnum.REFUND_INSERT, refundOrderRequest.getOrderId());
     		titanOrderService.saveOrderException(orderExceptionDTO);
 		}
@@ -461,7 +460,7 @@ public class TitanFinancialRefundServiceImpl implements
 		try{
 			titanRefundDao.insert(titanRefund);
 		}catch(Exception e){
-			log.error("保存退款单下单失败"+e.getMessage()+":data"+JsonUtil.objectToJson(titanRefund));
+			log.error("保存退款单下单失败"+e.getMessage()+":data"+JSONSerializer.toJSON(titanRefund));
 			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(refundOrderRequest.getOrderId(), "退款落单保存失败", OrderExceptionEnum.REFUND_INSERT, refundOrderRequest.getOrderId());
     		titanOrderService.saveOrderException(orderExceptionDTO);
 		}
