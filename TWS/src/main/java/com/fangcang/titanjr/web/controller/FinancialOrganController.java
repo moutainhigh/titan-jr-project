@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
+import com.fangcang.titanjr.common.enums.RegchannelEnum;
 import com.fangcang.titanjr.common.enums.SMSType;
 import com.fangcang.titanjr.common.enums.UserSourceEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
@@ -567,7 +568,7 @@ public class FinancialOrganController extends BaseController {
      * 机构和用户状态检查
      * @return
      */
-    @RequestMapping(value = "/ex/user-state")
+    @RequestMapping(value = "/reg/user-state")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String userState(Model model){
     	//用户状态
@@ -600,14 +601,10 @@ public class FinancialOrganController extends BaseController {
      * 显示修改的公司
      * @return
      */
-    @RequestMapping(value = "/organ/getEnterpriseInfo")
+    @RequestMapping(value = "/reg/organ/getEnterpriseInfo")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String getEnterpriseInfo(int orgId,Model model){
-    	if(orgId <=0){
-    		model.addAttribute("errormsg", "参数错误");
-    		return "error";
-    	}
-    	int code = getInfo(orgId,model);
+    public String getEnterpriseInfo(Model model){
+    	int code = getInfo(getUserId(),model);
     	if(code==0){
     		return "error";
     	}
@@ -617,22 +614,20 @@ public class FinancialOrganController extends BaseController {
      * 显示修改的个人
      * @return
      */
-    @RequestMapping(value = "/organ/getPersernalInfo")
+    @RequestMapping(value = "/reg/organ/getPersernalInfo")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String getPersernalInfo(int orgId,Model model){
-    	if(orgId <=0){
-    		model.addAttribute("errormsg", "参数错误");
-    		return "error";
-    	}
-    	int code = getInfo(orgId,model);
+    public String getPersernalInfo(Model model){
+    	
+    	int code = getInfo(getUserId(),model);
     	if(code==0){
     		return "error";
     	}
     	return "org-reg/org-persernal-info";
     }
-    private int getInfo(int orgId,Model model){
+    private int getInfo(String orgCode,Model model){
     	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-    	organQueryRequest.setOrgId(orgId);
+    	organQueryRequest.setOrgCode(orgCode);
+    	organQueryRequest.setRegchannel(RegchannelEnum.OFFIAIAL_WEBSITE.source);
     	FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
     	if(financialOrganResponse.isResult()){
     		model.addAttribute("org", financialOrganResponse.getFinancialOrganDTO());

@@ -288,7 +288,7 @@ Login.rememberUsername = function(){
 		}else{
 			n=$("#susername").val();
 		}
-		$.cookie("rem_username",n,{expires:-1});
+		$.cookie("rem_username",n,{expires:2000});
 	}else{
 		$.removeCookie("rem_username");
 	}

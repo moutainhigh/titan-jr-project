@@ -48,9 +48,16 @@ public class UserLoginInterceptor implements HandlerInterceptor{
 			CheckUserResponse checkUserResponse = userService.checkUser(checkUserRequest);
 			if(checkUserResponse.isResult()){//用户和机构状态正常
 				return true;
-			}else{//状态不正常
-				response.sendRedirect(request.getContextPath()+"/ex/user-state.shtml");
-				return false;
+			}else{//状态不正常,且不是注册逻辑，跳到注册状态页面
+				System.out.println("请求地址："+request.getRequestURI());
+				if(request.getRequestURI().startsWith(request.getContextPath()+"/reg")){
+					
+					return true;
+				}else{
+					response.sendRedirect(request.getContextPath()+"/reg/user-state.shtml");
+					return false;
+				}
+				
 			}
 			 
 		}else{//未登录，跳到登陆界面

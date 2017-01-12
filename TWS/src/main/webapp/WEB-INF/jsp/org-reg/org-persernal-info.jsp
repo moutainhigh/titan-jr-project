@@ -38,7 +38,7 @@
 					<li class="r_uploading">
 						<div class="fl r_u_l">上传本人持身份证正面照：<a class="J_example " href="javascript:;">查看示例</a></div>
 						<div class="fl r_u_r">
-						<div class="TFSaddImg "></div>
+						<div class="TFSaddImg"></div>
 			            <input type="file" name="img_file" id="img_file" onchange="ajaxFileUpload()"/>
 			            <div class="TFSuploading hidden">
 			                 <p class="TFSuploading1">
@@ -77,7 +77,13 @@
 		</form>
 	</div>
 </div>
-
+<c:if test="${not empty small_img_10}">
+<script type="text/javascript">
+$(".TFSaddImg").addClass("hidden");
+$(".TFSuploading").addClass("hidden");
+$(".TFSimgOn").removeClass("hidden").addClass("TFSimgOnBig");
+</script>
+</c:if>
 <jsp:include page="/comm/foot.jsp"></jsp:include>
 <!-- 查看示例 -->
 <div class="dn" id="example">
@@ -89,7 +95,12 @@
 <!-- 放大 -->
 <div class="dn" id="TFSimgOnBig">
 <div style="max-width: 1000px;">
-	<img src="images/tu12.jpg" id="bigImg_50" alt="" style="max-height: 600px;max-width: 1000px;">
+<c:if test="${not empty big_img_50}">
+	<img src="${big_img_50}" id="bigImg_50" alt="" style="max-height: 600px;max-width: 1000px;"/>
+</c:if>
+<c:if test="${ empty big_img_50}">
+	<img src="<%=cssWalletPath%>/images/tu12.jpg" id="bigImg_50" alt="" style="max-height: 600px;max-width: 1000px;"/>
+</c:if>
 </div>	
 </div>
 <script type="text/javascript">
@@ -99,7 +110,7 @@ var vform = new validform('#info_form');
 var big_img_url="${big_img_50}";
 //tws
 function ajaxFileUpload() {
-	$(".r_u_r input").prev().addClass("hidden");
+	$(".TFSaddImg").addClass("hidden");
     $(".r_u_r input").parent().find(".TFSuploading").removeClass("hidden");
     $(".r_u_r input").parent().find('.TFSuploaderror').addClass('hidden');
     loading($(".r_u_r input").parent().find(".TFSuploading"));
@@ -117,10 +128,11 @@ function ajaxFileUpload() {
             		objTFSuploading.find("span").css("width","100%");
             		objTFSuploading.find("i").html(100);
             		 setTimeout(function(){
-            			$(".TFSuploading").addClass("hidden");
+            			
             			$("#pre_view").attr({"src":result.data.imgPreview_10});
             			$("#pre_view").attr({"data-src-v":result.data.imgPreview_10});
             			$("#bigImg_50").attr({"src":result.data.imgPreview_50});
+            			$(".TFSuploading").addClass("hidden");
             			$(".TFSimgOn").removeClass("hidden").addClass("TFSimgOnBig");
             		   },100);
             		
@@ -137,7 +149,7 @@ function ajaxFileUpload() {
         }
     );
 }
-
+ 
 //注册
 function regOrg(){
 	if(!vform.validate()){

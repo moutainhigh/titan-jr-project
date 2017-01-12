@@ -57,7 +57,7 @@
 				</div>	
 			</div>
 			<div class="r_t_hint">				
-				<a href="<%=basePath%>/main/main.shtml">返回首页 ></a>
+				<a href="<%=basePath%>/reg/organ/getPersernalInfo.shtml">修改申请信息 ></a>
 			</div>	
 		</div>
 	</c:if>

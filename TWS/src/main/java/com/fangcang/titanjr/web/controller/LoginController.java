@@ -120,7 +120,7 @@ public class LoginController extends BaseController{
 			return toJson();
 		}else{
 			//账号异常
-			String returnUrl = getRequest().getScheme()+"://"+getRequest().getServerName()+":"+getRequest().getServerPort()+getRequest().getContextPath()+"/ex/user-state.shtml";
+			String returnUrl = getRequest().getScheme()+"://"+getRequest().getServerName()+":"+getRequest().getServerPort()+getRequest().getContextPath()+"/reg/user-state.shtml";
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put("returnUrl", returnUrl);
 			putSysError(checkUserResponse.getReturnMessage(), data);
