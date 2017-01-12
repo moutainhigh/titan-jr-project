@@ -138,7 +138,7 @@
                                 <td><span  style="width:160px" title="退款人：${transOrder.refundDTO.creator}">退款人：${transOrder.refundDTO.creator}</span></td>
 
                                 <td>
-                                    <span  style="width:160px" title="财务单${transOrder.payorderno }退款">财务单${transOrder.payorderno }退款</span>
+                                    <span  style="width:160px" title="财务单${transOrder.payorderno }退款">交易单号${transOrder.payorderno }退款</span>
                                 </td><!--房仓财务系统单号-->
 
                                   <td>
@@ -151,19 +151,19 @@
 	                               </td>
                                 <td><span>
                                     <c:if test="${transOrder.refundDTO.status == 0}">
-                                           退款处理中
+                                           	退款处理中
                                     </c:if>
                                     <c:if test="${transOrder.refundDTO.status == 1}">
-                                        退款审核失败
+                                       	 退款审核失败
                                     </c:if>
                                     <c:if test="${transOrder.refundDTO.status == 2}">
-                                        退款成功
+                                        	退款成功
                                     </c:if>
                                     <c:if test="${transOrder.refundDTO.status == 3}">
-                                        退款失败
+                                        	退款失败
                                     </c:if>
                                     <c:if test="${transOrder.refundDTO.status == 4}">
-                                        退款冲销
+                                        	退款冲销
                                     </c:if></span>
                                 </td>
                             </tr>
