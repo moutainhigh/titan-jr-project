@@ -221,6 +221,24 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				// 再次回调财务
 				return localAddTransOrderResponse;
 			}
+			
+			//废除单之后重新落单
+			titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
+			titanTransOrder.setUserorderid(OrderGenerateService
+					.genSyncUserOrderId());
+			titanTransOrder.setStatusid(OrderStatusEnum.RECHARGE_IN_PROCESS
+					.getStatus());
+			log.info("the params of local order :"
+					+ JSONSerializer.toJSON(titanTransOrder));
+			if (titanTransOrderDao.insert(titanTransOrder) > 0 ? true : false) {
+				localAddTransOrderResponse.setUserOrderId(titanTransOrder
+						.getUserorderid());
+				localAddTransOrderResponse.setOrderNo(titanTransOrder
+						.getOrderid());
+				localAddTransOrderResponse.putSuccess();
+				return localAddTransOrderResponse;
+			}
+			
 		} catch (Exception e) {
 			log.error("add local order is failed" + e.getMessage(), e);
 			localAddTransOrderResponse.putSysError();
@@ -242,9 +260,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			orderResponse.putErrorResult("订单不存在");
 			return orderResponse;
 		}
-
 		TransOrderDTO transOrderDTO = transOrderResponse.getTransOrder();
-		
 		if(OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())){
 			orderResponse.putErrorResult("支付成功,请勿重复支付！");
 			return orderResponse;
