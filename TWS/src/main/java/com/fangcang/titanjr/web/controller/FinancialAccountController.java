@@ -655,6 +655,7 @@ public class FinancialAccountController extends BaseController {
 
     @ResponseBody
     @RequestMapping("setPayPassword")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public Map<String, String> setPayPassword(HttpServletRequest request, PayPasswordRequest payPasswordRequest) {
         Map<String, String> map = new HashMap<String, String>();
         if (payPasswordRequest != null && StringUtil.isValidString(payPasswordRequest.getPayPassword())) {

@@ -27,7 +27,7 @@
 					<span><i class="ico Ibadd" id=""></i> <em>记住用户名</em></span>
 				</li>
 				<li class="lb_btn"><a href="javascript:;" onclick="Login.plogin()">立即登录</a></li>
-				<li class="lb_register"><a href="<%=basePath%>/ex/organ/showOrgUser.shtml">免费注册</a><a href="忘记密码.html">忘记密码？</a></li>
+				<li class="lb_register"><a href="<%=basePath%>/ex/organ/showOrgUser.shtml">免费注册</a><a href="<%=basePath%>/ex/login-pwd.shtml">忘记密码？</a></li>
 			</ul>
 			</div>
 		</div>
@@ -271,7 +271,7 @@ Login.loginRedirect = function(reUrl){
 		return ;
 	}
 	var url = $("#returnUrl").val();
-	if(typeof(url)!='undefined'&&returnUrl.length>0){
+	if(typeof(url)!='undefined'&&url.length>0){
 		location.href=url;
 		return ;
 	}

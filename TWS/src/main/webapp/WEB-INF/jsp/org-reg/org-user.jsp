@@ -5,10 +5,7 @@
 <head>
 <meta charset="utf-8">
     <title>注册申请-泰坦钱包</title>
-    <link rel="stylesheet" href="<%=cssWalletPath%>/css/fangcang.min.css?v=20161222">
-	<link rel="stylesheet" href="<%=cssWalletPath%>/css/AD.css"> 
-	<link rel="stylesheet" href="<%=cssWalletPath%>/css/style.css">
-	<link rel="stylesheet" href="<%=cssWalletPath%>/css/jquery-ui-1.9.2.custom.css" >
+    <jsp:include page="/comm/tws-static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
   
@@ -269,8 +266,8 @@ function next(){
 	
 	$.ajax({
 		type:"post",
-		url: '<%=basePath%>/ex/checkRegCode.shtml',		
-		data:{"userLoginName":userLoginName,"regCode":regCode},
+		url: '<%=basePath%>/ex/checkCode.shtml',		
+		data:{"userLoginName":userLoginName,"code":regCode},
 		dataType:"json",
 		success:function(result){
 			if(result.code==1){
@@ -416,7 +413,6 @@ $('.pass1').bind("cut copy paste", function(e) {
 $('.pass2').bind("cut copy paste", function(e) {  
     e.preventDefault();  
 });  
- 
 
 </script>
   </body>

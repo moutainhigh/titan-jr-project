@@ -42,7 +42,6 @@ import com.fangcang.util.StringUtil;
  * @2016年7月1日
  */
 @Controller
-@RequestMapping("/setting")
 @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 public class SettingBaseInfoController extends BaseController{
 	/**
@@ -58,63 +57,65 @@ public class SettingBaseInfoController extends BaseController{
 	@Resource
 	private TitanFinancialUserService userService;
 	
-	/**
-	 * 基础信息
-	 * @return
-	 */
-	
-	@RequestMapping("/base-info")
-	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
-	public String baseInfo(Model model){
-		
+	@RequestMapping("/setting/user-info")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	public String userInfo(Model model){
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 		if(StringUtil.isValidString(getTfsUserId())){
 			userInfoQueryRequest.setTfsUserId(Integer.valueOf(getTfsUserId()));
 			UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
 			TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
-			
-			FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-			organQueryRequest.setOrgCode(titanUser.getOrgcode());
-			FinancialOrganResponse financialOrganResponse = organService.queryFinancialOrgan(organQueryRequest);
-			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
-			model.addAttribute("financialOrganDTO", financialOrganDTO);
-			for(OrgImageInfo item : financialOrganDTO.getOrgImageInfoList()){
-				if(item.getSizeType()==10){
-					model.addAttribute("small_img_10", item.getImageURL());
-				}else if(item.getSizeType()==50){
-					model.addAttribute("big_img_50", item.getImageURL());
-				}
-			}
 			model.addAttribute("tfsUser", titanUser);
-			//管理员信息
-			UserInfoQueryRequest adminRequest = new UserInfoQueryRequest();
-			adminRequest.setOrgCode(titanUser.getOrgcode());
-			adminRequest.setIsadmin(1);
-			UserInfoPageResponse adminResponse = userService.queryUserInfoPage(adminRequest);
-			if(adminResponse.getTitanUserPaginationSupport().getItemList().size()>0){
-				TitanUser adminUser = adminResponse.getTitanUserPaginationSupport().getItemList().get(0);
-				model.addAttribute("adminUser", adminUser);
-			}
-			return "setting/base-info";
+			return "setting/user-info";
 		}else{
 			//登录者没有金服id
+			model.addAttribute("errormsg", "会话失效，请重新登录");
 			return "error";
 		}
-		
 	}
+	/***
+	 * 设置登录密码页面
+	 * @return
+	 */
+	@RequestMapping("/ex/to-login-pwd-set")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	public String toLoginPwdSet(String userLoginName,String code,Model model){
+		model.addAttribute("userLoginName", userLoginName);
+		model.addAttribute("code", code);
+		return "setting/login-pwd-set";
+	}
+	
+	@RequestMapping("/setting/first-save-login-pwd")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	public String firstSaveLoginPwd(){
+		
+		return "";
+	}
+	
+	@RequestMapping("/setting/pwd-set-succ")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	public String pwdSetSucc(Integer pageType ,Model model){
+		model.addAttribute("pageType", pageType);
+		return "setting/pwd-set-succ";
+	}
+	
+	
 	/**
 	 * 跳转到修改密码页
 	 * @return
 	 */
-	@RequestMapping("/login-pwd")
+	@RequestMapping("/setting/login-pwd")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String loginPwd(){
 		return "/setting/login-pwd";
 	}
+
 	/**
 	 * 忘记密码页
 	 * @return
 	 */
-	@RequestMapping("/login-pwd-forget")
+	@RequestMapping("/setting/login-pwd-forget")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String loginPwdForget(Model model){
 		int tfsUserId = Integer.valueOf(getTfsUserId());
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
@@ -128,7 +129,8 @@ public class SettingBaseInfoController extends BaseController{
 	 * 记得密码页
 	 * @return
 	 */
-	@RequestMapping("/login-pwd-remember")
+	@RequestMapping("/setting/login-pwd-remember")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String loginPwdRemember(){
 		return "/setting/login-pwd-remember";
 	}
@@ -138,7 +140,8 @@ public class SettingBaseInfoController extends BaseController{
 	 * @param newLoginPassword 新登录密码
 	 * @return
 	 */
-	@RequestMapping("/set-login-password-password")
+	@RequestMapping("/setting/set-login-password-password")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	@ResponseBody
 	public String setLoginPasswordByPassword(String oldLoginPassword,String newLoginPassword){
 		if(!StringUtil.isValidString(oldLoginPassword)){
@@ -193,16 +196,17 @@ public class SettingBaseInfoController extends BaseController{
 	 * 通过用户名修改登录密码
 	 * @return
 	 */
-	@RequestMapping("/set-login-password-login-name")
+	@RequestMapping("/ex/set-login-password-login-name")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	@ResponseBody
-	public String setLoginPasswordByLoginName(String code,String newLoginPassword){
+	public String setLoginPasswordByLoginName(String userLoginName,String code,String newLoginPassword){
 		//验证码验证
-		if(!(StringUtil.isValidString(code)&&StringUtil.isValidString(newLoginPassword))){
-			return toJson(putSysError("参数错误"));
+		if(!(StringUtil.isValidString(userLoginName)&&StringUtil.isValidString(code)&&StringUtil.isValidString(newLoginPassword))){
+			return toJson(putSysError("必填参数不能为空"));
 		}
     	
 		VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
-    	verifyCheckCodeRequest.setReceiveAddress(getUserName());
+    	verifyCheckCodeRequest.setReceiveAddress(userLoginName);
     	verifyCheckCodeRequest.setInputCode(code);
     	VerifyCheckCodeResponse verifyCheckCodeResponse = organService.verifyCheckCode(verifyCheckCodeRequest);
     	if(verifyCheckCodeResponse.isResult()){
@@ -243,7 +247,7 @@ public class SettingBaseInfoController extends BaseController{
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping("/set-enterprise-info")
+	@RequestMapping("/setting/set-enterprise-info")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String setEnterpriseInfo(String connect,String mobile){
 		if(!(StringUtil.isValidString(connect)||StringUtil.isValidString(mobile))){

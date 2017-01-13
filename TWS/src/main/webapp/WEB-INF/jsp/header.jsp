@@ -23,7 +23,7 @@
 						</div>
 						<div class="hrl_ul dn">
 							<a href="<%=basePath %>/account/overview-main.shtml">资产概览</a>
-							<a href="泰坦钱包设置.html">泰坦钱包设置</a>
+							<a href="<%=basePath %>/setting/user-info.shtml">泰坦钱包设置</a>
 							<a href="<%=basePath %>/ex/loginout.shtml">退出</a>								
 						</div>
 					</div>

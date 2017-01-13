@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -65,8 +66,8 @@ public class LoginController extends BaseController{
 	 */
 	@RequestMapping(value = "/login")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-	public String login(){
-		
+	public String login(String returnUrl,Model model){
+		model.addAttribute("returnUrl", returnUrl);
 		return "login";
 	}
 	

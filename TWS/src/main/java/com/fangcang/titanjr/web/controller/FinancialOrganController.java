@@ -174,9 +174,9 @@ public class FinancialOrganController extends BaseController {
     	try {
 			int code = checkRegInfo(userType, getUserId(), buslince, certificateNumber);
 			if(code==1){
-				putSuccess("该证件可以注册");
+				putSuccess("证件可以注册");
 			}else if(code == -1){
-				 putSysError("该证件已经注册，请使用其他证件注册");
+				 putSysError("证件已注册");
 			}else if(code == -2){
 				 putSysError("参数错误");
 			}
@@ -688,17 +688,17 @@ public class FinancialOrganController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/ex/checkRegCode")
+    @RequestMapping(value = "/ex/checkCode")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String checkRegCode(String userLoginName,String regCode){
-    	if((!StringUtil.isValidString(userLoginName))||(!StringUtil.isValidString(regCode))){
+    public String checkCode(String userLoginName,String code){
+    	if((!StringUtil.isValidString(userLoginName))||(!StringUtil.isValidString(code))){
     		putSysError("参数错误");
     		return toJson();
     		
     	}
     	VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
     	verifyCheckCodeRequest.setReceiveAddress(userLoginName);
-    	verifyCheckCodeRequest.setInputCode(regCode);
+    	verifyCheckCodeRequest.setInputCode(code);
     	VerifyCheckCodeResponse verifyCheckCodeResponse = titanFinancialOrganService.verifyCheckCode(verifyCheckCodeRequest);
     	if(verifyCheckCodeResponse.isResult()){
     		return toJson(putSuccess("验证成功"));

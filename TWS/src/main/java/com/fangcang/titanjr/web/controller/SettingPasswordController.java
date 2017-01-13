@@ -34,9 +34,10 @@ import com.fangcang.util.StringUtil;
  * @2016年7月1日
  */
 @Controller
-@RequestMapping("/setting")
 @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_PAY_38})
 public class SettingPasswordController extends BaseController{
+	
+	
 	/**
 	 * 
 	 */
@@ -48,19 +49,23 @@ public class SettingPasswordController extends BaseController{
 	@Resource
 	private TitanFinancialAccountService accountService;
 	
+	
+	
 	/***
 	 * 付款密码设置
 	 * @return
 	 */
-	@RequestMapping("/pay-set")
+	@RequestMapping("/setting/pay-set")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String paySet(Model model){
 		int tfsUserId = Integer.valueOf(getTfsUserId());
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 		userInfoQueryRequest.setTfsUserId(tfsUserId);
-		UserInfoResponse userInfoResponse = userService.queryFinancialUser(userInfoQueryRequest);
-		UserInfoDTO userInfo = userInfoResponse.getUserInfoDTOList().get(0);
+		UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
+		TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+		
 		//是否设置了付款密码
-		if(StringUtil.isValidString(userInfo.getPayPassword())){
+		if(StringUtil.isValidString(titanUser.getPaypassword())){
 			model.addAttribute("hasSetPayPass","1");//已设置
 		}else{
 			model.addAttribute("hasSetPayPass","0");//未设置
@@ -75,7 +80,7 @@ public class SettingPasswordController extends BaseController{
 		}else{
 			model.addAttribute("allownopwdpay","0");//关闭
 		}
-		model.addAttribute("isJrAdmin",userInfo.getIsAdmin());//开启
+		model.addAttribute("isJrAdmin",titanUser.getIsadmin());//开启
 		return "setting/pay-set";
 	}
 	 
@@ -83,7 +88,8 @@ public class SettingPasswordController extends BaseController{
 	 * 通过原始密码修改密码
 	 * @return
 	 */
-	@RequestMapping("/modify-pwd")
+	@RequestMapping("/setting/modify-pwd")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String paySetPassword(){
 		return "setting/modify-pwd";
 	}
@@ -92,7 +98,8 @@ public class SettingPasswordController extends BaseController{
 	 * 忘记原密码
 	 * @return 
 	 */
-	@RequestMapping("/modify-pwd-forget")
+	@RequestMapping("/setting/modify-pwd-forget")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String forgetPassword(Model model){
 		int tfsUserId = Integer.valueOf(getTfsUserId());
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
@@ -105,10 +112,11 @@ public class SettingPasswordController extends BaseController{
 	}
 	
 	/**
-	 * 忘记原密码
+	 * 记得原密码
 	 * @return 
 	 */
-	@RequestMapping("/modify-pwd-remember")
+	@RequestMapping("/setting/modify-pwd-remember")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String rememberPassword(){
 		return "setting/modify-pwd-remember";
 	}
@@ -120,7 +128,7 @@ public class SettingPasswordController extends BaseController{
 	 */
 	
 	@ResponseBody
-	@RequestMapping("/set-swicth")
+	@RequestMapping("/setting/set-swicth")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String setSwitch(Integer allownopwdpay,String payPassword){
 		if(allownopwdpay==null||(allownopwdpay!=0&&allownopwdpay!=1)){
@@ -174,7 +182,7 @@ public class SettingPasswordController extends BaseController{
 	
 	
 	@ResponseBody
-	@RequestMapping("/check_payPassword")
+	@RequestMapping("/setting/check_payPassword")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String checkPayPassword(String payPassword,String fcUserid) throws GlobalServiceException{
 		String tfsUserid = null;

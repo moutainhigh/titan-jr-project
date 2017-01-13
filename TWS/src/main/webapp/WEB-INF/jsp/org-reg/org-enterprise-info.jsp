@@ -4,10 +4,7 @@
 <html>
 <meta charset="utf-8">
     <title>泰坦钱包</title>
-   <link rel="stylesheet" href="<%=cssWalletPath%>/css/fangcang.min.css?v=20161222">
-	<link rel="stylesheet" href="<%=cssWalletPath%>/css/AD.css"> 
-	<link rel="stylesheet" href="<%=cssWalletPath%>/css/style.css">
-	<link rel="stylesheet" href="<%=cssWalletPath%>/css/jquery-ui-1.9.2.custom.css" >
+   	<jsp:include page="/comm/tws-static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 	<script type="text/javascript" src="<%=basePath %>/js/ajaxfileupload.js"></script>
 </head>
@@ -160,8 +157,8 @@ function regOrg(){
 	
 	$.ajax({
 		type:'post',
-		url: '<%=basePath%>/ex/checkRegCode.shtml',		
-		data:{"userLoginName":userLoginName,"regCode":regCode},
+		url: '<%=basePath%>/ex/checkCode.shtml',		
+		data:{"userLoginName":userLoginName,"code":regCode},
 		dataType:"json",
 		success:function(result){
 			if(result.code==1){

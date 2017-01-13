@@ -64,7 +64,7 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 			AccessPermission accessPermission = method.getMethod().getAnnotation(AccessPermission.class);
 			//默认全部限制
 			if(accessPermission==null){//无
-				setMsg(request, response, "当前用户没有权限访问该功能，请联系管理员");
+				setMsg(request, response, "这是一个bug,请开发给该方法添加权限注解");
 				return false;
 			}
 			String[] allownRoleCode = accessPermission.allowRoleCode();
