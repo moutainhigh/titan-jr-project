@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
@@ -82,8 +84,8 @@ public class TitanRefundService {
 	private TitanFinancialUserService titanFinancialUserService;
 	
 	
-	private static final Log log = LogFactory
-			.getLog(TitanTradeController.class);
+	private static final Log log = LogFactory.getLog(TitanTradeController.class);
+	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	
 	public RefundResponse orderRefund(RefundRequest refundRequest){
 		RefundResponse response = new RefundResponse();
@@ -106,7 +108,7 @@ public class TitanRefundService {
 				return response;
 			}
 			
-			
+			this.lockOutTradeNoList(refundRequest.getOrderNo());
 			//获取该订单
 			TransOrderRequest transOrderRequest = new TransOrderRequest();
 			transOrderRequest.setUserorderid(refundRequest.getOrderNo());
@@ -116,6 +118,12 @@ public class TitanRefundService {
 			if(null == transOrderDTO || !OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())){
 				log.error("该订单不存在或者该单没有支付成功");
 				response.putErrorResult(TitanMsgCodeEnum.ORDER_NOT_REFUND);
+				return response;
+			}
+			
+			if(OrderStatusEnum.isRefund(transOrderDTO.getStatusid())){
+				log.error("该订单已退款，请勿重复退款");
+				response.putErrorResult(TitanMsgCodeEnum.ORDER_REFUNND_IN_PROCESS);
 				return response;
 			}
 			
@@ -250,6 +258,8 @@ public class TitanRefundService {
 		    return response;			
 		}catch(Exception e){
 			log.error("退款出现异常:"+e.getMessage());
+		}finally{
+			this.unlockOutTradeNoList(refundRequest.getOrderNo());
 		}
 		response.putSysError();
 		return response;		
@@ -500,4 +510,26 @@ public class TitanRefundService {
 		return refundRequest;
 	}
 	
+	private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
+		synchronized (mapLock) {
+			if(mapLock.containsKey(out_trade_no)) {
+				synchronized (mapLock.get(out_trade_no)) 
+				{
+					mapLock.get(out_trade_no).wait();
+				}
+			}
+			else{
+				mapLock.put(out_trade_no, new Object());
+			}
+			
+		}
+	}
+	
+	private void unlockOutTradeNoList(String out_trade_no) {
+		if(mapLock.containsKey(out_trade_no)){
+			synchronized (mapLock.get(out_trade_no)) {
+				mapLock.remove(out_trade_no).notifyAll();
+			}
+		}
+	}
 }

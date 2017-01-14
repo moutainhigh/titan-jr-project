@@ -86,8 +86,8 @@ public class TitanPaymentController extends BaseController {
 
 	@Resource
 	private TitanCashierDeskService titanCashierDeskService;
-	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	
+	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	/**
 	 * 消息回调接口
 	 * @param rechargeResultConfirmRequest
@@ -557,30 +557,27 @@ public class TitanPaymentController extends BaseController {
 			log.error("微信生成图片错误："+e.getMessage());
 		}
 	}
-	
-    private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
-		synchronized (mapLock) {
-			if(mapLock.containsKey(out_trade_no)) {
-				synchronized (mapLock.get(out_trade_no)) 
-				{
-					mapLock.get(out_trade_no).wait();
+	 private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
+			synchronized (mapLock) {
+				if(mapLock.containsKey(out_trade_no)) {
+					synchronized (mapLock.get(out_trade_no)) 
+					{
+						mapLock.get(out_trade_no).wait();
+					}
+				}
+				else{
+					mapLock.put(out_trade_no, new Object());
+				}
+				
+			}
+		}
+		
+		private void unlockOutTradeNoList(String out_trade_no) {
+			if(mapLock.containsKey(out_trade_no)){
+				synchronized (mapLock.get(out_trade_no)) {
+					mapLock.remove(out_trade_no).notifyAll();
 				}
 			}
-			else{
-				mapLock.put(out_trade_no, new Object());
-			}
-			
 		}
-	}
-	
-	private void unlockOutTradeNoList(String out_trade_no) {
-		if(mapLock.containsKey(out_trade_no)){
-			synchronized (mapLock.get(out_trade_no)) {
-				mapLock.remove(out_trade_no).notifyAll();
-			}
-		}
-	}
-    
-    
-    
+	    
 }

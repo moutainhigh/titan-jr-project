@@ -132,8 +132,7 @@ public class TitanFinancialRefundServiceImpl implements
 				isFreeze  = true;
 				return response;
 			}
-			//加锁
-			this.lockOutTradeNoList(refundRequest.getPayOrderNo());
+			
 			//查询是否已经退款
 			TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
 			titanTransferDTO.setUserid(refundRequest.getUserId());
@@ -277,17 +276,14 @@ public class TitanFinancialRefundServiceImpl implements
 				refundStatus = RefundStatusEnum.REFUND_SUCCESS;
 			}
 			this.threadNotify(refundOrderRequest.getOrderId(),refundStatus);
-			this.unlockOutTradeNoList(refundRequest.getPayOrderNo());
 			return response;
 		}catch(Exception e){
 			log.error("退款失败"+e.getMessage());
 			response.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
-			this.unlockOutTradeNoList(refundRequest.getPayOrderNo());
 		}finally{
 			if(isFreeze){
 				this.orderRefundFreeze(refundRequest);
 			}
-			this.unlockOutTradeNoList(refundRequest.getPayOrderNo());
 		}
 		return response;
 	}
@@ -549,28 +545,6 @@ public class TitanFinancialRefundServiceImpl implements
 		return MD5.MD5Encode(str, charset);
 	}
 	
-	private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
-		synchronized (mapLock) {
-			if(mapLock.containsKey(out_trade_no)) {
-				synchronized (mapLock.get(out_trade_no)) 
-				{
-					mapLock.get(out_trade_no).wait();
-				}
-			}
-			else{
-				mapLock.put(out_trade_no, new Object());
-			}
-			
-		}
-	}
-	
-	private void unlockOutTradeNoList(String out_trade_no) {
-		if(mapLock.containsKey(out_trade_no)){
-			synchronized (mapLock.get(out_trade_no)) {
-				mapLock.remove(out_trade_no).notifyAll();
-			}
-		}
-	}
 
 	//冻结操作
 	private void orderRefundFreeze(TitanJrRefundRequest refundRequest){

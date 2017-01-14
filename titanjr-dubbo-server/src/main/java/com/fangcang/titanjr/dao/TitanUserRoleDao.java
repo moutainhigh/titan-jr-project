@@ -27,5 +27,5 @@ public interface TitanUserRoleDao {
 	 * @throws DaoException
 	 */
     List<TitanUserRole> selectUserRolesByuserid(String tfsuserid)throws DaoException;
-     
+    
 }
