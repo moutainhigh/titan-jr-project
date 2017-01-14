@@ -348,13 +348,12 @@ public class TitanRefundService {
 		//将传入的信息转换为金融信息
 		if(CommonConstant.ISMERCHCODE.equals(refundRequest.getIsMerchCode())){
 			if(this.saasToJr(refundRequest)==null){
-				log.error("商家未绑定金融账户或操作人为绑定金融用户");
+				log.error("商家未绑定金融账户或操作人未绑定金融用户");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.REFUND_CONCERT_FAIL.getResMsg());
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
 		}
-		
 		
 		//验证机构和支付人权限
 		boolean isRefund = this.validateIsPassRefund(refundRequest.getUserId(), refundRequest.getTfsUserid());
