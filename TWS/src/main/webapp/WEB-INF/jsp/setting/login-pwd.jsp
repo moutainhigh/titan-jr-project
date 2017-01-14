@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8">
-    <title>密码修改-泰坦钱包</title>
+    <title>登录密码修改-泰坦钱包</title>
    <jsp:include page="/comm/tws-static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
@@ -16,7 +16,7 @@
 	<div class="r_box">		
 		<div class="alter_password">
 			<a href="<%=basePath%>/setting/login-pwd-remember.shtml">我记得原登录密码 ></a>
-			<a href="<%=basePath%>/setting/login-pwd-forget.shtml">我忘记原登录密码了 ></a>
+			<a href="<%=basePath%>/setting/login-pwd-forget.shtml">我忘记了原登录密码 ></a>
 		</div>		
 	</div>
 </div>

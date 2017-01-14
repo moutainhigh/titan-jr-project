@@ -106,10 +106,9 @@ function validate_payPassword(){
 		add_PayPassword();
 		return false;
 	}
-	
+	$("#six_error_red").removeClass("sp_add");
 	if(payPassword1!=payPassword2){
 		$("#six_error_red").addClass("sp_add");
-		//new top.Tip({msg : '两次密码输入不相同！', type: 1 , timer:2000});   
 		add_PayPassword();
 		return false;
 	}

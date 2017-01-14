@@ -77,9 +77,9 @@ public class SettingBaseInfoController extends BaseController{
 	 * 设置登录密码页面
 	 * @return
 	 */
-	@RequestMapping("/ex/to-login-pwd-set")
+	@RequestMapping("/ex/login-pwd-set")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-	public String toLoginPwdSet(String userLoginName,String code,Model model){
+	public String loginPwdSet(String userLoginName,String code,Model model){
 		model.addAttribute("userLoginName", userLoginName);
 		model.addAttribute("code", code);
 		return "setting/login-pwd-set";

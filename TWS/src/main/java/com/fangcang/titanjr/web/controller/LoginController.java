@@ -248,7 +248,7 @@ public class LoginController extends BaseController{
     	}else if(msgType==SMSType.LOGIN_PASSWORD_MODIFY.getType()){//修改登录密码
     		sendRegCodeRequest.setContent("尊敬的用户： 您正在修改泰坦金融的登录密码，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。请勿将验证码发给其他人。");
         	sendRegCodeRequest.setSubject("泰坦金融修改登录密码");
-    	}else if(msgType==SMSType.LOGIN_PASSWORD_MODIFY.getType()){//动态码登录
+    	}else if(msgType==SMSType.LOGIN_BY_CODE.getType()){//动态码登录
     		sendRegCodeRequest.setContent("尊敬的用户： 您正在使用动态验证码登录泰坦金融，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。请勿将验证码发给其他人。");
         	sendRegCodeRequest.setSubject("动态验证码登录");
     	}

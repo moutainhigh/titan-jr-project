@@ -85,7 +85,7 @@ public class SettingPasswordController extends BaseController{
 	}
 	 
 	/**
-	 * 通过原始密码修改密码
+	 * 通过原始付款密码修改密码
 	 * @return
 	 */
 	@RequestMapping("/setting/modify-pwd")
@@ -93,26 +93,36 @@ public class SettingPasswordController extends BaseController{
 	public String paySetPassword(){
 		return "setting/modify-pwd";
 	}
-	
-	/**
-	 * 忘记原密码
-	 * @return 
+	/***
+	 * 忘记付款密码，发送验证码页面
+	 * @param model
+	 * @return
 	 */
-	@RequestMapping("/setting/modify-pwd-forget")
+	@RequestMapping("/setting/modify-pwd-code")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-	public String forgetPassword(Model model){
+	public String modifyPwdCode(Model model){
 		int tfsUserId = Integer.valueOf(getTfsUserId());
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 		userInfoQueryRequest.setTfsUserId(tfsUserId);
 		UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
 		TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
 		model.addAttribute("tfsUserLoginName", titanUser.getUserloginname());
-
+		return "setting/modify-pwd-code";
+	}
+	/**
+	 * 忘记原付款密码
+	 * @return 
+	 */
+	@RequestMapping("/setting/modify-pwd-forget")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	public String forgetPassword(String userLoginName,String code,Model model){
+		model.addAttribute("userLoginName", userLoginName);
+		model.addAttribute("code", code);
 		return "setting/modify-pwd-forget";
 	}
 	
 	/**
-	 * 记得原密码
+	 * 记得原付款密码
 	 * @return 
 	 */
 	@RequestMapping("/setting/modify-pwd-remember")

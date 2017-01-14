@@ -682,6 +682,7 @@ public class FinancialAccountController extends BaseController {
 
     @ResponseBody
     @RequestMapping("forgetPayPassword")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String forgetPayPassword(ForgetPayPassword forgetPayPassword){
     	if(forgetPayPassword ==null
     			||!StringUtil.isValidString(forgetPayPassword.getPayPassword())
@@ -707,33 +708,6 @@ public class FinancialAccountController extends BaseController {
         } else {
         	return toJson(putSysError(payPasswordResponse.getReturnMessage()));
         }
-    }
-    
-    @ResponseBody
-    @RequestMapping("check_code")
-    public String checkCode(String userName,String code) throws GlobalServiceException{
-    	if(!StringUtil.isValidString(userName)||!StringUtil.isValidString(code)){
-    		return toJson(putSysError("参数错误"));
-    	}
-    	//获取该用户的用户名
-    	if(!this.getUserName().equals(userName)){
-    		return toJson(putSysError("您输入的用户名错误"));
-    	}
-    	VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
-    	verifyCheckCodeRequest.setReceiveAddress(userName);
-    	verifyCheckCodeRequest.setInputCode(code);
-    	VerifyCheckCodeResponse verifyCheckCodeResponse = titanFinancialOrganService.verifyCheckCode(verifyCheckCodeRequest);
-    	if(verifyCheckCodeResponse.isResult()){
-    		if(verifyCheckCodeResponse.getCodeId()>0){
-				UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
-				updateCheckCodeRequest.setCodeId(verifyCheckCodeResponse.getCodeId());
-				updateCheckCodeRequest.setIsactive(0);
-				titanFinancialOrganService.useCheckCode(updateCheckCodeRequest);
-			}
-    		return toJson(putSuccess("验证成功"));
-    	}else{
-    		return toJson(putSysError(verifyCheckCodeResponse.getReturnMessage()));
-    	}
     }
     
     @ResponseBody

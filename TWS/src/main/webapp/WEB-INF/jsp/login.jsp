@@ -116,16 +116,12 @@ $('.lb_verify').on('click',function(){
     
 	_this= $(this);
 	$.ajax({
-		data:{"receiveAddress":susername},
+		data:{"receiveAddress":susername,"msgType":4},
 		url : '<%=basePath%>/ex/sendCode.shtml',
 		dataType : 'json',
 		success : function(result){
 			if(result.code==1){
-				//if(!_this.hasClass("lb_huise")){
-			        new Tip({msg : '验证码已成功发送,请注意查收！', type: 1, timer:2000});    
-			       // _this.addClass('lb_huise');
-			        //timeOut(_this);
-			    //} 
+			    new Tip({msg : '验证码已成功发送,请注意查收！', type: 1, timer:2000});    
 			}else{
 				new top.Tip({msg : result.msg, type: 1, timer:2500});
 			}

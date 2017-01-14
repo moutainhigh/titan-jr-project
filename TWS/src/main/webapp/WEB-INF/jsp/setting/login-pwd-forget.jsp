@@ -30,7 +30,7 @@
 	</div>
 </div>
 
-<form action="<%=basePath %>/ex/to-login-pwd-set.shtml" method="post" id="to_pwd_set_form">
+<form action="<%=basePath %>/ex/login-pwd-set.shtml" method="post" id="to_pwd_set_form">
 	<input type="hidden" name="userLoginName" id="f_userLoginName"/>
 	<input type="hidden" name="code" id="f_code"/>
 </form>
@@ -119,9 +119,6 @@ $('.r_verify').on('click',function(){
 			new top.Tip({msg : '网络错误，请重试', type: 1, timer:2000});
 		}
 	});
-});
-$(".forget_wrap .btn_exit").on('click', function() {
-	forgetDialog.remove();
 });
 
 </script>

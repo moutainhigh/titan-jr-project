@@ -32,7 +32,7 @@
 				<div class="sr_list">
 					<div class="img img1 ico"></div>
 					<div class="tit">登录密码</div>
-					<div class="srl_c">尚未设置登录密码 <a href="<%=basePath %>/setting/to-login-pwd-set.shtml" class="blue undl">现在设置</a></div>
+					<div class="srl_c">尚未设置登录密码 <a href="<%=basePath %>/ex/login-pwd-set.shtml" class="blue undl">现在设置</a></div>
 				</div>
 			</c:if>
 			
@@ -56,7 +56,7 @@
 				<div class="sr_list ">
 					<div class="img  ico"></div>
 					<div class="tit">付款密码</div>
-					<div class="srl_c">您已设置付款密码 <a href="修改付款密码.html" class="blue undl">修改密码</a></div>
+					<div class="srl_c">您已设置付款密码 <a href="<%=basePath %>/setting/modify-pwd.shtml" class="blue undl">修改密码</a></div>
 				</div>
 			</c:if>
 			<div class="h_90"></div>
