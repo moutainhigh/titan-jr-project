@@ -254,7 +254,6 @@ public class LoginController extends BaseController{
     	}
     	
     	SendCodeResponse sendRegCodeResponse = sendSMSService.sendCode(sendRegCodeRequest);
-    	sendRegCodeResponse.putSuccess();
     	if(sendRegCodeResponse.isResult()){
     		return toJson(putSuccess("验证码发送成功"));
     	}else{

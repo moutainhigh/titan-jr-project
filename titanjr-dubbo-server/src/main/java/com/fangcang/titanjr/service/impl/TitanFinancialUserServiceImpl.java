@@ -615,12 +615,11 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 	public FinancialUserUnBindResponse unbindFinancialUser(FinancialUserUnBindRequest financialUserUnBindRequest)throws GlobalServiceException {
     	FinancialUserUnBindResponse response = new FinancialUserUnBindResponse();
     	try {
-    		if(financialUserUnBindRequest.getTfsuserid()!=null&&financialUserUnBindRequest.getMerchantcode()!=null){
+    		if(financialUserUnBindRequest.getTfsuserid()!=null){
         		//根据金服用户id解除关系
         		TitanUserBindInfo entity = new TitanUserBindInfo();
         		entity.setIsactive(ISACTIVE_0_NO);
         		entity.setTfsuserid(financialUserUnBindRequest.getTfsuserid());
-        		entity.setMerchantcode(financialUserUnBindRequest.getMerchantcode());
         		entity.setModifior(financialUserUnBindRequest.getOperator());
         		entity.setModifytime(new Date());
         		titanUserBindInfoDao.update(entity);	
