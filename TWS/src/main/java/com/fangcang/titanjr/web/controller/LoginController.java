@@ -5,35 +5,28 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
 import com.fangcang.titanjr.common.enums.SMSType;
-import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
-import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.Tools;
-import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.request.CheckUserRequest;
-import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.PassLoginRequest;
 import com.fangcang.titanjr.dto.request.SendCodeRequest;
 import com.fangcang.titanjr.dto.request.SmsLoginRequest;
-import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.CheckUserResponse;
-import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.GetCheckCodeResponse;
 import com.fangcang.titanjr.dto.response.PassLoginResponse;
 import com.fangcang.titanjr.dto.response.SendCodeResponse;
 import com.fangcang.titanjr.dto.response.SmsLoginResponse;
-import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
-import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
@@ -50,7 +43,7 @@ import com.fangcang.util.StringUtil;
 @Controller
 @RequestMapping("/ex")
 public class LoginController extends BaseController{
-	private static final Logger LOGGER = Logger.getLogger(LoginController.class);
+	private static final Log LOGGER = LogFactory.getLog(LoginController.class);
 	
 	@Resource
 	private TitanFinancialUserService userService;
