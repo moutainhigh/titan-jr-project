@@ -59,8 +59,7 @@
 			<div class="MyAssets_list_inp01 fl ml10">				
 				<input type="text" value="" id="amount_1" placeholder="订单金额："></div>
 			<a class="btn btn_magnify m_l2 fl ml10 MyAssets_Search" href="javascript:void(0)" onclick="queryTransOrders(1)" >&nbsp;</a>
-			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(1)">
-				<img src="<%=cssSaasPath%>/images/TFS/tfs_c01.png" ></a>
+			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(1)">导出记录</a>
 		</div>		
 		<div class="label">
 				<table  width="100%" cellspacing="0" border="0">
@@ -133,8 +132,7 @@
 			<div class="MyAssets_list_inp01 fl ml10">				
 				<input type="text" value="" id="amount_2" placeholder="订单金额："></div>
 			<a class="btn btn_magnify m_l2 fl ml10 MyAssets_Search" href="javascript:void(0)" onclick="queryTransOrders(2)" >&nbsp;</a>
-			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(2)">
-				<img src="<%=cssSaasPath%>/images/TFS/tfs_c01.png"></a>
+			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(2)">导出记录</a>
 		</div>		
 		<div class="label">
 				<table width="100%" cellspacing="0" border="0">
@@ -207,8 +205,7 @@
 			<div class="MyAssets_list_inp01 fl ml10">				
 				<input type="text" value="" id="amount_3" placeholder="订单金额："></div>
 			<a class="btn btn_magnify m_l2 fl ml10 MyAssets_Search" href="javascript:void(0)" onclick="queryTransOrders(3)">&nbsp;</a>
-			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(3)">
-				<img src="<%=cssSaasPath%>/images/TFS/tfs_c01.png"></a>
+			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(3)">导出记录</a>
 		</div>		
 		<div class="label">
 				<table width="100%" cellspacing="0" border="0">
@@ -280,8 +277,7 @@
 			<div class="MyAssets_list_inp01 fl ml10">				
 				<input type="text" value="" id="amount_4" placeholder="充值金额："></div>
 			<a class="btn btn_magnify m_l2 fl ml10 MyAssets_Search" href="javascript:void(0)" onclick="queryTransOrders(4)">&nbsp;</a>
-			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(4)">
-				<img src="<%=cssSaasPath%>/images/TFS/tfs_c01.png"></a>
+			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(4)">导出记录</a>
 		</div>		
 		<div  class="label">
 				<table width="100%" cellspacing="0" border="0">
@@ -353,8 +349,7 @@
 			<div class="MyAssets_list_inp01 fl ml10">				
 				<input type="text" value="" id="amount_5" placeholder="提现金额："></div>
 			<a class="btn btn_magnify m_l2 fl ml10 MyAssets_Search" href="javascript:void(0)" onclick="queryTransOrders(5)">&nbsp;</a>
-			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(5)" >
-				<img src="<%=cssSaasPath%>/images/TFS/tfs_c01.png"></a>
+			<a href="javascript:void(0)" class="MyAssets_Export fr bacth_export_hotel J_export" onclick="exportExcel(5)">导出记录</a>
 		</div>		
 		<div  class="label">
 				<table width="100%" cellspacing="0" border="0">
@@ -410,7 +405,10 @@
 		</div>
 	</div>
 	<div style="height:50px;"></div>
-	<div class="main_kkpager">
+	<div class="main_kkpager">		
+		<div id="kkpager" class="page_turning"></div>
+	</div>
+<!-- 	<div class="main_kkpager">
 		<div class="pagination1">
 			<div class="pagination_r">
 				每页显示酒店数量
@@ -421,7 +419,7 @@
 			</div>
 		</div>
 		<div id="kkpager" class="page_turning"></div>
-	</div>
+	</div> -->
 </div>
 </div>
 <form action="<%=basePath%>/account/toBindCardStepOne.shtml" method="post" id="toBindCard" target="_blank">
@@ -439,11 +437,11 @@
 		//总记录数
 		var total1,total2,total3,total4,total5;
 		//每页数量
-		var size1 = 5,size2 = 5,size3 = 5,size4 = 5,size5 = 5;
+		 var size1 = 6;
         $(function(){
 			tabChange($(".MyAssets_list_tab span"), $(".MyAssets_tab"), "on");
 			initRequest();
-			initPageSizeChangeEvent();
+			/* initPageSizeChangeEvent(); */
 			initAutoSelectPartner();
 			validate_BankCard_Satatus();
 		});
@@ -461,16 +459,16 @@
 						tabChangeRequest(page1, total1, size1, tabIdx);
 						break;
 					case 2:
-						tabChangeRequest(page2, total2, size2, tabIdx);
+						tabChangeRequest(page2, total2, size1, tabIdx);
 						break;
 					case 3:
-						tabChangeRequest(page3, total3, size3, tabIdx);
+						tabChangeRequest(page3, total3, size1, tabIdx);
 						break;
 					case 4:
-						tabChangeRequest(page4, total4, size4, tabIdx);
+						tabChangeRequest(page4, total4, size1, tabIdx);
 						break;
 					case 5:
-						tabChangeRequest(page5, total5, size5, tabIdx);
+						tabChangeRequest(page5, total5, size1, tabIdx);
 						break;
 				}
 				$(tabpannel).eq(index).show().siblings().hide();
@@ -478,7 +476,7 @@
 		}
       //初始化页面请求
 		function initRequest() {
-			var size1 = $(".pagination_r .on").text();
+			var size1 = 6;
 			F.loading.show();
 			$.ajax({
 				dataType : 'html',
@@ -500,7 +498,7 @@
 		}
         
 		//初始化每页数量事件
-		function initPageSizeChangeEvent() {
+		/* function initPageSizeChangeEvent() {
 			var pageList=$(".main_kkpager").html();
 			$(".pagination_r i").on('click',function(){
 				$(".pagination_r i").eq($(this).index()).addClass("on").siblings().removeClass("on");
@@ -529,7 +527,7 @@
 				}
 			});
 		}
-		
+		 */
 		//添加日期锻
 		$('.J_Section').each(function(){
 			//添加日期锻

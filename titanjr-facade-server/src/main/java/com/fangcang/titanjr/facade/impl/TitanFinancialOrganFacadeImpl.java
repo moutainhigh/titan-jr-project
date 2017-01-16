@@ -17,12 +17,14 @@ import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.util.StringUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 /**
  * Created by zhaoshan on 2016/12/27.
  */
+@Service("titanFinancialOrganFacade")
 public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade {
 
     private static final Log log = LogFactory.getLog(TitanFinancialOrganFacadeImpl.class);
@@ -80,7 +82,7 @@ public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade 
             UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
             if (CollectionUtils.isNotEmpty(userInfoResponse.getUserInfoDTOList()) && StringUtil.
                     isValidString(userInfoResponse.getUserInfoDTOList().get(0).getUserId())){
-                return buildOrganInfoResponse(infoResponse,userInfoResponse.getUserInfoDTOList().get(0).getUserId(),
+                return buildOrganInfoResponse(infoResponse,organInfoQueryRequest.getPartnerCode(),
                         organInfoQueryRequest.getOrganTypeEnum().typeId);
             } else {
                 infoResponse.putErrorResult("NO_VALID_RESULT","传入的用户信息查询机构失败");
@@ -123,7 +125,7 @@ public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade 
 
     private OrganInfoResponse buildOrganInfoResponse(OrganInfoResponse infoResponse,String userId,Integer regChannel){
         FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-        organQueryRequest.setUserId(userId);
+        organQueryRequest.setMerchantcode(userId);
         organQueryRequest.setRegchannel(regChannel);
         FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
         if (null != financialOrganResponse.getFinancialOrganDTO() && StringUtil.

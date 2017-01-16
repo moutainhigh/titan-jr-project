@@ -1,4 +1,4 @@
-<%-- <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <html>
 <head>
 <script type="text/javascript" src="js/titanpay.js"></script>
@@ -30,13 +30,13 @@
 		var orderInfo = {
 			name : "zhang", //打开收银台人员姓名  N
 			escrowedDate : "2016-08-31",//保证期时间  N
-			goodsId : "dfadfs005",//商品编号，可以是对方的订单号
+			goodsId : "20170011",//商品编号，可以是对方的订单号
 			goodsDetail : "我是啊好人",//商品描述  N
 			goodsName : "提现最帅了！",//商品名称 N
-			userId : "23298",//付款方身份标示   如果是财务，则建议是FCUSERID，  如果是GDP，则是用户ID
-			ruserId : "M10021069",//收款方身份标示 N  ,GDP可以指定接受方的   商家联盟可以指定其FCUSERID
-			amount : "400",//订单金额
-			payerType : "4",//付款人类型   财务 GDP 等
+			userId : "",//付款方身份标示   如果是财务，则建议是FCUSERID，  如果是GDP，则是用户ID
+			ruserId : "TJM10030155",//收款方身份标示 N  ,GDP可以指定接受方的   商家联盟可以指定其FCUSERID
+			amount : "10000",//订单金额
+			payerType : "1001",//付款人类型   财务 GDP 等
 			// 			currencyType : "1",//币种
 			// 			checkOrderUrl : 'http://www.baidu.com',//可选
 			notify : 'http://www.baidu.com'
@@ -55,13 +55,13 @@
 
 	}
 </script>
-</html> --%>
+</html> 
  
 
 
 
 <!-- 对外收银台的对接 -->
- <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%--  <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>测试收银台</title>
@@ -194,3 +194,4 @@
 
 </body>
 </html> 
+--%>

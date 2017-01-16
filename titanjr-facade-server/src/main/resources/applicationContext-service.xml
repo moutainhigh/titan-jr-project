@@ -29,7 +29,8 @@
 	
     <dubbo:service interface="com.fangcang.titanjr.facade.TitanFinancialPermissionFacade" ref="titanFinancialPermissionFacade" timeout="20000"></dubbo:service>
 	<dubbo:service interface="com.fangcang.titanjr.facade.TitanFinancialTradeFacade" ref="titanFinanceTradeFacade" timeout="20000"></dubbo:service>
-	
+	<dubbo:service interface="com.fangcang.titanjr.facade.TitanFinancialOrganFacade" ref="titanFinancialOrganFacade" timeout="20000"></dubbo:service>
+
 	<dubbo:reference id="titanFinancialOrganService" interface="com.fangcang.titanjr.service.TitanFinancialOrganService" retries="0" timeout="800000"/><!-- retries:重试次数 -->
 	<dubbo:reference id="titanFinancialUserService" interface="com.fangcang.titanjr.service.TitanFinancialUserService" retries="0" timeout="10000"/><!-- retries:重试次数 -->
     <dubbo:reference id="titanFinancialTradeService" interface="com.fangcang.titanjr.service.TitanFinancialTradeService" retries="0" timeout="800000"/>
