@@ -504,7 +504,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			req.setUserorderid(orderRequest.getUserorderid()); // 用户订单编号
 			req.setAmount(orderRequest.getAmount());
 			req.setGoodsname(orderRequest.getGoodsname()); // 商品名称
-			req.setGoodsdetail(orderRequest.getGoodsdetail()); // 商品描述
+//			req.setGoodsdetail(orderRequest.getGoodsdetail()); // 商品描述
 			req.setNumber(orderRequest.getNumber()); // 商品数量
 			req.setUnitprice(orderRequest.getUnitprice()); // 手续费
 			req.setAdjusttype(orderRequest.getAdjusttype()); // 调整类型
