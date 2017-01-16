@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.LoanOrderDao">
+	
+	 <cache 
+          eviction="LRU"
+          flushInterval="60000"
+          size="1024"
+         readOnly="true"/> 
+	
+	
+    <resultMap id="loanApplyOrder" type="com.fangcang.titanjr.entity.LoanApplyOrder">
+        <result property="orderNo" column="orderno"/>
+        <result property="creditOrderNo" column="creditorderno"/>
+        <result property="orgCode" column="orgcode"/>
+        <result property="amount" column="amount"/>
+        <result property="actualAmount" column="actualamount"/>
+        <result property="rate" column="rate"/>
+        <result property="rspId" column="rspid"/>
+        <result property="rsorgId" column="rsorgid"/>
+        <result property="productType" column="producttype"/>
+        <result property="productId" column="productid"/>
+        <result property="creatorId" column="creatorId"/>
+        <result property="createTime" column="createtime"/>
+        <result property="rateTmp" column="ratetmp"/>
+        <result property="status" column="status"/>
+        <result property="errorMsg" column="errormsg"/>
+        <result property="relMoneyTime" column="relmoneytime"/>
+        <result property="productSpecId" column="productspecid"/>
+        <result property="repaymentType" column="repaymenttype"/>
+        <result property="actualRepaymentDate" column="actualrepaymentdate"/>
+        <result property="lastRepaymentDate" column="lastrepaymentdate"/>
+        <result property="repaymentPrincipal" column="repaymentprincipal"/>
+        <result property="repaymentInterest" column="repaymentinterest"/>
+        <result property="shouldCapital" column="shouldcapital"/>
+        <result property="orderid" column="orderid"/>
+        <result property="shouldInterest" column="shouldinterest"/>
+    </resultMap>
+    
+    
+    
+	
+	<select id="queryLoanExpiryStat" resultType="com.fangcang.titanjr.entity.LoanExpiryStat" parameterType="java.lang.String">
+		SELECT  COUNT(t.id) AS expiryNum,(SUM(t.shouldcapital) + SUM(t.shouldinterest)) AS expiryAmount FROM t_loan_order t
+ 				WHERE t.status = 9 AND t.`orgcode`=#{orgCode}
+	</select>
+	
+	
+	<select id="queryLoanSevenDaysStat" resultType="com.fangcang.titanjr.entity.LoanSevenDaysStat" parameterType="java.lang.String">
+		SELECT COUNT(t.id) AS sevenDaysNum,(SUM(t.shouldcapital) + SUM(t.shouldinterest)) AS sevenDaysAmount FROM t_loan_order t
+ 				WHERE t.status IN (6 ,9) AND  t.actualrepaymentdate &lt;= DATE_ADD(NOW(), INTERVAL 7 DAY) AND t.`orgcode`=#{orgCode}
+	</select>
+	
+	
+	
+	<select id="queryProductTypeAmount" resultType="com.fangcang.titanjr.entity.LoanProductAmountStat" parameterType="java.lang.String">
+		SELECT  t.producttype as productId  ,  SUM(t.shouldcapital)  AS amount , SUM(t.shouldcapital) + SUM(t.shouldinterest) as actualAmount  
+			FROM t_loan_order t WHERE t.status IN (6 ,9) AND t.`orgcode`=#{orgCode} GROUP BY t.producttype;
+	</select>
+
+    <select id="queryLoanApplyOrder" resultMap="loanApplyOrder"
+            parameterType="com.fangcang.titanjr.entity.parameter.LoanQueryConditions">
+        select `id`,
+        `orderno`,
+        `creditorderno`,
+        `orgcode`,
+        `amount`,
+        `actualamount`,
+        `rate`,
+        `rspid`,
+        `rsorgid`,
+        `producttype`,
+        `productId`,
+        `creatorId`,
+        `createtime`,
+        `ratetmp`,
+        `status`,
+        `errormsg`,
+        `relmoneytime`,
+        `productspecId`,
+        `repaymenttype`,
+        `actualrepaymentdate`,
+        `lastrepaymentdate`,
+        `repaymentprincipal`,
+        `repaymentinterest`,
+        `shouldcapital`,
+        `orderid`,
+        `shouldinterest`
+        from t_loan_order
+        <where>
+        	1=1
+        	
+            <if test="orderNo !=null">
+                and orderno = #{orderNo}
+            </if>
+            
+            <if test="productType !=null">
+                and producttype = #{productType}
+            </if>
+            
+            <if test="orderStatusEnum !=null">
+            	and status in
+			    <foreach collection="orderStatusEnum" index="index" item="item" open="(" separator="," close=")">  
+			            #{item}   
+			    </foreach>  
+            </if>
+            
+            <if test="beginActualRepaymentDate != null">
+		    	AND actualrepaymentdate &gt;= #{beginActualRepaymentDate}
+		    </if> 
+		    <if test="endActualRepaymentDate != null">
+		    	AND actualrepaymentdate &lt;= #{endActualRepaymentDate}
+		    </if>
+		    
+		    <if test="beginCreateTime != null">
+		    	AND createtime &gt;= #{beginCreateTime}
+		    </if> 
+		    <if test="endCreateTime != null">
+		    	AND createtime &lt;= #{endCreateTime}
+		    </if>
+		    
+		    
+		    <if test="beginLastRepaymentDate != null">
+		    	AND lastrepaymentdate &gt;= #{beginLastRepaymentDate}
+		    </if> 
+		    <if test="endLastRepaymentDate != null">
+		    	AND lastrepaymentdate &lt;= #{endLastRepaymentDate}
+		    </if>
+		    
+		    <if test="beginRelMoneyTime != null">
+		    	AND relmoneytime &gt;= #{beginRelMoneyTime}
+		    </if> 
+		    <if test="endRelMoneyTime != null">
+		    	AND relmoneytime &lt;= #{endRelMoneyTime}
+		    </if>
+		    
+            <if test="orgCode !=null">
+                and orgcode = #{orgCode}
+            </if>
+        </where>
+
+    </select>
+
+    <update id="updateLoanApplyOrder" parameterType="com.fangcang.titanjr.entity.LoanApplyOrder">
+        update t_loan_order
+        <set>
+            <if test="amount != null">amount= #{amount},</if>
+            <if test="actualAmount != null">actualamount= #{actualAmount},</if>
+            <if test="rate != null">rate= #{rate},</if>
+            <if test="rspId != null">rspid= #{rspId},</if>
+            <if test="orderid != null">orderid= #{orderid},</if>
+            <if test="rsorgId != null">rsorgid= #{rsorgId},</if>
+            <if test="productType != null">producttype= #{productType},</if>
+            <if test="productId != null">productid= #{productId},</if>
+            <if test="createTime != null">createtime= #{createTime},</if>
+            <if test="rateTmp != null">ratetmp=#{rateTmp},</if>
+            <if test="status != null">status= #{status},</if>
+            <if test="errorMsg != null">errormsg= #{errorMsg},</if>
+            <if test="relMoneyTime != null">relmoneytime= #{relMoneyTime},</if>
+            <if test="productSpecId != null">productspecId= #{productSpecId},</if>
+            <if test="repaymentType != null">repaymenttype= #{repaymentType},</if>
+            <if test="actualRepaymentDate != null">actualrepaymentdate= #{actualRepaymentDate},</if>
+            <if test="lastRepaymentDate != null">lastrepaymentdate= #{lastRepaymentDate},</if>
+            <if test="repaymentPrincipal != null">repaymentprincipal= #{repaymentPrincipal},</if>
+            <if test="repaymentInterest != null">repaymentinterest= #{repaymentInterest},</if>
+            <if test="shouldCapital != null">shouldcapital= #{shouldCapital},</if>
+            <if test="shouldInterest != null">shouldinterest= #{shouldInterest},</if>
+        </set>
+        <where>
+            orderno = #{orderNo} <!--orderNo一定不为空-->
+        </where>
+    </update>
+
+    <insert id="insertLoanApplyOrder" parameterType="com.fangcang.titanjr.entity.LoanApplyOrder">
+	  INSERT INTO `t_loan_order` (
+		`orderno`,
+	 	`creditorderno`, 
+	 	`orgcode`,
+	 	`amount`,
+	 	`actualamount`,
+	  	`rate`,
+	   	`rspid`, 
+	  	`rsorgid`, 
+	 	`producttype`,
+	  	`productId`,
+	  	`creatorId`,
+	   	`createtime`, 
+	  	`ratetmp`,
+	   	`status`, 
+	   	`errormsg`, 
+	    `relmoneytime`,
+	     `productspecId`,
+	     `repaymenttype`,
+	     `actualrepaymentdate`,
+	     `lastrepaymentdate`, 
+	     `repaymentprincipal`,
+	     `repaymentinterest`,
+	     `shouldcapital`,
+	     `shouldinterest`
+     )
+     VALUES
+     	(
+     		#{orderNo},
+     		#{creditOrderNo},
+     		#{orgCode},
+     		#{amount},
+     		#{actualAmount},
+     		#{rate},
+     		#{rspId},
+     		#{rsorgId},
+     		#{productType},
+     		#{productId},
+     		#{creatorId},
+     		#{createTime},
+     		#{rateTmp},
+     		#{status},
+     		#{errorMsg},
+     		#{relMoneyTime},
+     		#{productSpecId},
+     		#{repaymentType},
+     		#{actualRepaymentDate},
+     		#{lastRepaymentDate},
+     		#{repaymentPrincipal},
+     		#{repaymentInterest},
+     		#{shouldCapital},
+     		#{shouldInterest}
+     	)
+    </insert>
+
+</mapper>

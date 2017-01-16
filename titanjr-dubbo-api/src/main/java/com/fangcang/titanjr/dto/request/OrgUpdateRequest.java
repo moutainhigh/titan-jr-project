@@ -1,5 +1,7 @@
 package com.fangcang.titanjr.dto.request;
 
+import java.util.Date;
+
 import com.fangcang.titanjr.dto.BaseRequestDTO;
 /**
  * 修改机构信息
@@ -21,7 +23,29 @@ public class OrgUpdateRequest extends BaseRequestDTO{
 	 * 手机号码
 	 */
 	private String mobiletel;
+	/**
+	 * 授信金额估算时间
+	 */
+	private Date lastUpdateDate;
+	
+	//最大可申请授信额度
+	private Long maxLoanAmount;
+	
+	public Date getLastUpdateDate() {
+		return lastUpdateDate;
+	}
 
+	public void setLastUpdateDate(Date lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
+	}
+
+	public Long getMaxLoanAmount() {
+		return maxLoanAmount;
+	}
+
+	public void setMaxLoanAmount(Long maxLoanAmount) {
+		this.maxLoanAmount = maxLoanAmount;
+	}
 
 	public String getOrgCode() {
 		return orgCode;

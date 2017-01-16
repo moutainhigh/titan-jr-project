@@ -57,6 +57,9 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 
 	// 付款源
 	private String paySource;
+	
+	
+	private String orderTypeId;
 	//支付方式 默认个人银行
 	private PayTypeEnum payType = PayTypeEnum.Personal_Banking;
 	public Float getReceivablerate() {
@@ -210,4 +213,13 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	public void setPayType(PayTypeEnum payType) {
 		this.payType = payType;
 	}
+
+	public String getOrderTypeId() {
+		return orderTypeId;
+	}
+
+	public void setOrderTypeId(String orderTypeId) {
+		this.orderTypeId = orderTypeId;
+	}
+	
 }

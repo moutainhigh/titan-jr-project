@@ -20,7 +20,9 @@
 	<div class="S_popup_content adjust_c">
 		<div class="wx_fk fl">
 			<h3 style="margin-left: -12px;">微信扫描二维码支付</h3>
-			<div id="qrcode"> 
+			<div >
+			  <img id="qrcode" alt="微信扫描二维码支付" src="">
+			</div> 
 			<!-- <p><span class="c_f00" id="Time"></span>后此二维码过期</p> -->
 			</div>
 		</div>
@@ -39,6 +41,7 @@
 <form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder1" method="post">
   <input name="orderNo" id="orderNo" value="${qrCode.orderNo}" type="hidden">
   <input name="payTypeMsg" id="payTypeMsg" value="微信支付" type="hidden">
+  <input name="expand" id="expand" type="hidden">
 </form>
 </body>
 <script>
@@ -46,19 +49,18 @@
 	$("document").ready(function (){
 		if('${result}'=="success"){
 			_orderNo = '${qrCode.orderNo}';
-			 $("#qrcode").qrcode({
-				  render:"table",
-				  width:150,
-				  height:150,
-				  text:'${qrCode.respJs}'
-			  });
-			  closeWin('${qrCode.orderNo}');
+			share2dImg('${qrCode.respJs}')
+			closeWin('${qrCode.orderNo}');
 		}else{
 			$("#msg").val('${msg}');
 			$("#error_cashier").submit();
 		}
 		 
 	});
+	
+	function share2dImg(url){
+		$("#qrcode").attr("src","<%=basePath%>/payment/wxPicture.shtml?url="+url);   
+	}
 	
 	function timeOut(_this){
 	    var i=60*15;
@@ -82,6 +84,10 @@
 				 $("#confirmOrder1").submit();
 			}else if(status=="no_effect" || status=="exception"){
 				 clearInterval(interval);
+			}else if(status=="delay"){
+				clearInterval(interval);
+				$("#expand").val("001_001");
+				$("#confirmOrder1").submit();
 			}
 		},5000);
 	}

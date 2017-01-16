@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.LoanCreditOrderDiscardDao">
+
+    <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.LoanCreditOrderDiscard">
+	  INSERT INTO `t_loan_creditorderdiscard` (
+		`oldorderno`,
+		`neworderno`,
+	 	`orgcode`,
+	 	`rsorderno`,
+	 	`discardmsg`,
+	  	`remark`,
+	   	`creator`, 
+	  	`discardTime`
+     )
+     VALUES
+     	(
+     		#{oldOrderNo},
+     		#{newOrderNo},
+     		#{orgCode},
+     		#{rsorderNo},
+     		#{discardMsg},
+     		#{remark},
+     		#{creator},
+     		#{discardTime}
+     	)
+    </insert>
+
+</mapper>

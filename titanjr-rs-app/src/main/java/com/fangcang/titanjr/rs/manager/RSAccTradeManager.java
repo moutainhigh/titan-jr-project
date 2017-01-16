@@ -84,4 +84,21 @@ public interface RSAccTradeManager {
      * @return
      */
     public OrderSaveWithCardResponse orderSaveWithdraw(OrderSaveWithCardRequest orderSaveWithCardRequest);
+
+    
+    /**
+     * 下退款订单
+     * @param refundRequest
+     * @return
+     */
+    public RsRefundResponse addOrderRefund(RSRefundRequest refundRequest);
+    
+
+    /**
+     * 订单状态查询
+     * @param ordernQueryRequest
+     * @return
+     */
+	public OrdernQueryResponse ordernQuery(OrdernQueryRequest ordernQueryRequest);
+
 }

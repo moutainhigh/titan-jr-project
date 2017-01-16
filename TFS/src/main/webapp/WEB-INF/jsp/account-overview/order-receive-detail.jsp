@@ -12,7 +12,7 @@
         <div class="recharge-record-box">
             <p><em><strong>订单金额：</strong><span class="recharge-colorRed fontSize24">
 				<fmt:formatNumber value="${transOrder.tradeamount/100.0 }" pattern="#,##0.00#"/>
-			</span>元</em>业务单号：${transOrder.businessordercode }</p>
+			</span>元</em>业务单号：<c:if test="${empty transOrder.businessordercode }">无</c:if>${transOrder.businessordercode }</p>
             <div class="orderDetails-content">
                 <div class="orderDetails-content1">
                     <h3 class="orderDetails-title">基础信息</h3>
@@ -33,6 +33,15 @@
                                 </c:when>
                                 <c:when test="${transOrder.statusid == 6}">
                                     已冻结
+                                </c:when>
+                                <c:when test="${transOrder.statusid == 12 }">
+                                退款中
+                                </c:when>
+                                <c:when test="${transOrder.statusid == 13 }">
+                                 退款成功
+                                </c:when>
+                                <c:when test="${transOrder.statusid == 14 }">
+                                退款失败
                                 </c:when>
                               <c:otherwise>
                                 处理中
@@ -59,22 +68,23 @@
                 </div>
                 <div class="orderDetails-content1 orderDetails-content2">
                     <h3 class="orderDetails-title">交易流水</h3>
-                    <p class="ftSize14">交易单号：<span class="color1C">${transOrder.userorderid }</span></p>
+                    <p class="ftSize14">流水号：<span class="color1C">${transOrder.userorderid }</span></p>
                     <table cellpadding="0" cellspacing="0" width="100%" class="orderDetailsTable">
                         <colgroup>
                             <col width="150">
                             <col width="60">
-                            <col width="200">
+                            <col width="140">
                             <col width="200">
                             <col width="100">
-                            <col width="">
+                            <col width="80">
+                            <col width="70">
                         </colgroup>
                         <c:if test="${transOrder.titanOrderPayDTO != null}">
                             <tr>
                                 <td width=""><span><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.titanOrderPayDTO.orderDate }"/></span></td>
                                 <td width=""><span>充值</span></td>
-                                <td width=""><span style="width:180px" title="对方：${transOrder.transTarget}">对方：${transOrder.transTarget}</span></td>
-                                <td width=""><span style="width:180px" title="交易单${transOrder.titanOrderPayDTO.orderNo }充值">交易单${transOrder.titanOrderPayDTO.orderNo }充值</span></td>
+                                <td width=""><span title="对方：${transOrder.transTarget}">对方：${transOrder.transTarget}</span></td>
+                                <td width=""><span title="交易单号${transOrder.titanOrderPayDTO.orderNo }充值">交易单号${transOrder.titanOrderPayDTO.orderNo }充值</span></td>
                                 <td><span><fmt:formatNumber value="${transOrder.titanOrderPayDTO.orderAmount/100.0 }" pattern="#,##0.00#"/></span></td>
                                 <td><span>
                                     <c:if test="${transOrder.titanOrderPayDTO.reqstatus == 1}">
@@ -92,11 +102,19 @@
                         </c:if>
                         <c:if test="${transOrder.titanTransferDTO != null}">
                             <tr>
-                                <td><span><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.titanTransferDTO.createtime }"/></span></td>
+                                <td style="width:160px"><span><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.titanTransferDTO.createtime }"/></span></td>
                                 <td><span>转账</span></td>
-                                <td><span style="width:180px" title="对方：${transOrder.transTarget}">对方：${transOrder.transTarget}</span></td>
-                                <td><span style="width:180px" title="财务单${transOrder.payorderno }支付">财务单${transOrder.payorderno }支付</span></td>
-                                <td><span><fmt:formatNumber value="${transOrder.titanTransferDTO.amount / 100.0 }" pattern="#,##0.00#"/></span></td>
+                                <td><span  style="width:160px" title="对方：${transOrder.transTarget}">对方：${transOrder.transTarget}</span></td>
+                                <td><span   style="width:160px" title="交易单号${transOrder.payorderno }支付">交易单号${transOrder.payorderno }支付</span></td>
+                                <td>
+                                	<span>+<fmt:formatNumber value="${(transOrder.titanTransferDTO.amount +transOrder.receivedfee) / 100.0 }" pattern="#,##0.00#"/></span>
+	                            </td>
+	                             <td style="width:50px">
+                                    <c:if test="${transOrder.receivedfee!=null && transOrder.receivedfee!=0.0 && transOrder.receivedfee!=0.00}">
+	                                <span>-<fmt:formatNumber value="${transOrder.receivedfee / 100.0 }" pattern="#,##0.00#"/></span>
+	                                </c:if>
+	                            </td>
+
                                 <td><span>
                                     <c:if test="${transOrder.titanTransferDTO.status == 1}">
                                         处理中
@@ -106,6 +124,46 @@
                                     </c:if>
                                     <c:if test="${transOrder.titanTransferDTO.status == 3}">
                                         失败
+                                    </c:if></span>
+                                </td>
+                            </tr>
+                        </c:if>
+                        <c:if test="${transOrder.refundDTO != null}">
+                        	<tr>
+                                <td style="width:160px">
+                                    <span><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${transOrder.refundDTO.createtime }"/></span>
+                                </td>
+                                <td><span>退款</span></td>
+
+                                <td><span  style="width:160px" title="退款人：${transOrder.refundDTO.creator}">退款人：${transOrder.refundDTO.creator}</span></td>
+
+                                <td>
+                                    <span  style="width:160px" title="财务单${transOrder.payorderno }退款">交易单号${transOrder.payorderno }退款</span>
+                                </td><!--房仓财务系统单号-->
+
+                                  <td>
+                                    <span>-<fmt:formatNumber value="${(transOrder.refundDTO.transferAmount+transOrder.refundDTO.fee) / 100.0 }" pattern="#,##0.00#"/></span>
+	                               </td>
+	                               <td style="width:50px">
+	                               <c:if test="${transOrder.refundDTO.fee !=null && transOrder.refundDTO.fee!=0.0 &&transOrder.refundDTO.fee!=0.00}">
+	                                <span>+<fmt:formatNumber value="${transOrder.refundDTO.fee / 100.0 }" pattern="#,##0.00#"/></span>
+	                               </c:if>
+	                               </td>
+                                <td><span>
+                                    <c:if test="${transOrder.refundDTO.status == 0}">
+                                           	退款处理中
+                                    </c:if>
+                                    <c:if test="${transOrder.refundDTO.status == 1}">
+                                       	 退款审核失败
+                                    </c:if>
+                                    <c:if test="${transOrder.refundDTO.status == 2}">
+                                        	退款成功
+                                    </c:if>
+                                    <c:if test="${transOrder.refundDTO.status == 3}">
+                                        	退款失败
+                                    </c:if>
+                                    <c:if test="${transOrder.refundDTO.status == 4}">
+                                        	退款冲销
                                     </c:if></span>
                                 </td>
                             </tr>

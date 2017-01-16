@@ -342,10 +342,11 @@ public class TitanTradeController extends BaseController {
 			return false;
 		}
 		
-		if(pe.isOpenOrg() && !StringUtil.isValidString(dto.getRuserId())){
+		if(pe.isRecieveCashDesk() && !StringUtil.isValidString(dto.getRuserId())){
 			log.error(pe + "RuserId is null");
 			return false;
 		}
+		
 
 		if (StringUtil.isValidString(dto.getEscrowedDate())) {
 			try {
@@ -453,7 +454,6 @@ public class TitanTradeController extends BaseController {
 			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 		}
 
-		// 验证签名
 
 		// 根据payOrderNo查询出相应的订单
 		TransOrderRequest transOrderRequest = new TransOrderRequest();

@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import com.fangcang.titanjr.enums.*;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
@@ -100,7 +102,7 @@ public class TitanPaymentService {
 		}
 	 
 	 public boolean checkPwd(String pwd, String fcUserId){
-		 if(!StringUtil.isValidString(pwd) || !StringUtil.isValidString(fcUserId) ){
+		 if(!StringUtil.isValidString(pwd) || !StringUtil.isValidString(fcUserId)){
 			 return false;
 		 }
 		 
@@ -215,7 +217,7 @@ public class TitanPaymentService {
 	    		String amount = transOrderDTO.getTradeamount().toString();
 	    		if(StringUtil.isValidString(transOrderDTO.getPayerType())&&transOrderDTO.getReceivedfee()!=null){
 	    			PayerTypeEnum payerTypeEnum = PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
-	    			if(payerTypeEnum.isB2BPayment()||payerTypeEnum.isOpenOrg()){
+	    			if(payerTypeEnum.isB2BPayment()||payerTypeEnum.isOpenOrg()||payerTypeEnum.isTTMAlL()){
 	    				amount = new BigDecimal(transOrderDTO.getTradeamount()).subtract(new BigDecimal(transOrderDTO.getReceivedfee())).toString();
 	    			}
 	    		}
@@ -291,6 +293,10 @@ public class TitanPaymentService {
 			        if(StringUtil.isValidString(payTypeMsg)){
 			        	rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getAmount()).toString());
 			        	model.addAttribute("payType", payTypeMsg);
+			        }
+			        if(StringUtil.isValidString(rechargeResultConfirmRequest.getExpand()) && rechargeResultConfirmRequest.getExpand().equals(CommonConstant.ORDER_DELAY)){
+			        	rechargeResultConfirmRequest.setPayStatus("3");
+		        		rechargeResultConfirmRequest.setPayMsg("延迟到账，稍后查询");
 			        }
 			        
 				}

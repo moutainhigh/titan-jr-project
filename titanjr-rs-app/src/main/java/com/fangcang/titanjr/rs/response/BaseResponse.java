@@ -7,7 +7,11 @@ import java.io.Serializable;
  */
 public class BaseResponse implements Serializable {
 
-    private boolean isSuccess = false;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7529659775144586698L;
+	private boolean isSuccess = false;
     private String returnCode;
     private String returnMsg;
 	private String operateStatus;

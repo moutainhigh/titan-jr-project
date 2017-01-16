@@ -26,7 +26,9 @@
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
 
 	<dubbo:monitor protocol="registry" />
-	
+
+	<dubbo:consumer check="false"/>
+
     <dubbo:service interface="com.fangcang.titanjr.facade.TitanFinancialPermissionFacade" ref="titanFinancialPermissionFacade" timeout="20000"></dubbo:service>
 	<dubbo:service interface="com.fangcang.titanjr.facade.TitanFinancialTradeFacade" ref="titanFinanceTradeFacade" timeout="20000"></dubbo:service>
 	

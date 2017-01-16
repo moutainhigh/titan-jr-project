@@ -7,6 +7,7 @@ import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.common.exception.GlobalDaoException;
 import com.fangcang.titanjr.dao.TitanOrgBindinfoDao;
+import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
 import com.fangcang.titanjr.entity.TitanOrgBindinfo;
 import com.fangcang.titanjr.entity.parameter.TitanOrgBindinfoParam;
 
@@ -56,6 +57,15 @@ public class TitanOrgBindinfoDaoImpl extends GenericDAOMyBatisImpl implements Ti
 			TitanOrgBindinfo titanOrgBindinfo) throws DaoException {
 		try {
 			return getSqlSession().selectList("com.fangcang.titanjr.dao.TitanOrgBindinfoDao.selectActiveTitanOrgBindinfo", titanOrgBindinfo);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+	
+	@Override
+	public List<OrgBindInfoDTO> queryOrgBindInfoDTO(OrgBindInfoDTO orgBindDTO)throws DaoException {
+		try {
+			return getSqlSession().selectList("com.fangcang.titanjr.dao.TitanOrgBindinfoDao.queryOrgBindInfoDTO", orgBindDTO);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}

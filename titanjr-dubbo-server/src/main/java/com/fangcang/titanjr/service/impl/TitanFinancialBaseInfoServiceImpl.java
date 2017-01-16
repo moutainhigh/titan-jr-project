@@ -89,6 +89,7 @@ public class TitanFinancialBaseInfoServiceImpl implements TitanFinancialBaseInfo
 	public CityInfoInitResponse saveRSCityInfo() throws Exception {
 		CityInfoInitResponse cityInfoInitResponse = new CityInfoInitResponse();
 		try {
+			//查询省信息
 			CityInfoResponse rsProvinceInfo = baseInfoInitManager
 					.getRSProvinceInfo();
 			if (rsProvinceInfo != null && rsProvinceInfo.getCityInfos() != null) {
@@ -98,14 +99,26 @@ public class TitanFinancialBaseInfoServiceImpl implements TitanFinancialBaseInfo
 				List<CityInfo> rsProvinceList = rsProvinceInfo.getCityInfos();
 				// 省份信息循环
 				if (rsProvinceList != null && rsProvinceList.size() > 0) {
+					
+					//保存省级信息
+					List<TitanCityInfo> proInfo = new ArrayList<TitanCityInfo>();
+					for(int i = 0; i < rsProvinceList.size(); i++){
+						TitanCityInfo rsProvince = convertCityInfo2TitanCityInfo(rsProvinceList.get(i));
+						proInfo.add(rsProvince);
+					}
+					//保存省份信息
+					titanCityInfoDao.insertBatch(proInfo);
+					
+					//保存市级信息
 					for (int i = 0; i < rsProvinceList.size(); i++) {
 						if (rsProvinceList.get(i) != null) {
 							// 插入省份信息
 							TitanCityInfo rsProvince = convertCityInfo2TitanCityInfo(rsProvinceList.get(i));
 							// 获取省份下面的城市信息,并且排除全国
 							if((CommonConstant.COUNTRY_CODE).equals(rsProvinceList.get(i).getCitycode())){
-								titanCityInfoDao.insert(rsProvince);
+								continue;
 							}else{
+								
 								CityInfoResponse rsCityInfo = baseInfoInitManager
 										.getRSCityInfo(rsProvinceList.get(i)
 												.getCitycode());

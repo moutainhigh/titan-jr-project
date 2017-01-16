@@ -8,12 +8,15 @@ import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderInfo;
 import com.fangcang.titanjr.enums.PayTypeEnum;
+import com.fangcang.titanjr.dto.request.ConfirmOrdernQueryRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
+import com.fangcang.titanjr.dto.response.ConfirmOrdernQueryResponse;
 import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
 import com.fangcang.titanjr.dto.response.QrCodeResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
@@ -30,7 +33,9 @@ import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
+
 import net.sf.json.JSONSerializer;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -42,6 +47,7 @@ import javax.annotation.Resource;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -80,8 +86,8 @@ public class TitanPaymentController extends BaseController {
 
 	@Resource
 	private TitanCashierDeskService titanCashierDeskService;
-	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	
+	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	/**
 	 * 消息回调接口
 	 * @param rechargeResultConfirmRequest
@@ -99,6 +105,8 @@ public class TitanPaymentController extends BaseController {
 
 		response.getWriter().print("returnCode=000000&returnMsg=成功");
 		response.flushBuffer();
+		log.info(orderNo+"订单状态："+rechargeResultConfirmRequest.getPayStatus());
+		
 		String sign  =titanFinancialTradeService.getSign(rechargeResultConfirmRequest);
 		String signMsg = rechargeResultConfirmRequest.getSignMsg();
     	if(!MD5.MD5Encode(sign, "UTF-8").equals(signMsg)){
@@ -111,9 +119,9 @@ public class TitanPaymentController extends BaseController {
     		return ;
     	}
     	
+    	//查询订单
     	try{
     		lockOutTradeNoList(orderNo);
-        	
         	TransOrderRequest transOrderRequest = new TransOrderRequest();
     		transOrderRequest.setOrderid(orderNo);
     		TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
@@ -128,7 +136,7 @@ public class TitanPaymentController extends BaseController {
         	//validate transfer order 
         	boolean validateResult = titanPaymentService.validateIsConfirmed(transOrderDTO.getTransid());
 			if(!validateResult){
-				log.error("transfer were successed");
+				log.error("该订单已转帐成功");
 				unlockOutTradeNoList(orderNo);
 				return ;
 			}
@@ -139,11 +147,18 @@ public class TitanPaymentController extends BaseController {
         		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "充值成功 修改充值单失败", OrderExceptionEnum.OrderPay_Update, JSON.toJSONString(orderNo));
         		titanOrderService.saveOrderException(orderExceptionDTO);
         	}
-        	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARGE_SUCCESS;
         	
-        	if(PayerTypeEnum.RECHARGE.key.equals(payerType.getKey())){
+        	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARGE_SUCCESS;
+        	if(!validateOrderStatus(orderNo)){//发出三次确认订单成功到帐
+    			log.error("实在没办法,钱没到账，不能转账");
+    			orderStatusEnum = OrderStatusEnum.ORDER_DELAY;
+    			titanPaymentService.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
+    			return ;
+    		}
+        	
+        	if(PayerTypeEnum.RECHARGE.key.equals(payerType.getKey())){//如果是充值则置订单为成功
         		orderStatusEnum= OrderStatusEnum.ORDER_SUCCESS;
-        	}else{
+        	}else{//不是充值操作，就需要转帐
         		TransferRequest transferRequest = titanPaymentService.convertToTransferRequest(transOrderDTO);
 	        	log.info("begin to transfer:"+JsonConversionTool.toJson(transferRequest));
 	        	TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
@@ -197,6 +212,53 @@ public class TitanPaymentController extends BaseController {
     		unlockOutTradeNoList(orderNo);
     	}
     	
+	}
+	
+	private boolean validateOrderStatus(String orderNo){
+
+		ConfirmOrdernQueryRequest request = new ConfirmOrdernQueryRequest();
+		request.setOrderNo(orderNo);
+		request.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
+		
+		ConfirmOrdernQueryResponse response = null;
+		
+		TransOrderInfo order = null;
+		// 重试三次
+		for (int i = 0; i < 3; i++) {
+
+			response = titanFinancialTradeService.ordernQuery(request);
+
+			if (response == null || !response.isResult()
+					|| null == response.getTransOrderInfos()
+					|| response.getTransOrderInfos().size() != 1) {
+				log.error("confirem ordern query is null");
+				try {//线程等待
+					if(i<2){
+						Thread.sleep(500 * (2<<i));
+					}
+				} catch (InterruptedException e) {
+					log.error("", e);
+				}
+				continue;
+			}
+
+			order = response.getTransOrderInfos().get(0);
+
+			log.info(orderNo + "订单状态:" + i + ":" + order.getOrderstatus());
+
+			if (CommonConstant.RS_ORDER_STATUS.equals(order.getOrderstatus())) {
+				return true;
+			}
+			try {
+				if(i<2){
+					Thread.sleep(500 * (2<<i));
+				}
+				
+			} catch (InterruptedException e) {
+				log.error("", e);
+			}
+		}
+		return false;
 	}
 	
 	@RequestMapping("notifyPayResult")
@@ -359,7 +421,6 @@ public class TitanPaymentController extends BaseController {
 		//设置费率信息
 		titanPaymentRequest = titanRateService.setRateAmount(computeReq,
 				titanPaymentRequest);
-		
         TransOrderCreateResponse transOrderCreateResponse = titanFinancialTradeService.createRsOrder(titanPaymentRequest);
         if(!transOrderCreateResponse.isResult() || !StringUtil.isValidString(transOrderCreateResponse.getOrderNo()) ){
         	log.error("call createTitanTransOrder fail msg["+ JsonConversionTool.toJson(transOrderCreateResponse)+"]");
@@ -408,7 +469,7 @@ public class TitanPaymentController extends BaseController {
     	
 	}
 	
-	private String weChat(RechargeResponse rechargeResponse,Model model){
+	private String weChat(RechargeResponse rechargeResponse,Model model) throws Exception{
 		RechargeDataDTO rechargeDataDTO = rechargeResponse.getRechargeDataDTO();
 		QrCodeResponse response = titanFinancialTradeService.getQrCodeUrl(rechargeDataDTO);
 		if(!response.isResult()){
@@ -488,30 +549,35 @@ public class TitanPaymentController extends BaseController {
     	return resultMap;
     }
 	
-    
-    private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
-		synchronized (mapLock) {
-			if(mapLock.containsKey(out_trade_no)) {
-				synchronized (mapLock.get(out_trade_no)) 
-				{
-					mapLock.get(out_trade_no).wait();
+	@RequestMapping("wxPicture")
+	public void getWxPicture(String url,HttpServletResponse response){
+		try{
+			Wxutil.createRqCode(url, 170, 170, response.getOutputStream());
+		}catch(Exception e){
+			log.error("微信生成图片错误："+e.getMessage());
+		}
+	}
+	 private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
+			synchronized (mapLock) {
+				if(mapLock.containsKey(out_trade_no)) {
+					synchronized (mapLock.get(out_trade_no)) 
+					{
+						mapLock.get(out_trade_no).wait();
+					}
+				}
+				else{
+					mapLock.put(out_trade_no, new Object());
+				}
+				
+			}
+		}
+		
+		private void unlockOutTradeNoList(String out_trade_no) {
+			if(mapLock.containsKey(out_trade_no)){
+				synchronized (mapLock.get(out_trade_no)) {
+					mapLock.remove(out_trade_no).notifyAll();
 				}
 			}
-			else{
-				mapLock.put(out_trade_no, new Object());
-			}
-			
 		}
-	}
-	
-	private void unlockOutTradeNoList(String out_trade_no) {
-		if(mapLock.containsKey(out_trade_no)){
-			synchronized (mapLock.get(out_trade_no)) {
-				mapLock.remove(out_trade_no).notifyAll();
-			}
-		}
-	}
-    
-    
-    
+	    
 }

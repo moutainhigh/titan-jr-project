@@ -24,6 +24,8 @@ public class TitanTransferDTO implements Serializable {
     private Integer status;
     private String creator;
     private Date createtime;
+    private String payOrderNo;
+    
 
     public Integer getTransferreqid() {
         return transferreqid;
@@ -176,4 +178,13 @@ public class TitanTransferDTO implements Serializable {
     public void setCreatetime(Date createtime) {
         this.createtime = createtime;
     }
+
+	public String getPayOrderNo() {
+		return payOrderNo;
+	}
+
+	public void setPayOrderNo(String payOrderNo) {
+		this.payOrderNo = payOrderNo;
+	}
+    
 }

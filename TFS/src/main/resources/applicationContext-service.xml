@@ -22,6 +22,8 @@
 	<!--  group="production" -->
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
 
+	<dubbo:consumer check="false"/>
+
 	<!--<dubbo:monitor protocol="registry" />-->
 
 	<dubbo:reference id="titanFinancialOrganService" interface="com.fangcang.titanjr.service.TitanFinancialOrganService" retries="0" timeout="800000"/><!-- retries:重试次数 -->
@@ -34,6 +36,10 @@
     <dubbo:reference id="titanOrderService" interface="com.fangcang.titanjr.service.TitanOrderService" retries="0" timeout="40000"/>
     <dubbo:reference id="titanFinancialBankCardService" interface="com.fangcang.titanjr.service.TitanFinancialBankCardService" retries="0" timeout="40000"/>
 	<dubbo:reference id="titanHelpService" interface="com.fangcang.titanjr.service.TitanHelpService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
+	<dubbo:reference id="titanSysconfigService" interface="com.fangcang.titanjr.service.TitanSysconfigService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
+	<dubbo:reference id="titanFinancialLoanCreditService" interface="com.fangcang.titanjr.service.TitanFinancialLoanCreditService" retries="0" timeout="300000"/><!-- retries:重试次数 -->
 	<dubbo:reference id="titanFinancialRateService" interface="com.fangcang.titanjr.service.TitanFinancialRateService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
+	<dubbo:reference id="titanFinancialLoanService" interface="com.fangcang.titanjr.service.TitanFinancialLoanService" retries="0" timeout="300000"/><!-- retries:重试次数 -->
+
 	
 </beans>

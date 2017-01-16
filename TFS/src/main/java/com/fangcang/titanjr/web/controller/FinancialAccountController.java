@@ -3,6 +3,7 @@ package com.fangcang.titanjr.web.controller;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -175,7 +176,7 @@ public class FinancialAccountController extends BaseController {
     }
     @RequestMapping(value = "/order-pay-detail", method = RequestMethod.GET)
     public String queryPayOrderDetail(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
-        setTransOrderDetail(tradeDetailRequest,model);
+    	setTransOrderDetail(tradeDetailRequest,model);
         //付款时需查出当前机构
         FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
         organQueryRequest.setUserId(this.getUserId());
@@ -624,8 +625,9 @@ public class FinancialAccountController extends BaseController {
             head.createCell(6).setCellValue("交易内容");
             head.createCell(7).setCellValue("交易对方");
             head.createCell(8).setCellValue("订单金额");
-            head.createCell(9).setCellValue("手续费");
-            head.createCell(10).setCellValue("交易结果");
+            head.createCell(9).setCellValue("退款金额");
+            head.createCell(10).setCellValue("手续费");
+            head.createCell(11).setCellValue("交易结果");
             List<TransOrderDTO> orderDTOList = tradeDetailResponse.getTransOrders().getItemList();
             if (tradeDetailResponse != null && tradeDetailResponse.isResult()) {
                 for (int i = 0; i < orderDTOList.size(); i++) {
@@ -652,15 +654,17 @@ public class FinancialAccountController extends BaseController {
                         }
                         row.createCell(8).setCellValue(tradeAmount);
                     }
+                    
+                    row.createCell(9).setCellValue(this.refundAmount(orderDTOList.get(i)));
                     if (orderDTOList.get(i).getReceivedfee() != null) {
-                        row.createCell(9).setCellValue(orderDTOList.get(i).getReceivedfee() / 100.0);
+                        row.createCell(10).setCellValue(orderDTOList.get(i).getReceivedfee() / 100.0);
                     }
                     if (StringUtil.isValidString(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()))) {
-                        row.createCell(10).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
+                        row.createCell(11).setCellValue(OrderStatusEnum.getStatusMsgByKey(orderDTOList.get(i).getStatusid()));
                         if(OrderStatusEnum.ORDER_IN_PROCESS.equals(orderDTOList.get(i).getStatusid())
                         		||OrderStatusEnum.RECHARGE_FAIL.equals(orderDTOList.get(i).getStatusid())
                         		||OrderStatusEnum.FREEZE_FAIL.equals(orderDTOList.get(i).getStatusid())){
-                        	 row.createCell(10).setCellValue("处理中");
+                        	 row.createCell(11).setCellValue("处理中");
                         }
 //                    	if ("付款".equals(orderDTOList.get(i).getTradeType()) && OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(orderDTOList.get(i).getStatusid())) {
 //                            row.createCell(10).setCellValue(OrderStatusEnum.ORDER_SUCCESS.getStatusMsg());
@@ -690,6 +694,34 @@ public class FinancialAccountController extends BaseController {
         }
     }
 
+    private String refundAmount(TransOrderDTO order){
+    	if(!StringUtil.isValidString(order.getStatusid()) 
+    			|| !StringUtil.isValidString(order.getPayerType())
+    			||!OrderStatusEnum.isRefund(order.getStatusid())){//必须是退款
+    		return "0";
+    	}
+    	
+    	PayerTypeEnum payerType = PayerTypeEnum.getPayerTypeEnumByKey(order.getPayerType());
+    	BigDecimal refundAmount = null;
+    	if("收款".equals(order.getTradeType())){//收款方，且使用的是收款方的收银台
+    		if(payerType.isRecieveCashDesk()){
+    			refundAmount = new BigDecimal(order.getTradeamount()).subtract(new BigDecimal(order.getReceivedfee()));
+        	}else{
+        		refundAmount = new BigDecimal(order.getTradeamount());
+        	}
+    		return "-"+refundAmount.divide(new BigDecimal(100)).toString();
+    	}else if("付款".equals(order.getTradeType())){
+    		if(payerType.isRecieveCashDesk()){
+    			refundAmount = new BigDecimal(order.getTradeamount());
+        	}else{
+        		refundAmount = new BigDecimal(order.getTradeamount()).add(new BigDecimal(order.getReceivedfee()));
+        	}
+    		return "+"+refundAmount.divide(new BigDecimal(100)).toString();
+    	}
+    	
+    	return "0";
+    }
+    
     @RequestMapping("showSetPayPassword")
     public String showSetPayPassword() {
         return "checkstand-pay/setPayPassword";

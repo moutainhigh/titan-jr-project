@@ -66,10 +66,8 @@
             
             <mvc:exclude-mapping path="/setting/check_payPassword.action"/>
             <mvc:exclude-mapping path="/help/**/*"/>
+            <mvc:exclude-mapping path="/loan/offline/**/*"/>
            
-            
-            
-
             <bean class="com.fangcang.titanjr.web.interceptor.InitSessionInterceptor"></bean>
         </mvc:interceptor>
         <mvc:interceptor>
@@ -81,7 +79,7 @@
     </mvc:interceptors>
     
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">   
-          <property name="maxUploadSize"><value>10000000</value></property> 
+          <property name="maxUploadSize"><value>50000000</value></property> 
           <property name="defaultEncoding"><value>UTF-8</value></property> 
     </bean>
     

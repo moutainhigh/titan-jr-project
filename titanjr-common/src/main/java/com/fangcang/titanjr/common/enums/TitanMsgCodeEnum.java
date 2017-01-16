@@ -57,7 +57,7 @@ public enum TitanMsgCodeEnum {
 	USE_NEW_CARD_WITHDRAW_DEL_OLD_CARD_FAIL(110100015, "使用新卡提现删除原绑定卡失败"),
 
 	USE_NEW_CARD_WITHDRAW_BING_CARD_FAIL(110100016, "使用新卡提现,绑定新提现卡失败"),
-
+	
 	// "提现操作失败，请联系管理员"
 	WITHDRAW_OPT_FAIL(110100017, "提现操作失败，请联系管理员"),
 	
@@ -67,6 +67,50 @@ public enum TitanMsgCodeEnum {
 	QR_EXCEPTION(110100018,"调用网关接口异常"),
 	
 	NO_PERMISSION(110100019,"该用户无访问权限"),
+	
+    RS_ADD_ORDER_FAIL(110100020,"融数下单失败！"),
+	
+	RS_ADD_REFUND_ORDER_FAIL(110100021,"下退款单失败！"),
+    
+    RS_NOTIFY_REFUND_FAIL(110100022,"通知退款失败！"),
+    
+    LOCAL_ADD_TRANSFER_FAIL(110100023,"退款保存转账单失败！"),
+    
+    REFUND_TRANSFER_FAIL(110100024,"退款转账单失败！"),
+    
+    REFUND_SUCCESSED(110100025,"退款已完成，请勿重复退款！"),
+    
+    PACKAGE_REFUND_PARAM_FAIL(110100026,"封装网关退款参数失败"),
+    
+    TRANSFER_SUCCESS_UPDATE_LOACL_FAIL(110100027,"退款转账成功，更新本地单失败！"),
+    
+    
+    ORDER_NOT_REFUND(110100028,"该订单不存在或者未支付成功，不能退款"),
+    
+    ACCOUNT_BALANCE_NOT_ENOUGH(110100029,"账户余额不足，请充值"),
+    
+    BALANCE_ACCOUNT_NOT_ENOUGH(110100030,"收益子账户余额不足!"),
+    
+    REFUND_FAIL(110100031,"退款失败"),
+    
+  //订单信息不存在
+    QUERY_ORDER_FAIL(110100032,"订单不存在！"),
+    
+   RS_SUCCESS_SAVELOCA_FAIL(110100033,"融数下单成功，本地保存失败"),
+    
+    PACKAGE_RECHARGE_DATA_FAIL(110100034,"封装网关数据失败"),
+    
+    ACCOUNT_NOT_EXIST(110100035,"该账户未注册！"),
+  //落单+绑卡失败
+    OPER_ORDER_AND_BIND_CARD_FAIL(110100036,"落单绑卡失败！"),
+	
+    ORDER_REFUNND_IN_PROCESS(110100037,"该订单正在退款，请勿重复退款"),
+    
+    ORDER_OUT_TIME(110100038,"该订单已超出退款时间"),
+    
+    REFUND_UNFREEZE_FAIL(110100039,"资金解冻失败"),
+    
+    REFUND_CONCERT_FAIL(110100040,"商家未绑定金融账户或操作人为绑定金融用户"),
 
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");

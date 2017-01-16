@@ -17,8 +17,18 @@ public class CommonConstant {
 
     public static final String RS_FANGCANG_CONST_ID = "M000016";//机构号
     public static final String RS_FANGCANG_PRODUCT_ID = "P000070";//产品id
+    
+    public static final String RS_FANGCANG_PRODUCT_ID_230 = "P000230";//贷款产品id
+    
+    
+    public static final String RS_LOAN_CREDIT_RATETEMPL_RATE = "RA201611011800001";//贷款费率模板
+    public static final String RS_LOAN_CREDIT_REQUEST_TIME = "36";//授信申请有效期，时限,单位月
+    public static final int RS_LOAN_REPAYMENT_TIME = 90;//贷款还款到期时长,单位：天
+    
+    
     public static final String ORG_CODE_PREFIX = "TJM";//机构编码前缀
     public static final String ACCOUNT_CODE_PREFIX = "TJA";//accountCode编码前缀
+    public static final String LOAN_CREDIT_NO_PREFIX = "CR";//accountCode编码前缀
     public static final String RS_FANGCANG_USER_ID = "";//房仓平台userid
 
     //基础业务类型
@@ -53,6 +63,10 @@ public class CommonConstant {
 	//public static final String REQUSET_URL ="http://www.fangcang.com:8080/TFS/trade/payment.action";
 	//测试使用路径
 	public static final String REQUSET_URL = "/trade/showCashierDesk.action";
+	
+	public static final String QUICK_PAYMENT_URL = "/quickPayment/showQuickPayment.action";
+	
+	public static final String QUICK_PAYMENT = "6";
 	
 	//商户
 	public static final String ENTERPRISE = "1";
@@ -121,6 +135,7 @@ public class CommonConstant {
 	
     public static final String LOCAL_ORDERNO="L";
     
+	public static final String ACCOUNT_TYPE_ID = "00";
     //支付地址
     public static final String QRCODE="qrCode";
     
@@ -140,5 +155,34 @@ public class CommonConstant {
     public static final String ALIPAY = "alipay";
     
     public static final String CURRENT_TYPE="1";
+    
+    //融数订单状态。1为正常
+    public static final String RS_ORDER_STATUS="1";
+    
+    public static final String ORDER_DELAY = "001_001";
 	
+	    //退款成功
+    public static final String REFUND_SUCCESS="2";
+    
+    //退款审理中
+    public static final String REFUND_IN_PROCESS="0";
+	
+	public static final String IS_BIND_CARD = "0";
+	
+	//商户有效
+	public static final Integer IS_ACTIVE = 1;
+	
+	//30天所对应的毫秒数
+	public static final Long MS = (long)30*24*60*60*1000;
+	
+	public static final String ISRECIEVEDESK = "1";
+	
+	//是否是商家编码
+	public static final String ISMERCHCODE = "1";
+	
+	public static final Integer REAL_TIME = 0;
+	
+	public static final Integer NOT_REAL_TIME = 1;
+	
+    public static final String RATE_TEMPLETE = "RA201611011800001";
 }

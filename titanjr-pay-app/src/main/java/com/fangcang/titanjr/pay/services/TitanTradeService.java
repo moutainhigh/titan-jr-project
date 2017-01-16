@@ -158,7 +158,7 @@ public class TitanTradeService {
 			}
 		}
 
-		if (pe.isReicveMerchantCode()
+		if (pe.isReicveMerchantCode() 
 				&& StringUtil.isValidString(dto.getRuserId())) {
 			AccountInfoRequest accountInfo = new AccountInfoRequest();
 			accountInfo.setMerchantCode(dto.getRuserId());
@@ -180,6 +180,13 @@ public class TitanTradeService {
 		if(pe.isOpenOrg() && StringUtil.isValidString(dto.getRuserId())){
 			if(StringUtil.isValidString(dto.getUserId())){
 				log.error("对外商户传入的参数不合法");
+				return false;
+			}
+		}
+		
+		if(pe.isTTMAlL() && StringUtil.isValidString(dto.getRuserId())){
+			if(StringUtil.isValidString(dto.getUserId())){
+				log.error("TTMAl传入参数不合法");
 				return false;
 			}
 		}

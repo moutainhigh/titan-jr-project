@@ -9,6 +9,7 @@
         <version>1.0.0</version>
     </parent>
 
+
     <artifactId>titanjr-rs-app</artifactId>
 
     <name>titanjr-rs-app</name>
@@ -19,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>com.ruixuesoft</groupId>
-            <artifactId>RopExSdk</artifactId>
+            <artifactId>ropexsdk</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

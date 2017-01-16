@@ -51,4 +51,14 @@ public class TitanFundFreezereqDaoImpl extends GenericDAOMyBatisImpl implements 
 			throw new DaoException(e);
 		}
 	}
+
+	@Override
+	public List<FundFreezeDTO> queryFundFreezeDTOByOrderNo(String orderno)
+			throws DaoException {
+		try {
+			return super.selectList("com.fangcang.titanjr.dao.TitanFundFreezereqDao.queryFreezeOrder", orderno);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
 }

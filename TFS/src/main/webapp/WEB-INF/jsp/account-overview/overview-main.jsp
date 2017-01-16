@@ -41,6 +41,56 @@
 					</tr>
 				</table>
 			</div>
+			
+			<div class="MyAssets_chart_list01 fr" id="loanAccountZone" style="display: none;">
+				<h3>我的负债</h3>
+				<h4>
+					<i class="MyAssets_redNotice"><aa id="loanAmount">0.00</aa></i>
+					元
+				</h4>
+				<table cellpadding="0" cellspacing="0" class="MyAssets_chart_tab01">
+					<tr>
+						<td width="75" class="MyAssets_chart_td01">
+							<canvas id="can4" class="canvasBox"  height="60" width="60"></canvas>
+							<span></span>
+						</td>
+						<td>
+							<div class="fl" >
+							<p style="line-height: 24px;">
+								<span>运营贷总欠款：<a id="OPERACTION">0.00</a></span>															
+							</p>
+							<p class="c_999 " style="line-height: 24px;">
+								<span class="f_12">
+								<i class="fl">参考待还本息：<a id="OPERACTION_SUM">0.00</a></i> <i class="MyAssets_noticeIco m_t3 fl" title="参考待还本息为定时更新贷款订单应还本息之和，实际还款本息以还款时显示应还本息为准。"></i>
+								</span>
+							</p>	
+							</div>
+							<a href="<%=basePath %>/loan/credit/checkCreditStatus.shtml#zkback" class="blue decorationUnderline fl m_t15">还款</a>
+						</td>
+					</tr>
+					<tr>
+						<td width="75" class="MyAssets_chart_td01">
+							<canvas id="can5" class="canvasBox"  height="60" width="60"></canvas>
+							<span></span>
+						</td>
+						<td>
+							<div class="fl" >
+							<p style="line-height: 24px;">
+								<span>包房专项贷款：<a id="ROOM_PACK">0.00</a></span>
+							</p>
+							<p class="c_999 " style="line-height: 24px;">
+								<span class="f_12">
+								<i class="fl">参考待还本息：<a id="ROOM_PACK_SUM">0.00</a></i> <i class="MyAssets_noticeIco m_t3 fl" title="参考待还本息为定时更新贷款订单应还本息之和，实际还款本息以还款时显示应还本息为准。"></i>
+								</span>								
+							</p>
+							</div>	
+							<a href="<%=basePath %>/loan/credit/checkCreditStatus.shtml#zkback" class="blue decorationUnderline fl m_t15">还款</a>
+						
+						</td>
+					</tr>
+				</table>
+			</div>
+			
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -1181,6 +1231,80 @@
 		        	}
 		        }
         	});
+		}
+		
+		loadLoanAccountInfo();
+		
+		function loadLoanAccountInfo()
+		{
+			  $.ajax({
+					type : 'get',
+					url :  '<%=basePath%>/loan/loanStatInfo.shtml'+"?DateTime="+new Date().getTime(),
+					dataType : 'json',
+					success : function(obj) {
+							
+						   if(obj['code'] && obj['msg'])
+						   {
+							   return;
+						   }
+						   
+						   
+						   $('#loanAccountZone').show();
+						   
+						   
+						   var roomPackNum = 0;
+						   var operationNum = 0;
+						   
+						   if(obj['productAmount'])
+						   {
+							   if(obj['productAmount']['ROOM_PACK'])
+							   {
+								   roomPackNum = Math.round((obj['productAmount']['ROOM_PACK'] / obj['loanAmount'] ) * 100);
+								   $('#ROOM_PACK').text(formatCurrency(obj['productAmount']['ROOM_PACK']/100)  );
+							   }
+							   
+							   if(obj['productAmount']['OPERACTION'])
+							   {
+								   operationNum = Math.round((obj['productAmount']['OPERACTION'] / obj['loanAmount'] ) * 100);
+								   $('#OPERACTION').text(formatCurrency(obj['productAmount']['OPERACTION']/100));
+							   }
+						   }
+						   
+						   if(obj['productActualAmount'])
+						   {
+							   if(obj['productActualAmount']['ROOM_PACK'])
+							   {
+								   
+								   $('#ROOM_PACK_SUM').text(formatCurrency(obj['productActualAmount']['ROOM_PACK']/100)  );
+							   }
+							   
+							   if(obj['productActualAmount']['OPERACTION'])
+							   {
+								   $('#OPERACTION_SUM').text(formatCurrency(obj['productActualAmount']['OPERACTION']/100));
+							   }
+						   }
+						   
+						   
+						   if(obj['loanAmount'])
+							{
+							   $('#loanAmount').text(formatCurrency(obj['loanAmount']/100) );
+							}
+						   
+						   
+						   new scale({id: "can5", numb: roomPackNum });
+						   new scale({id: "can4", numb: operationNum});
+						   
+							
+
+						},
+						error:function(xhr,status){
+		         			if(xhr.status&&xhr.status==403){
+		            			//new top.Tip({msg : '没有权限访问贷款数据，请联系管理员', type: 3 , timer:2000});
+		            			return ;
+		            		}
+		         			 new top.Tip({msg : '请求失败，请重试', type: 3, timer:2000});
+		         		}
+					});
 		}
 </script>
 </body>
