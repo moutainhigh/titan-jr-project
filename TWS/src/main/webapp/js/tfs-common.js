@@ -1,6 +1,7 @@
 //验证用户名格式
 var email_reg=/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
 var phone_reg=/^13[0-9]{9}$|^14[0-9]{9}$|^15[0-9]{9}$|^18[0-9]{9}$|^17[0-9]{9}$/;
+var payPwd_reg=/^[0-9]{6}$/;
 function AjaxPage(option){
 	this.defaults = {
 			"pageSize":15,

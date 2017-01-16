@@ -22,7 +22,7 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
-	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
+	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
 </head>
 <body>

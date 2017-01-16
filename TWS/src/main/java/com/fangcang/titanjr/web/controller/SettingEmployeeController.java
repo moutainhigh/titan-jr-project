@@ -11,6 +11,7 @@ import com.fangcang.titanjr.dto.bean.TitanRateDto;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 import com.fangcang.titanjr.service.TitanFinancialRateService;
+
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -25,12 +26,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.fangcang.corenut.dao.PaginationSupport;
-import com.fangcang.titanjr.common.enums.LoginSourceEnum;
+import com.fangcang.titanjr.common.enums.UserSourceEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
@@ -50,8 +52,6 @@ import com.fangcang.util.StringUtil;
  * @2016年6月14日
  */
 @Controller
-@RequestMapping("/setting")
-@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 public class SettingEmployeeController extends BaseController{
 	private static final Log log = LogFactory.getLog(SettingEmployeeController.class);
     
@@ -69,7 +69,7 @@ public class SettingEmployeeController extends BaseController{
 	 * @return
 	 */
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-	@RequestMapping("/slidemenu")
+	@RequestMapping("/setting/slidemenu")
 	public String slidemenu(){
 		return "slidemenu/jr-setting-menu";
 	}
@@ -77,7 +77,8 @@ public class SettingEmployeeController extends BaseController{
 	 * 员工权限设置(查询员工)
 	 * @return
 	 */
-	@RequestMapping("/employee")
+	@RequestMapping("/setting/employee")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String employee(){
 		
 		return "setting/employee-list";
@@ -89,7 +90,8 @@ public class SettingEmployeeController extends BaseController{
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/employee-table")
+	@RequestMapping("/setting/employee-table")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String employeeTable(String tfsUserLoginName,String userName, Integer pageNo,Integer pageSize,Model model){
 		if(pageNo==null){
 			pageNo = 1;
@@ -97,12 +99,13 @@ public class SettingEmployeeController extends BaseController{
 		if(pageSize==null||pageSize==0){
 			pageSize = 15;
 		}
-		Integer tfsUserId = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+		String tfsUserId = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
-		userInfoQueryRequest.setTfsUserId(tfsUserId);
+		userInfoQueryRequest.setTfsUserId(Integer.valueOf(tfsUserId));
 		userInfoQueryRequest.setPageSize(pageSize);
 		userInfoQueryRequest.setCurrentPage(pageNo);
 		userInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
+		userInfoQueryRequest.setBindIsactive(100);//不使用绑定的查询条件
 		UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
 		
 		userInfoQueryRequest.setTfsUserId(null);
@@ -111,6 +114,7 @@ public class SettingEmployeeController extends BaseController{
 		userInfoQueryRequest.setUserLoginName("".equals(tfsUserLoginName)?null:tfsUserLoginName);
 		userInfoQueryRequest.setUserName("".equals(userName)?null:userName);
 		userInfoQueryRequest.setOrgCode(userInfoResponse.getUserInfoDTOList().get(0).getOrgCode());
+		userInfoQueryRequest.setBindIsactive(100);//不使用绑定的查询条件
 		RoleUserInfoPageResponse roleUserInfoPageResponse =  new RoleUserInfoPageResponse();
 		if(StringUtil.isValidString(userInfoQueryRequest.getOrgCode())){
 			roleUserInfoPageResponse = titanFinancialUserService.queryRoleUserInfoPage(userInfoQueryRequest);
@@ -125,7 +129,8 @@ public class SettingEmployeeController extends BaseController{
 	 * 新增员工权限
 	 * @return
 	 */
-	@RequestMapping("/fc-employee")
+	@RequestMapping("/setting/fc-employee")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String fcEmployee(){
 		return "setting/fc-employee-list";
 	}
@@ -134,7 +139,8 @@ public class SettingEmployeeController extends BaseController{
 	 * 新增员工权限-表格数据(房仓员工查询)
 	 * @return
 	 */
-	@RequestMapping("/fc-employee-table")
+	@RequestMapping("/setting/fc-employee-table")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String fcEmployeeTable(HttpServletRequest request,FcEmployeeTablePojo  fcEmployeeTablePojo,Model model){
 		SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
 
@@ -159,31 +165,10 @@ public class SettingEmployeeController extends BaseController{
 	 * 新增权限员工 添加 / 修改 金融员工信息（查询员工信息）
 	 * @return
 	 */
-	@RequestMapping("/employee-add")
-	public String employeeAdd(Integer tfsUserId,Integer fcUserId,Model model){
-		model.addAttribute("tfsUserId", tfsUserId);//新增该变量没有值
-		if(tfsUserId!=null&&tfsUserId>0){
-			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
-			userInfoQueryRequest.setTfsUserId(tfsUserId);
-			UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
-			
-			if(userInfoResponse.getUserInfoDTOList()!=null&&userInfoResponse.getUserInfoDTOList().size()>0){
-				UserInfoDTO userInfoDTO = userInfoResponse.getUserInfoDTOList().get(0);
-				model.addAttribute("userInfoDTO", userInfoDTO);
-				if(CollectionUtils.isNotEmpty(userInfoDTO.getRoleDTOList())){
-					String roleIds = "";
-					for(RoleDTO item : userInfoDTO.getRoleDTOList()){
-						if(item.getIsActive()==1){
-							roleIds += item.getRoleId()+",";
-						}
-					}
-					model.addAttribute("roleIds", roleIds);
-				}
-				return "setting/employee-update";
-			}
-			model.addAttribute("errormsg", "数据信息不存在");
-			return "error";
-		}
+	@RequestMapping("/setting/employee-add")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
+	public String employeeAdd(){
+		 
 		return "setting/employee-add";
 	}
 	
@@ -194,7 +179,8 @@ public class SettingEmployeeController extends BaseController{
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping("/save-employee")
+	@RequestMapping("/setting/save-employee")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String saveEmployee(EmployeePojo employeePojo){
 		
     	if (!GenericValidate.validate(employeePojo)) {
@@ -208,26 +194,25 @@ public class SettingEmployeeController extends BaseController{
     	if(!verifyCheckCodeResponse.isResult()){
     		return toJson(putSysError(verifyCheckCodeResponse.getReturnMessage()));
     	}
-		//TODO 校验待新增的用户是不是属于该商家
 		
 		String userId = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID);
 		
-		SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
-		saaSUserRoleRequest.setFcUserId(employeePojo.getFcUserId());
-		SaaSUserRoleResponse saaSUserRoleResponse = new SaaSUserRoleResponse();
-		try {
-			saaSUserRoleResponse = titanFinancialUserService.querySaaSUserRolePage(saaSUserRoleRequest);
-		} catch (GlobalServiceException e) {
-			log.error("查询saas用户失败，参数employeePojo:" +ToStringBuilder.reflectionToString(employeePojo), e);
-			putSysError(WebConstant.CONTROLLER_ERROR_MSG);
-			return toJson();
-		}
-		SaaSMerchantUserDTO saaSMerchantUserDTO =saaSUserRoleResponse.getPaginationSupport().getItemList().get(0);
+		//SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
+		//saaSUserRoleRequest.setFcUserId(employeePojo.getFcUserId());
+		//SaaSUserRoleResponse saaSUserRoleResponse = new SaaSUserRoleResponse();
+		//try {
+		//	saaSUserRoleResponse = titanFinancialUserService.querySaaSUserRolePage(saaSUserRoleRequest);
+		//} catch (GlobalServiceException e) {
+		//	log.error("查询saas用户失败，参数employeePojo:" +ToStringBuilder.reflectionToString(employeePojo), e);
+		//	putSysError(WebConstant.CONTROLLER_ERROR_MSG);
+		//	return toJson();
+		//}
+		//SaaSMerchantUserDTO saaSMerchantUserDTO =saaSUserRoleResponse.getPaginationSupport().getItemList().get(0);
 		//新增用户
 		UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
 		userRegisterRequest.setOperateTime(DateUtil.dateToString(DateUtil.getCurrentDate()));
     	userRegisterRequest.setIsAdminUser(0);
-		userRegisterRequest.setFcLoginUserName(saaSMerchantUserDTO.getUserLoginName());
+		//userRegisterRequest.setFcLoginUserName(saaSMerchantUserDTO.getUserLoginName());
     	userRegisterRequest.setLoginUserName(employeePojo.getReceiveAddress());
     	userRegisterRequest.setUserName(employeePojo.getUserName());
     	userRegisterRequest.setOrgCode(userId);
@@ -235,7 +220,7 @@ public class SettingEmployeeController extends BaseController{
     	userRegisterRequest.setUnselectRoleIdList(toList(employeePojo.getUncheckedRoleId()));
     	//生成一个密码
     	userRegisterRequest.setPassword(RandomStringUtils.randomAlphabetic(6));
-    	userRegisterRequest.setRegisterSource(LoginSourceEnum.SAAS.getKey());
+    	userRegisterRequest.setRegisterSource(UserSourceEnum.TFS.getKey());
     	userRegisterRequest.setUserId(userId);//金服机构
     	try {
 			UserRegisterResponse respose = titanFinancialUserService.registerFinancialUser(userRegisterRequest);
@@ -251,7 +236,7 @@ public class SettingEmployeeController extends BaseController{
 				putSysError(respose.getReturnMessage());
 			}
 		} catch (Exception e) {
-			log.error("查询saas用户失败，参数employeePojo:" +ToStringBuilder.reflectionToString(employeePojo), e);
+			log.error("添加员工失败，参数employeePojo:" +Tools.gsonToString(employeePojo), e);
 			putSysError("添加员工失败，请重试");
 		}
     	
@@ -283,7 +268,8 @@ public class SettingEmployeeController extends BaseController{
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping("/save-update-user")
+	@RequestMapping("/setting/save-update-user")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String saveUpdateUser(EmployeePojo employeePojo){
 		if(employeePojo.getTfsUserId()==null||employeePojo.getTfsUserId()<=0){
 			putSysError("参数错误");
@@ -314,7 +300,8 @@ public class SettingEmployeeController extends BaseController{
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping("/freeze-user")
+	@RequestMapping("/setting/freeze-user")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String freezeUser(Integer status,Integer tfsUserId){
 		if((status==null||status<0)||(tfsUserId==null||tfsUserId<0)){
 			putSysError("参数错误");
@@ -348,7 +335,8 @@ public class SettingEmployeeController extends BaseController{
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping("/cancel-permission")
+	@RequestMapping("/setting/cancel-permission")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String cancelPermission(Integer tfsUserId){
 		CancelPermissionRequest cancelPermissionRequest = new CancelPermissionRequest();
 		cancelPermissionRequest.setTfsUserId(tfsUserId);
@@ -362,11 +350,11 @@ public class SettingEmployeeController extends BaseController{
 				return toJson();
 			}
 		} catch (GlobalServiceException e) {
-//			log.error("解除权限操作失败，操作发起用户username："+getSAASLoginName()+",tfsUserId:"+tfsUserId, e);
+			log.error("解除权限操作失败，被解除的用户id[tfsUserId]:"+tfsUserId, e);
 			putSysError(WebConstant.CONTROLLER_ERROR_MSG);
 			return toJson();
 		} catch (MessageServiceException e) {
-//			log.error("解除权限操作失败， 原因：参数错误。操作发起用户username："+getSAASLoginName()+",tfsUserId:"+tfsUserId, e);
+			log.error("解除权限操作失败， 原因："+e.getMessage()+",被解除的用户id[tfsUserId]:"+tfsUserId, e);
 			putSysError(e.getMessage());
 			return toJson();
 		}
@@ -378,8 +366,8 @@ public class SettingEmployeeController extends BaseController{
 	 * 收付款费率公示
 	 * @return
 	 */
-	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
-	@RequestMapping("/fee")
+	@RequestMapping("/ex/fee")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String fee(HttpServletRequest request,Model model){
 		List<TitanRateDto> rateInfoList = new ArrayList<TitanRateDto>();
 		RateConfigRequest rateConfigRequest = new RateConfigRequest();
@@ -414,8 +402,8 @@ public class SettingEmployeeController extends BaseController{
 	 * 金融协议
 	 * @return
 	 */
-	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
-	@RequestMapping("/protocol")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	@RequestMapping("/ex/protocol")
 	public String protocol(){
 		return "setting/protocol";
 	}

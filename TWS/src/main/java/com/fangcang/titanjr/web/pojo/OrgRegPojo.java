@@ -42,7 +42,17 @@ public class OrgRegPojo {
 	private int userType;
 	
 	private String orgId;
+	/**
+	 * 用户登录或者注册来源，见UserSourceEnum
+	 */
+	private String us;
 	
+	public String getUs() {
+		return us;
+	}
+	public void setUs(String us) {
+		this.us = us;
+	}
 	public String getOrgId() {
 		return orgId;
 	}

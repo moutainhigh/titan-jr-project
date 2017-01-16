@@ -37,7 +37,11 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
      * 要排除的状态
      */
     private Integer excludeStatus;
-
+    
+    /***
+     * 用户绑定状态，为空时，默认为1
+     */
+    private Integer bindIsactive;
     
     public String getOrgCode() {
 		return orgCode;
@@ -134,4 +138,13 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
     public void setBindUserId(String bindUserId) {
         this.bindUserId = bindUserId;
     }
+
+	public Integer getBindIsactive() {
+		return bindIsactive;
+	}
+
+	public void setBindIsactive(Integer bindIsactive) {
+		this.bindIsactive = bindIsactive;
+	}
+    
 }

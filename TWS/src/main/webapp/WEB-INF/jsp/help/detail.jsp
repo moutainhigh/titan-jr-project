@@ -6,7 +6,7 @@
 <meta charset="utf-8">
     <title>帮助中心-泰坦金融</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
-	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
+	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 	<style type="text/css">
 		body {background: #f1f1f1;}
 		.ui-popup-backdrop{ opacity: 0.4!important; }

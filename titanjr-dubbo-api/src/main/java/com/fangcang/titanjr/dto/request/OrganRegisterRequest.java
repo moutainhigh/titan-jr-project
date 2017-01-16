@@ -60,7 +60,7 @@ public class OrganRegisterRequest extends BaseRequestDTO {
     /***************** 房仓信息 *****************/
     //房仓登录用户名
     private String fcLoginUserName;
-    //商家编码
+    //商家编码或者第三方的编码
     private String  merchantCode;
     //商家名称
     private String merchantname;

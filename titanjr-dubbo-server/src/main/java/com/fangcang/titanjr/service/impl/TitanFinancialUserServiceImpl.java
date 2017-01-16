@@ -1,50 +1,11 @@
 package com.fangcang.titanjr.service.impl;
 
-import com.fangcang.corenut.dao.PaginationSupport;
-import com.fangcang.exception.DaoException;
-import com.fangcang.exception.ParameterException;
-import com.fangcang.merchant.api.MerchantFacade;
-import com.fangcang.merchant.api.MerchantUserFacade;
-import com.fangcang.merchant.dto.*;
-import com.fangcang.merchant.dto.RoleDTO;
-import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
-import com.fangcang.merchant.query.dto.MerchantUserQueryDTO;
-import com.fangcang.merchant.response.dto.MerchantResponseDTO;
-import com.fangcang.security.domain.Role;
-import com.fangcang.security.domain.User;
-import com.fangcang.security.facade.RoleFacade;
-import com.fangcang.security.facade.UserFacade;
-import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
-import com.fangcang.titanjr.common.enums.LoginSourceEnum;
-import com.fangcang.titanjr.common.enums.entity.TitanCheckCodeEnum;
-import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
-import com.fangcang.titanjr.common.exception.GlobalServiceException;
-import com.fangcang.titanjr.common.exception.MessageServiceException;
-import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
-import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
-import com.fangcang.titanjr.common.util.CommonConstant;
-import com.fangcang.titanjr.common.util.GenericValidate;
-import com.fangcang.titanjr.common.util.MD5;
-import com.fangcang.titanjr.dao.TitanRoleDao;
-import com.fangcang.titanjr.dao.TitanUserBindInfoDao;
-import com.fangcang.titanjr.dao.TitanUserDao;
-import com.fangcang.titanjr.dao.TitanUserRoleDao;
-import com.fangcang.titanjr.dto.BaseResponseDTO;
-import com.fangcang.titanjr.dto.bean.*;
-import com.fangcang.titanjr.dto.request.*;
-import com.fangcang.titanjr.dto.response.*;
-import com.fangcang.titanjr.entity.TitanRole;
-import com.fangcang.titanjr.entity.TitanUser;
-import com.fangcang.titanjr.entity.TitanUserBindInfo;
-import com.fangcang.titanjr.entity.TitanUserRole;
-import com.fangcang.titanjr.entity.parameter.TitanUserBindInfoParam;
-import com.fangcang.titanjr.entity.parameter.TitanUserParam;
-import com.fangcang.titanjr.entity.parameter.TitanUserRoleParam;
-import com.fangcang.titanjr.enums.PermissionEnum;
-import com.fangcang.titanjr.rs.util.RSInvokeConstant;
-import com.fangcang.titanjr.service.TitanFinancialUserService;
-import com.fangcang.util.MyBeanUtil;
-import com.fangcang.util.StringUtil;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.annotation.Resource;
 
 import net.sf.json.JSONSerializer;
 
@@ -57,12 +18,110 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.exception.DaoException;
+import com.fangcang.exception.ParameterException;
+import com.fangcang.merchant.api.MerchantFacade;
+import com.fangcang.merchant.api.MerchantUserFacade;
+import com.fangcang.merchant.dto.BaseResultDTO;
+import com.fangcang.merchant.dto.MerchantUserCheckDTO;
+import com.fangcang.merchant.dto.MerchantUserCreateDTO;
+import com.fangcang.merchant.dto.MerchantUserDTO;
+import com.fangcang.merchant.dto.ModifyPWDRequestDTO;
+import com.fangcang.merchant.dto.RoleDTO;
+import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
+import com.fangcang.merchant.query.dto.MerchantUserQueryDTO;
+import com.fangcang.merchant.response.dto.MerchantResponseDTO;
+import com.fangcang.security.domain.Role;
+import com.fangcang.security.domain.User;
+import com.fangcang.security.facade.RoleFacade;
+import com.fangcang.security.facade.UserFacade;
+import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
+import com.fangcang.titanjr.common.enums.UserSourceEnum;
+import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
+import com.fangcang.titanjr.common.enums.entity.TitanCheckCodeEnum;
+import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
+import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.common.exception.MessageServiceException;
+import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
+import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.common.util.MD5;
+import com.fangcang.titanjr.dao.TitanOrgCheckDao;
+import com.fangcang.titanjr.dao.TitanRoleDao;
+import com.fangcang.titanjr.dao.TitanUserBindInfoDao;
+import com.fangcang.titanjr.dao.TitanUserDao;
+import com.fangcang.titanjr.dao.TitanUserRoleDao;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
+import com.fangcang.titanjr.dto.bean.CheckStatus;
+import com.fangcang.titanjr.dto.bean.OrgDTO;
+import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
+import com.fangcang.titanjr.dto.bean.TitanRoleDTO;
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
+import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
+import com.fangcang.titanjr.dto.bean.UserInfoDTO;
+import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
+import com.fangcang.titanjr.dto.request.CheckUserRequest;
+import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
+import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
+import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
+import com.fangcang.titanjr.dto.request.LoginPasswordModifyRequest;
+import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
+import com.fangcang.titanjr.dto.request.PassLoginRequest;
+import com.fangcang.titanjr.dto.request.PayPasswordRequest;
+import com.fangcang.titanjr.dto.request.PermissionRequest;
+import com.fangcang.titanjr.dto.request.SaaSUserRoleRequest;
+import com.fangcang.titanjr.dto.request.SmsLoginRequest;
+import com.fangcang.titanjr.dto.request.TitanRoleQueryRequest;
+import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
+import com.fangcang.titanjr.dto.request.UpdateUserRequest;
+import com.fangcang.titanjr.dto.request.UserBindInfoRequest;
+import com.fangcang.titanjr.dto.request.UserFreezeRequest;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
+import com.fangcang.titanjr.dto.request.UserLoginNameExistRequest;
+import com.fangcang.titanjr.dto.request.UserRegisterRequest;
+import com.fangcang.titanjr.dto.request.UserRoleSetRequest;
+import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
+import com.fangcang.titanjr.dto.response.CancelPermissionResponse;
+import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
+import com.fangcang.titanjr.dto.response.CheckUserResponse;
+import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.FinancialUserBindResponse;
+import com.fangcang.titanjr.dto.response.FinancialUserUnBindResponse;
+import com.fangcang.titanjr.dto.response.LoginPasswordModifyResponse;
+import com.fangcang.titanjr.dto.response.PassLoginResponse;
+import com.fangcang.titanjr.dto.response.PayPasswordResponse;
+import com.fangcang.titanjr.dto.response.PermissionResponse;
+import com.fangcang.titanjr.dto.response.RoleUserInfoPageResponse;
+import com.fangcang.titanjr.dto.response.SaaSUserRoleResponse;
+import com.fangcang.titanjr.dto.response.SmsLoginResponse;
+import com.fangcang.titanjr.dto.response.TitanRoleResponse;
+import com.fangcang.titanjr.dto.response.UpdateUserResponse;
+import com.fangcang.titanjr.dto.response.UserBindInfoResponse;
+import com.fangcang.titanjr.dto.response.UserFreezeResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
+import com.fangcang.titanjr.dto.response.UserInfoResponse;
+import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
+import com.fangcang.titanjr.dto.response.UserRegisterResponse;
+import com.fangcang.titanjr.dto.response.UserRoleSetResponse;
+import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
+import com.fangcang.titanjr.entity.TitanOrgCheck;
+import com.fangcang.titanjr.entity.TitanRole;
+import com.fangcang.titanjr.entity.TitanUser;
+import com.fangcang.titanjr.entity.TitanUserBindInfo;
+import com.fangcang.titanjr.entity.TitanUserRole;
+import com.fangcang.titanjr.entity.parameter.TitanOrgCheckParam;
+import com.fangcang.titanjr.entity.parameter.TitanUserBindInfoParam;
+import com.fangcang.titanjr.entity.parameter.TitanUserParam;
+import com.fangcang.titanjr.entity.parameter.TitanUserRoleParam;
+import com.fangcang.titanjr.enums.PermissionEnum;
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanFinancialUserService;
+import com.fangcang.util.MyBeanUtil;
+import com.fangcang.util.StringUtil;
 
 @Service("titanFinancialUserService")
 public class TitanFinancialUserServiceImpl implements TitanFinancialUserService {
@@ -82,10 +141,11 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 
     @Resource
     private TitanRoleDao titanRoleDao;
+    @Resource
+    private TitanOrgCheckDao titanOrgCheckDao;
     
-    
-//    @Resource  此处互相持有实例 ,需要修改。
-    private TitanFinancialOrganServiceImpl organService;
+    @Resource  
+    private TitanFinancialOrganService organService;
     
     @Resource
     private HessianProxyBeanFactory hessianProxyBeanFactory;
@@ -110,7 +170,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
             return response;
         }
         //SaaS页面注册时，商家编码和房仓登录名不能为空
-        if (userRegisterRequest.getRegisterSource() == LoginSourceEnum.SAAS.getKey()) {
+        if (userRegisterRequest.getRegisterSource() == UserSourceEnum.SAAS.getKey()) {
             if (!StringUtil.isValidString(userRegisterRequest.getFcLoginUserName()) ||
                     !StringUtil.isValidString(userRegisterRequest.getMerchantCode())) {
                 response.putParamError();
@@ -126,7 +186,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         }
 
         //SAAS验证用户是否存在当前商家,2016-12-23
-        if(userRegisterRequest.getRegisterSource()==LoginSourceEnum.SAAS.getKey()){
+        if(userRegisterRequest.getRegisterSource()==UserSourceEnum.SAAS.getKey()){
         	 MerchantUserCheckDTO checkDTO = new MerchantUserCheckDTO();
              checkDTO.setUserLoginName(userRegisterRequest.getLoginUserName());
              //TODO 检测机制要改变下，如果重复的用户属于金服的商家编码，则允许重复创建。但要修改相应的数据
@@ -155,9 +215,9 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 
         //2.saas页面注册时金服添加用户绑定关系
         Long orgiUserId = null;//SaaS注册时存在，当前登录的SaaS用户的用户id
-        if (userRegisterRequest.getRegisterSource() == LoginSourceEnum.SAAS.getKey()||userRegisterRequest.getRegisterSource() == LoginSourceEnum.TTM.getKey()) {
+        if (userRegisterRequest.getRegisterSource() == UserSourceEnum.SAAS.getKey()||userRegisterRequest.getRegisterSource() == UserSourceEnum.TTM.getKey()) {
             //查询房仓金服商家已添加上的用户
-            if(userRegisterRequest.getRegisterSource() == LoginSourceEnum.SAAS.getKey()){
+            if(userRegisterRequest.getRegisterSource() == UserSourceEnum.SAAS.getKey()){
             	MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
                 List<String> loginNameList = new ArrayList<String>();
                 loginNameList.add(userRegisterRequest.getFcLoginUserName());
@@ -211,7 +271,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
             log.error("金融权限添加失败，抛出异常回滚,userid:"+userRegisterRequest.getUserId());
             throw new Exception("金融权限初始化失败");
         }
-        if(userRegisterRequest.getRegisterSource() == LoginSourceEnum.SAAS.getKey()){
+        if(userRegisterRequest.getRegisterSource() == UserSourceEnum.SAAS.getKey()){
 	        //4.SaaS系统添加员工属于固定金服商家（需配置起来）
 	        MerchantDetailQueryDTO merchantDetailQueryDTO = new MerchantDetailQueryDTO();
 	        merchantDetailQueryDTO.setMerchantCode(RSInvokeConstant.defaultMerchant);
@@ -555,12 +615,11 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 	public FinancialUserUnBindResponse unbindFinancialUser(FinancialUserUnBindRequest financialUserUnBindRequest)throws GlobalServiceException {
     	FinancialUserUnBindResponse response = new FinancialUserUnBindResponse();
     	try {
-    		if(financialUserUnBindRequest.getTfsuserid()!=null&&financialUserUnBindRequest.getMerchantcode()!=null){
+    		if(financialUserUnBindRequest.getTfsuserid()!=null){
         		//根据金服用户id解除关系
         		TitanUserBindInfo entity = new TitanUserBindInfo();
         		entity.setIsactive(ISACTIVE_0_NO);
         		entity.setTfsuserid(financialUserUnBindRequest.getTfsuserid());
-        		entity.setMerchantcode(financialUserUnBindRequest.getMerchantcode());
         		entity.setModifior(financialUserUnBindRequest.getOperator());
         		entity.setModifytime(new Date());
         		titanUserBindInfoDao.update(entity);	
@@ -1026,12 +1085,47 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		String passswordmd5 = MD5.MD5Encode(passLoginRequest.getPassword());
 		if(passswordmd5.equals(titanUser.getPassword())){
 			passLoginResponse.putSuccess("登录成功");
+			passLoginResponse.setTfsuserId(titanUser.getTfsuserid());
+			passLoginResponse.setUserId(titanUser.getUserid());
+			passLoginResponse.setUserLoginName(titanUser.getUserloginname());
 		}else{
 			passLoginResponse.putErrorResult("密码不正确");
 			return passLoginResponse;
 		}
 		
 		return passLoginResponse;
+	}
+	
+	public SmsLoginResponse smsLogin(SmsLoginRequest smsLoginRequest)
+			throws GlobalServiceException {
+		SmsLoginResponse smsLoginResponse = new SmsLoginResponse();
+		TitanUser titanUser =  getTitanUser(smsLoginRequest.getLoginUsername());
+		if(titanUser==null){
+			smsLoginResponse.putErrorResult("用户名或密码错误");
+			return smsLoginResponse;
+		}
+		//验证动态码
+		VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
+		verifyCheckCodeRequest.setInputCode(smsLoginRequest.getSmsCode());
+		verifyCheckCodeRequest.setReceiveAddress(smsLoginRequest.getLoginUsername());
+		VerifyCheckCodeResponse  verifyCheckCodeResponse = organService.verifyCheckCode(verifyCheckCodeRequest);
+		if(verifyCheckCodeResponse.isResult()){
+			//使用该验证码后，置为无效。
+			if(verifyCheckCodeResponse.getCodeId()>0){
+				UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
+				updateCheckCodeRequest.setCodeId(verifyCheckCodeResponse.getCodeId());
+				updateCheckCodeRequest.setIsactive(TitanCheckCodeEnum.Isactive.NOT_ACTIVE.getKey());
+				organService.useCheckCode(updateCheckCodeRequest);
+			}
+			smsLoginResponse.putSuccess("登录成功");
+			smsLoginResponse.setUserId(titanUser.getUserid());
+			smsLoginResponse.setTfsuserId(titanUser.getTfsuserid());
+			smsLoginResponse.setUserLoginName(titanUser.getUserloginname());
+		}else{
+			smsLoginResponse.putErrorResult(verifyCheckCodeResponse.getReturnMessage());
+		}
+		
+		return smsLoginResponse;
 	}
 	/**
 	 * 查询用户
@@ -1051,36 +1145,74 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 			return null;
 		}
 	}
-	
-	
-	public SmsLoginResponse smsLogin(SmsLoginRequest smsLoginRequest)
+
+	@Override
+	public CheckUserResponse checkUser(CheckUserRequest checkUserRequest)
 			throws GlobalServiceException {
-		SmsLoginResponse smsLoginResponse = new SmsLoginResponse();
-		TitanUser titanUser =  getTitanUser(smsLoginRequest.getLoginUsername());
-		if(titanUser==null){
-			smsLoginResponse.putErrorResult("用户名或密码错误");
-			return smsLoginResponse;
+		CheckUserResponse checkUserResponse = new CheckUserResponse();
+		if(checkUserRequest.getTfsUserId()==null||checkUserRequest.getTfsUserId()<1){
+			checkUserResponse.putErrorResult("参数tfsUserId不能为空");
+			return checkUserResponse;
 		}
+		//检查用户状态
+		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+		userInfoQueryRequest.setTfsUserId(checkUserRequest.getTfsUserId());
+		UserInfoPageResponse userInfoPageResponse = this.queryUserInfoPage(userInfoQueryRequest);
+		TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+		//检查机构状态
+		OrgDTO orgDTO = new OrgDTO();
+		orgDTO.setUserid(titanUser.getUserid());
+		orgDTO = organService.queryOrg(orgDTO);
+		Integer statusId = orgDTO.getStatusid();
+		TitanOrgCheck titanOrgCheck = new TitanOrgCheck();
+		TitanOrgCheckParam checkParam = new TitanOrgCheckParam();
+    	checkParam.setUserid(titanUser.getUserid());
+    	
+    	PaginationSupport<TitanOrgCheck> orgCheckPage = new PaginationSupport<TitanOrgCheck>();
+    	titanOrgCheckDao.selectForPage(checkParam, orgCheckPage);
+    	titanOrgCheck = orgCheckPage.getItemList().get(0);
 		
-		//验证动态码
-		VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
-		verifyCheckCodeRequest.setInputCode(smsLoginRequest.getSmsCode());
-		verifyCheckCodeRequest.setReceiveAddress(smsLoginRequest.getLoginUsername());
-		VerifyCheckCodeResponse  verifyCheckCodeResponse = organService.verifyCheckCode(verifyCheckCodeRequest);
-		if(verifyCheckCodeResponse.isResult()){
-			//使用该验证码后，置为无效。
-			if(verifyCheckCodeResponse.getCodeId()>0){
-				UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
-				updateCheckCodeRequest.setCodeId(verifyCheckCodeResponse.getCodeId());
-				updateCheckCodeRequest.setIsactive(TitanCheckCodeEnum.Isactive.NOT_ACTIVE.getKey());
-				organService.useCheckCode(updateCheckCodeRequest);
+		String resultkey = titanOrgCheck.getResultkey();
+		//机构状态不正常
+		//if((!OrgCheckResultEnum.PASS.getResultkey().equals(resultkey))||(!(statusId==TitanOrgEnum.StatusId.AVAILABLE.getKey()))){
+			if(statusId == TitanOrgEnum.StatusId.FREEZE.getKey()){
+				checkUserResponse.putErrorResult("ORG_"+TitanOrgEnum.StatusId.FREEZE.getKey()+"_FREEZE", "机构冻结中");
+				return checkUserResponse;
 			}
-			smsLoginResponse.putSuccess("登录成功");
-			
-		}else{
-			smsLoginResponse.putErrorResult(verifyCheckCodeResponse.getReturnMessage());
+			if(statusId == TitanOrgEnum.StatusId.NOT_AVAILABLE.getKey()){
+				checkUserResponse.putErrorResult("ORG_"+TitanOrgEnum.StatusId.NOT_AVAILABLE.getKey()+"_NOT_AVAILABLE", "机构已注销");
+				return checkUserResponse;
+			}
+		 
+			if(OrgCheckResultEnum.FT.getResultkey().equals(resultkey)){
+				checkUserResponse.putErrorResult("ORG_"+OrgCheckResultEnum.FT.getResultkey(), "机构"+OrgCheckResultEnum.FT.getResultmsg());
+				return checkUserResponse;
+			}
+			if(OrgCheckResultEnum.FT_INVALID.getResultkey().equals(resultkey)){
+				checkUserResponse.putErrorResult("ORG_"+OrgCheckResultEnum.FT_INVALID.getResultkey(), titanOrgCheck.getResultmsg());
+				return checkUserResponse;
+			}
+			if(OrgCheckResultEnum.REVIEW.getResultkey().equals(resultkey)){
+				checkUserResponse.putErrorResult("ORG_"+OrgCheckResultEnum.REVIEW.getResultkey(), "机构"+OrgCheckResultEnum.REVIEW.getResultmsg());
+				return checkUserResponse;
+			}
+			if(OrgCheckResultEnum.REVIEW_INVALID.getResultkey().equals(resultkey)){
+				checkUserResponse.putErrorResult("ORG_"+OrgCheckResultEnum.REVIEW_INVALID.getResultkey(), titanOrgCheck.getResultmsg());
+				return checkUserResponse;
+			}
+		//}
+		//用户状态不对
+		if(titanUser.getStatus()==TitanUserEnum.Status.FREEZE.getKey()){
+			checkUserResponse.putErrorResult("USER_"+TitanUserEnum.Status.FREEZE.getKey()+"_FREEZE", "用户"+TitanUserEnum.Status.FREEZE.getDes());
+			return checkUserResponse;
 		}
-		
-		return smsLoginResponse;
+		if(titanUser.getStatus()==TitanUserEnum.Status.NOT_AVAILABLE.getKey()){
+			checkUserResponse.putErrorResult("USER_"+TitanUserEnum.Status.NOT_AVAILABLE.getKey()+"_NOT_AVAILABLE", "用户"+TitanUserEnum.Status.NOT_AVAILABLE.getDes());
+			return checkUserResponse;
+		}
+
+		checkUserResponse.putSuccess("机构和用户状态正常");
+		return checkUserResponse;
 	}
+	
 }

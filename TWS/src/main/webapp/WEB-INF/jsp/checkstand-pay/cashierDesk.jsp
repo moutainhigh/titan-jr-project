@@ -22,7 +22,7 @@
     <meta charset="utf-8">
     <title>SAAS后台管理</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
-	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
+	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 	
 </head>
 <body>

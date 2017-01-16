@@ -32,6 +32,7 @@ import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.*;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.WithDrawRequest;
@@ -100,13 +101,15 @@ public class FinancialAccountController extends BaseController {
     @RequestMapping(value = "/overview-main", method = RequestMethod.GET)
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
     public String home(HttpServletRequest request, Model model) throws Exception {
-        if (null != this.getUserId()) {
-            FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-            organQueryRequest.setUserId(this.getUserId());
-            organQueryRequest.setRegchannel(RegchannelEnum.OFFIAIAL_WEBSITE.source);
-            FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
-            model.addAttribute("organ", organOrganResponse.getFinancialOrganDTO());
-        }
+    	UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+		userInfoQueryRequest.setTfsUserId(Integer.valueOf(getTfsUserId()));
+		UserInfoPageResponse userInfoPageResponse = titanFinancialUserService.queryUserInfoPage(userInfoQueryRequest);
+		TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+        FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+        organQueryRequest.setUserId(titanUser.getUserid());
+        organQueryRequest.setRegchannel(RegchannelEnum.OFFIAIAL_WEBSITE.source);
+        FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+        model.addAttribute("organ", organOrganResponse.getFinancialOrganDTO());
         return "account-overview/overview-main";
     }
     
@@ -652,6 +655,7 @@ public class FinancialAccountController extends BaseController {
 
     @ResponseBody
     @RequestMapping("setPayPassword")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public Map<String, String> setPayPassword(HttpServletRequest request, PayPasswordRequest payPasswordRequest) {
         Map<String, String> map = new HashMap<String, String>();
         if (payPasswordRequest != null && StringUtil.isValidString(payPasswordRequest.getPayPassword())) {
@@ -678,6 +682,7 @@ public class FinancialAccountController extends BaseController {
 
     @ResponseBody
     @RequestMapping("forgetPayPassword")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String forgetPayPassword(ForgetPayPassword forgetPayPassword){
     	if(forgetPayPassword ==null
     			||!StringUtil.isValidString(forgetPayPassword.getPayPassword())
@@ -703,33 +708,6 @@ public class FinancialAccountController extends BaseController {
         } else {
         	return toJson(putSysError(payPasswordResponse.getReturnMessage()));
         }
-    }
-    
-    @ResponseBody
-    @RequestMapping("check_code")
-    public String checkCode(String userName,String code) throws GlobalServiceException{
-    	if(!StringUtil.isValidString(userName)||!StringUtil.isValidString(code)){
-    		return toJson(putSysError("参数错误"));
-    	}
-    	//获取该用户的用户名
-    	if(!this.getUserName().equals(userName)){
-    		return toJson(putSysError("您输入的用户名错误"));
-    	}
-    	VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
-    	verifyCheckCodeRequest.setReceiveAddress(userName);
-    	verifyCheckCodeRequest.setInputCode(code);
-    	VerifyCheckCodeResponse verifyCheckCodeResponse = titanFinancialOrganService.verifyCheckCode(verifyCheckCodeRequest);
-    	if(verifyCheckCodeResponse.isResult()){
-    		if(verifyCheckCodeResponse.getCodeId()>0){
-				UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
-				updateCheckCodeRequest.setCodeId(verifyCheckCodeResponse.getCodeId());
-				updateCheckCodeRequest.setIsactive(0);
-				titanFinancialOrganService.useCheckCode(updateCheckCodeRequest);
-			}
-    		return toJson(putSuccess("验证成功"));
-    	}else{
-    		return toJson(putSysError(verifyCheckCodeResponse.getReturnMessage()));
-    	}
     }
     
     @ResponseBody

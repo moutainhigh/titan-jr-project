@@ -17,6 +17,9 @@ public class RegUserLoginInfo implements Serializable{
 	 * 登录用户名
 	 */
 	private String userLoginName;
+	/***
+	 * 密码
+	 */
 	private String password;
 	/**
 	 * 确认密码

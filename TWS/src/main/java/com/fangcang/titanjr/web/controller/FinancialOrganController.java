@@ -26,7 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
+import com.fangcang.titanjr.common.enums.RegchannelEnum;
 import com.fangcang.titanjr.common.enums.SMSType;
+import com.fangcang.titanjr.common.enums.UserSourceEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
@@ -36,12 +38,14 @@ import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.ImageIOExtUtil;
 import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
+import com.fangcang.titanjr.dto.request.CheckUserRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.OrgRegisterValidateRequest;
@@ -55,6 +59,7 @@ import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.request.UserLoginNameExistRequest;
 import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
+import com.fangcang.titanjr.dto.response.CheckUserResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.GetCheckCodeResponse;
 import com.fangcang.titanjr.dto.response.OrgRegisterValidateResponse;
@@ -65,9 +70,11 @@ import com.fangcang.titanjr.dto.response.OrganQueryCheckResponse;
 import com.fangcang.titanjr.dto.response.OrganRegisterResponse;
 import com.fangcang.titanjr.dto.response.OrganRegisterUpdateResponse;
 import com.fangcang.titanjr.dto.response.SendCodeResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
 import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
+import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
@@ -86,7 +93,6 @@ import com.fangcang.util.StringUtil;
  * Created by zhaoshan on 2016/3/30.
  */
 @Controller
-@RequestMapping("/organ")
 public class FinancialOrganController extends BaseController {
 
     /**
@@ -118,7 +124,7 @@ public class FinancialOrganController extends BaseController {
      * @param model
      * @return
      */
-    @RequestMapping(value = "/showOrgUser")
+    @RequestMapping(value = "/ex/organ/showOrgUser")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showOrgUser(HttpServletRequest request, Model model) {
     	
@@ -131,7 +137,7 @@ public class FinancialOrganController extends BaseController {
      * @return
      */
     @ResponseBody
-	@RequestMapping(value = "/checkUserLoginName")
+	@RequestMapping(value = "/ex/organ/checkUserLoginName")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String checkUserLoginName(String userLoginName,int isOperator)
 	{
@@ -143,6 +149,8 @@ public class FinancialOrganController extends BaseController {
 			response = titanFinancialUserService.userLoginNameExist(request);
 			if("1".equals(response.getReturnCode())){
 				putSuccess();
+			}else if("-100".equals(response.getReturnCode())){
+				putSysError("帐号已存在");
 			}else{
 				putSysError(response.getReturnMessage());
 			}
@@ -160,15 +168,15 @@ public class FinancialOrganController extends BaseController {
      * @return
      */
     @ResponseBody
-	@RequestMapping(value = "/checkOrgRegNum")
+	@RequestMapping(value = "/ex/organ/checkOrgRegNum")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String checkOrgRegNum(int userType,String orgId,String buslince,String certificateNumber){
+    public String checkOrgRegNum(int userType,String buslince,String certificateNumber){
     	try {
-			int code = checkRegInfo(userType, orgId, buslince, certificateNumber);
+			int code = checkRegInfo(userType, getUserId(), buslince, certificateNumber);
 			if(code==1){
-				putSuccess("该证件可以注册");
+				putSuccess("证件可以注册");
 			}else if(code == -1){
-				 putSysError("该证件已经注册，请使用其他证件注册");
+				 putSysError("证件已注册");
 			}else if(code == -2){
 				 putSysError("参数错误");
 			}
@@ -177,7 +185,7 @@ public class FinancialOrganController extends BaseController {
 			putSysError(e1.getMessage());
 		} catch (Exception e) {
     		putSysError("系统错误");
-			log.error("机构注册校验失败，userType:"+userType+",orgId:"+orgId+",buslince:"+ buslince+",certificateNumber:"+ certificateNumber, e);
+			log.error("机构注册校验失败，userType:"+userType+",orgCode:"+getUserId()+",buslince:"+ buslince+",certificateNumber:"+ certificateNumber, e);
 		}
     	return toJson();
     }
@@ -186,7 +194,7 @@ public class FinancialOrganController extends BaseController {
      * @return
      * @throws MessageServiceException 
      */
-    private int checkRegInfo(int userType,String orgId,String buslince,String certificateNumber) throws MessageServiceException{
+    private int checkRegInfo(int userType,String orgCode,String buslince,String certificateNumber) throws MessageServiceException{
     	OrgRegisterValidateRequest orgRegisterValidateRequest  = new OrgRegisterValidateRequest();
     	orgRegisterValidateRequest.setUsertype(userType);
     	orgRegisterValidateRequest.setBuslince(buslince);
@@ -195,17 +203,22 @@ public class FinancialOrganController extends BaseController {
 		OrgRegisterValidateResponse orgRegisterValidateResponse = titanFinancialOrganService.validateOrg(orgRegisterValidateRequest);
 		if(orgRegisterValidateResponse.isResult()){
 			//判断机构注册证件的编号和登录者是不是同一个机构
-			Integer tfsUserIdStr = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);//金服用户名
 			if(orgRegisterValidateResponse.getOrgDTO()!=null){//如果所填写的证件编码已经存在
-				if(StringUtil.isValidString(orgId)){
+				if(StringUtil.isValidString(orgCode)){
+					Integer tfsUserIdStr = Integer.valueOf((String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID));//金服用户名
 					//修改
 					if((tfsUserIdStr!=null)&&(tfsUserIdStr>0)){
     					OrgDTO orgDTO = orgRegisterValidateResponse.getOrgDTO();
         				UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
             			userInfoQueryRequest.setTfsUserId(tfsUserIdStr);
             			userInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
-            			UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
-            			String userOrgCode = userInfoResponse.getUserInfoDTOList().get(0).getOrgCode();
+            			
+            			UserInfoPageResponse userInfoResponse = titanFinancialUserService.queryUserInfoPage(userInfoQueryRequest);
+            			List<TitanUser> list = userInfoResponse.getTitanUserPaginationSupport().getItemList();
+            			if(CollectionUtils.isEmpty(list)){
+            				return 1;
+            			}
+            			String userOrgCode = list.get(0).getOrgcode();
             			if(userOrgCode.equals(orgDTO.getOrgcode())){
             				//是登录者所属本机构,该证件可以注册
             				return 1;
@@ -231,7 +244,7 @@ public class FinancialOrganController extends BaseController {
      * 注册
      * @return
      */
-    @RequestMapping(value = "/regOrg")
+    @RequestMapping(value = "/ex/organ/regOrg")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String regOrg(RegUserLoginInfo regUserLoginInfo,OrgRegPojo orgRegPojo,Model model){
     	try {
@@ -288,11 +301,20 @@ public class FinancialOrganController extends BaseController {
 	    	organRegisterRequest.setConnect(orgRegPojo.getConnect());
 	    	organRegisterRequest.setMobileTel(orgRegPojo.getMobiletel());
 	    	
-	    	//session中的信息
-	    	//TODO 合作方用户信息，用rsa加密方式传输，TWS不应该从session取，从参数中取
-	    	String registerSourceStr = "1";
-	    	int registerSource = NumberUtils.toInt(registerSourceStr);
+	    	//TODO userSource用rsa加密方式传输或者渠道号要用密文
+	    	String userSource = orgRegPojo.getUs();
+	    	int registerSource = UserSourceEnum.TFS.getKey();
+	    	try {
+	    		registerSource = NumberUtils.toInt(userSource);
+			} catch (Exception e) {
+				e.printStackTrace();
+				
+			}
+	    	if(registerSource==0){
+	    		registerSource = UserSourceEnum.TFS.getKey();
+	    	}
 	    	organRegisterRequest.setRegisterSource(registerSource);
+	    	//TODO 合作方信息
 	    	String thirdPlatformLoginUserName = "luoqinglongttm";
 	    	if(StringUtil.isValidString(thirdPlatformLoginUserName)){
 	    		organRegisterRequest.setFcLoginUserName(thirdPlatformLoginUserName);
@@ -365,15 +387,15 @@ public class FinancialOrganController extends BaseController {
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名
             //如果包含系统运营员，判定当前地址
-            if (containsRole(userInfoDTO.getRoleDTOList(), FinancialRoleEnum.OPERATION.roleCode)) {
-                getSession().setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN);
-            }
+           // if (containsRole(userInfoDTO.getRoleDTOList(), FinancialRoleEnum.OPERATION.roleCode)) {
+                //getSession().setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN);
+            //}
             //将金服所有角色设置进去
-            for (FinancialRoleEnum roleEnum : FinancialRoleEnum.values()) {
-                if (containsRole(userInfoDTO.getRoleDTOList(), roleEnum.roleCode)) {
-                    getSession().setAttribute("JR_" + roleEnum.roleCode, "1");
-                }
-            }
+            //for (FinancialRoleEnum roleEnum : FinancialRoleEnum.values()) {
+            //    if (containsRole(userInfoDTO.getRoleDTOList(), roleEnum.roleCode)) {
+            //        getSession().setAttribute("JR_" + roleEnum.roleCode, "1");
+            //    }
+           // }
     	}else{
 		}
         
@@ -394,7 +416,7 @@ public class FinancialOrganController extends BaseController {
      * 注册时修改注册信息
      * @return
      */
-    @RequestMapping(value = "/updateOrg")
+    @RequestMapping(value = "/reg/organ/updateOrg")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String updateOrg(OrgRegPojo orgRegPojo,Model model){
     	
@@ -503,7 +525,7 @@ public class FinancialOrganController extends BaseController {
      */
     @Deprecated
     @ResponseBody
-   	@RequestMapping(value = "/sendRegCode")
+   	@RequestMapping(value = "/ex/sendRegCode")
     public String sendRegCode(String receiveAddress){
     	SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
     	if(StringUtil.isValidString(receiveAddress)){
@@ -543,104 +565,83 @@ public class FinancialOrganController extends BaseController {
    }
     
     
-    @ResponseBody
-   	@RequestMapping(value = "/sendCode")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String sendCode(String receiveAddress,Integer msgType){
-    	SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
-    	if(StringUtil.isValidString(receiveAddress)){
-    		sendRegCodeRequest.setReceiveAddress(receiveAddress);
-    	}else {
-    		return toJson(putSysError("参数错误"));
-    	}
-    	if(!(Tools.isEmailAddress(receiveAddress)||Tools.isPhone(receiveAddress))){
-    		return toJson(putSysError("手机号码或者邮箱地址格式不正确"));
-    	}
-    	sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
-    	msgType = msgType==null?SMSType.REG_CODE.getType():msgType;
-    	GetCheckCodeRequest getCheckCodeRequest = new GetCheckCodeRequest();
-    	getCheckCodeRequest.setMsgType(msgType);
-    	getCheckCodeRequest.setReceiveAddress(receiveAddress);
-    	String regCode;
-    	try {
-			GetCheckCodeResponse getCheckCodeResponse = titanFinancialOrganService.getCheckCode(getCheckCodeRequest);
-			if(getCheckCodeResponse.isResult()){
-				regCode = getCheckCodeResponse.getCheckCode();
-			}else{
-				return toJson(putSysError(getCheckCodeResponse.getReturnMessage()));
-			}
-		} catch (GlobalServiceException e) {
-			log.error("send code fail ,param|receiveAddress:"+receiveAddress+",msgType:"+msgType, e);
-			return toJson(putSysError("验证码获取失败"));
-		}
-    	
-    	if(msgType==SMSType.REG_CODE.getType()){//注册
-    		sendRegCodeRequest.setContent("尊敬的用户： 您正在申请开通泰坦金融服务，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
-        	sendRegCodeRequest.setSubject("泰坦金融注册验证码");
-    	}else if(msgType==SMSType.PAY_PASSWORD_MODIFY.getType()){//修改付款密码
-    		sendRegCodeRequest.setContent("尊敬的用户： 您正在修改泰坦金融的付款密码，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
-        	sendRegCodeRequest.setSubject("泰坦金融修改付款密码");
-    	}else if(msgType==SMSType.LOGIN_PASSWORD_MODIFY.getType()){//修改登录密码
-    		sendRegCodeRequest.setContent("尊敬的用户： 您正在修改泰坦金融的登录密码，验证码为："+regCode+"，验证码"+WebConstant.REG_CODE_TIME_OUT_HOUR+"小时内有效。如不是您申请，请勿将验证码发给其他人。");
-        	sendRegCodeRequest.setSubject("泰坦金融修改登录密码");
-    	}
-    	
-    	SendCodeResponse sendRegCodeResponse = sendSMSService.sendCode(sendRegCodeRequest);
-    	sendRegCodeResponse.putSuccess();
-    	if(sendRegCodeResponse.isResult()){
-    		return toJson(putSuccess("验证码发送成功"));
-    	}else{
-    		return toJson(putSysError(sendRegCodeResponse.getReturnMessage()));
-    	}
-    	
-   }
-    
     /**
      * 协议
      * @return
      */
-    @RequestMapping(value = "/showAgreement")
+    @RequestMapping(value = "/ex/showAgreement")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showAgreement(){
     	return "org-reg/agreement";
     }
     /**
-     * 显示修改的公司
+     * 机构和用户状态检查
      * @return
      */
-    @RequestMapping(value = "/getEnterpriseInfo")
+    @RequestMapping(value = "/reg/user-state")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String getEnterpriseInfo(int orgId,Model model){
-    	if(orgId <=0){
-    		model.addAttribute("errormsg", "参数错误");
-    		return "error";
-    	}
-    	int code = getInfo(orgId,model);
-    	if(code==0){
-    		return "error";
-    	}
-    	return "org-reg/org-enterprise-info";
+    public String userState(Model model){
+    	//用户状态
+		String tfsUserId = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+		if(!StringUtil.isValidString(tfsUserId)){
+			model.addAttribute("errormsg", "会话失效，请重新登录");
+			return "error";
+		}
+		CheckUserRequest checkUserRequest = new CheckUserRequest();
+		checkUserRequest.setTfsUserId(Integer.valueOf(tfsUserId));
+		try {
+			CheckUserResponse checkUserResponse = titanFinancialUserService.checkUser(checkUserRequest);
+			if(checkUserResponse.isResult()){
+				return "redirect:/main/main.shtml";//到首页
+			}else{
+				model.addAttribute("code", checkUserResponse.getReturnCode());
+				model.addAttribute("msg", checkUserResponse.getReturnMessage());
+		    	return "user-state";
+			}
+			
+		} catch (GlobalServiceException e) {
+			e.printStackTrace();
+			model.addAttribute("errormsg", "系统错误，请重试");
+			return "error";
+			
+		}
     }
-    /***
-     * 显示修改的个人
-     * @return
-     */
-    @RequestMapping(value = "/getPersernalInfo")
+    
+    @RequestMapping(value = "/reg/organ/getOrgInfo")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String getPersernalInfo(int orgId,Model model){
-    	if(orgId <=0){
-    		model.addAttribute("errormsg", "参数错误");
-    		return "error";
-    	}
-    	int code = getInfo(orgId,model);
-    	if(code==0){
-    		return "error";
-    	}
-    	return "org-reg/org-persernal-info";
-    }
-    private int getInfo(int orgId,Model model){
+    public String getOrgInfo(Model model){
     	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-    	organQueryRequest.setOrgId(orgId);
+    	organQueryRequest.setOrgCode(getUserId());
+    	organQueryRequest.setRegchannel(RegchannelEnum.OFFIAIAL_WEBSITE.source);
+    	FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+    	if(financialOrganResponse.isResult()){
+    		model.addAttribute("org", financialOrganResponse.getFinancialOrganDTO());
+    		if(financialOrganResponse.getFinancialOrganDTO().getOrgImageInfoList().size()>0){
+    			for(OrgImageInfo item : financialOrganResponse.getFinancialOrganDTO().getOrgImageInfoList()){
+    				if(item.getSizeType()==10){
+    					model.addAttribute("small_img_10", item.getImageURL());
+    				}else if(item.getSizeType()==50){
+    					model.addAttribute("big_img_50", item.getImageURL());
+    				}
+    			}
+    			if(financialOrganResponse.getFinancialOrganDTO().getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
+    				return "org-reg/org-enterprise-info";
+    			}else{
+    				return "org-reg/org-persernal-info";
+    			}
+    		}
+    		model.addAttribute("errormsg", "机构没有找到");
+    	}else{
+    		model.addAttribute("errormsg", "机构查询错误");
+    		
+    	}
+    	return "error";
+    }
+    
+    private int getInfo(String orgCode,Model model){
+    	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+    	organQueryRequest.setOrgCode(orgCode);
+    	organQueryRequest.setRegchannel(RegchannelEnum.OFFIAIAL_WEBSITE.source);
     	FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
     	if(financialOrganResponse.isResult()){
     		model.addAttribute("org", financialOrganResponse.getFinancialOrganDTO());
@@ -663,7 +664,7 @@ public class FinancialOrganController extends BaseController {
     *  显示公司信息
     * @return
     */
-    @RequestMapping(value = "/showEnterpriseInfo")
+    @RequestMapping(value = "/ex/showEnterpriseInfo")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showEnterpriseInfo(RegUserLoginInfo pojo, Model model){
     	model.addAttribute(pojo);
@@ -675,7 +676,7 @@ public class FinancialOrganController extends BaseController {
      * 显示个人信息
      * 
      */
-    @RequestMapping(value = "/showPersernalInfo")
+    @RequestMapping(value = "/ex/showPersernalInfo")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showPersernalInfo(RegUserLoginInfo pojo, Model model){
     	model.addAttribute(pojo);
@@ -687,17 +688,17 @@ public class FinancialOrganController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/checkRegCode")
+    @RequestMapping(value = "/ex/checkCode")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String checkRegCode(String userLoginName,String regCode){
-    	if((!StringUtil.isValidString(userLoginName))||(!StringUtil.isValidString(regCode))){
+    public String checkCode(String userLoginName,String code){
+    	if((!StringUtil.isValidString(userLoginName))||(!StringUtil.isValidString(code))){
     		putSysError("参数错误");
     		return toJson();
     		
     	}
     	VerifyCheckCodeRequest verifyCheckCodeRequest = new VerifyCheckCodeRequest();
     	verifyCheckCodeRequest.setReceiveAddress(userLoginName);
-    	verifyCheckCodeRequest.setInputCode(regCode);
+    	verifyCheckCodeRequest.setInputCode(code);
     	VerifyCheckCodeResponse verifyCheckCodeResponse = titanFinancialOrganService.verifyCheckCode(verifyCheckCodeRequest);
     	if(verifyCheckCodeResponse.isResult()){
     		return toJson(putSuccess("验证成功"));
@@ -706,7 +707,7 @@ public class FinancialOrganController extends BaseController {
     	}
     }
     
-    @RequestMapping(value = "/upload")
+    @RequestMapping(value = "/ex/organ/upload")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public void upload(@RequestParam(value = "img_file", required = false) MultipartFile file,int imageType) throws IOException{
     	Map<String, Object> resultMap = new HashMap<String, Object>();

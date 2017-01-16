@@ -12,8 +12,7 @@ import org.hibernate.validator.constraints.NotBlank;
 public class EmployeePojo extends BasePojo{
 	private String userName;
 	private Integer tfsUserId;
-	@NotNull
-	private Integer fcUserId;
+	
 	@NotBlank
 	private String receiveAddress;
 	@NotBlank
@@ -32,12 +31,6 @@ public class EmployeePojo extends BasePojo{
 	}
 	public void setTfsUserId(Integer tfsUserId) {
 		this.tfsUserId = tfsUserId;
-	}
-	public Integer getFcUserId() {
-		return fcUserId;
-	}
-	public void setFcUserId(Integer fcUserId) {
-		this.fcUserId = fcUserId;
 	}
 	public String getUserName() {
 		return userName;

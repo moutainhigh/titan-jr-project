@@ -4,7 +4,6 @@
 <tr>
 	<td>${userInfoDTO.userLoginName }</td>
 	<td>${userInfoDTO.userName }<c:if test="${userInfoDTO.isAdmin==1 and (empty userInfoDTO.userName) }">超级管理员</c:if></td>
-	<td>${userInfoDTO.userBindInfoDTO.fcLoginName }</td>
 	<td>
 		<c:forEach items="${userInfoDTO.roleDTOList}" var="roleDTO">
 			<c:if test="${roleDTO.roleCode=='PAY' and roleDTO.isActive==1}">
@@ -80,44 +79,6 @@
 </tr>
 <script type="text/javascript">
 
-//关联SASS用户
-$('.J_relation').on('click',function(){
-  top.F.loading.show();
-  $.ajax({
-      dataType : 'html',
-      context: document.body,
-      url : '关联SASS用户.html',           
-      success : function(html){
-          top.F.loading.hide();
-          var d =  window.top.dialog({
-              title: ' ',
-              padding: '0 0 0px 0',
-              content: html,
-              skin : 'saas_pop' ,
-              button : [ 
-                      {
-                          value: '完成',
-                          skin : 'btn p_lr30',
-                          callback: function () {
-                             top.F.loading.show();        
-                             setTimeout(function(){
-                                 top.F.loading.hide();
-                                 new top.Tip({msg : '设置成功！', type: 1 , time:1000});    
-                             },1000);  
-                          },
-					    autofocus: true
-                      },
-                      {
-                          value: '取消',
-                          skin : 'btn btn_grey btn_exit',
-                          callback: function () {
-                          }
-                      }	
-                  ]              
-          }).showModal();
-      }
-  });
-}); 
 //冻结
 $('.J_frozen').on('click',function(){
 	var _this = $(this);
@@ -129,7 +90,7 @@ $('.J_frozen').on('click',function(){
 	new top.createConfirm({
 	    title:'提示',
 		padding: '20px 20px 40px',		
-        content : '<div class="f_14 l_h26">你确定要冻结用户“'+tlogin+'”</div>',
+        content : '<div class="f_14 l_h26">您确定要冻结用户“'+tlogin+'”</div>',
 		ok : function(){
 			$.ajax({
 		        dataType : 'json',
@@ -140,7 +101,7 @@ $('.J_frozen').on('click',function(){
 		        	if(result.code==1){
 		        		_this.hide();
 			        	_this.next(".J_thaw").show();
-						new top.Tip({msg : '操作成功！', type: 1 });
+						new top.Tip({msg : '用户冻结成功！', type: 1 });
 		        	}else{
 		        		new top.Tip({msg : result.msg, type: 3 });
 		        	}
@@ -161,7 +122,7 @@ $(".J_thaw").on('click',function(){
 	new top.createConfirm({
 	    title:'提示',
 		padding: '20px 20px 40px',		
-        content : '<div class="f_14 l_h26">你确定要解冻用户“'+tlogin+'”</div>',
+        content : '<div class="f_14 l_h26">您确定要解冻用户“'+tlogin+'”</div>',
 		ok : function(){
 			$.ajax({
 		        dataType : 'json',
@@ -172,7 +133,7 @@ $(".J_thaw").on('click',function(){
 		        	if(result.code==1){
 			        	_this.hide();
 			        	_this.prev(".J_frozen").show();
-						new top.Tip({msg : '操作成功！', type: 1 }); 
+						new top.Tip({msg : '用户解冻成功！', type: 1 }); 
 		        	}else{
 		        		new top.Tip({msg : result.msg, type: 3 });
 		        	}

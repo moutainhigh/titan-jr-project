@@ -43,41 +43,28 @@ public class InitSessionInterceptor implements HandlerInterceptor {
 
         HttpSession session = httpServletRequest.getSession();
 
-        session.setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_1_TFS);
+       // session.setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_1_TFS);
         //参数说明
         UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
         userInfoQueryRequest.setUserId("TJM10000090");
-        UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
-        if (CollectionUtils.isNotEmpty(userInfoResponse.getUserInfoDTOList())) {
-            UserInfoDTO userInfoDTO = userInfoResponse.getUserInfoDTOList().get(0);
-            if (userInfoDTO.getRoleDTOList() != null && userInfoDTO.getRoleDTOList().size() > 0) {
-                List<RoleDTO> activeRoleList = new ArrayList<RoleDTO>();
-                for (RoleDTO item : userInfoDTO.getRoleDTOList()) {
-                    if (item.getIsActive() == 1) {
-                        activeRoleList.add(item);
-                    }
-                }
-            }
-
-            session.setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, userInfoDTO.getUserLoginName());//金服用户登录名
-            session.setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
-            session.setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名
-            //如果包含系统运营员，判定当前地址
-            if (containsRole(userInfoDTO.getRoleDTOList(), FinancialRoleEnum.OPERATION.roleCode)) {
-                session.setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN);
-            }
-            //将金服所有角色设置进去
-            for (FinancialRoleEnum roleEnum : FinancialRoleEnum.values()) {
-                if (containsRole(userInfoDTO.getRoleDTOList(), roleEnum.roleCode)) {
-                    session.setAttribute("JR_" + roleEnum.roleCode, "1");
-                }
-            }
-        } else {//跳转登录
-            log.error("用户信息设置有误，请检查后重新登录。");
-            httpServletResponse.sendRedirect("/TWS/j_acegi_logout?wait=y");
-            return false;
-        }
-        log.info("session中信息正常，直接返回");
+//        UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
+//        if (CollectionUtils.isNotEmpty(userInfoResponse.getUserInfoDTOList())) {
+//            UserInfoDTO userInfoDTO = userInfoResponse.getUserInfoDTOList().get(0);
+//
+//            session.setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, userInfoDTO.getUserLoginName());//金服用户登录名
+//            session.setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
+//            session.setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名
+//            //如果包含系统运营员，判定当前地址
+//            if (containsRole(userInfoDTO.getRoleDTOList(), FinancialRoleEnum.OPERATION.roleCode)) {
+//                session.setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN);
+//            }
+//             
+//        } else {//跳转登录
+//            log.error("用户信息设置有误，请检查后重新登录。");
+//            httpServletResponse.sendRedirect("/TWS/j_acegi_logout?wait=y");
+//            return false;
+//        }
+//        log.info("session中信息正常，直接返回");
         return true;
     }
 
