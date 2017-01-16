@@ -84,7 +84,7 @@
 			    	</div>
 			    	<div class="btnAdd">
 			    			<a class="btn" href="javascript:;" onclick="saveEmployee()">添加</a>
-			    			<a class="btn btn_g" href="员工权限信息.html">取消</a>
+			    			<a class="btn btn_g" href="<%=basePath%>/setting/employee.shtml">取消</a>
 			    	</div>
 		    	</div>
 			</div>	
