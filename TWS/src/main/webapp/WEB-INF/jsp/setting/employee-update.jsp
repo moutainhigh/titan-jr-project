@@ -31,7 +31,7 @@
 			    			<li><div class="title">姓名：</div><input type="text" class="text" placeholder="请输入姓名" id="userName" value="${userInfoDTO.userName }" customFun="checkUserName" maxlength="30"/></li>
 			    			<li>
 			    				<div class="title">用户名：</div>    				
-			    				<input type="text" placeholder="请输入手机号码/邮箱地址" class="text" id="receiveAddress" datatype="/\w*/" readonly="readonly" value="${userInfoDTO.userLoginName }" customFun="checkReceiveAddress"/>用户名用来登录泰坦金融官网或者APP
+			    				<input type="text" placeholder="请输入手机号码/邮箱地址" class="text" id="receiveAddress"  readonly="readonly" value="${userInfoDTO.userLoginName }" />用户名可用于登录泰坦钱包网站或者APP
 			    			</li>
 			    		</ul>
 			    	</div>
@@ -146,7 +146,6 @@ function saveUpdateEmployee(){
         	 uncheckedRoleId += $(this).val()+",";
          }
      });
-	alert(11);
 	if(!vform.validate()){
 		return;
 	}

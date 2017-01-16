@@ -57,6 +57,54 @@ public class SettingBaseInfoController extends BaseController{
 	@Resource
 	private TitanFinancialUserService userService;
 	
+	/**
+	 * 机构信息
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/org-info")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
+	public String orgInfo(Model model){
+		
+		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+		if(StringUtil.isValidString(getTfsUserId())){
+			userInfoQueryRequest.setTfsUserId(Integer.valueOf(getTfsUserId()));
+			UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
+			TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+			
+			FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+			organQueryRequest.setOrgCode(titanUser.getOrgcode());
+			
+			FinancialOrganResponse financialOrganResponse = organService.queryFinancialOrgan(organQueryRequest);
+			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
+			model.addAttribute("financialOrganDTO", financialOrganDTO);
+			for(OrgImageInfo item : financialOrganDTO.getOrgImageInfoList()){
+				if(item.getSizeType()==10){
+					model.addAttribute("small_img_10", item.getImageURL());
+				}else if(item.getSizeType()==50){
+					model.addAttribute("big_img_50", item.getImageURL());
+				}
+			}
+			model.addAttribute("tfsUser", titanUser);
+			UserInfoQueryRequest adminRequest = new UserInfoQueryRequest();
+			adminRequest.setOrgCode(titanUser.getOrgcode());
+			adminRequest.setIsadmin(1);
+			UserInfoPageResponse adminResponse = userService.queryUserInfoPage(adminRequest);
+			if(adminResponse.getTitanUserPaginationSupport().getItemList().size()>0){
+				TitanUser adminUser = adminResponse.getTitanUserPaginationSupport().getItemList().get(0);
+				model.addAttribute("adminUser", adminUser);
+			}
+			return "setting/base-info";
+		}else{
+			return "error";
+		}
+	}
+	
+	/**
+	 * 个人账户资料
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/setting/user-info")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String userInfo(Model model){
