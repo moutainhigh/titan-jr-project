@@ -62,7 +62,7 @@ public class SettingBaseInfoController extends BaseController{
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/org-info")
+	@RequestMapping("/setting/org-info")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
 	public String orgInfo(Model model){
 		
@@ -74,7 +74,7 @@ public class SettingBaseInfoController extends BaseController{
 			
 			FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 			organQueryRequest.setOrgCode(titanUser.getOrgcode());
-			
+			organQueryRequest.setRegchannel(1);
 			FinancialOrganResponse financialOrganResponse = organService.queryFinancialOrgan(organQueryRequest);
 			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
 			model.addAttribute("financialOrganDTO", financialOrganDTO);
@@ -85,17 +85,10 @@ public class SettingBaseInfoController extends BaseController{
 					model.addAttribute("big_img_50", item.getImageURL());
 				}
 			}
-			model.addAttribute("tfsUser", titanUser);
-			UserInfoQueryRequest adminRequest = new UserInfoQueryRequest();
-			adminRequest.setOrgCode(titanUser.getOrgcode());
-			adminRequest.setIsadmin(1);
-			UserInfoPageResponse adminResponse = userService.queryUserInfoPage(adminRequest);
-			if(adminResponse.getTitanUserPaginationSupport().getItemList().size()>0){
-				TitanUser adminUser = adminResponse.getTitanUserPaginationSupport().getItemList().get(0);
-				model.addAttribute("adminUser", adminUser);
-			}
-			return "setting/base-info";
+			model.addAttribute("isJrAdmin", titanUser.getIsadmin());
+			return "setting/org-info";
 		}else{
+			model.addAttribute("errormsg", "会话失效，请重新登录");
 			return "error";
 		}
 	}

@@ -712,6 +712,7 @@ public class FinancialAccountController extends BaseController {
     
     @ResponseBody
     @RequestMapping("checkIsSetPayPassword")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public Map<String, String> checkIsSetPayPassword(String fcUserid,HttpServletRequest request) {
     	boolean flag = false;
         Map<String, String> map = new HashMap<String, String>();
@@ -740,11 +741,13 @@ public class FinancialAccountController extends BaseController {
     }
 
     @RequestMapping("showSetPayPassword")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showSetPayPassword() {
         return "checkstand-pay/setPayPassword";
     }
 
     @RequestMapping("showPayPassword")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showPayPassword() {
         return "checkstand-pay/putPayPassword";
     }

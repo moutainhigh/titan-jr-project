@@ -111,6 +111,8 @@ public class OrgController extends BaseController{
 		
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 		organQueryRequest.setOrgId(orgId);
+		//TODO  优化改为通用的查询，不使用机构绑定关系查询条件
+		organQueryRequest.setRegchannel(1);
 		FinancialOrganResponse financialOrganResponse = organService.queryFinancialOrgan(organQueryRequest);
 		if(financialOrganResponse.isResult()){
 			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
@@ -125,7 +127,7 @@ public class OrgController extends BaseController{
 				return "admin/org/per-verify-org-info";
 			}
 		}else{
-			model.addAttribute("errormsg", "请求错误");
+			model.addAttribute("errormsg", financialOrganResponse.getReturnMessage());
 			return "error";
 		}
 	}

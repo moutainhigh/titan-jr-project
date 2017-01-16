@@ -177,7 +177,8 @@ jQuery.extend({
             handleError(s, xml, null, e);
         }
 		
-		jQuery('#' + frameId).load(uploadCallback	);
+        
+		jQuery('#' + frameId).bind("load",uploadCallback);
         return {abort: function () {}};	
 
     },
