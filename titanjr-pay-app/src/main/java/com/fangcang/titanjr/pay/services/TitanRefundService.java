@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
@@ -81,9 +83,10 @@ public class TitanRefundService {
 	@Resource
 	private TitanFinancialUserService titanFinancialUserService;
 
-	private static final Log log = LogFactory.getLog(TitanRefundService.class);
-
-	public RefundResponse orderRefund(RefundRequest refundRequest) {
+	private static final Log log = LogFactory.getLog(TitanTradeController.class);
+	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
+	
+	public RefundResponse orderRefund(RefundRequest refundRequest){
 		RefundResponse response = new RefundResponse();
 		try {
 			//已验证过过机构，去掉
@@ -94,7 +97,8 @@ public class TitanRefundService {
 				response.putErrorResult(TitanMsgCodeEnum.PAY_PWD_ERROR);
 				return response;
 			}
-
+			
+			this.lockOutTradeNoList(refundRequest.getOrderNo());
 			//获取该订单
 			TransOrderRequest transOrderRequest = new TransOrderRequest();
 			transOrderRequest.setUserorderid(refundRequest.getOrderNo());
@@ -107,7 +111,12 @@ public class TitanRefundService {
 				response.putErrorResult(TitanMsgCodeEnum.ORDER_NOT_REFUND);
 				return response;
 			}
-
+			
+			if(OrderStatusEnum.isRefund(transOrderDTO.getStatusid())){
+				log.error("该订单已退款，请勿重复退款");
+				response.putErrorResult(TitanMsgCodeEnum.ORDER_REFUNND_IN_PROCESS);
+				return response;
+			}
 			//查询账户转账金额
 			log.info("3.获取转账金额并校验账户余额是否大于转账金额");
 			TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
@@ -239,6 +248,8 @@ public class TitanRefundService {
 			return response;
 		} catch (Exception e) {
 			log.error("退款出现异常", e);
+		} finally {
+			this.unlockOutTradeNoList(refundRequest.getOrderNo());
 		}
 		response.putSysError();
 		return response;
@@ -429,5 +440,27 @@ public class TitanRefundService {
 		refundRequest.setUserId(user.getUserid());
 		return refundRequest;
 	}
-
+	
+	private void lockOutTradeNoList(String out_trade_no) throws InterruptedException {
+		synchronized (mapLock) {
+			if(mapLock.containsKey(out_trade_no)) {
+				synchronized (mapLock.get(out_trade_no)) 
+				{
+					mapLock.get(out_trade_no).wait();
+				}
+			}
+			else{
+				mapLock.put(out_trade_no, new Object());
+			}
+			
+		}
+	}
+	
+	private void unlockOutTradeNoList(String out_trade_no) {
+		if(mapLock.containsKey(out_trade_no)){
+			synchronized (mapLock.get(out_trade_no)) {
+				mapLock.remove(out_trade_no).notifyAll();
+			}
+		}
+	}
 }
