@@ -21,6 +21,7 @@ import com.fangcang.merchant.api.MerchantFacade;
 import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
+import com.fangcang.titanjr.common.enums.RegchannelEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;
@@ -280,6 +281,7 @@ public class TitanTradeService {
 		}
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 		organQueryRequest.setUserId(userId);
+		organQueryRequest.setRegchannel(RegchannelEnum.OFFIAIAL_WEBSITE.source);
 		FinancialOrganResponse financialOrgan = titanFinancialOrganService
 				.queryFinancialOrgan(organQueryRequest);
 		if (financialOrgan.isResult()) {
