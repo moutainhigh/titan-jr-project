@@ -147,61 +147,13 @@ $(".J_thaw").on('click',function(){
 $('.J_modify').on('click',function(){
 	var tdEle = $(this).parents(".td-data");
 	var tfsUserId = tdEle.attr("data-tfs-userid");
-	var fcUserId = tdEle.attr("data-fc-userid");
-  	
-	  $.ajax({
-	      dataType : 'html',
-	      context: document.body,
-	      data:{"tfsUserId":tfsUserId,"fcUserId":fcUserId},
-	      url : '<%=basePath%>/setting/employee-add.shtml',           
-	      success : function(html){
-	          top.F.loading.hide();
-	          var d =  window.top.dialog({
-	              title: ' ',
-	              padding: '0 0 0px 0',
-	              content: html,
-	              skin : 'saas_pop' ,
-	              button : [ 
-	                      {
-	                          value: '完成',
-	                          skin : 'btn p_lr30',
-	                          callback: function () {
-	                        	  if(top.saveUpdateEmployee()){
-	                        		  top.frames["right_con_frm"].ajaxPage.load();
-	                        		  return true;
-	                        	  }else{
-	                        		  return false;
-	                        	  }
-	                          },
-						    autofocus: true
-	                      },
-	                      {
-	                          value: '取消',
-	                          skin : 'btn btn_grey btn_exit',
-	                          callback: function () {
-	                          }
-	                      }	
-	                  ]              
-	          }).showModal();
-	      },
-	      beforeSend:function(){
-	    	  top.F.loading.show();
-	      },
-	      complete:function(){
-	    	  top.F.loading.hide();
-	      },
-	      error:function(){
-	    	  new top.Tip({msg : '系统错误，请重试!', type: 3 , time:1500});
-	      }
-	  });
+  	location.href='<%=basePath%>/setting/employee-add.shtml?tfsUserId='+tfsUserId;
 }); 
 
 //解除权限
 $('.J_relieve').on('click',function(){
 	var tdEle = $(this).parents(".td-data");
 	var tUserLoginName = tdEle.attr("data-tfs-userloginname");
-	var tUserName = tdEle.attr("data-tusername");
-	var fcUserLoginName = tdEle.attr("data-fc-userloginname");
 	var tfsUserId = tdEle.attr("data-tfs-userid");
 	 new top.createConfirm({
 	    title:'提示',

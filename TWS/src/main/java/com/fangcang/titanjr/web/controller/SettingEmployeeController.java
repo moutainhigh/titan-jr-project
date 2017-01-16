@@ -167,8 +167,34 @@ public class SettingEmployeeController extends BaseController{
 	 */
 	@RequestMapping("/setting/employee-add")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
-	public String employeeAdd(){
-		 
+	public String employeeAdd(Integer tfsUserId,Integer fcUserId,Model model){
+		model.addAttribute("tfsUserId", tfsUserId);//新增该变量没有值
+		model.addAttribute("fcUserId", fcUserId);
+		
+		if(tfsUserId!=null&&tfsUserId>0){
+			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+			userInfoQueryRequest.setTfsUserId(tfsUserId);
+			userInfoQueryRequest.setBindIsactive(99);
+			UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
+			
+			if(userInfoResponse.getUserInfoDTOList()!=null&&userInfoResponse.getUserInfoDTOList().size()>0){
+				UserInfoDTO userInfoDTO = userInfoResponse.getUserInfoDTOList().get(0);
+				model.addAttribute("userInfoDTO", userInfoDTO);
+				if(CollectionUtils.isNotEmpty(userInfoDTO.getRoleDTOList())){
+					String roleIds = "";
+					for(RoleDTO item : userInfoDTO.getRoleDTOList()){
+						if(item.getIsActive()==1){
+							roleIds += item.getRoleId()+",";
+						}
+					}
+					model.addAttribute("roleIds", roleIds);
+				}
+				
+				return "setting/employee-update";
+			}
+			model.addAttribute("errormsg", "数据信息不存在");
+			return "error";
+		} 
 		return "setting/employee-add";
 	}
 	
