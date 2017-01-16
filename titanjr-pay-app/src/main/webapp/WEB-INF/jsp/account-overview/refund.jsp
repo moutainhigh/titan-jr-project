@@ -35,7 +35,7 @@
 					<div class="clearfix">
 						<div class="fl w_800">
 							<div class="goldpay_title">
-								付款金额：
+								退款金额：
 								
 								<span class="gdt_red">
 								  <c:choose>
@@ -67,7 +67,7 @@
 									  </c:choose>
 									
 									</li>
-									<li class="balanceTip" hidden="hidden"><span>泰坦金融总余额：</span><i class="colorRed"><fmt:parseNumber  pattern="#,##0.00#" value="${balanceAmount/100}"></fmt:parseNumber></i>元<b class="mar_10" >(请先充值后进行退款)</b></li>
+									<li class="balanceTip" hidden="hidden"><span>泰坦金融总余额：</span><i class="colorRed"><fmt:parseNumber  pattern="#,##0.00#" value="${balanceAmount/100}"></fmt:parseNumber></i>元<b class="mar_10" style="color: red" >(请先充值后再进行退款)</b></li>
 								</ul>
 							</div>
 							
