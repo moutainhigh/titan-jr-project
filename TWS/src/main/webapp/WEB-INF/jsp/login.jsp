@@ -89,6 +89,7 @@ $('.user .lb_cut').on('click',function(){
 	 cur_plane='dynamic';
 })
 //验证码
+var sendingFlag = false;
 function timeOut(_this){
     var i=59;
     var interval=setInterval(function () {                
@@ -98,17 +99,22 @@ function timeOut(_this){
          }else{
             _this.removeClass("lb_huise").html("重新获取验证码");
             clearInterval(interval);
+            sendingFlag = false;
          }; 
     }, 1000);
 };
 $('.lb_verify').on('click',function(){
+	if(sendingFlag){
+		return;
+	}
 	var susernameObj = $("#susername");
 	var susername = susernameObj.val();
 	if((!phone_reg.test(susername))&&(!email_reg.test(susername))){
 		Login.getCurPlane().setErrormsg(susernameObj,'格式不正确');
 		return ;
 	}
-    if(!$(this).hasClass("lb_huise")){   
+    if(!$(this).hasClass("lb_huise")){
+    	sendingFlag = true;
     	$(this).text("重新发送(60)");
         $(this).addClass('lb_huise');
         timeOut($(this));

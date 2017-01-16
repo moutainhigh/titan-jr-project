@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-    <title>员工权限信息-泰坦钱包</title>
+    <title>新增员工权限信息-泰坦钱包</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
@@ -268,7 +268,6 @@ function saveEmployee(){
 				setTimeout(function(){
 					location.href="<%=basePath%>/setting/employee.shtml";
 				},2000);
-				
 			}else{
 				new top.createConfirm({
 			        padding:'30px 20px 65px',
