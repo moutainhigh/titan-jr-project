@@ -66,9 +66,65 @@
             <c:if test="${tradeItem.tradeType == '提现'}">
                 <a class="J_orderDetails blue decorationUnderline m_r10" href="<%=basePath%>/account/order-withdraw-detail.shtml?userOrderId=${tradeItem.userorderid}" target="_blank">详情</a>
             </c:if>
-            <a class="J_remark blue decorationUnderline"  href="<%=basePath%>/account/order-remark-history.shtml?userOrderId=${tradeItem.userorderid}" target="_blank">备注</a>
+            <a class="J_remark blue decorationUnderline"  orderId="${tradeItem.userorderid}" onclick='showRemarkInfo(this)'>备注</a>
 		</td>
 	</tr>
 </c:forEach>
 <input type="hidden" id="tradePageTotal" value="${tradePage.totalCount}">
 <input type="hidden" id="tradePageCurrent" value="${tradePage.currentPage}">
+<script type="text/javascript">
+
+//备注
+ //备注
+    function showRemarkInfo(obj) {
+        var code = $(obj).attr("orderId");
+        $.ajax({
+            dataType: 'html',
+            context: document.body,
+            data: {userOrderId: code},
+            url: '<%=basePath%>/account/order-remark.shtml',
+            success: function (html) {
+            	var d = window.top.dialog({
+			        title: '备注',
+			        padding: '0 0 0px 0 ',
+			        content: html,
+			        skin : 'overview_pop',
+			        button : [ 
+                    {
+                        value: '保存',
+                        skin : 'btn btn_save',
+                        callback: function () {
+                        	 var flag = false;
+                             $.ajax({
+                                 async:false,
+                                 type:'post',
+                                 data:{"remark":top.$("#id_remark_text").val(),userOrderId: code},
+                                 url : '<%=basePath%>/account/updateOrderRemark.shtml',
+                                 dataType : 'json',
+                                 success : function(result){
+                                     if(result.code==1){
+                                         new top.Tip({msg : '备注信息更新成功', type: 1 , timer:1500});
+                                         $('.MyAssets_list_tab').find('span.on').click();
+                                     }else{
+                                         alert("备注信息更新失败：" + result.msg);
+                                     }
+                                 }
+                             });
+                        },
+                        autofocus: true
+                    },
+                    {
+                        value: '取消',
+                        skin : 'btn btn_g',
+                        callback: function () {
+                           alert('c');
+                        }
+                    }
+                ]     
+			    }).showModal();	
+            }
+        });
+    }
+</script>
+
+

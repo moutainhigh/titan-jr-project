@@ -527,7 +527,28 @@ public class FinancialAccountController extends BaseController {
     	 return this.validatePersonOrEnterprise(request, model);
     }
     
-    
+    @RequestMapping(value = "/updateOrderRemark")
+    @ResponseBody
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String updateOrderRemark(TransOrderUpdateRequest transOrderUpdateRequest, HttpServletRequest request) {
+        if (this.getUserId() != null) {
+            transOrderUpdateRequest.setUserId(this.getUserId());
+            TransOrderUpdateResponse updateResponse = titanFinancialTradeService.updateTransOrder(transOrderUpdateRequest);
+            if (updateResponse.isResult()) {
+                return toJson(putSuccess());
+            } else {
+                return toJson(putSysError(updateResponse.getReturnMessage()));
+            }
+        } else {
+            return toJson(putSysError("当前会话机构标示为空"));
+        }
+    }
+
+    @RequestMapping("showSetPayPassword")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String showSetPayPassword() {
+        return "checkstand-pay/setPayPassword";
+    }
     
     
     
@@ -724,27 +745,7 @@ public class FinancialAccountController extends BaseController {
         return map;
     }
 
-    @RequestMapping(value = "/updateOrderRemark")
-    @ResponseBody
-    public String updateOrderRemark(TransOrderUpdateRequest transOrderUpdateRequest, HttpServletRequest request) {
-        if (this.getUserId() != null) {
-            transOrderUpdateRequest.setUserId(this.getUserId());
-            TransOrderUpdateResponse updateResponse = titanFinancialTradeService.updateTransOrder(transOrderUpdateRequest);
-            if (updateResponse.isResult()) {
-                return toJson(putSuccess());
-            } else {
-                return toJson(putSysError(updateResponse.getReturnMessage()));
-            }
-        } else {
-            return toJson(putSysError("当前会话机构标示为空"));
-        }
-    }
-
-    @RequestMapping("showSetPayPassword")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String showSetPayPassword() {
-        return "checkstand-pay/setPayPassword";
-    }
+  
 
     @RequestMapping("showPayPassword")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})

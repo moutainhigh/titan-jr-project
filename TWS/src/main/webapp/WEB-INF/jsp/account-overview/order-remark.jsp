@@ -1,7 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%@ include file="/comm/taglib.jsp"%>
 <script type="text/javascript" src="<%=basePath%>/js/tfs-common.js"></script>
-<div class="S_popup clearfix">
+<!-- <div class="S_popup clearfix">
 	<div class="S_popup_title">
 		<ul>
 			<li class="P_left"></li>
@@ -17,7 +17,15 @@
          </div>
          </div>
 	</div>
+</div> -->
+<div class="clearfix" style="width: 530px; padding:15px 25px 10px;">
+     <div class="remark_l fl">备注内容：</div>
+     <div class="remark_r fl">
+     	<textarea cols="" rows="" id="id_remark_text" ></textarea>       
+	 </div>
 </div>
+
+
 <script type="text/javascript">
 	var c = backEnterKey("${transOrder.remark}");
 	$("#id_remark_text").html(c);
