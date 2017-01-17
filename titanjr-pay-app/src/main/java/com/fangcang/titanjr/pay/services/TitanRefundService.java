@@ -192,10 +192,7 @@ public class TitanRefundService {
 				titanJrRefundRequest.setOrderTime(titanOrderPayDTO.getOrderTime());
 				titanJrRefundRequest.setVersion(titanOrderPayDTO.getVersion());
 				titanJrRefundRequest.setSignType(titanOrderPayDTO.getSignType().toString());
-				titanJrRefundRequest.setIsRealTime(CommonConstant.NOT_REAL_TIME);
-				if (PayTypeEnum.isRealTimeToAccount(titanOrderPayDTO.getPayType())) {
-					titanJrRefundRequest.setIsRealTime(CommonConstant.REAL_TIME);
-				}
+//				titanJrRefundRequest.setIsRealTime(CommonConstant.NOT_REAL_TIME);
 			} else {//直接进行账户退款,退款到账户余额
 				titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_ACCOUNT.type);
 			}
@@ -232,8 +229,7 @@ public class TitanRefundService {
 					+ ",realTime:" + titanJrRefundRequest.getIsRealTime());
 			TransOrderDTO transOrder = new TransOrderDTO();
 			transOrder.setStatusid(OrderStatusEnum.REFUND_IN_PROCESS.getStatus());
-			if (RefundTypeEnum.REFUND_ACCOUNT.type.equals(titanJrRefundRequest.getToBankCardOrAccount()) ||//余额支付的退款
-					titanJrRefundRequest.getIsRealTime().equals(CommonConstant.REAL_TIME)) {//第三方支付等实时到账的退款
+			if (RefundTypeEnum.REFUND_ACCOUNT.type.equals(titanJrRefundRequest.getToBankCardOrAccount())) {//余额支付的退款
 				transOrder.setStatusid(OrderStatusEnum.REFUND_SUCCESS.getStatus());
 			}
 			log.info("退款成功修改订单状态:" + transOrder.getTransid() + ":" + transOrder.getStatusid());

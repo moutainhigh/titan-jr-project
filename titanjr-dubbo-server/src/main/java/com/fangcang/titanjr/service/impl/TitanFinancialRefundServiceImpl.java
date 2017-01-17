@@ -189,7 +189,6 @@ public class TitanFinancialRefundServiceImpl implements
 			refundOrderRequest.setPayOrderNo(refundRequest.getPayOrderNo());
 			refundOrderRequest.setUserOrderId(refundRequest.getUserOrderId());
 			refundOrderRequest.setNotifyUrl(refundRequest.getNotifyUrl());
-			refundOrderRequest.setIsRealTime(refundRequest.getIsRealTime());
 			refundOrderRequest.setBusinessInfo(refundRequest.getBusinessInfo());
 			if (StringUtil.isValidString(refundRequest.getTfsUerId())) {
 				TitanUser user = titanUserDao.selectTitanUser(Integer.parseInt(refundRequest.getTfsUerId()));
@@ -232,9 +231,6 @@ public class TitanFinancialRefundServiceImpl implements
 				return response;
 			}
 			RefundStatusEnum refundStatus = RefundStatusEnum.REFUND_IN_PROCESS;
-			if (refundRequest.getIsRealTime() == CommonConstant.REAL_TIME) {
-				refundStatus = RefundStatusEnum.REFUND_SUCCESS;
-			}
 			log.info("6.7通知业务系统退款结果");
 			this.threadNotify(refundOrderRequest.getOrderId(), refundStatus);
 			response.putSuccess();
@@ -276,6 +272,7 @@ public class TitanFinancialRefundServiceImpl implements
 		titanRefund.setTransferAmount(refundOrderRequest.getAmount());
 		titanRefund.setFee("0");
 		try{
+			this.threadNotify(refundOrderRequest.getOrderId(), RefundStatusEnum.REFUND_SUCCESS);
 			titanRefundDao.insert(titanRefund);
 		}catch(Exception e){
 			log.error("保存退款单下单失败"+e.getMessage()+":data:"+JSONSerializer.toJSON(titanRefund));
@@ -425,9 +422,6 @@ public class TitanFinancialRefundServiceImpl implements
 		titanRefund.setFee(refundOrderRequest.getFee());
 		titanRefund.setBusinessInfo(refundOrderRequest.getBusinessInfo());
 		titanRefund.setStatus(RefundStatusEnum.REFUND_IN_PROCESS.status);
-		if(refundOrderRequest.getIsRealTime() == CommonConstant.REAL_TIME){
-			titanRefund.setStatus(RefundStatusEnum.REFUND_SUCCESS.status);
-		}
 		titanRefund.setNotifyUrl(refundOrderRequest.getNotifyUrl());
 		titanRefund.setUserorderid(refundOrderRequest.getUserOrderId());
 		titanRefund.setPayOrderNo(refundOrderRequest.getPayOrderNo());

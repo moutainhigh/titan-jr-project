@@ -180,9 +180,9 @@ public class CommonConstant {
 	//是否是商家编码
 	public static final String ISMERCHCODE = "1";
 	
-	public static final Integer REAL_TIME = 0;
-	
-	public static final Integer NOT_REAL_TIME = 1;
+//	public static final Integer REAL_TIME = 0;
+//	
+//	public static final Integer NOT_REAL_TIME = 1;
 	
     public static final String RATE_TEMPLETE = "RA201611011800001";
 }
