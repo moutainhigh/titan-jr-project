@@ -1,5 +1,6 @@
 package com.fangcang.titanjr.pay.services;
 
+import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
@@ -399,7 +400,6 @@ public class TitanRefundService {
 					TitanMsgCodeEnum.ORDER_NOT_REFUND.getResMsg());
 			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 		}
-		
 		//判断订单是否超过退款时间，
 		if(transOrderDTO.getAmount() !=null && transOrderDTO.getAmount()>0 ){
 			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
