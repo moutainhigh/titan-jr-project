@@ -361,7 +361,7 @@ public class TitanRefundService {
 		if(!isRefund){
 			log.error("验证机构或权限失败");
 			model.addAttribute("msg",
-					TitanMsgCodeEnum.PERMISSION_CHECK_FAILED.getResMsg());
+					TitanMsgCodeEnum.PERMISSION_CHECK_REFUND.getResMsg());
 			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 		}
 		

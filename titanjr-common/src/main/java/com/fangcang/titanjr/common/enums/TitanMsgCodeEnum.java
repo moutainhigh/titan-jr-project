@@ -22,8 +22,8 @@ public enum TitanMsgCodeEnum {
 	AUTHENTITCATION_FAILED(110100002, "身份认证失败，请确认！"),
 
 	// 权限校验
-	PERMISSION_CHECK_FAILED(110100003, "权限校验失败，请确认！"),
-
+	PERMISSION_CHECK_FAILED(110100003, "该用户没有，请确认！"),
+	
 	// 业务订单信息已经发生变化
 	BUSS_ORDER_CHANGE_CHECK_FAILED(110100004, "业务订单信息已经发生变化，请重新下单!"),
 
@@ -111,6 +111,9 @@ public enum TitanMsgCodeEnum {
     REFUND_UNFREEZE_FAIL(110100039,"资金解冻失败"),
     
     REFUND_CONCERT_FAIL(110100040,"商家未绑定金融账户或操作人为绑定金融用户"),
+    
+ // 权限校验
+ 	PERMISSION_CHECK_REFUND(110100041, "您还没有付款（退款）权限，请与管理员联系！"),
 
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");
