@@ -4,30 +4,24 @@
 <html>
 <head>
 <meta charset="utf-8">
-    <title>个人账户资料-泰坦金融</title>
+    <title></title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
   
-  <body style="min-width: 1300px;" class="bg" >
+  <body class="bg" >
 <!-- 头部 -->
-<jsp:include page="./../header.jsp"></jsp:include>
-<div class="h_90"></div>
 <!-- 内容 -->
-<div class="w_1200 ">
+<div class="w_1200" style="width:860px;">
 	<div class="overview clearfix m_t20 o_set">	
-		<jsp:include page="../slidemenu/jr-setting-menu.jsp">
-			<jsp:param value="fee" name="menu"/>
-		</jsp:include>
-		<div class="s_right clearfix">
-			<div class="sr_crumbs">我的账户  >  泰坦钱包设置  > 泰坦钱包协议</div>			
+		 
+		<div class="s_right clearfix" style="width:860px;border:0;">
 			<jsp:include page="/comm/content.jsp"></jsp:include>
-			<div class="sra_btn">
+			<div class="sra_btn" id="p_btn">
 					<div class="h_61"></div>
-					<div class="sra_btn1 sra_fixed">
+					<div class="sra_btn1 sra_fixed" style="width:890px;margin-left:-30px;">
 						<div class="sra_xi"></div>
-						<a class="btn" href="javascript:;" onclick="window.open('http://static.fangcang.com/static/tfs/titan_finance_protocol.doc')">下载</a>
-						<a class="btn btn_g" href="<%=basePath %>/ex/print-protocol.shtml" >打印</a>
+						<a class="btn btn_g" href="javascript:;" onclick="printPro()">打印</a>
 					</div>
 			    </div>
 		</div>
@@ -46,7 +40,10 @@ scrollCon();
 $(window).on('resize.fixed',function(){
 	scrollCon();
 });
-
+function printPro(){
+	$("#p_btn").hide();
+	window.print();
+}
 </script>
 
 </body>

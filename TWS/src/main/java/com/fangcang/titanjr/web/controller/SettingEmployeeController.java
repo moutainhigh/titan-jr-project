@@ -392,7 +392,7 @@ public class SettingEmployeeController extends BaseController{
 	 * 收付款费率公示
 	 * @return
 	 */
-	@RequestMapping("/ex/fee")
+	@RequestMapping("/setting/fee")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String fee(HttpServletRequest request,Model model){
 		List<TitanRateDto> rateInfoList = new ArrayList<TitanRateDto>();
@@ -433,6 +433,14 @@ public class SettingEmployeeController extends BaseController{
 	public String protocol(){
 		return "setting/protocol";
 	}
-	
+	/**
+	 * 金融协议
+	 * @return
+	 */
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	@RequestMapping("/ex/print-protocol")
+	public String printProtocol(){
+		return "setting/print-protocol";
+	}
 	
 }
