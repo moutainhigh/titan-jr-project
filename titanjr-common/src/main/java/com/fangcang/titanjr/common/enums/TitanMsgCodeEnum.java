@@ -110,7 +110,7 @@ public enum TitanMsgCodeEnum {
     
     REFUND_UNFREEZE_FAIL(110100039,"资金解冻失败"),
     
-    REFUND_CONCERT_FAIL(110100040,"商家未绑定金融账户或操作人为绑定金融用户"),
+    REFUND_CONCERT_FAIL(110100040,"商家未绑定金融账户或操作人未绑定金融用户"),
     
  // 权限校验
  	PERMISSION_CHECK_REFUND(110100041, "您还没有付款（退款）权限，请与管理员联系！"),
