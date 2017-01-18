@@ -98,7 +98,7 @@
 				  enoughBalance:function(){
 					  var refundAmount = null;
 					  if('${paySourceMark}'=='1'){
-						  refundAmount = transOrderDTO.tradeamount;
+						  refundAmount = '${transOrderDTO.tradeamount}';
 					  }else{
 						  refundAmount = '${(transOrderDTO.tradeamount+transOrderDTO.receivedfee)}';
 					  }
@@ -159,6 +159,9 @@
 		  
 		  refundObj.enoughBalance();
 		 
+		  $(".def_btn").click(function(){
+			  window.close();
+		  });
 		  
 		</script>
 		

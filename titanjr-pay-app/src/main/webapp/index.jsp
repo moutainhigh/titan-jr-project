@@ -67,7 +67,7 @@
 					businessInfo:"125sdlkkkl"
 			};
 			
-			   window.location=titanPayObj.getRefund(refundInfo);
+			   window.open().location=titanPayObj.getRefund(refundInfo);
 		 };
 		 
 		 

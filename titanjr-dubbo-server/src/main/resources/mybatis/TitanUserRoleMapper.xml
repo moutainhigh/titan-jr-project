@@ -79,6 +79,6 @@
   
   <select id="selectUserRoles" parameterType="java.lang.String" resultType="com.fangcang.titanjr.entity.TitanUserRole">
     select tfsuserid, roleid,creator, createtime, modifier,modifytime
-    from t_tfs_user_role where tfsuserid=#{tfsuserid}
+    from t_tfs_user_role where tfsuserid=#{tfsuserid} and isactive=1
   </select>
 </mapper>
