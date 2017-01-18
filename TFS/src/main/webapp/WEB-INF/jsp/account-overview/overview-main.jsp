@@ -1233,7 +1233,7 @@
         	});
 		}
 		
-		//loadLoanAccountInfo();
+		loadLoanAccountInfo();
 		
 		function loadLoanAccountInfo()
 		{

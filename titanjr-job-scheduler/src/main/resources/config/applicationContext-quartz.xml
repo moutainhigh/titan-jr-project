@@ -58,32 +58,38 @@
 	
 	
 	<!-- 每天晚上一点统计一次商家的可用金额 -->
-	<!--
 	 <bean id="loanCreditAmountEvaluationTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="loanCreditAmountEvaluationJobSchedule" />
 		<property name="cronExpression">
+			<!-- 测试配置 -->
 			<value>0 0 1 * * ?</value>
+			<!-- 发布配置 每3分钟执行一次 -->
+			<!--<value>0 0/30 * * * ?</value>-->
 		</property>
 	</bean>
-	-->
+	
 	<!-- 每一个小时同步授信单的状态 -->
-	<!--
 	 <bean id="loanCreditSynTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="loanCreditSynJobSchedule" />
 		<property name="cronExpression">
+			<!-- 测试配置 -->
 			<value>0 */59 * * * ?</value>
+			<!-- 发布配置 每3分钟执行一次 -->
+			<!--<value>0 0/30 * * * ?</value>-->
 		</property>
 	</bean>
-	-->
+	
 	<!-- 每半个小时同步一次贷款单状态 -->
-	<!--
 	 <bean id="loanOrderSynTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="loanOrderSynJobSchedule" />
 		<property name="cronExpression">
+			<!-- 测试配置 -->
 			<value>0 */30 * * * ?</value>
+			<!-- 发布配置 每3分钟执行一次 -->
+			<!--<value>0 0/30 * * * ?</value>-->
 		</property>
 	</bean>
-	-->
+	
 	
 	
 	
@@ -152,7 +158,7 @@
 	</bean>
 	
 	
-	<!-- 
+	
 	 <bean id="loanCreditAmountEvaluationJobSchedule" 
 	      class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass" value="com.fangcang.titanjr.job.LoanCreditAmountEvaluatingJob" />
@@ -201,7 +207,7 @@
 		  </map>
 	    </property>
 	</bean> 
-	 -->
+	
 
 	 <bean id="refundConfirmJobSchedule" 
 	      class="org.springframework.scheduling.quartz.JobDetailBean">
