@@ -165,7 +165,7 @@ public class TitanRefundService {
 			
 			Long fee = transOrderDTO.getReceivedfee();
 			if(null == fee){
-				fee = (long)0;
+				fee = 0l;
 			}
 		
 			TitanJrRefundRequest titanJrRefundRequest  = new TitanJrRefundRequest();
@@ -388,7 +388,7 @@ public class TitanRefundService {
 		if(OrderStatusEnum.REFUND_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())){
 			log.error("该订单退款成功，不能重复退款");
 			model.addAttribute("msg",
-					TitanMsgCodeEnum.TRANSFER_SUCCESS_UPDATE_LOACL_FAIL.getResMsg());
+					TitanMsgCodeEnum.REFUND_SUCCESSED.getResMsg());
 			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 		}
 		
