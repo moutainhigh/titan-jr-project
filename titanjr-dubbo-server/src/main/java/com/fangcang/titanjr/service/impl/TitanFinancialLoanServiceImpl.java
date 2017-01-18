@@ -552,7 +552,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			loanApplyOrder.setActualAmount(0L);
 			loanApplyOrder.setProductType(type);
 			loanApplyOrder.setRsorgId(orgCode);
-			loanApplyOrder.setRepaymentType(1);
+			loanApplyOrder.setRepaymentType(1);//1 按日计利，随借随还
 			loanApplyOrder
 					.setRspId(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
 			loanApplyOrder

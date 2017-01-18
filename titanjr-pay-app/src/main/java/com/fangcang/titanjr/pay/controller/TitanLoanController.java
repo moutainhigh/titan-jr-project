@@ -153,6 +153,7 @@ public class TitanLoanController extends BaseController {
 					titanCreditServiceListener.creditFailure(notifyDataObject.getOrderNo(),notifyDataObject.getBuessNo(),state, notifyDataObject.getMsg());
 				}else{
 					//其他状态暂时不处理。
+					log.info("该状态的通知不处理，状态为Status:"+notifyDataObject.getStatus()+"，处理参数notifyDataObject:"+Tools.gsonToString(notifyDataObject)+",createTime:"+createTime);
 				}
 				result.put("dataState", "0");
 				result.put("dataMsg", "通知处理成功");
@@ -177,6 +178,7 @@ public class TitanLoanController extends BaseController {
 					resultState = titanLoanServiceListener.loanFailure(notifyDataObject.getBuessNo(),state, notifyDataObject.getMsg());
 				}else{
 					//其他状态暂时不处理。
+					log.info("该状态的通知不处理，状态为Status:"+notifyDataObject.getStatus()+"，处理参数notifyDataObject:"+Tools.gsonToString(notifyDataObject)+",createTime:"+createTime);
 				}
 				if(resultState){
 					result.put("dataState", "0");
