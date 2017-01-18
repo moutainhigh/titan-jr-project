@@ -250,14 +250,10 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				return response;
 			}
 
-			String loanApplyOrderNo = "";
-			String contactNames = "";
 			String relateOrgCode = "";
 			if (LoanProductEnum.ROOM_PACK.getCode() == productType.getCode()) {
 				LoanRoomPackSpecBean loanSpecBean = (LoanRoomPackSpecBean) req
 						.getLcanSpec();
-				loanApplyOrderNo = loanSpecBean.getLoanOrderNo();
-				contactNames = loanSpecBean.getContractUrl();
 				String titanCode = loanSpecBean.getTitanCode();
 				if (StringUtil.isValidString(titanCode)) {
 					// 校验titanCode和用户名是否一致对应
