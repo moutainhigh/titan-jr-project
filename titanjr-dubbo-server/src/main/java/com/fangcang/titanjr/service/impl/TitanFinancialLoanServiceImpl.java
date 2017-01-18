@@ -289,9 +289,6 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				throw new Exception("保存订单失败");
 			}
 
-			// 上传文件到融数，并且获取相应的urlKey
-			//String urlKey = getApplyLoanUrlKey(req.getOrgCode(),
-				///	loanApplyOrderNo, 1, contactNames);
 			if (!StringUtil.isValidString(req.getUrlKey())) {
 				log.error("贷款申请订单证明资料上传失败，orgcode:" + req.getOrgCode());
 				throw new Exception("保存订单失败");
