@@ -117,7 +117,6 @@
                         value: '取消',
                         skin : 'btn btn_g',
                         callback: function () {
-                           alert('c');
                         }
                     }
                 ]     
