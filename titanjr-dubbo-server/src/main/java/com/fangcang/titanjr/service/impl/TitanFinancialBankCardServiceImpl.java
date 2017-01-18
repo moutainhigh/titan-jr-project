@@ -125,6 +125,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
             bankCardBindRequest.setCertificatenumnumber(cusBankCardBindRequest.getCertificateNumber());
             bankCardBindRequest.setBank_code(cusBankCardBindRequest.getBankCode());
             bankCardBindRequest.setUsertype(cusBankCardBindRequest.getUserType());
+            log.info("绑定卡的参数:"+JSONSerializer.toJSON(bankCardBindRequest));
             BankCardBindResponse bankCardBindResponse = rsBankCardInfoManager.bindBankCard(bankCardBindRequest);
             if (bankCardBindResponse != null) {
                 if (CommonConstant.OPERATE_SUCCESS.equals(bankCardBindResponse.getOperateStatus())) {

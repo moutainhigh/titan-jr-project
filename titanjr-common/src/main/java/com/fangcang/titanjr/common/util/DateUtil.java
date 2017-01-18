@@ -932,7 +932,7 @@ public class DateUtil {
 //			List<String> list = ["张三","李四"];
 			
 			
-			
+			System.out.println(new Date().getTime());
 			
 			
 			
