@@ -252,5 +252,16 @@ public class LoginController extends BaseController{
     		return toJson(putSysError(sendRegCodeResponse.getReturnMessage()));
     	}
     	
-   }
+	}
+	/***
+	 * 忘记登录密码页面
+	 * @return
+	 */
+   	@RequestMapping(value = "/u-login-pwd-forget")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	public String uLoginPwdForget(){
+   		
+   		
+		return  "user/u-login-pwd-forget";
+	}
 }

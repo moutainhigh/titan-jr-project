@@ -133,7 +133,7 @@ public class SettingBaseInfoController extends BaseController{
 		return "";
 	}
 	
-	@RequestMapping("/setting/pwd-set-succ")
+	@RequestMapping("/ex/pwd-set-succ")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String pwdSetSucc(Integer pageType ,Model model){
 		model.addAttribute("pageType", pageType);
@@ -251,7 +251,12 @@ public class SettingBaseInfoController extends BaseController{
     	verifyCheckCodeRequest.setInputCode(code);
     	VerifyCheckCodeResponse verifyCheckCodeResponse = organService.verifyCheckCode(verifyCheckCodeRequest);
     	if(verifyCheckCodeResponse.isResult()){
-    		int tfsUserId = Integer.valueOf(getTfsUserId());
+    		
+    		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+    		userInfoQueryRequest.setUserLoginName(userLoginName);
+    		UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
+    		
+    		int tfsUserId = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0).getTfsuserid();
     		LoginPasswordRequest loginPasswordRequest = new LoginPasswordRequest();
 			loginPasswordRequest.setTfsuserid(tfsUserId);
 			loginPasswordRequest.setNewLoginPassword(newLoginPassword);
@@ -271,11 +276,12 @@ public class SettingBaseInfoController extends BaseController{
 				}
 			} catch (GlobalServiceException e) {
 				Map<String, Object> errorMap= new HashMap<String, Object>();
-				errorMap.put("tfsUserId", tfsUserId);
+				errorMap.put("userLoginName", userLoginName);
 				errorMap.put("code", code);
 				errorMap.put("newLoginPassword", newLoginPassword);
 				LOG.error("通过原始密码修改登录密码错误，参数:"+JSONSerializer.toJSON(errorMap).toString(), e);
 				putSysError(WebConstant.CONTROLLER_ERROR_MSG);
+				return toJson();
 			}
     		return toJson(putSuccess("验证成功"));
     	}else{

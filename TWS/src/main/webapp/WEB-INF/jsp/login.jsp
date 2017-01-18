@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-    <title>泰坦钱包</title>        
+    <title>泰坦钱包</title>
     <link rel="stylesheet" href="<%=cssWalletPath%>/css/fangcang.min.css?v=20161222">
     <link rel="stylesheet" href="<%=cssWalletPath%>/css/style.css?v=20161222">
     <jsp:include page="/comm/static-js.jsp"></jsp:include>
@@ -27,7 +27,7 @@
 					<span><i class="ico Ibadd" id=""></i> <em>记住用户名</em></span>
 				</li>
 				<li class="lb_btn"><a href="javascript:;" onclick="Login.plogin()">立即登录</a></li>
-				<li class="lb_register"><a href="<%=basePath%>/ex/organ/showOrgUser.shtml">免费注册</a><a href="<%=basePath%>/ex/login-pwd.shtml">忘记密码？</a></li>
+				<li class="lb_register"><a href="<%=basePath%>/ex/organ/showOrgUser.shtml">免费注册</a><a href="<%=basePath%>/ex/u-login-pwd-forget.shtml">忘记密码？</a></li>
 			</ul>
 			</div>
 		</div>
@@ -45,7 +45,7 @@
 					<span><i class="ico Ibadd"></i> <em>记住用户名</em></span>
 				</li>
 				<li class="lb_btn"><a href="javascript:;" onclick="Login.slogin()">立即登录</a></li>
-				<li class="lb_register"><a href="<%=basePath%>/ex/organ/showOrgUser.shtml">免费注册</a><a href="忘记密码.html">忘记密码？</a></li>
+				<li class="lb_register"><a href="<%=basePath%>/ex/organ/showOrgUser.shtml">免费注册</a><a href="<%=basePath%>/ex/u-login-pwd-forget.shtml">忘记密码？</a></li>
 			</ul>
 			</div>
 		</div>
@@ -53,12 +53,7 @@
 </div>
 
 <!-- 版权 -->
-<div class="footer">
-	Copyright © 2012-2016, fangcang.com. All Rights Reserved 泰坦云 版权所有 粤ICP备13046150号	
-</div>
-<div class="szcert">
-	<script charset="utf-8" type="text/javascript" src="http://szcert.ebs.org.cn/govicon.js?id=78ccac39-a97a-452c-9f81-162cd840cff6&amp;width=130&amp;height=50&amp;type=2" id="ebsgovicon"></script>
-</div>
+<jsp:include page="/comm/foot.jsp"></jsp:include>
 
 
 <script type="text/javascript" src="<%=basePath%>/js/jquery.cookie.js"></script>
