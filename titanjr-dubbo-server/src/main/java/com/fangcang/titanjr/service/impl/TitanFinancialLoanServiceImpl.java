@@ -250,14 +250,10 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				return response;
 			}
 
-			String loanApplyOrderNo = "";
-			String contactNames = "";
 			String relateOrgCode = "";
 			if (LoanProductEnum.ROOM_PACK.getCode() == productType.getCode()) {
 				LoanRoomPackSpecBean loanSpecBean = (LoanRoomPackSpecBean) req
 						.getLcanSpec();
-				loanApplyOrderNo = loanSpecBean.getLoanOrderNo();
-				contactNames = loanSpecBean.getContractUrl();
 				String titanCode = loanSpecBean.getTitanCode();
 				if (StringUtil.isValidString(titanCode)) {
 					// 校验titanCode和用户名是否一致对应
@@ -293,9 +289,6 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				throw new Exception("保存订单失败");
 			}
 
-			// 上传文件到融数，并且获取相应的urlKey
-			//String urlKey = getApplyLoanUrlKey(req.getOrgCode(),
-				///	loanApplyOrderNo, 1, contactNames);
 			if (!StringUtil.isValidString(req.getUrlKey())) {
 				log.error("贷款申请订单证明资料上传失败，orgcode:" + req.getOrgCode());
 				throw new Exception("保存订单失败");
@@ -552,7 +545,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			loanApplyOrder.setActualAmount(0L);
 			loanApplyOrder.setProductType(type);
 			loanApplyOrder.setRsorgId(orgCode);
-			loanApplyOrder.setRepaymentType(1);
+			loanApplyOrder.setRepaymentType(1);//1 按日计利，随借随还
 			loanApplyOrder
 					.setRspId(LoanApplyOrderEnum.ProductId.MAIN_PRODUCTID.productId);
 			loanApplyOrder

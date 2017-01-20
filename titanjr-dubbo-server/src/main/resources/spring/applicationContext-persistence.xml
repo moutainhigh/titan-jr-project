@@ -112,7 +112,7 @@
 	<bean id="titanHelpDao" class="com.fangcang.titanjr.dao.impl.TitanHelpDaoImpl" parent="baseSqlMapClient"></bean>
 	
 	<bean id="titanHelpTypeDao" class="com.fangcang.titanjr.dao.impl.TitanHelpTypeDaoImpl" parent="baseSqlMapClient"></bean>
-	<bean id="titanSysconfigDao" class="com.fangcang.titanjr.dao.impl.TitanSysconfigDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="titanSysConfigDao" class="com.fangcang.titanjr.dao.impl.TitanSysConfigDaoImpl" parent="baseSqlMapClient"></bean>
 	<!--信贷产品-->
 	<bean id="loanCompanyEnsureDao" class="com.fangcang.titanjr.dao.impl.LoanCompanyEnsureDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="loanCreditCompanyDao" class="com.fangcang.titanjr.dao.impl.LoanCreditCompanyDaoImpl" parent="baseSqlMapClient"></bean>
