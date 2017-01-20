@@ -144,6 +144,7 @@ public class TitanPaymentController extends BaseController {
         	// update recharge order
 			int row = titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.RECHARFE_SUCCESS.getStatus()+"");
         	if(row<1){
+        		log.error("更新充值单失败");	
         		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "充值成功 修改充值单失败", OrderExceptionEnum.OrderPay_Update, JSON.toJSONString(orderNo));
         		titanOrderService.saveOrderException(orderExceptionDTO);
         	}

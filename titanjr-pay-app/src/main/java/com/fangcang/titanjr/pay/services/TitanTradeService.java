@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.pay.services;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -409,7 +410,7 @@ public class TitanTradeService {
 		if(cashierDeskItemDTOList==null || cashierDeskItemDTOList.size()==0){
 			return;
 		}
-		
+		Collections.reverse(cashierDeskItemDTOList);
 		CashierItemBankDTO cmbcBank = null;
 		for(CashierDeskItemDTO cashierDeskItem :cashierDeskItemDTOList){
 			//B2B Item

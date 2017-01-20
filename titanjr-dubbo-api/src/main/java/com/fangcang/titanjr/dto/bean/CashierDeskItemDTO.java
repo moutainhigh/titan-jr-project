@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by zhaoshan on 2016/5/18.
  */
-public class CashierDeskItemDTO implements Serializable {
+public class CashierDeskItemDTO implements Serializable,Comparable {
 
     /**
 	 * 
@@ -62,4 +62,12 @@ public class CashierDeskItemDTO implements Serializable {
     public void setRateConfigDTOList(List<RateConfigDTO> rateConfigDTOList) {
         this.rateConfigDTOList = rateConfigDTOList;
     }
+
+	@Override
+	public int compareTo(Object o) {
+		CashierDeskItemDTO item = (CashierDeskItemDTO)o;
+		Integer thisType = this.getItemType();
+		Integer itemType = item.getItemType();
+		return thisType.compareTo(itemType);
+	}
 }

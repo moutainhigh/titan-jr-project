@@ -84,6 +84,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
         try {
             List<CashierDeskDTO> result = titanCashierDeskDao.queryCashierDesk(cashierDeskQueryRequest);
             if (CollectionUtils.isNotEmpty(result)) {
+            	//设置收银台的顺序
                 deskResponse.setCashierDeskDTOList(result);
                 if (StringUtil.isValidString(cashierDeskQueryRequest.getPayerOrgCode())) {//验证付款方编码
                     FinancialOrganQueryRequest titanOrgQueryDTO = new FinancialOrganQueryRequest();
