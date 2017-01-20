@@ -17,9 +17,9 @@
 				  <ref bean="repairGDPTransferTrigger" />
 
 				  <ref bean="refundConfirmTrigger" />
-				  <ref bean="loanCreditAmountEvaluationTrigger" />
+				 <!--  <ref bean="loanCreditAmountEvaluationTrigger" />
 				  <ref bean="loanCreditSynTrigger" />
-				  <ref bean="loanOrderSynTrigger" />
+				  <ref bean="loanOrderSynTrigger" /> -->
 				  
 			</list>
 		</property>

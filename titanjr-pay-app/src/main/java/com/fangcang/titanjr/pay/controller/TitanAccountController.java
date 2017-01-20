@@ -223,9 +223,12 @@ public class TitanAccountController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("getBankInfoList")
-	public String getBankInfo() {
+	public String getBankInfo(String type,String parentCode) {
 		BankInfoQueryRequest bankInfoQueryRequest = new BankInfoQueryRequest();
-		bankInfoQueryRequest.setBankType(1);
+		if(StringUtil.isValidString(type)){
+			bankInfoQueryRequest.setBankType(Integer.parseInt(type));
+		}
+		bankInfoQueryRequest.setParentCode(parentCode);
 		BankInfoResponse bankInfoResponse = titanFinancialBaseInfoService
 				.queryBankInfoList(bankInfoQueryRequest);
 		if (bankInfoResponse.isResult()

@@ -11,7 +11,7 @@ public class BankInfoQueryRequest extends BaseRequestDTO{
     private Integer bankType;
     private String bankName;
     private String bankCode;
-
+    private String parentCode;
     public String getBankCity() {
         return bankCity;
     }
@@ -43,4 +43,12 @@ public class BankInfoQueryRequest extends BaseRequestDTO{
     public void setBankCode(String bankCode) {
         this.bankCode = bankCode;
     }
+
+	public String getParentCode() {
+		return parentCode;
+	}
+
+	public void setParentCode(String parentCode) {
+		this.parentCode = parentCode;
+	}
 }

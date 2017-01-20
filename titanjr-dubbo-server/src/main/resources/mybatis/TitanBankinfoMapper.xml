@@ -28,6 +28,9 @@
           <if test="bankCode != null">
               and bankCode = #{bankCode,jdbcType=VARCHAR}
           </if>
+           <if test="parentCode != null">
+              and parentCode = #{parentCode,jdbcType=VARCHAR}
+          </if>
     </select>
 
     <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanBankinfo">

@@ -163,6 +163,7 @@ new AutoComplete($('#bankCode'), {
     source : 'bankInfoDTOList',
     key : 'bankCode',  //数据源中，做为key的字段
     val : 'bankName', //数据源中，做为val的字段
+    data:{type:"1"},     
     width : 240,
     height : 300,
     autoSelectVal : true,
