@@ -1,7 +1,11 @@
 package com.fangcang.titanjr.entity;
 
-public class LoanSevenDaysStat 
+public class LoanSevenDaysStat  implements java.io.Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// 七天還款筆數
 	private int sevenDaysNum;
 	// 七天待還款金額

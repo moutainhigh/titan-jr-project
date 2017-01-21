@@ -5,8 +5,12 @@ import java.util.Date;
 /**
  * Created by zhaoshan on 2016/11/3.
  */
-public class LoanCompanyEnsure {
+public class LoanCompanyEnsure implements java.io.Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long id;
 	// 新授信单号
 	private String newOrderNo;

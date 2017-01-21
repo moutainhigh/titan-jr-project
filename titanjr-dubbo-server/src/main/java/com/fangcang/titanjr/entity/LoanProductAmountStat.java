@@ -1,6 +1,11 @@
 package com.fangcang.titanjr.entity;
 
-public class LoanProductAmountStat {
+public class LoanProductAmountStat implements java.io.Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private int productId;
 	
 	//本金
