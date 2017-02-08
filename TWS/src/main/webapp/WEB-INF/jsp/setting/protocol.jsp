@@ -8,8 +8,7 @@
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
-  
-  <body style="min-width: 1300px;" class="bg" >
+<body style="min-width: 1300px;" class="bg" >
 <!-- 头部 -->
 <jsp:include page="./../header.jsp"></jsp:include>
 <div class="h_90"></div>
@@ -17,7 +16,7 @@
 <div class="w_1200 ">
 	<div class="overview clearfix m_t20 o_set">	
 		<jsp:include page="../slidemenu/jr-setting-menu.jsp">
-			<jsp:param value="fee" name="menu"/>
+			<jsp:param value="protocol" name="menu"/>
 		</jsp:include>
 		<div class="s_right clearfix">
 			<div class="sr_crumbs">我的账户  >  泰坦钱包设置  > 泰坦钱包协议</div>			
