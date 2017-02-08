@@ -83,13 +83,13 @@
 						</div>  --><input type="hidden" class="text w_250  c_666 "
 						name="contactNames" id="contactNames"></li>
 					<li class="clearfix p_l83"><div class="tit">包房合同</div>
-						<div class="p_l25">请至少上传一张包房合同附件，附件格式支持PDF、JPG、JPEG、PNG、ZIP、RAR，大小不超过5M</div>
+						<div class="p_l25">请上传包房合同附件，附件格式支持PDF、JPG、JPEG、PNG、ZIP，大小不超过5M</div>
 						<input type="hidden" name="contractNames" id="contractNames"/>
 						<dl>
 							<dd class="RC_c_dd">
 								<div class="TFSaddImg"></div>
 								<input type="file" name="compartment_contract" id="compartment_contract1">
-								<input type="hidden" name="compartment_contract1_name" id="compartment_contract1_name">
+								<input type="hidden" name="compartment_contract1_name" id="compartment_contract1_name" value="rentcontract">
 								<div class="TFSuploading TFSupload_ZIP hidden">
 									<p class="TFSuploading1">
 										<span></span>
@@ -113,87 +113,7 @@
 								  <span id="compartment_contract1_error" style="color:red;"></span>
 								</div>
 							</dd>
-							<dd class="RC_c_dd">
-								<div class="TFSaddImg"></div>
-								<input type="file" name="compartment_contract" id="compartment_contract2">
-								<input type="hidden" name="compartment_contract2_name" id="compartment_contract2_name">
-								<div class="TFSuploading TFSupload_ZIP hidden">
-									<p class="TFSuploading1">
-										<span></span>
-									</p>
-									<p class="TFSuploading2">
-										已上传<i>0</i>%
-									</p>
-								</div>
-								<div class="TFSuploaderror hidden">
-									<i class="J_re_upload loanInformation_upload_btn">重新上传</i>
-									<p>上传失败</p>
-								</div>
-								<div class="TFSimgOn hidden">
-									<i class="J_delete_upload loanInformation_upload_btn">删除</i>
-									<div class="dd_img">
-										<img src="../images/TFS/help_logo.jpg">
-									</div>
-									<div class="dd_text" ></div>
-								</div>
-								<div>
-								  <span id="compartment_contract2_error" style="color:red;"></span>
-								</div>
-							</dd>
-							<dd class="RC_c_dd" data-file-name="">
-								<div class="TFSaddImg"></div>
-								<input type="file" name="compartment_contract" id="compartment_contract3">
-								<input type="hidden" name="compartment_contract3_name"  id="compartment_contract3_name">
-								<div class="TFSuploading TFSupload_ZIP hidden">
-									<p class="TFSuploading1">
-										<span></span>
-									</p>
-									<p class="TFSuploading2">
-										已上传<i>0</i>%
-									</p>
-								</div>
-								<div class="TFSuploaderror hidden">
-									<i class="J_re_upload loanInformation_upload_btn">重新上传</i>
-									<p>上传失败</p>
-								</div>
-								<div class="TFSimgOn hidden">
-									<i class="J_delete_upload loanInformation_upload_btn">删除</i>
-									<div class="dd_img">
-										<img src="../images/TFS/LH01.jpg">
-									</div>
-									<div class="dd_text" ></div>
-								</div>
-								<div>
-								  <span id="compartment_contract3_error" style="color:red;"></span>
-								</div>
-							</dd>
-							<dd class="RC_c_dd">
-								<div class="TFSaddImg"></div>
-								<input type="file" name="compartment_contract" id="compartment_contract4">
-								<input type="hidden" name="compartment_contract4_name" id="compartment_contract4_name">
-								<div class="TFSuploading TFSupload_ZIP hidden">
-									<p class="TFSuploading1">
-										<span></span>
-									</p>
-									<p class="TFSuploading2">
-										已上传<i>0</i>%
-									</p>
-								</div>
-								<div class="TFSuploaderror hidden">
-									<i class="J_re_upload loanInformation_upload_btn">重新上传</i>
-									<p>上传失败</p>
-								</div>
-								<div class="TFSimgOn hidden">
-									<i class="J_delete_upload loanInformation_upload_btn">删除</i>
-									<div class="dd_img">
-										<img src="../images/TFS/LH01.jpg">
-									</div>
-									<div class="dd_text"></div>
-								</div>
-								<div>
-								  <span id="compartment_contract4_error" style="color:red;"></span>
-								</div>
-							</dd>
+						 
 						</dl></li>
 				</ul>
 			</div>
@@ -513,7 +433,8 @@
 		
 		$(".RC_c_dd input").live("change",function(){
 			var ids =  $(this).attr('id');
-        	//开始装B走进度条了哦 
+			var fileName = $("#"+ids+"_name").val();
+        	//开始走进度条
 	        var loadingJ =  loading($(this).parent().find(".TFSuploading"));
 	        
 	        $(this).prev('.TFSaddImg').addClass("hidden");
@@ -524,7 +445,7 @@
    	        	url: '<%=basePath%>/loan_apply/upload.shtml',
    	            secureuri: false, 
    	            fileElementId: $(this).attr('id'), 
-   	            data:{loanApplyOrderNo:$("#loanApplyOrderNo").val(),fileName:ids},
+   	            data:{loanApplyOrderNo:$("#loanApplyOrderNo").val(),fileName:fileName},
    	            dataType: 'json', 
    	            success: function (result, status){
    	            	if(result.code==1)

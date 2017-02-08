@@ -388,7 +388,7 @@ public class FinancialLoanApplyController extends BaseController{
 		if ((dot > -1) && (dot < (filename.length() - 1))) {
 			String suffix = filename.substring(dot + 1).toLowerCase();
 			
-			if(suffix.equals("pdf") || suffix.equals("jpg") || suffix.equals("jpeg") || suffix.equals("png") || suffix.equals("zip") ||suffix.equals("rar")){
+			if(suffix.equals("pdf") || suffix.equals("jpg") || suffix.equals("jpeg") || suffix.equals("png") || suffix.equals("zip")){
 				return true;
 			}
 		}
