@@ -66,4 +66,21 @@
     delete from t_tfs_cityinfo ;
   </delete>
   
+  <select id="getCityInfo" resultType="com.fangcang.titanjr.dto.bean.CityInfoDTO" parameterType="com.fangcang.titanjr.dto.bean.CityInfoDTO">
+  	select 	country,citycode  as cityCode,cityname as cityName,datatype as dataType,
+  			parentcode as parentCode,fcdatacode as fcdataCode,createtime as createTime,
+  			modifytime as modifyTime from t_tfs_cityinfo
+  			<where>
+  			  <if test="cityName !=null">
+  			 	and cityname = #{cityName}
+  			  </if>
+  			  <if test="dataType !=null">
+  			 	and datatype = #{dataType}
+  			  </if>
+  			  <if test="parentCode !=null">
+  			 	and parentcode = #{parentCode}
+  			  </if>
+  			</where>
+  </select>
+  
 </mapper>

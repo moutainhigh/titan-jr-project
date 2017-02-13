@@ -152,7 +152,10 @@ public class TitanPaymentController extends BaseController {
         	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARGE_SUCCESS;
         	if(!validateOrderStatus(orderNo)){//发出三次确认订单成功到帐
     			log.error("实在没办法,钱没到账，不能转账");
-    			orderStatusEnum = OrderStatusEnum.ORDER_DELAY;
+    			orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
+    			if(CommonConstant.RS_FANGCANG_USER_ID.equals(transOrderDTO.getPayermerchant())){//中间账户的延时到帐就是失败
+    				orderStatusEnum = OrderStatusEnum.ORDER_DELAY;
+    			}
     			titanPaymentService.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
     			return ;
     		}

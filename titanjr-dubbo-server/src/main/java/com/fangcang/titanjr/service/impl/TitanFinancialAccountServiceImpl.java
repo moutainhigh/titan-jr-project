@@ -36,6 +36,7 @@ import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dao.TitanAccountDao;
 import com.fangcang.titanjr.dao.TitanAccountHistoryDao;
+import com.fangcang.titanjr.dao.TitanCityInfoDao;
 import com.fangcang.titanjr.dao.TitanFundFreezereqDao;
 import com.fangcang.titanjr.dao.TitanFundUnFreezereqDao;
 import com.fangcang.titanjr.dao.TitanOrgDao;
@@ -45,6 +46,7 @@ import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.AccountDTO;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
+import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
@@ -154,6 +156,9 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     
     @Resource
     private TitanFinancialAccountService titanFinancialAccountService;
+    
+    @Resource
+    private TitanCityInfoDao titanCityInfoDao;
     
 
     @Override
@@ -1071,6 +1076,13 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			SaveCertificationRequest saveCertificationRequest) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+
+	@Override
+	public List<CityInfoDTO> getCityInfoList(CityInfoDTO cityInfo) {
+		return titanCityInfoDao.getCityInfoList(cityInfo);
 	}
 
 	

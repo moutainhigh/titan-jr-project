@@ -29,7 +29,7 @@ public class CommonConstant {
     public static final String ORG_CODE_PREFIX = "TJM";//机构编码前缀
     public static final String ACCOUNT_CODE_PREFIX = "TJA";//accountCode编码前缀
     public static final String LOAN_CREDIT_NO_PREFIX = "CR";//accountCode编码前缀
-    public static final String RS_FANGCANG_USER_ID = "";//房仓平台userid
+    public static final String RS_FANGCANG_USER_ID = "141223100000056";//房仓平台userid
 
     //基础业务类型
     public static final String ORDEROTYPE = "B1";
