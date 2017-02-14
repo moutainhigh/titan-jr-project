@@ -92,9 +92,7 @@ public class TitanRefundService {
 		try {
 			//已验证过过机构，去掉
 			log.info("1.校验支付密码");
-			boolean flag = titanFinancialUserService.checkPayPassword(refundRequest.getTfsUserid(), refundRequest.getPayPassword
-
-());
+			boolean flag = titanFinancialUserService.checkPayPassword(refundRequest.getTfsUserid(), refundRequest.getPayPassword());
 			if (!flag) {
 				log.error("付款密码错误");
 				response.putErrorResult(TitanMsgCodeEnum.PAY_PWD_ERROR);
