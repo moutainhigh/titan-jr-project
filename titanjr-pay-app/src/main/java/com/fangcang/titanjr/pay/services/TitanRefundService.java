@@ -1,5 +1,4 @@
 ﻿package com.fangcang.titanjr.pay.services;
-
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -457,7 +456,6 @@ OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())))
 			else{
 				mapLock.put(out_trade_no, new Object());
 			}
-			
 		}
 	}
 	
