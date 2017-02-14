@@ -136,9 +136,7 @@ public class TitanRefundService {
 			if (!OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())) {
 				AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
 				accountBalanceRequest.setUserid(transOrderDTO.getUserrelateid());
-				AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance
-
-(accountBalanceRequest);
+				AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
 				if (!balanceResponse.isResult() || null == balanceResponse.getAccountBalance() ||
 						null == balanceResponse.getAccountBalance().get(0)) {
 					log.error("查询账户信息失败");
@@ -395,9 +393,7 @@ public class TitanRefundService {
 			return setUpErrorResult(model,TitanMsgCodeEnum.REFUND_SUCCESSED);
 		}
 
-		if(!(OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()) || 
-
-OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()))){
+		if(!(OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()) || OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()))){
 			log.error("该订单未支付成功，不能退款");
 			return setUpErrorResult(model,TitanMsgCodeEnum.ORDER_NOT_REFUND);
 		}
