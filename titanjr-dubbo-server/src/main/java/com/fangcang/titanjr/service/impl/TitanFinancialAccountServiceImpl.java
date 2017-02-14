@@ -75,6 +75,7 @@ import com.fangcang.titanjr.dto.response.AccountHistoryResponse;
 import com.fangcang.titanjr.dto.response.AccountResponse;
 import com.fangcang.titanjr.dto.response.AccountUpdateResponse;
 import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
+import com.fangcang.titanjr.dto.response.CityInfosResponse;
 import com.fangcang.titanjr.dto.response.DefaultPayerConfigResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
@@ -104,6 +105,7 @@ import com.fangcang.titanjr.rs.response.AccountBalanceQueryResponse;
 import com.fangcang.titanjr.rs.response.AccountWithDrawResponse;
 import com.fangcang.titanjr.rs.response.BalanceFreezeResponse;
 import com.fangcang.titanjr.rs.response.BalanceUnFreezeResponse;
+import com.fangcang.titanjr.rs.response.CityInfoResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
@@ -1081,8 +1083,17 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 
 
 	@Override
-	public List<CityInfoDTO> getCityInfoList(CityInfoDTO cityInfo) {
-		return titanCityInfoDao.getCityInfoList(cityInfo);
+	public CityInfosResponse getCityInfoList(CityInfoDTO cityInfo) {
+		CityInfosResponse response = new CityInfosResponse();
+		try{
+			List<CityInfoDTO> cityInfoList = titanCityInfoDao.getCityInfoList(cityInfo);
+			response.setCityInfoDTOList(cityInfoList);
+			response.putSuccess();
+		}catch(Exception e){
+			log.error("查询城市信息失败",e);
+			response.putSysError();
+		}
+		return response;
 	}
 
 	

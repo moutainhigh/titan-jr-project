@@ -80,6 +80,9 @@
   			  <if test="parentCode !=null">
   			 	and parentcode = #{parentCode}
   			  </if>
+  			   <if test="cityCode !=null">
+  			 	and citycode = #{cityCode}
+  			  </if>
   			</where>
   </select>
   

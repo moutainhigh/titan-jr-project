@@ -19,9 +19,11 @@ import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
+import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
@@ -33,6 +35,7 @@ import com.fangcang.titanjr.dto.request.DeleteBindBankRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
+import com.fangcang.titanjr.dto.response.CityInfosResponse;
 import com.fangcang.titanjr.dto.response.CusBankCardBindResponse;
 import com.fangcang.titanjr.dto.response.DeleteBindBankResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
@@ -325,10 +328,12 @@ public class TitanWithdrawController extends BaseController {
 			}
 			bankCardBindRequest.setBankCode(withDrawRequest.getBankCode());
 			bankCardBindRequest.setUserType("1");
-			// 以下是哪个说必填但是可选
-			bankCardBindRequest.setBankBranch("");
-			bankCardBindRequest.setBankCity("");
-			bankCardBindRequest.setBankProvince("");
+			
+			bankCardBindRequest.setBankBranch(withDrawRequest.getBranchCode());
+			bankCardBindRequest.setBankCity(withDrawRequest.getCityName());
+			if(StringUtil.isValidString(withDrawRequest.getCityCode())){
+				bankCardBindRequest.setBankProvince(this.queryProvinceName(withDrawRequest.getCityCode()));
+			}
 			CusBankCardBindResponse cardBindResponse = titanFinancialBankCardService
 					.bankCardBind(bankCardBindRequest);
 			if (!cardBindResponse.isResult()) {
@@ -389,6 +394,39 @@ public class TitanWithdrawController extends BaseController {
 		titanRateService.addRateRecord(req);
 		
 		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS);
+	}
+	
+	private String queryProvinceName(String cityCode){
+    	CityInfoDTO cityInfo = new CityInfoDTO();
+    	cityInfo.setCityCode(cityCode);
+    	CityInfosResponse response  = titanFinancialAccountService.getCityInfoList(cityInfo);
+    	if (!response.isResult() || response.getCityInfoDTOList() ==null || response.getCityInfoDTOList().size()<1){//如果是北京市或者重庆市的话，这个地方的size为2
+    		return null;
+    	}
+    	CityInfoDTO cityInfoDTO =  response.getCityInfoDTOList().get(0);
+    	cityCode =cityInfoDTO.getParentCode();
+    	
+    	if(!StringUtil.isValidString(cityCode)){
+    		return cityInfoDTO.getCityName();
+    	}
+    	cityInfo.setCityCode(cityCode);
+    	response  = titanFinancialAccountService.getCityInfoList(cityInfo);
+    	if (!response.isResult() || response.getCityInfoDTOList() ==null || response.getCityInfoDTOList().size()<1){
+    		return null;
+    	}
+    	return response.getCityInfoDTOList().get(0).getCityName();
+    }
+	
+	@ResponseBody
+	@RequestMapping("getCityList")
+	public String getCityList(CityInfoDTO cityInfo) {
+		CityInfosResponse response = titanFinancialAccountService
+				.getCityInfoList(cityInfo);
+
+		if (response.isResult()&& CollectionUtils.isNotEmpty(response.getCityInfoDTOList())) {
+			return JsonConversionTool.toJson(response);
+		}
+		return null;
 	}
 	/**
 	 * 根据用户ID查询对应的用户名信息

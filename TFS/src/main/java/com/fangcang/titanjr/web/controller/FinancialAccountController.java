@@ -26,12 +26,14 @@ import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.BankCardDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
+import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.ForgetPayPassword;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.rs.response.CityInfoResponse;
 import com.fangcang.titanjr.service.*;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.WithDrawRequest;
@@ -372,6 +374,9 @@ public class FinancialAccountController extends BaseController {
     	modifyInvalidWithDrawCardRequest.setHankheadname(bindBankCardRequest.getBankCardName());
     	modifyInvalidWithDrawCardRequest.setBankhead(bindBankCardRequest.getBankCode());
     	modifyInvalidWithDrawCardRequest.setUserid(this.getUserId());
+    	modifyInvalidWithDrawCardRequest.setBankcity(bindBankCardRequest.getCityName());
+    	modifyInvalidWithDrawCardRequest.setBankprovinec(this.queryProvinceName(bindBankCardRequest.getCityCode()));
+    	modifyInvalidWithDrawCardRequest.setHankbranch(bindBankCardRequest.getBranchCode());
     	return titanFinancialBankCardService.modifyinvalidPublicCard(modifyInvalidWithDrawCardRequest);
     }
     
@@ -398,28 +403,56 @@ public class FinancialAccountController extends BaseController {
          bankCardBindRequest.setAccountNumber(bindBankCardRequest.getBankCardCode());
          bankCardBindRequest.setAccountName(bindBankCardRequest.getUserName());
          bankCardBindRequest.setBankCode(bindBankCardRequest.getBankCode());
-         
          //以下是哪个说必填但是可选
-         bankCardBindRequest.setBankBranch("");
-         bankCardBindRequest.setBankCity("");
-         bankCardBindRequest.setBankProvince("");
-         
+         bankCardBindRequest.setBankBranch(bindBankCardRequest.getBranchCode());
+         bankCardBindRequest.setBankCity(bindBankCardRequest.getCityName());
+         bankCardBindRequest.setBankProvince(this.queryProvinceName(bindBankCardRequest.getCityCode()));
          return titanFinancialBankCardService.bankCardBind(bankCardBindRequest);
-        
     }
     
+    private String queryProvinceName(String cityCode){
+    	CityInfoDTO cityInfo = new CityInfoDTO();
+    	cityInfo.setCityCode(cityCode);
+    	CityInfosResponse response  = titanFinancialAccountService.getCityInfoList(cityInfo);
+    	if (!response.isResult() || response.getCityInfoDTOList() ==null || response.getCityInfoDTOList().size()<1){//如果是北京市或者重庆市的话，这个地方的size为2
+    		return null;
+    	}
+    	CityInfoDTO cityInfoDTO =  response.getCityInfoDTOList().get(0);
+    	cityCode =cityInfoDTO.getParentCode();
+    	
+    	if(!StringUtil.isValidString(cityCode)){
+    		return cityInfoDTO.getCityName();
+    	}
+    	cityInfo.setCityCode(cityCode);
+    	response  = titanFinancialAccountService.getCityInfoList(cityInfo);
+    	if (!response.isResult() || response.getCityInfoDTOList() ==null || response.getCityInfoDTOList().size()<1){
+    		return null;
+    	}
+    	return response.getCityInfoDTOList().get(0).getCityName();
+    }
+    
+    
+    
+    @ResponseBody
+    @RequestMapping("getCityList")
+    public String getCityList(CityInfoDTO cityInfo){
+        CityInfosResponse response =  titanFinancialAccountService.getCityInfoList(cityInfo);
+        if (response.isResult() && CollectionUtils.isNotEmpty(response.getCityInfoDTOList())){
+            return toJson(response);
+        }
+        return null;
+    }
+
     @ResponseBody
     @RequestMapping("getBankInfoList")
-    public String getBankInfo(){
-        BankInfoQueryRequest bankInfoQueryRequest = new BankInfoQueryRequest();
-        bankInfoQueryRequest.setBankType(1);
-        BankInfoResponse bankInfoResponse =  titanFinancialBaseInfoService.queryBankInfoList(bankInfoQueryRequest);
+    public String getBankInfo(BankInfoQueryRequest request){
+        BankInfoResponse bankInfoResponse =  titanFinancialBaseInfoService.queryBankInfoList(request);
         if (bankInfoResponse.isResult() && CollectionUtils.isNotEmpty(bankInfoResponse.getBankInfoDTOList())){
             return toJson(bankInfoResponse);
         }
         return null;
     }
-
+    
     @ResponseBody
     @RequestMapping("getOrgList")
     public String getOrgInfoList(){
@@ -802,5 +835,7 @@ public class FinancialAccountController extends BaseController {
 		model.addAttribute("msg", msg);
 		return "checkstand-pay/cashierDeskError";
 	}
+	
+
 	
 }

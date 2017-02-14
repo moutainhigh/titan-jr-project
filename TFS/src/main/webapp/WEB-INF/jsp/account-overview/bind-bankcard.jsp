@@ -31,7 +31,7 @@
 				<ul class="passwordset_u1 clearf">
 					<li>
 						<span class="reset_pass">收款银行 ：</span>
-						  <input type="text" id="bankCode" class="text w_250">
+						  <input type="text" id="bankCode" class="text w_250" >
                           <input type="hidden" id="bankName" >
 					<li>
 						<span class="reset_pass">收款账号：</span>
@@ -39,6 +39,12 @@
 					<li>
 						<span class="reset_pass">公司名称 ：</span>
 						<input type="text" class="text w_250" id="name" value="${organ.orgName}" disabled></li>		
+					<li>
+						<span class="reset_pass">开 户 支 行：</span>
+						<input name="" id="city_code" class="text i_city"  placeholder="城市" style="width: 80px; background-position: 65px 7px ! important;" type="text">
+						<input name="city_name" id="city_name" type="hidden">
+						<input type="text" class="text" name="branch_code" id="branch_code" placeholder="请选择支行" style="width: 154px;padding-left: 10px;">
+						<input name="branch_name" id="branch_name" type="hidden"></li>
 				</ul>
 				<div class="pas_close">
 					<span class="btn p_lr30 J_next to_bindCard">下一步</span>
@@ -82,6 +88,8 @@
 
 <script>
 
+
+
 if('${showBankCardInput}'.length>0){
 	$(".tipInfo").hide();
 	$(".input_bankinfo").show();
@@ -115,6 +123,9 @@ $('.to_bindCard').on('click',function(){
     			bankCardCode:bankCardData.accountnumber,
     			userName:bankCardData.name,
     			bankCode:bankCardData.bankCode,
+    			branchCode:bankCardData.branchCode,
+    			cityCode:bankCardData.cityCode,
+    			cityName:bankCardData.cityName,
     			modifyOrBind:${modifyOrBind}
     		},
     		success:function(data){
@@ -156,31 +167,95 @@ function validate_bankCard_data(bankCardData){
 	
 	return true;
 }
+var backListObj = null;
+var cityListObj = null;
+var childBackListObj = null;
 
-
-new AutoComplete($('#bankCode'), {
-    url : '<%=basePath%>/account/getBankInfoList.shtml',
+backListObj = new AutoComplete($('#bankCode'), {
+    url : '<%=basePath%>/account/getBankInfoList.shtml?bankType=1',
     source : 'bankInfoDTOList',
     key : 'bankCode',  //数据源中，做为key的字段
     val : 'bankName', //数据源中，做为val的字段
-    data:{type:"1"},     
     width : 240,
     height : 300,
     autoSelectVal : true,
     clickEvent : function(d, input){
         input.attr('data-id', d.key);
         $("#bankName").val(d.val);
+        showCityCode();
     }
 });
 
+cityListObj = new AutoComplete($('#city_code'), {
+    url : '<%=basePath%>/account/getCityList.shtml?dataType=2',
+    source : 'cityInfoDTOList',
+    key : 'cityCode',  //数据源中，做为key的字段
+    val : 'cityName', //数据源中，做为val的字段
+    width : 240,
+    height : 300,
+    autoSelectVal : true,
+    clickEvent : function(d, input){
+        input.attr('data-id', d.key);
+        $("#city_name").val(d.val);
+        showBranch();
+    }
+});
+
+
+function showCityCode(){
+	$("#branch_code").val("");
+	$("#branch_code").attr("data-id","");
+	$("#city_code").val("");
+	$("#city_code").attr("data-id","");
+	$("#city_code").show();
+	$("#branch_name").val("");
+	$("#city_name").val("");
+	if(childBackListObj)
+	{
+		childBackListObj.remove();
+	}
+}
+
+function showBranch(){
+	$("#branch_code").val("");
+	$("#branch_code").attr("data-id","");
+	$("#branch_code").show();
+	$("#branch_name").val("");
+	init_branch();
+}
+
+
+function init_branch(){
+	var bankCode = $("#bankCode").attr("data-id");
+	var cityCode = $("#city_code").attr("data-id");
+	if(bankCode !=null && cityCode !=null){
+		childBackListObj = new AutoComplete($('#branch_code'), {
+		    url : '<%=basePath%>/account/getBankInfoList.shtml?bankCity='+cityCode+'&parentCode='+bankCode,
+		    source : 'bankInfoDTOList',
+		    key : 'bankCode',  //数据源中，做为key的字段
+		    val : 'bankName', //数据源中，做为val的字段
+		    width : 240,
+		    height : 300,
+		    autoSelectVal : true,
+		    clickEvent : function(d, input){
+		        input.attr('data-id', d.key);
+		        $("#branch_name").val(d.val);
+		    }
+		});
+		
+	}
+}
+
+
 function getBankCardData(){
-	
-	
 	return {
 		bankCode : $("#bankCode").attr("data-id"),
 		accountnumber : $("#accountnumber").val(),
 		name :$("#name").val(),
 		bankHeadName:$("#bankName").val(),
+		branchCode:$("#branch_code").attr("data-id"),
+		cityCode:$("#city_code").attr("data-id"),
+		cityName:$("#city_name").val()
 	};
 }
 </script>
