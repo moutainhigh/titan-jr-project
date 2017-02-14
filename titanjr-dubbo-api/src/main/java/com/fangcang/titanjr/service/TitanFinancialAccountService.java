@@ -150,5 +150,5 @@ public interface TitanFinancialAccountService {
 			SaveCertificationRequest saveCertificationRequest);
 	
 	
-	public List<CityInfoDTO> getCityInfoList(CityInfoDTO cityInfo);
+	public CityInfosResponse getCityInfoList(CityInfoDTO cityInfo);
 }

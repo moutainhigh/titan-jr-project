@@ -47,6 +47,14 @@
                         <label>
                             <span><i>*</i>持卡人姓名：</span><input type="text" id="accountName" class="text w_250" value="${organ.orgName}" disabled>
                         </label>
+                        <label id="branch_spec" style="display: none">
+						<span class="reset_pass">开 户 支 行：</span>
+							<input name="" id="city_code" class="text i_city"  placeholder="城市" style="width: 80px; background-position: 65px 7px ! important;" type="text">
+							<input name="city_name" id="city_name" type="hidden">
+							<input type="text" class="text" name="branch_code" id="branch_code" placeholder="请选择支行" style="width: 154px;padding-left: 10px;">
+							<input name="branch_name" id="branch_name" type="hidden">
+						</label>
+                        
                         <c:if test="${bindBankCard != null}">
                             <a href="javascript:void(0)" id="withDrawToCurrentCard"
                                class="blue decorationUnderline TFS_withdrawBoxL_else_aHref hide">提现到已绑定银行卡 >></a>
@@ -203,13 +211,78 @@
         height : 300,
         autoSelectVal : true,
         clickEvent : function(d, input){
-        	console.log(d);
             input.attr('data-id', d.key);
             $("#bankName").val(d.val);
+            if(d.key=="104"){
+            	//显示支行信息
+            	$("#branch_spec").show();
+            	showCityCode();
+            }else{
+            	 $("#branch_spec").hide();
+            }
+           
         }
     });
 
-
+    var childBackListObj ="";
+    new AutoComplete($('#city_code'), {
+        url : '<%=basePath%>/withdraw/getCityList.shtml?dataType=2',
+        source : 'cityInfoDTOList',
+        key : 'cityCode',  //数据源中，做为key的字段
+        val : 'cityName', //数据源中，做为val的字段
+        width : 240,
+        height : 300,
+        autoSelectVal : true,
+        clickEvent : function(d, input){
+            input.attr('data-id', d.key);
+            $("#city_name").val(d.val);
+            showBranch();
+        }
+    });
+    
+    function showCityCode(){
+    	$("#branch_code").val("");
+    	$("#branch_code").attr("data-id","");
+    	$("#city_code").val("");
+    	$("#city_code").attr("data-id","");
+    	$("#city_code").show();
+    	$("#branch_name").val("");
+    	$("#city_name").val("");
+    	if(childBackListObj)
+    	{
+    		childBackListObj.remove();
+    	}
+    }
+    
+    function showBranch(){
+    	$("#branch_code").val("");
+    	$("#branch_code").attr("data-id","");
+    	$("#branch_code").show();
+    	$("#branch_name").val("");
+    	init_branch();
+    }
+    
+    function init_branch(){
+    	var bankCode = $("#bankCode").attr("data-id");
+    	var cityCode = $("#city_code").attr("data-id");
+    	if(bankCode !=null && cityCode !=null){
+    		childBackListObj = new AutoComplete($('#branch_code'), {
+    		    url : '<%=basePath%>/account/getBankInfoList.shtml?bankCity='+cityCode+'&parentCode='+bankCode,
+    		    source : 'bankInfoDTOList',
+    		    key : 'bankCode',  //数据源中，做为key的字段
+    		    val : 'bankName', //数据源中，做为val的字段
+    		    width : 240,
+    		    height : 300,
+    		    autoSelectVal : true,
+    		    clickEvent : function(d, input){
+    		        input.attr('data-id', d.key);
+    		        $("#branch_name").val(d.val);
+    		    }
+    		});
+    		
+    	}
+    }
+    
     $('.J_password').on('click',function(){
     	//验证提现的金额
     	var withdraw_amount = $("#withDrawNum").val();
@@ -340,7 +413,7 @@
     }
     
     function toAccountWithdraw(){
-    	top.F.loading.show();
+    	 top.F.loading.show(); 
     	 $.ajax({
              type: "post",
              dataType: 'json',
@@ -357,7 +430,10 @@
                  amount:$("#withDrawNum").val(),
                  fcUserId:'${fcUserId}',
                  userId:'${userId}',
-                 orderNo:'${orderNo}'
+                 orderNo:'${orderNo}',
+                 branchCode:$("#branch_code").attr("data-id"),
+         		 cityCode:$("#city_code").attr("data-id"),
+         		 cityName:$("#city_name").val()
              },
              context: document.body,
              url: '<%=basePath%>/withdraw/toAccountWithDraw.shtml',
