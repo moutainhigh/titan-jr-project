@@ -1,4 +1,5 @@
-﻿package com.fangcang.titanjr.pay.services;
+package com.fangcang.titanjr.pay.services;
+
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -448,6 +449,7 @@ public class TitanRefundService {
 			else{
 				mapLock.put(out_trade_no, new Object());
 			}
+			
 		}
 	}
 	
