@@ -241,9 +241,7 @@ public class TitanRefundService {
 			flag = titanOrderService.updateTransOrder(transOrder);
 			if (!flag) {
 				log.error("退款单状态更新失败");
-				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrderDTO.getOrderid(), "退款请求更新本地单失
-
-败", OrderExceptionEnum.REFUND_UPDATE_TRANSORDER, JSON.toJSONString(transOrderDTO));
+				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrderDTO.getOrderid(), "退款请求更新本地单失败", OrderExceptionEnum.REFUND_UPDATE_TRANSORDER, JSON.toJSONString(transOrderDTO));
 				titanOrderService.saveOrderException(orderExceptionDTO);
 			}
 			log.info("退款操作成功");
