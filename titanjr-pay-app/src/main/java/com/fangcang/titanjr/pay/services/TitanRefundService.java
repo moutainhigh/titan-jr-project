@@ -92,7 +92,9 @@ public class TitanRefundService {
 		try {
 			//已验证过过机构，去掉
 			log.info("1.校验支付密码");
-			boolean flag = titanFinancialUserService.checkPayPassword(refundRequest.getTfsUserid(), refundRequest.getPayPassword());
+			boolean flag = titanFinancialUserService.checkPayPassword(refundRequest.getTfsUserid(), refundRequest.getPayPassword
+
+());
 			if (!flag) {
 				log.error("付款密码错误");
 				response.putErrorResult(TitanMsgCodeEnum.PAY_PWD_ERROR);
@@ -136,7 +138,9 @@ public class TitanRefundService {
 			if (!OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())) {
 				AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
 				accountBalanceRequest.setUserid(transOrderDTO.getUserrelateid());
-				AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
+				AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance
+
+(accountBalanceRequest);
 				if (!balanceResponse.isResult() || null == balanceResponse.getAccountBalance() ||
 						null == balanceResponse.getAccountBalance().get(0)) {
 					log.error("查询账户信息失败");
@@ -237,7 +241,9 @@ public class TitanRefundService {
 			flag = titanOrderService.updateTransOrder(transOrder);
 			if (!flag) {
 				log.error("退款单状态更新失败");
-				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrderDTO.getOrderid(), "退款请求更新本地单失败", OrderExceptionEnum.REFUND_UPDATE_TRANSORDER, JSON.toJSONString(transOrderDTO));
+				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrderDTO.getOrderid(), "退款请求更新本地单失
+
+败", OrderExceptionEnum.REFUND_UPDATE_TRANSORDER, JSON.toJSONString(transOrderDTO));
 				titanOrderService.saveOrderException(orderExceptionDTO);
 			}
 			log.info("退款操作成功");
@@ -393,7 +399,9 @@ public class TitanRefundService {
 			return setUpErrorResult(model,TitanMsgCodeEnum.REFUND_SUCCESSED);
 		}
 
-		if(!(OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()) || OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()))){
+		if(!(OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()) || 
+
+OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()))){
 			log.error("该订单未支付成功，不能退款");
 			return setUpErrorResult(model,TitanMsgCodeEnum.ORDER_NOT_REFUND);
 		}
