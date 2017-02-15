@@ -396,26 +396,27 @@ public class TitanWithdrawController extends BaseController {
 		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS);
 	}
 	
-	private String queryProvinceName(String cityCode){
-    	CityInfoDTO cityInfo = new CityInfoDTO();
-    	cityInfo.setCityCode(cityCode);
-    	CityInfosResponse response  = titanFinancialAccountService.getCityInfoList(cityInfo);
-    	if (!response.isResult() || response.getCityInfoDTOList() ==null || response.getCityInfoDTOList().size()<1){//如果是北京市或者重庆市的话，这个地方的size为2
-    		return null;
-    	}
-    	CityInfoDTO cityInfoDTO =  response.getCityInfoDTOList().get(0);
-    	cityCode =cityInfoDTO.getParentCode();
-    	
-    	if(!StringUtil.isValidString(cityCode)){
-    		return cityInfoDTO.getCityName();
-    	}
-    	cityInfo.setCityCode(cityCode);
-    	response  = titanFinancialAccountService.getCityInfoList(cityInfo);
-    	if (!response.isResult() || response.getCityInfoDTOList() ==null || response.getCityInfoDTOList().size()<1){
-    		return null;
-    	}
-    	return response.getCityInfoDTOList().get(0).getCityName();
-    }
+	
+	 private String queryProvinceName(String cityCode){
+			CityInfoDTO cityInfo = new CityInfoDTO();
+	    	cityInfo.setCityCode(cityCode);
+	    	CityInfosResponse response  = titanFinancialAccountService.getCityInfoList(cityInfo);
+	    	if (!response.isResult() || response.getCityInfoDTOList() ==null ){//如果是北京市或者重庆市的话，这个地方的size为2
+	    		return null;
+	    	}
+	    	
+	    	cityInfo = response.getCityInfoDTOList().get(0);
+	    	if(response.getCityInfoDTOList().size()==2){
+	    		return cityInfo.getCityName();
+	    	}
+	    	
+	    	if(StringUtil.isValidString(cityInfo.getParentCode())){
+	    		return queryProvinceName(cityInfo.getParentCode());
+	    	}else{
+	    		return cityInfo.getCityName();
+	    	}
+		}
+	
 	
 	@ResponseBody
 	@RequestMapping("getCityList")
