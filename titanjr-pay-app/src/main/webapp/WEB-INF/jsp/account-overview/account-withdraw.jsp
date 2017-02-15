@@ -49,9 +49,9 @@
                         </label>
                         <label id="branch_spec" style="display: none">
 						<span class="reset_pass">开 户 支 行：</span>
-							<input name="" id="city_code" class="text i_city"  placeholder="城市" style="width: 80px; background-position: 65px 7px ! important;" type="text">
+							<input name="" id="city_code" class="text i_city" datatype="*1-20" errormsg="必选项" placeholder="城市" style="width: 80px; background-position: 65px 7px ! important;" type="text">
 							<input name="city_name" id="city_name" type="hidden">
-							<input type="text" class="text" name="branch_code" id="branch_code" placeholder="请选择支行" style="width: 154px;padding-left: 10px;">
+							<input type="text" class="text" name="branch_code" id="branch_code" datatype="*1-20" errormsg="必选项" placeholder="请选择支行" style="width: 154px;padding-left: 10px;">
 							<input name="branch_name" id="branch_name" type="hidden">
 						</label>
                         
@@ -107,29 +107,6 @@
 
 <form action="<%=basePath%>/account/overview-main.shtml" id="flashPage" target="right_con_frm"></form>
 <script>
-
-	(function($) {
-	    $.fn.watch = function(callback) {
-	        return this.each(function() {
-	            //缓存以前的值
-	            $.data(this, 'originVal', $(this).val());
-	
-	            //event
-	            $(this).on('keyup paste', function() {
-	                var originVal = $(this, 'originVal');
-	                var currentVal = $(this).val();
-	
-	                if (originVal !== currentVal) {
-	                    $.data(this, 'originVal', $(this).val());
-	                    callback(currentVal);
-	                }
-	            });
-	        });
-	    }
-	})(jQuery);
-	
-	
-	
 
     $(function(){
         if ('${bindBankCard }'){
@@ -290,7 +267,6 @@
     		withDrawCallBack("提现金额不能为空",1);
     		return;
     	}
-    	
     	  var neg = /^[1-9]{1}\d{0,20}(\.\d{1,2})?$/;
           var neg2 = /^[0]{1}(\.\d{1,2})?$/;
           var flag = neg.test(withdraw_amount)||neg2.test(withdraw_amount);
@@ -339,7 +315,19 @@
    	        	}
     	     }
     	}
-   
+    	var bankCode = $("#bankCode").attr("data-id");
+    	if(bankCode=="104"){//中国银行需要验证
+    		var cityCode = $("#city_code").attr("data-id");
+    		if(typeof cityCode =="undifined" || cityCode.length<1){
+    			withDrawCallBack("开户城市不能为空",1);
+    			return ;
+    		}
+    		var branchCode = $("#branch_code").attr("data-id");
+    		if(typeof branchCode =="undifined" || branchCode.length<1){
+    			withDrawCallBack("开户支行不能为空",1);
+    			return;
+    		}
+    	}
     	 showPayPassword();
 
     });

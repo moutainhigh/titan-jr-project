@@ -39,11 +39,11 @@
 					<li>
 						<span class="reset_pass">公司名称 ：</span>
 						<input type="text" class="text w_250" id="name" value="${organ.orgName}" disabled></li>		
-					<li>
+					<li id="branch_spec" style="display: none">
 						<span class="reset_pass">开 户 支 行：</span>
-						<input name="" id="city_code" class="text i_city"  placeholder="城市" style="width: 80px; background-position: 65px 7px ! important;" type="text">
+						<input name="" id="city_code" class="text i_city"  placeholder="城市" datatype="*1-20" errormsg="必选项" style="width: 80px; background-position: 65px 7px ! important;" type="text">
 						<input name="city_name" id="city_name" type="hidden">
-						<input type="text" class="text" name="branch_code" id="branch_code" placeholder="请选择支行" style="width: 154px;padding-left: 10px;">
+						<input type="text" class="text" name="branch_code" id="branch_code" datatype="*1-20" errormsg="必选项" placeholder="请选择支行" style="width: 154px;padding-left: 10px;">
 						<input name="branch_name" id="branch_name" type="hidden"></li>
 				</ul>
 				<div class="pas_close">
@@ -87,8 +87,6 @@
 <!--弹窗白色底-->
 
 <script>
-
-
 
 if('${showBankCardInput}'.length>0){
 	$(".tipInfo").hide();
@@ -165,6 +163,25 @@ function validate_bankCard_data(bankCardData){
 		return false;
 	}
 	
+	var bankCode = $("#bankCode").attr("data-id");
+	if(bankCode=="104"){//中国银行需要验证
+		var cityCode = $("#city_code").attr("data-id");
+		if(typeof cityCode =="undifined" || cityCode.length<1){
+			new top.Tip({msg : '开户城市不能为空！', type: 1 , time:1000}); 
+			return false;
+		}
+		var branchCode = $("#branch_code").attr("data-id");
+		if(typeof branchCode =="undifined" || branchCode.length<1){
+			new top.Tip({msg : '开户支行不能为空！', type: 1 , time:1000}); 
+			return false;
+		}
+		
+	/* 	if(!vlidateForm.validate())
+		{
+			return false;
+		} */
+	}
+	
 	return true;
 }
 var backListObj = null;
@@ -182,7 +199,12 @@ backListObj = new AutoComplete($('#bankCode'), {
     clickEvent : function(d, input){
         input.attr('data-id', d.key);
         $("#bankName").val(d.val);
-        showCityCode();
+        if(d.key =="104"){
+        	$("#branch_spec").show();
+        	showCityCode();
+        }else{
+        	$("#branch_spec").hide();
+        }
     }
 });
 
