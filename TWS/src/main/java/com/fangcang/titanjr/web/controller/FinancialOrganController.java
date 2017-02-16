@@ -2,6 +2,9 @@ package com.fangcang.titanjr.web.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +19,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpPost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +38,7 @@ import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
+import com.fangcang.titanjr.common.util.HttpUtils;
 import com.fangcang.titanjr.common.util.ImageIOExtUtil;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.Tools;
@@ -85,6 +90,7 @@ import com.fangcang.titanjr.web.pojo.CoopRegInfo;
 import com.fangcang.titanjr.web.pojo.OrgRegPojo;
 import com.fangcang.titanjr.web.pojo.RegUserLoginInfo;
 import com.fangcang.titanjr.web.util.WebConstant;
+import com.fangcang.util.HttpUtil;
 import com.fangcang.util.PasswordUtil;
 import com.fangcang.util.StringUtil;
 
@@ -283,7 +289,7 @@ public class FinancialOrganController extends BaseController {
     		int mobiletelCodeId = 0;
     		//登录用户验证
     		int userLoginCodeId = 0;
-    		log.error("机构注册，输入参数|regUserLoginInfo:"+JSONSerializer.toJSON(regUserLoginInfo).toString()+",orgRegPojo:"+JSONSerializer.toJSON(orgRegPojo).toString());
+    		log.info("机构注册，输入参数|regUserLoginInfo:"+Tools.gsonToString(regUserLoginInfo)+",orgRegPojo:"+Tools.gsonToString(orgRegPojo));
     		
     		//校验登录名和验证码
     		if((!StringUtil.isValidString(regUserLoginInfo.getUserLoginName()))||(!StringUtil.isValidString(regUserLoginInfo.getRegCode()))){
@@ -336,8 +342,10 @@ public class FinancialOrganController extends BaseController {
 	    	CoopRequest coopRequest = new CoopRequest();
 	    	coopRequest.setMixcode(regUserLoginInfo.getChannel());
     		CoopResponse coopResponse = baseInfoService.getOneCoop(coopRequest);
+    		boolean isNeedNofiy = false;
     		if(coopResponse.isResult()&&coopResponse.getCoopDTO()!=null){
     	    	registerSource = coopResponse.getCoopDTO().getCoopType();
+    	    	isNeedNofiy = true;
     		}
 	    	
 	    	organRegisterRequest.setRegisterSource(registerSource);
@@ -375,6 +383,10 @@ public class FinancialOrganController extends BaseController {
 					updateCheckCodeRequest.setIsactive(0);
 					titanFinancialOrganService.useCheckCode(updateCheckCodeRequest);
 				}
+				//通知第三方平台，机构信息
+				if(isNeedNofiy){
+					nofifyCoop(coopRegInfo.getCoopOrgCode(),coopRegInfo.getNotifyurl());
+				}
 				sendCheckAlarm(orgRegPojo.getOrgName());
 				return "/org-reg/reg-success";
 			}else{
@@ -393,6 +405,30 @@ public class FinancialOrganController extends BaseController {
 		}
     	//错误页面
     	return "error";
+    }
+    
+    /**
+     * 通知合作方注册的机构信息
+     * @param coopOrgCode
+     * @param notifyurl
+     */
+    private void nofifyCoop(String coopOrgCode,String notifyurl){
+    	try {
+	    	String orgcode = (String) getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID).toString();
+			Map<String, String> parameters = new HashMap<String, String>();
+			parameters.put("cooporgcode", coopOrgCode);
+			parameters.put("orgcode", orgcode);
+			HttpUtils.postRequest(new URL(URLDecoder.decode(notifyurl, "UTF-8")), parameters);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			log.error("通知第三方注册信息时失败。", e);
+		} catch (IOException e) {
+			e.printStackTrace();
+			log.error("通知第三方注册信息时失败。", e);
+		}catch (Exception e) {
+			e.printStackTrace();
+			log.error("通知第三方注册信息时失败。", e);
+		}
     }
     /**
      * 解密第三方过来的参数

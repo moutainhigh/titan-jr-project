@@ -1,11 +1,24 @@
 package com.fangcang.titanjr.common.util;
 
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -19,7 +32,7 @@ import org.apache.http.protocol.HTTP;
  * Created by zhaoshan on 2016/4/15.
  */
 public class HttpUtils {
-
+	private static final Log LOG = LogFactory.getLog(HttpUtils.class);
 	
 	public static HttpClient getHttpClientFactory()
 	{
@@ -49,5 +62,85 @@ public class HttpUtils {
 		}
 		httpost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
 		return httpost;
+	}
+	public static String postRequest(URL url, Map<String, String> parameters) throws IOException {
+		HttpURLConnection conn = null;
+		OutputStream out = null;
+		InputStream in = null;
+		try {
+			conn = (HttpURLConnection)url.openConnection();
+			conn.setConnectTimeout(10000);
+			conn.setReadTimeout(10000);
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.connect();
+			
+			// 写入POST数据
+			out = conn.getOutputStream();
+			byte[] params = generatorParamString(parameters).getBytes();
+			out.write(params, 0, params.length);
+			out.flush();
+			
+			// 读取响应数据
+			in = conn.getInputStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+			StringBuilder buffer = new StringBuilder();
+			char[] buf = new char[1000];
+			int len = 0;
+			while (len >= 0) {
+				buffer.append(buf, 0, len);
+				len = reader.read(buf);
+			}
+			String result = buffer.toString();
+			LOG.info("http client request ,url:"+url.toString()+",param:"+parameters.toString()+",result:"+result);
+			return result;
+		} catch(IOException e) {
+			LOG.error("http request fail， url:"+url.toString()+",param:"+parameters.toString());
+			throw e;
+		} finally {
+			close(in);
+			close(out);
+			if(conn != null){
+				conn.disconnect();
+			}
+		}
+	}
+	/**
+	 * @description 生成请求参数字符串
+	 * @param parameters
+	 * @return
+	 */
+	public static String generatorParamString(Map<String, String> parameters) {
+        StringBuffer params = new StringBuffer();
+        if(parameters != null) {
+        	for(Iterator<String> iter = parameters.keySet().iterator(); iter.hasNext(); ) {
+        		String name = iter.next();
+        		String value = parameters.get(name);
+        		params.append(name + "=");
+                try {
+                    params.append(URLEncoder.encode(value, "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                	throw new RuntimeException(e.getMessage(), e);
+                } catch (Exception e) {
+                	throw new RuntimeException(String.format("'%s'='%s'", name, value), e);
+                }
+                if(iter.hasNext())
+                	params.append("&");
+            }
+        }
+        return params.toString();
+    }
+	/**
+	 * @description 关闭对象
+	 * @param f
+	 */
+	public static void close(Closeable f) {
+		if(f != null){
+			try{
+				f.close();
+			}catch(IOException e){
+				Logger.getAnonymousLogger().info(e.toString());
+			}
+		}
 	}
 }
