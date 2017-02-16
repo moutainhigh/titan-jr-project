@@ -47,14 +47,6 @@
                         <label>
                             <span><i>*</i>持卡人姓名：</span><input type="text" id="accountName" class="text w_250" value="${organ.orgName}" disabled>
                         </label>
-                        <label id="branch_spec" style="display: none">
-						<span class="reset_pass">开户支行：</span>
-							<input name="" id="city_code" class="text i_city" datatype="*1-20" errormsg="必选项" placeholder="城市" style="width: 80px; background-position: 65px 7px ! important;" type="text">
-							<input name="city_name" id="city_name" type="hidden">
-							<input type="text" class="text" name="branch_code" id="branch_code" datatype="*1-20" errormsg="必选项" placeholder="请选择支行" style="width: 154px;padding-left: 10px;">
-							<input name="branch_name" id="branch_name" type="hidden">
-						</label>
-                        
                         <c:if test="${bindBankCard != null}">
                             <a href="javascript:void(0)" id="withDrawToCurrentCard"
                                class="blue decorationUnderline TFS_withdrawBoxL_else_aHref hide">提现到已绑定银行卡 >></a>
@@ -108,25 +100,28 @@
 <form action="<%=basePath%>/account/overview-main.shtml" id="flashPage" target="right_con_frm"></form>
 <script>
 
-(function($) {
-    $.fn.watch = function(callback) {
-        return this.each(function() {
-            //缓存以前的值
-            $.data(this, 'originVal', $(this).val());
-
-            //event
-            $(this).on('keyup paste', function() {
-                var originVal = $(this, 'originVal');
-                var currentVal = $(this).val();
-
-                if (originVal !== currentVal) {
-                    $.data(this, 'originVal', $(this).val());
-                    callback(currentVal);
-                }
-            });
-        });
-    }
-})(jQuery);
+	(function($) {
+	    $.fn.watch = function(callback) {
+	        return this.each(function() {
+	            //缓存以前的值
+	            $.data(this, 'originVal', $(this).val());
+	
+	            //event
+	            $(this).on('keyup paste', function() {
+	                var originVal = $(this, 'originVal');
+	                var currentVal = $(this).val();
+	
+	                if (originVal !== currentVal) {
+	                    $.data(this, 'originVal', $(this).val());
+	                    callback(currentVal);
+	                }
+	            });
+	        });
+	    }
+	})(jQuery);
+	
+	
+	
 
     $(function(){
         if ('${bindBankCard }'){
@@ -208,78 +203,13 @@
         height : 300,
         autoSelectVal : true,
         clickEvent : function(d, input){
+        	console.log(d);
             input.attr('data-id', d.key);
             $("#bankName").val(d.val);
-            if(d.key=="104"){
-            	//显示支行信息
-            	$("#branch_spec").show();
-            	showCityCode();
-            }else{
-            	 $("#branch_spec").hide();
-            }
-           
         }
     });
 
-    var childBackListObj ="";
-    new AutoComplete($('#city_code'), {
-        url : '<%=basePath%>/withdraw/getCityList.shtml?dataType=2',
-        source : 'cityInfoDTOList',
-        key : 'cityCode',  //数据源中，做为key的字段
-        val : 'cityName', //数据源中，做为val的字段
-        width : 240,
-        height : 300,
-        autoSelectVal : true,
-        clickEvent : function(d, input){
-            input.attr('data-id', d.key);
-            $("#city_name").val(d.val);
-            showBranch();
-        }
-    });
-    
-    function showCityCode(){
-    	$("#branch_code").val("");
-    	$("#branch_code").attr("data-id","");
-    	$("#city_code").val("");
-    	$("#city_code").attr("data-id","");
-    	$("#city_code").show();
-    	$("#branch_name").val("");
-    	$("#city_name").val("");
-    	if(childBackListObj)
-    	{
-    		childBackListObj.remove();
-    	}
-    }
-    
-    function showBranch(){
-    	$("#branch_code").val("");
-    	$("#branch_code").attr("data-id","");
-    	$("#branch_code").show();
-    	$("#branch_name").val("");
-    	init_branch();
-    }
-    
-    function init_branch(){
-    	var bankCode = $("#bankCode").attr("data-id");
-    	var cityCode = $("#city_code").attr("data-id");
-    	if(bankCode !=null && cityCode !=null){
-    		childBackListObj = new AutoComplete($('#branch_code'), {
-    		    url : '<%=basePath%>/account/getBankInfoList.shtml?bankCity='+cityCode+'&parentCode='+bankCode,
-    		    source : 'bankInfoDTOList',
-    		    key : 'bankCode',  //数据源中，做为key的字段
-    		    val : 'bankName', //数据源中，做为val的字段
-    		    width : 240,
-    		    height : 300,
-    		    autoSelectVal : true,
-    		    clickEvent : function(d, input){
-    		        input.attr('data-id', d.key);
-    		        $("#branch_name").val(d.val);
-    		    }
-    		});
-    		
-    	}
-    }
-    
+
     $('.J_password').on('click',function(){
     	//验证提现的金额
     	var withdraw_amount = $("#withDrawNum").val();
@@ -287,6 +217,7 @@
     		withDrawCallBack("提现金额不能为空",1);
     		return;
     	}
+    	
     	  var neg = /^[1-9]{1}\d{0,20}(\.\d{1,2})?$/;
           var neg2 = /^[0]{1}(\.\d{1,2})?$/;
           var flag = neg.test(withdraw_amount)||neg2.test(withdraw_amount);
@@ -335,19 +266,7 @@
    	        	}
     	     }
     	}
-    	var bankCode = $("#bankCode").attr("data-id");
-    	if(bankCode=="104"){//中国银行需要验证
-    		var cityCode = $("#city_code").attr("data-id");
-    		if(typeof cityCode =="undifined" || cityCode.length<1){
-    			withDrawCallBack("开户城市不能为空",1);
-    			return ;
-    		}
-    		var branchCode = $("#branch_code").attr("data-id");
-    		if(typeof branchCode =="undifined" || branchCode.length<1){
-    			withDrawCallBack("开户支行不能为空",1);
-    			return;
-    		}
-    	}
+   
     	 showPayPassword();
 
     });
@@ -421,7 +340,7 @@
     }
     
     function toAccountWithdraw(){
-    	 top.F.loading.show(); 
+    	top.F.loading.show();
     	 $.ajax({
              type: "post",
              dataType: 'json',
@@ -438,10 +357,7 @@
                  amount:$("#withDrawNum").val(),
                  fcUserId:'${fcUserId}',
                  userId:'${userId}',
-                 orderNo:'${orderNo}',
-                 branchCode:$("#branch_code").attr("data-id"),
-         		 cityCode:$("#city_code").attr("data-id"),
-         		 cityName:$("#city_name").val()
+                 orderNo:'${orderNo}'
              },
              context: document.body,
              url: '<%=basePath%>/withdraw/toAccountWithDraw.shtml',

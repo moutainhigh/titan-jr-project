@@ -31,20 +31,24 @@
 				<ul class="passwordset_u1 clearf">
 					<li>
 						<span class="reset_pass">收款银行 ：</span>
-						  <input type="text" id="bankCode" class="text w_250" >
-                          <input type="hidden" id="bankName" >
-					<li>
-						<span class="reset_pass">收款账号：</span>
-						<input type="text" placeholder="" class="text w_250" id="accountnumber"></li>
-					<li>
-						<span class="reset_pass">公司名称 ：</span>
-						<input type="text" class="text w_250" id="name" value="${organ.orgName}" disabled></li>		
-					<li id="branch_spec" style="display: none">
+						<input type="text" id="bankCode" class="text w_250" style="width:310px;" >
+                        <input type="hidden" id="bankName" >
+					</li>
+					<li id="branch_spec" style="display: none" >
 						<span class="reset_pass">开户支行：</span>
 						<input name="" id="city_code" class="text i_city"  placeholder="城市" datatype="*1-20" errormsg="必选项" style="width: 80px; background-position: 65px 7px ! important;" type="text">
 						<input name="city_name" id="city_name" type="hidden">
-						<input type="text" class="text" name="branch_code" id="branch_code" datatype="*1-20" errormsg="必选项" placeholder="请选择支行" style="width: 154px;padding-left: 10px;">
-						<input name="branch_name" id="branch_name" type="hidden"></li>
+						<input type="text" class="text" name="branch_code" id="branch_code" datatype="*1-20" errormsg="必选项" placeholder="请选择支行" style="width: 216px;padding-left: 10px;">
+						<input name="branch_name" id="branch_name" type="hidden">
+					</li>
+					<li>
+						<span class="reset_pass">收款账号：</span>
+						<input type="text" placeholder="" class="text w_250" id="accountnumber" style="width:310px;">
+					</li>
+					<li>
+						<span class="reset_pass">公司名称 ：</span>
+						<input type="text" class="text w_250" id="name" style="width:310px;" value="${organ.orgName}" disabled>
+					</li>		
 				</ul>
 				<div class="pas_close">
 					<span class="btn p_lr30 J_next to_bindCard">下一步</span>
