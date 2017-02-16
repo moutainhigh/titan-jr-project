@@ -151,6 +151,20 @@ function validate_bankCard_data(bankCardData){
 	    return false;
 	}
 	
+	var bankCode = $("#bankCode").attr("data-id");
+	if(bankCode=="104"){//中国银行需要验证
+		var cityCode = $("#city_code").attr("data-id");
+		if(typeof cityCode =="undifined" || cityCode.length<1){
+			new top.Tip({msg : '开户城市不能为空！', type: 1 , time:1000}); 
+			return false;
+		}
+		var branchCode = $("#branch_code").attr("data-id");
+		if(typeof branchCode =="undifined" || branchCode.length<1){
+			new top.Tip({msg : '开户支行不能为空！', type: 1 , time:1000}); 
+			return false;
+		}
+	}
+	
 	if(typeof bankCardData.accountnumber =="undifined" || bankCardData.accountnumber.length<1){
 		new top.Tip({msg : '收款账号不能为空！', type: 1 , time:1000}); 
 		return false;
@@ -165,25 +179,6 @@ function validate_bankCard_data(bankCardData){
 	if(typeof bankCardData.name =="undifined" || bankCardData.name.length<1){
 		new top.Tip({msg : '开户名不能为空！', type: 1 , time:1000}); 
 		return false;
-	}
-	
-	var bankCode = $("#bankCode").attr("data-id");
-	if(bankCode=="104"){//中国银行需要验证
-		var cityCode = $("#city_code").attr("data-id");
-		if(typeof cityCode =="undifined" || cityCode.length<1){
-			new top.Tip({msg : '开户城市不能为空！', type: 1 , time:1000}); 
-			return false;
-		}
-		var branchCode = $("#branch_code").attr("data-id");
-		if(typeof branchCode =="undifined" || branchCode.length<1){
-			new top.Tip({msg : '开户支行不能为空！', type: 1 , time:1000}); 
-			return false;
-		}
-		
-	/* 	if(!vlidateForm.validate())
-		{
-			return false;
-		} */
 	}
 	
 	return true;
