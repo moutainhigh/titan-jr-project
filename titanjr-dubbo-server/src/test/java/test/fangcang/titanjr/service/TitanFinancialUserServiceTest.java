@@ -16,6 +16,7 @@ import test.fangcang.titanjr.SpringTest;
 import com.fangcang.titanjr.common.enums.ReqstatusEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.request.SaaSUserRoleRequest;
 import com.fangcang.titanjr.dto.request.TitanRoleQueryRequest;
 import com.fangcang.titanjr.dto.request.UserFreezeRequest;
@@ -151,5 +152,6 @@ public class TitanFinancialUserServiceTest extends SpringTest {
 //   public void testUnFreezeOrder(){
 //	   titanFinancialAccountService.testUnFreezeOrder(0, 1);
 //   }
+    
     
 }
