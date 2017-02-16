@@ -398,23 +398,26 @@ public class TitanWithdrawController extends BaseController {
 	
 	
 	 private String queryProvinceName(String cityCode){
-			CityInfoDTO cityInfo = new CityInfoDTO();
-	    	cityInfo.setCityCode(cityCode);
-	    	CityInfosResponse response  = titanFinancialAccountService.getCityInfoList(cityInfo);
-	    	if (!response.isResult() || response.getCityInfoDTOList() ==null ){//如果是北京市或者重庆市的话，这个地方的size为2
-	    		return null;
-	    	}
-	    	
-	    	cityInfo = response.getCityInfoDTOList().get(0);
-	    	if(response.getCityInfoDTOList().size()==2){
-	    		return cityInfo.getCityName();
-	    	}
-	    	
-	    	if(StringUtil.isValidString(cityInfo.getParentCode())){
-	    		return queryProvinceName(cityInfo.getParentCode());
-	    	}else{
-	    		return cityInfo.getCityName();
-	    	}
+		 if(!StringUtil.isValidString(cityCode)){
+			 return null;
+		 }
+		CityInfoDTO cityInfo = new CityInfoDTO();
+    	cityInfo.setCityCode(cityCode);
+    	CityInfosResponse response  = titanFinancialAccountService.getCityInfoList(cityInfo);
+    	if (!response.isResult() || response.getCityInfoDTOList() ==null &&response.getCityInfoDTOList().size()>0){//如果是北京市或者重庆市的话，这个地方的size为2
+    		return null;
+    	}
+    	
+    	cityInfo = response.getCityInfoDTOList().get(0);
+    	if(response.getCityInfoDTOList().size()==2){
+    		return cityInfo.getCityName();
+    	}
+    	
+    	if(StringUtil.isValidString(cityInfo.getParentCode())){
+    		return queryProvinceName(cityInfo.getParentCode());
+    	}else{
+    		return cityInfo.getCityName();
+    	}
 		}
 	
 	
