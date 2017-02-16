@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.request;
 
-import com.fangcang.titanjr.dto.OrganTypeEnum;
 
 /**
  * Created by zhaoshan on 2016/12/27.

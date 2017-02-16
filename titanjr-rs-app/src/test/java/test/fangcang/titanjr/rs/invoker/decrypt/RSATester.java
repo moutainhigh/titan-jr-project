@@ -28,8 +28,8 @@ public class RSATester {
     }
 
     public static void main(String[] args) throws Exception {
-
-        testFile();
+    	testSign();
+       // testFile();
 //        test();
 //        testSign();
     }
@@ -97,7 +97,7 @@ public class RSATester {
         System.out.println("原文字：\r\n" + source);
         byte[] data = source.getBytes();
         byte[] encodedData = RSAUtils.encryptByPrivateKey(data, privateKey);
-        System.out.println("加密后：\r\n" + new String(encodedData));
+        System.out.println("加密后：\r\n" + new String(encodedData,"utf-8"));
         byte[] decodedData = RSAUtils.decryptByPublicKey(encodedData, publicKey);
         String target = new String(decodedData);
         System.out.println("解密后: \r\n" + target);

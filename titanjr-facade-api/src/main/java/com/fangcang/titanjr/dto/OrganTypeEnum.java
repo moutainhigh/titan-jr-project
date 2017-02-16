@@ -5,7 +5,9 @@ package com.fangcang.titanjr.dto;
  */
 public enum OrganTypeEnum {
     SaaS(2,"SaaS机构"),TTMall(4,"TTMALL机构");
-
+    /**
+     *  
+     */
     public Integer typeId;
     public String typeName;
 

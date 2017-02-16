@@ -19,6 +19,10 @@
         	<input type="hidden" name="password" value="${regUserLoginInfo.password}"/>
         	<input type="hidden" name="passwordConfirm" value="${regUserLoginInfo.passwordConfirm}"/>
         	<input type="hidden" name="regCode" value="${regUserLoginInfo.regCode}"/>
+        	<input type="hidden" name="channel" value="${regUserLoginInfo.channel}"/>
+        	<input type="hidden" name="info" value="${regUserLoginInfo.info}"/>
+        	<input type="hidden" name="encrypt_type" value="${regUserLoginInfo.encrypt_type}"/>
+        	<input type="hidden" name="sign" value="${regUserLoginInfo.sign}"/>
         	<!-- 修改时使用 -->
         	<input type="hidden" name="imgIds" id="imgIds" />
         	<input type="hidden" name="orgId" id="orgId" value="${org.orgId }"/>
@@ -258,11 +262,11 @@ $('.r_verify').on('click',function(){
 			if(result.code==1){
 		        new top.Tip({msg : '验证码已成功发送,请注意查收！', type: 1, timer:2000});    
 			}else{
-				new top.Tip({msg : result.msg, type: 1, timer:2500});
+				new top.Tip({msg : result.msg, type: 2, timer:2500});
 			}
 		},
 		error : function(){
-			new top.Tip({msg : '网络错误，请重试', type: 1, timer:2000});
+			new top.Tip({msg : '网络错误，请重试', type: 2, timer:2000});
 		}
 	});
       

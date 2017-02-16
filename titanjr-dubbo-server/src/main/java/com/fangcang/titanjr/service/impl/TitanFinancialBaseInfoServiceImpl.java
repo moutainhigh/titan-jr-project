@@ -6,22 +6,36 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
 import com.fangcang.titanjr.common.enums.MunicipalityEnum;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.ThreadPoolUtil;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanBankinfoDao;
 import com.fangcang.titanjr.dao.TitanCityInfoDao;
+import com.fangcang.titanjr.dao.TitanCoopDao;
 import com.fangcang.titanjr.dao.TitanRoleDao;
 import com.fangcang.titanjr.dto.bean.BankInfoDTO;
+import com.fangcang.titanjr.dto.bean.CoopDTO;
 import com.fangcang.titanjr.dto.request.BankInfoQueryRequest;
+import com.fangcang.titanjr.dto.request.CoopRequest;
 import com.fangcang.titanjr.dto.response.BankInfoInitResponse;
 import com.fangcang.titanjr.dto.response.CityInfoInitResponse;
+import com.fangcang.titanjr.dto.response.CoopResponse;
 import com.fangcang.titanjr.dto.response.OrganRoleInitResponse;
 import com.fangcang.titanjr.entity.TitanBankinfo;
 import com.fangcang.titanjr.entity.TitanCityInfo;
 import com.fangcang.titanjr.entity.TitanRole;
+import com.fangcang.titanjr.entity.parameter.TitanCoopParam;
 import com.fangcang.titanjr.rs.dto.BankInfo;
 import com.fangcang.titanjr.rs.dto.CityInfo;
 import com.fangcang.titanjr.rs.manager.BaseInfoInitManager;
@@ -31,12 +45,6 @@ import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialBaseInfoService;
 import com.fangcang.titanjr.task.BankInfoThread;
 import com.fangcang.util.MyBeanUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("titanFinancialBaseInfoService")
 public class TitanFinancialBaseInfoServiceImpl implements TitanFinancialBaseInfoService {
@@ -54,7 +62,10 @@ public class TitanFinancialBaseInfoServiceImpl implements TitanFinancialBaseInfo
 
 	@Resource
 	TitanRoleDao titanRoleDao;
-
+	
+	@Resource
+	TitanCoopDao titanCoopDao;
+	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT)
 	public OrganRoleInitResponse initFinancialOrganRole() {
@@ -330,5 +341,25 @@ public class TitanFinancialBaseInfoServiceImpl implements TitanFinancialBaseInfo
 		municipality.add(MunicipalityEnum.SHANGHAI.cityMsg);
 		return municipality;
 	}
+
+	@Override
+	public CoopResponse getOneCoop(CoopRequest coopRequest) {
+		CoopResponse response = new CoopResponse();
+		TitanCoopParam param = new TitanCoopParam();
+		
+		param.setCoopType(coopRequest.getCoopType());
+		param.setMixcode(coopRequest.getMixcode());
+		try {
+			CoopDTO coopDTO = titanCoopDao.getEntity(param);
+			response.setCoopDTO(coopDTO);
+			response.putSuccess();
+			
+		} catch (DaoException e) {
+			log.error("合作方信息查询(getOneCoop)失败，查询参数CoopRequest:"+Tools.gsonToString(coopRequest), e); 
+			response.putErrorResult("查询失败");
+		}
+		return response;
+	}
+	
 	
 }

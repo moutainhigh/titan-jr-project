@@ -41,7 +41,6 @@ import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.EmployeePojo;
 import com.fangcang.titanjr.web.pojo.FcEmployeeTablePojo;
-import com.fangcang.titanjr.web.util.TFSTools;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;

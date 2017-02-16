@@ -15,12 +15,12 @@
   <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanUserBindInfo" >
     insert into t_tfs_userbindinfo (tfsuserid, fcuserid, username, 
       loginname, fcusername, fcloginname, 
-      merchantcode, isactive, creator, 
+      merchantcode,cooptype, isactive, creator, 
       createtime, modifior, modifytime
       )
     values (#{tfsuserid,jdbcType=INTEGER}, #{fcuserid,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, 
       #{loginname,jdbcType=VARCHAR}, #{fcusername,jdbcType=VARCHAR}, #{fcloginname,jdbcType=VARCHAR}, 
-      #{merchantcode,jdbcType=VARCHAR}, #{isactive,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, 
+      #{merchantcode,jdbcType=VARCHAR},#{cooptype}, #{isactive,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, 
       #{createtime}, #{modifior,jdbcType=VARCHAR}, #{modifytime}
       )
   </insert>

@@ -323,7 +323,11 @@ public class RSAUtils {
     	Map<String, Object> map = genKeyPair();
     	System.out.println(getPrivateKey(map));
     	System.out.println(getPublicKey(map));
-    	
+    	String name = "33334444444";
+    	String mmm = new String(encryptByPrivateKey(name.getBytes("utf-8"), getPrivateKey(map)));
+    	System.out.println("密文："+mmm);
+    	String ming = new String(decryptByPublicKey(mmm.getBytes("utf-8"), getPublicKey(map)));
+    	System.out.println("ming："+ming);
     }
 
 }

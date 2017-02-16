@@ -6,10 +6,18 @@ package com.fangcang.titanjr.common.enums;
  * @2016年6月3日
  */
 public enum UserSourceEnum {
-	TFS(1,"金融官网"),SAAS(2,"SAAS"),AUTO(3,"后台自动"),TTM(4,"TTM");
+	TFS(1,"TFS"),SAAS(2,"SAAS"),AUTO(3,"后台自动"),TTM(4,"TTM"),TWS(5,"泰坦钱包");
 	
+	/**
+	 * 注册渠道
+	 */
 	private int key;
+	
 	private String des; 
+	/**
+	 * 注册渠道混淆码
+	 */
+	private String mixCode;
 	
 	private UserSourceEnum(int key,String des){
 		this.key = key;

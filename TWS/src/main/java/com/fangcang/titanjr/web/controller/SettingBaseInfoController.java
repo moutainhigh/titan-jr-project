@@ -74,8 +74,7 @@ public class SettingBaseInfoController extends BaseController{
 			
 			FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 			organQueryRequest.setOrgCode(titanUser.getOrgcode());
-			organQueryRequest.setRegchannel(1);
-			FinancialOrganResponse financialOrganResponse = organService.queryFinancialOrgan(organQueryRequest);
+			FinancialOrganResponse financialOrganResponse = organService.queryBaseFinancialOrgan(organQueryRequest);
 			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
 			model.addAttribute("financialOrganDTO", financialOrganDTO);
 			for(OrgImageInfo item : financialOrganDTO.getOrgImageInfoList()){

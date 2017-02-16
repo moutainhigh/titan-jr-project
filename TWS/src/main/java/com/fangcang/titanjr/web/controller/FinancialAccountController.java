@@ -16,10 +16,7 @@ import javax.servlet.http.HttpSession;
 import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
-import com.fangcang.titanjr.common.enums.RegchannelEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
-import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
-import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.Tools;
@@ -28,6 +25,7 @@ import com.fangcang.titanjr.dto.bean.BankCardDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.ForgetPayPassword;
+import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
@@ -35,10 +33,7 @@ import com.fangcang.titanjr.dto.response.*;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.*;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
-import com.fangcang.titanjr.web.pojo.WithDrawRequest;
 import com.fangcang.titanjr.web.util.WebConstant;
-import com.fangcang.titanjr.web.util.RSADecryptString;
-import com.fangcang.titanjr.web.util.TFSTools;
 import com.fangcang.util.DateUtil;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -105,11 +100,10 @@ public class FinancialAccountController extends BaseController {
 		userInfoQueryRequest.setTfsUserId(Integer.valueOf(getTfsUserId()));
 		UserInfoPageResponse userInfoPageResponse = titanFinancialUserService.queryUserInfoPage(userInfoQueryRequest);
 		TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
-        FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-        organQueryRequest.setUserId(titanUser.getUserid());
-        organQueryRequest.setRegchannel(RegchannelEnum.OFFIAIAL_WEBSITE.source);
-        FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
-        model.addAttribute("organ", organOrganResponse.getFinancialOrganDTO());
+        OrgDTO orgDTO = new OrgDTO();
+        orgDTO.setUserid(titanUser.getUserid());
+        orgDTO = titanFinancialOrganService.queryOrg(orgDTO);
+        model.addAttribute("orgDTO", orgDTO);
         return "account-overview/overview-main";
     }
     

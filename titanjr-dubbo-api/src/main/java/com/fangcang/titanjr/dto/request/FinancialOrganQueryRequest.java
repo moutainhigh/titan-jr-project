@@ -16,6 +16,7 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
    
     private Integer orgId;
     private String orgCode;
+    private Integer bindStatus;
     /***
      * 公司名称
      */
@@ -108,14 +109,14 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 		this.userId = userId;
 	}
 
-//    public Integer getCheckStatus() {
-//		return checkStatus;
-//	}
-//
-//	public void setCheckStatus(Integer checkStatus) {
-//		this.checkStatus = checkStatus;
-//	}
-// 
+	public Integer getBindStatus() {
+		return bindStatus;
+	}
+
+	public void setBindStatus(Integer bindStatus) {
+		this.bindStatus = bindStatus;
+	}
+
 	public String getMerchantcode() {
 		return merchantcode;
 	}

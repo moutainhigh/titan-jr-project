@@ -216,7 +216,8 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         //2.saas页面注册时金服添加用户绑定关系
         Long orgiUserId = null;//SaaS注册时存在，当前登录的SaaS用户的用户id
         if (userRegisterRequest.getRegisterSource() == UserSourceEnum.SAAS.getKey()||userRegisterRequest.getRegisterSource() == UserSourceEnum.TTM.getKey()) {
-            //查询房仓金服商家已添加上的用户
+        	TitanUserBindInfo bindInfo = new TitanUserBindInfo();
+        	//查询房仓金服商家已添加上的用户
             if(userRegisterRequest.getRegisterSource() == UserSourceEnum.SAAS.getKey()){
             	MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
                 List<String> loginNameList = new ArrayList<String>();
@@ -229,15 +230,18 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
                         orgiUserId = userDTO.getUserId();
                     }
                 }
+            }else{
+            	if(StringUtil.isValidString(userRegisterRequest.getCoopUserId())){
+                 	orgiUserId = Long.valueOf(userRegisterRequest.getCoopUserId());
+                }
             }
-            
-            TitanUserBindInfo bindInfo = new TitanUserBindInfo();
             bindInfo.setUsername(userRegisterRequest.getUserName());
             bindInfo.setLoginname(userRegisterRequest.getLoginUserName());
             bindInfo.setFcloginname(userRegisterRequest.getFcLoginUserName());
             bindInfo.setIsactive(1);
             bindInfo.setTfsuserid(tfsUserid);
             bindInfo.setFcuserid(orgiUserId);
+            bindInfo.setCooptype(userRegisterRequest.getRegisterSource());
             bindInfo.setMerchantcode(userRegisterRequest.getMerchantCode());
             bindInfo.setCreatetime(new Date());
             bindInfo.setCreator(userRegisterRequest.getOperator());

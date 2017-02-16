@@ -159,6 +159,29 @@
 		</where>
 		group by g.orgid
 	</select>
+	<select id="queryBaseOrgIdList" parameterType="java.lang.Object" resultType="java.lang.Integer">
+		SELECT
+	      g.orgid
+        FROM
+	      t_tfs_org g
+          LEFT JOIN t_tfs_orgbindinfo b ON g.userid = b.userid
+          LEFT JOIN t_tfs_orgimage i ON g.userid = i.userid
+          LEFT JOIN t_tfs_orgcheck c ON g.userid = c.userid
+		<where>
+		    <if test="bindstatus !=null">
+		    	b.bindstatus = 1
+		    </if>
+			<if test="userId !=null"> and  g.userId = #{userId}</if>
+			<if test="orgId !=null"> and g.orgid = #{orgId}</if>
+			<if test="orgCode !=null"> and g.orgCode = #{orgCode}</if>
+			<if test="statusId !=null"> and  g.statusId = #{statusId}</if>
+			<if test="resultKey !=null"> and  c.resultkey = #{resultKey}</if>
+			<if test="orgType !=null"> and  g.orgType = #{orgType}</if>
+			<if test="merchantcode !=null"> and  b.merchantcode = #{merchantcode}</if>
+            <if test="regchannel !=null"> and  g.regchannel = #{regchannel}</if>
+		</where>
+		group by g.orgid
+	</select>
 	<select id="queryOrgCollectionList" parameterType="java.util.Map" resultMap="resultMapOrgan">
 		SELECT
 	      g.orgcode,

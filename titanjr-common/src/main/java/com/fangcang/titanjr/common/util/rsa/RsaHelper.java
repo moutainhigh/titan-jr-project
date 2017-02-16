@@ -3,6 +3,7 @@ package com.fangcang.titanjr.common.util.rsa;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -187,7 +188,7 @@ public class RsaHelper {
 	}
 
 	// 用公钥加密
-	public static byte[] encryptData(byte[] data, PublicKey pubKey) {
+	public static byte[] encryptData(byte[] data, Key pubKey) {
 		try {
 			/*Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 			cipher.init(Cipher.ENCRYPT_MODE, pubKey);
@@ -223,7 +224,7 @@ public class RsaHelper {
 	}
 
 	// 用私钥解密
-	public static byte[] decryptData(byte[] encryptedData, PrivateKey priKey) {
+	public static byte[] decryptData(byte[] encryptedData, Key priKey) {
 		try {
 			/*Cipher cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.DECRYPT_MODE, priKey);
@@ -252,6 +253,7 @@ public class RsaHelper {
 	        out.close();  
 	        return decryptedData;  
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -353,4 +355,18 @@ public class RsaHelper {
 		}
 	}
 	
+	public static void main(String[] args) throws Exception {
+		KeyPair keyPair = generateRSAKeyPair(1024);
+		String pubicKeyString = encode64PublicKeyString(keyPair.getPublic());
+		String privateKeyString = encode64PrivateKeyString(keyPair.getPrivate());
+		PublicKey pk= decodePublicKeyFromBase64Str(pubicKeyString);
+		String encryptString = encryptDataFromStr("222222222222", pk);
+		
+		PrivateKey privateKey = decodePrivateKeyFromBase64Str(privateKeyString);
+		byte[] dString = decryptData(encryptString.getBytes(), privateKey);
+		String decryptString = new String(dString,"gb2312");
+		
+		System.out.println("encryptString:"+encryptString);
+		System.out.println("decryptString:"+decryptString);
+	}
 }

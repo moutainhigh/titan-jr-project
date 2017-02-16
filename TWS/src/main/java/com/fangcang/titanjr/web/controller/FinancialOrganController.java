@@ -24,9 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
-import com.fangcang.titanjr.common.enums.RegchannelEnum;
 import com.fangcang.titanjr.common.enums.SMSType;
 import com.fangcang.titanjr.common.enums.UserSourceEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
@@ -37,15 +35,17 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.ImageIOExtUtil;
+import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.Tools;
-import com.fangcang.titanjr.dto.bean.CheckStatus;
+import com.fangcang.titanjr.common.util.rsa.RSAUtil;
+import com.fangcang.titanjr.dto.bean.CoopDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
-import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.CheckUserRequest;
+import com.fangcang.titanjr.dto.request.CoopRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.OrgRegisterValidateRequest;
@@ -60,6 +60,7 @@ import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.request.UserLoginNameExistRequest;
 import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
 import com.fangcang.titanjr.dto.response.CheckUserResponse;
+import com.fangcang.titanjr.dto.response.CoopResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.GetCheckCodeResponse;
 import com.fangcang.titanjr.dto.response.OrgRegisterValidateResponse;
@@ -75,11 +76,12 @@ import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
 import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
 import com.fangcang.titanjr.entity.TitanUser;
-import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+import com.fangcang.titanjr.service.TitanFinancialBaseInfoService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
+import com.fangcang.titanjr.web.pojo.CoopRegInfo;
 import com.fangcang.titanjr.web.pojo.OrgRegPojo;
 import com.fangcang.titanjr.web.pojo.RegUserLoginInfo;
 import com.fangcang.titanjr.web.util.WebConstant;
@@ -111,13 +113,9 @@ public class FinancialOrganController extends BaseController {
     @Resource
     private TitanFinancialSendSMSService sendSMSService;
     
-    @RequestMapping(value = "/showOrg")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String queryOrgInfo(HttpServletRequest request, Model model) {
-        FinancialOrganResponse dto = titanFinancialOrganService.queryFinancialOrgan(new FinancialOrganQueryRequest());
-        model.addAttribute("org", dto);
-        return "orgManager";
-    }
+    @Resource
+    private TitanFinancialBaseInfoService baseInfoService;
+    
     /**
      * 显示注册登录信息页面
      * @param request
@@ -127,8 +125,41 @@ public class FinancialOrganController extends BaseController {
     @RequestMapping(value = "/ex/organ/showOrgUser")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String showOrgUser(HttpServletRequest request, Model model) {
+    	//校验sign签名
+    	model.addAttribute("channel", request.getParameter("channel"));
+    	model.addAttribute("sign", request.getParameter("sign"));
+    	model.addAttribute("info", request.getParameter("info"));
+    	model.addAttribute("encrypt_type", request.getParameter("encrypt_type"));
+    	RegUserLoginInfo regUserLoginInfo = new RegUserLoginInfo();
+    	regUserLoginInfo.setChannel(request.getParameter("channel"));
+    	regUserLoginInfo.setEncrypt_type(request.getParameter("encrypt_type"));
+    	regUserLoginInfo.setSign(request.getParameter("sign"));
+    	regUserLoginInfo.setInfo(request.getParameter("info"));
+    	//合作方信息
+    	CoopRegInfo coopRegInfo = decryptRegInfo(regUserLoginInfo);
     	
+    	System.out.println("_______"+Tools.gsonToString(coopRegInfo));
         return "org-reg/org-user";
+    }
+    
+    /**
+     * 校验第三方注册接口签名
+     */
+    private String verifyRegSign(String channel,String sign,String info,String encryptType,String key){
+    	if(StringUtil.isValidString(channel)&&StringUtil.isValidString(sign)&&StringUtil.isValidString(info)){
+    		String keyValue = "channel="+channel+"&encrypt_type="+encryptType+"&info="+info+"&key="+key;
+    		String paramSign = MD5.MD5Encode(keyValue).toUpperCase();
+    		if(paramSign.equals(sign)){
+    			//签名正确，第三方注册
+    			return "success";
+    		}else{
+    			//签名错误
+    			log.info("第三方注册参数非法，原始信息："+keyValue+",paramSign:"+paramSign+",md5sign:"+sign);
+    			return "fail";
+    		}
+    	}
+    	//参数不完整不需要校验，默认注册
+    	return "ok";
     }
     
     /**
@@ -300,34 +331,32 @@ public class FinancialOrganController extends BaseController {
 	    	organRegisterRequest.setUserType(orgRegPojo.getUserType());
 	    	organRegisterRequest.setConnect(orgRegPojo.getConnect());
 	    	organRegisterRequest.setMobileTel(orgRegPojo.getMobiletel());
+	    	//渠道号要用密文
+	    	int registerSource = UserSourceEnum.TWS.getKey();
+	    	CoopRequest coopRequest = new CoopRequest();
+	    	coopRequest.setMixcode(regUserLoginInfo.getChannel());
+    		CoopResponse coopResponse = baseInfoService.getOneCoop(coopRequest);
+    		if(coopResponse.isResult()&&coopResponse.getCoopDTO()!=null){
+    	    	registerSource = coopResponse.getCoopDTO().getCoopType();
+    		}
 	    	
-	    	//TODO userSource用rsa加密方式传输或者渠道号要用密文
-	    	String userSource = orgRegPojo.getUs();
-	    	int registerSource = UserSourceEnum.TFS.getKey();
-	    	try {
-	    		registerSource = NumberUtils.toInt(userSource);
-			} catch (Exception e) {
-				e.printStackTrace();
-				
-			}
-	    	if(registerSource==0){
-	    		registerSource = UserSourceEnum.TFS.getKey();
-	    	}
 	    	organRegisterRequest.setRegisterSource(registerSource);
-	    	//TODO 合作方信息
-	    	String thirdPlatformLoginUserName = "luoqinglongttm";
-	    	if(StringUtil.isValidString(thirdPlatformLoginUserName)){
-	    		organRegisterRequest.setFcLoginUserName(thirdPlatformLoginUserName);
-	    		String merchantCode = "ttt";
-	    		organRegisterRequest.setMerchantCode(merchantCode);
+	    	//合作方信息
+	    	CoopRegInfo coopRegInfo = decryptRegInfo(regUserLoginInfo);
+	    	if(coopRegInfo!=null){
+	    		organRegisterRequest.setFcLoginUserName(coopRegInfo.getCoopLoginName());
+	    		organRegisterRequest.setCoopUserId(coopRegInfo.getCoopUserId());
+	    		organRegisterRequest.setMerchantCode(coopRegInfo.getCoopOrgCode());
+	    		organRegisterRequest.setMerchantname(coopRegInfo.getCoopOrgName());
 	    	}
+	    	
 	    	if(orgRegPojo.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
 	    		//企业
 	    		organRegisterRequest.setBuslince(orgRegPojo.getBuslince());
 	    	}else{
 	    		//个人
 	    		organRegisterRequest.setCertificateNumber(orgRegPojo.getCertificatenumber());
-	    		organRegisterRequest.setCertificateType("0");//身份证
+	    		organRegisterRequest.setCertificateType(TitanOrgEnum.CertificateType.SFZ.getKey()+"");//身份证
 	    	}
 			OrganRegisterResponse organRegisterResponse = titanFinancialOrganService.registerFinancialOrgan(organRegisterRequest);
 			if(organRegisterResponse.isResult()){
@@ -366,6 +395,42 @@ public class FinancialOrganController extends BaseController {
     	return "error";
     }
     /**
+     * 解密第三方过来的参数
+     * @param CoopRegInfo
+     * @return
+     */
+    private CoopRegInfo decryptRegInfo(RegUserLoginInfo regUserLoginInfo){
+    	CoopRequest coopRequest = new CoopRequest();
+		coopRequest.setMixcode(regUserLoginInfo.getChannel());
+		CoopResponse coopResponse = baseInfoService.getOneCoop(coopRequest);
+		if(coopResponse.isResult()&&coopResponse.getCoopDTO()!=null){
+			CoopDTO coopDTO = coopResponse.getCoopDTO();
+	    	String msg = verifyRegSign(regUserLoginInfo.getChannel(),regUserLoginInfo.getSign(),regUserLoginInfo.getInfo(),regUserLoginInfo.getEncrypt_type(),coopDTO.getMd5Key());
+	    	if(msg.equals("success")){
+	    		//开始解密
+    			try {
+    				String urlKeyValues = RSAUtil.decryptByPrivateKeyGet(regUserLoginInfo.getInfo(), coopResponse.getCoopDTO().getPrivateKey());
+    				Map<String, String> result =  Tools.unserializable2Map(urlKeyValues);
+    				CoopRegInfo coopRegInfo = new CoopRegInfo();
+    				coopRegInfo.setCoopOrgCode(result.get("cooporgcode"));
+    				coopRegInfo.setCoopOrgName(result.get("cooporgname"));
+    				coopRegInfo.setCoopLoginName(result.get("cooploginname"));
+    				coopRegInfo.setCoopUserId(result.get("coopuserid"));
+    				coopRegInfo.setNotifyurl(result.get("notifyurl"));
+    				return coopRegInfo;
+    			} catch (Exception e) {
+    				log.error("第三方注册时,注册信息RSA解密失败，加密信息info为:"+regUserLoginInfo.getInfo()+",第三方为:"+coopResponse.getCoopDTO(), e); 
+    			}
+	    	}
+    	}else{
+			log.info("第三方注册时，没有找到对应的合作渠道号,渠道号【"+regUserLoginInfo.getChannel()+"】不存在");
+		}
+    	return null;
+    	
+    }
+   
+    
+    /**
      * 注册后刷新session中的个人信息,如绑定状态等
      */
     private void refreshSession(String userLoginName){
@@ -384,32 +449,13 @@ public class FinancialOrganController extends BaseController {
     		}
     		
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, userInfoDTO.getUserLoginName());//金服用户登录名
-            getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
-            getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名
-            //如果包含系统运营员，判定当前地址
-           // if (containsRole(userInfoDTO.getRoleDTOList(), FinancialRoleEnum.OPERATION.roleCode)) {
-                //getSession().setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN);
-            //}
-            //将金服所有角色设置进去
-            //for (FinancialRoleEnum roleEnum : FinancialRoleEnum.values()) {
-            //    if (containsRole(userInfoDTO.getRoleDTOList(), roleEnum.roleCode)) {
-            //        getSession().setAttribute("JR_" + roleEnum.roleCode, "1");
-            //    }
-           // }
+            getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId().toString());//金服机构id标示
+            getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId().toString());//金服用户名
+           
     	}else{
+    		log.error("用户信息不存在!刷新登录用户session失败.");
 		}
         
-    }
-    /**
-     * 判定是否包含角色code。
-     */
-    private boolean containsRole(List<RoleDTO> roleDTOList, String roleCode) {
-        for (RoleDTO roleDTO : roleDTOList) {
-            if (roleCode.equals(roleDTO.getRoleCode())) {
-                return true;
-            }
-        }
-        return false;
     }
     
     /***
@@ -612,8 +658,7 @@ public class FinancialOrganController extends BaseController {
     public String getOrgInfo(Model model){
     	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
     	organQueryRequest.setOrgCode(getUserId());
-    	organQueryRequest.setRegchannel(RegchannelEnum.OFFIAIAL_WEBSITE.source);
-    	FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+    	FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
     	if(financialOrganResponse.isResult()){
     		model.addAttribute("org", financialOrganResponse.getFinancialOrganDTO());
     		if(financialOrganResponse.getFinancialOrganDTO().getOrgImageInfoList().size()>0){
@@ -638,28 +683,6 @@ public class FinancialOrganController extends BaseController {
     	return "error";
     }
     
-    private int getInfo(String orgCode,Model model){
-    	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-    	organQueryRequest.setOrgCode(orgCode);
-    	organQueryRequest.setRegchannel(RegchannelEnum.OFFIAIAL_WEBSITE.source);
-    	FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
-    	if(financialOrganResponse.isResult()){
-    		model.addAttribute("org", financialOrganResponse.getFinancialOrganDTO());
-    		if(financialOrganResponse.getFinancialOrganDTO().getOrgImageInfoList().size()>0){
-    			for(OrgImageInfo item : financialOrganResponse.getFinancialOrganDTO().getOrgImageInfoList()){
-    				if(item.getSizeType()==10){
-    					model.addAttribute("small_img_10", item.getImageURL());
-    				}else if(item.getSizeType()==50){
-    					model.addAttribute("big_img_50", item.getImageURL());
-    				}
-    			}
-    		}
-    		return 1;
-    	}else{
-    		model.addAttribute("errormsg", "查询结果数据错误");
-    		return 0;
-    	}
-    }
    /**
     *  显示公司信息
     * @return
@@ -756,17 +779,6 @@ public class FinancialOrganController extends BaseController {
         out.flush();
         out.close();
 		return ;
-    }
-    /**
-     * 显示个人信息
-     * @param model
-     * @return
-     */
-    public String showPersonalInfo(Model model){
-    	
-    	
-    	
-    	return "org-reg/org-persernal-info";
     }
     
     /**

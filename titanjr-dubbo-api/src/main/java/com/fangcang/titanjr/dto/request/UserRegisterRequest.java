@@ -25,7 +25,10 @@ public class UserRegisterRequest extends BaseRequestDTO{
     private String mobilePhone;
 
     private String fcLoginUserName;
-    
+    /**
+     * 合作方的用户id
+     */
+    private String coopUserId;
     private String merchantCode;
 
     private String orgCode;
@@ -71,7 +74,16 @@ public class UserRegisterRequest extends BaseRequestDTO{
         this.userId = userId;
     }
 
-    public String getOrgCode() {
+    
+    public String getCoopUserId() {
+		return coopUserId;
+	}
+
+	public void setCoopUserId(String coopUserId) {
+		this.coopUserId = coopUserId;
+	}
+
+	public String getOrgCode() {
         return orgCode;
     }
 

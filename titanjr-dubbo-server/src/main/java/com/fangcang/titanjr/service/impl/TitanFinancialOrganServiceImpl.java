@@ -16,7 +16,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.bouncycastle.jcajce.provider.asymmetric.RSA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -204,7 +203,31 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
         return response;
     }
 
-
+    @Override
+	public FinancialOrganResponse queryBaseFinancialOrgan(
+			FinancialOrganQueryRequest request) {
+    	FinancialOrganResponse response = new FinancialOrganResponse();
+        try {
+        	if(request.getOrgId()==null&&!StringUtil.isValidString(request.getOrgCode())&&!StringUtil.isValidString(request.getUserId())&&!StringUtil.isValidString(request.getMerchantcode())){
+        		response.putErrorResult("参数错误，必填参数不能为空");
+        		return response;
+        	}
+            PaginationSupport<FinancialOrganDTO> paginationSupport = new PaginationSupport<FinancialOrganDTO>();
+            paginationSupport =  titanOrgDao.queryTitanOrgForPage(request, paginationSupport);
+            if(paginationSupport.getItemList()!=null&&paginationSupport.getItemList().size()==1){
+            	response.setFinancialOrganDTO(paginationSupport.getItemList().get(0));
+            	response.putSuccess();
+            }else{
+            	response.putErrorResult("数据结果集个数错误");
+            }
+		} catch (Exception e) {
+			LOGGER.error("查询错误，参数FinancialOrganQueryRequest："+JSONSerializer.toJSON(request).toString(), e);
+			response.putSysError();
+		}
+        
+        return response;
+	}
+    
 	@Override
     public OrganQueryCheckResponse queryFinancialOrganForPage(FinancialOrganQueryRequest titanOrgQueryDTO) {
     	OrganQueryCheckResponse responsePageDTO = new OrganQueryCheckResponse();
@@ -240,12 +263,12 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	}
     }
     /***
-     * 从saas页面注册的
+     * 从合作平台过来注册的(saas,ttm)页面注册的
      * @param organRegisterRequest
      * @return 1:成功，-1：参数错误，-2：
      * @throws Exception
      */
-    private TitanOrg registerFromSaaS(OrganRegisterRequest organRegisterRequest) throws MessageServiceException, GlobalServiceException{
+    private TitanOrg registerFromCoop(OrganRegisterRequest organRegisterRequest) throws MessageServiceException, GlobalServiceException{
     	TitanOrg titanOrg = null;
     	try{
     		OrgBindInfo orgBindInfo = new OrgBindInfo();
@@ -262,7 +285,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
         		throw new MessageServiceException(registerResponse.getReturnCode(),registerResponse.getReturnMessage());
         	}
 	    	// 绑定关系
-	    	int returnCode =addOrgbingInfo(organRegisterRequest.getOrgCode(), organRegisterRequest.getMerchantCode(), organRegisterRequest.getOrgCode(), organRegisterRequest.getMerchantname());
+	    	int returnCode = addOrgbingInfo(organRegisterRequest.getOrgCode(), organRegisterRequest.getMerchantCode(), organRegisterRequest.getOrgCode(), organRegisterRequest.getMerchantname(),organRegisterRequest.getRegisterSource());
 	    	if(ORGBINGINFO_CODE_EXIST==returnCode){
 	    		throw new MessageServiceException("该商家已经绑定过泰坦金融账号，不能重复绑定");
 	    	}
@@ -380,6 +403,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	userRegisterRequest.setMerchantCode(organRegisterRequest.getMerchantCode());
     	userRegisterRequest.setMobilePhone(organRegisterRequest.getMobileTel());
     	userRegisterRequest.setOrgCode(organRegisterRequest.getOrgCode());
+    	userRegisterRequest.setCoopUserId(organRegisterRequest.getCoopUserId());
     	userRegisterRequest.setPassword(organRegisterRequest.getPassword());
     	userRegisterRequest.setRegisterSource(organRegisterRequest.getRegisterSource());
     	userRegisterRequest.setUserId(organRegisterRequest.getOrgCode());
@@ -467,7 +491,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
      * 金服添加机构绑定关系
      * @throws GlobalServiceException
      */
-    private int addOrgbingInfo(String userId,String merchantCode,String orgcode,String merchantname) throws Exception{
+    private int addOrgbingInfo(String userId,String merchantCode,String orgcode,String merchantname,int coopType) throws Exception{
     	if(StringUtil.isValidString(userId)==false){
     		throw new ParameterException("param error: userId can not be  null");
     	}
@@ -492,6 +516,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     		orgBindinfo.setUserid(userId);
     		orgBindinfo.setOrgcode(orgcode);
     		orgBindinfo.setMerchantcode(merchantCode);
+    		orgBindinfo.setCooptype(coopType);
     		orgBindinfo.setMerchantname(merchantname);
     		orgBindinfo.setBindstatus(TitanOrgBindinfoEnum.BindStatus.BIND.getKey());
     		orgBindinfo.setCreatetime(new Date());
@@ -557,7 +582,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	}
     	
     	if(organRegisterRequest.getRegisterSource()==UserSourceEnum.SAAS.getKey()||organRegisterRequest.getRegisterSource()==UserSourceEnum.TTM.getKey()){
-    		registerFromSaaS(organRegisterRequest);
+    		registerFromCoop(organRegisterRequest);
     		addOrgCheck(organRegisterRequest.getOrgCode(),organRegisterRequest.getOperator());
     	}else if(organRegisterRequest.getRegisterSource()==UserSourceEnum.TFS.getKey()){
     		registerFromJinfuSite(organRegisterRequest);
@@ -1470,5 +1495,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		initKeyInfo("TJM10000110");
 
 	}
+
+
+	
 	
 }

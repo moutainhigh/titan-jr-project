@@ -60,6 +60,8 @@ public class OrganRegisterRequest extends BaseRequestDTO {
     /***************** 房仓信息 *****************/
     //房仓登录用户名
     private String fcLoginUserName;
+    //合作方的用户id
+    private String coopUserId;
     //商家编码或者第三方的编码
     private String  merchantCode;
     //商家名称
@@ -264,6 +266,14 @@ public class OrganRegisterRequest extends BaseRequestDTO {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getCoopUserId() {
+		return coopUserId;
+	}
+
+	public void setCoopUserId(String coopUserId) {
+		this.coopUserId = coopUserId;
 	}
     
 }

@@ -50,28 +50,22 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 			    log.info("send sms ,messageServiceUrl:"+messageServiceUrl+",sendSMSRequest  param:"+ToStringBuilder.reflectionToString(sendSMSRequest)+",retMessage:"+retMessage);
 		    	
 			    if(CommonConstant.RETURN_SUCCESS.toUpperCase().equals(retMessage)){
-			    	sendSmsResponse.setResult(true);
-				    sendSmsResponse.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-				    sendSmsResponse.setReturnMessage(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+			    	sendSmsResponse.putSuccess("短信发送成功");
 				    return sendSmsResponse;
 			    }else{
-			    	sendSmsResponse.setResult(false);
-					sendSmsResponse.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-					sendSmsResponse.setReturnMessage(retMessage);
+					sendSmsResponse.putErrorResult("短信发送失败，请重试");
+					log.error("短信发送失败,messageServiceUrl(发送服务器地址):"+messageServiceUrl+",sendSMSRequest  param:"+Tools.gsonToString(sendSMSRequest)+",接口返回信息为:"+retMessage);
 					return sendSmsResponse;
 			    }
 			}else{
-				sendSmsResponse.setResult(false);
-				sendSmsResponse.setReturnCode(RSInvokeErrorEnum.PARAM_EMPTY.returnCode);
-				sendSmsResponse.setReturnMessage(RSInvokeErrorEnum.PARAM_EMPTY.returnMsg);
+				sendSmsResponse.putErrorResult("参数不能为空");
 				return sendSmsResponse;
 			}
 		}catch(Exception e){
-			log.error(e.getMessage(),e);
+			log.error("短信发送失败,sendSMSRequest  param:"+Tools.gsonToString(sendSMSRequest),e);
+			
 		}
-		sendSmsResponse.setResult(false);
-		sendSmsResponse.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-		sendSmsResponse.setReturnMessage(RSInvokeErrorEnum.UNKNOWN_ERROR.returnMsg);
+		sendSmsResponse.putErrorResult("短信发送失败，请重试");
 		return sendSmsResponse;
 	}
 

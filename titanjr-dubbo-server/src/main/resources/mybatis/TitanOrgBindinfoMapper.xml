@@ -13,11 +13,11 @@
     </where>
   </select>
   <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanOrgBindinfo" >
-    insert into t_tfs_orgbindinfo (userid, merchantcode, orgcode, 
+    insert into t_tfs_orgbindinfo (userid, merchantcode,cooptype, orgcode, 
       merchantname, bindstatus,  creator, 
       createtime, modifier, modifytime
       )
-    values (#{userid,jdbcType=VARCHAR}, #{merchantcode,jdbcType=VARCHAR}, #{orgcode,jdbcType=VARCHAR}, 
+    values (#{userid,jdbcType=VARCHAR}, #{merchantcode,jdbcType=VARCHAR},#{cooptype}, #{orgcode,jdbcType=VARCHAR}, 
       #{merchantname,jdbcType=VARCHAR}, #{bindstatus,jdbcType=INTEGER},  #{creator,jdbcType=VARCHAR}, 
       #{createtime}, #{modifier,jdbcType=VARCHAR}, #{modifytime}
       )

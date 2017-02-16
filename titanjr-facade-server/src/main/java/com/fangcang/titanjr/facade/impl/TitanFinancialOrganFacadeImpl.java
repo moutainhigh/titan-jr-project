@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.facade.impl;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
+import com.fangcang.titanjr.common.enums.entity.TitanOrgBindinfoEnum;
 import com.fangcang.titanjr.dto.OrganStatusEnum;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
@@ -15,6 +16,7 @@ import com.fangcang.titanjr.response.OrganUserInfoResponse;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.util.StringUtil;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -47,8 +49,7 @@ public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade 
         FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
         organQueryRequest.setMerchantcode(organStatusRequest.getPartnerCode());
         organQueryRequest.setUserId(organStatusRequest.getTitanOrgCode());
-        organQueryRequest.setRegchannel(organStatusRequest.getOrganTypeEnum().typeId);
-        FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+        FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
         if (null == financialOrganResponse.getFinancialOrganDTO() ||
                 !StringUtil.isValidString(financialOrganResponse.getFinancialOrganDTO().getUserId())){
             statusResponse.putErrorResult("NO_RESULT","查询机构为空");
@@ -126,8 +127,8 @@ public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade 
     private OrganInfoResponse buildOrganInfoResponse(OrganInfoResponse infoResponse,String userId,Integer regChannel){
         FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
         organQueryRequest.setMerchantcode(userId);
-        organQueryRequest.setRegchannel(regChannel);
-        FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+        organQueryRequest.setBindStatus(TitanOrgBindinfoEnum.BindStatus.BIND.getKey());
+        FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
         if (null != financialOrganResponse.getFinancialOrganDTO() && StringUtil.
                 isValidString(financialOrganResponse.getFinancialOrganDTO().getUserId())){
             infoResponse.setResult(true);

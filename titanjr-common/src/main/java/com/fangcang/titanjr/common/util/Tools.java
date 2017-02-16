@@ -1,5 +1,7 @@
 package com.fangcang.titanjr.common.util;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -118,5 +120,18 @@ public class Tools {
 	public static String redKeyword(String content,String keyword){
 		return	content.replaceAll(keyword, "<span style=\"color:#f00;\">"+keyword+"</span>");
 	}
-	
+	/**
+	 * 解析url字符串
+	 * @param urlKeyValues   "aaa=1111&bbb=222&ccc=33333"
+	 * @return
+	 */
+	public static Map<String, String> unserializable2Map(String urlKeyValues){
+		String[] keyvalueItem = urlKeyValues.split("&");
+		Map<String, String> result = new HashMap<String, String>();
+		for(String item :keyvalueItem){
+			String[] keyvalueArray = item.split("="); 
+			result.put(keyvalueArray[0], keyvalueArray[1]);
+		}
+		return result;
+	}
 }
