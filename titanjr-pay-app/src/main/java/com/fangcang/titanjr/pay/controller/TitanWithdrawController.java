@@ -328,12 +328,11 @@ public class TitanWithdrawController extends BaseController {
 			}
 			bankCardBindRequest.setBankCode(withDrawRequest.getBankCode());
 			bankCardBindRequest.setUserType("1");
-			
-			bankCardBindRequest.setBankBranch(withDrawRequest.getBranchCode());
+		/*	bankCardBindRequest.setBankBranch(withDrawRequest.getBranchCode());
 			bankCardBindRequest.setBankCity(withDrawRequest.getCityName());
 			if(StringUtil.isValidString(withDrawRequest.getCityCode())){
 				bankCardBindRequest.setBankProvince(this.queryProvinceName(withDrawRequest.getCityCode()));
-			}
+			}*/
 			CusBankCardBindResponse cardBindResponse = titanFinancialBankCardService
 					.bankCardBind(bankCardBindRequest);
 			if (!cardBindResponse.isResult()) {
