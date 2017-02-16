@@ -179,9 +179,6 @@ public class TitanFinancialBaseInfoServiceImpl implements
 		return false;
 	}
 	
-	
-	
-	
 	private ExecutorService executor = Executors.newFixedThreadPool(10);
 
 	class Execute implements Callable<Integer>

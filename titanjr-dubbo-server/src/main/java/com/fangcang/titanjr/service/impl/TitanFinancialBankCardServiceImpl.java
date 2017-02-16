@@ -161,14 +161,12 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
                                     cusBankCardBindResponse.putSuccess();
                                     return cusBankCardBindResponse;
                                 }
-                                
-                                
-                                
                             }
                         }
                     }
                 }
-                cusBankCardBindResponse.putErrorResult(bankCardBindResponse.getReturnCode(),bankCardBindResponse.getReturnMsg());
+                log.error("绑卡失败："+bankCardBindResponse.getReturnCode()+":"+bankCardBindResponse.getReturnMsg());
+                cusBankCardBindResponse.putErrorResult("绑卡失败");
                 return cusBankCardBindResponse;
             }
         } catch (Exception e) {
@@ -178,11 +176,6 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
         return cusBankCardBindResponse;
     }
 
-    //查询银行编码
-    private String getBankCode(String bankName) {
-
-        return null;
-    }
 
     private TitanBankcard covertToTitanBankcard(CusBankCardBindRequest cusBankCardBindRequest) {
         TitanBankcard titanBankcard = new TitanBankcard();
