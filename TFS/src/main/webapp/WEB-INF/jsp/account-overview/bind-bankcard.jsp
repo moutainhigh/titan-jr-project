@@ -40,7 +40,7 @@
 						<span class="reset_pass">公司名称 ：</span>
 						<input type="text" class="text w_250" id="name" value="${organ.orgName}" disabled></li>		
 					<li id="branch_spec" style="display: none">
-						<span class="reset_pass">开 户 支 行：</span>
+						<span class="reset_pass">开户支行：</span>
 						<input name="" id="city_code" class="text i_city"  placeholder="城市" datatype="*1-20" errormsg="必选项" style="width: 80px; background-position: 65px 7px ! important;" type="text">
 						<input name="city_name" id="city_name" type="hidden">
 						<input type="text" class="text" name="branch_code" id="branch_code" datatype="*1-20" errormsg="必选项" placeholder="请选择支行" style="width: 154px;padding-left: 10px;">
