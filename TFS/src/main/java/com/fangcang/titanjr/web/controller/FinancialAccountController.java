@@ -412,10 +412,13 @@ public class FinancialAccountController extends BaseController {
     
     
     private String queryProvinceName(String cityCode){
+    	if(!StringUtil.isValidString(cityCode)){
+    		return null;
+    	}
 		CityInfoDTO cityInfo = new CityInfoDTO();
     	cityInfo.setCityCode(cityCode);
     	CityInfosResponse response  = titanFinancialAccountService.getCityInfoList(cityInfo);
-    	if (!response.isResult() || response.getCityInfoDTOList() ==null ){//如果是北京市或者重庆市的话，这个地方的size为2
+    	if (!response.isResult() || response.getCityInfoDTOList() ==null &&response.getCityInfoDTOList().size()>0){//如果是北京市或者重庆市的话，这个地方的size为2
     		return null;
     	}
     	

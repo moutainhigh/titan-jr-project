@@ -166,7 +166,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
                     }
                 }
                 log.error("绑卡失败："+bankCardBindResponse.getReturnCode()+":"+bankCardBindResponse.getReturnMsg());
-                cusBankCardBindResponse.putErrorResult("绑卡失败");
+                cusBankCardBindResponse.putErrorResult(bankCardBindResponse.getReturnCode(), bankCardBindResponse.getReturnMsg());
                 return cusBankCardBindResponse;
             }
         } catch (Exception e) {
