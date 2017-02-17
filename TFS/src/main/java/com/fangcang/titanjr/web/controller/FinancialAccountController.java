@@ -410,7 +410,12 @@ public class FinancialAccountController extends BaseController {
          bankCardBindRequest.setBankCode(bindBankCardRequest.getBankCode());
          //以下是哪个说必填但是可选
          bankCardBindRequest.setBankBranch(bindBankCardRequest.getBranchCode());
-         bankCardBindRequest.setBankCity(bindBankCardRequest.getCityName());
+         CityInfoDTO city = new CityInfoDTO();
+         city.setCityCode(bindBankCardRequest.getCityCode());
+         CityInfosResponse response =  titanFinancialAccountService.getCityInfoList(city);
+         if (response.isResult() && CollectionUtils.isNotEmpty(response.getCityInfoDTOList())){
+        	 bankCardBindRequest.setBankCity(response.getCityInfoDTOList().get(0).getCityName());
+         }
          bankCardBindRequest.setBankProvince(this.queryProvinceName(bindBankCardRequest.getCityCode()));
          return titanFinancialBankCardService.bankCardBind(bankCardBindRequest);
     }
@@ -445,22 +450,37 @@ public class FinancialAccountController extends BaseController {
     public String getCityList(CityInfoDTO cityInfo){
         CityInfosResponse response =  titanFinancialAccountService.getCityInfoList(cityInfo);
         if (response.isResult() && CollectionUtils.isNotEmpty(response.getCityInfoDTOList())){
+        	
         	//获取以省和市为key,以城市为值的键值对
         	Map<String,CityInfoDTO> cityMap = this.getParentCity();
         	List<CityInfoDTO> cityInfos = new ArrayList<CityInfoDTO>();
+        	
+        	
         	for(CityInfoDTO city : response.getCityInfoDTOList() ){//组装数据
             	city.setCityName(this.getCityName(city,cityMap));
         		cityInfos.add(city);
         	}
-        	
-        	
         	return toJson(response);
         }
         return null;
     }
-
+    
+    @ResponseBody
+    @RequestMapping("getCitys")
+    public String getCitys(){
+    	CityInfosResponse response = new CityInfosResponse();
+    	Map<String,CityInfoDTO> cityMap = this.getParentCity();
+    	List<CityInfoDTO> cityInfos = getCity();
+    	for(CityInfoDTO city :cityInfos){
+    		city.setCityName(this.getCityName(city,cityMap));
+    	}
+    	response.setCityInfoDTOList(cityInfos);
+    	return toJson(response);
+    }
+    
+    
     private String getCityName(CityInfoDTO city,Map<String,CityInfoDTO> cityMap){
-    	if(city ==null){
+    	if(city ==null || !StringUtil.isValidString(city.getCityCode())){
     		return "";
     	}
     	if(CommonConstant.BEIJING_CODE.equals(city.getCityCode())
@@ -469,7 +489,6 @@ public class FinancialAccountController extends BaseController {
     			||CommonConstant.SHNAGHAI_CODE.equals(city.getCityCode())){//直辖市
     		return city.getCityName();
     	}
-    	
     	StringBuffer cityName=new StringBuffer(city.getCityName());
     	city = cityMap.get(city.getParentCode());
     	if(city ==null){
@@ -504,6 +523,30 @@ public class FinancialAccountController extends BaseController {
      	}
     	return citys;
     }
+    
+    
+    private List<CityInfoDTO> getCity(){
+    	List<CityInfoDTO> citys = new ArrayList<CityInfoDTO>();
+    	
+    	CityInfoDTO cityInfo = new CityInfoDTO();
+    	cityInfo.setDataType(1);
+    	CityInfosResponse response =  titanFinancialAccountService.getCityInfoList(cityInfo);
+    	
+//     	for(CityInfoDTO city : response.getCityInfoDTOList() ){//将其code和name放到键值对中
+//     		citys.add(city);
+//     	}
+     	
+     	for(CityInfoDTO city : response.getCityInfoDTOList()){
+     		cityInfo.setDataType(null);
+     		cityInfo.setParentCode(city.getCityCode());
+     		response =  titanFinancialAccountService.getCityInfoList(cityInfo);
+     		for(CityInfoDTO cityinfo : response.getCityInfoDTOList() ){//将其code和name放到键值对中
+     			citys.add(cityinfo) ;
+         	}
+     	}
+     	return citys;
+    }
+    
     
     @ResponseBody
     @RequestMapping("getBankInfoList")
