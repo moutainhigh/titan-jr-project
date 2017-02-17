@@ -244,6 +244,10 @@ function showBranch(){
 	$("#branch_code").attr("data-id","");
 	$("#branch_code").show();
 	$("#branch_name").val("");
+	if(childBackListObj)
+	{
+		childBackListObj.remove();
+	}
 	init_branch();
 }
 

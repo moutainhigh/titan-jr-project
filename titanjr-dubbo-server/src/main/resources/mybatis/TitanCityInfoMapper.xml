@@ -83,6 +83,7 @@
   			   <if test="cityCode !=null">
   			 	and citycode = #{cityCode}
   			  </if>
+  			  order by citycode
   			</where>
   </select>
   
