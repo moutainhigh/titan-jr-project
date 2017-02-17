@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +48,7 @@ import com.fangcang.util.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.analysis.util.CharArrayMap.EntrySet;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -55,6 +59,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.util.StringUtil;
+import com.google.common.collect.Multiset.Entry;
 
 @Controller
 @RequestMapping("account")
@@ -440,11 +445,66 @@ public class FinancialAccountController extends BaseController {
     public String getCityList(CityInfoDTO cityInfo){
         CityInfosResponse response =  titanFinancialAccountService.getCityInfoList(cityInfo);
         if (response.isResult() && CollectionUtils.isNotEmpty(response.getCityInfoDTOList())){
-            return toJson(response);
+        	//获取以省和市为key,以城市为值的键值对
+        	Map<String,CityInfoDTO> cityMap = this.getParentCity();
+        	List<CityInfoDTO> cityInfos = new ArrayList<CityInfoDTO>();
+        	for(CityInfoDTO city : response.getCityInfoDTOList() ){//组装数据
+            	city.setCityName(this.getCityName(city,cityMap));
+        		cityInfos.add(city);
+        	}
+        	
+        	
+        	return toJson(response);
         }
         return null;
     }
 
+    private String getCityName(CityInfoDTO city,Map<String,CityInfoDTO> cityMap){
+    	if(city ==null){
+    		return "";
+    	}
+    	if(CommonConstant.BEIJING_CODE.equals(city.getCityCode())
+    			||CommonConstant.TIANJING_CODE.equals(city.getCityCode())
+    			||CommonConstant.CHONGQING_CODE.equals(city.getCityCode())
+    			||CommonConstant.SHNAGHAI_CODE.equals(city.getCityCode())){//直辖市
+    		return city.getCityName();
+    	}
+    	
+    	StringBuffer cityName=new StringBuffer(city.getCityName());
+    	city = cityMap.get(city.getParentCode());
+    	if(city ==null){
+    		return cityName.toString();
+    	}
+    	cityName = cityName.insert(0, "-").insert(0, city.getCityName()) ;
+    	city = cityMap.get(city.getParentCode());
+    	if(city ==null){
+    		return cityName.toString();
+    	}
+    	return cityName.insert(0, "-").insert(0, city.getCityName()).toString();
+    }
+    
+    private Map<String,CityInfoDTO> getParentCity(){
+    	CityInfoDTO cityInfo = new CityInfoDTO();
+    	cityInfo.setDataType(1);
+    	CityInfosResponse response =  titanFinancialAccountService.getCityInfoList(cityInfo);
+    	
+    	Map<String,CityInfoDTO> citys = new HashMap<String, CityInfoDTO>();
+     	for(CityInfoDTO city : response.getCityInfoDTOList() ){//将其code和name放到键值对中
+     		citys.put(city.getCityCode(), city);
+     	}
+     	
+     	Set<String> cityCodes = new HashSet<String>(citys.keySet());
+     	for(String cityCode : cityCodes){
+     		cityInfo.setDataType(null);
+     		cityInfo.setParentCode(cityCode);
+     		response =  titanFinancialAccountService.getCityInfoList(cityInfo);
+     		for(CityInfoDTO city : response.getCityInfoDTOList() ){//将其code和name放到键值对中
+         		citys.put(city.getCityCode(), city);
+         	}
+     	}
+    	return citys;
+    }
+    
     @ResponseBody
     @RequestMapping("getBankInfoList")
     public String getBankInfo(BankInfoQueryRequest request){
