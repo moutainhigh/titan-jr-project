@@ -217,7 +217,9 @@ cityListObj = new AutoComplete($('#city_code'), {
     autoSelectVal : true,
     clickEvent : function(d, input){
         input.attr('data-id', d.key);
-        $("#city_name").val(d.val);
+        input.attr('value',d.val.substring(d.val.indexOf("-")+1));
+        var arr = d.val.split("-");
+        $("#city_name").val(arr[arr.length-1]);
         showBranch();
     }
 });

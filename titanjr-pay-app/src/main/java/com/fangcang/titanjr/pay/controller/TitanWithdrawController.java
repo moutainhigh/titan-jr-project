@@ -161,10 +161,8 @@ public class TitanWithdrawController extends BaseController {
 				for (BankCardInfoDTO cid : cbr.getBankCardInfoDTOList()) {
 					if (cid.getStatus().equals(
 							BankCardEnum.BankCardStatusEnum.NORMAL.getKey())
-							&& cid.getAccountpurpose()
-									.equals(BankCardEnum.BankCardPurposeEnum.DEBIT_WITHDRAW_CARD.getKey())
-							|| cid.getAccountpurpose()
-									.equals(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey())) {
+							&& !cid.getAccountpurpose()
+									.equals(BankCardEnum.BankCardPurposeEnum.OTHER_CARD.getKey())) {
 						model.addAttribute("bindBankCard", cid);
 					}
 				}
