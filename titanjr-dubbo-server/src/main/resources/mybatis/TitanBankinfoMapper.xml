@@ -13,11 +13,9 @@
           statusId,
           parentCode
         FROM
-          t_tfs_bankinfo
-        WHERE
-          1 = 1
+          t_tfs_bankinfo where 1=1 
           <if test="bankCity != null">
-              and bankCity = #{bankCity,jdbcType=VARCHAR}
+              and bankCity in (${bankCity})
           </if>
           <if test="bankType != null">
               and bankType = #{bankType,jdbcType=INTEGER}

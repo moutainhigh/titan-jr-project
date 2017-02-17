@@ -26,6 +26,7 @@ import com.fangcang.titanjr.dao.TitanBankinfoDao;
 import com.fangcang.titanjr.dao.TitanCityInfoDao;
 import com.fangcang.titanjr.dao.TitanRoleDao;
 import com.fangcang.titanjr.dto.bean.BankInfoDTO;
+import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.request.BankInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.BankInfoInitResponse;
 import com.fangcang.titanjr.dto.response.CityInfoInitResponse;
@@ -42,6 +43,7 @@ import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialBaseInfoService;
 import com.fangcang.titanjr.task.BankInfoThread;
 import com.fangcang.util.MyBeanUtil;
+import com.fangcang.util.StringUtil;
 
 @Service("titanFinancialBaseInfoService")
 public class TitanFinancialBaseInfoServiceImpl implements
@@ -260,6 +262,23 @@ public class TitanFinancialBaseInfoServiceImpl implements
 			BankInfoQueryRequest bankInfoQueryRequest) {
 		com.fangcang.titanjr.dto.response.BankInfoResponse bankInfoResponse = new com.fangcang.titanjr.dto.response.BankInfoResponse();
 		try {
+			
+			if(StringUtil.isValidString(bankInfoQueryRequest.getBankCity())){
+				CityInfoDTO city = new CityInfoDTO();
+				city.setParentCode(bankInfoQueryRequest.getBankCity());
+				List<CityInfoDTO> citys = titanCityInfoDao.getCityInfoList(city);
+				StringBuffer buffer = new StringBuffer(bankInfoQueryRequest.getBankCity());
+				buffer.append(",");
+				for(int i = 0;i<citys.size();i++ ){
+					buffer.append(citys.get(i).getCityCode());
+					if(i<citys.size()-1){
+						buffer.append(",");
+					}
+					
+				}
+				bankInfoQueryRequest.setBankCity(buffer.toString());
+			}
+			
 			List<BankInfoDTO> bankInfoDTOs = titanBankinfoDao
 					.queryBankInfoList(bankInfoQueryRequest);
 			bankInfoResponse.setBankInfoDTOList(bankInfoDTOs);

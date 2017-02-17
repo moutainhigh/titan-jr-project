@@ -208,7 +208,7 @@ backListObj = new AutoComplete($('#bankCode'), {
 });
 
 cityListObj = new AutoComplete($('#city_code'), {
-    url : '<%=basePath%>/account/getCityList.shtml?dataType=2',
+    url : '<%=basePath%>/account/getCitys.shtml',
     source : 'cityInfoDTOList',
     key : 'cityCode',  //数据源中，做为key的字段
     val : 'cityName', //数据源中，做为val的字段
@@ -244,6 +244,10 @@ function showBranch(){
 	$("#branch_code").attr("data-id","");
 	$("#branch_code").show();
 	$("#branch_name").val("");
+	if(childBackListObj)
+	{
+		childBackListObj.remove();
+	}
 	init_branch();
 }
 
@@ -255,13 +259,15 @@ function init_branch(){
 		childBackListObj = new AutoComplete($('#branch_code'), {
 		    url : '<%=basePath%>/account/getBankInfoList.shtml?bankCity='+cityCode+'&parentCode='+bankCode,
 		    source : 'bankInfoDTOList',
-		    key : 'bankCode',  //数据源中，做为key的字段
+		    key : 'cityKey',  //数据源中，做为key的字段
 		    val : 'bankName', //数据源中，做为val的字段
 		    width : 240,
 		    height : 300,
 		    autoSelectVal : true,
 		    clickEvent : function(d, input){
-		        input.attr('data-id', d.key);
+		        var arr = d.key.split(",");
+		        input.attr('data-id', arr[0]);
+		        $("#city_code").attr("data-id",arr[1]);
 		        $("#branch_name").val(d.val);
 		    }
 		});
