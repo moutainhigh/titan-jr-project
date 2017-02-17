@@ -271,12 +271,9 @@ public class TitanFinancialBaseInfoServiceImpl implements
 				buffer.append(",");
 				for(int i = 0;i<citys.size();i++ ){
 					buffer.append(citys.get(i).getCityCode());
-					if(i<citys.size()-1){
-						buffer.append(",");
-					}
-					
+					buffer.append(",");
 				}
-				bankInfoQueryRequest.setBankCity(buffer.toString());
+				bankInfoQueryRequest.setBankCity(buffer.substring(0, buffer.length()-1));
 			}
 			
 			List<BankInfoDTO> bankInfoDTOs = titanBankinfoDao
