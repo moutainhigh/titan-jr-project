@@ -141,10 +141,6 @@ public class FinancialOrganController extends BaseController {
     	regUserLoginInfo.setEncrypt_type(request.getParameter("encrypt_type"));
     	regUserLoginInfo.setSign(request.getParameter("sign"));
     	regUserLoginInfo.setInfo(request.getParameter("info"));
-    	//合作方信息
-    	CoopRegInfo coopRegInfo = decryptRegInfo(regUserLoginInfo);
-    	
-    	System.out.println("_______"+Tools.gsonToString(coopRegInfo));
         return "org-reg/org-user";
     }
     
@@ -385,7 +381,7 @@ public class FinancialOrganController extends BaseController {
 				}
 				//通知第三方平台，机构信息
 				if(isNeedNofiy){
-					nofifyCoop(coopRegInfo.getCoopOrgCode(),coopRegInfo.getNotifyurl());
+					nofifyCoop(coopRegInfo.getCoopOrgCode(),coopRegInfo.getCoopUserId(),coopRegInfo.getNotifyurl());
 				}
 				sendCheckAlarm(orgRegPojo.getOrgName());
 				return "/org-reg/reg-success";
@@ -412,12 +408,16 @@ public class FinancialOrganController extends BaseController {
      * @param coopOrgCode
      * @param notifyurl
      */
-    private void nofifyCoop(String coopOrgCode,String notifyurl){
+    private void nofifyCoop(String coopOrgCode,String coopUserId,String notifyurl){
     	try {
 	    	String orgcode = (String) getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID).toString();
-			Map<String, String> parameters = new HashMap<String, String>();
+	    	String tfsUserid = (String) getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID).toString();//金服用户名
+	    	
+	    	Map<String, String> parameters = new HashMap<String, String>();
 			parameters.put("cooporgcode", coopOrgCode);
 			parameters.put("orgcode", orgcode);
+			parameters.put("coopuserid", coopUserId);
+			parameters.put("tfsuserid", tfsUserid);
 			HttpUtils.postRequest(new URL(URLDecoder.decode(notifyurl, "UTF-8")), parameters);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();

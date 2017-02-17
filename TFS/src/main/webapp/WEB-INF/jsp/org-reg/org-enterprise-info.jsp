@@ -40,7 +40,7 @@
 	                   <div class="b_c_c clearfix">
 	                    <ul>
 	                    <li><p><i class="c_f00">*</i>公司名称：</p><input type="text" class="text w_420 " name="orgName" value="${org.orgName }" placeholder="请与营业执照上的公司名称保持一致" datatype="*" errormsg="公司名称不能为空"></li>
-	                        <li><p><i class="c_f00">*</i>营业执照号：</p><input type="text" class="text w_420 " name="buslince" id="buslince" value="${org.buslince }" datatype="*" errormsg="营业执照号不能为空" afterPassed="checkOrgRegNum"></li>
+	                        <li><p><i class="c_f00">*</i>营业执照号：</p><input type="text" class="text w_420 " name="buslince" placeholder="三证合一请填写统一社会信用代码" id="buslince" value="${org.buslince }" datatype="*" errormsg="营业执照号不能为空" afterPassed="checkOrgRegNum"></li>
 	                        <li>
 	                        <div class="fl w_290">
 		                        <p class="fl"><i class="c_f00">*</i>上传营业执照照片：</p>

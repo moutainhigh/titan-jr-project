@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -375,9 +377,9 @@ public class RSAUtil {
 	
 	public static void main(String[] args) throws Exception{
 //		String msg = "罗庆龙";
-//		Map<String,String> keys = RSAUtil.generateKeys();
-//		String publicKey = keys.get(RSAUtil.PUBLIC_KEY);
-//		System.out.println(publicKey);
+		Map<String,String> keys = RSAUtil.generateStringKsys();
+		String publicKey = keys.get(RSAUtil.PUBLIC_KEY);
+		System.out.println(keys.toString());
 //		String publicMsg = RSAUtil.encryptByPublicKey(msg, publicKey);
 //		System.out.println("----------"+publicMsg);
 //		
@@ -401,8 +403,8 @@ public class RSAUtil {
 			String key = "eki6ixw9y3q5rqd3";
 			String md5 = "channel=MGKD6EP5&encrypt_type=RSA&info="+info+"&key="+key;
 			String signString = MD5.MD5Encode(md5).toUpperCase();
-			System.out.println("origin:"+md5);
-			System.out.println("signString:"+signString);
+			System.out.println("originLWMVC6K:"+md5);
+			System.out.println("signString:"+RandomStringUtils.randomAlphanumeric(16));
 		}   catch (Exception e) {
 			e.printStackTrace();
 		} 

@@ -17,6 +17,7 @@ public class TitanUserBindInfoDTO implements Serializable{
 	private String fcusername;
 	private String fcloginname;
 	private String merchantcode;
+	private Integer cooptype;
 	private Integer isactive;
 	private String creator;
 	private Date createtime;
@@ -119,4 +120,13 @@ public class TitanUserBindInfoDTO implements Serializable{
 	public void setModifytime(Date modifytime) {
 		this.modifytime = modifytime;
 	}
+
+	public Integer getCooptype() {
+		return cooptype;
+	}
+
+	public void setCooptype(Integer cooptype) {
+		this.cooptype = cooptype;
+	}
+	
 }

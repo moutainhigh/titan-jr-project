@@ -14,10 +14,6 @@ public enum UserSourceEnum {
 	private int key;
 	
 	private String des; 
-	/**
-	 * 注册渠道混淆码
-	 */
-	private String mixCode;
 	
 	private UserSourceEnum(int key,String des){
 		this.key = key;

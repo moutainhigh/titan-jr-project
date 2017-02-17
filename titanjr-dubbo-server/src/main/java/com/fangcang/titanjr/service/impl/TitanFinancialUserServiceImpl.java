@@ -1062,6 +1062,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		try{
 			TitanUserBindInfo titanUserBindInfo = new TitanUserBindInfo();
 			titanUserBindInfo.setFcuserid(titanUserBindInfoDTO.getFcuserid());
+			titanUserBindInfo.setCooptype(titanUserBindInfoDTO.getCooptype());
 			titanUserBindInfo.setTfsuserid(titanUserBindInfoDTO.getTfsuserid());
 			List<TitanUserBindInfo>  titanUserBindInfoList=  titanUserBindInfoDao.selectUserBindInfoByFcuserid(titanUserBindInfo);
 		    if(titanUserBindInfoList !=null && titanUserBindInfoList.size()==1){

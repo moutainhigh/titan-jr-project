@@ -73,11 +73,20 @@
   	</where>
   </update>
   <select id="selectUserBindInfoByFcuserid" parameterType="com.fangcang.titanjr.entity.TitanUserBindInfo" resultType="com.fangcang.titanjr.entity.TitanUserBindInfo">
-    select tfsuserid, fcuserid, username, loginname, fcusername, fcloginname, merchantcode, isactive, creator, 
+    select tfsuserid, fcuserid, username, loginname, fcusername, fcloginname, merchantcode,cooptype, isactive, creator, 
       createtime, modifior, modifytime from t_tfs_userbindinfo 
       <where>
         <if test="fcuserid !=null">
          and fcuserid=#{fcuserid}
+        </if>
+        <if test="cooptype ==null">
+         and cooptype=2
+        </if>
+        <if test="cooptype !=null">
+         and cooptype=#{cooptype}
+        </if>
+         <if test="merchantcode !=null">
+         and merchantcode=#{merchantcode}
         </if>
         <if test="tfsuserid !=null">
          and tfsuserid =#{tfsuserid}

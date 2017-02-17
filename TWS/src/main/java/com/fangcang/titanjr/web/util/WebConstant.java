@@ -90,6 +90,6 @@ public class WebConstant {
 	public static final String MODIFY_BANK_CARD="1";
 	
 	public static final String FREEZE_ORDER = "0";
-	
-    
+	//代理登录链接失效时长 ，5分钟
+    public static final Long PROXY_LOGIN_LINK_EXPIRE_TIME = 5*60*1000L;
 }

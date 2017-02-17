@@ -1,10 +1,13 @@
 package com.fangcang.titanjr.web.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -13,24 +16,36 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.enums.SMSType;
+import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.common.util.rsa.RSAUtil;
+import com.fangcang.titanjr.dto.bean.CoopDTO;
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.request.CheckUserRequest;
+import com.fangcang.titanjr.dto.request.CoopRequest;
 import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.PassLoginRequest;
 import com.fangcang.titanjr.dto.request.SendCodeRequest;
 import com.fangcang.titanjr.dto.request.SmsLoginRequest;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.CheckUserResponse;
+import com.fangcang.titanjr.dto.response.CoopResponse;
 import com.fangcang.titanjr.dto.response.GetCheckCodeResponse;
 import com.fangcang.titanjr.dto.response.PassLoginResponse;
 import com.fangcang.titanjr.dto.response.SendCodeResponse;
 import com.fangcang.titanjr.dto.response.SmsLoginResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
+import com.fangcang.titanjr.entity.TitanUser;
+import com.fangcang.titanjr.service.TitanFinancialBaseInfoService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.LoginPojo;
+import com.fangcang.titanjr.web.pojo.ProxyLoginPojo;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
 
@@ -52,6 +67,10 @@ public class LoginController extends BaseController{
 	
     @Resource
     private TitanFinancialSendSMSService sendSMSService;
+    
+    @Resource
+    private TitanFinancialBaseInfoService baseInfoService;
+    
 	/**
 	 * 登录页
 	 * @return
@@ -85,11 +104,8 @@ public class LoginController extends BaseController{
 		try {
 			PassLoginResponse passLoginResponse = userService.passLogin(passLoginRequest);
 			if(passLoginResponse.isResult()){
-				
 				//保存登录表示到session
-				getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, passLoginResponse.getUserId().toString());
-				getSession().setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, passLoginResponse.getUserLoginName());
-				getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, passLoginResponse.getTfsuserId().toString());
+				putLoginInfo(passLoginResponse.getUserId(),passLoginResponse.getUserLoginName(),passLoginResponse.getTfsuserId().toString());
 				
 				return checkUser();
 			}else{
@@ -102,6 +118,21 @@ public class LoginController extends BaseController{
 			return toJson();
 		}
 	}
+	/**
+	 * 保存登录用户信息到session
+	 */
+	private void putLoginInfo(String userId,String loginUsername,String tfsUserId){
+		getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, userId);
+		getSession().setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, loginUsername);
+		getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, tfsUserId);
+		
+	}
+	
+	/**
+	 * 检查用户状态
+	 * @return
+	 * @throws GlobalServiceException
+	 */
 	private String checkUser() throws GlobalServiceException{
 		//检查用户状态
 		String tfsUserId = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
@@ -142,9 +173,7 @@ public class LoginController extends BaseController{
 			if(smsLoginResponse.isResult()){
 				putSuccess("登录成功");
 				//保存登录表示到session
-				getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, smsLoginResponse.getUserId().toString());
-				getSession().setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, smsLoginResponse.getUserLoginName());
-				getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, smsLoginResponse.getTfsuserId().toString());
+				putLoginInfo(smsLoginResponse.getUserId(),smsLoginResponse.getUserLoginName(),smsLoginResponse.getTfsuserId().toString());
 				
 				return checkUser();
 			}else{
@@ -264,4 +293,137 @@ public class LoginController extends BaseController{
    		
 		return  "user/u-login-pwd-forget";
 	}
+   	/***
+   	 * 代理登录
+   	 * @return
+   	 */
+   	public String proxyLogin(ProxyLoginPojo proxyLogin,Model model){
+   		//校验参数
+   		if(isBlank(proxyLogin.getChannel())||isBlank(proxyLogin.getInfo())||isBlank(proxyLogin.getReqtime())||isBlank(proxyLogin.getSign())){
+   			model.addAttribute("errormsg", "必填参数不能为空");
+   			return "error";
+   		}
+   		Long reqTime = NumberUtils.toLong(proxyLogin.getReqtime());
+   		Date now = new Date();
+   		long dateDiff = Math.abs(now.getTime()-reqTime);
+   		
+   		if(reqTime==0||dateDiff>WebConstant.PROXY_LOGIN_LINK_EXPIRE_TIME){
+   			model.addAttribute("errormsg", "链接已经失效");
+   			return "error";
+   		}
+   		
+   		CoopRequest coopRequest = new CoopRequest();
+    	coopRequest.setMixcode(proxyLogin.getChannel());
+		CoopResponse coopResponse = baseInfoService.getOneCoop(coopRequest);
+		if(coopResponse.isResult()&&coopResponse.getCoopDTO()!=null){
+			//验证签名
+			CoopDTO coopDTO = coopResponse.getCoopDTO();
+	    	String msg = verifyLoginSign(proxyLogin.getChannel(),proxyLogin.getEncryptType(),proxyLogin.getInfo(),proxyLogin.getJumpurl(),reqTime,proxyLogin.getSign(),coopDTO.getMd5Key());
+	    	if(msg.equals("success")){
+    			try {
+    				//开始解密
+    				String urlKeyValues = RSAUtil.decryptByPrivateKeyGet(proxyLogin.getInfo(), coopDTO.getPrivateKey());
+    				Map<String, String> result =  Tools.unserializable2Map(urlKeyValues);
+    				String tfsuserid = result.get("tfsuserid");
+    				String orgcode = result.get("orgcode");
+    				if(!StringUtil.isValidString(tfsuserid)){
+    					model.addAttribute("errormsg", "无效用户无法登陆");
+    		   			return "error";
+    				}
+    				
+    				TitanUserBindInfoDTO paramBindInfo = new TitanUserBindInfoDTO();
+    				paramBindInfo.setTfsuserid(NumberUtils.toInt(tfsuserid));
+    				paramBindInfo.setCooptype(coopDTO.getCoopType());
+    				paramBindInfo.setMerchantcode(orgcode);
+    				TitanUserBindInfoDTO userBindInfoDTO = userService.getUserBindInfoByFcuserid(paramBindInfo);
+    				if(userBindInfoDTO==null){
+    					model.addAttribute("errormsg", "无效用户无法登陆");
+    		   			return "error";
+    				}
+    				UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+    				userInfoQueryRequest.setTfsUserId(NumberUtils.toInt(tfsuserid));
+    				userInfoQueryRequest.setOrgCode(orgcode);
+    				UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
+    				TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+    				
+    				//校验用户id是否存在,且为管理员
+    				if(titanUser.getStatus()==TitanUserEnum.Status.AVAILABLE.getKey()){
+    					if(titanUser.getIsadmin()==1){
+    						//机构id和用户id关联关系正确，可以登录
+    						putLoginInfo(titanUser.getOrgcode(), titanUser.getUserloginname(), titanUser.getTfsuserid().toString());
+    						
+    					}else{
+    						//TODO 跳到登录界面
+    						
+    					}
+    				}else{
+    					model.addAttribute("errormsg", "账号状态异常无法登陆，请联系管理员");
+    		   			return "error";
+    				}
+    				
+    				
+    				return "";
+    			} catch (Exception e) {
+    				LOGGER.error("代理登录失败,注册信息RSA解密失败，加密信息info为:"+proxyLogin.getInfo()+",第三方为:"+coopResponse.getCoopDTO(), e); 
+    			}
+	    	}else{
+	    		model.addAttribute("errormsg", "必填参数不能为空");
+	   			return "error";
+	    	}
+			
+			
+			 
+	   		
+	   		
+	   		
+			
+		}else{
+			LOGGER.info("代理登录失败，没有找到对应的合作渠道号,渠道号【"+proxyLogin.getChannel()+"】不存在");
+			model.addAttribute("errormsg", "渠道号错误");
+   			return "error";
+		}
+   		
+   		return "";
+   	}
+   	/**
+   	 * 验证登录签名
+   	 * @param channel
+   	 * @param sign
+   	 * @param info
+   	 * @param encryptType
+   	 * @param key
+   	 * @return
+   	 */
+    private String verifyLoginSign(String channel,String encryptType,String info,String jumpUrl,Long reqTime,String sign,String key){
+    	if(StringUtil.isValidString(channel)&&StringUtil.isValidString(sign)&&StringUtil.isValidString(info)){
+    		StringBuilder keyValue = new StringBuilder();
+    		keyValue.append("channel=").append(channel);
+    		keyValue.append("&encrypt_type=").append(encryptType);
+    		keyValue.append("&info=").append(info);
+    		if(!isBlank(jumpUrl)){
+    			keyValue.append("&jumpurl=").append(jumpUrl);
+    		}
+    		keyValue.append("&reqtime=").append(reqTime);
+    		keyValue.append("&key=").append(key);
+    		
+    		String paramSign = MD5.MD5Encode(keyValue.toString()).toUpperCase();
+    		if(paramSign.equals(sign)){
+    			//签名正确，第三方注册
+    			return "success";
+    		}else{
+    			//签名错误
+    			LOGGER.info("代理登录参数非法，原始信息："+keyValue.toString()+",paramSign:"+paramSign+",md5sign:"+sign);
+    			return "fail";
+    		}
+    	}
+    	//参数不完整不需要校验，默认注册
+    	return "ok";
+    }
+   	private boolean isBlank(String origin){
+   		if(origin==null||origin.length()==0){
+   			return true;
+   		}
+   		return false;
+   	}
+   	
 }
