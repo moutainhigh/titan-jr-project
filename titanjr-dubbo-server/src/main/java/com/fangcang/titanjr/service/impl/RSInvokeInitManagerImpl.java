@@ -44,8 +44,8 @@ public class RSInvokeInitManagerImpl {
 //        RSInvokeConstant.sessionKey = "1460355562856409835";
 //        RSInvokeConstant.defaultMerchant = "M10020809";
 //        RSInvokeConstant.defaultRoleId = 1301L;
-    	System.setProperty("sun.net.client.defaultConnectTimeout", "5000");  
-    	System.setProperty("sun.net.client.defaultReadTimeout", "5000");
+//    	System.setProperty("sun.net.client.defaultConnectTimeout", "5000");  
+//    	System.setProperty("sun.net.client.defaultReadTimeout", "5000");
 //        正式上线之后使用
         RSInvokeConfig rSInvokeConfig = getRSInvokeConfig();
         if (rSInvokeConfig!=null) {
