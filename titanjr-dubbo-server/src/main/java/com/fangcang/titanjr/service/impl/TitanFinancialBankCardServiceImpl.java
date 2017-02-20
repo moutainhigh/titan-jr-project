@@ -128,6 +128,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
             bankCardBindRequest.setBank_branch(cusBankCardBindRequest.getBankBranch());
             bankCardBindRequest.setBank_province(cusBankCardBindRequest.getBankProvince());
             bankCardBindRequest.setBank_city(cusBankCardBindRequest.getBankCity());
+            
             log.info("绑定卡的参数:"+JSONSerializer.toJSON(bankCardBindRequest));
             BankCardBindResponse bankCardBindResponse = rsBankCardInfoManager.bindBankCard(bankCardBindRequest);
             if (bankCardBindResponse != null) {
