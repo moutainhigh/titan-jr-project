@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -161,10 +163,8 @@ public class TitanWithdrawController extends BaseController {
 				for (BankCardInfoDTO cid : cbr.getBankCardInfoDTOList()) {
 					if (cid.getStatus().equals(
 							BankCardEnum.BankCardStatusEnum.NORMAL.getKey())
-							&& cid.getAccountpurpose()
-									.equals(BankCardEnum.BankCardPurposeEnum.DEBIT_WITHDRAW_CARD.getKey())
-							|| cid.getAccountpurpose()
-									.equals(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey())) {
+							&& !cid.getAccountpurpose()
+									.equals(BankCardEnum.BankCardPurposeEnum.OTHER_CARD.getKey())) {
 						model.addAttribute("bindBankCard", cid);
 					}
 				}
@@ -193,7 +193,7 @@ public class TitanWithdrawController extends BaseController {
 		if (null == withDrawRequest.getUserId()
 				|| null == withDrawRequest.getFcUserId()
 				|| null == withDrawRequest.getOrderNo()) {
-
+			log.error("请求参数错误:"+JSONSerializer.toJSON(withDrawRequest));
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
 		boolean needBindCard = false;
@@ -206,6 +206,7 @@ public class TitanWithdrawController extends BaseController {
 							.getAccountNum())
 					|| !StringUtil.isValidString(withDrawRequest
 							.getAccountName())) {
+				log.error("已绑定卡传入参数错误"+JSONSerializer.toJSON(withDrawRequest));
 				return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 			} else {
 				needBindCard = true;
@@ -218,6 +219,7 @@ public class TitanWithdrawController extends BaseController {
 								.getAccountNum())
 						|| !StringUtil.isValidString(withDrawRequest
 								.getAccountName())) {
+					log.error("绑定新卡传入参数错误"+JSONSerializer.toJSON(withDrawRequest));
 					return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 				} else {
 					needBindNewCard = true;
@@ -244,11 +246,13 @@ public class TitanWithdrawController extends BaseController {
 
 		if (!StringUtil.isValidString(withDrawRequest.getPassword())
 				|| !StringUtil.isValidString(tfsUserid)) {
+			log.error("密码或用户传入失败");
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
 		boolean istrue = titanFinancialUserService.checkPayPassword(
 				withDrawRequest.getPassword(), tfsUserid);
 		if (!istrue) {
+			log.error("密码错误");
 			return toMsgJson(TitanMsgCodeEnum.PAY_PWD_ERROR);
 		}
 		
@@ -267,6 +271,7 @@ public class TitanWithdrawController extends BaseController {
 				.getExRateAmount()));
 
 		if (er > al) {
+			log.error("手续费不能大于提现金额");
 			return toMsgJson(TitanMsgCodeEnum.RATE_NOT_MORE_WITHDRAW);
 		}
 		
@@ -286,6 +291,7 @@ public class TitanWithdrawController extends BaseController {
 			DeleteBindBankResponse deleteBindBankResponse = titanFinancialBankCardService
 					.deleteBindBank(deleteBindBankRequest);
 			if (!deleteBindBankResponse.isResult()) {
+				log.error("删除原提现卡失败");
 				return toMsgJson(TitanMsgCodeEnum.USE_NEW_CARD_WITHDRAW_DEL_OLD_CARD_FAIL);
 			}
 		}
@@ -328,15 +334,15 @@ public class TitanWithdrawController extends BaseController {
 			}
 			bankCardBindRequest.setBankCode(withDrawRequest.getBankCode());
 			bankCardBindRequest.setUserType("1");
-			
-			bankCardBindRequest.setBankBranch(withDrawRequest.getBranchCode());
+		/*	bankCardBindRequest.setBankBranch(withDrawRequest.getBranchCode());
 			bankCardBindRequest.setBankCity(withDrawRequest.getCityName());
 			if(StringUtil.isValidString(withDrawRequest.getCityCode())){
 				bankCardBindRequest.setBankProvince(this.queryProvinceName(withDrawRequest.getCityCode()));
-			}
+			}*/
 			CusBankCardBindResponse cardBindResponse = titanFinancialBankCardService
 					.bankCardBind(bankCardBindRequest);
 			if (!cardBindResponse.isResult()) {
+				log.error("用户绑卡失败");
 				return toMsgJson(TitanMsgCodeEnum.USE_NEW_CARD_WITHDRAW_BING_CARD_FAIL);
 			}
 		}
@@ -371,6 +377,7 @@ public class TitanWithdrawController extends BaseController {
 		BalanceWithDrawResponse balanceWithDrawResponse = titanFinancialAccountService
 				.accountBalanceWithdraw(balanceWithDrawRequest);
 		if (!balanceWithDrawResponse.isResult()) {
+			log.error("提现失败");
 			return toMsgJson(TitanMsgCodeEnum.WITHDRAW_OPT_FAIL);
 		}
 		
@@ -396,26 +403,30 @@ public class TitanWithdrawController extends BaseController {
 		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS);
 	}
 	
-	private String queryProvinceName(String cityCode){
-    	CityInfoDTO cityInfo = new CityInfoDTO();
+	
+	 private String queryProvinceName(String cityCode){
+		 if(!StringUtil.isValidString(cityCode)){
+			 return null;
+		 }
+		CityInfoDTO cityInfo = new CityInfoDTO();
     	cityInfo.setCityCode(cityCode);
     	CityInfosResponse response  = titanFinancialAccountService.getCityInfoList(cityInfo);
-    	if (!response.isResult() || response.getCityInfoDTOList() ==null || response.getCityInfoDTOList().size()<1){//如果是北京市或者重庆市的话，这个地方的size为2
+    	if (!response.isResult() || response.getCityInfoDTOList() ==null &&response.getCityInfoDTOList().size()>0){//如果是北京市或者重庆市的话，这个地方的size为2
     		return null;
     	}
-    	CityInfoDTO cityInfoDTO =  response.getCityInfoDTOList().get(0);
-    	cityCode =cityInfoDTO.getParentCode();
     	
-    	if(!StringUtil.isValidString(cityCode)){
-    		return cityInfoDTO.getCityName();
+    	cityInfo = response.getCityInfoDTOList().get(0);
+    	if(response.getCityInfoDTOList().size()==2){
+    		return cityInfo.getCityName();
     	}
-    	cityInfo.setCityCode(cityCode);
-    	response  = titanFinancialAccountService.getCityInfoList(cityInfo);
-    	if (!response.isResult() || response.getCityInfoDTOList() ==null || response.getCityInfoDTOList().size()<1){
-    		return null;
+    	
+    	if(StringUtil.isValidString(cityInfo.getParentCode())){
+    		return queryProvinceName(cityInfo.getParentCode());
+    	}else{
+    		return cityInfo.getCityName();
     	}
-    	return response.getCityInfoDTOList().get(0).getCityName();
-    }
+		}
+	
 	
 	@ResponseBody
 	@RequestMapping("getCityList")

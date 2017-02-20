@@ -31,20 +31,24 @@
 				<ul class="passwordset_u1 clearf">
 					<li>
 						<span class="reset_pass">收款银行 ：</span>
-						  <input type="text" id="bankCode" class="text w_250" >
-                          <input type="hidden" id="bankName" >
+						<input type="text" id="bankCode" class="text w_250" style="width:310px;" >
+                        <input type="hidden" id="bankName" >
+					</li>
+					<li id="branch_spec" style="display: none" >
+						<span class="reset_pass">开户支行：</span>
+						<input name="" id="city_code" class="text i_city"  placeholder="城市" datatype="*1-20" errormsg="必选项" style="width: 80px; background-position: 65px 7px ! important;" type="text">
+						<input name="city_name" id="city_name" type="hidden">
+						<input type="text" class="text" name="branch_code" id="branch_code" datatype="*1-20" errormsg="必选项" placeholder="请选择支行" style="width: 216px;padding-left: 10px;">
+						<input name="branch_name" id="branch_name" type="hidden">
+					</li>
 					<li>
 						<span class="reset_pass">收款账号：</span>
-						<input type="text" placeholder="" class="text w_250" id="accountnumber"></li>
+						<input type="text" placeholder="" class="text w_250" id="accountnumber" style="width:310px;">
+					</li>
 					<li>
 						<span class="reset_pass">公司名称 ：</span>
-						<input type="text" class="text w_250" id="name" value="${organ.orgName}" disabled></li>		
-					<li>
-						<span class="reset_pass">开 户 支 行：</span>
-						<input name="" id="city_code" class="text i_city"  placeholder="城市" style="width: 80px; background-position: 65px 7px ! important;" type="text">
-						<input name="city_name" id="city_name" type="hidden">
-						<input type="text" class="text" name="branch_code" id="branch_code" placeholder="请选择支行" style="width: 154px;padding-left: 10px;">
-						<input name="branch_name" id="branch_name" type="hidden"></li>
+						<input type="text" class="text w_250" id="name" style="width:310px;" value="${organ.orgName}" disabled>
+					</li>		
 				</ul>
 				<div class="pas_close">
 					<span class="btn p_lr30 J_next to_bindCard">下一步</span>
@@ -87,8 +91,6 @@
 <!--弹窗白色底-->
 
 <script>
-
-
 
 if('${showBankCardInput}'.length>0){
 	$(".tipInfo").hide();
@@ -149,6 +151,20 @@ function validate_bankCard_data(bankCardData){
 	    return false;
 	}
 	
+	var bankCode = $("#bankCode").attr("data-id");
+	if(bankCode=="104"){//中国银行需要验证
+		var cityCode = $("#city_code").attr("data-id");
+		if(typeof cityCode =="undifined" || cityCode.length<1){
+			new top.Tip({msg : '开户城市不能为空！', type: 1 , time:1000}); 
+			return false;
+		}
+		var branchCode = $("#branch_code").attr("data-id");
+		if(typeof branchCode =="undifined" || branchCode.length<1){
+			new top.Tip({msg : '开户支行不能为空！', type: 1 , time:1000}); 
+			return false;
+		}
+	}
+	
 	if(typeof bankCardData.accountnumber =="undifined" || bankCardData.accountnumber.length<1){
 		new top.Tip({msg : '收款账号不能为空！', type: 1 , time:1000}); 
 		return false;
@@ -182,12 +198,17 @@ backListObj = new AutoComplete($('#bankCode'), {
     clickEvent : function(d, input){
         input.attr('data-id', d.key);
         $("#bankName").val(d.val);
-        showCityCode();
+        if(d.key =="104"){
+        	$("#branch_spec").show();
+        	showCityCode();
+        }else{
+        	$("#branch_spec").hide();
+        }
     }
 });
 
 cityListObj = new AutoComplete($('#city_code'), {
-    url : '<%=basePath%>/account/getCityList.shtml?dataType=2',
+    url : '<%=basePath%>/account/getCitys.shtml',
     source : 'cityInfoDTOList',
     key : 'cityCode',  //数据源中，做为key的字段
     val : 'cityName', //数据源中，做为val的字段
@@ -196,7 +217,9 @@ cityListObj = new AutoComplete($('#city_code'), {
     autoSelectVal : true,
     clickEvent : function(d, input){
         input.attr('data-id', d.key);
-        $("#city_name").val(d.val);
+        input.attr('value',d.val.substring(d.val.indexOf("-")+1));
+        var arr = d.val.split("-");
+        $("#city_name").val(arr[arr.length-1]);
         showBranch();
     }
 });
@@ -221,6 +244,10 @@ function showBranch(){
 	$("#branch_code").attr("data-id","");
 	$("#branch_code").show();
 	$("#branch_name").val("");
+	if(childBackListObj)
+	{
+		childBackListObj.remove();
+	}
 	init_branch();
 }
 
@@ -232,13 +259,15 @@ function init_branch(){
 		childBackListObj = new AutoComplete($('#branch_code'), {
 		    url : '<%=basePath%>/account/getBankInfoList.shtml?bankCity='+cityCode+'&parentCode='+bankCode,
 		    source : 'bankInfoDTOList',
-		    key : 'bankCode',  //数据源中，做为key的字段
+		    key : 'cityKey',  //数据源中，做为key的字段
 		    val : 'bankName', //数据源中，做为val的字段
 		    width : 240,
 		    height : 300,
 		    autoSelectVal : true,
 		    clickEvent : function(d, input){
-		        input.attr('data-id', d.key);
+		        var arr = d.key.split(",");
+		        input.attr('data-id', arr[0]);
+		        $("#city_code").attr("data-id",arr[1]);
 		        $("#branch_name").val(d.val);
 		    }
 		});

@@ -540,15 +540,18 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	public BalanceWithDrawResponse accountBalanceWithdraw(BalanceWithDrawRequest balanceWithDrawRequest) {
 		BalanceWithDrawResponse withDrawResponse = new BalanceWithDrawResponse();
 		if (!GenericValidate.validate(balanceWithDrawRequest)) {
+			log.error("提现时校验参数失败："+JSONSerializer.toJSON(balanceWithDrawRequest));
 			withDrawResponse.putErrorResult("请求参数校验错误");
 			return withDrawResponse;
 		}
 		//判断提现金额和可用余额，获取可用余额
 		boolean flag = isBalanceVaild(balanceWithDrawRequest);
 		if ( !flag ) {//提现落单，不需要在融数落单，只需要在本地落单
+			log.error("提现金额不正确");
 			withDrawResponse.putErrorResult("提现金额不正确请核实后再次发起");
 			return withDrawResponse;
 		}
+		
 		TitanTransOrder titanTransOrder = convertToTitanTransOrder(balanceWithDrawRequest);
 		
 		
@@ -566,6 +569,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		}
 		
 		if (null == titanTransOrder ){
+			log.error("提现交易单构造失败");
 			withDrawResponse.putErrorResult("构造提现交易单失败");
 			return withDrawResponse;
 		}
@@ -579,6 +583,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				rowNum = titanTransOrderDao.insert(titanTransOrder);
 			}
 			if (rowNum <= 0) {
+				log.error("保存交易单失败");
 				withDrawResponse.putErrorResult("保存交易单失败");
 				return withDrawResponse;
 			}
@@ -659,8 +664,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			BankCardInfoDTO bindBankCard = null;
 			if(bankCardInfoDTOList !=null && bankCardInfoDTOList.size()>0) {
 				for(BankCardInfoDTO bankCardInfoDTO:bankCardInfoDTOList) {//未输入卡号则获取 提现卡或者提现结算一体卡
-					if(bankCardInfoDTO.getAccountpurpose().equals(BankCardEnum.BankCardPurposeEnum.DEBIT_WITHDRAW_CARD.getKey()) ||
-							bankCardInfoDTO.getAccountpurpose().equals(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey())){
+					if(!bankCardInfoDTO.getAccountpurpose().equals(BankCardEnum.BankCardPurposeEnum.OTHER_CARD.getKey())){
 						bindBankCard = bankCardInfoDTO;
 						break;
 					}
@@ -671,10 +675,12 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				titanWithDrawReq.setBankcode(bindBankCard.getAccount_number());
 				titanWithDrawReq.setBankname(bindBankCard.getBankheadname());
 			} else {
+				log.error("没有找到绑卡记录");
 				return null;
 			}
 			int rowNum = titanWithDrawReqDao.insert(titanWithDrawReq);
 			if (rowNum <= 0) {
+				log.error("插入绑卡记录失败");
 				return null;
 			}
 			return titanWithDrawReq;
