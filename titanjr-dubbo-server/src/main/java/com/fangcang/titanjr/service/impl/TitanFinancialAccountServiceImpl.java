@@ -675,10 +675,12 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				titanWithDrawReq.setBankcode(bindBankCard.getAccount_number());
 				titanWithDrawReq.setBankname(bindBankCard.getBankheadname());
 			} else {
+				log.error("没有找到绑卡记录");
 				return null;
 			}
 			int rowNum = titanWithDrawReqDao.insert(titanWithDrawReq);
 			if (rowNum <= 0) {
+				log.error("插入绑卡记录失败");
 				return null;
 			}
 			return titanWithDrawReq;
