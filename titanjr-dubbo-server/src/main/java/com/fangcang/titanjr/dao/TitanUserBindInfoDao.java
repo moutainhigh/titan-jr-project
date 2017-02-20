@@ -15,10 +15,12 @@ public interface TitanUserBindInfoDao {
 	/**
 	 * 批量更新绑定状态
 	 * @param isactive
-	 * @param merchantcode
+	 * @param coopType 
+	 * @param merchantcode 
 	 * @return
 	 * @throws DaoException
 	 */
-	int updateIsactiveBatch(Integer isactive,String merchantcode,String modifior,Date modifytime) throws DaoException;
+	int updateIsactiveBatch(Integer isactive,Integer coopType,String merchantcode,String modifior,Date modifytime) throws DaoException;
+	
 	List<TitanUserBindInfo> selectUserBindInfoByFcuserid(TitanUserBindInfo titanUserBindInfo)throws DaoException;
 }

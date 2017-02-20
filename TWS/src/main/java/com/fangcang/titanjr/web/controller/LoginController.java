@@ -1,5 +1,9 @@
 package com.fangcang.titanjr.web.controller;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,6 +84,21 @@ public class LoginController extends BaseController{
 	public String login(String returnUrl,Model model){
 		model.addAttribute("returnUrl", returnUrl);
 		return "login";
+	}
+	
+	@RequestMapping(value = "/test")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	public String test(String returnUrl,Model model){
+		try {
+			if(returnUrl==null||returnUrl.length()==0){
+				getResponse().sendRedirect("http://baidu.com");
+				return null;
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "error";
 	}
 	
 	/**
@@ -297,18 +316,20 @@ public class LoginController extends BaseController{
    	 * 代理登录
    	 * @return
    	 */
+   	@RequestMapping(value = "/proxyLogin")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
    	public String proxyLogin(ProxyLoginPojo proxyLogin,Model model){
    		//校验参数
    		if(isBlank(proxyLogin.getChannel())||isBlank(proxyLogin.getInfo())||isBlank(proxyLogin.getReqtime())||isBlank(proxyLogin.getSign())){
-   			model.addAttribute("errormsg", "必填参数不能为空");
-   			return "error";
+   			//跳到登录界面
+			return "redirect:/ex/login.shtml";
    		}
    		Long reqTime = NumberUtils.toLong(proxyLogin.getReqtime());
    		Date now = new Date();
    		long dateDiff = Math.abs(now.getTime()-reqTime);
    		
    		if(reqTime==0||dateDiff>WebConstant.PROXY_LOGIN_LINK_EXPIRE_TIME){
-   			model.addAttribute("errormsg", "链接已经失效");
+   			model.addAttribute("errormsg", "代理登录链接已经失效");
    			return "error";
    		}
    		
@@ -318,7 +339,7 @@ public class LoginController extends BaseController{
 		if(coopResponse.isResult()&&coopResponse.getCoopDTO()!=null){
 			//验证签名
 			CoopDTO coopDTO = coopResponse.getCoopDTO();
-	    	String msg = verifyLoginSign(proxyLogin.getChannel(),proxyLogin.getEncryptType(),proxyLogin.getInfo(),proxyLogin.getJumpurl(),reqTime,proxyLogin.getSign(),coopDTO.getMd5Key());
+	    	String msg = verifyLoginSign(proxyLogin.getChannel(),proxyLogin.getEncrypt_type(),proxyLogin.getInfo(),proxyLogin.getJumpurl(),reqTime,proxyLogin.getSign(),coopDTO.getMd5Key());
 	    	if(msg.equals("success")){
     			try {
     				//开始解密
@@ -334,10 +355,11 @@ public class LoginController extends BaseController{
     				TitanUserBindInfoDTO paramBindInfo = new TitanUserBindInfoDTO();
     				paramBindInfo.setTfsuserid(NumberUtils.toInt(tfsuserid));
     				paramBindInfo.setCooptype(coopDTO.getCoopType());
-    				paramBindInfo.setMerchantcode(orgcode);
     				TitanUserBindInfoDTO userBindInfoDTO = userService.getUserBindInfoByFcuserid(paramBindInfo);
+    				
     				if(userBindInfoDTO==null){
-    					model.addAttribute("errormsg", "无效用户无法登陆");
+    					model.addAttribute("errormsg", "无效用户无法登陆，请联系管理员");
+    					LOGGER.error("问题：代理登录时，无效用户无法登陆，原因：用户id的绑定关系不存在,登录参数：tfsuserid|"+tfsuserid+",orgcode|"+orgcode+",cooptype|"+coopDTO.getCoopType());
     		   			return "error";
     				}
     				UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
@@ -345,24 +367,34 @@ public class LoginController extends BaseController{
     				userInfoQueryRequest.setOrgCode(orgcode);
     				UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
     				TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
-    				
+    				if(titanUser==null){
+    					model.addAttribute("errormsg", "无效用户无法登陆，请联系管理员");
+    					LOGGER.error("问题：代理登录时，无效用户无法登陆，原因：用户不存在,登录参数：tfsuserid|"+tfsuserid+",orgcode|"+orgcode+",cooptype|"+coopDTO.getCoopType());
+    		   			return "error";
+    				}
     				//校验用户id是否存在,且为管理员
     				if(titanUser.getStatus()==TitanUserEnum.Status.AVAILABLE.getKey()){
     					if(titanUser.getIsadmin()==1){
     						//机构id和用户id关联关系正确，可以登录
     						putLoginInfo(titanUser.getOrgcode(), titanUser.getUserloginname(), titanUser.getTfsuserid().toString());
-    						
+    						String jumpUrl = "";
+    						if(!StringUtil.isValidString(proxyLogin.getJumpurl())){
+    							jumpUrl = getRequest().getScheme()+"://"+getRequest().getServerName()+":"+getRequest().getServerPort()+getRequest().getContextPath();
+    						}else{
+    							jumpUrl = URLDecoder.decode(proxyLogin.getJumpurl(),"UTF-8");
+    						}
+							getResponse().sendRedirect(jumpUrl);
+							return null;
     					}else{
-    						//TODO 跳到登录界面
-    						
+    						//跳到登录界面
+    						return "redirect:/ex/login.shtml"; 
     					}
     				}else{
     					model.addAttribute("errormsg", "账号状态异常无法登陆，请联系管理员");
+    					LOGGER.error("问题：代理登录时，账号状态异常无法登陆,登录参数：tfsuserid|"+tfsuserid+",orgcode|"+orgcode+",cooptype|"+coopDTO.getCoopType()+",titanUser status :"+titanUser.getStatus());
     		   			return "error";
     				}
     				
-    				
-    				return "";
     			} catch (Exception e) {
     				LOGGER.error("代理登录失败,注册信息RSA解密失败，加密信息info为:"+proxyLogin.getInfo()+",第三方为:"+coopResponse.getCoopDTO(), e); 
     			}
@@ -370,20 +402,13 @@ public class LoginController extends BaseController{
 	    		model.addAttribute("errormsg", "必填参数不能为空");
 	   			return "error";
 	    	}
-			
-			
-			 
-	   		
-	   		
-	   		
-			
 		}else{
-			LOGGER.info("代理登录失败，没有找到对应的合作渠道号,渠道号【"+proxyLogin.getChannel()+"】不存在");
+			LOGGER.error("代理登录失败，没有找到对应的合作渠道号,渠道号【"+proxyLogin.getChannel()+"】不存在");
 			model.addAttribute("errormsg", "渠道号错误");
-   			return "error";
+			return "redirect:/ex/login.shtml"; 
 		}
    		
-   		return "";
+		return "redirect:/ex/login.shtml"; 
    	}
    	/**
    	 * 验证登录签名
@@ -401,7 +426,11 @@ public class LoginController extends BaseController{
     		keyValue.append("&encrypt_type=").append(encryptType);
     		keyValue.append("&info=").append(info);
     		if(!isBlank(jumpUrl)){
-    			keyValue.append("&jumpurl=").append(jumpUrl);
+    			try {
+					keyValue.append("&jumpurl=").append(URLEncoder.encode(jumpUrl, "UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
     		}
     		keyValue.append("&reqtime=").append(reqTime);
     		keyValue.append("&key=").append(key);

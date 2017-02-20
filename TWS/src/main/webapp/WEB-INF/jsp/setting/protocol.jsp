@@ -10,7 +10,7 @@
 </head>
 <body style="min-width: 1300px;" class="bg" >
 <!-- 头部 -->
-<jsp:include page="./../header.jsp"></jsp:include>
+<jsp:include page="/comm/header.jsp"></jsp:include>
 <div class="h_90"></div>
 <!-- 内容 -->
 <div class="w_1200 ">

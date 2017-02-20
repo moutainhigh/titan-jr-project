@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import net.sf.json.regexp.RegexpMatcher;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -134,4 +136,29 @@ public class Tools {
 		}
 		return result;
 	}
+	
+	/**
+	 * 敏感信息替换
+	 * @return
+	 */
+	public static String replaceInfoStar(String src){
+		if(StringUtil.isValidString(src)){
+			StringBuilder  sb = new StringBuilder();
+			char[] reg = src.toCharArray();
+			for(int i=0;i<reg.length;i++){
+				if(i<=1||i>=reg.length-2){
+					sb.append(reg[i]);
+				}else{
+					sb.append("*");
+				}
+			}
+			return sb.toString();
+		}else{
+			return src;
+		}
+	}
+	public static void main(String[] arg){
+		System.out.println(replaceInfoStar("123asdftryyui456789"));
+	}
+	
 }

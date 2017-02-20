@@ -10,7 +10,7 @@
 </head>
 <body style="min-width: 1300px;" >
 <!-- 头部 -->
-<jsp:include page="../header.jsp"></jsp:include>
+<jsp:include page="/comm/header.jsp"><jsp:param name="menu" value="fangan"/></jsp:include>
 <!-- banner -->
 <div class="main_col m_t90">
 <div class="swiper-container">

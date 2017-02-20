@@ -1,6 +1,6 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%@ include file="/comm/taglib.jsp"%>
-<div class="o_crumbs">账户名称/泰坦码：${orgDTO.orgname}/${orgDTO.titanCode}</div>
+<div class="o_crumbs">账户名称/泰坦码：${orgDTO.orgname}/${orgDTO.titancode}</div>
 <div class="MyAssets_chart">
 	<div class="MyAssets_code"><img src="<%=cssWalletPath%>/images/tu09.jpg"></div>
 	<div class="MyAssets_chart_list">

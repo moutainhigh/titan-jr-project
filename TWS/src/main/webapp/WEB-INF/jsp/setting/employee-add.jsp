@@ -10,7 +10,7 @@
 </head>
 <body style="min-width: 1300px;" class="bg" >
 <!-- 头部 -->
-<jsp:include page="./../header.jsp"></jsp:include>
+<jsp:include page="/comm/header.jsp"></jsp:include>
 <div class="h_90"></div>
 <!-- 内容 -->
 <div class="w_1200 ">
@@ -31,7 +31,7 @@
 			    			</li>
 			
 			    			<li class="yzm"><div class="title">验证码：</div>
-								<input type="text" class="text" placeholder="验证码" id="code" datatype="/\w{4,}/" errormsg="验证码错误" customFun="checkCode"><div class="r_verify">获取验证码</div>
+								<input type="text" class="text" placeholder="验证码" id="code" datatype="/\w{4,}/" errormsg="验证码错误" customFun="checkCode"><div class="r_verify" style="left:210px;">获取验证码</div>
 							</li>
 			    		</ul>
 			    	</div>

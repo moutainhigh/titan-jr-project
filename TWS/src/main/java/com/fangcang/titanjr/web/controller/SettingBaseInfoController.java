@@ -76,6 +76,9 @@ public class SettingBaseInfoController extends BaseController{
 			organQueryRequest.setOrgCode(titanUser.getOrgcode());
 			FinancialOrganResponse financialOrganResponse = organService.queryBaseFinancialOrgan(organQueryRequest);
 			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
+			financialOrganDTO.setBuslince(Tools.replaceInfoStar(financialOrganDTO.getBuslince()));
+			financialOrganDTO.setCertificateNumber(Tools.replaceInfoStar(financialOrganDTO.getCertificateNumber()));
+			
 			model.addAttribute("financialOrganDTO", financialOrganDTO);
 			for(OrgImageInfo item : financialOrganDTO.getOrgImageInfoList()){
 				if(item.getSizeType()==10){
@@ -91,6 +94,8 @@ public class SettingBaseInfoController extends BaseController{
 			return "error";
 		}
 	}
+	
+	
 	
 	/**
 	 * 个人账户资料

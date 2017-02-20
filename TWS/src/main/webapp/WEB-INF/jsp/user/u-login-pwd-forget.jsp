@@ -68,7 +68,7 @@ function next(){
 				$("#f_code").val($("#code").val());
 				$("#to_pwd_set_form").submit();
 			}else{
-				new top.Tip({msg : result.msg, type: 3, timer:2000});
+				new top.Tip({msg : result.msg, type: 2, timer:2000});
 			}
 		},
 		beforeSend:function(){
@@ -78,7 +78,7 @@ function next(){
 	    	  top.F.loading.hide();
 	    },
 		error:function(){
-			new top.Tip({msg : '系统错误，请重试!', type: 3, timer:2000});
+			new top.Tip({msg : '系统错误，请重试!', type: 2, timer:2000});
 		}
 	});
     
@@ -121,14 +121,14 @@ $('.r_verify').on('click',function(){
 			if(result.code==1){
 			    new top.Tip({msg : '验证码已成功发送,请注意查收！', type: 1, timer:2000});    
 			}else{
-				new top.Tip({msg : result.msg, type: 1, timer:2500});
+				new top.Tip({msg : result.msg, type: 2, timer:2500});
 			}
 		},
 		complete:function(){
 	    	  top.F.loading.hide();
 	    },
 		error : function(){
-			new top.Tip({msg : '网络错误，请重试', type: 1, timer:2000});
+			new top.Tip({msg : '网络错误，请重试', type: 2, timer:2000});
 		}
 	});
 });

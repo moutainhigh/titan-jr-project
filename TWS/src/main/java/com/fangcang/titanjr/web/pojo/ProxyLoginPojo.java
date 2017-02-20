@@ -17,7 +17,7 @@ public class ProxyLoginPojo {
 	/**
 	 * 加密类型
 	 */
-	private String encryptType;
+	private String encrypt_type;
 	/**
 	 * 请求时间，毫秒
 	 */
@@ -43,11 +43,12 @@ public class ProxyLoginPojo {
 	public void setInfo(String info) {
 		this.info = info;
 	}
-	public String getEncryptType() {
-		return encryptType;
+	
+	public String getEncrypt_type() {
+		return encrypt_type;
 	}
-	public void setEncryptType(String encryptType) {
-		this.encryptType = encryptType;
+	public void setEncrypt_type(String encrypt_type) {
+		this.encrypt_type = encrypt_type;
 	}
 	public String getReqtime() {
 		return reqtime;

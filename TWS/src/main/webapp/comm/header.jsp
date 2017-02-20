@@ -1,5 +1,5 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
-<%@ include file="/comm/path-param.jsp"%>
+<%@ include file="/comm/taglib.jsp"%>
 <div class="header">
 	<div class="w_1200">
 		<div class="logo">
@@ -7,8 +7,8 @@
 		</div>
 		<div class="head_r">
 			<ul>
-				<li><a href="<%=basePath %>/main/main.shtml">首页</a></li>
-				<li><a href="<%=basePath %>/main/solution.shtml" class="Aon">解决方案</a></li>
+				<li><a href="<%=basePath %>/main/main.shtml" <c:if test="${param.menu=='index'}">class="Aon"</c:if>>首页</a></li>
+				<li><a href="<%=basePath %>/main/solution.shtml" <c:if test="${param.menu=='fangan'}">class="Aon"</c:if>>解决方案</a></li>
 				<li class="w_240 li_1">
 					<!-- 登录前 -->
 					<div class="" id="no_login">

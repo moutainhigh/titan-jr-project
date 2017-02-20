@@ -238,12 +238,12 @@ public class FinancialOrganController extends BaseController {
 			//判断机构注册证件的编号和登录者是不是同一个机构
 			if(orgRegisterValidateResponse.getOrgDTO()!=null){//如果所填写的证件编码已经存在
 				if(StringUtil.isValidString(orgCode)){
-					Integer tfsUserIdStr = Integer.valueOf((String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID));//金服用户名
+					String tfsUserIdStr = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);//金服用户名
 					//修改
-					if((tfsUserIdStr!=null)&&(tfsUserIdStr>0)){
+					if(StringUtil.isValidString(tfsUserIdStr)){
     					OrgDTO orgDTO = orgRegisterValidateResponse.getOrgDTO();
         				UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
-            			userInfoQueryRequest.setTfsUserId(tfsUserIdStr);
+            			userInfoQueryRequest.setTfsUserId(Integer.valueOf(tfsUserIdStr));
             			userInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
             			
             			UserInfoPageResponse userInfoResponse = titanFinancialUserService.queryUserInfoPage(userInfoQueryRequest);

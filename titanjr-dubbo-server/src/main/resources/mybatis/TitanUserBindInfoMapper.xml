@@ -10,6 +10,7 @@
     	isactive = 1
    		<if test="tfsuserid != null"> and tfsuserid = #{tfsuserid,jdbcType=INTEGER}</if> 
    		<if test="merchantcode != null"> and  merchantcode = #{merchantcode}</if> 
+   		<if test="cooptype != null"> and  cooptype = #{cooptype}</if>
     </where>
   </select>
   <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanUserBindInfo" >
@@ -61,15 +62,26 @@
     <where>
    		<if test="tfsuserid != null">tfsuserid = #{tfsuserid,jdbcType=INTEGER}</if> 
    		<if test="merchantcode != null"> and  merchantcode = #{merchantcode}</if> 
+   		<if test="cooptype != null"> and  cooptype = #{cooptype}</if> 
     </where>
      
   </update>
   <update id="updateIsactiveBatch" parameterType="Map" >
-  	update t_tfs_userbindinfo set isactive = #{isactive}
+  	update t_tfs_userbindinfo 
+  	<set>
+  		<if test="isactive != null" >
+       		isactive = #{isactive},
+      	</if>
+  		<if test="modifior != null" >
+        modifior = #{modifior,jdbcType=VARCHAR},
+      </if>
+      <if test="modifytime != null" >
+        modifytime = #{modifytime},
+      </if>
+  	</set>
   	<where>
   		<if test="merchantcode != null">merchantcode = #{merchantcode}</if>
-  		<if test="modifior != null" >modifior = #{modifior,jdbcType=VARCHAR},</if>
-      	<if test="modifytime != null" >modifytime = #{modifytime},</if>
+      	<if test="cooptype != null"> and  cooptype = #{cooptype}</if> 
   	</where>
   </update>
   <select id="selectUserBindInfoByFcuserid" parameterType="com.fangcang.titanjr.entity.TitanUserBindInfo" resultType="com.fangcang.titanjr.entity.TitanUserBindInfo">
@@ -78,9 +90,6 @@
       <where>
         <if test="fcuserid !=null">
          and fcuserid=#{fcuserid}
-        </if>
-        <if test="cooptype ==null">
-         and cooptype=2
         </if>
         <if test="cooptype !=null">
          and cooptype=#{cooptype}

@@ -326,6 +326,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     	TitanUserParam condition = new TitanUserParam();
     	condition.setTfsuserid(userInfoQueryRequest.getTfsUserId());
     	condition.setOrgcode(userInfoQueryRequest.getOrgCode());
+    	condition.setUserloginname(userInfoQueryRequest.getUserLoginName());
     	
     	paginationSupport = titanUserDao.selectForPage(condition, paginationSupport);
     	userInfoPageResponse.setTitanUserPaginationSupport(paginationSupport);
@@ -335,7 +336,12 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 
 	@Override
 	public UserBindInfoResponse queryUserBindInfoDTO(UserBindInfoRequest userBindInfoRequest) {
-    	UserBindInfoResponse userBindInfoResponse = new UserBindInfoResponse();
+		UserBindInfoResponse userBindInfoResponse = new UserBindInfoResponse();
+		if(StringUtil.isValidString(userBindInfoRequest.getMerchantcode())&&userBindInfoRequest.getCooptype()==null){
+			userBindInfoResponse.putErrorResult("参数[coopType]不能为空");
+			return userBindInfoResponse;
+		}
+    	
     	TitanUserBindInfoParam param = new TitanUserBindInfoParam();
     	MyBeanUtil.copyBeanProperties(param, userBindInfoRequest);
     	PaginationSupport<TitanUserBindInfo> paginationSupport = new PaginationSupport<TitanUserBindInfo>();
@@ -356,6 +362,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         		item.setFcUserName(entityBindInfo.getFcusername());
         		item.setLoginName(entityBindInfo.getLoginname());
         		item.setUserName(entityBindInfo.getUsername());
+        		item.setCoopType(entityBindInfo.getCooptype());
         		item.setMerchantCode(entityBindInfo.getMerchantcode());
         		item.setIsActive(entityBindInfo.getIsactive());
         		userBindInfoDTOList.add(item);
@@ -560,7 +567,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     public FinancialUserBindResponse bindFinancialUser(FinancialUserBindRequest financialUserBindRequest) {
         FinancialUserBindResponse response = new FinancialUserBindResponse();
         if (!GenericValidate.validate(financialUserBindRequest)) {
-            response.putParamError();
+            response.putErrorResult("必填参数不能为空");
             return response;
         }
         //1.金服添加用户绑定关系
@@ -575,7 +582,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         	TitanUserBindInfo bindInfo = new TitanUserBindInfo();
         	bindInfo.setTfsuserid(financialUserBindRequest.getUserid());
             bindInfo.setMerchantcode(financialUserBindRequest.getMerchantCode());
-             
+            bindInfo.setCooptype(financialUserBindRequest.getCoopType());
             bindInfo.setUsername("");
             bindInfo.setLoginname(financialUserBindRequest.getLoginUserName());
             bindInfo.setFcloginname(financialUserBindRequest.getFcLoginUserName());
@@ -590,7 +597,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         	TitanUserBindInfo bindInfo = new TitanUserBindInfo();
         	bindInfo.setTfsuserid(financialUserBindRequest.getUserid());
             bindInfo.setMerchantcode(financialUserBindRequest.getMerchantCode());
-            
+            bindInfo.setCooptype(financialUserBindRequest.getCoopType());
             bindInfo.setUsername("");
             bindInfo.setLoginname(financialUserBindRequest.getLoginUserName());
             bindInfo.setFcloginname(financialUserBindRequest.getFcLoginUserName());
@@ -627,9 +634,9 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         		entity.setModifior(financialUserUnBindRequest.getOperator());
         		entity.setModifytime(new Date());
         		titanUserBindInfoDao.update(entity);	
-        	}else if(financialUserUnBindRequest.getMerchantcode()!=null&&financialUserUnBindRequest.getTfsuserid()==null){
+        	}else if(financialUserUnBindRequest.getTfsuserid()==null&&financialUserUnBindRequest.getMerchantcode()!=null&&financialUserUnBindRequest.getCoopType()!=null){
         		//批量解绑机构下的所有员工
-        		titanUserBindInfoDao.updateIsactiveBatch(ISACTIVE_0_NO, financialUserUnBindRequest.getMerchantcode(),financialUserUnBindRequest.getOperator(),new Date());
+        		titanUserBindInfoDao.updateIsactiveBatch(ISACTIVE_0_NO,financialUserUnBindRequest.getCoopType(), financialUserUnBindRequest.getMerchantcode(),financialUserUnBindRequest.getOperator(),new Date());
         	}else{
         		throw new ParameterException("非法参数");
         	}
@@ -1062,7 +1069,12 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		try{
 			TitanUserBindInfo titanUserBindInfo = new TitanUserBindInfo();
 			titanUserBindInfo.setFcuserid(titanUserBindInfoDTO.getFcuserid());
-			titanUserBindInfo.setCooptype(titanUserBindInfoDTO.getCooptype());
+			if(titanUserBindInfoDTO.getCooptype()==null){
+				titanUserBindInfo.setCooptype(UserSourceEnum.SAAS.getKey());
+			}else{
+				titanUserBindInfo.setCooptype(titanUserBindInfoDTO.getCooptype());
+			}
+			
 			titanUserBindInfo.setTfsuserid(titanUserBindInfoDTO.getTfsuserid());
 			List<TitanUserBindInfo>  titanUserBindInfoList=  titanUserBindInfoDao.selectUserBindInfoByFcuserid(titanUserBindInfo);
 		    if(titanUserBindInfoList !=null && titanUserBindInfoList.size()==1){

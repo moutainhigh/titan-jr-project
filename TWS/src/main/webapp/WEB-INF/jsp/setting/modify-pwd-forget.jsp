@@ -114,7 +114,7 @@
 	    },
         success: function(data){
         	 if(data.code=="1"){
-        		 location.href="<%=basePath%>/setting/pwd-set-succ.shtml?pageType=2"; 
+        		 location.href="<%=basePath%>/ex/pwd-set-succ.shtml?pageType=2"; 
         	 }else{
         		 new top.Tip({msg : data.msg, type: 2 , timer:2000});
         	 }

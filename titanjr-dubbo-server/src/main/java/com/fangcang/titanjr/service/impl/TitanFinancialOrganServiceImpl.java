@@ -1373,6 +1373,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			TitanOrgParam condition = new TitanOrgParam();
 			condition.setOrgCode(orgDTO.getOrgcode());
 			condition.setOrgId(orgDTO.getOrgid());
+			condition.setUserId(orgDTO.getUserid());
 			condition.setTitanCode(orgDTO.getTitancode());
 			condition.setOrgName(orgDTO.getOrgname());
 			TitanOrg titanOrg = titanOrgDao.selectOne(condition);

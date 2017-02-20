@@ -89,7 +89,7 @@ function savePassword(){
 		dataType:"json",
 		success:function(result){
 			if(result.code==1){
-				location.href="<%=basePath%>/setting/pwd-set-succ.shtml?pageType=1";
+				location.href="<%=basePath%>/ex/pwd-set-succ.shtml?pageType=1";
 			}else{
 				new top.Tip({msg : result.msg, type: 2, timer:2000});
 			}
