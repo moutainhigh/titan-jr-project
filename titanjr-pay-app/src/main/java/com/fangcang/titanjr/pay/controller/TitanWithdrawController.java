@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -191,7 +193,7 @@ public class TitanWithdrawController extends BaseController {
 		if (null == withDrawRequest.getUserId()
 				|| null == withDrawRequest.getFcUserId()
 				|| null == withDrawRequest.getOrderNo()) {
-
+			log.error("请求参数错误:"+JSONSerializer.toJSON(withDrawRequest));
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
 		boolean needBindCard = false;
@@ -204,6 +206,7 @@ public class TitanWithdrawController extends BaseController {
 							.getAccountNum())
 					|| !StringUtil.isValidString(withDrawRequest
 							.getAccountName())) {
+				log.error("已绑定卡传入参数错误"+JSONSerializer.toJSON(withDrawRequest));
 				return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 			} else {
 				needBindCard = true;
@@ -216,6 +219,7 @@ public class TitanWithdrawController extends BaseController {
 								.getAccountNum())
 						|| !StringUtil.isValidString(withDrawRequest
 								.getAccountName())) {
+					log.error("绑定新卡传入参数错误"+JSONSerializer.toJSON(withDrawRequest));
 					return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 				} else {
 					needBindNewCard = true;
@@ -242,11 +246,13 @@ public class TitanWithdrawController extends BaseController {
 
 		if (!StringUtil.isValidString(withDrawRequest.getPassword())
 				|| !StringUtil.isValidString(tfsUserid)) {
+			log.error("密码或用户传入失败");
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
 		boolean istrue = titanFinancialUserService.checkPayPassword(
 				withDrawRequest.getPassword(), tfsUserid);
 		if (!istrue) {
+			log.error("密码错误");
 			return toMsgJson(TitanMsgCodeEnum.PAY_PWD_ERROR);
 		}
 		
@@ -265,6 +271,7 @@ public class TitanWithdrawController extends BaseController {
 				.getExRateAmount()));
 
 		if (er > al) {
+			log.error("手续费不能大于提现金额");
 			return toMsgJson(TitanMsgCodeEnum.RATE_NOT_MORE_WITHDRAW);
 		}
 		
@@ -284,6 +291,7 @@ public class TitanWithdrawController extends BaseController {
 			DeleteBindBankResponse deleteBindBankResponse = titanFinancialBankCardService
 					.deleteBindBank(deleteBindBankRequest);
 			if (!deleteBindBankResponse.isResult()) {
+				log.error("删除原提现卡失败");
 				return toMsgJson(TitanMsgCodeEnum.USE_NEW_CARD_WITHDRAW_DEL_OLD_CARD_FAIL);
 			}
 		}
@@ -334,6 +342,7 @@ public class TitanWithdrawController extends BaseController {
 			CusBankCardBindResponse cardBindResponse = titanFinancialBankCardService
 					.bankCardBind(bankCardBindRequest);
 			if (!cardBindResponse.isResult()) {
+				log.error("用户绑卡失败");
 				return toMsgJson(TitanMsgCodeEnum.USE_NEW_CARD_WITHDRAW_BING_CARD_FAIL);
 			}
 		}
@@ -368,6 +377,7 @@ public class TitanWithdrawController extends BaseController {
 		BalanceWithDrawResponse balanceWithDrawResponse = titanFinancialAccountService
 				.accountBalanceWithdraw(balanceWithDrawRequest);
 		if (!balanceWithDrawResponse.isResult()) {
+			log.error("提现失败");
 			return toMsgJson(TitanMsgCodeEnum.WITHDRAW_OPT_FAIL);
 		}
 		
