@@ -36,6 +36,7 @@ import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dao.TitanAccountDao;
 import com.fangcang.titanjr.dao.TitanAccountHistoryDao;
+import com.fangcang.titanjr.dao.TitanCityInfoDao;
 import com.fangcang.titanjr.dao.TitanFundFreezereqDao;
 import com.fangcang.titanjr.dao.TitanFundUnFreezereqDao;
 import com.fangcang.titanjr.dao.TitanOrgDao;
@@ -45,6 +46,7 @@ import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.AccountDTO;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
+import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
@@ -73,6 +75,7 @@ import com.fangcang.titanjr.dto.response.AccountHistoryResponse;
 import com.fangcang.titanjr.dto.response.AccountResponse;
 import com.fangcang.titanjr.dto.response.AccountUpdateResponse;
 import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
+import com.fangcang.titanjr.dto.response.CityInfosResponse;
 import com.fangcang.titanjr.dto.response.DefaultPayerConfigResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
@@ -102,6 +105,7 @@ import com.fangcang.titanjr.rs.response.AccountBalanceQueryResponse;
 import com.fangcang.titanjr.rs.response.AccountWithDrawResponse;
 import com.fangcang.titanjr.rs.response.BalanceFreezeResponse;
 import com.fangcang.titanjr.rs.response.BalanceUnFreezeResponse;
+import com.fangcang.titanjr.rs.response.CityInfoResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
@@ -154,6 +158,9 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     
     @Resource
     private TitanFinancialAccountService titanFinancialAccountService;
+    
+    @Resource
+    private TitanCityInfoDao titanCityInfoDao;
     
 
     @Override
@@ -533,15 +540,18 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	public BalanceWithDrawResponse accountBalanceWithdraw(BalanceWithDrawRequest balanceWithDrawRequest) {
 		BalanceWithDrawResponse withDrawResponse = new BalanceWithDrawResponse();
 		if (!GenericValidate.validate(balanceWithDrawRequest)) {
+			log.error("提现时校验参数失败："+JSONSerializer.toJSON(balanceWithDrawRequest));
 			withDrawResponse.putErrorResult("请求参数校验错误");
 			return withDrawResponse;
 		}
 		//判断提现金额和可用余额，获取可用余额
 		boolean flag = isBalanceVaild(balanceWithDrawRequest);
 		if ( !flag ) {//提现落单，不需要在融数落单，只需要在本地落单
+			log.error("提现金额不正确");
 			withDrawResponse.putErrorResult("提现金额不正确请核实后再次发起");
 			return withDrawResponse;
 		}
+		
 		TitanTransOrder titanTransOrder = convertToTitanTransOrder(balanceWithDrawRequest);
 		
 		
@@ -559,6 +569,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		}
 		
 		if (null == titanTransOrder ){
+			log.error("提现交易单构造失败");
 			withDrawResponse.putErrorResult("构造提现交易单失败");
 			return withDrawResponse;
 		}
@@ -572,6 +583,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				rowNum = titanTransOrderDao.insert(titanTransOrder);
 			}
 			if (rowNum <= 0) {
+				log.error("保存交易单失败");
 				withDrawResponse.putErrorResult("保存交易单失败");
 				return withDrawResponse;
 			}
@@ -652,8 +664,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			BankCardInfoDTO bindBankCard = null;
 			if(bankCardInfoDTOList !=null && bankCardInfoDTOList.size()>0) {
 				for(BankCardInfoDTO bankCardInfoDTO:bankCardInfoDTOList) {//未输入卡号则获取 提现卡或者提现结算一体卡
-					if(bankCardInfoDTO.getAccountpurpose().equals(BankCardEnum.BankCardPurposeEnum.DEBIT_WITHDRAW_CARD.getKey()) ||
-							bankCardInfoDTO.getAccountpurpose().equals(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey())){
+					if(!bankCardInfoDTO.getAccountpurpose().equals(BankCardEnum.BankCardPurposeEnum.OTHER_CARD.getKey())){
 						bindBankCard = bankCardInfoDTO;
 						break;
 					}
@@ -1071,6 +1082,22 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			SaveCertificationRequest saveCertificationRequest) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+
+	@Override
+	public CityInfosResponse getCityInfoList(CityInfoDTO cityInfo) {
+		CityInfosResponse response = new CityInfosResponse();
+		try{
+			List<CityInfoDTO> cityInfoList = titanCityInfoDao.getCityInfoList(cityInfo);
+			response.setCityInfoDTOList(cityInfoList);
+			response.putSuccess();
+		}catch(Exception e){
+			log.error("查询城市信息失败",e);
+			response.putSysError();
+		}
+		return response;
 	}
 
 	

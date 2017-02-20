@@ -32,7 +32,7 @@ public class TitanFinancialOrganServiceTest extends BaseTest{
     }
 	
 	
-	@Test
+//	@Test
 	public void testRefundComnfirm(){
 		RefundConfirmRequest refundConfirm = new RefundConfirmRequest();
 		refundConfirm.setUserId("141223100000056");
@@ -61,6 +61,6 @@ public class TitanFinancialOrganServiceTest extends BaseTest{
 		 
 	}
 	
-	 
+	
 	
 }

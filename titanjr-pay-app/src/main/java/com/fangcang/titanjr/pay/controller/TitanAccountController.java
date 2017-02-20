@@ -12,8 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import org.apache.commons.collections.CollectionUtils;
+
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
@@ -223,19 +223,12 @@ public class TitanAccountController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("getBankInfoList")
-	public String getBankInfo(String type,String parentCode) {
-		BankInfoQueryRequest bankInfoQueryRequest = new BankInfoQueryRequest();
-		if(StringUtil.isValidString(type)){
-			bankInfoQueryRequest.setBankType(Integer.parseInt(type));
-		}
-		bankInfoQueryRequest.setParentCode(parentCode);
-		BankInfoResponse bankInfoResponse = titanFinancialBaseInfoService
-				.queryBankInfoList(bankInfoQueryRequest);
-		if (bankInfoResponse.isResult()
-				&& CollectionUtils.isNotEmpty(bankInfoResponse
-						.getBankInfoDTOList())) {
-			return JsonConversionTool.toJson(bankInfoResponse);
-		}
-		return null;
-	}
+	 public String getBankInfo(BankInfoQueryRequest request){
+	        BankInfoResponse bankInfoResponse =  titanFinancialBaseInfoService.queryBankInfoList(request);
+	        if (bankInfoResponse.isResult() && CollectionUtils.isNotEmpty(bankInfoResponse.getBankInfoDTOList())){
+	        	return JsonConversionTool.toJson(bankInfoResponse);
+	        }
+	        return null;
+	    }
+	
 }

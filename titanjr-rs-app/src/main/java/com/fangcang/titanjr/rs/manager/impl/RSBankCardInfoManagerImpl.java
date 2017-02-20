@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -53,6 +56,7 @@ public class RSBankCardInfoManagerImpl implements RSBankCardInfoManager {
 				bankCardBindRequest.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, bankCardBindRequest);
+			log.info("调用融数的绑卡信息："+JSONSerializer.toJSON(req));
 			WheatfieldBankaccountBindingResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
@@ -221,6 +225,7 @@ public class RSBankCardInfoManagerImpl implements RSBankCardInfoManager {
 				invalidPubCardModifyRequest.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, invalidPubCardModifyRequest);
+			log.info("调用融数的绑卡信息："+JSONSerializer.toJSON(req));
 			WheatfieldAccountUpdateResponse rsp = RSInvokeConstant.ropClient.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用modifyInvalidPublicCard返回报文: \n" + rsp.getBody());

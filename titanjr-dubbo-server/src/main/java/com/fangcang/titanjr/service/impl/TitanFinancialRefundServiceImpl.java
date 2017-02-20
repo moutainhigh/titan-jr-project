@@ -640,7 +640,7 @@ public class TitanFinancialRefundServiceImpl implements
 				throw new Exception("回调异常");
 			}
 			CallBackInfo callBackInfo = TitanjrHttpTools.analyzeResponse(response);
-			if (!"000".equals(callBackInfo.getCode())) {
+			if (callBackInfo == null ||!"000".equals(callBackInfo.getCode())) {
 				log.error("回调异常，TTMALL返回失败");
 				throw new Exception("回调异常，TTMALL返回失败");
 			}

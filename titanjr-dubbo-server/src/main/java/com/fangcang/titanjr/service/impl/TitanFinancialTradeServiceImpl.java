@@ -672,8 +672,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		try {
 			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params) + "---url---"
 					+ url);
-			   HttpPost httpPost = new HttpPost(url);
-		        HttpResponse resp = HttpClient.httpRequest(params,  httpPost);
+			HttpPost httpPost = new HttpPost(url);
+		    HttpResponse resp = HttpClient.httpRequest(params,  httpPost);
 			if (null != resp) {
 				InputStream in = resp.getEntity().getContent();
 				byte b[] = new byte[1024];

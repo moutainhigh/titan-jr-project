@@ -1,7 +1,10 @@
 package com.fangcang.titanjr.service;
 
+import java.util.List;
+
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
+import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
@@ -145,4 +148,7 @@ public interface TitanFinancialAccountService {
 
 	public SaveCertificationResponse saveCertificationInfo(
 			SaveCertificationRequest saveCertificationRequest);
+	
+	
+	public CityInfosResponse getCityInfoList(CityInfoDTO cityInfo);
 }
