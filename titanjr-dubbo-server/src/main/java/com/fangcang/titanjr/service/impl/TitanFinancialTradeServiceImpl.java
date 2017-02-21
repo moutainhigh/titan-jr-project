@@ -1703,8 +1703,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			String domainName = domainConfigDao.queryCurrentEnvDomain();
 			if(StringUtil.isValidString(domainName)){
 				payMethodConfigDTO = new PayMethodConfigDTO();
-				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-app/payment/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-app/payment/notify.action");
+				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-02/payment/payConfirmPage.action");
+				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-02/payment/notify.action");
 			}
 			return payMethodConfigDTO;
 		}catch(Exception e){
@@ -2405,8 +2405,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			String payUrl =null;
 			if(response.indexOf("weixin")!=-1){
 				payUrl = response.substring(response.indexOf("weixin"), response.length());
+				qr.setRespJs(payUrl);
 			}
-			qr.setRespJs(payUrl);
 			log.info("网关返回参数:"+JSONSerializer.toJSON(qr));
 			boolean sign = this.validateGateSign(qr);
 			if(!sign){

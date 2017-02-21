@@ -151,4 +151,6 @@ public interface TitanFinancialAccountService {
 	
 	
 	public CityInfosResponse getCityInfoList(CityInfoDTO cityInfo);
+	
+	
 }

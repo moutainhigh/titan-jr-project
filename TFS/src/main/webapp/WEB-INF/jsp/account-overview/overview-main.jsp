@@ -1199,7 +1199,7 @@
 		}
 
         //充值
-        $('.rechargeBtn').on('click',function(){
+        $('.rechargeBtn').on('click',function(){//创建一个Iframe
                 window.top.createIframeDialog({
                 	  url : '<%=basePath%>/account/goto_cashierDesk.shtml?payType=7',
                 });

@@ -20,7 +20,6 @@
             付款
         </div>
     </div>
-
     <div class="S_popup_Kan clearfix opaque">
         <div class="gold_pay">
         <div class="clearfix">
@@ -159,7 +158,7 @@
 	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡） </span>
 	                              </c:if>
 	                              <c:if test="${commom.paytype == 9 }">
-	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（微信支付） </span>
+	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}"> </span>
                                   </c:if>
                                   <c:if test="${commom.bankname =='cmbc' &&commom.paytype==1}">
                                     <div class="clear"></div>
@@ -174,9 +173,9 @@
                          </c:if>
                          <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem" varStatus="o_status">
                             <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9 }">
-                                <li>
+                                <li >
                                     <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
-                                        <div class="paytable_payway" itemType='${deskItem.itemType}'>
+                                        <div class="paytable_payway" itemType='${deskItem.itemType}' >
                                             <div class="payc_left"><label class="f_ui-radio-c3">
                                                 <input name="r2" type="radio" data-index="${o_status.index }-${i_status.index}" class="bankName" value="${itemBank.bankName}">
                                                 <i></i>
@@ -198,7 +197,7 @@
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
                                             </c:if>
                                             <c:if test="${deskItem.itemType == 9 }">
-                                                <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（微信支付）</span>
+                                                <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}"></span>
                                             </c:if>
                                             <c:if test="${itemBank.bankName=='cmbc' && deskItem.itemType == 1}">
 				                                    <div class="clear"></div>
