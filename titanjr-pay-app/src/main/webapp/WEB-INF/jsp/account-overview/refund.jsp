@@ -93,7 +93,10 @@
 		<jsp:include page="/comm/static-js.jsp"></jsp:include>
 		<script type="text/javascript" src="../js/common.js"></script>
 		<script type="text/javascript" src="../js/psd.js"></script>
+		<script type="text/javascript" src="<%=basePath%>/js/cashier/paypsd.js"></script>
 		<script>
+		var cashierData = {};
+		
 		  var refundObj = {
 				  enoughBalance:function(){
 					  var refundAmount = null;
@@ -110,6 +113,9 @@
 				    	  $(".balanceTip").hide();
 				    	  $(".sure_btn").show();
 				      }
+				  },
+				  initData:function(){
+					  cashierData.tfsUserid='${refundRequest.tfsUserid}';
 				  },
 				  submitRequest:function(){
 					  var url = "<%=basePath%>";
@@ -154,10 +160,21 @@
 						 }
 						  
 					  });
+				  },
+				  setPayPassword:function(){
+						payPasswordObj.checkIsSetPayPassword();
 				  }
 		  };
 		  
-		  refundObj.enoughBalance();
+		  $("document").ready(function (){
+			  refundObj.enoughBalance();
+			  refundObj.initData();
+		  });
+		  
+		  window.onload=function(){
+			  initPayPassword();
+			  refundObj.setPayPassword();
+		  };
 		 
 		  $(".def_btn").click(function(){
 			  window.close();
