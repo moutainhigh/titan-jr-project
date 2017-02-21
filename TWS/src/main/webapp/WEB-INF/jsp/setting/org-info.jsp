@@ -117,7 +117,7 @@ function checkIsSetPayPassword(){
 function showConfirm(){
 	 window.top.createConfirm({
      	width:310,
-         content: msg,
+         content:'<div style=\'line-height:24px;\'>'+msg+'</div>',
          ok : function(){
              var swi = toState?1:0;
              var pay="";
@@ -288,8 +288,8 @@ var msg,sw,payDialog,toState;
                url : '<%=basePath%>/account/showPayPassword.shtml',
                success : function(html){
             	   payDialog =  dialog({
-                       title: ' ',
-                       padding: '0 0 0px 0 ',
+                       title: '请输入付款密码',
+                       padding: '0 0 20px 0 ',
                        content: html,
                        skin : 'saas_pop',
                        button : [
