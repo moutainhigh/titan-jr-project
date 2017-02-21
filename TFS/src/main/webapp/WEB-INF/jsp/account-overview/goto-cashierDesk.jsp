@@ -42,7 +42,7 @@ window.onload = function() {
 			fcUserId:"${fcUserId}"
 		};
 	
-	
+	//window.location 就是指当前文档的路径，就是document 
 		window.location.href = titanPayObj.getTitanPayUrl(orderInfo, businessInfo);
 		//titanPayObj.titanPay(orderInfo, businessInfo);
 		

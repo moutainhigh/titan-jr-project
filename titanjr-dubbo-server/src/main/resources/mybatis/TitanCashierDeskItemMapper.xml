@@ -41,5 +41,29 @@
         </set>
         where itemid = #{itemid,jdbcType=INTEGER}
     </update>
+    
+    <select id="queryCashierDeskItems" parameterType="com.fangcang.titanjr.entity.TitanCashierDeskItem" 
+    								   resultType="com.fangcang.titanjr.entity.TitanCashierDeskItem">
+    	select
+    		 itemid, 	 
+    		 deskid,
+          	 itemname,
+         	 itemtype,
+         	 creator,
+         	 createtime		
+        from 	
+        t_tfs_cashierdeskitem
+        <where>
+        	<if test="deskid !=null">
+        		deskid = #{deskid}
+        	</if>
+        	<if test="itemname !=null">
+        		and itemname = #{itemname}
+        	</if>
+        	<if test="itemtype !=null">
+        		and itemtype =#{itemtype}
+        	</if>
+        </where>
+    </select>
 
 </mapper>

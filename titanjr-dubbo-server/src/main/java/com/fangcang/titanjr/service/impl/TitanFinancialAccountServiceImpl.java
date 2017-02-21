@@ -60,6 +60,7 @@ import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
 import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrderRequest;
 import com.fangcang.titanjr.dto.request.FreezeAccountBalanceRequest;
+import com.fangcang.titanjr.dto.request.PaymentItemRequest;
 import com.fangcang.titanjr.dto.request.QueryCertificationRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.SaveCertificationRequest;
@@ -553,8 +554,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		}
 		
 		TitanTransOrder titanTransOrder = convertToTitanTransOrder(balanceWithDrawRequest);
-		
-		
 		TransOrderDTO orderDTO = null;
 		if (balanceWithDrawRequest.getOrderNo() != null) {
 			TransOrderRequest transOrderRequest = new TransOrderRequest();
@@ -1101,6 +1100,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		}
 		return response;
 	}
+
 
 	
 }

@@ -435,6 +435,9 @@ public class TitanPaymentController extends BaseController {
         //设置支付方式
     	if(StringUtil.isValidString(titanPaymentRequest.getLinePayType())){
     		titanPaymentRequest.setPayType(PayTypeEnum.getPayTypeEnum(titanPaymentRequest.getLinePayType()));
+    		if(CommonConstant.ALIPAY.equals(titanPaymentRequest.getBankInfo())){
+    			titanPaymentRequest.setPayType(PayTypeEnum.ALIPAY_URL);
+    		}
     	}
     	titanPaymentRequest.setOrderid(transOrderCreateResponse.getOrderNo());
     	
@@ -475,9 +478,12 @@ public class TitanPaymentController extends BaseController {
 	
 	private String weChat(RechargeResponse rechargeResponse,Model model) throws Exception{
 		RechargeDataDTO rechargeDataDTO = rechargeResponse.getRechargeDataDTO();
+		if(PayTypeEnum.ALIPAY_URL.key.equals(rechargeDataDTO.getPayType())){
+			rechargeDataDTO.setExpand2(CommonConstant.ALIPAY);
+		}
 		QrCodeResponse response = titanFinancialTradeService.getQrCodeUrl(rechargeDataDTO);
 		if(!response.isResult()){
-			log.error("微信支付获取地址失败");
+			log.error("第三方支付获取地址失败");
 			model.addAttribute(CommonConstant.RETURN_MSG, TitanMsgCodeEnum.QR_EXCEPTION.getKey());
 			return CommonConstant.PAY_WX;
 		}

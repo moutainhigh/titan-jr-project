@@ -190,4 +190,5 @@ public class CommonConstant {
     public static final String TIANJING_CODE ="1100";
     public static final String CHONGQING_CODE ="6530";
     public static final String SHNAGHAI_CODE ="2900";
+    
 }

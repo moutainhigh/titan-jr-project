@@ -19,7 +19,14 @@
 	</div>
 	<div class="S_popup_content adjust_c">
 		<div class="wx_fk fl">
-			<h3 style="margin-left: -12px;">微信扫描二维码支付</h3>
+			<h3 style="margin-left: -12px;">
+				<c:if test="${qrCode.payType=='32' }">
+					支付宝扫描二维码支付
+				</c:if>
+				<c:if test="${qrCode.payType=='30' }">
+					微信扫描二维码支付
+				</c:if>
+			</h3>
 			<div >
 			  <img id="qrcode" alt="微信扫描二维码支付" src="">
 			</div> 
@@ -40,7 +47,14 @@
 	
 <form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder1" method="post">
   <input name="orderNo" id="orderNo" value="${qrCode.orderNo}" type="hidden">
-  <input name="payTypeMsg" id="payTypeMsg" value="微信支付" type="hidden">
+  <c:choose>
+  	<c:when test="${qrCode.payType=='32'}">
+  		<input name="payTypeMsg" id="payTypeMsg" value="支付宝支付" type="hidden">
+  	</c:when>
+  	<c:when test="${qrCode.payType=='30'}">
+  		<input name="payTypeMsg" id="payTypeMsg" value="微信支付" type="hidden">
+  	</c:when>
+  </c:choose>
   <input name="expand" id="expand" type="hidden">
 </form>
 </body>

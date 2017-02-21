@@ -278,21 +278,35 @@ public class TitanWithdrawController extends BaseController {
 		FinancialOrganDTO financialOrganDTO = this
 				.getTitanOrganDTO(withDrawRequest.getUserId());
 		if (needBindNewCard) { // 需判定或删除原卡配置
-			DeleteBindBankRequest deleteBindBankRequest = new DeleteBindBankRequest();
-			deleteBindBankRequest.setUserid(withDrawRequest.getUserId());
-			deleteBindBankRequest
-					.setProductid(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_PRODUCT_ID);
-			deleteBindBankRequest
-					.setConstid(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_CONST_ID);
-			deleteBindBankRequest.setUsertype(String.valueOf(financialOrganDTO
-					.getUserType()));
-			deleteBindBankRequest.setAccountnumber(withDrawRequest
-					.getOriginalAccount());
-			DeleteBindBankResponse deleteBindBankResponse = titanFinancialBankCardService
-					.deleteBindBank(deleteBindBankRequest);
-			if (!deleteBindBankResponse.isResult()) {
-				log.error("删除原提现卡失败");
-				return toMsgJson(TitanMsgCodeEnum.USE_NEW_CARD_WITHDRAW_DEL_OLD_CARD_FAIL);
+			//删除之前查询该卡是否已绑定
+			BankCardBindInfoRequest bindInfoRequest = new BankCardBindInfoRequest();
+			bindInfoRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+			bindInfoRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+			bindInfoRequest.setUserid(withDrawRequest.getUserId());
+			bindInfoRequest.setUsertype(String.valueOf(financialOrganDTO.getUserType()));
+			bindInfoRequest.setObjorlist(CommonConstant.ALLCARD);
+			QueryBankCardBindInfoResponse bindInfoResponse = titanFinancialBankCardService.getBankCardBindInfo(bindInfoRequest);
+			if(bindInfoResponse !=null && bindInfoResponse.getBankCardInfoDTOList()!=null){
+				for(BankCardInfoDTO dto :bindInfoResponse.getBankCardInfoDTOList()){
+					if(withDrawRequest.getOriginalAccount().equals(dto.getAccount_number())){//若该卡已绑定则删除
+						DeleteBindBankRequest deleteBindBankRequest = new DeleteBindBankRequest();
+						deleteBindBankRequest.setUserid(withDrawRequest.getUserId());
+						deleteBindBankRequest
+								.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+						deleteBindBankRequest
+								.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+						deleteBindBankRequest.setUsertype(String.valueOf(financialOrganDTO
+								.getUserType()));
+						deleteBindBankRequest.setAccountnumber(withDrawRequest
+								.getOriginalAccount());
+						DeleteBindBankResponse deleteBindBankResponse = titanFinancialBankCardService
+								.deleteBindBank(deleteBindBankRequest);
+						if (!deleteBindBankResponse.isResult()) {
+							log.error("删除原提现卡失败");
+							return toMsgJson(TitanMsgCodeEnum.USE_NEW_CARD_WITHDRAW_DEL_OLD_CARD_FAIL);
+						}
+					}
+				}
 			}
 		}
 
@@ -373,7 +387,6 @@ public class TitanWithdrawController extends BaseController {
 					.getRsRateAmount());
 			balanceWithDrawRequest.setReceivedfee(computeRsp.getExRateAmount());
 		}
-
 		BalanceWithDrawResponse balanceWithDrawResponse = titanFinancialAccountService
 				.accountBalanceWithdraw(balanceWithDrawRequest);
 		if (!balanceWithDrawResponse.isResult()) {
