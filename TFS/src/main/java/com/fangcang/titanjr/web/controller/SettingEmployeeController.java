@@ -101,6 +101,7 @@ public class SettingEmployeeController extends BaseController{
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 		userInfoQueryRequest.setTfsUserId(tfsUserId);
 		userInfoQueryRequest.setPageSize(pageSize);
+		userInfoQueryRequest.setBindIsactive(1);
 		userInfoQueryRequest.setCurrentPage(pageNo);
 		userInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
 		UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
