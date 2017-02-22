@@ -125,9 +125,9 @@ public class TitanAccountController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/check_payPassword")
-	public String checkPayPassword(String payPassword, String fcUserid)
+	public String checkPayPassword(String payPassword, String fcUserid,String tfsUserId)
 			throws GlobalServiceException {
-		String tfsUserid = null;
+		String ttfsUserid = null;
 		if (StringUtil.isValidString(fcUserid)) {
 			TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
 			titanUserBindInfoDTO.setFcuserid(Long.parseLong(fcUserid));
@@ -135,16 +135,18 @@ public class TitanAccountController extends BaseController {
 					.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
 			if (titanUserBindInfoDTO != null
 					&& titanUserBindInfoDTO.getTfsuserid() != null) {
-				tfsUserid = titanUserBindInfoDTO.getTfsuserid().toString();
+				ttfsUserid = titanUserBindInfoDTO.getTfsuserid().toString();
 			}
+		}else{
+			ttfsUserid = tfsUserId;
 		}
-
+		
 		if (!StringUtil.isValidString(payPassword)
-				|| !StringUtil.isValidString(tfsUserid)) {
+				|| !StringUtil.isValidString(ttfsUserid)) {
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
 		boolean istrue = titanFinancialUserService.checkPayPassword(
-				payPassword, tfsUserid);
+				payPassword, ttfsUserid);
 		if (!istrue) {
 			return toMsgJson(TitanMsgCodeEnum.PAY_PWD_ERROR);
 		}

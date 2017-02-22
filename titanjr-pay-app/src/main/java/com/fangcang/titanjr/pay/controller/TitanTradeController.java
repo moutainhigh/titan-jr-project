@@ -34,6 +34,7 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.rsa.Base64Helper;
 import com.fangcang.titanjr.common.util.rsa.JsRSAUtil;
 import com.fangcang.titanjr.common.util.rsa.RSAUtil;
@@ -102,7 +103,7 @@ public class TitanTradeController extends BaseController {
 	 */
 	@RequestMapping(value = "/titanPay", method = { RequestMethod.GET,
 			RequestMethod.POST })
-	public String titanPay(String orderInfo, String businessInfo, Model model,HttpServletRequest request) {
+	public String titanPay(String orderInfo, String businessInfo,String wrapType, Model model,HttpServletRequest request) {
 		getRequest().getSession();
 		
 		if (!StringUtil.isValidString(orderInfo)) {
@@ -234,12 +235,14 @@ public class TitanTradeController extends BaseController {
 
 			if (dto.getPayerType().equals(PayerTypeEnum.WITHDRAW.getKey())) {
 				String fcUserId = "";
+				String tfsUserId = "";
 				Map<String, String> map = dto.getBusinessInfo();
 				if (map != null) {
-					fcUserId = map.get("fcUserId");
+					fcUserId = map.get("fcUserId")==null?"":map.get("fcUserId");
+					tfsUserId = map.get("tfsUserId")==null?"":map.get("tfsUserId");
 				}
 				url = "/withdraw/account-withdraw.action?userId="
-						+ dto.getUserId() + "&fcUserId=" + fcUserId
+						+ dto.getUserId() + "&tfsUserId="+tfsUserId+"&fcUserId=" + fcUserId
 						+ "&orderNo=" + orderCreateResponse.getOrderNo();
 			} else {
 				// 获取收银台地址
@@ -265,7 +268,11 @@ public class TitanTradeController extends BaseController {
 				url = response.getUrl();
 			}
 			log.info("get Payment url ok ");
-
+			if(StringUtil.isValidString(wrapType)){
+				Map<String , String> extParam = new HashMap<String, String>();
+				extParam.put("wrapType", wrapType);
+				url = Tools.appendRequestParam(url, extParam);
+			}
 			this.getResponse().sendRedirect(
 					this.getRequest().getContextPath() + url);
 
