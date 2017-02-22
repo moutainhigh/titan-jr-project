@@ -39,7 +39,7 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
     private Integer excludeStatus;
     
     /***
-     * 用户绑定状态，为空时，默认为1
+     * 用户绑定状态， 
      */
     private Integer bindIsactive;
     

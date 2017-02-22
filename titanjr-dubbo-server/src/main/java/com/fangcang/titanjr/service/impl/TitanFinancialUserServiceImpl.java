@@ -308,6 +308,10 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     @Override
     public UserInfoResponse queryFinancialUser(UserInfoQueryRequest userInfoQueryRequest) {
         UserInfoResponse response = new UserInfoResponse();
+        if(StringUtil.isValidString(userInfoQueryRequest.getBindLoginName())&&!StringUtil.isValidString(userInfoQueryRequest.getBindMerchantCode())){
+        	response.putErrorResult("合作方商家编码和登录用户名不能为空");
+        	return response;
+        }
         List<UserInfoDTO> userInfoDTOs =  titanUserDao.queryTitanUserList(userInfoQueryRequest);
         response.setUserInfoDTOList(userInfoDTOs);
         response.putSuccess();
@@ -378,6 +382,10 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 	public RoleUserInfoPageResponse queryRoleUserInfoPage(UserInfoQueryRequest userInfoQueryRequest) {
     	RoleUserInfoPageResponse response = new RoleUserInfoPageResponse();
 		PaginationSupport<UserInfoDTO> paginationSupport = new PaginationSupport<UserInfoDTO>();
+		if(StringUtil.isValidString(userInfoQueryRequest.getBindLoginName())&&!StringUtil.isValidString(userInfoQueryRequest.getBindMerchantCode())){
+        	response.putErrorResult("合作方商家编码和登录用户名不能为空");
+        	return response;
+        }
 		try {
 			paginationSupport = titanUserDao.selectForRoleUserInfoPage(userInfoQueryRequest);
 			response.setPaginationSupport(paginationSupport);

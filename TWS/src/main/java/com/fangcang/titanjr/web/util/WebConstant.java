@@ -9,7 +9,7 @@ public class WebConstant {
     public static final String SESSION_KEY_JR_USERID  = "JR_USERID";//金服机构id标示
     public static final String SESSION_KEY_JR_TFS_USERID  = "JR_TFS_USERID";//金服用户名id
     //public static final String SESSION_KEY_JR_RESOURCE  = "JR_RESOURCE";//此时标示是从金服官网登录
-    
+    public static final String SESSION_KEY_JR_ROLE_LIST  = "JR_ROLE_LIST";//金服用户角色列表
     
     
     public static final String SESSION_KEY_JR_RESOURCE_1_TFS  = "1";//金服官网登录或者注册
@@ -21,9 +21,6 @@ public class WebConstant {
    
     /********** TWS *******************/
     
-    //public static final String TWS_SESSION_LOGIN_USER_NAME = "TWS_SESSION_LOGIN_USER_NAME";//tws登录用户名
-    
-   // public static final String TWS_SESSION_TFS_USER_ID = "TWS_SESSION_TFS_USER_ID";//tws登录用户ID
     
     //'全国'的编码
     public static final String COUNTRY_CODE = "00";

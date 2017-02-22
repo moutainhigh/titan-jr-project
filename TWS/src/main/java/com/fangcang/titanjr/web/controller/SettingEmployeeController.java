@@ -104,7 +104,6 @@ public class SettingEmployeeController extends BaseController{
 		userInfoQueryRequest.setPageSize(pageSize);
 		userInfoQueryRequest.setCurrentPage(pageNo);
 		userInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
-		userInfoQueryRequest.setBindIsactive(100);//不使用绑定的查询条件
 		UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
 		
 		userInfoQueryRequest.setTfsUserId(null);
@@ -113,7 +112,6 @@ public class SettingEmployeeController extends BaseController{
 		userInfoQueryRequest.setUserLoginName("".equals(tfsUserLoginName)?null:tfsUserLoginName);
 		userInfoQueryRequest.setUserName("".equals(userName)?null:userName);
 		userInfoQueryRequest.setOrgCode(userInfoResponse.getUserInfoDTOList().get(0).getOrgCode());
-		userInfoQueryRequest.setBindIsactive(100);//不使用绑定的查询条件
 		RoleUserInfoPageResponse roleUserInfoPageResponse =  new RoleUserInfoPageResponse();
 		if(StringUtil.isValidString(userInfoQueryRequest.getOrgCode())){
 			roleUserInfoPageResponse = titanFinancialUserService.queryRoleUserInfoPage(userInfoQueryRequest);
@@ -173,7 +171,6 @@ public class SettingEmployeeController extends BaseController{
 		if(tfsUserId!=null&&tfsUserId>0){
 			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 			userInfoQueryRequest.setTfsUserId(tfsUserId);
-			userInfoQueryRequest.setBindIsactive(99);
 			UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
 			
 			if(userInfoResponse.getUserInfoDTOList()!=null&&userInfoResponse.getUserInfoDTOList().size()>0){

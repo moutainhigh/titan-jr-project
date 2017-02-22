@@ -67,7 +67,7 @@
 </div>
 <div class="h_40"></div>
 <!-- 版权 -->
-<jsp:include page="/comm/foot.jsp"></jsp:include> 
+<jsp:include page="/comm/foot-line.jsp"></jsp:include>
 <!-- 图片放大 -->
 <div class="clearfix dn" id="magnify" style="max-width:1000px;">
 <img src="${big_img_50}"  style="max-width: 1000px; max-height: 600px;display: block;margin: 0 auto;">  

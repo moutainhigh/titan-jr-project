@@ -169,7 +169,7 @@ $('.J_relieve').on('click',function(){
 				success:function(result){
 					if(result.code==1){
 						new top.Tip({msg : '操作成功！', type: 1 });
-						top.frames["right_con_frm"].ajaxPage.load();
+						ajaxPage.load();
 					}else{
 						new top.createConfirm({
 					        padding:'30px 20px 65px',
@@ -187,7 +187,7 @@ $('.J_relieve').on('click',function(){
 			    	 top.F.loading.hide();
 			    },
 				error:function(){
-					new top.Tip({msg : '系统错误，请重试!', type: 3 , time:1500});
+					new top.Tip({msg : '系统错误，请重试!', type: 3 , timer:1500});
 				}
 			});
       },

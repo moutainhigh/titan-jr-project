@@ -29,7 +29,7 @@
 		</div>		
 	</div>
 </div>
-
+<jsp:include page="/comm/foot.jsp"></jsp:include>
 <form action="<%=basePath %>/ex/login-pwd-set.shtml" method="post" id="to_pwd_set_form">
 	<input type="hidden" name="userLoginName" id="f_userLoginName"/>
 	<input type="hidden" name="code" id="f_code"/>

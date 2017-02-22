@@ -79,7 +79,7 @@
 </div>
 <div class="h_40"></div>
 <!-- 版权 -->
-<jsp:include page="/comm/foot.jsp"></jsp:include>
+<jsp:include page="/comm/foot-line.jsp"></jsp:include>
 
 <script type="text/javascript">  
 //内容高度
@@ -136,20 +136,7 @@ function search(){
 	      }); 
 		}
 	});
-//解除权限
-$('.J_relieve').on('click',function(){
-	new top.createConfirm({
-	    title:'提示',
-		padding: '20px 20px 40px',	
-		width:340,	
-        content : '<div class="f_14 l_h26">你确定要删除用户“188 8888 8888的所有权限么？<br>其所对应的SASS用户的权限也将一并解除。”</div>',
-		ok : function(){
-			new Tip({msg : '操作成功！', type: 1 }); 
-        },
-        cancel : function(){
-        }
-      }); 	  
-});
+ 
 </script>
 
 </body>

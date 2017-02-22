@@ -95,7 +95,7 @@ public class FinancialAccountController extends BaseController {
 
     @RequestMapping(value = "/overview-main", method = RequestMethod.GET)
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
-    public String home(HttpServletRequest request, Model model) throws Exception {
+    public String overviewMain(HttpServletRequest request, Model model) throws Exception {
     	UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 		userInfoQueryRequest.setTfsUserId(Integer.valueOf(getTfsUserId()));
 		UserInfoPageResponse userInfoPageResponse = titanFinancialUserService.queryUserInfoPage(userInfoQueryRequest);
@@ -261,7 +261,7 @@ public class FinancialAccountController extends BaseController {
         return "account-overview/order-remark";
     }
     
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     @RequestMapping(value = "/goto_cashierDesk", method = RequestMethod.GET)
     public String gotoCashierDesk(String payType , Model model)
     {
@@ -276,6 +276,7 @@ public class FinancialAccountController extends BaseController {
 		    	model.addAttribute("userName",getUserNameByUserId(this.getTfsUserId()));
 		    	model.addAttribute("payName", enum1.getMsg());
 		    	model.addAttribute("payDesc", enum1.getMsg());
+		    	model.addAttribute("tfsUserId", getTfsUserId());
 		    	return "account-overview/goto-cashierDesk";
     		}
     	}

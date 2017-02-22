@@ -637,17 +637,16 @@
         
         //充值
         $('.rechargeBtn').on('click',function(){
-                window.top.createIframeDialog({
-                	  url : '<%=basePath%>/account/goto_cashierDesk.shtml?payType=7',
-                });
-                return false;
+        	window.open('<%=basePath%>/account/goto_cashierDesk.shtml?payType=7');
+            return false;
         });
         function account_withdraw(){
-        	  window.top.createIframeDialog({
-                  url : '<%=basePath%>/account/goto_cashierDesk.shtml?payType=8',
-  					close:function () {
-  					}
-              });
+        	window.open('<%=basePath%>/account/goto_cashierDesk.shtml?payType=8');
+        	//  window.top.createIframeDialog({
+             //     url : '<%=basePath%>/account/goto_cashierDesk.shtml?payType=8',
+  			//		close:function () {
+  			//		}
+             // });
           }
           
         

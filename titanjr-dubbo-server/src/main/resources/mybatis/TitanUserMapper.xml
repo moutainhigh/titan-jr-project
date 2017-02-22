@@ -77,8 +77,7 @@
 	    t_tfs_user u
       LEFT JOIN t_tfs_userbindinfo b ON u.tfsuserid = b.tfsuserid 
     <where>
-    	<if test="bindIsactive == null or bindIsactive == 1"> b.isactive = 1</if>
-    	<if test="bindIsactive == 0"> b.isactive = 0</if>
+    	<if test="bindIsactive != null"> b.isactive = #{bindIsactive}</if>
     	<if test="status !=null"> and u.status = #{status}</if>
     	<if test="excludeStatus !=null"> and u.status != #{excludeStatus}</if>
 		<if test="userId !=null"> and u.userid = #{userId}</if>

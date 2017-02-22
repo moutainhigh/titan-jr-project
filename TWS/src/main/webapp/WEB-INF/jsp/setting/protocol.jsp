@@ -34,7 +34,7 @@
 </div>
 <div class="h_40"></div>
 <!-- 版权 -->
-<jsp:include page="/comm/foot.jsp"></jsp:include>
+<jsp:include page="/comm/foot-line.jsp"></jsp:include>
 <script type="text/javascript">  
 //内容高度
 function scrollCon(){
@@ -46,6 +46,16 @@ $(window).on('resize.fixed',function(){
 	scrollCon();
 });
 
+//按钮
+$(window).on('scroll',function(){
+	var st1=$(document).scrollTop(),		
+		OrderPay=$('.sra_btn').offset().top-$(window).height()+61;
+	if(st1<OrderPay){
+		$('.sra_btn1').addClass('sra_fixed');		
+	}else{
+		$('.sra_btn1').removeClass('sra_fixed');
+	}
+})
 </script>
 
 </body>

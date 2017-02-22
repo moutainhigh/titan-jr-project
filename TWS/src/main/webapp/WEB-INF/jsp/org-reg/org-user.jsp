@@ -345,6 +345,7 @@ $('.r_verify').on('click',function(){
         timeOut($(this));
     } 
 	$.ajax({
+		type:'post',
 		data:{"receiveAddress":receiveAddress,"msgType":1},
 		url : '<%=basePath%>/ex/sendCode.shtml',
 		dataType : 'json',

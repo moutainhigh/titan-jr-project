@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -27,7 +29,9 @@ import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.rsa.RSAUtil;
 import com.fangcang.titanjr.dto.bean.CoopDTO;
+import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
+import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.CheckUserRequest;
 import com.fangcang.titanjr.dto.request.CoopRequest;
 import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
@@ -42,6 +46,7 @@ import com.fangcang.titanjr.dto.response.PassLoginResponse;
 import com.fangcang.titanjr.dto.response.SendCodeResponse;
 import com.fangcang.titanjr.dto.response.SmsLoginResponse;
 import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
+import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.service.TitanFinancialBaseInfoService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -50,6 +55,7 @@ import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.LoginPojo;
 import com.fangcang.titanjr.web.pojo.ProxyLoginPojo;
+import com.fangcang.titanjr.web.util.LoginUtil;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
 
@@ -124,8 +130,7 @@ public class LoginController extends BaseController{
 			PassLoginResponse passLoginResponse = userService.passLogin(passLoginRequest);
 			if(passLoginResponse.isResult()){
 				//保存登录表示到session
-				putLoginInfo(passLoginResponse.getUserId(),passLoginResponse.getUserLoginName(),passLoginResponse.getTfsuserId().toString());
-				
+				LoginUtil.putLoginInfo(getSession(), userService, passLoginResponse.getUserId(),passLoginResponse.getUserLoginName(),passLoginResponse.getTfsuserId().toString());
 				return checkUser();
 			}else{
 				putSysError("用户名或者密码错误");
@@ -136,15 +141,6 @@ public class LoginController extends BaseController{
 			putSysError("登录异常，请重试");
 			return toJson();
 		}
-	}
-	/**
-	 * 保存登录用户信息到session
-	 */
-	private void putLoginInfo(String userId,String loginUsername,String tfsUserId){
-		getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, userId);
-		getSession().setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, loginUsername);
-		getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, tfsUserId);
-		
 	}
 	
 	/**
@@ -192,8 +188,7 @@ public class LoginController extends BaseController{
 			if(smsLoginResponse.isResult()){
 				putSuccess("登录成功");
 				//保存登录表示到session
-				putLoginInfo(smsLoginResponse.getUserId(),smsLoginResponse.getUserLoginName(),smsLoginResponse.getTfsuserId().toString());
-				
+				LoginUtil.putLoginInfo(getSession(), userService,smsLoginResponse.getUserId(),smsLoginResponse.getUserLoginName(),smsLoginResponse.getTfsuserId().toString());
 				return checkUser();
 			}else{
 				putSysError("用户名或者验证码错误");
@@ -376,7 +371,8 @@ public class LoginController extends BaseController{
     				if(titanUser.getStatus()==TitanUserEnum.Status.AVAILABLE.getKey()){
     					if(titanUser.getIsadmin()==1){
     						//机构id和用户id关联关系正确，可以登录
-    						putLoginInfo(titanUser.getOrgcode(), titanUser.getUserloginname(), titanUser.getTfsuserid().toString());
+    						LoginUtil.putLoginInfo(getSession(), userService,titanUser.getOrgcode(), titanUser.getUserloginname(), titanUser.getTfsuserid().toString());
+    						
     						String jumpUrl = "";
     						if(!StringUtil.isValidString(proxyLogin.getJumpurl())){
     							jumpUrl = getRequest().getScheme()+"://"+getRequest().getServerName()+":"+getRequest().getServerPort()+getRequest().getContextPath();

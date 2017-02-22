@@ -94,7 +94,7 @@
 </div>
 <div class="h_40"></div>
 <!-- 版权 -->
-<jsp:include page="/comm/foot.jsp"></jsp:include>
+<jsp:include page="/comm/foot-line.jsp"></jsp:include>
 <script type="text/javascript">  
 $(function(){
 	initRole();

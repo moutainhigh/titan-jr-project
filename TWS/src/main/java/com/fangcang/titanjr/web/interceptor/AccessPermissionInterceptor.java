@@ -62,15 +62,13 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 		if(handler instanceof HandlerMethod){//是请求方法才进行判断
 			HandlerMethod method = (HandlerMethod)handler;
 			AccessPermission accessPermission = method.getMethod().getAnnotation(AccessPermission.class);
-			//默认全部限制
-			if(accessPermission==null){//无
-				setMsg(request, response, "这是一个bug,请开发给该方法添加权限注解");
+			//默认无注解的方法全部限制访问
+			if(accessPermission==null){
+				setMsg(request, response, "这是一个bug,请开发同事给该方法添加权限注解");
 				return false;
 			}
 			String[] allownRoleCode = accessPermission.allowRoleCode();
-//			if(allownRoleCode.length==0){//不需要特殊访问权限
-//				return true;
-//			}
+
 			//无权限限制访问
 			if(excludeRole(allownRoleCode)){
 				return true;
@@ -81,16 +79,16 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 				return false;
 			}
 			//是否拥有该方法的访问权限
-//			List<RoleDTO> tfsRoleDTOList = (List<RoleDTO>)session.getAttribute(WebConstant.SESSION_KEY_JR_ROLE_LIST);
-//			String hasPermission = isAllow(allownRoleCode, tfsRoleDTOList,isadmin);
-//			if(hasPermission.equals("no")){
-//				setMsg(request, response, "当前用户没有权限访问，请联系管理员");
-//				return false;
-//			}
-//			if(hasPermission.equals("no_admin")){
-//				setMsg(request, response, "只有管理员才能访问该功能，请联系管理员");
-//				return false;
-//			}
+			List<RoleDTO> tfsRoleDTOList = (List<RoleDTO>)session.getAttribute(WebConstant.SESSION_KEY_JR_ROLE_LIST);
+			String hasPermission = isAllow(allownRoleCode, tfsRoleDTOList,isadmin);
+			if(hasPermission.equals("no")){
+				setMsg(request, response, "当前用户没有权限访问，请联系管理员");
+				return false;
+			}
+			if(hasPermission.equals("no_admin")){
+				setMsg(request, response, "只有管理员才能访问该功能，请联系管理员");
+				return false;
+			}
 		}
 		return true;
 	}
@@ -142,12 +140,12 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 	 */
 	private String isAllow(String[] functionArray,List<RoleDTO> roleList,int isadmin){
 		if(roleList==null||roleList.size()==0){
-			return "no";
+			return "no";//无权限
 		}
 		for(String function : functionArray){
 			//管理员权限判断
 			if(function.equals(CommonConstant.ROLECODE_ADMIN)&&isadmin==0){
-				return "no_admin";
+				return "no_admin";//无管理员权限
 			}
 			if(function.equals(CommonConstant.ROLECODE_ADMIN)&&isadmin==1){
 				return "yes";

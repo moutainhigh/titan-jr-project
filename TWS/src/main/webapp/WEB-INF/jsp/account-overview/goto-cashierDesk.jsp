@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>收银台-泰坦钱包</title>
 <%
   	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/titanjr-pay-app";
 %>
@@ -20,8 +20,6 @@
 	
 titanPayObj.initTitanPay();
 window.onload = function() {
-	
- 	 
 
 		var orderInfo = {
 			name : "${userName}", //打开收银台人员姓名  N
@@ -39,11 +37,12 @@ window.onload = function() {
 		};
 
 		var businessInfo = {
-			fcUserId:"${fcUserId}"
+			fcUserId:"${fcUserId}",
+			tfsUserId:"${tfsUserId}"
 		};
-	
-	
-		window.location.href = titanPayObj.getTitanPayUrl(orderInfo, businessInfo);
+		var _url = titanPayObj.getTitanPayUrl(orderInfo, businessInfo);
+		_url = _url+'&wrapType=wallet';
+		window.location.href = _url;
 		//titanPayObj.titanPay(orderInfo, businessInfo);
 		
 

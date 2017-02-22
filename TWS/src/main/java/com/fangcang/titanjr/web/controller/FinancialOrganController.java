@@ -19,7 +19,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpPost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -89,8 +88,8 @@ import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.CoopRegInfo;
 import com.fangcang.titanjr.web.pojo.OrgRegPojo;
 import com.fangcang.titanjr.web.pojo.RegUserLoginInfo;
+import com.fangcang.titanjr.web.util.LoginUtil;
 import com.fangcang.titanjr.web.util.WebConstant;
-import com.fangcang.util.HttpUtil;
 import com.fangcang.util.PasswordUtil;
 import com.fangcang.util.StringUtil;
 
@@ -467,7 +466,7 @@ public class FinancialOrganController extends BaseController {
    
     
     /**
-     * 注册后刷新session中的个人信息,如绑定状态等
+     * 注册后刷新session中的个人信息等
      */
     private void refreshSession(String userLoginName){
     	UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
@@ -475,19 +474,7 @@ public class FinancialOrganController extends BaseController {
     	UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
     	if(CollectionUtils.isNotEmpty(userInfoResponse.getUserInfoDTOList())){
     		UserInfoDTO userInfoDTO = userInfoResponse.getUserInfoDTOList().get(0);
-    		//通过机构查询绑定状态
-    		OrgBindInfo orgBindInfo = new OrgBindInfo();
-    		orgBindInfo.setUserid(userInfoDTO.getUserId());
-    		orgBindInfo.setBindStatus(1);
-    		orgBindInfo = titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
-    		if(orgBindInfo!=null){
-    		}else{
-    		}
-    		
-            getSession().setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, userInfoDTO.getUserLoginName());//金服用户登录名
-            getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId().toString());//金服机构id标示
-            getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId().toString());//金服用户名
-           
+    		LoginUtil.putLoginInfo(getSession(), titanFinancialUserService,userInfoDTO.getUserId().toString(),userInfoDTO.getUserLoginName(),userInfoDTO.getTfsUserId().toString());
     	}else{
     		log.error("用户信息不存在!刷新登录用户session失败.");
 		}

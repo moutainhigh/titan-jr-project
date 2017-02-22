@@ -48,7 +48,9 @@
 			    </c:choose>
 			</div>
 		</div>
-		<jsp:include page="footer.jsp"/>
+		<div class="h_40"></div>
+		<!-- 版权 -->
+		<jsp:include page="/comm/foot.jsp"></jsp:include>
 		<!-- 查看示例 -->
 		<div class="dn" id="example">
 		<div class="example">
