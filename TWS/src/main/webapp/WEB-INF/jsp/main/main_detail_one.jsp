@@ -4,7 +4,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>金融首页</title>
+	<title>安全的账户体系-泰坦钱包</title>
 	<jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>

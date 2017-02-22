@@ -4,7 +4,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>金融首页</title>
+	<title>泰坦钱包</title>
 	<jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
@@ -96,16 +96,7 @@
 </div>
 
 <!-- 版权 -->
-<div class="footer1">
-	<div class="f_bd">
-		<div class="fl">
-			Copyright © 2012-2016, fangcang.com. All Rights Reserved 泰坦云 版权所有 粤ICP备13046150号	
-		</div>
-		<div class="fl f_bd_r">
-		<script charset="utf-8" type="text/javascript" src="http://szcert.ebs.org.cn/govicon.js?id=78ccac39-a97a-452c-9f81-162cd840cff6&amp;width=130&amp;height=50&amp;type=2" id="ebsgovicon"></script>
-		</div>
-	</div>	
-</div>
+<jsp:include page="/comm/foot-line.jsp"></jsp:include>
 
 
 <script type="text/javascript">
