@@ -31,6 +31,7 @@ import com.fangcang.titanjr.pay.services.TitanTradeService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 
@@ -87,6 +88,7 @@ public class TitanPaymentController extends BaseController {
 	@Resource
 	private TitanCashierDeskService titanCashierDeskService;
 	
+	
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	/**
 	 * 消息回调接口
@@ -107,7 +109,7 @@ public class TitanPaymentController extends BaseController {
 		response.flushBuffer();
 		log.info(orderNo+"订单状态："+rechargeResultConfirmRequest.getPayStatus());
 		
-		String sign  =titanFinancialTradeService.getSign(rechargeResultConfirmRequest);
+		String sign  =titanPaymentService.getSign(rechargeResultConfirmRequest);
 		String signMsg = rechargeResultConfirmRequest.getSignMsg();
     	if(!MD5.MD5Encode(sign, "UTF-8").equals(signMsg)){
     	   log.error("signature verification is fail,The data is:"+JsonConversionTool.toJson(rechargeResultConfirmRequest));
@@ -145,7 +147,7 @@ public class TitanPaymentController extends BaseController {
 			int row = titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.RECHARFE_SUCCESS.getStatus()+"");
         	if(row<1){
         		log.error("更新充值单失败");	
-        		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "充值成功 修改充值单失败", OrderExceptionEnum.OrderPay_Update, JSON.toJSONString(orderNo));
+        		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "充值成功修改充值单失败", OrderExceptionEnum.OrderPay_Update, JSON.toJSONString(orderNo));
         		titanOrderService.saveOrderException(orderExceptionDTO);
         	}
         	
@@ -184,7 +186,7 @@ public class TitanPaymentController extends BaseController {
     					}else{
     						log.error("update the status of the order was failed,the msg is "+JsonConversionTool.toJson(transferRequest));
     						orderStatusEnum = OrderStatusEnum.FREEZE_FAIL;
-    						OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "freeze the order was failed", OrderExceptionEnum.Freeze_Insert, JSON.toJSONString(transferRequest));
+    						OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "转账成功冻结失败", OrderExceptionEnum.Freeze_Insert, JSON.toJSONString(transferRequest));
         	        		titanOrderService.saveOrderException(orderExceptionDTO);
     					}
 	        		}
@@ -205,8 +207,8 @@ public class TitanPaymentController extends BaseController {
 			boolean updateStatus = titanPaymentService.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
 			
 			if(!updateStatus){//udate the status was failed 
-				log.error("update the status of the order were failed");
-				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "freeze was successed but update the status was failed ", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(transOrderDTO.getTransid()));
+				log.error("冻结成功修改订单状态失败：update the status of the order were failed");
+				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(orderNo, "冻结成功修改订单状态失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(transOrderDTO.getTransid()));
         		titanOrderService.saveOrderException(orderExceptionDTO);
 			}
         	
@@ -320,7 +322,7 @@ public class TitanPaymentController extends BaseController {
 			orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
 			boolean updateStatus = titanPaymentService.updateOrderStatus(transOrder.getTransid(),orderStatusEnum);
 			if(!updateStatus){
-				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrder.getOrderid(), "冻结成功 修改订单状态失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(transOrder.getTransid()));
+				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrder.getOrderid(), "转账失败修改订单状态失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(transOrder.getTransid()));
 				titanOrderService.saveOrderException(orderExceptionDTO);
 			}
 			return toMsgJson(TitanMsgCodeEnum.TRANSFER_FAIL);
@@ -336,7 +338,7 @@ public class TitanPaymentController extends BaseController {
 			}else{
 				log.error("freeze the order was failed");
 				orderStatusEnum =OrderStatusEnum.FREEZE_FAIL;
-				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(localOrderResp.getOrderNo(), "冻结失败", OrderExceptionEnum.Freeze_Insert, JSON.toJSONString(transferRequest));
+				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(localOrderResp.getOrderNo(), "转账成功冻结失败", OrderExceptionEnum.Freeze_Insert, JSON.toJSONString(transferRequest));
         		titanOrderService.saveOrderException(orderExceptionDTO);
 			}
 		}
@@ -348,7 +350,7 @@ public class TitanPaymentController extends BaseController {
 		
 		boolean updateStatus = titanPaymentService.updateOrderStatus(transOrder.getTransid(),orderStatusEnum);
 		if(!updateStatus){
-			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrder.getOrderid(), "冻结成功 修改订单状态失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(transOrder.getTransid()));
+			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrder.getOrderid(), "冻结成功修改订单状态失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(transOrder.getTransid()));
 			titanOrderService.saveOrderException(orderExceptionDTO);
 		}
 		
