@@ -294,6 +294,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 							}else{
 								TitanFundFreezereq titanFundFreezereq = new TitanFundFreezereq();
 								titanFundFreezereq.setFreezereqid(rechargeResultConfirmRequest.getFreezereqId());
+								titanFundFreezereq.setRequestno(balanceFreezeRequest.getRequestno());
 								titanFundFreezereq.setAuthcode(balanceFreezeResponse.getAuthcode());
 								int row = titanFundFreezereqDao.update(titanFundFreezereq);
 								if(row<1){

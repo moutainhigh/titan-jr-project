@@ -42,6 +42,9 @@
        <if test="status !=null">
         status =#{status}
        </if>
+       <if test="userOrderId !=null">
+        userOrderId=#{userOrderId}
+       </if>
      </where>
   </select>
   

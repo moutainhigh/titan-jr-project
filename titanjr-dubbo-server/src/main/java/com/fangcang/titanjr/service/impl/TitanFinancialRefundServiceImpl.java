@@ -126,6 +126,8 @@ public class TitanFinancialRefundServiceImpl implements
 					isFreeze = true;
 					return response;
 				}
+				//后面会用这个ID更新订单
+				titanTransferDTO.setTransorderid(titanTransferReq.getTransorderid());
 			} else {//现在这一步基本不会出现，因为对在恢复操作中对退款转账单做了物理删除
 				if (null == titanTransferDTOList.get(0) || null == titanTransferDTOList.get(0).getTransferreqid()) {
 					log.error("退款单异常");
@@ -216,7 +218,7 @@ public class TitanFinancialRefundServiceImpl implements
 				isFreeze = true;
 				return response;
 			}
-
+			
 			log.info("6.6回调通知网关退款");
 			NotifyRefundRequest notifyRefundRequest = this.convertToNotifyRefundRequest(refundRequest);
 			notifyRefundRequest.setRefundOrderno(refundOrderResponse.getRefundOrderNo());
@@ -530,6 +532,15 @@ public class TitanFinancialRefundServiceImpl implements
 		List<FundFreezeDTO> fundFreezeDTOList = titanFundFreezereqDao.queryFundFreezeDTOByOrderNo(refundRequest.getOrderNo());
 		if(fundFreezeDTOList ==null || fundFreezeDTOList.size()<1){
 			log.info("该冻结暂时没有解冻记录,无需更改");
+			return ;
+		}
+		
+		//查询是否已成功下了退款单，如果已经成功下了退款单就不能进行恢复操作了。
+		RefundDTO refund = new RefundDTO();
+		refund.setUserOrderId(refundRequest.getUserOrderId());
+		List<RefundDTO> refundList = titanRefundDao.queryRefundDTO(refund);
+		if(refundList!=null && refundList.get(0)!=null ){
+			log.error("退款单已在落单,不能进行恢复操作了");
 			return ;
 		}
 		
