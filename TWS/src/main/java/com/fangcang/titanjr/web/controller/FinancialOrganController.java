@@ -29,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
 import com.fangcang.titanjr.common.enums.SMSType;
-import com.fangcang.titanjr.common.enums.UserSourceEnum;
+import com.fangcang.titanjr.common.enums.CoopTypeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
@@ -333,7 +333,7 @@ public class FinancialOrganController extends BaseController {
 	    	organRegisterRequest.setConnect(orgRegPojo.getConnect());
 	    	organRegisterRequest.setMobileTel(orgRegPojo.getMobiletel());
 	    	//渠道号要用密文
-	    	int registerSource = UserSourceEnum.TWS.getKey();
+	    	int registerSource = CoopTypeEnum.TWS.getKey();
 	    	boolean isNeedNofiy = false;
 	    	CoopRegInfo coopRegInfo = null;
 	    	if(StringUtil.isValidString(regUserLoginInfo.getChannel())){

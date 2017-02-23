@@ -12,6 +12,7 @@ public class OrgBindInfo implements Serializable{
 	private static final long serialVersionUID = 1L;
 	//绑定的商家编码
     private String merchantCode;
+    private Integer coopType;
     private String merchantName;
     //1.已绑定，0.未绑定
     private Integer bindStatus;
@@ -59,4 +60,13 @@ public class OrgBindInfo implements Serializable{
 	public void setUserid(String userid) {
 		this.userid = userid;
 	}
+
+	public Integer getCoopType() {
+		return coopType;
+	}
+
+	public void setCoopType(Integer coopType) {
+		this.coopType = coopType;
+	}
+	
 }

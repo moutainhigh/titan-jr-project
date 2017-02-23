@@ -5,7 +5,7 @@ package com.fangcang.titanjr.common.enums;
  * @author luoqinglong
  * @2016年6月3日
  */
-public enum UserSourceEnum {
+public enum CoopTypeEnum {
 	TFS(1,"TFS"),SAAS(2,"SAAS"),AUTO(3,"后台自动"),TTM(4,"TTM"),TWS(5,"泰坦钱包");
 	
 	/**
@@ -15,13 +15,13 @@ public enum UserSourceEnum {
 	
 	private String des; 
 	
-	private UserSourceEnum(int key,String des){
+	private CoopTypeEnum(int key,String des){
 		this.key = key;
 		this.des = des;
 	}
-	public static UserSourceEnum  getEnumByKey(int key){
-		UserSourceEnum entity = null;
-		for(UserSourceEnum item : UserSourceEnum.values()) {
+	public static CoopTypeEnum  getEnumByKey(int key){
+		CoopTypeEnum entity = null;
+		for(CoopTypeEnum item : CoopTypeEnum.values()) {
 			if(item.key == key) {
 				entity = item;
 				break;

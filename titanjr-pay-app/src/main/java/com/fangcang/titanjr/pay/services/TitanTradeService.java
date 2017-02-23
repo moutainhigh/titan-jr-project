@@ -21,7 +21,6 @@ import com.fangcang.merchant.api.MerchantFacade;
 import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
-import com.fangcang.titanjr.common.enums.UserSourceEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;

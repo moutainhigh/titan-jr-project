@@ -37,7 +37,7 @@ import com.fangcang.security.domain.User;
 import com.fangcang.security.facade.RoleFacade;
 import com.fangcang.security.facade.UserFacade;
 import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
-import com.fangcang.titanjr.common.enums.UserSourceEnum;
+import com.fangcang.titanjr.common.enums.CoopTypeEnum;
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanCheckCodeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
@@ -170,7 +170,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
             return response;
         }
         //SaaS页面注册时，商家编码和房仓登录名不能为空
-        if (userRegisterRequest.getRegisterSource() == UserSourceEnum.SAAS.getKey()) {
+        if (userRegisterRequest.getRegisterSource() == CoopTypeEnum.SAAS.getKey()) {
             if (!StringUtil.isValidString(userRegisterRequest.getFcLoginUserName()) ||
                     !StringUtil.isValidString(userRegisterRequest.getMerchantCode())) {
                 response.putParamError();
@@ -186,7 +186,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         }
 
         //SAAS验证用户是否存在当前商家,2016-12-23
-        if(userRegisterRequest.getRegisterSource()==UserSourceEnum.SAAS.getKey()){
+        if(userRegisterRequest.getRegisterSource()==CoopTypeEnum.SAAS.getKey()){
         	 MerchantUserCheckDTO checkDTO = new MerchantUserCheckDTO();
              checkDTO.setUserLoginName(userRegisterRequest.getLoginUserName());
              //TODO 检测机制要改变下，如果重复的用户属于金服的商家编码，则允许重复创建。但要修改相应的数据
@@ -215,10 +215,10 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 
         //2.saas页面注册时金服添加用户绑定关系
         Long orgiUserId = null;//SaaS注册时存在，当前登录的SaaS用户的用户id
-        if (userRegisterRequest.getRegisterSource() == UserSourceEnum.SAAS.getKey()||userRegisterRequest.getRegisterSource() == UserSourceEnum.TTM.getKey()) {
+        if (userRegisterRequest.getRegisterSource() == CoopTypeEnum.SAAS.getKey()||userRegisterRequest.getRegisterSource() == CoopTypeEnum.TTM.getKey()) {
         	TitanUserBindInfo bindInfo = new TitanUserBindInfo();
         	//查询房仓金服商家已添加上的用户
-            if(userRegisterRequest.getRegisterSource() == UserSourceEnum.SAAS.getKey()){
+            if(userRegisterRequest.getRegisterSource() == CoopTypeEnum.SAAS.getKey()){
             	MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
                 List<String> loginNameList = new ArrayList<String>();
                 loginNameList.add(userRegisterRequest.getFcLoginUserName());
@@ -275,7 +275,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
             log.error("金融权限添加失败，抛出异常回滚,userid:"+userRegisterRequest.getUserId());
             throw new Exception("金融权限初始化失败");
         }
-        if(userRegisterRequest.getRegisterSource() == UserSourceEnum.SAAS.getKey()){
+        if(userRegisterRequest.getRegisterSource() == CoopTypeEnum.SAAS.getKey()){
 	        //4.SaaS系统添加员工属于固定金服商家（需配置起来）
 	        MerchantDetailQueryDTO merchantDetailQueryDTO = new MerchantDetailQueryDTO();
 	        merchantDetailQueryDTO.setMerchantCode(RSInvokeConstant.defaultMerchant);
@@ -1078,7 +1078,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 			TitanUserBindInfo titanUserBindInfo = new TitanUserBindInfo();
 			titanUserBindInfo.setFcuserid(titanUserBindInfoDTO.getFcuserid());
 			if(titanUserBindInfoDTO.getCooptype()==null){
-				titanUserBindInfo.setCooptype(UserSourceEnum.SAAS.getKey());
+				titanUserBindInfo.setCooptype(CoopTypeEnum.SAAS.getKey());
 			}else{
 				titanUserBindInfo.setCooptype(titanUserBindInfoDTO.getCooptype());
 			}
