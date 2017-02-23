@@ -391,10 +391,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				row = titanTransOrderDao.updateTitanTransOrderByTransId(titanTransOrder);
 			}
 			if (row < 1) {
-				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(
-						titanTransOrder.getOrderid(), "融数落单成功 本地记录失败",
-						OrderExceptionEnum.TransOrder_Insert,
-						JSON.toJSONString(titanTransOrder));
+				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(titanTransOrder.getOrderid(),
+						"融数落单成功 本地记录失败",OrderExceptionEnum.TransOrder_Insert,JSON.toJSONString(titanTransOrder));
 				titanOrderService.saveOrderException(orderExceptionDTO);
 				return false;
 			}
@@ -1790,7 +1788,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				    	orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
 				    	if(!freezeAccountBalanceResponse.isFreezeSuccess()){//冻结不成功
 				    		orderStatusEnum = OrderStatusEnum.FREEZE_FAIL;
-				    		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(repairTransferDTO.getOrderid(), "冻结失败", OrderExceptionEnum.Freeze_Insert, "");
+				    		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(repairTransferDTO.getOrderid(), "修复交易单冻结失败", OrderExceptionEnum.Freeze_Insert, "");
 						    titanOrderService.saveOrderException(orderExceptionDTO);
 						}
 						log.info("修改单:"+JSONSerializer.toJSON(orderStatusEnum));
@@ -1801,7 +1799,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				    transOrderDTO.setTransid(repairTransferDTO.getTransid());
 					boolean updateStatus = titanOrderService.updateTransOrder(transOrderDTO);
 					if(!updateStatus &&repairTransferDTO.getTransid() !=null){
-						OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(repairTransferDTO.getTransid().toString(), "修改订单失败", OrderExceptionEnum.TransOrder_update, orderStatusEnum.getStatus());
+						OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(repairTransferDTO.getTransid().toString(), "修复交易单更新交易单状态失败",
+								OrderExceptionEnum.TransOrder_update, orderStatusEnum.getStatus());
 						titanOrderService.saveOrderException(orderExceptionDTO);
 					}
 				   
@@ -1902,11 +1901,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	/**
 	 * 更新订单中携带的业务信息
 	 * 
-	 * @param newBusinessInfo
+	 * @param transId
 	 * @throws ParseException 
 	 */
-	private void updateTransOrderBussInfo(Integer transId,
-			TitanOrderRequest titanOrderRequest , String oldBussInfo) {
+	private void updateTransOrderBussInfo(Integer transId, TitanOrderRequest titanOrderRequest, String oldBussInfo) {
 
 		if (StringUtil.isValidString(JsonConversionTool.toJson(titanOrderRequest
 				.getBusinessInfo()))){
