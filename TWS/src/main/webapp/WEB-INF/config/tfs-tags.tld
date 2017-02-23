@@ -14,6 +14,11 @@
 		<function-class>com.fangcang.titanjr.common.util.Tools</function-class>
 		<function-signature>java.lang.String redKeyword(java.lang.String,java.lang.String)</function-signature>
 	</function>
-	
+	<function>
+		<description>encrypt with AES </description>
+		<name>encryptAES</name>
+		<function-class>com.fangcang.titanjr.common.util.AESUtil</function-class>
+		<function-signature>java.lang.String encrypt(java.lang.String)</function-signature>
+	</function>
 	
 </taglib>

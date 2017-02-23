@@ -22,7 +22,7 @@
 			<div class="sr_crumbs">我的账户  >  泰坦钱包设置  >  员工权限设置  >  修改员工权限</div>			
 			<div class="sr_staff clearfix" >
 				<div class="TFS_addnew clearfix" id="employee_add">
-			    	<input type="hidden" id="tfsUserId" value="${tfsUserId }">
+			    	<input type="hidden" id="tfsUserId" value="${tfs:encryptAES(tfsUserId)}">
 			    	<input type="hidden" id="roleIds" value="${roleIds }">
 			    	<input type="hidden" id="tUserLoginName" value="${userInfoDTO.userLoginName }">
 			    	<input type="hidden" id="tUserName" value="${userInfoDTO.userName }">

@@ -46,7 +46,7 @@
 			</c:if>
 		</c:forEach>
 	</td>
-	<td class="td-data" data-tfs-userloginname="${userInfoDTO.userLoginName}" data-tusername="${userInfoDTO.userName}" data-fc-userloginname="${userInfoDTO.userBindInfoDTO.fcLoginName}" data-tfs-userid="${userInfoDTO.tfsUserId}" data-fc-userid="${userInfoDTO.userBindInfoDTO.fcUserId}" >
+	<td class="td-data" data-tfs-userloginname="${userInfoDTO.userLoginName}" data-tusername="${userInfoDTO.userName}" data-tfs-userid="${tfs:encryptAES(userInfoDTO.tfsUserId)}"  >
 		<div class="TFS_frozenset">
 			<c:if test="${userInfoDTO.isAdmin==0 }">
 				<span class="blue undl curpo J_frozen" data-status="2" <c:if test="${userInfoDTO.status==2 }">style="display:none;"</c:if>>冻结</span>

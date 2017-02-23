@@ -16,6 +16,7 @@ import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,10 @@ import com.fangcang.titanjr.common.enums.UserSourceEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
+import com.fangcang.titanjr.common.util.AESUtil;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
@@ -122,6 +125,7 @@ public class SettingEmployeeController extends BaseController{
 		}
 		return "setting/employee-list-table";
 	}
+	
 	/**
 	 * 新增员工权限
 	 * @return
@@ -164,13 +168,18 @@ public class SettingEmployeeController extends BaseController{
 	 */
 	@RequestMapping("/setting/employee-add")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
-	public String employeeAdd(Integer tfsUserId,Integer fcUserId,Model model){
-		model.addAttribute("tfsUserId", tfsUserId);//新增该变量没有值
+	public String employeeAdd(String tfsUserId,Integer fcUserId,Model model){
+		int tfsUserIdInt = 0;
+		if(StringUtil.isValidString(tfsUserId)){
+			tfsUserIdInt = NumberUtils.toInt(AESUtil.decrypt(tfsUserId));
+		}
+		
+		model.addAttribute("tfsUserId", tfsUserIdInt);//新增该变量没有值
 		model.addAttribute("fcUserId", fcUserId);
 		
-		if(tfsUserId!=null&&tfsUserId>0){
+		if(tfsUserIdInt>0){
 			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
-			userInfoQueryRequest.setTfsUserId(tfsUserId);
+			userInfoQueryRequest.setTfsUserId(tfsUserIdInt);
 			UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
 			
 			if(userInfoResponse.getUserInfoDTOList()!=null&&userInfoResponse.getUserInfoDTOList().size()>0){
@@ -188,7 +197,7 @@ public class SettingEmployeeController extends BaseController{
 				
 				return "setting/employee-update";
 			}
-			model.addAttribute("errormsg", "数据信息不存在");
+			model.addAttribute("errormsg", "数据信息不存在,请确认用户id是否合法");
 			return "error";
 		} 
 		return "setting/employee-add";
@@ -219,22 +228,11 @@ public class SettingEmployeeController extends BaseController{
 		
 		String userId = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID);
 		
-		//SaaSUserRoleRequest saaSUserRoleRequest = new SaaSUserRoleRequest();
-		//saaSUserRoleRequest.setFcUserId(employeePojo.getFcUserId());
-		//SaaSUserRoleResponse saaSUserRoleResponse = new SaaSUserRoleResponse();
-		//try {
-		//	saaSUserRoleResponse = titanFinancialUserService.querySaaSUserRolePage(saaSUserRoleRequest);
-		//} catch (GlobalServiceException e) {
-		//	log.error("查询saas用户失败，参数employeePojo:" +ToStringBuilder.reflectionToString(employeePojo), e);
-		//	putSysError(WebConstant.CONTROLLER_ERROR_MSG);
-		//	return toJson();
-		//}
-		//SaaSMerchantUserDTO saaSMerchantUserDTO =saaSUserRoleResponse.getPaginationSupport().getItemList().get(0);
+		 
 		//新增用户
 		UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
 		userRegisterRequest.setOperateTime(DateUtil.dateToString(DateUtil.getCurrentDate()));
     	userRegisterRequest.setIsAdminUser(0);
-		//userRegisterRequest.setFcLoginUserName(saaSMerchantUserDTO.getUserLoginName());
     	userRegisterRequest.setLoginUserName(employeePojo.getReceiveAddress());
     	userRegisterRequest.setUserName(employeePojo.getUserName());
     	userRegisterRequest.setOrgCode(userId);
@@ -242,7 +240,7 @@ public class SettingEmployeeController extends BaseController{
     	userRegisterRequest.setUnselectRoleIdList(toList(employeePojo.getUncheckedRoleId()));
     	//生成一个密码
     	userRegisterRequest.setPassword(RandomStringUtils.randomAlphabetic(6));
-    	userRegisterRequest.setRegisterSource(UserSourceEnum.TFS.getKey());
+    	userRegisterRequest.setRegisterSource(UserSourceEnum.TWS.getKey());
     	userRegisterRequest.setUserId(userId);//金服机构
     	try {
 			UserRegisterResponse respose = titanFinancialUserService.registerFinancialUser(userRegisterRequest);
