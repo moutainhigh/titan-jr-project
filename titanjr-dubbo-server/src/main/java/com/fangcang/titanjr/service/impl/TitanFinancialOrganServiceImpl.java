@@ -185,6 +185,10 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
         		response.putErrorResult("参数错误，必填参数不能为空");
         		return response;
         	}
+        	if(StringUtil.isValidString(request.getMerchantcode())&&request.getCoopType()==null){
+        		response.putErrorResult("参数错误，合作方类型不能为空");
+        		return response;
+        	}
             PaginationSupport<FinancialOrganDTO> paginationSupport = new PaginationSupport<FinancialOrganDTO>();
             paginationSupport =  titanOrgDao.queryTitanOrgForPage(request, paginationSupport);
             if(paginationSupport.getItemList()!=null&&paginationSupport.getItemList().size()==1){
@@ -213,7 +217,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
         		return response;
         	}
             PaginationSupport<FinancialOrganDTO> paginationSupport = new PaginationSupport<FinancialOrganDTO>();
-            paginationSupport =  titanOrgDao.queryTitanOrgForPage(request, paginationSupport);
+            paginationSupport =  titanOrgDao.queryBaseTitanOrgForPage(request, paginationSupport);
             if(paginationSupport.getItemList()!=null&&paginationSupport.getItemList().size()==1){
             	response.setFinancialOrganDTO(paginationSupport.getItemList().get(0));
             	response.putSuccess();
@@ -584,7 +588,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	if(organRegisterRequest.getRegisterSource()==UserSourceEnum.SAAS.getKey()||organRegisterRequest.getRegisterSource()==UserSourceEnum.TTM.getKey()){
     		registerFromCoop(organRegisterRequest);
     		addOrgCheck(organRegisterRequest.getOrgCode(),organRegisterRequest.getOperator());
-    	}else if(organRegisterRequest.getRegisterSource()==UserSourceEnum.TFS.getKey()){
+    	}else if(organRegisterRequest.getRegisterSource()==UserSourceEnum.TWS.getKey()){
     		registerFromJinfuSite(organRegisterRequest);
     		addOrgCheck(organRegisterRequest.getOrgCode(),organRegisterRequest.getOperator());
     	}else if(organRegisterRequest.getRegisterSource()==UserSourceEnum.AUTO.getKey()){
@@ -596,7 +600,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     		organCheckRequest.setOrgId(titanOrg.getOrgid());
     		checkFinancialOrgan(organCheckRequest);
     	}else{
-    		LOGGER.error("注册参数："+JSONSerializer.toJSON(organRegisterRequest).toString());
+    		LOGGER.error("无法注册，注册来源未知，注册参数："+JSONSerializer.toJSON(organRegisterRequest).toString());
     		response.putErrorResult("-1", "未知的注册来源");
     	}
     	

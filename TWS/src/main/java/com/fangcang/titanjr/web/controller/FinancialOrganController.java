@@ -334,24 +334,27 @@ public class FinancialOrganController extends BaseController {
 	    	organRegisterRequest.setMobileTel(orgRegPojo.getMobiletel());
 	    	//渠道号要用密文
 	    	int registerSource = UserSourceEnum.TWS.getKey();
-	    	CoopRequest coopRequest = new CoopRequest();
-	    	coopRequest.setMixcode(regUserLoginInfo.getChannel());
-    		CoopResponse coopResponse = baseInfoService.getOneCoop(coopRequest);
-    		boolean isNeedNofiy = false;
-    		if(coopResponse.isResult()&&coopResponse.getCoopDTO()!=null){
-    	    	registerSource = coopResponse.getCoopDTO().getCoopType();
-    	    	isNeedNofiy = true;
-    		}
+	    	boolean isNeedNofiy = false;
+	    	CoopRegInfo coopRegInfo = null;
+	    	if(StringUtil.isValidString(regUserLoginInfo.getChannel())){
+	    		CoopRequest coopRequest = new CoopRequest();
+		    	coopRequest.setMixcode(regUserLoginInfo.getChannel());
+	    		CoopResponse coopResponse = baseInfoService.getOneCoop(coopRequest);
+	    		if(coopResponse.isResult()&&coopResponse.getCoopDTO()!=null){
+	    	    	registerSource = coopResponse.getCoopDTO().getCoopType();
+	    	    	isNeedNofiy = true;
+	    		}
+		    	//合作方信息
+		    	coopRegInfo = decryptRegInfo(regUserLoginInfo);
+		    	if(coopRegInfo!=null){
+		    		organRegisterRequest.setFcLoginUserName(coopRegInfo.getCoopLoginName());
+		    		organRegisterRequest.setCoopUserId(coopRegInfo.getCoopUserId());
+		    		organRegisterRequest.setMerchantCode(coopRegInfo.getCoopOrgCode());
+		    		organRegisterRequest.setMerchantname(coopRegInfo.getCoopOrgName());
+		    	}
+	    	}
 	    	
 	    	organRegisterRequest.setRegisterSource(registerSource);
-	    	//合作方信息
-	    	CoopRegInfo coopRegInfo = decryptRegInfo(regUserLoginInfo);
-	    	if(coopRegInfo!=null){
-	    		organRegisterRequest.setFcLoginUserName(coopRegInfo.getCoopLoginName());
-	    		organRegisterRequest.setCoopUserId(coopRegInfo.getCoopUserId());
-	    		organRegisterRequest.setMerchantCode(coopRegInfo.getCoopOrgCode());
-	    		organRegisterRequest.setMerchantname(coopRegInfo.getCoopOrgName());
-	    	}
 	    	
 	    	if(orgRegPojo.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
 	    		//企业

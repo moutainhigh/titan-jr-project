@@ -5,6 +5,7 @@ import com.fangcang.titanjr.common.enums.BusTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierDeskTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
 import com.fangcang.titanjr.common.enums.SupportBankEnum;
+import com.fangcang.titanjr.common.enums.UserSourceEnum;
 import com.fangcang.titanjr.dao.TitanCashierDeskDao;
 import com.fangcang.titanjr.dao.TitanCashierDeskItemDao;
 import com.fangcang.titanjr.dao.TitanCashierItemBankDao;
@@ -82,7 +83,8 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
                 if (StringUtil.isValidString(cashierDeskQueryRequest.getPayerOrgCode())) {//验证付款方编码
                     FinancialOrganQueryRequest titanOrgQueryDTO = new FinancialOrganQueryRequest();
                     titanOrgQueryDTO.setMerchantcode(cashierDeskQueryRequest.getPayerOrgCode());
-                    titanFinancialOrganService.queryFinancialOrgan(titanOrgQueryDTO);
+                    titanOrgQueryDTO.setCoopType(UserSourceEnum.SAAS.getKey());//默认查SAAS合作方，兼容性
+                    titanFinancialOrganService.queryBaseFinancialOrgan(titanOrgQueryDTO);
                 }
             }
             deskResponse.putSuccess();

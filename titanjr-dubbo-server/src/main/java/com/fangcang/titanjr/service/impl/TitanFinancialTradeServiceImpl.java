@@ -1755,7 +1755,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 		organQueryRequest.setUserId(orgUserId);
 		FinancialOrganResponse organResponse = titanFinancialOrganService
-				.queryFinancialOrgan(organQueryRequest);
+				.queryBaseFinancialOrgan(organQueryRequest);
 		if (organResponse.isResult()
 				&& organResponse.getFinancialOrganDTO() != null) {
 			result = organResponse.getFinancialOrganDTO().getOrgName();

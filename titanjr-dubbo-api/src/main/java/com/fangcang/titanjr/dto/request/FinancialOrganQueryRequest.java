@@ -44,6 +44,8 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 
 	//注册渠道，提供对外查询可用
 	private Integer regchannel;
+	//合作方类型:SAAS:2,TTM:4
+	private Integer coopType;
     
     public Integer getOrgId() {
 		return orgId;
@@ -172,4 +174,13 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 	public void setRegchannel(Integer regchannel) {
 		this.regchannel = regchannel;
 	}
+
+	public Integer getCoopType() {
+		return coopType;
+	}
+
+	public void setCoopType(Integer coopType) {
+		this.coopType = coopType;
+	}
+	
 }

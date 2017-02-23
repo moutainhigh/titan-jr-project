@@ -435,7 +435,7 @@ public class TitanWithdrawController extends BaseController {
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 		organQueryRequest.setUserId(userId);
 		FinancialOrganResponse organOrganResponse = titanFinancialOrganService
-				.queryFinancialOrgan(organQueryRequest);
+				.queryBaseFinancialOrgan(organQueryRequest);
 		if (organOrganResponse.isResult()) {
 			return organOrganResponse.getFinancialOrganDTO();
 		}

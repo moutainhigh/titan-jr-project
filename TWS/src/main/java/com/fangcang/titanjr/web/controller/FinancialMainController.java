@@ -136,7 +136,7 @@ public class FinancialMainController extends BaseController {
         		UserInfoDTO userInfo =	userInfoResponse.getUserInfoDTOList().get(0);
         		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
             	organQueryRequest.setUserId(userInfo.getUserId());
-            	FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+            	FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
 				if (organOrganResponse.isResult()) {
 					
 					CheckStatus checkStatus = organOrganResponse.getFinancialOrganDTO().getCheckStatus();

@@ -138,7 +138,7 @@ public class FinancialAccountController extends BaseController {
     	//判断是否为对公账户
     	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
     	organQueryRequest.setUserId(this.getUserId());
-    	FinancialOrganResponse response  = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+    	FinancialOrganResponse response  = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
         if(response.isResult()){
         	FinancialOrganDTO financialOrganDTO = response.getFinancialOrganDTO();
         	if(financialOrganDTO !=null && financialOrganDTO.getUserType()!=null){
@@ -226,7 +226,7 @@ public class FinancialAccountController extends BaseController {
         //付款时需查出当前机构
         FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
         organQueryRequest.setUserId(this.getUserId());
-        FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+        FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
         model.addAttribute("organ", organOrganResponse.getFinancialOrganDTO());
         return "account-overview/order-pay-detail";
     }
@@ -775,7 +775,7 @@ public class FinancialAccountController extends BaseController {
     private FinancialOrganDTO getTitanOrganDTO(){
         FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
         organQueryRequest.setUserId(this.getUserId());
-        FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+        FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
         if (organOrganResponse.isResult()){
             return organOrganResponse.getFinancialOrganDTO();
         }
