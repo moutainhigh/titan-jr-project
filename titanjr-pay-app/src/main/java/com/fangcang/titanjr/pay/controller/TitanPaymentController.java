@@ -31,6 +31,7 @@ import com.fangcang.titanjr.pay.services.TitanTradeService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 
@@ -87,6 +88,7 @@ public class TitanPaymentController extends BaseController {
 	@Resource
 	private TitanCashierDeskService titanCashierDeskService;
 	
+	
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	/**
 	 * 消息回调接口
@@ -107,7 +109,7 @@ public class TitanPaymentController extends BaseController {
 		response.flushBuffer();
 		log.info(orderNo+"订单状态："+rechargeResultConfirmRequest.getPayStatus());
 		
-		String sign  =titanFinancialTradeService.getSign(rechargeResultConfirmRequest);
+		String sign  =titanPaymentService.getSign(rechargeResultConfirmRequest);
 		String signMsg = rechargeResultConfirmRequest.getSignMsg();
     	if(!MD5.MD5Encode(sign, "UTF-8").equals(signMsg)){
     	   log.error("signature verification is fail,The data is:"+JsonConversionTool.toJson(rechargeResultConfirmRequest));

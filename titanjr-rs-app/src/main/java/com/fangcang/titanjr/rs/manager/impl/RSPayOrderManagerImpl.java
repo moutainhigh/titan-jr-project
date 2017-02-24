@@ -26,35 +26,6 @@ public class RSPayOrderManagerImpl implements RSPayOrderManager{
 
 	private static final Log log = LogFactory
 			.getLog(RSOrganizationManagerImpl.class);
-	@Override
-	public RSPayOrderResponse getPayPage(RSPayOrderRequest rsPayOrderRequest) {
-		RSPayOrderResponse response = new RSPayOrderResponse();
-		try{
-			if(rsPayOrderRequest !=null){
-				//校验
-				rsPayOrderRequest.check();
-				rsPayOrderRequest.setKey(RSInvokeConstant.rsCheckKey);
-				String sign = getSigStr(rsPayOrderRequest);
-				if(sign!=null){
-					rsPayOrderRequest.setSignMsg(getSigStr(sign));
-					response.setSuccess(true);
-					response.setOperateStatus("true");
-					response.setRsPayOrderRequest(rsPayOrderRequest);
-					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
-				}
-			}
-		} catch (RSValidateException re) {
-			response.setReturnCode(re.getErrorCode());
-			response.setReturnMsg(re.getErrorMsg());
-			log.error("调用getPayPage参数校验异常", re);	
-		} catch (Exception e) {
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg(e.getMessage());
-			log.error("调用getPayPage过程出现未知异常", e);
-		}
-		return response;
-	}
 
 	@Override
 	public PayResultResponse queryPayResult(RSPayOrderRequest rsPayOrderRequest) {
@@ -110,36 +81,6 @@ public class RSPayOrderManagerImpl implements RSPayOrderManager{
 		paramMap.put("signMsg", getSigStr(sign));
 		String resultStr = sendHttpClientRequest(paramMap,"http://192.168.1.96:8080/TFS/pay/notify.action");
 		return resultStr;
-	}
-	
-	
-	/**
-	 * 获取签名的字符串
-	 * @param rsPayOrderRequest
-	 * @return
-	 * @author fangdaikang
-	 */
-	private String getSigStr(RSPayOrderRequest rsPayOrderRequest){
-		StringBuffer sign = new StringBuffer();
-		if(rsPayOrderRequest !=null){
-			sign.append("merchantNo=");
-			sign.append(rsPayOrderRequest.getMerchantNo());
-			sign.append("&orderNo=");
-			sign.append(rsPayOrderRequest.getOrderNo());
-			sign.append("&orderAmount=");
-			sign.append(rsPayOrderRequest.getOrderAmount());
-			sign.append("&payType=");
-			sign.append(rsPayOrderRequest.getPayType());
-			sign.append("&orderTime=");
-			sign.append(rsPayOrderRequest.getOrderTime());
-			sign.append("&signType=");
-			sign.append(rsPayOrderRequest.getSignType());
-			sign.append("&version=");
-			sign.append(rsPayOrderRequest.getVersion());
-			sign.append("&key=");
-			sign.append(RSInvokeConstant.rsCheckKey);
-		}
-		return sign.toString();
 	}
 	
 	/**

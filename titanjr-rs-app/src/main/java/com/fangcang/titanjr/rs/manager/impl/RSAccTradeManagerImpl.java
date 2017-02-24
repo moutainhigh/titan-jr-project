@@ -543,8 +543,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 	}
 	
 	@Override
-	public OrdernQueryResponse ordernQuery(
-			OrdernQueryRequest ordernQueryRequest) {
+	public OrdernQueryResponse ordernQuery(OrdernQueryRequest ordernQueryRequest) {
 		OrdernQueryResponse response = new OrdernQueryResponse();
 		try{
 			WheatfieldOrdernQueryRequest req = new WheatfieldOrdernQueryRequest();

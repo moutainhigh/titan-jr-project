@@ -140,9 +140,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	private TitanUserDao titanUserDao;
 
 	@Resource
-	private TitanDynamicKeyDao titanDynamicKeyDao;
-
-	@Resource
 	private TitanCashierDeskService titanCashierDeskService;
 
 	@Resource
@@ -154,9 +151,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	@Resource
 	private TitanFinancialUserService titanFinancialUserService;
 
-	@Resource
-	private DomainConfigDao domainConfigDao;
-	
 	@Resource
 	private TitanRefundDao titanRefundDao;
 
@@ -183,7 +177,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			}
 			TransOrderDTO transOrderDTO = transOrderResponse.getTransOrder();
 
-			OrderRequest orderRequest = this.convertorToTitanOrderRequest2(
+			OrderRequest orderRequest = this.convertorToTitanOrderRequest(
 					titanPaymentRequest, transOrderDTO);
 			TitanTransOrder titanTransOrder = orderRequest2TitanTransOrder(orderRequest);
 			if (OrderStatusEnum.isRepeatedPay(transOrderDTO.getStatusid())) {
@@ -322,7 +316,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 			}
 
-			OrderRequest orderRequest = this.convertorToTitanOrderRequest2(
+			OrderRequest orderRequest = this.convertorToTitanOrderRequest(
 					titanPaymentRequest, transOrderDTO);
 
 			if (!StringUtil.isValidString(orderid)) {// 是否在融数落单,
@@ -331,7 +325,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							.genSyncUserOrderId());
 				}
 				OrderOperateResponse orderOperateResponse = this
-						.getOrderId(orderRequest);
+						.addRSOrder(orderRequest);
 
 				if (!orderOperateResponse.getOperateStatus().equals(
 						CommonConstant.OPERATE_SUCCESS)) {// 融数下单不成功
@@ -477,7 +471,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	 * @author fangdaikang
 	 */
 
-	private OrderOperateResponse getOrderId(OrderRequest orderRequest)
+	private OrderOperateResponse addRSOrder(OrderRequest orderRequest)
 			throws Exception {
 		try {
 			OrderOperateRequest req = new OrderOperateRequest();
@@ -743,9 +737,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 //		return null;
 //	}
 
-	// 查询转账，确认转账是否真实成功
-	@Override
-	public boolean confirmTransAccountSuccess(
+	// 查询转账
+	private boolean confirmTransAccountSuccess(
 			AccountTransferFlowRequest accountTransferFlowRequest) {
 		try {
 			if (accountTransferFlowRequest != null) {
@@ -900,24 +893,41 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		}
 
 		log.info("充值获取参数的入参:" + JSON.toJSONString(rsPayOrderRequest));
-		RSPayOrderResponse response = rsPayOrderManager
-				.getPayPage(rsPayOrderRequest);
-		log.info("充值获取参数的结果:" + JSON.toJSONString(response));
-
-		rechargeResponse.putErrorResult(response.getReturnCode(),
-				response.getReturnMsg());
-		if (CommonConstant.OPERATE_SUCCESS.equals(response.getOperateStatus())) {
-			rechargeResponse.putSuccess();
-			RechargeDataDTO rechargeDataDTO = new RechargeDataDTO();
-			MyBeanUtil.copyProperties(rechargeDataDTO,
-					response.getRsPayOrderRequest());
-			rechargeDataDTO.setGateWayUrl(RSInvokeConstant.gateWayURL);
-			rechargeResponse.setRechargeDataDTO(rechargeDataDTO);
-		}
-		// 将网关支付地址返回支付
+		String md5Msg = MD5.MD5Encode(getSigStr(rsPayOrderRequest), "UTF-8");
+		rsPayOrderRequest.setSignMsg(md5Msg);
+		rsPayOrderRequest.setKey(RSInvokeConstant.rsCheckKey);
+		rechargeResponse.putSuccess();
+		RechargeDataDTO rechargeDataDTO = new RechargeDataDTO();
+		MyBeanUtil.copyProperties(rechargeDataDTO,rsPayOrderRequest);
+		rechargeDataDTO.setGateWayUrl(RSInvokeConstant.gateWayURL);
+		rechargeResponse.setRechargeDataDTO(rechargeDataDTO);
 		return rechargeResponse;
 	}
 
+	
+	private String getSigStr(RSPayOrderRequest rsPayOrderRequest){
+		StringBuffer sign = new StringBuffer();
+		if(rsPayOrderRequest !=null){
+			sign.append("merchantNo=");
+			sign.append(rsPayOrderRequest.getMerchantNo());
+			sign.append("&orderNo=");
+			sign.append(rsPayOrderRequest.getOrderNo());
+			sign.append("&orderAmount=");
+			sign.append(rsPayOrderRequest.getOrderAmount());
+			sign.append("&payType=");
+			sign.append(rsPayOrderRequest.getPayType());
+			sign.append("&orderTime=");
+			sign.append(rsPayOrderRequest.getOrderTime());
+			sign.append("&signType=");
+			sign.append(rsPayOrderRequest.getSignType());
+			sign.append("&version=");
+			sign.append(rsPayOrderRequest.getVersion());
+			sign.append("&key=");
+			sign.append(RSInvokeConstant.rsCheckKey);
+		}
+		return sign.toString();
+	}
+	
 
 	/**
 	 * 将充值的请求转换为融数的请求参数
@@ -965,7 +975,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	}
 
 
-	private OrderRequest convertorToTitanOrderRequest2(
+	private OrderRequest convertorToTitanOrderRequest(
 			TitanPaymentRequest titanPaymentRequest, TransOrderDTO transOrderDTO)
 			throws Exception {
 		OrderRequest orderRequest = new OrderRequest();
@@ -1502,98 +1512,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return null;
 	}
 	
-	@Override
-	public PaymentUrlResponse getPaymentUrl(PaymentUrlRequest paymentUrlRequest) {
-		PaymentUrlResponse paymentUrlResponse = new PaymentUrlResponse();
-		if (!GenericValidate.validate(paymentUrlRequest)) {
-			log.error("参数校验失败");
-			paymentUrlResponse.putParamError();
-			return paymentUrlResponse;
-		}
-		// 生成一对秘钥
-		String key = MD5.getSalt();
-		// 保存加密私钥
-		TitanDynamicKey titanDynamicKey = new TitanDynamicKey();
-		titanDynamicKey.setEncryptionkey(key);
-		titanDynamicKey.setPayorderno(paymentUrlRequest.getPayOrderNo());
-		try {
-			titanDynamicKeyDao.delete(titanDynamicKey);
-			titanDynamicKeyDao.insert(titanDynamicKey);
-		} catch (Exception e) {
-			log.error("金融密钥设置失败", e);
-			paymentUrlResponse.putErrorResult("dynamicKey_set_error",
-					"金融密钥设置失败");
-			return paymentUrlResponse;
-		}
-		// 构造参数列表拼接收银台地址
-		StringBuffer cashierDeskURL = buildParamList(paymentUrlRequest);
-		cashierDeskURL.append("&key=").append(key);
-		String sign = MD5.MD5Encode(cashierDeskURL.toString(), "UTF-8");
-		cashierDeskURL.delete(cashierDeskURL.indexOf("&key="),
-				cashierDeskURL.length());
-
-		cashierDeskURL.append("&sign=").append(sign);
-		cashierDeskURL.insert(0, CommonConstant.REQUSET_URL);
-		paymentUrlResponse.setUrl(cashierDeskURL.toString());
-		paymentUrlResponse.putSuccess();
-		return paymentUrlResponse;
-	}
-
-	private StringBuffer buildParamList(PaymentUrlRequest paymentUrlRequest) {
-		StringBuffer paramList = new StringBuffer();
-		if (StringUtil.isValidString(paymentUrlRequest.getMerchantcode())) {
-			paramList.append("?merchantcode=").append(
-					paymentUrlRequest.getMerchantcode());
-		} else {
-			paramList.append("?merchantcode=");
-		}
-		if (StringUtil.isValidString(paymentUrlRequest.getFcUserid())) {
-			paramList.append("&fcUserid=").append(
-					paymentUrlRequest.getFcUserid());
-		} else {
-			paramList.append("&fcUserid=");
-		}
-		paramList.append("&payOrderNo=").append(
-				paymentUrlRequest.getPayOrderNo());
-		paramList.append("&paySource=")
-				.append(paymentUrlRequest.getPaySource());
-
-		if (StringUtil.isValidString(paymentUrlRequest.getOperater())) {
-			paramList.append("&operater=").append(
-					paymentUrlRequest.getOperater());
-		} else {
-			paramList.append("&operater=");
-		}
-		if (StringUtil
-				.isValidString(paymentUrlRequest.getRecieveMerchantCode())) {
-			paramList.append("&recieveMerchantCode=").append(
-					paymentUrlRequest.getRecieveMerchantCode());
-		} else {
-			paramList.append("&recieveMerchantCode=");
-		}
-		if (StringUtil.isValidString(paymentUrlRequest.getBusinessOrderCode())) {
-			paramList.append("&businessOrderCode=").append(
-					paymentUrlRequest.getBusinessOrderCode());
-		} else {
-			paramList.append("&businessOrderCode=");
-		}
-		if (StringUtil.isValidString(paymentUrlRequest.getNotifyUrl())) {
-			paramList.append("&notifyUrl=").append(
-					paymentUrlRequest.getNotifyUrl());
-		} else {
-			paramList.append("&notifyUrl=");
-		}
-		paramList.append("&isEscrowed=").append(
-				paymentUrlRequest.getIsEscrowed());
-		if (StringUtil.isValidString(paymentUrlRequest.getEscrowedDate())) {
-			paramList.append("&escrowedDate=").append(
-					paymentUrlRequest.getEscrowedDate());
-		} else {
-			paramList.append("&escrowedDate=");
-		}
-		return paramList;
-	}
-
 
 	// 验证是否需要修改订单
 	private boolean validateIsUpdateOrder2(
@@ -1636,23 +1554,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return false;
 	}
 	
-	@Override
-	public PayMethodConfigDTO getPayMethodConfigDTO(
-			PayMethodConfigRequest payMethodConfigRequest) {
-		try{
-			PayMethodConfigDTO payMethodConfigDTO = null;
-			String domainName = domainConfigDao.queryCurrentEnvDomain();
-			if(StringUtil.isValidString(domainName)){
-				payMethodConfigDTO = new PayMethodConfigDTO();
-				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-app/payment/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-app/payment/notify.action");
-			}
-			return payMethodConfigDTO;
-		}catch(Exception e){
-			log.error("查询支付方式的配置出错"+e.getMessage(),e);
-		}
-		return null;
-	}
 
 	@Override
 	public TransOrderUpdateResponse updateTransOrder(
@@ -1761,34 +1662,34 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		}
 	}
 
-	@Override
-	public String getSign(
-			RechargeResultConfirmRequest rechargeResultConfirmRequest) {
-		StringBuffer stringBuffer = new StringBuffer();
-		if (rechargeResultConfirmRequest != null) {
-			stringBuffer.append("merchantNo=");
-			stringBuffer.append(rechargeResultConfirmRequest.getMerchantNo());
-			stringBuffer.append("&payType=");
-			stringBuffer.append(rechargeResultConfirmRequest.getPayType());
-			stringBuffer.append("&orderNo=");
-			stringBuffer.append(rechargeResultConfirmRequest.getOrderNo());
-			stringBuffer.append("&payOrderNo=");
-			stringBuffer.append(rechargeResultConfirmRequest.getPayOrderNo());
-			stringBuffer.append("&payStatus=");
-			stringBuffer.append(rechargeResultConfirmRequest.getPayStatus());
-			stringBuffer.append("&orderTime=");
-			stringBuffer.append(rechargeResultConfirmRequest.getOrderTime());
-			stringBuffer.append("&orderAmount=");
-			stringBuffer.append(rechargeResultConfirmRequest.getOrderAmount());
-			stringBuffer.append("&bankCode=");
-			stringBuffer.append(rechargeResultConfirmRequest.getBankCode());
-			stringBuffer.append("&orderPayTime=");
-			stringBuffer.append(rechargeResultConfirmRequest.getOrderPayTime());
-			stringBuffer.append("&key=");
-			stringBuffer.append(RSInvokeConstant.rsCheckKey);
-		}
-		return stringBuffer.toString();
-	}
+//	@Override
+//	public String getSign(
+//			RechargeResultConfirmRequest rechargeResultConfirmRequest) {
+//		StringBuffer stringBuffer = new StringBuffer();
+//		if (rechargeResultConfirmRequest != null) {
+//			stringBuffer.append("merchantNo=");
+//			stringBuffer.append(rechargeResultConfirmRequest.getMerchantNo());
+//			stringBuffer.append("&payType=");
+//			stringBuffer.append(rechargeResultConfirmRequest.getPayType());
+//			stringBuffer.append("&orderNo=");
+//			stringBuffer.append(rechargeResultConfirmRequest.getOrderNo());
+//			stringBuffer.append("&payOrderNo=");
+//			stringBuffer.append(rechargeResultConfirmRequest.getPayOrderNo());
+//			stringBuffer.append("&payStatus=");
+//			stringBuffer.append(rechargeResultConfirmRequest.getPayStatus());
+//			stringBuffer.append("&orderTime=");
+//			stringBuffer.append(rechargeResultConfirmRequest.getOrderTime());
+//			stringBuffer.append("&orderAmount=");
+//			stringBuffer.append(rechargeResultConfirmRequest.getOrderAmount());
+//			stringBuffer.append("&bankCode=");
+//			stringBuffer.append(rechargeResultConfirmRequest.getBankCode());
+//			stringBuffer.append("&orderPayTime=");
+//			stringBuffer.append(rechargeResultConfirmRequest.getOrderPayTime());
+//			stringBuffer.append("&key=");
+//			stringBuffer.append(RSInvokeConstant.rsCheckKey);
+//		}
+//		return stringBuffer.toString();
+//	}
 
 	@Override
 	public RepairTransferResponse getTransferOrders(
@@ -1811,12 +1712,14 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	}
 
 	@Override
-	public void repairTransferOrder() {
-		RepairTransferRequest repairTransferRequest = new RepairTransferRequest();
-    	repairTransferRequest.setStatus(OrderStatusEnum.ORDER_FAIL.getStatus());
+	public void repairTransferOrder(RepairTransferRequest repairTransferRequest) {
+		if(null == repairTransferRequest){
+			return;
+		}
+		repairTransferRequest.setStatus(OrderStatusEnum.ORDER_FAIL.getStatus());
     	repairTransferRequest.setTransferStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
     	repairTransferRequest.setOrderPayStatus(ReqstatusEnum.RECHARFE_SUCCESS.getStatus());
-    	repairTransferRequest.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);//GDP和平台所用的中间账户
+    	repairTransferRequest.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);//GDP和平
     	RepairTransferResponse response = titanFinancialTradeService.getTransferOrders(repairTransferRequest);
     	if(!response.isResult()){
     		log.info(response.getReturnMessage());
@@ -1852,7 +1755,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
         		transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);						//	接收方产品号
         		transferRequest.setUserrelateid(repairTransferDTO.getPayeemerchant());	                    //接收方用户Id	
     		
-        		
         		try {
         			TransferResponse  transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
 				    if(!transferResponse.isResult()){
