@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpPost;
-
+import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.fangcang.titanjr.common.bean.CallBackInfo;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
@@ -36,7 +36,7 @@ import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
-
+@Service("titanFinancialUtilService")
 public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 
 	private static final Log log = LogFactory.getLog(TitanFinancialTradeServiceImpl.class);
