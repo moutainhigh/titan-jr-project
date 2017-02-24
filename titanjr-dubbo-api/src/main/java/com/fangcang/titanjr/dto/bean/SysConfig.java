@@ -1,8 +1,14 @@
 package com.fangcang.titanjr.dto.bean;
 
-public class SysConfig {
+import java.io.Serializable;
+
+public class SysConfig implements Serializable{
 	
-	 //融数调用回话key
+	 /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	//融数调用回话key
     private String sessionKey;
     //支付网关地址
     private String gateWayURL;
