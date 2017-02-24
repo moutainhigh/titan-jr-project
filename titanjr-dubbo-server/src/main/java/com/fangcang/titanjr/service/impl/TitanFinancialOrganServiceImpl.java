@@ -1451,8 +1451,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	@Override
 	public OrgBindInfo queryActiveOrgBindInfo(OrgBindInfo orgBindInfo) {
 		try{
-			if(StringUtil.isValidString(orgBindInfo.getMerchantCode())&&orgBindInfo.getCoopType()){
-				
+			if(StringUtil.isValidString(orgBindInfo.getMerchantCode())&&orgBindInfo.getCoopType()==null){
+				orgBindInfo.setCoopType(CoopTypeEnum.SAAS.getKey());
 			}
 			TitanOrgBindinfo titanOrgBindinfo = new TitanOrgBindinfo();
 			titanOrgBindinfo.setMerchantcode(orgBindInfo.getMerchantCode());
@@ -1520,11 +1520,9 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 //		cashierDeskInitRequest.setConstId(CommonConstant.RS_FANGCANG_CONST_ID);
 //		titanCashierDeskService.initCashierDesk(cashierDeskInitRequest);
 		
-		initKeyInfo("TJM10000110");
+		//initKeyInfo("TJM10000110");
 
 	}
-
-
 	
 	
 }

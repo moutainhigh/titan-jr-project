@@ -21,6 +21,8 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
     private String bindLoginName;
     //房仓绑定商家编码
     private String bindMerchantCode;
+    //合作商类型
+    private Integer coopType;
     //金服用户名
     private String userName;
     //手机号
@@ -145,6 +147,14 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
 
 	public void setBindIsactive(Integer bindIsactive) {
 		this.bindIsactive = bindIsactive;
+	}
+
+	public Integer getCoopType() {
+		return coopType;
+	}
+
+	public void setCoopType(Integer coopType) {
+		this.coopType = coopType;
 	}
     
 }

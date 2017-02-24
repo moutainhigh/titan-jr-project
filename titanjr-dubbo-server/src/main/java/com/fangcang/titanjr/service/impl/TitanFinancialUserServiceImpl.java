@@ -312,6 +312,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         	response.putErrorResult("合作方商家编码和登录用户名不能为空");
         	return response;
         }
+        
         List<UserInfoDTO> userInfoDTOs =  titanUserDao.queryTitanUserList(userInfoQueryRequest);
         response.setUserInfoDTOList(userInfoDTOs);
         response.putSuccess();
@@ -331,7 +332,8 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     	condition.setTfsuserid(userInfoQueryRequest.getTfsUserId());
     	condition.setOrgcode(userInfoQueryRequest.getOrgCode());
     	condition.setUserloginname(userInfoQueryRequest.getUserLoginName());
-    	
+    	condition.setStatus(userInfoQueryRequest.getStatus());
+    	condition.setIsadmin(userInfoQueryRequest.getIsadmin());
     	paginationSupport = titanUserDao.selectForPage(condition, paginationSupport);
     	userInfoPageResponse.setTitanUserPaginationSupport(paginationSupport);
     	
@@ -342,8 +344,8 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 	public UserBindInfoResponse queryUserBindInfoDTO(UserBindInfoRequest userBindInfoRequest) {
 		UserBindInfoResponse userBindInfoResponse = new UserBindInfoResponse();
 		if(StringUtil.isValidString(userBindInfoRequest.getMerchantcode())&&userBindInfoRequest.getCooptype()==null){
-			userBindInfoResponse.putErrorResult("参数[coopType]不能为空");
-			return userBindInfoResponse;
+			//如果传了商家编码，默认合作方为SAAS
+			userBindInfoRequest.setCooptype(CoopTypeEnum.SAAS.getKey());
 		}
     	
     	TitanUserBindInfoParam param = new TitanUserBindInfoParam();
@@ -386,6 +388,10 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         	response.putErrorResult("合作方商家编码和登录用户名不能为空");
         	return response;
         }
+		//通过合作方商家编码查询的，默认为SAAS
+    	if(StringUtil.isValidString(userInfoQueryRequest.getBindMerchantCode())&&userInfoQueryRequest.getCoopType()==null){
+    		userInfoQueryRequest.setCoopType(CoopTypeEnum.SAAS.getKey());
+    	}
 		try {
 			paginationSupport = titanUserDao.selectForRoleUserInfoPage(userInfoQueryRequest);
 			response.setPaginationSupport(paginationSupport);
