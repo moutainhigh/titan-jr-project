@@ -136,9 +136,7 @@ public class TitanRefundService {
 			if (!OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())) {
 				AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
 				accountBalanceRequest.setUserid(transOrderDTO.getUserrelateid());
-				AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance
-
-(accountBalanceRequest);
+				AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
 				if (!balanceResponse.isResult() || null == balanceResponse.getAccountBalance() ||
 						null == balanceResponse.getAccountBalance().get(0)) {
 					log.error("查询账户信息失败");

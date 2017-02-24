@@ -412,6 +412,15 @@
                     <if test="orderPayStatus !=null">
                        and orderpay.reqstatus=#{orderPayStatus}
                     </if>
+                     <if test="orderid !=null">
+                       and transorder.orderid=#{orderid}
+                    </if>
+                     <if test="userOrderId !=null">
+                       and transorder.userorderid=#{userOrderId}
+                    </if>
+                     <if test="payOrderNo !=null">
+                       and transorder.payorderno=#{payOrderNo}
+                    </if>
                   </where>
     </select>
     

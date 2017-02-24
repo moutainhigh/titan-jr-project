@@ -40,6 +40,7 @@ import com.fangcang.titanjr.enums.PayTypeEnum;
 import com.fangcang.titanjr.enums.SignTypeEnum;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 
@@ -62,6 +63,9 @@ public class QuickPaymentService {
 	
 	@Resource
 	private TitanFinancialOrganService titanFinancialOrganService;
+	
+	@Resource 
+	private TitanFinancialUtilService titanFinancialUtilService;
 	
 	private static final Log log = LogFactory.getLog(QuickPaymentService.class);
 	
@@ -214,7 +218,7 @@ public class QuickPaymentService {
         rechargeRequest.setProductNum("1");
         rechargeRequest.setOrderTime(DateUtil.sdf5.format(new Date()));
         rechargeRequest.setSignType(SignTypeEnum.MD5.getKey());
-        PayMethodConfigDTO payMethodConfigDTO = titanFinancialTradeService.getPayMethodConfigDTO(null);
+        PayMethodConfigDTO payMethodConfigDTO = titanFinancialUtilService.getPayMethodConfigDTO(null);
 		rechargeRequest.setNotifyUrl(payMethodConfigDTO.getNotifyurl());
 		rechargeRequest.setPageUrl(payMethodConfigDTO.getPageurl());
 		

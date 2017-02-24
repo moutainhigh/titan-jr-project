@@ -18,6 +18,12 @@ public class RepairTransferRequest extends BaseRequestDTO{
 	private Integer transferStatus;
 	
 	private Integer orderPayStatus;
+	
+	private String orderid;
+	
+	private String userOrderId;
+	
+	private String payOrderNo;
 
 	public String getPayermerchant() {
 		return payermerchant;
@@ -50,5 +56,30 @@ public class RepairTransferRequest extends BaseRequestDTO{
 	public void setOrderPayStatus(Integer orderPayStatus) {
 		this.orderPayStatus = orderPayStatus;
 	}
+
+	public String getOrderid() {
+		return orderid;
+	}
+
+	public void setOrderid(String orderid) {
+		this.orderid = orderid;
+	}
+
+	public String getUserOrderId() {
+		return userOrderId;
+	}
+
+	public void setUserOrderId(String userOrderId) {
+		this.userOrderId = userOrderId;
+	}
+
+	public String getPayOrderNo() {
+		return payOrderNo;
+	}
+
+	public void setPayOrderNo(String payOrderNo) {
+		this.payOrderNo = payOrderNo;
+	}
+	
 
 }

@@ -15,9 +15,11 @@ import com.fangcang.titanjr.dao.TitanRateConfigDao;
 import com.fangcang.titanjr.dto.bean.CashierDeskDTO;
 import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
+import com.fangcang.titanjr.dto.bean.ItemBankDTO;
 import com.fangcang.titanjr.dto.request.CashierDeskInitRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
+import com.fangcang.titanjr.dto.request.PaymentItemRequest;
 import com.fangcang.titanjr.dto.response.CashierDeskInitResponse;
 import com.fangcang.titanjr.dto.response.CashierDeskResponse;
 import com.fangcang.titanjr.entity.TitanCashierDesk;
@@ -285,13 +287,20 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
     
     private List<TitanCashierItemBank> buildQRBankList(Integer bankItemId){
     	List<TitanCashierItemBank> result = new ArrayList<TitanCashierItemBank>();
-    	TitanCashierItemBank bank = new TitanCashierItemBank();
-        bank.setItemid(bankItemId);
-        bank.setBankmark("微信");
-        bank.setBankname("wx");
-        bank.setCreator("system");
-        bank.setCreatetime(new Date());
-        result.add(bank);
+    	TitanCashierItemBank wx = new TitanCashierItemBank();
+    	wx.setItemid(bankItemId);
+    	wx.setBankmark("微信");
+    	wx.setBankname("wx");
+    	wx.setCreator("system");
+    	wx.setCreatetime(new Date());
+        result.add(wx);
+        TitanCashierItemBank alipay = new TitanCashierItemBank();
+        alipay.setItemid(bankItemId);
+        alipay.setBankmark("支付宝");
+        alipay.setBankname("alipay");
+        alipay.setCreator("system");
+        alipay.setCreatetime(new Date());
+        result.add(alipay);
         return result;
     }
 
@@ -429,6 +438,31 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
 		}catch(Exception e){
 			log.error("初始化收银台失败:"+cashierDeskInitRequest.getUserId());
 		}
+	}
+
+	@Override
+	public <T> void addModelOfPayment(PaymentItemRequest<T> request) {
+		if(null == request || !StringUtil.isValidString(request.getType()) ||request.getItem()==null){
+			log.error("增加支付选项参数错误");
+			return;
+		}
+		
+		TitanCashierDeskItem item = new TitanCashierDeskItem();
+		item.setItemtype(Integer.parseInt(request.getType()));
+		List<TitanCashierDeskItem> items = titanCashierDeskItemDao.queryCashierDeskItems(item);
+		List<TitanCashierItemBank> banks = new ArrayList<TitanCashierItemBank>();
+		if(request.getItem() instanceof ItemBankDTO)
+		{
+			ItemBankDTO bankDTO  = (ItemBankDTO)request.getItem();
+			for(TitanCashierDeskItem itm : items)
+			{
+				TitanCashierItemBank bank = new TitanCashierItemBank();
+				MyBeanUtil.copyProperties(bank, bankDTO);
+				bank.setItemid(itm.getItemid());
+				banks.add(bank);
+			}
+		}
+		titanCashierItemBankDao.batchSaveItemBanks(banks);
 	}
 	
 }

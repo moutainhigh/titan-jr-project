@@ -60,6 +60,7 @@ import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
 import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrderRequest;
 import com.fangcang.titanjr.dto.request.FreezeAccountBalanceRequest;
+import com.fangcang.titanjr.dto.request.PaymentItemRequest;
 import com.fangcang.titanjr.dto.request.QueryCertificationRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.SaveCertificationRequest;
@@ -293,6 +294,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 							}else{
 								TitanFundFreezereq titanFundFreezereq = new TitanFundFreezereq();
 								titanFundFreezereq.setFreezereqid(rechargeResultConfirmRequest.getFreezereqId());
+								titanFundFreezereq.setRequestno(balanceFreezeRequest.getRequestno());
 								titanFundFreezereq.setAuthcode(balanceFreezeResponse.getAuthcode());
 								int row = titanFundFreezereqDao.update(titanFundFreezereq);
 								if(row<1){
@@ -553,8 +555,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		}
 		
 		TitanTransOrder titanTransOrder = convertToTitanTransOrder(balanceWithDrawRequest);
-		
-		
 		TransOrderDTO orderDTO = null;
 		if (balanceWithDrawRequest.getOrderNo() != null) {
 			TransOrderRequest transOrderRequest = new TransOrderRequest();
@@ -960,27 +960,26 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     }
 	
 	@Override
-	public void unfreezeAccountBalanceBatch(
-			UnFreeBalanceBatchRequest unFreezeBalanceBatchRequest) {
-		if(unFreezeBalanceBatchRequest.getFundFreezeDTOList() !=null){
-			for(FundFreezeDTO fundFreezeDTO :unFreezeBalanceBatchRequest.getFundFreezeDTOList()){
-				this.fundFreezeOrder(fundFreezeDTO);
+	public void unfreezeAccountBalanceBatch(UnFreeBalanceBatchRequest unFreezeBalanceBatchRequest) {
+		if (unFreezeBalanceBatchRequest.getFundFreezeDTOList() != null) {
+			for (FundFreezeDTO fundFreezeDTO : unFreezeBalanceBatchRequest.getFundFreezeDTOList()) {
+				this.fundUnFreezeWithFreezeOrder(fundFreezeDTO);
 			}
 		}
 	}
 	
 	@Override
-	public boolean unfreezeAccountBalanceOne(UnFreeBalanceBatchRequest unFreezeBalanceBatchRequest){
-		List<FundFreezeDTO> funfFreezeList = unFreezeBalanceBatchRequest.getFundFreezeDTOList();
-		if(funfFreezeList ==null ||funfFreezeList.size()!=1){
+	public boolean unfreezeAccountBalanceOne(UnFreeBalanceBatchRequest unFreezeBalanceBatchRequest) {
+		List<FundFreezeDTO> fundFreezeList = unFreezeBalanceBatchRequest.getFundFreezeDTOList();
+		if (fundFreezeList == null || fundFreezeList.size() != 1) {
 			log.error("解冻参数不正确");
 			return false;
 		}
-		 return fundFreezeOrder(funfFreezeList.get(0));
+		return fundUnFreezeWithFreezeOrder(fundFreezeList.get(0));
 	}
 	
-	
-	private boolean fundFreezeOrder(FundFreezeDTO fundFreezeDTO ){
+	//根据冻结订单解冻账户资金
+	private boolean fundUnFreezeWithFreezeOrder(FundFreezeDTO fundFreezeDTO ){
 		BalanceUnFreezeRequest balanceUnFreezeRequest = convertBalanceUnFreezeRequest(fundFreezeDTO);
 		if(balanceUnFreezeRequest !=null){
 			try{
@@ -993,7 +992,8 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			    	try{
 			    		titanFundUnFreezereqDao.insert(titanFundUnFreezereq);
 			    	}catch(Exception e){
-			    		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻资金记录插入失败", OrderExceptionEnum.UNFREEZE_RECORD_INSERT, JSON.toJSONString(titanFundUnFreezereq));
+			    		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻资金记录插入失败",
+								OrderExceptionEnum.UNFREEZE_RECORD_INSERT, JSON.toJSONString(titanFundUnFreezereq));
     	        		titanOrderService.saveOrderException(orderExceptionDTO);
     	        		return false;
 			    	}
@@ -1005,18 +1005,21 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			    	try{
 			    		titanTransOrderDao.update(titanTransOrder);
 			    	}catch(Exception e){
-			    		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻资金之后，修改订单失败", OrderExceptionEnum.TransOrder_update, JSON.toJSONString(titanTransOrder));
+			    		OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻资金后更新订单失败",
+								OrderExceptionEnum.TransOrder_update, JSON.toJSONString(titanTransOrder));
     	        		titanOrderService.saveOrderException(orderExceptionDTO);
     	        		return false;
 			    	}
 			    	
 			    }else{
-			    	OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻失败", OrderExceptionEnum.UNFREEZE_INSERT, JSON.toJSONString(fundFreezeDTO));
+			    	OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻失败",
+							OrderExceptionEnum.UNFREEZE_INSERT, JSON.toJSONString(fundFreezeDTO));
 	        		titanOrderService.saveOrderException(orderExceptionDTO);
 	        		return false;
 			    }
 			}catch(Exception e){
-				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻失败", OrderExceptionEnum.UNFREEZE_INSERT, JSON.toJSONString(fundFreezeDTO));
+				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(fundFreezeDTO.getOrderNo(), "解冻资金异常",
+						OrderExceptionEnum.UNFREEZE_INSERT, JSON.toJSONString(fundFreezeDTO));
         		titanOrderService.saveOrderException(orderExceptionDTO);
         		return false;
 			}
@@ -1101,6 +1104,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		}
 		return response;
 	}
+
 
 	
 }

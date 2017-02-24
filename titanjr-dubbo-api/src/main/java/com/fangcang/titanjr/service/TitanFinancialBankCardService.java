@@ -76,4 +76,7 @@ public interface TitanFinancialBankCardService {
 	 */
 	public ModifyInvalidWithDrawCardResponse  modifyinvalidPublicCard(ModifyInvalidWithDrawCardRequest modifyInvalidWithDrawCardRequest);
 
+	
+	
+	
 }

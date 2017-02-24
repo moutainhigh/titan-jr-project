@@ -1,8 +1,5 @@
 package com.fangcang.titanjr.pay.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
