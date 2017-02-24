@@ -62,6 +62,7 @@ import com.fangcang.titanjr.pay.util.RSADecryptString;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 
@@ -91,6 +92,9 @@ public class TitanTradeController extends BaseController {
 	
 	@Resource
 	private TitanTradeService titanTradeService;
+	
+	@Resource
+	private TitanFinancialUtilService titanFinancialUtilService;
 
 	/**
 	 * @Title: titanPay
@@ -251,8 +255,7 @@ public class TitanTradeController extends BaseController {
 						.getOrderNo());
 				paymentUrlRequest.setIsEscrowed("0");
 				paymentUrlRequest.setPaySource(dto.getPayerType());
-				PaymentUrlResponse response = titanFinancialTradeService
-						.getPaymentUrl(paymentUrlRequest);
+				PaymentUrlResponse response = titanFinancialUtilService.getPaymentUrl(paymentUrlRequest);
 
 				if (response == null || !response.isResult()) {
 					if (response != null) {
@@ -349,10 +352,11 @@ public class TitanTradeController extends BaseController {
 			return false;
 		}
 		
-		if(pe.isOpenOrg() && !StringUtil.isValidString(dto.getRuserId())){
+		if(pe.isRecieveCashDesk() && !StringUtil.isValidString(dto.getRuserId())){
 			log.error(pe + "RuserId is null");
 			return false;
 		}
+		
 
 		if (StringUtil.isValidString(dto.getEscrowedDate())) {
 			try {
@@ -460,7 +464,6 @@ public class TitanTradeController extends BaseController {
 			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 		}
 
-		// 验证签名
 
 		// 根据payOrderNo查询出相应的订单
 		TransOrderRequest transOrderRequest = new TransOrderRequest();

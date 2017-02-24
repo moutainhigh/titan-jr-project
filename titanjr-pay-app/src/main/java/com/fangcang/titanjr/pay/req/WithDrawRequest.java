@@ -21,6 +21,9 @@ public class WithDrawRequest
     private String originalAccount;
     private String originalBankName;
     private String amount;
+    private String branchCode;
+    private String cityCode;
+    private String cityName;
     
     public String getUserId() {
   		return userId;
@@ -126,12 +129,37 @@ public class WithDrawRequest
 		this.originalBankName = originalBankName;
 	}
 
+
 	public String getTfsUserId() {
 		return tfsUserId;
 	}
 
 	public void setTfsUserId(String tfsUserId) {
 		this.tfsUserId = tfsUserId;
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
+	}
+
+	public String getCityCode() {
+		return cityCode;
+	}
+
+	public void setCityCode(String cityCode) {
+		this.cityCode = cityCode;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+
 	}
     
 }

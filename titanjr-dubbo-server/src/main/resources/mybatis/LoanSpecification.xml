@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.LoanSpecificationDao">
+
+    <resultMap id="loanSpecification" type="com.fangcang.titanjr.entity.LoanSpecification">
+        <result property="id" column="id"/>
+        <result property="orderNo" column="orderno"/>
+        <result property="content" column="content"/>
+        <result property="accountName" column="accountname"/>
+        <result property="account" column="account"/>
+        <result property="bank" column="bank"/>
+        <result property="titanCode" column="titancode"/>
+        <result property="accessory" column="accessory"/>
+    </resultMap>
+
+
+    <select id="queryLoanSpecification" resultMap="loanSpecification"
+            parameterType="com.fangcang.titanjr.entity.LoanSpecification">
+        select `id`, `orderno`,content, `accountname`, `account`, `bank`,titanCode,
+        `accessory`
+        FROM t_loan_specification
+        <where>
+            <if test="orderNo !=null">
+                and orderno = #{orderNo}
+            </if>
+        </where>
+
+    </select>
+
+    <update id="updateLoanSpecification" parameterType="com.fangcang.titanjr.entity.LoanSpecification">
+        update t_loan_specification
+        <set>
+            <if test="content != null">content= #{content},</if>
+            <if test="titanCode != null">titancode= #{titanCode},</if>
+            <if test="accountName != null">accountname= #{accountName},</if>
+            <if test="account != null">account= #{account},</if>
+            <if test="bank != null">bank= #{bank},</if>
+            <if test="accessory != null">accessory= #{accessory},</if>
+        </set>
+        <where>
+            orderno = #{orderNo} <!--orderNo一定不为空-->
+        </where>
+    </update>
+
+    <insert id="insertLoanSpecification" parameterType="com.fangcang.titanjr.entity.LoanSpecification">
+	  INSERT INTO `t_loan_specification` ( `orderno`, 
+	  `content`, `titancode`,
+	  `accountname`, `account`, `bank`, `accessory`
+     )
+     VALUES
+     	(
+     		#{orderNo},
+     		#{content},
+     		#{titanCode},
+     		#{accountName},
+     		#{account},
+     		#{bank},
+     		#{accessory}
+     	)
+    </insert>
+
+</mapper>

@@ -20,4 +20,6 @@ public interface TitanTransferReqDao {
 	
 	List<TitanTransferReq> queryTitanTransferReq(TitanTransferReqParam titanTransferReqParam);
 	
+	int delete(TitanTransferReq entity) throws DaoException ;
+	
 }

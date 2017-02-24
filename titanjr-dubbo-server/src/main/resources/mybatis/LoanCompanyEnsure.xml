@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.LoanCompanyEnsureDao">
+
+    <resultMap id="resultMapCompanyEnsure" type="com.fangcang.titanjr.entity.LoanCompanyEnsure">
+        <result property="id" column="id"/>
+        <result property="orgCode" column="orgCode"/>
+        <result property="orderNo" column="orderno"/>
+        <result property="companyName" column="companyname"/>
+        <result property="foundDate" column="founddate"/>
+        <result property="enterpriseScale" column="enterprisescale"/>
+        <result property="businessLicense" column="businesslicense"/>
+        <result property="taxRegisterCode" column="taxregistercode"/>
+        <result property="orgCodeCertificate" column="orgcodecertificate"/>
+        <result property="registerAccount" column="registeraccount"/>
+        <result property="registerDate" column="registerdate"/>
+        <result property="legalPersonName" column="legalpersonname"/>
+        <result property="legalPersonCertificateType" column="legalpersoncertificatetype"/>
+        <result property="legalPersonCertificateNumber" column="legalpersoncertificatenumber"/>
+        <result property="contactName" column="contactname"/>
+        <result property="contactPhone" column="contactphone"/>
+        <result property="businessLicenseUrl" column="businesslicenseurl"/>
+        <result property="orgCodeCertificateUrl" column="orgcodecertificateurl"/>
+        <result property="taxRegisterCodeUrl" column="taxregistercodeurl"/>
+        <result property="licenseUrl" column="licenseurl"/>
+        <result property="officeAddress" column="officeaddress"/>
+        <result property="regAddress" column="regaddress"/>
+        
+        <result property="certificateStartDate" column="certificatestartdate"/>
+        <result property="certificateExpireDate" column="certificateexpiredate"/>
+        <result property="companyType" column="companytype"/>
+        <result property="registFinance" column="registfinance"/>
+        
+    </resultMap>
+
+
+    <select id="queryLoanCompanyEnsure" resultMap="resultMapCompanyEnsure"
+            parameterType="com.fangcang.titanjr.entity.LoanCompanyEnsure">
+        select
+        `id`,
+        `orgcode`,
+        `orderno`,
+        `companyname`,
+        `founddate`,
+        `enterprisescale`,
+        `businesslicense`,
+        `taxregistercode`,
+        `orgcodecertificate`,
+        `registeraccount`,
+        `registerdate`,
+        `legalpersonname`,
+        `legalpersoncertificatetype`,
+        `legalpersoncertificatenumber`,
+        `contactname`,
+        `contactphone`,
+        `businesslicenseurl`,
+        `orgcodecertificateurl`,
+        `taxregistercodeurl`,
+        `licenseurl`,
+        `legalpersonurl`,
+        `officeaddress`,
+        `regaddress`,
+        certificatestartdate,
+        certificateexpiredate,
+        companytype,
+        registfinance
+        from
+        t_loan_companyensure
+        <where>
+        	1=1
+            <if test="orgCode !=null">
+                and orgcode = #{orgCode}
+            </if>
+              <if test="orderNo !=null">
+                and orderno = #{orderNo}
+            </if>
+            <if test="companyName !=null">
+                and companyname = #{companyName}
+            </if>
+            <if test="businessLicense !=null">
+                and businesslicense = #{businessLicense}
+            </if>
+        </where>
+
+    </select>
+
+    <update id="updateCompanyEnsure" parameterType="com.fangcang.titanjr.entity.LoanCompanyEnsure">
+        update t_loan_companyensure
+        <set>
+        	<if test="newOrderNo != null">orderNo= #{newOrderNo},</if>
+            <if test="companyName != null">companyname= #{companyName},</if>
+            <if test="foundDate != null">founddate= #{foundDate},</if>
+            <if test="enterpriseScale != null">enterprisescale= #{enterpriseScale},</if>
+            <if test="businessLicense != null">businesslicense= #{businessLicense},</if>
+            <if test="taxRegisterCode != null">taxregistercode= #{taxRegisterCode},</if>
+            <if test="orgCodeCertificate != null">orgcodecertificate= #{orgCodeCertificate},</if>
+            <if test="registerAccount != null">registeraccount= #{registerAccount},</if>
+            <if test="registerDate != null">registerdate= #{registerDate},</if>
+            <if test="legalPersonName != null">legalpersonname= #{legalPersonName},</if>
+            <if test="legalPersonCertificateType != null">
+                legalpersoncertificatetype= #{legalPersonCertificateType},
+            </if>
+            <if test="legalPersonCertificateNumber != null">
+                legalpersoncertificatenumber=#{legalPersonCertificateNumber},
+            </if>
+            <if test="contactName != null">contactname= #{contactName},</if>
+            <if test="contactPhone != null">contactphone= #{contactPhone},</if>
+            <if test="businessLicenseUrl != null">businesslicenseurl= #{businessLicenseUrl},</if>
+            <if test="orgCodeCertificateUrl != null">orgcodecertificateurl= #{orgCodeCertificateUrl},</if>
+            <if test="taxRegisterCodeUrl != null">taxregistercodeurl= #{taxRegisterCodeUrl},</if>
+            <if test="licenseUrl != null">licenseurl= #{licenseUrl},</if>
+            <if test="legalPersonUrl != null">legalpersonurl= #{legalPersonUrl},</if>
+            <if test="officeAddress != null">officeaddress= #{officeAddress},</if>
+            <if test="regAddress != null">regaddress= #{regAddress},</if>
+            <if test="certificateStartDate != null">certificatestartdate= #{certificateStartDate},</if>
+            <if test="certificateExpireDate != null">certificateexpiredate= #{certificateExpireDate},</if>
+            <if test="companyType != null">companytype= #{companyType},</if>
+            <if test="registFinance != null">registfinance= #{registFinance},</if>
+        </set>
+        <where>
+               orgcode = #{orgCode}
+              <if test="orderNo !=null">
+                and orderno = #{orderNo}
+            </if>
+        </where>
+    </update>
+
+    <insert id="insertCompanyEnsure" parameterType="com.fangcang.titanjr.entity.LoanCompanyEnsure">
+	  INSERT INTO `t_loan_companyensure` (
+      	`orgcode`,
+      	`orderno`,
+      	`companyname`,
+      	`founddate`,
+      	`enterprisescale`,
+      	`businesslicense`,
+      	`taxregistercode`,
+      	`orgcodecertificate`,
+      	`registeraccount`,
+      	`registerdate`,
+      	`legalpersonname`,
+      	`legalpersoncertificatetype`,
+      	`legalpersoncertificatenumber`,
+      	`contactname`,
+      	`contactphone`,
+      	`businesslicenseurl`,
+      	`orgcodecertificateurl`,
+      	`taxregistercodeurl`,
+      	`licenseurl`,
+      	`legalpersonurl`,
+      	 `officeaddress`,
+        `regaddress`,
+          certificatestartdate,
+        certificateexpiredate,
+        companytype,
+        registfinance
+     )
+     VALUES
+     	(
+     		#{orgCode},
+     		#{orderNo},
+     		#{companyName},
+     		#{foundDate},
+     		#{enterpriseScale},
+     		#{businessLicense},
+     		#{taxRegisterCode},
+     		#{orgCodeCertificate},
+     		#{registerAccount},
+     		#{registerDate},
+     		#{legalPersonName},
+     		#{legalPersonCertificateType},
+     		#{legalPersonCertificateNumber},
+     		#{contactName},
+     		#{contactPhone},
+     		#{businessLicenseUrl},
+     		#{orgCodeCertificateUrl},
+     		#{taxRegisterCodeUrl},
+     		#{licenseUrl},
+     		#{legalPersonUrl},
+     		#{officeAddress},
+     		#{regAddress},
+     		#{certificateStartDate},
+     		#{certificateExpireDate},
+     		#{companyType},
+     		#{registFinance}
+     	)
+    </insert>
+
+</mapper>

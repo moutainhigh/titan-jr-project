@@ -78,4 +78,5 @@
     <import resource="applicationContext-hessian.xml"/>
      <import resource="applicationContext-service.xml"/>
 
+    <bean class="com.fangcang.util.SpringContextUtil"/>
 </beans>

@@ -340,8 +340,20 @@ function confirmPayResult(){
                       /*  new top.Tip({msg: data.msg, type: 1, time: 1000}); */
                        top.removeIframeDialog();
                    }, 1000);
-                   $("#flashPage").attr('action' , getRootPath()+"/account/overview-main.shtml");
-                   $("#flashPage").submit();
+                   
+                   try
+                   {
+                	   top.frames["right_con_frm"].location.reload();
+                	   
+                	//   $("#flashPage").attr('action' , top.frames["right_con_frm"].location.href);
+                   }
+                   catch(e)
+                   {
+                	   window.frames["right_con_frm"].location.reload();
+                	 	//$("#flashPage").attr('action' ,window.frames["right_con_frm"].location.href);
+                   }
+                  
+                  // $("#flashPage").submit();
         	   }
         	}
     });

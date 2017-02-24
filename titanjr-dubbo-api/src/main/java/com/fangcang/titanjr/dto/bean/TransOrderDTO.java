@@ -75,6 +75,8 @@ public class TransOrderDTO implements java.io.Serializable {
 	private TitanTransferDTO titanTransferDTO;
 
 	private TitanWithDrawDTO titanWithDrawDTO;
+	
+	private RefundDTO refundDTO;
 
 	public Long getReceivablefee() {
 		return receivablefee;
@@ -443,4 +445,11 @@ public class TransOrderDTO implements java.io.Serializable {
 		this.transordertype = transordertype;
 	}
 
+	public RefundDTO getRefundDTO() {
+		return refundDTO;
+	}
+
+	public void setRefundDTO(RefundDTO refundDTO) {
+		this.refundDTO = refundDTO;
+	}
 }

@@ -28,7 +28,7 @@ public class CreditJsonData {
 	//主营业务
     private List<MainBusinessData> mainBusinessData;
 	
-    //合作企业信息
+    //合作企业信息o
     private List<CooperationCompanyInfo> cooperationCompanyInfo;
 	
     //股东信息 

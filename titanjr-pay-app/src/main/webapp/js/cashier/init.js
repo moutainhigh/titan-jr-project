@@ -1,7 +1,7 @@
 function initCashierDesk(){
 	//识别出当前的余额是否足够支付，如果不够支付则位false 足够则为true
 	var isEnough = false;
-	if(isGDP()){//GDP支付的逻辑控制
+	if(isGDP()||isOpenOrg()||isTTMALL()){//GDP支付的逻辑控制
 		show_history();
 		$("#useCashierDeskPay").show();
         $("#enough_amount").hide();
@@ -24,11 +24,6 @@ function initCashierDesk(){
 		}   
 	}
 	
-	if(isOpenOrg()){
-		show_history();
-		$("#useCashierDeskPay").show();
-        $("#enough_amount").hide();
-	}
 	 
 	//账户可用余额为0的时候不能让复选按钮选中
     if(cashierData.balanceusable=="0.0" 
@@ -98,6 +93,14 @@ function isOpenOrg(){
 	}
 	return false;
 }
+
+function isTTMALL(){
+	if(cashierData.paySource=="7"){
+		return true;
+	}
+	return false;
+}
+
 
 //显示历史账户
 function show_history(){

@@ -59,6 +59,7 @@ import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
@@ -250,6 +251,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
             paginationSupport.setPageSize(request.getPageSize());
             paginationSupport.setOrderBy(" G.createTime asc ");
             titanOrgDao.queryTitanOrgCheckForPage(request, paginationSupport);
+
             responsePageDTO.setPaginationSupport(paginationSupport);
             responsePageDTO.putSuccess();
             
@@ -754,6 +756,11 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	    	TitanOrgCheck titanOrgCheck = new TitanOrgCheck();
 	    	param.setConstid(newOrgEntity.getConstid());
 	    	param.setUserid(newOrgEntity.getUserid());
+	    	
+	    	
+	    	
+	    	
+	    	
 	    	PaginationSupport<TitanOrgCheck> orgCheckPage = new PaginationSupport<TitanOrgCheck>();
 	    	titanOrgCheckDao.selectForPage(param, orgCheckPage);
 	    	OrgCheckResultEnum newOrgCheckResultEnum = convertCheckResultEnum(organCheckRequest.getCheckstatus());
@@ -1213,6 +1220,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	titanOrg.setOrgcode(orgUpdateRequest.getOrgCode());
     	titanOrg.setConnect(orgUpdateRequest.getConnect());
     	titanOrg.setMobiletel(orgUpdateRequest.getMobiletel());
+    	titanOrg.setLastUpdateDate(orgUpdateRequest.getLastUpdateDate());
+    	titanOrg.setMaxLoanAmount(orgUpdateRequest.getMaxLoanAmount());
     	try {
     		titanOrgDao.update(titanOrg);
     		responseDTO.putSuccess();
@@ -1400,7 +1409,11 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			condition.setUserId(orgDTO.getUserid());
 			condition.setTitanCode(orgDTO.getTitancode());
 			condition.setOrgName(orgDTO.getOrgname());
+			condition.setStatusId(orgDTO.getStatusId());
 			TitanOrg titanOrg = titanOrgDao.selectOne(condition);
+			if(titanOrg==null){
+				return null;
+			}
 			if(titanOrg !=null){
 				MyBeanUtil.copyProperties(orgDTO, titanOrg);
 			}
@@ -1522,6 +1535,11 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		
 		//initKeyInfo("TJM10000110");
 
+
+
+	@Override
+	public List<OrgBindInfoDTO> queryOrgBindInfoDTO(OrgBindInfoDTO orgBindDTO) {
+		return titanOrgBindinfoDao.queryOrgBindInfoDTO(orgBindDTO);
 	}
 	
 	

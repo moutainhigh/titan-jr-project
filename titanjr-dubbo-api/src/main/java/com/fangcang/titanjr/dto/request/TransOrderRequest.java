@@ -22,6 +22,8 @@ public class TransOrderRequest extends BaseRequestDTO {
 	private String payorderno;
 
 	private String payertype;
+	
+	private String statusId;
 
 	public String getPayertype() {
 		return payertype;
@@ -79,4 +81,12 @@ public class TransOrderRequest extends BaseRequestDTO {
 		this.businessordercode = businessordercode;
 	}
 
+	public String getStatusId() {
+		return statusId;
+	}
+
+	public void setStatusId(String statusId) {
+		this.statusId = statusId;
+	}
+	
 }

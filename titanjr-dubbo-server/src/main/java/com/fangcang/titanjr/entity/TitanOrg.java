@@ -1,4 +1,5 @@
 package com.fangcang.titanjr.entity;
+// default package
 
 import java.util.Date;
 
@@ -8,6 +9,11 @@ import java.util.Date;
 
 public class TitanOrg implements java.io.Serializable {
 
+	// Fields
+
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 234016678702765480L;
 	private Integer orgid;
 	private String orgcode;
@@ -72,12 +78,24 @@ public class TitanOrg implements java.io.Serializable {
 	 * 注册渠道:1-金融官网，2-SAAS,4-TTM'
 	 */
 	private Integer regChannel;
+	/**
+	 * 授信金额估算时间
+	 */
+	private Date lastUpdateDate;
+	
+	/***
+	 * 最大可申请授信额度
+	 */
+	private Long maxLoanAmount;
+
 
 	// Constructors
 
 	/** default constructor */
 	public TitanOrg() {
 	}
+
+	// Property accessors
 
 	public Integer getOrgid() {
 		return this.orgid;
@@ -383,6 +401,7 @@ public class TitanOrg implements java.io.Serializable {
 		this.updateTime = updateTime;
 	}
 
+
 	public Integer getRegChannel() {
 		return regChannel;
 	}
@@ -390,6 +409,21 @@ public class TitanOrg implements java.io.Serializable {
 	public void setRegChannel(Integer regChannel) {
 		this.regChannel = regChannel;
 	}
-	
 
+	public Long getMaxLoanAmount() {
+		return maxLoanAmount;
+	}
+
+	public void setMaxLoanAmount(Long maxLoanAmount) {
+		this.maxLoanAmount = maxLoanAmount;
+	}
+
+	public Date getLastUpdateDate() {
+		return lastUpdateDate;
+	}
+
+	public void setLastUpdateDate(Date lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
+	}
+	
 }

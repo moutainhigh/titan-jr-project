@@ -6,6 +6,7 @@ import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.dao.TitanCityInfoDao;
+import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.entity.TitanCityInfo;
 import com.fangcang.titanjr.entity.parameter.TitanCityInfoParam;
 
@@ -54,6 +55,15 @@ public class TitanCityInfoDaoImpl extends GenericDAOMyBatisImpl implements Titan
 	public int deleteTitanCitys() throws DaoException {
 		try {
 			return getSqlSession().delete("com.fangcang.titanjr.dao.TitanCityInfoDao.deleteTitanCitys");
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+
+	@Override
+	public List<CityInfoDTO> getCityInfoList(CityInfoDTO cityInfo) {
+		try {
+			return getSqlSession().selectList("com.fangcang.titanjr.dao.TitanCityInfoDao.getCityInfo", cityInfo);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}

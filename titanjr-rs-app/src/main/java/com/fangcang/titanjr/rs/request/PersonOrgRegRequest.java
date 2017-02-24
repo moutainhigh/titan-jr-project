@@ -184,12 +184,5 @@ public class PersonOrgRegRequest extends BaseRequest {
     public void setPersonsex(String personsex) {
         this.personsex = personsex;
     }
-
-    public static void main(String[] args) {
-        PersonOrgRegRequest req1 = new PersonOrgRegRequest();
-        req1.setAddress("dsfdsgds");
-        PersonOrgUpdateRequest req2 = new PersonOrgUpdateRequest();
-        MyBeanUtil.copyProperties(req2,req1);
-        System.out.println(req2);
-    }
+    
 }

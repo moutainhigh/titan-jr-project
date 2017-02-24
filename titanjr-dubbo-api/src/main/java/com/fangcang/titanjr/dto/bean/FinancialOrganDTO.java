@@ -59,9 +59,24 @@ public class FinancialOrganDTO implements Serializable {
     private CheckStatus checkStatus;
 
     private OrgBindInfo orgBindInfo;
-
+    /**
+	 * 授信金额估算时间
+	 */
+	private Date lastUpdateDate;
+	
+    private Long maxLoanAmount;
     
-    public String getOrgId() {
+    
+    
+    public Date getLastUpdateDate() {
+		return lastUpdateDate;
+	}
+
+	public void setLastUpdateDate(Date lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
+	}
+
+	public String getOrgId() {
 		return orgId;
 	}
 
@@ -379,5 +394,13 @@ public class FinancialOrganDTO implements Serializable {
 
     public void setTitanCode(String titanCode) {
         this.titanCode = titanCode;
+    }
+
+    public Long getMaxLoanAmount() {
+        return maxLoanAmount;
+    }
+
+    public void setMaxLoanAmount(Long maxLoanAmount) {
+        this.maxLoanAmount = maxLoanAmount;
     }
 }

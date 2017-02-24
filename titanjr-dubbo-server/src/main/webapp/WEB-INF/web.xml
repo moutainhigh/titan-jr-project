@@ -38,6 +38,16 @@
 		<url-pattern>*.shtml</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>accessTest</servlet-name>
+		<servlet-class>com.fangcang.titanjr.servlet.AccessTest</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>accessTest</servlet-name>
+		<url-pattern>/accessTest</url-pattern>
+	</servlet-mapping>
+
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>

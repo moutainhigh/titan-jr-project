@@ -2,6 +2,8 @@ package com.fangcang.titanjr.dto;
 
 import java.io.Serializable;
 
+import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
+
 /**
  * Created by zhaoshan on 2016/4/25.
  */
@@ -90,6 +92,12 @@ public class BaseResponseDTO implements Serializable {
 		setResult(false);
 		setReturnCode(CODE_ERROR);
 		setReturnMessage(msg);
+	}
+	
+	public void putErrorResult(TitanMsgCodeEnum titanMsgCodeEnum){
+		setResult(false);
+		setReturnCode(titanMsgCodeEnum.getKey());
+		setReturnMessage(titanMsgCodeEnum.getResMsg());
 	}
   
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
+import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.entity.TitanCityInfo;
 import com.fangcang.titanjr.entity.parameter.TitanCityInfoParam;
 
@@ -15,4 +16,6 @@ public interface TitanCityInfoDao {
 	int insertBatch(List<TitanCityInfo> titanCityInfos);
 	
 	int deleteTitanCitys()throws DaoException;
+	
+	List<CityInfoDTO> getCityInfoList(CityInfoDTO cityInfo);
 }

@@ -1,4 +1,4 @@
-  function sub(a, b) {
+  function sub(a, b) {//减法
         var c, d, e;
         try {
             c = a.toString().split(".")[1].length;

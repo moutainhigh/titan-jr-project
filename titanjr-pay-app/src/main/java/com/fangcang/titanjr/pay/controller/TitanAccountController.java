@@ -125,7 +125,7 @@ public class TitanAccountController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/check_payPassword")
-	public String checkPayPassword(String payPassword, String fcUserid,String tfsUserId)
+	public String checkPayPassword(String payPassword, String fcUserid,String tfsUserid)
 			throws GlobalServiceException {
 		String ttfsUserid = null;
 		if (StringUtil.isValidString(fcUserid)) {
@@ -138,7 +138,7 @@ public class TitanAccountController extends BaseController {
 				ttfsUserid = titanUserBindInfoDTO.getTfsuserid().toString();
 			}
 		}else{
-			ttfsUserid = tfsUserId;
+			ttfsUserid = tfsUserid;
 		}
 		
 		if (!StringUtil.isValidString(payPassword)
@@ -224,17 +224,12 @@ public class TitanAccountController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("getBankInfoList")
-	public String getBankInfo() {
-		BankInfoQueryRequest bankInfoQueryRequest = new BankInfoQueryRequest();
-		bankInfoQueryRequest.setBankType(1);
-		BankInfoResponse bankInfoResponse = titanFinancialBaseInfoService
-				.queryBankInfoList(bankInfoQueryRequest);
-		if (bankInfoResponse.isResult()
-				&& CollectionUtils.isNotEmpty(bankInfoResponse
-						.getBankInfoDTOList())) {
-			return JsonConversionTool.toJson(bankInfoResponse);
-		}
-		return null;
-	}
+	 public String getBankInfo(BankInfoQueryRequest request){
+	        BankInfoResponse bankInfoResponse =  titanFinancialBaseInfoService.queryBankInfoList(request);
+	        if (bankInfoResponse.isResult() && CollectionUtils.isNotEmpty(bankInfoResponse.getBankInfoDTOList())){
+	        	return JsonConversionTool.toJson(bankInfoResponse);
+	        }
+	        return null;
+	    }
+	
 }
-

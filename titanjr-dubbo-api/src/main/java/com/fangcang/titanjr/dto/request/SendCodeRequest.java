@@ -2,6 +2,7 @@ package com.fangcang.titanjr.dto.request;
 
 import com.fangcang.titanjr.dto.BaseRequestDTO;
 
+@Deprecated
 public class SendCodeRequest extends BaseRequestDTO {
 	
 	/**

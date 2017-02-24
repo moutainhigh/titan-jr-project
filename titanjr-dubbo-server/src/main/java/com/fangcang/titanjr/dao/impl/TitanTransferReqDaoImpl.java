@@ -64,5 +64,13 @@ public class TitanTransferReqDaoImpl extends GenericDAOMyBatisImpl implements Ti
 		}
 	}
 	
+	@Override
+	public int delete(TitanTransferReq entity) throws DaoException {
+		try {
+			return super.delete("com.fangcang.titanjr.dao.TitanTransferReqDao.delete", entity);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
 
 }

@@ -23,11 +23,21 @@ import org.apache.commons.logging.LogFactory;
 
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.util.StringUtil;
-
+/***
+ * 融数rsa处理类
+ * @author luoqinglong
+ * @date   2016年11月30日
+ */
 
 public class RSAUtil {
 	private static final Log log = LogFactory.getLog(RSAUtil.class);
-	/** *//** 
+	
+	/**
+	 * 融数上传文件加密公钥,dubbo-server的RSInvokeInitManagerImpl类会重新初始化这个值
+	 */
+	public static String UPLOAD_FILE_RSA_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDIORKS8rUfqq+8FnJbAALZpZ45ImXhbYdDBQsaMRyqbLXNMiRR3u41Ahkt2XMKo6+JR5x8OFUks3btCLoXx05GaPTjHAcDt+4JCvhFIi296KuYRElIoPrVDvkHtIkQZ64n/LYEaVAoYGuKw5g8DclCxDQgR7VmkiUqVbRem6UMLwIDAQAB";
+	
+	/** 
      * 加密算法RSA 
      */ 
 	public static final String KEY_ALGORITHM = "RSA";

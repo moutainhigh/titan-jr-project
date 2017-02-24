@@ -26,3 +26,4 @@ public interface TitanFinancialTradeFacade {
 	public BalanceQueryResponse queryAccountBalance(BalanceQueryRequest accountBalanceRequest);
 
 }
+

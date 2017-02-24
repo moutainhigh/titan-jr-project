@@ -1,7 +1,6 @@
 package test.fangcang.titanjr.rs.invoker.loancredit;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * Created by zhaoshan on 2016/10/9.
@@ -41,3 +40,4 @@ public class MainBusinessData implements Serializable{
 	}
     
 }
+

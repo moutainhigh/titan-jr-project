@@ -61,6 +61,7 @@ public class InvokeLogRecordManager {
         logData.setEnd(new Date());
         logData.setIndex("titanjr-rs-app:" + method.getName());
         logData.setAdditional("titanjr");
+        logData.setDocType("titanjr");
         if (joinPoint.getArgs().length > 0) {
             logData.setRequest(Tools.gsonToString(joinPoint.getArgs()[0]));
         }

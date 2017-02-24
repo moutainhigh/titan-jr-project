@@ -1,22 +1,46 @@
 package com.fangcang.titanjr.common.util;
 
+
+import java.io.BufferedInputStream;
+import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.CharArrayReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringBufferInputStream;
+import java.math.BigDecimal;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 import java.util.regex.Pattern;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -797,6 +821,10 @@ public class DateUtil {
 	 */
 	public static Date getDayEndTime(Date date) 
 	{
+		if(date == null)
+		{
+			return null;
+		}
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.set(Calendar.HOUR_OF_DAY, 23);
@@ -808,6 +836,10 @@ public class DateUtil {
 
 	public static Date getDayBeginTime(Date date) 
 	{
+		if(date == null)
+		{
+			return null;
+		}
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.set(Calendar.HOUR_OF_DAY, 0);
@@ -817,41 +849,86 @@ public class DateUtil {
 		return c.getTime();
 	}
 	
+//	@XmlAccessorType(XmlAccessType.FIELD)
+//	@XmlType(name="",propOrder={"name"})
+//	@XmlRootElement(name="Student")
+//	static class Student {
+//		
+//		@XmlElement(required=true)
+//		private String id;
+//		
+//		@XmlAttribute
+//		private String name;
+//		
+//		@XmlAttribute
+//		private Integer age;
+//
+//		public String getId() {
+//			return id;
+//		}
+//
+//		public void setId(String id) {
+//			this.id = id;
+//		}
+//
+//		public String getName() {
+//			return name;
+//		}
+//
+//		public void setName(String name) {
+//			this.name = name;
+//		}
+//
+//		public Integer getAge() {
+//			return age;
+//		}
+//
+//		public void setAge(Integer age) {
+//			this.age = age;
+//		}
+//		
+//	}
 	
-	public static void main(String[] args) {
+	
+	
+	public static void main(String[] args) throws JAXBException, ParseException {
 		
-		try {
-			
-//			String reg = "/\\d{3}-/\\d{5}";
-//			Pattern p = Pattern.compile(reg);
-//			boolean b = p.matcher("2-3").matches();
-//			boolean c = p.matcher("/212-/33621").matches();
-//			boolean d = p.matcher("02-03").matches();
-//			boolean f = p.matcher("20-30").matches();
-//			System.out.println(b+"---"+c+"---"+d+"---"+f);
-			
-//			String regex = "^23$";
-//			Pattern pa = Pattern.compile(regex);
-//			boolean  b = pa.matcher("24").matches();
-//			boolean  c = pa.matcher("23").matches();
-//			boolean  d = pa.matcher("25").matches();
-//			System.out.println(b+"---"+c+"---"+d);
-//			
-//			String regex = "^[^289]+3$";
-//			Pattern pa = Pattern.compile(regex);
-//			boolean  b = pa.matcher("2893").matches();
-//			boolean  c = pa.matcher("2894").matches();
-//			boolean  d = pa.matcher("893").matches();
-//			boolean  f = pa.matcher("4563").matches();
-//			System.out.println(b+"---"+c+"---"+d+"---"+f);
-			
-			
-            
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+//		Long orderDate = DateUtil.sdf5.parse("20161122144728").getTime();
+//		Long nowDate = new Date().getTime();
+//		System.out.println((long)(nowDate-orderDate));
+//		System.out.println((long)30*24*60*60*1000);
+		
+//		DateUtil.Student student = new DateUtil.Student();
+//		File file = new File("C:/Users/Administrator/Desktop/xmlTest.xml");
+//		
+//		student.setAge(30);
+//		student.setName("张三");
+//		student.setId("0102");
+//		
+//		JAXBContext context = JAXBContext.newInstance(DateUtil.Student.class);
+//		Marshaller marshaller = context.createMarshaller();
+//		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+//		marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+//		marshaller.marshal(student, file);
+//		
+//		DateUtil.Student stu = (DateUtil.Student)context.createUnmarshaller().unmarshal(file);
+//		System.out.println(stu.getName()+"---"+stu.getId()+"---"+stu.getAge());
+		
+//		BigDecimal j=new BigDecimal(1);
+//		BigDecimal k = new BigDecimal(1024);
+//		for(int i=0;i<1024;i++){
+//			j=j.multiply(k);
+//		}
+//		
+//		System.out.println(j.toString());
+//		System.out.println(10*10*10*10);
+//		System.out.println(10<<2);
+		
+		 
 
 	}
+
+	
 	
 }

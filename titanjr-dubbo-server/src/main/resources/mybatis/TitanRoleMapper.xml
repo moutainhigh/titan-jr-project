@@ -75,7 +75,7 @@
           isactive,
           creator,
           createtime
-        from t_tfs_role t where 1=1
+        from t_tfs_role t where isactive=1
          <if test="roleids!= null">
               and roleid in
               <foreach item="item" index="index" collection="roleids" open="(" separator="," close=")">

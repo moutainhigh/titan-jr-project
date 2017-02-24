@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,9 +21,11 @@ import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
+import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
@@ -33,6 +37,7 @@ import com.fangcang.titanjr.dto.request.DeleteBindBankRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
+import com.fangcang.titanjr.dto.response.CityInfosResponse;
 import com.fangcang.titanjr.dto.response.CusBankCardBindResponse;
 import com.fangcang.titanjr.dto.response.DeleteBindBankResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
@@ -158,10 +163,8 @@ public class TitanWithdrawController extends BaseController {
 				for (BankCardInfoDTO cid : cbr.getBankCardInfoDTOList()) {
 					if (cid.getStatus().equals(
 							BankCardEnum.BankCardStatusEnum.NORMAL.getKey())
-							&& cid.getAccountpurpose()
-									.equals(BankCardEnum.BankCardPurposeEnum.DEBIT_WITHDRAW_CARD.getKey())
-							|| cid.getAccountpurpose()
-									.equals(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey())) {
+							&& !cid.getAccountpurpose()
+									.equals(BankCardEnum.BankCardPurposeEnum.OTHER_CARD.getKey())) {
 						model.addAttribute("bindBankCard", cid);
 					}
 				}
@@ -191,7 +194,7 @@ public class TitanWithdrawController extends BaseController {
 		if (null == withDrawRequest.getUserId()
 				|| (isBlank(withDrawRequest.getFcUserId())&&isBlank(withDrawRequest.getTfsUserId()))
 				|| null == withDrawRequest.getOrderNo()) {
-
+			log.error("请求参数错误:"+JSONSerializer.toJSON(withDrawRequest));
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
 		boolean needBindCard = false;
@@ -204,6 +207,7 @@ public class TitanWithdrawController extends BaseController {
 							.getAccountNum())
 					|| !StringUtil.isValidString(withDrawRequest
 							.getAccountName())) {
+				log.error("已绑定卡传入参数错误"+JSONSerializer.toJSON(withDrawRequest));
 				return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 			} else {
 				needBindCard = true;
@@ -216,6 +220,7 @@ public class TitanWithdrawController extends BaseController {
 								.getAccountNum())
 						|| !StringUtil.isValidString(withDrawRequest
 								.getAccountName())) {
+					log.error("绑定新卡传入参数错误"+JSONSerializer.toJSON(withDrawRequest));
 					return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 				} else {
 					needBindNewCard = true;
@@ -246,11 +251,13 @@ public class TitanWithdrawController extends BaseController {
 		
 		if (!StringUtil.isValidString(withDrawRequest.getPassword())
 				|| !StringUtil.isValidString(tfsUserid)) {
+			log.error("密码或用户传入失败");
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
 		boolean istrue = titanFinancialUserService.checkPayPassword(
 				withDrawRequest.getPassword(), tfsUserid);
 		if (!istrue) {
+			log.error("密码错误");
 			return toMsgJson(TitanMsgCodeEnum.PAY_PWD_ERROR);
 		}
 		
@@ -269,26 +276,42 @@ public class TitanWithdrawController extends BaseController {
 				.getExRateAmount()));
 
 		if (er > al) {
+			log.error("手续费不能大于提现金额");
 			return toMsgJson(TitanMsgCodeEnum.RATE_NOT_MORE_WITHDRAW);
 		}
 		
 		FinancialOrganDTO financialOrganDTO = this
 				.getTitanOrganDTO(withDrawRequest.getUserId());
 		if (needBindNewCard) { // 需判定或删除原卡配置
-			DeleteBindBankRequest deleteBindBankRequest = new DeleteBindBankRequest();
-			deleteBindBankRequest.setUserid(withDrawRequest.getUserId());
-			deleteBindBankRequest
-					.setProductid(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_PRODUCT_ID);
-			deleteBindBankRequest
-					.setConstid(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_CONST_ID);
-			deleteBindBankRequest.setUsertype(String.valueOf(financialOrganDTO
-					.getUserType()));
-			deleteBindBankRequest.setAccountnumber(withDrawRequest
-					.getOriginalAccount());
-			DeleteBindBankResponse deleteBindBankResponse = titanFinancialBankCardService
-					.deleteBindBank(deleteBindBankRequest);
-			if (!deleteBindBankResponse.isResult()) {
-				return toMsgJson(TitanMsgCodeEnum.USE_NEW_CARD_WITHDRAW_DEL_OLD_CARD_FAIL);
+			//删除之前查询该卡是否已绑定
+			BankCardBindInfoRequest bindInfoRequest = new BankCardBindInfoRequest();
+			bindInfoRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+			bindInfoRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+			bindInfoRequest.setUserid(withDrawRequest.getUserId());
+			bindInfoRequest.setUsertype(String.valueOf(financialOrganDTO.getUserType()));
+			bindInfoRequest.setObjorlist(CommonConstant.ALLCARD);
+			QueryBankCardBindInfoResponse bindInfoResponse = titanFinancialBankCardService.getBankCardBindInfo(bindInfoRequest);
+			if(bindInfoResponse !=null && bindInfoResponse.getBankCardInfoDTOList()!=null){
+				for(BankCardInfoDTO dto :bindInfoResponse.getBankCardInfoDTOList()){
+					if(withDrawRequest.getOriginalAccount().equals(dto.getAccount_number())){//若该卡已绑定则删除
+						DeleteBindBankRequest deleteBindBankRequest = new DeleteBindBankRequest();
+						deleteBindBankRequest.setUserid(withDrawRequest.getUserId());
+						deleteBindBankRequest
+								.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+						deleteBindBankRequest
+								.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+						deleteBindBankRequest.setUsertype(String.valueOf(financialOrganDTO
+								.getUserType()));
+						deleteBindBankRequest.setAccountnumber(withDrawRequest
+								.getOriginalAccount());
+						DeleteBindBankResponse deleteBindBankResponse = titanFinancialBankCardService
+								.deleteBindBank(deleteBindBankRequest);
+						if (!deleteBindBankResponse.isResult()) {
+							log.error("删除原提现卡失败");
+							return toMsgJson(TitanMsgCodeEnum.USE_NEW_CARD_WITHDRAW_DEL_OLD_CARD_FAIL);
+						}
+					}
+				}
 			}
 		}
 
@@ -330,13 +353,15 @@ public class TitanWithdrawController extends BaseController {
 			}
 			bankCardBindRequest.setBankCode(withDrawRequest.getBankCode());
 			bankCardBindRequest.setUserType("1");
-			// 以下是哪个说必填但是可选
-			bankCardBindRequest.setBankBranch("");
-			bankCardBindRequest.setBankCity("");
-			bankCardBindRequest.setBankProvince("");
+		/*	bankCardBindRequest.setBankBranch(withDrawRequest.getBranchCode());
+			bankCardBindRequest.setBankCity(withDrawRequest.getCityName());
+			if(StringUtil.isValidString(withDrawRequest.getCityCode())){
+				bankCardBindRequest.setBankProvince(this.queryProvinceName(withDrawRequest.getCityCode()));
+			}*/
 			CusBankCardBindResponse cardBindResponse = titanFinancialBankCardService
 					.bankCardBind(bankCardBindRequest);
 			if (!cardBindResponse.isResult()) {
+				log.error("用户绑卡失败");
 				return toMsgJson(TitanMsgCodeEnum.USE_NEW_CARD_WITHDRAW_BING_CARD_FAIL);
 			}
 		}
@@ -367,10 +392,10 @@ public class TitanWithdrawController extends BaseController {
 					.getRsRateAmount());
 			balanceWithDrawRequest.setReceivedfee(computeRsp.getExRateAmount());
 		}
-
 		BalanceWithDrawResponse balanceWithDrawResponse = titanFinancialAccountService
 				.accountBalanceWithdraw(balanceWithDrawRequest);
 		if (!balanceWithDrawResponse.isResult()) {
+			log.error("提现失败");
 			return toMsgJson(TitanMsgCodeEnum.WITHDRAW_OPT_FAIL);
 		}
 		
@@ -396,8 +421,46 @@ public class TitanWithdrawController extends BaseController {
 		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS);
 	}
 	
+
 	private boolean isBlank(String src){
 		return !StringUtil.isValidString(src);
+	}
+	
+	 private String queryProvinceName(String cityCode){
+		 if(!StringUtil.isValidString(cityCode)){
+			 return null;
+		 }
+		CityInfoDTO cityInfo = new CityInfoDTO();
+    	cityInfo.setCityCode(cityCode);
+    	CityInfosResponse response  = titanFinancialAccountService.getCityInfoList(cityInfo);
+    	if (!response.isResult() || response.getCityInfoDTOList() ==null &&response.getCityInfoDTOList().size()>0){//如果是北京市或者重庆市的话，这个地方的size为2
+    		return null;
+    	}
+    	
+    	cityInfo = response.getCityInfoDTOList().get(0);
+    	if(response.getCityInfoDTOList().size()==2){
+    		return cityInfo.getCityName();
+    	}
+    	
+    	if(StringUtil.isValidString(cityInfo.getParentCode())){
+    		return queryProvinceName(cityInfo.getParentCode());
+    	}else{
+    		return cityInfo.getCityName();
+    	}
+		}
+	
+	
+	@ResponseBody
+	@RequestMapping("getCityList")
+	public String getCityList(CityInfoDTO cityInfo) {
+		CityInfosResponse response = titanFinancialAccountService
+				.getCityInfoList(cityInfo);
+
+		if (response.isResult()&& CollectionUtils.isNotEmpty(response.getCityInfoDTOList())) {
+			return JsonConversionTool.toJson(response);
+		}
+		return null;
+
 	}
 	/**
 	 * 根据用户ID查询对应的用户名信息

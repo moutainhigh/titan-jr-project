@@ -14,16 +14,12 @@ public class OrgDTO implements Serializable{
 	private String constid;
 	private String userid;
 	private String productid;
-	private Integer statusid;
 	private String titancode;
+	private Integer statusId;
+	
+	private String resultkey;
 	
 	
-	public Integer getStatusid() {
-		return statusid;
-	}
-	public void setStatusid(Integer statusid) {
-		this.statusid = statusid;
-	}
 	public Integer getOrgid() {
 		return orgid;
 	}
@@ -66,5 +62,16 @@ public class OrgDTO implements Serializable{
 	public void setTitancode(String titancode) {
 		this.titancode = titancode;
 	}
-	
+	public Integer getStatusId() {
+		return statusId;
+	}
+	public void setStatusId(Integer statusId) {
+		this.statusId = statusId;
+	}
+	public String getResultkey() {
+		return resultkey;
+	}
+	public void setResultkey(String resultkey) {
+		this.resultkey = resultkey;
+	}
 }

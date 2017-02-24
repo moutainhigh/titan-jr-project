@@ -26,6 +26,7 @@ import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
+import com.fangcang.titanjr.dto.bean.SysConfig;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
@@ -44,11 +45,13 @@ import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 
@@ -74,6 +77,9 @@ public class TitanPaymentService {
 	
 	@Resource
 	private TitanFinancialOrganService titanFinancialOrganService;
+	
+	@Resource
+	private TitanFinancialUtilService titanFinancialUtilService;
 	
 	 public AccountCheckResponse accountIsExist(String orgName,String titanCode ){
 	    	if(StringUtil.isValidString(orgName)&&
@@ -102,7 +108,7 @@ public class TitanPaymentService {
 		}
 	 
 	 public boolean checkPwd(String pwd, String fcUserId){
-		 if(!StringUtil.isValidString(pwd) || !StringUtil.isValidString(fcUserId) ){
+		 if(!StringUtil.isValidString(pwd) || !StringUtil.isValidString(fcUserId)){
 			 return false;
 		 }
 		 
@@ -162,7 +168,7 @@ public class TitanPaymentService {
             }
             PayMethodConfigRequest payMethodConfigRequest = new PayMethodConfigRequest();
 			payMethodConfigRequest.setUserId(titanPaymentRequest.getUserid());
-			PayMethodConfigDTO payMethodConfigDTO = titanFinancialTradeService.getPayMethodConfigDTO(payMethodConfigRequest);
+			PayMethodConfigDTO payMethodConfigDTO = titanFinancialUtilService.getPayMethodConfigDTO(payMethodConfigRequest);
 			if(payMethodConfigDTO !=null){
 				rechargeRequest.setPageUrl(payMethodConfigDTO.getPageurl());
 				rechargeRequest.setNotifyUrl(payMethodConfigDTO.getNotifyurl());
@@ -217,7 +223,7 @@ public class TitanPaymentService {
 	    		String amount = transOrderDTO.getTradeamount().toString();
 	    		if(StringUtil.isValidString(transOrderDTO.getPayerType())&&transOrderDTO.getReceivedfee()!=null){
 	    			PayerTypeEnum payerTypeEnum = PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
-	    			if(payerTypeEnum.isB2BPayment()||payerTypeEnum.isOpenOrg()){
+	    			if(payerTypeEnum.isB2BPayment()||payerTypeEnum.isOpenOrg()||payerTypeEnum.isTTMAlL()){
 	    				amount = new BigDecimal(transOrderDTO.getTradeamount()).subtract(new BigDecimal(transOrderDTO.getReceivedfee())).toString();
 	    			}
 	    		}
@@ -334,6 +340,37 @@ public class TitanPaymentService {
 			accountHistoryDTO.setCreatetime(new Date());
 			return accountHistoryDTO;
 		}
+		
+		
+		public String getSign(
+				RechargeResultConfirmRequest rechargeResultConfirmRequest) {
+			StringBuffer stringBuffer = new StringBuffer();
+			if (rechargeResultConfirmRequest != null) {
+				stringBuffer.append("merchantNo=");
+				stringBuffer.append(rechargeResultConfirmRequest.getMerchantNo());
+				stringBuffer.append("&payType=");
+				stringBuffer.append(rechargeResultConfirmRequest.getPayType());
+				stringBuffer.append("&orderNo=");
+				stringBuffer.append(rechargeResultConfirmRequest.getOrderNo());
+				stringBuffer.append("&payOrderNo=");
+				stringBuffer.append(rechargeResultConfirmRequest.getPayOrderNo());
+				stringBuffer.append("&payStatus=");
+				stringBuffer.append(rechargeResultConfirmRequest.getPayStatus());
+				stringBuffer.append("&orderTime=");
+				stringBuffer.append(rechargeResultConfirmRequest.getOrderTime());
+				stringBuffer.append("&orderAmount=");
+				stringBuffer.append(rechargeResultConfirmRequest.getOrderAmount());
+				stringBuffer.append("&bankCode=");
+				stringBuffer.append(rechargeResultConfirmRequest.getBankCode());
+				stringBuffer.append("&orderPayTime=");
+				stringBuffer.append(rechargeResultConfirmRequest.getOrderPayTime());
+				stringBuffer.append("&key=");
+				SysConfig config = titanFinancialUtilService.querySysConfig();
+				stringBuffer.append(config.getRsCheckKey());
+			}
+			return stringBuffer.toString();
+		}
+
 }
 
 

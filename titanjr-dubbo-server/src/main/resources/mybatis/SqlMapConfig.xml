@@ -85,8 +85,22 @@
 		<mapper resource="mybatis/TitanOrderException.xml" />
 		<mapper resource="mybatis/TitanCheckCodeMapper.xml" />
 		<mapper resource="mybatis/DomainConfigMapper.xml"/>
+		<!--信贷相关-->
+		<mapper resource="mybatis/LoanCompanyEnsure.xml"/>
+		<mapper resource="mybatis/LoanCreditCompany.xml"/>
+		<mapper resource="mybatis/LoanCreditOrder.xml"/>
+		<mapper resource="mybatis/LoanCreditOpinion.xml"/>
+		<mapper resource="mybatis/LoanOrder.xml"/>
+		<mapper resource="mybatis/LoanPersonEnsure.xml"/>
+		<mapper resource="mybatis/LoanSpecification.xml"/>
 		<mapper resource="mybatis/TitanOpenOrgMapper.xml"/>
+
 		<mapper resource="mybatis/TitanCoopMapper.xml"/>
+
+		
+		<mapper resource="mybatis/TitanRefundMapper.xml"/>
+		<mapper resource="mybatis/LoanCreditOrderDiscardMapper.xml"/>
+
 	</mappers>
 
 </configuration>

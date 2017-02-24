@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.LoanCreditCompanyDao">
+
+    <resultMap id="resultMapLoanCreditCompany" type="com.fangcang.titanjr.entity.LoanCreditCompany">
+        <result property="id" column="id"/>
+        <result property="creditOrderNo" column="creditorderno"/>
+        <result property="name" column="name"/>
+        <result property="startDate" column="startdate"/>
+        <result property="regAddress" column="regaddress"/>
+        <result property="officeAddress" column="officeaddress"/>
+        <result property="orgSize" column="orgsize"/>
+        <result property="license" column="license"/>
+        <result property="taxRegNo" column="taxregno"/>
+        <result property="orgCode" column="orgcode"/>
+        <result property="regAccount" column="regaccount"/>
+        <result property="regDate" column="regdate"/>
+        <result property="empSize" column="empsize"/>
+        <result property="legalName" column="legalname"/>
+        <result property="legalceType" column="legalcetype"/>
+        <result property="legalNo" column="legalno"/>
+        <result property="contactName" column="contactname"/>
+        <result property="contactPhone" column="contactphone"/>
+        <result property="waterEmail" column="wateremail"/>
+        <result property="appendInfo" column="appendinfo"/>
+        <result property="licenseUrl" column="licenseurl"/>
+        <result property="legalNoUrl" column="legalnourl"/>
+        <result property="officeNoUrl" column="officenourl"/>
+        <result property="accountUrl" column="accounturl"/>
+        <result property="creditUrl" column="crediturl"/>
+        <result property="officeUrl" column="officeurl"/>
+        <result property="waterUrl" column="waterurl"/>
+        <result property="taxRegUrl" column="taxregurl"/>
+        <result property="orgCodeUrl" column="orgcodeurl"/>
+        <result property="isPush" column="ispush"/>
+        
+        <result property="certificateStartDate" column="certificatestartdate"/>
+        <result property="certificateExpireDate" column="certificateexpiredate"/>
+        <result property="companyType" column="companytype"/>
+        <result property="registFinance" column="registfinance"/>
+        
+        
+    </resultMap>
+
+
+    <select id="queryLoanCreditCompany" resultMap="resultMapLoanCreditCompany"
+            parameterType="com.fangcang.titanjr.entity.LoanCreditCompany">
+        select
+        `id` ,
+        `creditorderno`,
+        `name` ,
+        `startdate` ,
+        `regaddress` ,
+        `officeaddress`,
+        `orgsize` ,
+        `license` ,
+        `taxregno` ,
+        `orgcode` ,
+        `regaccount` ,
+        `regdate` ,
+        `empsize` ,
+        `legalname` ,
+        `legalcetype` ,
+        `legalno` ,
+        `contactname` ,
+        `contactphone` ,
+        `wateremail` ,
+        `appendinfo` ,
+        `licenseurl` ,
+        `legalnourl` ,
+        `officenourl` ,
+        `accounturl` ,
+        `crediturl` ,
+        `officeurl` ,
+        `waterurl` ,
+        `taxregurl` ,
+        `orgcodeurl` ,
+        `ispush`,
+        certificateStartDate,
+        certificateExpireDate,
+        companyType,
+        registFinance
+        from
+        t_loan_creditcompany
+        <where>
+            <if test="creditOrderNo !=null">
+                and creditorderno = #{creditOrderNo}
+            </if>
+        </where>
+
+    </select>
+    
+    <update id="updateCreditCompany" parameterType="com.fangcang.titanjr.entity.LoanCreditCompany">
+        update t_loan_creditcompany
+        <set>
+        	<if test="newOrderNo != null">creditOrderNo= #{newOrderNo},</if>
+            <if test="name != null">name= #{name},</if>
+            <if test="startDate != null">startdate= #{startDate},</if>
+            <if test="regAddress != null">regaddress= #{regAddress},</if>
+            <if test="officeAddress != null">officeaddress= #{officeAddress},</if>
+            <if test="orgSize != null">orgsize= #{orgSize},</if>
+            <if test="license != null">license= #{license},</if>
+            <if test="taxRegNo != null">taxregno= #{taxRegNo},</if>
+            <if test="orgCode != null">orgcode= #{orgCode},</if>
+            <if test="regAccount != null">regaccount= #{regAccount},</if>
+            <if test="regDate != null">regdate= #{regDate},</if>
+            <if test="empSize != null">empsize= #{empSize},</if>
+            <if test="legalName != null">legalname= #{legalName},</if>
+            <if test="legalceType != null">legalcetype= #{legalceType},</if>
+            <if test="legalNo != null">legalno= #{legalNo},</if>
+            <if test="contactName != null">contactname= #{contactName},</if>
+            <if test="contactPhone != null">contactphone= #{contactPhone},</if>
+            <if test="waterEmail != null">wateremail= #{waterEmail},</if>
+            <if test="appendInfo != null">appendinfo= #{appendInfo},</if>
+            <if test="licenseUrl != null">licenseurl= #{licenseUrl},</if>
+            <if test="legalNoUrl != null">legalnourl= #{legalNoUrl},</if>
+            <if test="officeNoUrl != null">officenourl= #{officeNoUrl},</if>
+            <if test="accountUrl != null">accounturl= #{accountUrl},</if>
+            <if test="creditUrl != null">crediturl= #{creditUrl},</if>
+            <if test="officeUrl != null">officeurl= #{officeUrl},</if>
+            <if test="waterUrl != null">waterurl= #{waterUrl},</if>
+            <if test="taxRegUrl != null">taxregurl= #{taxRegUrl},</if>
+            <if test="orgCodeUrl != null">orgcodeurl= #{orgCodeUrl},</if>
+            <if test="isPush != null">ispush= #{isPush},</if>
+            <if test="certificateStartDate != null">certificatestartdate= #{certificateStartDate},</if>
+            <if test="certificateExpireDate != null">certificateexpiredate= #{certificateExpireDate},</if>
+            <if test="companyType != null">companytype= #{companyType},</if>
+            <if test="registFinance != null">registfinance= #{registFinance}</if>
+        </set>
+        <where>
+            creditorderno = #{creditOrderNo} <!--userId一定不为空-->
+            <!--<if test="userId != null"> userid = #{userId} </if>-->
+        </where>
+    </update>
+
+    <insert id="saveCreditCompany" parameterType="com.fangcang.titanjr.entity.LoanCreditCompany">
+	   INSERT INTO `t_loan_creditcompany` (
+      	`creditorderno`,
+      	`name`,
+      	`startdate`,
+      	`regaddress`,
+      	`officeaddress`,
+      	`orgsize`,
+      	`license`,
+      	`taxregno`,
+      	`orgcode`,
+      	`regaccount`,
+      	`regdate`,
+      	`empsize`,
+      	`legalname`,
+      	`legalcetype`,
+      	`legalno`,
+      	`contactname`,
+      	`contactphone`,
+      	`wateremail`,
+      	`appendinfo`,
+      	`licenseurl`,
+      	`legalnourl`,
+      	`officenourl`,
+      	`accounturl`,
+      	`crediturl`,
+      	`officeurl`,
+      	`waterurl`,
+      	`taxregurl` ,
+        `orgcodeurl` ,
+      	`ispush`,
+      	certificatestartdate,
+      	certificateexpiredate,
+      	companytype,
+      	registfinance
+      )
+      VALUES
+      	(
+      		#{creditOrderNo},
+      		#{name},
+      		#{startDate},
+      		#{regAddress},
+      		#{officeAddress},
+      		#{orgSize},
+      		#{license},
+      		#{taxRegNo},
+      		#{orgCode},
+      		#{regAccount},
+      		#{regDate},
+      		#{empSize},
+      		#{legalName},
+      		#{legalceType},
+      		#{legalNo},
+      		#{contactName},
+      		#{contactPhone},
+      		#{waterEmail},
+      		#{appendInfo},
+      		#{licenseUrl},
+      		#{legalNoUrl},
+      		#{officeNoUrl},
+      		#{accountUrl},
+      		#{creditUrl},
+      		#{officeUrl},
+      		#{waterUrl},
+      		#{taxRegUrl},
+      		#{orgCodeUrl},
+      		#{isPush},
+      		#{certificateStartDate},
+      		#{certificateExpireDate},
+      		#{companyType},
+      		#{registFinance}
+      	)
+    </insert>
+
+</mapper>

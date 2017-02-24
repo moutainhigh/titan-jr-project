@@ -355,18 +355,4 @@ public class RsaHelper {
 		}
 	}
 	
-	public static void main(String[] args) throws Exception {
-		KeyPair keyPair = generateRSAKeyPair(1024);
-		String pubicKeyString = encode64PublicKeyString(keyPair.getPublic());
-		String privateKeyString = encode64PrivateKeyString(keyPair.getPrivate());
-		PublicKey pk= decodePublicKeyFromBase64Str(pubicKeyString);
-		String encryptString = encryptDataFromStr("222222222222", pk);
-		
-		PrivateKey privateKey = decodePrivateKeyFromBase64Str(privateKeyString);
-		byte[] dString = decryptData(encryptString.getBytes(), privateKey);
-		String decryptString = new String(dString,"gb2312");
-		
-		System.out.println("encryptString:"+encryptString);
-		System.out.println("decryptString:"+decryptString);
-	}
 }

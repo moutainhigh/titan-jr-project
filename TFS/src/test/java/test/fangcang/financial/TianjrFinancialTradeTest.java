@@ -18,6 +18,8 @@ import com.fangcang.util.StringUtil;
 
 import net.sf.json.JSONSerializer;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,6 +39,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
 	private TitanFinancialOrganService titanFinancialOrganService=null;
 	private TitanOrderService titanOrderService;
 	private TitanCashierDeskService titanCashierDeskService=null;
+//	private TitanFinancialRefundService titanFinancialRefundService;
 
     @Before
     public void init(){
@@ -47,6 +50,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialOrganService = (TitanFinancialOrganService)cfx.getBean("titanFinancialOrganService");
     	titanOrderService = (TitanOrderService)cfx.getBean("titanOrderService");
     	titanCashierDeskService = (TitanCashierDeskService)cfx.getBean("titanCashierDeskService");
+//    	titanFinancialRefundService = (TitanFinancialRefundService)cfx.getBean("titanFinancialRefundService");
     }
     
 
@@ -268,56 +272,56 @@ public class TianjrFinancialTradeTest extends GenericTest{
     
     //获取商家向酒店支付地址
 //    @Test
-    public void testGetMerchantUrl(){
-    	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
-    	paymentUrlRequest.setMerchantcode("M10000001");
-    	paymentUrlRequest.setPayOrderNo("TW15112013332");
-    	paymentUrlRequest.setFcUserid("23298");
-    	paymentUrlRequest.setPaySource("2");
-    	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
-    	paymentUrlRequest.setIsEscrowed("0");
-//    	paymentUrlRequest.setRecieveMerchantCode("M10000002");
-    	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
-    	if(paymentUrlResponse !=null){
-    		System.out.println("-------------"+paymentUrlResponse.getUrl());
-    	}
-    }
-    
+//    public void testGetMerchantUrl(){
+//    	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
+//    	paymentUrlRequest.setMerchantcode("M10000001");
+//    	paymentUrlRequest.setPayOrderNo("TW15112013332");
+//    	paymentUrlRequest.setFcUserid("23298");
+//    	paymentUrlRequest.setPaySource("2");
+//    	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
+//    	paymentUrlRequest.setIsEscrowed("0");
+////    	paymentUrlRequest.setRecieveMerchantCode("M10000002");
+//    	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
+//    	if(paymentUrlResponse !=null){
+//    		System.out.println("-------------"+paymentUrlResponse.getUrl());
+//    	}
+//    }
+//    
     //联盟分销商向联盟供应商付款
 //    @Test
-    public void testGetMerchantLineUrl(){
-    	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
-    	paymentUrlRequest.setMerchantcode("M10000001");
-    	paymentUrlRequest.setPayOrderNo("TW15103012513");
-    	paymentUrlRequest.setFcUserid("23415");
-    	
-    	paymentUrlRequest.setPaySource("2");
-    	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
-    	paymentUrlRequest.setIsEscrowed("0");//1.不冻结，0.担保支付
-    	paymentUrlRequest.setRecieveMerchantCode("M10000002");
-    	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
-    	if(paymentUrlResponse !=null){
-    		System.out.println("-------------"+paymentUrlResponse.getUrl());
-    	}
-    }
+//    public void testGetMerchantLineUrl(){
+//    	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
+//    	paymentUrlRequest.setMerchantcode("M10000001");
+//    	paymentUrlRequest.setPayOrderNo("TW15103012513");
+//    	paymentUrlRequest.setFcUserid("23415");
+//    	
+//    	paymentUrlRequest.setPaySource("2");
+//    	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
+//    	paymentUrlRequest.setIsEscrowed("0");//1.不冻结，0.担保支付
+//    	paymentUrlRequest.setRecieveMerchantCode("M10000002");
+//    	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
+//    	if(paymentUrlResponse !=null){
+//    		System.out.println("-------------"+paymentUrlResponse.getUrl());
+//    	}
+//    }
     
     //获取GDP支付地址
 //    @Test
-    public void testGetPaymentUrl() throws UnsupportedEncodingException{
-    	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
-    	paymentUrlRequest.setPayOrderNo("H0147160902194350");
-    	paymentUrlRequest.setPaySource("1");
-    	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
-    	paymentUrlRequest.setIsEscrowed("1");
-    	paymentUrlRequest.setRecieveMerchantCode("M10000002");
-    	paymentUrlRequest.setNotifyUrl("http//:192.168.1.10/TFS");
-    	paymentUrlRequest.setBusinessOrderCode("1234568790");
-    	paymentUrlRequest.setOperater("中国人 非常好 ");
-    	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
-    	if(paymentUrlResponse !=null){
-    		System.out.println("-------------"+paymentUrlResponse.getUrl());
-    	}
-    }
+//    public void testGetPaymentUrl() throws UnsupportedEncodingException{
+//    	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
+//    	paymentUrlRequest.setPayOrderNo("");
+//    	paymentUrlRequest.setPaySource("1");
+//    	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
+//    	paymentUrlRequest.setIsEscrowed("1");
+//    	paymentUrlRequest.setRecieveMerchantCode("");
+//    	paymentUrlRequest.setNotifyUrl("http//:192.168.1.10/TFS");
+//    	paymentUrlRequest.setBusinessOrderCode("1234568790");
+//    	paymentUrlRequest.setOperater("中国人 非常好 ");
+//    	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
+//    	if(paymentUrlResponse !=null){
+//    		System.out.println("-------------"+paymentUrlResponse.getUrl());
+//    	}
+//    }
     //测试绑定银行卡0
 //    @Test
     public void bindBankCard(){
@@ -371,18 +375,17 @@ public class TianjrFinancialTradeTest extends GenericTest{
         }
     }
     
-//    @Test
+    @Test
     public void testCallBack() throws Exception{
     	TransOrderDTO transOrderDTO = new TransOrderDTO();
-    	
-    	
-      	transOrderDTO.setPayorderno("BA092159");
-    	transOrderDTO.setBusinessordercode("1000000000040871");
-    	transOrderDTO.setTradeamount((long)2);
-    	transOrderDTO.setMerchantcode("M10082926");
-    	transOrderDTO.setCreator("测试(meimei000)");
-    	transOrderDTO.setUserorderid("TJO161023004819378"); 	
-    	transOrderDTO.setNotifyUrl("http://172.16.21.15:19010/GDP/fcjr_pay.shtml");
+    	transOrderDTO.setPayorderno("8db6f0de-082d-48ef-aef4-9b58fe7384a0");
+    	transOrderDTO.setBusinessordercode("1000000000042316");
+    	transOrderDTO.setMerchantcode("M10001841");
+    	transOrderDTO.setCreator("张庆(13005776300)");
+    	transOrderDTO.setUserorderid("TJO161216185858054");
+    	transOrderDTO.setTradeamount((long)179900);
+    	transOrderDTO.setBusinessinfo("{'operator':'101701172341127737'}");
+    	transOrderDTO.setNotifyUrl("http://192.168.1.232:8087/TTM/orderPay/returnPay.shtml");
 		try {
 			titanFinancialTradeService.confirmFinance(transOrderDTO);
 		} catch (Exception e) {
@@ -400,22 +403,11 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanFinancialTradeService.confirmFinance(transOrderDTO);
 	}
     
-//    @Test
-    public void testGDPOrderDTO(){
-    	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
-    	paymentUrlRequest.setPayOrderNo("H0141160727185050");
-    	titanFinancialTradeService.getGDPOrderDTO(paymentUrlRequest.getPayOrderNo());
-    }
-    
-//    @Tenst
-    public void getSign(){
-    	RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
-    	titanFinancialTradeService.getSign(rechargeResultConfirmRequest);
-    }
     
 //    @Test
     public void repairTransferOrder(){
-    	titanFinancialTradeService.repairTransferOrder();
+    	RepairTransferRequest request = new RepairTransferRequest();
+    	titanFinancialTradeService.repairTransferOrder(request);
     }
     
 //    @Test
@@ -478,7 +470,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	titanCashierDeskService.initCashierDesk(cashierDeskInitRequest);
     }
     
-    @Test
+//    @Test
     public void testValidate(){
     	ConfirmOrdernQueryRequest request = new ConfirmOrdernQueryRequest();
 		request.setOrderNo("OP20161209163000001");
@@ -516,5 +508,6 @@ public class TianjrFinancialTradeTest extends GenericTest{
 		return ;
 		
     }
+    
     
 }

@@ -23,7 +23,7 @@ public class BankCardEnum {
     }
 
     public enum BankCardPurposeEnum {
-        DEBIT_CARD("1", "企业用户"), WITHDRAW_CARD("3", "提现卡"), DEBIT_WITHDRAW_CARD("4", "提现结算一体卡"), OTHER_CARD("2", "其他卡");
+        DEBIT_CARD("1", "结算卡"), WITHDRAW_CARD("3", "提现卡"), DEBIT_WITHDRAW_CARD("4", "提现结算一体卡"), OTHER_CARD("2", "其他卡");
         private String key;
         private String des;
 

@@ -113,5 +113,4 @@ public class TitanOrgBindinfo implements java.io.Serializable {
 		this.cooptype = cooptype;
 	}
 
-	
 }

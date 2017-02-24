@@ -21,7 +21,7 @@ public class HttpClient {
 	
     private static final Log log = LogFactory.getLog(HttpClient.class);
 
-	 public static HttpResponse httpRequest(List<NameValuePair> params, String url , HttpPost httpPost) {
+	 public static HttpResponse httpRequest(List<NameValuePair> params, HttpPost httpPost) {
 	        RequestConfig defaultRequestConfig = RequestConfig.custom()
 	                .setSocketTimeout(10000)
 	                .setConnectTimeout(10000)

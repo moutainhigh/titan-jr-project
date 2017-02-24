@@ -9,7 +9,13 @@ import com.fangcang.titanjr.dao.TitanCodeDao;
 import com.fangcang.titanjr.dao.TitanOrgidDao;
 import com.fangcang.titanjr.service.TitanCodeCenterService;
 
+import com.fangcang.util.DateUtil;
 import org.springframework.stereotype.Service;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Date;
+import java.util.Random;
 
 @Service("titanCodeCenterService")
 public class TitanCodeCenterServiceImpl implements TitanCodeCenterService {
@@ -45,5 +51,13 @@ public class TitanCodeCenterServiceImpl implements TitanCodeCenterService {
 		return CommonConstant.ACCOUNT_CODE_PREFIX + code;
 	}
 
-	
+	@Override
+	public String createLoanCreditOrderNo() throws ServiceException {
+		DecimalFormat df=(DecimalFormat)NumberFormat.getInstance();
+		df.applyPattern("000");
+		long rand = (long)(Math.random() *1000);
+		String subfix = df.format(rand);
+		return CommonConstant.LOAN_CREDIT_NO_PREFIX +
+				DateUtil.dateToString(new Date(),"yyyyMMddHHmmssSSS") + subfix;
+	}
 }

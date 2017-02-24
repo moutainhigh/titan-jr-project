@@ -6,6 +6,7 @@ import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.request.CashierDeskInitRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
+import com.fangcang.titanjr.dto.request.PaymentItemRequest;
 import com.fangcang.titanjr.dto.response.CashierDeskInitResponse;
 import com.fangcang.titanjr.dto.response.CashierDeskResponse;
 
@@ -53,4 +54,13 @@ public interface TitanCashierDeskService {
      */
     public List<CommonPayMethodDTO> queryCommonPayMethod(CashierDeskQueryRequest cashierDeskQueryRequest);
     
+    
+
+    public void initttMallCashDesk();
+    
+    /**
+	 * 添加一个支付item
+	 * @param request
+	 */
+	public <T> void addModelOfPayment(PaymentItemRequest<T> request);
 }

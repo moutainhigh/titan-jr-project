@@ -21,6 +21,8 @@
 	<dubbo:application name="titanjr_service_consumer" />
 	<!--  group="production" -->
 
+	<dubbo:consumer check="false"/>
+
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
 	<dubbo:monitor protocol="registry" /> 
 
@@ -38,4 +40,9 @@
     
     <dubbo:reference id="titanFinancialPermissionFacade" interface="com.fangcang.titanjr.facade.TitanFinancialPermissionFacade" retries="0" timeout="40000"/>
     <dubbo:reference id="titanFinanceTradeFacade" interface="com.fangcang.titanjr.facade.TitanFinancialTradeFacade" retries="0" timeout="40000"/>
+    <dubbo:reference id="titanFinancialRefundService"  interface="com.fangcang.titanjr.service.TitanFinancialRefundService" retries="0" timeout="40000"/>
+	<dubbo:reference id="titanFinancialLoanCreditService" interface="com.fangcang.titanjr.service.TitanFinancialLoanCreditService" retries="0" timeout="40000"/>
+    <dubbo:reference id="titanFinancialLoanService" interface="com.fangcang.titanjr.service.TitanFinancialLoanService" retries="0" timeout="40000"/>
+	<dubbo:reference id="titanFinancialUtilService" interface="com.fangcang.titanjr.service.TitanFinancialUtilService" retries="0" timeout="300000"/><!-- retries:重试次数 -->
+	<dubbo:reference id="titanSysconfigService" interface="com.fangcang.titanjr.service.TitanSysconfigService" retries="0" timeout="40000"/><!-- 做应用可访问测试 -->
 </beans>

@@ -17,6 +17,7 @@ import com.Rop.api.request.WheatfieldOrderSaveWithcardRequest;
 import com.Rop.api.request.WheatfieldOrderServiceAuthcodeserviceRequest;
 import com.Rop.api.request.WheatfieldOrderServiceMultitransferQueryRequest;
 import com.Rop.api.request.WheatfieldOrderServiceMultitransferRequest;
+import com.Rop.api.request.WheatfieldOrderServiceReturngoodsRequest;
 import com.Rop.api.request.WheatfieldOrderServiceThawauthcodeRequest;
 import com.Rop.api.request.WheatfieldOrderServiceWithdrawserviceRequest;
 import com.Rop.api.request.WheatfieldOrderTransferRequest;
@@ -27,6 +28,7 @@ import com.Rop.api.response.WheatfieldOrderOperResponse;
 import com.Rop.api.response.WheatfieldOrderSaveWithcardResponse;
 import com.Rop.api.response.WheatfieldOrderServiceAuthcodeserviceResponse;
 import com.Rop.api.response.WheatfieldOrderServiceMultitransferQueryResponse;
+import com.Rop.api.response.WheatfieldOrderServiceReturngoodsResponse;
 import com.Rop.api.response.WheatfieldOrderServiceThawauthcodeResponse;
 import com.Rop.api.response.WheatfieldOrderServiceWithdrawserviceResponse;
 import com.Rop.api.response.WheatfieldOrderTransferResponse;
@@ -47,6 +49,7 @@ import com.fangcang.titanjr.rs.request.BalanceUnFreezeRequest;
 import com.fangcang.titanjr.rs.request.OrderOperateRequest;
 import com.fangcang.titanjr.rs.request.OrderSaveWithCardRequest;
 import com.fangcang.titanjr.rs.request.OrderTransferFlowRequest;
+import com.fangcang.titanjr.rs.request.RSRefundRequest;
 import com.fangcang.titanjr.rs.request.OrdernQueryRequest;
 import com.fangcang.titanjr.rs.response.AccountBalanceQueryResponse;
 import com.fangcang.titanjr.rs.response.AccountTransferResponse;
@@ -57,6 +60,7 @@ import com.fangcang.titanjr.rs.response.OrderInfoResponse;
 import com.fangcang.titanjr.rs.response.OrderOperateResponse;
 import com.fangcang.titanjr.rs.response.OrderSaveWithCardResponse;
 import com.fangcang.titanjr.rs.response.OrderTransferFlowResponse;
+import com.fangcang.titanjr.rs.response.RsRefundResponse;
 import com.fangcang.titanjr.rs.response.OrdernQueryResponse;
 import com.fangcang.titanjr.rs.response.Retbeanlist;
 import com.fangcang.titanjr.rs.util.MyConvertXmlToObject;
@@ -490,10 +494,56 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 		}
 		return response;
 	}
+
+	@Override
+	public RsRefundResponse addOrderRefund(RSRefundRequest refundRequest) {
+		RsRefundResponse response = new RsRefundResponse();
+		try{
+			WheatfieldOrderServiceReturngoodsRequest req = new WheatfieldOrderServiceReturngoodsRequest();
+			if(needCheckRequest){
+				refundRequest.check();
+			}
+			MyBeanUtil.copyBeanProperties(req, refundRequest);
+			WheatfieldOrderServiceReturngoodsResponse rsp = RSInvokeConstant.ropClient
+					.execute(req, RSInvokeConstant.sessionKey);
+			if (rsp != null) {
+				log.info("调用addOrderRefund返回报文: \n" + rsp.getBody());
+				String errorMsg;
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						errorMsg = rsp.getSubMsg();
+					} else {
+						errorMsg = rsp.getMsg();
+					}
+					response.setReturnCode(rsp.getErrorCode());
+					response.setReturnMsg(errorMsg);
+					log.error("调用接口addOrderRefund异常：" + errorMsg);
+				} else {
+					response.setSuccess(true);
+					response.setOperateStatus(rsp.getIs_success());
+					response.setReturnMsg(rsp.getMsg());
+					response.setRefundOrderNo(rsp.getBatchno());;
+					if(rsp.getIs_success().equals(CommonConstant.OPERATE_SUCCESS)){
+						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+					}
+				}
+			}else{
+				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
+				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
+			}
+			
+		}catch(Exception e){
+			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+			response.setReturnMsg(RSInvokeErrorEnum.UNKNOWN_ERROR.returnMsg);
+			log.error("下退款单失败"+e.getMessage());
+		}
+		
+		return response;
+	}
 	
 	@Override
-	public OrdernQueryResponse ordernQuery(
-			OrdernQueryRequest ordernQueryRequest) {
+	public OrdernQueryResponse ordernQuery(OrdernQueryRequest ordernQueryRequest) {
 		OrdernQueryResponse response = new OrdernQueryResponse();
 		try{
 			WheatfieldOrdernQueryRequest req = new WheatfieldOrdernQueryRequest();
@@ -504,7 +554,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 			WheatfieldOrdernQueryResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.info("调用orderSaveWithCardRequest返回报文: \n" + rsp.getBody());
+				log.info("调用ordernQuery返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {

@@ -412,6 +412,15 @@
                     <if test="orderPayStatus !=null">
                        and orderpay.reqstatus=#{orderPayStatus}
                     </if>
+                     <if test="orderid !=null">
+                       and transorder.orderid=#{orderid}
+                    </if>
+                     <if test="userOrderId !=null">
+                       and transorder.userorderid=#{userOrderId}
+                    </if>
+                     <if test="payOrderNo !=null">
+                       and transorder.payorderno=#{payOrderNo}
+                    </if>
                   </where>
     </select>
     
@@ -420,4 +429,28 @@
             select statusid from t_tfs_transorder where orderid=#{orderNo} order by createtime
     </select>
     
+  <select id="selectTitanTransOrderAndRefund"  parameterType="com.fangcang.titanjr.dto.request.TransOrderRequest"
+            resultType="com.fangcang.titanjr.dto.bean.RefundDTO">
+             select 
+               transorder.constid as merchantNo,
+               transorder.orderid as orderNo,
+               re.refundOrderno,
+               re.refundAmount,
+               re.orderTime
+             from t_tfs_transorder transorder
+             inner join t_tfs_refund re on transorder.orderid= re.orderid 
+             <where>
+               <if test="orderid !=null">
+                and transorder.orderid = #{orderid}
+               </if>
+               
+                <if test="statusId !=null">
+                and transorder.statusid = #{statusId}
+               </if>
+               
+               <if test="userid !=null">
+                and transorder.userid  = #{userid}
+               </if>
+             </where>
+    </select>
 </mapper>

@@ -72,7 +72,8 @@ function initPayPassword(){
 		 $.ajax({
         	 type: "post",
              url: "../account/checkIsSetPayPassword.action",
-             data: {fcUserid:cashierData.fcUserid},
+             data: {fcUserid:cashierData.fcUserid,
+            	 	tfsUserId:cashierData.tfsUserid},
              dataType: "json",
              success: function(data){
             	 if(data.result=="0"){
@@ -106,7 +107,8 @@ function initPayPassword(){
 		                        			         url: "../account/setPayPassword.action",
 		                        			         data: {
 		                        			        	 fcuserid:cashierData.fcUserid,
-		                        			        	 payPassword:PasswordStr.returnStr()
+		                        			        	 payPassword:PasswordStr.returnStr(),
+		                        			        	 tfsuserid:cashierData.tfsUserid,
 		                        			         },
 		                        			         dataType: "json",
 		                        			         success: function(data){
@@ -194,3 +196,5 @@ function initPayPassword(){
     	return flag; 
 	};
 };
+
+

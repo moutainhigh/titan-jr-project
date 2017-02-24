@@ -188,9 +188,6 @@ var wrapType = '${ param.wrapType}';//从钱包页面过来的充值
         	        success: function(data){
         	       	 
         	       	 $('#withdrawRate').text(data.data.exRateAmount);
-        	       	// var show_online_payAmount = accAdd(payAmount,data.data.exRateAmount);
-        	       //  $("#pay_surplus_amount").text(show_online_payAmount);
-        	       	//alert(data.data.amount);
         	        }
         	   }); 
         });
@@ -207,25 +204,6 @@ var wrapType = '${ param.wrapType}';//从钱包页面过来的充值
         $("#right_con_frm").attr('src', $('#right_con_frm').attr('src'));
     });
 
-   /*  $("#withDrawNum").blur(function(){
-        var inputeAmount = $(this).val();
-        if($.trim(inputeAmount).length<1){
-            $("#inputeAmountError").text("提现金额不能为空");
-        }else{
-            $("#inputeAmountError").text("");
-        }
-
-        var neg = /^[1-9]{1}\d+(\.\d{1,2})?$/;
-        var neg2 = /^[0]{1}(\.\d{1,2})?$/;
-        var flag = neg.test($(this).val())||neg2.test($(this).val());
-        if(flag==false){
-            $("#inputeAmountError").text("输入金额无法识别,正确格式如xx或xx.xx");
-            $(this).val("");
-            $(this).focus();
-        }else{
-            $("#inputeAmountError").text("");
-        }
-    }); */
 
     //使用新卡提现或者旧卡
     $("#withDrawToNewCard").live('click',function(){
@@ -239,16 +217,30 @@ var wrapType = '${ param.wrapType}';//从钱包页面过来的充值
         $(".TFS_withdrawBoxL_else").show();
         $("#useNewBankCard").val("0");
     });
-
+   
+    //默认个人提现支持的银行
+    var data={
+    		content:[
+    		         {'key':'102','val':'中国工商银行'},
+    		         {'key':'104','val':'中国银行'},
+    		         {'key':'103','val':'中国农业银行'},
+    		         {'key':'105','val':'中国建设银行'},
+    		         {'key':'302','val':'中信银行'},
+    		         {'key':'308','val':'招商银行'},
+    		         {'key':'309','val':'兴业银行'},
+    		         {'key':'403','val':'中国邮政储蓄银行'}
+    		         ]
+    };
+    
     new AutoComplete($('#bankCode'), {
-        url : '<%=basePath%>/account/getBankInfoList.shtml',
-        source : 'bankInfoDTOList',
+        data : data.content,
         key : 'bankCode',  //数据源中，做为key的字段
         val : 'bankName', //数据源中，做为val的字段
         width : 240,
         height : 300,
         autoSelectVal : true,
         clickEvent : function(d, input){
+        	console.log(d);
             input.attr('data-id', d.key);
             $("#bankName").val(d.val);
         }
@@ -263,10 +255,6 @@ var wrapType = '${ param.wrapType}';//从钱包页面过来的充值
     		return;
     	}
     	
-    	/* var neg = /^([+-]?)((\d{1,3}(,\d{3})*)|(\d+))(\.\d{2}))?$/; */
-    	/*   var neg = /^[1-9]{1}\d{0,10}(\.\d{1,2})?$/;
-	      var neg2 = /^[0]{1}(\.\d{1,2})?$/; */
-    	  
     	  var neg = /^[1-9]{1}\d{0,20}(\.\d{1,2})?$/;
           var neg2 = /^[0]{1}(\.\d{1,2})?$/;
           var flag = neg.test(withdraw_amount)||neg2.test(withdraw_amount);
@@ -289,19 +277,11 @@ var wrapType = '${ param.wrapType}';//从钱包页面过来的充值
     		return ;
     	}
     	
-//     	if($('#withdrawRate').length >= 1 &&  parseFloat($('#withdrawRate').text()) > parseFloat(withdraw_amount) )
-//     	{
-//     		withDrawCallBack("提现金额不能少于手续费！",1);
-//     		return;
-//     	}
-    	
-    	
     	if($('#withdrawRate').length >= 1 && parseFloat(withdraw_amount) <= parseFloat($('#withdrawRate').text())  )
     	{
     		withDrawCallBack("提现金额必须大于手续费！",1);
     		return;
     	}
-    	
     	
     	if($("#accountNum").is(":visible")==true){//如果是需要输入银行卡号
     		
@@ -325,25 +305,6 @@ var wrapType = '${ param.wrapType}';//从钱包页面过来的充值
     	}
    
     	 showPayPassword();
-    	
-       /*  if (isNaN($("#withDrawNum").val())){
-            alert("请输入数字金额");
-            return false;
-        }
-        if ($("#bankCode").attr("data-id") == null){
-            alert("收款银行不能为空");
-            return false;
-        }
-        if ($("#accountName").val() == null){
-            alert("收款人姓名不能为空");
-            return false;
-        }
-        if ($("#accountNum").val() == null){
-            alert("收款账号不能为空");
-            return false;
-        } */
-        //验证是否设置支付密码
-        
 
     });
 	

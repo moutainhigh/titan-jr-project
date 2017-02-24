@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by zhaoshan on 2016/5/18.
  */
-public class CashierDeskDTO implements Serializable {
+public class CashierDeskDTO implements Serializable{
 
     /**
 	 * 
@@ -77,4 +77,5 @@ public class CashierDeskDTO implements Serializable {
     public void setCashierDeskItemDTOList(List<CashierDeskItemDTO> cashierDeskItemDTOList) {
         this.cashierDeskItemDTOList = cashierDeskItemDTOList;
     }
+
 }

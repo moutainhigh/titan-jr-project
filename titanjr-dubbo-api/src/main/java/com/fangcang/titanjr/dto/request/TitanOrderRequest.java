@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
 
 /**
  * @ClassName: TitanOrderRequest
@@ -30,7 +31,8 @@ public class TitanOrderRequest implements Serializable{
 	private String payerType;// 付款人类型 财务 GDP 等
 	private String notify;// 通知地址
 	private String checkOrderUrl;
-
+	private String productId = CommonConstant.RS_FANGCANG_PRODUCT_ID;
+	
 	private Map<String, String> businessInfo = new HashMap<String, String>(); // 存储业务信息
 
 	public String getCheckOrderUrl() {
@@ -145,5 +147,12 @@ public class TitanOrderRequest implements Serializable{
 	public void setNotify(String notify) {
 		this.notify = notify;
 	}
-	
+
+	public String getProductId() {
+		return productId;
+	}
+
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
 }

@@ -16,6 +16,9 @@ public final class TitanConstantDefine {
 
 	// 收银台页面
 	public static final String CASHIER_DESK_MAIN_PAGE = "/checkstand-pay/cashierDesk";
+	
+	// 退款页面
+	public static final String REFUND_MAIN_PAGE = "/account-overview/refund";
 
 	// 外部付款人中间账户
 	public static final String EXTERNAL_PAYMENT_ACCOUNT = "141223100000056";

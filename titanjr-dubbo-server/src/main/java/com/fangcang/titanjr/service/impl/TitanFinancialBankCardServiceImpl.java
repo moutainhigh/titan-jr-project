@@ -125,6 +125,11 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
             bankCardBindRequest.setCertificatenumnumber(cusBankCardBindRequest.getCertificateNumber());
             bankCardBindRequest.setBank_code(cusBankCardBindRequest.getBankCode());
             bankCardBindRequest.setUsertype(cusBankCardBindRequest.getUserType());
+            bankCardBindRequest.setBank_branch(cusBankCardBindRequest.getBankBranch());
+            bankCardBindRequest.setBank_province(cusBankCardBindRequest.getBankProvince());
+            bankCardBindRequest.setBank_city(cusBankCardBindRequest.getBankCity());
+            
+            log.info("绑定卡的参数:"+JSONSerializer.toJSON(bankCardBindRequest));
             BankCardBindResponse bankCardBindResponse = rsBankCardInfoManager.bindBankCard(bankCardBindRequest);
             if (bankCardBindResponse != null) {
                 if (CommonConstant.OPERATE_SUCCESS.equals(bankCardBindResponse.getOperateStatus())) {
@@ -157,14 +162,12 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
                                     cusBankCardBindResponse.putSuccess();
                                     return cusBankCardBindResponse;
                                 }
-                                
-                                
-                                
                             }
                         }
                     }
                 }
-                cusBankCardBindResponse.putErrorResult(bankCardBindResponse.getReturnCode(),bankCardBindResponse.getReturnMsg());
+                log.error("绑卡失败："+bankCardBindResponse.getReturnCode()+":"+bankCardBindResponse.getReturnMsg());
+                cusBankCardBindResponse.putErrorResult(bankCardBindResponse.getReturnCode(), bankCardBindResponse.getReturnMsg());
                 return cusBankCardBindResponse;
             }
         } catch (Exception e) {
@@ -174,11 +177,6 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
         return cusBankCardBindResponse;
     }
 
-    //查询银行编码
-    private String getBankCode(String bankName) {
-
-        return null;
-    }
 
     private TitanBankcard covertToTitanBankcard(CusBankCardBindRequest cusBankCardBindRequest) {
         TitanBankcard titanBankcard = new TitanBankcard();

@@ -1,8 +1,11 @@
 package com.fangcang.titanjr.facade.impl;
 
+import java.util.List;
+
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.PermissionRequest;
 import com.fangcang.titanjr.dto.request.TradeDetailRequest;
@@ -19,7 +22,9 @@ import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.util.StringUtil;
+
 import net.sf.json.JSONSerializer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -131,15 +136,17 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
         	 return checkAccountResponse;
 		 }
 		 
-		 OrgBindInfo orgBindInfo = new OrgBindInfo();
-         orgBindInfo.setMerchantCode(accountInfoRequest.getMerchantCode());
-         orgBindInfo = titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
-         if (orgBindInfo == null) {
-        	log.error("当前商家未开通或绑定金服机构");
-         	checkAccountResponse.setReturnMessage("当前商家未开通或绑定金服机构");
-         	return checkAccountResponse;
-         } 
-	            
+		 OrgBindInfoDTO orgBindDTO = new OrgBindInfoDTO();
+		 orgBindDTO.setMerchantCode(accountInfoRequest.getMerchantCode());
+		 orgBindDTO.setResultKey("PASS");
+		 orgBindDTO.setBindStatus(1);
+         List<OrgBindInfoDTO> orgBindDTOList = titanFinancialOrganService.queryOrgBindInfoDTO(orgBindDTO);
+         if(null == orgBindDTOList || orgBindDTOList.size()!=1 || orgBindDTOList.get(0)==null){
+        	 log.error("当前商家未开通或绑定金服机构");
+          	checkAccountResponse.setReturnMessage("当前商家未开通或绑定金服机构");
+          	return checkAccountResponse;
+         }
+         
          checkAccountResponse.setResult(true);
 		 return checkAccountResponse;
 	}

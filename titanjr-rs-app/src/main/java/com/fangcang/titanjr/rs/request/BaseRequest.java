@@ -10,7 +10,11 @@ import java.io.Serializable;
  */
 public  abstract class BaseRequest implements Serializable {
 
-    //==========大部分接口均用到的字段======
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4138055894487614737L;
+	//==========大部分接口均用到的字段======
     // 接入机构中设置的用户ID  不能重复
     private String userid;
     //机构码
