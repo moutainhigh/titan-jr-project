@@ -14,6 +14,7 @@ import com.Rop.api.DefaultRopClient;
 import com.Rop.api.request.ExternalSessionGetRequest;
 import com.Rop.api.response.ExternalSessionGetResponse;
 import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.common.util.rsa.RSAUtil;
 import com.fangcang.titanjr.dao.TitanSysConfigDao;
 import com.fangcang.titanjr.dto.bean.RSInvokeConfig;
 import com.fangcang.titanjr.dto.bean.TitanCallBackConfig;
@@ -31,6 +32,9 @@ public class RSInvokeInitManagerImpl {
 	private final static String OBJ_KEY_TITANPAYMETHOD = "TitanPayMethod";
 	private final static String OBJ_KEY_TITANCALLBACKCONFIG = "TitanCallBackConfig";
 	private final static String OBJ_KEY_DEFAULTPAYERCONFIG = "DefaultPayerConfig";
+	//融数上传zip资料rsa 加密key
+	private final static String CFG_KEY_UPLOAD_FILE_RSA_PUBLIC_KEY = "upload_file_ras_public_key";
+	
 	
 	@Resource(name="titanSysConfigDao")
 	private TitanSysConfigDao titanSysConfigDao;
@@ -77,6 +81,7 @@ public class RSInvokeInitManagerImpl {
         }
         log.info("callBackConfig:"+Tools.gsonToString(RSInvokeConstant.callBackConfigMap));
         getDefaultPayerConfig();
+        initUploadFileRSAPublicKey();
     }
 	/***
 	 * 融数sdk初始化参数
@@ -197,5 +202,19 @@ public class RSInvokeInitManagerImpl {
         } catch (Exception e) {
             log.error("初始化加载sessionkey失败", e);
         }
+    }
+    /**
+     * 初始化融数上传资料使用的rsa 公钥
+     */
+    private void initUploadFileRSAPublicKey(){
+    	TitanSysConfig param = new TitanSysConfig();
+    	param.setCfgKey(CFG_KEY_UPLOAD_FILE_RSA_PUBLIC_KEY);
+    	List<TitanSysConfig> list = titanSysConfigDao.querySysConfigList(param);
+		if(CollectionUtils.isNotEmpty(list)){
+			RSAUtil.UPLOAD_FILE_RSA_PUBLIC_KEY = list.get(0).getCfgValue();
+		}else{
+			log.error("融数上传zip资料的RSA公钥没有在配置表中配置，参数key:"+CFG_KEY_UPLOAD_FILE_RSA_PUBLIC_KEY);
+		}
+		
     }
 }

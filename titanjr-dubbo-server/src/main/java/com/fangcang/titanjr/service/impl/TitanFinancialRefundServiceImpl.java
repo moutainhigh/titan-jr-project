@@ -126,6 +126,8 @@ public class TitanFinancialRefundServiceImpl implements
 					isFreeze = true;
 					return response;
 				}
+				//后面会用这个ID更新订单
+				titanTransferDTO.setTransorderid(titanTransferReq.getTransorderid());
 			} else {//现在这一步基本不会出现，因为对在恢复操作中对退款转账单做了物理删除
 				if (null == titanTransferDTOList.get(0) || null == titanTransferDTOList.get(0).getTransferreqid()) {
 					log.error("退款单异常");
@@ -216,7 +218,7 @@ public class TitanFinancialRefundServiceImpl implements
 				isFreeze = true;
 				return response;
 			}
-
+			
 			log.info("6.6回调通知网关退款");
 			NotifyRefundRequest notifyRefundRequest = this.convertToNotifyRefundRequest(refundRequest);
 			notifyRefundRequest.setRefundOrderno(refundOrderResponse.getRefundOrderNo());
@@ -226,7 +228,7 @@ public class TitanFinancialRefundServiceImpl implements
 				//修改订单状态
 				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(refundOrderRequest.getOrderId(), "通知融数退款失败", OrderExceptionEnum.REFUND_UPDATE_ORDER, refundOrderRequest.getOrderId());
 				titanOrderService.saveOrderException(orderExceptionDTO);
-				this.updateTransOrder(OrderStatusEnum.REFUND_FAIL, titanTransferDTO.getTransorderid());
+				this.updateTransOrderByKey(OrderStatusEnum.REFUND_FAIL, titanTransferDTO.getTransorderid(), null);
 				response.putErrorResult(TitanMsgCodeEnum.PACKAGE_REFUND_PARAM_FAIL);
 				return response;
 			}
@@ -282,17 +284,22 @@ public class TitanFinancialRefundServiceImpl implements
 		}
 		return true;
 	}
-	
-	private void updateTransOrder(OrderStatusEnum status,Integer transId){
-		//修改transOrderDTO
+
+	//更新交易单状态用交易单编码或单号
+	private boolean updateTransOrderByKey(OrderStatusEnum status,Integer transId,String orderNo){
 	    TransOrderDTO order = new TransOrderDTO();
 	    order.setStatusid(status.getStatus());
-	    order.setTransid(transId);
-	    boolean flag = titanOrderService.updateTransOrder(order);
+		boolean flag = false;
+		if (transId != null || StringUtil.isValidString(orderNo)) {
+			order.setTransid(transId);
+			order.setOrderid(orderNo);
+			flag = titanOrderService.updateTransOrder(order);
+		}
 	    if(!flag){
-	    	OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transId.toString(), "退款网关请求失败", OrderExceptionEnum.REFUND_UPDATE_ORDER, transId.toString());
+	    	OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transId.toString(), "更新交易单状态失败", OrderExceptionEnum.REFUND_UPDATE_ORDER, transId.toString());
     		titanOrderService.saveOrderException(orderExceptionDTO);
 	    }
+		return flag;
 	}
 	
 	private boolean deleteRefundTransOrder(TitanTransferReq req){
@@ -311,10 +318,10 @@ public class TitanFinancialRefundServiceImpl implements
 			return ;
 		}
 		accountTransfer = convertToAccountTransferRequest(accountTransfer);
-		AccountTransferResponse accountTrans= rsAccTradeManager
-				.accountBalanceTransfer(accountTransfer);
+		AccountTransferResponse accountTrans= rsAccTradeManager.accountBalanceTransfer(accountTransfer);
 		if(!CommonConstant.OPERATE_SUCCESS.equals(accountTrans.getOperateStatus())){
-			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(refundRequest.getPayOrderNo(), "退款单回滚失败", OrderExceptionEnum.REFUND_UPDATE_TRANSFER, refundRequest.getPayOrderNo());
+			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(refundRequest.getPayOrderNo(), "退款失败回滚转账操作失败",
+					OrderExceptionEnum.REFUND_UPDATE_TRANSFER, refundRequest.getPayOrderNo());
     		titanOrderService.saveOrderException(orderExceptionDTO);
 		}
 		
@@ -394,8 +401,7 @@ public class TitanFinancialRefundServiceImpl implements
 		return accountTransfer;
 	}
 	
-	private RefundOrderResponse addRefundOrder(
-			RefundOrderRequest refundOrderRequest) {
+	private RefundOrderResponse addRefundOrder(	RefundOrderRequest refundOrderRequest) {
 		RefundOrderResponse refundOrderResponse = new RefundOrderResponse();
 		
 		if(null ==refundOrderRequest || 
@@ -533,6 +539,15 @@ public class TitanFinancialRefundServiceImpl implements
 			return ;
 		}
 		
+		//查询是否已成功下了退款单，如果已经成功下了退款单就不能进行恢复操作了。
+		RefundDTO refund = new RefundDTO();
+		refund.setUserOrderId(refundRequest.getUserOrderId());
+		List<RefundDTO> refundList = titanRefundDao.queryRefundDTO(refund);
+		if(refundList!=null && refundList.get(0)!=null ){
+			log.error("退款单已在落单,不能进行恢复操作了");
+			return ;
+		}
+		
 		//始终拿最新的解冻记录
 		FundFreezeDTO fundFreezeDTO = fundFreezeDTOList.get(0);
 		//重新冻结并修改解冻的相关信息
@@ -546,17 +561,15 @@ public class TitanFinancialRefundServiceImpl implements
 			FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService.freezeAccountBalance(rechargeResultConfirmRequest);
 		    if(!freezeAccountBalanceResponse.isFreezeSuccess()){
 		    	log.error("退款之后冻结订单失败");
-		    	OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(refundRequest.getOrderNo(), "重新冻结失败", OrderExceptionEnum.REFUND_FREEZE_AGAIN, refundRequest.getOrderNo());
+		    	OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(refundRequest.getOrderNo(), "退款失败后重新冻结订单失败",
+						OrderExceptionEnum.REFUND_FREEZE_AGAIN, refundRequest.getOrderNo());
 	    		titanOrderService.saveOrderException(orderExceptionDTO);
 		    }
-		    
-		    TransOrderDTO transOrderDTO = new TransOrderDTO();
-			transOrderDTO.setStatusid(OrderStatusEnum.FREEZE_SUCCESS.getStatus());
-			transOrderDTO.setOrderid(refundRequest.getOrderNo());
-			boolean flag = titanOrderService.updateTransOrder(transOrderDTO);
+			boolean flag = this.updateTransOrderByKey(OrderStatusEnum.FREEZE_SUCCESS,null,refundRequest.getOrderNo());
 			if(!flag){
 				log.error("重新冻结之后修改订单状态失败");
-				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(refundRequest.getOrderNo(), "重新冻结失败", OrderExceptionEnum.REFUND_FREEZE_UPDATE, refundRequest.getOrderNo());
+				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(refundRequest.getOrderNo(), "退款失败后冻结成功修改订单状态失败",
+						OrderExceptionEnum.REFUND_FREEZE_UPDATE, refundRequest.getOrderNo());
 	    		titanOrderService.saveOrderException(orderExceptionDTO);
 			}
 		} catch (Exception e) {

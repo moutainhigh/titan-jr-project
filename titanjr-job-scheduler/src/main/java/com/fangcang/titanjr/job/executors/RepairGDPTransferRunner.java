@@ -53,9 +53,9 @@ public class RepairGDPTransferRunner implements Runnable{
     }
     
     private void repairGDPTransferRunner(){
-    	
     	//查询订单失败，查询充值成功，转账单存在且未成功，或者转账单不存在，
-    	titanFinancialTradeService.repairTransferOrder();
+    	RepairTransferRequest repairTransferRequest = new RepairTransferRequest();
+    	titanFinancialTradeService.repairTransferOrder(repairTransferRequest);
     	
     }
     

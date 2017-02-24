@@ -10,7 +10,9 @@ import com.fangcang.titanjr.request.TitanOrderPaymentRequest;
 import com.fangcang.titanjr.response.TitanOrderPaymentResponse;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.util.StringUtil;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,9 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
 
     @Resource
     private TitanFinancialOrganService titanFinancialOrganService;
+    
+    @Resource
+    private TitanFinancialUtilService titanFinancialUtilService;
 
     @Override
     public TitanOrderPaymentResponse getOrderPaymentUrl(TitanOrderPaymentRequest titanOrderPaymentRequest) {
@@ -48,7 +53,7 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
                 }
             }
             PaymentUrlRequest paymentUrlRequest = convertToPaymentUrlRequest(titanOrderPaymentRequest);
-            PaymentUrlResponse paymentUrlResponse = titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
+            PaymentUrlResponse paymentUrlResponse = titanFinancialUtilService.getPaymentUrl(paymentUrlRequest);
             if (paymentUrlResponse != null && ReturnCode.CODE_SUCCESS.getCode()
                     .equals(paymentUrlResponse.getReturnCode())) {//调用成功
                 titanOrderPaymentResponse.setResult(true);

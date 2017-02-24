@@ -61,6 +61,7 @@ import com.fangcang.titanjr.pay.util.RSADecryptString;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 
@@ -90,6 +91,9 @@ public class TitanTradeController extends BaseController {
 	
 	@Resource
 	private TitanTradeService titanTradeService;
+	
+	@Resource
+	private TitanFinancialUtilService titanFinancialUtilService;
 
 	/**
 	 * @Title: titanPay
@@ -248,8 +252,7 @@ public class TitanTradeController extends BaseController {
 						.getOrderNo());
 				paymentUrlRequest.setIsEscrowed("0");
 				paymentUrlRequest.setPaySource(dto.getPayerType());
-				PaymentUrlResponse response = titanFinancialTradeService
-						.getPaymentUrl(paymentUrlRequest);
+				PaymentUrlResponse response = titanFinancialUtilService.getPaymentUrl(paymentUrlRequest);
 
 				if (response == null || !response.isResult()) {
 					if (response != null) {

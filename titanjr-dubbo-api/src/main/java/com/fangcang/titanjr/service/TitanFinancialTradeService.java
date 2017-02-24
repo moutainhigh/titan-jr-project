@@ -14,9 +14,6 @@ import com.fangcang.titanjr.dto.response.*;
  */
 public interface TitanFinancialTradeService {
 
-	
-//	 public TransOrderCreateResponse operateRSTransOrder2(OrderRequest orderRequest);
-	
 	/**
 	 * 本地生成订单。如果支付成功则直接返回，如果支付单没成功，
 	 * 则修改支付单的orderid为本地落单（本地落单是相对于融数来说的，
@@ -98,25 +95,6 @@ public interface TitanFinancialTradeService {
 	public TradeDetailResponse getOrderTradeDetail(TradeDetailRequest tradeDetailRequest);
 	
 	/**
-	 * 获取支付的url，并加密
-	 * @param paymentUrlRequest
-	 * @return
-	 * @author fangdaikang
-	 * 放到util的service
-	 */
-	public PaymentUrlResponse getPaymentUrl(PaymentUrlRequest paymentUrlRequest);
-	
-	
-	/**
-	 * 组装相关的回调参数
-	 * @param payMethodConfigRequest
-	 * @return
-	 * @author fangdaikang
-	 * 放到util的service
-	 */
-	public PayMethodConfigDTO getPayMethodConfigDTO(PayMethodConfigRequest payMethodConfigRequest);
-
-	/**
 	 * 更新交易单
 	 * @param transOrderUpdateRequest
 	 * @return
@@ -134,23 +112,6 @@ public interface TitanFinancialTradeService {
 	 */
 	public void confirmFinance(TransOrderDTO transOrderDTO)throws Exception;
 	
-	/**
-	 * 确认转账是否成功
-	 * @param accountTransferRequest
-	 * @return
-	 * @throws Exception
-	 * ，这个不应该提供service
-	 */
-	public boolean confirmTransAccountSuccess(AccountTransferFlowRequest accountTransferFlowRequest);
-	
-	
-	/**
-	 * 获取密文，只是组装密文，
-	 * @param rechargeResultConfirmRequest
-	 * @return
-	 * 能够在TFS中获取key的时候，就不需要这个方法
-	 */
-	public String getSign(RechargeResultConfirmRequest rechargeResultConfirmRequest);
 	
 	/**
 	 * 获取订单
@@ -164,7 +125,7 @@ public interface TitanFinancialTradeService {
 	 * 修复GDP转账失败的单
 	 * 一次处理一个单，传一个单号
 	 */
-	public void repairTransferOrder();
+	public void repairTransferOrder(RepairTransferRequest repairTransferRequest);
 	
 	/**
 	 * 下单
@@ -191,7 +152,6 @@ public interface TitanFinancialTradeService {
 	* 确认订单支付成功
 	 * @param ordernQueryRequest
 	 * @return
-	 * 通知接口移到dubbo就没有这个了
 	 */
 	public ConfirmOrdernQueryResponse ordernQuery(ConfirmOrdernQueryRequest ordernQueryRequest);	
 	
