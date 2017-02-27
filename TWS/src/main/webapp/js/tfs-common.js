@@ -144,3 +144,27 @@ function replaceEnterKey(src){
 function backEnterKey(src){
 	return src.replace(/\<BR\/\>/gi,"\r\n");  
 }
+/**
+ * 检查密码的复杂度
+ * @param pass
+ * @returns 密码强度1-4
+ */
+function checkComplicacy(pass){
+	var modes = 0;
+	if(pass.length<6){
+		return 1;
+	}
+	if(/\d/.test(pass)){
+		modes++;
+	}
+	if(/[a-z]/.test(pass)){
+		modes++;
+	}
+	if(/[A-Z]/.test(pass)){
+		modes++;
+	}
+	if(/\W/.test(pass)){
+		modes++;
+	}
+	return modes;
+}

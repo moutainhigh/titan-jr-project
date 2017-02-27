@@ -23,7 +23,7 @@
 			<div class="r_tit"><b>请输入新密码并确认：</b></div>
 			<div class="r_text">
 				<ul>					
-					<li class="r_y2"><input type="password" class="text" name="newLoginPassword" id="newLoginPassword" placeholder="设置登录密码" datatype="/\w*/" afterPassed="checkPass" errormsg="必填项"><i class="ico rt_eye"></i></li>
+					<li class="r_y2"><input type="password" class="text" name="newLoginPassword" id="newLoginPassword" placeholder="设置登录密码" datatype="/\w*/" afterPassed="checkPass" errormsg="必填项"><i class="ico rt_eye"></i><em class="ico hint_1" id="newLoginPassword_hint"></em></li>
 					<li class="r_y3"><input type="password" class="text" name="passwordConfirm" id="passwordConfirm" placeholder="确认登录密码" datatype="/\w*/" afterPassed="confirmPass" errormsg="必填项"><i class="ico rt_eye "></i></li>				
 					<li class="lb_btn"><a href="javascript:;" class="" onclick="savePass()">确定</a></li>
 				</ul>
@@ -103,6 +103,14 @@ function savePass(){
 		}
 	});
 }
+$('#newLoginPassword').bind("keyup",function(){
+	var m = checkComplicacy($(this).val());
+	if(m>=3){
+		m = 3;
+	}
+	$("#"+$(this).attr("id")+'_hint').attr({'class':"ico hint_"+m});
+});
+
 </script>
 
 </body>

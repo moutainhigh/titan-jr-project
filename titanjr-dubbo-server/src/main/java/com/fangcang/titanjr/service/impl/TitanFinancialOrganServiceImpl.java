@@ -1416,6 +1416,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			}
 			if(titanOrg !=null){
 				MyBeanUtil.copyProperties(orgDTO, titanOrg);
+				orgDTO.setStatusId(titanOrg.getStatusid());
 			}
 			return orgDTO;
 		}
