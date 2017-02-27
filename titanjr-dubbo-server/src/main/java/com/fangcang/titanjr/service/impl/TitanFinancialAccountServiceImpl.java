@@ -58,14 +58,9 @@ import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.AccountUpdateRequest;
 import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
 import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
-import com.fangcang.titanjr.dto.request.FinancialOrderRequest;
 import com.fangcang.titanjr.dto.request.FreezeAccountBalanceRequest;
-import com.fangcang.titanjr.dto.request.PaymentItemRequest;
-import com.fangcang.titanjr.dto.request.QueryCertificationRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
-import com.fangcang.titanjr.dto.request.SaveCertificationRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
-import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.dto.request.UnFreeBalanceBatchRequest;
 import com.fangcang.titanjr.dto.request.UnFreezeAccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.UnFreezeRequest;
@@ -78,11 +73,8 @@ import com.fangcang.titanjr.dto.response.AccountUpdateResponse;
 import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
 import com.fangcang.titanjr.dto.response.CityInfosResponse;
 import com.fangcang.titanjr.dto.response.DefaultPayerConfigResponse;
-import com.fangcang.titanjr.dto.response.FinancialOrderResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
-import com.fangcang.titanjr.dto.response.QueryCertificationResponse;
-import com.fangcang.titanjr.dto.response.SaveCertificationResponse;
 import com.fangcang.titanjr.dto.response.UnFreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.UnFreezeResponse;
 import com.fangcang.titanjr.entity.TitanAccount;
@@ -106,11 +98,9 @@ import com.fangcang.titanjr.rs.response.AccountBalanceQueryResponse;
 import com.fangcang.titanjr.rs.response.AccountWithDrawResponse;
 import com.fangcang.titanjr.rs.response.BalanceFreezeResponse;
 import com.fangcang.titanjr.rs.response.BalanceUnFreezeResponse;
-import com.fangcang.titanjr.rs.response.CityInfoResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
-import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
@@ -121,8 +111,7 @@ import com.fangcang.util.StringUtil;
 @Service("titanFinancialAccountService")
 public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountService {
    
-	private static final Log log = LogFactory.getLog(TitanFinancialUserServiceImpl.class);
-
+	private static final Log log = LogFactory.getLog(TitanFinancialAccountServiceImpl.class);
 
     @Resource
     private TitanAccountDao titanAccountDao;
@@ -149,16 +138,10 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     private TitanAccountHistoryDao titanAccountHistoryDao;
     
     @Resource
-    private TitanFinancialTradeService titanFinancialTradeService;
-    
-    @Resource
     private TitanOrderService titanOrderService;
     
     @Resource
     private TitanFinancialBankCardService titanFinancialBankCardService;
-    
-    @Resource
-    private TitanFinancialAccountService titanFinancialAccountService;
     
     @Resource
     private TitanCityInfoDao titanCityInfoDao;
@@ -201,14 +184,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
         accountCreateResponse.putSuccess();
         return accountCreateResponse;
     }
-    
-    
-
-//    @Override
-//    public AccountBalanceResponse queryAccountBalance(AccountBalanceRequest accountBalanceRequest) {
-//
-//        return null;
-//    }
 
 	@Override
 	public AccountResponse getAccount(AccountRequest accountRequest) {
@@ -268,51 +243,51 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	public FreezeAccountBalanceResponse freezeAccountBalance(
 			RechargeResultConfirmRequest rechargeResultConfirmRequest) throws Exception {
 		FreezeAccountBalanceResponse freezeAccountBalanceResponse = new FreezeAccountBalanceResponse();
-		try{
-			FreezeAccountBalanceRequest freezeAccountBalanceRequest = null;
-			if(rechargeResultConfirmRequest !=null){
-				freezeAccountBalanceRequest = convertToFreezeAccountBalanceRequest(rechargeResultConfirmRequest);
-			}
-			if(freezeAccountBalanceRequest !=null){
-				BalanceFreezeRequest balanceFreezeRequest = convertTobalanceFreezeRequest(freezeAccountBalanceRequest);
-				if(balanceFreezeRequest !=null){
-					BalanceFreezeResponse balanceFreezeResponse = rsAccTradeManager.freezeAccountBalance(balanceFreezeRequest);
-					if(balanceFreezeResponse !=null){
-						if(CommonConstant.OPERATE_SUCCESS.equals(balanceFreezeResponse.getOperateStatus())){
-							freezeAccountBalanceResponse.setAuthcode(balanceFreezeResponse.getAuthcode());
-							//将冻结的信息插入数据库
-							if(rechargeResultConfirmRequest.getFreezereqId()==null){
-								TitanFundFreezereq titanFundFreezereq = convertToTitanFundFreezereq(freezeAccountBalanceRequest);
-								if(titanFundFreezereq !=null){
-									titanFundFreezereq.setAuthcode(balanceFreezeResponse.getAuthcode());
-									int row = titanFundFreezereqDao.insert(titanFundFreezereq);
-									if(row<1){
-										log.error("插入冻结单失败");
-										throw new Exception();
-									}
-								}
-							}else{
-								TitanFundFreezereq titanFundFreezereq = new TitanFundFreezereq();
-								titanFundFreezereq.setFreezereqid(rechargeResultConfirmRequest.getFreezereqId());
-								titanFundFreezereq.setRequestno(balanceFreezeRequest.getRequestno());
+		if (rechargeResultConfirmRequest == null) { //添加参数校验
+			log.error("parameter validation error");
+			freezeAccountBalanceResponse.putParamError();
+			return freezeAccountBalanceResponse;
+		}
+		try {
+			FreezeAccountBalanceRequest freezeAccountBalanceRequest = convertToFreezeAccountBalanceRequest(rechargeResultConfirmRequest);
+			BalanceFreezeRequest balanceFreezeRequest = convertTobalanceFreezeRequest(freezeAccountBalanceRequest);
+			if (balanceFreezeRequest != null) {
+				BalanceFreezeResponse balanceFreezeResponse = rsAccTradeManager.freezeAccountBalance(balanceFreezeRequest);
+				if (balanceFreezeResponse != null) {
+					if (CommonConstant.OPERATE_SUCCESS.equals(balanceFreezeResponse.getOperateStatus())) {
+						freezeAccountBalanceResponse.setAuthcode(balanceFreezeResponse.getAuthcode());
+						//将冻结的信息插入数据库
+						if (rechargeResultConfirmRequest.getFreezereqId() == null) {
+							TitanFundFreezereq titanFundFreezereq = convertToTitanFundFreezereq(freezeAccountBalanceRequest);
+							if (titanFundFreezereq != null) {
 								titanFundFreezereq.setAuthcode(balanceFreezeResponse.getAuthcode());
-								int row = titanFundFreezereqDao.update(titanFundFreezereq);
-								if(row<1){
-									log.error("修改冻结单失败");
+								int row = titanFundFreezereqDao.insert(titanFundFreezereq);
+								if (row < 1) {
+									log.error("插入冻结单失败");
 									throw new Exception();
 								}
 							}
-							freezeAccountBalanceResponse.setFreezeSuccess(true);
-							freezeAccountBalanceResponse.putSuccess();
-							return freezeAccountBalanceResponse;
+						} else {
+							TitanFundFreezereq titanFundFreezereq = new TitanFundFreezereq();
+							titanFundFreezereq.setFreezereqid(rechargeResultConfirmRequest.getFreezereqId());
+							titanFundFreezereq.setRequestno(balanceFreezeRequest.getRequestno());
+							titanFundFreezereq.setAuthcode(balanceFreezeResponse.getAuthcode());
+							int row = titanFundFreezereqDao.update(titanFundFreezereq);
+							if (row < 1) {
+								log.error("修改冻结单失败");
+								throw new Exception();
+							}
 						}
+						freezeAccountBalanceResponse.setFreezeSuccess(true);
+						freezeAccountBalanceResponse.putSuccess();
+						return freezeAccountBalanceResponse;
 					}
-					freezeAccountBalanceResponse.putErrorResult(balanceFreezeResponse.getReturnCode(), balanceFreezeResponse.getReturnMsg());
-					return freezeAccountBalanceResponse;
 				}
+				freezeAccountBalanceResponse.putErrorResult(balanceFreezeResponse.getReturnCode(), balanceFreezeResponse.getReturnMsg());
+				return freezeAccountBalanceResponse;
 			}
-		}catch(Exception e){
-			log.error(e.getMessage(),e);
+		} catch (Exception e) {
+			log.error("冻结操作异常" + e.getMessage(), e);
 			throw new Exception(e);
 		}
 		freezeAccountBalanceResponse.setFreezeSuccess(false);
@@ -332,34 +307,33 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	 * @return
 	 * @throws Exception
 	 */
-	private FreezeAccountBalanceRequest convertToFreezeAccountBalanceRequest(RechargeResultConfirmRequest rechargeResultConfirmRequest) throws Exception{
-		try{
+	private FreezeAccountBalanceRequest convertToFreezeAccountBalanceRequest(RechargeResultConfirmRequest rechargeResultConfirmRequest) throws Exception {
+		try {
 			FreezeAccountBalanceRequest freezeAccountBalanceRequest = new FreezeAccountBalanceRequest();
-	    	if(rechargeResultConfirmRequest.getPayAmount()!=null){
-	    		freezeAccountBalanceRequest.setAmount(Long.parseLong(rechargeResultConfirmRequest.getPayAmount()));
-	    	}
-	    	freezeAccountBalanceRequest.setOrderno(rechargeResultConfirmRequest.getOrderNo());
-	    	freezeAccountBalanceRequest.setBankcode(rechargeResultConfirmRequest.getBankCode());
-	    	freezeAccountBalanceRequest.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
-	    	freezeAccountBalanceRequest.setRequestno(OrderGenerateService.genFreeAccountBalanceRequestNo());
-	    	freezeAccountBalanceRequest.setFunccode(CommonConstant.FUNCCODE);
-	    	freezeAccountBalanceRequest.setUserfee((long)0);
-	    	freezeAccountBalanceRequest.setConditioncode(FreezeConditionCodeEnum.NO_ORDER);
-	    	freezeAccountBalanceRequest.setRequesttime(new Date());
-	    	freezeAccountBalanceRequest.setStatus(CommonConstant.FREEZE_STATUS);
-	    	freezeAccountBalanceRequest.setUseripaddress(CommonConstant.USER_IPADDRESS);
-	    	freezeAccountBalanceRequest.setUserid(rechargeResultConfirmRequest.getUserid());
-	    	freezeAccountBalanceRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-	    	freezeAccountBalanceRequest.setOrdercount(1);
-	    	if(rechargeResultConfirmRequest.getOrderAmount() !=null){
-	    		freezeAccountBalanceRequest.setOrderamount(Long.parseLong(rechargeResultConfirmRequest.getOrderAmount()));
-	    	}
-	    	
-	    	//用orderNo获取订单
-	    	freezeAccountBalanceRequest.setOrdercount(1);
-	    	return freezeAccountBalanceRequest;
-		}catch(Exception e){
-			log.error(e.getMessage(),e);
+			if (rechargeResultConfirmRequest.getPayAmount() != null) {
+				freezeAccountBalanceRequest.setAmount(Long.parseLong(rechargeResultConfirmRequest.getPayAmount()));
+			}
+			freezeAccountBalanceRequest.setOrderno(rechargeResultConfirmRequest.getOrderNo());
+			freezeAccountBalanceRequest.setBankcode(rechargeResultConfirmRequest.getBankCode());
+			freezeAccountBalanceRequest.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
+			freezeAccountBalanceRequest.setRequestno(OrderGenerateService.genFreeAccountBalanceRequestNo());
+			freezeAccountBalanceRequest.setFunccode(CommonConstant.FUNCCODE);
+			freezeAccountBalanceRequest.setUserfee((long) 0);
+			freezeAccountBalanceRequest.setConditioncode(FreezeConditionCodeEnum.NO_ORDER);
+			freezeAccountBalanceRequest.setRequesttime(new Date());
+			freezeAccountBalanceRequest.setStatus(CommonConstant.FREEZE_STATUS);
+			freezeAccountBalanceRequest.setUseripaddress(CommonConstant.USER_IPADDRESS);
+			freezeAccountBalanceRequest.setUserid(rechargeResultConfirmRequest.getUserid());
+			freezeAccountBalanceRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+			freezeAccountBalanceRequest.setOrdercount(1);
+			if (rechargeResultConfirmRequest.getOrderAmount() != null) {
+				freezeAccountBalanceRequest.setOrderamount(Long.parseLong(rechargeResultConfirmRequest.getOrderAmount()));
+			}
+			//用orderNo获取订单
+			freezeAccountBalanceRequest.setOrdercount(1);
+			return freezeAccountBalanceRequest;
+		} catch (Exception e) {
+			log.error("转换冻结账户余额请求失败", e);
 			throw new Exception(e);
 		}
 	}
@@ -407,13 +381,13 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	 * @throws Exception
 	 * @author fangdaikang
 	 */
-	private BalanceFreezeRequest convertTobalanceFreezeRequest(FreezeAccountBalanceRequest freezeAccountBalanceRequest) throws Exception{
+	private BalanceFreezeRequest convertTobalanceFreezeRequest(FreezeAccountBalanceRequest freezeAccountBalanceRequest) throws Exception {
 		BalanceFreezeRequest balanceFreezeRequest = null;
-		try{
-			if(freezeAccountBalanceRequest !=null){
+		try {
+			if (freezeAccountBalanceRequest != null) {
 				balanceFreezeRequest = new BalanceFreezeRequest();
 				balanceFreezeRequest.setAmount(freezeAccountBalanceRequest.getAmount());
-				if(freezeAccountBalanceRequest.getConditioncode() !=null){
+				if (freezeAccountBalanceRequest.getConditioncode() != null) {
 					balanceFreezeRequest.setConditioncode(freezeAccountBalanceRequest.getConditioncode().getKey());
 				}
 				balanceFreezeRequest.setOrderno(freezeAccountBalanceRequest.getOrderno());
@@ -430,8 +404,8 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				balanceFreezeRequest.setOrderamount(freezeAccountBalanceRequest.getOrderamount());
 				balanceFreezeRequest.setOrdercount(freezeAccountBalanceRequest.getOrdercount());
 			}
-		}catch(Exception e){
-			log.error(e.getMessage(),e);
+		} catch (Exception e) {
+			log.error("转换冻结参数失败", e);
 			throw new Exception(e);
 		}
 		return balanceFreezeRequest;
@@ -875,17 +849,8 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		return accountCheckResponse;
 	}
 
-    public TitanAccountDao getTitanAccountDao() {
-        return titanAccountDao;
-    }
-
-    public void setTitanAccountDao(TitanAccountDao titanAccountDao) {
-        this.titanAccountDao = titanAccountDao;
-    }
-
 	@Override
-	public AccountHistoryResponse queryAccountHistory(
-			AccountHistoryRequest accountHistoryRequest) {
+	public AccountHistoryResponse queryAccountHistory(AccountHistoryRequest accountHistoryRequest) {
 		AccountHistoryResponse accountHistoryResponse = new AccountHistoryResponse();
 		try{
 			if(accountHistoryRequest !=null){
@@ -901,14 +866,14 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 
 	@Override
 	public int deleteAccountHistory(AccountHistoryDTO accountHistoryDTO) {
-		try{
-			if(StringUtil.isValidString(accountHistoryDTO.getPayeruserid()) &&
-					StringUtil.isValidString(accountHistoryDTO.getInaccountcode())&&
-					StringUtil.isValidString(accountHistoryDTO.getOutaccountcode())){
+		try {
+			if (StringUtil.isValidString(accountHistoryDTO.getPayeruserid()) &&
+					StringUtil.isValidString(accountHistoryDTO.getInaccountcode()) &&
+					StringUtil.isValidString(accountHistoryDTO.getOutaccountcode())) {
 				return titanAccountHistoryDao.deleteAccountHistory(accountHistoryDTO);
 			}
-		}catch(Exception e){
-			log.error("删除账户历史记录失败"+e.getMessage(),e);
+		} catch (Exception e) {
+			log.error("删除账户历史记录失败" + e.getMessage(), e);
 		}
 		return 0;
 	}
@@ -931,24 +896,21 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     @Override
-    public int unFreezeOrder(int offset,int rows) {
-    	UnFreezeRequest unFreezeRequest = new UnFreezeRequest();
-    	unFreezeRequest.setOffset(offset);
-    	unFreezeRequest.setRows(rows);
-    	Date date = new Date();
-    	String dateStr = DateUtil.sdf.format(date);
+	public int unFreezeOrder(int offset, int rows) {
+		UnFreezeRequest unFreezeRequest = new UnFreezeRequest();
+		unFreezeRequest.setOffset(offset);
+		unFreezeRequest.setRows(rows);
+		String today = DateUtil.sdf.format(new Date());
 		try {
-			unFreezeRequest.setUnFreezeDate(DateUtil.sdf.parse(dateStr));
-		} catch (ParseException e) {
-			e.printStackTrace();
+			unFreezeRequest.setUnFreezeDate(DateUtil.sdf.parse(today));
+		} catch (ParseException e) {//不会发生
+			log.error("解冻日期解析失败", e);
 		}
-		log.info("解冻时入参:"+JSONSerializer.toJSON(unFreezeRequest));
-		UnFreezeResponse unFreezeResponse =  this.queryUnFreezeData(unFreezeRequest);
-		System.out.println("**********************************************");
-		System.out.println(Thread.currentThread().getName());
-		System.out.println("**********************************************");
-		log.info("解冻查询结果:"+JSONSerializer.toJSON(unFreezeResponse));
-		if(unFreezeResponse.getFundFreezeDTO() !=null && unFreezeResponse.getFundFreezeDTO().size()>0){
+		log.info("解冻时入参:" + JSONSerializer.toJSON(unFreezeRequest));
+		UnFreezeResponse unFreezeResponse = this.queryUnFreezeData(unFreezeRequest);
+		log.info("****************" + Thread.currentThread().getName() + "*********************");
+		log.info("解冻查询结果:" + JSONSerializer.toJSON(unFreezeResponse));
+		if (unFreezeResponse.getFundFreezeDTO() != null && unFreezeResponse.getFundFreezeDTO().size() > 0) {
 			rows = unFreezeResponse.getFundFreezeDTO().size();
 			//调用解冻操作
 			UnFreeBalanceBatchRequest unFreeBalanceBatchRequest = new UnFreeBalanceBatchRequest();
@@ -957,7 +919,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			return rows;
 		}
 		return 0;
-    }
+	}
 	
 	@Override
 	public void unfreezeAccountBalanceBatch(UnFreeBalanceBatchRequest unFreezeBalanceBatchRequest) {
@@ -1027,9 +989,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		return true;
 	}
 	
-	
-	
-	
+
 	private BalanceUnFreezeRequest convertBalanceUnFreezeRequest(FundFreezeDTO fundFreezeDTO){
 		if(fundFreezeDTO !=null){
 			BalanceUnFreezeRequest balanceUnFreezeRequest = new BalanceUnFreezeRequest();
@@ -1071,26 +1031,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		return response;
 	}
 
-
-
-	@Override
-	public QueryCertificationResponse queryCertificationInfo(
-			QueryCertificationRequest queryCertificationRequest) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-
-	@Override
-	public SaveCertificationResponse saveCertificationInfo(
-			SaveCertificationRequest saveCertificationRequest) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-
 	@Override
 	public CityInfosResponse getCityInfoList(CityInfoDTO cityInfo) {
 		CityInfosResponse response = new CityInfosResponse();
@@ -1106,5 +1046,11 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	}
 
 
-	
+	public TitanAccountDao getTitanAccountDao() {
+		return titanAccountDao;
+	}
+
+	public void setTitanAccountDao(TitanAccountDao titanAccountDao) {
+		this.titanAccountDao = titanAccountDao;
+	}
 }
