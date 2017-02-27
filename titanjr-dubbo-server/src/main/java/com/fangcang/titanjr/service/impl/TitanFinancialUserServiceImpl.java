@@ -1194,7 +1194,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		OrgDTO orgDTO = new OrgDTO();
 		orgDTO.setUserid(titanUser.getUserid());
 		orgDTO = organService.queryOrg(orgDTO);
-		Integer statusId = orgDTO.getStatusid();
+		Integer statusId = orgDTO.getStatusId();
 		TitanOrgCheck titanOrgCheck = new TitanOrgCheck();
 		TitanOrgCheckParam checkParam = new TitanOrgCheckParam();
     	checkParam.setUserid(titanUser.getUserid());

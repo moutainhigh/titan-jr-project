@@ -292,7 +292,7 @@ public class RSAUtil {
      * @return
      * @throws Exception
      */
-    public static String encryptByPublicKey(byte[] data, String publicKey)
+    public static byte[] encryptByPublicKey(byte[] data, String publicKey)
             throws Exception {
         byte[] keyBytes = Base64Helper.decode(publicKey);
         X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
@@ -300,8 +300,9 @@ public class RSAUtil {
         Key publicK = keyFactory.generatePublic(x509KeySpec);
         // 对数据加密
         byte [] encodeDataByteArray = RsaHelper.encryptData(data, publicK);
-        return Base64Helper.encode(encodeDataByteArray);
+        return encodeDataByteArray;
     }
+    
     /**
      * 公钥加密，并特殊处理base64中的字符.用于http get	请求传输
      * @param originData  明文

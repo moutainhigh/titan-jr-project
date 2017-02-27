@@ -136,7 +136,7 @@ public class WithDrawRequest
 
 	public void setTfsUserId(String tfsUserId) {
 		this.tfsUserId = tfsUserId;
-
+	}
 	public String getBranchCode() {
 		return branchCode;
 	}

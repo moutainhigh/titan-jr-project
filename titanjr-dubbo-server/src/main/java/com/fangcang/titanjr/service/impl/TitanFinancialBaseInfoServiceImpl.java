@@ -3,6 +3,9 @@ package com.fangcang.titanjr.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
 
@@ -18,13 +21,13 @@ import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
 import com.fangcang.titanjr.common.enums.MunicipalityEnum;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
-import com.fangcang.titanjr.common.util.ThreadPoolUtil;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanBankinfoDao;
 import com.fangcang.titanjr.dao.TitanCityInfoDao;
 import com.fangcang.titanjr.dao.TitanCoopDao;
 import com.fangcang.titanjr.dao.TitanRoleDao;
 import com.fangcang.titanjr.dto.bean.BankInfoDTO;
+import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.CoopDTO;
 import com.fangcang.titanjr.dto.request.BankInfoQueryRequest;
 import com.fangcang.titanjr.dto.request.CoopRequest;
@@ -43,8 +46,8 @@ import com.fangcang.titanjr.rs.response.BankInfoResponse;
 import com.fangcang.titanjr.rs.response.CityInfoResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialBaseInfoService;
-import com.fangcang.titanjr.task.BankInfoThread;
 import com.fangcang.util.MyBeanUtil;
+import com.fangcang.util.StringUtil;
 
 @Service("titanFinancialBaseInfoService")
 public class TitanFinancialBaseInfoServiceImpl implements TitanFinancialBaseInfoService {

@@ -1526,8 +1526,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	}
 	
 	
-	@Override
-	public void test() throws Exception{
+	//@Override
+	//public void test() throws Exception{
 //		CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest(); 
 //		cashierDeskInitRequest.setUserId("TJM10000109");
 //		cashierDeskInitRequest.setConstId(CommonConstant.RS_FANGCANG_CONST_ID);
