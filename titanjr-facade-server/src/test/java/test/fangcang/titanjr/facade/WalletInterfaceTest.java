@@ -1,5 +1,9 @@
 package test.fangcang.titanjr.facade;
 
+import javax.annotation.Resource;
+
+import org.junit.Test;
+
 import com.fangcang.titanjr.dto.OrganTypeEnum;
 import com.fangcang.titanjr.facade.TitanFinancialOrganFacade;
 import com.fangcang.titanjr.facade.TitanFinancialTradeFacade;
@@ -10,9 +14,6 @@ import com.fangcang.titanjr.response.BalanceQueryResponse;
 import com.fangcang.titanjr.response.OrganInfoResponse;
 import com.fangcang.titanjr.response.OrganStatusResponse;
 import com.fangcang.titanjr.response.OrganUserInfoResponse;
-import org.junit.Test;
-
-import javax.annotation.Resource;
 
 /**
  * Created by zhaoshan on 2016/11/16.
