@@ -182,26 +182,20 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			TitanTransOrder titanTransOrder = orderRequest2TitanTransOrder(orderRequest);
 			if (OrderStatusEnum.isRepeatedPay(transOrderDTO.getStatusid())) {
 				// 两次需要充值的金额不等需改订单
-				boolean flag = validateIsUpdateOrder2(titanPaymentRequest,
+				boolean flag = validateIsUpdateOrder(titanPaymentRequest,
 						transOrderDTO);
 				if (flag) {// 充值金额相等则返回该单号，否则生成订单
 					// 更新一下订单
-					titanTransOrder.setOrderid(OrderGenerateService
-							.genLocalOrderNo());
+					titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
 					titanTransOrder.setTransid(transOrderDTO.getTransid());
-					titanTransOrderDao
-							.updateTitanTransOrderByTransId(titanTransOrder);
-
-					localAddTransOrderResponse.setOrderNo(titanTransOrder
-							.getOrderid());
-					localAddTransOrderResponse.setUserOrderId(titanTransOrder
-							.getUserorderid());
+					titanTransOrderDao.updateTitanTransOrderByTransId(titanTransOrder);
+					localAddTransOrderResponse.setOrderNo(titanTransOrder.getOrderid());
+					localAddTransOrderResponse.setUserOrderId(titanTransOrder.getUserorderid());
 					localAddTransOrderResponse.putSuccess();
 					return localAddTransOrderResponse;
 				}
 
-			} else if (OrderStatusEnum
-					.isPaySuccess(transOrderDTO.getStatusid())) {
+			} else if (OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())) {
 				localAddTransOrderResponse.putErrorResult("110100014", "已支付，请勿重复支付");
 				// 再次回调财务
 				return localAddTransOrderResponse;
@@ -213,13 +207,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					.genSyncUserOrderId());
 			titanTransOrder.setStatusid(OrderStatusEnum.RECHARGE_IN_PROCESS
 					.getStatus());
-			log.info("the params of local order :"
-					+ JSONSerializer.toJSON(titanTransOrder));
+			log.info("the params of local order :"+ JSONSerializer.toJSON(titanTransOrder));
 			if (titanTransOrderDao.insert(titanTransOrder) > 0 ? true : false) {
-				localAddTransOrderResponse.setUserOrderId(titanTransOrder
-						.getUserorderid());
-				localAddTransOrderResponse.setOrderNo(titanTransOrder
-						.getOrderid());
+				localAddTransOrderResponse.setUserOrderId(titanTransOrder.getUserorderid());
+				localAddTransOrderResponse.setOrderNo(titanTransOrder.getOrderid());
 				localAddTransOrderResponse.putSuccess();
 				return localAddTransOrderResponse;
 			}
@@ -241,12 +232,14 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		TransOrderResponse transOrderResponse = this
 				.queryTransOrderByCode(titanPaymentRequest.getPayOrderNo());
 		if (null == transOrderResponse
-				|| null == transOrderResponse.getTransOrder()) {
+				|| null == transOrderResponse.getTransOrder()) 
+		{
 			orderResponse.putErrorResult("订单不存在");
 			return orderResponse;
 		}
 		TransOrderDTO transOrderDTO = transOrderResponse.getTransOrder();
-		if(OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())){
+		if(OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid()))
+		{
 			orderResponse.putErrorResult("支付成功,请勿重复支付！");
 			return orderResponse;
 		}
@@ -258,11 +251,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			if (this.isRsOrder(transOrderDTO.getOrderid())) {// 在融数已经落单
 				
 				TitanOrderPayreq titanOrderPayreq = new TitanOrderPayreq();
-				titanOrderPayreq
-						.setTransorderid(transOrderDTO.getTransid());
-				titanOrderPayreq = this
-						.queryOrderPayReqByTransOrderId(titanOrderPayreq);
-				if (null == titanOrderPayreq) {
+				titanOrderPayreq.setTransorderid(transOrderDTO.getTransid());
+				titanOrderPayreq = this.queryOrderPayReqByTransOrderId(titanOrderPayreq);
+				if (null == titanOrderPayreq) 
+				{
 					orderResponse.putErrorResult("系统错误");
 					return orderResponse;
 				}
@@ -1514,15 +1506,14 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	
 
 	// 验证是否需要修改订单
-	private boolean validateIsUpdateOrder2(
+	private boolean validateIsUpdateOrder(
 			TitanPaymentRequest titanPaymentRequest, TransOrderDTO transOrderDTO)
 			throws Exception {
 		if (!NumberUtil.covertToCents(titanPaymentRequest.getPayAmount())
 				.equals(transOrderDTO.getAmount().toString())) {
 			// 直接将本地单作废重新生成新订单
 			try {
-				boolean flag = this.updateLocalOrder2(transOrderDTO
-						.getTransid());
+				boolean flag = this.updateLocalOrder(transOrderDTO.getTransid());
 				if (flag) {
 					return false;
 				}
@@ -1536,7 +1527,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	}
 
 	// 修改本地落单
-	private boolean updateLocalOrder2(Integer transid) throws Exception {
+	private boolean updateLocalOrder(Integer transid) throws Exception {
 		TitanTransOrder titanTransOrder = new TitanTransOrder();
 		try {
 			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_NO_EFFECT
@@ -1835,7 +1826,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				return localOrderResponse;
 			}
 
-			titanTransOrder.setGoodscnt(1);
+			titanTransOrder.setGoodscnt(CommonConstant.DEFALUT_GOODCNT);
 			titanTransOrder.setTradeamount(Long.parseLong(NumberUtil
 					.covertToCents(titanOrderRequest.getAmount())));
 			titanTransOrder.setPayorderno(titanOrderRequest.getGoodsId());
@@ -1848,7 +1839,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_IN_PROCESS
 					.getStatus());
 			titanTransOrder.setCreatetime(new Date());
-			titanTransOrder.setAmount((long) 0);
+			titanTransOrder.setAmount(0l);
 			titanTransOrder.setUserorderid(OrderGenerateService
 					.genSyncUserOrderId());
 			if (null != titanOrderRequest.getBusinessInfo()) {
@@ -1859,11 +1850,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						titanOrderRequest.getBusinessInfo()).toString());
 			}
 			try {
-				titanTransOrder.setIsEscrowedPayment("1");
+				titanTransOrder.setIsEscrowedPayment(EscrowedEnum.NO_ESCROWED_PAYMENT.getKey());
 				if (StringUtil.isValidString(titanOrderRequest
 						.getEscrowedDate())) {
 					log.info("should escrowed payment");
-					titanTransOrder.setIsEscrowedPayment("0");
+					titanTransOrder.setIsEscrowedPayment(EscrowedEnum.ESCROWED_PAYMENT.getKey());
 					titanTransOrder.setEscrowedDate(DateUtil.sdf
 							.parse(titanOrderRequest.getEscrowedDate()));
 				}

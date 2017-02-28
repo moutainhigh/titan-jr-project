@@ -146,12 +146,12 @@ public class TitanPaymentService {
             rechargeRequest.setProductName(transOrderDTO.getGoodsname());
             rechargeRequest.setUserid(transOrderDTO.getUserid());
             rechargeRequest.setOrderNo(titanPaymentRequest.getOrderid());
-            rechargeRequest.setProductNum("1");
+            rechargeRequest.setProductNum(CommonConstant.DEFAULT_PRODUCT_NUM);
             rechargeRequest.setAmtType(AmtTypeEnum.RMB.getKey());
             rechargeRequest.setPayerAcount(titanPaymentRequest.getPayerAcount());
             rechargeRequest.setBankInfo(titanPaymentRequest.getBankInfo());
             rechargeRequest.setOrderTime(DateUtil.sdf5.format(new Date()));
-            rechargeRequest.setOrderExpireTime(45);
+            rechargeRequest.setOrderExpireTime(CommonConstant.DEFAULT_EXPIRE_TIME);
             rechargeRequest.setSignType(SignTypeEnum.MD5.getKey());
             rechargeRequest.setBusiCode(BusiCodeEnum.MerchantOrder.getKey());
             rechargeRequest.setOrderMark( OrderMarkEnum.InsideOrder.getKey());

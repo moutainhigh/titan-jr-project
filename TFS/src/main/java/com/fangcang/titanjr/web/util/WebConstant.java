@@ -91,9 +91,15 @@ public class WebConstant {
 	//绑定成功
 	public static final Integer BANKCARD_SUCCESS = 1;
 	
+	public static final Integer BANKCARD_AUDIT = 3;
+	
 	public static final Integer BANKCARD_BINDING = 2;
 	
-	public static final Integer BANKCARD_FAIL = 0;
+	public static final Integer BANKCARD_FAILED = 4;
+	
+	public static final Integer BANKCARD_DELETE = 0;
+	
+//	public static final Integer BANKCARD_FAIL = 0;
 	
 	//绑定提现卡
 	public static final String BIND_BANK_CARD="0";

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
+import com.fangcang.titanjr.common.enums.EscrowedEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
@@ -250,7 +251,7 @@ public class TitanTradeController extends BaseController {
 				PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
 				paymentUrlRequest.setPayOrderNo(orderCreateResponse
 						.getOrderNo());
-				paymentUrlRequest.setIsEscrowed("0");
+				paymentUrlRequest.setIsEscrowed(EscrowedEnum.ESCROWED_PAYMENT.getKey());
 				paymentUrlRequest.setPaySource(dto.getPayerType());
 				PaymentUrlResponse response = titanFinancialUtilService.getPaymentUrl(paymentUrlRequest);
 

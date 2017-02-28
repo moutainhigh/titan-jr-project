@@ -154,9 +154,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     private TitanCodeCenterService titanCodeCenterService;
     @Resource
     private RSOrganizationManager rsOrganizationManager;
-    @Resource
-    private RSAccTradeManager rsAccTradeManager;
-    
+
     @Resource
     private TitanCashierDeskService titanCashierDeskService;
     

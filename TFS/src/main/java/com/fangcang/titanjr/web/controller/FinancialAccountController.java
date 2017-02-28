@@ -272,42 +272,60 @@ public class FinancialAccountController extends BaseController {
     	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
     	organQueryRequest.setUserId(this.getUserId());
     	FinancialOrganResponse response  = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
-        if(response.isResult()){
-        	FinancialOrganDTO financialOrganDTO = response.getFinancialOrganDTO();
-        	if(financialOrganDTO !=null && financialOrganDTO.getUserType()!=null){
-        		resultMap.put(WebConstant.RESULT,WebConstant.SUCCESS);
-        		if(WebConstant.ACCOUNT_PUBLIC.equals(financialOrganDTO.getUserType().toString())){
-        			BankCardRequest bankCardRequest = new BankCardRequest();
-        	    	bankCardRequest.setUserId(this.getUserId());
-        	    	bankCardRequest.setAccountproperty(WebConstant.ACCOUNT_PUBLIC);
-        	    	bankCardRequest.setAccountpurpose(WebConstant.ACCOUNT_PURPOSE_WITHDRAW);
-        	    	List<BankCardDTO> bankCardDTOList = titanFinancialBankCardService.queryBankCardDTO(bankCardRequest);
-        	    	if(bankCardDTOList !=null && bankCardDTOList.size()>0){
-        	    		BankCardDTO bankCardDTO = bankCardDTOList.get(0);
-        	    		if(bankCardDTO !=null && bankCardDTO.getStatus()!=null){
-        	    			if(WebConstant.BANKCARD_SUCCESS.intValue()==bankCardDTO.getStatus().intValue()){//对公且绑定失败
-        	    				resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_SUCCESS);
-        	        		}else if(WebConstant.BANKCARD_BINDING.intValue()==bankCardDTO.getStatus().intValue()){
-        	        			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_BINDING);
-        	        		}else{
-        	        			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_FAIL);
-        	        		}
-        	    			return toJson(resultMap);
-        	    		}
-        	    	}else{
-        	    		resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_NO_BIND);
-        	    		return toJson(resultMap);
-        	    	}
-        			
-        		}else{
-        			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PERSON);
-        		}
-        		return toJson(resultMap);
-        	}
-        }
-    	resultMap.put(WebConstant.MSG, "系统错误");
+    	if(!response.isResult() || response.getFinancialOrganDTO()==null)
+    	{
+    		log.error("无该机构");
+    		resultMap.put(WebConstant.MSG, "系统错误");
+        	return toJson(resultMap);
+    	}
+    	
+    	Integer userType = response.getFinancialOrganDTO().getUserType();
+    	resultMap.put(WebConstant.RESULT,WebConstant.SUCCESS);
+    	if(userType !=null && WebConstant.ACCOUNT_PUBLIC.equals(userType.toString()))
+    	{
+    		QueryBankCardBindInfoResponse  rsp = this.queryBankCardInfo(userType.toString());
+		
+			if(!rsp.isResult() || rsp.getBankCardInfoDTOList()==null)
+			{
+				log.info("该卡尚未绑定");
+				resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_NO_BIND);
+	    		return toJson(resultMap);
+			}
+			BankCardInfoDTO dto = rsp.getBankCardInfoDTOList().get(0);
+			if(WebConstant.BANKCARD_SUCCESS==Integer.parseInt(dto.getStatus()))
+			{//对公且绑定失败
+				resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_SUCCESS);
+    		}else if(WebConstant.BANKCARD_BINDING==Integer.parseInt(dto.getStatus()) 
+    				||WebConstant.BANKCARD_AUDIT==Integer.parseInt(dto.getStatus()))
+    		{
+    			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_BINDING);
+    		}else if(WebConstant.BANKCARD_FAILED ==Integer.parseInt(dto.getStatus()))
+    		{
+    			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_FAIL);
+    		}else if(WebConstant.BANKCARD_DELETE == Integer.parseInt(dto.getStatus()))
+    		{
+    			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_NO_BIND);
+    		}
+			return toJson(resultMap);
+			
+    	}
+    	resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PERSON);
     	return toJson(resultMap);
     }
+    
+    private QueryBankCardBindInfoResponse queryBankCardInfo(String userType)
+    {
+    	BankCardBindInfoRequest brq = new BankCardBindInfoRequest();
+		brq.setUserid(this.getUserId());
+		//账户用途
+		brq.setUsertype(userType);
+		////1：结算卡，2：所有绑定卡
+		brq.setObjorlist(CommonConstant.ALLCARD);
+		brq.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+		brq.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+		return titanFinancialBankCardService.getBankCardBindInfo(brq);
+    }
+    
     
     @RequestMapping(value = "/toBindAccountWithDrawCard")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
@@ -389,8 +407,8 @@ public class FinancialAccountController extends BaseController {
     private CusBankCardBindResponse bindBindCardToPublic(BindBankCardRequest bindBankCardRequest){
     	 CusBankCardBindRequest  bankCardBindRequest = new CusBankCardBindRequest();
          bankCardBindRequest.setUserId(this.getUserId());
-         bankCardBindRequest.setProductId(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_PRODUCT_ID);
-         bankCardBindRequest.setConstId(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_CONST_ID);
+         bankCardBindRequest.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+         bankCardBindRequest.setConstId(CommonConstant.RS_FANGCANG_CONST_ID);
          bankCardBindRequest.setUserType(String.valueOf(this.getTitanOrganDTO().getUserType()));
          bankCardBindRequest.setAccountTypeId("00");
          bankCardBindRequest.setBankHeadName(bindBankCardRequest.getBankCardName());
