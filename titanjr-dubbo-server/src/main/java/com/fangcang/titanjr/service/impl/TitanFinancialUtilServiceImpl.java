@@ -152,8 +152,8 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 			String domainName = domainConfigDao.queryCurrentEnvDomain();
 			if(StringUtil.isValidString(domainName)){
 				payMethodConfigDTO = new PayMethodConfigDTO();
-				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-app/payment/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-app/payment/notify.action");
+				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-02/payment/payConfirmPage.action");
+				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-02/payment/notify.action");
 			}
 			return payMethodConfigDTO;
 		}catch(Exception e){
