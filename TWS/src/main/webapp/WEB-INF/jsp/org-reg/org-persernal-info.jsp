@@ -21,6 +21,10 @@
        	<input type="hidden" name="password" value="${regUserLoginInfo.password}"/>
        	<input type="hidden" name="passwordConfirm" value="${regUserLoginInfo.passwordConfirm}"/>
        	<input type="hidden" name="regCode" value="${regUserLoginInfo.regCode}"/>
+       	<input type="hidden" name="channel" value="${regUserLoginInfo.channel}"/>
+        <input type="hidden" name="info" value="${regUserLoginInfo.info}"/>
+        <input type="hidden" name="encrypt_type" value="${regUserLoginInfo.encrypt_type}"/>
+        <input type="hidden" name="sign" value="${regUserLoginInfo.sign}"/>
        	<!-- 修改时使用 -->
        	<input type="hidden" name="imgIds" id="imgIds" />
        	<input type="hidden" name="orgId" id="orgId" value="${org.orgId }"/>

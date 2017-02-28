@@ -140,7 +140,8 @@ public class FinancialOrganController extends BaseController {
     	regUserLoginInfo.setEncrypt_type(request.getParameter("encrypt_type"));
     	regUserLoginInfo.setSign(request.getParameter("sign"));
     	regUserLoginInfo.setInfo(request.getParameter("info"));
-        return "org-reg/org-user";
+    	CoopRegInfo c = decryptRegInfo(regUserLoginInfo);
+    	  return "org-reg/org-user";
     }
     
     /**
@@ -148,16 +149,22 @@ public class FinancialOrganController extends BaseController {
      */
     private String verifyRegSign(String channel,String sign,String info,String encryptType,String key){
     	if(StringUtil.isValidString(channel)&&StringUtil.isValidString(sign)&&StringUtil.isValidString(info)){
-    		String keyValue = "channel="+channel+"&encrypt_type="+encryptType+"&info="+info+"&key="+key;
+    		Map<String, String> signParam = new HashMap<String, String>();
+    		signParam.put("channel", channel);
+    		signParam.put("encrypt_type", encryptType);
+    		signParam.put("info", info);
+    		String keyValue = MD5.generatorSignParam(signParam, key);
     		String paramSign = MD5.MD5Encode(keyValue).toUpperCase();
     		if(paramSign.equals(sign)){
     			//签名正确，第三方注册
     			return "success";
     		}else{
     			//签名错误
-    			log.info("第三方注册参数非法，原始信息："+keyValue+",paramSign:"+paramSign+",md5sign:"+sign);
+    			log.info("第三方注册sign签名失败，原始信息："+keyValue+",paramSign:"+paramSign+",md5sign:"+sign);
     			return "fail";
     		}
+    	}else{
+    		log.info("第三方注册时验签参数不完整,必填参数为：channel:"+channel+",info:"+info+",md5sign:"+sign);
     	}
     	//参数不完整不需要校验，默认注册
     	return "ok";
@@ -336,12 +343,14 @@ public class FinancialOrganController extends BaseController {
 	    	int registerSource = CoopTypeEnum.TWS.getKey();
 	    	boolean isNeedNofiy = false;
 	    	CoopRegInfo coopRegInfo = null;
+	    	String md5key = null;
 	    	if(StringUtil.isValidString(regUserLoginInfo.getChannel())){
 	    		CoopRequest coopRequest = new CoopRequest();
 		    	coopRequest.setMixcode(regUserLoginInfo.getChannel());
 	    		CoopResponse coopResponse = baseInfoService.getOneCoop(coopRequest);
 	    		if(coopResponse.isResult()&&coopResponse.getCoopDTO()!=null){
 	    	    	registerSource = coopResponse.getCoopDTO().getCoopType();
+	    	    	md5key = coopResponse.getCoopDTO().getMd5Key();
 	    	    	isNeedNofiy = true;
 	    		}
 		    	//合作方信息
@@ -383,7 +392,7 @@ public class FinancialOrganController extends BaseController {
 				}
 				//通知第三方平台，机构信息
 				if(isNeedNofiy){
-					nofifyCoop(coopRegInfo.getCoopOrgCode(),coopRegInfo.getCoopUserId(),coopRegInfo.getNotifyurl());
+					nofifyCoop(coopRegInfo.getCoopOrgCode(),coopRegInfo.getCoopUserId(),coopRegInfo.getNotifyurl(),md5key);
 				}
 				sendCheckAlarm(orgRegPojo.getOrgName());
 				return "/org-reg/reg-success";
@@ -410,16 +419,22 @@ public class FinancialOrganController extends BaseController {
      * @param coopOrgCode
      * @param notifyurl
      */
-    private void nofifyCoop(String coopOrgCode,String coopUserId,String notifyurl){
+    private void nofifyCoop(String coopOrgCode,String coopUserId,String notifyurl,String key){
     	try {
 	    	String orgcode = (String) getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID).toString();
 	    	String tfsUserid = (String) getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID).toString();//金服用户名
-	    	
 	    	Map<String, String> parameters = new HashMap<String, String>();
+	    	Long reqtime = new Date().getTime();
 			parameters.put("cooporgcode", coopOrgCode);
 			parameters.put("orgcode", orgcode);
 			parameters.put("coopuserid", coopUserId);
 			parameters.put("tfsuserid", tfsUserid);
+			parameters.put("reqtime", reqtime.toString());
+			 
+    		String keyValue = MD5.generatorSignParam(parameters, key);
+			String sign = MD5.MD5Encode(keyValue);
+			parameters.put("sign", sign);
+			
 			HttpUtils.postRequest(new URL(URLDecoder.decode(notifyurl, "UTF-8")), parameters);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -455,9 +470,11 @@ public class FinancialOrganController extends BaseController {
     				coopRegInfo.setCoopLoginName(result.get("cooploginname"));
     				coopRegInfo.setCoopUserId(result.get("coopuserid"));
     				coopRegInfo.setNotifyurl(result.get("notifyurl"));
+    				log.info("第三方注册时,RSA解密成功，解密信息coopRegInfo为:"+Tools.gsonToString(coopRegInfo)); 
+        			
     				return coopRegInfo;
     			} catch (Exception e) {
-    				log.error("第三方注册时,注册信息RSA解密失败，加密信息info为:"+regUserLoginInfo.getInfo()+",第三方为:"+coopResponse.getCoopDTO(), e); 
+    				log.error("第三方注册时,参数签名错误，加密信息info为:"+regUserLoginInfo.getInfo()+",第三方为:"+coopResponse.getCoopDTO(), e); 
     			}
 	    	}
     	}else{

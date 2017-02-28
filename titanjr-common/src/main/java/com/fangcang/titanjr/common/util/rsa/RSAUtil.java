@@ -10,6 +10,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -385,7 +386,32 @@ public class RSAUtil {
         return decryptedData;
     }
 
-	
+    /**
+     * 按key的顺序生成key=value串(值不为空的key-value才会返回)
+     * @param parameters 其他要加入签名的参数
+     * @param key 平台md5key
+     * @date 2017-02-28
+     * @return
+     */
+    public static String generatorSignParam(Map<String, String> parameters,String key) {
+        StringBuffer params = new StringBuffer();
+        if(!parameters.isEmpty()) {
+        	Object[] keys = parameters.keySet().toArray();
+			Arrays.sort(keys);
+			for (int i = 0; i < keys.length; i++) {
+        		String name = keys[i].toString();
+        		String value = parameters.get(name);
+        		if(StringUtil.isValidString(value)){
+        			params.append(name + "=");
+        			params.append(value);
+        			params.append("&");
+        		}
+               
+            }
+        }
+        params.append("key="+key);
+        return params.toString();
+    }
 	
 	public static void main(String[] args) throws Exception{
 //		String msg = "罗庆龙";
@@ -404,18 +430,22 @@ public class RSAUtil {
 		
 		/************* 第三方注册 *****************/
 		//RSA加密
-		String infoMingwen = "cooporgname=TTM商家二&cooporgcode=GL10000002222&cooploginname=luoeeeeeeeeee22222@qq.com&coopuserid=111000222&notifyurl=http%3A%2F%2Fbaidu.com";
+		String infoMingwen = "cooporgname=TTM商家二2&cooporgcode=GL100000033&cooploginname=luoeeeeeeeeee333@qq.com&coopuserid=111000333&notifyurl=http%3A%2F%2Fbaidu.com";
 		String publicKey1 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCbf0mFWF2r4YfaT1catS1fXFFkFp7DSiX/IhuolNuDKnTKa2/rhKOR7ZO5/H6J1JxKVlhieYl6lEiwByeDCuZRbTMq/bhT9gjdh5BsOXvNr6I7QSYI9nSV5PZhWtu47tlR3//hc9SRccQo66tGQx8uTEjjQegFQsYOrx1NtQrPbQIDAQAB";//keys1.get(RSAUtil.PUBLIC_KEY);
 		String info = RSAUtil.encryptByPublicKeyGet(infoMingwen, publicKey1); 
 		System.out.println("第三方注册info密文："+info);
 		
 		String privateKey1 = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJt/SYVYXavhh9pPVxq1LV9cUWQWnsNKJf8iG6iU24MqdMprb+uEo5Htk7n8fonUnEpWWGJ5iXqUSLAHJ4MK5lFtMyr9uFP2CN2HkGw5e82vojtBJgj2dJXk9mFa27ju2VHf/+Fz1JFxxCjrq0ZDHy5MSONB6AVCxg6vHU21Cs9tAgMBAAECgYA/fq191sSBMBmySl2OGVdKrj7J+PahVgDH+pyCrS4plEeWdGKCMGo+Z13AP1tIWtnq/PEgXPKHbE92GaXHu8ap7Dbc2132S8DMw/ENDCcoKko1bm3n749mg5xQp+pG2/VTqYN0mqab26hGAaRe8alqN4H1qDr7DiHPnMv0oak7PQJBAM9CS5oTln11T0NmoG4yxzKN3GnkIH5BhM7YYDvU+BbCH6Z4WhXTYejlTZQrycscGfXnsLD4dJmtkvzHsVnx458CQQDAEMGFf/iVQTvlADi9umGcjuf0wZpvFGgP0wWzgN4Td0q5pdo1ialFY7vmDJ6l+8qLeF182a8+Ehrhmt2cPBFzAkEAw6fmDvHm41DXHt3HHcC547OgHCbLteTMJyiE0HbgLTvc/R4ojOocR+wQLIyZ1zAUIdwzJR2nlVwSoqcxeaOsKQJATVbx9mX/nWp1SdN7BbtFjxtkgARtwYkAFk8tHokn48LHjlYgtipGxTBR+2Ldh40KlHrVem7VyDLWLD6GOmFdzQJAJUATreSlavtCZBLCVXhnO0sZBY47zhlS7s7qLjud6n3HUaSGGt5pQCZAzbWbyw+zmCSH9/RBIPn8GBNdgPlzbg==";//keys1.get(RSAUtil.PRIVATE_KEY);
-		String infoMingwen2 = RSAUtil.decryptByPrivateKeyGet(info, privateKey1);
-		//System.out.println("明文----"+infoMingwen2);
+		
 		//md5
 		try {
 			String key = "eki6ixw9y3q5rqd3";
-			String md5 = "channel=MGKD6EP5&encrypt_type=RSA&info="+info+"&key="+key;
+			Map<String, String> signParamter = new HashMap<String, String>();
+			signParamter.put("channel", "MGKD6EP5");
+			signParamter.put("encrypt_type", "RSA");
+			signParamter.put("info", info);
+			
+			String md5 = generatorSignParam(signParamter,key);
 			String signString = MD5.MD5Encode(md5).toUpperCase();
 			System.out.println("第三方注册参数:"+md5);
 			System.out.println("第三方注册签名sign:"+signString);
@@ -426,7 +456,7 @@ public class RSAUtil {
 		
 		/****************** 管理员代理登录 ************/
 		//RSA
-		String infoProxyLoginMingwen = "orgcode=TJM10030170&tfsuserid=10139";
+		String infoProxyLoginMingwen = "orgcode=TJM10030177&tfsuserid=10151";
 		String infoProxyLogin = RSAUtil.encryptByPublicKeyGet(infoProxyLoginMingwen, publicKey1); 
 		System.out.println("管理员代理登录 密文info："+infoProxyLogin);
 		
@@ -434,7 +464,17 @@ public class RSAUtil {
 		try {
 			String key = "eki6ixw9y3q5rqd3";
 			Long reqtime = new Date().getTime();
-			String md5 = "channel=MGKD6EP5&encrypt_type=RSA&info="+infoProxyLogin+"&jumpurl="+url+"&reqtime="+reqtime+"&key="+key;
+			//String md5 = "channel=MGKD6EP5&encrypt_type=RSA&info="+infoProxyLogin+"&jumpurl="+url+"&reqtime="+reqtime+"&key="+key;
+			
+			Map<String, String> signParamter = new HashMap<String, String>();
+			signParamter.put("channel", "MGKD6EP5");
+			signParamter.put("encrypt_type", "RSA");
+			signParamter.put("info", infoProxyLogin);
+			signParamter.put("jumpurl", url);
+			signParamter.put("reqtime", reqtime.toString());
+			
+			String md5 = generatorSignParam(signParamter,key);
+			
 			String signString = MD5.MD5Encode(md5).toUpperCase();
 			System.out.println("管理员代理登录 参数:"+md5);
 			System.out.println("管理员代理登录 sign:"+signString);

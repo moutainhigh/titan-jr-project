@@ -417,21 +417,35 @@ public class LoginController extends BaseController{
    	 */
     private String verifyLoginSign(String channel,String encryptType,String info,String jumpUrl,Long reqTime,String sign,String key){
     	if(StringUtil.isValidString(channel)&&StringUtil.isValidString(sign)&&StringUtil.isValidString(info)){
-    		StringBuilder keyValue = new StringBuilder();
-    		keyValue.append("channel=").append(channel);
-    		keyValue.append("&encrypt_type=").append(encryptType);
-    		keyValue.append("&info=").append(info);
+//    		StringBuilder keyValue = new StringBuilder();
+//    		keyValue.append("channel=").append(channel);
+//    		keyValue.append("&encrypt_type=").append(encryptType);
+//    		keyValue.append("&info=").append(info);
+//    		if(!isBlank(jumpUrl)){
+//    			try {
+//					keyValue.append("&jumpurl=").append(URLEncoder.encode(jumpUrl, "UTF-8"));
+//				} catch (UnsupportedEncodingException e) {
+//					e.printStackTrace();
+//				}
+//    		}
+//    		keyValue.append("&reqtime=").append(reqTime);
+//    		keyValue.append("&key=").append(key);
+//    		,,,
+    		Map<String, String> signParam = new HashMap<String, String>();
+    		signParam.put("channel", channel);
+    		signParam.put("encrypt_type", encryptType);
+    		signParam.put("info", info);
     		if(!isBlank(jumpUrl)){
     			try {
-					keyValue.append("&jumpurl=").append(URLEncoder.encode(jumpUrl, "UTF-8"));
+    				signParam.put("jumpurl", URLEncoder.encode(jumpUrl, "UTF-8"));
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
     		}
-    		keyValue.append("&reqtime=").append(reqTime);
-    		keyValue.append("&key=").append(key);
+    		signParam.put("reqtime", reqTime.toString());
+    		String keyValue = MD5.generatorSignParam(signParam, key);
     		
-    		String paramSign = MD5.MD5Encode(keyValue.toString()).toUpperCase();
+    		String paramSign = MD5.MD5Encode(keyValue).toUpperCase();
     		if(paramSign.equals(sign)){
     			//签名正确，第三方注册
     			return "success";

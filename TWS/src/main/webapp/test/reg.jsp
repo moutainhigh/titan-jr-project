@@ -18,12 +18,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
    <script type="text/javascript">
    //第三方注册
    function regThird(){
-		var url="http://local.luoqinglong.com:8020/TWS/ex/organ/showOrgUser.shtml?channel=MGKD6EP5&encrypt_type=RSA&info=WefpbsnMr7NQqeoE73zf8hT9nDiPbR1fkAKaZP4M6H3Zq9AiTSTgzrTZrxh0TO0ycx78zSV0Yo6a7E4IvXrdF52K0pTDEfysiS1rATCKHb8QuuieKoDJOobpwlVWvZeD3glwI1TS0CYhllK7YBqp7hcJ6UyejMwdakAx9lkuxZg-4yuJPRw*j7Wqx09BxGrbEBETiYnjyx1tb6MMoGsSpIYQd8ZOe9tDlULab8tSCpTf5qQYu8klbuCMnDZFGcsTRy66OoNqRStrxqtALB5KWhoAWziqsgAC3wZWd1*sbgjFUD*BSQALdxW9684ns13CB*Zqf83dTKOHPCao7ZN1Bw==&sign=6A344455AC578E71B48B603EC23AF687";
+		var url="http://local.luoqinglong.com:8020/TWS/ex/organ/showOrgUser.shtml?channel=MGKD6EP5&encrypt_type=RSA&info=Rtmn8aUyR3w4L0VpAXkOyeLtVjuTS2yui7ZrLr569v*P1Ftw8jf7tIWic*LsETfpolhbbZcpz0Y967PvqPIPdXVNWYgOJKhx-Q8PtWJlnDo6CxYca0EUUZOSArYJB8R*LlKe2nc2JeWcj1oyT9EfX5qQueAappQeiQCBKCTXIew5T5q7DumKpziqXHcaymgRlNxrdFZJZNga4FQUXyDx2lOMAQxOtPjeySV8B8reXMTeNdBEjxPYA9jlXfm6enLzUd63q87PQkiFdX7J552eVn93TeG5Fu6ZSuMZ*PSfAQtyRvb0Uo6YgWzhkCv6XjIVV7T3HbDzJGKDcOXvgmbi3A==&sign=890FEE5BCDDBF267820FF6C4EAED06AA";
    		location.href=url;
    }
    //代理登录
    function proxyLogin(){
-	   var url="http://local.luoqinglong.com:8020/TWS/ex/proxyLogin.shtml?channel=MGKD6EP5&encrypt_type=RSA&info=GqTkJnYkCRIq3m9*DOSPlcp5JssnV*kJfLCiMlUsnHplSuYP1ghVF6I9BbL5cFlxqzmbvqlk5Y9TmEWkmEgbKK8gAE3AMXRFhbY0qPidbC2lEmbXBw8abUfeCBapLsSjDw3QGNSlWvlKU2nJQSaOZs*JP-ouiepNXiF6Y45mVTk=&jumpurl=http%3A%2F%2Flocal.luoqinglong.com%3A8020%2FTWS%2Faccount%2Foverview-main.shtml&reqtime=1487559602507&sign=D6129FD466E8A5F626714B4B3412B76D";
+	   var url="http://local.luoqinglong.com:8020/TWS/ex/proxyLogin.shtml?channel=MGKD6EP5&encrypt_type=RSA&info=IOL9Nj77O*sHtWHVvKSOj4Ad9GQRr3cMBCBbgbJ8JklrW4X3H1pxVwtCRf2*HLVk1PJxqmZT-b1vkukR37nwddtr3-jH2aj8oypCosB3QePxKoFLlXv80Sey7UTzQS0Ecj63Dijc6j5i0lvBpGEldfNPvsriN5evIJ8mOJtwWaE=&jumpurl=http%3A%2F%2Flocal.luoqinglong.com%3A8020%2FTWS%2Faccount%2Foverview-main.shtml&reqtime=1488253576144&sign=91C341C88A56D0E243588215200073BD";
 	   location.href=url;
    }
    
