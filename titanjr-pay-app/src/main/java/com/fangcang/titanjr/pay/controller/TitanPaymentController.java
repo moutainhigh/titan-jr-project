@@ -310,7 +310,8 @@ public class TitanPaymentController extends BaseController {
         }
         titanPaymentRequest.setOrderid(localOrderResp.getOrderNo());
         TransferRequest transferRequest = this.convertToTransferRequest(titanPaymentRequest);
-		TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
+        //存在安全隐患，如果余额支付两次会不会存在重复支付，转帐操作中的锁在集群中已经不起作用了
+        TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
 		
 		TransOrderRequest transOrderRequest = new TransOrderRequest();
 		transOrderRequest.setOrderid(localOrderResp.getOrderNo());

@@ -18,7 +18,7 @@ public class ModifyInvalidWithDrawCardRequest extends BaseRequestDTO {
     
     private String userid;
     //机构码
-    private String constid = CommonConstant.RS_FANGCANG_PRODUCT_ID;
+    private String constid = CommonConstant.RS_FANGCANG_CONST_ID;
     // 产品号
     private String productid = CommonConstant.RS_FANGCANG_PRODUCT_ID;
     

@@ -571,7 +571,7 @@
    	                padding: '0 0 0px 0',
    					width: 560,
    	                content: html,
-   	                skin : 'saas_pop wx_close', 
+   	                skin : 'saas_pop wx_close wx_p', 
    	            	onclose: function () {
    	            		toWxPayPage();
    	          		}
