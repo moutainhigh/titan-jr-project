@@ -27,9 +27,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fangcang.titanjr.common.enums.CoopTypeEnum;
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
 import com.fangcang.titanjr.common.enums.SMSType;
-import com.fangcang.titanjr.common.enums.CoopTypeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
@@ -43,7 +43,6 @@ import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.rsa.RSAUtil;
 import com.fangcang.titanjr.dto.bean.CoopDTO;
-import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
@@ -59,6 +58,8 @@ import com.fangcang.titanjr.dto.request.OrganImageUploadRequest;
 import com.fangcang.titanjr.dto.request.OrganRegisterRequest;
 import com.fangcang.titanjr.dto.request.OrganRegisterUpdateRequest;
 import com.fangcang.titanjr.dto.request.SendCodeRequest;
+import com.fangcang.titanjr.dto.request.SendMessageRequest;
+import com.fangcang.titanjr.dto.request.SynOrgInfoRequest;
 import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.request.UserLoginNameExistRequest;
@@ -80,6 +81,7 @@ import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
 import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
 import com.fangcang.titanjr.entity.TitanUser;
+import com.fangcang.titanjr.service.TitanCoopService;
 import com.fangcang.titanjr.service.TitanFinancialBaseInfoService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
@@ -121,6 +123,9 @@ public class FinancialOrganController extends BaseController {
     @Resource
     private TitanFinancialBaseInfoService baseInfoService;
     
+    @Resource
+    private TitanCoopService  coopService;
+    
     /**
      * 显示注册登录信息页面
      * @param request
@@ -135,12 +140,18 @@ public class FinancialOrganController extends BaseController {
     	model.addAttribute("sign", request.getParameter("sign"));
     	model.addAttribute("info", request.getParameter("info"));
     	model.addAttribute("encrypt_type", request.getParameter("encrypt_type"));
-    	RegUserLoginInfo regUserLoginInfo = new RegUserLoginInfo();
-    	regUserLoginInfo.setChannel(request.getParameter("channel"));
-    	regUserLoginInfo.setEncrypt_type(request.getParameter("encrypt_type"));
-    	regUserLoginInfo.setSign(request.getParameter("sign"));
-    	regUserLoginInfo.setInfo(request.getParameter("info"));
-    	CoopRegInfo c = decryptRegInfo(regUserLoginInfo);
+//    	RegUserLoginInfo regUserLoginInfo = new RegUserLoginInfo();
+//    	regUserLoginInfo.setChannel(request.getParameter("channel"));
+//    	regUserLoginInfo.setEncrypt_type(request.getParameter("encrypt_type"));
+//    	regUserLoginInfo.setSign(request.getParameter("sign"));
+//    	regUserLoginInfo.setInfo(request.getParameter("info"));
+    	//CoopRegInfo c = decryptRegInfo(regUserLoginInfo);
+    	
+//    	SynOrgInfoRequest synOrgInfoRequest = new SynOrgInfoRequest();
+//		synOrgInfoRequest.setCoopType(1);
+//		synOrgInfoRequest.setKvparam("cooporgcode="+1+"&orgcode="+1+"&coopuserid="+1+"&tfsuserid="+1);
+//		synOrgInfoRequest.setNotifyUrl("111");
+//		coopService.insertSynOrgInfo(synOrgInfoRequest);
     	  return "org-reg/org-user";
     }
     
@@ -340,7 +351,7 @@ public class FinancialOrganController extends BaseController {
 	    	organRegisterRequest.setConnect(orgRegPojo.getConnect());
 	    	organRegisterRequest.setMobileTel(orgRegPojo.getMobiletel());
 	    	//渠道号要用密文
-	    	int registerSource = CoopTypeEnum.TWS.getKey();
+	    	int coopType = CoopTypeEnum.TWS.getKey();
 	    	boolean isNeedNofiy = false;
 	    	CoopRegInfo coopRegInfo = null;
 	    	String md5key = null;
@@ -349,7 +360,7 @@ public class FinancialOrganController extends BaseController {
 		    	coopRequest.setMixcode(regUserLoginInfo.getChannel());
 	    		CoopResponse coopResponse = baseInfoService.getOneCoop(coopRequest);
 	    		if(coopResponse.isResult()&&coopResponse.getCoopDTO()!=null){
-	    	    	registerSource = coopResponse.getCoopDTO().getCoopType();
+	    			coopType = coopResponse.getCoopDTO().getCoopType();
 	    	    	md5key = coopResponse.getCoopDTO().getMd5Key();
 	    	    	isNeedNofiy = true;
 	    		}
@@ -363,7 +374,7 @@ public class FinancialOrganController extends BaseController {
 		    	}
 	    	}
 	    	
-	    	organRegisterRequest.setRegisterSource(registerSource);
+	    	organRegisterRequest.setRegisterSource(coopType);
 	    	
 	    	if(orgRegPojo.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
 	    		//企业
@@ -392,7 +403,7 @@ public class FinancialOrganController extends BaseController {
 				}
 				//通知第三方平台，机构信息
 				if(isNeedNofiy){
-					nofifyCoop(coopRegInfo.getCoopOrgCode(),coopRegInfo.getCoopUserId(),coopRegInfo.getNotifyurl(),md5key);
+					nofifyCoop(coopType,coopRegInfo.getCoopOrgCode(),coopRegInfo.getCoopUserId(),coopRegInfo.getNotifyurl(),md5key);
 				}
 				sendCheckAlarm(orgRegPojo.getOrgName());
 				return "/org-reg/reg-success";
@@ -419,7 +430,7 @@ public class FinancialOrganController extends BaseController {
      * @param coopOrgCode
      * @param notifyurl
      */
-    private void nofifyCoop(String coopOrgCode,String coopUserId,String notifyurl,String key){
+    private void nofifyCoop(Integer coopType,String coopOrgCode,String coopUserId,String notifyurl,String key){
     	try {
 	    	String orgcode = (String) getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID).toString();
 	    	String tfsUserid = (String) getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID).toString();//金服用户名
@@ -435,8 +446,15 @@ public class FinancialOrganController extends BaseController {
 			String sign = MD5.MD5Encode(keyValue);
 			parameters.put("sign", sign);
 			
-			HttpUtils.postRequest(new URL(URLDecoder.decode(notifyurl, "UTF-8")), parameters);
-		} catch (MalformedURLException e) {
+			SynOrgInfoRequest synOrgInfoRequest = new SynOrgInfoRequest();
+			synOrgInfoRequest.setCoopType(coopType);
+			synOrgInfoRequest.setKvparam("cooporgcode="+coopOrgCode+"&orgcode="+orgcode+"&coopuserid="+coopUserId+"&tfsuserid="+tfsUserid);
+			synOrgInfoRequest.setNotifyUrl(URLDecoder.decode(notifyurl, "UTF-8"));
+			coopService.insertSynOrgInfo(synOrgInfoRequest);
+			
+			String resultString = HttpUtils.postRequest(new URL(URLDecoder.decode(notifyurl, "UTF-8")), parameters);
+			log.info("notify cooperate the reg info,info is :"+parameters.toString()+",result："+resultString);
+    	} catch (MalformedURLException e) {
 			e.printStackTrace();
 			log.error("通知第三方注册信息时失败。", e);
 		} catch (IOException e) {
@@ -595,13 +613,13 @@ public class FinancialOrganController extends BaseController {
      * 发送提醒,峰哥去审核金融开通申请（临时使用）
      */
     private void sendCheckAlarm(String orgName){
-    	SendCodeRequest sendRegCodeRequest = new SendCodeRequest();
-    	sendRegCodeRequest.setReceiveAddress("13543309695");//峰哥手机
-    	sendRegCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
-    	sendRegCodeRequest.setContent(orgName+",正在提交金融账户开通申请，请及时审核。提交时间："+DateUtil.formatDataToDatetime(new Date()));
-    	sendRegCodeRequest.setSubject("泰坦金融账号开通申请待审通知");
+    	SendMessageRequest sendCodeRequest = new SendMessageRequest();
+    	sendCodeRequest.setReceiveAddress("13543309695");//峰哥手机
+    	sendCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+    	sendCodeRequest.setContent(orgName+",正在提交金融账户开通申请，请及时审核。提交时间："+DateUtil.formatDataToDatetime(new Date()));
+    	sendCodeRequest.setSubject("泰坦金融账号开通申请待审通知");
     	try {
-    		sendSMSService.sendCode(sendRegCodeRequest);
+    		sendSMSService.asynSendMessage(sendCodeRequest);
 		} catch (Exception e) {
 			log.info("给运营人员发送泰坦金融账号开通申请待审通知失败", e);
 		}

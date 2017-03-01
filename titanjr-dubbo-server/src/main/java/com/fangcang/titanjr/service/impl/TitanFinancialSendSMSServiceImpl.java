@@ -1,7 +1,5 @@
 package com.fangcang.titanjr.service.impl;
 
-import java.util.Date;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,12 +10,11 @@ import com.fangcang.message.email.dto.EmailSenderDTO;
 import com.fangcang.message.email.service.EmailSendService;
 import com.fangcang.message.sms.dto.SMSSendDTO;
 import com.fangcang.message.sms.service.MessageSendService;
-import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;
-import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.DubboServerJDBCProperties;
+import com.fangcang.titanjr.common.util.ThreadPoolUtil;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.request.SendCodeRequest;
 import com.fangcang.titanjr.dto.request.SendMessageRequest;
@@ -26,6 +23,7 @@ import com.fangcang.titanjr.dto.response.SendCodeResponse;
 import com.fangcang.titanjr.dto.response.SendMessageResponse;
 import com.fangcang.titanjr.dto.response.SendSmsResponse;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
+import com.fangcang.titanjr.thread.SendMessageRunnable;
 import com.fangcang.util.StringUtil;
 
 @Service("titanFinancialSendSMSService")
@@ -91,7 +89,10 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 		sendCodeResponse.setReturnMessage(sendMessageResponse.getReturnMessage());
 		return sendCodeResponse;
 	}
-
+	
+	public void asynSendMessage(SendMessageRequest sendCodeRequest){
+		ThreadPoolUtil.excute(new SendMessageRunnable(this,sendCodeRequest));
+	}
 
 	@Override
 	public SendMessageResponse sendMessage(SendMessageRequest sendCodeRequest) {

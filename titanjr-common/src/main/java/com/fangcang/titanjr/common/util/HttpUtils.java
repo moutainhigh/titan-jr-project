@@ -63,7 +63,14 @@ public class HttpUtils {
 		httpost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
 		return httpost;
 	}
-	public static String postRequest(URL url, Map<String, String> parameters) throws IOException {
+	/**
+	 * post请求
+	 * @param url
+	 * @param keyvalue  参数，格式：aaaa=111&bbb=222&ccc=333
+	 * @return
+	 * @throws IOException
+	 */
+	public static String postRequest(URL url, String keyvalue) throws IOException {
 		HttpURLConnection conn = null;
 		OutputStream out = null;
 		InputStream in = null;
@@ -77,7 +84,7 @@ public class HttpUtils {
 			
 			// 写入POST数据
 			out = conn.getOutputStream();
-			byte[] params = generatorParamString(parameters).getBytes();
+			byte[] params = keyvalue.getBytes();
 			out.write(params, 0, params.length);
 			out.flush();
 			
@@ -92,10 +99,10 @@ public class HttpUtils {
 				len = reader.read(buf);
 			}
 			String result = buffer.toString();
-			LOG.info("http client request ,url:"+url.toString()+",param:"+parameters.toString()+",result:"+result);
+			LOG.info("http client request ,url:"+url.toString()+",param:"+keyvalue+",result:"+result);
 			return result;
 		} catch(IOException e) {
-			LOG.error("http request fail， url:"+url.toString()+",param:"+parameters.toString());
+			LOG.error("http request fail， url:"+url.toString()+",param:"+keyvalue);
 			throw e;
 		} finally {
 			close(in);
@@ -104,6 +111,17 @@ public class HttpUtils {
 				conn.disconnect();
 			}
 		}
+	}
+	
+	/**
+	 * post请求
+	 * @param url
+	 * @param parameters 参数
+	 * @return
+	 * @throws IOException
+	 */
+	public static String postRequest(URL url, Map<String, String> parameters) throws IOException {
+		return postRequest(url, generatorParamString(parameters));
 	}
 	/**
 	 * @description 生成请求参数字符串

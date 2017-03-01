@@ -124,6 +124,7 @@
 	<bean id="titanOpenOrgDao" class="com.fangcang.titanjr.dao.impl.TitanOpenOrgDaoImpl" parent="baseSqlMapClient"></bean>
 
 	<bean id="titanCoopDao" class="com.fangcang.titanjr.dao.impl.TitanCoopDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="titanSynOrgInfoDao" class="com.fangcang.titanjr.dao.impl.TitanSynOrgInfoDaoImpl" parent="baseSqlMapClient"></bean>
 	
 
 	<bean id="titanRefundDao" class="com.fangcang.titanjr.dao.impl.TitanRefundDaoImpl" parent="baseSqlMapClient"></bean>
