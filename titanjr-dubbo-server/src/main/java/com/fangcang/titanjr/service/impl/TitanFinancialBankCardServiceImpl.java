@@ -389,6 +389,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		if(StringUtil.isValidString(accountId)){
 			InvalidPubCardModifyRequest invalidPubCardModifyRequest = new InvalidPubCardModifyRequest();
 			MyBeanUtil.copyProperties(invalidPubCardModifyRequest, modifyInvalidWithDrawCardRequest);
+			invalidPubCardModifyRequest.setAccountid(accountId);
 			InvalidPubCardModifyResponse invalidPubCardModifyResponse = rsBankCardInfoManager.modifyInvalidPublicCard(invalidPubCardModifyRequest);
 			if(invalidPubCardModifyResponse.getOperateStatus().equals(CommonConstant.OPERATE_SUCCESS)){
 				response.putSuccess();
