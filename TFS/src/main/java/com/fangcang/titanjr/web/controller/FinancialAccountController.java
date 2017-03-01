@@ -293,7 +293,7 @@ public class FinancialAccountController extends BaseController {
 			}
 			BankCardInfoDTO dto = rsp.getBankCardInfoDTOList().get(0);
 			if(WebConstant.BANKCARD_SUCCESS==Integer.parseInt(dto.getStatus()))
-			{//对公且绑定失败
+			{
 				resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_SUCCESS);
     		}else if(WebConstant.BANKCARD_BINDING==Integer.parseInt(dto.getStatus()) 
     				||WebConstant.BANKCARD_AUDIT==Integer.parseInt(dto.getStatus()))
