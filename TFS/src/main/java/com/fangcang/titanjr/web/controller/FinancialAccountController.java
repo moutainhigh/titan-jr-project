@@ -400,6 +400,7 @@ public class FinancialAccountController extends BaseController {
     	modifyInvalidWithDrawCardRequest.setBankcity(bindBankCardRequest.getCityName());
     	modifyInvalidWithDrawCardRequest.setBankprovinec(this.queryProvinceName(bindBankCardRequest.getCityCode()));
     	modifyInvalidWithDrawCardRequest.setHankbranch(bindBankCardRequest.getBranchCode());
+    	modifyInvalidWithDrawCardRequest.setUsertype(WebConstant.ACCOUNT_PUBLIC);
     	return titanFinancialBankCardService.modifyinvalidPublicCard(modifyInvalidWithDrawCardRequest);
     }
     
