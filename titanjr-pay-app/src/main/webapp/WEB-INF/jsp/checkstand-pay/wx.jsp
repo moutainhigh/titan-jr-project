@@ -6,6 +6,9 @@
 <head>
 <meta charset="utf-8">
     <title>微信支付-泰坦金融</title>
+	<jsp:include page="/comm/static-resource.jsp"></jsp:include>
+    <jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
+    <jsp:include page="/comm/static-js.jsp"></jsp:include>
   <script type="text/javascript" src="<%=cssSaasPath%>/js/jquery-1.8.3.min.js"></script>
   <script type="text/javascript" src="<%=basePath%>/js/jquery.qrcode.min.js"></script> 
 </head>
@@ -18,22 +21,34 @@
 		</ul>
 	</div>
 	<div class="S_popup_content adjust_c">
+	
+	<c:if test="${qrCode.payType=='32' }">
 		<div class="wx_fk fl">
-			<h3 style="margin-left: -12px;">
-				<c:if test="${qrCode.payType=='32' }">
-					支付宝扫描二维码支付
-				</c:if>
-				<c:if test="${qrCode.payType=='30' }">
-					微信扫描二维码支付
-				</c:if>
-			</h3>
-			<div >
-			  <img id="qrcode" alt="微信扫描二维码支付" src="">
-			</div> 
-			<!-- <p><span class="c_f00" id="Time"></span>后此二维码过期</p> -->
-			</div>
+			<div class="wx_t fl"><img src="<%=cssSaasPath%>/images/TFS/alipay1.jpg" alt="" ></div>
+			 <img id="qrcode" alt="微信扫描二维码支付" src="" class="fl">
+			<div class="wx_c fl">扫码付款</div>		
 		</div>
-		<div class="wx_fkr fl"><img src="<%=basePath%>/banks/iphone.jpg" alt=""></div>
+	</c:if>
+	<c:if test="${qrCode.payType=='30' }">
+		<div class="wx_fk fl">
+				<div class="wx_t fl"><img src="<%=cssSaasPath%>/images/TFS/wx1.jpg" alt="" ></div>
+			 <img id="qrcode" alt="微信扫描二维码支付" src="" class="fl">
+			<div class="wx_c fl">扫码付款</div>				
+		</div>
+	</c:if>
+		
+		</div>
+		<div class="wx_fkr fl">
+			<c:if test="${qrCode.payType=='32' }">
+				<img src="<%=cssSaasPath%>/images/TFS/alipay2.jpg" alt="">
+					<!-- 支付宝扫描二维码支付 -->
+			</c:if>
+			<c:if test="${qrCode.payType=='30' }">
+				<img src="<%=cssSaasPath%>/images/TFS/iphone.jpg" alt="">
+				<!-- 微信扫描二维码支付 -->
+			</c:if>
+		
+		</div>
 		<div class="clear"></div>
 		<div class="wx_close blue curpo">选择其它支付方式 >></div>
 	</div>
