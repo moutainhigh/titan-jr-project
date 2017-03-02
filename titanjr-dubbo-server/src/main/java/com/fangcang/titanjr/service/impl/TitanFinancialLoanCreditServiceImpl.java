@@ -289,7 +289,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			sendMessageRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
 			sendMessageRequest.setContent("<"+orgDTO.getOrgname()+">提交的授信申请，提交复审时失败，请查看服务器日志或者重新提交复审");
 			sendMessageRequest.setReceiveAddress("13543309695");//峰哥手机
-			sendSMSService.sendMessage(sendMessageRequest);
+			sendSMSService.asynSendMessage(sendMessageRequest);
 		}
 		return response;
 	}
@@ -1324,10 +1324,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		sendMessageRequest.setContent(content);
     	
     	try {
-    		SendMessageResponse sendMessageResponse = sendSMSService.sendMessage(sendMessageRequest);
-    		if(!sendMessageResponse.isResult()){
-    			log.info("贷款短信（sendCreditSms）发送失败,错误信息："+sendMessageResponse.getReturnMessage()+",短信参数sendRegCodeRequest："+Tools.gsonToString(sendMessageResponse));
-    		}
+    		sendSMSService.asynSendMessage(sendMessageRequest);
 		} catch (Exception e) {
 			log.error("授信申请通知短信或者邮件发送失败,内容content："+content+",接收者receiveAddress:"+adminTitanUser.getUserloginname(), e);
 		}
