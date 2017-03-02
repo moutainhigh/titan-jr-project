@@ -15,7 +15,7 @@
 				  <ref bean="unFreezeTransOrderTrigger" />
 				  <ref bean="bindBankCardJobTrigger" />
 				  <ref bean="repairGDPTransferTrigger" />
-
+				<ref bean="fiveMinutesJobTrigger" />
 				  <ref bean="refundConfirmTrigger" />
 				 <!--  <ref bean="loanCreditAmountEvaluationTrigger" />
 				  <ref bean="loanCreditSynTrigger" />
@@ -97,6 +97,13 @@
 			<value>0 0 2 * * ?</value>
 			<!-- 发布配置 每3分钟执行一次 -->
 			<!--<value>0 0/30 * * * ?</value>-->
+		</property>
+	</bean>
+	
+	<bean id="fiveMinutesJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	  <property name="jobDetail" ref="fiveMinuteJobSchedule" />
+		<property name="cronExpression">
+			<value>0 */5 * * * ?</value>
 		</property>
 	</bean>
 	
@@ -218,4 +225,18 @@
 	    </property>
 	</bean> 
 	
+	<bean id="fiveMinuteJobSchedule" 
+	      class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.fangcang.titanjr.job.FiveMinuteJob" />
+		<property name="jobDataAsMap">
+		  <map>
+		  		<entry key="TitanFiveMinuteJobService">
+		  			<ref bean="titanFiveMinuteJobService"/>
+		  		</entry>
+			  <entry key="titanJobExecutor">
+				  <ref bean="titanJobExecutor"/>
+			  </entry>
+		  </map>
+	    </property>
+	</bean>
 </beans>

@@ -33,7 +33,7 @@ import com.fangcang.util.JsonUtil;
 @Service("titanCoopService")
 public class TitanCoopServiceImpl implements TitanCoopService {
 	private static final Log log = LogFactory.getLog(TitanCoopServiceImpl.class);
-	private static final long TEN_MINUTES = 60*60*1000L;
+	private static final long TEN_MINUTES = 30*60*1000L;
 	private SynOrgInfoWatch synOrgInfoWatch = new SynOrgInfoWatch();
 	
 	@Resource
@@ -47,8 +47,9 @@ public class TitanCoopServiceImpl implements TitanCoopService {
 	
 	@Override
 	public void notifyCoopOrgInfo() {
+		log.info("通知合作方机构信息方法TitanCoopService.notifyCoopOrgInfo()"+synOrgInfoWatch.getClass());
 		if(synOrgInfoWatch.isDoing()){
-			log.info("通知合作方机构信息方法TitanCoopService.synOrgInfo()正在执行，不允许重复执行,60分钟后或者等本次线程执行完后才可以执行。");
+			log.info("通知合作方机构信息方法TitanCoopService.notifyCoopOrgInfo()正在执行，不允许重复执行,30分钟后或者等本次线程执行完后才可以执行。");
 			return;
 		}
 		int pageSize = 10;
@@ -67,17 +68,15 @@ public class TitanCoopServiceImpl implements TitanCoopService {
 			for(TitanSynOrgInfo item : itemList){
 				TitanCoopParam titanCoopParam = new TitanCoopParam();
 				titanCoopParam.setCoopType(item.getCoopType());
-				CoopDTO coopDTO = coopDao.getEntity(titanCoopParam);
-				
 				Map<String, String> notifyParam = Tools.unserializable2Map(item.getKvparam());
 				notifyParam.put("reqtime", String.valueOf((new Date()).getTime()));
-				
-				String keyValue = MD5.generatorSignParam(notifyParam, coopDTO.getMd5Key());
-				String sign = MD5.MD5Encode(keyValue);
-				notifyParam.put("sign", sign);
-				String resultString;
-				
 				try {
+					CoopDTO coopDTO = coopDao.getEntity(titanCoopParam);
+					String keyValue = MD5.generatorSignParam(notifyParam, coopDTO.getMd5Key());
+					String sign = MD5.MD5Encode(keyValue);
+					notifyParam.put("sign", sign);
+					String resultString;
+				
 					resultString = HttpUtils.postRequest(new URL(URLDecoder.decode(item.getNotifyUrl(), "UTF-8")), notifyParam);
 					Map result = JsonUtil.jsonToMap(resultString);
 					//如果对方同步成功，则删除队列
