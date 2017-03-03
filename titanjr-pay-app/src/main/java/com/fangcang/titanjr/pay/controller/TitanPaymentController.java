@@ -159,6 +159,7 @@ public class TitanPaymentController extends BaseController {
     				orderStatusEnum = OrderStatusEnum.ORDER_DELAY;
     			}
     			titanPaymentService.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
+
     			return ;
     		}
         	
@@ -281,7 +282,6 @@ public class TitanPaymentController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping("/showTitanPayPage")
-	
 	public String showTitanPayPage(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest) throws Exception{
 		log.info("账户余额请求参数:"+JsonConversionTool.toJson(titanPaymentRequest));
 		if(null == titanPaymentRequest || !StringUtil.isValidString(titanPaymentRequest.getTradeAmount())
@@ -358,8 +358,7 @@ public class TitanPaymentController extends BaseController {
 		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS,transOrder.getOrderid());
 	}
 	
-	
-	
+
 	private TransferRequest convertToTransferRequest(TitanPaymentRequest titanPaymentRequest){
 		TransferRequest transferRequest = new TransferRequest();
 		transferRequest.setCreator(titanPaymentRequest.getCreator());
@@ -549,9 +548,9 @@ public class TitanPaymentController extends BaseController {
     
 
 	@RequestMapping("payConfirmPage")
-	public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,String payTypeMsg,Model model) throws NamingException{
+	public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,Model model) throws NamingException{
 		
-		return titanPaymentService.payConfirmPage(rechargeResultConfirmRequest,payTypeMsg,model);
+		return titanPaymentService.payConfirmPage(rechargeResultConfirmRequest,model);
 	}
 	
 	@RequestMapping("confirmOrder")
