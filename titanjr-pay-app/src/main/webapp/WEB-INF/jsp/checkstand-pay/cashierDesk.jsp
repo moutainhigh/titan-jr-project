@@ -229,7 +229,6 @@
 
 <form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder" method="post">
   <input name="orderNo" id="orderNo" type="hidden">
-  <input name="payTypeMsg" id="payTypeMsg"  type="hidden">
   <input name="delay" id="delay" type="hidden">
 </form>
 
@@ -591,11 +590,9 @@
     		var status = confirmOrder(_orderNo);
  			if(status =="success"||status=="fail"){
  				$("#orderNo").val(_orderNo);
- 				$("#payTypeMsg").val("微信支付");
  				 $("#confirmOrder").submit();
  			}else if(status =="delay"){
  				$("#orderNo").val(_orderNo);
- 				$("#payTypeMsg").val("微信支付");
  				$("#expand").val("001_001");
  				$("#confirmOrder").submit();
  			}

@@ -1,11 +1,5 @@
 package test.fangcang.titanjr.service;
 
-import com.fangcang.finance.enums.TradeStatusEnum;
-import com.fangcang.finance.remote.FinanceOrderRemote;
-import com.fangcang.finance.remote.FinanceSearchRemote;
-import com.fangcang.finance.request.FinanceOrderConfirmRequest;
-import com.fangcang.finance.request.FinanceOrderQuery;
-import com.fangcang.finance.response.FinanceOrderResponse;
 import com.fangcang.merchant.api.MerchantFacade;
 import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
@@ -33,36 +27,36 @@ public class HessianRemoteTest extends SpringTest {
 
 //    @Test
     public void queryFinanceSerachTest(){
-        FinanceSearchRemote financeSearchRemote = hessianProxyBeanFactory.getHessianProxyBean(
-                FinanceSearchRemote.class,
-                ProxyFactoryConstants.financeSearchRemoteUrl + "financeSearchRemote");
-        FinanceOrderQuery financeOrderQuery = new FinanceOrderQuery();
-        financeOrderQuery.setMerchantCode("M10000001");//商家编号
-        financeOrderQuery.setFinanceCode("TW15122313691");//支付工单号
-        List<FinanceOrderResponse> financeOrderResponses = financeSearchRemote.searchOrderFinanceOrderList(financeOrderQuery);
-        System.out.println(financeOrderResponses);
+//        FinanceSearchRemote financeSearchRemote = hessianProxyBeanFactory.getHessianProxyBean(
+//                FinanceSearchRemote.class,
+//                ProxyFactoryConstants.financeSearchRemoteUrl + "financeSearchRemote");
+//        FinanceOrderQuery financeOrderQuery = new FinanceOrderQuery();
+//        financeOrderQuery.setMerchantCode("M10000001");//商家编号
+//        financeOrderQuery.setFinanceCode("TW15122313691");//支付工单号
+//        List<FinanceOrderResponse> financeOrderResponses = financeSearchRemote.searchOrderFinanceOrderList(financeOrderQuery);
+//        System.out.println(financeOrderResponses);
     }
     
     
 //    @Test
     public void queryFinanceOrderTest(){
     	try{
-    		FinanceOrderRemote financeOrderRemote = hessianProxyBeanFactory.getHessianProxyBean(
-        			FinanceOrderRemote.class,
-                    ProxyFactoryConstants.financeSearchRemoteUrl + "financeOrderRemote");
-//    	    "http://192.168.0.49:80/hotel-finance-server/remote/financeOrderRemote 孙志平财务ip地址
-        	// 1
-    		// 100
-    		//
-        	FinanceOrderConfirmRequest financeOrderConfirmRequest = new FinanceOrderConfirmRequest();
-        	financeOrderConfirmRequest.setFinanceCode("TW14081902205");
-    		financeOrderConfirmRequest.setMerchantCode("M10000001");
-    		financeOrderConfirmRequest.setStatus(TradeStatusEnum.SUCCESS);
-    		financeOrderConfirmRequest.setSerialNumber("titanjrrequdo16060sf");
-    		financeOrderConfirmRequest.setConfirmManCode("23410");
-    		financeOrderConfirmRequest.setConfirmMan("system");
-            String msg= financeOrderRemote.confirmFinanceOrder(financeOrderConfirmRequest);
-            System.out.println(msg);
+//    		FinanceOrderRemote financeOrderRemote = hessianProxyBeanFactory.getHessianProxyBean(
+//        			FinanceOrderRemote.class,
+//                    ProxyFactoryConstants.financeSearchRemoteUrl + "financeOrderRemote");
+////    	    "http://192.168.0.49:80/hotel-finance-server/remote/financeOrderRemote 孙志平财务ip地址
+//        	// 1
+//    		// 100
+//    		//
+//        	FinanceOrderConfirmRequest financeOrderConfirmRequest = new FinanceOrderConfirmRequest();
+//        	financeOrderConfirmRequest.setFinanceCode("TW14081902205");
+//    		financeOrderConfirmRequest.setMerchantCode("M10000001");
+//    		financeOrderConfirmRequest.setStatus(TradeStatusEnum.SUCCESS);
+//    		financeOrderConfirmRequest.setSerialNumber("titanjrrequdo16060sf");
+//    		financeOrderConfirmRequest.setConfirmManCode("23410");
+//    		financeOrderConfirmRequest.setConfirmMan("system");
+//            String msg= financeOrderRemote.confirmFinanceOrder(financeOrderConfirmRequest);
+//            System.out.println(msg);
     	}catch(Exception e){
     		e.printStackTrace();
     	}

@@ -62,14 +62,6 @@
 	
 <form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder1" method="post">
   <input name="orderNo" id="orderNo" value="${qrCode.orderNo}" type="hidden">
-  <c:choose>
-  	<c:when test="${qrCode.payType=='32'}">
-  		<input name="payTypeMsg" id="payTypeMsg" value="支付宝支付" type="hidden">
-  	</c:when>
-  	<c:when test="${qrCode.payType=='30'}">
-  		<input name="payTypeMsg" id="payTypeMsg" value="微信支付" type="hidden">
-  	</c:when>
-  </c:choose>
   <input name="expand" id="expand" type="hidden">
 </form>
 </body>
