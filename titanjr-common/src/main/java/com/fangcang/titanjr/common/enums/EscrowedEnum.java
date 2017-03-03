@@ -4,7 +4,7 @@ import com.fangcang.util.StringUtil;
 
 public enum EscrowedEnum {
 
-	  ESCROWED_PAYMENT("1","担保支付"), NO_ESCROWED_PAYMENT("0","不担保支付");
+	  ESCROWED_PAYMENT("0","担保支付"), NO_ESCROWED_PAYMENT("1","不担保支付");
 
 	  private String key;
 	  private String msg;
