@@ -303,8 +303,10 @@ public class TitanPaymentService {
 			        TitanOrderPayDTO payOrderDTO =  titanOrderService.getTitanOrderPayDTO(payOrder);
 			        if(payOrderDTO !=null){
 			        	if(PayTypeEnum.ALIPAY_URL.getKey().equals(payOrderDTO.getPayType())){
+			        		 rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getAmount()).toString());
 			        		 model.addAttribute("payType", "支付宝支付");
 			        	}else if(PayTypeEnum.WECHAT_URL.getKey().equals(payOrderDTO.getPayType())){
+			        		 rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getAmount()).toString());
 			        		 model.addAttribute("payType", "微信支付");
 			        	}
 			        }
