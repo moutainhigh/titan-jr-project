@@ -24,7 +24,7 @@ public class Wxutil {
 	private static final int WHITE = 0xFFFFFFFF;
 	private static final int MARGIN = 1; // 边框
 	private static final String FORMAT = "png";
-
+	
 	private Wxutil() {
 	}
 
