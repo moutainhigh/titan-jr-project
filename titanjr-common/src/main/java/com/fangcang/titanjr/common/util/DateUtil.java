@@ -49,7 +49,6 @@ import org.apache.commons.lang3.StringUtils;
  * @description:日期工具类
  * @fileName:DateUtil.java
  * @createTime:2015年3月18日 下午2:15:53
- * @author:肖震
  * @version 1.0.0
  *
  */
@@ -78,7 +77,6 @@ public class DateUtil {
 	public static SimpleDateFormat sdf8 = new SimpleDateFormat("yyyy年MM月dd日");
 	public static SimpleDateFormat sdf9 = new SimpleDateFormat("MM.dd");
 	public static SimpleDateFormat sdf10 = new SimpleDateFormat("yyMMddHHmmss");
-//	public static SimpleDateFormat sdf11 = new SimpleDateFormat("YYYYMMddHHmmss");
 	public static SimpleDateFormat sdf12 = new SimpleDateFormat("HH:mm:ss");
 
 	public static Date toDataYYYYMMDD(String str) {
@@ -106,10 +104,6 @@ public class DateUtil {
 	public static String formatDataYYMMDD(Date date) {
 		return sdf3.format(date);
 	}
-
-//	public static String formatDataYYYYMMDDHHMMSS(Date date) {
-//		return sdf11.format(date);
-//	}
 
 	public static String formatDataYYMMDDHHMMSS(Date date) {
 		return sdf5.format(date);

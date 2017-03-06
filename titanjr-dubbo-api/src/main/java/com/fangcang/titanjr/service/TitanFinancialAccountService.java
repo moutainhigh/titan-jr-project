@@ -140,14 +140,7 @@ public interface TitanFinancialAccountService {
 	
 	
 	public DefaultPayerConfigResponse getDefaultPayerConfig();
-	
-	public QueryCertificationResponse queryCertificationInfo(
-			QueryCertificationRequest queryCertificationRequest);
 
-
-
-	public SaveCertificationResponse saveCertificationInfo(
-			SaveCertificationRequest saveCertificationRequest);
 	
 	
 	public CityInfosResponse getCityInfoList(CityInfoDTO cityInfo);

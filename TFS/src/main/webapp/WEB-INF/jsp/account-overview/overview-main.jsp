@@ -573,7 +573,7 @@
 				width:400,
 				cancelValue : '下次再说',
 		        okValue : '修改提现卡信息',		
-		        content : '<div class="l_h26" style="padding-left: 30px;"><i class="mr_ico"></i><span class="TFS_mrtips"><strong class="c_tfscolor f_16">对不起,提现卡绑定失败</strong>失败原因：银行卡信息或持卡人姓名不正确不正正宗确。银行卡信息或持卡人。</span></div>',
+		        content : '<div class="l_h26" style="padding-left: 30px;"><i class="mr_ico"></i><span class="TFS_mrtips"><strong class="c_tfscolor f_16">对不起,提现卡绑定失败</strong>失败原因：银行卡信息或持卡人姓名不正确。</span></div>',
 				ok : function(){	
 					$.ajax({
 				        dataType : 'html',		      

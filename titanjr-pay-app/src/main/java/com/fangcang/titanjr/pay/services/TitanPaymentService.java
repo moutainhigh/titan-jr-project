@@ -27,6 +27,7 @@ import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.SysConfig;
+import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
@@ -146,12 +147,12 @@ public class TitanPaymentService {
             rechargeRequest.setProductName(transOrderDTO.getGoodsname());
             rechargeRequest.setUserid(transOrderDTO.getUserid());
             rechargeRequest.setOrderNo(titanPaymentRequest.getOrderid());
-            rechargeRequest.setProductNum("1");
+            rechargeRequest.setProductNum(CommonConstant.DEFAULT_PRODUCT_NUM);
             rechargeRequest.setAmtType(AmtTypeEnum.RMB.getKey());
             rechargeRequest.setPayerAcount(titanPaymentRequest.getPayerAcount());
             rechargeRequest.setBankInfo(titanPaymentRequest.getBankInfo());
             rechargeRequest.setOrderTime(DateUtil.sdf5.format(new Date()));
-            rechargeRequest.setOrderExpireTime(45);
+            rechargeRequest.setOrderExpireTime(CommonConstant.DEFAULT_EXPIRE_TIME);
             rechargeRequest.setSignType(SignTypeEnum.MD5.getKey());
             rechargeRequest.setBusiCode(BusiCodeEnum.MerchantOrder.getKey());
             rechargeRequest.setOrderMark( OrderMarkEnum.InsideOrder.getKey());
@@ -269,7 +270,7 @@ public class TitanPaymentService {
 			return false;
 		}
 		
-		public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,String payTypeMsg,Model model){
+		public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,Model model){
 			if(StringUtil.isValidString(rechargeResultConfirmRequest.getOrderNo())){
 				TransOrderRequest transOrderRequest = new TransOrderRequest();
 				transOrderRequest.setOrderid(rechargeResultConfirmRequest.getOrderNo());
@@ -296,10 +297,20 @@ public class TitanPaymentService {
 			        	}
 			        	model.addAttribute("payType", "余额支付");
 					}
-			        if(StringUtil.isValidString(payTypeMsg)){
-			        	rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getAmount()).toString());
-			        	model.addAttribute("payType", payTypeMsg);
+			        
+			        TitanOrderPayDTO payOrder = new TitanOrderPayDTO();
+			        payOrder.setOrderNo(rechargeResultConfirmRequest.getOrderNo());
+			        TitanOrderPayDTO payOrderDTO =  titanOrderService.getTitanOrderPayDTO(payOrder);
+			        if(payOrderDTO !=null){
+			        	if(PayTypeEnum.ALIPAY_URL.getKey().equals(payOrderDTO.getPayType())){
+			        		 rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getAmount()).toString());
+			        		 model.addAttribute("payType", "支付宝支付");
+			        	}else if(PayTypeEnum.WECHAT_URL.getKey().equals(payOrderDTO.getPayType())){
+			        		 rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getAmount()).toString());
+			        		 model.addAttribute("payType", "微信支付");
+			        	}
 			        }
+			        
 			        if(StringUtil.isValidString(rechargeResultConfirmRequest.getExpand()) && rechargeResultConfirmRequest.getExpand().equals(CommonConstant.ORDER_DELAY)){
 			        	rechargeResultConfirmRequest.setPayStatus("3");
 		        		rechargeResultConfirmRequest.setPayMsg("延迟到账，稍后查询");

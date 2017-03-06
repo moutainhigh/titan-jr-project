@@ -272,7 +272,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					log.info("授信申请单["+creditOrderNo+"]------------第["+time+"]次提交授信申请资料到融数----------，结果:失败。原因："+response.getReturnMessage());
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("授信申请单["+creditOrderNo+"]提交失败", e);
 			}
 			time ++;
 		}
