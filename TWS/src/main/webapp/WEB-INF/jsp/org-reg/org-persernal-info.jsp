@@ -241,7 +241,7 @@ function loading(obj){
 	            clearInterval(loadingJ);
 	        }
 	        i++;
-	　　},20); 
+	},20); 
 	}
 
 //放大

@@ -105,7 +105,7 @@
 		</div>
 		<div class="h_40"></div>
 		<!-- 版权 -->
-	    <jsp:include page="footer.jsp"/>
+	    <jsp:include page="/comm/foot-line.jsp"/>
 	</body>
 </html>
 
