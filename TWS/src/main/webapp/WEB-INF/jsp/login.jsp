@@ -17,7 +17,7 @@
 		<div class="user ">
 			<div class="lb_cut ico"></div>
 			<div class="lb_hint ico">动态码登录在这里</div>
-			<div class="lb_logo"><i class="ico"></i></div>
+			<div class="lb_logo"><a href="<%=basePath%>/main/main.shtml"><i class="ico"></i></a></div>
 			<div class="lb_title">密码登录</div>
 			<div class="lb_list">
 			<ul>
@@ -35,7 +35,7 @@
 		<div class="dynamic dn">
 			<div class="lb_cut ico"></div>
 			<!-- <div class="lb_hint ico">密码登录在这里</div> -->
-			<div class="lb_logo"><i class="ico"></i></div>
+			<div class="lb_logo"><a href="<%=basePath%>/main/main.shtml"><i class="ico"></i></a></div>
 			<div class="lb_title">动态验证码登录</div>
 			<div class="lb_list">
 			<ul>

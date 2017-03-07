@@ -182,7 +182,7 @@
 <!-- 版权 -->
 <jsp:include page="/comm/foot.jsp"></jsp:include>
 </c:if>
-<script type="text/javascript;">
+<script type="text/javascript">
 //Run_tab切换
 
 //首先获取充值的支付单号
