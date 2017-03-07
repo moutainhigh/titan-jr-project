@@ -260,6 +260,8 @@ $('body,html').on('click','.TFSimgOnBig',function(){
 		event.stopPropagation();
 	    $(this).parent().addClass("hidden").removeClass("TFSimgOnBig");
 	    $(this).parent().parent().find(".TFSaddImg").removeClass("hidden");
+	    $("#pre_view").attr({"data-src-v":""});
+	    $("#pre_view").attr({"src":""});
 	});
 
 </script>

@@ -151,7 +151,7 @@ function regOrg(){
 		return;
 	}
 	var imageV = $("#pre_view").attr("data-src-v");
-	if(typeof(imageV)=='undefined'){
+	if(typeof(imageV)=='undefined'||imageV.length==0){
 		new Tip({msg:"请上传证件照",type:2,timer:2000});
 		return;
 	}
@@ -324,6 +324,9 @@ $(".J_delete_upload").on('click',function(event){
 	event.stopPropagation();
     $(this).parent().addClass("hidden").removeClass("TFSimgOnBig");
     $(this).parent().parent().find(".TFSaddImg").removeClass("hidden");
+    $("#pre_view").attr({"data-src-v":""});
+    $("#pre_view").attr({"src":""});
+    
 });
 </script>
 </body>
