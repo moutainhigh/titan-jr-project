@@ -357,7 +357,7 @@ var wrapType = '${ param.wrapType}';//从钱包页面过来的充值
              data: {
             	 payPassword:PasswordStr2.returnStr(),
             	 fcUserid:'${fcUserId}',
-            	 tfsUserId:'${tfsUserId}'
+            	 tfsUserid:'${tfsUserId}'
              },
              success: function (data) {
             	 if(data.result=="0"){
