@@ -47,9 +47,6 @@ public class InitSubmitJob {
         submitLoanOrderSynJob();
       
         submitLoanCreditAmountEvaluatingJob();
-        
-        
-        
     }
 
     /**
