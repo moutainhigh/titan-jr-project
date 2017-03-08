@@ -89,4 +89,7 @@ public class WebConstant {
 	public static final String FREEZE_ORDER = "0";
 	//代理登录链接失效时长 ，5分钟
     public static final Long PROXY_LOGIN_LINK_EXPIRE_TIME = 5*60*1000L;
+    
+    //回话失效，需要重新登录
+    public static final int REQUIRED_LOGIN = 603;
 }

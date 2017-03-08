@@ -714,7 +714,13 @@
 					var page = $("#id_" + index + " #tradePageCurrent").val();
 					pageGo(page, total, size,1);
 					F.loading.hide();
-				}
+				},
+				error:function(xhr){
+					if(xhr.status&&xhr.status==603){
+						alert('需要重新登录');
+						
+					}
+				},
 			});
 		}
 		
@@ -747,6 +753,12 @@
 					pageGo(page, total, size,index);
 					
 				},
+				error:function(xhr){
+					if(xhr.status&&xhr.status==603){
+						alert('需要重新登录');
+						
+					}
+				},
 				complete:function()
 				{
 					F.loading.hide();
@@ -776,6 +788,12 @@
 					$("#id_" + index).empty();
 					$("#id_" + index).html(html);
 					var total4 = $("#id_" + index +" #tradePageTotal").val();
+				},
+				error:function(xhr){
+					if(xhr.status&&xhr.status==603){
+						alert('需要重新登录');
+						
+					}
 				},
 				complete:function()
 				{
@@ -808,6 +826,12 @@
 					var total = $("#id_" + index + " #tradePageTotal").val();
 					pageGo(page,total,size,index);
 					
+				},
+				error:function(xhr){
+					if(xhr.status&&xhr.status==603){
+						alert('需要重新登录');
+						
+					}
 				},
 				complete:function()
 				{

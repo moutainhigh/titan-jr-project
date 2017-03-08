@@ -56,12 +56,17 @@ public class UserLoginInterceptor implements HandlerInterceptor{
 					response.sendRedirect(request.getContextPath()+"/reg/user-state.shtml");
 					return false;
 				}
-				
 			}
 			 
 		}else{//未登录，跳到登陆界面
-			String returnUrl = WebUtil.getForwordUrl(request);
-			response.sendRedirect(request.getContextPath()+"/ex/login.shtml?returnUrl="+URLEncoder.encode(returnUrl, "utf-8"));
+			
+			String with = request.getHeader("X-Requested-With");
+			if("XMLHttpRequest".equals(with)){
+				response.setStatus(WebConstant.REQUIRED_LOGIN);
+			}else{
+				String returnUrl = WebUtil.getForwardUrl(request);
+				response.sendRedirect(request.getContextPath()+"/ex/login.shtml?returnUrl="+URLEncoder.encode(returnUrl, "utf-8"));
+			}
 		}
 		return false;
 	}

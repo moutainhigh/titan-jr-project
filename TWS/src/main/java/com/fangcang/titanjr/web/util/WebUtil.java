@@ -10,7 +10,7 @@ public class WebUtil {
 	 * @param request
 	 * @return
 	 */
-	public static String getForwordUrl(HttpServletRequest request){
+	public static String getForwardUrl(HttpServletRequest request){
 		String forwordUrl = "";
 		if (request.getMethod().equalsIgnoreCase("post")) {
 			forwordUrl = request.getHeader("referer");
