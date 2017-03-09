@@ -63,6 +63,7 @@ import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialRefundService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 
@@ -83,6 +84,9 @@ public class TitanRefundService {
 	
 	@Resource
 	private TitanFinancialUserService titanFinancialUserService;
+	
+	@Resource
+	private TitanFinancialUtilService utilService;
 
 	private static final Log log = LogFactory.getLog(TitanTradeController.class);
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
@@ -237,8 +241,7 @@ public class TitanRefundService {
 			flag = titanOrderService.updateTransOrder(transOrder);
 			if (!flag) {
 				log.error("退款单状态更新失败");
-				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(transOrderDTO.getOrderid(), "退款请求更新本地单失败", OrderExceptionEnum.REFUND_UPDATE_TRANSORDER, JSON.toJSONString(transOrderDTO));
-				titanOrderService.saveOrderException(orderExceptionDTO);
+				utilService.saveOrderException(transOrderDTO.getOrderid(), OrderExceptionEnum.Refund_Success_Update_Order_Fail, JSONSerializer.toJSON(transOrder).toString());
 			}
 			log.info("退款操作成功");
 			response.putSuccess();

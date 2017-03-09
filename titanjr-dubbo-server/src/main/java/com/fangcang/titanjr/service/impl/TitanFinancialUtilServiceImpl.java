@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.service.impl;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -13,6 +14,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpPost;
 import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSON;
 import com.fangcang.titanjr.common.bean.CallBackInfo;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
@@ -23,6 +25,7 @@ import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
 import com.fangcang.titanjr.dao.DomainConfigDao;
 import com.fangcang.titanjr.dao.TitanDynamicKeyDao;
+import com.fangcang.titanjr.dao.TitanOrderExceptionDao;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.RSInvokeConfig;
@@ -32,6 +35,7 @@ import com.fangcang.titanjr.dto.request.PayMethodConfigRequest;
 import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
 import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.entity.TitanDynamicKey;
+import com.fangcang.titanjr.entity.TitanOrderException;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
@@ -49,6 +53,12 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 	
 	@Resource 
 	private TitanOrderService titanOrderService;
+	
+	@Resource 
+	private TitanFinancialUtilService utilService;
+	
+	@Resource 
+	private TitanOrderExceptionDao orderExceptionDao;
 	
 	private SysConfig config;
 	
@@ -71,8 +81,8 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 			titanDynamicKeyDao.insert(titanDynamicKey);
 		} catch (Exception e) {
 			log.error("金融密钥设置失败", e);
-			paymentUrlResponse.putErrorResult("dynamicKey_set_error",
-					"金融密钥设置失败");
+			paymentUrlResponse.putErrorResult("dynamicKey_set_error","金融密钥设置失败");
+			utilService.saveOrderException(titanDynamicKey.getPayorderno(), OrderExceptionEnum.Save_Order_Get_Desk_Url_Fail, JSONSerializer.toJSON(titanDynamicKey).toString());
 			return paymentUrlResponse;
 		}
 		// 构造参数列表拼接收银台地址
@@ -197,11 +207,7 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 			
 		}catch(Exception e){
 			log.error("回调失败");
-			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(
-					null, "回调失败",
-					OrderExceptionEnum.NOTIFY_FAILED,
-					JSONSerializer.toJSON(request).toString());
-			titanOrderService.saveOrderException(orderExceptionDTO);
+			utilService.saveOrderException(null, OrderExceptionEnum.Notify_Fail, JSONSerializer.toJSON(request).toString());
 		}
 	}
 
@@ -215,5 +221,27 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 			config.setTitanjrCheckKey(RSInvokeConstant.titanjrCheckKey);
 		}
 		return config;
+	}
+
+	@Override
+	public void saveOrderException(String orderId, OrderExceptionEnum oet,
+			String content) {
+		
+		if(null == oet){
+			return;
+		}
+		
+		TitanOrderException ex = new TitanOrderException();
+		ex.setType(oet.type);
+		ex.setExceptionContent(content);
+		ex.setExceptionTime(new Date());
+		ex.setOrderId(orderId);
+		ex.setFailState(oet.failState);
+		
+		try{
+			orderExceptionDao.insertTitanOrderException(ex);
+		}catch(Exception e){
+			log.error("插入异常信息失败",e);
+		}
 	}
 }

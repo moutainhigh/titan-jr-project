@@ -2,8 +2,11 @@ package com.fangcang.titanjr.service;
 
 import java.util.List;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.http.NameValuePair;
 
+import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.SysConfig;
 import com.fangcang.titanjr.dto.request.NotifyClientRequest;
@@ -43,6 +46,14 @@ public interface TitanFinancialUtilService {
 	 * @return
 	 */
 	public SysConfig querySysConfig();
+	
+	/**
+	 * 保存异常单
+	 * @param orderId
+	 * @param oet
+	 * @param content
+	 */
+	public void saveOrderException(String orderId,OrderExceptionEnum oet,String content);
 	
 	
 }

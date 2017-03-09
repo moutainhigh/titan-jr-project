@@ -25,13 +25,16 @@ public class TitanOrderException implements Serializable {
 	private String exceptionMsg;
 
 	// 错误类型
-	private String exceptionCode;
+	private String type;
 
 	// 异常时间
 	private Date exceptionTime;
 
 	// 异常内容
 	private String exceptionContent;
+	
+	//失败 0 中间过程 1
+	private String failState;
 	
 	public Integer getId() {
 		return id;
@@ -57,14 +60,6 @@ public class TitanOrderException implements Serializable {
 		this.exceptionMsg = exceptionMsg;
 	}
 
-	public String getExceptionCode() {
-		return exceptionCode;
-	}
-
-	public void setExceptionCode(String exceptionCode) {
-		this.exceptionCode = exceptionCode;
-	}
-
 	public Date getExceptionTime() {
 		return exceptionTime;
 	}
@@ -79,6 +74,22 @@ public class TitanOrderException implements Serializable {
 
 	public void setExceptionContent(String exceptionContent) {
 		this.exceptionContent = exceptionContent;
+	}
+
+	public String getFailState() {
+		return failState;
+	}
+
+	public void setFailState(String failState) {
+		this.failState = failState;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

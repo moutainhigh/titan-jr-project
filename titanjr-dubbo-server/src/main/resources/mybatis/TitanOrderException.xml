@@ -15,9 +15,10 @@
 	  id,
 	  orderid,
 	  exceptionmsg,
-	  exceptioncode,
+	  type,
 	  exceptionTime,
-	  exceptioncontent 
+	  exceptioncontent,
+	  failState
 	  from
 	  t_tfs_order_exception
 	  <where>
@@ -33,9 +34,10 @@
 	  (id,
 	  #{orderId},
 	  #{exceptionMsg},
-	  #{exceptionCode},
+	  #{type},
 	  #{exceptionTime},
-	  #{exceptionContent})
+	  #{exceptionContent},
+	  #{failState})
 	</insert>
 	
 </mapper>
