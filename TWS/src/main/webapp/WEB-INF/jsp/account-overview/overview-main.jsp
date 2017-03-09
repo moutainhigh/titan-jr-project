@@ -408,6 +408,9 @@
 	<div class="main_kkpager">		
 		<div id="kkpager" class="page_turning"></div>
 	</div>
+	<div class="pagination_r" style="display:none">
+		<i class="on">5</i>
+	</div>
 <!-- 	<div class="main_kkpager">
 		<div class="pagination1">
 			<div class="pagination_r">
@@ -477,7 +480,6 @@
       //初始化页面请求
 		function initRequest() {
 			var size1 = 6;
-			F.loading.show();
 			$.ajax({
 				dataType : 'html',
 				context: document.body,
@@ -489,10 +491,6 @@
 					var total1 = $("#id_1 #tradePageTotal").val();
 					var page1 = $("#id_1 #tradePageCurrent").val();
 					pageGo(page1,total1,size1,1);
-				},
-				complete:function()
-				{
-					F.loading.hide();
 				}
 			});
 		}
@@ -692,7 +690,6 @@
 			var tradeType = "" + (index - 1);
 			var data = getQueryOrderData(index);
 			var size = $(".pagination_r .on").text();
-			F.loading.show();
 			$.ajax({
 				dataType: 'html',
 				context: document.body,
@@ -713,14 +710,7 @@
 					var total = $("#id_" + index + " #tradePageTotal").val();
 					var page = $("#id_" + index + " #tradePageCurrent").val();
 					pageGo(page, total, size,1);
-					F.loading.hide();
-				},
-				error:function(xhr){
-					if(xhr.status&&xhr.status==603){
-						alert('需要重新登录');
-						
-					}
-				},
+				}
 			});
 		}
 		
@@ -731,7 +721,6 @@
 			}
 			resetPageSizeView(size);
 			var data = getQueryOrderData(index);
-			F.loading.show();
 			$.ajax({
 				dataType: 'html',
 				context: document.body,
@@ -752,23 +741,12 @@
 					var total = $("#id_" + index + " #tradePageTotal").val();
 					pageGo(page, total, size,index);
 					
-				},
-				error:function(xhr){
-					if(xhr.status&&xhr.status==603){
-						alert('需要重新登录');
-						
-					}
-				},
-				complete:function()
-				{
-					F.loading.hide();
 				}
 			});
 		}
 
 		//点击分页页码时调用
 		function pageNoChangeRequest(page, size, index) {
-			F.loading.show();
 			var data = getQueryOrderData(index);
 			$.ajax({
 				dataType : 'html',
@@ -788,23 +766,12 @@
 					$("#id_" + index).empty();
 					$("#id_" + index).html(html);
 					var total4 = $("#id_" + index +" #tradePageTotal").val();
-				},
-				error:function(xhr){
-					if(xhr.status&&xhr.status==603){
-						alert('需要重新登录');
-						
-					}
-				},
-				complete:function()
-				{
-					F.loading.hide();
 				}
 			});
 		}
 
 		//切换每页数量时调用
 		function pageSizeChangeRequest(page, size, index) {
-			F.loading.show();
 			var data = getQueryOrderData(index);
 			$.ajax({
 				dataType : 'html',
@@ -825,17 +792,6 @@
 					$("#id_" + index).html(html);
 					var total = $("#id_" + index + " #tradePageTotal").val();
 					pageGo(page,total,size,index);
-					
-				},
-				error:function(xhr){
-					if(xhr.status&&xhr.status==603){
-						alert('需要重新登录');
-						
-					}
-				},
-				complete:function()
-				{
-					F.loading.hide();
 				}
 			});
 		}

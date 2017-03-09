@@ -2,6 +2,62 @@
 var email_reg=/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
 var phone_reg=/^13[0-9]{9}$|^14[0-9]{9}$|^15[0-9]{9}$|^18[0-9]{9}$|^17[0-9]{9}$/;
 var payPwd_reg=/^[0-9]{6}$/;
+//重写jquery ajax
+(function($){  
+    var _ajax=$.ajax;  
+    $.ajax=function(opt){  
+        //定义默认的error和success方法  
+        var fn = {
+        	beforeSend:function(XMLHttpRequest){},
+        	success:function(data, textStatus){},
+            error:function(XMLHttpRequest, textStatus, errorThrown){},  
+            complete:function(XMLHttpRequest, textStatus){}
+        };
+        if(opt.beforeSend){  
+            fn.beforeSend=opt.beforeSend;
+        }
+        if(opt.success){  
+            fn.success=opt.success;  
+        }
+        if(opt.error){  
+            fn.error=opt.error;
+        } 
+        if(opt.complete){  
+            fn.complete=opt.complete;
+        }
+           
+        //扩展增强处理  
+        var _opt = $.extend(opt,{
+        	beforeSend:function(XHR){
+        		F.loading.show();
+            	fn.beforeSend(XHR);
+            },
+            success:function(data, textStatus){  
+                fn.success(data, textStatus);  
+            },
+            error:function(XHR, TS, errorThrown){
+            	//登录判断
+            	if(XHR.status&&XHR.status==603){//没有登录
+            		var returnUrl = encodeURIComponent(window.location.href);
+            		location.href=js_base_path+"/ex/login.shtml?returnUrl="+returnUrl;
+					return;
+				}
+            	//权限判断
+            	if(XHR.status&&XHR.status==403){
+        			new top.Tip({msg : '没有权限访问，请联系管理员', type: 2 , timer:2000});
+        			return ;
+        		}
+                fn.error(XHR, TS, errorThrown);  
+            },
+            complete:function(XHR, TS){  
+            	fn.complete(XHR, TS);
+            	F.loading.hide();
+            }  
+        });  
+        return _ajax(_opt);  
+    };  
+})(jQuery); 
+//ajax分页
 function AjaxPage(option){
 	this.defaults = {
 			"pageSize":15,
