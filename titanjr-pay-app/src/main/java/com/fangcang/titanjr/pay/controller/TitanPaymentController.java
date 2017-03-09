@@ -564,7 +564,7 @@ public class TitanPaymentController extends BaseController {
 	@RequestMapping("wxPicture")
 	public void getWxPicture(String url,HttpServletResponse response){
 		try{
-			Wxutil.createRqCode(url, 170, 170, response.getOutputStream());
+			Wxutil.createRqCode(url, CommonConstant.RQ_WIDTH, CommonConstant.RQ_HEIGH, response.getOutputStream());
 		}catch(Exception e){
 			log.error("微信生成图片错误："+e.getMessage());
 		}
@@ -584,12 +584,12 @@ public class TitanPaymentController extends BaseController {
 			}
 		}
 		
-		private void unlockOutTradeNoList(String out_trade_no) {
-			if(mapLock.containsKey(out_trade_no)){
-				synchronized (mapLock.get(out_trade_no)) {
-					mapLock.remove(out_trade_no).notifyAll();
-				}
+	private void unlockOutTradeNoList(String out_trade_no) {
+		if(mapLock.containsKey(out_trade_no)){
+			synchronized (mapLock.get(out_trade_no)) {
+				mapLock.remove(out_trade_no).notifyAll();
 			}
 		}
+	}
 	    
 }

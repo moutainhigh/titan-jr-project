@@ -19,7 +19,8 @@
            				http://code.alibabatech.com/schema/dubbo
            				http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-        <import resource="applicationContext-quartz.xml"/>
+        <import resource="spring-annotation.xml"/>
+         <import resource="spring-lts.xml"/>
         <import resource="applicationContext-service.xml"/>
         <bean id="placeholderspring" class="com.ctol.fangcang.common.Spring3PropertyConfigurer">
                 <property name="location">
