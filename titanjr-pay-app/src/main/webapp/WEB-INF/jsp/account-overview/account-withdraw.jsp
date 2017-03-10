@@ -27,7 +27,7 @@
 <div class="w_header">
 	<div class="w_1200">
 		<div class="w_logo">
-			<div class="l_img"><a href="http://www.fangcang.com/TWS" title="泰坦钱包"><img src="http://hres.fangcang.com/css/saas/WALLET/images/logo.png"></a></div>
+			<div class="l_img"><a href="http://pay.fangcang.com" title="泰坦钱包"><img src="http://hres.fangcang.com/css/saas/WALLET/images/logo.png"></a></div>
 			<div class="l_text">
 				<span class="">丨</span>提现
 			</div>
