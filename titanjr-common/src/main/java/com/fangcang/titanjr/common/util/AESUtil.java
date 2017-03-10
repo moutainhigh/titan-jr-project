@@ -79,7 +79,9 @@ public class AESUtil {
 	public static String encrypt(String content, String seed) {
 		try {
 			KeyGenerator kgen = KeyGenerator.getInstance("AES");
-			kgen.init(digit, new SecureRandom(seed.getBytes()));
+			SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG" );//解决在linux下每次加密结果都不一样问题.
+	        secureRandom.setSeed(seed.getBytes()); 
+			kgen.init(digit, secureRandom);
 			SecretKey secretKey = kgen.generateKey();
 			byte[] enCodeFormat = secretKey.getEncoded();
 			SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
@@ -124,7 +126,9 @@ public class AESUtil {
 	public static String decrypt(String content, String seed) {
 		try {
 			KeyGenerator kgen = KeyGenerator.getInstance("AES");
-			kgen.init(digit, new SecureRandom(seed.getBytes()));
+			SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG" ); 
+	        secureRandom.setSeed(seed.getBytes()); 
+			kgen.init(digit, secureRandom);
 			SecretKey secretKey = kgen.generateKey();
 			byte[] enCodeFormat = secretKey.getEncoded();
 			SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
@@ -153,15 +157,14 @@ public class AESUtil {
 	 */
 	public static void main(String[] args) {
 		// 需要加密的内容
-		String content = "12345";
+		String content = "10141";
 		// 加密密码
 		//String key = RandomStringUtils.randomAlphabetic(32);
 
-		System.out.println("seed：" + AES_SEED);
 		System.out.println("content：" + content);
-		String en = AESUtil.encrypt(content, AES_SEED);
+		String en = AESUtil.encrypt(content);
 		System.out.println("加密后密文：" + en);
-		String de = AESUtil.decrypt(en, AES_SEED);
+		String de = AESUtil.decrypt(en);
 
 		System.out.println("解密后明文：" + de);
 	}
