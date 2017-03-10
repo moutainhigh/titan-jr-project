@@ -146,8 +146,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     private TitanFinancialBankCardService titanFinancialBankCardService;
     
     @Resource
-    private TitanFinancialUtilService utilService;
-    
+    private TitanFinancialUtilService titanFinancialUtilService;
     
     @Resource
     private TitanCityInfoDao titanCityInfoDao;
@@ -961,7 +960,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			    		titanFundUnFreezereqDao.insert(titanFundUnFreezereq);
 			    	}catch(Exception e){
 			    		log.error("解冻插入订单失败");
-			    		utilService.saveOrderException(fundFreezeDTO.getOrderNo(), OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_Insert_Order_Fail, JSONSerializer.toJSON(titanFundUnFreezereq).toString());
+			    		titanFinancialUtilService.saveOrderException(fundFreezeDTO.getOrderNo(), OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_Insert_Order_Fail, JSONSerializer.toJSON(titanFundUnFreezereq).toString());
     	        		return false;
 			    	}
 			    	
@@ -973,18 +972,18 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			    		titanTransOrderDao.update(titanTransOrder);
 			    	}catch(Exception e){
 			    		log.error("解冻修改订单失败");
-			    		utilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_Update_Order_Fail,JSONSerializer.toJSON(titanTransOrder).toString());
+			    		titanFinancialUtilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_Update_Order_Fail,JSONSerializer.toJSON(titanTransOrder).toString());
     	        		return false;
 			    	}
 			    	
 			    }else{
 			    	log.error("调用融数解冻失败");
-			    	utilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_RS_Fail,JSONSerializer.toJSON(fundFreezeDTO).toString());
+			    	titanFinancialUtilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_RS_Fail,JSONSerializer.toJSON(fundFreezeDTO).toString());
 	        		return false;
 			    }
 			}catch(Exception e){
 				log.error("解冻资金异常");
-				utilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_Fail,JSONSerializer.toJSON(fundFreezeDTO).toString());
+				titanFinancialUtilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_Fail,JSONSerializer.toJSON(fundFreezeDTO).toString());
         		return false;
 			}
 		}

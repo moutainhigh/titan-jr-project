@@ -82,7 +82,7 @@ public class TitanFinancialRefundServiceImpl implements
 	private TitanUserDao titanUserDao;
 	
 	@Resource
-	private TitanFinancialUtilService utilService;
+	private TitanFinancialUtilService titanFinancialUtilService;
 	
 	
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
@@ -234,7 +234,7 @@ public class TitanFinancialRefundServiceImpl implements
 			if (!notifyRefundResponse.isResult()) {
 				log.error("网关退款参数失败");
 				//修改订单状态
-				utilService.saveOrderException(refundOrderRequest.getOrderId(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Notify_RS_Fail, JSONSerializer.toJSON(refundOrderRequest).toString());
+				titanFinancialUtilService.saveOrderException(refundOrderRequest.getOrderId(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Notify_RS_Fail, JSONSerializer.toJSON(refundOrderRequest).toString());
 				
 				this.updateTransOrderByKey(OrderStatusEnum.REFUND_FAIL, titanTransferDTO.getTransorderid(), null);
 				response.putErrorResult(TitanMsgCodeEnum.PACKAGE_REFUND_PARAM_FAIL);
@@ -286,7 +286,7 @@ public class TitanFinancialRefundServiceImpl implements
 			titanRefundDao.insert(titanRefund);
 		}catch(Exception e){
 			log.error("保存退款单下单失败"+e.getMessage()+":data:"+JSONSerializer.toJSON(titanRefund));
-			utilService.saveOrderException(refundOrderRequest.getOrderId(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Save_Order_Fail, JSONSerializer.toJSON(titanRefund).toString());
+			titanFinancialUtilService.saveOrderException(refundOrderRequest.getOrderId(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Save_Order_Fail, JSONSerializer.toJSON(titanRefund).toString());
 			return false;
 		}
 		return true;
@@ -304,7 +304,7 @@ public class TitanFinancialRefundServiceImpl implements
 		}
 	    if(!flag){
 	    	log.error("更新交易单状态用交易单编码或单号失败");
-	    	utilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Update_Order_OrderNo_Fail, JSONSerializer.toJSON(order).toString());
+	    	titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Update_Order_OrderNo_Fail, JSONSerializer.toJSON(order).toString());
 	    }
 		return flag;
 	}
@@ -314,7 +314,7 @@ public class TitanFinancialRefundServiceImpl implements
 			return titanTransferReqDao.delete(req)==1?true:false;
 		}catch(Exception e){
 			log.error("删除失败",e);
-			utilService.saveOrderException(req.getPayorderno(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Refund_Delete_Transfer_Order_Fail, JSONSerializer.toJSON(req).toString());
+			titanFinancialUtilService.saveOrderException(req.getPayorderno(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Refund_Delete_Transfer_Order_Fail, JSONSerializer.toJSON(req).toString());
 		}
 		return false;
 	}
@@ -327,7 +327,7 @@ public class TitanFinancialRefundServiceImpl implements
 		AccountTransferResponse accountTrans= rsAccTradeManager.accountBalanceTransfer(accountTransfer);
 		if(!CommonConstant.OPERATE_SUCCESS.equals(accountTrans.getOperateStatus())){
 			log.error("退款单修复性转账失败");
-			utilService.saveOrderException(refundRequest.getPayOrderNo(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Refund_Repair_Tranfer_Fail, JSONSerializer.toJSON(accountTransfer).toString());
+			titanFinancialUtilService.saveOrderException(refundRequest.getPayOrderNo(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Refund_Repair_Tranfer_Fail, JSONSerializer.toJSON(accountTransfer).toString());
 		}
 		
 	}
@@ -440,7 +440,7 @@ public class TitanFinancialRefundServiceImpl implements
 			titanRefundDao.insert(titanRefund);
 		}catch(Exception e){
 			log.error("保存退款单下单失败"+e.getMessage()+":data"+JSONSerializer.toJSON(titanRefund));
-			utilService.saveOrderException(refundOrderRequest.getOrderId(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Save_Order_Fail, JSONSerializer.toJSON(titanRefund).toString());
+			titanFinancialUtilService.saveOrderException(refundOrderRequest.getOrderId(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Save_Order_Fail, JSONSerializer.toJSON(titanRefund).toString());
 		}
 		
 		refundOrderResponse.putSuccess();
@@ -565,12 +565,12 @@ public class TitanFinancialRefundServiceImpl implements
 			FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService.freezeAccountBalance(rechargeResultConfirmRequest);
 		    if(!freezeAccountBalanceResponse.isFreezeSuccess()){
 		    	log.error("退款之后冻结订单失败");
-		    	utilService.saveOrderException(refundRequest.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Freeze_Order_Fail, JSONSerializer.toJSON(rechargeResultConfirmRequest).toString());
+		    	titanFinancialUtilService.saveOrderException(refundRequest.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Freeze_Order_Fail, JSONSerializer.toJSON(rechargeResultConfirmRequest).toString());
 		    }
 			boolean flag = this.updateTransOrderByKey(OrderStatusEnum.FREEZE_SUCCESS,null,refundRequest.getOrderNo());
 			if(!flag){
 				log.error("重新冻结之后修改订单状态失败");
-				utilService.saveOrderException(refundRequest.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Freeze_Update_Order_Fail, OrderStatusEnum.FREEZE_SUCCESS.getStatus());
+				titanFinancialUtilService.saveOrderException(refundRequest.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Freeze_Update_Order_Fail, OrderStatusEnum.FREEZE_SUCCESS.getStatus());
 			}
 		} catch (Exception e) {
 			log.error("退款之后冻结订单失败",e);
@@ -631,7 +631,7 @@ public class TitanFinancialRefundServiceImpl implements
 					}
 				}catch(Exception e){
 					log.error("定时器更新订单状态失败",e);
-					utilService.saveOrderException(refundDTO.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Timer_Update_Order, null);
+					titanFinancialUtilService.saveOrderException(refundDTO.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Timer_Update_Order, null);
 				}
 			}
 		}
@@ -661,7 +661,7 @@ public class TitanFinancialRefundServiceImpl implements
 			
 		}catch(Exception e){
 			log.error("退款回调失败",e);
-			utilService.saveOrderException(bean.getPayOrderNo(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.ReFund_Notify_Fail, JSONSerializer.toJSON(bean).toString());
+			titanFinancialUtilService.saveOrderException(bean.getPayOrderNo(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.ReFund_Notify_Fail, JSONSerializer.toJSON(bean).toString());
 		}
 	}
 	

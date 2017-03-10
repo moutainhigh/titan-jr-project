@@ -45,8 +45,6 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 	@Resource 
 	private TitanOrderService titanOrderService;
 	
-	@Resource 
-	private TitanFinancialUtilService utilService;
 	
 	@Resource 
 	private TitanOrderExceptionDao orderExceptionDao;
@@ -73,7 +71,7 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 		} catch (Exception e) {
 			log.error("金融密钥设置失败", e);
 			paymentUrlResponse.putErrorResult("dynamicKey_set_error","金融密钥设置失败");
-			utilService.saveOrderException(titanDynamicKey.getPayorderno(),OrderKindEnum.OrderId, OrderExceptionEnum.Save_Order_Get_Desk_Url_Fail, JSONSerializer.toJSON(titanDynamicKey).toString());
+			this.saveOrderException(titanDynamicKey.getPayorderno(),OrderKindEnum.OrderId, OrderExceptionEnum.Save_Order_Get_Desk_Url_Fail, JSONSerializer.toJSON(titanDynamicKey).toString());
 			return paymentUrlResponse;
 		}
 		// 构造参数列表拼接收银台地址
