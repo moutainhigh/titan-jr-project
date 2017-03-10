@@ -24,6 +24,7 @@ import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.FreezeConditionCodeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.TransOrderTypeEnum;
 import com.fangcang.titanjr.common.enums.WithDrawStatusEnum;
@@ -960,7 +961,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			    		titanFundUnFreezereqDao.insert(titanFundUnFreezereq);
 			    	}catch(Exception e){
 			    		log.error("解冻插入订单失败");
-			    		utilService.saveOrderException(fundFreezeDTO.getOrderNo(), OrderExceptionEnum.UnFreeze_Insert_Order_Fail, JSONSerializer.toJSON(titanFundUnFreezereq).toString());
+			    		utilService.saveOrderException(fundFreezeDTO.getOrderNo(), OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_Insert_Order_Fail, JSONSerializer.toJSON(titanFundUnFreezereq).toString());
     	        		return false;
 			    	}
 			    	
@@ -972,18 +973,18 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			    		titanTransOrderDao.update(titanTransOrder);
 			    	}catch(Exception e){
 			    		log.error("解冻修改订单失败");
-			    		utilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderExceptionEnum.UnFreeze_Update_Order_Fail,JSONSerializer.toJSON(titanTransOrder).toString());
+			    		utilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_Update_Order_Fail,JSONSerializer.toJSON(titanTransOrder).toString());
     	        		return false;
 			    	}
 			    	
 			    }else{
 			    	log.error("调用融数解冻失败");
-			    	utilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderExceptionEnum.UnFreeze_RS_Fail,JSONSerializer.toJSON(fundFreezeDTO).toString());
+			    	utilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_RS_Fail,JSONSerializer.toJSON(fundFreezeDTO).toString());
 	        		return false;
 			    }
 			}catch(Exception e){
 				log.error("解冻资金异常");
-				utilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderExceptionEnum.UnFreeze_Fail,JSONSerializer.toJSON(fundFreezeDTO).toString());
+				utilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_Fail,JSONSerializer.toJSON(fundFreezeDTO).toString());
         		return false;
 			}
 		}

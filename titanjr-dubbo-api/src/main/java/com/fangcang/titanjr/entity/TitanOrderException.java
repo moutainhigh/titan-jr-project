@@ -36,6 +36,9 @@ public class TitanOrderException implements Serializable {
 	//失败 0 中间过程 1
 	private String failState;
 	
+	//orderId:1 userOrderId :2 payOrderNo:3
+	private String orderType;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -91,5 +94,15 @@ public class TitanOrderException implements Serializable {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	public String getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(String orderType) {
+		this.orderType = orderType;
+	}
+	
+	
 
 }

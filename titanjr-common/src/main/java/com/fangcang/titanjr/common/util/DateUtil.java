@@ -42,6 +42,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -888,47 +890,10 @@ public class DateUtil {
 	public static void main(String[] args) throws JAXBException, ParseException {
 		
 
-//		Long orderDate = DateUtil.sdf5.parse("20161122144728").getTime();
-//		Long nowDate = new Date().getTime();
-//		System.out.println((long)(nowDate-orderDate));
-//		System.out.println((long)30*24*60*60*1000);
-		
-//		DateUtil.Student student = new DateUtil.Student();
-//		File file = new File("C:/Users/Administrator/Desktop/xmlTest.xml");
-//		
-//		student.setAge(30);
-//		student.setName("张三");
-//		student.setId("0102");
-//		
-//		JAXBContext context = JAXBContext.newInstance(DateUtil.Student.class);
-//		Marshaller marshaller = context.createMarshaller();
-//		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-//		marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-//		marshaller.marshal(student, file);
-//		
-//		DateUtil.Student stu = (DateUtil.Student)context.createUnmarshaller().unmarshal(file);
-//		System.out.println(stu.getName()+"---"+stu.getId()+"---"+stu.getAge());
-		
-//		BigDecimal j=new BigDecimal(1);
-//		BigDecimal k = new BigDecimal(1024);
-//		for(int i=0;i<1024;i++){
-//			j=j.multiply(k);
-//		}
-//		
-//		System.out.println(j.toString());
-//		System.out.println(10*10*10*10);
-//		System.out.println(10<<2);
-		
-		System.out.println(new BigDecimal(1024<<10).toString());
 
 		try {
 			
-//			List<String> list = ["张三","李四"];
-			
-			
 			System.out.println(new Date().getTime());
-			
-			
 			
 		} catch (Exception e) {
 			e.printStackTrace();

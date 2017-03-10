@@ -7,6 +7,7 @@ import net.sf.json.JSONSerializer;
 import org.apache.http.NameValuePair;
 
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.SysConfig;
 import com.fangcang.titanjr.dto.request.NotifyClientRequest;
@@ -39,7 +40,7 @@ public interface TitanFinancialUtilService {
 	 * @param request
 	 * @author fangdaikang
 	 */
-	public void notifyClient(NotifyClientRequest request);
+//	public void notifyClient(NotifyClientRequest request);
 	
 	/**
 	 * 获取系统的相关参数
@@ -53,7 +54,7 @@ public interface TitanFinancialUtilService {
 	 * @param oet
 	 * @param content
 	 */
-	public void saveOrderException(String orderId,OrderExceptionEnum oet,String content);
+	public void saveOrderException(String orderId,OrderKindEnum orEnum,OrderExceptionEnum oet,String content);
 	
 	
 }

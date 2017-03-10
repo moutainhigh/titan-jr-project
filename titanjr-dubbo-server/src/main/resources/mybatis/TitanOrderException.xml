@@ -37,7 +37,8 @@
 	  #{type},
 	  #{exceptionTime},
 	  #{exceptionContent},
-	  #{failState})
+	  #{failState},
+	  #{orderType})
 	</insert>
 	
 </mapper>

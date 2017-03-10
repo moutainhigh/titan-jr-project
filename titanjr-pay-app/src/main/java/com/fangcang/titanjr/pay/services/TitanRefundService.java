@@ -22,6 +22,7 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.fangcang.titanjr.common.enums.FreezeConditionCodeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.RefundTypeEnum;
@@ -241,7 +242,7 @@ public class TitanRefundService {
 			flag = titanOrderService.updateTransOrder(transOrder);
 			if (!flag) {
 				log.error("退款单状态更新失败");
-				utilService.saveOrderException(transOrderDTO.getOrderid(), OrderExceptionEnum.Refund_Success_Update_Order_Fail, JSONSerializer.toJSON(transOrder).toString());
+				utilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Success_Update_Order_Fail, JSONSerializer.toJSON(transOrder).toString());
 			}
 			log.info("退款操作成功");
 			response.putSuccess();
