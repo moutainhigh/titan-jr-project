@@ -1,6 +1,5 @@
 package test.fangcang.titanjr.service;
 
-import com.fangcang.finance.remote.FinanceSearchRemote;
 import com.fangcang.security.domain.Role;
 import com.fangcang.security.domain.User;
 import com.fangcang.security.facade.RoleFacade;

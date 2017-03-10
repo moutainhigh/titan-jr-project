@@ -191,4 +191,14 @@ public class CommonConstant {
     public static final String CHONGQING_CODE ="6530";
     public static final String SHNAGHAI_CODE ="2900";
     
+    public static final Integer DEFALUT_GOODCNT = 1;
+    
+    public static final String DEFAULT_PRODUCT_NUM="1";
+    
+    public static final Integer DEFAULT_EXPIRE_TIME=45;
+    
+    public static final Integer RQ_WIDTH = 170;
+    
+    public static final Integer RQ_HEIGH = 170;
+    
 }

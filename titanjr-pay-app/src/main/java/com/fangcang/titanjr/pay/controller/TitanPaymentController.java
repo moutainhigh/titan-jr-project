@@ -159,6 +159,7 @@ public class TitanPaymentController extends BaseController {
     				orderStatusEnum = OrderStatusEnum.ORDER_DELAY;
     			}
     			titanPaymentService.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
+
     			return ;
     		}
         	
@@ -281,7 +282,6 @@ public class TitanPaymentController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping("/showTitanPayPage")
-	
 	public String showTitanPayPage(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest) throws Exception{
 		log.info("账户余额请求参数:"+JsonConversionTool.toJson(titanPaymentRequest));
 		if(null == titanPaymentRequest || !StringUtil.isValidString(titanPaymentRequest.getTradeAmount())
@@ -310,7 +310,8 @@ public class TitanPaymentController extends BaseController {
         }
         titanPaymentRequest.setOrderid(localOrderResp.getOrderNo());
         TransferRequest transferRequest = this.convertToTransferRequest(titanPaymentRequest);
-		TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
+        //存在安全隐患，如果余额支付两次会不会存在重复支付，转帐操作中的锁在集群中已经不起作用了
+        TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
 		
 		TransOrderRequest transOrderRequest = new TransOrderRequest();
 		transOrderRequest.setOrderid(localOrderResp.getOrderNo());
@@ -357,8 +358,7 @@ public class TitanPaymentController extends BaseController {
 		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS,transOrder.getOrderid());
 	}
 	
-	
-	
+
 	private TransferRequest convertToTransferRequest(TitanPaymentRequest titanPaymentRequest){
 		TransferRequest transferRequest = new TransferRequest();
 		transferRequest.setCreator(titanPaymentRequest.getCreator());
@@ -548,9 +548,9 @@ public class TitanPaymentController extends BaseController {
     
 
 	@RequestMapping("payConfirmPage")
-	public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,String payTypeMsg,Model model) throws NamingException{
+	public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,Model model) throws NamingException{
 		
-		return titanPaymentService.payConfirmPage(rechargeResultConfirmRequest,payTypeMsg,model);
+		return titanPaymentService.payConfirmPage(rechargeResultConfirmRequest,model);
 	}
 	
 	@RequestMapping("confirmOrder")
@@ -564,7 +564,7 @@ public class TitanPaymentController extends BaseController {
 	@RequestMapping("wxPicture")
 	public void getWxPicture(String url,HttpServletResponse response){
 		try{
-			Wxutil.createRqCode(url, 170, 170, response.getOutputStream());
+			Wxutil.createRqCode(url, CommonConstant.RQ_WIDTH, CommonConstant.RQ_HEIGH, response.getOutputStream());
 		}catch(Exception e){
 			log.error("微信生成图片错误："+e.getMessage());
 		}
@@ -584,12 +584,12 @@ public class TitanPaymentController extends BaseController {
 			}
 		}
 		
-		private void unlockOutTradeNoList(String out_trade_no) {
-			if(mapLock.containsKey(out_trade_no)){
-				synchronized (mapLock.get(out_trade_no)) {
-					mapLock.remove(out_trade_no).notifyAll();
-				}
+	private void unlockOutTradeNoList(String out_trade_no) {
+		if(mapLock.containsKey(out_trade_no)){
+			synchronized (mapLock.get(out_trade_no)) {
+				mapLock.remove(out_trade_no).notifyAll();
 			}
 		}
+	}
 	    
 }

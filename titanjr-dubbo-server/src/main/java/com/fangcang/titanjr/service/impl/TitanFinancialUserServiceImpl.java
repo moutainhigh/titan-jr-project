@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -52,7 +51,6 @@ import com.fangcang.titanjr.dao.TitanUserBindInfoDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dao.TitanUserRoleDao;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
-import com.fangcang.titanjr.enums.PermissionEnum;
 import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
 import com.fangcang.titanjr.dto.bean.TitanRoleDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
@@ -99,6 +97,7 @@ import com.fangcang.titanjr.entity.TitanUserRole;
 import com.fangcang.titanjr.entity.parameter.TitanUserBindInfoParam;
 import com.fangcang.titanjr.entity.parameter.TitanUserParam;
 import com.fangcang.titanjr.entity.parameter.TitanUserRoleParam;
+import com.fangcang.titanjr.enums.PermissionEnum;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.util.MyBeanUtil;
@@ -167,6 +166,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         //验证用户是否存在当前商家
         MerchantUserCheckDTO checkDTO = new MerchantUserCheckDTO();
         checkDTO.setUserLoginName(userRegisterRequest.getLoginUserName());
+        checkDTO.setMerchantCode(RSInvokeConstant.defaultMerchant);
         //TODO 检测机制要改变下，如果重复的用户属于金服的商家编码，则允许重复创建。但要修改相应的数据
         BaseResultDTO checkResult = getMerchantUserFacade().checkMerchantUser(checkDTO);
         if (!checkResult.getIsSuccessed()) {//登录名已存在
@@ -574,6 +574,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
         queryDTO.setUserLoginNameList(new ArrayList<String>());
         queryDTO.getUserLoginNameList().add(financialUserBindRequest.getFcLoginUserName());
+        queryDTO.setMerchantCode(financialUserBindRequest.getMerchantCode());
         List<MerchantUserDTO> merchantUserDTOs = getMerchantUserFacade().queryMerchantUserForSMS(queryDTO);
         if (CollectionUtils.isNotEmpty(merchantUserDTOs)){
             Role titanjrRole = getRoleFacade().getRoleById(Integer.valueOf(String.valueOf(RSInvokeConstant.defaultRoleId)));
@@ -635,61 +636,6 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		response.putSuccess();
 		return response;
 	}
-
-	@Override
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-    public LoginPasswordModifyResponse modifyLoginPassword(LoginPasswordModifyRequest loginPasswordModifyRequest) throws Exception{
-        LoginPasswordModifyResponse response = new LoginPasswordModifyResponse();
-        if (!GenericValidate.validate(loginPasswordModifyRequest)) {
-            response.putParamError();
-            return response;
-        }
-        //验证金服系统原密码的正确性
-        TitanUserParam condition = new TitanUserParam();
-        condition.setTfsuserid(loginPasswordModifyRequest.getTfsUserid());
-        PaginationSupport<TitanUser> paginationSupport = new PaginationSupport<TitanUser>();
-        titanUserDao.selectForPage(condition, paginationSupport);
-        List<TitanUser> userList = paginationSupport.getItemList();
-        if (CollectionUtils.isEmpty(userList)){
-            response.putErrorResult("USER_NOT_EXISTS","用户名不存在");
-            return response;
-        }
-
-        if (!userList.get(0).getPassword().equals(loginPasswordModifyRequest.getOriginalPassword())){
-            response.putErrorResult("PASSWORD_ERROR","原密码不正确");
-            return response;
-        }
-
-        //更新金服系统密码
-        TitanUser titanUser = new TitanUser();
-        titanUser.setTfsuserid(loginPasswordModifyRequest.getTfsUserid());
-        titanUser.setPassword(loginPasswordModifyRequest.getNewPassword());
-        titanUserDao.update(titanUser);
-
-        //查询商家系统是否存在对应用户
-        MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
-        queryDTO.setUserLoginNameList(new ArrayList<String>());
-        queryDTO.getUserLoginNameList().add(userList.get(0).getUserloginname());
-        List<MerchantUserDTO> merchantUserDTOs = getMerchantUserFacade().queryMerchantUserForSMS(queryDTO);
-        if (CollectionUtils.isEmpty(merchantUserDTOs)){
-            response.putErrorResult("USER_NOT_EXISTS","商家系统不存在该用户名的用户");
-            return response;
-        }
-
-        //修改商家系统密码
-        ModifyPWDRequestDTO request = new ModifyPWDRequestDTO();
-        request.setUserLoginName(userList.get(0).getUserloginname());
-        request.setOriginalPassword(loginPasswordModifyRequest.getOriginalPassword());
-        request.setNewPassword(loginPasswordModifyRequest.getNewPassword());
-        BaseResultDTO baseResultDTO = getMerchantUserFacade().modifyPassword(request);
-        if (!baseResultDTO.getIsSuccessed()){
-            response.putErrorResult("MODIFY_MERCHANT_PASSWORD_ERROR",baseResultDTO.getReason());
-            throw new Exception("修改商家系统登录密码错误" + baseResultDTO.getReason());
-        }
-
-        response.putSuccess();
-        return response;
-    }
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -985,6 +931,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 			//saas 是否已经存在
 			MerchantUserCheckDTO checkDTO = new MerchantUserCheckDTO();
 	        checkDTO.setUserLoginName(request.getUserLoginName());
+	        checkDTO.setMerchantCode(RSInvokeConstant.defaultMerchant);
 	        BaseResultDTO checkResult = getMerchantUserFacade().checkMerchantUser(checkDTO);
 	        if (!checkResult.getIsSuccessed()) {//登录名已存在
 	        	response.putErrorResult("-100", "该登录用户名已经存在，请使用其他用户名");

@@ -10,13 +10,13 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.fangcang.exception.ParameterException;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.bouncycastle.jcajce.provider.asymmetric.RSA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
-import com.fangcang.finance.exception.ParameterException;
 import com.fangcang.titanjr.common.enums.ImgSizeEnum;
 import com.fangcang.titanjr.common.enums.LoginSourceEnum;
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
@@ -37,7 +36,6 @@ import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgImageEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
-//import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.FtpUtil;
 import com.fangcang.titanjr.common.util.GenericValidate;
@@ -114,7 +112,6 @@ import com.fangcang.titanjr.entity.parameter.TitanOrgCheckParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgImageParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgParam;
 import com.fangcang.titanjr.entity.parameter.TitanUserParam;
-import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.manager.RSAccountManager;
 import com.fangcang.titanjr.rs.manager.RSOrganizationManager;
 import com.fangcang.titanjr.rs.request.AccountFreezeRequest;
@@ -452,7 +449,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
      * @param organRegisterRequest
      * @throws ParameterException
      */
-    private void validatePersonalParam(OrganRegisterRequest organRegisterRequest) throws ParameterException{
+    private void validatePersonalParam(OrganRegisterRequest organRegisterRequest) throws ParameterException {
     	if(StringUtil.isValidString(organRegisterRequest.getCertificateType())==false){
     		throw new ParameterException("param error: CertificateType can not be  null");
     	}

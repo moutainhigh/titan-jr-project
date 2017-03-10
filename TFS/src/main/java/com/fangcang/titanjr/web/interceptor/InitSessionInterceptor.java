@@ -119,6 +119,7 @@ public class InitSessionInterceptor implements HandlerInterceptor {
                 UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
                 if (WebConstant.SESSION_KEY_JR_RESOURCE_2_SAAS.equals(session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE))) {
                     userInfoQueryRequest.setBindLoginName(roleUser.getLoginName());//SAAS商家的用户名
+                    userInfoQueryRequest.setBindMerchantCode(userInfo.getMerchantCode());
                     //绑定状态
                     OrgBindInfo condition = new OrgBindInfo();
                     condition.setMerchantCode(userInfo.getMerchantCode());
