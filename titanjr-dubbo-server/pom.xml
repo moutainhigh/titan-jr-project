@@ -188,10 +188,6 @@
             <artifactId>hotel-merchant-api</artifactId>
         </dependency>
         <dependency>
-			<groupId>com.fangcang</groupId>
-			<artifactId>hotel-finance-api</artifactId>
-		</dependency>
-        <dependency>
             <groupId>com.fangcang</groupId>
             <artifactId>hotel-message-api</artifactId>
         </dependency>
