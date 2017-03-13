@@ -1,11 +1,17 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%@ include file="/comm/taglib.jsp"%>
-<div class="clearfix agreement" style="width:1000px;">
-<h2>泰坦云金融服务协议</h2>  
-<div class="S_popup_content" >
-<div class="agreement_">
+<div class="sra_c ser_content">
 <jsp:include page="/comm/content.jsp"></jsp:include>
-</div> 
-<div class="but_next" style="padding:2px;"></div>
 </div>
-</div>
+<script type="text/javascript">
+$(".ser_content").mCustomScrollbar({  		                  
+   	scrollButtons:{  
+            enable:true //是否使用上下滚动按钮  
+       },      
+    autoHideScrollbar: false, //是否自动隐藏滚动条  
+    scrollInertia :0,//滚动延迟  
+    horizontalScroll : false,//水平滚动条  
+    callbacks:{  
+    }  
+});
+</script>

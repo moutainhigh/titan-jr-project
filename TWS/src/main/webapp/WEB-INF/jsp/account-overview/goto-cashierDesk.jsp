@@ -42,8 +42,10 @@ window.onload = function() {
 		};
 		var _url = titanPayObj.getTitanPayUrl(orderInfo, businessInfo);
 		_url = _url+'&wrapType=wallet';
+		if('${succUrl}'.length>0){
+			_url = _url+'&succUrl='+'${succUrl}';
+		}
 		window.location.href = _url;
-		//titanPayObj.titanPay(orderInfo, businessInfo);
 		
 
 }

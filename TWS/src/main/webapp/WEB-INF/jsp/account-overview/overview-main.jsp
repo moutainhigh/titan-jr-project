@@ -482,6 +482,7 @@
 			var size1 = 6;
 			$.ajax({
 				dataType : 'html',
+				showLoading:true,
 				context: document.body,
 				data:{currentPage:1,pageSize:size1,tradeTypeId:"0"},
 				url : '<%=basePath%>/account/query-org-page.shtml',
@@ -537,7 +538,8 @@
 		//初始化联想查询框
 		function initAutoSelectPartner() {
 			$.ajax({
-        		dataType : 'json',		      
+        		dataType : 'json',
+        		showLoading:true,
 		        url : '<%=basePath%>/account/getOrgList.shtml?date=' + new Date().getTime(),
 		        success:function(data){
 		        	
@@ -596,6 +598,7 @@
         function validate_BankCard_Satatus(){
 			$.ajax({
 				dataType:"json",
+				showLoading:true,
 				url:"<%=basePath%>/account/validate_person_Enterprise.shtml",
 				success: function (data) {
 					if(data.msg=="5"){
@@ -611,6 +614,7 @@
         $('.withdrawBtn').on('click',function(){
         	$.ajax({
         		dataType : 'json',
+        		showLoading:true,
         		async:false,
 		        url : '<%=basePath%>/account/validate_person_Enterprise.shtml',
 		        success:function(data){
@@ -635,16 +639,11 @@
         
         //充值
         $('.rechargeBtn').on('click',function(){
-        	window.open('<%=basePath%>/account/goto_cashierDesk.shtml?payType=7');
+        	window.open('<%=basePath%>/account/goto_cashierDesk.shtml?payType=7&succUrl='+encodeURIComponent(js_base_path+'/account/overview-main.shtml'));
             return false;
         });
         function account_withdraw(){
-        	window.open('<%=basePath%>/account/goto_cashierDesk.shtml?payType=8');
-        	//  window.top.createIframeDialog({
-             //     url : '<%=basePath%>/account/goto_cashierDesk.shtml?payType=8',
-  			//		close:function () {
-  			//		}
-             // });
+        	window.open('<%=basePath%>/account/goto_cashierDesk.shtml?payType=8&succUrl='+encodeURIComponent(js_base_path+'/account/overview-main.shtml'));
           }
           
         
@@ -655,15 +654,14 @@
 		$('.J_Section').each(function(){
 			//添加日期锻
 			new DateSection('#' + $(this).attr('id'), {minDate : '',maxDate : ''});
-			});
-	                
-		
-		
+		});
+	       
     	var errorIndex = 1;
 		function loadAccountBalance()
 		{
 			$.ajax({
-        		dataType : 'json',		      
+        		dataType : 'json',	
+        		showLoading:true,
 		        url : '<%=basePath%>/account/query-account-balance.shtml?date=' + new Date().getTime() ,
 		        success:function(data){
 		        	if(data)
@@ -692,6 +690,7 @@
 			var size = $(".pagination_r .on").text();
 			$.ajax({
 				dataType: 'html',
+				showLoading:true,
 				context: document.body,
 				data: {
 					currentPage: 1,
@@ -723,6 +722,7 @@
 			var data = getQueryOrderData(index);
 			$.ajax({
 				dataType: 'html',
+				showLoading:true,
 				context: document.body,
 				data: {
 					currentPage: page,
@@ -750,6 +750,7 @@
 			var data = getQueryOrderData(index);
 			$.ajax({
 				dataType : 'html',
+				showLoading:true,
 				context: document.body,
 				data:{
 					currentPage:page,
@@ -775,6 +776,7 @@
 			var data = getQueryOrderData(index);
 			$.ajax({
 				dataType : 'html',
+				showLoading:true,
 				context: document.body,
 				data:{
 					currentPage:page,
@@ -1008,7 +1010,8 @@
       
       function bank_card_binding(){
       	$.ajax({
-      		dataType : 'json',		      
+      			dataType : 'json',
+      			showLoading:true,
 		        url : '<%=basePath%>/account/checkBindAccountWithDrawCard.shtml',
 		        success : function(data){
 		        	if(data.result=="success"){

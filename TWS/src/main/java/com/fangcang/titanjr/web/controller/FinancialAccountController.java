@@ -263,7 +263,7 @@ public class FinancialAccountController extends BaseController {
     
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     @RequestMapping(value = "/goto_cashierDesk", method = RequestMethod.GET)
-    public String gotoCashierDesk(String payType , Model model)
+    public String gotoCashierDesk(String payType ,String succUrl, Model model)
     {
     	if(StringUtil.isValidString(payType))
     	{
@@ -277,6 +277,7 @@ public class FinancialAccountController extends BaseController {
 		    	model.addAttribute("payName", enum1.getMsg());
 		    	model.addAttribute("payDesc", enum1.getMsg());
 		    	model.addAttribute("tfsUserId", getTfsUserId());
+		    	model.addAttribute("succUrl", succUrl);
 		    	return "account-overview/goto-cashierDesk";
     		}
     	}

@@ -5,9 +5,9 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -108,7 +108,7 @@ public class TitanTradeController extends BaseController {
 	 */
 	@RequestMapping(value = "/titanPay", method = { RequestMethod.GET,
 			RequestMethod.POST })
-	public String titanPay(String orderInfo, String businessInfo,String wrapType, Model model,HttpServletRequest request) {
+	public String titanPay(String orderInfo, String businessInfo,String wrapType,String succUrl, Model model,HttpServletRequest request) {
 		getRequest().getSession();
 		
 		if (!StringUtil.isValidString(orderInfo)) {
@@ -275,6 +275,11 @@ public class TitanTradeController extends BaseController {
 			if(StringUtil.isValidString(wrapType)){
 				Map<String , String> extParam = new HashMap<String, String>();
 				extParam.put("wrapType", wrapType);
+				url = Tools.appendRequestParam(url, extParam);
+			}
+			if(StringUtil.isValidString(succUrl)){
+				Map<String , String> extParam = new HashMap<String, String>();
+				extParam.put("succUrl", URLEncoder.encode(succUrl, "UTF-8"));
 				url = Tools.appendRequestParam(url, extParam);
 			}
 			this.getResponse().sendRedirect(

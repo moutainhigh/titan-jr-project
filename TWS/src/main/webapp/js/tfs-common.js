@@ -5,7 +5,7 @@ var payPwd_reg=/^[0-9]{6}$/;
 //重写jquery ajax
 (function($){  
     var _ajax=$.ajax;  
-    $.ajax=function(opt){  
+    $.ajax=function(opt){
         //定义默认的error和success方法  
         var fn = {
         	beforeSend:function(XMLHttpRequest){},
@@ -13,6 +13,11 @@ var payPwd_reg=/^[0-9]{6}$/;
             error:function(XMLHttpRequest, textStatus, errorThrown){},  
             complete:function(XMLHttpRequest, textStatus){}
         };
+        var defaultOption = {
+        	showLoading:false//默认不显示load圈
+        };
+        opt = $.extend({},defaultOption,opt);
+        
         if(opt.beforeSend){  
             fn.beforeSend=opt.beforeSend;
         }
@@ -25,15 +30,17 @@ var payPwd_reg=/^[0-9]{6}$/;
         if(opt.complete){  
             fn.complete=opt.complete;
         }
-           
         //扩展增强处理  
         var _opt = $.extend(opt,{
         	beforeSend:function(XHR){
-        		F.loading.show();
-            	fn.beforeSend(XHR);
+        		//显示loading圈
+        		if(opt.showLoading){
+        			F.loading.show();
+        		}
+        		fn.beforeSend(XHR);
             },
             success:function(data, textStatus){  
-                fn.success(data, textStatus);  
+            	fn.success(data, textStatus);  
             },
             error:function(XHR, TS, errorThrown){
             	//登录判断
@@ -47,11 +54,13 @@ var payPwd_reg=/^[0-9]{6}$/;
         			new top.Tip({msg : '没有权限访问，请联系管理员', type: 2 , timer:2000});
         			return ;
         		}
-                fn.error(XHR, TS, errorThrown);  
+            	fn.error(XHR, TS, errorThrown);  
             },
             complete:function(XHR, TS){  
             	fn.complete(XHR, TS);
-            	F.loading.hide();
+            	if(opt.showLoading){
+            		F.loading.hide();
+        		}
             }  
         });  
         return _ajax(_opt);  

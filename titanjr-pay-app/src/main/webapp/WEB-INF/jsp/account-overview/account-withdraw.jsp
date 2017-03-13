@@ -133,6 +133,7 @@
 <form action="<%=basePath%>/account/overview-main.shtml" id="flashPage" target="right_con_frm"></form>
 <script>
 var wrapType = '${ param.wrapType}';//从钱包页面过来的充值
+var succUrl = '${ param.succUrl}';//成功后的回显页面
 	(function($) {
 	    $.fn.watch = function(callback) {
 	        return this.each(function() {
@@ -402,6 +403,15 @@ var wrapType = '${ param.wrapType}';//从钱包页面过来的充值
              url: '<%=basePath%>/withdraw/toAccountWithDraw.shtml',
              success: function (data) {
                  if(data.result == "0"){
+                	 if(succUrl.length>0){
+          			 	window.location.href=succUrl;
+          			 	return;
+	          		 }
+	          		 if(wrapType=='wallet'){
+	          			 window.close();
+	          			 return;
+	          		 }
+                	 
                 	 top.F.loading.hide();
                      withDrawCallBack('提现申请已提交，等待银行处理。<br/>预计到账时间：t+1个工作日', 1);
                      $("#flashPage").attr('action' , getRootPath()+"/account/overview-main.shtml");

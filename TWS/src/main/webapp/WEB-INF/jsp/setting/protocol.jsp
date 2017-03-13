@@ -19,9 +19,13 @@
 			<jsp:param value="protocol" name="menu"/>
 		</jsp:include>
 		<div class="s_right clearfix">
-			<div class="sr_crumbs">我的账户  >  泰坦钱包设置  > 泰坦钱包协议</div>			
-			<jsp:include page="/comm/content.jsp"></jsp:include>
-			<div class="sra_btn">
+			<div class="sr_crumbs">我的账户  >  泰坦钱包设置  > 泰坦钱包协议</div>		
+			<div class="sr_agreement clearfix">
+				<h2>泰坦云金融服务协议</h2>	
+				<div class="sra_c">
+				<jsp:include page="/comm/content.jsp"></jsp:include>
+				</div>
+				<div class="sra_btn">
 					<div class="h_61"></div>
 					<div class="sra_btn1 sra_fixed">
 						<div class="sra_xi"></div>
@@ -29,6 +33,7 @@
 						<a class="btn btn_g" href="<%=basePath %>/ex/print-protocol.shtml" >打印</a>
 					</div>
 			    </div>
+			 </div>
 		</div>
 	</div>
 </div>

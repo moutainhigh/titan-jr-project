@@ -7,6 +7,7 @@
     <title>注册申请-泰坦钱包</title>
     <jsp:include page="/comm/tws-static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
+	<link href="<%=cssSaasPath%>/css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css">
 </head>
   
   <body style="min-width: 1300px;" class="bg" >
@@ -93,8 +94,11 @@
 	<img src="<%=cssWalletPath %>/images/tu01.jpg" alt=""  style="max-width: 1000px; max-height: 600px;display: block;margin: 0 auto;">
 </div>	
 </div>
-<script src="<%=cssWalletPath %>/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="<%=cssSaasPath %>/js/jquery.mCustomScrollbar.concat.min.js"></script>
+
 <script type="text/javascript">
+  
+
 //验证
 var valid_qy_form = new validform('#reg_form_qy');
 var valid_phone_form = new validform('#reg_form_phone');
@@ -192,7 +196,6 @@ $('.services_terms').on('click',function(){
         success : function(html){
         	var d = dialog({
                 title: ' 泰坦云金融服务协议 ',
-                height:450,
                 fixed: true,
                 padding: '0 0 0px 0',
                 content: html,

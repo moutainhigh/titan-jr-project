@@ -188,6 +188,7 @@
 //首先获取充值的支付单号
 var payOrderNo = null;
 var wrapType = '${ param.wrapType}';//从钱包页面过来的充值
+var succUrl = '${ param.succUrl}';//成功后的回显页面
 (function($) {
     $.fn.watch = function(callback) {
         return this.each(function() {
@@ -330,6 +331,10 @@ function confirmPayResult(){
            dataType: "json",
            success: function (data) {
         	   if(data.result=="success"){
+        		   if(succUrl.length>0){
+        			   window.location.href=succUrl;
+        			   return;
+        		   }
         		   if(wrapType=='wallet'){
         			   window.close();
         			   return;
@@ -337,7 +342,6 @@ function confirmPayResult(){
         		   top.F.loading.show();
                    setTimeout(function () {
                        top.F.loading.hide();
-                      /*  new top.Tip({msg: data.msg, type: 1, time: 1000}); */
                        top.removeIframeDialog();
                    }, 1000);
                    
@@ -345,15 +349,11 @@ function confirmPayResult(){
                    {
                 	   top.frames["right_con_frm"].location.reload();
                 	   
-                	//   $("#flashPage").attr('action' , top.frames["right_con_frm"].location.href);
                    }
                    catch(e)
                    {
                 	   window.frames["right_con_frm"].location.reload();
-                	 	//$("#flashPage").attr('action' ,window.frames["right_con_frm"].location.href);
                    }
-                  
-                  // $("#flashPage").submit();
         	   }
         	}
     });

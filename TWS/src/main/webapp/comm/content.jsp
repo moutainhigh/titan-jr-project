@@ -1,8 +1,5 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <!-- 金融协议内容 -->
-<div class="sr_agreement clearfix">
-	<h2>泰坦云金融服务协议</h2>
-	<div class="sra_c">
 <p style="line-height:125%">
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">泰坦云金融</span>
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">服务协议（以下简称本协议）由</span>
@@ -1190,5 +1187,3 @@
 <p>
 	<br/>
 </p>
-</div>
-</div>
