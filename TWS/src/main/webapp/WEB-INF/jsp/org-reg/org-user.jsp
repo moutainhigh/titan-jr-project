@@ -29,11 +29,11 @@
 				<input type="hidden" name="encrypt_type" value="${encrypt_type }"/>
 				<input type="hidden" name="sign" value="${sign }"/>
 				<ul>
-					<li class="r_y1"><div class="rt_title">用户名</div><input type="text" class="text ui-loginusername"  name="userLoginName" placeholder="邮箱" datatype="e"  errormsg="格式不正确" afterPassed="checkExist"></li>
-					<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" id="qy_pass1" readonly onfocus="this.removeAttribute('readonly');" placeholder="设置登录密码" datatype="/\w{6,}/" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="qy_pass1_hint"></em></li>
-					<li class="r_y3"><div class="rt_title">确认密码</div><input type="password" class="text pass2" name="passwordConfirm" readonly onfocus="this.removeAttribute('readonly');" placeholder="确认登录密码" datatype="/\w*/" errormsg="长度太短" afterPassed="confirmPass"><i class="ico rt_eye "></i></li>
+					<li class="r_y1"><div class="rt_title">用户名</div><input type="text" class="text ui-loginusername"  name="userLoginName" placeholder="邮箱" datatype="/\w*/"  errormsg="格式不正确" afterPassed="checkExist"></li>
+					<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" id="qy_pass1" readonly onfocus="this.removeAttribute('readonly');" require="true" placeholder="设置登录密码" datatype="/\w{6,}/" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="qy_pass1_hint"></em></li>
+					<li class="r_y3"><div class="rt_title">确认密码</div><input type="password" class="text pass2" name="passwordConfirm" readonly onfocus="this.removeAttribute('readonly');" require="true" placeholder="确认登录密码" datatype="/\w*/" errormsg="长度太短" afterPassed="confirmPass"><i class="ico rt_eye "></i></li>
 					<li class="r_yzm"><div class="rt_title">验证码</div>
-					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\w{4,}/" errormsg="长度太短"><div class="r_verify">获取验证码</div>
+					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\w{4,}/" require="true" errormsg="长度太短"><div class="r_verify">获取验证码</div>
 					</li>
 					<li class="lb_Rememb">
 						<span class="fl qiye"><i class="i_agree ico"></i> 我已阅读并同意</span> <div class="colour m_l14 dib services_terms">《泰坦云金融服务协议》</div>
@@ -59,11 +59,11 @@
 				<input type="hidden" name="encrypt_type" value="${encrypt_type }"/>
 				<input type="hidden" name="sign" value="${sign }"/>
 				<ul>
-					<li class="r_y1"><div class="rt_title">用户名</div><input type="text" class="text ui-loginusername" name="userLoginName" placeholder="邮箱/手机号码" datatype="/\w*/" errormsg="格式不正确" afterPassed="checkGeExist"></li>
-					<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" id="per_pass1" placeholder="设置登录密码" datatype="/\w{6,}/" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="per_pass1_hint"></em></li>
-					<li class="r_y3"><div class="rt_title">确认密码</div><input type="password" class="text pass2" name="passwordConfirm" placeholder="确认登录密码" datatype="/\w{6,}/" errormsg="长度太短" afterPassed="confirmPass"><i class="ico rt_eye"></i></li>
+					<li class="r_y1"><div class="rt_title">用户名</div><input type="text" class="text ui-loginusername" name="userLoginName" placeholder="邮箱/手机号码"  datatype="/\w*/" errormsg="格式不正确" afterPassed="checkGeExist"></li>
+					<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" id="per_pass1" placeholder="设置登录密码" require="true" datatype="/\w{6,}/" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="per_pass1_hint"></em></li>
+					<li class="r_y3"><div class="rt_title">确认密码</div><input type="password" class="text pass2" name="passwordConfirm" placeholder="确认登录密码" require="true" datatype="/\w{6,}/" errormsg="长度太短" afterPassed="confirmPass"><i class="ico rt_eye"></i></li>
 					<li class="r_yzm"><div class="rt_title">验证码</div>
-					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\w{4,}/" request="true" errormsg="长度太短"><div class="r_verify">获取验证码</div>
+					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\w{4,}/" request="true" require="true" errormsg="长度太短"><div class="r_verify">获取验证码</div>
 					</li>
 					<li class="lb_Rememb">
 						<span class="fl geren"><i class="i_agree ico"></i> 我已阅读并同意</span> <div class="colour m_l14 dib services_terms">《泰坦云金融服务协议》</div>
@@ -192,6 +192,7 @@ $('.services_terms').on('click',function(){
         success : function(html){
         	var d = dialog({
                 title: ' 泰坦云金融服务协议 ',
+                height:450,
                 fixed: true,
                 padding: '0 0 0px 0',
                 content: html,
@@ -366,6 +367,14 @@ $('.r_verify').on('click',function(){
 //检查是否已经注册
 function checkExist(value, inputDom){
 	var flag = false;
+	if($.trim(value).length==0){
+		getValidate().setErrormsg(inputDom,"不能为空");
+		return false;
+	}
+	if(!email_reg.test(value)){
+		getValidate().setErrormsg(inputDom,"格式不正确");
+		return false;
+	}
 	$.ajax({
 		async:false,
 		type:'post',
@@ -388,7 +397,7 @@ function checkExist(value, inputDom){
 function checkGeExist(value, inputDom){
 	var flag = false;
 	if($.trim(value).length==0){
-		getValidate().setErrormsg(inputDom,"必填项");
+		getValidate().setErrormsg(inputDom,"不能为空");
 		return false;
 	}
 	if((!phone_reg.test(value))&&(!email_reg.test(value))){
