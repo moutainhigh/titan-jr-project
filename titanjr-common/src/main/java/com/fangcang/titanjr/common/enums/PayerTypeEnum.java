@@ -9,7 +9,6 @@ public enum PayerTypeEnum {
 	  SUPPLY_FINACIAL("3","财务供应商"),
 	  SUPPLY_UNION("4","联盟供应商付款"),
 	  ALLIANCE("5","商家联盟"),
-	  MOBILE("6","移动端"),
 	  RECHARGE("7","充值"),
 	  WITHDRAW("8","提现"),
 	  OPEN_ORG("1001","对外开放平台"),
