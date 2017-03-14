@@ -74,7 +74,36 @@
 <input type="hidden" id="tradePageCurrent" value="${tradePage.currentPage}">
 <script type="text/javascript">
 
-//备注
+	//备注
+	function showRemark(obj){
+		var code = $(obj).attr("orderId");
+        $.ajax({
+            dataType: 'html',
+            context: document.body,
+            data: {userOrderId: code},
+            url: '<%=basePath%>/account/order-remark-history.shtml',
+            success: function (html) {
+                var d = window.top.dialog({
+                    title: '备注',
+                    padding: '0 0 0px 0 ',
+                    content: html,
+                    height:280,
+                    width:590,
+                    skin: 'overview_pop',
+                    button: [
+                        {
+                            value: '关闭',
+                            skin: 'btn btn_grey btn_exit',
+                            callback: function () {
+                                //直接关闭
+                            }
+                        }
+                    ]
+                }).showModal();
+            }
+        });
+	}
+    
  //备注
     function showRemarkInfo(obj) {
         var code = $(obj).attr("orderId");
