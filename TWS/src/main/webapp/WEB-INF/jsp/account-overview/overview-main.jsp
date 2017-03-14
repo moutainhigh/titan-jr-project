@@ -408,7 +408,7 @@
 	<div class="main_kkpager">		
 		<div id="kkpager" class="page_turning"></div>
 	</div>
-	<div class="pagination_r" style="display:none">
+	<div class="pagination_r"   style="display:none">
 		<i class="on">5</i>
 	</div>
 <!-- 	<div class="main_kkpager">
@@ -718,7 +718,7 @@
 			if (!page) {
 				page = 1;
 			}
-			resetPageSizeView(size);
+			//resetPageSizeView(size);
 			var data = getQueryOrderData(index);
 			$.ajax({
 				dataType: 'html',
