@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
+import com.fangcang.exception.ServiceException;
 import com.fangcang.order.api.HotelOrderSearchFacade;
 import com.fangcang.titanjr.common.bean.CallBackInfo;
 import com.fangcang.titanjr.common.enums.*;
@@ -184,9 +185,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			TitanTransOrder titanTransOrder = orderRequest2TitanTransOrder(orderRequest);
 			if (OrderStatusEnum.isRepeatedPay(transOrderDTO.getStatusid())) {
 				// 两次需要充值的金额不等需改订单
-				boolean flag = validateIsUpdateOrder(titanPaymentRequest,
-						transOrderDTO);
-				if (flag) {// 充值金额相等则返回该单号，否则生成订单
+				boolean flag = validateAndUpdateOrder(titanPaymentRequest, transOrderDTO);
+				if (flag) {//充值金额相等则返回该单号，否则生成订单
 					// 更新一下订单
 					titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
 					titanTransOrder.setTransid(transOrderDTO.getTransid());
@@ -1532,44 +1532,25 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	}
 	
 
-	// 验证是否需要修改订单
-	private boolean validateIsUpdateOrder(
-			TitanPaymentRequest titanPaymentRequest, TransOrderDTO transOrderDTO)
+	//支付金额变更需失效订单 直接将本地单作废重新生成新订单
+	//如果充值金额相等则返回true；
+	private boolean validateAndUpdateOrder(TitanPaymentRequest titanPaymentRequest, TransOrderDTO transOrderDTO)
 			throws Exception {
-		if (!NumberUtil.covertToCents(titanPaymentRequest.getPayAmount())
-				.equals(transOrderDTO.getAmount().toString())) {
-			// 直接将本地单作废重新生成新订单
+		if (!NumberUtil.covertToCents(titanPaymentRequest.getPayAmount()).equals(transOrderDTO.getAmount().toString())) {
+			TitanTransOrder titanTransOrder = new TitanTransOrder();
+			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_NO_EFFECT.getStatus());
+			titanTransOrder.setTransid(transOrderDTO.getTransid());
 			try {
-				boolean flag = this.updateLocalOrder(transOrderDTO.getTransid());
-				if (flag) {
+				int row = titanTransOrderDao.update(titanTransOrder);
+				if (row > 0) {
 					return false;
 				}
-				throw new Exception();
 			} catch (Exception e) {
-				log.error(e.getMessage());
-				throw new Exception(e);
+				log.error("失效本地订单失败", e);
+				throw new ServiceException("失效本地订单异常，流程退出", e);
 			}
 		}
 		return true;
-	}
-
-	// 修改本地落单
-	private boolean updateLocalOrder(Integer transid) throws Exception {
-		TitanTransOrder titanTransOrder = new TitanTransOrder();
-		try {
-			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_NO_EFFECT
-					.getStatus());
-			titanTransOrder.setTransid(transid);
-			int row = titanTransOrderDao.update(titanTransOrder);
-			if (row > 0) {
-				return true;
-			}
-
-		} catch (Exception e) {
-			log.error("修改本地订单失败" + e.getMessage());
-			throw new Exception(e);
-		}
-		return false;
 	}
 	
 

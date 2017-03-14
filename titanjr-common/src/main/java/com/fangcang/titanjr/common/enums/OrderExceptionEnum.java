@@ -16,7 +16,7 @@ public enum OrderExceptionEnum {
 	Save_Order_Insert_Fail("1_1","0","落本地订单失败"),Save_Order_Get_Desk_Url_Fail("1_3","0","获取收银台地址失败"),
 	
 	//余额支付
-	Balance_Pay_Update_Fail("3_1","0","更新本地订单失败"),Balance_Pay_Insert_Again_Fail("3_3","0","重新罗本地单失败"),
+	Balance_Pay_Update_Fail("3_1","0","金额未变更新本地订单失败"),Balance_Pay_Insert_Again_Fail("3_3","0","重新罗本地单失败"),
 	
 	Balance_Pay_Update_TransOrder_Fail("3_5","0","本地落单后更新单失败"),Balance_Pay_Freeze_Fail("3_7","0","余额支付后冻结失败"),
 	
@@ -24,7 +24,7 @@ public enum OrderExceptionEnum {
 	
 	
 	//网银支付
-	Online_Pay_Add_Rs_Order_Fail("5_1","0","网银支付融树落单失败"),Online_Pay_Save_Order_Fail("5_3","0","网银支付更新或保存修改本地单失败"),
+	Online_Pay_Add_Rs_Order_Fail("5_1","0","网银支付融数落单失败"),Online_Pay_Save_Order_Fail("5_3","0","网银支付更新或保存修改本地单失败"),
 	
 	Online_Pay_Insert_PayOrder_Fail("5_5","0","网银支付保存充值单失败"),Online_Pay_Update_PayOrder_Fail("5_7","0","网银支付保存充值单失败"),
 	
