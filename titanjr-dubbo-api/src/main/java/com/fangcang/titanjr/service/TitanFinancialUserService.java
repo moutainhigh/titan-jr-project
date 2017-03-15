@@ -109,12 +109,6 @@ public interface TitanFinancialUserService {
      * @throws GlobalServiceException
      */
     public FinancialUserUnBindResponse unbindFinancialUser(FinancialUserUnBindRequest financialUserUnBindRequest) throws GlobalServiceException;
-    /**
-     * 修改用户登录密码
-     * @param loginPasswordModifyRequest
-     * @return
-     */
-    public LoginPasswordModifyResponse modifyLoginPassword(LoginPasswordModifyRequest loginPasswordModifyRequest) throws Exception;
 
     /**
      * 能根据角色编码列表或者房仓角色编码去查询所有的角色信息
