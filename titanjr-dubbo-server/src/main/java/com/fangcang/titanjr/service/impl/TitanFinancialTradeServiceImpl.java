@@ -1913,12 +1913,21 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				if (StringUtil.isValidString(oldBussInfo)) {
 					upBussMap = JsonConversionTool.toObject(oldBussInfo,
 							Map.class);
+					//设置 partnerId 是财务端支付带过去FcuserId。当财务端不同用户之间并支付时需要更新FcuserId
+					PayerTypeEnum payerTypeEnum = PayerTypeEnum
+							.getPayerTypeEnumByKey(titanOrderRequest.getPayerType());
+					if(payerTypeEnum.isFcUserId()){
+						newBussMap.put("partnerId", titanOrderRequest.getUserId());
+					}
 					upBussMap.putAll(newBussMap);
 				}
 				if (upBussMap != null) {
 					titanTransOrder.setBusinessinfo(JsonConversionTool
 							.toJson(upBussMap));
 				}
+				
+				
+				
 				titanTransOrder.setNotifyUrl(titanOrderRequest.getNotify());
 				titanTransOrder.setCreator(titanOrderRequest.getName());
 				titanTransOrder.setGoodsdetail(titanOrderRequest.getGoodsDetail());
@@ -1992,6 +2001,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			if (!StringUtil.isValidString(transOrderDTO.getOrderid())) {
 				log.info("order status process ing ."
 						+ transOrderDTO.getUserorderid());
+				
 
 				updateTransOrderBussInfo(transOrderDTO.getTransid(),
 						titanOrderRequest,
