@@ -126,10 +126,10 @@ public class TitanTradeController extends BaseController {
 				ruserId = busMap.get("ruserId");
 			}
 			
+			//解密参数，其中对外接口调用，每个商家有自己的公钥和私钥，对内的对接只有一套公钥和私钥
 			String deInfo = null;
 			TitanOpenOrgDTO openOrgDTO =null;
-			if(StringUtil.isValidString(ruserId)){
-				//查询私钥
+			if(StringUtil.isValidString(ruserId)){//ruserId标识对接方的身份，根据ruserId获取私钥
 				openOrgDTO = financialTradeService.queryOpenOrg(ruserId);
 				if(openOrgDTO==null){
 					model.addAttribute("msg",

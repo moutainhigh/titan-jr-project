@@ -197,4 +197,8 @@ public class CommonConstant {
     
     public static final Integer DEFAULT_EXPIRE_TIME=45;
     
+    public static final Integer RQ_WIDTH = 170;
+    
+    public static final Integer RQ_HEIGH = 170;
+    
 }

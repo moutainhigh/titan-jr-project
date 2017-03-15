@@ -84,6 +84,11 @@
         </dependency>
         <dependency>
             <groupId>com.fangcang</groupId>
+            <artifactId>fangcang-lts-common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fangcang</groupId>
             <artifactId>configparam</artifactId>
             <exclusions>
                 <exclusion>
