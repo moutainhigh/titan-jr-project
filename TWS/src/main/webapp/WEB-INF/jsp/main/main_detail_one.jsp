@@ -13,7 +13,7 @@
 <body style="min-width: 1300px;" >
 <!-- 头部 -->
 <jsp:include page="/comm/header.jsp">
-<jsp:param name="menu" value="fangan"/>
+<jsp:param name="menu" value="index"/>
 </jsp:include>
 <!-- banner -->
 <div class="h_90"></div>

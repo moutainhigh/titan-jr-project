@@ -28,13 +28,13 @@
 <div class="wh_solve w_1200">
 	<div class="wh_title">解决方案</div>
 	<div class="wh_c">
-		<a href="<%=basePath %>/main/solution_detail.shtml"  class="li1">
+		<a href="<%=basePath %>/main/solution_detail.shtml#tab1"  class="li1">
 			&nbsp;
 		</a>
-		<a href="<%=basePath %>/main/solution_detail.shtml" class="li2">
+		<a href="<%=basePath %>/main/solution_detail.shtml#tab2" class="li2">
 			&nbsp;
 		</a>
-		<a href="<%=basePath %>/main/solution_detail.shtml" class="li3">
+		<a href="<%=basePath %>/main/solution_detail.shtml#tab3" class="li3">
 			&nbsp;
 		</a>
 	</div>
