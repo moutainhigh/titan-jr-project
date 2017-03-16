@@ -495,38 +495,7 @@
 				}
 			});
 		}
-        
-		//初始化每页数量事件
-		/* function initPageSizeChangeEvent() {
-			var pageList=$(".main_kkpager").html();
-			$(".pagination_r i").on('click',function(){
-				$(".pagination_r i").eq($(this).index()).addClass("on").siblings().removeClass("on");
-				var index = $(".MyAssets_list_tab .on").attr("id");
-				switch(index){
-					case "1":
-						size1=$(this).text();
-						pageSizeChangeRequest(page1, size1, index);
-						break;
-					case "2":
-						size2=$(this).text();
-						pageSizeChangeRequest(page2, size2, index);
-						break;
-					case "3":
-						size3=$(this).text();
-						pageSizeChangeRequest(page3, size3, index);
-						break;
-					case "4":
-						size4=$(this).text();
-						pageSizeChangeRequest(page4, size4, index);
-						break;
-					case "5":
-						size5=$(this).text();
-						pageSizeChangeRequest(page5, size5, index);
-						break;
-				}
-			});
-		}
-		 */
+		 
 		//添加日期锻
 		$('.J_Section').each(function(){
 			//添加日期锻
@@ -601,6 +570,7 @@
 				showLoading:true,
 				url:"<%=basePath%>/account/validate_person_Enterprise.shtml",
 				success: function (data) {
+					$("#btn_withdraw").attr({"data-result":data.msg});
 					if(data.msg=="5"){
 						//修改银行卡
 						bind_card_fail();
@@ -611,30 +581,21 @@
 			});
 		}
         
+        //提现
         $('.withdrawBtn').on('click',function(){
-        	$.ajax({
-        		dataType : 'json',
-        		showLoading:true,
-        		async:false,
-		        url : '<%=basePath%>/account/validate_person_Enterprise.shtml',
-		        success:function(data){
-		        	if(data.result=="success"){
-		        		if(data.msg=="3"){//对公且未绑定
-		        			$("#toBindCard").submit();
-		        		}else if(data.msg=="2"|| data.msg=="4"){//对私或者对公已绑定成功
-		        			account_withdraw();
-		        		}else if(data.msg=="5"){//对公，且绑定失败
-		        			 bind_card_fail();
-		        		}else if(data.msg=="6"){
-		        			bank_card_binding();
-		        		}else{
-		        			 new top.Tip({msg: "系统错误", type: 1, time: 1000});
-		        		}
-		        	}else{
-		        		 new top.Tip({msg: "系统错误", type: 1, time: 1000});
-		        	}
-		        }
-        	});
+        	
+        	var bind = $("#btn_withdraw").attr("data-result");
+    		if(bind=="3"){//对公且未绑定
+    			$("#toBindCard").submit();
+    		}else if(bind=="2"|| bind=="4"){//对私或者对公已绑定成功
+    			account_withdraw();
+    		}else if(bind=="5"){//对公，且绑定失败
+    			 bind_card_fail();
+    		}else if(bind=="6"){
+    			bank_card_binding();
+    		}else{
+    			 new top.Tip({msg: "系统繁忙，请稍后再试", type: 2, timer: 1000});
+    		}
         });
         
         //充值

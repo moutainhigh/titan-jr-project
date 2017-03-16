@@ -139,7 +139,7 @@ public class FinancialAccountController extends BaseController {
     	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
     	organQueryRequest.setUserId(this.getUserId());
     	FinancialOrganResponse response  = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
-        if(response.isResult()){
+    	if(response.isResult()){
         	FinancialOrganDTO financialOrganDTO = response.getFinancialOrganDTO();
         	if(financialOrganDTO !=null && financialOrganDTO.getUserType()!=null){
         		resultMap.put(WebConstant.RESULT,WebConstant.SUCCESS);

@@ -3,11 +3,11 @@
 <div class="header">
 	<div class="w_1200">
 		<div class="logo">
-			<div class="l_img"><a href="http://pay.fangcang.com"><img src="<%=cssWalletPath%>/images/logo.png"></a></div>
+			<div class="l_img"><a href="<%=basePath%>"><img src="<%=cssWalletPath%>/images/logo.png"></a></div>
 		</div>
 		<div class="head_r">
 			<ul>
-				<li><a href="http://pay.fangcang.com" <c:if test="${param.menu=='index'}">class="Aon"</c:if>>首页</a></li>
+				<li><a href="<%=basePath%>" <c:if test="${param.menu=='index'}">class="Aon"</c:if>>首页</a></li>
 				<li><a href="<%=basePath %>/main/solution.shtml" <c:if test="${param.menu=='fangan'}">class="Aon"</c:if>>解决方案</a></li>
 				<li class="w_240 li_1">
 					<!-- 登录前 -->

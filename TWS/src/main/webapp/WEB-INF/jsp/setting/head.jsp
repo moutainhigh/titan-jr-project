@@ -4,7 +4,7 @@
 <div class="header">
 	<div class="w_1200">
 		<div class="logo">
-			<div class="l_img"><a href="http://pay.fangcang.com"><img src="<%=cssWalletPath%>/images/logo.png"></a></div>
+			<div class="l_img"><a href="<%=basePath%>"><img src="<%=cssWalletPath%>/images/logo.png"></a></div>
 			<div class="l_text">
 				<i class="ico"></i>${param.title}
 			</div>
