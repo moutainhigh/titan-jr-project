@@ -26,7 +26,7 @@
 								现金冻结余额：<i id="balancefrozonSpan">加载中...</i>
 								<i class="MyAssets_noticeIco" title="交易平台在线收款默认为担保支付，在订单离店日后1天款项自动解冻"></i>
 							</span>
-							<a href="<%=basePath%>/account/freeze-detail-page.shtml" class="blue decorationUnderline">详情</a>
+							<a href="<%=basePath%>/account/freeze-detail-page.shtml" class="blue decorationUnderline" target="_blank">详情</a>
 						</p>
 					</td>
 				</tr>
