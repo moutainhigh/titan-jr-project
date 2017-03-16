@@ -17,9 +17,9 @@
 <div class="main_col m_t90">
 <div class="swiper-container">
 <div class="swiper-wrapper">
-    <div class="swiper-slide"><a href="<%=basePath %>/main/main_detail_one.shtml" class="home01">&nbsp;</a></div>
-    <div class="swiper-slide"><a href="<%=basePath %>/main/main_detail_two.shtml" class="home02">&nbsp;</a></div>
-    <div class="swiper-slide"><a href="<%=basePath %>/main/main_detail_three.shtml" class="home03">&nbsp;</a></div>             
+    <div class="swiper-slide"><a href="<%=basePath %>/main/main_detail_one.shtml" class="home01" target="_blank">&nbsp;</a></div>
+    <div class="swiper-slide"><a href="<%=basePath %>/main/main_detail_two.shtml" class="home02" target="_blank">&nbsp;</a></div>
+    <div class="swiper-slide"><a href="<%=basePath %>/main/main_detail_three.shtml" class="home03" target="_blank">&nbsp;</a></div>             
 </div>
 <div class="swiper-pagination"></div>
 <div class="swiper-button-next"></div>

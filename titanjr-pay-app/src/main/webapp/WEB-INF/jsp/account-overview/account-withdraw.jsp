@@ -452,7 +452,7 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
    	 $.ajax({
        	 type: "post",
             url: "<%=basePath%>/account/checkIsSetPayPassword.action",
-            data: {fcUserid:'${fcUserId}'},
+            data: {fcUserid:'${fcUserId}',tfsUserId:'${tfsUserId}'},
             dataType: "json",
             success: function(data){
            	 if(data.result=="0"){
@@ -509,7 +509,7 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
 		                        			}
 		                        			return true;
 		                        		}else{
-		                        			 new top.Tip({msg: "密码必须为6位", type: 1, timer: 1000});
+		                        			 new top.Tip({msg: "密码必须为6位", type: 3, timer: 2000});
 		                        			 
 		                        			 $(".ui-dialog-content").html(html);
 		                         			setTimeout(function(){
@@ -518,7 +518,7 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
 			                        		
 		                        		}
 		                        	}else{
-		                        		 new top.Tip({msg: "两次输入密码不一致", type: 1, timer: 1000});
+		                        		 new top.Tip({msg: "两次输入密码不一致", type: 3, timer: 2000});
 		                        		 $(".ui-dialog-content").html(html);
 		                     			setTimeout(function(){
 		                     				clickPassword();
@@ -550,6 +550,7 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
 	         async:false,
 	         data: {
 	        	 fcuserid:'${fcUserId}',
+	        	 tfsuserid:'${tfsUserId}',
 	        	/*  payPassword:rsaData(PasswordStr.returnStr()) */
 	        	 payPassword:PasswordStr.returnStr()
 	         },
@@ -560,13 +561,13 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
 	        		top.F.loading.show();
                      setTimeout(function () {
                          top.F.loading.hide();
-                         new top.Tip({msg: '密码设置成功！', type: 1, timer: 1000});
+                         new top.Tip({msg: '密码设置成功！', type: 1, timer: 2000});
                      }, 1000);
 	        	 }else{
 	        			top.F.loading.show();
                          setTimeout(function () {
                              top.F.loading.hide();
-                             new top.Tip({msg: data.resultMsg, type: 1, timer: 1000});
+                             new top.Tip({msg: data.resultMsg, type: 3, timer: 2000});
                          }, 1000);
 	        	 }
 	         }
