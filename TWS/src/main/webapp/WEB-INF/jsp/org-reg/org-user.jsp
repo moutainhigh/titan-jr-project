@@ -30,16 +30,16 @@
 				<input type="hidden" name="encrypt_type" value="${encrypt_type }"/>
 				<input type="hidden" name="sign" value="${sign }"/>
 				<ul>
-					<li class="r_y1"><div class="rt_title">用户名</div><input type="text" class="text ui-loginusername"  name="userLoginName" placeholder="邮箱" datatype="/\w*/"  errormsg="格式不正确" afterPassed="checkExist"></li>
+					<li class="r_y1"><div class="rt_title">用户名</div><input type="text" class="text ui-loginusername"  name="userLoginName" placeholder="邮箱" datatype="/\w*/"  errormsg="格式不正确"  ></li>
 					<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" id="qy_pass1" readonly onfocus="this.removeAttribute('readonly');" require="true" placeholder="设置登录密码" datatype="/\w{6,}/" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="qy_pass1_hint"></em></li>
 					<li class="r_y3"><div class="rt_title">确认密码</div><input type="password" class="text pass2" name="passwordConfirm" readonly onfocus="this.removeAttribute('readonly');" require="true" placeholder="确认登录密码" datatype="/\w*/" errormsg="长度太短" afterPassed="confirmPass"><i class="ico rt_eye "></i></li>
 					<li class="r_yzm"><div class="rt_title">验证码</div>
-					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\w{4,}/" require="true" errormsg="长度太短"><div class="r_verify">获取验证码</div>
+					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\d*/" require="true" errormsg="长度太短" afterPassed="verifyCode"><div class="r_verify">获取验证码</div>
 					</li>
 					<li class="lb_Rememb">
-						<span class="fl qiye"><i class="i_agree ico"></i> 我已阅读并同意</span> <div class="colour m_l14 dib services_terms">《泰坦云金融服务协议》</div>
+						<span class="fl qiye"><i class="i_agree ico"></i>同意</span><div class="colour dib services_terms">《泰坦云金融服务协议》</div>
 					</li>
-					<li class="lb_btn disable"><a href="javascript:;" class="qiye-next">下一步</a></li>
+					<li class="lb_btn"><a href="javascript:;" class="qiye-next" onclick="next()">下一步</a></li>
 				</ul>
 				<input type="submit" class="regbtn" style="display:none;">
 			</form>
@@ -64,12 +64,12 @@
 					<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" id="per_pass1" placeholder="设置登录密码" require="true" datatype="/\w{6,}/" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="per_pass1_hint"></em></li>
 					<li class="r_y3"><div class="rt_title">确认密码</div><input type="password" class="text pass2" name="passwordConfirm" placeholder="确认登录密码" require="true" datatype="/\w{6,}/" errormsg="长度太短" afterPassed="confirmPass"><i class="ico rt_eye"></i></li>
 					<li class="r_yzm"><div class="rt_title">验证码</div>
-					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\w{4,}/" request="true" require="true" errormsg="长度太短"><div class="r_verify">获取验证码</div>
+					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\d*/" require="true" errormsg="长度太短" afterPassed="verifyCode"><div class="r_verify">获取验证码</div>
 					</li>
 					<li class="lb_Rememb">
-						<span class="fl geren"><i class="i_agree ico"></i> 我已阅读并同意</span> <div class="colour m_l14 dib services_terms">《泰坦云金融服务协议》</div>
+						<span class="fl geren"><i class="i_agree ico"></i>同意</span><div class="colour dib services_terms">《泰坦云金融服务协议》</div>
 					</li>
-					<li class="lb_btn disable"><a href="javascript:;" class="geren-next">下一步</a></li>
+					<li class="lb_btn "><a href="javascript:;" class="geren-next" onclick="next()">下一步</a></li>
 				</ul>
 				<input type="submit" class="regbtn" style="display:none;">
 				</form>
@@ -103,6 +103,8 @@
 var valid_qy_form = new validform('#reg_form_qy');
 var valid_phone_form = new validform('#reg_form_phone');
  
+ 
+ 
 
 var current_form = "reg_form_qy";
 //企业还是个人tab
@@ -111,6 +113,7 @@ var TAB_TYPE={"enterprise":1,"personage":2};
 //var LOGIN_TYPE={"email":1,"phone":2};
 var current_tab = TAB_TYPE["enterprise"];
 //var loginType = LOGIN_TYPE["email"];
+getValidate().setErrormsg($("#reg_form_qy .ui-loginusername"),"密码不一致");
 
 $(".ser_content").mCustomScrollbar({  		                  
    	scrollButtons:{  
@@ -126,30 +129,20 @@ $(".ser_content").mCustomScrollbar({
 
 // 我已阅读并同意 个人
 $('.lb_Rememb span.geren').on('click',function(){
-	var _this = $(this),
-		_thisI = _this.find('i');
+	var	_thisI = $(this).find('i');
 	if(_thisI.is('.Ibadd')){
 		_thisI.removeClass('Ibadd');
-		_this.parents('.r_text').find('.lb_btn').addClass('disable');
-		$('.geren-next').unbind("click",next);
 	}else{
 		_thisI.addClass('Ibadd');
-		_this.parents('.r_text').find('.lb_btn').removeClass('disable');
-		$('.geren-next').bind("click",next);
 	}
 });
 // 我已阅读并同意 企业
 $('.lb_Rememb span.qiye').on('click',function(){
-	var _this = $(this),
-		_thisI = _this.find('i');
+	var	_thisI = $(this).find('i');
 	if(_thisI.is('.Ibadd')){
 		_thisI.removeClass('Ibadd');
-		_this.parents('.r_text').find('.lb_btn').addClass('disable');
-		$('.qiye-next').unbind("click",next);
 	}else{
 		_thisI.addClass('Ibadd');
-		_this.parents('.r_text').find('.lb_btn').removeClass('disable');
-		$('.qiye-next').bind("click",next);
 	}
 });
 
@@ -261,14 +254,8 @@ function next(){
 	var formId = getCurrentFormId();
 	if(!$("#"+formId+" .i_agree").hasClass("Ibadd"))
 	{
-		   new top.createConfirm({
-		        padding:'30px 20px 65px',
-		        width:'330px',
-		        title:'提示',
-		        content : '<div class="f_14 t_a_c">请阅读并勾选《泰坦云金融服务协议》！</div>',      
-		        button:false
-		      }); 
-		   return;
+		new top.Tip({msg : '请阅读并勾选《泰坦云金融服务协议》', type: 2, timer:2000});
+		return;
 	}
 	
 	var loginEle = $("#"+formId+" .ui-loginusername");
@@ -291,9 +278,8 @@ function next(){
 			        title:'提示',
 			        content : '<div class="f_14 t_a_c">'+result.msg+'</div>',      
 			        button:false
-			     }); 
+			    });
 			}
-			
 		},
 		error:function(){
 			new top.Tip({msg : '请求错误，请重试', type: 3, timer:2000});
@@ -326,7 +312,7 @@ $('.r_verify').on('click',function(){
 	var receiveAddress = loginEle.val();
     
     if($.trim(receiveAddress).length==0){
-    	new top.Tip({msg : '用户名不能为空', type: 1, timer:2000});
+    	new top.Tip({msg : '用户名不能为空', type: 2, timer:2000});
     	return
     }
 	if(formId=='reg_form_qy'){
@@ -426,6 +412,41 @@ function checkGeExist(value, inputDom){
 	});
 	return  flag;
 	
+}
+
+function verifyCode(value, inputDom){
+	var flag = false;
+	if(!getValidate().validate()){
+		//return;
+	}
+	var formId = getCurrentFormId();
+	var loginEle = $("#"+formId+" .ui-loginusername");
+	var regCodeEle = $("#"+formId+" .ui-reg");
+	var userLoginName = loginEle.val();
+	var regCode = regCodeEle.val();
+	
+	if($.trim(userLoginName)){
+		getValidate().setErrormsg(loginEle,"不能为空");
+	}
+	$.ajax({
+		type:"post",
+		async:false,
+		url: '<%=basePath%>/ex/checkCode.shtml',		
+		data:{"userLoginName":userLoginName,"code":regCode},
+		dataType:"json",
+		success:function(result){
+			if(result.code==1){
+				flag = true;
+			}else{
+				getValidate().setErrormsg(inputDom,"验证码错误");
+				flag = false;
+			}
+		},
+		error:function(){
+			new top.Tip({msg : '请求错误，请重试', type: 2, timer:2000});
+		}
+	});
+	return flag;
 }
 
 $('.pass1').bind("cut copy paste", function(e) {  

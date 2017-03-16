@@ -189,6 +189,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         if(userRegisterRequest.getRegisterSource()==CoopTypeEnum.SAAS.getKey()){
         	 MerchantUserCheckDTO checkDTO = new MerchantUserCheckDTO();
              checkDTO.setUserLoginName(userRegisterRequest.getLoginUserName());
+             checkDTO.setMerchantCode(RSInvokeConstant.defaultMerchant);
              //TODO 检测机制要改变下，如果重复的用户属于金服的商家编码，则允许重复创建。但要修改相应的数据
              BaseResultDTO checkResult = getMerchantUserFacade().checkMerchantUser(checkDTO);
              if (!checkResult.getIsSuccessed()) {//登录名已存在
@@ -625,6 +626,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
         queryDTO.setUserLoginNameList(new ArrayList<String>());
         queryDTO.getUserLoginNameList().add(financialUserBindRequest.getFcLoginUserName());
+        queryDTO.setMerchantCode(financialUserBindRequest.getMerchantCode());
         List<MerchantUserDTO> merchantUserDTOs = getMerchantUserFacade().queryMerchantUserForSMS(queryDTO);
         if (CollectionUtils.isNotEmpty(merchantUserDTOs)){
             Role titanjrRole = getRoleFacade().getRoleById(Integer.valueOf(String.valueOf(RSInvokeConstant.defaultRoleId)));
@@ -720,6 +722,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
         queryDTO.setUserLoginNameList(new ArrayList<String>());
         queryDTO.getUserLoginNameList().add(userList.get(0).getUserloginname());
+        queryDTO.setMerchantCode(RSInvokeConstant.defaultMerchant);
         List<MerchantUserDTO> merchantUserDTOs = getMerchantUserFacade().queryMerchantUserForSMS(queryDTO);
         if (CollectionUtils.isEmpty(merchantUserDTOs)){
             response.putErrorResult("USER_NOT_EXISTS","商家系统不存在该用户名的用户");
@@ -1035,6 +1038,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 			//saas 是否已经存在
 			MerchantUserCheckDTO checkDTO = new MerchantUserCheckDTO();
 	        checkDTO.setUserLoginName(request.getUserLoginName());
+	        checkDTO.setMerchantCode(RSInvokeConstant.defaultMerchant);
 	        BaseResultDTO checkResult = getMerchantUserFacade().checkMerchantUser(checkDTO);
 	        if (!checkResult.getIsSuccessed()) {//登录名已存在
 	        	response.putErrorResult("-100", "该登录用户名已经存在，请使用其他用户名");
