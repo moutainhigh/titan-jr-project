@@ -374,12 +374,12 @@ public class TianjrFinancialTradeTest extends GenericTest{
     		System.out.println(JSONSerializer.toJSON(queryBankCardBindInfoResponse));
         }
     }
-    
+
     @Test
     public void testCallBack() throws Exception{
     	TransOrderDTO transOrderDTO = new TransOrderDTO();
-    	transOrderDTO.setPayorderno("8db6f0de-082d-48ef-aef4-9b58fe7384a0");
-    	transOrderDTO.setBusinessordercode("1000000000042316");
+    	transOrderDTO.setPayorderno("AD721703");
+    	transOrderDTO.setBusinessordercode("");
     	transOrderDTO.setMerchantcode("M10001841");
     	transOrderDTO.setCreator("张庆(13005776300)");
     	transOrderDTO.setUserorderid("TJO161216185858054");

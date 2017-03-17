@@ -40,44 +40,15 @@ public class TitanAccountTest extends GenericTest{
     	}
     }
     
-    @Test
+    // @Test
     public void test(){
     	titanFinancialRateService.initRateData();
     }
     
     
-//    @Test
+    @Test
     public void testAccountBankCardBatch(){
-    	
-    	Runnable s1 = new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				unFreezeAllTransOrder();
-			}
-		};
-    	
-		Runnable s2 = new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				unFreezeAllTransOrder();
-			}
-		};
-		
-		Thread t1 = new Thread(s1);
-		Thread t2 = new Thread(s2);
-		t1.start();
-		t2.start();
-    	
-		try {
-			Thread.sleep(1000000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	unFreezeAllTransOrder();
     	
     }
     
