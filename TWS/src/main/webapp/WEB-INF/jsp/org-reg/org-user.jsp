@@ -30,11 +30,11 @@
 				<input type="hidden" name="encrypt_type" value="${encrypt_type }"/>
 				<input type="hidden" name="sign" value="${sign }"/>
 				<ul>
-					<li class="r_y1"><div class="rt_title">用户名</div><input type="text" class="text ui-loginusername"  name="userLoginName" placeholder="邮箱" datatype="/\w*/"  errormsg="格式不正确"  ></li>
+					<li class="r_y1"><div class="rt_title">用户名</div><input type="text" class="text ui-loginusername"  name="userLoginName" placeholder="邮箱" datatype="/\w*/"  errormsg="格式不正确"  afterPassed="checkExist" ></li>
 					<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" id="qy_pass1" readonly onfocus="this.removeAttribute('readonly');" require="true" placeholder="设置登录密码" datatype="/\w{6,}/" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="qy_pass1_hint"></em></li>
 					<li class="r_y3"><div class="rt_title">确认密码</div><input type="password" class="text pass2" name="passwordConfirm" readonly onfocus="this.removeAttribute('readonly');" require="true" placeholder="确认登录密码" datatype="/\w*/" errormsg="长度太短" afterPassed="confirmPass"><i class="ico rt_eye "></i></li>
 					<li class="r_yzm"><div class="rt_title">验证码</div>
-					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\d*/" require="true" errormsg="长度太短" afterPassed="verifyCode"><div class="r_verify">获取验证码</div>
+					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\d*/" require="true"  afterPassed="verifyCode"><div class="r_verify">获取验证码</div>
 					</li>
 					<li class="lb_Rememb">
 						<span class="fl qiye"><i class="i_agree ico"></i>同意</span><div class="colour dib services_terms">《泰坦云金融服务协议》</div>
@@ -64,7 +64,7 @@
 					<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" id="per_pass1" placeholder="设置登录密码" require="true" datatype="/\w{6,}/" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="per_pass1_hint"></em></li>
 					<li class="r_y3"><div class="rt_title">确认密码</div><input type="password" class="text pass2" name="passwordConfirm" placeholder="确认登录密码" require="true" datatype="/\w{6,}/" errormsg="长度太短" afterPassed="confirmPass"><i class="ico rt_eye"></i></li>
 					<li class="r_yzm"><div class="rt_title">验证码</div>
-					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\d*/" require="true" errormsg="长度太短" afterPassed="verifyCode"><div class="r_verify">获取验证码</div>
+					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\d*/" require="true" afterPassed="verifyCode"><div class="r_verify">获取验证码</div>
 					</li>
 					<li class="lb_Rememb">
 						<span class="fl geren"><i class="i_agree ico"></i>同意</span><div class="colour dib services_terms">《泰坦云金融服务协议》</div>
@@ -110,11 +110,7 @@ var current_form = "reg_form_qy";
 //企业还是个人tab
 var TAB_TYPE={"enterprise":1,"personage":2};
 //选择是手机号码还是邮箱注册
-//var LOGIN_TYPE={"email":1,"phone":2};
 var current_tab = TAB_TYPE["enterprise"];
-//var loginType = LOGIN_TYPE["email"];
-getValidate().setErrormsg($("#reg_form_qy .ui-loginusername"),"密码不一致");
-
 $(".ser_content").mCustomScrollbar({  		                  
    	scrollButtons:{  
             enable:true //是否使用上下滚动按钮  
@@ -416,17 +412,16 @@ function checkGeExist(value, inputDom){
 
 function verifyCode(value, inputDom){
 	var flag = false;
-	if(!getValidate().validate()){
-		//return;
-	}
+	 
 	var formId = getCurrentFormId();
 	var loginEle = $("#"+formId+" .ui-loginusername");
 	var regCodeEle = $("#"+formId+" .ui-reg");
 	var userLoginName = loginEle.val();
 	var regCode = regCodeEle.val();
-	
-	if($.trim(userLoginName)){
-		getValidate().setErrormsg(loginEle,"不能为空");
+	if($.trim(userLoginName).length==0){
+		getValidate()._setErrorStyle(loginEle,"不能为空");
+		getValidate().setErrormsg(regCodeEle,"验证码错误");
+		return flag;
 	}
 	$.ajax({
 		type:"post",
