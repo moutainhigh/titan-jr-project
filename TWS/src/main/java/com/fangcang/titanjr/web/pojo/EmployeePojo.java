@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.web.pojo;
 
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -11,7 +10,8 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class EmployeePojo extends BasePojo{
 	private String userName;
-	private Integer tfsUserId;
+	
+	private String tfsUserId;
 	
 	@NotBlank
 	private String receiveAddress;
@@ -26,10 +26,10 @@ public class EmployeePojo extends BasePojo{
 	 */
 	private String uncheckedRoleId;
 	
-	public Integer getTfsUserId() {
+	public String getTfsUserId() {
 		return tfsUserId;
 	}
-	public void setTfsUserId(Integer tfsUserId) {
+	public void setTfsUserId(String tfsUserId) {
 		this.tfsUserId = tfsUserId;
 	}
 	public String getUserName() {

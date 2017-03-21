@@ -94,7 +94,7 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
         balanceRequest.setUserid(balanceQueryRequest.getTitanOrgCode());
         AccountBalanceResponse accountBalanceResponse = titanFinancialAccountService.queryAccountBalance(balanceRequest);
         if (!accountBalanceResponse.isResult() || CollectionUtils.isEmpty(accountBalanceResponse.getAccountBalance())){
-            response.putSysError();
+            response.putErrorResult(accountBalanceResponse.getReturnMessage());
             log.error("查询账户余额失败");
             return response;
         } else {

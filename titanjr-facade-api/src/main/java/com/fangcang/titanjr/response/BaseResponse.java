@@ -58,7 +58,11 @@ public class BaseResponse implements Serializable{
 		setReturnCode(code);
 		setReturnMessage(msg);
 	}
-	
+	public void putErrorResult(String msg) {
+		setResult(false);
+		setReturnCode(ReturnCode.CODE_SYS_ERROR.code);
+		setReturnMessage(msg);
+	}
 	private String returnCode;
 	
 	private String returnMessage;

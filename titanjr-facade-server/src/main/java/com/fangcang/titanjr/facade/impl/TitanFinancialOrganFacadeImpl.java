@@ -49,6 +49,7 @@ public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade 
         FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
         organQueryRequest.setMerchantcode(organStatusRequest.getPartnerCode());
         organQueryRequest.setUserId(organStatusRequest.getTitanOrgCode());
+        organQueryRequest.setCoopType(organStatusRequest.getOrganTypeEnum().typeId);
         FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
         if (null == financialOrganResponse.getFinancialOrganDTO() ||
                 !StringUtil.isValidString(financialOrganResponse.getFinancialOrganDTO().getUserId())){

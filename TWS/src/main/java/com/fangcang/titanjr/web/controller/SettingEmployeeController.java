@@ -34,10 +34,8 @@ import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.AESUtil;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.GenericValidate;
-import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
-import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
@@ -291,13 +289,15 @@ public class SettingEmployeeController extends BaseController{
 	@RequestMapping("/setting/save-update-user")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String saveUpdateUser(EmployeePojo employeePojo){
-		if(employeePojo.getTfsUserId()==null||employeePojo.getTfsUserId()<=0){
+		if(employeePojo.getTfsUserId()==null||(!StringUtil.isValidString(employeePojo.getTfsUserId()))){
 			putSysError("参数错误");
 			return toJson();
 		}
+		int tfsUserIdInt = 0;
+		tfsUserIdInt = NumberUtils.toInt(AESUtil.decrypt(employeePojo.getTfsUserId()));
 		UpdateUserRequest updateUserRequest = new UpdateUserRequest();
 		
-		updateUserRequest.setTfsUserId(employeePojo.getTfsUserId());
+		updateUserRequest.setTfsUserId(tfsUserIdInt);
 		updateUserRequest.setUserName(employeePojo.getUserName());
 		updateUserRequest.setRoleIdList(toList(employeePojo.getCheckedRoleId()));
 		updateUserRequest.setUnselectRoleIdList(toList(employeePojo.getUncheckedRoleId()));
