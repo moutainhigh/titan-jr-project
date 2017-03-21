@@ -447,7 +447,7 @@ public class FinancialOrganController extends BaseController {
 			parameters.put("reqtime", reqtime.toString());
 			 
     		String keyValue = MD5.generatorSignParam(parameters, key);
-			String sign = MD5.MD5Encode(keyValue);
+			String sign = MD5.MD5Encode(keyValue).toUpperCase();
 			parameters.put("sign", sign);
 			
 			SynOrgInfoRequest synOrgInfoRequest = new SynOrgInfoRequest();

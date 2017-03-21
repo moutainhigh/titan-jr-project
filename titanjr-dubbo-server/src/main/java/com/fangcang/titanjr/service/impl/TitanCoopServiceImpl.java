@@ -73,7 +73,7 @@ public class TitanCoopServiceImpl implements TitanCoopService {
 				try {
 					CoopDTO coopDTO = coopDao.getEntity(titanCoopParam);
 					String keyValue = MD5.generatorSignParam(notifyParam, coopDTO.getMd5Key());
-					String sign = MD5.MD5Encode(keyValue);
+					String sign = MD5.MD5Encode(keyValue).toUpperCase();
 					notifyParam.put("sign", sign);
 					String resultString;
 				

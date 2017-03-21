@@ -13,7 +13,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpPost;
 import org.springframework.stereotype.Service;
-import com.alibaba.fastjson.JSON;
+
 import com.fangcang.titanjr.common.bean.CallBackInfo;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
@@ -25,7 +25,6 @@ import com.fangcang.titanjr.dao.DomainConfigDao;
 import com.fangcang.titanjr.dao.TitanDynamicKeyDao;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
-import com.fangcang.titanjr.dto.bean.RSInvokeConfig;
 import com.fangcang.titanjr.dto.bean.SysConfig;
 import com.fangcang.titanjr.dto.request.NotifyClientRequest;
 import com.fangcang.titanjr.dto.request.PayMethodConfigRequest;

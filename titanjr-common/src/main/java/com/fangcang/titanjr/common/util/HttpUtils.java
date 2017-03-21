@@ -8,7 +8,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -160,5 +162,20 @@ public class HttpUtils {
 				Logger.getAnonymousLogger().info(e.toString());
 			}
 		}
+	}
+	
+	public static void main(String[] arg) throws MalformedURLException, UnsupportedEncodingException, IOException{
+		String notifyurl = "http://192.168.0.116:8080/TTM/ttmTitanjrNotify/registerNotice.shtml";
+		String siString = "d0894a844d141d3b0768fd0855042504";
+		String parameters = "sign="+siString.toUpperCase()+"&coopuserid=60&orgcode=TJM10030203&cooporgcode=1701061623470001&reqtime=1490066382381&tfsuserid=10161";
+		
+		//String notifyurl = "http://192.168.0.89:8020/TWS/ex/sendCode.shtml";
+		
+		//String parameters = "receiveAddress=1335298987&msgType=2";
+		
+		String contentgString = HttpUtils.postRequest(new URL(URLDecoder.decode(notifyurl, "UTF-8")), parameters);
+		System.out.println(contentgString);
+		
+		
 	}
 }
