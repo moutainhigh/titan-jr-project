@@ -371,6 +371,10 @@ public class FinancialOrganController extends BaseController {
 		    		organRegisterRequest.setCoopUserId(coopRegInfo.getCoopUserId());
 		    		organRegisterRequest.setMerchantCode(coopRegInfo.getCoopOrgCode());
 		    		organRegisterRequest.setMerchantname(coopRegInfo.getCoopOrgName());
+		    	}else{
+		    		// 第三方参数错误
+		    		model.addAttribute(WebConstant.MODEL_ERROR_MSG_KEY, "第三方注册参数错误,请重试");
+					return "error";
 		    	}
 	    	}
 	    	

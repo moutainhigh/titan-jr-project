@@ -103,6 +103,7 @@ public class TitanTradeController extends BaseController {
 	 * @param orderInfo
 	 * @param businessInfo
 	 * @param response
+	 * @param succUrl  点击“支付成功"
 	 * @return
 	 * @return: String
 	 */
