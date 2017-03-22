@@ -197,8 +197,6 @@ public class DateUtil {
 	 * @param termCount
 	 *            负数则为之前 正数则为之后
 	 * @return String
-	 * @Description:
-	 * @author 刘恒
 	 * @date 2015年3月11日 下午12:47:18
 	 * @version V1.0
 	 */
@@ -321,8 +319,7 @@ public class DateUtil {
 	 * @function: 比较两个时间相隔天数，精确到秒的比较
 	 * @param registerTime
 	 * @param nowDate
-	 * @return int
-	 * @exception @author:刘玉峰
+	 * @return long
 	 * @since 1.0.0
 	 */
 	public static long differDaysByTime(Date registerTime, Date nowDate) {
@@ -349,11 +346,9 @@ public class DateUtil {
 	
 	/**
 	 * 获取给定日期与当前日期相差天数
-	 * 
 	 * @function:
 	 * @param date
 	 * @return int
-	 * @exception @author:HX1401122
 	 * @since 1.0.0
 	 */
 	public static int differDays(Date date) {
@@ -369,7 +364,6 @@ public class DateUtil {
 	 * @param endDate
 	 *            结束时间
 	 * @return int
-	 * @exception @author:肖震
 	 * @since 1.0.0
 	 */
 	public static int differDaysWithoutRigor(Date startDate, Date endDate) {
@@ -450,7 +444,6 @@ public class DateUtil {
 	 * @param format
 	 *            日期格式
 	 * @return String 字符串
-	 * @author:肖震
 	 * @since 1.0.0
 	 */
 	public static String dateToString(Date date, String format) {
@@ -466,7 +459,7 @@ public class DateUtil {
 	 * @param formatt
 	 *            日期格式，如：yyyy-MM-dd
 	 * @return Date
-	 * @exception @author:肖震
+	 * @exception
 	 * @since 1.0.0
 	 */
 	public static Date StringToDate(String str, String formatt) {
@@ -491,7 +484,6 @@ public class DateUtil {
 	 * @param bdate
 	 *            较大的时间
 	 * @return 相差小时数
-	 * @author 李辞辞
 	 * @throws ParseException
 	 */
 	public static int hoursBetween(Date smdate, Date bdate) throws ParseException {
@@ -539,7 +531,7 @@ public class DateUtil {
 	 * @param bdate
 	 * @return int
 	 * @throws ParseException
-	 * @exception @author:肖震
+	 * @exception
 	 * @since 1.0.0
 	 */
 	public static int daysBetween(String smdate, String bdate) throws ParseException {
@@ -560,7 +552,7 @@ public class DateUtil {
 	 * @return
 	 * @throws ParseException
 	 *             Date
-	 * @exception @author:duyubo
+	 * @exception
 	 * @since 1.0.0
 	 */
 	public static Date timeStampToDate(Long unixTimeStamp) throws ParseException {
@@ -575,7 +567,7 @@ public class DateUtil {
 	 * @function:秒数转为时间格式
 	 * @param time
 	 * @return String
-	 * @exception @author:duyubo
+	 * @exception
 	 * @since 1.0.0
 	 */
 	public static String secToTime(int time) {
@@ -618,7 +610,6 @@ public class DateUtil {
 	 * @param end
 	 * @return int
 	 * @Description:
-	 * @author 刘恒
 	 * @date 2015年3月14日 下午10:42:06
 	 * @version V1.0
 	 */
@@ -724,10 +715,9 @@ public class DateUtil {
 	}
 
 	/**
-	 * 一种字符串格式的日期 转换为另一种 比如 yyyyMMddHHmmss 转换为 yyyy-MM-dd HH:mm:ss
-	 * 
+	 * 一种字符串格式的日期 转换为另一种 比如 yyyyMMddHHmmss
+	 * 转换为 yyyy-MM-dd HH:mm:ss
 	 * @time 2015年上午10:06:10
-	 * @author duyubo
 	 * @return
 	 */
 	public static String convertToAnotherDataFmt(String dataStr, SimpleDateFormat fromStyle, SimpleDateFormat toStyle) {
@@ -743,10 +733,8 @@ public class DateUtil {
 
 	/**
 	 * 比较日期大小
-	 * 
-	 * @param DATE1
-	 * @param DATE2
-	 * @author 邱先锋
+	 * @param dt1
+	 * @param dt2
 	 * @return
 	 */
 	public static int compareDate(Date dt1, Date dt2) {

@@ -159,8 +159,7 @@ public class TitanTradeService {
 			}
 		}
 
-		if (pe.isReicveMerchantCode() 
-				&& StringUtil.isValidString(dto.getRuserId())) {
+		if (pe.receiverIsMerchantCode() && StringUtil.isValidString(dto.getRuserId())) {
 			AccountInfoRequest accountInfo = new AccountInfoRequest();
 			accountInfo.setMerchantCode(dto.getRuserId());
 			log.info("check permission ruserId= " + dto.getRuserId());
@@ -224,7 +223,7 @@ public class TitanTradeService {
 	/**
 	 * 通知业务付款结果
 	 * 
-	 * @param req
+	 * @param orderId
 	 */
 	public void notifyPayResult(String orderId) {
 

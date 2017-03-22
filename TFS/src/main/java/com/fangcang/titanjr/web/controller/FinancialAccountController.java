@@ -861,14 +861,14 @@ public class FinancialAccountController extends BaseController {
     	PayerTypeEnum payerType = PayerTypeEnum.getPayerTypeEnumByKey(order.getPayerType());
     	BigDecimal refundAmount = null;
     	if("收款".equals(order.getTradeType())){//收款方，且使用的是收款方的收银台
-    		if(payerType.isRecieveCashDesk()){
+    		if(payerType.useReceiverCashDesk()){
     			refundAmount = new BigDecimal(order.getTradeamount()).subtract(new BigDecimal(order.getReceivedfee()));
         	}else{
         		refundAmount = new BigDecimal(order.getTradeamount());
         	}
     		return "-"+refundAmount.divide(new BigDecimal(100)).toString();
     	}else if("付款".equals(order.getTradeType())){
-    		if(payerType.isRecieveCashDesk()){
+    		if(payerType.useReceiverCashDesk()){
     			refundAmount = new BigDecimal(order.getTradeamount());
         	}else{
         		refundAmount = new BigDecimal(order.getTradeamount()).add(new BigDecimal(order.getReceivedfee()));

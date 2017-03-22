@@ -346,7 +346,7 @@ public class TitanTradeController extends BaseController {
 			return false;
 		}
 		
-		if(pe.isRecieveCashDesk() && !StringUtil.isValidString(dto.getRuserId())){
+		if(pe.useReceiverCashDesk() && !StringUtil.isValidString(dto.getRuserId())){
 			log.error(pe + "RuserId is null");
 			return false;
 		}
@@ -493,7 +493,7 @@ public class TitanTradeController extends BaseController {
 
 		// 查询收款方机构号，如果收款方不为空但是是酒店支付，还是不将收款信息填写
 		if (StringUtil.isValidString(transOrderDTO.getPayeemerchant())
-				&& payerTypeEnum.isMustPayeement()) {
+				&& payerTypeEnum.isPayeeNecessary()) {
 			FinancialOrganDTO financialOrganDTO = financialTradeService
 					.getFinancialOrganDTO(transOrderDTO.getPayeemerchant());
 			if (null == financialOrganDTO) {
@@ -608,7 +608,7 @@ public class TitanTradeController extends BaseController {
 		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
 		cashierDeskQueryRequest.setUserId(transOrderDTO.getUserid());
 		// GDP支付时用商家的收银台
-		if (payerTypeEnum.isRecieveCashDesk()) {// 使用收款商家收银台
+		if (payerTypeEnum.useReceiverCashDesk()) {// 使用收款商家收银台
 			cashierDeskQueryRequest.setUserId(transOrderDTO.getPayeemerchant());
 		}
 		cashierDeskQueryRequest.setUsedFor(PayerTypeEnum

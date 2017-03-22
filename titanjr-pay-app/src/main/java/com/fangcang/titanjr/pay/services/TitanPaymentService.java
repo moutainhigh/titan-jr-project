@@ -330,7 +330,7 @@ public class TitanPaymentService {
 			if(accountHistoryDTO !=null){
 				accountHistoryRequest = new AccountHistoryRequest();
 				accountHistoryRequest.setAccountHistoryDTO(accountHistoryDTO);
-				 titanFinancialAccountService.addAccountHistory2(accountHistoryRequest);
+				 titanFinancialAccountService.addAccountHistory(accountHistoryRequest);
 			}
 		}
 		

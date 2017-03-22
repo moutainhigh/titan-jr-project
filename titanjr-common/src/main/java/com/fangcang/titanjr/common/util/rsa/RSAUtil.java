@@ -175,7 +175,7 @@ public class RSAUtil {
 	 * @param publicKey 公钥
 	 * @return String
 	 * @Description:
-	 * @author 刘恒   
+	 *    
 	 * @date 2015年3月24日 下午9:44:35 
 	 * @version V1.0
 	 * @throws Exception 
@@ -195,7 +195,7 @@ public class RSAUtil {
 	 * @param privateKey  钱包私钥
 	 * @return boolean
 	 * @Description:
-	 * @author 刘恒   
+	 *    
 	 * @date 2015年3月24日 下午7:16:03 
 	 * @version V1.0
 	 */
@@ -222,7 +222,7 @@ public class RSAUtil {
 	 * @param type true：仅用于创建返回签名域  false：创建请求签名域和其他
 	 * @return String
 	 * @Description:
-	 * @author 刘恒   
+	 *    
 	 * @date 2015年3月24日 下午3:47:25 
 	 * @version V1.0
 	 */
@@ -238,7 +238,7 @@ public class RSAUtil {
 	 * @param para
 	 * @return String
 	 * @Description:
-	 * @author 刘恒   
+	 *    
 	 * @date 2015年3月24日 下午2:32:11 
 	 * @version V1.0
 	 */
@@ -267,7 +267,7 @@ public class RSAUtil {
 	 * @param paramType  true：接口返回签名（使用）  false：请求签名
 	 * @return Map<String,String>
 	 * @Description:
-	 * @author 刘恒   
+	 *    
 	 * @date 2015年3月24日 下午2:34:19 
 	 * @version V1.0
 	 */
