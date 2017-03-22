@@ -12,8 +12,7 @@ public interface TitanFinancialPermissionFacade {
 
 	/**
 	 * 查询是否有付款的权限
-	 * @param fcuserid
-	 * @param permission 1.付款权限,2.查看权限,3充值权限,4.充值和提现权限,5.理财权限,6.贷款权限,7.消息提醒权限,8.系统运营员权限
+	 * @param permissionRequest 1.付款权限,2.查看权限,3充值权限,4.充值和提现权限,5.理财权限,6.贷款权限,7.消息提醒权限,8.系统运营员权限
 	 * @return
 	 * @author fangdaikang
 	 */
@@ -29,7 +28,7 @@ public interface TitanFinancialPermissionFacade {
 	
 	/**
 	 * 是否开通金融账户
-	 * @param merchantcode
+	 * @param accountInfo
 	 * @return
 	 */
 	public CheckAccountResponse isFinanceAccount(AccountInfoRequest accountInfo);

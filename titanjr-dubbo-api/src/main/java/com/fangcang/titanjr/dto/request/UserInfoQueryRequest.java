@@ -14,10 +14,15 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
     private Integer tfsUserId;
     //金服用户登录名
     private String userLoginName;
+
+    //绑定的用户id
+    private String bindUserId;
     //房仓绑定用户名
     private String bindLoginName;
     //房仓绑定商家编码
     private String bindMerchantCode;
+    //合作商类型
+    private Integer coopType;
     //金服用户名
     private String userName;
     //手机号
@@ -34,7 +39,11 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
      * 要排除的状态
      */
     private Integer excludeStatus;
-
+    
+    /***
+     * 用户绑定状态， 
+     */
+    private Integer bindIsactive;
     
     public String getOrgCode() {
 		return orgCode;
@@ -123,4 +132,29 @@ public class UserInfoQueryRequest extends BaseRequestDTO {
 	public void setIsadmin(Integer isadmin) {
 		this.isadmin = isadmin;
 	}
+
+    public String getBindUserId() {
+        return bindUserId;
+    }
+
+    public void setBindUserId(String bindUserId) {
+        this.bindUserId = bindUserId;
+    }
+
+	public Integer getBindIsactive() {
+		return bindIsactive;
+	}
+
+	public void setBindIsactive(Integer bindIsactive) {
+		this.bindIsactive = bindIsactive;
+	}
+
+	public Integer getCoopType() {
+		return coopType;
+	}
+
+	public void setCoopType(Integer coopType) {
+		this.coopType = coopType;
+	}
+    
 }

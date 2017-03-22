@@ -24,6 +24,8 @@ public interface TitanOrgDao {
 	
 	PaginationSupport<FinancialOrganDTO> queryTitanOrgForPage(FinancialOrganQueryRequest organQueryRequest, PaginationSupport<FinancialOrganDTO> paginationSupport);
 	
+	PaginationSupport<FinancialOrganDTO> queryBaseTitanOrgForPage(FinancialOrganQueryRequest organQueryRequest, PaginationSupport<FinancialOrganDTO> paginationSupport);
+	
 	PaginationSupport<OrgCheckDTO> queryTitanOrgCheckForPage(FinancialOrganQueryRequest organQueryRequest, PaginationSupport<OrgCheckDTO> paginationSupport) throws DaoException;
 	/**
 	 * 查询一个实体

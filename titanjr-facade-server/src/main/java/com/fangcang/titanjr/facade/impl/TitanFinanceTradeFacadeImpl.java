@@ -1,17 +1,25 @@
 package com.fangcang.titanjr.facade.impl;
 
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.dto.BaseResponseDTO.ReturnCode;
+import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
+import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.facade.TitanFinancialTradeFacade;
+import com.fangcang.titanjr.request.BalanceQueryRequest;
 import com.fangcang.titanjr.request.TitanOrderPaymentRequest;
+import com.fangcang.titanjr.response.BalanceQueryResponse;
 import com.fangcang.titanjr.response.TitanOrderPaymentResponse;
+import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.util.StringUtil;
+import org.apache.commons.collections.CollectionUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +40,9 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
     
     @Resource
     private TitanFinancialUtilService titanFinancialUtilService;
+
+    @Resource
+    private TitanFinancialAccountService titanFinancialAccountService;
 
     @Override
     public TitanOrderPaymentResponse getOrderPaymentUrl(TitanOrderPaymentRequest titanOrderPaymentRequest) {
@@ -68,6 +79,43 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
             titanOrderPaymentResponse.putErrorResult(ReturnCode.CODE_SYS_ERROR.getCode(), "系统错误");
         }
         return titanOrderPaymentResponse;
+    }
+
+    @Override
+    public BalanceQueryResponse queryAccountBalance(BalanceQueryRequest balanceQueryRequest) {
+        BalanceQueryResponse response = new BalanceQueryResponse();
+        if (!StringUtil.isValidString(balanceQueryRequest.getTitanOrgCode())){
+            response.putParamError();
+            log.error("查询账户余额时金融机构编码不能为空");
+            return response;
+        }
+        AccountBalanceRequest balanceRequest = new AccountBalanceRequest();
+        balanceRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+        balanceRequest.setUserid(balanceQueryRequest.getTitanOrgCode());
+        AccountBalanceResponse accountBalanceResponse = titanFinancialAccountService.queryAccountBalance(balanceRequest);
+        if (!accountBalanceResponse.isResult() || CollectionUtils.isEmpty(accountBalanceResponse.getAccountBalance())){
+            response.putErrorResult(accountBalanceResponse.getReturnMessage());
+            log.error("查询账户余额失败");
+            return response;
+        } else {
+            AccountBalance resultBalance = null;
+            for (AccountBalance accountBalance : accountBalanceResponse.getAccountBalance()){
+                if (CommonConstant.RS_FANGCANG_PRODUCT_ID.equals(accountBalance.getProductid())){
+                    resultBalance = accountBalance;
+                }
+            }
+            if (null == resultBalance){
+                response.putErrorResult("NO_VALID_ACCOUNT","无合法的金融主账户");
+                log.error("无合法的金融主账户");
+                return response;
+            }
+
+            response.setResult(true);
+            response.setAccountId(resultBalance.getFinaccountid());
+            response.setBalanceFrozon(resultBalance.getBalancefrozon());
+            response.setBalanceUsable(resultBalance.getBalanceusable());
+        }
+        return response;
     }
 
     private PaymentUrlRequest convertToPaymentUrlRequest(TitanOrderPaymentRequest titanOrderPaymentRequest) {

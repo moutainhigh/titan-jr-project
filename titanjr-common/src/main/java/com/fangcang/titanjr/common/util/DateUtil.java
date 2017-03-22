@@ -873,21 +873,7 @@ public class DateUtil {
 //		
 //	}
 	
-	
-	
-	public static void main(String[] args) throws JAXBException, ParseException {
-		
 
-
-		try {
-			
-			System.out.println(new Date().getTime());
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
 
 	
 	

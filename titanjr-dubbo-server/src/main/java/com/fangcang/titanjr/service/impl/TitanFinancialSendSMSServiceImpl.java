@@ -10,11 +10,11 @@ import com.fangcang.message.email.dto.EmailSenderDTO;
 import com.fangcang.message.email.service.EmailSendService;
 import com.fangcang.message.sms.dto.SMSSendDTO;
 import com.fangcang.message.sms.service.MessageSendService;
-import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DubboServerJDBCProperties;
+import com.fangcang.titanjr.common.util.ThreadPoolUtil;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.request.SendCodeRequest;
 import com.fangcang.titanjr.dto.request.SendMessageRequest;
@@ -23,6 +23,7 @@ import com.fangcang.titanjr.dto.response.SendCodeResponse;
 import com.fangcang.titanjr.dto.response.SendMessageResponse;
 import com.fangcang.titanjr.dto.response.SendSmsResponse;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
+import com.fangcang.titanjr.thread.SendMessageRunnable;
 import com.fangcang.util.StringUtil;
 
 @Service("titanFinancialSendSMSService")
@@ -48,32 +49,27 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 				smsSendDTO.setMerchantCode(sendSMSRequest.getMerchantCode());
 				String messageServiceUrl= ProxyFactoryConstants.messageServiceUrl + "messageSendService";
 				MessageSendService messageSendService = hessianProxyBeanFactory.getHessianProxyBean(MessageSendService.class,messageServiceUrl);
-			    String retMessage = messageSendService.sendSMS(smsSendDTO);
+				String retMessage = messageSendService.sendSMS(smsSendDTO);
 			    log.info("send sms ,messageServiceUrl:"+messageServiceUrl+",sendSMSRequest  param:"+ToStringBuilder.reflectionToString(sendSMSRequest)+",retMessage:"+retMessage);
 		    	
 			    if(CommonConstant.RETURN_SUCCESS.toUpperCase().equals(retMessage)){
-			    	sendSmsResponse.setResult(true);
-				    sendSmsResponse.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-				    sendSmsResponse.setReturnMessage(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+			    	sendSmsResponse.putSuccess("短信发送成功");
 				    return sendSmsResponse;
 			    }else{
-			    	sendSmsResponse.setResult(false);
-					sendSmsResponse.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-					sendSmsResponse.setReturnMessage(retMessage);
+					sendSmsResponse.putErrorResult("短信发送失败，请重试");
+					log.error("短信发送失败,messageServiceUrl(发送服务器地址):"+messageServiceUrl+",sendSMSRequest  param:"+Tools.gsonToString(sendSMSRequest)+",接口返回信息为:"+retMessage);
 					return sendSmsResponse;
 			    }
 			}else{
-				sendSmsResponse.setResult(false);
-				sendSmsResponse.setReturnCode(RSInvokeErrorEnum.PARAM_EMPTY.returnCode);
-				sendSmsResponse.setReturnMessage(RSInvokeErrorEnum.PARAM_EMPTY.returnMsg);
+				sendSmsResponse.putErrorResult("参数不能为空");
 				return sendSmsResponse;
 			}
 		}catch(Exception e){
+
 			log.error("短信发送失败，发送参数sendSMSRequest："+Tools.gsonToString(sendSMSRequest),e);
+
 		}
-		sendSmsResponse.setResult(false);
-		sendSmsResponse.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-		sendSmsResponse.setReturnMessage(RSInvokeErrorEnum.UNKNOWN_ERROR.returnMsg);
+		sendSmsResponse.putErrorResult("短信发送失败，请重试");
 		return sendSmsResponse;
 	}
 
@@ -93,7 +89,10 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 		sendCodeResponse.setReturnMessage(sendMessageResponse.getReturnMessage());
 		return sendCodeResponse;
 	}
-
+	
+	public void asynSendMessage(SendMessageRequest sendCodeRequest){
+		ThreadPoolUtil.excute(new SendMessageRunnable(this,sendCodeRequest));
+	}
 
 	@Override
 	public SendMessageResponse sendMessage(SendMessageRequest sendCodeRequest) {

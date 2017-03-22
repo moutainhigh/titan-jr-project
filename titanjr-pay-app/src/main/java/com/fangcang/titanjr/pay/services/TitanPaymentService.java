@@ -279,7 +279,7 @@ public class TitanPaymentService {
 					model.addAttribute("transOrderDTO", transOrderDTO);
 					FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 					organQueryRequest.setOrgCode(transOrderDTO.getPayeemerchant());
-					FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+					FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
 			        if(financialOrganResponse.isResult()){
 			        	model.addAttribute("financialOrganDTO", financialOrganResponse.getFinancialOrganDTO());
 			        }

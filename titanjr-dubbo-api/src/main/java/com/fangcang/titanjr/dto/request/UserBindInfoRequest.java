@@ -12,6 +12,7 @@ public class UserBindInfoRequest extends BaseRequestDTO {
 	private Long fcuserid;
 	private String loginname;
 	private String fcloginname;
+	private Integer cooptype;
 	private String merchantcode;
 	private Integer isactive;
 	
@@ -51,6 +52,12 @@ public class UserBindInfoRequest extends BaseRequestDTO {
 	}
 	public void setIsactive(Integer isactive) {
 		this.isactive = isactive;
+	}
+	public Integer getCooptype() {
+		return cooptype;
+	}
+	public void setCooptype(Integer cooptype) {
+		this.cooptype = cooptype;
 	}
 	
 	

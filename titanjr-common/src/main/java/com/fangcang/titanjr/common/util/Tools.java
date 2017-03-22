@@ -1,6 +1,11 @@
 package com.fangcang.titanjr.common.util;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.Pattern;
+
+import net.sf.json.regexp.RegexpMatcher;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -118,5 +123,78 @@ public class Tools {
 	public static String redKeyword(String content,String keyword){
 		return	content.replaceAll(keyword, "<span style=\"color:#f00;\">"+keyword+"</span>");
 	}
+	/**
+	 * 解析url字符串
+	 * @param urlKeyValues   "aaa=1111&bbb=222&ccc=33333"
+	 * @return
+	 */
+	public static Map<String, String> unserializable2Map(String urlKeyValues){
+		String[] keyvalueItem = urlKeyValues.split("&");
+		Map<String, String> result = new HashMap<String, String>();
+		for(String item :keyvalueItem){
+			String[] keyvalueArray = item.split("="); 
+			result.put(keyvalueArray[0], keyvalueArray[1]);
+		}
+		return result;
+	}
+	
+	/**
+	 * 敏感信息替换
+	 * @return
+	 */
+	public static String replaceInfoStar(String src){
+		if(StringUtil.isValidString(src)){
+			StringBuilder  sb = new StringBuilder();
+			char[] reg = src.toCharArray();
+			for(int i=0;i<reg.length;i++){
+				if(i<=1||i>=reg.length-2){
+					sb.append(reg[i]);
+				}else{
+					sb.append("*");
+				}
+			}
+			return sb.toString();
+		}else{
+			return src;
+		}
+	}
+	
+	/***
+	 * 拼接参数
+	 * @param prefixUrl  请求地址
+	 * @param param 参数
+	 * @return
+	 */
+	public static String appendRequestParam(String prefixUrl, Map<String, String> param){
+		if(prefixUrl.indexOf("?")==-1){
+			return prefixUrl+"?"+generatorParamString(param).toString();
+		}
+		if(prefixUrl.indexOf("?")>-1&&prefixUrl.indexOf("?")==(prefixUrl.length()-1)){//最后一个字符为?
+			return prefixUrl+generatorParamString(param);
+		}else{
+			return prefixUrl+"&"+generatorParamString(param).toString();
+		}
+	}
+	 
+	/**
+	 * @description 生成请求参数字符串
+	 * @param parameters
+	 * @return
+	 */
+	public static String generatorParamString(Map<String, String> parameters) {
+        StringBuffer params = new StringBuffer();
+        if(parameters != null) {
+        	for(Iterator<String> iter = parameters.keySet().iterator(); iter.hasNext(); ) {
+        		String name = iter.next();
+        		String value = parameters.get(name);
+        		params.append(name + "=");
+                params.append(value);
+                 
+                if(iter.hasNext())
+                	params.append("&");
+            }
+        }
+        return params.toString();
+    }
 	
 }

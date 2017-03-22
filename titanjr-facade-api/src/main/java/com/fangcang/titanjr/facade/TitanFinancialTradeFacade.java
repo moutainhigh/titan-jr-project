@@ -1,6 +1,8 @@
 package com.fangcang.titanjr.facade;
 
+import com.fangcang.titanjr.request.BalanceQueryRequest;
 import com.fangcang.titanjr.request.TitanOrderPaymentRequest;
+import com.fangcang.titanjr.response.BalanceQueryResponse;
 import com.fangcang.titanjr.response.TitanOrderPaymentResponse;
 
 
@@ -14,6 +16,14 @@ public interface TitanFinancialTradeFacade {
 	 * @return
      */
 	public TitanOrderPaymentResponse getOrderPaymentUrl(TitanOrderPaymentRequest titanOrderPaymentRequest);
-	
+
+
+	/**
+	 * 根据房仓金融机构id查询账户资金信息，现只提供主账户资金信息
+	 * @param accountBalanceRequest
+	 * @return
+     */
+	public BalanceQueryResponse queryAccountBalance(BalanceQueryRequest accountBalanceRequest);
 
 }
+

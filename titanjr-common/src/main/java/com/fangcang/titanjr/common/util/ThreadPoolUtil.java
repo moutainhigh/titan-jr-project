@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * @2016年5月5日
  */
 public class ThreadPoolUtil {
-	private static ExecutorService cachedThreadPool = new ThreadPoolExecutor(5,15,10,TimeUnit.HOURS,new LinkedBlockingQueue<Runnable>());
+	private static ExecutorService cachedThreadPool = new ThreadPoolExecutor(10,10,10,TimeUnit.MINUTES,new LinkedBlockingQueue<Runnable>());
 	
 	public static void excute(Runnable task){
 		cachedThreadPool.execute(task);

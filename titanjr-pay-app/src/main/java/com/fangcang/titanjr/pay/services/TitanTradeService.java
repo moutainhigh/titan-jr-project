@@ -288,7 +288,7 @@ public class TitanTradeService {
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 		organQueryRequest.setUserId(userId);
 		FinancialOrganResponse financialOrgan = titanFinancialOrganService
-				.queryFinancialOrgan(organQueryRequest);
+				.queryBaseFinancialOrgan(organQueryRequest);
 		if (financialOrgan.isResult()) {
 			return financialOrgan.getFinancialOrganDTO();
 		}
