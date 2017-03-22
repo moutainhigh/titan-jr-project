@@ -124,6 +124,7 @@ public class FinancialAccountController extends BaseController {
 		    	model.addAttribute("payName", enum1.getMsg());
 		    	model.addAttribute("payDesc", enum1.getMsg());
 		    	model.addAttribute("fcUserId", this.getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ID));
+		    	model.addAttribute("tfsUserId", getTfsUserId());
 		    	return "account-overview/goto-cashierDesk";
     		}
     	}

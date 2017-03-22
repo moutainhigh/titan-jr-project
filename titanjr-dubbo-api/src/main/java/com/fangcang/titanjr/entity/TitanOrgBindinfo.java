@@ -19,6 +19,7 @@ public class TitanOrgBindinfo implements java.io.Serializable {
 	private String merchantcode;
 	private String orgcode;
 	private String merchantname;
+	private int cooptype;
 	private Integer bindstatus;
 	
 	private String creator;
@@ -102,6 +103,14 @@ public class TitanOrgBindinfo implements java.io.Serializable {
 
 	public void setModifytime(Date modifytime) {
 		this.modifytime = modifytime;
+	}
+
+	public int getCooptype() {
+		return cooptype;
+	}
+
+	public void setCooptype(int cooptype) {
+		this.cooptype = cooptype;
 	}
 
 }

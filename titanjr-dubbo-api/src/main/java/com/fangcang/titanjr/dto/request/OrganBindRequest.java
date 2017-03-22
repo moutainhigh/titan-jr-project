@@ -20,7 +20,7 @@ public class OrganBindRequest extends BaseRequestDTO{
     private String userId;
 	@NotBlank
     private String merchantCode;
-
+	private Integer coopType;
     private String merchantName;
     private String userloginname;
     private String password;
@@ -102,5 +102,12 @@ public class OrganBindRequest extends BaseRequestDTO{
 	public void setFcloginname(String fcloginname) {
 		this.fcloginname = fcloginname;
 	}
+	public Integer getCoopType() {
+		return coopType;
+	}
+	public void setCoopType(Integer coopType) {
+		this.coopType = coopType;
+	}
+	
     
 }

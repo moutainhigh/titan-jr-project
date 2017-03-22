@@ -14,6 +14,7 @@ public class UserBindInfoDTO  implements Serializable {
     private String fcUserName;
     private String fcLoginName;
     private String merchantCode;
+    private Integer coopType;
     private Integer isActive;
 
     public Long getFcUserId() {
@@ -71,4 +72,14 @@ public class UserBindInfoDTO  implements Serializable {
     public void setIsActive(Integer isActive) {
         this.isActive = isActive;
     }
+
+	public Integer getCoopType() {
+		return coopType;
+	}
+
+	public void setCoopType(Integer coopType) {
+		this.coopType = coopType;
+	}
+    
+    
 }

@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
+
 import com.alibaba.fastjson.JSON;
 import com.fangcang.exception.ServiceException;
 import com.fangcang.order.api.HotelOrderSearchFacade;
@@ -20,6 +21,7 @@ import com.fangcang.titanjr.common.enums.*;
 import com.fangcang.titanjr.common.util.*;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
+
 
 import net.sf.json.JSONSerializer;
 
@@ -32,26 +34,49 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.order.api.HotelOrderSearchFacade;
+import com.fangcang.titanjr.common.bean.CallBackInfo;
+import com.fangcang.titanjr.common.enums.ConditioncodeEnum;
+import com.fangcang.titanjr.common.enums.EscrowedEnum;
+import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.PayerTypeEnum;
+import com.fangcang.titanjr.common.enums.ROPErrorEnum;
+import com.fangcang.titanjr.common.enums.ReqstatusEnum;
+import com.fangcang.titanjr.common.enums.SupportBankEnum;
+import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
+import com.fangcang.titanjr.common.enums.TradeTypeEnum;
+import com.fangcang.titanjr.common.enums.TransOrderTypeEnum;
+import com.fangcang.titanjr.common.enums.TransferReqEnum;
+import com.fangcang.titanjr.common.enums.TransfertypeEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.common.util.MD5;
+import com.fangcang.titanjr.common.util.NumberUtil;
+import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
-import com.fangcang.titanjr.dao.DomainConfigDao;
 import com.fangcang.titanjr.dao.TitanAccountDao;
-import com.fangcang.titanjr.dao.TitanDynamicKeyDao;
 import com.fangcang.titanjr.dao.TitanOrderPayreqDao;
 import com.fangcang.titanjr.dao.TitanRefundDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
-import com.fangcang.titanjr.dto.bean.GDPOrderDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
-import com.fangcang.titanjr.enums.*;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
-import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.QrCodeDTO;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.bean.RefundDTO;
@@ -62,7 +87,37 @@ import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderInfo;
-import com.fangcang.titanjr.entity.TitanDynamicKey;
+import com.fangcang.titanjr.dto.request.AccountTransferFlowRequest;
+import com.fangcang.titanjr.dto.request.AllowNoPwdPayRequest;
+import com.fangcang.titanjr.dto.request.ConfirmOrdernQueryRequest;
+import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
+import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
+import com.fangcang.titanjr.dto.request.OrderRequest;
+import com.fangcang.titanjr.dto.request.OrderSaveAndBindCardRequest;
+import com.fangcang.titanjr.dto.request.RechargeRequest;
+import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
+import com.fangcang.titanjr.dto.request.RepairTransferRequest;
+import com.fangcang.titanjr.dto.request.TitanOrderRequest;
+import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
+import com.fangcang.titanjr.dto.request.TradeDetailRequest;
+import com.fangcang.titanjr.dto.request.TransOrderRequest;
+import com.fangcang.titanjr.dto.request.TransOrderUpdateRequest;
+import com.fangcang.titanjr.dto.request.TransferRequest;
+import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
+import com.fangcang.titanjr.dto.response.ConfirmOrdernQueryResponse;
+import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
+import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
+import com.fangcang.titanjr.dto.response.OrderSaveAndBindCardResponse;
+import com.fangcang.titanjr.dto.response.QrCodeResponse;
+import com.fangcang.titanjr.dto.response.RechargeResponse;
+import com.fangcang.titanjr.dto.response.RepairTransferResponse;
+import com.fangcang.titanjr.dto.response.TradeDetailResponse;
+import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
+import com.fangcang.titanjr.dto.response.TransOrderResponse;
+import com.fangcang.titanjr.dto.response.TransOrderUpdateResponse;
+import com.fangcang.titanjr.dto.response.TransferResponse;
+import com.fangcang.titanjr.entity.TitanAccount;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.TitanTransOrder;
 import com.fangcang.titanjr.entity.TitanTransferReq;
@@ -71,6 +126,8 @@ import com.fangcang.titanjr.entity.parameter.TitanAccountParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
 import com.fangcang.titanjr.entity.parameter.TitanTransOrderParam;
 import com.fangcang.titanjr.entity.parameter.TitanTransferReqParam;
+import com.fangcang.titanjr.enums.OperTypeEnum;
+import com.fangcang.titanjr.enums.OrderTypeEnum;
 import com.fangcang.titanjr.rs.dto.Transorderinfo;
 import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.manager.RSPayOrderManager;
@@ -81,12 +138,10 @@ import com.fangcang.titanjr.rs.request.OrderTransferFlowRequest;
 import com.fangcang.titanjr.rs.request.OrdernQueryRequest;
 import com.fangcang.titanjr.rs.request.RSPayOrderRequest;
 import com.fangcang.titanjr.rs.response.AccountTransferResponse;
-import com.fangcang.titanjr.rs.response.OrderOperateInfo;
 import com.fangcang.titanjr.rs.response.OrderOperateResponse;
 import com.fangcang.titanjr.rs.response.OrderSaveWithCardResponse;
 import com.fangcang.titanjr.rs.response.OrderTransferFlowResponse;
 import com.fangcang.titanjr.rs.response.OrdernQueryResponse;
-import com.fangcang.titanjr.rs.response.RSPayOrderResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
@@ -97,12 +152,6 @@ import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
-import com.fangcang.titanjr.entity.TitanAccount;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("titanFinancialTradeService")
 public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeService {
@@ -154,9 +203,12 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	@Resource
 	private TitanRefundDao titanRefundDao;
 	
+<<<<<<< HEAD
 	@Resource
 	private TitanFinancialUtilService titanFinancialUtilService;
 
+=======
+>>>>>>> dev_wallet
 	private HotelOrderSearchFacade hotelOrderSearchFacade;
 
 	private static Map<String, Object> mapLock = new ConcurrentHashMap<String, Object>();
@@ -1553,7 +1605,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return true;
 	}
 	
-
 	@Override
 	public TransOrderUpdateResponse updateTransOrder(
 			TransOrderUpdateRequest transOrderUpdateRequest) {
@@ -1619,7 +1670,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 		organQueryRequest.setUserId(orgUserId);
 		FinancialOrganResponse organResponse = titanFinancialOrganService
-				.queryFinancialOrgan(organQueryRequest);
+				.queryBaseFinancialOrgan(organQueryRequest);
 		if (organResponse.isResult()
 				&& organResponse.getFinancialOrganDTO() != null) {
 			result = organResponse.getFinancialOrganDTO().getOrgName();

@@ -14,9 +14,13 @@ public class FinancialUserUnBindRequest extends BaseRequestDTO{
 	 * 
 	 */
 	private static final long serialVersionUID = -5835979192155353391L;
+	
 	private Integer tfsuserid;
-	@NotNull
 	private String merchantcode;
+	/**
+	 * 合作方类型
+	 */
+	private Integer coopType;
 	
 	
 	public String getMerchantcode() {
@@ -30,6 +34,12 @@ public class FinancialUserUnBindRequest extends BaseRequestDTO{
 	}
 	public void setTfsuserid(Integer tfsuserid) {
 		this.tfsuserid = tfsuserid;
+	}
+	public Integer getCoopType() {
+		return coopType;
+	}
+	public void setCoopType(Integer coopType) {
+		this.coopType = coopType;
 	}
 	
 }

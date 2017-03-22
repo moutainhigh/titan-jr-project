@@ -7,7 +7,9 @@ package com.fangcang.titanjr.pay.req;
 public class WithDrawRequest 
 {
 	private String userId;
+	@Deprecated
 	private String fcUserId;
+	private String tfsUserId;
 	private String orderNo;
 	private Integer useNewBankCard;
     private Integer hasBindBanCard;
@@ -127,6 +129,14 @@ public class WithDrawRequest
 		this.originalBankName = originalBankName;
 	}
 
+
+	public String getTfsUserId() {
+		return tfsUserId;
+	}
+
+	public void setTfsUserId(String tfsUserId) {
+		this.tfsUserId = tfsUserId;
+	}
 	public String getBranchCode() {
 		return branchCode;
 	}
@@ -149,6 +159,7 @@ public class WithDrawRequest
 
 	public void setCityName(String cityName) {
 		this.cityName = cityName;
+
 	}
     
 }

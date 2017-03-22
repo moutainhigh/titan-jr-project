@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.fangcang.titanjr.dao.TitanCoopDao">
+    <select id="getEntity" parameterType="com.fangcang.titanjr.entity.parameter.TitanCoopParam" resultType="com.fangcang.titanjr.dto.bean.CoopDTO">
+		SELECT 
+			id,
+			coopname,
+			cooptype,
+			mixcode,
+			publickey,
+			privatekey,
+			publicmodulus,
+			publicexponent,
+			md5key
+		FROM t_tfs_coop
+		<where>
+			<if test="coopType!=null">cooptype=#{coopType}</if>
+			<if test="mixcode!=null">and mixcode=#{mixcode}</if>
+		</where>
+    </select>
+
+</mapper>
