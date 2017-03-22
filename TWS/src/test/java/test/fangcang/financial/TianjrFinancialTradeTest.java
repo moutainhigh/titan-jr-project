@@ -273,10 +273,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
     	paymentUrlRequest.setIsEscrowed("0");
 //    	paymentUrlRequest.setRecieveMerchantCode("M10000002");
-    	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
-    	if(paymentUrlResponse !=null){
-    		System.out.println("-------------"+paymentUrlResponse.getUrl());
-    	}
+    	 
     }
     
     //联盟分销商向联盟供应商付款
@@ -291,10 +288,6 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	paymentUrlRequest.setEscrowedDate(DateUtil.sdf.format(DateUtil.getEscrowedDate()));
     	paymentUrlRequest.setIsEscrowed("0");//1.不冻结，0.担保支付
     	paymentUrlRequest.setRecieveMerchantCode("M10000002");
-    	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
-    	if(paymentUrlResponse !=null){
-    		System.out.println("-------------"+paymentUrlResponse.getUrl());
-    	}
     }
     
     //获取GDP支付地址
@@ -309,10 +302,6 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	paymentUrlRequest.setNotifyUrl("http//:192.168.1.10/TFS");
     	paymentUrlRequest.setBusinessOrderCode("1234568790");
     	paymentUrlRequest.setOperater("中国人 非常好 ");
-    	PaymentUrlResponse paymentUrlResponse =titanFinancialTradeService.getPaymentUrl(paymentUrlRequest);
-    	if(paymentUrlResponse !=null){
-    		System.out.println("-------------"+paymentUrlResponse.getUrl());
-    	}
     }
     //测试绑定银行卡0
 //    @Test
@@ -400,18 +389,15 @@ public class TianjrFinancialTradeTest extends GenericTest{
     public void testGDPOrderDTO(){
     	PaymentUrlRequest paymentUrlRequest = new PaymentUrlRequest();
     	paymentUrlRequest.setPayOrderNo("H0141160727185050");
-    	titanFinancialTradeService.getGDPOrderDTO(paymentUrlRequest.getPayOrderNo());
     }
     
 //    @Tenst
     public void getSign(){
     	RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
-    	titanFinancialTradeService.getSign(rechargeResultConfirmRequest);
     }
     
 //    @Test
     public void repairTransferOrder(){
-    	titanFinancialTradeService.repairTransferOrder();
     }
     
 //    @Test
