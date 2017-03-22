@@ -3,13 +3,13 @@ package com.fangcang.titanjr.pay.controller;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.apache.commons.collections.CollectionUtils;
 
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
@@ -38,15 +38,16 @@ public class TitanAccountController extends BaseController {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	private static final Log log = LogFactory.getLog(TitanAccountController.class);
+
+	private static final Log log = LogFactory
+			.getLog(TitanAccountController.class);
 
 	@Resource
 	private TitanFinancialAccountService titanFinancialAccountService;
-	
+
 	@Resource
 	private TitanFinancialUserService titanFinancialUserService;
-	
+
 	@Resource
 	private TitanPaymentService titanPaymentService;
 
@@ -126,6 +127,7 @@ public class TitanAccountController extends BaseController {
 	@RequestMapping("/check_payPassword")
 	public String checkPayPassword(String payPassword, String fcUserid,String tfsUserid)
 			throws GlobalServiceException {
+		String ttfsUserid = null;
 		if (StringUtil.isValidString(fcUserid)) {
 			TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
 			titanUserBindInfoDTO.setFcuserid(Long.parseLong(fcUserid));
@@ -133,16 +135,18 @@ public class TitanAccountController extends BaseController {
 					.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
 			if (titanUserBindInfoDTO != null
 					&& titanUserBindInfoDTO.getTfsuserid() != null) {
-				tfsUserid = titanUserBindInfoDTO.getTfsuserid().toString();
+				ttfsUserid = titanUserBindInfoDTO.getTfsuserid().toString();
 			}
+		}else{
+			ttfsUserid = tfsUserid;
 		}
-
+		
 		if (!StringUtil.isValidString(payPassword)
-				|| !StringUtil.isValidString(tfsUserid)) {
+				|| !StringUtil.isValidString(ttfsUserid)) {
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
 		boolean istrue = titanFinancialUserService.checkPayPassword(
-				payPassword, tfsUserid);
+				payPassword, ttfsUserid);
 		if (!istrue) {
 			return toMsgJson(TitanMsgCodeEnum.PAY_PWD_ERROR);
 		}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanSynOrgInfoDao">
+    <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanSynOrgInfo"
+            parameterType="com.fangcang.titanjr.entity.parameter.TitanSynOrgInfoParam">
+        select
+        *
+        from t_tfs_synorginfo
+        <where> isactive = 1
+            <if test="synId != null"> and synid = #{synId}</if>
+            <if test="coopType != null"> and cooptype = #{coopType}</if>
+        </where>
+    </select>
+
+    <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanSynOrgInfo">
+    insert into t_tfs_synorginfo (notifyurl, cooptype, 
+      kvparam, createtime)
+    values (#{notifyUrl}, #{coopType}, 
+       #{kvparam}, #{createTime})
+  </insert>
+    <delete id="deleteById">
+       delete from t_tfs_synorginfo where synid in
+		 <foreach item="item" index="index" collection="list" open="(" separator="," close=")">  
+		  #{item}  
+		 </foreach>
+    </delete>
+</mapper>

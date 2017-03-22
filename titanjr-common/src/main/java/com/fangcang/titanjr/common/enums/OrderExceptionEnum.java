@@ -1,5 +1,8 @@
 package com.fangcang.titanjr.common.enums;
 
+/**
+ * 异常单记录枚举类
+ */
 public enum OrderExceptionEnum {
 //	TransOrder_Insert("00"," 落单新增失败"),TransOrder_update("01","落单修改失败"),
 //	OrderPay_Insert("10","充值新增失败"),OrderPay_Update("11","充值修改失败 "),

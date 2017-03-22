@@ -69,7 +69,7 @@
     </collection>
 
   </resultMap>
-  
+  <!-- 要绑定关系的查询用户，最好重写一个sql -->
   <select id="queryTitanUserIdList" parameterType="com.fangcang.titanjr.dto.request.UserInfoQueryRequest" resultType="java.lang.Integer">
     SELECT
 	  u.tfsuserid
@@ -77,7 +77,7 @@
 	    t_tfs_user u
       LEFT JOIN t_tfs_userbindinfo b ON u.tfsuserid = b.tfsuserid 
     <where>
-    	b.isactive = 1
+    	<if test="bindIsactive != null"> b.isactive = #{bindIsactive}</if>
     	<if test="status !=null"> and u.status = #{status}</if>
     	<if test="excludeStatus !=null"> and u.status != #{excludeStatus}</if>
 		<if test="userId !=null"> and u.userid = #{userId}</if>
@@ -86,6 +86,8 @@
       	<if test="userLoginName !=null"> and u.userloginname = #{userLoginName}</if>
       	<if test="bindLoginName !=null"> and b.fcloginname = #{bindLoginName}</if>
       	<if test="bindMerchantCode !=null"> and b.merchantcode = #{bindMerchantCode}</if>
+      	<if test="coopType !=null"> and b.cooptype = #{coopType}</if>
+        <if test="bindUserId !=null"> and b.fcuserid = #{bindUserId}</if>
       	<if test="userName !=null"> and u.username like concat('%',#{userName},'%')</if>
       	<if test="mobilePhone !=null"> and u.mobilephone = #{mobilePhone}</if>
     </where>

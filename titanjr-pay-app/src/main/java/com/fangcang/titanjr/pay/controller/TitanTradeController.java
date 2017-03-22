@@ -5,9 +5,9 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -35,6 +35,7 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.rsa.Base64Helper;
 import com.fangcang.titanjr.common.util.rsa.JsRSAUtil;
 import com.fangcang.titanjr.common.util.rsa.RSAUtil;
@@ -102,12 +103,13 @@ public class TitanTradeController extends BaseController {
 	 * @param orderInfo
 	 * @param businessInfo
 	 * @param response
+	 * @param succUrl  点击“支付成功"
 	 * @return
 	 * @return: String
 	 */
 	@RequestMapping(value = "/titanPay", method = { RequestMethod.GET,
 			RequestMethod.POST })
-	public String titanPay(String orderInfo, String businessInfo, Model model,HttpServletRequest request) {
+	public String titanPay(String orderInfo, String businessInfo,String wrapType,String succUrl, Model model,HttpServletRequest request) {
 		getRequest().getSession();
 		
 		if (!StringUtil.isValidString(orderInfo)) {
@@ -239,12 +241,14 @@ public class TitanTradeController extends BaseController {
 
 			if (dto.getPayerType().equals(PayerTypeEnum.WITHDRAW.getKey())) {
 				String fcUserId = "";
+				String tfsUserId = "";
 				Map<String, String> map = dto.getBusinessInfo();
 				if (map != null) {
-					fcUserId = map.get("fcUserId");
+					fcUserId = map.get("fcUserId")==null?"":map.get("fcUserId");
+					tfsUserId = map.get("tfsUserId")==null?"":map.get("tfsUserId");
 				}
 				url = "/withdraw/account-withdraw.action?userId="
-						+ dto.getUserId() + "&fcUserId=" + fcUserId
+						+ dto.getUserId() + "&tfsUserId="+tfsUserId+"&fcUserId=" + fcUserId
 						+ "&orderNo=" + orderCreateResponse.getOrderNo();
 			} else {
 				// 获取收银台地址
@@ -269,7 +273,16 @@ public class TitanTradeController extends BaseController {
 				url = response.getUrl();
 			}
 			log.info("get Payment url ok ");
-
+			if(StringUtil.isValidString(wrapType)){
+				Map<String , String> extParam = new HashMap<String, String>();
+				extParam.put("wrapType", wrapType);
+				url = Tools.appendRequestParam(url, extParam);
+			}
+			if(StringUtil.isValidString(succUrl)){
+				Map<String , String> extParam = new HashMap<String, String>();
+				extParam.put("succUrl", URLEncoder.encode(succUrl, "UTF-8"));
+				url = Tools.appendRequestParam(url, extParam);
+			}
 			this.getResponse().sendRedirect(
 					this.getRequest().getContextPath() + url);
 
@@ -346,7 +359,7 @@ public class TitanTradeController extends BaseController {
 			return false;
 		}
 		
-		if(pe.isRecieveCashDesk() && !StringUtil.isValidString(dto.getRuserId())){
+		if(pe.useReceiverCashDesk() && !StringUtil.isValidString(dto.getRuserId())){
 			log.error(pe + "RuserId is null");
 			return false;
 		}
@@ -493,7 +506,7 @@ public class TitanTradeController extends BaseController {
 
 		// 查询收款方机构号，如果收款方不为空但是是酒店支付，还是不将收款信息填写
 		if (StringUtil.isValidString(transOrderDTO.getPayeemerchant())
-				&& payerTypeEnum.isMustPayeement()) {
+				&& payerTypeEnum.isPayeeNecessary()) {
 			FinancialOrganDTO financialOrganDTO = financialTradeService
 					.getFinancialOrganDTO(transOrderDTO.getPayeemerchant());
 			if (null == financialOrganDTO) {
@@ -608,7 +621,7 @@ public class TitanTradeController extends BaseController {
 		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
 		cashierDeskQueryRequest.setUserId(transOrderDTO.getUserid());
 		// GDP支付时用商家的收银台
-		if (payerTypeEnum.isRecieveCashDesk()) {// 使用收款商家收银台
+		if (payerTypeEnum.useReceiverCashDesk()) {// 使用收款商家收银台
 			cashierDeskQueryRequest.setUserId(transOrderDTO.getPayeemerchant());
 		}
 		cashierDeskQueryRequest.setUsedFor(PayerTypeEnum

@@ -11,7 +11,7 @@ import net.sf.json.JSONSerializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
-
+import com.fangcang.titanjr.common.bean.CallBackInfo;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
@@ -151,8 +151,8 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 			String domainName = domainConfigDao.queryCurrentEnvDomain();
 			if(StringUtil.isValidString(domainName)){
 				payMethodConfigDTO = new PayMethodConfigDTO();
-				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-app/payment/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-app/payment/notify.action");
+				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-02/payment/payConfirmPage.action");
+				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-02/payment/notify.action");
 			}
 			return payMethodConfigDTO;
 		}catch(Exception e){

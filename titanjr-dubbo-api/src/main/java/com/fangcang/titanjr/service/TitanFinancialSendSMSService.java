@@ -13,7 +13,9 @@ public interface TitanFinancialSendSMSService {
 	 * 发送短信
 	 * @param SendSMSRequest
 	 * @return
+	 * @deprecated see sendMessage()
 	 */
+	@Deprecated
 	public SendSmsResponse sendSMS(SendSMSRequest SendSMSRequest);
 	/**
 	 * 发送消息(手机和短信)
@@ -22,6 +24,11 @@ public interface TitanFinancialSendSMSService {
 	 */
 	@Deprecated
 	public SendCodeResponse sendCode(SendCodeRequest sendCodeRequest);
+	/**
+	 * 异步发送短信或者邮件
+	 * @param sendCodeRequest
+	 */
+	public void asynSendMessage(SendMessageRequest sendCodeRequest);
 	/**
 	 * 发送消息(手机和短信)
 	 * @param sendEmailRequest

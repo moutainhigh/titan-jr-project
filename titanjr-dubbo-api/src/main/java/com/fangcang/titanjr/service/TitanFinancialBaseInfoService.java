@@ -2,9 +2,11 @@ package com.fangcang.titanjr.service;
 
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.request.BankInfoQueryRequest;
+import com.fangcang.titanjr.dto.request.CoopRequest;
 import com.fangcang.titanjr.dto.response.BankInfoInitResponse;
 import com.fangcang.titanjr.dto.response.BankInfoResponse;
 import com.fangcang.titanjr.dto.response.CityInfoInitResponse;
+import com.fangcang.titanjr.dto.response.CoopResponse;
 import com.fangcang.titanjr.dto.response.OrganRoleInitResponse;
 
 /**
@@ -42,4 +44,10 @@ public interface TitanFinancialBaseInfoService {
      */
     public BankInfoResponse queryBankInfoList(BankInfoQueryRequest bankInfoQueryRequest);
 
+    /**
+     * 查询一个合作方信息
+     * @param coopRequest
+     * @return
+     */
+    public CoopResponse getOneCoop(CoopRequest coopRequest);
 }

@@ -7,7 +7,6 @@ import java.util.Random;
 
 /**
  * 流水号生成服务
- * @author HX1401028
  *
  */
 public class OrderGenerateService {

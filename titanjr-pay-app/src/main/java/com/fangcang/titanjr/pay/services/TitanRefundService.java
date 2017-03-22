@@ -365,7 +365,7 @@ public class TitanRefundService {
 
 		log.info("5.开始设置请求到页面的参数");
 		PayerTypeEnum payerType= PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
-		if(payerType !=null && payerType.isRecieveCashDesk()){
+		if(payerType !=null && payerType.useReceiverCashDesk()){
 			model.addAttribute("paySourceMark", CommonConstant.ISRECIEVEDESK);
 		}
 		

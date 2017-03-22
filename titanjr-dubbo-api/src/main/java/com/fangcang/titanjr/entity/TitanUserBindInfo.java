@@ -20,6 +20,7 @@ public class TitanUserBindInfo implements java.io.Serializable {
 	private String loginname;
 	private String fcusername;
 	private String fcloginname;
+	private Integer cooptype;
 	private String merchantcode;
 	private Integer isactive;
 	private String creator;
@@ -129,4 +130,11 @@ public class TitanUserBindInfo implements java.io.Serializable {
 		this.modifytime = modifytime;
 	}
 
+	public Integer getCooptype() {
+		return cooptype;
+	}
+
+	public void setCooptype(Integer cooptype) {
+		this.cooptype = cooptype;
+	}
 }

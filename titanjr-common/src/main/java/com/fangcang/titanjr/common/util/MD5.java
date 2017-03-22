@@ -1,6 +1,8 @@
 package com.fangcang.titanjr.common.util;
 
 import java.security.MessageDigest;
+import java.util.Arrays;
+import java.util.Map;
 
 import org.apache.commons.lang.RandomStringUtils;
 
@@ -50,7 +52,7 @@ public class MD5 {
         return hexDigits[d1] + hexDigits[d2];
     }
     /**
-     * 加密
+     * md5加密
      * @param password
      * @param salt
      * @return
@@ -58,17 +60,43 @@ public class MD5 {
     public static String titanEncrypt(String password,String salt){
     	return MD5.MD5Encode(password+salt, "UTF-8");
     }
-//    private static String titanDecrypt(String password,String salt){
-//    	
-//    	
-//    }
+
+    /**
+     * 生成12位含特殊字符的串
+     * @return
+     */
     public static String getSalt(){
     	return RandomStringUtils.random(CommonConstant.PASSWORD_SALT_LENGTH, new char[]{'!','@','#','$','%','^','&','*','_','+',':','|','<','>','?','~','B','Y','H','N','U','J','M','I','K','O','L','P','1','2','3','4','5','6','7','8','9','0','o','p','q','r','s','t','u','v','w','x','y','z'});
     }
     
+    /**
+     * 按key的顺序生成key=value串(值不为空的key-value才会返回)
+     * @param parameters 其他要加入签名的参数
+     * @param key 平台md5key
+     * @date 2017-02-28
+     * @return
+     */
+    public static String generatorSignParam(Map<String, String> parameters,String key) {
+        StringBuffer params = new StringBuffer();
+        if(!parameters.isEmpty()) {
+        	Object[] keys = parameters.keySet().toArray();
+			Arrays.sort(keys);
+			for (int i = 0; i < keys.length; i++) {
+        		String name = keys[i].toString();
+        		String value = parameters.get(name);
+        		if(StringUtil.isValidString(value)){
+        			params.append(name + "=");
+        			params.append(value);
+        			params.append("&");
+        		}
+               
+            }
+        }
+        params.append("key="+key);
+        return params.toString();
+    }
+    
     public static void main(String[] arg){
-    	String salt = MD5.getSalt();
-//    	System.out.println(salt);
 //    	System.out.println(MD5.titanEncrypt("123456",salt));
     }
 }

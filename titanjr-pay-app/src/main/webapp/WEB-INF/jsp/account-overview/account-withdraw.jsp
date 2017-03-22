@@ -7,16 +7,45 @@
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
     <jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
     <jsp:include page="/comm/static-js.jsp"></jsp:include>
+    <style>
+		body{margin:0;}     
+		/*头部*/
+		.w_1200{margin: 0 auto;width: 1200px;}
+		.w_header{top: 0;width: 100%; z-index: 1000;height: 90px;background-color: #fff;-webkit-box-shadow:0 0 5px #c1c3c4;-moz-box-shadow:0 0 5px #c1c3c4;box-shadow:0 0 5px #c1c3c4; position:fixed;}
+		.w_header .w_logo{padding-top: 30px;float: left;}
+		.w_header .w_logo .l_img{float: left;width: 316px;padding-left: 10px;}
+		.w_header .w_logo .l_text{float: left;font-size: 18px;color: #999;height: 24px;line-height: 24px;padding-top: 4px;}
+		.w_header .w_logo .l_text span{width: 13px;height: 24px;display: inline-block;float: left;color: #ccc;font-weight: normal;padding-right: 10px;}
+		.footer1 {font: 12px/100% "微软雅黑";color: #4a4a4a;height: 86px;line-height: 86px;background-color: #cbccce;text-align: center;overflow: hidden;}
+		.footer1 .f_bd {width: 700px;margin: 0 auto;height: 86px;}
+		.fl {float: left;}
+		.footer1 .f_bd .f_bd_r {display: inline-block;padding-top: 16px;padding-left: 20px;}
+	</style> 
 </head>
 <body>
+<c:if test="${ param.wrapType=='wallet'}">
+<div class="w_header">
+	<div class="w_1200">
+		<div class="w_logo">
+			<div class="l_img"><a href="http://pay.fangcang.com" title="泰坦钱包"><img src="http://hres.fangcang.com/css/saas/WALLET/images/logo.png"></a></div>
+			<div class="l_text">
+				<span class="">丨</span>提现
+			</div>
+		</div>		
+	</div>
+</div>
+<div style="height:100px;"></div>
+</c:if>
 <!--弹窗白色底-->
 <div class="other_popup">
-    <div class="other_popup_title">
-        <div class="other_popup_title2">
-            <span class="visual"></span>
-            提现
-        </div>
-    </div>
+	<c:if test="${empty param.wrapType}">
+	    <div class="other_popup_title">
+	        <div class="other_popup_title2">
+	            <span class="visual"></span>
+	            提现
+	        </div>
+	    </div>
+    </c:if>
     <div class="S_popup_Kan clearfix opaque">
         <div class="gold_pay">
             <div class="TFS_rechargeBox">
@@ -96,10 +125,15 @@
     </div>
 </div>
 <!--弹窗白色底-->
-
+<c:if test="${ param.wrapType=='wallet'}">
+<div style="height:40px;"></div>
+<!-- 版权 -->
+<jsp:include page="/comm/foot.jsp"></jsp:include>
+</c:if>
 <form action="<%=basePath%>/account/overview-main.shtml" id="flashPage" target="right_con_frm"></form>
 <script>
-
+var wrapType = '${ param.wrapType}';//从钱包页面过来的充值
+var succUrl = '${ param.succUrl}';//成功后的回显页面
 	(function($) {
 	    $.fn.watch = function(callback) {
 	        return this.each(function() {
@@ -163,6 +197,10 @@
 
     //点击取消关闭弹框
     $(".J_exitKan").on('click', function() {
+    	if(wrapType=='wallet'){
+    		window.close();
+    		return;
+    	}
         top.removeIframeDialog();
         $("#right_con_frm").attr('src', $('#right_con_frm').attr('src'));
     });
@@ -319,7 +357,8 @@
              url: '<%=basePath%>/account/check_payPassword.shtml',
              data: {
             	 payPassword:PasswordStr2.returnStr(),
-            	 fcUserid:'${fcUserId}'
+            	 fcUserid:'${fcUserId}',
+            	 tfsUserid:'${tfsUserId}'
              },
              success: function (data) {
             	 if(data.result=="0"){
@@ -356,6 +395,7 @@
                  originalBankName:'${bindBankCard.bankheadname}',
                  amount:$("#withDrawNum").val(),
                  fcUserId:'${fcUserId}',
+                 tfsUserId:'${tfsUserId}',
                  userId:'${userId}',
                  orderNo:'${orderNo}'
              },
@@ -363,6 +403,15 @@
              url: '<%=basePath%>/withdraw/toAccountWithDraw.shtml',
              success: function (data) {
                  if(data.result == "0"){
+                	 if(succUrl.length>0){
+          			 	window.location.href=succUrl;
+          			 	return;
+	          		 }
+	          		 if(wrapType=='wallet'){
+	          			 window.close();
+	          			 return;
+	          		 }
+                	 
                 	 top.F.loading.hide();
                      withDrawCallBack('提现申请已提交，等待银行处理。<br/>预计到账时间：t+1个工作日', 1);
                      $("#flashPage").attr('action' , getRootPath()+"/account/overview-main.shtml");
@@ -403,7 +452,7 @@
    	 $.ajax({
        	 type: "post",
             url: "<%=basePath%>/account/checkIsSetPayPassword.action",
-            data: {fcUserid:'${fcUserId}'},
+            data: {fcUserid:'${fcUserId}',tfsUserId:'${tfsUserId}'},
             dataType: "json",
             success: function(data){
            	 if(data.result=="0"){
@@ -460,7 +509,7 @@
 		                        			}
 		                        			return true;
 		                        		}else{
-		                        			 new top.Tip({msg: "密码必须为6位", type: 1, timer: 1000});
+		                        			 new top.Tip({msg: "密码必须为6位", type: 3, timer: 2000});
 		                        			 
 		                        			 $(".ui-dialog-content").html(html);
 		                         			setTimeout(function(){
@@ -469,7 +518,7 @@
 			                        		
 		                        		}
 		                        	}else{
-		                        		 new top.Tip({msg: "两次输入密码不一致", type: 1, timer: 1000});
+		                        		 new top.Tip({msg: "两次输入密码不一致", type: 3, timer: 2000});
 		                        		 $(".ui-dialog-content").html(html);
 		                     			setTimeout(function(){
 		                     				clickPassword();
@@ -501,6 +550,7 @@
 	         async:false,
 	         data: {
 	        	 fcuserid:'${fcUserId}',
+	        	 tfsuserid:'${tfsUserId}',
 	        	/*  payPassword:rsaData(PasswordStr.returnStr()) */
 	        	 payPassword:PasswordStr.returnStr()
 	         },
@@ -511,13 +561,13 @@
 	        		top.F.loading.show();
                      setTimeout(function () {
                          top.F.loading.hide();
-                         new top.Tip({msg: '密码设置成功！', type: 1, timer: 1000});
+                         new top.Tip({msg: '密码设置成功！', type: 1, timer: 2000});
                      }, 1000);
 	        	 }else{
 	        			top.F.loading.show();
                          setTimeout(function () {
                              top.F.loading.hide();
-                             new top.Tip({msg: data.resultMsg, type: 1, timer: 1000});
+                             new top.Tip({msg: data.resultMsg, type: 3, timer: 2000});
                          }, 1000);
 	        	 }
 	         }

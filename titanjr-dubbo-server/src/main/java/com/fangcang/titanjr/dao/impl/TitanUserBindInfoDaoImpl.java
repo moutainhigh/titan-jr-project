@@ -45,10 +45,11 @@ public class TitanUserBindInfoDaoImpl extends GenericDAOMyBatisImpl implements T
 		}
 	}
 	@Override
-	public int updateIsactiveBatch(Integer isactive,String merchantcode,String modifior,Date modifytime) throws DaoException{
+	public int updateIsactiveBatch(Integer isactive,Integer coopType,String merchantcode,String modifior,Date modifytime) throws DaoException{
 		try {
 			Map<String, Object> param = new HashMap<String, Object>();
 			param.put("isactive", isactive);
+			param.put("cooptype", coopType);
 			param.put("merchantcode", merchantcode);
 			param.put("modifior", modifior);
 			param.put("modifytime", modifytime);

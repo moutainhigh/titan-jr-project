@@ -749,7 +749,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	
 
 	@Override
-	public AccountHistoryResponse addAccountHistory2(AccountHistoryRequest accountHistoryRequest){
+	public AccountHistoryResponse addAccountHistory(AccountHistoryRequest accountHistoryRequest){
 
 		AccountHistoryResponse accountHistoryResponse = new AccountHistoryResponse();
 		try{

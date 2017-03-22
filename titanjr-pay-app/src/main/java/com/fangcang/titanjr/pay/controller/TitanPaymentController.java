@@ -95,8 +95,7 @@ public class TitanPaymentController extends BaseController {
 	
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	/**
-	 * 消息回调接口
-	 * @param rechargeResultConfirmRequest
+	 * 消息回调接口	 * @param rechargeResultConfirmRequest
 	 * @param response
 	 * @throws IOException
 	 */
