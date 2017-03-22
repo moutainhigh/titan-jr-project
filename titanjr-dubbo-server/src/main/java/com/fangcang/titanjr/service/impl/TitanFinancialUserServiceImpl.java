@@ -184,18 +184,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
                 return response;
             }
         }
-
-<<<<<<< HEAD
-        //验证用户是否存在当前商家
-        MerchantUserCheckDTO checkDTO = new MerchantUserCheckDTO();
-        checkDTO.setUserLoginName(userRegisterRequest.getLoginUserName());
-        checkDTO.setMerchantCode(RSInvokeConstant.defaultMerchant);
-        //TODO 检测机制要改变下，如果重复的用户属于金服的商家编码，则允许重复创建。但要修改相应的数据
-        BaseResultDTO checkResult = getMerchantUserFacade().checkMerchantUser(checkDTO);
-        if (!checkResult.getIsSuccessed()) {//登录名已存在
-            response.putErrorResult("USER_EXISTS", "登录用户名已存在");
-            return response;
-=======
+ 
         //SAAS验证用户是否存在当前商家,2016-12-23
         if(userRegisterRequest.getRegisterSource()==CoopTypeEnum.SAAS.getKey()){
         	 MerchantUserCheckDTO checkDTO = new MerchantUserCheckDTO();
@@ -207,7 +196,6 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
                  response.putErrorResult("USER_EXISTS", "登录用户名已存在");
                  return response;
              }
->>>>>>> dev_wallet
         }
 
         //1.金服添加用户
@@ -700,66 +688,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		return response;
 	}
 
-<<<<<<< HEAD
-=======
 	@Override
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-    public LoginPasswordModifyResponse modifyLoginPassword(LoginPasswordModifyRequest loginPasswordModifyRequest) throws Exception{
-        LoginPasswordModifyResponse response = new LoginPasswordModifyResponse();
-        if (!GenericValidate.validate(loginPasswordModifyRequest)) {
-            response.putParamError();
-            return response;
-        }
-        //验证金服系统原密码的正确性
-        TitanUserParam condition = new TitanUserParam();
-        condition.setTfsuserid(loginPasswordModifyRequest.getTfsUserid());
-        PaginationSupport<TitanUser> paginationSupport = new PaginationSupport<TitanUser>();
-        titanUserDao.selectForPage(condition, paginationSupport);
-        List<TitanUser> userList = paginationSupport.getItemList();
-        if (CollectionUtils.isEmpty(userList)){
-            response.putErrorResult("USER_NOT_EXISTS","用户名不存在");
-            return response;
-        }
-
-        if (!userList.get(0).getPassword().equals(loginPasswordModifyRequest.getOriginalPassword())){
-            response.putErrorResult("PASSWORD_ERROR","原密码不正确");
-            return response;
-        }
-
-        //更新金服系统密码
-        TitanUser titanUser = new TitanUser();
-        titanUser.setTfsuserid(loginPasswordModifyRequest.getTfsUserid());
-        titanUser.setPassword(loginPasswordModifyRequest.getNewPassword());
-        titanUserDao.update(titanUser);
-
-        //查询商家系统是否存在对应用户
-        MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
-        queryDTO.setUserLoginNameList(new ArrayList<String>());
-        queryDTO.getUserLoginNameList().add(userList.get(0).getUserloginname());
-        queryDTO.setMerchantCode(RSInvokeConstant.defaultMerchant);
-        List<MerchantUserDTO> merchantUserDTOs = getMerchantUserFacade().queryMerchantUserForSMS(queryDTO);
-        if (CollectionUtils.isEmpty(merchantUserDTOs)){
-            response.putErrorResult("USER_NOT_EXISTS","商家系统不存在该用户名的用户");
-            return response;
-        }
-
-        //修改商家系统密码
-        ModifyPWDRequestDTO request = new ModifyPWDRequestDTO();
-        request.setUserLoginName(userList.get(0).getUserloginname());
-        request.setOriginalPassword(loginPasswordModifyRequest.getOriginalPassword());
-        request.setNewPassword(loginPasswordModifyRequest.getNewPassword());
-        BaseResultDTO baseResultDTO = getMerchantUserFacade().modifyPassword(request);
-        if (!baseResultDTO.getIsSuccessed()){
-            response.putErrorResult("MODIFY_MERCHANT_PASSWORD_ERROR",baseResultDTO.getReason());
-            throw new Exception("修改商家系统登录密码错误" + baseResultDTO.getReason());
-        }
-
-        response.putSuccess();
-        return response;
-    }
-
->>>>>>> dev_wallet
-    @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public TitanRoleResponse queryTitanRole(TitanRoleQueryRequest titanRoleQueryRequest) {
         TitanRoleResponse response = new TitanRoleResponse();

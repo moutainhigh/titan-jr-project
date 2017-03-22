@@ -15,12 +15,8 @@ import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
 import com.fangcang.exception.ServiceException;
-import com.fangcang.order.api.HotelOrderSearchFacade;
 import com.fangcang.titanjr.common.bean.CallBackInfo;
 import com.fangcang.titanjr.common.enums.*;
-import com.fangcang.titanjr.common.util.*;
-import com.fangcang.titanjr.dto.request.*;
-import com.fangcang.titanjr.dto.response.*;
 
 
 import net.sf.json.JSONSerializer;
@@ -39,10 +35,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alibaba.fastjson.JSON;
 import com.fangcang.corenut.dao.PaginationSupport;
-import com.fangcang.order.api.HotelOrderSearchFacade;
-import com.fangcang.titanjr.common.bean.CallBackInfo;
 import com.fangcang.titanjr.common.enums.ConditioncodeEnum;
 import com.fangcang.titanjr.common.enums.EscrowedEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
@@ -57,7 +50,6 @@ import com.fangcang.titanjr.common.enums.TransOrderTypeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.enums.TransfertypeEnum;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
-import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.GenericValidate;
@@ -203,14 +195,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	@Resource
 	private TitanRefundDao titanRefundDao;
 	
-<<<<<<< HEAD
 	@Resource
 	private TitanFinancialUtilService titanFinancialUtilService;
-
-=======
->>>>>>> dev_wallet
-	private HotelOrderSearchFacade hotelOrderSearchFacade;
-
+	
 	private static Map<String, Object> mapLock = new ConcurrentHashMap<String, Object>();
 
 
@@ -1301,15 +1288,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return sign.toString();
 	}
 
-	private HotelOrderSearchFacade getHotelOrderSearchFacade() {
-		if (hotelOrderSearchFacade == null) {
-			hotelOrderSearchFacade = hessianProxyBeanFactory
-					.getHessianProxyBean(HotelOrderSearchFacade.class,
-							ProxyFactoryConstants.orderServiceUrl
-									+ "hotelOrderSearchFacade");
-		}
-		return hotelOrderSearchFacade;
-	}
 
 	private long getExpireTime(TitanOrderPayreq titanOrderPayreq) {
 		Integer orderExpireTime = titanOrderPayreq.getOrderExpireTime();

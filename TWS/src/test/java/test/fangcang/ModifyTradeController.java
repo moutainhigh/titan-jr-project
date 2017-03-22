@@ -1,21 +1,5 @@
 package test.fangcang;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletResponse;
-
-import com.alibaba.fastjson.JSON;
-import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
-import com.fangcang.titanjr.common.enums.OrderStatusEnum;
-import com.fangcang.titanjr.common.enums.ReqstatusEnum;
-import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
-import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
-import com.fangcang.titanjr.dto.request.TransOrderRequest;
-import com.fangcang.titanjr.dto.request.TransferRequest;
-import com.fangcang.titanjr.dto.response.TransferResponse;
-import com.fangcang.titanjr.web.util.WebConstant;
-import com.fangcang.util.StringUtil;
 
 public class ModifyTradeController {
 
