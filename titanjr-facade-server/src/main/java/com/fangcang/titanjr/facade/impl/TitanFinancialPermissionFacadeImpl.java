@@ -124,32 +124,34 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
         return showPaymentResponse;
     }
 
-	@Override
-	public CheckAccountResponse isFinanceAccount(
-			AccountInfoRequest accountInfoRequest) {
-		 log.info("验证账户的请求参数"+JSONSerializer.toJSON(accountInfoRequest));
-		 CheckAccountResponse checkAccountResponse = new CheckAccountResponse();
-		 checkAccountResponse.setResult(false);
-		 if(accountInfoRequest !=null && !StringUtil.isValidString(accountInfoRequest.getMerchantCode())){
-			 log.error("商家编码不能为空");
-        	 checkAccountResponse.setReturnMessage("商家编码不能为空");
-        	 return checkAccountResponse;
-		 }
-		 
-		 OrgBindInfoDTO orgBindDTO = new OrgBindInfoDTO();
-		 orgBindDTO.setMerchantCode(accountInfoRequest.getMerchantCode());
-		 orgBindDTO.setResultKey("PASS");
-		 orgBindDTO.setBindStatus(1);
-         List<OrgBindInfoDTO> orgBindDTOList = titanFinancialOrganService.queryOrgBindInfoDTO(orgBindDTO);
-         if(null == orgBindDTOList || orgBindDTOList.size()!=1 || orgBindDTOList.get(0)==null){
-        	 log.error("当前商家未开通或绑定金服机构");
-          	checkAccountResponse.setReturnMessage("当前商家未开通或绑定金服机构");
-          	return checkAccountResponse;
-         }
-         
-         checkAccountResponse.setResult(true);
-		 return checkAccountResponse;
-	}
+    @Override
+    public CheckAccountResponse isFinanceAccount(AccountInfoRequest accountInfoRequest) {
+        log.info("验证账户的请求参数" + JSONSerializer.toJSON(accountInfoRequest));
+        CheckAccountResponse checkAccountResponse = new CheckAccountResponse();
+        checkAccountResponse.setResult(false);
+        if (accountInfoRequest != null && !StringUtil.isValidString(accountInfoRequest.getMerchantCode())) {
+            log.error("商家编码不能为空");
+            checkAccountResponse.setReturnMessage("商家编码不能为空");
+            return checkAccountResponse;
+        }
+
+        OrgBindInfoDTO orgBindDTO = new OrgBindInfoDTO();
+        if (accountInfoRequest.getMerchantCode().startsWith("TJM")) {
+            orgBindDTO.setUserid(accountInfoRequest.getMerchantCode());
+        } else {
+            orgBindDTO.setMerchantCode(accountInfoRequest.getMerchantCode());
+        }
+        orgBindDTO.setResultKey("PASS");
+        orgBindDTO.setBindStatus(1);
+        List<OrgBindInfoDTO> orgBindDTOList = titanFinancialOrganService.queryOrgBindInfoDTO(orgBindDTO);
+        if (null == orgBindDTOList || orgBindDTOList.size() != 1 || orgBindDTOList.get(0) == null) {
+            log.error("当前商家未开通或绑定金服机构");
+            checkAccountResponse.setReturnMessage("当前商家未开通或绑定金服机构");
+            return checkAccountResponse;
+        }
+        checkAccountResponse.setResult(true);
+        return checkAccountResponse;
+    }
 
 
 }

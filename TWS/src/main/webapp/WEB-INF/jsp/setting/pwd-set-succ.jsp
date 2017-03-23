@@ -30,7 +30,7 @@
 					<c:if test="${pageType==2 }"><p>您的付款密码已经修改成功</p></c:if>
 				</div>
 				<div class="rt_skip">
-					3 秒后自动跳转至设置界面
+					3 秒后将自动跳转
 				</div>
 			</div>
 			<div class="r_t_hint">				

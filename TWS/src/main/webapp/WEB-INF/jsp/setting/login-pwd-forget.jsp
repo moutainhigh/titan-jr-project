@@ -66,7 +66,7 @@ function next(){
 	    	  top.F.loading.hide();
 	    },
 		error:function(){
-			new top.Tip({msg : '系统错误，请重试!', type: 3, timer:2000});
+			new top.Tip({msg : '系统错误，请重试!', type: 2, timer:2000});
 		}
 	});
     

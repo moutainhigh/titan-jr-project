@@ -226,9 +226,9 @@ public class LoginController extends BaseController{
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String loginout(){
 		//清理资源
-		getSession().removeAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
-		getSession().removeAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
-		
+		//getSession().removeAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+		//getSession().removeAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
+		getSession().invalidate();
 		return "redirect:/ex/login.shtml"; 
 	}
 	/***

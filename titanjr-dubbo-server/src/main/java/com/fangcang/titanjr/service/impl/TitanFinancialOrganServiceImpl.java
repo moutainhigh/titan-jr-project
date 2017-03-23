@@ -245,7 +245,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
             PaginationSupport<OrgCheckDTO> paginationSupport = new PaginationSupport<OrgCheckDTO>();
             paginationSupport.setCurrentPage(request.getCurrentPage());
             paginationSupport.setPageSize(request.getPageSize());
-            paginationSupport.setOrderBy(" G.createTime asc ");
+            paginationSupport.setOrderBy(" G.createTime desc ");
             titanOrgDao.queryTitanOrgCheckForPage(request, paginationSupport);
 
             responsePageDTO.setPaginationSupport(paginationSupport);

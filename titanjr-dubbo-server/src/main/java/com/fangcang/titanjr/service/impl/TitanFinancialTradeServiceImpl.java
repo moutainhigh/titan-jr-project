@@ -19,6 +19,7 @@ import com.fangcang.titanjr.common.bean.CallBackInfo;
 import com.fangcang.titanjr.common.enums.*;
 
 
+import com.fangcang.titanjr.dto.bean.*;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -66,19 +67,6 @@ import com.fangcang.titanjr.dao.TitanRefundDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
-import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
-import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
-import com.fangcang.titanjr.dto.bean.OrgBindInfo;
-import com.fangcang.titanjr.dto.bean.QrCodeDTO;
-import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
-import com.fangcang.titanjr.dto.bean.RefundDTO;
-import com.fangcang.titanjr.dto.bean.RepairTransferDTO;
-import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
-import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
-import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
-import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
-import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.bean.TransOrderInfo;
 import com.fangcang.titanjr.dto.request.AccountTransferFlowRequest;
 import com.fangcang.titanjr.dto.request.AllowNoPwdPayRequest;
 import com.fangcang.titanjr.dto.request.ConfirmOrdernQueryRequest;
@@ -2215,18 +2203,29 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		}
 		
 		if(payerTypeEnum.isTtMall()){
-			titanTransOrder.setMerchantcode(titanOrderRequest.getRuserId());
+
+			OrgBindInfoDTO orgBindDTO = new OrgBindInfoDTO();
+			if (titanOrderRequest.getRuserId().startsWith("TJM")){
+				orgBindDTO.setUserid(titanOrderRequest.getRuserId());
+			}else {
+				orgBindDTO.setMerchantCode(titanOrderRequest.getRuserId());
+				titanTransOrder.setMerchantcode(titanOrderRequest.getRuserId());
+			}
+			orgBindDTO.setResultKey("PASS");
+			orgBindDTO.setBindStatus(1);
+			List<OrgBindInfoDTO> orgBindDTOList = titanFinancialOrganService.queryOrgBindInfoDTO(orgBindDTO);
+
+			if (CollectionUtils.isEmpty(orgBindDTOList) || orgBindDTOList.size() != 1) {
+				response.putErrorResult("接收方机构不存在,或不正确");
+				return response;
+			}
+
 			titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
 			titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
 			titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
-			OrgBindInfo orgBindInfo = this
-					.queryOrgBindInfo(titanOrderRequest.getRuserId());
-			if (orgBindInfo == null) {
-				response.putErrorResult("接收方机构不存在");
-				return response;
-			}
-			titanTransOrder.setPayeemerchant(orgBindInfo.getUserid());
-			titanTransOrder.setUserrelateid(orgBindInfo.getUserid());
+
+			titanTransOrder.setPayeemerchant(orgBindDTOList.get(0).getUserid());
+			titanTransOrder.setUserrelateid(orgBindDTOList.get(0).getUserid());
 			return response;
 		}
 		
