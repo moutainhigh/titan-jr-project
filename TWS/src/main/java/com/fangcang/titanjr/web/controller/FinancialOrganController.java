@@ -241,7 +241,12 @@ public class FinancialOrganController extends BaseController {
     }
     /***
      * 检查注册用的证件号码是否已经注册过(包括新建和修改证件号码)
+     * @userType
+     * @orgCode
+     * @buslince
+     * @certificateNumber
      * @return
+     * 
      * @throws MessageServiceException 
      */
     private int checkRegInfo(int userType,String orgCode,String buslince,String certificateNumber) throws MessageServiceException{
@@ -805,14 +810,31 @@ public class FinancialOrganController extends BaseController {
     	getResponse().setHeader("Cache-Control", "no-cache"); 
     	try {
     		if(file.getBytes().length>(WebConstant.UPLOAD_IMG_MAX_SIZE_10_M*1000*1000)){
-    			putSysError("文件大小超过了"+WebConstant.UPLOAD_IMG_MAX_SIZE_10_M+"M，请压缩后再上传");
+    			putSysError("文件太大");
                 PrintWriter out = getResponse().getWriter(); 
                 out.print(toJson());
                 out.flush();
                 out.close();
     			return ;
     		}
-    		
+    		if(file.getBytes().length==0){
+    			putSysError("文件不能为空");
+                PrintWriter out = getResponse().getWriter(); 
+                out.print(toJson());
+                out.flush();
+                out.close();
+    			
+    			return;
+    		}
+    		String suffix = ImageIOExtUtil.getFileSuffix(file.getOriginalFilename());
+    		if(!isAvailableImg(suffix)){
+    			putSysError("文件格式错误");
+                PrintWriter out = getResponse().getWriter(); 
+                out.print(toJson());
+                out.flush();
+                out.close();
+    			return;
+    		}
     		OrganImageUploadRequest organImageUploadRequest = new OrganImageUploadRequest();
     		
     		String newFileName = FtpUtil.createFileName()+"."+ImageIOExtUtil.getFileSuffix(file.getOriginalFilename());
@@ -844,6 +866,13 @@ public class FinancialOrganController extends BaseController {
         out.flush();
         out.close();
 		return ;
+    }
+    
+    private boolean isAvailableImg(String filesuffix){
+    	if(filesuffix.toLowerCase().equals("jpg")||filesuffix.toLowerCase().equals("jpeg")||filesuffix.toLowerCase().equals("png")){
+    		return true;	
+    	}
+    	return false;
     }
     
     /**

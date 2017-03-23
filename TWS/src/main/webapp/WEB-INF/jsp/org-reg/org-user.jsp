@@ -54,7 +54,7 @@
 		</div>
 		<div class="r_c dn">
 			<div class="r_text" id="reg_person">
-				<form action="<c:url value='/ex/showPersernalInfo.shtml'/>" id="reg_form_phone">
+				<form action="<c:url value='/ex/showPersernalInfo.shtml'/>" id="reg_form_phone" method="post">
 				<input type="hidden" name="channel" value="${channel }"/>
 				<input type="hidden" name="info" value="${info }"/>
 				<input type="hidden" name="encrypt_type" value="${encrypt_type }"/>
@@ -121,8 +121,7 @@ $(".ser_content").mCustomScrollbar({
     callbacks:{  
         /*onScroll: function(){alert(1)} *///滚动完成后触发事件  
     }  
-});  
-
+});
 // 我已阅读并同意 个人
 $('.lb_Rememb span.geren').on('click',function(){
 	var	_thisI = $(this).find('i');

@@ -51,7 +51,7 @@
 			            </div>
 			            <div class="TFSuploaderror hidden">
 			                <div class="J_re_upload loanInformation_upload_btn">重新上传</div>
-			                <p>上传失败</p>
+			                <p id="upload_error">上传失败</p>
 			            </div>
 			            <div class="TFSimgOn hidden">
 			                <div class="J_delete_upload loanInformation_upload_btn">删除</div>
@@ -141,6 +141,7 @@ function ajaxFileUpload() {
             	}else{
             		$(".TFSuploading").addClass("hidden");
             		$(".TFSuploaderror").removeClass("hidden");
+            		$("#upload_error").html(result.msg);
             	}
             	
             },
