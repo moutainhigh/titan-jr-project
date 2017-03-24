@@ -235,15 +235,16 @@
             <properties>
                 <package.environment>test02</package.environment>
             </properties>
+            <activation>
+        		<activeByDefault>true</activeByDefault>
+        	</activation>
         </profile>
         <profile>
             <id>test03</id>
             <properties>
                 <package.environment>test03</package.environment>
             </properties>
-            <activation>
-        		<activeByDefault>true</activeByDefault>
-        	</activation>
+            
         </profile>
     </profiles>
     
@@ -259,6 +260,7 @@
                 <filtering>true</filtering>
                 <excludes>
                 	<exclude>production/**/**</exclude>
+                	<exclude>filters/**/**</exclude>
                    <exclude>jdbc.properties</exclude>
                    <exclude>debug_conf.properties</exclude>
                	</excludes>
