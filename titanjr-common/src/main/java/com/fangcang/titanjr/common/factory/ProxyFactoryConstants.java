@@ -39,6 +39,6 @@ public class ProxyFactoryConstants {
 	public static void setOrderServiceUrl(String orderServiceUrl) {
 		ProxyFactoryConstants.orderServiceUrl = orderServiceUrl;
 	}
-    
-    
+	
+	
 }

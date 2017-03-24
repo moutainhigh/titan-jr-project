@@ -5,12 +5,9 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.junit.Before;
-import org.junit.Test;
 
 import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
 import com.fangcang.titanjr.dto.request.RefundConfirmRequest;
-import com.fangcang.titanjr.service.TitanFinancialAccountService;
-import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialRefundService;
 

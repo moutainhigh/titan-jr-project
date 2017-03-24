@@ -48,9 +48,9 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 	
 	
 	@Resource 
-	private TitanOrderExceptionDao orderExceptionDao;
+	TitanOrderExceptionDao orderExceptionDao;
 	
-	private SysConfig config;
+	SysConfig config;
 	
 	@Value("${pay.callback.pageurl}")
 	private String payCallbackPageUrl;
@@ -242,4 +242,5 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 			log.error("插入异常信息失败",e);
 		}
 	}
+
 }
