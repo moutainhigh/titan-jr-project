@@ -1114,7 +1114,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 	private TitanUser getTitanUser(String loginUsername){
 		TitanUserParam param = new TitanUserParam();
 		param.setUserloginname(loginUsername);
-		param.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
+		//param.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
 		PaginationSupport<TitanUser> userPage = new PaginationSupport<TitanUser>();
 		userPage.setPageSize(PaginationSupport.NO_SPLIT_PAGE_SIZE);
 		userPage = titanUserDao.selectForPage(param, userPage);

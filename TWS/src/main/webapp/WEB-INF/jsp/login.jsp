@@ -26,7 +26,7 @@
 				<li class="lb_Rememb">				
 					<span><i class="ico Ibadd" id=""></i> <em>记住用户名</em></span>
 				</li>
-				<li class="lb_btn"><a href="javascript:;" onclick="Login.plogin()">立即登录</a></li>
+				<li class="lb_btn"><a href="javascript:;" onclick="Login.plogin(event)">立即登录</a></li>
 				<li class="lb_register"><a href="<%=basePath%>/ex/organ/showOrgUser.shtml">免费注册</a><a href="<%=basePath%>/ex/u-login-pwd-forget.shtml">忘记密码？</a></li>
 			</ul>
 			</div>
@@ -44,7 +44,7 @@
 				<li class="lb_Rememb">
 					<span><i class="ico Ibadd"></i> <em>记住用户名</em></span>
 				</li>
-				<li class="lb_btn"><a href="javascript:;" onclick="Login.slogin()">立即登录</a></li>
+				<li class="lb_btn"><a href="javascript:;" onclick="Login.slogin(event)">立即登录</a></li>
 				<li class="lb_register"><a href="<%=basePath%>/ex/organ/showOrgUser.shtml">免费注册</a><a href="<%=basePath%>/ex/u-login-pwd-forget.shtml">忘记密码？</a></li>
 			</ul>
 			</div>
@@ -149,7 +149,7 @@ $(function(){
 		$('.l_mm').removeClass('l_mm_hover');		
 	});
 	Login.putUsername();
-})
+});
 
 var Login ={};
 Login.valid_user_form = new validform('.l_box .user');
@@ -162,7 +162,7 @@ Login.getCurPlane = function(){
 	}
 }
 //检查用户名
-checkUserName = function(value, inputDom){
+function checkUserName(value, inputDom){
 	if(value.length==0){
 		Login.getCurPlane().setErrormsg(inputDom,'必填项');
 		return false;
@@ -174,7 +174,7 @@ checkUserName = function(value, inputDom){
 	return true;
 }
 //检查密码
-checkPass = function(value, inputDom){
+function checkPass(value, inputDom){
 	if(value.length==0){
 		Login.getCurPlane().setErrormsg(inputDom,'必填项');
 		return false;
@@ -186,20 +186,20 @@ checkPass = function(value, inputDom){
 	return true;
 }
 //密码登录
-Login.plogin = function(){
+Login.plogin = function(e){
 	Login.rememberUsername();
 	//检查参数
 	if(!Login.getCurPlane().validate()){
 		return;
 	}
-	F.loading.show();
+	
 	$.ajax({
 		url:'<%=basePath%>/ex/passlogin.shtml',
 		type:'post',
 		data:{'loginUserName':$('#username').val(),'password':$("#password").val()},
 		dataType:'json',
 		beforeSend:function(){
-			F.loading.show();
+			$(e.target).html("正在登录...");
 		},
 		success:function(json){
 			if(json.code==1){
@@ -210,22 +210,20 @@ Login.plogin = function(){
 				}
 			}else{
 				if(typeof(json.data)=='undefined'||typeof(json.data.returnUrl)=='undefined'){
-					new Tip({msg : json.msg, type: 2 , timer:3000});
+					new Tip({msg : json.msg, type: 2 , timer:2000});
+					
 				}else{
 					Login.loginRedirect(json.data.returnUrl);
 				}
 			}
 		},
-		error:function(){
-			alert("请求失败，请重试!");
-		},
 		complete:function(){
-			F.loading.hide();
+			$(e.target).html("立即登录");
 		}
 	});
 }
 //动态码登录
-Login.slogin = function(){
+Login.slogin = function(e){
 	//检查参数
 	if(!Login.getCurPlane().validate()){
 		return;
@@ -236,7 +234,7 @@ Login.slogin = function(){
 		data:{'loginUserName':$('#susername').val(),'password':$("#code").val()},
 		dataType:'json',
 		beforeSend:function(){
-			F.loading.show();
+			$(e.target).html("正在登录...");
 		},
 		success:function(json){
 			if(json.code==1){
@@ -247,17 +245,14 @@ Login.slogin = function(){
 				}
 			}else{
 				if(typeof(json.data)=='undefined'||typeof(json.data.returnUrl)=='undefined'){
-					new Tip({msg : json.msg, type: 2 , timer:3000});
+					new Tip({msg : json.msg, type: 2 , timer:2000});
 				}else{
 					Login.loginRedirect(json.data.returnUrl);
 				}
 			}
 		},
-		error:function(){
-			alert("请求失败，请重试!");
-		},
 		complete:function(){
-			F.loading.hide();
+			$(e.target).html("立即登录");
 		}
 	});
 }

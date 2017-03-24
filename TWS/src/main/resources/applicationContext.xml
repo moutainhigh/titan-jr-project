@@ -67,6 +67,7 @@
        <mvc:interceptor>
         	<mvc:mapping path="/*"/>
             <mvc:mapping path="/**/*"/>
+            <mvc:exclude-mapping path="/ex/**/*"/>
         	<bean class="com.fangcang.titanjr.web.interceptor.AccessPermissionInterceptor"></bean>
         
         </mvc:interceptor>

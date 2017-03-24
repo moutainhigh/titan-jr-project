@@ -1,8 +1,7 @@
 package com.fangcang.titanjr.service.impl;
 
-import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -10,8 +9,9 @@ import net.sf.json.JSONSerializer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.fangcang.titanjr.common.bean.CallBackInfo;
+
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
@@ -31,6 +31,7 @@ import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
+
 @Service("titanFinancialUtilService")
 public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 
@@ -50,6 +51,12 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 	private TitanOrderExceptionDao orderExceptionDao;
 	
 	private SysConfig config;
+	
+	@Value("${pay.callback.pageurl}")
+	private String payCallbackPageUrl;
+	
+	@Value("${pay.notifyurl}")
+	private String payNotifyUrl;
 	
 	@Override
 	public PaymentUrlResponse getPaymentUrl(PaymentUrlRequest paymentUrlRequest) {
@@ -151,8 +158,8 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 			String domainName = domainConfigDao.queryCurrentEnvDomain();
 			if(StringUtil.isValidString(domainName)){
 				payMethodConfigDTO = new PayMethodConfigDTO();
-				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-03/payment/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-03/payment/notify.action");
+				payMethodConfigDTO.setPageurl(MessageFormat.format(payCallbackPageUrl, domainName));
+				payMethodConfigDTO.setNotifyurl(MessageFormat.format(payNotifyUrl, domainName));
 			}
 			return payMethodConfigDTO;
 		}catch(Exception e){
