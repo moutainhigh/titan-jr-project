@@ -302,12 +302,13 @@ var msg,sw,payDialog,toState;
                                			return true;
                                		}
                                		$(".ui-dialog-content").html(html);
+                               		$(".org-info-pwd-error").html("付款密码错误,请重新输入").show();
                                		setTimeout(function(){
                                			$('#passwordbox').click();
                                		},500);
                                		return false;
                                	}else{
-                               		new top.Tip({msg: '请输入6位付款密码', type: 1, timer: 2000});
+                               		$(".org-info-pwd-error").html("请输入6位付款密码").show();
                                		setTimeout(function(){
                                			$('#passwordbox').click();
                                		},500);
@@ -336,7 +337,6 @@ var msg,sw,payDialog,toState;
            		showConfirm();
            		flag = true;
            	 }else{
-           		new top.Tip({msg: '输入的付款密码错误', type: 2, timer: 2000});
            		flag = false;
            	 }
             }

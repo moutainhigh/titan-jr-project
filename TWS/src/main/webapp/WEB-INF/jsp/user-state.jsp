@@ -10,7 +10,9 @@
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
 <body style="min-width: 1300px;" class="bg" >
-<jsp:include page="./org-reg/org-head.jsp"></jsp:include>
+<jsp:include page="./org-reg/org-head.jsp">
+<jsp:param value="审核状态" name="title"/>
+</jsp:include>
 
 <div class="register r_three">
 	<!-- 待审核 -->

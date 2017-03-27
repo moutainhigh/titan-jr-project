@@ -19,19 +19,19 @@
 			<div class="r_tit"><b>原密码：</b></div>
 			<div class="r_text">
 				<ul>					
-					<li class="r_y2"><input type="password" class="text" name="password" id="oldLoginPassword" readonly="readonly" placeholder="原密码" datatype="/\w{1,}/" errormsg="必填项"><i class="ico rt_eye"></i></li>
+					<li class="r_y2"><input type="password" class="text" name="password" id="oldLoginPassword" readonly="readonly" placeholder="原密码"  datatype="/\w{6,}/" require="true"  errormsg="长度太短"><i class="ico rt_eye"></i></li>
 				</ul>
 			</div>	
 			<div class="r_tit"><b>新密码：</b></div>
 			<div class="r_text">
 				<ul>					
-					<li class="r_y2"><input type="password" class="text" id="newLoginPassword" readonly="readonly" placeholder="新密码" datatype="/\w{6,}/" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="newLoginPassword_hint"></em></li>					
+					<li class="r_y2"><input type="password" class="text" id="newLoginPassword" readonly="readonly" placeholder="新密码" datatype="/\w{6,}/" require="true" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="newLoginPassword_hint"></em></li>					
 				</ul>
 			</div>
 			<div class="r_tit"><b>确认密码：</b></div>
 			<div class="r_text">
 				<ul>
-					<li class="r_y3"><input type="password" class="text" name="passwordConfirm" id="passwordConfirm" readonly="readonly" placeholder="确认密码" datatype="*" errormsg="两次密码输入不一致" customFun="confirmPass"><i class="ico rt_eye "></i></li>				
+					<li class="r_y3"><input type="password" class="text" name="passwordConfirm" id="passwordConfirm" readonly="readonly" placeholder="确认密码" datatype="*" require="true" errormsg="两次密码输入不一致" customFun="confirmPass"><i class="ico rt_eye "></i></li>				
 					<li class="lb_btn"><a href="javascript:;" class="" onclick="savePassword()">确定</a></li>
 				</ul>
 			</div>
@@ -68,7 +68,7 @@ function confirmPass(){
 	var pass1 = $("#newLoginPassword").val();
 	var pass2 = $("#passwordConfirm").val();
 	if($.trim(pass2).length<1){
-		passform.setErrormsg($("#passwordConfirm"),"确认新密码不能为空");
+		passform.setErrormsg($("#passwordConfirm"),"不能为空");
 		return false;
 	}
 	if(pass1!=pass2){
