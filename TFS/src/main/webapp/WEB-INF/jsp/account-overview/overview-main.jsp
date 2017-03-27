@@ -713,7 +713,7 @@
 					$("#id_" + index).html(html);
 					var total = $("#id_" + index + " #tradePageTotal").val();
 					var page = $("#id_" + index + " #tradePageCurrent").val();
-					pageGo(page, total, size,1);
+					pageGo(page, total, size,index);
 					F.loading.hide();
 				}
 			});

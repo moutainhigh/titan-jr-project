@@ -440,7 +440,7 @@
 		//总记录数
 		var total1,total2,total3,total4,total5;
 		//每页数量
-		 var size1 = 6;
+		 var size1 = 5;
         $(function(){
 			tabChange($(".MyAssets_list_tab span"), $(".MyAssets_tab"), "on");
 			initRequest();
@@ -479,7 +479,6 @@
 		}
       //初始化页面请求
 		function initRequest() {
-			var size1 = 6;
 			$.ajax({
 				dataType : 'html',
 				showLoading:true,
@@ -669,7 +668,7 @@
 					$("#id_" + index).html(html);
 					var total = $("#id_" + index + " #tradePageTotal").val();
 					var page = $("#id_" + index + " #tradePageCurrent").val();
-					pageGo(page, total, size,1);
+					pageGo(page, total, size,index);
 				}
 			});
 		}
@@ -811,6 +810,7 @@
 
 		//分页内页面跳转方法
 		function pageGo(pageIdx, totals, size,tabIdx){
+			
 			pageIdx = pageIdx || 1;
 			var totalPage = 0;
 			if (totals % size == 0){ //取模若为0标示可以除尽
