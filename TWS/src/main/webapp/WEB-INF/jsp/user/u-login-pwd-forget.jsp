@@ -70,33 +70,29 @@ function next(){
 			}else{
 				new top.Tip({msg : result.msg, type: 2, timer:2000});
 			}
-		},
-		beforeSend:function(){
-	    	  top.F.loading.show();
-	    },
-	    complete:function(){
-	    	  top.F.loading.hide();
-	    },
-		error:function(){
-			new top.Tip({msg : '系统错误，请重试!', type: 2, timer:2000});
 		}
 	});
     
 }
 //获取验证码
 var sendingFlag = false;
+var i=60,interval=null;
 function timeOut(_this){
-    var i=60;
-    var interval=setInterval(function () {                
+    interval=setInterval(function () {                
          if(i>0){
              _this.html("重新发送(" + i + ")"); 
              i--;
          }else{
-            _this.removeClass("r_huise").html("重新获取验证码");
-            clearInterval(interval);
-            sendingFlag = false;
+        	 clearSend();
          }
     }, 1000);
+}
+
+function clearSend(){
+	$('.r_verify').removeClass("r_huise").html("重新获取验证码");
+     clearInterval(interval);
+     i=60;
+     sendingFlag = false;
 }
 //验证码发送倒计时
 $('.r_verify').on('click',function(){
@@ -105,10 +101,18 @@ $('.r_verify').on('click',function(){
 	}
     var raObj = $("#userLoginName");
     var receiveAddress = raObj.val();
+    if($.trim(receiveAddress).length==0){
+    	passUserloginForm._setErrorStyle(raObj,'必填项');
+		return;	
+	}
+    if((!phone_reg.test(receiveAddress))&&(!email_reg.test(receiveAddress))){
+    	passUserloginForm._setErrorStyle(raObj,'格式不正确');
+		return ;
+	}
+    
     _this = $(this);
 	if(!$(this).hasClass("r_huise")){  
 		sendingFlag = true;
-    	$(this).text("重新发送(60)");
         $(this).addClass('r_huise');
         timeOut($(this));
     }
@@ -125,10 +129,7 @@ $('.r_verify').on('click',function(){
 			}
 		},
 		complete:function(){
-	    	  top.F.loading.hide();
-	    },
-		error : function(){
-			new top.Tip({msg : '网络错误，请重试', type: 2, timer:2000});
+			clearSend();
 		}
 	});
 });

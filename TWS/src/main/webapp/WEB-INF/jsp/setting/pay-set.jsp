@@ -23,7 +23,7 @@
 				<div class="password_set " id="password_set">
 				<div class="press_pass"></div>
 				<ul class="passwordset_u1" >
-					<li>
+					<li id="six_pwd_err_1">
 					
 						<div class="sixDigitPassword" id="passwordbox"> 
 							<i><b></b></i>  
@@ -34,7 +34,8 @@
 							<i><b></b></i>
 							<span></span>
 						</div>
-
+						<div class="rp_hint" style="font-size:14px;"></div>
+					
 					</li>
 				</ul>
 				</div>
@@ -44,7 +45,7 @@
 				<div class="password_set " id="password_set">
 				<div class="press_pass"></div>
 				<ul class="passwordset_u1" >
-					<li class="" id="six_error_red">
+					<li class="" id="six_pwd_err_2">
 						
 						<div class="sixDigitPassword " id="passwordbox1"> 
 							<i><b></b></i>  
@@ -56,7 +57,7 @@
 							<span></span>
 						</div>
 						<!-- 错误提示 -->
-						<div class="rp_hint">两次输入的密码不一致,请重新输入</div>
+						<div class="rp_hint" style="font-size:14px;"></div>
 					</li>
 				</ul>
 				
@@ -102,14 +103,16 @@ function validate_payPassword(){
 	var payPassword1 = PasswordStr1.returnStr();
 	var payPassword2 = PasswordStr2.returnStr();
 	if(payPassword1.length!=6||payPassword2.length!=6||(!payPwd_reg.test(payPassword1))||(!payPwd_reg.test(payPassword2))){
-		new top.Tip({msg : '密码必须为6位数字，请重新输入', type: 1 , timer:2000}); 
-		add_PayPassword();
+		$("#six_pwd_err_1").addClass("sp_add");
+		$("#six_pwd_err_1 .rp_hint").html('密码必须为6位数字，请重新输入');
+		reInitOldPwd();
 		return false;
 	}
-	$("#six_error_red").removeClass("sp_add");
+	$("#six_pwd_err_1").removeClass("sp_add");
 	if(payPassword1!=payPassword2){
-		$("#six_error_red").addClass("sp_add");
-		add_PayPassword();
+		$("#six_pwd_err_2").addClass("sp_add");
+		$("#six_pwd_err_2 .rp_hint").html('两次输入的密码不一致，请重新输入');
+		reInitOldPwd();
 		return false;
 	}
 	return true;
@@ -146,6 +149,26 @@ var PasswordStr1=new sixDigitPassword("passwordbox");
 var PasswordStr2=new sixDigitPassword("passwordbox1");
 
 var timeIndex = 0;
+
+var htmlPwd,htmlPwd1;
+$("document").ready(function (){
+	htmlPwd = $("#passwordbox").html();
+	htmlPwd1 = $("#passwordbox1").html();
+});
+
+function reInitOldPwd(){
+	$("#passwordbox").html(htmlPwd);
+	$("#passwordbox1").html(htmlPwd1);
+	PasswordStr1=new sixDigitPassword("passwordbox");
+	PasswordStr2=new sixDigitPassword("passwordbox1");
+	window.setTimeout(function(){
+		$("#six_pwd_err_1").removeClass("sp_add");
+		$("#six_pwd_err_2").removeClass("sp_add");
+	}, 2000);
+	window.setTimeout(function(){
+		clickPassword();
+	}, 200);
+}
 
 function clickPassword()
 {

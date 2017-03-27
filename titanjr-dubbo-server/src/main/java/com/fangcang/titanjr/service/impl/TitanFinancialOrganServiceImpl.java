@@ -1280,8 +1280,19 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	public GetCheckCodeResponse getCheckCode(GetCheckCodeRequest getCheckCodeRequest) throws GlobalServiceException {
 		GetCheckCodeResponse response = new GetCheckCodeResponse();
 		if (!GenericValidate.validate(getCheckCodeRequest)){
-    		LOGGER.info("参数错误， getCheckCodeRequest："+JSONSerializer.toJSON(getCheckCodeRequest).toString());
+    		LOGGER.info("获取验证码时，参数错误， getCheckCodeRequest："+JSONSerializer.toJSON(getCheckCodeRequest).toString());
 			response.putParamError();
+			return response;
+		}
+		//判断用户是否已经注册
+		TitanUserParam userParam = new TitanUserParam();
+		userParam.setUserloginname(getCheckCodeRequest.getReceiveAddress());
+		
+		PaginationSupport<TitanUser> userPaginationSupport = new PaginationSupport<TitanUser>();
+		userPaginationSupport = titanUserDao.selectForPage(userParam, userPaginationSupport);
+		if(userPaginationSupport.getItemList().size()==0){
+			LOGGER.info("获取验证码时，用户名不存在,用户名："+getCheckCodeRequest.getReceiveAddress());
+			response.putErrorResult("该用户名不存在");
 			return response;
 		}
 		TitanCheckCodeParam condition = new TitanCheckCodeParam();
