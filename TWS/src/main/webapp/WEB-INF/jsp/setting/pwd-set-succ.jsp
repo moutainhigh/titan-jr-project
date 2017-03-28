@@ -10,13 +10,13 @@
 <body style="min-width: 1300px;" class="bg" >
 <!-- 登录密码  -->
 <c:if test="${pageType==1 }">
-	<jsp:include page="./head.jsp">
+	<jsp:include page="/comm/head-title.jsp">
 	<jsp:param value="修改登录密码" name="title"/>
 	</jsp:include>
 </c:if>
 <!-- 付款密码  -->
 <c:if test="${pageType==2 }">
-	<jsp:include page="./head.jsp">
+	<jsp:include page="/comm/head-title.jsp">
 	<jsp:param value="修改付款密码" name="title"/>
 	</jsp:include>
 </c:if>

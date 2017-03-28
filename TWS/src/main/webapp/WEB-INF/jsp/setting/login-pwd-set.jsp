@@ -11,7 +11,7 @@
 	
 </head>
 <body style="min-width: 1300px;" class="bg" >
-<jsp:include page="./head.jsp">
+<jsp:include page="/comm/head-title.jsp">
 	<jsp:param value="修改登录密码" name="title"/>
 </jsp:include>
 

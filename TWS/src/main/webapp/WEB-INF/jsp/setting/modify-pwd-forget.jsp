@@ -10,7 +10,7 @@
 </head>
   
 <body style="min-width: 1300px;" class="bg">
-<jsp:include page="./head.jsp">
+<jsp:include page="/comm/head-title.jsp">
 	<jsp:param value="修改付款密码" name="title"/>
 </jsp:include>
 <div class="register r_three forget r_alter">

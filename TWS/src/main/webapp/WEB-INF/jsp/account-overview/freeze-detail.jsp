@@ -9,16 +9,10 @@
 </head>
 <body style="min-width: 1300px;" class="bg" >
 <!-- 头部 -->
-<div class="header">
-	<div class="w_1200">
-		<div class="logo">
-			<div class="l_img"><a href="<%=basePath%>"><img src="<%=cssWalletPath%>/images/logo.png"></a></div>
-			<div class="l_text">
-				<i class="ico "></i>冻结金额详情
-			</div>
-		</div>
-	</div>
-</div>
+<jsp:include page="/comm/head-title.jsp">
+	<jsp:param value="冻结金额详情" name="title"/>
+</jsp:include>
+ 
 <div class="h_90"></div>
 <!-- 内容 -->
 <div class="w_1200 ">
