@@ -184,6 +184,8 @@ AjaxPage.prototype.load=function(){
 };
 /**
  * TWS发送验证码
+ * @author luoqinglong 
+ * @date 2017-03-28
  */
 function SendCode(option){
 	this.defaults={
