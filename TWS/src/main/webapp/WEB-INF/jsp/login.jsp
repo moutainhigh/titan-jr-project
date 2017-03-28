@@ -40,7 +40,7 @@
 			<div class="lb_list">
 			<ul>
 				<li class="l_zh "><em class="ico "></em><input type="text" class="text" id="susername" placeholder="手机号码/邮箱" datatype="/\w*/" afterPassed="checkUserName" errormsg="必填项"></li>
-				<li class="l_mm "><em class="ico "></em><input type="text" class="text" id="code" placeholder="验证码" datatype="/\w{4,}/" errormsg="验证码错误"><div class="lb_verify">获取验证码</div></li>
+				<li class="l_mm "><em class="ico "></em><input type="text" class="text" id="code" placeholder="验证码" require="true" datatype="/\w*/" errormsg="验证码错误"><div class="lb_verify">获取验证码</div></li>
 				<li class="lb_Rememb">
 					<span><i class="ico Ibadd"></i> <em>记住用户名</em></span>
 				</li>

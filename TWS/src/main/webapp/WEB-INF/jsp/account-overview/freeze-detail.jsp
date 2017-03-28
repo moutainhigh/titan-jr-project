@@ -72,7 +72,7 @@
 			</div>
 		</div>
 		
-		<div class="main_con " >
+		<div class="main_con" >
 			<div class="MyAssets_frozen ">
 				<table border="0" cellspacing="0" width="100%">
 					<colgroup>
@@ -88,8 +88,7 @@
 				</table>
 			</div>
 		</div>
-
-		<div class="main_kkpager">		
+		<div class="main_kkpager" id="fr_main_kkpager" style="display:none;" >		
 			<div id="kkpager" class="page_turning"></div>
 		</div>
 	</div>
@@ -97,7 +96,7 @@
 </div>
 <div class="h_40"></div>
 <!-- 版权 -->
-<jsp:include page="/comm/foot.jsp"></jsp:include>
+<jsp:include page="/comm/foot-line.jsp"></jsp:include>
 <script type="text/javascript"> 
 $(function () {
     initRequest(); 
@@ -106,7 +105,6 @@ $(function () {
 
 function initRequest() {
     var size =10;
-    F.loading.show();
     $.ajax({
         dataType : 'html',
         context: document.body,
@@ -122,8 +120,10 @@ function initRequest() {
             $("#id_1").html(html);
             var total = $("#id_1 #tradePageTotal").val();
             var page = $("#id_1 #tradePageCurrent").val();
-            pageGo(page,total,size);
-            F.loading.hide();
+            if(page>0){
+            	$(".fr_main_kkpager").show();
+            	pageGo(page,total,size);
+            }
         }
     });
 }

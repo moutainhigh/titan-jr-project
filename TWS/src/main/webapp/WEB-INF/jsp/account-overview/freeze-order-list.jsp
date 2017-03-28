@@ -1,5 +1,11 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8" %>
 <%@ include file="/comm/taglib.jsp" %>
+<c:if test="${fn:length(tradePage.itemList)==0}">
+<tr>
+	<td colspan="7">暂无已冻结金额</td>
+</tr>
+</c:if>
+<c:if test="${fn:length(tradePage.itemList)>0}">
 <c:forEach items="${tradePage.itemList}" var="tradeItem">
 	<tr>
 		<td></td>
@@ -42,5 +48,6 @@
 		<td class="tdl"><span class="ico_forzen" title="供应商确认订单号即可解冻"></span></td>
 	</tr>
 </c:forEach>
+</c:if>
 <input type="hidden" id="tradePageTotal" value="${tradePage.totalCount}">
 <input type="hidden" id="tradePageCurrent" value="${tradePage.currentPage}">

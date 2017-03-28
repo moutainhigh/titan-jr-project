@@ -21,7 +21,7 @@
 				<ul>			
 					<li class="f_14 l_h24">用户名：<span id="userLoginName">${tfsUserLoginName }</span></li>		
 					<li class="r_yzm m_b30">
-					<input type="text" class="text" placeholder="请输入验证码" id="code" datatype="/\d{6,}/" errormsg="验证码错误"><div class="r_verify">获取验证码</div>
+					<input type="text" class="text" placeholder="请输入验证码" id="code" require="true" datatype="/\w*/" errormsg="验证码错误"><div class="r_verify">获取验证码</div>
 					</li>			
 					<li class="lb_btn"><a href="javascript:;" class="" onclick="next()">下一步</a></li>	
 				</ul>

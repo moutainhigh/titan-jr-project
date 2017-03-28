@@ -176,12 +176,117 @@ AjaxPage.prototype.load=function(){
 			if (_ajaxPage.option.error){
 				_ajaxPage.option.error.call(_ajaxPage, xhr);
 			}
-			
 		},
 		complete:function(){
 			F.loading.hide();
 		}
 	});
+};
+/**
+ * TWS发送验证码
+ */
+function SendCode(option){
+	this.defaults={
+		send_btn:null,//发送验证码的按钮
+		receive_input:null,//接收短信的输入框
+		msgType:null,//短信业务类型
+		fui_form:null,//F.UI的表单
+		verifyType:'phone',//接收账号的类型,phone:手机号，email:邮箱地址，all:手机号和邮箱，
+		sendingFlag : false,
+		second:60,
+		interval:null
+	};
+	this._option = $.extend({},this.defaults,option);
+	this.init();
+}
+/**
+ * 倒计时
+ */
+SendCode.prototype.timeOut = function(){
+	_this = this;
+	this._option.interval = setInterval(function () {   
+        if(_this._option.second>0){
+        	_this._option.send_btn.html("重新发送(" + _this._option.second + ")"); 
+        	_this._option.second--;
+        }else{
+        	_this.clearSend();
+        }
+   }, 1000);
+};
+/**
+ * 重置验证码发送资源
+ */
+SendCode.prototype.clearSend = function(){
+	this._option.send_btn.removeClass("r_huise").html("重新获取验证码");
+    clearInterval(this._option.interval);
+    this._option.second=60;
+    this._option.sendingFlag = false;
+    
+};
+/**
+ * 验证码发送初始化
+ */
+SendCode.prototype.init = function(){
+	_this = this;
+	_this._option.send_btn.on('click',function(){
+		if(_this._option.sendingFlag){
+			return;
+		}
+	    var raObj = _this._option.receive_input;
+	    var receiveAddress = raObj.val()||raObj.html();
+	    if($.trim(receiveAddress).length==0){
+	    	_this._option.fui_form._setErrorStyle(raObj,'必填项');
+			return;	
+		}
+	    if(_this._option.verifyType=='phone'){
+	    	if(!phone_reg.test(receiveAddress)){
+	    		_this._option.fui_form._setErrorStyle(raObj,'格式不正确');
+				return ;
+			}
+	    }else if(_this._option.verifyType=='email'){
+	    	if(!email_reg.test(receiveAddress)){
+	    		_this._option.fui_form._setErrorStyle(raObj,'格式不正确');
+				return ;
+			}
+	    }else if(_this._option.verifyType=='all'){
+	    	if((!phone_reg.test(receiveAddress))&&(!email_reg.test(receiveAddress))){
+	    		_this._option.fui_form._setErrorStyle(raObj,'格式不正确');
+				return ;
+			}
+	    }
+	  //校验 msgType
+		if(_this._option.msgType==null){
+			new top.Tip({msg : "===代码错误，没有指定发送消息类型", type: 2, timer:2500});
+			return;
+		}
+		if(!_this._option.send_btn.hasClass("r_huise")){  
+			_this._option.sendingFlag = true;
+			_this._option.send_btn.addClass('r_huise');
+			_this.timeOut();
+	    }
+		
+		$.ajax({
+			type:'post',
+			url : js_base_path+'/ex/sendCode.shtml',
+			data:{"receiveAddress":receiveAddress,"msgType":_this._option.msgType},
+			dataType : 'json',
+			success : function(result){
+				if(result.code==1){
+				    new top.Tip({msg : '验证码已成功发送,请注意查收！', type: 1, timer:2000});
+				}else{
+					new top.Tip({msg : result.msg, type: 2, timer:2500});
+					_this.clearSend();
+				}
+			},
+			error:function(){
+				_this.clearSend();
+			}
+		});
+	});
+};
+var TWS = TWS||{};
+TWS.initSendCode = function(option){
+	new SendCode(option);
 };
 //刷新待审核机构数
 function freshCheckCount(){

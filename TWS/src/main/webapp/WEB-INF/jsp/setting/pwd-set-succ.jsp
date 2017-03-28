@@ -45,7 +45,7 @@ function timeOut(_this){
     var i=2;
     var interval=setInterval(function () {                
          if(i>0){
-             _this.html( i + " 秒后自动跳转至设置界面"); 
+             _this.html( i + " 秒后自动跳转"); 
              i--;
          }else{
             window.location.href="<%=basePath%>/setting/user-info.shtml";
