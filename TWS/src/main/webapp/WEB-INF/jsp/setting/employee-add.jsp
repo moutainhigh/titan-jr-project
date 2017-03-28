@@ -205,11 +205,16 @@ function checkReceiveAddress(receiveAddress){
 //检查验证码
 function checkCode(){
 	var validateFlag = false;
-	var receiveAddress = $("#employee_add #receiveAddress").val();
+	var receiveAddressEle = $("#employee_add #receiveAddress");
+	var receiveAddress = receiveAddressEle.val();
 	var codeEle = $("#employee_add #code");
 	var code = codeEle.val();
 	if($.trim(code).length==0){
 		vform.setErrormsg(codeEle,'验证码不能为空');
+		return false;
+	}
+	if($.trim(receiveAddress).length==0){
+		vform._setErrorStyle(receiveAddressEle,'用户名不能为空');
 		return false;
 	}
 	$.ajax({
