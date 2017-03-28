@@ -24,6 +24,7 @@ import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.BankCardDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
+import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.ForgetPayPassword;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
@@ -651,15 +652,42 @@ public class FinancialAccountController extends BaseController {
 
     
     private ModifyInvalidWithDrawCardResponse modifyBindCard(BindBankCardRequest bindBankCardRequest){
+    	
     	ModifyInvalidWithDrawCardRequest modifyInvalidWithDrawCardRequest = new ModifyInvalidWithDrawCardRequest();
     	modifyInvalidWithDrawCardRequest.setAccountnumber(bindBankCardRequest.getBankCardCode());
     	modifyInvalidWithDrawCardRequest.setAccountrealname(bindBankCardRequest.getUserName());
     	modifyInvalidWithDrawCardRequest.setHankheadname(bindBankCardRequest.getBankCardName());
     	modifyInvalidWithDrawCardRequest.setBankhead(bindBankCardRequest.getBankCode());
     	modifyInvalidWithDrawCardRequest.setUserid(this.getUserId());
+    	modifyInvalidWithDrawCardRequest.setBankcity(bindBankCardRequest.getCityName());
+    	modifyInvalidWithDrawCardRequest.setBankprovinec(this.queryProvinceName(bindBankCardRequest.getCityCode()));
+    	modifyInvalidWithDrawCardRequest.setHankbranch(bindBankCardRequest.getBranchCode());
+    	modifyInvalidWithDrawCardRequest.setUsertype(WebConstant.ACCOUNT_PUBLIC);
     	return titanFinancialBankCardService.modifyinvalidPublicCard(modifyInvalidWithDrawCardRequest);
     }
     
+    private String queryProvinceName(String cityCode){
+    	if(!StringUtil.isValidString(cityCode)){
+    		return null;
+    	}
+		CityInfoDTO cityInfo = new CityInfoDTO();
+    	cityInfo.setCityCode(cityCode);
+    	CityInfosResponse response  = titanFinancialAccountService.getCityInfoList(cityInfo);
+    	if (!response.isResult() || response.getCityInfoDTOList() ==null &&response.getCityInfoDTOList().size()>0){//如果是北京市或者重庆市的话，这个地方的size为2
+    		return null;
+    	}
+    	
+    	cityInfo = response.getCityInfoDTOList().get(0);
+    	if(response.getCityInfoDTOList().size()==2){
+    		return cityInfo.getCityName();
+    	}
+    	
+    	if(StringUtil.isValidString(cityInfo.getParentCode())){
+    		return queryProvinceName(cityInfo.getParentCode());
+    	}else{
+    		return cityInfo.getCityName();
+    	}
+	}
     
     private CusBankCardBindResponse bindBindCardToPublic(BindBankCardRequest bindBankCardRequest){
     	 CusBankCardBindRequest  bankCardBindRequest = new CusBankCardBindRequest();
