@@ -25,7 +25,7 @@
 			<div class="r_tit"><b>新密码：</b></div>
 			<div class="r_text">
 				<ul>					
-					<li class="r_y2"><input type="password" class="text" id="newLoginPassword" readonly="readonly" placeholder="新密码" datatype="/\w{6,}/" require="true" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="newLoginPassword_hint"></em></li>					
+					<li class="r_y2"><input type="password" class="text" id="newLoginPassword" readonly="readonly" placeholder="新密码" datatype="/\w{6,}/" require="true" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="newLoginPassword_hint" style="display:none;"></em></li>					
 				</ul>
 			</div>
 			<div class="r_tit"><b>确认密码：</b></div>
@@ -105,11 +105,17 @@ function savePassword(){
 		}
 	});
 }
+//密码强度
 $('#newLoginPassword').bind("keyup",function(){
+	if($(this).val().length==0){
+		$("#newLoginPassword_hint").hide();
+		return;
+	}
 	var m = checkComplicacy($(this).val());
 	if(m>=3){
 		m = 3;
 	}
 	$("#"+$(this).attr("id")+'_hint').attr({'class':"ico hint_"+m});
+	$("#newLoginPassword_hint").show();
 });
 </script>
