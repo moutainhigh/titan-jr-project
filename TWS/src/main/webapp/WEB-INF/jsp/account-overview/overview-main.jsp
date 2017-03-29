@@ -586,6 +586,7 @@
         	
         	var bind = $("#btn_withdraw").attr("data-result");
     		if(bind=="3"){//对公且未绑定
+    			$("#modifyOrBind").val("0");
     			$("#toBindCard").submit();
     		}else if(bind=="2"|| bind=="4"){//对私或者对公已绑定成功
     			account_withdraw();

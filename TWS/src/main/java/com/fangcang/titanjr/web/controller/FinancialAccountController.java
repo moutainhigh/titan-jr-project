@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -509,7 +512,7 @@ public class FinancialAccountController extends BaseController {
     		return "account-overview/bind_card_three";
     	}
      	
-     	if(!StringUtil.isValidString(bindBankCardRequest.getModifyOrBind())){//绑卡
+     	if(WebConstant.BIND_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//绑卡
      		CusBankCardBindResponse cardBindResponse = bindBindCardToPublic(bindBankCardRequest);
      		 if (!cardBindResponse.isResult()){
      			 log.error("绑卡失败"+cardBindResponse.getReturnMessage());
@@ -530,15 +533,96 @@ public class FinancialAccountController extends BaseController {
     @ResponseBody
     @RequestMapping("getBankInfoList")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    public String getBankInfo(){
-        BankInfoQueryRequest bankInfoQueryRequest = new BankInfoQueryRequest();
-        bankInfoQueryRequest.setBankType(1);
-        BankInfoResponse bankInfoResponse =  titanFinancialBaseInfoService.queryBankInfoList(bankInfoQueryRequest);
+    public String getBankInfo(BankInfoQueryRequest request){
+        BankInfoResponse bankInfoResponse =  titanFinancialBaseInfoService.queryBankInfoList(request);
         if (bankInfoResponse.isResult() && CollectionUtils.isNotEmpty(bankInfoResponse.getBankInfoDTOList())){
             return toJson(bankInfoResponse);
         }
         return null;
     }
+    
+    /**
+     * 支行ss获取城市
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("getCitys")
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    public String getCitys(){
+    	CityInfosResponse response = new CityInfosResponse();
+    	Map<String,CityInfoDTO> cityMap = this.getParentCity();
+    	List<CityInfoDTO> cityInfos = getCity();
+    	for(CityInfoDTO city :cityInfos){
+    		city.setCityName(this.getCityName(city,cityMap));
+    	}
+    	response.setCityInfoDTOList(cityInfos);
+    	return toJson(response);
+    }
+    
+    private String getCityName(CityInfoDTO city,Map<String,CityInfoDTO> cityMap){
+    	if(city ==null || !StringUtil.isValidString(city.getCityCode())){
+    		return "";
+    	}
+    	if(CommonConstant.BEIJING_CODE.equals(city.getCityCode())
+    			||CommonConstant.TIANJING_CODE.equals(city.getCityCode())
+    			||CommonConstant.CHONGQING_CODE.equals(city.getCityCode())
+    			||CommonConstant.SHNAGHAI_CODE.equals(city.getCityCode())){//直辖市
+    		return city.getCityName();
+    	}
+    	StringBuffer cityName=new StringBuffer(city.getCityName());
+    	city = cityMap.get(city.getParentCode());
+    	if(city ==null){
+    		return cityName.toString();
+    	}
+    	cityName = cityName.insert(0, "-").insert(0, city.getCityName()) ;
+    	city = cityMap.get(city.getParentCode());
+    	if(city ==null){
+    		return cityName.toString();
+    	}
+    	return cityName.insert(0, "-").insert(0, city.getCityName()).toString();
+    }
+    
+    private Map<String,CityInfoDTO> getParentCity(){
+    	CityInfoDTO cityInfo = new CityInfoDTO();
+    	cityInfo.setDataType(1);
+    	CityInfosResponse response =  titanFinancialAccountService.getCityInfoList(cityInfo);
+    	
+    	Map<String,CityInfoDTO> citys = new HashMap<String, CityInfoDTO>();
+     	for(CityInfoDTO city : response.getCityInfoDTOList() ){//将其code和name放到键值对中
+     		citys.put(city.getCityCode(), city);
+     	}
+     	
+     	Set<String> cityCodes = new HashSet<String>(citys.keySet());
+     	for(String cityCode : cityCodes){
+     		cityInfo.setDataType(null);
+     		cityInfo.setParentCode(cityCode);
+     		response =  titanFinancialAccountService.getCityInfoList(cityInfo);
+     		for(CityInfoDTO city : response.getCityInfoDTOList() ){//将其code和name放到键值对中
+         		citys.put(city.getCityCode(), city);
+         	}
+     	}
+    	return citys;
+    }
+    
+    
+    private List<CityInfoDTO> getCity(){
+    	List<CityInfoDTO> citys = new ArrayList<CityInfoDTO>();
+    	
+    	CityInfoDTO cityInfo = new CityInfoDTO();
+    	cityInfo.setDataType(1);
+    	CityInfosResponse response =  titanFinancialAccountService.getCityInfoList(cityInfo);
+    	
+     	for(CityInfoDTO city : response.getCityInfoDTOList()){
+     		cityInfo.setDataType(null);
+     		cityInfo.setParentCode(city.getCityCode());
+     		response =  titanFinancialAccountService.getCityInfoList(cityInfo);
+     		for(CityInfoDTO cityinfo : response.getCityInfoDTOList() ){//将其code和name放到键值对中
+     			citys.add(cityinfo) ;
+         	}
+     	}
+     	return citys;
+    }
+    
     
     @ResponseBody
     @RequestMapping(value = "/checkBindAccountWithDrawCard")
@@ -614,42 +698,6 @@ public class FinancialAccountController extends BaseController {
 	}
     
     
-    
-    
-
-
-   
-
-  
-   
-    
-    @RequestMapping(value = "/toBindAccountWithDrawCard")
-	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
-    public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName) throws UnsupportedEncodingException{
-    	model.addAttribute("modifyOrBind",WebConstant.BIND_BANK_CARD);
-    	 if (null != this.getUserId()) {
-             model.addAttribute("organ", this.getTitanOrganDTO());
-         }
-
-    	return "account-overview/bind-bankcard";
-    }
-    
-    @RequestMapping("update_account-withdraw_info")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
-    public String updateAccountWithdrawInfo(HttpServletRequest request, Model model,String orgName){
-    	if (null != this.getUserId()) {
-             model.addAttribute("organ", this.getTitanOrganDTO());
-        }
-    	model.addAttribute("showBankCardInput",1);
-
-    	model.addAttribute("modifyOrBind",WebConstant.MODIFY_BANK_CARD);
-
-    	return "account-overview/bind-bankcard";
-    }
-    
-   
-    
-
     
     private ModifyInvalidWithDrawCardResponse modifyBindCard(BindBankCardRequest bindBankCardRequest){
     	
