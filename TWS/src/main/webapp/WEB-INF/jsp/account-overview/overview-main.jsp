@@ -964,7 +964,10 @@
 		        },
 		        cancel : function(){
 		          	$(".withdrawBtn").text('提现卡绑定失败').removeClass('blue').addClass('MyAssets_red');
-		        }
+		        },
+		        onclose:function(){
+					$(".withdrawBtn").text('提现卡绑定失败').removeClass('blue').addClass('MyAssets_red');
+				}
 		      });
       
       }

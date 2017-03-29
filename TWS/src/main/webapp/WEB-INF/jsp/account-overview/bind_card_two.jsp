@@ -18,9 +18,9 @@
 					<div class="r_text">
 						<form id="bank_card_form" method="post" action="<%=basePath%>/account/bankCardBind.shtml">
 							<ul>
+								<li class="r_y1"><div class="rt_title">收款银行</div><input type="text" class="text"  id="bankCardName" name="bankCardName"placeholder="请选择收款银行"><input type="hidden" id="bankCode" name="bankCode" ></li>
+								<li class="r_y1"><div class="rt_title">收款账号</div><input type="text" class="text" id="bankCardCode" name="bankCardCode" placeholder="请输入收款账号"></li>
 								<li class="r_y1"><div class="rt_title">公司名称</div><input type="text" class="text" id="userName" disabled value="${organ.orgName}" placeholder="请输入公司名称" ><input type="hidden" name="userName" value="${organ.orgName}"/></li>
-								<li class="r_y1"><div class="rt_title">卡号</div><input type="text" class="text" id="bankCardCode" name="bankCardCode" placeholder="请输入对公卡卡号"></li>
-								<li class="r_y1"><div class="rt_title">开户行</div><input type="text" class="text"  id="bankCardName" name="bankCardName"placeholder="请选择开户银行"><input type="hidden" id="bankCode" name="bankCode" ></li>
 								<li class="lb_btn "><a href="javascript:void(0)" onclick="submitForm();" class="">提交绑卡申请</a> <input type="hidden" name="modifyOrBind" id="modifyOrBind" value="${modifyOrBind}"></li>
 							</ul>
 						</form>
