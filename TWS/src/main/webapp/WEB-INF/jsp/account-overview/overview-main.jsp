@@ -480,6 +480,7 @@
       //初始化页面请求
 		function initRequest() {
 			$.ajax({
+				type:'post',
 				dataType : 'html',
 				showLoading:true,
 				context: document.body,
@@ -649,6 +650,7 @@
 			var data = getQueryOrderData(index);
 			var size = $(".pagination_r .on").text();
 			$.ajax({
+				type:'post',
 				dataType: 'html',
 				showLoading:true,
 				context: document.body,
@@ -681,6 +683,7 @@
 			//resetPageSizeView(size);
 			var data = getQueryOrderData(index);
 			$.ajax({
+				type:'post',
 				dataType: 'html',
 				showLoading:true,
 				context: document.body,
@@ -709,6 +712,7 @@
 		function pageNoChangeRequest(page, size, index) {
 			var data = getQueryOrderData(index);
 			$.ajax({
+				type:"post",
 				dataType : 'html',
 				showLoading:true,
 				context: document.body,
@@ -735,6 +739,7 @@
 		function pageSizeChangeRequest(page, size, index) {
 			var data = getQueryOrderData(index);
 			$.ajax({
+				type:'post',
 				dataType : 'html',
 				showLoading:true,
 				context: document.body,

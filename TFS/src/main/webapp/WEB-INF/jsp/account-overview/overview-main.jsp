@@ -697,6 +697,7 @@
 			var size = $(".pagination_r .on").text();
 			F.loading.show();
 			$.ajax({
+				type:'post',
 				dataType: 'html',
 				context: document.body,
 				data: {
@@ -801,6 +802,7 @@
 			var data = getQueryOrderData(index);
 			F.loading.show();
 			$.ajax({
+				type:'post',
 				dataType: 'html',
 				context: document.body,
 				data: {
@@ -833,6 +835,7 @@
 			F.loading.show();
 			var data = getQueryOrderData(index);
 			$.ajax({
+				type:'post',
 				dataType : 'html',
 				context: document.body,
 				data:{
@@ -863,6 +866,7 @@
 			F.loading.show();
 			var data = getQueryOrderData(index);
 			$.ajax({
+				type:'post',
 				dataType : 'html',
 				context: document.body,
 				data:{
@@ -999,6 +1003,7 @@
 			var size1 = $(".pagination_r .on").text();
 			F.loading.show();
 			$.ajax({
+				type:'post',
 				dataType : 'html',
 				context: document.body,
 				data:{currentPage:1,pageSize:size1,tradeTypeId:"0"},

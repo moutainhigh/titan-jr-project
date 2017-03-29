@@ -178,7 +178,7 @@ public class FinancialAccountController extends BaseController {
     	return toJson(resultMap);
     }
     
-    @RequestMapping(value = "/query-org-page", method = RequestMethod.GET)
+    @RequestMapping(value = "/query-org-page")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String queryForPage(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {

@@ -18,7 +18,7 @@
             </span>
         </td>
         <td width="" >
-            <span style="max-width: 253px">
+            <span style="max-width: 153px" title="${tradeItem.transTarget}">
                 ${tradeItem.transTarget}
             </span>
         </td>
