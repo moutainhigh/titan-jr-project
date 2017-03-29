@@ -21,16 +21,19 @@ import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
+import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
 import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
 import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
+import com.fangcang.titanjr.dto.response.AccountResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
 import com.fangcang.titanjr.entity.TitanUser;
+import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
@@ -56,6 +59,8 @@ public class SettingBaseInfoController extends BaseController{
 	
 	@Resource
 	private TitanFinancialUserService userService;
+	@Resource
+	private TitanFinancialAccountService accountService;
 	
 	/**
 	 * 机构信息
@@ -86,6 +91,15 @@ public class SettingBaseInfoController extends BaseController{
 				}else if(item.getSizeType()==50){
 					model.addAttribute("big_img_50", item.getImageURL());
 				}
+			}
+			//是否开启免密支付
+			AccountRequest accountRequest = new AccountRequest();
+			accountRequest.setUserid(getUserId());
+			AccountResponse accountResponse = accountService.getAccount(accountRequest);
+			if(accountResponse.getAccountDTO()!=null&&accountResponse.getAccountDTO().getAllownopwdpay()==1){
+				model.addAttribute("allownopwdpay","1");//开启
+			}else{
+				model.addAttribute("allownopwdpay","0");//关闭
 			}
 			model.addAttribute("isJrAdmin", titanUser.getIsadmin());
 			return "setting/org-info";
