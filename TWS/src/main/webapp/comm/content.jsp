@@ -1,6 +1,6 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <!-- 金融协议内容 -->
-<p style="line-height:125%">
+<p style="">
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">泰坦云金融</span>
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">服务协议（以下简称本协议）由</span>
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">深圳市天下房仓科技</span>
@@ -96,6 +96,9 @@
 	<span style="font-family: 微软雅黑;font-weight: bold;font-size: 12px;background: rgb(255, 255, 255)">账户（或“该账户”）：指您按照本公司允许的方式取得的供您使用</span>
 	<span style="font-family: 微软雅黑;font-weight: bold;font-size: 12px;background: rgb(255, 255, 255)">泰坦云金融</span>
 	<span style="font-family: 微软雅黑;font-weight: bold;font-size: 12px;background: rgb(255, 255, 255)">服务的账户。</span>
+	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">
+		<br/>
+	</span>
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">2、</span>
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">本网站：除本协议另有规定外，指</span>
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">jr.fangcang.com</span>
@@ -244,7 +247,7 @@
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">泰坦云金融</span>
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">账户支付的一种支付方式。本公司提示您注意:&nbsp;该项服务一般适用于您与交易对方彼此都有充分信任的交易。</span>
 </p>
-<p style="line-height:125%">
+<p style="">
 	<span style="font-family: 微软雅黑;font-weight: bold;font-size: 12px;background: rgb(255, 255, 255)">2、查询</span>
 	<span style="font-family: 微软雅黑;font-weight: bold;font-size: 12px;background: rgb(255, 255, 255)">：</span>
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">本公司将对您使用本公司服务的操作的全部或部分进行记录,&nbsp;不论该操作之目的最终是否实现。您可以登录</span>
@@ -265,7 +268,7 @@
 	<span style="font-family: 微软雅黑;font-weight: bold;font-size: 12px;background: rgb(255, 255, 255)">：</span>
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">您实际使用的本公司接受您的委托为您不时提供的其他服务及本公司提供的其他产品或服务。</span>
 </p>
-<p style="line-height:125%">
+<p style="">
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">
 		<br/>
 	</span>
@@ -421,7 +424,7 @@
 	<span style="font-family: 微软雅黑;font-weight: bold;font-size: 12px;background: rgb(255, 255, 255)">泰坦云金融</span>
 	<span style="font-family: 微软雅黑;font-weight: bold;font-size: 12px;background: rgb(255, 255, 255)">服务。</span>
 </p>
-<p style="line-height:125%">
+<p style="">
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">
 		<br/>
 	</span>
@@ -443,7 +446,7 @@
 	<span style="font-family: 微软雅黑;font-weight: bold;font-size: 12px;background: rgb(255, 255, 255)">泰坦云</span>
 	<span style="font-family: 微软雅黑;font-weight: bold;font-size: 12px;background: rgb(255, 255, 255)">网站使用。</span>
 </p>
-<p style="line-height:125%">
+<p style="">
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">
 		<br/>
 	</span>
@@ -521,7 +524,7 @@
 	<span style="font-family: 微软雅黑;font-weight: bold;font-size: 12px;background: rgb(255, 255, 255)">泰坦云金融</span>
 	<span style="font-family: 微软雅黑;font-weight: bold;font-size: 12px;background: rgb(255, 255, 255)">账户进行查询、冻结或扣划。</span>
 </p>
-<p style="line-height:125%">
+<p style="">
 	<span style="font-family: 微软雅黑;font-size: 12px;background: rgb(255, 255, 255)">
 		<br/>
 	</span>

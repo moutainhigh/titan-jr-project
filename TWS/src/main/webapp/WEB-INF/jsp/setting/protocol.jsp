@@ -30,7 +30,7 @@
 					<div class="sra_btn1 sra_fixed">
 						<div class="sra_xi"></div>
 						<a class="btn" href="javascript:;" onclick="window.open('http://static.fangcang.com/static/tfs/titan_finance_protocol.doc')">下载</a>
-						<a class="btn btn_g" href="<%=basePath %>/ex/print-protocol.shtml" >打印</a>
+						<a class="btn btn_g" href="<%=basePath %>/ex/print-protocol.shtml" target="_blank" >打印</a>
 					</div>
 			    </div>
 			 </div>

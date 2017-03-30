@@ -26,7 +26,7 @@
 						新增员工权限
 					</a>
 					<div class="fr clearfix">
-						<input type="text" placeholder="泰坦金服用户名：" class="text fl " id="J_tfs_userLoginName" name="jinfuUserLoginName"/>
+						<input type="text" placeholder="泰坦钱包用户名：" class="text fl " id="J_tfs_userLoginName" name="jinfuUserLoginName"/>
 						<input type="text" placeholder="姓名：" id="J_tfs_userName" class="text fl" name="userName"/>
 						<span class="btn btn_magnify">&nbsp;</span>
 					</div>
@@ -46,7 +46,7 @@
 							<col width="">
 							</colgroup>
 						<tr class="TFS_setth">
-							<td rowspan="2" class="td_l20">泰坦金服用户名</td>
+							<td rowspan="2" class="td_l20">泰坦钱包用户名</td>
 							<td rowspan="2" class="td_l20">姓名</td>							
 							<td colspan="6">权限</td>
 							<td colspan="6" rowspan="2">操作</td>

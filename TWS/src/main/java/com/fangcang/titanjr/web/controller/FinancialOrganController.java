@@ -711,7 +711,7 @@ public class FinancialOrganController extends BaseController {
 				return "redirect:/main/main.shtml";//到首页
 			}else{
 				model.addAttribute("code", checkUserResponse.getReturnCode());
-				model.addAttribute("msg", checkUserResponse.getReturnMessage());
+				model.addAttribute("msg", Tools.replaceEnterKeyHTML(checkUserResponse.getReturnMessage()));
 		    	return "user-state";
 			}
 			

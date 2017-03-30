@@ -99,11 +99,13 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 		//参数校验
 		SendMessageResponse response = new SendMessageResponse();
 		if(!StringUtil.isValidString(sendCodeRequest.getReceiveAddress())){
-			response.putErrorResult("接收地址不能为空"); 
+			response.putErrorResult("接收地址不能为空");
+			log.error(Tools.getStringBuilder().append("参数错误:接收地址不能为空,").append("发送参数sendCodeRequest：").append(Tools.gsonToString(sendCodeRequest)));
 			return response;
 		}
 		if(!StringUtil.isValidString(sendCodeRequest.getMerchantCode())){
-			response.putErrorResult("发送方的商家编码不能为空"); 
+			response.putErrorResult("发送方的商家编码不能为空");
+			log.error(Tools.getStringBuilder().append("参数错误:发送方的商家编码不能为空,").append("发送参数sendCodeRequest：").append(Tools.gsonToString(sendCodeRequest)));
 			return response;
 		}
 		int sendType = sendCodeRequest.getReceiveAddress().indexOf("@")>-1?2:1;
@@ -112,6 +114,7 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 		if(sendType==1){
 			if(Tools.isNotPhone(sendCodeRequest.getReceiveAddress())){
 				response.putErrorResult("手机号码格式不正确"); 
+				log.error(Tools.getStringBuilder().append("参数错误:手机号码格式不正确,").append("发送参数sendCodeRequest：").append(Tools.gsonToString(sendCodeRequest)));
 				return response;
 			}
 			SendSMSRequest sendSMSRequest = new SendSMSRequest();
@@ -134,10 +137,12 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 			//邮件
 			if(Tools.isNotEmailAddress(sendCodeRequest.getReceiveAddress())){
 				response.putErrorResult("邮箱地址不正确"); 
+				log.error(Tools.getStringBuilder().append("参数错误:邮箱地址不正确,").append("发送参数sendCodeRequest：").append(Tools.gsonToString(sendCodeRequest)));
 				return response;
 			}
 			if(!StringUtil.isValidString(sendCodeRequest.getSubject())){
-				response.putErrorResult("邮件主题不能为空"); 
+				response.putErrorResult("邮件主题不能为空");
+				log.error(Tools.getStringBuilder().append("参数错误:邮件主题不能为空,").append("发送参数sendCodeRequest：").append(Tools.gsonToString(sendCodeRequest)));
 				return response;
 			}
 			
@@ -157,19 +162,19 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 			}
 			
 			try {
-				log.info("begin send email ,messageServiceUrl:"+messageServiceUrl+",address:"+sendCodeRequest.getReceiveAddress()+",emailSenderDTO:"+ToStringBuilder.reflectionToString(emailSenderDTO));
+				log.info(Tools.getStringBuilder().append("begin send email ,messageServiceUrl:").append(messageServiceUrl).append(",address:"+sendCodeRequest.getReceiveAddress()).append(",emailSenderDTO:").append(ToStringBuilder.reflectionToString(emailSenderDTO)));
 				EmailSendService emailSendService = hessianProxyBeanFactory.getHessianProxyBean(EmailSendService.class,messageServiceUrl);
 				boolean  sendState = emailSendService.send(emailSenderDTO);
 				if(sendState){
-					log.info("end send email success ,address:"+sendCodeRequest.getReceiveAddress());
+					log.info(Tools.getStringBuilder().append("end send email success ,address:").append(sendCodeRequest.getReceiveAddress()));
 					response.putSuccess("邮件发送成功");
 					return response;
 				}else{
-					log.error("end send email fail ,messageServiceUrl:"+messageServiceUrl+",param:"+ToStringBuilder.reflectionToString(emailSenderDTO)+",sendState:"+sendState);
+					log.error(Tools.getStringBuilder().append("end send email fail ,messageServiceUrl:").append(messageServiceUrl).append(",param:").append(ToStringBuilder.reflectionToString(emailSenderDTO)).append(",sendState:").append(sendState));
 					response.putErrorResult("邮件发送失败");
 				}
 			} catch (Exception e) {
-				log.error("邮件发送失败,sendEmailRequest:"+ToStringBuilder.reflectionToString(sendCodeRequest),e);
+				log.error(Tools.getStringBuilder().append("邮件发送失败,sendEmailRequest:").append(ToStringBuilder.reflectionToString(sendCodeRequest)),e);
 				response.putErrorResult("服务异常，邮件发送失败");
 			}
 		}

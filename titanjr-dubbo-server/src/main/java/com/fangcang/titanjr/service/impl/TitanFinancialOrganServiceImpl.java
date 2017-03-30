@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import com.fangcang.exception.ParameterException;
+
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -30,6 +31,7 @@ import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.common.enums.ImgSizeEnum;
 import com.fangcang.titanjr.common.enums.CoopTypeEnum;
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
+import com.fangcang.titanjr.common.enums.SMSType;
 import com.fangcang.titanjr.common.enums.entity.TitanCheckCodeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgBindinfoEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
@@ -1280,10 +1282,23 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	public GetCheckCodeResponse getCheckCode(GetCheckCodeRequest getCheckCodeRequest) throws GlobalServiceException {
 		GetCheckCodeResponse response = new GetCheckCodeResponse();
 		if (!GenericValidate.validate(getCheckCodeRequest)){
-    		LOGGER.info("参数错误， getCheckCodeRequest："+JSONSerializer.toJSON(getCheckCodeRequest).toString());
+    		LOGGER.info("获取验证码时，参数错误， getCheckCodeRequest："+JSONSerializer.toJSON(getCheckCodeRequest).toString());
 			response.putParamError();
 			return response;
 		}
+		//非注册场景时，需要检验信息接收方是否已经注册
+		if(getCheckCodeRequest.getMsgType()!=SMSType.REG_CODE.getType()){
+			TitanUserParam userParam = new TitanUserParam();
+			userParam.setUserloginname(getCheckCodeRequest.getReceiveAddress());
+			PaginationSupport<TitanUser> userPaginationSupport = new PaginationSupport<TitanUser>();
+			userPaginationSupport = titanUserDao.selectForPage(userParam, userPaginationSupport);
+			if(userPaginationSupport.getItemList().size()==0){
+				LOGGER.info("获取验证码时，用户名不存在,用户名："+getCheckCodeRequest.getReceiveAddress());
+				response.putErrorResult("该用户名不存在");
+				return response;
+			}
+		}
+		
 		TitanCheckCodeParam condition = new TitanCheckCodeParam();
 		condition.setReceiveAddress(getCheckCodeRequest.getReceiveAddress());
 		condition.setIsactive(TitanCheckCodeEnum.Isactive.ACTIVE.getKey());

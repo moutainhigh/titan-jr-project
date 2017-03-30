@@ -15,14 +15,21 @@ import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.SMSTemplate;
 //import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
+import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.OrganCheckRequest;
+import com.fangcang.titanjr.dto.request.SendMessageRequest;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.OrganCheckResponse;
 import com.fangcang.titanjr.dto.response.OrganQueryCheckResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.controller.BaseController;
 import com.fangcang.titanjr.web.pojo.OrgPojo;
@@ -41,6 +48,8 @@ public class OrgController extends BaseController{
 	private TitanFinancialOrganService organService;
 	@Resource
 	private TitanFinancialUserService userService;
+	@Resource
+	private TitanFinancialSendSMSService smsService;
 	/**
 	 * 企业机构页面
 	 * @return
@@ -154,6 +163,27 @@ public class OrgController extends BaseController{
 		try {
 			OrganCheckResponse organCheckResponse = organService.checkFinancialOrgan(organCheckRequest);
 			if(organCheckResponse.isResult()){
+				OrgDTO orgDTO = new OrgDTO();
+				orgDTO.setOrgid(orgId);
+				orgDTO = organService.queryOrg(orgDTO);
+				String receiveAddress;
+				if(orgDTO.getUsertype().equals(TitanOrgEnum.UserType.ENTERPRISE.getKey())){//企业用户
+					//给联系人发
+					receiveAddress = orgDTO.getMobiletel();
+				}else{
+					//给管理员发
+					UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+					userInfoQueryRequest.setIsadmin(1);
+					userInfoQueryRequest.setOrgCode(orgDTO.getOrgcode());
+					UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
+					receiveAddress = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0).getUserloginname();
+				}
+				SendMessageRequest sendCodeRequest = new SendMessageRequest();
+				sendCodeRequest.setReceiveAddress(receiveAddress);
+				sendCodeRequest.setSubject(SMSTemplate.ORG_REG_SUCCESS.getSubject());
+				sendCodeRequest.setContent(SMSTemplate.ORG_REG_SUCCESS.getContent());
+				sendCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+				smsService.asynSendMessage(sendCodeRequest);
 				putSuccess("审核成功");
 				
 				return toJson();

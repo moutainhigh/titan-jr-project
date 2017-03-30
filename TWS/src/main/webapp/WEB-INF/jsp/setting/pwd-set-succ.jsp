@@ -10,13 +10,13 @@
 <body style="min-width: 1300px;" class="bg" >
 <!-- 登录密码  -->
 <c:if test="${pageType==1 }">
-	<jsp:include page="./head.jsp">
+	<jsp:include page="/comm/head-title.jsp">
 	<jsp:param value="修改登录密码" name="title"/>
 	</jsp:include>
 </c:if>
 <!-- 付款密码  -->
 <c:if test="${pageType==2 }">
-	<jsp:include page="./head.jsp">
+	<jsp:include page="/comm/head-title.jsp">
 	<jsp:param value="修改付款密码" name="title"/>
 	</jsp:include>
 </c:if>
@@ -45,7 +45,7 @@ function timeOut(_this){
     var i=2;
     var interval=setInterval(function () {                
          if(i>0){
-             _this.html( i + " 秒后自动跳转至设置界面"); 
+             _this.html( i + " 秒后自动跳转"); 
              i--;
          }else{
             window.location.href="<%=basePath%>/setting/user-info.shtml";

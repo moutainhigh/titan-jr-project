@@ -106,7 +106,6 @@ var loginType = LOGIN_TYPE["email"];
 
 //企业用户 个人用户 
 $('.enterprise').click(function(){
-	//$('.next').unbind("click",next);
     var qy = $(this).parents('.pour').find('.qy'),
         gr = $(this).parents('.pour').find('.gr');
 
@@ -115,13 +114,11 @@ $('.enterprise').click(function(){
         $(this).addClass('on').siblings().removeClass('on');
 		
         $('.f_ui-checkbox-c3 input[type=checkbox]').attr('checked',false);
-       // $('.btn').addClass('btn_h');
         current_tab = TAB_TYPE["enterprise"];
         loginType = LOGIN_TYPE["email"];
          
 });    
 $('.personage').click(function(){
-	//	$('.next').unbind("click",next);
         var qy = $(this).parents('.pour').find('.qy'),
         gr = $(this).parents('.pour').find('.gr');
         qy.hide();
@@ -129,7 +126,6 @@ $('.personage').click(function(){
         $(this).addClass('on').siblings().removeClass('on');
 
         $('.f_ui-checkbox-c3 input[type=checkbox]').attr('checked',false);
-       // $('.btn').addClass('btn_h');
         current_tab = TAB_TYPE["personage"];
         loginType = LOGIN_TYPE[$('.personage').attr("data-select-form")];
 });
@@ -138,13 +134,11 @@ $('.personage').click(function(){
 
 
 $('.J_yx').click(function() {
-	//$('.next').unbind("click",next);
     if($('.yx1').is('.on')){
         $('.yx1').hide().removeClass('on');
         $('.yx2').show().addClass('on');
         $(this).text('使用手机号码注册>>');
         $('.f_ui-checkbox-c3 input[type=checkbox]').attr('checked',false);
-        //$('.btn').addClass('btn_h');
         loginType = LOGIN_TYPE["email"];
         $('.personage').attr({"data-select-form":"email"});
     }else
@@ -153,7 +147,6 @@ $('.J_yx').click(function() {
         $('.yx2').hide().removeClass('on');      
         $(this).text('使用邮箱注册>>');
         $('.f_ui-checkbox-c3 input[type=checkbox]').attr('checked',false);
-        //$('.btn').addClass('btn_h');
         loginType = LOGIN_TYPE["phone"];
         $('.personage').attr({"data-select-form":"phone"});
     }

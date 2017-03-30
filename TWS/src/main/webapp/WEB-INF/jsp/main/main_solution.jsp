@@ -15,9 +15,9 @@
 <div class="main_col m_t90">
 <div class="swiper-container">
 <div class="swiper-wrapper">
-	<div class="swiper-slide"><a href="<%=basePath %>/main/main_detail_one.shtml" class="home01">&nbsp;</a></div>
-    <div class="swiper-slide"><a href="<%=basePath %>/main/main_detail_two.shtml" class="home02">&nbsp;</a></div>
-    <div class="swiper-slide"><a href="<%=basePath %>/main/main_detail_three.shtml" class="home03">&nbsp;</a></div>             
+	<div class="swiper-slide"><a href="<%=basePath %>/main/main_detail_one.shtml" target="_blank" class="home01">&nbsp;</a></div>
+    <div class="swiper-slide"><a href="<%=basePath %>/main/main_detail_two.shtml" target="_blank" class="home02">&nbsp;</a></div>
+    <div class="swiper-slide"><a href="<%=basePath %>/main/main_detail_three.shtml" target="_blank" class="home03">&nbsp;</a></div>             
 </div>
 <div class="swiper-pagination"></div>
 <div class="swiper-button-next"></div>
@@ -28,13 +28,13 @@
 <div class="wh_solve w_1200">
 	<div class="wh_title">解决方案</div>
 	<div class="wh_c">
-		<a href="<%=basePath %>/main/solution_detail.shtml#tab1"  class="li1">
+		<a href="<%=basePath %>/main/solution_detail.shtml#tab1"  target="_blank" class="li1">
 			&nbsp;
 		</a>
-		<a href="<%=basePath %>/main/solution_detail.shtml#tab2" class="li2">
+		<a href="<%=basePath %>/main/solution_detail.shtml#tab2" target="_blank" class="li2">
 			&nbsp;
 		</a>
-		<a href="<%=basePath %>/main/solution_detail.shtml#tab3" class="li3">
+		<a href="<%=basePath %>/main/solution_detail.shtml#tab3" target="_blank" class="li3">
 			&nbsp;
 		</a>
 	</div>

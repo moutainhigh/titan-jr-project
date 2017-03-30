@@ -15,7 +15,7 @@
 
 <div class="register r_two">
 	<div class="r_box ">
-		<form action="" id="info_form" method="post">
+		<form action="" id="info_form" method="post" onsubmit="return checkOrgReg();">
 		<!-- 新增时使用 -->
        	<input type="hidden" name="userLoginName" value="${regUserLoginInfo.userLoginName}"/>
        	<input type="hidden" name="password" value="${regUserLoginInfo.password}"/>
@@ -155,13 +155,8 @@ function ajaxFileUpload() {
 var submitingFlag =  false;
 //注册
 function regOrg(){
-	if(!vform.validate()){
-		return;
-	}
-	var imageV = $("#pre_view").attr("data-src-v");
-	if($.trim(imageV).length==0){
-		new Tip({msg:"请上传证件照",type:2,timer:2000});
-		return;
+	if(checkOrgReg()==false){
+		return ;
 	}
 	if($("#orgId").val().length>0){
 		$("#info_form").attr({"action":"<%=basePath%>/reg/organ/updateOrg.shtml"});
@@ -173,9 +168,18 @@ function regOrg(){
 		$("#reg_btn").click();
 		submitingFlag = true;
 	}
-	
 }
-
+function checkOrgReg(){
+	if(!vform.validate()){
+		return false;
+	}
+	var imageV = $("#pre_view").attr("data-src-v");
+	if($.trim(imageV).length==0){
+		new Tip({msg:"请上传证件照",type:2,timer:2000});
+		return false;
+	}
+	return true;
+}
 
 //检查注册编码
 function checkOrgRegNum(value, inputDom){

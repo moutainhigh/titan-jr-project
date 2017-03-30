@@ -24,7 +24,7 @@ public class TitanOrg implements java.io.Serializable {
 	private String role;
 	private String username;
 	/**
-	 * 机构类型：企业，个人
+	 * 机构类型：企业:1，个人:2
 	 */
 	private Integer usertype;
 	private Integer statusid;

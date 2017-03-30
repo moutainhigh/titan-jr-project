@@ -10,7 +10,7 @@
 </head>
   
   <body style="min-width: 1300px;" class="bg" >
-<jsp:include page="./head.jsp">
+<jsp:include page="/comm/head-title.jsp">
 	<jsp:param value="修改付款密码" name="title"/>
 </jsp:include>
 
@@ -33,7 +33,7 @@
 							<span></span>
 						</div>
 						<!-- 错误提示 -->
-						<div class="rp_hint">原密码错误</div>
+						<div class="rp_hint" style="font-size:14px;">原密码错误</div>
 					</li>
 				</ul>
 				</div>
@@ -55,7 +55,7 @@
 							<span></span>
 						</div>
 						<!-- 错误提示 -->
-						<div class="rp_hint"></div>
+						<div class="rp_hint" style="font-size:14px;"></div>
 					</li>
 				</ul>
 				
@@ -77,12 +77,12 @@
 							<span></span>
 						</div>
 						<!-- 错误提示 -->
-						<div class="rp_hint">两次输入的密码不一致</div>
+						<div class="rp_hint" style="font-size:14px;">两次输入的密码不一致</div>
 					</li>
 				</ul>				
 			</div>
 
-			<div class="r_text">
+			<div class="r_text" style="margin-top:10px;">
 				<ul>
 					<li class="lb_btn"><a href="javascript:;" class="" onclick="savePayPwd()">确定</a></li>
 				</ul>
@@ -96,10 +96,14 @@
 var PasswordStr=null;
 var PasswordStr1=null;
 var PasswordStr2=null;
+var htmlPwd,htmlPwd1,htmlPwd2;
 $("document").ready(function (){
 	PasswordStr=new sixDigitPassword("passwordbox");
 	PasswordStr1=new sixDigitPassword("passwordbox1");
 	PasswordStr2=new sixDigitPassword("passwordbox2");
+	htmlPwd = $("#passwordbox").html();
+	htmlPwd1 = $("#passwordbox1").html();
+	htmlPwd2 = $("#passwordbox2").html();
 });
 //校验密码输入
 function validate_payPassword(){
@@ -111,30 +115,65 @@ function validate_payPassword(){
 	$("#six_pwd_err_3").removeClass("sp_add");
 	
 	if((payPassword.length!=6)||(!payPwd_reg.test(payPassword))){
-		new top.Tip({msg : '原密码必须为6位数字！', type: 2 , timer:2000}); 
+		$("#six_pwd_err_1").addClass("sp_add");
+		$("#six_pwd_err_1 .rp_hint").html('原密码必须为6位数字');
+		reInitOldPwd();
 		return false;
 	}
 	
 	if(payPassword1.length!=6||payPassword2.length!=6||(!payPwd_reg.test(payPassword1))||(!payPwd_reg.test(payPassword2))){
-		new top.Tip({msg : '密码必须为6位数字！', type: 2 , timer:2000}); 
+		$("#six_pwd_err_3").addClass("sp_add");
+		$("#six_pwd_err_3 .rp_hint").html('新密码必须为6位数字');
+		reInitNewPwd();
 		return false;
 	}
 	
 	if(payPassword1!=payPassword2){
 		$("#six_pwd_err_3").addClass("sp_add");
-		$("#six_pwd_err_3 .rp_hint").html('两次新密码输入不相同！');
+		$("#six_pwd_err_3 .rp_hint").html('两次新密码输入不相同');
+		reInitNewPwd();
 		return false;
 	}
 	
 	if(payPassword==payPassword1){
 		$("#six_pwd_err_2").addClass("sp_add");
-		$("#six_pwd_err_2 .rp_hint").html('原密码不能和新密码相同！');
-		$("#six_pwd_err_1").addClass("sp_add");
-		$("#six_pwd_err_1 .rp_hint").html('');
+		$("#six_pwd_err_2 .rp_hint").html('新密码和原密码不能相同！');
+		
+		reInitNewPwd();
 		return false;
 	}
 	return true;
 	
+}
+function reInitOldPwd(){
+	$("#passwordbox").html(htmlPwd);
+	$("#passwordbox1").html(htmlPwd1);
+	$("#passwordbox2").html(htmlPwd2);
+	PasswordStr=new sixDigitPassword("passwordbox");
+	PasswordStr1=new sixDigitPassword("passwordbox1");
+	PasswordStr2=new sixDigitPassword("passwordbox2");
+	window.setTimeout(function(){
+		$("#six_pwd_err_1").removeClass("sp_add");
+		$("#six_pwd_err_2").removeClass("sp_add");
+		$("#six_pwd_err_3").removeClass("sp_add");
+	}, 2000);
+	window.setTimeout(function(){
+		clickPassword();
+	}, 200);
+}
+function reInitNewPwd(){
+	$("#passwordbox1").html(htmlPwd1);
+	$("#passwordbox2").html(htmlPwd2);
+	PasswordStr1=new sixDigitPassword("passwordbox1");
+	PasswordStr2=new sixDigitPassword("passwordbox2");
+	window.setTimeout(function(){
+		$("#six_pwd_err_1").removeClass("sp_add");
+		$("#six_pwd_err_2").removeClass("sp_add");
+		$("#six_pwd_err_3").removeClass("sp_add");
+	}, 2000);
+	window.setTimeout(function(){
+		clickPassword();
+	}, 200);
 }
 //保存支付密码
 function savePayPwd(){
@@ -164,11 +203,13 @@ function update_old_pwd(){
 	    complete:function(){
 	    	  top.F.loading.hide();
 	    },
-         success: function(data){
+        success: function(data){
         	 if(data.result=="success"){//密码设置成功
         		 location.href="<%=basePath%>/ex/pwd-set-succ.shtml?pageType=2";
         	 }else{
-        		 new top.Tip({msg : data.msg, type: 2 , timer:2000}); 
+        		 $("#six_pwd_err_1").addClass("sp_add");
+       			$("#six_pwd_err_1 .rp_hint").html(data.msg);
+       			reInitOldPwd();
         	 }
          }
 	});

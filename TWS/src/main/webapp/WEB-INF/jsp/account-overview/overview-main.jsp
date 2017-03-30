@@ -431,7 +431,7 @@
 
 <div class="h_40"></div>
 <!-- 版权 -->
-<jsp:include page="/comm/foot.jsp"></jsp:include>
+<jsp:include page="/comm/foot-line.jsp"></jsp:include>
 
 <script type="text/javascript">  
 //我的账户
@@ -440,7 +440,7 @@
 		//总记录数
 		var total1,total2,total3,total4,total5;
 		//每页数量
-		 var size1 = 6;
+		 var size1 = 5;
         $(function(){
 			tabChange($(".MyAssets_list_tab span"), $(".MyAssets_tab"), "on");
 			initRequest();
@@ -479,8 +479,8 @@
 		}
       //初始化页面请求
 		function initRequest() {
-			var size1 = 6;
 			$.ajax({
+				type:'post',
 				dataType : 'html',
 				showLoading:true,
 				context: document.body,
@@ -586,6 +586,7 @@
         	
         	var bind = $("#btn_withdraw").attr("data-result");
     		if(bind=="3"){//对公且未绑定
+    			$("#modifyOrBind").val("0");
     			$("#toBindCard").submit();
     		}else if(bind=="2"|| bind=="4"){//对私或者对公已绑定成功
     			account_withdraw();
@@ -650,6 +651,7 @@
 			var data = getQueryOrderData(index);
 			var size = $(".pagination_r .on").text();
 			$.ajax({
+				type:'post',
 				dataType: 'html',
 				showLoading:true,
 				context: document.body,
@@ -669,7 +671,7 @@
 					$("#id_" + index).html(html);
 					var total = $("#id_" + index + " #tradePageTotal").val();
 					var page = $("#id_" + index + " #tradePageCurrent").val();
-					pageGo(page, total, size,1);
+					pageGo(page, total, size,index);
 				}
 			});
 		}
@@ -682,6 +684,7 @@
 			//resetPageSizeView(size);
 			var data = getQueryOrderData(index);
 			$.ajax({
+				type:'post',
 				dataType: 'html',
 				showLoading:true,
 				context: document.body,
@@ -710,6 +713,7 @@
 		function pageNoChangeRequest(page, size, index) {
 			var data = getQueryOrderData(index);
 			$.ajax({
+				type:"post",
 				dataType : 'html',
 				showLoading:true,
 				context: document.body,
@@ -736,6 +740,7 @@
 		function pageSizeChangeRequest(page, size, index) {
 			var data = getQueryOrderData(index);
 			$.ajax({
+				type:'post',
 				dataType : 'html',
 				showLoading:true,
 				context: document.body,
@@ -811,6 +816,7 @@
 
 		//分页内页面跳转方法
 		function pageGo(pageIdx, totals, size,tabIdx){
+			
 			pageIdx = pageIdx || 1;
 			var totalPage = 0;
 			if (totals % size == 0){ //取模若为0标示可以除尽
@@ -957,14 +963,17 @@
 				width:400,
 				cancelValue : '下次再说',
 		        okValue : '修改提现卡信息',		
-		        content : '<div class="l_h26" style="padding-left: 30px;"><i class="mr_ico"></i><span class="TFS_mrtips"><strong class="c_tfscolor f_16">对不起,提现卡绑定失败</strong>失败原因：银行卡信息或持卡人姓名不正确不正正宗确。银行卡信息或持卡人。</span></div>',
+		        content : '<div class="l_h26" style="padding-left: 30px;"><i class="mr_ico"></i><span class="TFS_mrtips"><strong class="c_tfscolor f_16">对不起,提现卡绑定失败</strong>失败原因：银行卡信息或持卡人姓名不正确。</span></div>',
 				ok : function(){	
 					$("#modifyOrBind").val("1");
 					$("#toBindCard").submit();
 		        },
 		        cancel : function(){
 		          	$(".withdrawBtn").text('提现卡绑定失败').removeClass('blue').addClass('MyAssets_red');
-		        }
+		        },
+		        onclose:function(){
+					$(".withdrawBtn").text('提现卡绑定失败').removeClass('blue').addClass('MyAssets_red');
+				}
 		      });
       
       }

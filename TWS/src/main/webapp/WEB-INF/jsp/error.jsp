@@ -25,6 +25,6 @@
 </div>				
 
 <!-- 版权 -->
-<jsp:include page="/comm/foot.jsp"></jsp:include>
+<jsp:include page="/comm/foot-line.jsp"></jsp:include>
 </body>
 </html>

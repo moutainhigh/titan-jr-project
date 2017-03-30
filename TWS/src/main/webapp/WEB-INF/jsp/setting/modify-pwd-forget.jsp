@@ -10,7 +10,7 @@
 </head>
   
 <body style="min-width: 1300px;" class="bg">
-<jsp:include page="./head.jsp">
+<jsp:include page="/comm/head-title.jsp">
 	<jsp:param value="修改付款密码" name="title"/>
 </jsp:include>
 <div class="register r_three forget r_alter">
@@ -53,7 +53,7 @@
 								<span></span>
 							</div>
 							<!-- 错误提示 -->
-							<div class="rp_hint">两次密码不一致</div>
+							<div class="rp_hint" style="font-size:14px;">两次密码不一致</div>
 						</li>
 					</ul>
 				</div>	
@@ -70,11 +70,12 @@
  <script type="text/javascript">
  var passwordStr3=null;
  var passwordStr4=null;
+ var pwdHtmlbak;
  $("document").ready(function (){
 	passwordStr3 =new sixDigitPassword("passwordbox3");
  	passwordStr4=new sixDigitPassword("passwordbox4");
+ 	pwdHtmlbak = $('#pwd_wrap').html();
  });
- var pwdHtmlbak = $('#pwd_wrap').html();
 
  var timeIndex = 0;
 //跳转到下一个输入框
@@ -129,16 +130,22 @@
  	var payPassword3 = passwordStr3.returnStr();
  	var payPassword4 = passwordStr4.returnStr();
  	$("#six_pwd_err").removeClass("sp_add");
+ 
  	if(payPassword3.length !=6 || payPassword4.length!=6||(!payPwd_reg.test(payPassword3))||(!payPwd_reg.test(payPassword4))){
  		$("#six_pwd_err").addClass("sp_add");
 		$("#six_pwd_err .rp_hint").html('密码必须为6位数字');
- 		reInitPwdPanel();
+		setTimeout(function(){
+			reInitPwdPanel();
+		},2000);
+ 		
  		return;
  	}
  	if(payPassword3 !=payPassword4){
  		$("#six_pwd_err").addClass("sp_add");
 		$("#six_pwd_err .rp_hint").html('两次输入的密码必须相同');
- 		reInitPwdPanel();
+		setTimeout(function(){
+			reInitPwdPanel();
+		},2000);
  		return;
  	}
  	
@@ -150,7 +157,7 @@
  }
 //重新初始化密码框
 function reInitPwdPanel(){
-	$('.passwordset_u1').html(pwdHtmlbak);
+	$('#pwd_wrap').html(pwdHtmlbak);
 	passwordStr3=new sixDigitPassword("passwordbox3");
 	passwordStr4=new sixDigitPassword("passwordbox4");
 	setTimeout(function(){
