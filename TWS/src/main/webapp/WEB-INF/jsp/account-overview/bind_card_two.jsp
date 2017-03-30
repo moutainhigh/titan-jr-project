@@ -22,7 +22,7 @@
 								<li class="r_y2" id="branch_spec" data-show="0" style="display: none" ><div class="rt_title">开户支行</div>
 									<input type="text" id="auto_city_code" class="text text1 ico" placeholder="城市">
 									<input name="cityCode" id="cityCode" type="hidden"/><input name="cityName" id="cityName" type="hidden"/>
-									<input type="text" id="auto_branch_code" class="text text2" datatype="/\w*/"  errormsg="请选择支行" placeholder="请选择支行">
+									<input type="text" id="auto_branch_code" class="text text2" datatype="/\w*/"  errormsg="请选择支行" afterPassed="checkBranch" placeholder="请选择支行">
 									<input name="branchCode" id="branchCode" type="hidden"/>
 									</li>
 								<li class="r_y1"><div class="rt_title">收款账号</div><input type="text" class="text" id="bankCardCode" name="bankCardCode" datatype="/^[0-9]{6,30}$/"  require="true" errormsg="账号错误" placeholder="请输入收款账号"></li>
@@ -42,17 +42,15 @@
 			if(!bank_card_form.validate()){
 				 return ;
 			}
-			if($("#branch_spec").attr("data-show")==1){
-				if($("#auto_city_code").val().length==0||$("#auto_branch_code").val().length==0){
-					bank_card_form._setErrorStyle($("#auto_branch_code"),"请选择支行");
-					return ;
-				}
-			}	
+				
 			$("#bank_card_form").submit();
 		}
 		function checkBranch(){
-			if($("#auto_city_code").val().length==0||$("#auto_branch_code").val().length==0){
-				return false;
+			if($("#branch_spec").attr("data-show")==1){
+				if($("#auto_city_code").val().length==0||$("#auto_branch_code").val().length==0){
+					bank_card_form._setErrorStyle($("#auto_branch_code"),"请选择支行");
+					return false;
+				}
 			}
 			return true;
 		}
@@ -95,6 +93,7 @@
 		        var arr = d.val.split("-");
 		        $("#cityCode").val(d.key);
 		        $("#cityName").val(arr[arr.length-1]);
+		        input.val(arr[arr.length-1]);
 		        showBranch();
 		        clearBranch();
 		    }
