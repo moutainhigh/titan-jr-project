@@ -13,7 +13,7 @@
 
 <div class="register r_two r_h680">
 	<div class="r_box ">
-		<form action="" id="info_form" method="post">
+		<form action="" id="info_form" method="post" onsubmit="return checkOrgReg();">
 			<!-- 新增时使用 -->
         	<input type="hidden" name="userLoginName" value="${regUserLoginInfo.userLoginName}"/>
         	<input type="hidden" name="password" value="${regUserLoginInfo.password}"/>
@@ -148,13 +148,8 @@ function ajaxFileUpload() {
 
 //注册
 function regOrg(){
-	if(!vform.validate()){
-		return;
-	}
-	var imageV = $("#pre_view").attr("data-src-v");
-	if(typeof(imageV)=='undefined'||imageV.length==0){
-		new Tip({msg:"请上传证件照",type:2,timer:2000});
-		return;
+	if(checkOrgReg()==false){
+		return ;
 	}
 	var smsRegCodeEle = $("#smsRegCode");
 	var userLoginName = $("#mobiletel").val();
@@ -189,6 +184,17 @@ function regOrg(){
 		}
 	});
 	
+}
+function checkOrgReg(){
+	if(!vform.validate()){
+		return false;
+	}
+	var imageV = $("#pre_view").attr("data-src-v");
+	if(typeof(imageV)=='undefined'||imageV.length==0){
+		new Tip({msg:"请上传证件照",type:2,timer:2000});
+		return false;
+	}
+	return true;
 }
 //检查注册编码
 function checkOrgRegNum(value, inputDom){
