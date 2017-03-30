@@ -1,8 +1,10 @@
 package com.fangcang.titanjr.web.controller;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fangcang.titanjr.common.enums.BusTypeEnum;
@@ -34,10 +36,13 @@ import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.AESUtil;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.common.util.SMSTemplate;
 import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.EmployeePojo;
@@ -63,7 +68,9 @@ public class SettingEmployeeController extends BaseController{
 
 	@Autowired
 	private TitanFinancialRateService titanFinancialRateService;
-
+	
+	@Resource
+	private TitanFinancialSendSMSService smsService;
 	/**
 	 * 左侧菜单（本地调试使用）
 	 * @return
@@ -202,7 +209,7 @@ public class SettingEmployeeController extends BaseController{
 	}
 	
 	/***
-	 * 保存添加员工
+	 * 新增用户时,保存员工
 	 * @param employeePojo
 	 * @param model
 	 * @return
@@ -226,8 +233,6 @@ public class SettingEmployeeController extends BaseController{
 		
 		String userId = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID);
 		
-		 
-		//新增用户
 		UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
 		userRegisterRequest.setOperateTime(DateUtil.dateToString(DateUtil.getCurrentDate()));
     	userRegisterRequest.setIsAdminUser(0);
@@ -237,19 +242,31 @@ public class SettingEmployeeController extends BaseController{
     	userRegisterRequest.setRoleIdList(toList(employeePojo.getCheckedRoleId()));
     	userRegisterRequest.setUnselectRoleIdList(toList(employeePojo.getUncheckedRoleId()));
     	//生成一个密码
-    	userRegisterRequest.setPassword(RandomStringUtils.randomAlphabetic(6));
+    	userRegisterRequest.setPassword(RandomStringUtils.randomNumeric(8));
     	userRegisterRequest.setRegisterSource(CoopTypeEnum.TWS.getKey());
     	userRegisterRequest.setUserId(userId);//金服机构
     	try {
 			UserRegisterResponse respose = titanFinancialUserService.registerFinancialUser(userRegisterRequest);
 			if(respose.isResult()){
-				putSuccess("添加成功");
+				putSuccess("员工添加成功");
+				
 				if(verifyCheckCodeResponse.getCodeId()>0){
 					UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
 					updateCheckCodeRequest.setCodeId(verifyCheckCodeResponse.getCodeId());
 					updateCheckCodeRequest.setIsactive(0);
 					organService.useCheckCode(updateCheckCodeRequest);
 				}
+				//发送通知短信
+				OrgDTO orgDTO = new OrgDTO();
+				orgDTO.setOrgcode(userId);
+				orgDTO = organService.queryOrg(orgDTO);
+				SendMessageRequest sendCodeRequest = new SendMessageRequest();
+				sendCodeRequest.setReceiveAddress(userRegisterRequest.getLoginUserName());
+				sendCodeRequest.setSubject(SMSTemplate.EMPLOYEE_ADD_SUCCESS.getSubject());
+				sendCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+				sendCodeRequest.setContent(MessageFormat.format(SMSTemplate.EMPLOYEE_ADD_SUCCESS.getContent(), new Object[]{orgDTO.getOrgname(),userRegisterRequest.getLoginUserName(),userRegisterRequest.getPassword()}));
+				smsService.asynSendMessage(sendCodeRequest);
+				
 			}else{
 				putSysError(respose.getReturnMessage());
 			}
@@ -322,13 +339,16 @@ public class SettingEmployeeController extends BaseController{
 	@ResponseBody
 	@RequestMapping("/setting/freeze-user")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
-	public String freezeUser(Integer status,Integer tfsUserId){
-		if((status==null||status<0)||(tfsUserId==null||tfsUserId<0)){
-			putSysError("参数错误");
+	public String freezeUser(Integer status,String tfsUserId){
+		if((status==null||status<0)||(!StringUtil.isValidString(tfsUserId))){
+			putSysError("请求参数错误");
 			return toJson();
 		}
+		int tfsUserIdInt = 0;
+		tfsUserIdInt = NumberUtils.toInt(AESUtil.decrypt(tfsUserId));
+		
 		UserFreezeRequest userFreezeRequest = new UserFreezeRequest();
-		userFreezeRequest.setTfsUserId(tfsUserId);
+		userFreezeRequest.setTfsUserId(tfsUserIdInt);
 		userFreezeRequest.setStatus(status);
 		
 		try {
@@ -357,9 +377,15 @@ public class SettingEmployeeController extends BaseController{
 	@ResponseBody
 	@RequestMapping("/setting/cancel-permission")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
-	public String cancelPermission(Integer tfsUserId){
+	public String cancelPermission(String tfsUserId){
+		if(!StringUtil.isValidString(tfsUserId)){
+			putSysError("请求参数错误");
+			return toJson();
+		}
+		int tfsUserIdInt = 0;
+		tfsUserIdInt = NumberUtils.toInt(AESUtil.decrypt(tfsUserId));
 		CancelPermissionRequest cancelPermissionRequest = new CancelPermissionRequest();
-		cancelPermissionRequest.setTfsUserId(tfsUserId);
+		cancelPermissionRequest.setTfsUserId(tfsUserIdInt);
 		try {
 			CancelPermissionResponse cancelPermissionResponse =	titanFinancialUserService.cancelPermission(cancelPermissionRequest);
 			if(cancelPermissionResponse.isResult()){

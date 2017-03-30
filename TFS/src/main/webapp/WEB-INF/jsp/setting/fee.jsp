@@ -28,7 +28,7 @@
 			<tr class="TFS_setth">
 				<td>付款方式</td>
 				<td>基础费率</td>
-				<td>执行费率（至2017.03.31）</td>
+				<td>执行费率（至2017.06.30）</td>
 			</tr>
 			<c:forEach items="${rateInfoList}" var="rateInfo">
 				<tr class="TFS_settd">

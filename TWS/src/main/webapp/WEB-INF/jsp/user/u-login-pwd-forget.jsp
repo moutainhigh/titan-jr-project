@@ -31,7 +31,7 @@
 	</div>
 </div>
 
-<form action="<%=basePath %>/ex/login-pwd-set.shtml" method="post" id="to_pwd_set_form">
+<form action="<%=basePath %>/ex/login-pwd-update.shtml" method="post" id="to_pwd_set_form">
 	<input type="hidden" name="userLoginName" id="f_userLoginName"/>
 	<input type="hidden" name="code" id="f_code"/>
 </form>

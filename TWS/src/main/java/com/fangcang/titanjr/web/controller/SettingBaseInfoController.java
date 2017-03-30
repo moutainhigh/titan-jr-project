@@ -133,10 +133,22 @@ public class SettingBaseInfoController extends BaseController{
 		}
 	}
 	/***
+	 * 登录密码页面
+	 * @return
+	 */
+	@RequestMapping("/ex/login-pwd-update")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	public String loginPwdModify(String userLoginName,String code,Model model){
+		model.addAttribute("userLoginName", userLoginName);
+		model.addAttribute("code", code);
+		return "setting/login-pwd-update";
+	}
+	
+	/***
 	 * 设置登录密码页面
 	 * @return
 	 */
-	@RequestMapping("/ex/login-pwd-set")
+	@RequestMapping("/setting/login-pwd-set")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String loginPwdSet(String userLoginName,String code,Model model){
 		model.addAttribute("userLoginName", userLoginName);
@@ -305,6 +317,39 @@ public class SettingBaseInfoController extends BaseController{
     	}else{
     		return toJson(putSysError(verifyCheckCodeResponse.getReturnMessage()));
     	}
+	}
+	
+	@RequestMapping("/setting/set-login-password")
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+	@ResponseBody
+	public String setLoginPassword(String newLoginPassword){
+		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+		userInfoQueryRequest.setTfsUserId(Integer.valueOf(getTfsUserId()));
+		UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
+		TitanUser titanUser = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+		
+		if(StringUtil.isValidString(titanUser.getPassword())){
+			putSysError("已经设置过登录密码");
+			return toJson();
+		}
+		
+		LoginPasswordRequest loginPasswordRequest = new LoginPasswordRequest();
+		loginPasswordRequest.setTfsuserid(Integer.valueOf(getTfsUserId()));
+		loginPasswordRequest.setNewLoginPassword(newLoginPassword);
+		try {
+			BaseResponseDTO response = userService.saveLoginPassword(loginPasswordRequest);
+			if(response.isResult()){
+				putSuccess("密码修改成功");
+				return toJson();
+			}else{
+				putSysError(response.getReturnMessage());
+				return toJson();
+			}
+		} catch (GlobalServiceException e) {
+			LOG.error("设置登录密码错误，参数newLoginPassword:"+newLoginPassword+",tfsuserid:"+getTfsUserId(), e);
+			putSysError(WebConstant.CONTROLLER_ERROR_MSG);
+			return toJson();
+		}
 	}
 	
 	/**

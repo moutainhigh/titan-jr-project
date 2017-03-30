@@ -18,7 +18,19 @@ public class OrgDTO implements Serializable{
 	private Integer statusId;
 	
 	private String resultkey;
+	/**
+	 * 联系手机号
+	 */
+	private String mobiletel;
+	/**
+	 * 联系人
+	 */
+	private String connect;
 	
+	/**
+	 * 机构类型：企业:1，个人:2
+	 */
+	private Integer usertype;
 	
 	public Integer getOrgid() {
 		return orgid;
@@ -74,4 +86,23 @@ public class OrgDTO implements Serializable{
 	public void setResultkey(String resultkey) {
 		this.resultkey = resultkey;
 	}
+	public String getMobiletel() {
+		return mobiletel;
+	}
+	public void setMobiletel(String mobiletel) {
+		this.mobiletel = mobiletel;
+	}
+	public String getConnect() {
+		return connect;
+	}
+	public void setConnect(String connect) {
+		this.connect = connect;
+	}
+	public Integer getUsertype() {
+		return usertype;
+	}
+	public void setUsertype(Integer usertype) {
+		this.usertype = usertype;
+	}
+	
 }

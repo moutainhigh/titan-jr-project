@@ -299,8 +299,9 @@ public class FinancialAccountController extends BaseController {
      * @return
      * @throws Exception
      */
+    
+    @RequestMapping(value = "/order-remark-history")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-    @RequestMapping(value = "/order-remark-history", method = RequestMethod.GET)
     public String toOrderRemarkHisotry(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
             tradeDetailRequest.setUserid(this.getUserId());
@@ -484,14 +485,14 @@ public class FinancialAccountController extends BaseController {
     
 //    绑定提现卡start
     @RequestMapping("toBindCardStepOne")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     public String toBindCardStepOne(String modifyOrBind,Model model){
     	model.addAttribute("modifyOrBind", modifyOrBind);
     	return "account-overview/bind_card_one";
     }
     
     @RequestMapping("toBindCardStepTwo")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     public String toBindCardStepTwo(String modifyOrBind,Model model){
     	if (null != this.getUserId()) {
             model.addAttribute("organ", this.getTitanOrganDTO());
@@ -501,7 +502,7 @@ public class FinancialAccountController extends BaseController {
     }
     
     @RequestMapping("bankCardBind")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
+    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     public String bankCardBindToPublic(BindBankCardRequest  bindBankCardRequest,Model model){
      	if(!StringUtil.isValidString(bindBankCardRequest.getBankCardCode()) 
     			|| !StringUtil.isValidString(bindBankCardRequest.getBankCardName())
