@@ -28,10 +28,10 @@
 					<li class="r_y2"><input type="password" class="text" id="newLoginPassword" readonly="readonly" placeholder="新密码" datatype="/\w{6,}/" require="true" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="newLoginPassword_hint" style="display:none;"></em></li>					
 				</ul>
 			</div>
-			<div class="r_tit"><b>确认密码：</b></div>
+			<div class="r_tit"><b>确认新密码：</b></div>
 			<div class="r_text">
 				<ul>
-					<li class="r_y3"><input type="password" class="text" name="passwordConfirm" id="passwordConfirm" readonly="readonly" placeholder="确认密码" datatype="*" require="true" errormsg="两次密码输入不一致" customFun="confirmPass"><i class="ico rt_eye "></i></li>				
+					<li class="r_y3"><input type="password" class="text" name="passwordConfirm" id="passwordConfirm" readonly="readonly" placeholder="确认新密码" datatype="*" require="true" errormsg="两次密码输入不一致" customFun="confirmPass"><i class="ico rt_eye "></i></li>				
 					<li class="lb_btn"><a href="javascript:;" class="" onclick="savePassword()">确定</a></li>
 				</ul>
 			</div>
@@ -93,15 +93,6 @@ function savePassword(){
 			}else{
 				new top.Tip({msg : result.msg, type: 2, timer:2000});
 			}
-		},
-		beforeSend:function(){
-	    	  top.F.loading.show();
-	      },
-	    complete:function(){
-	    	  top.F.loading.hide();
-	    },
-	    error:function(xhr,status){
-			new top.Tip({msg : '系统错误，请重试!', type: 2 , time:1500});
 		}
 	});
 }
