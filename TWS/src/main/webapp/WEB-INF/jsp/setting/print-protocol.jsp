@@ -14,7 +14,7 @@
 <!-- 内容 -->
 <div class="w_1200" style="width:860px;">
 	<div class="overview clearfix m_t20 o_set">	
-		<div class="s_right clearfix" style="width:830px;border:0;">
+		<div class="s_right clearfix" style="width:830px;border:0;margin-left:0;">
 			<h2 style="text-align:center;padding:20px 0px;font-weight:bold;font-size:20px;">泰坦云金融服务协议</h2>
 			<jsp:include page="/comm/content.jsp"></jsp:include>
 			<div class="sra_btn" id="p_btn">
