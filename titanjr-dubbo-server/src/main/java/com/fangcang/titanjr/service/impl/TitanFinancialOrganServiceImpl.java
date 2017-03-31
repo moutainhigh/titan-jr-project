@@ -45,6 +45,7 @@ import com.fangcang.titanjr.common.util.ImageIOExtUtil;
 import com.fangcang.titanjr.common.util.ImageResizer;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberPrefix;
+import com.fangcang.titanjr.common.util.SMSTemplate;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.rsa.RSAUtil;
 import com.fangcang.titanjr.dao.TitanAccountDao;
@@ -79,7 +80,9 @@ import com.fangcang.titanjr.dto.request.OrganImageRequest;
 import com.fangcang.titanjr.dto.request.OrganImageUploadRequest;
 import com.fangcang.titanjr.dto.request.OrganRegisterRequest;
 import com.fangcang.titanjr.dto.request.OrganRegisterUpdateRequest;
+import com.fangcang.titanjr.dto.request.SendMessageRequest;
 import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.request.UserRegisterRequest;
 import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
@@ -96,6 +99,7 @@ import com.fangcang.titanjr.dto.response.OrganImageUploadResponse;
 import com.fangcang.titanjr.dto.response.OrganQueryCheckResponse;
 import com.fangcang.titanjr.dto.response.OrganRegisterResponse;
 import com.fangcang.titanjr.dto.response.OrganRegisterUpdateResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.dto.response.UserRegisterResponse;
 import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
 import com.fangcang.titanjr.entity.TitanAccount;
@@ -128,6 +132,7 @@ import com.fangcang.titanjr.rs.response.PersonOrgRegResponse;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanCodeCenterService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
@@ -172,7 +177,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     private TitanCheckCodeDao checkCodeDao;
     @Resource
     private TitanFinancialUserService titanFinancialUserService;
-    
+    @Resource
+	private TitanFinancialSendSMSService smsService;
     @Resource
     private TitanOpenOrgDao titanOpenOrgDao;
 
@@ -756,9 +762,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	    	param.setUserid(newOrgEntity.getUserid());
 	    	
 	    	
-	    	
-	    	
-	    	
 	    	PaginationSupport<TitanOrgCheck> orgCheckPage = new PaginationSupport<TitanOrgCheck>();
 	    	titanOrgCheckDao.selectForPage(param, orgCheckPage);
 	    	OrgCheckResultEnum newOrgCheckResultEnum = convertCheckResultEnum(organCheckRequest.getCheckstatus());
@@ -781,7 +784,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	    	titanOrgCheck.setCheckuser(organCheckRequest.getOperator());
 	    	titanOrgCheck.setChecktime(nowDate);
 	    	// 审核通过创建账号 account
-	    	if(organCheckRequest.getCheckstatus()==1){
+	    	if(organCheckRequest.getCheckstatus()==1){//审核通过
 	    		PaginationSupport<TitanAccount> accountPage = new PaginationSupport<TitanAccount>();
 	        	TitanAccountParam condition = new TitanAccountParam();
 	        	//如何确定该机构的账号还没有创建，唯一性
@@ -821,6 +824,9 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	            		titanOrgCheck.setResultkey(OrgCheckResultEnum.PASS.getResultkey());
 	            		titanOrgCheck.setResultmsg(OrgCheckResultEnum.PASS.getResultmsg());
 	            		titanOrgCheckDao.update(titanOrgCheck);
+	            		
+	            		sendRegNotify(newOrgEntity.getUserid());
+	            		
 	        		}else{//失败抛出异常
 	        			String rsmsg  = baseResponse.getReturnMsg();
 	        			titanOrgCheck.setCheckuser(CommonConstant.CHECK_ADMIN_RS);
@@ -856,6 +862,31 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	response.putSuccess("操作成功");
     	return response;
     }
+	
+	private void sendRegNotify(String userId){
+		OrgDTO orgDTO = new OrgDTO();
+		orgDTO.setUserid(userId);
+		orgDTO = this.queryOrg(orgDTO);
+		String receiveAddress;
+		if(orgDTO.getUsertype().equals(TitanOrgEnum.UserType.ENTERPRISE.getKey())){//企业用户
+			//给联系人发
+			receiveAddress = orgDTO.getMobiletel();
+		}else{
+			//给管理员发
+			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+			userInfoQueryRequest.setIsadmin(1);
+			userInfoQueryRequest.setOrgCode(orgDTO.getOrgcode());
+			UserInfoPageResponse userInfoPageResponse = titanFinancialUserService.queryUserInfoPage(userInfoQueryRequest);
+			receiveAddress = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0).getUserloginname();
+		}
+		SendMessageRequest sendCodeRequest = new SendMessageRequest();
+		sendCodeRequest.setReceiveAddress(receiveAddress);
+		sendCodeRequest.setSubject(SMSTemplate.ORG_REG_SUCCESS.getSubject());
+		sendCodeRequest.setContent(SMSTemplate.ORG_REG_SUCCESS.getContent());
+		sendCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+		smsService.asynSendMessage(sendCodeRequest);
+	}
+	
 	/**
 	 * 添加审核日志
 	 * @param titanOrgCheck
