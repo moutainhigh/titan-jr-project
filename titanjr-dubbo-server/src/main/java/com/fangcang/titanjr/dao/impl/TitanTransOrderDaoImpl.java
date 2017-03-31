@@ -90,7 +90,16 @@ public class TitanTransOrderDaoImpl extends GenericDAOMyBatisImpl implements Tit
             throw new DaoException(e);
         }
     }
-    
+
+    @Override
+    public List<TransOrderDTO> selectTitanTransOrderLock(TransOrderRequest transOrderRequest) throws DaoException {
+        try {
+            return super.selectList("com.fangcang.titanjr.dao.TitanTransOrderDao.selectTitanTransOrderLock", transOrderRequest);
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+    }
+
 	@Override
 	public List<RepairTransferDTO> queryTitanTransOrderByStatus(RepairTransferRequest repairTransferRequest){
 		 try {

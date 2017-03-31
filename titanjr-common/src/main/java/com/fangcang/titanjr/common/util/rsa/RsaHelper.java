@@ -20,15 +20,19 @@ import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 public class RsaHelper {
-	 /** *//** 
+
+	private static final Log log = LogFactory.getLog(RsaHelper.class);
+	 /**
      * RSA最大加密明文大小 
      */  
     private static final int MAX_ENCRYPT_BLOCK = 117;  
       
-    /** *//** 
+    /**
      * RSA最大解密密文大小 
      */  
     private static final int MAX_DECRYPT_BLOCK = 128; 
@@ -218,7 +222,7 @@ public class RsaHelper {
 	        out.close(); 
 	        return decryptedData;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("encryptData use public key error;", e);
 			return null;
 		}
 	}
@@ -253,7 +257,7 @@ public class RsaHelper {
 	        out.close();  
 	        return decryptedData;  
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("decryptData using private key error", e);
 			return null;
 		}
 	}
@@ -275,7 +279,7 @@ public class RsaHelper {
 	                dataByteArray, pubKey);	        
 			return Base64Helper.encode(encryptedDataByteArray);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			log.error("encryptDataFromStr using public key error" , e);
 			return "";
 		}
 	}
