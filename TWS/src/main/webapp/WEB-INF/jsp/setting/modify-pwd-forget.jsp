@@ -10,7 +10,7 @@
 </head>
   
 <body style="min-width: 1300px;" class="bg">
-<jsp:include page="./head.jsp">
+<jsp:include page="/comm/head-title.jsp">
 	<jsp:param value="修改付款密码" name="title"/>
 </jsp:include>
 <div class="register r_three forget r_alter">
@@ -130,6 +130,7 @@
  	var payPassword3 = passwordStr3.returnStr();
  	var payPassword4 = passwordStr4.returnStr();
  	$("#six_pwd_err").removeClass("sp_add");
+ 
  	if(payPassword3.length !=6 || payPassword4.length!=6||(!payPwd_reg.test(payPassword3))||(!payPwd_reg.test(payPassword4))){
  		$("#six_pwd_err").addClass("sp_add");
 		$("#six_pwd_err .rp_hint").html('密码必须为6位数字');

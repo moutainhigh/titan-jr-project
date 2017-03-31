@@ -10,7 +10,7 @@
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
 <body style="min-width: 1300px;" class="bg" >
-<jsp:include page="./head.jsp">
+<jsp:include page="/comm/head-title.jsp">
 	<jsp:param value="修改登录密码" name="title"/>
 </jsp:include>
 
@@ -21,7 +21,7 @@
 				<ul>			
 					<li class="f_14 l_h24">用户名：<span id="userLoginName">${tfsUserLoginName }</span></li>		
 					<li class="r_yzm m_b30">
-					<input type="text" class="text" placeholder="请输入验证码" id="code" datatype="/\d{6,}/" errormsg="验证码错误"><div class="r_verify">获取验证码</div>
+					<input type="text" class="text" placeholder="请输入验证码" id="code" require="true" datatype="/\w*/" errormsg="验证码错误"><div class="r_verify">获取验证码</div>
 					</li>			
 					<li class="lb_btn"><a href="javascript:;" class="" onclick="next()">下一步</a></li>	
 				</ul>
@@ -30,7 +30,7 @@
 	</div>
 </div>
 <jsp:include page="/comm/foot.jsp"></jsp:include>
-<form action="<%=basePath %>/ex/login-pwd-set.shtml" method="post" id="to_pwd_set_form">
+<form action="<%=basePath %>/ex/login-pwd-update.shtml" method="post" id="to_pwd_set_form">
 	<input type="hidden" name="userLoginName" id="f_userLoginName"/>
 	<input type="hidden" name="code" id="f_code"/>
 </form>
@@ -71,67 +71,10 @@ function next(){
 	});
     
 }
-//获取验证码
-var sendingFlag = false;
-var i=60,interval=null;
-function timeOut(_this){
-    interval=setInterval(function () {                
-         if(i>0){
-             _this.html("重新发送(" + i + ")"); 
-             i--;
-         }else{
-        	 clearSend();
-         }
-    }, 1000);
-}
-function clearSend(){
-	$('.r_verify').removeClass("r_huise").html("重新获取验证码");
-     clearInterval(interval);
-     i=60;
-     sendingFlag = false;
-}
-//验证码发送倒计时
-$('.r_verify').on('click',function(){
-	if(sendingFlag){
-		return;
-	}
-    var raObj = $("#userLoginName");
-    var receiveAddress = raObj.html();
-    if($.trim(receiveAddress).length==0){
-    	passUserloginForm._setErrorStyle(raObj,'必填项');
-		return;	
-	}
-    if((!phone_reg.test(receiveAddress))&&(!email_reg.test(receiveAddress))){
-    	passUserloginForm._setErrorStyle(raObj,'格式不正确');
-		return false;
-	}
-    
-    _this = $(this);
-	if(!$(this).hasClass("r_huise")){  
-		sendingFlag = true;
-    	$(this).text("重新发送(60)");
-        $(this).addClass('r_huise');
-        timeOut($(this));
-    }
-	
-	$.ajax({
-		method:'post',
-		url : '<%=basePath%>/ex/sendCode.shtml',
-		data:{"receiveAddress":receiveAddress,"msgType":3},
-		dataType : 'json',
-		success : function(result){
-			if(result.code==1){
-			    new top.Tip({msg : '验证码已成功发送,请注意查收！', type: 1, timer:2000});    
-			}else{
-				new top.Tip({msg : result.msg, type: 1, timer:2500});
-			}
-		},
-		complete:function(){
-			clearSend();
-	    }
-	});
+$(function(){
+	//获取验证码
+	TWS.initSendCode({send_btn:$('.r_verify'),receive_input:$("#userLoginName"),msgType:3,fui_form:passUserloginForm,verifyType:"all"});
 });
-
 </script>
 </body>
 </html>

@@ -205,7 +205,7 @@ public class FinancialAccountController extends BaseController {
         return "account-overview/order-withdraw-detail";
     }
 
-    @RequestMapping(value = "/query-org-page", method = RequestMethod.GET)
+    @RequestMapping(value = "/query-org-page")
     public String queryForPage(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
             model.addAttribute("organ", this.getTitanOrganDTO());

@@ -392,7 +392,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 			invalidPubCardModifyRequest.setAccountid(accountId);
 			InvalidPubCardModifyResponse invalidPubCardModifyResponse = rsBankCardInfoManager.modifyInvalidPublicCard(invalidPubCardModifyRequest);
 			if(invalidPubCardModifyResponse.getOperateStatus().equals(CommonConstant.OPERATE_SUCCESS)){
-				response.putSuccess();
+				response.putSuccess("修改绑卡信息成功");
 			}else{
 				response.putErrorResult(invalidPubCardModifyResponse.getReturnCode(), invalidPubCardModifyResponse.getReturnMsg());
 			}

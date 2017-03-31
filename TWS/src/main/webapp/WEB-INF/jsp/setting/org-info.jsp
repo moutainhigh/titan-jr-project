@@ -33,7 +33,7 @@
 				<!-- 企业信息 -->
 				<div class="srl_c clearfix"><div class="w_120 fl">公司名称：</div> <div class="con">${financialOrganDTO.orgName }</div></div>
 				<div class="srl_c clearfix"><div class="w_120 fl">营业执照号：</div> <div class="con">${financialOrganDTO.buslince }</div></div>
-				<div class="srl_c clearfix"><div class="w_120 fl">营业执照照片：</div> <div class="con cursor p_t15" style="width:140px;"><img src="${small_img_10}" width="140" height="100" class="J_magnify"></div></div>
+				<div class="srl_c clearfix"><div class="w_120 fl">营业执照照片：</div> <div class="con cursor p_t15"><img src="${small_img_10}" width="140" height="100" class="J_magnify"></div></div>
 				<div class="srl_c clearfix"><div class="w_120 fl">联系人：</div> 
 					<div class="fl message dn"><div class="con"><input type="text"  id="connect"> <i class="btn J_save" data-field="connect">保存</i><i class="btn btn_g J_cancel">取消</i></div></div>
 					<div class="fl message "><div class="con fl">${financialOrganDTO.connect }</div> <a href="javascript:void(0)" class="blue undl fl J_alter">修改</a></div>

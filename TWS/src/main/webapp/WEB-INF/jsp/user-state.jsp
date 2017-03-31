@@ -41,7 +41,7 @@
 	<!-- 初审不通过 -->
 	<c:if test="${code=='ORG_FT_INVALID' }">
 		<div class="r_box">				
-			<div class="r_t_text">
+			<div class="r_t_text " style="margin-bottom:10px;">
 				<div class="rt_img auditOn"><i class="ico"></i></div>
 				<div class="rt_c h_70">
 					<p>初审不通过</p>			
@@ -54,7 +54,7 @@
 						<li class="last">审核通过</li>
 					</ul>
 				</div>
-				<div class="rt_on">
+				<div class="rt_on ">
 					不通过原因：${msg}
 				</div>	
 			</div>

@@ -40,7 +40,7 @@
 			<div class="lb_list">
 			<ul>
 				<li class="l_zh "><em class="ico "></em><input type="text" class="text" id="susername" placeholder="手机号码/邮箱" datatype="/\w*/" afterPassed="checkUserName" errormsg="必填项"></li>
-				<li class="l_mm "><em class="ico "></em><input type="text" class="text" id="code" placeholder="验证码" datatype="/\w{4,}/" errormsg="验证码错误"><div class="lb_verify">获取验证码</div></li>
+				<li class="l_mm "><em class="ico "></em><input type="text" class="text" id="code" placeholder="验证码" require="true" datatype="/\w*/" errormsg="验证码错误"><div class="lb_verify">获取验证码</div></li>
 				<li class="lb_Rememb">
 					<span><i class="ico Ibadd"></i> <em>记住用户名</em></span>
 				</li>
@@ -83,56 +83,6 @@ $('.user .lb_cut').on('click',function(){
 	$(this).parent().addClass('dn').siblings().removeClass('dn');
 	 cur_plane='dynamic';
 })
-//验证码
-var sendingFlag = false;
-function timeOut(_this){
-    var i=59;
-    var interval=setInterval(function () {                
-         if(i>0){
-             _this.html("重新发送("+i+")"); 
-             i--;
-         }else{
-            _this.removeClass("lb_huise").html("重新获取验证码");
-            clearInterval(interval);
-            sendingFlag = false;
-         }; 
-    }, 1000);
-};
-$('.lb_verify').on('click',function(){
-	if(sendingFlag){
-		return;
-	}
-	var susernameObj = $("#susername");
-	var susername = susernameObj.val();
-	if((!phone_reg.test(susername))&&(!email_reg.test(susername))){
-		Login.getCurPlane().setErrormsg(susernameObj,'格式不正确');
-		return ;
-	}
-    if(!$(this).hasClass("lb_huise")){
-    	sendingFlag = true;
-    	$(this).text("重新发送(60)");
-        $(this).addClass('lb_huise');
-        timeOut($(this));
-    }
-    
-	_this= $(this);
-	$.ajax({
-		data:{"receiveAddress":susername,"msgType":4},
-		url : '<%=basePath%>/ex/sendCode.shtml',
-		dataType : 'json',
-		success : function(result){
-			if(result.code==1){
-			    new Tip({msg : '验证码已成功发送,请注意查收！', type: 1, timer:2000});    
-			}else{
-				new top.Tip({msg : result.msg, type: 1, timer:2500});
-			}
-		},
-		error : function(){
-			new top.Tip({msg : '网络错误，请重试', type: 1, timer:2000});
-		}
-	});
-})
-
 //输入框/按钮效果控制
 $(function(){
 	$('.l_zh input').on('focus',function(){	
@@ -149,6 +99,9 @@ $(function(){
 		$('.l_mm').removeClass('l_mm_hover');		
 	});
 	Login.putUsername();
+	//获取验证码
+	TWS.initSendCode({send_btn:$('.lb_verify'),receive_input:$("#susername"),msgType:4,fui_form:Login.getCurPlane(),verifyType:"all"});
+
 });
 
 var Login ={};

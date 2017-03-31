@@ -32,7 +32,7 @@
 				<div class="sr_list">
 					<div class="img img1 ico"></div>
 					<div class="tit">登录密码</div>
-					<div class="srl_c">尚未设置登录密码 <a href="<%=basePath %>/ex/login-pwd-set.shtml" class="blue undl" target="_blank">现在设置</a></div>
+					<div class="srl_c">尚未设置登录密码 <a href="<%=basePath %>/setting/login-pwd-set.shtml" class="blue undl" target="_blank">现在设置</a></div>
 				</div>
 			</c:if>
 			

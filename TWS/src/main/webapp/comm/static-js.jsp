@@ -10,8 +10,8 @@ var js_base_path = "<%=basePath%>";
 <script type="text/javascript" src="<%=basePath%>/js/jquery.cookie.js"></script>
 
 <script type="text/javascript" src="<%=cssWalletPath%>/js/AD.js"></script>
- <script type="text/javascript" src="<%=basePath%>/js/tfs-common.js"></script>
- <script type="text/javascript" src="<%=basePath%>/js/tfs-util.js"></script>
+ <script type="text/javascript" src="<%=basePath%>/js/tfs-common.js?v=20170306"></script>
+ <script type="text/javascript" src="<%=basePath%>/js/tfs-util.js?v=20170306"></script>
  <script type="text/javascript" src="<%=basePath%>/rsa/Barrett.js"></script>
  <script type="text/javascript" src="<%=basePath%>/rsa/BigInt.js"></script>
  <script type="text/javascript" src="<%=basePath%>/rsa/RSA.js"></script>

@@ -31,7 +31,7 @@
 			    			</li>
 			
 			    			<li class="yzm"><div class="title">验证码：</div>
-								<input type="text" class="text" placeholder="验证码" id="code" datatype="/\w{4,}/" errormsg="验证码错误" customFun="checkCode"><div class="r_verify" style="left:210px;">获取验证码</div>
+								<input type="text" class="text" placeholder="验证码" id="code" require="true" datatype="/\w*/" errormsg="验证码错误" customFun="checkCode"><div class="r_verify" style="left:210px;">获取验证码</div>
 							</li>
 			    		</ul>
 			    	</div>
@@ -52,7 +52,7 @@
 			    				</td>
 			    				<td>
 			    					<div class="TFS_addtabletop"><b>充值&提现</b><label class="f_ui-checkbox-c3 curpo fr"><input type="checkbox" name="roleId" value="40" /><i></i></label></div>
-			    					<p class="TFS_tips">可以为此泰坦金服账户账户充值账户余额可以提现的权限</p>
+			    					<p class="TFS_tips">可以为此泰坦钱包账户充值,账户余额可以提现的权限</p>
 			    					<span class="TFS_tipsproposal">建议用户：财务人员等</span>
 			    				</td>
 			    				<td>
@@ -110,48 +110,9 @@ $(window).on('resize.fixed',function(){
     scrollCon();
 });
 
-//验证码
-function timeOut(_this){
-    var i=60;
-    var interval=setInterval(function () {                
-         if(i>0){
-             _this.html("重新发送("+i+")"); 
-             i--;
-         }else{
-            _this.removeClass("r_huise").html("重新获取验证码");
-            clearInterval(interval);
-         }; 
-    }, 1000);
-};
-$('.r_verify').on('click',function(){			
-    var receiveAddressEle = $("#receiveAddress");
-	var receiveAddress = receiveAddressEle.val();
-	if(!(phone_reg.test(receiveAddress)||email_reg.test(receiveAddress))){
-		new top.Tip({msg : "用户名格式不正确", type: 2, timer:2000});
-		return ;
-	}
-	_this= $(this);
-	if(!$(this).hasClass("r_huise")){   
-   		$(this).text("重新发送(60)");
-       $(this).addClass('r_huise');
-       timeOut($(this));
-	}
-	$.ajax({
-		type:'post',
-		data:{"receiveAddress":receiveAddress},
-		url : '<%=basePath%>/ex/sendCode.shtml',
-		dataType : 'json',
-		success : function(result){
-			if(result.code==1){
-			     new top.Tip({msg : '验证码已成功发送,请注意查收！', type: 1, timer:2000});    
-			}else{
-				new top.Tip({msg : result.msg, type: 2, timer:2000});
-			}
-		},
-		error : function(){
-			new top.Tip({msg : '网络错误，请重试', type: 2, timer:2000});
-		}
-	});
+$(function(){
+	//获取验证码
+	TWS.initSendCode({send_btn:$('.r_verify'),receive_input:$("#receiveAddress"),msgType:1,fui_form:vform,verifyType:"all"});
 });
 function checkUserName()
 {
@@ -205,11 +166,16 @@ function checkReceiveAddress(receiveAddress){
 //检查验证码
 function checkCode(){
 	var validateFlag = false;
-	var receiveAddress = $("#employee_add #receiveAddress").val();
+	var receiveAddressEle = $("#employee_add #receiveAddress");
+	var receiveAddress = receiveAddressEle.val();
 	var codeEle = $("#employee_add #code");
 	var code = codeEle.val();
 	if($.trim(code).length==0){
 		vform.setErrormsg(codeEle,'验证码不能为空');
+		return false;
+	}
+	if($.trim(receiveAddress).length==0){
+		vform._setErrorStyle(receiveAddressEle,'用户名不能为空');
 		return false;
 	}
 	$.ajax({

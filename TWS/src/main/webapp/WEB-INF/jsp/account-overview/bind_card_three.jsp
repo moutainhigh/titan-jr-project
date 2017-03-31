@@ -9,16 +9,9 @@
 		<jsp:include page="/comm/static-js.jsp"></jsp:include>
 	</head>
 	<body style="min-width: 1300px;" class="bg" >
-		<div class="header">
-			<div class="w_1200">
-				<div class="logo">
-					<div class="l_img"><a href="<%=basePath%>"><img src="<%=cssWalletPath%>/images/logo.png"></a></div>
-					<div class="l_text">
-						<i class="ico"></i>绑定提现银行卡
-					</div>
-				</div>
-			</div>
-		</div>
+		<jsp:include page="/comm/head-title.jsp">
+			<jsp:param value="绑定提现银行卡" name="title"/>
+		</jsp:include>
 		<div class="register r_three">
 			<div class="r_box">	
 			    <c:choose>

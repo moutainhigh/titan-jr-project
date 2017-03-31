@@ -197,4 +197,7 @@ public class Tools {
         return params.toString();
     }
 	
+	public static StringBuilder getStringBuilder(){
+		return new StringBuilder();
+	}
 }

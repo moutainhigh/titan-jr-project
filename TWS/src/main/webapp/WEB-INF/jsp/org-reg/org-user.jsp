@@ -55,23 +55,23 @@
 		<div class="r_c dn">
 			<div class="r_text" id="reg_person">
 				<form action="<c:url value='/ex/showPersernalInfo.shtml'/>" id="reg_form_phone" method="post">
-				<input type="hidden" name="channel" value="${channel }"/>
-				<input type="hidden" name="info" value="${info }"/>
-				<input type="hidden" name="encrypt_type" value="${encrypt_type }"/>
-				<input type="hidden" name="sign" value="${sign }"/>
-				<ul>
-					<li class="r_y1"><div class="rt_title">用户名</div><input type="text" class="text ui-loginusername" name="userLoginName" placeholder="邮箱/手机号码"  datatype="/\w*/" errormsg="格式不正确" afterPassed="checkGeExist"></li>
-					<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" id="per_pass1" placeholder="设置登录密码" require="true" datatype="/\w{6,}/" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="per_pass1_hint"></em></li>
-					<li class="r_y3"><div class="rt_title">确认密码</div><input type="password" class="text pass2" name="passwordConfirm" placeholder="确认登录密码" require="true" datatype="/\w{6,}/" errormsg="长度太短" afterPassed="confirmPass"><i class="ico rt_eye"></i></li>
-					<li class="r_yzm"><div class="rt_title">验证码</div>
-					<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\d*/" require="true" afterPassed="verifyCode"><div class="r_verify">获取验证码</div>
-					</li>
-					<li class="lb_Rememb">
-						<span class="fl geren"><i class="i_agree ico"></i>同意</span><div class="colour dib services_terms">《泰坦云金融服务协议》</div>
-					</li>
-					<li class="lb_btn "><a href="javascript:;" class="geren-next" onclick="next()">下一步</a></li>
-				</ul>
-				<input type="submit" class="regbtn" style="display:none;">
+					<input type="hidden" name="channel" value="${channel }"/>
+					<input type="hidden" name="info" value="${info }"/>
+					<input type="hidden" name="encrypt_type" value="${encrypt_type }"/>
+					<input type="hidden" name="sign" value="${sign }"/>
+					<ul>
+						<li class="r_y1"><div class="rt_title">用户名</div><input type="text" class="text ui-loginusername" name="userLoginName" placeholder="邮箱/手机号码"  datatype="/\w*/" errormsg="格式不正确" afterPassed="checkGeExist"></li>
+						<li class="r_y2"><div class="rt_title">登录密码</div><input type="password" class="text pass1" name="password" id="per_pass1" placeholder="设置登录密码" require="true" datatype="/\w{6,}/" errormsg="长度太短"><i class="ico rt_eye"></i><em class="ico hint_1" id="per_pass1_hint"></em></li>
+						<li class="r_y3"><div class="rt_title">确认密码</div><input type="password" class="text pass2" name="passwordConfirm" placeholder="确认登录密码" require="true" datatype="/\w{6,}/" errormsg="长度太短" afterPassed="confirmPass"><i class="ico rt_eye"></i></li>
+						<li class="r_yzm"><div class="rt_title">验证码</div>
+						<input type="text" class="text ui-reg" name="regCode" placeholder="验证码" datatype="/\d*/" require="true" afterPassed="verifyCode"><div class="r_verify">获取验证码</div>
+						</li>
+						<li class="lb_Rememb">
+							<span class="fl geren"><i class="i_agree ico"></i>同意</span><div class="colour dib services_terms">《泰坦云金融服务协议》</div>
+						</li>
+						<li class="lb_btn "><a href="javascript:;" class="geren-next" onclick="next()">下一步</a></li>
+					</ul>
+					<input type="submit" class="regbtn" style="display:none;">
 				</form>
 			</div>
 			<div class="r_hint">

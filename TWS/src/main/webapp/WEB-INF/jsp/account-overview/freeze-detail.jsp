@@ -9,16 +9,10 @@
 </head>
 <body style="min-width: 1300px;" class="bg" >
 <!-- 头部 -->
-<div class="header">
-	<div class="w_1200">
-		<div class="logo">
-			<div class="l_img"><a href="<%=basePath%>"><img src="<%=cssWalletPath%>/images/logo.png"></a></div>
-			<div class="l_text">
-				<i class="ico "></i>冻结金额详情
-			</div>
-		</div>
-	</div>
-</div>
+<jsp:include page="/comm/head-title.jsp">
+	<jsp:param value="冻结金额详情" name="title"/>
+</jsp:include>
+ 
 <div class="h_90"></div>
 <!-- 内容 -->
 <div class="w_1200 ">
@@ -72,7 +66,7 @@
 			</div>
 		</div>
 		
-		<div class="main_con " >
+		<div class="main_con" >
 			<div class="MyAssets_frozen ">
 				<table border="0" cellspacing="0" width="100%">
 					<colgroup>
@@ -88,8 +82,7 @@
 				</table>
 			</div>
 		</div>
-
-		<div class="main_kkpager">		
+		<div class="main_kkpager" id="fr_main_kkpager" style="display:none;" >		
 			<div id="kkpager" class="page_turning"></div>
 		</div>
 	</div>
@@ -97,7 +90,7 @@
 </div>
 <div class="h_40"></div>
 <!-- 版权 -->
-<jsp:include page="/comm/foot.jsp"></jsp:include>
+<jsp:include page="/comm/foot-line.jsp"></jsp:include>
 <script type="text/javascript"> 
 $(function () {
     initRequest(); 
@@ -106,7 +99,6 @@ $(function () {
 
 function initRequest() {
     var size =10;
-    F.loading.show();
     $.ajax({
         dataType : 'html',
         context: document.body,
@@ -122,8 +114,10 @@ function initRequest() {
             $("#id_1").html(html);
             var total = $("#id_1 #tradePageTotal").val();
             var page = $("#id_1 #tradePageCurrent").val();
-            pageGo(page,total,size);
-            F.loading.hide();
+            if(page>0){
+            	$(".fr_main_kkpager").show();
+            	pageGo(page,total,size);
+            }
         }
     });
 }
