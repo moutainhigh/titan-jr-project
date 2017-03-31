@@ -18,14 +18,14 @@
 					<div class="r_text">
 						<form id="bank_card_form" method="post" action="<%=basePath%>/account/bankCardBind.shtml">
 							<ul>
-								<li class="r_y1"><div class="rt_title">收款银行</div><input type="text" class="text"  id="auto_bankCardName" datatype="/\w+/"   errormsg="请选择"   placeholder="请选择收款银行" /><input type="hidden" id="bankCode" name="bankCode" /><input type="hidden" id="bankCardName" name="bankCardName" /></li>
+								<li class="r_y1"><div class="rt_title">收款银行</div><input type="text" class="text"  id="auto_bankCardName" datatype="/\w*/" errormsg="请选择银行"  placeholder="请选择收款银行" /><input type="hidden" id="bankCode" name="bankCode" /><input type="hidden" id="bankCardName" name="bankCardName" /></li>
 								<li class="r_y2" id="branch_spec" data-show="0" style="display: none" ><div class="rt_title">开户支行</div>
 									<input type="text" id="auto_city_code" class="text text1 ico" placeholder="城市">
 									<input name="cityCode" id="cityCode" type="hidden"/><input name="cityName" id="cityName" type="hidden"/>
-									<input type="text" id="auto_branch_code" class="text text2" datatype="/\w*/"  errormsg="请选择支行" afterPassed="checkBranch" placeholder="请选择支行">
+									<input type="text" id="auto_branch_code" class="text text2" datatype="/\w*/"  errormsg="请选择支行" placeholder="请选择支行">
 									<input name="branchCode" id="branchCode" type="hidden"/>
 									</li>
-								<li class="r_y1"><div class="rt_title">收款账号</div><input type="text" class="text" id="bankCardCode" name="bankCardCode" datatype="/^[0-9]{6,30}$/"  require="true" errormsg="账号错误" placeholder="请输入收款账号"></li>
+								<li class="r_y1"><div class="rt_title">收款账号</div><input type="text" class="text" id="bankCardCode" name="bankCardCode" datatype="/\w*/"   errormsg="不能为空" placeholder="请输入收款账号"></li>
 								<li class="r_y1"><div class="rt_title">公司名称</div><input type="text" class="text" id="userName" disabled value="${organ.orgName}" placeholder="请输入公司名称" ><input type="hidden" name="userName" value="${organ.orgName}"/></li>
 								<li class="lb_btn "><a href="javascript:void(0)" onclick="submitForm()" class="">提交绑卡申请</a> <input type="hidden" name="modifyOrBind" id="modifyOrBind" value="${modifyOrBind}"></li>
 							</ul>
@@ -39,11 +39,25 @@
 		//验证
 		var bank_card_form = new validform('#bank_card_form');
 		function submitForm(){
-			if(!bank_card_form.validate()){
-				 return ;
+			var checksucc = true;
+			checksucc = checkBank()&&checksucc;
+			checksucc = checkBranch()&&checksucc;
+			
+			if($("#bankCardCode").val().length==0){
+				bank_card_form._setErrorStyle($("#bankCardCode"),"不能为空");
+				checksucc = false && checksucc;
 			}
-				
-			$("#bank_card_form").submit();
+			if(checksucc){
+				$("#bank_card_form").submit();
+			}
+			
+		}
+		function checkBank(){
+			if($("#bankCardName").val().length==0||$("#auto_bankCardName").val().length==0){
+				bank_card_form._setErrorStyle($("#auto_bankCardName"),"请选择银行");
+				return false ;
+			}
+			return true;
 		}
 		function checkBranch(){
 			if($("#branch_spec").attr("data-show")==1){
@@ -64,11 +78,6 @@
 		    height : 300,
 		    autoSelectVal : true,
 		    clickEvent : function(d, input){
-		    	if($('#auto_bankCardName').val().length==0){
-		    		bank_card_form._setErrorStyle($("#auto_bankCardName"),"不能为空");
-		    	}else{
-		    		bank_card_form._setCorrectStyle($("#auto_bankCardName"),"");
-		    	}
 		        $("#bankCode").val(d.key);
 		        $("#bankCardName").val(d.val);
 		        if(d.key =="104"){
