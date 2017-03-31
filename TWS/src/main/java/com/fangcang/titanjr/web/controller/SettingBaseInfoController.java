@@ -138,9 +138,10 @@ public class SettingBaseInfoController extends BaseController{
 	 */
 	@RequestMapping("/ex/login-pwd-update")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
-	public String loginPwdModify(String userLoginName,String code,Model model){
+	public String loginPwdModify(String t,String userLoginName,String code,Model model){
 		model.addAttribute("userLoginName", userLoginName);
 		model.addAttribute("code", code);
+		model.addAttribute("t", t);
 		return "setting/login-pwd-update";
 	}
 	

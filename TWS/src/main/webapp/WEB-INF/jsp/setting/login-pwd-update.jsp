@@ -11,9 +11,17 @@
 	
 </head>
 <body style="min-width: 1300px;" class="bg" >
+<c:if test="${t=='set'}">
+<jsp:include page="/comm/head-title.jsp">
+	<jsp:param value="设置新密码" name="title"/>
+</jsp:include>
+</c:if>
+<c:if test="${t=='update'}">
 <jsp:include page="/comm/head-title.jsp">
 	<jsp:param value="修改登录密码" name="title"/>
 </jsp:include>
+</c:if>
+
 
 <div class="register r_three forget">
 	<div class="r_box login_pwd_set">		
@@ -91,15 +99,6 @@ function savePass(){
 			}else{
 				new top.Tip({msg : result.msg, type: 2, timer:2000});
 			}
-		},
-		beforeSend:function(){
-	    	  top.F.loading.show();
-	      },
-	    complete:function(){
-	    	  top.F.loading.hide();
-	    },
-	    error:function(xhr,status){
-			new top.Tip({msg : '系统错误，请重试!', type: 2 , timer:1500});
 		}
 	});
 }

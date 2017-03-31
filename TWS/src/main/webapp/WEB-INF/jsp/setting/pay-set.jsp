@@ -120,13 +120,11 @@ function validate_payPassword(){
 }
 var dPop;
 $('.J_password').on('click',function(){
-    top.F.loading.show();
     $.ajax({
         dataType : 'html',
         context: document.body,
         url : '<%=basePath%>/setting/modify-pwd.shtml',           
         success : function(html){
-            top.F.loading.hide();
             dPop =  window.top.dialog({
                 title: ' ',
                 padding: '0 0 0px 0',

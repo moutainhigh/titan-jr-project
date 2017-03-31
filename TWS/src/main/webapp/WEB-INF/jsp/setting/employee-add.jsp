@@ -222,12 +222,6 @@ function saveEmployee(){
 		url: '<%=basePath%>/setting/save-employee.shtml',	
 		data:{"userName":userName,"receiveAddress":receiveAddress,"code":code,"checkedRoleId":checkedRoleId,"uncheckedRoleId":uncheckedRoleId},
 		dataType:"json",
-		beforeSend:function(){
-	    	  top.F.loading.show();
-	    },
-	    complete:function(){
-	    	  top.F.loading.hide();
-	    },
 		success:function(result){
 			if(result.code==1){
 				new top.Tip({msg : '员工添加成功', type: 1 , timer:2000});

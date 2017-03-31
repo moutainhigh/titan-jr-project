@@ -11,7 +11,7 @@
 </head>
 <body style="min-width: 1300px;" class="bg" >
 <jsp:include page="/comm/head-title.jsp">
-	<jsp:param value="修改登录密码" name="title"/>
+	<jsp:param value="找回密码" name="title"/>
 </jsp:include>
 
 <div class="register r_three forget">
@@ -34,6 +34,7 @@
 <form action="<%=basePath %>/ex/login-pwd-update.shtml" method="post" id="to_pwd_set_form">
 	<input type="hidden" name="userLoginName" id="f_userLoginName"/>
 	<input type="hidden" name="code" id="f_code"/>
+	<input type="hidden" name="t" value="set"/>
 </form>
 <script type="text/javascript">
 F.UI.scan();
