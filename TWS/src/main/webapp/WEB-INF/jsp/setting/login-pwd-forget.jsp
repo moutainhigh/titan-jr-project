@@ -33,6 +33,7 @@
 <form action="<%=basePath %>/ex/login-pwd-update.shtml" method="post" id="to_pwd_set_form">
 	<input type="hidden" name="userLoginName" id="f_userLoginName"/>
 	<input type="hidden" name="code" id="f_code"/>
+	<input type="hidden" name="t" value="update"/>
 </form>
 <script type="text/javascript">
 F.UI.scan();
@@ -58,15 +59,6 @@ function next(){
 			}else{
 				new top.Tip({msg : result.msg, type: 3, timer:2000});
 			}
-		},
-		beforeSend:function(){
-	    	  top.F.loading.show();
-	    },
-	    complete:function(){
-	    	  top.F.loading.hide();
-	    },
-		error:function(){
-			new top.Tip({msg : '系统错误，请重试!', type: 2, timer:2000});
 		}
 	});
     

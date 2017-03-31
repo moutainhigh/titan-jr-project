@@ -170,15 +170,6 @@ function saveUpdateEmployee(){
 			        button:false
 			     }); 
 			}
-		},
-		beforeSend:function(){
-	    	  top.F.loading.show();
-	      },
-	    complete:function(){
-	    	  top.F.loading.hide();
-	    },
-		error:function(){
-			new top.Tip({msg : '系统错误，请重试!', type: 3 , time:2000});
 		}
 	});
 	

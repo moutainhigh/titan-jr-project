@@ -107,12 +107,6 @@
      		payPassword:data.payPassword
          },
          dataType: "json",
-         beforeSend:function(){
-	    	  top.F.loading.show();
-	      },
-	    complete:function(){
-	    	  top.F.loading.hide();
-	    },
         success: function(data){
         	 if(data.code=="1"){
         		 location.href="<%=basePath%>/ex/pwd-set-succ.shtml?pageType=2"; 

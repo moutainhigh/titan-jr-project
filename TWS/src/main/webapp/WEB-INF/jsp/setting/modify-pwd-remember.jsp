@@ -197,12 +197,6 @@ function update_old_pwd(){
         	 payPassword:PasswordStr1.returnStr()
          },
          dataType: "json",
-         beforeSend:function(){
-	    	  top.F.loading.show();
-	      },
-	    complete:function(){
-	    	  top.F.loading.hide();
-	    },
         success: function(data){
         	 if(data.result=="success"){//密码设置成功
         		 location.href="<%=basePath%>/ex/pwd-set-succ.shtml?pageType=2";
