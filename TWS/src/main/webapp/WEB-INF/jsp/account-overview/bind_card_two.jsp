@@ -47,13 +47,14 @@
 				bank_card_form._setErrorStyle($("#bankCardCode"),"不能为空");
 				checksucc = false && checksucc;
 			}
+			
 			if(checksucc){
 				$("#bank_card_form").submit();
 			}
 			
 		}
 		function checkBank(){
-			if($("#bankCardName").val().length==0&&$("#auto_bankCardName").val().length==0){
+			if($("#bankCardName").val().length==0||$("#auto_bankCardName").val().length==0){
 				bank_card_form._setErrorStyle($("#auto_bankCardName"),"请选择银行");
 				return false ;
 			}
