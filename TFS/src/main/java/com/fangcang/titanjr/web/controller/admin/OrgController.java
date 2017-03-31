@@ -48,8 +48,7 @@ public class OrgController extends BaseController{
 	private TitanFinancialOrganService organService;
 	@Resource
 	private TitanFinancialUserService userService;
-	@Resource
-	private TitanFinancialSendSMSService smsService;
+	
 	/**
 	 * 企业机构页面
 	 * @return
@@ -163,27 +162,6 @@ public class OrgController extends BaseController{
 		try {
 			OrganCheckResponse organCheckResponse = organService.checkFinancialOrgan(organCheckRequest);
 			if(organCheckResponse.isResult()){
-				OrgDTO orgDTO = new OrgDTO();
-				orgDTO.setOrgid(orgId);
-				orgDTO = organService.queryOrg(orgDTO);
-				String receiveAddress;
-				if(orgDTO.getUsertype().equals(TitanOrgEnum.UserType.ENTERPRISE.getKey())){//企业用户
-					//给联系人发
-					receiveAddress = orgDTO.getMobiletel();
-				}else{
-					//给管理员发
-					UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
-					userInfoQueryRequest.setIsadmin(1);
-					userInfoQueryRequest.setOrgCode(orgDTO.getOrgcode());
-					UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
-					receiveAddress = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0).getUserloginname();
-				}
-				SendMessageRequest sendCodeRequest = new SendMessageRequest();
-				sendCodeRequest.setReceiveAddress(receiveAddress);
-				sendCodeRequest.setSubject(SMSTemplate.ORG_REG_SUCCESS.getSubject());
-				sendCodeRequest.setContent(SMSTemplate.ORG_REG_SUCCESS.getContent());
-				sendCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
-				smsService.asynSendMessage(sendCodeRequest);
 				putSuccess("审核成功");
 				
 				return toJson();
