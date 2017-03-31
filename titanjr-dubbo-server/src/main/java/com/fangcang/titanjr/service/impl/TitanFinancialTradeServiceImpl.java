@@ -538,7 +538,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		}
 	}
 
-	// 转账
+	// 转账 t添加数据库锁
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	public TransferResponse transferAccounts(TransferRequest transferRequest) throws Exception {
@@ -555,26 +555,32 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			transferResponse.setRequestNo(titanTransferReq.getRequestno());
 			if (titanTransferReq != null) {
 				Integer transid = null;
-				TransOrderDTO transOrderDTO = getTransidByOrderId(transferRequest.getOrderid());
-				if (transOrderDTO != null) {
-					transid = transOrderDTO.getTransid();
-					payOrderNo = transOrderDTO.getPayorderno();
+				TransOrderRequest transOrderRequest = new TransOrderRequest();
+				transOrderRequest.setOrderid(transferRequest.getOrderid());
+				List<TransOrderDTO> transOrderDTOList =  titanTransOrderDao.selectTitanTransOrderLock(transOrderRequest);
+				if (CollectionUtils.isNotEmpty(transOrderDTOList)) {
+					transid = transOrderDTOList.get(0).getTransid();
+					payOrderNo = transOrderDTOList.get(0).getPayorderno();
 				}
 				// 获取落单时的订单id
 				if (transid != null && StringUtil.isValidString(payOrderNo)) {
 					titanTransferReq.setTransorderid(transid);
 					titanTransferReq.setPayorderno(payOrderNo);
+
 					// 查询该单号是否已经有转账单
 					TitanTransferReq titanTransfer = queryTransfer(payOrderNo);
+
 					boolean flag = false;
 					if (titanTransfer == null) {// 判断转账是否已经进行
 						flag = titanTransferReqDao.insert(titanTransferReq) > 0 ? true : false;
+
 					} else {
 						if (TransferReqEnum.TRANSFER_SUCCESS.getStatus() != titanTransfer.getStatus().intValue()) {
 							titanTransferReq.setTransferreqid(titanTransfer.getTransferreqid());
 							flag = titanTransferReqDao.update(titanTransferReq) > 0 ? true : false;
 						}
 					}
+
 					if (flag) {
 						AccountTransferResponse accountTransferResponse = rsAccTradeManager.accountBalanceTransfer(accountTransferRequest);
 						log.info("转账结果" + JSON.toJSONString(accountTransferResponse));
