@@ -47,6 +47,7 @@
 				bank_card_form._setErrorStyle($("#bankCardCode"),"不能为空");
 				checksucc = false && checksucc;
 			}
+			
 			if(checksucc){
 				$("#bank_card_form").submit();
 			}
