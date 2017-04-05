@@ -1,7 +1,5 @@
 package com.fangcang.titanjr.pay.controller;
 
-import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,26 +14,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fangcang.titanjr.common.enums.OrderStatusEnum;
-import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
-import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
-import com.fangcang.titanjr.dto.bean.AccountBalance;
-import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
-import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.RefundRequest;
-import com.fangcang.titanjr.dto.request.TitanOrderRequest;
-import com.fangcang.titanjr.dto.request.TransOrderRequest;
-import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.RefundResponse;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.services.TitanRefundService;
 import com.fangcang.titanjr.pay.util.RSADecryptString;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanOrderService;
-import com.fangcang.util.JsonUtil;
 import com.fangcang.util.StringUtil;
 
 @Controller
@@ -82,7 +69,7 @@ public class TitanRefundController extends BaseController{
 		}
 		
 		RefundResponse response = titanRefundService.orderRefund(refundRequest);
-		return JsonUtil.objectToJson(response);
+		return JsonConversionTool.toJson(response);
 		
 	}
 	

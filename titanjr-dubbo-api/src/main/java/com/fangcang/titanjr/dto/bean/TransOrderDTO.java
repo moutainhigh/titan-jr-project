@@ -69,6 +69,8 @@ public class TransOrderDTO implements java.io.Serializable {
 	private String payerType;
 
 	private Integer transordertype;
+	
+	private String loanOrderNo;
 
 	private TitanOrderPayDTO titanOrderPayDTO;
 
@@ -77,6 +79,14 @@ public class TransOrderDTO implements java.io.Serializable {
 	private TitanWithDrawDTO titanWithDrawDTO;
 	
 	private RefundDTO refundDTO;
+	
+	public String getLoanOrderNo() {
+		return loanOrderNo;
+	}
+
+	public void setLoanOrderNo(String loanOrderNo) {
+		this.loanOrderNo = loanOrderNo;
+	}
 
 	public Long getReceivablefee() {
 		return receivablefee;

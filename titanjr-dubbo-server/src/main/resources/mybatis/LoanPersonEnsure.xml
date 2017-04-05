@@ -111,8 +111,7 @@
              <if test="carBrand != null">carbrand= #{carBrand},</if>
              <if test="carWorth != null">carworth= #{carWorth},</if>
              <if test="email != null">email= #{email},</if>
-            <if test="yearIncome != null">yearIncome= #{yearIncome},</if>
-            <if test="orderNo != null">orderno= #{orderNo}</if>
+            <if test="yearIncome != null">yearIncome= #{yearIncome}</if>
         </set>
         <where>
             orderno = #{orderNo} <!--orderNo一定不为空-->

@@ -23,11 +23,23 @@ public class LoanCreditCompanyBean implements java.io.Serializable {
 	private String contactName;
 	private String contactPhone;
 	private String waterEmail;
+	private String openAccount;
+	
 
 	private String certificateStartDate;
 	private String certificateExpireDate;
 	private Integer companyType;
 	private String registFinance;
+	
+
+	public String getOpenAccount() {
+		return openAccount;
+	}
+
+	public void setOpenAccount(String openAccount) {
+		this.openAccount = openAccount;
+	}
+
 
 	public String getCertificateStartDate() {
 		return certificateStartDate;

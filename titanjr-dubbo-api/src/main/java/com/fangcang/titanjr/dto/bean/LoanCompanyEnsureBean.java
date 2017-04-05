@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.dto.bean;
 
-import java.util.Date;
 
 /**
  * Created by zhaoshan on 2016/11/3.
@@ -52,23 +51,34 @@ public class LoanCompanyEnsureBean implements java.io.Serializable {
 	private String licenseUrl;
 	// 法人身份证地址--不一定是身份证可能是护照
 	private String legalPersonUrl;
-	
-    /**
+
+	/**
 	 * 营业照生效日期
 	 */
-    private String certificateStartDate;
-    /**
+	private String certificateStartDate;
+	/**
 	 * 营业照失效日期
 	 */
 	private String certificateExpireDate;
 	/**
-	 * 企业类型：'1 有限责任公司 2 股份有限公司 3 内资 4 国有全资  5 集资全资 6 国外投资股份有限公司 99 其他'
+	 * 企业类型：'1 有限责任公司 2 股份有限公司 3 内资 4 国有全资 5 集资全资 6 国外投资股份有限公司 99 其他'
 	 */
 	private Integer companyType;
+
+	private String openAccount;
+
 	/**
 	 * 注册资本
 	 */
 	private String registFinance;
+
+	public String getOpenAccount() {
+		return openAccount;
+	}
+
+	public void setOpenAccount(String openAccount) {
+		this.openAccount = openAccount;
+	}
 
 	public String getCertificateStartDate() {
 		return certificateStartDate;

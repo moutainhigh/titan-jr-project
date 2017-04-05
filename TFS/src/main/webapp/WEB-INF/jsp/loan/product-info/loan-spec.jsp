@@ -62,17 +62,12 @@
 			</c:choose>
 				<li class="clearfix"><div class="tit">收款信息</div>
 					<div class="w_290" title="账户名：烈扬旅游">账户名：${loanSpecInfo.accountName}</div>
-					<c:if test="${empty loanSpecInfo.titanCode}">
 						<div class="w_360">银行账号：${loanSpecInfo.account}</div>
 						<div class="w_400">开户行：${loanSpecInfo.bank}</div>
-					</c:if>
-					<c:if test="${!empty loanSpecInfo.titanCode }">
-						<div class="w_360">泰坦码：${loanSpecInfo.titanCode}</div>
-					</c:if>
 				</li>
 				
 				<c:if test="${loanOrderInfo.productType == 10001}">
-					<input type="hidden" value ="${loanSpecInfo.contractUrl}" id="urls"/>
+					<input type="hidden" value ="${loanSpecInfo.accessory}" id="urls"/>
 					<li class="clearfix"><div class="tit">贷款内容</div>
 						<div class="w_300">酒店名称：${loanSpecInfo.hotleName}</div>
 						<div class="w_360">包房时段：<fmt:formatDate value="${loanSpecInfo.beginDate}" pattern="yyyy-MM-dd" /> -- <fmt:formatDate value="${loanSpecInfo.endDate}" pattern="yyyy-MM-dd" /></div>

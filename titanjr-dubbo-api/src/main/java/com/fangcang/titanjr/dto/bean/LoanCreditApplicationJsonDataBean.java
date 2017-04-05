@@ -18,8 +18,12 @@ public class LoanCreditApplicationJsonDataBean implements Serializable {
 		private String rootInstCd;//机构号码
 		private String passportNumber;//护照号码
 		private String workPhone;//工作电话
+		private String contacts;//联系人姓名
+		private String contactsInfo;// 联系人电话
 		
 		
+		
+	
 		//经营信息
 		private String platformRegistTime;//平台注册日期
 		private String platformOperaNo;//平台注册账号
@@ -90,6 +94,20 @@ public class LoanCreditApplicationJsonDataBean implements Serializable {
 		private String  buyCarYear_p;//购车年份
 		private String  otherAssets;//其他资产情况
 		private String  relatedNote;//相关说明
+		
+		
+		public String getContacts() {
+			return contacts;
+		}
+		public void setContacts(String contacts) {
+			this.contacts = contacts;
+		}
+		public String getContactsInfo() {
+			return contactsInfo;
+		}
+		public void setContactsInfo(String contactsInfo) {
+			this.contactsInfo = contactsInfo;
+		}
 		public String getRootInstCd() {
 			return rootInstCd;
 		}

@@ -35,7 +35,7 @@
 	</bean>
 	<bean id="rSInvokeInitManagerImpl" class="com.fangcang.titanjr.service.impl.RSInvokeInitManagerImpl" init-method="initRopClient" />  
     <dubbo:application name="titanjr_service_provider" />
- 	<dubbo:monitor protocol="registry" /> 
+    <dubbo:monitor protocol="registry" /> 
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
 
 
@@ -55,7 +55,10 @@
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanSysconfigService" ref="titanSysconfigService" timeout="40000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialLoanCreditService" ref="titanFinancialLoanCreditService" timeout="300000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialLoanService" ref="titanFinancialLoanService" timeout="300000" />
-	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialUtilService" ref="titanFinancialUtilService" timeout="300000" />
-
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialUtilService" ref="titanFinancialUtilService" timeout="40000" />
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanCoopService" ref="titanCoopService" timeout="40000" />
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanFiveMinuteJobService" ref="titanFiveMinuteJobService" timeout="40000" />
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialVirtualService" ref="titanFinancialVirtualService" timeout="300000" />
+	
 </beans>
 

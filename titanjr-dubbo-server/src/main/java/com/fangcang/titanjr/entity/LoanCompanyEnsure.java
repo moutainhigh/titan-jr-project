@@ -54,6 +54,16 @@ public class LoanCompanyEnsure {
 	private String officeAddress;
 	// 企业注册地址
 	private String regAddress;
+	
+	private String openAccount;
+
+	public String getOpenAccount() {
+		return openAccount;
+	}
+
+	public void setOpenAccount(String openAccount) {
+		this.openAccount = openAccount;
+	}
 
 	/**
 	 * 营业照生效日期

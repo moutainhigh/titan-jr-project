@@ -289,7 +289,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 			sendMessageRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
 			sendMessageRequest.setContent("<"+orgDTO.getOrgname()+">提交的授信申请，提交复审时失败，请查看服务器日志或者重新提交复审");
 			sendMessageRequest.setReceiveAddress("13543309695");//峰哥手机
-			sendSMSService.sendMessage(sendMessageRequest);
+			sendSMSService.asynSendMessage(sendMessageRequest);
 		}
 		return response;
 	}
@@ -433,6 +433,8 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				.getRegistFinance());
 		creditCompanyRequest.setAddress(loanCreditCompany.getRegAddress());
 		creditCompanyRequest.setTaxregcard(loanCreditCompany.getTaxRegNo());
+		
+		creditCompanyRequest.setOrgancertificate(loanCreditCompany.getOrgCode());
 
 		creditCompanyRequest.setCorporatename(loanCreditCompany
 				.getLegalName());
@@ -440,7 +442,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				.getLegalceType());
 		creditCompanyRequest.setCertificatenumber(loanCreditCompany
 				.getLegalNo());
-
+		creditCompanyRequest.setAcuntopenlince(loanCreditCompany.getOpenAccount());
 		OprsystemCreditCompanyResponse oprsystemCreditCompanyResponse = rsCreditManager
 				.oprsystemCreditCompany(creditCompanyRequest);
 		if (oprsystemCreditCompanyResponse.isSuccess() == false) {
@@ -453,15 +455,13 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		}
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 		organQueryRequest.setUserId(loanCreditOrder.getOrgCode());
-		FinancialOrganResponse financialOrganResponse = titanFinancialOrganService
-				.queryFinancialOrgan(organQueryRequest);
-
-		Long maxLoanAmount = financialOrganResponse.getFinancialOrganDTO()
-				.getMaxLoanAmount();
+		//获取当前用户可以授信单的额度
+		long maxLoanAmount = getLoanCreditAmount(loanCreditOrder.getOrgCode());
+		
 		// 3-授信申请接口
 		LoanCompanyAppendInfo companyAppendInfo = LoanTypeConvertUtil
 				.getCompanyAppendInfo(loanCreditCompany.getAppendInfo());
-		String creditApplicationJsonData = creditApplicationJson(
+		String creditApplicationJsonData = creditApplicationJson(loanCreditOrder,
 				loanCreditCompany, companyAppendInfo, loanPersonEnsure,
 				loanCompanyEnsure);
 
@@ -474,9 +474,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				.getOrgCode());
 		orderMixserviceCreditapplicationRequest.setUserorderid(loanCreditOrder
 				.getOrderNo());
-		orderMixserviceCreditapplicationRequest
-				.setAmount(maxLoanAmount != null ? maxLoanAmount.toString()
-						: "0");
+		orderMixserviceCreditapplicationRequest.setAmount(""+maxLoanAmount);
 		orderMixserviceCreditapplicationRequest
 				.setReqesttime(CommonConstant.RS_LOAN_CREDIT_REQUEST_TIME);
 		orderMixserviceCreditapplicationRequest
@@ -507,6 +505,22 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		loanCreditOrderDao.updateLoanCreditOrder(updateLoanCreditOrderParam);
 		response.putSuccess("授信资料提交成功");
 		return response;
+	}
+	
+	private long getLoanCreditAmount(String orgCode) {
+		LoanAmountEvaluationRequest request = new LoanAmountEvaluationRequest();
+		request.setOrgCode(orgCode);
+		LoanAmountEvaluationResponse response = this
+				.loanAmountEvaluation(request);
+		//默认50W授信额度
+		long amount = 500000;
+		
+		try {
+			 amount = Long.parseLong(response.getMaxCreditAmount());
+		} catch (NumberFormatException ex) {
+			log.error("get loan credit amount fail!");
+		}
+		return amount;
 	}
 	
 	/**
@@ -618,13 +632,15 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	 * @param loanCompanyEnsure
 	 * @return
 	 */
-	private String creditApplicationJson(LoanCreditCompany loanCreditCompany,
+	private String creditApplicationJson(LoanCreditOrder loanCreditOrder ,LoanCreditCompany loanCreditCompany,
 			LoanCompanyAppendInfo companyAppendInfo,
 			LoanPersonEnsure loanPersonEnsure,
 			LoanCompanyEnsure loanCompanyEnsure) {
 
 		LoanCreditApplicationJsonDataBean creditJsonData = new LoanCreditApplicationJsonDataBean();
-
+		
+		creditJsonData.setContacts(loanCreditCompany.getContactName());
+		creditJsonData.setContactsInfo(loanCreditCompany.getContactPhone());
 		creditJsonData.setRootInstCd(CommonConstant.RS_FANGCANG_CONST_ID);
 		creditJsonData.setPassportNumber("");// 无法提供，暂时不传
 		creditJsonData.setWorkPhone(loanCreditCompany.getContactPhone());
@@ -655,8 +671,8 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		creditJsonData.setCooperationCompanyInfo(companyAppendInfo
 				.getCooperationCompanyInfos());
 		creditJsonData.setControllData(companyAppendInfo.getControllDatas());
-		// 个人担保
-		if (loanPersonEnsure != null) {
+		// 个人担保   担保 1 个人 2 企业
+		if (loanPersonEnsure != null && "1".equals(String.valueOf(loanCreditOrder.getAssureType()))) {
 			creditJsonData.setApplicateName_p(loanPersonEnsure.getPersonName());
 			creditJsonData.setApplicateCardId_p(loanPersonEnsure
 					.getNationalIdentityNumber());
@@ -723,11 +739,17 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					.getCarPurchaseDate());
 			creditJsonData.setOtherAssets(loanPersonEnsure.getOtherProperty());
 			creditJsonData.setRelatedNote(loanPersonEnsure.getPropertyRemark());
+			
+			creditJsonData.setEmail_p(loanPersonEnsure.getEmail());
+			creditJsonData.setAnnualIncome_p(loanPersonEnsure.getYearIncome());
+//			private String email;//邮箱
+//			
+//			private String yearIncome;//年收入
 
 		}
 		//TODO 根据字段属性担保判断
 		// 企业担保
-		if (loanCompanyEnsure != null) {
+		if (loanCompanyEnsure != null  && "2".equals(String.valueOf(loanCreditOrder.getAssureType()))) {
 			creditJsonData.setCompanyName_c(loanCompanyEnsure.getCompanyName());
 			creditJsonData.setBusinessExpire_c(loanCompanyEnsure.getCertificateStartDate()+"到"+loanCompanyEnsure.getCertificateExpireDate());
 			creditJsonData.setCompanyType_c(CompanyType.getEnumByType(loanCompanyEnsure.getCompanyType()).getDes());// 暂无提供
@@ -765,6 +787,8 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					.getContactName());
 			creditJsonData.setPrimaryContactPhoneNumber(loanCompanyEnsure
 					.getContactPhone());
+			creditJsonData.setPlatformOperaNo_c(loanCompanyEnsure.getRegisterAccount());
+			creditJsonData.setPlatformRegistTime_c(""+loanCompanyEnsure.getRegisterDate());
 
 		}
 		JSON result = JSONSerializer.toJSON(creditJsonData);
@@ -1248,6 +1272,8 @@ public class TitanFinancialLoanCreditServiceImpl implements
 				updateNoLoanCreditOrderParam.setOrderNo(notifyRequest.getBuessNo());
 				loanCreditOrderDao.updateLoanCreditOrder(updateNoLoanCreditOrderParam);
 				
+				updateLoanCreditOrderParam.setOrderNo(newOrderNo);
+				
 				LoanCompanyEnsure loanCompanyEnsureParam = new LoanCompanyEnsure();
 				loanCompanyEnsureParam.setOrgCode(loanCreditOrder.getOrgCode());
 				loanCompanyEnsureParam.setOrderNo(notifyRequest.getBuessNo());
@@ -1382,13 +1408,14 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	/**
 	 * 可贷款金额评测
 	 */
-	public LoanAmountEvaluationResponse loanAmountEvaluation(LoanAmountEvaluationRequest request) {
+	public LoanAmountEvaluationResponse loanAmountEvaluation(
+			LoanAmountEvaluationRequest request) {
 
 		LoanAmountEvaluationResponse evaluationResponse = new LoanAmountEvaluationResponse();
-		
+
 		Calendar caled = Calendar.getInstance();
 		caled.setTime(new Date());
-		caled.add(Calendar.YEAR, -1);
+		caled.add(Calendar.MONTH, -1);
 
 		PlatformOrderStatConditons conditons = new PlatformOrderStatConditons();
 		conditons.setBeginDate(com.fangcang.titanjr.common.util.DateUtil.sdf
@@ -1413,24 +1440,24 @@ public class TitanFinancialLoanCreditServiceImpl implements
 					BigDecimal reAmount = new BigDecimal(
 							platformOrderStat.getReceivable());
 
-					if (reAmount.longValue() > 0) {
+					if (reAmount.longValue() < 500000) {
+						reAmount = new BigDecimal(500000);
+					}
+					//
+					// long amount = reAmount
+					// .divide(new BigDecimal(12), 2,
+					// BigDecimal.ROUND_HALF_UP)
+					// .multiply(new BigDecimal(0.7)).longValue();
 
-						long amount = reAmount
-								.divide(new BigDecimal(12), 2,
-										BigDecimal.ROUND_HALF_UP)
-								.multiply(new BigDecimal(0.7)).longValue();
-
-						OrgUpdateRequest orgUpdateRequest = new OrgUpdateRequest();
-						orgUpdateRequest
-								.setMaxLoanAmount( amount);
-						orgUpdateRequest.setOrgCode(request.getOrgCode());
-						try {
-							titanFinancialOrganService
-									.updateOrg(orgUpdateRequest);
-							evaluationResponse.setMaxCreditAmount("" + amount);
-						} catch (GlobalServiceException e) {
-							log.error("", e);
-						}
+					OrgUpdateRequest orgUpdateRequest = new OrgUpdateRequest();
+					orgUpdateRequest.setMaxLoanAmount(reAmount.longValue());
+					orgUpdateRequest.setOrgCode(request.getOrgCode());
+					try {
+						titanFinancialOrganService.updateOrg(orgUpdateRequest);
+						evaluationResponse.setMaxCreditAmount(""
+								+ reAmount.longValue());
+					} catch (GlobalServiceException e) {
+						log.error("", e);
 					}
 				}
 			}

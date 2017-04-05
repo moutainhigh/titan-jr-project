@@ -139,8 +139,18 @@ public class LoanCreditCompany {
 	 */
 	private String registFinance;
 	
+	private String openAccount;
 	
-    public String getNewOrderNo() {
+	
+    public String getOpenAccount() {
+		return openAccount;
+	}
+
+	public void setOpenAccount(String openAccount) {
+		this.openAccount = openAccount;
+	}
+
+	public String getNewOrderNo() {
 		return newOrderNo;
 	}
 

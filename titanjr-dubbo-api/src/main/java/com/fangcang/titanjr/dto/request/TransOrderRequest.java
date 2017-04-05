@@ -24,6 +24,16 @@ public class TransOrderRequest extends BaseRequestDTO {
 	private String payertype;
 	
 	private String statusId;
+	
+	private String loanOrderNo;
+
+	public String getLoanOrderNo() {
+		return loanOrderNo;
+	}
+
+	public void setLoanOrderNo(String loanOrderNo) {
+		this.loanOrderNo = loanOrderNo;
+	}
 
 	public String getPayertype() {
 		return payertype;

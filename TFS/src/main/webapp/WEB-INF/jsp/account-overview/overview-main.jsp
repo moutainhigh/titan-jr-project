@@ -604,9 +604,11 @@
 		        },
 		        cancel : function(){
 		          	$(".withdrawBtn").text('提现卡绑定失败').removeClass('blue').addClass('MyAssets_red');
+		        },
+		        onclose:function(){
+		        	$(".withdrawBtn").text('提现卡绑定失败').removeClass('blue').addClass('MyAssets_red');
 		        }
 		      });
-        
         }
         
         function bank_card_binding(){
@@ -695,6 +697,7 @@
 			var size = $(".pagination_r .on").text();
 			F.loading.show();
 			$.ajax({
+				type:'post',
 				dataType: 'html',
 				context: document.body,
 				data: {
@@ -713,7 +716,7 @@
 					$("#id_" + index).html(html);
 					var total = $("#id_" + index + " #tradePageTotal").val();
 					var page = $("#id_" + index + " #tradePageCurrent").val();
-					pageGo(page, total, size,1);
+					pageGo(page, total, size,index);
 					F.loading.hide();
 				}
 			});
@@ -799,6 +802,7 @@
 			var data = getQueryOrderData(index);
 			F.loading.show();
 			$.ajax({
+				type:'post',
 				dataType: 'html',
 				context: document.body,
 				data: {
@@ -831,6 +835,7 @@
 			F.loading.show();
 			var data = getQueryOrderData(index);
 			$.ajax({
+				type:'post',
 				dataType : 'html',
 				context: document.body,
 				data:{
@@ -861,6 +866,7 @@
 			F.loading.show();
 			var data = getQueryOrderData(index);
 			$.ajax({
+				type:'post',
 				dataType : 'html',
 				context: document.body,
 				data:{
@@ -997,6 +1003,7 @@
 			var size1 = $(".pagination_r .on").text();
 			F.loading.show();
 			$.ajax({
+				type:'post',
 				dataType : 'html',
 				context: document.body,
 				data:{currentPage:1,pageSize:size1,tradeTypeId:"0"},
@@ -1233,7 +1240,7 @@
         	});
 		}
 		
-		//loadLoanAccountInfo();
+		loadLoanAccountInfo();
 		
 		function loadLoanAccountInfo()
 		{
