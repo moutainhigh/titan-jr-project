@@ -69,7 +69,7 @@ public class InitSubmitJob {
         // 在同一个TaskTracker节点组中，当任务队列中存在这个任务的时候（任务id一样），是否替换更新
         job.setReplaceOnExist(true);
         // cron表达式
-        job.setCronExpression("0 */1 * * * ?");
+        job.setCronExpression("0 0 9 * * ?");
         
         job.setRelyOnPrevCycle(false);
 
@@ -101,7 +101,7 @@ public class InitSubmitJob {
         job.setRelyOnPrevCycle(false);
 
         // cron表达式
-        job.setCronExpression("0 */1 * * * ?");
+        job.setCronExpression("0 */5 * * * ?");
 
         // 提交任务  response.success = true 表示提交成功
         Response response = jobClient.submitJob(job);
@@ -130,7 +130,7 @@ public class InitSubmitJob {
 
         job.setRelyOnPrevCycle(false);
         // cron表达式
-        job.setCronExpression("0 */1 * * * ?");
+        job.setCronExpression("0 0 2 * * ?");
 
         // 提交任务  response.success = true 表示提交成功
         Response response = jobClient.submitJob(job);
@@ -159,7 +159,7 @@ public class InitSubmitJob {
         // 在同一个TaskTracker节点组中，当任务队列中存在这个任务的时候（任务id一样），是否替换更新
         job.setReplaceOnExist(true);
         // cron表达式
-        job.setCronExpression("0 */1 * * * ?");
+        job.setCronExpression("0 0 2 * * ?");
         
         job.setRelyOnPrevCycle(false);
 
@@ -188,7 +188,7 @@ public class InitSubmitJob {
         // 在同一个TaskTracker节点组中，当任务队列中存在这个任务的时候（任务id一样），是否替换更新
         job.setReplaceOnExist(true);
         // cron表达式
-        job.setCronExpression("0 */1 * * * ?");
+        job.setCronExpression("0 */59 * * * ?");
         
         job.setRelyOnPrevCycle(false);
 
@@ -216,7 +216,7 @@ public class InitSubmitJob {
         // 在同一个TaskTracker节点组中，当任务队列中存在这个任务的时候（任务id一样），是否替换更新
         job.setReplaceOnExist(true);
         // cron表达式
-        job.setCronExpression("0 */1 * * * ?");
+        job.setCronExpression("0 */30 * * * ?");
         
         job.setRelyOnPrevCycle(false);
 
@@ -245,7 +245,7 @@ public class InitSubmitJob {
         // 在同一个TaskTracker节点组中，当任务队列中存在这个任务的时候（任务id一样），是否替换更新
         job.setReplaceOnExist(true);
         // cron表达式
-        job.setCronExpression("0 */1 * * * ?");
+        job.setCronExpression("0 0 1 * * ?");
         
         job.setRelyOnPrevCycle(false);
 

@@ -219,12 +219,14 @@ $('#createVirtualOrg').on('click',function(){
    	if(!flag){
    		return ;
    	}
+   	top.F.loading.show();
    	$.ajax({
    	    type: 'post',
    		url:'<%=basePath%>/loan_apply/createVirtualOrg.shtml',
    		dataType:'json',
    		data:bankCardData,
    		success:function(data){
+   			top.F.loading.hide();
        		if(data.code=="-1"){
        			new top.Tip({msg : data.msg , type: 1 , time:1000}); 
        		}else{
