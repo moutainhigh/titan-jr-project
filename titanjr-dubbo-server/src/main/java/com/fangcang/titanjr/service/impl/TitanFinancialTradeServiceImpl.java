@@ -12,14 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
-
-import com.alibaba.fastjson.JSON;
-import com.fangcang.exception.ServiceException;
-import com.fangcang.titanjr.common.bean.CallBackInfo;
-import com.fangcang.titanjr.common.enums.*;
-
-
-import com.fangcang.titanjr.dto.bean.*;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -36,10 +28,14 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.exception.ServiceException;
+import com.fangcang.titanjr.common.bean.CallBackInfo;
 import com.fangcang.titanjr.common.enums.ConditioncodeEnum;
 import com.fangcang.titanjr.common.enums.EscrowedEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.ROPErrorEnum;
@@ -67,8 +63,22 @@ import com.fangcang.titanjr.dao.TitanRefundDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
+import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
+import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
+import com.fangcang.titanjr.dto.bean.QrCodeDTO;
+import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
+import com.fangcang.titanjr.dto.bean.RefundDTO;
+import com.fangcang.titanjr.dto.bean.RepairTransferDTO;
+import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
+import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
+import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderInfo;
 import com.fangcang.titanjr.dto.request.AccountTransferFlowRequest;
 import com.fangcang.titanjr.dto.request.AllowNoPwdPayRequest;
+import com.fangcang.titanjr.dto.request.ConfirmFinanceRequest;
 import com.fangcang.titanjr.dto.request.ConfirmOrdernQueryRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
@@ -1824,7 +1834,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					transOrderRequest.setUserorderid(repairTransferDTO.getUserorderid());
 					transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
 				    log.info("回调:"+JSONSerializer.toJSON(transOrderDTO));
-				    titanFinancialTradeService.confirmFinance(transOrderDTO);
+				    ConfirmFinanceRequest req = new ConfirmFinanceRequest();
+				    req.setTransOrderDTO(transOrderDTO);
+				    titanFinancialTradeService.confirmFinance(req);
 				    
         		} catch (Exception e) {
 					e.printStackTrace();
@@ -2013,7 +2025,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							&& StringUtil.isValidString(titanOrderRequest.getBusinessInfo().get("bussCode"))){
 						transOrderDTO.setBusinessordercode(titanOrderRequest.getBusinessInfo().get("bussCode"));
 					}
-					this.confirmFinance(transOrderDTO);
+					 ConfirmFinanceRequest req = new ConfirmFinanceRequest();
+					    req.setTransOrderDTO(transOrderDTO);
+					    titanFinancialTradeService.confirmFinance(req);
 				} catch (Exception e) {
 					log.error("回调失败");
 				}
