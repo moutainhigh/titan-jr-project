@@ -58,11 +58,8 @@
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialUtilService" ref="titanFinancialUtilService" timeout="40000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanCoopService" ref="titanCoopService" timeout="40000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFiveMinuteJobService" ref="titanFiveMinuteJobService" timeout="40000" />
-<<<<<<< HEAD
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialVirtualService" ref="titanFinancialVirtualService" timeout="300000" />
 	
-=======
 
->>>>>>> branch 'dev' of git@192.168.2.94:/srv/git/titan-jr-project.git
 </beans>
 

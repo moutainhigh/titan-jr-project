@@ -1,20 +1,18 @@
 package com.fangcang.titanjr.job.init;
 
-import com.fangcang.lts.common.constants.Constants;
-import com.fangcang.lts.common.custom.FangCangJobClient;
-import com.fangcang.lts.common.enums.JobValidEnvEnum;
-import com.fangcang.lts.common.utils.CommonUtils;
-import com.github.ltsopensource.core.commons.utils.DateUtils;
-import com.github.ltsopensource.core.domain.Job;
-import com.github.ltsopensource.jobclient.JobClient;
-import com.github.ltsopensource.jobclient.domain.Response;
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.util.Date;
+import com.fangcang.lts.common.constants.Constants;
+import com.fangcang.lts.common.custom.FangCangJobClient;
+import com.fangcang.lts.common.enums.JobValidEnvEnum;
+import com.fangcang.lts.common.utils.CommonUtils;
+import com.github.ltsopensource.core.domain.Job;
+import com.github.ltsopensource.jobclient.domain.Response;
 
 /**
  * Created by wd on 2016/8/16.
@@ -58,7 +56,7 @@ public class InitSubmitJob {
         job.setTaskId("bind_bankCard");
 
         // 模拟参数
-        job.setParam("shopId", "11111");
+//        job.setParam("shopId", "11111");
         // 扩展参数：任务执行环境，默认为ONLINE
         job.setParam(Constants.JOB_VALID_ENV_KEY, JobValidEnvEnum.ONLINE.toString());
         // 扩展参数：任务执行JobRunner
@@ -87,7 +85,7 @@ public class InitSubmitJob {
         job.setTaskId("repair_gdp");
 
         // 模拟参数
-        job.setParam("shopId", "11111");
+//        job.setParam("shopId", "11111");
         // 扩展参数：任务执行环境，默认为ONLINE
         job.setParam(Constants.JOB_VALID_ENV_KEY, JobValidEnvEnum.ONLINE.toString());
         // 扩展参数：任务执行JobRunner
@@ -117,7 +115,7 @@ public class InitSubmitJob {
         job.setTaskId("unFreeze_transfer_order");
 
         // 模拟参数
-        job.setParam("shopId", "11111");
+//        job.setParam("shopId", "11111");
         // 扩展参数：任务执行环境，默认为ONLINE
         job.setParam(Constants.JOB_VALID_ENV_KEY, JobValidEnvEnum.ONLINE.toString());
         // 扩展参数：任务执行JobRunner
@@ -148,7 +146,7 @@ public class InitSubmitJob {
         job.setTaskId("refund_confirm");
 
         // 模拟参数
-        job.setParam("shopId", "11111");
+//        job.setParam("shopId", "11111");
         // 扩展参数：任务执行环境，默认为ONLINE
         job.setParam(Constants.JOB_VALID_ENV_KEY, JobValidEnvEnum.ONLINE.toString());
         // 扩展参数：任务执行JobRunner
@@ -177,7 +175,7 @@ public class InitSubmitJob {
         job.setTaskId("loanCreditSyn");
 
         // 模拟参数
-        job.setParam("shopId", "11111");
+//        job.setParam("shopId", "11111");
         // 扩展参数：任务执行环境，默认为ONLINE
         job.setParam(Constants.JOB_VALID_ENV_KEY, JobValidEnvEnum.ONLINE.toString());
         // 扩展参数：任务执行JobRunner
@@ -205,7 +203,7 @@ public class InitSubmitJob {
         job.setTaskId("loanOrderSyn");
 
         // 模拟参数
-        job.setParam("shopId", "11111");
+//        job.setParam("shopId", "11111");
         // 扩展参数：任务执行环境，默认为ONLINE
         job.setParam(Constants.JOB_VALID_ENV_KEY, JobValidEnvEnum.ONLINE.toString());
         // 扩展参数：任务执行JobRunner
@@ -234,7 +232,7 @@ public class InitSubmitJob {
         job.setTaskId("loanCreditAmountEvaluating");
 
         // 模拟参数
-        job.setParam("shopId", "11111");
+//        job.setParam("shopId", "11111");
         // 扩展参数：任务执行环境，默认为ONLINE
         job.setParam(Constants.JOB_VALID_ENV_KEY, JobValidEnvEnum.ONLINE.toString());
         // 扩展参数：任务执行JobRunner
