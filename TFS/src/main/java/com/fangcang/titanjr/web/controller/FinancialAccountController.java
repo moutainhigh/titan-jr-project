@@ -124,6 +124,7 @@ public class FinancialAccountController extends BaseController {
 		    	model.addAttribute("payName", enum1.getMsg());
 		    	model.addAttribute("payDesc", enum1.getMsg());
 		    	model.addAttribute("fcUserId", this.getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ID));
+		    	model.addAttribute("tfsUserId", getTfsUserId());
 		    	return "account-overview/goto-cashierDesk";
     		}
     	}
@@ -204,7 +205,7 @@ public class FinancialAccountController extends BaseController {
         return "account-overview/order-withdraw-detail";
     }
 
-    @RequestMapping(value = "/query-org-page", method = RequestMethod.GET)
+    @RequestMapping(value = "/query-org-page")
     public String queryForPage(TradeDetailRequest tradeDetailRequest, HttpServletRequest request, Model model) throws Exception {
         if (null != this.getUserId()) {
             model.addAttribute("organ", this.getTitanOrganDTO());
@@ -861,14 +862,14 @@ public class FinancialAccountController extends BaseController {
     	PayerTypeEnum payerType = PayerTypeEnum.getPayerTypeEnumByKey(order.getPayerType());
     	BigDecimal refundAmount = null;
     	if("收款".equals(order.getTradeType())){//收款方，且使用的是收款方的收银台
-    		if(payerType.isRecieveCashDesk()){
+    		if(payerType.useReceiverCashDesk()){
     			refundAmount = new BigDecimal(order.getTradeamount()).subtract(new BigDecimal(order.getReceivedfee()));
         	}else{
         		refundAmount = new BigDecimal(order.getTradeamount());
         	}
     		return "-"+refundAmount.divide(new BigDecimal(100)).toString();
     	}else if("付款".equals(order.getTradeType())){
-    		if(payerType.isRecieveCashDesk()){
+    		if(payerType.useReceiverCashDesk()){
     			refundAmount = new BigDecimal(order.getTradeamount());
         	}else{
         		refundAmount = new BigDecimal(order.getTradeamount()).add(new BigDecimal(order.getReceivedfee()));

@@ -1,38 +1,26 @@
 package com.fangcang.titanjr.common.util.rsa;
 
-import java.io.ByteArrayOutputStream;
-import java.math.BigInteger;
+import java.net.URLEncoder;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import javax.crypto.Cipher;
-
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-
-
-
-
-
-
-
-
-
 
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.util.StringUtil;
@@ -124,7 +112,7 @@ public class RSAUtil {
         String privateKey = Base64Helper.encode(priKey.getEncoded());
         String publicKey = Base64Helper.encode(pubKey.getEncoded());
         RSAPublicKey rsaPukey = (RSAPublicKey)pubKey;
-    	
+        
         keysMap.put(RSAUtil.PUBLIC_KEY_MODULE, rsaPukey.getModulus().toString(16));
         keysMap.put(RSAUtil.PUBLIC_KEY_EMPOENT, rsaPukey.getPublicExponent().toString(16));
     	keysMap.put(RSAUtil.PRIVATE_KEY, privateKey);
@@ -175,7 +163,7 @@ public class RSAUtil {
 	 * @param publicKey 公钥
 	 * @return String
 	 * @Description:
-	 * @author 刘恒   
+	 *    
 	 * @date 2015年3月24日 下午9:44:35 
 	 * @version V1.0
 	 * @throws Exception 
@@ -195,7 +183,7 @@ public class RSAUtil {
 	 * @param privateKey  钱包私钥
 	 * @return boolean
 	 * @Description:
-	 * @author 刘恒   
+	 *    
 	 * @date 2015年3月24日 下午7:16:03 
 	 * @version V1.0
 	 */
@@ -222,7 +210,7 @@ public class RSAUtil {
 	 * @param type true：仅用于创建返回签名域  false：创建请求签名域和其他
 	 * @return String
 	 * @Description:
-	 * @author 刘恒   
+	 *    
 	 * @date 2015年3月24日 下午3:47:25 
 	 * @version V1.0
 	 */
@@ -238,7 +226,7 @@ public class RSAUtil {
 	 * @param para
 	 * @return String
 	 * @Description:
-	 * @author 刘恒   
+	 *    
 	 * @date 2015年3月24日 下午2:32:11 
 	 * @version V1.0
 	 */
@@ -267,7 +255,7 @@ public class RSAUtil {
 	 * @param paramType  true：接口返回签名（使用）  false：请求签名
 	 * @return Map<String,String>
 	 * @Description:
-	 * @author 刘恒   
+	 *    
 	 * @date 2015年3月24日 下午2:34:19 
 	 * @version V1.0
 	 */
@@ -312,29 +300,61 @@ public class RSAUtil {
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
         Key publicK = keyFactory.generatePublic(x509KeySpec);
         // 对数据加密
-        Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
-        cipher.init(Cipher.ENCRYPT_MODE, publicK);
-        int inputLen = data.length;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int offSet = 0;
-        byte[] cache;
-        int i = 0;
-        // 对数据分段加密
-        while (inputLen - offSet > 0) {
-            if (inputLen - offSet > MAX_ENCRYPT_BLOCK) {
-                cache = cipher.doFinal(data, offSet, MAX_ENCRYPT_BLOCK);
-            } else {
-                cache = cipher.doFinal(data, offSet, inputLen - offSet);
-            }
-            out.write(cache, 0, cache.length);
-            i++;
-            offSet = i * MAX_ENCRYPT_BLOCK;
-        }
-        byte[] encryptedData = out.toByteArray();
-        out.close();
-        return encryptedData;
+        byte [] encodeDataByteArray = RsaHelper.encryptData(data, publicK);
+        return encodeDataByteArray;
     }
-
+    
+    /**
+     * 公钥加密，并特殊处理base64中的字符.用于http get	请求传输
+     * @param originData  明文
+     * @param publicKey 公钥的encoded
+     * @return
+     * @throws Exception
+     */
+    public static String encryptByPublicKeyGet(String originData, String publicKey)
+            throws Exception {
+        byte[] keyBytes = Base64Helper.decode(publicKey);
+        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
+        Key publicK = keyFactory.generatePublic(x509KeySpec);
+        // 对数据加密
+        byte [] encodeDataByteArray = RsaHelper.encryptData(originData.getBytes("utf-8"), publicK);
+        return replaceBase64(Base64Helper.encode(encodeDataByteArray));
+    }
+    /**
+     * 解密特殊处理的base64
+     * @param encryptedData 密文
+     * @param privateKey
+     * @return
+     * @throws Exception
+     */
+    public static String decryptByPrivateKeyGet(String encryptedData, String privateKey)
+            throws Exception {
+        byte[] keyBytes = Base64Helper.decode(privateKey);
+        PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
+        Key privateK = keyFactory.generatePrivate(pkcs8KeySpec);
+        byte [] decryptedDataByteArray = RsaHelper.decryptData(Base64Helper.decode(rebackBase64(encryptedData)), privateK);
+        if(decryptedDataByteArray == null) return null;
+        String decryptedData = new String(decryptedDataByteArray, "utf-8");
+        return decryptedData;
+    }
+    /**
+     * 替换+/为-*
+     * @param base64Str  base64字符串
+     * @return
+     */
+    public static String replaceBase64(String base64Str){
+    	return base64Str.replaceAll("\\+", "\\-").replaceAll("/", "\\*");
+    }
+    /***
+     * 还原特殊字符为base64字符串
+     * @param base64ReplaceStr  特殊处理的base64字符串
+     * @return
+     */
+    public static String rebackBase64(String base64ReplaceStr){
+    	return base64ReplaceStr.replaceAll("\\-", "\\+").replaceAll("\\*", "/");
+    }
     /** *//**
      * <P>
      * 私钥解密
@@ -348,64 +368,119 @@ public class RSAUtil {
     
     public static String decryptRSAToString(String encryptedData, String privateKey) throws Exception{
     	byte[] encrypted = encryptedData.getBytes();
-    	byte[] result = decryptByPrivateKey(encrypted, privateKey);
-    	return new String(result);
+    	return decryptByPrivateKey(encrypted, privateKey);
     	
     }
     
-    public static byte[] decryptByPrivateKey(byte[] encryptedData, String privateKey)
+    public static String decryptByPrivateKey(byte[] encryptedData, String privateKey)
             throws Exception {
     	
     	
         byte[] keyBytes = Base64Helper.decode(privateKey);
         PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM , "BC");
+        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
         Key privateK = keyFactory.generatePrivate(pkcs8KeySpec);
-        Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
-        cipher.init(Cipher.DECRYPT_MODE, privateK);
-        int inputLen = encryptedData.length;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int offSet = 0;
-        byte[] cache;
-        int i = 0;
-        // 对数据分段解密
-        while (inputLen - offSet > 0) {
-            if (inputLen - offSet > MAX_DECRYPT_BLOCK) {
-                cache = cipher.doFinal(encryptedData, offSet, MAX_DECRYPT_BLOCK);
-            } else {
-                cache = cipher.doFinal(encryptedData, offSet, inputLen - offSet);
-            }
-            out.write(cache, 0, cache.length);
-            i++;
-            offSet = i * MAX_DECRYPT_BLOCK;
-        }
-        byte[] decryptedData = out.toByteArray();
-        out.close();
+        byte [] decryptedDataByteArray = RsaHelper.decryptData(encryptedData, privateK);
+        if(decryptedDataByteArray == null) return null;
+        String decryptedData = new String(decryptedDataByteArray, "utf-8");
         return decryptedData;
     }
 
+    /**
+     * 按key的顺序生成key=value串(值不为空的key-value才会返回)
+     * @param parameters 其他要加入签名的参数
+     * @param key 平台md5key
+     * @date 2017-02-28
+     * @return
+     */
+    public static String generatorSignParam(Map<String, String> parameters,String key) {
+        StringBuffer params = new StringBuffer();
+        if(!parameters.isEmpty()) {
+        	Object[] keys = parameters.keySet().toArray();
+			Arrays.sort(keys);
+			for (int i = 0; i < keys.length; i++) {
+        		String name = keys[i].toString();
+        		String value = parameters.get(name);
+        		if(StringUtil.isValidString(value)){
+        			params.append(name + "=");
+        			params.append(value);
+        			params.append("&");
+        		}
+               
+            }
+        }
+        params.append("key="+key);
+        return params.toString();
+    }
 	
-	
-	public static void main(String[] args){
+	public static void main(String[] args) throws Exception{
+//		String msg = "罗庆龙";
+		//Map<String,String> keys = RSAUtil.generateStringKsys();
+		//String publicKey = keys.get(RSAUtil.PUBLIC_KEY);
+		//System.out.println(keys.toString());
+//		String publicMsg = RSAUtil.encryptByPublicKey(msg, publicKey);
+//		System.out.println("----------"+publicMsg);
+//		
+//		String privateKey = keys.get(RSAUtil.PRIVATE_KEY);
+//		String endMsg = RSAUtil.decryptByPrivateKey(publicMsg, privateKey);
+//		
+//		System.out.println(endMsg);
+		
+		String url = URLEncoder.encode("http://local.luoqinglong.com:8020/TWS/account/overview-main.shtml","UTF-8");
+		
+		/************* 第三方注册 *****************/
+		//RSA加密
+		String infoMingwen = "cooporgname=TTM商家二2&cooporgcode=GL100000033&cooploginname=luoeeeeeeeeee333@qq.com&coopuserid=111000333&notifyurl=http%3A%2F%2Fbaidu.com";
+		String publicKey1 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCbf0mFWF2r4YfaT1catS1fXFFkFp7DSiX/IhuolNuDKnTKa2/rhKOR7ZO5/H6J1JxKVlhieYl6lEiwByeDCuZRbTMq/bhT9gjdh5BsOXvNr6I7QSYI9nSV5PZhWtu47tlR3//hc9SRccQo66tGQx8uTEjjQegFQsYOrx1NtQrPbQIDAQAB";//keys1.get(RSAUtil.PUBLIC_KEY);
+		String info = RSAUtil.encryptByPublicKeyGet(infoMingwen, publicKey1); 
+		System.out.println("第三方注册info密文："+info);
+		
+		String privateKey1 = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJt/SYVYXavhh9pPVxq1LV9cUWQWnsNKJf8iG6iU24MqdMprb+uEo5Htk7n8fonUnEpWWGJ5iXqUSLAHJ4MK5lFtMyr9uFP2CN2HkGw5e82vojtBJgj2dJXk9mFa27ju2VHf/+Fz1JFxxCjrq0ZDHy5MSONB6AVCxg6vHU21Cs9tAgMBAAECgYA/fq191sSBMBmySl2OGVdKrj7J+PahVgDH+pyCrS4plEeWdGKCMGo+Z13AP1tIWtnq/PEgXPKHbE92GaXHu8ap7Dbc2132S8DMw/ENDCcoKko1bm3n749mg5xQp+pG2/VTqYN0mqab26hGAaRe8alqN4H1qDr7DiHPnMv0oak7PQJBAM9CS5oTln11T0NmoG4yxzKN3GnkIH5BhM7YYDvU+BbCH6Z4WhXTYejlTZQrycscGfXnsLD4dJmtkvzHsVnx458CQQDAEMGFf/iVQTvlADi9umGcjuf0wZpvFGgP0wWzgN4Td0q5pdo1ialFY7vmDJ6l+8qLeF182a8+Ehrhmt2cPBFzAkEAw6fmDvHm41DXHt3HHcC547OgHCbLteTMJyiE0HbgLTvc/R4ojOocR+wQLIyZ1zAUIdwzJR2nlVwSoqcxeaOsKQJATVbx9mX/nWp1SdN7BbtFjxtkgARtwYkAFk8tHokn48LHjlYgtipGxTBR+2Ldh40KlHrVem7VyDLWLD6GOmFdzQJAJUATreSlavtCZBLCVXhnO0sZBY47zhlS7s7qLjud6n3HUaSGGt5pQCZAzbWbyw+zmCSH9/RBIPn8GBNdgPlzbg==";//keys1.get(RSAUtil.PRIVATE_KEY);
+		
+		//md5
 		try {
+			String key = "eki6ixw9y3q5rqd3";
+			Map<String, String> signParamter = new HashMap<String, String>();
+			signParamter.put("channel", "MGKD6EP5");
+			signParamter.put("encrypt_type", "RSA");
+			signParamter.put("info", info);
 			
-			Map<String,String> keyMap = generateStringKsys();
-//			String apc = "{\"name\":\"zhangsan\",\"escrowedDate\":\"2016-12-03\",\"goodsId\":\"201611141238596002654\",\"goodsDetail\":\"预定日本签证，加急，5张....\",\"goodsName\":\"签证预定单\",\"userId\":\"\",\"ruserId\":\"TJM10000109\",\"amount\":\"889\",\"payerType\":\"1001\",\"currencyType\":\"1\",\"checkOrderUrl\":\"\",\"notify\":\"http://localhost:8080/CashierDesk/payCallBack\"}";
-//			RSAPublicKey publicKey = new RSAPublicKeySpec(new BigInteger(keyMap.get(RSAUtil.PUBLIC_KEY_MODULE)),new BigInteger(keyMap.get(RSAUtil.PUBLIC_KEY_EMPOENT)));
-			
-//			byte[] encryptMsg =  encryptByPublicKey(apc.getBytes(), keyMap.get(RSAUtil.PUBLIC_KEY));
-			
-//			byte[] decryptMsg = decryptByPrivateKey(encryptMsg, keyMap.get(RSAUtil.PRIVATE_KEY));
-			
-//			String ss = new String(decryptMsg,"UTF-8");
-			System.out.println(keyMap.get(RSAUtil.PUBLIC_KEY_MODULE));
-			System.out.println(keyMap.get(RSAUtil.PUBLIC_KEY_EMPOENT));
-			System.out.println(keyMap.get(RSAUtil.PRIVATE_KEY));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println("11");
+			String md5 = generatorSignParam(signParamter,key);
+			String signString = MD5.MD5Encode(md5).toUpperCase();
+			System.out.println("第三方注册参数:"+md5);
+			System.out.println("第三方注册签名sign:"+signString);
+		}   catch (Exception e) {
 			e.printStackTrace();
-		}
+		} 
+		
+		
+		/****************** 管理员代理登录 ************/
+		//RSA
+		String infoProxyLoginMingwen = "orgcode=TJM10030177&tfsuserid=10151";
+		String infoProxyLogin = RSAUtil.encryptByPublicKeyGet(infoProxyLoginMingwen, publicKey1); 
+		System.out.println("管理员代理登录 密文info："+infoProxyLogin);
+		
+		//md5
+		try {
+			String key = "eki6ixw9y3q5rqd3";
+			Long reqtime = new Date().getTime();
+			//String md5 = "channel=MGKD6EP5&encrypt_type=RSA&info="+infoProxyLogin+"&jumpurl="+url+"&reqtime="+reqtime+"&key="+key;
+			
+			Map<String, String> signParamter = new HashMap<String, String>();
+			signParamter.put("channel", "MGKD6EP5");
+			signParamter.put("encrypt_type", "RSA");
+			signParamter.put("info", infoProxyLogin);
+			signParamter.put("jumpurl", url);
+			signParamter.put("reqtime", reqtime.toString());
+			
+			String md5 = generatorSignParam(signParamter,key);
+			
+			String signString = MD5.MD5Encode(md5).toUpperCase();
+			System.out.println("管理员代理登录 参数:"+md5);
+			System.out.println("管理员代理登录 sign:"+signString);
+		}   catch (Exception e) {
+			e.printStackTrace();
+		} 
 	}
     
 }

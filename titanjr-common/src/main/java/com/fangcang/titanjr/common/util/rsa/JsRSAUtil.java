@@ -38,7 +38,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
  * @description: js与后端交互:RSA 工具类。提供加密，解密，生成密钥对等方法。
  * @fileName:JsRSAUtil.java
  * @createTime:2015年6月26日 下午5:41:26
- * @author: 黄伟
+ * @author
  * @version 1.0.0
  *
  */
@@ -73,7 +73,7 @@ public class JsRSAUtil {
 	 * @throws Exception
 	 *             KeyPair
 	 * @exception
-	 * @author: 黄伟
+	 * @author
 	 * @since 1.0.0
 	 */
 	public static KeyPair generateKeyPair() throws Exception {
@@ -147,7 +147,7 @@ public class JsRSAUtil {
 	 * @throws Exception
 	 *             RSAPublicKey
 	 * @exception
-	 * @author: 黄伟
+	 * @author
 	 * @since 1.0.0
 	 */
 	public static RSAPublicKey generateRSAPublicKey(byte[] modulus,
@@ -177,7 +177,7 @@ public class JsRSAUtil {
 	 * @throws Exception
 	 *             RSAPrivateKey
 	 * @exception
-	 * @author: 黄伟
+	 * @author
 	 * @since 1.0.0
 	 */
 	public static RSAPrivateKey generateRSAPrivateKey(byte[] modulus,
@@ -209,7 +209,7 @@ public class JsRSAUtil {
 	 * @throws Exception
 	 *             byte[]
 	 * @exception
-	 * @author: 黄伟
+	 * @author
 	 * @since 1.0.0
 	 */
 
@@ -257,7 +257,7 @@ public class JsRSAUtil {
 	 * @throws Exception
 	 *             byte[]
 	 * @exception 解密后的明文
-	 * @author: 黄伟
+	 * @author
 	 * @since 1.0.0
 	 */
 	public static byte[] decrypt(PrivateKey pk, byte[] raw) throws Exception {
@@ -289,7 +289,7 @@ public class JsRSAUtil {
 	 * @throws Exception
 	 *             String
 	 * @exception
-	 * @author: 黄伟
+	 * @author
 	 * @since 1.0.0
 	 */
 	public static String decryptString(PrivateKey privateKey, String result)

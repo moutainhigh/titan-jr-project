@@ -1350,10 +1350,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		sendMessageRequest.setContent(content);
     	
     	try {
-    		SendMessageResponse sendMessageResponse = sendSMSService.sendMessage(sendMessageRequest);
-    		if(!sendMessageResponse.isResult()){
-    			log.info("贷款短信（sendCreditSms）发送失败,错误信息："+sendMessageResponse.getReturnMessage()+",短信参数sendRegCodeRequest："+Tools.gsonToString(sendMessageResponse));
-    		}
+    		sendSMSService.asynSendMessage(sendMessageRequest);
 		} catch (Exception e) {
 			log.error("授信申请通知短信或者邮件发送失败,内容content："+content+",接收者receiveAddress:"+adminTitanUser.getUserloginname(), e);
 		}

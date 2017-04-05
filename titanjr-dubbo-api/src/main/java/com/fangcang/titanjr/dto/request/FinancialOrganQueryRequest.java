@@ -16,6 +16,7 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
    
     private Integer orgId;
     private String orgCode;
+    private Integer bindStatus;
     /***
      * 公司名称
      */
@@ -40,7 +41,11 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 
     //若当前是商家用户，则根据商家查询，判定是否有结果
     private String merchantcode;
-    
+
+	//注册渠道，提供对外查询可用
+	private Integer regchannel;
+	//合作方类型:SAAS:2,TTM:4
+	private Integer coopType;
     
     public Integer getOrgId() {
 		return orgId;
@@ -106,14 +111,14 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 		this.userId = userId;
 	}
 
-//    public Integer getCheckStatus() {
-//		return checkStatus;
-//	}
-//
-//	public void setCheckStatus(Integer checkStatus) {
-//		this.checkStatus = checkStatus;
-//	}
-// 
+	public Integer getBindStatus() {
+		return bindStatus;
+	}
+
+	public void setBindStatus(Integer bindStatus) {
+		this.bindStatus = bindStatus;
+	}
+
 	public String getMerchantcode() {
 		return merchantcode;
 	}
@@ -162,4 +167,20 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 		this.statusId = statusId;
 	}
 
+	public Integer getRegchannel() {
+		return regchannel;
+	}
+
+	public void setRegchannel(Integer regchannel) {
+		this.regchannel = regchannel;
+	}
+
+	public Integer getCoopType() {
+		return coopType;
+	}
+
+	public void setCoopType(Integer coopType) {
+		this.coopType = coopType;
+	}
+	
 }

@@ -85,6 +85,34 @@ public class TitanOrgDaoImpl extends GenericDAOMyBatisImpl implements TitanOrgDa
 	}
 
 	@Override
+	public PaginationSupport<FinancialOrganDTO> queryBaseTitanOrgForPage(FinancialOrganQueryRequest organQueryRequest,
+										PaginationSupport<FinancialOrganDTO> paginationSupport)
+			throws DaoException {
+
+		try {
+			
+			PaginationSupport<Integer> orgIdPage = new PaginationSupport<Integer>();
+			orgIdPage.setOrderBy(paginationSupport.getOrderBy());
+			orgIdPage.setPageSize(paginationSupport.getPageSize());
+			orgIdPage.setCurrentPage(paginationSupport.getCurrentPage());
+			super.selectForPage("com.fangcang.titanjr.dao.TitanOrgDao.queryBaseOrgIdList", organQueryRequest, orgIdPage);
+			if(orgIdPage.getItemList().size()>0){
+				List<Integer> userIdList = orgIdPage.getItemList();
+				Map<String, Object> param = new HashMap<String, Object>();
+				param.put("orgIdList", userIdList);
+				List<FinancialOrganDTO> list = super.selectList("com.fangcang.titanjr.dao.TitanOrgDao.queryOrgCollectionList", param);
+				paginationSupport.setItemList(list);
+				paginationSupport.setTotalCount(orgIdPage.getTotalCount());
+				paginationSupport.setTotalPage(orgIdPage.getTotalPage());
+			}
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+
+		return paginationSupport;
+	}
+	
+	@Override
 	public PaginationSupport<OrgCheckDTO> queryTitanOrgCheckForPage(
 			FinancialOrganQueryRequest organQueryRequest,
 			PaginationSupport<OrgCheckDTO> paginationSupport) throws DaoException{

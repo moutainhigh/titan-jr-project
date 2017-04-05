@@ -81,7 +81,7 @@
 </script>
 
 <body>
-	<h2>Hello World!</h2>
+	<h2>Hello World! <%=request.getLocalAddr() %></h2>
 	
 <form id="payForm">
     <div class="pay">

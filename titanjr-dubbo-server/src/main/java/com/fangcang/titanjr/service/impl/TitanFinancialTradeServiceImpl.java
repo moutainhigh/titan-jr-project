@@ -703,20 +703,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					.analyzeResponse(response);
 			if (!"000".equals(callBackInfo.getCode())) {
 				log.error("回调失败单号:" + transOrderDTO.getUserorderid());
-				OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(
-						transOrderDTO.getUserorderid(), "转账成功 回调失败",
-						OrderExceptionEnum.Finance_Confirm,
-						JSON.toJSONString(callBackInfo));
-				titanOrderService.saveOrderException(orderExceptionDTO);
+				titanFinancialUtilService.saveOrderException(transOrderDTO.getUserorderid(),OrderKindEnum.UserOrderId, OrderExceptionEnum.Notify_Client_Transfer_Notify_Fail, JSONSerializer.toJSON(callBackInfo).toString());
 				return;
 			}
 
 		} else {// 记录异常单
-			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(
-					transOrderDTO.getOrderid(), "回调业务系统异常",
-					OrderExceptionEnum.Finance_Confirm,
-					JSON.toJSONString(transOrderDTO));
-			titanOrderService.saveOrderException(orderExceptionDTO);
+			log.error("回调无响应");
+			titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Client_Not_CallBack, JSONSerializer.toJSON(transOrderDTO).toString());
 		}
 	}
 

@@ -15,14 +15,21 @@ import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.SMSTemplate;
 //import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
+import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.OrganCheckRequest;
+import com.fangcang.titanjr.dto.request.SendMessageRequest;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.OrganCheckResponse;
 import com.fangcang.titanjr.dto.response.OrganQueryCheckResponse;
+import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
+import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.controller.BaseController;
 import com.fangcang.titanjr.web.pojo.OrgPojo;
@@ -41,6 +48,7 @@ public class OrgController extends BaseController{
 	private TitanFinancialOrganService organService;
 	@Resource
 	private TitanFinancialUserService userService;
+	
 	/**
 	 * 企业机构页面
 	 * @return
@@ -110,7 +118,8 @@ public class OrgController extends BaseController{
 		
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 		organQueryRequest.setOrgId(orgId);
-		FinancialOrganResponse financialOrganResponse = organService.queryFinancialOrgan(organQueryRequest);
+		//优化改为通用的查询，不使用机构绑定关系查询条件
+		FinancialOrganResponse financialOrganResponse = organService.queryBaseFinancialOrgan(organQueryRequest);
 		if(financialOrganResponse.isResult()){
 			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
 			model.addAttribute("financialOrganDTO", financialOrganDTO);
@@ -124,7 +133,7 @@ public class OrgController extends BaseController{
 				return "admin/org/per-verify-org-info";
 			}
 		}else{
-			model.addAttribute("errormsg", "请求错误");
+			model.addAttribute("errormsg", financialOrganResponse.getReturnMessage());
 			return "error";
 		}
 	}

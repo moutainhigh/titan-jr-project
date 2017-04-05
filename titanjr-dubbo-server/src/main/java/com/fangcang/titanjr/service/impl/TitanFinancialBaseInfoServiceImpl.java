@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 
@@ -17,23 +16,29 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
 import com.fangcang.titanjr.common.enums.MunicipalityEnum;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
-import com.fangcang.titanjr.common.util.ThreadPoolUtil;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanBankinfoDao;
 import com.fangcang.titanjr.dao.TitanCityInfoDao;
+import com.fangcang.titanjr.dao.TitanCoopDao;
 import com.fangcang.titanjr.dao.TitanRoleDao;
 import com.fangcang.titanjr.dto.bean.BankInfoDTO;
 import com.fangcang.titanjr.dto.bean.CityInfoDTO;
+import com.fangcang.titanjr.dto.bean.CoopDTO;
 import com.fangcang.titanjr.dto.request.BankInfoQueryRequest;
+import com.fangcang.titanjr.dto.request.CoopRequest;
 import com.fangcang.titanjr.dto.response.BankInfoInitResponse;
 import com.fangcang.titanjr.dto.response.CityInfoInitResponse;
+import com.fangcang.titanjr.dto.response.CoopResponse;
 import com.fangcang.titanjr.dto.response.OrganRoleInitResponse;
 import com.fangcang.titanjr.entity.TitanBankinfo;
 import com.fangcang.titanjr.entity.TitanCityInfo;
 import com.fangcang.titanjr.entity.TitanRole;
+import com.fangcang.titanjr.entity.parameter.TitanCoopParam;
 import com.fangcang.titanjr.rs.dto.BankInfo;
 import com.fangcang.titanjr.rs.dto.CityInfo;
 import com.fangcang.titanjr.rs.manager.BaseInfoInitManager;
@@ -41,35 +46,35 @@ import com.fangcang.titanjr.rs.response.BankInfoResponse;
 import com.fangcang.titanjr.rs.response.CityInfoResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialBaseInfoService;
-import com.fangcang.titanjr.task.BankInfoThread;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
 
 @Service("titanFinancialBaseInfoService")
-public class TitanFinancialBaseInfoServiceImpl implements
-		TitanFinancialBaseInfoService {
+public class TitanFinancialBaseInfoServiceImpl implements TitanFinancialBaseInfoService {
 
-	private static final Log log = LogFactory
-			.getLog(TitanFinancialBankCardServiceImpl.class);
+	private static final Log log = LogFactory.getLog(TitanFinancialBankCardServiceImpl.class);
 
 	@Resource
 	BaseInfoInitManager baseInfoInitManager;
 
 	@Resource
 	TitanCityInfoDao titanCityInfoDao;
-
+	
 	@Resource
 	TitanBankinfoDao titanBankinfoDao;
 
 	@Resource
 	TitanRoleDao titanRoleDao;
-
+	
+	@Resource
+	TitanCoopDao titanCoopDao;
+	
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT)
 	public OrganRoleInitResponse initFinancialOrganRole() {
 		OrganRoleInitResponse response = new OrganRoleInitResponse();
 		List<TitanRole> roleList = new ArrayList<TitanRole>();
-		for (FinancialRoleEnum roleEnum : FinancialRoleEnum.values()) {
+		for (FinancialRoleEnum roleEnum : FinancialRoleEnum.values()){
 			TitanRole role = new TitanRole();
 			role.setFcroleid(RSInvokeConstant.defaultRoleId);
 			role.setRolecode(roleEnum.roleCode);
@@ -81,8 +86,8 @@ public class TitanFinancialBaseInfoServiceImpl implements
 			roleList.add(role);
 		}
 		try {
-			int result = titanRoleDao.batchSaveRoles(roleList);
-			if (roleList.size() == result) {
+			int result =  titanRoleDao.batchSaveRoles(roleList);
+			if (roleList.size() == result){
 				response.setResult(true);
 				response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
 				response.setReturnMessage(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
@@ -435,4 +440,24 @@ public class TitanFinancialBaseInfoServiceImpl implements
 		return municipality;
 	}
 
+	@Override
+	public CoopResponse getOneCoop(CoopRequest coopRequest) {
+		CoopResponse response = new CoopResponse();
+		TitanCoopParam param = new TitanCoopParam();
+		
+		param.setCoopType(coopRequest.getCoopType());
+		param.setMixcode(coopRequest.getMixcode());
+		try {
+			CoopDTO coopDTO = titanCoopDao.getEntity(param);
+			response.setCoopDTO(coopDTO);
+			response.putSuccess();
+			
+		} catch (DaoException e) {
+			log.error("合作方信息查询(getOneCoop)失败，查询参数CoopRequest:"+Tools.gsonToString(coopRequest), e); 
+			response.putErrorResult("查询失败");
+		}
+		return response;
+	}
+	
+	
 }

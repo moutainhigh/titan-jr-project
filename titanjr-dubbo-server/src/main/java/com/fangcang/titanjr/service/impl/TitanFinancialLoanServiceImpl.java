@@ -1131,6 +1131,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
 		sendMessageRequest.setContent(content);
 		sendMessageRequest.setSubject(subject);
+<<<<<<< HEAD
 		try {
 			SendMessageResponse sendMessageResponse = sendSMSService
 					.sendMessage(sendMessageRequest);
@@ -1139,6 +1140,128 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 						+ sendMessageResponse.getReturnMessage()
 						+ ",短信参数sendRegCodeRequest："
 						+ Tools.gsonToString(sendMessageResponse));
+=======
+    	try {
+    		sendSMSService.asynSendMessage(sendMessageRequest);
+		} catch (Exception e) {
+			log.error("贷款通知短信或者邮件发送失败,内容content："+content+",接收者receiveAddress:"+receiveAddress+",订单号orderNo："+orderNo, e);
+		}
+
+	}
+
+	/***
+	 * 贷款转账
+	 * 
+	 * @param payOrgCode
+	 *            付款机构
+	 * @param loanOrderNo
+	 *            贷款申请订单号
+	 * @param loanActualAmount
+	 *            实际转账金额
+	 * @return
+	 */
+	private boolean loanPay(String payOrgCode, String loanOrderNo,
+			String loanActualAmount) {
+		boolean payState = false;
+		// 是否已经转账成功，不能重复转账
+		TransOrderRequest transOrderRequest = new TransOrderRequest();
+		transOrderRequest.setPayorderno(loanOrderNo);
+		TransOrderDTO transOrderDTO = orderService
+				.queryTransOrderDTO(transOrderRequest);
+		if (transOrderDTO == null
+				|| (!OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(
+						transOrderDTO.getStatusid()))) {// 转账不成功，继续转账
+			log.info("贷款通知时转账流程->未转账或者转账不成功，继续转账，贷款订单号loanOrderNo："
+					+ loanOrderNo + ",付款方OrgCode:" + payOrgCode);
+			LoanSpecification loanSpecification = new LoanSpecification();
+			loanSpecification.setOrderNo(loanOrderNo);
+			List<LoanSpecification> loanSpecificationList = loanSpecificationDao
+					.queryLoanSpecification(loanSpecification);
+			if (CollectionUtils.isNotEmpty(loanSpecificationList)) {
+
+				String titanCode = loanSpecificationList.get(0).getTitanCode();
+				OrgDTO relateOrgDTO = new OrgDTO();
+				relateOrgDTO.setTitancode(titanCode);
+				relateOrgDTO = organService.queryOrg(relateOrgDTO);
+
+				String orderId = OrderGenerateService.genLocalOrderNo();
+				String requestno = OrderGenerateService.genResquestNo();
+				// 下单
+				TitanOrderRequest titanOrderRequest = new TitanOrderRequest();
+				titanOrderRequest.setAmount(NumberUtil
+						.covertToYuan(loanActualAmount));
+				titanOrderRequest.setCurrencyType("1");// 人民币
+				titanOrderRequest.setGoodsDetail("贷款付款转账");
+				titanOrderRequest.setGoodsId(loanOrderNo);
+				titanOrderRequest.setGoodsName("贷款");
+				titanOrderRequest.setPayerType(PayerTypeEnum.LOAN.getKey());
+				titanOrderRequest
+						.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID_230);
+				titanOrderRequest.setUserId(payOrgCode);// 付款方
+				titanOrderRequest.setRuserId(relateOrgDTO.getOrgcode());// 接收方
+				TransOrderCreateResponse transOrderCreateResponse = tradeService
+						.saveTitanTransOrder(titanOrderRequest);
+				if (transOrderCreateResponse.isResult()) {
+					TitanTransOrder transOrderParam = new TitanTransOrder();
+					transOrderParam.setTransid(transOrderCreateResponse
+							.getTransId());
+					transOrderParam.setOrderid(orderId);
+					titanTransOrderDao
+							.updateTitanTransOrderByTransId(transOrderParam);
+					// 转账
+					TransferRequest transferRequest = new TransferRequest();
+					transferRequest
+							.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
+					transferRequest
+							.setIntermerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
+					transferRequest
+							.setConditioncode(ConditioncodeEnum.ADD_OEDER);
+					transferRequest.setUserid(payOrgCode);
+					transferRequest.setUserrelateid(relateOrgDTO.getOrgcode());
+					transferRequest.setAmount(loanActualAmount);
+					transferRequest
+							.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID_230);
+					transferRequest
+							.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+					transferRequest.setOrderid(orderId);
+					transferRequest.setRequestno(requestno);
+					transferRequest.setRequesttime(DateUtil.sdf4
+							.format(new Date()));
+					transferRequest
+							.setTransfertype(TransfertypeEnum.BRANCH_TRANSFER);
+					transferRequest.setUserfee("0");
+					TransferResponse transferResponse = new TransferResponse();
+					try {
+						transferResponse = tradeService
+								.transferAccounts(transferRequest);
+						if (transferResponse.isResult()) {
+							TransOrderDTO orderStatusidParam = new TransOrderDTO();
+							orderStatusidParam
+									.setStatusid(OrderStatusEnum.ORDER_SUCCESS
+											.getStatus());
+							orderStatusidParam
+									.setTransid(transOrderCreateResponse
+											.getTransId());
+							orderService.updateTransOrder(orderStatusidParam);
+							log.info("贷款通知时转账流程->转账成功，贷款订单号loanOrderNo："
+									+ loanOrderNo + ",requestno:" + requestno);
+							payState = true;
+						} else {
+							log.error("贷款转账失败,原因："
+									+ transferResponse.getReturnMessage()
+									+ ",贷款订单号loanOrderNo：" + loanOrderNo
+									+ ",转账参数："
+									+ Tools.gsonToString(transferRequest));
+						}
+					} catch (Exception e) {
+						log.error(
+								"贷款转账失败loanPay，付款方机构id:" + payOrgCode
+										+ ",转账参数："
+										+ Tools.gsonToString(transferRequest),
+								e);
+					}
+				}
+>>>>>>> branch 'dev' of git@192.168.2.94:/srv/git/titan-jr-project.git
 			}
 		} catch (Exception e) {
 			log.error("贷款通知短信或者邮件发送失败,内容content：" + content

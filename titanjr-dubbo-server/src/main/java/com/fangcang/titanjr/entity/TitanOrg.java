@@ -24,7 +24,7 @@ public class TitanOrg implements java.io.Serializable {
 	private String role;
 	private String username;
 	/**
-	 * 机构类型：企业，个人
+	 * 机构类型：企业:1，个人:2
 	 */
 	private Integer usertype;
 	private Integer statusid;
@@ -75,6 +75,10 @@ public class TitanOrg implements java.io.Serializable {
 	private Date createTime;
 	private Date updateTime;
 	/**
+	 * 注册渠道:1-金融官网，2-SAAS,4-TTM'
+	 */
+	private Integer regChannel;
+	/**
 	 * 授信金额估算时间
 	 */
 	private Date lastUpdateDate;
@@ -83,6 +87,7 @@ public class TitanOrg implements java.io.Serializable {
 	 * 最大可申请授信额度
 	 */
 	private Long maxLoanAmount;
+
 
 	// Constructors
 
@@ -396,6 +401,15 @@ public class TitanOrg implements java.io.Serializable {
 		this.updateTime = updateTime;
 	}
 
+
+	public Integer getRegChannel() {
+		return regChannel;
+	}
+
+	public void setRegChannel(Integer regChannel) {
+		this.regChannel = regChannel;
+	}
+
 	public Long getMaxLoanAmount() {
 		return maxLoanAmount;
 	}
@@ -412,5 +426,4 @@ public class TitanOrg implements java.io.Serializable {
 		this.lastUpdateDate = lastUpdateDate;
 	}
 	
- 
 }

@@ -3,6 +3,7 @@ package com.fangcang.titanjr.common.util.rsa;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -19,15 +20,19 @@ import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 public class RsaHelper {
-	 /** *//** 
+
+	private static final Log log = LogFactory.getLog(RsaHelper.class);
+	 /**
      * RSA最大加密明文大小 
      */  
     private static final int MAX_ENCRYPT_BLOCK = 117;  
       
-    /** *//** 
+    /**
      * RSA最大解密密文大小 
      */  
     private static final int MAX_DECRYPT_BLOCK = 128; 
@@ -187,7 +192,7 @@ public class RsaHelper {
 	}
 
 	// 用公钥加密
-	public static byte[] encryptData(byte[] data, PublicKey pubKey) {
+	public static byte[] encryptData(byte[] data, Key pubKey) {
 		try {
 			/*Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 			cipher.init(Cipher.ENCRYPT_MODE, pubKey);
@@ -217,13 +222,13 @@ public class RsaHelper {
 	        out.close(); 
 	        return decryptedData;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("encryptData use public key error;", e);
 			return null;
 		}
 	}
 
 	// 用私钥解密
-	public static byte[] decryptData(byte[] encryptedData, PrivateKey priKey) {
+	public static byte[] decryptData(byte[] encryptedData, Key priKey) {
 		try {
 			/*Cipher cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.DECRYPT_MODE, priKey);
@@ -252,6 +257,7 @@ public class RsaHelper {
 	        out.close();  
 	        return decryptedData;  
 		} catch (Exception e) {
+			log.error("decryptData using private key error", e);
 			return null;
 		}
 	}
@@ -273,7 +279,7 @@ public class RsaHelper {
 	                dataByteArray, pubKey);	        
 			return Base64Helper.encode(encryptedDataByteArray);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			log.error("encryptDataFromStr using public key error" , e);
 			return "";
 		}
 	}

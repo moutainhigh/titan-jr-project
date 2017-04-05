@@ -115,7 +115,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.1.41</version>
+            <version>1.2.28</version>
         </dependency>
         <!-- dubbo start -->
         <dependency>
@@ -217,18 +217,53 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
+	<profiles>
+		<profile>
+            <id>production</id>
+            <properties>
+                <package.environment>production</package.environment>
+            </properties>
+        </profile>
+        <profile>
+            <id>test01</id>
+            <properties>
+                <package.environment>test01</package.environment>
+            </properties>
+        </profile>
+        <profile>
+            <id>test02</id>
+            <properties>
+                <package.environment>test02</package.environment>
+            </properties>
+            <activation>
+        		<activeByDefault>true</activeByDefault>
+        	</activation>
+        </profile>
+        <profile>
+            <id>test03</id>
+            <properties>
+                <package.environment>test03</package.environment>
+            </properties>
+            
+        </profile>
+    </profiles>
+    
     <build>
         <finalName>titanjr-dubbo-server</finalName>
+        <filters> 
+	    	<filter>src/main/resources/filters/sys-${package.environment}.properties</filter> 
+	    </filters> 
         <!-- 定义resource 文件和目录 -->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <excludes>
-                    <exclude>production/**/**</exclude>
-                    <exclude>debug_conf.properties</exclude>
-                </excludes>
+                	<exclude>production/**/**</exclude>
+                	<exclude>filters/**/**</exclude>
+                   <exclude>jdbc.properties</exclude>
+                   <exclude>debug_conf.properties</exclude>
+               	</excludes>
             </resource>
         </resources>
          <plugins>
@@ -245,6 +280,7 @@
                         <resource>
                             <directory>src/main/resources/production</directory>
                             <targetPath>WEB-INF/classes</targetPath>
+                            <filtering>true</filtering>
                         </resource>
                     </webResources>
                 </configuration>

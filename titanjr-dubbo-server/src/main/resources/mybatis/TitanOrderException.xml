@@ -15,9 +15,11 @@
 	  id,
 	  orderid,
 	  exceptionmsg,
-	  exceptioncode,
+	  type,
 	  exceptionTime,
-	  exceptioncontent 
+	  exceptioncontent,
+	  failState,
+	  orderType
 	  from
 	  t_tfs_order_exception
 	  <where>
@@ -28,14 +30,25 @@
 	</select>
 	
 	<insert id="insertOrderException" parameterType="com.fangcang.titanjr.entity.TitanOrderException">
-	  insert into t_tfs_order_exception 
+	  insert into t_tfs_order_exception
+	  (
+	  id,
+	  orderid,
+	  exceptionmsg,
+	  type,
+	  exceptiontime,
+	  exceptioncontent,
+	  failstate,
+	  ordertype
+	  ) 
 	  values
 	  (id,
 	  #{orderId},
 	  #{exceptionMsg},
-	  #{exceptionCode},
+	  #{type},
 	  #{exceptionTime},
-	  #{exceptionContent})
+	  #{exceptionContent},
+	  #{failState},
+	  #{orderType})
 	</insert>
-	
 </mapper>

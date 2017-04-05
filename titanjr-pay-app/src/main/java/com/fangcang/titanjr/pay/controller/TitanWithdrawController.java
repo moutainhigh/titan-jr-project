@@ -103,7 +103,7 @@ public class TitanWithdrawController extends BaseController {
 	 * @return: String
 	 */
 	@RequestMapping(value = "/account-withdraw", method = RequestMethod.GET)
-	public String toAccountWithDrawPage(String userId, String fcUserId,
+	public String toAccountWithDrawPage(String userId,String tfsUserId, String fcUserId,
 			String orderNo, Model model) throws Exception {
 		if (null != userId) {
 			// 根据用户ID查询对于的组织机构信息
@@ -173,6 +173,7 @@ public class TitanWithdrawController extends BaseController {
 			// 设置界面需要获取的信息
 			model.addAttribute("organ", financialOrganDTO);
 			model.addAttribute("fcUserId", fcUserId);
+			model.addAttribute("tfsUserId", tfsUserId);
 			model.addAttribute("userId", userId);
 			model.addAttribute("orderNo", orderNo);
 		}
@@ -191,7 +192,7 @@ public class TitanWithdrawController extends BaseController {
 	public String accountWithDraw(WithDrawRequest withDrawRequest) {
 
 		if (null == withDrawRequest.getUserId()
-				|| null == withDrawRequest.getFcUserId()
+				|| (isBlank(withDrawRequest.getFcUserId())&&isBlank(withDrawRequest.getTfsUserId()))
 				|| null == withDrawRequest.getOrderNo()) {
 			log.error("请求参数错误:"+JSONSerializer.toJSON(withDrawRequest));
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
@@ -243,7 +244,11 @@ public class TitanWithdrawController extends BaseController {
 				tfsUserid = titanUserBindInfoDTO.getTfsuserid().toString();
 			}
 		}
-
+		//优先使用tfsuserId
+		if(StringUtil.isValidString(withDrawRequest.getTfsUserId())){
+			tfsUserid = withDrawRequest.getTfsUserId();
+		}
+		
 		if (!StringUtil.isValidString(withDrawRequest.getPassword())
 				|| !StringUtil.isValidString(tfsUserid)) {
 			log.error("密码或用户传入失败");
@@ -416,6 +421,10 @@ public class TitanWithdrawController extends BaseController {
 		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS);
 	}
 	
+
+	private boolean isBlank(String src){
+		return !StringUtil.isValidString(src);
+	}
 	
 	 private String queryProvinceName(String cityCode){
 		 if(!StringUtil.isValidString(cityCode)){
@@ -451,6 +460,7 @@ public class TitanWithdrawController extends BaseController {
 			return JsonConversionTool.toJson(response);
 		}
 		return null;
+
 	}
 	/**
 	 * 根据用户ID查询对应的用户名信息
@@ -488,7 +498,7 @@ public class TitanWithdrawController extends BaseController {
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 		organQueryRequest.setUserId(userId);
 		FinancialOrganResponse organOrganResponse = titanFinancialOrganService
-				.queryFinancialOrgan(organQueryRequest);
+				.queryBaseFinancialOrgan(organQueryRequest);
 		if (organOrganResponse.isResult()) {
 			return organOrganResponse.getFinancialOrganDTO();
 		}

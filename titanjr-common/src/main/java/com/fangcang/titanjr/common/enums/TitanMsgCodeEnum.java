@@ -22,7 +22,7 @@ public enum TitanMsgCodeEnum {
 	AUTHENTITCATION_FAILED(110100002, "身份认证失败，请确认！"),
 
 	// 权限校验
-	PERMISSION_CHECK_FAILED(110100003, "该用户没有，请确认！"),
+	PERMISSION_CHECK_FAILED(110100003, "该用户没有付款权限，请确认！"),
 	
 	// 业务订单信息已经发生变化
 	BUSS_ORDER_CHANGE_CHECK_FAILED(110100004, "业务订单信息已经发生变化，请重新下单!"),

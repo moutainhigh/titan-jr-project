@@ -16,7 +16,6 @@ public class OrderExceptionDTO implements Serializable{
 	
     public OrderExceptionDTO(String orderId,String exceptionMsg,OrderExceptionEnum exceptionCode,String exceptionContent){
 		this.orderId = orderId;
-		this.exceptionCode=exceptionCode.code;
 		this.exceptionMsg = exceptionMsg;
 		this.exceptionContent =exceptionContent;
 		this.exceptionTime=new Date();

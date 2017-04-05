@@ -1,7 +1,7 @@
 package com.fangcang.titanjr.service.impl;
 
-import java.io.InputStream;
-import java.util.List;
+import java.text.MessageFormat;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -9,33 +9,29 @@ import net.sf.json.JSONSerializer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.HttpPost;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.alibaba.fastjson.JSON;
-import com.fangcang.titanjr.common.bean.CallBackInfo;
+
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.common.util.MD5;
-import com.fangcang.titanjr.common.util.httpclient.HttpClient;
-import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
 import com.fangcang.titanjr.dao.DomainConfigDao;
 import com.fangcang.titanjr.dao.TitanDynamicKeyDao;
-import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
+import com.fangcang.titanjr.dao.TitanOrderExceptionDao;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
-import com.fangcang.titanjr.dto.bean.RSInvokeConfig;
 import com.fangcang.titanjr.dto.bean.SysConfig;
-import com.fangcang.titanjr.dto.request.NotifyClientRequest;
 import com.fangcang.titanjr.dto.request.PayMethodConfigRequest;
 import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
 import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.entity.TitanDynamicKey;
+import com.fangcang.titanjr.entity.TitanOrderException;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
+
 @Service("titanFinancialUtilService")
 public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 
@@ -50,7 +46,17 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 	@Resource 
 	private TitanOrderService titanOrderService;
 	
-	private SysConfig config;
+	
+	@Resource 
+	TitanOrderExceptionDao orderExceptionDao;
+	
+	SysConfig config;
+	
+	@Value("${pay.callback.pageurl}")
+	private String payCallbackPageUrl;
+	
+	@Value("${pay.notifyurl}")
+	private String payNotifyUrl;
 	
 	@Override
 	public PaymentUrlResponse getPaymentUrl(PaymentUrlRequest paymentUrlRequest) {
@@ -71,8 +77,8 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 			titanDynamicKeyDao.insert(titanDynamicKey);
 		} catch (Exception e) {
 			log.error("金融密钥设置失败", e);
-			paymentUrlResponse.putErrorResult("dynamicKey_set_error",
-					"金融密钥设置失败");
+			paymentUrlResponse.putErrorResult("dynamicKey_set_error","金融密钥设置失败");
+			this.saveOrderException(titanDynamicKey.getPayorderno(),OrderKindEnum.OrderId, OrderExceptionEnum.Save_Order_Get_Desk_Url_Fail, JSONSerializer.toJSON(titanDynamicKey).toString());
 			return paymentUrlResponse;
 		}
 		// 构造参数列表拼接收银台地址
@@ -152,8 +158,8 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 			String domainName = domainConfigDao.queryCurrentEnvDomain();
 			if(StringUtil.isValidString(domainName)){
 				payMethodConfigDTO = new PayMethodConfigDTO();
-				payMethodConfigDTO.setPageurl("http://"+domainName+"/titanjr-pay-02/payment/payConfirmPage.action");
-				payMethodConfigDTO.setNotifyurl("http://"+domainName+"/titanjr-pay-02/payment/notify.action");
+				payMethodConfigDTO.setPageurl(MessageFormat.format(payCallbackPageUrl, domainName));
+				payMethodConfigDTO.setNotifyurl(MessageFormat.format(payNotifyUrl, domainName));
 			}
 			return payMethodConfigDTO;
 		}catch(Exception e){
@@ -162,48 +168,44 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 		return null;
 	}
 
-	@Override
-	public void notifyClient(NotifyClientRequest request) {
-		if(null == request || !StringUtil.isValidString(request.getUrl())){
-			return ;
-		}
-		log.info("回调客户端参数："+JSONSerializer.toJSON(request));
-		 String response = "";
-		try{
-			HttpPost httpPost = new HttpPost(request.getUrl());
-		    HttpResponse resp = HttpClient.httpRequest(request.getParams(),  httpPost);
-			if (null != resp) {
-				InputStream in = resp.getEntity().getContent();
-				byte b[] = new byte[1024];
-				
-				int length = 0;
-				if((length = in.read(b)) !=-1){
-					byte d[] = new byte[length];
-					System.arraycopy(b, 0, d, 0, length);
-					response = new String(d , "UTF-8");
-				}
-				httpPost.releaseConnection();
-			}
-			
-			if(!StringUtil.isValidString(response)){
-				log.error("回调返回信息为空:" + response);
-				throw new Exception("回调返回信息为空");
-			}
-			CallBackInfo callBackInfo = TitanjrHttpTools.analyzeResponse(response);
-			if (callBackInfo == null ||!"000".equals(callBackInfo.getCode())) {
-				log.error("回调返回信息异常");
-				throw new Exception("回调返回信息异常");
-			}
-			
-		}catch(Exception e){
-			log.error("回调失败");
-			OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO(
-					null, "回调失败",
-					OrderExceptionEnum.NOTIFY_FAILED,
-					JSONSerializer.toJSON(request).toString());
-			titanOrderService.saveOrderException(orderExceptionDTO);
-		}
-	}
+//	@Override
+//	public void notifyClient(NotifyClientRequest request) {
+//		if(null == request || !StringUtil.isValidString(request.getUrl())){
+//			return ;
+//		}
+//		log.info("回调客户端参数："+JSONSerializer.toJSON(request));
+//		 String response = "";
+//		try{
+//			HttpPost httpPost = new HttpPost(request.getUrl());
+//		    HttpResponse resp = HttpClient.httpRequest(request.getParams(),  httpPost);
+//			if (null != resp) {
+//				InputStream in = resp.getEntity().getContent();
+//				byte b[] = new byte[1024];
+//				
+//				int length = 0;
+//				if((length = in.read(b)) !=-1){
+//					byte d[] = new byte[length];
+//					System.arraycopy(b, 0, d, 0, length);
+//					response = new String(d , "UTF-8");
+//				}
+//				httpPost.releaseConnection();
+//			}
+//			
+//			if(!StringUtil.isValidString(response)){
+//				log.error("回调返回信息为空:" + response);
+//				throw new Exception("回调返回信息为空");
+//			}
+//			CallBackInfo callBackInfo = TitanjrHttpTools.analyzeResponse(response);
+//			if (callBackInfo == null ||!"000".equals(callBackInfo.getCode())) {
+//				log.error("回调返回信息异常");
+//				throw new Exception("回调返回信息异常");
+//			}
+//			
+//		}catch(Exception e){
+//			log.error("回调失败");
+//			utilService.saveOrderException(null, OrOrderExceptionEnum.Notify_Fail, JSONSerializer.toJSON(request).toString());
+//		}
+//	}
 
 	@Override
 	public SysConfig querySysConfig() {
@@ -216,4 +218,29 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 		}
 		return config;
 	}
+
+	@Override
+	public void saveOrderException(String orderId, OrderKindEnum orEnum,OrderExceptionEnum oet,
+			String content) {
+		
+		if(null == oet){
+			return;
+		}
+		
+		TitanOrderException ex = new TitanOrderException();
+		ex.setType(oet.type);
+		ex.setExceptionContent(content);
+		ex.setExceptionTime(new Date());
+		ex.setOrderId(orderId);
+		ex.setFailState(oet.failState);
+		ex.setExceptionMsg(oet.msg);
+		ex.setOrderType(orEnum.getType());
+		
+		try{
+			orderExceptionDao.insertTitanOrderException(ex);
+		}catch(Exception e){
+			log.error("插入异常信息失败",e);
+		}
+	}
+
 }

@@ -77,11 +77,11 @@ public interface TitanFinancialAccountService {
 	
 	/**
 	 * 更新收付款历史记录
-	 * @param transferRequest
+	 * @param accountHistoryRequest
 	 * @return
 	 * @author fangdaikang
 	 */
-	public AccountHistoryResponse addAccountHistory2(AccountHistoryRequest accountHistoryRequest);
+	public AccountHistoryResponse addAccountHistory(AccountHistoryRequest accountHistoryRequest);
 	
 	/**
 	 * 获取收付款历史

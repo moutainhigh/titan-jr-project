@@ -20,6 +20,8 @@ public class FinancialUserBindRequest extends BaseRequestDTO{
     @NotNull
     private String loginUserName;
     @NotNull
+    private Integer coopType;
+    @NotNull
     private String fcLoginUserName;
     @NotNull
     private String merchantCode;
@@ -40,7 +42,15 @@ public class FinancialUserBindRequest extends BaseRequestDTO{
         this.loginUserName = loginUserName;
     }
 
-    public Integer getFcuserid() {
+    public Integer getCoopType() {
+		return coopType;
+	}
+
+	public void setCoopType(Integer coopType) {
+		this.coopType = coopType;
+	}
+
+	public Integer getFcuserid() {
 		return fcuserid;
 	}
 

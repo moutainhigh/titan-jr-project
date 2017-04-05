@@ -129,6 +129,10 @@
 
 	<bean id="titanRefundDao" class="com.fangcang.titanjr.dao.impl.TitanRefundDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="loanCreditOrderDiscardDao" class="com.fangcang.titanjr.dao.impl.LoanCreditOrderDiscardDaoImpl" parent="baseSqlMapClient"></bean>	
+<<<<<<< HEAD
 	<bean id="titanVirtualOrgDao" class="com.fangcang.titanjr.dao.impl.TitanVirtualOrgDaoImpl" parent="baseSqlMapClient"></bean>
+=======
+
+>>>>>>> branch 'dev' of git@192.168.2.94:/srv/git/titan-jr-project.git
 </beans>
 
