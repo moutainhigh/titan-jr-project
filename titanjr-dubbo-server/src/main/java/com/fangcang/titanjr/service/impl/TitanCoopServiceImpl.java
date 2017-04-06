@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.util.HttpUtils;
+import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanCoopDao;
@@ -28,7 +29,6 @@ import com.fangcang.titanjr.dto.request.SynOrgInfoRequest;
 import com.fangcang.titanjr.entity.TitanSynOrgInfo;
 import com.fangcang.titanjr.entity.parameter.TitanCoopParam;
 import com.fangcang.titanjr.service.TitanCoopService;
-import com.fangcang.util.JsonUtil;
 
 @Service("titanCoopService")
 public class TitanCoopServiceImpl implements TitanCoopService {
@@ -78,7 +78,7 @@ public class TitanCoopServiceImpl implements TitanCoopService {
 					String resultString;
 				
 					resultString = HttpUtils.postRequest(new URL(URLDecoder.decode(item.getNotifyUrl(), "UTF-8")), notifyParam);
-					Map result = JsonUtil.jsonToMap(resultString);
+					Map result = JsonConversionTool.toObject(resultString, Map.class);
 					//如果对方同步成功，则删除队列
 					if("1".equals(result.get("status"))){
 						deleteList.add(item.getSynId());

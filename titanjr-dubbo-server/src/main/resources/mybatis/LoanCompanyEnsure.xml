@@ -30,7 +30,7 @@
         <result property="certificateExpireDate" column="certificateexpiredate"/>
         <result property="companyType" column="companytype"/>
         <result property="registFinance" column="registfinance"/>
-        
+        <result property="openAccount" column="openAccount"/>
     </resultMap>
 
 
@@ -63,7 +63,8 @@
         certificatestartdate,
         certificateexpiredate,
         companytype,
-        registfinance
+        registfinance,
+        openAccount
         from
         t_loan_companyensure
         <where>
@@ -116,6 +117,7 @@
             <if test="certificateExpireDate != null">certificateexpiredate= #{certificateExpireDate},</if>
             <if test="companyType != null">companytype= #{companyType},</if>
             <if test="registFinance != null">registfinance= #{registFinance},</if>
+             <if test="openAccount != null">openAccount= #{openAccount}</if>
         </set>
         <where>
                orgcode = #{orgCode}
@@ -152,7 +154,8 @@
           certificatestartdate,
         certificateexpiredate,
         companytype,
-        registfinance
+        registfinance,
+        openAccount
      )
      VALUES
      	(
@@ -181,7 +184,8 @@
      		#{certificateStartDate},
      		#{certificateExpireDate},
      		#{companyType},
-     		#{registFinance}
+     		#{registFinance},
+     		#{openAccount}
      	)
     </insert>
 

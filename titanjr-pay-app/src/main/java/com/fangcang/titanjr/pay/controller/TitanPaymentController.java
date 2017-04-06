@@ -1,40 +1,17 @@
 
 package com.fangcang.titanjr.pay.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.fangcang.titanjr.common.enums.*;
-import com.fangcang.titanjr.common.util.*;
-import com.fangcang.titanjr.dto.PaySourceEnum;
-import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
-import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
-import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.bean.TransOrderInfo;
-import com.fangcang.titanjr.enums.PayTypeEnum;
-import com.fangcang.titanjr.dto.request.ConfirmOrdernQueryRequest;
-import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
-import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
-import com.fangcang.titanjr.dto.request.TransOrderRequest;
-import com.fangcang.titanjr.dto.request.TransferRequest;
-import com.fangcang.titanjr.dto.response.AccountCheckResponse;
-import com.fangcang.titanjr.dto.response.ConfirmOrdernQueryResponse;
-import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
-import com.fangcang.titanjr.dto.response.QrCodeResponse;
-import com.fangcang.titanjr.dto.response.RechargeResponse;
-import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
-import com.fangcang.titanjr.dto.response.TransOrderResponse;
-import com.fangcang.titanjr.dto.response.TransferResponse;
-import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
-import com.fangcang.titanjr.pay.req.CreateTitanRateRecordReq;
-import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
-import com.fangcang.titanjr.pay.services.TitanPaymentService;
-import com.fangcang.titanjr.pay.services.TitanRateService;
-import com.fangcang.titanjr.pay.services.TitanTradeService;
-import com.fangcang.titanjr.service.TitanCashierDeskService;
-import com.fangcang.titanjr.service.TitanFinancialAccountService;
-import com.fangcang.titanjr.service.TitanFinancialTradeService;
-import com.fangcang.titanjr.service.TitanFinancialUtilService;
-import com.fangcang.titanjr.service.TitanOrderService;
-import com.fangcang.util.StringUtil;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.Resource;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONSerializer;
 
@@ -45,17 +22,55 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
+import com.fangcang.titanjr.common.enums.LoanProductEnum;
+import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.PayerTypeEnum;
+import com.fangcang.titanjr.common.enums.ReqstatusEnum;
+import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.common.util.MD5;
+import com.fangcang.titanjr.common.util.NumberUtil;
+import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.Wxutil;
+import com.fangcang.titanjr.dto.PaySourceEnum;
+import com.fangcang.titanjr.dto.bean.LoanSpecificationBean;
+import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderInfo;
+import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
+import com.fangcang.titanjr.dto.request.ConfirmOrdernQueryRequest;
+import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
+import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
+import com.fangcang.titanjr.dto.request.TransOrderRequest;
+import com.fangcang.titanjr.dto.request.TransferRequest;
+import com.fangcang.titanjr.dto.response.AccountCheckResponse;
+import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
+import com.fangcang.titanjr.dto.response.ConfirmOrdernQueryResponse;
+import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
+import com.fangcang.titanjr.dto.response.QrCodeResponse;
+import com.fangcang.titanjr.dto.response.RechargeResponse;
+import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
+import com.fangcang.titanjr.dto.response.TransferResponse;
+import com.fangcang.titanjr.enums.PayTypeEnum;
+import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
+import com.fangcang.titanjr.pay.req.CreateTitanRateRecordReq;
+import com.fangcang.titanjr.pay.req.OperationLoanPayReq;
+import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
+import com.fangcang.titanjr.pay.services.TitanPaymentService;
+import com.fangcang.titanjr.pay.services.TitanRateService;
+import com.fangcang.titanjr.pay.services.TitanTradeService;
+import com.fangcang.titanjr.service.TitanCashierDeskService;
+import com.fangcang.titanjr.service.TitanFinancialAccountService;
+import com.fangcang.titanjr.service.TitanFinancialLoanService;
+import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
+import com.fangcang.titanjr.service.TitanOrderService;
+import com.fangcang.util.StringUtil;
 @Controller
 @RequestMapping("/payment")
 public class TitanPaymentController extends BaseController {
@@ -92,6 +107,8 @@ public class TitanPaymentController extends BaseController {
 	@Resource
 	private TitanFinancialUtilService titanFinancialUtilService;
 	
+	@Resource
+	private TitanFinancialLoanService titanFinancialLoanService;
 	
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	/**
@@ -599,6 +616,93 @@ public class TitanPaymentController extends BaseController {
 				mapLock.remove(out_trade_no).notifyAll();
 			}
 		}
+	}
+	
+
+	/**
+	 * 申请运营贷
+	 * 
+	 * @Title: operationLoanPay
+	 * @Description: TODO
+	 * @param req
+	 * @return
+	 * @return: String
+	 */
+	@RequestMapping("operationLoanPay")
+	public String operationLoanPay(HttpServletRequest httpRequest,
+			OperationLoanPayReq req) {
+
+		// 校验参数是否合法
+		if (req == null || !StringUtil.isValidString(req.getAmount())
+				|| !StringUtil.isValidString(req.getBankName())
+				|| !StringUtil.isValidString(req.getCardNum())
+				|| !StringUtil.isValidString(req.getAccountName())) {
+
+			log.error("check loan request param is null!");
+
+			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+		}
+
+		log.info("operation loan pay req = " + JsonConversionTool.toJson(req));
+
+		TransOrderRequest transOrderRequest = new TransOrderRequest();
+		transOrderRequest.setUserorderid(req.getTransOrderNo());
+		TransOrderDTO transOrderDTO = titanOrderService
+				.queryTransOrderDTO(transOrderRequest);
+
+		if (transOrderDTO == null) {
+			log.error("trans order is error !");
+			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+		}
+		Map<String, String> bussinessInfoMap = JsonConversionTool.toObject(
+				transOrderDTO.getBusinessinfo(), Map.class);
+
+		String billOrderNo = bussinessInfoMap.get("billCode");
+
+		if (!StringUtil.isValidString(billOrderNo)) {
+			log.error("bill order is null !");
+			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+		}
+		// 申请贷款
+		LoanSpecificationBean loanSpecBean = new LoanSpecificationBean();
+		loanSpecBean.setAmount(NumberUtil.covertToCents(req.getAmount()));
+		loanSpecBean.setOrderNo(OrderGenerateService.genLoanApplyOrderNo());
+		loanSpecBean.setAccount(req.getCardNum());
+		loanSpecBean.setAccountName(req.getAccountName());
+		loanSpecBean.setBank(req.getBankName());
+
+		Map<String, String> contentMap = new HashMap<String, String>();
+		contentMap.put("billOrderNo", billOrderNo);
+		contentMap.put("transOrderNo", req.getTransOrderNo());
+		loanSpecBean.setContent(JsonConversionTool.toJson(contentMap));
+
+		ApplyLoanRequest request = new ApplyLoanRequest();
+		request.setProductType(LoanProductEnum.OPERACTION);
+		request.setLcanSpec(loanSpecBean);
+		request.setOrgCode(transOrderDTO.getUserid());
+		request.setOperator("0");
+
+		try {
+			log.info("apply loan request = "
+					+ JsonConversionTool.toJson(request));
+
+			ApplyLoanResponse response = titanFinancialLoanService
+					.applyLoan(request);
+
+			if (response == null || !response.isResult()) {
+
+				log.error("apply loan fail!"
+						+ JsonConversionTool.toJson(response));
+
+				return toMsgJson(TitanMsgCodeEnum.LOAN_REQUEST_FAIL);
+			}
+
+			return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS);
+
+		} catch (Exception e) {
+			log.error("apply loan fail!", e);
+		}
+		return toMsgJson(TitanMsgCodeEnum.LOAN_REQUEST_FAIL);
 	}
 	    
 }

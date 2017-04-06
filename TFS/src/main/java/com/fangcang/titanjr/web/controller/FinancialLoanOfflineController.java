@@ -156,14 +156,14 @@ public class FinancialLoanOfflineController extends BaseController {
 				// 申请贷款
 				LoanRoomPackSpecBean loanSpecBean = new LoanRoomPackSpecBean();
 				loanSpecBean.setAmount("0");
-				loanSpecBean.setLoanOrderNo(info.getLoanOrderNo());
+				loanSpecBean.setOrderNo(info.getLoanOrderNo());
 				loanSpecBean.setAccount(info.getAccount());
-				loanSpecBean.setTitanCode(info.getTitanCode());
+//				loanSpecBean.setTitanCode(info.getTitanCode());
 				loanSpecBean.setAccountName(info.getAccountName());
 				loanSpecBean.setBank(info.getBank());
 				loanSpecBean.setBeginDate(DateUtil.sdf.parse(info
 						.getBeginDate()));
-				loanSpecBean.setContractUrl(info.getContactNames());
+				loanSpecBean.setAccessory(info.getContactNames());
 				loanSpecBean.setEndDate(DateUtil.sdf.parse(info.getEndDate()));
 				loanSpecBean.setHotleName(info.getHotelName());
 				if (StringUtil.isValidString(info.getRoomNights())) {
@@ -176,7 +176,7 @@ public class FinancialLoanOfflineController extends BaseController {
 				request.setProductType(LoanProductEnum.OPERACTION);
 				LoanSpecificationBean specificationBean = new LoanSpecificationBean();
 				specificationBean.setAccount(info.getAccount());
-				specificationBean.setTitanCode(info.getTitanCode());
+//				specificationBean.setTitanCode(info.getTitanCode());
 				specificationBean.setAccountName(info.getAccountName());
 				specificationBean.setBank(info.getBank());
 				specificationBean.setAccessory(info.getContactNames());

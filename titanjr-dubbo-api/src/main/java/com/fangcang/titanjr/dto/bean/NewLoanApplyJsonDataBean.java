@@ -31,7 +31,15 @@ public class NewLoanApplyJsonDataBean implements Serializable {
 	private String orderType;//订单类型
 	private String rootInstCd;//机构号码
 	private String loanTerm;//贷款期限（天）
+	private String shenqingAmount;
 	
+	public String getShenqingAmount() {
+		return shenqingAmount;
+	}
+	
+	public void setShenqingAmount(String shenqingAmount) {
+		this.shenqingAmount = shenqingAmount;
+	}
 	public String getLoanApplicateName() {
 		return loanApplicateName;
 	}

@@ -37,6 +37,7 @@ public class LoanOrderSynRunner implements JobRunner{
         
 		GetLoanOrderInfoListRequest req = new GetLoanOrderInfoListRequest();
 		req.setCurrentPage(1);
+		req.setOrgCode("TJM60000001");
 		
 		req.setOrderStatusEnum(LoanOrderStatusEnum.HAVE_LOAN,
 				LoanOrderStatusEnum.LOAN_EXPIRY,
@@ -65,7 +66,7 @@ public class LoanOrderSynRunner implements JobRunner{
 					try {
 						titanFinancialLoanService.synLoanOrderInfo(sreq);
 					} catch (Exception ex) {
-						 return new Result(Action.EXECUTE_FAILED, "成功");
+//						 return new Result(Action.EXECUTE_FAILED, "成功");
 					}
 				}
 			}

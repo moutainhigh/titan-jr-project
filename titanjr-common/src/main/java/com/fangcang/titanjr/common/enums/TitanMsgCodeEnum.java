@@ -114,6 +114,8 @@ public enum TitanMsgCodeEnum {
  	PERMISSION_CHECK_REFUND(110100041, "您还没有付款（退款）权限，请与管理员联系！"),
 
     REFUND_CONCERT_FAIL(110100040,"商家未绑定金融账户或员工未绑定金融用户"),
+    
+    LOAN_REQUEST_FAIL(110100042,"请求贷款失败，请联系管理员！"),
 
 
 	// 身份认证失败Unexpected error

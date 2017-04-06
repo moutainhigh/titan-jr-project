@@ -53,35 +53,23 @@
 								id="roomNights" class="text w_120 c_666" placeholder=""
 								type="text" value=""> 间夜
 						</div></li>
-					<li class="clearfix"><div class="tit">收款信息</div>
-						<div class="w_290">
-							<i class="c_f00">*</i>账户名：<input name="accountName"
-								id="accountName" class="text w_184 c_666 m_l10" placeholder=""
-								type="text" value="">
-						</div>
-						<div class="w_360">
-							<i class="c_f00">*</i>泰坦码：<input name="titanCode" id="titanCode"
-								class="text w_265 c_666" placeholder="" type="text" value="">
-						</div>
-						<!-- 
-						<div class="w_400">
-							<i class="c_f00">*</i>开户行： <select
-								class="select b_fff m_l10 w_150" name="bank" id="bank">
-								<option value="招商银行" >招商银行</option>
-								<option value="中国工商银行" selected="selected">中国工商银行</option>
-								<option value="中国建设银行">中国建设银行</option>
-								<option value="中国农业银行">中国农业银行</option>
-								<option value="中国民生银行">中国民生银行</option>
-								<option value="光大银行">中国光大银行</option>
-								
-								<option value="交通银行">交通银行</option>
-								<option value="中国银行">中国银行</option>
-								<option value="兴业银行">兴业银行</option>
-								<option value="中国建设银行">中国建设银行</option>
-								<option value="中国建设银行">中国民生银行</option>
-							</select>
-						</div>  --><input type="hidden" class="text w_250  c_666 "
-						name="contactNames" id="contactNames"></li>
+						
+						  <li class="clearfix"><div class="tit">收款信息</div>
+					          <div class="sel_Bank list_two J_add_Bank"> 
+					            <b class="blue">选择收款方</b>
+					          </div>
+					          <div class="Bank dn">
+					            <div class="b_img"><img src="../images/TFS/Bankico.png" id="bankIco"></div>
+					            <p class="" title="" id="accountNameSelect"></p>
+					            <p id="accountSelect"></p>
+					            <div class="b_replace J_add_Bank"></div>
+					          </div>
+					        </li>
+					        
+					        <input name="accountName"  id="accountName"type="hidden" value=""/>
+					        <input name="bank"  id="bank"type="hidden" value=""/>
+					        <input name="account"  id="account"type="hidden" value=""/>
+			
 					<li class="clearfix p_l83"><div class="tit">包房合同</div>
 						<div class="p_l25">请上传包房合同附件，附件格式支持PDF、JPG、JPEG、PNG、ZIP，大小不超过5M</div>
 						<input type="hidden" name="contractNames" id="contractNames"/>
@@ -132,7 +120,51 @@
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 	<script type="text/javascript" src="<%=basePath %>/js/ajaxfileupload.js"></script>
 
-	<script type="text/javascript">   
+	<script type="text/javascript">
+	
+	var selectBankWinow = null;
+	
+	function selectBankCallBack(bankName , bankCode , account , accountName)
+	{
+		$('#accountName').val(accountName);
+		$('#account').val(account);
+		$('#bank').val(bankName);
+		
+		$('#accountNameSelect').text(accountName);
+		$('#accountSelect').text(account);
+		$("#bankIco").attr("src","<%=basePath%>/banks/ico36/"+bankCode+".png");
+		
+		 $('.sel_Bank').hide();
+         $('.Bank').show();
+         
+         if(selectBankWinow)
+         {
+        	 selectBankWinow.remove();
+        	 selectBankWinow= null;
+         }
+	}
+	
+	$('.J_add_Bank').on('click',function(){
+		  $.ajax({
+		    dataType : 'html',
+		    context: document.body,
+		    url : '<%=basePath%>/loan_apply/selectBank.shtml',     
+		    success : function(html){
+		    	selectBankWinow =  window.top.dialog({
+		            title: ' ',
+		            padding: '0 0 35px 0',
+		            content: html,
+		            skin : 'saas_pop',  
+		        }).showModal();
+// 		        window.parent.$(".J_close").on('click', function() {       
+// 		          d.remove();
+// 		          $('.sel_Bank').hide();
+// 		          $('.Bank').show();
+// 		        });
+		    }
+		  });
+		})
+	
 	/* var initData = new init_loanApply_obj(); */
 	var init_loanApply_obj = {
 			static_path:"http://image.fangcang.com/upload/images/titanjr/loan_apply/${JR_USERID}/",
@@ -186,7 +218,6 @@
 				
 			});
 		},
-		
 		queryData:function(){
 			return {
 				loanOrderNo:$("#loanApplyOrderNo").val(),
@@ -196,8 +227,9 @@
 				endDate:$("#dataE").val(),
 				roomNights:$("#roomNights").val(),
 				accountName:$("#accountName").val(),
-				titanCode:$("#titanCode").val(),
-				//bank:$("#bank").val(),
+// 				titanCode:$("#titanCode").val(),
+				bank:$("#bank").val(),
+				account:$("#account").val(),
 				contactNames:this.addContactName()
 			};
 		},
@@ -232,26 +264,26 @@
 				return false;
 			}
 			
-			if(tfs_common_valid.isBlank(data.accountName)){
-				new top.Tip({msg: '账户名不能为空', type: 3, timer: 2000});
+// 			if(tfs_common_valid.isBlank(data.accountName)){
+// 				new top.Tip({msg: '账户名不能为空', type: 3, timer: 2000});
+// 				return false;
+// 			}
+			
+			
+// 			if(tfs_common_valid.isBlank(data.titanCode)){
+// 				new top.Tip({msg: '泰坦码不能为空', type: 3, timer: 2000});
+// 				return false;
+// 			}
+			
+// 			if(!tfs_common_valid.isTitanCode(data.titanCode)){
+// 				new top.Tip({msg: '泰坦码格式不正确', type: 3, timer: 2000});
+// 				return false;
+// 			}
+			
+			if(tfs_common_valid.isBlank(data.bank)){
+				new top.Tip({msg: '收款账户不能为空！', type: 1, timer: 2000});
 				return false;
 			}
-			
-			
-			if(tfs_common_valid.isBlank(data.titanCode)){
-				new top.Tip({msg: '泰坦码不能为空', type: 3, timer: 2000});
-				return false;
-			}
-			
-			if(!tfs_common_valid.isTitanCode(data.titanCode)){
-				new top.Tip({msg: '泰坦码格式不正确', type: 3, timer: 2000});
-				return false;
-			}
-			
-			//if(tfs_common_valid.isBlank(data.bank)){
-			//	new top.Tip({msg: '开户行不能为空', type: 1, timer: 2000});
-			///	return false;
-			//}
 			
 			if(tfs_common_valid.isBlank(data.contactNames)){
 				new top.Tip({msg: '包房合同不能为空', type: 3, timer: 2000});
@@ -261,22 +293,23 @@
 			return true;
 		},
 		addContactName:function(){
+			
 			var contactNames ="";
 			if($.trim($("#compartment_contract1_name").val()).length>1){
-				contactNames += $.trim($("#compartment_contract1_name").val())+",";
+				contactNames += $.trim($("#compartment_contract1_name").parent(".RC_c_dd").attr("data-file-name"));
 			}
 			
-			if($.trim($("#compartment_contract2_name").val()).length>1){
-				contactNames+=$.trim($("#compartment_contract2_name").val())+",";
-			}
+// 			if($.trim($("#compartment_contract2_name").val()).length>1){
+// 				contactNames+=$.trim($("#compartment_contract2_name").val())+",";
+// 			}
 			
-			if($.trim($("#compartment_contract3_name").val()).length>1){
-				contactNames+=$.trim($("#compartment_contract3_name").val())+",";
-			}
+// 			if($.trim($("#compartment_contract3_name").val()).length>1){
+// 				contactNames+=$.trim($("#compartment_contract3_name").val())+",";
+// 			}
 			
-			if($.trim($("#compartment_contract4_name").val()).length>1){
-				contactNames+=$.trim($("#compartment_contract4_name").val());
-			}
+// 			if($.trim($("#compartment_contract4_name").val()).length>1){
+// 				contactNames+=$.trim($("#compartment_contract4_name").val());
+// 			}
 			return contactNames;
 		} 
 		
@@ -456,7 +489,7 @@
 	   	            	 }
 	   	            	 //假装让进度条走到100
 	   	            	loadingOver($('#' + ids).parent().find(".TFSuploading") , function(){
-	   	            		$("#"+ids+"_name").val(result.data.fileName);
+	   	            		//$("#"+ids+"_name").val(result.data.fileName);
 	   	            	 	$("#"+ids+"_name").parent(".RC_c_dd").attr({"data-file-name":result.data.fileName});
 	   	            		$("#"+ids+"_error").hide();
 	   	            		uploadSucess(ids , result.data.fileName);

@@ -27,27 +27,25 @@ import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
 
 public final class LoanTypeConvertUtil {
-	
-	
+
 	/**
 	 * 融数跟房仓的状态映射
+	 * 
 	 * @param rsStatus
 	 * @return
 	 */
-	public static LoanOrderStatusEnum rsStatusMap(String rsStatus)
-	{
+	public static LoanOrderStatusEnum rsStatusMap(String rsStatus) {
 		if ("贷款已结束".equals(rsStatus)) {
 			return LoanOrderStatusEnum.LOAN_FINISH;
 		} else if ("终审续议".startsWith(rsStatus) || "终审不通过".startsWith(rsStatus)) {
 			return LoanOrderStatusEnum.AUDIT_FIAL;
 		} else if ("待协议确认".equals(rsStatus) || "待放款".equals(rsStatus)) {
 			return LoanOrderStatusEnum.AUDIT_PASS;
-		}else if("已放款".equals(rsStatus)){
+		} else if ("已放款".equals(rsStatus)) {
 			return LoanOrderStatusEnum.HAVE_LOAN;
 		}
 		return null;
 	}
-	
 
 	public static LoanRepaymentBean getLoanRepaymentBean(
 			TUserArepayment arepayment) {
@@ -76,15 +74,14 @@ public final class LoanTypeConvertUtil {
 
 		if (StringUtil.isValidString(arepayment.getActiverepaymentdate())) {
 
-			repaymentBean
-					.setRepaymentDate(arepayment.getActiverepaymentdate());
+			repaymentBean.setRepaymentDate(arepayment.getActiverepaymentdate());
 		}
 
 		return repaymentBean;
 	}
 
 	public static LoanSpecificationBean getLoanSpecBean(
-			LoanSpecification packSpec ) {
+			LoanSpecification packSpec) {
 		if (packSpec == null) {
 			return null;
 		}
@@ -95,14 +92,13 @@ public final class LoanTypeConvertUtil {
 		packSpecBean.setBank(packSpec.getBank());
 		packSpecBean.setAccessory(packSpec.getAccessory());
 		packSpecBean.setOrderNo(packSpec.getOrderNo());
-		packSpecBean.setTitanCode(packSpec.getTitanCode());
+		// packSpecBean.setTitanCode(packSpec.getTitanCode());
 		packSpecBean.setContent(packSpec.getContent());
 		return packSpecBean;
 	}
-	
-	
+
 	public static LoanRoomPackSpecBean getLoanRoomPackSpecBean(
-			LoanSpecification packSpec ) {
+			LoanSpecification packSpec) {
 		if (packSpec == null) {
 			return null;
 		}
@@ -111,12 +107,11 @@ public final class LoanTypeConvertUtil {
 		packSpecBean.setAccount(packSpec.getAccount());
 		packSpecBean.setAccountName(packSpec.getAccountName());
 		packSpecBean.setBank(packSpec.getBank());
-		packSpecBean.setContractUrl(packSpec.getAccessory());
-		packSpecBean.setLoanOrderNo(packSpec.getOrderNo());
-		packSpecBean.setTitanCode(packSpec.getTitanCode());
-		
-		if(StringUtil.isValidString(packSpec.getContent()))
-		{
+		packSpecBean.setAccessory(packSpec.getAccessory());
+		packSpecBean.setOrderNo(packSpec.getOrderNo());
+		// packSpecBean.setTitanCode(packSpec.getTitanCode());
+
+		if (StringUtil.isValidString(packSpec.getContent())) {
 			Map<String, String> map = JsonConversionTool.toObject(
 					packSpec.getContent(), Map.class);
 
@@ -191,11 +186,11 @@ public final class LoanTypeConvertUtil {
 		creditOrder.setOrgCode(orgCode);
 		creditOrder.setCreateTime(new Date());
 		creditOrder.setStatus(1);
-		//TODO 引用全局变量
+		// TODO 引用全局变量
 		creditOrder.setRateTem("RA201610141100001");
 		creditOrder.setRspId(CommonConstant.RS_FANGCANG_PRODUCT_ID);
 		creditOrder.setRsorgId(CommonConstant.RS_FANGCANG_CONST_ID);
-		//TODO 引用全局变量
+		// TODO 引用全局变量
 		creditOrder.setDayLimit(36);
 		return creditOrder;
 	}
@@ -249,7 +244,6 @@ public final class LoanTypeConvertUtil {
 		ensureBean.setCarWorth(personEnsure.getCarWorth());
 		ensureBean.setEmail(personEnsure.getEmail());
 		ensureBean.setYearIncome(personEnsure.getYearIncome());
-
 		return ensureBean;
 	}
 
@@ -302,7 +296,7 @@ public final class LoanTypeConvertUtil {
 				companyEnsure.getCertificateStartDate(), "yyyy-MM-dd"));
 		companyEnsureBean.setRegistFinance(companyEnsure.getRegistFinance());
 		companyEnsureBean.setCompanyType(companyEnsure.getCompanyType());
-
+		companyEnsureBean.setOpenAccount(companyEnsure.getOpenAccount());
 		return companyEnsureBean;
 
 	}
@@ -362,7 +356,7 @@ public final class LoanTypeConvertUtil {
 		companyBean.setCompanyType(creditCompany.getCompanyType());
 
 		companyBean.setRegistFinance(creditCompany.getRegistFinance());
-
+		companyBean.setOpenAccount(creditCompany.getOpenAccount());
 		return companyBean;
 	}
 
@@ -474,6 +468,7 @@ public final class LoanTypeConvertUtil {
 		loanCreditCompany.setCompanyType(lcc.getCompanyType());
 
 		loanCreditCompany.setRegistFinance(lcc.getRegistFinance());
+		loanCreditCompany.setOpenAccount(lcc.getOpenAccount());
 
 		return loanCreditCompany;
 	}
@@ -524,7 +519,7 @@ public final class LoanTypeConvertUtil {
 				lc.getCertificateStartDate(), "yyyy-MM-dd"));
 		loanCompanyEnsure.setRegistFinance(lc.getRegistFinance());
 		loanCompanyEnsure.setCompanyType(lc.getCompanyType());
-
+		loanCompanyEnsure.setOpenAccount(lc.getOpenAccount());
 		return loanCompanyEnsure;
 	}
 

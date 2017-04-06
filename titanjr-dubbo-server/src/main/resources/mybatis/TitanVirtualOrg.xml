@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanVirtualOrgDao">
+	
+    <resultMap id="titanVirtualOrg" type="com.fangcang.titanjr.entity.TitanVirtualOrg">
+        <result property="orgCode" column="orgcode"/>
+        <result property="orgName" column="orgname"/>
+        <result property="createTime" column="createtime"/>
+        <result property="buslince" column="buslince"/>
+        <result property="contacts" column="contacts"/>
+        <result property="password" column="password"/>
+          <result property="account" column="account"/>
+    </resultMap>
+    
+     <resultMap id="virtualOrgRelation" type="com.fangcang.titanjr.entity.VirtualOrgRelation">
+        <result property="orgCode" column="orgcode"/>
+        <result property="vorgCode" column="vorgcode"/>
+         <result property="vorgName" column="vorgname"/>
+        <result property="bankName" column="bankname"/>
+        <result property="bankCard" column="bankcard"/>
+    </resultMap>
+    
+    
+      <select id="queryVirtualOrgRelationInfos" resultMap="virtualOrgRelation"
+            parameterType="com.fangcang.titanjr.entity.VirtualOrgRelation">
+            select orgcode,vorgcode,bankname,bankcard ,bankcode,vorgname  from t_tfs_virtual_org_relation
+	        <where>
+	            <if test="orgCode !=null">
+	                and orgcode = #{orgCode}
+	            </if>
+	            <if test="bankCard !=null">
+	                and bankcard = #{bankCard}
+	            </if>
+	            <if test="bankName !=null">
+	                and bankname = #{bankName}
+	            </if>
+	             <if test="vorgCode !=null">
+	                and vorgcode = #{vorgCode}
+	            </if>
+	        </where>
+    </select>
+    
+    
+     <insert id="insertVirtualOrgRelation" parameterType="com.fangcang.titanjr.entity.VirtualOrgRelation">
+	  INSERT INTO `t_tfs_virtual_org_relation` ( orgcode,vorgcode,bankname,bankcard , bankcode ,  vorgname)
+     VALUES
+     	(
+     		#{orgCode},
+     		#{vorgCode},
+     		#{bankName},
+     		#{bankCard},
+     		#{bankCode},
+     		#{vorgName}
+     		
+     	)
+    </insert>
+    
+
+    <select id="queryVirtualOrgInfos" resultMap="titanVirtualOrg"
+            parameterType="com.fangcang.titanjr.entity.TitanVirtualOrg">
+            select orgcode,orgname,status,createtime,buslince,contacts,password,account
+                     from t_tfs_virtual_org
+	        <where>
+	            <if test="orgCode !=null">
+	                and orgcode = #{orgCode}
+	            </if>
+	            <if test="orgName !=null">
+	                and orgname = #{orgName}
+	            </if>
+	        </where>
+	        order by createtime desc
+    </select>
+
+   
+
+    <insert id="insertVirtualOrg" parameterType="com.fangcang.titanjr.entity.TitanVirtualOrg">
+	  INSERT INTO `t_tfs_virtual_org` (orgcode,orgname,status,createtime,buslince,contacts,password,account)
+     VALUES
+     	(
+     		#{orgCode},
+     		#{orgName},
+     		#{status},
+     		#{createTime},
+     		#{buslince},
+     		#{contacts},
+     		#{password},
+     		#{account}
+     	)
+    </insert>
+
+</mapper>

@@ -33,12 +33,15 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.dto.bean.LoanApplyOrderBean;
 import com.fangcang.titanjr.dto.bean.LoanCreditOrderBean;
+import com.fangcang.titanjr.dto.bean.LoanSpecificationBean;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.CancelLoanRequest;
 import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.GetHistoryRepaymentListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoListRequest;
 import com.fangcang.titanjr.dto.request.GetLoanOrderInfoRequest;
 import com.fangcang.titanjr.dto.request.GetOrgLoanStatInfoRequest;
+import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.response.CancelLoanResponse;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
 import com.fangcang.titanjr.dto.response.GetHistoryRepaymentListResponse;
@@ -47,6 +50,7 @@ import com.fangcang.titanjr.dto.response.GetLoanOrderInfoResponse;
 import com.fangcang.titanjr.dto.response.GetOrgLoanStatInfoResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
+import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.LoanQueryConditions;
@@ -77,6 +81,9 @@ public class FinancialLoanController extends BaseController {
 
 	@Resource
 	private TitanFinancialLoanCreditService financialLoanCreditService;
+	
+	@Resource
+	private TitanOrderService titanOrderService;
 
 	private final static Map<String, Object> initDataMap = new HashMap<String, Object>();
 
@@ -98,14 +105,53 @@ public class FinancialLoanController extends BaseController {
 		initDataMap.put("loan-payment-status",
 				new LoanOrderStatusEnum[] { LoanOrderStatusEnum.HAVE_LOAN,
 						LoanOrderStatusEnum.LOAN_EXPIRY });
-		initDataMap
-				.put("loan-payment-orderby", "status desc , actualrepaymentdate");
+		initDataMap.put("loan-payment-orderby",
+				"status desc , actualrepaymentdate");
 
 		// initDataMap.put("" + LoanProductEnum.ROOM_PACK.getCode(),
 		// "loan-spec");
 		// initDataMap.put("" + LoanProductEnum.OPERACTION.getCode(),
 		// "loan-spec");
 
+	}
+	/**
+	 * 改变运营贷中的贷款内容
+	 * @Title: setOperactionLoanContent 
+	 * @Description: TODO
+	 * @param applyOrderBean
+	 * @return: void
+	 */
+	private void setOperactionLoanContent(LoanApplyOrderBean applyOrderBean) {
+		if (LoanProductEnum.OPERACTION.getCode() == applyOrderBean
+				.getProductType().intValue()) {
+
+			if (applyOrderBean.getLoanSpec() != null) {
+				String content = ((LoanSpecificationBean) applyOrderBean
+						.getLoanSpec()).getContent();
+				if (StringUtil.isValidString(content)) {
+					try {
+						Map<String, String> map = JsonConversionTool.toObject(
+								content, Map.class);
+						String transOrderNo = map.get("transOrderNo");
+						if (StringUtil.isValidString(transOrderNo)) {
+							TransOrderRequest transOrderRequest = new TransOrderRequest();
+							transOrderRequest.setUserorderid(transOrderNo);
+							TransOrderDTO dto = titanOrderService
+									.queryTransOrderDTO(transOrderRequest);
+							if (dto != null) {
+								((LoanSpecificationBean) applyOrderBean
+										.getLoanSpec()).setContent(dto
+										.getGoodsdetail());
+							}
+						}
+
+					} catch (Exception e) {
+						//如果不是json格式，那么就不需要处理
+					}
+				}
+			}
+
+		}
 	}
 
 	/**
@@ -137,14 +183,11 @@ public class FinancialLoanController extends BaseController {
 			return "error";
 		}
 
-		// Object pageKey = initDataMap.get(String.valueOf(infoResponse
-		// .getApplyOrderInfo().getProductType()));
-		// if (pageKey == null || "".equals(pageKey)) {
-		// log.error("product type pageKey is null");
-		// model.addAttribute("errormsg", "产品类型不支持查看详情，请确认！");
-		// return "error";
-		// }
-		model.addAttribute("loanOrderInfo", infoResponse.getApplyOrderInfo());
+		LoanApplyOrderBean applyOrderBean = infoResponse.getApplyOrderInfo();
+
+		setOperactionLoanContent(applyOrderBean);
+
+		model.addAttribute("loanOrderInfo", applyOrderBean);
 		if (infoResponse.getApplyOrderInfo() != null) {
 			model.addAttribute("loanSpecInfo", infoResponse.getApplyOrderInfo()
 					.getLoanSpec());
@@ -315,7 +358,7 @@ public class FinancialLoanController extends BaseController {
 						.get(loanQueryConditions.getPageKey() + "-status")));
 		// 如果页面指定了要查询的状态，那么就需要按照页面的要求来
 		if (StringUtil.isValidString(loanQueryConditions.getLoanStatus())) {
-			
+
 			String status[] = loanQueryConditions.getLoanStatus().split(",");
 			statusList.clear();
 			for (int i = 0; i < status.length; i++) {

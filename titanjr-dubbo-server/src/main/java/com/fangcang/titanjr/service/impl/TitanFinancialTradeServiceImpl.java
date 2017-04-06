@@ -12,14 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
-
-import com.alibaba.fastjson.JSON;
-import com.fangcang.exception.ServiceException;
-import com.fangcang.titanjr.common.bean.CallBackInfo;
-import com.fangcang.titanjr.common.enums.*;
-
-
-import com.fangcang.titanjr.dto.bean.*;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -36,10 +28,14 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.exception.ServiceException;
+import com.fangcang.titanjr.common.bean.CallBackInfo;
 import com.fangcang.titanjr.common.enums.ConditioncodeEnum;
 import com.fangcang.titanjr.common.enums.EscrowedEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.ROPErrorEnum;
@@ -67,8 +63,22 @@ import com.fangcang.titanjr.dao.TitanRefundDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
+import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
+import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
+import com.fangcang.titanjr.dto.bean.QrCodeDTO;
+import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
+import com.fangcang.titanjr.dto.bean.RefundDTO;
+import com.fangcang.titanjr.dto.bean.RepairTransferDTO;
+import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
+import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
+import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderInfo;
 import com.fangcang.titanjr.dto.request.AccountTransferFlowRequest;
 import com.fangcang.titanjr.dto.request.AllowNoPwdPayRequest;
+import com.fangcang.titanjr.dto.request.ConfirmFinanceRequest;
 import com.fangcang.titanjr.dto.request.ConfirmOrdernQueryRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
@@ -650,16 +660,20 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 	// 回调财务
 	@Override
-	public void confirmFinance(TransOrderDTO transOrderDTO) throws Exception {
+	public void confirmFinance(ConfirmFinanceRequest req) throws Exception {
 
-		if (transOrderDTO == null
-				|| !StringUtil.isValidString(transOrderDTO.getUserorderid())) {
+		if (req == null
+				|| req.getTransOrderDTO() == null
+				|| !StringUtil.isValidString(req.getTransOrderDTO()
+						.getUserorderid())) {
 			return;
 		}
 
+		TransOrderDTO transOrderDTO = req.getTransOrderDTO();
+
 		String response = "";
 
-		List<NameValuePair> params = this.getHttpParams(transOrderDTO);
+		List<NameValuePair> params = this.getHttpParams(req);
 
 		if (params == null) {
 			return;
@@ -669,23 +683,23 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 		if (StringUtil.isValidString(transOrderDTO.getNotifyUrl())) {
 			url = transOrderDTO.getNotifyUrl();
-		}else{
+		} else {
 			return;
 		}
 		try {
 			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params) + "---url---"
 					+ url);
 			HttpPost httpPost = new HttpPost(url);
-		    HttpResponse resp = HttpClient.httpRequest(params,  httpPost);
+			HttpResponse resp = HttpClient.httpRequest(params, httpPost);
 			if (null != resp) {
 				InputStream in = resp.getEntity().getContent();
 				byte b[] = new byte[1024];
-				
+
 				int length = 0;
-				if((length = in.read(b)) !=-1){
+				if ((length = in.read(b)) != -1) {
 					byte d[] = new byte[length];
 					System.arraycopy(b, 0, d, 0, length);
-					response = new String(d , "UTF-8");
+					response = new String(d, "UTF-8");
 				}
 				httpPost.releaseConnection();
 			}
@@ -695,7 +709,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		}
 		log.info("调用http请求通知支付支付结果完成：" + response);
 		if (StringUtil.isValidString(response)) {
-			CallBackInfo callBackInfo = TitanjrHttpTools.analyzeResponse(response);
+			CallBackInfo callBackInfo = TitanjrHttpTools
+					.analyzeResponse(response);
 			if (!"000".equals(callBackInfo.getCode())) {
 				log.error("回调失败单号:" + transOrderDTO.getUserorderid());
 				titanFinancialUtilService.saveOrderException(transOrderDTO.getUserorderid(),OrderKindEnum.UserOrderId, OrderExceptionEnum.Notify_Client_Transfer_Notify_Fail, JSONSerializer.toJSON(callBackInfo).toString());
@@ -706,7 +721,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			log.error("回调无响应");
 			titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Client_Not_CallBack, JSONSerializer.toJSON(transOrderDTO).toString());
 		}
-
 	}
 
 	private OrgBindInfo getOrgBindInfo(String orgCode) {
@@ -719,7 +733,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
 	}
 
-	private List<NameValuePair> getHttpParams(TransOrderDTO transOrderDTO) {
+	private List<NameValuePair> getHttpParams(ConfirmFinanceRequest req) {
+
+		TransOrderDTO transOrderDTO = req.getTransOrderDTO();
 		
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("payOrderCode", transOrderDTO
@@ -727,33 +743,35 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		params.add(new BasicNameValuePair("businessOrderCode", transOrderDTO
 				.getBusinessordercode()));
 
-		if(transOrderDTO.getTradeamount()!=null ){
+		if (transOrderDTO.getTradeamount() != null) {
 			params.add(new BasicNameValuePair("amount", transOrderDTO
 					.getTradeamount().toString()));
 		}
-		NameValuePair nameValuePair = new BasicNameValuePair("merchantCode", transOrderDTO
-				.getMerchantcode());
-		
-		//此段处理逻辑是前一版本收银台的逻辑，新版本之后将舍去
-		PayerTypeEnum payerTypeEnum = PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
-		if(payerTypeEnum !=null && payerTypeEnum.isB2BPayment()){
+		NameValuePair nameValuePair = new BasicNameValuePair("merchantCode",
+				transOrderDTO.getMerchantcode());
+
+		// 此段处理逻辑是前一版本收银台的逻辑，新版本之后将舍去
+		PayerTypeEnum payerTypeEnum = PayerTypeEnum
+				.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
+		if (payerTypeEnum != null && payerTypeEnum.isB2BPayment()) {
 			OrgBindInfo orgBindInfo = this.getOrgBindInfo(transOrderDTO
 					.getPayeemerchant());
 			if (null != orgBindInfo) {
-				nameValuePair = new BasicNameValuePair("merchantCode", orgBindInfo
-						.getMerchantCode());
+				nameValuePair = new BasicNameValuePair("merchantCode",
+						orgBindInfo.getMerchantCode());
 			}
 		}
 		params.add(nameValuePair);
-		//end
+		// end
 		params.add(new BasicNameValuePair("operator", transOrderDTO
 				.getCreator()));
-		
+
 		params.add(new BasicNameValuePair("titanPayOrderCode", transOrderDTO
 				.getUserorderid()));
-		params.add(new BasicNameValuePair("businessInfo", transOrderDTO.getBusinessinfo()));
-		
-		params.add(new BasicNameValuePair("payResult", "1"));
+		params.add(new BasicNameValuePair("businessInfo", transOrderDTO
+				.getBusinessinfo()));
+
+		params.add(new BasicNameValuePair("payResult", ""+req.getStatus()));// 2 申请贷款 3 贷款失败
 		params.add(new BasicNameValuePair("code", "valid"));
 		return params;
 	}
@@ -1816,7 +1834,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					transOrderRequest.setUserorderid(repairTransferDTO.getUserorderid());
 					transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
 				    log.info("回调:"+JSONSerializer.toJSON(transOrderDTO));
-				    titanFinancialTradeService.confirmFinance(transOrderDTO);
+				    ConfirmFinanceRequest req = new ConfirmFinanceRequest();
+				    req.setTransOrderDTO(transOrderDTO);
+				    titanFinancialTradeService.confirmFinance(req);
 				    
         		} catch (Exception e) {
 					e.printStackTrace();
@@ -2005,7 +2025,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							&& StringUtil.isValidString(titanOrderRequest.getBusinessInfo().get("bussCode"))){
 						transOrderDTO.setBusinessordercode(titanOrderRequest.getBusinessInfo().get("bussCode"));
 					}
-					this.confirmFinance(transOrderDTO);
+					 ConfirmFinanceRequest req = new ConfirmFinanceRequest();
+					    req.setTransOrderDTO(transOrderDTO);
+					    titanFinancialTradeService.confirmFinance(req);
 				} catch (Exception e) {
 					log.error("回调失败");
 				}

@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.ConfirmFinanceRequest;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 
 /**
@@ -50,8 +51,11 @@ public final class TitanPayResultNotifyTask implements Runnable {
 				log.error("order dto is null.");
 				return;
 			}
+			
+			ConfirmFinanceRequest req = new ConfirmFinanceRequest();
+			req.setTransOrderDTO(transOrderDTO);
 
-			titanFinancialTradeService.confirmFinance(transOrderDTO);
+			titanFinancialTradeService.confirmFinance(req);
 
 			log.info("end execute taskId=" + taskId);
 

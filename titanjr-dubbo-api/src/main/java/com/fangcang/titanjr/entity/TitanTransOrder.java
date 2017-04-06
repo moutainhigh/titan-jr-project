@@ -73,6 +73,16 @@ public class TitanTransOrder implements java.io.Serializable {
 	private String bankInfo;
 
 	private String remark;
+	
+	private String loanOrderNo;
+
+	public String getLoanOrderNo() {
+		return loanOrderNo;
+	}
+
+	public void setLoanOrderNo(String loanOrderNo) {
+		this.loanOrderNo = loanOrderNo;
+	}
 
 	public Long getStandfee() {
 		return standfee;

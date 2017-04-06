@@ -1,7 +1,13 @@
 package test.fangcang.titanjr.rs.invoker;
 
-import com.Rop.api.request.WheatfieldAccountCheckRequest;
-import com.Rop.api.response.WheatfieldAccountCheckResponse;
+import net.sf.json.JSONSerializer;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import test.fangcang.titanjr.rs.base.GenericTest;
+
+import com.Rop.api.DefaultRopClient;
 import com.fangcang.titanjr.rs.manager.RSOrganizationManager;
 import com.fangcang.titanjr.rs.request.CompOrgInfoQueryRequest;
 import com.fangcang.titanjr.rs.request.CompanyOrgRegRequest;
@@ -17,15 +23,7 @@ import com.fangcang.titanjr.rs.response.OrgStatusQueryResponse;
 import com.fangcang.titanjr.rs.response.PersOrgInfoQueryResponse;
 import com.fangcang.titanjr.rs.response.PersonOrgRegResponse;
 import com.fangcang.titanjr.rs.response.PersonOrgUpdateResponse;
-import com.fasterxml.jackson.databind.JsonSerializable;
-
-import net.sf.json.JSONSerializer;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import test.fangcang.titanjr.rs.base.GenericTest;
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 
 /**
  * Created by zhaoshan on 2016/4/15.
@@ -36,19 +34,28 @@ public class OrganizationManagerTest extends GenericTest {
 
     @Before
     public void init(){
+    	
+    	  String ropUrl = "https://testapi.open.ruixuesoft.com:30005/ropapi";
+        String appKey = "F1A95B5E-3485-4CEB-8036-F2B9EC53EF65";
+        String appSecret = "8B6E8EEF-48CC-4CCF-94C6-55C4AA2FE9F2";
+        RSInvokeConstant.ropClient = new DefaultRopClient(ropUrl, appKey, appSecret, "xml");
+        RSInvokeConstant.sessionKey = "1460355562856409835";
+        RSInvokeConstant.defaultMerchant = "M10020809";
+        RSInvokeConstant.defaultRoleId = 1301L;
+    	
         rsOrganizationManager = (RSOrganizationManager)cfx.getBean("rsOrganizationManager");
     }
 
 //    注册机构信息 success
-//    @Test
+    @Test
     public void testRegisterComOrg(){
         CompanyOrgRegRequest req = new CompanyOrgRegRequest();
         // 必输项
         req.setCompanyname("集散公司万岁");				// 企业名称
 //        req.setBuslince("YP454986456RYY");					// 营业执照
-        req.setBuslince("YP454986456RVS");
+        req.setBuslince("YP454986456RVS5436");
         req.setUsertype("1");					// 用户类型(1：商户 )
-        req.setUserid("TJM10000108");					// 接入机构中设置的用户ID  不能重复
+        req.setUserid("TJM10000155");					// 接入机构中设置的用户ID  不能重复
         req.setConstid("M000016");				// 机构码
         req.setProductid("P000070");			// 产品号
         req.setUsername("天下旅行");					// 用户名称，及接入机构的用户名
@@ -220,7 +227,7 @@ public class OrganizationManagerTest extends GenericTest {
     }
     
     //查询个人信息 success
-    @Test 
+//    @Test 
     public void testQueryPersOrgInfo(){
     	PersOrgInfoQueryRequest req = new PersOrgInfoQueryRequest();
     	req.setConstid("M000016");				// 机构码

@@ -67,7 +67,18 @@
                     <td class="loanInformation_td02">
                          <input type="text" class="loanInformation_inp01" placeholder="请输入组织机构代码"  field="orgCode" value="" datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
                     </td>
+                      
                 </tr>
+                
+                 <tr>
+                    <td class="loanInformation_td01">
+                        <i class="redNotice">*</i>开户许可证号：
+                    </td>
+                   <td class="loanInformation_td02">
+                         <input type="text" class="loanInformation_inp01" placeholder="请输入开户许可证号"  field="openAccount" value="" datatype="*1-50" errormsg="必填项，并且最长只能50个字符！">
+                    </td>
+                </tr>
+                
                 <tr>
                     <td class="loanInformation_td01">
                         <i class="redNotice">*</i>平台注册账号：
