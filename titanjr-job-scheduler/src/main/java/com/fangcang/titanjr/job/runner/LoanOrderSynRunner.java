@@ -22,7 +22,7 @@ import com.github.ltsopensource.tasktracker.runner.JobRunner;
 @Service
 public class LoanOrderSynRunner implements JobRunner{
 	
-	private static Logger logger = LoggerFactory.getLogger(LoanCreditAmountEvaluatingRunner.class);
+	private static Logger logger = LoggerFactory.getLogger(LoanOrderSynRunner.class);
 	
 	@Autowired
 	private TitanFinancialLoanService titanFinancialLoanService;

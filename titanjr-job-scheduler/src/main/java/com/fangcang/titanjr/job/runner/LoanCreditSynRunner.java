@@ -24,7 +24,7 @@ import com.github.ltsopensource.tasktracker.runner.JobRunner;
 @Service
 public class LoanCreditSynRunner implements JobRunner {
 
-	private static Logger logger = LoggerFactory.getLogger(LoanCreditAmountEvaluatingRunner.class);
+	private static Logger logger = LoggerFactory.getLogger(LoanCreditSynRunner.class);
 	
     @Autowired
     private TitanFinancialLoanCreditService titanFinancialLoanCreditService;

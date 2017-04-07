@@ -15,7 +15,7 @@ import com.github.ltsopensource.tasktracker.runner.JobRunner;
 @Service
 public class RefundConfirmRunner implements JobRunner{
 
-	private static Logger logger = LoggerFactory.getLogger(LoanCreditAmountEvaluatingRunner.class);
+	private static Logger logger = LoggerFactory.getLogger(RefundConfirmRunner.class);
 	
 	@Autowired
 	private TitanFinancialRefundService titanFinancialRefundService;
@@ -26,7 +26,6 @@ public class RefundConfirmRunner implements JobRunner{
 		  // 业务日志记录
         BizLogger bizLogger = jobContext.getBizLogger();
 
-		System.out.println("");
 		titanFinancialRefundService.refundConfirm(null);
 		
 		logger.info("退款：" + jobContext);
