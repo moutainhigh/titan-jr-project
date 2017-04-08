@@ -41,41 +41,51 @@ public class InvokeLogRecordManager {
                 return null;
             }
         } catch (Throwable e) {
-            log.error("执行切面方法异常", e);
+            log.error("elk执行切面方法异常", e);
         }
 
         try {
-            LogRecordTask task = new LogRecordTask();
-            task.setLogData(buildLogData(startDate,signature.getMethod(),joinPoint,retVal));
-            task.setLogDataDao(logDataDao);
-            rsLogRecordExecutor.execute(task);
+            buildLogData(startDate,signature.getMethod(),joinPoint,retVal);
         } catch (Throwable e) {
-            log.error("新日志记录，将日志存储记录于redis失败", e);
+            log.error("elk新日志记录，将日志存储记录于redis失败", e);
         }
         return retVal;
     }
 
-    private LogData buildLogData(Date startDate, Method method, JoinPoint joinPoint, Object retVal){
-        LogData logData = new LogData();
+    public void logELK(Date startDate,Date endDate,String index,String request, String response,String status){
+    	LogData logData = new LogData();
         logData.setStart(startDate);
-        logData.setEnd(new Date());
-        logData.setIndex("titanjr-rs-app:" + method.getName());
+        logData.setEnd(endDate);
+        logData.setIndex(index);
         logData.setAdditional("titanjr");
         logData.setDocType("titanjr");
+        logData.setRequest(request);
+        logData.setResponse(response);
+        logData.setStatus(status);
+        
+        LogRecordTask task = new LogRecordTask();
+        task.setLogData(logData);
+        task.setLogDataDao(logDataDao);
+        rsLogRecordExecutor.execute(task);
+    }
+    
+    private void buildLogData(Date startDate, Method method, JoinPoint joinPoint, Object retVal){
+    	String request = "";
         if (joinPoint.getArgs().length > 0) {
-            logData.setRequest(Tools.gsonToString(joinPoint.getArgs()[0]));
+        	request = Tools.gsonToString(joinPoint.getArgs()[0]);
         }
+        String response = "";
         if (null != retVal) {
-            logData.setResponse(Tools.gsonToString(retVal));
+        	response = Tools.gsonToString(retVal);
         }
-        logData.setStatus("1");
+        String status = "1";
         if (retVal instanceof BaseResponse){
             BaseResponse resp = (BaseResponse) retVal;
             if (!resp.isSuccess()){
-                logData.setStatus("0");
+            	status = "0";
             }
         }
-        return logData;
+        logELK(startDate,new Date(),"titanjr-rs-app:" + method.getName(),request,response,status);
     }
 
     public void setRsLogRecordExecutor(ThreadPoolTaskExecutor rsLogRecordExecutor) {
