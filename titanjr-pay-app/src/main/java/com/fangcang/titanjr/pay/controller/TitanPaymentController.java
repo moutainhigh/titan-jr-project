@@ -628,6 +628,7 @@ public class TitanPaymentController extends BaseController {
 	 * @return
 	 * @return: String
 	 */
+	@ResponseBody
 	@RequestMapping("operationLoanPay")
 	public String operationLoanPay(HttpServletRequest httpRequest,
 			OperationLoanPayReq req) {
@@ -646,7 +647,7 @@ public class TitanPaymentController extends BaseController {
 		log.info("operation loan pay req = " + JsonConversionTool.toJson(req));
 
 		TransOrderRequest transOrderRequest = new TransOrderRequest();
-		transOrderRequest.setUserorderid(req.getTransOrderNo());
+		transOrderRequest.setPayorderno(req.getPayOrderNo());
 		TransOrderDTO transOrderDTO = titanOrderService
 				.queryTransOrderDTO(transOrderRequest);
 
@@ -673,7 +674,7 @@ public class TitanPaymentController extends BaseController {
 
 		Map<String, String> contentMap = new HashMap<String, String>();
 		contentMap.put("billOrderNo", billOrderNo);
-		contentMap.put("transOrderNo", req.getTransOrderNo());
+		contentMap.put("transOrderNo", transOrderDTO.getUserorderid());
 		loanSpecBean.setContent(JsonConversionTool.toJson(contentMap));
 
 		ApplyLoanRequest request = new ApplyLoanRequest();

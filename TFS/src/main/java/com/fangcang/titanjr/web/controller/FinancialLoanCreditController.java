@@ -271,7 +271,7 @@ public class FinancialLoanCreditController extends BaseController {
 		PrintWriter out = getResponse().getWriter();
 		
 		String supperImgSuffix = "png;jpg;jpeg;pdf";
-		String supperZipSuffix = " zip;rar";
+		String supperZipSuffix = " zip";
 		
 		if ((file.getOriginalFilename() != null)
 				&& (file.getOriginalFilename().length() > 0)) {
