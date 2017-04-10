@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fangcang.titanjr.dto.request.RepairTransferRequest;
-import com.fangcang.titanjr.service.TitanFinancialAccountService;
-import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.github.ltsopensource.core.domain.Action;
 import com.github.ltsopensource.tasktracker.Result;
@@ -17,7 +15,7 @@ import com.github.ltsopensource.tasktracker.runner.JobRunner;
 @Service
 public class RepairGDPTransferRunner implements JobRunner{
 
-	 private static Logger logger = LoggerFactory.getLogger(BindBankCardRunner.class);
+	 private static Logger logger = LoggerFactory.getLogger(RepairGDPTransferRunner.class);
 
 	    @Autowired
 	    private TitanFinancialTradeService titanFinancialTradeService;

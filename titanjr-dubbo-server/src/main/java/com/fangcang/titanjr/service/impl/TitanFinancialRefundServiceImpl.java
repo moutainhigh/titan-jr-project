@@ -1,35 +1,13 @@
 package com.fangcang.titanjr.service.impl;
 
-import com.fangcang.titanjr.common.bean.CallBackInfo;
-import com.fangcang.titanjr.common.bean.NotifyBean;
-import com.fangcang.titanjr.common.enums.*;
-import com.fangcang.titanjr.common.util.*;
-import com.fangcang.titanjr.common.util.httpclient.HttpClient;
-import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
-import com.fangcang.titanjr.dao.*;
-import com.fangcang.titanjr.dto.bean.*;
-import com.fangcang.titanjr.dto.request.*;
-import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
-import com.fangcang.titanjr.dto.response.NotifyRefundResponse;
-import com.fangcang.titanjr.dto.response.RefundOrderResponse;
-import com.fangcang.titanjr.dto.response.TitanJrRefundResponse;
-import com.fangcang.titanjr.entity.TitanRefund;
-import com.fangcang.titanjr.entity.TitanTransferReq;
-import com.fangcang.titanjr.entity.TitanUser;
-import com.fangcang.titanjr.enums.BusiCodeEnum;
-import com.fangcang.titanjr.enums.SignTypeEnum;
-import com.fangcang.titanjr.enums.VersionEnum;
-import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
-import com.fangcang.titanjr.rs.request.AccountTransferRequest;
-import com.fangcang.titanjr.rs.request.RSRefundRequest;
-import com.fangcang.titanjr.rs.response.AccountTransferResponse;
-import com.fangcang.titanjr.rs.response.RsRefundResponse;
-import com.fangcang.titanjr.rs.util.RSInvokeConstant;
-import com.fangcang.titanjr.service.TitanFinancialAccountService;
-import com.fangcang.titanjr.service.TitanFinancialRefundService;
-import com.fangcang.titanjr.service.TitanFinancialUtilService;
-import com.fangcang.titanjr.service.TitanOrderService;
-import com.fangcang.util.StringUtil;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.Resource;
 
 import net.sf.json.JSONSerializer;
 
@@ -44,14 +22,62 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.fangcang.titanjr.common.bean.CallBackInfo;
+import com.fangcang.titanjr.common.bean.NotifyBean;
+import com.fangcang.titanjr.common.enums.ConditioncodeEnum;
+import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.RefundStatusEnum;
+import com.fangcang.titanjr.common.enums.RefundTypeEnum;
+import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
+import com.fangcang.titanjr.common.enums.TransferReqEnum;
+import com.fangcang.titanjr.common.enums.TransfertypeEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.MD5;
+import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
+import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.common.util.httpclient.HttpClient;
+import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
+import com.fangcang.titanjr.dao.TitanFundFreezereqDao;
+import com.fangcang.titanjr.dao.TitanRefundDao;
+import com.fangcang.titanjr.dao.TitanTransOrderDao;
+import com.fangcang.titanjr.dao.TitanTransferReqDao;
+import com.fangcang.titanjr.dao.TitanUserDao;
+import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
+import com.fangcang.titanjr.dto.bean.RefundDTO;
+import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.NotifyRefundRequest;
+import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
+import com.fangcang.titanjr.dto.request.RefundConfirmRequest;
+import com.fangcang.titanjr.dto.request.RefundOrderRequest;
+import com.fangcang.titanjr.dto.request.TitanJrRefundRequest;
+import com.fangcang.titanjr.dto.request.TransOrderRequest;
+import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
+import com.fangcang.titanjr.dto.response.NotifyRefundResponse;
+import com.fangcang.titanjr.dto.response.RefundOrderResponse;
+import com.fangcang.titanjr.dto.response.TitanJrRefundResponse;
+import com.fangcang.titanjr.entity.TitanRefund;
+import com.fangcang.titanjr.entity.TitanTransferReq;
+import com.fangcang.titanjr.entity.TitanUser;
+import com.fangcang.titanjr.enums.BusiCodeEnum;
+import com.fangcang.titanjr.enums.SignTypeEnum;
+import com.fangcang.titanjr.enums.VersionEnum;
+import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
+import com.fangcang.titanjr.rs.manager.impl.InvokeLogRecordManager;
+import com.fangcang.titanjr.rs.request.AccountTransferRequest;
+import com.fangcang.titanjr.rs.request.RSRefundRequest;
+import com.fangcang.titanjr.rs.response.AccountTransferResponse;
+import com.fangcang.titanjr.rs.response.RsRefundResponse;
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+import com.fangcang.titanjr.service.TitanFinancialAccountService;
+import com.fangcang.titanjr.service.TitanFinancialRefundService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
+import com.fangcang.titanjr.service.TitanOrderService;
+import com.fangcang.util.StringUtil;
 
 @Service("titanFinancialRefundService")
 public class TitanFinancialRefundServiceImpl implements
@@ -83,6 +109,9 @@ public class TitanFinancialRefundServiceImpl implements
 	
 	@Resource
 	private TitanFinancialUtilService titanFinancialUtilService;
+	
+	@Resource
+	private InvokeLogRecordManager invokeLogRecordManager;
 	
 	
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
@@ -466,6 +495,8 @@ public class TitanFinancialRefundServiceImpl implements
 		}
 		List<NameValuePair> params = this.getGateawayParam(notifyRefundRequest);
 		String response ="";
+		Date beginDate = new Date();
+		BusiCodeEnum busiCodeEnum = BusiCodeEnum.getEnumByKey(notifyRefundRequest.getBusiCode());
 		HttpPost httpPost = new HttpPost(RSInvokeConstant.gateWayURL);
 		try {
 			HttpResponse resp = HttpClient.httpRequest(params,httpPost);
@@ -481,6 +512,10 @@ public class TitanFinancialRefundServiceImpl implements
 					log.error("退款通知异常:"+notifyRefundResponse.getErrMsg());
 					notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
 			    }
+				
+				if(busiCodeEnum!=null&&busiCodeEnum.equals(BusiCodeEnum.MerchantRefund)){
+					invokeLogRecordManager.logELK(beginDate, new Date(), "titanjr:notifygateawayrefund."+busiCodeEnum.toString().toLowerCase(), Tools.gsonToString(params)+",gatewayurl:"+RSInvokeConstant.gateWayURL+","+Tools.gsonToString(busiCodeEnum), Tools.gsonToString(notifyRefundResponse), notifyRefundResponse.isResult()+"");
+				}
 				return notifyRefundResponse;
 			}
 		} catch (ParseException e) {
@@ -489,6 +524,9 @@ public class TitanFinancialRefundServiceImpl implements
 		} catch (Exception e) {
 			notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
 			log.error("退款通知异常"+e.getMessage(),e);
+		}
+		if(busiCodeEnum!=null&&busiCodeEnum.equals(BusiCodeEnum.MerchantRefund)){
+			invokeLogRecordManager.logELK(beginDate, new Date(), "titanjr:notifygateawayrefund."+busiCodeEnum.toString().toLowerCase(), Tools.gsonToString(params)+",gatewayurl:"+RSInvokeConstant.gateWayURL+","+Tools.gsonToString(busiCodeEnum), Tools.gsonToString(notifyRefundResponse), notifyRefundResponse.isResult()+"");
 		}
 		return notifyRefundResponse;
 	}

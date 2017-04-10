@@ -58,6 +58,10 @@
             <c:if test="${tradeItem.statusid == 14 }">
             退款失败
             </c:if>
+            
+             <c:if test="${tradeItem.statusid == 15 }">
+            贷款处理中
+            </c:if>
 
             <c:if test="${tradeItem.statusid == 9}">
                 <i class="MyAssets_red">交易失败</i>

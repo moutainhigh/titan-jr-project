@@ -1460,6 +1460,12 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                             transOrderDTO.setTradeType("提现");
                         }
                     }
+                    
+                    if(StringUtil.isValidString(transOrderDTO.getLoanOrderNo()))
+                    {
+                    	 transOrderDTO.setTradeType("贷款");
+                    }
+                    
                     tradeDetailResponse.getTransOrders().getItemList().add(transOrderDTO);
                 }
                 tradeDetailResponse.putSuccess();

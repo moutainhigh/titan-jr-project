@@ -45,6 +45,8 @@ public class InitSubmitJob {
         submitLoanOrderSynJob();
       
         submitLoanCreditAmountEvaluatingJob();
+        
+        submitFiveMinutesJob();
     }
 
     /**
@@ -255,5 +257,21 @@ public class InitSubmitJob {
         logger.info("response:{}" , response);
     }
     
+    public void submitFiveMinutesJob(){
+    	Job job = new Job();
+        job.setTaskId("fiveMinutes");
+        job.setParam(Constants.JOB_VALID_ENV_KEY, JobValidEnvEnum.ONLINE.toString());
+        job.setParam(Constants.JOB_RUNNER_KEY, InitJobRunner.fiveMinutes);
+        job.setTaskTrackerNodeGroup(CommonUtils.getTaskTrackerNodeGroup(jobClient.getServerName()));
+        job.setNeedFeedback(true);
+        job.setReplaceOnExist(true);
+        job.setCronExpression("0 */5 * * * ?");
+        
+        job.setRelyOnPrevCycle(false);
+
+        Response response = jobClient.submitJob(job);
+
+        logger.info("response:{}" , response);
+    }
     
 }

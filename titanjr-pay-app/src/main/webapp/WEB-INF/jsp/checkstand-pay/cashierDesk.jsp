@@ -29,6 +29,29 @@
             </div>
             <div class="goldpay_top">
                 <ul>
+                	<li class="clearfix h_70" id="loanItemType">	
+						<div class="sel_card " id="notSelectBank">							
+					        <div class="gt_Bank  J_add_Bank"> 
+					            <i class="blue gti underline cursor J_Bank2">付款至供应商银行卡 &gt;
+					            <span style="display: none;">目前仅运营贷可付款至供应商银行卡！</span>
+					            </i>							            
+					        </div>
+				        </div>
+				       <div class="s_bank clearfix  dn" id="selectBankZone">							       		
+					  	<div class="s_title">付款至供应商银行卡：</div>
+					  	<div class="Bank fl">
+					         <div class="b_img"><img src="../images/TFS/Bankico.png" id="bankIco"></div>
+					         <p class="" title="" id="accountNameSelect"></p>
+					         <p id="accountSelect"></p>
+					         <div class="b_replace blue underline cursor J_Bank2" id="switchBankCard">更换银行卡</div>
+					      </div>
+					  </div>
+					  
+					  <input type="hidden" id="accountName" />
+					  <input type="hidden" id="account" />
+					  <input type="hidden" id="bank" />
+					  
+					</li>
                     <li id="not_exists_history">
                         <div class="goldpay">
                             <div>
@@ -83,7 +106,7 @@
                         <c:if test="${deskItem.itemType == 4}">
                             <input type="hidden" id="canUseAccBalance" value="1">
                             <c:if test="${ not empty cashDeskData.balanceusable}">
-                            <li class="p_l27">
+                            <li class="p_l27" id="useBalanceCheck">
                                 <label class="f_ui-checkbox-c3 p_r10">
                                     <input type="checkbox" checked="" id="d_checkbox" onclick="checkedBalance()" ><i ></i>
                                     使用账户可用余额付款</label>丨
@@ -128,7 +151,7 @@
                            <li class="on" id="pay_table_ttt">常用</li>
                         </c:if>
                         <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem">
-                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9 }">
+                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9 or deskItem.itemType == 10 }">
                                 <li>${deskItem.itemName}</li>
                             </c:if>
                          </c:forEach>
@@ -157,9 +180,10 @@
 	                              <c:if test="${commom.paytype == 3 }">
 	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡） </span>
 	                              </c:if>
-	                              <c:if test="${commom.paytype == 9 }">
+	                              <c:if test="${commom.paytype == 9 or commom.paytype == 10}">
 	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}"> </span>
                                   </c:if>
+                                  
                                   <c:if test="${commom.bankname =='cmbc' &&commom.paytype==1}">
                                     <div class="clear"></div>
 								    <div class="payc_ms">
@@ -172,7 +196,7 @@
                           </li>
                          </c:if>
                          <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem" varStatus="o_status">
-                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9 }">
+                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9  or deskItem.itemType == 10}">
                                 <li >
                                     <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
                                         <div class="paytable_payway" itemType='${deskItem.itemType}' >
@@ -196,7 +220,7 @@
                                             <c:if test="${deskItem.itemType == 3 }">
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（信用卡）</span>
                                             </c:if>
-                                            <c:if test="${deskItem.itemType == 9 }">
+                                            <c:if test="${deskItem.itemType == 9 or deskItem.itemType == 10}">
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}"></span>
                                             </c:if>
                                             <c:if test="${itemBank.bankName=='cmbc' && deskItem.itemType == 1}">
@@ -229,6 +253,7 @@
 
 <form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder" method="post">
   <input name="orderNo" id="orderNo" type="hidden">
+   <input name="payOrderNo" id="payOrderNo" type="hidden" value="${cashDeskData.payOrderNo}">
   <input name="delay" id="delay" type="hidden">
 </form>
 
@@ -267,8 +292,79 @@
 			accountHistoryDTO:'${cashDeskData.accountHistoryDTO}',
 			orgName:'${cashDeskData.orgName}',
 		});
-		
 	}
+	
+	function getLoanReqData()
+	{
+		return {
+			'userId':"${cashDeskData.userId}",
+			'bankName':$('#bank').val(),
+			'bankCode':'',
+			'cardNum':$('#account').val(),
+			'accountName':$('#accountName').val(),
+			'amount':'${cashDeskData.amount}',
+			'payOrderNo':'${cashDeskData.payOrderNo}'
+		};
+	}
+	
+// 	private String bankName;
+// 	private String bankCode;
+// 	private String cardNum;
+// 	private String accountName;
+// //	// 开户行支行号
+// //	private String bankBranch;
+// //	private String bankCityCode;
+// //	private String bankCityName;
+	
+// 	private String amount;
+// 	private String transOrderNo;
+ 
+	var selectBankWinow = null;
+	function selectBankCallBack(bankName , bankCode , account , accountName)
+	{
+		$('#accountName').val(accountName);
+		$('#account').val(account);
+		$('#bank').val(bankName);
+		
+		$('#accountNameSelect').text(accountName);
+		$('#accountSelect').text(account);
+		$("#bankIco").attr("src","<%=basePath%>/banks/ico36/"+bankCode+".png");
+		
+		 $('#notSelectBank').hide();
+         $('#selectBankZone').show();
+         
+         if(selectBankWinow)
+         {
+        	 selectBankWinow.remove();
+        	 selectBankWinow= null;
+         }
+	}
+	
+	 $('.J_Bank2').hover(function(){
+			$(this).find('span').show();
+		},function(){
+			$(this).find('span').hide();
+		});
+		
+	$("#switchBankCard").on("click" , function(){
+		$('.J_add_Bank').click();
+	});
+	$('.J_add_Bank').on('click',function(){
+		  $.ajax({
+		    dataType : 'html',
+		    context: document.body,
+		    url : '<%=basePath%>/trade/selectBank.shtml?userId=${cashDeskData.userId}',     
+		    success : function(html){
+		    	selectBankWinow =  window.top.dialog({
+		            title: ' ',
+		            padding: '0 0 35px 0',
+		            content: html,
+		            skin : 'saas_pop',  
+		        }).showModal();
+		    }
+		  });
+		})
+	
     //点击使用余额支付
     function checkedBalance() {
     	//如果余额足够则只能用余额或者网银付款，二选一，如果余额不足则自由选择
@@ -441,110 +537,166 @@
     	}
     });
     
+    function loanPay()
+    {
+    	$.ajax({
+    		type:'post',
+            dataType: 'json',
+            url: '<%=basePath%>/payment/operationLoanPay.action',
+            async:false,
+            data:getLoanReqData(),
+            success: function (data) {
+            	top.F.loading.hide();
+            	if(data.result=="0"){
+            		 $("#confirmOrder").submit();
+            	}else{
+            		new top.Tip({msg: '申请运营贷款失败，请联系管理员！', type: 1, timer: 2000});
+            	}
+            }
+        });
+    }
+    
     //检查账户是否存在
     function check_account_isExit(){
+    	
     	var recieveOrgName = $("#reOrgName").val();
     	var recieveTitanCode = $("#reTitanCode").val();
     	var check_account=true;
-    	if(typeof recieveOrgName !="undefined" && typeof recieveTitanCode !="undefined"){
-    		check_account = false;
-        	$.ajax({
-        		type:'post',
-                dataType: 'json',
-                url: '<%=basePath%>/account/check_account.action',
-                async:false,
-                data:{
-                	recieveOrgName:recieveOrgName,
-                	recieveTitanCode:recieveTitanCode,
-                },
-                success: function (data) {
-                	if(data.result=="0"){
-                		check_account = true;
-                	}else{
-                		new top.Tip({msg: '该账户不存在', type: 1, timer: 2000});
-                	}
-                }
-            });
+    	if(cashierData.linePayType()!='10')
+    	{	
+	    	
+	    	if(typeof recieveOrgName !="undefined" && typeof recieveTitanCode !="undefined"){
+	    		check_account = false;
+	        	$.ajax({
+	        		type:'post',
+	                dataType: 'json',
+	                url: '<%=basePath%>/account/check_account.action',
+	                async:false,
+	                data:{
+	                	recieveOrgName:recieveOrgName,
+	                	recieveTitanCode:recieveTitanCode,
+	                },
+	                success: function (data) {
+	                	if(data.result=="0"){
+	                		check_account = true;
+	                	}else{
+	                		new top.Tip({msg: '该账户不存在', type: 1, timer: 2000});
+	                	}
+	                }
+	            });
+	    	}
     	}
     	return check_account;
     }
     
      //验证是否部分为空
     function validate_isBlank(){
-    	if($("#not_exists_history").is(":visible")==true || $(".replanceArea").is(":visible")==true){
-    		if($.trim($("#reOrgName").val()).length<1){
-        		$("#reOrgNameError").text("收款方账户不能为空");
-        		return false;
-        	}else{
-        		$("#reOrgNameError").text("");
-        	}
-        	if($.trim($("#reTitanCode").val()).length<1){
-        		$("#reTitanCodeError").text("收款方泰坦码不能为空");
-        		return false;
-        	}else{
-        		$("#reTitanCodeError").text("");
-        	}
-    	}
-    	$("#reOrgNameError").text("");
-    	$("#reTitanCodeError").text("");
-    	return true;
-    }
-    
-    $("#reOrgName").blur(function(){
-    	 var orgName =  $(this).val();
-    	 if($.trim(orgName).length<1){
-    		 $("#reOrgNameError").text("收款方账户不能为空");
-    	 }else{
-    		 $("#reOrgNameError").text("");
-    	 }
-    });
-    
-    $("#reTitanCode").blur(function(){
-    	var titanCode = $(this).val();
-    	if($.trim(titanCode).length<1){
-    		 $("#reTitanCodeError").text("收款方泰坦码不能为空");
-    	}else{
-    		 $("#reTitanCodeError").text("");
-    	}
-    });
-    
-    //判断如果是民生银行出现下拉框
-    $('.paytable_payway input').on('change',function(){
-    	var _this=$(this);
-    	var value=$('input:radio[name=r2]:checked').val();;
-    	//获取
-    	var dataIndex = $('input:radio[name=r2]:checked').attr("data-index");
-    	var linePayType =   $("#item-"+dataIndex).attr("data-index");
-    	if(value=='cmbc' && linePayType==1){
-    		_this.parents('.paytable_payway').find('.payc_ms').slideDown();
-    	}else{
-    		$('.paytable_payway').find('.payc_ms').slideUp();
-    	}
-    });
-    
-    /** 支付相关开始 **/
-    //提交表单
-    function pay_Order(){
-    	//获取数据
-    	if(cashierData.validatePayerAccount().length>0){
-    		cashierData.window(cashierData.validatePayerAccount());
-    		return ;
-    	}
-   	    top.F.loading.show();
-        if(cashierData.payAmount() =="0"){//余额支付
-        	balancePayment();
-    	}else if(cashierData.linePayType()=='9'){//微信支付
-    		qrPayment();
-    	}else{//有网银支付
-    		cashierData.submit();
-    	}  
-    }
-    
-    //余额支付
-    function balancePayment(){
-    	$.ajax({//支付页面
-          	 type: "post",
-               url: "<%=basePath%>/payment/showTitanPayPage.action",
+     	
+    	if(cashierData.linePayType()=='10')
+    	{	
+    		var data = getLoanReqData();
+			if (data["cardNum"] == null || data["cardNum"] == '') 
+			{
+				new top.Tip({msg: '请选择收款的银行卡!', type: 1, timer: 2000});
+				return false;
+			} 
+			else if (data["accountName"] == null || data["accountName"] == '')
+			{
+				new top.Tip({msg: '请选择收款的银行卡!', type: 1, timer: 2000});
+				return false;
+			} else if (data["bankName"] == null || data["bankName"] == '') {
+				new top.Tip({msg: '请选择收款的银行卡!', type: 1, timer: 2000});
+				return false;
+			} else if (data["payOrderNo"] == null || data["payOrderNo"] == '') {
+				new top.Tip({msg: '付款单号为空，请联系管理员!', type: 1, timer: 2000});
+				return false;
+
+			} else if (data["userId"] == null || data["userId"] == '') {
+				new top.Tip({msg: '用户标示为空，请联系管理员!', type: 1, timer: 2000});
+				return false;
+			}
+
+		} else {
+			if ($("#not_exists_history").is(":visible") == true
+					|| $(".replanceArea").is(":visible") == true) {
+				if ($.trim($("#reOrgName").val()).length < 1) {
+					$("#reOrgNameError").text("收款方账户不能为空");
+					return false;
+				} else {
+					$("#reOrgNameError").text("");
+				}
+				if ($.trim($("#reTitanCode").val()).length < 1) {
+					$("#reTitanCodeError").text("收款方泰坦码不能为空");
+					return false;
+				} else {
+					$("#reTitanCodeError").text("");
+				}
+			}
+			$("#reOrgNameError").text("");
+			$("#reTitanCodeError").text("");
+		}
+		return true;
+	}
+
+	$("#reOrgName").blur(function() {
+		var orgName = $(this).val();
+		if ($.trim(orgName).length < 1) {
+			$("#reOrgNameError").text("收款方账户不能为空");
+		} else {
+			$("#reOrgNameError").text("");
+		}
+	});
+
+	$("#reTitanCode").blur(function() {
+		var titanCode = $(this).val();
+		if ($.trim(titanCode).length < 1) {
+			$("#reTitanCodeError").text("收款方泰坦码不能为空");
+		} else {
+			$("#reTitanCodeError").text("");
+		}
+	});
+
+	//判断如果是民生银行出现下拉框
+	$('.paytable_payway input').on('change', function() {
+		var _this = $(this);
+		var value = $('input:radio[name=r2]:checked').val();
+		;
+		//获取
+		var dataIndex = $('input:radio[name=r2]:checked').attr("data-index");
+		var linePayType = $("#item-" + dataIndex).attr("data-index");
+		if (value == 'cmbc' && linePayType == 1) {
+			_this.parents('.paytable_payway').find('.payc_ms').slideDown();
+		} else {
+			$('.paytable_payway').find('.payc_ms').slideUp();
+		}
+	});
+
+	/** 支付相关开始 **/
+	//提交表单
+	function pay_Order() {
+		//获取数据
+		if (cashierData.validatePayerAccount().length > 0) {
+			cashierData.window(cashierData.validatePayerAccount());
+			return;
+		}
+		top.F.loading.show();
+		if (cashierData.payAmount() == "0") {//余额支付
+			balancePayment();
+		} else if (cashierData.linePayType() == '9') {//微信支付
+			qrPayment();
+
+		} else if (cashierData.linePayType() == '10') {
+			loanPay();
+		} else {//有网银支付
+			cashierData.submit();
+		}
+	}
+
+	//余额支付
+	function balancePayment() {
+		$.ajax({//支付页面
+			type : "post",
+			url : "<%=basePath%>/payment/showTitanPayPage.action",
                data: cashierData.onlinePayData(),
                dataType: "json",
                success: function (data) {

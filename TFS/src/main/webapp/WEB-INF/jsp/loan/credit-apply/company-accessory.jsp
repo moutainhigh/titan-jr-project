@@ -45,8 +45,8 @@
                     <dt class="fl">上传须知：</dt>
                     <dd class="fl">
                         <p>三证合一企业税务登记证和组织机构代码证请统一上传营业执照；</p>
-                        <p>如一类资料下有多张图片，请上传ZIP或RAR文件，压缩文件大小不可超过20M，其他附件大小不超过5M：</p>
-                        <p>附件格式支持 PNG、JPG 、 JPEG、PDF、ZIP、RAR；</p>
+                        <p>如一类资料下有多张图片，请上传ZIP文件，压缩文件大小不可超过20M，其他附件大小不超过5M：</p>
+                        <p>附件格式支持 PNG、JPG 、 JPEG、PDF、ZIP；</p>
                     </dd>
                 </dl>
                 <ul class="loanInformation_upload_list clearfix">

@@ -37,33 +37,41 @@ import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.rsa.Base64Helper;
-import com.fangcang.titanjr.common.util.rsa.JsRSAUtil;
-import com.fangcang.titanjr.common.util.rsa.RSAUtil;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.CashDeskData;
 import com.fangcang.titanjr.dto.bean.CashierDeskDTO;
-import com.fangcang.titanjr.dto.bean.CashierDeskItemDTO;
-import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
+import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
+import com.fangcang.titanjr.dto.bean.TitanVirtualOrgRelation;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.BindingVirtuaOrgBankCardRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
+import com.fangcang.titanjr.dto.request.CreateVirtualOrgRequest;
+import com.fangcang.titanjr.dto.request.GetVirtuaOrgBindCarListRequest;
 import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
 import com.fangcang.titanjr.dto.request.TitanOrderRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.response.AccountHistoryResponse;
+import com.fangcang.titanjr.dto.response.BindingVirtuaOrgBankCardResponse;
 import com.fangcang.titanjr.dto.response.CashierDeskResponse;
+import com.fangcang.titanjr.dto.response.CityInfosResponse;
+import com.fangcang.titanjr.dto.response.CreateVirtualOrgResponse;
+import com.fangcang.titanjr.dto.response.GetVirtuaOrgBindCarListResponse;
 import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
+import com.fangcang.titanjr.pay.req.CreateVirtualOrgReq;
 import com.fangcang.titanjr.pay.services.TitanTradeService;
 import com.fangcang.titanjr.pay.util.RSADecryptString;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
+import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
+import com.fangcang.titanjr.service.TitanFinancialVirtualService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 
@@ -96,6 +104,12 @@ public class TitanTradeController extends BaseController {
 	
 	@Resource
 	private TitanFinancialUtilService titanFinancialUtilService;
+	
+	@Resource
+	private TitanFinancialVirtualService titanFinancialVirtualService;
+
+	@Resource
+	private TitanFinancialAccountService titanFinancialAccountService;
 
 	/**
 	 * @Title: titanPay
@@ -447,6 +461,103 @@ public class TitanTradeController extends BaseController {
 		return resultMap;
 	}
 	
+	@RequestMapping(value = "/selectBank", method = RequestMethod.GET)
+	public String selectBank(String userId, Model model) {
+
+		GetVirtuaOrgBindCarListRequest req = new GetVirtuaOrgBindCarListRequest();
+		req.setOrgCode(userId);
+
+		GetVirtuaOrgBindCarListResponse listResponse = titanFinancialVirtualService
+				.getVirtuaOrgBindingBankCardList(req);
+
+		List<TitanVirtualOrgRelation> list = listResponse.getvOrgRelationList();
+
+		model.addAttribute("orgList", list);
+
+		return "/checkstand-pay/select_bank";
+	}
+
+	@ResponseBody
+	@RequestMapping("createVirtualOrg")
+	public String createVirtualOrg(CreateVirtualOrgReq req) {
+		
+		//创建虚拟
+		CreateVirtualOrgRequest createVirtualOrgRequest = new CreateVirtualOrgRequest();
+		createVirtualOrgRequest.setOrgCode(req.getUserId());
+		createVirtualOrgRequest.setVirtualOrgName(req.getAccountName());
+
+		CreateVirtualOrgResponse orgResponse = titanFinancialVirtualService
+				.createVirtualOrg(createVirtualOrgRequest);
+
+		if (orgResponse == null || !orgResponse.isResult()
+				|| !StringUtil.isValidString(orgResponse.getvOrgCode())) {
+			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+		}
+
+		BindingVirtuaOrgBankCardRequest request = new BindingVirtuaOrgBankCardRequest();
+		request.setBankCard(req.getCardNum());
+		request.setBankCode(req.getBankCode());
+		request.setBankName(req.getBankName());
+		request.setvOrgCode(orgResponse.getvOrgCode());
+		request.setOrgCode(req.getUserId());
+		
+		//中国银行才需要考虑地区编码和支行
+		if(StringUtil.isValidString(req.getBankCityCode()))
+		{
+			request.setBankBranch(req.getBankBranch());
+			CityInfoDTO city = new CityInfoDTO();
+			city.setCityCode(req.getBankCityCode());
+			CityInfosResponse response = titanFinancialAccountService
+					.getCityInfoList(city);
+			if (response.isResult()
+					&& CollectionUtils.isNotEmpty(response.getCityInfoDTOList())) {
+				request.setBankCity(response.getCityInfoDTOList().get(0)
+						.getCityName());
+			}
+			request.setBankProvince(this.queryProvinceName(req.getBankCityCode()));
+		}
+
+		BindingVirtuaOrgBankCardResponse cardResponse = titanFinancialVirtualService
+				.bindingBankCardToVirtuaOrg(request);
+
+		if (cardResponse == null || !cardResponse.isResult()) {
+			return toMsgJson(TitanMsgCodeEnum.UNEXPECTED_ERROR);
+		}
+		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS);
+	}
+	/**
+	 * 根据选择的地区编码查询对应的省份名称
+	 * @Title: queryProvinceName 
+	 * @Description: TODO
+	 * @param cityCode
+	 * @return
+	 * @return: String
+	 */
+	private String queryProvinceName(String cityCode) {
+		if (!StringUtil.isValidString(cityCode)) {
+			return null;
+		}
+		CityInfoDTO cityInfo = new CityInfoDTO();
+		cityInfo.setCityCode(cityCode);
+		CityInfosResponse response = titanFinancialAccountService
+				.getCityInfoList(cityInfo);
+		if (!response.isResult() || response.getCityInfoDTOList() == null
+				&& response.getCityInfoDTOList().size() > 0) {// 如果是北京市或者重庆市的话，这个地方的size为2
+			return null;
+		}
+
+		cityInfo = response.getCityInfoDTOList().get(0);
+		if (response.getCityInfoDTOList().size() == 2) {
+			return cityInfo.getCityName();
+		}
+
+		if (StringUtil.isValidString(cityInfo.getParentCode())) {
+			return queryProvinceName(cityInfo.getParentCode());
+		} else {
+			return cityInfo.getCityName();
+		}
+	}
+
 	
 	
 	/**

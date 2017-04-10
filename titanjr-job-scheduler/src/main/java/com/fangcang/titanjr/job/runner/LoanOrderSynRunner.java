@@ -22,7 +22,7 @@ import com.github.ltsopensource.tasktracker.runner.JobRunner;
 @Service
 public class LoanOrderSynRunner implements JobRunner{
 	
-	private static Logger logger = LoggerFactory.getLogger(LoanCreditAmountEvaluatingRunner.class);
+	private static Logger logger = LoggerFactory.getLogger(LoanOrderSynRunner.class);
 	
 	@Autowired
 	private TitanFinancialLoanService titanFinancialLoanService;
@@ -33,11 +33,8 @@ public class LoanOrderSynRunner implements JobRunner{
 		// 业务日志记录
         BizLogger bizLogger = jobContext.getBizLogger();
 		
-        System.out.println("授信单");
-        
 		GetLoanOrderInfoListRequest req = new GetLoanOrderInfoListRequest();
 		req.setCurrentPage(1);
-		req.setOrgCode("TJM60000001");
 		
 		req.setOrderStatusEnum(LoanOrderStatusEnum.HAVE_LOAN,
 				LoanOrderStatusEnum.LOAN_EXPIRY,
