@@ -12,6 +12,7 @@ public enum OrderStatusEnum {
 	ORDER_DELAY("11","支付延迟到账"),
 	REFUND_IN_PROCESS("12","退款中"),
 	REFUND_SUCCESS("13","退款成功"),
+	LOAN_ING("15","贷款处理中"),
 	REFUND_FAIL("14","退款失败");
   
     private String status;

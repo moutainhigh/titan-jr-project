@@ -37,9 +37,22 @@ function initCashierDesk(){
     $('.paytable_payway').on('click', function(){
     	var itemType = $(this).attr("itemType");
     	paytable_paywayClick(itemType);
+    	//表示贷款
+		  if (itemType == 10) {
+			$("#exists_history").hide();
+			$("#not_exists_history").hide();
+			$("#loanItemType").show();
+			$("#useBalanceCheck").hide();
+
+		} else {
+			$("#exists_history").show();
+			$("#not_exists_history").show();
+			$("#loanItemType").hide();
+			$("#useBalanceCheck").show();
+		}
     });
     
-  //单选框选中是触发限额显示
+  // 单选框选中是触发限额显示
 	$(".pay_bank_l input[type='radio']").on("click",function(){
 		bankCheckRadio($(this));
 	});
