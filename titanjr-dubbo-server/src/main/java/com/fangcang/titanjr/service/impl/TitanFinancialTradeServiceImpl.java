@@ -2256,6 +2256,17 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			titanTransOrder.setUserrelateid(orgBindDTOList.get(0).getUserid());
 			return response;
 		}
+		//TTMall第二期，支持金融机构收款
+		if(payerTypeEnum.isTTmallV2()){
+			//付款方
+			titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+			titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
+			titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+			//收款方
+			titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
+			titanTransOrder.setUserrelateid(titanOrderRequest.getRuserId());
+			return response;
+		}
 		
 		if(payerTypeEnum.isLoan()){
 			titanTransOrder.setUserid(titanOrderRequest.getUserId());
