@@ -2270,6 +2270,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
 			//收款方
 			titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
+			titanTransOrder.setPayeemerchant(titanOrderRequest.getRuserId());
 			titanTransOrder.setUserrelateid(titanOrderRequest.getRuserId());
 			return response;
 		}
