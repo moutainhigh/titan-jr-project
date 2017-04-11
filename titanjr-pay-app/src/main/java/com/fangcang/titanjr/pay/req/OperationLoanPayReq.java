@@ -12,7 +12,7 @@ public class OperationLoanPayReq
 //	private String bankCityName;
 	
 	private String amount;
-	private String transOrderNo;
+	private String payOrderNo;;
 //	private String billOrderNo;
 	
 	public String getAmount() {
@@ -21,18 +21,12 @@ public class OperationLoanPayReq
 	public void setAmount(String amount) {
 		this.amount = amount;
 	}
-	public String getTransOrderNo() {
-		return transOrderNo;
+	public String getPayOrderNo() {
+		return payOrderNo;
 	}
-	public void setTransOrderNo(String transOrderNo) {
-		this.transOrderNo = transOrderNo;
+	public void setPayOrderNo(String payOrderNo) {
+		this.payOrderNo = payOrderNo;
 	}
-//	public String getBillOrderNo() {
-//		return billOrderNo;
-//	}
-//	public void setBillOrderNo(String billOrderNo) {
-//		this.billOrderNo = billOrderNo;
-//	}
 	public String getBankName() {
 		return bankName;
 	}

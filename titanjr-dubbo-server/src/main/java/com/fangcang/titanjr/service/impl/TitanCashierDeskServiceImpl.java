@@ -136,6 +136,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
             TitanCashierDeskItem creditsitem = buildCahsierDesk(supplyCashierDesk.getDeskid(), CashierItemTypeEnum.CREDIT_ITEM);
             TitanCashierDeskItem balancesitem = buildCahsierDesk(supplyCashierDesk.getDeskid(), CashierItemTypeEnum.BALANCE_ITEM);
             TitanCashierDeskItem qrsitem =  buildCahsierDesk(supplyCashierDesk.getDeskid(), CashierItemTypeEnum.QR_ITEM);
+            TitanCashierDeskItem loan =  buildCahsierDesk(supplyCashierDesk.getDeskid(), CashierItemTypeEnum.LOAN);
             //联盟分销商付款给联盟供应商时有以下一个选项
             TitanCashierDeskItem balanceaitem = buildCahsierDesk(allianceCashierDesk.getDeskid(), CashierItemTypeEnum.BALANCE_ITEM);
 
@@ -166,6 +167,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
             titanCashierDeskItemDao.saveCashierDeskItem(b2critem);
             titanCashierDeskItemDao.saveCashierDeskItem(qritem);
             titanCashierDeskItemDao.saveCashierDeskItem(qrsitem);
+            titanCashierDeskItemDao.saveCashierDeskItem(loan);
             
             titanCashierDeskItemDao.saveCashierDeskItem(openOrg2bitem);
             titanCashierDeskItemDao.saveCashierDeskItem(openOrg2citem);
@@ -199,14 +201,14 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
             allItemBanks.addAll(buildItemBankList(openOrgCritem.getItemid(), "Credit"));
             allItemBanks.addAll(buildItemBankList(ttMallCritem.getItemid(), "Credit"));
             
-            
             //第三方支付
             allItemBanks.addAll(buildQRBankList(qritem.getItemid()));
             allItemBanks.addAll(buildQRBankList(qrsitem.getItemid()));
             allItemBanks.addAll(buildQRBankList(openOrgQritem.getItemid()));
             allItemBanks.addAll(buildQRBankList(ttMallQritem.getItemid()));
             
-
+            allItemBanks.addAll(buildLoanBankList(loan.getItemid()));
+            
             
             titanCashierItemBankDao.batchSaveItemBanks(allItemBanks);
 
@@ -284,6 +286,19 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
                 result.add(bank);
             }
         }
+        return result;
+    }
+    
+    private List<TitanCashierItemBank> buildLoanBankList(Integer bankItemId)
+    {
+    	List<TitanCashierItemBank> result = new ArrayList<TitanCashierItemBank>();
+    	TitanCashierItemBank wx = new TitanCashierItemBank();
+    	wx.setItemid(bankItemId);
+    	wx.setBankmark("运营贷");
+    	wx.setBankname("yyd");
+    	wx.setCreator("system");
+    	wx.setCreatetime(new Date());
+        result.add(wx);
         return result;
     }
     

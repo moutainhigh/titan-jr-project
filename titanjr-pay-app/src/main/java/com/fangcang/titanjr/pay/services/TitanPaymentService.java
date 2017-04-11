@@ -271,9 +271,20 @@ public class TitanPaymentService {
 		}
 		
 		public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,Model model){
-			if(StringUtil.isValidString(rechargeResultConfirmRequest.getOrderNo())){
+			if(StringUtil.isValidString(rechargeResultConfirmRequest.getOrderNo())
+					|| StringUtil.isValidString(rechargeResultConfirmRequest.getPayOrderNo())){
+				
 				TransOrderRequest transOrderRequest = new TransOrderRequest();
-				transOrderRequest.setOrderid(rechargeResultConfirmRequest.getOrderNo());
+			if (StringUtil.isValidString(rechargeResultConfirmRequest
+					.getOrderNo())) {
+				transOrderRequest.setOrderid(rechargeResultConfirmRequest
+						.getOrderNo());
+			}
+			if (StringUtil.isValidString(rechargeResultConfirmRequest
+					.getPayOrderNo())) {
+				transOrderRequest.setPayorderno(rechargeResultConfirmRequest
+						.getPayOrderNo());
+			}
 				TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
 				if(transOrderDTO !=null){
 					model.addAttribute("transOrderDTO", transOrderDTO);
@@ -284,38 +295,44 @@ public class TitanPaymentService {
 			        	model.addAttribute("financialOrganDTO", financialOrganResponse.getFinancialOrganDTO());
 			        }
 			        
-			        model.addAttribute("payType", "网银支付");
-			        if(!StringUtil.isValidString(rechargeResultConfirmRequest.getPayStatus())){//判断是本地回调
-			        	
-			        	boolean paySuccess = OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid());
-			        	rechargeResultConfirmRequest.setOrderPayTime(DateUtil.sdf5.format(transOrderDTO.getCreatetime()));
-			        	rechargeResultConfirmRequest.setPayMsg("付款失败");
-			        	if(paySuccess){
-			        		rechargeResultConfirmRequest.setPayStatus("3");
-			        		rechargeResultConfirmRequest.setPayMsg("付款成功");
-			        		rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getTradeamount()).toString());
-			        	}
-			        	model.addAttribute("payType", "余额支付");
-					}
-			        
-			        TitanOrderPayDTO payOrder = new TitanOrderPayDTO();
-			        payOrder.setOrderNo(rechargeResultConfirmRequest.getOrderNo());
-			        TitanOrderPayDTO payOrderDTO =  titanOrderService.getTitanOrderPayDTO(payOrder);
-			        if(payOrderDTO !=null){
-			        	if(PayTypeEnum.ALIPAY_URL.getKey().equals(payOrderDTO.getPayType())){
-			        		 rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getAmount()).toString());
-			        		 model.addAttribute("payType", "支付宝支付");
-			        	}else if(PayTypeEnum.WECHAT_URL.getKey().equals(payOrderDTO.getPayType())){
-			        		 rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getAmount()).toString());
-			        		 model.addAttribute("payType", "微信支付");
-			        	}
+			        if(StringUtil.isValidString(rechargeResultConfirmRequest.getPayOrderNo()))
+			        {
+			        	  model.addAttribute("payType", "贷款支付");
+			        	  return "checkstand-pay/loanPayResult";
 			        }
-			        
-			        if(StringUtil.isValidString(rechargeResultConfirmRequest.getExpand()) && rechargeResultConfirmRequest.getExpand().equals(CommonConstant.ORDER_DELAY)){
-			        	rechargeResultConfirmRequest.setPayStatus("3");
-		        		rechargeResultConfirmRequest.setPayMsg("延迟到账，稍后查询");
+			        else{
+				        model.addAttribute("payType", "网银支付");
+				        if(!StringUtil.isValidString(rechargeResultConfirmRequest.getPayStatus())){//判断是本地回调
+				        	
+				        	boolean paySuccess = OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid());
+				        	rechargeResultConfirmRequest.setOrderPayTime(DateUtil.sdf5.format(transOrderDTO.getCreatetime()));
+				        	rechargeResultConfirmRequest.setPayMsg("付款失败");
+				        	if(paySuccess){
+				        		rechargeResultConfirmRequest.setPayStatus("3");
+				        		rechargeResultConfirmRequest.setPayMsg("付款成功");
+				        		rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getTradeamount()).toString());
+				        	}
+				        	model.addAttribute("payType", "余额支付");
+						}
+				        
+				        TitanOrderPayDTO payOrder = new TitanOrderPayDTO();
+				        payOrder.setOrderNo(rechargeResultConfirmRequest.getOrderNo());
+				        TitanOrderPayDTO payOrderDTO =  titanOrderService.getTitanOrderPayDTO(payOrder);
+				        if(payOrderDTO !=null){
+				        	if(PayTypeEnum.ALIPAY_URL.getKey().equals(payOrderDTO.getPayType())){
+				        		 rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getAmount()).toString());
+				        		 model.addAttribute("payType", "支付宝支付");
+				        	}else if(PayTypeEnum.WECHAT_URL.getKey().equals(payOrderDTO.getPayType())){
+				        		 rechargeResultConfirmRequest.setPayAmount(new BigDecimal(transOrderDTO.getAmount()).toString());
+				        		 model.addAttribute("payType", "微信支付");
+				        	}
+				        }
+				        
+				        if(StringUtil.isValidString(rechargeResultConfirmRequest.getExpand()) && rechargeResultConfirmRequest.getExpand().equals(CommonConstant.ORDER_DELAY)){
+				        	rechargeResultConfirmRequest.setPayStatus("3");
+			        		rechargeResultConfirmRequest.setPayMsg("延迟到账，稍后查询");
+				        }
 			        }
-			        
 				}
 			}
 		    model.addAttribute("rechargeResultConfirmRequest", rechargeResultConfirmRequest);
