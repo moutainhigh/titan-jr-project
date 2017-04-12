@@ -29,7 +29,7 @@ import com.fangcang.titanjr.common.enums.FileTypeEnum;
 import com.fangcang.titanjr.common.enums.LoanApplyOrderEnum;
 import com.fangcang.titanjr.common.enums.LoanOrderStatusEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
-import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
+import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.FileHelp;
@@ -950,7 +950,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				}
 			}
 			// 如果没生成还款计划的，那么还款日期先采用+90天方式来算
-			if (loanApplyOrder.getActualRepaymentDate() == null) {
+			if (loanApplyOrder.getActualRepaymentDate() == null &&  rsp.getLoandate() != null) {
 				Date rDate = DateUtils.addDays(
 						DateUtil.toDataYYYYMMDD(rsp.getLoandate()),
 						(CommonConstant.RS_LOAN_REPAYMENT_TIME - 1));
@@ -1014,17 +1014,6 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 						.getTitanUserPaginationSupport().getItemList().get(0);
 			}
 
-			// 管理员
-			UserInfoQueryRequest adminUserInfoQueryRequest = new UserInfoQueryRequest();
-			adminUserInfoQueryRequest.setOrgCode(loanApplyOrder.getOrgCode());
-			adminUserInfoQueryRequest.setIsadmin(1);
-			adminUserInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE
-					.getKey());
-			UserInfoPageResponse adminUserInfoPageResponse = userService
-					.queryUserInfoPage(adminUserInfoQueryRequest);
-			TitanUser adminTitanUser = adminUserInfoPageResponse
-					.getTitanUserPaginationSupport().getItemList().get(0);
-
 			LoanSpecification loanSpecificationParam = new LoanSpecification();
 			loanSpecificationParam.setOrderNo(orderNo);
 			List<LoanSpecification> loanSpecificationList = loanSpecificationDao
@@ -1042,14 +1031,32 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 					isExistsCreator = true;
 				}
 				// 发给管理员
-				if ((isExistsCreator == false)
-						|| (!titanUser.getUserloginname().equals(
-								adminTitanUser.getUserloginname()))) {
-					sendLoanSms(adminTitanUser.getUserloginname(),
-							adminTitanUser.getUsername(), orderNo,
+				if (isExistsCreator == false) {
+					OrgDTO orgDTO = new OrgDTO();
+					orgDTO.setUserid(loanApplyOrder.getOrgCode());
+					orgDTO = organService.queryOrg(orgDTO);
+					String receiveAddress;
+					String username;
+					if(orgDTO.getUsertype().equals(TitanOrgEnum.UserType.ENTERPRISE.getKey())){//企业用户
+						//给联系人发
+						receiveAddress = orgDTO.getMobiletel();
+						username = orgDTO.getConnect();
+					}else{
+						//给管理员发
+						UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+						userInfoQueryRequest.setIsadmin(1);
+						userInfoQueryRequest.setOrgCode(orgDTO.getOrgcode());
+						UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
+						receiveAddress = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0).getUserloginname();
+						username = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0).getUsername();
+					}
+					
+					sendLoanSms(receiveAddress,
+							username, orderNo,
 							loanApplyOrder.getAmount().toString(),
 							loanSpecification.getAccountName(),
 							loanApplyOrder.getStatus());
+					
 				}
 			} catch (Exception e) {
 				log.error("贷款通知短信或者邮件发送失败,订单号orderNo：" + orderNo, e);
