@@ -342,15 +342,13 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		BankCardQueryResponse bankCardQueryResponse = rsBankCardInfoManager.queryBindCard(bankCardQueryRequest);
 		if(bankCardQueryResponse.getBankCardInfoList() !=null && bankCardQueryResponse.getBankCardInfoList().size()>0){
 			for(BankCardInfo bankCardInfo :bankCardQueryResponse.getBankCardInfoList()){
-				if(CommonConstant.WITHDRAW_CARD.equals(bankCardInfo.getAccountpurpose()) 
-					&& CommonConstant.ENTERPRISE.equals(bankCardInfo.getAccountproperty())){//对公，提现卡
+				if( CommonConstant.ENTERPRISE.equals(bankCardInfo.getAccountproperty())){//对公，提现卡
 			        if(CommonConstant.BIND_SUCCESS.equals(bankCardInfo.getStatus()) ){
 			        	status = CommonConstant.BIND_SUCCESS;
 			        }else if(CommonConstant.BIND_FAIL.equals(bankCardInfo.getStatus())){//审核失败
 			        	status = CommonConstant.BIND_FAIL;
 			        }
 				}
-				
 			}
 		}
 		return status;
