@@ -58,7 +58,7 @@ public enum PayerTypeEnum {
             return 3;
         } else if (OPEN_ORG.key.equals(key)) {
             return 6;
-        } else if (TT_MALL.key.equals(key)) {
+        } else if (TT_MALL.key.equals(key)||TT_MALL_V2.key.equals(key)) {
             return 7;
         }
         return null;
@@ -92,7 +92,7 @@ public enum PayerTypeEnum {
 
     public boolean isPayeeNecessary() {
         return SUPPLY_UNION.key.equals(this.key) || B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key)
-                || RECHARGE.key.equals(this.key) || OPEN_ORG.key.equals(this.key) || TT_MALL.key.equals(this.key);
+                || RECHARGE.key.equals(this.key) || OPEN_ORG.key.equals(this.key) || TT_MALL.key.equals(this.key)|| TT_MALL_V2.key.equals(this.key);
     }
 
 
