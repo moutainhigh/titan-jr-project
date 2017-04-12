@@ -950,7 +950,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 				}
 			}
 			// 如果没生成还款计划的，那么还款日期先采用+90天方式来算
-			if (loanApplyOrder.getActualRepaymentDate() == null) {
+			if (loanApplyOrder.getActualRepaymentDate() == null &&  rsp.getLoandate() != null) {
 				Date rDate = DateUtils.addDays(
 						DateUtil.toDataYYYYMMDD(rsp.getLoandate()),
 						(CommonConstant.RS_LOAN_REPAYMENT_TIME - 1));

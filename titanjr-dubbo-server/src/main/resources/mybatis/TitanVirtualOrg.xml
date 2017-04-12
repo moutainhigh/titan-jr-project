@@ -21,11 +21,11 @@
     </resultMap>
     
     
-      <select id="queryVirtualOrgRelationInfos" resultMap="virtualOrgRelation"
+     <select id="queryOrgBindCardHistoryList" resultMap="virtualOrgRelation"
             parameterType="com.fangcang.titanjr.entity.VirtualOrgRelation">
            
             SELECT orgcode,vorgcode,bankname,bankcard ,t1.bankcode,vorgname  FROM t_tfs_virtual_org_relation t1, t_tfs_bankcard t2 
- 			WHERE vorgcode = t2.`userid` AND t1.bankcard = t2.`accountnumber` AND t2.`status` = 1
+ 			WHERE vorgcode = t2.`userid` AND t1.bankcard = t2.`accountnumber` AND (t2.`status` = 1 or t2.`status` = 2 )
 	        
             <if test="orgCode !=null">
                 and t1.orgcode = #{orgCode}
@@ -39,6 +39,26 @@
              <if test="vorgCode !=null">
                 and t1.vorgcode = #{vorgCode}
             </if>
+    </select>
+    
+      <select id="queryVirtualOrgRelationInfos" resultMap="virtualOrgRelation"
+            parameterType="com.fangcang.titanjr.entity.VirtualOrgRelation">
+           
+            SELECT orgcode,vorgcode,bankname,bankcard ,bankcode,vorgname  FROM t_tfs_virtual_org_relation 
+	        <where>
+	            <if test="orgCode !=null">
+	                and orgcode = #{orgCode}
+	            </if>
+	            <if test="bankCard !=null">
+	                and bankcard = #{bankCard}
+	            </if>
+	            <if test="bankName !=null">
+	                and bankname = #{bankName}
+	            </if>
+	             <if test="vorgCode !=null">
+	                and vorgcode = #{vorgCode}
+	            </if>
+            </where>
     </select>
     
     

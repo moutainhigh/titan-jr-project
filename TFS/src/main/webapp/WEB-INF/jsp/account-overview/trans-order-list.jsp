@@ -60,7 +60,7 @@
             </c:if>
             
              <c:if test="${tradeItem.statusid == 15 }">
-            贷款处理中
+            处理中
             </c:if>
 
             <c:if test="${tradeItem.statusid == 9}">

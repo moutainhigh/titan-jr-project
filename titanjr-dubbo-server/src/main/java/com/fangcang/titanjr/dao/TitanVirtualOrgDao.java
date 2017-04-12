@@ -13,6 +13,8 @@ public interface TitanVirtualOrgDao {
 	
 	public List<VirtualOrgRelation> queryVirtualOrgRelationInfos(VirtualOrgRelation orgRelation);
 	
+	public List<VirtualOrgRelation> queryOrgBindCardHistoryList(VirtualOrgRelation orgRelation);
+	
 	public void addVirtualOrgRelation(VirtualOrgRelation orgRelation);
 	
 //	public void delVirtualOrgRelation(VirtualOrgRelation orgRelation);
