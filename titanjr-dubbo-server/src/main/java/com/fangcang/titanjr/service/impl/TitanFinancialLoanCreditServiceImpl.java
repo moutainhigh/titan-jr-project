@@ -33,7 +33,7 @@ import com.fangcang.titanjr.common.enums.entity.LoanCreditCompanyEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanCreditCompanyEnum.CompanyType;
 import com.fangcang.titanjr.common.enums.entity.LoanCreditOrderEnum;
 import com.fangcang.titanjr.common.enums.entity.LoanPersonEnsureEnum;
-import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
+import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
@@ -1336,15 +1336,24 @@ public class TitanFinancialLoanCreditServiceImpl implements
 	 */
 	private void sendCreditSms(String orgCode,String subject,String content){
 		
-		UserInfoQueryRequest adminUserInfoQueryRequest = new UserInfoQueryRequest();
-		adminUserInfoQueryRequest.setOrgCode(orgCode);
-		adminUserInfoQueryRequest.setIsadmin(1);
-		adminUserInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
-		UserInfoPageResponse adminUserInfoPageResponse = userService.queryUserInfoPage(adminUserInfoQueryRequest);
-		TitanUser adminTitanUser  = adminUserInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0);
+		OrgDTO orgDTO = new OrgDTO();
+		orgDTO.setUserid(orgCode);
+		orgDTO = titanFinancialOrganService.queryOrg(orgDTO);
+		String receiveAddress;
+		if(orgDTO.getUsertype().equals(TitanOrgEnum.UserType.ENTERPRISE.getKey())){//企业用户
+			//给联系人发
+			receiveAddress = orgDTO.getMobiletel();
+		}else{
+			//给管理员发
+			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+			userInfoQueryRequest.setIsadmin(1);
+			userInfoQueryRequest.setOrgCode(orgDTO.getOrgcode());
+			UserInfoPageResponse userInfoPageResponse = userService.queryUserInfoPage(userInfoQueryRequest);
+			receiveAddress = userInfoPageResponse.getTitanUserPaginationSupport().getItemList().get(0).getUserloginname();
+		}
 		
 		SendMessageRequest sendMessageRequest = new SendMessageRequest();
-		sendMessageRequest.setReceiveAddress(adminTitanUser.getUserloginname());
+		sendMessageRequest.setReceiveAddress(receiveAddress);
 		sendMessageRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
 		sendMessageRequest.setSubject(subject);
 		sendMessageRequest.setContent(content);
@@ -1352,7 +1361,7 @@ public class TitanFinancialLoanCreditServiceImpl implements
     	try {
     		sendSMSService.asynSendMessage(sendMessageRequest);
 		} catch (Exception e) {
-			log.error("授信申请通知短信或者邮件发送失败,内容content："+content+",接收者receiveAddress:"+adminTitanUser.getUserloginname(), e);
+			log.error("授信申请通知短信或者邮件发送失败,内容content："+content+",接收者receiveAddress:"+receiveAddress, e);
 		}
 	}
 

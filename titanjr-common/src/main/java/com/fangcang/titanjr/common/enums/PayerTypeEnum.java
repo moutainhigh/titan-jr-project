@@ -13,6 +13,7 @@ public enum PayerTypeEnum {
     WITHDRAW("8", "提现"),
     OPEN_ORG("1001", "对外开放平台"),
     TT_MALL("1024", "TTMALL收银台"),
+    TT_MALL_V2("10242","TTMALL收银台v2"),
     LOAN("512", "贷款");
 
     public String key;
@@ -57,7 +58,7 @@ public enum PayerTypeEnum {
             return 3;
         } else if (OPEN_ORG.key.equals(key)) {
             return 6;
-        } else if (TT_MALL.key.equals(key)) {
+        } else if (TT_MALL.key.equals(key)||TT_MALL_V2.key.equals(key)) {
             return 7;
         }
         return null;
@@ -69,7 +70,7 @@ public enum PayerTypeEnum {
 
     //使用收款方收银台
     public boolean useReceiverCashDesk() {
-        return B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key) || OPEN_ORG.key.equals(this.key) || TT_MALL.key.equals(this.key);
+        return B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key) || OPEN_ORG.key.equals(this.key) || TT_MALL.key.equals(this.key)|| TT_MALL_V2.key.equals(this.key);
     }
 
     public boolean isUserId() {
@@ -91,7 +92,7 @@ public enum PayerTypeEnum {
 
     public boolean isPayeeNecessary() {
         return SUPPLY_UNION.key.equals(this.key) || B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key)
-                || RECHARGE.key.equals(this.key) || OPEN_ORG.key.equals(this.key) || TT_MALL.key.equals(this.key);
+                || RECHARGE.key.equals(this.key) || OPEN_ORG.key.equals(this.key) || TT_MALL.key.equals(this.key)|| TT_MALL_V2.key.equals(this.key);
     }
 
 
@@ -125,6 +126,10 @@ public enum PayerTypeEnum {
 
     public boolean isTtMall() {
         return TT_MALL.key.equals(this.key);
+    }
+    
+    public boolean isTTmallV2(){
+    	 return TT_MALL_V2.key.equals(this.key);
     }
 
     public boolean isLoan() {

@@ -2,7 +2,9 @@ package com.fangcang.titanjr.dto.request;
 
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 
-public class ConfirmFinanceRequest {
+import java.io.Serializable;
+
+public class ConfirmFinanceRequest implements Serializable{
 	
 	private TransOrderDTO transOrderDTO;
 	

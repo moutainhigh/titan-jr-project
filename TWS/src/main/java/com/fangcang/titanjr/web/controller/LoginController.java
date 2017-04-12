@@ -309,6 +309,7 @@ public class LoginController extends BaseController{
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
    	public String proxyLogin(ProxyLoginPojo proxyLogin,Model model){
    		//校验参数
+   		LOGGER.info("代理登录,登录参数proxyLogin："+Tools.gsonToString(proxyLogin));
    		if(isBlank(proxyLogin.getChannel())||isBlank(proxyLogin.getInfo())||isBlank(proxyLogin.getReqtime())||isBlank(proxyLogin.getSign())){
    			//跳到登录界面
 			return "redirect:/ex/login.shtml";
@@ -319,7 +320,7 @@ public class LoginController extends BaseController{
    		
    		if(reqTime==0||dateDiff>WebConstant.PROXY_LOGIN_LINK_EXPIRE_TIME){
    			model.addAttribute("errormsg", "代理登录链接已经失效");
-   			return "error";
+   			return "redirect:/ex/login.shtml";
    		}
    		
    		CoopRequest coopRequest = new CoopRequest();
@@ -333,12 +334,13 @@ public class LoginController extends BaseController{
     			try {
     				//开始解密
     				String urlKeyValues = RSAUtil.decryptByPrivateKeyGet(proxyLogin.getInfo(), coopDTO.getPrivateKey());
+    				LOGGER.info("代理登录，解密后的登录用户信息："+urlKeyValues);
     				Map<String, String> result =  Tools.unserializable2Map(urlKeyValues);
     				String tfsuserid = result.get("tfsuserid");
     				String orgcode = result.get("orgcode");
     				if(!StringUtil.isValidString(tfsuserid)){
     					model.addAttribute("errormsg", "无效用户无法登陆");
-    		   			return "error";
+    					return "redirect:/ex/login.shtml";
     				}
     				
     				TitanUserBindInfoDTO paramBindInfo = new TitanUserBindInfoDTO();
@@ -349,7 +351,7 @@ public class LoginController extends BaseController{
     				if(userBindInfoDTO==null){
     					model.addAttribute("errormsg", "无效用户无法登陆，请联系管理员");
     					LOGGER.error("问题：代理登录时，无效用户无法登陆，原因：用户id的绑定关系不存在,登录参数：tfsuserid|"+tfsuserid+",orgcode|"+orgcode+",cooptype|"+coopDTO.getCoopType());
-    		   			return "error";
+    					return "redirect:/ex/login.shtml";
     				}
     				UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
     				userInfoQueryRequest.setTfsUserId(NumberUtils.toInt(tfsuserid));
@@ -359,7 +361,7 @@ public class LoginController extends BaseController{
     				if(titanUser==null){
     					model.addAttribute("errormsg", "无效用户无法登陆，请联系管理员");
     					LOGGER.error("问题：代理登录时，无效用户无法登陆，原因：用户不存在,登录参数：tfsuserid|"+tfsuserid+",orgcode|"+orgcode+",cooptype|"+coopDTO.getCoopType());
-    		   			return "error";
+    					return "redirect:/ex/login.shtml";
     				}
     				//校验用户id是否存在,且为管理员
     				if(titanUser.getStatus()==TitanUserEnum.Status.AVAILABLE.getKey()){
@@ -382,7 +384,7 @@ public class LoginController extends BaseController{
     				}else{
     					model.addAttribute("errormsg", "账号状态异常无法登陆，请联系管理员");
     					LOGGER.error("问题：代理登录时，账号状态异常无法登陆,登录参数：tfsuserid|"+tfsuserid+",orgcode|"+orgcode+",cooptype|"+coopDTO.getCoopType()+",titanUser status :"+titanUser.getStatus());
-    		   			return "error";
+    					return "redirect:/ex/login.shtml";
     				}
     				
     			} catch (Exception e) {
@@ -390,7 +392,7 @@ public class LoginController extends BaseController{
     			}
 	    	}else{
 	    		model.addAttribute("errormsg", "必填参数不能为空");
-	   			return "error";
+	    		return "redirect:/ex/login.shtml";
 	    	}
 		}else{
 			LOGGER.error("代理登录失败，没有找到对应的合作渠道号,渠道号【"+proxyLogin.getChannel()+"】不存在");
