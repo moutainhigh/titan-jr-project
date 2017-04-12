@@ -250,6 +250,23 @@ function validate_bankCard_data(bankCardData){
 	    return false;
 	}
 	
+	var bankName = $("#bankCode").val();
+	if(bankName == null || bankName == '' || bankName.length< 1)
+	{
+		new top.Tip({msg : '收款银行不能为空！', type: 1 , time:1000}); 
+		return false;
+	}
+	
+	var bankCode = $("#bankCode").attr("data-id");
+	
+	if(bankCode == null || bankCode == '' || bankCode.length< 1)
+	{
+		new top.Tip({msg : '收款银行不能为空！', type: 1 , time:1000}); 
+		return false;
+	}
+	
+	
+	
 	var bankCode = $("#bankCode").attr("data-id");
 	if(bankCode=="104"){//中国银行需要验证
 		var cityCode = $("#city_code").attr("data-id");

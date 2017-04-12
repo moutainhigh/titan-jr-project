@@ -6,29 +6,21 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.alibaba.fastjson.JSON;
-import com.fangcang.corenut.dao.PaginationSupport;
-import com.fangcang.titanjr.common.enums.BankCardEnum;
-import com.fangcang.titanjr.common.enums.BindCardStatus;
-import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
-import com.fangcang.titanjr.common.enums.OrderStatusEnum;
-import com.fangcang.titanjr.common.enums.ReqstatusEnum;
-import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
-import com.fangcang.titanjr.common.util.GenericValidate;
-
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.titanjr.common.enums.BindCardStatus;
 import com.fangcang.titanjr.common.enums.ROPErrorEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.dao.TitanBankcardDao;
 import com.fangcang.titanjr.dto.bean.BankCardDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
-import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
 import com.fangcang.titanjr.dto.request.BankCardRequest;
 import com.fangcang.titanjr.dto.request.CusBankCardBindRequest;
@@ -43,7 +35,6 @@ import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
 import com.fangcang.titanjr.entity.TitanBankcard;
 import com.fangcang.titanjr.entity.parameter.TitanBankcardParam;
 import com.fangcang.titanjr.rs.dto.BankCardInfo;
-import com.fangcang.titanjr.rs.dto.BankInfo;
 import com.fangcang.titanjr.rs.manager.RSBankCardInfoManager;
 import com.fangcang.titanjr.rs.request.BankCardBindRequest;
 import com.fangcang.titanjr.rs.request.BankCardQueryRequest;
@@ -53,7 +44,6 @@ import com.fangcang.titanjr.rs.response.BankCardBindResponse;
 import com.fangcang.titanjr.rs.response.BankCardQueryResponse;
 import com.fangcang.titanjr.rs.response.DeletePersonCardResponse;
 import com.fangcang.titanjr.rs.response.InvalidPubCardModifyResponse;
-import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
@@ -301,7 +291,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		PaginationSupport<TitanBankcard> paginationSupport = new PaginationSupport<TitanBankcard>();
 		condition.setStatus(BindCardStatus.BIND_BINDING.status);
 		condition.setAccountproperty(CommonConstant.ENTERPRISE);
-		condition.setAccountpurpose(CommonConstant.WITHDRAW_CARD);
+//		condition.setAccountpurpose(CommonConstant.WITHDRAW_CARD);
 		if(StringUtil.isValidString(userId)){
 			condition.setUserid(userId);
 		}
