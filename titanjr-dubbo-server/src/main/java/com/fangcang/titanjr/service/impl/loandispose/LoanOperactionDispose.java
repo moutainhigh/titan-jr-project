@@ -130,7 +130,7 @@ public class LoanOperactionDispose extends LoanProductDisposeAbstrator {
 			entity.setTransid(dto.getTransid());
 			entity.setLoanOrderNo(req.getLcanSpec().getOrderNo());
 			entity.setTradeamount(Long.parseLong(req.getLcanSpec().getAmount()));
-			entity.setStatusid(OrderStatusEnum.LOAN_ING.getStatus());
+			entity.setStatusid(OrderStatusEnum.PROGRESS_ING.getStatus());
 			entity.setGoodsdetail("(运营贷)"+dto.getGoodsdetail());
 			titanTransOrderDao.updateTitanTransOrderByTransId(entity);
 

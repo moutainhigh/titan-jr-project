@@ -39,7 +39,22 @@ public class TitanVirtualOrgDaoImpl extends GenericDAOMyBatisImpl implements
 			throw new DaoException(e);
 		}
 	}
-
+	
+	public List<VirtualOrgRelation> queryOrgBindCardHistoryList(VirtualOrgRelation orgRelation)
+	{
+		try {
+			return super
+					.selectList(
+							"com.fangcang.titanjr.dao.TitanVirtualOrgDao.queryOrgBindCardHistoryList",
+							orgRelation);
+		} catch (Exception e) {
+			log.error("queryVirtualOrgRelationInfos Error", e);
+			throw new DaoException(e);
+		}
+	}
+	
+	
+	
 	public List<VirtualOrgRelation> queryVirtualOrgRelationInfos(
 			VirtualOrgRelation orgRelation) {
 		try {

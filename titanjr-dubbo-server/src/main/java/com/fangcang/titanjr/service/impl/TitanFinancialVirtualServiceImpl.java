@@ -184,6 +184,21 @@ public class TitanFinancialVirtualServiceImpl implements
 			titanVirtualOrgDao.addVirtualOrgRelation(orgRelation);
 		}
 		
+		
+		VirtualOrgRelation queryCon = new VirtualOrgRelation();
+		queryCon.setBankCard(request.getBankCard());
+		queryCon.setBankName(request.getBankName());
+		queryCon.setVorgCode(request.getvOrgCode());
+		List<VirtualOrgRelation> vList = titanVirtualOrgDao
+				.queryOrgBindCardHistoryList(orgRelation);
+		
+		if(vList != null  && vList.size() > 0)
+		{
+			log.info("bind card success .");
+			cardResponse.putSuccess();
+			return cardResponse;
+		}
+		
 		//构建绑卡的基本信息
 		CusBankCardBindRequest bankCardBindRequest = new CusBankCardBindRequest();
 		bankCardBindRequest.setUserId(request.getvOrgCode());
@@ -240,7 +255,7 @@ public class TitanFinancialVirtualServiceImpl implements
 		orgRelation.setOrgCode(req.getOrgCode());
 
 		List<VirtualOrgRelation> orgRelations = titanVirtualOrgDao
-				.queryVirtualOrgRelationInfos(orgRelation);
+				.queryOrgBindCardHistoryList(orgRelation);
 
 		List<TitanVirtualOrgRelation> d = new ArrayList<TitanVirtualOrgRelation>();
 
