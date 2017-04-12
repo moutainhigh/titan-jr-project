@@ -309,6 +309,7 @@ public class LoginController extends BaseController{
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
    	public String proxyLogin(ProxyLoginPojo proxyLogin,Model model){
    		//校验参数
+   		LOGGER.info("代理登录,登录参数proxyLogin："+Tools.gsonToString(proxyLogin));
    		if(isBlank(proxyLogin.getChannel())||isBlank(proxyLogin.getInfo())||isBlank(proxyLogin.getReqtime())||isBlank(proxyLogin.getSign())){
    			//跳到登录界面
 			return "redirect:/ex/login.shtml";
@@ -333,6 +334,7 @@ public class LoginController extends BaseController{
     			try {
     				//开始解密
     				String urlKeyValues = RSAUtil.decryptByPrivateKeyGet(proxyLogin.getInfo(), coopDTO.getPrivateKey());
+    				LOGGER.info("代理登录，解密后的登录用户信息："+urlKeyValues);
     				Map<String, String> result =  Tools.unserializable2Map(urlKeyValues);
     				String tfsuserid = result.get("tfsuserid");
     				String orgcode = result.get("orgcode");
