@@ -35,7 +35,7 @@
     		</div>
     	</div>
     	<div class="bp_r clearfix opacity04">
-    		<div class="r_title ">新增收款账户</div>
+    		<div class="r_title ">新增收款账户（对公账户）</div>
     		<ul>
     			<li>
     			<div class="r_tit">开 户 行 ：</div>
@@ -133,12 +133,12 @@ backListObj = new AutoComplete($('#bankCode'), {
     clickEvent : function(d, input){
         input.attr('data-id', d.key);
         $("#bankName").val(d.val);
-        if(d.key =="104"){
+//         if(d.key =="104"){
         	$("#branch_spec").show();
         	showCityCode();
-        }else{
-        	$("#branch_spec").hide();
-        }
+//         }else{
+//         	$("#branch_spec").hide();
+//         }
     }
 });
 
@@ -266,7 +266,7 @@ function validate_bankCard_data(bankCardData){
 	
 	
 	
-	if(bankCode=="104"){//中国银行需要验证
+// 	if(bankCode=="104"){//中国银行需要验证
 		var cityCode = $("#city_code").attr("data-id");
 		if(typeof cityCode =="undifined" || cityCode.length<1){
 			new top.Tip({msg : '开户城市不能为空！', type: 1 , time:1000}); 
@@ -277,7 +277,7 @@ function validate_bankCard_data(bankCardData){
 			new top.Tip({msg : '开户支行不能为空！', type: 1 , time:1000}); 
 			return false;
 		}
-	}
+// 	}
 	
 	if(typeof bankCardData.cardNum =="undifined" || bankCardData.cardNum.length<1){
 		new top.Tip({msg : '收款账号不能为空！', type: 1 , time:1000}); 
