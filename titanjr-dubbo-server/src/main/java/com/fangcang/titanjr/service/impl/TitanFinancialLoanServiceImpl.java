@@ -321,7 +321,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			response.setOrderCreateTime(DateUtil.dateToString(new Date(),
 					"yyyy-MM-dd HH:mm"));
 			response.putSuccess();
-			sendLoanSms(req.getOrgCode());
+			sendLoanSms(req.getLcanSpec().getOrderNo());
 			return response;
 
 		} catch (Exception e) {

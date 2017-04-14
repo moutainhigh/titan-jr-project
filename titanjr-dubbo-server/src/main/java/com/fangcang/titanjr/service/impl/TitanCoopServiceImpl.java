@@ -47,7 +47,7 @@ public class TitanCoopServiceImpl implements TitanCoopService {
 	
 	@Override
 	public void notifyCoopOrgInfo() {
-		log.info("通知合作方机构信息方法TitanCoopService.notifyCoopOrgInfo()"+synOrgInfoWatch.getClass());
+		log.info("通知合作方机构信息方法TitanCoopService.notifyCoopOrgInfo()"+synOrgInfoWatch.toString());
 		if(synOrgInfoWatch.isDoing()){
 			log.info("通知合作方机构信息方法TitanCoopService.notifyCoopOrgInfo()正在执行，不允许重复执行,30分钟后或者等本次线程执行完后才可以执行。");
 			return;
