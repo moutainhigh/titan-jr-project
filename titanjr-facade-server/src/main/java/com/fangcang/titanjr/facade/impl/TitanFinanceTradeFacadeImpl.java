@@ -113,6 +113,7 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
             response.setResult(true);
             response.setAccountId(resultBalance.getFinaccountid());
             response.setBalanceFrozon(resultBalance.getBalancefrozon());
+            response.setAmount(resultBalance.getAmount());
             response.setBalanceUsable(resultBalance.getBalanceusable());
         }
         return response;
