@@ -65,6 +65,9 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 	@Value("${pay.notifyurl}")
 	private String payNotifyUrl;
 	
+	@Value("${send.order.warning}")
+	private String isSendWarning;
+	
 	@Override
 	public PaymentUrlResponse getPaymentUrl(PaymentUrlRequest paymentUrlRequest) {
 		PaymentUrlResponse paymentUrlResponse = new PaymentUrlResponse();
@@ -245,12 +248,15 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 		
 		try{
 			orderExceptionDao.insertTitanOrderException(ex);
-			SendMessageRequest sendCodeRequest = new SendMessageRequest();
-			sendCodeRequest.setReceiveAddress("jinrong@fangcang.com");
-			sendCodeRequest.setSubject(SMSTemplate.ORDER_WARNING.getSubject());
-			sendCodeRequest.setContent(MessageFormat.format(SMSTemplate.ORDER_WARNING.getContent(), orderId,oet.msg));
-			sendCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
-			smsService.asynSendMessage(sendCodeRequest);
+			
+			if("1".equals(isSendWarning)){
+				SendMessageRequest sendCodeRequest = new SendMessageRequest();
+				sendCodeRequest.setReceiveAddress("jinrong@fangcang.com");
+				sendCodeRequest.setSubject(SMSTemplate.ORDER_WARNING.getSubject());
+				sendCodeRequest.setContent(MessageFormat.format(SMSTemplate.ORDER_WARNING.getContent(), orderId,oet.msg));
+				sendCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+				smsService.asynSendMessage(sendCodeRequest);
+			}
 			
 		}catch(Exception e){
 			log.error("插入异常信息失败",e);
