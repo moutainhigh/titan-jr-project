@@ -81,12 +81,12 @@
 		    clickEvent : function(d, input){
 		        $("#bankCode").val(d.key);
 		        $("#bankCardName").val(d.val);
-		        if(d.key =="104"){
+		        //if(d.key =="104"){
 		        	$("#branch_spec").show().attr({"data-show":"1"});
 		        	showCityCode();
-		        }else{
-		        	$("#branch_spec").hide().attr({"data-show":"0"});
-		        }
+		        //}else{
+		       // 	$("#branch_spec").hide().attr({"data-show":"0"});
+		      //  }
 		        clearCity();
 		    }
 		});

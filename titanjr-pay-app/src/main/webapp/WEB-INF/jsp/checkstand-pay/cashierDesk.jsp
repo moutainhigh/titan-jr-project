@@ -151,9 +151,15 @@
                            <li class="on" id="pay_table_ttt">常用</li>
                         </c:if>
                         <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem">
-                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9 or deskItem.itemType == 10 }">
+                        
+                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9 }">
                                 <li>${deskItem.itemName}</li>
                             </c:if>
+                            
+                            <c:if test="${deskItem.itemType == 10 and isSupportLoanApply}">
+                            	<li>${deskItem.itemName}</li>
+                            </c:if>
+                            
                          </c:forEach>
                     </ul>
                   </div>
@@ -180,7 +186,11 @@
 	                              <c:if test="${commom.paytype == 3 }">
 	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}">（信用卡） </span>
 	                              </c:if>
-	                              <c:if test="${commom.paytype == 9 or commom.paytype == 10}">
+	                              <c:if test="${commom.paytype == 9}">
+	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}"> </span>
+                                  </c:if>
+                                  
+                                  <c:if test="${ commom.paytype == 10 and isSupportLoanApply}">
 	                                  <span class="payc_title fl"  id="item-${status.index}" data-index="${commom.paytype}"> </span>
                                   </c:if>
                                   
@@ -196,7 +206,7 @@
                           </li>
                          </c:if>
                          <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem" varStatus="o_status">
-                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9  or deskItem.itemType == 10}">
+                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9  or (deskItem.itemType == 10 and  isSupportLoanApply)}">
                                 <li >
                                     <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
                                         <div class="paytable_payway" itemType='${deskItem.itemType}' >
@@ -223,6 +233,11 @@
                                             <c:if test="${deskItem.itemType == 9 or deskItem.itemType == 10}">
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}"></span>
                                             </c:if>
+                                            
+                                            <c:if test="${deskItem.itemType == 10 and isSupportLoanApply }">
+                                                <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}"></span>
+                                            </c:if>
+                                            
                                             <c:if test="${itemBank.bankName=='cmbc' && deskItem.itemType == 1}">
 				                                    <div class="clear"></div>
 												    <div class="payc_ms">

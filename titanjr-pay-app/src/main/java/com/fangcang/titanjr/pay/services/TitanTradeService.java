@@ -41,11 +41,13 @@ import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
+import com.fangcang.titanjr.dto.request.GetCreditInfoRequest;
 import com.fangcang.titanjr.dto.request.TitanOrderRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.AccountHistoryResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
 import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
 import com.fangcang.titanjr.pay.req.TitanConfirmBussOrderReq;
 import com.fangcang.titanjr.pay.rsp.TianConfirmBussOrderRsp;
@@ -57,6 +59,7 @@ import com.fangcang.titanjr.response.CheckAccountResponse;
 import com.fangcang.titanjr.response.PermissionResponse;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
+import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanOrderService;
@@ -95,6 +98,36 @@ public class TitanTradeService {
 	@Resource
 	private TitanOrderService titanOrderService;
 
+	
+	@Resource
+	private TitanFinancialLoanCreditService financialLoanCreditService;
+	/**
+	 * 
+	 * @Title: isSupportLoanRequest
+	 * @Description: TODO
+	 * @param userId
+	 * @return
+	 * @return: boolean
+	 */
+	public boolean isSupportLoanApply(String userId,
+			PayerTypeEnum payerTypeEnum) {
+		if (StringUtil.isValidString(userId) && payerTypeEnum != null) {
+
+			if (payerTypeEnum.getKey().equals(PayerTypeEnum.SUPPLY_FINACIAL.getKey())) {
+				GetCreditInfoRequest req = new GetCreditInfoRequest();
+				req.setOrgCode(userId);
+
+				GetCreditInfoResponse creditInfoResponse = financialLoanCreditService
+						.getCreditOrderInfo(req);
+
+				if (creditInfoResponse != null
+						&& creditInfoResponse.getCreditOrder() != null) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	/**
 	 * 确认业务的订单信息
 	 * 

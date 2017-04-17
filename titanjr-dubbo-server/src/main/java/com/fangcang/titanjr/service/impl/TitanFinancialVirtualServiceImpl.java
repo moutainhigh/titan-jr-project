@@ -199,6 +199,29 @@ public class TitanFinancialVirtualServiceImpl implements
 			return cardResponse;
 		}
 		
+//		//原先已经绑卡并且在历史表中不存在，那么就认为需要修改绑卡
+//		if ((orgRelations != null && orgRelations.size() > 0)
+//				&& (vList == null || vList.isEmpty())) {
+//			ModifyInvalidWithDrawCardRequest modifyInvalidWithDrawCardRequest = new ModifyInvalidWithDrawCardRequest();
+//	    	modifyInvalidWithDrawCardRequest.setAccountnumber(request.getBankCard());
+//	    	modifyInvalidWithDrawCardRequest.setAccountrealname(titanVirtualOrg.getOrgName());
+//	    	modifyInvalidWithDrawCardRequest.setHankheadname(request.getBankName());
+//	    	modifyInvalidWithDrawCardRequest.setBankhead(request.getBankCode());
+//	    	modifyInvalidWithDrawCardRequest.setUserid(request.getvOrgCode());
+//	    	modifyInvalidWithDrawCardRequest.setBankcity(request.getBankCity());
+//	    	modifyInvalidWithDrawCardRequest.setBankprovinec(request.getBankProvince());
+//	    	modifyInvalidWithDrawCardRequest.setHankbranch(request.getBankBranch());
+//	    	modifyInvalidWithDrawCardRequest.setUsertype("1");
+//			ModifyInvalidWithDrawCardResponse modifyCard = bankCardService
+//					.modifyinvalidPublicCard(modifyInvalidWithDrawCardRequest);
+//			
+//			if (modifyCard != null && modifyCard.isResult()) {
+//
+//				log.info("bind card success .");
+//				cardResponse.putSuccess();
+//				return cardResponse;
+//			}
+//		}
 		//构建绑卡的基本信息
 		CusBankCardBindRequest bankCardBindRequest = new CusBankCardBindRequest();
 		bankCardBindRequest.setUserId(request.getvOrgCode());
@@ -233,7 +256,7 @@ public class TitanFinancialVirtualServiceImpl implements
 		//调用本系统提供的绑卡接口，触发原先的绑卡流程。
 		CusBankCardBindResponse bindResponse = bankCardService
 				.bankCardBind(bankCardBindRequest);
-
+		
 		if (bindResponse != null && bindResponse.isResult()) {
 
 			log.info("bind card success .");
