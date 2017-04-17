@@ -699,7 +699,6 @@ public class TitanTradeController extends BaseController {
 				cashDeskData.setUserIDOrgMap(userIDOrgMap);
 				log.info("set account history is ok");
 			}
-
 		}
 		String mCode =  transOrderDTO.getMerchantcode();
 		if (payerTypeEnum .isUserId() || payerTypeEnum.isOpenOrg()) 
@@ -771,7 +770,13 @@ public class TitanTradeController extends BaseController {
 					.divide(new BigDecimal(100));
 			cashDeskData.setAmount(amount.toString());
 		}
-
+		
+	
+		//设置当前用户是否支持贷款
+		model.addAttribute("isSupportLoanApply", titanTradeService
+				.isSupportLoanApply(cashDeskData.getUserId(), PayerTypeEnum
+						.getPayerTypeEnumByKey(transOrderDTO.getPayerType())));
+			
 		model.addAttribute("cashDeskData", cashDeskData);
 
 		log.info("end set cash desk data ");
