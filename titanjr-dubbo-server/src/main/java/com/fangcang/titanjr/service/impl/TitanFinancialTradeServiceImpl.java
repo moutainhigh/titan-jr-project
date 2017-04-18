@@ -783,7 +783,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		params.add(new BasicNameValuePair("code", "valid"));
 		signMap.put("code", "valid");
 		
-		String sign = MD5.generatorSignParam(signMap, CommonConstant.PAY_NOTIFY_SIGN_MD5_KEY);
+		String sign = MD5.MD5Encode(MD5.generatorSignParam(signMap, CommonConstant.PAY_NOTIFY_SIGN_MD5_KEY), "utf-8");
 		params.add(new BasicNameValuePair("sign", sign));
 		return params;
 	}
