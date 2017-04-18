@@ -777,8 +777,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				.getUserorderid());
 		params.add(new BasicNameValuePair("businessInfo", transOrderDTO
 				.getBusinessinfo()));
-		signMap.put("businessInfo", transOrderDTO
-				.getBusinessinfo());
 		params.add(new BasicNameValuePair("payResult", ""+req.getStatus()));// 2 申请贷款 3 贷款失败
 		signMap.put("payResult", ""+req.getStatus());
 		params.add(new BasicNameValuePair("code", "valid"));
@@ -788,7 +786,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		params.add(new BasicNameValuePair("sign", sign));
 		return params;
 	}
-	
 	
 //	private CallBackInfo analyzeResponse(String info) {
 //		CallBackInfo callBackInfo = new CallBackInfo();
