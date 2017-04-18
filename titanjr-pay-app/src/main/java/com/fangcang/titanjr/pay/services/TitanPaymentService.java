@@ -23,6 +23,7 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
@@ -271,6 +272,7 @@ public class TitanPaymentService {
 		}
 		
 		public String payConfirmPage(RechargeResultConfirmRequest rechargeResultConfirmRequest,Model model){
+			
 			if(StringUtil.isValidString(rechargeResultConfirmRequest.getOrderNo())
 					|| StringUtil.isValidString(rechargeResultConfirmRequest.getPayOrderNo())){
 				
@@ -333,7 +335,11 @@ public class TitanPaymentService {
 			        		rechargeResultConfirmRequest.setPayMsg("延迟到账，稍后查询");
 				        }
 			        }
+				}else{
+					log.error("显示支付结果页，订单没有找到，参数transOrderRequest："+Tools.gsonToString(transOrderRequest));
 				}
+			}else{
+				log.error("显示支付结果页,订单不存在，参数rechargeResultConfirmRequest:"+Tools.gsonToString(rechargeResultConfirmRequest));
 			}
 		    model.addAttribute("rechargeResultConfirmRequest", rechargeResultConfirmRequest);
 			return "checkstand-pay/payResult";
