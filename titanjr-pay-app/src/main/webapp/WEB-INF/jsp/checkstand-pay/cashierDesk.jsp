@@ -268,7 +268,7 @@
 
 <form action="<%=basePath%>/payment/payConfirmPage.action" id="confirmOrder" method="post">
   <input name="orderNo" id="orderNo" type="hidden">
-   <input name="payOrderNo" id="payOrderNo" type="hidden" value="${cashDeskData.payOrderNo}">
+   <input name="payOrderNo" id="confirmOrder_payOrderNo" type="hidden" value="${cashDeskData.payOrderNo}">
   <input name="delay" id="delay" type="hidden">
 </form>
 
