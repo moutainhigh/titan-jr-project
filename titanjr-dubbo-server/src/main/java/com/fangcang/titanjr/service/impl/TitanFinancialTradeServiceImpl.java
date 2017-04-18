@@ -765,6 +765,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						orgBindInfo.getMerchantCode());
 			}
 		}
+		
 		params.add(nameValuePair);
 		// end
 		params.add(new BasicNameValuePair("operator", transOrderDTO
