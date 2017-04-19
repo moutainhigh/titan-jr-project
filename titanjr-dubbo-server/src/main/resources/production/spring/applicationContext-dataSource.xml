@@ -27,7 +27,7 @@
 	<!-- 线上使用jndi数据源 -->
 	<jee:jndi-lookup id="dataSource" jndi-name="jdbc/titanjr" />
 	<jee:jndi-lookup id="configDataSource" jndi-name="jdbc/cfgDS" />
-	<jee:jndi-lookup id="orderDataSource" jndi-name="jdbc/cfgDS" />
+	<jee:jndi-lookup id="orderDataSource" jndi-name="jdbc/htl_order" />
 
 </beans>
 
