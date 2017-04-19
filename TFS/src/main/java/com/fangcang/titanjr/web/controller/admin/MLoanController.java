@@ -126,7 +126,6 @@ public class MLoanController extends BaseController{
 			return toJson(putSysError("参数不能为空"));
 		}
 		AuditCreditOrderRequest auditCreidtOrderRequest = new AuditCreditOrderRequest();
-		auditCreidtOrderRequest.setOperator(getSAASLoginName());
 		auditCreidtOrderRequest.setOrderNo(orderNo);
 		auditCreidtOrderRequest.setCheckState(auditResult);
 		auditCreidtOrderRequest.setContent(content);
@@ -151,8 +150,16 @@ public class MLoanController extends BaseController{
 		if(StringUtils.isEmpty(orderNo)){
 			return toJson(putSysError("参数不能为空"));
 		}
-		loanCreditService.asynPushCreditInfo(orderNo);
-		putSuccess("正在重新提交复审,请稍后关注审核状态");
+		AuditCreditOrderRequest auditCreidtOrderRequest = new AuditCreditOrderRequest();
+		auditCreidtOrderRequest.setOrderNo(orderNo);
+		auditCreidtOrderRequest.setCheckState(1);
+		auditCreidtOrderRequest.setOperator(getSAASLoginName());
+		AuditCreidtOrderResponse auditCreidtOrderResponse = loanCreditService.auditCreditOrder(auditCreidtOrderRequest);
+		if(auditCreidtOrderResponse.isResult()){
+			putSuccess("提交复审中");
+		}else{
+			putSysError(auditCreidtOrderResponse.getReturnMessage());
+		}
 		return toJson();	
 	}
 }

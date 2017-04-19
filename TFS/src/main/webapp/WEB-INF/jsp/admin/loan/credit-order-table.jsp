@@ -20,7 +20,7 @@
 	
 	<c:choose>
 		<c:when test="${creditCompanyInfoDTO.status ==2}"><a href="<%=basePath%>/admin/credit-order-detail.shtml?orderNo=${creditCompanyInfoDTO.orderNo }&opt=check" class="c_blue cursor undl j_loan_check">审核</a></c:when>
-		<c:when test="${creditCompanyInfoDTO.status ==11 or creditCompanyInfoDTO.status ==10}"><a href="javascript:;" class="c_blue cursor undl j_loan_check" onclick="commit('${creditCompanyInfoDTO.orderNo }')">提交复审</a></c:when>
+		<c:when test="${creditCompanyInfoDTO.status ==11}"><a href="javascript:;" class="c_blue cursor undl j_loan_check" onclick="commit('${creditCompanyInfoDTO.orderNo }')">提交复审</a></c:when>
 		<c:otherwise><a href="<%=basePath%>/admin/credit-order-detail.shtml?orderNo=${creditCompanyInfoDTO.orderNo }&opt=view" class="c_blue cursor undl j_loan_check">查看</a></c:otherwise>
 	</c:choose>
 	
