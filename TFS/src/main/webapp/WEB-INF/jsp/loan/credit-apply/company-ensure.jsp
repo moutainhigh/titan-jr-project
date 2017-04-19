@@ -649,37 +649,37 @@
                 ctlYearId: 'idYearEnsure',
                 ctlMonthId: 'idMonthEnsure',
                 ctlDayId: '',
-                minYear: 1800,
-                maxYear: 2100
+                minYear: 1980,
+                maxYear: 2020
         });
         $("#dateSelector1Ensure").DateSelector({
                 ctlYearId: 'idYear1Ensure',
                 ctlMonthId: 'idMonth1Ensure',
                 ctlDayId: 'idDay1Ensure',
-                minYear: 1800,
-                maxYear: 2100
+                minYear: 1980,
+                maxYear: 2020
         });
         $("#dateSelector2Ensure").DateSelector({
                 ctlYearId: 'idYear2Ensure',
                 ctlMonthId: 'idMonth2Ensure',
                 ctlDayId: 'idDay2Ensure',
-                minYear: 1800,
-                maxYear: 2100
+                minYear: 1980,
+                maxYear: 2020
         });
         
         $("#ENcertificateStartDate").DateSelector({
 			ctlYearId : 'ENCertificateStartYear',
 			ctlMonthId : 'ENCertificateStartMonth',
 			ctlDayId : 'ENCertificateStartDay',
-			minYear : 1800,
-			maxYear : 2100
+			minYear : 1980,
+			maxYear : 2020
 		});
 		$("#ENcertificateExpireDate").DateSelector({
 			ctlYearId : 'ENCertificateExpireYear',
 			ctlMonthId : 'ENCertificateExpireMonth',
 			ctlDayId : 'ENCertificateExpireDay',
-			minYear : 1800,
-			maxYear : 2100
+			minYear : 1980,
+			maxYear : 2020
 		});
     }
 </script>
