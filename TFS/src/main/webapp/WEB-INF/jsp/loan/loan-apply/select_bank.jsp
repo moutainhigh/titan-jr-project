@@ -227,16 +227,19 @@ $('#createVirtualOrg').on('click',function(){
    		data:bankCardData,
    		success:function(data){
    			top.F.loading.hide();
-       		if(data.code=="-1"){
-       			new top.Tip({msg : data.msg , type: 1 , time:1000}); 
-       		}else{
+       		if(data.code == 1){
        			top.frames["right_con_frm"].selectBankCallBack(
 						bankCardData.bankName,
 						bankCardData.bankCode,
 						bankCardData.cardNum,
 						bankCardData.accountName);
+       		}else{
+       			new top.Tip({msg : data.msg , type: 1 , time:1000}); 
        		}
-       	}
+       	},
+        error: function (data, status, e){
+        	new top.Tip({msg : '账号绑定失败，请联系管理员！' , type: 1 , time:1000});
+        }
    	});
 }); 
 

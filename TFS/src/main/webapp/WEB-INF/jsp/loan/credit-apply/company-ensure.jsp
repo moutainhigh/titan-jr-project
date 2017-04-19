@@ -420,20 +420,20 @@
                     </td>
                 </tr>
                     
-                    <tr>
-                    <td class="loanInformation_td01">
-                        		平台注册账号：
-                    </td>
-                    <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" placeholder="请输入平台注册账号" field="registerAccount" value="" >
-                    </td>
-                    <td class="loanInformation_td01">
-                        		平台注册日期：
-                    </td>
-                     <td class="loanInformation_td02">
-                        <input type="text" class="loanInformation_inp01" placeholder="" field="registerDate" value="">
-                    </td>
-                </tr>
+<!--                     <tr> -->
+<!--                     <td class="loanInformation_td01"> -->
+<!--                         		平台注册账号： -->
+<!--                     </td> -->
+<!--                     <td class="loanInformation_td02"> -->
+<!--                         <input type="text" class="loanInformation_inp01" placeholder="请输入平台注册账号" field="registerAccount" value="" > -->
+<!--                     </td> -->
+<!--                     <td class="loanInformation_td01"> -->
+<!--                         		平台注册日期： -->
+<!--                     </td> -->
+<!--                      <td class="loanInformation_td02"> -->
+<!--                         <input type="text" class="loanInformation_inp01" placeholder="" field="registerDate" value=""> -->
+<!--                     </td> -->
+<!--                 </tr> -->
                 
                         <tr>
                     <td class="loanInformation_td01">
