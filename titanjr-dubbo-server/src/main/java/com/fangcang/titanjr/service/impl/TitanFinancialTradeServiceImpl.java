@@ -765,6 +765,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						orgBindInfo.getMerchantCode());
 			}
 		}
+		
 		params.add(nameValuePair);
 		// end
 		params.add(new BasicNameValuePair("operator", transOrderDTO
@@ -776,18 +777,15 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				.getUserorderid());
 		params.add(new BasicNameValuePair("businessInfo", transOrderDTO
 				.getBusinessinfo()));
-		signMap.put("businessInfo", transOrderDTO
-				.getBusinessinfo());
 		params.add(new BasicNameValuePair("payResult", ""+req.getStatus()));// 2 申请贷款 3 贷款失败
 		signMap.put("payResult", ""+req.getStatus());
 		params.add(new BasicNameValuePair("code", "valid"));
 		signMap.put("code", "valid");
 		
-		String sign = MD5.generatorSignParam(signMap, CommonConstant.PAY_NOTIFY_SIGN_MD5_KEY);
+		String sign = MD5.MD5Encode(MD5.generatorSignParam(signMap, CommonConstant.PAY_NOTIFY_SIGN_MD5_KEY), "utf-8");
 		params.add(new BasicNameValuePair("sign", sign));
 		return params;
 	}
-	
 	
 //	private CallBackInfo analyzeResponse(String info) {
 //		CallBackInfo callBackInfo = new CallBackInfo();
