@@ -238,7 +238,9 @@ $('#createVirtualOrg').on('click',function(){
        		}
        	},
         error: function (data, status, e){
+        	top.F.loading.hide();
         	new top.Tip({msg : '账号绑定失败，请联系管理员！' , type: 1 , time:1000});
+        	
         }
    	});
 }); 
