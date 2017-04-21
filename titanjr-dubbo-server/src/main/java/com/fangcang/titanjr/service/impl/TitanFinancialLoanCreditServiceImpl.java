@@ -512,14 +512,19 @@ public class TitanFinancialLoanCreditServiceImpl implements
 		request.setOrgCode(orgCode);
 		LoanAmountEvaluationResponse response = this
 				.loanAmountEvaluation(request);
-		//默认50W授信额度
+		// 默认50W授信额度
 		long amount = 500000;
-		
+
 		try {
-			 amount = Long.parseLong(response.getMaxCreditAmount());
+			amount = Long.parseLong(response.getMaxCreditAmount());
 		} catch (NumberFormatException ex) {
 			log.error("get loan credit amount fail!");
 		}
+
+		if (amount < 500000) {
+			amount = 500000;
+		}
+
 		return amount;
 	}
 	

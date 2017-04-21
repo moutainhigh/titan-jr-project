@@ -136,7 +136,7 @@
         var current = new Date();
         current.setMonth(current.getMonth() - 3);//查询三个月的数据
         var dateStr = current.getFullYear() + "-" + (current.getMonth() + 1) + "-" + current.getDate();
-        new DateSection('.J_Section',{minDate:dateStr,maxDate:''});
+        new DateSection('.J_Section',{minDate:dateStr,maxDate:'',showButtonPanel:true});
     }
 
     //初始化页面请求
