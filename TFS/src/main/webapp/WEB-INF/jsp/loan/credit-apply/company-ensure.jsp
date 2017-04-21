@@ -650,21 +650,21 @@
                 ctlMonthId: 'idMonthEnsure',
                 ctlDayId: '',
                 minYear: 1980,
-                maxYear: 2020
+                maxYear: 2050
         });
         $("#dateSelector1Ensure").DateSelector({
                 ctlYearId: 'idYear1Ensure',
                 ctlMonthId: 'idMonth1Ensure',
                 ctlDayId: 'idDay1Ensure',
                 minYear: 1980,
-                maxYear: 2020
+                maxYear: 2050
         });
         $("#dateSelector2Ensure").DateSelector({
                 ctlYearId: 'idYear2Ensure',
                 ctlMonthId: 'idMonth2Ensure',
                 ctlDayId: 'idDay2Ensure',
                 minYear: 1980,
-                maxYear: 2020
+                maxYear: 2050
         });
         
         $("#ENcertificateStartDate").DateSelector({
@@ -672,7 +672,7 @@
 			ctlMonthId : 'ENCertificateStartMonth',
 			ctlDayId : 'ENCertificateStartDay',
 			minYear : 1980,
-			maxYear : 2020
+			maxYear : 2050
 		});
 		$("#ENcertificateExpireDate").DateSelector({
 			ctlYearId : 'ENCertificateExpireYear',
