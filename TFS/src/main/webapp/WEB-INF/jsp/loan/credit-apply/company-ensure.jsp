@@ -679,7 +679,7 @@
 			ctlMonthId : 'ENCertificateExpireMonth',
 			ctlDayId : 'ENCertificateExpireDay',
 			minYear : 1980,
-			maxYear : 2020
+			maxYear : 2050
 		});
     }
 </script>
