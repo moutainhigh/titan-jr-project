@@ -29,7 +29,7 @@
             </div>
             <div class="goldpay_top">
                 <ul>
-                	<li class="clearfix h_70" id="loanItemType">	
+                	<li class="clearfix h_70" id="loanItemType" style="display: none;">	
 						<div class="sel_card " id="notSelectBank">							
 					        <div class="gt_Bank  J_add_Bank"> 
 					            <i class="blue gti underline cursor J_Bank2">付款至供应商银行卡 &gt;
