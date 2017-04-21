@@ -66,7 +66,6 @@
 							</p>	
 							</div>
 							<a href="<%=basePath %>/loan/credit/checkCreditStatus.shtml#zkback m_l20" class="blue decorationUnderline fl m_t15 ">还款</a>
-							<a href="<%=basePath %>/loan_apply/main.shtml" class="blue decorationUnderline fl m_t15 m_l20">申请包房贷</a>
 						</td>
 					</tr>
 					<tr>
@@ -86,6 +85,7 @@
 							</p>
 							</div>	
 							<a href="<%=basePath %>/loan/credit/checkCreditStatus.shtml#zkback" class="blue decorationUnderline fl m_t15">还款</a>
+							<a href="<%=basePath %>/loan_apply/main.shtml" class="blue decorationUnderline fl m_t15 m_l20">申请包房贷</a>
 						
 						</td>
 					</tr>
