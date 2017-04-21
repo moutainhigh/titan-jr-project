@@ -87,7 +87,7 @@ public class TitanRefundController extends BaseController{
 		String deInfo = RSADecryptString.decryptString(refundInfo,
 			TitanConstantDefine.PRIVATE_KEY);
 		if (!StringUtil.isValidString(deInfo)) {
-			log.error("验签不通过");
+			log.error("参数【refundInfo】 RAS解密后为空,传入参数 refundInfo为:"+refundInfo);
 			model.addAttribute("msg",
 				TitanMsgCodeEnum.AUTHENTITCATION_FAILED.getResMsg());
 			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
@@ -103,7 +103,9 @@ public class TitanRefundController extends BaseController{
 					||!StringUtil.isValidString(refundRequest.getNotifyUrl())
 				){
 			log.error("参数传入异常");
-			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+			model.addAttribute("msg",
+					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getResMsg());
+				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 		}
 		
 		return titanRefundService.refundRequest(refundRequest, model);
