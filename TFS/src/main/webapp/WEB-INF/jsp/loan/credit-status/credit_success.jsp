@@ -372,7 +372,8 @@
 			//添加日期锻
 			new DateSection('#' + $(this).attr('id'), {
 				minDate : '2010-01-01',
-				maxDate : ''
+				maxDate : '',
+				showButtonPanel:true
 			});
 		});
 		

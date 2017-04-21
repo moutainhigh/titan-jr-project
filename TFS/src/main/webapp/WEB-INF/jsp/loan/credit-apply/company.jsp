@@ -292,14 +292,14 @@
 			ctlMonthId : 'idMonth',
 			ctlDayId : 'idDay',
 			minYear : 1980,
-			maxYear : 2020
+			maxYear : 2050
 		});
 		$("#dateSelector1").DateSelector({
 			ctlYearId : 'idYear1',
 			ctlMonthId : 'idMonth1',
 			ctlDayId : 'idDay1',
 			minYear : 1980,
-			maxYear : 2020
+			maxYear : 2050
 		});
 		
 		
@@ -308,7 +308,7 @@
 			ctlMonthId : 'CertificateStartMonth',
 			ctlDayId : 'CertificateStartDay',
 			minYear : 1980,
-			maxYear : 2020
+			maxYear : 2050
 		});
 		$("#certificateExpireDate").DateSelector({
 			ctlYearId : 'CertificateExpireYear',
