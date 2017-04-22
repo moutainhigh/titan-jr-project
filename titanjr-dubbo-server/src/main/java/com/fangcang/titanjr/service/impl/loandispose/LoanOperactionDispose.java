@@ -344,11 +344,11 @@ public class LoanOperactionDispose extends LoanProductDisposeAbstrator {
 						+ req.getLcanSpec().getOrderNo());
 				// 小于10K，则表示文件不存在或者下载失败
 
-				if (zipFileLength < 10) {
-					log.error("从ftp下载文件时，文件太小或者不存在，原文件路径srcZipFile："
-							+ srcZipFile.getAbsolutePath());
-					throw new ServiceException("包房贷申请的文件下载失败或者文件太小");
-				}
+//				if (zipFileLength < 10) {
+//					log.error("从ftp下载文件时，文件太小或者不存在，原文件路径srcZipFile："
+//							+ srcZipFile.getAbsolutePath());
+//					throw new ServiceException("包房贷申请的文件下载失败或者文件太小");
+//				}
 				/**
 				 * 上传给融数
 				 */

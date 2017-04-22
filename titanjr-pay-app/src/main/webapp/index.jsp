@@ -35,6 +35,7 @@
 			inAccountCode : "A000003337",
 			outAccountCode : "A000018432",
 			bussCode : "566322565",//业务单号
+            billCode:"BS007425",
 		};
 		
 		
