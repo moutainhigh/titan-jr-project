@@ -77,7 +77,7 @@
 	             <c:if test="${empty org.orgId or org.orgId==0  }">
 	                <a href="<%=basePath %>/organ/showOrgUser.shtml?userType=1&eUserLoginName=${regUserLoginInfo.userLoginName}&ePassword=${regUserLoginInfo.password}&ePasswordConfirm=${regUserLoginInfo.passwordConfirm}&eRegCode=${regUserLoginInfo.regCode}" class="btn btnh">上一步</a>
 	               </c:if>
-	                <a href="javasript:void(0);" class="btn" onclick="regOrg()">下一步</a>           
+	                <a href="javascript:void(0);" class="btn" onclick="regOrg()">下一步</a>           
 	            </div>
 	            <input type="submit" id="reg_btn" style="display:none;"/>
             </form>
