@@ -207,7 +207,7 @@
 	      g.bindcompanyname,
 	      g.orgshortname,
 	      g.mcc,
-	      g.connect,
+	      g.`connect`,
 	      g.buslince,
 	      g.taxregcardf,
 	      g.taxregcards,
@@ -275,9 +275,9 @@
 			G.certificatetype,
 			G.certificatenumber,
 			G.orgname,
-			G.buslince,	
-			G.connect,	
-			G.mobiletel,	
+			G.buslince,
+			G.`connect`,
+			G.mobiletel,
 			U.tfsuserid,
 			U.userloginname,
 			C.resultkey ,
@@ -309,7 +309,7 @@
       remark, orgtype, certificatetype, 
       certificatenumber, mobiletel, 
       bindcompanyname, orgshortname, mcc, 
-      connect, buslince, taxregcardf, 
+      `connect`, buslince, taxregcardf, 
       taxregcards, organcertificate, busplacectf, 
       loancard, acuntopnlince, corporatename, 
       personengname, persontype, personsex, 
@@ -388,7 +388,7 @@
                 mcc = #{mcc,jdbcType=VARCHAR},
             </if>
             <if test="connect != null">
-                connect = #{connect,jdbcType=VARCHAR},
+                `connect` = #{connect,jdbcType=VARCHAR},
             </if>
             <if test="buslince != null">
                 buslince = #{buslince,jdbcType=VARCHAR},
