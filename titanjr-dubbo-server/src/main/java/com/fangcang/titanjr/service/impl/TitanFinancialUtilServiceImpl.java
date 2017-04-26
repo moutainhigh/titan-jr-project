@@ -17,6 +17,7 @@ import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.common.util.MD5;
+import com.fangcang.titanjr.common.util.SMSTemplate;
 import com.fangcang.titanjr.dao.DomainConfigDao;
 import com.fangcang.titanjr.dao.TitanDynamicKeyDao;
 import com.fangcang.titanjr.dao.TitanOrderExceptionDao;
@@ -24,10 +25,12 @@ import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.SysConfig;
 import com.fangcang.titanjr.dto.request.PayMethodConfigRequest;
 import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
+import com.fangcang.titanjr.dto.request.SendMessageRequest;
 import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.entity.TitanDynamicKey;
 import com.fangcang.titanjr.entity.TitanOrderException;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
@@ -48,7 +51,11 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 	
 	
 	@Resource 
-	TitanOrderExceptionDao orderExceptionDao;
+	private TitanOrderExceptionDao orderExceptionDao;
+	
+	@Resource
+	private TitanFinancialSendSMSService smsService;
+	
 	
 	SysConfig config;
 	
@@ -57,6 +64,9 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 	
 	@Value("${pay.notifyurl}")
 	private String payNotifyUrl;
+	
+	@Value("${send.order.warning}")
+	private String isSendWarning;
 	
 	@Override
 	public PaymentUrlResponse getPaymentUrl(PaymentUrlRequest paymentUrlRequest) {
@@ -238,6 +248,16 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 		
 		try{
 			orderExceptionDao.insertTitanOrderException(ex);
+			
+			if("1".equals(isSendWarning)){
+				SendMessageRequest sendCodeRequest = new SendMessageRequest();
+				sendCodeRequest.setReceiveAddress("jinrong@fangcang.com");
+				sendCodeRequest.setSubject(SMSTemplate.ORDER_WARNING.getSubject());
+				sendCodeRequest.setContent(MessageFormat.format(SMSTemplate.ORDER_WARNING.getContent(), orderId,oet.msg));
+				sendCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+				smsService.asynSendMessage(sendCodeRequest);
+			}
+			
 		}catch(Exception e){
 			log.error("插入异常信息失败",e);
 		}

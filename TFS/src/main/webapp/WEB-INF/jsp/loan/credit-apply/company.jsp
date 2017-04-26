@@ -27,9 +27,9 @@
                     </td>
                     <td class="loanInformation_td02" id="dateSelector" fields="startDate" split="-" >
                     	<div customFun="validateSelects" errormsg="企业成立日期必须选择！"  style="display:inline-block;">
-	                       <select item='year'  id="idYear" name="idYear" class="select loanInformation_se01" data="" onblur="$(this).parent().blur();"></select>
-	                       <select item='month'  class="select loanInformation_se01" id="idMonth" name="idMonth" data="12" onblur="$(this).parent().blur();"></select>
-	                       <select item='day'  id="idDay" name="idDay" class="select loanInformation_se01" data="1" onblur="$(this).parent().blur();"></select>
+	                       <select item='year'  id="idYear" name="idYear" class="select loanInformation_se01" onblur="$(this).parent().blur();"></select>
+	                       <select item='month'  class="select loanInformation_se01" id="idMonth" name="idMonth"  onblur="$(this).parent().blur();"></select>
+	                       <select item='day'  id="idDay" name="idDay" class="select loanInformation_se01"  onblur="$(this).parent().blur();"></select>
                        </div>
                     </td>
                 </tr>
@@ -101,9 +101,9 @@
                     </td>
                    <td class="loanInformation_td02" id="certificateStartDate" fields="certificateStartDate" split="-" >
                     	<div customFun="validateSelects" errormsg="企业成立日期必须选择！"  style="display:inline-block;">
-	                       <select item='year'  id="CertificateStartYear" name="idYear" class="select loanInformation_se01" data="" onblur="$(this).parent().blur();"></select>
-	                       <select item='month'  class="select loanInformation_se01" id="CertificateStartMonth" name="idMonth" data="12" onblur="$(this).parent().blur();"></select>
-	                       <select item='day'  id="CertificateStartDay" name="idDay" class="select loanInformation_se01" data="1" onblur="$(this).parent().blur();"></select>
+	                       <select item='year'  id="CertificateStartYear" name="idYear" class="select loanInformation_se01" onblur="$(this).parent().blur();"></select>
+	                       <select item='month'  class="select loanInformation_se01" id="CertificateStartMonth" name="idMonth"  onblur="$(this).parent().blur();"></select>
+	                       <select item='day'  id="CertificateStartDay" name="idDay" class="select loanInformation_se01"  onblur="$(this).parent().blur();"></select>
                        </div>
                     </td>
                     <td class="loanInformation_td01">
@@ -111,9 +111,9 @@
                     </td>
                      <td class="loanInformation_td02" id="certificateExpireDate" fields="certificateExpireDate" split="-" >
                     	<div customFun="validateSelects" errormsg="企业成立日期必须选择！"  style="display:inline-block;">
-	                       <select item='year'  id="CertificateExpireYear" name="idYear" class="select loanInformation_se01" data="" onblur="$(this).parent().blur();"></select>
-	                       <select item='month'  class="select loanInformation_se01" id="CertificateExpireMonth" name="idMonth" data="12" onblur="$(this).parent().blur();"></select>
-	                       <select item='day'  id="CertificateExpireDay" name="idDay" class="select loanInformation_se01" data="1" onblur="$(this).parent().blur();"></select>
+	                       <select item='year'  id="CertificateExpireYear" name="idYear" class="select loanInformation_se01"  onblur="$(this).parent().blur();"></select>
+	                       <select item='month'  class="select loanInformation_se01" id="CertificateExpireMonth" name="idMonth"  onblur="$(this).parent().blur();"></select>
+	                       <select item='day'  id="CertificateExpireDay" name="idDay" class="select loanInformation_se01" onblur="$(this).parent().blur();"></select>
                        </div>
                     </td>
                 </tr>
@@ -291,21 +291,15 @@
 			ctlYearId : 'idYear',
 			ctlMonthId : 'idMonth',
 			ctlDayId : 'idDay',
-			defYear : myDate.getFullYear(),
-			defMonth : (myDate.getMonth() + 1),
-			defDay : myDate.getDate(),
-			minYear : 1800,
-			maxYear : 2100
+			minYear : 1980,
+			maxYear : 2050
 		});
 		$("#dateSelector1").DateSelector({
 			ctlYearId : 'idYear1',
 			ctlMonthId : 'idMonth1',
 			ctlDayId : 'idDay1',
-			defYear : myDate.getFullYear(),
-			defMonth : (myDate.getMonth() + 1),
-			defDay : myDate.getDate(),
-			minYear : 1800,
-			maxYear : 2100
+			minYear : 1980,
+			maxYear : 2050
 		});
 		
 		
@@ -313,21 +307,15 @@
 			ctlYearId : 'CertificateStartYear',
 			ctlMonthId : 'CertificateStartMonth',
 			ctlDayId : 'CertificateStartDay',
-			defYear : myDate.getFullYear(),
-			defMonth : (myDate.getMonth() + 1),
-			defDay : myDate.getDate(),
-			minYear : 1800,
-			maxYear : 2100
+			minYear : 1980,
+			maxYear : 2050
 		});
 		$("#certificateExpireDate").DateSelector({
 			ctlYearId : 'CertificateExpireYear',
 			ctlMonthId : 'CertificateExpireMonth',
 			ctlDayId : 'CertificateExpireDay',
-			defYear : myDate.getFullYear(),
-			defMonth : (myDate.getMonth() + 1),
-			defDay : myDate.getDate(),
-			minYear : 1800,
-			maxYear : 2100
+			minYear : 1980,
+			maxYear : 2050
 		});
 	}
 </script>

@@ -200,5 +200,7 @@ public class CommonConstant {
     public static final Integer RQ_WIDTH = 170;
     
     public static final Integer RQ_HEIGH = 170;
+    //钱包支付成功后通知SAAS服务，签名key
+    public static final String PAY_NOTIFY_SIGN_MD5_KEY = "tLrLggmLgpfU0lZG";
     
 }

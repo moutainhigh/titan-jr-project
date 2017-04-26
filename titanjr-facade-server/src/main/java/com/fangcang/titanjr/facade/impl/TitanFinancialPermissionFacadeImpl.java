@@ -107,9 +107,13 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
                             (transOrderDTO.getTitanTransferDTO() == null || transOrderDTO.getTitanTransferDTO().getStatus() != 2))){
                     //展示在线支付按钮
                     showPaymentResponse.setShowStatus(1);
-                } else {
-                    //展示支付中按钮
-                    showPaymentResponse.setShowStatus(2);
+                }  else {
+                    if (OrderStatusEnum.PROGRESS_ING.getStatus().equals(transOrderDTO.getStatusid())){
+                        //展示贷款申请中
+                        showPaymentResponse.setShowStatus(3);
+                    } else {//展示支付中按钮
+                        showPaymentResponse.setShowStatus(2);
+                    }
                 }
                 showPaymentResponse.setResult(true);
                 log.info("判定权限结束：" + showPaymentResponse.getShowStatus());

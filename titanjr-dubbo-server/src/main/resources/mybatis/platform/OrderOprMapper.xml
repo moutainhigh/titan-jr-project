@@ -26,7 +26,7 @@
 		 where o.merchantcode =#{merchantCode}
 		   and o.id = d.orderid
 		   and o.paymethod = 2
-		   and o.orderstate in (3,4)
+		   and o.orderstate in (3)
 		   and o.id = ar.orderid(+)
 		   and o.id = supply.orderid(+)
 			 and o.createTime &gt;= to_date(#{beginDate},'yyyy-mm-dd')

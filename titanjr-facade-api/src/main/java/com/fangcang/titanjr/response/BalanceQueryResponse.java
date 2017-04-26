@@ -6,6 +6,8 @@ package com.fangcang.titanjr.response;
 public class BalanceQueryResponse extends BaseResponse{
 
     private String accountId;
+    //账户余额
+    private String amount;
     //可用余额
     private String balanceUsable;
     //冻结金额
@@ -46,4 +48,13 @@ public class BalanceQueryResponse extends BaseResponse{
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+	public String getAmount() {
+		return amount;
+	}
+
+	public void setAmount(String amount) {
+		this.amount = amount;
+	}
+    
 }

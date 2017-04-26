@@ -248,6 +248,18 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
         </dependency>
+
+      <dependency>
+          <groupId>bouncycastle</groupId>
+          <artifactId>bcmail-jdk14</artifactId>
+          <version>138</version>
+      </dependency>
+      <dependency>
+          <groupId>bouncycastle</groupId>
+          <artifactId>bcprov-jdk14</artifactId>
+          <version>138</version>
+      </dependency>
+
         <dependency>
             <groupId>com.ruixuesoft</groupId>
             <artifactId>RopExSdk</artifactId>

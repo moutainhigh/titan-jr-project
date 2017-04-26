@@ -164,15 +164,15 @@
                     <td class="loanInformation_td02">
                         <span id="dateSelectorAppend" fields='beginLeaseDate' split='-'>
                            <div customFun="validateSelects" errormsg="请选择租赁开始日期"  style="display:inline-block;">
-	                           <select id="idYearAppend" name="idYearAppend" class="select loanInformation_se01" data="" item="year" onblur="$(this).parent().blur();"></select>
-	                           <select class="select loanInformation_se01" id="idMonthAppend" name="idMonthAppend" data="12" item="month" onblur="$(this).parent().blur();"></select>
+	                           <select id="idYearAppend" name="idYearAppend" class="select loanInformation_se01"  item="year" onblur="$(this).parent().blur();"></select>
+	                           <select class="select loanInformation_se01" id="idMonthAppend" name="idMonthAppend" item="month" onblur="$(this).parent().blur();"></select>
                            </div>
                         </span>
                          <span class="loanInformation_td02_ico">——</span>
                          <span id="dateSelector1Append"  fields='endLeaseDate' split='-'>
                          	<div customFun="validateSelects" errormsg="请选择租赁结束日期"  style="display:inline-block;">
-	                            <select id="idYear1Append" name="idYear1Append" class="select loanInformation_se01" data="" item='year' onblur="$(this).parent().blur();"></select>
-	                            <select class="select loanInformation_se01" id="idMonth1Append" name="idMonth1Append" data="12" item='month' onblur="$(this).parent().blur();"></select>
+	                            <select id="idYear1Append" name="idYear1Append" class="select loanInformation_se01"  item='year' onblur="$(this).parent().blur();"></select>
+	                            <select class="select loanInformation_se01" id="idMonth1Append" name="idMonth1Append"  item='month' onblur="$(this).parent().blur();"></select>
                             </div>
                         </span>
                     </td>   
@@ -339,21 +339,15 @@
                 ctlYearId: 'idYearAppend',
                 ctlMonthId: 'idMonthAppend',
                 ctlDayId: '',
-                defYear: myDate.getFullYear(),
-                defMonth: (myDate.getMonth()+1),
-                defDay: myDate.getDate(),
-                minYear: 1800,
-                maxYear: 2100
+                minYear: 1980,
+                maxYear: 2050
         });
         $("#dateSelector1Append").DateSelector({
                 ctlYearId: 'idYear1Append',
                 ctlMonthId: 'idMonth1Append',
                 ctlDayId: '',
-                defYear: myDate.getFullYear(),
-                defMonth: (myDate.getMonth()+1),
-                defDay: myDate.getDate(),
-                minYear: 1800,
-                maxYear: 2100
+                minYear: 1980,
+                maxYear: 2050
         });
     }
 </script>

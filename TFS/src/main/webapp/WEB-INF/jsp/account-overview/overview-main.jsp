@@ -65,7 +65,7 @@
 								</span>
 							</p>	
 							</div>
-							<a href="<%=basePath %>/loan/credit/checkCreditStatus.shtml#zkback" class="blue decorationUnderline fl m_t15">还款</a>
+							<a href="<%=basePath %>/loan/credit/checkCreditStatus.shtml#zkback m_l20" class="blue decorationUnderline fl m_t15 ">还款</a>
 						</td>
 					</tr>
 					<tr>
@@ -85,6 +85,7 @@
 							</p>
 							</div>	
 							<a href="<%=basePath %>/loan/credit/checkCreditStatus.shtml#zkback" class="blue decorationUnderline fl m_t15">还款</a>
+							<a href="<%=basePath %>/loan_apply/main.shtml" class="blue decorationUnderline fl m_t15 m_l20">申请包房贷</a>
 						
 						</td>
 					</tr>
@@ -727,11 +728,11 @@
 			var current = new Date();
 			current.setMonth(current.getMonth() - 3);//查询三个月的数据
 			var dateStr = current.getFullYear() + "-" + (current.getMonth() + 1) + "-" + current.getDate();
-			new DateSection('#date_select_1',{minDate:dateStr,maxDate:''});
-			new DateSection('#date_select_2',{minDate:dateStr,maxDate:''});
-			new DateSection('#date_select_3',{minDate:dateStr,maxDate:''});
-			new DateSection('#date_select_4',{minDate:dateStr,maxDate:''});
-			new DateSection('#date_select_5',{minDate:dateStr,maxDate:''});
+			new DateSection('#date_select_1',{minDate:dateStr,maxDate:'',showButtonPanel:true});
+			new DateSection('#date_select_2',{minDate:dateStr,maxDate:'',showButtonPanel:true});
+			new DateSection('#date_select_3',{minDate:dateStr,maxDate:'',showButtonPanel:true});
+			new DateSection('#date_select_4',{minDate:dateStr,maxDate:'',showButtonPanel:true});
+			new DateSection('#date_select_5',{minDate:dateStr,maxDate:'',showButtonPanel:true});
 		}
 
 		var partner_dataSource=null;
