@@ -545,7 +545,7 @@
     	}
     	
     	var flag = payPasswordObj.validate_isInput_password();
-    	if(flag==false){
+    	if(flag==false || cashierData.linePayType() == '10'){
     		payPasswordObj.show_payPassword();
     	}else{
     		pay_Order(); 
