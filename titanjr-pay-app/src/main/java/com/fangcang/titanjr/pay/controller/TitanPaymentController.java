@@ -40,6 +40,7 @@ import com.fangcang.titanjr.common.util.Wxutil;
 import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.LoanSpecificationBean;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderInfo;
 import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
@@ -48,6 +49,7 @@ import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
+import com.fangcang.titanjr.dto.request.UserBindInfoRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.ConfirmOrdernQueryResponse;
@@ -68,6 +70,7 @@ import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
@@ -109,6 +112,9 @@ public class TitanPaymentController extends BaseController {
 	
 	@Resource
 	private TitanFinancialLoanService titanFinancialLoanService;
+	
+	@Resource
+	private TitanFinancialUserService titanFinancialUserService;
 	
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	/**
@@ -683,6 +689,17 @@ public class TitanPaymentController extends BaseController {
 		request.setLcanSpec(loanSpecBean);
 		request.setOrgCode(transOrderDTO.getUserid());
 		request.setOperator("0");
+		
+		if(StringUtil.isValidString(req.getFcUserId()))
+		{
+			TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
+			titanUserBindInfoDTO.setFcuserid(Long.parseLong(req.getFcUserId()));
+			TitanUserBindInfoDTO dto = titanFinancialUserService
+					.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+			if (dto != null) {
+				request.setOperator("" + dto.getTfsuserid());
+			}
+		}
 
 		try {
 			log.info("apply loan request = "
