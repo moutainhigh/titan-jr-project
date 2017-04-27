@@ -223,7 +223,7 @@ $('#createVirtualOrg').on('click',function(){
    	top.F.loading.show();
    	$.ajax({
    	    type: 'post',
-   		url:'<%=basePath%>/loan_apply/createVirtualOrg.shtml',
+   		url:'<%=basePath%>/trade/createVirtualOrg.shtml',
    		dataType:'json',
    		data:bankCardData,
    		success:function(data){
@@ -237,7 +237,12 @@ $('#createVirtualOrg').on('click',function(){
 						bankCardData.cardNum,
 						bankCardData.accountName);
        		}
-       	}
+       	},
+	    error: function (data, status, e){
+	    	top.F.loading.hide();
+	    	new top.Tip({msg : '账号绑定失败，请联系管理员！' , type: 1 , time:1000});
+	    	
+	    }
    	});
 }); 
 

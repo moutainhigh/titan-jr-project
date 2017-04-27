@@ -43,12 +43,14 @@ function initCashierDesk(){
 			$("#not_exists_history").hide();
 			$("#loanItemType").show();
 			$("#useBalanceCheck").hide();
+			$("#not_enough_amount").hide();
 
 		} else {
 			$("#exists_history").show();
 			$("#not_exists_history").show();
 			$("#loanItemType").hide();
 			$("#useBalanceCheck").show();
+			$("#not_enough_amount").show();
 		}
     });
     

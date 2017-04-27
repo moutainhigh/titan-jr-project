@@ -41,20 +41,20 @@
     
 	
 	<select id="queryLoanExpiryStat" resultType="com.fangcang.titanjr.entity.LoanExpiryStat" parameterType="java.lang.String">
-		SELECT  COUNT(t.id) AS expiryNum,(SUM(t.shouldcapital) + SUM(t.shouldinterest)) AS expiryAmount FROM t_loan_order t
+		SELECT  COUNT(t.id) AS expiryNum,(SUM(t.shouldcapital) + IFNULL(SUM(t.shouldinterest),0)) AS expiryAmount FROM t_loan_order t
  				WHERE t.status = 9 AND t.`orgcode`=#{orgCode}
 	</select>
 	
 	
 	<select id="queryLoanSevenDaysStat" resultType="com.fangcang.titanjr.entity.LoanSevenDaysStat" parameterType="java.lang.String">
-		SELECT COUNT(t.id) AS sevenDaysNum,(SUM(t.shouldcapital) + SUM(t.shouldinterest)) AS sevenDaysAmount FROM t_loan_order t
+		SELECT COUNT(t.id) AS sevenDaysNum,(SUM(t.shouldcapital) + IFNULL(SUM(t.shouldinterest),0)) AS sevenDaysAmount FROM t_loan_order t
  				WHERE t.status IN (6 ,9) AND  t.actualrepaymentdate &lt;= DATE_ADD(NOW(), INTERVAL 7 DAY) AND t.`orgcode`=#{orgCode}
 	</select>
 	
 	
 	
 	<select id="queryProductTypeAmount" resultType="com.fangcang.titanjr.entity.LoanProductAmountStat" parameterType="java.lang.String">
-		SELECT  t.producttype as productId  ,  SUM(t.shouldcapital)  AS amount , SUM(t.shouldcapital) + SUM(t.shouldinterest) as actualAmount  
+		SELECT  t.producttype as productId  ,  SUM(t.shouldcapital)  AS amount , SUM(t.shouldcapital) +  IFNULL(SUM(t.shouldinterest) , 0)  as actualAmount  
 			FROM t_loan_order t WHERE t.status IN (6 ,9) AND t.`orgcode`=#{orgCode} GROUP BY t.producttype;
 	</select>
 

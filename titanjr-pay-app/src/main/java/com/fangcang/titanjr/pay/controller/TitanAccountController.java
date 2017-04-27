@@ -10,6 +10,8 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -324,7 +326,8 @@ public class TitanAccountController extends BaseController {
 		if (bankInfoResponse.isResult()
 				&& CollectionUtils.isNotEmpty(bankInfoResponse
 						.getBankInfoDTOList())) {
-			return JsonConversionTool.toJson(bankInfoResponse);
+		
+			return 	JSONSerializer.toJSON(bankInfoResponse).toString();
 		}
 		return null;
 	}
