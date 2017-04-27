@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.service.impl.loandispose;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +30,7 @@ import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
 import com.fangcang.titanjr.dto.request.ConfirmFinanceRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
+import com.fangcang.titanjr.dto.response.FTPConfigResponse;
 import com.fangcang.titanjr.entity.LoanApplyOrder;
 import com.fangcang.titanjr.entity.TitanTransOrder;
 import com.fangcang.titanjr.exception.ServiceException;
@@ -40,6 +42,7 @@ import com.fangcang.titanjr.rs.response.NewLoanApplyResponse;
 import com.fangcang.titanjr.rs.response.RSFsFileUploadResponse;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanOrderService;
+import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.service.impl.TitanFinancialLoanServiceImpl;
 import com.fangcang.util.StringUtil;
 
@@ -56,6 +59,9 @@ public class LoanOperactionDispose extends LoanProductDisposeAbstrator {
 
 	private final static ThreadPoolExecutor executor = new ThreadPoolExecutor(
 			2, 15, 2, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
+
+	@Resource
+	private TitanSysconfigService sysconfigService;
 
 	@Resource
 	private TitanOrderService titanOrderService;
@@ -131,7 +137,7 @@ public class LoanOperactionDispose extends LoanProductDisposeAbstrator {
 			entity.setLoanOrderNo(req.getLcanSpec().getOrderNo());
 			entity.setTradeamount(Long.parseLong(req.getLcanSpec().getAmount()));
 			entity.setStatusid(OrderStatusEnum.PROGRESS_ING.getStatus());
-			entity.setGoodsdetail("(运营贷)"+dto.getGoodsdetail());
+			entity.setGoodsdetail("(运营贷)" + dto.getGoodsdetail());
 			titanTransOrderDao.updateTitanTransOrderByTransId(entity);
 
 			// 异步执行贷款的任务
@@ -144,9 +150,11 @@ public class LoanOperactionDispose extends LoanProductDisposeAbstrator {
 		response.putSuccess();
 		return response;
 	}
+
 	/**
 	 * 执行贷款异步任务类
-	 * @ClassName: ExecuteLoanTask 
+	 * 
+	 * @ClassName: ExecuteLoanTask
 	 * @Description: TODO
 	 * @author: Administrator
 	 * @date: 2017年3月23日 下午7:59:52
@@ -181,10 +189,11 @@ public class LoanOperactionDispose extends LoanProductDisposeAbstrator {
 	 *            贷款单号
 	 * @param status
 	 *            设置失败状态
-	 *            
+	 * 
 	 * @return: void
 	 */
-	public void loanFailNotify(String orderNo, LoanOrderStatusEnum status , String msg) {
+	public void loanFailNotify(String orderNo, LoanOrderStatusEnum status,
+			String msg) {
 		try {
 			// 设置贷款单的状态为贷款失败
 			LoanApplyOrder loanOrder = new LoanApplyOrder();
@@ -218,7 +227,7 @@ public class LoanOperactionDispose extends LoanProductDisposeAbstrator {
 			log.error("send confirm messge fail! ", e);
 		}
 	}
-	
+
 	@Override
 	public void loanAuditPassNotify(String orderNo, LoanOrderStatusEnum status) {
 		// 设置贷款单的状态为贷款失败
@@ -251,7 +260,7 @@ public class LoanOperactionDispose extends LoanProductDisposeAbstrator {
 			entity.setTransid(dto.getTransid());
 			entity.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
 			titanTransOrderDao.updateTitanTransOrderByTransId(entity);
-			
+
 			ConfirmFinanceRequest cReq = new ConfirmFinanceRequest();
 			cReq.setTransOrderDTO(dto);
 			cReq.setStatus(1);
@@ -260,6 +269,48 @@ public class LoanOperactionDispose extends LoanProductDisposeAbstrator {
 		} catch (Exception e) {
 			log.error("send confirm messge fail! ", e);
 		}
+	}
+
+	private void uploadToFtp(String localFilePath, String userId,
+			String orderNo, String fileName) {
+		
+		log.info("begin upload file to ftp |" + userId + "|" + orderNo + "|"
+				+ fileName + "|" + localFilePath);
+		
+		FtpUtil util = null;
+		try {
+
+			FTPConfigResponse configResponse = sysconfigService.getFTPConfig();
+
+			util = new FtpUtil(configResponse.getFtpServerIp(),
+					configResponse.getFtpServerPort(),
+					configResponse.getFtpServerUser(),
+					configResponse.getFtpServerPassword());
+
+			util.ftpLogin();
+
+			util.deleteFile(FtpUtil.UPLOAD_PATH_LOAN_APPLY + "/" + userId + "/"
+					+ orderNo + "/" + orderNo);
+
+			util.uploadStream(fileName, new FileInputStream(localFilePath),
+					FtpUtil.UPLOAD_PATH_LOAN_APPLY + "/" + userId + "/"
+							+ orderNo + "/");
+
+			log.info("upload to ftp success fileName=" + fileName);
+			util.ftpLogOut();
+
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (util != null) {
+				try {
+					util.ftpLogOut();
+				} catch (Exception e) {
+					log.error("", e);
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -331,6 +382,10 @@ public class LoanOperactionDispose extends LoanProductDisposeAbstrator {
 				HttpClient.dowloadResToLoacl(downloadUrl.toString(), param,
 						orgLoanFileRootDir + localFileDir,
 						"billing_details.xls");// 下载文件到本地
+				
+				//着这只是一个列外的操作，即使失败也不会影响贷款流程
+				uploadToFtp(orgLoanFileRootDir + localFileDir
+						+ "/billing_details.xls", dto.getUserid(), req.getLcanSpec().getOrderNo(), "billing_details.xls");
 
 				log.info("download is ok , local files to zip!");
 				/**
@@ -344,11 +399,11 @@ public class LoanOperactionDispose extends LoanProductDisposeAbstrator {
 						+ req.getLcanSpec().getOrderNo());
 				// 小于10K，则表示文件不存在或者下载失败
 
-//				if (zipFileLength < 10) {
-//					log.error("从ftp下载文件时，文件太小或者不存在，原文件路径srcZipFile："
-//							+ srcZipFile.getAbsolutePath());
-//					throw new ServiceException("包房贷申请的文件下载失败或者文件太小");
-//				}
+				// if (zipFileLength < 10) {
+				// log.error("从ftp下载文件时，文件太小或者不存在，原文件路径srcZipFile："
+				// + srcZipFile.getAbsolutePath());
+				// throw new ServiceException("包房贷申请的文件下载失败或者文件太小");
+				// }
 				/**
 				 * 上传给融数
 				 */
@@ -439,11 +494,9 @@ public class LoanOperactionDispose extends LoanProductDisposeAbstrator {
 				if (i >= 3) {
 
 					loanFailNotify(req.getLcanSpec().getOrderNo(),
-							LoanOrderStatusEnum.LOAN_FAIL,"apply loan fail!");
+							LoanOrderStatusEnum.LOAN_FAIL, "apply loan fail!");
 				}
 			}
 		}
 	}
-
-	
 }

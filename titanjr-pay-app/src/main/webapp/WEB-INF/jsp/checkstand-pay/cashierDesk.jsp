@@ -318,7 +318,8 @@
 			'cardNum':$('#account').val(),
 			'accountName':$('#accountName').val(),
 			'amount':'${cashDeskData.amount}',
-			'payOrderNo':'${cashDeskData.payOrderNo}'
+			'payOrderNo':'${cashDeskData.payOrderNo}',
+			'fcUserId':'${cashDeskData.fcUserid}'
 		};
 	}
 	

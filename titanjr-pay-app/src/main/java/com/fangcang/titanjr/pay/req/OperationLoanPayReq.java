@@ -12,9 +12,18 @@ public class OperationLoanPayReq
 //	private String bankCityName;
 	
 	private String amount;
-	private String payOrderNo;;
+	private String payOrderNo;
+	//被迫的
+	private String fcUserId;
+	
 //	private String billOrderNo;
 	
+	public String getFcUserId() {
+		return fcUserId;
+	}
+	public void setFcUserId(String fcUserId) {
+		this.fcUserId = fcUserId;
+	}
 	public String getAmount() {
 		return amount;
 	}

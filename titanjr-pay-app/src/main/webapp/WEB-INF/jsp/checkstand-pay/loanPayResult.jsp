@@ -19,7 +19,7 @@
 	<div class="TFSsu_content">
 		     <div class="TFSsu_contenttop c_green"> 
 				<i class="TFSpay_ico TFSsu"></i>
-				贷款申请成功
+				贷款申请提交成功
 			</div>
 		
 		<div class="TFSsu_contentcenter">
@@ -42,7 +42,7 @@
 <!-- 			</p> -->
 			<p class="f_14">
 				<span class="TFSsu_sleft">付款状态：</span>
-				<span class="c_999">成功</span>
+				<span class="c_999">处理中</span>
 			</p>
 		</div>
 		<div class="TFSsu_contentfoot">

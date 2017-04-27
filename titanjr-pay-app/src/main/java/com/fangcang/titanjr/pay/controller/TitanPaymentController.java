@@ -671,6 +671,7 @@ public class TitanPaymentController extends BaseController {
 		loanSpecBean.setAccount(req.getCardNum());
 		loanSpecBean.setAccountName(req.getAccountName());
 		loanSpecBean.setBank(req.getBankName());
+		loanSpecBean.setAccessory("billing_details.xls");
 
 		Map<String, String> contentMap = new HashMap<String, String>();
 		contentMap.put("billOrderNo", billOrderNo);
