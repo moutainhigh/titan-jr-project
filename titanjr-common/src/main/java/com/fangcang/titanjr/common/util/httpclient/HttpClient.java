@@ -33,6 +33,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.propertyeditors.URLEditor;
 
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.util.StringUtil;
 
 public class HttpClient {
@@ -176,8 +177,8 @@ public class HttpClient {
 
 	public static HttpResponse httpRequest(HttpGet httpGet) throws Exception {
 		RequestConfig defaultRequestConfig = RequestConfig.custom()
-				.setSocketTimeout(30000).setConnectTimeout(30000)
-				.setConnectionRequestTimeout(30000).build();
+				.setSocketTimeout(60000).setConnectTimeout(60000)
+				.setConnectionRequestTimeout(60000).build();
 		CloseableHttpClient httpclient = HttpClients.custom()
 				.setDefaultRequestConfig(defaultRequestConfig).build();
 		RequestConfig requestConfig = RequestConfig.copy(defaultRequestConfig)
@@ -188,23 +189,24 @@ public class HttpClient {
 		try {
 			response = httpclient.execute(httpGet);
 		} catch (UnsupportedEncodingException e) {
-			log.error("UnsupportedEncodingException:", e);
+			log.error("httpGet url:"+httpGet.getURI(), e);
 			throw e;
 		} catch (ClientProtocolException e) {
-			log.error("ClientProtocolException:", e);
+			log.error("httpGet url:"+httpGet.getURI(), e);
 			throw e;
 		} catch (IOException e) {
-			log.error("IOException", e);
+			log.error("httpGet url:"+httpGet.getURI(), e);
 			throw e;
 		}
 		return response;
 	}
+	
 
 	public static HttpResponse httpRequest(List<NameValuePair> params,
 			HttpPost httpPost) {
 		RequestConfig defaultRequestConfig = RequestConfig.custom()
-				.setSocketTimeout(10000).setConnectTimeout(10000)
-				.setConnectionRequestTimeout(5000).build();
+				.setSocketTimeout(60000).setConnectTimeout(60000)
+				.setConnectionRequestTimeout(60000).build();
 		CloseableHttpClient httpclient = HttpClients.custom()
 				.setDefaultRequestConfig(defaultRequestConfig).build();
 		RequestConfig requestConfig = RequestConfig.copy(defaultRequestConfig)
@@ -221,31 +223,12 @@ public class HttpClient {
 			}
 			response = httpclient.execute(httpPost);
 		} catch (UnsupportedEncodingException e) {
-			log.error("UnsupportedEncodingException:", e);
+			log.error(Tools.getStringBuilder().append("httpclient 请求 ,UnsupportedEncodingException异常，url:  ").append(httpPost.getURI()).append(",param:").append(Tools.gsonToString(params)), e);
 		} catch (ClientProtocolException e) {
-			log.error("ClientProtocolException:", e);
+			log.error(Tools.getStringBuilder().append("httpclient 请求 ,ClientProtocolException异常，url:  ").append(httpPost.getURI()).append(",param:").append(Tools.gsonToString(params)), e);
 		} catch (IOException e) {
-			log.error("IOException", e);
+			log.error(Tools.getStringBuilder().append("httpclient 请求 ,IOException异常，url:  ").append(httpPost.getURI()).append(",param:").append(Tools.gsonToString(params)), e);
 		}
 		return response;
-	}
-
-	public static void main(String[] args) {
-//		try {
-//			// ?billId=7563&merchantCode=M10000001&operator=zhangsan
-//			Map<String, String> map = new HashMap<String, String>();
-//			map.put("billId", "7563");
-//			map.put("merchantCode", "M10000001");
-//			map.put("operator", "zhangsan");
-//
-//			dowloadResToLoacl(
-//					"http://local.fangcang.com:8080/HFP/billitem-list!getSupplierBillDetail.action",
-//					map, "d://");
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}\
-		
-
 	}
 }

@@ -89,7 +89,7 @@ public class TitanRefundService {
 	@Resource
 	private TitanFinancialUtilService utilService;
 
-	private static final Log log = LogFactory.getLog(TitanTradeController.class);
+	private static final Log log = LogFactory.getLog(TitanRefundService.class);
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	
 	public RefundResponse orderRefund(RefundRequest refundRequest){

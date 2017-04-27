@@ -69,7 +69,7 @@
 				            </div>
 						</div>
 					</li>
-					<li class="lb_btn "><a href="javasript:void(0);" onclick="regOrg()" class="">提交申请</a></li>
+					<li class="lb_btn "><a href="javascript:void(0);" onclick="regOrg()" class="">提交申请</a></li>
 				</ul>
 			</div>
 		</div>
