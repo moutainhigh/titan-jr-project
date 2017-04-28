@@ -36,6 +36,7 @@ import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
+import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
@@ -62,6 +63,7 @@ import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 
@@ -74,8 +76,7 @@ import com.fangcang.util.StringUtil;
 @Component
 public class TitanTradeService {
 
-	private static final Log log = LogFactory
-			.getLog(TitanTradeService.class);
+	private static final Log log = LogFactory.getLog(TitanTradeService.class);
 
 	@Resource
 	private TitanFinancialTradeService titanFinancialTradeService;
@@ -98,9 +99,12 @@ public class TitanTradeService {
 	@Resource
 	private TitanOrderService titanOrderService;
 
-	
 	@Resource
 	private TitanFinancialLoanCreditService financialLoanCreditService;
+
+	@Resource
+	private TitanFinancialUserService titanFinancialUserService;
+
 	/**
 	 * 
 	 * @Title: isSupportLoanRequest
@@ -110,10 +114,33 @@ public class TitanTradeService {
 	 * @return: boolean
 	 */
 	public boolean isSupportLoanApply(String userId,
-			PayerTypeEnum payerTypeEnum) {
+			PayerTypeEnum payerTypeEnum, String fcUserId , String billCode) {
 		if (StringUtil.isValidString(userId) && payerTypeEnum != null) {
+			
+			//如果是空的，就没话说了
+			if(!StringUtil.isValidString(billCode))
+			{
+				return false;
+			}
+			
+			if (StringUtil.isValidString(fcUserId)) {
+				CheckPermissionRequest permissionRequest = new CheckPermissionRequest();
+				permissionRequest.setFcuserid(fcUserId);
+				permissionRequest.setPermission("6");
 
-			if (payerTypeEnum.getKey().equals(PayerTypeEnum.SUPPLY_FINACIAL.getKey())) {
+				log.info("check loan permission userId= " + fcUserId);
+
+				PermissionResponse permissionResponse = titanFinancialPermissionFacade
+						.isPermissionToPayment(permissionRequest);
+
+				if (permissionResponse == null
+						|| (!permissionResponse.isResult())) {
+					return false;
+				}
+			}
+
+			if (payerTypeEnum.getKey().equals(
+					PayerTypeEnum.SUPPLY_FINACIAL.getKey())) {
 				GetCreditInfoRequest req = new GetCreditInfoRequest();
 				req.setOrgCode(userId);
 
@@ -128,6 +155,7 @@ public class TitanTradeService {
 		}
 		return false;
 	}
+
 	/**
 	 * 确认业务的订单信息
 	 * 
@@ -192,7 +220,8 @@ public class TitanTradeService {
 			}
 		}
 
-		if (pe.receiverIsMerchantCode() && StringUtil.isValidString(dto.getRuserId())) {
+		if (pe.receiverIsMerchantCode()
+				&& StringUtil.isValidString(dto.getRuserId())) {
 			AccountInfoRequest accountInfo = new AccountInfoRequest();
 			accountInfo.setMerchantCode(dto.getRuserId());
 			log.info("check permission ruserId= " + dto.getRuserId());
@@ -209,21 +238,21 @@ public class TitanTradeService {
 				return false;
 			}
 		}
-		
-		if(pe.isOpenOrg() && StringUtil.isValidString(dto.getRuserId())){
-			if(StringUtil.isValidString(dto.getUserId())){
+
+		if (pe.isOpenOrg() && StringUtil.isValidString(dto.getRuserId())) {
+			if (StringUtil.isValidString(dto.getUserId())) {
 				log.error("对外商户传入的参数不合法");
 				return false;
 			}
 		}
-		
-		if(pe.isTTMAlL() && StringUtil.isValidString(dto.getRuserId())){
-			if(StringUtil.isValidString(dto.getUserId())){
+
+		if (pe.isTTMAlL() && StringUtil.isValidString(dto.getRuserId())) {
+			if (StringUtil.isValidString(dto.getUserId())) {
 				log.error("TTMAl传入参数不合法");
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -265,15 +294,15 @@ public class TitanTradeService {
 		String taskId = MD5.MD5Encode(orderId + System.currentTimeMillis());
 
 		log.info("gen taskId = " + taskId);
-		
+
 		TitanPayResultNotifyTask notifyTask = new TitanPayResultNotifyTask(
 				titanFinancialTradeService);
-		
+
 		TransOrderRequest transOrderRequest = new TransOrderRequest();
 		transOrderRequest.setUserorderid(orderId);
 		TransOrderDTO transOrderDTO = titanOrderService
 				.queryTransOrderDTO(transOrderRequest);
-		
+
 		notifyTask.setTransOrderDTO(transOrderDTO);
 		notifyTask.setTaskId(taskId);
 
@@ -396,7 +425,7 @@ public class TitanTradeService {
 
 	public MerchantResponseDTO getMerchantResponseDTO(String merchantCode) {
 
-		try{
+		try {
 			MerchantDetailQueryDTO queryDTO = new MerchantDetailQueryDTO();
 			queryDTO.setMerchantCode(merchantCode);
 
@@ -404,72 +433,80 @@ public class TitanTradeService {
 					.getHessianProxyBean(MerchantFacade.class,
 							ProxyFactoryConstants.merchantServerUrl
 									+ "merchantFacade");
-	        log.info("hessionUrl:"+ProxyFactoryConstants.merchantServerUrl);
+			log.info("hessionUrl:" + ProxyFactoryConstants.merchantServerUrl);
 			return merchantFacade.queryMerchantDetail(queryDTO);
-		}catch(Exception e){
+		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 将民生银行的企业银行放在最后面
+	 * 
 	 * @param commonPayMethodDTOList
 	 */
-	public void sortBank(List<CommonPayMethodDTO> commonPayMethodDTOList){
-		if(commonPayMethodDTOList ==null ||commonPayMethodDTOList.size()==0){
-			return ;
+	public void sortBank(List<CommonPayMethodDTO> commonPayMethodDTOList) {
+		if (commonPayMethodDTOList == null
+				|| commonPayMethodDTOList.size() == 0) {
+			return;
 		}
-		CommonPayMethodDTO cmbcBank =null;
-		for(CommonPayMethodDTO commonPayMethodDTO :commonPayMethodDTOList){
-			if(CommonConstant.CMBC.equals(commonPayMethodDTO.getBankname()) && 
-					 commonPayMethodDTO.getPaytype()!=null &&
-					 commonPayMethodDTO.getPaytype().intValue()==CommonConstant.BUS_BANK){
-		    		cmbcBank = commonPayMethodDTO;
-		    		commonPayMethodDTOList.remove(commonPayMethodDTO);
-		    		break;
-		     }
+		CommonPayMethodDTO cmbcBank = null;
+		for (CommonPayMethodDTO commonPayMethodDTO : commonPayMethodDTOList) {
+			if (CommonConstant.CMBC.equals(commonPayMethodDTO.getBankname())
+					&& commonPayMethodDTO.getPaytype() != null
+					&& commonPayMethodDTO.getPaytype().intValue() == CommonConstant.BUS_BANK) {
+				cmbcBank = commonPayMethodDTO;
+				commonPayMethodDTOList.remove(commonPayMethodDTO);
+				break;
+			}
 		}
-		
-		if(cmbcBank !=null){
+
+		if (cmbcBank != null) {
 			commonPayMethodDTOList.add(cmbcBank);
 		}
-		
+
 	}
-	
-	public void sortBank(CashierDeskDTO cashierDesk){
-		List<CashierDeskItemDTO> cashierDeskItemDTOList = cashierDesk.getCashierDeskItemDTOList();
-		if(cashierDeskItemDTOList==null || cashierDeskItemDTOList.size()==0){
+
+	public void sortBank(CashierDeskDTO cashierDesk) {
+		List<CashierDeskItemDTO> cashierDeskItemDTOList = cashierDesk
+				.getCashierDeskItemDTOList();
+		if (cashierDeskItemDTOList == null
+				|| cashierDeskItemDTOList.size() == 0) {
 			return;
 		}
 		Collections.reverse(cashierDeskItemDTOList);
 		CashierItemBankDTO cmbcBank = null;
-		for(CashierDeskItemDTO cashierDeskItem :cashierDeskItemDTOList){
-			//B2B Item
-			if(cashierDeskItem.getItemType()!=null && cashierDeskItem.getItemType().intValue()==1){
-				List<CashierItemBankDTO> cashierItemBankDTOList = cashierDeskItem.getCashierItemBankDTOList();
-				if(cashierItemBankDTOList ==null || cashierItemBankDTOList.size()==0){
+		for (CashierDeskItemDTO cashierDeskItem : cashierDeskItemDTOList) {
+			// B2B Item
+			if (cashierDeskItem.getItemType() != null
+					&& cashierDeskItem.getItemType().intValue() == 1) {
+				List<CashierItemBankDTO> cashierItemBankDTOList = cashierDeskItem
+						.getCashierItemBankDTOList();
+				if (cashierItemBankDTOList == null
+						|| cashierItemBankDTOList.size() == 0) {
 					continue;
-				} 
-				
-				for( CashierItemBankDTO cashierItemBankDTO :cashierItemBankDTOList){
-					 if(CommonConstant.CMBC.equals(cashierItemBankDTO.getBankName())){
-						 cmbcBank = cashierItemBankDTO;
-						 cashierItemBankDTOList.remove(cashierItemBankDTO);
-				    	 break;
+				}
+
+				for (CashierItemBankDTO cashierItemBankDTO : cashierItemBankDTOList) {
+					if (CommonConstant.CMBC.equals(cashierItemBankDTO
+							.getBankName())) {
+						cmbcBank = cashierItemBankDTO;
+						cashierItemBankDTOList.remove(cashierItemBankDTO);
+						break;
 					}
 				}
-				if(cmbcBank !=null){
-					 cashierItemBankDTOList.add(cmbcBank);
+				if (cmbcBank != null) {
+					cashierItemBankDTOList.add(cmbcBank);
 				}
 			}
 		}
 	}
-	
-	public TitanOpenOrgDTO queryOpenOrg(String userId){
+
+	public TitanOpenOrgDTO queryOpenOrg(String userId) {
 		return titanFinancialOrganService.queryTitanOpenOrgDTO(userId);
 	}
-	
+
 	public String getIp(HttpServletRequest request) {
 		String ip = request.getHeader("X-Forwarded-For");
 		if (StringUtil.isValidString(ip) && !"unKnown".equalsIgnoreCase(ip)) {

@@ -12,7 +12,7 @@
 <div id="scroll">  
     <div class="main_top clearfix headline bg_bom">
          <div class="main_return fl"><a href="javascript:history.go(-1)"><i></i>返回上一页</a></div>
-        <div class="history fl">我的贷款 > 包房贷款详情</div>
+        <div class="history fl">我的贷款 > 贷款详情</div>
     </div>   
 </div>
 

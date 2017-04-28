@@ -141,7 +141,9 @@ public class FinancialLoanController extends BaseController {
 							if (dto != null) {
 								((LoanSpecificationBean) applyOrderBean
 										.getLoanSpec()).setContent(dto
-										.getGoodsdetail());
+										.getGoodsdetail()
+										+ "|账单编号:"
+										+ map.get("billOrderNo"));
 							}
 						}
 
