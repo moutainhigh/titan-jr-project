@@ -2036,6 +2036,21 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 		// 表明业务订单号已经重复提交
 		if (null != transOrderDTO) {
+			
+			//如果是贷款单并且状态是处理中的话,那么就需要直接返回
+			if (StringUtil.isValidString(transOrderDTO.getLoanOrderNo())
+					&& OrderStatusEnum.PROGRESS_ING.getStatus().equals(
+							transOrderDTO.getStatusid())) {
+				orderCreateResponse.setResult(false);
+				orderCreateResponse.setReturnCode(""
+						+ TitanMsgCodeEnum.ORDER_PROGRESS_ING.getCode());
+				orderCreateResponse
+						.setReturnMessage(TitanMsgCodeEnum.ORDER_PROGRESS_ING
+								.getResMsg());
+				return orderCreateResponse;
+			}
+			
+			
 			if (OrderStatusEnum.isPaySuccess(transOrderDTO
 					.getStatusid())) {
 
@@ -2086,6 +2101,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			if (StringUtil.isValidString(transOrderDTO.getOrderid())) {
 				
 				if (OrderStatusEnum.isRepeatedPay(transOrderDTO.getStatusid())) {
+					
+					
 					// 查询融数网关支付的订单
 					TitanOrderPayreq titanOrderPayreq = new TitanOrderPayreq();
 					titanOrderPayreq
