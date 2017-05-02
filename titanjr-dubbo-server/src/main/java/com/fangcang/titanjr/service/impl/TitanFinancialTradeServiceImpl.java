@@ -1422,7 +1422,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
             pgSupport.setPageSize(tradeDetailRequest.getPageSize());
             pgSupport.setCurrentPage(tradeDetailRequest.getCurrentPage());
             pgSupport.setOrderBy("createtime desc");
-            titanTransOrderDao.selectOrderForPage(condition, pgSupport);
+			if (tradeDetailRequest.isNeedLoan()){
+				titanTransOrderDao.selectTransLoanForPage(condition, pgSupport);
+			} else {
+				titanTransOrderDao.selectOrderForPage(condition, pgSupport);
+			}
             this.initTradeDetailResp(tradeDetailResponse, pgSupport);
             if (CollectionUtils.isNotEmpty(pgSupport.getItemList())) {//查询结果不为空。为空不能算出错
                 for (TitanTransOrder titanTransOrder : pgSupport.getItemList()) {

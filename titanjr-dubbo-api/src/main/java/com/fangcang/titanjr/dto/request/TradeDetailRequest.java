@@ -45,7 +45,9 @@ public class TradeDetailRequest extends BaseRequestDTO {
     
     //状态
     private String statusId;
-    
+
+    //是否需要查出退款单
+    private boolean needLoan = false;
 
     public TradeTypeEnum getTradeTypeEnum() {
         return tradeTypeEnum;
@@ -165,4 +167,12 @@ public class TradeDetailRequest extends BaseRequestDTO {
 	public void setStatusId(String statusId) {
 		this.statusId = statusId;
 	}
+
+    public boolean isNeedLoan() {
+        return needLoan;
+    }
+
+    public void setNeedLoan(boolean needLoan) {
+        this.needLoan = needLoan;
+    }
 }

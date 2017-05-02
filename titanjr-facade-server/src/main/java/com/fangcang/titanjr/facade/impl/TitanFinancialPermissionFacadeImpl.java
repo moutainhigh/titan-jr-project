@@ -85,6 +85,7 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
                 TradeDetailRequest tradeDetailRequest = new TradeDetailRequest();
                 tradeDetailRequest.setUserid(orgBindInfo.getUserid());
                 tradeDetailRequest.setPayOrderNo(showPaymentRequest.getPayOrderNo());
+                tradeDetailRequest.setNeedLoan(true);
                 TradeDetailResponse detailResponse = titanFinancialTradeService.getOrderTradeDetail(tradeDetailRequest);
                 TransOrderDTO transOrderDTO = null;
                 if (null != detailResponse.getTransOrders() && CollectionUtils.isNotEmpty(detailResponse.getTransOrders().getItemList())){

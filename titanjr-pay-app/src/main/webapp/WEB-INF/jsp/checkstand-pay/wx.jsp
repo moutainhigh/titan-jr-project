@@ -25,7 +25,7 @@
 	<c:if test="${qrCode.payType=='32' }">
 		<div class="wx_fk fl">
 			<div class="wx_t fl"><img src="<%=cssSaasPath%>/images/TFS/alipay1.jpg" alt="" ></div>
-			 <img id="qrcode" alt="微信扫描二维码支付" src="" class="fl">
+			 <img id="qrcode" alt="支付宝扫描二维码支付" src="" class="fl">
 			<div class="wx_c fl">扫码付款</div>		
 		</div>
 	</c:if>

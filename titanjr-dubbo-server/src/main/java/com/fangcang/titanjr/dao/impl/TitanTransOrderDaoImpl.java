@@ -61,6 +61,17 @@ public class TitanTransOrderDaoImpl extends GenericDAOMyBatisImpl implements Tit
     }
 
     @Override
+    public boolean selectTransLoanForPage(TitanTransOrderParam condition, PaginationSupport<TitanTransOrder> paginationSupport)
+            throws DaoException {
+        try {
+            super.selectForPage("com.fangcang.titanjr.dao.TitanTransOrderDao.queryTransLoanOrder", condition, paginationSupport);
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+        return true;
+    }
+
+    @Override
     public int insert(TitanTransOrder entity) throws DaoException {
         try {
             return super.insertEntity("com.fangcang.titanjr.dao.TitanTransOrderDao.insertEntity", entity);
