@@ -49,6 +49,7 @@ import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.AccountHistoryResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.GetCreditInfoResponse;
+import com.fangcang.titanjr.enums.PermissionEnum;
 import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
 import com.fangcang.titanjr.pay.req.TitanConfirmBussOrderReq;
 import com.fangcang.titanjr.pay.rsp.TianConfirmBussOrderRsp;
@@ -126,7 +127,7 @@ public class TitanTradeService {
 			if (StringUtil.isValidString(fcUserId)) {
 				CheckPermissionRequest permissionRequest = new CheckPermissionRequest();
 				permissionRequest.setFcuserid(fcUserId);
-				permissionRequest.setPermission("6");
+				permissionRequest.setPermission(PermissionEnum.Loan.getKey());
 
 				log.info("check loan permission userId= " + fcUserId);
 

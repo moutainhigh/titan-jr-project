@@ -8,10 +8,11 @@ import org.springframework.stereotype.Service;
 import com.fangcang.lts.common.custom.FangCangTaskTracker;
 import com.fangcang.lts.common.holder.JobRunnerHolder;
 import com.fangcang.titanjr.job.runner.BindBankCardRunner;
-import com.fangcang.titanjr.job.runner.FiveMinutesRunner;
+import com.fangcang.titanjr.job.runner.NotifyCoopOrgInfoRunner;
 import com.fangcang.titanjr.job.runner.LoanCreditAmountEvaluatingRunner;
 import com.fangcang.titanjr.job.runner.LoanCreditSynRunner;
 import com.fangcang.titanjr.job.runner.LoanOrderSynRunner;
+import com.fangcang.titanjr.job.runner.NotifyTradeStatusRunner;
 import com.fangcang.titanjr.job.runner.RefundConfirmRunner;
 import com.fangcang.titanjr.job.runner.RepairGDPTransferRunner;
 import com.fangcang.titanjr.job.runner.UnFreezeTransOrderRunner;
@@ -32,7 +33,8 @@ public class InitJobRunner {
     public static String loanCreditSyn = "loanCreditSyn";
     public static String loanOrderSyn = "loanOrderSyn";
     public static String loanCreditAmountEvaluating = "loanCreditAmountEvaluating";
-    public static String fiveMinutes= "fiveMinutes";
+    public static String notifyCoopOrgInfo= "notifyCoopOrgInfo";
+    public static String notifyTradeStatus= "notifyTradeStatus";
 
     @Autowired
     private BindBankCardRunner bindBankCardRunner;
@@ -59,7 +61,10 @@ public class InitJobRunner {
     private FangCangTaskTracker fangCangTaskTracker;
     
     @Autowired
-    private FiveMinutesRunner fiveMinuteRunner;
+    private NotifyCoopOrgInfoRunner notifyCoopOrgInfoRunner;
+    
+    @Autowired
+    private NotifyTradeStatusRunner notifyTradeStatusRunner;
 
     @PostConstruct
     public void initJobRunner(){
@@ -79,7 +84,9 @@ public class InitJobRunner {
         
         JobRunnerHolder.jobRunnerMap.putIfAbsent(loanCreditAmountEvaluating,loanCreditAmountEvaluatingRunner);
         
-        JobRunnerHolder.jobRunnerMap.putIfAbsent(fiveMinutes,fiveMinuteRunner);
+        JobRunnerHolder.jobRunnerMap.putIfAbsent(notifyCoopOrgInfo,notifyCoopOrgInfoRunner);
+        
+        JobRunnerHolder.jobRunnerMap.putIfAbsent(notifyTradeStatus,notifyTradeStatusRunner);
         // 启动taskTracker
         fangCangTaskTracker.start();
     }

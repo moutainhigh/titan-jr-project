@@ -23,18 +23,23 @@ public class TitanOrderException implements Serializable {
 
 	// 错误信息
 	private String exceptionMsg;
-
-	// 错误类型
-	private String type;
-
+	
+	private String exceptionCode;
+	
 	// 异常时间
 	private Date exceptionTime;
-
 	// 异常内容
 	private String exceptionContent;
 	
+	private String orderNo;
+	// 更新时间
+	private Date updateTime;
 	//失败 0 中间过程 1
 	private String failState;
+	
+	// 错误类型
+	private String type;
+	
 	
 	//orderId:1 userOrderId :2 payOrderNo:3
 	private String orderType;
@@ -49,6 +54,30 @@ public class TitanOrderException implements Serializable {
 
 	public String getOrderId() {
 		return orderId;
+	}
+
+	public String getExceptionCode() {
+		return exceptionCode;
+	}
+
+	public void setExceptionCode(String exceptionCode) {
+		this.exceptionCode = exceptionCode;
+	}
+
+	public String getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(String orderNo) {
+		this.orderNo = orderNo;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 
 	public void setOrderId(String orderId) {
