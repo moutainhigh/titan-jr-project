@@ -50,7 +50,8 @@ public enum OrderStatusEnum {
 	}
 
 	public static boolean isRepeatedPay(String status){
-		if(status.equals(OrderStatusEnum.ORDER_IN_PROCESS.getStatus()) 
+		if(status.equals(OrderStatusEnum.ORDER_IN_PROCESS.getStatus())
+				||status.equals(OrderStatusEnum.PROGRESS_ING.getStatus()) 
 				||status.equals(OrderStatusEnum.RECHARGE_IN_PROCESS.getStatus())
 				||status.equals(OrderStatusEnum.RECHARGE_FAIL.getStatus())
 				||status.equals(OrderStatusEnum.ORDER_FAIL.getStatus())
