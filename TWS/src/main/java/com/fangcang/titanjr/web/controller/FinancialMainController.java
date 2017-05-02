@@ -47,8 +47,8 @@ public class FinancialMainController extends BaseController {
     @RequestMapping(value = "/main", method = RequestMethod.GET)
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
     public String toIndex(HttpServletRequest request, Model model) {
-
-        return "main";
+        
+    	return "main";
     }
     
     @RequestMapping(value = "/main_detail_one", method = RequestMethod.GET)

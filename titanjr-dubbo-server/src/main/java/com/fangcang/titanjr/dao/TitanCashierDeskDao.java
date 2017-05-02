@@ -15,4 +15,5 @@ public interface TitanCashierDeskDao {
 
 	List<CashierDeskDTO> queryCashierDesk(CashierDeskQueryRequest cashierDeskQueryRequest) throws Exception;
 	
+	 List<CashierDeskDTO> queryNotAssociatedLoanCashierdesk() throws Exception;
 }

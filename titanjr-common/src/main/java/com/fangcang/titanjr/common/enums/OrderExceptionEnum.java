@@ -81,5 +81,17 @@ public enum OrderExceptionEnum {
 		this.msg = msg;
 		this.failState =failState;
 	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public String getFailState() {
+		return failState;
+	}
 	
 }
