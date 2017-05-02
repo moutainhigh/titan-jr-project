@@ -703,22 +703,26 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				httpPost.releaseConnection();
 			}
 		} catch (Exception e) {
-			log.error("调用http请求通知支付失败", e);
+			log.error("调用http请求通知支付失败,通知参数:"+JSONSerializer.toJSON(params), e);
 			throw e;
 		}
-		log.info("调用http请求通知支付支付结果完成：" + response);
+		log.info("调用http请求通知支付结果：" + response);
 		if (StringUtil.isValidString(response)) {
 			CallBackInfo callBackInfo = TitanjrHttpTools
 					.analyzeResponse(response);
 			if (!"000".equals(callBackInfo.getCode())) {
-				log.error("回调失败单号:" + transOrderDTO.getUserorderid());
-				titanFinancialUtilService.saveOrderException(transOrderDTO.getUserorderid(),OrderKindEnum.UserOrderId, OrderExceptionEnum.Notify_Client_Transfer_Notify_Fail, JSONSerializer.toJSON(callBackInfo).toString());
+				log.error("回调失败单号,通知参数:"+JSONSerializer.toJSON(params));
+				if(req.getIsSaveLog()){
+					titanFinancialUtilService.saveOrderException(transOrderDTO.getUserorderid(),OrderKindEnum.UserOrderId, OrderExceptionEnum.Notify_Client_Transfer_Notify_Fail, JSONSerializer.toJSON(callBackInfo).toString());
+				}
 				return;
 			}
 
 		} else {// 记录异常单
-			log.error("回调无响应");
+			log.error("回调无响应,通知参数:"+JSONSerializer.toJSON(params));
+			if(req.getIsSaveLog()){
 			titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Client_Not_CallBack, JSONSerializer.toJSON(transOrderDTO).toString());
+			}
 		}
 	}
 
