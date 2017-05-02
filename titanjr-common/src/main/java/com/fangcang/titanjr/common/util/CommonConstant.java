@@ -203,4 +203,6 @@ public class CommonConstant {
     //钱包支付成功后通知SAAS服务，签名key
     public static final String PAY_NOTIFY_SIGN_MD5_KEY = "tLrLggmLgpfU0lZG";
     
+    public static final String ORDER_EXCEPTION_MAX_FAIL_STATE = "99";
+    
 }

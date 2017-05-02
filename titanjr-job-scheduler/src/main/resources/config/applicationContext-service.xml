@@ -39,7 +39,9 @@
 
     <dubbo:reference id="titanFinancialLoanCreditService" interface="com.fangcang.titanjr.service.TitanFinancialLoanCreditService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
 	<dubbo:reference id="titanFinancialLoanService" interface="com.fangcang.titanjr.service.TitanFinancialLoanService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
-	<dubbo:reference id="titanFiveMinuteJobService" interface="com.fangcang.titanjr.service.TitanFiveMinuteJobService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
+	<dubbo:reference id="titanCoopService" interface="com.fangcang.titanjr.service.TitanCoopService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
+	<dubbo:reference id="titanFixService" interface="com.fangcang.titanjr.service.TitanFixService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
+
 
 	<dubbo:reference id="titanSysconfigService" interface="com.fangcang.titanjr.service.TitanSysconfigService" retries="0" timeout="40000"/><!-- 做应用可访问测试 -->
 

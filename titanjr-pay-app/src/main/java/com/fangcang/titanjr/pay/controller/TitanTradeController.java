@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
+import com.fangcang.titanjr.common.enums.BusinessLog;
 import com.fangcang.titanjr.common.enums.EscrowedEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
@@ -46,6 +48,7 @@ import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
 import com.fangcang.titanjr.dto.bean.TitanVirtualOrgRelation;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.AddPayLogRequest;
 import com.fangcang.titanjr.dto.request.BindingVirtuaOrgBankCardRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
 import com.fangcang.titanjr.dto.request.CreateVirtualOrgRequest;
@@ -65,6 +68,7 @@ import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.req.CreateVirtualOrgReq;
 import com.fangcang.titanjr.pay.services.TitanTradeService;
 import com.fangcang.titanjr.pay.util.RSADecryptString;
+import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -109,6 +113,9 @@ public class TitanTradeController extends BaseController {
 
 	@Resource
 	private TitanFinancialAccountService titanFinancialAccountService;
+	
+	@Resource
+	private BusinessLogService businessLogService;
 
 //	/**
 //	 * 移动支付请求入口
@@ -307,7 +314,7 @@ public class TitanTradeController extends BaseController {
 					+ orderCreateResponse.getOrderNo() + "]");
 
 			String url = "";
-
+			businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.SaveTitanTransOrder, OrderKindEnum.TransOrderId, orderCreateResponse.getTransId()+""));
 			if (dto.getPayerType().equals(PayerTypeEnum.WITHDRAW.getKey())) {
 				String fcUserId = "";
 				String tfsUserId = "";
@@ -661,7 +668,8 @@ public class TitanTradeController extends BaseController {
 		transOrderRequest.setUserorderid(payOrderNo);
 		TransOrderDTO transOrderDTO = titanOrderService
 				.queryTransOrderDTO(transOrderRequest);
-
+		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.EnterCashierDesk, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
+		
 		if (null == transOrderDTO
 				|| !StringUtil.isValidString(transOrderDTO.getUserid())) {// 验证付款方
 
@@ -807,7 +815,8 @@ public class TitanTradeController extends BaseController {
 		}
 		cashierDeskQueryRequest.setUsedFor(PayerTypeEnum
 				.getPaySource(transOrderDTO.getPayerType()));
-
+		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.QueryCashierDeskData, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
+		
 		CashierDeskResponse response = titanCashierDeskService
 				.queryCashierDesk(cashierDeskQueryRequest);
 		if (!(response.isResult() && CollectionUtils.isNotEmpty(response
@@ -854,7 +863,8 @@ public class TitanTradeController extends BaseController {
 		model.addAttribute("cashDeskData", cashDeskData);
 
 		log.info("end set cash desk data ");
-
+		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.ShowCashierDesk, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
+		
 		if (payerTypeEnum.isRechargeCashDesk()) {
 			return TitanConstantDefine.RECHARGE_MAIN_PAGE;
 		}

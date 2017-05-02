@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fangcang.titanjr.common.enums.BusinessLog;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
@@ -34,6 +36,7 @@ import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
+import com.fangcang.titanjr.dto.request.AddPayLogRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
 import com.fangcang.titanjr.dto.request.PayMethodConfigRequest;
@@ -48,6 +51,7 @@ import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -59,7 +63,7 @@ import com.fangcang.util.StringUtil;
 
 @Component
 public class TitanPaymentService {
-	private static final Log log = LogFactory.getLog(TitanTradeService.class);
+	private static final Log log = LogFactory.getLog(TitanPaymentService.class);
 
 	@Resource
 	private TitanFinancialAccountService titanFinancialAccountService;
@@ -81,54 +85,52 @@ public class TitanPaymentService {
 
 	@Resource
 	private TitanFinancialUtilService titanFinancialUtilService;
-
-	public AccountCheckResponse accountIsExist(String orgName, String titanCode) {
-		if (StringUtil.isValidString(orgName)
-				&& StringUtil.isValidString(titanCode)) {
-			AccountCheckRequest accountCheckRequest = new AccountCheckRequest();
-			accountCheckRequest.setOrgName(orgName);
-			accountCheckRequest.setTitanCode(titanCode);
-			accountCheckRequest.setStatusId(1);// just query active org
-			AccountCheckResponse accountCheckResponse = titanFinancialAccountService
-					.checkTitanCode(accountCheckRequest);
-			if (accountCheckResponse.isCheckResult()) {
-				return accountCheckResponse;
-			}
-		}
-		return null;
-	}
-
-	public boolean isAllowNoPwdPay(String userid, String totalAmount) {
-		JudgeAllowNoPwdPayRequest judgeAllowNoPwdPayRequest = new JudgeAllowNoPwdPayRequest();
-		judgeAllowNoPwdPayRequest.setMoney(totalAmount);
-		judgeAllowNoPwdPayRequest.setUserid(userid);
-		AllowNoPwdPayResponse allowNoPwdPayResponse = titanFinancialTradeService
-				.isAllowNoPwdPay(judgeAllowNoPwdPayRequest);
-		if (allowNoPwdPayResponse.isAllowNoPwdPay()) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean checkPwd(String pwd, String fcUserId) {
-		if (!StringUtil.isValidString(pwd)
-				|| !StringUtil.isValidString(fcUserId)) {
+	
+	@Resource
+	private BusinessLogService businessLogService;
+	
+	 public AccountCheckResponse accountIsExist(String orgName,String titanCode ){
+	    	if(StringUtil.isValidString(orgName)&&
+	    			StringUtil.isValidString(titanCode)){
+	    		AccountCheckRequest accountCheckRequest = new AccountCheckRequest();
+	    		accountCheckRequest.setOrgName(orgName);
+	    		accountCheckRequest.setTitanCode(titanCode);
+	    		accountCheckRequest.setStatusId(1);//just query active org
+	    		AccountCheckResponse accountCheckResponse = titanFinancialAccountService.checkTitanCode(accountCheckRequest);
+	    		if(accountCheckResponse.isCheckResult()){
+	    		   return accountCheckResponse;
+	    		}
+	    	}
+			return null;
+	    } 
+	 
+	 public boolean isAllowNoPwdPay(String userid,String totalAmount){
+			JudgeAllowNoPwdPayRequest judgeAllowNoPwdPayRequest = new JudgeAllowNoPwdPayRequest();
+			judgeAllowNoPwdPayRequest.setMoney(totalAmount);
+			judgeAllowNoPwdPayRequest.setUserid(userid);
+			AllowNoPwdPayResponse allowNoPwdPayResponse = titanFinancialTradeService.isAllowNoPwdPay(judgeAllowNoPwdPayRequest);
+		    if(allowNoPwdPayResponse.isAllowNoPwdPay()){
+		    	return true;
+		    }
 			return false;
 		}
-
-		TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
-		titanUserBindInfoDTO.setFcuserid(Long.parseLong(fcUserId));
-		titanUserBindInfoDTO = titanFinancialUserService
-				.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
-
-		if (null == titanUserBindInfoDTO
-				|| null == titanUserBindInfoDTO.getTfsuserid()) {
-			return false;
-		}
-
-		return titanFinancialUserService.checkPayPassword(pwd,
-				titanUserBindInfoDTO.getTfsuserid().toString());
-	}
+	 
+	 public boolean checkPwd(String pwd, String fcUserId){
+		 if(!StringUtil.isValidString(pwd) || !StringUtil.isValidString(fcUserId)){
+			 return false;
+		 }
+		 
+		 TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
+		 titanUserBindInfoDTO.setFcuserid(Long.parseLong(fcUserId));
+		 titanUserBindInfoDTO = titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+		 
+		 if(null == titanUserBindInfoDTO || null ==titanUserBindInfoDTO.getTfsuserid()){
+			 return false;
+		 }
+		 
+		 return titanFinancialUserService.checkPayPassword(pwd,titanUserBindInfoDTO.getTfsuserid().toString());
+	 }
+	   
 
 	public RechargeResponse packageRechargeData(
 			TitanPaymentRequest titanPaymentRequest) {
@@ -324,6 +326,7 @@ public class TitanPaymentService {
 			TransOrderDTO transOrderDTO = titanOrderService
 					.queryTransOrderDTO(transOrderRequest);
 			if (transOrderDTO != null) {
+				businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.PayConfirmPage, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
 				model.addAttribute("transOrderDTO", transOrderDTO);
 				FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 				organQueryRequest.setOrgCode(transOrderDTO.getPayeemerchant());

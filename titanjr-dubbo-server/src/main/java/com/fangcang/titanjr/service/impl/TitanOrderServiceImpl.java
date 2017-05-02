@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -26,7 +27,6 @@ import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
-import com.fangcang.titanjr.dto.response.TransOrderResponse;
 import com.fangcang.titanjr.entity.TitanDynamicKey;
 import com.fangcang.titanjr.entity.TitanFundFreezereq;
 import com.fangcang.titanjr.entity.TitanOrderException;
@@ -35,6 +35,7 @@ import com.fangcang.titanjr.entity.TitanTransOrder;
 import com.fangcang.titanjr.entity.TitanTransferReq;
 import com.fangcang.titanjr.entity.TitanWithDrawReq;
 import com.fangcang.titanjr.entity.parameter.TitanFundFreezereqParam;
+import com.fangcang.titanjr.entity.parameter.TitanOrderExceptionParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
 import com.fangcang.titanjr.entity.parameter.TitanTransferReqParam;
 import com.fangcang.titanjr.entity.parameter.TitanWithDrawReqParam;
@@ -229,6 +230,27 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 		}
 		return null;
 	}
+	
+
+	@Override
+	public PaginationSupport<TitanOrderException> selectOrderExceptionForPage(TitanOrderExceptionParam condition,
+			PaginationSupport<TitanOrderException> paginationSupport) {
+		return titanOrderExceptionDao.selectForPage(condition, paginationSupport);
+	}
+
+	@Override
+	public boolean updateOrderException(OrderExceptionDTO orderExceptionDTO) {
+		TitanOrderException titanOrderException = new TitanOrderException();
+		MyBeanUtil.copyProperties(titanOrderException, orderExceptionDTO);
+		try {
+			titanOrderExceptionDao.updateTitanOrderException(titanOrderException);
+			return true;
+		} catch (Exception e) {
+			 log.error("更新异常单错误,orderId:"+orderExceptionDTO.getOrderId(),e);
+		}
+		
+		return false;
+	}
 
 	@Override
 	public boolean saveOrderException(OrderExceptionDTO orderExceptionDTO) {
@@ -236,6 +258,7 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 			TitanOrderException titanOrderException = new TitanOrderException();
 			try{
 				MyBeanUtil.copyProperties(titanOrderException, orderExceptionDTO);
+				titanOrderException.setUpdateTime(new Date());
 				return titanOrderExceptionDao.insertTitanOrderException(titanOrderException)>0?true:false;
 			}catch(Exception e){
 			    log.error("插入异常单错误"+e.getMessage(),e);

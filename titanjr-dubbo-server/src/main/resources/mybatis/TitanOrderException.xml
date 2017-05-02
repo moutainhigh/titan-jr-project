@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fangcang.titanjr.dao.TitanOrderExceptionDao">
-    <resultMap id="resultMapOrderException" type="com.fangcang.titanjr.entity.TitanOrderException">
-        <result property="id" column="id"/>
-        <result property="orderId" column="orderid"/>
-        <result property="exceptionMsg" column="exceptionmsg"/>
-        <result property="exceptionCode" column="exceptioncode"/>
-        <result property="exceptionTime" column="exceptioncode"/>
-        <result property="exceptionContent" column="exceptioncontent"/>
-    </resultMap>
 	
-	<select id="queryOrderException" parameterType="com.fangcang.titanjr.entity.TitanOrderException" resultMap="resultMapOrderException">
+	<select id="queryList" parameterType="com.fangcang.titanjr.entity.parameter.TitanOrderExceptionParam" resultType="com.fangcang.titanjr.entity.TitanOrderException">
 	  select 
-	  id,
-	  orderid,
-	  exceptionmsg,
-	  type,
-	  exceptionTime,
-	  exceptioncontent,
-	  failState,
-	  orderType
+		  id,
+		  orderid,
+		  exceptionmsg,
+		  exceptioncode,
+		  exceptiontime,
+		  exceptioncontent,
+		  orderno,
+		  updatetime,
+		  failState,
+		  type,
+		  orderType
 	  from
 	  t_tfs_order_exception
 	  <where>
-	    <if test="orderId !=null">
-	      orderid = #{orderId}
-	    </if>
+	    <if test="orderId !=null">orderid = #{orderId}</if>
+	    <if test="orderNo !=null"> and orderno = #{orderNo}</if>
+	    <if test="beginUpdateTime !=null">and <![CDATA[ updatetime >= #{beginUpdateTime}]]></if>
+	    <if test="endUpdateTime !=null">and <![CDATA[ updatetime < #{endUpdateTime}]]></if>
+	    <if test="beginFailState !=null">and <![CDATA[ failState >= #{beginFailState}]]></if>
+	    <if test="endFailState !=null">and <![CDATA[ failState < #{endFailState}]]></if>
+	    <if test="failState !=null"> and failstate = #{failState}</if>
+	    <if test="type !=null"> and type = #{type}</if>
 	  </where>
 	</select>
 	
@@ -51,4 +51,17 @@
 	  #{failState},
 	  #{orderType})
 	</insert>
+	
+	<update id="updateOrderException" parameterType="com.fangcang.titanjr.entity.TitanOrderException" >
+	    update t_tfs_order_exception
+	    <set >
+	      <if test="updateTime != null" >
+	        updatetime = #{updateTime},
+	      </if>
+	      <if test="failState != null" >
+	        failstate = #{failState},
+	      </if>
+	    </set>
+	    where id = #{id}
+  </update>
 </mapper>

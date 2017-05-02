@@ -5,15 +5,15 @@
     select 
     *
     from t_tfs_user
-    <where>
-    	<if test="tfsuserid != null"> tfsuserid = #{tfsuserid}</if>
+    where status!=0
+    	<if test="tfsuserid != null"> and tfsuserid = #{tfsuserid}</if>
     	<if test="userid != null"> and userid = #{userid}</if>
     	<if test="orgcode != null"> and orgcode = #{orgcode}</if>
     	<if test="userloginname != null"> and userloginname = #{userloginname}</if>
     	<if test="isadmin != null"> and isadmin = #{isadmin}</if>
     	<if test="isoperator != null"> and isoperator = #{isoperator}</if>
     	<if test="status != null"> and status = #{status}</if>
-    </where>
+     
   </select>
   <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanUser" useGeneratedKeys="true" keyProperty="tfsuserid">
     insert into t_tfs_user (userid, orgcode, 
@@ -76,8 +76,8 @@
     FROM
 	    t_tfs_user u
       LEFT JOIN t_tfs_userbindinfo b ON u.tfsuserid = b.tfsuserid 
-    <where>
-    	<if test="bindIsactive != null"> b.isactive = #{bindIsactive}</if>
+    where status!=0
+    	<if test="bindIsactive != null"> and b.isactive = #{bindIsactive}</if>
     	<if test="status !=null"> and u.status = #{status}</if>
     	<if test="excludeStatus !=null"> and u.status != #{excludeStatus}</if>
 		<if test="userId !=null"> and u.userid = #{userId}</if>
@@ -90,7 +90,6 @@
         <if test="bindUserId !=null"> and b.fcuserid = #{bindUserId}</if>
       	<if test="userName !=null"> and u.username like concat('%',#{userName},'%')</if>
       	<if test="mobilePhone !=null"> and u.mobilephone = #{mobilePhone}</if>
-    </where>
     GROUP BY u.tfsuserid
   </select>
   <select id="queryTitanUserCollectionList"  parameterType="java.util.Map" resultMap="userResultMap">
