@@ -1,11 +1,26 @@
 package com.fangcang.titanjr.service.impl;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.BusTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierDeskTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
-import com.fangcang.titanjr.common.enums.SupportBankEnum;
 import com.fangcang.titanjr.common.enums.CoopTypeEnum;
+import com.fangcang.titanjr.common.enums.SupportBankEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dao.TitanCashierDeskDao;
 import com.fangcang.titanjr.dao.TitanCashierDeskItemDao;
@@ -35,21 +50,6 @@ import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by zhaoshan on 2016/5/18.
@@ -456,6 +456,27 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
 			log.error("初始化收银台失败:"+cashierDeskInitRequest.getUserId());
 		}
 	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	@Override
+	public void executeLoanDeskInit() throws Exception{
+		try {
+			List<CashierDeskDTO> cashierDeskDTOs = titanCashierDeskDao
+					.queryNotAssociatedLoanCashierdesk();
+			TitanCashierDeskItem loan = null;
+			List<TitanCashierItemBank> allItemBanks = new ArrayList<TitanCashierItemBank>();
+			for (CashierDeskDTO cashierDeskDTO : cashierDeskDTOs) {
+				loan = buildCahsierDesk(cashierDeskDTO.getDeskId(),
+						CashierItemTypeEnum.LOAN);
+				titanCashierDeskItemDao.saveCashierDeskItem(loan);
+				allItemBanks.addAll(buildLoanBankList(loan.getItemid()));
+			}
+			titanCashierItemBankDao.batchSaveItemBanks(allItemBanks);
+		} catch (Exception e) {
+			log.error("execute loan desk fail!", e);
+			throw e;
+		}
+	}
 
 	@Override
 	public <T> void addModelOfPayment(PaymentItemRequest<T> request) {
@@ -477,6 +498,8 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
 				MyBeanUtil.copyProperties(bank, bankDTO);
 				bank.setItemid(itm.getItemid());
 				banks.add(bank);
+				
+				
 			}
 		}
 		titanCashierItemBankDao.batchSaveItemBanks(banks);

@@ -63,4 +63,13 @@ public interface TitanCashierDeskService {
 	 * @param request
 	 */
 	public <T> void addModelOfPayment(PaymentItemRequest<T> request);
+	
+	/**
+	 * 暂时增加对贷款收银台的初始化方法
+	 * @Title: executeLoanDeskInit 
+	 * @Description: TODO
+	 * @throws ServiceException
+	 * @return: void
+	 */
+	public void executeLoanDeskInit() throws Exception;
 }

@@ -34,7 +34,14 @@
             </collection>
         </collection>
     </resultMap>
-
+    
+    
+     <select id="queryNotAssociatedLoanCashierdeskInfo" 
+         resultMap="cashierDeskMap">
+  		SELECT t1.* FROM  t_tfs_cashierdesk  t1 WHERE t1.deskid  NOT IN (  SELECT DISTINCT deskid FROM  t_tfs_cashierdeskitem t1 WHERE t1.itemtype = 10)  AND  t1.usedfor = 2
+	</select>
+	
+	
     <select id="queryCashierDesk" parameterType="com.fangcang.titanjr.dto.request.CashierDeskQueryRequest"
             resultMap="cashierDeskMap">
     SELECT

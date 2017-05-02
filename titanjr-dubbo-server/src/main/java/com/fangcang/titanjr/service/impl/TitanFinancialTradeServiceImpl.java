@@ -996,7 +996,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			sign.append("&orderAmount=");
 			sign.append(rsPayOrderRequest.getOrderAmount());
 			sign.append("&payType=");
-			sign.append(rsPayOrderRequest.getPayType());
+			if (rsPayOrderRequest.getPayType() == null) {
+				sign.append("");
+			} else {
+				sign.append(rsPayOrderRequest.getPayType());
+			}
 			sign.append("&orderTime=");
 			sign.append(rsPayOrderRequest.getOrderTime());
 			sign.append("&signType=");
