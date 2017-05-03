@@ -368,11 +368,11 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	transOrderDTO.setCreator("测试(meimei000)");
     	transOrderDTO.setUserorderid("TJO161023004819378"); 	
     	transOrderDTO.setNotifyUrl("http://172.16.21.15:19010/GDP/fcjr_pay.shtml");
-		try {
-			titanFinancialTradeService.confirmFinance(transOrderDTO);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			titanFinancialTradeService.confirmFinance(transOrderDTO);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
     
     //@Test
@@ -382,7 +382,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	transOrderDTO.setBusinessordercode("1032353636");
     	transOrderDTO.setPayorderno("秀月");
     	transOrderDTO.setUserorderid("422423154");
-    	titanFinancialTradeService.confirmFinance(transOrderDTO);
+    	//titanFinancialTradeService.confirmFinance(transOrderDTO);
 	}
     
 //    @Test

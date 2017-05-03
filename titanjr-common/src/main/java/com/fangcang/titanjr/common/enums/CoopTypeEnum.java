@@ -6,7 +6,7 @@ package com.fangcang.titanjr.common.enums;
  * @2016年6月3日
  */
 public enum CoopTypeEnum {
-	TFS(1,"TFS"),SAAS(2,"SAAS"),AUTO(3,"后台自动"),TTM(4,"TTM"),TWS(5,"泰坦钱包");
+	SAAS(2,"SAAS"),AUTO(3,"后台自动"),TTM(4,"TTM"),TWS(5,"泰坦钱包");
 	
 	/**
 	 * 注册渠道
