@@ -236,14 +236,15 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 		if(null == oet){
 			return;
 		}
-		
+		Date now = new Date();
 		TitanOrderException ex = new TitanOrderException();
 		ex.setType(oet.type);
 		ex.setExceptionContent(content);
-		ex.setExceptionTime(new Date());
+		ex.setExceptionTime(now);
 		ex.setOrderId(orderId);
 		ex.setFailState(oet.failState);
 		ex.setExceptionMsg(oet.msg);
+		ex.setUpdateTime(now);
 		ex.setOrderType(orEnum.getType());
 		
 		try{

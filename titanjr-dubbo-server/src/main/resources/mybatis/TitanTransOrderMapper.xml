@@ -174,7 +174,21 @@
                       </if>
                     </where>
      </select>
-     
+    <!--查询有贷款单信息的交易单-->
+    <select id="queryTransLoanOrder" resultType="com.fangcang.titanjr.entity.TitanTransOrder"
+            parameterType="com.fangcang.titanjr.entity.parameter.TitanTransOrderParam" >
+        select o.*
+        from t_tfs_transorder o
+        <where>
+            <include refid="sqlWhere"/>
+            and (((transordertype=1 or transordertype=2) and statusid =8) or (transordertype=3 and statusid !=10 and statusid !=0))
+            <if test="partner !=null">
+                and ((payermerchant=#{userid} and payeemerchant=#{partner}) or
+                (payeemerchant = #{userid} and payermerchant=#{partner}))
+            </if>
+        </where>
+    </select>
+
      <!-- 充值 -->
      <select id="queryRechargeOrder" resultType="com.fangcang.titanjr.entity.TitanTransOrder"
                                      parameterType="com.fangcang.titanjr.entity.parameter.TitanTransOrderParam">

@@ -31,7 +31,7 @@ public interface TitanFinancialSendSMSService {
 	public void asynSendMessage(SendMessageRequest sendCodeRequest);
 	/**
 	 * 发送消息(手机和短信)
-	 * @param sendEmailRequest
+	 * @param SendMessageRequest
 	 * @return
 	 */
 	public SendMessageResponse sendMessage(SendMessageRequest sendCodeRequest);

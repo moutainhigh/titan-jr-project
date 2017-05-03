@@ -116,7 +116,8 @@ public enum TitanMsgCodeEnum {
     REFUND_CONCERT_FAIL(110100040,"商家未绑定金融账户或员工未绑定金融用户"),
     
     LOAN_REQUEST_FAIL(110100042,"请求贷款失败，请联系管理员！"),
-
+    
+    ORDER_PROGRESS_ING(110100043,"订单处理中，请等待！"),
 
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");

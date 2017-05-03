@@ -212,6 +212,11 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
+            <groupId>com.fangcang</groupId>
+            <artifactId>business-log</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
