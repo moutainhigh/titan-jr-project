@@ -66,7 +66,7 @@ public class TitanFixServiceImpl implements TitanFixService {
 			    boolean isDuplicate = false; 
 			    try {
 			    	if(!sendOrderIdSet.contains(item.getOrderId())){
-			    		log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()));
+			    		log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()).append(",failState:").append(item.getFailState()));
 						tradeService.confirmFinance(req);
 						sendOrderIdSet.add(item.getOrderId());
 						isDuplicate = false;
