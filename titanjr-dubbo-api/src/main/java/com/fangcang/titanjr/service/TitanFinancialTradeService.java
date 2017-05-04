@@ -110,7 +110,7 @@ public interface TitanFinancialTradeService {
 	 * @author fangdaikang
 	 * 把notify拆分为一个service
 	 */
-	public void confirmFinance(ConfirmFinanceRequest req)throws Exception;
+	public boolean confirmFinance(ConfirmFinanceRequest req)throws Exception;
 	
 	
 	/**

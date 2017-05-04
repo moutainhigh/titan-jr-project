@@ -64,10 +64,11 @@ public class TitanFixServiceImpl implements TitanFixService {
 			    req.setTransOrderDTO(transOrderDTO);
 			    req.setIsSaveLog(false);
 			    boolean isDuplicate = false; 
+			    boolean isNotifySuccss = false;
 			    try {
 			    	if(!sendOrderIdSet.contains(item.getOrderId())){
 			    		log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()).append(",failState:").append(item.getFailState()));
-						tradeService.confirmFinance(req);
+			    		isNotifySuccss = tradeService.confirmFinance(req);
 						sendOrderIdSet.add(item.getOrderId());
 						isDuplicate = false;
 			    	}else{
@@ -79,7 +80,7 @@ public class TitanFixServiceImpl implements TitanFixService {
 				}finally {
 					//更新数据
 					NotifyPolicy next = null;
-					if(isDuplicate){//orderid重复记录，则不再通知
+					if(isDuplicate||isNotifySuccss){//orderid重复记录或者成功，则不再通知
 						next = NotifyPolicy.FailState_99;
 					}else{
 						next = NotifyPolicy.getNotifyPolicy(NotifyPolicy.getNotifyPolicy(item.getFailState()).getNextFailState());

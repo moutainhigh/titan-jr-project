@@ -661,13 +661,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 	// 回调财务
 	@Override
-	public void confirmFinance(ConfirmFinanceRequest req) throws Exception {
-
+	public boolean confirmFinance(ConfirmFinanceRequest req) throws Exception {
 		if (req == null
 				|| req.getTransOrderDTO() == null
 				|| !StringUtil.isValidString(req.getTransOrderDTO()
 						.getUserorderid())) {
-			return;
+			log.error("参数[ConfirmFinanceRequest]为空");
+			return false;
 		}
 
 		TransOrderDTO transOrderDTO = req.getTransOrderDTO();
@@ -675,7 +675,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		List<NameValuePair> params = this.getHttpParams(req);
 
 		if (params == null) {
-			return;
+			log.error("参数[getHttpParams]为空");
+			return false;
 		}
 
 		String url = null;
@@ -683,7 +684,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		if (StringUtil.isValidString(transOrderDTO.getNotifyUrl())) {
 			url = transOrderDTO.getNotifyUrl();
 		} else {
-			return;
+			log.error("参数[transOrderDTO.getNotifyUrl()]为空");
+			return false;
 		}
 		try {
 			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params) + "---url---"
@@ -715,14 +717,17 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				if(req.getIsSaveLog()){
 					titanFinancialUtilService.saveOrderException(transOrderDTO.getUserorderid(),OrderKindEnum.UserOrderId, OrderExceptionEnum.Notify_Client_Transfer_Notify_Fail, JSONSerializer.toJSON(callBackInfo).toString());
 				}
-				return;
+				return false;
+			}else{
+				return true;
 			}
 
 		} else {// 记录异常单
 			log.error("回调无响应,通知参数:"+JSONSerializer.toJSON(params));
 			if(req.getIsSaveLog()){
-			titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Client_Not_CallBack, JSONSerializer.toJSON(transOrderDTO).toString());
+				titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Client_Not_CallBack, JSONSerializer.toJSON(transOrderDTO).toString());
 			}
+			return false;
 		}
 	}
 
