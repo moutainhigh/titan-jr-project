@@ -486,7 +486,12 @@ public class LoanOperactionDispose extends LoanProductDisposeAbstrator {
 				entity.setTransid(dto.getTransid());
 				entity.setOrderid(loanResponse.getOrderid());
 				titanTransOrderDao.updateTitanTransOrderByTransId(entity);
-
+				if(StringUtil.isValidString(loanResponse.getOrderid())){
+					LoanApplyOrder loanOrder = new LoanApplyOrder();
+					loanOrder.setOrderid(loanResponse.getOrderid());
+					loanOrder.setOrderNo(request.getUserorderid());
+					loanOrderDao.updateLoanApplyOrder(loanOrder);
+				}
 				break;
 
 			} catch (Exception ex) {
