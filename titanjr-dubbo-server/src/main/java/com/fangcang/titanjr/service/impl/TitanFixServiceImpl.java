@@ -63,12 +63,12 @@ public class TitanFixServiceImpl implements TitanFixService {
 			    ConfirmFinanceRequest req = new ConfirmFinanceRequest();
 			    req.setTransOrderDTO(transOrderDTO);
 			    req.setIsSaveLog(false);
-			    boolean isDuplicate = false; 
-			    boolean isNotifySuccss = false;
+			    boolean isDuplicate = false;//是否为重复异常 
+			    boolean isNotifySuccss = false;//是否通知成功
 			    try {
 			    	if(!sendOrderIdSet.contains(item.getOrderId())){
-			    		log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()).append(",failState:").append(item.getFailState()));
 			    		isNotifySuccss = tradeService.confirmFinance(req);
+			    		log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()).append(",次数(failState):").append(item.getFailState()).append(",是否成功："+isNotifySuccss));
 						sendOrderIdSet.add(item.getOrderId());
 						isDuplicate = false;
 			    	}else{
@@ -80,16 +80,25 @@ public class TitanFixServiceImpl implements TitanFixService {
 				}finally {
 					//更新数据
 					NotifyPolicy next = null;
-					if(isDuplicate||isNotifySuccss){//orderid重复记录或者成功，则不再通知
+					String failState ;
+					Date updateTime ;
+					if(isNotifySuccss){//或者成功
+						failState = "1";
+						updateTime = new Date();
+					}else if(isDuplicate){//orderid重复记录，则不再通知
 						next = NotifyPolicy.FailState_99;
+						failState = next.getFailState();
+						updateTime = NotifyPolicy.getNextTime(next);
 					}else{
 						next = NotifyPolicy.getNotifyPolicy(NotifyPolicy.getNotifyPolicy(item.getFailState()).getNextFailState());
+						failState = next.getFailState();
+						updateTime = NotifyPolicy.getNextTime(next);
 					}
 					
 					OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO();
 					orderExceptionDTO.setId(item.getId());
-					orderExceptionDTO.setUpdateTime(NotifyPolicy.getNextTime(next));
-					orderExceptionDTO.setFailState(next.getFailState());
+					orderExceptionDTO.setUpdateTime(updateTime);
+					orderExceptionDTO.setFailState(failState);
 					titanOrderService.updateOrderException(orderExceptionDTO);
 					
 				}
@@ -113,11 +122,11 @@ public class TitanFixServiceImpl implements TitanFixService {
 	 */
 	public enum NotifyPolicy{
 		FailState_0("0","2",1,"MINUTES","状态为0,通知第一次"),
-		FailState_2("2","3",3,"MINUTES","状态为2,通知第二次"),
-		FailState_3("3","4",10,"MINUTES","状态为3,通知第三次"),
-		FailState_4("4","5",30,"MINUTES","状态为4,通知第四次"),
-		FailState_5("5","6",2,"HOURS","状态为5,通知第五次"),
-		FailState_6("6","99",12,"HOURS","状态为6,12小时后，再通知第六次"),
+		FailState_2("2","3",1,"MINUTES","状态为2,通知第二次"),
+		FailState_3("3","4",1,"MINUTES","状态为3,通知第三次"),
+		FailState_4("4","5",1,"MINUTES","状态为4,通知第四次"),
+		FailState_5("5","6",1,"MINUTES","状态为5,通知第五次"),
+		FailState_6("6","99",1,"MINUTES","状态为6,12小时后，再通知第六次"),
 		FailState_99("99","0",0,"HOURS","状态为99,停止通知");
 		
 		/**
