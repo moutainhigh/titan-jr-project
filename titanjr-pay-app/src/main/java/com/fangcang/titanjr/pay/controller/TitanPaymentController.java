@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fangcang.titanjr.common.enums.BusinessLog;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
@@ -43,6 +44,7 @@ import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderInfo;
+import com.fangcang.titanjr.dto.request.AddPayLogRequest;
 import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
 import com.fangcang.titanjr.dto.request.ConfirmOrdernQueryRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
@@ -66,6 +68,7 @@ import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
 import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.pay.services.TitanRateService;
 import com.fangcang.titanjr.pay.services.TitanTradeService;
+import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
@@ -116,6 +119,9 @@ public class TitanPaymentController extends BaseController {
 	@Resource
 	private TitanFinancialUserService titanFinancialUserService;
 	
+	@Resource
+	private BusinessLogService businessLogService;
+	
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	/**
 	 * 消息回调接口	 * @param rechargeResultConfirmRequest
@@ -158,7 +164,7 @@ public class TitanPaymentController extends BaseController {
         		unlockOutTradeNoList(orderNo);
         		return ;
         	}
-        	
+        	businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.CallbackNotify, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
         	PayerTypeEnum payerType = PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
         	
         	//validate transfer order 
@@ -200,6 +206,7 @@ public class TitanPaymentController extends BaseController {
 	        	if(!transferResponse.isResult()){//transfer fail
 	        		orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
 	        	}else{//transfer success
+	        		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
 	        		orderStatusEnum = OrderStatusEnum.TRANSFER_SUCCESS;
 	        		financialTradeService.notifyPayResult(transOrderDTO.getUserorderid());
 	        		
@@ -210,6 +217,7 @@ public class TitanPaymentController extends BaseController {
     					//update the status of the order
     					if(freezeSuccess){//freeze order is success
     						orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
+    						businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.FreezeSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
     					}else{
     						log.error("update the status of the order was failed,the msg is "+JsonConversionTool.toJson(transferRequest));
     						orderStatusEnum = OrderStatusEnum.FREEZE_FAIL;
@@ -417,6 +425,8 @@ public class TitanPaymentController extends BaseController {
 	public String packageRechargeData(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model) throws Exception{
 		log.info("网银支付请求参数:"+JsonConversionTool.toJson(titanPaymentRequest));
 		model.addAttribute(CommonConstant.RESULT, CommonConstant.OPERATE_FAIL);
+		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.BeginPackageRechargeData, OrderKindEnum.PayOrderNo, titanPaymentRequest.getPayOrderNo()));
+		
 		if(null == titanPaymentRequest || !StringUtil.isValidString(titanPaymentRequest.getTradeAmount()) 
 				|| !StringUtil.isValidString(titanPaymentRequest.getPayAmount())){
 			log.error("参数错误");
@@ -457,6 +467,8 @@ public class TitanPaymentController extends BaseController {
 		//设置费率信息
 		titanPaymentRequest = titanRateService.setRateAmount(computeReq,
 				titanPaymentRequest);
+		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.CreateRsOrder, OrderKindEnum.PayOrderNo, titanPaymentRequest.getPayOrderNo()));
+		
         TransOrderCreateResponse transOrderCreateResponse = titanFinancialTradeService.createRsOrder(titanPaymentRequest);
         if(!transOrderCreateResponse.isResult() || !StringUtil.isValidString(transOrderCreateResponse.getOrderNo()) ){
         	log.error("call createTitanTransOrder fail msg["+ JsonConversionTool.toJson(transOrderCreateResponse)+"]");
@@ -502,8 +514,10 @@ public class TitanPaymentController extends BaseController {
 		titanPaymentService.saveCommonPayMethod(titanPaymentRequest);
 		//如果是扫码支付则调用httpClient接口进行
 		if(PayTypeEnum.WECHAT_URL.getLinePayType().equals(titanPaymentRequest.getLinePayType())){
+			businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.WechatpayStep, OrderKindEnum.PayOrderNo, titanPaymentRequest.getPayOrderNo()));
 			return weChat(rechargeResponse, model);
 		}
+		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.CyberBankStep, OrderKindEnum.PayOrderNo, titanPaymentRequest.getPayOrderNo()));
 		
 		return cyberBank(rechargeResponse,model);
     	

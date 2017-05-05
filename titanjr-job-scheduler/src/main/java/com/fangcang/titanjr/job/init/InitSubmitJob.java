@@ -46,7 +46,9 @@ public class InitSubmitJob {
       
         submitLoanCreditAmountEvaluatingJob();
         
-        submitFiveMinutesJob();
+        submitNotifyCoopOrgInfoJob();
+        
+        submitNotifyTradeStatusJob();
     }
 
     /**
@@ -257,11 +259,15 @@ public class InitSubmitJob {
         logger.info("response:{}" , response);
     }
     
-    public void submitFiveMinutesJob(){
+    /**
+     * 通知第三方金融注册机构信息
+     * 
+     */
+    public void submitNotifyCoopOrgInfoJob(){
     	Job job = new Job();
-        job.setTaskId("fiveMinutes");
+        job.setTaskId(InitJobRunner.notifyCoopOrgInfo+"_taskid");
         job.setParam(Constants.JOB_VALID_ENV_KEY, JobValidEnvEnum.ONLINE.toString());
-        job.setParam(Constants.JOB_RUNNER_KEY, InitJobRunner.fiveMinutes);
+        job.setParam(Constants.JOB_RUNNER_KEY, InitJobRunner.notifyCoopOrgInfo);
         job.setTaskTrackerNodeGroup(CommonUtils.getTaskTrackerNodeGroup(jobClient.getServerName()));
         job.setNeedFeedback(true);
         job.setReplaceOnExist(true);
@@ -274,4 +280,24 @@ public class InitSubmitJob {
         logger.info("response:{}" , response);
     }
     
+    /***
+     * 通知第三方交易状态
+     *
+     **/ 
+    public void submitNotifyTradeStatusJob(){
+    	Job job = new Job();
+        job.setTaskId(InitJobRunner.notifyTradeStatus+"_taskid");
+        job.setParam(Constants.JOB_VALID_ENV_KEY, JobValidEnvEnum.ONLINE.toString());
+        job.setParam(Constants.JOB_RUNNER_KEY, InitJobRunner.notifyTradeStatus);
+        job.setTaskTrackerNodeGroup(CommonUtils.getTaskTrackerNodeGroup(jobClient.getServerName()));
+        job.setNeedFeedback(true);
+        job.setReplaceOnExist(true);
+        job.setCronExpression("0 */3 * * * ?");
+        
+        job.setRelyOnPrevCycle(false);
+
+        Response response = jobClient.submitJob(job);
+
+        logger.info("response:{}" , response);
+    }
 }

@@ -1,11 +1,18 @@
 package com.fangcang.titanjr.web.pojo;
 
+import java.io.Serializable;
+
 /***
  * TTM合作方注册信息
  * @author luoqinglong
  * @date   2017年2月15日
  */
-public class CoopRegInfo {
+public class CoopRegInfo implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1118191665349754271L;
 	/**
 	 * 合作方机构编码
 	 */

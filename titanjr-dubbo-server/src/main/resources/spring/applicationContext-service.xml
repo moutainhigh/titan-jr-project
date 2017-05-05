@@ -57,9 +57,9 @@
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialLoanService" ref="titanFinancialLoanService" timeout="300000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialUtilService" ref="titanFinancialUtilService" timeout="40000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanCoopService" ref="titanCoopService" timeout="40000" />
-	<dubbo:service interface="com.fangcang.titanjr.service.TitanFiveMinuteJobService" ref="titanFiveMinuteJobService" timeout="40000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialVirtualService" ref="titanFinancialVirtualService" timeout="300000" />
-	
+	<dubbo:service interface="com.fangcang.titanjr.service.TitanFixService" ref="titanFixService" timeout="40000" />
+	<dubbo:service interface="com.fangcang.titanjr.service.BusinessLogService" ref="businessLogService" timeout="40000" />
 
 </beans>
 

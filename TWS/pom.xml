@@ -48,7 +48,6 @@
             <artifactId>fangcang-security-api</artifactId>
             <version>1.0.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
@@ -220,6 +219,7 @@
             <artifactId>titanjr-rs-app</artifactId>
             <version>1.0.0</version>
         </dependency>
+        
     </dependencies>
 
     <build>

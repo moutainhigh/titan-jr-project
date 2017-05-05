@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.BankCardEnum;
+import com.fangcang.titanjr.common.enums.BusinessLog;
 import com.fangcang.titanjr.common.enums.FreezeConditionCodeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
@@ -57,6 +58,7 @@ import com.fangcang.titanjr.dto.request.AccountCreateRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.AccountUpdateRequest;
+import com.fangcang.titanjr.dto.request.AddPayLogRequest;
 import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
 import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
 import com.fangcang.titanjr.dto.request.FreezeAccountBalanceRequest;
@@ -100,6 +102,7 @@ import com.fangcang.titanjr.rs.response.AccountWithDrawResponse;
 import com.fangcang.titanjr.rs.response.BalanceFreezeResponse;
 import com.fangcang.titanjr.rs.response.BalanceUnFreezeResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
@@ -150,6 +153,9 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     
     @Resource
     private TitanCityInfoDao titanCityInfoDao;
+    
+    @Resource
+	private BusinessLogService businessLogService;
     
 
     @Override
@@ -964,6 +970,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     	        		return false;
 			    	}
 			    	
+			    	businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.UnfreezeSucc, OrderKindEnum.OrderId, fundFreezeDTO.getOrderNo()));
 			    	//修改系统单号
 			    	TitanTransOrder titanTransOrder = new TitanTransOrder();
 			    	titanTransOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());

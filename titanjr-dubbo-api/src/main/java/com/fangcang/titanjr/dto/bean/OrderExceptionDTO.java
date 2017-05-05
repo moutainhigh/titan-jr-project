@@ -38,7 +38,11 @@ public class OrderExceptionDTO implements Serializable{
 	// 异常时间
 	private String exceptionContent;
 	
-  
+	// 更新时间
+	private Date updateTime;
+	
+	//失败- 0 ;成功-1
+	private String failState;
 
 	public Integer getId() {
 		return id;
@@ -88,4 +92,20 @@ public class OrderExceptionDTO implements Serializable{
 		this.exceptionContent = exceptionContent;
 	}
 
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public String getFailState() {
+		return failState;
+	}
+
+	public void setFailState(String failState) {
+		this.failState = failState;
+	}
+	
 }

@@ -2,6 +2,7 @@ package com.fangcang.titanjr.service;
 
 import java.util.List;
 
+import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
@@ -9,10 +10,13 @@ import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
-import com.fangcang.titanjr.dto.response.TransOrderResponse;
+import com.fangcang.titanjr.entity.TitanOrderException;
+import com.fangcang.titanjr.entity.parameter.TitanOrderExceptionParam;
 
 public interface TitanOrderService {
 
+	
+	
 	/**
 	 * 根据财务单，查询本地是否有对应的 落单
 	 * 根据业务单号查询金服的交易工单
@@ -88,7 +92,14 @@ public interface TitanOrderService {
 	 * @author fangdaikang
 	 */
 	public boolean updateTransOrder(TransOrderDTO transOrderDTO);
-
+	
+	/***
+	 * 分页查询异常信息
+	 * @param condition
+	 * @param paginationSupportOOO
+	 * @return
+	 */
+	public PaginationSupport<TitanOrderException> selectOrderExceptionForPage(TitanOrderExceptionParam condition, PaginationSupport<TitanOrderException> paginationSupport);
 	/**
 	 * 保存单异常信息
 	 * @param orderExceptionDTO
@@ -97,6 +108,12 @@ public interface TitanOrderService {
 	 */
 	public boolean saveOrderException(OrderExceptionDTO orderExceptionDTO);
 	
+	/***
+	 * 更新异常信息
+	 * @param orderExceptionDTO
+	 * @return
+	 */
+	public boolean updateOrderException(OrderExceptionDTO orderExceptionDTO);
 	/**
 	 * 修改转账单的状态
 	 * @param transferDTO

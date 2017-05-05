@@ -2,7 +2,8 @@ package com.fangcang.titanjr.web.util;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.elasticsearch.common.lang3.StringUtils;
+import com.fangcang.util.StringUtils;
+
 
 public class WebUtil {
 	/***
@@ -16,7 +17,7 @@ public class WebUtil {
 			forwordUrl = request.getHeader("referer");
 		} else {
 			forwordUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getRequestURI();
-			if (StringUtils.isNotEmpty(request.getQueryString())) {
+			if (StringUtils.isValidString(request.getQueryString())) {
 				forwordUrl += "?" + request.getQueryString();
 			}
 		} 
