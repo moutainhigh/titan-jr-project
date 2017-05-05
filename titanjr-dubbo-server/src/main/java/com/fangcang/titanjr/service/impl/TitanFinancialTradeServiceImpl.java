@@ -661,13 +661,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 	// 回调财务
 	@Override
-	public void confirmFinance(ConfirmFinanceRequest req) throws Exception {
-
+	public boolean confirmFinance(ConfirmFinanceRequest req) throws Exception {
 		if (req == null
 				|| req.getTransOrderDTO() == null
 				|| !StringUtil.isValidString(req.getTransOrderDTO()
 						.getUserorderid())) {
-			return;
+			log.error("参数[ConfirmFinanceRequest]为空");
+			return false;
 		}
 
 		TransOrderDTO transOrderDTO = req.getTransOrderDTO();
@@ -675,7 +675,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		List<NameValuePair> params = this.getHttpParams(req);
 
 		if (params == null) {
-			return;
+			log.error("参数[getHttpParams]为空");
+			return false;
 		}
 
 		String url = null;
@@ -683,7 +684,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		if (StringUtil.isValidString(transOrderDTO.getNotifyUrl())) {
 			url = transOrderDTO.getNotifyUrl();
 		} else {
-			return;
+			log.error("参数[transOrderDTO.getNotifyUrl()]为空");
+			return false;
 		}
 		try {
 			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params) + "---url---"
@@ -703,22 +705,29 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				httpPost.releaseConnection();
 			}
 		} catch (Exception e) {
-			log.error("调用http请求通知支付失败", e);
+			log.error("调用http请求通知支付失败,通知参数:"+JSONSerializer.toJSON(params), e);
 			throw e;
 		}
-		log.info("调用http请求通知支付支付结果完成：" + response);
+		log.info("调用http请求通知支付结果：" + response);
 		if (StringUtil.isValidString(response)) {
 			CallBackInfo callBackInfo = TitanjrHttpTools
 					.analyzeResponse(response);
 			if (!"000".equals(callBackInfo.getCode())) {
-				log.error("回调失败单号:" + transOrderDTO.getUserorderid());
-				titanFinancialUtilService.saveOrderException(transOrderDTO.getUserorderid(),OrderKindEnum.UserOrderId, OrderExceptionEnum.Notify_Client_Transfer_Notify_Fail, JSONSerializer.toJSON(callBackInfo).toString());
-				return;
+				log.error("回调失败单号,通知参数:"+JSONSerializer.toJSON(params));
+				if(req.getIsSaveLog()){
+					titanFinancialUtilService.saveOrderException(transOrderDTO.getUserorderid(),OrderKindEnum.UserOrderId, OrderExceptionEnum.Notify_Client_Transfer_Notify_Fail, JSONSerializer.toJSON(callBackInfo).toString());
+				}
+				return false;
+			}else{
+				return true;
 			}
 
 		} else {// 记录异常单
-			log.error("回调无响应");
-			titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Client_Not_CallBack, JSONSerializer.toJSON(transOrderDTO).toString());
+			log.error("回调无响应,通知参数:"+JSONSerializer.toJSON(params));
+			if(req.getIsSaveLog()){
+				titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Client_Not_CallBack, JSONSerializer.toJSON(transOrderDTO).toString());
+			}
+			return false;
 		}
 	}
 
@@ -1426,7 +1435,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
             pgSupport.setPageSize(tradeDetailRequest.getPageSize());
             pgSupport.setCurrentPage(tradeDetailRequest.getCurrentPage());
             pgSupport.setOrderBy("createtime desc");
-            titanTransOrderDao.selectOrderForPage(condition, pgSupport);
+			if (tradeDetailRequest.isNeedLoan()){
+				titanTransOrderDao.selectTransLoanForPage(condition, pgSupport);
+			} else {
+				titanTransOrderDao.selectOrderForPage(condition, pgSupport);
+			}
             this.initTradeDetailResp(tradeDetailResponse, pgSupport);
             if (CollectionUtils.isNotEmpty(pgSupport.getItemList())) {//查询结果不为空。为空不能算出错
                 for (TitanTransOrder titanTransOrder : pgSupport.getItemList()) {
@@ -2184,25 +2197,35 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	 */
 	private TransOrderCreateResponse setBaseUserInfo(
 			TitanOrderRequest titanOrderRequest, TitanTransOrder titanTransOrder) {
+		
 		TransOrderCreateResponse response = new TransOrderCreateResponse();
 		response.putSuccess();
+		
 		PayerTypeEnum payerTypeEnum = PayerTypeEnum
 				.getPayerTypeEnumByKey(titanOrderRequest.getPayerType());
 		titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
 		
 		if(payerTypeEnum.isB2BPayment()){//B2B端支付
-			OrgBindInfo orgBindInfo = this
-					.queryOrgBindInfo(titanOrderRequest.getRuserId());
-			if (orgBindInfo == null) {
-				response.putErrorResult("接收方机构不存在");
-				return response;
+			
+			if (!payerTypeEnum.getKey().equals(
+					payerTypeEnum.B2B_WX_PUBLIC_PAY.getKey())) {
+				OrgBindInfo orgBindInfo = this
+						.queryOrgBindInfo(titanOrderRequest.getRuserId());
+				if (orgBindInfo == null) {
+					response.putErrorResult("接收方机构不存在");
+					return response;
+				}
+				titanTransOrder.setPayeemerchant(orgBindInfo.getUserid());
+				titanTransOrder.setUserrelateid(orgBindInfo.getUserid());
+				titanTransOrder.setMerchantcode(titanOrderRequest.getRuserId());
+			} else {
+				titanTransOrder
+						.setPayeemerchant(titanOrderRequest.getRuserId());
+				titanTransOrder.setUserrelateid(titanOrderRequest.getRuserId());
 			}
-			titanTransOrder.setMerchantcode(titanOrderRequest.getRuserId());
 			titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
 			titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
 			titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
-			titanTransOrder.setPayeemerchant(orgBindInfo.getUserid());
-			titanTransOrder.setUserrelateid(orgBindInfo.getUserid());
 			return response;
 		}
 		
@@ -2318,6 +2341,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		response.putSysError();
 		return response;
 	}
+	
 	
 	private TitanUserBindInfoDTO getBindInfoDTO(String userId){
 		TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
