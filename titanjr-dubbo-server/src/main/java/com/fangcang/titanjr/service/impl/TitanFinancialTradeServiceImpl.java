@@ -2197,35 +2197,25 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	 */
 	private TransOrderCreateResponse setBaseUserInfo(
 			TitanOrderRequest titanOrderRequest, TitanTransOrder titanTransOrder) {
-		
 		TransOrderCreateResponse response = new TransOrderCreateResponse();
 		response.putSuccess();
-		
 		PayerTypeEnum payerTypeEnum = PayerTypeEnum
 				.getPayerTypeEnumByKey(titanOrderRequest.getPayerType());
 		titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
 		
 		if(payerTypeEnum.isB2BPayment()){//B2B端支付
-			
-			if (!payerTypeEnum.getKey().equals(
-					payerTypeEnum.B2B_WX_PUBLIC_PAY.getKey())) {
-				OrgBindInfo orgBindInfo = this
-						.queryOrgBindInfo(titanOrderRequest.getRuserId());
-				if (orgBindInfo == null) {
-					response.putErrorResult("接收方机构不存在");
-					return response;
-				}
-				titanTransOrder.setPayeemerchant(orgBindInfo.getUserid());
-				titanTransOrder.setUserrelateid(orgBindInfo.getUserid());
-				titanTransOrder.setMerchantcode(titanOrderRequest.getRuserId());
-			} else {
-				titanTransOrder
-						.setPayeemerchant(titanOrderRequest.getRuserId());
-				titanTransOrder.setUserrelateid(titanOrderRequest.getRuserId());
+			OrgBindInfo orgBindInfo = this
+					.queryOrgBindInfo(titanOrderRequest.getRuserId());
+			if (orgBindInfo == null) {
+				response.putErrorResult("接收方机构不存在");
+				return response;
 			}
+			titanTransOrder.setMerchantcode(titanOrderRequest.getRuserId());
 			titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
 			titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
 			titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+			titanTransOrder.setPayeemerchant(orgBindInfo.getUserid());
+			titanTransOrder.setUserrelateid(orgBindInfo.getUserid());
 			return response;
 		}
 		
@@ -2341,7 +2331,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		response.putSysError();
 		return response;
 	}
-	
 	
 	private TitanUserBindInfoDTO getBindInfoDTO(String userId){
 		TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
