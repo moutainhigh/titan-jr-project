@@ -67,7 +67,9 @@ public class WeChatController {
 	private String secret = "48e9b1649839dff8d2e4897bb611b3f8";
 
 	private static Map<String, Object> mapLock = new ConcurrentHashMap<String, Object>();
-
+	//开发测试的上下文路径，如果修复了，建议为空
+	private final static String context_path="/titanjr-pay-dev3";
+	
 	@Resource
 	private TitanRateService titanRateService;
 
@@ -318,14 +320,16 @@ public class WeChatController {
 	 * @return: String
 	 */
 	private String getRequestBaseUrl(HttpServletRequest req) {
-		System.out.println(req.getRequestURI());
-		System.out.println(req.getRequestURL());
 
+		String contextPath = req.getContextPath();
+		if (StringUtil.isValidString(context_path)) {
+			contextPath = context_path;
+		}
 		String host = req.getServerName();
 		if (req.getServerPort() != 80) {
 			host += ":" + req.getServerPort();
 		}
-		String url = req.getScheme() + "://" + host + "/titanjr-pay-dev3";
+		String url = req.getScheme() + "://" + host + contextPath;
 		return url;
 	}
 
