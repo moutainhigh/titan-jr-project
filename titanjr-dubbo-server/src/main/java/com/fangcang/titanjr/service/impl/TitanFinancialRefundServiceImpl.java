@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
-import com.fangcang.util.JsonUtil;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.logging.Log;
@@ -36,6 +35,7 @@ import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.enums.TransfertypeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
@@ -261,7 +261,7 @@ public class TitanFinancialRefundServiceImpl implements
 			NotifyRefundRequest notifyRefundRequest = this.convertToNotifyRefundRequest(refundRequest);
 			notifyRefundRequest.setRefundOrderno(refundOrderResponse.getRefundOrderNo());
 			NotifyRefundResponse notifyRefundResponse = this.notifyGateawayRefund(notifyRefundRequest);
-			log.info(JsonUtil.objectToJson(notifyRefundRequest));
+			log.info(JsonConversionTool.toJson(notifyRefundRequest));
 			if (!notifyRefundResponse.isResult()) {
 				log.error("网关退款调用失败");
 				//修改订单状态

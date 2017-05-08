@@ -214,7 +214,104 @@
                 <td class="tdr"></td>
                 <td><button value="asdfadfasd" id="refundButton">退款</button></td>
             </tr>
-	
+
+
+
+
+	<form id="wxPayForm" action="/titanjr-pay-dev3/titanPay.action" method="POST">
+		<div class="pay">
+
+			<table cellspacing="0" border="0">
+				<tbody>
+					<tr align="left">
+						<td class="tdr">收款机构</td>
+						<td><input type="text" name="payeeOrg" id="payeeOrg"
+							value="TJM60000001" class="input_t01" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">收款机构名称</td>
+						<td><input type="text" id="payeeOrgName" value="测试很帅的"
+							name="payeeOrgName" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">付款机构</td>
+						<td><input type="text" id="payerOrg" value=""
+							name="payerOrg" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">付款机构名称</td>
+						<td><input type="text" id="payerOrgName" value=""
+							name="payerOrgName" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">商品名称或者简要</td>
+						<td><input type="text" id="commodityName" value="测试小闪屏"
+							name="commodityName" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">商品详细描述</td>
+						<td><input type="text" id="commodityDesc" value="测试小闪屏"
+							name="commodityDesc" /></td>
+					</tr>
+					
+					
+					<tr>
+						<td class="tdr">业务单号</td>
+						<td><input type="text" id="bussOrderNo" value="5445645645"
+							name="bussOrderNo" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">币种 1 人民币</td>
+						<td><input type="text" id="currencyType" value="1"
+							name="currencyType" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">订单金额</td>
+						<td><input type="text" id="amount" value="10"
+							name="amount" /></td>
+					</tr>
+					
+					
+					<tr>
+						<td class="tdr">支付通道类型 1 WX</td>
+						<td><input type="text" id="channelType" value="1"
+							name="channelType" /></td>
+					</tr>
+					
+					
+					<tr>
+						<td class="tdr">业务通知地址</td>
+						<td><input type="text" id="notifyUrl" value="http://www.baidu.com"
+							name="notifyUrl" /></td>
+					</tr>
+					
+					
+					<tr>
+						<td class="tdr">业务信息</td>
+						<td><input type="text" id="bussInfo" value='{"taoge":"taogegege"}'
+							name="bussInfo" /></td>
+					</tr>
+					
+					
+					<tr>
+						<td class="tdr">成功回调地址</td>
+						<td><input type="text" id="successJumpUrl" value="http://www.baidu.com"
+							name="successJumpUrl" /></td>
+					</tr>
+					
+					<tr>
+						<td class="tdr">失败回调地址</td>
+						<td><input type="text" id="failJumpUrl" value="http://www.baidu.com"
+							name="failJumpUrl" /></td>
+					</tr>
+					
+				</tbody>
+			</table>
+			
+		</div>
+		<button type="submit" >微信支付</button>
+	</form>
+
 </body>
 
 
