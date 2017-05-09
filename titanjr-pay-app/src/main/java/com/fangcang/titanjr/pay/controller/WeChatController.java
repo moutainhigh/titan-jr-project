@@ -68,7 +68,7 @@ public class WeChatController {
 
 	private static Map<String, Object> mapLock = new ConcurrentHashMap<String, Object>();
 	//开发测试的上下文路径，如果修复了，建议为空
-	private final static String context_path="/titanjr-pay-dev3";
+	private final static String context_path=null;
 	
 	@Resource
 	private TitanRateService titanRateService;
@@ -346,7 +346,7 @@ public class WeChatController {
 
 			successJumpUrl = URLDecoder.decode(successJumpUrl, "UTF-8");
 			failJumpUrl = URLDecoder.decode(failJumpUrl, "UTF-8");
-
+			
 			if (!StringUtil.isValidString(code)
 					|| !StringUtil.isValidString(orderData)) {
 				jumpFailUrl(failJumpUrl, response, request,
