@@ -387,7 +387,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	transOrderDTO.setBusinessinfo("{'operator':'101701172341127737'}");
     	transOrderDTO.setNotifyUrl("http://192.168.1.232:8087/TTM/orderPay/returnPay.shtml");
 		try {
-			titanFinancialTradeService.confirmFinance(transOrderDTO);
+			//titanFinancialTradeService.confirmFinance(transOrderDTO);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -400,7 +400,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
     	transOrderDTO.setBusinessordercode("1032353636");
     	transOrderDTO.setPayorderno("秀月");
     	transOrderDTO.setUserorderid("422423154");
-    	titanFinancialTradeService.confirmFinance(transOrderDTO);
+    	//titanFinancialTradeService.confirmFinance(transOrderDTO);
 	}
     
     

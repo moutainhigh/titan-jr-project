@@ -37,6 +37,7 @@ import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.Wxutil;
 import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.LoanSpecificationBean;
@@ -160,7 +161,7 @@ public class TitanPaymentController extends BaseController {
     		transOrderRequest.setOrderid(orderNo);
     		TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
         	if(null == transOrderDTO){
-        		log.error("the object is null");
+        		log.error("the transOrderDTO is null,orderNo:"+orderNo);
         		unlockOutTradeNoList(orderNo);
         		return ;
         	}
@@ -170,7 +171,7 @@ public class TitanPaymentController extends BaseController {
         	//validate transfer order 
         	boolean validateResult = titanPaymentService.validateIsConfirmed(transOrderDTO.getTransid());
 			if(!validateResult){
-				log.error("该订单已转帐成功");
+				log.error("该订单已转帐成功,orderNo:"+orderNo);
 				unlockOutTradeNoList(orderNo);
 				return ;
 			}
@@ -178,13 +179,13 @@ public class TitanPaymentController extends BaseController {
         	// update recharge order
 			int row = titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.RECHARFE_SUCCESS.getStatus()+"");
         	if(row<1){
-        		log.error("更新充值单失败");
+        		log.error("更新充值单失败,orderNo:"+orderNo);
         		titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Update_PayOrder_Fail, null);
         	}
         	
         	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARGE_SUCCESS;
         	if(!PayerTypeEnum.RECHARGE.key.equals(payerType.getKey())&&!validateOrderStatus(orderNo)){//非充值的需要发出三次确认订单成功到帐
-    			log.error("实在没办法,钱没到账，不能转账");
+    			log.error("实在没办法,钱没到账，不能转账，orderNo："+orderNo);
     			titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Money_Not_In_Account_Fail, null);
     			orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
     			if(CommonConstant.RS_FANGCANG_USER_ID.equals(transOrderDTO.getPayermerchant())){//中间账户的延时到帐就是失败
@@ -270,7 +271,7 @@ public class TitanPaymentController extends BaseController {
 			if (response == null || !response.isResult()
 					|| null == response.getTransOrderInfos()
 					|| response.getTransOrderInfos().size() != 1) {
-				log.error("confirem ordern query is null");
+				log.error("confirem ordern query is null,param:"+Tools.gsonToString(request)+",response:"+Tools.gsonToString(response));
 				try {//线程等待
 					if(i<2){
 						Thread.sleep(500 * (2<<i));

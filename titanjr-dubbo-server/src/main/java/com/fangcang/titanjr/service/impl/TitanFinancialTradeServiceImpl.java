@@ -1835,7 +1835,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				    	continue ;
 				    }
 				    
-				    log.info("转账的结果:"+JSONSerializer.toJSON(transferResponse));
+				    log.info(transferRequest.getOrderid()+"转账的结果:"+JSONSerializer.toJSON(transferResponse));
 				    OrderStatusEnum orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
 				    //是否需要冻结
 				    if(0==repairTransferDTO.getIsEscrowedPayment()){
@@ -1848,11 +1848,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				    	FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService.freezeAccountBalance(rechargeResultConfirmRequest);
 				    	orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
 				    	if(!freezeAccountBalanceResponse.isFreezeSuccess()){//冻结不成功
-				    		log.error("修复冻结订单失败");
+				    		log.error(rechargeResultConfirmRequest.getOrderNo()+"修复冻结订单失败");
 				    		titanFinancialUtilService.saveOrderException(repairTransferDTO.getPayorderno(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Repair_Freeze_Order_Fail, JSONSerializer.toJSON(repairTransferDTO).toString());
 				    		orderStatusEnum = OrderStatusEnum.FREEZE_FAIL;
 						}
-						log.info("修改单:"+JSONSerializer.toJSON(orderStatusEnum));
+						log.info(rechargeResultConfirmRequest.getOrderNo()+"修改单:"+JSONSerializer.toJSON(orderStatusEnum));
 				    }
 				   //修改订单
 				    TransOrderDTO  transOrderDTO = new TransOrderDTO();
@@ -2514,7 +2514,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		
 		OrdernQueryResponse ordernQueryResponse = rsAccTradeManager.ordernQuery(ordernQueryRequest);
 		if(!ordernQueryResponse.isSuccess()){
-			log.error("查询订单失败:"+ordernQueryResponse.getReturnCode()+":"+ordernQueryResponse.getReturnMsg());
+			log.error("查询订单失败,orderNo:"+ordernQueryRequest.getOrderno()+",ReturnCode"+ordernQueryResponse.getReturnCode()+",ReturnMsg:"+ordernQueryResponse.getReturnMsg());
 			response.putErrorResult(ordernQueryResponse.getReturnCode(), ordernQueryResponse.getReturnMsg());
 		    return response;
 		}

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
@@ -36,7 +37,6 @@ public class FinancialMainController extends BaseController {
     
     @RequestMapping(value = "/common/main", method = RequestMethod.GET)
     public String toIndex(HttpServletRequest request, Model model) {
-
         return "main";
     }
     /***
@@ -80,15 +80,21 @@ public class FinancialMainController extends BaseController {
             	organQueryRequest.setUserId(userInfo.getUserId());
             	FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
 				if (organOrganResponse.isResult()) {
-					
 					CheckStatus checkStatus = organOrganResponse.getFinancialOrganDTO().getCheckStatus();
 					if (checkStatus != null) {
 						orgCheckResultKey = checkStatus.getCheckResultKey();
 						orgCheckResultMsg = checkStatus.getCheckResultMsg();
 						model.addAttribute("userType", organOrganResponse.getFinancialOrganDTO().getUserType());
 						model.addAttribute("orgId", organOrganResponse.getFinancialOrganDTO().getOrgId());
+					}else{
+						log.error("金融首页错误，机构无审核状态[organOrganResponse]:"+Tools.gsonToString(organOrganResponse)+",userid:"+userInfo.getUserId());
 					}
-				}
+					
+				}else{
+	        		log.error("金融首页错误，查询结果错误[organOrganResponse]:"+Tools.gsonToString(organOrganResponse)+",userid:"+userInfo.getUserId());
+	        	}
+        	}else{
+        		log.error("金融首页错误，session中登录用户名为空");
         	}
     		
 		} catch (Exception e) {
