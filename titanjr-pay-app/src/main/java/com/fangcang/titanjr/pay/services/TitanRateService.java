@@ -195,7 +195,8 @@ public class TitanRateService {
 			String paySource = paymentRequest.getPaySource();
 			if (!PaySourceEnum.B2B.getDeskCode().equals(paySource) 
 					&& !PaySourceEnum.OPEN_ORG.getDeskCode().equals(paySource)
-					&& !PaySourceEnum.TT_MALL.getDeskCode().equals(paySource)) {
+					&& !PaySourceEnum.TT_MALL.getDeskCode().equals(paySource)
+					&& !PaySourceEnum.WX_PUBLIC_PAY.getDeskCode().equals(paySource)) {
 				paymentRequest.setPayAmount(computeRsp.getAmount());
 			}
 		}

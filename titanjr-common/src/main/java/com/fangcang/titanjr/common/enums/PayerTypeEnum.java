@@ -14,6 +14,7 @@ public enum PayerTypeEnum {
     OPEN_ORG("1001", "对外开放平台"),
     TT_MALL("1024", "TTMALL收银台"),
     TT_MALL_V2("10242","TTMALL收银台v2"),
+    B2B_WX_PUBLIC_PAY("10243" , "微信公众号支付"),
     LOAN("512", "贷款");
 
     public String key;
@@ -60,6 +61,9 @@ public enum PayerTypeEnum {
             return 6;
         } else if (TT_MALL.key.equals(key)||TT_MALL_V2.key.equals(key)) {
             return 7;
+        } else if( B2B_WX_PUBLIC_PAY.key.equals(key))
+        {
+        	return 8;
         }
         return null;
     }
@@ -70,7 +74,7 @@ public enum PayerTypeEnum {
 
     //使用收款方收银台
     public boolean useReceiverCashDesk() {
-        return B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key) || OPEN_ORG.key.equals(this.key) || TT_MALL.key.equals(this.key)|| TT_MALL_V2.key.equals(this.key);
+        return B2B_PUS.key.equals(this.key) || B2B_WX_PUBLIC_PAY.key.equals(this.key)|| B2B_GDP.key.equals(this.key) || OPEN_ORG.key.equals(this.key) || TT_MALL.key.equals(this.key)|| TT_MALL_V2.key.equals(this.key);
     }
 
     public boolean isUserId() {
@@ -97,7 +101,7 @@ public enum PayerTypeEnum {
 
 
     public boolean isB2BPayment() {
-        return B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key);
+        return B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key) || B2B_WX_PUBLIC_PAY.key.equals(this.key);
     }
 
     public boolean isAddAccountHistory() {
