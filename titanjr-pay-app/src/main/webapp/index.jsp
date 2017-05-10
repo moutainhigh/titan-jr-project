@@ -226,11 +226,11 @@
 					<tr align="left">
 						<td class="tdr">收款机构</td>
 						<td><input type="text" name="payeeOrg" id="payeeOrg"
-							value="TJM60000001" class="input_t01" /></td>
+							value="TJM10000029" class="input_t01" /></td>
 					</tr>
 					<tr>
 						<td class="tdr">收款机构名称</td>
-						<td><input type="text" id="payeeOrgName" value="测试很帅的"
+						<td><input type="text" id="payeeOrgName" value="郑尧辉"
 							name="payeeOrgName" /></td>
 					</tr>
 					<tr>
@@ -245,12 +245,12 @@
 					</tr>
 					<tr>
 						<td class="tdr">商品名称或者简要</td>
-						<td><input type="text" id="commodityName" value="测试小闪屏"
+						<td><input type="text" id="commodityName" value="测试微信公众号支付"
 							name="commodityName" /></td>
 					</tr>
 					<tr>
 						<td class="tdr">商品详细描述</td>
-						<td><input type="text" id="commodityDesc" value="测试小闪屏"
+						<td><input type="text" id="commodityDesc" value="测试微信公众号支付详细描述"
 							name="commodityDesc" /></td>
 					</tr>
 					
@@ -267,7 +267,7 @@
 					</tr>
 					<tr>
 						<td class="tdr">订单金额</td>
-						<td><input type="text" id="amount" value="10"
+						<td><input type="text" id="amount" value="0.02"
 							name="amount" /></td>
 					</tr>
 					
