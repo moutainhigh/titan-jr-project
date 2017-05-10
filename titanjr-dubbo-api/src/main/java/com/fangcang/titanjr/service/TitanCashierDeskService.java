@@ -64,6 +64,8 @@ public interface TitanCashierDeskService {
 	 */
 	public <T> void addModelOfPayment(PaymentItemRequest<T> request);
 	
+	
+	
 	/**
 	 * 暂时增加对贷款收银台的初始化方法
 	 * @Title: executeLoanDeskInit 
@@ -72,4 +74,10 @@ public interface TitanCashierDeskService {
 	 * @return: void
 	 */
 	public void executeLoanDeskInit() throws Exception;
+	
+	/**
+	 * 对已经注册的机构增加微信公众号收银台
+	 * @throws Exception
+	 */
+	public void executeWxPublicInit() throws Exception;
 }

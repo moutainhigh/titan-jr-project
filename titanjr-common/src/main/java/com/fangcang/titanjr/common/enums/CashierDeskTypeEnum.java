@@ -7,7 +7,7 @@ public enum CashierDeskTypeEnum {
 
     B2B_DESK("1","B2B"),SUPPLY_DESK("2","财务供应商"),
     ALLIANCE_DESK("3","商家联盟"),
-    RECHARGE("5","充值"),OPEN_ORG("6","对外开放"),TT_MALL("7","TTMALL");
+    RECHARGE("5","充值"),OPEN_ORG("6","对外开放"),TT_MALL("7","TTMALL"),WX_PUBLIC("8","微信公众号");
 
     public String deskCode;
     public String deskName;

@@ -39,6 +39,10 @@ public enum BusTypeEnum {
 		return this.type==WITHDRAW_RATE.type;
 	}
 	
+	public boolean isWxPublic(){
+		return this.type==WX_PUBLIC.type;
+	}
+	
 	public static Integer getBusTypeByItemType(String cashierItemType){
 		if(!StringUtil.isValidString(cashierItemType)){
 			return null;
