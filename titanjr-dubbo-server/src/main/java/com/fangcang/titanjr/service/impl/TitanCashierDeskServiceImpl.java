@@ -486,6 +486,20 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
 			throw e;
 		}
 	}
+	
+	
+	@Override
+	public void executeWxPublicInit() throws Exception {
+		
+		List<String> useridList =  titanCashierDeskDao.queryNotExistWxPublic();
+		CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest();
+		for(String userid:useridList){
+			cashierDeskInitRequest.setUserId(userid);
+			cashierDeskInitRequest.setConstId(CommonConstant.RS_FANGCANG_CONST_ID);
+			TitanCashierDesk wxPublicCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.WX_PUBLIC);
+	        titanCashierDeskDao.saveCashierDesk(wxPublicCashierDesk);
+		}
+	}
 
 	@Override
 	public <T> void addModelOfPayment(PaymentItemRequest<T> request) {
