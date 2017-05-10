@@ -218,7 +218,7 @@
 
 
 
-	<form id="wxPayForm" action="/titanjr-pay-dev3/titanPay.action" method="POST">
+	<form id="wxPayForm" action="titanPay.action" method="POST">
 		<div class="pay">
 
 			<table cellspacing="0" border="0">
