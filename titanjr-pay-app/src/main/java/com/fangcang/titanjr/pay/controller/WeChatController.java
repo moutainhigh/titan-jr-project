@@ -110,6 +110,7 @@ public class WeChatController {
 		}
 		// 构建本地落单请求对象
 		TitanOrderRequest dto = convertToTitanOrderReq(req);
+		
 		// 设置业务信息
 		if (StringUtil.isValidString(req.getBussInfo())) {
 			Map<String, String> map = JsonConversionTool.toObject(
@@ -508,6 +509,9 @@ public class WeChatController {
 		dto.setUserId(req.getPayerOrg());
 		dto.setRuserId(req.getPayeeOrg());
 		dto.setGoodsId(req.getBussOrderNo());
+		dto.setName(req.getPayerOrgName());
+		dto.setNotify(req.getNotifyUrl());
+		
 		return dto;
 	}
 
