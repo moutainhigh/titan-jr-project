@@ -115,6 +115,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
             TitanCashierDesk rechargeCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.RECHARGE);
             TitanCashierDesk openOrgCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.OPEN_ORG);
             TitanCashierDesk ttMAllCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.TT_MALL);
+            TitanCashierDesk wxPublicCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.WX_PUBLIC);
             //批量插入初始化收银台
             titanCashierDeskDao.saveCashierDesk(b2bCashierDesk);
             titanCashierDeskDao.saveCashierDesk(supplyCashierDesk);
@@ -122,6 +123,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
             titanCashierDeskDao.saveCashierDesk(rechargeCashierDesk);
             titanCashierDeskDao.saveCashierDesk(openOrgCashierDesk);
             titanCashierDeskDao.saveCashierDesk(ttMAllCashierDesk);
+            titanCashierDeskDao.saveCashierDesk(wxPublicCashierDesk);
             
 
             //B2B的收银台有下面三个选项
@@ -220,6 +222,8 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
 
             rateConfigList.add(bulidPayRateConfig(BusTypeEnum.QR_RATE, cashierDeskInitRequest.getUserId(), "第三方支付费率"));
             rateConfigList.add(bulidPayRateConfig(BusTypeEnum.WITHDRAW_RATE, cashierDeskInitRequest.getUserId(), "账户提现费率"));
+            
+            rateConfigList.add(bulidPayRateConfig(BusTypeEnum.WX_PUBLIC, cashierDeskInitRequest.getUserId(), "微信公众号支付费率"));
 
             titanRateConfigDao.batchSaveRateConfigs(rateConfigList);
             deskInitResponse.putSuccess();
@@ -249,13 +253,13 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
         	 
          }else if(bustype.isCREDIT()){
         	 rateConfig.setRatetype(1);//按百分比
-        	 rateConfig.setRsrate(0.2f);//千分之一点五
+        	 rateConfig.setRsrate(0.2f);
              rateConfig.setStandrate(0.3f);
              rateConfig.setExecutionrate(0f);
         	 
          }else if(bustype.isQR()){
         	 rateConfig.setRatetype(1);//按百分比
-        	 rateConfig.setRsrate(0.4f);//千分之一点五
+        	 rateConfig.setRsrate(0.4f);
              rateConfig.setStandrate(0.4f);
              rateConfig.setExecutionrate(0f);
         	 
@@ -263,6 +267,11 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
              rateConfig.setRatetype(2);//按笔收费
              rateConfig.setRsrate(3f);//每笔3元
              rateConfig.setStandrate(5f);//每笔5元
+             rateConfig.setExecutionrate(0f);
+         }else if(bustype.isWxPublic()){
+        	 rateConfig.setRatetype(1);//按百分比
+        	 rateConfig.setRsrate(0.4f);
+             rateConfig.setStandrate(0.4f);
              rateConfig.setExecutionrate(0f);
          }
          rateConfig.setUserid(userId);
