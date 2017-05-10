@@ -250,8 +250,7 @@
 					</tr>
 					<tr>
 						<td class="tdr">商品详细描述</td>
-						<td><input type="text" id="commodityDesc" value="测试微信公众号支付详细描述"
-							name="commodityDesc" /></td>
+						<td><input type="text" id="commodityDesc" value="测试微信公众号支付详细描述" name="commodityDesc" /></td>
 					</tr>
 					
 					
