@@ -383,7 +383,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						CommonConstant.OPERATE_SUCCESS)) {// 融数下单不成功
 					orderResponse.putErrorResult(orderOperateResponse
 							.getReturnMsg());
-					log.error("网银支付融数落单失败");
+					log.error("网银支付融数落单失败,Userorderid:"+orderRequest.getUserorderid());
 					titanFinancialUtilService.saveOrderException(orderRequest.getUserorderid(),OrderKindEnum.UserOrderId, OrderExceptionEnum.Online_Pay_Add_Rs_Order_Fail, JSONSerializer.toJSON(orderRequest).toString());
 					return orderResponse;
 				}
@@ -403,16 +403,15 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				boolean isSuccess = this.saveOrUpdateTitanTransOrder(
 						orderRequest, isAddOrderAgain);
 				if (!isSuccess) {
-					log.error("网银支付，保存本地单失败");
+					log.error("网银支付，保存本地单失败,PayOrderNo:"+orderRequest.getPayOrderNo());
 					orderResponse.putErrorResult("保存本地单失败");
 					titanFinancialUtilService.saveOrderException(orderRequest.getPayOrderNo(), OrderKindEnum.PayOrderNo, OrderExceptionEnum.Online_Pay_Save_Order_Fail, JSONSerializer.toJSON(orderRequest).toString());
 					return orderResponse;
 				}
 				orderResponse.setOrderNo(orderOperateResponse.getOrderid());
 			}
-
-			log.info("融数落单返回结果dubbo:" + JSONSerializer.toJSON(orderResponse));
 			orderResponse.putSuccess();
+			log.info("融数落单返回结果dubbo:" + JSONSerializer.toJSON(orderResponse));
 			return orderResponse;
 
 		} catch (Exception e) {
