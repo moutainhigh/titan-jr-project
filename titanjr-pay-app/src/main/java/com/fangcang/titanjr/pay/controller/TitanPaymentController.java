@@ -212,9 +212,9 @@ public class TitanPaymentController extends BaseController {
 	        		financialTradeService.notifyPayResult(transOrderDTO.getUserorderid());
 	        		
 	        		if(CommonConstant.FREEZE_ORDER.equals(transOrderDTO.getIsEscrowedPayment())){//需要进行冻结操作
-	        			log.info("begin to freeze:"+transferRequest);
+	        			log.info("begin to freeze,transferRequest:"+Tools.gsonToString(transferRequest));
 	        			boolean freezeSuccess = titanPaymentService.freezeAccountBalance(transferRequest,orderNo);
-	        			log.info("the result of freeze:"+freezeSuccess);
+	        			log.info("the result of freeze,orderNo:"+orderNo+",冻结状态："+freezeSuccess);
     					//update the status of the order
     					if(freezeSuccess){//freeze order is success
     						orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
