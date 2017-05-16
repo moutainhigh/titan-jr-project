@@ -272,15 +272,15 @@
 					
 					
 					<tr>
-						<td class="tdr">支付通道类型 1 WX</td>
-						<td><input type="text" id="channelType" value="1"
+						<td class="tdr">支付通道类型  WX</td>
+						<td><input type="text" id="channelType" value="10243"
 							name="channelType" /></td>
 					</tr>
 					
 					
 					<tr>
 						<td class="tdr">业务通知地址</td>
-						<td><input type="text" id="notifyUrl" value="http://www.baidu.com"
+						<td><input type="text" id="notifyUrl" value="http://www.163.com"
 							name="notifyUrl" /></td>
 					</tr>
 					
@@ -294,7 +294,7 @@
 					
 					<tr>
 						<td class="tdr">成功回调地址</td>
-						<td><input type="text" id="successJumpUrl" value="http://www.baidu.com"
+						<td><input type="text" id="successJumpUrl" value="http://www.sina.com"
 							name="successJumpUrl" /></td>
 					</tr>
 					
