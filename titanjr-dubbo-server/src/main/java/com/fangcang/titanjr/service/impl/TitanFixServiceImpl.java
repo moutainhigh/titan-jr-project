@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
@@ -58,7 +60,11 @@ public class TitanFixServiceImpl implements TitanFixService {
 			for(TitanOrderException item : paginationSupport.getItemList()){
 				
 				TransOrderRequest transOrderRequest = new TransOrderRequest();
-				transOrderRequest.setOrderid(item.getOrderId());
+				if(item.getOrderType().equals(OrderKindEnum.OrderId.getType())){
+					transOrderRequest.setOrderid(item.getOrderId());
+				}else if(item.getOrderType().equals(OrderKindEnum.UserOrderId.getType())){
+					transOrderRequest.setUserorderid(item.getOrderId());
+				}
 				TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
 			    ConfirmFinanceRequest req = new ConfirmFinanceRequest();
 			    req.setTransOrderDTO(transOrderDTO);
@@ -67,9 +73,13 @@ public class TitanFixServiceImpl implements TitanFixService {
 			    boolean isNotifySuccss = false;//是否通知成功
 			    try {
 			    	if(!sendOrderIdSet.contains(item.getOrderId())){
-			    		isNotifySuccss = tradeService.confirmFinance(req);
-			    		log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()).append(",次数(failState):").append(item.getFailState()).append(",是否成功："+isNotifySuccss));
-						sendOrderIdSet.add(item.getOrderId());
+			    		if(transOrderDTO.getStatusid().equals(OrderStatusEnum.ORDER_SUCCESS.getStatus())){
+			    			isNotifySuccss = tradeService.confirmFinance(req);
+				    		log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()).append(",次数(failState):").append(item.getFailState()).append(",通知是否成功："+isNotifySuccss));
+			    		}else{
+			    			log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()).append(",次数(failState):").append(item.getFailState()).append(",该订单未支付成功，订单状态："+transOrderDTO.getStatusid()));
+			    		}
+			    		sendOrderIdSet.add(item.getOrderId());
 						isDuplicate = false;
 			    	}else{
 			    		isDuplicate = true;
