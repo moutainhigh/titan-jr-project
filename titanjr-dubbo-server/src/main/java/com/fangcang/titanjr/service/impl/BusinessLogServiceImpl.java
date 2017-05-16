@@ -50,6 +50,11 @@ public class BusinessLogServiceImpl implements BusinessLogService {
 					transOrderRequest.setPayorderno(addPayLogRequest.getOrderId());
 					TransOrderDTO orderDTO = orderService.queryTransOrderDTO(transOrderRequest);
 					payLog.setTransOrderid(orderDTO.getTransid()+"");
+		    	}else if(addPayLogRequest.getOrEnum().getType().equals(OrderKindEnum.OrderId.getType())){
+		    		TransOrderRequest transOrderRequest = new TransOrderRequest();
+					transOrderRequest.setOrderid(addPayLogRequest.getOrderId());
+					TransOrderDTO orderDTO = orderService.queryTransOrderDTO(transOrderRequest);
+					payLog.setTransOrderid(orderDTO.getTransid()+"");
 		    	}else{
 		    		log.error(Tools.getStringBuilder().append("订单号类型错误，日志记录失败,参数orderId：").append(addPayLogRequest.getOrderId()).append(",OrderKindEnum:").append(addPayLogRequest.getOrEnum().getType()));
 		    		return ;
