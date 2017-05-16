@@ -83,7 +83,7 @@ public class TitanFixServiceImpl implements TitanFixService {
 					String failState ;
 					Date updateTime ;
 					if(isNotifySuccss){//或者成功
-						failState = "1";
+						failState = "200";
 						updateTime = new Date();
 					}else if(isDuplicate){//orderid重复记录，则不再通知
 						next = NotifyPolicy.FailState_99;
@@ -121,12 +121,12 @@ public class TitanFixServiceImpl implements TitanFixService {
 	 *
 	 */
 	public enum NotifyPolicy{
-		FailState_0("0","2",1,"MINUTES","状态为0,通知第一次"),
-		FailState_2("2","3",3,"MINUTES","状态为2,通知第二次"),
-		FailState_3("3","4",10,"MINUTES","状态为3,通知第三次"),
-		FailState_4("4","5",30,"MINUTES","状态为4,通知第四次"),
-		FailState_5("5","6",2,"HOURS","状态为5,通知第五次"),
-		FailState_6("6","99",12,"HOURS","状态为6,12小时后，再通知第六次"),
+		FailState_0("0","1",1,"MINUTES","状态为0,通知第一次"),
+		FailState_1("1","2",3,"MINUTES","状态为1,通知第二次"),
+		FailState_2("2","3",10,"MINUTES","状态为2,通知第三次"),
+		FailState_3("3","4",30,"MINUTES","状态为3,通知第四次"),
+		FailState_4("4","5",2,"HOURS","状态为4,通知第五次"),
+		FailState_5("5","99",12,"HOURS","状态为5,12小时后，再通知第六次"),
 		FailState_99("99","0",0,"HOURS","状态为99,停止通知");
 		
 		/**

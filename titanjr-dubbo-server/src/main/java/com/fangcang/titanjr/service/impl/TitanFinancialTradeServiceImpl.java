@@ -310,14 +310,14 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				titanOrderPayreq = this.queryOrderPayReqByTransOrderId(titanOrderPayreq);
 				if (null == titanOrderPayreq) 
 				{
-					log.error("未找到相应的充值单");
+					log.error("未找到相应的充值单，transid:"+transOrderDTO.getTransid());
 					orderResponse.putErrorResult("系统错误");
 					return orderResponse;
 				}
 
 				if (ReqstatusEnum.RECHARFE_SUCCESS.getStatus() == titanOrderPayreq
 						.getReqstatus()) {
-					log.error("该充值单已成功充值");
+					log.error("该充值单已成功充值，transid:"+transOrderDTO.getTransid()+",OrderNo:"+titanOrderPayreq.getOrderNo());
 					orderResponse.putErrorResult("该单已成功充值,请勿重新充值");
 					return orderResponse;
 				}
@@ -351,12 +351,12 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						orderid = titanOrderPayreq.getOrderNo();
 						orderResponse.setOrderNo(orderid);
 					} else {
-						log.info("单已过期，废单");		
+						log.info("单已过期..，废单,单号orderId:"+transOrderDTO.getOrderid());	
 						this.updateOrderNoEffect(transOrderDTO.getTransid());
 						isAddOrderAgain = true;
 					}
 				} else {
-					log.info("单已过期，废单");
+					log.info("单已过期，废单,单号orderId:"+transOrderDTO.getOrderid());
 					this.updateOrderNoEffect(transOrderDTO.getTransid());
 					isAddOrderAgain = true;
 				}
@@ -403,7 +403,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				boolean isSuccess = this.saveOrUpdateTitanTransOrder(
 						orderRequest, isAddOrderAgain);
 				if (!isSuccess) {
-					log.error("网银支付，保存本地单失败,PayOrderNo:"+orderRequest.getPayOrderNo());
+					log.error("网银支付，保存本地单失败,PayOrderNo:"+titanPaymentRequest.getPayOrderNo());
 					orderResponse.putErrorResult("保存本地单失败");
 					titanFinancialUtilService.saveOrderException(orderRequest.getPayOrderNo(), OrderKindEnum.PayOrderNo, OrderExceptionEnum.Online_Pay_Save_Order_Fail, JSONSerializer.toJSON(orderRequest).toString());
 					return orderResponse;
@@ -411,11 +411,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				orderResponse.setOrderNo(orderOperateResponse.getOrderid());
 			}
 			orderResponse.putSuccess();
-			log.info("融数落单返回结果dubbo:" + JSONSerializer.toJSON(orderResponse));
+			log.info("融数落单返回结果:" + JSONSerializer.toJSON(orderResponse)+",PayOrderNo:"+titanPaymentRequest.getPayOrderNo());
 			return orderResponse;
 
 		} catch (Exception e) {
-			log.error("落单失败" + e.getMessage());
+			log.error("落单失败:" + e.getMessage()+",PayOrderNo:"+titanPaymentRequest.getPayOrderNo());
 			orderResponse.putErrorResult("落单异常");
 		}
 		return orderResponse;

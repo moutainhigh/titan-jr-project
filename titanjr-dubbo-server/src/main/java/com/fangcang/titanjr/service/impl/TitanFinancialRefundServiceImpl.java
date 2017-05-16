@@ -237,7 +237,7 @@ public class TitanFinancialRefundServiceImpl implements
 		return response;
 	}
 	/***
-	 * 下退款单
+	 * 下退款单并退款
 	 * @param refundOrderRequest
 	 */
 	private BaseResponseDTO refundOrder(TitanJrRefundRequest refundRequest){
@@ -726,7 +726,6 @@ public class TitanFinancialRefundServiceImpl implements
 						titanJrRefundRequest.setOrderTime(titanOrderPayDTO.getOrderTime());
 						titanJrRefundRequest.setVersion(titanOrderPayDTO.getVersion());
 						titanJrRefundRequest.setSignType(titanOrderPayDTO.getSignType().toString());
-//						titanJrRefundRequest.setIsRealTime(CommonConstant.NOT_REAL_TIME);
 					} else {//直接进行账户退款,退款到账户余额
 						titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_ACCOUNT.type);
 						log.info("退款冲销，订单orderid:"+refundDTO.getOrderNo()+",无充值单，直接退到账户余额");
@@ -734,6 +733,9 @@ public class TitanFinancialRefundServiceImpl implements
 					titanRefundDao.updateRefundDTO(refundDTO);
 			    	this.refundOrder(titanJrRefundRequest);
 			    }
+				
+				
+				
 			}else{
 				log.error("退款单状态查询失败,订单[orderid]:"+refundDTO.getOrderNo()+",返回值[notifyRefundResponse]:"+Tools.gsonToString(notifyRefundResponse));
 			}
