@@ -219,7 +219,7 @@ public class TitanFinancialRefundServiceImpl implements
 				isFreeze = true;
 				return response;
 			}
-			this.refundOrder(refundRequest);
+			this.notifyRefundOrder(refundRequest);
 			this.updateTransOrderByKey(OrderStatusEnum.REFUND_IN_PROCESS, titanTransferDTO.getTransorderid(), null);
 			RefundStatusEnum refundStatus = RefundStatusEnum.REFUND_IN_PROCESS;
 			log.info("6.7通知业务系统退款结果");
@@ -240,7 +240,7 @@ public class TitanFinancialRefundServiceImpl implements
 	 * 下退款单并退款
 	 * @param refundOrderRequest
 	 */
-	private BaseResponseDTO refundOrder(TitanJrRefundRequest refundRequest){
+	private BaseResponseDTO notifyRefundOrder(TitanJrRefundRequest refundRequest){
 		//下退款单
 		log.info("6.5下退款单进行退款");
 		NotifyRefundResponse notifyRefundResponse = new NotifyRefundResponse();
@@ -282,7 +282,7 @@ public class TitanFinancialRefundServiceImpl implements
 			log.error("下退款单失败" + refundOrderResponse.getReturnMessage());
 			//this.fixRefundProcess(tradeTransferRequest, userFeeTransferRequest, titanTransferReq, refundRequest);
 			notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.REFUND_FAIL);
-			this.orderRefundFreeze(refundRequest);
+			this.orderRefundFreeze(refundRequest);//需要冻结之前的支付单
 			return notifyRefundResponse;
 		}
 		
@@ -655,30 +655,35 @@ public class TitanFinancialRefundServiceImpl implements
 			notifyRefundRequest.setSignType(SignTypeEnum.MD5.getKey());
 			
 			NotifyRefundResponse notifyRefundResponse = this.notifyGateawayRefund(notifyRefundRequest);
-			log.info("退款单号："+notifyRefundResponse.getOrderNo()+",融数退款状态是:"+notifyRefundResponse.getRefundStatus());
 			if(notifyRefundResponse.isResult()){
+				log.info("refundConfirm()-查询退款单号orderId："+refundDTO.getOrderNo()+",融数退款状态是:"+notifyRefundResponse.getRefundStatus());
+				String status = notifyRefundResponse.getRefundStatus();
+				double diffHour = DateUtil.getDiffHour(refundDTO.getCreatetime(), new Date());
+				boolean isLongTime = false;//规定时长内不同步状态和通知
+				boolean isSynState = false;//是否需要同步状态
+				if(diffHour>24){
+					isLongTime = true;
+				}
 				TransOrderDTO transOrderDTO = new TransOrderDTO();
 				transOrderDTO.setOrderid(refundDTO.getOrderNo());
-				String status = notifyRefundResponse.getRefundStatus();
+				
 				if(RefundStatusEnum.REFUND_SUCCESS.status==Integer.parseInt(status)){
+					isSynState = true;
+					isLongTime = true;
 					transOrderDTO.setStatusid(OrderStatusEnum.REFUND_SUCCESS.getStatus());
 					refundDTO.setStatus(RefundStatusEnum.REFUND_SUCCESS.status);
-					this.threadNotify(refundDTO.getOrderNo(),RefundStatusEnum.getRefundStatusEnumByStatus(refundDTO.getStatus()));
-					titanOrderService.updateTransOrder(transOrderDTO);
-					titanRefundDao.updateRefundDTO(refundDTO);
-					
 			    }else if(RefundStatusEnum.REFUND_FAILURE.status==Integer.parseInt(status)
 			    		|| RefundStatusEnum.REFUND_PROCESS_FAILURE.status==Integer.parseInt(status)){
-			    	//transOrderDTO.setStatusid(OrderStatusEnum.REFUND_FAIL.getStatus());
-			    	//refundDTO.setStatus(Integer.parseInt(status));
-			    	log.error("退款单号："+refundDTO.getOrderNo()+",融数退款状态是:"+status+",返回信息：退款失败");
-			    }else if(RefundStatusEnum.REFUND_AFAINST.status==Integer.parseInt(status)){
+			    	isSynState = true;
+			    	transOrderDTO.setStatusid(OrderStatusEnum.REFUND_FAIL.getStatus());
 			    	refundDTO.setStatus(Integer.parseInt(status));
-			    	
+			    	log.info("refundConfirm()-退款单号orderid："+refundDTO.getOrderNo()+",融数退款状态是:"+status+",返回信息：退款失败");
+			    }else if(RefundStatusEnum.REFUND_AFAINST.status==Integer.parseInt(status)){//不需要同步状态，业务实行递归
+			    	refundDTO.setStatus(Integer.parseInt(status));
 			    	TransOrderRequest paramTransOrder = new TransOrderRequest();
 			    	paramTransOrder.setUserorderid(refundDTO.getOrderNo());
 					TransOrderDTO paramTransOrderDTO = titanOrderService.queryTransOrderDTO(paramTransOrder);
-					log.info("定时器同步退款状态，融数退款状态为["+RefundStatusEnum.REFUND_AFAINST.name()+"]，订单orderid:"+refundDTO.getOrderNo());
+
 					//转账单
 					TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
 					titanTransferDTO.setPayOrderNo(transOrderDTO.getPayorderno());
@@ -687,7 +692,7 @@ public class TitanFinancialRefundServiceImpl implements
 					titanTransferDTO.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
 					titanTransferDTO = titanOrderService.getTitanTransferDTO(titanTransferDTO);
 					if (null == titanTransferDTO) {
-						log.error("退款冲销，找不到转账单，订单号Payorderno："+transOrderDTO.getPayorderno()+",orderid:"+transOrderDTO.getOrderid());
+						log.error("refundConfirm()-退款冲销，找不到转账单，订单号Payorderno："+transOrderDTO.getPayorderno()+",orderid:"+refundDTO.getOrderNo());
 						return ;
 					}
 					
@@ -718,7 +723,7 @@ public class TitanFinancialRefundServiceImpl implements
 					titanOrderPayDTO.setOrderNo(paramTransOrderDTO.getOrderid());
 					titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
 					if (null != titanOrderPayDTO) {//有充值单
-						log.info("退款冲销，订单orderid:"+refundDTO.getOrderNo()+",有充值单");
+						log.info("refundConfirm()-退款冲销，订单orderid:"+refundDTO.getOrderNo()+",有充值单");
 						if (transOrderDTO.getAmount() != null) {//充值的钱
 							titanJrRefundRequest.setRefundAmount(transOrderDTO.getAmount().toString());
 						}
@@ -728,16 +733,21 @@ public class TitanFinancialRefundServiceImpl implements
 						titanJrRefundRequest.setSignType(titanOrderPayDTO.getSignType().toString());
 					} else {//直接进行账户退款,退款到账户余额
 						titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_ACCOUNT.type);
-						log.info("退款冲销，订单orderid:"+refundDTO.getOrderNo()+",无充值单，直接退到账户余额");
+						log.info("refundConfirm()-退款冲销，订单orderid:"+refundDTO.getOrderNo()+",无充值单，直接退到账户余额");
 					}
+
+					//更改就订单状态
 					titanRefundDao.updateRefundDTO(refundDTO);
-			    	this.refundOrder(titanJrRefundRequest);
+					//重新下单
+			    	this.notifyRefundOrder(titanJrRefundRequest);
 			    }
-				
-				
-				
+				if(isSynState&&isLongTime){
+					this.threadNotify(refundDTO.getOrderNo(),RefundStatusEnum.getRefundStatusEnumByStatus(refundDTO.getStatus()));
+					titanOrderService.updateTransOrder(transOrderDTO);
+					titanRefundDao.updateRefundDTO(refundDTO);
+				}
 			}else{
-				log.error("退款单状态查询失败,订单[orderid]:"+refundDTO.getOrderNo()+",返回值[notifyRefundResponse]:"+Tools.gsonToString(notifyRefundResponse));
+				log.error("refundConfirm()-退款单状态查询失败,订单[orderid]:"+refundDTO.getOrderNo()+",返回值[notifyRefundResponse]:"+Tools.gsonToString(notifyRefundResponse));
 			}
 		}
 	}
@@ -753,16 +763,15 @@ public class TitanFinancialRefundServiceImpl implements
 		try{
 			response = TitanjrHttpTools.confirmRefund(bean, httpPost);
 			if(!StringUtil.isValidString(response)){
-				log.error("回调退款单失败:" + bean.getUserOrderId());
+				log.error("回调退款单失败,参数[NotifyBean]："+JSONSerializer.toJSON(bean));
 				throw new Exception("回调异常");
 			}
 			CallBackInfo callBackInfo = TitanjrHttpTools.analyzeResponse(response);
 			if (callBackInfo == null ||!"000".equals(callBackInfo.getCode())) {
-				log.error("回调异常，TTMALL返回失败");
+				log.error("回调异常，TTMALL返回失败,参数[NotifyBean]："+JSONSerializer.toJSON(bean)+",返回信息："+response);
 				throw new Exception("回调异常，TTMALL返回失败");
 			}
-			
-			log.info("回调TTMALL成功");
+			log.info("回调TTMALL成功,参数[NotifyBean]："+JSONSerializer.toJSON(bean));
 			
 		}catch(Exception e){
 			log.error("退款回调失败",e);
@@ -788,7 +797,7 @@ public class TitanFinancialRefundServiceImpl implements
 				bean.setUserOrderId(refund.getUserOrderId());
 				bean.setCode(refundStatus.status.toString());
 				bean.setBusinessInfo(refund.getBusinessInfo());
-				log.info("退款单回调的参数："+JSONSerializer.toJSON(bean));
+				log.info("threadNotify()通知第三方退款单状态,参数[NotifyBean]："+JSONSerializer.toJSON(bean));
 				notifyTTMall(bean);
 			}
 		});
