@@ -489,16 +489,37 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
 	
 	
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
 	public void executeWxPublicInit() throws Exception {
 		
-		List<String> useridList =  titanCashierDeskDao.queryNotExistWxPublic();
+		List<String> useridList =  titanCashierDeskDao.queryNotExistCashierDesk(Integer.valueOf(CashierDeskTypeEnum.WX_PUBLIC.deskCode));
 		CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest();
+		//添加收银台
 		for(String userid:useridList){
+			
 			cashierDeskInitRequest.setUserId(userid);
 			cashierDeskInitRequest.setConstId(CommonConstant.RS_FANGCANG_CONST_ID);
 			TitanCashierDesk wxPublicCashierDesk = this.buildCahsierDesk(cashierDeskInitRequest, CashierDeskTypeEnum.WX_PUBLIC);
 	        titanCashierDeskDao.saveCashierDesk(wxPublicCashierDesk);
 		}
+		//添加机构费率
+		List<String> rateUserIdlist = titanRateConfigDao.queryUserIdNoRateConfig(BusTypeEnum.WX_PUBLIC.type);
+		if(CollectionUtils.isNotEmpty(rateUserIdlist)){
+			List<TitanRateConfig> rateConfiglist = new ArrayList<TitanRateConfig>();
+			int i=0,size=0;
+			for(String userid:rateUserIdlist){
+				i++;
+				size++;
+				rateConfiglist.add(bulidPayRateConfig(BusTypeEnum.WX_PUBLIC, userid, "微信公众号支付费率"));
+				if(i==10||size==rateUserIdlist.size()){//每10个或者最后一个提交。
+					titanRateConfigDao.batchSaveRateConfigs(rateConfiglist);
+					i=0;
+					rateConfiglist.clear();
+				}
+			}
+		}
+		
+		
 	}
 
 	@Override

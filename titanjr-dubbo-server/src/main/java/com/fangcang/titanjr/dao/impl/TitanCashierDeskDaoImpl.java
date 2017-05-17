@@ -39,9 +39,9 @@ public class TitanCashierDeskDaoImpl extends GenericDAOMyBatisImpl implements Ti
 	}
 	
 	@Override
-	public List<String> queryNotExistWxPublic() throws DaoException {
+	public List<String> queryNotExistCashierDesk(Integer usedfor) throws DaoException {
 		try {
-			return super.selectList("com.fangcang.titanjr.dao.TitanCashierDeskDao.queryNotExistWxPublic");
+			return super.selectList("com.fangcang.titanjr.dao.TitanCashierDeskDao.queryNotExistCashierDesk",usedfor);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}

@@ -687,8 +687,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			return false;
 		}
 		try {
-			log.info("转账成功之后回调:" + JSONSerializer.toJSON(params) + "---url---"
-					+ url);
+			log.info("转账成功之后通知支付结果，参数:" + JSONSerializer.toJSON(params) + "--通知地址url:"
+					+ url+",userid:"+transOrderDTO.getUserid());
 			HttpPost httpPost = new HttpPost(url);
 			HttpResponse resp = HttpClient.httpRequest(params, httpPost);
 			if (null != resp) {
@@ -704,15 +704,15 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				httpPost.releaseConnection();
 			}
 		} catch (Exception e) {
-			log.error("调用http请求通知支付失败,通知参数:"+JSONSerializer.toJSON(params), e);
+			log.error("调用http请求通知支付失败,通知参数:"+JSONSerializer.toJSON(params)+",userid:"+transOrderDTO.getUserid(), e);
 			throw e;
 		}
-		log.info("调用http请求通知支付结果：" + response);
+		log.info("调用http请求通知支付结果：" + response+",userid:"+transOrderDTO.getUserid());
 		if (StringUtil.isValidString(response)) {
 			CallBackInfo callBackInfo = TitanjrHttpTools
 					.analyzeResponse(response);
 			if (!"000".equals(callBackInfo.getCode())) {
-				log.error("回调失败单号,通知参数:"+JSONSerializer.toJSON(params));
+				log.error("回调失败单号,通知参数:"+JSONSerializer.toJSON(params)+",userid:"+transOrderDTO.getUserid());
 				if(req.getIsSaveLog()){
 					titanFinancialUtilService.saveOrderException(transOrderDTO.getUserorderid(),OrderKindEnum.UserOrderId, OrderExceptionEnum.Notify_Client_Transfer_Notify_Fail, JSONSerializer.toJSON(callBackInfo).toString());
 				}
@@ -722,7 +722,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			}
 
 		} else {// 记录异常单
-			log.error("回调无响应,通知参数:"+JSONSerializer.toJSON(params));
+			log.error("回调无响应,通知参数:"+JSONSerializer.toJSON(params)+",userid:"+transOrderDTO.getUserid());
 			if(req.getIsSaveLog()){
 				titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Client_Not_CallBack, JSONSerializer.toJSON(transOrderDTO).toString());
 			}
@@ -1798,7 +1798,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     		log.info(response.getReturnMessage());
     		return;
     	}
-    	log.info("获取订单详情:"+JSONSerializer.toJSON(response));
+    	log.info("repairTransferOrder()获取订单详情:"+JSONSerializer.toJSON(response));
     	List<RepairTransferDTO> repairTransferDTOList = response.getRepairTransferDTOListList();
     	if(repairTransferDTOList !=null && repairTransferDTOList.size()>0){
     		for(RepairTransferDTO repairTransferDTO :repairTransferDTOList){

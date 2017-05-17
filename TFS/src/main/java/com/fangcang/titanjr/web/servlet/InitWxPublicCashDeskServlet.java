@@ -34,9 +34,12 @@ public class InitWxPublicCashDeskServlet extends HttpServlet
 	{
 		try {
 			titanCashierDeskService.executeWxPublicInit();
+			response.setContentType("text/html");
+			response.setCharacterEncoding("utf-8");
 			response.getWriter().write("微信公众号收银员增加成功!");
 		} catch (Exception e) {
-			
+			response.setContentType("text/html");
+			response.setCharacterEncoding("utf-8");
 			response.getWriter().write("微信公众号收银员增加失败了哈!");
 			e.printStackTrace();
 		}

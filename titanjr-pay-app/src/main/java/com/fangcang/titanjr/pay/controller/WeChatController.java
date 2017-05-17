@@ -334,6 +334,11 @@ public class WeChatController {
 		return url;
 	}
 
+	@RequestMapping(value = "/errorView")
+	public String errorView(){
+		return "/wx/errorView";
+	}
+	
 	@RequestMapping(value = "/checkstand")
 	public String checkstand(String code, String state, String orderData,
 			String successJumpUrl, String failJumpUrl,
@@ -523,8 +528,8 @@ public class WeChatController {
 	 */
 	private boolean checkOrderInfo(MobilePayOrderReq req) {
 
-		if (!StringUtil.isValidString(req.getChannelType())) {
-			log.error("ChannelType is null");
+		if (!PayerTypeEnum.B2B_WX_PUBLIC_PAY.getKey().equals(req.getChannelType())) {
+			log.error("ChannelType is incorrect");
 			return false;
 		}
 		PayerTypeEnum pe = PayerTypeEnum.getPayerTypeEnumByKey(req
@@ -553,8 +558,7 @@ public class WeChatController {
 			return false;
 		}
 
-		if (StringUtil.isValidString(req.getCurrencyType())
-				&& !req.getCurrencyType().equals(CommonConstant.CURRENT_TYPE)) {
+		if (!CommonConstant.CURRENT_TYPE.equals(req.getCurrencyType())) {
 			log.error("Currency type must be RMB ");
 			return false;
 		}
