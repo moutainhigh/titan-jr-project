@@ -21,5 +21,5 @@ public interface TitanCashierDeskDao {
 	 * @return
 	 * @throws DaoException
 	 */
-	List<String> queryNotExistWxPublic() throws DaoException;
+	List<String> queryNotExistCashierDesk(Integer usedfor) throws DaoException;
 }

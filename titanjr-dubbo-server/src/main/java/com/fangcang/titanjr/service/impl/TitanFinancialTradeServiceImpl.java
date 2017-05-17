@@ -1798,7 +1798,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     		log.info(response.getReturnMessage());
     		return;
     	}
-    	log.info("获取订单详情:"+JSONSerializer.toJSON(response));
+    	log.info("repairTransferOrder()获取订单详情:"+JSONSerializer.toJSON(response));
     	List<RepairTransferDTO> repairTransferDTOList = response.getRepairTransferDTOListList();
     	if(repairTransferDTOList !=null && repairTransferDTOList.size()>0){
     		for(RepairTransferDTO repairTransferDTO :repairTransferDTOList){

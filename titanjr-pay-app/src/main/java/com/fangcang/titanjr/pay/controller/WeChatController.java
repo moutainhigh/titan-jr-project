@@ -334,6 +334,11 @@ public class WeChatController {
 		return url;
 	}
 
+	@RequestMapping(value = "/errorView")
+	public String errorView(){
+		return "/wx/errorView";
+	}
+	
 	@RequestMapping(value = "/checkstand")
 	public String checkstand(String code, String state, String orderData,
 			String successJumpUrl, String failJumpUrl,
