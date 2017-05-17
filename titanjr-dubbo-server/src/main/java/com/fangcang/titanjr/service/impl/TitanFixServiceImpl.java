@@ -73,12 +73,12 @@ public class TitanFixServiceImpl implements TitanFixService {
 			    boolean isNotifySuccss = false;//是否通知成功
 			    try {
 			    	if(!sendOrderIdSet.contains(item.getOrderId())){
-			    		if(transOrderDTO.getStatusid().equals(OrderStatusEnum.ORDER_SUCCESS.getStatus())){
+			    		//if(transOrderDTO.getStatusid().equals(OrderStatusEnum.ORDER_SUCCESS.getStatus())){
 			    			isNotifySuccss = tradeService.confirmFinance(req);
 				    		log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()).append(",次数(failState):").append(item.getFailState()).append(",通知是否成功："+isNotifySuccss));
-			    		}else{
-			    			log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()).append(",次数(failState):").append(item.getFailState()).append(",该订单未支付成功，订单状态："+transOrderDTO.getStatusid()));
-			    		}
+			    		//}else{
+			    		//log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()).append(",次数(failState):").append(item.getFailState()).append(",该订单未支付成功，订单状态："+transOrderDTO.getStatusid()));
+			    		//}
 			    		sendOrderIdSet.add(item.getOrderId());
 						isDuplicate = false;
 			    	}else{
