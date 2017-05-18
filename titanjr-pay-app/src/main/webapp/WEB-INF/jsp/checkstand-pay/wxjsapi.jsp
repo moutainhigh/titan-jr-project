@@ -7,7 +7,6 @@
 <title>收银台</title>
 </head>
 <body>
-<div>支付页面跳转中...</div>
 <script type="text/javascript">
 
 		var payJson = '${payJson}';
