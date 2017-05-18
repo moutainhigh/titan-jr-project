@@ -254,7 +254,7 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 				SendMessageRequest sendCodeRequest = new SendMessageRequest();
 				sendCodeRequest.setReceiveAddress("jinrong@fangcang.com");
 				sendCodeRequest.setSubject(SMSTemplate.ORDER_WARNING.getSubject());
-				sendCodeRequest.setContent(MessageFormat.format(SMSTemplate.ORDER_WARNING.getContent(), orderId,oet.msg));
+				sendCodeRequest.setContent(MessageFormat.format(SMSTemplate.ORDER_WARNING.getContent(), orderId,oet.msg,","+content));
 				sendCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
 				smsService.asynSendMessage(sendCodeRequest);
 			}

@@ -493,7 +493,10 @@
              select 
                transorder.constid as merchantNo,
                transorder.orderid as orderNo,
+               re.refundid,
                re.refundOrderno,
+               re.createtime,
+               re.userOrderId,
                re.refundAmount,
                re.orderTime
              from t_tfs_transorder transorder
