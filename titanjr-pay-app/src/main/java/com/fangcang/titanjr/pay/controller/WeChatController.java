@@ -50,6 +50,7 @@ import com.fangcang.titanjr.pay.util.HttpUtils;
 import com.fangcang.titanjr.pay.util.WeChatUtils;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.util.StringUtil;
 
 /**
@@ -84,6 +85,9 @@ public class WeChatController {
 
 	@Resource
 	private TitanCashierDeskService titanCashierDeskService;
+	
+	@Resource
+	private TitanFinancialUtilService utilservice;
 
 	/**
 	 * 移动支付入口
@@ -437,9 +441,9 @@ public class WeChatController {
 			try {
 				// 如果会话中存在该签名，那么就直接返回签名信息，不用向网关进行查询
 				if (session.getAttribute(dataDTO.getSignMsg()) == null) {
-
+					String gateway = utilservice.querySysConfig().getGateWayURL();
 					result = HttpUtils
-							.doPost("http://uatrsjf.rongcapital.com.cn:8487/checkstand/payment",
+							.doPost(gateway,
 									gatewayParam);
 					session.setAttribute(dataDTO.getSignMsg(), result);
 				}
