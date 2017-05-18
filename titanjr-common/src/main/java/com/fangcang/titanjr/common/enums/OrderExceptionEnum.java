@@ -67,8 +67,9 @@ public enum OrderExceptionEnum {
 	
 	Refund_Freeze_Update_Order_Fail("17_13","0","退款冻结金额后修改订单失败"),Refund_Timer_Update_Order("17_15","0","退款定时器更新订单失败"),
 	
-	ReFund_Notify_Fail("11_17","0","退款回调失败"),Refund_Success_Update_Order_Fail("17_19","0","退款成功更新订单状态失败");
+	ReFund_Notify_Fail("11_17","0","退款回调失败"),Refund_Success_Update_Order_Fail("17_19","0","退款成功更新订单状态失败"),
 	
+	Refund_RS_Fail("11_20","0","融数退款失败");
 	
 	public String msg;
 	
