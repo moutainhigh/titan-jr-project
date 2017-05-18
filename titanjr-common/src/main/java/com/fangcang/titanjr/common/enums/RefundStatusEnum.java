@@ -1,5 +1,7 @@
 package com.fangcang.titanjr.common.enums;
 
+import com.fangcang.titanjr.common.util.Tools;
+
 public enum RefundStatusEnum {
 
 	REFUND_IN_PROCESS(0,"退款中"),REFUND_PROCESS_FAILURE(1,"审核失败"),REFUND_SUCCESS(2,"退款成功"),REFUND_FAILURE(3,"退款失败"),REFUND_AFAINST(4,"退款冲销");
@@ -24,6 +26,9 @@ public enum RefundStatusEnum {
 			}
 		}
 		return null;
+	}
+	public String toString(){
+		return Tools.gsonToString(this);
 	}
 	
 }
