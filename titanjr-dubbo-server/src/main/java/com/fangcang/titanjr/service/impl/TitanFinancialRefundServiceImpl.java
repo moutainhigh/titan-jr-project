@@ -250,6 +250,7 @@ public class TitanFinancialRefundServiceImpl implements
 			}
 			NotifyRefundRequest notifyRefundRequest = this.convertToNotifyRefundRequest(refundRequest);
 			NotifyRefundResponse notifyRefundResponse = notifyRefundOrder(refundOrderRequest,notifyRefundRequest);
+			log.info("6.7通知业务系统退款结果");
 			RefundStatusEnum refundStatus = null;
 			if(notifyRefundResponse.isResult()){
 				RefundStatusEnum status = RefundStatusEnum.getRefundStatusEnumByStatus(Integer.parseInt(notifyRefundResponse.getRefundStatus()));
@@ -292,9 +293,10 @@ public class TitanFinancialRefundServiceImpl implements
 		log.info("6.6回调通知网关退款");
 		notifyRefundRequest.setRefundOrderno(refundOrderResponse.getRefundOrderNo());
 		notifyRefundResponse = this.notifyGateawayRefund(notifyRefundRequest);
-		log.info("调用网关退款，orderid:"+refundOrderRequest.getOrderId()+",结果notifyRefundResponse："+Tools.gsonToString(notifyRefundResponse));
+		log.info("调用网关退款，orderid:"+refundOrderRequest.getOrderId()+",退款结果notifyRefundResponse："+Tools.gsonToString(notifyRefundResponse));
 		notifyRefundRequest.setBusiCode(BusiCodeEnum.QueryRefund.getKey());
 		NotifyRefundResponse queryNotifyRefundResponse = this.notifyGateawayRefund(notifyRefundRequest);
+		log.info("调用网关退款查询，orderid:"+refundOrderRequest.getOrderId()+",查询结果notifyRefundResponse："+Tools.gsonToString(notifyRefundResponse));
 		
 		return queryNotifyRefundResponse;
 		
@@ -555,8 +557,6 @@ public class TitanFinancialRefundServiceImpl implements
 				notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_IN_PROCESS.status.toString());
 				log.error("网关退款失败,参数params:"+Tools.gsonToString(params)+",退款地址gateWayURL:"+RSInvokeConstant.gateWayURL);
 			}
-			
-			
 		} catch (ParseException e) {
 			notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
 			log.error("网关退款失败,parse异常："+e.getMessage()+",参数params:"+Tools.gsonToString(params),e);
