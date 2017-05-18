@@ -252,22 +252,21 @@ public class TitanFinancialRefundServiceImpl implements
 			NotifyRefundResponse notifyRefundResponse = notifyRefundOrder(refundOrderRequest,notifyRefundRequest);
 			RefundStatusEnum refundStatus = null;
 			if(notifyRefundResponse.isResult()){
-				String status = notifyRefundResponse.getRefundStatus();
-				if(RefundStatusEnum.REFUND_SUCCESS.status==Integer.parseInt(status)){
-					refundStatus = RefundStatusEnum.REFUND_SUCCESS;
-				}else{
+				RefundStatusEnum status = RefundStatusEnum.getRefundStatusEnumByStatus(Integer.parseInt(notifyRefundResponse.getRefundStatus()));
+				if(RefundStatusEnum.REFUND_AFAINST==status){
 					refundStatus = RefundStatusEnum.REFUND_IN_PROCESS;
+				}else{
+					refundStatus = status;
 				}
 			}else{
 				log.error("网关退款调用失败,订单orderid:"+refundRequest.getOrderNo()+",响应结果:"+Tools.gsonToString(notifyRefundResponse));
-				//修改订单状态
 				response.putErrorResult(TitanMsgCodeEnum.PACKAGE_REFUND_PARAM_FAIL);
 				return response;
 			}
 				
 			log.info("6.7通知业务系统退款结果");
 			this.threadNotify(refundOrderRequest.getOrderId(), refundStatus);
-			response.putSuccess("已发起退款，请等待审批");
+			response.putSuccess("已发起退款");
 			return response;
 		} catch (Exception e) {
 			log.error("退款失败", e);
@@ -454,47 +453,6 @@ public class TitanFinancialRefundServiceImpl implements
 	}
 	
 	
-	private RefundOrderResponse reRefundOrder(RefundOrderRequest refundOrderRequest){
-		RefundOrderResponse refundOrderResponse = new RefundOrderResponse();
-		if(null ==refundOrderRequest || 
-				!StringUtil.isValidString(refundOrderRequest.getAmount())||
-				!StringUtil.isValidString(refundOrderRequest.getOrderId())){
-			refundOrderResponse.putErrorResult(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED); 
-			return refundOrderResponse;
-		}
-		RSRefundRequest  refundRequest = this.convertToRefundRequest(refundOrderRequest);
-		RsRefundResponse refundResponse = rsAccTradeManager.addOrderRefund(refundRequest);
-		if(!CommonConstant.OPERATE_SUCCESS.equals(refundResponse.getOperateStatus())){
-			log.error("下退款单失败:"+refundResponse.getReturnCode()+":"+refundResponse.getReturnMsg());
-			refundOrderResponse.putErrorResult(TitanMsgCodeEnum.RS_ADD_REFUND_ORDER_FAIL);
-			return refundOrderResponse;
-		}
-		TitanRefund titanRefund = new TitanRefund();
-		titanRefund.setOrderid(refundOrderRequest.getOrderId());
-		titanRefund.setRefundOrderno(refundResponse.getRefundOrderNo());
-		titanRefund.setRefundAmount(refundRequest.getAmount());
-		titanRefund.setCreateTime(new Date());
-		titanRefund.setOrderTime(refundOrderRequest.getOrderTime());
-		titanRefund.setCreator(refundOrderRequest.getCreator());
-		titanRefund.setTransferAmount(refundOrderRequest.getTransferAmount());
-		titanRefund.setFee(refundOrderRequest.getFee());
-		titanRefund.setBusinessInfo(refundOrderRequest.getBusinessInfo());
-		titanRefund.setStatus(RefundStatusEnum.REFUND_IN_PROCESS.status);
-		titanRefund.setNotifyUrl(refundOrderRequest.getNotifyUrl());
-		titanRefund.setUserorderid(refundOrderRequest.getUserOrderId());
-		titanRefund.setPayOrderNo(refundOrderRequest.getPayOrderNo());
-		try{
-			titanRefundDao.insert(titanRefund);
-		}catch(Exception e){
-			log.error("保存退款单下单失败"+e.getMessage()+":data"+JSONSerializer.toJSON(titanRefund));
-			titanFinancialUtilService.saveOrderException(refundOrderRequest.getOrderId(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Save_Order_Fail, JSONSerializer.toJSON(titanRefund).toString());
-		}
-		
-		refundOrderResponse.putSuccess();
-		refundOrderResponse.setRefundOrderNo(refundResponse.getRefundOrderNo());
-		return refundOrderResponse;
-	}
-	
 	private RefundOrderResponse addRefundOrder(	RefundOrderRequest refundOrderRequest) {
 		RefundOrderResponse refundOrderResponse = new RefundOrderResponse();
 		
@@ -562,6 +520,10 @@ public class TitanFinancialRefundServiceImpl implements
 		HttpPost httpPost = new HttpPost(RSInvokeConstant.gateWayURL);
 		try {
 			HttpResponse resp = HttpClient.httpRequest(params,httpPost);
+			if(notifyRefundRequest.getOrderTime().equals("20101010101010")){
+				resp = null;
+				log.error("【测试-请求超时场景】------");
+			}
 			if (null != resp) {
 				HttpEntity entity = resp.getEntity();
 				response = EntityUtils.toString(entity);
@@ -585,6 +547,7 @@ public class TitanFinancialRefundServiceImpl implements
 				notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_IN_PROCESS.status.toString());
 				log.error("网关退款失败,参数params:"+Tools.gsonToString(params)+",退款地址gateWayURL:"+RSInvokeConstant.gateWayURL);
 			}
+			
 		} catch (ParseException e) {
 			notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
 			log.error("网关退款失败,parse异常："+e.getMessage()+",参数params:"+Tools.gsonToString(params),e);
@@ -765,6 +728,7 @@ public class TitanFinancialRefundServiceImpl implements
 								isSynState = false;
 							}
 						}else{
+							isSynState = false;
 							log.error("网关退款调用失败,订单orderid:"+notifyRefundRequest.getOrderNo()+",响应结果:"+Tools.gsonToString(gatewayRefundResponse));
 						}
 					}
@@ -774,10 +738,10 @@ public class TitanFinancialRefundServiceImpl implements
 					this.threadNotify(refundDTO.getOrderNo(),RefundStatusEnum.getRefundStatusEnumByStatus(refundDTO.getStatus()));
 					titanOrderService.updateTransOrder(transOrderDTO);
 					titanRefundDao.updateRefundDTO(refundDTO);
-					//发失败邮件
-					if(!refundDTO.getStatus().equals(RefundStatusEnum.REFUND_SUCCESS.status)){
-						titanFinancialUtilService.saveOrderException(refundDTO.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_RS_Fail, "退款状态："+RefundStatusEnum.getRefundStatusEnumByStatus(refundDTO.getStatus()).toString());
-					}
+				}
+				//发失败邮件
+				if(!refundDTO.getStatus().equals(RefundStatusEnum.REFUND_SUCCESS.status)){
+					titanFinancialUtilService.saveOrderException(refundDTO.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_RS_Fail, "退款状态："+RefundStatusEnum.getRefundStatusEnumByStatus(refundDTO.getStatus()).toString());
 				}
 			}else{
 				log.error("refundConfirm()-退款单状态查询失败,订单[orderid]:"+refundDTO.getOrderNo()+",返回值[notifyRefundResponse]:"+Tools.gsonToString(notifyRefundResponse));
