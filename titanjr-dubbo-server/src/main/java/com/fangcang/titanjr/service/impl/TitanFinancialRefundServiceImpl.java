@@ -543,6 +543,11 @@ public class TitanFinancialRefundServiceImpl implements
 				if(busiCodeEnum!=null&&busiCodeEnum.equals(BusiCodeEnum.MerchantRefund)){
 					invokeLogRecordManager.logELK(beginDate, new Date(), "titanjr:notifygateawayrefund."+busiCodeEnum.toString().toLowerCase(), Tools.gsonToString(params)+",gatewayurl:"+RSInvokeConstant.gateWayURL+","+Tools.gsonToString(busiCodeEnum), Tools.gsonToString(notifyRefundResponse), notifyRefundResponse.isResult()+"");
 				}
+				if(notifyRefundRequest.getRefundAmount().equals("3")){
+					notifyRefundResponse.putSuccess();
+					notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_IN_PROCESS.status.toString());
+					log.info("【模拟测试场景3-请求超时】------"+notifyRefundRequest.getOrderNo());
+				}
 				return notifyRefundResponse;
 			}else{
 				//网络无响应，则
@@ -550,12 +555,6 @@ public class TitanFinancialRefundServiceImpl implements
 				notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_IN_PROCESS.status.toString());
 				log.error("网关退款失败,参数params:"+Tools.gsonToString(params)+",退款地址gateWayURL:"+RSInvokeConstant.gateWayURL);
 			}
-			if(notifyRefundRequest.getRefundAmount().equals("3")){
-				notifyRefundResponse.putSuccess();
-				notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_IN_PROCESS.status.toString());
-				log.info("【模拟测试场景3-请求超时】------"+notifyRefundRequest.getOrderNo());
-			}
-			
 		} catch (ParseException e) {
 			notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
 			log.error("网关退款失败,parse异常："+e.getMessage()+",参数params:"+Tools.gsonToString(params),e);
