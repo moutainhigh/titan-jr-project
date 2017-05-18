@@ -750,6 +750,7 @@ public class TitanFinancialRefundServiceImpl implements
 				}
 				//发失败邮件
 				if(!refundDTO.getStatus().equals(RefundStatusEnum.REFUND_SUCCESS.status)){
+					log.info(refundDTO.getStatus()+"--status---"+titanFinancialUtilService);
 					titanFinancialUtilService.saveOrderException(refundDTO.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_RS_Fail, "退款状态："+RefundStatusEnum.getRefundStatusEnumByStatus(refundDTO.getStatus()).toString());
 				}
 			}else{
