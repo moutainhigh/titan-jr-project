@@ -56,7 +56,7 @@ public class HttpUtils {
 		InputStream in = null;
 		try {
 			String queryStr = convertToQueryStr(params, isEncode);
-			System.out.println("requestUrl + queryStr:" + requestUrl + queryStr);
+			logger.info("requestUrl + queryStr:" + requestUrl + queryStr);
 			URLConnection conn=null;
 			if(POST.equalsIgnoreCase(method)){
 				conn = new URL(requestUrl).openConnection();
