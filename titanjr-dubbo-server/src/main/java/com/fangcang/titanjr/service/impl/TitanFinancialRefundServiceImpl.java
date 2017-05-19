@@ -555,7 +555,7 @@ public class TitanFinancialRefundServiceImpl implements
 				//网络无响应，则
 				notifyRefundResponse.putSuccess();
 				notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_IN_PROCESS.status.toString());
-				log.error("网关退款失败,参数params:"+Tools.gsonToString(params)+",退款地址gateWayURL:"+RSInvokeConstant.gateWayURL);
+				log.error("网关退款失败 resp 为空,参数params:"+Tools.gsonToString(params)+",退款地址gateWayURL:"+RSInvokeConstant.gateWayURL);
 			}
 		} catch (ParseException e) {
 			notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
@@ -712,9 +712,9 @@ public class TitanFinancialRefundServiceImpl implements
 					refundRequest.setOrderid(refundDTO.getOrderNo());
 					refundRequest.setUserorderid(refundDTO.getUserOrderId());
 					RsRefundResponse refundResponse = rsAccTradeManager.addOrderRefund(refundRequest);
-					log.info("定时器下退款单，请求参数refundRequest："+Tools.gsonToString(refundRequest)+",响应结果refundResponse："+Tools.gsonToString(refundResponse));
+					log.info("冲销退款单，定时器重新下退款单，请求参数refundRequest："+Tools.gsonToString(refundRequest)+",响应结果refundResponse："+Tools.gsonToString(refundResponse));
 					if(!CommonConstant.OPERATE_SUCCESS.equals(refundResponse.getOperateStatus())){
-						log.error("定时器下退款单失败，请求参数refundRequest："+Tools.gsonToString(refundRequest)+",响应结果refundResponse："+Tools.gsonToString(refundResponse));
+						log.error("定时器重新下退款单，请求参数refundRequest："+Tools.gsonToString(refundRequest)+",响应结果refundResponse："+Tools.gsonToString(refundResponse));
 						continue;
 					}else if(StringUtil.isValidString(refundResponse.getRefundOrderNo())){
 						//2更新退款单
@@ -738,7 +738,7 @@ public class TitanFinancialRefundServiceImpl implements
 							}
 						}else{
 							isSynState = false;
-							log.error("网关退款调用失败,订单orderid:"+notifyRefundRequest.getOrderNo()+",响应结果:"+Tools.gsonToString(gatewayRefundResponse));
+							log.error("定时器重新下退款单网关退款查询调用失败,订单orderid:"+notifyRefundRequest.getOrderNo()+",响应结果:"+Tools.gsonToString(gatewayRefundResponse));
 						}
 					}
 			    }
