@@ -683,8 +683,9 @@ public class TitanFinancialRefundServiceImpl implements
 			notifyRefundRequest.setSignType(SignTypeEnum.MD5.getKey());
 			
 			NotifyRefundResponse notifyRefundResponse = this.notifyGateawayRefund(notifyRefundRequest);
+			RefundStatusEnum refundStatusEnum = null;
 			if(notifyRefundResponse.isResult()){
-				RefundStatusEnum refundStatusEnum = RefundStatusEnum.getRefundStatusEnumByStatus(Integer.parseInt(notifyRefundResponse.getRefundStatus()));
+				refundStatusEnum = RefundStatusEnum.getRefundStatusEnumByStatus(Integer.parseInt(notifyRefundResponse.getRefundStatus()));
 				log.info("refundConfirm()-查询退款单号orderId："+refundDTO.getOrderNo()+",融数退款状态是:"+refundStatusEnum.toString());
 				double diffHour = DateUtil.getDiffHour(refundDTO.getCreatetime(), new Date());
 				boolean isLongTime = false;//规定时长内不同步状态和通知
@@ -749,8 +750,8 @@ public class TitanFinancialRefundServiceImpl implements
 					titanRefundDao.updateRefundDTO(refundDTO);
 				}
 				//发失败邮件
-				if(!refundDTO.getStatus().equals(RefundStatusEnum.REFUND_SUCCESS.status)){
-					titanFinancialUtilService.saveOrderException(refundDTO.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_RS_Fail, "退款状态："+RefundStatusEnum.getRefundStatusEnumByStatus(refundDTO.getStatus()).toString());
+				if(refundStatusEnum!=RefundStatusEnum.REFUND_SUCCESS&&refundStatusEnum!=RefundStatusEnum.REFUND_IN_PROCESS){
+					titanFinancialUtilService.saveOrderException(refundDTO.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_RS_Fail, "退款状态："+refundStatusEnum.toString());
 				}
 			}else{
 				log.error("refundConfirm()-退款单状态查询失败,订单[orderid]:"+refundDTO.getOrderNo()+",返回值[notifyRefundResponse]:"+Tools.gsonToString(notifyRefundResponse));
