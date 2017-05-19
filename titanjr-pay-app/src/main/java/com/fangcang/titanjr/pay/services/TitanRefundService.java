@@ -224,7 +224,7 @@ public class TitanRefundService {
 			if (RefundTypeEnum.REFUND_ACCOUNT.type.equals(titanJrRefundRequest.getToBankCardOrAccount())) {//余额支付的退款
 				transOrder.setStatusid(OrderStatusEnum.REFUND_SUCCESS.getStatus());
 			}
-			log.info("退款成功修改订单状态:" + transOrderDTO.getTransid() + ":" + transOrder.getStatusid());
+			log.info("退款成功修改订单状态,Transid:" + transOrderDTO.getTransid() + ",orderId:"+transOrderDTO.getOrderid()+",Statusid:" + transOrder.getStatusid());
 			transOrder.setTransid(transOrderDTO.getTransid());
 			flag = titanOrderService.updateTransOrder(transOrder);
 			if (!flag) {

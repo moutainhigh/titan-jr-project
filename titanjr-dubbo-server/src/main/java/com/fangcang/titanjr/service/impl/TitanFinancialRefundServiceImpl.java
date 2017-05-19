@@ -259,10 +259,9 @@ public class TitanFinancialRefundServiceImpl implements
 				}else{
 					refundStatus = status;
 				}
-			}else{
-				log.error("网关退款调用失败,订单orderid:"+refundRequest.getOrderNo()+",响应结果:"+Tools.gsonToString(notifyRefundResponse));
-				response.putErrorResult(TitanMsgCodeEnum.PACKAGE_REFUND_PARAM_FAIL);
-				return response;
+			}else{//网关退款请求无响应或者失败都当成退款中
+				refundStatus = RefundStatusEnum.REFUND_IN_PROCESS;
+				log.info("网关退款调用失败,订单orderid:"+refundRequest.getOrderNo()+",响应结果:"+Tools.gsonToString(notifyRefundResponse));
 			}
 				
 			log.info("6.7通知业务系统退款结果");
@@ -521,12 +520,7 @@ public class TitanFinancialRefundServiceImpl implements
 		BusiCodeEnum busiCodeEnum = BusiCodeEnum.getEnumByKey(notifyRefundRequest.getBusiCode());
 		HttpPost httpPost = new HttpPost(RSInvokeConstant.gateWayURL);
 		try {
-//			if(notifyRefundRequest.getRefundAmount().equals("4")){
-//				notifyRefundResponse.putSuccess();
-//				notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_AFAINST.status.toString());
-//				log.info("【模拟测试场景4-退款冲销】------"+notifyRefundRequest.getOrderNo());
-//				return notifyRefundResponse;
-//			}
+ 
 			HttpResponse resp = HttpClient.httpRequest(params,httpPost);
 			
 			if (null != resp) {
@@ -539,17 +533,14 @@ public class TitanFinancialRefundServiceImpl implements
 			    		|| StringUtil.isValidString(notifyRefundResponse.getErrMsg())
 			    		|| !StringUtil.isValidString(notifyRefundResponse.getRefundOrderno())){//通知退款失败
 					log.error("调用融数网关gateWayURL退款异常,错误信息:"+notifyRefundResponse.getErrMsg()+",参数params:"+Tools.gsonToString(params));
-					notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
+					//notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
+					notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_IN_PROCESS.status.toString());
 			    }
 				
 				if(busiCodeEnum!=null&&busiCodeEnum.equals(BusiCodeEnum.MerchantRefund)){
 					invokeLogRecordManager.logELK(beginDate, new Date(), "titanjr:notifygateawayrefund."+busiCodeEnum.toString().toLowerCase(), Tools.gsonToString(params)+",gatewayurl:"+RSInvokeConstant.gateWayURL+","+Tools.gsonToString(busiCodeEnum), Tools.gsonToString(notifyRefundResponse), notifyRefundResponse.isResult()+"");
 				}
-//				if(notifyRefundRequest.getRefundAmount().equals("3")){
-//					notifyRefundResponse.putSuccess();
-//					notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_IN_PROCESS.status.toString());
-//					log.info("【模拟测试场景3-请求超时】------"+notifyRefundRequest.getOrderNo());
-//				}
+ 
 				return notifyRefundResponse;
 			}else{
 				//网络无响应，则
@@ -567,6 +558,8 @@ public class TitanFinancialRefundServiceImpl implements
 		if(busiCodeEnum!=null&&busiCodeEnum.equals(BusiCodeEnum.MerchantRefund)){
 			invokeLogRecordManager.logELK(beginDate, new Date(), "titanjr:notifygateawayrefund."+busiCodeEnum.toString().toLowerCase(), Tools.gsonToString(params)+",gatewayurl:"+RSInvokeConstant.gateWayURL+","+Tools.gsonToString(busiCodeEnum), Tools.gsonToString(notifyRefundResponse), notifyRefundResponse.isResult()+"");
 		}
+		notifyRefundResponse.putSuccess();
+		notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_IN_PROCESS.status.toString());
 		return notifyRefundResponse;
 	}
 	
