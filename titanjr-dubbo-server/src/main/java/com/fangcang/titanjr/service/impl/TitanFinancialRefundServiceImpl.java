@@ -521,12 +521,12 @@ public class TitanFinancialRefundServiceImpl implements
 		BusiCodeEnum busiCodeEnum = BusiCodeEnum.getEnumByKey(notifyRefundRequest.getBusiCode());
 		HttpPost httpPost = new HttpPost(RSInvokeConstant.gateWayURL);
 		try {
-			if(notifyRefundRequest.getRefundAmount().equals("4")){
-				notifyRefundResponse.putSuccess();
-				notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_AFAINST.status.toString());
-				log.info("【模拟测试场景4-退款冲销】------"+notifyRefundRequest.getOrderNo());
-				return notifyRefundResponse;
-			}
+//			if(notifyRefundRequest.getRefundAmount().equals("4")){
+//				notifyRefundResponse.putSuccess();
+//				notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_AFAINST.status.toString());
+//				log.info("【模拟测试场景4-退款冲销】------"+notifyRefundRequest.getOrderNo());
+//				return notifyRefundResponse;
+//			}
 			HttpResponse resp = HttpClient.httpRequest(params,httpPost);
 			
 			if (null != resp) {
@@ -545,11 +545,11 @@ public class TitanFinancialRefundServiceImpl implements
 				if(busiCodeEnum!=null&&busiCodeEnum.equals(BusiCodeEnum.MerchantRefund)){
 					invokeLogRecordManager.logELK(beginDate, new Date(), "titanjr:notifygateawayrefund."+busiCodeEnum.toString().toLowerCase(), Tools.gsonToString(params)+",gatewayurl:"+RSInvokeConstant.gateWayURL+","+Tools.gsonToString(busiCodeEnum), Tools.gsonToString(notifyRefundResponse), notifyRefundResponse.isResult()+"");
 				}
-				if(notifyRefundRequest.getRefundAmount().equals("3")){
-					notifyRefundResponse.putSuccess();
-					notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_IN_PROCESS.status.toString());
-					log.info("【模拟测试场景3-请求超时】------"+notifyRefundRequest.getOrderNo());
-				}
+//				if(notifyRefundRequest.getRefundAmount().equals("3")){
+//					notifyRefundResponse.putSuccess();
+//					notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_IN_PROCESS.status.toString());
+//					log.info("【模拟测试场景3-请求超时】------"+notifyRefundRequest.getOrderNo());
+//				}
 				return notifyRefundResponse;
 			}else{
 				//网络无响应，则
@@ -666,7 +666,7 @@ public class TitanFinancialRefundServiceImpl implements
 		
 		List<RefundDTO> refundDTOList =  titanTransOrderDao.selectTitanTransOrderAndRefund(transOrderRequest);
 		if(null == refundDTOList || refundDTOList.size()<1){
-			log.info("无退款记录,订单orderid:"+refundConfirm.getOrderNo());
+			log.info("refundConfirm ，无退款中的订单记录");
 			return ;
 		}
 		
