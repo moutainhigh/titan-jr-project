@@ -49,16 +49,17 @@
   </select>
   
   <update id="updateEntity" parameterType="com.fangcang.titanjr.dto.bean.RefundDTO">
-    update t_tfs_refund set status = #{status} 
+    update t_tfs_refund
+    <set>
+    	<if test="status!=null">status = #{status},</if>
+    	<if test="refundOrderno!=null">refundOrderno = #{refundOrderno},</if>
+    </set>
     <where>
        <if test="refundId !=null">
          refundid = #{refundId}
        </if>
        <if test="orderNo !=null">
          and orderid =#{orderNo}
-       </if>
-       <if test="refundOrderno !=null">
-         and refundOrderno =#{refundOrderno}
        </if>
     </where>
   </update>
