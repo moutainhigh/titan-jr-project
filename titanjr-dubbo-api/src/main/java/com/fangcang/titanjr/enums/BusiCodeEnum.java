@@ -36,4 +36,8 @@ public enum BusiCodeEnum {
 	public void setValue(String value) {
 		this.value = value;
 	}
+	
+	public String toString(){
+		return "BusiCodeEnum{key:"+this.key+",value:\""+this.value+"\"}";
+	}
 }

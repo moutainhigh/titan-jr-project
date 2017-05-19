@@ -532,13 +532,13 @@ public class TitanFinancialRefundServiceImpl implements
 			if (null != resp) {
 				HttpEntity entity = resp.getEntity();
 				response = EntityUtils.toString(entity);
-				log.info("调用融数网关gateWayURL退款,orderId："+notifyRefundRequest.getOrderNo()+",退款返回信息："+response);
+				log.info("调用融数网关gateWayURL退款,操作："+busiCodeEnum.toString()+",orderId："+notifyRefundRequest.getOrderNo()+",请求参数:"+Tools.gsonToString(params)+",退款返回信息："+response);
 				notifyRefundResponse = RSConvertFiled2ObjectUtil.convertField2Object(NotifyRefundResponse.class, response);
 				notifyRefundResponse.putSuccess("");
 				if(StringUtil.isValidString(notifyRefundResponse.getErrCode()) 
 			    		|| StringUtil.isValidString(notifyRefundResponse.getErrMsg())
 			    		|| !StringUtil.isValidString(notifyRefundResponse.getRefundOrderno())){//通知退款失败
-					log.error("退款通知异常,错误信息:"+notifyRefundResponse.getErrMsg()+",参数params:"+Tools.gsonToString(params));
+					log.error("调用融数网关gateWayURL退款异常,错误信息:"+notifyRefundResponse.getErrMsg()+",参数params:"+Tools.gsonToString(params));
 					notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
 			    }
 				
@@ -689,7 +689,7 @@ public class TitanFinancialRefundServiceImpl implements
 				double diffHour = DateUtil.getDiffHour(refundDTO.getCreatetime(), new Date());
 				boolean isLongTime = false;//规定时长内不同步状态和通知
 				boolean isSynState = false;//是否需要同步状态
-				if(diffHour>24){
+				if(diffHour>12){
 					isLongTime = true;
 				}
 				TransOrderDTO transOrderDTO = new TransOrderDTO();
@@ -714,7 +714,7 @@ public class TitanFinancialRefundServiceImpl implements
 					RsRefundResponse refundResponse = rsAccTradeManager.addOrderRefund(refundRequest);
 					log.info("定时器下退款单，请求参数refundRequest："+Tools.gsonToString(refundRequest)+",响应结果refundResponse："+Tools.gsonToString(refundResponse));
 					if(!CommonConstant.OPERATE_SUCCESS.equals(refundResponse.getOperateStatus())){
-						log.error("定时器下退款单:"+refundResponse.getReturnCode()+":"+refundResponse.getReturnMsg());
+						log.error("定时器下退款单失败，请求参数refundRequest："+Tools.gsonToString(refundRequest)+",响应结果refundResponse："+Tools.gsonToString(refundResponse));
 						continue;
 					}else if(StringUtil.isValidString(refundResponse.getRefundOrderNo())){
 						//2更新退款单
@@ -750,7 +750,6 @@ public class TitanFinancialRefundServiceImpl implements
 				}
 				//发失败邮件
 				if(!refundDTO.getStatus().equals(RefundStatusEnum.REFUND_SUCCESS.status)){
-					log.info(refundDTO.getStatus()+"--status---"+titanFinancialUtilService);
 					titanFinancialUtilService.saveOrderException(refundDTO.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_RS_Fail, "退款状态："+RefundStatusEnum.getRefundStatusEnumByStatus(refundDTO.getStatus()).toString());
 				}
 			}else{
