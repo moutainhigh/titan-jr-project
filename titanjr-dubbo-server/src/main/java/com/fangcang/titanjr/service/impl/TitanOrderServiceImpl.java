@@ -252,20 +252,6 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 		return false;
 	}
 
-	@Override
-	public boolean saveOrderException(OrderExceptionDTO orderExceptionDTO) {
-		if(orderExceptionDTO !=null){
-			TitanOrderException titanOrderException = new TitanOrderException();
-			try{
-				MyBeanUtil.copyProperties(titanOrderException, orderExceptionDTO);
-				titanOrderException.setUpdateTime(new Date());
-				return titanOrderExceptionDao.insertTitanOrderException(titanOrderException)>0?true:false;
-			}catch(Exception e){
-			    log.error("插入异常单错误"+e.getMessage(),e);
-			}
-		}
-		return false;
-	}
 
 	@Override
 	public boolean updateTransferOrder(TitanTransferDTO transferDTO) {

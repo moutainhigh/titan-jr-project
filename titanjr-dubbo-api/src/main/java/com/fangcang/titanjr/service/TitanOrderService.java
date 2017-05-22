@@ -100,13 +100,6 @@ public interface TitanOrderService {
 	 * @return
 	 */
 	public PaginationSupport<TitanOrderException> selectOrderExceptionForPage(TitanOrderExceptionParam condition, PaginationSupport<TitanOrderException> paginationSupport);
-	/**
-	 * 保存单异常信息
-	 * @param orderExceptionDTO
-	 * @return
-	 * @author fangdaikang
-	 */
-	public boolean saveOrderException(OrderExceptionDTO orderExceptionDTO);
 	
 	/***
 	 * 更新异常信息
