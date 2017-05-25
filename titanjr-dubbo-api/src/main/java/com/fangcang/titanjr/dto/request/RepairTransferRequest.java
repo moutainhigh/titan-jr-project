@@ -1,22 +1,20 @@
 package com.fangcang.titanjr.dto.request;
 
-import com.fangcang.titanjr.common.enums.CashierDeskTypeEnum;
 import com.fangcang.titanjr.dto.BaseRequestDTO;
 
+/**
+ * 当前请求用于查出交易单支付失败但充值成功的
+ * 这种可能是转账失败导致
+ */
 public class RepairTransferRequest extends BaseRequestDTO{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	//付款账户
 	private String payermerchant;
 	
-	//订单状态
+	//交易单支付状态
 	private String status;
-	
-	private Integer transferStatus;
-	
+
+	//充值状态
 	private Integer orderPayStatus;
 	
 	private String orderid;
@@ -39,14 +37,6 @@ public class RepairTransferRequest extends BaseRequestDTO{
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public Integer getTransferStatus() {
-		return transferStatus;
-	}
-
-	public void setTransferStatus(Integer transferStatus) {
-		this.transferStatus = transferStatus;
 	}
 
 	public Integer getOrderPayStatus() {

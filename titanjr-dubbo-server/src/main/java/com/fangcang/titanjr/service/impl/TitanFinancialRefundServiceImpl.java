@@ -510,7 +510,7 @@ public class TitanFinancialRefundServiceImpl implements
 	private NotifyRefundResponse notifyGateawayRefund(
 			NotifyRefundRequest notifyRefundRequest) {
 		NotifyRefundResponse notifyRefundResponse = new NotifyRefundResponse();
-		if(null ==notifyRefundRequest){
+		if(null == notifyRefundRequest){
 			notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 			return notifyRefundResponse;
 		}
@@ -657,7 +657,7 @@ public class TitanFinancialRefundServiceImpl implements
 		}
 		transOrderRequest.setStatusId(OrderStatusEnum.REFUND_IN_PROCESS.getStatus());
 		
-		List<RefundDTO> refundDTOList =  titanTransOrderDao.selectTitanTransOrderAndRefund(transOrderRequest);
+		List<RefundDTO> refundDTOList =  titanTransOrderDao.selectTransRefundOrder(transOrderRequest);
 		if(null == refundDTOList || refundDTOList.size()<1){
 			log.info("refundConfirm ，无退款中的订单记录");
 			return ;
