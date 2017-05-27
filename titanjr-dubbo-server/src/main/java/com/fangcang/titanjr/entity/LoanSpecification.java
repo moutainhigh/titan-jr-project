@@ -1,7 +1,12 @@
 package com.fangcang.titanjr.entity;
 
-public class LoanSpecification {
+public class LoanSpecification implements java.io.Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private String id;
 
 	private String orderNo;

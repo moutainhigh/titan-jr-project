@@ -140,7 +140,7 @@
             <tr>
                 <td class="tdr">收付款类型</td>
                 <td>
-                    <input type="text" value="1" id="payerType" name="payerType"/><span>1:B2B交易平台  2:GDP 3:财务供应商  4:联盟供应商付款 1001:对外开放平台
+                    <input type="text" value="1" id="payerType" name="payerType"/><span>1:B2B交易平台  2:GDP 3:财务供应商  4:联盟供应商付款 1001:对外开放平台,1024:TTM-SAAS商家,10242：TTM-金融商家，10243:微信公众号
                 </td>
             </tr>
             <tr>
@@ -183,7 +183,7 @@
             <tr align="left">
                 <td class="tdr">退款单号</td>
                 <td>
-                    <input type="text" name="reorderNo"  id="reorderNo" value="dfadfs0055" class="input_t01"/>
+                    <input type="text" name="reorderNo"  id="reorderNo" value="dfadfs0055" class="input_t01"/>与业务订单号相同
                 </td>
             </tr>
             <tr>
@@ -287,7 +287,7 @@
 					
 					<tr>
 						<td class="tdr">业务信息</td>
-						<td><input type="text" id="bussInfo" value='{"taoge":"taogegege"}'
+						<td><input type="text" id="bussInfo" value='{"ordercontent":"taogegege"}'
 							name="bussInfo" /></td>
 					</tr>
 					

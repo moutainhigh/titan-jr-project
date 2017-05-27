@@ -8,8 +8,13 @@ import java.util.Date;
  * @author wengxitao
  *
  */
-public class LoanRoomPackSpec
+public class LoanRoomPackSpec implements java.io.Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private Long id;
 
 	private String orderNo;// 贷款单号

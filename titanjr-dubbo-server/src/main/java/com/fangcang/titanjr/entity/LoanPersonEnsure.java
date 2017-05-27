@@ -6,8 +6,13 @@ package com.fangcang.titanjr.entity;
  * @author wengxitao
  *
  */
-public class LoanPersonEnsure {
+public class LoanPersonEnsure implements java.io.Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private String newOrderNo;// 新授信单号
 	
 	private String orderNo;// 授信单号
