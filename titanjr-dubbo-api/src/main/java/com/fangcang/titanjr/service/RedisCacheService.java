@@ -11,7 +11,6 @@ public interface RedisCacheService {
 	
 	/***
 	 * 保存redis值
-	 * @param clazz 用于合成key,格式为：com-fangcang-titanjr-common-util-Wxutil
 	 * @param key 业务key, 格式为：username ,最后合成的key 为：TITANJR:com-fangcang-titanjr-common-util-Wxutil:username
 	 * @param value
 	 */
@@ -19,7 +18,6 @@ public interface RedisCacheService {
 	
 	/**
 	 * 保存redis值
-	 * @param clazz 用于合成key,格式为：com-fangcang-titanjr-common-util-Wxutil
 	 * @param key 业务key, 格式为：username ,最后合成的key 为：TITANJR:com-fangcang-titanjr-common-util-Wxutil:username
 	 * @param value
 	 * @param timeout 失效时间，单位：分钟
@@ -29,7 +27,6 @@ public interface RedisCacheService {
 	
 	/**
 	 * 保存redis值
-	 * @param clazz 用于合成key,格式为：com-fangcang-titanjr-common-util-Wxutil
 	 * @param key 业务key, 格式为：username ,最后合成的key 为：TITANJR:com-fangcang-titanjr-common-util-Wxutil:username
 	 * @param value
 	 * @param timeout 失效时间
@@ -38,7 +35,6 @@ public interface RedisCacheService {
 	public void setValue(String key,Object value,long timeout,TimeUnit unit);
 	/***
 	 * 
-	 * @param clazz 用于合成key,格式为：com-fangcang-titanjr-common-util-Wxutil
 	 * @param key 业务key, 格式为：username ,最后合成的key 为：TITANJR:com-fangcang-titanjr-common-util-Wxutil:username
 	 * @return
 	 */
@@ -46,7 +42,6 @@ public interface RedisCacheService {
 	
 	/**
 	 * 删除 某个值
-	 * @param clazz 用于合成key,格式为：com-fangcang-titanjr-common-util-Wxutil
 	 * @param key 业务key, 格式为：username ,最后合成的key 为：TITANJR:com-fangcang-titanjr-common-util-Wxutil:username
 	 */
 	public void deleteValue(String key);
