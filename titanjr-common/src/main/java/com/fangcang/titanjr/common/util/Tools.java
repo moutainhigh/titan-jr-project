@@ -200,4 +200,23 @@ public class Tools {
 	public static StringBuilder getStringBuilder(){
 		return new StringBuilder();
 	}
-}
+	
+	/***
+	 * 拼成规范的redis key
+	 * @param setClazz
+	 * @param key
+	 * @return
+	 */
+	public static String getTitanRedisKey(String key){
+		StringBuilder sb  = getStringBuilder().append(CommonConstant.REDIS_KEY_PREFIX_TITANJR).append(":");
+//		if(setClazz!=null){
+//			sb.append(setClazz.getName().replaceAll("\\.", "-")).append(":");
+//		}
+		sb.append(key);
+		return sb.toString();
+	}
+	
+	public static final void main(String[] arg){
+		//System.out.println(getTitanRedisKey(Wxutil.class,"notify"));
+	}
+ }
