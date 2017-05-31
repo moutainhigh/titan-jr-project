@@ -1,7 +1,5 @@
 package com.fangcang.titanjr.cache;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -89,7 +87,7 @@ public class MybatisRedisCache implements Cache {
 
 	public Object removeObject(final Object arg0) {
 		getRedisTemplate().expire(arg0.toString(), 0, TimeUnit.SECONDS);
-		return nullValue();
+		return null;
 	}
 	
 	public int getSize() {
