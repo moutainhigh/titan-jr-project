@@ -6,7 +6,11 @@ import java.util.Date;
  * 授信申请公司资料
  * Created by zhaoshan on 2016/11/4.
  */
-public class LoanCreditCompany {
+public class LoanCreditCompany implements java.io.Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
     private Long id;
     /**
      * 新授信单号

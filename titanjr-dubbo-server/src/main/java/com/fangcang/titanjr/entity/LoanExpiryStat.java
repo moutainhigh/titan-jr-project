@@ -1,7 +1,11 @@
 package com.fangcang.titanjr.entity;
 
 
-public class LoanExpiryStat {
+public class LoanExpiryStat implements java.io.Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// 逾期筆數
 	private int expiryNum;
 	// 逾期本金金額

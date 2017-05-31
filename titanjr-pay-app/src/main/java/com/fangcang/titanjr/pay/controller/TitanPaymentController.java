@@ -140,7 +140,8 @@ public class TitanPaymentController extends BaseController {
 
 		response.getWriter().print("returnCode=000000&returnMsg=成功");
 		response.flushBuffer();
-		log.info(orderNo+"订单状态："+rechargeResultConfirmRequest.getPayStatus());
+		
+		log.info("融数通知notify支付结果rechargeResultConfirmRequest："+Tools.gsonToString(rechargeResultConfirmRequest));
 		
 		String sign  =titanPaymentService.getSign(rechargeResultConfirmRequest);
 		String signMsg = rechargeResultConfirmRequest.getSignMsg();

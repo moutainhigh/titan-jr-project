@@ -593,13 +593,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 					if (flag) {
 						AccountTransferResponse accountTransferResponse = rsAccTradeManager.accountBalanceTransfer(accountTransferRequest);
-						log.info("转账结果" + JSON.toJSONString(accountTransferResponse));
+						log.info("orderid:"+transferRequest.getOrderid()+",转账结果,响应结果[accountTransferResponse]:" + JSON.toJSONString(accountTransferResponse));
 						if (accountTransferResponse != null) {
 							if (CommonConstant.OPERATE_SUCCESS.equals(accountTransferResponse.getOperateStatus())) {
 								titanTransferReq.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
 								transferResponse.putSuccess();
 							} else {
-								log.error("转账失败");
+								log.error("orderid:"+transferRequest.getOrderid()+",转账失败,响应结果[accountTransferResponse]:"+ JSON.toJSONString(accountTransferResponse));
 								titanFinancialUtilService.saveOrderException(payOrderNo,OrderKindEnum.PayOrderNo, OrderExceptionEnum.Transfer_Fail, JSONSerializer.toJSON(accountTransferRequest).toString());
 								titanTransferReq.setStatus(TransferReqEnum.TRANSFER_FAIL.getStatus());
 								transferResponse.putErrorResult(accountTransferResponse.getRetcode(), accountTransferResponse.getRetmsg());
@@ -623,7 +623,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 								titanFinancialUtilService.saveOrderException(payOrderNo,OrderKindEnum.PayOrderNo, OrderExceptionEnum.Transfer_Success_Update_Order_Fail, JSONSerializer.toJSON(titanTransferReq).toString());
 							}
 						}else{
-							log.error("转账失败");
+							log.error("orderid:"+transferRequest.getOrderid()+",转账失败,响应[accountTransferResponse] 为空");
 							titanFinancialUtilService.saveOrderException(payOrderNo, OrderKindEnum.PayOrderNo,OrderExceptionEnum.Transfer_Fail, JSONSerializer.toJSON(accountTransferRequest).toString());
 						}
 					} else {

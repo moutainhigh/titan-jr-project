@@ -7,8 +7,13 @@ import java.util.Date;
  * @author wengxitao
  *
  */
-public class LoanCreditOpinion 
+public class LoanCreditOpinion  implements java.io.Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private Long id;
 
 	private String orderNo;//授信单号
