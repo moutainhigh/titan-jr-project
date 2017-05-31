@@ -64,11 +64,5 @@
                 class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
         </property>
     </bean>
-	
-	<bean class="com.fangcang.titanjr.util.DistributedLock" scope="prototype">
-		<constructor-arg>
-			<ref bean="redisTemplate"/>
-		</constructor-arg>
-	</bean>
 </beans>
 
