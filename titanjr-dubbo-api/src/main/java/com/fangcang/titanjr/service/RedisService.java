@@ -2,12 +2,13 @@ package com.fangcang.titanjr.service;
 
 import java.util.concurrent.TimeUnit;
 
+
 /**
  * 缓存
  * @author luoqinglong
  *
  */
-public interface RedisCacheService {
+public interface RedisService {
 	
 	/***
 	 * 保存redis值
@@ -45,4 +46,6 @@ public interface RedisCacheService {
 	 * @param key 业务key, 格式为：username ,最后合成的key 为：TITANJR:com-fangcang-titanjr-common-util-Wxutil:username
 	 */
 	public void deleteValue(String key);
+	
+	
 }

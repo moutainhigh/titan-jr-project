@@ -1,5 +1,9 @@
 package com.fangcang.titanjr.util;
 
+import java.io.Serializable;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
@@ -7,14 +11,21 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
- * 分布式锁工具
+ * 分布式锁工具,仅在service层用,不能在controller
  * 
  * @author xtweng
  *
  */
-public class DistributedLock {
+public class RedisDistributedLock implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3322602705007536708L;
 
-	private RedisTemplate<String, String> redisTemplate = null;
+	private static final Log log = LogFactory.getLog(RedisDistributedLock.class);
+	
+	private RedisTemplate<String, Object> redisTemplate = null;
 
 	private static final int DEFAULT_ACQUIRY_RESOLUTION_MILLIS = 100;
 
@@ -24,12 +35,18 @@ public class DistributedLock {
 	 * 锁等待时间，防止线程饥饿
 	 */
 	private int timeoutMsecs = 10 * 1000;
+	
+	/**
+	 * 是否成功获取到锁
+	 */
+	private boolean isGetLock = false;
 
-	public DistributedLock(RedisTemplate<String, String> redisTemplate) {
+	
+	public RedisDistributedLock(RedisTemplate<String, Object> redisTemplate) {
 		this.redisTemplate = redisTemplate;
 	}
 
-	public RedisTemplate<String, String> getRedisTemplate() {
+	public RedisTemplate<String, Object> getRedisTemplate() {
 		return redisTemplate;
 	}
 
@@ -82,9 +99,9 @@ public class DistributedLock {
 	 * 根据key申请一个小锁
 	 * 
 	 * @param key
-	 * @return
+	 * @return false:未拿到锁，true:拿到锁
 	 */
-	public synchronized boolean acquire(String key) {
+	public synchronized boolean lock(String key) {
 
 		int timeout = timeoutMsecs;
 		// 如果获取锁失败则多次尝试并且设置超时时间为10秒
@@ -93,7 +110,8 @@ public class DistributedLock {
 
 			// 如果返回true则标示成功了，已经拿到锁了嘻嘻
 			if (checkLock(key, String.valueOf(expires))) {
-				return true;
+				isGetLock = true;
+				return isGetLock;
 			}
 			// 获取锁的超时时间
 			String value = get(key);
@@ -107,7 +125,8 @@ public class DistributedLock {
 
 				// 主要是确认设置的新锁是成功的，并且新锁的超时时间已经更新成功
 				if (oldValueStr != null && oldValueStr.equals(value)) {
-					return true;
+					isGetLock = true;
+					return isGetLock;
 				}
 			}
 
@@ -115,13 +134,14 @@ public class DistributedLock {
 			timeout -= DEFAULT_ACQUIRY_RESOLUTION_MILLIS;
 
 			try {
+				log.info("lock 未取到分布式锁 ，等待100毫秒,分布式key:"+key);
 				// 每次等待100毫秒的间隔
 				Thread.sleep(DEFAULT_ACQUIRY_RESOLUTION_MILLIS);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.error("获取分布式redis锁时异常，锁key为："+key,e);
 			}
 		}
-		return false;
+		return isGetLock;
 	}
 
 	/**
@@ -129,7 +149,10 @@ public class DistributedLock {
 	 */
 	public synchronized void unlock(String key) {
 		if (redisTemplate != null && key != null) {
-			redisTemplate.delete(key);
+			if(isGetLock){
+				redisTemplate.delete(key);
+			}
+			
 		}
 	}
 }
