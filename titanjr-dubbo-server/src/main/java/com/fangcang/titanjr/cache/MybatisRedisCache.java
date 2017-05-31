@@ -1,4 +1,4 @@
-package com.fangcang.titanjr.dao.cache;
+package com.fangcang.titanjr.cache;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
