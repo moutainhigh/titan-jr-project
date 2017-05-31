@@ -2505,6 +2505,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		for(Transorderinfo info :transorderinfos){
 			TransOrderInfo order = new TransOrderInfo();
 			MyBeanUtil.copyBeanProperties(order, info);
+			//test faild
+			//order.setOrderstatus("0");
 			orderInfo.add(order);
 		}
 		response.setTransOrderInfos(orderInfo);
