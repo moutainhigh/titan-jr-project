@@ -121,7 +121,10 @@ public class Tools {
 	 * @return
 	 */
 	public static String redKeyword(String content,String keyword){
-		return	content.replaceAll(keyword, "<span style=\"color:#f00;\">"+keyword+"</span>");
+		if(StringUtil.isValidString(keyword)&&StringUtil.isValidString(content)){
+			return	content.replaceAll(keyword, "<span style=\"color:#f00;\">"+keyword+"</span>");
+		}
+		return content;
 	}
 	/**
 	 * 解析url字符串
