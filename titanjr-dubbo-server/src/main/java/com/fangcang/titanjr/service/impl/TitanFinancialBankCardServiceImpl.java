@@ -287,44 +287,38 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 	
 	private void bindBankCard(int rows,int offset,String userId){
 		
-		while (offset != 0) {
-			
-			boolean doUpdate = false;
-			
-			TitanBankcardParam condition = new TitanBankcardParam();
-			PaginationSupport<TitanBankcard> paginationSupport = new PaginationSupport<TitanBankcard>();
-			condition.setStatus(BindCardStatus.BIND_BINDING.status);
-			condition.setAccountproperty(CommonConstant.ENTERPRISE);
-			if (StringUtil.isValidString(userId)) {
-				condition.setUserid(userId);
-			}
-			paginationSupport.setCurrentPage(rows);
-			paginationSupport.setPageSize(offset);
-			titanBankcardDao.selectForPage(condition, paginationSupport);
-			log.info("绑卡的查询结果:" + JSONSerializer.toJSON(paginationSupport));
-			if (paginationSupport.getItemList() != null) {
-				List<TitanBankcard> bankcardList = paginationSupport
-						.getItemList();
-				offset = bankcardList.size();
-				if (bankcardList.size() > 0) {
-					for (TitanBankcard titanBankcard : bankcardList) {
-						//查询融数
-						log.info("查询绑卡的入参titanBankcard:"
-								+ JSONSerializer.toJSON(titanBankcard));
-						String bindStatus = this.queryBindCard(titanBankcard);
-						log.info("查询绑卡结果bindStatus:" + bindStatus);
-						if (StringUtil.isValidString(bindStatus)) {//同步绑定状态，成功或者失败
-							updateBankCard(titanBankcard, bindStatus);
-							doUpdate = true;
-						}
+		TitanBankcardParam condition = new TitanBankcardParam();
+		PaginationSupport<TitanBankcard> paginationSupport = new PaginationSupport<TitanBankcard>();
+		condition.setStatus(BindCardStatus.BIND_BINDING.status);
+		condition.setAccountproperty(CommonConstant.ENTERPRISE);
+//		condition.setAccountpurpose(CommonConstant.WITHDRAW_CARD);
+		if(StringUtil.isValidString(userId)){
+			condition.setUserid(userId);
+		}
+		paginationSupport.setCurrentPage(rows);
+		paginationSupport.setPageSize(offset);
+		titanBankcardDao.selectForPage(condition, paginationSupport);
+		log.info("绑卡的查询结果:"+JSONSerializer.toJSON(paginationSupport));
+		if( paginationSupport.getItemList()!=null){
+			List<TitanBankcard> bankcardList  = paginationSupport.getItemList();
+			offset = bankcardList.size();
+			if(bankcardList.size()>0){
+				for(TitanBankcard titanBankcard :bankcardList){
+					//查询融数
+					log.info("查询绑卡的入参titanBankcard:"+JSONSerializer.toJSON(titanBankcard));
+					String bindStatus = this.queryBindCard(titanBankcard);
+					log.info("查询绑卡结果bindStatus:"+bindStatus);
+					if(StringUtil.isValidString(bindStatus)){//绑定成功,更新自己代码
+						updateBankCard(titanBankcard,bindStatus);
 					}
 				}
 			}
-			
-			if (!doUpdate) {
-				rows++;
-			}
-			
+		}
+		
+		if(offset <100){
+			return ;
+		}else{
+			this.bindBankCard(rows+1,offset,userId);
 		}
 		
 	}
