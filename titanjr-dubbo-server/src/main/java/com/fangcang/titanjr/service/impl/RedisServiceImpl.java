@@ -8,10 +8,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.fangcang.titanjr.common.util.Tools;
-import com.fangcang.titanjr.service.RedisCacheService;
+import com.fangcang.titanjr.service.RedisService;
 
-@Service("redisCacheService")
-public class RedisCacheServiceImpl implements RedisCacheService {
+@Service("redisService")
+public class RedisServiceImpl implements RedisService {
 	/***
 	 * 缓存默认过期时间
 	 */
@@ -47,5 +47,6 @@ public class RedisCacheServiceImpl implements RedisCacheService {
 	public void deleteValue(String key) {
 		redisTemplate.expire(key, 0, TimeUnit.MINUTES);
 	}
+
 
 }

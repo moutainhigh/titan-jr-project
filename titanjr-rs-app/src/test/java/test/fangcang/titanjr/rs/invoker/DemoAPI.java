@@ -5,10 +5,10 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.Rop.api.ApiException;
 import com.Rop.api.DefaultRopClient;
 import com.Rop.api.request.*;
 import com.Rop.api.response.*;
-import com.ruixue.oss.common.utils.DateUtil;
 
 
 public class DemoAPI {
@@ -27,8 +27,8 @@ public class DemoAPI {
 	
 	//融数UAT 环境
 		private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
-		private static String appKey = "762DF53A-4DFD-427A-88F8-C4EEF26195A3";
-		private static String appSecret = "6461B23C-3ABE-4BE2-8E2C-D3FF4B2F5415";
+		private static String appKey = "93A6626A-C082-4D25-B496-EA9CC6E90EDB";
+		private static String appSecret = "DC368712-18A4-4290-9A58-FF995DC161DC";
 		private static String session = "1478056836773639888";
 		
 		
@@ -81,7 +81,7 @@ public class DemoAPI {
 //		String requestType = "ruixue.wheatfield.order.transfer";
 
 		//查询信贷账户余额 TJM10000087
-		String requestType = "ruixue.wheatfield.balance.getlist";
+		String requestType = "ruixue.wheatfield.ordern.query";
 
 		if ("ruixue.wheatfield.enterprise.entityaccountopt".equals(requestType)) {
 			//企业账户开户
@@ -143,6 +143,9 @@ public class DemoAPI {
 		} else if ("ruixue.wheatfield.order.service.withdrawservice".equals(requestType)) {
 			//订单提现
 			strMsg = doWheatfieldOrderServiceWithdrawservice(session);
+		}else if ("ruixue.wheatfield.ordern.query".equals(requestType)) {
+			//订单查询
+			ordernQuery();
 		} else if ("ruixue.wheatfield.order.service.kzhwithhold".equals(requestType)) {
 			//代付
 			strMsg = doWheatfieldOrderServiceKzhwithholdRequest(session);
@@ -450,6 +453,28 @@ public class DemoAPI {
 
 		}
 		return strError;
+	}
+	/** 
+	 * 订单查询新接口
+	 * ruixue.wheatfield.ordern.query
+	 * 
+	 * **/
+	
+	public static void ordernQuery(){
+		WheatfieldOrdernQueryRequest req = new WheatfieldOrdernQueryRequest();
+		req.setOrderno("2017052312514500004");
+		req.setMerchantcode("M000016");
+		WheatfieldOrdernQueryResponse rsp;
+		try {
+			rsp = ropClient.execute(req,session);
+			if (rsp != null) {
+				System.out.println("返回报文: \n" + rsp.getBody());
+			}
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
 	/* ruixue.wheatfield.batchquery.company 查询账户状态 */
