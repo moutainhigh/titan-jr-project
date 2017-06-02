@@ -29,7 +29,7 @@ public class RedisDistributedLock implements Serializable {
 
 	private static final int DEFAULT_ACQUIRY_RESOLUTION_MILLIS = 100;
 
-	private int expireMsecs = 60 * 1000;
+	private int expireMsecs = 30 * 1000;
 
 	/**
 	 * 锁等待时间，防止线程饥饿
@@ -102,7 +102,6 @@ public class RedisDistributedLock implements Serializable {
 	 * @return false:未拿到锁，true:拿到锁
 	 */
 	public synchronized boolean lock(String key) {
-
 		int timeout = timeoutMsecs;
 		// 如果获取锁失败则多次尝试并且设置超时时间为10秒
 		while (timeout >= 0) {
@@ -111,12 +110,13 @@ public class RedisDistributedLock implements Serializable {
 			// 如果返回true则标示成功了，已经拿到锁了嘻嘻
 			if (checkLock(key, String.valueOf(expires))) {
 				isGetLock = true;
+				log.info("thread name："+Thread.currentThread().getName()+",lock(): ---------------成功拿到分布式锁 ,分布式key:"+key);
 				return isGetLock;
 			}
 			// 获取锁的超时时间
 			String value = get(key);
 
-			// 如果锁的时间小于本地时间则标示锁已经超时了
+			// 如果锁的时间小于本地时间,则锁已经超时
 			if (value != null
 					&& Long.parseLong(value) < System.currentTimeMillis()) {
 
@@ -126,6 +126,7 @@ public class RedisDistributedLock implements Serializable {
 				// 主要是确认设置的新锁是成功的，并且新锁的超时时间已经更新成功
 				if (oldValueStr != null && oldValueStr.equals(value)) {
 					isGetLock = true;
+					log.info("thread name："+Thread.currentThread().getName()+",lock(): ---------------成功拿到分布式锁 ,分布式key:"+key);
 					return isGetLock;
 				}
 			}
@@ -134,22 +135,24 @@ public class RedisDistributedLock implements Serializable {
 			timeout -= DEFAULT_ACQUIRY_RESOLUTION_MILLIS;
 
 			try {
-				log.info("lock 未取到分布式锁 ，等待100毫秒,分布式key:"+key);
 				// 每次等待100毫秒的间隔
 				Thread.sleep(DEFAULT_ACQUIRY_RESOLUTION_MILLIS);
 			} catch (InterruptedException e) {
-				log.error("获取分布式redis锁时异常，锁key为："+key,e);
+				log.error("thread name："+Thread.currentThread().getName()+",lock():获取分布式redis锁时异常，分布式key："+key,e);
 			}
 		}
+		log.error("thread name："+Thread.currentThread().getName()+",lock(): "+timeoutMsecs+" 毫秒内  获取分布式锁失败 ,分布式key:"+key);
 		return isGetLock;
 	}
 
+	 
 	/**
 	 * 干掉锁
 	 */
 	public synchronized void unlock(String key) {
 		if (redisTemplate != null && key != null) {
 			if(isGetLock){
+				log.info(Thread.currentThread().getName()+"-unlock(): ---------------成功解锁 ,分布式key:"+key);
 				redisTemplate.delete(key);
 			}
 			
