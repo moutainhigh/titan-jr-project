@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.cache;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -48,14 +47,14 @@ public class MybatisRedisCache implements Cache {
 	 * 清空key
 	 */
 	public void clear() {
-		
 		getRedisTemplate().execute(new RedisCallback<String>() {
 			public String doInRedis(RedisConnection connection)
 					throws DataAccessException {
 				log.info("MybatisRedisCache clear redis key ,regex:[*"+id+"*]");
-				connection.openPipeline();
-				Set<byte[]> bs = connection.keys(("*" +id+"*").getBytes());
-				connection.del(bs.toArray(new byte[0][0]));
+//				connection.openPipeline();
+//				Set<byte[]> bs = connection.keys(("*" +id+"*").getBytes());
+//				connection.del(bs.toArray(new byte[0][0]));
+				connection.flushDb();
 				return "ok";
 			}
 		});
@@ -67,7 +66,6 @@ public class MybatisRedisCache implements Cache {
 			String key = keyObj.toString();
 			Object value = getRedisTemplate().opsForValue().get(key);
 			if(value!=null){
-				//Object object = jdkSerializer.deserialize((byte[])value);
 				log.info("get-value-----key:"+Tools.gsonToString(keyObj)+",---value--"+Tools.gsonToString(value));
 				return value;   
 			}
