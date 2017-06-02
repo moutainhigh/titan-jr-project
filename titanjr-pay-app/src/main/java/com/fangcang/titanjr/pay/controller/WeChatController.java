@@ -113,7 +113,21 @@ public class WeChatController {
 
 		log.info("Wx titan pay request Json = "
 				+ JsonConversionTool.toJson(req));
-
+		// 查询收款人对于的机构信息
+		if(StringUtil.isValidString(req.getPayType())&&req.getPayType().toUpperCase().startsWith("S")){//SAAS商家编码
+			OrgBindInfoDTO orgDto = new OrgBindInfoDTO();
+			orgDto.setMerchantCode(req.getPayeeOrg());
+			List<OrgBindInfoDTO> list = orgService.queryOrgBindInfoDTO(orgDto);
+			if(CollectionUtils.isEmpty(list)){
+				log.error("saas PayeeOrg financialOrganDTO is null,PayeeOrg:"+req.getPayeeOrg());
+				jumpFailUrl(req.getFailJumpUrl(), response, request,
+						TitanMsgCodeEnum.CASHIER_INSTITUTIONS_NOT_EXISTS);
+				return;
+			}else{
+				orgDto = list.get(0);
+				req.setPayeeOrg(orgDto.getUserid());
+			}
+		}
 		if (!checkOrderInfo(req)) {
 			jumpFailUrl(req.getFailJumpUrl(), response, request,
 					TitanMsgCodeEnum.UNEXPECTED_ERROR);
@@ -183,20 +197,6 @@ public class WeChatController {
 			titanPaymentRequest.setTradeAmount(req.getAmount());
 
 			// 查询收款人对于的机构信息
-			if(StringUtil.isValidString(req.getPayType())&&req.getPayType().toUpperCase().startsWith("S")){//SAAS商家编码
-				OrgBindInfoDTO orgDto = new OrgBindInfoDTO();
-				orgDto.setMerchantCode(req.getPayeeOrg());
-				List<OrgBindInfoDTO> list = orgService.queryOrgBindInfoDTO(orgDto);
-				if(CollectionUtils.isEmpty(list)){
-					log.error("saas PayeeOrg financialOrganDTO is null,PayeeOrg:"+req.getPayeeOrg());
-					jumpFailUrl(req.getFailJumpUrl(), response, request,
-							TitanMsgCodeEnum.CASHIER_INSTITUTIONS_NOT_EXISTS);
-					return;
-				}else{
-					orgDto = list.get(0);
-					req.setPayeeOrg(orgDto.getUserid());
-				}
-			}
 			FinancialOrganDTO financialOrganDTO = financialTradeService
 					.getFinancialOrganDTO(req.getPayeeOrg());
 			if (null == financialOrganDTO) {
