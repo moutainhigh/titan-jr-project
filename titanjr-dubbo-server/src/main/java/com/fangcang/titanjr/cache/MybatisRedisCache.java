@@ -1,5 +1,6 @@
 package com.fangcang.titanjr.cache;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -23,12 +24,15 @@ import com.fangcang.util.SpringContextUtil;
  */
 public class MybatisRedisCache implements Cache {
 	private static final Log log = LogFactory.getLog(MybatisRedisCache.class);
-	
+	private final static long  MYBATIS_CACHE_TIME_OUT = 15*60;//15分钟
 	
 	private RedisTemplate<String, Object> redisTemplate;
 
 	/** The ReadWriteLock. */
 	private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+	/**
+	 * mapper 中的 namespace
+	 */
 	private String id;
 
 	public MybatisRedisCache(String id) {
@@ -44,20 +48,12 @@ public class MybatisRedisCache implements Cache {
 	}
 
 	/**
-	 * 清空key
+	 * 清空缓存
 	 */
 	public void clear() {
-		getRedisTemplate().execute(new RedisCallback<String>() {
-			public String doInRedis(RedisConnection connection)
-					throws DataAccessException {
-				log.info("MybatisRedisCache clear redis key ,regex:[*"+id+"*]");
-//				connection.openPipeline();
-//				Set<byte[]> bs = connection.keys(("*" +id+"*").getBytes());
-//				connection.del(bs.toArray(new byte[0][0]));
-				connection.flushDb();
-				return "ok";
-			}
-		});
+		log.info("MybatisRedisCache clear redis key ,regex:[*"+id+"*]");
+		Set<String> keys =  getRedisTemplate().keys("*"+id+"*");
+		getRedisTemplate().delete(keys);
 	}
 
 
@@ -77,14 +73,13 @@ public class MybatisRedisCache implements Cache {
 	}
 	
 	public void putObject(final Object key, final Object value) {
-		final long liveTime = 15*60;//15分钟
 		log.info("put-value-------key:"+Tools.gsonToString(key)+",---value--"+Tools.gsonToString(value));
-		getRedisTemplate().opsForValue().set(key.toString(), value,liveTime, TimeUnit.SECONDS);
+		getRedisTemplate().opsForValue().set(key.toString(), value,MYBATIS_CACHE_TIME_OUT, TimeUnit.SECONDS);
 	 
 	}
 
-	public Object removeObject(final Object arg0) {
-		getRedisTemplate().expire(arg0.toString(), 0, TimeUnit.SECONDS);
+	public Object removeObject(final Object key) {
+		getRedisTemplate().delete(key.toString());
 		return null;
 	}
 	
