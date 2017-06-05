@@ -42,7 +42,6 @@
         <property name="port" value="${redis.port}"/>
         <property name="database" value="${redis.database}"/>
         <property name="password" value="${redis.pass}"/>
-        <property name="timeout" value="${redis.timeout}"/>
         <property name="poolConfig" ref="poolConfig"/>
     </bean>
 
@@ -65,11 +64,5 @@
                 class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
         </property>
     </bean>
-	
-	<bean class="com.fangcang.titanjr.util.DistributedLock" scope="prototype">
-		<constructor-arg>
-			<ref bean="redisTemplate"/>
-		</constructor-arg>
-	</bean>
 </beans>
 

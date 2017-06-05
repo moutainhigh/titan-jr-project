@@ -1,20 +1,19 @@
 package com.fangcang.titanjr.cache;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.cache.Cache;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.util.SpringContextUtil;
 
 /**
@@ -24,12 +23,16 @@ import com.fangcang.util.SpringContextUtil;
  *
  */
 public class MybatisRedisCache implements Cache {
-
+	private static final Log log = LogFactory.getLog(MybatisRedisCache.class);
+	private final static long  MYBATIS_CACHE_TIME_OUT = 15*60;//15分钟
+	
 	private RedisTemplate<String, Object> redisTemplate;
 
 	/** The ReadWriteLock. */
 	private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-
+	/**
+	 * mapper 中的 namespace
+	 */
 	private String id;
 
 	public MybatisRedisCache(String id) {
@@ -45,49 +48,41 @@ public class MybatisRedisCache implements Cache {
 	}
 
 	/**
-	 * 清空key
+	 * 清空缓存
 	 */
 	public void clear() {
-		
-		
-		
-		getRedisTemplate().execute(new RedisCallback<String>() {
-			public String doInRedis(RedisConnection connection)
-					throws DataAccessException {
-				
-				connection.openPipeline();
-				Set<byte[]> bs = connection.keys(("*" +id+"*").getBytes());
-//				connection.
-				connection.del(bs.toArray(new byte[0][0]));
-//				connection.keys(("*" + id +"*".getBytes()));
-//				connection.flushDb();
-				return "ok";
+		log.info("MybatisRedisCache clear redis key ,regex:[*"+id+"*]");
+		Set<String> keys =  getRedisTemplate().keys("*"+id+"*");
+		getRedisTemplate().delete(keys);
+	}
+
+
+	public Object getObject(final Object keyObj) {
+		if(keyObj!=null){
+			String key = keyObj.toString();
+			Object value = getRedisTemplate().opsForValue().get(key);
+			if(value!=null){
+				log.info("get-value-----key:"+Tools.gsonToString(keyObj)+",---value--"+Tools.gsonToString(value));
+				return value;   
 			}
-		});
+			return null;
+		}else{
+			log.error("redis param error : key is null");
+		}
+		return null;
+	}
+	
+	public void putObject(final Object key, final Object value) {
+		log.info("put-value-------key:"+Tools.gsonToString(key)+",---value--"+Tools.gsonToString(value));
+		getRedisTemplate().opsForValue().set(key.toString(), value,MYBATIS_CACHE_TIME_OUT, TimeUnit.SECONDS);
+	 
 	}
 
-	public String getId() {
-		return id;
+	public Object removeObject(final Object key) {
+		getRedisTemplate().delete(key.toString());
+		return null;
 	}
-
-	public Object getObject(final Object arg0) {
-		return getRedisTemplate().execute(new RedisCallback<Object>() {
-			public Object doInRedis(RedisConnection connection)
-					throws DataAccessException {
-				byte[] key = serialize(arg0);
-				byte[] value = connection.get(key);
-				if (value == null) {
-					return null;
-				}
-				return unserizlize(value);
-			}
-		});
-	}
-
-	public ReadWriteLock getReadWriteLock() {
-		return readWriteLock;
-	}
-
+	
 	public int getSize() {
 		return getRedisTemplate().execute(new RedisCallback<Integer>() {
 			public Integer doInRedis(RedisConnection connection)
@@ -96,70 +91,12 @@ public class MybatisRedisCache implements Cache {
 			}
 		});
 	}
-
-	public void putObject(final Object arg0, final Object arg1) {
-		final long liveTime = 86400;
-		getRedisTemplate().execute(new RedisCallback<Long>() {
-			public Long doInRedis(RedisConnection connection)
-					throws DataAccessException {
-				byte[] keyb = serialize(arg0);
-				byte[] valueb = serialize(arg1);
-				connection.set(keyb, valueb);
-				if (liveTime > 0) {
-
-					connection.expire(keyb, liveTime);
-				}
-				return 1L;
-			}
-		});
-
+	 
+	public ReadWriteLock getReadWriteLock() {
+		return readWriteLock;
 	}
-
-	public Object removeObject(final Object arg0) {
-
-		return getRedisTemplate().execute(new RedisCallback<Object>() {
-			public Object doInRedis(RedisConnection connection)
-					throws DataAccessException {
-				byte[] keyb = serialize(arg0);
-				byte[] result = connection.get(keyb);
-				if (result != null) {
-					connection.expire(serialize(arg0), 0);
-				}
-				return unserizlize(result);
-			}
-		});
+	
+	public String getId() {
+		return id;
 	}
-
-	// 序列化
-	private static byte[] serialize(Object obj) {
-		ObjectOutputStream obi = null;
-		ByteArrayOutputStream bai = null;
-		try {
-			bai = new ByteArrayOutputStream();
-			obi = new ObjectOutputStream(bai);
-			obi.writeObject(obj);
-			byte[] byt = bai.toByteArray();
-			return byt;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	// 反序列化
-	private static Object unserizlize(byte[] byt) {
-		ObjectInputStream oii = null;
-		ByteArrayInputStream bis = null;
-		bis = new ByteArrayInputStream(byt);
-		try {
-			oii = new ObjectInputStream(bis);
-			Object obj = oii.readObject();
-			return obj;
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 }

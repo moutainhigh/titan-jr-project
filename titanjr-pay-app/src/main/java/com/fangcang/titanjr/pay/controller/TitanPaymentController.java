@@ -285,7 +285,7 @@ public class TitanPaymentController extends BaseController {
 
 			order = response.getTransOrderInfos().get(0);
 
-			log.info(orderNo + "订单状态:" + i + ":" + order.getOrderstatus());
+			log.info("查询订单状态,第["+i+"]次，订单号："+orderNo + ",状态:" + order.getOrderstatus());
 
 			if (CommonConstant.RS_ORDER_STATUS.equals(order.getOrderstatus())) {
 				return true;
