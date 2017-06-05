@@ -153,4 +153,11 @@
     </set>
     where bankcardid = #{bankcardid,jdbcType=INTEGER}
   </update>
+  
+  <delete id="deletePersonCard"  parameterType="com.fangcang.titanjr.entity.TitanBankcard">
+  	delete from t_tfs_bankcard where
+  		userid = #{userid} and accountnumber = #{accountnumber} and productid = #{productid} 
+  		and accountproperty = #{accountproperty}
+  </delete>
+  
 </mapper>

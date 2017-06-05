@@ -40,4 +40,13 @@ public class TitanBankcardDaoImpl extends GenericDAOMyBatisImpl implements Titan
 		}
 	}
 	
+	@Override
+	public int delete(TitanBankcard entity) throws DaoException {
+		try {
+			return super.delete("com.fangcang.titanjr.dao.TitanBankcardDao.deletePersonCard", entity);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+	
 }
