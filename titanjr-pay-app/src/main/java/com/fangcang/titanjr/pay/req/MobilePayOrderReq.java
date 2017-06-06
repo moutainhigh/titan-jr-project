@@ -10,6 +10,9 @@ package com.fangcang.titanjr.pay.req;
  */
 public class MobilePayOrderReq {
 
+	// 收付款方编码类型：第一位为收款方类型，第二位为付款方类型，格式：SS,ST,TT,TS；S-SAAS商家编码M，T-金融机构编码TJM
+	private String payType;
+	
 	// 收款机构
 	private String payeeOrg;
 
@@ -52,6 +55,15 @@ public class MobilePayOrderReq {
 	// 失败跳转地址
 	private String failJumpUrl;
 	
+	
+	public String getPayType() {
+		return payType;
+	}
+
+	public void setPayType(String payType) {
+		this.payType = payType;
+	}
+
 	public String getBussOrderNo() {
 		return bussOrderNo;
 	}
