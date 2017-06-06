@@ -22,6 +22,33 @@
     
   </select>
   
+  <select id="queryEntity" resultType="com.fangcang.titanjr.entity.TitanBankcard" parameterType="com.fangcang.titanjr.entity.parameter.TitanBankcardParam" >
+    select  * from t_tfs_bankcard
+    <where>
+      <if test="userid !=null">
+        and userid = #{userid}
+      </if>
+      <if test="usertype !=null">
+        and usertype = #{usertype}
+      </if>
+      <if test="constid !=null">
+        and constid = #{constid}
+      </if>
+      <if test="productid !=null">
+        and productid = #{productid}
+      </if>
+       <if test="status !=null">
+        and status = #{status}
+      </if>
+      <if test="accountpurpose !=null">
+        and accountpurpose = #{accountpurpose}
+      </if>
+      <if test="accountproperty !=null">
+        and accountproperty = #{accountproperty}
+      </if>
+    </where>
+  </select>
+  
   <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanBankcard" >
     insert into t_tfs_bankcard ( constid, userid, 
       usertype, productid, role, 
@@ -156,8 +183,7 @@
   
   <delete id="deletePersonCard"  parameterType="com.fangcang.titanjr.entity.TitanBankcard">
   	delete from t_tfs_bankcard where
-  		userid = #{userid} and accountnumber = #{accountnumber} and productid = #{productid} 
-  		and accountproperty = #{accountproperty}
+  		userid = #{userid} and accountnumber = #{accountnumber} and productid = #{productid}
   </delete>
   
 </mapper>

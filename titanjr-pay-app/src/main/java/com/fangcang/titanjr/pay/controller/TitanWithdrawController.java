@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.pay.controller;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -42,6 +41,8 @@ import com.fangcang.titanjr.dto.response.CusBankCardBindResponse;
 import com.fangcang.titanjr.dto.response.DeleteBindBankResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
+import com.fangcang.titanjr.entity.TitanBankcard;
+import com.fangcang.titanjr.entity.parameter.TitanBankcardParam;
 import com.fangcang.titanjr.pay.req.CreateTitanRateRecordReq;
 import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
 import com.fangcang.titanjr.pay.req.WithDrawRequest;
@@ -121,18 +122,6 @@ public class TitanWithdrawController extends BaseController {
 				model.addAttribute("accountBalance", balanceResponse
 						.getAccountBalance().get(0));
 			}
-
-			// 查询用户对应绑定的银行卡信息
-			BankCardBindInfoRequest brq = new BankCardBindInfoRequest();
-			brq.setUserid(userId);
-			//账户用途
-			brq.setAccountPurpose(2);
-			brq.setUsertype(String.valueOf(financialOrganDTO.getUserType()));
-			////1：结算卡，2：所有绑定卡
-			brq.setObjorlist("2");
-			brq.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-			brq.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-
 			
 			String mCode = null;
 			OrgBindInfo orgBindInfo = new OrgBindInfo();
@@ -155,18 +144,46 @@ public class TitanWithdrawController extends BaseController {
 				}
 			}
 			
-			QueryBankCardBindInfoResponse cbr = titanFinancialBankCardService
-					.getBankCardBindInfo(brq);
+			// 查询用户对应绑定的银行卡信息
+			if(CommonConstant.ENTERPRISE.equals(String.valueOf(financialOrganDTO.getUserType()))){//对公查融数
+				BankCardBindInfoRequest brq = new BankCardBindInfoRequest();
+				brq.setUserid(userId);
+				brq.setUsertype(String.valueOf(financialOrganDTO.getUserType()));
+				////1：结算卡，2：所有绑定卡
+				brq.setObjorlist("2");
+				brq.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+				brq.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+				QueryBankCardBindInfoResponse cbr = titanFinancialBankCardService
+				.getBankCardBindInfo(brq);
 
-			if (cbr.isResult()
-					&& CollectionUtils.isNotEmpty(cbr.getBankCardInfoDTOList())) {
-				for (BankCardInfoDTO cid : cbr.getBankCardInfoDTOList()) {
-					if (cid.getStatus().equals(
-							BankCardEnum.BankCardStatusEnum.NORMAL.getKey())
-							&& !cid.getAccountpurpose()
-									.equals(BankCardEnum.BankCardPurposeEnum.OTHER_CARD.getKey())) {
-						model.addAttribute("bindBankCard", cid);
+				if (cbr.isResult()
+						&& CollectionUtils.isNotEmpty(cbr.getBankCardInfoDTOList())) {
+					for (BankCardInfoDTO cid : cbr.getBankCardInfoDTOList()) {
+						if (cid.getStatus().equals(
+								BankCardEnum.BankCardStatusEnum.NORMAL.getKey())
+								&& !cid.getAccountpurpose()
+										.equals(BankCardEnum.BankCardPurposeEnum.OTHER_CARD.getKey())) {
+							TitanBankcard titanBankcard = new TitanBankcard();
+							titanBankcard.setBankheadname(cid.getBankheadname());
+							titanBankcard.setAccountnumber(cid.getAccount_number());
+							titanBankcard.setAccountname(cid.getAccountrealname());
+							model.addAttribute("bindBankCard", titanBankcard);
+						}
 					}
+				}
+			}else if(CommonConstant.PERSONAL.equals(String.valueOf(financialOrganDTO.getUserType()))){//对私查本地
+				TitanBankcardParam param = new TitanBankcardParam();
+				param.setUserid(userId);
+				param.setUsertype(financialOrganDTO.getUserType());
+				param.setStatus(Integer.parseInt(BankCardEnum.BankCardStatusEnum.NORMAL.getKey()));
+				param.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+				param.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+				TitanBankcard titanBankcard = titanFinancialBankCardService.queryBankCardInfo(param);
+				if (titanBankcard != null && String.valueOf(titanBankcard.getStatus()).equals(
+						BankCardEnum.BankCardStatusEnum.NORMAL.getKey())
+						&& !titanBankcard.getAccountpurpose()
+								.equals(BankCardEnum.BankCardPurposeEnum.OTHER_CARD.getKey())) {
+					model.addAttribute("bindBankCard", titanBankcard);
 				}
 			}
 
@@ -352,7 +369,7 @@ public class TitanWithdrawController extends BaseController {
 						.valueOf(financialOrganDTO.getCertificateNumber()));
 			}
 			bankCardBindRequest.setBankCode(withDrawRequest.getBankCode());
-			bankCardBindRequest.setUserType("1");
+			bankCardBindRequest.setUserType(String.valueOf(financialOrganDTO.getUserType()));
 		/*	bankCardBindRequest.setBankBranch(withDrawRequest.getBranchCode());
 			bankCardBindRequest.setBankCity(withDrawRequest.getCityName());
 			if(StringUtil.isValidString(withDrawRequest.getCityCode())){
@@ -426,7 +443,8 @@ public class TitanWithdrawController extends BaseController {
 		return !StringUtil.isValidString(src);
 	}
 	
-	 private String queryProvinceName(String cityCode){
+	 @SuppressWarnings("unused")
+	private String queryProvinceName(String cityCode){
 		 if(!StringUtil.isValidString(cityCode)){
 			 return null;
 		 }

@@ -56,7 +56,7 @@ public enum TitanMsgCodeEnum {
 	// 使用新卡提现删除原绑定卡失败
 	USE_NEW_CARD_WITHDRAW_DEL_OLD_CARD_FAIL(110100015, "使用新卡提现删除原绑定卡失败"),
 
-	USE_NEW_CARD_WITHDRAW_BING_CARD_FAIL(110100016, "使用新卡提现,绑定新提现卡失败"),
+	USE_NEW_CARD_WITHDRAW_BING_CARD_FAIL(110100016, "提现卡绑定失败，请检查绑卡信息是否正确"),
 	
 	// "提现操作失败，请联系管理员"
 	WITHDRAW_OPT_FAIL(110100017, "提现操作失败，请联系管理员"),

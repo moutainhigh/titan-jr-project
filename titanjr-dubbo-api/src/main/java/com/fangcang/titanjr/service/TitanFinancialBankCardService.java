@@ -14,6 +14,8 @@ import com.fangcang.titanjr.dto.response.DeleteBindBankResponse;
 import com.fangcang.titanjr.dto.response.ModifyInvalidWithDrawCardResponse;
 import com.fangcang.titanjr.dto.response.ModifyWithDrawCardResponse;
 import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
+import com.fangcang.titanjr.entity.TitanBankcard;
+import com.fangcang.titanjr.entity.parameter.TitanBankcardParam;
 
 public interface TitanFinancialBankCardService {
 	
@@ -77,6 +79,13 @@ public interface TitanFinancialBankCardService {
 	public ModifyInvalidWithDrawCardResponse  modifyinvalidPublicCard(ModifyInvalidWithDrawCardRequest modifyInvalidWithDrawCardRequest);
 
 	
+	/**
+	 * 查询单个绑卡信息
+	 * @author jerry
+	 * @param param
+	 * @return
+	 */
+	public TitanBankcard queryBankCardInfo(TitanBankcardParam param);
 	
 	
 }

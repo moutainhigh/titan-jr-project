@@ -49,4 +49,14 @@ public class TitanBankcardDaoImpl extends GenericDAOMyBatisImpl implements Titan
 		}
 	}
 	
+	
+	@Override
+	public TitanBankcard selectEntity(TitanBankcardParam param) throws DaoException {
+		try {
+			return (TitanBankcard)super.selectOne("com.fangcang.titanjr.dao.TitanBankcardDao.queryEntity", param);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+	
 }

@@ -10,4 +10,5 @@ public interface TitanBankcardDao {
 	int insert(TitanBankcard entity) throws DaoException;
 	int update(TitanBankcard entity) throws DaoException;
 	int delete(TitanBankcard entity) throws DaoException;
+	TitanBankcard selectEntity(TitanBankcardParam param) throws DaoException;
 }
