@@ -522,18 +522,16 @@ public class TitanFinancialRefundServiceImpl implements
 		try {
  
 			HttpResponse resp = HttpClient.httpRequest(params,httpPost);
-			
+			log.info("调用融数网关gateWayURL退款或查询退款状态,操作："+busiCodeEnum.toString()+",orderId："+notifyRefundRequest.getOrderNo()+",请求参数:"+Tools.gsonToString(params)+",退款返回信息："+response);
 			if (null != resp) {
 				HttpEntity entity = resp.getEntity();
 				response = EntityUtils.toString(entity);
-				log.info("调用融数网关gateWayURL退款,操作："+busiCodeEnum.toString()+",orderId："+notifyRefundRequest.getOrderNo()+",请求参数:"+Tools.gsonToString(params)+",退款返回信息："+response);
 				notifyRefundResponse = RSConvertFiled2ObjectUtil.convertField2Object(NotifyRefundResponse.class, response);
 				notifyRefundResponse.putSuccess("");
 				if(StringUtil.isValidString(notifyRefundResponse.getErrCode()) 
 			    		|| StringUtil.isValidString(notifyRefundResponse.getErrMsg())
 			    		|| !StringUtil.isValidString(notifyRefundResponse.getRefundOrderno())){//通知退款失败
 					log.error("调用融数网关gateWayURL退款异常,错误信息:"+notifyRefundResponse.getErrMsg()+",参数params:"+Tools.gsonToString(params));
-					//notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
 					notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_IN_PROCESS.status.toString());
 			    }
 				
@@ -546,7 +544,8 @@ public class TitanFinancialRefundServiceImpl implements
 				//网络无响应，则
 				notifyRefundResponse.putSuccess();
 				notifyRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_IN_PROCESS.status.toString());
-				log.error("网关退款失败 resp 为空,参数params:"+Tools.gsonToString(params)+",退款地址gateWayURL:"+RSInvokeConstant.gateWayURL);
+				log.error("网关退款失败 resp 为空,操作："+busiCodeEnum.toString()+",参数params:"+Tools.gsonToString(params)+",退款地址gateWayURL:"+RSInvokeConstant.gateWayURL);
+				return notifyRefundResponse;
 			}
 		} catch (ParseException e) {
 			notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.RS_NOTIFY_REFUND_FAIL);
