@@ -1,5 +1,7 @@
 package com.fangcang.titanjr.dao.impl;
 
+import java.util.List;
+
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
@@ -30,6 +32,16 @@ public class TitanBankcardDaoImpl extends GenericDAOMyBatisImpl implements Titan
 			throw new DaoException(e);
 		}
 	}
+	
+	@Override
+	public int intsertBatch(List<TitanBankcard> list) throws DaoException {
+		try {
+			return super.insertEntity("com.fangcang.titanjr.dao.TitanBankcardDao.intsertBatch", list);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DaoException(e);
+		}
+	}
 
 	@Override
 	public int update(TitanBankcard entity) throws DaoException {
@@ -43,7 +55,7 @@ public class TitanBankcardDaoImpl extends GenericDAOMyBatisImpl implements Titan
 	@Override
 	public int delete(TitanBankcard entity) throws DaoException {
 		try {
-			return super.delete("com.fangcang.titanjr.dao.TitanBankcardDao.deletePersonCard", entity);
+			return super.delete("com.fangcang.titanjr.dao.TitanBankcardDao.deleteEntity", entity);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}

@@ -38,6 +38,8 @@
           <if test="userType != null">AND usertype = #{userType}</if>
           <if test="orgType != null">AND orgtype =#{orgType}</if>
           <if test="statusId != null">AND statusid =#{statusId}</if>
+          <if test="certificatetype != null">AND certificatetype =#{certificatetype}</if>
+          <if test="certificatenumber != null">AND certificatenumber =#{certificatenumber}</if>
     </select>
     
     <select id="queryTitanOrgListByUserId" resultType="com.fangcang.titanjr.entity.TitanOrg"

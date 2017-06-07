@@ -75,6 +75,38 @@
       #{bankcity,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, 
       #{createtime})
   </insert>
+  
+  <insert id="intsertBatch" parameterType="list">
+  	insert into t_tfs_bankcard
+  		( constid, userid, 
+      	usertype, productid, role, 
+      	accountnumber, accounttypeid, bankbranchname, 
+      	bankheadname, currency, openaccountdate, 
+      	reqsn, submittime, openaccountdescription, 
+      	accountpurpose, bindid, accountproperty, 
+      	relatid, certificatetype, certificatenumnumber, 
+      	accountname, relatedcard, tel, 
+      	merrem, remark, referuserid, 
+      	bankcode, bankbranch, bankprovince, 
+      	bankcity, status, creator, 
+      	createtime)
+			values
+		<foreach collection="list" item="item" index="index" separator=",">
+			( #{item.constid,jdbcType=VARCHAR}, #{item.userid,jdbcType=VARCHAR}, 
+		      #{item.usertype,jdbcType=INTEGER}, #{item.productid,jdbcType=VARCHAR}, #{item.role,jdbcType=VARCHAR}, 
+		      #{item.accountnumber,jdbcType=VARCHAR}, #{item.accounttypeid,jdbcType=VARCHAR}, #{item.bankbranchname,jdbcType=VARCHAR}, 
+		      #{item.bankheadname,jdbcType=VARCHAR}, #{item.currency,jdbcType=VARCHAR}, #{item.openaccountdate}, 
+		      #{item.reqsn,jdbcType=VARCHAR}, #{item.submittime}, #{item.openaccountdescription,jdbcType=VARCHAR}, 
+		      #{item.accountpurpose,jdbcType=VARCHAR}, #{item.bindid,jdbcType=VARCHAR}, #{item.accountproperty,jdbcType=VARCHAR}, 
+		      #{item.relatid,jdbcType=VARCHAR}, #{item.certificatetype,jdbcType=VARCHAR}, #{item.certificatenumnumber,jdbcType=VARCHAR}, 
+		      #{item.accountname,jdbcType=VARCHAR}, #{item.relatedcard,jdbcType=VARCHAR}, #{item.tel,jdbcType=VARCHAR}, 
+		      #{item.merrem,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR}, #{item.referuserid,jdbcType=VARCHAR}, 
+		      #{item.bankcode,jdbcType=VARCHAR}, #{item.bankbranch,jdbcType=VARCHAR}, #{item.bankprovince,jdbcType=VARCHAR}, 
+		      #{item.bankcity,jdbcType=VARCHAR}, #{item.status,jdbcType=INTEGER}, #{item.creator,jdbcType=VARCHAR}, 
+		      #{item.createtime})
+		</foreach>
+  </insert>
+  
   <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanBankcard" >
     update t_tfs_bankcard
     <set >
@@ -181,9 +213,25 @@
     where bankcardid = #{bankcardid,jdbcType=INTEGER}
   </update>
   
-  <delete id="deletePersonCard"  parameterType="com.fangcang.titanjr.entity.TitanBankcard">
-  	delete from t_tfs_bankcard where
-  		userid = #{userid} and accountnumber = #{accountnumber} and productid = #{productid}
+  <delete id="deleteEntity"  parameterType="com.fangcang.titanjr.entity.TitanBankcard">
+  	delete from t_tfs_bankcard
+  	<where>
+      <if test="userid !=null">
+        and userid = #{userid}
+      </if>
+      <if test="usertype !=null">
+        and usertype = #{usertype}
+      </if>
+      <if test="productid !=null">
+        and productid = #{productid}
+      </if>
+      <if test="accountnumber !=null">
+        and accountnumber = #{accountnumber}
+      </if>
+      <if test="status !=null">
+        and status = #{status}
+      </if>
+    </where>
   </delete>
   
 </mapper>
