@@ -10,6 +10,8 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import com.fangcang.util.StringUtil;
+
 /**
  * 分布式锁工具,仅在service层用,不能在controller
  * 
@@ -29,17 +31,17 @@ public class RedisDistributedLock implements Serializable {
 
 	private static final int DEFAULT_ACQUIRY_RESOLUTION_MILLIS = 100;
 
-	private int expireMsecs = 30 * 1000;
+	private int expireMsecs = 60 * 1000;
 
 	/**
-	 * 锁等待时间，防止线程饥饿
+	 * 抢锁时长,超过该时间还未取到锁，就返回去锁失败，防止线程饥饿
 	 */
 	private int timeoutMsecs = 10 * 1000;
 	
 	/**
 	 * 是否成功获取到锁
 	 */
-	private boolean isGetLock = false;
+	private String lockValue = "";
 
 	
 	public RedisDistributedLock(RedisTemplate<String, Object> redisTemplate) {
@@ -83,7 +85,6 @@ public class RedisDistributedLock implements Serializable {
 	}
 
 	private boolean checkLock(final String key, final String value) {
-
 		boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
 			public Boolean doInRedis(RedisConnection connection)
 					throws DataAccessException {
@@ -99,9 +100,9 @@ public class RedisDistributedLock implements Serializable {
 	 * 根据key申请一个小锁
 	 * 
 	 * @param key
-	 * @return false:未拿到锁，true:拿到锁
+	 * @return 返回空:未拿到锁，返回时间戳:拿到锁
 	 */
-	public synchronized boolean lock(String key) {
+	public synchronized String lock(String key) {
 		int timeout = timeoutMsecs;
 		// 如果获取锁失败则多次尝试并且设置超时时间为10秒
 		while (timeout >= 0) {
@@ -109,12 +110,13 @@ public class RedisDistributedLock implements Serializable {
 
 			// 如果返回true则标示成功了，已经拿到锁了嘻嘻
 			if (checkLock(key, String.valueOf(expires))) {
-				isGetLock = true;
-				log.info("thread name："+Thread.currentThread().getName()+",lock(): ---------------成功拿到分布式锁 ,分布式key:"+key);
-				return isGetLock;
+				lockValue = get(key);
+				log.info("thread name："+Thread.currentThread().getName()+",lock(): ---------------成功拿到分布式锁 ,分布式key:["+key+"]");
+				return lockValue;
 			}
 			// 获取锁的超时时间
 			String value = get(key);
+			
 
 			// 如果锁的时间小于本地时间,则锁已经超时
 			if (value != null
@@ -125,9 +127,11 @@ public class RedisDistributedLock implements Serializable {
 
 				// 主要是确认设置的新锁是成功的，并且新锁的超时时间已经更新成功
 				if (oldValueStr != null && oldValueStr.equals(value)) {
-					isGetLock = true;
-					log.info("thread name："+Thread.currentThread().getName()+",lock(): ---------------成功拿到分布式锁 ,分布式key:"+key);
-					return isGetLock;
+					lockValue = get(key);
+					log.info("thread name："+Thread.currentThread().getName()+",lock(): ---------------成功拿到分布式锁 ,分布式key:["+key+"]");
+					return lockValue;
+				}else{
+					log.info("thread name："+Thread.currentThread().getName()+",lock(): ---------------分布式锁超时,分布式key:["+key+"]");
 				}
 			}
 
@@ -138,24 +142,26 @@ public class RedisDistributedLock implements Serializable {
 				// 每次等待100毫秒的间隔
 				Thread.sleep(DEFAULT_ACQUIRY_RESOLUTION_MILLIS);
 			} catch (InterruptedException e) {
-				log.error("thread name："+Thread.currentThread().getName()+",lock():获取分布式redis锁时异常，分布式key："+key,e);
+				log.error("thread name："+Thread.currentThread().getName()+",lock():获取分布式redis锁时异常，分布式key：["+key+"]",e);
 			}
 		}
-		log.error("thread name："+Thread.currentThread().getName()+",lock(): "+timeoutMsecs+" 毫秒内  获取分布式锁失败 ,分布式key:"+key);
-		return isGetLock;
+		log.error("thread name："+Thread.currentThread().getName()+",lock(): "+timeoutMsecs+" 毫秒内  获取分布式锁失败 ,分布式key:["+key+"]");
+		return lockValue;
 	}
 
 	 
 	/**
-	 * 干掉锁
+	 * 解锁分布式锁
 	 */
 	public synchronized void unlock(String key) {
 		if (redisTemplate != null && key != null) {
-			if(isGetLock){
-				log.info(Thread.currentThread().getName()+"-unlock(): ---------------成功解锁 ,分布式key:"+key);
+			String cacheValue = get(key);
+			if(cacheValue!=null&&lockValue!=null&&lockValue.equals(cacheValue)){//只有锁持有者才能解锁
 				redisTemplate.delete(key);
+				log.info("thread name："+Thread.currentThread().getName()+",lock(): reids 成功解锁,key:["+key+"],lockValue:"+lockValue+",cacheValue:"+cacheValue);
+			}else{
+				log.error("thread name："+Thread.currentThread().getName()+",lock(): reids 解锁失败,key:["+key+"],lockValue:"+lockValue+",cacheValue:"+cacheValue);
 			}
-			
 		}
 	}
 }

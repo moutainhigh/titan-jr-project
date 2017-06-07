@@ -47,5 +47,17 @@ public interface RedisService {
 	 */
 	public void deleteValue(String key);
 	
+	/***
+	 * 获取锁
+	 * @param key 锁键
+	 * @return 锁值
+	 */
+	public String lock(String key);
 	
+	/***
+	 * 解锁
+	 * @param key 锁键
+	 * @param lockValue 锁值
+	 */
+	public void unlock(String key,String lockValue);
 }
