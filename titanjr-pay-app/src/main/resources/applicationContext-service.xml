@@ -24,7 +24,7 @@
 	<dubbo:consumer check="false"/>
 
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
-	<dubbo:monitor protocol="registry" /> 
+	<!-- <dubbo:monitor protocol="registry" />  -->
 
 	<dubbo:reference id="titanFinancialOrganService" interface="com.fangcang.titanjr.service.TitanFinancialOrganService" retries="0" timeout="800000"/><!-- retries:重试次数 -->
 	<dubbo:reference id="titanFinancialUserService" interface="com.fangcang.titanjr.service.TitanFinancialUserService" retries="0" timeout="10000"/><!-- retries:重试次数 -->

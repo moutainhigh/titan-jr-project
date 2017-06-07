@@ -35,7 +35,7 @@
 	</bean>
 	<bean id="rSInvokeInitManagerImpl" class="com.fangcang.titanjr.service.impl.RSInvokeInitManagerImpl" init-method="initRopClient" />  
     <dubbo:application name="titanjr_service_provider" />
-    <dubbo:monitor protocol="registry" /> 
+    <!-- <dubbo:monitor protocol="registry" />  -->
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
 
 
