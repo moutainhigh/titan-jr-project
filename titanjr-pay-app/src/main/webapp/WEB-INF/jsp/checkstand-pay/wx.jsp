@@ -110,7 +110,7 @@
 				$("#expand").val("001_001");
 				$("#confirmOrder1").submit();
 			}
-		},2000);
+		},2500);
 	}
 	
 	function confirmOrder(_orderNo){

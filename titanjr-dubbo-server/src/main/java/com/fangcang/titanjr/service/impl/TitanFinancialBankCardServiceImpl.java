@@ -18,6 +18,7 @@ import com.fangcang.titanjr.common.enums.ROPErrorEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanBankcardDao;
 import com.fangcang.titanjr.dto.bean.BankCardDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
@@ -94,8 +95,9 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
     public CusBankCardBindResponse bankCardBind(CusBankCardBindRequest cusBankCardBindRequest) {
         CusBankCardBindResponse cusBankCardBindResponse = new CusBankCardBindResponse();
         try {
-            if (cusBankCardBindRequest != null) {
+            if (cusBankCardBindRequest == null) {
                 cusBankCardBindResponse.putErrorResult("绑卡参数不合法");
+                return cusBankCardBindResponse;
             }
             BankCardBindRequest bankCardBindRequest = new BankCardBindRequest();
             bankCardBindRequest.setUserid(cusBankCardBindRequest.getUserId());
@@ -121,50 +123,50 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
             
             log.info("绑定卡的参数:"+JSONSerializer.toJSON(bankCardBindRequest));
             BankCardBindResponse bankCardBindResponse = rsBankCardInfoManager.bindBankCard(bankCardBindRequest);
-            if (bankCardBindResponse != null) {
-                if (CommonConstant.OPERATE_SUCCESS.equals(bankCardBindResponse.getOperateStatus())) {
-                    try {//绑定卡成功，本地初始化
-                        TitanBankcard titanBankcard = covertToTitanBankcard(cusBankCardBindRequest);
-                        if (titanBankcard != null) {
-                        	if(CommonConstant.ENTERPRISE.equals(cusBankCardBindRequest.getAccountProperty())){
-                            	titanBankcard.setStatus(BindCardStatus.BIND_BINDING.status);
-                            }
-                            titanBankcardDao.insert(titanBankcard);
+            if (CommonConstant.OPERATE_SUCCESS.equals(bankCardBindResponse.getOperateStatus())) {
+                try {//绑定卡成功，本地初始化
+                    TitanBankcard titanBankcard = covertToTitanBankcard(cusBankCardBindRequest);
+                    if (titanBankcard != null) {
+                    	if(CommonConstant.ENTERPRISE.equals(cusBankCardBindRequest.getAccountProperty())){
+                        	titanBankcard.setStatus(BindCardStatus.BIND_BINDING.status);
                         }
-                    } catch (Exception e) {
-                        log.error("绑卡本地信息记录失败" + e.getMessage(), e);
-                        e.printStackTrace();
+                        titanBankcardDao.insert(titanBankcard);
                     }
-                    cusBankCardBindResponse.putSuccess();
+                } catch (Exception e) {
+                    log.error("绑卡本地信息记录失败。异常响应信息：" + e.getMessage()+",绑卡参数:"+Tools.gsonToString(cusBankCardBindRequest), e);
+                    cusBankCardBindResponse.putErrorResult("绑卡失败，请重试");
                     return cusBankCardBindResponse;
-                } else {
-                    if (ROPErrorEnum.getROPErrorEnumByCode(bankCardBindResponse.getReturnCode()) != null) {
-                        BankCardBindInfoRequest bankCardBindInfoRequest = new BankCardBindInfoRequest();
-                        bankCardBindInfoRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-                        bankCardBindInfoRequest.setProductid(cusBankCardBindRequest.getProductId());
-                        bankCardBindInfoRequest.setUserid(cusBankCardBindRequest.getUserId());
-                        bankCardBindInfoRequest.setUsertype(cusBankCardBindRequest.getUserType());
-                        bankCardBindInfoRequest.setObjorlist(CommonConstant.ALLCARD);
-                        QueryBankCardBindInfoResponse queryBankCardBindInfoResponse = this.getBankCardBindInfo(bankCardBindInfoRequest);
-                        if (queryBankCardBindInfoResponse != null && queryBankCardBindInfoResponse.getBankCardInfoDTOList() != null) {
-                            for (BankCardInfoDTO bankCardInfoDTO : queryBankCardBindInfoResponse.getBankCardInfoDTOList()) {
-                                if (bankCardInfoDTO.getAccount_number().equals(bankCardBindRequest.getAccountnumber())) {
-                                    cusBankCardBindResponse.putSuccess();
-                                    return cusBankCardBindResponse;
-                                }
+                }
+                cusBankCardBindResponse.putSuccess();
+                return cusBankCardBindResponse;
+            } else {
+                if (ROPErrorEnum.getROPErrorEnumByCode(bankCardBindResponse.getReturnCode()) != null) {
+                    BankCardBindInfoRequest bankCardBindInfoRequest = new BankCardBindInfoRequest();
+                    bankCardBindInfoRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+                    bankCardBindInfoRequest.setProductid(cusBankCardBindRequest.getProductId());
+                    bankCardBindInfoRequest.setUserid(cusBankCardBindRequest.getUserId());
+                    bankCardBindInfoRequest.setUsertype(cusBankCardBindRequest.getUserType());
+                    bankCardBindInfoRequest.setObjorlist(CommonConstant.ALLCARD);
+                    QueryBankCardBindInfoResponse queryBankCardBindInfoResponse = this.getBankCardBindInfo(bankCardBindInfoRequest);
+                    if (queryBankCardBindInfoResponse != null && queryBankCardBindInfoResponse.getBankCardInfoDTOList() != null) {
+                        for (BankCardInfoDTO bankCardInfoDTO : queryBankCardBindInfoResponse.getBankCardInfoDTOList()) {
+                            if (bankCardInfoDTO.getAccount_number().equals(bankCardBindRequest.getAccountnumber())) {
+                                cusBankCardBindResponse.putSuccess();
+                                return cusBankCardBindResponse;
                             }
                         }
                     }
                 }
-                log.error("绑卡失败："+bankCardBindResponse.getReturnCode()+":"+bankCardBindResponse.getReturnMsg());
-                cusBankCardBindResponse.putErrorResult(bankCardBindResponse.getReturnCode(), bankCardBindResponse.getReturnMsg());
-                return cusBankCardBindResponse;
             }
+            log.error("绑卡失败,绑卡参数："+Tools.gsonToString(cusBankCardBindRequest)+",错误代码："+bankCardBindResponse.getReturnCode()+"，错误信息："+bankCardBindResponse.getReturnMsg());
+            cusBankCardBindResponse.putErrorResult(bankCardBindResponse.getReturnCode(), bankCardBindResponse.getReturnMsg());
+            return cusBankCardBindResponse;
         } catch (Exception e) {
-            log.error("绑卡失败" + e.getMessage(), e);
+        	log.error("绑卡失败。异常响应信息：" + e.getMessage()+",绑卡参数:"+Tools.gsonToString(cusBankCardBindRequest), e);
+        	cusBankCardBindResponse.putErrorResult("绑卡失败，请重试");
+            return cusBankCardBindResponse;
         }
-        cusBankCardBindResponse.putSysError();
-        return cusBankCardBindResponse;
+        
     }
 
 
