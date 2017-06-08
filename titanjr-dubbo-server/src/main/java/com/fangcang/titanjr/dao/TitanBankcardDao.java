@@ -1,5 +1,7 @@
 package com.fangcang.titanjr.dao;
 
+import java.util.List;
+
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.entity.TitanBankcard;
@@ -9,4 +11,7 @@ public interface TitanBankcardDao {
 	boolean selectForPage(TitanBankcardParam condition, PaginationSupport<TitanBankcard> paginationSupport) throws DaoException;
 	int insert(TitanBankcard entity) throws DaoException;
 	int update(TitanBankcard entity) throws DaoException;
+	int delete(TitanBankcard entity) throws DaoException;
+	TitanBankcard selectEntity(TitanBankcardParam param) throws DaoException;
+	int intsertBatch(List<TitanBankcard> list) throws DaoException;
 }
