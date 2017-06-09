@@ -70,6 +70,7 @@ import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.pay.services.TitanRateService;
 import com.fangcang.titanjr.pay.services.TitanTradeService;
 import com.fangcang.titanjr.service.BusinessLogService;
+import com.fangcang.titanjr.service.RedisService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
@@ -122,6 +123,9 @@ public class TitanPaymentController extends BaseController {
 	
 	@Resource
 	private BusinessLogService businessLogService;
+	
+	@Resource
+	private RedisService redisService;
 	
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	/**
@@ -187,7 +191,14 @@ public class TitanPaymentController extends BaseController {
         	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARGE_SUCCESS;
         	if(!PayerTypeEnum.RECHARGE.key.equals(payerType.getKey())&&!validateOrderStatus(orderNo)){//非充值的需要发出三次确认订单成功到帐
     			log.error("实在没办法,钱没到账，不能转账，orderNo："+orderNo);
-    			titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Money_Not_In_Account_Fail, null);
+    			//融数可能会回调两次，使用redis控制“充值金额未到账户”的错误邮件发送次数
+    			if(redisService.getValue(orderNo+"_"+OrderExceptionEnum.Notify_Money_Not_In_Account_Fail.msg) == null){
+    				titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Money_Not_In_Account_Fail, null);
+    				redisService.setValue(orderNo+"_"+OrderExceptionEnum.Notify_Money_Not_In_Account_Fail.msg, 
+    						OrderExceptionEnum.Notify_Money_Not_In_Account_Fail.failState, 120);
+    				log.info("充值金额未到账户已发送邮件，set redis log，orderNo：" + orderNo);
+    			}
+    			
     			orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
     			if(CommonConstant.RS_FANGCANG_USER_ID.equals(transOrderDTO.getPayermerchant())){//中间账户的延时到帐就是失败
     				orderStatusEnum = OrderStatusEnum.ORDER_DELAY;
