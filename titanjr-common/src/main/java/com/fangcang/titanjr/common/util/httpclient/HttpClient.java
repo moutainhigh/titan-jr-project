@@ -211,8 +211,6 @@ public class HttpClient {
 				.setDefaultRequestConfig(defaultRequestConfig).build();
 		RequestConfig requestConfig = RequestConfig.copy(defaultRequestConfig)
 				.build();
-		// HttpPost httpPost = new HttpPost(url);
-		// httpPost.setConfig(requestConfig);
 		httpPost.setHeader("Content-Type",
 				"application/x-www-form-urlencoded;charset=UTF-8");
 		httpPost.setConfig(requestConfig);
@@ -223,12 +221,13 @@ public class HttpClient {
 			}
 			response = httpclient.execute(httpPost);
 		} catch (UnsupportedEncodingException e) {
-			log.error(Tools.getStringBuilder().append("httpclient 请求 ,UnsupportedEncodingException异常，url:  ").append(httpPost.getURI()).append(",param:").append(Tools.gsonToString(params)), e);
+			log.error(Tools.getStringBuilder().append("httpclient 请求 ,UnsupportedEncodingException异常，url:  ").append(httpPost.getURI()).append(",param:").append(Tools.gsonToString(params))+"，错误信息："+e.getMessage(), e);
 		} catch (ClientProtocolException e) {
-			log.error(Tools.getStringBuilder().append("httpclient 请求 ,ClientProtocolException异常，url:  ").append(httpPost.getURI()).append(",param:").append(Tools.gsonToString(params)), e);
+			log.error(Tools.getStringBuilder().append("httpclient 请求 ,ClientProtocolException异常，url:  ").append(httpPost.getURI()).append(",param:").append(Tools.gsonToString(params))+"，错误信息："+e.getMessage(), e);
 		} catch (IOException e) {
-			log.error(Tools.getStringBuilder().append("httpclient 请求 ,IOException异常，url:  ").append(httpPost.getURI()).append(",param:").append(Tools.gsonToString(params)), e);
+			log.error(Tools.getStringBuilder().append("httpclient 请求 ,IOException异常，url:  ").append(httpPost.getURI()).append(",param:").append(Tools.gsonToString(params))+"，错误信息："+e.getMessage(), e);
 		}
 		return response;
 	}
+	
 }

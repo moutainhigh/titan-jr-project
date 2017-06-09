@@ -121,7 +121,10 @@ public class Tools {
 	 * @return
 	 */
 	public static String redKeyword(String content,String keyword){
-		return	content.replaceAll(keyword, "<span style=\"color:#f00;\">"+keyword+"</span>");
+		if(StringUtil.isValidString(keyword)&&StringUtil.isValidString(content)){
+			return	content.replaceAll(keyword, "<span style=\"color:#f00;\">"+keyword+"</span>");
+		}
+		return content;
 	}
 	/**
 	 * 解析url字符串
@@ -200,4 +203,33 @@ public class Tools {
 	public static StringBuilder getStringBuilder(){
 		return new StringBuilder();
 	}
-}
+	
+	/***
+	 * 拼成规范的redis key
+	 * @param key
+	 * @return
+	 */
+	public static String getTitanRedisKey(String key){
+		StringBuilder sb  = getStringBuilder().append(CommonConstant.REDIS_KEY_PREFIX_TITANJR).append(":");
+		sb.append(key);
+		return sb.toString();
+	}
+	
+	/***
+	 * 拼成规范的redis key
+	 * @param clazz key所在的全限定类
+	 * @param key
+	 * @return
+	 */
+	public static String getTitanRedisKey(Class clazz,String key){
+		StringBuilder sb  = getStringBuilder().append(CommonConstant.REDIS_KEY_PREFIX_TITANJR).append(":");
+		if(clazz!=null){
+			sb.append(clazz.getName().replaceAll("\\.", "-")).append(":");
+		}
+		sb.append(key);
+		return sb.toString();
+	}
+	public static final void main(String[] arg){
+		//System.out.println(getTitanRedisKey(Wxutil.class,"notify"));
+	}
+ }

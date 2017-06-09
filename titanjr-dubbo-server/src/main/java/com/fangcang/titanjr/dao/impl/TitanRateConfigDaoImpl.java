@@ -72,4 +72,14 @@ public class TitanRateConfigDaoImpl extends GenericDAOMyBatisImpl implements Tit
 			throw new DaoException(e);
 		}
 	}
+
+	@Override
+	public List<String> queryUserIdNoRateConfig(Integer busType) {
+		try {
+			return super.selectList("com.fangcang.titanjr.dao.TitanRateConfigDao.queryUserIdNoRateConfig",busType);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+	
 }

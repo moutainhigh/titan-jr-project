@@ -9,7 +9,6 @@
         <artifactId>titan-jr-project</artifactId>
         <version>1.0.0</version>
     </parent>
-
     <artifactId>titanjr-job-scheduler</artifactId>
     <packaging>war</packaging>
     <name>titanjr-job-scheduler Maven Webapp</name>

@@ -23,4 +23,6 @@ public interface TitanRateConfigDao {
 	int deleteRateRecordByOrderNo(String orderNo);
 	
 	List<String> queryAllUserId();
+	//无某个费率的机构id
+	List<String> queryUserIdNoRateConfig(Integer busType);
 }

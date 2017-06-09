@@ -38,6 +38,7 @@
 	  type,
 	  exceptiontime,
 	  exceptioncontent,
+	  updatetime,
 	  failstate,
 	  ordertype
 	  ) 
@@ -48,6 +49,7 @@
 	  #{type},
 	  #{exceptionTime},
 	  #{exceptionContent},
+	  #{updateTime},
 	  #{failState},
 	  #{orderType})
 	</insert>

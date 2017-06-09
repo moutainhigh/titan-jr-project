@@ -89,11 +89,11 @@
                                     <span>收款银行：</span>${bindBankCard.bankheadname }
                                 </p>
                                 <p>
-                                    <span>收款账号：</span>${bindBankCard.account_number }
+                                    <span>收款账号：</span>${bindBankCard.accountnumber }
                                 </p>
                                 <p>
                                     <span>持卡人姓名：</span>
-                                    ${bindBankCard.accountrealname }
+                                    ${bindBankCard.accountname }
                                 </p>
                             </div>
 
@@ -398,7 +398,7 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
                  accountNum: $("#accountNum").val(),
                  accountName: $("#accountName").val(),
                  password:PasswordStr2.returnStr(),
-                 originalAccount:'${bindBankCard.account_number }',
+                 originalAccount:'${bindBankCard.accountnumber }',
                  originalBankName:'${bindBankCard.bankheadname}',
                  amount:$("#withDrawNum").val(),
                  fcUserId:'${fcUserId}',

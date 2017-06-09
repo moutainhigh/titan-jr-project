@@ -163,7 +163,7 @@ public class InitSubmitJob {
         // 在同一个TaskTracker节点组中，当任务队列中存在这个任务的时候（任务id一样），是否替换更新
         job.setReplaceOnExist(true);
         // cron表达式
-        job.setCronExpression("0 0 2 * * ?");
+        job.setCronExpression("0 0 0/1 * * ?");
         
         job.setRelyOnPrevCycle(false);
 
@@ -265,7 +265,7 @@ public class InitSubmitJob {
      */
     public void submitNotifyCoopOrgInfoJob(){
     	Job job = new Job();
-        job.setTaskId(InitJobRunner.notifyCoopOrgInfo+"_taskid");
+        job.setTaskId(InitJobRunner.notifyCoopOrgInfo);
         job.setParam(Constants.JOB_VALID_ENV_KEY, JobValidEnvEnum.ONLINE.toString());
         job.setParam(Constants.JOB_RUNNER_KEY, InitJobRunner.notifyCoopOrgInfo);
         job.setTaskTrackerNodeGroup(CommonUtils.getTaskTrackerNodeGroup(jobClient.getServerName()));
@@ -286,7 +286,7 @@ public class InitSubmitJob {
      **/ 
     public void submitNotifyTradeStatusJob(){
     	Job job = new Job();
-        job.setTaskId(InitJobRunner.notifyTradeStatus+"_taskid");
+        job.setTaskId(InitJobRunner.notifyTradeStatus);
         job.setParam(Constants.JOB_VALID_ENV_KEY, JobValidEnvEnum.ONLINE.toString());
         job.setParam(Constants.JOB_RUNNER_KEY, InitJobRunner.notifyTradeStatus);
         job.setTaskTrackerNodeGroup(CommonUtils.getTaskTrackerNodeGroup(jobClient.getServerName()));

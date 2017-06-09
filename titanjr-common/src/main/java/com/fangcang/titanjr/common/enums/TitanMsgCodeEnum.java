@@ -56,7 +56,7 @@ public enum TitanMsgCodeEnum {
 	// 使用新卡提现删除原绑定卡失败
 	USE_NEW_CARD_WITHDRAW_DEL_OLD_CARD_FAIL(110100015, "使用新卡提现删除原绑定卡失败"),
 
-	USE_NEW_CARD_WITHDRAW_BING_CARD_FAIL(110100016, "使用新卡提现,绑定新提现卡失败"),
+	USE_NEW_CARD_WITHDRAW_BING_CARD_FAIL(110100016, "提现卡绑定失败，请检查绑卡信息是否正确"),
 	
 	// "提现操作失败，请联系管理员"
 	WITHDRAW_OPT_FAIL(110100017, "提现操作失败，请联系管理员"),
@@ -118,6 +118,8 @@ public enum TitanMsgCodeEnum {
     LOAN_REQUEST_FAIL(110100042,"请求贷款失败，请联系管理员！"),
     
     ORDER_PROGRESS_ING(110100043,"订单处理中，请等待！"),
+    
+    REQUEST_PAYER_FAIL(110100044,"请求付款失败！"),
 
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");

@@ -7,7 +7,7 @@ package com.fangcang.titanjr.common.util;
  */
 public enum SMSTemplate {
 	
-	ORDER_WARNING("订单支付失败","订单号：{0},错误信息：{1}。订单支付失败，请及时关注、处理","订单支付失败，通知相关人员"),
+	ORDER_WARNING("订单失败","订单号：{0},错误信息：{1}{2}。订单失败，请及时关注、处理","订单失败，通知相关人员"),
 	/**
 	 * 金融账户开通模板
 	 */

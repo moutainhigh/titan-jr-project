@@ -313,10 +313,13 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 			}
 
 			// 更新融数返回的贷款单号
-			LoanApplyOrder loanOrder = new LoanApplyOrder();
-			loanOrder.setOrderid(loanResponse.getOrderNo());
-			loanOrder.setOrderNo(request.getUserorderid());
-			this.updateLoanOrderBean(loanOrder);
+			if(StringUtil.isValidString(loanResponse.getOrderNo())){
+				LoanApplyOrder loanOrder = new LoanApplyOrder();
+				loanOrder.setOrderid(loanResponse.getOrderNo());
+				loanOrder.setOrderNo(request.getUserorderid());
+				this.updateLoanOrderBean(loanOrder);
+			}
+			
 			response.setOrderNo(request.getUserorderid());
 			response.setOrderCreateTime(DateUtil.dateToString(new Date(),
 					"yyyy-MM-dd HH:mm"));

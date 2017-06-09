@@ -53,7 +53,7 @@ public class HelpController extends BaseController {
 	 */
 	@RequestMapping("/search")
 	public String search(String w,Integer pn, Model model) throws UnsupportedEncodingException{
-		w = new String(w.getBytes("iso8859-1"), "utf-8");
+		//w = new String(w.getBytes("iso8859-1"), "utf-8");
 		if(pn==null||pn<1){
 			pn = 1;
 		}

@@ -354,7 +354,7 @@ public class TitanTradeController extends BaseController {
 				url = response.getUrl();
 			}
 			log.info("get Payment url ok ");
-			if (StringUtil.isValidString(wrapType)) {
+			if (StringUtil.isValidString(wrapType)) {//支付和充值页面显示样式，钱包head
 				Map<String, String> extParam = new HashMap<String, String>();
 				extParam.put("wrapType", wrapType);
 				url = Tools.appendRequestParam(url, extParam);

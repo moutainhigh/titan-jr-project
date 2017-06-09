@@ -37,6 +37,7 @@ import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.Wxutil;
 import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.LoanSpecificationBean;
@@ -69,6 +70,7 @@ import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.pay.services.TitanRateService;
 import com.fangcang.titanjr.pay.services.TitanTradeService;
 import com.fangcang.titanjr.service.BusinessLogService;
+import com.fangcang.titanjr.service.RedisService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
@@ -122,6 +124,9 @@ public class TitanPaymentController extends BaseController {
 	@Resource
 	private BusinessLogService businessLogService;
 	
+	@Resource
+	private RedisService redisService;
+	
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	/**
 	 * 消息回调接口	 * @param rechargeResultConfirmRequest
@@ -139,7 +144,8 @@ public class TitanPaymentController extends BaseController {
 
 		response.getWriter().print("returnCode=000000&returnMsg=成功");
 		response.flushBuffer();
-		log.info(orderNo+"订单状态："+rechargeResultConfirmRequest.getPayStatus());
+		
+		log.info("融数通知notify支付结果rechargeResultConfirmRequest："+Tools.gsonToString(rechargeResultConfirmRequest));
 		
 		String sign  =titanPaymentService.getSign(rechargeResultConfirmRequest);
 		String signMsg = rechargeResultConfirmRequest.getSignMsg();
@@ -160,7 +166,7 @@ public class TitanPaymentController extends BaseController {
     		transOrderRequest.setOrderid(orderNo);
     		TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
         	if(null == transOrderDTO){
-        		log.error("the object is null");
+        		log.error("the transOrderDTO is null,orderNo:"+orderNo);
         		unlockOutTradeNoList(orderNo);
         		return ;
         	}
@@ -170,7 +176,7 @@ public class TitanPaymentController extends BaseController {
         	//validate transfer order 
         	boolean validateResult = titanPaymentService.validateIsConfirmed(transOrderDTO.getTransid());
 			if(!validateResult){
-				log.error("该订单已转帐成功");
+				log.error("该订单已转帐成功,orderNo:"+orderNo);
 				unlockOutTradeNoList(orderNo);
 				return ;
 			}
@@ -178,14 +184,21 @@ public class TitanPaymentController extends BaseController {
         	// update recharge order
 			int row = titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.RECHARFE_SUCCESS.getStatus()+"");
         	if(row<1){
-        		log.error("更新充值单失败");
+        		log.error("更新充值单失败,orderNo:"+orderNo);
         		titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Update_PayOrder_Fail, null);
         	}
         	
         	OrderStatusEnum orderStatusEnum = OrderStatusEnum.RECHARGE_SUCCESS;
         	if(!PayerTypeEnum.RECHARGE.key.equals(payerType.getKey())&&!validateOrderStatus(orderNo)){//非充值的需要发出三次确认订单成功到帐
-    			log.error("实在没办法,钱没到账，不能转账");
-    			titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Money_Not_In_Account_Fail, null);
+    			log.error("实在没办法,钱没到账，不能转账，orderNo："+orderNo);
+    			//融数可能会回调两次，使用redis控制“充值金额未到账户”的错误邮件发送次数
+    			if(redisService.getValue(orderNo+"_"+OrderExceptionEnum.Notify_Money_Not_In_Account_Fail.msg) == null){
+    				titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Money_Not_In_Account_Fail, null);
+    				redisService.setValue(orderNo+"_"+OrderExceptionEnum.Notify_Money_Not_In_Account_Fail.msg, 
+    						OrderExceptionEnum.Notify_Money_Not_In_Account_Fail.failState, 120);
+    				log.info("充值金额未到账户已发送邮件，set redis log，orderNo：" + orderNo);
+    			}
+    			
     			orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
     			if(CommonConstant.RS_FANGCANG_USER_ID.equals(transOrderDTO.getPayermerchant())){//中间账户的延时到帐就是失败
     				orderStatusEnum = OrderStatusEnum.ORDER_DELAY;
@@ -211,9 +224,9 @@ public class TitanPaymentController extends BaseController {
 	        		financialTradeService.notifyPayResult(transOrderDTO.getUserorderid());
 	        		
 	        		if(CommonConstant.FREEZE_ORDER.equals(transOrderDTO.getIsEscrowedPayment())){//需要进行冻结操作
-	        			log.info("begin to freeze:"+transferRequest);
+	        			log.info("begin to freeze,transferRequest:"+Tools.gsonToString(transferRequest));
 	        			boolean freezeSuccess = titanPaymentService.freezeAccountBalance(transferRequest,orderNo);
-	        			log.info("the result of freeze:"+freezeSuccess);
+	        			log.info("the result of freeze,orderNo:"+orderNo+",冻结状态："+freezeSuccess);
     					//update the status of the order
     					if(freezeSuccess){//freeze order is success
     						orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
@@ -270,7 +283,7 @@ public class TitanPaymentController extends BaseController {
 			if (response == null || !response.isResult()
 					|| null == response.getTransOrderInfos()
 					|| response.getTransOrderInfos().size() != 1) {
-				log.error("confirem ordern query is null");
+				log.error("confirem ordern query is null,param:"+Tools.gsonToString(request)+",response:"+Tools.gsonToString(response));
 				try {//线程等待
 					if(i<2){
 						Thread.sleep(500 * (2<<i));
@@ -283,7 +296,7 @@ public class TitanPaymentController extends BaseController {
 
 			order = response.getTransOrderInfos().get(0);
 
-			log.info(orderNo + "订单状态:" + i + ":" + order.getOrderstatus());
+			log.info("查询订单状态,第["+i+"]次，订单号："+orderNo + ",状态:" + order.getOrderstatus());
 
 			if (CommonConstant.RS_ORDER_STATUS.equals(order.getOrderstatus())) {
 				return true;

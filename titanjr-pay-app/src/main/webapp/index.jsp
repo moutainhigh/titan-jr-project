@@ -140,7 +140,7 @@
             <tr>
                 <td class="tdr">收付款类型</td>
                 <td>
-                    <input type="text" value="1" id="payerType" name="payerType"/><span>1:B2B交易平台  2:GDP 3:财务供应商  4:联盟供应商付款 1001:对外开放平台
+                    <input type="text" value="1" id="payerType" name="payerType"/><span>1:B2B交易平台  2:GDP 3:财务供应商  4:联盟供应商付款 1001:对外开放平台,1024:TTM-SAAS商家,10242：TTM-金融商家，10243:微信公众号
                 </td>
             </tr>
             <tr>
@@ -183,7 +183,7 @@
             <tr align="left">
                 <td class="tdr">退款单号</td>
                 <td>
-                    <input type="text" name="reorderNo"  id="reorderNo" value="dfadfs0055" class="input_t01"/>
+                    <input type="text" name="reorderNo"  id="reorderNo" value="dfadfs0055" class="input_t01"/>与业务订单号相同
                 </td>
             </tr>
             <tr>
@@ -214,7 +214,103 @@
                 <td class="tdr"></td>
                 <td><button value="asdfadfasd" id="refundButton">退款</button></td>
             </tr>
-	
+
+
+
+
+	<form id="wxPayForm" action="titanPay.action" method="POST">
+		<div class="pay">
+
+			<table cellspacing="0" border="0">
+				<tbody>
+					<tr align="left">
+						<td class="tdr">收款机构</td>
+						<td><input type="text" name="payeeOrg" id="payeeOrg"
+							value="TJM10000029" class="input_t01" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">收款机构名称</td>
+						<td><input type="text" id="payeeOrgName" value="郑尧辉"
+							name="payeeOrgName" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">付款机构</td>
+						<td><input type="text" id="payerOrg" value=""
+							name="payerOrg" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">付款机构名称</td>
+						<td><input type="text" id="payerOrgName" value=""
+							name="payerOrgName" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">商品名称或者简要</td>
+						<td><input type="text" id="commodityName" value="测试微信公众号支付"
+							name="commodityName" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">商品详细描述</td>
+						<td><input type="text" id="commodityDesc" value="测试微信公众号支付详细描述" name="commodityDesc" /></td>
+					</tr>
+					
+					
+					<tr>
+						<td class="tdr">业务单号</td>
+						<td><input type="text" id="bussOrderNo" value="5445645645"
+							name="bussOrderNo" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">币种 1 人民币</td>
+						<td><input type="text" id="currencyType" value="1"
+							name="currencyType" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">订单金额</td>
+						<td><input type="text" id="amount" value="0.02"
+							name="amount" /></td>
+					</tr>
+					
+					
+					<tr>
+						<td class="tdr">支付通道类型  WX</td>
+						<td><input type="text" id="channelType" value="10243"
+							name="channelType" /></td>
+					</tr>
+					
+					
+					<tr>
+						<td class="tdr">业务通知地址</td>
+						<td><input type="text" id="notifyUrl" value="http://www.163.com"
+							name="notifyUrl" /></td>
+					</tr>
+					
+					
+					<tr>
+						<td class="tdr">业务信息</td>
+						<td><input type="text" id="bussInfo" value='{"ordercontent":"taogegege"}'
+							name="bussInfo" /></td>
+					</tr>
+					
+					
+					<tr>
+						<td class="tdr">成功回调地址</td>
+						<td><input type="text" id="successJumpUrl" value="http://www.sina.com"
+							name="successJumpUrl" /></td>
+					</tr>
+					
+					<tr>
+						<td class="tdr">失败回调地址</td>
+						<td><input type="text" id="failJumpUrl" value="http://www.baidu.com"
+							name="failJumpUrl" /></td>
+					</tr>
+					
+				</tbody>
+			</table>
+			
+		</div>
+		<button type="submit" >微信支付</button>
+	</form>
+
 </body>
 
 

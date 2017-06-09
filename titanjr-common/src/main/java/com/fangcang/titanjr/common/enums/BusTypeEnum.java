@@ -4,7 +4,8 @@ import com.fangcang.util.StringUtil;
 
 public enum BusTypeEnum {
 
-	B2B_RATE(3, "企业网银","1"), B2C_RATE(4, "个人网银","2"), CREDIT_RATE(5, "信用卡","3"), QR_RATE(6, "第三方支付","9"),WITHDRAW_RATE(7,"提现手续费","0");
+	B2B_RATE(3, "企业网银","1"), B2C_RATE(4, "个人网银","2"), CREDIT_RATE(5, "信用卡","3"), QR_RATE(6, "第三方支付","9"),
+	WX_PUBLIC(8, "微信公众号支付","8"),WITHDRAW_RATE(7,"提现手续费","0");
 	
 	public int type;
 	
@@ -36,6 +37,10 @@ public enum BusTypeEnum {
 	
 	public boolean isWITHDRAW(){
 		return this.type==WITHDRAW_RATE.type;
+	}
+	
+	public boolean isWxPublic(){
+		return this.type==WX_PUBLIC.type;
 	}
 	
 	public static Integer getBusTypeByItemType(String cashierItemType){

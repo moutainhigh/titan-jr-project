@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.pay.services;
 
-import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
@@ -12,15 +11,11 @@ import javax.annotation.Resource;
 
 import net.sf.json.JSONSerializer;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
-import com.alibaba.dubbo.config.annotation.Service;
-import com.alibaba.fastjson.JSON;
-import com.fangcang.titanjr.common.enums.FreezeConditionCodeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
@@ -30,19 +25,15 @@ import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
-import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
-import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
-import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.PermissionRequest;
-import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.RefundRequest;
 import com.fangcang.titanjr.dto.request.TitanJrRefundRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
@@ -50,16 +41,12 @@ import com.fangcang.titanjr.dto.request.UnFreeBalanceBatchRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
-import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
-import com.fangcang.titanjr.dto.response.OrganBriefResponse;
 import com.fangcang.titanjr.dto.response.RefundResponse;
 import com.fangcang.titanjr.dto.response.TitanJrRefundResponse;
 import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.enums.BusiCodeEnum;
-import com.fangcang.titanjr.enums.PayTypeEnum;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
-import com.fangcang.titanjr.pay.controller.TitanTradeController;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialRefundService;
@@ -237,7 +224,7 @@ public class TitanRefundService {
 			if (RefundTypeEnum.REFUND_ACCOUNT.type.equals(titanJrRefundRequest.getToBankCardOrAccount())) {//余额支付的退款
 				transOrder.setStatusid(OrderStatusEnum.REFUND_SUCCESS.getStatus());
 			}
-			log.info("退款成功修改订单状态:" + transOrder.getTransid() + ":" + transOrder.getStatusid());
+			log.info("退款成功修改订单状态,Transid:" + transOrderDTO.getTransid() + ",orderId:"+transOrderDTO.getOrderid()+",Statusid:" + transOrder.getStatusid());
 			transOrder.setTransid(transOrderDTO.getTransid());
 			flag = titanOrderService.updateTransOrder(transOrder);
 			if (!flag) {

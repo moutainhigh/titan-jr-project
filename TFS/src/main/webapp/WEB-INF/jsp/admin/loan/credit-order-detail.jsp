@@ -75,6 +75,12 @@
 								<td>${getCreditInfoResponse.creditCompany.regDate }</td>
 							</tr>
 							<tr>
+								<td class="bg_f2"><i class="c_f00">*</i>开户许可证号：</td>
+								<td>${getCreditInfoResponse.creditCompany.openAccount }</td>
+								<td class="bg_f2"></td>
+								<td></td>
+							</tr>
+							<tr>
 								<td class="bg_f2"><i class="c_f00">*</i>营业执照生效日期：</td>
 								<td>${getCreditInfoResponse.creditCompany.certificateStartDate }</td>
 								<td class="bg_f2"><i class="c_f00">*</i>营业执照失效日期：</td>
@@ -510,6 +516,12 @@
 								<td>${getCreditInfoResponse.companyEnsure.taxRegisterCode}</td>
 								<td class="bg_f2"><i class="c_f00">*</i>组织机构代码：</td>
 								<td>${getCreditInfoResponse.companyEnsure.orgCodeCertificate}</td>								
+							</tr>
+							<tr>
+								<td class="bg_f2"><i class="c_f00">*</i>开户许可证号：</td>
+								<td>${getCreditInfoResponse.companyEnsure.openAccount}</td>
+								<td class="bg_f2"></td>
+								<td></td>								
 							</tr>
 							<!-- 
 							<tr>

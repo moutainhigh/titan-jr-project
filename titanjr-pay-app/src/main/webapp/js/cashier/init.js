@@ -50,7 +50,14 @@ function initCashierDesk(){
 			$("#not_exists_history").show();
 			$("#loanItemType").hide();
 			$("#useBalanceCheck").show();
-			$("#not_enough_amount").show();
+			if(isFinance()){//财务中需要显示历史,显示余额充足或者不充足。
+				var testFlag = (cashierData.tradeAmount - cashierData.balanceusable) <= 0;
+				if(testFlag){
+					 $("#not_enough_amount").hide();
+				}else{
+					 $("#not_enough_amount").show();
+				}   
+			}
 		}
     });
     

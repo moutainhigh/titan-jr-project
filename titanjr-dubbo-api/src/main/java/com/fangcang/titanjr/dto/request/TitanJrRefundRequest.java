@@ -45,6 +45,8 @@ public class TitanJrRefundRequest extends BaseRequestDTO {
 	private String fee;
 	
 	private String tfsUerId;
+	//退款单创建者
+	private String orderCreator;
 	
 	private Integer transorderid;
 	
@@ -260,6 +262,14 @@ public class TitanJrRefundRequest extends BaseRequestDTO {
 
 	public void setBusinessInfo(String businessInfo) {
 		this.businessInfo = businessInfo;
+	}
+
+	public String getOrderCreator() {
+		return orderCreator;
+	}
+
+	public void setOrderCreator(String orderCreator) {
+		this.orderCreator = orderCreator;
 	}
 	
 }

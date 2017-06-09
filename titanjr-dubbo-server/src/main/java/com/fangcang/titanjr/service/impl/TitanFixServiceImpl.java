@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
@@ -58,17 +60,26 @@ public class TitanFixServiceImpl implements TitanFixService {
 			for(TitanOrderException item : paginationSupport.getItemList()){
 				
 				TransOrderRequest transOrderRequest = new TransOrderRequest();
-				transOrderRequest.setOrderid(item.getOrderId());
+				if(item.getOrderType().equals(OrderKindEnum.OrderId.getType())){
+					transOrderRequest.setOrderid(item.getOrderId());
+				}else if(item.getOrderType().equals(OrderKindEnum.UserOrderId.getType())){
+					transOrderRequest.setUserorderid(item.getOrderId());
+				}
 				TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
 			    ConfirmFinanceRequest req = new ConfirmFinanceRequest();
 			    req.setTransOrderDTO(transOrderDTO);
 			    req.setIsSaveLog(false);
-			    boolean isDuplicate = false; 
+			    boolean isDuplicate = false;//是否为重复异常 
+			    boolean isNotifySuccss = false;//是否通知成功
 			    try {
 			    	if(!sendOrderIdSet.contains(item.getOrderId())){
-			    		log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()).append(",failState:").append(item.getFailState()));
-						tradeService.confirmFinance(req);
-						sendOrderIdSet.add(item.getOrderId());
+			    		//if(transOrderDTO.getStatusid().equals(OrderStatusEnum.ORDER_SUCCESS.getStatus())){
+			    			isNotifySuccss = tradeService.confirmFinance(req);
+				    		log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()).append(",次数(failState):").append(item.getFailState()).append(",通知是否成功："+isNotifySuccss));
+			    		//}else{
+			    		//log.info(Tools.getStringBuilder().append("支付状态通知补偿,orderId:").append(transOrderDTO.getOrderid()).append(",userorderId:").append(transOrderDTO.getUserorderid()).append(",次数(failState):").append(item.getFailState()).append(",该订单未支付成功，订单状态："+transOrderDTO.getStatusid()));
+			    		//}
+			    		sendOrderIdSet.add(item.getOrderId());
 						isDuplicate = false;
 			    	}else{
 			    		isDuplicate = true;
@@ -79,16 +90,25 @@ public class TitanFixServiceImpl implements TitanFixService {
 				}finally {
 					//更新数据
 					NotifyPolicy next = null;
-					if(isDuplicate){//orderid重复记录，则不再通知
+					String failState ;
+					Date updateTime ;
+					if(isNotifySuccss){//或者成功
+						failState = "200";
+						updateTime = new Date();
+					}else if(isDuplicate){//orderid重复记录，则不再通知
 						next = NotifyPolicy.FailState_99;
+						failState = next.getFailState();
+						updateTime = NotifyPolicy.getNextTime(next);
 					}else{
 						next = NotifyPolicy.getNotifyPolicy(NotifyPolicy.getNotifyPolicy(item.getFailState()).getNextFailState());
+						failState = next.getFailState();
+						updateTime = NotifyPolicy.getNextTime(next);
 					}
 					
 					OrderExceptionDTO orderExceptionDTO = new OrderExceptionDTO();
 					orderExceptionDTO.setId(item.getId());
-					orderExceptionDTO.setUpdateTime(NotifyPolicy.getNextTime(next));
-					orderExceptionDTO.setFailState(next.getFailState());
+					orderExceptionDTO.setUpdateTime(updateTime);
+					orderExceptionDTO.setFailState(failState);
 					titanOrderService.updateOrderException(orderExceptionDTO);
 					
 				}
@@ -111,12 +131,12 @@ public class TitanFixServiceImpl implements TitanFixService {
 	 *
 	 */
 	public enum NotifyPolicy{
-		FailState_0("0","2",1,"MINUTES","状态为0,通知第一次"),
-		FailState_2("2","3",3,"MINUTES","状态为2,通知第二次"),
-		FailState_3("3","4",10,"MINUTES","状态为3,通知第三次"),
-		FailState_4("4","5",30,"MINUTES","状态为4,通知第四次"),
-		FailState_5("5","6",2,"HOURS","状态为5,通知第五次"),
-		FailState_6("6","99",12,"HOURS","状态为6,12小时后，再通知第六次"),
+		FailState_0("0","1",1,"MINUTES","状态为0,通知第一次"),
+		FailState_1("1","2",3,"MINUTES","状态为1,通知第二次"),
+		FailState_2("2","3",10,"MINUTES","状态为2,通知第三次"),
+		FailState_3("3","4",30,"MINUTES","状态为3,通知第四次"),
+		FailState_4("4","5",2,"HOURS","状态为4,通知第五次"),
+		FailState_5("5","99",12,"HOURS","状态为5,12小时后，再通知第六次"),
 		FailState_99("99","0",0,"HOURS","状态为99,停止通知");
 		
 		/**

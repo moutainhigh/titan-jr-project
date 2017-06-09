@@ -25,5 +25,8 @@ public enum RefundStatusEnum {
 		}
 		return null;
 	}
+	public String toString(){
+		return "RefundStatusEnum{status:"+this.status+",msg:\""+this.msg+"\"}";
+	}
 	
 }

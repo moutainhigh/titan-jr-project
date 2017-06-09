@@ -60,6 +60,7 @@
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFinancialVirtualService" ref="titanFinancialVirtualService" timeout="300000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.TitanFixService" ref="titanFixService" timeout="40000" />
 	<dubbo:service interface="com.fangcang.titanjr.service.BusinessLogService" ref="businessLogService" timeout="40000" />
+	<dubbo:service interface="com.fangcang.titanjr.service.RedisService" ref="redisService" timeout="40000" />
 
 </beans>
 

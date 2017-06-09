@@ -205,4 +205,8 @@ public class CommonConstant {
     
     public static final String ORDER_EXCEPTION_MAX_FAIL_STATE = "99";
     
+    /***
+	 * 金融缓存key前缀
+	 */
+    public static final String REDIS_KEY_PREFIX_TITANJR = "TITANJR";
 }
