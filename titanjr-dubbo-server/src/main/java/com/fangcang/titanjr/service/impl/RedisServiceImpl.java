@@ -38,7 +38,7 @@ public class RedisServiceImpl implements RedisService {
 	@Override
 	public void setValue(String key, Object value, long timeout) {
 		
-		this.setValue(Tools.getTitanRedisKey(key), value, timeout, TimeUnit.MINUTES);
+		this.setValue(key, value, timeout, TimeUnit.MINUTES);
 	}
 
 	@Override

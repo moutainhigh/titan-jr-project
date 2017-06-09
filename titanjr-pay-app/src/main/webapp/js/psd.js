@@ -56,7 +56,7 @@ var payPassdword = {
 		           		 result = true;
 		           		 refundObj.submitObj();
 		           	 }else{
-		           		new top.Tip({msg: '输入的密码错误', type: 1, timer: 2000});
+		           		new top.Tip({msg: '输入的密码错误', type: 2, timer: 2000});
 		           	 }
 		            },error:function(data){
 		            }

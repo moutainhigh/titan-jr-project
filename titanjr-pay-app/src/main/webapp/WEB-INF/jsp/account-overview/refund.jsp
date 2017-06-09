@@ -85,7 +85,7 @@
 					</div>
 	
 				<p class="rtn_item">
-					<button class="sure_btn" onclick="refundObj.submitRequest()">确定</button><button class="def_btn">取消</button>
+					<button class="sure_btn" onclick="refundObj.submitRequest();this.blur()">确定</button><button class="def_btn">取消</button>
 				</p>
 								
 			</div>
@@ -149,7 +149,7 @@
 									 window.close();
 								 }, 2000);
 							 }else{
-								 new top.Tip({msg: data.returnMessage, type: 1, timer: 3000});
+								 new top.Tip({msg: data.returnMessage, type: 2, timer: 3000});
 								 setTimeout(function(){
 									 window.close();
 								 }, 2000);
