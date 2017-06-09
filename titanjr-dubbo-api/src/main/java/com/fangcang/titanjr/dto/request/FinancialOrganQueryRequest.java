@@ -46,6 +46,9 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 	private Integer regchannel;
 	//合作方类型:SAAS:2,TTM:4
 	private Integer coopType;
+	
+	private String certificatetype;
+	private String certificatenumber;
     
     public Integer getOrgId() {
 		return orgId;
@@ -181,6 +184,22 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 
 	public void setCoopType(Integer coopType) {
 		this.coopType = coopType;
+	}
+
+	public String getCertificatetype() {
+		return certificatetype;
+	}
+
+	public void setCertificatetype(String certificatetype) {
+		this.certificatetype = certificatetype;
+	}
+
+	public String getCertificatenumber() {
+		return certificatenumber;
+	}
+
+	public void setCertificatenumber(String certificatenumber) {
+		this.certificatenumber = certificatenumber;
 	}
 	
 }
