@@ -1818,6 +1818,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			try {
 				TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
 				if (!transferResponse.isResult()) {
+					log.info("定时任务repairTransferOrder转账失败，失败原因" + transferResponse.getReturnMessage() + ",单号" +  transferResponse.getRequestNo());
 					continue;
 				}
 
