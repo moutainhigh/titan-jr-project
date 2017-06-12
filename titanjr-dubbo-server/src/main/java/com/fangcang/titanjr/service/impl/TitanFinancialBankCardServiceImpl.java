@@ -172,18 +172,18 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 	                            }
 	                        }
 	                    }
-	                    //绑卡失败也要在本地保存绑卡失败记录
-	                    if (titanBankcard != null) {
-	                    	try {
-								titanBankcard.setStatus(BindCardStatus.BIND_FAIL.status);
-								titanBankcard.setRemark(bankCardBindResponse.getReturnMsg());
-								titanBankcardDao.insert(titanBankcard);
-							} catch (Exception e) {
-								log.error("绑卡本地信息记录失败" + e.getMessage(), e);
-								e.printStackTrace();
-							}
-	                    }
 	                }
+	                //绑卡失败也要在本地保存绑卡失败记录
+                    if (titanBankcard != null) {
+                    	try {
+							titanBankcard.setStatus(BindCardStatus.BIND_FAIL.status);
+							titanBankcard.setRemark(bankCardBindResponse.getReturnMsg());
+							titanBankcardDao.insert(titanBankcard);
+						} catch (Exception e) {
+							log.error("绑卡本地信息记录失败" + e.getMessage(), e);
+							e.printStackTrace();
+						}
+                    }
 	            }
 	            log.error("绑卡失败,绑卡参数："+Tools.gsonToString(cusBankCardBindRequest)+",错误代码："+bankCardBindResponse.getReturnCode()+"，错误信息："+bankCardBindResponse.getReturnMsg());
 	            cusBankCardBindResponse.putErrorResult(bankCardBindResponse.getReturnCode(), bankCardBindResponse.getReturnMsg());
