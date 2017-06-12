@@ -47,5 +47,6 @@
 	<dubbo:reference id="titanSysconfigService" interface="com.fangcang.titanjr.service.TitanSysconfigService" retries="0" timeout="40000"/><!-- 做应用可访问测试 -->
 	<dubbo:reference id="titanFinancialVirtualService" interface="com.fangcang.titanjr.service.TitanFinancialVirtualService" retries="0" timeout="300000"/><!-- retries:重试次数 -->
 	<dubbo:reference id="businessLogService" interface="com.fangcang.titanjr.service.BusinessLogService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
+	<dubbo:reference id="redisService" interface="com.fangcang.titanjr.service.RedisService" retries="0" timeout="40000"/><!-- retries:重试次数 -->
 	
 </beans>
