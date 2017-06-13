@@ -2,7 +2,6 @@ package com.fangcang.titanjr.pay.servlet;
 
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.SpringContextUtil;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -11,7 +10,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 /**
