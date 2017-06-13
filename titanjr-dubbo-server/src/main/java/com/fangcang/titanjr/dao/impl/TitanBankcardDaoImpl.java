@@ -2,6 +2,9 @@ package com.fangcang.titanjr.dao.impl;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
@@ -10,6 +13,8 @@ import com.fangcang.titanjr.entity.TitanBankcard;
 import com.fangcang.titanjr.entity.parameter.TitanBankcardParam;
 
 public class TitanBankcardDaoImpl extends GenericDAOMyBatisImpl implements TitanBankcardDao{
+	
+	private static final Log log = LogFactory.getLog(TitanBankcardDaoImpl.class);
 
 	@Override
 	public boolean selectForPage(TitanBankcardParam condition,
@@ -28,7 +33,6 @@ public class TitanBankcardDaoImpl extends GenericDAOMyBatisImpl implements Titan
 		try {
 			return super.insertEntity("com.fangcang.titanjr.dao.TitanBankcardDao.insertEntity", entity);
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new DaoException(e);
 		}
 	}
@@ -38,7 +42,6 @@ public class TitanBankcardDaoImpl extends GenericDAOMyBatisImpl implements Titan
 		try {
 			return super.insertEntity("com.fangcang.titanjr.dao.TitanBankcardDao.intsertBatch", list);
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new DaoException(e);
 		}
 	}
@@ -57,6 +60,7 @@ public class TitanBankcardDaoImpl extends GenericDAOMyBatisImpl implements Titan
 		try {
 			return super.delete("com.fangcang.titanjr.dao.TitanBankcardDao.deleteEntity", entity);
 		} catch (Exception e) {
+			log.error("删除本地对私卡绑定记录异常", e);
 			throw new DaoException(e);
 		}
 	}
@@ -67,6 +71,7 @@ public class TitanBankcardDaoImpl extends GenericDAOMyBatisImpl implements Titan
 		try {
 			return (TitanBankcard)super.selectOne("com.fangcang.titanjr.dao.TitanBankcardDao.queryEntity", param);
 		} catch (Exception e) {
+			log.error("批量插入对私卡绑定记录异常", e);
 			throw new DaoException(e);
 		}
 	}

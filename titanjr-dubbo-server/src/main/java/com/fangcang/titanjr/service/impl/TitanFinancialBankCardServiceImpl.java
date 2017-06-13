@@ -276,7 +276,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 							int result = titanBankcardDao.delete(entity);
 							log.info("本地删除绑卡成功，共删除" + result + "条记录");
 						} catch (Exception e) {
-							log.error("本地删除绑卡失败" + e.getMessage());
+							log.error("本地删除绑卡异常", e);
 						}
                     } else {
                         deleteBindBankResponse.putErrorResult(deletePersonCardResponse.getReturnCode(), deletePersonCardResponse.getReturnMsg());
@@ -475,7 +475,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		try {
 			titanBankcard = titanBankcardDao.selectEntity(param);
 		} catch (DaoException e) {
-			e.printStackTrace();
+			log.error("查询本地绑卡信息异常", e);
 		}
 		return titanBankcard;
 	}
