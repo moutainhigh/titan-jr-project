@@ -268,7 +268,7 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 	@Override
 	public String confirmOrderStatus(String orderNo) {
 		
-		List<String> statusId =  titanTransOrderDao.confirmOrderStatus(orderNo);
+		List<String> statusId =  titanTransOrderDao.queryTransOrderStatus(orderNo);
 		if(statusId.size()==1 && StringUtil.isValidString(statusId.get(0))){
 			if(OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(statusId.get(0)) || OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(statusId.get(0))){
 				return "success";

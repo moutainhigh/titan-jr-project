@@ -103,23 +103,12 @@ public interface TitanFinancialTradeService {
     
 	/**
 	 * 回调对接的机构
-	 * @param transferRequest
-	 * @param transOrderDTO
-	 * @param flag
+	 * @param ConfirmFinanceRequest
 	 * @return
 	 * @author fangdaikang
 	 * 把notify拆分为一个service
 	 */
 	public boolean confirmFinance(ConfirmFinanceRequest req)throws Exception;
-	
-	
-	/**
-	 * 获取订单
-	 * @param repairTransferRequest
-	 * @return
-	 * 名称要通用一些。在此处不应该提供该方法
-	 */
-	public RepairTransferResponse getTransferOrders(RepairTransferRequest repairTransferRequest);
 	
 	/**
 	 * 修复GDP转账失败的单

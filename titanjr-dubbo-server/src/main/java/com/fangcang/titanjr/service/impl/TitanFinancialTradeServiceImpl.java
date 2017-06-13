@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
+import com.fangcang.titanjr.dto.response.*;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -94,20 +95,6 @@ import com.fangcang.titanjr.dto.request.TradeDetailRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransOrderUpdateRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
-import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
-import com.fangcang.titanjr.dto.response.ConfirmOrdernQueryResponse;
-import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
-import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
-import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
-import com.fangcang.titanjr.dto.response.OrderSaveAndBindCardResponse;
-import com.fangcang.titanjr.dto.response.QrCodeResponse;
-import com.fangcang.titanjr.dto.response.RechargeResponse;
-import com.fangcang.titanjr.dto.response.RepairTransferResponse;
-import com.fangcang.titanjr.dto.response.TradeDetailResponse;
-import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
-import com.fangcang.titanjr.dto.response.TransOrderResponse;
-import com.fangcang.titanjr.dto.response.TransOrderUpdateResponse;
-import com.fangcang.titanjr.dto.response.TransferResponse;
 import com.fangcang.titanjr.entity.TitanAccount;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.TitanTransOrder;
@@ -1764,120 +1751,116 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 //		return stringBuffer.toString();
 //	}
 
-	@Override
-	public RepairTransferResponse getTransferOrders(
-			RepairTransferRequest repairTransferRequest) {
+
+	private TransferOrderResponse getTransferOrders(RepairTransferRequest repairTransferRequest) {
 		log.info("获取订单参数:" + JSONSerializer.toJSON(repairTransferRequest));
-		RepairTransferResponse repairTransferResponse = new RepairTransferResponse();
+		TransferOrderResponse transferOrderResponse = new TransferOrderResponse();
 		if (!StringUtil.isValidString(repairTransferRequest.getPayermerchant())
 				&& !StringUtil.isValidString(repairTransferRequest.getStatus())) {
-			repairTransferResponse.setResult(false);
-			repairTransferResponse.setReturnMessage("参数错误");
-			return repairTransferResponse;
+			log.error("请求参数错误,请核实;");
+			transferOrderResponse.putParamError();
+			return transferOrderResponse;
 		}
-
-		List<RepairTransferDTO> repairTransferDTOList = titanTransOrderDao
-				.queryTitanTransOrderByStatus(repairTransferRequest);
-		repairTransferResponse.setResult(true);
-		repairTransferResponse
-				.setRepairTransferDTOListList(repairTransferDTOList);
-		return repairTransferResponse;
+		List<RepairTransferDTO> repairTransferDTOList = titanTransOrderDao.queryTitanTransOrderByStatus(repairTransferRequest);
+		transferOrderResponse.setResult(true);
+		transferOrderResponse.setRepairTransferDTOListList(repairTransferDTOList);
+		return transferOrderResponse;
 	}
 
 	@Override
 	public void repairTransferOrder(RepairTransferRequest repairTransferRequest) {
-		if(null == repairTransferRequest){
+		if (null == repairTransferRequest) {
+			log.error("请求参数不能为null");
 			return;
 		}
 		repairTransferRequest.setStatus(OrderStatusEnum.ORDER_FAIL.getStatus());
-    	repairTransferRequest.setTransferStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
-    	repairTransferRequest.setOrderPayStatus(ReqstatusEnum.RECHARFE_SUCCESS.getStatus());
-    	repairTransferRequest.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);//GDP和平
-    	RepairTransferResponse response = titanFinancialTradeService.getTransferOrders(repairTransferRequest);
-    	if(!response.isResult()){
-    		log.info(response.getReturnMessage());
-    		return;
-    	}
-    	log.info("repairTransferOrder()获取订单详情:"+JSONSerializer.toJSON(response));
-    	List<RepairTransferDTO> repairTransferDTOList = response.getRepairTransferDTOListList();
-    	if(repairTransferDTOList !=null && repairTransferDTOList.size()>0){
-    		for(RepairTransferDTO repairTransferDTO :repairTransferDTOList){
-    			if(StringUtil.isValidString(repairTransferDTO.getTransorderid()) 
-    					&& StringUtil.isValidString(repairTransferDTO.getStatus())
-    					&& "2".equals(repairTransferDTO.getStatus())){//其中2代表转账成功
-    				continue;
-    			}
-    			
-    			TransferRequest transferRequest = new TransferRequest();
-        		transferRequest.setTransfertype(TransfertypeEnum.BRANCH_TRANSFER);								//1:子账户转账				
-        		transferRequest.setConditioncode(ConditioncodeEnum.ADD_OEDER);								//1:落单
-        		transferRequest.setRequestno(OrderGenerateService.genResquestNo());									//业务订单号
-        		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));				//请求时间
-        		transferRequest.setAmount(repairTransferDTO.getTradeamount().toString());
-        		if(repairTransferDTO.getReceivedfee() !=null){
-        			BigDecimal amount  = new BigDecimal(repairTransferDTO.getTradeamount()).subtract(new BigDecimal(repairTransferDTO.getReceivedfee()));
-        			transferRequest.setAmount(amount.toString());
-        		}
-        		transferRequest.setOrderid(repairTransferDTO.getOrderid());
-        		transferRequest.setUserid(repairTransferDTO.getUserid());                                     //转出方用户Id	
-        		transferRequest.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);							//转出方机构号
-        		transferRequest.setProductId(repairTransferDTO.getProductid());							//转出方产品号
-        		transferRequest.setUserfee("0");//转账费率始终为0
-        		
-        		transferRequest.setIntermerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);					//	接收方机构码
-        		transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);						//	接收方产品号
-        		transferRequest.setUserrelateid(repairTransferDTO.getPayeemerchant());	                    //接收方用户Id	
-    		
-        		try {
-        			TransferResponse  transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
-				    if(!transferResponse.isResult()){
-				    	continue ;
-				    }
-				    
-				    log.info(transferRequest.getOrderid()+"转账的结果:"+JSONSerializer.toJSON(transferResponse));
-				    OrderStatusEnum orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
-				    //是否需要冻结
-				    if(0==repairTransferDTO.getIsEscrowedPayment()){
-				    	RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
-				    	rechargeResultConfirmRequest.setOrderNo(repairTransferDTO.getOrderid());
-				    	rechargeResultConfirmRequest.setPayAmount(transferRequest.getAmount());
-				    	rechargeResultConfirmRequest.setUserid(transferRequest.getUserrelateid());
-				    	rechargeResultConfirmRequest.setOrderAmount(transferRequest.getAmount());
-				    	log.info("冻结入参:"+JSONSerializer.toJSON(rechargeResultConfirmRequest));
-				    	FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService.freezeAccountBalance(rechargeResultConfirmRequest);
-				    	orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
-				    	if(!freezeAccountBalanceResponse.isFreezeSuccess()){//冻结不成功
-				    		log.error(rechargeResultConfirmRequest.getOrderNo()+"修复冻结订单失败");
-				    		titanFinancialUtilService.saveOrderException(repairTransferDTO.getPayorderno(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Repair_Freeze_Order_Fail, JSONSerializer.toJSON(repairTransferDTO).toString());
-				    		orderStatusEnum = OrderStatusEnum.FREEZE_FAIL;
-						}
-						log.info(rechargeResultConfirmRequest.getOrderNo()+"修改单:"+JSONSerializer.toJSON(orderStatusEnum));
-				    }
-				   //修改订单
-				    TransOrderDTO  transOrderDTO = new TransOrderDTO();
-				    transOrderDTO.setStatusid(orderStatusEnum.getStatus());
-				    transOrderDTO.setTransid(repairTransferDTO.getTransid());
-					boolean updateStatus = titanOrderService.updateTransOrder(transOrderDTO);
-					if(!updateStatus &&repairTransferDTO.getTransid() !=null){
-						log.error("修复交易单更新交易单状态失败");
-						titanFinancialUtilService.saveOrderException(repairTransferDTO.getPayorderno(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Repair_Update_Order_Fail, JSONSerializer.toJSON(repairTransferDTO).toString());
-					}
-				   
-					TransOrderRequest transOrderRequest = new TransOrderRequest();
-					transOrderRequest.setUserorderid(repairTransferDTO.getUserorderid());
-					transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
-				    log.info("回调:"+JSONSerializer.toJSON(transOrderDTO));
-				    ConfirmFinanceRequest req = new ConfirmFinanceRequest();
-				    req.setTransOrderDTO(transOrderDTO);
-				    titanFinancialTradeService.confirmFinance(req);
-				    
-        		} catch (Exception e) {
-					e.printStackTrace();
+		repairTransferRequest.setOrderPayStatus(ReqstatusEnum.RECHARFE_SUCCESS.getStatus());
+		//处理的是所有中间账户付出的交易
+		repairTransferRequest.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
+		TransferOrderResponse response = this.getTransferOrders(repairTransferRequest);
+		if (!response.isResult()) {
+			log.error(response.getReturnMessage());
+			return;
+		}
+		log.info("repairTransferOrder获取订单详情:" + JSONSerializer.toJSON(response));
+		List<RepairTransferDTO> repairTransferDTOList = response.getRepairTransferDTOListList();
+		if (CollectionUtils.isEmpty(repairTransferDTOList)) {
+			log.info("无符合条件的交易单，任务结束");
+			return;
+		}
+
+		for (RepairTransferDTO repairTransferDTO : repairTransferDTOList) {
+			if (StringUtil.isValidString(repairTransferDTO.getTransorderid()) && StringUtil.isValidString
+					(repairTransferDTO.getStatus()) && "2".equals(repairTransferDTO.getStatus())) {//其中2代表转账成功
+				continue;
+			}
+
+			TransferRequest transferRequest = new TransferRequest();
+			transferRequest.setTransfertype(TransfertypeEnum.BRANCH_TRANSFER);                                //1:子账户转账
+			transferRequest.setConditioncode(ConditioncodeEnum.ADD_OEDER);                                //1:落单
+			transferRequest.setRequestno(OrderGenerateService.genResquestNo());                                    //业务订单号
+			transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));                //请求时间
+			transferRequest.setAmount(repairTransferDTO.getTradeamount().toString());
+			if (repairTransferDTO.getReceivedfee() != null) {
+				BigDecimal amount = new BigDecimal(repairTransferDTO.getTradeamount()).subtract(new BigDecimal(repairTransferDTO.getReceivedfee()));
+				transferRequest.setAmount(amount.toString());
+			}
+			transferRequest.setOrderid(repairTransferDTO.getOrderid());
+			transferRequest.setUserid(repairTransferDTO.getUserid());                                     //转出方用户Id
+			transferRequest.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);                            //转出方机构号
+			transferRequest.setProductId(repairTransferDTO.getProductid());                            //转出方产品号
+			transferRequest.setUserfee("0");//转账费率始终为0
+
+			transferRequest.setIntermerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);                    //	接收方机构码
+			transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);                        //	接收方产品号
+			transferRequest.setUserrelateid(repairTransferDTO.getPayeemerchant());                        //接收方用户Id
+
+			try {
+				TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
+				if (!transferResponse.isResult()) {
+					log.info("定时任务repairTransferOrder转账失败，失败原因" + transferResponse.getReturnMessage() + ",单号" +  transferResponse.getRequestNo());
+					continue;
 				}
-    		   
-    		}
-    	}
-		
+
+				log.info(transferRequest.getOrderid() + "转账的结果:" + JSONSerializer.toJSON(transferResponse));
+				OrderStatusEnum orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
+				//是否需要冻结
+				if (0 == repairTransferDTO.getIsEscrowedPayment()) {
+					RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
+					rechargeResultConfirmRequest.setOrderNo(repairTransferDTO.getOrderid());
+					rechargeResultConfirmRequest.setPayAmount(transferRequest.getAmount());
+					rechargeResultConfirmRequest.setUserid(transferRequest.getUserrelateid());
+					rechargeResultConfirmRequest.setOrderAmount(transferRequest.getAmount());
+					log.info("冻结入参:" + JSONSerializer.toJSON(rechargeResultConfirmRequest));
+					FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService.freezeAccountBalance(rechargeResultConfirmRequest);
+					orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
+					if (!freezeAccountBalanceResponse.isFreezeSuccess()) {//冻结不成功
+						log.error(rechargeResultConfirmRequest.getOrderNo() + "修复冻结订单失败");
+						titanFinancialUtilService.saveOrderException(repairTransferDTO.getPayorderno(), OrderKindEnum.PayOrderNo, OrderExceptionEnum.Repair_Freeze_Order_Fail, JSONSerializer.toJSON(repairTransferDTO).toString());
+						orderStatusEnum = OrderStatusEnum.FREEZE_FAIL;
+					}
+					log.info(rechargeResultConfirmRequest.getOrderNo() + "修改单:" + JSONSerializer.toJSON(orderStatusEnum));
+				}
+				//修改交易单状态
+				TransOrderDTO transOrderDTO = new TransOrderDTO();
+				transOrderDTO.setStatusid(orderStatusEnum.getStatus());
+				transOrderDTO.setTransid(repairTransferDTO.getTransid());
+				boolean updateStatus = titanOrderService.updateTransOrder(transOrderDTO);
+				if (!updateStatus && repairTransferDTO.getTransid() != null) {
+					log.error("修复交易单更新交易单状态失败");
+					titanFinancialUtilService.saveOrderException(repairTransferDTO.getPayorderno(), OrderKindEnum.PayOrderNo, OrderExceptionEnum.Repair_Update_Order_Fail, JSONSerializer.toJSON(repairTransferDTO).toString());
+				}
+				TransOrderRequest transOrderRequest = new TransOrderRequest();
+				transOrderRequest.setUserorderid(repairTransferDTO.getUserorderid());
+				transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
+				log.info("回调:" + JSONSerializer.toJSON(transOrderDTO));
+				ConfirmFinanceRequest req = new ConfirmFinanceRequest();
+				req.setTransOrderDTO(transOrderDTO);
+				titanFinancialTradeService.confirmFinance(req);
+			} catch (Exception e) {
+				log.error("定时任务转账修复失败", e);
+			}
+		}
 	}
 
 	@Override
