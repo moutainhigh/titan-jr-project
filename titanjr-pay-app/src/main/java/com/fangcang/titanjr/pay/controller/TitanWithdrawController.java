@@ -153,8 +153,7 @@ public class TitanWithdrawController extends BaseController {
 				brq.setObjorlist("2");
 				brq.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
 				brq.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-				QueryBankCardBindInfoResponse cbr = titanFinancialBankCardService
-				.getBankCardBindInfo(brq);
+				QueryBankCardBindInfoResponse cbr = titanFinancialBankCardService.getBankCardBindInfo(brq);
 
 				if (cbr.isResult()
 						&& CollectionUtils.isNotEmpty(cbr.getBankCardInfoDTOList())) {

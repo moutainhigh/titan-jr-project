@@ -1,38 +1,44 @@
 package com.fangcang.titanjr.dto.request;
 
 import com.fangcang.titanjr.dto.BaseRequestDTO;
+import org.hibernate.validator.constraints.NotBlank;
 
 public class NotifyRefundRequest extends BaseRequestDTO{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	
 	//机构号
+	@NotBlank
 	private String merchantNo;
 	
 	//业务号
+	@NotBlank
 	private String busiCode;
 	
 	//原订单号
+	@NotBlank
 	private String orderNo;
 	
-	//退款单号
+	//退款金额
+	@NotBlank
 	private String refundAmount;
 	
 	//下单时间
+	@NotBlank
 	private String orderTime;
 	
 	//退款单号
+	@NotBlank
 	private String refundOrderno;
 	
 	//版本号
+	@NotBlank
 	private String version;
 	
 	//签名类型
+	@NotBlank
 	private String signType;
 	
 	//签名字符串
+	@NotBlank
 	private String signMsg;
 
 	public String getMerchantNo() {

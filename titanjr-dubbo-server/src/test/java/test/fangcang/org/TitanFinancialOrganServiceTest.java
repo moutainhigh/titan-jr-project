@@ -35,7 +35,7 @@ public class TitanFinancialOrganServiceTest extends BaseTest{
 		refundConfirm.setUserId("141223100000056");
 		refundConfirm.setOrderNo("2017010920155900001");
 		try{
-			titanFinancialRefundService.refundConfirm(refundConfirm);
+//			titanFinancialRefundService.refundConfirm(refundConfirm);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

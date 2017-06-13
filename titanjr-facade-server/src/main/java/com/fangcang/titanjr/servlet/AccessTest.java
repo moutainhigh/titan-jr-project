@@ -1,7 +1,6 @@
 package com.fangcang.titanjr.servlet;
 
 import com.fangcang.titanjr.service.TitanSysconfigService;
-import com.fangcang.util.SpringContextUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.context.support.WebApplicationContextUtils;

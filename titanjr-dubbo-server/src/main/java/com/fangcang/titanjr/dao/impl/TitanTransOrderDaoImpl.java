@@ -132,7 +132,7 @@ public class TitanTransOrderDaoImpl extends GenericDAOMyBatisImpl implements Tit
 
 
 	@Override
-	public List<RefundDTO> selectTitanTransOrderAndRefund(
+	public List<RefundDTO> selectTransRefundOrder(
 			TransOrderRequest transOrderRequest) throws DaoException {
 		  try {
 	           return super.selectList("com.fangcang.titanjr.dao.TitanTransOrderDao.selectTitanTransOrderAndRefund",transOrderRequest);
@@ -141,7 +141,7 @@ public class TitanTransOrderDaoImpl extends GenericDAOMyBatisImpl implements Tit
 	        }
 	}
 	
-	public List<String> confirmOrderStatus(String  orderNo){
+	public List<String> queryTransOrderStatus(String orderNo){
 		try {
        	 return super.selectList("com.fangcang.titanjr.dao.TitanTransOrderDao.confirmOrderStatus", orderNo);
        } catch (Exception e) {
