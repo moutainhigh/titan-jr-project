@@ -270,7 +270,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
                         TitanBankcard entity = new TitanBankcard();
                         entity.setUserid(deleteBindBankRequest.getUserid());
                         entity.setUsertype(Integer.parseInt(deleteBindBankRequest.getUsertype()));
-                        entity.setAccountnumber(deleteBindBankRequest.getAccountnumber());
+                        //entity.setAccountnumber(deleteBindBankRequest.getAccountnumber());
                         entity.setProductid(deleteBindBankRequest.getProductid());
                         try {
 							int result = titanBankcardDao.delete(entity);

@@ -547,10 +547,10 @@
 		        		}else if(data.msg=="6"){
 		        			bank_card_binding();
 		        		}else{
-		        			 new top.Tip({msg: "系统错误", type: 1, time: 1000});
+		        			 new top.Tip({msg: "系统错误", type: 2, timer: 2000});
 		        		}
 		        	}else{
-		        		 new top.Tip({msg: "系统错误", type: 1, time: 1000});
+		        		 new top.Tip({msg: "系统错误", type: 2, timer: 2000});
 		        	}
 		        }
         	});
@@ -566,7 +566,6 @@
 					}
             });
         }
-        
         function bind_card_fail(){
         	new top.createConfirm({
 			    title:'提示',
@@ -634,7 +633,7 @@
 		        		      });
 		                	window.top.$(".ui-dialog-close").hide();
 		        		}else{
-		        			 new top.Tip({msg: "系统错误", type: 1, time: 1000});
+		        			 new top.Tip({msg: "系统错误", type: 2, time: 2000});
 		        		}
 		        	}
 		        },
@@ -644,7 +643,6 @@
 		        }
         	})
         }        
-        
         
         function bind_card_public(this_Object){
         	var _this=this_Object;
