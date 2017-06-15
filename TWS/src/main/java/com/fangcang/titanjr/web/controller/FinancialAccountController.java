@@ -143,10 +143,10 @@ public class FinancialAccountController extends BaseController {
     	//判断是否为对公账户
     	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
     	organQueryRequest.setUserId(this.getUserId());
-    	FinancialOrganResponse response  = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+    	FinancialOrganResponse response  = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
     	if(!response.isResult() || response.getFinancialOrganDTO()==null)
     	{
-    		log.error("无该机构");
+    		log.error("无该机构,查询机构userid:"+this.getUserId()+",返回结果response:"+Tools.gsonToString(response));
     		resultMap.put(WebConstant.MSG, "系统错误");
         	return toJson(resultMap);
     	}
