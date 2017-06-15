@@ -311,24 +311,25 @@ public class FinancialAccountController extends BaseController {
 			if(!rsp.isResult() || rsp.getBankCardInfoDTOList()==null)
 			{
 				log.info("该卡尚未绑定");
-				resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_NO_BIND);
+				resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_NO_BIND_3);
 	    		return toJson(resultMap);
 			}
 			BankCardInfoDTO dto = rsp.getBankCardInfoDTOList().get(0);
 			if(WebConstant.BANKCARD_SUCCESS==Integer.parseInt(dto.getStatus()))
 			{
-				resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_SUCCESS);
+				resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_SUCCESS_4);
     		}else if(WebConstant.BANKCARD_BINDING==Integer.parseInt(dto.getStatus()) 
     				||WebConstant.BANKCARD_AUDIT==Integer.parseInt(dto.getStatus()))
     		{
-    			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_BINDING);
+    			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_BINDING_6);
     		}else if(WebConstant.BANKCARD_FAILED ==Integer.parseInt(dto.getStatus()))
     		{
-    			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_FAIL);
+    			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_FAIL_5);
     		}else if(WebConstant.BANKCARD_DELETE == Integer.parseInt(dto.getStatus()))
     		{
-    			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_NO_BIND);
+    			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_NO_BIND_3);
     		}
+			titanFinancialBankCardService.bindBankCardForOne(this.getUserId());
 			return toJson(resultMap);
 			
     	}
