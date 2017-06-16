@@ -381,10 +381,4 @@ public class TitanBankcard implements java.io.Serializable {
 		this.createtime = createtime;
 	}
 	
-	
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-	}
-
 }
