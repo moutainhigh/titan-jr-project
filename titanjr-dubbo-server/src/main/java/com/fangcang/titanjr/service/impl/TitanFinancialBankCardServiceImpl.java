@@ -567,7 +567,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		}
 		//插入之前先删除本地对私绑卡信息
 		TitanBankcard deleteReq = new TitanBankcard();
-		deleteReq.setUsertype(Integer.parseInt(CommonConstant.PERSONAL));
+		deleteReq.setAccountproperty(CommonConstant.PERSONAL);
 		deleteReq.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
 		deleteReq.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
 		int deleteResult = titanBankcardDao.delete(deleteReq);
