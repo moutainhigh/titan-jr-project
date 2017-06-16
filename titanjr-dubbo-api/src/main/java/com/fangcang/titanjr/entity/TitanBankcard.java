@@ -382,9 +382,9 @@ public class TitanBankcard implements java.io.Serializable {
 	}
 	
 	
-	/*@Override
+	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-	}*/
+	}
 
 }

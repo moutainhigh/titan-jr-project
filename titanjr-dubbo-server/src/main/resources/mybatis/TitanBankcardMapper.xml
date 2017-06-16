@@ -222,9 +222,6 @@
       <if test="constid !=null">
         and constid = #{constid}
       </if>
-      <if test="usertype !=null">
-        and usertype = #{usertype}
-      </if>
       <if test="accountproperty !=null">
         and accountproperty = #{accountproperty}
       </if>
