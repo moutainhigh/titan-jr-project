@@ -566,15 +566,19 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 			baseResponseDTO.setReturnMessage("未查询到需要同步的对私绑卡记录，errorMsg：" + errorMsg.toString());
 			return baseResponseDTO;
 		}
+		log.info("在融数查询到" + cardList.size() + "条需要同步的对私绑卡记录");
+		
 		//插入之前先删除本地对私绑卡信息
 		TitanBankcard deleteReq = new TitanBankcard();
 		deleteReq.setAccountproperty(CommonConstant.PERSONAL);
 		deleteReq.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
 		deleteReq.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+		log.info("执行删除本地对私卡绑定信息，参数：" + deleteReq.toString());
 		int deleteResult = titanBankcardDao.delete(deleteReq);
 		log.info("删除本地对私绑卡信息成功，一共删除" + deleteResult + "条记录");
 		
 		//批量插入
+		log.info("执行批量插入对私卡绑定记录");
 		int inserResult = titanBankcardDao.intsertBatch(cardList);
 		baseResponseDTO.setResult(true);
 		baseResponseDTO.setReturnMessage("成功同步" + inserResult + "条对私绑卡记录，errorMsg：" + errorMsg.toString());
