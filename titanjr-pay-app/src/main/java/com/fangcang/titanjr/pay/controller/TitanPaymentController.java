@@ -446,28 +446,31 @@ public class TitanPaymentController extends BaseController {
 			model.addAttribute(CommonConstant.RETURN_MSG, "必填参数不能为空");
 			return CommonConstant.GATE_WAY_PAYGE;
 		}
-		//检查sign
-		String paramSing = titanPaymentRequest.getSign();
-		String md5Sign = md5Sign(titanPaymentRequest, TitanConstantDefine.PAY_APP_CASHIER_SIGN_MD5_KEY);
-		if(!(StringUtil.isValidString(paramSing)&&paramSing.equals(md5Sign))){
-			log.error("网银支付请求参数签名错误,，参数titanPaymentRequest:"+JsonConversionTool.toJson(titanPaymentRequest)+",签名sing:"+md5Sign);
-			model.addAttribute(CommonConstant.RETURN_MSG, "参数签名错误");
-			return CommonConstant.GATE_WAY_PAYGE;
-		}
-		//如果付款到中间账户的方式，就没有余额支付.后期跟进业务调整
-		BigDecimal transferAmount = new BigDecimal(titanPaymentRequest.getTransferAmount());
-		if((!transferAmount.equals(BigDecimal.ZERO))&&titanFinancialAccountService.getDefaultPayerConfig().getUserId().equals(titanPaymentRequest.getUserid())){
-			model.addAttribute(CommonConstant.RETURN_MSG, "不允许用余额支付");
-			return CommonConstant.GATE_WAY_PAYGE;
+		//非充值单才校验，通常是支付单
+		if(!PaySourceEnum.RECHARDE.getDeskCode().equals(titanPaymentRequest.getPaySource())){
+			//检查sign
+			String paramSing = titanPaymentRequest.getSign();
+			String md5Sign = md5Sign(titanPaymentRequest, TitanConstantDefine.PAY_APP_CASHIER_SIGN_MD5_KEY);
+			if(!(StringUtil.isValidString(paramSing)&&paramSing.equals(md5Sign))){
+				log.error("网银支付请求参数签名错误,，参数titanPaymentRequest:"+JsonConversionTool.toJson(titanPaymentRequest)+",签名sing:"+md5Sign);
+				model.addAttribute(CommonConstant.RETURN_MSG, "参数签名错误");
+				return CommonConstant.GATE_WAY_PAYGE;
+			}
+			//如果付款到中间账户的方式，就没有余额支付.后期跟进业务调整
+			float transferAmount = (new BigDecimal(titanPaymentRequest.getTransferAmount())).floatValue();
+			if((transferAmount!=0)&&titanFinancialAccountService.getDefaultPayerConfig().getUserId().equals(titanPaymentRequest.getUserid())){
+				model.addAttribute(CommonConstant.RETURN_MSG, "不允许用余额支付");
+				return CommonConstant.GATE_WAY_PAYGE;
+			}
+			//金额检查
+			boolean flag = NumberUtil.add(titanPaymentRequest.getTransferAmount(),titanPaymentRequest.getPayAmount()).floatValue()==(new BigDecimal(titanPaymentRequest.getTradeAmount())).floatValue() ;
+			if(!flag){
+				log.error("网银支付请求参数金额异常,，参数titanPaymentRequest:"+JsonConversionTool.toJson(titanPaymentRequest));
+				model.addAttribute(CommonConstant.RETURN_MSG, "参数金额异常");
+				return CommonConstant.GATE_WAY_PAYGE;
+			}
 		}
 		
-		//金额检查
-		boolean flag = NumberUtil.add(titanPaymentRequest.getTransferAmount(),titanPaymentRequest.getPayAmount()).equals(new BigDecimal(titanPaymentRequest.getTradeAmount())) ;
-		if(!flag){
-			log.error("网银支付请求参数金额异常,，参数titanPaymentRequest:"+JsonConversionTool.toJson(titanPaymentRequest));
-			model.addAttribute(CommonConstant.RETURN_MSG, "参数金额异常");
-			return CommonConstant.GATE_WAY_PAYGE;
-		}
 		
 		if(!titanPaymentRequest.getPaySource().equals(PaySourceEnum.RECHARDE.getDeskCode()) )
 		{
