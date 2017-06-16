@@ -47,5 +47,20 @@ public class NumberUtil {
         	return "0.00";
         }
     }
+	/***
+	 * 两个数相加 
+	 * @param param1 
+	 * @param param2 
+	 * @return
+	 */
+	public static BigDecimal add(String param1,String param2){
+		if(!StringUtil.isValidString(param1)){
+			param1 = "0";
+		}
+		if(!StringUtil.isValidString(param2)){
+			param2 = "0";
+		}
+		return new BigDecimal(param1).add(new BigDecimal(param2));
+	}
 	
 }

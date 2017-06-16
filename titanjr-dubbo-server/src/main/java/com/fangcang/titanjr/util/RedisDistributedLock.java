@@ -10,8 +10,6 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.fangcang.util.StringUtil;
-
 /**
  * 分布式锁工具,仅在service层用,不能在controller
  * 
