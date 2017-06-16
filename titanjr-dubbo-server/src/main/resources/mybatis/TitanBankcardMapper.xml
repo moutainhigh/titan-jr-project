@@ -92,7 +92,7 @@
       	createtime)
 			values
 		<foreach collection="list" item="item" index="index" separator=",">
-			( #{item.constid,jdbcType=VARCHAR}, #{item.userid,jdbcType=VARCHAR}, #{item.bankhead,jdbcType=VARCHAR},
+			( #{item.constid,jdbcType=VARCHAR}, #{item.userid,jdbcType=VARCHAR}, #{item.bankcode,jdbcType=VARCHAR},
 		      #{item.usertype,jdbcType=INTEGER}, #{item.productid,jdbcType=VARCHAR}, #{item.role,jdbcType=VARCHAR}, 
 		      #{item.accountnumber,jdbcType=VARCHAR}, #{item.accounttypeid,jdbcType=VARCHAR}, #{item.bankbranchname,jdbcType=VARCHAR}, 
 		      #{item.bankheadname,jdbcType=VARCHAR}, #{item.currency,jdbcType=VARCHAR}, #{item.openaccountdate}, 
