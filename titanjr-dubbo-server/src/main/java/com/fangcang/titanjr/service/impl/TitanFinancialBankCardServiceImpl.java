@@ -270,7 +270,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
                         TitanBankcard entity = new TitanBankcard();
                         entity.setUserid(deleteBindBankRequest.getUserid());
                         entity.setUsertype(Integer.parseInt(deleteBindBankRequest.getUsertype()));
-                        entity.setAccountnumber(deleteBindBankRequest.getAccountnumber());
+                        //entity.setAccountnumber(deleteBindBankRequest.getAccountnumber());
                         entity.setProductid(deleteBindBankRequest.getProductid());
                         try {
 							int result = titanBankcardDao.delete(entity);
@@ -536,6 +536,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 				            titanBankcard.setBankcity(cid.getBankcity());
 				            titanBankcard.setBankheadname(cid.getBankheadname());
 				            titanBankcard.setBankprovince(cid.getBankprovince());
+				            titanBankcard.setBankcode(cid.getBankhead());
 				            
 				            titanBankcard.setCertificatetype(cid.getCertificatetype());
 				            titanBankcard.setCertificatenumnumber(cid.getCertificatenumber());
@@ -567,7 +568,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		}
 		//插入之前先删除本地对私绑卡信息
 		TitanBankcard deleteReq = new TitanBankcard();
-		deleteReq.setUsertype(Integer.parseInt(CommonConstant.PERSONAL));
+		deleteReq.setAccountproperty(CommonConstant.PERSONAL);
 		deleteReq.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
 		deleteReq.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
 		int deleteResult = titanBankcardDao.delete(deleteReq);

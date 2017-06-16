@@ -58,16 +58,16 @@ public class WebConstant {
     
     
     //对公账户，绑定失败
-    public static final String ACCOUNT_PUBLIC_FAIL="5";
+    public static final String ACCOUNT_PUBLIC_FAIL_5="5";
     
     //对公的账户,绑定成功
-   	public static final String ACCOUNT_PUBLIC_SUCCESS ="4";
+   	public static final String ACCOUNT_PUBLIC_SUCCESS_4 ="4";
    	
    	//对公账户未绑定
-   	public static final String ACCOUNT_PUBLIC_NO_BIND="3";
+   	public static final String ACCOUNT_PUBLIC_NO_BIND_3 ="3";
    	
    	//对公账户审核中
-   	public static final String ACCOUNT_PUBLIC_BINDING="6";
+   	public static final String ACCOUNT_PUBLIC_BINDING_6 ="6";
    	
        
 	//提现卡
@@ -76,9 +76,13 @@ public class WebConstant {
 	//绑定成功
 	public static final Integer BANKCARD_SUCCESS = 1;
 	
+	public static final Integer BANKCARD_AUDIT = 3;
+	
 	public static final Integer BANKCARD_BINDING = 2;
 	
-	public static final Integer BANKCARD_FAIL = 0;
+	public static final Integer BANKCARD_FAILED = 4;
+	
+	public static final Integer BANKCARD_DELETE = 0;
 	
 	//绑定提现卡
 	public static final String BIND_BANK_CARD="0";
