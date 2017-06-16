@@ -42,6 +42,7 @@ public class TitanBankcardDaoImpl extends GenericDAOMyBatisImpl implements Titan
 		try {
 			return super.insertEntity("com.fangcang.titanjr.dao.TitanBankcardDao.intsertBatch", list);
 		} catch (Exception e) {
+			log.error("批量插入对私绑卡信息异常", e);
 			throw new DaoException(e);
 		}
 	}

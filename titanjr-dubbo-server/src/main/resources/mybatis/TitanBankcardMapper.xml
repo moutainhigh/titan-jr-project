@@ -219,6 +219,9 @@
       <if test="userid !=null">
         and userid = #{userid}
       </if>
+      <if test="constid !=null">
+        and constid = #{constid}
+      </if>
       <if test="accountproperty !=null">
         and accountproperty = #{accountproperty}
       </if>
