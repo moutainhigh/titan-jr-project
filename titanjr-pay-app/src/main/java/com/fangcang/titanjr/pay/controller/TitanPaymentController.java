@@ -147,7 +147,7 @@ public class TitanPaymentController extends BaseController {
 		
 		log.info("融数通知notify支付结果rechargeResultConfirmRequest："+Tools.gsonToString(rechargeResultConfirmRequest));
 		
-		String sign  =titanPaymentService.getSign(rechargeResultConfirmRequest);
+		String sign  = titanPaymentService.getSign(rechargeResultConfirmRequest);
 		String signMsg = rechargeResultConfirmRequest.getSignMsg();
     	if(!MD5.MD5Encode(sign, "UTF-8").equals(signMsg)){
     	   log.error("signature verification is fail,The data is:"+JsonConversionTool.toJson(rechargeResultConfirmRequest));
@@ -436,22 +436,47 @@ public class TitanPaymentController extends BaseController {
 	 */
 	@RequestMapping("packageRechargeData")
 	public String packageRechargeData(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model) throws Exception{
-		log.info("网银支付请求参数:"+JsonConversionTool.toJson(titanPaymentRequest));
+		log.info("网银支付请求参数titanPaymentRequest:"+JsonConversionTool.toJson(titanPaymentRequest));
 		model.addAttribute(CommonConstant.RESULT, CommonConstant.OPERATE_FAIL);
 		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.BeginPackageRechargeData, OrderKindEnum.PayOrderNo, titanPaymentRequest.getPayOrderNo()));
-		
+		//检查必填参数
 		if(null == titanPaymentRequest || !StringUtil.isValidString(titanPaymentRequest.getTradeAmount()) 
 				|| !StringUtil.isValidString(titanPaymentRequest.getPayAmount())){
-			log.error("参数错误");
-			model.addAttribute(CommonConstant.RETURN_MSG, "参数错误");
+			log.error("订单金额或者支付金额不能为空，参数titanPaymentRequest:"+JsonConversionTool.toJson(titanPaymentRequest));
+			model.addAttribute(CommonConstant.RETURN_MSG, "必填参数不能为空");
 			return CommonConstant.GATE_WAY_PAYGE;
 		}
+		//非充值单才校验，通常是支付单
+		if(!PaySourceEnum.RECHARDE.getDeskCode().equals(titanPaymentRequest.getPaySource())){
+			//检查sign
+			String paramSing = titanPaymentRequest.getSign();
+			String md5Sign = md5Sign(titanPaymentRequest, TitanConstantDefine.PAY_APP_CASHIER_SIGN_MD5_KEY);
+			if(!(StringUtil.isValidString(paramSing)&&paramSing.equals(md5Sign))){
+				log.error("网银支付请求参数签名错误,，参数titanPaymentRequest:"+JsonConversionTool.toJson(titanPaymentRequest)+",签名sing:"+md5Sign);
+				model.addAttribute(CommonConstant.RETURN_MSG, "参数签名错误");
+				return CommonConstant.GATE_WAY_PAYGE;
+			}
+			//如果付款到中间账户的方式，就没有余额支付.后期跟进业务调整
+			float transferAmount = (new BigDecimal(titanPaymentRequest.getTransferAmount())).floatValue();
+			if((transferAmount!=0)&&titanFinancialAccountService.getDefaultPayerConfig().getUserId().equals(titanPaymentRequest.getUserid())){
+				model.addAttribute(CommonConstant.RETURN_MSG, "不允许用余额支付");
+				return CommonConstant.GATE_WAY_PAYGE;
+			}
+			//金额检查
+			boolean flag = NumberUtil.add(titanPaymentRequest.getTransferAmount(),titanPaymentRequest.getPayAmount()).floatValue()==(new BigDecimal(titanPaymentRequest.getTradeAmount())).floatValue() ;
+			if(!flag){
+				log.error("网银支付请求参数金额异常,，参数titanPaymentRequest:"+JsonConversionTool.toJson(titanPaymentRequest));
+				model.addAttribute(CommonConstant.RETURN_MSG, "参数金额异常");
+				return CommonConstant.GATE_WAY_PAYGE;
+			}
+		}
+		
 		
 		if(!titanPaymentRequest.getPaySource().equals(PaySourceEnum.RECHARDE.getDeskCode()) )
 		{
 	        Map<String,String> validResult = this.validPaymentData(titanPaymentRequest);
 	        if(!CommonConstant.OPERATE_SUCCESS.equals(validResult.get(CommonConstant.RESULT))){//合规性验证
-	        	log.error("验证参数失败");
+	        	log.error("网银支付验证参数失败,，参数titanPaymentRequest:"+JsonConversionTool.toJson(titanPaymentRequest));
 	        	model.addAttribute(CommonConstant.RETURN_MSG, validResult.get(CommonConstant.RETURN_MSG));
 				return CommonConstant.GATE_WAY_PAYGE;
 	        }
@@ -534,6 +559,55 @@ public class TitanPaymentController extends BaseController {
 		
 		return cyberBank(rechargeResponse,model);
     	
+	}
+	
+	private String md5Sign(TitanPaymentRequest titanPaymentRequest,String md5key){
+		StringBuilder stringBuilder = new StringBuilder("1=2");
+		if(StringUtil.isValidString(titanPaymentRequest.getUserid())){
+			stringBuilder.append("&").append("userId=").append(titanPaymentRequest.getUserid());
+		}
+		if(StringUtil.isValidString(titanPaymentRequest.getPayOrderNo())){
+			stringBuilder.append("&").append("payOrderNo=").append(titanPaymentRequest.getPayOrderNo());
+		}
+//		if(StringUtil.isValidString(titanPaymentRequest.getMerchantcode())){
+//			stringBuilder.append("&").append("merchantcode=").append(titanPaymentRequest.getMerchantcode());
+//		}
+		if(StringUtil.isValidString(titanPaymentRequest.getTradeAmount())){
+			stringBuilder.append("&").append("amount=").append(titanPaymentRequest.getTradeAmount());
+		}
+//		if(StringUtil.isValidString(cashDeskData.getTitanCode())){
+//			stringBuilder.append("&").append("titanCode=").append(cashDeskData.getTitanCode());
+//		}
+		if(StringUtil.isValidString(titanPaymentRequest.getFcUserid())){
+			stringBuilder.append("&").append("fcUserid=").append(titanPaymentRequest.getFcUserid());
+		}
+//		if(StringUtil.isValidString(titanPaymentRequest.gettf)){
+//			stringBuilder.append("&").append("tfsUserId=").append(titanPaymentRequest.getTfsUserId());
+//		}
+//		if(StringUtil.isValidString(cashDeskData.getBalanceusable())){
+//			stringBuilder.append("&").append("balanceusable=").append(cashDeskData.getBalanceusable());
+//		}
+		if(StringUtil.isValidString(titanPaymentRequest.getCreator())){
+			stringBuilder.append("&").append("operator=").append(titanPaymentRequest.getCreator());
+		}
+		if(StringUtil.isValidString(titanPaymentRequest.getPaySource())){
+			stringBuilder.append("&").append("paySource=").append(titanPaymentRequest.getPaySource());
+		}
+//		if(StringUtil.isValidString(titanPaymentRequest.getIsEscrowed())){
+//			stringBuilder.append("&").append("isEscrowed=").append(titanPaymentRequest.getIsEscrowed());
+//		}
+//		if(StringUtil.isValidString(titanPaymentRequest.getRecieveOrgCode())){
+//			stringBuilder.append("&").append("recieveOrgCode=").append(titanPaymentRequest.getRecieveOrgCode());
+//		}
+//		if(StringUtil.isValidString(titanPaymentRequest.getBusinessOrderCode())){
+//			stringBuilder.append("&").append("businessOrderCode=").append(titanPaymentRequest.getBusinessOrderCode());
+//		}
+		if(StringUtil.isValidString(titanPaymentRequest.getDeskId())){
+			stringBuilder.append("&").append("deskId=").append(titanPaymentRequest.getDeskId());
+		}
+		stringBuilder.append("&").append("key=").append(md5key);
+		log.info("封装支付参数packageRechargeData,md5原明文"+stringBuilder.toString());
+		return MD5.MD5Encode(stringBuilder.toString());
 	}
 	
 	private String weChat(RechargeResponse rechargeResponse,Model model) throws Exception{

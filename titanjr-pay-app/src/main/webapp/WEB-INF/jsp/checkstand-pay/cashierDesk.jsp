@@ -303,6 +303,7 @@
 			escrowedDate:'${cashDeskData.escrowedDate}',
 			isEscrowed:'${cashDeskData.isEscrowed}',
 			tradeAmount:'${cashDeskData.amount}',
+			sign:'${cashDeskData.sign}',
 			balanceusable:'${cashDeskData.balanceusable}',
 			accountHistoryDTO:'${cashDeskData.accountHistoryDTO}',
 			orgName:'${cashDeskData.orgName}',
