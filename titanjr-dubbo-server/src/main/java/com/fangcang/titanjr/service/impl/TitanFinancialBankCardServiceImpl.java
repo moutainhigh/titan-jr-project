@@ -536,6 +536,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 				            titanBankcard.setBankcity(cid.getBankcity());
 				            titanBankcard.setBankheadname(cid.getBankheadname());
 				            titanBankcard.setBankprovince(cid.getBankprovince());
+				            titanBankcard.setBankcode(cid.getBankhead());
 				            
 				            titanBankcard.setCertificatetype(cid.getCertificatetype());
 				            titanBankcard.setCertificatenumnumber(cid.getCertificatenumber());
