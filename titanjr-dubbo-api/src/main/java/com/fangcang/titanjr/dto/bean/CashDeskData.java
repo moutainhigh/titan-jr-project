@@ -82,6 +82,8 @@ public class CashDeskData implements Serializable{
 	
     //当前商家主题
 	private String currentTheme;
+	// 签名信息
+	private String sign ;
 	
 
 	public String getPayOrderNo() {
@@ -300,6 +302,13 @@ public class CashDeskData implements Serializable{
 		this.returnMsg = "成功";
 		return this;
 	}
-	
+
+	public String getSign() {
+		return sign;
+	}
+
+	public void setSign(String sign) {
+		this.sign = sign;
+	}
 	
 }
