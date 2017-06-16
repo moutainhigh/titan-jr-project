@@ -219,8 +219,8 @@
       <if test="userid !=null">
         and userid = #{userid}
       </if>
-      <if test="usertype !=null">
-        and usertype = #{usertype}
+      <if test="accountproperty !=null">
+        and accountproperty = #{accountproperty}
       </if>
       <if test="productid !=null">
         and productid = #{productid}
