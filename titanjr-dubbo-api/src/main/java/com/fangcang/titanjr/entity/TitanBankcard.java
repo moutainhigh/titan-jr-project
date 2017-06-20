@@ -3,6 +3,9 @@ package com.fangcang.titanjr.entity;
 
 import java.util.Date;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 /**
  * TitanBankcard entity. @author MyEclipse Persistence Tools
  */
@@ -377,5 +380,5 @@ public class TitanBankcard implements java.io.Serializable {
 	public void setCreatetime(Date createtime) {
 		this.createtime = createtime;
 	}
-
+	
 }

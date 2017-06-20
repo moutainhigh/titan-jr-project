@@ -66,9 +66,16 @@ public class MD5 {
      * @return
      */
     public static String getSalt(){
-    	return RandomStringUtils.random(CommonConstant.PASSWORD_SALT_LENGTH, new char[]{'!','@','#','$','%','^','&','*','_','+',':','|','<','>','?','~','B','Y','H','N','U','J','M','I','K','O','L','P','1','2','3','4','5','6','7','8','9','0','o','p','q','r','s','t','u','v','w','x','y','z'});
+    	return getSalt(CommonConstant.PASSWORD_SALT_LENGTH);
     }
     
+    /**
+     * 生成len位含特殊字符的串
+     * @return
+     */
+    public static String getSalt(int len){
+    	return RandomStringUtils.random(len, new char[]{'!','@','#','$','%','^','&','*','_','+',':','|','<','>','?','~','B','Y','H','N','U','J','M','I','K','O','L','P','1','2','3','4','5','6','7','8','9','0','o','p','q','r','s','t','u','v','w','x','y','z'});
+    }
     /**
      * 按key的顺序生成key=value串(值不为空的key-value才会返回)
      * @param parameters 其他要加入签名的参数
@@ -96,7 +103,13 @@ public class MD5 {
         return params.toString();
     }
     
+    public static boolean isopen(){
+    	System.out.println("111");
+    	return false;
+    }
+     
     public static void main(String[] arg){
-    	//System.out.println(RandomStringUtils.randomAlphanumeric(16));
+    	System.out.println(!(isopen()&&isopen()));
+    	System.out.println((!isopen()||(!isopen())));
     }
 }

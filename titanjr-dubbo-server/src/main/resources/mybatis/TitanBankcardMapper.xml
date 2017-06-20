@@ -78,7 +78,7 @@
   
   <insert id="intsertBatch" parameterType="list">
   	insert into t_tfs_bankcard
-  		( constid, userid, bankcode,
+  		( constid, userid,
       	usertype, productid, role, 
       	accountnumber, accounttypeid, bankbranchname, 
       	bankheadname, currency, openaccountdate, 
@@ -92,7 +92,7 @@
       	createtime)
 			values
 		<foreach collection="list" item="item" index="index" separator=",">
-			( #{item.constid,jdbcType=VARCHAR}, #{item.userid,jdbcType=VARCHAR}, #{item.bankhead,jdbcType=VARCHAR},
+			( #{item.constid,jdbcType=VARCHAR}, #{item.userid,jdbcType=VARCHAR},
 		      #{item.usertype,jdbcType=INTEGER}, #{item.productid,jdbcType=VARCHAR}, #{item.role,jdbcType=VARCHAR}, 
 		      #{item.accountnumber,jdbcType=VARCHAR}, #{item.accounttypeid,jdbcType=VARCHAR}, #{item.bankbranchname,jdbcType=VARCHAR}, 
 		      #{item.bankheadname,jdbcType=VARCHAR}, #{item.currency,jdbcType=VARCHAR}, #{item.openaccountdate}, 
@@ -219,8 +219,14 @@
       <if test="userid !=null">
         and userid = #{userid}
       </if>
+      <if test="constid !=null">
+        and constid = #{constid}
+      </if>
       <if test="usertype !=null">
         and usertype = #{usertype}
+      </if>
+      <if test="accountproperty !=null">
+        and accountproperty = #{accountproperty}
       </if>
       <if test="productid !=null">
         and productid = #{productid}
