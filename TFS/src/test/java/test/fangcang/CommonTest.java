@@ -36,6 +36,7 @@ public class CommonTest {
     }
 
     private static void refundCallback(){
+    	
         NotifyBean bean = new NotifyBean();
         bean.setPayOrderNo("8c56a10d-8268-4d5c-9fe4-35ebf424851e");
         bean.setNotifyUrl("http://www.titanmall.cn/TTMC3/orderCancel/returnRefund.shtml");
