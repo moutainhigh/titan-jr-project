@@ -36,26 +36,28 @@
             </div>
         </c:when>
         <c:when test="${orgCheckResultKey=='FT_INVALID'}">
-          		<!-- 初审未通过... -->
-          		<div class="plan plan1">
-                <ul>
-                    <li>提交申请</li>
-                    <li class="w_90"><div class="c_f00">初审</div><p class="Province c_f00" title="未通过(${orgCheckResultMsg })">未通过(${orgCheckResultMsg })</p>
-                    <c:if test="${userType==1 }">
+            <div class="plan plan1 ">
+            <ul>
+                <li>提交申请</li>
+                <li class="w_90 pr">
+                    <div class="c_f00">初审未通过</div>
+                    <div class="plan_notice">
+                        <i class="plan_notice_ico"></i>
+                        <p>${orgCheckResultMsg }</p>
+                        <c:if test="${userType==1 }">
 	                    <!-- 企业用户-修改 -->
-	                    <a class="blue underline cursor" href="<%=basePath%>/organ/getEnterpriseInfo.shtml?orgId=${orgId}">修改申请信息</a>
-                    </c:if>
-                    <c:if test="${userType==2 }">
-                    	<!-- 个人用户-修改 -->
-                    <a class="blue underline cursor" href="<%=basePath%>/organ/getPersernalInfo.shtml?orgId=${orgId}">修改申请信息</a>
-                    </c:if>
-                    
-                    
-                    </li>
-                    <li class="c_8d"><div>复审</div></li>
-                    <li class="c_8d">审核通过</li>
-                </ul>
-            </div>
+	                    <a class="plan_notice_btn" href="<%=basePath%>/organ/getEnterpriseInfo.shtml?orgId=${orgId}">修改申请信息</a>
+	                    </c:if>
+	                    <c:if test="${userType==2 }">
+	                    	<!-- 个人用户-修改 -->
+	                    <a class="plan_notice_btn" href="<%=basePath%>/organ/getPersernalInfo.shtml?orgId=${orgId}">修改申请信息</a>
+                    	</c:if>
+                    </div>
+                </li>
+                <li class=" c_8d"><div>复审</div></li>
+                <li class="c_8d">审核通过</li>
+            </ul>
+        </div>
           		
         </c:when>
         <c:when test="${orgCheckResultKey=='REVIEW'}">

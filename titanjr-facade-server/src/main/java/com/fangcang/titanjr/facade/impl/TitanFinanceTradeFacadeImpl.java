@@ -2,27 +2,32 @@ package com.fangcang.titanjr.facade.impl;
 
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.BaseResponseDTO.ReturnCode;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
+import com.fangcang.titanjr.dto.request.UpdateFreezeOrderRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.facade.TitanFinancialTradeFacade;
 import com.fangcang.titanjr.request.BalanceQueryRequest;
 import com.fangcang.titanjr.request.TitanOrderPaymentRequest;
+import com.fangcang.titanjr.request.UpdateFreezeRequest;
 import com.fangcang.titanjr.response.BalanceQueryResponse;
+import com.fangcang.titanjr.response.BaseResponse;
 import com.fangcang.titanjr.response.TitanOrderPaymentResponse;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.util.StringUtil;
-import org.apache.commons.collections.CollectionUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -134,6 +139,38 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
         paymentUrlRequest.setBusinessOrderCode(titanOrderPaymentRequest.getBusinessOrderCode());
         paymentUrlRequest.setNotifyUrl(titanOrderPaymentRequest.getNotifyUrl());
         return paymentUrlRequest;
+    }
+    
+    
+    @Override
+    public BaseResponse UpdateFreezeOrder(UpdateFreezeRequest updateFreezeRequest) {
+    	
+    	BaseResponse baseResponse = new BaseResponse();
+    	UpdateFreezeOrderRequest updateFreezeOrderRequest = new UpdateFreezeOrderRequest();
+    	
+    	try {
+    		
+    		String validateMsg = GenericValidate.validateObj(updateFreezeRequest);
+			if(validateMsg != null){
+				log.error("参数错误 =====>> " + validateMsg);
+	    		baseResponse.putErrorResult(validateMsg);
+	    		return baseResponse;
+			}
+			BeanUtils.copyProperties(updateFreezeRequest, updateFreezeOrderRequest);
+			
+		} catch (Exception e) {
+			
+			log.error("异常", e);
+    		baseResponse.putErrorResult("参数异常");
+    		return baseResponse;
+		}
+    	
+    	BaseResponseDTO baseResponseDTO = titanFinancialAccountService.UpdateFreezeOrder(updateFreezeOrderRequest);
+    	
+    	baseResponse.setResult(baseResponseDTO.isResult());
+    	baseResponse.setReturnCode(baseResponseDTO.getReturnCode());
+    	baseResponse.setReturnMessage(baseResponseDTO.getReturnMessage());
+    	return baseResponse;
     }
 
 
