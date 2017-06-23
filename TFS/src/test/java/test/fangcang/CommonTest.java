@@ -32,7 +32,7 @@ public class CommonTest {
     private static final Log log = LogFactory.getLog(CommonTest.class);
 
     public static void main(String[] args) {
-        payCallBack();
+        payCallBack(); 
     }
 
     private static void refundCallback(){
