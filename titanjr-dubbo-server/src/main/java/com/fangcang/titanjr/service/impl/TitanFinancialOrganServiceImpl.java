@@ -825,7 +825,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	            		titanOrgCheck.setResultmsg(OrgCheckResultEnum.PASS.getResultmsg());
 	            		titanOrgCheckDao.update(titanOrgCheck);
 	            		
-	            		sendRegNotify(newOrgEntity.getUserid());
+	            		sendRegNotify(newOrgEntity.getUserid(), true, null);
 	            		
 	        		}else{//失败抛出异常
 	        			String rsmsg  = baseResponse.getReturnMsg();
@@ -849,6 +849,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	    	}else{
 	    		titanOrgCheckDao.update(titanOrgCheck);
 	    		addOrgCheckLog(titanOrgCheck);
+	    		
+	    		sendRegNotify(newOrgEntity.getUserid(), false, organCheckRequest.getResultMsg());
 	    	}
 	    	
 			
@@ -863,7 +865,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	return response;
     }
 	
-	private void sendRegNotify(String userId){
+	private void sendRegNotify(String userId, boolean isSuccess, String reason){
 		OrgDTO orgDTO = new OrgDTO();
 		orgDTO.setUserid(userId);
 		orgDTO = this.queryOrg(orgDTO);
@@ -881,8 +883,14 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		}
 		SendMessageRequest sendCodeRequest = new SendMessageRequest();
 		sendCodeRequest.setReceiveAddress(receiveAddress);
-		sendCodeRequest.setSubject(SMSTemplate.ORG_REG_SUCCESS.getSubject());
-		sendCodeRequest.setContent(SMSTemplate.ORG_REG_SUCCESS.getContent());
+		if(isSuccess){
+			sendCodeRequest.setSubject(SMSTemplate.ORG_REG_SUCCESS.getSubject());
+			sendCodeRequest.setContent(SMSTemplate.ORG_REG_SUCCESS.getContent());
+		}else{
+			String content = SMSTemplate.ORG_REG_FAID.getContent().replace("reson", reason);
+			sendCodeRequest.setSubject(SMSTemplate.ORG_REG_FAID.getSubject());
+			sendCodeRequest.setContent(content);
+		}
 		sendCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
 		smsService.asynSendMessage(sendCodeRequest);
 	}

@@ -2,7 +2,9 @@ package com.fangcang.titanjr.facade;
 
 import com.fangcang.titanjr.request.BalanceQueryRequest;
 import com.fangcang.titanjr.request.TitanOrderPaymentRequest;
+import com.fangcang.titanjr.request.UpdateFreezeRequest;
 import com.fangcang.titanjr.response.BalanceQueryResponse;
+import com.fangcang.titanjr.response.BaseResponse;
 import com.fangcang.titanjr.response.TitanOrderPaymentResponse;
 
 
@@ -24,6 +26,18 @@ public interface TitanFinancialTradeFacade {
 	 * @return
      */
 	public BalanceQueryResponse queryAccountBalance(BalanceQueryRequest accountBalanceRequest);
+	
+	
+	/**
+	 * 更新冻结订单
+	 * @author jerry
+	 * 
+	 * @param payOrderNo 支付订单号
+	 * @param operationType 操作类型 1、直接解冻  2、修改解冻日期
+	 * @param uNFreezeDate 解冻日期（yyyy-MM-dd）
+	 * @return BaseResponse
+	 */
+	public BaseResponse UpdateFreezeOrder(UpdateFreezeRequest updateFreezeRequest);
 
 }
 

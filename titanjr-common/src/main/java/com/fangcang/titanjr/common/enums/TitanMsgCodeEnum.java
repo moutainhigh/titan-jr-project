@@ -106,7 +106,7 @@ public enum TitanMsgCodeEnum {
 	
     ORDER_REFUNND_IN_PROCESS(110100037,"该订单正在退款，请勿重复退款"),
     
-    ORDER_OUT_TIME(110100038,"该订单已超出退款时间"),
+    ORDER_OUT_TIME(110100038,"该订单已超过退款时限30天，请线下退款"),
     
     REFUND_UNFREEZE_FAIL(110100039,"资金解冻失败"),
     

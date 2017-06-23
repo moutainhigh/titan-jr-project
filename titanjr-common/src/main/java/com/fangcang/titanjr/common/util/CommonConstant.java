@@ -209,4 +209,5 @@ public class CommonConstant {
 	 * 金融缓存key前缀
 	 */
     public static final String REDIS_KEY_PREFIX_TITANJR = "TITANJR";
+    
 }
