@@ -1,9 +1,6 @@
 package com.fangcang.titanjr.service;
 
-
-import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
-import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 /**
@@ -142,6 +139,6 @@ public interface TitanFinancialTradeService {
 	 * @param ordernQueryRequest
 	 * @return
 	 */
-	public ConfirmOrdernQueryResponse ordernQuery(ConfirmOrdernQueryRequest ordernQueryRequest);	
+	public ConfirmOrdernQueryResponse ordernQuery(ConfirmOrdernQueryRequest ordernQueryRequest);
 	
 }

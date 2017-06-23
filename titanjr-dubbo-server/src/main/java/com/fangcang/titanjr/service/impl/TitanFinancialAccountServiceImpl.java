@@ -27,6 +27,7 @@ import com.fangcang.titanjr.common.enums.FreezeConditionCodeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.TransOrderTypeEnum;
 import com.fangcang.titanjr.common.enums.WithDrawStatusEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
@@ -44,13 +45,13 @@ import com.fangcang.titanjr.dao.TitanFundUnFreezereqDao;
 import com.fangcang.titanjr.dao.TitanOrgDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanWithDrawReqDao;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.AccountDTO;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
-import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
@@ -67,6 +68,7 @@ import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.UnFreeBalanceBatchRequest;
 import com.fangcang.titanjr.dto.request.UnFreezeAccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.UnFreezeRequest;
+import com.fangcang.titanjr.dto.request.UpdateFreezeOrderRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
 import com.fangcang.titanjr.dto.response.AccountCreateResponse;
@@ -1051,6 +1053,87 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			response.putSysError();
 		}
 		return response;
+	}
+	
+	
+	@Override
+	public BaseResponseDTO UpdateFreezeOrder(UpdateFreezeOrderRequest updateFreezeOrderRequest) {
+		BaseResponseDTO baseResponseDTO = new BaseResponseDTO();
+		try {
+			//获取金融订单
+			TransOrderRequest transOrderRequest = new TransOrderRequest();
+			transOrderRequest.setPayorderno(updateFreezeOrderRequest.getPayOrderNo());
+			TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
+			if(transOrderDTO == null){
+				log.error("查询金融订单失败 transOrderDTO==null");
+				baseResponseDTO.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
+				return baseResponseDTO;
+			}
+			log.error("金融订单 transOrderDTO 状态为：" + transOrderDTO.getStatusid());
+			
+			//冻结成功进入下一步
+			if (OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())) {
+				if (!StringUtil.isValidString(transOrderDTO.getOrderid())) {
+					log.error("金融订单orderid为空");
+					baseResponseDTO.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
+					return baseResponseDTO;
+				}
+				if("1".equals(updateFreezeOrderRequest.getOperationType())){
+					
+					log.info("进行订单资金解冻");
+					FundFreezeDTO fundFreezeDTO = new FundFreezeDTO();
+					fundFreezeDTO.setOrderNo(transOrderDTO.getOrderid());
+					List<FundFreezeDTO> fundFreezeDTOList = titanOrderService.queryFundFreezeDTO(fundFreezeDTO);
+					if (null == fundFreezeDTOList || fundFreezeDTOList.size() != 1) {
+						log.error("冻结单查询失败");
+						baseResponseDTO.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
+						return baseResponseDTO;
+					}
+					log.info("查询到解冻订单" + fundFreezeDTOList.size() + "条记录");
+					
+					boolean flag = fundUnFreezeWithFreezeOrder(fundFreezeDTOList.get(0));
+					
+					if(!flag){
+						baseResponseDTO.putErrorResult(TitanMsgCodeEnum.REFUND_UNFREEZE_FAIL);
+						return baseResponseDTO;
+					}
+					log.info("订单资金解冻成功");
+					baseResponseDTO.putSuccess("解冻成功");
+					
+				}else if("2".equals(updateFreezeOrderRequest.getOperationType())){
+					
+					if(!StringUtil.isValidString(updateFreezeOrderRequest.getuNFreezeDate())){
+						log.error("解冻日期不能为空");
+						baseResponseDTO.putErrorResult("uNFreezeDate is null");
+						return baseResponseDTO;
+					}
+					log.info("开始修改订单解冻日期");
+					TransOrderDTO updateTransOrderDTO = new TransOrderDTO();
+					updateTransOrderDTO.setOrderid(transOrderDTO.getOrderid());
+					updateTransOrderDTO.setEscrowedDate(DateUtil.StringToDate(updateFreezeOrderRequest
+							.getuNFreezeDate(), "yyyy-MM-dd"));
+					boolean flag = titanOrderService.updateTransOrder(updateTransOrderDTO);
+					
+					if(!flag){
+						log.error("更新订单解冻日期失败，零条记录被更新");
+						baseResponseDTO.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
+						return baseResponseDTO;
+					}
+					log.info("订单修改解冻日期成功，解冻日期修改为：" + updateFreezeOrderRequest.getuNFreezeDate());
+					baseResponseDTO.putSuccess("订单修改解冻日期成功");
+					
+				}else{
+					log.error("操作类型参数不匹配");
+					baseResponseDTO.putErrorResult(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+		    		return baseResponseDTO;
+				}
+			}
+			
+		} catch (Exception e) {
+			log.error("解冻异常", e);
+			baseResponseDTO.putErrorResult("解冻异常");
+		}
+		return baseResponseDTO;
 	}
 
 
