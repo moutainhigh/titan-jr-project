@@ -60,7 +60,7 @@ function initPayPassword(){
 	           		 result = true;
 	           		 pay_Order();
 	           	 }else{
-	           		new top.Tip({msg: '输入的密码错误', type: 1, timer: 2000});
+	           		new top.Tip({msg: '输入的密码错误', type: 2, timer: 2000});
 	           	 }
 	            },error:function(data){
 	            }
@@ -116,19 +116,19 @@ function initPayPassword(){
 		                        			        		top.F.loading.show();
 		                 		                            setTimeout(function () {
 		                 		                                top.F.loading.hide();
-		                 		                                new top.Tip({msg: '密码设置成功！', type: 1, timer: 1000});
+		                 		                                new top.Tip({msg: '密码设置成功！', type: 1, timer: 2000});
 		                 		                            }, 1000);
 		                        			        	 }else{
 		                        			        			top.F.loading.show();
 		                 		                                setTimeout(function () {
 		                 		                                top.F.loading.hide();
-		                 		                                new top.Tip({msg: data.msg, type: 1, timer: 1000});
+		                 		                                new top.Tip({msg: data.msg, type: 2, timer: 2000});
 		                 		                            }, 1000);
 		                        			        	 }
 		                        			         }
 		                        			   });
 		                        		}else{
-		                        			 new top.Tip({msg: "密码必须为6位", type: 1, timer: 1000});
+		                        			 new top.Tip({msg: "密码必须为6位", type: 2, timer: 2000});
 		                        			 $(".ui-dialog-content").html(html);
 			                         			setTimeout(function(){
 			                         				clickPassword();
@@ -136,7 +136,7 @@ function initPayPassword(){
 			                         			return false;
 		                        		}
 		                        	}else{
-		                        		 new top.Tip({msg: "两次输入的密码不一致", type: 1, timer: 1000});
+		                        		 new top.Tip({msg: "两次输入的密码不一致", type: 2, timer: 2000});
 		                        		 $(".ui-dialog-content").html(html);
 		                         			setTimeout(function(){
 		                         				clickPassword();

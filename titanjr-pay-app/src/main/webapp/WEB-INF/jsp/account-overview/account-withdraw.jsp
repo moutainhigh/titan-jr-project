@@ -373,7 +373,7 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
             		 toAccountWithdraw();
             		 
             	 }else{
-            		new top.Tip({msg: '输入的密码错误', type: 1, timer: 2000});
+            		new top.Tip({msg: '输入的密码错误', type: 2, timer: 2000});
             		 $(".ui-dialog-content").html(pwdHtml);
             			setTimeout(function(){
                    			$('#passwordbox').click();

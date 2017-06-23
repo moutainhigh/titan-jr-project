@@ -351,6 +351,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 					response.setReturnMsg(errorMsg);
 					log.error("调用接口accountBalanceTransfer异常：" + errorMsg);
 				} else {
+					response.setSuccess(true);
 					response.setOperateStatus(rsp.getIs_success());
 					response.setRetcode(rsp.getRetcode());
 					response.setRetmsg(rsp.getRetmsg());
