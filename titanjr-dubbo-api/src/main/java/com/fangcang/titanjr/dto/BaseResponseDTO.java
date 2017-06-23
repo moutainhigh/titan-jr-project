@@ -8,6 +8,10 @@ import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
  * Created by zhaoshan on 2016/4/25.
  */
 public class BaseResponseDTO implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8695905724380391232L;
 	protected static final  String CODE_SUCCESS = "1";//成功
 	protected static final  String CODE_ERROR = "-100";//错误提示
 	public static final  String FINANCE_SYS_ERROR = "-400";//系统错误

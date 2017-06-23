@@ -80,7 +80,7 @@ public interface TitanFinancialBankCardService {
 
 	
 	/**
-	 * 查询单个绑卡信息
+	 * 查询本地单个绑卡信息
 	 * @author jerry
 	 * @param param
 	 * @return
@@ -97,6 +97,5 @@ public interface TitanFinancialBankCardService {
 	 * @return
 	 */
 	public BaseResponseDTO batchUpdatePersonalCard();
-	
 	
 }
