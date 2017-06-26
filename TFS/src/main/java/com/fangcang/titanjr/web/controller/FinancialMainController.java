@@ -63,6 +63,8 @@ public class FinancialMainController extends BaseController {
     private void queryOrgInfo(Model model) throws Exception{
     	Integer isAdmin = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_IS_ADMIN);
     	String merchantCode = (String)getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);		
+    	String jrUserLoginName = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
+    	
     	//暂时统一从session中取
     	String orgBindStatus = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS);
     	String saasLoginName =   (String)getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_LOGINNAME);
@@ -70,7 +72,7 @@ public class FinancialMainController extends BaseController {
     	String orgCheckResultKey = "";
     	String orgCheckResultMsg = "";
     	try {
-    		if(StringUtil.isValidString(merchantCode)){//查询机构审核状态
+    		if(StringUtil.isValidString(merchantCode)&&StringUtil.isValidString(jrUserLoginName)){//查询机构审核状态,只有添加了的员工才可以看到
         		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
             	organQueryRequest.setMerchantcode(merchantCode);
             	organQueryRequest.setCoopType(CoopTypeEnum.SAAS.getKey());
