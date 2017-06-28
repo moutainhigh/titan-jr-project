@@ -102,7 +102,8 @@ public class FinancialMainController extends BaseController {
 			throw new Exception(e);
 		}
     	model.addAttribute("orgCheckResultKey", orgCheckResultKey);
-    	model.addAttribute("orgCheckResultMsg", orgCheckResultMsg);
+    	model.addAttribute("orgCheckResultMsg", Tools.replaceEnterKeyHTML(orgCheckResultMsg));
+    	model.addAttribute("resultMsg_title", orgCheckResultMsg);
     	model.addAttribute("isAdmin", isAdmin==null?0:isAdmin);
     	model.addAttribute("orgBindStatus", orgBindStatus==null?0:orgBindStatus);
     }
