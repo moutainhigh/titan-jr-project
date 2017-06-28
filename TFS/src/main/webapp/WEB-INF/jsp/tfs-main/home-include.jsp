@@ -43,7 +43,7 @@
                     <div class="c_f00">初审未通过</div>
                     <div class="plan_notice">
                         <i class="plan_notice_ico"></i>
-                        <p>${orgCheckResultMsg }</p>
+                        <p title="未通过(${orgCheckResultMsg })">${orgCheckResultMsg }</p>
                         <c:if test="${userType==1 }">
 	                    <!-- 企业用户-修改 -->
 	                    <a class="plan_notice_btn" data-url="<%=basePath%>/organ/getEnterpriseInfo.shtml?orgId=${orgId}" href="javascript:;">修改申请信息</a>
