@@ -92,7 +92,7 @@ public class FinancialMainController extends BaseController {
 	        		log.error("金融首页错误，查询金融机构失败[organOrganResponse]:"+Tools.gsonToString(organOrganResponse)+",saasLoginName:"+saasLoginName);
 	        	}
         	}else{
-        		log.error("金融首页错误，session中saas商家编码为空");
+        		log.info("该员工未添加为金融员工，SAAS商家编码："+merchantCode+",SAAS登录用户名："+saasLoginName);
         	}
     		
 		} catch (Exception e) {

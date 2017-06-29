@@ -234,8 +234,7 @@ public class FinancialLoanController extends BaseController {
 
 		if (response == null || !response.isResult()
 				|| response.getCreditOrder() == null) {
-
-			log.error("query credit fail!");
+			 
 			return false;
 		}
 
@@ -246,7 +245,6 @@ public class FinancialLoanController extends BaseController {
 			return true;
 		}
 
-		log.error("credit status exception!");
 
 		return false;
 	}
