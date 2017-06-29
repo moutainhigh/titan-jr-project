@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -887,6 +889,11 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			sendCodeRequest.setSubject(SMSTemplate.ORG_REG_SUCCESS.getSubject());
 			sendCodeRequest.setContent(SMSTemplate.ORG_REG_SUCCESS.getContent());
 		}else{
+			Pattern patPunc = Pattern.compile("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]$");
+			Matcher matcher = patPunc.matcher(reason);//最后一个字符是特殊符号
+			if(!matcher.find()){
+				reason += "，";
+			}
 			String content = SMSTemplate.ORG_REG_FAID.getContent().replace("reson", reason);
 			sendCodeRequest.setSubject(SMSTemplate.ORG_REG_FAID.getSubject());
 			sendCodeRequest.setContent(content);

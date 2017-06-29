@@ -54,8 +54,8 @@
 						<li class="last">审核通过</li>
 					</ul>
 				</div>
-				<div class="rt_on ">
-					不通过原因：${msg}
+				<div class="rt_on " style="color: #4a4a4a">
+					审核未通过，原因是：<br/>${msg}
 				</div>	
 			</div>
 			<div class="r_t_hint">				
