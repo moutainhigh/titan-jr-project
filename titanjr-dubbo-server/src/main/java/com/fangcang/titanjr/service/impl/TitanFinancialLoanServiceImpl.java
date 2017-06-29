@@ -754,7 +754,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 					+ "  orgCode=" + orgCode + "]");
 		}
 
-		log.info("query loan apply result " + JsonConversionTool.toJson(rsp));
+		log.info("orderNo:"+orderNo+",query loan apply result " + JsonConversionTool.toJson(rsp));
 		// 查询贷款应还信息
 		QueryBorrowinfoRequest bReq = new QueryBorrowinfoRequest();
 		bReq.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
@@ -764,13 +764,8 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 
 		QueryBorrowinfoResponse brsp = rsCreditManager.queryBorrowinfo(bReq);
 
-		if (!brsp.isSuccess() || brsp.gettBorrowRepayment() == null) {
 
-			log.error("query borrow info fail.  [ orderNo = " + orderNo
-					+ "  orgCode=" + orgCode + "]");
-		}
-
-		log.info("query borrow info result " + JsonConversionTool.toJson(brsp));
+		log.info("orderNo:"+orderNo+", query borrow info result " + JsonConversionTool.toJson(brsp));
 
 		// 查询主动还款信息 
 		QueryUserInitiativeRepaymentRequest ureq = new QueryUserInitiativeRepaymentRequest();
@@ -781,13 +776,9 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 		QueryUserInitiativeRepaymentResponse response = rsCreditManager
 				.queryUserInitiativeRepayment(ureq);
 
-		if (!response.isSuccess() || response.gettUserArepaymentList() == null) {
+		 
 
-			log.error("query User Initiative fail.  [ orderNo = " + orderNo
-					+ "  orgCode=" + orgCode + "]");
-		}
-
-		log.info("query User Initiative result "
+		log.info("orderNo:"+orderNo+",query User Initiative result "
 				+ JsonConversionTool.toJson(response));
 
 		TBorrowRepayment borrowRepayment = brsp.gettBorrowRepayment();
@@ -911,7 +902,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 					|| LoanOrderStatusEnum.WAIT_AUDIT.getKey() == loanApplyOrder
 							.getStatus()) {
 
-				log.info(" confirm loan order protocol ");
+				log.info("orderNo:"+orderNo+", confirm loan order protocol ");
 				// 进行协议确认
 				OrderServiceAgreementConfirmRequest cReq = new OrderServiceAgreementConfirmRequest();
 
@@ -926,7 +917,7 @@ public class TitanFinancialLoanServiceImpl implements TitanFinancialLoanService 
 						.agreementConfirm(cReq);
 
 				if (confirmResponse == null || !confirmResponse.isSuccess()) {
-					log.error("confirm loan order protocol fail!  "
+					log.error("orderNo:"+orderNo+",confirm loan order protocol fail!  "
 							+ JsonConversionTool.toJson(confirmResponse));
 				}
 			}
