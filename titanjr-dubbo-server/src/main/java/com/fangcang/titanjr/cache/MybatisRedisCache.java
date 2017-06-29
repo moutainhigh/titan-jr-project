@@ -62,7 +62,7 @@ public class MybatisRedisCache implements Cache {
 			String key = keyObj.toString();
 			Object value = getRedisTemplate().opsForValue().get(key);
 			if(value!=null){
-				log.info("get-value-----key:"+Tools.gsonToString(keyObj)+",---value--"+Tools.gsonToString(value));
+				log.info("get-value-----key:"+Tools.gsonToString(keyObj));
 				return value;   
 			}
 			return null;
@@ -73,7 +73,7 @@ public class MybatisRedisCache implements Cache {
 	}
 	
 	public void putObject(final Object key, final Object value) {
-		log.info("put-value-------key:"+Tools.gsonToString(key)+",---value--"+Tools.gsonToString(value));
+		log.info("put-value-------key:"+Tools.gsonToString(key));
 		getRedisTemplate().opsForValue().set(key.toString(), value,MYBATIS_CACHE_TIME_OUT, TimeUnit.SECONDS);
 	 
 	}
