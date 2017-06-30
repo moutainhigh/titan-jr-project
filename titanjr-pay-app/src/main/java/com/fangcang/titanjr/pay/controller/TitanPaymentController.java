@@ -470,7 +470,7 @@ public class TitanPaymentController extends BaseController {
 				}
 				// 付款方不是中间账户就需要查询账户信息	
 				AccountBalance accountBalance = financialTradeService.getAccountBalance(transOrderDTO.getUserid());
-				String balanceusable = NumberUtil.covertToYuan(accountBalance.getBalanceusable());//可用余额,元
+				String balanceusable = accountBalance.getBalanceusable();//可用余额,元
 				if(NumberUtil.subtract(titanPaymentRequest.getTradeAmount(),balanceusable).floatValue()>0){
 					//订单金额大于余额，需要网银再支付剩下的款
 					payAmount = NumberUtil.subtract(titanPaymentRequest.getTradeAmount(),balanceusable).toString();
