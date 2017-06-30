@@ -470,19 +470,19 @@ public class TitanPaymentController extends BaseController {
 				}
 				// 付款方不是中间账户就需要查询账户信息	
 				AccountBalance accountBalance = financialTradeService.getAccountBalance(transOrderDTO.getUserid());
-				String accountAmount = NumberUtil.covertToYuan(accountBalance.getAmount());//余额,元
-				if(NumberUtil.subtract(titanPaymentRequest.getTradeAmount(),accountAmount).floatValue()>0){
+				String balanceusable = NumberUtil.covertToYuan(accountBalance.getBalanceusable());//可用余额,元
+				if(NumberUtil.subtract(titanPaymentRequest.getTradeAmount(),balanceusable).floatValue()>0){
 					//订单金额大于余额，需要网银再支付剩下的款
-					payAmount = NumberUtil.subtract(titanPaymentRequest.getTradeAmount(),accountAmount).toString();
-					transferAmount = accountAmount;
+					payAmount = NumberUtil.subtract(titanPaymentRequest.getTradeAmount(),balanceusable).toString();
+					transferAmount = balanceusable;
 				}else{
 					//余额大于订单金额，可以只用余额支付，不用网银支付
 					payAmount = "0";
 					transferAmount = titanPaymentRequest.getTradeAmount();
 				}
 			}else{//没有勾选余额支付
-				transferAmount= "0";
 				payAmount = titanPaymentRequest.getTradeAmount();
+				transferAmount= "0";
 			}
 		}
 		titanPaymentRequest.setPayAmount(payAmount);
