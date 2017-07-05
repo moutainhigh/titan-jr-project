@@ -140,7 +140,7 @@
             <tr>
                 <td class="tdr">收付款类型</td>
                 <td>
-                    <input type="text" value="1" id="payerType" name="payerType"/><span>1:B2B交易平台 <span title='2:GDP-收款方SAAS商家编码'> 2:GDP</span> <span title='3:财务供应商-收付款方为SAAS用户id'>3:财务供应商</span>  4:联盟供应商付款 1001:对外开放平台,1024:TTM-SAAS商家,10242：TTM-金融商家，10243:微信公众号
+                    <input type="text" value="1" id="payerType" name="payerType"/><span>1:B2B交易平台 <span title='2:GDP-收款方SAAS商家编码'> 2:GDP</span> <span title='3:财务供应商-付款方为SAAS用户id'>3:财务供应商</span>  4:联盟供应商付款 1001:对外开放平台,1024:TTM-SAAS商家,10242：TTM-金融商家，10243:微信公众号
                 </td>
             </tr>
             <tr>
