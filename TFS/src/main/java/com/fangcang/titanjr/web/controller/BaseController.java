@@ -12,6 +12,7 @@ import net.sf.json.JSONSerializer;
 
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.web.util.WebConstant;
 
 /**
@@ -48,7 +49,7 @@ public class BaseController implements Serializable {
     
     
     public String toJson(Object object){
-    	return JSONSerializer.toJSON(object).toString();
+    	return Tools.gsonToString(object);
     }
     
     public String toJson(){
