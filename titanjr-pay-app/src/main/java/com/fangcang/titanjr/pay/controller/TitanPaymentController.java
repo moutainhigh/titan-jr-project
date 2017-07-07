@@ -296,7 +296,7 @@ public class TitanPaymentController extends BaseController {
 				log.error("confirem ordern query is null,param:"+Tools.gsonToString(request)+",response:"+Tools.gsonToString(response));
 				try {//线程等待
 					if(i<2){
-						Thread.sleep(500 * (2<<i));
+						Thread.sleep(2000 * (2<<i));
 					}
 				} catch (InterruptedException e) {
 					log.error("", e);
