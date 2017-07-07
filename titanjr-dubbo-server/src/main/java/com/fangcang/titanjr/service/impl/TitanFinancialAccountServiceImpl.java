@@ -768,8 +768,8 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			
 			TitanAccountHistoryParam condition = new TitanAccountHistoryParam();
 			AccountHistoryDTO accountHistoryDTO = accountHistoryRequest.getAccountHistoryDTO();
-			condition.setPayeeuserid(accountHistoryDTO.getPayeeuserid());
-			condition.setPayeruserid(accountHistoryDTO.getPayeruserid());
+			condition.setOutaccountcode(accountHistoryDTO.getOutaccountcode());
+			condition.setInaccountcode(accountHistoryDTO.getInaccountcode());
 			PaginationSupport<TitanAccountHistory> paginationSupport = new PaginationSupport<TitanAccountHistory>();
 			titanAccountHistoryDao.selectForPage(condition, paginationSupport);  
 			//如果数据了中没有收付款账户记录则插入一条数据，否则直接返回成功

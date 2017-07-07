@@ -86,7 +86,7 @@ public class TitanRefundService {
 			log.info("1.校验支付密码");
 			boolean flag = titanFinancialUserService.checkPayPassword( refundRequest.getPayPassword(),refundRequest.getTfsUserid());
 			if (!flag) {
-				log.error("付款密码错误");
+				log.error("付款密码错误,tfsuserid:"+refundRequest.getTfsUserid());
 				response.putErrorResult(TitanMsgCodeEnum.PAY_PWD_ERROR);
 				return response;
 			}
@@ -100,13 +100,13 @@ public class TitanRefundService {
 			log.info("2.校验支付单状态");
 			TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
 			if (null == transOrderDTO || !OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())) {
-				log.error("该订单不存在或者该单没有支付成功");
+				log.error("该订单不存在或者该单没有支付成功,orderid:"+transOrderDTO.getOrderid());
 				response.putErrorResult(TitanMsgCodeEnum.ORDER_NOT_REFUND);
 				return response;
 			}
 			
 			if(OrderStatusEnum.isRefund(transOrderDTO.getStatusid())){
-				log.error("该订单已退款，请勿重复退款");
+				log.error("该订单已退款，请勿重复退款,orderid:"+transOrderDTO.getOrderid());
 				response.putErrorResult(TitanMsgCodeEnum.ORDER_REFUNND_IN_PROCESS);
 				return response;
 			}
@@ -131,7 +131,7 @@ public class TitanRefundService {
 				AccountBalanceResponse balanceResponse = titanFinancialAccountService.queryAccountBalance(accountBalanceRequest);
 				if (!balanceResponse.isResult() || null == balanceResponse.getAccountBalance() ||
 						null == balanceResponse.getAccountBalance().get(0)) {
-					log.error("查询账户信息失败");
+					log.error("查询账户信息失败或者不存在,userid:"+transOrderDTO.getUserrelateid());
 					response.putErrorResult(TitanMsgCodeEnum.TITAN_ACCOUNT_NOT_EXISTS);
 					return response;
 				}
@@ -139,7 +139,7 @@ public class TitanRefundService {
 				//账户余额不足不能退款
 				BigDecimal balance = new BigDecimal(balanceResponse.getAccountBalance().get(0).getBalanceusable());
 				if (balance.subtract(transferAmount).compareTo(BigDecimal.ZERO) == -1) {
-					log.error("账户余额余额不足，需先充值");
+					log.error("账户余额余额不足，需先充值,userid:"+transOrderDTO.getUserrelateid());
 					response.putErrorResult(TitanMsgCodeEnum.ACCOUNT_BALANCE_NOT_ENOUGH);
 					return response;
 				}
@@ -194,7 +194,7 @@ public class TitanRefundService {
 			if (OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())) {//立即解冻
 				List<FundFreezeDTO> fundFreezeList = getFundFreezeList(transOrderDTO.getOrderid());
 				if (null == fundFreezeList) {
-					log.error("冻结单查询失败");
+					log.error("冻结单查询失败，orderid:"+transOrderDTO.getOrderid());
 					response.putErrorResult(TitanMsgCodeEnum.REFUND_FAIL);
 					return response;
 				}
@@ -203,7 +203,7 @@ public class TitanRefundService {
 				unFreeBalanceBatchRequest.setFundFreezeDTOList(fundFreezeList);
 				flag = titanFinancialAccountService.unfreezeAccountBalanceOne(unFreeBalanceBatchRequest);
 				if (!flag) {
-					log.error("资金解冻失败");
+					log.error("资金解冻失败，orderid:"+transOrderDTO.getOrderid());
 					response.putErrorResult(TitanMsgCodeEnum.REFUND_UNFREEZE_FAIL);
 					return response;
 				}
@@ -213,7 +213,7 @@ public class TitanRefundService {
 			log.info("6.调用服务退款");
 			TitanJrRefundResponse titanJrRefundResponse = titanFinancialRefundService.refund(titanJrRefundRequest);
 			if (!titanJrRefundResponse.isResult()) {
-				log.error("退款操作失败:" + titanJrRefundResponse.getReturnMessage());
+				log.error("退款操作失败:订单orderid:"+transOrderDTO.getOrderid()+",错误信息："+ titanJrRefundResponse.getReturnMessage());
 				response.putErrorResult(TitanMsgCodeEnum.REFUND_FAIL);
 				return response;
 			}
@@ -228,7 +228,7 @@ public class TitanRefundService {
 			transOrder.setTransid(transOrderDTO.getTransid());
 			flag = titanOrderService.updateTransOrder(transOrder);
 			if (!flag) {
-				log.error("退款单状态更新失败");
+				log.error("退款单状态更新失败,orderId:"+transOrderDTO.getOrderid());
 				utilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Success_Update_Order_Fail, JSONSerializer.toJSON(transOrder).toString());
 			}
 			log.info("退款操作成功");
