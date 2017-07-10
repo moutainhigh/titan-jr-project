@@ -13,6 +13,9 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /***
  * AES加密
@@ -20,7 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @date   2017年2月23日
  */
 public class AESUtil {
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AESUtil.class);
 	public static String AES_SEED = "VenTPrgtBSYQBBSbWoqWViUspXoGgCkV";
 	private final static int digit = 128;
 	/**
@@ -91,17 +94,17 @@ public class AESUtil {
 			byte[] result = cipher.doFinal(byteContent);
 			return byte2hex(result); // 加密
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			LOGGER.error("加密失败，参数content："+content+",NoSuchAlgorithmException",e);
 		} catch (NoSuchPaddingException e) {
-			e.printStackTrace();
+			LOGGER.error("加密失败，参数content："+content+",NoSuchPaddingException",e);
 		} catch (InvalidKeyException e) {
-			e.printStackTrace();
+			LOGGER.error("加密失败，参数content："+content+",InvalidKeyException",e);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			LOGGER.error("加密失败，参数content："+content+",UnsupportedEncodingException",e);
 		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
+			LOGGER.error("加密失败，参数content："+content+",IllegalBlockSizeException",e);
 		} catch (BadPaddingException e) {
-			e.printStackTrace();
+			LOGGER.error("加密失败，参数content："+content+",BadPaddingException",e);
 		}
 
 		return null;
@@ -138,15 +141,15 @@ public class AESUtil {
 			
 			return new String(result); // 解密
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			LOGGER.error("解密失败，参数密文content："+content+",NoSuchAlgorithmException",e);
 		} catch (NoSuchPaddingException e) {
-			e.printStackTrace();
+			LOGGER.error("解密失败，参数密文content："+content+",NoSuchPaddingException",e);
 		} catch (InvalidKeyException e) {
-			e.printStackTrace();
+			LOGGER.error("解密失败，参数密文content："+content+",InvalidKeyException",e);
 		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
+			LOGGER.error("解密失败，参数密文content："+content+",IllegalBlockSizeException",e);
 		} catch (BadPaddingException e) {
-			e.printStackTrace();
+			LOGGER.error("解密失败，参数密文content："+content+",BadPaddingException",e);
 		}
 		return null;
 
@@ -160,7 +163,6 @@ public class AESUtil {
 		String content = "10141";
 		// 加密密码
 		//String key = RandomStringUtils.randomAlphabetic(32);
-
 		System.out.println("content：" + content);
 		String en = AESUtil.encrypt(content);
 		System.out.println("加密后密文：" + en);

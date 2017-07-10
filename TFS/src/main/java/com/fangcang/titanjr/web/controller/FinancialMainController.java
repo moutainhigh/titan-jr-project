@@ -11,13 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fangcang.titanjr.common.enums.CoopTypeEnum;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.CheckStatus;
-import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
-import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
-import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.util.WebConstant;
@@ -64,21 +62,21 @@ public class FinancialMainController extends BaseController {
      */
     private void queryOrgInfo(Model model) throws Exception{
     	Integer isAdmin = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_IS_ADMIN);
+    	String merchantCode = (String)getSession().getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE);		
     	String jrUserLoginName = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME);
+    	
     	//暂时统一从session中取
     	String orgBindStatus = (String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_BIND_STATUS);
+    	String saasLoginName =   (String)getSession().getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_LOGINNAME);
     	
     	String orgCheckResultKey = "";
     	String orgCheckResultMsg = "";
     	try {
-    		if(StringUtil.isValidString(jrUserLoginName)){//查询机构审核状态
-        		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
-        		userInfoQueryRequest.setUserLoginName(jrUserLoginName);
-        		UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
-        		UserInfoDTO userInfo =	userInfoResponse.getUserInfoDTOList().get(0);
+    		if(StringUtil.isValidString(merchantCode)&&StringUtil.isValidString(jrUserLoginName)){//查询机构审核状态,只有添加了的员工才可以看到
         		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-            	organQueryRequest.setUserId(userInfo.getUserId());
-            	FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+            	organQueryRequest.setMerchantcode(merchantCode);
+            	organQueryRequest.setCoopType(CoopTypeEnum.SAAS.getKey());
+            	FinancialOrganResponse organOrganResponse = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
 				if (organOrganResponse.isResult()) {
 					CheckStatus checkStatus = organOrganResponse.getFinancialOrganDTO().getCheckStatus();
 					if (checkStatus != null) {
@@ -87,18 +85,18 @@ public class FinancialMainController extends BaseController {
 						model.addAttribute("userType", organOrganResponse.getFinancialOrganDTO().getUserType());
 						model.addAttribute("orgId", organOrganResponse.getFinancialOrganDTO().getOrgId());
 					}else{
-						log.error("金融首页错误，机构无审核状态[organOrganResponse]:"+Tools.gsonToString(organOrganResponse)+",userid:"+userInfo.getUserId());
+						log.error("金融首页错误，机构无审核状态[organOrganResponse]:"+Tools.gsonToString(organOrganResponse)+",saasLoginName:"+saasLoginName);
 					}
 					
 				}else{
-	        		log.error("金融首页错误，查询结果错误[organOrganResponse]:"+Tools.gsonToString(organOrganResponse)+",userid:"+userInfo.getUserId());
+	        		log.error("金融首页错误，查询金融机构失败[organOrganResponse]:"+Tools.gsonToString(organOrganResponse)+",saasLoginName:"+saasLoginName);
 	        	}
         	}else{
-        		log.error("金融首页错误，session中登录用户名为空");
+        		log.info("该员工未添加为金融员工，SAAS商家编码："+merchantCode+",SAAS登录用户名："+saasLoginName);
         	}
     		
 		} catch (Exception e) {
-			log.error("金融首页错误，登录用户名为:"+jrUserLoginName, e);
+			log.error("金融首页错误，saasLoginName为:"+saasLoginName+",商家编码merchantCode："+merchantCode, e);
 			throw new Exception(e);
 		}
     	model.addAttribute("orgCheckResultKey", orgCheckResultKey);

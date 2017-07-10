@@ -117,11 +117,22 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 		if(financialOrganResponse.getFinancialOrganDTO()!=null){
 			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
 			CheckStatus checkStatus = financialOrganDTO.getCheckStatus();
-			if(!OrgCheckResultEnum.PASS.getResultkey().equals(checkStatus.getCheckResultKey())){
+			if(OrgCheckResultEnum.PASS.getResultkey().equals(checkStatus.getCheckResultKey())){
+				return true;
+			}
+			//审核中
+			if(OrgCheckResultEnum.FT.getResultkey().equals(checkStatus.getCheckResultKey())||OrgCheckResultEnum.REVIEW.getResultkey().equals(checkStatus.getCheckResultKey())){
 				setMsg(request, response, "开通申请正在审核中，请等待客服审核");
 				return false;
 			}
-			return true;
+			//审核不通过
+			if(OrgCheckResultEnum.FT_INVALID.getResultkey().equals(checkStatus.getCheckResultKey())||OrgCheckResultEnum.REVIEW_INVALID.getResultkey().equals(checkStatus.getCheckResultKey())){
+				setMsg(request, response, "开通申请审核不通过，请管理员修改申请信息");
+				return false;
+			}
+			//其他情况
+			setMsg(request, response, "开通申请正在审核中，请等待客服审核");
+			return false;
 		}else{//暂未开通
 			if(isadmin!=null&&isadmin==1){
 				setMsg(request, response, "当前用户还没有开通该功能，请先开通泰坦金融");

@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class AccountBalance implements Serializable{
 	//账户心跳计次
     private String pulsedegree;
-    //可用余额
+    //可用余额（元）
     private String balanceusable;
     //贷记余额
     private String balancecredit;
@@ -19,7 +19,7 @@ public class AccountBalance implements Serializable{
     private String finaccountid;
     //可信用消费余额
     private String balanceoverlimit;
-    //账户余额
+    //账户余额(分)
     private String amount;
     //产品号
     private String productid;
