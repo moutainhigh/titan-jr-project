@@ -767,7 +767,7 @@ public class TitanTradeController extends BaseController {
 
 		CashDeskData cashDeskData = new CashDeskData();
 
-		// 查询收款方机构号，如果收款方不为空但是是酒店支付，还是不将收款信息填写
+		//如果收款方不为空，并且不是酒店财务供应商支付，需要设置帐户名和泰坦码（在收银台展示）
 		if (StringUtil.isValidString(transOrderDTO.getPayeemerchant())
 				&& payerTypeEnum.isPayeeNecessary()) {
 			FinancialOrganDTO financialOrganDTO = financialTradeService

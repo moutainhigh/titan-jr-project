@@ -1,4 +1,3 @@
-
 package com.fangcang.titanjr.pay.controller;
 
 import java.io.IOException;
@@ -52,7 +51,6 @@ import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
-import com.fangcang.titanjr.dto.request.UserBindInfoRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.ConfirmOrdernQueryResponse;
@@ -61,6 +59,7 @@ import com.fangcang.titanjr.dto.response.QrCodeResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.dto.response.TransferResponse;
+import com.fangcang.titanjr.dto.response.gateway.QuickPaymentResponse;
 import com.fangcang.titanjr.enums.PayTypeEnum;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.req.CreateTitanRateRecordReq;
@@ -69,11 +68,14 @@ import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
 import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.pay.services.TitanRateService;
 import com.fangcang.titanjr.pay.services.TitanTradeService;
+import com.fangcang.titanjr.pay.util.IPUtil;
+import com.fangcang.titanjr.pay.util.TerminalUtil;
 import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.RedisService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
+import com.fangcang.titanjr.service.RSGatewayInterfaceService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
@@ -126,6 +128,9 @@ public class TitanPaymentController extends BaseController {
 	
 	@Resource
 	private RedisService redisService;
+	
+	@Resource
+	private RSGatewayInterfaceService titanFinancialQuickPayService;
 	
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	/**
@@ -558,6 +563,7 @@ public class TitanPaymentController extends BaseController {
 		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.CyberBankStep, OrderKindEnum.PayOrderNo, titanPaymentRequest.getPayOrderNo()));
 		
 		return cyberBank(rechargeResponse,model);
+		//return quickPay(request, rechargeResponse.getRechargeDataDTO(), model);//quickPay
     	
 	}
 	
@@ -635,6 +641,65 @@ public class TitanPaymentController extends BaseController {
     	//保存常用的支付方式
 		return CommonConstant.GATE_WAY_PAYGE;
 	}
+	
+	
+	//快捷支付
+	private String quickPay(HttpServletRequest request, RechargeDataDTO rechargeDataDTO, Model model){
+		String strUserAgent = request.getHeader("user-agent").toString().toLowerCase();
+		//模拟组装参数
+		rechargeDataDTO.setPayType("41");
+		rechargeDataDTO.setBankInfo("cmb");
+		rechargeDataDTO.setVersion("v1.1");
+		rechargeDataDTO.setIdCode("411381198907135674");
+		rechargeDataDTO.setPayerAccountType("10");
+		rechargeDataDTO.setPayerName("赵闪");
+		rechargeDataDTO.setPayerPhone("18620352083");
+		rechargeDataDTO.setPayerAcount("6214837833012036");
+		//rechargeDataDTO.setCheckCode("123456");
+		rechargeDataDTO.setSignMsg(getSigMsgForQuickPay(rechargeDataDTO));
+		String terminalType = null;
+		rechargeDataDTO.setTerminalIp(IPUtil.getUserIP(request));
+		if(TerminalUtil.check(strUserAgent)){
+			terminalType = "wap";
+		}else{
+			terminalType = "web";
+		}
+		rechargeDataDTO.setTerminalType(terminalType);
+		//rechargeResponse.getRechargeDataDTO().setTerminalInfo("null_2C-56-DC-48-55-C3_SIM");
+		
+    	log.info("快捷支付请求的参数如下:"+JsonConversionTool.toJson(rechargeDataDTO));
+    	
+    	QuickPaymentResponse quickPaymentResponse = titanFinancialQuickPayService.quickPay(rechargeDataDTO);
+    	model.addAttribute("quickPaymentResponse", quickPaymentResponse);
+    	model.addAttribute("rechargeDataDTO", rechargeDataDTO);
+    	return "checkstand-pay/quickPayResult";
+	}
+	
+	private String getSigMsgForQuickPay(RechargeDataDTO rechargeDataDTO){
+		StringBuffer sign = new StringBuffer();
+		if(rechargeDataDTO !=null){
+			sign.append("merchantNo=");
+			sign.append(rechargeDataDTO.getMerchantNo());
+			sign.append("&orderNo=");
+			sign.append(rechargeDataDTO.getOrderNo());
+			sign.append("&orderAmount=");
+			sign.append(rechargeDataDTO.getOrderAmount());
+			sign.append("&payType=");
+			sign.append(rechargeDataDTO.getPayType());
+			sign.append("&orderTime=");
+			sign.append(rechargeDataDTO.getOrderTime());
+			sign.append("&signType=");
+			sign.append(rechargeDataDTO.getSignType());
+			sign.append("&version=");
+			sign.append(rechargeDataDTO.getVersion());
+			sign.append("&key=");
+			sign.append(titanFinancialUtilService.querySysConfig().getRsCheckKey());
+		}
+		String md5Msg = MD5.MD5Encode(sign.toString(), "UTF-8");
+		return md5Msg;
+	}
+	//test quickPay end
+	
  	
     private Map<String,String> validPaymentData(TitanPaymentRequest titanPaymentRequest){
     	Map<String,String> resultMap = new HashMap<String, String>();

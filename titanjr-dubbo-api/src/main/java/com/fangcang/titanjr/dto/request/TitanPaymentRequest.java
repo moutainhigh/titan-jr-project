@@ -22,11 +22,11 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	//付款密码
 	private String payPassword;
 	
-	//卡或者第三方支付需要支付金额
-    private String payAmount;
+	//卡或者第三方支付需要支付金额,业务逻辑改为从后台计算，【不从页面获取】
+    private String payAmount = "0";
     
-    //余额
-    private String transferAmount;
+    //余额,业务逻辑改为从后台计算，【不从页面获取】
+    private String transferAmount = "0";
 	// 应收手续费
 	private String receivablefee = "0";
 	// 实收手续费
@@ -63,11 +63,19 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	
 	private String orderTypeId;
 	
-	
 	//md5签名
 	private String sign ;
 	//支付方式 默认个人银行
 	private PayTypeEnum payType = PayTypeEnum.Personal_Banking;
+	
+	private String payerAccountType; //支付人银行卡类型   10：借记卡  21：信用卡
+	private String idCode; //支付人身份证
+	
+	private String terminalIp; //终端IP
+	private String terminalType; //终端类型
+	private String terminalInfo; //终端信息
+	
+	
 	public Float getReceivablerate() {
 		return receivablerate;
 	}
@@ -236,13 +244,52 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 		this.sign = sign;
 	}
 
-
 	public String getTransferAmount() {
 		return transferAmount;
 	}
 
 	public void setTransferAmount(String transferAmount) {
 		this.transferAmount = transferAmount;
+	}
+	
+	public String getPayerAccountType() {
+		return payerAccountType;
+	}
+
+	public void setPayerAccountType(String payerAccountType) {
+		this.payerAccountType = payerAccountType;
+	}
+
+	public String getIdCode() {
+		return idCode;
+	}
+
+	public void setIdCode(String idCode) {
+		this.idCode = idCode;
+	}
+
+	public String getTerminalIp() {
+		return terminalIp;
+	}
+
+	public void setTerminalIp(String terminalIp) {
+		this.terminalIp = terminalIp;
+	}
+
+	public String getTerminalType() {
+		return terminalType;
+	}
+
+	public void setTerminalType(String terminalType) {
+		this.terminalType = terminalType;
+	}
+
+	public String getTerminalInfo() {
+		return terminalInfo;
+	}
+
+	public void setTerminalInfo(String terminalInfo) {
+		this.terminalInfo = terminalInfo;
 	}
 	
 }
