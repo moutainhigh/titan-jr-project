@@ -95,7 +95,7 @@
             <tr align="left">
                 <td class="tdr">操作人</td>
                 <td>
-                    <input type="text" name="name"  id="name" value="zhangsan" class="input_t01"/>
+                    <input type="text" name="name"  id="name" value="pjw" class="input_t01"/>
                 </td>
             </tr>
             <tr>
@@ -104,7 +104,7 @@
             </tr>
             <tr>
                 <td class="tdr">业务订单号</td>
-                <td><input type="text" id="goodsId" value="201611141238596002662" name="goodsId"/>
+                <td><input type="text" id="goodsId" value="201711141238596003060" name="goodsId"/>
                 </td>
             </tr>
             <tr>
@@ -128,7 +128,7 @@
             <tr>
                 <td class="tdr">收款方机构编码</td>
                 <td>
-                    <input type="text" value="TJM10000098" id="ruserId" name="ruserId"/>
+                    <input type="text" value="M10036489" id="ruserId" name="ruserId"/>
                 </td>
             </tr>
             <tr>
@@ -158,7 +158,7 @@
             <tr>
                 <td class="tdr">支付通知接口地址</td>
                 <td>
-                    <input type="text" value="http://localhost:8088/titanjr-pay-app/quickPayment/customerNotify.action" id="notify" name="notify"/>
+                    <input type="text" value="http://192.168.0.77:8084/titanjr-pay-app/payCallBack" id="notify" name="notify"/>
                 </td>
             </tr>
             </tbody>
@@ -188,21 +188,21 @@
             </tr>
             <tr>
                 <td class="tdr">金融账号</td>
-                <td><input type="text" id="reuserId" value="TJM10000035" name="reuserId"/></td>
+                <td><input type="text" id="reuserId" value="TJM60000020" name="reuserId"/></td>
             </tr>
             <tr>
                 <td class="tdr">操作人ID</td>
-                <td><input type="text" id="retfsUserid" value="10122" name="retfsUserid"/>
+                <td><input type="text" id="retfsUserid" value="10181" name="retfsUserid"/>
                 </td>
             </tr>
              <tr>
                 <td class="tdr">是否为商家编码</td>
-                <td><input type="text" id="isMerchCode" value="10122" name="isMerchCode"/>1,商家编码，0金融账号
+                <td><input type="text" id="isMerchCode" value="0" name="isMerchCode"/>1,商家编码，0金融账号
                 </td>
             </tr>
              <tr>
                 <td class="tdr">回调地址</td>
-                <td><input type="text" id="notifyUrl" value="10122" name="notifyUrl"/>
+                <td><input type="text" id="notifyUrl" value="http://192.168.0.77:8084/titanjr-pay-app/payCallBack" name="notifyUrl"/>
                 </td>
             </tr>
             
