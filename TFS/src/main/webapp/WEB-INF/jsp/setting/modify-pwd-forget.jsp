@@ -95,18 +95,18 @@ $('.J_next_btn').on('click',function(){
 	
 	 var flag = validate_email_or_phone(data);
 	 if(!flag){
-		 new top.Tip({msg : '用户名必须是您注册时的手机或者邮箱！', type: 1, timer:2000});      
+		 new top.Tip({msg : '用户名必须是您注册时的手机或者邮箱！', type: 2, timer:2000});      
 	     return;
 	 }
 	 
 	if(typeof code =="undefined" || code.length<1){
-		new top.Tip({msg : '验证码必须填写！', type: 1, timer:2000});      
+		new top.Tip({msg : '验证码必须填写！', type: 2, timer:2000});      
 		return;
 	}
 	
 	var codeTest = /^\d{6}$/;
 	if(!codeTest.test(code)){
-		new top.Tip({msg : '验证码必须输入6位数字！', type: 1, timer:2000});      
+		new top.Tip({msg : '验证码必须输入6位数字！', type: 2, timer:2000});      
 		return;
 	}
 	data.code = code;
@@ -151,7 +151,7 @@ function check_code(data){
        		
 
        	 }else{
-       		 new top.Tip({msg : data.msg, type: 1 , time:1000});   
+       		 new top.Tip({msg : data.msg, type: 2 , time:2000});   
        	 }
         },complete:function(data){
         	top.F.loading.hide();
@@ -178,7 +178,7 @@ $(".J_close").on('click',function(){
        		$(this).addClass('huise');
     	        timeOut($(this));
        	 }else{
-       		 new top.Tip({msg : data.msg, type: 1 , time:1000});   
+       		 new top.Tip({msg : data.msg, type: 2 , time:2000});   
        	 }
         }    		
 	});
@@ -193,7 +193,7 @@ function forget_pwd_data(){
 	
 	 
 	if(payPassword2.length !=6 || payPassword.length!=6){
-		new top.Tip({msg : '密码必须为6位数！', type: 1, timer:2000});  
+		new top.Tip({msg : '密码必须为6位数！', type: 2, timer:2000});  
 		$('.passwordset_u1').html(pwd3);
 		 PasswordStr6=new sixDigitPassword("passwordbox3");
 		 PasswordStr7=new sixDigitPassword("passwordbox4");
@@ -205,7 +205,7 @@ function forget_pwd_data(){
 		return;
 	}
 	if(payPassword2 !=payPassword){
-		new top.Tip({msg : '两次输入的密码必须相同！', type: 1, timer:2000});  
+		new top.Tip({msg : '两次输入的密码必须相同！', type: 2, timer:2000});  
 		$('.passwordset_u1').html(pwd3);
 		 PasswordStr6=new sixDigitPassword("passwordbox3");
 		 PasswordStr7=new sixDigitPassword("passwordbox4");
@@ -251,11 +251,11 @@ $('.sendmes').on('click',function(){
 		         dataType: "json",
 		         success: function(data){
 		        	 if(data.code=="1"){//短信发送成功
-		        	    new top.Tip({msg : '验证码已成功发送,请注意查收！', type: 1, timer:1000});      
+		        	    new top.Tip({msg : '验证码已成功发送,请注意查收！', type: 1, timer:2000});      
 		        		$(".sendmes").addClass('huise');
 		     	        timeOut($(".sendmes"));
 		        	 }else{
-		        		 new top.Tip({msg : 'data.msg', type: 1 , time:1000});   
+		        		 new top.Tip({msg : 'data.msg', type: 2 , time:2000});   
 		        	 }
 		         },  		
 	    	});

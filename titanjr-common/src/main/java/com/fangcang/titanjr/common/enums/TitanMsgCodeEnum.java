@@ -85,7 +85,7 @@ public enum TitanMsgCodeEnum {
     TRANSFER_SUCCESS_UPDATE_LOACL_FAIL(110100027,"退款转账成功，更新本地单失败！"),
     
     
-    ORDER_NOT_REFUND(110100028,"该订单不存在或者未支付成功，不能退款"),
+    ORDER_NOT_REFUND(110100028,"该订单冻结失败或者未支付成功，不能退款"),
     
     ACCOUNT_BALANCE_NOT_ENOUGH(110100029,"账户余额不足，请充值"),
     

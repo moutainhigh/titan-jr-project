@@ -126,25 +126,25 @@ function validate_payPassword(){
 	var payPassword5 = PasswordStr5.returnStr();
 	
 	if(payPassword3.length!=6){
-		new top.Tip({msg : '原密码必须为6位！', type: 1 , timer:1000}); 
+		new top.Tip({msg : '原密码必须为6位！', type: 2 , timer:2000}); 
 // 		modify_pwd();
 		return false;
 	}
 	
 	if(payPassword4.length!=6||payPassword5.length!=6){
-		new top.Tip({msg : '设置的密码必须为6位！', type: 1 , timer:1000}); 
+		new top.Tip({msg : '设置的密码必须为6位！', type: 2 , timer:2000}); 
 // 		modify_pwd();
 		return false;
 	}
 	
 	if(payPassword4!=payPassword5){
-		new top.Tip({msg : '两次新密码输入不相同！', type: 1 , timer:1000});   
+		new top.Tip({msg : '两次新密码输入不相同！', type: 2 , timer:2000});   
 // 		modify_pwd();
 		return false;
 	}
 	
 	if(payPassword3==payPassword4){
-		new top.Tip({msg : '原密码不能和新密码相同！', type: 1 , timer:1000});   
+		new top.Tip({msg : '原密码不能和新密码相同！', type: 2 , timer:2000});   
 // 		modify_pwd();
 		return false;
 	}

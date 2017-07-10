@@ -1,7 +1,11 @@
 package com.fangcang.titanjr.common.util;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fangcang.util.StringUtil;
 /**
@@ -10,6 +14,7 @@ import com.fangcang.util.StringUtil;
  * @date   2016年12月29日
  */
 public class NumberUtil {
+	private static final Logger LOGGER = LoggerFactory.getLogger(NumberUtil.class);
 	private static final DecimalFormat decimalFormat = new DecimalFormat("##0.00");
 	/***
 	 * 元转分
@@ -54,13 +59,102 @@ public class NumberUtil {
 	 * @return
 	 */
 	public static BigDecimal add(String param1,String param2){
-		if(!StringUtil.isValidString(param1)){
+		if(param1==null||"".equals(param1.toString())){
 			param1 = "0";
 		}
-		if(!StringUtil.isValidString(param2)){
+		if(param2==null||"".equals(param2.toString())){
 			param2 = "0";
 		}
-		return new BigDecimal(param1).add(new BigDecimal(param2));
+		try {
+			return new BigDecimal(param1.toString()).add(new BigDecimal(param2.toString()));
+		} catch (Exception e) {
+			LOGGER.error("数字加法异常,参数param1:"+param1.toString()+",参数param2:"+param2.toString(),e);
+			return BigDecimal.ZERO;
+		}
 	}
 	
+	/***
+	 * 两个数相减
+	 * @param param1
+	 * @param param2
+	 * @return
+	 */
+	public static BigDecimal subtract(Object param1,Object param2){
+		if(param1==null||"".equals(param1.toString())){
+			param1 = "0";
+		}
+		if(param2==null||"".equals(param2.toString())){
+			param2 = "0";
+		}
+		try {
+			return new BigDecimal(param1.toString()).subtract(new BigDecimal(param2.toString()));
+		} catch (Exception e) {
+			LOGGER.error("数字减法异常,参数param1:"+param1.toString()+",参数param2:"+param2.toString(),e);
+			return BigDecimal.ZERO;
+		}
+	}
+	/***
+	 * 两个数相乘
+	 * @param param1
+	 * @param param2
+	 * @return
+	 */
+	public static BigDecimal multiply(Object param1,Object param2){
+		if(param1==null||"".equals(param1.toString())){
+			param1 = "0";
+		}
+		if(param2==null||"".equals(param2.toString())){
+			param2 = "0";
+		}
+		try {
+			return new BigDecimal(param1.toString()).multiply(new BigDecimal(param2.toString()));
+		} catch (Exception e) {
+			LOGGER.error("数字减法异常,参数param1:"+param1.toString()+",参数param2:"+param2.toString(),e);
+			return BigDecimal.ZERO;
+		}
+	}
+	/***
+	 * 两个数相除
+	 * @param param1 被除数
+	 * @param param2 除数
+	 * @param scale  小数保留位数
+	 * @return
+	 */
+	public static BigDecimal divide(Object param1,Object param2,int scale){
+		if(param1==null||"".equals(param1.toString())){
+			param1 = "0";
+		}
+		if(param2==null||"".equals(param2.toString())){
+			param2 = "0";
+		}
+		if(scale<0){
+			scale = 0;
+		}
+		try {
+			return new BigDecimal(Double.valueOf(param1.toString())).divide(new BigDecimal(Double.valueOf(param2.toString())),scale,RoundingMode.HALF_UP);
+		} catch (Exception e) {
+			LOGGER.error("数字减法异常,参数param1:"+param1.toString()+",参数param2:"+param2.toString(),e);
+			return BigDecimal.ZERO;
+		}
+	}
+	/***
+	 * 两个数相除,默认保留两位小数 
+	 * @param param1 被除数
+	 * @param param2 除数
+	 * @return
+	 */
+	public static BigDecimal divide(Object param1,Object param2){
+		if(param1==null||"".equals(param1.toString())){
+			param1 = "0";
+		}
+		if(param2==null||"".equals(param2.toString())){
+			param2 = "0";
+		}
+		return divide(param1,param2,2);//默认保留两位有效数字
+	}
+	
+	
+	public static void main(String[] arg){
+    	System.out.println(subtract("3.05","0.21").toString());
+    }
 }

@@ -103,10 +103,8 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 			log.error(Tools.getStringBuilder().append("参数错误:接收地址不能为空,").append("发送参数sendCodeRequest：").append(Tools.gsonToString(sendCodeRequest)));
 			return response;
 		}
-		if(!StringUtil.isValidString(sendCodeRequest.getMerchantCode())){
-			response.putErrorResult("发送方的商家编码不能为空");
-			log.error(Tools.getStringBuilder().append("参数错误:发送方的商家编码不能为空,").append("发送参数sendCodeRequest：").append(Tools.gsonToString(sendCodeRequest)));
-			return response;
+		if(!StringUtil.isValidString(sendCodeRequest.getMerchantCode())){//默认使用房仓商家发送
+			sendCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
 		}
 		int sendType = sendCodeRequest.getReceiveAddress().indexOf("@")>-1?2:1;
 		

@@ -30,7 +30,7 @@
 		<div class="help_box_content help_search_content">
 			<c:forEach items="${helpPage.itemList }" var="help">
 				<dl>
-					<dt><a href="<%=basePath %>/help/detail.action?hid=${help.helpId }">${tfs:redKeyword(help.helpTitle,w)}</a></dt>
+					<dt><a target="_blank" href="<%=basePath %>/help/detail.action?hid=${help.helpId }">${tfs:redKeyword(help.helpTitle,w)}</a></dt>
 					<dd>${tfs:redKeyword(help.helpContent,w)}</dd>
 				</dl>
 			</c:forEach>

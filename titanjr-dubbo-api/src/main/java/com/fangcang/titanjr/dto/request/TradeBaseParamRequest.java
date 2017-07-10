@@ -18,9 +18,10 @@ public class TradeBaseParamRequest implements Serializable{
 	//产品号
 	private String productNo;
 	
-	//交易金额
+	//交易金额(第三方业务系统订单金额)
     private String tradeAmount;
-  
+    // 是否使用余额,1-使用，空或者其它值为不使用
+    private String isaccount;
     //收款人机构orgName
   	private String recieveOrgName;
   	
@@ -133,6 +134,14 @@ public class TradeBaseParamRequest implements Serializable{
 
 	public void setCreator(String creator) {
 		this.creator = creator;
+	}
+
+	public String getIsaccount() {
+		return isaccount;
+	}
+
+	public void setIsaccount(String isaccount) {
+		this.isaccount = isaccount;
 	}
 	
 }

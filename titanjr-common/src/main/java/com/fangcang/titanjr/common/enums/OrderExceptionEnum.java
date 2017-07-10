@@ -38,6 +38,8 @@ public enum OrderExceptionEnum {
 	
 	Notify_Freeze_Insert_Fail("7_5","0","转账成功冻结失败"),Online_Freeze_Success_Update_Order_Fail("7_7","0","冻结成功修改订单状态失败"),
 	
+	Notify_Order_Amount_Execption("7_8","0","收到融数通知，订单支付金额异常"),
+	
 	//转账
 	Transfer_Update_Order_Fail("9_1","0","新增转账单失败或修改转账单失败"),Transfer_Fail("9_3","0","转账失败"),
 	

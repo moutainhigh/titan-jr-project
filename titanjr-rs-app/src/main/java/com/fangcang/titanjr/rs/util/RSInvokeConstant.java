@@ -13,8 +13,8 @@ public class RSInvokeConstant {
 
     //融数调用构造的client
     public static DefaultRopClient ropClient = null;
-    //融数调用回话key
-    public static String sessionKey = null;
+    //融数调用回话key ，使用固定值
+    public static String sessionKey = "1498838092996169647";
     //支付网关地址
     public static String gateWayURL = null;
     //融数给出构造加密数据的签名

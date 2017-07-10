@@ -169,6 +169,9 @@ public class Tools {
 	 * @return
 	 */
 	public static String appendRequestParam(String prefixUrl, Map<String, String> param){
+		if(param==null||param.isEmpty()){
+			return prefixUrl;
+		}
 		if(prefixUrl.indexOf("?")==-1){
 			return prefixUrl+"?"+generatorParamString(param).toString();
 		}
@@ -230,6 +233,8 @@ public class Tools {
 		return sb.toString();
 	}
 	public static final void main(String[] arg){
-		//System.out.println(getTitanRedisKey(Wxutil.class,"notify"));
+//		Map<String, String> praMap = new HashMap<String, String>();
+//		praMap.put("name", "333");
+//		System.out.println(appendRequestParam("4444444rrfgg",praMap));
 	}
  }

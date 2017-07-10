@@ -65,7 +65,7 @@ public class BusinessLogServiceImpl implements BusinessLogService {
 				
 				LogProducer.sendMsg(payLogDto);
 			} catch (Exception e) {
-				log.error("支付业务流程日志写失败，orderId:"+addPayLogRequest.getOrderId());
+				log.error("支付业务流程日志写失败，orderId:"+addPayLogRequest.getOrderId(),e);
 			}
 
 	}
