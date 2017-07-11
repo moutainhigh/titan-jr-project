@@ -55,4 +55,19 @@
             <taglib-location>/WEB-INF/config/fn.tld</taglib-location>
         </taglib>
     </jsp-config>
+    
+    <!--  -->
+    <filter>
+	    <display-name>parameterFilter</display-name>
+	    <filter-name>parameterFilter</filter-name>
+		<filter-class>com.fangcang.platform.preventXss.ParameterFilter</filter-class>
+    	<init-param>
+	      <param-name>config</param-name>
+	      <param-value>filterConfig.properties</param-value>
+	    </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>parameterFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>
