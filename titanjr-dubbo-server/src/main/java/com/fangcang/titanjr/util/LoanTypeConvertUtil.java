@@ -186,12 +186,10 @@ public final class LoanTypeConvertUtil {
 		creditOrder.setOrgCode(orgCode);
 		creditOrder.setCreateTime(new Date());
 		creditOrder.setStatus(1);
-		// TODO 引用全局变量
-		creditOrder.setRateTem("RA201610141100001");
+		creditOrder.setRateTem(CommonConstant.RS_LOAN_CREDIT_RATETEMPL_RATE);
 		creditOrder.setRspId(CommonConstant.RS_FANGCANG_PRODUCT_ID);
 		creditOrder.setRsorgId(CommonConstant.RS_FANGCANG_CONST_ID);
-		// TODO 引用全局变量
-		creditOrder.setDayLimit(36);
+		creditOrder.setDayLimit(Integer.parseInt(CommonConstant.RS_LOAN_CREDIT_REQUEST_TIME));
 		return creditOrder;
 	}
 

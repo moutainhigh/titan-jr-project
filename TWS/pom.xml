@@ -220,6 +220,12 @@
             <version>1.0.0</version>
         </dependency>
         
+        <dependency>
+			<groupId>com.fangcang</groupId>
+			<artifactId>fangcang-preventXss</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+        
     </dependencies>
 
     <build>
