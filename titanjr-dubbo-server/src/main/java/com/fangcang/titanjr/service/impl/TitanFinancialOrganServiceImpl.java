@@ -3,6 +3,7 @@ package com.fangcang.titanjr.service.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -894,7 +895,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			if(!matcher.find()){
 				reason += "，";
 			}
-			String content = SMSTemplate.ORG_REG_FAID.getContent().replace("reson", reason);
+			String content = MessageFormat.format(SMSTemplate.ORG_REG_FAID.getContent(), reason);
 			sendCodeRequest.setSubject(SMSTemplate.ORG_REG_FAID.getSubject());
 			sendCodeRequest.setContent(content);
 		}

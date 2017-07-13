@@ -143,7 +143,7 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
     
     
     @Override
-    public BaseResponse UpdateFreezeOrder(UpdateFreezeRequest updateFreezeRequest) {
+    public BaseResponse updateFreezeOrder(UpdateFreezeRequest updateFreezeRequest) {
     	
     	BaseResponse baseResponse = new BaseResponse();
     	UpdateFreezeOrderRequest updateFreezeOrderRequest = new UpdateFreezeOrderRequest();
@@ -165,7 +165,7 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
     		return baseResponse;
 		}
     	
-    	BaseResponseDTO baseResponseDTO = titanFinancialAccountService.UpdateFreezeOrder(updateFreezeOrderRequest);
+    	BaseResponseDTO baseResponseDTO = titanFinancialAccountService.updateFreezeOrder(updateFreezeOrderRequest);
     	
     	baseResponse.setResult(baseResponseDTO.isResult());
     	baseResponse.setReturnCode(baseResponseDTO.getReturnCode());

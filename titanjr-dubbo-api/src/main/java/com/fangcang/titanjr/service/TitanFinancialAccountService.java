@@ -153,7 +153,7 @@ public interface TitanFinancialAccountService {
 	 * @param uNFreezeDate 解冻日期
 	 * @return BaseResponse
 	 */
-	public BaseResponseDTO UpdateFreezeOrder(UpdateFreezeOrderRequest updateFreezeOrderRequest);
+	public BaseResponseDTO updateFreezeOrder(UpdateFreezeOrderRequest updateFreezeOrderRequest);
 	
 	
 }

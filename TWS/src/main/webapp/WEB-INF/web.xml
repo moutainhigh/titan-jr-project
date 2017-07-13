@@ -11,6 +11,7 @@
             classpath:applicationContext.xml
         </param-value>
     </context-param>
+  	
     <!-- start Character Encoding filter -->
     <filter>
         <filter-name>encodingFilter</filter-name>
@@ -30,6 +31,21 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <!-- end Character Encoding filter -->
+    
+    <!-- XSS攻击过滤 -->
+    <filter>
+	    <display-name>parameterFilter</display-name>
+	    <filter-name>parameterFilter</filter-name>
+		<filter-class>com.fangcang.platform.preventXss.ParameterFilter</filter-class>
+	    <init-param>
+	      <param-name>config</param-name>
+	      <param-value>filterConfig.properties</param-value>
+	    </init-param>
+	</filter>
+	<filter-mapping>
+	    <filter-name>parameterFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+  	</filter-mapping>
     
     <!--Spring ApplicationContext 载入 -->
     <listener>
@@ -90,20 +106,6 @@
             <taglib-location>/WEB-INF/config/fn.tld</taglib-location>
         </taglib>
     </jsp-config>
-    
-    <filter>
-	    <display-name>parameterFilter</display-name>
-	    <filter-name>parameterFilter</filter-name>
-		<filter-class>com.fangcang.platform.preventXss.ParameterFilter</filter-class>
-	    <init-param>
-	      <param-name>config</param-name>
-	      <param-value>filterConfig.properties</param-value>
-	    </init-param>
-	</filter>
-	<filter-mapping>
-	    <filter-name>parameterFilter</filter-name>
-	    <url-pattern>/*</url-pattern>
-  	</filter-mapping>
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
