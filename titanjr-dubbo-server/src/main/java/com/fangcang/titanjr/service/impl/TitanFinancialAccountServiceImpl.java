@@ -1057,19 +1057,20 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	
 	
 	@Override
-	public BaseResponseDTO UpdateFreezeOrder(UpdateFreezeOrderRequest updateFreezeOrderRequest) {
+	public BaseResponseDTO updateFreezeOrder(UpdateFreezeOrderRequest updateFreezeOrderRequest) {
 		BaseResponseDTO baseResponseDTO = new BaseResponseDTO();
 		try {
 			//获取金融订单
 			TransOrderRequest transOrderRequest = new TransOrderRequest();
 			transOrderRequest.setPayorderno(updateFreezeOrderRequest.getPayOrderNo());
+			transOrderRequest.setPayertype(updateFreezeOrderRequest.getPayerType());
 			TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
 			if(transOrderDTO == null){
 				log.error("查询金融订单失败 transOrderDTO==null");
 				baseResponseDTO.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
 				return baseResponseDTO;
 			}
-			log.error("金融订单 transOrderDTO 状态为：" + transOrderDTO.getStatusid());
+			log.info("金融订单 transOrderDTO 状态为：" + transOrderDTO.getStatusid());
 			
 			//冻结成功进入下一步
 			if (OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())) {
@@ -1078,6 +1079,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					baseResponseDTO.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
 					return baseResponseDTO;
 				}
+				//操作类型 1、直接解冻  2、修改解冻日期
 				if("1".equals(updateFreezeOrderRequest.getOperationType())){
 					
 					log.info("进行订单资金解冻");
