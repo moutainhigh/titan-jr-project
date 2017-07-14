@@ -17,6 +17,11 @@ public class UpdateFreezeOrderRequest extends BaseRequestDTO {
 	@NotBlank
 	private String payOrderNo;
 	/**
+	 * 支付方类型
+	 */
+	@NotBlank
+	private String payerType;
+	/**
 	 * 操作类型 1、直接解冻  2、修改解冻日期
 	 */
 	@NotBlank
@@ -24,7 +29,6 @@ public class UpdateFreezeOrderRequest extends BaseRequestDTO {
 	/**
 	 * 解冻日期
 	 */
-	@NotBlank
 	private String uNFreezeDate;
 	
 	public String getPayOrderNo() {
@@ -44,6 +48,12 @@ public class UpdateFreezeOrderRequest extends BaseRequestDTO {
 	}
 	public void setuNFreezeDate(String uNFreezeDate) {
 		this.uNFreezeDate = uNFreezeDate;
+	}
+	public String getPayerType() {
+		return payerType;
+	}
+	public void setPayerType(String payerType) {
+		this.payerType = payerType;
 	}
 
 }

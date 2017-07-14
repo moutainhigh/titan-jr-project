@@ -37,7 +37,7 @@ public interface TitanFinancialTradeFacade {
 	 * @param uNFreezeDate 解冻日期（yyyy-MM-dd）
 	 * @return BaseResponse
 	 */
-	public BaseResponse UpdateFreezeOrder(UpdateFreezeRequest updateFreezeRequest);
+	public BaseResponse updateFreezeOrder(UpdateFreezeRequest updateFreezeRequest);
 
 }
 
