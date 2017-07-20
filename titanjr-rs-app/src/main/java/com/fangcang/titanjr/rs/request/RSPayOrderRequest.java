@@ -61,12 +61,17 @@ public class RSPayOrderRequest {
 	//签名字符串
 	private String signMsg;
 	
-	
-	
 	//测试支付回调接口
 	private String payOrderNo;
 	
 	private String payStatus;
+	
+	//新版收银台增加字段
+	private String payerAccountType; //支付人银行卡类型   10：借记卡  21：信用卡
+	private String idCode; //支付人身份证
+	private String terminalIp; //终端IP
+	private String terminalType; //终端类型
+	private String terminalInfo; //终端信息
 	
 	public String getPayStatus() {
 		return payStatus;
@@ -247,6 +252,36 @@ public class RSPayOrderRequest {
 		this.key = key;
 	}
 	
+	public String getPayerAccountType() {
+		return payerAccountType;
+	}
+	public void setPayerAccountType(String payerAccountType) {
+		this.payerAccountType = payerAccountType;
+	}
+	public String getIdCode() {
+		return idCode;
+	}
+	public void setIdCode(String idCode) {
+		this.idCode = idCode;
+	}
+	public String getTerminalIp() {
+		return terminalIp;
+	}
+	public void setTerminalIp(String terminalIp) {
+		this.terminalIp = terminalIp;
+	}
+	public String getTerminalType() {
+		return terminalType;
+	}
+	public void setTerminalType(String terminalType) {
+		this.terminalType = terminalType;
+	}
+	public String getTerminalInfo() {
+		return terminalInfo;
+	}
+	public void setTerminalInfo(String terminalInfo) {
+		this.terminalInfo = terminalInfo;
+	}
 	public static Map<String,String> RSPayOrderRequestToMap(RSPayOrderRequest rsPayOrderRequest){
 		Map<String,String>paraMap = new HashMap<String, String>();
 		if(rsPayOrderRequest !=null){

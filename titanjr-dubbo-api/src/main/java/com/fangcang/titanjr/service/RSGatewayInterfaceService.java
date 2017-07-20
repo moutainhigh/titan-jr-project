@@ -1,6 +1,6 @@
 package com.fangcang.titanjr.service;
 
-import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
+import com.fangcang.titanjr.dto.request.QuickPaymentRequest;
 import com.fangcang.titanjr.dto.request.gateway.CardSceurityVerifyRequest;
 import com.fangcang.titanjr.dto.request.gateway.ConfirmRechargeRequest;
 import com.fangcang.titanjr.dto.request.gateway.QueryBankCardBINRequest;
@@ -31,7 +31,7 @@ public interface RSGatewayInterfaceService {
 	 * @param rechargeDataDTO
 	 * @return
 	 */
-	public QuickPaymentResponse quickPay(RechargeDataDTO rechargeDataDTO);
+	public QuickPaymentResponse quickPay(QuickPaymentRequest quickPaymentRequest);
 	
 	
 	/**

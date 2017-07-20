@@ -191,6 +191,12 @@ public class TitanPaymentService {
 			rechargeRequest.setPageUrl(payMethodConfigDTO.getPageurl());
 			rechargeRequest.setNotifyUrl(payMethodConfigDTO.getNotifyurl());
 		}
+		//新版收银台增加参数
+		rechargeRequest.setVersion(titanPaymentRequest.getVersion());
+		rechargeRequest.setIdCode(titanPaymentRequest.getIdCode());
+		rechargeRequest.setPayerAccountType(titanPaymentRequest.getPayerAccountType());
+		rechargeRequest.setPayerName(titanPaymentRequest.getPayerName());
+		rechargeRequest.setPayerPhone(titanPaymentRequest.getPayerPhone());
 
 		return rechargeRequest;
 	}

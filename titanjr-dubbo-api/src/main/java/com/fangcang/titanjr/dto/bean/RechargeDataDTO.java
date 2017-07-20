@@ -74,13 +74,12 @@ public class RechargeDataDTO implements Serializable{
 		//商户密钥
 		private String key ="12356780Poi";
 		
+		//新版收银台增加字段
 		private String payerAccountType; //支付人银行卡类型   10：借记卡  21：信用卡
 		private String idCode; //支付人身份证
-		
 		private String terminalIp; //终端IP
 		private String terminalType; //终端类型
 		private String terminalInfo; //终端信息
-		
 		private String checkCode; //快捷支付验证码
 		
 		public String getPayStatus() {

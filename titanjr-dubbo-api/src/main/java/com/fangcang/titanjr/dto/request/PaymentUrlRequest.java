@@ -6,7 +6,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public class PaymentUrlRequest extends BaseRequestDTO {
 
-    private String merchantcode;
+    /** 
+	 * 
+	 */
+	private static final long serialVersionUID = -3163998348942517998L;
+
+	private String merchantcode;
 
     @NotEmpty
     private String payOrderNo;
@@ -40,6 +45,10 @@ public class PaymentUrlRequest extends BaseRequestDTO {
 
     //解冻日期
     private String escrowedDate;
+    
+    //收银台版本 @see CashierDeskVersionEnum
+    @NotEmpty
+    private String cashierDeskVersion;
 
 
     public String getFcUserid() {
@@ -136,6 +145,14 @@ public class PaymentUrlRequest extends BaseRequestDTO {
 
 	public void setNotifyUrl(String notifyUrl) {
 		this.notifyUrl = notifyUrl;
+	}
+
+	public String getCashierDeskVersion() {
+		return cashierDeskVersion;
+	}
+
+	public void setCashierDeskVersion(String cashierDeskVersion) {
+		this.cashierDeskVersion = cashierDeskVersion;
 	}
 	
 }

@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.util;
 
 import com.fangcang.titanjr.common.util.MD5;
+import com.fangcang.titanjr.dto.request.QuickPaymentRequest;
 import com.fangcang.titanjr.dto.request.gateway.CardSceurityVerifyRequest;
 import com.fangcang.titanjr.dto.request.gateway.ConfirmRechargeRequest;
 import com.fangcang.titanjr.dto.request.gateway.QueryBankCardBINRequest;
@@ -11,6 +12,30 @@ import com.fangcang.titanjr.dto.request.gateway.UpdateBankCardPhoneResponseReque
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 
 public final class SignMsgBuilder {
+	
+	public static String getSignMsgForQuickPay(QuickPaymentRequest quickPaymentRequest) {
+		StringBuffer sign = new StringBuffer();
+		if(quickPaymentRequest != null){
+			sign.append("merchantNo=");
+			sign.append(quickPaymentRequest.getMerchantNo());
+			sign.append("&orderNo=");
+			sign.append(quickPaymentRequest.getOrderNo());
+			sign.append("&orderAmount=");
+			sign.append(quickPaymentRequest.getOrderAmount());
+			sign.append("&payType=");
+			sign.append(quickPaymentRequest.getPayType());
+			sign.append("&orderTime=");
+			sign.append(quickPaymentRequest.getOrderTime());
+			sign.append("&signType=");
+			sign.append(quickPaymentRequest.getSignType());
+			sign.append("&version=");
+			sign.append(quickPaymentRequest.getVersion());
+			sign.append("&key=");
+			sign.append(RSInvokeConstant.rsCheckKey);
+		}
+		String md5Msg = MD5.MD5Encode(sign.toString(), "UTF-8");
+		return md5Msg;
+	}
 	
 	public static String getSignMsgForConfirmRecharge(ConfirmRechargeRequest confirmRechargeRequest) {
 		StringBuffer sign = new StringBuffer();

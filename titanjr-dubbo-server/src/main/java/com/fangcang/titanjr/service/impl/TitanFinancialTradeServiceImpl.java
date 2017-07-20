@@ -1050,6 +1050,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			req.setBusiCode(rechargeRequest.getBusiCode());
 			req.setVersion(rechargeRequest.getVersion());
 			req.setCharset(rechargeRequest.getCharset());
+			//新版收银台增加参数
+			req.setIdCode(rechargeRequest.getIdCode());
+			req.setPayerAccountType(rechargeRequest.getPayerAccountType());
 		}
 		return req;
 	}

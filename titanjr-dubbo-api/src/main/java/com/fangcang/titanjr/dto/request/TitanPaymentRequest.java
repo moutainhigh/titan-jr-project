@@ -68,12 +68,15 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	//支付方式 默认个人银行
 	private PayTypeEnum payType = PayTypeEnum.Personal_Banking;
 	
+	//新版收银台增加字段
 	private String payerAccountType; //支付人银行卡类型   10：借记卡  21：信用卡
+	private String payerName; //支付人名字
+	private String payerPhone; //支付人银行预留电话
 	private String idCode; //支付人身份证
-	
 	private String terminalIp; //终端IP
 	private String terminalType; //终端类型
 	private String terminalInfo; //终端信息
+	private String version;
 	
 	
 	public Float getReceivablerate() {
@@ -290,6 +293,30 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 
 	public void setTerminalInfo(String terminalInfo) {
 		this.terminalInfo = terminalInfo;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public String getPayerName() {
+		return payerName;
+	}
+
+	public void setPayerName(String payerName) {
+		this.payerName = payerName;
+	}
+
+	public String getPayerPhone() {
+		return payerPhone;
+	}
+
+	public void setPayerPhone(String payerPhone) {
+		this.payerPhone = payerPhone;
 	}
 	
 }

@@ -19,7 +19,6 @@ import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.BusTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierDeskTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
-import com.fangcang.titanjr.common.enums.CoopTypeEnum;
 import com.fangcang.titanjr.common.enums.SupportBankEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dao.TitanCashierDeskDao;
@@ -57,7 +56,12 @@ import com.fangcang.util.StringUtil;
 @Service("titanCashierDeskService")
 public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Serializable {
 
-    private static final Log log = LogFactory.getLog(TitanCashierDeskServiceImpl.class);
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6036678797022327373L;
+
+	private static final Log log = LogFactory.getLog(TitanCashierDeskServiceImpl.class);
 
     @Resource
     TitanCashierDeskDao titanCashierDeskDao;
@@ -87,14 +91,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
         try {
             List<CashierDeskDTO> result = titanCashierDeskDao.queryCashierDesk(cashierDeskQueryRequest);
             if (CollectionUtils.isNotEmpty(result)) {
-            	//设置收银台的顺序
                 deskResponse.setCashierDeskDTOList(result);
-                if (StringUtil.isValidString(cashierDeskQueryRequest.getPayerOrgCode())) {//验证付款方编码
-                    FinancialOrganQueryRequest titanOrgQueryDTO = new FinancialOrganQueryRequest();
-                    titanOrgQueryDTO.setMerchantcode(cashierDeskQueryRequest.getPayerOrgCode());
-                    titanOrgQueryDTO.setCoopType(CoopTypeEnum.SAAS.getKey());//默认查SAAS合作方，兼容性
-                    titanFinancialOrganService.queryBaseFinancialOrgan(titanOrgQueryDTO);
-                }
             }
             deskResponse.putSuccess();
         } catch (Exception e) {

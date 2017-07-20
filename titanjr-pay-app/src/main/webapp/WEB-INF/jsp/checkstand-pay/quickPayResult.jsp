@@ -13,7 +13,7 @@
 
 <form action="<%=basePath%>/quickPay/cardSceurityVerify.shtml?orderNo=${quickPaymentResponse.orderNo}" name="cardverify_form" id="cardverify_form" method="post" >
 </form>
-<c:if test="${quickPaymentResponse.certificate ne 1}">
+<c:if test="${quickPaymentResponse.certificate ne 1 && quickPaymentResponse.success eq true}">
 	<form action="<%=basePath%>/quickPay/confirmRecharge.shtml" name="recharge_form" id="recharge_form" method="post" >
 		<input name="busiCode" type="hidden" value="109"/>
 		<input name="signType" type="hidden" value="1"/>
@@ -25,10 +25,13 @@
 	    <input type="button" value="确认充值" onclick="submitform_recharge()"/>
 	</form>
 </c:if>
+
+<c:if test="${quickPaymentResponse.success eq false}">
+	<h1 style="color: red;">${quickPaymentResponse.errMsg }</h1>
+</c:if>
 	
 </body>
 <script type="text/javascript">
-alert("${quickPaymentResponse.certificate ne 1}");
 //卡密校验
 function submitform_cardverify(){
 	   $("#cardverify_form").submit();
@@ -37,8 +40,8 @@ function submitform_cardverify(){
 function submitform_recharge(){
 	   $("#recharge_form").submit();
 	}
-debugger;
-if('${quickPaymentResponse.certificate }' == '1'){
+
+if('${quickPaymentResponse.certificate }' == '1' && quickPaymentResponse.success == true){
 	window.onload = submitform_cardverify;
 }
 </script>

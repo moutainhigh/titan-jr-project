@@ -32,6 +32,7 @@ public class TitanOrderRequest implements Serializable{
 	private String notify;// 通知地址
 	private String checkOrderUrl;
 	private String productId = CommonConstant.RS_FANGCANG_PRODUCT_ID;
+	private String cashierDeskVersion;//收银台版本 @see CashierDeskVersionEnum
 	
 	private Map<String, String> businessInfo = new HashMap<String, String>(); // 存储业务信息
 
@@ -154,5 +155,13 @@ public class TitanOrderRequest implements Serializable{
 
 	public void setProductId(String productId) {
 		this.productId = productId;
+	}
+
+	public String getCashierDeskVersion() {
+		return cashierDeskVersion;
+	}
+
+	public void setCashierDeskVersion(String cashierDeskVersion) {
+		this.cashierDeskVersion = cashierDeskVersion;
 	}
 }

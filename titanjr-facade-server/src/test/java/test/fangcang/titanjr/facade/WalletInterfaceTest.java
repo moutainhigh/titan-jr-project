@@ -75,7 +75,7 @@ public class WalletInterfaceTest extends SpringTest {
     	updateFreezeRequest.setOperationType("1");
     	updateFreezeRequest.setPayOrderNo("201711141238596003064");
     	updateFreezeRequest.setuNFreezeDate("2017-12-03");
-    	BaseResponse baseResponse = titanFinanceTradeFacade.UpdateFreezeOrder(updateFreezeRequest);
+    	BaseResponse baseResponse = titanFinanceTradeFacade.updateFreezeOrder(updateFreezeRequest);
     	System.out.println(baseResponse.isResult() + "-----" + baseResponse.getReturnMessage());
     }
 

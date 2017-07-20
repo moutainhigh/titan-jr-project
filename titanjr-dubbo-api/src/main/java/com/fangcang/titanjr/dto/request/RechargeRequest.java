@@ -1,7 +1,6 @@
 package com.fangcang.titanjr.dto.request;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class RechargeRequest implements Serializable{
 	
@@ -76,6 +75,10 @@ public class RechargeRequest implements Serializable{
 	private Float standardrate;
 	private Float executionrate;
 	private Integer ratetype;
+	
+	//新版收银台增加字段
+	private String idCode; //支付人身份证
+	private String payerAccountType; //支付人银行卡类型   10：借记卡  21：信用卡
 	
 	public Integer getRatetype() {
 		return ratetype;
@@ -281,5 +284,17 @@ public class RechargeRequest implements Serializable{
 	}
 	public void setUserid(String userid) {
 		this.userid = userid;
+	}
+	public String getIdCode() {
+		return idCode;
+	}
+	public void setIdCode(String idCode) {
+		this.idCode = idCode;
+	}
+	public String getPayerAccountType() {
+		return payerAccountType;
+	}
+	public void setPayerAccountType(String payerAccountType) {
+		this.payerAccountType = payerAccountType;
 	}
 }

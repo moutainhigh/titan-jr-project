@@ -13,7 +13,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +20,8 @@ import com.fangcang.titanjr.common.util.BeanConvertor;
 import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
-import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.bean.gateway.QuickPayCardDTO;
+import com.fangcang.titanjr.dto.request.QuickPaymentRequest;
 import com.fangcang.titanjr.dto.request.gateway.CardSceurityVerifyRequest;
 import com.fangcang.titanjr.dto.request.gateway.ConfirmRechargeRequest;
 import com.fangcang.titanjr.dto.request.gateway.QueryBankCardBINRequest;
@@ -38,8 +37,6 @@ import com.fangcang.titanjr.dto.response.gateway.QuickPaymentResponse;
 import com.fangcang.titanjr.dto.response.gateway.ReSendVerifyCodeResponse;
 import com.fangcang.titanjr.dto.response.gateway.UnbindBankCardResponse;
 import com.fangcang.titanjr.dto.response.gateway.UpdateBankCardPhoneResponse;
-import com.fangcang.titanjr.enums.BusiCodeEnum;
-import com.fangcang.titanjr.enums.VersionEnum;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.RSGatewayInterfaceService;
 import com.fangcang.titanjr.util.SignMsgBuilder;
@@ -58,20 +55,23 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 	private static final Log log = LogFactory.getLog(RSGatewayInterfaceServiceImpl.class);
 
 	@Override
-	public QuickPaymentResponse quickPay(RechargeDataDTO rechargeDataDTO) {
+	public QuickPaymentResponse quickPay(QuickPaymentRequest quickPaymentRequest) {
 		QuickPaymentResponse quickPaymentResponse = new QuickPaymentResponse();
-		log.info("【网关接口】为：" + RSInvokeConstant.gateWayURL);
-		HttpPost httpPost = new HttpPost(RSInvokeConstant.gateWayURL);
-		List<NameValuePair> quickPayParams = this.getGateawayQuickPayParam(rechargeDataDTO);
+		quickPaymentRequest.setSignMsg(SignMsgBuilder.getSignMsgForQuickPay(quickPaymentRequest));
 		String response ="";
-		log.info("【快捷支付】请求参数:" + Tools.gsonToString(quickPayParams));
+		
 		try {
+			log.info("【网关接口】为：" + RSInvokeConstant.gateWayURL);
+			HttpPost httpPost = new HttpPost(RSInvokeConstant.gateWayURL);
+			List<NameValuePair> quickPayParams = BeanConvertor.beanToList(quickPaymentRequest);
+			log.info("【快捷支付】请求参数:" + quickPaymentRequest.toString());
+			
 			HttpResponse quickPayResp = HttpClient.httpRequest(quickPayParams, httpPost);
 			if (null != quickPayResp) {
 				HttpEntity entity = quickPayResp.getEntity();
 				response = EntityUtils.toString(entity, "UTF-8");
 				quickPaymentResponse = RSConvertFiled2ObjectUtil.convertField2ObjectSuper(QuickPaymentResponse.class, response);
-				log.info("快捷支付返回信息:"+quickPaymentResponse.toString());
+				log.info("【快捷支付】返回信息:"+quickPaymentResponse.toString());
 				if(StringUtil.isValidString(quickPaymentResponse.getErrCode()) 
 			    		&& !"0000".equals(quickPaymentResponse.getErrCode())){//通知快捷支付失败
 					quickPaymentResponse.putError(quickPaymentResponse.getErrMsg());
@@ -83,13 +83,13 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				return quickPaymentResponse;
 				
 			}else{
-				log.error("网关快捷支付失败 resp 为空, 参数params:"+Tools.gsonToString(quickPayParams));
-				quickPaymentResponse.putError("融数返回对象为空");
+				log.error("【快捷支付】失败 resp 为空, 参数params:"+Tools.gsonToString(quickPayParams));
+				quickPaymentResponse.putError("系统错误，请联系管理员");
 				return quickPaymentResponse;
 			}
 		} catch (Exception e) {
-			log.error("网关快捷支付失败,异常：", e);
-			quickPaymentResponse.putError("网关快捷支付失败");
+			log.error("【快捷支付】失败,异常：", e);
+			quickPaymentResponse.putError("系统异常");
 			return quickPaymentResponse;
 		}
 		
@@ -100,19 +100,19 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 	public String confirmRecharge(ConfirmRechargeRequest confirmRechargeRequest) {
 		ConfirmRechargeResponse confirmRechargeResponse = new ConfirmRechargeResponse();
 		confirmRechargeRequest.setSignMsg(SignMsgBuilder.getSignMsgForConfirmRecharge(confirmRechargeRequest));
-		
-		log.info("【网关接口】为：" + RSInvokeConstant.gateWayURL);
-		HttpPost httpPost = new HttpPost(RSInvokeConstant.gateWayURL);
 		String response ="";
 		try {
+			log.info("【网关接口】为：" + RSInvokeConstant.gateWayURL);
+			HttpPost httpPost = new HttpPost(RSInvokeConstant.gateWayURL);
 			List<NameValuePair> confirmRechargeParams = BeanConvertor.beanToList(confirmRechargeRequest);
-			HttpResponse confirmRechargeResp = HttpClient.httpRequest(confirmRechargeParams, httpPost);
+			log.info("【确认充值】请求参数:" + confirmRechargeRequest.toString());
 			
+			HttpResponse confirmRechargeResp = HttpClient.httpRequest(confirmRechargeParams, httpPost);
 			if (confirmRechargeResp != null) {
 				HttpEntity entity = confirmRechargeResp.getEntity();
 				response = EntityUtils.toString(entity, "UTF-8");
 				confirmRechargeResponse = RSConvertFiled2ObjectUtil.convertField2ObjectSuper(ConfirmRechargeResponse.class,response);
-				log.info("调用融数网关gateWayURL确认充值返回信息:"+ confirmRechargeResponse.toString());
+				log.info("【确认充值】返回信息:"+ confirmRechargeResponse.toString());
 				
 				if (StringUtil.isValidString(confirmRechargeResponse.getErrCode())
 						&& !"0000".equals(confirmRechargeResponse.getErrCode())) {
@@ -121,7 +121,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				}
 				return "success";
 			}else{
-				log.error("网关确认充值失败 confirmRechargeResp 为空, 参数params:"+Tools.gsonToString(confirmRechargeParams));
+				log.error("【确认充值】失败 confirmRechargeResp 为空, 参数params:"+Tools.gsonToString(confirmRechargeParams));
 				return "false";
 			}
 			
@@ -345,7 +345,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 	 * @param rechargeDataDTO
 	 * @return
 	 */
-	private List<NameValuePair> getGateawayQuickPayParam(RechargeDataDTO rechargeDataDTO){
+	/*private List<NameValuePair> getGateawayQuickPayParam(RechargeDataDTO rechargeDataDTO){
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("merchantNo", rechargeDataDTO.getMerchantNo()));
 		params.add(new BasicNameValuePair("orderNo", rechargeDataDTO.getOrderNo()));
@@ -372,7 +372,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 		params.add(new BasicNameValuePair("terminalType", rechargeDataDTO.getTerminalType()));
 		params.add(new BasicNameValuePair("terminalInfo", rechargeDataDTO.getTerminalInfo()));
 		return params;
-	}
+	}*/
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

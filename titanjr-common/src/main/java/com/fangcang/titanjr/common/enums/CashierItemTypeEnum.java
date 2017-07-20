@@ -8,7 +8,8 @@ import com.fangcang.util.StringUtil;
 public enum CashierItemTypeEnum {
 
 	B2B_ITEM("1", "企业网银"), B2C_ITEM("2", "个人网银"), CREDIT_ITEM("3", "信用卡"), BALANCE_ITEM(
-			"4", "账户余额"), FINANCING_ITEM("5", "理财"), MOBILE_ITEM("6", "移动端"),WX_PUBLIC("8", "微信公众号支付"),QR_ITEM("9", "第三方支付") ,LOAN("10", "贷款支付");
+			"4", "账户余额"), FINANCING_ITEM("5", "理财"), MOBILE_ITEM("6", "移动端"),WX_PUBLIC("8", "微信公众号支付"),
+			QR_ITEM("9", "第三方支付") ,LOAN("10", "贷款支付"), QUICK_PAY_NEW("11", "新快捷支付");
 
 	public String itemCode;
 	public String itemName;
@@ -33,6 +34,27 @@ public enum CashierItemTypeEnum {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * 判断key是否在指定枚举集合中
+	 */
+	public static boolean between(String itemCode, CashierItemTypeEnum... enums){
+		if(itemCode == null){
+			return false;
+		}
+		
+		if(enums == null){
+			return false;
+		}
+		
+		for(CashierItemTypeEnum e : enums){
+			if(itemCode.equals(e.getItemCode())){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	private CashierItemTypeEnum(String itemCode, String itemName) {

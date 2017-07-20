@@ -52,6 +52,7 @@
 		                ruserId : $("#ruserId").val(),//收款方身份标示N
 		                amount : $("#amount").val(),//订单金额
 		                payerType : $("#payerType").val(),//付款人类型
+		                cashierDeskVersion : $("#cashierDeskVersion").val(),
 		                notify : $("#notify").val()
 		            };
 			
@@ -95,28 +96,28 @@
             <tr align="left">
                 <td class="tdr">操作人</td>
                 <td>
-                    <input type="text" name="name"  id="name" value="zhangsan" class="input_t01"/>
+                    <input type="text" name="name"  id="name" value="pjw" class="input_t01"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">担保结束日期</td>
-                <td><input type="text" id="escrowedDate" value="2016-12-03" name="escrowedDate"/></td>
+                <td><input type="text" id="escrowedDate" value="2017-12-03" name="escrowedDate"/></td>
             </tr>
             <tr>
                 <td class="tdr">业务订单号</td>
-                <td><input type="text" id="goodsId" value="201611141238596002662" name="goodsId"/>
+                <td><input type="text" id="goodsId" value="201707171238596000001" name="goodsId"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">商品名称</td>
                 <td>
-                    <input type="text" id="goodsName" value="签证预定单" name="goodsName"/>
+                    <input type="text" id="goodsName" value="测试预定单" name="goodsName"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">商品详情</td>
                 <td>
-                    <input type="text" value="预定日本签证，加急，5张...." id="goodsDetail" name="goodsDetail"/>
+                    <input type="text" value="预定单，加急，100张" id="goodsDetail" name="goodsDetail"/>
                 </td>
             </tr>
             <tr>
@@ -128,7 +129,7 @@
             <tr>
                 <td class="tdr">收款方机构编码</td>
                 <td>
-                    <input type="text" value="TJM10000098" id="ruserId" name="ruserId"/>
+                    <input type="text" value="M10036454" id="ruserId" name="ruserId"/>
                 </td>
             </tr>
             <tr>
@@ -150,6 +151,12 @@
                 </td>
             </tr>
             <tr>
+                <td class="tdr">收银台版本</td>
+                <td>
+                    <input type="text" value="1.0" id="cashierDeskVersion" name="cashierDeskVersion"/>
+                </td>
+            </tr>
+            <tr>
                 <td class="tdr">订单校验接口地址</td>
                 <td>
                     <input type="text" id="checkOrderUrl" name="checkOrderUrl"/>
@@ -158,7 +165,7 @@
             <tr>
                 <td class="tdr">支付通知接口地址</td>
                 <td>
-                    <input type="text" value="http://localhost:8088/titanjr-pay-app/quickPayment/customerNotify.action" id="notify" name="notify"/>
+                    <input type="text" value="http://192.168.0.77:8084/titanjr-pay-app/payCallBack" id="notify" name="notify"/>
                 </td>
             </tr>
             </tbody>

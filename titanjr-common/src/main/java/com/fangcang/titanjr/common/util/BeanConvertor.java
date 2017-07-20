@@ -31,7 +31,8 @@ public final class BeanConvertor {
         Field[] fields = cls.getDeclaredFields();
         for (Field field : fields) {
             field.setAccessible(true);
-            if(!"serialVersionUID".equals(field.getName())){
+            if(!"serialVersionUID".equals(field.getName()) && !String.valueOf(field.get(object)).equals("null") 
+            		&& !String.valueOf(field.get(object)).equals("")){
                 list.add(new BasicNameValuePair(field.getName(), field.get(object)+""));
             }
         }
