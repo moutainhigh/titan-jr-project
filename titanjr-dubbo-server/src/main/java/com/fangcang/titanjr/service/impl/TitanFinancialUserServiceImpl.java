@@ -27,7 +27,6 @@ import com.fangcang.merchant.dto.BaseResultDTO;
 import com.fangcang.merchant.dto.MerchantUserCheckDTO;
 import com.fangcang.merchant.dto.MerchantUserCreateDTO;
 import com.fangcang.merchant.dto.MerchantUserDTO;
-import com.fangcang.merchant.dto.ModifyPWDRequestDTO;
 import com.fangcang.merchant.dto.RoleDTO;
 import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
 import com.fangcang.merchant.query.dto.MerchantUserQueryDTO;
@@ -55,7 +54,6 @@ import com.fangcang.titanjr.dao.TitanUserBindInfoDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dao.TitanUserRoleDao;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
-import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
 import com.fangcang.titanjr.dto.bean.TitanRoleDTO;
@@ -64,10 +62,8 @@ import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
 import com.fangcang.titanjr.dto.request.CheckUserRequest;
-import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
-import com.fangcang.titanjr.dto.request.LoginPasswordModifyRequest;
 import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
 import com.fangcang.titanjr.dto.request.PassLoginRequest;
 import com.fangcang.titanjr.dto.request.PayPasswordRequest;
@@ -87,10 +83,8 @@ import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
 import com.fangcang.titanjr.dto.response.CancelPermissionResponse;
 import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
 import com.fangcang.titanjr.dto.response.CheckUserResponse;
-import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.FinancialUserBindResponse;
 import com.fangcang.titanjr.dto.response.FinancialUserUnBindResponse;
-import com.fangcang.titanjr.dto.response.LoginPasswordModifyResponse;
 import com.fangcang.titanjr.dto.response.PassLoginResponse;
 import com.fangcang.titanjr.dto.response.PayPasswordResponse;
 import com.fangcang.titanjr.dto.response.PermissionResponse;
@@ -160,7 +154,8 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     //cas系统提供的用户操作的hessian接口
     private UserFacade userFacade;
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public UserRegisterResponse registerFinancialUser(UserRegisterRequest userRegisterRequest) throws Exception {
         //参数校验,基础的非空校验
@@ -529,7 +524,8 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         	saasUserPaginationSupport.setTotalCount(merchantUserPage.getTotalCount());
         	saasUserPaginationSupport.setTotalPage(merchantUserPage.getTotalPage());
         	
-        	List<MerchantUserDTO> merchantUserList = (List<MerchantUserDTO>)merchantUserPage.getItemList();
+        	@SuppressWarnings("unchecked")
+			List<MerchantUserDTO> merchantUserList = (List<MerchantUserDTO>)merchantUserPage.getItemList();
         	if(merchantUserPage.getItemList().size()>0){
         		for(MerchantUserDTO item : merchantUserList){
         			SaaSMerchantUserDTO entity = new SaaSMerchantUserDTO();
@@ -700,7 +696,8 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
             response.putSysError();
             return response;
         }
-        List<TitanRoleDTO> titanRoleDTOList = MyBeanUtil.copyCollection(titanRoles, TitanRoleDTO.class);
+        @SuppressWarnings("unchecked")
+		List<TitanRoleDTO> titanRoleDTOList = MyBeanUtil.copyCollection(titanRoles, TitanRoleDTO.class);
         response.setTitanRoleDTOList(titanRoleDTOList);
         response.putSuccess();
         return response;
@@ -1190,6 +1187,16 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 
 		checkUserResponse.putSuccess("机构和用户状态正常");
 		return checkUserResponse;
+	}
+	
+	@Override
+	public TitanUserBindInfo queryAdminUserBindInfo(UserInfoQueryRequest userInfoQueryRequest) {
+		try {
+			return titanUserBindInfoDao.queryAdminUserBindInfo(userInfoQueryRequest);
+		} catch (Exception e) {
+			log.error("查询管理员的用户绑定信息异常：", e);
+			return null;
+		}
 	}
 	
 }

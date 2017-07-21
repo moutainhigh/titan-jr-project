@@ -10,7 +10,7 @@
 </head>
   
   <body>
-  <div style="margin: 150px auto; width: 250px;" class="no_data error_contain">
+  <div style="margin: 150px auto; width: 280px;" class="no_data error_contain">
     <p><i class="blue">${errormsg }</i></p>
     </div>
   </body>

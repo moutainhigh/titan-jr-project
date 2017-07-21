@@ -44,6 +44,7 @@ import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
 import com.fangcang.titanjr.dto.response.UserRegisterResponse;
 import com.fangcang.titanjr.dto.response.UserRoleSetResponse;
+import com.fangcang.titanjr.entity.TitanUserBindInfo;
 
 /**
  * 金服平台用户相关服务
@@ -235,4 +236,15 @@ public interface TitanFinancialUserService {
      * @throws GlobalServiceException
      */
     public CheckUserResponse checkUser(CheckUserRequest checkUserRequest) throws GlobalServiceException;
+    
+    /**
+     * @Description: 查询管理员的用户绑定信息
+     *
+     * @author Jerry
+     * @date 2017年7月20日 下午5:43:10 
+     * @param @param userInfoQueryRequest
+     * @param @return 
+     * @return TitanUserBindInfo
+     */
+    public TitanUserBindInfo queryAdminUserBindInfo(UserInfoQueryRequest userInfoQueryRequest);
 }

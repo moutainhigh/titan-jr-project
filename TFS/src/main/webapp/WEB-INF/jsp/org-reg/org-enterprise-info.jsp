@@ -55,6 +55,7 @@
 	                        <c:if test="${empty small_img_10}">
 	                        	<img src="<%=cssSaasPath%>/images/TFS/tu12.jpg" width="130"  id="img_small" class="cursor J_magnify">
 	                        </c:if>  
+	                        <br><p class="fl" style="color: #9b9b9b; size: 12px;">仅支持 jpg、jpeg、png 文件格式</p>
 	                        <p></p>
 	                        </div>                      
 	                        </li>
