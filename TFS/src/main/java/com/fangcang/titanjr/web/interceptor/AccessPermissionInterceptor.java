@@ -24,6 +24,7 @@ import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.entity.TitanUser;
+import com.fangcang.titanjr.entity.TitanUserBindInfo;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
@@ -89,12 +90,25 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 			//是否拥有该方法的访问权限
 			List<RoleDTO> tfsRoleDTOList = (List<RoleDTO>)session.getAttribute(WebConstant.SESSION_KEY_JR_ROLE_LIST);
 			String hasPermission = isAllow(allownRoleCode, tfsRoleDTOList,isadmin);
+			
+			String adminName = "查询异常";
+			if(hasPermission.equals("no") || hasPermission.equals("no_admin")){
+				//查询管理员
+				UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+				userInfoQueryRequest.setIsadmin(1);
+				userInfoQueryRequest.setBindMerchantCode((String)session.getAttribute(WebConstant.SESSION_KEY_CURRENT_MERCHANT_CODE));
+				TitanUserBindInfo userBindInfo = userService.queryAdminUserBindInfo(userInfoQueryRequest);
+				if(userBindInfo != null){
+					adminName = userBindInfo.getFcloginname();
+				}
+			}
+			
 			if(hasPermission.equals("no")){
-				setMsg(request, response, "当前用户没有权限访问，请联系管理员");
+				setMsg(request, response, "当前用户没有权限访问，请联系管理员【" + adminName + "】");
 				return false;
 			}
 			if(hasPermission.equals("no_admin")){
-				setMsg(request, response, "只有管理员才能访问该功能，请联系管理员");
+				setMsg(request, response, "只有管理员才能访问该功能，请联系管理员【" + adminName + "】");
 				return false;
 			}
 			

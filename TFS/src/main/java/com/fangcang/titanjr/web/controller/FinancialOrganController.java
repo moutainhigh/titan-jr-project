@@ -727,7 +727,24 @@ public class FinancialOrganController extends BaseController {
                 out.close();
     			return ;
     		}
-    		
+    		if(file.getBytes().length==0){
+    			putSysError("文件不能为空");
+                PrintWriter out = getResponse().getWriter(); 
+                out.print(toJson());
+                out.flush();
+                out.close();
+    			
+    			return;
+    		}
+    		String suffix = ImageIOExtUtil.getFileSuffix(file.getOriginalFilename());
+    		if(!(suffix.toLowerCase().equals("jpg")||suffix.toLowerCase().equals("jpeg")||suffix.toLowerCase().equals("png"))){
+    			putSysError("文件格式错误");
+                PrintWriter out = getResponse().getWriter(); 
+                out.print(toJson());
+                out.flush();
+                out.close();
+    			return;
+    		}
     		OrganImageUploadRequest organImageUploadRequest = new OrganImageUploadRequest();
     		
     		String newFileName = FtpUtil.createFileName()+"."+ImageIOExtUtil.getFileSuffix(file.getOriginalFilename());
