@@ -99,7 +99,7 @@ public class RedisDistributedLock implements Serializable {
 	 * @param key
 	 * @return 返回空:未拿到锁，返回时间戳:拿到锁
 	 */
-	public synchronized String lock(String key) {
+	public synchronized boolean lock(String key) {
 		int timeout = timeoutMsecs;
 		// 如果获取锁失败则多次尝试并且设置超时时间为10秒
 		while (timeout >= 0) {
@@ -109,7 +109,7 @@ public class RedisDistributedLock implements Serializable {
 			if (checkLock(key, String.valueOf(expires))) {
 				lockValue = get(key);
 				log.info("thread name："+Thread.currentThread().getName()+",lock(): ---------------成功拿到分布式锁 ,分布式key:["+key+"]");
-				return lockValue;
+				return true;
 			}
 			// 获取锁的超时时间
 			String value = get(key);
@@ -126,7 +126,7 @@ public class RedisDistributedLock implements Serializable {
 				if (oldValueStr != null && oldValueStr.equals(value)) {
 					lockValue = get(key);
 					log.info("thread name："+Thread.currentThread().getName()+",lock(): ---------------成功拿到分布式锁 ,分布式key:["+key+"]");
-					return lockValue;
+					return true;
 				}else{
 					log.info("thread name："+Thread.currentThread().getName()+",lock(): ---------------分布式锁超时,分布式key:["+key+"]");
 				}
@@ -143,7 +143,7 @@ public class RedisDistributedLock implements Serializable {
 			}
 		}
 		log.error("thread name："+Thread.currentThread().getName()+",lock(): "+timeoutMsecs+" 毫秒内  获取分布式锁失败 ,分布式key:["+key+"]");
-		return lockValue;
+		return false;
 	}
 
 	 

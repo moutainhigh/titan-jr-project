@@ -52,12 +52,6 @@ public interface RedisService {
 	 * @param key 锁键
 	 * @return 锁值
 	 */
-	public String lock(String key);
+	public boolean lock(String key);
 	
-	/***
-	 * 解锁
-	 * @param key 锁键
-	 * @param lockValue 锁值
-	 */
-	public void unlock(String key,String lockValue);
 }
