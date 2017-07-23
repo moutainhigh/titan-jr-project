@@ -539,7 +539,7 @@ public class FinancialAccountController extends BaseController {
      	}else if(WebConstant.MODIFY_BANK_CARD.equals(bindBankCardRequest.getModifyOrBind())){//失败修改绑卡
      		ModifyInvalidWithDrawCardResponse modifyInvalidWithDrawCardResponse = modifyBindCard(bindBankCardRequest);
      	    if(!modifyInvalidWithDrawCardResponse.isResult()){
-     	    	 log.error("绑卡失败"+modifyInvalidWithDrawCardResponse.getReturnMessage());
+     	    	 log.error("绑卡失败,参数bindBankCardRequest："+Tools.gsonToString(bindBankCardRequest)+",响应结果modifyInvalidWithDrawCardResponse："+Tools.gsonToString(modifyInvalidWithDrawCardResponse));
      			 model.addAttribute("msg", modifyInvalidWithDrawCardResponse.getReturnMessage());
      	    }
      	}else{

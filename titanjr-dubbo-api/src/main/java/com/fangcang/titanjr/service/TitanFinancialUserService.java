@@ -6,9 +6,9 @@ import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
 import com.fangcang.titanjr.dto.request.CheckUserRequest;
+import com.fangcang.titanjr.dto.request.DeleteBindUserRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
-import com.fangcang.titanjr.dto.request.LoginPasswordModifyRequest;
 import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
 import com.fangcang.titanjr.dto.request.PassLoginRequest;
 import com.fangcang.titanjr.dto.request.PayPasswordRequest;
@@ -28,7 +28,6 @@ import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
 import com.fangcang.titanjr.dto.response.CheckUserResponse;
 import com.fangcang.titanjr.dto.response.FinancialUserBindResponse;
 import com.fangcang.titanjr.dto.response.FinancialUserUnBindResponse;
-import com.fangcang.titanjr.dto.response.LoginPasswordModifyResponse;
 import com.fangcang.titanjr.dto.response.PassLoginResponse;
 import com.fangcang.titanjr.dto.response.PayPasswordResponse;
 import com.fangcang.titanjr.dto.response.PermissionResponse;
@@ -115,7 +114,14 @@ public interface TitanFinancialUserService {
      * @throws GlobalServiceException
      */
     public FinancialUserUnBindResponse unbindFinancialUser(FinancialUserUnBindRequest financialUserUnBindRequest) throws GlobalServiceException;
-
+    /***
+     * 删除绑定用户绑定关系
+     * @param deleteBindUserRequest
+     * @return
+     * @throws GlobalServiceException
+     */
+    public BaseResponseDTO deleteBindUser(DeleteBindUserRequest deleteBindUserRequest) throws MessageServiceException;;
+    
     /**
      * 能根据角色编码列表或者房仓角色编码去查询所有的角色信息
      * @param titanRoleQueryRequest

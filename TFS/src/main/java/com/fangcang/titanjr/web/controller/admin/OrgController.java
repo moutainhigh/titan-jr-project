@@ -17,6 +17,7 @@ import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.SMSTemplate;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 //import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
@@ -34,6 +35,7 @@ import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.controller.BaseController;
 import com.fangcang.titanjr.web.pojo.OrgPojo;
 import com.fangcang.titanjr.web.util.WebConstant;
+import com.fangcang.util.StringUtil;
 
 /**
  * 金融机构审核
@@ -196,5 +198,34 @@ public class OrgController extends BaseController{
 		personalRequest.setUserType(TitanOrgEnum.UserType.PERSONAL.getKey());
 		int perCount = organService.countOrg(personalRequest);
 		model.addAttribute("perCount", perCount);
+	}
+	
+	/**
+	 * 取消机构绑定
+	 * @param orgCode
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/cancelOrgBind")
+	public String cancelOrgBind(String orgCode){
+		if(!StringUtil.isValidString(orgCode)){
+			putSysError("参数错误不能为空");
+			return toJson();
+		}
+		try {
+			BaseResponseDTO baseResponseDTO = organService.cancelOrgBind(orgCode);
+			if(baseResponseDTO.isResult()){
+				putSuccess("取消成功");
+				return toJson();
+			}else{
+				putSysError(baseResponseDTO.getReturnMessage());
+				return toJson();
+			}
+		} catch (MessageServiceException e) {
+			logger.error(e.getMessage() ,e);
+			putSysError(e.getMessage());
+			return toJson();
+		}
+		
 	}
 }

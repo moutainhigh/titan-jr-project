@@ -260,7 +260,7 @@ public class TitanPaymentController extends BaseController {
 				orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
 			}
 			
-			log.info("update the status of the order:"+JsonConversionTool.toJson(orderStatusEnum));
+			log.info("update the status of the order:"+JsonConversionTool.toJson(orderStatusEnum)+",orderNo:"+orderNo);
 			boolean updateStatus = titanPaymentService.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
 			
 			if(!updateStatus){//udate the status was failed 
@@ -634,8 +634,8 @@ public class TitanPaymentController extends BaseController {
 		}
 		QrCodeResponse response = titanFinancialTradeService.getQrCodeUrl(rechargeDataDTO);
 		if(!response.isResult()){
-			log.error("第三方支付获取地址失败");
-			titanFinancialUtilService.saveOrderException(rechargeDataDTO.getPayOrderNo(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Online_Pay_Get_Pay_Url_Fail, JSONSerializer.toJSON(rechargeDataDTO).toString());
+			log.error("订单号："+rechargeDataDTO.getOrderNo()+",第三方支付获取地址失败,错误信息："+response.getReturnMessage());
+			titanFinancialUtilService.saveOrderException(rechargeDataDTO.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Online_Pay_Get_Pay_Url_Fail, JSONSerializer.toJSON(rechargeDataDTO).toString());
 			model.addAttribute(CommonConstant.RETURN_MSG, TitanMsgCodeEnum.QR_EXCEPTION.getKey());
 			return CommonConstant.PAY_WX;
 		}

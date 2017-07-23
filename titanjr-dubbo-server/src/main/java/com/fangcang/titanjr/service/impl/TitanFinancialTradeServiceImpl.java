@@ -674,8 +674,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			return false;
 		}
 		try {
-			log.info("转账成功之后通知支付结果，参数:" + JSONSerializer.toJSON(params) + "--通知地址url:"
-					+ url+",userid:"+transOrderDTO.getUserid());
+			log.info("转账成功之后调用http请求通知支付结果，参数:" + JSONSerializer.toJSON(params) + "--通知地址url:"
+					+ url+",orderid:"+transOrderDTO.getOrderid());
 			HttpPost httpPost = new HttpPost(url);
 			HttpResponse resp = HttpClient.httpRequest(params, httpPost);
 			if (null != resp) {
@@ -691,15 +691,15 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				httpPost.releaseConnection();
 			}
 		} catch (Exception e) {
-			log.error("调用http请求通知支付失败,通知参数:"+JSONSerializer.toJSON(params)+",userid:"+transOrderDTO.getUserid(), e);
+			log.error("调用http请求通知支付失败,通知参数:"+JSONSerializer.toJSON(params)+",orderid:"+transOrderDTO.getOrderid(), e);
 			throw e;
 		}
-		log.info("调用http请求通知支付结果：" + response+",userid:"+transOrderDTO.getUserid());
+		log.info("调用http请求通知支付结果response：" + response+",orderid:"+transOrderDTO.getOrderid());
 		if (StringUtil.isValidString(response)) {
 			CallBackInfo callBackInfo = TitanjrHttpTools
 					.analyzeResponse(response);
 			if (!"000".equals(callBackInfo.getCode())) {
-				log.error("回调失败单号,通知参数:"+JSONSerializer.toJSON(params)+",userid:"+transOrderDTO.getUserid());
+				log.error("回调失败单号,通知参数:"+JSONSerializer.toJSON(params)+",orderid:"+transOrderDTO.getOrderid());
 				if(req.getIsSaveLog()){
 					titanFinancialUtilService.saveOrderException(transOrderDTO.getUserorderid(),OrderKindEnum.UserOrderId, OrderExceptionEnum.Notify_Client_Transfer_Notify_Fail, JSONSerializer.toJSON(callBackInfo).toString());
 				}
@@ -709,7 +709,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			}
 
 		} else {// 记录异常单
-			log.error("回调无响应,通知参数:"+JSONSerializer.toJSON(params)+",userid:"+transOrderDTO.getUserid());
+			log.error("调用http请求通知支付结果，回调响应 为空，response：" + response+",通知参数:"+JSONSerializer.toJSON(params)+",orderid:"+transOrderDTO.getOrderid());
 			if(req.getIsSaveLog()){
 				titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Client_Not_CallBack, JSONSerializer.toJSON(transOrderDTO).toString());
 			}
