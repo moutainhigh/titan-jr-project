@@ -20,7 +20,7 @@
            				http://www.springframework.org/schema/jee
 						http://www.springframework.org/schema/jee/spring-jee-2.5.xsd">
 	
-	<bean id="placeholderspring" class="com.ctol.fangcang.common.Spring3PropertyConfigurer">
+	<bean id="placeholderspringRedis" class="com.ctol.fangcang.common.Spring3PropertyConfigurer">
         <property name="location">
             <value>classpath:redis.properties</value>
         </property>

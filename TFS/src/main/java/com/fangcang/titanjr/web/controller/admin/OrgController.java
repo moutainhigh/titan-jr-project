@@ -222,7 +222,7 @@ public class OrgController extends BaseController{
 				return toJson();
 			}
 		} catch (MessageServiceException e) {
-			logger.error(e.getMessage() ,e);
+			logger.error("取消机构绑定操作失败，orgCode:"+orgCode+"，失败原因"+e.getMessage() ,e);
 			putSysError(e.getMessage());
 			return toJson();
 		}
