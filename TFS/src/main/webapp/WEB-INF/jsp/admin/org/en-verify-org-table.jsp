@@ -16,7 +16,7 @@
 		<c:if test="${orgCheckDTO.resultkey=='PASS'}">已通过</c:if>
 		<c:if test="${orgCheckDTO.resultkey=='FT'}"></c:if>
 	</td>
-	<td class="td-data" data-orgId="${orgCheckDTO.orgId}" data-orgCode="${orgCheckDTO.orgCode}" data-tfsLoginUsername="${orgCheckDTO.userloginname }">
+	<td class="td-data" data-orgId="${orgCheckDTO.orgId}" data-orgCode="${orgCheckDTO.orgcode}" data-tfsLoginUsername="${orgCheckDTO.userloginname }">
 		<c:if test="${orgCheckDTO.resultkey!='FT' and orgCheckDTO.resultkey!='REVIEW'}"><span class="orange cursor undl J_examine" data-opt="view">查看</span></c:if>
 		<c:if test="${orgCheckDTO.resultkey=='FT' or orgCheckDTO.resultkey=='REVIEW'}"><span class="c_blue cursor undl J_examine" data-opt="check">审核</span></c:if>
 		<span class="c_blue cursor undl J_cancel_orgbind" >取消绑定</span>
@@ -48,15 +48,34 @@
 $(".J_cancel_orgbind").on('click',function(){
 	var tEle = $(this).parents(".td-data");
 	var orgCode = tEle.attr("data-orgCode");
-	$.ajax({
-        dataType : 'json',
-        type:'post',
-        data:{'orgCode':orgCode},
-        url : '<%=basePath%>/admin/cancelOrgBind.shtml',            
-        success : function(html){
-        	
-        }
-	});
+	var tEle = $(this).parents(".td-data");
+	var orgCode = tEle.attr("data-orgCode");
+	
+	var d = top.dialog({
+	        title: '提示',
+	        padding: '35px 20px 39px 35px',
+	        width:420,
+	        content: '确定要取消该金融账户与SaaS的绑定关系?',
+	        okValue: '确 定',
+	        ok: function () {
+	      	  $.ajax({
+	      		  type:"post",
+	      		  dataType:"json",
+	      		  data:{'orgCode':orgCode},
+		          url : '<%=basePath%>/admin/cancelOrgBind.shtml',
+	      		  success:function(result){
+	      			  if(data.code=="1"){
+		        		new top.Tip({msg : '取消成功', type: 1 , time:2000});
+		        	}else{
+		        		alert(data.msg);
+		        	}
+	      		  }
+	      	  });
+	        },
+	        cancelValue: '取消',
+	        cancel: function () {}
+		}).showModal();
+	 
 });
 //查看/审核操作
 $('.J_examine').on('click',function(){

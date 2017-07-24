@@ -43,14 +43,14 @@
 		<div class="acount_table">
 		    <table border="0" cellspacing="0" width="100%">
 						<colgroup>
-						<col width="20%">
-		                   <col width="20%">
-		                   <col width="15%">
-		                   <col width="7%">
-		                   <col width="12%">                    
-		                   <col width="11%">
-		                   <col width="10%">
-		                   <col width="">
+							 <col width="232">
+			                  <col >
+			                  <col width="155">
+			                  <col width="139">
+			                  <col width="127">                    
+			                  <col width="116">
+			                  <col width="120">
+			                  <col width="100">
 		                 </colgroup>
 					<tr>
 		                 <th class="tdl" ><span class="pl12">用户名</span></th>
@@ -66,14 +66,14 @@
     		<div class="table_content">
 				<table border="0" cellspacing="0" width="100%">
 					<colgroup>
-			                  <col width="20%">
-			                  <col width="20%">
-			                  <col width="15%">
-			                  <col width="7%">
-			                  <col width="12%">                    
-			                  <col width="11%">
-			                  <col width="10%">
-			                  <col width="">
+			                  <col width="232">
+			                  <col >
+			                  <col width="155">
+			                  <col width="139">
+			                  <col width="127">                    
+			                  <col width="116">
+			                  <col width="120">
+			                  <col width="100">
 			              </colgroup>
 						<tbody id="t_body">
 						
