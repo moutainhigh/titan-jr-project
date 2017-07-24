@@ -250,9 +250,7 @@
             <properties>
                 <package.environment>test02</package.environment>
             </properties>
-            <activation>
-        		<activeByDefault>true</activeByDefault>
-        	</activation>
+            
         </profile>
         <profile>
             <id>test03</id>
@@ -266,7 +264,9 @@
             <properties>
                 <package.environment>dev</package.environment>
             </properties>
-            
+            <activation>
+        		<activeByDefault>true</activeByDefault>
+        	</activation>
         </profile>
     </profiles>
     
