@@ -77,7 +77,7 @@
     
     <import resource="applicationContext-hessian.xml"/>
     <import resource="applicationContext-service.xml"/>
-    <import resource="classpath:/spring/applicationContext*.xml" />
+    <import resource="applicationContext-redis.xml" />
 
     <bean class="com.fangcang.util.SpringContextUtil"/>
 </beans>
