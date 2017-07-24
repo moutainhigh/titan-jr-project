@@ -16,6 +16,7 @@
 	<td class="td-data" data-orgId="${orgCheckDTO.orgId}" data-tfsLoginUsername="${orgCheckDTO.userloginname }">
 		<c:if test="${orgCheckDTO.resultkey!='FT' and orgCheckDTO.resultkey!='REVIEW'}"><span class="orange cursor undl J_examine" data-opt="view">查看</span></c:if>
 		<c:if test="${orgCheckDTO.resultkey=='FT' or orgCheckDTO.resultkey=='REVIEW'}"><span class="c_blue cursor undl J_examine" data-opt="check">审核</span></c:if>
+		<span class="c_blue cursor undl J_cancel_orgbind" >取消绑定</span>
 	</td>
 </tr>
 </c:forEach>
@@ -40,6 +41,20 @@
 </tr>
 
 <script type="text/javascript">
+//取消机构绑定
+$(".J_cancel_orgbind").on('click',function(){
+	var tEle = $(this).parents(".td-data");
+	var orgCode = tEle.attr("data-orgCode");
+	$.ajax({
+        dataType : 'json',
+        type:'post',
+        data:{'orgCode':orgCode},
+        url : '<%=basePath%>/admin/cancelOrgBind.shtml',            
+        success : function(html){
+        	
+        }
+	});
+});
 //查看/审核操作
 $('.J_examine').on('click',function(){
 	var opt = $(this).attr("data-opt");

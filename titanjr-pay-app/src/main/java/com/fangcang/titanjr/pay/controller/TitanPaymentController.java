@@ -11,8 +11,6 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -74,8 +72,8 @@ import com.fangcang.titanjr.pay.strategy.pay.QRCodePay;
 import com.fangcang.titanjr.pay.strategy.pay.QuickPay;
 import com.fangcang.titanjr.pay.util.IPUtil;
 import com.fangcang.titanjr.pay.util.TerminalUtil;
+import com.fangcang.titanjr.redis.service.RedisService;
 import com.fangcang.titanjr.service.BusinessLogService;
-import com.fangcang.titanjr.service.RedisService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
@@ -85,6 +83,8 @@ import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
+
+import net.sf.json.JSONSerializer;
 @Controller
 @RequestMapping("/payment")
 public class TitanPaymentController extends BaseController {
@@ -268,7 +268,7 @@ public class TitanPaymentController extends BaseController {
 				orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
 			}
 			
-			log.info("update the status of the order:"+JsonConversionTool.toJson(orderStatusEnum));
+			log.info("update the status of the order:"+JsonConversionTool.toJson(orderStatusEnum)+",orderNo:"+orderNo);
 			boolean updateStatus = titanPaymentService.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
 			
 			if(!updateStatus){//udate the status was failed 

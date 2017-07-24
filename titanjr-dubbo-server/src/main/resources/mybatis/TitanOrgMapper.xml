@@ -437,6 +437,9 @@
             <if test="email != null">
                 email = #{email,jdbcType=VARCHAR},
             </if>
+            <if test="regChannel != null">
+                regchannel = #{regChannel},
+            </if>
             <if test="lastUpdateDate != null">
                 lastupdatedate = #{lastUpdateDate},
             </if>

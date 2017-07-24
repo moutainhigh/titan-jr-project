@@ -76,7 +76,8 @@
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
     
     <import resource="applicationContext-hessian.xml"/>
-     <import resource="applicationContext-service.xml"/>
+    <import resource="applicationContext-service.xml"/>
+    <import resource="classpath:/spring/applicationContext*.xml" />
 
     <bean class="com.fangcang.util.SpringContextUtil"/>
 </beans>

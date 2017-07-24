@@ -25,6 +25,7 @@ import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
@@ -83,7 +84,7 @@ public class TitanRefundService {
 		RefundResponse response = new RefundResponse();
 		try {
 			//已验证过过机构，去掉
-			log.info("1.校验支付密码");
+			log.info("1.校验支付密码，退款请求参数refundRequest："+Tools.gsonToString(refundRequest));
 			boolean flag = titanFinancialUserService.checkPayPassword( refundRequest.getPayPassword(),refundRequest.getTfsUserid());
 			if (!flag) {
 				log.error("付款密码错误,tfsuserid:"+refundRequest.getTfsUserid());

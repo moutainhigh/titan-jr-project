@@ -36,7 +36,7 @@ public class TitanUserDaoImpl extends GenericDAOMyBatisImpl implements TitanUser
 	}
 
 	@Override
-	public int update(TitanUser entity) {
+	public int update(TitanUserParam entity) {
 		try {
 			return super.updateEntity("com.fangcang.titanjr.dao.TitanUserDao.updateEntity", entity);
 		} catch (Exception e) {
