@@ -43,12 +43,12 @@
 		<div class="acount_table">
 		    <table border="0" cellspacing="0" width="100%">
 						<colgroup>
-							<col width="25%">
-		                    <col width="20%">
-		                    <col width="20%">                    
-		                    <col width="15%">
-		                    <col width="15%">
-		                    <col width="">
+							<col width="250">
+		                    <col width="150">
+		                    <col width="280">                    
+		                    <col width="200">
+		                    <col width="150">
+		                    <col >
 		                 </colgroup>
 					<tr>
 		                 <th class="tdl" ><span class="pl12">用户名</span></th>
@@ -62,12 +62,12 @@
     		<div class="table_content">
 				<table border="0" cellspacing="0" width="100%">
 					<colgroup>
-			                <col width="25%">
-		                    <col width="20%">
-		                    <col width="20%">                    
-		                    <col width="15%">
-		                    <col width="15%">
-		                    <col width="">
+			                <col width="250">
+		                    <col width="150">
+		                    <col width="280">                    
+		                    <col width="200">
+		                    <col width="150">
+		                    <col >
 			              </colgroup>
 						<tbody id="t_body">
 						

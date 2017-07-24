@@ -102,6 +102,7 @@
  	  select 
  	 	b.merchantcode as merchantCode,
  	 	b.merchantname as merchantName,
+ 	 	b.orgcode,
  	 	b.bindstatus as bindStatus,
  	 	b.userid,
  	 	c.resultkey as resultKey,
@@ -130,6 +131,9 @@
  	 	</if>
  	 	<if test="merchantCode !=null">
  	 		and b.merchantcode = #{merchantCode}
+ 	 	</if>
+ 	 	<if test="orgcode !=null">
+ 	 		and b.orgcode = #{orgcode}
  	 	</if>
  	 </where>
   </select>

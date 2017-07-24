@@ -395,6 +395,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 			TitanUserParam entity = new TitanUserParam();
 			entity.setMerchantcode("");
 			entity.setClauseMerchantCode(deleteBindUserRequest.getMerchantCode());
+			entity.setModifytime(new Date());
 			titanUserDao.update(entity);
 		} catch (DaoException e) {
 			log.error("删除用户绑定关系失败,参数deleteBindUserRequest："+Tools.gsonToString(deleteBindUserRequest),e);
