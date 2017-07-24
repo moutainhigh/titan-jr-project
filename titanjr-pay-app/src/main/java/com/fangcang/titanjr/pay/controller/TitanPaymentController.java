@@ -455,8 +455,8 @@ public class TitanPaymentController extends BaseController {
 	public String packageRechargeData(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model) throws Exception{
 		//快捷支付测试代码
 		if(CashierItemTypeEnum.between(titanPaymentRequest.getLinePayType(), CashierItemTypeEnum.QUICK_PAY_NEW)){
-			titanPaymentRequest.setLinePayType("11");
-			titanPaymentRequest.setBankInfo("cmb");
+//			titanPaymentRequest.setLinePayType("11");
+//			titanPaymentRequest.setBankInfo("cmb");
 			titanPaymentRequest.setVersion(VersionEnum.Version_2.key);//新版网关快捷支付
 			titanPaymentRequest.setIdCode("411381198907135674");
 			titanPaymentRequest.setPayerAccountType("10");
