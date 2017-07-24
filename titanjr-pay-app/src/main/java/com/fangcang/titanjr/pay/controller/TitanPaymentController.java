@@ -455,16 +455,16 @@ public class TitanPaymentController extends BaseController {
 	public String packageRechargeData(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model) throws Exception{
 		//快捷支付测试代码
 		if(CashierItemTypeEnum.between(titanPaymentRequest.getLinePayType(), CashierItemTypeEnum.QUICK_PAY_NEW)){
-//			titanPaymentRequest.setLinePayType("11");
-//			titanPaymentRequest.setBankInfo("cmb");
-			titanPaymentRequest.setVersion(VersionEnum.Version_2.key);
+			titanPaymentRequest.setLinePayType("11");
+			titanPaymentRequest.setBankInfo("cmb");
+			titanPaymentRequest.setVersion(VersionEnum.Version_2.key);//新版网关快捷支付
 			titanPaymentRequest.setIdCode("411381198907135674");
 			titanPaymentRequest.setPayerAccountType("10");
 			titanPaymentRequest.setPayerName("赵闪");
 			titanPaymentRequest.setPayerPhone("18620352083");
 			titanPaymentRequest.setPayerAcount("6214837833012036");
 		}else{
-			titanPaymentRequest.setVersion(VersionEnum.Version_1.key);
+			titanPaymentRequest.setVersion(VersionEnum.Version_1.key);//原网关支付
 		}
 		
 		log.info("网银支付请求参数titanPaymentRequest:"+JsonConversionTool.toJson(titanPaymentRequest));

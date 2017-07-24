@@ -973,6 +973,15 @@ public class TitanTradeController extends BaseController {
 		return TitanConstantDefine.CASHIER_DESK_MAIN_PAGE;
 	}
 	
+	/**
+	 * @Description: 重构收银台的数据结构（新版收银台）
+	 *
+	 * @author Jerry
+	 * @date 2017年7月24日 上午10:10:13 
+	 * @param @param cashierDeskDTO
+	 * @param @return 
+	 * @return BaseResponse
+	 */
 	private BaseResponse resetCashierDeskItem(CashierDeskDTO cashierDeskDTO){
 		
 		BaseResponse baseResponse = new BaseResponse();

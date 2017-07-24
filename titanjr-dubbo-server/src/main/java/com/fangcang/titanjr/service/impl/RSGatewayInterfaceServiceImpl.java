@@ -77,7 +77,6 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 					quickPaymentResponse.putError(quickPaymentResponse.getErrMsg());
 					return quickPaymentResponse;
 				}
-				Thread.sleep(10000);
 				
 				quickPaymentResponse.setSuccess(true);
 				return quickPaymentResponse;
