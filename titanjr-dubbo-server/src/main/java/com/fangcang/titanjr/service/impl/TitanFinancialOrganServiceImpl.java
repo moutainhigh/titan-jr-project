@@ -1623,6 +1623,9 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		String merchantcode = null;
 		if(CollectionUtils.isNotEmpty(orgBindInfoDTOList)){
 			merchantcode = orgBindInfoDTOList.get(0).getMerchantCode();
+			//TODO 删除记录日志
+			LOGGER.info("取消机构关联关系，商家编码merchantcode："+merchantcode+",金融机构orgCode："+orgCode);
+			
 			try {
 				TitanOrgBindinfoParam deleteParam = new TitanOrgBindinfoParam();
 				deleteParam.setOrgcode(orgCode);

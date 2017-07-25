@@ -10,6 +10,7 @@
   
   <artifactId>titanjr-redis</artifactId>
   <name>titanjr-redis</name>
+  <packaging>jar</packaging>
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -72,9 +73,7 @@
             <properties>
                 <package.environment>test02</package.environment>
             </properties>
-            <activation>
-        		<activeByDefault>true</activeByDefault>
-        	</activation>
+            
         </profile>
         <profile>
             <id>test03</id>
@@ -88,7 +87,25 @@
             <properties>
                 <package.environment>dev</package.environment>
             </properties>
-            
+            <activation>
+        		<activeByDefault>true</activeByDefault>
+        	</activation>
         </profile>
     </profiles>
+    <build>
+        <finalName>titanjr-redis</finalName>
+        <filters> 
+	    	<filter>src/main/resources/filters/titanjr-redis-sys-${package.environment}.properties</filter> 
+	    </filters>
+	    
+	    <resources>
+	      <resource>
+	      	<directory>src/main/resources</directory>
+	        <filtering>true</filtering> <!-- 是否使用过滤器 -->
+	        	<excludes>
+                	<exclude>filters/**/**</exclude>
+               	</excludes>
+	      </resource>
+	    </resources>
+	</build>
 </project>

@@ -37,21 +37,51 @@ public enum CashierItemTypeEnum {
 	}
 	
 	/**
-	 * 判断key是否在指定枚举集合中
+	 * 判断是否个人网银
+	 * @author Jerry
+	 * @date 2017年7月25日 上午11:21:48
 	 */
-	public static boolean between(String itemCode, CashierItemTypeEnum... enums){
+	public static boolean isPersonalEbank(String itemCode){
 		if(itemCode == null){
 			return false;
 		}
 		
-		if(enums == null){
+		if(itemCode.equals(B2C_ITEM.itemCode)){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * 判断是否信用卡支付
+	 * @author Jerry
+	 * @date 2017年7月25日 上午11:23:48
+	 */
+	public static boolean isCreditCard(String itemCode){
+		if(itemCode == null){
 			return false;
 		}
 		
-		for(CashierItemTypeEnum e : enums){
-			if(itemCode.equals(e.getItemCode())){
-				return true;
-			}
+		if(itemCode.equals(CREDIT_ITEM.itemCode)){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * 判断是否快捷支付
+	 * @author Jerry
+	 * @date 2017年7月25日 上午11:38:23
+	 */
+	public static boolean isQuickPay(String itemCode){
+		if(itemCode == null){
+			return false;
+		}
+		
+		if(itemCode.equals(QUICK_PAY_NEW.itemCode)){
+			return true;
 		}
 		
 		return false;

@@ -553,7 +553,7 @@ public class TitanTradeController extends BaseController {
 			if(dto.getCashierDeskVersion() == null || "".equals(dto.getCashierDeskVersion())){
 				dto.setCashierDeskVersion(CashierDeskVersionEnum.VERSION_1.key);//默认老版本
 			}
-			if(!CashierDeskVersionEnum.between(dto.getCashierDeskVersion(), CashierDeskVersionEnum.values())){
+			if(!CashierDeskVersionEnum.isExist(dto.getCashierDeskVersion())){
 				log.error("cashierDeskVersion error");
 				return false;
 			}
@@ -924,7 +924,7 @@ public class TitanTradeController extends BaseController {
 		CashierDeskDTO cashierDeskDTO = response.getCashierDeskDTOList().get(0);
 		
 		//如果是新版收银台，需要合并个人网银（储蓄卡）和信用卡
-		if(CashierDeskVersionEnum.between(deskReq.getCashierDeskVersion(), CashierDeskVersionEnum.VERSION_2)){
+		if(CashierDeskVersionEnum.isVersion2(deskReq.getCashierDeskVersion())){
 			BaseResponse baseResponse = resetCashierDeskItem(cashierDeskDTO);
 			if(!baseResponse.isResult()){
 				model.addAttribute("msg", baseResponse.getReturnMessage());
@@ -987,9 +987,10 @@ public class TitanTradeController extends BaseController {
 		BaseResponse baseResponse = new BaseResponse();
 		baseResponse.putSuccess();
 		try {
-			List<CashierItemBankDTO> personalEBankList = new ArrayList<CashierItemBankDTO>(); //储蓄卡和信用卡合并后的个人网银支付银行列表
-			List<CashierItemBankDTO> depositCardList = null; //原个人网银支付银行列表（储蓄卡）
-			List<CashierItemBankDTO> creditCardList = null; //信用卡支付银行列表
+			Integer delCreditCardCashierIndex = null; //需要删除的信用卡支付下标
+			List<CashierItemBankDTO> personalEBankList = new ArrayList<CashierItemBankDTO>(); //用来保存储蓄卡和信用卡合并后银行列表
+			List<CashierItemBankDTO> depositCardList = null; //原储蓄卡银行列表（个人网银）
+			List<CashierItemBankDTO> creditCardList = null; //原信用卡银行列表
 			List<CashierDeskItemDTO> cashierDeskItemDTOList = cashierDeskDTO.getCashierDeskItemDTOList(); //收银台支付方式
 			if(CollectionUtils.isEmpty(cashierDeskItemDTOList)){
 				log.error("收银台支付方式列表为空");
@@ -997,14 +998,12 @@ public class TitanTradeController extends BaseController {
 			}
 			
 			for (int i = 0; i < cashierDeskItemDTOList.size(); i++) {
-				if(CashierItemTypeEnum.between(String.valueOf(cashierDeskItemDTOList.get(i).getItemType()), 
-						CashierItemTypeEnum.B2C_ITEM) ){
+				if(CashierItemTypeEnum.isPersonalEbank(String.valueOf(cashierDeskItemDTOList.get(i).getItemType()))){
 					depositCardList = cashierDeskItemDTOList.get(i).getCashierItemBankDTOList();
 				}
-				if(CashierItemTypeEnum.between(String.valueOf(cashierDeskItemDTOList.get(i).getItemType()), 
-						CashierItemTypeEnum.CREDIT_ITEM) ){
+				if(CashierItemTypeEnum.isCreditCard(String.valueOf(cashierDeskItemDTOList.get(i).getItemType()))){
 					creditCardList = cashierDeskItemDTOList.get(i).getCashierItemBankDTOList();
-					cashierDeskItemDTOList.remove(i); //删除信用卡支付
+					delCreditCardCashierIndex = i;
 				}
 			}
 			
@@ -1047,14 +1046,16 @@ public class TitanTradeController extends BaseController {
 			
 			if(CollectionUtils.isNotEmpty(personalEBankList)){
 				for (int i = 0; i < cashierDeskItemDTOList.size(); i++) {
-					if(CashierItemTypeEnum.between(String.valueOf(cashierDeskItemDTOList.get(i).getItemType()), 
-							CashierItemTypeEnum.B2C_ITEM) ){
-						//把原来的个人网银支付银行列表替换成合并后的personalEBankList
+					if(CashierItemTypeEnum.isPersonalEbank(String.valueOf(cashierDeskItemDTOList.get(i).getItemType()))){
+						//把原来的个人网银列表换成合并后的personalEBankList
 						cashierDeskItemDTOList.get(i).setCashierItemBankDTOList(personalEBankList);
 					}
 				}
 			}
 			
+			if(delCreditCardCashierIndex != null){
+				cashierDeskItemDTOList.remove(delCreditCardCashierIndex); //删除信用卡支付
+			}
 			cashierDeskDTO.setCashierDeskItemDTOList(cashierDeskItemDTOList);
 			
 		} catch (Exception e) {

@@ -193,10 +193,10 @@
         modifytime = #{modifytime},
       </if>
     </set>
-    where 
-    	<if test="tfsuserid != null" >tfsuserid = #{tfsuserid} </if>
+   	<where>
+    	<if test="tfsuserid != null" > and tfsuserid = #{tfsuserid} </if>
     	<if test="clauseMerchantCode != null" > and merchantcode = #{clauseMerchantCode} </if>
-    
+    </where>
   </update>
   <select id="selectTitanUser" parameterType="java.lang.Integer" resultType="com.fangcang.titanjr.entity.TitanUser">
       select tfsuserid, userid, orgcode, username, userloginname, password, department, mobilephone, email, 

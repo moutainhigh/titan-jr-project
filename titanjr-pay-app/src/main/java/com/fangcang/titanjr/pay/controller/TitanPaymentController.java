@@ -454,7 +454,7 @@ public class TitanPaymentController extends BaseController {
 	@RequestMapping("packageRechargeData")
 	public String packageRechargeData(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model) throws Exception{
 		//快捷支付测试代码
-		if(CashierItemTypeEnum.between(titanPaymentRequest.getLinePayType(), CashierItemTypeEnum.QUICK_PAY_NEW)){
+		if(CashierItemTypeEnum.isQuickPay(titanPaymentRequest.getLinePayType())){
 //			titanPaymentRequest.setLinePayType("11");
 //			titanPaymentRequest.setBankInfo("cmb");
 			titanPaymentRequest.setVersion(VersionEnum.Version_2.key);//新版网关快捷支付
@@ -615,7 +615,7 @@ public class TitanPaymentController extends BaseController {
 		}else if(PayTypeEnum.between(titanPaymentRequest.getPayType().getKey(), PayTypeEnum.QUICK_PAY_NEW)){
 			String strUserAgent = request.getHeader("user-agent").toString().toLowerCase();
 			String terminalType = null;
-			rechargeDataDTO.setTerminalIp(IPUtil.getUserIP(request));
+			rechargeDataDTO.setTerminalIp(IPUtil.getUserRealIP(request));
 			if(TerminalUtil.check(strUserAgent)){
 				terminalType = "wap";
 			}else{

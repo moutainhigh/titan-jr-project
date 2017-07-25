@@ -16,7 +16,7 @@ package com.fangcang.titanjr.common.enums;
 public enum CashierDeskVersionEnum {
 	
 	VERSION_1("1.0", "第一期收银台"),
-	VERSION_2("2.0", "第二期收银台");
+	VERSION_2("1.1", "第二期收银台");
 	
 	public String key;
 	public String value;
@@ -27,21 +27,41 @@ public enum CashierDeskVersionEnum {
 	}
 	
 	/**
-	 * 判断key是否在指定枚举集合中
+	 * 判断key是否在当前枚举的属性中
 	 */
-	public static boolean between(String key,CashierDeskVersionEnum... enums){
+	public static boolean isExist(String key){
 		if(key == null){
 			return false;
 		}
 		
-		if(enums == null){
-			return false;
-		}
-		
-		for(CashierDeskVersionEnum e : enums){
+		for(CashierDeskVersionEnum e : CashierDeskVersionEnum.values()){
 			if(key.equals(e.getKey())){
 				return true;
 			}
+		}
+		
+		return false;
+	}
+	
+	public static boolean isVersion1(String key){
+		if(key == null){
+			return false;
+		}
+		
+		if(key.equals(VERSION_1.key)){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public static boolean isVersion2(String key){
+		if(key == null){
+			return false;
+		}
+		
+		if(key.equals(VERSION_2.key)){
+			return true;
 		}
 		
 		return false;
