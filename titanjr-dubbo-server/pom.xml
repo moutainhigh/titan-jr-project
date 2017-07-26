@@ -283,7 +283,6 @@
                 <excludes>
                 	<exclude>production/**/**</exclude>
                 	<exclude>filters/**/**</exclude>
-                   <exclude>jdbc.properties</exclude>
                    <exclude>debug_conf.properties</exclude>
                	</excludes>
             </resource>
