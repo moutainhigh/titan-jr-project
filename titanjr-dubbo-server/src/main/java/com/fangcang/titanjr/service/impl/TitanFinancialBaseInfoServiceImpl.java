@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ import com.fangcang.titanjr.entity.TitanBankinfo;
 import com.fangcang.titanjr.entity.TitanCityInfo;
 import com.fangcang.titanjr.entity.TitanRole;
 import com.fangcang.titanjr.entity.parameter.TitanCoopParam;
+import com.fangcang.titanjr.redis.service.RedisService;
 import com.fangcang.titanjr.rs.dto.BankInfo;
 import com.fangcang.titanjr.rs.dto.CityInfo;
 import com.fangcang.titanjr.rs.manager.BaseInfoInitManager;
@@ -68,6 +70,10 @@ public class TitanFinancialBaseInfoServiceImpl implements TitanFinancialBaseInfo
 	
 	@Resource
 	TitanCoopDao titanCoopDao;
+	
+	@Resource
+	RedisService redisService;
+	
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT)
@@ -267,6 +273,13 @@ public class TitanFinancialBaseInfoServiceImpl implements TitanFinancialBaseInfo
 			BankInfoQueryRequest bankInfoQueryRequest) {
 		com.fangcang.titanjr.dto.response.BankInfoResponse bankInfoResponse = new com.fangcang.titanjr.dto.response.BankInfoResponse();
 		try {
+			String key = Tools.getClassName(this.getClass())+ ":queryBankInfoList_"+Tools.gsonToString(bankInfoQueryRequest);
+			List<BankInfoDTO> bankInfoDTOs = (List<BankInfoDTO>)redisService.getValue(key);
+			if(CollectionUtils.isNotEmpty(bankInfoDTOs)){
+				bankInfoResponse.setBankInfoDTOList(bankInfoDTOs);
+				bankInfoResponse.putSuccess();
+				return bankInfoResponse;
+			}
 			
 			if(StringUtil.isValidString(bankInfoQueryRequest.getBankCity())){
 				CityInfoDTO city = new CityInfoDTO();
@@ -281,8 +294,14 @@ public class TitanFinancialBaseInfoServiceImpl implements TitanFinancialBaseInfo
 				bankInfoQueryRequest.setBankCity(buffer.substring(0, buffer.length()-1));
 			}
 			
-			List<BankInfoDTO> bankInfoDTOs = titanBankinfoDao
+			bankInfoDTOs = titanBankinfoDao
 					.queryBankInfoList(bankInfoQueryRequest);
+			if(CollectionUtils.isNotEmpty(bankInfoDTOs)){
+				for(BankInfoDTO item : bankInfoDTOs){
+					item.setCityKey();
+				}
+				redisService.setValue(key, bankInfoDTOs);
+			}
 			bankInfoResponse.setBankInfoDTOList(bankInfoDTOs);
 			bankInfoResponse.putSuccess();
 		} catch (Exception e) {

@@ -147,7 +147,7 @@ $('.to_bindCard').on('click',function(){
 
 function validate_bankCard_data(bankCardData){
 	if(typeof bankCardData.bankHeadName =="undifined" || bankCardData.bankHeadName.length<1){
-		new top.Tip({msg : '收款银行不能为空！', type: 1 , time:1000}); 
+		new top.Tip({msg : '收款银行不能为空！', type: 3 , timer:3000}); 
 	    return false;
 	}
 	
@@ -155,29 +155,29 @@ function validate_bankCard_data(bankCardData){
 // 	if(bankCode=="104"){//中国银行需要验证
 		var cityCode = $("#city_code").attr("data-id");
 		if(typeof cityCode =="undifined" || cityCode.length<1){
-			new top.Tip({msg : '开户城市不能为空！', type: 1 , time:1000}); 
+			new top.Tip({msg : '开户城市不能为空！', type: 3 , timer:3000}); 
 			return false;
 		}
 		var branchCode = $("#branch_code").attr("data-id");
 		if(typeof branchCode =="undifined" || branchCode.length<1){
-			new top.Tip({msg : '开户支行不能为空！', type: 1 , time:1000}); 
+			new top.Tip({msg : '开户支行不能为空！', type: 3 , timer:3000}); 
 			return false;
 		}
 // 	}
 	
 	if(typeof bankCardData.accountnumber =="undifined" || bankCardData.accountnumber.length<1){
-		new top.Tip({msg : '收款账号不能为空！', type: 1 , time:1000}); 
+		new top.Tip({msg : '收款账号不能为空！', type: 3 , timer:3000}); 
 		return false;
 	}
 	
 	var testNumber  = /^[0-9]*$/;
 	if(!testNumber.test( bankCardData.accountnumber)){
-		new top.Tip({msg : '收款账号必须为数字！', type: 1 , time:1000}); 
+		new top.Tip({msg : '收款账号必须为数字！', type: 3 , timer:3000}); 
 		return false;
 	}
 	
 	if(typeof bankCardData.name =="undifined" || bankCardData.name.length<1){
-		new top.Tip({msg : '开户名不能为空！', type: 1 , time:1000}); 
+		new top.Tip({msg : '开户名不能为空！', type: 3 , timer:3000}); 
 		return false;
 	}
 	
