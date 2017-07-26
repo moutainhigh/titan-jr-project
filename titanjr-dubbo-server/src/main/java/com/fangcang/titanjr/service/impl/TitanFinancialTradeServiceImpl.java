@@ -1053,6 +1053,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			//新版收银台增加参数
 			req.setIdCode(rechargeRequest.getIdCode());
 			req.setPayerAccountType(rechargeRequest.getPayerAccountType());
+			req.setSafetyCode(rechargeRequest.getSafetyCode());
+			req.setValidthru(rechargeRequest.getValidthru());
 		}
 		return req;
 	}

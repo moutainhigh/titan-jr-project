@@ -72,6 +72,8 @@ public class RSPayOrderRequest {
 	private String terminalIp; //终端IP
 	private String terminalType; //终端类型
 	private String terminalInfo; //终端信息
+	private String safetyCode;//信用卡背后的3位数字
+	private String validthru;//月年格式 例如2020年09月应写为0920
 	
 	public String getPayStatus() {
 		return payStatus;
@@ -281,6 +283,18 @@ public class RSPayOrderRequest {
 	}
 	public void setTerminalInfo(String terminalInfo) {
 		this.terminalInfo = terminalInfo;
+	}
+	public String getSafetyCode() {
+		return safetyCode;
+	}
+	public void setSafetyCode(String safetyCode) {
+		this.safetyCode = safetyCode;
+	}
+	public String getValidthru() {
+		return validthru;
+	}
+	public void setValidthru(String validthru) {
+		this.validthru = validthru;
 	}
 	public static Map<String,String> RSPayOrderRequestToMap(RSPayOrderRequest rsPayOrderRequest){
 		Map<String,String>paraMap = new HashMap<String, String>();

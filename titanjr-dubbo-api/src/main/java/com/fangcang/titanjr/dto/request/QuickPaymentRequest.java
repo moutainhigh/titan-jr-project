@@ -77,9 +77,7 @@ public class QuickPaymentRequest implements Serializable {
 	//终端类型
 	private String terminalType; 
 	//终端信息
-	private String terminalInfo; 
-	//快捷支付验证码
-	private String checkCode;
+	private String terminalInfo;
 	
 	public String getMerchantNo() {
 		return merchantNo;
@@ -279,12 +277,6 @@ public class QuickPaymentRequest implements Serializable {
 	public void setTerminalInfo(String terminalInfo) {
 		this.terminalInfo = terminalInfo;
 	}
-	public String getCheckCode() {
-		return checkCode;
-	}
-	public void setCheckCode(String checkCode) {
-		this.checkCode = checkCode;
-	} 
 	
 	
 	@Override

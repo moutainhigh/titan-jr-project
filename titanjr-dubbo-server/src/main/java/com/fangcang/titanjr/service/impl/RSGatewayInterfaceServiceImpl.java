@@ -71,7 +71,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				HttpEntity entity = quickPayResp.getEntity();
 				response = EntityUtils.toString(entity, "UTF-8");
 				quickPaymentResponse = RSConvertFiled2ObjectUtil.convertField2ObjectSuper(QuickPaymentResponse.class, response);
-				log.info("【快捷支付】返回信息:"+quickPaymentResponse.toString());
+				log.info("【快捷支付】返回信息:" + quickPaymentResponse.toString());
 				if(StringUtil.isValidString(quickPaymentResponse.getErrCode()) 
 			    		&& !"0000".equals(quickPaymentResponse.getErrCode())){//通知快捷支付失败
 					quickPaymentResponse.putError(quickPaymentResponse.getErrMsg());
@@ -111,7 +111,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				HttpEntity entity = confirmRechargeResp.getEntity();
 				response = EntityUtils.toString(entity, "UTF-8");
 				confirmRechargeResponse = RSConvertFiled2ObjectUtil.convertField2ObjectSuper(ConfirmRechargeResponse.class,response);
-				log.info("【确认充值】返回信息:"+ confirmRechargeResponse.toString());
+				log.info("【确认充值】返回信息:" + confirmRechargeResponse.toString());
 				
 				if (StringUtil.isValidString(confirmRechargeResponse.getErrCode())
 						&& !"0000".equals(confirmRechargeResponse.getErrCode())) {
@@ -150,8 +150,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				responseStr = EntityUtils.toString(entity, "UTF-8");
 				reSendVerifyCodeResponse = RSConvertFiled2ObjectUtil
 						.convertField2ObjectSuper(ReSendVerifyCodeResponse.class,responseStr);
-				log.info("调用融数网关gateWayURL【重发验证码】返回信息:"
-						+ reSendVerifyCodeResponse.toString());
+				log.info("调用融数网关gateWayURL【重发验证码】返回信息:" + reSendVerifyCodeResponse.toString());
 				if (StringUtil.isValidString(reSendVerifyCodeResponse.getErrCode()) && !"0000"
 								.equals(reSendVerifyCodeResponse.getErrCode())) {
 					reSendVerifyCodeResponse.setSuccess(false);
@@ -336,42 +335,6 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 			return updatePhoneNumberResponse;
 		}
 	}
-	
-	
-	
-	/**
-	 * 获取快捷支付支付参数
-	 * @param rechargeDataDTO
-	 * @return
-	 */
-	/*private List<NameValuePair> getGateawayQuickPayParam(RechargeDataDTO rechargeDataDTO){
-		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("merchantNo", rechargeDataDTO.getMerchantNo()));
-		params.add(new BasicNameValuePair("orderNo", rechargeDataDTO.getOrderNo()));
-		params.add(new BasicNameValuePair("orderAmount", rechargeDataDTO.getOrderAmount()));
-		params.add(new BasicNameValuePair("amtType", rechargeDataDTO.getAmtType()));
-		params.add(new BasicNameValuePair("pageUrl", rechargeDataDTO.getPageUrl()));
-		params.add(new BasicNameValuePair("notifyUrl", rechargeDataDTO.getNotifyUrl()));
-		params.add(new BasicNameValuePair("orderTime", rechargeDataDTO.getOrderTime()));
-		params.add(new BasicNameValuePair("orderExpireTime", rechargeDataDTO.getOrderExpireTime()));
-		params.add(new BasicNameValuePair("orderMark", rechargeDataDTO.getOrderMark()));
-		params.add(new BasicNameValuePair("signType", rechargeDataDTO.getSignType()));
-		params.add(new BasicNameValuePair("busiCode", rechargeDataDTO.getBusiCode()));
-		params.add(new BasicNameValuePair("charset", rechargeDataDTO.getCharset()));
-		params.add(new BasicNameValuePair("signMsg", rechargeDataDTO.getSignMsg()));
-		params.add(new BasicNameValuePair("payType", rechargeDataDTO.getPayType()));
-		params.add(new BasicNameValuePair("bankInfo", rechargeDataDTO.getBankInfo()));
-		params.add(new BasicNameValuePair("version", rechargeDataDTO.getVersion()));
-		params.add(new BasicNameValuePair("idCode", rechargeDataDTO.getIdCode()));
-		params.add(new BasicNameValuePair("payerAccountType", rechargeDataDTO.getPayerAccountType()));
-		params.add(new BasicNameValuePair("payerName", rechargeDataDTO.getPayerName()));
-		params.add(new BasicNameValuePair("payerPhone", rechargeDataDTO.getPayerPhone()));
-		params.add(new BasicNameValuePair("payerAcount", rechargeDataDTO.getPayerAcount()));
-		params.add(new BasicNameValuePair("terminalIp", rechargeDataDTO.getTerminalIp()));
-		params.add(new BasicNameValuePair("terminalType", rechargeDataDTO.getTerminalType()));
-		params.add(new BasicNameValuePair("terminalInfo", rechargeDataDTO.getTerminalInfo()));
-		return params;
-	}*/
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

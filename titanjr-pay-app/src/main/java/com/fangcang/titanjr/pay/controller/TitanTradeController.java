@@ -1054,7 +1054,7 @@ public class TitanTradeController extends BaseController {
 			}
 			
 			if(delCreditCardCashierIndex != null){
-				cashierDeskItemDTOList.remove(delCreditCardCashierIndex); //删除信用卡支付
+				cashierDeskItemDTOList.remove(delCreditCardCashierIndex.intValue()); //删除信用卡支付
 			}
 			cashierDeskDTO.setCashierDeskItemDTOList(cashierDeskItemDTOList);
 			

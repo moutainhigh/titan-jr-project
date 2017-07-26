@@ -443,6 +443,18 @@ public class TitanPaymentController extends BaseController {
 		return CommonConstant.PAY_WX;
 	}
 	
+	@RequestMapping("showQuickPayView")
+	public String showQuickPayView(Model model){
+		return "checkstand-pay/quickPayView";
+	}
+	
+	@RequestMapping("quickPayRecharge")
+	@ResponseBody
+	public String quickPayRecharge(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model) throws Exception{
+		String json = packageRechargeData(request, titanPaymentRequest, model);
+		return json;
+	}
+	
 	/**
 	 * 需要充值的接口
 	 * @param request
@@ -453,18 +465,11 @@ public class TitanPaymentController extends BaseController {
 	 */
 	@RequestMapping("packageRechargeData")
 	public String packageRechargeData(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model) throws Exception{
-		//快捷支付测试代码
+		//设置第三方版本
 		if(CashierItemTypeEnum.isQuickPay(titanPaymentRequest.getLinePayType())){
-//			titanPaymentRequest.setLinePayType("11");
-//			titanPaymentRequest.setBankInfo("cmb");
-			titanPaymentRequest.setVersion(VersionEnum.Version_2.key);//新版网关快捷支付
-			titanPaymentRequest.setIdCode("411381198907135674");
-			titanPaymentRequest.setPayerAccountType("10");
-			titanPaymentRequest.setPayerName("赵闪");
-			titanPaymentRequest.setPayerPhone("18620352083");
-			titanPaymentRequest.setPayerAcount("6214837833012036");
+			titanPaymentRequest.setVersion(VersionEnum.Version_2.key);
 		}else{
-			titanPaymentRequest.setVersion(VersionEnum.Version_1.key);//原网关支付
+			titanPaymentRequest.setVersion(VersionEnum.Version_1.key);
 		}
 		
 		log.info("网银支付请求参数titanPaymentRequest:"+JsonConversionTool.toJson(titanPaymentRequest));

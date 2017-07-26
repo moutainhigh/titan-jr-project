@@ -76,6 +76,8 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	private String terminalIp; //终端IP
 	private String terminalType; //终端类型
 	private String terminalInfo; //终端信息
+	private String safetyCode;//信用卡背后的3位数字
+	private String validthru;//月年格式 例如2020年09月应写为0920
 	private String version;
 	
 	
@@ -317,6 +319,22 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 
 	public void setPayerPhone(String payerPhone) {
 		this.payerPhone = payerPhone;
+	}
+
+	public String getSafetyCode() {
+		return safetyCode;
+	}
+
+	public void setSafetyCode(String safetyCode) {
+		this.safetyCode = safetyCode;
+	}
+
+	public String getValidthru() {
+		return validthru;
+	}
+
+	public void setValidthru(String validthru) {
+		this.validthru = validthru;
 	}
 	
 }

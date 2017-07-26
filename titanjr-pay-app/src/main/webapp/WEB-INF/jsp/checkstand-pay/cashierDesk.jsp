@@ -239,7 +239,7 @@
                                             </c:if>
                                             
                                             <c:if test="${deskItem.itemType == 11 }">
-                                                <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}">（快捷支付）</span>
+                                                <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}"></span>
                                             </c:if>
                                             
                                             <c:if test="${itemBank.bankName=='cmbc' && deskItem.itemType == 1}">
@@ -282,7 +282,7 @@
 <script type="text/javascript" src="<%=basePath%>/js/common.js"></script>
 <script type="text/javascript" src="<%=basePath%>/js/cashier/paypsd.js"></script>
 <script type="text/javascript" src="<%=basePath%>/js/cashier/rate.js"></script>
-<script type="text/javascript" src="<%=basePath%>/js/cashier/cashierData.js"></script>
+<script type="text/javascript" src="<%=basePath%>/js/cashier/cashierData.js?v=5"></script>
 <script type="text/javascript" src="<%=basePath%>/js/cashier/init.js"></script>
 <script>
 	$("document").ready(function (){
@@ -708,6 +708,9 @@
 
 		} else if (cashierData.linePayType() == '10') {
 			loanPay();
+		} else if (cashierData.linePayType() == '11') { //测试快捷支付
+			quickPay();
+			
 		} else {//有网银支付
 			cashierData.submit();
 		}
@@ -756,6 +759,47 @@
                	top.F.loading.hide();
             }
            });
+    }
+    
+    function quickPay(){
+    	$.ajax({
+    		type: "post",
+            dataType : 'html',
+   	        context: document.body,
+   	        url : '<%=basePath%>/payment/showQuickPayView.action',			
+   	        success : function(html){
+   	            var d =  window.top.dialog({
+   	                title: ' ',
+   	                padding: '0 0 0px 0',
+   					width: 400,
+   	                content: html,
+   	                skin : 'saas_pop wx_close wx_p'
+   	            }).showModal();
+   	            $('#getCheckCode').on('click',function(){
+   	            	$.ajax({
+	   	 				type : "post",
+	   	 				url : "<%=basePath%>/payment/quickPayRecharge.action",
+	   	 	               data: cashierData.onlineQuickPayData(),
+	   	 	               dataType: "json",
+	   	 	               success: function (data) {
+	   	 	            	   if(data.isSuccess == false){
+	   	 	            		   alert(data.errMsg);
+	   	 	            		   return;
+	   	 	            	   }
+	   	 	            	   var certificate = data.certificate;
+	   	 	            	   if(certificate != null && !typeof(certificate) == 'undefined' && certificate == '1'){
+	   	 	            		   alert("需要鉴权");
+	   	 	            	   }else{
+	   	 	            		   alert("不需要鉴权");
+	   	 	            	   }
+	   	 	            	   
+	   	 	               }
+	   	 	         });
+   	            });
+   	        },complete:function(){
+               	top.F.loading.hide();
+            }
+        });
     }
     
     function toWxPayPage(){

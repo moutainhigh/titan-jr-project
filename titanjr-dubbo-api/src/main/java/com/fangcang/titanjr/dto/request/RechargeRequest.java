@@ -79,6 +79,8 @@ public class RechargeRequest implements Serializable{
 	//新版收银台增加字段
 	private String idCode; //支付人身份证
 	private String payerAccountType; //支付人银行卡类型   10：借记卡  21：信用卡
+	private String safetyCode;//信用卡背后的3位数字
+	private String validthru;//月年格式 例如2020年09月应写为0920
 	
 	public Integer getRatetype() {
 		return ratetype;
@@ -296,5 +298,17 @@ public class RechargeRequest implements Serializable{
 	}
 	public void setPayerAccountType(String payerAccountType) {
 		this.payerAccountType = payerAccountType;
+	}
+	public String getSafetyCode() {
+		return safetyCode;
+	}
+	public void setSafetyCode(String safetyCode) {
+		this.safetyCode = safetyCode;
+	}
+	public String getValidthru() {
+		return validthru;
+	}
+	public void setValidthru(String validthru) {
+		this.validthru = validthru;
 	}
 }

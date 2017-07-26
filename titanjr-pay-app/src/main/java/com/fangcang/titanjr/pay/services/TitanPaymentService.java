@@ -197,6 +197,8 @@ public class TitanPaymentService {
 		rechargeRequest.setPayerAccountType(titanPaymentRequest.getPayerAccountType());
 		rechargeRequest.setPayerName(titanPaymentRequest.getPayerName());
 		rechargeRequest.setPayerPhone(titanPaymentRequest.getPayerPhone());
+		rechargeRequest.setSafetyCode(titanPaymentRequest.getSafetyCode());
+		rechargeRequest.setValidthru(titanPaymentRequest.getValidthru());
 
 		return rechargeRequest;
 	}

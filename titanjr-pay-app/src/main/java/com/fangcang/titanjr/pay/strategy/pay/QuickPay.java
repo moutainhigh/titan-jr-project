@@ -8,6 +8,7 @@ import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.request.QuickPaymentRequest;
 import com.fangcang.titanjr.dto.response.gateway.QuickPaymentResponse;
 import com.fangcang.titanjr.service.RSGatewayInterfaceService;
+import com.fangcang.util.JsonUtil;
 import com.fangcang.util.SpringContextUtil;
 
 @Component
@@ -24,8 +25,8 @@ public class QuickPay implements PayStrategy {
     	QuickPaymentResponse quickPaymentResponse = rsGatewayInterfaceService.quickPay(quickPaymentRequest);
     	model.addAttribute("quickPaymentResponse", quickPaymentResponse);
     	model.addAttribute("rechargeDataDTO", rechargeDataDTO);
-    	return "checkstand-pay/quickPayResult";
-		
+		return JsonUtil.objectToJson(quickPaymentResponse);
+    	
 	}
 
 }

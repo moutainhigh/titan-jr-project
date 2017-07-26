@@ -6,17 +6,14 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fangcang.titanjr.common.enums.QuickPayBankEnum;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.gateway.QuickPayCardDTO;
 import com.fangcang.titanjr.dto.request.gateway.CardSceurityVerifyRequest;
@@ -122,6 +119,36 @@ public class TitanQuickPaymentController extends BaseController {
 		return bankCardBINIResponse;
 	}
 	
+	
+	/**
+	 * 校验用户输入的银行卡号是否支持快捷支付
+	 * @author Jerry
+	 * @date 2017年7月25日 下午7:45:04
+	 * @param queryBankCardBINRequest
+	 * @return
+	 */
+	@RequestMapping(value = {"/checkCardCanQuickPay"})
+	@ResponseBody
+	public QueryBankCardBINIResponse checkCardCanQuickPay(QueryBankCardBINRequest queryBankCardBINRequest){
+		
+		QueryBankCardBINIResponse bankCardBINIResponse = rsGatewayInterfaceService
+				.queryBankCardBIN(queryBankCardBINRequest);
+		
+		if(bankCardBINIResponse.isSuccess()){
+			
+			if(QuickPayBankEnum.isExist(bankCardBINIResponse.getBankCode(), bankCardBINIResponse.getCardType())){
+				String bankInfo = QuickPayBankEnum.getBankInfo(bankCardBINIResponse.getBankCode()
+						, bankCardBINIResponse.getCardType());
+				bankCardBINIResponse.setBankInfo(bankInfo);
+				
+				return bankCardBINIResponse;
+				
+			}
+			bankCardBINIResponse.putError("该银行卡不支持快捷支付");
+		}
+		
+		return bankCardBINIResponse;
+	}
 	
 	
 	@RequestMapping(value = {"/unBindBankCard"})

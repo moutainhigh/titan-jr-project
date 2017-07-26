@@ -21,7 +21,7 @@ public class QueryBankCardBINIResponse extends RSBaseResponse {
 	//所属银行名称
 	private String bankName;
 	
-	//银行卡类型  2-储蓄卡，3-信用卡
+	//银行卡类型  10-储蓄卡，11-信用卡
 	private String cardType;
 	
 	private String version;
@@ -29,6 +29,8 @@ public class QueryBankCardBINIResponse extends RSBaseResponse {
 	private String signType;
 	
 	private String signMsg;
+	
+	private String bankInfo;
 	
 
 	public String getMerchantNo() {
@@ -95,7 +97,14 @@ public class QueryBankCardBINIResponse extends RSBaseResponse {
 		this.signMsg = signMsg;
 	}
 	
-	
+	public String getBankInfo() {
+		return bankInfo;
+	}
+
+	public void setBankInfo(String bankInfo) {
+		this.bankInfo = bankInfo;
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

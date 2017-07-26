@@ -2,6 +2,8 @@ package com.fangcang.titanjr.common.util;
 
 import java.lang.reflect.Field;
 
+import com.fangcang.util.StringUtil;
+
 public class RSConvertFiled2ObjectUtil {
 	 public static <T> T convertField2Object(Class<T> cls,String str) throws Exception{
 		   T ref = cls.newInstance();
@@ -46,6 +48,21 @@ public class RSConvertFiled2ObjectUtil {
 	                   break;
 	               }
 	           }
+	    	   
+	    	   if("errCode".equals(key)){
+	    		   for (Field field : cls.getSuperclass().getDeclaredFields()) {
+		               if (field.getName().equals("isSuccess")) {
+		                   field = cls.getSuperclass().getDeclaredField("isSuccess");
+		                   field.setAccessible(true);
+		                   if(StringUtil.isValidString(value) && "0000".equals(value)){
+		                	   field.set(ref, true);
+		                   }else{
+		                	   field.set(ref, false);
+		                   }
+		                   break;
+		               }
+		           }
+	    	   }
 	    	  
 	       }
 		   return  ref;
