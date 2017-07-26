@@ -57,6 +57,7 @@ import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
 import com.fangcang.titanjr.dao.TitanAccountDao;
@@ -2041,13 +2042,14 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				return orderCreateResponse;
 			}
 			//--判断付款方和收款方是否发生了变化--luoqinglong-
-			TitanTransOrder tempTransOrder = new TitanTransOrder();
-			TransOrderCreateResponse localOrderResponse = this.setBaseUserInfo(titanOrderRequest,tempTransOrder);//仅仅是为了获得订单的收付款双方
+			TitanTransOrder newTransOrder = new TitanTransOrder();
+			TransOrderCreateResponse localOrderResponse = this.setBaseUserInfo(titanOrderRequest,newTransOrder);//仅仅是为了获得订单的收付款双方
 			if(localOrderResponse.isResult()){
 				//收款和付款方任意一方绑定关系变化，则重新下单
-				if(!(transOrderDTO.getPayeemerchant().equals(tempTransOrder.getPayeemerchant())&&transOrderDTO.getPayermerchant().equals(tempTransOrder.getPayermerchant()))){
+				log.info("--新单信息newTransOrder："+Tools.gsonToString(newTransOrder)+",旧单信息transOrderDTO："+Tools.gsonToString(transOrderDTO));
+				if(!(transOrderDTO.getPayeemerchant().equals(newTransOrder.getPayeemerchant())&&transOrderDTO.getPayermerchant().equals(newTransOrder.getPayermerchant()))){
 					updateOrderNoEffect(transOrderRequest.getTransid());
-					log.info("订单orderid:"+transOrderDTO.getOrderid()+",订单的收付款双方发生改变,需要重新生成订单。旧的收款方Payeemerchant："+transOrderDTO.getPayeemerchant()+",Payermerchant:"+transOrderDTO.getPayermerchant()+"，新收款方Payeemerchant:"+tempTransOrder.getPayeemerchant()+",Payermerchant:"+tempTransOrder.getPayermerchant());
+					log.info("订单orderid:"+transOrderDTO.getOrderid()+",订单的收付款双方发生改变,需要重新生成订单。旧的收款方Payeemerchant："+transOrderDTO.getPayeemerchant()+",Payermerchant:"+transOrderDTO.getPayermerchant()+"，新收款方Payeemerchant:"+newTransOrder.getPayeemerchant()+",Payermerchant:"+newTransOrder.getPayermerchant());
 					return null;
 				}
 			}else{
