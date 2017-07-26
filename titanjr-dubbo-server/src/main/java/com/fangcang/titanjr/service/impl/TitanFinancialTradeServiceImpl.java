@@ -2046,17 +2046,15 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			TransOrderCreateResponse localOrderResponse = this.setBaseUserInfo(titanOrderRequest,newTransOrder);//仅仅是为了获得订单的收付款双方
 			if(localOrderResponse.isResult()){
 				//收款和付款方任意一方绑定关系变化，则重新下单
-				log.info("--新单信息newTransOrder："+Tools.gsonToString(newTransOrder)+",旧单信息transOrderDTO："+Tools.gsonToString(transOrderDTO));
-				if(!(transOrderDTO.getPayeemerchant().equals(newTransOrder.getPayeemerchant())&&transOrderDTO.getPayermerchant().equals(newTransOrder.getPayermerchant()))){
+				if(isChange(transOrderDTO.getPayeemerchant(), newTransOrder.getPayeemerchant())||isChange(transOrderDTO.getPayermerchant(), newTransOrder.getPayermerchant())){
 					updateOrderNoEffect(transOrderRequest.getTransid());
-					log.info("订单orderid:"+transOrderDTO.getOrderid()+",订单的收付款双方发生改变,需要重新生成订单。旧的收款方Payeemerchant："+transOrderDTO.getPayeemerchant()+",Payermerchant:"+transOrderDTO.getPayermerchant()+"，新收款方Payeemerchant:"+newTransOrder.getPayeemerchant()+",Payermerchant:"+newTransOrder.getPayermerchant());
+					log.info("订单orderid:"+transOrderDTO.getOrderid()+",订单Payorderno:"+transOrderDTO.getPayorderno()+",订单的收付款双方发生改变,需要重新生成订单。旧的收款方Payeemerchant："+transOrderDTO.getPayeemerchant()+",Payermerchant:"+transOrderDTO.getPayermerchant()+"，新收款方Payeemerchant:"+newTransOrder.getPayeemerchant()+",Payermerchant:"+newTransOrder.getPayermerchant());
 					return null;
 				}
 			}else{
 				orderCreateResponse.putErrorResult("订单收付款信息错误");
 				return orderCreateResponse;
 			}
-			
 			
 			if (OrderStatusEnum.isPaySuccess(transOrderDTO
 					.getStatusid())) {
@@ -2156,6 +2154,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 		}
 		return null;
+	}
+	
+	private boolean isChange(String value,String value2){
+		if(StringUtil.isValidString(value)&&StringUtil.isValidString(value2)&&(!value.equals(value2))){
+			return true;
+		}
+		return false;
 	}
 
 	private long getExpireTime(Integer orderExpireTime) {
