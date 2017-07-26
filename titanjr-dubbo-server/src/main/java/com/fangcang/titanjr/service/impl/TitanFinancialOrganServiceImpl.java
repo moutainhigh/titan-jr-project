@@ -266,7 +266,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
             responsePageDTO.putSuccess();
             
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("查询机构失败,查询参数request："+Tools.gsonToString(request), e);
 			responsePageDTO.putSysError();
 		}
         return responsePageDTO;

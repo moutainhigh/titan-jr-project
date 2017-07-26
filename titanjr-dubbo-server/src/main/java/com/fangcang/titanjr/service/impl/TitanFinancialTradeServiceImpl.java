@@ -2040,6 +2040,20 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 								.getResMsg());
 				return orderCreateResponse;
 			}
+			//--判断付款方和收款方是否发生了变化--luoqinglong-
+			TitanTransOrder tempTransOrder = new TitanTransOrder();
+			TransOrderCreateResponse localOrderResponse = this.setBaseUserInfo(titanOrderRequest,tempTransOrder);//仅仅是为了获得订单的收付款双方
+			if(localOrderResponse.isResult()){
+				//收款和付款方任意一方绑定关系变化，则重新下单
+				if(!(transOrderDTO.getPayeemerchant().equals(tempTransOrder.getPayeemerchant())&&transOrderDTO.getPayermerchant().equals(tempTransOrder.getPayermerchant()))){
+					updateOrderNoEffect(transOrderRequest.getTransid());
+					log.info("订单orderid:"+transOrderDTO.getOrderid()+",订单的收付款双方发生改变,需要重新生成订单。旧的收款方Payeemerchant："+transOrderDTO.getPayeemerchant()+",Payermerchant:"+transOrderDTO.getPayermerchant()+"，新收款方Payeemerchant:"+tempTransOrder.getPayeemerchant()+",Payermerchant:"+tempTransOrder.getPayermerchant());
+					return null;
+				}
+			}else{
+				orderCreateResponse.putErrorResult("订单收付款信息错误");
+				return orderCreateResponse;
+			}
 			
 			
 			if (OrderStatusEnum.isPaySuccess(transOrderDTO
