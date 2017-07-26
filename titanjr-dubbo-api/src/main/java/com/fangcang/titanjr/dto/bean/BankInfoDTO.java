@@ -14,10 +14,17 @@ public class BankInfoDTO implements Serializable {
     private Integer bankType;
     private Integer statusId;
     private String parentCode;
+    private String cityKey;
+    
+    
+	public void setCityKey() {
+		this.cityKey = bankCode + "," + bankCity;
+	}
 
 	public String getCityKey()
-    {
-    	return  bankCode + "," + bankCity;
+    {	
+		this.cityKey = bankCode + "," + bankCity;
+    	return  cityKey;
     }
     
     public String getBankCode() {

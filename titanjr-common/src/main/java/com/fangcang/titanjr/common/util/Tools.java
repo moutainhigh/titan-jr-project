@@ -1,19 +1,23 @@
 package com.fangcang.titanjr.common.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import net.sf.json.regexp.RegexpMatcher;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fangcang.titanjr.common.util.gson.NullStringToEmptyAdapterFactory;
 import com.fangcang.util.StringUtil;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSerializer;
+
+import net.sf.json.JSONSerializer;
 
 /**
  * 其他无法归类的工具方法
@@ -84,10 +88,9 @@ public class Tools {
 	 */
 	public static String gsonToString(Object object){
 		try {
-			return new GsonBuilder().serializeNulls().create().toJson(object);
+			return new GsonBuilder().serializeNulls().registerTypeAdapterFactory(new NullStringToEmptyAdapterFactory()).create().toJson(object);
 		} catch (Exception e) {
-			LOGGER.info("convert to josn fail , object:"+object);
-			e.printStackTrace();
+			LOGGER.error("convert to josn fail , object is:"+object,e);
 		}
 		return ToStringBuilder.reflectionToString(object);
 		
@@ -224,17 +227,16 @@ public class Tools {
 	 * @param key
 	 * @return
 	 */
-	public static String getTitanRedisKey(Class clazz,String key){
-		StringBuilder sb  = getStringBuilder().append(CommonConstant.REDIS_KEY_PREFIX_TITANJR).append(":");
+	public static String getClassName(Class clazz){
+		StringBuilder sb  = new StringBuilder();
 		if(clazz!=null){
-			sb.append(clazz.getName().replaceAll("\\.", "-")).append(":");
+			return sb.append(clazz.getName().replaceAll("\\.", "-")).toString();
 		}
-		sb.append(key);
-		return sb.toString();
+		return "";
 	}
+	
 	public static final void main(String[] arg){
 //		Map<String, String> praMap = new HashMap<String, String>();
 //		praMap.put("name", "333");
-//		System.out.println(appendRequestParam("4444444rrfgg",praMap));
 	}
  }
