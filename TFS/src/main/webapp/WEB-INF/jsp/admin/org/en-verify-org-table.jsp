@@ -55,7 +55,7 @@ $(".J_cancel_orgbind").on('click',function(){
 	        title: '提示',
 	        padding: '35px 20px 39px 35px',
 	        width:420,
-	        content: '确定要取消该金融账户与SaaS的绑定关系?',
+	        content: '确定要取消该金融账户的绑定关系?',
 	        okValue: '确 定',
 	        ok: function () {
 	      	  $.ajax({

@@ -211,8 +211,12 @@ public class OrgController extends BaseController{
 			//暂时只支持SaaS注册的金融账户
 			OrgBindInfo orgBindInfo = new OrgBindInfo();
 			orgBindInfo.setOrgcode(orgCode);
-			orgBindInfo = organService.queryActiveOrgBindInfo(orgBindInfo);
-			if(orgBindInfo!=null&&orgBindInfo.getCoopType()!=null&&(!orgBindInfo.getCoopType().equals(CoopTypeEnum.SAAS.getKey()))){
+			orgBindInfo = organService.queryOrgBindInfoByUserid(orgBindInfo);
+			if(orgBindInfo==null){
+				putSysError("该金融账户的绑定关系不存在");
+				return toJson();
+			}
+			if(!orgBindInfo.getCoopType().equals(CoopTypeEnum.SAAS.getKey())){
 				putSysError("暂时只支持SaaS注册的金融账户");
 				return toJson();
 			}

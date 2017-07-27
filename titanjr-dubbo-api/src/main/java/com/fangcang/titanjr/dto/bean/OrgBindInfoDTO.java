@@ -20,6 +20,7 @@ public class OrgBindInfoDTO implements Serializable{
 	private String titanCode;
 	private String busline;
 	private String userType;
+	//1：生效，2：冻结，3：注销
 	private String statusId;
 	public String getMerchantCode() {
 		return merchantCode;
