@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,13 +17,17 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dto.bean.RoleDTO;
+import com.fangcang.titanjr.dto.request.UserBindInfoRequest;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
+import com.fangcang.titanjr.dto.response.UserBindInfoResponse;
 import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.entity.TitanUser;
+import com.fangcang.titanjr.entity.TitanUserBindInfo;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.util.WebConstant;
+import com.fangcang.util.StringUtil;
 
 /**
  * 金融访问权限拦截器
@@ -43,6 +48,7 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 		HttpSession session = request.getSession();
 		Integer isadmin = 0;
 		String tfsUserId = (String)session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+		String orgCode = null;
 		if(tfsUserId!=null){
 			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 			userInfoQueryRequest.setTfsUserId(Integer.valueOf(tfsUserId));
@@ -57,6 +63,7 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 				return false;
 			}
 			isadmin = titanUser.getIsadmin();
+			orgCode = titanUser.getOrgcode();
 		}
 		
 		if(handler instanceof HandlerMethod){//是请求方法才进行判断
@@ -78,15 +85,47 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 			if(hasRegister(request, response)==false){
 				return false;
 			}
+			
 			//是否拥有该方法的访问权限
 			List<RoleDTO> tfsRoleDTOList = (List<RoleDTO>)session.getAttribute(WebConstant.SESSION_KEY_JR_ROLE_LIST);
 			String hasPermission = isAllow(allownRoleCode, tfsRoleDTOList,isadmin);
+			
+			String adminName = "查询异常";
+			if(StringUtil.isValidString(tfsUserId) && (hasPermission.equals("no") || hasPermission.equals("no_admin"))){
+				//金服用户是否有SAAS绑定用户
+				UserBindInfoRequest userBindInfoRequest = new UserBindInfoRequest();
+				userBindInfoRequest.setTfsuserid(Integer.parseInt(tfsUserId));
+				UserBindInfoResponse userBindInfoResponse = userService.queryUserBindInfoDTO(userBindInfoRequest);
+				if(userBindInfoResponse.isResult() && CollectionUtils.isNotEmpty(userBindInfoResponse
+						.getPaginationSupport().getItemList())){
+					//查询管理员SAAS用户登录名
+					UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+					userInfoQueryRequest.setIsadmin(1);
+					userInfoQueryRequest.setBindMerchantCode(userBindInfoResponse.getPaginationSupport()
+							.getItemList().get(0).getMerchantCode());
+					TitanUserBindInfo userBindInfo = userService.queryAdminUserBindInfo(userInfoQueryRequest);
+					if(userBindInfo != null){
+						adminName = userBindInfo.getFcloginname();
+					}
+				}else{
+					//查询管理员金服登录名
+					UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+					userInfoQueryRequest.setOrgCode(orgCode);
+					userInfoQueryRequest.setIsadmin(1);
+					UserInfoPageResponse userInfoPage = userService.queryUserInfoPage(userInfoQueryRequest);
+					if(userInfoPage.isResult() && CollectionUtils.isNotEmpty(userInfoPage
+							.getTitanUserPaginationSupport().getItemList())){
+						adminName = userInfoPage.getTitanUserPaginationSupport().getItemList().get(0).getUserloginname();
+					}
+				}
+			}
+			
 			if(hasPermission.equals("no")){
-				setMsg(request, response, "当前用户没有权限访问，请联系管理员");
+				setMsg(request, response, "当前用户没有权限访问，请联系管理员【" + adminName + "】");
 				return false;
 			}
 			if(hasPermission.equals("no_admin")){
-				setMsg(request, response, "只有管理员才能访问该功能，请联系管理员");
+				setMsg(request, response, "只有管理员才能访问该功能，请联系管理员【" + adminName + "】");
 				return false;
 			}
 		}
