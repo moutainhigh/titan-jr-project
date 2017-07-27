@@ -236,6 +236,5 @@ public class OrgController extends BaseController{
 			putSysError(e.getMessage());
 			return toJson();
 		}
-		
 	}
 }

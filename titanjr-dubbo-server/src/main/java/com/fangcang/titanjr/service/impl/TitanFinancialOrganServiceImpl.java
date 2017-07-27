@@ -1326,6 +1326,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			orgBindInfo.setMerchantCode(titanOrgBindinfo.getMerchantcode());
 			orgBindInfo.setMerchantName(titanOrgBindinfo.getMerchantname());
 			orgBindInfo.setUserid(titanOrgBindinfo.getUserid());
+			orgBindInfo.setCoopType(titanOrgBindinfo.getCooptype());
 			orgBindInfo.setOrgcode(titanOrgBindinfo.getOrgcode());
 			return orgBindInfo;
 		}
