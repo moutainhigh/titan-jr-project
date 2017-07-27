@@ -15,9 +15,9 @@ import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
-//import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.request.CancelOrgBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.OrganCheckRequest;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
@@ -216,8 +216,10 @@ public class OrgController extends BaseController{
 				putSysError("暂时只支持SaaS注册的金融账户");
 				return toJson();
 			}
-			
-			BaseResponseDTO baseResponseDTO = organService.cancelOrgBind(orgCode);
+			CancelOrgBindRequest cancelOrgBindRequest = new CancelOrgBindRequest();
+			cancelOrgBindRequest.setOrgCode(orgCode);
+			cancelOrgBindRequest.setOperator(getSAASLoginName());
+			BaseResponseDTO baseResponseDTO = organService.cancelOrgBind(cancelOrgBindRequest); 
 			if(baseResponseDTO.isResult()){
 				putSuccess("取消成功");
 				return toJson();
