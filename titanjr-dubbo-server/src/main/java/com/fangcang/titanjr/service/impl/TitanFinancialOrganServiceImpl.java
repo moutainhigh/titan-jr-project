@@ -67,12 +67,14 @@ import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
 import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
+import com.fangcang.titanjr.dto.request.CancelOrgBindRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskInitRequest;
 import com.fangcang.titanjr.dto.request.DeleteBindUserRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
 import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
+import com.fangcang.titanjr.dto.request.OperateLogRequest;
 import com.fangcang.titanjr.dto.request.OrgRegisterValidateRequest;
 import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
 import com.fangcang.titanjr.dto.request.OrganBindRequest;
@@ -122,6 +124,7 @@ import com.fangcang.titanjr.entity.parameter.TitanOrgCheckParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgImageParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgParam;
 import com.fangcang.titanjr.entity.parameter.TitanUserParam;
+import com.fangcang.titanjr.enums.OperateTypeOperateLogEnum;
 import com.fangcang.titanjr.rs.manager.RSAccountManager;
 import com.fangcang.titanjr.rs.manager.RSOrganizationManager;
 import com.fangcang.titanjr.rs.request.AccountFreezeRequest;
@@ -133,6 +136,7 @@ import com.fangcang.titanjr.rs.response.AccountUnFreezeResponse;
 import com.fangcang.titanjr.rs.response.BaseResponse;
 import com.fangcang.titanjr.rs.response.CompanyOrgRegResponse;
 import com.fangcang.titanjr.rs.response.PersonOrgRegResponse;
+import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanCodeCenterService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -187,6 +191,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	private TitanFinancialSendSMSService smsService;
     @Resource
     private TitanOpenOrgDao titanOpenOrgDao;
+    @Resource
+    private BusinessLogService businessLog;
 
     @Override
     public FinancialOrganResponse queryFinancialOrgan(FinancialOrganQueryRequest request) {
@@ -266,7 +272,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
             responsePageDTO.putSuccess();
             
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("查询机构失败,查询参数request："+Tools.gsonToString(request), e);
 			responsePageDTO.putSysError();
 		}
         return responsePageDTO;
@@ -1320,6 +1326,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			orgBindInfo.setMerchantCode(titanOrgBindinfo.getMerchantcode());
 			orgBindInfo.setMerchantName(titanOrgBindinfo.getMerchantname());
 			orgBindInfo.setUserid(titanOrgBindinfo.getUserid());
+			orgBindInfo.setCoopType(titanOrgBindinfo.getCooptype());
 			orgBindInfo.setOrgcode(titanOrgBindinfo.getOrgcode());
 			return orgBindInfo;
 		}
@@ -1612,40 +1619,48 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-	public BaseResponseDTO cancelOrgBind(String orgCode) throws MessageServiceException {
+	public BaseResponseDTO cancelOrgBind(CancelOrgBindRequest cancelOrgBindRequest) throws MessageServiceException {
 		BaseResponseDTO  responseDTO = new BaseResponseDTO();
-		responseDTO.putSuccess("成功解除机构关联关系");
-		//删除机构绑定
+		if(!StringUtil.isValidString(cancelOrgBindRequest.getOrgCode())){
+			responseDTO.putErrorResult("机构编码[OrgCode]不能为空");
+			return  responseDTO;
+		}
+		//1-删除机构绑定
 		OrgBindInfoDTO orgBindDTOParam = new OrgBindInfoDTO();
 		orgBindDTOParam.setBindStatus(BindStatusOrgEnum.BING.getBindStatus());//绑定状态
-		orgBindDTOParam.setOrgcode(orgCode);
+		orgBindDTOParam.setOrgcode(cancelOrgBindRequest.getOrgCode());
 		List<OrgBindInfoDTO> orgBindInfoDTOList = titanOrgBindinfoDao.queryOrgBindInfoDTO(orgBindDTOParam);
 		String merchantcode = null;
+		
 		if(CollectionUtils.isNotEmpty(orgBindInfoDTOList)){
 			merchantcode = orgBindInfoDTOList.get(0).getMerchantCode();
-			//TODO 删除记录日志
-			LOGGER.info("取消机构关联关系，商家编码merchantcode："+merchantcode+",金融机构orgCode："+orgCode);
 			
+			OperateLogRequest operateLogRequest = new OperateLogRequest();
+        	operateLogRequest.setOperateType(OperateTypeOperateLogEnum.CANCEL_ORG_BIND.getOperateType());
+        	operateLogRequest.setOperateContent("成功取消机构绑定关系，商家编码merchantcode："+merchantcode+",金融机构orgCode："+cancelOrgBindRequest.getOrgCode());
+        	operateLogRequest.setOperateTime(new Date());
+        	operateLogRequest.setOperator(cancelOrgBindRequest.getOperator());
+        	businessLog.addOperateLog(operateLogRequest);
 			try {
 				TitanOrgBindinfoParam deleteParam = new TitanOrgBindinfoParam();
-				deleteParam.setOrgcode(orgCode);
+				deleteParam.setOrgcode(cancelOrgBindRequest.getOrgCode());
 				titanOrgBindinfoDao.delete(deleteParam);
 				//更改注册渠道，防止在钱包系统无法登陆问题.
 				TitanOrg entity = new TitanOrg();
-				entity.setOrgcode(orgCode);
+				entity.setOrgcode(cancelOrgBindRequest.getOrgCode());
 				entity.setRegChannel(CoopTypeEnum.TWS.getKey());
 				titanOrgDao.update(entity);
+				
 			} catch (DaoException e) {
-				LOGGER.error("删除机构绑定关系失败，参数orgCode："+orgCode,e);
-				throw  new MessageServiceException("删除机构绑定关系失败，参数orgCode："+orgCode,e);
+				LOGGER.error("删除机构绑定关系失败，参数orgCode："+cancelOrgBindRequest.getOrgCode(),e);
+				throw  new MessageServiceException("删除机构绑定关系失败，参数orgCode："+cancelOrgBindRequest.getOrgCode(),e);
 			}
-		}
-		
-		if(!StringUtil.isValidString(merchantcode)){
-			
+		}else{//绑定关系不存在
+			responseDTO.putErrorResult("机构绑定关系不存在，请确认后操作");
 			return responseDTO;
 		}
-		//删除员工绑定
+		
+		//2-删除员工绑定
 		UserBindInfoRequest userBindInfoRequest = new UserBindInfoRequest();
 		userBindInfoRequest.setMerchantcode(merchantcode);
 		UserBindInfoResponse userBindInfoResponse = titanFinancialUserService.queryUserBindInfoDTO(userBindInfoRequest);
@@ -1658,8 +1673,11 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 				LOGGER.error("删除员工绑定关系失败，参数merchantcode："+merchantcode,e);
 				throw  new MessageServiceException("删除员工绑定关系失败",e);
 			}
+		}else{//绑定关系不存在
+			responseDTO.putErrorResult("用户绑定关系不存在，请确认后操作");
+			return responseDTO;
 		}
-		
+		responseDTO.putSuccess("成功解除机构和员工绑定关系");
 		return responseDTO;
 	}
 	

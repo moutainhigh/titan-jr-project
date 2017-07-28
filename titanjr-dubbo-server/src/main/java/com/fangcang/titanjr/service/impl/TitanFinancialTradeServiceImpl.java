@@ -57,6 +57,7 @@ import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
 import com.fangcang.titanjr.dao.TitanAccountDao;
@@ -2045,7 +2046,20 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 								.getResMsg());
 				return orderCreateResponse;
 			}
-			
+			//--判断付款方和收款方是否发生了变化--luoqinglong-
+			TitanTransOrder newTransOrder = new TitanTransOrder();
+			TransOrderCreateResponse localOrderResponse = this.setBaseUserInfo(titanOrderRequest,newTransOrder);//仅仅是为了获得订单的收付款双方
+			if(localOrderResponse.isResult()){
+				//收款和付款方任意一方绑定关系变化，则重新下单
+				if(isChange(transOrderDTO.getPayeemerchant(), newTransOrder.getPayeemerchant())||isChange(transOrderDTO.getPayermerchant(), newTransOrder.getPayermerchant())){
+					updateOrderNoEffect(transOrderRequest.getTransid());
+					log.info("订单orderid:"+transOrderDTO.getOrderid()+",订单Payorderno:"+transOrderDTO.getPayorderno()+",订单的收付款双方发生改变,需要重新生成订单。旧的收款方Payeemerchant："+transOrderDTO.getPayeemerchant()+",Payermerchant:"+transOrderDTO.getPayermerchant()+"，新收款方Payeemerchant:"+newTransOrder.getPayeemerchant()+",Payermerchant:"+newTransOrder.getPayermerchant());
+					return null;
+				}
+			}else{
+				orderCreateResponse.putErrorResult("订单收付款信息错误");
+				return orderCreateResponse;
+			}
 			
 			if (OrderStatusEnum.isPaySuccess(transOrderDTO
 					.getStatusid())) {
@@ -2145,6 +2159,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 		}
 		return null;
+	}
+	
+	private boolean isChange(String value,String value2){
+		if(StringUtil.isValidString(value)&&StringUtil.isValidString(value2)&&(!value.equals(value2))){
+			return true;
+		}
+		return false;
 	}
 
 	private long getExpireTime(Integer orderExpireTime) {

@@ -60,7 +60,7 @@
   
   
   <select id="selectTitanOrgBindinfoByUserid" parameterType="com.fangcang.titanjr.entity.TitanOrgBindinfo" resultType="com.fangcang.titanjr.entity.TitanOrgBindinfo">
-     select userid, merchantcode, orgcode, merchantname, bindstatus,  creator, 
+     select userid, merchantcode, orgcode, merchantname,cooptype, bindstatus,  creator, 
       createtime, modifier, modifytime from t_tfs_orgbindinfo  
       <where>
       	bindstatus = 1

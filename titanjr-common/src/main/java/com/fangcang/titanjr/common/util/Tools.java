@@ -1,9 +1,7 @@
 package com.fangcang.titanjr.common.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -15,9 +13,6 @@ import org.slf4j.LoggerFactory;
 import com.fangcang.titanjr.common.util.gson.NullStringToEmptyAdapterFactory;
 import com.fangcang.util.StringUtil;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSerializer;
-
-import net.sf.json.JSONSerializer;
 
 /**
  * 其他无法归类的工具方法

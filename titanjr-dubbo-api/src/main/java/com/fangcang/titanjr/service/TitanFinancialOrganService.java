@@ -232,5 +232,5 @@ public interface TitanFinancialOrganService {
     /***
      * 解除金融机构关联
      */
-    public BaseResponseDTO cancelOrgBind(String orgCode) throws MessageServiceException;;
+    public BaseResponseDTO cancelOrgBind(CancelOrgBindRequest cancelOrgBindRequest) throws MessageServiceException;;
 }

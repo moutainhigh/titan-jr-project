@@ -1,16 +1,10 @@
 package com.fangcang.titanjr.service;
 
-import java.util.List;
-
-import net.sf.json.JSONSerializer;
-
-import org.apache.http.NameValuePair;
 
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.SysConfig;
-import com.fangcang.titanjr.dto.request.NotifyClientRequest;
 import com.fangcang.titanjr.dto.request.PayMethodConfigRequest;
 import com.fangcang.titanjr.dto.request.PaymentUrlRequest;
 import com.fangcang.titanjr.dto.response.PaymentUrlResponse;

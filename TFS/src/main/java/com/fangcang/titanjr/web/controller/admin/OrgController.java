@@ -2,8 +2,6 @@ package com.fangcang.titanjr.web.controller.admin;
 
 import javax.annotation.Resource;
 
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -11,31 +9,28 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fangcang.titanjr.common.enums.CoopTypeEnum;
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
-import com.fangcang.titanjr.common.util.CommonConstant;
-import com.fangcang.titanjr.common.util.SMSTemplate;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
-//import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
-import com.fangcang.titanjr.dto.bean.OrgDTO;
+import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.request.CancelOrgBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.OrganCheckRequest;
-import com.fangcang.titanjr.dto.request.SendMessageRequest;
-import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.OrganCheckResponse;
 import com.fangcang.titanjr.dto.response.OrganQueryCheckResponse;
-import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
-import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.controller.BaseController;
 import com.fangcang.titanjr.web.pojo.OrgPojo;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
+
+import net.sf.json.JSONSerializer;
 
 /**
  * 金融机构审核
@@ -213,7 +208,22 @@ public class OrgController extends BaseController{
 			return toJson();
 		}
 		try {
-			BaseResponseDTO baseResponseDTO = organService.cancelOrgBind(orgCode);
+			//暂时只支持SaaS注册的金融账户
+			OrgBindInfo orgBindInfo = new OrgBindInfo();
+			orgBindInfo.setOrgcode(orgCode);
+			orgBindInfo = organService.queryOrgBindInfoByUserid(orgBindInfo);
+			if(orgBindInfo==null){
+				putSysError("该金融账户的绑定关系不存在");
+				return toJson();
+			}
+			if(!orgBindInfo.getCoopType().equals(CoopTypeEnum.SAAS.getKey())){
+				putSysError("暂时只支持SaaS注册的金融账户");
+				return toJson();
+			}
+			CancelOrgBindRequest cancelOrgBindRequest = new CancelOrgBindRequest();
+			cancelOrgBindRequest.setOrgCode(orgCode);
+			cancelOrgBindRequest.setOperator(getSAASLoginName());
+			BaseResponseDTO baseResponseDTO = organService.cancelOrgBind(cancelOrgBindRequest); 
 			if(baseResponseDTO.isResult()){
 				putSuccess("取消成功");
 				return toJson();
@@ -226,6 +236,5 @@ public class OrgController extends BaseController{
 			putSysError(e.getMessage());
 			return toJson();
 		}
-		
 	}
 }

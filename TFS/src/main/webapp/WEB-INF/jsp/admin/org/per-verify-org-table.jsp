@@ -15,8 +15,8 @@
 	</td>
 	<td class="td-data" data-orgId="${orgCheckDTO.orgId}" data-orgCode="${orgCheckDTO.orgcode}" data-tfsLoginUsername="${orgCheckDTO.userloginname }">
 		<c:if test="${orgCheckDTO.resultkey!='FT' and orgCheckDTO.resultkey!='REVIEW'}"><span class="orange cursor undl J_examine" data-opt="view">查看</span></c:if>
-		<c:if test="${orgCheckDTO.resultkey=='FT' or orgCheckDTO.resultkey=='REVIEW'}"><span class="c_blue cursor undl J_examine" data-opt="check">审核</span></c:if>
-		<c:if test="${not empty orgCheckDTO.merchantcode}"><span class="c_blue cursor undl J_cancel_orgbind" >取消绑定</span></c:if>
+		<c:if test="${orgCheckDTO.resultkey=='FT' or orgCheckDTO.resultkey=='REVIEW'}"><span class="c_blue cursor undl J_examine" data-opt="check" style="padding-left:5px;">审核</span></c:if>
+		<c:if test="${not empty orgCheckDTO.merchantcode}"><span class="c_blue cursor undl J_cancel_orgbind" style="padding-left:5px;" >取消绑定</span></c:if>
 	</td>
 </tr>
 </c:forEach>
@@ -51,7 +51,7 @@ $(".J_cancel_orgbind").on('click',function(){
 	        title: '提示',
 	        padding: '35px 20px 39px 35px',
 	        width:420,
-	        content: '确定要取消该金融账户与SaaS的绑定关系?',
+	        content: '确定要取消该金融账户的绑定关系?',
 	        okValue: '确 定',
 	        ok: function () {
 	      	  $.ajax({
