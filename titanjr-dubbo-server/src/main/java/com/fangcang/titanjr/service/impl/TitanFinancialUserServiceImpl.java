@@ -335,6 +335,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     	condition.setIsadmin(userInfoQueryRequest.getIsadmin());
     	paginationSupport = titanUserDao.selectForPage(condition, paginationSupport);
     	userInfoPageResponse.setTitanUserPaginationSupport(paginationSupport);
+    	userInfoPageResponse.putSuccess();
     	
 		return userInfoPageResponse;
 	}
