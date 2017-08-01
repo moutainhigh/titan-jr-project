@@ -18,7 +18,7 @@
            				http://code.alibabatech.com/schema/dubbo
            				http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-	<dubbo:application name="titanjr_service_consumer" />
+	<dubbo:application name="titanjr_pay_consumer" />
 	<!--  group="production" -->
 
 	<dubbo:consumer check="false"/>

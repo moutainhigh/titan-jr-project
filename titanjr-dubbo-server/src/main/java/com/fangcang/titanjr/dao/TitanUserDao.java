@@ -12,7 +12,7 @@ import java.util.List;
 public interface TitanUserDao {
 	PaginationSupport<TitanUser> selectForPage(TitanUserParam condition, PaginationSupport<TitanUser> paginationSupport) throws DaoException;
 	int insert(TitanUser entity) throws DaoException;
-	int update(TitanUser entity) throws DaoException;
+	int update(TitanUserParam entity) throws DaoException;
 	
 	TitanUser selectTitanUser(Integer tfsuserid) throws DaoException;
 

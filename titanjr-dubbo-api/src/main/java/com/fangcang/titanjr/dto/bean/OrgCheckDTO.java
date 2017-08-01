@@ -16,6 +16,7 @@ public class OrgCheckDTO implements Serializable{
 	private String orgcode;
 	private Integer tfsuserid;
 	private String userloginname;
+	private String merchantcode;
 	private String orgname;
 	private String buslince;	
 	private String connect;	
@@ -97,6 +98,12 @@ public class OrgCheckDTO implements Serializable{
 	}
 	public void setResultkey(String resultkey) {
 		this.resultkey = resultkey;
+	}
+	public String getMerchantcode() {
+		return merchantcode;
+	}
+	public void setMerchantcode(String merchantcode) {
+		this.merchantcode = merchantcode;
 	}
 	
 	

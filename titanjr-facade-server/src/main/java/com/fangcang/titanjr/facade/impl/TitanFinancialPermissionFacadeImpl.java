@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
@@ -150,7 +151,7 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
         orgBindDTO.setBindStatus(1);
         List<OrgBindInfoDTO> orgBindDTOList = titanFinancialOrganService.queryOrgBindInfoDTO(orgBindDTO);
         if (null == orgBindDTOList || orgBindDTOList.size() != 1 || orgBindDTOList.get(0) == null) {
-            log.error("当前商家未开通或绑定金服机构");
+            log.error("验证账户---> 错误信息：当前商家未开通或绑定金服机构，请求参数[accountInfoRequest]："+Tools.gsonToString(accountInfoRequest));
             checkAccountResponse.setReturnMessage("当前商家未开通或绑定金服机构");
             return checkAccountResponse;
         }

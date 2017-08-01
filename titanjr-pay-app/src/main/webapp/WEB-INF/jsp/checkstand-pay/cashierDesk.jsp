@@ -303,6 +303,7 @@
 			escrowedDate:'${cashDeskData.escrowedDate}',
 			isEscrowed:'${cashDeskData.isEscrowed}',
 			tradeAmount:'${cashDeskData.amount}',
+			sign:'${cashDeskData.sign}',
 			balanceusable:'${cashDeskData.balanceusable}',
 			accountHistoryDTO:'${cashDeskData.accountHistoryDTO}',
 			orgName:'${cashDeskData.orgName}',
@@ -774,13 +775,14 @@
 			$("#orderNo").val(data.data);
 			$("#confirmOrder").submit();
 		 }else{
-			  new top.Tip({msg: data.resultMsg, type: 1, timer: 2000});
-			  setTimeout(function () {
+			  new top.Tip({msg: data.resultMsg, type: 2, timer: 2000});
+			  /**setTimeout(function () {
 				 if(typeof data.data !='undefined'){
 						$("#orderNo").val(data.data);
 					 }
 				 $("#confirmOrder").submit();
 			  }, 2000);
+			  */
 		 }
     }
     

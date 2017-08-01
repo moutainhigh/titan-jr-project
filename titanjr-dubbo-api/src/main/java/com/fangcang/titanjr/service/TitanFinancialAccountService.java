@@ -1,11 +1,9 @@
 package com.fangcang.titanjr.service;
 
-import java.util.List;
-
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.CityInfoDTO;
-import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 
@@ -144,6 +142,18 @@ public interface TitanFinancialAccountService {
 	
 	
 	public CityInfosResponse getCityInfoList(CityInfoDTO cityInfo);
+	
+	
+	/**
+	 * 更新冻结订单
+	 * @author jerry
+	 * 
+	 * @param payOrderNo 支付订单号
+	 * @param operationType 操作类型 1、直接解冻  2、修改解冻日期
+	 * @param uNFreezeDate 解冻日期
+	 * @return BaseResponse
+	 */
+	public BaseResponseDTO updateFreezeOrder(UpdateFreezeOrderRequest updateFreezeOrderRequest);
 	
 	
 }

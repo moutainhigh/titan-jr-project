@@ -189,9 +189,18 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 	public boolean updateTransOrder(TransOrderDTO transOrderDTO) {
 		try{
 			TitanTransOrder titanTransOrder = new TitanTransOrder();
-			titanTransOrder.setTransid(transOrderDTO.getTransid());
-			titanTransOrder.setStatusid(transOrderDTO.getStatusid());
-			titanTransOrder.setOrderid(transOrderDTO.getOrderid());
+			if(transOrderDTO.getTransid() != null){
+				titanTransOrder.setTransid(transOrderDTO.getTransid());
+			}
+			if(StringUtil.isValidString(transOrderDTO.getStatusid())){
+				titanTransOrder.setStatusid(transOrderDTO.getStatusid());
+			}
+			if(StringUtil.isValidString(transOrderDTO.getOrderid())){
+				titanTransOrder.setOrderid(transOrderDTO.getOrderid());
+			}
+			if(transOrderDTO.getEscrowedDate() != null){
+				titanTransOrder.setEscrowedDate(transOrderDTO.getEscrowedDate());
+			}
 			int row = titanTransOrderDao.update(titanTransOrder);
 			if(row>0){
 				return true;
@@ -268,7 +277,7 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 	@Override
 	public String confirmOrderStatus(String orderNo) {
 		
-		List<String> statusId =  titanTransOrderDao.confirmOrderStatus(orderNo);
+		List<String> statusId =  titanTransOrderDao.queryTransOrderStatus(orderNo);
 		if(statusId.size()==1 && StringUtil.isValidString(statusId.get(0))){
 			if(OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(statusId.get(0)) || OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(statusId.get(0))){
 				return "success";

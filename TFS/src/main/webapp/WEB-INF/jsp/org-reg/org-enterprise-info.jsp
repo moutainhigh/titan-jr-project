@@ -39,9 +39,9 @@
 	                   <div class="b_c_t"><i class="tfs_ico"></i>公司信息</div>
 	                   <div class="b_c_c clearfix">
 	                    <ul>
-	                    <li><p><i class="c_f00">*</i>公司名称：</p><input type="text" class="text w_420 " name="orgName" value="${org.orgName }" placeholder="请与营业执照上的公司名称保持一致" datatype="*" errormsg="公司名称不能为空"></li>
-	                        <li><p><i class="c_f00">*</i>营业执照号：</p><input type="text" class="text w_420 " name="buslince" id="buslince" placeholder="三证合一请填写统一社会信用代码" value="${org.buslince }" datatype="*" errormsg="营业执照号不能为空" afterPassed="checkOrgRegNum"></li>
-	                        <li>
+	                    <li style="padding-bottom:30px;"><p><i class="c_f00">*</i>公司名称：</p><input type="text" class="text w_420 " name="orgName" value="${org.orgName }" placeholder="请与营业执照上的公司名称保持一致" datatype="*" errormsg="公司名称不能为空"></li>
+	                    <li style="padding-bottom:30px;"><p><i class="c_f00">*</i>营业执照号：</p><input type="text" class="text w_420 " name="buslince" id="buslince" placeholder="三证合一请填写统一社会信用代码" value="${org.buslince }" datatype="*" errormsg="营业执照号不能为空" afterPassed="checkOrgRegNum"></li>
+	                    <li style="padding-bottom:30px;">
 	                        <div class="fl w_290">
 		                        <p class="fl"><i class="c_f00">*</i>上传营业执照照片：</p>
 		                        <span class="fl span_btn w_50" id="img_upload">选择附件<input type="file" class="to_lead" name="img_file" id="img_file" onchange="ajaxFileUpload()"></span>
@@ -55,9 +55,10 @@
 	                        <c:if test="${empty small_img_10}">
 	                        	<img src="<%=cssSaasPath%>/images/TFS/tu12.jpg" width="130"  id="img_small" class="cursor J_magnify">
 	                        </c:if>  
+	                        <br><p class="fl" style="color: #9b9b9b; size: 12px;">仅支持 jpg、jpeg、png 文件格式</p>
 	                        <p></p>
 	                        </div>                      
-	                        </li>
+	                     </li>
 	                    </ul>
 	                   </div>
 	                 </div>
@@ -65,9 +66,9 @@
 	                     <div class="b_c_t"><span class="tfs_ico"></span>联系人信息</div>
 	                     <div class="b_c_c brn">
 	                     <ul>
-	                        <li><p><i class="c_f00">*</i>联系人：</p><input type="text" class="text w_420 " name="connect" value="${org.connect }" datatype="*" errormsg="联系人不能为空"></li>
-	                        <li><p><i class="c_f00">*</i>联系手机：</p><input type="text" class="text w_420 " name="mobiletel" value="${org.mobileTel }" id="mobiletel" require="true" datatype="m" errormsg="手机号码格式不正确"></li>
-	                        <li><p><i class="c_f00">*</i>短信验证码：</p><input type="text" class="text w_420 " name="smsRegCode" id="smsRegCode" datatype="*" errormsg="短信验证码不能为空">
+	                        <li style="padding-bottom:30px;"><p><i class="c_f00">*</i>联系人：</p><input type="text" class="text w_420 " name="connect" value="${org.connect }" datatype="*" errormsg="联系人不能为空"></li>
+	                        <li style="padding-bottom:30px;"><p><i class="c_f00">*</i>联系手机：</p><input type="text" class="text w_420 " name="mobiletel" value="${org.mobileTel }" id="mobiletel" require="true" datatype="m" errormsg="手机号码格式不正确"></li>
+	                        <li style="padding-bottom:30px;"><p><i class="c_f00">*</i>短信验证码：</p><input type="text" class="text w_420 " name="smsRegCode" id="smsRegCode" datatype="*" errormsg="短信验证码不能为空">
 	                        <span class="verify">获取验证码</span></li>
 	                     </ul>
 	                     </div>

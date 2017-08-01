@@ -85,7 +85,7 @@ public enum TitanMsgCodeEnum {
     TRANSFER_SUCCESS_UPDATE_LOACL_FAIL(110100027,"退款转账成功，更新本地单失败！"),
     
     
-    ORDER_NOT_REFUND(110100028,"该订单不存在或者未支付成功，不能退款"),
+    ORDER_NOT_REFUND(110100028,"该订单冻结失败或者未支付成功，不能退款"),
     
     ACCOUNT_BALANCE_NOT_ENOUGH(110100029,"账户余额不足，请充值"),
     
@@ -106,7 +106,7 @@ public enum TitanMsgCodeEnum {
 	
     ORDER_REFUNND_IN_PROCESS(110100037,"该订单正在退款，请勿重复退款"),
     
-    ORDER_OUT_TIME(110100038,"该订单已超出退款时间"),
+    ORDER_OUT_TIME(110100038,"该订单已超过退款时限30天，请线下退款"),
     
     REFUND_UNFREEZE_FAIL(110100039,"资金解冻失败"),
     
@@ -120,7 +120,8 @@ public enum TitanMsgCodeEnum {
     ORDER_PROGRESS_ING(110100043,"订单处理中，请等待！"),
     
     REQUEST_PAYER_FAIL(110100044,"请求付款失败！"),
-
+    
+    SIGN_INCORRECT(110100045,"签名错误"),
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");
 	

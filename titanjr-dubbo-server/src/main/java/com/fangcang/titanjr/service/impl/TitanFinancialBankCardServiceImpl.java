@@ -172,18 +172,18 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 	                            }
 	                        }
 	                    }
-	                    //绑卡失败也要在本地保存绑卡失败记录
-	                    if (titanBankcard != null) {
-	                    	try {
-								titanBankcard.setStatus(BindCardStatus.BIND_FAIL.status);
-								titanBankcard.setRemark(bankCardBindResponse.getReturnMsg());
-								titanBankcardDao.insert(titanBankcard);
-							} catch (Exception e) {
-								log.error("绑卡本地信息记录失败" + e.getMessage(), e);
-								e.printStackTrace();
-							}
-	                    }
 	                }
+	                //绑卡失败也要在本地保存绑卡失败记录
+                    if (titanBankcard != null) {
+                    	try {
+							titanBankcard.setStatus(BindCardStatus.BIND_FAIL.status);
+							titanBankcard.setRemark(bankCardBindResponse.getReturnMsg());
+							titanBankcardDao.insert(titanBankcard);
+						} catch (Exception e) {
+							log.error("绑卡本地信息记录失败" + e.getMessage(), e);
+							e.printStackTrace();
+						}
+                    }
 	            }
 	            log.error("绑卡失败,绑卡参数："+Tools.gsonToString(cusBankCardBindRequest)+",错误代码："+bankCardBindResponse.getReturnCode()+"，错误信息："+bankCardBindResponse.getReturnMsg());
 	            cusBankCardBindResponse.putErrorResult(bankCardBindResponse.getReturnCode(), bankCardBindResponse.getReturnMsg());
@@ -270,13 +270,13 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
                         TitanBankcard entity = new TitanBankcard();
                         entity.setUserid(deleteBindBankRequest.getUserid());
                         entity.setUsertype(Integer.parseInt(deleteBindBankRequest.getUsertype()));
-                        entity.setAccountnumber(deleteBindBankRequest.getAccountnumber());
+                        //entity.setAccountnumber(deleteBindBankRequest.getAccountnumber());
                         entity.setProductid(deleteBindBankRequest.getProductid());
                         try {
 							int result = titanBankcardDao.delete(entity);
 							log.info("本地删除绑卡成功，共删除" + result + "条记录");
 						} catch (Exception e) {
-							log.error("本地删除绑卡失败" + e.getMessage());
+							log.error("本地删除绑卡异常", e);
 						}
                     } else {
                         deleteBindBankResponse.putErrorResult(deletePersonCardResponse.getReturnCode(), deletePersonCardResponse.getReturnMsg());
@@ -475,7 +475,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		try {
 			titanBankcard = titanBankcardDao.selectEntity(param);
 		} catch (DaoException e) {
-			e.printStackTrace();
+			log.error("查询本地绑卡信息异常", e);
 		}
 		return titanBankcard;
 	}
@@ -536,6 +536,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 				            titanBankcard.setBankcity(cid.getBankcity());
 				            titanBankcard.setBankheadname(cid.getBankheadname());
 				            titanBankcard.setBankprovince(cid.getBankprovince());
+				            titanBankcard.setBankcode(cid.getBankhead());
 				            
 				            titanBankcard.setCertificatetype(cid.getCertificatetype());
 				            titanBankcard.setCertificatenumnumber(cid.getCertificatenumber());
@@ -565,15 +566,19 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 			baseResponseDTO.setReturnMessage("未查询到需要同步的对私绑卡记录，errorMsg：" + errorMsg.toString());
 			return baseResponseDTO;
 		}
+		log.info("在融数查询到" + cardList.size() + "条需要同步的对私绑卡记录");
+		
 		//插入之前先删除本地对私绑卡信息
 		TitanBankcard deleteReq = new TitanBankcard();
-		deleteReq.setUsertype(Integer.parseInt(CommonConstant.PERSONAL));
+		deleteReq.setAccountproperty(CommonConstant.PERSONAL);
 		deleteReq.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
 		deleteReq.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+		log.info("执行删除本地对私卡绑定信息，参数：" + deleteReq.toString());
 		int deleteResult = titanBankcardDao.delete(deleteReq);
 		log.info("删除本地对私绑卡信息成功，一共删除" + deleteResult + "条记录");
 		
 		//批量插入
+		log.info("执行批量插入对私卡绑定记录");
 		int inserResult = titanBankcardDao.intsertBatch(cardList);
 		baseResponseDTO.setResult(true);
 		baseResponseDTO.setReturnMessage("成功同步" + inserResult + "条对私绑卡记录，errorMsg：" + errorMsg.toString());

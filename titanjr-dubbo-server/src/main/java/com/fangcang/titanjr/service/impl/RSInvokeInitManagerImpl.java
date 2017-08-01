@@ -63,7 +63,7 @@ public class RSInvokeInitManagerImpl {
         }else{
         	throw new RuntimeException("rong shu sdk init failed, param[rSInvokeConfig] is null");
         }
-        initSessionKey(RSInvokeConstant.ropClient);
+        //initSessionKey(RSInvokeConstant.ropClient);
         //用新的方式查询
         TitanPayMethod titanPayMethod = getTitanPayMethod();
         if (titanPayMethod!=null) {
@@ -94,7 +94,6 @@ public class RSInvokeInitManagerImpl {
 		if(CollectionUtils.isNotEmpty(list)){
 			RSInvokeConfig invokeConfig = new RSInvokeConfig();
 			for(TitanSysConfig item : list){
-				//TODO 改为连接uat的贷款环境，上线后改成从数据库取。
 				if(item.getCfgKey().equals("RSInvokeConfig_appKey")){
 					invokeConfig.setAppKey(item.getCfgValue());
 					continue;
@@ -194,15 +193,6 @@ public class RSInvokeInitManagerImpl {
 		return cList;
 	}
     
-    public void initSessionKey(DefaultRopClient ropClient) {
-        try {
-            ExternalSessionGetRequest sessionGetReq = new ExternalSessionGetRequest();
-            ExternalSessionGetResponse sessionGetRsp = ropClient.execute(sessionGetReq);
-            RSInvokeConstant.sessionKey = sessionGetRsp.getSession();
-        } catch (Exception e) {
-            log.error("初始化加载sessionkey失败", e);
-        }
-    }
     /**
      * 初始化融数上传资料使用的rsa 公钥
      */

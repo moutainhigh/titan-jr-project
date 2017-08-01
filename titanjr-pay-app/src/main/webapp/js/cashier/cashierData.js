@@ -9,10 +9,16 @@ function initCashierData(data){
 		}
 		return false;
 	};
+	cashierData.isaccount = function(){
+		if(cashierData.checkBoxIsChecked()){
+			return 1;
+		}
+		return 2;
+	};
 	cashierData.pay_totalAmount = function(){
 		return $("#pay_totalAmount").text();
 	};
-	
+	//余额支付总额
 	cashierData.transferAmount=function(){
 		if(sub(cashierData.tradeAmount, cashierData.balanceusable) <= 0){
 			if(cashierData.checkBoxIsChecked()){
@@ -25,15 +31,15 @@ function initCashierData(data){
 		}
 		return "0";
 	};
-	
+	//充值金额
 	cashierData.payAmount = function(){
 		if(sub(cashierData.tradeAmount, cashierData.balanceusable) <= 0){
-			if(!cashierData.checkBoxIsChecked()){
+			if(!cashierData.checkBoxIsChecked()){//不用余额
 				return cashierData.tradeAmount;
 			}
 		}else{
-			if(cashierData.checkBoxIsChecked()){
-				return sub(cashierData.tradeAmount, cashierData.balanceusable);
+			if(cashierData.checkBoxIsChecked()){//用余额
+				return sub(cashierData.tradeAmount, cashierData.balanceusable);//还要充值的金额
 			}else{
 				return cashierData.tradeAmount;
 			}
@@ -109,24 +115,21 @@ function initCashierData(data){
 	
 	cashierData.onlinePayData = function(){
 		var data= {
-		       	 merchantcode:cashierData.merchantcode,
 		       	 payOrderNo:cashierData.payOrderNo,
 		       	 fcUserid:cashierData.fcUserid,
 		       	 userid:cashierData.userid,
 		       	 deskId:cashierData.deskId,
 		         paySource:cashierData.paySource,
 		         creator:cashierData.creator,
-		         escrowedDate:cashierData.escrowedDate,
-		       	 isEscrowed:cashierData.isEscrowed,
 		       	 tradeAmount:cashierData.tradeAmount,
-		       	 
-		       	 transferAmount:cashierData.transferAmount(),
-		       	 payAmount:cashierData.payAmount(),
+		       	 sign:cashierData.sign,
+		       	
 		       	 recieveOrgName:cashierData.recieveOrgName(),
 		       	 recieveTitanCode:cashierData.recieveTitanCode(),
 		       	 bankInfo:cashierData.bankInfo(),
-		         linePayType:cashierData.linePayType(),	
-		         payPassword:cashierData.payPassword(),
+		         linePayType:cashierData.linePayType(),
+		         isaccount:cashierData.isaccount(),
+		         payPassword:cashierData.payPassword()
 		};
 		return data;
 	};
@@ -149,23 +152,18 @@ function initCashierData(data){
 		form.action = '../payment/packageRechargeData.action';
 		form.id = 'onlinePaymentForm';
 		form.method = 'post';
+		
+			var isaccount = document.createElement("input");
+			isaccount.type = 'hidden';
+			isaccount.name = 'isaccount';
+			isaccount.id = 'isaccount';
+			form.appendChild(isaccount);
+		
 			var payPassword = document.createElement("input");
 			payPassword.type = 'hidden';
 			payPassword.name = 'payPassword';
 			payPassword.id = 'payPassword';
 			form.appendChild(payPassword);
-			
-			var transferAmount = document.createElement("input");
-			transferAmount.type = 'hidden';
-			transferAmount.name = 'transferAmount';
-			transferAmount.id = 'transferAmount';
-			form.appendChild(transferAmount);
-		
-			var payAmount = document.createElement("input");
-			payAmount.type = 'hidden';
-			payAmount.name = 'payAmount';
-			payAmount.id = 'payAmount';
-			form.appendChild(payAmount);
 			
 			var recieveOrgName = document.createElement("input");
 			recieveOrgName.type = 'hidden';
@@ -221,6 +219,12 @@ function initCashierData(data){
 			payOrderNo.id = 'payOrderNo';
 			form.appendChild(payOrderNo);
 		
+			var sign = document.createElement("input");
+			sign.type = 'hidden';
+			sign.name = 'sign';
+			sign.id = 'sign';
+			form.appendChild(sign);
+			
 			var fcUserid = document.createElement("input");
 			fcUserid.type = 'hidden';
 			fcUserid.name = 'fcUserid';
@@ -237,9 +241,9 @@ function initCashierData(data){
 	
 	cashierData.submit = function(){
 		cashierData.form();
+		
+		document.getElementById('isaccount').value=cashierData.isaccount();
 		document.getElementById('payPassword').value=cashierData.payPassword();
-		document.getElementById('transferAmount').value=cashierData.transferAmount();
-		document.getElementById('payAmount').value=cashierData.payAmount();
 		
 		document.getElementById('recieveOrgName').value=cashierData.recieveOrgName();
 		document.getElementById('recieveTitanCode').value=cashierData.recieveTitanCode();
@@ -252,6 +256,7 @@ function initCashierData(data){
 		document.getElementById('payOrderNo').value=cashierData.payOrderNo;
 		document.getElementById('tradeAmount').value=cashierData.tradeAmount;
 		document.getElementById('fcUserid').value=cashierData.fcUserid;
+		document.getElementById('sign').value=cashierData.sign;
 		document.getElementById('onlinePaymentForm').submit();
 	};
 	

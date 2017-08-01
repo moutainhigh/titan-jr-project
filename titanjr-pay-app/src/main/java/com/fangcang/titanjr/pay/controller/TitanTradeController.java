@@ -14,8 +14,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +33,7 @@ import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.rsa.Base64Helper;
@@ -66,6 +65,7 @@ import com.fangcang.titanjr.dto.response.PaymentUrlResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.req.CreateVirtualOrgReq;
+import com.fangcang.titanjr.pay.req.DeskReq;
 import com.fangcang.titanjr.pay.services.TitanTradeService;
 import com.fangcang.titanjr.pay.util.RSADecryptString;
 import com.fangcang.titanjr.service.BusinessLogService;
@@ -77,6 +77,8 @@ import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanFinancialVirtualService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
+
+import net.sf.json.JSONSerializer;
 
 @Controller
 @RequestMapping("/trade")
@@ -318,11 +320,11 @@ public class TitanTradeController extends BaseController {
 			if (dto.getPayerType().equals(PayerTypeEnum.WITHDRAW.getKey())) {
 				String fcUserId = "";
 				String tfsUserId = "";
-				Map<String, String> map = dto.getBusinessInfo();
-				if (map != null) {
-					fcUserId = map.get("fcUserId") == null ? "" : map
+				Map<String, String> businessInfoMap = dto.getBusinessInfo();
+				if (businessInfoMap != null) {
+					fcUserId = businessInfoMap.get("fcUserId") == null ? "" : businessInfoMap
 							.get("fcUserId");
-					tfsUserId = map.get("tfsUserId") == null ? "" : map
+					tfsUserId = businessInfoMap.get("tfsUserId") == null ? "" : businessInfoMap
 							.get("tfsUserId");
 				}
 				url = "/withdraw/account-withdraw.action?userId="
@@ -337,6 +339,9 @@ public class TitanTradeController extends BaseController {
 				paymentUrlRequest.setIsEscrowed(EscrowedEnum.ESCROWED_PAYMENT
 						.getKey());
 				paymentUrlRequest.setPaySource(dto.getPayerType());
+				if(dto.getPayerType().equals(PayerTypeEnum.SUPPLY_FINACIAL.key)){
+					paymentUrlRequest.setFcUserid(dto.getUserId());
+				}
 				PaymentUrlResponse response = titanFinancialUtilService
 						.getPaymentUrl(paymentUrlRequest);
 
@@ -377,7 +382,61 @@ public class TitanTradeController extends BaseController {
 		model.addAttribute("msg", TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
 		return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 	}
+	
+	private StringBuffer buildParamList(PaymentUrlRequest paymentUrlRequest) {
+		StringBuffer paramList = new StringBuffer();
+		if (StringUtil.isValidString(paymentUrlRequest.getMerchantcode())) {
+			paramList.append("?merchantcode=").append(
+					paymentUrlRequest.getMerchantcode());
+		} else {
+			paramList.append("?merchantcode=");
+		}
+		if (StringUtil.isValidString(paymentUrlRequest.getFcUserid())) {
+			paramList.append("&fcUserid=").append(
+					paymentUrlRequest.getFcUserid());
+		} else {
+			paramList.append("&fcUserid=");
+		}
+		paramList.append("&payOrderNo=").append(
+				paymentUrlRequest.getPayOrderNo());
+		paramList.append("&paySource=")
+				.append(paymentUrlRequest.getPaySource());
 
+		if (StringUtil.isValidString(paymentUrlRequest.getOperater())) {
+			paramList.append("&operater=").append(
+					paymentUrlRequest.getOperater());
+		} else {
+			paramList.append("&operater=");
+		}
+		if (StringUtil
+				.isValidString(paymentUrlRequest.getRecieveMerchantCode())) {
+			paramList.append("&recieveMerchantCode=").append(
+					paymentUrlRequest.getRecieveMerchantCode());
+		} else {
+			paramList.append("&recieveMerchantCode=");
+		}
+		if (StringUtil.isValidString(paymentUrlRequest.getBusinessOrderCode())) {
+			paramList.append("&businessOrderCode=").append(
+					paymentUrlRequest.getBusinessOrderCode());
+		} else {
+			paramList.append("&businessOrderCode=");
+		}
+		if (StringUtil.isValidString(paymentUrlRequest.getNotifyUrl())) {
+			paramList.append("&notifyUrl=").append(
+					paymentUrlRequest.getNotifyUrl());
+		} else {
+			paramList.append("&notifyUrl=");
+		}
+		paramList.append("&isEscrowed=").append(
+				paymentUrlRequest.getIsEscrowed());
+		if (StringUtil.isValidString(paymentUrlRequest.getEscrowedDate())) {
+			paramList.append("&escrowedDate=").append(
+					paymentUrlRequest.getEscrowedDate());
+		} else {
+			paramList.append("&escrowedDate=");
+		}
+		return paramList;
+	}
 	/**
 	 * 检查订单中的信息是否合法
 	 * 
@@ -652,14 +711,26 @@ public class TitanTradeController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("/showCashierDesk")
-	public String showCashierDesk(String payOrderNo, String sign, Model model) {
-
+	public String showCashierDesk(DeskReq  deskReq, Model model) {
+		String payOrderNo = deskReq.getPayOrderNo();
 		log.info("showCashierDesk payOrderNo = " + payOrderNo);
-
+		
 		if (!StringUtil.isValidString(payOrderNo)) {
 			log.error("pay orderNo is null");
 			model.addAttribute("msg",
 					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getResMsg());
+			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+		}
+		//校验签名sign
+		String key = titanOrderService.getKeyByPayOrderNo(payOrderNo);
+		StringBuffer cashierDeskURL = buildParamList(deskReq);
+		cashierDeskURL.append("&key=").append(key);
+		String sign = MD5.MD5Encode(cashierDeskURL.toString(), "UTF-8");
+		
+		if(!(sign.equals(deskReq.getSign())&&StringUtil.isValidString(deskReq.getSign()))){
+			log.error("显示收银台时，签名错误。签名为："+sign+"，输入参数："+Tools.gsonToString(deskReq));
+			model.addAttribute("msg",
+					TitanMsgCodeEnum.SIGN_INCORRECT.getResMsg());
 			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 		}
 
@@ -776,7 +847,7 @@ public class TitanTradeController extends BaseController {
 
 				cashDeskData.setAccountHistoryDTO(accountHistoryResponse
 						.getAccountHistoryDTOList().get(0));
-				cashDeskData.setUserIDOrgMap(userIDOrgMap);
+				cashDeskData.setUserIDOrgMap(userIDOrgMap);//pay页面中未用到
 				log.info("set account history is ok");
 			}
 		}
@@ -859,7 +930,8 @@ public class TitanTradeController extends BaseController {
 				.isSupportLoanApply(cashDeskData.getUserId(), PayerTypeEnum
 						.getPayerTypeEnumByKey(transOrderDTO.getPayerType()),
 						cashDeskData.getFcUserid(), billCode));
-		
+		//
+		cashDeskData.setSign(md5CashDeskData(cashDeskData,TitanConstantDefine.PAY_APP_CASHIER_SIGN_MD5_KEY));
 		model.addAttribute("cashDeskData", cashDeskData);
 
 		log.info("end set cash desk data ");
@@ -870,7 +942,62 @@ public class TitanTradeController extends BaseController {
 		}
 		return TitanConstantDefine.CASHIER_DESK_MAIN_PAGE;
 	}
-
+	
+	/**
+	 * 加密传到收银台的敏感数据
+	 * @param cashDeskData 收银台数据
+	 * @param md5key
+	 * @return
+	 */
+	private String md5CashDeskData(CashDeskData cashDeskData,String md5key){
+		StringBuilder stringBuilder = new StringBuilder("1=2");
+		if(StringUtil.isValidString(cashDeskData.getUserId())){
+			stringBuilder.append("&").append("userId=").append(cashDeskData.getUserId());
+		}
+		if(StringUtil.isValidString(cashDeskData.getPayOrderNo())){
+			stringBuilder.append("&").append("payOrderNo=").append(cashDeskData.getPayOrderNo());
+		}
+//		if(StringUtil.isValidString(cashDeskData.getMerchantcode())){
+//			stringBuilder.append("&").append("merchantcode=").append(cashDeskData.getMerchantcode());
+//		}
+		if(StringUtil.isValidString(cashDeskData.getAmount())){
+			stringBuilder.append("&").append("amount=").append(cashDeskData.getAmount());
+		}
+//		if(StringUtil.isValidString(cashDeskData.getTitanCode())){
+//			stringBuilder.append("&").append("titanCode=").append(cashDeskData.getTitanCode());
+//		}
+		if(StringUtil.isValidString(cashDeskData.getFcUserid())){
+			stringBuilder.append("&").append("fcUserid=").append(cashDeskData.getFcUserid());
+		}
+//		if(StringUtil.isValidString(cashDeskData.getTfsUserId())){
+//			stringBuilder.append("&").append("tfsUserId=").append(cashDeskData.getTfsUserId());
+//		}
+//		if(StringUtil.isValidString(cashDeskData.getBalanceusable())){
+//			stringBuilder.append("&").append("balanceusable=").append(cashDeskData.getBalanceusable());
+//		}
+		if(StringUtil.isValidString(cashDeskData.getOperator())){
+			stringBuilder.append("&").append("operator=").append(cashDeskData.getOperator());
+		}
+		if(StringUtil.isValidString(cashDeskData.getPaySource())){
+			stringBuilder.append("&").append("paySource=").append(cashDeskData.getPaySource());
+		}
+//		if(StringUtil.isValidString(cashDeskData.getIsEscrowed())){
+//			stringBuilder.append("&").append("isEscrowed=").append(cashDeskData.getIsEscrowed());
+//		}
+//		if(StringUtil.isValidString(cashDeskData.getRecieveOrgCode())){
+//			stringBuilder.append("&").append("recieveOrgCode=").append(cashDeskData.getRecieveOrgCode());
+//		}
+//		if(StringUtil.isValidString(cashDeskData.getBusinessOrderCode())){
+//			stringBuilder.append("&").append("businessOrderCode=").append(cashDeskData.getBusinessOrderCode());
+//		}
+		if(cashDeskData.getDeskId()!=null&&cashDeskData.getDeskId()>0){
+			stringBuilder.append("&").append("deskId=").append(cashDeskData.getDeskId());
+		}
+		stringBuilder.append("&").append("key=").append(md5key);
+		log.info("showCashierDesk,md5原明文"+stringBuilder.toString());
+		return MD5.MD5Encode(stringBuilder.toString());
+	} 
+	
 	@ResponseBody
 	@RequestMapping("genLoacalPayOrderNo")
 	public Map<String, String> getRechargePayOrderNo() {

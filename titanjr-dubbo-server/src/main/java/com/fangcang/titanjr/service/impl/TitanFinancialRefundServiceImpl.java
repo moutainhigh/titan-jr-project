@@ -510,7 +510,7 @@ public class TitanFinancialRefundServiceImpl implements
 	private NotifyRefundResponse notifyGateawayRefund(
 			NotifyRefundRequest notifyRefundRequest) {
 		NotifyRefundResponse notifyRefundResponse = new NotifyRefundResponse();
-		if(null ==notifyRefundRequest){
+		if(null == notifyRefundRequest){
 			notifyRefundResponse.putErrorResult(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 			return notifyRefundResponse;
 		}
@@ -522,10 +522,11 @@ public class TitanFinancialRefundServiceImpl implements
 		try {
  
 			HttpResponse resp = HttpClient.httpRequest(params,httpPost);
-			log.info("调用融数网关gateWayURL退款或查询退款状态,操作："+busiCodeEnum.toString()+",orderId："+notifyRefundRequest.getOrderNo()+",请求参数:"+Tools.gsonToString(params)+",退款返回信息："+response);
 			if (null != resp) {
 				HttpEntity entity = resp.getEntity();
 				response = EntityUtils.toString(entity);
+				log.info("调用融数网关gateWayURL退款或查询退款状态,操作："+busiCodeEnum.toString()+",orderId："+notifyRefundRequest.getOrderNo()+",请求参数:"+Tools.gsonToString(params)+",退款返回信息response："+response);
+				
 				notifyRefundResponse = RSConvertFiled2ObjectUtil.convertField2Object(NotifyRefundResponse.class, response);
 				notifyRefundResponse.putSuccess("");
 				if(StringUtil.isValidString(notifyRefundResponse.getErrCode()) 
@@ -656,7 +657,7 @@ public class TitanFinancialRefundServiceImpl implements
 		}
 		transOrderRequest.setStatusId(OrderStatusEnum.REFUND_IN_PROCESS.getStatus());
 		
-		List<RefundDTO> refundDTOList =  titanTransOrderDao.selectTitanTransOrderAndRefund(transOrderRequest);
+		List<RefundDTO> refundDTOList =  titanTransOrderDao.selectTransRefundOrder(transOrderRequest);
 		if(null == refundDTOList || refundDTOList.size()<1){
 			log.info("refundConfirm ，无退款中的订单记录");
 			return ;

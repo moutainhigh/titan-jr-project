@@ -261,6 +261,7 @@
     	<result property="orgcode" column="orgcode"/>
     	<result property="tfsuserid" column="tfsuserid"/>
     	<result property="userloginname" column="userloginname"/>
+    	<result property="merchantcode" column="merchantcode"/>
     	<result property="orgname" column="orgname"/>
     	<result property="buslince" column="buslince"/>
     	<result property="connect" column="connect"/>
@@ -282,6 +283,7 @@
 			G.mobiletel,
 			U.tfsuserid,
 			U.userloginname,
+			U.`merchantcode`,
 			C.resultkey ,
 			C.checkuser,
 			C.checktime
@@ -436,6 +438,9 @@
             </if>
             <if test="email != null">
                 email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="regChannel != null">
+                regchannel = #{regChannel},
             </if>
             <if test="lastUpdateDate != null">
                 lastupdatedate = #{lastUpdateDate},

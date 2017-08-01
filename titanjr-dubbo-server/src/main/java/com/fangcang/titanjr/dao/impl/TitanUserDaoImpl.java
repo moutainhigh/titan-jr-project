@@ -12,6 +12,7 @@ import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.entity.parameter.TitanUserParam;
+import com.fangcang.util.StringUtil;
 
 public class TitanUserDaoImpl extends GenericDAOMyBatisImpl implements TitanUserDao{
 	@Override
@@ -36,8 +37,12 @@ public class TitanUserDaoImpl extends GenericDAOMyBatisImpl implements TitanUser
 	}
 
 	@Override
-	public int update(TitanUser entity) {
+	public int update(TitanUserParam entity) {
 		try {
+			if(entity.getTfsuserid()==null&&(!StringUtil.isValidString(entity.getClauseMerchantCode()))){
+				throw new DaoException("参数[Merchantcode,Tfsuserid]不能同时为空");
+			}
+			
 			return super.updateEntity("com.fangcang.titanjr.dao.TitanUserDao.updateEntity", entity);
 		} catch (Exception e) {
 			throw new DaoException(e);

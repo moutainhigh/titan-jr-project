@@ -10,7 +10,7 @@ import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.dao.TitanUserBindInfoDao;
-import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
+import com.fangcang.titanjr.dto.request.UserInfoQueryRequest;
 import com.fangcang.titanjr.entity.TitanUserBindInfo;
 import com.fangcang.titanjr.entity.parameter.TitanUserBindInfoParam;
 
@@ -44,6 +44,18 @@ public class TitanUserBindInfoDaoImpl extends GenericDAOMyBatisImpl implements T
 			throw new DaoException(e);
 		}
 	}
+	
+	
+	@Override
+	public boolean delete(TitanUserBindInfoParam param) throws DaoException {
+		try {
+			 super.delete("com.fangcang.titanjr.dao.TitanUserBindInfoDao.deleteEntity", param);
+			 return true;
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+
 	@Override
 	public int updateIsactiveBatch(Integer isactive,Integer coopType,String merchantcode,String modifior,Date modifytime) throws DaoException{
 		try {
@@ -69,6 +81,15 @@ public class TitanUserBindInfoDaoImpl extends GenericDAOMyBatisImpl implements T
 			throw new DaoException(e);
 		}
 		return null;
+	}
+	
+	@Override
+	public TitanUserBindInfo queryAdminUserBindInfo(UserInfoQueryRequest userInfoQueryRequest) {
+		try {
+			return (TitanUserBindInfo)super.selectOne("com.fangcang.titanjr.dao.TitanUserBindInfoDao.queryAdminUserBindInfo", userInfoQueryRequest);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
 	}
 	
 }

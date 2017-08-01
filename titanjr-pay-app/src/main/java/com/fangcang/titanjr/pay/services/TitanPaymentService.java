@@ -425,18 +425,22 @@ public class TitanPaymentService {
 				|| !StringUtil.isValidString(transOrderDTO.getBusinessinfo())) {
 			return null;
 		}
-		AccountHistoryDTO accountHistoryDTO = new AccountHistoryDTO();
+		AccountHistoryDTO accountHistoryDTO = null;
 		Map<String, String> bussinessInfoMap = JsonConversionTool.toObject(
 				transOrderDTO.getBusinessinfo(), Map.class);
 		if (bussinessInfoMap != null) {
 			String inAccountCode = bussinessInfoMap.get("inAccountCode");
 			String outAccountCode = bussinessInfoMap.get("outAccountCode");
-			accountHistoryDTO.setInaccountcode(inAccountCode);
-			accountHistoryDTO.setOutaccountcode(outAccountCode);
+			if(StringUtil.isValidString(inAccountCode)&&StringUtil.isValidString(outAccountCode)){
+				accountHistoryDTO = new AccountHistoryDTO();
+				accountHistoryDTO.setInaccountcode(inAccountCode);
+				accountHistoryDTO.setOutaccountcode(outAccountCode);
+				accountHistoryDTO.setPayeeuserid(transOrderDTO.getPayeemerchant());
+				accountHistoryDTO.setPayeruserid(transOrderDTO.getPayermerchant());
+				accountHistoryDTO.setCreatetime(new Date());
+			}
 		}
-		accountHistoryDTO.setPayeeuserid(transOrderDTO.getPayeemerchant());
-		accountHistoryDTO.setPayeruserid(transOrderDTO.getPayermerchant());
-		accountHistoryDTO.setCreatetime(new Date());
+		
 		return accountHistoryDTO;
 	}
 

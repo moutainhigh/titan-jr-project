@@ -22,9 +22,11 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	//付款密码
 	private String payPassword;
 	
-	//卡或者第三方支付需要支付金额
-    private String payAmount;
-
+	//卡或者第三方支付需要支付金额,业务逻辑改为从后台计算，【不从页面获取】
+    private String payAmount = "0";
+    
+    //余额,业务逻辑改为从后台计算，【不从页面获取】
+    private String transferAmount = "0";
 	// 应收手续费
 	private String receivablefee = "0";
 	// 实收手续费
@@ -60,6 +62,10 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	
 	
 	private String orderTypeId;
+	
+	
+	//md5签名
+	private String sign ;
 	//支付方式 默认个人银行
 	private PayTypeEnum payType = PayTypeEnum.Personal_Banking;
 	public Float getReceivablerate() {
@@ -220,6 +226,22 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 
 	public void setOrderTypeId(String orderTypeId) {
 		this.orderTypeId = orderTypeId;
+	}
+
+	public String getSign() {
+		return sign;
+	}
+
+	public void setSign(String sign) {
+		this.sign = sign;
+	}
+
+	public String getTransferAmount() {
+		return transferAmount;
+	}
+
+	public void setTransferAmount(String transferAmount) {
+		this.transferAmount = transferAmount;
 	}
 	
 }

@@ -51,7 +51,6 @@ import com.fangcang.titanjr.dto.response.GetOrgLoanStatInfoResponse;
 import com.fangcang.titanjr.service.TitanFinancialLoanCreditService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
 import com.fangcang.titanjr.service.TitanOrderService;
-import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.LoanQueryConditions;
 import com.fangcang.util.DateUtil;
@@ -75,9 +74,6 @@ public class FinancialLoanController extends BaseController {
 
 	@Resource
 	private TitanFinancialLoanService financialLoanService;
-
-	@Resource
-	private TitanSysconfigService sysconfigService;
 
 	@Resource
 	private TitanFinancialLoanCreditService financialLoanCreditService;
@@ -238,8 +234,7 @@ public class FinancialLoanController extends BaseController {
 
 		if (response == null || !response.isResult()
 				|| response.getCreditOrder() == null) {
-
-			log.error("query credit fail!");
+			 
 			return false;
 		}
 
@@ -250,7 +245,6 @@ public class FinancialLoanController extends BaseController {
 			return true;
 		}
 
-		log.error("credit status exception!");
 
 		return false;
 	}

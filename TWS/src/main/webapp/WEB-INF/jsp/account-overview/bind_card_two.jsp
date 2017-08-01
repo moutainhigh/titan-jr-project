@@ -13,7 +13,7 @@
 			<jsp:param value="绑定提现银行卡" name="title"/>
 		</jsp:include>
 		<div class="register r_two">
-			<div class="r_box h_335_p_t45">
+			<div class="r_box h_335_p_t45" style="height:395px;">
 				<div class="r_c ">
 					<div class="r_text">
 						<form id="bank_card_form" method="post" action="<%=basePath%>/account/bankCardBind.shtml">

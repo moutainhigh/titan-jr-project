@@ -377,5 +377,5 @@ public class TitanBankcard implements java.io.Serializable {
 	public void setCreatetime(Date createtime) {
 		this.createtime = createtime;
 	}
-
+	
 }

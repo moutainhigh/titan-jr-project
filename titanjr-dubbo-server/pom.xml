@@ -37,7 +37,21 @@
             <artifactId>fangcang-dao</artifactId>
             <version>1.0.0</version>
         </dependency>
-
+		<dependency>
+            <groupId>com.fangcang</groupId>
+            <artifactId>titanjr-redis</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>  
+	        <groupId>org.springframework.data</groupId>  
+	        <artifactId>spring-data-redis</artifactId>
+	        <version>1.8.4.RELEASE</version>  
+	    </dependency>
+	    <dependency>
+		    <groupId>redis.clients</groupId>
+		    <artifactId>jedis</artifactId>
+		    <version>2.9.0</version>
+		</dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
@@ -177,12 +191,7 @@
             <version>3.2.3.RELEASE</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper</artifactId>
-            <version>4.1.2</version>
-        </dependency>
+       
         <dependency>
             <groupId>com.fangcang</groupId>
             <artifactId>hotel-merchant-api</artifactId>
@@ -221,18 +230,7 @@
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        
-        
-        <dependency>  
-	        <groupId>org.springframework.data</groupId>  
-	        <artifactId>spring-data-redis</artifactId>  
-	    </dependency>
-        
-        <dependency>
-		    <groupId>redis.clients</groupId>
-		    <artifactId>jedis</artifactId>
-		    <version>2.6.2</version>
-		</dependency>
+         
     </dependencies>
 	<profiles>
 		<profile>
@@ -252,9 +250,7 @@
             <properties>
                 <package.environment>test02</package.environment>
             </properties>
-            <activation>
-        		<activeByDefault>true</activeByDefault>
-        	</activation>
+            
         </profile>
         <profile>
             <id>test03</id>
@@ -262,6 +258,15 @@
                 <package.environment>test03</package.environment>
             </properties>
             
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <package.environment>dev</package.environment>
+            </properties>
+            <activation>
+        		<activeByDefault>true</activeByDefault>
+        	</activation>
         </profile>
     </profiles>
     
@@ -278,7 +283,6 @@
                 <excludes>
                 	<exclude>production/**/**</exclude>
                 	<exclude>filters/**/**</exclude>
-                   <exclude>jdbc.properties</exclude>
                    <exclude>debug_conf.properties</exclude>
                	</excludes>
             </resource>

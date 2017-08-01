@@ -37,25 +37,25 @@
 	                   <div class="b_c_t"><i class="tfs_ico"></i>填写个人信息</div>
 	                   <div class="b_c_c clearfix brn">
 	                    <ul>
-	                    <li><p><i class="c_f00">*</i>姓名：</p><input type="text" class="text w_500 " name="orgName" id="orgName" value="${org.orgName }" placeholder="请与证件上的姓名保持一致"  datatype="*" errormsg="姓名不能为空"></li>
-	                        <li><p><i class="c_f00">*</i>身份证号：</p><input type="text" class="text w_500 " name="certificatenumber" id="certificatenumber" value="${org.certificateNumber }" datatype="*" errormsg="身份证号不能为空" afterPassed="checkOrgRegNum"></li>
-	                        <li>
+	                    <li style="padding-bottom:30px;"><p><i class="c_f00">*</i>姓名：</p><input type="text" class="text w_500 " name="orgName" id="orgName" value="${org.orgName }" placeholder="请与证件上的姓名保持一致"  datatype="*" errormsg="姓名不能为空"></li>
+	                       <li style="padding-bottom:30px;"><p><i class="c_f00">*</i>身份证号：</p><input type="text" class="text w_500 " name="certificatenumber" id="certificatenumber" value="${org.certificateNumber }" datatype="*" errormsg="身份证号不能为空" afterPassed="checkOrgRegNum"></li>
+	                       <li>
 	                        <div class="fl w_370">
 	                        	<p class="fl"><i class="c_f00">*</i>上传本人持身份证正面照：</p>
 	                         	<span class="fl span_btn w_50" id="img_upload">选择附件<input type="file" class="to_lead" name="img_file" id="img_file" onchange="ajaxFileUpload()"></span>
-		                        <span class="fl span_btn w_50" style="display:none" id="uploading">上传中...</span>  
+	                         	<span class="fl span_btn w_50" style="display:none" id="uploading">上传中...</span>  
 	                         	<i class="c_f00" id="upload_error" style="display:none">上传失败！</i>
 	                        </div>
 	                        <div class="fl t_a_c">
-	                         <c:if test="${not empty small_img_10}">
-	                        	<img src="${small_img_10}" width="130" data-src-v="${small_img_10}" height="90" id="img_small" class="cursor J_magnify">
-	                        </c:if>
-	                        <c:if test="${empty small_img_10}">
-	                        	<img src="<%=cssSaasPath%>/images/TFS/tu13.jpg" width="130" id="img_small" class="cursor J_magnify">
-	                        </c:if>
-	                        
-	                        </div>                      
-	                        </li>
+		                        <c:if test="${not empty small_img_10}">
+		                        	<img src="${small_img_10}" width="130" data-src-v="${small_img_10}" height="90" id="img_small" class="cursor J_magnify">
+		                        </c:if>
+		                        <c:if test="${empty small_img_10}">
+		                        	<img src="<%=cssSaasPath%>/images/TFS/tu13.jpg" width="130" id="img_small" class="cursor J_magnify">
+		                        </c:if><br>
+		                        <p class="fl" style="color: #9b9b9b; size: 12px;">仅支持 jpg、jpeg、png 文件格式</p> 
+		                    </div>    
+	                       </li>
 	                    </ul>
 	                   </div>
 	                 </div>

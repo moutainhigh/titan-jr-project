@@ -31,9 +31,19 @@ public interface TitanTransOrderDao {
 	List<RepairTransferDTO> queryTitanTransOrderByStatus(RepairTransferRequest repairTransferRequest);
 	
 	int updateTitanTransOrderByTransId(TitanTransOrder entity)throws DaoException;
-	
-	List<RefundDTO> selectTitanTransOrderAndRefund(TransOrderRequest transOrderRequest)throws DaoException;
-	
-	
-	List<String> confirmOrderStatus(String orderNo);
+
+	/**
+	 * 查询退款交易单
+	 * @param transOrderRequest
+	 * @return
+	 * @throws DaoException
+     */
+	List<RefundDTO> selectTransRefundOrder(TransOrderRequest transOrderRequest) throws DaoException;
+
+	/**
+	 * 实际操作是查询交易单状态
+	 * @param orderNo
+	 * @return
+     */
+	List<String> queryTransOrderStatus(String orderNo) throws DaoException;
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
-import com.fangcang.titanjr.common.exception.GlobalDaoException;
 import com.fangcang.titanjr.dao.TitanOrgBindinfoDao;
 import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
 import com.fangcang.titanjr.entity.TitanOrgBindinfo;
@@ -40,6 +39,17 @@ public class TitanOrgBindinfoDaoImpl extends GenericDAOMyBatisImpl implements Ti
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}
+	}
+
+	@Override
+	public boolean delete(TitanOrgBindinfoParam param) throws DaoException {
+		try {
+			super.delete("com.fangcang.titanjr.dao.TitanOrgBindinfoDao.deleteEntity", param);
+			return true;
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+		
 	}
 
 	@Override
