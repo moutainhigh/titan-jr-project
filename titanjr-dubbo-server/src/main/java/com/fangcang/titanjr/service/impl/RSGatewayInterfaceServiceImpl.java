@@ -29,7 +29,6 @@ import com.fangcang.titanjr.dto.request.gateway.QueryQuickPayBindCardRequest;
 import com.fangcang.titanjr.dto.request.gateway.ReSendVerifyCodeRequest;
 import com.fangcang.titanjr.dto.request.gateway.UnbindBankCardRequest;
 import com.fangcang.titanjr.dto.request.gateway.UpdateBankCardPhoneResponseRequest;
-import com.fangcang.titanjr.dto.response.gateway.CardSceurityVerifyResponse;
 import com.fangcang.titanjr.dto.response.gateway.ConfirmRechargeResponse;
 import com.fangcang.titanjr.dto.response.gateway.QueryBankCardBINIResponse;
 import com.fangcang.titanjr.dto.response.gateway.QueryQuickPayBindCardResponse;
@@ -37,6 +36,8 @@ import com.fangcang.titanjr.dto.response.gateway.QuickPaymentResponse;
 import com.fangcang.titanjr.dto.response.gateway.ReSendVerifyCodeResponse;
 import com.fangcang.titanjr.dto.response.gateway.UnbindBankCardResponse;
 import com.fangcang.titanjr.dto.response.gateway.UpdateBankCardPhoneResponse;
+import com.fangcang.titanjr.enums.BusiCodeEnum;
+import com.fangcang.titanjr.enums.VersionEnum;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.RSGatewayInterfaceService;
 import com.fangcang.titanjr.util.SignMsgBuilder;
@@ -72,13 +73,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				response = EntityUtils.toString(entity, "UTF-8");
 				quickPaymentResponse = RSConvertFiled2ObjectUtil.convertField2ObjectSuper(QuickPaymentResponse.class, response);
 				log.info("【快捷支付】返回信息:" + quickPaymentResponse.toString());
-				if(StringUtil.isValidString(quickPaymentResponse.getErrCode()) 
-			    		&& !"0000".equals(quickPaymentResponse.getErrCode())){//通知快捷支付失败
-					quickPaymentResponse.putError(quickPaymentResponse.getErrMsg());
-					return quickPaymentResponse;
-				}
 				
-				quickPaymentResponse.setSuccess(true);
 				return quickPaymentResponse;
 				
 			}else{
@@ -96,7 +91,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 	
 	
 	@Override
-	public String confirmRecharge(ConfirmRechargeRequest confirmRechargeRequest) {
+	public ConfirmRechargeResponse confirmRecharge(ConfirmRechargeRequest confirmRechargeRequest) {
 		ConfirmRechargeResponse confirmRechargeResponse = new ConfirmRechargeResponse();
 		confirmRechargeRequest.setSignMsg(SignMsgBuilder.getSignMsgForConfirmRecharge(confirmRechargeRequest));
 		String response ="";
@@ -113,20 +108,17 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				confirmRechargeResponse = RSConvertFiled2ObjectUtil.convertField2ObjectSuper(ConfirmRechargeResponse.class,response);
 				log.info("【确认充值】返回信息:" + confirmRechargeResponse.toString());
 				
-				if (StringUtil.isValidString(confirmRechargeResponse.getErrCode())
-						&& !"0000".equals(confirmRechargeResponse.getErrCode())) {
-					confirmRechargeResponse.setSuccess(false);
-					return confirmRechargeResponse.getErrMsg();
-				}
-				return "success";
+				return confirmRechargeResponse;
+				
 			}else{
 				log.error("【确认充值】失败 confirmRechargeResp 为空, 参数params:"+Tools.gsonToString(confirmRechargeParams));
-				return "false";
+				return confirmRechargeResponse;
 			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "false";
+			confirmRechargeResponse.setErrMsg("确认充值异常");
+			return confirmRechargeResponse;
 		}
 	}
 	
@@ -151,12 +143,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				reSendVerifyCodeResponse = RSConvertFiled2ObjectUtil
 						.convertField2ObjectSuper(ReSendVerifyCodeResponse.class,responseStr);
 				log.info("调用融数网关gateWayURL【重发验证码】返回信息:" + reSendVerifyCodeResponse.toString());
-				if (StringUtil.isValidString(reSendVerifyCodeResponse.getErrCode()) && !"0000"
-								.equals(reSendVerifyCodeResponse.getErrCode())) {
-					reSendVerifyCodeResponse.setSuccess(false);
-					return reSendVerifyCodeResponse;
-				}
-				reSendVerifyCodeResponse.setSuccess(true);
+				
 				return reSendVerifyCodeResponse;
 			}else{
 				log.error("网关【重发验证码】失败 resp 为空, 参数params:"+Tools.gsonToString(params));
@@ -191,17 +178,8 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				HttpEntity entity = resp.getEntity();
 				responseStr = EntityUtils.toString(entity, "UTF-8");
 				queryQuickPayBindCardResponse = convertToQueryQuickPayBindCardResponse(responseStr);
-				if(!queryQuickPayBindCardResponse.isSuccess()){
-					return queryQuickPayBindCardResponse;
-				}
 				log.info("【查询快捷绑卡信息】返回信息:" + queryQuickPayBindCardResponse.toString());
 				
-				if (StringUtil.isValidString(queryQuickPayBindCardResponse.getErrCode()) && !"0000"
-						.equals(queryQuickPayBindCardResponse.getErrCode())) {
-					queryQuickPayBindCardResponse.setSuccess(false);
-					return queryQuickPayBindCardResponse;
-				}
-				queryQuickPayBindCardResponse.setSuccess(true);
 				return queryQuickPayBindCardResponse;
 			}else{
 				log.error("网关【查询快捷绑卡信息】失败 resp 为空, 参数params:"+Tools.gsonToString(params));
@@ -236,12 +214,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				bankCardBINIResponse = RSConvertFiled2ObjectUtil
 						.convertField2ObjectSuper(QueryBankCardBINIResponse.class, responseStr);
 				log.info("【查询银行卡BIN信息】返回信息:" + bankCardBINIResponse.toString());
-				if (StringUtil.isValidString(bankCardBINIResponse.getErrCode()) && !"0000"
-						.equals(bankCardBINIResponse.getErrCode())) {
-					bankCardBINIResponse.setSuccess(false);
-					return bankCardBINIResponse;
-				}
-				bankCardBINIResponse.setSuccess(true);
+				
 				return bankCardBINIResponse;
 			}else{
 				log.error("网关【查询银行卡BIN信息】失败 resp 为空, 参数params:"+Tools.gsonToString(params));
@@ -276,12 +249,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				unbindBankCardResponse = RSConvertFiled2ObjectUtil
 						.convertField2ObjectSuper(UnbindBankCardResponse.class, responseStr);
 				log.info("【银行卡解绑】返回信息:" + unbindBankCardResponse.toString());
-				if (StringUtil.isValidString(unbindBankCardResponse.getErrCode()) && !"0000"
-						.equals(unbindBankCardResponse.getErrCode())) {
-					unbindBankCardResponse.setSuccess(false);
-					return unbindBankCardResponse;
-				}
-				unbindBankCardResponse.setSuccess(true);
+				
 				return unbindBankCardResponse;
 			}else{
 				log.error("网关【银行卡解绑】失败 resp 为空, 参数params:"+Tools.gsonToString(params));
@@ -316,12 +284,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				updatePhoneNumberResponse = RSConvertFiled2ObjectUtil
 						.convertField2ObjectSuper(UpdateBankCardPhoneResponse.class, responseStr);
 				log.info("【更改预留手机号】返回信息:" + updatePhoneNumberResponse.toString());
-				if (StringUtil.isValidString(updatePhoneNumberResponse.getErrCode()) && !"0000"
-						.equals(updatePhoneNumberResponse.getErrCode())) {
-					updatePhoneNumberResponse.setSuccess(false);
-					return updatePhoneNumberResponse;
-				}
-				updatePhoneNumberResponse.setSuccess(true);
+				
 				return updatePhoneNumberResponse;
 			}else{
 				log.error("网关【更改预留手机号】失败 resp 为空, 参数params:"+Tools.gsonToString(params));
@@ -375,9 +338,31 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 	                   break;
 	               }
 	           }
+	    	   for (Field field : responseClas.getSuperclass().getDeclaredFields()) {
+	               if (field.getName().equals(key)) {
+	                   field = responseClas.getSuperclass().getDeclaredField(key);
+	                   field.setAccessible(true);
+	                   field.set(queryQuickPayBindCardResponse, value);
+	                   break;
+	               }
+	           }
+	    	   
+	    	   if("errCode".equals(key)){
+	    		   for (Field field : responseClas.getSuperclass().getDeclaredFields()) {
+		               if (field.getName().equals("isSuccess")) {
+		                   field = responseClas.getSuperclass().getDeclaredField("isSuccess");
+		                   field.setAccessible(true);
+		                   if(StringUtil.isValidString(value) && "0000".equals(value)){
+		                	   field.set(queryQuickPayBindCardResponse, true);
+		                   }else{
+		                	   field.set(queryQuickPayBindCardResponse, false);
+		                   }
+		                   break;
+		               }
+		           }
+	    	   }
 	       }
 		   queryQuickPayBindCardResponse.setAgentProtocolList(agentProtocolList);
-		   queryQuickPayBindCardResponse.setSuccess(true);
 		   
 		} catch (Exception e) {
 			log.error("银行列表信息转换异常", e);
@@ -390,22 +375,22 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 	
 	
 	@Override
-	public CardSceurityVerifyResponse cardSceurityVerify(CardSceurityVerifyRequest cardSceurityVerifyRequest) {
-		CardSceurityVerifyResponse cardSceurityVerifyResponse = new CardSceurityVerifyResponse();
+	public CardSceurityVerifyRequest getCardSceurityVerifyParam(CardSceurityVerifyRequest cardSceurityVerifyRequest) {
 		
-		/*cardSceurityVerifyRequest.setBusiCode(BusiCodeEnum.CARE_SCEURITY_VERIFY.getKey());
-		cardSceurityVerifyRequest.setCardChecknotifyUrl("http://www.fangcang.org/titanjr-pay-dev3/quickPay/cardSceurityVerifyResultNotice.action");
-		cardSceurityVerifyRequest.setCardCheckPageUrl("http://www.fangcang.org/titanjr-pay-dev3/quickPay/cardSceurityVerifyResultPage.action");
-		cardSceurityVerifyRequest.setCardNo("6214242710498509");
-		cardSceurityVerifyRequest.setMerchantNo("M000016");
-		cardSceurityVerifyRequest.setOrderNo("");
-		cardSceurityVerifyRequest.setPayType("41");
-		cardSceurityVerifyRequest.setSignType("1");
-		cardSceurityVerifyRequest.setVersion(VersionEnum.Version_2.key);*/
-		cardSceurityVerifyResponse.setErrCode(RSInvokeConstant.gateWayURL);
-		cardSceurityVerifyResponse.setSignMsg(SignMsgBuilder.getSignMsgForCardSceurityVerify(cardSceurityVerifyRequest));
+		CardSceurityVerifyRequest cardSceurityVerifyParam = new CardSceurityVerifyRequest();
+		cardSceurityVerifyParam.setBusiCode(BusiCodeEnum.CARE_SCEURITY_VERIFY.getKey());
+		cardSceurityVerifyParam.setCardNo(cardSceurityVerifyRequest.getCardNo());
+		cardSceurityVerifyParam.setMerchantNo("M000016");
+		cardSceurityVerifyParam.setOrderNo(cardSceurityVerifyRequest.getOrderNo());
+		cardSceurityVerifyParam.setPayType("41");
+		cardSceurityVerifyParam.setSignType("1");
+		cardSceurityVerifyParam.setVersion(VersionEnum.Version_2.key);
+		cardSceurityVerifyParam.setTerminalType(cardSceurityVerifyRequest.getTerminalType());
+		cardSceurityVerifyParam.setCardChecknotifyUrl("http://www.fangcang.org/titanjr-pay-dev3/quickPay/cardSceurityVerifyResultNotice.action");
+		cardSceurityVerifyParam.setCardCheckPageUrl("http://www.fangcang.org/titanjr-pay-dev3/quickPay/cardSceurityVerifyResultPage.action");
+		cardSceurityVerifyParam.setSignMsg(SignMsgBuilder.getSignMsgForCardSceurityVerify(cardSceurityVerifyParam));
 		
-		return cardSceurityVerifyResponse;
+		return cardSceurityVerifyParam;
 	}
 
 }

@@ -40,8 +40,6 @@ public class CardSceurityVerifyRequest implements Serializable {
 	private String cardChecknotifyUrl;
 	
 	private String signMsg;
-	
-	private String gateWayURL;
 
 	public String getBusiCode() {
 		return busiCode;
@@ -131,12 +129,9 @@ public class CardSceurityVerifyRequest implements Serializable {
 		this.signMsg = signMsg;
 	}
 	
-	public String getGateWayURL() {
-		return gateWayURL;
-	}
-
-	public void setGateWayURL(String gateWayURL) {
-		this.gateWayURL = gateWayURL;
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }

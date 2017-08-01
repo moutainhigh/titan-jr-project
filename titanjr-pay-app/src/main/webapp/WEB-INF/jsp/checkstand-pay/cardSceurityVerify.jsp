@@ -25,14 +25,11 @@
 	<input name="signMsg" type="hidden" value="${cardSceurityVerifyRequest.signMsg}"/>
 </form>
 </c:if>
-<%-- <form action="<%=basePath%>/account/error_cashier.action" name="error_cashier"  id="error_cashier" method="post">
-  <input name="msg" type="hidden" value="${msg}"/>
-</form> --%>
+
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
 </body>
 <script type="text/javascript">
 function submitform(){
-		alert("submit");
 	   $("#cardSceurityVerify_form").submit();
 	}
 window.onload = submitform;

@@ -33,23 +33,23 @@
 			</tr>
 			<tr>
 				<td>持卡人姓名</td>
-				<td><input id="payerName" name="payerName" value="赵闪" type="text"/></td>
+				<td><input id="payerName" name="payerName" value="罗庆龙" type="text"/></td>
 			</tr>
 			<tr>
 				<td>身份证号</td>
-				<td><input id="idCode" name="idCode" value="411381198907135674" type="text"/></td>
+				<td><input id="idCode" name="idCode" value="430426198401024831" type="text"/></td>
 			</tr>
 			<tr>
 				<td>银行预留手机号</td>
-				<td><input id="payerPhone" name="payerPhone" value="18620352083" type="text"/></td>
+				<td><input id="payerPhone" name="payerPhone" value="13352989767" type="text"/></td>
 			</tr>
 			<tr>
 				<td>信用卡安全码</td>
-				<td><input id="safetyCode" name="safetyCode" value="450" type="text"/></td>
+				<td><input id="safetyCode" name="safetyCode" type="text"/></td>
 			</tr>
 			<tr>
 				<td>信用卡有效期至</td>
-				<td><input id="validthru" name="validthru" value="0819" type="text"/></td>
+				<td><input id="validthru" name="validthru" type="text"/></td>
 			</tr>
 			<tr>
 				<td>手机验证码</td>

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.enums.QuickPayBankEnum;
-import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.gateway.QuickPayCardDTO;
 import com.fangcang.titanjr.dto.request.gateway.CardSceurityVerifyRequest;
 import com.fangcang.titanjr.dto.request.gateway.ConfirmRechargeRequest;
@@ -24,13 +23,12 @@ import com.fangcang.titanjr.dto.request.gateway.ReSendVerifyCodeRequest;
 import com.fangcang.titanjr.dto.request.gateway.UnbindBankCardRequest;
 import com.fangcang.titanjr.dto.request.gateway.UpdateBankCardPhoneResponseRequest;
 import com.fangcang.titanjr.dto.response.gateway.CardSceurityVerifyResponse;
+import com.fangcang.titanjr.dto.response.gateway.ConfirmRechargeResponse;
 import com.fangcang.titanjr.dto.response.gateway.QueryBankCardBINIResponse;
 import com.fangcang.titanjr.dto.response.gateway.QueryQuickPayBindCardResponse;
 import com.fangcang.titanjr.dto.response.gateway.ReSendVerifyCodeResponse;
 import com.fangcang.titanjr.dto.response.gateway.UnbindBankCardResponse;
 import com.fangcang.titanjr.dto.response.gateway.UpdateBankCardPhoneResponse;
-import com.fangcang.titanjr.enums.BusiCodeEnum;
-import com.fangcang.titanjr.enums.VersionEnum;
 import com.fangcang.titanjr.pay.util.TerminalUtil;
 import com.fangcang.titanjr.service.RSGatewayInterfaceService;
 import com.fangcang.util.JsonUtil;
@@ -62,13 +60,13 @@ public class TitanQuickPaymentController extends BaseController {
 	 * @param confirmRechargeRequest
 	 * @return
 	 */
-	@RequestMapping(value = {"/confirmRecharge"}, produces = "text/json;charset=UTF-8")
+	@RequestMapping(value = {"/confirmRecharge"})
 	@ResponseBody
-	public String confirmRecharge(ConfirmRechargeRequest confirmRechargeRequest){
+	public ConfirmRechargeResponse confirmRecharge(ConfirmRechargeRequest confirmRechargeRequest){
 		
-		String result = rsGatewayInterfaceService.confirmRecharge(confirmRechargeRequest);
+		ConfirmRechargeResponse confirmRechargeResponse = rsGatewayInterfaceService.confirmRecharge(confirmRechargeRequest);
 		
-		return result;
+		return confirmRechargeResponse;
 	}
 	
 	
@@ -186,22 +184,13 @@ public class TitanQuickPaymentController extends BaseController {
 			terminalType = "web";
 		}
 		cardSceurityVerifyRequest.setTerminalType(terminalType);
-		cardSceurityVerifyRequest.setBusiCode(BusiCodeEnum.CARE_SCEURITY_VERIFY.getKey());
-		cardSceurityVerifyRequest.setCardChecknotifyUrl("http://www.fangcang.org/titanjr-pay-dev3/quickPay/cardSceurityVerifyResultNotice.action");
-		cardSceurityVerifyRequest.setCardCheckPageUrl("http://www.fangcang.org/titanjr-pay-dev3/quickPay/cardSceurityVerifyResultPage.action");
-		cardSceurityVerifyRequest.setCardNo("6214837833012036");
-		cardSceurityVerifyRequest.setMerchantNo("M000016");
-		cardSceurityVerifyRequest.setOrderNo(cardSceurityVerifyRequest.getOrderNo());
-		cardSceurityVerifyRequest.setPayType("41");
-		cardSceurityVerifyRequest.setSignType("1");
-		cardSceurityVerifyRequest.setVersion(VersionEnum.Version_2.key);
 		
-		CardSceurityVerifyResponse cardSceurityVerifyResponse = rsGatewayInterfaceService.cardSceurityVerify(cardSceurityVerifyRequest);
-		cardSceurityVerifyRequest.setGateWayURL(cardSceurityVerifyResponse.getErrCode());
-		cardSceurityVerifyRequest.setSignMsg(cardSceurityVerifyResponse.getSignMsg());
+		CardSceurityVerifyRequest cardSceurityVerifyParam = rsGatewayInterfaceService
+				.getCardSceurityVerifyParam(cardSceurityVerifyRequest);
 		
-		model.addAttribute("cardSceurityVerifyRequest", cardSceurityVerifyRequest);
-		log.info("cardSceurityVerify request："+Tools.gsonToString(cardSceurityVerifyRequest));
+		model.addAttribute("cardSceurityVerifyRequest", cardSceurityVerifyParam);
+		//log.info("cardSceurityVerify request：" + Tools.gsonToString(cardSceurityVerifyParam));
+		log.info("cardSceurityVerify request：" + cardSceurityVerifyParam.toString());
 		
 		return "checkstand-pay/cardSceurityVerify";
 		

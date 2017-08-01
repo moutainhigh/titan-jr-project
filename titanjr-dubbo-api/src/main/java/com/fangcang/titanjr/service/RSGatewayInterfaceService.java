@@ -9,6 +9,7 @@ import com.fangcang.titanjr.dto.request.gateway.ReSendVerifyCodeRequest;
 import com.fangcang.titanjr.dto.request.gateway.UnbindBankCardRequest;
 import com.fangcang.titanjr.dto.request.gateway.UpdateBankCardPhoneResponseRequest;
 import com.fangcang.titanjr.dto.response.gateway.CardSceurityVerifyResponse;
+import com.fangcang.titanjr.dto.response.gateway.ConfirmRechargeResponse;
 import com.fangcang.titanjr.dto.response.gateway.QueryBankCardBINIResponse;
 import com.fangcang.titanjr.dto.response.gateway.QueryQuickPayBindCardResponse;
 import com.fangcang.titanjr.dto.response.gateway.QuickPaymentResponse;
@@ -40,7 +41,7 @@ public interface RSGatewayInterfaceService {
 	 * 
 	 * @return
 	 */
-	public String confirmRecharge(ConfirmRechargeRequest confirmRechargeRequest);
+	public ConfirmRechargeResponse confirmRecharge(ConfirmRechargeRequest confirmRechargeRequest);
 	
 	
 	/**
@@ -96,6 +97,6 @@ public interface RSGatewayInterfaceService {
 	 * @param cardSceurityVerifyRequest
 	 * @return
 	 */
-	public CardSceurityVerifyResponse cardSceurityVerify(CardSceurityVerifyRequest cardSceurityVerifyRequest);
+	public CardSceurityVerifyRequest getCardSceurityVerifyParam(CardSceurityVerifyRequest cardSceurityVerifyRequest);
 	
 }

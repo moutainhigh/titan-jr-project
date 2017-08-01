@@ -762,6 +762,7 @@
     }
     
     function quickPay(){
+    	var orderNo = "";
     	$.ajax({
     		type: "post",
             dataType : 'html',
@@ -786,16 +787,47 @@
 	   	 	            		   alert(data.errMsg);
 	   	 	            		   return;
 	   	 	            	   }
+	   	 	            	   orderNo = data.orderNo;
+	   	 	            	   
 	   	 	            	   var certificate = data.certificate;
-	   	 	            	   if(certificate != null && !typeof(certificate) == 'undefined' && certificate == '1'){
-	   	 	            		   alert("需要鉴权");
+	   	 	            	   if(certificate != null && typeof(certificate) != 'undefined' && certificate == '1'){
+	   	 	            		   window.open("<%=basePath%>/quickPay/cardSceurityVerify.shtml?orderNo=" + data.orderNo + "&cardNo=" + $('#payerAcount').val(), "_blank");
+	   	 	            		   
 	   	 	            	   }else{
-	   	 	            		   alert("不需要鉴权");
+	   	 	            		   alert("验证码发送成功");
 	   	 	            	   }
 	   	 	            	   
 	   	 	               }
 	   	 	         });
    	            });
+   	            $('#recharge').on('click',function(){
+ 	            	$('#recharge').attr("disabled", true);
+	            	$.ajax({
+	   	 				type : "post",
+	   	 				url : "<%=basePath%>/quickPay/confirmRecharge.action",
+	   	 	               data: {
+	   	 	            		busiCode: "109",
+	   	 	            		signType: "1",
+	   	 	            		version: "v1.1",
+	   	 	        			merchantNo: "M000016",
+	   	 	        			orderNo: orderNo,
+	   	 	        			payType: "41",
+	   	 	        			checkCode: $("#checkCode").val()
+	   	 	               },
+	   	 	               dataType: "json",
+	   	 	               success: function (data) {
+	   	 	            	   if(data.success == false){
+	   	 	            		   alert(data.errMsg);
+	   	 	            		   $('#recharge').attr("disabled", false);
+	   	 	            		   return;
+	   	 	            	   }
+	   	 	            	   alert("充值成功");
+	   	 	            	   d.close().remove();
+	   	 	            	   top.F.loading.hide();
+	   	 	               }
+	   	 	         });
+	             });
+   	            
    	        },complete:function(){
                	top.F.loading.hide();
             }

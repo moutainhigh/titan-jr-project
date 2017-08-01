@@ -153,7 +153,7 @@
             <tr>
                 <td class="tdr">收银台版本</td>
                 <td>
-                    <input type="text" value="1.0" id="cashierDeskVersion" name="cashierDeskVersion"/>
+                    <input type="text" value="1.0" id="cashierDeskVersion" name="cashierDeskVersion"/>1.0-老版收银台   1.1-新版收银台
                 </td>
             </tr>
             <tr>
