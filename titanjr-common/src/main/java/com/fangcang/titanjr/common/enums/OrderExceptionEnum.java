@@ -29,9 +29,9 @@ public enum OrderExceptionEnum {
 	//网银支付
 	Online_Pay_Add_Rs_Order_Fail("5_1","0","网银支付融数落单失败"),Online_Pay_Save_Order_Fail("5_3","0","网银支付更新或保存修改本地单失败"),
 	
-	Online_Pay_Insert_PayOrder_Fail("5_5","0","网银支付保存充值单失败"),Online_Pay_Update_PayOrder_Fail("5_7","0","网银支付保存充值单失败"),
+	Online_Pay_Insert_PayOrder_Fail("5_5","0","网银支付保存充值单失败"),Online_Pay_Update_PayOrder_Fail("5_6","0","网银支付更新充值单失败"),
 	
-	Online_Pay_Get_Pay_Url_Fail("5_7","0","网银支付保存充值单失败"),
+	Online_Pay_Get_Pay_Url_Fail("5_7","0","微信支付宝支付获取二维码链接失败"),
 
 	//融数回调
 	Notify_Update_PayOrder_Fail("7_1","1","充值成功修改充值单失败"),Notify_Money_Not_In_Account_Fail("7_3","1","充值金额未到账户"),

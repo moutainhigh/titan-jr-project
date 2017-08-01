@@ -12,10 +12,13 @@ import com.fangcang.log.model.BaseLogDto;
 import com.fangcang.log.rocketmq.LogProducer;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.dao.TitanOperateLogDao;
 import com.fangcang.titanjr.dto.bean.PayLog;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.AddPayLogRequest;
+import com.fangcang.titanjr.dto.request.OperateLogRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
+import com.fangcang.titanjr.entity.TitanOperateLog;
 import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
@@ -26,6 +29,9 @@ public class BusinessLogServiceImpl implements BusinessLogService {
 	private static final Log log = LogFactory.getLog(BusinessLogServiceImpl.class);
 	@Resource
 	private TitanOrderService orderService;
+	
+	@Resource
+	private TitanOperateLogDao operateLogDao;
 	
 	@Override
 	public void addPayLog(AddPayLogRequest addPayLogRequest) {
@@ -68,6 +74,20 @@ public class BusinessLogServiceImpl implements BusinessLogService {
 				log.error("支付业务流程日志写失败，orderId:"+addPayLogRequest.getOrderId(),e);
 			}
 
+	}
+
+	@Override
+	public void addOperateLog(OperateLogRequest operateLogRequest) {
+		TitanOperateLog entity = new TitanOperateLog();
+		entity.setOperateType(operateLogRequest.getOperateType());
+		entity.setOperateContent(operateLogRequest.getOperateContent());
+		entity.setOperateTime(operateLogRequest.getOperateTime());
+		entity.setOperator(operateLogRequest.getOperator());
+		try {
+			operateLogDao.insert(entity);
+		} catch (Exception e) {
+			log.error("操作日志失败，参数operateLogRequest:"+Tools.gsonToString(operateLogRequest),e);
+		}
 	}
 
 }

@@ -84,6 +84,15 @@
       	<if test="cooptype != null"> and  cooptype = #{cooptype}</if> 
   	</where>
   </update>
+  <delete id="deleteEntity" parameterType="com.fangcang.titanjr.entity.parameter.TitanUserBindInfoParam">
+  		delete from t_tfs_userbindinfo
+  		where
+  			<if test="merchantcode != null">merchantcode = #{merchantcode}</if>
+  
+  </delete>
+  
+  
+  
   <select id="selectUserBindInfoByFcuserid" parameterType="com.fangcang.titanjr.entity.TitanUserBindInfo" resultType="com.fangcang.titanjr.entity.TitanUserBindInfo">
     select tfsuserid, fcuserid, username, loginname, fcusername, fcloginname, merchantcode,cooptype, isactive, creator, 
       createtime, modifior, modifytime from t_tfs_userbindinfo 

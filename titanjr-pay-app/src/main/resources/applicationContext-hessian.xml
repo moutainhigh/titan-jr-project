@@ -22,8 +22,11 @@
 	<context:component-scan base-package="com.fangcang.titanjr.common.factory" />
 
 	<bean id="placeholderspring" class="com.ctol.fangcang.common.Spring3PropertyConfigurer">
-		<property name="location">
-			<value>classpath:jdbc.properties</value>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="locations">
+			<list>
+	        	<value>classpath:jdbc.properties</value>
+	        </list>
 		</property>
 	</bean>
 

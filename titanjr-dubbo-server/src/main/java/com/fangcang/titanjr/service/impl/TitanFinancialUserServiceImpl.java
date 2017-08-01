@@ -48,6 +48,7 @@ import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.common.util.MD5;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanOrgCheckDao;
 import com.fangcang.titanjr.dao.TitanRoleDao;
 import com.fangcang.titanjr.dao.TitanUserBindInfoDao;
@@ -62,6 +63,8 @@ import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.CancelPermissionRequest;
 import com.fangcang.titanjr.dto.request.CheckUserRequest;
+import com.fangcang.titanjr.dto.request.DeleteBindUserRequest;
+
 import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
 import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
@@ -332,6 +335,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     	condition.setIsadmin(userInfoQueryRequest.getIsadmin());
     	paginationSupport = titanUserDao.selectForPage(condition, paginationSupport);
     	userInfoPageResponse.setTitanUserPaginationSupport(paginationSupport);
+    	userInfoPageResponse.putSuccess();
     	
 		return userInfoPageResponse;
 	}
@@ -374,6 +378,31 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     	userBindInfoResponse.setPaginationSupport(userBindInfoPage);
     	userBindInfoResponse.putSuccess();
 		return userBindInfoResponse;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public BaseResponseDTO deleteBindUser(DeleteBindUserRequest deleteBindUserRequest) throws MessageServiceException {
+		BaseResponseDTO baseResponseDTO = new BaseResponseDTO();
+		baseResponseDTO.putSuccess("删除成功");
+		if(!StringUtil.isValidString(deleteBindUserRequest.getMerchantCode())){
+			baseResponseDTO.putErrorResult("参数MerchantCode[商家编码]不能为空");
+			return baseResponseDTO;
+		}
+		try {
+			TitanUserBindInfoParam deletePrama = new TitanUserBindInfoParam();
+			deletePrama.setMerchantcode(deleteBindUserRequest.getMerchantCode());
+			titanUserBindInfoDao.delete(deletePrama);
+			TitanUserParam entity = new TitanUserParam();
+			entity.setMerchantcode("");
+			entity.setClauseMerchantCode(deleteBindUserRequest.getMerchantCode());
+			entity.setModifytime(new Date());
+			titanUserDao.update(entity);
+		} catch (DaoException e) {
+			log.error("删除用户绑定关系失败,参数deleteBindUserRequest："+Tools.gsonToString(deleteBindUserRequest),e);
+			throw new MessageServiceException("删除用户绑定关系失败",e);
+		}
+		return baseResponseDTO;
 	}
 
 	@Override
@@ -470,7 +499,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     		return updateUserResponse;
     	}
     	try {
-	    	TitanUser entity = new TitanUser();
+    		TitanUserParam entity = new TitanUserParam();
 	    	entity.setTfsuserid(updateUserRequest.getTfsUserId());
 	    	entity.setUsername(updateUserRequest.getUserName());
 	    	entity.setModifier(updateUserRequest.getOperator());
@@ -669,7 +698,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 			return response;
 		}
 		try {
-			TitanUser titanUser = new TitanUser();
+			TitanUserParam titanUser = new TitanUserParam();
 			titanUser.setTfsuserid(userFreezeRequest.getTfsUserId());
 			titanUser.setStatus(userFreezeRequest.getStatus());
 			titanUser.setModifier(userFreezeRequest.getOperator());
@@ -786,7 +815,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		PayPasswordResponse payPasswordResponse = new PayPasswordResponse();
 		try{
 			if(payPasswordRequest !=null){
-				TitanUser titanUser = new TitanUser();
+				TitanUserParam titanUser = new TitanUserParam();
 				if(StringUtil.isValidString(payPasswordRequest.getTfsuserid())){
 					titanUser.setTfsuserid(Integer.parseInt(payPasswordRequest.getTfsuserid()));
 				}else{
@@ -852,7 +881,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
             response.putErrorResult("参数不能为空");
             return response;
         }
-		TitanUser entity = new TitanUser();
+		TitanUserParam entity = new TitanUserParam();
 		entity.setTfsuserid(loginPasswordRequest.getTfsuserid());
 		entity.setPassword(MD5.MD5Encode(loginPasswordRequest.getNewLoginPassword()));
 		entity.setModifier(loginPasswordRequest.getOperator());
@@ -923,7 +952,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 			return response;
 		}
 		try {
-			TitanUser modifyTitanUser = new TitanUser();
+			TitanUserParam modifyTitanUser = new TitanUserParam();
 			modifyTitanUser.setTfsuserid(cancelPermissionRequest.getTfsUserId());
 			modifyTitanUser.setStatus(TitanUserEnum.Status.NOT_AVAILABLE.getKey());
 			titanUserDao.update(modifyTitanUser);

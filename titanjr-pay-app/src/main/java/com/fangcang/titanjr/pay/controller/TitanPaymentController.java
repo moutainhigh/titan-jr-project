@@ -2,7 +2,6 @@
 package com.fangcang.titanjr.pay.controller;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +11,6 @@ import javax.annotation.Resource;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.json.JSONSerializer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,7 +50,6 @@ import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
-import com.fangcang.titanjr.dto.request.UserBindInfoRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
 import com.fangcang.titanjr.dto.response.ApplyLoanResponse;
 import com.fangcang.titanjr.dto.response.ConfirmOrdernQueryResponse;
@@ -70,8 +66,8 @@ import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
 import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.pay.services.TitanRateService;
 import com.fangcang.titanjr.pay.services.TitanTradeService;
+import com.fangcang.titanjr.redis.service.RedisService;
 import com.fangcang.titanjr.service.BusinessLogService;
-import com.fangcang.titanjr.service.RedisService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialLoanService;
@@ -80,6 +76,8 @@ import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
+
+import net.sf.json.JSONSerializer;
 @Controller
 @RequestMapping("/payment")
 public class TitanPaymentController extends BaseController {
@@ -260,7 +258,7 @@ public class TitanPaymentController extends BaseController {
 				orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
 			}
 			
-			log.info("update the status of the order:"+JsonConversionTool.toJson(orderStatusEnum));
+			log.info("update the status of the order:"+JsonConversionTool.toJson(orderStatusEnum)+",orderNo:"+orderNo);
 			boolean updateStatus = titanPaymentService.updateOrderStatus(transOrderDTO.getTransid(),orderStatusEnum);
 			
 			if(!updateStatus){//udate the status was failed 
@@ -634,8 +632,8 @@ public class TitanPaymentController extends BaseController {
 		}
 		QrCodeResponse response = titanFinancialTradeService.getQrCodeUrl(rechargeDataDTO);
 		if(!response.isResult()){
-			log.error("第三方支付获取地址失败");
-			titanFinancialUtilService.saveOrderException(rechargeDataDTO.getPayOrderNo(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Online_Pay_Get_Pay_Url_Fail, JSONSerializer.toJSON(rechargeDataDTO).toString());
+			log.error("订单号："+rechargeDataDTO.getOrderNo()+",第三方支付获取地址失败,错误信息："+response.getReturnMessage());
+			titanFinancialUtilService.saveOrderException(rechargeDataDTO.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Online_Pay_Get_Pay_Url_Fail, JSONSerializer.toJSON(rechargeDataDTO).toString());
 			model.addAttribute(CommonConstant.RETURN_MSG, TitanMsgCodeEnum.QR_EXCEPTION.getKey());
 			return CommonConstant.PAY_WX;
 		}

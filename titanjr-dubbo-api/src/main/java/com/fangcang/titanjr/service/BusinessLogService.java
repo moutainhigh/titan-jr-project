@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.service;
 
 import com.fangcang.titanjr.dto.request.AddPayLogRequest;
+import com.fangcang.titanjr.dto.request.OperateLogRequest;
 
 
 /**
@@ -16,5 +17,9 @@ public interface BusinessLogService {
 	 * @param orderId 单号
 	 */
 	void addPayLog(AddPayLogRequest addPayLogRequest);
-	
+	/***
+	 * 记录操作日志
+	 * @param operateLogRequest
+	 */
+	void addOperateLog(OperateLogRequest operateLogRequest);
 }

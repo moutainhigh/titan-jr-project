@@ -125,9 +125,9 @@ public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade 
         return infoResponse;
     }
 
-    private OrganInfoResponse buildOrganInfoResponse(OrganInfoResponse infoResponse,String userId,Integer regChannel){
+    private OrganInfoResponse buildOrganInfoResponse(OrganInfoResponse infoResponse,String merchantcode,Integer regChannel){
         FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-        organQueryRequest.setMerchantcode(userId);
+        organQueryRequest.setMerchantcode(merchantcode);
         organQueryRequest.setBindStatus(TitanOrgBindinfoEnum.BindStatus.BIND.getKey());
         FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
         if (null != financialOrganResponse.getFinancialOrganDTO() && StringUtil.

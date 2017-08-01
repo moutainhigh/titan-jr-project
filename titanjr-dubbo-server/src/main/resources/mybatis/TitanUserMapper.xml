@@ -138,7 +138,7 @@
     order by u.createtime
   </select>
   
-  <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanUser" >
+  <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.parameter.TitanUserParam" >
     update t_tfs_user
     <set >
       <if test="userid != null" >
@@ -193,7 +193,10 @@
         modifytime = #{modifytime},
       </if>
     </set>
-    where tfsuserid = #{tfsuserid,jdbcType=INTEGER}
+   	<where>
+    	<if test="tfsuserid != null" > and tfsuserid = #{tfsuserid} </if>
+    	<if test="clauseMerchantCode != null" > and merchantcode = #{clauseMerchantCode} </if>
+    </where>
   </update>
   <select id="selectTitanUser" parameterType="java.lang.Integer" resultType="com.fangcang.titanjr.entity.TitanUser">
       select tfsuserid, userid, orgcode, username, userloginname, password, department, mobilephone, email, 

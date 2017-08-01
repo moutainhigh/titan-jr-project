@@ -13,6 +13,7 @@ public interface TitanUserBindInfoDao {
 	PaginationSupport<TitanUserBindInfo> selectForPage(TitanUserBindInfoParam condition, PaginationSupport<TitanUserBindInfo> paginationSupport) throws DaoException;
 	int insert(TitanUserBindInfo entity) throws DaoException;
 	int update(TitanUserBindInfo entity) throws DaoException;
+	boolean delete(TitanUserBindInfoParam param) throws DaoException;
 	/**
 	 * 批量更新绑定状态
 	 * @param isactive

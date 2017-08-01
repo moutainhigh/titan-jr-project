@@ -28,7 +28,8 @@ public interface TitanFinancialOrganService {
      * 以房仓本地数据库数据为准,查询条件需有审核状态。
      * 查询出的数据应该包括机构基础信息，审核状态，机构图片地址，机构绑定状态四部分信息
      * @param titanOrgQueryDTO
-     * @deprecated Instead, use the queryBaseFinancialOrgan(FinancialOrganQueryRequest)
+     * @deprecated Insteaded, use the queryBaseFinancialOrgan(FinancialOrganQueryRequest)
+     * @see queryBaseFinancialOrgan(FinancialOrganQueryRequest)
      * @return
      */
 	@Deprecated
@@ -227,4 +228,9 @@ public interface TitanFinancialOrganService {
      * @return
      */
     public List<OrgBindInfoDTO> queryOrgBindInfoDTO(OrgBindInfoDTO orgBindDTO);
+    
+    /***
+     * 解除金融机构关联
+     */
+    public BaseResponseDTO cancelOrgBind(CancelOrgBindRequest cancelOrgBindRequest) throws MessageServiceException;;
 }

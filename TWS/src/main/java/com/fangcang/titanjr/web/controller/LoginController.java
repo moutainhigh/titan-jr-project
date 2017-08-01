@@ -391,12 +391,12 @@ public class LoginController extends BaseController{
     				LOGGER.error("代理登录失败,注册信息RSA解密失败，加密信息info为:"+proxyLogin.getInfo()+",第三方为:"+coopResponse.getCoopDTO(), e); 
     			}
 	    	}else{
-	    		model.addAttribute("errormsg", "必填参数不能为空");
+	    		model.addAttribute("errormsg", "参数签名错误");
 	    		return "redirect:/ex/login.shtml";
 	    	}
 		}else{
 			LOGGER.error("代理登录失败，没有找到对应的合作渠道号,渠道号【"+proxyLogin.getChannel()+"】不存在");
-			model.addAttribute("errormsg", "渠道号错误");
+			model.addAttribute("errormsg", "参数错误");
 			return "redirect:/ex/login.shtml"; 
 		}
    		

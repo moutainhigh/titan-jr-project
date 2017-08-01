@@ -13,10 +13,13 @@ public interface TitanOrgBindinfoDao {
 	boolean selectForPage(TitanOrgBindinfoParam condition, PaginationSupport<TitanOrgBindinfo> paginationSupport) throws DaoException;
 	int insert(TitanOrgBindinfo entity) throws DaoException;
 	int update(TitanOrgBindinfo entity) throws DaoException;
+	boolean delete(TitanOrgBindinfoParam param) throws DaoException;
 	
 	List<TitanOrgBindinfo> selectTitanOrgBindinfoByUserid(TitanOrgBindinfo titanOrgBindinfo)throws DaoException;
 	
 	List<TitanOrgBindinfo> selectActiveTitanOrgBindinfo(TitanOrgBindinfo titanOrgBindinfo)throws DaoException;
 
 	List<OrgBindInfoDTO> queryOrgBindInfoDTO(OrgBindInfoDTO orgBindDTO);
+	
+	
 }

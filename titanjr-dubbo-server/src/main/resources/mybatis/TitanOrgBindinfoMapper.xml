@@ -52,9 +52,15 @@
     	<if test="merchantcode != null"> and merchantcode = #{merchantcode,jdbcType=VARCHAR}</if>
     </where>
   </update>
+  <delete id="deleteEntity" parameterType="com.fangcang.titanjr.entity.parameter.TitanOrgBindinfoParam" >
+  		delete from t_tfs_orgbindinfo  
+  		where 
+  		<if test="orgcode != null">orgcode = #{orgcode}</if>
+  </delete>
+  
   
   <select id="selectTitanOrgBindinfoByUserid" parameterType="com.fangcang.titanjr.entity.TitanOrgBindinfo" resultType="com.fangcang.titanjr.entity.TitanOrgBindinfo">
-     select userid, merchantcode, orgcode, merchantname, bindstatus,  creator, 
+     select userid, merchantcode, orgcode, merchantname,cooptype, bindstatus,  creator, 
       createtime, modifier, modifytime from t_tfs_orgbindinfo  
       <where>
       	bindstatus = 1
@@ -82,8 +88,11 @@
       <where>
           org.statusid=1
 	      <if test="merchantcode !=null">
-	        and merchantcode = #{merchantcode}
+	        and obi.merchantcode = #{merchantcode}
 	      </if>
+	      <if test="bindstatus !=null">
+ 	 		and obi.bindstatus=#{bindstatus}
+ 	 	</if>
 	  </where>
   </select>
   
@@ -93,6 +102,7 @@
  	  select 
  	 	b.merchantcode as merchantCode,
  	 	b.merchantname as merchantName,
+ 	 	b.orgcode,
  	 	b.bindstatus as bindStatus,
  	 	b.userid,
  	 	c.resultkey as resultKey,
@@ -121,6 +131,9 @@
  	 	</if>
  	 	<if test="merchantCode !=null">
  	 		and b.merchantcode = #{merchantCode}
+ 	 	</if>
+ 	 	<if test="orgcode !=null">
+ 	 		and b.orgcode = #{orgcode}
  	 	</if>
  	 </where>
   </select>

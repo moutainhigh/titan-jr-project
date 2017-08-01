@@ -37,8 +37,8 @@
 	                   <div class="b_c_t"><i class="tfs_ico"></i>填写个人信息</div>
 	                   <div class="b_c_c clearfix brn">
 	                    <ul>
-	                    <li><p><i class="c_f00">*</i>姓名：</p><input type="text" class="text w_500 " name="orgName" id="orgName" value="${org.orgName }" placeholder="请与证件上的姓名保持一致"  datatype="*" errormsg="姓名不能为空"></li>
-	                       <li><p><i class="c_f00">*</i>身份证号：</p><input type="text" class="text w_500 " name="certificatenumber" id="certificatenumber" value="${org.certificateNumber }" datatype="*" errormsg="身份证号不能为空" afterPassed="checkOrgRegNum"></li>
+	                    <li style="padding-bottom:30px;"><p><i class="c_f00">*</i>姓名：</p><input type="text" class="text w_500 " name="orgName" id="orgName" value="${org.orgName }" placeholder="请与证件上的姓名保持一致"  datatype="*" errormsg="姓名不能为空"></li>
+	                       <li style="padding-bottom:30px;"><p><i class="c_f00">*</i>身份证号：</p><input type="text" class="text w_500 " name="certificatenumber" id="certificatenumber" value="${org.certificateNumber }" datatype="*" errormsg="身份证号不能为空" afterPassed="checkOrgRegNum"></li>
 	                       <li>
 	                        <div class="fl w_370">
 	                        	<p class="fl"><i class="c_f00">*</i>上传本人持身份证正面照：</p>

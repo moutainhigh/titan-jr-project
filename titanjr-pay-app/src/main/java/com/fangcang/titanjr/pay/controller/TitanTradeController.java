@@ -847,7 +847,7 @@ public class TitanTradeController extends BaseController {
 
 				cashDeskData.setAccountHistoryDTO(accountHistoryResponse
 						.getAccountHistoryDTOList().get(0));
-				cashDeskData.setUserIDOrgMap(userIDOrgMap);
+				cashDeskData.setUserIDOrgMap(userIDOrgMap);//pay页面中未用到
 				log.info("set account history is ok");
 			}
 		}
