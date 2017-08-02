@@ -5,7 +5,7 @@
             parameterType="com.fangcang.titanjr.entity.parameter.TitanOrgParam">
         select
         *
-        from t_tfs_org
+        from t_tfs_suborg
         <where>
             <if test="orgId != null">orgid = #{orgId}</if>
             <if test="orgCode != null"> and orgcode = #{orgCode}</if>
@@ -31,7 +31,7 @@
           statusid,
           orgtype
         FROM
-          t_tfs_org
+          t_tfs_suborg
         WHERE
           1=1
           <if test="userId != null">AND userid = #{userId}</if>
@@ -53,7 +53,7 @@
           statusid,
           orgtype
         FROM
-          t_tfs_org 
+          t_tfs_suborg 
            <where>
             	userid in (
                   select DISTINCT payeeuserid from t_tfs_accounthistory his where  his.payeruserid =#{userId} 
@@ -66,7 +66,7 @@
     
     <select id="countOrg" parameterType="com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest" resultType="Integer">
     	select count(1) from 
-	      t_tfs_org g
+	      t_tfs_suborg g
           LEFT JOIN t_tfs_orgcheck c ON g.userid = c.userid
 		<where>
 			<if test="userId !=null"> g.userId = #{userId}</if>
@@ -143,7 +143,7 @@
 		SELECT
 	      g.orgid
         FROM
-	      t_tfs_org g
+	      t_tfs_suborg g
           LEFT JOIN t_tfs_orgbindinfo b ON g.userid = b.userid
           LEFT JOIN t_tfs_orgimage i ON g.userid = i.userid
           LEFT JOIN t_tfs_orgcheck c ON g.userid = c.userid
@@ -166,7 +166,7 @@
 		SELECT
 	      g.orgid
         FROM
-	      t_tfs_org g
+	      t_tfs_suborg g
           LEFT JOIN t_tfs_orgbindinfo b ON g.userid = b.userid
           LEFT JOIN t_tfs_orgimage i ON g.userid = i.userid
           LEFT JOIN t_tfs_orgcheck c ON g.userid = c.userid
@@ -242,7 +242,7 @@
 	      b.bindapplyphone,
 	      b.bindapplyname
         FROM
-	      t_tfs_org g
+	      t_tfs_suborg g
           LEFT JOIN t_tfs_orgbindinfo b ON g.userid = b.userid
           LEFT JOIN t_tfs_orgimage i ON g.userid = i.userid
           LEFT JOIN t_tfs_orgcheck c ON g.userid = c.userid
@@ -288,7 +288,7 @@
 			C.checkuser,
 			C.checktime
 		FROM 
-			t_tfs_org G 
+			t_tfs_suborg G 
 			LEFT JOIN t_tfs_user U ON G.userid = U.userid
 			LEFT JOIN t_tfs_orgcheck C ON G.userid = C.userid 
 			<where>
@@ -306,7 +306,7 @@
 			</where>
 	</select>
     <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanOrg" useGeneratedKeys="true" keyProperty="orgid">
-    insert into t_tfs_org (orgid, orgcode, orgname, 
+    insert into t_tfs_suborg (orgid, orgcode, orgname, 
       constid, userid, productid, 
       role, username, usertype, 
       statusid, address, post, 
@@ -334,7 +334,7 @@
       #{email,jdbcType=VARCHAR},#{regChannel},#{createTime})
   </insert>
     <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanOrg">
-        update t_tfs_org
+        update t_tfs_suborg
         <set>
             
             <if test="orgname != null">

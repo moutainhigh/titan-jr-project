@@ -82,7 +82,7 @@
 	      obi.bindstatus,  obi.creator,obi.createtime, obi.modifier, 
 	      obi.modifytime 
 	  from 
-	      t_tfs_orgbindinfo obi inner join  t_tfs_org org 
+	      t_tfs_orgbindinfo obi inner join  t_tfs_suborg org 
 	  on 
 	       org.userid =obi.userid
       <where>
@@ -112,7 +112,7 @@
  	 	o.usertype as userType,
  	 	o.statusid as statusId
  	 from t_tfs_orgbindinfo b inner join t_tfs_orgcheck c on b.userid=c.userid
- 	 inner join t_tfs_org o on  o.userid =b.userid
+ 	 inner join t_tfs_suborg o on  o.userid =b.userid
  	 <where>
  	 	<if test="userid !=null">
  	 		and b.userid=#{userid}
