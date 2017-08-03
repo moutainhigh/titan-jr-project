@@ -165,9 +165,9 @@
                 </td>
             </tr>
             <tr>
-                <td class="tdr">版本号</td><span>v1.0-老版本；v1.1-新版本（新版收银台，快捷支付，账户升级）</span>
+                <td class="tdr">版本号</td>
                 <td>
-                    <input type="text" value="1" id="version" name="version"/>
+                    <input type="text" value="v1.0" id="version" name="version"/><span>v1.0-老版本；v1.1-新版本（新版收银台，快捷支付，账户升级）</span>
                 </td>
             </tr>
             <tr>
