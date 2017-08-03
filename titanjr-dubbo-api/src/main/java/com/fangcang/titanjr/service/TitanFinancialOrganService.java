@@ -168,6 +168,15 @@ public interface TitanFinancialOrganService {
     public OrgBindInfo queryActiveOrgBindInfo(OrgBindInfo orgBindInfo);
     
     /**
+     * 根据给出的任意条件查询商家绑定信息
+     * @author Jerry
+     * @date 2017年8月3日 上午10:00:27
+     * @param orgBindInfo
+     * @return
+     */
+    public OrgBindInfo queryOrgBindInfo(OrgBindInfo orgBindInfo);
+    
+    /**
      * 获取或者生成验证码
      * @param getCheckCodeRequest
      * @return

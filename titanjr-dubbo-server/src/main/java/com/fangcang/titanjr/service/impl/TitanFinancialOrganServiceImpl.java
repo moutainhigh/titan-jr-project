@@ -1681,4 +1681,21 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		return responseDTO;
 	}
 	
+	@Override
+	public OrgBindInfo queryOrgBindInfo(OrgBindInfo orgBindInfo) {
+		try{
+			TitanOrgBindinfo titanOrgBindinfo = new TitanOrgBindinfo();
+			titanOrgBindinfo.setMerchantcode(orgBindInfo.getMerchantCode());
+			titanOrgBindinfo.setOrgcode(orgBindInfo.getOrgcode());
+		    List<TitanOrgBindinfo> titanOrgBindinfoList =  titanOrgBindinfoDao.queryTitanOrgBindinfo(titanOrgBindinfo);
+			if(titanOrgBindinfoList !=null && titanOrgBindinfoList.size()==1){
+				return convertOrgBindInfo(titanOrgBindinfoList.get(0));
+			}
+		    
+		}catch(Exception e){
+			LOGGER.error("查询绑定机构信息失败"+e.getMessage(), e);
+		}
+		return null;
+	}
+	
 }

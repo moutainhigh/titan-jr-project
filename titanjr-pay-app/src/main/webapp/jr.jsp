@@ -48,11 +48,14 @@
 		                goodsId : $("#goodsId").val(),//商品编号,可以是对方的订单号
 		                goodsDetail : $("#goodsDetail").val(),//商品描述 N
 		                goodsName : $("#goodsName").val(),//商品名称N
-		                userId : $("#userId").val(),//付款方身份标示
+		                userId : $("#userId").val(),//付款方用户ID
+		                partnerOrgCode : $("#partnerOrgCode").val(),//付款方的机构编码
+		                orgCode : $("#orgCode").val(),//付款方的金融机构编码
 		                ruserId : $("#ruserId").val(),//收款方身份标示N
 		                amount : $("#amount").val(),//订单金额
 		                payerType : $("#payerType").val(),//付款人类型
-		                notify : $("#notify").val()
+		                notify : $("#notify").val(),
+		                version : $("#version").val()
 		            };
 			
 			titanPayObj.titanPay(orderInfo, businessInfo);
@@ -95,40 +98,52 @@
             <tr align="left">
                 <td class="tdr">操作人</td>
                 <td>
-                    <input type="text" name="name"  id="name" value="zhangsan" class="input_t01"/>
+                    <input type="text" name="name"  id="name" value="faceking" class="input_t01"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">担保结束日期</td>
-                <td><input type="text" id="escrowedDate" value="2016-12-03" name="escrowedDate"/></td>
+                <td><input type="text" id="escrowedDate" value="2017-10-03" name="escrowedDate"/></td>
             </tr>
             <tr>
                 <td class="tdr">业务订单号</td>
-                <td><input type="text" id="goodsId" value="201611141238596002662" name="goodsId"/>
+                <td><input type="text" id="goodsId" value="201708021425596001001" name="goodsId"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">商品名称</td>
                 <td>
-                    <input type="text" id="goodsName" value="签证预定单" name="goodsName"/>
+                    <input type="text" id="goodsName" value="随便预定单" name="goodsName"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">商品详情</td>
                 <td>
-                    <input type="text" value="预定日本签证，加急，5张...." id="goodsDetail" name="goodsDetail"/>
+                    <input type="text" value="加急，5张...." id="goodsDetail" name="goodsDetail"/>
                 </td>
             </tr>
             <tr>
-                <td class="tdr">付款方机构编码</td>
+                <td class="tdr">付款方用户ID</td>
                 <td>
                     <input type="text" value="" id="userId" name="userId"/>
                 </td>
             </tr>
             <tr>
+                <td class="tdr">付款方机构编码</td>
+                <td>
+                    <input type="text" value="" id="partnerOrgCode" name="userId"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">付款方金融机构编码</td>
+                <td>
+                    <input type="text" value="" id="orgCode" name="userId"/>
+                </td>
+            </tr>
+            <tr>
                 <td class="tdr">收款方机构编码</td>
                 <td>
-                    <input type="text" value="TJM10000098" id="ruserId" name="ruserId"/>
+                    <input type="text" value="TJM60000001" id="ruserId" name="ruserId"/>
                 </td>
             </tr>
             <tr>
@@ -150,6 +165,12 @@
                 </td>
             </tr>
             <tr>
+                <td class="tdr">版本号</td><span>v1.0-老版本；v1.1-新版本（新版收银台，快捷支付，账户升级）</span>
+                <td>
+                    <input type="text" value="1" id="version" name="version"/>
+                </td>
+            </tr>
+            <tr>
                 <td class="tdr">订单校验接口地址</td>
                 <td>
                     <input type="text" id="checkOrderUrl" name="checkOrderUrl"/>
@@ -158,7 +179,7 @@
             <tr>
                 <td class="tdr">支付通知接口地址</td>
                 <td>
-                    <input type="text" value="http://localhost:8088/titanjr-pay-app/quickPayment/customerNotify.action" id="notify" name="notify"/>
+                    <input type="text" value="http://192.168.0.77:8084/titanjr-pay-app/payCallBack" id="notify" name="notify"/>
                 </td>
             </tr>
             </tbody>

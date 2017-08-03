@@ -139,4 +139,25 @@ public enum PayerTypeEnum {
     public boolean isLoan() {
         return LOAN.key.equals(this.key);
     }
+    
+    /**
+     * 必须需要付款方信息
+     * @author Jerry
+     * @date 2017年8月2日 下午7:54:43
+     * @return
+     */
+    public boolean isNeedPayerInfo(){
+    	return SUPPLY_FINACIAL.key.equals(this.key) || SUPPLY_UNION.key.equals(this.key) || WITHDRAW.key.equals(this.key) 
+    			|| LOAN.key.equals(this.key);
+    }
+    /**
+     * 必须需要收款方信息
+     * @author Jerry
+     * @date 2017年8月2日 下午7:55:12
+     * @return
+     */
+    public boolean isNeedPayeeInfo(){
+    	return !SUPPLY_FINACIAL.key.equals(this.key) || !RECHARGE.key.equals(this.key) || !LOAN.key.equals(this.key);
+    }
+    
 }

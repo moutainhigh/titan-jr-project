@@ -138,4 +138,24 @@
  	 </where>
   </select>
   
+  <select id="queryTitanOrgBindinfo" parameterType="com.fangcang.titanjr.entity.TitanOrgBindinfo" resultType="com.fangcang.titanjr.entity.TitanOrgBindinfo">
+      select 
+	      obi.userid, obi.merchantcode, obi.orgcode, obi.merchantname, 
+	      obi.bindstatus,  obi.creator,obi.createtime, obi.modifier, 
+	      obi.modifytime 
+	  from 
+	      t_tfs_orgbindinfo obi inner join  t_tfs_suborg org 
+	  on 
+	       org.userid =obi.userid
+      <where>
+	      <if test="merchantcode !=null">
+	        and obi.merchantcode = #{merchantcode}
+	      </if>
+	      <if test="orgcode !=null">
+	        and obi.orgcode = #{orgcode}
+	      </if>
+	  </where>
+	  org.statusid=1 and obi.bindstatus=1
+  </select>
+  
 </mapper>
