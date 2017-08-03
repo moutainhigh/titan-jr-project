@@ -74,6 +74,16 @@ public class RechargeDataDTO implements Serializable{
 		//商户密钥
 		private String key ="12356780Poi";
 		
+		//新版收银台增加字段
+		private String payerAccountType; //支付人银行卡类型   10：借记卡  21：信用卡
+		private String idCode; //支付人身份证
+		private String terminalIp; //终端IP
+		private String terminalType; //终端类型
+		private String terminalInfo; //终端信息
+		private String checkCode; //快捷支付验证码
+		private String safetyCode;//信用卡背后的3位数字
+		private String validthru;//月年格式 例如2020年09月应写为0920
+		
 		public String getPayStatus() {
 			return payStatus;
 		}
@@ -256,5 +266,53 @@ public class RechargeDataDTO implements Serializable{
 		}
 		public void setGateWayUrl(String gateWayUrl) {
 			this.gateWayUrl = gateWayUrl;
+		}
+		public String getTerminalIp() {
+			return terminalIp;
+		}
+		public void setTerminalIp(String terminalIp) {
+			this.terminalIp = terminalIp;
+		}
+		public String getTerminalType() {
+			return terminalType;
+		}
+		public void setTerminalType(String terminalType) {
+			this.terminalType = terminalType;
+		}
+		public String getTerminalInfo() {
+			return terminalInfo;
+		}
+		public void setTerminalInfo(String terminalInfo) {
+			this.terminalInfo = terminalInfo;
+		}
+		public String getCheckCode() {
+			return checkCode;
+		}
+		public void setCheckCode(String checkCode) {
+			this.checkCode = checkCode;
+		}
+		public String getPayerAccountType() {
+			return payerAccountType;
+		}
+		public void setPayerAccountType(String payerAccountType) {
+			this.payerAccountType = payerAccountType;
+		}
+		public String getIdCode() {
+			return idCode;
+		}
+		public void setIdCode(String idCode) {
+			this.idCode = idCode;
+		}
+		public String getSafetyCode() {
+			return safetyCode;
+		}
+		public void setSafetyCode(String safetyCode) {
+			this.safetyCode = safetyCode;
+		}
+		public String getValidthru() {
+			return validthru;
+		}
+		public void setValidthru(String validthru) {
+			this.validthru = validthru;
 		}
 }

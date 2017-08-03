@@ -32,7 +32,7 @@ public class TitanOrderRequest implements Serializable{
 	private String notify;// 通知地址
 	private String checkOrderUrl;
 	private String productId = CommonConstant.RS_FANGCANG_PRODUCT_ID;
-	private String version = "v1.0"; //泰坦金融版本号（v1.0-老版本； v1.1-新版本，支持新版收银台，快捷支付，账户升级）
+	private String version = "v1.0"; //@see TitanjrVersionEnum
 	
 	private Map<String, String> businessInfo = new HashMap<String, String>(); // 存储业务信息
 

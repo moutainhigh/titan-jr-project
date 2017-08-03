@@ -98,7 +98,7 @@
             <tr align="left">
                 <td class="tdr">操作人</td>
                 <td>
-                    <input type="text" name="name"  id="name" value="faceking" class="input_t01"/>
+                    <input type="text" name="name"  id="name" value="德玛西亚" class="input_t01"/>
                 </td>
             </tr>
             <tr>
@@ -113,13 +113,13 @@
             <tr>
                 <td class="tdr">商品名称</td>
                 <td>
-                    <input type="text" id="goodsName" value="随便预定单" name="goodsName"/>
+                    <input type="text" id="goodsName" value="测试预定单" name="goodsName"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">商品详情</td>
                 <td>
-                    <input type="text" value="加急，5张...." id="goodsDetail" name="goodsDetail"/>
+                    <input type="text" value="预定单，加急，100张" id="goodsDetail" name="goodsDetail"/>
                 </td>
             </tr>
             <tr>

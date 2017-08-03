@@ -2,7 +2,8 @@ package com.fangcang.titanjr.enums;
 
 public enum VersionEnum {
 	
-    Version_1("v1.0","版本1");
+    Version_1("v1.0","版本1"),
+    Version_2("v1.1","版本2");
 	
 	public String key;
 	

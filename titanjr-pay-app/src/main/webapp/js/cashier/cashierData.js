@@ -134,6 +134,33 @@ function initCashierData(data){
 		return data;
 	};
 	
+	cashierData.onlineQuickPayData = function(){
+		var data= {
+				payOrderNo:cashierData.payOrderNo,
+		       	fcUserid:cashierData.fcUserid,
+		       	userid:cashierData.userid,
+		       	deskId:cashierData.deskId,
+		        paySource:cashierData.paySource,
+		        creator:cashierData.creator,
+		       	tradeAmount:cashierData.tradeAmount,
+		       	sign:cashierData.sign,
+		       	recieveOrgName:cashierData.recieveOrgName(),
+		       	recieveTitanCode:cashierData.recieveTitanCode(),
+		       	bankInfo:$("#bankInfo").val(),
+		       	payerAcount:$("#payerAcount").val(),
+		       	payerAccountType:$("#payerAccountType").val(),
+		       	payerName:$("#payerName").val(),
+		       	payerPhone:$("#payerPhone").val(),
+		       	idCode:$("#idCode").val(),
+		       	safetyCode:$("#safetyCode").val(),
+		       	validthru:$("#validthru").val(),
+		        linePayType:cashierData.linePayType(),
+		        isaccount:cashierData.isaccount(),
+		        payPassword:cashierData.payPassword()
+		};
+		return data;
+	};
+	
 	cashierData.window = function(errMsg){
 		 new top.createConfirm({
 	            title:'提示',

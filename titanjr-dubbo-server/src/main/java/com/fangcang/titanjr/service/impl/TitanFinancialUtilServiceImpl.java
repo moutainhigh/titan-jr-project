@@ -157,6 +157,7 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 		} else {
 			paramList.append("&escrowedDate=");
 		}
+		paramList.append("&version=").append(paymentUrlRequest.getVersion());
 		return paramList;
 	}
 	

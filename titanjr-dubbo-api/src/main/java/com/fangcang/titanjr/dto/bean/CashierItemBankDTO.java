@@ -8,11 +8,21 @@ import java.io.Serializable;
  */
 public class CashierItemBankDTO implements Serializable {
 
-    private String bankMark;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2906389436247051578L;
+
+	private String bankMark;
 
     private String bankName;
 
     private String bankImage;
+    
+    /**
+     * 该银行支持卡类型  1储蓄卡  2信用卡  3两者都支持
+     */
+    private String cardType;
 
     public String getBankMark() {
         return bankMark;
@@ -37,4 +47,12 @@ public class CashierItemBankDTO implements Serializable {
     public void setBankImage(String bankImage) {
         this.bankImage = bankImage;
     }
+
+	public String getCardType() {
+		return cardType;
+	}
+
+	public void setCardType(String cardType) {
+		this.cardType = cardType;
+	}
 }
