@@ -84,7 +84,7 @@
 	  accHis.createtime,
 	  org.titancode, 
 	  org.orgname
-	  from t_tfs_accounthistory accHis inner join t_tfs_suborg org  on org.orgcode=accHis.payeeuserid
+	  from t_tfs_accounthistory accHis inner join t_tfs_org org  on org.orgcode=accHis.payeeuserid
 	  <where>
 	    <if test="payeruserid !=null">
 	      and payeruserid=#{payeruserid}

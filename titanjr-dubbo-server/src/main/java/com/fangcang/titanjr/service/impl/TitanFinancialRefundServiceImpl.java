@@ -194,7 +194,7 @@ public class TitanFinancialRefundServiceImpl implements
 			BigDecimal free = new BigDecimal(refundRequest.getFee());
 			if (free.compareTo(BigDecimal.ZERO) == 1) {
 				userFeeTransferRequest = this.convertToTransferRequest(refundRequest);
-				userFeeTransferRequest.setUserid("141223100000056");
+				userFeeTransferRequest.setUserid(CommonConstant.RS_FANGCANG_USER_ID);
 				userFeeTransferRequest.setProductid("P000229");
 				userFeeTransferRequest.setAmount(refundRequest.getFee());
 				accountTransferResponse = rsAccTradeManager.accountBalanceTransfer(userFeeTransferRequest);

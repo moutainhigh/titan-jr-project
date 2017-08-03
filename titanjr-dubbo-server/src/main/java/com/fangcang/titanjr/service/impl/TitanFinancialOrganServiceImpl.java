@@ -466,8 +466,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	organRegisterRequest.setOrgCode(orgcode);
     	if(organRegisterRequest.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
     		validateEnterpriseParam(organRegisterRequest);
-    		titanOrg.setEmail(organRegisterRequest.getEmail());
-    		titanOrg.setUsername(organRegisterRequest.getOrgName());
+    		//titanOrg.setEmail(organRegisterRequest.getEmail());
+    		//titanOrg.setUsername(organRegisterRequest.getOrgName());
     		//机构
     		titanOrg.setOrgtype(organRegisterRequest.getOrgType());
         	titanOrg.setOrgname(organRegisterRequest.getOrgName());
@@ -480,7 +480,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     		validatePersonalParam(organRegisterRequest);
     		titanOrg.setOrgtype(organRegisterRequest.getOrgType());
         	titanOrg.setOrgname(organRegisterRequest.getOrgName());
-        	titanOrg.setPersonengname(organRegisterRequest.getOrgName());
+        	//titanOrg.setPersonengname(organRegisterRequest.getOrgName());
         	titanOrg.setCertificatetype(NumberUtils.toInt(organRegisterRequest.getCertificateType()));
         	titanOrg.setCertificatenumber(organRegisterRequest.getCertificateNumber());
     	}
