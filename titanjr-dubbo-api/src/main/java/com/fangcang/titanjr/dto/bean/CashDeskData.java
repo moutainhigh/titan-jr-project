@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import com.fangcang.dto.Response;
+import com.fangcang.titanjr.dto.bean.gateway.QuickCardHistoryDTO;
 
 public class CashDeskData implements Serializable{
 
@@ -84,6 +84,12 @@ public class CashDeskData implements Serializable{
 	private String currentTheme;
 	// 签名信息
 	private String sign ;
+	
+	//是否有余额支付的权限
+	private boolean canAccountBalance;
+	
+	//快捷支付卡历史记录
+	private List<QuickCardHistoryDTO> quickCardHistoryList;
 	
 
 	public String getPayOrderNo() {
@@ -286,6 +292,23 @@ public class CashDeskData implements Serializable{
 
 	public void setDeskId(Integer deskId) {
 		this.deskId = deskId;
+	}
+
+	public boolean isCanAccountBalance() {
+		return canAccountBalance;
+	}
+
+	public void setCanAccountBalance(boolean canAccountBalance) {
+		this.canAccountBalance = canAccountBalance;
+	}
+
+	public List<QuickCardHistoryDTO> getQuickCardHistoryList() {
+		return quickCardHistoryList;
+	}
+
+	public void setQuickCardHistoryList(
+			List<QuickCardHistoryDTO> quickCardHistoryList) {
+		this.quickCardHistoryList = quickCardHistoryList;
 	}
 
 	public CashDeskData putError(String msg){

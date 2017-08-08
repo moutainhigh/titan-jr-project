@@ -22,7 +22,7 @@ public class TitanOrderRequest implements Serializable{
 	private String goodsId;// 商品编号，可以是对方的订单号
 	private String goodsDetail;// 商品描述 N
 	private String goodsName;// 商品名称 N
-	private String userId;// 付款方用户ID
+	private String userId;// 付款方用户ID（老版本还可以是金融机构编码）
 	private String partnerOrgCode; //付款方的机构编码
 	private String orgCode;//付款方的金融机构编码
 	private String ruserId;// 收款方身份标示（收款方的机构编码或金融机构编码）
