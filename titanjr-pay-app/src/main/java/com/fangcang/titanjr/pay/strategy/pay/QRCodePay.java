@@ -13,6 +13,7 @@ import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.request.AddPayLogRequest;
+import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.response.QrCodeResponse;
 import com.fangcang.titanjr.enums.PayTypeEnum;
 import com.fangcang.titanjr.service.BusinessLogService;
@@ -33,13 +34,15 @@ public class QRCodePay implements PayStrategy {
 	private TitanFinancialUtilService titanFinancialUtilService;
 
 	@Override
-	public String pay(RechargeDataDTO rechargeDataDTO, String payOrderNo, Model model) {
+	public String pay(RechargeDataDTO rechargeDataDTO, TitanPaymentRequest titanPaymentRequest, Model model) {
 		
 		businessLogService = (BusinessLogService) SpringContextUtil.getBean("businessLogService");
 		titanFinancialTradeService = (TitanFinancialTradeService) SpringContextUtil.getBean("titanFinancialTradeService");
 		titanFinancialUtilService = (TitanFinancialUtilService) SpringContextUtil.getBean("titanFinancialUtilService");
 
-		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.WechatpayStep, OrderKindEnum.PayOrderNo, payOrderNo));
+		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.WechatpayStep, 
+				OrderKindEnum.PayOrderNo, titanPaymentRequest.getPayOrderNo()));
+		
 		if(PayTypeEnum.ALIPAY_URL.key.equals(rechargeDataDTO.getPayType())){
 			rechargeDataDTO.setExpand2(CommonConstant.ALIPAY);
 		}
@@ -50,6 +53,7 @@ public class QRCodePay implements PayStrategy {
 			model.addAttribute(CommonConstant.RETURN_MSG, TitanMsgCodeEnum.QR_EXCEPTION.getKey());
 			return CommonConstant.PAY_WX;
 		}
+		
 		model.addAttribute(CommonConstant.RESULT, CommonConstant.RETURN_SUCCESS);
 		model.addAttribute(CommonConstant.QRCODE,response.getQrCodeDTO());
 		return CommonConstant.PAY_WX;

@@ -131,6 +131,7 @@
 	<bean id="loanCreditOrderDiscardDao" class="com.fangcang.titanjr.dao.impl.LoanCreditOrderDiscardDaoImpl" parent="baseSqlMapClient"></bean>	
 	<bean id="titanVirtualOrgDao" class="com.fangcang.titanjr.dao.impl.TitanVirtualOrgDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanOperateLogDao" class="com.fangcang.titanjr.dao.impl.TitanOperateLogDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="quickCardHistoryDao" class="com.fangcang.titanjr.dao.impl.QuickCardHistoryDaoImpl" parent="baseSqlMapClient"></bean>
 	
 </beans>
 

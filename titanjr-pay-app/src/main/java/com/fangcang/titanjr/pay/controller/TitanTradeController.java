@@ -6,7 +6,6 @@ import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +25,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.BusinessLog;
-import com.fangcang.titanjr.common.enums.CardTypeEnum;
-import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
 import com.fangcang.titanjr.common.enums.EscrowedEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
@@ -44,8 +41,6 @@ import com.fangcang.titanjr.common.util.rsa.Base64Helper;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.CashDeskData;
 import com.fangcang.titanjr.dto.bean.CashierDeskDTO;
-import com.fangcang.titanjr.dto.bean.CashierDeskItemDTO;
-import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
@@ -53,6 +48,7 @@ import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
 import com.fangcang.titanjr.dto.bean.TitanVirtualOrgRelation;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.bean.gateway.QuickCardHistoryDTO;
 import com.fangcang.titanjr.dto.request.AddPayLogRequest;
 import com.fangcang.titanjr.dto.request.BindingVirtuaOrgBankCardRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
@@ -74,6 +70,7 @@ import com.fangcang.titanjr.pay.req.CreateVirtualOrgReq;
 import com.fangcang.titanjr.pay.req.DeskReq;
 import com.fangcang.titanjr.pay.services.TitanTradeService;
 import com.fangcang.titanjr.pay.util.RSADecryptString;
+import com.fangcang.titanjr.pay.util.TitanjrUpgradeHander;
 import com.fangcang.titanjr.response.BaseResponse;
 import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
@@ -256,28 +253,47 @@ public class TitanTradeController extends BaseController {
 						TitanMsgCodeEnum.AUTHENTITCATION_FAILED.getResMsg());
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
+			if(dto.getVersion() == null || "".equals(dto.getVersion())){
+				dto.setVersion(TitanjrVersionEnum.VERSION_1.getKey());//默认老版本
+			}
+			if(!TitanjrVersionEnum.isExist(dto.getVersion())){
+				log.error("titanjrVersion error");
+				model.addAttribute("msg", TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getResMsg());
+				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+			}
 
 			log.info("auth user is ok .");
 
-			// 检查解析后的参数是否合理
-			if (!checkOrderInfo(dto)) {
-				log.error("orderInfo check fail!");
-				model.addAttribute("msg",
-						TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED
-								.getResMsg());
-				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+			// 校验参数以及检查用户权限
+			if(TitanjrVersionEnum.isVersion1(dto.getVersion())){
+				if (!checkOrderInfo(dto)) {
+					log.error("orderInfo check fail!");
+					model.addAttribute("msg",
+							TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED
+									.getResMsg());
+					return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+				}
+				log.info("check order info is ok");
+				
+				if (!financialTradeService.checkPermission(dto)) {
+					log.error("checkPermission is fail.");
+					model.addAttribute("msg",
+							TitanMsgCodeEnum.PERMISSION_CHECK_FAILED.getResMsg());
+					return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+				}
+				log.info("check permission is ok");
+			}else{
+				//金融二期不在这里检查权限，在设置收付款信息那里
+				if (!TitanjrUpgradeHander.checkOrderInfo(dto)) {
+					log.error("orderInfo check fail!");
+					model.addAttribute("msg",
+							TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED
+									.getResMsg());
+					return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+				}
+				log.info("check order info is ok");
 			}
-
-			log.info("check order info is ok");
-			// 检查用户权限
-			if (!financialTradeService.checkPermission(dto)) {
-				log.error("checkPermission is fail.");
-				model.addAttribute("msg",
-						TitanMsgCodeEnum.PERMISSION_CHECK_FAILED.getResMsg());
-				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
-			}
-
-			log.info("check permission is ok");
+			
 			// 确认业务订单信息
 			if (!financialTradeService.checkConfirmBussOrder(dto)) {
 				log.error("checkConfirmBussOrder is fail.");
@@ -346,10 +362,11 @@ public class TitanTradeController extends BaseController {
 				paymentUrlRequest.setIsEscrowed(EscrowedEnum.ESCROWED_PAYMENT
 						.getKey());
 				paymentUrlRequest.setPaySource(dto.getPayerType());
-				if(dto.getPayerType().equals(PayerTypeEnum.SUPPLY_FINACIAL.key)){
+				//if(dto.getPayerType().equals(PayerTypeEnum.SUPPLY_FINACIAL.key)){
 					paymentUrlRequest.setFcUserid(dto.getUserId());
-				}
+				//}
 				paymentUrlRequest.setVersion(dto.getVersion());
+				paymentUrlRequest.setCanAccountBalance(orderCreateResponse.isCanAccountBalance());
 				PaymentUrlResponse response = titanFinancialUtilService
 						.getPaymentUrl(paymentUrlRequest);
 
@@ -444,6 +461,7 @@ public class TitanTradeController extends BaseController {
 			paramList.append("&escrowedDate=");
 		}
 		paramList.append("&version=").append(paymentUrlRequest.getVersion());
+		paramList.append("&canAccountBalance=").append(paymentUrlRequest.isCanAccountBalance());
 		return paramList;
 	}
 	/**
@@ -465,7 +483,7 @@ public class TitanTradeController extends BaseController {
 			return false;
 		}
 
-		if (!pe.isUserId() && !StringUtil.isValidString(dto.getAmount())) {
+		if (!pe.isRWL() && !StringUtil.isValidString(dto.getAmount())) {
 			log.error("Amount is null");
 			return false;
 		}
@@ -491,12 +509,15 @@ public class TitanTradeController extends BaseController {
 			return false;
 		}
 
-		if (!pe.isUserId() && !StringUtil.isValidString(dto.getGoodsId())) {
+		/**
+		 * 非充值、提现、贷款的goodsId是第三方系统的订单号，必传
+		 */
+		if (!pe.isRWL() && !StringUtil.isValidString(dto.getGoodsId())) {
 			log.error("GoodsId is null");
 			return false;
 		}
 
-		if (pe.isUserId() && !StringUtil.isValidString(dto.getUserId())) {
+		if (pe.isRWL() && !StringUtil.isValidString(dto.getUserId())) {
 			log.error(pe + "userId is null");
 			return false;
 		}
@@ -546,16 +567,6 @@ public class TitanTradeController extends BaseController {
 						"UTF-8"));
 			} catch (UnsupportedEncodingException e) {
 				log.error("CheckOrderUrl URLDecoder fail.");
-			}
-		}
-		
-		if(!pe.isUserId()){
-			if(dto.getVersion() == null || "".equals(dto.getVersion())){
-				dto.setVersion(TitanjrVersionEnum.VERSION_1.getKey());//默认老版本
-			}
-			if(!TitanjrVersionEnum.isExist(dto.getVersion())){
-				log.error("titanjrVersion error");
-				return false;
 			}
 		}
 
@@ -871,7 +882,7 @@ public class TitanTradeController extends BaseController {
 			}
 		}
 		String mCode = transOrderDTO.getMerchantcode();
-		if (payerTypeEnum.isUserId() || payerTypeEnum.isOpenOrg()) {
+		if (payerTypeEnum.isRWL() || payerTypeEnum.isOpenOrg()) {
 			String userid = StringUtil.isValidString(transOrderDTO
 					.getPayeemerchant()) ? transOrderDTO.getPayeemerchant()
 					: transOrderDTO.getPayermerchant();
@@ -899,8 +910,8 @@ public class TitanTradeController extends BaseController {
 
 		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
 		cashierDeskQueryRequest.setUserId(transOrderDTO.getUserid());
-		// GDP支付时用商家的收银台
-		if (payerTypeEnum.useReceiverCashDesk()) {// 使用收款商家收银台
+		//非必须需要付款方的用收款方的收银台
+		if (!payerTypeEnum.isNeedPayerInfo()) {
 			cashierDeskQueryRequest.setUserId(transOrderDTO.getPayeemerchant());
 		}
 		cashierDeskQueryRequest.setUsedFor(PayerTypeEnum
@@ -923,15 +934,24 @@ public class TitanTradeController extends BaseController {
 
 		CashierDeskDTO cashierDeskDTO = response.getCashierDeskDTOList().get(0);
 		
-		//如果是新版收银台，需要合并个人网银（储蓄卡）和信用卡
+		//金融二期
 		if(TitanjrVersionEnum.isVersion2(deskReq.getVersion())){
-			
-			BaseResponse baseResponse = resetCashierDeskItem(cashierDeskDTO);
+			//新版收银台，需要合并个人网银（储蓄卡）和信用卡
+			BaseResponse baseResponse = TitanjrUpgradeHander.resetCashierDeskItem(cashierDeskDTO);
 			if(!baseResponse.isResult()){
 				model.addAttribute("msg", baseResponse.getReturnMessage());
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
-			
+			//设置第三方用户ID（快捷支付）
+			if(StringUtil.isValidString(deskReq.getFcUserid())){
+				cashDeskData.setFcUserid(deskReq.getFcUserid());
+			}
+			//快捷支付卡历史
+			QuickCardHistoryDTO quickCardHistoryDTO = new QuickCardHistoryDTO();
+			quickCardHistoryDTO.setOrgcode(transOrderDTO.getUserid());
+			quickCardHistoryDTO.setFcuserid(cashDeskData.getFcUserid());
+			cashDeskData.setQuickCardHistoryList(titanCashierDeskService
+					.queryQuickcardHistory(quickCardHistoryDTO));
 		}
 		
 		// 将民生银行的企业银行方到最后面
@@ -943,6 +963,7 @@ public class TitanTradeController extends BaseController {
 		cashDeskData.setMerchantcode(transOrderDTO.getMerchantcode());
 		cashDeskData.setUserId(transOrderDTO.getUserid());
 		cashDeskData.setPayOrderNo(transOrderDTO.getPayorderno());
+		cashDeskData.setCanAccountBalance(deskReq.isCanAccountBalance());
 
 		if (response.getCashierDeskDTOList().get(0) != null) {
 			cashDeskData.setDeskId(response.getCashierDeskDTOList().get(0)
@@ -972,102 +993,13 @@ public class TitanTradeController extends BaseController {
 		if (payerTypeEnum.isRechargeCashDesk()) {
 			return TitanConstantDefine.RECHARGE_MAIN_PAGE;
 		}
-		return TitanConstantDefine.CASHIER_DESK_MAIN_PAGE;
+		if(TitanjrVersionEnum.isVersion1(deskReq.getVersion())){
+			return TitanConstantDefine.CASHIER_DESK_MAIN_PAGE;
+		}else{
+			return TitanConstantDefine.CASHIER_DESK_MAIN_PAGE_NEW;
+		}
 	}
 	
-	/**
-	 * @Description: 重构收银台的数据结构（新版收银台）
-	 *
-	 * @author Jerry
-	 * @date 2017年7月24日 上午10:10:13 
-	 * @param @param cashierDeskDTO
-	 * @param @return 
-	 * @return BaseResponse
-	 */
-	private BaseResponse resetCashierDeskItem(CashierDeskDTO cashierDeskDTO){
-		
-		BaseResponse baseResponse = new BaseResponse();
-		baseResponse.putSuccess();
-		try {
-			Integer delCreditCardCashierIndex = null; //需要删除的信用卡支付下标
-			List<CashierItemBankDTO> personalEBankList = new ArrayList<CashierItemBankDTO>(); //用来保存储蓄卡和信用卡合并后银行列表
-			List<CashierItemBankDTO> depositCardList = null; //原储蓄卡银行列表（个人网银）
-			List<CashierItemBankDTO> creditCardList = null; //原信用卡银行列表
-			List<CashierDeskItemDTO> cashierDeskItemDTOList = cashierDeskDTO.getCashierDeskItemDTOList(); //收银台支付方式
-			if(CollectionUtils.isEmpty(cashierDeskItemDTOList)){
-				log.error("收银台支付方式列表为空");
-				baseResponse.putErrorResult("收银台支付列表为空");
-			}
-			
-			for (int i = 0; i < cashierDeskItemDTOList.size(); i++) {
-				if(CashierItemTypeEnum.isPersonalEbank(String.valueOf(cashierDeskItemDTOList.get(i).getItemType()))){
-					depositCardList = cashierDeskItemDTOList.get(i).getCashierItemBankDTOList();
-				}
-				if(CashierItemTypeEnum.isCreditCard(String.valueOf(cashierDeskItemDTOList.get(i).getItemType()))){
-					creditCardList = cashierDeskItemDTOList.get(i).getCashierItemBankDTOList();
-					delCreditCardCashierIndex = i;
-				}
-			}
-			
-			if(CollectionUtils.isNotEmpty(depositCardList)){
-				for (CashierItemBankDTO depositCard : depositCardList) {
-					depositCard.setCardType(String.valueOf(CardTypeEnum.DEPOSIT.key));
-				}
-				//将原个人网银支付银行列表放进personalEBankList
-				personalEBankList.addAll(depositCardList);
-			}
-			
-			//用信用卡支付银行列表和personalEBankList对比合并
-			if(CollectionUtils.isNotEmpty(creditCardList)){
-				
-				if(CollectionUtils.isEmpty(personalEBankList)){
-					for (CashierItemBankDTO creditCard : creditCardList) {
-						creditCard.setCardType(String.valueOf(CardTypeEnum.CREDIT.key));
-					}
-					personalEBankList.addAll(creditCardList);
-					
-				}else{
-					for (int i = 0; i < creditCardList.size(); i++) {
-						boolean isBoth = false;
-						for (int j = 0; j < personalEBankList.size(); j++) {
-							if(creditCardList.get(i).getBankName().equals(personalEBankList.get(j).getBankName())){
-								personalEBankList.get(j).setCardType(String.valueOf(CardTypeEnum.BOTH.key));
-								isBoth = true;
-								break;
-							}
-						}
-						if(!isBoth){
-							creditCardList.get(i).setCardType(String.valueOf(CardTypeEnum.CREDIT.key));
-							personalEBankList.add(creditCardList.get(i));
-						}
-					}
-					
-				}
-				
-			}
-			
-			if(CollectionUtils.isNotEmpty(personalEBankList)){
-				for (int i = 0; i < cashierDeskItemDTOList.size(); i++) {
-					if(CashierItemTypeEnum.isPersonalEbank(String.valueOf(cashierDeskItemDTOList.get(i).getItemType()))){
-						//把原来的个人网银列表换成合并后的personalEBankList
-						cashierDeskItemDTOList.get(i).setCashierItemBankDTOList(personalEBankList);
-					}
-				}
-			}
-			
-			if(delCreditCardCashierIndex != null){
-				cashierDeskItemDTOList.remove(delCreditCardCashierIndex.intValue()); //删除信用卡支付
-			}
-			cashierDeskDTO.setCashierDeskItemDTOList(cashierDeskItemDTOList);
-			
-		} catch (Exception e) {
-			log.error("快捷支付重置收银台数据异常：", e);
-			baseResponse.putErrorResult("系统错误，请联系管理员");
-			
-		}
-		
-		return baseResponse;
-	}
 	
 	/**
 	 * 加密传到收银台的敏感数据

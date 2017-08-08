@@ -105,7 +105,7 @@
                      <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem">
                         <c:if test="${deskItem.itemType == 4}">
                             <input type="hidden" id="canUseAccBalance" value="1">
-                            <c:if test="${ not empty cashDeskData.balanceusable}">
+                            <c:if test="${ not empty cashDeskData.balanceusable and cashDeskData.canAccountBalance eq true }">
                             <li class="p_l27" id="useBalanceCheck">
                                 <label class="f_ui-checkbox-c3 p_r10">
                                     <input type="checkbox" checked="" id="d_checkbox" onclick="checkedBalance()" ><i ></i>
@@ -132,11 +132,13 @@
 				</div>
             <input type="hidden" id="onlinePayAmount" name="onlinePayAmount"><!--通过网银充值并支付的金额-->
               <div class="goldpay_title1" style="border-bottom:#ddd 1px solid;">
-                <c:if test="${ not empty cashDeskData.fcUserid}">
-                <div class="goldpaytitle1_top" id="not_enough_amount">剩余余额：<!--账户余额不够用余额付款-->
-                    <span class="c_f00" id="pay_surplus_amount"><fmt:formatNumber value="${cashDeskData.amount - cashDeskData.balanceusable}"  pattern="#,##0.00#" /></span>元
-                    <span class="p_l27">使用以下方式付款：</span>
-                </div>
+              <c:if test="${deskItem.itemType == 4}">
+	                <c:if test="${ not empty cashDeskData.fcUserid}">
+		                <div class="goldpaytitle1_top" id="not_enough_amount">剩余余额：<!--账户余额不够用余额付款-->
+		                    <span class="c_f00" id="pay_surplus_amount"><fmt:formatNumber value="${cashDeskData.amount - cashDeskData.balanceusable}"  pattern="#,##0.00#" /></span>元
+		                    <span class="p_l27">使用以下方式付款：</span>
+		                </div>
+	                </c:if>
                 </c:if>
 
                 <div class="goldpaytitle1_top blue J_payway" id="enough_amount"><!--账户余额足够但是不用余额付款-->
@@ -147,12 +149,12 @@
                 <div class="goldpayway" id="useCashierDeskPay">
                   <div class="pay_table">
                     <ul>
-                         <c:if test="${not empty  cashDeskData.commonPayMethodDTOList}">
+                         <c:if test="${not empty cashDeskData.commonPayMethodDTOList or not empty cashDeskData.quickCardHistoryList}">
                            <li class="on" id="pay_table_ttt">常用</li>
                         </c:if>
                         <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem">
                         
-                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9 }">
+                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9 or deskItem.itemType == 11 }">
                                 <li>${deskItem.itemName}</li>
                             </c:if>
                             
@@ -205,8 +207,23 @@
                           </c:forEach>
                           </li>
                          </c:if>
+                         <!-- 快捷支付卡历史记录 -->
+                         <c:if test="${not empty cashDeskData.quickCardHistoryList }">
+		                      <li>
+		                      <c:forEach items="${cashDeskData.quickCardHistoryList }" var="quickCard" varStatus="status">
+								  <span class="payc_title fl">${quickCard.bankname }---${quickCard.payeracount }--- 快捷支付
+								  （<c:if test="${quickCard.payeraccounttype =='10'}">
+								  	储蓄卡
+								  </c:if>
+								  <c:if test="${quickCard.payeraccounttype =='11'}">
+								  	信用卡
+								  </c:if>）
+								  </span>
+	                          </c:forEach>
+	                          </li>
+                         </c:if>
                          <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem" varStatus="o_status">
-                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9  or (deskItem.itemType == 10 and  isSupportLoanApply)}">
+                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9  or (deskItem.itemType == 10 and  isSupportLoanApply) or deskItem.itemType == 11}">
                                 <li >
                                     <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
                                         <div class="paytable_payway" itemType='${deskItem.itemType}' >
@@ -235,6 +252,10 @@
                                             </c:if>
                                             
                                             <c:if test="${deskItem.itemType == 10 and isSupportLoanApply }">
+                                                <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}"></span>
+                                            </c:if>
+                                            
+                                            <c:if test="${deskItem.itemType == 11 }">
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}"></span>
                                             </c:if>
                                             
@@ -278,7 +299,7 @@
 <script type="text/javascript" src="<%=basePath%>/js/common.js"></script>
 <script type="text/javascript" src="<%=basePath%>/js/cashier/paypsd.js"></script>
 <script type="text/javascript" src="<%=basePath%>/js/cashier/rate.js"></script>
-<script type="text/javascript" src="<%=basePath%>/js/cashier/cashierData.js"></script>
+<script type="text/javascript" src="<%=basePath%>/js/cashier/cashierData.js?v=5"></script>
 <script type="text/javascript" src="<%=basePath%>/js/cashier/init.js"></script>
 <script>
 	$("document").ready(function (){
@@ -704,6 +725,9 @@
 
 		} else if (cashierData.linePayType() == '10') {
 			loanPay();
+		} else if (cashierData.linePayType() == '11') { //测试快捷支付
+			quickPay();
+			
 		} else {//有网银支付
 			cashierData.submit();
 		}
@@ -752,6 +776,79 @@
                	top.F.loading.hide();
             }
            });
+    }
+    
+    function quickPay(){
+    	var orderNo = "";
+    	$.ajax({
+    		type: "post",
+            dataType : 'html',
+   	        context: document.body,
+   	        url : '<%=basePath%>/payment/showQuickPayView.action',			
+   	        success : function(html){
+   	            var d =  window.top.dialog({
+   	                title: ' ',
+   	                padding: '0 0 0px 0',
+   					width: 400,
+   	                content: html,
+   	                skin : 'saas_pop wx_close wx_p'
+   	            }).showModal();
+   	            $('#getCheckCode').on('click',function(){
+   	            	$.ajax({
+	   	 				type : "post",
+	   	 				url : "<%=basePath%>/payment/quickPayRecharge.action",
+	   	 	               data: cashierData.onlineQuickPayData(),
+	   	 	               dataType: "json",
+	   	 	               success: function (data) {
+	   	 	            	   if(data.isSuccess == false){
+	   	 	            		   alert(data.errMsg);
+	   	 	            		   return;
+	   	 	            	   }
+	   	 	            	   orderNo = data.orderNo;
+	   	 	            	   
+	   	 	            	   var certificate = data.certificate;
+	   	 	            	   if(certificate != null && typeof(certificate) != 'undefined' && certificate == '1'){
+	   	 	            		   window.open("<%=basePath%>/quickPay/cardSceurityVerify.shtml?orderNo=" + data.orderNo + "&cardNo=" + $('#payerAcount').val(), "_blank");
+	   	 	            		   
+	   	 	            	   }else{
+	   	 	            		   alert("验证码发送成功");
+	   	 	            	   }
+	   	 	            	   
+	   	 	               }
+	   	 	         });
+   	            });
+   	            $('#recharge').on('click',function(){
+ 	            	$('#recharge').attr("disabled", true);
+	            	$.ajax({
+	   	 				type : "post",
+	   	 				url : "<%=basePath%>/quickPay/confirmRecharge.action",
+	   	 	               data: {
+	   	 	            		busiCode: "109",
+	   	 	            		signType: "1",
+	   	 	            		version: "v1.1",
+	   	 	        			merchantNo: "M000016",
+	   	 	        			orderNo: orderNo,
+	   	 	        			payType: "41",
+	   	 	        			checkCode: $("#checkCode").val()
+	   	 	               },
+	   	 	               dataType: "json",
+	   	 	               success: function (data) {
+	   	 	            	   if(data.success == false){
+	   	 	            		   alert(data.errMsg);
+	   	 	            		   $('#recharge').attr("disabled", false);
+	   	 	            		   return;
+	   	 	            	   }
+	   	 	            	   alert("充值成功");
+	   	 	            	   d.close().remove();
+	   	 	            	   top.F.loading.hide();
+	   	 	               }
+	   	 	         });
+	             });
+   	            
+   	        },complete:function(){
+               	top.F.loading.hide();
+            }
+        });
     }
     
     function toWxPayPage(){

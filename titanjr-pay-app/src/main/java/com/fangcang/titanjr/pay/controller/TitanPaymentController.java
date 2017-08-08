@@ -634,7 +634,7 @@ public class TitanPaymentController extends BaseController {
 			
 		}
 		Payment payment = new Payment(strategy);
-		return payment.doPay(rechargeDataDTO, titanPaymentRequest.getPayOrderNo(), model);
+		return payment.doPay(rechargeDataDTO, titanPaymentRequest, model);
 	}
 	
 	private String md5Sign(TitanPaymentRequest titanPaymentRequest,String md5key){

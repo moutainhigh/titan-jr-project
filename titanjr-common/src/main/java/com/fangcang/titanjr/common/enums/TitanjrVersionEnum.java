@@ -53,6 +53,35 @@ public enum TitanjrVersionEnum {
 		
 	}
 	
+	/**
+	 * 金融一期
+	 * @author Jerry
+	 * @date 2017年8月4日 下午2:30:38
+	 * @param key
+	 * @return
+	 */
+	public static boolean isVersion1(String key){
+		
+		if(!StringUtil.isValidString(key)){
+			return false;
+		}
+		
+		if(TitanjrVersionEnum.VERSION_1.getKey().equals(key)){
+			
+			return true;
+		}
+		
+		return false;
+		
+	}
+	
+	/**
+	 * 金融二期（快捷支付，账户升级，新版收银台）
+	 * @author Jerry
+	 * @date 2017年8月4日 下午2:30:48
+	 * @param key
+	 * @return
+	 */
 	public static boolean isVersion2(String key){
 		
 		if(!StringUtil.isValidString(key)){

@@ -59,7 +59,6 @@ import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
-import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
 import com.fangcang.titanjr.dao.TitanAccountDao;
@@ -128,6 +127,7 @@ import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUpgradeService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
@@ -186,6 +186,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	
 	@Resource
 	private TitanFinancialUtilService titanFinancialUtilService;
+	
+	@Resource
+	private TitanFinancialUpgradeService titanFinancialUpgradeService;
 	
 	private static Map<String, Object> mapLock = new ConcurrentHashMap<String, Object>();
 
@@ -1897,7 +1900,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				localOrderResponse = this.setBaseUserInfo(titanOrderRequest,
 						titanTransOrder);
 			}else{
-				localOrderResponse = setBaseOrderInfoForAccountUpgrade(titanOrderRequest, titanTransOrder);
+				localOrderResponse = titanFinancialUpgradeService.setBaseUserInfo(titanOrderRequest, titanTransOrder);
 			}
 			
 			if (!localOrderResponse.isResult()) {
@@ -2053,9 +2056,15 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 								.getResMsg());
 				return orderCreateResponse;
 			}
-			//--判断付款方和收款方是否发生了变化--luoqinglong-
+			//--判断付款方和收款方是否发生了变化--luoqinglong-不对TitanTransOrder设置
 			TitanTransOrder newTransOrder = new TitanTransOrder();
-			TransOrderCreateResponse localOrderResponse = this.setBaseUserInfo(titanOrderRequest,newTransOrder);//仅仅是为了获得订单的收付款双方
+			TransOrderCreateResponse localOrderResponse = new TransOrderCreateResponse();
+			if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanOrderRequest.getVersion())){
+				localOrderResponse = this.setBaseUserInfo(titanOrderRequest, newTransOrder);
+			}else{
+				localOrderResponse = titanFinancialUpgradeService.setBaseUserInfo(titanOrderRequest, newTransOrder);
+				orderCreateResponse.setCanAccountBalance(localOrderResponse.isCanAccountBalance());
+			}
 			if(localOrderResponse.isResult()){
 				//收款和付款方任意一方绑定关系变化，则重新下单
 				if(isChange(transOrderDTO.getPayeemerchant(), newTransOrder.getPayeemerchant())||isChange(transOrderDTO.getPayermerchant(), newTransOrder.getPayermerchant())){
@@ -2198,94 +2207,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return false;
 	}
 	
-	
-	private TransOrderCreateResponse setBaseOrderInfoForAccountUpgrade(TitanOrderRequest titanOrderRequest, 
-			TitanTransOrder titanTransOrder){
-		
-		TransOrderCreateResponse response = new TransOrderCreateResponse();
-		response.putSuccess();
-		PayerTypeEnum payerTypeEnum = PayerTypeEnum
-				.getPayerTypeEnumByKey(titanOrderRequest.getPayerType());
-		
-		//设置付款方信息
-		if(payerTypeEnum.isNeedPayerInfo()){
-			if((!StringUtil.isValidString(titanOrderRequest.getPartnerOrgCode()) || !StringUtil.isValidString(
-					titanOrderRequest.getOrgCode())) && !StringUtil.isValidString(titanOrderRequest.getUserId())){
-				response.putErrorResult("付款方不能为空");
-				return response;
-			}
-		}
-		if(StringUtil.isValidString(titanOrderRequest.getPartnerOrgCode()) && StringUtil
-				.isValidString(titanOrderRequest.getOrgCode())){
-			
-			OrgBindInfo orgBindInfo = queryOrgBindInfo(titanOrderRequest.getPartnerOrgCode(),
-					titanOrderRequest.getOrgCode());
-			if(orgBindInfo == null){
-				response.putErrorResult("查询机构绑定信息失败");
-				return response;
-			}
-			titanTransOrder.setUserid(orgBindInfo.getOrgcode());
-			titanTransOrder.setPayermerchant(orgBindInfo.getOrgcode());
-			
-		}else if(StringUtil.isValidString(titanOrderRequest.getUserId())){
-			TitanUserBindInfoDTO titanUserBindInfoDTO = this.getBindInfoDTO(titanOrderRequest.getUserId());
-			if (titanUserBindInfoDTO == null
-					|| titanUserBindInfoDTO.getTfsuserid() == null) {
-				response.putErrorResult("查询用户绑定信息失败");
-				return response;
-			}
-			TitanUser titanUser = titanUserDao.selectTitanUser(titanUserBindInfoDTO.getTfsuserid());
-			if(titanUser == null){
-				response.putErrorResult("查询金融用户失败");
-				return response;
-			}
-			titanTransOrder.setUserid(titanUser.getUserid());
-			titanTransOrder.setPayermerchant(titanUser.getUserid());
-			titanTransOrder.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-		}else{
-			titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
-			titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
-			titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
-		}
-		//设置收款方信息
-		if(payerTypeEnum.isNeedPayeeInfo()){
-			
-			if(!StringUtil.isValidString(titanOrderRequest.getRuserId())){
-				response.putErrorResult("收款方不能为空");
-				return response;
-			}
-			
-			OrgBindInfoDTO orgBindDTO = new OrgBindInfoDTO();
-			if (titanOrderRequest.getRuserId().startsWith("TJM")){
-				orgBindDTO.setUserid(titanOrderRequest.getRuserId());
-			}else {
-				orgBindDTO.setMerchantCode(titanOrderRequest.getRuserId());
-			}
-			orgBindDTO.setResultKey("PASS");
-			orgBindDTO.setBindStatus(1);
-			List<OrgBindInfoDTO> orgBindDTOList = titanFinancialOrganService.queryOrgBindInfoDTO(orgBindDTO);
-
-			if (CollectionUtils.isEmpty(orgBindDTOList) || orgBindDTOList.size() != 1) {
-				response.putErrorResult("接收方机构不存在,或不正确");
-				return response;
-			}
-			titanTransOrder.setPayeemerchant(orgBindDTOList.get(0).getUserid());
-			titanTransOrder.setUserrelateid(orgBindDTOList.get(0).getUserid());
-			
-		}
-		//设置订单类型
-		if(payerTypeEnum.isRechargeCashDesk()){
-			titanTransOrder.setTransordertype(TransOrderTypeEnum.RECHARGE.type);
-		}
-		if(payerTypeEnum.isWithdraw()){
-			titanTransOrder.setTransordertype(TransOrderTypeEnum.WITHDRAW.type);
-		}else{
-			titanTransOrder.setTransordertype(TransOrderTypeEnum.PAYMENT.type);
-		}
-		
-		return response;
-		
-	}
 
 	/**
 	 * 保存收付款方相关信息
@@ -2459,12 +2380,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		OrgBindInfo orgBindInfo = new OrgBindInfo();
 		orgBindInfo.setMerchantCode(merchantCode);
 		return titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
-	}
-	private OrgBindInfo queryOrgBindInfo(String partnerOrgCode, String orgCode) {
-		OrgBindInfo orgBindInfo = new OrgBindInfo();
-		orgBindInfo.setMerchantCode(partnerOrgCode);
-		orgBindInfo.setOrgcode(orgCode);
-		return titanFinancialOrganService.queryOrgBindInfo(orgBindInfo);
 	}
 
 	@Override

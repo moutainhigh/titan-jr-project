@@ -69,7 +69,7 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	private PayTypeEnum payType = PayTypeEnum.Personal_Banking;
 	
 	//新版收银台增加字段
-	private String payerAccountType; //支付人银行卡类型   10：借记卡  21：信用卡
+	private String payerAccountType; //支付人银行卡类型   10：借记卡  11：信用卡
 	private String payerName; //支付人名字
 	private String payerPhone; //支付人银行预留电话
 	private String idCode; //支付人身份证

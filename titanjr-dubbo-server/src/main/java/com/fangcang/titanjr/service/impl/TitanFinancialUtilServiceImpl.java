@@ -158,6 +158,7 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 			paramList.append("&escrowedDate=");
 		}
 		paramList.append("&version=").append(paymentUrlRequest.getVersion());
+		paramList.append("&canAccountBalance=").append(paymentUrlRequest.isCanAccountBalance());
 		return paramList;
 	}
 	

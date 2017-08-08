@@ -49,6 +49,9 @@ public class PaymentUrlRequest extends BaseRequestDTO {
     //收银台版本 @see TitanjrVersionEnum
     @NotEmpty
     private String version;
+    
+    //是否可用余额支付
+    private boolean canAccountBalance;
 
 
     public String getFcUserid() {
@@ -153,6 +156,14 @@ public class PaymentUrlRequest extends BaseRequestDTO {
 
 	public void setVersion(String version) {
 		this.version = version;
+	}
+
+	public boolean isCanAccountBalance() {
+		return canAccountBalance;
+	}
+
+	public void setCanAccountBalance(boolean canAccountBalance) {
+		this.canAccountBalance = canAccountBalance;
 	}
 	
 }
