@@ -797,7 +797,7 @@ public class TitanFinancialRefundServiceImpl implements
 				bean.setUserOrderId(refund.getUserOrderId());
 				bean.setCode(refundStatus.status.toString());
 				bean.setBusinessInfo(refund.getBusinessInfo());
-				log.info("threadNotify()通知第三方退款单状态,参数[NotifyBean]："+JSONSerializer.toJSON(bean));
+				log.info("threadNotify()通知第三方退款单状态,参数[NotifyBean]："+JSONSerializer.toJSON(bean)+",单号orderid:"+orderNo);
 				notifyTTMall(bean);
 			}
 		});

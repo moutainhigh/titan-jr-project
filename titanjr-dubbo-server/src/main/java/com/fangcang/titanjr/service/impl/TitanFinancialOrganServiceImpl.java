@@ -12,7 +12,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
-import javax.tools.Tool;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.time.DateUtils;
