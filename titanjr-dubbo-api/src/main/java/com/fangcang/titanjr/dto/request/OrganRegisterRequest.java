@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.dto.request;
 
-import com.fangcang.titanjr.dto.BaseRequestDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
 
 import java.util.List;
@@ -12,36 +11,36 @@ import org.hibernate.validator.constraints.NotBlank;
 /**
  * Created by zhaoshan on 2016/4/21.
  */
-public class OrganRegisterRequest extends BaseRequestDTO {
+public class OrganRegisterRequest extends RegOrgSubRequest {
     //公司名称，需生成公司编码
-	@NotBlank
-    private String orgName;
+	//@NotBlank
+   // private String orgName;
     //注册机构时候必须字段，跟公司名可以一致
     private String userName;
     
-    private String orgCode;
+  //  private String orgCode;
     //联系人
-    private String connect;
+  //  private String connect;
     //联系电话
-    private String mobileTel;
+  //  private String mobileTel;
     //注册个人机构时必须，营业执照号
-    private String buslince;
+ ///   private String buslince;
 
 
     //注册个人机构时必须，跟orgName可以一样
    // private String personName;
     //注册个人机构时必须，身份认证类型，默认身份证 = 0
-    private String certificateType;
+  //  private String certificateType;
     //注册个人机构时必须，身份认证编码
-    private String certificateNumber;
+   // private String certificateNumber;
 
 
     //机构类型
-    private Integer orgType;
+  //  private Integer orgType;
     @NotNull
     private Integer userType;
 
-    //注册来源，1.SaaS页面注册，2.金服官网注册，3.后台自动注册,RegisterSourceEnum
+    //注册来源，见CoopTypeEnum
     @NotNull
     private Integer registerSource;
 
@@ -55,7 +54,7 @@ public class OrganRegisterRequest extends BaseRequestDTO {
     
     //可以是数组,格式：111,222,333
     private String imageid;
-    private String titancode;
+    //private String titancode;
     
     /***************** 房仓信息 *****************/
     //房仓登录用户名
@@ -66,12 +65,10 @@ public class OrganRegisterRequest extends BaseRequestDTO {
     private String  merchantCode;
     //商家名称
     private String merchantname;
-    //SAAS
-    private String bindapplyname;
-    
-    private String bindapplyphone;
-    
-    
+    //是否自动审核
+    private boolean isAutoCheck = false;
+    //是否创建真实机构
+    private boolean isCreateOrgSub = false;
     /*******    *****/
     private String checkResKey;
     
@@ -82,30 +79,6 @@ public class OrganRegisterRequest extends BaseRequestDTO {
 
 	public void setCheckResKey(String checkResKey) {
 		this.checkResKey = checkResKey;
-	}
-
-	public String getTitancode() {
-		return titancode;
-	}
-
-	public void setTitancode(String titancode) {
-		this.titancode = titancode;
-	}
-
-	public String getBindapplyname() {
-		return bindapplyname;
-	}
-
-	public void setBindapplyname(String bindapplyname) {
-		this.bindapplyname = bindapplyname;
-	}
-
-	public String getBindapplyphone() {
-		return bindapplyphone;
-	}
-
-	public void setBindapplyphone(String bindapplyphone) {
-		this.bindapplyphone = bindapplyphone;
 	}
 
 	public String getMerchantname() {
@@ -132,13 +105,7 @@ public class OrganRegisterRequest extends BaseRequestDTO {
 		this.merchantCode = merchantCode;
 	}
 
-	public String getOrgCode() {
-		return orgCode;
-	}
-
-	public void setOrgCode(String orgCode) {
-		this.orgCode = orgCode;
-	}
+	 
 
 	public String getEmail() {
 		return email;
@@ -156,13 +123,7 @@ public class OrganRegisterRequest extends BaseRequestDTO {
 		this.imageid = imageid;
 	}
 
-	public String getOrgName() {
-        return orgName;
-    }
-
-    public void setOrgName(String orgName) {
-        this.orgName = orgName;
-    }
+	 
 
     public String getUserName() {
         return userName;
@@ -172,61 +133,23 @@ public class OrganRegisterRequest extends BaseRequestDTO {
         this.userName = userName;
     }
 
-    public String getConnect() {
-        return connect;
-    }
 
-    public void setConnect(String connect) {
-        this.connect = connect;
-    }
+    public boolean getIsAutoCheck() {
+		return isAutoCheck;
+	}
 
-    public String getMobileTel() {
-        return mobileTel;
-    }
+	public void setIsAutoCheck(boolean isAutoCheck) {
+		this.isAutoCheck = isAutoCheck;
+	}
 
-    public void setMobileTel(String mobileTel) {
-        this.mobileTel = mobileTel;
-    }
+	public boolean getIsCreateOrgSub() {
+		return isCreateOrgSub;
+	}
 
-    public String getBuslince() {
-        return buslince;
-    }
+	public void setIsCreateOrgSub(boolean isCreateOrgSub) {
+		this.isCreateOrgSub = isCreateOrgSub;
+	}
 
-    public void setBuslince(String buslince) {
-        this.buslince = buslince;
-    }
-
-//    public String getPersonName() {
-//        return personName;
-//    }
-//
-//    public void setPersonName(String personName) {
-//        this.personName = personName;
-//    }
-
-    public String getCertificateType() {
-        return certificateType;
-    }
-
-    public void setCertificateType(String certificateType) {
-        this.certificateType = certificateType;
-    }
-
-    public String getCertificateNumber() {
-        return certificateNumber;
-    }
-
-    public void setCertificateNumber(String certificateNumber) {
-        this.certificateNumber = certificateNumber;
-    }
-
-    public Integer getOrgType() {
-        return orgType;
-    }
-
-    public void setOrgType(Integer orgType) {
-        this.orgType = orgType;
-    }
 
     public List<OrgImageInfo> getOrgImageInfoList() {
         return orgImageInfoList;

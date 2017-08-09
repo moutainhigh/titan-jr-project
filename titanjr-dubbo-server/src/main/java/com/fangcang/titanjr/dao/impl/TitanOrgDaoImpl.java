@@ -1,5 +1,9 @@
 package com.fangcang.titanjr.dao.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
@@ -9,10 +13,6 @@ import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.entity.TitanOrg;
 import com.fangcang.titanjr.entity.parameter.TitanOrgParam;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class TitanOrgDaoImpl extends GenericDAOMyBatisImpl implements TitanOrgDao{
 	@Override

@@ -62,7 +62,6 @@ public class InitSessionInterceptor implements HandlerInterceptor {
         HttpSession session = httpServletRequest.getSession();
         MerchantFacade merchantFacade = hessianProxyBeanFactory.getHessianProxyBean(MerchantFacade.class,
                 ProxyFactoryConstants.merchantServerUrl + "merchantFacade");
-        
         if (session.getAttribute("onlineRoleUser") == null || session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE) == null) {
             if (session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER) != null && session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ROLE) == null) {
                 UserWrapper roleUser = null;

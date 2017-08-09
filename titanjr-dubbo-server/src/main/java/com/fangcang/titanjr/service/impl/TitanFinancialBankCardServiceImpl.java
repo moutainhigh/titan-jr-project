@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,6 +56,8 @@ import com.fangcang.titanjr.rs.response.InvalidPubCardModifyResponse;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
+
+import net.sf.json.JSONSerializer;
 
 @Service("titanFinancialBankCardService")
 public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCardService {

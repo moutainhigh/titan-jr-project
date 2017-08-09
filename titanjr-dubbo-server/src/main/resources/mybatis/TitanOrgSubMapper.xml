@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanOrgSubDao">
+    <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanOrgSub"
+            parameterType="com.fangcang.titanjr.entity.parameter.TitanOrgSubParam">
+        select
+        *
+        from t_tfs_org
+        <where>
+            <if test="orgsubid != null"> and orgsubid = #{orgsubid}</if>
+            <if test="orgsubid != null"> and orgcode = #{orgsubid}</if>
+            <if test="userid != null"> and userid =#{userid}</if>
+            <if test="orgname !=null"> and orgname = #{orgname}</if>
+            <if test="buslince != null"> and buslince = #{buslince}</if>
+            <if test="certificatetype != null"> and certificatetype =#{certificatetype}</if>
+            <if test="certificatenumber != null"> and certificatenumber =#{certificatenumber}</if>
+        </where>
+    </select>
+    
+    <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanOrgSub" useGeneratedKeys="true" keyProperty="orgsubid">
+    insert into t_tfs_org (
+     orgcode, 
+     orgname, 
+      userid,
+      usertype, 
+      certificatetype, 
+      certificatenumber, 
+      mobiletel, 
+      `connect`, 
+      buslince,
+      createTime)
+    values (#{orgcode,jdbcType=VARCHAR}, 
+    	#{orgname,jdbcType=VARCHAR}, 
+       #{userid,jdbcType=VARCHAR},
+      #{usertype,jdbcType=INTEGER}, 
+      #{certificatetype,jdbcType=INTEGER}, 
+      #{certificatenumber,jdbcType=VARCHAR},
+       #{mobiletel,jdbcType=VARCHAR}, 
+      #{connect,jdbcType=VARCHAR}, 
+      #{buslince,jdbcType=VARCHAR}
+      #{createTime})
+  </insert>
+   
+
+</mapper>

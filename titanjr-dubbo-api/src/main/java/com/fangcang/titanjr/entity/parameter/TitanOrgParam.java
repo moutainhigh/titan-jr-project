@@ -1,6 +1,6 @@
 package com.fangcang.titanjr.entity.parameter;
 
-public class TitanOrgParam {
+public class TitanOrgParam  {
 
     /**
      *
