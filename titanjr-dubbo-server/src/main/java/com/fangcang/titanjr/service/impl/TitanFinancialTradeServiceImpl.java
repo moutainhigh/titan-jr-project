@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Resource;
 
 import com.fangcang.titanjr.dto.response.*;
+
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -44,6 +45,7 @@ import com.fangcang.titanjr.common.enums.ROPErrorEnum;
 import com.fangcang.titanjr.common.enums.ReqstatusEnum;
 import com.fangcang.titanjr.common.enums.SupportBankEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
+import com.fangcang.titanjr.common.enums.TitanjrVersionEnum;
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
 import com.fangcang.titanjr.common.enums.TransOrderTypeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
@@ -57,7 +59,6 @@ import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
-import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
 import com.fangcang.titanjr.dao.TitanAccountDao;
@@ -126,6 +127,7 @@ import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUpgradeService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
@@ -184,6 +186,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	
 	@Resource
 	private TitanFinancialUtilService titanFinancialUtilService;
+	
+	@Resource
+	private TitanFinancialUpgradeService titanFinancialUpgradeService;
 	
 	private static Map<String, Object> mapLock = new ConcurrentHashMap<String, Object>();
 
@@ -1051,6 +1056,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			req.setBusiCode(rechargeRequest.getBusiCode());
 			req.setVersion(rechargeRequest.getVersion());
 			req.setCharset(rechargeRequest.getCharset());
+			//新版收银台增加参数
+			req.setIdCode(rechargeRequest.getIdCode());
+			req.setPayerAccountType(rechargeRequest.getPayerAccountType());
+			req.setSafetyCode(rechargeRequest.getSafetyCode());
+			req.setValidthru(rechargeRequest.getValidthru());
 		}
 		return req;
 	}
@@ -1886,8 +1896,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			}
 
 			//设置收付款方信息
-			localOrderResponse = this.setBaseUserInfo(titanOrderRequest,
-					titanTransOrder);
+			if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanOrderRequest.getVersion())){
+				localOrderResponse = this.setBaseUserInfo(titanOrderRequest,
+						titanTransOrder);
+			}else{
+				localOrderResponse = titanFinancialUpgradeService.setBaseUserInfo(titanOrderRequest, titanTransOrder);
+			}
+			
 			if (!localOrderResponse.isResult()) {
 				log.error("save base userinfo is fail");
 				return localOrderResponse;
@@ -2041,9 +2056,15 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 								.getResMsg());
 				return orderCreateResponse;
 			}
-			//--判断付款方和收款方是否发生了变化--luoqinglong-
+			//--判断付款方和收款方是否发生了变化--luoqinglong-不对TitanTransOrder设置
 			TitanTransOrder newTransOrder = new TitanTransOrder();
-			TransOrderCreateResponse localOrderResponse = this.setBaseUserInfo(titanOrderRequest,newTransOrder);//仅仅是为了获得订单的收付款双方
+			TransOrderCreateResponse localOrderResponse = new TransOrderCreateResponse();
+			if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanOrderRequest.getVersion())){
+				localOrderResponse = this.setBaseUserInfo(titanOrderRequest, newTransOrder);
+			}else{
+				localOrderResponse = titanFinancialUpgradeService.setBaseUserInfo(titanOrderRequest, newTransOrder);
+				orderCreateResponse.setCanAccountBalance(localOrderResponse.isCanAccountBalance());
+			}
 			if(localOrderResponse.isResult()){
 				//收款和付款方任意一方绑定关系变化，则重新下单
 				if(isChange(transOrderDTO.getPayeemerchant(), newTransOrder.getPayeemerchant())||isChange(transOrderDTO.getPayermerchant(), newTransOrder.getPayermerchant())){
@@ -2185,6 +2206,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		}
 		return false;
 	}
+	
 
 	/**
 	 * 保存收付款方相关信息

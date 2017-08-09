@@ -6,7 +6,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public class PaymentUrlRequest extends BaseRequestDTO {
 
-    private String merchantcode;
+    /** 
+	 * 
+	 */
+	private static final long serialVersionUID = -3163998348942517998L;
+
+	private String merchantcode;
 
     @NotEmpty
     private String payOrderNo;
@@ -40,6 +45,13 @@ public class PaymentUrlRequest extends BaseRequestDTO {
 
     //解冻日期
     private String escrowedDate;
+    
+    //收银台版本 @see TitanjrVersionEnum
+    @NotEmpty
+    private String version;
+    
+    //是否可用余额支付
+    private boolean canAccountBalance;
 
 
     public String getFcUserid() {
@@ -136,6 +148,22 @@ public class PaymentUrlRequest extends BaseRequestDTO {
 
 	public void setNotifyUrl(String notifyUrl) {
 		this.notifyUrl = notifyUrl;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public boolean isCanAccountBalance() {
+		return canAccountBalance;
+	}
+
+	public void setCanAccountBalance(boolean canAccountBalance) {
+		this.canAccountBalance = canAccountBalance;
 	}
 	
 }

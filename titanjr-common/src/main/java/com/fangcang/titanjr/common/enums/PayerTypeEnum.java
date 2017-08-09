@@ -77,7 +77,12 @@ public enum PayerTypeEnum {
         return B2B_PUS.key.equals(this.key) || B2B_WX_PUBLIC_PAY.key.equals(this.key)|| B2B_GDP.key.equals(this.key) || OPEN_ORG.key.equals(this.key) || TT_MALL.key.equals(this.key)|| TT_MALL_V2.key.equals(this.key);
     }
 
-    public boolean isUserId() {
+    /**
+     * 属于充值、提现、贷款
+     * @author Jerry
+     * @date 2017年8月4日 上午11:02:31
+     */
+    public boolean isRWL() {
         return RECHARGE.key.equals(this.key) || WITHDRAW.key.equals(this.key) || LOAN.key.equals(this.key);
     }
 
@@ -139,4 +144,25 @@ public enum PayerTypeEnum {
     public boolean isLoan() {
         return LOAN.key.equals(this.key);
     }
+    
+    /**
+     * 必须需要付款方信息
+     * @author Jerry
+     * @date 2017年8月2日 下午7:54:43
+     * @return
+     */
+    public boolean isNeedPayerInfo(){
+    	return SUPPLY_FINACIAL.key.equals(this.key) || SUPPLY_UNION.key.equals(this.key) || WITHDRAW.key.equals(this.key) 
+    			|| LOAN.key.equals(this.key);
+    }
+    /**
+     * 必须需要收款方信息
+     * @author Jerry
+     * @date 2017年8月2日 下午7:55:12
+     * @return
+     */
+    public boolean isNeedPayeeInfo(){
+    	return !SUPPLY_FINACIAL.key.equals(this.key) && !WITHDRAW.key.equals(this.key) && !LOAN.key.equals(this.key);
+    }
+    
 }

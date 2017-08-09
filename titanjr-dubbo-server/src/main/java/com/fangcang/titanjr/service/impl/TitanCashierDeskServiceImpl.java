@@ -3,7 +3,9 @@ package com.fangcang.titanjr.service.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -19,19 +21,22 @@ import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.BusTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierDeskTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
-import com.fangcang.titanjr.common.enums.CoopTypeEnum;
 import com.fangcang.titanjr.common.enums.SupportBankEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.dao.QuickCardHistoryDao;
 import com.fangcang.titanjr.dao.TitanCashierDeskDao;
 import com.fangcang.titanjr.dao.TitanCashierDeskItemDao;
 import com.fangcang.titanjr.dao.TitanCashierItemBankDao;
 import com.fangcang.titanjr.dao.TitanCommonPayMethodDao;
 import com.fangcang.titanjr.dao.TitanOrgDao;
 import com.fangcang.titanjr.dao.TitanRateConfigDao;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.CashierDeskDTO;
 import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.ItemBankDTO;
+import com.fangcang.titanjr.dto.bean.gateway.QuickCardHistoryDTO;
 import com.fangcang.titanjr.dto.request.CashierDeskInitRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
@@ -57,7 +62,12 @@ import com.fangcang.util.StringUtil;
 @Service("titanCashierDeskService")
 public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Serializable {
 
-    private static final Log log = LogFactory.getLog(TitanCashierDeskServiceImpl.class);
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6036678797022327373L;
+
+	private static final Log log = LogFactory.getLog(TitanCashierDeskServiceImpl.class);
 
     @Resource
     TitanCashierDeskDao titanCashierDeskDao;
@@ -79,6 +89,9 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
     
     @Resource 
     TitanOrgDao titanOrgDao;
+    
+    @Resource 
+    QuickCardHistoryDao quickCardHistoryDao;
 
     @Override
     public CashierDeskResponse queryCashierDesk(CashierDeskQueryRequest cashierDeskQueryRequest) {
@@ -87,14 +100,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
         try {
             List<CashierDeskDTO> result = titanCashierDeskDao.queryCashierDesk(cashierDeskQueryRequest);
             if (CollectionUtils.isNotEmpty(result)) {
-            	//设置收银台的顺序
                 deskResponse.setCashierDeskDTOList(result);
-                if (StringUtil.isValidString(cashierDeskQueryRequest.getPayerOrgCode())) {//验证付款方编码
-                    FinancialOrganQueryRequest titanOrgQueryDTO = new FinancialOrganQueryRequest();
-                    titanOrgQueryDTO.setMerchantcode(cashierDeskQueryRequest.getPayerOrgCode());
-                    titanOrgQueryDTO.setCoopType(CoopTypeEnum.SAAS.getKey());//默认查SAAS合作方，兼容性
-                    titanFinancialOrganService.queryBaseFinancialOrgan(titanOrgQueryDTO);
-                }
             }
             deskResponse.putSuccess();
         } catch (Exception e) {
@@ -409,6 +415,61 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public BaseResponseDTO saveQuickcardHistory(QuickCardHistoryDTO quickCardHistoryDTO) {
+		
+		BaseResponseDTO baseResponseDTO = new BaseResponseDTO();
+		baseResponseDTO.putSuccess();
+		if(!StringUtil.isValidString(quickCardHistoryDTO.getIdtype())){
+			quickCardHistoryDTO.setIdtype("1");
+		}
+		
+		String validate = GenericValidate.validateObj(quickCardHistoryDTO);
+		if(StringUtil.isValidString(validate)){
+			log.error("saveQuickcardHistory error：" + validate);
+			baseResponseDTO.putErrorResult(validate);
+			return baseResponseDTO;
+		}
+		
+		Map<String, String> condition = new HashMap<String, String>();
+		condition.put("fcuserid", quickCardHistoryDTO.getFcuserid());
+		condition.put("payeracount", quickCardHistoryDTO.getPayeracount());
+		PaginationSupport<QuickCardHistoryDTO> paginationSupport = new PaginationSupport<QuickCardHistoryDTO>();
+		quickCardHistoryDao.selectForPage(condition, paginationSupport);
+		
+		if(paginationSupport.getItemList() != null && paginationSupport.getItemList().size() != 0 ){
+		   if(paginationSupport.getItemList().size()==1){
+			   QuickCardHistoryDTO quickCardHistory = paginationSupport.getItemList().get(0);
+			   quickCardHistory.setCount(quickCardHistory.getCount() + 1);
+			   if(quickCardHistoryDao.update(quickCardHistory) <= 0){
+				   log.error("更新快捷支付卡历史失败");
+				   baseResponseDTO.putSysError();
+			   }
+		   }else{
+			   log.error("快捷支付卡历史记录重复  fcuserid=" + quickCardHistoryDTO.getFcuserid() + ", payeracount=" + quickCardHistoryDTO.getPayeracount());
+		   }
+		}else{
+			
+			quickCardHistoryDTO.setCount(1);
+			if(quickCardHistoryDao.insert(quickCardHistoryDTO) <= 0){
+				log.error("添加快捷支付卡历史失败");
+				baseResponseDTO.putSysError();
+			}
+		}
+		
+		return baseResponseDTO;
+	}
+	
+	@Override
+	public List<QuickCardHistoryDTO> queryQuickcardHistory(QuickCardHistoryDTO quickCardHistoryDTO) {
+		try{
+			return quickCardHistoryDao.selectQuickCardHistory(quickCardHistoryDTO);
+		}catch(Exception e){
+			 log.error("查询快捷支付卡历史记录异常：", e);
+		}
+		return null;
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package com.fangcang.titanjr.pay.services;
 
 import java.math.BigDecimal;
-import java.text.Bidi;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +13,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fangcang.titanjr.common.enums.BusinessLog;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
+import com.fangcang.titanjr.common.enums.QuickPayBankEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
@@ -34,6 +33,7 @@ import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.bean.gateway.QuickCardHistoryDTO;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.AddPayLogRequest;
@@ -50,7 +50,6 @@ import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
-import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
@@ -191,6 +190,14 @@ public class TitanPaymentService {
 			rechargeRequest.setPageUrl(payMethodConfigDTO.getPageurl());
 			rechargeRequest.setNotifyUrl(payMethodConfigDTO.getNotifyurl());
 		}
+		//新版收银台增加参数
+		rechargeRequest.setVersion(titanPaymentRequest.getVersion());
+		rechargeRequest.setIdCode(titanPaymentRequest.getIdCode());
+		rechargeRequest.setPayerAccountType(titanPaymentRequest.getPayerAccountType());
+		rechargeRequest.setPayerName(titanPaymentRequest.getPayerName());
+		rechargeRequest.setPayerPhone(titanPaymentRequest.getPayerPhone());
+		rechargeRequest.setSafetyCode(titanPaymentRequest.getSafetyCode());
+		rechargeRequest.setValidthru(titanPaymentRequest.getValidthru());
 
 		return rechargeRequest;
 	}
@@ -210,6 +217,29 @@ public class TitanPaymentService {
 						.parseInt(titanPaymentRequest.getLinePayType()));
 			}
 			titanCashierDeskService.saveCommonPayMethod(commonPayMethodDTO);
+		} catch (Exception e) {
+			log.error("保存常用的支付方式失败" + e.getMessage(), e);
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveQuickcardHistory(TitanPaymentRequest titanPaymentRequest) {
+		try {
+			QuickCardHistoryDTO quickCardHistoryDTO = new QuickCardHistoryDTO();
+			quickCardHistoryDTO.setOrgcode(titanPaymentRequest.getUserid());
+			quickCardHistoryDTO.setFcuserid(titanPaymentRequest.getFcUserid());
+			quickCardHistoryDTO.setPayername(titanPaymentRequest.getPayerName());
+			quickCardHistoryDTO.setPayeracount(titanPaymentRequest.getPayerAcount());
+			quickCardHistoryDTO.setBankinfo(titanPaymentRequest.getBankInfo());
+			quickCardHistoryDTO.setPayeraccounttype(titanPaymentRequest.getPayerAccountType());
+			quickCardHistoryDTO.setPayerphone(titanPaymentRequest.getPayerPhone());
+			quickCardHistoryDTO.setBankname(QuickPayBankEnum.getBankName(titanPaymentRequest.getBankInfo(), 
+					titanPaymentRequest.getPayerAccountType()));
+			quickCardHistoryDTO.setIdcode(titanPaymentRequest.getIdCode());
+			quickCardHistoryDTO.setSafetycode(titanPaymentRequest.getSafetyCode());
+			quickCardHistoryDTO.setValidthru(titanPaymentRequest.getValidthru());
+			quickCardHistoryDTO.setCreator(titanPaymentRequest.getCreator());
+			titanCashierDeskService.saveQuickcardHistory(quickCardHistoryDTO);
 		} catch (Exception e) {
 			log.error("保存常用的支付方式失败" + e.getMessage(), e);
 			e.printStackTrace();

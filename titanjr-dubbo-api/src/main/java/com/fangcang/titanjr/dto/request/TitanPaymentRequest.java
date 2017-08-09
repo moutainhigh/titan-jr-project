@@ -63,11 +63,24 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	
 	private String orderTypeId;
 	
-	
 	//md5签名
 	private String sign ;
 	//支付方式 默认个人银行
 	private PayTypeEnum payType = PayTypeEnum.Personal_Banking;
+	
+	//新版收银台增加字段
+	private String payerAccountType; //支付人银行卡类型   10：借记卡  11：信用卡
+	private String payerName; //支付人名字
+	private String payerPhone; //支付人银行预留电话
+	private String idCode; //支付人身份证
+	private String terminalIp; //终端IP
+	private String terminalType; //终端类型
+	private String terminalInfo; //终端信息
+	private String safetyCode;//信用卡背后的3位数字
+	private String validthru;//月年格式 例如2020年09月应写为0920
+	private String version;
+	
+	
 	public Float getReceivablerate() {
 		return receivablerate;
 	}
@@ -242,6 +255,86 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 
 	public void setTransferAmount(String transferAmount) {
 		this.transferAmount = transferAmount;
+	}
+	
+	public String getPayerAccountType() {
+		return payerAccountType;
+	}
+
+	public void setPayerAccountType(String payerAccountType) {
+		this.payerAccountType = payerAccountType;
+	}
+
+	public String getIdCode() {
+		return idCode;
+	}
+
+	public void setIdCode(String idCode) {
+		this.idCode = idCode;
+	}
+
+	public String getTerminalIp() {
+		return terminalIp;
+	}
+
+	public void setTerminalIp(String terminalIp) {
+		this.terminalIp = terminalIp;
+	}
+
+	public String getTerminalType() {
+		return terminalType;
+	}
+
+	public void setTerminalType(String terminalType) {
+		this.terminalType = terminalType;
+	}
+
+	public String getTerminalInfo() {
+		return terminalInfo;
+	}
+
+	public void setTerminalInfo(String terminalInfo) {
+		this.terminalInfo = terminalInfo;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public String getPayerName() {
+		return payerName;
+	}
+
+	public void setPayerName(String payerName) {
+		this.payerName = payerName;
+	}
+
+	public String getPayerPhone() {
+		return payerPhone;
+	}
+
+	public void setPayerPhone(String payerPhone) {
+		this.payerPhone = payerPhone;
+	}
+
+	public String getSafetyCode() {
+		return safetyCode;
+	}
+
+	public void setSafetyCode(String safetyCode) {
+		this.safetyCode = safetyCode;
+	}
+
+	public String getValidthru() {
+		return validthru;
+	}
+
+	public void setValidthru(String validthru) {
+		this.validthru = validthru;
 	}
 	
 }
