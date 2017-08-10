@@ -31,7 +31,12 @@ public class MD5 {
         }
         return resultString;
     }
-
+    /***
+     * 请使用 MD5Encode(string ,string)
+     * @param origin
+     * @return
+     */
+    @Deprecated 
     public static String MD5Encode(String origin){
     	return MD5Encode(origin,"");
     }
@@ -103,13 +108,9 @@ public class MD5 {
         return params.toString();
     }
     
-    public static boolean isopen(){
-    	System.out.println("111");
-    	return false;
-    }
      
     public static void main(String[] arg){
-    	System.out.println(!(isopen()&&isopen()));
-    	System.out.println((!isopen()||(!isopen())));
+    	//System.out.println(MD5.MD5Encode("1111"));
+    	//System.out.println(MD5.MD5Encode("1111","UTF-8"));
     }
 }

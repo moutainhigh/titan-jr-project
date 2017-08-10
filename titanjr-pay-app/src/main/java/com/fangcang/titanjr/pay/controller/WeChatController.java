@@ -116,6 +116,42 @@ public class WeChatController {
 
 		log.info("Wx titan pay request Json = "
 				+ JsonConversionTool.toJson(req));
+		
+		if (!checkOrderInfo(req)) {
+			jumpFailUrl(req.getFailJumpUrl(), response, request,
+					TitanMsgCodeEnum.UNEXPECTED_ERROR);
+			return;
+		}
+		//签名校验
+		Map<String, String> paramMap = null;
+		try {
+			paramMap = BeanUtils.describe(req);
+			paramMap.remove("sign");//排除签名串本身
+			paramMap.remove("class");//排除签名串本身
+		} catch (NoSuchMethodException e) {
+			log.error("微信公众号支付请求,请求参数转map失败NoSuchMethodException：  "+ JsonConversionTool.toJson(req),e);
+			jumpFailUrl(req.getFailJumpUrl(), response, request,
+					TitanMsgCodeEnum.UNEXPECTED_ERROR);
+			return;
+		} catch (IllegalAccessException e) {
+			log.error("微信公众号支付请求,请求参数转map失败IllegalAccessException：  "+ JsonConversionTool.toJson(req),e);
+			jumpFailUrl(req.getFailJumpUrl(), response, request,
+					TitanMsgCodeEnum.UNEXPECTED_ERROR);
+			return;
+		} catch (InvocationTargetException e) {
+			log.error("微信公众号支付请求,请求参数转map失败InvocationTargetException：  "+ JsonConversionTool.toJson(req),e);
+			jumpFailUrl(req.getFailJumpUrl(), response, request,
+					TitanMsgCodeEnum.UNEXPECTED_ERROR);
+			return;
+		}
+		
+		String sign = MD5.MD5Encode(MD5.generatorSignParam(paramMap, TitanConstantDefine.PAY_APP_CASHIER_SIGN_MD5_KEY),"UTF-8").toUpperCase();
+		if(!sign.toUpperCase().equals(req.getSign())){
+			log.error("微信公众号支付请求签名错误signerror,请求参数：  "+ JsonConversionTool.toJson(req)+",金融签名sign为："+sign);
+			jumpFailUrl(req.getFailJumpUrl(), response, request,
+					TitanMsgCodeEnum.SIGN_INCORRECT);
+			return;
+		}
 		// 查询收款人对于的机构信息
 		if(StringUtil.isValidString(req.getPayType())&&req.getPayType().toUpperCase().startsWith("S")){//SAAS商家编码
 			OrgBindInfoDTO orgDto = new OrgBindInfoDTO();
@@ -130,30 +166,6 @@ public class WeChatController {
 				orgDto = list.get(0);
 				req.setPayeeOrg(orgDto.getUserid());
 			}
-		}
-		if (!checkOrderInfo(req)) {
-			jumpFailUrl(req.getFailJumpUrl(), response, request,
-					TitanMsgCodeEnum.UNEXPECTED_ERROR);
-			return;
-		}
-		//签名校验
-		Map<String, String> paramMap = null;
-		try {
-			paramMap = BeanUtils.describe(req);
-			paramMap.remove("sign");//排除签名串本身
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-			log.error("微信公众号支付请求,请求参数转map失败：  "+ JsonConversionTool.toJson(req),e);
-			jumpFailUrl(req.getFailJumpUrl(), response, request,
-					TitanMsgCodeEnum.UNEXPECTED_ERROR);
-			return;
-		}
-		
-		String sign = MD5.MD5Encode(MD5.generatorSignParam(paramMap, TitanConstantDefine.PAY_APP_CASHIER_SIGN_MD5_KEY)).toUpperCase();
-		if(!sign.toUpperCase().equals(req.getSign())){
-			log.error("微信公众号支付请求签名错误signerror,请求参数：  "+ JsonConversionTool.toJson(req)+",金融签名sign为："+sign);
-			jumpFailUrl(req.getFailJumpUrl(), response, request,
-					TitanMsgCodeEnum.SIGN_INCORRECT);
-			return;
 		}
 		
 		// 构建本地落单请求对象
