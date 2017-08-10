@@ -2,6 +2,7 @@ package com.fangcang.titanjr.pay.controller;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +31,7 @@ import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
+import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
@@ -133,6 +136,26 @@ public class WeChatController {
 					TitanMsgCodeEnum.UNEXPECTED_ERROR);
 			return;
 		}
+		//签名校验
+		Map<String, String> paramMap = null;
+		try {
+			paramMap = BeanUtils.describe(req);
+			paramMap.remove("sign");//排除签名串本身
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+			log.error("微信公众号支付请求,请求参数转map失败：  "+ JsonConversionTool.toJson(req),e);
+			jumpFailUrl(req.getFailJumpUrl(), response, request,
+					TitanMsgCodeEnum.UNEXPECTED_ERROR);
+			return;
+		}
+		
+		String sign = MD5.MD5Encode(MD5.generatorSignParam(paramMap, TitanConstantDefine.PAY_APP_CASHIER_SIGN_MD5_KEY)).toUpperCase();
+		if(!sign.toUpperCase().equals(req.getSign())){
+			log.error("微信公众号支付请求签名错误signerror,请求参数：  "+ JsonConversionTool.toJson(req)+",金融签名sign为："+sign);
+			jumpFailUrl(req.getFailJumpUrl(), response, request,
+					TitanMsgCodeEnum.SIGN_INCORRECT);
+			return;
+		}
+		
 		// 构建本地落单请求对象
 		TitanOrderRequest dto = convertToTitanOrderReq(req);
 		
@@ -541,6 +564,7 @@ public class WeChatController {
 		dto.setGoodsId(req.getBussOrderNo());
 		dto.setName(req.getPayerOrgName());
 		dto.setNotify(req.getNotifyUrl());
+		dto.setEscrowedDate(req.getEscrowedDate());
 		
 		return dto;
 	}
@@ -554,18 +578,18 @@ public class WeChatController {
 	private boolean checkOrderInfo(MobilePayOrderReq req) {
 
 		if (!PayerTypeEnum.B2B_WX_PUBLIC_PAY.getKey().equals(req.getChannelType())) {
-			log.error("ChannelType is incorrect");
+			log.error("wx public pay ChannelType is incorrect");
 			return false;
 		}
 		PayerTypeEnum pe = PayerTypeEnum.getPayerTypeEnumByKey(req
 				.getChannelType());
 		if (pe == null) {
-			log.error("ChannelType convert is null");
+			log.error(" wx public pay ChannelType convert is null");
 			return false;
 		}
 
 		if (!StringUtil.isValidString(req.getAmount())) {
-			log.error("Amount is null");
+			log.error("wx public pay Amount is null");
 			return false;
 		}
 		if (StringUtil.isValidString(req.getAmount())) {
@@ -579,22 +603,26 @@ public class WeChatController {
 		}
 
 		if (new BigDecimal(req.getAmount()).compareTo(BigDecimal.ZERO) < 1) {
-			log.error("Amount not regular ");
+			log.error(" wx public pay Amount not regular ");
 			return false;
 		}
 
 		if (!CommonConstant.CURRENT_TYPE.equals(req.getCurrencyType())) {
-			log.error("Currency type must be RMB ");
+			log.error("wx public pay Currency type must be RMB ");
 			return false;
 		}
 
 		if (!StringUtil.isValidString(req.getBussOrderNo())) {
-			log.error("BussOrderNo is null");
+			log.error("wx public pay BussOrderNo is null");
 			return false;
 		}
 
 		if (pe.isB2BPayment() && !StringUtil.isValidString(req.getPayeeOrg())) {
 			log.error(pe + "PayeeOrg is null");
+			return false;
+		}
+		if(!StringUtil.isValidString(req.getSign())){
+			log.error("wx public pay request sign is null");
 			return false;
 		}
 		return true;

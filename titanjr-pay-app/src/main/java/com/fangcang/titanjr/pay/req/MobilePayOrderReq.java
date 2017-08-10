@@ -1,5 +1,9 @@
 package com.fangcang.titanjr.pay.req;
 
+
+import org.hibernate.validator.constraints.NotBlank;
+
+
 /**
  * 移动支付订单请求
  * 
@@ -12,8 +16,10 @@ public class MobilePayOrderReq {
 
 	// 收付款方编码类型：第一位为收款方类型，第二位为付款方类型，格式：SS,ST,TT,TS；S-SAAS商家编码M，T-金融机构编码TJM
 	private String payType;
-	
+	// 资金解冻日期,格式：2017-08-09
+	private String escrowedDate;
 	// 收款机构
+	@NotBlank
 	private String payeeOrg;
 
 	// 收款机构名称
@@ -32,15 +38,19 @@ public class MobilePayOrderReq {
 	private String commodityDesc;
 	
 	//业务单号
+	@NotBlank
 	private String bussOrderNo;
 	
 	// 币种 1 人民币
+	@NotBlank
 	private String currencyType;
 
 	// 订单金额
+	@NotBlank
 	private String amount;
 
 	// 支付通道类型 1 WX
+	@NotBlank
 	private String channelType;
 
 	// 通知地址
@@ -54,7 +64,9 @@ public class MobilePayOrderReq {
 
 	// 失败跳转地址
 	private String failJumpUrl;
-	
+	//签名
+	@NotBlank
+	private String sign;
 	
 	public String getPayType() {
 		return payType;
@@ -174,5 +186,22 @@ public class MobilePayOrderReq {
 	public void setChannelType(String channelType) {
 		this.channelType = channelType;
 	}
+	
+	
+	public String getEscrowedDate() {
+		return escrowedDate;
+	}
 
+	public void setEscrowedDate(String escrowedDate) {
+		this.escrowedDate = escrowedDate;
+	}
+
+	public String getSign() {
+		return sign;
+	}
+
+	public void setSign(String sign) {
+		this.sign = sign;
+	}
+	 
 }

@@ -218,7 +218,7 @@
 
 
 
-	<form id="wxPayForm" action="titanPay.action" method="POST">
+	<form id="wxPayForm" action="titanPay.action" method="POST" target="_blank">
 		<div class="pay">
 
 			<table cellspacing="0" border="0">
@@ -303,7 +303,16 @@
 						<td><input type="text" id="failJumpUrl" value="http://www.baidu.com"
 							name="failJumpUrl" /></td>
 					</tr>
-					
+					<tr>
+						<td class="tdr">参数签名</td>
+						<td><input type="text" id="sign" value="246456GYTYW7RE234"
+							name="sign" /></td>
+					</tr>
+					<tr>
+						<td class="tdr">资金解冻日期</td>
+						<td><input type="text" id="escrowedDate" value="2017-08-12"
+							name="escrowedDate" /></td>
+					</tr>
 				</tbody>
 			</table>
 			
