@@ -166,7 +166,7 @@
                 </td>
             </tr>
             <tr>
-                <td class="tdr">冻结类型</td>
+                <td class="tdr">冻结方案</td>
                 <td>
                     <input type="text" value="2" id="freezeType" name="freezeType"/><span>1-转账到收款方，不冻结；2-转账到收款方并冻结收款方资金；3-不转账，冻结付款方资金</span>
                 </td>
