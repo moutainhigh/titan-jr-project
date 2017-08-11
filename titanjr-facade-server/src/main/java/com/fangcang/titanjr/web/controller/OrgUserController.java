@@ -22,7 +22,7 @@ public class OrgUserController {
 	@RequestMapping(value = "/orgUser/orgRegister", method = RequestMethod.POST)
 	@ApiOperation(value = "机构注册接口", produces = "application/json", httpMethod = "POST",
 			response = OrgRegisterResponse.class, notes = "机构注册")
-	public OrgRegisterResponse orgRegister(@ApiParam(required = true, name = "userDTO", value = "机构信息json数据")
+	public OrgRegisterResponse orgRegister(@ApiParam(required = true, name = "registerRequest", value = "机构信息json数据")
 									  @RequestBody OrgRegisterRequest registerRequest, HttpServletRequest request) {
 		log.info("测试添加机构操作");
 		request.getSession();
