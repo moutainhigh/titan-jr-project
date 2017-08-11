@@ -55,7 +55,8 @@
 		                amount : $("#amount").val(),//订单金额
 		                payerType : $("#payerType").val(),//付款人类型
 		                notify : $("#notify").val(),
-		                version : $("#version").val()
+		                version : $("#version").val(),//金融版本 v1.0  v1.1
+		                freezeType : $("#freezeType").val()
 		            };
 			
 			titanPayObj.titanPay(orderInfo, businessInfo);
@@ -162,6 +163,12 @@
                 <td class="tdr">币种</td>
                 <td>
                     <input type="text" value="1" id="currencyType" name="currencyType"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">冻结方案</td>
+                <td>
+                    <input type="text" value="2" id="freezeType" name="freezeType"/><span>1-转账到收款方，不冻结；2-转账到收款方并冻结收款方资金；3-不转账，冻结付款方资金</span>
                 </td>
             </tr>
             <tr>

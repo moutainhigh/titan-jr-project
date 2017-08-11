@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.enums.BusinessLog;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
+import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
 import com.fangcang.titanjr.common.enums.LoanProductEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
@@ -179,13 +180,24 @@ public class TitanPaymentController extends BaseController {
         		unlockOutTradeNoList(orderNo);
         		return ;
         	}
+        	log.info("query transOrderDTO success：" + JSONSerializer.toJSON(transOrderDTO).toString());
         	businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.CallbackNotify, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
         	PayerTypeEnum payerType = PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
+        	
+        	if(!StringUtil.isValidString(transOrderDTO.getFreezeType())){
+    			transOrderDTO.setFreezeType(FreezeTypeEnum.FREEZE_PAYEE.getKey());
+    		}
         	
         	//validate transfer order 
         	boolean validateResult = titanPaymentService.validateIsConfirmed(transOrderDTO.getTransid());
 			if(!validateResult){
 				log.error("该订单已转帐成功,orderNo:"+orderNo);
+				unlockOutTradeNoList(orderNo);
+				return ;
+			}
+			if(FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrderDTO.getFreezeType()) 
+					&& OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())){
+				log.error("资金已冻结在付款方，不需转账   orderNo：" + orderNo);
 				unlockOutTradeNoList(orderNo);
 				return ;
 			}
@@ -219,44 +231,55 @@ public class TitanPaymentController extends BaseController {
         	
         	if(PayerTypeEnum.RECHARGE.key.equals(payerType.getKey())){//如果是充值则置订单为成功
         		orderStatusEnum= OrderStatusEnum.ORDER_SUCCESS;
-        	}else{//不是充值操作，就需要转帐
-        		TransferRequest transferRequest = titanPaymentService.convertToTransferRequest(transOrderDTO);
-        		//校验实际付款金额和订单应付金额（包含手续费）：付款方是中间账户
-        		boolean payFlag = NumberUtil.subtract(rechargeResultConfirmRequest.getPayAmount(), transOrderDTO.getAmount()).floatValue()==0.0D;
-        		if(!payFlag){
-        			log.error("订单支付异常：支付金额和收到的金额不相等，订单号："+transOrderDTO.getOrderid());
-        			titanPaymentService.updateOrderStatus(transOrderDTO.getTransid(),OrderStatusEnum.ORDER_FAIL);
-        			titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Order_Amount_Execption,null);
-        			return ;
-        		}
         		
-        		log.info("begin to transfer:"+JsonConversionTool.toJson(transferRequest));
-	        	TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
-	        	log.info("the result of transfer :"+JsonConversionTool.toJson(transferResponse)+",orderid:"+transferRequest.getOrderid());
+        	}else{//不是充值操作，就需要转帐
+        		
+        		TransferResponse transferResponse = null;
+    			TransferRequest transferRequest = titanPaymentService.convertToTransferRequest(transOrderDTO);
+        		//如果冻结方案不是3才需要转账
+        		if(!FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrderDTO.getFreezeType())){
+        			
+            		//校验实际付款金额和订单应付金额（包含手续费）：付款方是中间账户
+            		boolean payFlag = NumberUtil.subtract(rechargeResultConfirmRequest.getPayAmount(), transOrderDTO.getAmount()).floatValue()==0.0D;
+            		if(!payFlag){
+            			log.error("订单支付异常：支付金额和收到的金额不相等，订单号："+transOrderDTO.getOrderid());
+            			titanPaymentService.updateOrderStatus(transOrderDTO.getTransid(),OrderStatusEnum.ORDER_FAIL);
+            			titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Order_Amount_Execption,null);
+            			return ;
+            		}
+            		
+            		log.info("begin to transfer:"+JsonConversionTool.toJson(transferRequest));
+    	        	transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
+    	        	log.info("the result of transfer :"+JsonConversionTool.toJson(transferResponse)+",orderid:"+transferRequest.getOrderid());
+        		}
 	        	
-	        	if(!transferResponse.isResult()){//transfer fail
+	        	if(transferResponse != null && !transferResponse.isResult()){//转账失败
 	        		orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
-	        	}else{//transfer success
+	        		
+	        	}else{
 	        		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
 	        		orderStatusEnum = OrderStatusEnum.TRANSFER_SUCCESS;
 	        		financialTradeService.notifyPayResult(transOrderDTO.getUserorderid());
 	        		
-	        		if(CommonConstant.FREEZE_ORDER.equals(transOrderDTO.getIsEscrowedPayment())){//需要进行冻结操作
-	        			log.info("begin to freeze,transferRequest:"+Tools.gsonToString(transferRequest));
-	        			boolean freezeSuccess = titanPaymentService.freezeAccountBalance(transferRequest,orderNo);
-	        			log.info("the result of freeze,orderNo:"+orderNo+",冻结状态："+freezeSuccess);
-    					//update the status of the order
-    					if(freezeSuccess){//freeze order is success
+	        		//根据订单冻结方案进行冻结操作
+	        		if(CommonConstant.FREEZE_ORDER.equals(transOrderDTO.getIsEscrowedPayment())){
+	        			log.info("begin to freeze, transferRequest：" + JSONSerializer.toJSON(transferRequest).toString());
+	        			int freezeSuccess = titanPaymentService.freezeAccountBalance(transferRequest, transOrderDTO);
+	        			log.info("the result of freeze, orderNo:"+orderNo+", freeze status："+freezeSuccess);
+    					
+	        			if(freezeSuccess == -1){//不需要冻结，订单状态为成功
+	        				orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
+	        			}else if(freezeSuccess == 1){//冻结成功
     						orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
     						businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.FreezeSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
-    					}else{
-    						log.error("update the status of the order was failed,the msg is "+JsonConversionTool.toJson(transferRequest));
+    					}else{//冻结失败
+    						log.error("订单冻结失败");
     						orderStatusEnum = OrderStatusEnum.FREEZE_FAIL;
-    						titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Freeze_Insert_Fail, JSONSerializer.toJSON(transferRequest).toString());
+    						titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Freeze_Insert_Fail, JSONSerializer.toJSON(transOrderDTO).toString());
     					}
 	        		}
 	        		
-	        		//save the trade account
+	        		//财务供应商保存账户历史
 					if(payerType.isAddAccountHistory()){
 						titanPaymentService.addAccountHistory(transOrderDTO);
 					}
@@ -374,18 +397,25 @@ public class TitanPaymentController extends BaseController {
         }
         titanPaymentRequest.setOrderid(localOrderResp.getOrderNo());
         TransferRequest transferRequest = this.convertToTransferRequest(titanPaymentRequest);
-       
-        //存在安全隐患，如果余额支付两次会不会存在重复支付
-        lockOutTradeNoList(titanPaymentRequest.getPayOrderNo());//锁定支付单
-        TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
-        unlockOutTradeNoList(titanPaymentRequest.getPayOrderNo());//解锁支付单
 		
         TransOrderRequest transOrderRequest = new TransOrderRequest();
 		transOrderRequest.setOrderid(localOrderResp.getOrderNo());
 		TransOrderDTO transOrder= titanOrderService.queryTransOrderDTO(transOrderRequest);
 		OrderStatusEnum orderStatusEnum = OrderStatusEnum.ORDER_IN_PROCESS;
+       
+		if(!StringUtil.isValidString(transOrder.getFreezeType())){
+			transOrder.setFreezeType(FreezeTypeEnum.FREEZE_PAYEE.getKey());
+		}
+		TransferResponse transferResponse = null;
+		//如果冻结方案不是3才需要转账
+		if(!FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrder.getFreezeType())){
+			//存在安全隐患，如果余额支付两次会不会存在重复支付
+	        lockOutTradeNoList(titanPaymentRequest.getPayOrderNo());//锁定支付单
+	        transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
+	        unlockOutTradeNoList(titanPaymentRequest.getPayOrderNo());//解锁支付单
+		}
         
-		if(!transferResponse.isResult()){
+		if(transferResponse != null && !transferResponse.isResult()){
 			log.error("transfer is failed");
 			orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
 			boolean updateStatus = titanPaymentService.updateOrderStatus(transOrder.getTransid(),orderStatusEnum);
@@ -399,11 +429,13 @@ public class TitanPaymentController extends BaseController {
 		financialTradeService.notifyPayResult(localOrderResp.getUserOrderId());
 		orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
 		if(CommonConstant.FREEZE_ORDER.equals(transOrder.getIsEscrowedPayment())){
-			boolean freezeSuccess = titanPaymentService.freezeAccountBalance(transferRequest,localOrderResp.getOrderNo());
+			int freezeSuccess = titanPaymentService.freezeAccountBalance(transferRequest, transOrder);
 			//修改订单状态
-			if(freezeSuccess){//冻结成功改变订单状态
+			if(freezeSuccess == -1){//不需要冻结，直接成功
+				orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
+			}else if(freezeSuccess == 1){//冻结成功
 				orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
-			}else{
+			}else{//冻结失败
 				log.error("freeze the order was failed");
 				orderStatusEnum =OrderStatusEnum.FREEZE_FAIL;
 				titanFinancialUtilService.saveOrderException(localOrderResp.getOrderNo(),OrderKindEnum.OrderId, OrderExceptionEnum.Balance_Pay_Freeze_Fail, JSONSerializer.toJSON(transferRequest).toString());

@@ -44,6 +44,9 @@ public class RechargeResultConfirmRequest implements Serializable {
 		
 		private Integer freezereqId;
 		
+		//冻结方式  1-不冻结；2-订单金额冻结在收款方；3-订单金额冻结在付款方
+		private String freezeType; 
+		
 		public String getUserid() {
 			return userid;
 		}
@@ -151,5 +154,11 @@ public class RechargeResultConfirmRequest implements Serializable {
 		}
 		public void setFreezereqId(Integer freezereqId) {
 			this.freezereqId = freezereqId;
+		}
+		public String getFreezeType() {
+			return freezeType;
+		}
+		public void setFreezeType(String freezeType) {
+			this.freezeType = freezeType;
 		}
 }

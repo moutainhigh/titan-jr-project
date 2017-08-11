@@ -20,7 +20,7 @@ public class TradeDetailRequest extends BaseRequestDTO {
 
     //查询类型
     private TradeTypeEnum tradeTypeEnum;
-    //交易类型id
+    //交易类型id @see TradeTypeEnum
     private String tradeTypeId;
 
     //开始时间

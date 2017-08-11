@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
 import com.fangcang.titanjr.common.enums.BusinessLog;
+import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
@@ -294,27 +295,50 @@ public class TitanPaymentService {
 		return transferRequest;
 	}
 
-	// 冻结
-	public boolean freezeAccountBalance(TransferRequest transferRequest,
-			String orderNo) {
+	/**
+	 * 
+	 * @author Jerry
+	 * @date 2017年8月9日 下午2:40:13
+	 * @param transferRequest transOrderDTO
+	 * @return -1不需要冻结	  0冻结失败       1冻结成功
+	 */
+	public int freezeAccountBalance(TransferRequest transferRequest,
+			TransOrderDTO transOrderDTO) {
 		try {
 			RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
-			rechargeResultConfirmRequest.setOrderNo(orderNo);
+			rechargeResultConfirmRequest.setOrderNo(transOrderDTO.getOrderid());
 			rechargeResultConfirmRequest.setPayAmount(transferRequest
 					.getAmount());
 			rechargeResultConfirmRequest.setUserid(transferRequest
-					.getUserrelateid());
+					.getUserrelateid());//默认冻结在收款方
 			rechargeResultConfirmRequest.setOrderAmount(transferRequest
 					.getAmount());
+			
+			if(StringUtil.isValidString(transOrderDTO.getFreezeType())){
+				if(FreezeTypeEnum.UNFREEZE.getKey().equals(transOrderDTO.getFreezeType())){
+					log.info("转账到收款方，不冻结");
+					return -1;//不需要冻结
+				}else if(FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrderDTO.getFreezeType())){
+					rechargeResultConfirmRequest.setUserid(transferRequest.getUserid());//冻结在付款方
+					log.info("不转账，资金冻结在付款方");
+				}else{
+					log.info("转账到收款方，资金冻结在收款方");
+				}
+			}else{
+				log.info("转账到收款方，资金冻结在收款方");
+			}
+			
 			FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService
 					.freezeAccountBalance(rechargeResultConfirmRequest);
 			if (freezeAccountBalanceResponse.isFreezeSuccess()) {
-				return true;
+				return 1;//冻结成功
 			}
+			
 		} catch (Exception e) {
+			
 			log.error("冻结余额失败" + e.getMessage(), e);
 		}
-		return false;
+		return 0;//冻结失败
 	}
 
 	// 更新订单状态
