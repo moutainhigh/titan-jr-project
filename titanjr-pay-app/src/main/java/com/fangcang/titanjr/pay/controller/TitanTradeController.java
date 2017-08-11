@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.BusinessLog;
 import com.fangcang.titanjr.common.enums.EscrowedEnum;
+import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
@@ -568,6 +569,20 @@ public class TitanTradeController extends BaseController {
 			} catch (UnsupportedEncodingException e) {
 				log.error("CheckOrderUrl URLDecoder fail.");
 			}
+		}
+		
+		//如果付款方不用自己的账户，则不允许使用冻结方案3
+		if(!StringUtil.isValidString(dto.getPartnerOrgCode()) || !StringUtil.isValidString(
+				dto.getOrgCode())){
+			if(StringUtil.isValidString(dto.getFreezeType()) && FreezeTypeEnum.FREEZE_PAYER.getKey()
+					.equals(dto.getFreezeType())){
+				log.error("freezeType error");
+				return false;
+			}
+		}
+		//默认冻结方案2
+		if(!StringUtil.isValidString(dto.getFreezeType())){
+			dto.setFreezeType(FreezeTypeEnum.FREEZE_PAYEE.getKey());
 		}
 
 		return true;

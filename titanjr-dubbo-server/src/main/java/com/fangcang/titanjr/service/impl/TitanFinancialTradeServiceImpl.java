@@ -37,6 +37,7 @@ import com.fangcang.exception.ServiceException;
 import com.fangcang.titanjr.common.bean.CallBackInfo;
 import com.fangcang.titanjr.common.enums.ConditioncodeEnum;
 import com.fangcang.titanjr.common.enums.EscrowedEnum;
+import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
@@ -1837,20 +1838,25 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				OrderStatusEnum orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
 				//是否需要冻结
 				if (0 == repairTransferDTO.getIsEscrowedPayment()) {
-					RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
-					rechargeResultConfirmRequest.setOrderNo(repairTransferDTO.getOrderid());
-					rechargeResultConfirmRequest.setPayAmount(transferRequest.getAmount());
-					rechargeResultConfirmRequest.setUserid(transferRequest.getUserrelateid());
-					rechargeResultConfirmRequest.setOrderAmount(transferRequest.getAmount());
-					log.info("冻结入参:" + JSONSerializer.toJSON(rechargeResultConfirmRequest));
-					FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService.freezeAccountBalance(rechargeResultConfirmRequest);
-					orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
-					if (!freezeAccountBalanceResponse.isFreezeSuccess()) {//冻结不成功
-						log.error(rechargeResultConfirmRequest.getOrderNo() + "修复冻结订单失败");
-						titanFinancialUtilService.saveOrderException(repairTransferDTO.getPayorderno(), OrderKindEnum.PayOrderNo, OrderExceptionEnum.Repair_Freeze_Order_Fail, JSONSerializer.toJSON(repairTransferDTO).toString());
-						orderStatusEnum = OrderStatusEnum.FREEZE_FAIL;
+					//当冻结方案为空或冻结方案为2（冻结付款方）时才做冻结操作
+					if(!StringUtil.isValidString(repairTransferDTO.getFreezeType()) 
+							|| (StringUtil.isValidString(repairTransferDTO.getFreezeType()) && 
+									FreezeTypeEnum.FREEZE_PAYEE.getKey().equals(repairTransferDTO.getFreezeType()))){
+						RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
+						rechargeResultConfirmRequest.setOrderNo(repairTransferDTO.getOrderid());
+						rechargeResultConfirmRequest.setPayAmount(transferRequest.getAmount());
+						rechargeResultConfirmRequest.setUserid(transferRequest.getUserrelateid());
+						rechargeResultConfirmRequest.setOrderAmount(transferRequest.getAmount());
+						log.info("冻结入参:" + JSONSerializer.toJSON(rechargeResultConfirmRequest));
+						FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService.freezeAccountBalance(rechargeResultConfirmRequest);
+						orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
+						if (!freezeAccountBalanceResponse.isFreezeSuccess()) {//冻结不成功
+							log.error(rechargeResultConfirmRequest.getOrderNo() + "修复冻结订单失败");
+							titanFinancialUtilService.saveOrderException(repairTransferDTO.getPayorderno(), OrderKindEnum.PayOrderNo, OrderExceptionEnum.Repair_Freeze_Order_Fail, JSONSerializer.toJSON(repairTransferDTO).toString());
+							orderStatusEnum = OrderStatusEnum.FREEZE_FAIL;
+						}
+						log.info(rechargeResultConfirmRequest.getOrderNo() + "修改单:" + JSONSerializer.toJSON(orderStatusEnum));
 					}
-					log.info(rechargeResultConfirmRequest.getOrderNo() + "修改单:" + JSONSerializer.toJSON(orderStatusEnum));
 				}
 				//修改交易单状态
 				TransOrderDTO transOrderDTO = new TransOrderDTO();
@@ -1931,6 +1937,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				titanTransOrder.setBusinessinfo(JSONSerializer.toJSON(
 						titanOrderRequest.getBusinessInfo()).toString());
 			}
+			titanTransOrder.setFreezeType(titanOrderRequest.getFreezeType());
 			try {
 				titanTransOrder.setIsEscrowedPayment(EscrowedEnum.NO_ESCROWED_PAYMENT.getKey());
 				if (StringUtil.isValidString(titanOrderRequest.getEscrowedDate())) {

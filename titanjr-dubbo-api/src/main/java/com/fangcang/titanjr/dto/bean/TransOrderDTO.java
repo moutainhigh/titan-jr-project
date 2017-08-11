@@ -3,9 +3,10 @@ package com.fangcang.titanjr.dto.bean;
 import java.util.Date;
 
 public class TransOrderDTO implements java.io.Serializable {
-
-	
-
+	/** 
+	 * 
+	 */
+	private static final long serialVersionUID = -824224859767527934L;
 	private Integer transid;
 	private String constid;
 	private String userid;
@@ -79,6 +80,9 @@ public class TransOrderDTO implements java.io.Serializable {
 	private TitanWithDrawDTO titanWithDrawDTO;
 	
 	private RefundDTO refundDTO;
+	
+	//冻结方式  1-不冻结；2-订单金额冻结在收款方；3-订单金额冻结在付款方
+	private String freezeType;
 	
 	public String getLoanOrderNo() {
 		return loanOrderNo;
@@ -461,5 +465,13 @@ public class TransOrderDTO implements java.io.Serializable {
 
 	public void setRefundDTO(RefundDTO refundDTO) {
 		this.refundDTO = refundDTO;
+	}
+
+	public String getFreezeType() {
+		return freezeType;
+	}
+
+	public void setFreezeType(String freezeType) {
+		this.freezeType = freezeType;
 	}
 }

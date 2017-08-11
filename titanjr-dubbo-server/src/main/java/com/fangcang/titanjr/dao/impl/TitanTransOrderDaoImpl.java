@@ -11,7 +11,6 @@ import com.fangcang.titanjr.dto.bean.RepairTransferDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.RepairTransferRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
-import com.fangcang.titanjr.dto.response.TransOrderResponse;
 import com.fangcang.titanjr.entity.TitanTransOrder;
 import com.fangcang.titanjr.entity.parameter.TitanTransOrderParam;
 import com.fangcang.util.StringUtil;

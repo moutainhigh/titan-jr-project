@@ -66,6 +66,9 @@ public class RepairTransferDTO implements Serializable {
 	 //转账是否成功的状态
 	 private String status;
 	 
+	//冻结方式  1-不冻结；2-订单金额冻结在收款方；3-订单金额冻结在付款方
+	private String freezeType;
+	 
 	public String getAmount() {
 		return amount;
 	}
@@ -227,6 +230,12 @@ public class RepairTransferDTO implements Serializable {
 	}
 	public void setReceivedfee(Integer receivedfee) {
 		this.receivedfee = receivedfee;
+	}
+	public String getFreezeType() {
+		return freezeType;
+	}
+	public void setFreezeType(String freezeType) {
+		this.freezeType = freezeType;
 	}
 	
 }

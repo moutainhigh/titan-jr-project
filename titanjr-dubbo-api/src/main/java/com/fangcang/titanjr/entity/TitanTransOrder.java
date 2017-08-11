@@ -75,6 +75,9 @@ public class TitanTransOrder implements java.io.Serializable {
 	private String remark;
 	
 	private String loanOrderNo;
+	
+	//冻结方式  1-不冻结；2-订单金额冻结在收款方；3-订单金额冻结在付款方
+	private String freezeType; 
 
 	public String getLoanOrderNo() {
 		return loanOrderNo;
@@ -410,5 +413,13 @@ public class TitanTransOrder implements java.io.Serializable {
 
 	public void setPayerType(String payerType) {
 		this.payerType = payerType;
+	}
+
+	public String getFreezeType() {
+		return freezeType;
+	}
+
+	public void setFreezeType(String freezeType) {
+		this.freezeType = freezeType;
 	}
 }

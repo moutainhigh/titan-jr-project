@@ -264,7 +264,8 @@
       adjusttype, adjustcontent, creator, 
       receivablefee, createtime, receivedfee,isEscrowedPayment,
       escrowedDate,payeemerchant,payermerchant,payorderno,merchantcode,
-      tradeamount,transordertype,notifyUrl,businessinfo,payertype,standfee
+      tradeamount,transordertype,notifyUrl,businessinfo,payertype,standfee, 
+      freezeType
       )
     values (#{transid,jdbcType=INTEGER}, #{constid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, 
       #{ordertypeid,jdbcType=VARCHAR}, #{productid,jdbcType=VARCHAR}, #{orderid,jdbcType=VARCHAR}, 
@@ -275,7 +276,8 @@
       #{adjusttype,jdbcType=VARCHAR}, #{adjustcontent,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
       #{receivablefee}, #{createtime}, #{receivedfee},#{isEscrowedPayment},#{escrowedDate},
       #{payeemerchant},#{payermerchant},#{payorderno},#{merchantcode},#{tradeamount},#{transordertype},
-      #{notifyUrl},#{businessinfo},#{payerType},#{standfee}
+      #{notifyUrl},#{businessinfo},#{payerType},#{standfee},
+      #{freezeType}
       )
   </insert>
 
@@ -375,7 +377,8 @@
         select transid, constid, userid, ordertypeid, productid, orderid, userorderid, businessordercode, orderdate,
         ordertime, provider, userrelateid,amount, goodsname, goodsdetail, goodscnt, unitprice, statusid,
         adjusttype, adjustcontent, creator,receivablefee,standfee, createtime, receivedfee,escrowedDate,isEscrowedPayment,
-        payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype,notifyUrl,businessinfo,payertype as payerType,loanorderno
+        payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype,notifyUrl,businessinfo,
+        payertype as payerType,loanorderno,freezeType
          from t_tfs_transorder
         <where>
             <if test="transid != null">
@@ -460,7 +463,8 @@
              transorder.creator,
              transorder.receivedfee,
              transfer.transorderid,
-             transfer.status
+             transfer.status,
+             transorder.freezeType
              from t_tfs_transorder transorder
                   inner join t_tfs_orderpayreq orderpay on orderpay.transorderid = transorder.transid
                   left join t_tfs_transferreq transfer on transorder.transid=transfer.transorderid

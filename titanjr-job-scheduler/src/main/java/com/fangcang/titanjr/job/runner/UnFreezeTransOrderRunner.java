@@ -48,7 +48,7 @@ public class UnFreezeTransOrderRunner implements JobRunner {
 				do{
 					System.out.println("开始执行定时:"+Thread.currentThread().getName());
 					 row = titanFinancialAccountService.unFreezeOrder(offset,row);
-					 offset = (offset+1)*row;
+					 offset = offset + row;
 				}while(row==100);
 				
 			} catch (Exception e) {

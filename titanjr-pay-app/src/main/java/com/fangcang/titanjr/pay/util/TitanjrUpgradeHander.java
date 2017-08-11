@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.fangcang.titanjr.common.enums.CardTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
+import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
@@ -157,6 +158,20 @@ public class TitanjrUpgradeHander {
 			} catch (UnsupportedEncodingException e) {
 				log.error("CheckOrderUrl URLDecoder fail.");
 			}
+		}
+		
+		//如果付款方不用自己的账户，则不允许使用冻结方案3
+		if(!StringUtil.isValidString(dto.getPartnerOrgCode()) || !StringUtil.isValidString(
+				dto.getOrgCode())){
+			if(StringUtil.isValidString(dto.getFreezeType()) && FreezeTypeEnum.FREEZE_PAYER.getKey()
+					.equals(dto.getFreezeType())){
+				log.error("freezeType error");
+				return false;
+			}
+		}
+		//默认冻结方案2
+		if(!StringUtil.isValidString(dto.getFreezeType())){
+			dto.setFreezeType(FreezeTypeEnum.FREEZE_PAYEE.getKey());
 		}
 
 		return true;
