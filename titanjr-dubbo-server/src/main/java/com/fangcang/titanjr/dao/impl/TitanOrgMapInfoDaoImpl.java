@@ -21,6 +21,12 @@ public class TitanOrgMapInfoDaoImpl extends GenericDAOMyBatisImpl implements Tit
 
 	@Override
 	public List<TitanOrgMapInfo> queryList(TitanOrgMapInfoParam titanOrgMapInfoParam) throws DaoException {
+		if(titanOrgMapInfoParam.getIsactive()==null){
+			titanOrgMapInfoParam.setIsactive(1);//1-有效，0-无效
+		}else if(titanOrgMapInfoParam.getIsactive()>99){//不加该条件
+			titanOrgMapInfoParam.setIsactive(null);
+		}
+		
 		return super.selectList("com.fangcang.titanjr.dao.TitanOrgMapInfoDao.queryList", titanOrgMapInfoParam);
 	}
 

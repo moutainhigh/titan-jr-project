@@ -34,7 +34,7 @@ public class TitanOrgSubDaoImpl extends GenericDAOMyBatisImpl implements TitanOr
 //			param.setIsactive(1);//默认查询有效的数据
 //		}
 		try {
-			List<TitanOrgSub> list = super.selectList("com.fangcang.titanjr.dao.TitanOrgsSubDao.queryList", param);
+			List<TitanOrgSub> list = super.selectList("com.fangcang.titanjr.dao.TitanOrgSubDao.queryList", param);
 			if(CollectionUtils.isNotEmpty(list)&&list.size()==1){
 				return list.get(0);
 			}else if(list.size()>1){

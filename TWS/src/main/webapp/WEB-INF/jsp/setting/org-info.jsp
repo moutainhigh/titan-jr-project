@@ -29,10 +29,10 @@
 			<div class="sr_list">
 				<div class="img ico"></div>
 				<div class="tit">机构信息</div>
-				<c:if test="${financialOrganDTO.userType ==1 }">
+				<c:if test="${orgSubDTO.userType ==1 }">
 				<!-- 企业信息 -->
-				<div class="srl_c clearfix"><div class="w_120 fl">公司名称：</div> <div class="con">${financialOrganDTO.orgName }</div></div>
-				<div class="srl_c clearfix"><div class="w_120 fl">营业执照号：</div> <div class="con">${financialOrganDTO.buslince }</div></div>
+				<div class="srl_c clearfix"><div class="w_120 fl">公司名称：</div> <div class="con">${orgSubDTO.orgName }</div></div>
+				<div class="srl_c clearfix"><div class="w_120 fl">营业执照号：</div> <div class="con">${orgSubDTO.buslince }</div></div>
 				<div class="srl_c clearfix"><div class="w_120 fl">营业执照照片：</div> <div class="con cursor p_t15"><img src="${small_img_10}" width="140" height="100" class="J_magnify"></div></div>
 				<div class="srl_c clearfix"><div class="w_120 fl">联系人：</div> 
 					<div class="fl message dn"><div class="con"><input type="text"  id="connect"> <i class="btn J_save" data-field="connect">保存</i><i class="btn btn_g J_cancel">取消</i></div></div>
@@ -43,24 +43,13 @@
 					<div class="fl message "><div class="con fl">${financialOrganDTO.mobileTel }</div> <a href="javascript:void(0)" class="blue undl fl J_alter">修改</a></div>
 				</div>
 				</c:if>
-				<c:if test="${financialOrganDTO.userType == 2 }">
-					<div class="srl_c clearfix"><div class="w_120 fl">姓名：</div> <div class="con">${financialOrganDTO.orgName }</div></div>
-					<div class="srl_c clearfix"><div class="w_120 fl">身份证号码：</div> <div class="con">${financialOrganDTO.certificateNumber }</div></div>
+				<c:if test="${orgSubDTO.userType == 2 }">
+					<div class="srl_c clearfix"><div class="w_120 fl">姓名：</div> <div class="con">${orgSubDTO.orgName }</div></div>
+					<div class="srl_c clearfix"><div class="w_120 fl">身份证号码：</div> <div class="con">${orgSubDTO.certificateNumber }</div></div>
 					<div class="srl_c clearfix"><div class="w_120 fl">身份证照片：</div> <div class="con cursor p_t15" style="width:140px;"><img src="${small_img_10}" width="140" height="100" class="J_magnify"></div></div>
 				</c:if>
 			</div>
-			<div class="sr_list">
-				<div class="img ico"></div>
-				<div class="tit">			
-				<div class=" fl">小额免密支付开关</div>
-				<div class="titright fl">
-					<span uitype="switch" <c:if test="${allownopwdpay==1}">checked</c:if> class="tit_text" >
-					</span>
-					<c:if test="${allownopwdpay==0}"><span >未开通小额免密支付，付款时需要密码</span></c:if>
-					<c:if test="${allownopwdpay==1}"><span class="tip">已开通小额免密支付，1000元以下付款时无需密码</span></c:if>
-				</div>
-				</div>
-			</div>
+			 
 			<div class="h_90"></div>
 		</div>
 	</div>

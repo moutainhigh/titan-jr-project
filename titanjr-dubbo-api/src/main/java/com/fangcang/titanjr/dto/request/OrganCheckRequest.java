@@ -25,6 +25,7 @@ public class OrganCheckRequest extends BaseRequestDTO{
     
     private Integer operateType;
     
+    
 	public int getOrgId() {
 		return orgId;
 	}
@@ -36,8 +37,6 @@ public class OrganCheckRequest extends BaseRequestDTO{
 	public void setResultMsg(String resultMsg) {
 		this.resultMsg = resultMsg;
 	}
-
-
 
 	public void setOrgId(int orgId) {
 		this.orgId = orgId;
@@ -58,4 +57,5 @@ public class OrganCheckRequest extends BaseRequestDTO{
     public void setOperateType(Integer operateType) {
         this.operateType = operateType;
     }
+
 }

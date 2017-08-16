@@ -5,10 +5,10 @@
             parameterType="com.fangcang.titanjr.entity.parameter.TitanOrgSubParam">
         select
         *
-        from t_tfs_org
+        from t_tfs_orgsub
         <where>
             <if test="orgsubid != null"> and orgsubid = #{orgsubid}</if>
-            <if test="orgsubid != null"> and orgcode = #{orgsubid}</if>
+            <if test="orgcode != null"> and orgcode = #{orgcode}</if>
             <if test="userid != null"> and userid =#{userid}</if>
             <if test="orgname !=null"> and orgname = #{orgname}</if>
             <if test="buslince != null"> and buslince = #{buslince}</if>
@@ -18,7 +18,7 @@
     </select>
     
     <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanOrgSub" useGeneratedKeys="true" keyProperty="orgsubid">
-    insert into t_tfs_org (
+    insert into t_tfs_orgsub (
      orgcode, 
      orgname, 
       userid,

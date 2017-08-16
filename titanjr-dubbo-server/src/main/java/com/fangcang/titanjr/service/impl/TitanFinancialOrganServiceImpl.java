@@ -1,5 +1,7 @@
 package com.fangcang.titanjr.service.impl;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,6 +71,7 @@ import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
+import com.fangcang.titanjr.dto.bean.OrgSubDTO;
 import com.fangcang.titanjr.dto.bean.RSOrg;
 import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
 import com.fangcang.titanjr.dto.request.CancelOrgBindRequest;
@@ -130,6 +133,7 @@ import com.fangcang.titanjr.entity.parameter.TitanCheckCodeParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgBindinfoParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgCheckParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgImageParam;
+import com.fangcang.titanjr.entity.parameter.TitanOrgMapInfoParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgParam;
 import com.fangcang.titanjr.entity.parameter.TitanUserParam;
 import com.fangcang.titanjr.enums.OperateTypeOperateLogEnum;
@@ -254,6 +258,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
             PaginationSupport<FinancialOrganDTO> paginationSupport = new PaginationSupport<FinancialOrganDTO>();
             paginationSupport =  titanOrgDao.queryBaseTitanOrgForPage(request, paginationSupport);
             if(paginationSupport.getItemList()!=null&&paginationSupport.getItemList().size()==1){
+            	OrgSubDTO orgSubDTO = getOrgSubDTO(paginationSupport.getItemList().get(0).getOrgCode());
+            	response.setOrgSubDTO(orgSubDTO);
             	response.setFinancialOrganDTO(paginationSupport.getItemList().get(0));
             	response.putSuccess();
             }else{
@@ -267,7 +273,26 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
         return response;
 	}
     
-    
+    private OrgSubDTO getOrgSubDTO(String orgCode){
+    	TitanOrgMapInfoParam titanOrgMapInfoParam = new TitanOrgMapInfoParam();
+    	titanOrgMapInfoParam.setOrgCode(orgCode);;
+    	List<TitanOrgMapInfo> list = titanOrgMapInfoDao.queryList(titanOrgMapInfoParam);
+    	if(CollectionUtils.isEmpty(list)||list.size()>1){
+    		return null;
+    	}
+    	TitanOrgSub titanOrgSub = orgSubDao.getOneByOrgCode(list.get(0).getOrgSubcode());
+    	OrgSubDTO orgSubDTO = new OrgSubDTO();
+    	orgSubDTO.setOrgCode(orgCode);
+    	orgSubDTO.setOrgName(titanOrgSub.getOrgname());
+    	orgSubDTO.setOrgSubId(titanOrgSub.getOrgsubid());
+    	orgSubDTO.setCertificateType(titanOrgSub.getCertificatetype());
+    	orgSubDTO.setCertificateNumber(titanOrgSub.getCertificatenumber());
+    	orgSubDTO.setBuslince(titanOrgSub.getBuslince());
+    	orgSubDTO.setMobileTel(titanOrgSub.getMobiletel());
+    	orgSubDTO.setUserType(titanOrgSub.getUsertype());
+    	
+    	return orgSubDTO;
+    }
     
     
     
@@ -434,10 +459,10 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	try {
     		titanOrg = addOrg(organRegisterRequest);
         	
-        	OrganCheckRequest organCheckRequest = new OrganCheckRequest();
-        	organCheckRequest.setOrgId(titanOrg.getOrgid());
-        	organCheckRequest.setCheckstatus(OrgCheckResultEnum.PASS.getCheckstatus());
-        	checkFinancialOrgan(organCheckRequest);
+//        	OrganCheckRequest organCheckRequest = new OrganCheckRequest();
+//        	organCheckRequest.setOrgId(titanOrg.getOrgid());
+//        	organCheckRequest.setCheckstatus(OrgCheckResultEnum.PASS.getCheckstatus());
+//        	checkFinancialOrgan(organCheckRequest);
     		
     		// 注册员工
     		UserRegisterResponse registerResponse = registerUser(organRegisterRequest);
@@ -566,40 +591,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	return titanOrg;
     }
     
-    /***
-     * 添加orgsub
-     * @param regOrgSubRequest
-     * @return
-     */
-    private TitanOrgSub addOrgSub(RegOrgSubRequest regOrgSubRequest){
-    	TitanOrgSub orgSub = new TitanOrgSub();
-    	String orgcode = titanCodeCenterService.createOrgCode();
-    	if(!StringUtil.isValidString(regOrgSubRequest.getOrgCode())){//没有值，则用新生成的
-    		regOrgSubRequest.setOrgCode(orgcode);
-    	}else{//有传值，就用入参的
-    		orgcode = regOrgSubRequest.getOrgCode();
-    	}
-    	
-    	orgSub.setOrgcode(orgcode);
-    	orgSub.setUserid(orgcode);
-    	orgSub.setUsertype(regOrgSubRequest.getUserType());
-    	orgSub.setCreateTime(new Date());
-    	if(regOrgSubRequest.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
-    		validateEnterpriseParam(regOrgSubRequest);
-    		orgSub.setOrgname(regOrgSubRequest.getOrgName());
-    		orgSub.setBuslince(regOrgSubRequest.getBuslince());
-    		orgSub.setConnect(regOrgSubRequest.getConnect());
-    		orgSub.setMobiletel(regOrgSubRequest.getMobileTel());
-        	
-    	}else if(regOrgSubRequest.getUserType()==TitanOrgEnum.UserType.PERSONAL.getKey()){
-    		validatePersonalParam(regOrgSubRequest);
-    		orgSub.setOrgname(regOrgSubRequest.getOrgName());
-    		orgSub.setCertificatetype(NumberUtils.toInt(regOrgSubRequest.getCertificateType()));
-    		orgSub.setCertificatenumber(regOrgSubRequest.getCertificateNumber());
-    	}
-    	orgSubDao.insert(orgSub);
-    	return orgSub;
-    }
+    
     
     
     /**
@@ -705,18 +697,12 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     public OrganRegisterResponse registerFinancialOrgan(OrganRegisterRequest organRegisterRequest) throws MessageServiceException, GlobalServiceException {
     	OrganRegisterResponse response = new OrganRegisterResponse();
     	response.putSuccess("注册成功");
-    	RegOrgSubRequest orgSubRequest = new RegOrgSubRequest();
-    	//真实证件注册
+    	RegOrgSubRequest orgSubRequest = null;
+    	
     	if(StringUtil.isValidString(organRegisterRequest.getBuslince())||StringUtil.isValidString(organRegisterRequest.getCertificateNumber())){
+    		//真实证件注册
+    		orgSubRequest = new RegOrgSubRequest();
     		MyBeanUtil.copyProperties(orgSubRequest, organRegisterRequest);
-    		
-    		//organRegisterRequest.setIsAutoCheck(false);
-    		organRegisterRequest.setIsCreateOrgSub(true);
-    	}else{//如果营业执照和身份证都为空，则按虚拟证件注册(接口注册方式)
-    		
-        	//organRegisterRequest.setPassword(RandomStringUtils.randomAlphabetic(6));
-        	//organRegisterRequest.setIsAutoCheck(true);
-        	organRegisterRequest.setIsCreateOrgSub(false);
     	}
     	//统一都用虚拟证件注册
     	String orgcode = titanCodeCenterService.createOrgCode();
@@ -746,15 +732,19 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	TitanOrg titanOrg = null;
     	if(organRegisterRequest.getRegisterSource()==CoopTypeEnum.SAAS.getKey()||organRegisterRequest.getRegisterSource()==CoopTypeEnum.TTM.getKey()){
     		titanOrg = registerFromCoop(organRegisterRequest);
+    		addOrgSubMap(orgSubRequest,titanOrg.getOrgcode());
     		addOrgCheck(organRegisterRequest.getOrgCode(),organRegisterRequest.getOperator());
     	}else if(organRegisterRequest.getRegisterSource()==CoopTypeEnum.TWS.getKey()){
     		titanOrg = registerFromJinfuSite(organRegisterRequest);
+    		addOrgSubMap(orgSubRequest,titanOrg.getOrgcode());
     		addOrgCheck(organRegisterRequest.getOrgCode(),organRegisterRequest.getOperator());
-    	}else if(organRegisterRequest.getRegisterSource()==CoopTypeEnum.AUTO.getKey()){
+    	}else if(organRegisterRequest.getRegisterSource()==CoopTypeEnum.AUTO.getKey()){//接口注册，只有注册虚拟证件
     		titanOrg = registerFromAuto(organRegisterRequest);
+    		addOrgSubMap(orgSubRequest,titanOrg.getOrgcode());
     		addOrgCheck(organRegisterRequest.getOrgCode(),organRegisterRequest.getOperator());
+    		//虚拟证件注册的，则自动审核
     		OrganCheckRequest organCheckRequest = new OrganCheckRequest();
-    		organCheckRequest.setCheckstatus(1);
+    		organCheckRequest.setCheckstatus(1);//审核通过
     		organCheckRequest.setOperator(CommonConstant.CHECK_ADMIN_JR);
     		organCheckRequest.setOrgId(titanOrg.getOrgid());
     		checkFinancialOrgan(organCheckRequest);
@@ -762,62 +752,71 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     		LOGGER.error("无法注册，注册来源未知，注册参数："+JSONSerializer.toJSON(organRegisterRequest).toString());
     		response.putErrorResult("-1", "未知的注册来源");
     	}
-    	
-    	//-----2 真实证件注册
-    	if(organRegisterRequest.getIsCreateOrgSub()){
-    		regOrgSub(orgSubRequest,titanOrg.getOrgcode());
-    	}
-    	//虚拟证件注册的，则自动审核
-    	if(organRegisterRequest.getIsAutoCheck()){
-    		OrganCheckRequest organCheckRequest = new OrganCheckRequest();
-    		organCheckRequest.setCheckstatus(1);//通过
-    		organCheckRequest.setOperator(CommonConstant.CHECK_ADMIN_JR);
-    		organCheckRequest.setOrgId(titanOrg.getOrgid());
-    		checkFinancialOrgan(organCheckRequest);
-    	}
+    	 
     	return response;
     }
     
     /***
-     * 注册子机构(真实证件)
+     * 注册子机构(真实证件),并添加机构间的关联关系
      * @param regOrgSubRequest 子机构信息
-     * @param relateOrgCode 虚拟证件机构编码
+     * @param relateOrgCode 虚拟证件机构编码,如果为空，则不添加关联关系
+     * @param isRegRs 是否到融数注册机构，默认为false，即不注册
      * @return
      **/
-    private BaseResponseDTO regOrgSub(RegOrgSubRequest regOrgSubRequest,String relateOrgCode){
+    private BaseResponseDTO addOrgSubMap(RegOrgSubRequest regOrgSubRequest,String relateOrgCode){
     	BaseResponseDTO  baseResponseDTO = new BaseResponseDTO();
     	//本地保存机构
     	TitanOrgSub orgSub = addOrgSub(regOrgSubRequest);
-    	
-    	//添加机构关联关系
-		TitanOrgMapInfo orgMapInfo = new TitanOrgMapInfo();
-		orgMapInfo.setOrgCode(relateOrgCode);
-		orgMapInfo.setOrgSubcode(orgSub.getOrgcode());
-		orgMapInfo.setIsactive(1);//1-有效，2-删除
-		orgMapInfo.setCreateTime(new Date());
-		titanOrgMapInfoDao.insert(orgMapInfo);
-		
-		//融数注册机构
-    	RSOrg rsOrg = new RSOrg();
-		rsOrg.setUserid(orgSub.getUserid());
-		rsOrg.setOrgcode(orgSub.getOrgcode());
-		rsOrg.setOrgname(orgSub.getOrgname());
-		rsOrg.setBuslince(orgSub.getBuslince());
-		rsOrg.setCertificatetype(orgSub.getCertificatetype());
-		rsOrg.setCertificatenumber(orgSub.getCertificatenumber());
-		rsOrg.setUsertype(orgSub.getUsertype());
-		BaseResponse baseResponse = registerRSOrg(rsOrg);
-    	if(CommonConstant.OPERATE_SUCCESS.equals(baseResponse.getOperateStatus())){
-    		baseResponseDTO.putSuccess("注册成功");
-    		return baseResponseDTO;
-    	}else{
-    		LOGGER.error("注册子机构失败，方法：regOrgSub(),失败原因："+Tools.gsonToString(baseResponse));
-    		baseResponseDTO.putErrorResult(baseResponse.getReturnCode(),baseResponse.getReturnMsg());
+    	baseResponseDTO.putSuccess("子机构成功");
+    	if(StringUtil.isValidString(relateOrgCode)){
+    		//添加机构关联关系
+    		TitanOrgMapInfo orgMapInfo = new TitanOrgMapInfo();
+    		orgMapInfo.setOrgCode(relateOrgCode);
+    		orgMapInfo.setOrgSubcode(orgSub.getOrgcode());
+    		orgMapInfo.setIsactive(1);//1-有效，2-删除
+    		orgMapInfo.setCreateTime(new Date());
+    		titanOrgMapInfoDao.insert(orgMapInfo);
+    		baseResponseDTO.putSuccess("关联关系保持成功");
     	}
+		 
     	
     	return baseResponseDTO;
     }
     
+    /***
+     * 添加orgsub
+     * @param regOrgSubRequest
+     * @return
+     */
+    private TitanOrgSub addOrgSub(RegOrgSubRequest regOrgSubRequest){
+    	TitanOrgSub orgSub = new TitanOrgSub();
+    	String orgcode = titanCodeCenterService.createOrgCode();
+    	if(!StringUtil.isValidString(regOrgSubRequest.getOrgCode())){//没有值，则用新生成的
+    		regOrgSubRequest.setOrgCode(orgcode);
+    	}else{//有传值，就用入参的
+    		orgcode = regOrgSubRequest.getOrgCode();
+    	}
+    	
+    	orgSub.setOrgcode(orgcode);
+    	orgSub.setUserid(orgcode);
+    	orgSub.setUsertype(regOrgSubRequest.getUserType());
+    	orgSub.setCreateTime(new Date());
+    	if(regOrgSubRequest.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
+    		validateEnterpriseParam(regOrgSubRequest);
+    		orgSub.setOrgname(regOrgSubRequest.getOrgName());
+    		orgSub.setBuslince(regOrgSubRequest.getBuslince());
+    		orgSub.setConnect(regOrgSubRequest.getConnect());
+    		orgSub.setMobiletel(regOrgSubRequest.getMobileTel());
+        	
+    	}else if(regOrgSubRequest.getUserType()==TitanOrgEnum.UserType.PERSONAL.getKey()){
+    		validatePersonalParam(regOrgSubRequest);
+    		orgSub.setOrgname(regOrgSubRequest.getOrgName());
+    		orgSub.setCertificatetype(NumberUtils.toInt(regOrgSubRequest.getCertificateType()));
+    		orgSub.setCertificatenumber(regOrgSubRequest.getCertificateNumber());
+    	}
+    	orgSubDao.insert(orgSub);
+    	return orgSub;
+    }
     
 	@Override
 	public OrgRegisterValidateResponse validateOrg(OrgRegisterValidateRequest request) {
@@ -988,7 +987,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	        	condition.setUserid(newOrgEntity.getUserid());
 	        	titanAccountDao.selectForPage(condition, accountPage);
 	        	if(CollectionUtils.isEmpty(accountPage.getItemList())){
-	        		//融数创建账号
+	        		//虚拟证件融数注册机构
 	        		RSOrg rsOrg = new RSOrg();
 	        		rsOrg.setUserid(newOrgEntity.getUserid());
 	        		rsOrg.setOrgcode(newOrgEntity.getOrgcode());
@@ -997,9 +996,26 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	        		rsOrg.setCertificatetype(newOrgEntity.getCertificatetype());
 	        		rsOrg.setCertificatenumber(newOrgEntity.getCertificatenumber());
 	        		rsOrg.setUsertype(newOrgEntity.getUsertype());
-	        		BaseResponse baseResponse = registerRSOrg(rsOrg);
+	        		BaseResponse orgBaseResponse = registerRSOrg(rsOrg);
+	        		//真实证件融数注册机构
+	        		TitanOrgMapInfoParam titanOrgMapInfoParam = new TitanOrgMapInfoParam();
+	        		titanOrgMapInfoParam.setOrgCode(newOrgEntity.getOrgcode());
+	        		List<TitanOrgMapInfo> list = titanOrgMapInfoDao.queryList(titanOrgMapInfoParam);
+	        		if(list!=null&&list.size()>1){
+	        			LOGGER.error("金融机构关联关系记录太多，关联机构orgcode:"+newOrgEntity.getOrgcode()+",查询到关联机构条数："+list.size());
+	        			throw new MessageServiceException("机构数据异常，请联系系统管理员");
+	        		}else if(list.size()==1){
+	        			String orgSubcode = list.get(0).getOrgSubcode();
+		        		BaseResponse orgSubResponse = regOrgSubForRS(orgSubcode); 
+		        		
+		        		if(!CommonConstant.OPERATE_SUCCESS.equals(orgSubResponse.getOperateStatus())){//失败
+		        			LOGGER.error("调用融数接口rsOrganizationManager.resigterPersonOrg 失败,注册机构参数 orgSubcode:"+orgSubcode+",rs返回信息[baseResponse]:"+JSONSerializer.toJSON(orgSubResponse).toString());
+		        			response.putErrorResult(orgBaseResponse.getReturnMsg());
+		        			return response;
+		        		}
+	        		}
 	        		
-	        		if(CommonConstant.OPERATE_SUCCESS.equals(baseResponse.getOperateStatus())){
+	        		if(CommonConstant.OPERATE_SUCCESS.equals(orgBaseResponse.getOperateStatus())){
 	            		TitanAccount account = new TitanAccount();
 	            		account.setUserid(newOrgEntity.getUserid());
 	            		account.setAccountcode(titanCodeCenterService.createTitanAccountCode());
@@ -1032,18 +1048,17 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	            		
 	            		sendRegNotify(newOrgEntity.getUserid(), true, null);
 	            		
-	        		}else{//失败抛出异常
-	        			String rsmsg  = baseResponse.getReturnMsg();
+	        		}else{//失败
+	        			String rsmsg  = orgBaseResponse.getReturnMsg();
 	        			titanOrgCheck.setCheckuser(CommonConstant.CHECK_ADMIN_RS);
 		        		titanOrgCheck.setChecktime(nowDate);
 	        			titanOrgCheck.setResultkey(OrgCheckResultEnum.REVIEW.getResultkey());
 	        			titanOrgCheck.setResultmsg(rsmsg);
 		        		titanOrgCheckDao.update(titanOrgCheck);
 		        		addOrgCheckLog(titanOrgCheck);
-	        			LOGGER.error("调用融数接口rsOrganizationManager.resigterPersonOrg 失败,request orgId:"+organCheckRequest.getOrgId()+",rs return content[baseResponse]:"+JSONSerializer.toJSON(baseResponse).toString()+"。 organCheckRequest:"+JSONSerializer.toJSON(organCheckRequest).toString()+",response:"+JSONSerializer.toJSON(response).toString());
-	        			response.putErrorResult(baseResponse.getReturnMsg());
+	        			LOGGER.error("调用融数接口rsOrganizationManager.resigterPersonOrg 失败,request orgId:"+organCheckRequest.getOrgId()+",rs return content[orgBaseResponse]:"+JSONSerializer.toJSON(orgBaseResponse).toString()+"。 organCheckRequest:"+JSONSerializer.toJSON(organCheckRequest).toString());
+	        			response.putErrorResult(orgBaseResponse.getReturnMsg());
 	        			return response;
-	        			//throw new MessageServiceException("融数账户创建失败,错误信息："+baseResponse.getReturnMsg());
 	        		}
 	        		
 	        	}else{
@@ -1069,6 +1084,23 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	response.putSuccess("操作成功");
     	return response;
     }
+	
+	/**
+	 * 融数注册orgsub子机构
+	 */
+	private BaseResponse regOrgSubForRS(String orgsubCode){
+		TitanOrgSub orgSub = orgSubDao.getOneByOrgCode(orgsubCode);
+		RSOrg rsOrg = new RSOrg();
+		rsOrg.setUserid(orgSub.getUserid());
+		rsOrg.setOrgcode(orgSub.getOrgcode());
+		rsOrg.setOrgname(orgSub.getOrgname());
+		rsOrg.setBuslince(orgSub.getBuslince());
+		rsOrg.setCertificatetype(orgSub.getCertificatetype());
+		rsOrg.setCertificatenumber(orgSub.getCertificatenumber());
+		rsOrg.setUsertype(orgSub.getUsertype());
+		return registerRSOrg(rsOrg);
+ 
+	}
 	
 	private void sendRegNotify(String userId, boolean isSuccess, String reason){
 		OrgDTO orgDTO = new OrgDTO();

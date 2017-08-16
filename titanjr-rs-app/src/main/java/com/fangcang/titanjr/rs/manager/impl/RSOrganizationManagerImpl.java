@@ -14,12 +14,12 @@ import com.Rop.api.response.WheatfieldEnterpriseUpdatecompanyinfoResponse;
 import com.Rop.api.response.WheatfieldPersonAccountoprResponse;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.exception.RSValidateException;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.rs.request.*;
 import com.fangcang.titanjr.rs.response.*;
 import com.fangcang.titanjr.rs.manager.RSOrganizationManager;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.util.MyBeanUtil;
-import com.fangcang.util.StringUtil;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -137,7 +137,7 @@ public class RSOrganizationManagerImpl implements RSOrganizationManager {
 				personOrgRegRequest.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, personOrgRegRequest);
-			log.info("开始调用个人账户注册接口:");
+			log.info("开始调用个人账户注册接口,请求参数personOrgRegRequest："+Tools.gsonToString(personOrgRegRequest));
 			WheatfieldPersonAccountoprResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {

@@ -5,8 +5,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -21,6 +19,7 @@ import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
+import com.fangcang.titanjr.dto.bean.OrgSubDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
 import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
@@ -36,6 +35,8 @@ import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
+
+import net.sf.json.JSONSerializer;
 /**
  * 基础信息
  * @author luoqinglong
@@ -75,9 +76,17 @@ public class SettingBaseInfoController extends BaseController{
 			
 			FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 			organQueryRequest.setOrgCode(titanUser.getOrgcode());
-			FinancialOrganResponse financialOrganResponse = organService.queryFinancialOrgan(organQueryRequest);
+			FinancialOrganResponse financialOrganResponse = organService.queryBaseFinancialOrgan(organQueryRequest);
 			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
+			financialOrganDTO.setBuslince(Tools.replaceInfoStar(financialOrganDTO.getBuslince()));
+			financialOrganDTO.setCertificateNumber(Tools.replaceInfoStar(financialOrganDTO.getCertificateNumber()));
+			
+			OrgSubDTO orgSubDTO = financialOrganResponse.getOrgSubDTO();
+			orgSubDTO.setBuslince(Tools.replaceInfoStar(orgSubDTO.getBuslince()));
+			orgSubDTO.setCertificateNumber(Tools.replaceInfoStar(orgSubDTO.getCertificateNumber()));
+			
 			model.addAttribute("financialOrganDTO", financialOrganDTO);
+			model.addAttribute("orgSubDTO", orgSubDTO);
 			for(OrgImageInfo item : financialOrganDTO.getOrgImageInfoList()){
 				if(item.getSizeType()==10){
 					model.addAttribute("small_img_10", item.getImageURL());

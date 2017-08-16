@@ -33,34 +33,34 @@
 						<li class="fl"><span class="TFS_basname">泰坦码：</span><strong class="c_f00">${financialOrganDTO.titanCode }</strong></li>
 					</ul>
 				</div>
-				<c:if test="${financialOrganDTO.userType ==1 }">
+				<c:if test="${orgSubDTO.userType ==1 }">
 				<!-- 企业信息 -->
 				<h2>公司信息：</h2>
 				<div class="TFS_basicbottom en_info_wrap">
 					<ul>
-						<li class="fl"><span class="TFS_basname">公司名称：</span>${financialOrganDTO.orgName }</li>
-						<li class="fl"><span class="TFS_basname fl">联系人：</span><div class="info_c"><h3>${financialOrganDTO.connect }</h3><i class="J_mody blue curpo undl">修改</i></div><input type="text" style="display:none;" data-is-update="0" id="connect" class="text w_180"></li>
-						<li class="fl"><span class="TFS_basname">营业执照：</span>${financialOrganDTO.buslince }</li>
-						<li class="fl"><span class="TFS_basname fl">联系手机：</span><div class="info_c"><h3>${financialOrganDTO.mobileTel }</h3><i class="J_mody blue curpo undl">修改</i></div><input type="text" style="display:none;" data-is-update="0" id="mobileTel" class="text w_180" ></li>
+						<li class="fl"><span class="TFS_basname">公司名称：</span>${orgSubDTO.orgName }</li>
+						<li class="fl"><span class="TFS_basname fl">联系人：</span><div class="info_c"><h3>${orgSubDTO.connect }</h3><i class="J_mody blue curpo undl">修改</i></div><input type="text" style="display:none;" data-is-update="0" id="connect" class="text w_180"></li>
+						<li class="fl"><span class="TFS_basname">营业执照：</span>${orgSubDTO.buslince }</li>
+						<li class="fl"><span class="TFS_basname fl">联系手机：</span><div class="info_c"><h3>${orgSubDTO.mobileTel }</h3><i class="J_mody blue curpo undl">修改</i></div><input type="text" style="display:none;" data-is-update="0" id="mobileTel" class="text w_180" ></li>
 						<li class="fl"><span class="TFS_basname fl">上传工商执照注册照片：</span>
 						<p class="fl"><img width="130" height="90" class="cursor J_magnify" src="${small_img_10 }"></p></li>
 					</ul>
 				</div>
 				</c:if>
-				<c:if test="${financialOrganDTO.userType == 2 }">
+				<c:if test="${orgSubDTO.userType == 2 }">
 				<!-- 个人信息 -->
 				<h2 >个人信息：</h2>
 				<div class="TFS_basicbottom" >
 					<ul>
-						<li><span class="TFS_basname">姓名：</span>${financialOrganDTO.orgName }</li>
-						<li><span class="TFS_basname">身份证号：</span>${financialOrganDTO.certificateNumber }</li>
+						<li><span class="TFS_basname">姓名：</span>${orgSubDTO.orgName }</li>
+						<li><span class="TFS_basname">身份证号：</span>${orgSubDTO.certificateNumber }</li>
 						<li><span class="TFS_basname fl">本人持身份证正面照：</span>
 						<p class="fl"><img width="130" height="90" class="cursor J_magnify" src="${small_img_10 }"></p></li>
 					</ul>
 				</div>
 				</c:if>
 			</div>
-			<c:if test="${financialOrganDTO.userType == 1 }">
+			<c:if test="${orgSubDTO.userType == 1 }">
 				<div class="TFS_basicbutton" style="display:none;">
 					<span class="btn p_lr30 b_submit">保存</span>
 					<span class="btn btn_exit b_cancel">取消</span>

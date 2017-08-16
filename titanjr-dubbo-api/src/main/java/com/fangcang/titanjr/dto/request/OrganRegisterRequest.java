@@ -68,7 +68,7 @@ public class OrganRegisterRequest extends RegOrgSubRequest {
     //是否自动审核
     private boolean isAutoCheck = false;
     //是否创建真实机构
-    private boolean isCreateOrgSub = false;
+    //private boolean isCreateOrgSub = false;
     /*******    *****/
     private String checkResKey;
     
@@ -142,13 +142,13 @@ public class OrganRegisterRequest extends RegOrgSubRequest {
 		this.isAutoCheck = isAutoCheck;
 	}
 
-	public boolean getIsCreateOrgSub() {
-		return isCreateOrgSub;
-	}
-
-	public void setIsCreateOrgSub(boolean isCreateOrgSub) {
-		this.isCreateOrgSub = isCreateOrgSub;
-	}
+//	public boolean getIsCreateOrgSub() {
+//		return isCreateOrgSub;
+//	}
+//
+//	public void setIsCreateOrgSub(boolean isCreateOrgSub) {
+//		this.isCreateOrgSub = isCreateOrgSub;
+//	}
 
 
     public List<OrgImageInfo> getOrgImageInfoList() {

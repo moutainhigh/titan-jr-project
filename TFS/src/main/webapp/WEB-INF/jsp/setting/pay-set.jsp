@@ -54,14 +54,7 @@
 			<c:if test="${hasSetPayPass==1}">
 				<h3 class="TFSpassw_title"><span class="fl">您的付款密码：</span><span class="TFS_changepassword fl"><img src="<%=cssSaasPath%>/images/TFS/lock.png" alt=""><i class="blue undl curpo J_password">修改密码</i></span></h3>
 			</c:if>
-			<div class="TFSpayset">
-				<h3 class="TFSpassw_title fl">小额免密支付开关</h3>
-				<div class="glright fl">
-					<span uitype="switch" <c:if test="${allownopwdpay==1}">checked</c:if> class="switch-text" id="J_siwtch_auto"></span>
-					<c:if test="${allownopwdpay==0}"><span class="nopassword">未开通小额免密支付，付款时需要密码</span></c:if>
-					<c:if test="${allownopwdpay==1}"><span class="nopassword tip">已开通小额免密支付，1000元以下付款时无需密码</span></c:if>
-				</div>
-			</div>
+			 
 		</div>
 	</div>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
@@ -70,6 +63,7 @@ var isadmin = '${isJrAdmin}';
 //渲染组件
 	F.UI.scan();
 	//展开、收缩表格
+	//删除了免密支付功能
 	var msg,sw,payDialog,toState;
     $.each($('.TFSpayset'), function(){
         var _this = $(this), siwtchArray = [], siwtchs = F.UI.find(_this.find('*[uitype=switch]'));

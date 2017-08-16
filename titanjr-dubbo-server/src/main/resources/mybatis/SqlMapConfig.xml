@@ -60,6 +60,8 @@
 		<mapper resource="mybatis/TitanFundFreezereqMapper.xml" />
 		<mapper resource="mybatis/TitanOrderPayreqMapper.xml" />
 		<mapper resource="mybatis/TitanOrgBindinfoMapper.xml" />
+		<mapper resource="mybatis/TitanOrgMapInfoMapper.xml" />
+		<mapper resource="mybatis/TitanOrgSubMapper.xml" />
 		<mapper resource="mybatis/TitanOrgidMapper.xml" />
 		<mapper resource="mybatis/TitanOrgImageMapper.xml" />
 		<mapper resource="mybatis/TitanOrgMapper.xml" />
