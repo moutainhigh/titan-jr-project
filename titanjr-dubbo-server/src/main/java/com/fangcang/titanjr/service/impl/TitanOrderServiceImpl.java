@@ -1,7 +1,6 @@
 package com.fangcang.titanjr.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -200,6 +199,9 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 			}
 			if(transOrderDTO.getEscrowedDate() != null){
 				titanTransOrder.setEscrowedDate(transOrderDTO.getEscrowedDate());
+			}
+			if(transOrderDTO.getFreezeAt() != null){
+				titanTransOrder.setFreezeAt(transOrderDTO.getFreezeAt());
 			}
 			int row = titanTransOrderDao.update(titanTransOrder);
 			if(row>0){

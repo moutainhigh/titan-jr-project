@@ -363,9 +363,12 @@ public class TitanTradeController extends BaseController {
 				paymentUrlRequest.setIsEscrowed(EscrowedEnum.ESCROWED_PAYMENT
 						.getKey());
 				paymentUrlRequest.setPaySource(dto.getPayerType());
-				//if(dto.getPayerType().equals(PayerTypeEnum.SUPPLY_FINACIAL.key)){
+				if(dto.getPayerType().equals(PayerTypeEnum.SUPPLY_FINACIAL.key)){
 					paymentUrlRequest.setFcUserid(dto.getUserId());
-				//}
+				}
+				if(TitanjrVersionEnum.isVersion2(dto.getVersion())){
+					paymentUrlRequest.setFcUserid(dto.getUserId());//金融二期，userId只能是第三方用户ID
+				}
 				paymentUrlRequest.setVersion(dto.getVersion());
 				paymentUrlRequest.setCanAccountBalance(orderCreateResponse.isCanAccountBalance());
 				PaymentUrlResponse response = titanFinancialUtilService

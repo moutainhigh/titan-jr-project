@@ -49,7 +49,6 @@ import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.enums.BusiCodeEnum;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
-import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialRefundService;
