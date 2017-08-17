@@ -706,12 +706,16 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	}
     	//统一都用虚拟证件注册
     	String orgcode = titanCodeCenterService.createOrgCode();
-    	organRegisterRequest.setBuslince("BL"+orgcode);//虚拟营业执照
+    	String vOrgcode = "BL"+orgcode;
+    	organRegisterRequest.setBuslince(vOrgcode);//虚拟营业执照
+    	organRegisterRequest.setOrgCode(vOrgcode);
     	organRegisterRequest.setUserType(1);//1-企业
+    	
+    	orgSubRequest.setOrgCode(orgcode);
     	
     	//---1虚拟证件注册，公共参数校验,密码校验
     	if (!(GenericValidate.validate(organRegisterRequest)&&StringUtil.isValidString(organRegisterRequest.getPassword()))){
-    		LOGGER.info("参数错误，organRegisterRequest："+JSONSerializer.toJSON(organRegisterRequest).toString());
+    		LOGGER.error("机构注册时，参数错误，organRegisterRequest："+JSONSerializer.toJSON(organRegisterRequest).toString());
 			response.putErrorResult("必填参数不能为空");
 			return response;
 		}

@@ -300,55 +300,54 @@ public class TitanPaymentService {
 	 * @author Jerry
 	 * @date 2017年8月9日 下午2:40:13
 	 * @param transferRequest transOrderDTO
-	 * @return -1不需要冻结	  0冻结失败       1冻结成功
+	 * @return -1冻结失败   0不需要冻结	1冻结付款方 2冻结在收款方
 	 */
 	public int freezeAccountBalance(TransferRequest transferRequest,
 			TransOrderDTO transOrderDTO) {
+		int freezeStatus = -1;
 		try {
 			RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
 			rechargeResultConfirmRequest.setOrderNo(transOrderDTO.getOrderid());
 			rechargeResultConfirmRequest.setPayAmount(transferRequest
 					.getAmount());
-			rechargeResultConfirmRequest.setUserid(transferRequest
-					.getUserrelateid());//默认冻结在收款方
 			rechargeResultConfirmRequest.setOrderAmount(transferRequest
 					.getAmount());
 			
-			if(StringUtil.isValidString(transOrderDTO.getFreezeType())){
-				if(FreezeTypeEnum.UNFREEZE.getKey().equals(transOrderDTO.getFreezeType())){
-					log.info("转账到收款方，不冻结");
-					return -1;//不需要冻结
-				}else if(FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrderDTO.getFreezeType())){
-					rechargeResultConfirmRequest.setUserid(transferRequest.getUserid());//冻结在付款方
-					log.info("不转账，资金冻结在付款方");
-				}else{
-					log.info("转账到收款方，资金冻结在收款方");
-				}
+			if(FreezeTypeEnum.UNFREEZE.getKey().equals(transOrderDTO.getFreezeType())){
+				log.info("转账到收款方，不冻结");
+				return 0;//不需要冻结，直接返回
+			}else if(FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrderDTO.getFreezeType())){
+				rechargeResultConfirmRequest.setUserid(transferRequest.getUserid());//冻结在付款方
+				freezeStatus = 1;
+				log.info("不转账，资金冻结在付款方");
 			}else{
+				rechargeResultConfirmRequest.setUserid(transferRequest.getUserrelateid());//冻结在收款方
+				freezeStatus = 2;
 				log.info("转账到收款方，资金冻结在收款方");
 			}
 			
 			FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService
 					.freezeAccountBalance(rechargeResultConfirmRequest);
-			if (freezeAccountBalanceResponse.isFreezeSuccess()) {
-				return 1;//冻结成功
+			if (!freezeAccountBalanceResponse.isFreezeSuccess()) {
+				freezeStatus = -1;//冻结失败
 			}
 			
 		} catch (Exception e) {
-			
+			freezeStatus = -1;
 			log.error("冻结余额失败" + e.getMessage(), e);
 		}
-		return 0;//冻结失败
+		return freezeStatus;
 	}
 
 	// 更新订单状态
-	public boolean updateOrderStatus(Integer transId,
+	public boolean updateOrderStatus(TransOrderDTO transOrderDTO,
 			OrderStatusEnum orderStatusEnum) {
 		try {
-			TransOrderDTO transOrderDTO = new TransOrderDTO();
-			transOrderDTO.setStatusid(orderStatusEnum.getStatus());
-			transOrderDTO.setTransid(transId);
-			boolean flag = titanOrderService.updateTransOrder(transOrderDTO);
+			TransOrderDTO transOrderReq = new TransOrderDTO();
+			transOrderReq.setStatusid(orderStatusEnum.getStatus());
+			transOrderReq.setTransid(transOrderDTO.getTransid());
+			transOrderReq.setFreezeAt(transOrderDTO.getFreezeAt());
+			boolean flag = titanOrderService.updateTransOrder(transOrderReq);
 			return flag;
 		} catch (Exception e) {
 			log.error("更新订单失败" + e.getMessage(), e);

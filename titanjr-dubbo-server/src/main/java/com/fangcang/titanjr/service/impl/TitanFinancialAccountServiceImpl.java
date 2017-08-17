@@ -975,7 +975,11 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			    	businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.UnfreezeSucc, OrderKindEnum.OrderId, fundFreezeDTO.getOrderNo()));
 			    	//修改系统单号
 			    	TitanTransOrder titanTransOrder = new TitanTransOrder();
-			    	titanTransOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
+			    	if(fundFreezeDTO.getOrderStatusEnum() == OrderStatusEnum.ORDER_FAIL){
+			    		titanTransOrder.setStatusid(fundFreezeDTO.getOrderStatusEnum().getStatus());
+			    	}else{
+			    		titanTransOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
+			    	}
 			    	titanTransOrder.setOrderid(fundFreezeDTO.getOrderNo());
 			    	try{
 			    		titanTransOrderDao.update(titanTransOrder);

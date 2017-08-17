@@ -350,6 +350,9 @@
             <if test=" escrowedDate !=null">
             	escrowedDate =#{escrowedDate}
             </if>
+            <if test="freezeAt !=null">
+            	freezeAt =#{freezeAt}
+            </if>
         </set>
         <where>
           <if test="userorderid !=null">

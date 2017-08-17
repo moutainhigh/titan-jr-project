@@ -491,7 +491,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		
 		//查询个人机构
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-        organQueryRequest.setUserType(Integer.parseInt(CommonConstant.PERSONAL));
+        organQueryRequest.setSubUserType(Integer.parseInt(CommonConstant.PERSONAL));
 		List<TitanOrg> orgList = titanOrgDao.queryTitanOrgList(organQueryRequest);
 		if(CollectionUtils.isEmpty(orgList)){
 			baseResponseDTO.setReturnMessage("未查询到本地机构信息");

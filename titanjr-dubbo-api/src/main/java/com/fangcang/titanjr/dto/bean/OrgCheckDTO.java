@@ -12,6 +12,7 @@ public class OrgCheckDTO implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -6346796661307189288L;
+	/************** 虚拟证件 *************************/
 	private String orgId;
 	private String orgcode;
 	private Integer tfsuserid;
@@ -19,14 +20,29 @@ public class OrgCheckDTO implements Serializable{
 	private String merchantcode;
 	private String orgname;
 	private String buslince;	
-	private String connect;	
-	private String mobiletel;
+	
 	private Integer certificateType;
 	private String certificateNumber;	
 	private String checkuser;	
 	private String resultkey ;
 	
+	/************* 真实证件 ***************************/
+	private String orgSubId;
+	private String subOrgCode;
+	private String subOrgname;
+	private Integer subCertificateType;
+	private String subCertificateNumber;
+	private String subBuslince;
+	private String subConnect;	
+	private String subMobiletel;
 	
+	
+	public String getOrgSubId() {
+		return orgSubId;
+	}
+	public void setOrgSubId(String orgSubId) {
+		this.orgSubId = orgSubId;
+	}
 	public Integer getCertificateType() {
 		return certificateType;
 	}
@@ -69,17 +85,18 @@ public class OrgCheckDTO implements Serializable{
 	public void setBuslince(String buslince) {
 		this.buslince = buslince;
 	}
-	public String getConnect() {
-		return connect;
+	
+	public String getSubConnect() {
+		return subConnect;
 	}
-	public void setConnect(String connect) {
-		this.connect = connect;
+	public void setSubConnect(String subConnect) {
+		this.subConnect = subConnect;
 	}
-	public String getMobiletel() {
-		return mobiletel;
+	public String getSubMobiletel() {
+		return subMobiletel;
 	}
-	public void setMobiletel(String mobiletel) {
-		this.mobiletel = mobiletel;
+	public void setSubMobiletel(String subMobiletel) {
+		this.subMobiletel = subMobiletel;
 	}
 	public String getCertificateNumber() {
 		return certificateNumber;
@@ -105,6 +122,35 @@ public class OrgCheckDTO implements Serializable{
 	public void setMerchantcode(String merchantcode) {
 		this.merchantcode = merchantcode;
 	}
-	
+	public String getSubOrgCode() {
+		return subOrgCode;
+	}
+	public void setSubOrgCode(String subOrgCode) {
+		this.subOrgCode = subOrgCode;
+	}
+	public String getSubOrgname() {
+		return subOrgname;
+	}
+	public void setSubOrgname(String subOrgname) {
+		this.subOrgname = subOrgname;
+	}
+	public Integer getSubCertificateType() {
+		return subCertificateType;
+	}
+	public void setSubCertificateType(Integer subCertificateType) {
+		this.subCertificateType = subCertificateType;
+	}
+	public String getSubCertificateNumber() {
+		return subCertificateNumber;
+	}
+	public void setSubCertificateNumber(String subCertificateNumber) {
+		this.subCertificateNumber = subCertificateNumber;
+	}
+	public String getSubBuslince() {
+		return subBuslince;
+	}
+	public void setSubBuslince(String subBuslince) {
+		this.subBuslince = subBuslince;
+	}
 	
 }

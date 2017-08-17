@@ -76,10 +76,9 @@ public class OrgController extends BaseController{
 		int userType = orgPojo.getUserType()==null?1:orgPojo.getUserType();
 		
 		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-		organQueryRequest.setIsadmin(1);
 		organQueryRequest.setUserloginname(orgPojo.getUserLoginName());
-		organQueryRequest.setUserType(userType);
-		organQueryRequest.setOrgName(orgPojo.getOrgName());
+		organQueryRequest.setSubUserType(userType);
+		organQueryRequest.setSubOrgName(orgPojo.getOrgName());
 		organQueryRequest.setResultKey("".equals(orgPojo.getResultKey())?null:orgPojo.getResultKey());
 		organQueryRequest.setCurrentPage(orgPojo.getPageNo());
 		organQueryRequest.setPageSize(orgPojo.getPageSize());
@@ -184,13 +183,13 @@ public class OrgController extends BaseController{
 	private void count(Model model){
 		FinancialOrganQueryRequest enterpriseRequest = new FinancialOrganQueryRequest();
 		enterpriseRequest.setResultKey(OrgCheckResultEnum.FT.getResultkey());
-		enterpriseRequest.setUserType(TitanOrgEnum.UserType.ENTERPRISE.getKey());
+		enterpriseRequest.setSubUserType(TitanOrgEnum.UserType.ENTERPRISE.getKey());
 		int enCount = organService.countOrg(enterpriseRequest);
 		model.addAttribute("enCount", enCount);
 		
 		FinancialOrganQueryRequest personalRequest = new FinancialOrganQueryRequest();
 		personalRequest.setResultKey(OrgCheckResultEnum.FT.getResultkey());
-		personalRequest.setUserType(TitanOrgEnum.UserType.PERSONAL.getKey());
+		personalRequest.setSubUserType(TitanOrgEnum.UserType.PERSONAL.getKey());
 		int perCount = organService.countOrg(personalRequest);
 		model.addAttribute("perCount", perCount);
 	}

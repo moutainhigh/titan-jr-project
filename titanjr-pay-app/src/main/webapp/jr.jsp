@@ -126,19 +126,19 @@
             <tr>
                 <td class="tdr">付款方用户ID</td>
                 <td>
-                    <input type="text" value="" id="userId" name="userId"/>
+                    <input type="text" value="40795" id="userId" name="userId"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">付款方机构编码</td>
                 <td>
-                    <input type="text" value="" id="partnerOrgCode" name="userId"/>
+                    <input type="text" value="M10036454" id="partnerOrgCode" name="userId"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">付款方金融机构编码</td>
                 <td>
-                    <input type="text" value="" id="orgCode" name="userId"/>
+                    <input type="text" value="TJM60000018" id="orgCode" name="userId"/>
                 </td>
             </tr>
             <tr>

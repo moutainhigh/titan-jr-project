@@ -276,7 +276,7 @@ public class SettingEmployeeController extends BaseController{
 				if(verifyCheckCodeResponse.getCodeId()>0){
 					UpdateCheckCodeRequest updateCheckCodeRequest = new UpdateCheckCodeRequest();
 					updateCheckCodeRequest.setCodeId(verifyCheckCodeResponse.getCodeId());
-					updateCheckCodeRequest.setIsactive(0);
+					updateCheckCodeRequest.setIsactive(0);//改为无效
 					organService.useCheckCode(updateCheckCodeRequest);
 				}
 			}else{

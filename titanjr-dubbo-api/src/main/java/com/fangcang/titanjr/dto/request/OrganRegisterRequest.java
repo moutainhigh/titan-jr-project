@@ -37,8 +37,8 @@ public class OrganRegisterRequest extends RegOrgSubRequest {
 
     //机构类型
   //  private Integer orgType;
-    @NotNull
-    private Integer userType;
+   // @NotNull
+   // private Integer userType;
 
     //注册来源，见CoopTypeEnum
     @NotNull
@@ -167,13 +167,13 @@ public class OrganRegisterRequest extends RegOrgSubRequest {
         this.registerSource = registerSource;
     }
 
-	public Integer getUserType() {
-		return userType;
-	}
-
-	public void setUserType(Integer userType) {
-		this.userType = userType;
-	}
+//	public Integer getUserType() {
+//		return userType;
+//	}
+//
+//	public void setUserType(Integer userType) {
+//		this.userType = userType;
+//	}
 
 	public String getUserloginname() {
 		return userloginname;

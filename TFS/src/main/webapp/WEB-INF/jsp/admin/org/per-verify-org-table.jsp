@@ -3,8 +3,8 @@
 <c:forEach items="${orgCheckDTOPage.itemList}" var="orgCheckDTO">
 <tr>
 	<td class="tdl"><span class="pl12">${orgCheckDTO.userloginname }</span></td>
-	<td class="tdl">${orgCheckDTO.orgname }</td>
-	<td class="tdl">${orgCheckDTO.certificateNumber }</td>
+	<td class="tdl">${orgCheckDTO.subOrgname }</td>
+	<td class="tdl">${orgCheckDTO.subCertificateNumber }</td>
 	<td class="tdl">${orgCheckDTO.checkuser }</td>
 	<td class="tdl">
 		<c:if test="${orgCheckDTO.resultkey=='FT'}"><span class="c_red">待审核</span></c:if>

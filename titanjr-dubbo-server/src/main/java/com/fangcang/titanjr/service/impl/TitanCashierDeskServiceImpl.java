@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.titanjr.common.bean.CommRes;
 import com.fangcang.titanjr.common.enums.BusTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierDeskTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
@@ -426,10 +427,10 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
 			quickCardHistoryDTO.setIdtype("1");
 		}
 		
-		String validate = GenericValidate.validateObj(quickCardHistoryDTO);
-		if(StringUtil.isValidString(validate)){
-			log.error("saveQuickcardHistory error：" + validate);
-			baseResponseDTO.putErrorResult(validate);
+		CommRes res = GenericValidate.validateObj(quickCardHistoryDTO);
+		if(!res.isSuccess()){
+			log.error("saveQuickcardHistory error：" + res.getReturnMessage());
+			baseResponseDTO.putErrorResult(res.getReturnMessage());
 			return baseResponseDTO;
 		}
 		

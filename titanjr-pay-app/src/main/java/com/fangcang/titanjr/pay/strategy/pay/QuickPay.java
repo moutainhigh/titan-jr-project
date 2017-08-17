@@ -12,6 +12,7 @@ import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.service.RSGatewayInterfaceService;
 import com.fangcang.util.JsonUtil;
 import com.fangcang.util.SpringContextUtil;
+import com.fangcang.util.StringUtil;
 
 @Component
 public class QuickPay implements PayStrategy {
@@ -25,7 +26,10 @@ public class QuickPay implements PayStrategy {
 		rsGatewayInterfaceService = (RSGatewayInterfaceService) SpringContextUtil.getBean("rsGatewayInterfaceService");
 		titanPaymentService = (TitanPaymentService) SpringContextUtil.getBean("titanPaymentService");
 		
-		titanPaymentService.saveQuickcardHistory(titanPaymentRequest);
+		//要校验金融机构信息吗？
+		if(StringUtil.isValidString(titanPaymentRequest.getFcUserid())){
+			titanPaymentService.saveQuickcardHistory(titanPaymentRequest);
+		}
 		
 		QuickPaymentRequest quickPaymentRequest = new QuickPaymentRequest();
 		BeanUtils.copyProperties(rechargeDataDTO, quickPaymentRequest);

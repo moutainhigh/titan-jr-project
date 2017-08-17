@@ -1862,6 +1862,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				TransOrderDTO transOrderDTO = new TransOrderDTO();
 				transOrderDTO.setStatusid(orderStatusEnum.getStatus());
 				transOrderDTO.setTransid(repairTransferDTO.getTransid());
+				if(orderStatusEnum == OrderStatusEnum.FREEZE_SUCCESS){
+					transOrderDTO.setFreezeAt(CommonConstant.FREEZE_PAYEE);
+				}
 				boolean updateStatus = titanOrderService.updateTransOrder(transOrderDTO);
 				if (!updateStatus && repairTransferDTO.getTransid() != null) {
 					log.error("修复交易单更新交易单状态失败");

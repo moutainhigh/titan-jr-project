@@ -3,6 +3,7 @@ package com.fangcang.titanjr.dto.bean;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
 
 public class FundFreezeDTO implements Serializable{
@@ -24,6 +25,8 @@ public class FundFreezeDTO implements Serializable{
 	private String orderNo;
 	
 	private String requestTime = DateUtil.sdf4.format(new Date());
+	
+	private OrderStatusEnum orderStatusEnum;
 
 	public String getMerchantCode() {
 		return merchantCode;
@@ -87,6 +90,14 @@ public class FundFreezeDTO implements Serializable{
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public OrderStatusEnum getOrderStatusEnum() {
+		return orderStatusEnum;
+	}
+
+	public void setOrderStatusEnum(OrderStatusEnum orderStatusEnum) {
+		this.orderStatusEnum = orderStatusEnum;
 	}
 	
 }

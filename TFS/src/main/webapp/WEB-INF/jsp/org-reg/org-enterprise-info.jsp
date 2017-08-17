@@ -209,7 +209,7 @@ function checkOrgRegNum(value, inputDom){
 		},
 		error:function(){
 			flag = true;
-			new top.Tip({msg : '系统错误，请重试', type: 1, timer:2000}); 
+			new top.Tip({msg : '系统错误，请重试', type: 3, timer:2000}); 
 		}
 	});
 	return  flag;
@@ -254,11 +254,11 @@ $('.verify').on('click',function(){
 			        timeOut(_this);
 			    } 
 			}else{
-				new top.Tip({msg : result.msg, type: 1, timer:2500});
+				new top.Tip({msg : result.msg, type: 3, timer:2500});
 			}
 		},
 		error : function(){
-			new top.Tip({msg : '网络错误，请重试', type: 1, timer:2000});
+			new top.Tip({msg : '网络错误，请重试', type: 3, timer:2000});
 		}
 	});
       

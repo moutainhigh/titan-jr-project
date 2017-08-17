@@ -13,44 +13,57 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 	private static final long serialVersionUID = 6211572158966127160L;
 	private String regStartTime;
     private String regEndTime;
-   
     private Integer orgId;
     private String orgCode;
+    private Integer userType;
     private Integer bindStatus;
-    /***
-     * 公司名称
-     */
-    private String orgName;
     private String userId;
-    
     //private Integer checkStatus;
     private String userloginname;
-    private Integer isadmin;
-    /**
-     * 是否为运营人员
-     */
-    private Integer isoperator;
     private String resultKey;
-    private Integer orgType;
-    private Integer userType;
+    
     /**
      * 机构:1：生效，2：冻结，3：注销
      */
     private Integer statusId;
 
-
     //若当前是商家用户，则根据商家查询，判定是否有结果
     private String merchantcode;
-
 	//注册渠道，提供对外查询可用
 	private Integer regchannel;
 	//合作方类型:SAAS:2,TTM:4
 	private Integer coopType;
 	
-	private String certificatetype;
-	private String certificatenumber;
-    
-    public Integer getOrgId() {
+	private String subCertificatetype;
+	private String subCertificatenumber;
+	private Integer subUserType;
+	private String subOrgName;
+
+	public String getSubCertificatetype() {
+		return subCertificatetype;
+	}
+
+	public void setSubCertificatetype(String subCertificatetype) {
+		this.subCertificatetype = subCertificatetype;
+	}
+
+	public String getSubCertificatenumber() {
+		return subCertificatenumber;
+	}
+
+	public void setSubCertificatenumber(String subCertificatenumber) {
+		this.subCertificatenumber = subCertificatenumber;
+	}
+
+	public String getSubOrgName() {
+		return subOrgName;
+	}
+
+	public void setSubOrgName(String subOrgName) {
+		this.subOrgName = subOrgName;
+	}
+
+	public Integer getOrgId() {
 		return orgId;
 	}
 
@@ -66,21 +79,7 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 		this.orgCode = orgCode;
 	}
 
-	public Integer getIsadmin() {
-		return isadmin;
-	}
-
-	public void setIsadmin(Integer isadmin) {
-		this.isadmin = isadmin;
-	}
-
-	public Integer getIsoperator() {
-		return isoperator;
-	}
-
-	public void setIsoperator(Integer isoperator) {
-		this.isoperator = isoperator;
-	}
+	 
 
 	public String getRegStartTime() {
         return regStartTime;
@@ -98,14 +97,7 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
         this.regEndTime = regEndTime;
     }
 
-    public String getOrgName() {
-        return orgName;
-    }
-
-    public void setOrgName(String orgName) {
-        this.orgName = orgName;
-    }
-
+    
     public String getUserId() {
 		return userId;
 	}
@@ -145,13 +137,17 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 	public void setResultKey(String resultKey) {
 		this.resultKey = resultKey;
 	}
-
-	public Integer getOrgType() {
-		return orgType;
+ 
+	public Integer getSubUserType() {
+		return subUserType;
 	}
 
-	public void setOrgType(Integer orgType) {
-		this.orgType = orgType;
+	public void setSubUserType(Integer subUserType) {
+		this.subUserType = subUserType;
+	}
+
+	public Integer getStatusId() {
+		return statusId;
 	}
 
 	public Integer getUserType() {
@@ -160,10 +156,6 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 
 	public void setUserType(Integer userType) {
 		this.userType = userType;
-	}
-
-	public Integer getStatusId() {
-		return statusId;
 	}
 
 	public void setStatusId(Integer statusId) {
@@ -184,22 +176,6 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 
 	public void setCoopType(Integer coopType) {
 		this.coopType = coopType;
-	}
-
-	public String getCertificatetype() {
-		return certificatetype;
-	}
-
-	public void setCertificatetype(String certificatetype) {
-		this.certificatetype = certificatetype;
-	}
-
-	public String getCertificatenumber() {
-		return certificatenumber;
-	}
-
-	public void setCertificatenumber(String certificatenumber) {
-		this.certificatenumber = certificatenumber;
 	}
 	
 }
