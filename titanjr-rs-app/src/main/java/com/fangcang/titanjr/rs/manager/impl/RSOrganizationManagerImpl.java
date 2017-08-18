@@ -39,6 +39,7 @@ public class RSOrganizationManagerImpl implements RSOrganizationManager {
 			CompanyOrgRegRequest companyOrgRegRequest) {
 		CompanyOrgRegResponse response = new CompanyOrgRegResponse();
 		try {
+			log.info("机构注册（resigterCompanyOrg）参数（companyOrgRegRequest）："+Tools.gsonToString(companyOrgRegRequest));
 			WheatfieldEnterpriseEntityaccountoptRequest req = new WheatfieldEnterpriseEntityaccountoptRequest();
 			if (needCheckRequest) {
 				companyOrgRegRequest.check();
@@ -132,6 +133,7 @@ public class RSOrganizationManagerImpl implements RSOrganizationManager {
 			PersonOrgRegRequest personOrgRegRequest) {
 		PersonOrgRegResponse response = new PersonOrgRegResponse();
 		try {
+			log.info("机构注册（resigterPersonOrg）参数（personOrgRegRequest）："+Tools.gsonToString(personOrgRegRequest));
 			WheatfieldPersonAccountoprRequest req = new WheatfieldPersonAccountoprRequest();
 			if (needCheckRequest) {
 				personOrgRegRequest.check();

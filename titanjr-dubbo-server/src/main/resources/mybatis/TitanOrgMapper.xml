@@ -62,16 +62,18 @@
     </select>
     
     <select id="countOrg" parameterType="com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest" resultType="Integer">
-    	select count(1) from 
-	      t_tfs_org g
-          LEFT JOIN t_tfs_orgcheck c ON g.userid = c.userid
+    	SELECT 
+    		COUNT(1) 
+    	FROM 
+	      t_tfs_org g LEFT JOIN t_tfs_orgmapinfo m ON g.orgcode = m.orgcode  
+			LEFT JOIN t_tfs_orgsub s ON  s.orgcode = m.orgsubcode
+			LEFT JOIN t_tfs_orgcheck c ON g.userid = c.userid
 		<where>
-			<if test="userId !=null"> g.userId = #{userId}</if>
-			<if test="orgId !=null"> and g.orgid = #{orgId}</if>
-			<if test="userType !=null"> and g.usertype = #{userType}</if>
+			<if test="subUserType !=null"> and s.usertype = #{subUserType}</if>
 			<if test="orgCode !=null"> and g.orgCode = #{orgCode}</if>
 			<if test="statusId !=null"> and  g.statusId = #{statusId}</if>
 			<if test="resultKey !=null"> and  c.resultkey = #{resultKey}</if>
+			<if test="mapIsactive !=null"> and  m.isactive = #{mapIsactive}</if>
 		</where>
     </select>
 

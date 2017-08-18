@@ -38,6 +38,18 @@ public class FinancialOrganQueryRequest extends BaseRequestDTO {
 	private String subCertificatenumber;
 	private Integer subUserType;
 	private String subOrgName;
+	
+	//关联关系是否有效
+	private Integer mapIsactive;
+	
+
+	public Integer getMapIsactive() {
+		return mapIsactive;
+	}
+
+	public void setMapIsactive(Integer mapIsactive) {
+		this.mapIsactive = mapIsactive;
+	}
 
 	public String getSubCertificatetype() {
 		return subCertificatetype;

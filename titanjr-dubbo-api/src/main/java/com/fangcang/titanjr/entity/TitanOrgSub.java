@@ -13,7 +13,6 @@ public class TitanOrgSub implements java.io.Serializable {
 	private Integer orgsubid;
 	private String orgcode;
 	private String orgname;
-	private String userid;
 	/**
 	 * 机构类型：企业:1，个人:2
 	 */
@@ -59,12 +58,6 @@ public class TitanOrgSub implements java.io.Serializable {
 		this.orgname = orgname;
 	}
 	 
-	public String getUserid() {
-		return userid;
-	}
-	public void setUserid(String userid) {
-		this.userid = userid;
-	}
 	public Integer getUsertype() {
 		return usertype;
 	}
