@@ -6,15 +6,14 @@ public enum PayerTypeEnum {
 
     B2B_PUS("1", "B2B交易平台"),
     B2B_GDP("2", "GDP"),
-    SUPPLY_FINACIAL("3", "财务供应商"),
-    SUPPLY_UNION("4", "联盟供应商付款"),
-    ALLIANCE("5", "商家联盟"),
+    SUPPLY_FINACIAL("3", "财务付款给供应商"),
+    SUPPLY_UNION("4", "财务付款给联盟供应商"),
     RECHARGE("7", "充值"),
     WITHDRAW("8", "提现"),
     OPEN_ORG("1001", "对外开放平台"),
     TT_MALL("1024", "TTMALL收银台"),
     TT_MALL_V2("10242","TTMALL收银台v2"),
-    B2B_WX_PUBLIC_PAY("10243" , "微信公众号支付"),
+    B2B_WX_PUBLIC_PAY("10243" , "TTM移动端"),
     LOAN("512", "贷款");
 
     public String key;
@@ -49,20 +48,19 @@ public enum PayerTypeEnum {
 
 
     public static Integer getPaySource(String key) {
-        if (RECHARGE.key.equals(key)) {//充值收银台
-            return 5;
-        } else if (B2B_PUS.key.equals(key) || B2B_GDP.key.equals(key)) {
+        if (B2B_GDP.key.equals(key)) {
             return 1;
         } else if (SUPPLY_FINACIAL.key.equals(key) || SUPPLY_UNION.key.equals(key)) {
             return 2;
-        } else if (ALLIANCE.key.equals(key)) {
+        } else if (B2B_PUS.key.equals(key)) {
             return 3;
+        } else if (RECHARGE.key.equals(key)) {
+            return 5;
         } else if (OPEN_ORG.key.equals(key)) {
             return 6;
         } else if (TT_MALL.key.equals(key)||TT_MALL_V2.key.equals(key)) {
             return 7;
-        } else if( B2B_WX_PUBLIC_PAY.key.equals(key))
-        {
+        } else if( B2B_WX_PUBLIC_PAY.key.equals(key)) {
         	return 8;
         }
         return null;

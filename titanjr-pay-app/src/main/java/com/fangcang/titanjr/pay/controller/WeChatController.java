@@ -189,7 +189,7 @@ public class WeChatController {
 			titanPaymentRequest.setPayAmount(req.getAmount());
 			titanPaymentRequest.setPayerAcount("");
 			titanPaymentRequest.setBankInfo("");
-			titanPaymentRequest.setPaySource(PaySourceEnum.WX_PUBLIC_PAY
+			titanPaymentRequest.setPaySource(PaySourceEnum.TT_MALL_MOBILE
 					.getDeskCode());
 			titanPaymentRequest.setPayType(PayTypeEnum.WECHAT_PAY);
 			titanPaymentRequest
