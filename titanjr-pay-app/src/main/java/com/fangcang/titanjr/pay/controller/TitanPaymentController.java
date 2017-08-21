@@ -527,7 +527,7 @@ public class TitanPaymentController extends BaseController {
 		//计算支付金额(不包含手续费)，余额，
 		String  payAmount = "0";//网银需要支付的金额
 		String	transferAmount= "0";//余额要支付的金额
-		if(PaySourceEnum.RECHARDE.getDeskCode().equals(titanPaymentRequest.getPaySource())){//充值单
+		if(PaySourceEnum.RECHARGE.getDeskCode().equals(titanPaymentRequest.getPaySource())){//充值单
 			payAmount = titanPaymentRequest.getTradeAmount();
 		}else{//付款
 			if("1".equals(titanPaymentRequest.getIsaccount())){//勾选了余额支付
@@ -559,7 +559,7 @@ public class TitanPaymentController extends BaseController {
 		titanPaymentRequest.setTransferAmount(transferAmount);
 		
 		//非充值单才校验，通常是支付单
-		if(!PaySourceEnum.RECHARDE.getDeskCode().equals(titanPaymentRequest.getPaySource())){
+		if(!PaySourceEnum.RECHARGE.getDeskCode().equals(titanPaymentRequest.getPaySource())){
 			//检查sign
 			String paramSing = titanPaymentRequest.getSign();
 			String md5Sign = md5Sign(titanPaymentRequest, TitanConstantDefine.PAY_APP_CASHIER_SIGN_MD5_KEY);
@@ -576,7 +576,7 @@ public class TitanPaymentController extends BaseController {
 		}
 		
 		
-		if(!titanPaymentRequest.getPaySource().equals(PaySourceEnum.RECHARDE.getDeskCode()) )
+		if(!titanPaymentRequest.getPaySource().equals(PaySourceEnum.RECHARGE.getDeskCode()) )
 		{
 	        Map<String,String> validResult = this.validPaymentData(titanPaymentRequest);
 	        if(!CommonConstant.OPERATE_SUCCESS.equals(validResult.get(CommonConstant.RESULT))){//合规性验证
