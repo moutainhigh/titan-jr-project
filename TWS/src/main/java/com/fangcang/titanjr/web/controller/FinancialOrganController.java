@@ -731,6 +731,7 @@ public class FinancialOrganController extends BaseController {
     	FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
     	if(financialOrganResponse.isResult()){
     		model.addAttribute("org", financialOrganResponse.getFinancialOrganDTO());
+    		model.addAttribute("orgSubDTO", financialOrganResponse.getOrgSubDTO());
     		if(financialOrganResponse.getFinancialOrganDTO().getOrgImageInfoList().size()>0){
     			for(OrgImageInfo item : financialOrganResponse.getFinancialOrganDTO().getOrgImageInfoList()){
     				if(item.getSizeType()==10){

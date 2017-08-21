@@ -30,4 +30,18 @@ public class TitanOrgMapInfoDaoImpl extends GenericDAOMyBatisImpl implements Tit
 		return super.selectList("com.fangcang.titanjr.dao.TitanOrgMapInfoDao.queryList", titanOrgMapInfoParam);
 	}
 
+	@Override
+	public TitanOrgMapInfo getOneTitanOrgMapInfo(String orgCode) throws DaoException {
+		TitanOrgMapInfoParam titanOrgMapInfoParam = new TitanOrgMapInfoParam();
+		titanOrgMapInfoParam.setOrgCode(orgCode);
+		List<TitanOrgMapInfo> list = queryList(titanOrgMapInfoParam);
+		if(list!=null&&list.size()==1){
+			return list.get(0);
+		}else if(list.size()>1){
+			throw new DaoException("机构关联关系错误，有效关联关系记录超过一条");
+		}
+		return null;
+	}
+	
+
 }

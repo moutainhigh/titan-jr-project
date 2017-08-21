@@ -37,6 +37,41 @@
       #{buslince,jdbcType=VARCHAR},
       #{createTime})
   </insert>
-   
+   <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanOrgSub">
+        update t_tfs_orgsub
+        <set>
+            
+            <if test="orgname != null">
+                orgname = #{orgname,jdbcType=VARCHAR},
+            </if>
+            
+            <if test="usertype != null">
+                usertype = #{usertype,jdbcType=INTEGER},
+            </if>
+            <if test="certificatetype != null">
+                certificatetype = #{certificatetype,jdbcType=INTEGER},
+            </if>
+            <if test="certificatenumber != null">
+                certificatenumber = #{certificatenumber,jdbcType=VARCHAR},
+            </if>
+             
+            <if test="buslince != null">
+                buslince = #{buslince,jdbcType=VARCHAR},
+            </if>
+            
+            <if test="mobiletel != null">
+                mobiletel = #{mobiletel},
+            </if>
+            <if test="connect != null">
+                connect = #{connect},
+            </if>
+        </set>
+        <where>
+        	<if test="orgsubid != null"> orgsubid = #{orgsubid,jdbcType=INTEGER} </if>
+        	<if test="orgcode != null">
+               and  orgcode = #{orgcode,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </update>
 
 </mapper>

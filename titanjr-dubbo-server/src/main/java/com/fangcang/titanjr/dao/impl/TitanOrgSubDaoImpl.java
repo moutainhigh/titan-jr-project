@@ -48,4 +48,12 @@ public class TitanOrgSubDaoImpl extends GenericDAOMyBatisImpl implements TitanOr
 		
 	}
 
+	@Override
+	public int update(TitanOrgSub entity) throws DaoException {
+		
+		
+		return 0;
+	}
+	
+
 }

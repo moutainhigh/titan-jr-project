@@ -1,7 +1,5 @@
 package com.fangcang.titanjr.service.impl;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -802,7 +800,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	}
     	
     	orgSub.setOrgcode(orgcode);
-    	orgSub.setUserid(orgcode);
     	orgSub.setUsertype(regOrgSubRequest.getUserType());
     	orgSub.setCreateTime(new Date());
     	if(regOrgSubRequest.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
@@ -897,23 +894,26 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			if(StringUtil.isValidString(organRegisterUpdateRequest.getImageid())){
 				updateOrgImg(organRegisterUpdateRequest.getImageid(),oldOrg.getOrgcode());
 			}
+			//修改真实机构信息
+			TitanOrgMapInfo titanOrgMapInfo = titanOrgMapInfoDao.getOneTitanOrgMapInfo(oldOrg.getOrgcode());
+			TitanOrgSub updateOrgSubEntity  = new TitanOrgSub();
+			updateOrgSubEntity.setOrgcode(titanOrgMapInfo.getOrgSubcode());
+			updateOrgSubEntity.setOrgname(organRegisterUpdateRequest.getOrgName());
+			updateOrgSubEntity.setBuslince(organRegisterUpdateRequest.getBuslince());
+			updateOrgSubEntity.setConnect(organRegisterUpdateRequest.getConnect());
+			updateOrgSubEntity.setMobiletel(organRegisterUpdateRequest.getMobileTel());
+			updateOrgSubEntity.setCertificatetype(NumberUtils.toInt(organRegisterUpdateRequest.getCertificateType()));
+	    	updateOrgSubEntity.setCertificatenumber(organRegisterUpdateRequest.getCertificateNumber());
+			orgSubDao.update(updateOrgSubEntity);
 			
-			TitanOrg updateEntity = new TitanOrg();
-			updateEntity.setOrgid(organRegisterUpdateRequest.getOrgId());
-			updateEntity.setOrgname(organRegisterUpdateRequest.getOrgName());
-			updateEntity.setBuslince(organRegisterUpdateRequest.getBuslince());
-			updateEntity.setConnect(organRegisterUpdateRequest.getConnect());
-			updateEntity.setMobiletel(organRegisterUpdateRequest.getMobileTel());
-				
+			//修改机构审核状态为待审核	
 			TitanOrgCheck titanOrgCheck = new TitanOrgCheck();
 			TitanOrgCheckParam checkParam = new TitanOrgCheckParam();
 	    	checkParam.setConstid(oldOrg.getConstid());
 	    	checkParam.setUserid(oldOrg.getUserid());
-	    	
 	    	PaginationSupport<TitanOrgCheck> orgCheckPage = new PaginationSupport<TitanOrgCheck>();
 	    	titanOrgCheckDao.selectForPage(checkParam, orgCheckPage);
 	    	titanOrgCheck = orgCheckPage.getItemList().get(0);
-	    	
 	    	titanOrgCheck.setResultkey(OrgCheckResultEnum.FT.getResultkey());
 	    	titanOrgCheck.setResultmsg("修改注册资料，重新注册");
 	    	titanOrgCheckDao.update(titanOrgCheck);
@@ -929,10 +929,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	    	titanOrgCheckLog.setOpttime(new Date());
 	    	titanOrgCheckLogDao.insert(titanOrgCheckLog);
 	    	
-			updateEntity.setCertificatetype(NumberUtils.toInt(organRegisterUpdateRequest.getCertificateType()));
-			updateEntity.setCertificatenumber(organRegisterUpdateRequest.getCertificateNumber());
-			titanOrgDao.update(updateEntity);
-			response.putSuccess();
+			response.putSuccess("资料提交成功");
 		} catch (Exception e) {
 			throw new GlobalServiceException("修改机构信息失败,param:"+JSONSerializer.toJSON(organRegisterUpdateRequest).toString(), e);
 		}
@@ -1094,8 +1091,9 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	 */
 	private BaseResponse regOrgSubForRS(String orgsubCode){
 		TitanOrgSub orgSub = orgSubDao.getOneByOrgCode(orgsubCode);
+		 
 		RSOrg rsOrg = new RSOrg();
-		rsOrg.setUserid(orgSub.getUserid());
+		rsOrg.setUserid(orgSub.getOrgcode());
 		rsOrg.setOrgcode(orgSub.getOrgcode());
 		rsOrg.setOrgname(orgSub.getOrgname());
 		rsOrg.setBuslince(orgSub.getBuslince());

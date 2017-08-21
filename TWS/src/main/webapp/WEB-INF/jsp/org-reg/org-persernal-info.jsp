@@ -33,8 +33,8 @@
 		<div class="r_c ">
 			<div class="r_text">
 				<ul>
-					<li class="r_y1"><div class="rt_title">姓名</div><input type="text" class="text" placeholder="请输入您的真实姓名" name="orgName" id="orgName" value="${org.orgName }" datatype="*" errormsg="必填项" ></li>
-					<li class="r_y1"><div class="rt_title">身份证号</div><input type="text" class="text" placeholder="请输入您的身份证号码" name="certificatenumber" id="certificatenumber" value="${org.certificateNumber }" datatype="*" errormsg="必填项" afterPassed="checkOrgRegNum"></li>
+					<li class="r_y1"><div class="rt_title">姓名</div><input type="text" class="text" placeholder="请输入您的真实姓名" name="orgName" id="orgName" value="${orgSubDTO.orgName }" datatype="*" errormsg="必填项" ></li>
+					<li class="r_y1"><div class="rt_title">身份证号</div><input type="text" class="text" placeholder="请输入您的身份证号码" name="certificatenumber" id="certificatenumber" value="${orgSubDTO.certificateNumber }" datatype="*" errormsg="必填项" afterPassed="checkOrgRegNum"></li>
 					<!-- 初始状态 -->
 					<li class="r_uploading">
 						<div class="fl r_u_l">上传本人持身份证正面照：<a class="J_example " href="javascript:;">查看示例</a></div>

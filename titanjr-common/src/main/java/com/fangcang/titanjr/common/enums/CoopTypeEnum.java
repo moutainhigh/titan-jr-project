@@ -7,7 +7,7 @@ package com.fangcang.titanjr.common.enums;
  */
 public enum CoopTypeEnum {
 	
-	TFS(1,"TFS,暂无用"),SAAS(2,"SAAS"),AUTO(3,"后台自动,暂无用"),TTM(4,"TTM"),TWS(5,"泰坦钱包"),SAAS_INTERFACE(6,"SaaS无审核接口注册"),TTM_GONGYING_INTERFACE(7,"TTM供应商无审核接口注册"),TTM_FENXIAO_INTERFACE(8,"TTM分销商无审核接口注册");
+	TFS(1,"TFS,暂无用"),SAAS(2,"SAAS"),AUTO(3,"后台自动,暂无用"),TTM(4,"TTM"),TWS(5,"泰坦钱包"),SAAS_INTERFACE(6,"SaaS无审核接口注册"),TTM_GONGYINGSHANG_INTERFACE(7,"TTM供应商无审核接口注册"),TTM_FENXIAOSHANG_INTERFACE(8,"TTM分销商无审核接口注册");
 	
 	/**
 	 * 注册渠道

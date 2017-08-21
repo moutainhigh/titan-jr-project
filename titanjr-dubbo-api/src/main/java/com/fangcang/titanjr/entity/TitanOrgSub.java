@@ -37,8 +37,10 @@ public class TitanOrgSub implements java.io.Serializable {
 	 * 营业执照号
 	 */
 	private String buslince;
+	
 	private Date createTime;
 	private Date updateTime;
+	
 	public Integer getOrgsubid() {
 		return orgsubid;
 	}
