@@ -4,7 +4,6 @@ import com.fangcang.titanjr.rest.enums.TradeTypeEnum;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -37,12 +36,20 @@ public class JRTransQueryRequest {
     @ApiModelProperty(value = "是否担保操作,0担保，1不担保")
     private String isEscrowedPayment;
 
+    @ApiModelProperty(value = "分页参数：当前页编号")
+    private int currentPage = 1;
+    @ApiModelProperty(value = "分页参数：每页数量")
+    private int pageSize = 15;
+
     public String getPayOrderNo() {
         return payOrderNo;
     }
 
     public void setPayOrderNo(String payOrderNo) {
         this.payOrderNo = payOrderNo;
+        if ("".equals(payOrderNo)){
+            this.payOrderNo = null;
+        }
     }
 
     public TradeTypeEnum getTradeTypeEnum() {
@@ -51,6 +58,9 @@ public class JRTransQueryRequest {
 
     public void setTradeTypeEnum(TradeTypeEnum tradeTypeEnum) {
         this.tradeTypeEnum = tradeTypeEnum;
+        if ("".equals(tradeTypeEnum)){
+            this.tradeTypeEnum = TradeTypeEnum.TRADE_RECORD;
+        }
     }
 
     public String getUserId() {
@@ -67,6 +77,9 @@ public class JRTransQueryRequest {
 
     public void setBusinessOrderCode(String businessOrderCode) {
         this.businessOrderCode = businessOrderCode;
+        if ("".equals(businessOrderCode)){
+            this.businessOrderCode = null;
+        }
     }
 
     public Date getStartTime() {
@@ -87,10 +100,14 @@ public class JRTransQueryRequest {
 
     public String getTradeTarget() {
         return tradeTarget;
+
     }
 
     public void setTradeTarget(String tradeTarget) {
         this.tradeTarget = tradeTarget;
+        if ("".equals(tradeTarget)){
+            this.tradeTarget = null;
+        }
     }
 
     public String getOrderAmount() {
@@ -99,6 +116,9 @@ public class JRTransQueryRequest {
 
     public void setOrderAmount(String orderAmount) {
         this.orderAmount = orderAmount;
+        if ("".equals(orderAmount)){
+            this.orderAmount = null;
+        }
     }
 
     public String getUserOrderId() {
@@ -107,6 +127,9 @@ public class JRTransQueryRequest {
 
     public void setUserOrderId(String userOrderId) {
         this.userOrderId = userOrderId;
+        if ("".equals(userOrderId)){
+            this.userOrderId = null;
+        }
     }
 
     public String getOrderOperator() {
@@ -115,6 +138,9 @@ public class JRTransQueryRequest {
 
     public void setOrderOperator(String orderOperator) {
         this.orderOperator = orderOperator;
+        if ("".equals(orderOperator)){
+            this.orderOperator = null;
+        }
     }
 
     public String getIsEscrowedPayment() {
@@ -123,6 +149,24 @@ public class JRTransQueryRequest {
 
     public void setIsEscrowedPayment(String isEscrowedPayment) {
         this.isEscrowedPayment = isEscrowedPayment;
+        if ("".equals(isEscrowedPayment)){
+            this.isEscrowedPayment = null;
+        }
     }
 
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
 }
