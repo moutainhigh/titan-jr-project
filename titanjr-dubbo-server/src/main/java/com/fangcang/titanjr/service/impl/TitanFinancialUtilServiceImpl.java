@@ -159,6 +159,12 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 		}
 		paramList.append("&version=").append(paymentUrlRequest.getVersion());
 		paramList.append("&canAccountBalance=").append(paymentUrlRequest.isCanAccountBalance());
+		if (StringUtil.isValidString(paymentUrlRequest.getPartnerOrgCode())) {
+			paramList.append("&partnerOrgCode=").append(
+					paymentUrlRequest.getPartnerOrgCode());
+		} else {
+			paramList.append("&partnerOrgCode=");
+		}
 		return paramList;
 	}
 	

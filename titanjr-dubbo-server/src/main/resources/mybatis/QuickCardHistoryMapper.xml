@@ -8,6 +8,9 @@
 		      <if test="fcuserid !=null">
 		        and fcuserid =#{fcuserid}
 		      </if>
+		      <if test="orgcode !=null">
+		        and orgcode =#{orgcode}
+		      </if>
 		      <if test="payeracount !=null">
 		        and payeracount=#{payeracount}
 		      </if>

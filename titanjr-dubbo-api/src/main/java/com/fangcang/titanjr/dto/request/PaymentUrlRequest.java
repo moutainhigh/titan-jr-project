@@ -46,12 +46,15 @@ public class PaymentUrlRequest extends BaseRequestDTO {
     //解冻日期
     private String escrowedDate;
     
-    //收银台版本 @see TitanjrVersionEnum
+    //泰坦金融版本 @see TitanjrVersionEnum
     @NotEmpty
     private String version;
     
     //是否可用余额支付
     private boolean canAccountBalance;
+    
+    //付款方机构编码
+    private String partnerOrgCode;
 
 
     public String getFcUserid() {
@@ -164,6 +167,14 @@ public class PaymentUrlRequest extends BaseRequestDTO {
 
 	public void setCanAccountBalance(boolean canAccountBalance) {
 		this.canAccountBalance = canAccountBalance;
+	}
+
+	public String getPartnerOrgCode() {
+		return partnerOrgCode;
+	}
+
+	public void setPartnerOrgCode(String partnerOrgCode) {
+		this.partnerOrgCode = partnerOrgCode;
 	}
 	
 }

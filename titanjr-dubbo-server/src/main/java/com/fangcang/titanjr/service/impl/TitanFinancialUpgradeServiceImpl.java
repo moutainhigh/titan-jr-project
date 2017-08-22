@@ -67,8 +67,9 @@ public class TitanFinancialUpgradeServiceImpl implements TitanFinancialUpgradeSe
 				.getPayerTypeEnumByKey(titanOrderRequest.getPayerType());
 		
 		//付款方信息
-		if(StringUtil.isValidString(titanOrderRequest.getPartnerOrgCode()) && StringUtil
-				.isValidString(titanOrderRequest.getOrgCode())){
+		if(StringUtil.isValidString(titanOrderRequest.getPartnerOrgCode()) 
+				&& StringUtil.isValidString(titanOrderRequest.getOrgCode()) 
+				&& StringUtil.isValidString(titanOrderRequest.getUserId())){
 			
 			OrgBindInfo orgBindInfo = queryOrgBindInfo(titanOrderRequest.getPartnerOrgCode(),
 					titanOrderRequest.getOrgCode());
@@ -92,28 +93,6 @@ public class TitanFinancialUpgradeServiceImpl implements TitanFinancialUpgradeSe
 				}
 			}else{
 				response.setCanAccountBalance(false);
-			}
-			
-		}else if(StringUtil.isValidString(titanOrderRequest.getUserId())){
-			
-			TitanUser titanUser = checkUserInfo(titanOrderRequest.getUserId());
-			
-			if(titanUser == null){
-				titanTransOrder.setUserid(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
-				titanTransOrder.setPayermerchant(RSInvokeConstant.DEFAULTPAYERCONFIG_USERID);
-				titanTransOrder.setProductid(RSInvokeConstant.DEFAULTPAYERCONFIG_PRODUCTID);
-				response.setCanAccountBalance(false);
-				
-			}else{
-				
-				titanTransOrder.setUserid(titanUser.getUserid());
-				titanTransOrder.setPayermerchant(titanUser.getUserid());
-				titanTransOrder.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-				
-				//校验余额支付权限
-				CheckPermissionResponse permissionResponse = isCanAccountBalance(
-						String.valueOf(titanUser.getTfsuserid()));
-				response.setCanAccountBalance(permissionResponse.isPermission());
 			}
 			
 		}else{

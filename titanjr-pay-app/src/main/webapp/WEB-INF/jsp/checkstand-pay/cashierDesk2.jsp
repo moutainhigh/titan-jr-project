@@ -26,6 +26,9 @@
 		  <div class="fl w_800">
            <div class="goldpay_title">付款金额：<span class="gdt_red" id="pay_totalAmount"><fmt:formatNumber value="${cashDeskData.amount }"  pattern="#,##0.00#" /></span>元
            	<i class="f_12 c_f00 m_l20" style="font-weight: normal; display: none;" id="enBankTitle">付款金额不足1000元，无法使用企业网银付款</i>
+            <c:if test="${ cashDeskData.canAccountBalance ne true }">
+            	---不能使用余额付款
+            </c:if>
             </div>
             <div class="goldpay_top">
                 <ul>
@@ -105,7 +108,7 @@
                      <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem">
                         <c:if test="${deskItem.itemType == 4}">
                             <input type="hidden" id="canUseAccBalance" value="1">
-                            <c:if test="${ not empty cashDeskData.balanceusable and cashDeskData.canAccountBalance eq true }">
+                            <c:if test="${ not empty cashDeskData.balanceusable and cashDeskData.canAccountBalance ne true }">
                             <li class="p_l27" id="useBalanceCheck">
                                 <label class="f_ui-checkbox-c3 p_r10">
                                     <input type="checkbox" checked="" id="d_checkbox" onclick="checkedBalance()" ><i ></i>
@@ -211,14 +214,14 @@
                          <c:if test="${not empty cashDeskData.quickCardHistoryList }">
 		                      <li>
 		                      <c:forEach items="${cashDeskData.quickCardHistoryList }" var="quickCard" varStatus="status">
-								  <span class="payc_title fl">${quickCard.bankname }---${quickCard.payeracount }--- 快捷支付
+								  <span class="payc_title fl">${quickCard.payername }---${quickCard.bankname }---${quickCard.payeracount }--- 快捷支付
 								  （<c:if test="${quickCard.payeraccounttype =='10'}">
 								  	储蓄卡
 								  </c:if>
 								  <c:if test="${quickCard.payeraccounttype =='11'}">
 								  	信用卡
 								  </c:if>）
-								  </span>
+								  </span><br/>
 	                          </c:forEach>
 	                          </li>
                          </c:if>
@@ -299,8 +302,8 @@
 <script type="text/javascript" src="<%=basePath%>/js/common.js"></script>
 <script type="text/javascript" src="<%=basePath%>/js/cashier/paypsd.js"></script>
 <script type="text/javascript" src="<%=basePath%>/js/cashier/rate.js"></script>
-<script type="text/javascript" src="<%=basePath%>/js/cashier/cashierData.js?v=5"></script>
-<script type="text/javascript" src="<%=basePath%>/js/cashier/init.js"></script>
+<script type="text/javascript" src="<%=basePath%>/js/cashier/cashierData.js?v=6"></script>
+<script type="text/javascript" src="<%=basePath%>/js/cashier/init.js?v=2"></script>
 <script>
 	$("document").ready(function (){
 		//初始化收银台数据集合
@@ -328,6 +331,7 @@
 			balanceusable:'${cashDeskData.balanceusable}',
 			accountHistoryDTO:'${cashDeskData.accountHistoryDTO}',
 			orgName:'${cashDeskData.orgName}',
+			partnerOrgCode:'${cashDeskData.partnerOrgCode}',
 		});
 	}
 	
@@ -711,7 +715,7 @@
 
 	/** 支付相关开始 **/
 	//提交表单
-	function pay_Order() {
+	function pay_Order() {debugger;
 		//获取数据
 		if (cashierData.validatePayerAccount().length > 0) {
 			cashierData.window(cashierData.validatePayerAccount());

@@ -134,7 +134,7 @@ function initCashierData(data){
 		return data;
 	};
 	
-	cashierData.onlineQuickPayData = function(){
+	cashierData.onlineQuickPayData = function(){debugger;
 		var data= {
 				payOrderNo:cashierData.payOrderNo,
 		       	fcUserid:cashierData.fcUserid,
@@ -154,6 +154,7 @@ function initCashierData(data){
 		       	idCode:$("#idCode").val(),
 		       	safetyCode:$("#safetyCode").val(),
 		       	validthru:$("#validthru").val(),
+		       	partnerOrgCode:cashierData.partnerOrgCode,
 		        linePayType:cashierData.linePayType(),
 		        isaccount:cashierData.isaccount(),
 		        payPassword:cashierData.payPassword()

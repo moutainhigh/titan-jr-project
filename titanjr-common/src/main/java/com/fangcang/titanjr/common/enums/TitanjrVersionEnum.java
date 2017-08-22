@@ -16,8 +16,8 @@ import com.fangcang.util.StringUtil;
  */
 public enum TitanjrVersionEnum {
 	
-	VERSION_1("v1.0", "金融一期"),//老版本
-	VERSION_2("v1.1", "金融二期");//支持新版收银台，快捷支付，账户升级
+	VERSION_1("v1.0", "老版金融"),//老版本
+	VERSION_2("v2.0", "金融升级");//支持新版收银台，快捷支付，账户升级
 	
 	private String key;
 	private String value;
@@ -54,7 +54,7 @@ public enum TitanjrVersionEnum {
 	}
 	
 	/**
-	 * 金融一期
+	 * 是否老版本
 	 * @author Jerry
 	 * @date 2017年8月4日 下午2:30:38
 	 * @param key
@@ -76,7 +76,7 @@ public enum TitanjrVersionEnum {
 	}
 	
 	/**
-	 * 金融二期（快捷支付，账户升级，新版收银台）
+	 * 是否新版金融（快捷支付，账户升级，新版收银台）
 	 * @author Jerry
 	 * @date 2017年8月4日 下午2:30:48
 	 * @param key

@@ -9,8 +9,6 @@ import java.io.IOException;
 import javax.annotation.Resource;
 
 import net.sf.json.JSONSerializer;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -318,7 +316,7 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 	public void testQueryCheckOrg(){
 		FinancialOrganQueryRequest condition = new FinancialOrganQueryRequest();
 		//condition.setCheckStatus(1);
-		condition.setIsadmin(1);
+		//condition.setIsadmin(1);
 		condition.setResultKey("FT");
 		///condition.setIsoperator(0);
 		condition.setUserloginname("1331111123");

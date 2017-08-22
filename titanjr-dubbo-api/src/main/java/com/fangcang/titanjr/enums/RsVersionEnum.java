@@ -1,6 +1,10 @@
 package com.fangcang.titanjr.enums;
 
-public enum VersionEnum {
+/**
+ * 融数版本号
+ * @author Jerry
+ */
+public enum RsVersionEnum {
 	
     Version_1("v1.0","版本1"),
     Version_2("v1.1","版本2");
@@ -9,7 +13,7 @@ public enum VersionEnum {
 	
 	public String value;
 	
-	private VersionEnum(String key, String value) {
+	private RsVersionEnum(String key, String value) {
 		this.key = key;
 		this.value = value;
 	}

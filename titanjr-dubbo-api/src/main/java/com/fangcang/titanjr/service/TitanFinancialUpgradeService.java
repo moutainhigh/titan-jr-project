@@ -12,7 +12,7 @@ import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.entity.TitanTransOrder;
 
 /**
- * 泰坦金融二期服务接口
+ * 泰坦金融升级服务接口
  * @author Jerry
  * @date 2017年8月4日 下午3:39:07  
  */
