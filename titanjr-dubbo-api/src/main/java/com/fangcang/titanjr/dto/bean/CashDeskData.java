@@ -91,6 +91,9 @@ public class CashDeskData implements Serializable{
 	//快捷支付卡历史记录
 	private List<QuickCardHistoryDTO> quickCardHistoryList;
 	
+	//付款方机构编码
+	private String partnerOrgCode;
+	
 
 	public String getPayOrderNo() {
 		return payOrderNo;
@@ -309,6 +312,14 @@ public class CashDeskData implements Serializable{
 	public void setQuickCardHistoryList(
 			List<QuickCardHistoryDTO> quickCardHistoryList) {
 		this.quickCardHistoryList = quickCardHistoryList;
+	}
+
+	public String getPartnerOrgCode() {
+		return partnerOrgCode;
+	}
+
+	public void setPartnerOrgCode(String partnerOrgCode) {
+		this.partnerOrgCode = partnerOrgCode;
 	}
 
 	public CashDeskData putError(String msg){

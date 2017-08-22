@@ -94,28 +94,14 @@ public class TitanjrUpgradeHander {
 			log.error("GoodsId is null");
 			return false;
 		}
-		
-		/**
-		 * partnerOrgCode, orgCode 不能只传其中一个
-		 */
-		if(!StringUtil.isValidString(dto.getPartnerOrgCode()) && StringUtil.isValidString(
-				dto.getOrgCode())){
-			log.error(pe + "partnerOrgCode is null");
-			return false;
-		}
-		if(StringUtil.isValidString(dto.getPartnerOrgCode()) && !StringUtil.isValidString(
-				dto.getOrgCode())){
-			log.error(pe + "orgCode is null");
-			return false;
-		}
 
 		/**
 		 * 必传付款方
 		 */
 		if(pe.isNeedPayerInfo()){
-			if(!StringUtil.isValidString(dto.getPartnerOrgCode()) && !StringUtil.isValidString(
-					dto.getOrgCode()) && !StringUtil.isValidString(dto.getUserId())){
-				log.error(pe + "payer is null");
+			if(!StringUtil.isValidString(dto.getPartnerOrgCode()) || !StringUtil.isValidString(
+					dto.getOrgCode()) || !StringUtil.isValidString(dto.getUserId())){
+				log.error(pe + "--payer is null");
 				return false;
 			}
 		}
@@ -124,7 +110,7 @@ public class TitanjrUpgradeHander {
 		 * 必传收款方 
 		 */
 		if (pe.isNeedPayeeInfo() && !StringUtil.isValidString(dto.getRuserId())) {
-			log.error(pe + "ruserId is null");
+			log.error(pe + "--ruserId is null");
 			return false;
 		}
 

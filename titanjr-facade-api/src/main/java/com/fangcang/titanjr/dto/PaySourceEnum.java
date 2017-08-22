@@ -10,7 +10,7 @@ public enum PaySourceEnum {
 	    ALLIANCE("3","商家联盟"),MOBILE("4","移动端"),RECHARDE("5","充值"),
 	    OPEN_ORG("6","对外开放用户"),TT_MALL("7","TTMALL收银台"),WX_PUBLIC_PAY("8","微信公众号");*/
 		
-		//优化调整   2017-08-18   update by jerry
+		//优化调整（原来的3是无用的）   2017-08-18   update by jerry
 		DISTRIBUTION_PC("1","分销工具PC收银台"), 
 		FINANCE_SUPPLY_PC("2","财务供应PC收银台"),
 	    TRADING_PLATFORM_PC("3","交易平台PC收银台"),

@@ -284,7 +284,7 @@ public class TitanTradeController extends BaseController {
 				}
 				log.info("check permission is ok");
 			}else{
-				//金融二期不在这里检查权限，在设置收付款信息那里
+				//金融升级后不在这里检查权限，在设置收付款信息那里
 				if (!TitanjrUpgradeHander.checkOrderInfo(dto)) {
 					log.error("orderInfo check fail!");
 					model.addAttribute("msg",
@@ -368,9 +368,10 @@ public class TitanTradeController extends BaseController {
 				}
 				if(TitanjrVersionEnum.isVersion2(dto.getVersion())){
 					paymentUrlRequest.setFcUserid(dto.getUserId());//金融二期，userId只能是第三方用户ID
+					paymentUrlRequest.setCanAccountBalance(orderCreateResponse.isCanAccountBalance());//是否有余额支付权限
+					paymentUrlRequest.setPartnerOrgCode(dto.getPartnerOrgCode());//第三方机构编码
 				}
 				paymentUrlRequest.setVersion(dto.getVersion());
-				paymentUrlRequest.setCanAccountBalance(orderCreateResponse.isCanAccountBalance());
 				PaymentUrlResponse response = titanFinancialUtilService
 						.getPaymentUrl(paymentUrlRequest);
 
@@ -466,6 +467,12 @@ public class TitanTradeController extends BaseController {
 		}
 		paramList.append("&version=").append(paymentUrlRequest.getVersion());
 		paramList.append("&canAccountBalance=").append(paymentUrlRequest.isCanAccountBalance());
+		if (StringUtil.isValidString(paymentUrlRequest.getPartnerOrgCode())) {
+			paramList.append("&partnerOrgCode=").append(
+					paymentUrlRequest.getPartnerOrgCode());
+		} else {
+			paramList.append("&partnerOrgCode=");
+		}
 		return paramList;
 	}
 	/**
@@ -576,7 +583,7 @@ public class TitanTradeController extends BaseController {
 		
 		//如果付款方不用自己的账户，则不允许使用冻结方案3
 		if(!StringUtil.isValidString(dto.getPartnerOrgCode()) || !StringUtil.isValidString(
-				dto.getOrgCode())){
+				dto.getOrgCode()) || !StringUtil.isValidString(dto.getUserId())){
 			if(StringUtil.isValidString(dto.getFreezeType()) && FreezeTypeEnum.FREEZE_PAYER.getKey()
 					.equals(dto.getFreezeType())){
 				log.error("freezeType error");
@@ -952,24 +959,29 @@ public class TitanTradeController extends BaseController {
 
 		CashierDeskDTO cashierDeskDTO = response.getCashierDeskDTOList().get(0);
 		
-		//金融二期
+		//金融升级处理
 		if(TitanjrVersionEnum.isVersion2(deskReq.getVersion())){
+			
 			//新版收银台，需要合并个人网银（储蓄卡）和信用卡
 			BaseResponse baseResponse = TitanjrUpgradeHander.resetCashierDeskItem(cashierDeskDTO);
 			if(!baseResponse.isResult()){
 				model.addAttribute("msg", baseResponse.getReturnMessage());
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
-			//设置第三方用户ID（快捷支付）
-			if(StringUtil.isValidString(deskReq.getFcUserid())){
-				cashDeskData.setFcUserid(deskReq.getFcUserid());
-			}
-			//快捷支付卡历史
+			
+			//余额支付权限
+			cashDeskData.setCanAccountBalance(deskReq.isCanAccountBalance());
+			//设置第三方用户ID和机构编码
+			cashDeskData.setFcUserid(deskReq.getFcUserid());
+			cashDeskData.setPartnerOrgCode(deskReq.getPartnerOrgCode());
+			
+			//查询快捷支付卡历史
 			QuickCardHistoryDTO quickCardHistoryDTO = new QuickCardHistoryDTO();
 			quickCardHistoryDTO.setOrgcode(transOrderDTO.getUserid());
 			quickCardHistoryDTO.setFcuserid(cashDeskData.getFcUserid());
 			cashDeskData.setQuickCardHistoryList(titanCashierDeskService
 					.queryQuickcardHistory(quickCardHistoryDTO));
+			
 		}
 		
 		// 将民生银行的企业银行方到最后面
@@ -981,7 +993,6 @@ public class TitanTradeController extends BaseController {
 		cashDeskData.setMerchantcode(transOrderDTO.getMerchantcode());
 		cashDeskData.setUserId(transOrderDTO.getUserid());
 		cashDeskData.setPayOrderNo(transOrderDTO.getPayorderno());
-		cashDeskData.setCanAccountBalance(deskReq.isCanAccountBalance());
 
 		if (response.getCashierDeskDTOList().get(0) != null) {
 			cashDeskData.setDeskId(response.getCashierDeskDTOList().get(0)

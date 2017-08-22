@@ -58,7 +58,7 @@ import com.fangcang.titanjr.dto.response.RechargeResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.dto.response.TransferResponse;
 import com.fangcang.titanjr.enums.PayTypeEnum;
-import com.fangcang.titanjr.enums.VersionEnum;
+import com.fangcang.titanjr.enums.RsVersionEnum;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.req.CreateTitanRateRecordReq;
 import com.fangcang.titanjr.pay.req.OperationLoanPayReq;
@@ -508,11 +508,11 @@ public class TitanPaymentController extends BaseController {
 	 */
 	@RequestMapping("packageRechargeData")
 	public String packageRechargeData(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model) throws Exception{
-		//设置第三方版本
+		//设置第三方支付平台的版本
 		if(CashierItemTypeEnum.isQuickPay(titanPaymentRequest.getLinePayType())){
-			titanPaymentRequest.setVersion(VersionEnum.Version_2.key);
+			titanPaymentRequest.setVersion(RsVersionEnum.Version_2.key);
 		}else{
-			titanPaymentRequest.setVersion(VersionEnum.Version_1.key);
+			titanPaymentRequest.setVersion(RsVersionEnum.Version_1.key);
 		}
 		
 		log.info("网银支付请求参数titanPaymentRequest:"+JsonConversionTool.toJson(titanPaymentRequest));

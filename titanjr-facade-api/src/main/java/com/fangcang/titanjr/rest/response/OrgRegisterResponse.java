@@ -7,8 +7,27 @@ import com.fangcang.titanjr.response.BaseResponse;
  */
 public class OrgRegisterResponse extends BaseResponse {
 
+    private String coopOrgCode;
     private String jrOrgCode;
+
+    private String coopUserId;
     private String jrUserId;
+
+    public String getCoopOrgCode() {
+        return coopOrgCode;
+    }
+
+    public void setCoopOrgCode(String coopOrgCode) {
+        this.coopOrgCode = coopOrgCode;
+    }
+
+    public String getCoopUserId() {
+        return coopUserId;
+    }
+
+    public void setCoopUserId(String coopUserId) {
+        this.coopUserId = coopUserId;
+    }
 
     public String getJrOrgCode() {
         return jrOrgCode;

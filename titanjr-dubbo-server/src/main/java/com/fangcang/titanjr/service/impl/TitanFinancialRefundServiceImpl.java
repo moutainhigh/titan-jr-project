@@ -65,7 +65,7 @@ import com.fangcang.titanjr.entity.TitanTransferReq;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.enums.BusiCodeEnum;
 import com.fangcang.titanjr.enums.SignTypeEnum;
-import com.fangcang.titanjr.enums.VersionEnum;
+import com.fangcang.titanjr.enums.RsVersionEnum;
 import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.manager.impl.InvokeLogRecordManager;
 import com.fangcang.titanjr.rs.request.AccountTransferRequest;
@@ -672,7 +672,7 @@ public class TitanFinancialRefundServiceImpl implements
 			notifyRefundRequest.setRefundAmount(refundDTO.getRefundAmount());
 			notifyRefundRequest.setOrderTime(refundDTO.getOrderTime());
 			notifyRefundRequest.setRefundOrderno(refundDTO.getRefundOrderno());
-			notifyRefundRequest.setVersion(VersionEnum.Version_1.getKey());
+			notifyRefundRequest.setVersion(RsVersionEnum.Version_1.getKey());
 			notifyRefundRequest.setSignType(SignTypeEnum.MD5.getKey());
 			
 			NotifyRefundResponse notifyRefundResponse = this.notifyGateawayRefund(notifyRefundRequest);

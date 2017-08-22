@@ -436,6 +436,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
 		
 		Map<String, String> condition = new HashMap<String, String>();
 		condition.put("fcuserid", quickCardHistoryDTO.getFcuserid());
+		condition.put("orgcode", quickCardHistoryDTO.getOrgcode());
 		condition.put("payeracount", quickCardHistoryDTO.getPayeracount());
 		PaginationSupport<QuickCardHistoryDTO> paginationSupport = new PaginationSupport<QuickCardHistoryDTO>();
 		quickCardHistoryDao.selectForPage(condition, paginationSupport);
@@ -448,6 +449,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
 				   log.error("更新快捷支付卡历史失败");
 				   baseResponseDTO.putSysError();
 			   }
+			   log.info("更新快捷卡历史记录成功");
 		   }else{
 			   log.error("快捷支付卡历史记录重复  fcuserid=" + quickCardHistoryDTO.getFcuserid() + ", payeracount=" + quickCardHistoryDTO.getPayeracount());
 		   }

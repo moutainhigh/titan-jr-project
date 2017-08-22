@@ -2,8 +2,10 @@ package com.fangcang.titanjr.rest.request;
 
 import com.fangcang.titanjr.request.BaseRequest;
 import com.fangcang.titanjr.rest.enums.RegisterSourceEnum;
+import com.sun.istack.internal.NotNull;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * Created by zhaoshan on 2017/8/1.
@@ -13,29 +15,35 @@ public class OrgRegisterRequest extends BaseRequest {
 
     //机构相关数据
     @ApiModelProperty(value = "合作方机构编码",required = true)
+    @NotBlank
     private String coopOrgCode;
     @ApiModelProperty(value = "合作方机构名称",required = true)
+    @NotBlank
     private String coopOrgName;
     @ApiModelProperty(value = "联系人")
     private String connect;
-    @ApiModelProperty(value = "联系电话")
-    private String connectTel;
+    @ApiModelProperty(value = "联系电话", required = true)
+    @NotBlank
+    private String connectPhone;
     @ApiModelProperty(value = "地址")
     private String address;
     @ApiModelProperty(value = "电子邮件")
     private String email;
     @ApiModelProperty(value = "注册来源" , allowableValues = "SAAS_MERCHANT, TTM_SUPPLY, TTM_AGENT", required = true)
+    @NotNull
     private RegisterSourceEnum registerSourceEnum;
 
     //初始用户相关数据
-    @ApiModelProperty(value = "合作方用户ID，若同时添加用户则必须")
+    @ApiModelProperty(value = "合作方用户ID", required = true)
+    @NotBlank
     private String coopUserId;
     @ApiModelProperty(value = "合作方用户名")
     private String coopUserName;
-    @ApiModelProperty(value = "合作方用户登录名，若同时添加用户则必须")
+    @ApiModelProperty(value = "合作方用户登录名", required = true)
+    @NotBlank
     private String userLoginName;
-    @ApiModelProperty(value = "是否管理员，若同时添加用户则必须")
-    private boolean isAdmin;
+    @ApiModelProperty(value = "是否管理员", required = true)
+    private boolean isAdmin = false;
 
     public String getCoopOrgCode() {
         return coopOrgCode;
@@ -61,12 +69,12 @@ public class OrgRegisterRequest extends BaseRequest {
         this.connect = connect;
     }
 
-    public String getConnectTel() {
-        return connectTel;
+    public String getConnectPhone() {
+        return connectPhone;
     }
 
-    public void setConnectTel(String connectTel) {
-        this.connectTel = connectTel;
+    public void setConnectPhone(String connectPhone) {
+        this.connectPhone = connectPhone;
     }
 
     public String getAddress() {

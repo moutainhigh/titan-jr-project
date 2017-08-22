@@ -68,6 +68,9 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	//支付方式 默认个人银行
 	private PayTypeEnum payType = PayTypeEnum.Personal_Banking;
 	
+	//付款方机构编码
+	private String partnerOrgCode;
+	
 	//新版收银台增加字段
 	private String payerAccountType; //支付人银行卡类型   10：借记卡  11：信用卡
 	private String payerName; //支付人名字
@@ -335,6 +338,14 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 
 	public void setValidthru(String validthru) {
 		this.validthru = validthru;
+	}
+
+	public String getPartnerOrgCode() {
+		return partnerOrgCode;
+	}
+
+	public void setPartnerOrgCode(String partnerOrgCode) {
+		this.partnerOrgCode = partnerOrgCode;
 	}
 	
 }

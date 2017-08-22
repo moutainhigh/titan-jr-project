@@ -42,7 +42,7 @@ public class TitanRateService {
 	 * @param computeReq
 	 */
 	public TitanRateComputeRsp rateCompute(TitanRateComputeReq computeReq) {
-		TitanRateComputeRsp computeRsp = new TitanRateComputeRsp();
+		TitanRateComputeRsp computeRsp = null;
 
 		RateConfigRequest req = new RateConfigRequest();
 		req.setUserId(computeReq.getUserId());
@@ -53,6 +53,8 @@ public class TitanRateService {
 		if (rateConfigResponse != null
 				&& rateConfigResponse.getRateInfoList() != null
 				&& rateConfigResponse.getRateInfoList().size() > 0) {
+			
+			computeRsp = new TitanRateComputeRsp();
 
 			TitanRateDto dto = rateConfigResponse.getRateInfoList().get(0);
 			computeRsp.setExecutionRate("" + dto.getExecutionrate());
@@ -194,7 +196,8 @@ public class TitanRateService {
 			if (!PaySourceEnum.DISTRIBUTION_PC.getDeskCode().equals(paySource) 
 					&& !PaySourceEnum.OPEN_PLATFORM_PC.getDeskCode().equals(paySource)
 					&& !PaySourceEnum.TT_MALL_PC.getDeskCode().equals(paySource)
-					&& !PaySourceEnum.TT_MALL_MOBILE.getDeskCode().equals(paySource)) {
+					&& !PaySourceEnum.TT_MALL_MOBILE.getDeskCode().equals(paySource)
+					&& !PaySourceEnum.TRADING_PLATFORM_PC.getDeskCode().equals(paySource)) {
 				paymentRequest.setPayAmount(computeRsp.getAmount());
 			}
 		}

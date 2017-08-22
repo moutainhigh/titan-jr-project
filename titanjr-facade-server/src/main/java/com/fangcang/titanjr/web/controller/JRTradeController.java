@@ -1,25 +1,30 @@
 package com.fangcang.titanjr.web.controller;
 
 import com.fangcang.titanjr.common.enums.TradeTypeEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dto.bean.*;
+import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.TradeDetailRequest;
 import com.fangcang.titanjr.dto.response.TradeDetailResponse;
+import com.fangcang.titanjr.request.BalanceQueryRequest;
+import com.fangcang.titanjr.response.BalanceQueryResponse;
 import com.fangcang.titanjr.rest.dto.*;
 import com.fangcang.titanjr.rest.request.JRTransQueryRequest;
+import com.fangcang.titanjr.rest.response.AccountBalanceResponse;
 import com.fangcang.titanjr.rest.response.JRTransDetailResponse;
 import com.fangcang.titanjr.rest.response.JRTransOrderListResponse;
+import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.util.StringUtil;
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiImplicitParam;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -37,25 +42,44 @@ public class JRTradeController {
     @Autowired
     private TitanFinancialTradeService titanFinancialTradeService;
 
+    @Autowired
+    private TitanFinancialAccountService titanFinancialAccountService;
 
     @RequestMapping(value = "/trade/queryTradeOrderList", method = RequestMethod.POST)
     @ApiOperation(value = "交易列表查询", produces = "application/json", httpMethod = "POST",
             response = JRTransOrderListResponse.class, notes = "交易记录列表查询")
+    @ApiImplicitParam(defaultValue = "15")
     public JRTransOrderListResponse queryTradeOrderList(@ApiParam(required = true, name = "jrTransQueryRequest", value = "交易列表查询请求")
                                                    @RequestBody JRTransQueryRequest jrTransQueryRequest, HttpServletRequest request) {
 
         JRTransOrderListResponse response = new JRTransOrderListResponse();
+
+        if (jrTransQueryRequest == null || !StringUtil.isValidString(jrTransQueryRequest.getUserId())) {
+            response.putParamError();
+            return response;
+        }
+
+        if (jrTransQueryRequest.getPageSize() < 1 || jrTransQueryRequest.getCurrentPage() <1){
+            response.putParamError();
+            return response;
+        }
         TradeDetailRequest detailRequest = new TradeDetailRequest();
         buildTradeDetailRequest(detailRequest,jrTransQueryRequest);
+        detailRequest.setPageSize(jrTransQueryRequest.getPageSize());
+        detailRequest.setCurrentPage(jrTransQueryRequest.getCurrentPage());
         TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getTradeDetail(detailRequest);
 
         List<JRTransOrderDTO> jrTransOrderDTOList = new ArrayList<JRTransOrderDTO>();
         response.setJrTransOrderDTOList(jrTransOrderDTOList);
-        if (CollectionUtils.isEmpty(tradeDetailResponse.getTransOrders().getItemList())){
+        if (null == tradeDetailResponse.getTransOrders() || CollectionUtils.isEmpty(tradeDetailResponse.getTransOrders().getItemList())){
             log.info("无查询结果列表");
             response.putSuccess();
             return response;
         }
+        response.setCurrentPage(tradeDetailResponse.getTransOrders().getCurrentPage());
+        response.setTotalCount(tradeDetailResponse.getTransOrders().getTotalCount());
+        response.setTotalPage(tradeDetailResponse.getTransOrders().getTotalPage());
+
         for (TransOrderDTO transOrderDTO : tradeDetailResponse.getTransOrders().getItemList()){
             jrTransOrderDTOList.add(buildJRTransOrderDTO(transOrderDTO));
         }
@@ -70,13 +94,23 @@ public class JRTradeController {
     public JRTransDetailResponse queryTradeDetail(@ApiParam(required = true, name = "jrTransQueryRequest", value = "交易详情查询请求")
                                            @RequestBody JRTransQueryRequest jrTransQueryRequest, HttpServletRequest request) {
         JRTransDetailResponse response = new JRTransDetailResponse();
+
+        if (jrTransQueryRequest == null || !StringUtil.isValidString(jrTransQueryRequest.getUserId()) ||
+                (!StringUtil.isValidString(jrTransQueryRequest.getBusinessOrderCode())
+                && !StringUtil.isValidString(jrTransQueryRequest.getUserOrderId()) &&
+                !StringUtil.isValidString(jrTransQueryRequest.getPayOrderNo()))) {
+            response.putParamError();
+            return response;
+        }
+
         TradeDetailRequest detailRequest = new TradeDetailRequest();
         buildTradeDetailRequest(detailRequest,jrTransQueryRequest);
         TradeDetailResponse tradeDetailResponse = titanFinancialTradeService.getOrderTradeDetail(detailRequest);
         List<JRTransDetailDTO> jrTransDetailDTOList = new ArrayList<JRTransDetailDTO>();
         response.setJrTransDetailDTOList(jrTransDetailDTOList);
 
-        if (CollectionUtils.isEmpty(tradeDetailResponse.getTransOrders().getItemList())){
+        if (null == tradeDetailResponse.getTransOrders() ||
+                CollectionUtils.isEmpty(tradeDetailResponse.getTransOrders().getItemList())){
             log.info("无查询结果列表");
             response.putSuccess();
             return response;
@@ -105,6 +139,49 @@ public class JRTradeController {
 
         }
 
+        return response;
+    }
+
+    @RequestMapping(value = "/trade/queryAccountBalance", method = RequestMethod.POST)
+    @ApiOperation(value = "账户余额查询", produces = "application/json", httpMethod = "POST",
+            response = AccountBalanceResponse.class, notes = "账户余额查询接口")
+    public AccountBalanceResponse queryAccountBalance(@ApiParam(required = true, name = "titanOrgCode", value = "金融机构编码")
+                                                      @RequestParam(value = "titanOrgCode") String titanOrgCode) {
+        AccountBalanceResponse response = new AccountBalanceResponse();
+        List<AccountBalanceDTO> accountBalanceDTOList = new ArrayList<AccountBalanceDTO>();
+
+        response.setAccountBalanceDTOList(accountBalanceDTOList);
+        if (!StringUtil.isValidString(titanOrgCode)) {
+            response.putParamError();
+            log.error("查询账户余额时金融机构编码不能为空");
+            return response;
+        }
+        AccountBalanceRequest balanceRequest = new AccountBalanceRequest();
+        balanceRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+        balanceRequest.setUserid(titanOrgCode);
+        com.fangcang.titanjr.dto.response.AccountBalanceResponse accountBalanceResponse =
+                titanFinancialAccountService.queryAccountBalance(balanceRequest);
+
+        if (!accountBalanceResponse.isResult() || CollectionUtils.isEmpty(accountBalanceResponse.getAccountBalance())) {
+            response.putErrorResult(accountBalanceResponse.getReturnMessage());
+            log.error("查询账户余额失败");
+            return response;
+        }
+
+        for (AccountBalance accountBalance : accountBalanceResponse.getAccountBalance()) {
+            AccountBalanceDTO balanceDTO = new AccountBalanceDTO();
+            balanceDTO.setAccountId(accountBalance.getFinaccountid());
+            balanceDTO.setBalanceFrozen(accountBalance.getBalancefrozon());
+            balanceDTO.setAmount(accountBalance.getAmount());
+            balanceDTO.setBalanceUsable(accountBalance.getBalanceusable());
+            balanceDTO.setProductId(accountBalance.getProductid());
+            balanceDTO.setStatus(1);
+            if (CommonConstant.RS_FANGCANG_PRODUCT_ID.equals(accountBalance.getProductid())) {
+                balanceDTO.setMainAccount(true);
+            }
+            accountBalanceDTOList.add(balanceDTO);
+        }
+        response.putSuccess();
         return response;
     }
 
