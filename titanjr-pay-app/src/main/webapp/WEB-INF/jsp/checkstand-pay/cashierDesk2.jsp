@@ -715,7 +715,7 @@
 
 	/** 支付相关开始 **/
 	//提交表单
-	function pay_Order() {debugger;
+	function pay_Order() {
 		//获取数据
 		if (cashierData.validatePayerAccount().length > 0) {
 			cashierData.window(cashierData.validatePayerAccount());

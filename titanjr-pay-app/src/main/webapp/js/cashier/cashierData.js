@@ -134,7 +134,7 @@ function initCashierData(data){
 		return data;
 	};
 	
-	cashierData.onlineQuickPayData = function(){debugger;
+	cashierData.onlineQuickPayData = function(){
 		var data= {
 				payOrderNo:cashierData.payOrderNo,
 		       	fcUserid:cashierData.fcUserid,
