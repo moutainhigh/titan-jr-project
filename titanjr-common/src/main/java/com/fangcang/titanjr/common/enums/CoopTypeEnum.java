@@ -1,13 +1,14 @@
 package com.fangcang.titanjr.common.enums;
 
+
 /**
- * 用户注册或登录来源
+ * 合作方(系统方)
  * @author luoqinglong
  * @2016年6月3日
  */
 public enum CoopTypeEnum {
 	
-	TFS(1,"TFS,暂无用"),SAAS(2,"SAAS"),AUTO(3,"后台自动,暂无用"),TTM(4,"TTM"),TWS(5,"泰坦钱包"),SAAS_INTERFACE(6,"SaaS无审核接口注册"),TTM_GONGYINGSHANG_INTERFACE(7,"TTM供应商无审核接口注册"),TTM_FENXIAOSHANG_INTERFACE(8,"TTM分销商无审核接口注册");
+	SAAS(2,"SAAS") ,TTM(4,"TTM"),TWS(5,"泰坦钱包");
 	
 	/**
 	 * 注册渠道
@@ -36,5 +37,25 @@ public enum CoopTypeEnum {
 	public String getDes() {
 		return des;
 	}
+	/**
+	 * 来源与合作方转换
+	 * @param registerSourceEnum
+	 * @return
+	 */
+	public CoopTypeEnum getCoopTypeEnum(RegSourceEnum registerSourceEnum){
+		switch (registerSourceEnum) {
+		case SAAS:
+		case SAAS_INTERFACE:
+			return  CoopTypeEnum.SAAS;
+		case TTM:
+		case TTM_GONGYINGSHANG_INTERFACE:
+		case TTM_FENXIAOSHANG_INTERFACE:
+			return  CoopTypeEnum.TTM;
+		default:
+			return  CoopTypeEnum.TWS;
+		}
+	}
+	
 	
 }
+
