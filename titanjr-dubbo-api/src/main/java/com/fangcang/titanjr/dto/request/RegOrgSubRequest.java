@@ -14,7 +14,7 @@ import com.fangcang.titanjr.dto.BaseRequestDTO;
  */
 public class RegOrgSubRequest extends BaseRequestDTO implements Serializable {
 	
-	
+	//机构名称
 	@NotBlank
     private String orgName;
     

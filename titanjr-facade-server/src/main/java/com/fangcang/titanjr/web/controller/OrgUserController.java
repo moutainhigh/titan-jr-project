@@ -69,7 +69,6 @@ public class OrgUserController {
 		organRegisterRequest.setFcLoginUserName(registerRequest.getUserLoginName());
 		organRegisterRequest.setMerchantCode(registerRequest.getCoopOrgCode());
 		organRegisterRequest.setMerchantname(registerRequest.getCoopOrgName());
-		organRegisterRequest.setIsAutoCheck(true);
 		organRegisterRequest.setCheckResKey(null);
 
 		organRegisterRequest.setIsAddOrgSub(false);
