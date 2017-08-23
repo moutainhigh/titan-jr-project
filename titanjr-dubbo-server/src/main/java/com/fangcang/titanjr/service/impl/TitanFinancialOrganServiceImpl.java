@@ -369,7 +369,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
         	}
     		result.put("tfsUserId", registerResponse.getTfsUserId().toString());
 	    	// 绑定关系
-	    	int returnCode = addOrgbingInfo(organRegisterRequest.getOrgCode(), organRegisterRequest.getMerchantCode(), organRegisterRequest.getOrgCode(), organRegisterRequest.getMerchantname(),organRegisterRequest.getRegisterSource());
+	    	int returnCode = addOrgbingInfo(organRegisterRequest.getOrgCode(), organRegisterRequest.getMerchantCode(), organRegisterRequest.getOrgCode(), organRegisterRequest.getMerchantname(),organRegisterRequest.getCoopType());
 	    	if(ORGBINGINFO_CODE_EXIST==returnCode){
 	    		throw new MessageServiceException("该商家已经绑定过泰坦金融账号，不能重复绑定");
 	    	}
@@ -470,7 +470,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	UserRegisterResponse respose = new UserRegisterResponse();
     	//如果没传用户名，则不添加
     	if(!StringUtil.isValidString(organRegisterRequest.getUserloginname())){
-    		LOGGER.error("注册金融机构时，没有要添加的登录用，机构id(orgcode)为："+organRegisterRequest.getOrgCode());
+    		LOGGER.error("注册金融机构时，金融用户名[Userloginname],不能为空，机构id(orgcode)为："+organRegisterRequest.getOrgCode());
     		respose.putErrorResult("金融用户名[Userloginname],不能为空");
     		return respose;
     	}
@@ -656,15 +656,15 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	
     	//统一都用虚拟证件注册
     	String orgcode = titanCodeCenterService.createOrgCode();
-    	String vOrgcode = "BL"+orgcode;
+    	String orgSubcode = orgcode.replace("TJM", "TJMS");
     	if(StringUtil.isValidString(organRegisterRequest.getBuslince())||StringUtil.isValidString(organRegisterRequest.getCertificateNumber())){
     		//真实证件
     		orgSubRequest = new RegOrgSubRequest();
     		MyBeanUtil.copyProperties(orgSubRequest, organRegisterRequest);//拷贝真实证件信息
-    		orgSubRequest.setOrgCode(orgcode);
+    		orgSubRequest.setOrgCode(orgSubcode);
     	}
-    	organRegisterRequest.setBuslince(vOrgcode);//使用虚拟营业执照
-    	organRegisterRequest.setOrgCode(vOrgcode);
+    	organRegisterRequest.setBuslince(orgcode);//使用虚拟营业执照
+    	organRegisterRequest.setOrgCode(orgcode);
     	organRegisterRequest.setUserType(1);//1-企业 
 
     	//---虚拟证件注册，公共参数校验,密码校验
@@ -673,9 +673,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			response.putErrorResult("必填参数不能为空");
 			return response;
 		}
-    	if(!StringUtil.isValidString(organRegisterRequest.getPassword())){
-    		organRegisterRequest.setPassword(RandomStringUtils.randomAlphabetic(6));
-    	}
+    	
     	//判断是否可以注册
     	OrgRegisterValidateRequest request = new OrgRegisterValidateRequest();
     	request.setUsertype(organRegisterRequest.getUserType());

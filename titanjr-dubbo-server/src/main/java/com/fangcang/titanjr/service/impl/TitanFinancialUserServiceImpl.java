@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -162,14 +163,18 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
     	
     	UserRegisterResponse response = new UserRegisterResponse();
         if (!GenericValidate.validate(userRegisterRequest)) {
-            response.putParamError();
+            response.putErrorResult("参数校验不通过");
             return response;
+        }
+        //登录密码为空时，设置随机密码
+        if(!StringUtil.isValidString(userRegisterRequest.getPassword())){
+        	userRegisterRequest.setPassword(RandomStringUtils.randomAlphabetic(6));
         }
         //SaaS页面注册时，商家编码和房仓登录名不能为空
         if (userRegisterRequest.getRegisterSource() == RegSourceEnum.SAAS.getType()) {
             if (!StringUtil.isValidString(userRegisterRequest.getFcLoginUserName()) ||
                     !StringUtil.isValidString(userRegisterRequest.getMerchantCode())) {
-                response.putParamError();
+                response.putErrorResult("合作方用户名或者商家编码不能为空");
                 return response;
             }
         }
@@ -181,7 +186,6 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
             }
         }
  
-
         //1.金服添加用户
         TitanUser titanUser = new TitanUser();
         titanUser.setCreatetime(new Date());

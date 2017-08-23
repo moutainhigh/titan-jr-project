@@ -32,16 +32,7 @@ public class RegOrgSubRequest extends BaseRequestDTO implements Serializable {
     private String certificateNumber;
     @NotNull
     private Integer userType;
-    //是否为添加子机构
-    private boolean isAddOrgSub = false;
     
-    
-	public boolean getIsAddOrgSub() {
-		return isAddOrgSub;
-	}
-	public void setIsAddOrgSub(boolean isAddOrgSub) {
-		this.isAddOrgSub = isAddOrgSub;
-	}
 	public String getOrgName() {
 		return orgName;
 	}

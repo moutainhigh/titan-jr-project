@@ -52,7 +52,6 @@ public class OrgUserController {
 		//查询证件号是否存在
 
 		OrganRegisterRequest organRegisterRequest = new OrganRegisterRequest();
-		organRegisterRequest.setUserName(registerRequest.getCoopUserName());
 		organRegisterRequest.setRegisterSource(registerRequest.getRegisterSourceEnum().key);
 		organRegisterRequest.setOrgImageInfoList(null);
 		organRegisterRequest.setEmail(registerRequest.getEmail());
@@ -64,14 +63,14 @@ public class OrgUserController {
 		}
 		organRegisterRequest.setPassword(null);
 		organRegisterRequest.setImageid(null);
-
+		organRegisterRequest.setConnect(registerRequest.getConnect());
+		organRegisterRequest.setMobileTel(registerRequest.getConnectPhone());
 		organRegisterRequest.setCoopUserId(registerRequest.getCoopUserId());
 		organRegisterRequest.setFcLoginUserName(registerRequest.getUserLoginName());
 		organRegisterRequest.setMerchantCode(registerRequest.getCoopOrgCode());
 		organRegisterRequest.setMerchantname(registerRequest.getCoopOrgName());
 		organRegisterRequest.setCheckResKey(null);
 
-		organRegisterRequest.setIsAddOrgSub(false);
 		organRegisterRequest.setOrgName(registerRequest.getCoopOrgName());
 		organRegisterRequest.setUserType(1);
 
@@ -84,6 +83,9 @@ public class OrgUserController {
 //				registerResponse.setJrUserId();
 				registerResponse.putSuccess();
 			}
+		} catch (MessageServiceException e) {
+			registerResponse.putErrorResult(e.getMessage());
+			log.error("注册失败" , e);
 		} catch (Exception e) {
 			registerResponse.putSysError();
 			log.error("" , e);

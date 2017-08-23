@@ -13,9 +13,6 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class OrganRegisterRequest extends RegOrgSubRequest {
      
-    //注册机构时候必须字段，跟公司名可以一致
-    private String userName;
-
     //
     @NotNull
     private Integer registerSource;
@@ -96,17 +93,6 @@ public class OrganRegisterRequest extends RegOrgSubRequest {
 	public void setImageid(String imageid) {
 		this.imageid = imageid;
 	}
-
-	 
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
 
     public List<OrgImageInfo> getOrgImageInfoList() {
         return orgImageInfoList;
