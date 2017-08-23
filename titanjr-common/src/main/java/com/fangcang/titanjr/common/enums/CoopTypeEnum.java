@@ -44,11 +44,11 @@ public enum CoopTypeEnum {
 	public static CoopTypeEnum getCoopTypeEnum(RegSourceEnum registerSourceEnum){
 		switch (registerSourceEnum) {
 		case SAAS:
-		case SAAS_INTERFACE:
+		case SAAS_MERCHANT:
 			return  CoopTypeEnum.SAAS;
 		case TTM:
-		case TTM_GONGYINGSHANG_INTERFACE:
-		case TTM_FENXIAOSHANG_INTERFACE:
+		case TTM_SUPPLY:
+		case TTM_AGENT:
 			return  CoopTypeEnum.TTM;
 		default:
 			return  CoopTypeEnum.TWS;
