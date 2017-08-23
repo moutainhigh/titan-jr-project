@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fangcang.titanjr.common.enums.CoopTypeEnum;
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
+import com.fangcang.titanjr.common.enums.RegSourceEnum;
 import com.fangcang.titanjr.common.enums.SMSType;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
@@ -356,18 +357,23 @@ public class FinancialOrganController extends BaseController {
 	    	organRegisterRequest.setConnect(orgRegPojo.getConnect());
 	    	organRegisterRequest.setMobileTel(orgRegPojo.getMobiletel());
 	    	//渠道号要用密文
-	    	int coopType = CoopTypeEnum.TWS.getKey();
+	    	int regSource = RegSourceEnum.TWS.getType();
 	    	boolean isNeedNofiy = false;
 	    	CoopRegInfo coopRegInfo = null;
 	    	String md5key = null;
 	    	if(StringUtil.isValidString(regUserLoginInfo.getChannel())){
 	    		CoopRequest coopRequest = new CoopRequest();
-		    	coopRequest.setMixcode(regUserLoginInfo.getChannel());
+		    	coopRequest.setMixcode(regUserLoginInfo.getChannel());//第一个版本TTM注册传cooptype,后续版本传regsource
 	    		CoopResponse coopResponse = baseInfoService.getOneCoop(coopRequest);
 	    		if(coopResponse.isResult()&&coopResponse.getCoopDTO()!=null){
-	    			coopType = coopResponse.getCoopDTO().getCoopType();
+	    			//TODO
+	    			regSource = coopResponse.getCoopDTO().getCoopType();
 	    	    	md5key = coopResponse.getCoopDTO().getMd5Key();
 	    	    	isNeedNofiy = true;
+	    		}else{
+	    			// 第三方参数错误
+		    		model.addAttribute(WebConstant.MODEL_ERROR_MSG_KEY, "第三方注册参数错误,请重试");
+					return "error";
 	    		}
 		    	//合作方信息
 		    	coopRegInfo = decryptRegInfo(regUserLoginInfo);
@@ -383,7 +389,7 @@ public class FinancialOrganController extends BaseController {
 		    	}
 	    	}
 	    	
-	    	organRegisterRequest.setRegisterSource(coopType);
+	    	organRegisterRequest.setRegisterSource(regSource);
 	    	
 	    	if(orgRegPojo.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
 	    		//企业
@@ -412,7 +418,7 @@ public class FinancialOrganController extends BaseController {
 				}
 				//通知第三方平台，机构信息
 				if(isNeedNofiy){
-					nofifyCoop(coopType,coopRegInfo.getCoopOrgCode(),coopRegInfo.getCoopUserId(),coopRegInfo.getNotifyurl(),md5key);
+					nofifyCoop(CoopTypeEnum.getCoopTypeEnum(regSource).getKey(),coopRegInfo.getCoopOrgCode(),coopRegInfo.getCoopUserId(),coopRegInfo.getNotifyurl(),md5key);
 				}
 				sendCheckAlarm(orgRegPojo.getOrgName());
 				return "/org-reg/reg-success";
@@ -436,6 +442,7 @@ public class FinancialOrganController extends BaseController {
     
     /**
      * 通知合作方注册的机构信息
+     * @param coopType 合作方系统类型
      * @param coopOrgCode
      * @param notifyurl
      */

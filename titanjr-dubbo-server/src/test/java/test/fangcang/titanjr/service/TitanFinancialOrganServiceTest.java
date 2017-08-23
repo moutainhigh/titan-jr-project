@@ -129,7 +129,7 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 	/***
 	 * SAAS注册机构
 	 */
-	@Test
+	//@Test
 	public void testRegisterOrg_2(){
 		OrganRegisterRequest organRegisterRequest = new OrganRegisterRequest();
 		organRegisterRequest.setRegisterSource(LoginSourceEnum.SAAS.getKey());
@@ -185,7 +185,7 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 			Assert.assertFalse(1==1);
 		}
 	}
-	//@Test 
+	@Test 
 	public void testRegisterOrg_2_enterprise(){
 		OrganRegisterRequest organRegisterRequest = new OrganRegisterRequest();
 		organRegisterRequest.setImageid("32,33,34");

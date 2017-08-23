@@ -33,6 +33,7 @@ import com.fangcang.security.facade.UserFacade;
 import com.fangcang.titanjr.common.enums.FinancialRoleEnum;
 import com.fangcang.titanjr.common.enums.CoopTypeEnum;
 import com.fangcang.titanjr.common.enums.OrgCheckResultEnum;
+import com.fangcang.titanjr.common.enums.RegSourceEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanCheckCodeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
@@ -165,7 +166,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
             return response;
         }
         //SaaS页面注册时，商家编码和房仓登录名不能为空
-        if (userRegisterRequest.getRegisterSource() == CoopTypeEnum.SAAS.getKey()) {
+        if (userRegisterRequest.getRegisterSource() == RegSourceEnum.SAAS.getType()) {
             if (!StringUtil.isValidString(userRegisterRequest.getFcLoginUserName()) ||
                     !StringUtil.isValidString(userRegisterRequest.getMerchantCode())) {
                 response.putParamError();
@@ -196,13 +197,14 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         titanUser.setUsername(userRegisterRequest.getUserName());
         titanUserDao.insert(titanUser);//失败直接抛异常并回滚
         int tfsUserid = titanUser.getTfsuserid();
-
+        response.setTfsUserId(tfsUserid);
         //2.saas页面注册时金服添加用户绑定关系
         Long orgiUserId = null;//SaaS注册时存在，当前登录的SaaS用户的用户id
-        if (userRegisterRequest.getRegisterSource() == CoopTypeEnum.SAAS.getKey()||userRegisterRequest.getRegisterSource() == CoopTypeEnum.TTM.getKey()) {
+        
+        if (StringUtil.isValidString(userRegisterRequest.getMerchantCode())) {//是否为第三方合作方注册
         	TitanUserBindInfo bindInfo = new TitanUserBindInfo();
         	//查询房仓金服商家已添加上的用户
-            if(userRegisterRequest.getRegisterSource() == CoopTypeEnum.SAAS.getKey()){
+            if(userRegisterRequest.getRegisterSource() == RegSourceEnum.SAAS.getType()){
             	MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
                 List<String> loginNameList = new ArrayList<String>();
                 loginNameList.add(userRegisterRequest.getFcLoginUserName());
@@ -231,7 +233,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
             bindInfo.setIsactive(1);
             bindInfo.setTfsuserid(tfsUserid);
             bindInfo.setFcuserid(orgiUserId);
-            bindInfo.setCooptype(userRegisterRequest.getRegisterSource());
+            bindInfo.setCooptype(CoopTypeEnum.getCoopTypeEnum(userRegisterRequest.getRegisterSource()).getKey());
             bindInfo.setMerchantcode(userRegisterRequest.getMerchantCode());
             bindInfo.setCreatetime(new Date());
             bindInfo.setCreator(userRegisterRequest.getOperator());
