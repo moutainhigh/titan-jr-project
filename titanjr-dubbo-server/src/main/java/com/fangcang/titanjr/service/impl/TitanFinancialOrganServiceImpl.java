@@ -666,6 +666,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	organRegisterRequest.setBuslince(vOrgcode);//使用虚拟营业执照
     	organRegisterRequest.setOrgCode(vOrgcode);
     	organRegisterRequest.setUserType(1);//1-企业 
+
     	//---1虚拟证件注册，公共参数校验,密码校验
     	if (!(GenericValidate.validate(organRegisterRequest)&&StringUtil.isValidString(organRegisterRequest.getPassword()))){
     		LOGGER.error("机构注册时，参数错误，organRegisterRequest："+JSONSerializer.toJSON(organRegisterRequest).toString());
