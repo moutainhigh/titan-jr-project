@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.CoopTypeEnum;
+import com.fangcang.titanjr.common.enums.RegSourceEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
@@ -243,7 +244,7 @@ public class SettingEmployeeController extends BaseController{
     	userRegisterRequest.setUnselectRoleIdList(toList(employeePojo.getUncheckedRoleId()));
     	//生成一个密码
     	userRegisterRequest.setPassword(RandomStringUtils.randomNumeric(8));
-    	userRegisterRequest.setRegisterSource(CoopTypeEnum.TWS.getKey());
+    	userRegisterRequest.setRegisterSource(RegSourceEnum.TWS.getType());
     	userRegisterRequest.setUserId(userId);//金服机构
     	try {
 			UserRegisterResponse respose = titanFinancialUserService.registerFinancialUser(userRegisterRequest);

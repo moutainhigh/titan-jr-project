@@ -40,9 +40,11 @@ public class OrganRegisterRequest extends RegOrgSubRequest {
    // @NotNull
    // private Integer userType;
 
-    //注册来源，见CoopTypeEnum
+    //
     @NotNull
     private Integer registerSource;
+    //合作方类型，见CoopTypeEnum
+    private Integer coopType;
 
     //图片信息列表，不需审核时候可为空
     private List<OrgImageInfo> orgImageInfoList;
@@ -197,6 +199,14 @@ public class OrganRegisterRequest extends RegOrgSubRequest {
 
 	public void setCoopUserId(String coopUserId) {
 		this.coopUserId = coopUserId;
+	}
+
+	public Integer getCoopType() {
+		return coopType;
+	}
+
+	public void setCoopType(Integer coopType) {
+		this.coopType = coopType;
 	}
     
 }

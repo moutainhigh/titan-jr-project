@@ -21,17 +21,12 @@ public class TitanOrg implements java.io.Serializable {
 	private String constid;
 	private String userid;
 	private String productid;
-	private String role;
-	private String username;
 	/**
 	 * 机构类型：企业:1，个人:2
 	 */
 	private Integer usertype;
 	private Integer statusid;
-	private String address;
-	private String post;
 	private String remark;
-	private Integer orgtype;
 	/***
 	 * 证件类型：身份证，士官证
 	 */
@@ -44,9 +39,6 @@ public class TitanOrg implements java.io.Serializable {
 	 * 联系手机
 	 */
 	private String mobiletel;
-	private String bindcompanyname;
-	private String orgshortname;
-	private String mcc;
 	/***
 	 * 联系人
 	 */
@@ -55,18 +47,6 @@ public class TitanOrg implements java.io.Serializable {
 	 * 营业执照号
 	 */
 	private String buslince;
-	private String taxregcardf;
-	private String taxregcards;
-	private String organcertificate;
-	private String busplacectf;
-	private String loancard;
-	private String acuntopnlince;
-	private String corporatename;
-	private String personengname;
-	private String persontype;
-	private String personsex;
-	private Date birthday;
-	private String fixTel;
 	/**
 	 * 泰坦码
 	 */
@@ -75,9 +55,11 @@ public class TitanOrg implements java.io.Serializable {
 	private Date createTime;
 	private Date updateTime;
 	/**
-	 * 注册渠道:1-金融官网，2-SAAS,4-TTM'
+	 * 合作方系统类型: 2-SAAS,4-TTM,5-钱包官网'
 	 */
 	private Integer regChannel;
+	
+	private Integer regSource;
 	/**
 	 * 授信金额估算时间
 	 */
@@ -145,21 +127,7 @@ public class TitanOrg implements java.io.Serializable {
 		this.productid = productid;
 	}
 
-	public String getRole() {
-		return this.role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
-
-	public String getUsername() {
-		return this.username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
+	 
 
 	public Integer getUsertype() {
 		return this.usertype;
@@ -177,21 +145,7 @@ public class TitanOrg implements java.io.Serializable {
 		this.statusid = statusid;
 	}
 
-	public String getAddress() {
-		return this.address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getPost() {
-		return this.post;
-	}
-
-	public void setPost(String post) {
-		this.post = post;
-	}
+	 
 
 	public String getRemark() {
 		return this.remark;
@@ -201,14 +155,7 @@ public class TitanOrg implements java.io.Serializable {
 		this.remark = remark;
 	}
 
-	public Integer getOrgtype() {
-		return this.orgtype;
-	}
-
-	public void setOrgtype(Integer orgtype) {
-		this.orgtype = orgtype;
-	}
-
+	 
 	public Integer getCertificatetype() {
 		return this.certificatetype;
 	}
@@ -233,29 +180,9 @@ public class TitanOrg implements java.io.Serializable {
 		this.mobiletel = mobiletel;
 	}
 
-	public String getBindcompanyname() {
-		return this.bindcompanyname;
-	}
+	 
 
-	public void setBindcompanyname(String bindcompanyname) {
-		this.bindcompanyname = bindcompanyname;
-	}
-
-	public String getOrgshortname() {
-		return this.orgshortname;
-	}
-
-	public void setOrgshortname(String orgshortname) {
-		this.orgshortname = orgshortname;
-	}
-
-	public String getMcc() {
-		return this.mcc;
-	}
-
-	public void setMcc(String mcc) {
-		this.mcc = mcc;
-	}
+	 
 
 	public String getConnect() {
 		return this.connect;
@@ -273,100 +200,12 @@ public class TitanOrg implements java.io.Serializable {
 		this.buslince = buslince;
 	}
 
-	public String getTaxregcardf() {
-		return this.taxregcardf;
+	public Integer getRegSource() {
+		return regSource;
 	}
 
-	public void setTaxregcardf(String taxregcardf) {
-		this.taxregcardf = taxregcardf;
-	}
-
-	public String getTaxregcards() {
-		return this.taxregcards;
-	}
-
-	public void setTaxregcards(String taxregcards) {
-		this.taxregcards = taxregcards;
-	}
-
-	public String getOrgancertificate() {
-		return this.organcertificate;
-	}
-
-	public void setOrgancertificate(String organcertificate) {
-		this.organcertificate = organcertificate;
-	}
-
-	public String getBusplacectf() {
-		return this.busplacectf;
-	}
-
-	public void setBusplacectf(String busplacectf) {
-		this.busplacectf = busplacectf;
-	}
-
-	public String getLoancard() {
-		return this.loancard;
-	}
-
-	public void setLoancard(String loancard) {
-		this.loancard = loancard;
-	}
-
-	public String getAcuntopnlince() {
-		return this.acuntopnlince;
-	}
-
-	public void setAcuntopnlince(String acuntopnlince) {
-		this.acuntopnlince = acuntopnlince;
-	}
-
-	public String getCorporatename() {
-		return this.corporatename;
-	}
-
-	public void setCorporatename(String corporatename) {
-		this.corporatename = corporatename;
-	}
-
-	public String getPersonengname() {
-		return this.personengname;
-	}
-
-	public void setPersonengname(String personengname) {
-		this.personengname = personengname;
-	}
-
-	public String getPersontype() {
-		return this.persontype;
-	}
-
-	public void setPersontype(String persontype) {
-		this.persontype = persontype;
-	}
-
-	public String getPersonsex() {
-		return this.personsex;
-	}
-
-	public void setPersonsex(String personsex) {
-		this.personsex = personsex;
-	}
-
-	public Date getBirthday() {
-		return this.birthday;
-	}
-
-	public void setBirthday(Date birthday) {
-		this.birthday = birthday;
-	}
-
-	public String getFixTel() {
-		return this.fixTel;
-	}
-
-	public void setFixTel(String fixTel) {
-		this.fixTel = fixTel;
+	public void setRegSource(Integer regSource) {
+		this.regSource = regSource;
 	}
 
 	public String getEmail() {

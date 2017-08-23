@@ -24,7 +24,8 @@ public class OrganCheckRequest extends BaseRequestDTO{
     //还是初审失败重新发起申请时候的申请 = 2
     
     private Integer operateType;
-    
+    //是否需要发送机构注册信息
+    private boolean isSendSms = true;
     
 	public int getOrgId() {
 		return orgId;
@@ -57,5 +58,13 @@ public class OrganCheckRequest extends BaseRequestDTO{
     public void setOperateType(Integer operateType) {
         this.operateType = operateType;
     }
+
+	public boolean getIsSendSms() {
+		return isSendSms;
+	}
+
+	public void setIsSendSms(boolean isSendSms) {
+		this.isSendSms = isSendSms;
+	}
 
 }

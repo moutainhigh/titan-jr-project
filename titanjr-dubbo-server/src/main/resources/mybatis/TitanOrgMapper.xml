@@ -28,7 +28,8 @@
           productid,
           constid,
           usertype,
-          statusid
+          statusid,
+          regsource
         FROM
           t_tfs_org
         WHERE
@@ -48,7 +49,8 @@
           productid,
           constid,
           usertype,
-          statusid
+          statusid,
+          regsource
         FROM
           t_tfs_org 
            <where>
@@ -271,7 +273,7 @@
       statusid, 
       remark,certificatetype, 
       certificatenumber, 
-     buslince, titancode,regchannel,createTime)
+     buslince, titancode,regchannel,regsource,createTime)
     values (#{orgid,jdbcType=INTEGER}, #{orgcode,jdbcType=VARCHAR}, #{orgname,jdbcType=VARCHAR}, 
       #{constid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, #{productid,jdbcType=VARCHAR}, 
        #{usertype,jdbcType=INTEGER}, 
@@ -279,7 +281,7 @@
       #{remark,jdbcType=VARCHAR},#{certificatetype,jdbcType=INTEGER}, 
       #{certificatenumber,jdbcType=VARCHAR}, 
       #{buslince,jdbcType=VARCHAR}, 
-      #{titancode,jdbcType=VARCHAR},#{regChannel},#{createTime})
+      #{titancode,jdbcType=VARCHAR},#{regChannel},#{regSource},#{createTime})
   </insert>
     <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanOrg">
         update t_tfs_org

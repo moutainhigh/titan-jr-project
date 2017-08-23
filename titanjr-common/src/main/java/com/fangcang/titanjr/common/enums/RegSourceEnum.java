@@ -25,7 +25,16 @@ public enum RegSourceEnum {
 		return des;
 	}
 
-
+	public static RegSourceEnum  getEnumByKey(int type){
+		RegSourceEnum entity = null;
+		for(RegSourceEnum item : RegSourceEnum.values()) {
+			if(item.type == type) {
+				entity = item;
+				break;
+			}
+		}
+		return entity;
+	}
 	/**
 	 * 是否为接口注册，接口注册，无需审核，自动通过
 	 * @param coopType

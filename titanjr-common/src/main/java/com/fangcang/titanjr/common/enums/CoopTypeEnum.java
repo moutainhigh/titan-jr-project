@@ -7,7 +7,6 @@ package com.fangcang.titanjr.common.enums;
  * @2016年6月3日
  */
 public enum CoopTypeEnum {
-	
 	SAAS(2,"SAAS") ,TTM(4,"TTM"),TWS(5,"泰坦钱包");
 	
 	/**
@@ -39,10 +38,10 @@ public enum CoopTypeEnum {
 	}
 	/**
 	 * 来源与合作方转换
-	 * @param registerSourceEnum
+	 * @param registerSourceEnum,注册来源
 	 * @return
 	 */
-	public CoopTypeEnum getCoopTypeEnum(RegSourceEnum registerSourceEnum){
+	public static CoopTypeEnum getCoopTypeEnum(RegSourceEnum registerSourceEnum){
 		switch (registerSourceEnum) {
 		case SAAS:
 		case SAAS_INTERFACE:
@@ -55,7 +54,16 @@ public enum CoopTypeEnum {
 			return  CoopTypeEnum.TWS;
 		}
 	}
-	
+	/**
+	 * 来源与合作方转换
+	 * @param registerSource,注册来源
+	 * @return
+	 */
+	public static CoopTypeEnum getCoopTypeEnum(Integer registerSource){
+		RegSourceEnum entity = RegSourceEnum.getEnumByKey(registerSource);
+		return getCoopTypeEnum(entity);
+		
+	}
 	
 }
 
