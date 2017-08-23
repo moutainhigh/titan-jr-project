@@ -654,20 +654,18 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	//注册类型转为合作方类型
     	organRegisterRequest.setCoopType(CoopTypeEnum.getCoopTypeEnum(organRegisterRequest.getRegisterSource()).getKey());
     	
-    	if(StringUtil.isValidString(organRegisterRequest.getBuslince())||StringUtil.isValidString(organRegisterRequest.getCertificateNumber())){
-    		//真实证件注册
-    		orgSubRequest = new RegOrgSubRequest();
-    		MyBeanUtil.copyProperties(orgSubRequest, organRegisterRequest);
-    	}
-    	
     	//统一都用虚拟证件注册
     	String orgcode = titanCodeCenterService.createOrgCode();
     	String vOrgcode = "BL"+orgcode;
-    	organRegisterRequest.setBuslince(vOrgcode);//虚拟营业执照
+    	if(StringUtil.isValidString(organRegisterRequest.getBuslince())||StringUtil.isValidString(organRegisterRequest.getCertificateNumber())){
+    		//真实证件
+    		orgSubRequest = new RegOrgSubRequest();
+    		MyBeanUtil.copyProperties(orgSubRequest, organRegisterRequest);//拷贝真实证件信息
+    		orgSubRequest.setOrgCode(orgcode);
+    	}
+    	organRegisterRequest.setBuslince(vOrgcode);//使用虚拟营业执照
     	organRegisterRequest.setOrgCode(vOrgcode);
-    	organRegisterRequest.setUserType(1);//1-企业
-    	orgSubRequest.setOrgCode(orgcode);
-    	
+    	organRegisterRequest.setUserType(1);//1-企业 
     	//---1虚拟证件注册，公共参数校验,密码校验
     	if (!(GenericValidate.validate(organRegisterRequest)&&StringUtil.isValidString(organRegisterRequest.getPassword()))){
     		LOGGER.error("机构注册时，参数错误，organRegisterRequest："+JSONSerializer.toJSON(organRegisterRequest).toString());
