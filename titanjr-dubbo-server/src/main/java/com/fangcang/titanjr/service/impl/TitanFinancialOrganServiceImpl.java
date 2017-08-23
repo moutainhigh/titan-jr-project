@@ -667,12 +667,15 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	organRegisterRequest.setOrgCode(vOrgcode);
     	organRegisterRequest.setUserType(1);//1-企业 
 
-    	//---1虚拟证件注册，公共参数校验,密码校验
-    	if (!(GenericValidate.validate(organRegisterRequest)&&StringUtil.isValidString(organRegisterRequest.getPassword()))){
+    	//---虚拟证件注册，公共参数校验,密码校验
+    	if (!GenericValidate.validate(organRegisterRequest)){
     		LOGGER.error("机构注册时，参数错误，organRegisterRequest："+JSONSerializer.toJSON(organRegisterRequest).toString());
 			response.putErrorResult("必填参数不能为空");
 			return response;
 		}
+    	if(!StringUtil.isValidString(organRegisterRequest.getPassword())){
+    		organRegisterRequest.setPassword(RandomStringUtils.randomAlphabetic(6));
+    	}
     	//判断是否可以注册
     	OrgRegisterValidateRequest request = new OrgRegisterValidateRequest();
     	request.setUsertype(organRegisterRequest.getUserType());
