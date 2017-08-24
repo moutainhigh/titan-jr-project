@@ -137,7 +137,6 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 		organRegisterRequest.setCertificateType(CertificateType.SFZ.getKey()+"");
 		organRegisterRequest.setCertificateNumber("4304261990111331123");
 		organRegisterRequest.setOrgName("春秋旅游");
-		organRegisterRequest.setUserName("春秋旅游");
 		organRegisterRequest.setUserloginname("luoqinglong@etxing.com");
 		organRegisterRequest.setPassword("123456");
 		organRegisterRequest.setMerchantCode("M100000061");
@@ -168,7 +167,6 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 		organRegisterRequest.setCertificateType(CertificateType.SFZ.getKey()+"");
 		organRegisterRequest.setCertificateNumber("430426199011345353");
 		organRegisterRequest.setOrgName("罗庆龙333");
-		organRegisterRequest.setUserName("罗庆龙333");
 		organRegisterRequest.setUserloginname("13312534535");
 		organRegisterRequest.setPassword("123456");
 		
@@ -195,7 +193,6 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 		
 		organRegisterRequest.setOrgName("深圳春秋科技有限公司");
 		organRegisterRequest.setBuslince("430426199011133123456");
-		organRegisterRequest.setUserName("深圳春秋科技有限公司");
 		
 		organRegisterRequest.setConnect("罗庆龙1");
 		organRegisterRequest.setMobileTel("13352989767");
@@ -225,7 +222,6 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 		organRegisterRequest.setCertificateType(CertificateType.SFZ.getKey()+"");
 		organRegisterRequest.setCertificateNumber("430426199011115487");
 		organRegisterRequest.setOrgName("罗庆龙");
-		organRegisterRequest.setUserName("罗庆龙");
 		organRegisterRequest.setUserloginname("13352989767");
 		organRegisterRequest.setPassword("123456");
 		
