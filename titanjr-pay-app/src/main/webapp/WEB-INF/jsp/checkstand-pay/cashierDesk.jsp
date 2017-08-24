@@ -546,8 +546,16 @@
     		return false;
     	}
     	
-    	var flag = payPasswordObj.validate_isInput_password();
+    	/* var flag = payPasswordObj.validate_isInput_password();
     	if(flag==false || cashierData.linePayType() == '10'){
+    		payPasswordObj.show_payPassword();
+    	}else{
+    		pay_Order(); 
+    	} */
+    	
+    	//如果是使用余额支付或者贷款，则必须输入密码
+    	if(($("#d_checkbox").attr("checked")=="checked" && cashierData.balanceusable!="0") || 
+    			cashierData.linePayType() == '10'){
     		payPasswordObj.show_payPassword();
     	}else{
     		pay_Order(); 

@@ -11,6 +11,7 @@ import com.fangcang.titanjr.dto.bean.TitanRateDto;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 import com.fangcang.titanjr.service.TitanFinancialRateService;
+
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -39,7 +40,6 @@ import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.pojo.EmployeePojo;
 import com.fangcang.titanjr.web.pojo.FcEmployeeTablePojo;
-import com.fangcang.titanjr.web.util.TFSTools;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
@@ -53,6 +53,11 @@ import com.fangcang.util.StringUtil;
 @RequestMapping("/setting")
 @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 public class SettingEmployeeController extends BaseController{
+	/** 
+	 * 
+	 */
+	private static final long serialVersionUID = 376395101677758942L;
+
 	private static final Log log = LogFactory.getLog(SettingEmployeeController.class);
     
     @Autowired
@@ -446,6 +451,32 @@ public class SettingEmployeeController extends BaseController{
 		}
 		return "setting/fee";
 	}
+	
+	
+	/**
+	 * 新的收付款费率公示（暂时只查第三方支付费率）
+	 * @author Jerry
+	 * @date 2017年8月23日 下午2:24:07
+	 */
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
+	@RequestMapping("/feeNew")
+	public String feeNew(HttpServletRequest request,Model model){
+		
+		RateConfigResponse rateConfigResponse = null;
+		List<TitanRateDto> rateInfoList = new ArrayList<TitanRateDto>();
+		RateConfigRequest rateConfigRequest = new RateConfigRequest();
+		
+		rateConfigRequest.setUserId(String.valueOf(getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID)));
+		rateConfigRequest.setPayType(CashierItemTypeEnum.QR_ITEM);
+		rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
+		rateInfoList = rateConfigResponse.getRateInfoList();
+		if(CollectionUtils.isNotEmpty(rateInfoList)){
+			model.addAttribute("titanRateDto", rateInfoList.get(0));
+		}
+		return "setting/fee";
+		
+	}
+	
 	
 	/**
 	 * 金融协议
