@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.fangcang.corenut.dao.PaginationSupport;
-import com.fangcang.titanjr.common.enums.CoopTypeEnum;
 import com.fangcang.titanjr.common.enums.RegSourceEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanUserEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
@@ -59,6 +58,11 @@ import com.fangcang.util.StringUtil;
  */
 @Controller
 public class SettingEmployeeController extends BaseController{
+	/** 
+	 * 
+	 */
+	private static final long serialVersionUID = 8044945171301793319L;
+
 	private static final Log log = LogFactory.getLog(SettingEmployeeController.class);
     
     @Autowired
@@ -443,6 +447,30 @@ public class SettingEmployeeController extends BaseController{
 			}
 		}
 		return "setting/fee";
+	}
+	
+	/**
+	 * 新的收付款费率公示（暂时只查第三方支付费率）
+	 * @author Jerry
+	 * @date 2017年8月23日 下午2:24:07
+	 */
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
+	@RequestMapping("/feeNew")
+	public String feeNew(HttpServletRequest request,Model model){
+		
+		RateConfigResponse rateConfigResponse = null;
+		List<TitanRateDto> rateInfoList = new ArrayList<TitanRateDto>();
+		RateConfigRequest rateConfigRequest = new RateConfigRequest();
+		
+		rateConfigRequest.setUserId(String.valueOf(getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID)));
+		rateConfigRequest.setPayType(CashierItemTypeEnum.QR_ITEM);
+		rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
+		rateInfoList = rateConfigResponse.getRateInfoList();
+		if(CollectionUtils.isNotEmpty(rateInfoList)){
+			model.addAttribute("titanRateDto", rateInfoList.get(0));
+		}
+		return "setting/fee";
+		
 	}
 	
 	/**

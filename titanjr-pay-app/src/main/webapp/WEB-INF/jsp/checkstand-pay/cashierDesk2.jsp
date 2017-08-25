@@ -108,7 +108,7 @@
                      <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem">
                         <c:if test="${deskItem.itemType == 4}">
                             <input type="hidden" id="canUseAccBalance" value="1">
-                            <c:if test="${ not empty cashDeskData.balanceusable and cashDeskData.canAccountBalance ne true }">
+                            <c:if test="${ not empty cashDeskData.balanceusable and cashDeskData.canAccountBalance eq true }">
                             <li class="p_l27" id="useBalanceCheck">
                                 <label class="f_ui-checkbox-c3 p_r10">
                                     <input type="checkbox" checked="" id="d_checkbox" onclick="checkedBalance()" ><i ></i>
@@ -571,12 +571,21 @@
     		return false;
     	}
     	
-    	var flag = payPasswordObj.validate_isInput_password();
+    	/* var flag = payPasswordObj.validate_isInput_password();
     	if(flag==false || cashierData.linePayType() == '10'){
     		payPasswordObj.show_payPassword();
     	}else{
     		pay_Order(); 
+    	} */
+    	
+    	//如果是使用余额支付或者贷款，则必须输入密码
+    	if(($("#d_checkbox").attr("checked")=="checked" && cashierData.balanceusable!="0") || 
+    			cashierData.linePayType() == '10'){
+    		payPasswordObj.show_payPassword();
+    	}else{
+    		pay_Order(); 
     	}
+    	
     });
     
     function loanPay()
