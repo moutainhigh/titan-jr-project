@@ -15,12 +15,17 @@ public class OrgRegisterValidateRequest extends BaseRequestDTO{
 	 * 
 	 */
 	private static final long serialVersionUID = 5925152704898953015L;
+	/**
+	 * 机构类型:1-企业，2-个人
+	 */
 	private Integer usertype;
 	/**
 	 * 营业执照号码
 	 */
 	private String buslince;
-	
+	/***
+	 * 证件类型：0-身份证
+	 */
 	private String certificatetype;
 	/**
 	 * 其他证件号码

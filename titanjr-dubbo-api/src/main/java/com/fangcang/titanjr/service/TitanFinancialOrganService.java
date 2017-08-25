@@ -71,6 +71,14 @@ public interface TitanFinancialOrganService {
      */
     public OrganRegisterResponse registerFinancialOrgan(OrganRegisterRequest organRegisterRequest) throws MessageServiceException, GlobalServiceException;
 
+    /***
+     * 注册真实机构并添加机构关联关系
+     * @param regOrgSubRequest
+     * @param relateOrgCode 虚拟机构编码
+     * @return
+     * @throws GlobalServiceException
+     */
+    public BaseResponseDTO registerOrgSub(RegOrgSubRequest regOrgSubRequest,String relateOrgCode) throws GlobalServiceException;
 
     /**
      * 重新修改机构注册信息，后台初审失败，客户修改后再次发起申请时的接口,修改真实证件资料
@@ -93,7 +101,7 @@ public interface TitanFinancialOrganService {
     /**
      * 注册时检查结构信息是否已经注册
      * @param request
-     * @return
+     * @return  code = 500 ,该证件已经注册过
      * @throws MessageServiceException
      */
     public OrgRegisterValidateResponse validateOrg(OrgRegisterValidateRequest request) ;
