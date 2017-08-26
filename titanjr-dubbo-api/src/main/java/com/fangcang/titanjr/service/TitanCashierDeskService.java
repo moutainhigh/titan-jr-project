@@ -8,6 +8,7 @@ import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
 import com.fangcang.titanjr.dto.bean.gateway.QuickCardHistoryDTO;
 import com.fangcang.titanjr.dto.request.CashierDeskInitRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
+import com.fangcang.titanjr.dto.request.CashierDeskUpdateRequest;
 import com.fangcang.titanjr.dto.request.PaymentItemRequest;
 import com.fangcang.titanjr.dto.response.CashierDeskInitResponse;
 import com.fangcang.titanjr.dto.response.CashierDeskResponse;
@@ -34,7 +35,10 @@ public interface TitanCashierDeskService {
      * @return
      */
     public CashierDeskInitResponse initCashierDesk(CashierDeskInitRequest cashierDeskInitRequest) throws Exception;
-    
+
+
+	public boolean updateCashierDesk(CashierDeskUpdateRequest deskUpdateRequest) throws Exception;
+
    /**
     * 根据银行标识查询银行信息
     * @param bankName
