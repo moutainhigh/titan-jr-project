@@ -200,8 +200,6 @@
           LEFT JOIN t_tfs_orgimage i ON g.userid = i.userid
           LEFT JOIN t_tfs_orgcheck c ON g.userid = c.userid
      	<where>
-     		i.isactive = 1
-     		and
 	    	g.orgid in
 	        <foreach collection="orgIdList" index="index" item="item" open="(" separator="," close=")">
 	            #{item}
