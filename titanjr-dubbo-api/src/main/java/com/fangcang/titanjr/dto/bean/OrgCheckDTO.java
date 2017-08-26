@@ -25,7 +25,14 @@ public class OrgCheckDTO implements Serializable{
 	private String certificateNumber;	
 	private String checkuser;	
 	private String resultkey ;
-	
+	/**
+	 * 联系手机
+	 */
+	private String mobiletel;
+	/***
+	 * 联系人
+	 */
+	private String connect;
 	/************* 真实证件 ***************************/
 	private String orgSubId;
 	private String subOrgCode;
@@ -33,8 +40,6 @@ public class OrgCheckDTO implements Serializable{
 	private Integer subCertificateType;
 	private String subCertificateNumber;
 	private String subBuslince;
-	private String subConnect;	
-	private String subMobiletel;
 	
 	
 	public String getOrgSubId() {
@@ -86,17 +91,17 @@ public class OrgCheckDTO implements Serializable{
 		this.buslince = buslince;
 	}
 	
-	public String getSubConnect() {
-		return subConnect;
+	public String getMobiletel() {
+		return mobiletel;
 	}
-	public void setSubConnect(String subConnect) {
-		this.subConnect = subConnect;
+	public void setMobiletel(String mobiletel) {
+		this.mobiletel = mobiletel;
 	}
-	public String getSubMobiletel() {
-		return subMobiletel;
+	public String getConnect() {
+		return connect;
 	}
-	public void setSubMobiletel(String subMobiletel) {
-		this.subMobiletel = subMobiletel;
+	public void setConnect(String connect) {
+		this.connect = connect;
 	}
 	public String getCertificateNumber() {
 		return certificateNumber;

@@ -156,7 +156,7 @@
             <tr>
                 <td class="tdr">收付款类型</td>
                 <td>
-                    <input type="text" value="1" id="payerType" name="payerType"/><span>1:B2B交易平台</span> <span title='2:GDP-收款方SAAS商家编码'> 2:GDP</span> <span title='3:财务供应商-付款方为SAAS用户id'>3:财务付款给供应商</span>  4:财务付款给联盟供应商 1001:对外开放平台,1024:TTM-SAAS商家,10242：TTM-金融商家，10243:TTM移动端
+                    <input type="text" value="1" id="payerType" name="payerType"/><span title="收款方编码为SAAS编码">1:B2B交易平台</span> <span title='2:GDP-收款方SAAS商家编码'> 2:GDP</span> <span title='3:财务供应商-付款方为SAAS用户id'>3:财务付款给供应商</span>  4:财务付款给联盟供应商 1001:对外开放平台,1024:TTM-SAAS商家,10242：TTM-金融商家，10243:TTM移动端
                 </td>
             </tr>
             <tr>
@@ -184,7 +184,7 @@
                 </td>
             </tr>
             <tr>
-                <td class="tdr">支付通知接口地址</td>
+                <td class="tdr">支付回显地址</td>
                 <td>
                     <input type="text" value="http://192.168.0.77:8084/titanjr-pay-app/payCallBack" id="notify" name="notify"/>
                 </td>

@@ -60,6 +60,7 @@ import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
 import com.fangcang.titanjr.dao.TitanAccountDao;
@@ -1899,7 +1900,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			if (!StringUtil.isValidString(titanOrderRequest.getUserId())
 					&& !StringUtil
 							.isValidString(titanOrderRequest.getRuserId())) {
-				log.error("the param is error");
+				log.error("the param is error,收款方或者付款方为空");
 				localOrderResponse.putParamError();
 				return localOrderResponse;
 			}
@@ -1913,7 +1914,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			}
 			
 			if (!localOrderResponse.isResult()) {
-				log.error("save base userinfo is fail");
+				log.error("save base userinfo is fail,原因："+Tools.gsonToString(localOrderResponse));
 				return localOrderResponse;
 			}
 

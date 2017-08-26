@@ -262,7 +262,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
             	response.setFinancialOrganDTO(paginationSupport.getItemList().get(0));
             	response.putSuccess();
             }else{
-            	response.putErrorResult("数据结果集个数错误");
+            	LOGGER.error("金融机构查询错误，查询参数FinancialOrganQueryRequest："+Tools.gsonToString(request)+",记录个数："+paginationSupport.getItemList().size());
+            	response.putErrorResult("机构结果集个数错误");
             }
 		} catch (Exception e) {
 			LOGGER.error("查询错误，参数FinancialOrganQueryRequest："+JSONSerializer.toJSON(request).toString(), e);
@@ -287,7 +288,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	orgSubDTO.setCertificateType(titanOrgSub.getCertificatetype());
     	orgSubDTO.setCertificateNumber(titanOrgSub.getCertificatenumber());
     	orgSubDTO.setBuslince(titanOrgSub.getBuslince());
-    	orgSubDTO.setMobileTel(titanOrgSub.getMobiletel());
     	orgSubDTO.setUserType(titanOrgSub.getUsertype());
     	
     	return orgSubDTO;
@@ -785,8 +785,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     		validateEnterpriseParam(regOrgSubRequest);
     		orgSub.setOrgname(regOrgSubRequest.getOrgName());
     		orgSub.setBuslince(regOrgSubRequest.getBuslince());
-    		orgSub.setConnect(regOrgSubRequest.getConnect());
-    		orgSub.setMobiletel(regOrgSubRequest.getMobileTel());
         	
     	}else if(regOrgSubRequest.getUserType()==TitanOrgEnum.UserType.PERSONAL.getKey()){
     		validatePersonalParam(regOrgSubRequest);
@@ -879,8 +877,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			updateOrgSubEntity.setOrgcode(titanOrgMapInfo.getOrgSubcode());
 			updateOrgSubEntity.setOrgname(organRegisterUpdateRequest.getOrgName());
 			updateOrgSubEntity.setBuslince(organRegisterUpdateRequest.getBuslince());
-			updateOrgSubEntity.setConnect(organRegisterUpdateRequest.getConnect());
-			updateOrgSubEntity.setMobiletel(organRegisterUpdateRequest.getMobileTel());
 			updateOrgSubEntity.setCertificatetype(NumberUtils.toInt(organRegisterUpdateRequest.getCertificateType()));
 	    	updateOrgSubEntity.setCertificatenumber(organRegisterUpdateRequest.getCertificateNumber());
 			orgSubDao.update(updateOrgSubEntity);

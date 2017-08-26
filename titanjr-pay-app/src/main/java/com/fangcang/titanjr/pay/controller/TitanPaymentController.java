@@ -591,7 +591,7 @@ public class TitanPaymentController extends BaseController {
 						.getLinePayType());
 
 		if (cashierItemTypeEnum == null) {
-			log.error("支付类型不存在");
+			log.error("支付类型不存在，LinePayType 不存在");
 			model.addAttribute(CommonConstant.RETURN_MSG,
 					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getKey());
 			return CommonConstant.GATE_WAY_PAYGE;

@@ -92,6 +92,8 @@
         <result property="certificateType" column="certificatetype"/>
         <result property="certificateNumber" column="certificatenumber"/>
          <result property="createTime" column="createTime"/>
+        <result property="mobileTel" column="mobiletel"/>
+        <result property="connect" column="connect"/>
         <result property="buslince" column="buslince"/>
         <result property="titanCode" column="titancode"/>
         <result property="lastUpdateDate" column="lastupdatedate"/>
@@ -174,6 +176,8 @@
 	      g.remark,
 	      g.certificatetype,
 	      g.certificatenumber,
+	      g.mobiletel,
+	      g.`connect`,
 	      g.buslince,
 	      g.titancode,
 	      g.createTime,
@@ -189,9 +193,7 @@
 	      c.checktime,
 	      b.merchantcode,
 	      b.merchantname,
-	      b.bindstatus,
-	      b.bindapplyphone,
-	      b.bindapplyname
+	      b.bindstatus 
         FROM
 	      t_tfs_org g
           LEFT JOIN t_tfs_orgbindinfo b ON g.userid = b.userid
@@ -217,12 +219,12 @@
     	<result property="buslince" column="buslince"/>
     	<result property="certificateType" column="certificatetype"/>
     	<result property="certificateNumber" column="certificateNumber"/>
+    	<result property="connect" column="connect"/>
+    	<result property="mobiletel" column="mobiletel"/>
     	<result property="subOrgCode" column="suborgcode"/>
     	<result property="subCertificateType" column="subcertificatetype"/>
     	<result property="subCertificateNumber" column="subcertificateNumber"/>
     	<result property="subOrgname" column="suborgname"/>
-    	<result property="subConnect" column="subconnect"/>
-    	<result property="subMobiletel" column="submobiletel"/>
     	<result property="subBuslince" column="subbuslince"/>
     	<result property="orgSubId" column="orgsubid"/>
     	<result property="checkuser" column="checkuser"/>
@@ -236,17 +238,17 @@
 			G.certificatenumber,
 			G.orgname,
 			G.buslince,
+			G.`connect` ,
+			G.mobiletel ,
 			S.orgcode suborgcode,
 			S.orgsubid ,
 			S.certificatetype subcertificatetype,
 			S.certificatenumber subcertificatenumber,
 			S.orgname suborgname,
 			S.buslince subbuslince,
-			S.`connect` subconnect,
-			S.mobiletel submobiletel,
 			U.tfsuserid,
 			U.userloginname,
-			U.`merchantcode`,
+			U.merchantcode,
 			C.resultkey ,
 			C.checkuser,
 			C.checktime
@@ -271,15 +273,15 @@
       constid, userid, productid, 
       usertype, 
       statusid, 
-      remark,certificatetype, 
+      remark,certificatetype, `connect`,mobiletel,
       certificatenumber, 
      buslince, titancode,regchannel,regsource,createTime)
     values (#{orgid,jdbcType=INTEGER}, #{orgcode,jdbcType=VARCHAR}, #{orgname,jdbcType=VARCHAR}, 
       #{constid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, #{productid,jdbcType=VARCHAR}, 
        #{usertype,jdbcType=INTEGER}, 
       #{statusid,jdbcType=INTEGER},
-      #{remark,jdbcType=VARCHAR},#{certificatetype,jdbcType=INTEGER}, 
-      #{certificatenumber,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR},#{certificatetype,jdbcType=INTEGER}, ,#{connect,jdbcType=VARCHAR},#{mobiletel,jdbcType=VARCHAR},
+      #{certificatenumber,jdbcType=VARCHAR} 
       #{buslince,jdbcType=VARCHAR}, 
       #{titancode,jdbcType=VARCHAR},#{regChannel},#{regSource},#{createTime})
   </insert>
@@ -317,7 +319,12 @@
             <if test="certificatenumber != null">
                 certificatenumber = #{certificatenumber,jdbcType=VARCHAR},
             </if>
-             
+            <if test="mobiletel != null">
+                mobiletel = #{mobiletel,jdbcType=VARCHAR},
+            </if>
+            <if test="connect != null">
+                `connect` = #{connect,jdbcType=VARCHAR},
+            </if>
             <if test="buslince != null">
                 buslince = #{buslince,jdbcType=VARCHAR},
             </if>

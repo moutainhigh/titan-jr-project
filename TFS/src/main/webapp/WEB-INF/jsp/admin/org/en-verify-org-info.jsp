@@ -11,7 +11,7 @@
 					<li class="fs16">公司名称：<span class="orange">${orgSubDTO.orgName }</span></li>
 					<li class="fs16">营业执照号：<span class="orange">${orgSubDTO.buslince }</span></li>
 					<li class="fs14">用户名：<span>${tfsLoginUsername}</span></li>
-					<li class="fs14">联系人信息：<span>${orgSubDTO.connect}  ${orgSubDTO.mobileTel}</span></li>
+					<li class="fs14">联系人信息：<span>${financialOrganDTO.connect}  ${financialOrganDTO.mobileTel}</span></li>
 					<li class="fs14">申请时间：<span><fmt:formatDate value="${financialOrganDTO.createTime }" pattern="yyyy-MM-dd HH:mm:ss"/></span></li>
 				</ul>
 			</div>

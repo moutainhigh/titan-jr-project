@@ -322,15 +322,15 @@ public class TitanTradeController extends BaseController {
 						TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
 
 				if (orderCreateResponse != null) {
-					log.error("orderCreateResponse "
-							+ orderCreateResponse.getReturnCode() + ":"
-							+ orderCreateResponse.getReturnMessage());
+					log.error("创建订单失败，错误信息： "+Tools.gsonToString(orderCreateResponse));
 
 					TitanMsgCodeEnum codeEnum = TitanMsgCodeEnum
 							.findTitanMsgCodeEnum(orderCreateResponse
 									.getReturnCode());
 					if (codeEnum != null) {
 						model.addAttribute("msg", codeEnum.getResMsg());
+					}else{
+						model.addAttribute("msg", orderCreateResponse.getReturnMessage());
 					}
 				}
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
@@ -829,7 +829,7 @@ public class TitanTradeController extends BaseController {
 					.getFinancialOrganDTO(transOrderDTO.getPayeemerchant());
 			if (null == financialOrganDTO) {
 
-				log.error("financialOrganDTO is null!");
+				log.error("收款方不存在， 收款方编码(Payeemerchant)是："+transOrderDTO.getPayeemerchant());
 
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.CASHIER_INSTITUTIONS_NOT_EXISTS
