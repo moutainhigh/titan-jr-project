@@ -16,6 +16,14 @@ public interface TitanOrgImageDao {
 	 * @throws DaoException
 	 */
 	int update(TitanOrgImage entity) throws DaoException;
+	
+	/***
+	 * 删除
+	 * @param param
+	 * @return
+	 * @throws DaoException
+	 */
+	int delete(TitanOrgImageParam param) throws DaoException;
 	/**
 	 * 通过机构编码批量更新
 	 * @param entity

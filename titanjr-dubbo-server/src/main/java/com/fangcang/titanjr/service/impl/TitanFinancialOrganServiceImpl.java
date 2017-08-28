@@ -435,11 +435,10 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     private void updateOrgImg(String imageId,String orgCode) throws GlobalServiceException{
     	if(StringUtils.isNotBlank(imageId)){
     		String[] imgArr = imageId.split(",");
-    		//1、把旧的照片更改为无效
-    		TitanOrgImage titanOrgImage = new TitanOrgImage();
-			titanOrgImage.setOrgcode(orgCode);
-			titanOrgImage.setIsactive(TitanOrgImageEnum.IsActive.NOT_ACTIVE.getKey());
-			titanOrgImageDao.updateIsActiveByOrgCode(titanOrgImage);
+    		//1、把旧的照片删除
+    		TitanOrgImageParam orgImageParam = new TitanOrgImageParam();
+    		orgImageParam.setOrgcode(orgCode);
+			titanOrgImageDao.delete(orgImageParam);
     		//2、新上传的图片置为有效
     		for(String temp: imgArr){
     			int tempImageId = 0;
