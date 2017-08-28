@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.dto.request;
 
-import com.fangcang.titanjr.common.enums.CashierDeskTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
 import com.fangcang.titanjr.dto.BaseRequestDTO;
 

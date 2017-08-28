@@ -23,8 +23,6 @@
       usertype, 
       certificatetype, 
       certificatenumber, 
-      mobiletel, 
-      `connect`, 
       buslince,
       createTime)
     values (#{orgcode,jdbcType=VARCHAR}, 
@@ -32,8 +30,6 @@
       #{usertype,jdbcType=INTEGER}, 
       #{certificatetype,jdbcType=INTEGER}, 
       #{certificatenumber,jdbcType=VARCHAR},
-       #{mobiletel,jdbcType=VARCHAR}, 
-      #{connect,jdbcType=VARCHAR}, 
       #{buslince,jdbcType=VARCHAR},
       #{createTime})
   </insert>
@@ -58,13 +54,7 @@
             <if test="buslince != null">
                 buslince = #{buslince,jdbcType=VARCHAR},
             </if>
-            
-            <if test="mobiletel != null">
-                mobiletel = #{mobiletel},
-            </if>
-            <if test="connect != null">
-                connect = #{connect},
-            </if>
+             
         </set>
         <where>
         	<if test="orgsubid != null"> orgsubid = #{orgsubid,jdbcType=INTEGER} </if>

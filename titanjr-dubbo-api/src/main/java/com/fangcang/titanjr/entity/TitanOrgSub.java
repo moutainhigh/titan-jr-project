@@ -25,14 +25,7 @@ public class TitanOrgSub implements java.io.Serializable {
 	 * 证件号，如：身份证，士官证
 	 */
 	private String certificatenumber;
-	/**
-	 * 联系手机
-	 */
-	private String mobiletel;
-	/***
-	 * 联系人
-	 */
-	private String connect;
+	 
 	/**
 	 * 营业执照号
 	 */
@@ -78,18 +71,7 @@ public class TitanOrgSub implements java.io.Serializable {
 	public void setCertificatenumber(String certificatenumber) {
 		this.certificatenumber = certificatenumber;
 	}
-	public String getMobiletel() {
-		return mobiletel;
-	}
-	public void setMobiletel(String mobiletel) {
-		this.mobiletel = mobiletel;
-	}
-	public String getConnect() {
-		return connect;
-	}
-	public void setConnect(String connect) {
-		this.connect = connect;
-	}
+	 
 	public String getBuslince() {
 		return buslince;
 	}

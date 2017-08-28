@@ -20,8 +20,6 @@ public class OrgSubDTO implements Serializable {
 	private Integer  userType;
 	private Integer certificateType;
     private String certificateNumber;
-    private String mobileTel;
-	private String  connect;
 	private String  buslince;
 	
 	public Integer getOrgSubId() {
@@ -62,18 +60,6 @@ public class OrgSubDTO implements Serializable {
 		this.certificateNumber = certificateNumber;
 	}
 	
-	public String getMobileTel() {
-		return mobileTel;
-	}
-	public void setMobileTel(String mobileTel) {
-		this.mobileTel = mobileTel;
-	}
-	public String getConnect() {
-		return connect;
-	}
-	public void setConnect(String connect) {
-		this.connect = connect;
-	}
 	public String getBuslince() {
 		return buslince;
 	}

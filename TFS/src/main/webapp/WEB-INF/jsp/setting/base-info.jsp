@@ -39,9 +39,9 @@
 				<div class="TFS_basicbottom en_info_wrap">
 					<ul>
 						<li class="fl"><span class="TFS_basname">公司名称：</span>${orgSubDTO.orgName }</li>
-						<li class="fl"><span class="TFS_basname fl">联系人：</span><div class="info_c"><h3>${orgSubDTO.connect }</h3><i class="J_mody blue curpo undl">修改</i></div><input type="text" style="display:none;" data-is-update="0" id="connect" class="text w_180"></li>
+						<li class="fl"><span class="TFS_basname fl">联系人：</span><div class="info_c"><h3>${financialOrganDTO.connect }</h3><i class="J_mody blue curpo undl">修改</i></div><input type="text" style="display:none;" data-is-update="0" id="connect" class="text w_180"></li>
 						<li class="fl"><span class="TFS_basname">营业执照：</span>${orgSubDTO.buslince }</li>
-						<li class="fl"><span class="TFS_basname fl">联系手机：</span><div class="info_c"><h3>${orgSubDTO.mobileTel }</h3><i class="J_mody blue curpo undl">修改</i></div><input type="text" style="display:none;" data-is-update="0" id="mobileTel" class="text w_180" ></li>
+						<li class="fl"><span class="TFS_basname fl">联系手机：</span><div class="info_c"><h3>${financialOrganDTO.mobileTel }</h3><i class="J_mody blue curpo undl">修改</i></div><input type="text" style="display:none;" data-is-update="0" id="mobileTel" class="text w_180" ></li>
 						<li class="fl"><span class="TFS_basname fl">上传工商执照注册照片：</span>
 						<p class="fl"><img width="130" height="90" class="cursor J_magnify" src="${small_img_10 }"></p></li>
 					</ul>

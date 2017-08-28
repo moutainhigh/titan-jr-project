@@ -322,15 +322,15 @@ public class TitanTradeController extends BaseController {
 						TitanMsgCodeEnum.UNEXPECTED_ERROR.getResMsg());
 
 				if (orderCreateResponse != null) {
-					log.error("orderCreateResponse "
-							+ orderCreateResponse.getReturnCode() + ":"
-							+ orderCreateResponse.getReturnMessage());
+					log.error("创建订单失败，错误信息： "+Tools.gsonToString(orderCreateResponse));
 
 					TitanMsgCodeEnum codeEnum = TitanMsgCodeEnum
 							.findTitanMsgCodeEnum(orderCreateResponse
 									.getReturnCode());
 					if (codeEnum != null) {
 						model.addAttribute("msg", codeEnum.getResMsg());
+					}else{
+						model.addAttribute("msg", orderCreateResponse.getReturnMessage());
 					}
 				}
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
@@ -829,7 +829,7 @@ public class TitanTradeController extends BaseController {
 					.getFinancialOrganDTO(transOrderDTO.getPayeemerchant());
 			if (null == financialOrganDTO) {
 
-				log.error("financialOrganDTO is null!");
+				log.error("收款方不存在， 收款方编码(Payeemerchant)是："+transOrderDTO.getPayeemerchant());
 
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.CASHIER_INSTITUTIONS_NOT_EXISTS
@@ -1044,39 +1044,22 @@ public class TitanTradeController extends BaseController {
 		if(StringUtil.isValidString(cashDeskData.getPayOrderNo())){
 			stringBuilder.append("&").append("payOrderNo=").append(cashDeskData.getPayOrderNo());
 		}
-//		if(StringUtil.isValidString(cashDeskData.getMerchantcode())){
-//			stringBuilder.append("&").append("merchantcode=").append(cashDeskData.getMerchantcode());
-//		}
+ 
 		if(StringUtil.isValidString(cashDeskData.getAmount())){
 			stringBuilder.append("&").append("amount=").append(cashDeskData.getAmount());
 		}
-//		if(StringUtil.isValidString(cashDeskData.getTitanCode())){
-//			stringBuilder.append("&").append("titanCode=").append(cashDeskData.getTitanCode());
-//		}
+ 
 		if(StringUtil.isValidString(cashDeskData.getFcUserid())){
 			stringBuilder.append("&").append("fcUserid=").append(cashDeskData.getFcUserid());
 		}
-//		if(StringUtil.isValidString(cashDeskData.getTfsUserId())){
-//			stringBuilder.append("&").append("tfsUserId=").append(cashDeskData.getTfsUserId());
-//		}
-//		if(StringUtil.isValidString(cashDeskData.getBalanceusable())){
-//			stringBuilder.append("&").append("balanceusable=").append(cashDeskData.getBalanceusable());
-//		}
+ 
 		if(StringUtil.isValidString(cashDeskData.getOperator())){
 			stringBuilder.append("&").append("operator=").append(cashDeskData.getOperator());
 		}
 		if(StringUtil.isValidString(cashDeskData.getPaySource())){
 			stringBuilder.append("&").append("paySource=").append(cashDeskData.getPaySource());
 		}
-//		if(StringUtil.isValidString(cashDeskData.getIsEscrowed())){
-//			stringBuilder.append("&").append("isEscrowed=").append(cashDeskData.getIsEscrowed());
-//		}
-//		if(StringUtil.isValidString(cashDeskData.getRecieveOrgCode())){
-//			stringBuilder.append("&").append("recieveOrgCode=").append(cashDeskData.getRecieveOrgCode());
-//		}
-//		if(StringUtil.isValidString(cashDeskData.getBusinessOrderCode())){
-//			stringBuilder.append("&").append("businessOrderCode=").append(cashDeskData.getBusinessOrderCode());
-//		}
+ 
 		if(cashDeskData.getDeskId()!=null&&cashDeskData.getDeskId()>0){
 			stringBuilder.append("&").append("deskId=").append(cashDeskData.getDeskId());
 		}

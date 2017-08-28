@@ -179,7 +179,7 @@ public class TitanTradeService {
 					TianConfirmBussOrderRsp.class);
 
 		} catch (Exception ex) {
-			log.error("", ex);
+			log.error("确认业务的订单信息异常", ex);
 		}
 
 		return null;

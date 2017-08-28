@@ -35,7 +35,16 @@ public class TitanCodeCenterServiceImpl implements TitanCodeCenterService {
 			throw new ServiceException("机构编码生成失败");
 		}
 	}
-
+	@Override
+	public String createOrgSubCode() {
+		Long orgId = titanOrgidDao.getNextOrgId();
+		if(orgId>0){
+			return CommonConstant.ORG_SUB_CODE_PREFIX + orgId;
+		}else {
+			throw new ServiceException("机构编码生成失败");
+		}
+	}
+	
 	@Override
 	public String createTitanCode() throws ServiceException {
 		Long code = titanCodeDao.getNextTitanCode();

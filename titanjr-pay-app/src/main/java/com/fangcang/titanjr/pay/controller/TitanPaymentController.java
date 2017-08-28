@@ -374,16 +374,16 @@ public class TitanPaymentController extends BaseController {
 	@ResponseBody
 	@RequestMapping("/showTitanPayPage")
 	public String showTitanPayPage(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest) throws Exception{
-		log.info("账户余额请求参数:"+JsonConversionTool.toJson(titanPaymentRequest));
+		log.info("账户余额支付请求参数:"+JsonConversionTool.toJson(titanPaymentRequest));
 		if(null == titanPaymentRequest || !StringUtil.isValidString(titanPaymentRequest.getTradeAmount())
 				||!StringUtil.isValidString(titanPaymentRequest.getPayOrderNo())){
-			log.error("参数不合法");
+			log.error("账户余额支付参数不合法，参数："+JsonConversionTool.toJson(titanPaymentRequest));
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
 		
 	    Map<String,String> validResult = this.validPaymentData(titanPaymentRequest);
         if(!CommonConstant.OPERATE_SUCCESS.equals(validResult.get(CommonConstant.RESULT))){//合规性验证
-        	log.error("支付验证失败"+JSONSerializer.toJSON(validResult));
+        	log.error("账户余额支付参数验证失败，验证参数:"+JsonConversionTool.toJson(titanPaymentRequest)+"验证结果："+JSONSerializer.toJSON(validResult));
         	Map<String, Object> map = new HashMap<String, Object>();
         	map.put("result", validResult.get(CommonConstant.RESULT));
     		map.put("resultMsg", validResult.get(CommonConstant.RETURN_MSG));
@@ -591,7 +591,7 @@ public class TitanPaymentController extends BaseController {
 						.getLinePayType());
 
 		if (cashierItemTypeEnum == null) {
-			log.error("支付类型不存在");
+			log.error("支付类型不存在，LinePayType 不存在");
 			model.addAttribute(CommonConstant.RETURN_MSG,
 					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getKey());
 			return CommonConstant.GATE_WAY_PAYGE;

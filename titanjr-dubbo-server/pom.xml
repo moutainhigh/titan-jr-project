@@ -230,7 +230,13 @@
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-         
+
+        <dependency>
+            <groupId>com.fangcang</groupId>
+            <artifactId>titanjr-facade-api</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
 	<profiles>
 		<profile>

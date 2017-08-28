@@ -117,6 +117,7 @@ public class TitanFinancialUpgradeServiceImpl implements TitanFinancialUpgradeSe
 			List<OrgBindInfoDTO> orgBindDTOList = titanFinancialOrganService.queryOrgBindInfoDTO(orgBindDTO);
 
 			if (CollectionUtils.isEmpty(orgBindDTOList) || orgBindDTOList.size() != 1) {
+				log.error("接收方机构不存在或不正确,接收方为："+titanOrderRequest.getRuserId());
 				response.putErrorResult("接收方机构不存在或不正确");
 				return response;
 			}

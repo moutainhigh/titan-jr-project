@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanOrgSubDao;
 import com.fangcang.titanjr.entity.TitanOrgSub;
 import com.fangcang.titanjr.entity.parameter.TitanOrgSubParam;
@@ -27,12 +28,8 @@ public class TitanOrgSubDaoImpl extends GenericDAOMyBatisImpl implements TitanOr
 
 	@Override
 	public TitanOrgSub getOneByOrgCode(String orgCode) throws DaoException {
-		
 		TitanOrgSubParam param = new TitanOrgSubParam();
 		param.setOrgcode(orgCode);
-//		if(param.getIsactive()==null){
-//			param.setIsactive(1);//默认查询有效的数据
-//		}
 		try {
 			List<TitanOrgSub> list = super.selectList("com.fangcang.titanjr.dao.TitanOrgSubDao.queryList", param);
 			if(CollectionUtils.isNotEmpty(list)&&list.size()==1){
@@ -45,15 +42,32 @@ public class TitanOrgSubDaoImpl extends GenericDAOMyBatisImpl implements TitanOr
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}
-		
+	}
+	
+	@Override
+	public TitanOrgSub selectOne(TitanOrgSubParam condition) throws DaoException {
+		try {
+			List<TitanOrgSub> list = super.selectList("com.fangcang.titanjr.dao.TitanOrgSubDao.queryList", condition);
+			if(CollectionUtils.isNotEmpty(list)&&list.size()==1){
+				return list.get(0);
+			}else if(list.size()>1){
+				LOG.error("子机构查询存在多条记录，违背了机构唯一性原则，查询条件TitanOrgSubParam："+Tools.gsonToString(condition));
+				return null;
+			}
+			return null;
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
 	}
 
 	@Override
 	public int update(TitanOrgSub entity) throws DaoException {
+		try {
+			return super.updateEntity("com.fangcang.titanjr.dao.TitanOrgSubDao.updateEntity", entity);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
 		
-		
-		return 0;
 	}
-	
 
 }

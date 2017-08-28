@@ -5,8 +5,8 @@
 	<td class="tdl"><span class="pl12">${orgCheckDTO.userloginname }</span></td>
 	<td class="tdl"><span class="textleng" style="max-width:200px;" title="${orgCheckDTO.subOrgname }">${orgCheckDTO.subOrgname }</span></td>
 	<td class="tdl">${orgCheckDTO.subBuslince }</td>
-	<td class="tdl">${orgCheckDTO.subConnect }</td>
-	<td class="tdl">${orgCheckDTO.subMobiletel }</td>
+	<td class="tdl">${orgCheckDTO.connect }</td>
+	<td class="tdl">${orgCheckDTO.mobiletel }</td>
 	<td class="tdl">${orgCheckDTO.checkuser }</td>
 	<td class="tdl">
 		<c:if test="${orgCheckDTO.resultkey=='FT'}"><span class="c_red">待审核</span></c:if>
