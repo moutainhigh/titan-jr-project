@@ -212,11 +212,11 @@ public class CommonConstant {
     public static final String REDIS_KEY_PREFIX_TITANJR = "TITANJR";
     
     /**
-     * 冻结在收款方
+     * 冻结在付款方
      */
     public static final String FREEZE_PAYER = "1";
     /**
-     * 冻结在付款方
+     * 冻结在收款方
      */
     public static final String FREEZE_PAYEE = "2";
     

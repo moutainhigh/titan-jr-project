@@ -199,7 +199,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
                 }else if(CommonConstant.PERSONAL.equals(titanBankcard.getAccountproperty())){
                 	titanBankcard.setStatus(BindCardStatus.BIND_SUCCESS.status); //对私绑卡成功就直接记录成功
                 }else{
-                	log.error("绑卡状态异常  accountProperty：" + titanBankcard.getAccountproperty());
+                	log.error("绑卡类型错误  accountProperty：" + titanBankcard.getAccountproperty());
                 }
         	}else{
         		titanBankcard.setStatus(BindCardStatus.BIND_FAIL.status);

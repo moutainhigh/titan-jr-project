@@ -1141,6 +1141,46 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		}
 		return baseResponseDTO;
 	}
+	
+	
+	@Override
+	public BaseResponseDTO reFreezeOrder(TransOrderDTO transOrderDTO) {
+		
+		log.info("开始重新冻结订单");
+		BaseResponseDTO baseResponseDTO = new BaseResponseDTO();
+		
+		//判断该解冻是否成功
+		List<FundFreezeDTO> fundFreezeDTOList = titanFundFreezereqDao.queryFundFreezeDTOByOrderNo(transOrderDTO.getOrderid());
+		if(fundFreezeDTOList ==null || fundFreezeDTOList.size()<1){
+			log.error("没有冻结或者解冻记录");
+			baseResponseDTO.putErrorResult("没有冻结或者解冻记录");
+			return baseResponseDTO;
+		}
+		
+		FundFreezeDTO fundFreezeDTO = fundFreezeDTOList.get(0);
+		RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
+		rechargeResultConfirmRequest.setPayAmount(String.valueOf(transOrderDTO.getTradeamount()));
+		rechargeResultConfirmRequest.setUserid(transOrderDTO.getUserid());
+		rechargeResultConfirmRequest.setOrderNo(transOrderDTO.getOrderid());
+		rechargeResultConfirmRequest.setFreezereqId(fundFreezeDTO.getFreezereqId());
+		try {
+			FreezeAccountBalanceResponse freezeAccountBalanceResponse = this.freezeAccountBalance(rechargeResultConfirmRequest);
+		    if(!freezeAccountBalanceResponse.isFreezeSuccess()){
+		    	log.error("重新冻结失败 ：" + JSONSerializer.toJSON(freezeAccountBalanceResponse));
+		    	titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.AccountReceive_ReFreezePayer_Fail, JSONSerializer.toJSON(rechargeResultConfirmRequest).toString());
+		    	baseResponseDTO.putErrorResult("重新冻结失败：" + freezeAccountBalanceResponse.getReturnMessage());
+		    	return baseResponseDTO;
+		    }
+		} catch (Exception e) {
+			log.error("重新冻结异常",e);
+			baseResponseDTO.putErrorResult("重新冻结异常");
+			return baseResponseDTO; 
+		}
+		
+		log.info("重新冻结订单成功");
+		baseResponseDTO.putSuccess();
+		return baseResponseDTO;
+	}
 
 
 	public TitanAccountDao getTitanAccountDao() {

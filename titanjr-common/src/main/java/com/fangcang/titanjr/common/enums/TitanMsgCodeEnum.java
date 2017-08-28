@@ -135,6 +135,8 @@ public enum TitanMsgCodeEnum {
     
     ISRECEIVE_OPERATETYPE_NOTMATCH(110100051,"是否收款和收款操作方式不匹配"),
     
+    UPDATE_ORDERSTATUS_FAIL(110100052,"更新订单状态失败"),
+    
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");
 	

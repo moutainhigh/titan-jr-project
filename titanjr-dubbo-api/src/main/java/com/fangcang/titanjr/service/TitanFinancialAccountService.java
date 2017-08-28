@@ -4,6 +4,7 @@ import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.CityInfoDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 
@@ -154,6 +155,16 @@ public interface TitanFinancialAccountService {
 	 * @return BaseResponse
 	 */
 	public BaseResponseDTO updateFreezeOrder(UpdateFreezeOrderRequest updateFreezeOrderRequest);
+	
+	
+	/**
+	 * 订单解冻之后转账失败，重新冻结操作
+	 * @author Jerry
+	 * @date 2017年8月28日 上午11:54:07
+	 * @param transOrderDTO
+	 * @return 
+	 */
+	public BaseResponseDTO reFreezeOrder(TransOrderDTO transOrderDTO);
 	
 	
 }

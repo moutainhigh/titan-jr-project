@@ -14,11 +14,10 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONSerializer;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fangcang.titanjr.common.bean.CommRes;
 import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
+import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
@@ -34,6 +35,7 @@ import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
@@ -55,6 +57,7 @@ import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialRefundService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 import com.wordnik.swagger.annotations.Api;
@@ -86,11 +89,18 @@ public class JRAccountController {
 	@Resource
 	private TitanFinancialRefundService titanFinancialRefundService;
 	
+	@Resource
+    private TitanFinancialUtilService titanFinancialUtilService;
 	
+	
+	/**
+	 * 资金冻结在付款方的时候，供应商在线收款操作
+	 * @author Jerry
+	 * @date 2017年8月28日 上午11:33:23
+	 */
 	@RequestMapping(value = "/account/payeeAccountReceive", method = RequestMethod.POST)
     @ApiOperation(value = "供应商在线收款", produces = "application/json", httpMethod = "POST",
             response = BaseResponse.class, notes = "收款方收款操作")
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public BaseResponse payeeAccountReceive(@ApiParam(required = true, name = "jrAccountReceiveRequest", 
     	value = "收款操作请求") @RequestBody JRAccountReceiveRequest jrAccountReceiveRequest, HttpServletRequest request) {
 		
@@ -254,7 +264,7 @@ public class JRAccountController {
 	 * @author Jerry
 	 * @date 2017年8月14日 下午4:29:32
 	 */
-	private BaseResponse unfreezePayer(TransOrderDTO transOrderDTO, boolean isReceive) throws Exception{
+	private BaseResponse unfreezePayer(TransOrderDTO transOrderDTO, boolean isReceive) {
 		
 		BaseResponse baseResponse = new BaseResponse();
 		baseResponse.putSuccess();
@@ -296,6 +306,9 @@ public class JRAccountController {
 		BaseResponse baseResponse = new BaseResponse();
 		baseResponse.putSuccess();
 		
+		TransOrderDTO transOrder = new TransOrderDTO();
+		transOrder.setOrderid(transOrderDTO.getOrderid());
+		
 		TransferRequest transferRequest = new TransferRequest();
 		transferRequest.setCreator(transOrderDTO.getCreator());
 		transferRequest.setUserid(transOrderDTO.getUserid()); // 转出的用户
@@ -310,12 +323,26 @@ public class JRAccountController {
 		log.info("begin to transfer:" + JsonConversionTool.toJson(transferRequest));
 		TransferResponse transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
     	log.info("the result of transfer :" + JsonConversionTool.toJson(transferResponse)+", orderid:"+transferRequest.getOrderid());
+    	
     	if(!transferResponse.isResult()){
     		log.error("转账失败，orderid:" + transOrderDTO.getOrderid());
-			baseResponse.putErrorResult(String.valueOf(TitanMsgCodeEnum.TRANSFER_FAIL.getCode()), 
+    		transOrder.setStatusid(OrderStatusEnum.ORDER_FAIL.getStatus());
+    		BaseResponseDTO baseResponseDTO = titanFinancialAccountService.reFreezeOrder(transOrderDTO);//转账失败后重新冻结付款方
+			if(baseResponseDTO.isResult()){
+				transOrder.setFreezeAt(CommonConstant.FREEZE_PAYER);
+				transOrder.setStatusid(OrderStatusEnum.FREEZE_SUCCESS.getStatus());
+			}
+    		baseResponse.putErrorResult(String.valueOf(TitanMsgCodeEnum.TRANSFER_FAIL.getCode()), 
 					TitanMsgCodeEnum.TRANSFER_FAIL.getKey());
-			return baseResponse;
+    	}else{
+    		transOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
     	}
+    	
+    	//更新订单状态
+		if(!titanOrderService.updateTransOrder(transOrder)){
+			log.error("账户收款，转账后修改订单状态失败");
+			titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.AccountReceive_Transfer_UpdateOrder_Fail, JSONSerializer.toJSON(transOrder).toString());
+		}
 		
 		return baseResponse;
 	}
@@ -327,10 +354,13 @@ public class JRAccountController {
 	 * @throws Exception 
 	 * @date 2017年8月14日 下午4:30:23
 	 */
-	private BaseResponse freezePayee(TransOrderDTO transOrderDTO) throws Exception{
+	private BaseResponse freezePayee(TransOrderDTO transOrderDTO) throws Exception {
 		
 		BaseResponse baseResponse = new BaseResponse();
 		baseResponse.putSuccess();
+		
+		TransOrderDTO transOrder = new TransOrderDTO();
+		transOrder.setOrderid(transOrderDTO.getOrderid());
 		
 		RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
 		rechargeResultConfirmRequest.setOrderNo(transOrderDTO.getOrderid());
@@ -340,18 +370,24 @@ public class JRAccountController {
 		FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService
 				.freezeAccountBalance(rechargeResultConfirmRequest);
 		if (!freezeAccountBalanceResponse.isFreezeSuccess()) {
+			
 			log.error("冻结收款方资金失败，orderid:" + transOrderDTO.getOrderid());
 			baseResponse.putErrorResult(String.valueOf(TitanMsgCodeEnum.FREEZEORDER_FAIL.getCode()), 
 					TitanMsgCodeEnum.FREEZEORDER_FAIL.getKey());
-			return baseResponse;
+			titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.AccountReceive_FreezePayee_Fail, JSONSerializer.toJSON(rechargeResultConfirmRequest).toString());
+			transOrder.setStatusid(OrderStatusEnum.FREEZE_FAIL.getStatus());
+			
+		}else{
+			
+			transOrder.setFreezeAt(CommonConstant.FREEZE_PAYEE);
+			transOrder.setStatusid(OrderStatusEnum.FREEZE_SUCCESS.getStatus());
 		}
 		
 		//更新订单状态
-		TransOrderDTO transOrder = new TransOrderDTO();
-		transOrder.setOrderid(transOrderDTO.getOrderid());
-		transOrder.setFreezeAt(CommonConstant.FREEZE_PAYEE);
-		transOrder.setStatusid(OrderStatusEnum.FREEZE_SUCCESS.getStatus());
-		titanOrderService.updateTransOrder(transOrder);
+		if(!titanOrderService.updateTransOrder(transOrder)){
+			log.error("账户收款，冻结收款方后修改订单状态失败");
+			titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.AccountReceive_FreezePayee_UpdateOrder_Fail, JSONSerializer.toJSON(transOrder).toString());
+		}
 		
 		return baseResponse;
 	}
