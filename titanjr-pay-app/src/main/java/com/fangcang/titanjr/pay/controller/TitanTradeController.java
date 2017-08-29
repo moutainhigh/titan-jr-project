@@ -210,7 +210,7 @@ public class TitanTradeController extends BaseController {
 			}
 
 			// 解密参数，其中对外接口调用，每个商家有自己的公钥和私钥，对内的对接只有一套公钥和私钥
-			String deInfo = null;
+			String decryptOrderInfo = null;
 			TitanOpenOrgDTO openOrgDTO = null;
 			if (StringUtil.isValidString(ruserId)) {// ruserId标识对接方的身份，根据ruserId获取私钥
 				openOrgDTO = financialTradeService.queryOpenOrg(ruserId);
@@ -221,18 +221,18 @@ public class TitanTradeController extends BaseController {
 					return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 				}
 
-				deInfo = RSADecryptString.decryptString(
+				decryptOrderInfo = RSADecryptString.decryptString(
 						orderInfo,
 						new BigInteger(Base64Helper.decode(openOrgDTO
 								.getPrivatekey())).toString(16));
 
 			} else {
 
-				deInfo = RSADecryptString.decryptString(orderInfo,
+				decryptOrderInfo = RSADecryptString.decryptString(orderInfo,
 						TitanConstantDefine.PRIVATE_KEY);
 			}
 
-			if (!StringUtil.isValidString(deInfo)) {
+			if (!StringUtil.isValidString(decryptOrderInfo)) {
 				log.error("validate user identity decrypt fail.");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.AUTHENTITCATION_FAILED.getResMsg());
@@ -242,23 +242,23 @@ public class TitanTradeController extends BaseController {
 			log.info("decrypt orderInfo is ok .");
 
 			// 解析订单信息
-			TitanOrderRequest dto = JsonConversionTool.toObject(deInfo,
+			TitanOrderRequest orderRequest = JsonConversionTool.toObject(decryptOrderInfo,
 					TitanOrderRequest.class);
 
 			log.info("the titanOrderRequest of info is:"
-					+ JSONSerializer.toJSON(dto));
+					+ JSONSerializer.toJSON(orderRequest));
 
-			if (dto == null) {
+			if (orderRequest == null) {
 				log.error("validate user identity decrypt fail.");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.AUTHENTITCATION_FAILED.getResMsg());
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
-			if(dto.getVersion() == null || "".equals(dto.getVersion())){
-				dto.setVersion(TitanjrVersionEnum.VERSION_1.getKey());//默认老版本
+			if(orderRequest.getVersion() == null || "".equals(orderRequest.getVersion())){
+				orderRequest.setVersion(TitanjrVersionEnum.VERSION_1.getKey());//默认老版本
 			}
-			if(!TitanjrVersionEnum.isExist(dto.getVersion())){
-				log.error("titanjrVersion error");
+			if(!TitanjrVersionEnum.isExist(orderRequest.getVersion())){
+				log.error("titanjrVersion error,version:"+orderRequest.getVersion());
 				model.addAttribute("msg", TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getResMsg());
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
@@ -266,8 +266,8 @@ public class TitanTradeController extends BaseController {
 			log.info("auth user is ok .");
 
 			// 校验参数以及检查用户权限
-			if(TitanjrVersionEnum.isVersion1(dto.getVersion())){
-				if (!checkOrderInfo(dto)) {
+			if(TitanjrVersionEnum.isVersion1(orderRequest.getVersion())){
+				if (!checkOrderInfo(orderRequest)) {
 					log.error("orderInfo check fail!");
 					model.addAttribute("msg",
 							TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED
@@ -276,7 +276,7 @@ public class TitanTradeController extends BaseController {
 				}
 				log.info("check order info is ok");
 				
-				if (!financialTradeService.checkPermission(dto)) {
+				if (!financialTradeService.checkPermission(orderRequest)) {
 					log.error("checkPermission is fail.");
 					model.addAttribute("msg",
 							TitanMsgCodeEnum.PERMISSION_CHECK_FAILED.getResMsg());
@@ -285,7 +285,7 @@ public class TitanTradeController extends BaseController {
 				log.info("check permission is ok");
 			}else{
 				//金融升级后不在这里检查权限，在设置收付款信息那里
-				if (!TitanjrUpgradeHander.checkOrderInfo(dto)) {
+				if (!TitanjrUpgradeHander.checkOrderInfo(orderRequest)) {
 					log.error("orderInfo check fail!");
 					model.addAttribute("msg",
 							TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED
@@ -296,7 +296,7 @@ public class TitanTradeController extends BaseController {
 			}
 			
 			// 确认业务订单信息
-			if (!financialTradeService.checkConfirmBussOrder(dto)) {
+			if (!financialTradeService.checkConfirmBussOrder(orderRequest)) {
 				log.error("checkConfirmBussOrder is fail.");
 				model.addAttribute("msg",
 						TitanMsgCodeEnum.BUSS_ORDER_CHANGE_CHECK_FAILED
@@ -306,13 +306,13 @@ public class TitanTradeController extends BaseController {
 
 			log.info("confirm buss order is ok");
 
-			dto.setBusinessInfo(busMap);
+			orderRequest.setBusinessInfo(busMap);
 
 			log.info("begin sava titan trans order ...");
 
 			// 保存金融订单
 			TransOrderCreateResponse orderCreateResponse = titanFinancialTradeService
-					.saveTitanTransOrder(dto);
+					.saveTitanTransOrder(orderRequest);
 
 			if (orderCreateResponse == null
 					|| (!orderCreateResponse.isResult())
@@ -341,10 +341,10 @@ public class TitanTradeController extends BaseController {
 
 			String url = "";
 			businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.SaveTitanTransOrder, OrderKindEnum.TransOrderId, orderCreateResponse.getTransId()+""));
-			if (dto.getPayerType().equals(PayerTypeEnum.WITHDRAW.getKey())) {
+			if (orderRequest.getPayerType().equals(PayerTypeEnum.WITHDRAW.getKey())) {
 				String fcUserId = "";
 				String tfsUserId = "";
-				Map<String, String> businessInfoMap = dto.getBusinessInfo();
+				Map<String, String> businessInfoMap = orderRequest.getBusinessInfo();
 				if (businessInfoMap != null) {
 					fcUserId = businessInfoMap.get("fcUserId") == null ? "" : businessInfoMap
 							.get("fcUserId");
@@ -352,7 +352,7 @@ public class TitanTradeController extends BaseController {
 							.get("tfsUserId");
 				}
 				url = "/withdraw/account-withdraw.action?userId="
-						+ dto.getUserId() + "&tfsUserId=" + tfsUserId
+						+ orderRequest.getUserId() + "&tfsUserId=" + tfsUserId
 						+ "&fcUserId=" + fcUserId + "&orderNo="
 						+ orderCreateResponse.getOrderNo();
 			} else {
@@ -362,16 +362,16 @@ public class TitanTradeController extends BaseController {
 						.getOrderNo());
 				paymentUrlRequest.setIsEscrowed(EscrowedEnum.ESCROWED_PAYMENT
 						.getKey());
-				paymentUrlRequest.setPaySource(dto.getPayerType());
-				if(dto.getPayerType().equals(PayerTypeEnum.SUPPLY_FINACIAL.key)){
-					paymentUrlRequest.setFcUserid(dto.getUserId());
+				paymentUrlRequest.setPaySource(orderRequest.getPayerType());
+				if(orderRequest.getPayerType().equals(PayerTypeEnum.SUPPLY_FINACIAL.key)){
+					paymentUrlRequest.setFcUserid(orderRequest.getUserId());
 				}
-				if(TitanjrVersionEnum.isVersion2(dto.getVersion())){
-					paymentUrlRequest.setFcUserid(dto.getUserId());//金融二期，userId只能是第三方用户ID
+				if(TitanjrVersionEnum.isVersion2(orderRequest.getVersion())){
+					paymentUrlRequest.setFcUserid(orderRequest.getUserId());//金融二期，userId只能是第三方用户ID
 					paymentUrlRequest.setCanAccountBalance(orderCreateResponse.isCanAccountBalance());//是否有余额支付权限
-					paymentUrlRequest.setPartnerOrgCode(dto.getPartnerOrgCode());//第三方机构编码
+					paymentUrlRequest.setPartnerOrgCode(orderRequest.getPartnerOrgCode());//第三方机构编码
 				}
-				paymentUrlRequest.setVersion(dto.getVersion());
+				paymentUrlRequest.setVersion(orderRequest.getVersion());
 				PaymentUrlResponse response = titanFinancialUtilService
 						.getPaymentUrl(paymentUrlRequest);
 
