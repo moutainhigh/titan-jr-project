@@ -343,7 +343,7 @@
                	  loanorderno=#{loanOrderNo},
             </if>
             <if test=" payerType !=null">
-            	payertype =#{payerType}
+            	payertype =#{payerType},
             </if>
             <if test=" escrowedDate !=null">
             	escrowedDate =#{escrowedDate}
