@@ -2084,7 +2084,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					return null;
 				}
 			}else{
-				orderCreateResponse.putErrorResult("订单收付款信息错误");
+				orderCreateResponse.putErrorResult(localOrderResponse.getReturnMessage());
 				return orderCreateResponse;
 			}
 			

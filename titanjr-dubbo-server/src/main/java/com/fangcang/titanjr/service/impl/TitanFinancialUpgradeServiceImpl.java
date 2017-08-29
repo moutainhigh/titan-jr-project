@@ -81,16 +81,20 @@ public class TitanFinancialUpgradeServiceImpl implements TitanFinancialUpgradeSe
 			titanTransOrder.setPayermerchant(orgBindInfo.getOrgcode());
 			titanTransOrder.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
 			
+			//校验用户信息
 			if(StringUtil.isValidString(titanOrderRequest.getUserId())){
+				
 				TitanUser titanUser = checkUserInfo(titanOrderRequest.getUserId());
-				//校验余额支付权限
-				if(titanUser != null){
-					CheckPermissionResponse permissionResponse = isCanAccountBalance(
-							String.valueOf(titanUser.getTfsuserid()));
-					response.setCanAccountBalance(permissionResponse.isPermission());
-				}else{
-					response.setCanAccountBalance(false);
+				if(titanUser == null){
+					log.error("付款方用户不存在，根据userId查询金融用户失败");
+					response.putErrorResult("付款方用户不存在");
+					return response;
 				}
+				//余额支付权限
+				CheckPermissionResponse permissionResponse = isCanAccountBalance(
+						String.valueOf(titanUser.getTfsuserid()));
+				response.setCanAccountBalance(permissionResponse.isPermission());
+				
 			}else{
 				response.setCanAccountBalance(false);
 			}

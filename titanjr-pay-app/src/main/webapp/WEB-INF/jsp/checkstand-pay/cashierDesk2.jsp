@@ -108,7 +108,7 @@
                      <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem">
                         <c:if test="${deskItem.itemType == 4}">
                             <input type="hidden" id="canUseAccBalance" value="1">
-                            <c:if test="${ not empty cashDeskData.balanceusable and cashDeskData.canAccountBalance eq true }">
+                            <c:if test="${ not empty cashDeskData.balanceusable and cashDeskData.canAccountBalance ne true }">
                             <li class="p_l27" id="useBalanceCheck">
                                 <label class="f_ui-checkbox-c3 p_r10">
                                     <input type="checkbox" checked="" id="d_checkbox" onclick="checkedBalance()" ><i ></i>

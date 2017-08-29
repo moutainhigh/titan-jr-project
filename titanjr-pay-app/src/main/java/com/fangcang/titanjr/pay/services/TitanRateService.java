@@ -42,7 +42,7 @@ public class TitanRateService {
 	 * @param computeReq
 	 */
 	public TitanRateComputeRsp rateCompute(TitanRateComputeReq computeReq) {
-		TitanRateComputeRsp computeRsp = null;
+		TitanRateComputeRsp computeRsp = new TitanRateComputeRsp();
 
 		RateConfigRequest req = new RateConfigRequest();
 		req.setUserId(computeReq.getUserId());
@@ -53,8 +53,6 @@ public class TitanRateService {
 		if (rateConfigResponse != null
 				&& rateConfigResponse.getRateInfoList() != null
 				&& rateConfigResponse.getRateInfoList().size() > 0) {
-			
-			computeRsp = new TitanRateComputeRsp();
 
 			TitanRateDto dto = rateConfigResponse.getRateInfoList().get(0);
 			computeRsp.setExecutionRate("" + dto.getExecutionrate());
