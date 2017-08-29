@@ -132,13 +132,13 @@
             <tr>
                 <td class="tdr">付款方机构编码</td>
                 <td>
-                    <input type="text" value="M10036454" id="partnerOrgCode" name="userId"/>
+                    <input type="text" value="M10036454" id="partnerOrgCode" name="partnerOrgCode"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">付款方金融机构编码</td>
                 <td>
-                    <input type="text" value="TJM60000018" id="orgCode" name="userId"/>
+                    <input type="text" value="TJM60000018" id="orgCode" name="orgCode"/>
                 </td>
             </tr>
             <tr>
