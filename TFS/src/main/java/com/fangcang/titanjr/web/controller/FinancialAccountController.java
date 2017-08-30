@@ -285,7 +285,12 @@ public class FinancialAccountController extends BaseController {
 
         return "account-overview/freeze-detail";
     }
-
+    /***
+     * 查询绑卡状态
+     * @param request
+     * @param model
+     * @return
+     */
     @ResponseBody
     @RequestMapping("validate_person_Enterprise")
     public String validatePersonOrEnterprise(HttpServletRequest request, Model model){

@@ -743,6 +743,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 				if(StringUtil.isValidString(permissionRequest.getFcuserid())){
 					TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
 					titanUserBindInfoDTO.setFcuserid(Long.parseLong(permissionRequest.getFcuserid()));
+					titanUserBindInfoDTO.setMerchantcode(permissionRequest.getMerchantcode());
 					titanUserBindInfoDTO = this.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
 				    if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid()!=null){
 				    	permissionRequest.setTfsuserid(titanUserBindInfoDTO.getTfsuserid().toString());
@@ -1018,10 +1019,12 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		try{
 			TitanUserBindInfo titanUserBindInfo = new TitanUserBindInfo();
 			titanUserBindInfo.setFcuserid(titanUserBindInfoDTO.getFcuserid());
-			if(titanUserBindInfoDTO.getCooptype()==null){
-				titanUserBindInfo.setCooptype(CoopTypeEnum.SAAS.getKey());
-			}else{
+			if(StringUtil.isValidString(titanUserBindInfoDTO.getMerchantcode())){//根据商家编码查
+				titanUserBindInfo.setMerchantcode(titanUserBindInfoDTO.getMerchantcode());
+			}else if(titanUserBindInfoDTO.getCooptype()!=null){//根据合作方类型查
 				titanUserBindInfo.setCooptype(titanUserBindInfoDTO.getCooptype());
+			}else{//无商家编码和合作方类型，则默认查SAAS
+				titanUserBindInfo.setCooptype(CoopTypeEnum.SAAS.getKey());
 			}
 			
 			titanUserBindInfo.setTfsuserid(titanUserBindInfoDTO.getTfsuserid());

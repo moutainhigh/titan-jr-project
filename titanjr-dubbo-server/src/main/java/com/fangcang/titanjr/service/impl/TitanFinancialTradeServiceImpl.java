@@ -2067,26 +2067,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 								.getResMsg());
 				return orderCreateResponse;
 			}
-			//--判断付款方和收款方是否发生了变化--luoqinglong-不对TitanTransOrder设置
-			TitanTransOrder newTransOrder = new TitanTransOrder();
-			TransOrderCreateResponse localOrderResponse = new TransOrderCreateResponse();
-			if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanOrderRequest.getVersion())){
-				localOrderResponse = this.setBaseUserInfo(titanOrderRequest, newTransOrder);
-			}else{
-				localOrderResponse = titanFinancialUpgradeService.setBaseUserInfo(titanOrderRequest, newTransOrder);
-				orderCreateResponse.setCanAccountBalance(localOrderResponse.isCanAccountBalance());
-			}
-			if(localOrderResponse.isResult()){
-				//收款和付款方任意一方绑定关系变化，则重新下单
-				if(isChange(transOrderDTO.getPayeemerchant(), newTransOrder.getPayeemerchant())||isChange(transOrderDTO.getPayermerchant(), newTransOrder.getPayermerchant())){
-					updateOrderNoEffect(transOrderRequest.getTransid());
-					log.info("订单orderid:"+transOrderDTO.getOrderid()+",订单Payorderno:"+transOrderDTO.getPayorderno()+",订单的收付款双方发生改变,需要重新生成订单。旧的收款方Payeemerchant："+transOrderDTO.getPayeemerchant()+",Payermerchant:"+transOrderDTO.getPayermerchant()+"，新收款方Payeemerchant:"+newTransOrder.getPayeemerchant()+",Payermerchant:"+newTransOrder.getPayermerchant());
-					return null;
-				}
-			}else{
-				orderCreateResponse.putErrorResult(localOrderResponse.getReturnMessage());
-				return orderCreateResponse;
-			}
 			
 			if (OrderStatusEnum.isPaySuccess(transOrderDTO
 					.getStatusid())) {
@@ -2108,6 +2088,26 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				} catch (Exception e) {
 					log.error("回调失败");
 				}
+				return orderCreateResponse;
+			}
+			//--判断付款方和收款方是否发生了变化--luoqinglong-不对TitanTransOrder设置
+			TitanTransOrder newTransOrder = new TitanTransOrder();
+			TransOrderCreateResponse localOrderResponse = new TransOrderCreateResponse();
+			if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanOrderRequest.getVersion())){
+				localOrderResponse = this.setBaseUserInfo(titanOrderRequest, newTransOrder);
+			}else{
+				localOrderResponse = titanFinancialUpgradeService.setBaseUserInfo(titanOrderRequest, newTransOrder);
+				orderCreateResponse.setCanAccountBalance(localOrderResponse.isCanAccountBalance());
+			}
+			if(localOrderResponse.isResult()){
+				//收款和付款方任意一方绑定关系变化，则重新下单
+				if(isChange(transOrderDTO.getPayeemerchant(), newTransOrder.getPayeemerchant())||isChange(transOrderDTO.getPayermerchant(), newTransOrder.getPayermerchant())){
+					updateOrderNoEffect(transOrderRequest.getTransid());
+					log.info("订单orderid:"+transOrderDTO.getOrderid()+",订单Payorderno:"+transOrderDTO.getPayorderno()+",订单的收付款双方发生改变,需要重新生成订单。旧的收款方Payeemerchant："+transOrderDTO.getPayeemerchant()+",Payermerchant:"+transOrderDTO.getPayermerchant()+"，新收款方Payeemerchant:"+newTransOrder.getPayeemerchant()+",Payermerchant:"+newTransOrder.getPayermerchant());
+					return null;
+				}
+			}else{
+				orderCreateResponse.putErrorResult(localOrderResponse.getReturnMessage());
 				return orderCreateResponse;
 			}
 			orderCreateResponse.setTransId(transOrderDTO.getTransid());

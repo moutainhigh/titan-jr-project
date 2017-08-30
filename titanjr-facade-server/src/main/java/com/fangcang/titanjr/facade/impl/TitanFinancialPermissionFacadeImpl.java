@@ -62,6 +62,7 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
         try {
             PermissionRequest permissionRequest = new PermissionRequest();
             permissionRequest.setFcuserid(checkPermissionRequest.getFcuserid());
+            permissionRequest.setMerchantcode(checkPermissionRequest.getMerchantcode());
             permissionRequest.setPermission(checkPermissionRequest.getPermission());
             CheckPermissionResponse checkResponse = titanFinancialUserService.checkUserPermission(permissionRequest);
             log.info("验证该用户是否有支付权限结果:"+JSONSerializer.toJSON(checkResponse));
