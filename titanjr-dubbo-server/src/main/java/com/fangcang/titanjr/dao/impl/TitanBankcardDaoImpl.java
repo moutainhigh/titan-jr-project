@@ -31,7 +31,9 @@ public class TitanBankcardDaoImpl extends GenericDAOMyBatisImpl implements Titan
 	@Override
 	public int insert(TitanBankcard entity) throws DaoException {
 		try {
-			return super.insertEntity("com.fangcang.titanjr.dao.TitanBankcardDao.insertEntity", entity);
+			
+			super.insertEntity("com.fangcang.titanjr.dao.TitanBankcardDao.insertEntity", entity);
+			return entity.getBankcardid();
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}

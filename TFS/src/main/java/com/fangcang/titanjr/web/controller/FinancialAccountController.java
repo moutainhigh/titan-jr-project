@@ -38,7 +38,6 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
-import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.ForgetPayPassword;
@@ -53,6 +52,7 @@ import com.fangcang.titanjr.dto.request.BindBankCardRequest;
 import com.fangcang.titanjr.dto.request.CusBankCardBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.ModifyInvalidWithDrawCardRequest;
+import com.fangcang.titanjr.dto.request.OrgSubRequest;
 import com.fangcang.titanjr.dto.request.PayPasswordRequest;
 import com.fangcang.titanjr.dto.request.TradeDetailRequest;
 import com.fangcang.titanjr.dto.request.TransOrderUpdateRequest;
@@ -66,6 +66,7 @@ import com.fangcang.titanjr.dto.response.CityInfosResponse;
 import com.fangcang.titanjr.dto.response.CusBankCardBindResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.ModifyInvalidWithDrawCardResponse;
+import com.fangcang.titanjr.dto.response.BankCardStatusResponse;
 import com.fangcang.titanjr.dto.response.OrganBriefResponse;
 import com.fangcang.titanjr.dto.response.PayPasswordResponse;
 import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
@@ -295,50 +296,15 @@ public class FinancialAccountController extends BaseController {
     @RequestMapping("validate_person_Enterprise")
     public String validatePersonOrEnterprise(HttpServletRequest request, Model model){
     	Map<String,String> resultMap = new HashMap<String, String>();
-    	resultMap.put(WebConstant.RESULT,WebConstant.FAIL);
-    	//判断是否为对公账户
-    	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-    	organQueryRequest.setUserId(this.getUserId());
-    	FinancialOrganResponse response  = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
-    	if(!response.isResult() || response.getFinancialOrganDTO()==null)
-    	{
-    		log.error("无该机构");
-    		resultMap.put(WebConstant.MSG, "系统错误");
-        	return toJson(resultMap);
-    	}
     	
-    	Integer userType = response.getFinancialOrganDTO().getUserType();
-    	resultMap.put(WebConstant.RESULT,WebConstant.SUCCESS);
-    	if(userType !=null && WebConstant.ACCOUNT_PUBLIC.equals(userType.toString()))
-    	{
-    		QueryBankCardBindInfoResponse  rsp = this.queryBankCardInfo(userType.toString());
-		
-			if(!rsp.isResult() || rsp.getBankCardInfoDTOList()==null)
-			{
-				log.info("该卡尚未绑定");
-				resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_NO_BIND_3);
-	    		return toJson(resultMap);
-			}
-			BankCardInfoDTO dto = rsp.getBankCardInfoDTOList().get(0);
-			if(WebConstant.BANKCARD_SUCCESS==Integer.parseInt(dto.getStatus()))
-			{
-				resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_SUCCESS_4);
-    		}else if(WebConstant.BANKCARD_BINDING==Integer.parseInt(dto.getStatus()) 
-    				||WebConstant.BANKCARD_AUDIT==Integer.parseInt(dto.getStatus()))
-    		{
-    			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_BINDING_6);
-    		}else if(WebConstant.BANKCARD_FAILED ==Integer.parseInt(dto.getStatus()))
-    		{
-    			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_FAIL_5);
-    		}else if(WebConstant.BANKCARD_DELETE == Integer.parseInt(dto.getStatus()))
-    		{
-    			resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PUBLIC_NO_BIND_3);
-    		}
-			titanFinancialBankCardService.bindBankCardForOne(this.getUserId());
-			return toJson(resultMap);
-			
+    	BankCardStatusResponse response = titanFinancialBankCardService.getBankCardStatus(this.getUserId());
+    	if(response.isResult()){
+    		response.putSuccess("查询状态成功");
+    		resultMap.put("orgBankcardStatus", response.getOrgBankcardStatus());
+    		resultMap.put("orgBankcardMsg", response.getOrgBankcardMsg());
+    	}else{
+    		putSysError(response.getReturnMessage());
     	}
-    	resultMap.put(WebConstant.MSG, WebConstant.ACCOUNT_PERSON);
     	return toJson(resultMap);
     }
     
@@ -361,7 +327,7 @@ public class FinancialAccountController extends BaseController {
     public String toBindAccountWithDrawCard(HttpServletRequest request, Model model,String orgName) throws UnsupportedEncodingException{
     	model.addAttribute("modifyOrBind",WebConstant.BIND_BANK_CARD);
     	 if (null != this.getUserId()) {
-             model.addAttribute("organ", this.getTitanOrganDTO());
+            // model.addAttribute("organ", this.getTitanOrganDTO());
          }
 
     	return "account-overview/bind-bankcard";
@@ -371,7 +337,9 @@ public class FinancialAccountController extends BaseController {
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     public String updateAccountWithdrawInfo(HttpServletRequest request, Model model,String orgName){
     	if (null != this.getUserId()) {
-             model.addAttribute("organ", this.getTitanOrganDTO());
+    		OrgSubRequest orgSubRequest = new OrgSubRequest();
+    		orgSubRequest.setOrgCode(this.getUserId());
+             model.addAttribute("organ", titanFinancialOrganService.getOrgSub(orgSubRequest));
         }
     	model.addAttribute("showBankCardInput",1);
 
@@ -387,7 +355,12 @@ public class FinancialAccountController extends BaseController {
     	 return this.validatePersonOrEnterprise(request, model);
     }
     
-
+    /***
+     * 新增或者修改绑卡关系
+     * @param bindBankCardRequest
+     * @param model
+     * @return
+     */
     @ResponseBody
     @RequestMapping("bankCardBind")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})

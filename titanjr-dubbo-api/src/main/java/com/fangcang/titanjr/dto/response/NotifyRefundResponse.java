@@ -27,7 +27,7 @@ public class NotifyRefundResponse extends BaseResponseDTO {
 		//	订单金额	
 		private String orderAmount;
 		
-		//退款状态
+		//退款状态,请参考：RefundStatusEnum
 		private String refundStatus;
 		
 		//下单时间

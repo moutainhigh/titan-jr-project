@@ -51,7 +51,7 @@
 					</li>		
 				</ul>
 				<div class="pas_close">
-					<span class="btn p_lr30 J_next to_bindCard">下一步</span>
+					<span class="btn p_lr30 J_next to_bindCard">提交</span>
 				</div>
 			</div>
 		
@@ -104,10 +104,8 @@ $(".bindCard").on('click',function(){
 
 //下一步
 $('.to_bindCard').on('click',function(){
-    // $(".passwordf").hide();
-    // $(".passwordf_next").show(); 
    
-    if($(this).text()=="下一步"){
+    if($(this).text()=="提交"){
     	//ajax提交办卡信息
     	var bankCardData = getBankCardData();
     	//验证相关的数据

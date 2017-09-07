@@ -278,8 +278,8 @@
       #{constid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, #{productid,jdbcType=VARCHAR}, 
        #{usertype,jdbcType=INTEGER}, 
       #{statusid,jdbcType=INTEGER},
-      #{remark,jdbcType=VARCHAR},#{certificatetype,jdbcType=INTEGER}, ,#{connect,jdbcType=VARCHAR},#{mobiletel,jdbcType=VARCHAR},
-      #{certificatenumber,jdbcType=VARCHAR} 
+      #{remark,jdbcType=VARCHAR},#{certificatetype,jdbcType=INTEGER},#{connect,jdbcType=VARCHAR},#{mobiletel,jdbcType=VARCHAR},
+      #{certificatenumber,jdbcType=VARCHAR} ,
       #{buslince,jdbcType=VARCHAR}, 
       #{titancode,jdbcType=VARCHAR},#{regChannel},#{regSource},#{createTime})
   </insert>

@@ -82,6 +82,7 @@ import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
 import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.OperateLogRequest;
 import com.fangcang.titanjr.dto.request.OrgRegisterValidateRequest;
+import com.fangcang.titanjr.dto.request.OrgSubRequest;
 import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
 import com.fangcang.titanjr.dto.request.OrganBindRequest;
 import com.fangcang.titanjr.dto.request.OrganCheckRequest;
@@ -717,8 +718,9 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     }
     
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-    public BaseResponseDTO registerOrgSub(RegOrgSubRequest regOrgSubRequest,String relateOrgCode) throws GlobalServiceException{
-    	BaseResponseDTO response = new BaseResponseDTO();
+    public OrganRegisterResponse registerOrgSub(RegOrgSubRequest regOrgSubRequest,String relateOrgCode) throws GlobalServiceException{
+    	OrganRegisterResponse response = new OrganRegisterResponse();
+    	LOGGER.info("开始注册真实机构，真实证件为："+Tools.gsonToString(regOrgSubRequest));
     	//判断是否可以注册
     	OrgRegisterValidateRequest request = new OrgRegisterValidateRequest();
     	request.setUsertype(regOrgSubRequest.getUserType());
@@ -726,19 +728,37 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	request.setCertificatetype(regOrgSubRequest.getCertificateType());
     	request.setCertificateNumber(regOrgSubRequest.getCertificateNumber());
     	OrgRegisterValidateResponse orgRegisterValidateResponse = validateOrg(request);
+    	LOGGER.info("注册真实机构注册信息校验结果："+Tools.gsonToString(orgRegisterValidateResponse));
+    	if(orgRegisterValidateResponse.isResult()){//证件可用
+    		try {
+        		String orgSubcode = titanCodeCenterService.createOrgSubCode();
+            	regOrgSubRequest.setOrgCode(orgSubcode);
+        		TitanOrgSub orgSub = addOrgSubMap(regOrgSubRequest,relateOrgCode);
+        		response.setOrgCode(orgSub.getOrgcode());
+        		BaseResponse baseResponse = regOrgSubForRS(orgSub.getOrgcode());
+        		if(!CommonConstant.OPERATE_SUCCESS.equals(baseResponse.getOperateStatus())){//失败
+        			LOGGER.error("调用融数接口注册失败,注册机构参数 orgSubcode:"+orgSubcode+",rs返回信息[baseResponse]:"+JSONSerializer.toJSON(baseResponse).toString());
+        			throw new GlobalServiceException("调用融数接口注册失败");
+        		}
+    		} catch (Exception e) {
+    			LOGGER.error("真实机构注册失败,注册参数："+Tools.gsonToString(regOrgSubRequest)+",relateOrgCode："+relateOrgCode);
+    			throw new GlobalServiceException("真实机构注册失败",e);
+    		}
+    	}else if(orgRegisterValidateResponse.getReturnCode().equals("500")){//该证件和姓名（公司名称）已经注册
+    		//添加机构关联关系
+    		TitanOrgMapInfo orgMapInfo = new TitanOrgMapInfo();
+    		orgMapInfo.setOrgCode(relateOrgCode);
+    		orgMapInfo.setOrgSubcode(orgRegisterValidateResponse.getOrgDTO().getOrgcode());
+    		orgMapInfo.setIsactive(1);//1-有效，2-删除
+    		orgMapInfo.setCreateTime(new Date());
+    		titanOrgMapInfoDao.insert(orgMapInfo);
+    	}
+    	
     	if(orgRegisterValidateResponse.isResult()==false){
     		response.putErrorResult(orgRegisterValidateResponse.getReturnMessage());
 			return response;
     	}
-    	
-    	String orgSubcode = titanCodeCenterService.createOrgSubCode();
-    	regOrgSubRequest.setOrgCode(orgSubcode);
-    	try {
-    		response = addOrgSubMap(regOrgSubRequest,relateOrgCode);
-		} catch (Exception e) {
-			LOGGER.error("真实机构注册失败,注册参数："+Tools.gsonToString(regOrgSubRequest)+",relateOrgCode："+relateOrgCode);
-			throw new GlobalServiceException("真实机构注册失败",e);
-		}
+    	response.putSuccess("注册成功");
     	return response;
     }
     
@@ -749,11 +769,9 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
      * @param isRegRs 是否到融数注册机构，默认为false，即不注册
      * @return
      **/
-    private BaseResponseDTO addOrgSubMap(RegOrgSubRequest regOrgSubRequest,String relateOrgCode){
-    	BaseResponseDTO  baseResponseDTO = new BaseResponseDTO();
+    private TitanOrgSub addOrgSubMap(RegOrgSubRequest regOrgSubRequest,String relateOrgCode){
     	//本地保存机构
     	TitanOrgSub orgSub = addOrgSub(regOrgSubRequest);
-    	baseResponseDTO.putSuccess("子机构添加成功");
     	if(StringUtil.isValidString(relateOrgCode)){
     		//添加机构关联关系
     		TitanOrgMapInfo orgMapInfo = new TitanOrgMapInfo();
@@ -762,10 +780,9 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     		orgMapInfo.setIsactive(1);//1-有效，2-删除
     		orgMapInfo.setCreateTime(new Date());
     		titanOrgMapInfoDao.insert(orgMapInfo);
-    		baseResponseDTO.putSuccess("机构关联成功");
     	}
 		 
-    	return baseResponseDTO;
+    	return orgSub;
     }
     
    
@@ -803,7 +820,10 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			response.putErrorResult("机构类型不能为空");
 			return response;
 		}
-		
+		if(!StringUtil.isValidString(request.getOrgName())){
+			response.putErrorResult("公司名称或者姓名不能为空");
+			return response;
+		}
 		if(request.getUsertype()==TitanOrgEnum.UserType.PERSONAL.getKey()){
 			if(request.getCertificatetype()==null||!StringUtil.isValidString(request.getCertificateNumber())){
 				response.putErrorResult("证件类型或者证件号码不能为空");
@@ -813,6 +833,19 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			condition.setCertificatetype(NumberUtils.toInt(request.getCertificatetype()));
 			condition.setCertificatenumber(request.getCertificateNumber());
 			titanOrgSub = orgSubDao.selectOne(condition);
+			if(titanOrgSub!=null){//已经存在机构
+				OrgDTO orgDTO = new OrgDTO();
+				orgDTO.setOrgid(titanOrgSub.getOrgsubid());
+				orgDTO.setOrgcode(titanOrgSub.getOrgcode());
+				orgDTO.setOrgname(titanOrgSub.getOrgname());
+				response.setOrgDTO(orgDTO);
+				if(titanOrgSub.getOrgname().equals(request.getOrgName())){//证件号和名字都相同
+					response.putErrorResult("500", "该证件已经注册，请使用其他证件");
+				}else{//证件号相同，名字不相同
+					response.putErrorResult("该证件号已经注册，请核实证件");
+				}
+				return response;
+			}
 		}else if(request.getUsertype()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
 			if(!StringUtil.isValidString(request.getBuslince())){
 				response.putErrorResult("营业执照号不能为空");
@@ -821,18 +854,42 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			TitanOrgSubParam condition = new TitanOrgSubParam();
 			condition.setBuslince(request.getBuslince());
 			titanOrgSub = orgSubDao.selectOne(condition);
+			//证件号相同,公司名字不同
+			if(titanOrgSub!=null&&(!titanOrgSub.getOrgname().equals(request.getOrgName()))){
+				OrgDTO orgDTO = new OrgDTO();
+				orgDTO.setOrgid(titanOrgSub.getOrgsubid());
+				orgDTO.setOrgcode(titanOrgSub.getOrgcode());
+				orgDTO.setOrgname(titanOrgSub.getOrgname());
+				response.setOrgDTO(orgDTO);
+				response.putErrorResult( "公司名称和证件号不相符，请核实证件");
+				return response;
+			}else if(titanOrgSub!=null&&titanOrgSub.getOrgname().equals(request.getOrgName())){
+				OrgDTO orgDTO = new OrgDTO();
+				orgDTO.setOrgid(titanOrgSub.getOrgsubid());
+				orgDTO.setOrgcode(titanOrgSub.getOrgcode());
+				orgDTO.setOrgname(titanOrgSub.getOrgname());
+				response.setOrgDTO(orgDTO);
+				response.putErrorResult("500", "该证件已经注册，请使用其他证件");
+				return response;
+			}
+			condition.setBuslince(null);
+			condition.setOrgname(request.getOrgName());
+			titanOrgSub = orgSubDao.selectOne(condition);
+			//公司名字相同，证件号不相同,
+			if(titanOrgSub!=null&&(!titanOrgSub.getBuslince().equals(request.getBuslince()))){
+				OrgDTO orgDTO = new OrgDTO();
+				orgDTO.setOrgid(titanOrgSub.getOrgsubid());
+				orgDTO.setOrgcode(titanOrgSub.getOrgcode());
+				orgDTO.setOrgname(titanOrgSub.getOrgname());
+				response.setOrgDTO(orgDTO);
+				response.putErrorResult("公司名称和证件号不相符，请核实证件");
+				return response;
+			}
 		}else {
 			response.putErrorResult("注册证件类型错误");
 			return response;
 		}
-		if(titanOrgSub!=null){//已经存在机构
-			OrgDTO orgDTO = new OrgDTO();
-			orgDTO.setOrgid(titanOrgSub.getOrgsubid());
-			orgDTO.setOrgcode(titanOrgSub.getOrgcode());
-			response.setOrgDTO(orgDTO);
-			response.putErrorResult("500", "该证件已经注册,请改换其他证件");
-			return response;
-		}
+		
 		response.putSuccess("该证件可以使用");
 		return response;
 	}
@@ -1685,6 +1742,28 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			return orgDTO;
 		}
 		
+		return null;
+	}
+	
+
+	@Override
+	public TitanOrgSub getOrgSub(OrgSubRequest orgSubRequest) {
+		//参数不能为空
+		if(!(StringUtil.isValidString(orgSubRequest.getOrgCode())||StringUtil.isValidString(orgSubRequest.getOrgSubCode()))){
+			return null;
+		}
+		String orgSubCode = null;
+		if(!StringUtil.isValidString(orgSubRequest.getOrgSubCode())){
+			TitanOrgMapInfo orgMapInfo = titanOrgMapInfoDao.getOneTitanOrgMapInfo(orgSubRequest.getOrgCode());
+			if(orgMapInfo==null){
+				return null;
+			}else{
+				orgSubCode = orgMapInfo.getOrgSubcode();
+			}
+		}
+		if(StringUtil.isValidString(orgSubCode)){
+			return orgSubDao.getOneByOrgCode(orgSubCode);
+		}
 		return null;
 	}
 

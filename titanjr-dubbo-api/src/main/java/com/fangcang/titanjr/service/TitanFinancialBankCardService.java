@@ -2,23 +2,33 @@ package com.fangcang.titanjr.service;
 
 import java.util.List;
 
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.BankCardDTO;
-import com.fangcang.titanjr.dto.request.BankCardRequest;
 import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
+import com.fangcang.titanjr.dto.request.BankCardRequest;
 import com.fangcang.titanjr.dto.request.CusBankCardBindRequest;
 import com.fangcang.titanjr.dto.request.DeleteBindBankRequest;
 import com.fangcang.titanjr.dto.request.ModifyInvalidWithDrawCardRequest;
 import com.fangcang.titanjr.dto.request.ModifyWithDrawCardRequest;
+import com.fangcang.titanjr.dto.request.OrgSubCardRequest;
 import com.fangcang.titanjr.dto.response.CusBankCardBindResponse;
 import com.fangcang.titanjr.dto.response.DeleteBindBankResponse;
 import com.fangcang.titanjr.dto.response.ModifyInvalidWithDrawCardResponse;
 import com.fangcang.titanjr.dto.response.ModifyWithDrawCardResponse;
+import com.fangcang.titanjr.dto.response.OrgSubCardResponse;
+import com.fangcang.titanjr.dto.response.BankCardStatusResponse;
 import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
 import com.fangcang.titanjr.entity.TitanBankcard;
 import com.fangcang.titanjr.entity.parameter.TitanBankcardParam;
 
 public interface TitanFinancialBankCardService {
+	/***
+	 * 虚拟机构绑卡状态
+	 * @return
+	 */
+	public BankCardStatusResponse getBankCardStatus(String orgCode);
 	
 	/**
 	 * 查询融数绑卡信息
@@ -34,7 +44,16 @@ public interface TitanFinancialBankCardService {
 	 * @return
 	 * @author fangdaikang
 	 */
-	public CusBankCardBindResponse bankCardBind(CusBankCardBindRequest  bankCardBindRequest);
+	public CusBankCardBindResponse bankCardBind(CusBankCardBindRequest  bankCardBindRequest) ;
+	
+	/**
+	 * 真实机构绑卡:包括创建机构，机构关联关系，虚拟机构和绑卡记录关系。真实机构存在则不创建，直接开始绑定
+	 * @param orgSubCardRequest
+	 * @return
+	 * @throws GlobalServiceException
+	 * @throws MessageServiceException
+	 */
+	public OrgSubCardResponse bindOrgSubCard(OrgSubCardRequest orgSubCardRequest) throws GlobalServiceException, MessageServiceException;
 	
 	/**
 	 * 删除银行卡绑定

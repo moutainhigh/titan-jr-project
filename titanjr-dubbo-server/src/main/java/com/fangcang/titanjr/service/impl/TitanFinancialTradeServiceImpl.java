@@ -707,7 +707,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			CallBackInfo callBackInfo = TitanjrHttpTools
 					.analyzeResponse(response);
 			if (!"000".equals(callBackInfo.getCode())) {
-				log.error("回调失败单号,通知参数:"+JSONSerializer.toJSON(params)+",orderid:"+transOrderDTO.getOrderid());
+				log.error("回调失败单号,通知参数:"+JSONSerializer.toJSON(params)+",orderid:"+transOrderDTO.getOrderid()+",返回结果response："+response);
 				if(req.getIsSaveLog()){
 					titanFinancialUtilService.saveOrderException(transOrderDTO.getUserorderid(),OrderKindEnum.UserOrderId, OrderExceptionEnum.Notify_Client_Transfer_Notify_Fail, JSONSerializer.toJSON(callBackInfo).toString());
 				}

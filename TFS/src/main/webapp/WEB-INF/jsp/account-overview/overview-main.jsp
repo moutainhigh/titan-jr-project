@@ -521,11 +521,13 @@
 				dataType:"json",
 				url:"<%=basePath%>/account/validate_person_Enterprise.shtml",
 				success: function (data) {
-					if(data.msg=="5"){
-						//修改银行卡
-						bind_card_fail();
-					}else if(data.msg=="6"){//审核中该如何解决
-						$(".withdrawBtn").text('提现卡审核中···').removeClass('blue decorationUnderline').css("color","#999");
+					if(data.code=="1"){
+						if(data.orgBankcardStatus=="0"){
+							//修改银行卡
+							bind_card_fail();
+						}else if(data.orgBankcardStatus=="2"){//审核中该如何解决
+							$(".withdrawBtn").text('提现卡审核中···').removeClass('blue decorationUnderline').css("color","#999");
+						}
 					}
 				}
 			});
@@ -537,25 +539,23 @@
         		dataType : 'json',		      
 		        url : '<%=basePath%>/account/validate_person_Enterprise.shtml',
 		        success:function(data){
-		        	if(data.result=="success"){
-		        		if(data.msg=="3"){//对公且未绑定
-		        			bind_card_public($(this));
-		        		}else if(data.msg=="2"|| data.msg=="4"){//对私或者对公已绑定成功
+		        	if(data.code=="1"){
+		        	  	if(data.withdrawStatus=="0"){//绑定失败
+		        			bind_card_fail();
+		        		}else if(data.withdrawStatus=="1"){//对私或者对公已绑定成功
 		        			account_withdraw();
-		        		}else if(data.msg=="5"){//对公，且绑定失败
-		        			 bind_card_fail();
-		        		}else if(data.msg=="6"){
+		        		}else if(data.withdrawStatus=="2"){//审核中
 		        			bank_card_binding();
+		        		}else if(data.orgBankcardStatus=="20"){//未绑定
+		        			bind_card_public($(this));
 		        		}else{
-		        			 new top.Tip({msg: "系统错误", type: 2, timer: 2000});
+		        			 new top.Tip({msg: "用户绑卡状态错误,请联系管理员", type: 2, timer: 2000});
 		        		}
 		        	}else{
-		        		 new top.Tip({msg: "系统错误", type: 2, timer: 2000});
+		        		 new top.Tip({msg: data.msg, type: 2, timer: 2000});
 		        	}
 		        }
         	});
-        	
-        	
         });
 
         function account_withdraw(){

@@ -51,6 +51,8 @@
 		<mapper resource="mybatis/TitanAccountMapper.xml" />
 		<mapper resource="mybatis/TitanAccountOperLogMapper.xml" />
 		<mapper resource="mybatis/TitanBankcardMapper.xml" />
+		<mapper resource="mybatis/TitanOrgCardMapMapper.xml" />
+		
 		<mapper resource="mybatis/TitanBankinfoMapper.xml" />
 		<mapper resource="mybatis/TitanCashierDeskItemMapper.xml" />
 		<mapper resource="mybatis/TitanCashierDeskMapper.xml" />

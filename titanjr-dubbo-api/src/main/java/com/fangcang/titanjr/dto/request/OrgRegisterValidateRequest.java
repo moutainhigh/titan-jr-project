@@ -15,6 +15,10 @@ public class OrgRegisterValidateRequest extends BaseRequestDTO{
 	 * 
 	 */
 	private static final long serialVersionUID = 5925152704898953015L;
+	/***
+	 * 机构名称(公司名称或者身份证名称)
+	 */
+	private String orgName;
 	/**
 	 * 机构类型:1-企业，2-个人
 	 */
@@ -57,6 +61,12 @@ public class OrgRegisterValidateRequest extends BaseRequestDTO{
 	}
 	public void setCertificateNumber(String certificateNumber) {
 		this.certificateNumber = certificateNumber;
+	}
+	public String getOrgName() {
+		return orgName;
+	}
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
 	}
 	
 }
