@@ -7,11 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fangcang.titanjr.common.enums.BusTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
-import com.fangcang.titanjr.dto.bean.TitanRateDto;
+import com.fangcang.titanjr.dto.bean.*;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialRateService;
 
+import com.fangcang.titanjr.web.pojo.CashierSwitchPO;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -32,9 +34,6 @@ import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.GenericValidate;
-import com.fangcang.titanjr.dto.bean.RoleDTO;
-import com.fangcang.titanjr.dto.bean.SaaSMerchantUserDTO;
-import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
@@ -68,6 +67,9 @@ public class SettingEmployeeController extends BaseController{
 
 	@Autowired
 	private TitanFinancialRateService titanFinancialRateService;
+
+	@Autowired
+	private TitanCashierDeskService titanCashierDeskService;
 
 	/**
 	 * 左侧菜单（本地调试使用）
@@ -427,32 +429,76 @@ public class SettingEmployeeController extends BaseController{
 		RateConfigRequest rateConfigRequest = new RateConfigRequest();
 		rateConfigRequest.setUserId(String.valueOf(getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID)));
 		rateConfigRequest.setPayType(CashierItemTypeEnum.B2B_ITEM);
-		RateConfigResponse rateConfigResponse = null;
-		rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
-		rateInfoList.addAll(rateConfigResponse.getRateInfoList());
-		rateConfigRequest.setPayType(CashierItemTypeEnum.B2C_ITEM);
-		rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
-		rateInfoList.addAll(rateConfigResponse.getRateInfoList());
-		rateConfigRequest.setPayType(CashierItemTypeEnum.CREDIT_ITEM);
-		rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
-		rateInfoList.addAll(rateConfigResponse.getRateInfoList());
 		rateConfigRequest.setPayType(CashierItemTypeEnum.QR_ITEM);
-		rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
-		rateInfoList.addAll(rateConfigResponse.getRateInfoList());
-		rateConfigRequest.setPayType(null);
-		rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
-		rateInfoList.addAll(rateConfigResponse.getRateInfoList());
-		model.addAttribute("rateInfoList", rateInfoList);
-		for(TitanRateDto rateDto : rateInfoList){
+
+		RateConfigResponse rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
+		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
+		cashierDeskQueryRequest.setUserId(String.valueOf(getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID)));
+		CashierDeskResponse response = titanCashierDeskService.queryCashierDesk(cashierDeskQueryRequest);
+		if (response.isResult() && CollectionUtils.isNotEmpty(response.getCashierDeskDTOList())){
+			for (CashierDeskDTO cashierDeskDTO : response.getCashierDeskDTOList()){
+				if (cashierDeskDTO.getUsedFor() == 1){
+					model.addAttribute("saasOpen", cashierDeskDTO.getIsOpen());
+				}
+				if (cashierDeskDTO.getUsedFor() == 3){
+					model.addAttribute("unionOpen", cashierDeskDTO.getIsOpen());
+				}
+			}
+		}
+		if (CollectionUtils.isNotEmpty(rateConfigResponse.getRateInfoList())) {
+			TitanRateDto rateDto = rateConfigResponse.getRateInfoList().get(0);
+			model.addAttribute("rateInfo", rateDto);
 			rateDto.setDescription(rateDto.getDescription().replace("费率",""));
 			if (!rateDto.getBustype().equals(BusTypeEnum.QR_RATE.type)){
 				rateDto.setDescription(rateDto.getDescription().replace("支付",""));
 			}
 		}
+
 		return "setting/fee";
 	}
-	
-	
+
+	/**
+	 * 开关收银台操作
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/switch-cashier")
+	public String switchCashierDesk(CashierSwitchPO cashierSwitchPO){
+		if(cashierSwitchPO.getCashierType() == null || cashierSwitchPO.getOpen() == null ||
+				(cashierSwitchPO.getCashierType() != 1 && cashierSwitchPO.getCashierType() != 2) ||
+				(cashierSwitchPO.getOpen() != 0 && cashierSwitchPO.getOpen() != 1)){
+			putSysError("参数错误");
+			return toJson();
+		}
+		CashierDeskUpdateRequest deskUpdateRequest = new CashierDeskUpdateRequest();
+		deskUpdateRequest.setIsOpen(cashierSwitchPO.getOpen());
+		List<Integer> usedList = new ArrayList<Integer>();
+		if (cashierSwitchPO.getCashierType() == 1){//分销工具GDP
+			usedList.add(1);
+			usedList.add(4);
+		}
+		if (cashierSwitchPO.getCashierType() == 2){//交易平台PUS
+			usedList.add(3);
+			usedList.add(9);
+		}
+		deskUpdateRequest.setUsedList(usedList);
+		deskUpdateRequest.setUserId(String.valueOf(getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID)));
+		try {
+			boolean result = titanCashierDeskService.updateCashierDesk(deskUpdateRequest);
+			if (result) {
+				putSuccess();
+				return toJson();
+			} else {
+				putSysError("更新收银台开关失败");
+				return toJson();
+			}
+		} catch (Exception e) {
+			putSysError("更新收银台开关异常");
+			log.error("更新收银台开关异常" ,e );
+		}
+		return toJson();
+	}
+
 	/**
 	 * 新的收付款费率公示（暂时只查第三方支付费率）
 	 * @author Jerry

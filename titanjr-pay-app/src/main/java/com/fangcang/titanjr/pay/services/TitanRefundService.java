@@ -198,6 +198,10 @@ public class TitanRefundService {
 			} else {//直接进行账户退款,退款到账户余额
 				titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_ACCOUNT.type);
 			}
+			//如果请求条件不需要原路退回，设置直接退回卡
+			if (refundRequest.getIsBackTrack() == 0) {
+				titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_ACCOUNT.type);
+			}
 
 			//解冻操作
 			log.info("5.交易单若冻结则执行解冻");

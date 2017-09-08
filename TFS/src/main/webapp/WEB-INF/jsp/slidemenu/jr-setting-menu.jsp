@@ -6,7 +6,7 @@
    
     <li><a href="<%=basePath %>/setting/pay-set.shtml">付款密码设置</a></li>
     
-	<li><a href="<%=basePath %>/setting/fee.shtml">收付款费率公示</a></li>
+	<li><a href="<%=basePath %>/setting/fee.shtml">收银台设置</a></li>
 
 	<li><a href="<%=basePath %>/setting/protocol.shtml">泰坦金融协议</a></li>
 

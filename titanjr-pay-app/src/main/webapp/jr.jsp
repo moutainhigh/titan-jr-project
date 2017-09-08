@@ -69,6 +69,7 @@
 					tfsUserid:$("#retfsUserid").val(),
 					isMerchCode:$("#isMerchCode").val(),
 					notifyUrl:$("#notifyUrl").val(),
+                    isBackTrack:$("#isBackTrack").val(),
 					businessInfo:"125sdlkkkl"
 			};
 			
@@ -226,6 +227,11 @@
              <tr>
                 <td class="tdr">是否为商家编码</td>
                 <td><input type="text" id="isMerchCode" value="10122" name="isMerchCode"/>1,商家编码，0金融账号
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">是否原路退回</td>
+                <td><input type="text" id="isBackTrack" value="0" name="isBackTrack"/>1,原路退回，0不原路退回，可不传，默认为0
                 </td>
             </tr>
              <tr>

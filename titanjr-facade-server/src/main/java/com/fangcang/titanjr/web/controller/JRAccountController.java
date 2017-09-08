@@ -165,8 +165,10 @@ public class JRAccountController {
 				if(!baseResponse.isResult()) {
 					return baseResponse;
 				}
-				
-				backTrack(transOrderDTO);
+				//需要原路退回才执行
+				if (jrAccountReceiveRequest.getIsBackTrack() != 0) {
+					backTrack(transOrderDTO);
+				}
 				
 			}
 			

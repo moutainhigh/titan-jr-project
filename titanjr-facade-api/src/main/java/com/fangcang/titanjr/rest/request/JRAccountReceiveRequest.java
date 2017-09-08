@@ -37,6 +37,9 @@ public class JRAccountReceiveRequest {
 	
 	@ApiModelProperty(value = "操作方式 --- 1直接收款  2收款并冻结  3不收款并解冻")
     private int operateType;
+
+	@ApiModelProperty(value = "是否需要原路退回，默认不需要")
+	private Integer isBackTrack = 0;
 	
 	@ApiModelProperty(value = "操作人")
     private String operator;
@@ -81,7 +84,15 @@ public class JRAccountReceiveRequest {
 	public void setOperateType(int operateType) {
 		this.operateType = operateType;
 	}
-	
+
+	public Integer getIsBackTrack() {
+		return isBackTrack;
+	}
+
+	public void setIsBackTrack(Integer isBackTrack) {
+		this.isBackTrack = isBackTrack;
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

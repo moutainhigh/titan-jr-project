@@ -125,19 +125,20 @@ public class OrgUserController {
 		return registerResponse;
 	}
 
-	private String validLoginName(String connectPhone) {
+	//校验如果出现重复手机号或者邮箱，则匹配生成新的
+	private String validLoginName(String loginName) {
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
-		userInfoQueryRequest.setUserLoginName(connectPhone);
+		userInfoQueryRequest.setUserLoginName(loginName);
 		UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
-		//不存在表明当前手机号可用
+		//不存在表明当前或者邮箱可用
 		if (!userInfoResponse.isResult() || CollectionUtils.isEmpty(userInfoResponse.getUserInfoDTOList())){
-			return connectPhone;
+			return loginName;
 		} else {
 			DecimalFormat decimalFormat = new DecimalFormat("##");
 			String formatNumber = decimalFormat.format(Math.random() *100);
-			connectPhone = connectPhone + "-" + formatNumber;
-			validLoginName(connectPhone);
-			return connectPhone;
+			loginName = loginName + "-" + formatNumber;
+			validLoginName(loginName);
+			return loginName;
 		}
 	}
 

@@ -25,6 +25,9 @@ public class RefundRequest implements Serializable{
 	
 	//是否为商户编码，这个参数是对传入Merchcode的接入方设置的，默认为传入金融机构的id和机构编码
 	private String isMerchCode;
+
+	//是否原路退回，若原路退回，；
+	private Integer isBackTrack = 0;
 	
 	//回调地址
 	private String notifyUrl;
@@ -97,5 +100,13 @@ public class RefundRequest implements Serializable{
 
 	public void setBusinessInfo(String businessInfo) {
 		this.businessInfo = businessInfo;
+	}
+
+	public Integer getIsBackTrack() {
+		return isBackTrack;
+	}
+
+	public void setIsBackTrack(Integer isBackTrack) {
+		this.isBackTrack = isBackTrack;
 	}
 }
