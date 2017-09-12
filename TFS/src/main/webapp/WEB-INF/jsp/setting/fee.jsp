@@ -17,7 +17,7 @@
 		</div>
 	</div>
 	<div class="scroll_x hide t_85"></div>
-	<div class="main_con p_t60">
+	<div class="main_con p_t60" style="padding-top:60px;">
 		<div class="TFS_set" style="padding:0 16px 0 0; ">
 			<header>
 				<div class="banner"><img src="<%=basePath%>/images/set_banner.jpg" alt=""/></div>
@@ -128,9 +128,7 @@
 	</div>
 </div>
 <div style="height:50px;"></div>
-<script src="../js/jquery-1.8.3.min.js"></script>
-<!--<script src="../js/fangcang.min.js?v=20150906"></script>-->
-<!--<script src="../js/common.js"></script>-->
+
 <script>
 
 	$(document).ready(function(){

@@ -142,13 +142,13 @@ public class OrgUserController {
 		}
 	}
 
-	@RequestMapping(value = "/orgUser/test", method = RequestMethod.GET)
-	@ApiOperation(value = "测试接口", httpMethod = "GET", response = OrgRegisterRequest.class, notes = "测试")
-	public OrgRegisterRequest test(@ApiParam(name = "orgCode", value = "测试") @RequestParam(
-			value = "orgCode") String orgCode, HttpServletRequest request) {
-		log.info("测试单参数查询操作");
-		OrgRegisterRequest userResult = new OrgRegisterRequest();
-		////测试初始化收银台
+//	@RequestMapping(value = "/orgUser/test", method = RequestMethod.GET)
+//	@ApiOperation(value = "测试接口", httpMethod = "GET", response = OrgRegisterRequest.class, notes = "测试")
+//	public OrgRegisterRequest test(@ApiParam(name = "orgCode", value = "测试") @RequestParam(
+//			value = "orgCode") String orgCode, HttpServletRequest request) {
+//		log.info("测试单参数查询操作");
+//		OrgRegisterRequest userResult = new OrgRegisterRequest();
+//		//测试初始化收银台
 //		CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest();
 //		cashierDeskInitRequest.setConstId("M000016");
 //		cashierDeskInitRequest.setUserId("TJM60020015");
@@ -158,7 +158,7 @@ public class OrgUserController {
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
-		//测试更新收银台
+//		//测试更新收银台
 //		CashierDeskUpdateRequest deskUpdateRequest = new CashierDeskUpdateRequest();
 //		deskUpdateRequest.setUserId("TJM60020015");
 //		deskUpdateRequest.setUsedList(new ArrayList<Integer>());
@@ -171,22 +171,22 @@ public class OrgUserController {
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
-		//测试查询收银台
+//		//测试查询收银台
 //		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
 //		cashierDeskQueryRequest.setUserId("TJM60020015");
 //		CashierDeskResponse response = titanCashierDeskService.queryCashierDesk(cashierDeskQueryRequest);
 //		log.info(response);
-
-		AccountInfoRequest accountInfo = new AccountInfoRequest();
-		accountInfo.setMerchantCode("TJM60020015");
-		CheckAccountResponse checkAccountResponse = null;
-		checkAccountResponse = titanFinancialPermissionFacade.isFinanceAccount(accountInfo);
-		accountInfo.setPaySourceEnum(PaySourceEnum.TRADING_PLATFORM_PC);
-		checkAccountResponse = titanFinancialPermissionFacade.isFinanceAccount(accountInfo);
-		accountInfo.setPaySourceEnum(PaySourceEnum.DISTRIBUTION_PC);
-		checkAccountResponse = titanFinancialPermissionFacade.isFinanceAccount(accountInfo);
-		System.out.println(checkAccountResponse);
-		return userResult;
-	}
+//
+//		AccountInfoRequest accountInfo = new AccountInfoRequest();
+//		accountInfo.setMerchantCode("TJM60020015");
+//		CheckAccountResponse checkAccountResponse = null;
+//		checkAccountResponse = titanFinancialPermissionFacade.isFinanceAccount(accountInfo);
+//		accountInfo.setPaySourceEnum(PaySourceEnum.TRADING_PLATFORM_PC);
+//		checkAccountResponse = titanFinancialPermissionFacade.isFinanceAccount(accountInfo);
+//		accountInfo.setPaySourceEnum(PaySourceEnum.DISTRIBUTION_PC);
+//		checkAccountResponse = titanFinancialPermissionFacade.isFinanceAccount(accountInfo);
+//		System.out.println(checkAccountResponse);
+//		return userResult;
+//	}
 
 }
