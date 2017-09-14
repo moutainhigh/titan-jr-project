@@ -357,6 +357,7 @@ public class FinancialOrganController extends BaseController {
     		
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_ROLE_LIST, userInfoDTO.getRoleDTOList());//金服用户角色列表
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, userInfoDTO.getUserLoginName());//金服用户登录名
+			getSession().setAttribute(WebConstant.SESSION_KEY_JR_UESRNAME, userInfoDTO.getUserName());//金服用户名
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名
             //如果包含系统运营员，判定当前地址

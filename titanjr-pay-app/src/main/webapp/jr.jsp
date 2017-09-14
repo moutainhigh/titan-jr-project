@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <html>
 <head>
-    <script type="text/javascript" src="http://hres.fangcang.com/js/common/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="http://hres.fangcang.com/js/common/jquery/jquery.form.js"></script>
+    <script type="text/javascript" src="<%=request.getScheme()%>://hres.fangcang.com/js/common/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="<%=request.getScheme()%>://hres.fangcang.com/js/common/jquery/jquery.form.js"></script>
 <script type="text/javascript" src="js/titanpay.js"></script>
 
 </head>

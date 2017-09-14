@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -104,6 +105,21 @@ public class SettingBaseInfoController extends BaseController{
 				TitanUser adminUser = adminResponse.getTitanUserPaginationSupport().getItemList().get(0);
 				model.addAttribute("adminUser", adminUser);
 			}
+			String titanCode = financialOrganResponse.getFinancialOrganDTO().getTitanCode();
+			StringBuilder builder = new StringBuilder();
+			char[] codeArray = titanCode.toCharArray();
+			for (int i = 0; i < codeArray.length; i++) {
+				if (i < codeArray.length - 1) {
+					if (i == 3) {
+						builder.append(codeArray[i]).append("&nbsp;&nbsp;&nbsp;&nbsp;");
+					} else {
+						builder.append(codeArray[i]).append(" ");
+					}
+				} else {
+					builder.append(codeArray[i]);
+				}
+			}
+			model.addAttribute("titanCode", builder.toString());
 			return "setting/base-info";
 		}else{
 			//登录者没有金服id
