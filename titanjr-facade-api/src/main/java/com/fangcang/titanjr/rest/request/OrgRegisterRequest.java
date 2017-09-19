@@ -2,9 +2,11 @@ package com.fangcang.titanjr.rest.request;
 
 import com.fangcang.titanjr.request.BaseRequest;
 import com.fangcang.titanjr.rest.enums.RegisterSourceEnum;
-import com.sun.istack.internal.NotNull;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
