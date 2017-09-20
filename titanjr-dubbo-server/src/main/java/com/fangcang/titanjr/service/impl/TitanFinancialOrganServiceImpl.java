@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.Rop.api.domain.OpenAccountPerson;
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
@@ -81,6 +82,7 @@ import com.fangcang.titanjr.dto.request.FinancialUserBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialUserUnBindRequest;
 import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.OperateLogRequest;
+import com.fangcang.titanjr.dto.request.OrgBaseInfoRequest;
 import com.fangcang.titanjr.dto.request.OrgRegisterValidateRequest;
 import com.fangcang.titanjr.dto.request.OrgSubRequest;
 import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
@@ -142,12 +144,16 @@ import com.fangcang.titanjr.rs.manager.RSOrganizationManager;
 import com.fangcang.titanjr.rs.request.AccountFreezeRequest;
 import com.fangcang.titanjr.rs.request.AccountUnFreezeRequest;
 import com.fangcang.titanjr.rs.request.CompanyOrgRegRequest;
+import com.fangcang.titanjr.rs.request.PersOrgInfoQueryRequest;
 import com.fangcang.titanjr.rs.request.PersonOrgRegRequest;
+import com.fangcang.titanjr.rs.request.PersonOrgUpdateRequest;
 import com.fangcang.titanjr.rs.response.AccountFreezeResponse;
 import com.fangcang.titanjr.rs.response.AccountUnFreezeResponse;
 import com.fangcang.titanjr.rs.response.BaseResponse;
 import com.fangcang.titanjr.rs.response.CompanyOrgRegResponse;
+import com.fangcang.titanjr.rs.response.PersOrgInfoQueryResponse;
 import com.fangcang.titanjr.rs.response.PersonOrgRegResponse;
+import com.fangcang.titanjr.rs.response.PersonOrgUpdateResponse;
 import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanCodeCenterService;
@@ -556,14 +562,14 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     		LOGGER.error("机构注册参数错误,营业执照号(Buslince)不能为空");
     		throw new ParameterException("param error: Buslince can not be  null");
     	}
-    	if(StringUtil.isValidString(regOrgSubRequest.getConnect())==false){
-    		LOGGER.error("机构注册参数错误,联系人(Connect)不能为空");
-    		throw new ParameterException("param error: Connect can not be  null");
-    	}
-    	if(StringUtil.isValidString(regOrgSubRequest.getMobileTel())==false){
-    		LOGGER.error("机构注册参数错误,联系电话(MobileTel)不能为空");
-    		throw new ParameterException("param error: MobileTel can not be  null");
-    	}
+    	//if(StringUtil.isValidString(regOrgSubRequest.getConnect())==false){
+    		//LOGGER.error("机构注册参数错误,联系人(Connect)不能为空");
+    		//throw new ParameterException("param error: Connect can not be  null");
+    	//}
+    	//if(StringUtil.isValidString(regOrgSubRequest.getMobileTel())==false){
+    		//LOGGER.error("机构注册参数错误,联系电话(MobileTel)不能为空");
+    		//throw new ParameterException("param error: MobileTel can not be  null");
+    	//}
     }
     /**
      * 个人机构注册必填参数校验
@@ -718,30 +724,35 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     }
     
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-    public OrganRegisterResponse registerOrgSub(RegOrgSubRequest regOrgSubRequest,String relateOrgCode) throws GlobalServiceException{
+    public OrganRegisterResponse registerOrgSub(RegOrgSubRequest regOrgSubRequest,String relateOrgCode) throws GlobalServiceException, MessageServiceException{
     	OrganRegisterResponse response = new OrganRegisterResponse();
-    	LOGGER.info("开始注册真实机构，真实证件为："+Tools.gsonToString(regOrgSubRequest));
+    	LOGGER.info("开始注册真实机构，注册参数regOrgSubRequest："+Tools.gsonToString(regOrgSubRequest)+",虚拟机构编码relateOrgCode:"+relateOrgCode);
     	//判断是否可以注册
     	OrgRegisterValidateRequest request = new OrgRegisterValidateRequest();
     	request.setUsertype(regOrgSubRequest.getUserType());
+    	request.setOrgName(regOrgSubRequest.getOrgName());
     	request.setBuslince(regOrgSubRequest.getBuslince());
     	request.setCertificatetype(regOrgSubRequest.getCertificateType());
     	request.setCertificateNumber(regOrgSubRequest.getCertificateNumber());
     	OrgRegisterValidateResponse orgRegisterValidateResponse = validateOrg(request);
-    	LOGGER.info("注册真实机构注册信息校验结果："+Tools.gsonToString(orgRegisterValidateResponse));
+    	LOGGER.info("注册真实机构注册信息,虚拟机构编码(relateOrgCode):"+relateOrgCode+",参数校验结果为："+Tools.gsonToString(orgRegisterValidateResponse));
     	if(orgRegisterValidateResponse.isResult()){//证件可用
     		try {
         		String orgSubcode = titanCodeCenterService.createOrgSubCode();
             	regOrgSubRequest.setOrgCode(orgSubcode);
         		TitanOrgSub orgSub = addOrgSubMap(regOrgSubRequest,relateOrgCode);
-        		response.setOrgCode(orgSub.getOrgcode());
         		BaseResponse baseResponse = regOrgSubForRS(orgSub.getOrgcode());
         		if(!CommonConstant.OPERATE_SUCCESS.equals(baseResponse.getOperateStatus())){//失败
         			LOGGER.error("调用融数接口注册失败,注册机构参数 orgSubcode:"+orgSubcode+",rs返回信息[baseResponse]:"+JSONSerializer.toJSON(baseResponse).toString());
-        			throw new GlobalServiceException("调用融数接口注册失败");
+        			throw new MessageServiceException(baseResponse.getReturnMsg());
         		}
-    		} catch (Exception e) {
-    			LOGGER.error("真实机构注册失败,注册参数："+Tools.gsonToString(regOrgSubRequest)+",relateOrgCode："+relateOrgCode);
+        		response.putSuccess("注册成功");
+        		response.setOrgCode(orgSub.getOrgcode());
+        		return response;
+    		}catch (MessageServiceException ee) {
+    			throw ee;
+			}catch (Exception e) {
+    			LOGGER.error("真实机构注册失败,注册参数："+Tools.gsonToString(regOrgSubRequest)+",relateOrgCode："+relateOrgCode,e);
     			throw new GlobalServiceException("真实机构注册失败",e);
     		}
     	}else if(orgRegisterValidateResponse.getReturnCode().equals("500")){//该证件和姓名（公司名称）已经注册
@@ -752,13 +763,14 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     		orgMapInfo.setIsactive(1);//1-有效，2-删除
     		orgMapInfo.setCreateTime(new Date());
     		titanOrgMapInfoDao.insert(orgMapInfo);
-    	}
-    	
-    	if(orgRegisterValidateResponse.isResult()==false){
+    		response.putSuccess("注册成功");
+        	return response;
+    	}else if(orgRegisterValidateResponse.isResult()==false){
     		response.putErrorResult(orgRegisterValidateResponse.getReturnMessage());
 			return response;
     	}
-    	response.putSuccess("注册成功");
+    	LOGGER.error("真实机构注册发生未知异常,注册参数regOrgSubRequest："+Tools.gsonToString(regOrgSubRequest)+",虚拟机构编码relateOrgCode:"+relateOrgCode);
+    	response.putErrorResult("未知异常");
     	return response;
     }
     
@@ -861,7 +873,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 				orgDTO.setOrgcode(titanOrgSub.getOrgcode());
 				orgDTO.setOrgname(titanOrgSub.getOrgname());
 				response.setOrgDTO(orgDTO);
-				response.putErrorResult( "公司名称和证件号不相符，请核实证件");
+				response.putErrorResult("公司名称和证件号不相符，请核实证件");
 				return response;
 			}else if(titanOrgSub!=null&&titanOrgSub.getOrgname().equals(request.getOrgName())){
 				OrgDTO orgDTO = new OrgDTO();
@@ -1538,8 +1550,62 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		
 		return responseDTO;
 	}
+    
+    
 
-    public RSOrganizationManager getRsOrganizationManager() {
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public BaseResponseDTO updateOrgBaseInfo(OrgBaseInfoRequest orgBaseInfoRequest) throws MessageServiceException {
+    	BaseResponseDTO baseResponseDTO = new BaseResponseDTO();
+    	TitanOrgSub entity = new TitanOrgSub();
+    	entity.setOrgcode(orgBaseInfoRequest.getOrgCode());
+    	entity.setOrgname(orgBaseInfoRequest.getOrgName());
+    	entity.setCertificatenumber(orgBaseInfoRequest.getCertificatenumber());
+    	if(StringUtil.isValidString(orgBaseInfoRequest.getCertificatetype())){
+    		entity.setCertificatetype(Integer.valueOf(entity.getCertificatetype()));
+    	}
+    	entity.setBuslince(orgBaseInfoRequest.getBuslince());
+    	orgSubDao.update(entity);
+    	if(orgBaseInfoRequest.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
+    		//TODO 修改企业机构信息
+    		//rsOrganizationManager.updateCompanyOrg(companyOrgUpdateRequest)
+    	}else{
+    		PersOrgInfoQueryRequest persOrgInfoQueryRequest = new PersOrgInfoQueryRequest();
+    		persOrgInfoQueryRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+    		persOrgInfoQueryRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+    		persOrgInfoQueryRequest.setUserid(orgBaseInfoRequest.getOrgCode());
+    		
+    		PersOrgInfoQueryResponse persOrgInfoQueryResponse = rsOrganizationManager.queryPersOrgInfo(persOrgInfoQueryRequest);
+    		if(CollectionUtils.isNotEmpty(persOrgInfoQueryResponse.getPersonOrgList())){
+    			OpenAccountPerson openAccountPerson = persOrgInfoQueryResponse.getPersonOrgList().get(0);
+    			PersonOrgUpdateRequest personOrgUpdateRequest = new PersonOrgUpdateRequest();
+    			boolean isUpdate = false;
+    			if(!openAccountPerson.getCertificatenumber().equals(orgBaseInfoRequest.getCertificatenumber())){
+    				personOrgUpdateRequest.setCertificatenumber(orgBaseInfoRequest.getCertificatenumber());
+    				isUpdate = true;
+        		}
+    			if(!openAccountPerson.getPersonchnname().equals(orgBaseInfoRequest.getOrgName())){
+    				personOrgUpdateRequest.setUsername(orgBaseInfoRequest.getOrgName());
+    				isUpdate = true;
+    			}
+        		if(isUpdate){//机构名称或者证件号不同，才修改
+        			personOrgUpdateRequest.setUserid(orgBaseInfoRequest.getOrgCode());
+            		personOrgUpdateRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+            		personOrgUpdateRequest.setOpertype("2");//修改
+            		personOrgUpdateRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+            		PersonOrgUpdateResponse response = rsOrganizationManager.updatePersonOrg(personOrgUpdateRequest);
+            		if(!CommonConstant.OPERATE_SUCCESS.equals(response.getOperateStatus())){
+                		// 融数操作失败，回滚金服数据
+                		throw new MessageServiceException(response.getReturnMsg());
+                	}
+        		}
+    		}
+    	}
+    	baseResponseDTO.putSuccess("修改成功");
+		return baseResponseDTO;
+	}
+
+	public RSOrganizationManager getRsOrganizationManager() {
         return rsOrganizationManager;
     }
 

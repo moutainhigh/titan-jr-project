@@ -1,5 +1,7 @@
 package com.fangcang.titanjr.dto.request;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 /***
  * 机构绑卡
  * @author luoqinglong
@@ -9,6 +11,7 @@ public class OrgSubCardRequest extends CusBankCardBindRequest {
 	/**
 	 * 虚拟金融机构商家编码
 	 */
+	@NotBlank
 	private String orgCode;
 
 	

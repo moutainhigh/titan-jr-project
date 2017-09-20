@@ -521,8 +521,8 @@ public class FinancialAccountController extends BaseController {
     @RequestMapping("bankCardBind")
     @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
     public String bankCardBindToPublic(BindBankCardRequest  bindBankCardRequest,Model model){
-     	if(!StringUtil.isValidString(bindBankCardRequest.getBankCardCode()) 
-    			|| !StringUtil.isValidString(bindBankCardRequest.getBankCardName())
+     	if(!StringUtil.isValidString(bindBankCardRequest.getAccountNumber()) 
+    			|| !StringUtil.isValidString(bindBankCardRequest.getBankName())
     			|| !StringUtil.isValidString(bindBankCardRequest.getUserName())
     			|| !StringUtil.isValidString(bindBankCardRequest.getBankCode())
     			){
@@ -720,9 +720,9 @@ public class FinancialAccountController extends BaseController {
     private ModifyInvalidWithDrawCardResponse modifyBindCard(BindBankCardRequest bindBankCardRequest){
     	
     	ModifyInvalidWithDrawCardRequest modifyInvalidWithDrawCardRequest = new ModifyInvalidWithDrawCardRequest();
-    	modifyInvalidWithDrawCardRequest.setAccountnumber(bindBankCardRequest.getBankCardCode());
+    	modifyInvalidWithDrawCardRequest.setAccountnumber(bindBankCardRequest.getAccountNumber());
     	modifyInvalidWithDrawCardRequest.setAccountrealname(bindBankCardRequest.getUserName());
-    	modifyInvalidWithDrawCardRequest.setHankheadname(bindBankCardRequest.getBankCardName());
+    	modifyInvalidWithDrawCardRequest.setHankheadname(bindBankCardRequest.getBankName());
     	modifyInvalidWithDrawCardRequest.setBankhead(bindBankCardRequest.getBankCode());
     	modifyInvalidWithDrawCardRequest.setUserid(this.getUserId());
     	modifyInvalidWithDrawCardRequest.setBankcity(bindBankCardRequest.getCityName());
@@ -762,7 +762,7 @@ public class FinancialAccountController extends BaseController {
          bankCardBindRequest.setConstId(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_CONST_ID);
          bankCardBindRequest.setUserType(String.valueOf(this.getTitanOrganDTO().getUserType()));
          bankCardBindRequest.setAccountTypeId("00");
-         bankCardBindRequest.setBankHeadName(bindBankCardRequest.getBankCardName());
+         bankCardBindRequest.setBankHeadName(bindBankCardRequest.getBankName());
          bankCardBindRequest.setCurrency("CNY");
          bankCardBindRequest.setReqSn(String.valueOf(System.currentTimeMillis()));
          bankCardBindRequest.setSubmitTime(DateUtil.dateToString(new Date(),"yyyyMMddHHmmss"));
@@ -774,7 +774,7 @@ public class FinancialAccountController extends BaseController {
          //查询企业营业执照号
          bankCardBindRequest.setCertificateNumber(this.getTitanOrganDTO().getBuslince());
          
-         bankCardBindRequest.setAccountNumber(bindBankCardRequest.getBankCardCode());
+         bankCardBindRequest.setAccountNumber(bindBankCardRequest.getAccountNumber());
          bankCardBindRequest.setAccountName(bindBankCardRequest.getUserName());
          bankCardBindRequest.setBankCode(bindBankCardRequest.getBankCode());
          

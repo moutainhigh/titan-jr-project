@@ -20,6 +20,7 @@ import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.BindCardStatus;
 import com.fangcang.titanjr.common.enums.ROPErrorEnum;
+import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
@@ -40,6 +41,7 @@ import com.fangcang.titanjr.dto.request.DeleteBindBankRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.ModifyInvalidWithDrawCardRequest;
 import com.fangcang.titanjr.dto.request.ModifyWithDrawCardRequest;
+import com.fangcang.titanjr.dto.request.OrgBaseInfoRequest;
 import com.fangcang.titanjr.dto.request.OrgSubCardRequest;
 import com.fangcang.titanjr.dto.request.OrgSubRequest;
 import com.fangcang.titanjr.dto.request.RegOrgSubRequest;
@@ -135,7 +137,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		response.setOrgBankcardStatus(bankCardStatusEnum.getKey());
 		response.setOrgBankcardMsg(bankCardStatusEnum.getDes());
 		if(bankCardStatusEnum.getKey().equals(BankCardEnum.BankCardStatusEnum.NORMAL.getKey())){
-			//通过该绑卡记录的状态
+			//更新绑卡记录的状态
 			bindBankCardForOne(orgMapInfo.getOrgSubcode());
 		}
 		return response;
@@ -177,36 +179,62 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 	 * @throws GlobalServiceException 
 	 * @throws MessageServiceException 
 	 */
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-	public OrgSubCardResponse bindOrgSubCard(OrgSubCardRequest orgSubCardRequest) throws GlobalServiceException, MessageServiceException{
+	public OrgSubCardResponse bindOrgSubCard(OrgSubCardRequest orgSubCardRequest) throws GlobalServiceException{
 		OrgSubCardResponse orgSubCardResponse = new OrgSubCardResponse();
-		orgSubCardRequest.setAccountPurpose("2");//统一绑为其他卡,2
-		orgSubCardRequest.setConstId(CommonConstant.RS_FANGCANG_CONST_ID);
-		if(!StringUtil.isValidString(orgSubCardRequest.getProductId())){//使用默认的产品
-			orgSubCardRequest.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-		}
-		//虚拟机构的关联关系存在，则不需要添加新机构
+		log.info("机构绑卡,参数orgSubCardRequest："+Tools.gsonToString(orgSubCardRequest));
 		OrgSubRequest orgSubRequest = new OrgSubRequest();
 		orgSubRequest.setOrgCode(orgSubCardRequest.getOrgCode()); 
 		TitanOrgSub orgSub = orgService.getOrgSub(orgSubRequest);
+		if(orgSub!=null){//存在关联关系，则取当前关联的
+			orgSubCardRequest.setAccountName(orgSub.getOrgname());
+			orgSubCardRequest.setCertificateNumber(StringUtil.isValidString(orgSub.getBuslince())?orgSub.getBuslince():orgSub.getCertificatenumber());
+		}
+		if (!GenericValidate.validate(orgSubCardRequest)){
+			log.error("机构绑卡的必填参数不能为空,参数为orgSubCardRequest："+Tools.gsonToString(orgSubCardRequest));
+			orgSubCardResponse.putErrorResult("必填参数不能为空");
+			return orgSubCardResponse;
+		}
+		//设置默认值
+		setOrgSubCardDefaultValue(orgSubCardRequest);
 		if(orgSub==null){//不存在关联关系则需要注册建立 
 			//1-添加机构信息
 			RegOrgSubRequest regOrgSubRequest = new RegOrgSubRequest();
 			regOrgSubRequest.setOrgName(orgSubCardRequest.getAccountName());
 			regOrgSubRequest.setUserType(Integer.valueOf(orgSubCardRequest.getUserType()));
-			regOrgSubRequest.setCertificateType(orgSubCardRequest.getCertificateType());
+			regOrgSubRequest.setCertificateType("0");//身份证或者营业执照
 			if(orgSubCardRequest.getUserType().equals("1")){//企业
 				regOrgSubRequest.setBuslince(orgSubCardRequest.getCertificateNumber());
 			}else{//个人
 				regOrgSubRequest.setCertificateNumber(orgSubCardRequest.getCertificateNumber());
 			}
-			OrganRegisterResponse registerResponse = orgService.registerOrgSub(regOrgSubRequest, orgSubCardRequest.getOrgCode());
-			if(registerResponse.isResult()==false){
-				orgSubCardResponse.putErrorResult(registerResponse.getReturnMessage());
-				log.error("注册真实机构失败,注册参数："+Tools.gsonToString(orgSubCardRequest));
-				throw new MessageServiceException(registerResponse.getReturnMessage());
+			OrganRegisterResponse registerResponse;
+			try {
+				registerResponse = orgService.registerOrgSub(regOrgSubRequest, orgSubCardRequest.getOrgCode());
+				if(registerResponse.isResult()==false){
+					orgSubCardResponse.putErrorResult(registerResponse.getReturnMessage());
+					log.error("注册真实机构失败,注册参数："+Tools.gsonToString(orgSubCardRequest)+",错误信息："+registerResponse.getReturnMessage());
+					orgSubCardResponse.putErrorResult(registerResponse.getReturnMessage());
+					return orgSubCardResponse;
+				}
+			} catch (MessageServiceException e) {
+				log.error("注册真实机构异常,注册参数："+Tools.gsonToString(orgSubCardRequest)+",错误信息："+e.getMessage());
+				orgSubCardResponse.putErrorResult(e.getMessage());
+				return orgSubCardResponse;
 			}
 			orgSub = orgService.getOrgSub(orgSubRequest);
+		}else if(orgSub.getUsertype()==TitanOrgEnum.UserType.PERSONAL.getKey()){
+			//存在关联的机构，则修改名字和身份证号码
+			OrgBaseInfoRequest orgBaseInfoRequest = new OrgBaseInfoRequest();
+			orgBaseInfoRequest.setOrgCode(orgSub.getOrgcode());
+			orgBaseInfoRequest.setOrgName(orgSubCardRequest.getAccountName());
+			orgBaseInfoRequest.setCertificatenumber(orgSubCardRequest.getCertificateNumber());
+			try {
+				orgService.updateOrgBaseInfo(orgBaseInfoRequest);
+			} catch (MessageServiceException e) {
+				log.error("融数修改机构信息失败，参数："+Tools.gsonToString(orgBaseInfoRequest)+"，错误信息："+e.getMessage());
+				orgSubCardResponse.putErrorResult(e.getMessage());
+				return orgSubCardResponse;
+			}
 		}
 		
 		//2-是否已经有绑卡记录
@@ -223,7 +251,9 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 				bankcardid = cusBankCardBindResponse.getBankcardid();
 			}else{
 				log.error("注册真实绑卡失败,绑卡参数："+Tools.gsonToString(orgSubCardRequest));
-				throw new MessageServiceException(cusBankCardBindResponse.getReturnMessage());
+				//不需要回滚
+				orgSubCardResponse.putErrorResult(cusBankCardBindResponse.getReturnMessage());
+				return orgSubCardResponse;
 			}
 		}else{
 			bankcardid = titanBankcard.getBankcardid();
@@ -237,12 +267,38 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		orgCardMap.setOrgCode(orgSubCardRequest.getOrgCode());
 		orgCardMap.setBankcardid(bankcardid);
 		orgCardMap.setIsactive(1);//启用
+		orgCardMap.setCreator(orgSubCardRequest.getOperator());
 		orgCardMap.setCreateTime(new Date());
 		orgCardMapDao.insert(orgCardMap);
-		
+		orgSubCardResponse.putSuccess("绑卡成功");
 		return orgSubCardResponse;
 	}
 	
+	
+	/***
+	 * 设置默认值，如果为空
+	 * @param orgSubCardRequest
+	 */
+	private void setOrgSubCardDefaultValue(OrgSubCardRequest orgSubCardRequest){
+		orgSubCardRequest.setConstId(CommonConstant.RS_FANGCANG_CONST_ID);
+		orgSubCardRequest.setReqSn(String.valueOf(System.currentTimeMillis()));
+		orgSubCardRequest.setAccountPurpose("2");//统一绑为其他卡,2
+		orgSubCardRequest.setSubmitTime(DateUtil.dateToString(new Date(),"yyyyMMddHHmmss"));
+		if(!StringUtil.isValidString(orgSubCardRequest.getProductId())){//使用默认的产品
+			orgSubCardRequest.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+		}
+		if(!StringUtil.isValidString(orgSubCardRequest.getCurrency())){
+			orgSubCardRequest.setCurrency("CNY");//人民币
+		}
+		if(!StringUtil.isValidString(orgSubCardRequest.getAccountTypeId())){
+			orgSubCardRequest.setAccountTypeId("00");//银行卡
+		}
+		orgSubCardRequest.setCertificateType("0");//身份证或者营业执照
+		
+	 
+		
+		
+	}
 	
     @Override
     public CusBankCardBindResponse bankCardBind(CusBankCardBindRequest cusBankCardBindRequest) {
@@ -251,6 +307,11 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
             if (cusBankCardBindRequest == null) {
                 cusBankCardBindResponse.putErrorResult("绑卡参数不合法");
                 return cusBankCardBindResponse;
+            }
+            if(cusBankCardBindRequest.getUserType().equals("1")){//公司类型为企业，则绑定对公
+            	cusBankCardBindRequest.setAccountProperty("1");
+            }else{//对私
+            	cusBankCardBindRequest.setAccountProperty("2");
             }
             BankCardBindRequest bankCardBindRequest = new BankCardBindRequest();
             bankCardBindRequest.setUserid(cusBankCardBindRequest.getUserId());

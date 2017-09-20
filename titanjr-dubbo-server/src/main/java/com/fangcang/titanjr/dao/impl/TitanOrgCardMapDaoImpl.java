@@ -13,7 +13,7 @@ public class TitanOrgCardMapDaoImpl extends GenericDAOMyBatisImpl implements Tit
 	@Override
 	public int insert(TitanOrgCardMap entity) throws DaoException {
 		try {
-			return super.insertEntity("com.fangcang.titanjr.dao.TitanOrgCardMapDao.queryList", entity);
+			return super.insertEntity("com.fangcang.titanjr.dao.TitanOrgCardMapDao.insertEntity", entity);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}

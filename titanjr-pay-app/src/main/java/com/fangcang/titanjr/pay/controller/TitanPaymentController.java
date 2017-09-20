@@ -507,7 +507,7 @@ public class TitanPaymentController extends BaseController {
 	 * @throws Exception
 	 */
 	@RequestMapping("packageRechargeData")
-	public String packageRechargeData(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model)  {
+	public String packageRechargeData(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest,Model model) throws Exception{
 		//设置第三方支付平台的版本
 		if(CashierItemTypeEnum.isQuickPay(titanPaymentRequest.getLinePayType())){
 			titanPaymentRequest.setVersion(RsVersionEnum.Version_2.key);

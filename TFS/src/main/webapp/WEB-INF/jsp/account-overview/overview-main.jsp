@@ -7,6 +7,7 @@
 	<jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
+	<script type="text/javascript" src="<%=basePath%>/js/bindingBank.js?v=2017090218"></script>
 <body>
 	<h3 class="MyAssets_top">账户名称/泰坦码：${organ.orgName}/${organ.titanCode }</h3>
 	<div class="MyAssets_chart">
@@ -29,6 +30,7 @@
 								<span>现金可用余额：<i id="balanceusableSpan">加载中...</i></span>
 								<a href="javascript:void(0)" class="blue decorationUnderline rechargeBtn">充值</a>
 								<a href="javascript:void(0)" class="blue decorationUnderline withdrawBtn">提现</a>
+								<span class="binding-prompt" style="display:none;">未绑定提现卡</span>
 							</p>
 							<p>
 								<span>
@@ -498,7 +500,15 @@
 		</div>
 		<div id="kkpager" class="page_turning"></div>
 	</div>
-
+	<div id="bindcard-wrap" style="display:none;">
+		<div class="veil"></div>
+		<!--模态框-->
+		<div class="modal-box">
+			 
+		</div>
+	</div>
+	
+	
 	<script type="text/javascript">
 		//当前页码
 		var page1,page2,page3,page4,page5;
@@ -519,16 +529,15 @@
 		function validate_BankCard_Satatus(){
 			$.ajax({
 				dataType:"json",
-				url:"<%=basePath%>/account/validate_person_Enterprise.shtml",
-				success: function (data) {
-					if(data.code=="1"){
-						if(data.orgBankcardStatus=="0"){
-							//修改银行卡
-							bind_card_fail();
-						}else if(data.orgBankcardStatus=="2"){//审核中该如何解决
-							$(".withdrawBtn").text('提现卡审核中···').removeClass('blue decorationUnderline').css("color","#999");
-						}
-					}
+				url:"<%=basePath%>/account/checkBindResult.shtml",
+				success: function (result) {
+					if(result.code=="1"){
+		        	  	if(result.data.orgBankcardStatus=="0"){//绑定失败
+		        			bc.bindResultView();
+		        		}
+		        	}else{
+		        		 new top.Tip({msg: result.msg, type: 2, timer: 2000});
+		        	}
 				}
 			});
 			
@@ -537,22 +546,22 @@
         $('.withdrawBtn').on('click',function(){
         	$.ajax({
         		dataType : 'json',		      
-		        url : '<%=basePath%>/account/validate_person_Enterprise.shtml',
-		        success:function(data){
-		        	if(data.code=="1"){
-		        	  	if(data.withdrawStatus=="0"){//绑定失败
-		        			bind_card_fail();
-		        		}else if(data.withdrawStatus=="1"){//对私或者对公已绑定成功
+		        url : '<%=basePath%>/account/checkBindResult.shtml',
+		        success:function(result){
+		        	if(result.code=="1"){
+		        	  	if(result.data.orgBankcardStatus=="0"){//绑定失败
+		        			bc.bindResultView();
+		        		}else if(result.data.orgBankcardStatus=="1"){//对私或者对公已绑定成功
 		        			account_withdraw();
-		        		}else if(data.withdrawStatus=="2"){//审核中
-		        			bank_card_binding();
-		        		}else if(data.orgBankcardStatus=="20"){//未绑定
-		        			bind_card_public($(this));
+		        		}else if(result.data.orgBankcardStatus=="2"){//审核中
+		        			bc.bindResultView();
+		        		}else if(result.data.orgBankcardStatus=="20"){//未绑定
+		        			bc.bind_card();
 		        		}else{
-		        			 new top.Tip({msg: "用户绑卡状态错误,请联系管理员", type: 2, timer: 2000});
+		        			new top.Tip({msg: "用户绑卡状态错误,请联系管理员", type: 2, timer: 2000});
 		        		}
 		        	}else{
-		        		 new top.Tip({msg: data.msg, type: 2, timer: 2000});
+		        		 new top.Tip({msg: result.msg, type: 2, timer: 2000});
 		        	}
 		        }
         	});
@@ -566,6 +575,7 @@
 					}
             });
         }
+        
         function bind_card_fail(){
         	new top.createConfirm({
 			    title:'提示',
@@ -611,73 +621,7 @@
 		      });
         }
         
-        function bank_card_binding(){
-        	$.ajax({
-        		dataType : 'json',		      
-		        url : '<%=basePath%>/account/checkBindAccountWithDrawCard.shtml',
-		        success : function(data){
-		        	if(data.result=="success"){
-		        		if(data.msg=="2"|| data.msg=="4"){//对私或者对公已绑定成功
-		        			account_withdraw();
-		        		}else if(data.msg=="5"){//对公，且绑定失败
-		        			 bind_card_fail();
-		        		}else if(data.msg=="6"){
-		        			new top.createConfirm({
-		                		title:'提示',
-		        				padding: '20px 20px 40px',
-		        				width:400,
-		        				okValue:'关闭',
-		        				skin:'saas_confirm_singlebtn',
-		        		        content : '<div class="l_h26" style="padding-left: 30px;"><i class="mr_ico"></i><span class="TFS_mrtips"><strong class="c_tfscolor f_16">对不起,提现卡绑定审核中</strong>请您稍后查看,我们会在24小时之内审核您的提现卡。</span></div>',
-		        		        cancel : false
-		        		      });
-		                	window.top.$(".ui-dialog-close").hide();
-		        		}else{
-		        			 new top.Tip({msg: "系统错误", type: 2, time: 2000});
-		        		}
-		        	}
-		        },
-		        error:function(data){
-		        	console.log(data);
-		        	alert("失败");
-		        }
-        	})
-        }        
-        
-        function bind_card_public(this_Object){
-        	var _this=this_Object;
-        	$.ajax({
-		        dataType : 'html',		      
-		        context: document.body,
-		        url : '<%=basePath%>/account/toBindAccountWithDrawCard.shtml',
-		        success : function(html){
-		        	var d = window.top.dialog({
-				        title: ' ',
-				        padding: '0 0 0px 0 ',
-				        content: html,
-				        skin : 'saas_pop',
-				    }).showModal();		
-					//点击关闭
-					window.parent.$(".J_finsh").on('click', function() {
-						d.remove();
-						_this.text('提现卡审核中···').removeClass('blue decorationUnderline').css("color","#999");
-					}); 
-					window.parent.$(".J_finsh_close").on('click', function() {
-						d.remove();
-							 $(".withdrawBtn").text('提现卡审核失败···').removeClass('blue decorationUnderline').css("color","#999"); 
-						});  
-				},
-		        error:function(xhr,status){
-         			if(xhr.status&&xhr.status==403){
-            			new top.Tip({msg : '没有权限访问，请联系管理员', type: 3 , timer:2000});
-            			return ;
-            		}
-         			 new top.Tip({msg : '请求失败，请重试', type: 3});
-         		}
-
-		    });
-        	
-        }
+         
         
         
         //导出提示

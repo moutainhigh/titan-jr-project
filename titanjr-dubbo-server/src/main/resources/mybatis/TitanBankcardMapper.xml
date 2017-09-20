@@ -25,6 +25,9 @@
   <select id="queryEntity" resultType="com.fangcang.titanjr.entity.TitanBankcard" parameterType="com.fangcang.titanjr.entity.parameter.TitanBankcardParam" >
     select  * from t_tfs_bankcard
     <where>
+    	<if test="bankcardid !=null">
+        and bankcardid = #{bankcardid}
+      </if>
       <if test="userid !=null">
         and userid = #{userid}
       </if>

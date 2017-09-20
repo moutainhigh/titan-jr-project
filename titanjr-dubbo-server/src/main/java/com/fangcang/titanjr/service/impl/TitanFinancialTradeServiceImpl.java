@@ -2398,14 +2398,14 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		QrCodeResponse qrCodeResponse = new QrCodeResponse();
 		try {
 			List<NameValuePair> params = this.getCommonHttpParams(rechargeDataDTO);
-			log.info("微信调用网关接口参数:" + JSONSerializer.toJSON(params) );
+			log.info("微信调用网关接口参数:" + JSONSerializer.toJSON(params));
 			
 			   HttpPost httpPost = new HttpPost(rechargeDataDTO.getGateWayUrl());
 //		        httpPost.setConfig(requestConfig);
 		        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 			HttpResponse resp = HttpClient.httpRequest(params, httpPost);
 			if(resp == null){
-				log.error("调用融数网关失败");
+				log.error("调用融数网关获取支付二维码失败,返回结果resp："+Tools.gsonToString(resp)+",参数:" + JSONSerializer.toJSON(params));
 				qrCodeResponse.putErrorResult("调用融数网关失败");
 				return qrCodeResponse;
 			}
@@ -2414,7 +2414,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			String response = EntityUtils.toString(entity);
 			
 			if(!StringUtil.isValidString(response)){
-				log.error("融数网关返回信息为空");
+				log.error("调用融数网关获取支付二维码失败,参数:" + JSONSerializer.toJSON(params));
 				qrCodeResponse.putErrorResult("融数网关返回信息为空");
 				return qrCodeResponse;
 			}

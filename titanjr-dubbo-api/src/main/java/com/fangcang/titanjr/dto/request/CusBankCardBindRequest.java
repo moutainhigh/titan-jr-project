@@ -2,18 +2,23 @@ package com.fangcang.titanjr.dto.request;
 
 import java.util.Date;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.fangcang.titanjr.dto.BaseRequestDTO;
 
 public class CusBankCardBindRequest extends BaseRequestDTO {
 	//融数绑卡记录id
 	private String accountid;
     // 用户类型(1：商户，2：普通用户)
+	@NotBlank
     private String userType;
     // 银行卡账号
+	@NotBlank
     private String accountNumber;
     // 账号类型 00银行卡，01存折，02信用卡。不填默认为银行卡00。
     private String accountTypeId;
     // 开户行总行名称
+    @NotBlank
     private String bankHeadName;
     // 币种（CNY）
     private String currency;
@@ -27,14 +32,17 @@ public class CusBankCardBindRequest extends BaseRequestDTO {
     // 账户属性（1：对公，2：对私）
     private String accountProperty;
     // 证件号
+    @NotBlank
     private String certificateNumber;
     // 开户证件类型0：身份证,1: 户口簿，2：护照,3.军官证,4.士兵证，5.
     // 港澳居民来往内地通行证,6. 台湾同胞来往内地通行证,7.
     // 临时身份证,8. 外国人居留证,9. 警官证, X.其他证件
     private String certificateType;
     // 账号名 银行卡或存折上的所有人姓名。
+    @NotBlank
     private String accountName;
     // 银行代码总行  通过接口"ruixue.wheatfield.bankn.query" 查询
+    @NotBlank
     private String bankCode;
 
     // ============建议要有的参数===========
@@ -335,4 +343,5 @@ public class CusBankCardBindRequest extends BaseRequestDTO {
     public void setConstId(String constId) {
         this.constId = constId;
     }
+    
 }

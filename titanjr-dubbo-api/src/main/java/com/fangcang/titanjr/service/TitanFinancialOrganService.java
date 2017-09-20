@@ -13,6 +13,7 @@ import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
 import com.fangcang.titanjr.dto.request.CancelOrgBindRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
+import com.fangcang.titanjr.dto.request.OrgBaseInfoRequest;
 import com.fangcang.titanjr.dto.request.OrgRegisterValidateRequest;
 import com.fangcang.titanjr.dto.request.OrgSubRequest;
 import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
@@ -106,7 +107,7 @@ public interface TitanFinancialOrganService {
      * @return
      * @throws GlobalServiceException
      */
-    public OrganRegisterResponse registerOrgSub(RegOrgSubRequest regOrgSubRequest,String relateOrgCode) throws GlobalServiceException;
+    public OrganRegisterResponse registerOrgSub(RegOrgSubRequest regOrgSubRequest,String relateOrgCode) throws GlobalServiceException,MessageServiceException;
 
     /**
      * 重新修改机构注册信息，后台初审失败，客户修改后再次发起申请时的接口,修改真实证件资料
@@ -256,6 +257,15 @@ public interface TitanFinancialOrganService {
      * @throws GlobalServiceException
      */
     public BaseResponseDTO updateOrg(OrgUpdateRequest orgUpdateRequest)throws GlobalServiceException;
+    
+    
+   	/**
+   	 * 修改机构信息,如果是证件信息，就同时修改融数的
+   	 * @param orgBaseInfoRequest
+   	 * @return
+   	 * @throws GlobalServiceException
+   	 */
+    public BaseResponseDTO updateOrgBaseInfo(OrgBaseInfoRequest orgBaseInfoRequest)throws MessageServiceException;
     
     
     /**
