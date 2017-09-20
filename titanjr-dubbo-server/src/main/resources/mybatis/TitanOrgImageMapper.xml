@@ -33,10 +33,10 @@
 	      and  userid = #{userid}  
 	      </if>
 	      <if test="orgcode != null" >
-	      and  orgcode = #{orgcode},
+	      and  orgcode = #{orgcode}
 	      </if>
   			<if test="imageid != null" >
-	      and  imageid = #{imageid},
+	      and  imageid = #{imageid}
 	      </if>
   	</where>
   
