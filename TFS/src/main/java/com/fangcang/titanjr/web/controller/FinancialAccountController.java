@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.web.controller;
 
-import static org.hamcrest.CoreMatchers.nullValue;
 
 import java.io.IOException;
 import java.io.OutputStream;
