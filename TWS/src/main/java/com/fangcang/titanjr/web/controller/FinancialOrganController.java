@@ -233,7 +233,9 @@ public class FinancialOrganController extends BaseController {
 			}
 			
 		} catch (MessageServiceException e1) {
+			
 			putSysError(e1.getMessage());
+			log.error("机构注册校验失败，userType:"+userType+",orgCode:"+getUserId()+",buslince:"+ buslince+",certificateNumber:"+ certificateNumber+",错误信息："+e1.getMessage());
 		} catch (Exception e) {
     		putSysError("系统错误");
 			log.error("机构注册校验失败，userType:"+userType+",orgCode:"+getUserId()+",buslince:"+ buslince+",certificateNumber:"+ certificateNumber, e);
@@ -259,7 +261,7 @@ public class FinancialOrganController extends BaseController {
 		OrgRegisterValidateResponse orgRegisterValidateResponse = titanFinancialOrganService.validateOrg(orgRegisterValidateRequest);
 		if(orgRegisterValidateResponse.isResult()){
 			return 1;//证件可以用
-		}else if("500".equals(orgRegisterValidateResponse.getReturnCode())){//填写的证件编码已经存在
+		}else if(orgRegisterValidateResponse.getOrgDTO()!=null){
 			if(StringUtil.isValidString(orgCode)){//修改
 				//判断机构注册证件的编号和登录者是不是同一个机构
 				Integer tfsUserIdStr = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);//金服用户名
@@ -281,10 +283,10 @@ public class FinancialOrganController extends BaseController {
 			}else{
 				return -1;//证件已经被其他机构使用
 			}
+			
 		}else{
 			throw new MessageServiceException(orgRegisterValidateResponse.getReturnMessage()); 
 		}
-    	
     }
     /**
      * 注册

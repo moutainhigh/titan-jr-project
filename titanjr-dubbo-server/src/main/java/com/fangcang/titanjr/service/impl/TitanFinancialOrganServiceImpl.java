@@ -677,6 +677,10 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
         	request.setCertificateNumber(organRegisterRequest.getCertificateNumber());
         	OrgRegisterValidateResponse orgRegisterValidateResponse = validateOrg(request);
         	if(orgRegisterValidateResponse.isResult()==false){
+        		//如果已经注册
+        		if(orgRegisterValidateResponse.getOrgDTO()!=null){
+        			response.setOrgCode(orgRegisterValidateResponse.getOrgDTO().getOrgcode());
+        		}
         		response.putErrorResult(orgRegisterValidateResponse.getReturnMessage());
     			return response;
         	}
@@ -691,7 +695,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			response.putErrorResult("必填参数不能为空");
 			return response;
 		}
-    	
     	
     	Map<String, Object> orgResult = new HashMap<String, Object>();
     	if(organRegisterRequest.getRegisterSource()==RegSourceEnum.SAAS.getType()||organRegisterRequest.getRegisterSource()==RegSourceEnum.TTM.getType()){
@@ -728,6 +731,19 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	OrganRegisterResponse response = new OrganRegisterResponse();
     	LOGGER.info("开始注册真实机构，注册参数regOrgSubRequest："+Tools.gsonToString(regOrgSubRequest)+",虚拟机构编码relateOrgCode:"+relateOrgCode);
     	//判断是否可以注册
+    	if(regOrgSubRequest.getUserType()==null){
+    		response.putErrorResult("机构类型不能为空");
+    		return response;
+    	}
+    	if(!StringUtil.isValidString(regOrgSubRequest.getOrgName())){
+    		response.putErrorResult("机构名称不能为空");
+    		return response;
+    	}
+    	if(!(StringUtil.isValidString(regOrgSubRequest.getBuslince())||StringUtil.isValidString(regOrgSubRequest.getCertificateNumber()))){
+    		response.putErrorResult("证件不能为空");
+    		return response;
+    	}
+    	
     	OrgRegisterValidateRequest request = new OrgRegisterValidateRequest();
     	request.setUsertype(regOrgSubRequest.getUserType());
     	request.setOrgName(regOrgSubRequest.getOrgName());
@@ -824,6 +840,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	return orgSub;
     }
     
+    
 	@Override
 	public OrgRegisterValidateResponse validateOrg(OrgRegisterValidateRequest request) {
 		OrgRegisterValidateResponse response = new OrgRegisterValidateResponse();
@@ -832,10 +849,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			response.putErrorResult("机构类型不能为空");
 			return response;
 		}
-		if(!StringUtil.isValidString(request.getOrgName())){
-			response.putErrorResult("公司名称或者姓名不能为空");
-			return response;
-		}
+		
 		if(request.getUsertype()==TitanOrgEnum.UserType.PERSONAL.getKey()){
 			if(request.getCertificatetype()==null||!StringUtil.isValidString(request.getCertificateNumber())){
 				response.putErrorResult("证件类型或者证件号码不能为空");
@@ -845,6 +859,17 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			condition.setCertificatetype(NumberUtils.toInt(request.getCertificatetype()));
 			condition.setCertificatenumber(request.getCertificateNumber());
 			titanOrgSub = orgSubDao.selectOne(condition);
+			if(titanOrgSub!=null){
+				OrgDTO orgDTO = new OrgDTO();
+				orgDTO.setOrgid(titanOrgSub.getOrgsubid());
+				orgDTO.setOrgcode(titanOrgSub.getOrgcode());
+				orgDTO.setOrgname(titanOrgSub.getOrgname());
+				response.setOrgDTO(orgDTO);
+			}
+			if(titanOrgSub!=null&&(!StringUtil.isValidString(request.getOrgName()))){
+				response.putErrorResult("已注册");
+				return response;
+			}
 			if(titanOrgSub!=null){//已经存在机构
 				OrgDTO orgDTO = new OrgDTO();
 				orgDTO.setOrgid(titanOrgSub.getOrgsubid());
@@ -866,37 +891,42 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			TitanOrgSubParam condition = new TitanOrgSubParam();
 			condition.setBuslince(request.getBuslince());
 			titanOrgSub = orgSubDao.selectOne(condition);
-			//证件号相同,公司名字不同
-			if(titanOrgSub!=null&&(!titanOrgSub.getOrgname().equals(request.getOrgName()))){
+			if(titanOrgSub!=null){
 				OrgDTO orgDTO = new OrgDTO();
 				orgDTO.setOrgid(titanOrgSub.getOrgsubid());
 				orgDTO.setOrgcode(titanOrgSub.getOrgcode());
 				orgDTO.setOrgname(titanOrgSub.getOrgname());
 				response.setOrgDTO(orgDTO);
+			}
+			if(titanOrgSub!=null&&(!StringUtil.isValidString(request.getOrgName()))){
+				response.putErrorResult("已注册");
+				return response;
+			}
+			//证件号相同,公司名字不同
+			if(titanOrgSub!=null&&(!titanOrgSub.getOrgname().equals(request.getOrgName()))){
 				response.putErrorResult("公司名称和证件号不相符，请核实证件");
 				return response;
 			}else if(titanOrgSub!=null&&titanOrgSub.getOrgname().equals(request.getOrgName())){
-				OrgDTO orgDTO = new OrgDTO();
-				orgDTO.setOrgid(titanOrgSub.getOrgsubid());
-				orgDTO.setOrgcode(titanOrgSub.getOrgcode());
-				orgDTO.setOrgname(titanOrgSub.getOrgname());
-				response.setOrgDTO(orgDTO);
 				response.putErrorResult("500", "该证件已经注册，请使用其他证件");
 				return response;
 			}
-			condition.setBuslince(null);
-			condition.setOrgname(request.getOrgName());
-			titanOrgSub = orgSubDao.selectOne(condition);
-			//公司名字相同，证件号不相同,
-			if(titanOrgSub!=null&&(!titanOrgSub.getBuslince().equals(request.getBuslince()))){
-				OrgDTO orgDTO = new OrgDTO();
-				orgDTO.setOrgid(titanOrgSub.getOrgsubid());
-				orgDTO.setOrgcode(titanOrgSub.getOrgcode());
-				orgDTO.setOrgname(titanOrgSub.getOrgname());
-				response.setOrgDTO(orgDTO);
-				response.putErrorResult("公司名称和证件号不相符，请核实证件");
-				return response;
+			//检查公司名称是否已经存在
+			if(StringUtil.isValidString(request.getOrgName())){
+				condition.setBuslince(null);
+				condition.setOrgname(request.getOrgName());
+				titanOrgSub = orgSubDao.selectOne(condition);
+				//公司名字相同，证件号不相同,
+				if(titanOrgSub!=null&&(!titanOrgSub.getBuslince().equals(request.getBuslince()))){
+					OrgDTO orgDTO = new OrgDTO();
+					orgDTO.setOrgid(titanOrgSub.getOrgsubid());
+					orgDTO.setOrgcode(titanOrgSub.getOrgcode());
+					orgDTO.setOrgname(titanOrgSub.getOrgname());
+					response.setOrgDTO(orgDTO);
+					response.putErrorResult("公司名称和证件号不相符，请核实证件");
+					return response;
+				}
 			}
+			
 		}else {
 			response.putErrorResult("注册证件类型错误");
 			return response;

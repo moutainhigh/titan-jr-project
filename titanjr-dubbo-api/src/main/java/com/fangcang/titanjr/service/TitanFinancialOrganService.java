@@ -128,7 +128,7 @@ public interface TitanFinancialOrganService {
 //     */
 //    public UpdateOrgaResponse updateOrg(UpdateOrgaRequest updateOrgaRequest) throws GlobalServiceException;
     /**
-     * 注册时检查结构信息是否已经注册
+     * 检查机构信息是否已经注册
      * @param request
      * @return  code = 500 ,该证件已经注册过
      * @throws MessageServiceException
