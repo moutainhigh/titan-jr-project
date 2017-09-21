@@ -1,0 +1,1977 @@
+@charset "utf-8";
+
+/*头部*/
+body{
+    background-color: #f1f2f4;
+    font-family: "微软雅黑";!important;
+}
+body input,
+body select{
+    font-family: "微软雅黑";!important;
+}
+.w{
+    width: 1000px;
+    margin: 0 auto;
+}
+.h{
+    width: 1366px;
+    margin: 0 auto;
+}
+header{
+    /*width: 100%;*/
+    height: 40px;
+    background-color: #fff;
+    padding-left: 50px;
+}
+header b{
+    display: inline-block;
+    width: 160px;
+    height: 15px;
+    background: url("../images/01502241-B2B9-2BDA-983E-EDF3AAE0FE85.png") no-repeat center;
+    -webkit-background-size: auto 15px;
+    background-size: auto 15px;
+    margin-top: 13px;
+}
+header span{
+    line-height: 42px;
+    font-size: 14px;
+    margin-left: 20px;
+    vertical-align: top;
+}
+
+.main{}
+.payment-info{
+    margin-top: 10px;
+    padding: 20px 0 20px 30px;
+    border-radius: 4px;
+    background-color: #fff;
+}
+/*付款信息*/
+.main .payment-info-left{
+    width: 760px;
+    line-height: 22px;
+}
+.main .payment-info-left>p:first-child{
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+.main .payment-info-left>p:nth-child(2){
+    /*width: 100%;*/
+    position: relative;
+    padding-right: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.main .payment-info-left>p:nth-child(2)>svg{
+    transition:all 0.2s linear;
+    position: absolute;
+    top:1px;
+    right: 0;
+    color: #333;
+    font-size: 20px;
+    cursor: pointer;
+}
+.main .payment-info-left>p:nth-child(2)>svg.icon-rotate{
+    transform:rotate(-180deg);
+}
+.payment-info-right{
+    width: 170px;
+    /*padding-top: 30px;*/
+    padding-right: 30px;
+}
+.payment-info-right>p{
+    font-size: 22px;
+    color: #d71319;
+    text-align: right;
+    line-height: 54px;
+}
+.payment-info-right>p>span{
+    font-size: 12px;
+}
+/*付款类型*/
+.payment-type{
+    width: 100%;
+    height: 100px;
+    margin-top: 10px;
+    background-color: #fff;
+    border-radius: 4px;
+}
+.payment-type>.left{
+    width: 210px;
+    height: 100%;
+    line-height: 100px;
+    font-size: 16px;
+    padding-left: 30px;
+}
+.payment-type>.right{
+    width: 760px;
+    height: 100%;
+    /*padding-right: 20px;*/
+}
+.payment-type>.right>li{
+    float: left;
+    width: 358px;
+    height: 70px;
+    text-align: center;
+    line-height: 70px;
+    /*background-color: #f8f8f9;*/
+    border:1px solid #dadfe3;
+    border-radius: 2px;
+    margin-top: 15px;
+    margin-right: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.payment-type>.right>li:hover{
+    box-shadow: 0 0 8px #ccc;
+}
+.payment-type>.right>li.payment-disable{
+    opacity: 0.4;
+    box-shadow: 0 0 0 #fff;
+}
+.payment-type>.right>li>a{
+    color: #238AF7;
+}
+.payment-type>.right>.new-payment-number,
+.payment-type>.right>.new-payment-bank{
+    width: 318px;
+    height: 55px;
+    padding: 15px 20px 0 20px;
+    position: relative;
+    border: 1px solid #d71319;
+    color: #d71319;
+}
+.new-payment-number a,
+.new-payment-bank a{
+    float: right;
+    line-height: 40px;
+}
+.payment-type .new-payment>i{
+    position: absolute;
+    right: -1px;
+    bottom: -26px;
+    font-size: 20px;
+}
+.payment-type .new-payment .li-left span{
+    display: block;
+    width: 50px;
+    height: 40px;
+    /* background-color: #d71319; */
+    margin-right: 12px;
+    background: url(../images/20170823230952.png) no-repeat center;
+}
+.payment-type .new-payment .li-right p{
+    line-height: 20px;
+    text-align: left;
+    color: #222;
+}
+.new-payment-number svg{
+    display: block;
+    width: 50px;
+    height: 40px;
+    margin-right: 12px;
+}
+/*付款方式*/
+.payment-mode{
+    padding: 2px 30px 0 30px;
+    margin-top: 10px;
+    border-radius: 4px;
+    background-color: #fff;
+    padding-bottom: 15px;
+}
+.payment-mode>li{
+    box-sizing: content-box;
+    line-height: 60px;
+    padding: 0 20px 0 30px;
+    border: 2px solid transparent;
+    border-bottom: 2px solid  #f6f7f7;
+    transition: all 0.5s;
+    cursor: pointer;
+}
+.payment-mode>li:hover{
+    box-shadow: 0 0 15px #ccc;!important;
+    border-bottom: 2px solid  transparent;
+}
+.payment-mode .payment-mode-prohibit:hover{
+    box-shadow: 0 0 0 #fff;
+}
+.payment-mode>li.selected{
+    border: 2px solid #f3b8ba;
+    border-radius: 2px;
+}
+.payment-mode>li>.icon{
+    cursor: pointer;
+    width: 240px;
+    min-height: 60px;
+    /*padding-left: 30px;*/
+}
+.payment-mode>li>.icon>i{
+    font-size: 26px;
+    margin-left: 35px;
+    position: relative;
+    top: 3px;
+}
+.payment-mode>li>.icon>b{
+    font-size: 22px;
+    position: relative;
+    top: 2px;
+    color: #ccc;
+    left: 1px;
+    /*margin-left: 35px;*/
+}
+.payment-mode>li>.icon>b.icon-check-color{
+    color: #d71319;
+}
+.payment-mode>li>.icon>span{
+    margin-left: 10px;
+    font-size: 16px;
+}
+.payment-mode>li>.content{
+    font-size: 13px;
+    /*line-height: 60px;*/
+}
+.payment-mode>li>.content>span{
+    color: #d71319;
+}
+.payment-mode>li>.content>.discount-icon{
+    width: 32px;
+    height: 20px;
+    margin-top: 20px;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+    color: #fff;
+    border-radius: 2px;
+    background-color: #85A5DB;
+}
+.payment-mode>li>.content>.discount-info{
+    margin-left: 10px;
+    color: #85A5DB;
+    font-size: 13px;
+}
+.payment-mode>li>.content>.bank-card{
+    margin-right: 30px;
+    color: #333;
+}
+.payment-mode>li>.content>.bank-card>s{
+    color: #d1d1d1;
+    margin: 0 5px;
+}
+.payment-mode .right-money{
+    float: right;
+    color: #d71319;
+}
+.payment-mode .right-money .money{
+    font-size: 18px;
+}
+.payment-mode .right-money>span:first-child{
+    margin-right: 20px;
+}
+.payment-mode .right-money .money>s{
+    font-size: 13px;
+}
+/*泰坦易*/
+.payment-mode>.payment-mode-item{
+    /*border: 2px solid #f3b8ba;*/
+    /*border-radius: 2px;*/
+    cursor: pointer;
+}
+.payment-mode>.payment-mode-item>.item-icon{
+    position: relative;
+}
+.payment-mode>.payment-mode-item>.item-icon>b{
+    font-size: 22px;
+    color: #ccc;
+}
+.payment-mode>.payment-mode-item>.item-icon>span{
+    margin-left: 10px;
+    font-size: 16px;
+}
+.payment-mode>.payment-mode-item>.item-icon>b.icon-check-color{
+    color: #d71319;
+}
+.payment-mode>.payment-mode-item>.content{
+    padding-left: 54px;
+}
+.payment-mode>li>.discount{
+    cursor: pointer;
+}
+.payment-mode>.payment-mode-item>.content>.taitangyi>li{
+    float: left;
+    width: 110px;
+    height: 44px;
+    line-height: 20px;
+    text-align: center;
+    font-size: 13px;
+    padding: 0 24px 0 24px;
+    border: 1px solid #d7d8dd;
+    color: #333;
+    border-radius: 2px;
+    margin-right: 30px;
+    transition: all 0.2s;
+    position: relative;
+}
+.payment-mode>.payment-mode-item>.content>.taitangyi>li:hover{
+    box-shadow: 0 0 8px #ccc;
+}
+.payment-mode>.payment-mode-item>.content>.taitangyi>li>i{
+    position: absolute;
+    right: -1px;
+    bottom: -1px;
+    font-size: 20px;
+}
+.payment-mode>.payment-mode-item>.content>.taitangyi>li.choice-color{
+    border: 1px solid #d71319;
+    color: #d71319;
+}
+.payment-mode>.payment-mode-item>.content>.by-stages{
+    margin-top: 16px;
+    padding: 20px 30px 20px 20px;
+    border: 1px solid #e6e9eb;
+    background-color: #f8f8f9;
+    margin-bottom: 20px;
+}
+.payment-mode>.payment-mode-item>.content>.by-stages>ul>li{
+    float: left;
+    height: 34px;
+    width: 58px;
+    line-height: 17px;
+    text-align: center;
+    padding: 4px 10px 4px 10px;
+    border: 1px solid #c7c7cc;
+    border-radius: 2px;
+    margin-right: 10px;
+    position: relative;
+    color: #333;
+    position: relative;
+    transition: all 0.2s;
+}
+.payment-mode>.payment-mode-item>.content>.by-stages>ul>li:hover{
+    box-shadow: 0 0 8px #ccc;
+}
+.payment-mode>.payment-mode-item>.content>.by-stages>ul>li>i{
+    position: absolute;
+    font-size: 16px;
+    right: -1px;
+    bottom: -1px;
+}
+.payment-mode>.payment-mode-item>.content>.by-stages>ul>li.choice-color{
+    border: 1px solid #d71319;
+    color: #d71319;
+}
+.payment-mode>.payment-mode-item>.content>.by-stages>.by-stages-info{
+    margin-top: 20px;
+    color: #333;
+    line-height: 22px;
+}
+.payment-mode>.payment-mode-item>.content>.by-stages>.by-stages-info>div{
+    font-size: 13px;
+    line-height: 22px;
+}
+.payment-mode>.payment-mode-item>.content>.by-stages>.by-stages-info>div>span:first-child{
+    display: block;
+    width: 70px;
+}
+.payment-mode>.payment-mode-item>.content>.by-stages>.by-stages-info>div:last-child>span:last-child{
+    display: inline-block;
+    width: 90%;
+}
+/*支付*/
+.payment{
+    padding-left: 120px;
+    padding-bottom: 60px;
+    border-radius: 4px;
+    background-color: #fff;
+}
+.payment>.more{
+
+}
+.payment>.more>li{
+    float: left;
+    width: 100px;
+    height: 34px;
+    margin-right: 20px;
+}
+.payment>.more>li:hover{
+    /*opacity: 0.8;*/
+}
+.payment>.more>li>a{
+    display: block;
+    color: #238AF7;
+    line-height: 34px;
+    text-align: center;
+    border: 1px solid #dadfe2;
+    border-radius: 2px;
+}
+.payment>.more>li>a:hover{
+    border-color: #238AF7;
+}
+.payment>.more>li:last-child>a{
+    width: 150px;
+    height: 34px;
+}
+/*设置输入密码*/
+.payment>.password{
+    margin-top: 30px;
+}
+.password .input-password li span:last-child:hover{
+    color: #238AF7;
+}
+.password .input-password a{
+    color: #238AF7;
+    margin-left: 10px;
+    line-height: 42px;
+}
+.password .input-password a:hover{
+    text-decoration: underline;
+}
+/*.payment>.password .TFSpassw_set>li:first-child{*/
+    /*margin-top: 20px;*/
+/*}*/
+/*.payment>.password .TFSpassw_set>li:last-child{*/
+    /*margin-top: 10px;*/
+/*}*/
+/*.payment>.password .TFSpassw_set>li>.Passname{*/
+    /*float: left;*/
+    /*display: inline-block;*/
+    /*width: 110px;*/
+    /*height: 40px;*/
+    /*border: 1px solid #dadfe2;*/
+    /*line-height: 40px;*/
+    /*text-align: center;*/
+    /*background-color: #f8f8f9;*/
+/*}*/
+/*.payment>.password .TFSpassw_set>li .sixDigitPassword {*/
+    /*cursor: text;*/
+    /*float: left;*/
+    /*background: #fff;*/
+    /*height: 40px;*/
+    /*outline: 0;*/
+    /*position: relative;*/
+    /*border: 1px solid #ccc;*/
+    /*margin-left: -1px;*/
+/*}*/
+
+/*.payment>.password .TFSpassw_set>li .sixDigitPassword>i {*/
+    /*float: left;*/
+    /*display: block;*/
+    /*height: 40px;*/
+    /*width: 50px;*/
+    /*border-left: 1px solid #ccc;*/
+/*}*/
+/*.payment>.password .TFSpassw_set>li .sixDigitPassword>i:first-child{*/
+    /*border-left: none;*/
+/*}*/
+/*去支付*/
+.payment>.go-payment{
+    margin-top: 15px;
+}
+.payment>.go-payment>button{
+    width: 200px;
+    height: 50px;
+    background-color: #d71319;
+    color: #fff;
+    font-size: 18px;
+    line-height: 50px;
+    text-align: center;
+    border-radius: 2px;
+    cursor: pointer;
+}
+.payment>.go-payment>button:hover{
+    background-color: #FF0000;
+}
+/*底部*/
+footer{
+    width: 100%;
+    height: 40px;
+    background-color: #666;
+    margin-top: 60px;
+    position: fixed;
+    bottom: 0;
+}
+footer>.h{
+    height: 40px;
+}
+footer p{
+    text-align: center;
+    line-height: 40px;
+    color: #fff;
+}
+footer p>a{
+    margin: 0 10px 0 80px;
+    display: inline-block;
+    position: relative;
+    top: 5px;
+    width: 28px;
+    height: 29px;
+    background: url("../images/20170826113606.png") no-repeat center;
+    vertical-align: text-bottom;
+}
+
+/*遮罩层*/
+.payment-box{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.3);
+}
+/*添加快捷支付银行卡弹窗*/
+.shortcut{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    width: 880px;
+    min-height: 440px;
+    /*margin-left: -440px;*/
+    /*margin-top: -240px;*/
+    transform: translate(-50%,-50%);
+    background-color: #fff;
+    box-shadow: 0 0 14px #777;
+    border-radius: 4px;
+}
+.shortcut input{
+    font-family: "微软雅黑";
+}
+.shortcut>.title{
+    /*width: 100%;*/
+    height: 50px;
+    padding-left: 12px;
+    border-bottom: 1px solid #dadfe2;
+}
+.shortcut>.title>i{
+    position: absolute;
+    top:0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+}
+.shortcut>.title>ul>li{
+    float: left;
+    width: 80px;
+    height: 48px;
+    line-height: 48px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0 20px;
+}
+.shortcut>.title>ul>li.title-color{
+    border-bottom: 3px solid #d71319;
+}
+/*快捷支付*/
+.shortcut>.shortcut-payment{
+
+}
+.shortcut>.shortcut-payment>.bank-account{
+    padding: 60px 0 100px 0;
+    font-size: 18px;
+    width: 505px;
+    margin: 0 auto;
+    position: relative;
+}
+.shortcut>.shortcut-payment>.bank-account>i{
+    position: absolute;
+    top: 73px;
+    width: 25px;
+    height: 25px;
+    font-size: 18px;
+    color: #777;
+    right: 100px;
+    text-align: center;
+    line-height: 25px;
+    cursor: pointer;
+}
+.shortcut>.shortcut-payment>.bank-account>.enlarge{
+    width: 350px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 22px;
+    background-color: #fff;
+    box-shadow: 0 0 8px #ccc;
+    padding: 10px;
+    border-radius: 2px;
+    position: absolute;
+    top: 2px;
+    left: 93px;
+}
+.shortcut>.shortcut-payment>.bank-account>label{
+    margin-right: 20px;
+    line-height: 50px;
+}
+.shortcut>.shortcut-payment>.bank-account>input{
+    width: 310px;
+    height: 48px;
+    line-height: 48px;
+    border: 1px solid #d6dbdd;
+    border-radius: 2px 0 0 2px;
+    font-size: 16px;
+    padding-left: 10px;
+    margin-right: -1px;
+}
+.shortcut>.shortcut-payment>.bank-account>input::-webkit-input-placeholder { /* WebKit browsers */
+    color:#ccc;
+    font-size: 16px;
+    height: 48px;
+    line-height: 48px;
+}
+.shortcut>.shortcut-payment>.bank-account>input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:#ccc;
+    font-size: 16px;
+    height: 48px;
+    line-height: 48px;
+}
+.shortcut>.shortcut-payment>.bank-account>input::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:#ccc;
+    font-size: 16px;
+    height: 48px;
+    line-height: 48px;
+}
+.shortcut>.shortcut-payment>.bank-account>input:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:#ccc !important;
+    font-size: 16px;
+    height: 48px;
+    line-height: 48px;
+}
+.shortcut>.shortcut-payment>.bank-account>input:hover{
+    border-color: #666;
+}
+.shortcut>.shortcut-payment>.bank-account>button{
+    width: 90px;
+    height: 50px;
+    background-color: #d71319;
+    color: #fff;
+    text-align: center;
+    line-height: 50px;
+    border-radius: 0 2px 2px 0;
+    font-size: 18px;
+    cursor: pointer;
+}
+.shortcut>.shortcut-payment>.bank-account>button:hover{
+    background-color: #FF0000;
+}
+.shortcut>.shortcut-payment>.title{
+    padding-left: 40px;
+}
+.shortcut>.shortcut-payment>.content{
+    padding-left: 44px;
+    padding-bottom: 30px;
+}
+.shortcut>.shortcut-payment>ul:nth-child(3){
+    padding-bottom: 40px;
+}
+.shortcut>.shortcut-payment>.content>li{
+    float: left;
+    width: 166px;
+    margin-top: 20px;
+    position: relative;
+}
+.shortcut>.shortcut-payment>.content>li .bank-type-icon{
+    font-size: 60px;
+    top: -16px;
+    right: 32px;
+    position: absolute;
+}
+.shortcut>.shortcut-payment>.content>li .bank-type-icon4{
+    right: 7px;
+}
+.shortcut>.shortcut-payment>.content>li>i{
+    /*margin-right: 10px;*/
+}
+.shortcut>.shortcut-payment>.content>li>span{
+    margin-left: 10px;
+}
+/*填写银行卡信息*/
+.bank-account-info{
+    width: 100%;
+}
+.bank-account-info .prompt{
+    height: 40px;
+    background-color: #fff5ee;
+    padding-left: 30px;
+    line-height: 40px;
+    color: #FF6000;
+}
+.bank-account-info .content{
+    padding: 0 40px 0 40px;
+}
+.bank-account-info .register_information{
+    margin-top: 10px;
+}
+.bank-account-info .register_information .register_list .type_name{
+    width: 100px;
+    min-height: 17px;
+    line-height: 40px;
+}
+.bank-account-info .register_information .register_list .type_li{
+    margin-top: 10px;
+}
+.bank-account-info .register_information .register_list .type_li .type_mz{
+    /*width: 298px;*/
+    height: 36px;
+    /*border: 1px solid #dadfe2;*/
+    /*border-radius: 2px;*/
+    line-height: 36px;
+}
+.bank-account-info .register_information .register_list .type_li .bank-number{
+    /*font-size: 20px;*/
+}
+.bank-account-info .register_information .register_list .type_li .common-bank{
+    position: absolute;
+    top: -4px;
+    right: 5px;
+
+}
+.bank-account-info .register_information  .type_li .type_mz .pdd .common-bank>s{
+    width: 0px;
+    position: relative;
+    top: 3px;
+    display: inline-block;
+    height: 18px;
+    border-left: 1px solid #d1d1d1;
+    margin-left: 0px;
+    margin-right: 10px;
+}
+.bank-account-info .register_information  .type_li .valid-tip{
+    padding-left: 20px;
+}
+.register_information .register_list .type_li .common-bank>i{
+    color: #ccc;
+    font-size: 26px;
+    position: relative;
+    top: 4px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.bank-account-info .register_information .register_list .type{
+    height: 40px;
+    line-height: 40px;
+}
+.bank-account-info .register_information .register_list .type_li .number{
+    line-height: 38px;
+}
+.bank-account-info .register_information .register_list .type>.icon{
+    width: 310px;
+    height: 40px;
+}
+.bank-account-info .register_information .register_list .type>.icon>a:hover{
+    text-decoration: underline;
+}
+.bank-account-info .register_information .register_list .type>.icon>i,
+.bank-account-info .register_information .register_list .type>.icon>span{
+    margin-right: 10px;
+}
+.bank-account-info .register_information  .type_li .type_mz .pdd{
+    position: relative;
+}
+.bank-account-info .register_information  .type_li .type_mz .pdd s{
+    position: absolute;
+    top: 0;
+    right: 1px;
+    width: 25px;
+    text-align: center;
+}
+.bank-account-info .register_information  .type_li .type_mz .pdd{
+    position: relative;
+}
+.bank-account-info .register_information  .type_li .type_mz .pdd s{
+    position: absolute;
+    top: 1px;
+    right: 3px;
+}
+.bank-account-info .register_information  .type_li .type_mz .pdd input{
+    width: 272px;
+    height: 36px;
+    line-height: 36px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    padding-left: 10px;
+    padding-right: 20px;
+    color: #222;
+    font-size: 13px;
+}
+.bank-account-info .register_information  .type_li .type_mz .pdd input::-webkit-input-placeholder { /* WebKit browsers */
+    color:#ccc;
+    font-size: 13px;
+    height: 36px;
+    line-height: 36px;
+}
+.bank-account-info .register_information  .type_li .type_mz .pdd input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:#ccc;
+    font-size: 13px;
+    height: 36px;
+    line-height: 36px;
+}
+.bank-account-info .register_information  .type_li .type_mz .pdd input::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:#ccc;
+    font-size: 13px;
+    height: 36px;
+    line-height: 36px;
+}
+.bank-account-info .register_information  .type_li .type_mz .pdd input:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:#ccc !important;
+    font-size: 13px;
+    height: 36px;
+    line-height: 36px;
+}
+.bank-account-info .register_information  .type_li .type_mz .pdd input:hover{
+    border-color: #666;
+}
+.bank-account-info .register_information  .type_li .type_mz .bank-input-span .valid-tip{
+    left: 305px;
+}
+.bank-account-info .register_information  .type_li .register_btn{
+    width: 200px;
+    height: 50px;
+    font-size: 18px;
+    color: #fff;
+    margin-bottom: 22px;
+    background-color: #d71319;
+    border-radius: 2px;
+    cursor: pointer;
+}
+.bank-account-info .register_information  .type_li .register_btn:hover{
+    background-color: #FF0000;
+}
+.bank-account-info .register_information  .type_li .City_components>select{
+    width: 304px;
+    height: 36px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    line-height: 36px;
+    padding-left: 10px;
+}
+.bank-account-info .register_information  .type_li .City_components>select:hover{
+    border-color: #666;
+}
+.bank-account-info .register_information  .type_li .City_components>i{
+    position: absolute;
+    right: 5px;
+    top: 0;
+    line-height: 36px;
+    height: 36px;
+    color: #666;
+    font-size: 14px;
+}
+.bank-account-info .register_information  .type_li .City_components{
+    position: relative;
+}
+.bank-account-info .register_information  .type_li .City_components>ul{
+    width: 298px;
+    position: absolute;
+    box-shadow: 0 0 5px #777;
+}
+.bank-account-info .register_information  .type_li .City_components>ul>li{
+    height: 38px;
+    line-height: 38px;
+    background-color: #fff;
+    border-bottom: 1px solid #dadfe2;
+    padding-left: 10px;
+}
+.bank-account-info .register_information  .type_li .City_components>ul>li:last-child{
+    border-bottom: none;
+}
+.bank-account-info .register_information  .type_li .City_components>ul>li:hover{
+    background-color: #f8f8f9;
+}
+.bank-account-info .register_information .register_list .type_li .get-verification-btn{
+    width: 76px;
+    height: 40px;
+    background-color: #f1f2f4;
+    text-align: center;
+    line-height: 40px;
+    margin-right: 10px;
+    cursor: pointer;
+    color: #333;
+    margin-left: 10px;
+}
+.bank-account-info .register_information .register_list .type_li .get-verification-btn:hover{
+    color: #238AF7;
+}
+.bank-account-info .register_information .register_list .type_li02{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.bank-account-info .register_information .register_list .type_li02 i{
+    position: relative;
+    top: 5px;
+    font-size: 26px;
+    color: #ccc;
+}
+.bank-account-info .register_information .register_list .type_li02 .la_agree a{
+    color: #238AF7;
+}
+.bank-account-info .register_information .register_list .type_li02 .la_agree>a:hover{
+    text-decoration: underline;
+}
+.bank-account-info .content>.right{
+    width: 260px;
+    margin-top: 30px;
+}
+.bank-account-info .content>.right>.card{
+    height: 150px;
+    box-shadow: 0 0 8px #ccc;
+    padding: 20px 30px 0 20px;
+    border-radius: 2px;
+}
+.bank-account-info .content>.right>.card>.title{
+    line-height: 26px;
+}
+.bank-account-info .content>.right>.card>.title>span:nth-child(1){
+    /*font-weight: 700;*/
+}
+.bank-account-info .content>.right>.card>.title>span:nth-child(2){
+    color: #777;
+    float: right;
+}
+.bank-account-info .content>.right>.card>p{
+    font-size: 16px;
+    margin-top: 24px;
+    margin-bottom: 20px;
+}
+.bank-account-info .content>.right>.card>.card-icon{
+    width: 100%;
+}
+
+.bank-account-info .content>.right>.quota{
+    padding: 20px 30px 0 20px;
+}
+.bank-account-info .right>.quota>.quota-num{
+    line-height: 26px;
+}
+.bank-account-info .right>.quota>.quota-num>.left{
+    width: 100px;
+}
+.type_li .pdd .f_ui-valid-item .valid-tip{
+    margin-left: 0;
+}
+
+/*个人网银*/
+.personal>ul{
+    padding: 30px 0 0 45px;
+}
+.personal>ul>li{
+    float: left;
+    width: 180px;
+    height: 60px;
+    text-align: center;
+    line-height: 60px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #dadfe2;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+}
+.personal>ul>li:hover{
+    box-shadow: 0 0 8px #ccc;
+}
+.personal>ul>li.selected{
+    color: #d71319;
+    border: 1px solid #d71319;
+}
+.personal>ul>li>i{
+    margin-right: 10px;
+    position: absolute;
+    bottom: -21px;
+    right: -11px;
+    font-size: 20px;
+}
+.personal>ul>li>span{
+    font-size: 14px;
+    color: #333;
+}
+.personal>.btn{
+    padding-bottom: 30px;
+    padding-right: 40px;
+}
+.personal>.btn>button{
+    width: 200px;
+    height: 50px;
+    background-color: #d71319;
+    border-radius: 2px;
+    text-align: center;
+    line-height: 50px;
+    float: right;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+}
+.personal>.btn>button:hover{
+    background-color: #FF0000;
+}
+/*企业网银*/
+.enterprise{}
+.enterprise>.prompt{
+    height: 40px;
+    background-color: #fff5ee;
+    line-height: 40px;
+    padding-left: 30px;
+    color: #FF6000;
+}
+.enterprise .enterprise-content{
+    padding-left: 40px;
+    padding-top: 30px;
+}
+.enterprise .enterprise-content>.enterprise-form>.left{
+    width: 100px;
+}
+.enterprise .enterprise-content>.enterprise-form>.right{
+    width: 300px;
+    position: relative;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>s{
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    height: 38px;
+    line-height: 38px;
+}
+.enterprise .enterprise-content>.enterprise-form>.right .change-bank{
+    color: #238AF7;
+    margin-left: 20px;
+}
+.enterprise .enterprise-content>.enterprise-form>.right .change-bank:hover{
+    text-decoration: underline;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>span:nth-child(2){
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>span:nth-child(3){
+    color: #666;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>.item{
+    width: 100px;
+    color: #ccc;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>.item.selected{
+    color: #d71319;
+    border: none;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>.item>i{
+    margin-right: 5px;
+    cursor: pointer;
+    border: none;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>.item>i.selected{
+    color: #d71319;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>.item>span{
+    color: #333;
+    cursor: pointer;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>input{
+    width: 288px;
+    height: 36px;
+    padding-left: 10px;
+    border: 1px solid #dadfe2;
+    border-radius: 2px;
+    line-height: 36px;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>input:hover{
+    border-color: #666;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>table{
+    width: 630px;
+    text-align: left;
+    border: 1px solid #f9fafc;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>table tr{
+    height: 34px;
+    line-height: 34px;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>table th,
+.enterprise .enterprise-content>.enterprise-form>.right>table td{
+    padding-left: 20px;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>table>thead>tr{
+    background-color: #f1f2f4;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>table>tbody>tr:nth-child(even){
+    background-color: #f9fafc;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>button{
+    width: 200px;
+    height: 50px;
+    background-color: #d71319;
+    margin-top: 30px;
+    text-align: center;
+    line-height: 50px;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 2px;
+}
+.enterprise .enterprise-content>.enterprise-form>.right>button:hover{
+    background-color: #FF0000;
+}
+/*优惠方式*/
+.discount-mode{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    width: 590px;
+    height: 446px;
+    margin-top: -223px;
+    margin-left: -270px;
+    background-color: #fff;
+    box-shadow: 0 0 14px #777;
+    border-radius: 4px;
+}
+.discount-mode>.discount-mode-title{
+    height: 56px;
+    line-height: 50px;
+    padding-left: 20px;
+    font-size: 16px;
+}
+.discount-mode>.discount-mode-title>.close,
+.wx-payment>.wx-payment-title>.close,
+.payment-verification>.payment-verification-title>.close,
+.payment2account>.title>.close{
+    font-size: 20px;
+    width: 36px;
+    float: right;
+    cursor: pointer;
+}
+.discount-mode>.discount-mode-content{
+    padding: 0 0 30px 30px;
+}
+.discount-mode>.discount-mode-content>li{
+    float: left;
+    width: 228px;
+    height: 38px;
+    padding: 18px 0 20px 20px;
+    margin-top: 10px;
+    margin-right: 20px;
+    border: 1px solid #dadfe2;
+    background-color: #fff;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+}
+.discount-mode>.discount-mode-content>li:hover{
+    box-shadow: 0 0 8px #ccc;
+}
+.discount-mode>.discount-mode-content>li.selected{
+    border: 1px solid #d71319;
+    color: #d71319;
+}
+.discount-mode>.discount-mode-content>li>p{
+    color: #777;
+}
+.discount-mode>.discount-mode-content>li>p:nth-child(2){
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #222;
+}
+.discount-mode>.discount-mode-content>li>i{
+    position: absolute;
+    right: -1px;
+    bottom: -2px;
+    font-size: 20px;
+}
+.discount-mode>.btn>button{
+    width: 200px;
+    height: 50px;
+    background-color: #d71319;
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 40px;
+    margin-left: 30px;
+    text-align: center;
+    line-height: 50px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+.discount-mode>.btn>button:hover{
+    background-color: #ff0000;
+}
+/*微信支付*/
+.wx-payment{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    width: 500px;
+    /*height: 600px;*/
+    /*margin-top: -300px;*/
+    /*margin-left: -250px;*/
+    transform: translate(-50%,-50%);
+    background-color: #fff;
+    box-shadow: 0 0 14px #777;
+    border-radius: 4px;
+}
+.wx-payment>.wx-payment-title{
+    height: 56px;
+    line-height: 56px;
+    padding-left: 20px;
+    font-size: 16px;
+}
+.wx-payment>.wx-payment-content{
+    text-align: center;
+}
+.wx-payment>.wx-payment-content>p{
+    padding-top: 30px;
+    padding-bottom: 30px;
+    font-size: 28px;
+    color: #d71319;
+}
+.wx-payment>.wx-payment-content>p>span{
+    font-size: 16px;
+}
+.wx-payment>.wx-payment-content>.icon{
+    width: 200px;
+    height: 40px;
+    background-color: #68b613;
+    line-height: 40px;
+    margin: 0 auto;
+}
+.wx-payment>.wx-payment-content>.icon>.left{
+    margin-left: 20px;
+    margin-right: 20px;
+}
+.wx-payment>.wx-payment-content>.icon>.left>.iconfont{
+    color: #fff;
+    font-size: 28px;
+}
+.wx-payment>.wx-payment-content>.icon>.right{
+    text-align: left;
+}
+.wx-payment>.wx-payment-content>.icon>.right>p{
+    font-size: 12px;
+    line-height: 20px;
+    color: #fff;
+}
+.wx-payment>.wx-payment-content>.count-down{
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 60px;
+}
+.wx-payment>.wx-payment-content>.buttom{
+    width: 100%;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    border-top: 1px solid #dadfe2;
+}
+.wx-payment>.wx-payment-content>.buttom>a{
+    color: #238AF7;
+}
+/*支付宝支付*/
+.wx-payment.zfb>.wx-payment-content>.icon{
+    background-color: #238AF7;
+}
+/*收银台验证*/
+.payment-verification{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    /*margin-top: -160px;*/
+    /*margin-left: -250px;*/
+    transform: translate(-50%,-50%);
+    width: 500px;
+    height: 320px;
+    background-color: #fff;
+    box-shadow: 0 0 14px #777;
+    border-radius: 4px;
+}
+.payment-verification>.payment-verification-title{
+    height: 56px;
+    line-height: 56px;
+    padding-left: 20px;
+    font-size: 16px;
+}
+.payment-verification>.payment-verification-content{
+    padding-top: 30px;
+    padding-left: 30px;
+}
+.payment-verification>.payment-verification-content>.phone>.left{
+    width: 86px;
+}
+.payment-verification>.payment-verification-content>.message{
+    margin-top: 18px;
+    position: relative;
+}
+.payment-verification>.payment-verification-content>.message>.left{
+    line-height: 38px;
+}
+.payment-verification>.payment-verification-content>.message>.right>input{
+    width: 178px;
+    height: 36px;
+    border: 1px solid #dadfe2;
+    border-radius: 2px;
+    line-height: 36px;
+    margin-right: 10px;
+    padding-left: 10px;
+    padding-right: 20px;
+}
+.payment-verification>.payment-verification-content>.message>.right{
+    position: relative;
+}
+.payment-verification>.payment-verification-content>.message>.right>i{
+    position: absolute;
+    top: 0px;
+    right: 96px;
+    height: 40px;
+    line-height: 40px;
+}
+.payment-verification>.payment-verification-content>.message>.right>input:hover{
+    border-color: #666;
+}
+.payment-verification>.payment-verification-content>.message>.right>.obtain-btn{
+    width: 80px;
+    height: 38px;
+    background-color: #f1f2f4;
+    text-align: center;
+    line-height: 38px;
+    font-size: 13px;
+    cursor: pointer;
+}
+.payment-verification>.payment-verification-content>.message>.right>.obtain-btn:hover{
+    color: #238AF7;
+}
+.payment-verification>.payment-verification-content>.verification-code{
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+.payment-verification>.payment-verification-content>.verification-code>.left,
+.payment-verification>.payment-verification-content>.confirm>.left{
+    height: 17px;
+}
+.payment-verification>.payment-verification-content>.verification-code>.right>i{
+    margin-right: 5px;
+    color: #68b613;
+    font-size: 16px;
+}
+.payment-verification>.payment-verification-content>.confirm>.right>.confirm-btn{
+    width: 200px;
+    height: 50px;
+    background-color: #d71319;
+    border-radius: 2px;
+    text-align: center;
+    line-height: 50px;
+    color: #fff;
+    font-size: 18px;
+}
+.payment-verification>.payment-verification-content>.confirm>.right>.confirm-btn:hover{
+    background-color: #FF0000;
+}
+/*付款至供应商泰坦金融账户*/
+.payment2account{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    width: 880px;
+    height: 500px;
+    /*margin-top: -250px;*/
+    /*margin-left: -440px;*/
+    transform: translate(-50%,-50%);
+    background-color: #fff;
+    box-shadow: 0 0 14px #777;
+    border-radius: 4px;
+}
+.payment2account .right input{
+    padding-left: 10px;
+    box-shadow: 0 0 0 #fff;
+}
+.payment2account .history-items{
+    /*width: 320px;*/
+    height: 340px;
+    overflow: auto;
+}
+.payment2account>.title{
+    height: 56px;
+    line-height: 56px;
+    padding-left: 20px;
+    font-size: 16px;
+}
+.payment2account>.content{
+    padding-top: 22px;
+}
+.payment2account>.content .right .input-text input{
+    width: 254px;
+    height: 36px;
+    padding: 12px 30px 12px 10px;
+    box-sizing: border-box;
+    line-height: 36px;
+    background-color: #fff;
+    border-radius: 2px;
+    color: #222;
+    font-size: 13px;
+    border-color: #ccc;
+}
+.payment2account>.content .right .input-text input::-webkit-input-placeholder { /* WebKit browsers */
+    color:#ccc;
+    font-size: 13px;
+}
+.payment2account>.content .right .input-text input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:#ccc;
+    font-size: 13px;
+}
+.payment2account>.content .right .input-text input::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:#ccc;
+    font-size: 13px;
+}
+.payment2account>.content .right .input-text input:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:#ccc !important;
+    font-size: 13px;
+}
+.payment2account>.content .right .input-text{
+    position: relative;
+}
+.payment2account>.content .right .input-text>i{
+    position: absolute;
+    right: 10px;
+    top: 1px;
+}
+.payment2account>.content>.left{
+    width: 330px;
+    padding-left: 40px;
+    padding-right: 70px;
+    position: relative;
+}
+.payment2account>.content>.left>p{
+    margin-bottom: 20px;
+}
+.payment2account>.content>.left .input-text{
+    position: relative;
+    padding: 0;
+    margin: 0;
+    background-color: #fff;
+    border: 1px solid transparent;
+    height: auto;
+}
+
+.payment2account>.content>.left .input-text>i{
+    position: absolute;
+    right: -12px;
+    top: 5px;
+    font-size: 26px;
+    color: #666;
+}
+.payment2account>.content>.left .input-text>input{
+    width: 240px;
+    height: 36px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    line-height: 36px;
+    padding-left: 20px;
+    padding-right: 40px;
+    font-size: 13px;
+}
+.payment2account>.content>.left .input-text>input:hover{
+    border-color: #666;
+}
+.payment2account>.content>.left>ul>li:first-child:hover{
+    box-shadow: 0 0 0 #fff;
+}
+.payment2account>.content>.left>ul>li{
+    width: 279px;
+    height: 59px;
+    padding-top: 19px;
+    padding-left: 19px;
+    margin-top: 10px;
+    border: 1px solid #dadfe3;
+    border-radius: 2px;
+    position: relative;
+    transition: all 0.2s;
+    z-index: 9;
+    cursor: pointer;
+}
+.payment2account>.content>.left>ul>li>i{
+    position: absolute;
+    right: -1px;
+    bottom: -2px;
+    font-size: 20px;
+}
+.payment2account>.content>.left>ul>li:hover{
+    box-shadow: 0 0 8px #ccc;
+    /*transform: scale(1.01);*/
+}
+.payment2account>.content>.left>ul>li.selected{
+    border: 1px solid #d71319;
+    color: #d71319;
+    background-color: #fff;
+}
+.payment2account>.content>.left>ul>li>.li-left>span{
+    display: block;
+    width: 50px;
+    height: 40px;
+    /*background-color: #d71319;*/
+    margin-right: 12px;
+    background: url("../images/20170823230952.png") no-repeat center;
+}
+.payment2account>.content>.left>ul>li>.li-left>svg{
+    display: block;
+    width: 50px;
+    height: 40px;
+    margin-right: 12px;
+}
+.payment2account>.content>.left>ul>li>.li-right{
+    line-height: 20px;
+}
+.payment2account>.content>.left>ul>li>.li-right>p{
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.payment2account>.content>.right{
+    padding-left: 40px;
+    padding-right: 70px;
+    width: 328px;
+    min-height: 340px;
+    border-left: 2px solid #edf0f1;
+    position: relative;
+}
+.payment2account>.content>.right p{
+    margin-bottom: 20px;
+}
+.payment2account>.content>.right .input-text{
+    /*width: 298px;*/
+    height: 36px;
+    margin-bottom: 30px;
+    line-height: 36px;
+}
+.payment2account>.content>.right .input-text input:hover{
+    border-color: #666;
+}
+.payment2account>.content>.right .input-text>input{
+    width: 232px;
+    height: 36px;
+    border: 1px solid #edf0f1;
+    border-radius: 2px;
+    padding-left: 10px;
+}
+.payment2account>.content>.right .input-text>span{
+    display: inline-block;
+    width: 68px;
+    height: 100%;
+    /*padding-left: 12px;*/
+}
+.payment2account>.content>.right button{
+    margin-top: 30px;
+    margin-left: 72px;
+    width: 200px;
+    height: 50px;
+    background-color: #d71319;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 2px;
+}
+.payment2account>.content>.right button:hover{
+    background-color: #FF0000;
+}
+.payment2account>.content>.right .valid-tip{
+    top: 36px;;
+    margin: 0;
+    padding: 0;
+    color: #ff0000;
+}
+/*付款至供应商银行卡*/
+.payment2Bank .input-selected{
+    /*width: 298px;*/
+    height: 36px;
+    border-radius: 2px;
+    line-height: 36px;
+    margin-bottom: 30px;
+    position: relative;
+}
+.payment2Bank .input-selected>i{
+    position: absolute;
+    right: 5px;
+    top: 1px;
+    font-size: 14px;
+    color: #666;
+}
+.payment2Bank .input-selected select:hover,
+.payment2Bank .input-selected input:hover{
+    border-color: #666;
+}
+.payment2Bank .input-selected>span:nth-child(1){
+    display: inline-block;
+    width: 68px;
+    height: 100%;
+    /*padding-left: 12px;*/
+}
+.payment2Bank .input-selected>.new-selected1{
+    width: 255px;
+    height: 36px;
+    color: #ccc;
+    border: 1px solid #ccc;
+    padding-left: 10px;
+    border-radius: 2px;
+    font-size: 13px;
+}
+.payment2Bank .input-selected>.new-selected2{
+    width: 90px;
+    height: 36px;
+    color: #ccc;
+    border: 1px solid #ccc;
+    padding-left: 10px;
+    border-radius: 2px;
+    font-size: 13px;
+}
+.payment2Bank .input-selected>.new-selected3{
+    width: 149px;
+    height: 36px;
+    color: #222;
+    border: 1px solid #ccc;
+    padding-left: 10px;
+    border-radius: 2px;
+    font-size: 13px;
+    line-height: 36px;
+}
+.payment2account>.content>.right .valid-tip{
+    top: 36px;;
+    margin: 0;
+    padding: 0;
+    left: 0;
+}
+
+.payment2Bank .input-selected>span:nth-child(2){
+    color: #777;
+}
+.payment2Bank .input-selected>i{
+    position: absolute;
+    right: 5px;;
+}
+
+.isShow{
+    display: none;
+}
+.password-prompt{
+    position: absolute;
+    color: #d71319;
+    right: 334px;
+    top: 102px;
+}
+.password .setpassword{
+    position: relative;
+}
+
+/*选中*/
+.selected{
+    border: 1px solid #d71319;
+    color: #d71319;
+}
+/*图标*/
+svg{
+    position: relative;
+    font-size: 22px;
+}
+
+
+
+/*支付协议*/
+.agreement{
+    background-color: #fff;
+    box-sizing: border-box;
+    padding: 40px 100px 40px 100px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+.agreement>.agreement-title{
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.agreement>.agreement-content>p{
+    line-height: 22px;
+}
+.agreement>.agreement-content>.boundary{
+    margin-top: 30px;
+}
+
+/*忘记密码*/
+.forgot-password{
+    /*height: 600px;*/
+}
+.forgot-password>.forgot-password-payment{
+    transform: translate(-50%,-20%);
+}
+.forgot-password-top{
+    height: 100px;
+    margin-top: 10px;
+    background-color: #fff;
+}
+.forgot-password-top .content{
+    width: 500px;
+    height: 56px;
+    margin: 0 auto;
+    padding: 22px 0;
+}
+.forgot-password-top .content .top{
+    width: 100%;
+    height: 22px;
+    position: relative;
+}
+.forgot-password-top .content .bottom{
+    position: relative;
+}
+.border{
+    width: 100%;
+    border-bottom: 2px solid #f1f1f1;
+    position: absolute;
+    top: 10px;
+    /*z-index: -1;*/
+}
+.content .top{
+    position: relative;
+}
+.content .top svg{
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background-color: #fff;
+}
+.forgot-password-top .content .password-one,
+.forgot-password-top .content .password-two,
+.forgot-password-top .content .password-three{
+    box-sizing: border-box;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+    line-height: 20px;
+    position: absolute;
+    /*top: 0;*/
+}
+.forgot-password-top .content .password-one{
+    line-height: 21px;
+}
+.forgot-password-top .content .password-one{
+    left: 0;
+    background-color: #7fbe41;
+}
+.forgot-password-top .content .password-two{
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #ccc;
+    left: 50%;
+    transform: translate(-50%,0);
+}
+.forgot-password-top .content .password-three{
+    border: 2px solid #eaeaea;
+    background-color: #fff;
+    color: #ccc;
+    right: 0;
+}
+.forgot-password-top .content .text-one,
+.forgot-password-top .content .text-two,
+.forgot-password-top .content .text-three{
+    margin-top: 16px;
+    font-size: 14px;
+    text-align: center;
+    position: absolute;
+    top: 0;
+}
+.forgot-password-top .content .text-one{
+    left: -16px;
+    /*color: #999;*/
+}
+.forgot-password-top .content .text-two{
+    color: #999;
+    left: 50%;
+    transform: translate(-50%,0);
+}
+.forgot-password-top .content .text-three{
+    color: #999;
+    right: -5px;
+}
+.content-2 .top svg{
+    left: 0;
+}
+.content-2 .bottom .text-one{
+    color: #999;
+}
+.content-2 .bottom .text-two{
+    color: #222;
+}
+.content-3 .top .svg-1{
+    left: 50%;
+    transform: translate(-50%,0);
+}
+.content-3 .top .svg-2{
+    left: 0;
+}
+.content-3 .bottom .text-three{
+    color: #222;
+}
+.forgot-password-3 .payment-verification-content{
+    text-align: center;
+}
+.forgot-password-3 .payment-verification-content p{
+    font-size: 18px;
+    margin-top: 20px;
+}
+.forgot-password-3 .payment-verification-content a{
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-top: 30px;
+    color: #238AF7;
+    line-height: 34px;
+    text-align: center;
+    border: 1px solid #dadfe2;
+    background-color: #fff;
+    border-radius: 2px;
+    margin-left: -15px;
+}
+.forgot-password-3 .payment-verification-content a:hover{
+    border-color: #238AF7;
+}
+.next-step-btn,
+.password-confirm-btn{
+    width: 200px;
+    height: 50px;
+    background-color: #d71319;
+    color: #fff;
+    font-size: 18px;
+    line-height: 50px;
+    text-align: center;
+    border-radius: 2px;
+    cursor: pointer;
+}
+.next-step-btn:hover,
+.password-confirm-btn:hover{
+    background-color: #ff0000;
+}
+.forgot-password-top .content-2 .password-two{
+    background-color: #7fbe41;
+    color: #fff;
+    border-color: #7fbe41;
+}
+.forgot-password-top .content-3 .password-three{
+    background-color: #7fbe41;
+    color: #fff;
+    border-color: #7fbe41;
+}
+.forgot-password-top .content-3 .text-one{
+    color: #999;
+}
+.forgot-password-2 .setpassword{
+    position: relative;
+}
+.forgot-password-2 .setpassword .password-prompt{
+    position: absolute;
+    color: #d71319;
+}
+.close:hover{
+    color: #ff6000;
+}
+input:hover{
+    border-color: #666;
+}
+
+/*验证码语句*/
+.verification-sentence{
+    color: #d71319;
+    position: absolute;
+    top: 10px;
+    right: -20px;
+}
+
+/*密码控件样式*/
+.sixDigitPassword {cursor: text;background: #fff;width:306px;outline: none;position: relative;;height: 40px;border: 1px solid #ccc;border-radius: 2px;margin-bottom: 10px;}
+.sixDigitPassword i { float: left;display: block;padding: 17px 0;height: 7px; border-left: 1px solid #cccccc;width: 50px;}
+.sixDigitPassword i b {
+    display: block;margin: 0 auto; width: 7px;height: 7px; overflow: hidden;visibility: hidden;background-image: url("https://t.alipayobjects.com/tfscom/T1sl0fXcBnXXXXXXXX.png");
+}
+.sixDigitPassword i:first-child {    border-color: transparent;}
+.active {background-image:url("https://t.alipayobjects.com/images/rmsweb/T1nYJhXalXXXXXXXXX.gif");background-position: center center;background-repeat: no-repeat;}
+.sixDigitPassword span  {
+    position: absolute;
+    display: block;
+    left: 0px;
+    top: -1px;
+    height: 40px;
+    border: 1px solid rgba(82, 168, 236, .8);
+    border: 1px solid #00ffff\9;
+    border-radius: 2px;
+    width: 50px;
+    -webkit-box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.75), 0 0 8px rgba(82, 168, 236, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+    visibility: hidden;
+}
+.Passname{
+    display: inline-block;
+    width: 110px;
+    height: 40px;
+    background-color: #f8f8f9;
+    text-align: center;
+    line-height: 40px;
+    border: 1px solid #ccc;
+    margin-right: -1px;
+}
+/*列表 loading条*/
+.load_line1{    position: fixed;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    height: 3px;}
+.load_line1 span {display: block;width: 0px;height: 3px; background: #FF6002;}
+
+
+/*信用卡的下拉框*/
+.credit .City_components{
+    position: relative;
+}
+.month-drop-down-frame,.year-drop-down-frame{
+    position: absolute;
+    width: 118px;
+    max-height: 100px;
+    top: 36px;
+    left: 0;
+    z-index: 11;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    overflow-y: auto;
+}
+.year-drop-down-frame{
+    left: 10px;
+}
+.City_components .drop-down-frame{
+    height: 30px;
+    line-height: 30px;
+    padding-left: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}
+.City_components .drop-down-frame:hover{
+    background-color: #238AF7;
+}
+.City_components .select-items{
+    box-sizing: border-box;
+    display: inline-block;
+    width: 120px;
+    height: 36px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    line-height: 36px;
+    padding-left: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.City_components .select-items:hover{
+    border-color: #666;
+}
+.payment2account .right .input-text .valid-tip b{
+    margin-left: 20px;
+}

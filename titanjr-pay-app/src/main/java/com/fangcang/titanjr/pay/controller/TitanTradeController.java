@@ -49,7 +49,7 @@ import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
 import com.fangcang.titanjr.dto.bean.TitanVirtualOrgRelation;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.bean.gateway.QuickCardHistoryDTO;
+import com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO;
 import com.fangcang.titanjr.dto.request.AddPayLogRequest;
 import com.fangcang.titanjr.dto.request.BindingVirtuaOrgBankCardRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
@@ -822,23 +822,29 @@ public class TitanTradeController extends BaseController {
 
 		CashDeskData cashDeskData = new CashDeskData();
 
-		//如果收款方不为空，并且不是酒店财务供应商支付，需要设置帐户名和泰坦码（在收银台展示）
-		if (StringUtil.isValidString(transOrderDTO.getPayeemerchant())
-				&& payerTypeEnum.isPayeeNecessary()) {
-			FinancialOrganDTO financialOrganDTO = financialTradeService
-					.getFinancialOrganDTO(transOrderDTO.getPayeemerchant());
-			if (null == financialOrganDTO) {
-
-				log.error("收款方不存在， 收款方编码(Payeemerchant)是："+transOrderDTO.getPayeemerchant());
-
-				model.addAttribute("msg",
-						TitanMsgCodeEnum.CASHIER_INSTITUTIONS_NOT_EXISTS
-								.getResMsg());
-				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+		//如果收款方机构编码不为空设置帐户名和泰坦码
+		if (StringUtil.isValidString(transOrderDTO.getPayeemerchant())) {
+			boolean isSetPayeeInfo = true;
+			//老版收银台并且是财务付款给供应商就不需要设置帐户名和泰坦码
+			if(TitanjrVersionEnum.isVersion1(deskReq.getVersion()) && !payerTypeEnum.isPayeeNecessary()){
+				isSetPayeeInfo = false;
 			}
-			log.info("set org info is ok.");
-			cashDeskData.setOrgName(financialOrganDTO.getOrgName());
-			cashDeskData.setTitanCode(financialOrganDTO.getTitanCode());
+			if(isSetPayeeInfo){
+				FinancialOrganDTO financialOrganDTO = financialTradeService
+						.getFinancialOrganDTO(transOrderDTO.getPayeemerchant());
+				if (null == financialOrganDTO) {
+
+					log.error("收款方不存在， 收款方编码(Payeemerchant)是："+transOrderDTO.getPayeemerchant());
+
+					model.addAttribute("msg",
+							TitanMsgCodeEnum.CASHIER_INSTITUTIONS_NOT_EXISTS
+									.getResMsg());
+					return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+				}
+				log.info("set org info is ok.");
+				cashDeskData.setOrgName(financialOrganDTO.getOrgName());
+				cashDeskData.setTitanCode(financialOrganDTO.getTitanCode());
+			}
 		}
 
 		// 查询账户信息，不是中间账户就需要查询
@@ -969,18 +975,30 @@ public class TitanTradeController extends BaseController {
 				return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 			}
 			
-			//余额支付权限
+			//设置其他信息
 			cashDeskData.setCanAccountBalance(deskReq.isCanAccountBalance());
-			//设置第三方用户ID和机构编码
 			cashDeskData.setFcUserid(deskReq.getFcUserid());
 			cashDeskData.setPartnerOrgCode(deskReq.getPartnerOrgCode());
+			cashDeskData.setGoodName(transOrderDTO.getGoodsname());
+			cashDeskData.setGoodDetail(transOrderDTO.getGoodsdetail());
+			cashDeskData.setPayerTypeEnum(PayerTypeEnum.getPayerTypeEnumByKey(transOrderDTO.getPayerType()));
 			
-			//查询快捷支付卡历史
-			QuickCardHistoryDTO quickCardHistoryDTO = new QuickCardHistoryDTO();
+			//查询新的常用支付历史
+			CommonPayHistoryDTO quickCardHistoryDTO = new CommonPayHistoryDTO();
 			quickCardHistoryDTO.setOrgcode(transOrderDTO.getUserid());
 			quickCardHistoryDTO.setFcuserid(cashDeskData.getFcUserid());
-			cashDeskData.setQuickCardHistoryList(titanCashierDeskService
-					.queryQuickcardHistory(quickCardHistoryDTO));
+			quickCardHistoryDTO.setDeskid(String.valueOf(cashierDeskDTO.getDeskId()));
+			List<CommonPayHistoryDTO> commPayList = titanCashierDeskService.queryCommonPayHistory(quickCardHistoryDTO);
+			if(CollectionUtils.isNotEmpty(commPayList)){
+				for (CommonPayHistoryDTO commonPayHistoryDTO : commPayList) {
+					if(StringUtil.isValidString(commonPayHistoryDTO.getPayeracount()) && 
+							commonPayHistoryDTO.getPayeracount().length() >= 4){
+						String strsub = commonPayHistoryDTO.getPayeracount().substring(commonPayHistoryDTO.getPayeracount().length()-4);
+						commonPayHistoryDTO.setSubpayeracount("****" + strsub);
+					}
+				}
+				cashDeskData.setCommonPayHistoryList(commPayList);
+			}
 			
 		}
 		
@@ -1013,6 +1031,7 @@ public class TitanTradeController extends BaseController {
 						.getPayerTypeEnumByKey(transOrderDTO.getPayerType()),
 						cashDeskData.getFcUserid(), billCode));
 		//
+		cashDeskData.setJrVersion(deskReq.getVersion());
 		cashDeskData.setSign(md5CashDeskData(cashDeskData,TitanConstantDefine.PAY_APP_CASHIER_SIGN_MD5_KEY));
 		model.addAttribute("cashDeskData", cashDeskData);
 

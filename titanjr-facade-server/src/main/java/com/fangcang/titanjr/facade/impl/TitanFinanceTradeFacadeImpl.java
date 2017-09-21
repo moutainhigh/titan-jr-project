@@ -1,6 +1,6 @@
 package com.fangcang.titanjr.facade.impl;
 
-import com.fangcang.titanjr.common.bean.CommRes;
+import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
@@ -151,7 +151,7 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
     	
     	try {
     		
-    		CommRes res = GenericValidate.validateObj(updateFreezeRequest);
+    		ValidateResponse res = GenericValidate.validateObj(updateFreezeRequest);
 			if(!res.isSuccess()){
 				log.error("参数错误 =====>> " + res.getReturnMessage());
 	    		baseResponse.putErrorResult(res.getReturnMessage());

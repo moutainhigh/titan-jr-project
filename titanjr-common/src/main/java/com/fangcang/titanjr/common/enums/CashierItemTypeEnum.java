@@ -89,6 +89,40 @@ public enum CashierItemTypeEnum {
 
         return false;
     }
+    
+    /**
+     * 快捷支付和第三方支付需要返回json数据
+     * @author Jerry
+     */
+    public static boolean needReturnJson(String itemCode) {
+        if (itemCode == null) {
+            return false;
+        }
+
+        if (itemCode.equals(QUICK_PAY_NEW.itemCode) || itemCode.equals(QR_ITEM.itemCode)) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    /**
+     * <p>余额支付和第三方支付不需要保存为常用支付方式</p>
+     * <p>新版收银台，快捷支付需要在支付请求（发送验证码）成功后增加到常用支付方式，以确保信息正确</p>
+     * @author Jerry
+     * @date 2017年9月20日 上午11:23:17
+     */
+    public static boolean isNeedSaveCommonpay(String itemCode) {
+        if (itemCode == null) {
+            return false;
+        }
+
+        if (!itemCode.equals(BALANCE_ITEM.itemCode) && !itemCode.equals(QR_ITEM.itemCode) && !itemCode.equals(QUICK_PAY_NEW.itemCode)) {
+            return true;
+        }
+
+        return false;
+    }
 
     private CashierItemTypeEnum(String itemCode, String itemName) {
         this.itemCode = itemCode;

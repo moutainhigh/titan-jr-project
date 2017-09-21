@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.enums.QuickPayBankEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dto.bean.gateway.QuickPayCardDTO;
+import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.gateway.CardSceurityVerifyRequest;
 import com.fangcang.titanjr.dto.request.gateway.ConfirmRechargeRequest;
 import com.fangcang.titanjr.dto.request.gateway.QueryBankCardBINRequest;
@@ -29,9 +31,12 @@ import com.fangcang.titanjr.dto.response.gateway.QueryQuickPayBindCardResponse;
 import com.fangcang.titanjr.dto.response.gateway.ReSendVerifyCodeResponse;
 import com.fangcang.titanjr.dto.response.gateway.UnbindBankCardResponse;
 import com.fangcang.titanjr.dto.response.gateway.UpdateBankCardPhoneResponse;
+import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.pay.util.TerminalUtil;
 import com.fangcang.titanjr.service.RSGatewayInterfaceService;
+import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.JsonUtil;
+import com.fangcang.util.StringUtil;
 
 /**
  * 快捷支付
@@ -54,19 +59,77 @@ public class TitanQuickPaymentController extends BaseController {
 	@Resource
 	private RSGatewayInterfaceService rsGatewayInterfaceService;
 	
+	@Resource
+	private TitanOrderService titanOrderService;
+	
+	@Resource
+	private TitanPaymentService titanPaymentService;
+	
 	
 	/**
-	 * 确认充值
+	 * 确认充值（支付历史）
 	 * @param confirmRechargeRequest
 	 * @return
 	 */
-	@RequestMapping(value = {"/confirmRecharge"})
+	@RequestMapping(value = {"/quickPayRecharge"})
 	@ResponseBody
-	public ConfirmRechargeResponse confirmRecharge(ConfirmRechargeRequest confirmRechargeRequest){
+	public ConfirmRechargeResponse quickPayRecharge(ConfirmRechargeRequest confirmRechargeRequest){
 		
 		ConfirmRechargeResponse confirmRechargeResponse = rsGatewayInterfaceService.confirmRecharge(confirmRechargeRequest);
 		
 		return confirmRechargeResponse;
+	}
+	
+	
+	/**
+	 * 确认充值（表单提交）
+	 * @param confirmRechargeRequest
+	 * @return
+	 */
+	@RequestMapping(value = {"/confirmRecharge"})
+	public String confirmRecharge(ConfirmRechargeRequest confirmRechargeRequest, Model model){
+		
+		RechargeResultConfirmRequest RechargeResultConfirmRequest = new RechargeResultConfirmRequest();
+		
+		ConfirmRechargeResponse confirmRechargeResponse = rsGatewayInterfaceService
+				.confirmRecharge(confirmRechargeRequest);
+		
+		if(confirmRechargeResponse.isSuccess() && StringUtil.isValidString(confirmRechargeResponse.getOrderNo())){
+			
+			int index = 0;
+			
+			while (index < 3) {
+				
+				try {
+					//4,8,16
+					Thread.sleep(2000 * (2<<index));
+				} catch (InterruptedException e) {
+					log.error("网关充值成功，本地查询订单状态线程等待异常：", e);
+				}
+				
+				String orderStatus = titanOrderService.confirmOrderStatus(confirmRechargeResponse.getOrderNo());
+				log.info("try confirmOrderStatus, index=" + (2000 * (2<<index)) + ", orderStatus=" + orderStatus);
+				
+				if("success".equals(orderStatus) || "fail".equals(orderStatus)){
+					
+					RechargeResultConfirmRequest.setOrderNo(confirmRechargeResponse.getOrderNo());
+					return titanPaymentService.payConfirmPage(RechargeResultConfirmRequest, model);
+					
+				}else if("delay".equals(orderStatus)){
+					
+					RechargeResultConfirmRequest.setOrderNo(confirmRechargeResponse.getOrderNo());
+					RechargeResultConfirmRequest.setExpand(CommonConstant.ORDER_DELAY);
+					return titanPaymentService.payConfirmPage(RechargeResultConfirmRequest, model);
+				}
+				
+				index ++;
+			}
+			
+		}
+		
+		model.addAttribute("confirmRechargeResponse", confirmRechargeResponse);
+		log.error("confirmRecharge is success, but confirmOrderStatus is failed after try again three times");
+		return "checkstand-pay/payResult";
 	}
 	
 	
@@ -79,11 +142,11 @@ public class TitanQuickPaymentController extends BaseController {
 	 */
 	@RequestMapping(value = {"/reSendVerifyCode"})
 	@ResponseBody
-	public String reSendVerifyCode(ReSendVerifyCodeRequest reSendVerifyCodeRequest){
+	public ReSendVerifyCodeResponse reSendVerifyCode(ReSendVerifyCodeRequest reSendVerifyCodeRequest){
 		
 		ReSendVerifyCodeResponse reSendVerifyCodeResponse = rsGatewayInterfaceService.reSendVerifyCode(reSendVerifyCodeRequest);
 		
-		return String.valueOf(reSendVerifyCodeResponse.isSuccess());
+		return reSendVerifyCodeResponse;
 	}
 	
 	
@@ -135,10 +198,12 @@ public class TitanQuickPaymentController extends BaseController {
 		if(bankCardBINIResponse.isSuccess()){
 			
 			if(QuickPayBankEnum.isExist(bankCardBINIResponse.getBankCode(), bankCardBINIResponse.getCardType())){
-				String bankInfo = QuickPayBankEnum.getBankInfo(bankCardBINIResponse.getBankCode()
-						, bankCardBINIResponse.getCardType());
-				bankCardBINIResponse.setBankInfo(bankInfo);
 				
+				QuickPayBankEnum bankEnum = QuickPayBankEnum.getBankEnum(bankCardBINIResponse.getBankCode()
+						, bankCardBINIResponse.getCardType());
+				bankCardBINIResponse.setBankInfo(bankEnum.getBankInfo());
+				bankCardBINIResponse.setSingleLimit(bankEnum.getSingleLimit());
+				bankCardBINIResponse.setDailyLimit(bankEnum.getDailyLimit());
 				return bankCardBINIResponse;
 				
 			}

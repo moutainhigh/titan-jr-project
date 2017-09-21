@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 
 import com.fangcang.titanjr.enums.*;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,8 @@ import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.bean.gateway.QuickCardHistoryDTO;
+import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
+import com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.AddPayLogRequest;
@@ -46,11 +48,13 @@ import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
+import com.fangcang.titanjr.dto.request.UserBindInfoRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
 import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
+import com.fangcang.titanjr.dto.response.UserBindInfoResponse;
 import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
@@ -192,7 +196,7 @@ public class TitanPaymentService {
 			rechargeRequest.setNotifyUrl(payMethodConfigDTO.getNotifyurl());
 		}
 		//新版收银台增加参数
-		rechargeRequest.setVersion(titanPaymentRequest.getVersion());
+		rechargeRequest.setVersion(titanPaymentRequest.getRsVersion());
 		rechargeRequest.setIdCode(titanPaymentRequest.getIdCode());
 		rechargeRequest.setPayerAccountType(titanPaymentRequest.getPayerAccountType());
 		rechargeRequest.setPayerName(titanPaymentRequest.getPayerName());
@@ -224,23 +228,48 @@ public class TitanPaymentService {
 		}
 	}
 	
-	public void saveQuickcardHistory(TitanPaymentRequest titanPaymentRequest) {
+	public void saveCommonPayHistory(TitanPaymentRequest titanPaymentRequest) {
 		try {
-			QuickCardHistoryDTO quickCardHistoryDTO = new QuickCardHistoryDTO();
-			quickCardHistoryDTO.setOrgcode(titanPaymentRequest.getUserid());
-			quickCardHistoryDTO.setFcuserid(titanPaymentRequest.getFcUserid());
-			quickCardHistoryDTO.setPayername(titanPaymentRequest.getPayerName());
-			quickCardHistoryDTO.setPayeracount(titanPaymentRequest.getPayerAcount());
-			quickCardHistoryDTO.setBankinfo(titanPaymentRequest.getBankInfo());
-			quickCardHistoryDTO.setPayeraccounttype(titanPaymentRequest.getPayerAccountType());
-			quickCardHistoryDTO.setPayerphone(titanPaymentRequest.getPayerPhone());
-			quickCardHistoryDTO.setBankname(QuickPayBankEnum.getBankName(titanPaymentRequest.getBankInfo(), 
-					titanPaymentRequest.getPayerAccountType()));
-			quickCardHistoryDTO.setIdcode(titanPaymentRequest.getIdCode());
-			quickCardHistoryDTO.setSafetycode(titanPaymentRequest.getSafetyCode());
-			quickCardHistoryDTO.setValidthru(titanPaymentRequest.getValidthru());
-			quickCardHistoryDTO.setCreator(titanPaymentRequest.getCreator());
-			titanCashierDeskService.saveQuickcardHistory(quickCardHistoryDTO);
+			boolean isSaveHistory = false;
+			
+			if(StringUtil.isValidString(titanPaymentRequest.getFcUserid()) && 
+					StringUtil.isValidString(titanPaymentRequest.getPartnerOrgCode())){
+				
+				UserBindInfoDTO userBindInfoDTO = null;
+				UserBindInfoRequest userBindInfoRequest = new UserBindInfoRequest();
+				userBindInfoRequest.setMerchantcode(titanPaymentRequest.getPartnerOrgCode());
+				UserBindInfoResponse userBindInfoResponse = titanFinancialUserService.queryUserBindInfoDTO(userBindInfoRequest);
+				if(CollectionUtils.isNotEmpty(userBindInfoResponse.getPaginationSupport().getItemList())){
+					userBindInfoDTO = userBindInfoResponse.getPaginationSupport().getItemList().get(0);
+				}
+				if(userBindInfoDTO != null && titanPaymentRequest.getFcUserid().equals(String.valueOf(
+						userBindInfoDTO.getFcUserId()))){
+					isSaveHistory = true;
+				}
+			}
+			
+			if(isSaveHistory){
+				
+				CommonPayHistoryDTO commonPayHistoryDTO = new CommonPayHistoryDTO();
+				commonPayHistoryDTO.setOrgcode(titanPaymentRequest.getUserid());
+				commonPayHistoryDTO.setFcuserid(titanPaymentRequest.getFcUserid());
+				commonPayHistoryDTO.setDeskid(titanPaymentRequest.getDeskId());
+				commonPayHistoryDTO.setPaytype(titanPaymentRequest.getPayType().getLinePayType());
+				commonPayHistoryDTO.setBankinfo(titanPaymentRequest.getBankInfo());
+				commonPayHistoryDTO.setBankname(QuickPayBankEnum.getBankName(titanPaymentRequest.getBankInfo(), 
+						titanPaymentRequest.getPayerAccountType()));
+				commonPayHistoryDTO.setPayername(titanPaymentRequest.getPayerName());
+				commonPayHistoryDTO.setPayeracount(titanPaymentRequest.getPayerAcount());
+				commonPayHistoryDTO.setPayeraccounttype(titanPaymentRequest.getPayerAccountType());
+				commonPayHistoryDTO.setPayerphone(titanPaymentRequest.getPayerPhone());
+				commonPayHistoryDTO.setIdcode(titanPaymentRequest.getIdCode());
+				commonPayHistoryDTO.setSafetycode(titanPaymentRequest.getSafetyCode());
+				commonPayHistoryDTO.setValidthru(titanPaymentRequest.getValidthru());
+				commonPayHistoryDTO.setCreator(titanPaymentRequest.getCreator());
+				
+				titanCashierDeskService.saveCommonPayHistory(commonPayHistoryDTO);
+			}
+			
 		} catch (Exception e) {
 			log.error("保存常用的支付方式失败" + e.getMessage(), e);
 			e.printStackTrace();
@@ -436,6 +465,8 @@ public class TitanPaymentService {
 									.setPayAmount(new BigDecimal(transOrderDTO
 											.getAmount()).toString());
 							model.addAttribute("payType", "微信支付");
+						}else if(PayTypeEnum.QUICK_PAY_NEW.getKey().equals(payOrderDTO.getPayType())){
+							model.addAttribute("payType", "快捷支付");
 						}
 					}
 

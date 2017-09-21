@@ -3,7 +3,7 @@ package com.fangcang.titanjr.common.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.fangcang.titanjr.common.bean.CommRes;
+import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.util.StringUtil;
 
 import javax.validation.ConstraintViolation;
@@ -54,9 +54,9 @@ public class GenericValidate {
 	}
 	
 	
-	public static CommRes validateObj(Object obj) {
+	public static ValidateResponse validateObj(Object obj) {
 		
-		CommRes res = new CommRes();
+		ValidateResponse res = new ValidateResponse();
 		res.putSuccess();
 		
 		if(obj == null) {

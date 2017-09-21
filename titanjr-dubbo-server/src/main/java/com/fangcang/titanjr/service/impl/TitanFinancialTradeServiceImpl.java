@@ -622,7 +622,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							titanFinancialUtilService.saveOrderException(payOrderNo, OrderKindEnum.PayOrderNo,OrderExceptionEnum.Transfer_Fail, JSONSerializer.toJSON(accountTransferRequest).toString());
 						}
 					} else {
-						log.error("转账落单失败，交易单ID：" + titanTransferReq.getTransorderid());
+						log.error("转账落单失败或已转账成功，交易单ID：" + titanTransferReq.getTransorderid());
 						transferResponse.putErrorResult("转账落单失败或业务单已转账成功");
 						titanFinancialUtilService.saveOrderException(payOrderNo,OrderKindEnum.PayOrderNo, OrderExceptionEnum.Transfer_Update_Order_Fail, JSONSerializer.toJSON(titanTransferReq).toString());
 					}
@@ -1839,10 +1839,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				OrderStatusEnum orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
 				//是否需要冻结
 				if (0 == repairTransferDTO.getIsEscrowedPayment()) {
-					//当冻结方案为空或冻结方案为2（冻结付款方）时才做冻结操作
-					if(!StringUtil.isValidString(repairTransferDTO.getFreezeType()) 
-							|| (StringUtil.isValidString(repairTransferDTO.getFreezeType()) && 
-									FreezeTypeEnum.FREEZE_PAYEE.getKey().equals(repairTransferDTO.getFreezeType()))){
+					//当冻结方案为2（冻结收款方）时才做冻结操作
+					if((StringUtil.isValidString(repairTransferDTO.getFreezeType()) && 
+							FreezeTypeEnum.FREEZE_PAYEE.getKey().equals(repairTransferDTO.getFreezeType()))){
 						RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
 						rechargeResultConfirmRequest.setOrderNo(repairTransferDTO.getOrderid());
 						rechargeResultConfirmRequest.setPayAmount(transferRequest.getAmount());

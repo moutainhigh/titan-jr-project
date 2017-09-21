@@ -11,11 +11,13 @@ import java.io.Serializable;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.fangcang.titanjr.enums.PayTypeEnum;
+
 /**
  * @author Jerry
  * @date 2017年8月8日 上午9:43:03  
  */
-public class QuickCardHistoryDTO implements Serializable {
+public class CommonPayHistoryDTO implements Serializable {
 
 	/** 
 	 * 
@@ -25,7 +27,7 @@ public class QuickCardHistoryDTO implements Serializable {
 	/**
 	 * 主键
 	 */
-	private int quickcardid;
+	private int commonpayid;
 	/**
 	 * 所属机构
 	 */
@@ -37,15 +39,24 @@ public class QuickCardHistoryDTO implements Serializable {
 	@NotBlank
 	private String fcuserid;
 	/**
-	 * 支付人姓名
+	 * 收银台ID
 	 */
 	@NotBlank
+	private String deskid;
+	/**
+	 * 支付方式 @see {@link PayTypeEnum}，这里对应的是linePayType
+	 */
+	@NotBlank
+	private String paytype;
+	/**
+	 * 支付人姓名
+	 */
 	private String payername;
 	/**
 	 * 支付人银行卡号
 	 */
-	@NotBlank
 	private String payeracount;
+	private String subpayeracount;
 	/**
 	 * 银行名称
 	 */
@@ -64,17 +75,14 @@ public class QuickCardHistoryDTO implements Serializable {
 	/**
 	 * 支付人手机号
 	 */
-	@NotBlank
 	private String payerphone;
 	/**
 	 * 证件类型：1身份证
 	 */
-	@NotBlank
 	private String idtype;
 	/**
 	 * 支付人证件号
 	 */
-	@NotBlank
 	private String idcode;
 	/**
 	 * 信用卡背后的3位数字
@@ -100,13 +108,19 @@ public class QuickCardHistoryDTO implements Serializable {
 	 * 最近一次使用时间
 	 */
 	private String lasttime;
+	
+	/**
+	 * 收银台用于（一个deskId只对应一个userdfor）
+	 */
+	private String usedfor;
+	
 
-	public int getQuickcardid() {
-		return quickcardid;
+	public int getCommonpayid() {
+		return commonpayid;
 	}
 
-	public void setQuickcardid(int quickcardid) {
-		this.quickcardid = quickcardid;
+	public void setCommonpayid(int commonpayid) {
+		this.commonpayid = commonpayid;
 	}
 
 	public String getOrgcode() {
@@ -123,6 +137,22 @@ public class QuickCardHistoryDTO implements Serializable {
 
 	public void setFcuserid(String fcuserid) {
 		this.fcuserid = fcuserid;
+	}
+
+	public String getDeskid() {
+		return deskid;
+	}
+
+	public void setDeskid(String deskid) {
+		this.deskid = deskid;
+	}
+
+	public String getPaytype() {
+		return paytype;
+	}
+
+	public void setPaytype(String paytype) {
+		this.paytype = paytype;
 	}
 
 	public String getPayername() {
@@ -235,6 +265,22 @@ public class QuickCardHistoryDTO implements Serializable {
 
 	public void setLasttime(String lasttime) {
 		this.lasttime = lasttime;
+	}
+
+	public String getUsedfor() {
+		return usedfor;
+	}
+
+	public void setUsedfor(String usedfor) {
+		this.usedfor = usedfor;
+	}
+
+	public String getSubpayeracount() {
+		return subpayeracount;
+	}
+
+	public void setSubpayeracount(String subpayeracount) {
+		this.subpayeracount = subpayeracount;
 	}
 
 }

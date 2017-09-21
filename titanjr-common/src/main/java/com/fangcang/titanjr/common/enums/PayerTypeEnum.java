@@ -97,6 +97,9 @@ public enum PayerTypeEnum {
         return SUPPLY_FINACIAL.key.equals(this.key) || SUPPLY_UNION.key.equals(this.key);
     }
 
+    /**
+     * 不是财务付款给供应商
+     */
     public boolean isPayeeNecessary() {
         return SUPPLY_UNION.key.equals(this.key) || B2B_PUS.key.equals(this.key) || B2B_GDP.key.equals(this.key)
                 || RECHARGE.key.equals(this.key) || OPEN_ORG.key.equals(this.key) || TT_MALL.key.equals(this.key)|| TT_MALL_V2.key.equals(this.key);

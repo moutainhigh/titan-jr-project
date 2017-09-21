@@ -3,7 +3,7 @@ package com.fangcang.titanjr.common.bean;
 import java.io.Serializable;
 
 
-public class CommRes implements Serializable{
+public class ValidateResponse implements Serializable{
 	
 	/** 
 	 * 

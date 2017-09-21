@@ -81,7 +81,9 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	private String terminalInfo; //终端信息
 	private String safetyCode;//信用卡背后的3位数字
 	private String validthru;//月年格式 例如2020年09月应写为0920
-	private String version;
+	private String rsVersion;//融数对接版本
+	private String jrVersion;//金融对接版本
+	private String isSaveHistorypay;//是否保存常用卡  0否  1是
 	
 	
 	public Float getReceivablerate() {
@@ -300,12 +302,12 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 		this.terminalInfo = terminalInfo;
 	}
 
-	public String getVersion() {
-		return version;
+	public String getJrVersion() {
+		return jrVersion;
 	}
 
-	public void setVersion(String version) {
-		this.version = version;
+	public void setJrVersion(String jrVersion) {
+		this.jrVersion = jrVersion;
 	}
 
 	public String getPayerName() {
@@ -346,6 +348,22 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 
 	public void setPartnerOrgCode(String partnerOrgCode) {
 		this.partnerOrgCode = partnerOrgCode;
+	}
+
+	public String getRsVersion() {
+		return rsVersion;
+	}
+
+	public void setRsVersion(String rsVersion) {
+		this.rsVersion = rsVersion;
+	}
+
+	public String getIsSaveHistorypay() {
+		return isSaveHistorypay;
+	}
+
+	public void setIsSaveHistorypay(String isSaveHistorypay) {
+		this.isSaveHistorypay = isSaveHistorypay;
 	}
 	
 }

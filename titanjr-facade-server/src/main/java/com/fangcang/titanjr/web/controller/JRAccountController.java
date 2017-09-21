@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fangcang.titanjr.common.bean.CommRes;
+import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
@@ -109,7 +109,7 @@ public class JRAccountController {
 		
 		try {
 			
-			CommRes res = GenericValidate.validateObj(jrAccountReceiveRequest);
+			ValidateResponse res = GenericValidate.validateObj(jrAccountReceiveRequest);
 			if(!res.isSuccess()){
 				baseResponse.putErrorResult(res.getReturnMessage());
 				return baseResponse;
@@ -119,13 +119,13 @@ public class JRAccountController {
 			TransOrderRequest transOrderRequest = new TransOrderRequest();
 			transOrderRequest.setPayorderno(jrAccountReceiveRequest.getPayOrderNo());
 			TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
-			transOrderDTO.setCreator(jrAccountReceiveRequest.getOperator());
 			
 			//校验信息
 			baseResponse = checkInfo(jrAccountReceiveRequest, transOrderDTO);
 			if(!baseResponse.isResult()){
 				return baseResponse;
 			}
+			transOrderDTO.setCreator(jrAccountReceiveRequest.getOperator());
 			
 			//直接收款
 			if(jrAccountReceiveRequest.getOperateType() == AccReceOperTypeEnum.RECEIVE_ONLY.getKey()){

@@ -10,6 +10,7 @@ import com.fangcang.titanjr.common.enums.BusinessLog;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
+import com.fangcang.titanjr.common.enums.TitanjrVersionEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.request.AddPayLogRequest;
@@ -19,6 +20,7 @@ import com.fangcang.titanjr.enums.PayTypeEnum;
 import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
+import com.fangcang.util.JsonUtil;
 import com.fangcang.util.SpringContextUtil;
 
 /**
@@ -56,7 +58,12 @@ public class QRCodePay implements PayStrategy {
 		
 		model.addAttribute(CommonConstant.RESULT, CommonConstant.RETURN_SUCCESS);
 		model.addAttribute(CommonConstant.QRCODE,response.getQrCodeDTO());
-		return CommonConstant.PAY_WX;
+		
+		if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanPaymentRequest.getJrVersion())){
+			return CommonConstant.PAY_WX;
+		}else{
+			return JsonUtil.objectToJson(response);
+		}
 		
 	}
 

@@ -19,7 +19,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.fangcang.titanjr.common.enums.CardTypeEnum;
+import com.fangcang.titanjr.common.enums.SupportCardTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
 import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
@@ -148,7 +148,7 @@ public class TitanjrUpgradeHander {
 		
 		//如果付款方不用自己的账户，则不允许使用冻结方案3
 		if(!StringUtil.isValidString(dto.getPartnerOrgCode()) || !StringUtil.isValidString(
-				dto.getOrgCode())){
+				dto.getOrgCode()) || !StringUtil.isValidString(dto.getUserId())){
 			if(StringUtil.isValidString(dto.getFreezeType()) && FreezeTypeEnum.FREEZE_PAYER.getKey()
 					.equals(dto.getFreezeType())){
 				log.error("freezeType error");
@@ -197,7 +197,7 @@ public class TitanjrUpgradeHander {
 			
 			if(CollectionUtils.isNotEmpty(depositCardList)){
 				for (CashierItemBankDTO depositCard : depositCardList) {
-					depositCard.setCardType(String.valueOf(CardTypeEnum.DEPOSIT.key));
+					depositCard.setSupportType(String.valueOf(SupportCardTypeEnum.DEPOSIT.key));
 				}
 				//将原个人网银支付银行列表放进personalEBankList
 				personalEBankList.addAll(depositCardList);
@@ -208,7 +208,7 @@ public class TitanjrUpgradeHander {
 				
 				if(CollectionUtils.isEmpty(personalEBankList)){
 					for (CashierItemBankDTO creditCard : creditCardList) {
-						creditCard.setCardType(String.valueOf(CardTypeEnum.CREDIT.key));
+						creditCard.setSupportType(String.valueOf(SupportCardTypeEnum.CREDIT.key));
 					}
 					personalEBankList.addAll(creditCardList);
 					
@@ -217,13 +217,13 @@ public class TitanjrUpgradeHander {
 						boolean isBoth = false;
 						for (int j = 0; j < personalEBankList.size(); j++) {
 							if(creditCardList.get(i).getBankName().equals(personalEBankList.get(j).getBankName())){
-								personalEBankList.get(j).setCardType(String.valueOf(CardTypeEnum.BOTH.key));
+								personalEBankList.get(j).setSupportType(String.valueOf(SupportCardTypeEnum.BOTH.key));
 								isBoth = true;
 								break;
 							}
 						}
 						if(!isBoth){
-							creditCardList.get(i).setCardType(String.valueOf(CardTypeEnum.CREDIT.key));
+							creditCardList.get(i).setSupportType(String.valueOf(SupportCardTypeEnum.CREDIT.key));
 							personalEBankList.add(creditCardList.get(i));
 						}
 					}

@@ -13,21 +13,21 @@ import java.util.Map;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
-import com.fangcang.titanjr.dao.QuickCardHistoryDao;
-import com.fangcang.titanjr.dto.bean.gateway.QuickCardHistoryDTO;
+import com.fangcang.titanjr.dao.CommonPayHistoryDao;
+import com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO;
 
 /**
  * @author Jerry
  * @date 2017年8月8日 上午10:26:00  
  */
-public class QuickCardHistoryDaoImpl extends GenericDAOMyBatisImpl implements QuickCardHistoryDao {
+public class CommonPayHistoryDaoImpl extends GenericDAOMyBatisImpl implements CommonPayHistoryDao {
 
 	@Override
 	public boolean selectForPage(Map<String, String> condition,
-			PaginationSupport<QuickCardHistoryDTO> paginationSupport)
+			PaginationSupport<CommonPayHistoryDTO> paginationSupport)
 			throws DaoException {
 		try {
-			super.selectForPage("com.fangcang.titanjr.dao.QuickCardHistoryDao.selectForPage", condition, paginationSupport);
+			super.selectForPage("com.fangcang.titanjr.dao.CommonPayHistoryDao.selectForPage", condition, paginationSupport);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}
@@ -35,28 +35,28 @@ public class QuickCardHistoryDaoImpl extends GenericDAOMyBatisImpl implements Qu
 	}
 
 	@Override
-	public int insert(QuickCardHistoryDTO entity) throws DaoException {
+	public int insert(CommonPayHistoryDTO entity) throws DaoException {
 		try {
-			return super.insertEntity("com.fangcang.titanjr.dao.QuickCardHistoryDao.insertEntity", entity);
+			return super.insertEntity("com.fangcang.titanjr.dao.CommonPayHistoryDao.insertEntity", entity);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}
 	}
 
 	@Override
-	public int update(QuickCardHistoryDTO entity) throws DaoException {
+	public int update(CommonPayHistoryDTO entity) throws DaoException {
 		try {
-			return super.updateEntity("com.fangcang.titanjr.dao.QuickCardHistoryDao.updateEntity", entity);
+			return super.updateEntity("com.fangcang.titanjr.dao.CommonPayHistoryDao.updateEntity", entity);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}
 	}
 
 	@Override
-	public List<QuickCardHistoryDTO> selectQuickCardHistory(
-			QuickCardHistoryDTO quickCardHistoryDTO) throws DaoException {
+	public List<CommonPayHistoryDTO> selectCommonPayHistory(
+			CommonPayHistoryDTO commonPayHistoryDTO) throws DaoException {
 		try {
-			return super.selectList("com.fangcang.titanjr.dao.QuickCardHistoryDao.selectQuickCardHistory", quickCardHistoryDTO);
+			return super.selectList("com.fangcang.titanjr.dao.CommonPayHistoryDao.selectCommonPayHistory", commonPayHistoryDTO);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}
