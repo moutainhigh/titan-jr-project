@@ -68,8 +68,11 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	//支付方式 默认个人银行
 	private PayTypeEnum payType = PayTypeEnum.Personal_Banking;
 	
+	//付款方机构编码
+	private String partnerOrgCode;
+	
 	//新版收银台增加字段
-	private String payerAccountType; //支付人银行卡类型   10：借记卡  21：信用卡
+	private String payerAccountType; //支付人银行卡类型   10：借记卡  11：信用卡
 	private String payerName; //支付人名字
 	private String payerPhone; //支付人银行预留电话
 	private String idCode; //支付人身份证
@@ -78,7 +81,9 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	private String terminalInfo; //终端信息
 	private String safetyCode;//信用卡背后的3位数字
 	private String validthru;//月年格式 例如2020年09月应写为0920
-	private String version;
+	private String rsVersion;//融数对接版本
+	private String jrVersion;//金融对接版本
+	private String isSaveHistorypay;//是否保存常用卡  0否  1是
 	
 	
 	public Float getReceivablerate() {
@@ -297,12 +302,12 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 		this.terminalInfo = terminalInfo;
 	}
 
-	public String getVersion() {
-		return version;
+	public String getJrVersion() {
+		return jrVersion;
 	}
 
-	public void setVersion(String version) {
-		this.version = version;
+	public void setJrVersion(String jrVersion) {
+		this.jrVersion = jrVersion;
 	}
 
 	public String getPayerName() {
@@ -335,6 +340,30 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 
 	public void setValidthru(String validthru) {
 		this.validthru = validthru;
+	}
+
+	public String getPartnerOrgCode() {
+		return partnerOrgCode;
+	}
+
+	public void setPartnerOrgCode(String partnerOrgCode) {
+		this.partnerOrgCode = partnerOrgCode;
+	}
+
+	public String getRsVersion() {
+		return rsVersion;
+	}
+
+	public void setRsVersion(String rsVersion) {
+		this.rsVersion = rsVersion;
+	}
+
+	public String getIsSaveHistorypay() {
+		return isSaveHistorypay;
+	}
+
+	public void setIsSaveHistorypay(String isSaveHistorypay) {
+		this.isSaveHistorypay = isSaveHistorypay;
 	}
 	
 }

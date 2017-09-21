@@ -31,8 +31,8 @@
 		<div class="r_c ">
 			<div class="r_text">
 				<ul>
-					<li class="r_y1"><div class="rt_title">公司名称</div><input type="text" class="text" name="orgName" value="${org.orgName }" datatype="*" errormsg="必填项" placeholder="请与营业执照上的公司名称保持一致" ></li>
-					<li class="r_y1"><div class="rt_title">营业执照号</div><input type="text" class="text" name="buslince" id="buslince" value="${org.buslince }" datatype="*" errormsg="必填项" afterPassed="checkOrgRegNum" placeholder="必填项"></li>
+					<li class="r_y1"><div class="rt_title">公司名称</div><input type="text" class="text" name="orgName" value="${orgSubDTO.orgName }" datatype="*" errormsg="必填项" placeholder="请与营业执照上的公司名称保持一致" ></li>
+					<li class="r_y1"><div class="rt_title">营业执照号</div><input type="text" class="text" name="buslince" id="buslince" value="${orgSubDTO.buslince }" datatype="*" errormsg="必填项" afterPassed="checkOrgRegNum" placeholder="必填项"></li>
 					<li class="r_y1"><div class="rt_title">联系人</div><input type="text" class="text" name="connect" value="${org.connect }" datatype="*" errormsg="必填项" placeholder="请输入联系人" ></li>
 					<li class="r_y1"><div class="rt_title">联系手机</div><input type="text" class="text" name="mobiletel" value="${org.mobileTel }" id="mobiletel" require="true" datatype="m" errormsg="格式不正确" placeholder="请输入联系手机"></li>
 					<li class="r_yzm m_b30"><div class="rt_title">验证码</div>

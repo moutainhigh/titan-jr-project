@@ -45,11 +45,14 @@ public class FinancialMainController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/home", method = RequestMethod.GET)
-    public String home(HttpServletRequest request, Model model) throws Exception {
+    public String home(HttpServletRequest request, Model model)  {
     	try {
     		queryOrgInfo(model);
 		} catch (Exception e) {
-			throw new Exception(e);
+			//errormsg
+			model.addAttribute("errormsg", "系统错误，请重试或者联系SaaS管理员");
+			log.error("金融首页错误", e);
+			return "error";
 		}
     	
         return "tfs-main/home";
@@ -116,7 +119,9 @@ public class FinancialMainController extends BaseController {
     	try {
     		queryOrgInfo(model);
 		} catch (Exception e) {
-			throw new Exception(e);
+			model.addAttribute("errormsg", "系统错误，请重试或者联系SaaS管理员");
+			log.error("贷款页面请求错误/loan", e);
+			return "error";
 		}
         return "tfs-main/loan";
     }
@@ -131,7 +136,9 @@ public class FinancialMainController extends BaseController {
     	try {
     		queryOrgInfo(model);
 		} catch (Exception e) {
-			throw new Exception(e);
+			model.addAttribute("errormsg", "系统错误，请重试或者联系SaaS管理员");
+			log.error("收款介绍页面请求错误/receipt", e);
+			return "error";
 		}
         return "tfs-main/receipt";
     }
@@ -146,7 +153,8 @@ public class FinancialMainController extends BaseController {
     	try {
     		queryOrgInfo(model);
 		} catch (Exception e) {
-			throw new Exception(e);
+			model.addAttribute("errormsg", "系统错误，请重试或者联系SaaS管理员");
+			log.error("付款介绍页面请求错误/pay", e);
 		}
         return "tfs-main/pay";
     }

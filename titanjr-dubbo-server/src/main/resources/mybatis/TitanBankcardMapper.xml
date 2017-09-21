@@ -25,6 +25,9 @@
   <select id="queryEntity" resultType="com.fangcang.titanjr.entity.TitanBankcard" parameterType="com.fangcang.titanjr.entity.parameter.TitanBankcardParam" >
     select  * from t_tfs_bankcard
     <where>
+    	<if test="bankcardid !=null">
+        and bankcardid = #{bankcardid}
+      </if>
       <if test="userid !=null">
         and userid = #{userid}
       </if>
@@ -37,8 +40,11 @@
       <if test="productid !=null">
         and productid = #{productid}
       </if>
-       <if test="status !=null">
+     <if test="status !=null">
         and status = #{status}
+      </if>
+      <if test="accountnumber !=null">
+        and accountnumber = #{accountnumber}
       </if>
       <if test="accountpurpose !=null">
         and accountpurpose = #{accountpurpose}
@@ -49,7 +55,7 @@
     </where>
   </select>
   
-  <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanBankcard" >
+  <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanBankcard" useGeneratedKeys="true" keyProperty="bankcardid">
     insert into t_tfs_bankcard ( constid, userid, 
       usertype, productid, role, 
       accountnumber, accounttypeid, bankbranchname, 

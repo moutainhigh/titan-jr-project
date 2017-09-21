@@ -20,6 +20,7 @@ public class TitanBankcard implements java.io.Serializable {
 	private String userid;
 	private Integer usertype;
 	private String productid;
+	private String accountid;
 	private String role;
 	private String accountnumber;
 	private String accounttypeid;
@@ -108,6 +109,14 @@ public class TitanBankcard implements java.io.Serializable {
 
 	public Integer getBankcardid() {
 		return this.bankcardid;
+	}
+
+	public String getAccountid() {
+		return accountid;
+	}
+
+	public void setAccountid(String accountid) {
+		this.accountid = accountid;
 	}
 
 	public void setBankcardid(Integer bankcardid) {

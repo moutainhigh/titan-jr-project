@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.service.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,7 +35,6 @@ import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.enums.TransfertypeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
-import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
@@ -48,10 +46,8 @@ import com.fangcang.titanjr.dao.TitanRefundDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
-import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.RefundDTO;
-import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.NotifyRefundRequest;
@@ -69,7 +65,7 @@ import com.fangcang.titanjr.entity.TitanTransferReq;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.enums.BusiCodeEnum;
 import com.fangcang.titanjr.enums.SignTypeEnum;
-import com.fangcang.titanjr.enums.VersionEnum;
+import com.fangcang.titanjr.enums.RsVersionEnum;
 import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.manager.impl.InvokeLogRecordManager;
 import com.fangcang.titanjr.rs.request.AccountTransferRequest;
@@ -117,7 +113,11 @@ public class TitanFinancialRefundServiceImpl implements
 	@Resource
 	private InvokeLogRecordManager invokeLogRecordManager;
 	
+	@Resource
+	private TitanFinancialUtilService utilService;
 	
+	
+	@SuppressWarnings("unused")
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	
 	private static final Log log = LogFactory.getLog(TitanFinancialRefundServiceImpl.class);
@@ -194,7 +194,7 @@ public class TitanFinancialRefundServiceImpl implements
 			BigDecimal free = new BigDecimal(refundRequest.getFee());
 			if (free.compareTo(BigDecimal.ZERO) == 1) {
 				userFeeTransferRequest = this.convertToTransferRequest(refundRequest);
-				userFeeTransferRequest.setUserid("141223100000056");
+				userFeeTransferRequest.setUserid(CommonConstant.RS_FANGCANG_USER_ID);
 				userFeeTransferRequest.setProductid("P000229");
 				userFeeTransferRequest.setAmount(refundRequest.getFee());
 				accountTransferResponse = rsAccTradeManager.accountBalanceTransfer(userFeeTransferRequest);
@@ -672,7 +672,7 @@ public class TitanFinancialRefundServiceImpl implements
 			notifyRefundRequest.setRefundAmount(refundDTO.getRefundAmount());
 			notifyRefundRequest.setOrderTime(refundDTO.getOrderTime());
 			notifyRefundRequest.setRefundOrderno(refundDTO.getRefundOrderno());
-			notifyRefundRequest.setVersion(VersionEnum.Version_1.getKey());
+			notifyRefundRequest.setVersion(RsVersionEnum.Version_1.getKey());
 			notifyRefundRequest.setSignType(SignTypeEnum.MD5.getKey());
 			
 			NotifyRefundResponse notifyRefundResponse = this.notifyGateawayRefund(notifyRefundRequest);
@@ -797,11 +797,47 @@ public class TitanFinancialRefundServiceImpl implements
 				bean.setUserOrderId(refund.getUserOrderId());
 				bean.setCode(refundStatus.status.toString());
 				bean.setBusinessInfo(refund.getBusinessInfo());
-				log.info("threadNotify()通知第三方退款单状态,参数[NotifyBean]："+JSONSerializer.toJSON(bean));
+				log.info("threadNotify()通知第三方退款单状态,参数[NotifyBean]："+JSONSerializer.toJSON(bean)+",单号orderid:"+orderNo);
 				notifyTTMall(bean);
 			}
 		});
 		t.start();
+	}
+	
+	
+	@Override
+	public NotifyRefundResponse notifyRefund(RefundOrderRequest refundOrderRequest, NotifyRefundRequest 
+			notifyRefundRequest, TransOrderDTO transOrderDTO){
+		
+		NotifyRefundResponse notifyRefundResponse = notifyRefundOrder(refundOrderRequest,notifyRefundRequest);
+		
+		OrderStatusEnum orderStatusEnum = null;
+		if(notifyRefundResponse.isResult()){
+			RefundStatusEnum status = RefundStatusEnum.getRefundStatusEnumByStatus(Integer.parseInt(notifyRefundResponse.getRefundStatus()));
+			//除了退款成功，其他状态都设置成退款中
+			if(RefundStatusEnum.REFUND_SUCCESS == status){
+				orderStatusEnum = OrderStatusEnum.REFUND_SUCCESS;
+			}else{
+				orderStatusEnum = OrderStatusEnum.REFUND_IN_PROCESS;
+			}
+		}else{
+			//网关退款请求无响应或者失败都当成退款中
+			orderStatusEnum = OrderStatusEnum.REFUND_IN_PROCESS;
+			log.info("网关退款调用失败,订单orderid:"+transOrderDTO.getOrderid()+",响应结果:"+Tools.gsonToString(notifyRefundResponse));
+		}
+		
+		TransOrderDTO transOrder = new TransOrderDTO();
+		transOrder.setTransid(transOrderDTO.getTransid());
+		transOrder.setStatusid(orderStatusEnum.getStatus());
+		log.info("退款成功修改订单状态,Transid:" + transOrderDTO.getTransid() + ",orderId:"+transOrderDTO.getOrderid()+",Statusid:" + transOrder.getStatusid());
+		boolean flag = titanOrderService.updateTransOrder(transOrder);
+		if (!flag) {
+			log.error("退款单状态更新失败,orderId:"+transOrderDTO.getOrderid());
+			utilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Success_Update_Order_Fail, JSONSerializer.toJSON(transOrder).toString());
+		}
+		
+		return notifyRefundResponse;
+		
 	}
 	
 }

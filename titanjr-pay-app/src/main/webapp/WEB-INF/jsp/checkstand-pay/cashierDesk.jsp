@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"  session="false" %>
 <%@ include file="/comm/taglib.jsp"%>
 <%@ page isELIgnored="false" %>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -152,7 +153,7 @@
                         </c:if>
                         <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem">
                         
-                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9 or deskItem.itemType == 11 }">
+                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9 }">
                                 <li>${deskItem.itemName}</li>
                             </c:if>
                             
@@ -206,7 +207,7 @@
                           </li>
                          </c:if>
                          <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem" varStatus="o_status">
-                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9  or (deskItem.itemType == 10 and  isSupportLoanApply) or deskItem.itemType == 11}">
+                            <c:if test="${deskItem.itemType == 1 or deskItem.itemType == 2 or deskItem.itemType == 3 or deskItem.itemType == 9  or (deskItem.itemType == 10 and  isSupportLoanApply)}">
                                 <li >
                                     <c:forEach items="${deskItem.cashierItemBankDTOList }" var="itemBank" varStatus="i_status">
                                         <div class="paytable_payway" itemType='${deskItem.itemType}' >
@@ -235,10 +236,6 @@
                                             </c:if>
                                             
                                             <c:if test="${deskItem.itemType == 10 and isSupportLoanApply }">
-                                                <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}"></span>
-                                            </c:if>
-                                            
-                                            <c:if test="${deskItem.itemType == 11 }">
                                                 <span class="payc_title fl"  id="item-${o_status.index }-${i_status.index}" data-index="${deskItem.itemType}"></span>
                                             </c:if>
                                             
@@ -282,7 +279,7 @@
 <script type="text/javascript" src="<%=basePath%>/js/common.js"></script>
 <script type="text/javascript" src="<%=basePath%>/js/cashier/paypsd.js"></script>
 <script type="text/javascript" src="<%=basePath%>/js/cashier/rate.js"></script>
-<script type="text/javascript" src="<%=basePath%>/js/cashier/cashierData.js?v=5"></script>
+<script type="text/javascript" src="<%=basePath%>/js/cashier/cashierData.js"></script>
 <script type="text/javascript" src="<%=basePath%>/js/cashier/init.js"></script>
 <script>
 	$("document").ready(function (){
@@ -550,8 +547,16 @@
     		return false;
     	}
     	
-    	var flag = payPasswordObj.validate_isInput_password();
+    	/* var flag = payPasswordObj.validate_isInput_password();
     	if(flag==false || cashierData.linePayType() == '10'){
+    		payPasswordObj.show_payPassword();
+    	}else{
+    		pay_Order(); 
+    	} */
+    	
+    	//如果是使用余额支付或者贷款，则必须输入密码
+    	if(($("#d_checkbox").attr("checked")=="checked" && cashierData.balanceusable!="0") || 
+    			cashierData.linePayType() == '10'){
     		payPasswordObj.show_payPassword();
     	}else{
     		pay_Order(); 
@@ -708,9 +713,6 @@
 
 		} else if (cashierData.linePayType() == '10') {
 			loanPay();
-		} else if (cashierData.linePayType() == '11') { //测试快捷支付
-			quickPay();
-			
 		} else {//有网银支付
 			cashierData.submit();
 		}
@@ -759,79 +761,6 @@
                	top.F.loading.hide();
             }
            });
-    }
-    
-    function quickPay(){
-    	var orderNo = "";
-    	$.ajax({
-    		type: "post",
-            dataType : 'html',
-   	        context: document.body,
-   	        url : '<%=basePath%>/payment/showQuickPayView.action',			
-   	        success : function(html){
-   	            var d =  window.top.dialog({
-   	                title: ' ',
-   	                padding: '0 0 0px 0',
-   					width: 400,
-   	                content: html,
-   	                skin : 'saas_pop wx_close wx_p'
-   	            }).showModal();
-   	            $('#getCheckCode').on('click',function(){
-   	            	$.ajax({
-	   	 				type : "post",
-	   	 				url : "<%=basePath%>/payment/quickPayRecharge.action",
-	   	 	               data: cashierData.onlineQuickPayData(),
-	   	 	               dataType: "json",
-	   	 	               success: function (data) {
-	   	 	            	   if(data.isSuccess == false){
-	   	 	            		   alert(data.errMsg);
-	   	 	            		   return;
-	   	 	            	   }
-	   	 	            	   orderNo = data.orderNo;
-	   	 	            	   
-	   	 	            	   var certificate = data.certificate;
-	   	 	            	   if(certificate != null && typeof(certificate) != 'undefined' && certificate == '1'){
-	   	 	            		   window.open("<%=basePath%>/quickPay/cardSceurityVerify.shtml?orderNo=" + data.orderNo + "&cardNo=" + $('#payerAcount').val(), "_blank");
-	   	 	            		   
-	   	 	            	   }else{
-	   	 	            		   alert("验证码发送成功");
-	   	 	            	   }
-	   	 	            	   
-	   	 	               }
-	   	 	         });
-   	            });
-   	            $('#recharge').on('click',function(){
- 	            	$('#recharge').attr("disabled", true);
-	            	$.ajax({
-	   	 				type : "post",
-	   	 				url : "<%=basePath%>/quickPay/confirmRecharge.action",
-	   	 	               data: {
-	   	 	            		busiCode: "109",
-	   	 	            		signType: "1",
-	   	 	            		version: "v1.1",
-	   	 	        			merchantNo: "M000016",
-	   	 	        			orderNo: orderNo,
-	   	 	        			payType: "41",
-	   	 	        			checkCode: $("#checkCode").val()
-	   	 	               },
-	   	 	               dataType: "json",
-	   	 	               success: function (data) {
-	   	 	            	   if(data.success == false){
-	   	 	            		   alert(data.errMsg);
-	   	 	            		   $('#recharge').attr("disabled", false);
-	   	 	            		   return;
-	   	 	            	   }
-	   	 	            	   alert("充值成功");
-	   	 	            	   d.close().remove();
-	   	 	            	   top.F.loading.hide();
-	   	 	               }
-	   	 	         });
-	             });
-   	            
-   	        },complete:function(){
-               	top.F.loading.hide();
-            }
-        });
     }
     
     function toWxPayPage(){

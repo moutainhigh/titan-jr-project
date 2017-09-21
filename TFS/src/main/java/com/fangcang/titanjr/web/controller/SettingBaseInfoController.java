@@ -5,8 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import net.sf.json.JSONSerializer;
-
+import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -21,6 +20,7 @@ import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
+import com.fangcang.titanjr.dto.bean.OrgSubDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
 import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
@@ -36,6 +36,8 @@ import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.StringUtil;
+
+import net.sf.json.JSONSerializer;
 /**
  * 基础信息
  * @author luoqinglong
@@ -75,9 +77,17 @@ public class SettingBaseInfoController extends BaseController{
 			
 			FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
 			organQueryRequest.setOrgCode(titanUser.getOrgcode());
-			FinancialOrganResponse financialOrganResponse = organService.queryFinancialOrgan(organQueryRequest);
+			FinancialOrganResponse financialOrganResponse = organService.queryBaseFinancialOrgan(organQueryRequest);
 			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
+			financialOrganDTO.setBuslince(Tools.replaceInfoStar(financialOrganDTO.getBuslince()));
+			financialOrganDTO.setCertificateNumber(Tools.replaceInfoStar(financialOrganDTO.getCertificateNumber()));
+			
+			OrgSubDTO orgSubDTO = financialOrganResponse.getOrgSubDTO();
+			orgSubDTO.setBuslince(Tools.replaceInfoStar(orgSubDTO.getBuslince()));
+			orgSubDTO.setCertificateNumber(Tools.replaceInfoStar(orgSubDTO.getCertificateNumber()));
+			
 			model.addAttribute("financialOrganDTO", financialOrganDTO);
+			model.addAttribute("orgSubDTO", orgSubDTO);
 			for(OrgImageInfo item : financialOrganDTO.getOrgImageInfoList()){
 				if(item.getSizeType()==10){
 					model.addAttribute("small_img_10", item.getImageURL());
@@ -95,6 +105,21 @@ public class SettingBaseInfoController extends BaseController{
 				TitanUser adminUser = adminResponse.getTitanUserPaginationSupport().getItemList().get(0);
 				model.addAttribute("adminUser", adminUser);
 			}
+			String titanCode = financialOrganResponse.getFinancialOrganDTO().getTitanCode();
+			StringBuilder builder = new StringBuilder();
+			char[] codeArray = titanCode.toCharArray();
+			for (int i = 0; i < codeArray.length; i++) {
+				if (i < codeArray.length - 1) {
+					if (i == 3) {
+						builder.append(codeArray[i]).append("&nbsp;&nbsp;&nbsp;&nbsp;");
+					} else {
+						builder.append(codeArray[i]).append(" ");
+					}
+				} else {
+					builder.append(codeArray[i]);
+				}
+			}
+			model.addAttribute("titanCode", builder.toString());
 			return "setting/base-info";
 		}else{
 			//登录者没有金服id

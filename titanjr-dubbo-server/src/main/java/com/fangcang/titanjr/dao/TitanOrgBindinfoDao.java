@@ -21,5 +21,5 @@ public interface TitanOrgBindinfoDao {
 
 	List<OrgBindInfoDTO> queryOrgBindInfoDTO(OrgBindInfoDTO orgBindDTO);
 	
-	
+	List<TitanOrgBindinfo> queryTitanOrgBindinfo(TitanOrgBindinfo titanOrgBindinfo);
 }

@@ -2,10 +2,13 @@ package com.fangcang.titanjr.service;
 
 import java.util.List;
 
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.CommonPayMethodDTO;
+import com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO;
 import com.fangcang.titanjr.dto.request.CashierDeskInitRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
+import com.fangcang.titanjr.dto.request.CashierDeskUpdateRequest;
 import com.fangcang.titanjr.dto.request.PaymentItemRequest;
 import com.fangcang.titanjr.dto.response.CashierDeskInitResponse;
 import com.fangcang.titanjr.dto.response.CashierDeskResponse;
@@ -32,7 +35,10 @@ public interface TitanCashierDeskService {
      * @return
      */
     public CashierDeskInitResponse initCashierDesk(CashierDeskInitRequest cashierDeskInitRequest) throws Exception;
-    
+
+
+	public boolean updateCashierDesk(CashierDeskUpdateRequest deskUpdateRequest) throws Exception;
+
    /**
     * 根据银行标识查询银行信息
     * @param bankName
@@ -54,7 +60,21 @@ public interface TitanCashierDeskService {
      */
     public List<CommonPayMethodDTO> queryCommonPayMethod(CashierDeskQueryRequest cashierDeskQueryRequest);
     
+    /**
+     * 保存常用支付历史记录（新版收银台）
+     * @author Jerry
+     * @date 2017年8月8日 上午9:50:56
+     * @param commonPayHistoryDTO
+     * @return
+     */
+    public BaseResponseDTO saveCommonPayHistory(CommonPayHistoryDTO commonPayHistoryDTO);
     
+    /**
+     * 查询常用支付历史记录（新版收银台）
+     * @author Jerry
+     * @date 2017年8月8日 下午5:22:58
+     */
+    public List<CommonPayHistoryDTO> queryCommonPayHistory(CommonPayHistoryDTO commonPayHistoryDTO);
 
     public void initttMallCashDesk();
     

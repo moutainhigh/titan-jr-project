@@ -8,8 +8,10 @@ import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
 import com.fangcang.titanjr.dto.request.PermissionRequest;
 import com.fangcang.titanjr.dto.request.TradeDetailRequest;
+import com.fangcang.titanjr.dto.response.CashierDeskResponse;
 import com.fangcang.titanjr.dto.response.CheckPermissionResponse;
 import com.fangcang.titanjr.dto.response.TradeDetailResponse;
 import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
@@ -19,6 +21,7 @@ import com.fangcang.titanjr.request.ShowPaymentRequest;
 import com.fangcang.titanjr.response.CheckAccountResponse;
 import com.fangcang.titanjr.response.PermissionResponse;
 import com.fangcang.titanjr.response.ShowPaymentResponse;
+import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
@@ -47,6 +50,9 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
     @Resource
     private TitanFinancialTradeService titanFinancialTradeService;
 
+    @Resource
+    private TitanCashierDeskService titanCashierDeskService;
+
     @Override
     public PermissionResponse isPermissionToPayment(CheckPermissionRequest checkPermissionRequest) {
         log.info("验证该用户是否有支付权限:"+JSONSerializer.toJSON(checkPermissionRequest));
@@ -56,6 +62,7 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
         try {
             PermissionRequest permissionRequest = new PermissionRequest();
             permissionRequest.setFcuserid(checkPermissionRequest.getFcuserid());
+            permissionRequest.setMerchantcode(checkPermissionRequest.getMerchantcode());
             permissionRequest.setPermission(checkPermissionRequest.getPermission());
             CheckPermissionResponse checkResponse = titanFinancialUserService.checkUserPermission(permissionRequest);
             log.info("验证该用户是否有支付权限结果:"+JSONSerializer.toJSON(checkResponse));
@@ -154,6 +161,20 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
             log.error("验证账户---> 错误信息：当前商家未开通或绑定金服机构，请求参数[accountInfoRequest]："+Tools.gsonToString(accountInfoRequest));
             checkAccountResponse.setReturnMessage("当前商家未开通或绑定金服机构");
             return checkAccountResponse;
+        }
+        //如果收银台支付来源不为空，则需要验证收银台是否打开状态
+        if (null != accountInfoRequest.getPaySourceEnum()) {
+            CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
+            cashierDeskQueryRequest.setUsedFor(Integer.valueOf(accountInfoRequest.getPaySourceEnum().getDeskCode()));
+            cashierDeskQueryRequest.setUserId(orgBindDTOList.get(0).getUserid());
+            CashierDeskResponse cashierDeskResponse = titanCashierDeskService.queryCashierDesk(cashierDeskQueryRequest);
+            if (!cashierDeskResponse.isResult() || //返回失败
+                    CollectionUtils.isEmpty(cashierDeskResponse.getCashierDeskDTOList()) || //返回结果为空
+                    cashierDeskResponse.getCashierDeskDTOList().get(0).getIsOpen() == 0 ){ //收银台关闭状态
+                log.error("验证收银台---> 错误信息：当前收银台不存在或处于关闭状态，请求参数[accountInfoRequest]："+Tools.gsonToString(accountInfoRequest));
+                checkAccountResponse.setReturnMessage("当前收银台不存在或处于关闭状态");
+                return checkAccountResponse;
+            }
         }
         checkAccountResponse.setResult(true);
         return checkAccountResponse;

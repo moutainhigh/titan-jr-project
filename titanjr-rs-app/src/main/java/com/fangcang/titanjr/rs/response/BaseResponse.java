@@ -15,7 +15,15 @@ public class BaseResponse implements Serializable {
     private String returnCode;
     private String returnMsg;
 	private String operateStatus;
-
+	
+	public BaseResponse(){
+		 
+	}
+	public BaseResponse(String returnCode,String returnMsg){
+		this.returnCode = returnCode;
+		this.returnMsg = returnMsg;
+	}
+	
 	public String getOperateStatus() {
 		return operateStatus;
 	}

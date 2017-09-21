@@ -32,8 +32,11 @@
             <fmt:formatNumber value="${tradeItem.tradeamount /100}"  pattern="#,##0.00#" />
         </td>
         <td>
-            <c:if test="${tradeItem.isEscrowedPayment == 0 and tradeItem.tradeType == '收款' and tradeItem.statusid=='6'}">
-                <i class="freeze_ico" title="供应商确认订单号即可解冻"/>
+            <c:if test="${tradeItem.isEscrowedPayment == 0 and tradeItem.tradeType == '收款' and tradeItem.statusid=='6' and tradeItem.freezeAt == 2}">
+                <i class="freeze_ico" title="客户离店或到担保日期后即可解冻"/>
+            </c:if>
+            <c:if test="${tradeItem.isEscrowedPayment == 0 and tradeItem.tradeType == '付款' and tradeItem.statusid=='6' and tradeItem.freezeAt == 1}">
+                <i class="freeze_ico" title="供应商确认订单后解冻并转账"/>
             </c:if>
         </td>
         <td class="tdr">${tradeItem.receivedfee /100}</td><!--只展示实收手续费-->
@@ -45,8 +48,19 @@
             <c:if test="${tradeItem.statusid == 8 }">
                 已成功
             </c:if>
-            <c:if test="${tradeItem.statusid == 6 }">
-                已冻结
+            
+            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '付款' and tradeItem.freezeAt == 2 }">
+                冻结在收款方
+            </c:if>
+            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '收款' and tradeItem.freezeAt == 1 }">
+                冻结在付款方 
+            </c:if>
+            
+            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '付款' and tradeItem.freezeAt == 1 }">
+                 已冻结  
+            </c:if>
+            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '收款' and tradeItem.freezeAt == 2 }">
+                 已冻结
             </c:if>
 
             <c:if test="${tradeItem.statusid == 12 }">

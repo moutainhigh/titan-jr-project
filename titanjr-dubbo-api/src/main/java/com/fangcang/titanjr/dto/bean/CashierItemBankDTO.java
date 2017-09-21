@@ -22,7 +22,7 @@ public class CashierItemBankDTO implements Serializable {
     /**
      * 该银行支持卡类型  1储蓄卡  2信用卡  3两者都支持
      */
-    private String cardType;
+    private String supportType;
 
     public String getBankMark() {
         return bankMark;
@@ -48,11 +48,11 @@ public class CashierItemBankDTO implements Serializable {
         this.bankImage = bankImage;
     }
 
-	public String getCardType() {
-		return cardType;
+	public String getSupportType() {
+		return supportType;
 	}
 
-	public void setCardType(String cardType) {
-		this.cardType = cardType;
+	public void setSupportType(String supportType) {
+		this.supportType = supportType;
 	}
 }

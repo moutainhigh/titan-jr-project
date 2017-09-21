@@ -190,38 +190,32 @@ public class FinancialOrganController extends BaseController {
     	orgRegisterValidateRequest.setCertificateNumber(certificateNumber);
 		OrgRegisterValidateResponse orgRegisterValidateResponse = titanFinancialOrganService.validateOrg(orgRegisterValidateRequest);
 		if(orgRegisterValidateResponse.isResult()){
-			//判断机构注册证件的编号和登录者是不是同一个机构
-			Integer tfsUserIdStr = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);//金服用户名
-			if(orgRegisterValidateResponse.getOrgDTO()!=null){//如果所填写的证件编码已经存在
-				if(StringUtil.isValidString(orgId)){
-					//修改
-					if((tfsUserIdStr!=null)&&(tfsUserIdStr>0)){
-    					OrgDTO orgDTO = orgRegisterValidateResponse.getOrgDTO();
-        				UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
-            			userInfoQueryRequest.setTfsUserId(tfsUserIdStr);
-            			userInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
-            			UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
-            			String userOrgCode = userInfoResponse.getUserInfoDTOList().get(0).getOrgCode();
-            			if(userOrgCode.equals(orgDTO.getOrgcode())){
-            				//是登录者所属本机构,该证件可以注册
-            				return 1;
-            			}else{
-            				//不属于,该证件已经注册
-            				return -1;
-            			}
-    				}else{
-    					return -2;//参数错误
-    				}
-				}else{//新增
-					return -1;
+			return 1;//证件可以用
+		}else if(orgRegisterValidateResponse.getOrgDTO()!=null){//填写的证件编码已经存在
+			if(StringUtil.isValidString(orgId)){//修改
+				//判断机构注册证件的编号和登录者是不是同一个机构
+				Integer tfsUserIdStr = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);//金服用户名
+				if((tfsUserIdStr!=null)&&(tfsUserIdStr>0)){
+					OrgDTO orgDTO = orgRegisterValidateResponse.getOrgDTO();
+    				UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
+        			userInfoQueryRequest.setTfsUserId(tfsUserIdStr);
+        			userInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
+        			UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
+        			String userOrgCode = userInfoResponse.getUserInfoDTOList().get(0).getOrgCode();
+        			if(userOrgCode.equals(orgDTO.getOrgcode())){
+        				return 1;//是登录者所属本机构,该证件可以注册
+        			}else{
+        				return -1;//证件已经被其他机构使用
+        			}
+				}else{
+					return -2;//参数错误
 				}
 			}else{
-				return 1;
+				return -1;//证件已经被其他机构使用
 			}
 		}else{
-			throw new MessageServiceException(orgRegisterValidateResponse.getReturnMessage());
+			throw new MessageServiceException(orgRegisterValidateResponse.getReturnMessage()); 
 		}
-    	
     }
     /**
      * 注册
@@ -363,6 +357,7 @@ public class FinancialOrganController extends BaseController {
     		
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_ROLE_LIST, userInfoDTO.getRoleDTOList());//金服用户角色列表
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, userInfoDTO.getUserLoginName());//金服用户登录名
+			getSession().setAttribute(WebConstant.SESSION_KEY_JR_UESRNAME, userInfoDTO.getUserName());//金服用户名
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名
             //如果包含系统运营员，判定当前地址
@@ -649,9 +644,10 @@ public class FinancialOrganController extends BaseController {
     private int getInfo(int orgId,Model model){
     	FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
     	organQueryRequest.setOrgId(orgId);
-    	FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+    	FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
     	if(financialOrganResponse.isResult()){
     		model.addAttribute("org", financialOrganResponse.getFinancialOrganDTO());
+    		model.addAttribute("orgSubDTO", financialOrganResponse.getOrgSubDTO());
     		if(financialOrganResponse.getFinancialOrganDTO().getOrgImageInfoList().size()>0){
     			for(OrgImageInfo item : financialOrganResponse.getFinancialOrganDTO().getOrgImageInfoList()){
     				if(item.getSizeType()==10){

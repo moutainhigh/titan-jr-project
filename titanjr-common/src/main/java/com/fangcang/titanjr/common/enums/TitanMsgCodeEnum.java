@@ -122,9 +122,23 @@ public enum TitanMsgCodeEnum {
     REQUEST_PAYER_FAIL(110100044,"请求付款失败！"),
     
     SIGN_INCORRECT(110100045,"签名错误"),
+    
+    ORDER_FREEZE_PAYER(110100046,"资金冻结在付款方，拒绝该订单即可"),
+    
+    ORDER_NOT_FREEZE(110100047,"订单不是冻结状态"),
+    
+    ORDER_FREEZETYPE_NOT3(110100048,"订单的冻结状态不是3"),
+    
+    QUERY_FREEZEORDER_FAIL(110100049,"冻结单查询失败"),
+    
+    FREEZEORDER_FAIL(110100050,"冻结失败"),
+    
+    ISRECEIVE_OPERATETYPE_NOTMATCH(110100051,"是否收款和收款操作方式不匹配"),
+    
+    UPDATE_ORDERSTATUS_FAIL(110100052,"更新订单状态失败"),
+    
 	// 身份认证失败Unexpected error
 	UNEXPECTED_ERROR(110999999, "发生错误，请联系管理员!");
-	
 	
 
 	private int code;

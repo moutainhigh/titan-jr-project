@@ -37,7 +37,7 @@ import com.fangcang.titanjr.dto.response.gateway.ReSendVerifyCodeResponse;
 import com.fangcang.titanjr.dto.response.gateway.UnbindBankCardResponse;
 import com.fangcang.titanjr.dto.response.gateway.UpdateBankCardPhoneResponse;
 import com.fangcang.titanjr.enums.BusiCodeEnum;
-import com.fangcang.titanjr.enums.VersionEnum;
+import com.fangcang.titanjr.enums.RsVersionEnum;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.RSGatewayInterfaceService;
 import com.fangcang.titanjr.util.SignMsgBuilder;
@@ -384,7 +384,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 		cardSceurityVerifyParam.setOrderNo(cardSceurityVerifyRequest.getOrderNo());
 		cardSceurityVerifyParam.setPayType("41");
 		cardSceurityVerifyParam.setSignType("1");
-		cardSceurityVerifyParam.setVersion(VersionEnum.Version_2.key);
+		cardSceurityVerifyParam.setVersion(RsVersionEnum.Version_2.key);
 		cardSceurityVerifyParam.setTerminalType(cardSceurityVerifyRequest.getTerminalType());
 		cardSceurityVerifyParam.setCardChecknotifyUrl("http://www.fangcang.org/titanjr-pay-dev3/quickPay/cardSceurityVerifyResultNotice.action");
 		cardSceurityVerifyParam.setCardCheckPageUrl("http://www.fangcang.org/titanjr-pay-dev3/quickPay/cardSceurityVerifyResultPage.action");

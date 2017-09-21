@@ -3,8 +3,6 @@ package com.fangcang.titanjr.dto.request;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 
 /**
@@ -24,15 +22,18 @@ public class TitanOrderRequest implements Serializable{
 	private String goodsId;// 商品编号，可以是对方的订单号
 	private String goodsDetail;// 商品描述 N
 	private String goodsName;// 商品名称 N
-	private String userId;// 付款方身份标示 如果是财务，则建议是FCUSERID
-	private String ruserId;// 收款方身份标示 N ,GDP可以指定接受方的 商家联盟可以指定其FCUSERID,ke
+	private String userId;// 付款方用户ID（老版本还可以是金融机构编码）
+	private String partnerOrgCode; //付款方的机构编码
+	private String orgCode;//付款方的金融机构编码
+	private String ruserId;// 收款方身份标示（收款方的机构编码或金融机构编码）
 	private String currencyType;//币种 1 人民币
 	private String amount;// 订单金额
 	private String payerType;// 付款人类型 财务 GDP 等
 	private String notify;// 通知地址
 	private String checkOrderUrl;
 	private String productId = CommonConstant.RS_FANGCANG_PRODUCT_ID;
-	private String cashierDeskVersion;//收银台版本 @see CashierDeskVersionEnum
+	private String version = "v1.0"; //@see TitanjrVersionEnum
+	private String freezeType; //冻结方式  1-不冻结；2-订单金额冻结在收款方；3-订单金额冻结在付款方
 	
 	private Map<String, String> businessInfo = new HashMap<String, String>(); // 存储业务信息
 
@@ -157,11 +158,35 @@ public class TitanOrderRequest implements Serializable{
 		this.productId = productId;
 	}
 
-	public String getCashierDeskVersion() {
-		return cashierDeskVersion;
+	public String getPartnerOrgCode() {
+		return partnerOrgCode;
 	}
 
-	public void setCashierDeskVersion(String cashierDeskVersion) {
-		this.cashierDeskVersion = cashierDeskVersion;
+	public void setPartnerOrgCode(String partnerOrgCode) {
+		this.partnerOrgCode = partnerOrgCode;
+	}
+
+	public String getOrgCode() {
+		return orgCode;
+	}
+
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public String getFreezeType() {
+		return freezeType;
+	}
+
+	public void setFreezeType(String freezeType) {
+		this.freezeType = freezeType;
 	}
 }

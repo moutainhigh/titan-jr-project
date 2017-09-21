@@ -3,6 +3,7 @@ package com.fangcang.titanjr.pay.strategy.pay;
 import org.springframework.ui.Model;
 
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
+import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 
 /**
  * 支付策略
@@ -18,6 +19,6 @@ public interface PayStrategy {
 	 * @param model
 	 * @return	网关地址
 	 */
-	public String pay(RechargeDataDTO rechargeDataDTO, String payOrderNo, Model model);
+	public String pay(RechargeDataDTO rechargeDataDTO, TitanPaymentRequest titanPaymentRequest, Model model);
 
 }

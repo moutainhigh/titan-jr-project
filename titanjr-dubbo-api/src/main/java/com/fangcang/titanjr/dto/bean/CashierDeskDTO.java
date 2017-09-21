@@ -18,6 +18,8 @@ public class CashierDeskDTO implements Serializable{
     private String deskName;
     private Integer usedFor;
     private Integer payType;
+    //新增收银台是否开放
+    private Integer isOpen;
 
     private List<CashierDeskItemDTO> cashierDeskItemDTOList;
 
@@ -78,4 +80,11 @@ public class CashierDeskDTO implements Serializable{
         this.cashierDeskItemDTOList = cashierDeskItemDTOList;
     }
 
+    public Integer getIsOpen() {
+        return isOpen;
+    }
+
+    public void setIsOpen(Integer isOpen) {
+        this.isOpen = isOpen;
+    }
 }

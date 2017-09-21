@@ -26,7 +26,8 @@ public class CommonConstant {
     public static final int RS_LOAN_REPAYMENT_TIME = 90;//贷款还款到期时长,单位：天
     
     
-    public static final String ORG_CODE_PREFIX = "TJM";//机构编码前缀
+    public static final String ORG_CODE_PREFIX = "TJM";//虚拟证件机构编码前缀
+    public static final String ORG_SUB_CODE_PREFIX = "TJMS";//真实证件机构编码前缀
     public static final String ACCOUNT_CODE_PREFIX = "TJA";//accountCode编码前缀
     public static final String LOAN_CREDIT_NO_PREFIX = "CR";//accountCode编码前缀
     public static final String RS_FANGCANG_USER_ID = "141223100000056";//房仓平台userid
@@ -209,5 +210,14 @@ public class CommonConstant {
 	 * 金融缓存key前缀
 	 */
     public static final String REDIS_KEY_PREFIX_TITANJR = "TITANJR";
+    
+    /**
+     * 冻结在付款方
+     */
+    public static final String FREEZE_PAYER = "1";
+    /**
+     * 冻结在收款方
+     */
+    public static final String FREEZE_PAYEE = "2";
     
 }

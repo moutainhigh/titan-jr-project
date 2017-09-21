@@ -86,6 +86,8 @@
 	<bean id="titanOrgBindinfoDao" class="com.fangcang.titanjr.dao.impl.TitanOrgBindinfoDaoImpl" parent="baseSqlMapClient"></bean>
 	
 	<bean id="titanOrgDao" class="com.fangcang.titanjr.dao.impl.TitanOrgDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="titanOrgSubDao" class="com.fangcang.titanjr.dao.impl.TitanOrgSubDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="titanOrgMapInfoDao" class="com.fangcang.titanjr.dao.impl.TitanOrgMapInfoDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanOrgImageDao" class="com.fangcang.titanjr.dao.impl.TitanOrgImageDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanRateChangeLogDao" class="com.fangcang.titanjr.dao.impl.TitanRateChangeLogDaoImpl" parent="baseSqlMapClient"></bean>
 	
@@ -131,6 +133,8 @@
 	<bean id="loanCreditOrderDiscardDao" class="com.fangcang.titanjr.dao.impl.LoanCreditOrderDiscardDaoImpl" parent="baseSqlMapClient"></bean>	
 	<bean id="titanVirtualOrgDao" class="com.fangcang.titanjr.dao.impl.TitanVirtualOrgDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanOperateLogDao" class="com.fangcang.titanjr.dao.impl.TitanOperateLogDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="commonPayHistoryDao" class="com.fangcang.titanjr.dao.impl.CommonPayHistoryDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="orgCardMapDao" class="com.fangcang.titanjr.dao.impl.TitanOrgCardMapDaoImpl" parent="baseSqlMapClient"></bean>
 	
 </beans>
 

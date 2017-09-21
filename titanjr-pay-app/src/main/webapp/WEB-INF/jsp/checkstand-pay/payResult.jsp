@@ -29,32 +29,40 @@
 			<i class="TFSpay_ico TFSsb"></i>
 			 付款失败
 		  </div>
+		  <c:if test="${not empty confirmRechargeResponse and confirmRechargeResponse.success == false }">
+		  	<div class="TFSsu_contenttop c_red"> 
+		  		${confirmRechargeResponse.errMsg }
+		  	</div>
+		  </c:if>
 	     </c:otherwise>
 	   </c:choose>
 		
-		<div class="TFSsu_contentcenter">
-			<h4 class="f_14"><span class="TFSsu_sleft">交易流水号：</span><span class="c_999 f_14">${transOrderDTO.userorderid }</span></h4>
-			<p class="f_14">
-				<span class="TFSsu_sleft">收    款   方：</span>
-				<span class="c_999">${financialOrganDTO.orgName }</span>
-			</p>
-			<p class="f_14">
-				<span class="TFSsu_sleft">实付金额：</span>
-				<span class="c_999">${rechargeResultConfirmRequest.payAmount/100 }CNY</span>
-			</p>
-			<p class="f_14">
-				<span class="TFSsu_sleft">付款方式：</span>
-				<span class="c_999">${payType}</span>
-			</p>
-			<p class="f_14">
-				<span class="TFSsu_sleft">付款时间：</span>
-				<span class="c_999" id="payOrderTime"></span>
-			</p>
-			<p class="f_14">
-				<span class="TFSsu_sleft">付款状态：</span>
-				<span class="c_999">${rechargeResultConfirmRequest.payMsg}</span>
-			</p>
-		</div>
+		<c:if test="${not empty rechargeResultConfirmRequest }">
+			<div class="TFSsu_contentcenter">
+				<h4 class="f_14"><span class="TFSsu_sleft">交易流水号：</span><span class="c_999 f_14">${transOrderDTO.userorderid }</span></h4>
+				<p class="f_14">
+					<span class="TFSsu_sleft">收    款   方：</span>
+					<span class="c_999">${financialOrganDTO.orgName }</span>
+				</p>
+				<p class="f_14">
+					<span class="TFSsu_sleft">实付金额：</span>
+					<span class="c_999">${rechargeResultConfirmRequest.payAmount/100 }CNY</span>
+				</p>
+				<p class="f_14">
+					<span class="TFSsu_sleft">付款方式：</span>
+					<span class="c_999">${payType}</span>
+				</p>
+				<p class="f_14">
+					<span class="TFSsu_sleft">付款时间：</span>
+					<span class="c_999" id="payOrderTime"></span>
+				</p>
+				<p class="f_14">
+					<span class="TFSsu_sleft">付款状态：</span>
+					<span class="c_999">${rechargeResultConfirmRequest.payMsg}</span>
+				</p>
+			</div>
+		</c:if>
+		
 		<div class="TFSsu_contentfoot">
 			<span class="btn btn_exit J_exitKan">关闭</span>
 		</div>

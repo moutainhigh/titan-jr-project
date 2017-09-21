@@ -5,6 +5,7 @@ import com.fangcang.titanjr.dto.bean.CheckStatus;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
+import com.fangcang.titanjr.dto.bean.OrgSubDTO;
 
 import java.util.List;
 
@@ -15,6 +16,8 @@ import java.util.List;
 public class FinancialOrganResponse extends BaseResponseDTO{
 
     private FinancialOrganDTO financialOrganDTO;
+    
+    private OrgSubDTO orgSubDTO;
 
     public FinancialOrganDTO getFinancialOrganDTO() {
         return financialOrganDTO;
@@ -23,4 +26,13 @@ public class FinancialOrganResponse extends BaseResponseDTO{
     public void setFinancialOrganDTO(FinancialOrganDTO financialOrganDTO) {
         this.financialOrganDTO = financialOrganDTO;
     }
+
+	public OrgSubDTO getOrgSubDTO() {
+		return orgSubDTO;
+	}
+
+	public void setOrgSubDTO(OrgSubDTO orgSubDTO) {
+		this.orgSubDTO = orgSubDTO;
+	}
+    
 }

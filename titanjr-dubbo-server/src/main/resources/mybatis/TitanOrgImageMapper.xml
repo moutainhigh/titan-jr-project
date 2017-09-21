@@ -26,6 +26,21 @@
       #{createtime}, #{modifier,jdbcType=VARCHAR}, #{modifytime}
       )
   </insert>
+  <delete id="deleteEntity" parameterType="com.fangcang.titanjr.entity.parameter.TitanOrgImageParam">
+  	delete from t_tfs_orgimage
+  	<where>
+  		<if test="userid != null" >
+	      and  userid = #{userid}  
+	      </if>
+	      <if test="orgcode != null" >
+	      and  orgcode = #{orgcode}
+	      </if>
+  			<if test="imageid != null" >
+	      and  imageid = #{imageid}
+	      </if>
+  	</where>
+  
+  </delete>
   <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanOrgImage" >
     update t_tfs_orgimage
     <set >

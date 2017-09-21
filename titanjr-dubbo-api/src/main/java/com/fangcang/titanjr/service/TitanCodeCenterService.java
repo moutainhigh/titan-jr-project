@@ -9,10 +9,16 @@ import com.fangcang.exception.ServiceException;
  */
 public interface TitanCodeCenterService {
 	/**
-	 * 生成机构编码
+	 * 虚拟证件机构编码
 	 * @return
 	 */
 	public String createOrgCode() throws ServiceException;
+	/***
+	 * 真实证件机构编码
+	 * @return
+	 * @throws ServiceException
+	 */
+	public String createOrgSubCode() throws ServiceException; 
 	/***
 	 * 生成泰坦码
 	 * @return

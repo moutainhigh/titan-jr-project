@@ -200,6 +200,23 @@ public class TitanAccountController extends BaseController {
 		}
 		return "checkstand-pay/selectAccHistory";
 	}
+	
+	@RequestMapping("/queryAccountHistory")
+	@ResponseBody
+	public AccountHistoryResponse queryAccountHistory(AccountHistoryDTO accountHistoryDTO) {
+		
+		AccountHistoryResponse accountHistoryResponse = new AccountHistoryResponse();
+		
+		if (accountHistoryDTO != null) {
+			
+			AccountHistoryRequest accountHistoryRequest = new AccountHistoryRequest();
+			accountHistoryRequest.setAccountHistoryDTO(accountHistoryDTO);
+			accountHistoryResponse = titanFinancialAccountService
+					.queryAccountHistory(accountHistoryRequest);
+		}
+		
+		return accountHistoryResponse;
+	}
 
 	@RequestMapping("deleteAccountHistory")
 	public String deleteAccountHistory(String payerUserid,

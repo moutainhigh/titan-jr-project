@@ -39,8 +39,8 @@
 	                   <div class="b_c_t"><i class="tfs_ico"></i>公司信息</div>
 	                   <div class="b_c_c clearfix">
 	                    <ul>
-	                    <li style="padding-bottom:30px;"><p><i class="c_f00">*</i>公司名称：</p><input type="text" class="text w_420 " name="orgName" value="${org.orgName }" placeholder="请与营业执照上的公司名称保持一致" datatype="*" errormsg="公司名称不能为空"></li>
-	                    <li style="padding-bottom:30px;"><p><i class="c_f00">*</i>营业执照号：</p><input type="text" class="text w_420 " name="buslince" id="buslince" placeholder="三证合一请填写统一社会信用代码" value="${org.buslince }" datatype="*" errormsg="营业执照号不能为空" afterPassed="checkOrgRegNum"></li>
+	                    <li style="padding-bottom:30px;"><p><i class="c_f00">*</i>公司名称：</p><input type="text" class="text w_420 " name="orgName" value="${orgSubDTO.orgName }" placeholder="请与营业执照上的公司名称保持一致" datatype="*" errormsg="公司名称不能为空"></li>
+	                    <li style="padding-bottom:30px;"><p><i class="c_f00">*</i>营业执照号：</p><input type="text" class="text w_420 " name="buslince" id="buslince" placeholder="三证合一请填写统一社会信用代码" value="${orgSubDTO.buslince }" datatype="*" errormsg="营业执照号不能为空" afterPassed="checkOrgRegNum"></li>
 	                    <li style="padding-bottom:30px;">
 	                        <div class="fl w_290">
 		                        <p class="fl"><i class="c_f00">*</i>上传营业执照照片：</p>
@@ -209,7 +209,7 @@ function checkOrgRegNum(value, inputDom){
 		},
 		error:function(){
 			flag = true;
-			new top.Tip({msg : '系统错误，请重试', type: 1, timer:2000}); 
+			new top.Tip({msg : '系统错误，请重试', type: 3, timer:2000}); 
 		}
 	});
 	return  flag;
@@ -254,11 +254,11 @@ $('.verify').on('click',function(){
 			        timeOut(_this);
 			    } 
 			}else{
-				new top.Tip({msg : result.msg, type: 1, timer:2500});
+				new top.Tip({msg : result.msg, type: 3, timer:2500});
 			}
 		},
 		error : function(){
-			new top.Tip({msg : '网络错误，请重试', type: 1, timer:2000});
+			new top.Tip({msg : '网络错误，请重试', type: 3, timer:2000});
 		}
 	});
       

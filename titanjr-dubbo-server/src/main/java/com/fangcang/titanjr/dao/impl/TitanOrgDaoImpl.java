@@ -1,5 +1,9 @@
 package com.fangcang.titanjr.dao.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
@@ -9,10 +13,6 @@ import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.entity.TitanOrg;
 import com.fangcang.titanjr.entity.parameter.TitanOrgParam;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class TitanOrgDaoImpl extends GenericDAOMyBatisImpl implements TitanOrgDao{
 	@Override
@@ -117,8 +117,8 @@ public class TitanOrgDaoImpl extends GenericDAOMyBatisImpl implements TitanOrgDa
 			FinancialOrganQueryRequest organQueryRequest,
 			PaginationSupport<OrgCheckDTO> paginationSupport) throws DaoException{
 		try {
-			paginationSupport = super.selectForPage("com.fangcang.titanjr.dao.TitanOrgDao.queryOrgCheckList",
-					organQueryRequest,paginationSupport);
+			setDefaultValue(organQueryRequest);
+			paginationSupport = super.selectForPage("com.fangcang.titanjr.dao.TitanOrgDao.queryOrgCheckList",organQueryRequest,paginationSupport);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}
@@ -147,9 +147,23 @@ public class TitanOrgDaoImpl extends GenericDAOMyBatisImpl implements TitanOrgDa
 	public List<TitanOrg> queryTitanOrgListByUserId(
 			FinancialOrganQueryRequest organQueryRequest) {
 		try {
+			setDefaultValue(organQueryRequest);
 			return super.selectList("com.fangcang.titanjr.dao.TitanOrgDao.queryTitanOrgListByUserId", organQueryRequest);
 		} catch (Exception e) {
 			throw new DaoException(e);
+		}
+	}
+	
+	/***
+	 * 设置默认查询参数
+	 * @param organQueryRequest
+	 */
+	private void setDefaultValue(FinancialOrganQueryRequest organQueryRequest){
+		if(organQueryRequest.getStatusId()==null){
+			organQueryRequest.setStatusId(1);
+		}
+		if(organQueryRequest.getMapIsactive()==null){
+			organQueryRequest.setMapIsactive(1);
 		}
 	}
 }

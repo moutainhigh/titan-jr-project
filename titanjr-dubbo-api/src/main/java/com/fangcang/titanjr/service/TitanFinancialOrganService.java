@@ -10,8 +10,37 @@ import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.OrgDTO;
 import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
-import com.fangcang.titanjr.dto.request.*;
-import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.dto.request.CancelOrgBindRequest;
+import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
+import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
+import com.fangcang.titanjr.dto.request.OrgBaseInfoRequest;
+import com.fangcang.titanjr.dto.request.OrgRegisterValidateRequest;
+import com.fangcang.titanjr.dto.request.OrgSubRequest;
+import com.fangcang.titanjr.dto.request.OrgUpdateRequest;
+import com.fangcang.titanjr.dto.request.OrganBindRequest;
+import com.fangcang.titanjr.dto.request.OrganCheckRequest;
+import com.fangcang.titanjr.dto.request.OrganFreezeRequest;
+import com.fangcang.titanjr.dto.request.OrganImageRequest;
+import com.fangcang.titanjr.dto.request.OrganImageUploadRequest;
+import com.fangcang.titanjr.dto.request.OrganRegisterRequest;
+import com.fangcang.titanjr.dto.request.OrganRegisterUpdateRequest;
+import com.fangcang.titanjr.dto.request.RegOrgSubRequest;
+import com.fangcang.titanjr.dto.request.UpdateCheckCodeRequest;
+import com.fangcang.titanjr.dto.request.VerifyCheckCodeRequest;
+import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.GetCheckCodeResponse;
+import com.fangcang.titanjr.dto.response.OrgRegisterValidateResponse;
+import com.fangcang.titanjr.dto.response.OrganBindResponse;
+import com.fangcang.titanjr.dto.response.OrganBriefResponse;
+import com.fangcang.titanjr.dto.response.OrganCheckResponse;
+import com.fangcang.titanjr.dto.response.OrganFreezeResponse;
+import com.fangcang.titanjr.dto.response.OrganImageResponse;
+import com.fangcang.titanjr.dto.response.OrganImageUploadResponse;
+import com.fangcang.titanjr.dto.response.OrganQueryCheckResponse;
+import com.fangcang.titanjr.dto.response.OrganRegisterResponse;
+import com.fangcang.titanjr.dto.response.OrganRegisterUpdateResponse;
+import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
+import com.fangcang.titanjr.entity.TitanOrgSub;
 
 /**
  * 金服平台机构服务
@@ -71,9 +100,17 @@ public interface TitanFinancialOrganService {
      */
     public OrganRegisterResponse registerFinancialOrgan(OrganRegisterRequest organRegisterRequest) throws MessageServiceException, GlobalServiceException;
 
+    /***
+     * 注册真实机构并添加机构关联关系
+     * @param regOrgSubRequest
+     * @param relateOrgCode 虚拟机构编码
+     * @return
+     * @throws GlobalServiceException
+     */
+    public OrganRegisterResponse registerOrgSub(RegOrgSubRequest regOrgSubRequest,String relateOrgCode) throws GlobalServiceException,MessageServiceException;
 
     /**
-     * 重新修改机构注册信息，后台初审失败，客户修改后再次发起申请时的接口
+     * 重新修改机构注册信息，后台初审失败，客户修改后再次发起申请时的接口,修改真实证件资料
      * 1.重新上传图片并修改图片路径
      * 2.金服机构信息修改
      * 3.修改审核记录中审核状态(运营人员修改时不用改变审核状态)
@@ -91,9 +128,9 @@ public interface TitanFinancialOrganService {
 //     */
 //    public UpdateOrgaResponse updateOrg(UpdateOrgaRequest updateOrgaRequest) throws GlobalServiceException;
     /**
-     * 注册时检查结构信息是否已经注册
+     * 检查机构信息是否已经注册
      * @param request
-     * @return
+     * @return  code = 500 ,该证件已经注册过
      * @throws MessageServiceException
      */
     public OrgRegisterValidateResponse validateOrg(OrgRegisterValidateRequest request) ;
@@ -168,6 +205,15 @@ public interface TitanFinancialOrganService {
     public OrgBindInfo queryActiveOrgBindInfo(OrgBindInfo orgBindInfo);
     
     /**
+     * 根据给出的任意条件查询商家绑定信息
+     * @author Jerry
+     * @date 2017年8月3日 上午10:00:27
+     * @param orgBindInfo
+     * @return
+     */
+    public OrgBindInfo queryOrgBindInfo(OrgBindInfo orgBindInfo);
+    
+    /**
      * 获取或者生成验证码
      * @param getCheckCodeRequest
      * @return
@@ -188,11 +234,17 @@ public interface TitanFinancialOrganService {
      */
     public BaseResponseDTO useCheckCode(UpdateCheckCodeRequest updateCheckCodeRequest) throws  GlobalServiceException;
     /**
-     * 查询机构信息
+     * 查询虚拟机构信息
      * @param orgDTO
      * @return
      */
     public OrgDTO queryOrg(OrgDTO orgDTO);
+    
+    /**
+     * 获取
+     * @return
+     */
+    public TitanOrgSub getOrgSub(OrgSubRequest orgSubRequest);
     /**
      * 机构总数
      * @return
@@ -205,6 +257,15 @@ public interface TitanFinancialOrganService {
      * @throws GlobalServiceException
      */
     public BaseResponseDTO updateOrg(OrgUpdateRequest orgUpdateRequest)throws GlobalServiceException;
+    
+    
+   	/**
+   	 * 修改机构信息,如果是证件信息，就同时修改融数的
+   	 * @param orgBaseInfoRequest
+   	 * @return
+   	 * @throws GlobalServiceException
+   	 */
+    public BaseResponseDTO updateOrgBaseInfo(OrgBaseInfoRequest orgBaseInfoRequest)throws MessageServiceException;
     
     
     /**

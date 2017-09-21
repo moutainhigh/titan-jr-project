@@ -331,7 +331,7 @@ $('.verify').on('click',function(){
 	var receiveAddress = loginEle.val();
     //
     if($.trim(receiveAddress).length==0){
-    	new top.Tip({msg : '用户名不能为空', type: 1, timer:2000});
+    	new top.Tip({msg : '用户名不能为空', type: 3, timer:2000});
     	loginEle.focus();
     	return
     }

@@ -1,7 +1,6 @@
 package com.fangcang.titanjr.pay.services;
 
 import java.math.BigDecimal;
-import java.text.Bidi;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -10,16 +9,18 @@ import javax.annotation.Resource;
 
 import com.fangcang.titanjr.enums.*;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fangcang.titanjr.common.enums.BusinessLog;
+import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
+import com.fangcang.titanjr.common.enums.QuickPayBankEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
@@ -34,6 +35,8 @@ import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
+import com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.AddPayLogRequest;
@@ -45,12 +48,13 @@ import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
+import com.fangcang.titanjr.dto.request.UserBindInfoRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
 import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
-import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+import com.fangcang.titanjr.dto.response.UserBindInfoResponse;
 import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
@@ -192,7 +196,7 @@ public class TitanPaymentService {
 			rechargeRequest.setNotifyUrl(payMethodConfigDTO.getNotifyurl());
 		}
 		//新版收银台增加参数
-		rechargeRequest.setVersion(titanPaymentRequest.getVersion());
+		rechargeRequest.setVersion(titanPaymentRequest.getRsVersion());
 		rechargeRequest.setIdCode(titanPaymentRequest.getIdCode());
 		rechargeRequest.setPayerAccountType(titanPaymentRequest.getPayerAccountType());
 		rechargeRequest.setPayerName(titanPaymentRequest.getPayerName());
@@ -218,6 +222,54 @@ public class TitanPaymentService {
 						.parseInt(titanPaymentRequest.getLinePayType()));
 			}
 			titanCashierDeskService.saveCommonPayMethod(commonPayMethodDTO);
+		} catch (Exception e) {
+			log.error("保存常用的支付方式失败" + e.getMessage(), e);
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveCommonPayHistory(TitanPaymentRequest titanPaymentRequest) {
+		try {
+			boolean isSaveHistory = false;
+			
+			if(StringUtil.isValidString(titanPaymentRequest.getFcUserid()) && 
+					StringUtil.isValidString(titanPaymentRequest.getPartnerOrgCode())){
+				
+				UserBindInfoDTO userBindInfoDTO = null;
+				UserBindInfoRequest userBindInfoRequest = new UserBindInfoRequest();
+				userBindInfoRequest.setMerchantcode(titanPaymentRequest.getPartnerOrgCode());
+				UserBindInfoResponse userBindInfoResponse = titanFinancialUserService.queryUserBindInfoDTO(userBindInfoRequest);
+				if(CollectionUtils.isNotEmpty(userBindInfoResponse.getPaginationSupport().getItemList())){
+					userBindInfoDTO = userBindInfoResponse.getPaginationSupport().getItemList().get(0);
+				}
+				if(userBindInfoDTO != null && titanPaymentRequest.getFcUserid().equals(String.valueOf(
+						userBindInfoDTO.getFcUserId()))){
+					isSaveHistory = true;
+				}
+			}
+			
+			if(isSaveHistory){
+				
+				CommonPayHistoryDTO commonPayHistoryDTO = new CommonPayHistoryDTO();
+				commonPayHistoryDTO.setOrgcode(titanPaymentRequest.getUserid());
+				commonPayHistoryDTO.setFcuserid(titanPaymentRequest.getFcUserid());
+				commonPayHistoryDTO.setDeskid(titanPaymentRequest.getDeskId());
+				commonPayHistoryDTO.setPaytype(titanPaymentRequest.getPayType().getLinePayType());
+				commonPayHistoryDTO.setBankinfo(titanPaymentRequest.getBankInfo());
+				commonPayHistoryDTO.setBankname(QuickPayBankEnum.getBankName(titanPaymentRequest.getBankInfo(), 
+						titanPaymentRequest.getPayerAccountType()));
+				commonPayHistoryDTO.setPayername(titanPaymentRequest.getPayerName());
+				commonPayHistoryDTO.setPayeracount(titanPaymentRequest.getPayerAcount());
+				commonPayHistoryDTO.setPayeraccounttype(titanPaymentRequest.getPayerAccountType());
+				commonPayHistoryDTO.setPayerphone(titanPaymentRequest.getPayerPhone());
+				commonPayHistoryDTO.setIdcode(titanPaymentRequest.getIdCode());
+				commonPayHistoryDTO.setSafetycode(titanPaymentRequest.getSafetyCode());
+				commonPayHistoryDTO.setValidthru(titanPaymentRequest.getValidthru());
+				commonPayHistoryDTO.setCreator(titanPaymentRequest.getCreator());
+				
+				titanCashierDeskService.saveCommonPayHistory(commonPayHistoryDTO);
+			}
+			
 		} catch (Exception e) {
 			log.error("保存常用的支付方式失败" + e.getMessage(), e);
 			e.printStackTrace();
@@ -272,37 +324,59 @@ public class TitanPaymentService {
 		return transferRequest;
 	}
 
-	// 冻结
-	public boolean freezeAccountBalance(TransferRequest transferRequest,
-			String orderNo) {
+	/**
+	 * 
+	 * @author Jerry
+	 * @date 2017年8月9日 下午2:40:13
+	 * @param transferRequest transOrderDTO
+	 * @return -1冻结失败   0不需要冻结	1冻结付款方 2冻结在收款方
+	 */
+	public int freezeAccountBalance(TransferRequest transferRequest,
+			TransOrderDTO transOrderDTO) {
+		int freezeStatus = -1;
 		try {
 			RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
-			rechargeResultConfirmRequest.setOrderNo(orderNo);
+			rechargeResultConfirmRequest.setOrderNo(transOrderDTO.getOrderid());
 			rechargeResultConfirmRequest.setPayAmount(transferRequest
 					.getAmount());
-			rechargeResultConfirmRequest.setUserid(transferRequest
-					.getUserrelateid());
 			rechargeResultConfirmRequest.setOrderAmount(transferRequest
 					.getAmount());
+			
+			if(FreezeTypeEnum.UNFREEZE.getKey().equals(transOrderDTO.getFreezeType())){
+				log.info("转账到收款方，不冻结");
+				return 0;//不需要冻结，直接返回
+			}else if(FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrderDTO.getFreezeType())){
+				rechargeResultConfirmRequest.setUserid(transferRequest.getUserid());//冻结在付款方
+				freezeStatus = 1;
+				log.info("不转账，资金冻结在付款方");
+			}else{
+				rechargeResultConfirmRequest.setUserid(transferRequest.getUserrelateid());//冻结在收款方
+				freezeStatus = 2;
+				log.info("转账到收款方，资金冻结在收款方");
+			}
+			
 			FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService
 					.freezeAccountBalance(rechargeResultConfirmRequest);
-			if (freezeAccountBalanceResponse.isFreezeSuccess()) {
-				return true;
+			if (!freezeAccountBalanceResponse.isFreezeSuccess()) {
+				freezeStatus = -1;//冻结失败
 			}
+			
 		} catch (Exception e) {
+			freezeStatus = -1;
 			log.error("冻结余额失败" + e.getMessage(), e);
 		}
-		return false;
+		return freezeStatus;
 	}
 
 	// 更新订单状态
-	public boolean updateOrderStatus(Integer transId,
+	public boolean updateOrderStatus(TransOrderDTO transOrderDTO,
 			OrderStatusEnum orderStatusEnum) {
 		try {
-			TransOrderDTO transOrderDTO = new TransOrderDTO();
-			transOrderDTO.setStatusid(orderStatusEnum.getStatus());
-			transOrderDTO.setTransid(transId);
-			boolean flag = titanOrderService.updateTransOrder(transOrderDTO);
+			TransOrderDTO transOrderReq = new TransOrderDTO();
+			transOrderReq.setStatusid(orderStatusEnum.getStatus());
+			transOrderReq.setTransid(transOrderDTO.getTransid());
+			transOrderReq.setFreezeAt(transOrderDTO.getFreezeAt());
+			boolean flag = titanOrderService.updateTransOrder(transOrderReq);
 			return flag;
 		} catch (Exception e) {
 			log.error("更新订单失败" + e.getMessage(), e);
@@ -391,6 +465,8 @@ public class TitanPaymentService {
 									.setPayAmount(new BigDecimal(transOrderDTO
 											.getAmount()).toString());
 							model.addAttribute("payType", "微信支付");
+						}else if(PayTypeEnum.QUICK_PAY_NEW.getKey().equals(payOrderDTO.getPayType())){
+							model.addAttribute("payType", "快捷支付");
 						}
 					}
 

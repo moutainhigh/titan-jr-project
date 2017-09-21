@@ -53,13 +53,13 @@ public class MIndexController extends BaseController{
 		//企业开通申请待审核数量
 		FinancialOrganQueryRequest enterpriseRequest = new FinancialOrganQueryRequest();
 		enterpriseRequest.setResultKey(OrgCheckResultEnum.FT.getResultkey());
-		enterpriseRequest.setUserType(TitanOrgEnum.UserType.ENTERPRISE.getKey());
+		enterpriseRequest.setSubUserType(TitanOrgEnum.UserType.ENTERPRISE.getKey());
 		int enCount = organService.countOrg(enterpriseRequest);
 		result.put("enCount", enCount);
 		//个人开通申请待审核数量
 		FinancialOrganQueryRequest personalRequest = new FinancialOrganQueryRequest();
 		personalRequest.setResultKey(OrgCheckResultEnum.FT.getResultkey());
-		personalRequest.setUserType(TitanOrgEnum.UserType.PERSONAL.getKey());
+		personalRequest.setSubUserType(TitanOrgEnum.UserType.PERSONAL.getKey());
 		int perCount = organService.countOrg(personalRequest);
 		result.put("perCount", perCount);
 		

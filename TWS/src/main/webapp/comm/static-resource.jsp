@@ -1,4 +1,4 @@
-<!-- š„ common css-->
+<!-- ï¿½ï¿½ common css-->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="<%=cssSaasPath%>/css/fangcang.min.css?v=20161222">
 <link rel="stylesheet" href="<%=cssWalletPath%>/css/AD.css"> 
 <link rel="stylesheet" href="<%=cssWalletPath%>/css/style.css">
+<link rel="stylesheet" href="<%=cssSaasPath%>/css/withdrawals.css"/>
 
 
 

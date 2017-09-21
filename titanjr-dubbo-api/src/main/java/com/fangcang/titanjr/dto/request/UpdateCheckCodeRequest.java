@@ -2,8 +2,11 @@ package com.fangcang.titanjr.dto.request;
 
 import java.io.Serializable;
 
-import org.hibernate.validator.constraints.NotBlank;
-
+/***
+ * 更新验证码有效性
+ * @author luoqinglong
+ * @date 2017年8月16日
+ */
 public class UpdateCheckCodeRequest implements Serializable {
 
 	/**
@@ -14,7 +17,7 @@ public class UpdateCheckCodeRequest implements Serializable {
 	private Integer codeId;
 	
 	/**
-	 * 状态
+	 * 状态,0-无效，1-有效
 	 */
 	private Integer isactive;
 

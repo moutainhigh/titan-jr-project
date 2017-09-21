@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
+import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
@@ -186,7 +187,19 @@ public class TitanRefundService {
 				titanJrRefundRequest.setVersion(titanOrderPayDTO.getVersion());
 				titanJrRefundRequest.setSignType(titanOrderPayDTO.getSignType().toString());
 //				titanJrRefundRequest.setIsRealTime(CommonConstant.NOT_REAL_TIME);
+				//有充值支付的退款超过30天不能做原路退回，只能退款到账户余额
+				if (StringUtil.isValidString(titanOrderPayDTO.getOrderTime())) {
+					Long orderDate = DateUtil.sdf5.parse(titanOrderPayDTO.getOrderTime()).getTime();
+					Long nowDate = new Date().getTime();
+					if (nowDate - orderDate > CommonConstant.MS) {
+						titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_ACCOUNT.type);
+					}
+				}
 			} else {//直接进行账户退款,退款到账户余额
+				titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_ACCOUNT.type);
+			}
+			//如果请求条件不需要原路退回，设置直接退回卡
+			if (refundRequest.getIsBackTrack() == 0) {
 				titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_ACCOUNT.type);
 			}
 
@@ -321,7 +334,8 @@ public class TitanRefundService {
 				try {
 					Long orderDate = DateUtil.sdf5.parse(payOrder.getOrderTime()).getTime();
 					Long nowDate = new Date().getTime();
-					if (nowDate - orderDate > CommonConstant.MS) {
+					if (nowDate - orderDate > CommonConstant.MS && TitanConstantDefine.EXTERNAL_PAYMENT_ACCOUNT
+							.equals(payOrder.getMerchantNo())) {
 						log.error("该订单已超出退款时限");
 						return setUpErrorResult(model, TitanMsgCodeEnum.ORDER_OUT_TIME);
 					}
@@ -373,6 +387,12 @@ public class TitanRefundService {
 		if(transOrderDTO ==null){
 			log.error("交易单订单不存在");
 			return setUpErrorResult(model,TitanMsgCodeEnum.QUERY_LOCAL_ORDER);
+		}
+		
+		if(OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()) 
+				&& FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrderDTO.getFreezeType())){
+			log.error("资金冻结在付款方，不允许退款");
+			return setUpErrorResult(model,TitanMsgCodeEnum.ORDER_FREEZE_PAYER);
 		}
 
 		if(OrderStatusEnum.REFUND_IN_PROCESS.getStatus().equals(transOrderDTO.getStatusid())){

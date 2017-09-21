@@ -9,8 +9,6 @@ import java.io.IOException;
 import javax.annotation.Resource;
 
 import net.sf.json.JSONSerializer;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -131,7 +129,7 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 	/***
 	 * SAAS注册机构
 	 */
-	@Test
+	//@Test
 	public void testRegisterOrg_2(){
 		OrganRegisterRequest organRegisterRequest = new OrganRegisterRequest();
 		organRegisterRequest.setRegisterSource(LoginSourceEnum.SAAS.getKey());
@@ -139,7 +137,6 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 		organRegisterRequest.setCertificateType(CertificateType.SFZ.getKey()+"");
 		organRegisterRequest.setCertificateNumber("4304261990111331123");
 		organRegisterRequest.setOrgName("春秋旅游");
-		organRegisterRequest.setUserName("春秋旅游");
 		organRegisterRequest.setUserloginname("luoqinglong@etxing.com");
 		organRegisterRequest.setPassword("123456");
 		organRegisterRequest.setMerchantCode("M100000061");
@@ -170,7 +167,6 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 		organRegisterRequest.setCertificateType(CertificateType.SFZ.getKey()+"");
 		organRegisterRequest.setCertificateNumber("430426199011345353");
 		organRegisterRequest.setOrgName("罗庆龙333");
-		organRegisterRequest.setUserName("罗庆龙333");
 		organRegisterRequest.setUserloginname("13312534535");
 		organRegisterRequest.setPassword("123456");
 		
@@ -187,7 +183,7 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 			Assert.assertFalse(1==1);
 		}
 	}
-	//@Test 
+	@Test 
 	public void testRegisterOrg_2_enterprise(){
 		OrganRegisterRequest organRegisterRequest = new OrganRegisterRequest();
 		organRegisterRequest.setImageid("32,33,34");
@@ -197,7 +193,6 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 		
 		organRegisterRequest.setOrgName("深圳春秋科技有限公司");
 		organRegisterRequest.setBuslince("430426199011133123456");
-		organRegisterRequest.setUserName("深圳春秋科技有限公司");
 		
 		organRegisterRequest.setConnect("罗庆龙1");
 		organRegisterRequest.setMobileTel("13352989767");
@@ -227,7 +222,6 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 		organRegisterRequest.setCertificateType(CertificateType.SFZ.getKey()+"");
 		organRegisterRequest.setCertificateNumber("430426199011115487");
 		organRegisterRequest.setOrgName("罗庆龙");
-		organRegisterRequest.setUserName("罗庆龙");
 		organRegisterRequest.setUserloginname("13352989767");
 		organRegisterRequest.setPassword("123456");
 		
@@ -318,7 +312,7 @@ public class TitanFinancialOrganServiceTest extends SpringTest{
 	public void testQueryCheckOrg(){
 		FinancialOrganQueryRequest condition = new FinancialOrganQueryRequest();
 		//condition.setCheckStatus(1);
-		condition.setIsadmin(1);
+		//condition.setIsadmin(1);
 		condition.setResultKey("FT");
 		///condition.setIsoperator(0);
 		condition.setUserloginname("1331111123");

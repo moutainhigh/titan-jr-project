@@ -21,6 +21,7 @@ public class WebConstant {
     public static final String SESSION_KEY_JR_BIND_STATUS  = "JR_BIND_STATUS";//绑定状态
     public static final String SESSION_KEY_JR_ROLE_LIST  = "JR_ROLE_LIST";//金服用户角色列表
     public static final String SESSION_KEY_JR_LOGIN_UESRNAME  = "JR_LOGIN_UESRNAME";//金服用户登录名
+    public static final String SESSION_KEY_JR_UESRNAME  = "JR_UESRNAME";//金服用户登录名
     public static final String SESSION_KEY_JR_USERID  = "JR_USERID";//金服机构id标示
     public static final String SESSION_KEY_JR_TFS_USERID  = "JR_TFS_USERID";//金服用户名id
     public static final String SESSION_KEY_JR_RESOURCE  = "JR_RESOURCE";//此时标示是从金服官网登录

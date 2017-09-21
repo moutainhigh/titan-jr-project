@@ -10,6 +10,7 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
 import com.fangcang.titanjr.dto.request.AddPayLogRequest;
+import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.util.SpringContextUtil;
 
@@ -24,11 +25,13 @@ public class ECPay implements PayStrategy {
 	private BusinessLogService businessLogService;
 
 	@Override
-	public String pay(RechargeDataDTO rechargeDataDTO, String payOrderNo,Model model) {
+	public String pay(RechargeDataDTO rechargeDataDTO, TitanPaymentRequest titanPaymentRequest, Model model) {
 		
 		businessLogService = (BusinessLogService) SpringContextUtil.getBean("businessLogService");
 		
-		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.CyberBankStep, OrderKindEnum.PayOrderNo, payOrderNo));
+		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.CyberBankStep, 
+				OrderKindEnum.PayOrderNo, titanPaymentRequest.getPayOrderNo()));
+		
 		model.addAttribute(CommonConstant.RESULT, CommonConstant.RETURN_SUCCESS);
     	model.addAttribute("rechargeDataDTO", rechargeDataDTO);
     	log.info("支付请求的参数如下:"+JsonConversionTool.toJson(rechargeDataDTO));

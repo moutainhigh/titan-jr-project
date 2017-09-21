@@ -8,10 +8,19 @@ public class BindBankCardRequest extends BaseRequestDTO{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	//虚拟机构绑卡记录id
+	private String orgCardId;
+	//机构类型
+	private String userType;
+	//机构名称
+	private String orgName;
+	//证件号码
+	private String credentialsNumber;
+	//开户行名称
+	private String bankName;
 	
-	private String bankCardName;
-	
-	private String bankCardCode;
+	//银行卡号
+	private String accountNumber;
 	
 	private String userName;
 	
@@ -27,23 +36,36 @@ public class BindBankCardRequest extends BaseRequestDTO{
 	//城市名称
 	private String cityName;
 	
+	
 	//修改还是绑定 0:绑定 1：修改
 	private String modifyOrBind;
 
-	public String getBankCardName() {
-		return bankCardName;
+
+	public String getUserType() {
+		
+		
+		return userType;
+		
 	}
 
-	public void setBankCardName(String bankCardName) {
-		this.bankCardName = bankCardName;
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 
-	public String getBankCardCode() {
-		return bankCardCode;
+	public String getBankName() {
+		return bankName;
 	}
 
-	public void setBankCardCode(String bankCardCode) {
-		this.bankCardCode = bankCardCode;
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
 	}
 
 	public String getUserName() {
@@ -93,4 +115,29 @@ public class BindBankCardRequest extends BaseRequestDTO{
 	public void setCityName(String cityName) {
 		this.cityName = cityName;
 	}
+
+	public String getOrgCardId() {
+		return orgCardId;
+	}
+
+	public void setOrgCardId(String orgCardId) {
+		this.orgCardId = orgCardId;
+	}
+
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
+	public String getCredentialsNumber() {
+		return credentialsNumber;
+	}
+
+	public void setCredentialsNumber(String credentialsNumber) {
+		this.credentialsNumber = credentialsNumber;
+	}
+	
 }

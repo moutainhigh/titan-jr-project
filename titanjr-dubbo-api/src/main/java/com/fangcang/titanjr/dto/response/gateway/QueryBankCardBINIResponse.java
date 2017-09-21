@@ -32,6 +32,9 @@ public class QueryBankCardBINIResponse extends RSBaseResponse {
 	
 	private String bankInfo;
 	
+	private int singleLimit;//单笔限额
+	private int dailyLimit;//单日限额
+	
 
 	public String getMerchantNo() {
 		return merchantNo;
@@ -103,6 +106,22 @@ public class QueryBankCardBINIResponse extends RSBaseResponse {
 
 	public void setBankInfo(String bankInfo) {
 		this.bankInfo = bankInfo;
+	}
+
+	public int getSingleLimit() {
+		return singleLimit;
+	}
+
+	public void setSingleLimit(int singleLimit) {
+		this.singleLimit = singleLimit;
+	}
+
+	public int getDailyLimit() {
+		return dailyLimit;
+	}
+
+	public void setDailyLimit(int dailyLimit) {
+		this.dailyLimit = dailyLimit;
 	}
 
 	@Override

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanOrgMapInfoDao" >
+   <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanOrgMapInfo" parameterType="com.fangcang.titanjr.entity.parameter.TitanOrgMapInfoParam" >
+    select 
+    *
+    from t_tfs_orgmapinfo
+    <where>
+    	<if test="orgMapid != null"> orgmapid = #{orgMapid}</if>
+    	<if test="orgCode != null"> and  orgcode = #{orgCode}</if>
+    	<if test="orgSubcode != null"> and  orgsubcode = #{orgSubcode}</if>
+    	<if test="isactive != null"> and  isactive = #{isactive}</if>
+    </where>
+  </select>
+  <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanOrgMapInfo" >
+    insert into t_tfs_orgmapinfo (orgcode, orgsubcode,isactive, createtime)
+    values (#{orgCode},#{orgSubcode}, #{isactive},#{createTime})
+  </insert>
+  
+  
+</mapper>

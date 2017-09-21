@@ -2,6 +2,9 @@ package com.fangcang.titanjr.dto.request.gateway;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 public class ConfirmRechargeRequest implements Serializable {
 
 	/**
@@ -94,6 +97,11 @@ public class ConfirmRechargeRequest implements Serializable {
 
 	public void setSignMsg(String signMsg) {
 		this.signMsg = signMsg;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
 	}
 
 }

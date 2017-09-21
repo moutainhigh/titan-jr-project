@@ -3,6 +3,7 @@ package com.fangcang.titanjr.common.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.util.StringUtil;
 
 import javax.validation.ConstraintViolation;
@@ -53,10 +54,16 @@ public class GenericValidate {
 	}
 	
 	
-	public static String validateObj(Object obj) {
+	public static ValidateResponse validateObj(Object obj) {
+		
+		ValidateResponse res = new ValidateResponse();
+		res.putSuccess();
+		
 		if(obj == null) {
-			return "request object is null";
+			res.putError("request object is null");
+			return res;
 		}
+		
 		validator = getValidator();
 		StringBuilder validateResult = new StringBuilder();
 		Set<ConstraintViolation<Object>> constraintViolations = validator.validate(obj);
@@ -66,9 +73,11 @@ public class GenericValidate {
 			}
 		}
         if(StringUtil.isValidString(validateResult.toString())) {
-            return validateResult.toString();
+        	res.putError(validateResult.toString());
+			return res;
         }
-        return null;
+        
+        return res;
 	}
 	
 	

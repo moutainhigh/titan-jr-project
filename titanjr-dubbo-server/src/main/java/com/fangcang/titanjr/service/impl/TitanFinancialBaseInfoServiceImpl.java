@@ -271,6 +271,13 @@ public class TitanFinancialBaseInfoServiceImpl implements TitanFinancialBaseInfo
 	@Override
 	public com.fangcang.titanjr.dto.response.BankInfoResponse queryBankInfoList(
 			BankInfoQueryRequest bankInfoQueryRequest) {
+		
+		if("".equals(bankInfoQueryRequest.getBankCity())){
+			bankInfoQueryRequest.setBankCity(null);
+		}
+		if("".equals(bankInfoQueryRequest.getBankCode())){
+			bankInfoQueryRequest.setBankCode(null);
+		}
 		com.fangcang.titanjr.dto.response.BankInfoResponse bankInfoResponse = new com.fangcang.titanjr.dto.response.BankInfoResponse();
 		try {
 			String key = Tools.getClassName(this.getClass())+ ":queryBankInfoList_"+Tools.gsonToString(bankInfoQueryRequest);
@@ -293,7 +300,7 @@ public class TitanFinancialBaseInfoServiceImpl implements TitanFinancialBaseInfo
 				}
 				bankInfoQueryRequest.setBankCity(buffer.substring(0, buffer.length()-1));
 			}
-			
+			 
 			bankInfoDTOs = titanBankinfoDao
 					.queryBankInfoList(bankInfoQueryRequest);
 			if(CollectionUtils.isNotEmpty(bankInfoDTOs)){

@@ -95,7 +95,7 @@ public class RechargePageRequest extends BaseRequestDTO {
     private BusiCodeEnum busiCode = BusiCodeEnum.MerchantOrder;
 
     //版本
-    private VersionEnum version = VersionEnum.Version_1;
+    private RsVersionEnum version = RsVersionEnum.Version_1;
 
     //编码
     private CharsetEnum charset = CharsetEnum.UTF_8;
@@ -337,11 +337,11 @@ public class RechargePageRequest extends BaseRequestDTO {
         this.busiCode = busiCode;
     }
 
-    public VersionEnum getVersion() {
+    public RsVersionEnum getVersion() {
         return version;
     }
 
-    public void setVersion(VersionEnum version) {
+    public void setVersion(RsVersionEnum version) {
         this.version = version;
     }
 

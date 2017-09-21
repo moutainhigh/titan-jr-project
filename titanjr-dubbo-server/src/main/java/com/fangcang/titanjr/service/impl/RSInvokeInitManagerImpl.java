@@ -75,11 +75,11 @@ public class RSInvokeInitManagerImpl {
         	throw new RuntimeException("rong shu notify url init failed, param[titanPayMethod] is null");
         }
         log.info("当前构建的sessionkey是：" + RSInvokeConstant.sessionKey);
-        List<TitanCallBackConfig> callBackConfigs = getTitanCallBackConfig();
+        /*List<TitanCallBackConfig> callBackConfigs = getTitanCallBackConfig();
         for (TitanCallBackConfig callBackConfig : callBackConfigs) {
             RSInvokeConstant.callBackConfigMap.put(callBackConfig.getPaySource(),callBackConfig.getCallBackURL());
         }
-        log.info("callBackConfig:"+Tools.gsonToString(RSInvokeConstant.callBackConfigMap));
+        log.info("callBackConfig:"+Tools.gsonToString(RSInvokeConstant.callBackConfigMap));*/
         getDefaultPayerConfig();
         initUploadFileRSAPublicKey();
     }

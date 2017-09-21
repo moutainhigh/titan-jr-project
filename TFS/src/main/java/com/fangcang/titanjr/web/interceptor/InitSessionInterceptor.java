@@ -62,7 +62,6 @@ public class InitSessionInterceptor implements HandlerInterceptor {
         HttpSession session = httpServletRequest.getSession();
         MerchantFacade merchantFacade = hessianProxyBeanFactory.getHessianProxyBean(MerchantFacade.class,
                 ProxyFactoryConstants.merchantServerUrl + "merchantFacade");
-        
         if (session.getAttribute("onlineRoleUser") == null || session.getAttribute(WebConstant.SESSION_KEY_JR_RESOURCE) == null) {
             if (session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER) != null && session.getAttribute(WebConstant.SESSION_KEY_LOGIN_USER_ROLE) == null) {
                 UserWrapper roleUser = null;
@@ -146,6 +145,7 @@ public class InitSessionInterceptor implements HandlerInterceptor {
                     }
                     
                     session.setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, userInfoDTO.getUserLoginName());//金服用户登录名
+                    session.setAttribute(WebConstant.SESSION_KEY_JR_UESRNAME, userInfoDTO.getUserName());//金服用户名
                     session.setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
                     session.setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名
                     //如果包含系统运营员，判定当前地址

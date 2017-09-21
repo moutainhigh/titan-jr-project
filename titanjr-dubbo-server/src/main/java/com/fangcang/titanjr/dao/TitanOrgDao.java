@@ -1,5 +1,7 @@
 package com.fangcang.titanjr.dao;
 
+import java.util.List;
+
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
@@ -7,8 +9,6 @@ import com.fangcang.titanjr.dto.bean.OrgCheckDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.entity.TitanOrg;
 import com.fangcang.titanjr.entity.parameter.TitanOrgParam;
-
-import java.util.List;
 
 public interface TitanOrgDao {
 	

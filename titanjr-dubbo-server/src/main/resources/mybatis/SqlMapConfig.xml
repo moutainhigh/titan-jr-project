@@ -51,6 +51,8 @@
 		<mapper resource="mybatis/TitanAccountMapper.xml" />
 		<mapper resource="mybatis/TitanAccountOperLogMapper.xml" />
 		<mapper resource="mybatis/TitanBankcardMapper.xml" />
+		<mapper resource="mybatis/TitanOrgCardMapMapper.xml" />
+		
 		<mapper resource="mybatis/TitanBankinfoMapper.xml" />
 		<mapper resource="mybatis/TitanCashierDeskItemMapper.xml" />
 		<mapper resource="mybatis/TitanCashierDeskMapper.xml" />
@@ -60,6 +62,8 @@
 		<mapper resource="mybatis/TitanFundFreezereqMapper.xml" />
 		<mapper resource="mybatis/TitanOrderPayreqMapper.xml" />
 		<mapper resource="mybatis/TitanOrgBindinfoMapper.xml" />
+		<mapper resource="mybatis/TitanOrgMapInfoMapper.xml" />
+		<mapper resource="mybatis/TitanOrgSubMapper.xml" />
 		<mapper resource="mybatis/TitanOrgidMapper.xml" />
 		<mapper resource="mybatis/TitanOrgImageMapper.xml" />
 		<mapper resource="mybatis/TitanOrgMapper.xml" />
@@ -102,6 +106,7 @@
 		<mapper resource="mybatis/LoanCreditOrderDiscardMapper.xml"/>
 		<mapper resource="mybatis/TitanVirtualOrg.xml"/>
 		<mapper resource="mybatis/TitanOperateLogMapper.xml"/>
+		<mapper resource="mybatis/CommonPayHistoryMapper.xml"/>
 
 	</mappers>
 

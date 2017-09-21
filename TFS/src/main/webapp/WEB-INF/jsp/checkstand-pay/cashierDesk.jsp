@@ -17,6 +17,7 @@
         }
     }
 %>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -662,12 +663,22 @@
     		return false;
     	}
     	
-    	var flag = validate_isInput_password();
+    	//如果是使用余额支付或者贷款，则必须输入密码
+    	/* var flag = validate_isInput_password();
     	if(flag==false){
     		show_payPassword();
     	}else{
     		pay_Order(); 
+    	} */
+    	
+    	//如果是使用余额支付或者贷款，则必须输入密码
+    	if(($("#d_checkbox").attr("checked")=="checked" && cashierData.balanceusable!="0") || 
+    			cashierData.linePayType() == '10'){
+    		payPasswordObj.show_payPassword();
+    	}else{
+    		pay_Order(); 
     	}
+    	
     });
     
     function check_account_isExit(){
@@ -850,8 +861,9 @@
                	 }
                 }
             });
-    	
     	return flag; 
+    	
+    	return false; 
     }
     
     function save_payDate(){

@@ -21,6 +21,7 @@ import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgImageInfo;
+import com.fangcang.titanjr.dto.bean.OrgSubDTO;
 import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.LoginPasswordRequest;
@@ -83,8 +84,12 @@ public class SettingBaseInfoController extends BaseController{
 			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
 			financialOrganDTO.setBuslince(Tools.replaceInfoStar(financialOrganDTO.getBuslince()));
 			financialOrganDTO.setCertificateNumber(Tools.replaceInfoStar(financialOrganDTO.getCertificateNumber()));
+			OrgSubDTO orgSubDTO = financialOrganResponse.getOrgSubDTO();
+			orgSubDTO.setBuslince(Tools.replaceInfoStar(orgSubDTO.getBuslince()));
+			orgSubDTO.setCertificateNumber(Tools.replaceInfoStar(orgSubDTO.getCertificateNumber()));
 			
 			model.addAttribute("financialOrganDTO", financialOrganDTO);
+			model.addAttribute("orgSubDTO", orgSubDTO);
 			for(OrgImageInfo item : financialOrganDTO.getOrgImageInfoList()){
 				if(item.getSizeType()==10){
 					model.addAttribute("small_img_10", item.getImageURL());

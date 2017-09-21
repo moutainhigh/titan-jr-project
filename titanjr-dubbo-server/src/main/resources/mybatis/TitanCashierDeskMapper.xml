@@ -9,6 +9,7 @@
         <result property="deskName" column="deskname"/>
         <result property="usedFor" column="usedfor"/>
         <result property="payType" column="paytype"/>
+        <result property="isOpen" column="isOpen"/>
 
         <collection property="cashierDeskItemDTOList" ofType="com.fangcang.titanjr.dto.bean.CashierDeskItemDTO">
             <result property="itemId" column="itemid"/>
@@ -54,6 +55,7 @@
 	    d.deskname,
 	    d.usedfor,
 	    d.paytype,
+        d.isOpen,
 	    i.itemid,
 	    i.itemname,
 	    i.itemtype,
@@ -70,12 +72,12 @@
 	    c.description,
 	    c.expiration
     FROM
-	  t_tfs_cashierdesk d
+	    t_tfs_cashierdesk d
         LEFT JOIN t_tfs_cashierdeskitem i ON d.deskid = i.deskid
         LEFT JOIN t_tfs_rateconfig c ON i.itemid = c.cashieritemid
         LEFT JOIN t_tfs_cashieritembank b ON i.itemid = b.itemid
         <where>
-            <if test="userId !=null"> d.userid = #{userId}</if>
+            <if test="userId !=null"> and d.userid = #{userId}</if>
             <if test="deskId !=null"> and  d.deskid = #{deskId}</if>
             <if test="usedFor !=null"> and  d.usedfor = #{usedFor}</if>
         </where>
@@ -104,34 +106,31 @@
   </insert>
 
 
-    <update id="updateCashierDesk" parameterType="com.fangcang.titanjr.entity.TitanCashierDesk">
+    <update id="updateCashierDesk" parameterType="com.fangcang.titanjr.dto.request.CashierDeskUpdateRequest">
         update t_tfs_cashierdesk
         <set>
-            <if test="constid != null">
-                constid = #{constid,jdbcType=VARCHAR},
+            <if test="isOpen != null">
+                isOpen = #{isOpen,jdbcType=INTEGER},
             </if>
-            <if test="userid != null">
-                userid = #{userid,jdbcType=VARCHAR},
+            <if test="deskName != null">
+                deskname = #{deskName,jdbcType=VARCHAR},
             </if>
-            <if test="deskname != null">
-                deskname = #{deskname,jdbcType=VARCHAR},
-            </if>
-            <if test="usedfor != null">
-                usedfor = #{usedfor,jdbcType=INTEGER},
-            </if>
-            <if test="paytype != null">
-                paytype = #{paytype,jdbcType=INTEGER},
-            </if>
-            <if test="creator != null">
-                creator = #{creator,jdbcType=VARCHAR},
-            </if>
-            <if test="createtime != null">
-                createtime = #{createtime},
+            <if test="payType != null">
+                paytype = #{payType,jdbcType=INTEGER},
             </if>
         </set>
-        where deskid = #{deskid,jdbcType=INTEGER}
+
+        <where>
+            <if test="userId != null"> and userid = #{userId,jdbcType=VARCHAR} </if>
+            <if test="deskId !=null"> and deskid = #{deskId,jdbcType=INTEGER}</if>
+            <if test="usedList != null">
+                and usedfor in
+                <foreach item="item" index="index" collection="usedList" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+
     </update>
-    
-    <select id="queryCommonPayMethodDesk" parameterType="com.fangcang.titanjr.dto.request.CashierDeskQueryRequest"></select>
-    
+
 </mapper>

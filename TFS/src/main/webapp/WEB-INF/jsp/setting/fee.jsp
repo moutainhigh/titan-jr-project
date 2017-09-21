@@ -4,65 +4,188 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>金融设置-收付款费率公示</title>
+	<title>金融设置-收银台设置</title>
 	<jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 <body>
-<div id="scroll" >
-	<div class="main_sell clearfix user_title">
-		<div class="p_r30 p_l10">
-			<span>泰坦金融&nbsp;-&nbsp;泰坦金融设置&nbsp;-&nbsp;收付款费率公示</span>
+	<div id="scroll" >
+		<div class="main_sell clearfix user_title">
+			<div class="p_r30 p_l10">
+				<span>泰坦金服&nbsp;-&nbsp;泰坦金服设置&nbsp;-&nbsp;收银台设置</span>
+			</div>
 		</div>
 	</div>
-</div>
-<div class="scroll_x hide t_56"></div>
-<div class="main_con p_t56">
-	<div class="TFS_set" style="padding:0 16px 0 0; width: 670px;">
-		<table width="100%" border="1" cellspacing="0" class="TFS_pubtable">
-			<colgroup>
-				<col width="23%">
-				<col width="23%">
-				<col width="">
-			</colgroup>
-			<tr class="TFS_setth">
-				<td>付款方式</td>
-				<td>基础费率</td>
-				<td>执行费率</td>
-			</tr>
-			<c:forEach items="${rateInfoList}" var="rateInfo">
-				<tr class="TFS_settd">
-					<td><strong>${rateInfo.description }</strong></td>
-					<td><strong>${rateInfo.standrate }
-						<c:if test="${rateInfo.ratetype==1}">%</c:if>
-						<c:if test="${rateInfo.ratetype==2}">元/笔</c:if>
-					</strong></td>
-					<td><strong class="c_f60_1">
-						<c:if test="${rateInfo.executionrate == 0.0}">免费</c:if>
-						<c:if test="${rateInfo.executionrate != 0.0}">${rateInfo.executionrate}
-							<c:if test="${rateInfo.ratetype==1}">%</c:if>
-							<c:if test="${rateInfo.ratetype==2}">元/笔</c:if>
-						</c:if>
-					</strong></td>
-				</tr>
-			</c:forEach>
-		</table>
+	<div class="scroll_x hide t_85"></div>
+	<div class="main_con p_t60" style="padding-top:60px;">
+		<div class="TFS_set" style="padding:0 16px 0 0; ">
+			<header>
+				<div class="banner"><img src="<%=basePath%>/images/set_banner.jpg" alt=""/></div>
+			</header>
+			<div class="main">
+				<div class="table">
+					<div class="rate"><!--receivables-rate  payment-rate-->
+						<div class="title">收款费率 <span class="h">（商家向分销商收钱时的手续费费率）</span></div>
+						<table>
+							<thead>
+							<tr>
+								<th width="20%">收款场景</th>
+								<th width="37%">支付方式</th>
+								<th width="12%">承担费率</th>
+								<th width="16%">限时优惠</th>
+								<th width="15%">是否开通在线付款</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr>
+								<td>SaaS分销工具收银台</td>
+								<td>微信扫码支付、支付宝扫码支付、信用卡快捷支付、个人网银支付、企业网银支付、信贷支付等</td>
+								<td>${rateInfo.standrate}%</td>
+								<td>
+									<c:if test="${rateInfo.executionrate == 0.0}">免费</c:if>
+									<c:if test="${rateInfo.executionrate != 0.0}">${rateInfo.executionrate}%</c:if>
+									<span class="h">截止至2017.12.31</span></td>
+								<td>
+									<div class="sw" id="saasToggle" value = "1">
+                            <span class="sw_ctr">
+                                <span class="base"></span><!-- style="background: rgb(75, 214, 99) none repeat scroll 0% 0%;"-->
+                                <span class="slider"></span> <!--style="margin-left: 2.3rem;"-->
+                            </span>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>商家联盟交易平台收银台</td>
+								<td>微信扫码支付、支付宝扫码支付、信用卡快捷支付、个人网银支付、企业网银支付、信贷支付等</td>
+								<td>${rateInfo.standrate}%</td>
+								<td><c:if test="${rateInfo.executionrate == 0.0}">免费</c:if>
+									<c:if test="${rateInfo.executionrate != 0.0}">${rateInfo.executionrate}%</c:if>
+									<span class="h">截止至2017.12.31</span></td>
+								<td>
+									<div class="sw" id="unionToggle" value = "2">
+                            <span class="sw_ctr">
+                                <span class="base"></span><!-- style="background: rgb(75, 214, 99) none repeat scroll 0% 0%;"-->
+                                <span class="slider"></span> <!--style="margin-left: 2.3rem;"-->
+                            </span>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>TTM交易平台</td>
+								<td>微信扫码支付、支付宝扫码支付、信用卡快捷支付、个人网银支付、企业网银支付、信贷支付等</td>
+								<td>${rateInfo.standrate}%</td>
+								<td>
+									<c:if test="${rateInfo.executionrate == 0.0}">免费</c:if>
+									<c:if test="${rateInfo.executionrate != 0.0}">${rateInfo.executionrate}%</c:if>
+									<span class="h">截止至2017.12.31</span></td>
+								<td><span class="s">已开启</span>&nbsp;不支持关闭</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="rate">
+						<div class="title">付款款费率（商家向供应商付钱时的手续费费率）</div>
+						<table>
+							<thead>
+							<tr>
+								<th width="20%">付款场景</th>
+								<th width="37%">支付方式</th>
+								<th width="12%">承担费率</th>
+								<th width="16%">限时优惠</th>
+								<th width="15%">是否开通在线付款</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr>
+								<td>财务付款给供应商</td>
+								<td>微信扫码支付、支付宝扫码支付、信用卡快捷支付、个人网银支付、企业网银支付、信贷支付等</td>
+								<td>${rateInfo.standrate}%</td>
+								<td>
+									<c:if test="${rateInfo.executionrate == 0.0}">免费</c:if>
+									<c:if test="${rateInfo.executionrate != 0.0}">${rateInfo.executionrate}%</c:if>
+									<span class="h">截止至2017.12.31</span></td>
+								<td><span class="s">已开启</span>&nbsp;不支持关闭</td>
+							</tr>
+							<tr>
+								<td>余额转账</td>
+								<td>账户余额</td>
+								<td>免费</td>
+								<td>免费</td>
+								<td><span class="s">已开启</span>&nbsp;不支持关闭</td>
+							</tr>
+							<tr>
+								<td>余额提现</td>
+								<td>账户余额</td>
+								<td>免费</td>
+								<td>免费</td>
+								<td><span class="s">已开启</span>&nbsp;不支持关闭</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 	</div>
 </div>
+<div style="height:50px;"></div>
 
 <script>
-	//滚动显示线
-	$(window).scroll(function(){
-		var win_top = $(window).scrollTop();
-		if(win_top > 0)
-		{
-			$('.scroll_x').show();
+
+	$(document).ready(function(){
+		if ("${saasOpen}" == 1) {
+			$("#saasToggle").toggleClass("slide");
+			$("#saasToggle").find(".base").css("backgroundColor", "#36c817").next().css("left", "14px");
 		}
-		else
-		{
-			$('.scroll_x').hide();
+		if ("${unionOpen}" == 1){
+			$("#unionToggle").toggleClass("slide");
+			$("#unionToggle").find(".base").css("backgroundColor", "#36c817").next().css("left", "14px");
 		}
 	});
+
+	$(function(){
+		// 滑块
+		$(".sw").on("click",function(){
+			var cashierType =  $(this).attr("value");
+			var obj = $(this);
+			obj.toggleClass("slide");
+			if($(this).hasClass("slide")){
+				$.ajax({
+					type: "post",
+					url: "<%=basePath%>/setting/switch-cashier.action",
+					data: {
+						cashierType:cashierType,
+						open:1
+					},
+					dataType: "json",
+					success: function(data){
+						if(data.code == 1){
+							obj.find(".base").css("backgroundColor","#36c817").next().css("left","14px");
+						} else {
+							alert("设置失败,请联系管理员");
+						}
+					}
+				});
+			}else{
+				$.ajax({
+					type: "post",
+					url: "<%=basePath%>/setting/switch-cashier.action",
+					data: {
+						cashierType:cashierType,
+						open:0
+					},
+					dataType: "json",
+					success: function(data){
+						if(data.code == 1){
+							obj.find(".base").css("backgroundColor","#fff").next().css("left","-4px");
+						} else {
+							alert("设置失败,请联系管理员");
+						}
+					}
+				});
+
+			}
+		})
+	})
 </script>
 </body>
 </html>

@@ -71,7 +71,13 @@ public enum OrderExceptionEnum {
 	
 	ReFund_Notify_Fail("11_17","0","退款回调失败"),Refund_Success_Update_Order_Fail("17_19","0","退款成功更新订单状态失败"),
 	
-	Refund_RS_Fail("11_20","0","融数退款失败");
+	Refund_RS_Fail("11_20","0","融数退款失败"),
+	
+	//账户收款
+	AccountReceive_ReFreezePayer_Fail("18_01","0","账户收款，重新冻结付款方失败"),
+	AccountReceive_FreezePayee_UpdateOrder_Fail("18_02","0","账户收款，冻结收款方后修改订单状态失败"),
+	AccountReceive_FreezePayee_Fail("18_03","0","账户收款，冻结收款方失败"),
+	AccountReceive_Transfer_UpdateOrder_Fail("18_04","0","账户收款，转账后修改订单状态失败");
 	
 	public String msg;
 	

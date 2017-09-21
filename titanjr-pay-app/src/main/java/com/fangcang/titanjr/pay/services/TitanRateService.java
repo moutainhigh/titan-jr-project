@@ -6,8 +6,6 @@ import java.sql.Timestamp;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
-
-import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.TitanRateDto;
@@ -193,10 +191,11 @@ public class TitanRateService {
 
 			// 如果非B2B付款则付款金额不用加上费率,直接从付款金额中扣除费率
 			String paySource = paymentRequest.getPaySource();
-			if (!PaySourceEnum.B2B.getDeskCode().equals(paySource) 
-					&& !PaySourceEnum.OPEN_ORG.getDeskCode().equals(paySource)
-					&& !PaySourceEnum.TT_MALL.getDeskCode().equals(paySource)
-					&& !PaySourceEnum.WX_PUBLIC_PAY.getDeskCode().equals(paySource)) {
+			if (!PaySourceEnum.DISTRIBUTION_PC.getDeskCode().equals(paySource) 
+					&& !PaySourceEnum.OPEN_PLATFORM_PC.getDeskCode().equals(paySource)
+					&& !PaySourceEnum.TT_MALL_PC.getDeskCode().equals(paySource)
+					&& !PaySourceEnum.TT_MALL_MOBILE.getDeskCode().equals(paySource)
+					&& !PaySourceEnum.TRADING_PLATFORM_PC.getDeskCode().equals(paySource)) {
 				paymentRequest.setPayAmount(computeRsp.getAmount());
 			}
 		}

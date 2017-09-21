@@ -154,6 +154,7 @@ function initCashierData(data){
 		       	idCode:$("#idCode").val(),
 		       	safetyCode:$("#safetyCode").val(),
 		       	validthru:$("#validthru").val(),
+		       	partnerOrgCode:cashierData.partnerOrgCode,
 		        linePayType:cashierData.linePayType(),
 		        isaccount:cashierData.isaccount(),
 		        payPassword:cashierData.payPassword()

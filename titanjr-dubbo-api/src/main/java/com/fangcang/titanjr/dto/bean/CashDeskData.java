@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import com.fangcang.dto.Response;
+import com.fangcang.titanjr.common.enums.PayerTypeEnum;
+import com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO;
 
 public class CashDeskData implements Serializable{
 
@@ -84,6 +85,25 @@ public class CashDeskData implements Serializable{
 	private String currentTheme;
 	// 签名信息
 	private String sign ;
+	
+	//是否有余额支付的权限
+	private boolean canAccountBalance;
+	
+	//快捷支付卡历史记录
+	private List<CommonPayHistoryDTO> commonPayHistoryList;
+	
+	//付款方机构编码
+	private String partnerOrgCode;
+	
+	//商品名称
+	private String goodName;
+	
+	//商品详情
+	private String goodDetail;
+	
+	private PayerTypeEnum payerTypeEnum;
+	
+	private String jrVersion;
 	
 
 	public String getPayOrderNo() {
@@ -286,6 +306,63 @@ public class CashDeskData implements Serializable{
 
 	public void setDeskId(Integer deskId) {
 		this.deskId = deskId;
+	}
+
+	public boolean isCanAccountBalance() {
+		return canAccountBalance;
+	}
+
+	public void setCanAccountBalance(boolean canAccountBalance) {
+		this.canAccountBalance = canAccountBalance;
+	}
+
+	public List<CommonPayHistoryDTO> getCommonPayHistoryList() {
+		return commonPayHistoryList;
+	}
+
+	public void setCommonPayHistoryList(
+			List<CommonPayHistoryDTO> commonPayHistoryList) {
+		this.commonPayHistoryList = commonPayHistoryList;
+	}
+
+	public String getPartnerOrgCode() {
+		return partnerOrgCode;
+	}
+
+	public void setPartnerOrgCode(String partnerOrgCode) {
+		this.partnerOrgCode = partnerOrgCode;
+	}
+
+	public String getGoodName() {
+		return goodName;
+	}
+
+	public void setGoodName(String goodName) {
+		this.goodName = goodName;
+	}
+
+	public String getGoodDetail() {
+		return goodDetail;
+	}
+
+	public void setGoodDetail(String goodDetail) {
+		this.goodDetail = goodDetail;
+	}
+
+	public PayerTypeEnum getPayerTypeEnum() {
+		return payerTypeEnum;
+	}
+
+	public void setPayerTypeEnum(PayerTypeEnum payerTypeEnum) {
+		this.payerTypeEnum = payerTypeEnum;
+	}
+
+	public String getJrVersion() {
+		return jrVersion;
+	}
+
+	public void setJrVersion(String jrVersion) {
+		this.jrVersion = jrVersion;
 	}
 
 	public CashDeskData putError(String msg){

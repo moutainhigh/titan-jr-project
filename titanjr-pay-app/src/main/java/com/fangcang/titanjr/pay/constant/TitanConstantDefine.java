@@ -17,6 +17,9 @@ public final class TitanConstantDefine {
 	// 收银台页面
 	public static final String CASHIER_DESK_MAIN_PAGE = "/checkstand-pay/cashierDesk";
 	
+	// 新版收银台
+	public static final String CASHIER_DESK_MAIN_PAGE_NEW = "/checkstand-upgrade/cashierDeskNew";
+	
 	// 退款页面
 	public static final String REFUND_MAIN_PAGE = "/account-overview/refund";
 

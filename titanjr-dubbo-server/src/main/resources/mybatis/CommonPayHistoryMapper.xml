@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 常用支付方式历史记录数据层操作（新版收银台） -->
+<mapper namespace="com.fangcang.titanjr.dao.CommonPayHistoryDao" >
+   
+   <select id="selectForPage" resultType="com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO" parameterType="map">
+	    select * from t_tfs_commonpayhistory
+	    <where>
+		      <if test="fcuserid !=null and fcuserid != ''">
+		        and fcuserid =#{fcuserid}
+		      </if>
+		      <if test="orgcode !=null and orgcode != ''">
+		        and orgcode =#{orgcode}
+		      </if>
+		      <if test="deskid !=null and deskid != ''">
+		        and deskid=#{deskid}
+		      </if>
+		      <if test="paytype !=null and paytype != ''">
+		        and paytype=#{paytype}
+		      </if>
+		      <if test="bankinfo !=null and bankinfo != ''">
+		        and bankinfo=#{bankinfo}
+		      </if>
+		      <if test="payeracount !=null and payeracount != ''">
+		        and payeracount=#{payeracount}
+		      </if>
+	    </where>
+  </select>
+  
+  <insert id="insertEntity" parameterType="com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO" >
+    insert into t_tfs_commonpayhistory (commonpayid, orgcode, fcuserid, deskid, paytype, payername, 
+    	payeracount, bankname, bankinfo, payeraccounttype, payerphone, idtype, idcode, safetycode, 
+    	validthru, creator, createtime, count, lasttime
+      )
+    	values (NULL, #{orgcode}, #{fcuserid},#{deskid},#{paytype},#{payername},#{payeracount},  
+      	#{bankname}, #{bankinfo},#{payeraccounttype},#{payerphone},#{idtype},#{idcode},#{safetycode},
+      	#{validthru},#{creator},SYSDATE(),#{count},SYSDATE()
+      )
+  </insert>
+  
+  <update id="updateEntity" parameterType="com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO" >
+    update t_tfs_commonpayhistory
+    <set >
+      <if test="payerphone != null" >
+        payerphone = #{payerphone},
+      </if>
+      <if test="idtype != null" >
+        idtype = #{idtype},
+      </if>
+      <if test="idcode != null">
+        idcode =#{idcode},
+      </if>
+      <if test="count != null" >
+        count = #{count},
+      </if>
+      <if test="lasttime != null" >
+        lasttime = SYSDATE(),
+      </if>
+    </set>
+    where commonpayid = #{commonpayid}
+  </update>
+  
+  
+  <select id="selectCommonPayHistory" parameterType="com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO" 
+      resultType="com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO" >
+      select * from t_tfs_commonpayhistory
+  			where fcuserid=#{fcuserid} and orgcode=#{orgcode} and deskid=#{deskid}
+  			order by lasttime desc
+  </select>
+  
+</mapper>

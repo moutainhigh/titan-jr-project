@@ -89,6 +89,9 @@
 	    <if test="payeruserid !=null">
 	      and payeruserid=#{payeruserid}
 	    </if>
+	    <if test="orgname !=null">
+	      and orgname=#{orgname}
+	    </if>
 	    <if test="inaccountcode !=null">
 	      and inaccountcode=#{inaccountcode}
 	    </if>

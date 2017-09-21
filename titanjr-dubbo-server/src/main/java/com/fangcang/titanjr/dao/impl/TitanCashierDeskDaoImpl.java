@@ -7,6 +7,7 @@ import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.dao.TitanCashierDeskDao;
 import com.fangcang.titanjr.dto.bean.CashierDeskDTO;
 import com.fangcang.titanjr.dto.request.CashierDeskQueryRequest;
+import com.fangcang.titanjr.dto.request.CashierDeskUpdateRequest;
 import com.fangcang.titanjr.entity.TitanCashierDesk;
 
 public class TitanCashierDeskDaoImpl extends GenericDAOMyBatisImpl implements TitanCashierDeskDao{
@@ -21,9 +22,9 @@ public class TitanCashierDeskDaoImpl extends GenericDAOMyBatisImpl implements Ti
 	}
 
 	@Override
-	public int updateCashierDesk(TitanCashierDesk entity) throws DaoException {
+	public int updateCashierDesk(CashierDeskUpdateRequest deskUpdateRequest) throws DaoException {
 		try {
-			return super.updateEntity("com.fangcang.titanjr.dao.TitanCashierDeskDao.updateCashierDesk", entity);
+			return super.updateEntity("com.fangcang.titanjr.dao.TitanCashierDeskDao.updateCashierDesk", deskUpdateRequest);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}
