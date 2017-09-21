@@ -264,7 +264,7 @@ public class FinancialOrganController extends BaseController {
 		}else if(orgRegisterValidateResponse.getOrgDTO()!=null){
 			if(StringUtil.isValidString(orgCode)){//修改
 				//判断机构注册证件的编号和登录者是不是同一个机构
-				Integer tfsUserIdStr = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);//金服用户名
+				Integer tfsUserIdStr = Integer.valueOf((String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID));//金服用户名
 				if((tfsUserIdStr!=null)&&(tfsUserIdStr>0)){
 					OrgDTO orgDTO = orgRegisterValidateResponse.getOrgDTO();
     				UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
