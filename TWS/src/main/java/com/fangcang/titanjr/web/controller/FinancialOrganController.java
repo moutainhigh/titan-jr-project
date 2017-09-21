@@ -739,7 +739,7 @@ public class FinancialOrganController extends BaseController {
     					model.addAttribute("big_img_50", item.getImageURL());
     				}
     			}
-    			if(financialOrganResponse.getFinancialOrganDTO().getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
+    			if(financialOrganResponse.getOrgSubDTO().getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){
     				return "org-reg/org-enterprise-info";
     			}else{
     				return "org-reg/org-persernal-info";
