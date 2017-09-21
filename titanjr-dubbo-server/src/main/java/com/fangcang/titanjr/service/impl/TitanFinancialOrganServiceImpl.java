@@ -1180,8 +1180,10 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		OrgDTO orgDTO = new OrgDTO();
 		orgDTO.setUserid(userId);
 		orgDTO = this.queryOrg(orgDTO);
+		OrgSubDTO orgSubDTO =  getOrgSubDTO(userId);
 		String receiveAddress;
-		if(orgDTO.getUsertype().equals(TitanOrgEnum.UserType.ENTERPRISE.getKey())){//企业用户
+		
+		if(orgSubDTO.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){//企业用户
 			//给联系人发
 			receiveAddress = orgDTO.getMobiletel();
 		}else{
