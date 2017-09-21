@@ -109,7 +109,7 @@
             </tr>
             <tr>
                 <td class="tdr">业务订单号</td>
-                <td><input type="text" id="goodsId" value="201708021425596001001" name="goodsId"/>
+                <td><input type="text" id="goodsId" value="201709211425596000001" name="goodsId"/>
                 </td>
             </tr>
             <tr>
