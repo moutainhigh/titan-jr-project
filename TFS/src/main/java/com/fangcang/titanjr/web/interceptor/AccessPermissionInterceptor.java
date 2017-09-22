@@ -47,7 +47,7 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 		
 		HttpSession session = request.getSession();
 		Integer isadmin = 0;
-		Integer tfsUserId = (Integer)session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+		Integer tfsUserId = Integer.valueOf((String)session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID));
 		if(tfsUserId!=null){
 			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 			userInfoQueryRequest.setTfsUserId(tfsUserId);
