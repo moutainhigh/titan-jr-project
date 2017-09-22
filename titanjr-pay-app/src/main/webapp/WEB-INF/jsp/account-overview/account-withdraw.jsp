@@ -64,7 +64,7 @@
             <input type="hidden" id="hasBindBanCard"><!-- 记录是否有已绑定的卡 -->
             <div class="TFS_withdrawBox">
                 <div class="TFS_withdrawBoxL fl">
-                    <div class="TFS_withdrawBoxL_first">
+                    <div class="TFS_withdrawBoxL_first" style="width:400px">
                         <label>
                             <span><i>*</i>收款银行：</span>
                             <input type="text" id="bankCode" class="text w_250">
@@ -74,7 +74,7 @@
                             <span><i>*</i>收款账号：</span><input type="text" id="accountNum" class="text w_250">
                         </label>
                         <label>
-                            <span><i>*</i>持卡人姓名：</span><input type="text" id="accountName" class="text w_250" value="${organ.orgName}" disabled>
+                            <span><i>*</i>持卡人姓名：</span><input type="text" id="accountName" class="text w_250" value="${orgSub.orgName}" disabled>
                         </label>
                         <c:if test="${bindBankCard != null}">
                             <a href="javascript:void(0)" id="withDrawToCurrentCard"
@@ -98,10 +98,10 @@
                             </div>
 
                         </div>
-                        <c:if test="${organ.userType == 2 }"> <!--只有个人机构允许提现到其它卡-->
+                        
                             <a href="javascript:void(0)" id="withDrawToNewCard"
                                 class="blue decorationUnderline TFS_withdrawBoxL_else_aHref">提现到其他银行卡 >></a>
-                        </c:if>
+                        
                     </div>
 
                 </div>
@@ -256,7 +256,11 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
 
 
     $('.J_password').on('click',function(){
-    	//验证提现的金额
+    	bindcard();
+    });
+	
+	function withdraw(){
+		//验证提现的金额
     	var withdraw_amount = $("#withDrawNum").val();
     	if(withdraw_amount.length<1){
     		withDrawCallBack("提现金额不能为空",1);
@@ -291,30 +295,11 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
     		return;
     	}
     	
-    	if($("#accountNum").is(":visible")==true){//如果是需要输入银行卡号
-    		
-    		var bankName= $("#bankName").val();
-        	if(typeof bankName=="undefined" ||bankName.length<1 ){
-        		withDrawCallBack("收款银行不能为空",1);
-        		return;
-        	}
-    		
-    		var accountNum = $("#accountNum").val();
-    		 if(accountNum.length<1){
-    	        	withDrawCallBack("收款账号不能为空",1);
-    	        	return;
-    	     }else{
-    	    	var neg = /^[0-9]\d*$/
-   	        	if(accountNum.length>30||!neg.test(accountNum)){
-   	        		withDrawCallBack("请输入正确的卡号",1);
-   	        		return;
-   	        	}
-    	     }
-    	}
+    	
    
     	 showPayPassword();
-
-    });
+	} 
+	
 	
     var pwdHtml = '';
     
@@ -384,6 +369,51 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
     	 
     	 return result;
     }
+    
+    function bindcard(){
+    	if($("#accountNum").is(":visible")==true){//如果是需要输入银行卡号
+    		var bankName= $("#bankName").val();
+        	if(typeof bankName=="undefined" ||bankName.length<1 ){
+        		withDrawCallBack("收款银行不能为空",1);
+        		return;
+        	}
+    		
+    		var accountNum = $("#accountNum").val();
+    		 if(accountNum.length<1){
+    	        withDrawCallBack("收款账号不能为空",1);
+    	        return;
+    	     }else{
+    	    	var neg = /^[0-9]\d*$/
+   	        	if(accountNum.length>30||!neg.test(accountNum)){
+   	        		withDrawCallBack("请输入正确的卡号",1);
+   	        		return;
+   	        	}
+    	     }
+    	}
+    
+    	$.ajax({
+    		 url: '<%=basePath%>/withdraw/bindCard.shtml',
+             type: "post",
+             dataType: 'json',
+             data: {
+                 bankCode: $("#bankCode").attr("data-id"),
+                 bankName: $("#bankName").val(),
+                 accountNum: $("#accountNum").val(),
+                 accountName: $("#accountName").val(),
+                 tfsUserId:'${tfsUserId}',
+                 orgCode:'${userId}'
+             },
+             context: document.body,
+             success: function (data) {
+                 if(data.result == "0"){
+                	 withdraw();
+                 } else {
+                 	withDrawCallBack(data.resultMsg, 1);
+                 }
+             }
+         });
+    }
+    
     
     function toAccountWithdraw(){
     	top.F.loading.show();
@@ -597,29 +627,7 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
                 <%-- 	$(window.parent.frames["right_con_frm"]).attr('src','<%=basePath%>/account/overview-main.shtml'); --%>
                     <%--  $("#right_con_frm").attr('src','<%=basePath%>/account/overview-main.shtml'); --%>
                 }
-                //TODO 需刷新当前提现记录页面
-//                $.ajax({
-//                    dataType : 'html',
-//                    context: document.body,
-//                    url : '提现记录.html',
-//                    success : function(html){
-//                        var d =  dialog({
-//                            title: ' ',
-//                            padding: '0 0 0px 0 ',
-//                            content: html,
-//                            skin : 'saas_pop',
-//                            button : [
-//                                {
-//                                    value: '关闭',
-//                                    skin : 'btn btn_grey btn_exit',
-//                                    callback: function () {
-//                                        top.removeIframeDialog();
-//                                    }
-//                                }
-//                            ]
-//                        }).showModal();
-//                    }
-//                });
+ 
             },
             cancel: false
         });
