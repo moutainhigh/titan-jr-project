@@ -41,11 +41,13 @@ public class TitanFinancialRateServiceImpl implements TitanFinancialRateService 
 
 		TitanRateConfigParam configParam = new TitanRateConfigParam();
 		configParam.setUserid(req.getUserId());
-		if (req.getPayType() != null) {
+		/*if (req.getPayType() != null) {
 			configParam.setBustype(BusTypeEnum.getBusTypeByItemType(req.getPayType().getItemCode()));
 		}else{
 			configParam.setBustype(BusTypeEnum.WITHDRAW_RATE.type);
-		}
+		}*/
+		//默认全部使用第三方支付的费率
+		configParam.setBustype(BusTypeEnum.QR_RATE.type);
 		
 		List<TitanRateConfig> rateConfigs = titanRateConfigDao
 				.queryTitanRateConfigInfo(configParam);

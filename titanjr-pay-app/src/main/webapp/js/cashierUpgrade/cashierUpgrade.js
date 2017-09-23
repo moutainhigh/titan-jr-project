@@ -585,11 +585,11 @@ function rateCompute(payType, type){
 		        dataType: "json",
 		        async: false,
 		        success: function(data){
-	        		 var amount = parseFloat($("#amount_" + payType).text());
+	        		 var _amount = parseFloat(amount);
 	        		 var exRateAmount = parseFloat(data.data.exRateAmount);
 		        	 if(type == "commpay"){
 				       	 $("#commPayRateAmount_" + payType).text(exRateAmount.toFixed(2));
-				       	 $("#amount_" + payType).text(amount + exRateAmount);
+				       	 $("#amount_" + payType).text(_amount + exRateAmount);
 		        	 }else{
 		        		 
 		        	 }

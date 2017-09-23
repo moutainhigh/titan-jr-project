@@ -176,8 +176,8 @@
                         <use xlink:href="#icon-zfb"></use>
                     </svg>
                     <span class="payment-mode-info">支付宝支付</span>
-                    <input class="bankinfo" type="hidden" value="alipay"/>
-                    <input class="itemtype" type="hidden" value="9"/>
+                    <input class="bankInfo" type="hidden" value="alipay"/>
+                    <input class="itemType" type="hidden" value="9"/>
                 </div>
                 <div class="right-money isShow">
                     <!-- 财务付款给供应商才显示手续费 -->
@@ -198,8 +198,8 @@
 		                        <use xlink:href="#icon-${commonPay.bankinfo }"></use>
 		                    </svg>
 		                    <span class="payment-mode-info">${commonPay.bankname }</span>
-		                    <input class="bankinfo" type="hidden" value="${commonPay.bankinfo }"/>
-                    		<input class="itemtype" type="hidden" value="${commonPay.paytype }"/>
+		                    <input class="bankInfo" type="hidden" value="${commonPay.bankinfo }"/>
+                    		<input class="itemType" type="hidden" value="${commonPay.paytype }"/>
                     		<input class="payerAccount" type="hidden" value="${commonPay.payeracount }"/>
                     		<input class="payerAccountType" type="hidden" value="${commonPay.payeraccounttype }"/>
                     		<input class="payerName" type="hidden" value="${commonPay.payername }"/>
