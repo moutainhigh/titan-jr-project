@@ -568,10 +568,11 @@ function set_payPassword(){
  */
 function rateCompute(payType, type){
 	
+	var paySource = cashierData.paySource;
 	var userId = cashierData.userid;
 	var amount = cashierData.tradeAmount;
 	
-	if(payType != 'balance'){
+	if(paySource == '2' && payType != 'balance'){//paySource=2 表示财务付款
 		
 		var relPayType = payType;
 		
