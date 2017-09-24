@@ -82,7 +82,7 @@
 					<div class="content">
 						<div class="left">银行卡号:</div>
 						<div class="right">
-							<p><input type="text"  class="bank-input accountnumber" maxlength="16" placeholder="输入银行卡号" datatype="*" errormsg="请填写银行卡号" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/><s class="iconfont icon-sc input-empty isShow"></s></p>
+							<p><input type="text"  class="bank-input accountnumber" maxlength="25" placeholder="输入银行卡号" datatype="*" errormsg="请填写银行卡号" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/><s class="iconfont icon-sc input-empty isShow"></s></p>
 						</div>
 					</div>
 					<div class="content">
@@ -250,7 +250,12 @@
         			}
         			formv._setErrorStyle($("#"+fid+" .accountnumber"),result.msg);
         		}else{
-        			bc.bindResultView();
+        			if(paramData.userType=='2'){//个人表示绑卡成功
+        				bc.close();
+        				account_withdraw();
+        			}else{
+        				bc.bindResultView();
+        			}
         		}
         	}
 	    });
@@ -260,7 +265,7 @@
     	var reg = /^\d{15}$|^\d{18}$/g;
     	bc.checkSubmit();
     	if(!reg.test(value)){
-    		//$(inputDom).parent().find("span").append("<p>非身份证绑卡验证需要人工复核，请联系金融运营人员协助确认</p>");
+    		$(inputDom).parent().find("span").append("<p>非身份证绑卡验证需要人工复核，请联系金融运营人员协助确认</p>");
     		return true;
     	}
     	return true;

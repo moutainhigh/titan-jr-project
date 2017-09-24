@@ -60,8 +60,10 @@
                 </div>
                 <div class="clear"></div>
             </div>
-            <input type="hidden" id="useNewBankCard"><!-- 记录是否使用新卡提现 -->
-            <input type="hidden" id="hasBindBanCard"><!-- 记录是否有已绑定的卡 -->
+            <input type="hidden" id="useNewBankCard"/><!-- 记录是否使用新卡提现 -->
+            <input type="hidden" id="hasBindBanCard"/><!-- 记录是否有已绑定的卡 -->
+            <input type="hidden" id="originalAccount" value="${bindBankCard.accountnumber }"/>
+            <input type="hidden" id="originalBankName" value="${bindBankCard.bankheadname}"/>
             <div class="TFS_withdrawBox">
                 <div class="TFS_withdrawBoxL fl">
                     <div class="TFS_withdrawBoxL_first" style="width:400px">
@@ -256,7 +258,12 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
 
 
     $('.J_password').on('click',function(){
-    	bindcard();
+    	if($("#useNewBankCard").val()=='1'){
+    		bindcard();
+    	}else{
+    	 	withdraw();
+    	}
+    	
     });
 	
 	function withdraw(){
@@ -405,7 +412,9 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
              },
              context: document.body,
              success: function (data) {
-                 if(data.result == "0"){
+                 if(data.result == "0"){//绑卡成功
+                 	$("#originalAccount").val($("#accountNum").val());
+                 	$("#originalBankName").val($("#bankName").val());
                 	 withdraw();
                  } else {
                  	withDrawCallBack(data.resultMsg, 1);
@@ -421,12 +430,12 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
              type: "post",
              dataType: 'json',
              data: {
-                 useNewBankCard: $("#useNewBankCard").val(),
+                // useNewBankCard: $("#useNewBankCard").val(),
                  hasBindBanCard: $("#hasBindBanCard").val(),
-                 bankCode: $("#bankCode").attr("data-id"),
-                 bankName: $("#bankName").val(),
-                 accountNum: $("#accountNum").val(),
-                 accountName: $("#accountName").val(),
+                // bankCode: $("#bankCode").attr("data-id"),
+                // bankName: $("#bankName").val(),
+                 //accountNum: $("#accountNum").val(),
+                // accountName: $("#accountName").val(),
                  password:PasswordStr2.returnStr(),
                  originalAccount:'${bindBankCard.accountnumber }',
                  originalBankName:'${bindBankCard.bankheadname}',

@@ -543,12 +543,17 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		//判断提现金额和可用余额，获取可用余额
 		boolean flag = isBalanceVaild(balanceWithDrawRequest);
 		if ( !flag ) {//提现落单，不需要在融数落单，只需要在本地落单
-			log.error("提现金额不正确");
+			log.error("提现金额不正确,参数："+JSONSerializer.toJSON(balanceWithDrawRequest));
 			withDrawResponse.putErrorResult("提现金额不正确请核实后再次发起");
 			return withDrawResponse;
 		}
 		
 		TitanTransOrder titanTransOrder = convertToTitanTransOrder(balanceWithDrawRequest);
+		if (null == titanTransOrder ){
+			log.error("提现交易单构造失败,参数："+JSONSerializer.toJSON(balanceWithDrawRequest));
+			withDrawResponse.putErrorResult("构造提现交易单失败");
+			return withDrawResponse;
+		}
 		TransOrderDTO orderDTO = null;
 		if (balanceWithDrawRequest.getOrderNo() != null) {
 			TransOrderRequest transOrderRequest = new TransOrderRequest();
@@ -562,11 +567,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			}
 		}
 		
-		if (null == titanTransOrder ){
-			log.error("提现交易单构造失败");
-			withDrawResponse.putErrorResult("构造提现交易单失败");
-			return withDrawResponse;
-		}
+		
 		try {
 			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_IN_PROCESS.getStatus());
 			titanTransOrder.setTransordertype(TransOrderTypeEnum.WITHDRAW.type);

@@ -4,8 +4,6 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,18 +13,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fangcang.merchant.response.dto.MerchantResponseDTO;
 import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
+import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
-import com.fangcang.titanjr.dto.bean.OrgBindInfo;
+import com.fangcang.titanjr.dto.bean.OrgSubDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
@@ -34,15 +34,17 @@ import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
 import com.fangcang.titanjr.dto.request.CusBankCardBindRequest;
 import com.fangcang.titanjr.dto.request.DeleteBindBankRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
+import com.fangcang.titanjr.dto.request.OrgSubCardRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
+import com.fangcang.titanjr.dto.response.BankCardStatusResponse;
 import com.fangcang.titanjr.dto.response.CityInfosResponse;
 import com.fangcang.titanjr.dto.response.CusBankCardBindResponse;
 import com.fangcang.titanjr.dto.response.DeleteBindBankResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.OrgSubCardResponse;
 import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
-import com.fangcang.titanjr.entity.TitanBankcard;
-import com.fangcang.titanjr.entity.parameter.TitanBankcardParam;
+import com.fangcang.titanjr.pay.req.BindCardRequest;
 import com.fangcang.titanjr.pay.req.CreateTitanRateRecordReq;
 import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
 import com.fangcang.titanjr.pay.req.WithDrawRequest;
@@ -55,6 +57,8 @@ import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
+
+import net.sf.json.JSONSerializer;
 
 @Controller
 @RequestMapping("/withdraw")
@@ -104,11 +108,17 @@ public class TitanWithdrawController extends BaseController {
 	 * @return: String
 	 */
 	@RequestMapping(value = "/account-withdraw", method = RequestMethod.GET)
-	public String toAccountWithDrawPage(String userId,String tfsUserId, String fcUserId,
+	public String accountWithDraw(String userId,String tfsUserId, String fcUserId,
 			String orderNo, Model model) throws Exception {
 		if (null != userId) {
 			// 根据用户ID查询对于的组织机构信息
-			FinancialOrganDTO financialOrganDTO = this.getTitanOrganDTO(userId);
+			FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+			organQueryRequest.setUserId(userId);
+			FinancialOrganResponse organOrganResponse = titanFinancialOrganService
+					.queryBaseFinancialOrgan(organQueryRequest);
+			OrgSubDTO orgSub = organOrganResponse.getOrgSubDTO();
+			FinancialOrganDTO organDTO = organOrganResponse.getFinancialOrganDTO();
+		
 			
 			// 查询用户账户余额信息
 			AccountBalanceRequest accountBalanceRequest = new AccountBalanceRequest();
@@ -122,78 +132,65 @@ public class TitanWithdrawController extends BaseController {
 				model.addAttribute("accountBalance", balanceResponse
 						.getAccountBalance().get(0));
 			}
-			
-			String mCode = null;
-			OrgBindInfo orgBindInfo = new OrgBindInfo();
-			orgBindInfo.setUserid(userId);
-			OrgBindInfo bindInfo = financialOrganService
-					.queryOrgBindInfoByUserid(orgBindInfo);
-			if (bindInfo != null) {
-				mCode = bindInfo.getMerchantCode();
-			}
-
-			// 设置商家主题]
-			log.info("the merchantcode is " + mCode);
-			if (StringUtil.isValidString(mCode)) {
-				MerchantResponseDTO merchantResponseDTO = financialTradeService
-						.getMerchantResponseDTO(mCode);
-				if (null != merchantResponseDTO) {
-					log.info("the theme is" + merchantResponseDTO.getTheme());
-					model.addAttribute("CURRENT_THEME",
-							merchantResponseDTO.getTheme());
-				}
-			}
-			
 			// 查询用户对应绑定的银行卡信息
-			if(CommonConstant.ENTERPRISE.equals(String.valueOf(financialOrganDTO.getUserType()))){//对公查融数
-				BankCardBindInfoRequest brq = new BankCardBindInfoRequest();
-				brq.setUserid(userId);
-				brq.setUsertype(String.valueOf(financialOrganDTO.getUserType()));
-				////1：结算卡，2：所有绑定卡
-				brq.setObjorlist("2");
-				brq.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-				brq.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-				QueryBankCardBindInfoResponse cbr = titanFinancialBankCardService.getBankCardBindInfo(brq);
+			BankCardStatusResponse bankCardStatusResponse = titanFinancialBankCardService.getBankCardStatus(userId);
+			model.addAttribute("bindBankCard", bankCardStatusResponse.getBankcard());
 
-				if (cbr.isResult()
-						&& CollectionUtils.isNotEmpty(cbr.getBankCardInfoDTOList())) {
-					for (BankCardInfoDTO cid : cbr.getBankCardInfoDTOList()) {
-						if (cid.getStatus().equals(
-								BankCardEnum.BankCardStatusEnum.NORMAL.getKey())
-								&& !cid.getAccountpurpose()
-										.equals(BankCardEnum.BankCardPurposeEnum.OTHER_CARD.getKey())) {
-							TitanBankcard titanBankcard = new TitanBankcard();
-							titanBankcard.setBankheadname(cid.getBankheadname());
-							titanBankcard.setAccountnumber(cid.getAccount_number());
-							titanBankcard.setAccountname(cid.getAccountrealname());
-							model.addAttribute("bindBankCard", titanBankcard);
-						}
-					}
-				}
-			}else if(CommonConstant.PERSONAL.equals(String.valueOf(financialOrganDTO.getUserType()))){//对私查本地
-				TitanBankcardParam param = new TitanBankcardParam();
-				param.setUserid(userId);
-				param.setUsertype(financialOrganDTO.getUserType());
-				param.setStatus(Integer.parseInt(BankCardEnum.BankCardStatusEnum.NORMAL.getKey()));
-				param.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-				param.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-				TitanBankcard titanBankcard = titanFinancialBankCardService.queryBankCardInfo(param);
-				if (titanBankcard != null && String.valueOf(titanBankcard.getStatus()).equals(
-						BankCardEnum.BankCardStatusEnum.NORMAL.getKey())
-						&& !titanBankcard.getAccountpurpose()
-								.equals(BankCardEnum.BankCardPurposeEnum.OTHER_CARD.getKey())) {
-					model.addAttribute("bindBankCard", titanBankcard);
-				}
-			}
-
-			// 设置界面需要获取的信息
-			model.addAttribute("organ", financialOrganDTO);
+			model.addAttribute("organ", organDTO);
+			model.addAttribute("orgSub", orgSub);
 			model.addAttribute("fcUserId", fcUserId);
 			model.addAttribute("tfsUserId", tfsUserId);
 			model.addAttribute("userId", userId);
 			model.addAttribute("orderNo", orderNo);
 		}
 		return "account-overview/account-withdraw";
+	}
+	/***
+	 * 提现页面对私绑卡
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("bindCard")
+	public String bindCard(BindCardRequest bindCardRequest){
+		try {
+			if(!checkBindCard(bindCardRequest)){
+				return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+			}
+			OrgSubCardRequest orgSubCardRequest = new OrgSubCardRequest();
+			orgSubCardRequest.setBankHeadName(bindCardRequest.getBankName());
+			orgSubCardRequest.setAccountNumber(bindCardRequest.getAccountNum());
+			orgSubCardRequest.setBankCode(bindCardRequest.getBankCode());
+			orgSubCardRequest.setOrgCode(bindCardRequest.getOrgCode());// 虚拟机构
+
+			OrgSubCardResponse orgSubCardResponse = titanFinancialBankCardService.bindOrgSubCard(orgSubCardRequest);
+			if (orgSubCardResponse.isResult()) {
+				return toMsgJson("0", "绑卡成功");
+			} else {
+				return toMsgJson("-1", orgSubCardResponse.getReturnMessage());
+			}
+		} catch (MessageServiceException e) {
+			return toMsgJson("-1", e.getMessage());
+		} catch (GlobalServiceException e) {
+			 log.error("提现时绑卡失败，绑卡参数(bindCardRequest):"+Tools.gsonToString(bindCardRequest),e);
+			return toMsgJson("-1", "绑卡失败");
+		}
+	}
+	
+	private boolean checkBindCard(BindCardRequest bindCardRequest){
+		
+		if(!StringUtil.isValidString(bindCardRequest.getOrgCode())){
+			return false;
+		}
+		if(!StringUtil.isValidString(bindCardRequest.getAccountNum())){
+			return false;
+		}
+		if(!StringUtil.isValidString(bindCardRequest.getBankName())){
+			return false;
+		}
+		if(!StringUtil.isValidString(bindCardRequest.getBankCode())){
+			return false;
+		}
+		return true;
 	}
 	/**
 	 * 执行提现操作申请
@@ -205,7 +202,7 @@ public class TitanWithdrawController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/toAccountWithDraw")
-	public String accountWithDraw(WithDrawRequest withDrawRequest) {
+	public String toAccountWithDraw(WithDrawRequest withDrawRequest) {
 
 		if (null == withDrawRequest.getUserId()
 				|| (isBlank(withDrawRequest.getFcUserId())&&isBlank(withDrawRequest.getTfsUserId()))
@@ -408,6 +405,10 @@ public class TitanWithdrawController extends BaseController {
 					.getRsRateAmount());
 			balanceWithDrawRequest.setReceivedfee(computeRsp.getExRateAmount());
 		}
+		
+		///
+		
+		
 		BalanceWithDrawResponse balanceWithDrawResponse = titanFinancialAccountService
 				.accountBalanceWithdraw(balanceWithDrawRequest);
 		if (!balanceWithDrawResponse.isResult()) {

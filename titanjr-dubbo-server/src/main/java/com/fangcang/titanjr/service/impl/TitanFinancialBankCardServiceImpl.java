@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.service.impl;
 
 
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -131,6 +132,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
     		response.setOrgBankcardMsg(BankCardEnum.BankCardStatusEnum.NO_BANKCARD.getDes());
 			return response;
 		}
+		response.setBankcard(bankcard);
 		//本地绑卡状态
 		BankCardEnum.BankCardStatusEnum  bankCardStatusEnum = BankCardEnum.BankCardStatusEnum.getEnumByKey(bankcard.getStatus()+"");
 		response.setOrgSubCode(orgMapInfo.getOrgSubcode());
@@ -186,6 +188,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		orgSubRequest.setOrgCode(orgSubCardRequest.getOrgCode()); 
 		TitanOrgSub orgSub = orgService.getOrgSub(orgSubRequest);
 		if(orgSub!=null){//存在关联关系，则取当前关联的
+			orgSubCardRequest.setUserType(orgSub.getUsertype()+"");
 			orgSubCardRequest.setAccountName(orgSub.getOrgname());
 			orgSubCardRequest.setCertificateNumber(StringUtil.isValidString(orgSub.getBuslince())?orgSub.getBuslince():orgSub.getCertificatenumber());
 		}
@@ -196,7 +199,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		}
 		//设置默认值
 		setOrgSubCardDefaultValue(orgSubCardRequest);
-		if(orgSub==null){//不存在关联关系则需要注册建立 
+		if(orgSub==null){//不存在机构关联关系则需要注册建立 
 			//1-添加机构信息
 			RegOrgSubRequest regOrgSubRequest = new RegOrgSubRequest();
 			regOrgSubRequest.setOrgName(orgSubCardRequest.getAccountName());
@@ -216,12 +219,16 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 					orgSubCardResponse.putErrorResult(registerResponse.getReturnMessage());
 					return orgSubCardResponse;
 				}
+				
+				
 			} catch (MessageServiceException e) {
 				log.error("注册真实机构异常,注册参数："+Tools.gsonToString(orgSubCardRequest)+",错误信息："+e.getMessage());
 				orgSubCardResponse.putErrorResult(e.getMessage());
 				return orgSubCardResponse;
 			}
+			//注册成功
 			orgSub = orgService.getOrgSub(orgSubRequest);
+			
 		}else if(orgSub.getUsertype()==TitanOrgEnum.UserType.PERSONAL.getKey()){
 			//存在关联的机构，则修改名字和身份证号码
 			OrgBaseInfoRequest orgBaseInfoRequest = new OrgBaseInfoRequest();
@@ -237,26 +244,27 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 			}
 		}
 		
-		//2-是否已经有绑卡记录
+		orgSubCardRequest.setUserId(orgSub.getOrgcode());
+		//2-该机构是否已经绑过该卡
 		Integer bankcardid = null;
 		TitanBankcardParam param = new TitanBankcardParam();
 		param.setAccountnumber(orgSubCardRequest.getAccountNumber());
 		param.setUserid(orgSub.getOrgcode());
+		param.setStatus(Integer.valueOf(BankCardEnum.BankCardStatusEnum.NORMAL.getKey()));
 		
-		TitanBankcard titanBankcard =titanBankcardDao.selectEntity(param);
-		if(titanBankcard==null){//不存在记录，则新增绑卡
-			//2.1-调用融数新增绑卡（公和私）,审核失败都新增，不修改旧绑卡记录
+		TitanBankcard titanBankcard = titanBankcardDao.selectEntity(param);
+		if(titanBankcard!=null){//绑定状态成功
+			bankcardid = titanBankcard.getBankcardid();
+		}else{//不存在或者没成功
+			//2.1-调用融数新增绑卡（公和私）,没有成功的则使用新增，不修改旧绑卡记录
 			CusBankCardBindResponse cusBankCardBindResponse = bankCardBind(orgSubCardRequest);
 			if(cusBankCardBindResponse.isResult()){
 				bankcardid = cusBankCardBindResponse.getBankcardid();
 			}else{
 				log.error("注册真实绑卡失败,绑卡参数："+Tools.gsonToString(orgSubCardRequest));
-				//不需要回滚
 				orgSubCardResponse.putErrorResult(cusBankCardBindResponse.getReturnMessage());
 				return orgSubCardResponse;
 			}
-		}else{
-			bankcardid = titanBankcard.getBankcardid();
 		}
 		
 		//3-新增绑卡关联记录
@@ -300,14 +308,27 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		
 	}
 	
-    @Override
-    public CusBankCardBindResponse bankCardBind(CusBankCardBindRequest cusBankCardBindRequest) {
-        CusBankCardBindResponse cusBankCardBindResponse = new CusBankCardBindResponse();
-        try {
-            if (cusBankCardBindRequest == null) {
-                cusBankCardBindResponse.putErrorResult("绑卡参数不合法");
-                return cusBankCardBindResponse;
+	
+	private CusBankCardBindResponse bindCardForRs(CusBankCardBindRequest cusBankCardBindRequest){
+		CusBankCardBindResponse cusBankCardBindResponse = new CusBankCardBindResponse();
+		//1、查询该卡号是否绑卡
+		BankCardBindInfoRequest bankCardBindInfoRequest = new BankCardBindInfoRequest();
+        bankCardBindInfoRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+        bankCardBindInfoRequest.setProductid(cusBankCardBindRequest.getProductId());
+        bankCardBindInfoRequest.setUserid(cusBankCardBindRequest.getUserId());
+        bankCardBindInfoRequest.setUsertype(cusBankCardBindRequest.getUserType());
+        bankCardBindInfoRequest.setObjorlist(CommonConstant.ALLCARD);
+        BankCardInfoDTO bankCardInfoDTOExist = null;
+        QueryBankCardBindInfoResponse queryBankCardBindInfoResponse = this.getBankCardBindInfo(bankCardBindInfoRequest);
+        if (queryBankCardBindInfoResponse != null && queryBankCardBindInfoResponse.getBankCardInfoDTOList() != null) {
+            for (BankCardInfoDTO bankCardInfoDTO : queryBankCardBindInfoResponse.getBankCardInfoDTOList()) {
+                if (bankCardInfoDTO.getAccount_number().equals(cusBankCardBindRequest.getAccountNumber())) {
+                	bankCardInfoDTOExist = bankCardInfoDTO;
+                	break;
+                }
             }
+        }
+        if(bankCardInfoDTOExist==null){//1.2未绑过，则新增
             if(cusBankCardBindRequest.getUserType().equals("1")){//公司类型为企业，则绑定对公
             	cusBankCardBindRequest.setAccountProperty("1");
             }else{//对私
@@ -334,57 +355,75 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
             bankCardBindRequest.setBank_branch(cusBankCardBindRequest.getBankBranch());
             bankCardBindRequest.setBank_province(cusBankCardBindRequest.getBankProvince());
             bankCardBindRequest.setBank_city(cusBankCardBindRequest.getBankCity());
-            
-            
-            log.info("绑定卡的参数:"+JSONSerializer.toJSON(bankCardBindRequest));
+            log.info("绑定卡的参数bankCardBindRequest:"+JSONSerializer.toJSON(bankCardBindRequest));
             BankCardBindResponse bankCardBindResponse = rsBankCardInfoManager.bindBankCard(bankCardBindRequest);
-            if (bankCardBindResponse != null) {
-            	TitanBankcard titanBankcard = covertToTitanBankcard(cusBankCardBindRequest);
-                if (CommonConstant.OPERATE_SUCCESS.equals(bankCardBindResponse.getOperateStatus())) {
-                	//本地保存绑卡记录
-                	cusBankCardBindResponse = saveBindCardRecord(true, titanBankcard, null);
-                	return cusBankCardBindResponse;
-                	
-	            } else {
-	                if (ROPErrorEnum.getROPErrorEnumByCode(bankCardBindResponse.getReturnCode()) != null) {
-	                    BankCardBindInfoRequest bankCardBindInfoRequest = new BankCardBindInfoRequest();
-	                    bankCardBindInfoRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-	                    bankCardBindInfoRequest.setProductid(cusBankCardBindRequest.getProductId());
-	                    bankCardBindInfoRequest.setUserid(cusBankCardBindRequest.getUserId());
-	                    bankCardBindInfoRequest.setUsertype(cusBankCardBindRequest.getUserType());
-	                    bankCardBindInfoRequest.setObjorlist(CommonConstant.ALLCARD);
-	                    QueryBankCardBindInfoResponse queryBankCardBindInfoResponse = this.getBankCardBindInfo(bankCardBindInfoRequest);
-	                    if (queryBankCardBindInfoResponse != null && queryBankCardBindInfoResponse.getBankCardInfoDTOList() != null) {
-	                        for (BankCardInfoDTO bankCardInfoDTO : queryBankCardBindInfoResponse.getBankCardInfoDTOList()) {
-	                            if (bankCardInfoDTO.getAccount_number().equals(bankCardBindRequest.getAccountnumber())) {
-	                            	//本地保存绑卡记录
-	                            	cusBankCardBindResponse = saveBindCardRecord(true, titanBankcard, null);
-	                                return cusBankCardBindResponse;
-	                            }
-	                        }
-	                    }
-	                }
-	                
-	                //绑卡失败也要在本地保存绑卡失败记录
-	                saveBindCardRecord(false, titanBankcard, bankCardBindResponse.getReturnMsg());
-	            }
-	            log.error("绑卡失败,绑卡参数："+Tools.gsonToString(cusBankCardBindRequest)+",错误代码："+bankCardBindResponse.getReturnCode()+"，错误信息："+bankCardBindResponse.getReturnMsg());
-	            cusBankCardBindResponse.putErrorResult(bankCardBindResponse.getReturnCode(), bankCardBindResponse.getReturnMsg());
-	            return cusBankCardBindResponse;
+            if (CommonConstant.OPERATE_SUCCESS.equals(bankCardBindResponse.getOperateStatus())) {
+            	cusBankCardBindResponse.putSuccess("绑卡成功");
+            }else{
+            	cusBankCardBindResponse.putErrorResult(bankCardBindResponse.getReturnMsg());
+            }  
+            return cusBankCardBindResponse;
+        }
+        log.info(cusBankCardBindRequest.getUserId()+",卡号:"+cusBankCardBindRequest.getAccountNumber()+",融数返回的绑卡状态："+bankCardInfoDTOExist.getStatus());
+        //1.1 绑过，则修改
+        if(bankCardInfoDTOExist.getStatus().equals("4")){//审核失败
+        	if(cusBankCardBindRequest.getUserType().equals("1")){//1.1.2 对公 修改
+        		ModifyInvalidWithDrawCardRequest modifyInvalidWithDrawCardRequest = new ModifyInvalidWithDrawCardRequest();
+            	modifyInvalidWithDrawCardRequest.setAccountnumber(cusBankCardBindRequest.getAccountNumber());
+            	modifyInvalidWithDrawCardRequest.setAccountrealname(cusBankCardBindRequest.getAccountName());
+            	modifyInvalidWithDrawCardRequest.setHankheadname(cusBankCardBindRequest.getBankHeadName());
+            	modifyInvalidWithDrawCardRequest.setBankhead(cusBankCardBindRequest.getBankCode());
+            	modifyInvalidWithDrawCardRequest.setUserid(cusBankCardBindRequest.getUserId());
+            	modifyInvalidWithDrawCardRequest.setBankcity(cusBankCardBindRequest.getBankCity());
+            	modifyInvalidWithDrawCardRequest.setBankprovinec(cusBankCardBindRequest.getBankProvince());
+            	modifyInvalidWithDrawCardRequest.setHankbranch(cusBankCardBindRequest.getBankBranch());
+            	modifyInvalidWithDrawCardRequest.setUsertype("1");//对公
+            	ModifyInvalidWithDrawCardResponse response = modifyinvalidPublicCard(modifyInvalidWithDrawCardRequest);
+            	if (response.isResult()) {
+                	cusBankCardBindResponse.putSuccess("绑卡成功");
+                }else{
+                	log.error("绑卡时，修改对公银行卡信息失败，卡号："+cusBankCardBindRequest.getAccountNumber()+",userid:"+cusBankCardBindRequest.getUserId()+",绑卡参数cusBankCardBindRequest："+Tools.gsonToString(cusBankCardBindRequest));
+                	cusBankCardBindResponse.putErrorResult(response.getReturnCode(),response.getReturnMessage());
+                }
+            	return cusBankCardBindResponse;
+        	}else{//1.1.1对私 ，则表示成功;如果不成功，那么需要人工处理
+        		log.error("融数的对私绑卡状态失败,卡号："+cusBankCardBindRequest.getAccountNumber()+",userid:"+cusBankCardBindRequest.getUserId()+",绑卡参数cusBankCardBindRequest："+Tools.gsonToString(cusBankCardBindRequest));
+        		cusBankCardBindResponse.putErrorResult("对私绑卡失败，请联系技术处理");
+        		return cusBankCardBindResponse;
+        	}
+        }else{
+        	cusBankCardBindResponse.putSuccess("绑卡信息正常");
+        	return cusBankCardBindResponse;
+        }
+		
+	}
+	
+	
+    @Override
+    public CusBankCardBindResponse bankCardBind(CusBankCardBindRequest cusBankCardBindRequest) {
+        CusBankCardBindResponse cusBankCardBindResponse = new CusBankCardBindResponse();
+        try {
+            cusBankCardBindResponse = bindCardForRs(cusBankCardBindRequest);
+            TitanBankcard titanBankcard = covertToTitanBankcard(cusBankCardBindRequest);
+            if (cusBankCardBindResponse.isResult()) {
+                //本地保存绑卡记录
+               cusBankCardBindResponse = saveBindCardRecord(true, titanBankcard, null);
+               return cusBankCardBindResponse;
+            }else{
+            	//绑卡失败也要在本地保存绑卡失败记录
+                saveBindCardRecord(false, titanBankcard, cusBankCardBindResponse.getReturnMessage());
+                cusBankCardBindResponse.putErrorResult(cusBankCardBindResponse.getReturnMessage());
+                return cusBankCardBindResponse;
             }
-            
         } catch (Exception e) {
         	log.error("绑卡失败。异常响应信息：" + e.getMessage()+",绑卡参数:"+Tools.gsonToString(cusBankCardBindRequest), e);
         	cusBankCardBindResponse.putErrorResult("绑卡失败，请重试");
             return cusBankCardBindResponse;
         }
-        
-        cusBankCardBindResponse.putSysError();
-        return cusBankCardBindResponse;
     }
     
     
-    private CusBankCardBindResponse saveBindCardRecord(boolean isBind, TitanBankcard 
+    private CusBankCardBindResponse saveBindCardRecord(boolean isBindSuccess, TitanBankcard 
     		titanBankcard, String errorMsg){
     	
     	CusBankCardBindResponse cusBankCardBindResponse = new CusBankCardBindResponse();
@@ -395,7 +434,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
     	
     	try {
     		
-    		if(isBind){
+    		if(isBindSuccess){
         		if(CommonConstant.ENTERPRISE.equals(titanBankcard.getAccountproperty())){
                 	titanBankcard.setStatus(BindCardStatus.BIND_BINDING.status);//对公绑卡成功，还出于审核状态
                 }else if(CommonConstant.PERSONAL.equals(titanBankcard.getAccountproperty())){
@@ -407,7 +446,9 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
         		titanBankcard.setStatus(BindCardStatus.BIND_FAIL.status);
 				titanBankcard.setRemark(errorMsg);
         	}
+    		
         	int bankcardid = titanBankcardDao.insert(titanBankcard);
+        	
         	cusBankCardBindResponse.setBankcardid(bankcardid);
         } catch (Exception e) {
         	
