@@ -1118,8 +1118,11 @@
     	}
     }
     
-    function showHistoryAccount(){
+    function showHistoryAccount(){debugger;
     	if('${cashDeskData.payerTypeEnum.key }' != '3'){
+    		return;
+    	}
+    	if('${cashDeskData.orgName }'.length > 0 || '${cashDeskData.titanCode }'.length > 0){
     		return;
     	}
     	var orgName;

@@ -643,7 +643,11 @@ public class TitanPaymentController extends BaseController {
 		computeReq.setAmount(titanPaymentRequest.getPayAmount());
 		computeReq.setItemTypeEnum(cashierItemTypeEnum);
 		computeReq.setUserId(titanPaymentRequest.getUserid());
-		if(TitanConstantDefine.EXTERNAL_PAYMENT_ACCOUNT.equals(titanPaymentRequest.getUserid())){
+		//财务端收银台或者充值收付款方的手续费
+		if(PaySourceEnum.FINANCE_SUPPLY_PC.getDeskCode().equals(titanPaymentRequest.getPaySource()) 
+				|| PaySourceEnum.RECHARGE.getDeskCode().equals(titanPaymentRequest.getPaySource())){
+			computeReq.setUserId(titanPaymentRequest.getUserid());
+		}else{
 			computeReq.setUserId(titanPaymentRequest.getUserrelateid());
 		}
 		
