@@ -207,42 +207,8 @@ public class TitanWithdrawController extends BaseController {
 		if (null == withDrawRequest.getUserId()
 				|| (isBlank(withDrawRequest.getFcUserId())&&isBlank(withDrawRequest.getTfsUserId()))
 				|| null == withDrawRequest.getOrderNo()) {
-			log.error("请求参数错误:"+JSONSerializer.toJSON(withDrawRequest));
+			log.error("提现时请求参数错误，参数为:"+JSONSerializer.toJSON(withDrawRequest));
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
-		}
-		boolean needBindCard = false;
-		boolean needBindNewCard = false;
-		String cardNo = null;
-		// 1.检查参数
-		if (withDrawRequest.getHasBindBanCard() == 0) {
-			if (!StringUtil.isValidString(withDrawRequest.getBankCode())
-					|| !StringUtil.isValidString(withDrawRequest
-							.getAccountNum())
-					|| !StringUtil.isValidString(withDrawRequest
-							.getAccountName())) {
-				log.error("已绑定卡传入参数错误"+JSONSerializer.toJSON(withDrawRequest));
-				return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
-			} else {
-				needBindCard = true;
-				cardNo = withDrawRequest.getAccountNum();
-			}
-		} else {
-			if (withDrawRequest.getUseNewBankCard() == 1) {
-				if (!StringUtil.isValidString(withDrawRequest.getBankCode())
-						|| !StringUtil.isValidString(withDrawRequest
-								.getAccountNum())
-						|| !StringUtil.isValidString(withDrawRequest
-								.getAccountName())) {
-					log.error("绑定新卡传入参数错误"+JSONSerializer.toJSON(withDrawRequest));
-					return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
-				} else {
-					needBindNewCard = true;
-					needBindCard = true;
-					cardNo = withDrawRequest.getAccountNum();
-				}
-			} else {
-				cardNo = withDrawRequest.getOriginalAccount();
-			}
 		}
 
 		String tfsUserid = null;
@@ -264,13 +230,13 @@ public class TitanWithdrawController extends BaseController {
 		
 		if (!StringUtil.isValidString(withDrawRequest.getPassword())
 				|| !StringUtil.isValidString(tfsUserid)) {
-			log.error("密码或用户传入失败");
+			log.error("付款密码或用户id为空");
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
 		boolean istrue = titanFinancialUserService.checkPayPassword(
 				withDrawRequest.getPassword(), tfsUserid);
 		if (!istrue) {
-			log.error("密码错误");
+			log.error("付款密码输入错误,用户id(tfsUserid):"+tfsUserid+",输入的付款密码是："+withDrawRequest.getPassword());
 			return toMsgJson(TitanMsgCodeEnum.PAY_PWD_ERROR);
 		}
 		
@@ -289,102 +255,16 @@ public class TitanWithdrawController extends BaseController {
 				.getExRateAmount()));
 
 		if (er > al) {
-			log.error("手续费不能大于提现金额");
+			log.error("手续费不能大于提现金额,手续费为："+er+"，提现参数为（withDrawRequest）："+Tools.gsonToString(withDrawRequest));
 			return toMsgJson(TitanMsgCodeEnum.RATE_NOT_MORE_WITHDRAW);
 		}
-		
-		FinancialOrganDTO financialOrganDTO = this
-				.getTitanOrganDTO(withDrawRequest.getUserId());
-		if (needBindNewCard) { // 需判定或删除原卡配置
-			//删除之前查询该卡是否已绑定
-			BankCardBindInfoRequest bindInfoRequest = new BankCardBindInfoRequest();
-			bindInfoRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-			bindInfoRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-			bindInfoRequest.setUserid(withDrawRequest.getUserId());
-			bindInfoRequest.setUsertype(String.valueOf(financialOrganDTO.getUserType()));
-			bindInfoRequest.setObjorlist(CommonConstant.ALLCARD);
-			QueryBankCardBindInfoResponse bindInfoResponse = titanFinancialBankCardService.getBankCardBindInfo(bindInfoRequest);
-			if(bindInfoResponse !=null && bindInfoResponse.getBankCardInfoDTOList()!=null){
-				for(BankCardInfoDTO dto :bindInfoResponse.getBankCardInfoDTOList()){
-					if(withDrawRequest.getOriginalAccount().equals(dto.getAccount_number())){//若该卡已绑定则删除
-						DeleteBindBankRequest deleteBindBankRequest = new DeleteBindBankRequest();
-						deleteBindBankRequest.setUserid(withDrawRequest.getUserId());
-						deleteBindBankRequest
-								.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-						deleteBindBankRequest
-								.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-						deleteBindBankRequest.setUsertype(String.valueOf(financialOrganDTO
-								.getUserType()));
-						deleteBindBankRequest.setAccountnumber(withDrawRequest
-								.getOriginalAccount());
-						DeleteBindBankResponse deleteBindBankResponse = titanFinancialBankCardService
-								.deleteBindBank(deleteBindBankRequest);
-						if (!deleteBindBankResponse.isResult()) {
-							log.error("删除原提现卡失败");
-							return toMsgJson(TitanMsgCodeEnum.USE_NEW_CARD_WITHDRAW_DEL_OLD_CARD_FAIL);
-						}
-					}
-				}
-			}
-		}
-
-		if (needBindCard) {// 需要绑定卡
-			CusBankCardBindRequest bankCardBindRequest = new CusBankCardBindRequest();
-			bankCardBindRequest.setUserId(withDrawRequest.getUserId());
-			bankCardBindRequest
-					.setProductId(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_PRODUCT_ID);
-			bankCardBindRequest
-					.setConstId(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_CONST_ID);
-			bankCardBindRequest.setUserType(String.valueOf(financialOrganDTO
-					.getOrgType()));
-			bankCardBindRequest.setAccountNumber(withDrawRequest
-					.getAccountNum());
-			bankCardBindRequest
-					.setAccountName(withDrawRequest.getAccountName());
-			bankCardBindRequest.setAccountTypeId("00");
-			bankCardBindRequest.setBankHeadName(withDrawRequest.getBankName());
-			bankCardBindRequest.setCurrency("CNY");
-			bankCardBindRequest.setReqSn(String.valueOf(System
-					.currentTimeMillis()));
-			bankCardBindRequest.setSubmitTime(DateUtil.dateToString(new Date(),
-					"yyyyMMddHHmmss"));
-			bankCardBindRequest.setAccountProperty(String.valueOf(2));
-			bankCardBindRequest
-					.setAccountPurpose(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD
-							.getKey());
-			if (financialOrganDTO.getUserType() == 1) {
-				bankCardBindRequest.setCertificateType(String
-						.valueOf(TitanOrgEnum.CertificateType.SFZ.getKey()));
-				bankCardBindRequest.setCertificateNumber(financialOrganDTO
-						.getBuslince());
-				// bankCardBindRequest.setCertificateNumber("411381196802185622");
-			} else {
-				bankCardBindRequest.setCertificateType(String
-						.valueOf(financialOrganDTO.getCertificateType()));
-				bankCardBindRequest.setCertificateNumber(String
-						.valueOf(financialOrganDTO.getCertificateNumber()));
-			}
-			bankCardBindRequest.setBankCode(withDrawRequest.getBankCode());
-			bankCardBindRequest.setUserType(String.valueOf(financialOrganDTO.getUserType()));
-		/*	bankCardBindRequest.setBankBranch(withDrawRequest.getBranchCode());
-			bankCardBindRequest.setBankCity(withDrawRequest.getCityName());
-			if(StringUtil.isValidString(withDrawRequest.getCityCode())){
-				bankCardBindRequest.setBankProvince(this.queryProvinceName(withDrawRequest.getCityCode()));
-			}*/
-			CusBankCardBindResponse cardBindResponse = titanFinancialBankCardService
-					.bankCardBind(bankCardBindRequest);
-			if (!cardBindResponse.isResult()) {
-				log.error("用户绑卡失败");
-				return toMsgJson(TitanMsgCodeEnum.USE_NEW_CARD_WITHDRAW_BING_CARD_FAIL);
-			}
-		}
+		 
 
 		BalanceWithDrawRequest balanceWithDrawRequest = new BalanceWithDrawRequest();
 		balanceWithDrawRequest.setUserId(withDrawRequest.getUserId());
 		balanceWithDrawRequest
 				.setProductid(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_PRODUCT_ID);
 		balanceWithDrawRequest.setAmount(withDrawRequest.getAmount());
-		balanceWithDrawRequest.setCardNo(cardNo);
 
 		balanceWithDrawRequest.setCreator(this.getUserNameByUserId(tfsUserid));
 		balanceWithDrawRequest.setOrderDate(DateUtil.dateToString(new Date(),
@@ -406,13 +286,11 @@ public class TitanWithdrawController extends BaseController {
 			balanceWithDrawRequest.setReceivedfee(computeRsp.getExRateAmount());
 		}
 		
-		///
-		
 		
 		BalanceWithDrawResponse balanceWithDrawResponse = titanFinancialAccountService
 				.accountBalanceWithdraw(balanceWithDrawRequest);
 		if (!balanceWithDrawResponse.isResult()) {
-			log.error("提现失败");
+			log.error("提现失败，返回结果balanceWithDrawResponse："+Tools.gsonToString(balanceWithDrawResponse)+",提现参数为（withDrawRequest）："+Tools.gsonToString(withDrawRequest));
 			return toMsgJson(TitanMsgCodeEnum.WITHDRAW_OPT_FAIL);
 		}
 		
