@@ -121,7 +121,7 @@
         <div class="ysgl_bottombut">
             <div class="massBtn">
                 <a class="btn btn_grey J_password">确定</a>
-                <a class="btn btn_grey btn_exit J_exitKan">取消</a>
+                <a class="btn btn_grey btn_exit J_exitKan">关闭</a>
             </div>
         </div>
     </div>

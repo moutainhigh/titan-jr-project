@@ -20,6 +20,7 @@
 							<span>现金可用余额：<i id="balanceusableSpan">加载中...</i></span>
 							<a href="javascript:void(0)" class="blue decorationUnderline rechargeBtn">充值</a>
 							<a href="javascript:void(0)" class="blue decorationUnderline withdrawBtn" id="btn_withdraw" data-result="99">提现</a>
+							<span class="binding-prompt" style="display:none;">未绑定提现卡</span>
 						</p>
 						<p>
 							<span>
