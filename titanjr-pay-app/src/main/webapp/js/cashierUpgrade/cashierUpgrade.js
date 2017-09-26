@@ -127,7 +127,7 @@ function quickPay_history(){
         dataType: "json",
         success: function (data) {
            top.F.loading.hide();
-    	   if(data.success == true){
+    	   if(data.isSuccess == true){
     		   $(".payment-verification").show();//输入验证码弹窗
         	   $("#rsOrderNo").val(data.orderNo);
         	   $("#safe_payerphone").text(cashierData.payerPhone);

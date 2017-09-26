@@ -848,6 +848,7 @@ footer p>a{
     border-radius: 2px;
     line-height: 36px;
     padding-left: 10px;
+    background-color: transparent;
 }
 .bank-account-info .register_information  .type_li .City_components>select:hover{
     border-color: #666;
@@ -856,6 +857,7 @@ footer p>a{
     position: absolute;
     right: 5px;
     top: 0;
+    z-index: -1;
     line-height: 36px;
     height: 36px;
     color: #666;

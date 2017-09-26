@@ -435,8 +435,8 @@
                                     <div class="City_components m_r10 prov">
                                         <select name="">
                                             <option value="1">身份证</option>
-                                            <option value="">护照</option>
-                                            <option value="">港澳通行证</option>
+                                            <!-- <option value="">护照</option>
+                                            <option value="">港澳通行证</option> -->
                                         </select>
                                         <i class="iconfont icon-downArrow"></i>
                                     </div>
@@ -582,8 +582,8 @@
                                     <div class="City_components m_r10 prov">
                                         <select name="">
                                             <option value="1">身份证</option>
-                                            <option value="">护照</option>
-                                            <option value="">港澳通行证</option>
+                                            <!-- <option value="">护照</option>
+                                            <option value="">港澳通行证</option> -->
                                         </select>
                                         <i class="iconfont icon-downArrow"></i>
                                     </div>

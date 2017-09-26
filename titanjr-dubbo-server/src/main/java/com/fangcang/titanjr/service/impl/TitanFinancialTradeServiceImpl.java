@@ -1448,6 +1448,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                         tradeDetailResponse.putErrorResult("USERID_INVALID", "查询结果中userId不合法");
                         return tradeDetailResponse;
                     }
+                    PayerTypeEnum payerTypeEnum = null;
+                    if (StringUtil.isValidString(titanTransOrder
+							.getPayerType())) {
+	                    payerTypeEnum = PayerTypeEnum
+								.getPayerTypeEnumByKey(titanTransOrder
+										.getPayerType());
+                    }
                     if (isPayeeValid(transOrderDTO)) { //收款方存在时
                         if (isPayerValid(transOrderDTO)) {//付款方也存在
                             if (isPayeeOrg(tradeDetailRequest, transOrderDTO)) { //当前机构等于收款方
@@ -1457,24 +1464,23 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                                 }else{
                                 	 transOrderDTO.setTransTarget(getTransTarget(transOrderDTO.getPayermerchant()));//付款方
                                 }
-								// 如果当前机构是收款方并且收款类型为商家联盟，则不考虑费率显示问题
-								if (StringUtil.isValidString(titanTransOrder
-										.getPayerType())) {
-									PayerTypeEnum payerTypeEnum = PayerTypeEnum
-											.getPayerTypeEnumByKey(titanTransOrder
-													.getPayerType());
-
-									// 如果是商家联盟的付款，则收款方不需要展示费率。
-									if (payerTypeEnum != null
-											&& (PayerTypeEnum.SUPPLY_UNION.key
-													.equals(payerTypeEnum.key) || PayerTypeEnum.SUPPLY_FINACIAL.key
-													.equals(payerTypeEnum.key))) {
-										transOrderDTO.setReceivedfee(0L);
-									}
+                                // 当前机构是收款方并且是财务付款，则收款方不需要展示费率。
+								if (payerTypeEnum != null
+										&& (PayerTypeEnum.SUPPLY_UNION.key
+												.equals(payerTypeEnum.key) || PayerTypeEnum.SUPPLY_FINACIAL.key
+												.equals(payerTypeEnum.key))) {
+									transOrderDTO.setReceivedfee(0L);
 								}
 
                             } else if (isPayerOrg(tradeDetailRequest, transOrderDTO)) {//当前机构等于付款方
                                 transOrderDTO.setTradeType("付款");
+                                // 当前机构是付款方并且不是财务付款，则付款方不需要展示费率。
+								if (payerTypeEnum != null
+										&& !PayerTypeEnum.SUPPLY_UNION.key
+												.equals(payerTypeEnum.key) && !PayerTypeEnum.SUPPLY_FINACIAL.key
+												.equals(payerTypeEnum.key)) {
+									transOrderDTO.setReceivedfee(0L);
+								}
                                 transOrderDTO.setTransTarget(getTransTarget(transOrderDTO.getPayeemerchant()));//收款方
                             }
                         } else if (isPayeeOrg(tradeDetailRequest, transOrderDTO)) {//付款方不存在机构等于收款方
