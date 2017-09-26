@@ -1117,6 +1117,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			orderRequest.setReceivablefee(titanPaymentRequest.getReceivablefee());
 			orderRequest.setReceivedfee(titanPaymentRequest.getReceivedfee());
 			orderRequest.setStandfee(titanPaymentRequest.getStandfee());
+			orderRequest.setFreezeType(transOrderDTO.getFreezeType());
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
@@ -1197,6 +1198,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				titanTransOrder
 						.setBusinessinfo(orderRequest.getBussinessInfo());
 				titanTransOrder.setGoodscnt(1);
+				titanTransOrder.setFreezeType(orderRequest.getFreezeType());
 
 				//设置费率信息
 				if(StringUtil.isValidString(orderRequest.getReceivablefee())){
