@@ -7,7 +7,7 @@
 	<jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
-	<script type="text/javascript" src="<%=basePath%>/js/bindingBank.js?v=2017090218"></script>
+	<script type="text/javascript" src="<%=basePath%>/js/bindingBank.js?v=2017090219"></script>
 <body>
 	<h3 class="MyAssets_top">账户名称/泰坦码：${organ.orgName}/${organ.titanCode }</h3>
 	<div class="MyAssets_chart">
@@ -534,6 +534,10 @@
 					if(result.code=="1"){
 		        	  	if(result.data.orgBankcardStatus=="0"){//绑定失败
 		        			bc.bindResultView();
+		        		}else if(result.data.orgBankcardStatus=="10"){//未关联机构
+		        			$(".binding-prompt").show();
+		        		}else if(result.data.orgBankcardStatus=="20"){//无绑定记录
+		        			$(".binding-prompt").show();
 		        		}
 		        	}else{
 		        		 new top.Tip({msg: result.msg, type: 2, timer: 2000});
@@ -555,8 +559,10 @@
 		        			account_withdraw();
 		        		}else if(result.data.orgBankcardStatus=="2"){//审核中
 		        			bc.bindResultView();
-		        		}else if(result.data.orgBankcardStatus=="20"){//未绑定
+		        		}else if(result.data.orgBankcardStatus=="10"){//未关联机构
 		        			bc.bind_card();
+		        		}else if(result.data.orgBankcardStatus=="20"){//无绑定记录
+		        			bc.updateBind();
 		        		}else{
 		        			new top.Tip({msg: "用户绑卡状态错误,请联系管理员", type: 2, timer: 2000});
 		        		}
@@ -576,63 +582,6 @@
             });
         }
         
-        function bind_card_fail(){
-        	new top.createConfirm({
-			    title:'提示',
-				padding: '20px 20px 40px',
-				width:400,
-				cancelValue : '下次再说',
-		        okValue : '修改提现卡信息',		
-		        content : '<div class="l_h26" style="padding-left: 30px;"><i class="mr_ico"></i><span class="TFS_mrtips"><strong class="c_tfscolor f_16">对不起,提现卡绑定失败</strong>失败原因：银行卡信息或持卡人姓名不正确。</span></div>',
-				ok : function(){	
-					$.ajax({
-				        dataType : 'html',		      
-				        context: document.body,
-				        data:{
-				        	orgName:'${organ.orgName}'
-				        },
-				        url : '<%=basePath%>/account/update_account-withdraw_info.shtml',
-				        success : function(html){
-				        	var d = window.top.dialog({
-						        title: ' ',
-						        padding: '0 0 0px 0 ',
-						        content: html,
-						        skin : 'saas_pop',
-						    }).showModal();		
-							//点击关闭
-							window.parent.$(".J_finsh").on('click', function() {
-								d.remove();
-									$(".withdrawBtn").text('提现卡审核中···').removeClass('blue decorationUnderline').css("color","#999");
-								});  
-							window.parent.$(".J_finsh_close").on('click', function() {
-								d.remove();
-									$(".withdrawBtn").text('提现卡审核失败···').removeClass('blue decorationUnderline').css("color","#999");
-								});  
-						}
-
-				    });
-		        },
-		        cancel : function(){
-		          	$(".withdrawBtn").text('提现卡绑定失败').removeClass('blue').addClass('MyAssets_red');
-		        },
-		        onclose:function(){
-		        	$(".withdrawBtn").text('提现卡绑定失败').removeClass('blue').addClass('MyAssets_red');
-		        }
-		      });
-        }
-        
-         
-        
-        
-        //导出提示
-//        $(".J_export").on('click', function() {
-//        	top.F.loading.show();
-//            setTimeout(function(){
-//				top.F.loading.hide();
-//				new top.Tip({msg : '导出成功!', type: 1 , time:1500});
-//			},1500);
-//        });
-
 		//按条件查询
 		function queryTransOrders(index) {
 			var tradeType = "" + (index - 1);

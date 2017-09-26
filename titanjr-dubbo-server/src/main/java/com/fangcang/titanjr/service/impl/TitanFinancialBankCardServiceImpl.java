@@ -234,18 +234,18 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 			orgSub = orgService.getOrgSub(orgSubRequest);
 			
 		}else if(orgSub.getUsertype()==TitanOrgEnum.UserType.PERSONAL.getKey()){
-			//存在关联的机构，则修改名字和身份证号码
-			OrgBaseInfoRequest orgBaseInfoRequest = new OrgBaseInfoRequest();
-			orgBaseInfoRequest.setOrgCode(orgSub.getOrgcode());
-			orgBaseInfoRequest.setOrgName(orgSubCardRequest.getAccountName());
-			orgBaseInfoRequest.setCertificatenumber(orgSubCardRequest.getCertificateNumber());
-			try {
-				orgService.updateOrgBaseInfo(orgBaseInfoRequest);
-			} catch (MessageServiceException e) {
-				log.error("融数修改机构信息失败，参数："+Tools.gsonToString(orgBaseInfoRequest)+"，错误信息："+e.getMessage());
-				orgSubCardResponse.putErrorResult(e.getMessage());
-				return orgSubCardResponse;
-			}
+			//TODO 测试  ，上线后打开，存在关联的机构，则修改名字和身份证号码
+//			OrgBaseInfoRequest orgBaseInfoRequest = new OrgBaseInfoRequest();
+//			orgBaseInfoRequest.setOrgCode(orgSub.getOrgcode());
+//			orgBaseInfoRequest.setOrgName(orgSubCardRequest.getAccountName());
+//			orgBaseInfoRequest.setCertificatenumber(orgSubCardRequest.getCertificateNumber());
+//			try {
+//				orgService.updateOrgBaseInfo(orgBaseInfoRequest);
+//			} catch (MessageServiceException e) {
+//				log.error("融数修改机构信息失败，参数："+Tools.gsonToString(orgBaseInfoRequest)+"，错误信息："+e.getMessage());
+//				orgSubCardResponse.putErrorResult(e.getMessage());
+//				return orgSubCardResponse;
+//			}
 		}
 		
 		orgSubCardRequest.setUserId(orgSub.getOrgcode());
