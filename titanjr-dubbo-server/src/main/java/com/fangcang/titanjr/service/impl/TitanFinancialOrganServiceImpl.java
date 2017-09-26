@@ -357,7 +357,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
             orgBindInfo.setMerchantCode(organRegisterRequest.getMerchantCode());
             orgBindInfo = this.queryOrgBindInfoByUserid(orgBindInfo);
     		if(orgBindInfo!=null&&StringUtil.isValidString(orgBindInfo.getOrgcode())){
-    			throw new MessageServiceException("该商家已经开通了金融账号，不允许重复开通");
+    			throw new MessageServiceException("6002","该商家已经开通了金融账号，不允许重复开通");
     		}
     		TitanOrg titanOrg = addOrg(organRegisterRequest);
     		result.put("titanOrg", titanOrg);

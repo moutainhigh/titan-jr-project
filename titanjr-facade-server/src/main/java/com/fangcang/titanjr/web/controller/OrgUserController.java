@@ -1,16 +1,11 @@
 package com.fangcang.titanjr.web.controller;
 
-import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.GenericValidate;
-import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.request.*;
-import com.fangcang.titanjr.dto.response.CashierDeskResponse;
 import com.fangcang.titanjr.dto.response.OrganRegisterResponse;
 import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.facade.TitanFinancialPermissionFacade;
-import com.fangcang.titanjr.request.AccountInfoRequest;
-import com.fangcang.titanjr.response.CheckAccountResponse;
 import com.fangcang.titanjr.rest.request.OrgRegisterRequest;
 import com.fangcang.titanjr.rest.response.OrgRegisterResponse;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
@@ -29,10 +24,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Random;
-
 
 @RestController
 @Api(value = "UserOrgAPI")
@@ -113,9 +104,12 @@ public class OrgUserController {
 				log.error("注册失败:" + organRegisterResponse.getReturnMessage());
 				registerResponse.putErrorResult(organRegisterResponse.getReturnCode(),
 						organRegisterResponse.getReturnMessage());
+				if(StringUtil.isValidString(organRegisterResponse.getOrgCode())){
+					registerResponse.setJrOrgCode(organRegisterResponse.getOrgCode());
+				}
 			}
 		} catch (MessageServiceException e) {
-			registerResponse.putErrorResult(e.getMessage());
+			registerResponse.putErrorResult(e.getCode(), e.getMessage());
 			log.error("注册失败" , e);
 		} catch (Exception e) {
 			registerResponse.putSysError();
