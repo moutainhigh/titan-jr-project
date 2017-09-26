@@ -114,7 +114,7 @@
 	        input.attr('data-id', d.key);
 	        $("#J_form_enterprise .bankName").val(d.val);
 	       	bc.checkSubmit();
-	       	if($('#J_form_enterprise .city_code')){
+	       	if($('#J_form_enterprise .city_code').length>0){
 	       		showCityCode();
 	       	}
 	    }
@@ -134,7 +134,7 @@
 	       	bc.checkSubmit();
 	    }
 	});
-	if($('#J_form_enterprise .city_code')){
+	if($('#J_form_enterprise .city_code').length>0){
 	   initCityAutoComplete();
 	}
 	//支行
@@ -152,9 +152,9 @@
 		        input.attr('data-id', d.key);
 		        input.attr('value',d.val.substring(d.val.indexOf("-")+1));
 		        var arr = d.val.split("-");
-		       // $("#J_form_enterprise .city_name").val(arr[arr.length-1]);
-		       // bc.checkSubmit();
-		       // showBranch();
+		        $("#J_form_enterprise .city_name").val(arr[arr.length-1]);
+		        bc.checkSubmit();
+		        showBranch();
 		    }
 		});
 	}
@@ -232,6 +232,7 @@
 	}	
 	
 	function saveBindCard(){
+		F.loading.show();
 		var paramData = getBankCardData();
 		$.ajax({
     	    type: 'post',
@@ -257,7 +258,11 @@
         				bc.bindResultView();
         			}
         		}
-        	}
+        	},
+        	complete:function()
+			{
+				F.loading.hide();
+			}
 	    });
     }
     //校验身份证号码

@@ -20,7 +20,7 @@ import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.BindCardStatus;
-import com.fangcang.titanjr.common.enums.ROPErrorEnum;
+import com.fangcang.titanjr.common.enums.OrgBindCardEnum;
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
@@ -109,8 +109,8 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
     	//是否存在机构关联关系
     	TitanOrgMapInfo orgMapInfo = orgMapInfoDao.getOneTitanOrgMapInfo(orgCode);
     	if(orgMapInfo==null){
-    		response.setOrgBankcardStatus(BankCardEnum.BankCardStatusEnum.NO_BANKCARD.getKey());
-    		response.setOrgBankcardMsg(BankCardEnum.BankCardStatusEnum.NO_BANKCARD.getDes());
+    		response.setOrgBankcardStatus(OrgBindCardEnum.NO_ORGSUB.getStatus());
+    		response.setOrgBankcardMsg(OrgBindCardEnum.NO_ORGSUB.getDes());
 			return response;
     	}
 		// 虚拟机构是否存在绑卡关联的记录
@@ -118,8 +118,8 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		titanOrgCardMapParam.setOrgCode(orgCode);
 		List<TitanOrgCardMap> orgCardMapList = orgCardMapDao.selectList(titanOrgCardMapParam);
 		if(CollectionUtils.isEmpty(orgCardMapList)){
-			response.setOrgBankcardStatus(BankCardEnum.BankCardStatusEnum.NO_BANKCARD.getKey());
-    		response.setOrgBankcardMsg(BankCardEnum.BankCardStatusEnum.NO_BANKCARD.getDes());
+			response.setOrgBankcardStatus(OrgBindCardEnum.NO_BANKCARD.getStatus());
+    		response.setOrgBankcardMsg(OrgBindCardEnum.NO_BANKCARD.getDes());
 			return response;
 		}
 		//真实机构的绑卡记录是否存在
@@ -128,8 +128,8 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		TitanBankcard  bankcard = titanBankcardDao.selectEntity(bankcardParam);
 		if(bankcard==null){
 			log.error("绑卡数据异常:真实机构的绑卡记录是否存在，虚拟机构(orgCode):"+orgCode+",真实机构的绑卡记录id(Bankcardid)："+orgCardMapList.get(0).getBankcardid());
-			response.setOrgBankcardStatus(BankCardEnum.BankCardStatusEnum.NO_BANKCARD.getKey());
-    		response.setOrgBankcardMsg(BankCardEnum.BankCardStatusEnum.NO_BANKCARD.getDes());
+			response.setOrgBankcardStatus(OrgBindCardEnum.NO_BANKCARD.getStatus());
+    		response.setOrgBankcardMsg(OrgBindCardEnum.NO_BANKCARD.getDes());
 			return response;
 		}
 		response.setBankcard(bankcard);
@@ -138,9 +138,13 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		response.setOrgSubCode(orgMapInfo.getOrgSubcode());
 		response.setOrgBankcardStatus(bankCardStatusEnum.getKey());
 		response.setOrgBankcardMsg(bankCardStatusEnum.getDes());
-		if(bankCardStatusEnum.getKey().equals(BankCardEnum.BankCardStatusEnum.NORMAL.getKey())){
+		if(!bankCardStatusEnum.getKey().equals(BankCardEnum.BankCardStatusEnum.NORMAL.getKey())){
+			if(StringUtil.isValidString(bankcard.getRemark())){
+				response.setOrgBankcardMsg(bankcard.getRemark());
+			}
 			//更新绑卡记录的状态
 			bindBankCardForOne(orgMapInfo.getOrgSubcode());
+			
 		}
 		return response;
 		

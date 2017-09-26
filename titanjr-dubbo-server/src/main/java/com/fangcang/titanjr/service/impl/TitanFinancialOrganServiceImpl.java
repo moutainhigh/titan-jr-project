@@ -164,7 +164,6 @@ import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
 
 import net.sf.json.JSONSerializer;
-
 /**
  * Created by zhaoshan on 2016/3/30.
  */
@@ -1627,7 +1626,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
             		personOrgUpdateRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
             		PersonOrgUpdateResponse response = rsOrganizationManager.updatePersonOrg(personOrgUpdateRequest);
             		if(!CommonConstant.OPERATE_SUCCESS.equals(response.getOperateStatus())){
-                		// 融数操作失败，回滚金服数据
+            			// 融数操作失败，回滚金服数据
+            			LOGGER.error("调用融数接口修改机构信息失败，机构id(userid):"+orgBaseInfoRequest.getOrgCode()+",泰坦金融机构证件号为："+orgBaseInfoRequest.getCertificatenumber()+",机构名称："+orgBaseInfoRequest.getOrgName()+",融数机构证件号为："+openAccountPerson.getCertificatenumber()+",机构名称："+openAccountPerson.getPersonchnname());
                 		throw new MessageServiceException(response.getReturnMsg());
                 	}
         		}

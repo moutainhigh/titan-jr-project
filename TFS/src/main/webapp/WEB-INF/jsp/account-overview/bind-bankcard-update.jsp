@@ -75,15 +75,15 @@
 	    clickEvent : function(d, input){
 	        input.attr('data-id', d.key);
 	        $(".bankName").val(d.val);
-	       	bc.checkSubmit();
-	       	if($('.city_code')){
+	       	bc.isDisabled(".platform-binding-bank-modal");
+	       	if($('.city_code').length>0){
 	       		showCityCode();
 	       	}
 	    }
 	});
 	
-	if($('.city_code')){//企业
-	   initCityAutoComplete();
+	if($('.city_code').length>0){//企业
+		initCityAutoComplete();
 	}
 	
 	
@@ -102,12 +102,11 @@
 		        input.attr('value',d.val.substring(d.val.indexOf("-")+1));
 		        var arr = d.val.split("-");
 		        $(".city_name").val(arr[arr.length-1]);
-		        bc.checkSubmit();
+		        bc.isDisabled(".platform-binding-bank-modal");
 		        showBranch();
 		    }
 		});
 	}
-	
 	
 	function showCityCode(){
 		$(".branch_code").val("");
@@ -154,7 +153,7 @@
 			        input.attr('data-id', arr[0]);
 			        $(".city_code").attr("data-id",arr[1]);
 			        $(".branch_name").val(d.val);
-			        bc.checkSubmit();
+			       bc.isDisabled(".platform-binding-bank-modal");
 			    }
 			});
 		}
@@ -178,6 +177,7 @@
 	
 	function saveBindCard(){
 		var paramData = getBankCardData();
+		F.loading.show();
 		$.ajax({
     	    type: 'post',
     		url:'<%=basePath%>/account/bankCardBind.shtml',
@@ -185,11 +185,20 @@
     		data:paramData,
     		success:function(result){
         		if(result.code=="-1"){
-        			new top.Tip({msg: result.msg, type: 2, timer: 2000});
+        			bc.updateCardValid._setErrorStyle($(".accountnumber"),result.msg);
         		}else{
-        			bc.bindResultView();
+        			if(paramData.userType=='2'){//个人表示绑卡成功
+        				bc.close();
+        				account_withdraw();
+        			}else{
+        				bc.bindResultView();
+        			}
         		}
-        	}
+        	},
+        	complete:function()
+			{
+				F.loading.hide();
+			}
 	    });
     }
     bc.initUpdateBindCardPanel();

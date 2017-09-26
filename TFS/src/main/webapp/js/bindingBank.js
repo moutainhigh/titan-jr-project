@@ -106,6 +106,7 @@ bc.updateBind=function(){
 
 bc.personalValid;
 bc.enterpriseValid;
+bc.updateCardValid;
 //新增绑卡页面初始化
 bc.initBindCardPanel=function(){
     // 表单验证
@@ -145,7 +146,7 @@ bc.initBindCardPanel=function(){
     });
 }
 bc.initUpdateBindCardPanel=function(){
-	 new validform('#J_form_update',{
+	bc.updateCardValid = new validform('#J_form_update',{
 	    noMust:true
 	 });
 	 $(".close").on("click",function(){
