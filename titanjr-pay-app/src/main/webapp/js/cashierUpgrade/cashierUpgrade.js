@@ -321,6 +321,7 @@ function checkQuickCardNo(inputTextK){
         	   $("#quick_bankInfo_hid").val(data.bankInfo);
                $("#quick_cardType_hid").val(data.cardType);
                
+               var index = "";
                if(data.cardType == '10'){
             	   $("#quick_cardType_deposit").text("储蓄卡");
                    $("#quick_cardNo_deposit").text(inputTextK);
@@ -333,6 +334,7 @@ function checkQuickCardNo(inputTextK){
                    $("#quick_dailyLimit_deposit").text(data.dailyLimit);
             	   $(".bank-account-info .savings").removeClass("isShow");
             	   $(".bank-account-info .credit").addClass("isShow");//显示天喜储蓄卡
+            	   index = "deposit";
         	   }else if(data.cardType == '11'){
         		   $("#quick_cardType_deposit").text("信用卡");
                    $("#quick_cardNo_credit").text(inputTextK);
@@ -345,13 +347,14 @@ function checkQuickCardNo(inputTextK){
                    $("#quick_dailyLimit_credit").text(data.dailyLimit);
         		   $(".bank-account-info .savings").addClass("isShow");
             	   $(".bank-account-info .credit").removeClass("isShow");//显示填写信用卡
+            	   index = "credit";
         	   }
                
                $("#checkCardNo_errorMsg").text("");
     		   $("#checkCardNo_errorMsg").addClass("isShow");
                $(".shortcut-payment").addClass("isShow");//快捷支付tab隐藏
                $(".bank-account-info").removeClass("isShow"); //填写银行卡信息页面显示
-               rateCompute($("#quick_payType_hid").val(), 'addpay');//费率计算
+               rateCompute($("#quick_payType_hid").val(), 'addpay', index);//费率计算
         	   
            },complete:function(){
            	   top.F.loading.hide();
@@ -563,9 +566,9 @@ function set_payPassword(){
 }
 
 /**
- * 费率计算  payType:支付方式	  type{'commpay': 常用支付点选; 'addpay': 添加支付}
+ * 费率计算  payType:支付方式	  type{'commpay': 常用支付点选; 'addpay': 添加支付}   index:特殊标记
  */
-function rateCompute(payType, type){
+function rateCompute(payType, type, index){
 	
 	var paySource = cashierData.paySource;
 	var userId = cashierData.userid;
@@ -588,16 +591,17 @@ function rateCompute(payType, type){
 	        		 var _amount = parseFloat(amount);
 	        		 var exRateAmount = parseFloat(data.data.exRateAmount);
 		        	 if(type == "commpay"){
-				       	 $("#commPayRateAmount_" + payType).text(exRateAmount.toFixed(2));
-				       	 $("#amount_" + payType).text(_amount + exRateAmount);
+				       	 $("#commPayRateAmount_" + payType + "_" + index).text(exRateAmount.toFixed(2));
+				       	 $("#amount_" + payType + "_" + index).text(_amount + exRateAmount);
 		        	 }else{
-		        		 
+		        		 $("#addPayRateAmount_" + payType + "_" + index).text(exRateAmount.toFixed(2));
+				       	 $("#addPayAmount_" + payType + "_" + index).text(_amount + exRateAmount);
 		        	 }
 		        }
 		});
 		
 	}else {
-		$("#amount_" + payType).text(amount);
+		$("#amount_" + payType + "_" + index).text(amount);
 		
 	}
 	

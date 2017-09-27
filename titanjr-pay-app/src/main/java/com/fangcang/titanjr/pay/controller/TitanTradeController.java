@@ -493,6 +493,11 @@ public class TitanTradeController extends BaseController {
 			log.error("PayerType convert is null");
 			return false;
 		}
+		if (pe == PayerTypeEnum.B2B_WX_PUBLIC_PAY) {
+			log.error("PayerType is B2B_WX_PUBLIC_PAY");
+			return false;
+		}
+		
 
 		if (!pe.isRWL() && !StringUtil.isValidString(dto.getAmount())) {
 			log.error("Amount is null");

@@ -105,10 +105,11 @@ $(function(){
             }
             initData();//初始化收银台
             var paytyep = cashierData.linePayType;
+            var index = $(this).find(".index").val();
             if(cashierData.linePayType == '9'){
             	paytyep = cashierData.bankInfo;
             }
-            rateCompute(paytyep, 'commpay');//费率计算
+            rateCompute(paytyep, 'commpay', index);//费率计算
         }else{
             return;
         }
@@ -562,7 +563,7 @@ $(function(){
         
         $(".personal-bank").addClass("isShow"); //个人银行列表隐藏
         $(".personal-bank-infor").removeClass("isShow"); //显示跳转网银界面
-        rateCompute(linePayType, 'addpay');//费率计算
+        rateCompute(linePayType, 'addpay', "personal");//费率计算
     });
     function limitShow(tableId){
     	$("table[name='bankLimit']").addClass("isShow");
@@ -619,7 +620,7 @@ $(function(){
         
         $(".enterprise-bank").addClass("isShow"); //企业银行列表隐藏
         $(".enterprise-bank-info").removeClass("isShow"); //显示跳转网银界面
-        rateCompute(linePayType, 'addpay');//费率计算
+        rateCompute(linePayType, 'addpay', "enterprise");//费率计算
     });
     
     //企业网银跳转按钮

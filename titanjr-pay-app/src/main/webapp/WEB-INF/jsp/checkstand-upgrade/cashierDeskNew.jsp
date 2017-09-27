@@ -151,6 +151,7 @@
             </c:if>
             <!-- 微信和支付宝支付默认显示 -->
             <li class="clearfix selected">
+            	<input class="index" type="hidden" value="1"/>
                 <div class="icon fl">
                     <b class="iconfont icon-check icon-check-color"></b>
                     <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
@@ -163,13 +164,14 @@
                 <div class="right-money">
                     <!-- 财务付款给供应商才显示手续费 -->
 					<c:if test="${cashDeskData.paySource =='2' }">
-						<span id="rateSpan_wx">手续费 ￥<span id="commPayRateAmount_wx">0.00</span></span>
+						<span>手续费 ￥<span id="commPayRateAmount_wx_1">0.00</span></span>
 					</c:if>
 					<!-- 这里需要考虑手续费 -->
-					<span class="money"><s>￥</s><span id="amount_wx">${cashDeskData.amount }</span></span>
+					<span class="money"><s>￥</s><span id="amount_wx_1">${cashDeskData.amount }</span></span>
                 </div>
             </li>
          	<li class="clearfix">
+         		<input class="index" type="hidden" value="2"/>
                 <div class="icon fl">
                     <b class="iconfont icon-check1"></b>
                     <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
@@ -182,16 +184,17 @@
                 <div class="right-money isShow">
                     <!-- 财务付款给供应商才显示手续费 -->
 					<c:if test="${cashDeskData.paySource =='2' }">
-						<span id="rateSpan_alipay">手续费 ￥<span id="commPayRateAmount_alipay">0.00</span></span>
+						<span>手续费 ￥<span id="commPayRateAmount_alipay_2">0.00</span></span>
 					</c:if>
 					<!-- 这里需要考虑手续费 -->
-					<span class="money"><s>￥</s><span id="amount_alipay">${cashDeskData.amount }</span></span>
+					<span class="money"><s>￥</s><span id="amount_alipay_2">${cashDeskData.amount }</span></span>
                 </div>
             </li>
             <!-- 常用支付方式历史 -->
             <c:if test="${not empty cashDeskData.commonPayHistoryList }">
             	 <c:forEach items="${cashDeskData.commonPayHistoryList }" var="commonPay" varStatus="status">
 	            	<li class="<c:if test='${status.index > 0}'>isShow </c:if>clearfix">
+	            		<input class="index" type="hidden" value="${status.index + 3 }"/>
 		                <div class="icon fl">
 		                    <b class="iconfont icon-check1"></b>
 		                    <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
@@ -249,10 +252,10 @@
 		                <div class="right-money isShow">
 		                    <!-- 财务付款给供应商才显示手续费 -->
 							<c:if test="${cashDeskData.paySource =='2' }">
-								<span id="rateSpan_${commonPay.paytype }">手续费 ￥<span id="commPayRateAmount_${commonPay.paytype }">0.00</span></span>
+								<span>手续费 ￥<span id="commPayRateAmount_${commonPay.paytype }_${status.index + 3}">0.00</span></span>
 							</c:if>
 							<!-- 这里需要考虑手续费 -->
-							<span class="money"><s>￥</s><span id="amount_${commonPay.paytype }">${cashDeskData.amount }</span></span>
+							<span class="money"><s>￥</s><span id="amount_${commonPay.paytype }_${status.index + 3}">${cashDeskData.amount }</span></span>
 		                </div>
 		            </li>
 	            </c:forEach>
@@ -309,7 +312,7 @@
                                 <i><b></b></i>
                                 <span></span>
                             </div>
-                            <a href="忘记密码.html" target="_blank" class="fl">忘记密码?</a>
+                            <a href="../edit-password.jsp" target="_blank" class="fl">忘记密码?</a>
                         </li>
                     </ul>
                     <span id="payPasswordError" class="password-prompt" style="top: 12px;right: 230px;"></span>
@@ -495,6 +498,12 @@
                     </form>
                 </div>
                 <div class="right fr">
+                	<c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
+	                	<div style="background-color: #E6E6FA; padding: 10px; margin-bottom: 10px; border: 2px solid #E3E3E3;">
+	                		<span>手续费 ￥<span id="addPayRateAmount_11_deposit">0.00</span></span>&nbsp;&nbsp;&nbsp;
+	                		<span class="money"><s>总金额 ￥</s><span id="addPayAmount_11_deposit">${cashDeskData.amount }</span></span>
+	                	</div>
+                	</c:if>
                     <div class="card">
                         <div class="title">
                         <span>
@@ -706,6 +715,12 @@
                     </form>
                 </div>
                 <div class="right fr">
+                	<c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
+	                	<div style="background-color: #E6E6FA; padding: 10px; margin-bottom: 10px; border: 2px solid #E3E3E3;">
+	                		<span>手续费 ￥<span id="addPayRateAmount_11_credit">0.00</span></span>&nbsp;&nbsp;&nbsp;
+	                		<span class="money"><s>总金额 ￥</s><span id="addPayAmount_11_credit">${cashDeskData.amount }</span></span>
+	                	</div>
+                	</c:if>
                     <div class="card">
                         <div class="title">
                         <span>
@@ -770,11 +785,18 @@
         <div class="content enterprise-content clearfix">
             <div class="enterprise-form clearfix" style="margin-bottom: 20px;line-height: 26px">
                 <div class="left fl">付款银行</div>
-                <div class="right fl">
+                <div class="right fl" style="width: 700px;">
                     <svg class="icon" aria-hidden="true" style="position: relative;top: 2px;">
                         <use id="bankImg_personal" xlink:href=""></use>
                     </svg>
-                    <span id="bankName_personal"></span><a href="javascript:void (0);" class="change-bank">更换付款银行</a></div>
+                    <span id="bankName_personal"></span><a href="javascript:void (0);" class="change-bank">更换付款银行</a>
+                    <c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
+	                    <span style="background-color: #E6E6FA; padding: 10px; margin-left:50px; border: 2px solid #E3E3E3;">
+	                		<span>手续费 ￥<span id="addPayRateAmount_2_personal">0.00</span></span>&nbsp;&nbsp;&nbsp;
+	                		<span class="money"><s>总金额 ￥</s><span id="addPayAmount_2_personal">${cashDeskData.amount }</span></span>
+	                	</span>
+                	</c:if>
+                </div>
             </div>
             <div class="enterprise-form clearfix" style="margin-bottom: 20px">
                 <div class="left fl">银行类型</div>
@@ -816,11 +838,18 @@
         <div class="content enterprise-content clearfix">
             <div class="enterprise-form clearfix" style="margin-bottom: 20px;line-height: 26px">
                 <div class="left fl">付款银行</div>
-                <div class="right fl">
+                <div class="right fl" style="width: 700px;">
                     <svg class="icon" aria-hidden="true" style="position: relative;top: 2px;">
                         <use id="bankImg_enterprise" xlink:href=""></use>
                     </svg>
-                    <span id="bankName_enterprise"></span><a href="javascript:void (0);" class="change-bank">更换付款银行</a></div>
+                    <span id="bankName_enterprise"></span><a href="javascript:void (0);" class="change-bank">更换付款银行</a>
+                    <c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
+	                    <span style="background-color: #E6E6FA; padding: 10px; margin-left:50px; border: 2px solid #E3E3E3;">
+	                		<span>手续费 ￥<span id="addPayRateAmount_1_enterprise">0.00</span></span>&nbsp;&nbsp;&nbsp;
+	                		<span class="money"><s>总金额 ￥</s><span id="addPayAmount_1_enterprise">${cashDeskData.amount }</span></span>
+	                	</span>
+                	</c:if>
+                </div>
             </div>
             <div id="enterpriseCustomerNoDev" class="enterprise-form clearfix isShow" style="margin-bottom: 20px">
                 <div class="left fl" style="line-height: 38px">企业银行客户号</div>
@@ -1038,7 +1067,7 @@
     //费率显示
     function setRate(){
     	if('${cashDeskData.paySource }' == '2'){//目前财务付款才有手续费，第一次进来默认选中微信支付
-    		rateCompute('wx', 'commpay');
+    		rateCompute('wx', 'commpay', 1);
     	}
     }
     
@@ -1124,7 +1153,7 @@
     	}
     }
     
-    function showHistoryAccount(){debugger;
+    function showHistoryAccount(){
     	if('${cashDeskData.payerTypeEnum.key }' != '3'){
     		return;
     	}
