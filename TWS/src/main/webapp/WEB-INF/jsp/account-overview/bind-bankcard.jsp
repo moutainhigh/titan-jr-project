@@ -253,7 +253,7 @@
         		}else{
         			if(paramData.userType=='2'){//个人表示绑卡成功
         				bc.close();
-        				account_withdraw();
+        				window.location.reload();
         			}else{
         				bc.bindResultView();
         			}

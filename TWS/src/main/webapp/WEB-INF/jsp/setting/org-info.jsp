@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8">
     <title>机构信息-泰坦钱包</title>
-    <jsp:include page="/comm/static-resource.jsp"></jsp:include>
+	<jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 </head>
 <body style="min-width: 1300px;" class="bg" >
@@ -28,20 +28,20 @@
 			</div>
 			<div class="sr_list">
 				<div class="img ico"></div>
-				<div class="tit">机构信息</div>
+				<div class="tit">机构信息<p><span>未绑定提现卡</span><a href="javascript:void(0)" class="immediately-binding">立即绑卡</a></p></div>
 				<c:if test="${orgSubDTO.userType ==1 }">
-				<!-- 企业信息 -->
-				<div class="srl_c clearfix"><div class="w_120 fl">公司名称：</div> <div class="con">${orgSubDTO.orgName }</div></div>
-				<div class="srl_c clearfix"><div class="w_120 fl">营业执照号：</div> <div class="con">${orgSubDTO.buslince }</div></div>
-				<div class="srl_c clearfix"><div class="w_120 fl">营业执照照片：</div> <div class="con cursor p_t15"><img src="${small_img_10}" width="140" height="100" class="J_magnify"></div></div>
-				<div class="srl_c clearfix"><div class="w_120 fl">联系人：</div> 
-					<div class="fl message dn"><div class="con"><input type="text"  id="connect"> <i class="btn J_save" data-field="connect">保存</i><i class="btn btn_g J_cancel">取消</i></div></div>
-					<div class="fl message "><div class="con fl">${financialOrganDTO.connect }</div> <a href="javascript:void(0)" class="blue undl fl J_alter">修改</a></div>
-				</div>
-				<div class="srl_c clearfix"><div class="w_120 fl">联系手机：</div> 
-					<div class="fl message dn"><div class="con"><input type="text"  id="mobileTel"> <i class="btn J_save" data-field="mobileTel">保存</i><i class="btn btn_g J_cancel">取消</i></div></div>
-					<div class="fl message "><div class="con fl">${financialOrganDTO.mobileTel }</div> <a href="javascript:void(0)" class="blue undl fl J_alter">修改</a></div>
-				</div>
+					<!-- 企业信息 -->
+					<div class="srl_c clearfix"><div class="w_120 fl">公司名称：</div> <div class="con">${orgSubDTO.orgName }</div></div>
+					<div class="srl_c clearfix"><div class="w_120 fl">营业执照号：</div> <div class="con">${orgSubDTO.buslince }</div></div>
+					<div class="srl_c clearfix"><div class="w_120 fl">营业执照照片：</div> <div class="con cursor p_t15"><img src="${small_img_10}" width="140" height="100" class="J_magnify"></div></div>
+					<div class="srl_c clearfix"><div class="w_120 fl">联系人：</div> 
+						<div class="fl message dn"><div class="con"><input type="text"  id="connect"> <i class="btn J_save" data-field="connect">保存</i><i class="btn btn_g J_cancel">取消</i></div></div>
+						<div class="fl message "><div class="con fl">${financialOrganDTO.connect }</div> <a href="javascript:void(0)" class="blue undl fl J_alter">修改</a></div>
+					</div>
+					<div class="srl_c clearfix"><div class="w_120 fl">联系手机：</div> 
+						<div class="fl message dn"><div class="con"><input type="text"  id="mobileTel"> <i class="btn J_save" data-field="mobileTel">保存</i><i class="btn btn_g J_cancel">取消</i></div></div>
+						<div class="fl message "><div class="con fl">${financialOrganDTO.mobileTel }</div> <a href="javascript:void(0)" class="blue undl fl J_alter">修改</a></div>
+					</div>
 				</c:if>
 				<c:if test="${orgSubDTO.userType == 2 }">
 					<div class="srl_c clearfix"><div class="w_120 fl">姓名：</div> <div class="con">${orgSubDTO.orgName }</div></div>
@@ -54,6 +54,13 @@
 		</div>
 	</div>
 </div>
+<div id="bindcard-wrap" style="display:none;">
+		<div class="veil"></div>
+		<!--模态框-->
+		<div class="modal-box">
+			 
+		</div>
+	</div>
 <div class="h_40"></div>
 <!-- 版权 -->
 <jsp:include page="/comm/foot-line.jsp"></jsp:include>
@@ -63,6 +70,8 @@
 </div>
 <script type="text/javascript">
 var isadmin = '${isJrAdmin}';
+
+
 //内容高度
 function scrollCon(){
 	var winH=$(window).height();
@@ -74,7 +83,54 @@ scrollCon();
 $(window).on('resize.fixed',function(){
 	scrollCon();
 })
+$(function(){
+	validate_BankCard_Satatus();
+	$('.immediately-binding').on('click',function(){
+        	$.ajax({
+        		dataType : 'json',		      
+		        url : '<%=basePath%>/account/checkBindResult.shtml',
+		        success:function(result){
+		        	if(result.code=="1"){
+		        	  	if(result.data.orgBankcardStatus=="0"){//绑定失败
+		        			bc.bindResultView();
+		        		}else if(result.data.orgBankcardStatus=="1"){//对私或者对公已绑定成功
+		        			account_withdraw();
+		        		}else if(result.data.orgBankcardStatus=="2"){//审核中
+		        			bc.bindResultView();
+		        		}else if(result.data.orgBankcardStatus=="10"){//未关联机构
+		        			bc.bind_card();
+		        		}else if(result.data.orgBankcardStatus=="20"){//无绑定记录
+		        			bc.updateBind();
+		        		}else{
+		        			new top.Tip({msg: "用户绑卡状态错误,请联系管理员", type: 2, timer: 2000});
+		        		}
+		        	}else{
+		        		 new top.Tip({msg: result.msg, type: 2, timer: 2000});
+		        	}
+		        }
+        	});
+        });
+});
 
+function validate_BankCard_Satatus(){
+	$.ajax({
+		dataType:"json",
+		url:"<%=basePath%>/account/checkBindResult.shtml",
+		success: function (result) {
+			if(result.code=="1"){
+        	  	if(result.data.orgBankcardStatus=="0"){//绑定失败
+        			bc.bindResultView();
+        		}else if(result.data.orgBankcardStatus=="10"){//未关联机构
+        			$("#bindcard").show();
+        		}else if(result.data.orgBankcardStatus=="20"){//无绑定记录
+        			$("#bindcard").show();
+        		}
+        	}else{
+        		 new top.Tip({msg: result.msg, type: 2, timer: 2000});
+        	}
+		}
+	});
+}
 //修改
 $('.J_alter').on('click',function(){
  	var _this= $(this),
