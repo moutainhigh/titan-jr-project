@@ -222,13 +222,16 @@
 		                </c:if>
 		                <c:if test="${commonPay.paytype != '11' }">
 		                	<div class="content discount fl">
-			                    <div class="bank-card fl"><span style="display:inline-block;width: 58px;"></span>
+			                    <div class="bank-card fl"><!-- <span style="display:inline-block;width: 58px;"></span> -->
 			                    	<c:if test="${commonPay.paytype =='1'}">
 			                    		<!-- 民生银行的payeracount是企业银行客户号 -->
-								  		<span>${commonPay.subpayeracount }</span><s>|</s><span>企业网银</span></div>
+								  		<%-- <span>${commonPay.subpayeracount }</span><s>|</s><span>企业网银</span></div> --%>
+								  		<c:if test="${not empty commonPay.subpayeracount }">
+								  			<span>${commonPay.subpayeracount }</span><s>|</s>
+								  		</c:if>
+								  		<span>企业网银</span></div>
 									</c:if>
 									<c:if test="${commonPay.paytype =='2'}">
-										<s></s>
 										<c:if test="${commonPay.payeraccounttype =='10'}">
 									  		<span>
 									  		储蓄卡
@@ -739,9 +742,9 @@
         </div>
     </div>
     <!-- 网银支付 -->
-    <input id="accountType_personal_hid" type="hidden" /><!-- 针对个人网银，调转网银之前设值 -->
-    <input id="bankInfo_personal_hid" type="hidden" />
-    <input id="linePayType_personal_hid" type="hidden" />
+    <input id="accountType_wy_hid" type="hidden" /><!-- 针对个人网银，调转网银之前设值 -->
+    <input id="bankInfo_wy_hid" type="hidden" />
+    <input id="linePayType_wy_hid" type="hidden" />
     <!-- 个人网银-->
     <div class="personal personal-bank isShow">
         <ul class="clearfix">
@@ -831,6 +834,9 @@
                     <button>跳转至网银并支付</button>
                 </div>
             </div>
+        </div>
+        <div id="enterprise_warm" style="padding-left: 40px; display: none;">
+        	<p><em style="color: #CD3700;">温馨提示：必须登录有提交权限的企业U盾后才可正常进入工商银行企业网银。</em></p>
         </div>
     </div>
 </div>

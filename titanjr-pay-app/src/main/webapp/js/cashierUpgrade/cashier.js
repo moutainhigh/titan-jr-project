@@ -527,8 +527,8 @@ $(function(){
         var bankName = $(this).addClass("selected").find(".bankName_personal").val();
         var supportType = $(this).addClass("selected").find(".supportType_personal").val();
         
-        $("#bankInfo_personal_hid").val(bankInfo);
-        $("#linePayType_personal_hid").val(linePayType);
+        $("#bankInfo_wy_hid").val(bankInfo);
+        $("#linePayType_wy_hid").val(linePayType);
         $("#bankImg_personal").attr("xlink:href","#icon-" + bankInfo);
         $("#bankName_personal").text(bankName);
         
@@ -573,9 +573,9 @@ $(function(){
     $(".personal-bank-infor button").click(function(){
     	debugger;
     	if($("#cardType_deposit").hasClass("selected")){
-    		$("#accountType_personal_hid").val("10");
+    		$("#accountType_wy_hid").val("10");
     	}else{
-    		$("#accountType_personal_hid").val("11");
+    		$("#accountType_wy_hid").val("11");
     	}
         $(".shortcut").hide();
         showLoading();
@@ -598,15 +598,23 @@ $(function(){
         var linePayType = $(this).addClass("selected").find(".linePayType_enterprise").val();
         var bankName = $(this).addClass("selected").find(".bankName_enterprise").val();
         
-        $("#bankInfo_personal_hid").val(bankInfo);
-        $("#linePayType_personal_hid").val(linePayType);
-        $("#accountType_personal_hid").val("10");
+        $("#bankInfo_wy_hid").val(bankInfo);
+        $("#linePayType_wy_hid").val(linePayType);
+        $("#accountType_wy_hid").val("10");
         $("#bankImg_enterprise").attr("xlink:href","#icon-" + bankInfo);
         $("#bankName_enterprise").text(bankName);
         
         //民生银行显示企业银行客户号输入框
         if(bankInfo == 'cmbc'){
         	$("#enterpriseCustomerNoDev").removeClass("isShow");
+        }else{
+        	$("#enterpriseCustomerNoDev").addClass("isShow");
+        }
+        //工商银行显示温馨提示
+        if(bankInfo == 'icbc'){
+        	$("#enterprise_warm").show();
+        }else{
+        	$("#enterprise_warm").hide();
         }
         
         $(".enterprise-bank").addClass("isShow"); //企业银行列表隐藏
@@ -616,8 +624,9 @@ $(function(){
     
     //企业网银跳转按钮
     $(".enterprise-bank-info button").click(function(){
-    	if($.trim($("#enterpriseCustomerNo").val()).length <= 0){
-    		alert("请输入企业银行客户号");
+    	var bankInfo = $("#bankInfo_wy_hid").val();
+    	if(bankInfo == 'cmbc' && $.trim($("#enterpriseCustomerNo").val()).length <= 0){
+    		new top.Tip({msg: "请输入企业银行客户号", type: 2, timer: 2000});
     		return;
     	}
         $(".shortcut").hide();
@@ -634,7 +643,7 @@ $(function(){
     $(".enterprise .items").on("click",".item",function(){
         $(this).siblings().removeClass("selected").find("i").removeClass("icon-check").addClass("icon-check1");
         $(this).addClass("selected").find("i").removeClass("icon-check1").addClass("icon-check");
-        limitShow($("#bankInfo_personal_hid").val() + "_" + $(this).find("i").attr("id"));
+        limitShow($("#bankInfo_wy_hid").val() + "_" + $(this).find("i").attr("id"));
         
     });
     
@@ -1040,8 +1049,8 @@ function buildCashierData(data){
 		document.getElementById('f_isaccount').value=2;
 		document.getElementById('f_recieveOrgName').value=$("#recieveOrgName").val(),
 		document.getElementById('f_recieveTitanCode').value=$("#recieveTitanCode").val(),
-		document.getElementById('f_bankInfo').value=$("#bankInfo_personal_hid").val();
-		document.getElementById('f_linePayType').value=$("#linePayType_personal_hid").val();
+		document.getElementById('f_bankInfo').value=$("#bankInfo_wy_hid").val();
+		document.getElementById('f_linePayType').value=$("#linePayType_wy_hid").val();
 		document.getElementById('f_paySource').value=cashierData.paySource;
 		document.getElementById('f_deskId').value=cashierData.deskId;
 		document.getElementById('f_userid').value=cashierData.userid;
@@ -1050,7 +1059,7 @@ function buildCashierData(data){
 		document.getElementById('f_tradeAmount').value=cashierData.tradeAmount;
 		document.getElementById('f_fcUserid').value=cashierData.fcUserid;
 		document.getElementById('f_payerAcount').value=$("#enterpriseCustomerNo").val();//民生银行企业网银需要银行客户号
-		document.getElementById('f_payerAccountType').value=$("#accountType_personal_hid").val();//用于保存常用支付方式
+		document.getElementById('f_payerAccountType').value=$("#accountType_wy_hid").val();//用于保存常用支付方式
 		document.getElementById('f_sign').value=cashierData.sign;
 		document.getElementById('onlinePaymentForm').submit();
 	};

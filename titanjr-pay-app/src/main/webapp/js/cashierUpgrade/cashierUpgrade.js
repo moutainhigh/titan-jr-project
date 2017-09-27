@@ -25,8 +25,7 @@ function toResultPage(data){debugger;
 		$("#check_orderNo").val(data.data);
 		$("#payConfirmPage").submit();
 	 }else{
-		  //new top.Tip({msg: data.resultMsg, type: 2, timer: 2000});
-		  alert(data.resultMsg);
+		  new top.Tip({msg: data.resultMsg, type: 3, timer: 2000});
 		  top.F.loading.hide();
    	   	  isShowVeil("#Veil","hide");
 	 }
@@ -161,7 +160,7 @@ function confirmRecharge(){
         	   if(data.success == true){
        				checkOrderPayStatus($("#rsOrderNo").val());
         	   }else{
-        		   alert(data.errMsg);
+        		   new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
         		   top.F.loading.hide();
         		   isShowVeil("#Veil","hide");
         	   }
@@ -177,15 +176,15 @@ function validQuickPayInfo(){
 		var payerPhone = $("#quick_payerPhone_deposit").val();
 		
 		if(payerName.length <= 0){
-			alert("请输入持卡人姓名");
+        	new top.Tip({msg: "请输入持卡人姓名", type: 2, timer: 2000});
 			return false;
 		}
 		if(idCode.length <= 0){
-			alert("请输入证件号码");
+        	new top.Tip({msg: "请输入证件号码", type: 2, timer: 2000});
 			return false;
 		}
 		if(payerPhone.length <= 0){
-			alert("请输入银行预留手机号");
+        	new top.Tip({msg: "请输入银行预留手机号", type: 2, timer: 2000});
 			return false;
 		}
 	}else{
@@ -197,23 +196,23 @@ function validQuickPayInfo(){
 		var safetyCode = $("#quick_safetyCode_credit").val();
 		
 		if(payerName.length <= 0){
-			alert("请输入持卡人姓名");
+			new top.Tip({msg: "请输入持卡人姓名", type: 2, timer: 2000});
 			return false;
 		}
 		if(idCode.length <= 0){
-			alert("请输入证件号码");
+			new top.Tip({msg: "请输入证件号码", type: 2, timer: 2000});
 			return false;
 		}
 		if(validthruMonth == "请选择" || validthruYear == "请选择"){
-			alert("请选择信用卡有效期");
+			new top.Tip({msg: "请选择信用卡有效期", type: 2, timer: 2000});
 			return false;
 		}
 		if(safetyCode.length <= 0){
-			alert("请输入信用卡安全码");
+			new top.Tip({msg: "请输入信用卡安全码", type: 2, timer: 2000});
 			return false;
 		}
 		if(payerPhone.length <= 0){
-			alert("请输入银行预留手机号");
+			new top.Tip({msg: "请输入银行预留手机号", type: 2, timer: 2000});
 			return false;
 		}
 	}
@@ -264,9 +263,9 @@ function sendVierfyCode(_button){debugger;
 		  	        	clearInterval(interval_countDown);
 		  	        	$(_button).text("发送验证码").css("color","#ccc");
 		  	        	if($.trim(data.errMsg).length > 0){
-		  	        		alert(data.errMsg);
+		  	        		new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
 		 	       		}else{
-		 	       			alert(data);
+		 	       			new top.Tip({msg: data, type: 3, timer: 2000});
 		 	       		}
 		  	        }
 		        }
@@ -286,7 +285,7 @@ function sendVierfyCode(_button){debugger;
 		        dataType: "json",
 		        success: function (data) {
 		  	       if(data.success == false){
-		  		       alert("重发验证码失败：" + data.errMsg);
+		  	    	   new top.Tip({msg: "重发验证码失败：" + data.errMsg, type: 3, timer: 2000});
 		  	       }
 		        }
 		    });
@@ -373,11 +372,11 @@ function validate_payeeInfo(){
 		var recieveOrgName = $("#recieveOrgName").val();
 		var recieveTitanCode = $("#recieveTitanCode").val();
 		if($.trim(recieveOrgName).length < 1){
-			alert("收款方账户不能为空");
+			new top.Tip({msg: "收款方账户不能为空", type: 2, timer: 2000});
 			return false;
 		}
 		if($.trim(recieveTitanCode).length < 1){
-			alert("收款方泰坦码不能为空");
+			new top.Tip({msg: "收款方泰坦码不能为空", type: 2, timer: 2000});
 			return false;
 		}
 		
@@ -412,7 +411,7 @@ function check_account_isExit(){
                 	if(data.result=="0"){
                 		check_account = true;
                 	}else{
-                		alert("该账户不存在");
+                		new top.Tip({msg: "该账户不存在", type: 3, timer: 2000});
                 	}
                 }
             });
