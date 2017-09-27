@@ -2437,13 +2437,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			log.info("网关返回参数:"+JSONSerializer.toJSON(qr));
 			boolean sign = this.validateGateSign(qr);
 			if(!sign){
-				log.error("网关返回签名失败");
+				log.error("融数网关获取支付二维码时返回签名失败,参数:" + JSONSerializer.toJSON(params));
 				qrCodeResponse.putErrorResult("签名验证失败");
 				return qrCodeResponse;
 			}
 			
 			if(!StringUtil.isValidString(qr.getRespJs())){
-				log.error("网关返回参数异常"+qr.getRespJs());
+				log.error("网关返回支付二维码参数异常,参数:" + JSONSerializer.toJSON(params)+","+qr.getRespJs());
 				qrCodeResponse.putErrorResult("网关返回参数异常");
 				return qrCodeResponse;
 			}
@@ -2453,8 +2453,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			return qrCodeResponse;
 			
 		} catch (Exception e) {
-			log.error("系统异常",e);
-			qrCodeResponse.putErrorResult("系统异常");
+			log.error("系统繁忙，请稍后再试",e);
+			qrCodeResponse.putErrorResult("系统繁忙，请稍后再试");
 		}
 		return qrCodeResponse;
 	}

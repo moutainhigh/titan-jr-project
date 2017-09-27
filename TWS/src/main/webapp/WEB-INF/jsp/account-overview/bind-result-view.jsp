@@ -65,10 +65,7 @@
 			function closeBind(){
 				bc.close();
 				window.location.reload();
-			
 			}
-		
-		
 		</script>
 </body>
 </html> 
