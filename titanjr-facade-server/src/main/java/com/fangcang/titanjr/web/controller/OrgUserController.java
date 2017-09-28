@@ -2,6 +2,7 @@ package com.fangcang.titanjr.web.controller;
 
 import com.fangcang.titanjr.common.exception.MessageServiceException;
 import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.OrganRegisterResponse;
 import com.fangcang.titanjr.dto.response.UserInfoResponse;
@@ -48,17 +49,17 @@ public class OrgUserController {
 			response = OrgRegisterResponse.class, notes = "机构注册")
 	public OrgRegisterResponse orgRegister(@ApiParam(required = true, name = "registerRequest", value = "机构信息json数据")
 									  @RequestBody OrgRegisterRequest registerRequest, HttpServletRequest request) {
-		log.info("添加机构操作");
+		log.info("添加机构操作,参数registerRequest："+Tools.gsonToString(registerRequest));
 		OrgRegisterResponse registerResponse = new OrgRegisterResponse();
 		if (!GenericValidate.validate(registerRequest)){
 			registerResponse.putParamError();
-			log.error("参数校验失败");
+			log.error("参数校验失败，参数registerRequest："+Tools.gsonToString(registerRequest));
 			return registerResponse;
 		}
 		if (!RegexValidator.isPhone(registerRequest.getConnectPhone()) &&
 				!RegexValidator.isEmail(registerRequest.getEmail())){
 			registerResponse.putParamError();
-			log.error("必须有一个合法的邮箱或手机号");
+			log.error("必须有一个合法的邮箱或手机号，参数registerRequest："+Tools.gsonToString(registerRequest));
 			return registerResponse;
 		}
 
@@ -94,14 +95,14 @@ public class OrgUserController {
 		try {
 			OrganRegisterResponse organRegisterResponse = titanFinancialOrganService.registerFinancialOrgan(organRegisterRequest);
 			if (organRegisterResponse.isResult()){
-				log.info("注册成功");
+				log.info("注册成功，参数registerRequest："+Tools.gsonToString(registerRequest));
 				registerResponse.setCoopOrgCode(registerRequest.getCoopOrgCode());
 				registerResponse.setCoopUserId(registerRequest.getCoopUserId());
 				registerResponse.setJrOrgCode(organRegisterResponse.getOrgCode());
 				registerResponse.setJrUserId(String.valueOf(organRegisterResponse.getTfsUserId()));
 				registerResponse.putSuccess();
 			} else {
-				log.error("注册失败:" + organRegisterResponse.getReturnMessage());
+				log.error("注册失败,返回消息:" + organRegisterResponse.getReturnMessage()+"，参数registerRequest："+Tools.gsonToString(registerRequest));
 				registerResponse.putErrorResult(organRegisterResponse.getReturnCode(),
 						organRegisterResponse.getReturnMessage());
 				if(StringUtil.isValidString(organRegisterResponse.getOrgCode())){
@@ -110,7 +111,7 @@ public class OrgUserController {
 			}
 		} catch (MessageServiceException e) {
 			registerResponse.putErrorResult(e.getCode(), e.getMessage());
-			log.error("注册失败" , e);
+			log.error("注册失败，返回消息:"+e.getMessage()+",参数registerRequest："+Tools.gsonToString(registerRequest), e);
 		} catch (Exception e) {
 			registerResponse.putSysError();
 			log.error("" , e);

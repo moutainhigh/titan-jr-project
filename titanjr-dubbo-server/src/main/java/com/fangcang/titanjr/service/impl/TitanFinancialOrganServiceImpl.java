@@ -493,7 +493,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	userRegisterRequest.setFcLoginUserName(organRegisterRequest.getFcLoginUserName());
     	userRegisterRequest.setLoginUserName(organRegisterRequest.getUserloginname());
     	userRegisterRequest.setMerchantCode(organRegisterRequest.getMerchantCode());
-    	userRegisterRequest.setMobilePhone(organRegisterRequest.getMobileTel());
     	userRegisterRequest.setOrgCode(organRegisterRequest.getOrgCode());
     	userRegisterRequest.setCoopUserId(organRegisterRequest.getCoopUserId());
     	userRegisterRequest.setPassword(organRegisterRequest.getPassword());

@@ -28,7 +28,7 @@
 			</div>
 			<div class="sr_list">
 				<div class="img ico"></div>
-				<div class="tit">机构信息<p><span>未绑定提现卡</span><a href="javascript:void(0)" class="immediately-binding">立即绑卡</a></p></div>
+				<div class="tit">机构信息<p id="bindcard" style="display:none;"><span>未绑定提现卡</span><a href="javascript:void(0)" class="immediately-binding">立即绑卡</a></p></div>
 				<c:if test="${orgSubDTO.userType ==1 }">
 					<!-- 企业信息 -->
 					<div class="srl_c clearfix"><div class="w_120 fl">公司名称：</div> <div class="con">${orgSubDTO.orgName }</div></div>
@@ -68,6 +68,7 @@
 <div class="clearfix dn" id="magnify" style="max-width:1000px;">
 <img src="${big_img_50}"  style="max-width: 1000px; max-height: 600px;display: block;margin: 0 auto;">  
 </div>
+<script type="text/javascript" src="<%=basePath%>/js/bindingBank.js?v=2017090219"></script>
 <script type="text/javascript">
 var isadmin = '${isJrAdmin}';
 
