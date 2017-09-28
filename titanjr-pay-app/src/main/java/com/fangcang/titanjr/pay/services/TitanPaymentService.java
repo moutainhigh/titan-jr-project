@@ -238,6 +238,7 @@ public class TitanPaymentService {
 				UserBindInfoDTO userBindInfoDTO = null;
 				UserBindInfoRequest userBindInfoRequest = new UserBindInfoRequest();
 				userBindInfoRequest.setMerchantcode(titanPaymentRequest.getPartnerOrgCode());
+				userBindInfoRequest.setFcuserid(Long.valueOf(titanPaymentRequest.getFcUserid()));
 				UserBindInfoResponse userBindInfoResponse = titanFinancialUserService.queryUserBindInfoDTO(userBindInfoRequest);
 				if(CollectionUtils.isNotEmpty(userBindInfoResponse.getPaginationSupport().getItemList())){
 					userBindInfoDTO = userBindInfoResponse.getPaginationSupport().getItemList().get(0);

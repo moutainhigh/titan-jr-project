@@ -299,6 +299,12 @@ function sendVierfyCode(_button){debugger;
  */
 function checkQuickCardNo(inputTextK){
 	var cardNo = inputTextK.replace(/[^\d]/g,'');
+	
+	if($.trim(cardNo).length <= 0){
+		$("#checkCardNo_errorMsg").text("请输入银行卡号");
+		$("#checkCardNo_errorMsg").removeClass("isShow");
+		return;
+	}
 	$.ajax({
 		type : "post",
 		url : "../quickPay/checkCardCanQuickPay.action",
