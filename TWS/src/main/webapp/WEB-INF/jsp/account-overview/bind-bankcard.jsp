@@ -270,7 +270,9 @@
     	var reg = /^\d{15}$|^\d{18}$/g;
     	bc.checkSubmit();
     	if(!reg.test(value)){
-    		$(inputDom).parent().find("span").append("<p>非身份证绑卡验证需要人工复核，请联系金融运营人员协助确认</p>");
+    		window.setTimeout(function() {
+    			$(inputDom).parent().find("span").append("<p>非身份证绑卡验证需要人工复核，请联系金融运营人员协助确认</p>");
+    		}, 200);
     		return true;
     	}
     	return true;
