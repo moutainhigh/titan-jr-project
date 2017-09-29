@@ -271,7 +271,7 @@
     	bc.checkSubmit();
     	if(!reg.test(value)){
     		window.setTimeout(function() {
-    			$(inputDom).parent().find("span").append("<p>非身份证绑卡验证需要人工复核，请联系金融运营人员协助确认</p>");
+    			$(inputDom).parent().find("span").append("<p>非身份证验证请联系金融运营人员协助确认</p>");
     		}, 200);
     		return true;
     	}
