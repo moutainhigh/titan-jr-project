@@ -652,6 +652,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					titanWithDrawReq.setStatus(WithDrawStatusEnum.WithDraw_SUCCESSED.getKey());
 					titanTransOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
 				} else {//提现失败
+					log.error("提现到银行卡失败,订单号orderid:"+orderDTO.getOrderid()+"，错误信息："+Tools.gsonToString(accountWithDrawResponse));
 					withDrawResponse.putErrorResult(accountWithDrawResponse.getReturnCode(), accountWithDrawResponse.getReturnMsg());
 					titanTransOrder.setStatusid(OrderStatusEnum.ORDER_FAIL.getStatus());
 					titanWithDrawReq.setStatus(WithDrawStatusEnum.WithDraw_FAILED.getKey());
