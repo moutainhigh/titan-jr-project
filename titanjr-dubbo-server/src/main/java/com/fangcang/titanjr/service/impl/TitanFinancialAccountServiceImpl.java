@@ -21,16 +21,13 @@ import com.alibaba.fastjson.JSON;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.BusinessLog;
-import com.fangcang.titanjr.common.enums.ConditioncodeEnum;
 import com.fangcang.titanjr.common.enums.FreezeConditionCodeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.TransOrderTypeEnum;
-import com.fangcang.titanjr.common.enums.TransfertypeEnum;
 import com.fangcang.titanjr.common.enums.WithDrawStatusEnum;
-import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
@@ -50,7 +47,6 @@ import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.AccountDTO;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
-import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
@@ -62,10 +58,10 @@ import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.AccountUpdateRequest;
 import com.fangcang.titanjr.dto.request.AddPayLogRequest;
 import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
-import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
 import com.fangcang.titanjr.dto.request.FreezeAccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
+import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.dto.request.UnFreeBalanceBatchRequest;
 import com.fangcang.titanjr.dto.request.UnFreezeAccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.UnFreezeRequest;
@@ -81,7 +77,7 @@ import com.fangcang.titanjr.dto.response.BankCardStatusResponse;
 import com.fangcang.titanjr.dto.response.CityInfosResponse;
 import com.fangcang.titanjr.dto.response.DefaultPayerConfigResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
-import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
+import com.fangcang.titanjr.dto.response.TransferResponse;
 import com.fangcang.titanjr.dto.response.UnFreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.UnFreezeResponse;
 import com.fangcang.titanjr.entity.TitanAccount;
@@ -99,12 +95,10 @@ import com.fangcang.titanjr.entity.parameter.TitanOrgParam;
 import com.fangcang.titanjr.rs.dto.BalanceInfo;
 import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.request.AccountBalanceQueryRequest;
-import com.fangcang.titanjr.rs.request.AccountTransferRequest;
 import com.fangcang.titanjr.rs.request.AccountWithDrawRequest;
 import com.fangcang.titanjr.rs.request.BalanceFreezeRequest;
 import com.fangcang.titanjr.rs.request.BalanceUnFreezeRequest;
 import com.fangcang.titanjr.rs.response.AccountBalanceQueryResponse;
-import com.fangcang.titanjr.rs.response.AccountTransferResponse;
 import com.fangcang.titanjr.rs.response.AccountWithDrawResponse;
 import com.fangcang.titanjr.rs.response.BalanceFreezeResponse;
 import com.fangcang.titanjr.rs.response.BalanceUnFreezeResponse;
@@ -112,6 +106,7 @@ import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
+import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.MyBeanUtil;
@@ -159,6 +154,9 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     
     @Resource
     private TitanFinancialUtilService titanFinancialUtilService;
+    
+    @Resource
+    private TitanFinancialTradeService tradeService;
     
     @Resource
     private TitanCityInfoDao titanCityInfoDao;
@@ -573,7 +571,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		try {
 			//查询绑卡记录
 			BankCardStatusResponse bankCardStatusResponse = titanFinancialBankCardService.getBankCardStatus(titanTransOrder.getUserid());
-			
 			TitanBankcard bankcard = bankCardStatusResponse.getBankcard();
 			if(bankcard==null||(!BankCardEnum.BankCardStatusEnum.NORMAL.getKey().equals(bankcard.getStatus().toString()))){
 				withDrawResponse.putErrorResult(bankCardStatusResponse.getOrgBankcardMsg());
@@ -596,32 +593,31 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				withDrawResponse.putErrorResult("保存交易单失败");
 				return withDrawResponse;
 			}
-			
-			
 			//转账
-			AccountTransferRequest accountTransfer = new AccountTransferRequest();
-			accountTransfer.setAmount(NumberUtil.covertToCents(balanceWithDrawRequest.getAmount()));
-			accountTransfer.setConditioncode(ConditioncodeEnum.ADD_OEDER.getKey());//收款方
-			accountTransfer.setIntermerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
-			accountTransfer.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-			accountTransfer.setUserrelateid(bankcard.getUserid());//收款方
+			TransferRequest transferRequest = new TransferRequest();
+	    	transferRequest.setUserid(balanceWithDrawRequest.getUserId());										//转出的用户
+	    	transferRequest.setRequestno(OrderGenerateService.genResquestNo());									//业务订单号
+	    	transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));				//请求时间
+	    	transferRequest.setAmount(NumberUtil.covertToCents(balanceWithDrawRequest.getAmount()));										//金额 必须是分
+	    	transferRequest.setUserfee("0");									
+	    	transferRequest.setUserrelateid(bankcard.getUserid());	                   //接收方用户Id
+	    	transferRequest.setOrderid(orderDTO.getOrderid());
 			
-			accountTransfer.setUserid(balanceWithDrawRequest.getUserId());
-			accountTransfer.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-			accountTransfer.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
-			accountTransfer.setUserfee("0");
-			accountTransfer.setRequestno(OrderGenerateService.genResquestNo());
-			accountTransfer.setRequesttime(DateUtil.sdf4.format(new Date()));
-			accountTransfer.setTransfertype(TransfertypeEnum.BRANCH_TRANSFER.getKey());
-			
-			AccountTransferResponse accountTransferResponse = rsAccTradeManager.accountBalanceTransfer(accountTransfer);
-			if (!CommonConstant.OPERATE_SUCCESS.equals(accountTransferResponse.getOperateStatus())) {
-				log.error("提现时，转账失败。原因："+Tools.gsonToString(accountTransferResponse)+",转账参数AccountTransferRequest："+Tools.gsonToString(accountTransfer));
+	    	TransferResponse transferResponse = tradeService.transferAccounts(transferRequest);
+	    	if(transferResponse != null && !transferResponse.isResult()){
+				log.error("提现时转账失败，订单号orderid:"+orderDTO.getOrderid()+",错误信息:"+Tools.gsonToString(transferResponse));
+				TransOrderDTO transOrderReq = new TransOrderDTO();
+				transOrderReq.setStatusid(OrderStatusEnum.ORDER_FAIL.getStatus());
+				transOrderReq.setTransid(orderDTO.getTransid());
+				boolean updateFlag = titanOrderService.updateTransOrder(transOrderReq);
+				if(!updateFlag){
+					log.error("提现时转账失转账后更新订单失败,订单号orderid:"+orderDTO.getOrderid());
+					titanFinancialUtilService.saveOrderException(orderDTO.getPayorderno(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Balance_Pay_Update_TransOrder_Fail, JSONSerializer.toJSON(orderDTO).toString());
+				}
 				withDrawResponse.putErrorResult(TitanMsgCodeEnum.WITHDRAW_TRANSFER_FAIL);
 				return withDrawResponse;
 			}
 			log.info("提现操作时转账成功,订单号orderid:"+titanTransOrder.getOrderid());
-			
 			//本地化提现信息
 			TitanWithDrawReq titanWithDrawReq = saveTitanWithDraw(balanceWithDrawRequest, titanTransOrder.getTransid());
 			if (null == titanWithDrawReq){
@@ -655,13 +651,12 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					withDrawResponse.setOperateStatus(true);
 					titanWithDrawReq.setStatus(WithDrawStatusEnum.WithDraw_SUCCESSED.getKey());
 					titanTransOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
-				} else {
+				} else {//提现失败
 					withDrawResponse.putErrorResult(accountWithDrawResponse.getReturnCode(), accountWithDrawResponse.getReturnMsg());
 					titanTransOrder.setStatusid(OrderStatusEnum.ORDER_FAIL.getStatus());
 					titanWithDrawReq.setStatus(WithDrawStatusEnum.WithDraw_FAILED.getKey());
 					withDrawResponse.setOperateStatus(false);
 					//TODO 转账成功，提现失败，需要自动修复提现
-					
 				}
 				//更新订单
 				titanTransOrderDao.update(titanTransOrder);
