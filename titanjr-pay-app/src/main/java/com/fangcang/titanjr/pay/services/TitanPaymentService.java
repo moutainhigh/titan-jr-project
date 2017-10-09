@@ -21,6 +21,7 @@ import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.QuickPayBankEnum;
+import com.fangcang.titanjr.common.enums.TitanjrVersionEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
@@ -296,29 +297,37 @@ public class TitanPaymentService {
 		return true;
 	}
 
-	public TransferRequest convertToTransferRequest(TransOrderDTO transOrderDTO) {
+	public TransferRequest convertToTransferRequest(TransOrderDTO transOrderDTO, String rsVersion) {
 		TransferRequest transferRequest = new TransferRequest();
 		transferRequest.setCreator(transOrderDTO.getCreator());
 		transferRequest.setUserid(transOrderDTO.getUserid()); // 转出的用户
 		transferRequest.setRequestno(OrderGenerateService.genResquestNo()); // 业务订单号
 		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date())); // 请求时间
-		if (transOrderDTO.getTradeamount() != null) {// 如果是GDP支付则应该减去手续费
-			String amount = transOrderDTO.getTradeamount().toString();
-			if (StringUtil.isValidString(transOrderDTO.getPayerType())
-					&& transOrderDTO.getReceivedfee() != null) {
-				PayerTypeEnum payerTypeEnum = PayerTypeEnum
-						.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
-				if (payerTypeEnum.isB2BPayment() || payerTypeEnum.isOpenOrg()
-						|| payerTypeEnum.isTTMAlL()) {
-					amount = new BigDecimal(transOrderDTO.getTradeamount())
-							.subtract(
-									new BigDecimal(transOrderDTO
-											.getReceivedfee())).toString();
+		if(TitanjrVersionEnum.VERSION_1.getKey().equals(rsVersion)){
+			if (transOrderDTO.getTradeamount() != null) {// 如果是GDP支付则应该减去手续费
+				String amount = transOrderDTO.getTradeamount().toString();
+				if (StringUtil.isValidString(transOrderDTO.getPayerType())
+						&& transOrderDTO.getReceivedfee() != null) {
+					PayerTypeEnum payerTypeEnum = PayerTypeEnum
+							.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
+					if (!payerTypeEnum.isNeedPayerInfo()) {
+						amount = new BigDecimal(transOrderDTO.getTradeamount())
+								.subtract(
+										new BigDecimal(transOrderDTO
+												.getReceivedfee())).toString();
+					}
 				}
+				transferRequest.setAmount(amount);
 			}
-			transferRequest.setAmount(amount);
+			transferRequest.setUserfee("0");
+		}else{//新版收银台转账金额就是实际充值金额,有手续费就设置手续费
+			Long receivedFee = 0L;
+			if(transOrderDTO.getReceivedfee() != null){
+				receivedFee = transOrderDTO.getReceivedfee();
+			}
+			transferRequest.setAmount(String.valueOf(transOrderDTO.getTradeamount() + receivedFee));
+			transferRequest.setUserfee(String.valueOf(receivedFee));
 		}
-		transferRequest.setUserfee("0");
 		transferRequest.setOrderid(transOrderDTO.getOrderid());
 		transferRequest.setUserrelateid(transOrderDTO.getUserrelateid());
 		transferRequest.setProductId(transOrderDTO.getProductid());

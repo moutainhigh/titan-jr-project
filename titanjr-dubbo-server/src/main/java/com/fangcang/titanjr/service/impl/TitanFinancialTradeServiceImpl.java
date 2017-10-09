@@ -372,7 +372,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							.genSyncUserOrderId());
 				}
 				OrderOperateResponse orderOperateResponse = this
-						.addRSOrder(orderRequest);
+						.addRSOrder(orderRequest, titanPaymentRequest.getJrVersion());
 
 				if (!orderOperateResponse.getOperateStatus().equals(
 						CommonConstant.OPERATE_SUCCESS)) {// 融数下单不成功
@@ -515,7 +515,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	 * @author fangdaikang
 	 */
 
-	private OrderOperateResponse addRSOrder(OrderRequest orderRequest)
+	private OrderOperateResponse addRSOrder(OrderRequest orderRequest, String titanJrVersion)
 			throws Exception {
 		try {
 			OrderOperateRequest req = new OrderOperateRequest();
@@ -536,7 +536,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			req.setAdjusttype(orderRequest.getAdjusttype()); // 调整类型
 			req.setAdjustcontent(orderRequest.getAdjustcontent()); // 调整内容
 			req.setUserrelateid(orderRequest.getUserrelateid()); // 关联用户id（若有第三方则必须填写）
-			req.setUnitprice(orderRequest.getReceivedfee());//设置实收的手续费
+			if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanJrVersion)){
+				req.setUnitprice(orderRequest.getReceivedfee());//设置实收的手续费
+			}else{
+				orderRequest.setReceivedfee("0"); //新版收银台，充值手续费为0，在转账的时候再计算手续费
+			}
 			return rsAccTradeManager.operateOrder(req);
 		} catch (Exception e) {
 			throw new Exception(e);

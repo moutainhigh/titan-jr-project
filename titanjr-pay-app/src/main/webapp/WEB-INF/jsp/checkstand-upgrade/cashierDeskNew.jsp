@@ -16,55 +16,10 @@
         .disabledButton{
         	opacity: 0.3;
         }
-                .City_components{
-            position: relative;
-        }
-        .month-drop-down-frame,.year-drop-down-frame{
-            position: absolute;
-            width: 118px;
-            max-height: 100px;
-            top: 36px;
-            left: 0;
-            z-index: 11;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            overflow-y: auto;
-        }
-        .year-drop-down-frame{
-            left: 10px;
-        }
-        .City_components .drop-down-frame{
-            height: 30px;
-            line-height: 30px;
-            padding-left: 10px;
-            border-bottom: 1px solid #ccc;
-            cursor: pointer;
-        }
-        .City_components .drop-down-frame:hover{
-            background-color: #238AF7;
-        }
-        .City_components .select-items{
-            box-sizing: border-box;
-            display: inline-block;
-            width: 120px;
-            height: 36px;
-            border: 1px solid #ccc;
-            border-radius: 2px;
-            line-height: 36px;
-            padding-left: 10px;
-            margin-right: 10px;
-            margin-left: 10px;
-            cursor: pointer;
-        }
-        .City_components .select-items:hover{
-            border-color: #666;
-        }
-        .payment2account .right .input-text .valid-tip b{
-            margin-left: 20px;
-        }
     </style>
 </head>
 <body>
+<div class="cashier-box">
     <header>
         <div class="h">
             <b></b>
@@ -132,6 +87,7 @@
             	<c:if test="${cashDeskData.canAccountBalance eq true }">
             		<!-- 无余额支付权限或者余额小于支付金额，设置不可选 -->
 	            	<li class="payment-mode-prohibit clearfix" <c:if test="${cashDeskData.canAccountBalance ne true or cashDeskData.balanceusable < cashDeskData.amount }">data-choice="false"</c:if> >
+		                <input class="index" type="hidden" value="1"/>
 		                <div class="icon fl">
 		                    <b class="iconfont icon-check1"></b>
 		                    <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
@@ -144,14 +100,18 @@
 		                   	 账户余额：<span><fmt:formatNumber value="${cashDeskData.balanceusable }"  pattern="#,##0.00#" />元</span>
 		                </div>
 		                <div class="right-money isShow">
-		                    <span class="money"><s>￥</s><span id="amount_balance">${cashDeskData.amount }</span></span>
+		                	<!-- 财务付款给供应商才显示手续费 -->
+							<c:if test="${cashDeskData.paySource =='2' }">
+								<span>手续费 ￥<span id="commPayRateAmount_balance_1">0.00</span></span>
+							</c:if>
+		                    <span class="money"><s>￥</s><span id="amount_balance_1">${cashDeskData.amount }</span></span>
 		                </div>
 		            </li>
             	</c:if>
             </c:if>
             <!-- 微信和支付宝支付默认显示 -->
             <li class="clearfix selected">
-            	<input class="index" type="hidden" value="1"/>
+            	<input class="index" type="hidden" value="2"/>
                 <div class="icon fl">
                     <b class="iconfont icon-check icon-check-color"></b>
                     <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
@@ -164,14 +124,13 @@
                 <div class="right-money">
                     <!-- 财务付款给供应商才显示手续费 -->
 					<c:if test="${cashDeskData.paySource =='2' }">
-						<span>手续费 ￥<span id="commPayRateAmount_wx_1">0.00</span></span>
+						<span>手续费 ￥<span id="commPayRateAmount_wx_2">0.00</span></span>
 					</c:if>
-					<!-- 这里需要考虑手续费 -->
-					<span class="money"><s>￥</s><span id="amount_wx_1">${cashDeskData.amount }</span></span>
+					<span class="money"><s>￥</s><span id="amount_wx_2">${cashDeskData.amount }</span></span>
                 </div>
             </li>
          	<li class="clearfix">
-         		<input class="index" type="hidden" value="2"/>
+         		<input class="index" type="hidden" value="3"/>
                 <div class="icon fl">
                     <b class="iconfont icon-check1"></b>
                     <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
@@ -184,17 +143,16 @@
                 <div class="right-money isShow">
                     <!-- 财务付款给供应商才显示手续费 -->
 					<c:if test="${cashDeskData.paySource =='2' }">
-						<span>手续费 ￥<span id="commPayRateAmount_alipay_2">0.00</span></span>
+						<span>手续费 ￥<span id="commPayRateAmount_alipay_3">0.00</span></span>
 					</c:if>
-					<!-- 这里需要考虑手续费 -->
-					<span class="money"><s>￥</s><span id="amount_alipay_2">${cashDeskData.amount }</span></span>
+					<span class="money"><s>￥</s><span id="amount_alipay_3">${cashDeskData.amount }</span></span>
                 </div>
             </li>
             <!-- 常用支付方式历史 -->
             <c:if test="${not empty cashDeskData.commonPayHistoryList }">
             	 <c:forEach items="${cashDeskData.commonPayHistoryList }" var="commonPay" varStatus="status">
 	            	<li class="<c:if test='${status.index > 0}'>isShow </c:if>clearfix">
-	            		<input class="index" type="hidden" value="${status.index + 3 }"/>
+	            		<input class="index" type="hidden" value="${status.index + 4 }"/>
 		                <div class="icon fl">
 		                    <b class="iconfont icon-check1"></b>
 		                    <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
@@ -252,10 +210,9 @@
 		                <div class="right-money isShow">
 		                    <!-- 财务付款给供应商才显示手续费 -->
 							<c:if test="${cashDeskData.paySource =='2' }">
-								<span>手续费 ￥<span id="commPayRateAmount_${commonPay.paytype }_${status.index + 3}">0.00</span></span>
+								<span>手续费 ￥<span id="commPayRateAmount_${commonPay.paytype }_${status.index + 4}">0.00</span></span>
 							</c:if>
-							<!-- 这里需要考虑手续费 -->
-							<span class="money"><s>￥</s><span id="amount_${commonPay.paytype }_${status.index + 3}">${cashDeskData.amount }</span></span>
+							<span class="money"><s>￥</s><span id="amount_${commonPay.paytype }_${status.index + 4}">${cashDeskData.amount }</span></span>
 		                </div>
 		            </li>
 	            </c:forEach>
@@ -439,11 +396,11 @@
                                 </div>
                                 <div class="type_adress fl" id="city_4">
                                     <div class="City_components m_r10 prov">
-                                        <select name="">
-                                            <option value="1">身份证</option>
-                                            <!-- <option value="">护照</option>
-                                            <option value="">港澳通行证</option> -->
-                                        </select>
+                                        <div class="certificates-type">身份证</div>
+                                        <div class="certificates-type-items isShow">
+                                            <div class="certificates-type-item">身份证</div>
+                                            <div class="certificates-type-item">护照</div>
+                                        </div>
                                         <i class="iconfont icon-downArrow"></i>
                                     </div>
                                 </div>
@@ -484,7 +441,7 @@
                                 <div class="type_name fl"></div>
                                 <div class="type_agree fl">
                                     <label class="la_agree">
-                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i> &nbsp;<span>同意</span><a href="支付协议.html" target="_blank">《支付服务协议》</a>
+                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i><span>同意</span><a href="支付协议.html" target="_blank">《支付服务协议》</a>
                                     </label>
                                 </div>
                             </li>
@@ -592,11 +549,11 @@
                                 </div>
                                 <div class="type_adress fl" id="city_4">
                                     <div class="City_components m_r10 prov">
-                                        <select name="">
-                                            <option value="1">身份证</option>
-                                            <!-- <option value="">护照</option>
-                                            <option value="">港澳通行证</option> -->
-                                        </select>
+                                        <div class="certificates-type">身份证</div>
+                                        <div class="certificates-type-items isShow">
+                                            <div class="certificates-type-item">身份证</div>
+                                            <div class="certificates-type-item">护照</div>
+                                        </div>
                                         <i class="iconfont icon-downArrow"></i>
                                     </div>
                                 </div>
@@ -701,7 +658,7 @@
                                 <div class="type_name fl"></div>
                                 <div class="type_agree fl">
                                     <label class="la_agree">
-                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i> &nbsp;<span>同意</span><a href="支付协议.html" target="_blank">《支付服务协议》</a>
+                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i><span>同意</span><a href="支付协议.html" target="_blank">《支付服务协议》</a>
                                     </label>
                                 </div>
                             </li>
@@ -973,14 +930,23 @@
   <input name="orderNo" id="check_orderNo" type="hidden">
   <input name="expand" id="check_expand" type="hidden">
 </form>
-
+</div>
 </body>
 <%@include file="/comm/upgrade/upgrade-js.jsp"%>
 <script>
-	//下拉框
+	// 可视区域判断
+	if($(".cashier-box").height() >= $(window).height()){
+	    $("footer").css("position","static");
+	}
+	
+	//信用卡有效期下拉框
 	$(".select-items").on("click",function(){
-	    $(".select-items").next().addClass("isShow");
-	    $(this).next().removeClass("isShow");
+	    if($(this).next().hasClass("isShow")){
+	        $(".select-items").next().addClass("isShow");
+	        $(this).next().removeClass("isShow");
+	    }else{
+	        $(this).next().addClass("isShow");
+	    }
 	});
 	$(".shortcut").on("clcik",function(){
 	    $(".select-items").next().addClass("isShow");
@@ -995,6 +961,21 @@
 	    $(this).parent().prev().text(text);
 	    $(this).parent().addClass("isShow");
 	});
+	
+	// 证件类型下拉框
+    $(".bank-account-info .certificates-type").on("click",function(){
+       if($(this).next().hasClass("isShow")){
+           $(this).next().removeClass("isShow");
+       }else{
+           $(this).next().addClass("isShow");
+       }
+    });
+    $(".bank-account-info .certificates-type-items").on("click",".certificates-type-item",function(){
+        $(".bank-account-info .certificates-type").trigger("click");
+        var text = $(this).text();
+        $(".bank-account-info .certificates-type").text(text);
+    });
+	
 	// 进度条
 	function showLoading(){
 		F.loading_line.show() //显示loading
@@ -1067,7 +1048,7 @@
     //费率显示
     function setRate(){
     	if('${cashDeskData.paySource }' == '2'){//目前财务付款才有手续费，第一次进来默认选中微信支付
-    		rateCompute('wx', 'commpay', 1);
+    		rateCompute('wx', 'commpay', 2);
     	}
     }
     

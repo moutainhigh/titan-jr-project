@@ -35,10 +35,11 @@ public class JRAccountReceiveRequest {
 	@NotNull
     private Long tradeAmount;
 	
-	@ApiModelProperty(value = "操作方式 --- 1直接收款  2收款并冻结  3拒单并原路退回",required = true)
+	@ApiModelProperty(value = "操作方式：1直接收款  2收款并冻结  3拒单并解冻",required = true)
     private int operateType;
 
-	@ApiModelProperty(value = "是否需要原路退回，默认不需要")
+	@ApiModelProperty(value = "是否需要原路退回：0否  1是 （默认不需要）")
+	@NotNull
 	private Integer isBackTrack = 0;
 	
 	@ApiModelProperty(value = "操作人")

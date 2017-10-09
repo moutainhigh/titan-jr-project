@@ -236,7 +236,7 @@ public class TitanPaymentController extends BaseController {
         	}else{//不是充值操作，就需要转帐
         		
         		TransferResponse transferResponse = null;
-    			TransferRequest transferRequest = titanPaymentService.convertToTransferRequest(transOrderDTO);
+    			TransferRequest transferRequest = titanPaymentService.convertToTransferRequest(transOrderDTO, rechargeResultConfirmRequest.getVersion());
         		//如果冻结方案不是3才需要转账
         		if(!FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrderDTO.getFreezeType())){
         			

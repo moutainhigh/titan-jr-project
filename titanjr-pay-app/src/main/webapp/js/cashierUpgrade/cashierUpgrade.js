@@ -572,7 +572,11 @@ function set_payPassword(){
 }
 
 /**
- * 费率计算  payType:支付方式	  type{'commpay': 常用支付点选; 'addpay': 添加支付}   index:特殊标记
+ * 费率计算<br/>	  
+ * payType：支付方式<br/>	  
+ * type：{'commpay': 常用支付点选; 'addpay': 添加支付}<br/>	   
+ * index:如果是常用支付方式点选表示li元素的下标；<br/>	
+ * 		 如果是新添加支付则表示特殊标记（个人网银[personal]，企业网银[enterprise]，快捷支付分为储蓄卡和信用卡[deposit,credit]）
  */
 function rateCompute(payType, type, index){
 	
@@ -580,12 +584,15 @@ function rateCompute(payType, type, index){
 	var userId = cashierData.userid;
 	var amount = cashierData.tradeAmount;
 	
-	if(paySource == '2' && payType != 'balance'){//paySource=2 表示财务付款
+	if(paySource == '2'){//paySource=2 表示财务付款
 		
 		var relPayType = payType;
 		
 		if(payType == 'wx' || payType == 'alipay'){
 			relPayType = 9;
+		}
+		if(payType == 'balance'){
+			relPayType = 4;
 		}
 		
 		$.ajax({

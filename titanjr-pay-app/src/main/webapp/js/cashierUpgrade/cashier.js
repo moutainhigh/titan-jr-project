@@ -402,8 +402,8 @@ $(function(){
     });
     // 添加支付 tab切换
     $(".shortcut>.title>ul").on("click","li",function(){
-        $(this).siblings().removeClass("title-color");
-        $(this).addClass("title-color");
+    	$(this).siblings().removeClass("title-color c_319");
+        $(this).addClass("title-color c_319");
         var mode = $(this).attr("data-mode");
         sessionStorage.setItem("mode", mode);
         tab();
@@ -517,6 +517,15 @@ $(function(){
        $(this).prev().find("input").val("");
         $(this).addClass("isShow");
     });
+    
+    /*// 快捷支付储蓄卡 确认支付
+    $(".savings .register_btn").on("click",function(){
+        $(this).text("正在支付...").css("opacity","0.4");
+    });
+    // 快捷支付信用卡 确认支付
+    $(".credit .register_btn").on("click",function(){
+        $(this).text("正在支付...").css("opacity","0.4");
+    });*/ 
 
     // 个人网银选中
     $(".personal-bank>ul").on("click","li",function(){
