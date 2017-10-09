@@ -399,7 +399,7 @@
                                         <div class="certificates-type">身份证</div>
                                         <div class="certificates-type-items isShow">
                                             <div class="certificates-type-item">身份证</div>
-                                            <div class="certificates-type-item">护照</div>
+                                            <!-- <div class="certificates-type-item">护照</div> -->
                                         </div>
                                         <i class="iconfont icon-downArrow"></i>
                                     </div>
@@ -552,7 +552,7 @@
                                         <div class="certificates-type">身份证</div>
                                         <div class="certificates-type-items isShow">
                                             <div class="certificates-type-item">身份证</div>
-                                            <div class="certificates-type-item">护照</div>
+                                            <!-- <div class="certificates-type-item">护照</div> -->
                                         </div>
                                         <i class="iconfont icon-downArrow"></i>
                                     </div>
@@ -811,7 +811,7 @@
             <div id="enterpriseCustomerNoDev" class="enterprise-form clearfix isShow" style="margin-bottom: 20px">
                 <div class="left fl" style="line-height: 38px">企业银行客户号</div>
                 <div class="right fl">
-                    <input id="enterpriseCustomerNo" type="text" placeholder="请输入企业银行客户号"/>
+                    <input id="enterpriseCustomerNo" type="text"/>
                     <s class="iconfont icon-sc enterprise-empty-btn isShow"></s>
                 </div>
             </div>
@@ -831,8 +831,8 @@
 <div class="wx-payment wx isShow">
     <div class="wx-payment-title">微信支付<i class="iconfont icon-sc close"></i></div>
     <div class="wx-payment-content">
-        <p><span>￥</span><span id="wx_pay_amount"></span></p>
-        <img id="wx_qrcode" src="" alt="微信扫描二维码支付"/>
+        <p><span>￥</span><b id="wx_pay_amount"></b></p>
+        <img height="250px;" width="240px;" id="wx_qrcode" src="" alt="微信扫描二维码支付"/>
         <div class="icon">
             <div class="left fl">
                 <i class="iconfont icon-wx"></i>
