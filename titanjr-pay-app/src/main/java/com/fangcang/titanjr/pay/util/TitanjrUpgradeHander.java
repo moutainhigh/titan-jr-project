@@ -79,9 +79,9 @@ public class TitanjrUpgradeHander {
 			}
 		}
 
-		if (pe.isOpenOrg()
-				&& new BigDecimal(dto.getAmount()).compareTo(BigDecimal.ZERO) < 1) {
-			log.error("Amount not regular ");
+		if (new BigDecimal(dto.getAmount()).compareTo(BigDecimal.ZERO) <= 0 
+				|| new BigDecimal(dto.getAmount()).compareTo(new BigDecimal(9999999)) > 0) {
+			log.error("传入金额小等于0 或者超过7位数");
 			return false;
 		}
 

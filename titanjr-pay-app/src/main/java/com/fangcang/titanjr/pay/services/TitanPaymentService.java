@@ -303,13 +303,12 @@ public class TitanPaymentService {
 		transferRequest.setUserid(transOrderDTO.getUserid()); // 转出的用户
 		transferRequest.setRequestno(OrderGenerateService.genResquestNo()); // 业务订单号
 		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date())); // 请求时间
+		PayerTypeEnum payerTypeEnum = PayerTypeEnum
+				.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
 		if(TitanjrVersionEnum.VERSION_1.getKey().equals(rsVersion)){
 			if (transOrderDTO.getTradeamount() != null) {// 如果是GDP支付则应该减去手续费
 				String amount = transOrderDTO.getTradeamount().toString();
-				if (StringUtil.isValidString(transOrderDTO.getPayerType())
-						&& transOrderDTO.getReceivedfee() != null) {
-					PayerTypeEnum payerTypeEnum = PayerTypeEnum
-							.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
+				if (payerTypeEnum != null && transOrderDTO.getReceivedfee() != null) {
 					if (!payerTypeEnum.isNeedPayerInfo()) {
 						amount = new BigDecimal(transOrderDTO.getTradeamount())
 								.subtract(
@@ -320,12 +319,16 @@ public class TitanPaymentService {
 				transferRequest.setAmount(amount);
 			}
 			transferRequest.setUserfee("0");
-		}else{//新版收银台转账金额就是实际充值金额,有手续费就设置手续费
+		}else{//新版收银台有手续费就设置手续费
 			Long receivedFee = 0L;
 			if(transOrderDTO.getReceivedfee() != null){
 				receivedFee = transOrderDTO.getReceivedfee();
 			}
-			transferRequest.setAmount(String.valueOf(transOrderDTO.getTradeamount() + receivedFee));
+			if (payerTypeEnum.isNeedPayerInfo()) {//付款方出手续费，转账金额等于交易金额加上手续费
+				transferRequest.setAmount(String.valueOf(transOrderDTO.getTradeamount() + receivedFee));
+			}else{//收款方出手续费，直接从交易金额中扣取手续费
+				transferRequest.setAmount(String.valueOf(transOrderDTO.getTradeamount()));
+			}
 			transferRequest.setUserfee(String.valueOf(receivedFee));
 		}
 		transferRequest.setOrderid(transOrderDTO.getOrderid());

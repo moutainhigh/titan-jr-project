@@ -373,6 +373,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 				OrderOperateResponse orderOperateResponse = this
 						.addRSOrder(orderRequest, titanPaymentRequest.getJrVersion());
+				//到融数下单的时候将手续费设成了0，下完单后手续费需要设置回来，方便后面更新订单的时候保存手续费的值
+				orderRequest.setReceivedfee(titanPaymentRequest.getReceivedfee());
 
 				if (!orderOperateResponse.getOperateStatus().equals(
 						CommonConstant.OPERATE_SUCCESS)) {// 融数下单不成功
