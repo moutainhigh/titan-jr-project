@@ -395,9 +395,9 @@ $(function(){
     // 添加支付--关闭
     $(".shortcut>.title>.close").on("click",function(){
         isShowVeil("#Veil","hide");
-        $(".bank-account-info .bank-number").text("");
+        /*$(".bank-account-info .bank-number").text("");
         $("#checkCardNo_errorMsg").text("");
-		$("#checkCardNo_errorMsg").addClass("isShow");
+		$("#checkCardNo_errorMsg").addClass("isShow");*/
         $(".shortcut").hide();
     });
     // 添加支付 tab切换
