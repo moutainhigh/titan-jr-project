@@ -27,8 +27,8 @@ public class DemoAPI {
 	
 	//融数UAT 环境
 		private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
-		private static String appKey = "93A6626A-C082-4D25-B496-EA9CC6E90EDB";
-		private static String appSecret = "DC368712-18A4-4290-9A58-FF995DC161DC";
+		private static String appKey = "762DF53A-4DFD-427A-88F8-C4EEF26195A3";
+		private static String appSecret = "6461B23C-3ABE-4BE2-8E2C-D3FF4B2F5415";
 		private static String session = "1478056836773639888";
 		
 		
@@ -78,10 +78,10 @@ public class DemoAPI {
 		//检查提现卡信息：存在返回false，不存在返回ture  modityWithDrawCard
 //		String requestType = "ruixue.wheatfield.accountnum.ckeck";
 		//单笔转账操作
-//		String requestType = "ruixue.wheatfield.order.transfer";
+		String requestType = "ruixue.wheatfield.order.transfer";
 
 		//查询信贷账户余额 TJM10000087
-		String requestType = "ruixue.wheatfield.ordern.query";
+		//String requestType = "ruixue.wheatfield.ordern.query";
 
 		if ("ruixue.wheatfield.enterprise.entityaccountopt".equals(requestType)) {
 			//企业账户开户
@@ -1283,16 +1283,16 @@ public class DemoAPI {
 			WheatfieldOrderTransferRequest req = new WheatfieldOrderTransferRequest();
 			req.setTransfertype("3");								//1:子账户转账				
 			req.setConditioncode("1");								//1:落单
-			req.setMerchantcode("M000016");							//转入方机构号
-			req.setProductid("P000070");							//转入方产品号
-			req.setUserid("");										//转出的用户
-			req.setRequestno("");									//业务订单号
-			req.setRequesttime("2016-12-12 22:22:22");				//请求时间
-			req.setAmount("100");										//金额
-			req.setUserfee("0");									
-			req.setIntermerchantcode("M000016");					//转出方机构号
-			req.setInterproductid("P000070");						//转出方产品号
-			req.setUserrelateid("141223100000056");								//平台企业账户或普通用户  平台账户“141223100000056”
+			req.setMerchantcode("M000016");							//转出方机构号
+			req.setProductid("P000070");							//转出方产品号
+			req.setUserid("TJM60020018");										//转出的用户
+			req.setRequestno("tjr20171011172131");									//业务订单号
+			req.setRequesttime("2017-10-11 17:22:22");				//请求时间
+			req.setAmount("3");										//金额
+			req.setUserfee("1");									
+			req.setIntermerchantcode("M000016");					//接收方机构号
+			req.setInterproductid("P000070");						//接收方产品号
+			req.setUserrelateid("TJM60020016");								//平台企业账户或普通用户  平台账户“141223100000056”
 			WheatfieldOrderTransferResponse rsp = ropClient.execute(req,session);
 			if (rsp != null) {
 				System.out.println("返回报文: \n" + rsp.getBody());
