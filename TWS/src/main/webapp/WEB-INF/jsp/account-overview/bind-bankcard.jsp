@@ -4,6 +4,11 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <style type="text/css">
+    	#J_form_enterprise .content .right .f_ui-valid-item{
+    		margin-right:-5px;
+    	}
+    </style>
 </head>
 <body>
 		<!-- 新增绑卡 -->
