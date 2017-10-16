@@ -24,7 +24,7 @@
 			     ${msg}
 			  </c:when>
 			  <c:otherwise>
-			      系统错误
+			      系统繁忙
 			  </c:otherwise>
 			</c:choose>
 			 
@@ -36,7 +36,12 @@
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
 	<script>
 	$('.J_exitKan').on('click',function(){
-		window.close();
+		if(top!=self){
+			top.removeIframeDialog();
+		}else{
+			window.close();
+		}
+		
 	});
 		
 	</script>
