@@ -830,38 +830,6 @@ public class FinancialAccountController extends BaseController {
     	}
 	}
     
-    private CusBankCardBindResponse bindBindCardToPublic(BindBankCardRequest bindBankCardRequest){
-    	 CusBankCardBindRequest  bankCardBindRequest = new CusBankCardBindRequest();
-         bankCardBindRequest.setUserId(this.getUserId());
-         bankCardBindRequest.setProductId(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_PRODUCT_ID);
-         bankCardBindRequest.setConstId(com.fangcang.titanjr.common.util.CommonConstant.RS_FANGCANG_CONST_ID);
-         bankCardBindRequest.setUserType(String.valueOf(this.getTitanOrganDTO().getUserType()));
-         bankCardBindRequest.setAccountTypeId("00");
-         bankCardBindRequest.setBankHeadName(bindBankCardRequest.getBankName());
-         bankCardBindRequest.setCurrency("CNY");
-         bankCardBindRequest.setReqSn(String.valueOf(System.currentTimeMillis()));
-         bankCardBindRequest.setSubmitTime(DateUtil.dateToString(new Date(),"yyyyMMddHHmmss"));
-         bankCardBindRequest.setAccountProperty(WebConstant.ACCOUNT_PUBLIC);
-         //暂时改为私人账户
-//         bankCardBindRequest.setAccountProperty(CommonConstant.ACCOUNT_PERSON);
-         bankCardBindRequest.setAccountPurpose(BankCardEnum.BankCardPurposeEnum.WITHDRAW_CARD.getKey());
-         bankCardBindRequest.setCertificateType(String.valueOf(0));
-         //查询企业营业执照号
-         bankCardBindRequest.setCertificateNumber(this.getTitanOrganDTO().getBuslince());
-         
-         bankCardBindRequest.setAccountNumber(bindBankCardRequest.getAccountNumber());
-         bankCardBindRequest.setAccountName(bindBankCardRequest.getUserName());
-         bankCardBindRequest.setBankCode(bindBankCardRequest.getBankCode());
-         
-         //以下是哪个说必填但是可选
-         bankCardBindRequest.setBankBranch("");
-         bankCardBindRequest.setBankCity("");
-         bankCardBindRequest.setBankProvince("");
-         
-         return titanFinancialBankCardService.bankCardBind(bankCardBindRequest);
-        
-    }
-    
 
     @ResponseBody
     @RequestMapping("setPayPassword")
