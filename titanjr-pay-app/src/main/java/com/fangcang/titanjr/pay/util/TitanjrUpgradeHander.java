@@ -79,7 +79,7 @@ public class TitanjrUpgradeHander {
 			}
 		}
 
-		if (new BigDecimal(dto.getAmount()).compareTo(BigDecimal.ZERO) <= 0 
+		if (!pe.isRWL() && new BigDecimal(dto.getAmount()).compareTo(BigDecimal.ZERO) <= 0 
 				|| new BigDecimal(dto.getAmount()).compareTo(new BigDecimal(9999999)) > 0) {
 			log.error("传入金额小等于0 或者超过7位数");
 			return false;
