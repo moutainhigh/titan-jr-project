@@ -126,8 +126,7 @@
 	});
 	//个人开户行
 	personalBankAutoComplete = new AutoComplete($('#J_form_personal .bankCode'), {
-	    url : '<%=basePath%>/account/getBankInfoList.shtml?bankType=1',
-	    source : 'bankInfoDTOList',
+	    data : personBankData.content,
 	    key : 'bankCode',  //数据源中，做为key的字段
 	    val : 'bankName', //数据源中，做为val的字段
 	    width : 240,

@@ -608,31 +608,36 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				withDrawResponse.putErrorResult("保存交易单失败");
 				return withDrawResponse;
 			}
-			//转账
-			TransferRequest transferRequest = new TransferRequest();
-	    	transferRequest.setUserid(vUserId);										//转出的用户
-	    	transferRequest.setRequestno(OrderGenerateService.genResquestNo());		//业务订单号
-	    	transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));		//请求时间
-	    	transferRequest.setAmount(NumberUtil.covertToCents(balanceWithDrawRequest.getAmount()));										//金额 必须是分
-	    	transferRequest.setUserfee("0");									
-	    	transferRequest.setUserrelateid(bankcard.getUserid());	                   //接收方用户Id
-	    	transferRequest.setOrderid(titanTransOrder.getOrderid());//
-			
-	    	TransferResponse transferResponse = tradeService.transferAccounts(transferRequest);
-	    	if(transferResponse != null && !transferResponse.isResult()){//转账失败
-				log.error("提现时转账失败，订单号orderid:"+titanTransOrder.getOrderid()+",错误信息:"+Tools.gsonToString(transferResponse));
-				TransOrderDTO transOrderReq = new TransOrderDTO();
-				transOrderReq.setStatusid(OrderStatusEnum.ORDER_FAIL.getStatus());
-				transOrderReq.setTransid(orderDTO.getTransid());
-				boolean updateFlag = titanOrderService.updateTransOrder(transOrderReq);
-				if(!updateFlag){
-					log.error("提现时转账失转账后更新订单失败,订单号orderid:"+titanTransOrder.getOrderid());
-					titanFinancialUtilService.saveOrderException(orderDTO.getPayorderno(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Balance_Pay_Update_TransOrder_Fail, JSONSerializer.toJSON(orderDTO).toString());
+			if(!vUserId.equals(bankcard.getUserid())){
+				//转账
+				TransferRequest transferRequest = new TransferRequest();
+		    	transferRequest.setUserid(vUserId);										//转出的用户
+		    	transferRequest.setRequestno(OrderGenerateService.genResquestNo());		//业务订单号
+		    	transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));		//请求时间
+		    	transferRequest.setAmount(NumberUtil.covertToCents(balanceWithDrawRequest.getAmount()));										//金额 必须是分
+		    	transferRequest.setUserfee("0");									
+		    	transferRequest.setUserrelateid(bankcard.getUserid());	                   //接收方用户Id
+		    	transferRequest.setOrderid(titanTransOrder.getOrderid());//
+				
+		    	TransferResponse transferResponse = tradeService.transferAccounts(transferRequest);
+		    	if(transferResponse != null && !transferResponse.isResult()){//转账失败
+					log.error("提现时转账失败，订单号orderid:"+titanTransOrder.getOrderid()+",错误信息:"+Tools.gsonToString(transferResponse));
+					TransOrderDTO transOrderReq = new TransOrderDTO();
+					transOrderReq.setStatusid(OrderStatusEnum.ORDER_FAIL.getStatus());
+					transOrderReq.setTransid(orderDTO.getTransid());
+					boolean updateFlag = titanOrderService.updateTransOrder(transOrderReq);
+					if(!updateFlag){
+						log.error("提现时转账失转账后更新订单失败,订单号orderid:"+titanTransOrder.getOrderid());
+						titanFinancialUtilService.saveOrderException(orderDTO.getPayorderno(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Balance_Pay_Update_TransOrder_Fail, JSONSerializer.toJSON(orderDTO).toString());
+					}
+					withDrawResponse.putErrorResult(TitanMsgCodeEnum.WITHDRAW_TRANSFER_FAIL);
+					return withDrawResponse;
 				}
-				withDrawResponse.putErrorResult(TitanMsgCodeEnum.WITHDRAW_TRANSFER_FAIL);
-				return withDrawResponse;
+				log.info("提现操作时转账成功,订单号orderid:"+titanTransOrder.getOrderid());
+			}else{
+				log.info("提现操作时，真实机构和虚拟机构orgcode相同，不需要转账，直接提现。orgcode:"+vUserId);
 			}
-			log.info("提现操作时转账成功,订单号orderid:"+titanTransOrder.getOrderid());
+			
 			//本地化提现信息
 			TitanWithDrawReq titanWithDrawReq = saveTitanWithDraw(balanceWithDrawRequest, titanTransOrder.getTransid());
 			if (null == titanWithDrawReq){

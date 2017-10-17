@@ -4,6 +4,11 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <style type="text/css">
+    	#J_form_update .content .right .f_ui-valid-item{
+    		margin-right:-5px;
+    	}
+    </style>
 </head>
 <body>
 		<!-- 绑卡 修改 -->
@@ -64,23 +69,43 @@
 		var branchBankAutoComplete = null;
 		var usertype='${orgSub.usertype}'; 
 	//开户银行
-	bankAutoComplete = new AutoComplete($('.bankCode'), {
-	    url : '<%=basePath%>/account/getBankInfoList.shtml?bankType=1',
-	    source : 'bankInfoDTOList',
-	    key : 'bankCode',  //数据源中，做为key的字段
-	    val : 'bankName', //数据源中，做为val的字段
-	    width : 240,
-	    height : 300,
-	    autoSelectVal : true,
-	    clickEvent : function(d, input){
-	        input.attr('data-id', d.key);
-	        $(".bankName").val(d.val);
-	       	bc.isDisabled(".platform-binding-bank-modal");
-	       	if($('.city_code').length>0){
-	       		showCityCode();
-	       	}
-	    }
-	});
+	if(usertype==1){//企业
+		bankAutoComplete = new AutoComplete($('.bankCode'), {
+		    url : '<%=basePath%>/account/getBankInfoList.shtml?bankType=1',
+		    source : 'bankInfoDTOList',
+		    key : 'bankCode',  //数据源中，做为key的字段
+		    val : 'bankName', //数据源中，做为val的字段
+		    width : 240,
+		    height : 300,
+		    autoSelectVal : true,
+		    clickEvent : function(d, input){
+		        input.attr('data-id', d.key);
+		        $(".bankName").val(d.val);
+		       	bc.isDisabled(".platform-binding-bank-modal");
+		       	if($('.city_code').length>0){
+		       		showCityCode();
+		       	}
+		    }
+		});
+	}else{//个人
+		bankAutoComplete = new AutoComplete($('.bankCode'), {
+		    data : personBankData.content,
+		    key : 'bankCode',  //数据源中，做为key的字段
+		    val : 'bankName', //数据源中，做为val的字段
+		    width : 240,
+		    height : 300,
+		    autoSelectVal : true,
+		    clickEvent : function(d, input){
+		        input.attr('data-id', d.key);
+		        $(".bankName").val(d.val);
+		       	bc.isDisabled(".platform-binding-bank-modal");
+		       	if($('.city_code').length>0){
+		       		showCityCode();
+		       	}
+		    }
+		});
+	}
+	
 	
 	if($('.city_code').length>0){//企业
 		initCityAutoComplete();

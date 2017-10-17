@@ -220,30 +220,10 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
         $(".TFS_withdrawBoxL_else").show();
         $("#useNewBankCard").val("0");
     });
-   
-    //默认个人提现支持的银行
-    var data={
-    		content:[
-    		         {'key':'102','val':'中国工商银行'},
-    		         {'key':'104','val':'中国银行'},
-    		         {'key':'103','val':'中国农业银行'},
-    		         {'key':'105','val':'中国建设银行'},
-    		         {'key':'301','val':'交通银行'},
-    		         {'key':'302','val':'中信银行'},
-    		         {'key':'303','val':'中国光大银行'},
-    		         {'key':'304','val':'华夏银行'},
-    		         {'key':'305','val':'中国民生银行'},
-    		         {'key':'308','val':'招商银行'},
-    		         {'key':'309','val':'兴业银行'},
-    		         {'key':'306','val':'广发银行'},
-    		         {'key':'307','val':'平安银行'},
-    		         {'key':'310','val':'上海浦东发展银行'},
-    		         {'key':'403','val':'中国邮政储蓄银行'}
-    		         ]
-    };
+    
     
     new AutoComplete($('#bankCode'), {
-        data : data.content,
+        data : personBankData.content,,
         key : 'bankCode',  //数据源中，做为key的字段
         val : 'bankName', //数据源中，做为val的字段
         width : 240,
