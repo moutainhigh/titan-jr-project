@@ -68,15 +68,15 @@
                 <div class="TFS_withdrawBoxL fl">
                     <div class="TFS_withdrawBoxL_first" style="width:400px">
                         <label>
-                            <span><i>*</i>收款银行：</span>
+                            <span><i>*</i>开户银行：</span>
                             <input type="text" id="bankCode" class="text w_250">
                             <input type="hidden" id="bankName" >
                         </label>
                         <label>
-                            <span><i>*</i>收款账号：</span><input type="text" id="accountNum" class="text w_250">
+                            <span><i>*</i>银行卡号：</span><input type="text" id="accountNum" class="text w_250">
                         </label>
                         <label>
-                            <span><i>*</i>持卡人姓名：</span><input type="text" id="accountName" class="text w_250" value="${orgSub.orgName}" disabled>
+                            <span><i>*</i>姓名：</span><input type="text" id="accountName" class="text w_250" value="${orgSub.orgName}" disabled>
                         </label>
                         <c:if test="${bindBankCard != null}">
                             <a href="javascript:void(0)" id="withDrawToCurrentCard"
@@ -88,13 +88,13 @@
                             <h3>提现卡信息</h3>
                             <div class="TFS_withdrawBoxL_card_content">
                                 <p>
-                                    <span>收款银行：</span>${bindBankCard.bankheadname }
+                                    <span>开户银行：</span>${bindBankCard.bankheadname }
                                 </p>
                                 <p>
-                                    <span>收款账号：</span>${bindBankCard.accountnumber }
+                                    <span>银行卡号：</span>${bindBankCard.accountnumber }
                                 </p>
                                 <p>
-                                    <span>持卡人姓名：</span>
+                                    <span>姓名：</span>
                                     ${bindBankCard.accountname }
                                 </p>
                             </div>
