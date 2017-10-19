@@ -116,9 +116,8 @@ function confirmOrder(_orderNo){
 	return status;
 }
 
-//常用支付方式--快捷支付
+//常用支付方式--快捷支付--发送验证码
 function quickPay_history(){
-	//调网关支付接口，发送验证码
 	$.ajax({
 		type : "post",
 		url : "../payment/quickPayRecharge.action",
@@ -168,6 +167,8 @@ function confirmRecharge(){
      });
 }
 
+
+//获取验证码时校验参数
 function validQuickPayInfo(){
 	
 	if($("#quick_cardType_hid").val() == '10'){
@@ -257,7 +258,7 @@ function sendVierfyCode(_button){debugger;
 		        dataType: "json",
 		        success: function (data) {
 		  	        if(data.isSuccess == true){
-		  	        	$("#quick_rsOrder").val(data.orderNo);
+		  	        	$(".quick_rsOrder").val(data.orderNo);
 		  	        }else{
 		  	        	btn = true;
 		  	        	clearInterval(interval_countDown);
@@ -293,6 +294,77 @@ function sendVierfyCode(_button){debugger;
 	}
 	
 }
+
+
+//添加快捷支付--储蓄卡--确认充值
+function submitQuickpay_deposit(){debugger;
+	if(quickpayDeposit.validate()){
+		$("#confirm_quickpay_deposit").addClass("disabledButton").attr("disabled", true);
+    	$("#VeilWhite").removeClass("isShow");
+    	top.F.loading.show();
+    	showLoading();
+    	//$("#J_form1").submit();
+    	$.ajax({
+    		type : "post",
+    		url : "../quickPay/quickPayRecharge.action",
+               data: {
+            		busiCode: "109",
+            		signType: "1",
+            		version: "v1.1",
+        			merchantNo: "M000016",
+        			orderNo: $("#quick_rsOrder_deposit").val(),
+        			payType: "41",
+        			checkCode: $("#checkCode_deposit").val()
+               },
+               dataType: "json",
+               success: function (data) {debugger;
+            	   if(data.success == true){
+           				checkOrderPayStatus($("#quick_rsOrder_deposit").val());
+            	   }else{
+            		   new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
+            		   top.F.loading.hide();
+            		   $("#VeilWhite").addClass("isShow");
+            		   $("#confirm_quickpay_deposit").removeClass("disabledButton").attr("disabled", false);
+            	   }
+               }
+         });
+	}
+}
+//添加快捷支付--信用卡--确认充值
+function submitQuickpay_credit(){debugger;
+	if(quickpayCredit.validate()){
+		$("#confirm_quickpay_credit").addClass("disabledButton").attr("disabled", true);
+    	$("#VeilWhite").removeClass("isShow");
+    	top.F.loading.show();
+    	showLoading();
+    	//$("#J_form3").submit();
+    	$.ajax({
+    		type : "post",
+    		url : "../quickPay/quickPayRecharge.action",
+               data: {
+            		busiCode: "109",
+            		signType: "1",
+            		version: "v1.1",
+        			merchantNo: "M000016",
+        			orderNo: $("#quick_rsOrder_credit").val(),
+        			payType: "41",
+        			checkCode: $("#checkCode_credit").val()
+               },
+               dataType: "json",
+               success: function (data) {debugger;
+            	   if(data.success == true){
+           				checkOrderPayStatus($("#quick_rsOrder_credit").val());
+            	   }else{
+            		   new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
+            		   top.F.loading.hide();
+            		   $("#VeilWhite").addClass("isShow");
+            		   $("#confirm_quickpay_credit").removeClass("disabledButton").attr("disabled", false);
+            	   }
+               }
+         });
+	}
+}
+
 
 /**
  * 校验快捷支付银行卡
@@ -342,7 +414,7 @@ function checkQuickCardNo(inputTextK){
             	   $(".bank-account-info .credit").addClass("isShow");//显示天喜储蓄卡
             	   index = "deposit";
         	   }else if(data.cardType == '11'){
-        		   $("#quick_cardType_deposit").text("信用卡");
+        		   $("#quick_cardType_credit").text("信用卡");
                    $("#quick_cardNo_credit").text(inputTextK);
                    $("#quick_icon_credit").attr("xlink:href","#icon-"+data.bankInfo);
                    $("#quick_bankName_credit").text(data.bankName);
@@ -582,7 +654,7 @@ function rateCompute(payType, type, index){
 	
 	var paySource = cashierData.paySource;
 	var userId = cashierData.userid;
-	var amount = cashierData.tradeAmount;
+	var tradeAmount = cashierData.tradeAmount;
 	
 	if(paySource == '2'){//paySource=2 表示财务付款
 		
@@ -591,30 +663,29 @@ function rateCompute(payType, type, index){
 		if(payType == 'wx' || payType == 'alipay'){
 			relPayType = 9;
 		}
-		if(payType == 'balance'){
-			relPayType = 4;
-		}
 		
 		$.ajax({
 			   	type: "get",
-		        url: "../rate/rateCompute.action?userId="+userId+"&amount="+amount+"&payType="+relPayType+"&date=" + new Date().getTime(),
+		        url: "../rate/rateCompute.action?userId="+userId+"&amount="+tradeAmount+"&payType="+relPayType+"&date=" + new Date().getTime(),
 		        dataType: "json",
 		        async: false,
 		        success: function(data){
-	        		 var _amount = parseFloat(amount);
-	        		 var exRateAmount = parseFloat(data.data.exRateAmount);
+	        		 var exRateAmount = numeral(parseFloat(data.data.exRateAmount)).format("0,0.00");
+	        		 var _amount =  numeral(parseFloat(tradeAmount)+parseFloat(data.data.exRateAmount)).format("0,0.00");
 		        	 if(type == "commpay"){
-				       	 $("#commPayRateAmount_" + payType + "_" + index).text(exRateAmount.toFixed(2));
-				       	 $("#amount_" + payType + "_" + index).text(_amount + exRateAmount);
+				       	 $("#commPayRateAmount_" + payType + "_" + index).text(exRateAmount);
+				       	 $("#amount_" + payType + "_" + index).text(_amount);
 		        	 }else{
-		        		 $("#addPayRateAmount_" + payType + "_" + index).text(exRateAmount.toFixed(2));
-				       	 $("#addPayAmount_" + payType + "_" + index).text(_amount + exRateAmount);
+		        		 $("#addPayRateAmount_" + payType + "_" + index).text(exRateAmount);
+				       	 $("#addPayAmount_" + payType + "_" + index).text(_amount);
 		        	 }
 		        }
 		});
 		
 	}else {
-		$("#amount_" + payType + "_" + index).text(amount);
+		
+		var formatAmount = numeral(tradeAmount).format("0,0.00")
+		$("#amount_" + payType + "_" + index).text(formatAmount);
 		
 	}
 	

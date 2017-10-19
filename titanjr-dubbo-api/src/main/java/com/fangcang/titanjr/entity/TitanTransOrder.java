@@ -80,6 +80,8 @@ public class TitanTransOrder implements java.io.Serializable {
 	private String freezeType; 
 	//订单当下冻结在 1付款方 2收款方
 	private String freezeAt;
+	//收银台版本
+	private String version;
 
 	public String getLoanOrderNo() {
 		return loanOrderNo;
@@ -431,5 +433,13 @@ public class TitanTransOrder implements java.io.Serializable {
 
 	public void setFreezeAt(String freezeAt) {
 		this.freezeAt = freezeAt;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
 	}
 }

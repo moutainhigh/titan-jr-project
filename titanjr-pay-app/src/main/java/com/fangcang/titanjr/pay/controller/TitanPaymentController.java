@@ -86,6 +86,7 @@ import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.JsonUtil;
 import com.fangcang.util.StringUtil;
+
 import net.sf.json.JSONSerializer;
 @Controller
 @RequestMapping("/payment")
@@ -236,7 +237,7 @@ public class TitanPaymentController extends BaseController {
         	}else{//不是充值操作，就需要转帐
         		
         		TransferResponse transferResponse = null;
-    			TransferRequest transferRequest = titanPaymentService.convertToTransferRequest(transOrderDTO, rechargeResultConfirmRequest.getVersion());
+    			TransferRequest transferRequest = titanPaymentService.convertToTransferRequest(transOrderDTO);
         		//如果冻结方案不是3才需要转账
         		if(!FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrderDTO.getFreezeType())){
         			
@@ -252,6 +253,25 @@ public class TitanPaymentController extends BaseController {
             		log.info("begin to transfer:"+JsonConversionTool.toJson(transferRequest));
     	        	transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
     	        	log.info("the result of transfer :"+JsonConversionTool.toJson(transferResponse)+",orderid:"+transferRequest.getOrderid());
+    	        	
+    	        	//新版收银台如果有手续费，需要将手续费转到收益子账户
+    	        	if(transferResponse.isResult()){
+    	        		if(TitanjrVersionEnum.VERSION_2.getKey().equals(transOrderDTO.getVersion())){
+    	        			if(transOrderDTO.getReceivedfee() != null && transOrderDTO.getReceivedfee() > 0){
+    	        				log.info("began transfer to revenueAccount");
+    	        				TransferRequest transferRevenueAccountRequest = titanPaymentService
+    	        						.getRevenueAccountTransferRequest(transOrderDTO);
+    	        				transferResponse = titanFinancialTradeService.transferAccounts(transferRevenueAccountRequest);
+    	        				if(transferResponse.isResult()){
+    	        					log.info("transfer to revenueAccount success, transOrderId: " + transOrderDTO.getTransid());
+    	        					businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
+    	        				}else{
+    	        					log.error("transfer to revenueAccount success faild, transOrderId: " + transOrderDTO.getTransid());
+    	        					titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Transfer_revenueAccount_Fail,orderStatusEnum.getStatus());
+    	        				}
+    	        			}
+    	        		}
+    	        	}
         		}
 	        	
 	        	if(transferResponse != null && !transferResponse.isResult()){//转账失败
@@ -390,6 +410,10 @@ public class TitanPaymentController extends BaseController {
     		map.put("resultMsg", validResult.get(CommonConstant.RETURN_MSG));
         	return JSONSerializer.toJSON(map).toString();
         }
+        
+        //计算并设置费率
+ 		TitanRateComputeReq computeReq = new TitanRateComputeReq();
+ 		rateCompute(computeReq, titanPaymentRequest);
 		
 		LocalAddTransOrderResponse localOrderResp = titanFinancialTradeService.addLocalTransOrder(titanPaymentRequest);
         log.info("the params of local order:"+JsonConversionTool.toJson(titanPaymentRequest)+"the result of local order:"+JsonConversionTool.toJson(localOrderResp));
@@ -402,8 +426,9 @@ public class TitanPaymentController extends BaseController {
     		return JSONSerializer.toJSON(map).toString();
         }
         titanPaymentRequest.setOrderid(localOrderResp.getOrderNo());
-        TransferRequest transferRequest = this.convertToTransferRequest(titanPaymentRequest);
-		
+        //添加费率记录
+ 		addRateRecord(computeReq, titanPaymentRequest);
+        
         TransOrderRequest transOrderRequest = new TransOrderRequest();
 		transOrderRequest.setOrderid(localOrderResp.getOrderNo());
 		TransOrderDTO transOrder= titanOrderService.queryTransOrderDTO(transOrderRequest);
@@ -412,12 +437,31 @@ public class TitanPaymentController extends BaseController {
 		if(!StringUtil.isValidString(transOrder.getFreezeType())){
 			transOrder.setFreezeType(FreezeTypeEnum.FREEZE_PAYEE.getKey());
 		}
+		
+		TransferRequest transferRequest = this.convertToTransferRequest(titanPaymentRequest);
 		TransferResponse transferResponse = null;
 		//如果冻结方案不是3才需要转账
 		if(!FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrder.getFreezeType())){
 			//存在安全隐患，如果余额支付两次会不会存在重复支付
 	        lockOutTradeNoList(titanPaymentRequest.getPayOrderNo());//锁定支付单
 	        transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
+        	//新版收银台如果有手续费，需要将手续费转到收益子账户
+	        if(transferResponse.isResult()){
+				if(TitanjrVersionEnum.VERSION_2.getKey().equals(titanPaymentRequest.getJrVersion())){
+					if(titanPaymentRequest.getReceivedfee() != null && Integer.parseInt(titanPaymentRequest.getReceivedfee()) > 0){
+						log.info("began transfer to revenueAccount");
+						TransferRequest transferRevenueAccountRequest = this.getRevenueAccountTransferRequest(titanPaymentRequest);
+						transferResponse = titanFinancialTradeService.transferAccounts(transferRevenueAccountRequest);
+						if(transferResponse.isResult()){
+							log.info("transfer to revenueAccount success, transOrderId: " + transOrder.getTransid());
+							businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrder.getTransid()+""));
+						}else{
+							log.error("transfer to revenueAccount success faild, transOrderId: " + transOrder.getTransid());
+							titanFinancialUtilService.saveOrderException(transOrder.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Transfer_revenueAccount_Fail,orderStatusEnum.getStatus());
+						}
+					}
+				}
+	        }
 	        unlockOutTradeNoList(titanPaymentRequest.getPayOrderNo());//解锁支付单
 		}
         
@@ -469,15 +513,42 @@ public class TitanPaymentController extends BaseController {
 	
 
 	private TransferRequest convertToTransferRequest(TitanPaymentRequest titanPaymentRequest){
+		PayerTypeEnum payerTypeEnum = PayerTypeEnum
+				.getPayerTypeEnumByKey(titanPaymentRequest.getPayerType());
 		TransferRequest transferRequest = new TransferRequest();
 		transferRequest.setCreator(titanPaymentRequest.getCreator());
     	transferRequest.setUserid(titanPaymentRequest.getUserid());										//转出的用户
     	transferRequest.setRequestno(OrderGenerateService.genResquestNo());									//业务订单号
     	transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));				//请求时间
-    	transferRequest.setAmount(NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount()));										//金额 必须是分
-    	transferRequest.setUserfee("0");									
+    	//新版收银台转账金额需要考虑手续费
+    	if(TitanjrVersionEnum.isVersion1(titanPaymentRequest.getJrVersion())){
+    		transferRequest.setAmount(NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount()));	
+    	}else{
+    		if (titanPaymentRequest.getReceivedfee() != null && payerTypeEnum != null && !payerTypeEnum.isNeedPayerInfo()) {
+	    		// 收款方出手续费的，交易金额减去手续费
+	    		transferRequest.setAmount(String.valueOf(Integer.parseInt(titanPaymentRequest.getTradeAmount())-Integer.parseInt(titanPaymentRequest.getReceivedfee())));//金额 必须是分
+    		}else{
+    			transferRequest.setAmount(NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount()));
+    		}
+    	}						
+    	transferRequest.setUserfee("0");
     	transferRequest.setUserrelateid(titanPaymentRequest.getUserrelateid());	                   //接收方用户Id
     	transferRequest.setOrderid(titanPaymentRequest.getOrderid());
+		return transferRequest;
+	}
+	
+	public TransferRequest getRevenueAccountTransferRequest(TitanPaymentRequest titanPaymentRequest){
+		TransferRequest transferRequest = new TransferRequest();
+		transferRequest.setCreator(titanPaymentRequest.getCreator());
+		transferRequest.setUserid(titanPaymentRequest.getUserid()); // 转出的用户
+		transferRequest.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+		transferRequest.setRequestno(OrderGenerateService.genResquestNo()); // 业务订单号
+		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date())); // 请求时间
+		transferRequest.setAmount(titanPaymentRequest.getReceivedfee());
+		transferRequest.setUserfee("0");
+		transferRequest.setOrderid(titanPaymentRequest.getOrderid());
+		transferRequest.setUserrelateid(CommonConstant.RS_FANGCANG_USER_ID); // 转入的用户
+		transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
 		return transferRequest;
 	}
 	
@@ -640,20 +711,8 @@ public class TitanPaymentController extends BaseController {
 		
 		// 开始计算并设置费率
 		TitanRateComputeReq computeReq = new TitanRateComputeReq();
-		computeReq.setAmount(titanPaymentRequest.getPayAmount());
-		computeReq.setItemTypeEnum(cashierItemTypeEnum);
-		computeReq.setUserId(titanPaymentRequest.getUserid());
-		//财务端收银台或者充值收付款方的手续费
-		if(PaySourceEnum.FINANCE_SUPPLY_PC.getDeskCode().equals(titanPaymentRequest.getPaySource()) 
-				|| PaySourceEnum.RECHARGE.getDeskCode().equals(titanPaymentRequest.getPaySource())){
-			computeReq.setUserId(titanPaymentRequest.getUserid());
-		}else{
-			computeReq.setUserId(titanPaymentRequest.getUserrelateid());
-		}
+		rateCompute(computeReq, titanPaymentRequest);
 		
-		//设置费率信息
-		titanPaymentRequest = titanRateService.setRateAmount(computeReq,
-				titanPaymentRequest);
 		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.CreateRsOrder, OrderKindEnum.PayOrderNo, titanPaymentRequest.getPayOrderNo()));
 		
         TransOrderCreateResponse transOrderCreateResponse = titanFinancialTradeService.createRsOrder(titanPaymentRequest);
@@ -689,30 +748,14 @@ public class TitanPaymentController extends BaseController {
     		return CommonConstant.GATE_WAY_PAYGE;
     	}
 		
-		CreateTitanRateRecordReq req = new CreateTitanRateRecordReq();
-		req.setAmount(Long.parseLong(NumberUtil.covertToCents(computeReq
-				.getAmount())));
-		req.setReceivablefee(Long.parseLong(titanPaymentRequest
-				.getReceivablefee()));
-		req.setReceivedfee(Long.parseLong(titanPaymentRequest.getReceivedfee()));
-		req.setStanderdfee(Long.parseLong(titanPaymentRequest.getStandfee()));
-		req.setPayType(Integer.parseInt(cashierItemTypeEnum.itemCode));
-		if (StringUtil.isValidString(titanPaymentRequest.getPaySource())) {
-			req.setUsedFor(Integer.parseInt(titanPaymentRequest.getPaySource()));
-		}
-		req.setUserId(computeReq.getUserId());
-		req.setReceivableRate(titanPaymentRequest.getReceivablerate());
-		req.setReceivedRate(titanPaymentRequest.getExecutionrate());
-		req.setStandardRate(titanPaymentRequest.getStandardrate());
-		req.setRateType(titanPaymentRequest.getRateType());
-		req.setOrderNo(transOrderCreateResponse.getOrderNo());
-		req.setCreator(computeReq.getUserId());
-		titanRateService.addRateRecord(req);
+    	//添加费率记录
+    	addRateRecord(computeReq, titanPaymentRequest);
+    	//保存常用支付方式
 		if(TitanjrVersionEnum.isVersion1(titanPaymentRequest.getJrVersion())){
 			titanPaymentService.saveCommonPayMethod(titanPaymentRequest);
 		}else{
 			if(CashierItemTypeEnum.isNeedSaveCommonpay(titanPaymentRequest.getLinePayType())){
-				titanPaymentService.saveCommonPayHistory(titanPaymentRequest); //新版收银台保存常用支付方式
+				titanPaymentService.saveCommonPayHistory(titanPaymentRequest);
 			}
 		}
 		
@@ -739,6 +782,66 @@ public class TitanPaymentController extends BaseController {
 		}
 		Payment payment = new Payment(strategy);
 		return payment.doPay(rechargeDataDTO, titanPaymentRequest, model);
+	}
+	
+	/**
+	 * 计算并设置费率
+	 * @author Jerry
+	 * @date 2017年10月18日 下午5:07:58
+	 * @param computeReq
+	 * @param titanPaymentRequest
+	 */
+	private void rateCompute(TitanRateComputeReq computeReq, TitanPaymentRequest titanPaymentRequest){
+		CashierItemTypeEnum cashierItemTypeEnum = CashierItemTypeEnum
+				.getCashierItemTypeEnumByKey(titanPaymentRequest
+						.getLinePayType());
+		// 开始计算并设置费率
+		computeReq.setAmount(titanPaymentRequest.getPayAmount());
+		computeReq.setItemTypeEnum(cashierItemTypeEnum);
+		computeReq.setUserId(titanPaymentRequest.getUserid());
+		//财务端收银台或者充值收付款方的手续费
+		if(PaySourceEnum.FINANCE_SUPPLY_PC.getDeskCode().equals(titanPaymentRequest.getPaySource()) 
+				|| PaySourceEnum.RECHARGE.getDeskCode().equals(titanPaymentRequest.getPaySource())){
+			computeReq.setUserId(titanPaymentRequest.getUserid());
+		}else{
+			computeReq.setUserId(titanPaymentRequest.getUserrelateid());
+		}
+		
+		//设置费率信息
+		titanPaymentRequest = titanRateService.setRateAmount(computeReq,
+				titanPaymentRequest);
+	}
+	
+	/**
+	 * 添加费率记录
+	 * @author Jerry
+	 * @date 2017年10月18日 下午5:28:29
+	 * @param computeReq
+	 * @param titanPaymentRequest
+	 */
+	private void addRateRecord(TitanRateComputeReq computeReq, TitanPaymentRequest titanPaymentRequest){
+		CashierItemTypeEnum cashierItemTypeEnum = CashierItemTypeEnum
+				.getCashierItemTypeEnumByKey(titanPaymentRequest
+						.getLinePayType());
+		CreateTitanRateRecordReq req = new CreateTitanRateRecordReq();
+		req.setAmount(Long.parseLong(NumberUtil.covertToCents(computeReq
+				.getAmount())));
+		req.setReceivablefee(Long.parseLong(titanPaymentRequest
+				.getReceivablefee()));
+		req.setReceivedfee(Long.parseLong(titanPaymentRequest.getReceivedfee()));
+		req.setStanderdfee(Long.parseLong(titanPaymentRequest.getStandfee()));
+		req.setPayType(Integer.parseInt(cashierItemTypeEnum.itemCode));
+		if (StringUtil.isValidString(titanPaymentRequest.getPaySource())) {
+			req.setUsedFor(Integer.parseInt(titanPaymentRequest.getPaySource()));
+		}
+		req.setUserId(computeReq.getUserId());
+		req.setReceivableRate(titanPaymentRequest.getReceivablerate());
+		req.setReceivedRate(titanPaymentRequest.getExecutionrate());
+		req.setStandardRate(titanPaymentRequest.getStandardrate());
+		req.setRateType(titanPaymentRequest.getRateType());
+		req.setOrderNo(titanPaymentRequest.getOrderid());
+		req.setCreator(computeReq.getUserId());
+		titanRateService.addRateRecord(req);
 	}
 	
 	private String md5Sign(TitanPaymentRequest titanPaymentRequest,String md5key){

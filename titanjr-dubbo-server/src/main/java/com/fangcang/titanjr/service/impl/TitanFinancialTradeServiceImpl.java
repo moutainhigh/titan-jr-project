@@ -569,17 +569,20 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				TransOrderRequest transOrderRequest = new TransOrderRequest();
 				transOrderRequest.setOrderid(transferRequest.getOrderid());
 				List<TransOrderDTO> transOrderDTOList =  titanTransOrderDao.selectTitanTransOrderLock(transOrderRequest);
+				TransOrderDTO transOrderDTO = null;
 				if (CollectionUtils.isNotEmpty(transOrderDTOList)) {
-					transid = transOrderDTOList.get(0).getTransid();
-					payOrderNo = transOrderDTOList.get(0).getPayorderno();
+					transOrderDTO = transOrderDTOList.get(0);
+					transid = transOrderDTO.getTransid();
+					payOrderNo = transOrderDTO.getPayorderno();
 				}
 				// 获取落单时的订单id
-				if (transid != null && StringUtil.isValidString(payOrderNo)) {
+				if (transOrderDTO != null && transid != null && StringUtil.isValidString(payOrderNo)) {
 					titanTransferReq.setTransorderid(transid);
 					titanTransferReq.setPayorderno(payOrderNo);
 
 					// 查询该单号是否已经有转账单
-					TitanTransferReq titanTransfer = queryTransfer(payOrderNo);
+					TitanTransferReq titanTransfer = queryTransfer(payOrderNo, transferRequest.getUserid(), 
+							transferRequest.getUserrelateid());
 
 					boolean flag = false;
 					if (titanTransfer == null) {// 判断转账是否已经进行
@@ -645,9 +648,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return transferResponse;
 	}
 
-	private TitanTransferReq queryTransfer(String payOrderNo) {
+	private TitanTransferReq queryTransfer(String payOrderNo, String userId, String userRelateId) {
 		TitanTransferReqParam titanTransferReqParam = new TitanTransferReqParam();
 		titanTransferReqParam.setPayorderno(payOrderNo);
+		titanTransferReqParam.setUserid(userId);
+		titanTransferReqParam.setUserrelateid(userRelateId);
 		List<TitanTransferReq> titanTransferList = titanTransferReqDao
 				.queryTitanTransferReq(titanTransferReqParam);
 		if (titanTransferList != null && titanTransferList.size() > 0) {
@@ -859,7 +864,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	private AccountTransferRequest getAccountTransferRequest(TransferRequest transferRequest){
 		AccountTransferRequest transferReq = new AccountTransferRequest();;
 		if (transferRequest != null) {
-			transferReq.setAmount(transferRequest.getAmount());
 			if (transferRequest.getTransfertype() != null) {
 				transferReq.setTransfertype(transferRequest.getTransfertype().getKey()); // 1:子账户转账
 			}
@@ -1955,6 +1959,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						titanOrderRequest.getBusinessInfo()).toString());
 			}
 			titanTransOrder.setFreezeType(titanOrderRequest.getFreezeType());
+			titanTransOrder.setVersion(titanOrderRequest.getVersion());
 			try {
 				titanTransOrder.setIsEscrowedPayment(EscrowedEnum.NO_ESCROWED_PAYMENT.getKey());
 				if (StringUtil.isValidString(titanOrderRequest.getEscrowedDate())) {

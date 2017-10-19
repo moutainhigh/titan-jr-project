@@ -33,7 +33,7 @@ public class TitanOrderRequest implements Serializable{
 	private String checkOrderUrl;
 	private String productId = CommonConstant.RS_FANGCANG_PRODUCT_ID;
 	private String version = "v1.0"; //@see TitanjrVersionEnum
-	private String freezeType; //冻结方式  1-不冻结；2-订单金额冻结在收款方；3-订单金额冻结在付款方
+	private String freezeType; //冻结方式  1-不冻结；2-订单金额冻结在收款方；3-订单金额冻结在付款方（老版收银台支持2）
 	
 	private Map<String, String> businessInfo = new HashMap<String, String>(); // 存储业务信息
 

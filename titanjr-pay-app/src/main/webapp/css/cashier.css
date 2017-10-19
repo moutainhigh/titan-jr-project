@@ -504,6 +504,9 @@ footer p{
     color: #fff;
 }
 footer p>a{
+    color: #fff;
+}
+footer p>a>span{
     margin: 0 10px 0 80px;
     display: inline-block;
     position: relative;

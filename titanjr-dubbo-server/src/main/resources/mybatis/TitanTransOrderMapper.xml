@@ -265,7 +265,7 @@
       receivablefee, createtime, receivedfee,isEscrowedPayment,
       escrowedDate,payeemerchant,payermerchant,payorderno,merchantcode,
       tradeamount,transordertype,notifyUrl,businessinfo,payertype,standfee, 
-      freezeType
+      freezeType,version
       )
     values (#{transid,jdbcType=INTEGER}, #{constid,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, 
       #{ordertypeid,jdbcType=VARCHAR}, #{productid,jdbcType=VARCHAR}, #{orderid,jdbcType=VARCHAR}, 
@@ -277,7 +277,7 @@
       #{receivablefee}, #{createtime}, #{receivedfee},#{isEscrowedPayment},#{escrowedDate},
       #{payeemerchant},#{payermerchant},#{payorderno},#{merchantcode},#{tradeamount},#{transordertype},
       #{notifyUrl},#{businessinfo},#{payerType},#{standfee},
-      #{freezeType}
+      #{freezeType},#{version}
       )
   </insert>
 
@@ -381,7 +381,7 @@
         ordertime, provider, userrelateid,amount, goodsname, goodsdetail, goodscnt, unitprice, statusid,
         adjusttype, adjustcontent, creator,receivablefee,standfee, createtime, receivedfee,escrowedDate,isEscrowedPayment,
         payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype,notifyUrl,businessinfo,
-        payertype as payerType,loanorderno,freezeType
+        payertype as payerType,loanorderno,freezeType,version
          from t_tfs_transorder
         <where>
             <if test="transid != null">

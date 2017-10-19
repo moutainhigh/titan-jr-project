@@ -128,7 +128,7 @@ public class TitanQuickPaymentController extends BaseController {
 		}
 		
 		model.addAttribute("confirmRechargeResponse", confirmRechargeResponse);
-		log.error("confirmRecharge is success, but confirmOrderStatus is failed after try again three times");
+		log.error("confirmRecharge is success, but confirmOrderStatus failed after try again three times");
 		return "checkstand-pay/payResult";
 	}
 	

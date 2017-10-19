@@ -83,32 +83,33 @@
         <!-- 支付方式-->
         <ul class="payment-mode">
         	<!-- 余额支付 -->
-            <c:if test="${ not empty cashDeskData.balanceusable }">
-            	<c:if test="${cashDeskData.canAccountBalance eq true }">
-            		<!-- 无余额支付权限或者余额小于支付金额，设置不可选 -->
-	            	<li class="payment-mode-prohibit clearfix" <c:if test="${cashDeskData.canAccountBalance ne true or cashDeskData.balanceusable < cashDeskData.amount }">data-choice="false"</c:if> >
-		                <input class="index" type="hidden" value="1"/>
-		                <div class="icon fl">
-		                    <b class="iconfont icon-check1"></b>
-		                    <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
-		                        <use xlink:href="#icon-qb"></use>
-		                    </svg>
-		                    <span class="payment-mode-info">账户余额</span>
-		                    <input class="itemType" type="hidden" value="balance"/>
-		                </div>
-		                <div class="content fl">
-		                   	 账户余额：<span><fmt:formatNumber value="${cashDeskData.balanceusable }"  pattern="#,##0.00#" />元</span>
-		                </div>
-		                <div class="right-money isShow">
-		                	<!-- 财务付款给供应商才显示手续费 -->
-							<c:if test="${cashDeskData.paySource =='2' }">
-								<span>手续费 ￥<span id="commPayRateAmount_balance_1">0.00</span></span>
-							</c:if>
-		                    <span class="money"><s>￥</s><span id="amount_balance_1">${cashDeskData.amount }</span></span>
-		                </div>
-		            </li>
-            	</c:if>
-            </c:if>
+           	<li class="payment-mode-prohibit clearfix">
+                <input class="index" type="hidden" value="1"/>
+                <div class="icon fl">
+                    <b class="iconfont icon-check1"></b>
+                    <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
+                        <use xlink:href="#icon-qb"></use>
+                    </svg>
+                    <span class="payment-mode-info">账户余额</span>
+                    <input class="itemType" type="hidden" value="4"/>
+                </div>
+                <div class="content fl">
+                   	 账户余额：<span><fmt:formatNumber value="${cashDeskData.balanceusable }"  pattern="#,##0.00#" />元</span>
+                </div>
+                <div class="right-money isShow">
+                	<!-- 财务付款给供应商才显示手续费 -->
+					<c:if test="${cashDeskData.paySource =='2' }">
+						<span>手续费 ￥<span id="commPayRateAmount_4_1">0.00</span></span>
+					</c:if>
+                    <span class="money"><s>￥</s><span id="amount_4_1">${cashDeskData.amount }</span></span>
+                </div>
+                <div id="balanceNotEnough" class="isShow" style="float: right;">
+					<c:if test="${cashDeskData.paySource =='2' }">
+						<span style="color: red;">手续费 ￥<span id="balanceNotEnough_rate" style="color: #EE0000;">0.00 </span></span>&nbsp;&nbsp;
+					</c:if>
+                    <span class="money"><span style="font-size: 15px;" id="balanceNotEnough_amoun">余额不足</span></span>
+                </div>
+            </li>
             <!-- 微信和支付宝支付默认显示 -->
             <li class="clearfix selected">
             	<input class="index" type="hidden" value="2"/>
@@ -126,7 +127,7 @@
 					<c:if test="${cashDeskData.paySource =='2' }">
 						<span>手续费 ￥<span id="commPayRateAmount_wx_2">0.00</span></span>
 					</c:if>
-					<span class="money"><s>￥</s><span id="amount_wx_2">${cashDeskData.amount }</span></span>
+					<span class="money"><s>￥</s><span id="amount_wx_2"><fmt:formatNumber value="${cashDeskData.amount }" pattern="#,##0.00#" /></span></span>
                 </div>
             </li>
          	<li class="clearfix">
@@ -281,11 +282,13 @@
     <!-- 底部-->
     <footer>
         <div class="h">
-            <p>Copyright 2012-2016，fangcang.com. All Rights Reserved 泰坦云 版权所有 粤ICP备13046150号 <a href="javascript:void(0);"></a>工商网监 电子标识</p>
+            <p>Copyright 2012-2016，fangcang.com. All Rights Reserved 泰坦云 版权所有 粤ICP备13046150号 <a href="http://szcert.ebs.org.cn/78ccac39-a97a-452c-9f81-162cd840cff6" target="_blank"><span></span>工商网监 电子标识</a></p>
         </div>
     </footer>
 <!--遮罩层 -->
 <div class="payment-box isShow" id="Veil"></div>
+<!-- 透明遮罩层-->
+<div class="payment-box isShow" id="VeilWhite" style="opacity:0.4; z-index: 9;"></div>
 <!--添加快捷/银行卡支付弹窗-->
 <div class="shortcut isShow">
 	<!-- tab切换 -->
@@ -354,7 +357,7 @@
 	                    <input id="merchantNo" name="merchantNo" type="hidden" value="M000016" />
 	                    <input id="payType" name="payType" type="hidden" value="41" />
 	                    <!-- 融数订单号，获取验证码的时候设置 -->
-	                    <input id="quick_rsOrder" name="orderNo" type="hidden" />
+	                    <input id="quick_rsOrder_deposit" name="orderNo" class="quick_rsOrder" type="hidden" />
                         <ul class="register_list">
                             <li class="type_li clearfix">
                                 <div class="type_name fl">
@@ -433,7 +436,7 @@
                                 </div>
                                 <div class="type_mz fl">
                                     <div class="pdd pdd_y fl bank-input-span">
-                                        <input name="checkCode" style="background-color: #fff;width: 184px;" class="re_color f_ui-grey-input focus_on " datatype="n" type="text" focus_on errormsg="请输入验证码" placeholder="请输入验证码" onkeyup="value=value.replace(/[^\d]/g,'')"><s class="iconfont icon-sc info-empty-btn isShow" style="right: 100px;"></s><button type="button" class="get-verification-btn ">获取验证码</button>
+                                        <input id="checkCode_deposit" name="checkCode" style="background-color: #fff;width: 184px;" class="re_color f_ui-grey-input focus_on " datatype="n" type="text" focus_on errormsg="请输入验证码" placeholder="请输入验证码" onkeyup="value=value.replace(/[^\d]/g,'')"><s class="iconfont icon-sc info-empty-btn isShow" style="right: 100px;"></s><button type="button" class="get-verification-btn">获取验证码</button>
                                     </div>
                                 </div>
                             </li>
@@ -501,13 +504,13 @@
             <div class="content clearfix">
                 <!-- 表单-->
                 <div class="register_information fl">
-                    <form id="J_form3" class="demo_form" action="<%=basePath%>/quickPay/confirmRecharge.action">
+                    <form id="J_form3" class="demo_form" action="<%=basePath%>/quickPay/confirmRecharge.action" target="_blank">
                     	<input id="busiCode" name="busiCode" type="hidden" value="109" />
 	                    <input id="signType" name="signType" type="hidden" value="1" />
 	                    <input id="version" name="version" type="hidden" value="v1.1" />
 	                    <input id="merchantNo" name="merchantNo" type="hidden" value="M000016" />
 	                    <input id="payType" name="payType" type="hidden" value="41" />
-	                    <input id="quick_rsOrder" name="orderNo" type="hidden" /><!-- 获取验证码的时候设置 -->
+	                    <input id="quick_rsOrder_credit" name="orderNo" class="quick_rsOrder" type="hidden" /><!-- 获取验证码的时候设置 -->
                         <ul class="register_list">
                             <li class="type_li clearfix">
                                 <div class="type_name fl">
@@ -650,7 +653,7 @@
                                 </div>
                                 <div class="type_mz fl">
                                     <div class="pdd pdd_y fl bank-input-span">
-                                        <input style="background-color: #fff;width: 184px;" class="re_color f_ui-grey-input focus_on " datatype="n" type="text" focus_on errormsg="请输入验证码" placeholder="6位数字验证码" onkeyup="value=value.replace(/[^\d]/g,'')"><s class="iconfont icon-sc info-empty-btn isShow" style="right: 100px;"></s><button type="button" class="get-verification-btn ">获取验证码</button>
+                                        <input id="checkCode_credit" name="checkCode" style="background-color: #fff;width: 184px;" class="re_color f_ui-grey-input focus_on " datatype="n" type="text" focus_on errormsg="请输入验证码" placeholder="6位数字验证码" onkeyup="value=value.replace(/[^\d]/g,'')"><s class="iconfont icon-sc info-empty-btn isShow" style="right: 100px;"></s><button type="button" class="get-verification-btn">获取验证码</button>
                                     </div>
                                 </div>
                             </li>
@@ -1047,8 +1050,23 @@
     
     //费率显示
     function setRate(){
-    	if('${cashDeskData.paySource }' == '2'){//目前财务付款才有手续费，第一次进来默认选中微信支付
+    	if('${cashDeskData.paySource }' == '2'){//财务付款需要计算显示手续费（付款方手续费），第一次进来默认选中微信支付
     		rateCompute('wx', 'commpay', 2);
+    		//校验余额支付
+    		var balanceusable = '${not empty cashDeskData.balanceusable }';
+    		var canAccountBalance = '${cashDeskData.canAccountBalance eq true }';
+    		var balanceAmount = parseFloat('${cashDeskData.balanceusable }');
+    		var tradeAmount = parseFloat('${cashDeskData.amount }');
+    		var rateAmount = parseFloat($("#commPayRateAmount_wx_2").text());
+    		if(!balanceusable || !canAccountBalance){
+    			$('.payment-mode-prohibit').css('background-color', '#FCFCFC').css('opacity', '0.4');
+    			$('.payment-mode-prohibit').attr('data-choice', false);
+    		}else if(balanceAmount < tradeAmount + rateAmount){
+    			$("#balanceNotEnough_rate").text(rateAmount);
+    			$("#balanceNotEnough").removeClass('isShow');
+    			$('.payment-mode-prohibit').css('background-color', '#FCFCFC').css('opacity', '0.4');
+    			$('.payment-mode-prohibit').attr('data-choice', false);
+    		}
     	}
     }
     
@@ -1154,25 +1172,6 @@
             $("#recieveOrgName").val(orgName);
             $("#recieveTitanCode").val(titanCode);
             $(".new-payment-bank").removeClass("isShow");
-    	}
-    }
-    
-    //添加快捷支付--储蓄卡--表单提交事件
-    function submitQuickpay_deposit(){debugger;
-    	if(quickpayDeposit.validate()){
-    		$("#confirm_quickpay_deposit").addClass("disabledButton").attr("disabled", true);
-        	showLoading();
-        	top.F.loading.show();
-        	$("#J_form1").submit();
-    	}
-    }
-    //添加快捷支付--信用卡--表单提交事件
-    function submitQuickpay_credit(){debugger;
-    	if(quickpayCredit.validate()){
-    		$("#confirm_quickpay_credit").addClass("disabledButton").attr("disabled", true);
-        	showLoading();
-        	top.F.loading.show();
-        	$("#J_form3").submit();
     	}
     }
     

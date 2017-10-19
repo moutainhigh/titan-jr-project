@@ -21,7 +21,6 @@ import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.QuickPayBankEnum;
-import com.fangcang.titanjr.common.enums.TitanjrVersionEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
@@ -297,7 +296,7 @@ public class TitanPaymentService {
 		return true;
 	}
 
-	public TransferRequest convertToTransferRequest(TransOrderDTO transOrderDTO, String rsVersion) {
+	public TransferRequest convertToTransferRequest(TransOrderDTO transOrderDTO) {
 		TransferRequest transferRequest = new TransferRequest();
 		transferRequest.setCreator(transOrderDTO.getCreator());
 		transferRequest.setUserid(transOrderDTO.getUserid()); // 转出的用户
@@ -305,35 +304,37 @@ public class TitanPaymentService {
 		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date())); // 请求时间
 		PayerTypeEnum payerTypeEnum = PayerTypeEnum
 				.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
-		if(TitanjrVersionEnum.VERSION_1.getKey().equals(rsVersion)){
-			if (transOrderDTO.getTradeamount() != null) {// 如果是GDP支付则应该减去手续费
-				String amount = transOrderDTO.getTradeamount().toString();
-				if (payerTypeEnum != null && transOrderDTO.getReceivedfee() != null) {
-					if (!payerTypeEnum.isNeedPayerInfo()) {
-						amount = new BigDecimal(transOrderDTO.getTradeamount())
-								.subtract(
-										new BigDecimal(transOrderDTO
-												.getReceivedfee())).toString();
-					}
+		if (transOrderDTO.getTradeamount() != null) {
+			String amount = transOrderDTO.getTradeamount().toString();
+			if (payerTypeEnum != null && transOrderDTO.getReceivedfee() != null) {
+				if (!payerTypeEnum.isNeedPayerInfo()) {// 收款方出手续费的，交易金额减去手续费
+					amount = new BigDecimal(transOrderDTO.getTradeamount())
+							.subtract(
+									new BigDecimal(transOrderDTO
+											.getReceivedfee())).toString();
 				}
-				transferRequest.setAmount(amount);
 			}
-			transferRequest.setUserfee("0");
-		}else{//新版收银台有手续费就设置手续费
-			Long receivedFee = 0L;
-			if(transOrderDTO.getReceivedfee() != null){
-				receivedFee = transOrderDTO.getReceivedfee();
-			}
-			if (payerTypeEnum.isNeedPayerInfo()) {//付款方出手续费，转账金额等于交易金额加上手续费
-				transferRequest.setAmount(String.valueOf(transOrderDTO.getTradeamount() + receivedFee));
-			}else{//收款方出手续费，直接从交易金额中扣取手续费
-				transferRequest.setAmount(String.valueOf(transOrderDTO.getTradeamount()));
-			}
-			transferRequest.setUserfee(String.valueOf(receivedFee));
+			transferRequest.setAmount(amount);
 		}
+		transferRequest.setUserfee("0");
 		transferRequest.setOrderid(transOrderDTO.getOrderid());
 		transferRequest.setUserrelateid(transOrderDTO.getUserrelateid());
 		transferRequest.setProductId(transOrderDTO.getProductid());
+		return transferRequest;
+	}
+	
+	public TransferRequest getRevenueAccountTransferRequest(TransOrderDTO transOrderDTO){
+		TransferRequest transferRequest = new TransferRequest();
+		transferRequest.setCreator(transOrderDTO.getCreator());
+		transferRequest.setUserid(transOrderDTO.getUserid()); // 转出的用户
+		transferRequest.setProductId(transOrderDTO.getProductid());
+		transferRequest.setRequestno(OrderGenerateService.genResquestNo()); // 业务订单号
+		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date())); // 请求时间
+		transferRequest.setAmount(String.valueOf(transOrderDTO.getReceivedfee()));
+		transferRequest.setUserfee("0");
+		transferRequest.setOrderid(transOrderDTO.getOrderid());
+		transferRequest.setUserrelateid(CommonConstant.RS_FANGCANG_USER_ID); // 转入的用户
+		transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
 		return transferRequest;
 	}
 
@@ -359,7 +360,12 @@ public class TitanPaymentService {
 				log.info("转账到收款方，不冻结");
 				return 0;//不需要冻结，直接返回
 			}else if(FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrderDTO.getFreezeType())){
-				rechargeResultConfirmRequest.setUserid(transferRequest.getUserid());//冻结在付款方
+				//冻结在付款方,冻结金额需要考虑手续费
+				if(transOrderDTO.getReceivedfee() != null && transOrderDTO.getReceivedfee() > 0){
+					log.info("freezeType is 3, transferAmount add receivedfee");
+					rechargeResultConfirmRequest.setPayAmount(String.valueOf(Integer.parseInt(transferRequest.getAmount()) + transOrderDTO.getReceivedfee()));
+				}
+				rechargeResultConfirmRequest.setUserid(transferRequest.getUserid());
 				freezeStatus = 1;
 				log.info("不转账，资金冻结在付款方");
 			}else{

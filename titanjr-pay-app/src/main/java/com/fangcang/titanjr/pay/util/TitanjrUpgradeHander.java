@@ -150,6 +150,11 @@ public class TitanjrUpgradeHander {
 			}
 		}
 		
+		//默认冻结方案2
+		if(!StringUtil.isValidString(dto.getFreezeType())){
+			dto.setFreezeType(FreezeTypeEnum.FREEZE_PAYEE.getKey());
+		}
+		
 		//如果付款方不用自己的账户，则不允许使用冻结方案3
 		if(!StringUtil.isValidString(dto.getPartnerOrgCode()) || !StringUtil.isValidString(
 				dto.getOrgCode()) || !StringUtil.isValidString(dto.getUserId())){
@@ -158,10 +163,6 @@ public class TitanjrUpgradeHander {
 				log.error("freezeType error");
 				return false;
 			}
-		}
-		//默认冻结方案2
-		if(!StringUtil.isValidString(dto.getFreezeType())){
-			dto.setFreezeType(FreezeTypeEnum.FREEZE_PAYEE.getKey());
 		}
 
 		return true;

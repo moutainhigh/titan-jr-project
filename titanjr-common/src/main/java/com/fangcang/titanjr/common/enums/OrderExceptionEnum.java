@@ -43,7 +43,7 @@ public enum OrderExceptionEnum {
 	//转账
 	Transfer_Update_Order_Fail("9_1","0","新增转账单失败或修改转账单失败"),Transfer_Fail("9_3","0","转账失败"),
 	
-	Transfer_Success_Update_Order_Fail("9_5","0","转账成功修改转账单失败"),
+	Transfer_revenueAccount_Fail("9_4","0","手续费转账到收益子账户失败"),Transfer_Success_Update_Order_Fail("9_5","0","转账成功修改转账单失败"),
 	
 	//回调客户端
 	Notify_Client_Transfer_Notify_Fail("11_1","0","转账成功回调失败"),Notify_Client_Not_CallBack("11_3","0","转账成功回调没有响应"),

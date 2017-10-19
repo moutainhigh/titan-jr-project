@@ -140,7 +140,7 @@ $(function(){
                 if(paymentInfor == "泰容易"){ //贷款
                 	//暂不支持
                 	
-                }else if(itemType == "balance"){ //余额支付
+                }else if(itemType == "4"){ //余额支付
                 	var flag = check_set_payPassword();
                 	if(flag){
                 		showLoading();
@@ -521,11 +521,13 @@ $(function(){
     /*// 快捷支付储蓄卡 确认支付
     $(".savings .register_btn").on("click",function(){
         $(this).text("正在支付...").css("opacity","0.4");
+        $("#VeilWhite").removeClass("isShow");
     });
     // 快捷支付信用卡 确认支付
     $(".credit .register_btn").on("click",function(){
         $(this).text("正在支付...").css("opacity","0.4");
-    });*/ 
+        $("#VeilWhite").removeClass("isShow");
+    }); */
 
     // 个人网银选中
     $(".personal-bank>ul").on("click","li",function(){
@@ -699,6 +701,8 @@ $(function(){
            $(this).css("borderColor","#dadfe2");
        }
     });
+    
+    //常用支付方式--重新获取验证码
     var btn2 = true;
     $(".obtain-btn-1").click(function(){
         console.log(1);
@@ -785,7 +789,7 @@ function buildCashierData(data){
     
 	//是否使用账户余额
 	cashierData.isaccount = function(){
-		if(itemType == 'balance'){
+		if(itemType == '4'){
 			return 1;
 		}
 		return 2;

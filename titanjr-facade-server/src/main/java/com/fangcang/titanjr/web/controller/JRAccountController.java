@@ -24,11 +24,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fangcang.titanjr.common.bean.ValidateResponse;
+import com.fangcang.titanjr.common.enums.BusinessLog;
 import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
+import com.fangcang.titanjr.common.enums.TitanjrVersionEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.GenericValidate;
@@ -40,6 +43,7 @@ import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.AddPayLogRequest;
 import com.fangcang.titanjr.dto.request.NotifyRefundRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.RefundOrderRequest;
@@ -53,6 +57,7 @@ import com.fangcang.titanjr.enums.BusiCodeEnum;
 import com.fangcang.titanjr.response.BaseResponse;
 import com.fangcang.titanjr.rest.enums.AccReceOperTypeEnum;
 import com.fangcang.titanjr.rest.request.JRAccountReceiveRequest;
+import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialRefundService;
@@ -91,6 +96,9 @@ public class JRAccountController {
 	
 	@Resource
     private TitanFinancialUtilService titanFinancialUtilService;
+	
+	@Resource
+	private BusinessLogService businessLogService;
 	
 	
 	/**
@@ -320,6 +328,8 @@ public class JRAccountController {
 		if(transOrderDTO.getReceivedfee() != null){
 			receivedFee = transOrderDTO.getReceivedfee();
 		}
+		PayerTypeEnum payerTypeEnum = PayerTypeEnum
+				.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
 		
 		TransOrderDTO transOrder = new TransOrderDTO();
 		transOrder.setOrderid(transOrderDTO.getOrderid());
@@ -329,8 +339,12 @@ public class JRAccountController {
 		transferRequest.setUserid(transOrderDTO.getUserid()); // 转出的用户
 		transferRequest.setRequestno(OrderGenerateService.genResquestNo()); // 业务订单号
 		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date())); // 请求时间
-		transferRequest.setAmount(String.valueOf(transOrderDTO.getTradeamount()+receivedFee));
-		transferRequest.setUserfee(String.valueOf(receivedFee));
+		if (payerTypeEnum != null && !payerTypeEnum.isNeedPayerInfo()) {//收款方出手续费，减去手续费
+			transferRequest.setAmount(String.valueOf(transOrderDTO.getTradeamount()-receivedFee));
+		}else{
+			transferRequest.setAmount(String.valueOf(transOrderDTO.getTradeamount()));
+		}
+		transferRequest.setUserfee("0");
 		transferRequest.setOrderid(transOrderDTO.getOrderid());
 		transferRequest.setUserrelateid(transOrderDTO.getUserrelateid());
 		transferRequest.setProductId(transOrderDTO.getProductid());
@@ -351,6 +365,21 @@ public class JRAccountController {
 					TitanMsgCodeEnum.TRANSFER_FAIL.getKey());
     	}else{
     		transOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
+    		//将手续费转到收益子账户
+        	if(transferResponse.isResult()){
+    			if(transOrderDTO.getReceivedfee() != null && transOrderDTO.getReceivedfee() > 0){
+    				log.info("began transfer to revenueAccount");
+    				TransferRequest transferRevenueAccountRequest = this.getRevenueAccountTransferRequest(transOrderDTO);
+    				transferResponse = titanFinancialTradeService.transferAccounts(transferRevenueAccountRequest);
+    				if(transferResponse.isResult()){
+    					log.info("transfer to revenueAccount success, transOrderId: " + transOrderDTO.getTransid());
+    					businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
+    				}else{
+    					log.error("transfer to revenueAccount success faild, transOrderId: " + transOrderDTO.getTransid());
+    					titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(), OrderKindEnum.OrderId, OrderExceptionEnum.Transfer_revenueAccount_Fail, transOrderDTO.getStatusid());
+    				}
+    			}
+        	}
     	}
     	
     	//更新订单状态
@@ -474,6 +503,21 @@ public class JRAccountController {
 		notifyRefundRequest.setSignType(String.valueOf(payOrder.getSignType()));
 		notifyRefundRequest.setVersion(payOrder.getVersion());//关于版本？
 		return notifyRefundRequest;
+	}
+	
+	public TransferRequest getRevenueAccountTransferRequest(TransOrderDTO transOrderDTO){
+		TransferRequest transferRequest = new TransferRequest();
+		transferRequest.setCreator(transOrderDTO.getCreator());
+		transferRequest.setUserid(transOrderDTO.getUserid()); // 转出的用户
+		transferRequest.setProductId(transOrderDTO.getProductid());
+		transferRequest.setRequestno(OrderGenerateService.genResquestNo()); // 业务订单号
+		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date())); // 请求时间
+		transferRequest.setAmount(String.valueOf(transOrderDTO.getReceivedfee()));
+		transferRequest.setUserfee("0");
+		transferRequest.setOrderid(transOrderDTO.getOrderid());
+		transferRequest.setUserrelateid(CommonConstant.RS_FANGCANG_USER_ID); // 转入的用户
+		transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
+		return transferRequest;
 	}
 
 }

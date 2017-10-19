@@ -586,18 +586,14 @@ public class TitanTradeController extends BaseController {
 			}
 		}
 		
-		//如果付款方不用自己的账户，则不允许使用冻结方案3
-		if(!StringUtil.isValidString(dto.getPartnerOrgCode()) || !StringUtil.isValidString(
-				dto.getOrgCode()) || !StringUtil.isValidString(dto.getUserId())){
-			if(StringUtil.isValidString(dto.getFreezeType()) && FreezeTypeEnum.FREEZE_PAYER.getKey()
-					.equals(dto.getFreezeType())){
-				log.error("freezeType error");
-				return false;
-			}
-		}
 		//默认冻结方案2
 		if(!StringUtil.isValidString(dto.getFreezeType())){
 			dto.setFreezeType(FreezeTypeEnum.FREEZE_PAYEE.getKey());
+		}
+		//老版收银台只支持冻结方案2
+		if(!FreezeTypeEnum.FREEZE_PAYEE.getKey().equals(dto.getFreezeType())){
+			log.error("freezeType is not 2");
+			return false;
 		}
 
 		return true;
