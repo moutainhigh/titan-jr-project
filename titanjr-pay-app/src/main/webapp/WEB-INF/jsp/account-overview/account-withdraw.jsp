@@ -223,7 +223,7 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
     
     
     new AutoComplete($('#bankCode'), {
-        data : personBankData.content,,
+        data : personBankData.content,
         key : 'bankCode',  //数据源中，做为key的字段
         val : 'bankName', //数据源中，做为val的字段
         width : 240,
