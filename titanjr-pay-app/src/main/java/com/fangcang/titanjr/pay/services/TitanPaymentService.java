@@ -238,6 +238,7 @@ public class TitanPaymentService {
 				UserBindInfoDTO userBindInfoDTO = null;
 				UserBindInfoRequest userBindInfoRequest = new UserBindInfoRequest();
 				userBindInfoRequest.setMerchantcode(titanPaymentRequest.getPartnerOrgCode());
+				userBindInfoRequest.setFcuserid(Long.valueOf(titanPaymentRequest.getFcUserid()));
 				UserBindInfoResponse userBindInfoResponse = titanFinancialUserService.queryUserBindInfoDTO(userBindInfoRequest);
 				if(CollectionUtils.isNotEmpty(userBindInfoResponse.getPaginationSupport().getItemList())){
 					userBindInfoDTO = userBindInfoResponse.getPaginationSupport().getItemList().get(0);
@@ -301,14 +302,12 @@ public class TitanPaymentService {
 		transferRequest.setUserid(transOrderDTO.getUserid()); // 转出的用户
 		transferRequest.setRequestno(OrderGenerateService.genResquestNo()); // 业务订单号
 		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date())); // 请求时间
-		if (transOrderDTO.getTradeamount() != null) {// 如果是GDP支付则应该减去手续费
+		PayerTypeEnum payerTypeEnum = PayerTypeEnum
+				.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
+		if (transOrderDTO.getTradeamount() != null) {
 			String amount = transOrderDTO.getTradeamount().toString();
-			if (StringUtil.isValidString(transOrderDTO.getPayerType())
-					&& transOrderDTO.getReceivedfee() != null) {
-				PayerTypeEnum payerTypeEnum = PayerTypeEnum
-						.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
-				if (payerTypeEnum.isB2BPayment() || payerTypeEnum.isOpenOrg()
-						|| payerTypeEnum.isTTMAlL()) {
+			if (payerTypeEnum != null && transOrderDTO.getReceivedfee() != null) {
+				if (!payerTypeEnum.isNeedPayerInfo()) {// 收款方出手续费的，交易金额减去手续费
 					amount = new BigDecimal(transOrderDTO.getTradeamount())
 							.subtract(
 									new BigDecimal(transOrderDTO
@@ -321,6 +320,21 @@ public class TitanPaymentService {
 		transferRequest.setOrderid(transOrderDTO.getOrderid());
 		transferRequest.setUserrelateid(transOrderDTO.getUserrelateid());
 		transferRequest.setProductId(transOrderDTO.getProductid());
+		return transferRequest;
+	}
+	
+	public TransferRequest getRevenueAccountTransferRequest(TransOrderDTO transOrderDTO){
+		TransferRequest transferRequest = new TransferRequest();
+		transferRequest.setCreator(transOrderDTO.getCreator());
+		transferRequest.setUserid(transOrderDTO.getUserid()); // 转出的用户
+		transferRequest.setProductId(transOrderDTO.getProductid());
+		transferRequest.setRequestno(OrderGenerateService.genResquestNo()); // 业务订单号
+		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date())); // 请求时间
+		transferRequest.setAmount(String.valueOf(transOrderDTO.getReceivedfee()));
+		transferRequest.setUserfee("0");
+		transferRequest.setOrderid(transOrderDTO.getOrderid());
+		transferRequest.setUserrelateid(CommonConstant.RS_FANGCANG_USER_ID); // 转入的用户
+		transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
 		return transferRequest;
 	}
 
@@ -346,7 +360,12 @@ public class TitanPaymentService {
 				log.info("转账到收款方，不冻结");
 				return 0;//不需要冻结，直接返回
 			}else if(FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrderDTO.getFreezeType())){
-				rechargeResultConfirmRequest.setUserid(transferRequest.getUserid());//冻结在付款方
+				//冻结在付款方,冻结金额需要考虑手续费
+				if(transOrderDTO.getReceivedfee() != null && transOrderDTO.getReceivedfee() > 0){
+					log.info("freezeType is 3, transferAmount add receivedfee");
+					rechargeResultConfirmRequest.setPayAmount(String.valueOf(Integer.parseInt(transferRequest.getAmount()) + transOrderDTO.getReceivedfee()));
+				}
+				rechargeResultConfirmRequest.setUserid(transferRequest.getUserid());
 				freezeStatus = 1;
 				log.info("不转账，资金冻结在付款方");
 			}else{

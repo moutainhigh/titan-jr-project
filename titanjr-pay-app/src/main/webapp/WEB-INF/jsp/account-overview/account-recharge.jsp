@@ -154,7 +154,7 @@
 			</div>
 			<div class="ysgl_bottombut">
 				<a class="btn p_lr30 J_password">确定</a>
-				<a class="btn btn_exit J_exitKan">取消</a>
+				<a class="btn btn_exit J_exitKan">关闭</a>
 			</div>
 			<jsp:include page="../checkstand-pay/cashierDeskLimit.jsp"></jsp:include>
  		</div>

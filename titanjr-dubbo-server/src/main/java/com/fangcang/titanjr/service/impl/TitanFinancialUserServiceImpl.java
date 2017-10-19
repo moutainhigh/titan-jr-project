@@ -192,7 +192,6 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         titanUser.setCreator(userRegisterRequest.getOperator());
         titanUser.setIsadmin(userRegisterRequest.getIsAdminUser());
         titanUser.setMerchantcode(userRegisterRequest.getMerchantCode());
-        titanUser.setMobilephone(userRegisterRequest.getMobilePhone());
         titanUser.setOrgcode(userRegisterRequest.getOrgCode());
         titanUser.setUserid(userRegisterRequest.getUserId());
         titanUser.setPassword(MD5.MD5Encode(userRegisterRequest.getPassword()));

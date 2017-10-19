@@ -16,55 +16,10 @@
         .disabledButton{
         	opacity: 0.3;
         }
-                .City_components{
-            position: relative;
-        }
-        .month-drop-down-frame,.year-drop-down-frame{
-            position: absolute;
-            width: 118px;
-            max-height: 100px;
-            top: 36px;
-            left: 0;
-            z-index: 11;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            overflow-y: auto;
-        }
-        .year-drop-down-frame{
-            left: 10px;
-        }
-        .City_components .drop-down-frame{
-            height: 30px;
-            line-height: 30px;
-            padding-left: 10px;
-            border-bottom: 1px solid #ccc;
-            cursor: pointer;
-        }
-        .City_components .drop-down-frame:hover{
-            background-color: #238AF7;
-        }
-        .City_components .select-items{
-            box-sizing: border-box;
-            display: inline-block;
-            width: 120px;
-            height: 36px;
-            border: 1px solid #ccc;
-            border-radius: 2px;
-            line-height: 36px;
-            padding-left: 10px;
-            margin-right: 10px;
-            margin-left: 10px;
-            cursor: pointer;
-        }
-        .City_components .select-items:hover{
-            border-color: #666;
-        }
-        .payment2account .right .input-text .valid-tip b{
-            margin-left: 20px;
-        }
     </style>
 </head>
 <body>
+<div class="cashier-box">
     <header>
         <div class="h">
             <b></b>
@@ -128,29 +83,36 @@
         <!-- 支付方式-->
         <ul class="payment-mode">
         	<!-- 余额支付 -->
-            <c:if test="${ not empty cashDeskData.balanceusable }">
-            	<c:if test="${cashDeskData.canAccountBalance eq true }">
-            		<!-- 无余额支付权限或者余额小于支付金额，设置不可选 -->
-	            	<li class="payment-mode-prohibit clearfix" <c:if test="${cashDeskData.canAccountBalance ne true or cashDeskData.balanceusable < cashDeskData.amount }">data-choice="false"</c:if> >
-		                <div class="icon fl">
-		                    <b class="iconfont icon-check1"></b>
-		                    <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
-		                        <use xlink:href="#icon-qb"></use>
-		                    </svg>
-		                    <span class="payment-mode-info">账户余额</span>
-		                    <input class="itemType" type="hidden" value="balance"/>
-		                </div>
-		                <div class="content fl">
-		                   	 账户余额：<span><fmt:formatNumber value="${cashDeskData.balanceusable }"  pattern="#,##0.00#" />元</span>
-		                </div>
-		                <div class="right-money isShow">
-		                    <span class="money"><s>￥</s><span id="amount_balance">${cashDeskData.amount }</span></span>
-		                </div>
-		            </li>
-            	</c:if>
-            </c:if>
+           	<li class="payment-mode-prohibit clearfix">
+                <input class="index" type="hidden" value="1"/>
+                <div class="icon fl">
+                    <b class="iconfont icon-check1"></b>
+                    <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
+                        <use xlink:href="#icon-qb"></use>
+                    </svg>
+                    <span class="payment-mode-info">账户余额</span>
+                    <input class="itemType" type="hidden" value="4"/>
+                </div>
+                <div class="content fl">
+                   	 账户余额：<span><fmt:formatNumber value="${cashDeskData.balanceusable }"  pattern="#,##0.00#" />元</span>
+                </div>
+                <div class="right-money isShow">
+                	<!-- 财务付款给供应商才显示手续费 -->
+					<c:if test="${cashDeskData.paySource =='2' }">
+						<span>手续费 ￥<span id="commPayRateAmount_4_1">0.00</span></span>
+					</c:if>
+                    <span class="money"><s>￥</s><span id="amount_4_1">${cashDeskData.amount }</span></span>
+                </div>
+                <div id="balanceNotEnough" class="isShow" style="float: right;">
+					<c:if test="${cashDeskData.paySource =='2' }">
+						<span style="color: red;">手续费 ￥<span id="balanceNotEnough_rate" style="color: #EE0000;">0.00 </span></span>&nbsp;&nbsp;
+					</c:if>
+                    <span class="money"><span style="font-size: 15px;" id="balanceNotEnough_amoun">余额不足</span></span>
+                </div>
+            </li>
             <!-- 微信和支付宝支付默认显示 -->
             <li class="clearfix selected">
+            	<input class="index" type="hidden" value="2"/>
                 <div class="icon fl">
                     <b class="iconfont icon-check icon-check-color"></b>
                     <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
@@ -163,43 +125,43 @@
                 <div class="right-money">
                     <!-- 财务付款给供应商才显示手续费 -->
 					<c:if test="${cashDeskData.paySource =='2' }">
-						<span id="rateSpan_wx">手续费 ￥<span id="commPayRateAmount_wx">0.00</span></span>
+						<span>手续费 ￥<span id="commPayRateAmount_wx_2">0.00</span></span>
 					</c:if>
-					<!-- 这里需要考虑手续费 -->
-					<span class="money"><s>￥</s><span id="amount_wx">${cashDeskData.amount }</span></span>
+					<span class="money"><s>￥</s><span id="amount_wx_2"><fmt:formatNumber value="${cashDeskData.amount }" pattern="#,##0.00#" /></span></span>
                 </div>
             </li>
          	<li class="clearfix">
+         		<input class="index" type="hidden" value="3"/>
                 <div class="icon fl">
                     <b class="iconfont icon-check1"></b>
                     <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
                         <use xlink:href="#icon-zfb"></use>
                     </svg>
                     <span class="payment-mode-info">支付宝支付</span>
-                    <input class="bankinfo" type="hidden" value="alipay"/>
-                    <input class="itemtype" type="hidden" value="9"/>
+                    <input class="bankInfo" type="hidden" value="alipay"/>
+                    <input class="itemType" type="hidden" value="9"/>
                 </div>
                 <div class="right-money isShow">
                     <!-- 财务付款给供应商才显示手续费 -->
 					<c:if test="${cashDeskData.paySource =='2' }">
-						<span id="rateSpan_alipay">手续费 ￥<span id="commPayRateAmount_alipay">0.00</span></span>
+						<span>手续费 ￥<span id="commPayRateAmount_alipay_3">0.00</span></span>
 					</c:if>
-					<!-- 这里需要考虑手续费 -->
-					<span class="money"><s>￥</s><span id="amount_alipay">${cashDeskData.amount }</span></span>
+					<span class="money"><s>￥</s><span id="amount_alipay_3">${cashDeskData.amount }</span></span>
                 </div>
             </li>
             <!-- 常用支付方式历史 -->
             <c:if test="${not empty cashDeskData.commonPayHistoryList }">
             	 <c:forEach items="${cashDeskData.commonPayHistoryList }" var="commonPay" varStatus="status">
 	            	<li class="<c:if test='${status.index > 0}'>isShow </c:if>clearfix">
+	            		<input class="index" type="hidden" value="${status.index + 4 }"/>
 		                <div class="icon fl">
 		                    <b class="iconfont icon-check1"></b>
 		                    <svg class="icon" aria-hidden="true" style="font-size: 26px;margin-left: 35px;top: 4px;">
 		                        <use xlink:href="#icon-${commonPay.bankinfo }"></use>
 		                    </svg>
 		                    <span class="payment-mode-info">${commonPay.bankname }</span>
-		                    <input class="bankinfo" type="hidden" value="${commonPay.bankinfo }"/>
-                    		<input class="itemtype" type="hidden" value="${commonPay.paytype }"/>
+		                    <input class="bankInfo" type="hidden" value="${commonPay.bankinfo }"/>
+                    		<input class="itemType" type="hidden" value="${commonPay.paytype }"/>
                     		<input class="payerAccount" type="hidden" value="${commonPay.payeracount }"/>
                     		<input class="payerAccountType" type="hidden" value="${commonPay.payeraccounttype }"/>
                     		<input class="payerName" type="hidden" value="${commonPay.payername }"/>
@@ -222,13 +184,16 @@
 		                </c:if>
 		                <c:if test="${commonPay.paytype != '11' }">
 		                	<div class="content discount fl">
-			                    <div class="bank-card fl"><span style="display:inline-block;width: 58px;"></span>
+			                    <div class="bank-card fl"><!-- <span style="display:inline-block;width: 58px;"></span> -->
 			                    	<c:if test="${commonPay.paytype =='1'}">
 			                    		<!-- 民生银行的payeracount是企业银行客户号 -->
-								  		<span>${commonPay.subpayeracount }</span><s>|</s><span>企业网银</span></div>
+								  		<%-- <span>${commonPay.subpayeracount }</span><s>|</s><span>企业网银</span></div> --%>
+								  		<c:if test="${not empty commonPay.subpayeracount }">
+								  			<span>${commonPay.subpayeracount }</span><s>|</s>
+								  		</c:if>
+								  		<span>企业网银</span></div>
 									</c:if>
 									<c:if test="${commonPay.paytype =='2'}">
-										<s></s>
 										<c:if test="${commonPay.payeraccounttype =='10'}">
 									  		<span>
 									  		储蓄卡
@@ -246,10 +211,9 @@
 		                <div class="right-money isShow">
 		                    <!-- 财务付款给供应商才显示手续费 -->
 							<c:if test="${cashDeskData.paySource =='2' }">
-								<span id="rateSpan_${commonPay.paytype }">手续费 ￥<span id="commPayRateAmount_${commonPay.paytype }">0.00</span></span>
+								<span>手续费 ￥<span id="commPayRateAmount_${commonPay.paytype }_${status.index + 4}">0.00</span></span>
 							</c:if>
-							<!-- 这里需要考虑手续费 -->
-							<span class="money"><s>￥</s><span id="amount_${commonPay.paytype }">${cashDeskData.amount }</span></span>
+							<span class="money"><s>￥</s><span id="amount_${commonPay.paytype }_${status.index + 4}">${cashDeskData.amount }</span></span>
 		                </div>
 		            </li>
 	            </c:forEach>
@@ -306,7 +270,7 @@
                                 <i><b></b></i>
                                 <span></span>
                             </div>
-                            <a href="忘记密码.html" target="_blank" class="fl">忘记密码?</a>
+                            <a href="../edit-password.jsp" target="_blank" class="fl">忘记密码?</a>
                         </li>
                     </ul>
                     <span id="payPasswordError" class="password-prompt" style="top: 12px;right: 230px;"></span>
@@ -318,11 +282,13 @@
     <!-- 底部-->
     <footer>
         <div class="h">
-            <p>Copyright 2012-2016，fangcang.com. All Rights Reserved 泰坦云 版权所有 粤ICP备13046150号 <a href="javascript:void(0);"></a>工商网监 电子标识</p>
+            <p>Copyright 2012-2016，fangcang.com. All Rights Reserved 泰坦云 版权所有 粤ICP备13046150号 <a href="http://szcert.ebs.org.cn/78ccac39-a97a-452c-9f81-162cd840cff6" target="_blank"><span></span>工商网监 电子标识</a></p>
         </div>
     </footer>
 <!--遮罩层 -->
 <div class="payment-box isShow" id="Veil"></div>
+<!-- 透明遮罩层-->
+<div class="payment-box isShow" id="VeilWhite" style="opacity:0.4; z-index: 9;"></div>
 <!--添加快捷/银行卡支付弹窗-->
 <div class="shortcut isShow">
 	<!-- tab切换 -->
@@ -391,7 +357,7 @@
 	                    <input id="merchantNo" name="merchantNo" type="hidden" value="M000016" />
 	                    <input id="payType" name="payType" type="hidden" value="41" />
 	                    <!-- 融数订单号，获取验证码的时候设置 -->
-	                    <input id="quick_rsOrder" name="orderNo" type="hidden" />
+	                    <input id="quick_rsOrder_deposit" name="orderNo" class="quick_rsOrder" type="hidden" />
                         <ul class="register_list">
                             <li class="type_li clearfix">
                                 <div class="type_name fl">
@@ -433,11 +399,11 @@
                                 </div>
                                 <div class="type_adress fl" id="city_4">
                                     <div class="City_components m_r10 prov">
-                                        <select name="">
-                                            <option value="1">身份证</option>
-                                            <option value="">护照</option>
-                                            <option value="">港澳通行证</option>
-                                        </select>
+                                        <div class="certificates-type">身份证</div>
+                                        <div class="certificates-type-items isShow">
+                                            <div class="certificates-type-item">身份证</div>
+                                            <!-- <div class="certificates-type-item">护照</div> -->
+                                        </div>
                                         <i class="iconfont icon-downArrow"></i>
                                     </div>
                                 </div>
@@ -470,7 +436,7 @@
                                 </div>
                                 <div class="type_mz fl">
                                     <div class="pdd pdd_y fl bank-input-span">
-                                        <input name="checkCode" style="background-color: #fff;width: 184px;" class="re_color f_ui-grey-input focus_on " datatype="n" type="text" focus_on errormsg="请输入验证码" placeholder="请输入验证码" onkeyup="value=value.replace(/[^\d]/g,'')"><s class="iconfont icon-sc info-empty-btn isShow" style="right: 100px;"></s><button type="button" class="get-verification-btn ">获取验证码</button>
+                                        <input id="checkCode_deposit" name="checkCode" style="background-color: #fff;width: 184px;" class="re_color f_ui-grey-input focus_on " datatype="n" type="text" focus_on errormsg="请输入验证码" placeholder="请输入验证码" onkeyup="value=value.replace(/[^\d]/g,'')"><s class="iconfont icon-sc info-empty-btn isShow" style="right: 100px;"></s><button type="button" class="get-verification-btn">获取验证码</button>
                                     </div>
                                 </div>
                             </li>
@@ -478,7 +444,7 @@
                                 <div class="type_name fl"></div>
                                 <div class="type_agree fl">
                                     <label class="la_agree">
-                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i> &nbsp;<span>同意</span><a href="支付协议.html" target="_blank">《支付服务协议》</a>
+                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i><span>同意</span><a href="支付协议.html" target="_blank">《支付服务协议》</a>
                                     </label>
                                 </div>
                             </li>
@@ -492,6 +458,12 @@
                     </form>
                 </div>
                 <div class="right fr">
+                	<c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
+	                	<div style="background-color: #E6E6FA; padding: 10px; margin-bottom: 10px; border: 2px solid #E3E3E3;">
+	                		<span>手续费 ￥<span id="addPayRateAmount_11_deposit">0.00</span></span>&nbsp;&nbsp;&nbsp;
+	                		<span class="money"><s>总金额 ￥</s><span id="addPayAmount_11_deposit">${cashDeskData.amount }</span></span>
+	                	</div>
+                	</c:if>
                     <div class="card">
                         <div class="title">
                         <span>
@@ -532,13 +504,13 @@
             <div class="content clearfix">
                 <!-- 表单-->
                 <div class="register_information fl">
-                    <form id="J_form3" class="demo_form" action="<%=basePath%>/quickPay/confirmRecharge.action">
+                    <form id="J_form3" class="demo_form" action="<%=basePath%>/quickPay/confirmRecharge.action" target="_blank">
                     	<input id="busiCode" name="busiCode" type="hidden" value="109" />
 	                    <input id="signType" name="signType" type="hidden" value="1" />
 	                    <input id="version" name="version" type="hidden" value="v1.1" />
 	                    <input id="merchantNo" name="merchantNo" type="hidden" value="M000016" />
 	                    <input id="payType" name="payType" type="hidden" value="41" />
-	                    <input id="quick_rsOrder" name="orderNo" type="hidden" /><!-- 获取验证码的时候设置 -->
+	                    <input id="quick_rsOrder_credit" name="orderNo" class="quick_rsOrder" type="hidden" /><!-- 获取验证码的时候设置 -->
                         <ul class="register_list">
                             <li class="type_li clearfix">
                                 <div class="type_name fl">
@@ -580,11 +552,11 @@
                                 </div>
                                 <div class="type_adress fl" id="city_4">
                                     <div class="City_components m_r10 prov">
-                                        <select name="">
-                                            <option value="1">身份证</option>
-                                            <option value="">护照</option>
-                                            <option value="">港澳通行证</option>
-                                        </select>
+                                        <div class="certificates-type">身份证</div>
+                                        <div class="certificates-type-items isShow">
+                                            <div class="certificates-type-item">身份证</div>
+                                            <!-- <div class="certificates-type-item">护照</div> -->
+                                        </div>
                                         <i class="iconfont icon-downArrow"></i>
                                     </div>
                                 </div>
@@ -681,7 +653,7 @@
                                 </div>
                                 <div class="type_mz fl">
                                     <div class="pdd pdd_y fl bank-input-span">
-                                        <input style="background-color: #fff;width: 184px;" class="re_color f_ui-grey-input focus_on " datatype="n" type="text" focus_on errormsg="请输入验证码" placeholder="6位数字验证码" onkeyup="value=value.replace(/[^\d]/g,'')"><s class="iconfont icon-sc info-empty-btn isShow" style="right: 100px;"></s><button type="button" class="get-verification-btn ">获取验证码</button>
+                                        <input id="checkCode_credit" name="checkCode" style="background-color: #fff;width: 184px;" class="re_color f_ui-grey-input focus_on " datatype="n" type="text" focus_on errormsg="请输入验证码" placeholder="6位数字验证码" onkeyup="value=value.replace(/[^\d]/g,'')"><s class="iconfont icon-sc info-empty-btn isShow" style="right: 100px;"></s><button type="button" class="get-verification-btn">获取验证码</button>
                                     </div>
                                 </div>
                             </li>
@@ -689,7 +661,7 @@
                                 <div class="type_name fl"></div>
                                 <div class="type_agree fl">
                                     <label class="la_agree">
-                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i> &nbsp;<span>同意</span><a href="支付协议.html" target="_blank">《支付服务协议》</a>
+                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i><span>同意</span><a href="支付协议.html" target="_blank">《支付服务协议》</a>
                                     </label>
                                 </div>
                             </li>
@@ -703,6 +675,12 @@
                     </form>
                 </div>
                 <div class="right fr">
+                	<c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
+	                	<div style="background-color: #E6E6FA; padding: 10px; margin-bottom: 10px; border: 2px solid #E3E3E3;">
+	                		<span>手续费 ￥<span id="addPayRateAmount_11_credit">0.00</span></span>&nbsp;&nbsp;&nbsp;
+	                		<span class="money"><s>总金额 ￥</s><span id="addPayAmount_11_credit">${cashDeskData.amount }</span></span>
+	                	</div>
+                	</c:if>
                     <div class="card">
                         <div class="title">
                         <span>
@@ -739,9 +717,9 @@
         </div>
     </div>
     <!-- 网银支付 -->
-    <input id="accountType_personal_hid" type="hidden" /><!-- 针对个人网银，调转网银之前设值 -->
-    <input id="bankInfo_personal_hid" type="hidden" />
-    <input id="linePayType_personal_hid" type="hidden" />
+    <input id="accountType_wy_hid" type="hidden" /><!-- 针对个人网银，调转网银之前设值 -->
+    <input id="bankInfo_wy_hid" type="hidden" />
+    <input id="linePayType_wy_hid" type="hidden" />
     <!-- 个人网银-->
     <div class="personal personal-bank isShow">
         <ul class="clearfix">
@@ -767,11 +745,18 @@
         <div class="content enterprise-content clearfix">
             <div class="enterprise-form clearfix" style="margin-bottom: 20px;line-height: 26px">
                 <div class="left fl">付款银行</div>
-                <div class="right fl">
+                <div class="right fl" style="width: 700px;">
                     <svg class="icon" aria-hidden="true" style="position: relative;top: 2px;">
                         <use id="bankImg_personal" xlink:href=""></use>
                     </svg>
-                    <span id="bankName_personal"></span><a href="javascript:void (0);" class="change-bank">更换付款银行</a></div>
+                    <span id="bankName_personal"></span><a href="javascript:void (0);" class="change-bank">更换付款银行</a>
+                    <c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
+	                    <span style="background-color: #E6E6FA; padding: 10px; margin-left:50px; border: 2px solid #E3E3E3;">
+	                		<span>手续费 ￥<span id="addPayRateAmount_2_personal">0.00</span></span>&nbsp;&nbsp;&nbsp;
+	                		<span class="money"><s>总金额 ￥</s><span id="addPayAmount_2_personal">${cashDeskData.amount }</span></span>
+	                	</span>
+                	</c:if>
+                </div>
             </div>
             <div class="enterprise-form clearfix" style="margin-bottom: 20px">
                 <div class="left fl">银行类型</div>
@@ -813,16 +798,23 @@
         <div class="content enterprise-content clearfix">
             <div class="enterprise-form clearfix" style="margin-bottom: 20px;line-height: 26px">
                 <div class="left fl">付款银行</div>
-                <div class="right fl">
+                <div class="right fl" style="width: 700px;">
                     <svg class="icon" aria-hidden="true" style="position: relative;top: 2px;">
                         <use id="bankImg_enterprise" xlink:href=""></use>
                     </svg>
-                    <span id="bankName_enterprise"></span><a href="javascript:void (0);" class="change-bank">更换付款银行</a></div>
+                    <span id="bankName_enterprise"></span><a href="javascript:void (0);" class="change-bank">更换付款银行</a>
+                    <c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
+	                    <span style="background-color: #E6E6FA; padding: 10px; margin-left:50px; border: 2px solid #E3E3E3;">
+	                		<span>手续费 ￥<span id="addPayRateAmount_1_enterprise">0.00</span></span>&nbsp;&nbsp;&nbsp;
+	                		<span class="money"><s>总金额 ￥</s><span id="addPayAmount_1_enterprise">${cashDeskData.amount }</span></span>
+	                	</span>
+                	</c:if>
+                </div>
             </div>
             <div id="enterpriseCustomerNoDev" class="enterprise-form clearfix isShow" style="margin-bottom: 20px">
                 <div class="left fl" style="line-height: 38px">企业银行客户号</div>
                 <div class="right fl">
-                    <input id="enterpriseCustomerNo" type="text" placeholder="请输入企业银行客户号"/>
+                    <input id="enterpriseCustomerNo" type="text"/>
                     <s class="iconfont icon-sc enterprise-empty-btn isShow"></s>
                 </div>
             </div>
@@ -832,6 +824,9 @@
                 </div>
             </div>
         </div>
+        <div id="enterprise_warm" style="padding-left: 40px; display: none;">
+        	<p><em style="color: #CD3700;">温馨提示：必须登录有提交权限的企业U盾后才可正常进入工商银行企业网银。</em></p>
+        </div>
     </div>
 </div>
 
@@ -839,8 +834,8 @@
 <div class="wx-payment wx isShow">
     <div class="wx-payment-title">微信支付<i class="iconfont icon-sc close"></i></div>
     <div class="wx-payment-content">
-        <p><span>￥</span><span id="wx_pay_amount"></span></p>
-        <img id="wx_qrcode" src="" alt="微信扫描二维码支付"/>
+        <p><span>￥</span><b id="wx_pay_amount"></b></p>
+        <img height="250px;" width="240px;" id="wx_qrcode" src="" alt="微信扫描二维码支付"/>
         <div class="icon">
             <div class="left fl">
                 <i class="iconfont icon-wx"></i>
@@ -938,14 +933,23 @@
   <input name="orderNo" id="check_orderNo" type="hidden">
   <input name="expand" id="check_expand" type="hidden">
 </form>
-
+</div>
 </body>
 <%@include file="/comm/upgrade/upgrade-js.jsp"%>
 <script>
-	//下拉框
+	// 可视区域判断
+	if($(".cashier-box").height() >= $(window).height()){
+	    $("footer").css("position","static");
+	}
+	
+	//信用卡有效期下拉框
 	$(".select-items").on("click",function(){
-	    $(".select-items").next().addClass("isShow");
-	    $(this).next().removeClass("isShow");
+	    if($(this).next().hasClass("isShow")){
+	        $(".select-items").next().addClass("isShow");
+	        $(this).next().removeClass("isShow");
+	    }else{
+	        $(this).next().addClass("isShow");
+	    }
 	});
 	$(".shortcut").on("clcik",function(){
 	    $(".select-items").next().addClass("isShow");
@@ -960,6 +964,21 @@
 	    $(this).parent().prev().text(text);
 	    $(this).parent().addClass("isShow");
 	});
+	
+	// 证件类型下拉框
+    $(".bank-account-info .certificates-type").on("click",function(){
+       if($(this).next().hasClass("isShow")){
+           $(this).next().removeClass("isShow");
+       }else{
+           $(this).next().addClass("isShow");
+       }
+    });
+    $(".bank-account-info .certificates-type-items").on("click",".certificates-type-item",function(){
+        $(".bank-account-info .certificates-type").trigger("click");
+        var text = $(this).text();
+        $(".bank-account-info .certificates-type").text(text);
+    });
+	
 	// 进度条
 	function showLoading(){
 		F.loading_line.show() //显示loading
@@ -1031,8 +1050,23 @@
     
     //费率显示
     function setRate(){
-    	if('${cashDeskData.paySource }' == '2'){//目前财务付款才有手续费，第一次进来默认选中微信支付
-    		rateCompute('wx', 'commpay');
+    	if('${cashDeskData.paySource }' == '2'){//财务付款需要计算显示手续费（付款方手续费），第一次进来默认选中微信支付
+    		rateCompute('wx', 'commpay', 2);
+    		//校验余额支付
+    		var balanceusable = '${not empty cashDeskData.balanceusable }';
+    		var canAccountBalance = '${cashDeskData.canAccountBalance eq true }';
+    		var balanceAmount = parseFloat('${cashDeskData.balanceusable }');
+    		var tradeAmount = parseFloat('${cashDeskData.amount }');
+    		var rateAmount = parseFloat($("#commPayRateAmount_wx_2").text());
+    		if(!balanceusable || !canAccountBalance){
+    			$('.payment-mode-prohibit').css('background-color', '#FCFCFC').css('opacity', '0.4');
+    			$('.payment-mode-prohibit').attr('data-choice', false);
+    		}else if(balanceAmount < tradeAmount + rateAmount){
+    			$("#balanceNotEnough_rate").text(rateAmount);
+    			$("#balanceNotEnough").removeClass('isShow');
+    			$('.payment-mode-prohibit').css('background-color', '#FCFCFC').css('opacity', '0.4');
+    			$('.payment-mode-prohibit').attr('data-choice', false);
+    		}
     	}
     }
     
@@ -1122,6 +1156,9 @@
     	if('${cashDeskData.payerTypeEnum.key }' != '3'){
     		return;
     	}
+    	if('${cashDeskData.orgName }'.length > 0 || '${cashDeskData.titanCode }'.length > 0){
+    		return;
+    	}
     	var orgName;
     	var titanCode;
     	if('${cashDeskData.accountHistoryDTO}' != null){
@@ -1135,25 +1172,6 @@
             $("#recieveOrgName").val(orgName);
             $("#recieveTitanCode").val(titanCode);
             $(".new-payment-bank").removeClass("isShow");
-    	}
-    }
-    
-    //添加快捷支付--储蓄卡--表单提交事件
-    function submitQuickpay_deposit(){debugger;
-    	if(quickpayDeposit.validate()){
-    		$("#confirm_quickpay_deposit").addClass("disabledButton").attr("disabled", true);
-        	showLoading();
-        	top.F.loading.show();
-        	$("#J_form1").submit();
-    	}
-    }
-    //添加快捷支付--信用卡--表单提交事件
-    function submitQuickpay_credit(){debugger;
-    	if(quickpayCredit.validate()){
-    		$("#confirm_quickpay_credit").addClass("disabledButton").attr("disabled", true);
-        	showLoading();
-        	top.F.loading.show();
-        	$("#J_form3").submit();
     	}
     }
     

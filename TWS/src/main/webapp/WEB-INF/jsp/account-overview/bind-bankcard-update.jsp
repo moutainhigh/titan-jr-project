@@ -107,7 +107,6 @@
 	}
 	
 	
-	
 	if($('.city_code').length>0){//企业
 		initCityAutoComplete();
 	}
@@ -215,7 +214,7 @@
         		}else{
         			if(paramData.userType=='2'){//个人表示绑卡成功
         				bc.close();
-        				account_withdraw();
+        				window.location.reload();
         			}else{
         				bc.bindResultView();
         			}

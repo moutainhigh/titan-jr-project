@@ -29,6 +29,7 @@ import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.titanjr.web.annotation.AccessPermission;
 import com.fangcang.titanjr.web.util.WebConstant;
+import com.fangcang.util.StringUtil;
 
 /**
  * 金融访问权限拦截器
@@ -47,8 +48,9 @@ public class AccessPermissionInterceptor  implements HandlerInterceptor {
 		
 		HttpSession session = request.getSession();
 		Integer isadmin = 0;
-		Integer tfsUserId = (Integer)session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
-		if(tfsUserId!=null){
+		String tfsUserIdString = (String)session.getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+		if(StringUtil.isValidString(tfsUserIdString)){
+			Integer tfsUserId = Integer.valueOf(tfsUserIdString);
 			UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 			userInfoQueryRequest.setTfsUserId(tfsUserId);
 			UserInfoPageResponse userInfoPage = userService.queryUserInfoPage(userInfoQueryRequest);

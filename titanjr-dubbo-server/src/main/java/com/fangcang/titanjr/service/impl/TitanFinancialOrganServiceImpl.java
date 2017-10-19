@@ -164,7 +164,6 @@ import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
 
 import net.sf.json.JSONSerializer;
-
 /**
  * Created by zhaoshan on 2016/3/30.
  */
@@ -358,7 +357,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
             orgBindInfo.setMerchantCode(organRegisterRequest.getMerchantCode());
             orgBindInfo = this.queryOrgBindInfoByUserid(orgBindInfo);
     		if(orgBindInfo!=null&&StringUtil.isValidString(orgBindInfo.getOrgcode())){
-    			throw new MessageServiceException("该商家已经开通了金融账号，不允许重复开通");
+    			throw new MessageServiceException("6002","该商家已经开通了金融账号，不允许重复开通");
     		}
     		TitanOrg titanOrg = addOrg(organRegisterRequest);
     		result.put("titanOrg", titanOrg);
@@ -494,7 +493,6 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     	userRegisterRequest.setFcLoginUserName(organRegisterRequest.getFcLoginUserName());
     	userRegisterRequest.setLoginUserName(organRegisterRequest.getUserloginname());
     	userRegisterRequest.setMerchantCode(organRegisterRequest.getMerchantCode());
-    	userRegisterRequest.setMobilePhone(organRegisterRequest.getMobileTel());
     	userRegisterRequest.setOrgCode(organRegisterRequest.getOrgCode());
     	userRegisterRequest.setCoopUserId(organRegisterRequest.getCoopUserId());
     	userRegisterRequest.setPassword(organRegisterRequest.getPassword());
@@ -1180,8 +1178,10 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		OrgDTO orgDTO = new OrgDTO();
 		orgDTO.setUserid(userId);
 		orgDTO = this.queryOrg(orgDTO);
+		OrgSubDTO orgSubDTO =  getOrgSubDTO(userId);
 		String receiveAddress;
-		if(orgDTO.getUsertype().equals(TitanOrgEnum.UserType.ENTERPRISE.getKey())){//企业用户
+		
+		if(orgSubDTO.getUserType()==TitanOrgEnum.UserType.ENTERPRISE.getKey()){//企业用户
 			//给联系人发
 			receiveAddress = orgDTO.getMobiletel();
 		}else{
@@ -1625,7 +1625,8 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
             		personOrgUpdateRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
             		PersonOrgUpdateResponse response = rsOrganizationManager.updatePersonOrg(personOrgUpdateRequest);
             		if(!CommonConstant.OPERATE_SUCCESS.equals(response.getOperateStatus())){
-                		// 融数操作失败，回滚金服数据
+            			// 融数操作失败，回滚金服数据
+            			LOGGER.error("调用融数接口修改机构信息失败，机构id(userid):"+orgBaseInfoRequest.getOrgCode()+",泰坦金融机构证件号为："+orgBaseInfoRequest.getCertificatenumber()+",机构名称："+orgBaseInfoRequest.getOrgName()+",融数机构证件号为："+openAccountPerson.getCertificatenumber()+",机构名称："+openAccountPerson.getPersonchnname());
                 		throw new MessageServiceException(response.getReturnMsg());
                 	}
         		}

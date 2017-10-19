@@ -25,8 +25,7 @@ function toResultPage(data){debugger;
 		$("#check_orderNo").val(data.data);
 		$("#payConfirmPage").submit();
 	 }else{
-		  //new top.Tip({msg: data.resultMsg, type: 2, timer: 2000});
-		  alert(data.resultMsg);
+		  new top.Tip({msg: data.resultMsg, type: 3, timer: 2000});
 		  top.F.loading.hide();
    	   	  isShowVeil("#Veil","hide");
 	 }
@@ -117,9 +116,8 @@ function confirmOrder(_orderNo){
 	return status;
 }
 
-//常用支付方式--快捷支付
+//常用支付方式--快捷支付--发送验证码
 function quickPay_history(){
-	//调网关支付接口，发送验证码
 	$.ajax({
 		type : "post",
 		url : "../payment/quickPayRecharge.action",
@@ -127,7 +125,7 @@ function quickPay_history(){
         dataType: "json",
         success: function (data) {
            top.F.loading.hide();
-    	   if(data.success == true){
+    	   if(data.isSuccess == true){
     		   $(".payment-verification").show();//输入验证码弹窗
         	   $("#rsOrderNo").val(data.orderNo);
         	   $("#safe_payerphone").text(cashierData.payerPhone);
@@ -161,7 +159,7 @@ function confirmRecharge(){
         	   if(data.success == true){
        				checkOrderPayStatus($("#rsOrderNo").val());
         	   }else{
-        		   alert(data.errMsg);
+        		   new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
         		   top.F.loading.hide();
         		   isShowVeil("#Veil","hide");
         	   }
@@ -169,6 +167,8 @@ function confirmRecharge(){
      });
 }
 
+
+//获取验证码时校验参数
 function validQuickPayInfo(){
 	
 	if($("#quick_cardType_hid").val() == '10'){
@@ -177,15 +177,15 @@ function validQuickPayInfo(){
 		var payerPhone = $("#quick_payerPhone_deposit").val();
 		
 		if(payerName.length <= 0){
-			alert("请输入持卡人姓名");
+        	new top.Tip({msg: "请输入持卡人姓名", type: 2, timer: 2000});
 			return false;
 		}
 		if(idCode.length <= 0){
-			alert("请输入证件号码");
+        	new top.Tip({msg: "请输入证件号码", type: 2, timer: 2000});
 			return false;
 		}
 		if(payerPhone.length <= 0){
-			alert("请输入银行预留手机号");
+        	new top.Tip({msg: "请输入银行预留手机号", type: 2, timer: 2000});
 			return false;
 		}
 	}else{
@@ -197,23 +197,23 @@ function validQuickPayInfo(){
 		var safetyCode = $("#quick_safetyCode_credit").val();
 		
 		if(payerName.length <= 0){
-			alert("请输入持卡人姓名");
+			new top.Tip({msg: "请输入持卡人姓名", type: 2, timer: 2000});
 			return false;
 		}
 		if(idCode.length <= 0){
-			alert("请输入证件号码");
+			new top.Tip({msg: "请输入证件号码", type: 2, timer: 2000});
 			return false;
 		}
 		if(validthruMonth == "请选择" || validthruYear == "请选择"){
-			alert("请选择信用卡有效期");
+			new top.Tip({msg: "请选择信用卡有效期", type: 2, timer: 2000});
 			return false;
 		}
 		if(safetyCode.length <= 0){
-			alert("请输入信用卡安全码");
+			new top.Tip({msg: "请输入信用卡安全码", type: 2, timer: 2000});
 			return false;
 		}
 		if(payerPhone.length <= 0){
-			alert("请输入银行预留手机号");
+			new top.Tip({msg: "请输入银行预留手机号", type: 2, timer: 2000});
 			return false;
 		}
 	}
@@ -258,15 +258,15 @@ function sendVierfyCode(_button){debugger;
 		        dataType: "json",
 		        success: function (data) {
 		  	        if(data.isSuccess == true){
-		  	        	$("#quick_rsOrder").val(data.orderNo);
+		  	        	$(".quick_rsOrder").val(data.orderNo);
 		  	        }else{
 		  	        	btn = true;
 		  	        	clearInterval(interval_countDown);
 		  	        	$(_button).text("发送验证码").css("color","#ccc");
 		  	        	if($.trim(data.errMsg).length > 0){
-		  	        		alert(data.errMsg);
+		  	        		new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
 		 	       		}else{
-		 	       			alert(data);
+		 	       			new top.Tip({msg: data, type: 3, timer: 2000});
 		 	       		}
 		  	        }
 		        }
@@ -286,7 +286,7 @@ function sendVierfyCode(_button){debugger;
 		        dataType: "json",
 		        success: function (data) {
 		  	       if(data.success == false){
-		  		       alert("重发验证码失败：" + data.errMsg);
+		  	    	   new top.Tip({msg: "重发验证码失败：" + data.errMsg, type: 3, timer: 2000});
 		  	       }
 		        }
 		    });
@@ -295,11 +295,88 @@ function sendVierfyCode(_button){debugger;
 	
 }
 
+
+//添加快捷支付--储蓄卡--确认充值
+function submitQuickpay_deposit(){debugger;
+	if(quickpayDeposit.validate()){
+		$("#confirm_quickpay_deposit").addClass("disabledButton").attr("disabled", true);
+    	$("#VeilWhite").removeClass("isShow");
+    	top.F.loading.show();
+    	showLoading();
+    	//$("#J_form1").submit();
+    	$.ajax({
+    		type : "post",
+    		url : "../quickPay/quickPayRecharge.action",
+               data: {
+            		busiCode: "109",
+            		signType: "1",
+            		version: "v1.1",
+        			merchantNo: "M000016",
+        			orderNo: $("#quick_rsOrder_deposit").val(),
+        			payType: "41",
+        			checkCode: $("#checkCode_deposit").val()
+               },
+               dataType: "json",
+               success: function (data) {debugger;
+            	   if(data.success == true){
+           				checkOrderPayStatus($("#quick_rsOrder_deposit").val());
+            	   }else{
+            		   new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
+            		   top.F.loading.hide();
+            		   $("#VeilWhite").addClass("isShow");
+            		   $("#confirm_quickpay_deposit").removeClass("disabledButton").attr("disabled", false);
+            	   }
+               }
+         });
+	}
+}
+//添加快捷支付--信用卡--确认充值
+function submitQuickpay_credit(){debugger;
+	if(quickpayCredit.validate()){
+		$("#confirm_quickpay_credit").addClass("disabledButton").attr("disabled", true);
+    	$("#VeilWhite").removeClass("isShow");
+    	top.F.loading.show();
+    	showLoading();
+    	//$("#J_form3").submit();
+    	$.ajax({
+    		type : "post",
+    		url : "../quickPay/quickPayRecharge.action",
+               data: {
+            		busiCode: "109",
+            		signType: "1",
+            		version: "v1.1",
+        			merchantNo: "M000016",
+        			orderNo: $("#quick_rsOrder_credit").val(),
+        			payType: "41",
+        			checkCode: $("#checkCode_credit").val()
+               },
+               dataType: "json",
+               success: function (data) {debugger;
+            	   if(data.success == true){
+           				checkOrderPayStatus($("#quick_rsOrder_credit").val());
+            	   }else{
+            		   new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
+            		   top.F.loading.hide();
+            		   $("#VeilWhite").addClass("isShow");
+            		   $("#confirm_quickpay_credit").removeClass("disabledButton").attr("disabled", false);
+            	   }
+               }
+         });
+	}
+}
+
+
 /**
  * 校验快捷支付银行卡
  */
 function checkQuickCardNo(inputTextK){
 	var cardNo = inputTextK.replace(/[^\d]/g,'');
+	
+	if($.trim(cardNo).length <= 0){
+		$("#checkCardNo_errorMsg").text("请输入银行卡号");
+		$("#checkCardNo_errorMsg").removeClass("isShow");
+		return;
+	}
 	$.ajax({
 		type : "post",
 		url : "../quickPay/checkCardCanQuickPay.action",
@@ -322,6 +399,7 @@ function checkQuickCardNo(inputTextK){
         	   $("#quick_bankInfo_hid").val(data.bankInfo);
                $("#quick_cardType_hid").val(data.cardType);
                
+               var index = "";
                if(data.cardType == '10'){
             	   $("#quick_cardType_deposit").text("储蓄卡");
                    $("#quick_cardNo_deposit").text(inputTextK);
@@ -334,8 +412,9 @@ function checkQuickCardNo(inputTextK){
                    $("#quick_dailyLimit_deposit").text(data.dailyLimit);
             	   $(".bank-account-info .savings").removeClass("isShow");
             	   $(".bank-account-info .credit").addClass("isShow");//显示天喜储蓄卡
+            	   index = "deposit";
         	   }else if(data.cardType == '11'){
-        		   $("#quick_cardType_deposit").text("信用卡");
+        		   $("#quick_cardType_credit").text("信用卡");
                    $("#quick_cardNo_credit").text(inputTextK);
                    $("#quick_icon_credit").attr("xlink:href","#icon-"+data.bankInfo);
                    $("#quick_bankName_credit").text(data.bankName);
@@ -346,13 +425,14 @@ function checkQuickCardNo(inputTextK){
                    $("#quick_dailyLimit_credit").text(data.dailyLimit);
         		   $(".bank-account-info .savings").addClass("isShow");
             	   $(".bank-account-info .credit").removeClass("isShow");//显示填写信用卡
+            	   index = "credit";
         	   }
                
                $("#checkCardNo_errorMsg").text("");
     		   $("#checkCardNo_errorMsg").addClass("isShow");
                $(".shortcut-payment").addClass("isShow");//快捷支付tab隐藏
                $(".bank-account-info").removeClass("isShow"); //填写银行卡信息页面显示
-               rateCompute($("#quick_payType_hid").val(), 'addpay');//费率计算
+               rateCompute($("#quick_payType_hid").val(), 'addpay', index);//费率计算
         	   
            },complete:function(){
            	   top.F.loading.hide();
@@ -373,11 +453,11 @@ function validate_payeeInfo(){
 		var recieveOrgName = $("#recieveOrgName").val();
 		var recieveTitanCode = $("#recieveTitanCode").val();
 		if($.trim(recieveOrgName).length < 1){
-			alert("收款方账户不能为空");
+			new top.Tip({msg: "收款方账户不能为空", type: 2, timer: 2000});
 			return false;
 		}
 		if($.trim(recieveTitanCode).length < 1){
-			alert("收款方泰坦码不能为空");
+			new top.Tip({msg: "收款方泰坦码不能为空", type: 2, timer: 2000});
 			return false;
 		}
 		
@@ -412,7 +492,7 @@ function check_account_isExit(){
                 	if(data.result=="0"){
                 		check_account = true;
                 	}else{
-                		alert("该账户不存在");
+                		new top.Tip({msg: "该账户不存在", type: 3, timer: 2000});
                 	}
                 }
             });
@@ -564,14 +644,19 @@ function set_payPassword(){
 }
 
 /**
- * 费率计算  payType:支付方式	  type{'commpay': 常用支付点选; 'addpay': 添加支付}
+ * 费率计算<br/>	  
+ * payType：支付方式<br/>	  
+ * type：{'commpay': 常用支付点选; 'addpay': 添加支付}<br/>	   
+ * index:如果是常用支付方式点选表示li元素的下标；<br/>	
+ * 		 如果是新添加支付则表示特殊标记（个人网银[personal]，企业网银[enterprise]，快捷支付分为储蓄卡和信用卡[deposit,credit]）
  */
-function rateCompute(payType, type){
+function rateCompute(payType, type, index){
 	
+	var paySource = cashierData.paySource;
 	var userId = cashierData.userid;
-	var amount = cashierData.tradeAmount;
+	var tradeAmount = cashierData.tradeAmount;
 	
-	if(payType != 'balance'){
+	if(paySource == '2'){//paySource=2 表示财务付款
 		
 		var relPayType = payType;
 		
@@ -581,23 +666,26 @@ function rateCompute(payType, type){
 		
 		$.ajax({
 			   	type: "get",
-		        url: "../rate/rateCompute.action?userId="+userId+"&amount="+amount+"&payType="+relPayType+"&date=" + new Date().getTime(),
+		        url: "../rate/rateCompute.action?userId="+userId+"&amount="+tradeAmount+"&payType="+relPayType+"&date=" + new Date().getTime(),
 		        dataType: "json",
 		        async: false,
 		        success: function(data){
-	        		 var amount = parseFloat($("#amount_" + payType).text());
-	        		 var exRateAmount = parseFloat(data.data.exRateAmount);
+	        		 var exRateAmount = numeral(parseFloat(data.data.exRateAmount)).format("0,0.00");
+	        		 var _amount =  numeral(parseFloat(tradeAmount)+parseFloat(data.data.exRateAmount)).format("0,0.00");
 		        	 if(type == "commpay"){
-				       	 $("#commPayRateAmount_" + payType).text(exRateAmount.toFixed(2));
-				       	 $("#amount_" + payType).text(amount + exRateAmount);
+				       	 $("#commPayRateAmount_" + payType + "_" + index).text(exRateAmount);
+				       	 $("#amount_" + payType + "_" + index).text(_amount);
 		        	 }else{
-		        		 
+		        		 $("#addPayRateAmount_" + payType + "_" + index).text(exRateAmount);
+				       	 $("#addPayAmount_" + payType + "_" + index).text(_amount);
 		        	 }
 		        }
 		});
 		
 	}else {
-		$("#amount_" + payType).text(amount);
+		
+		var formatAmount = numeral(tradeAmount).format("0,0.00")
+		$("#amount_" + payType + "_" + index).text(formatAmount);
 		
 	}
 	

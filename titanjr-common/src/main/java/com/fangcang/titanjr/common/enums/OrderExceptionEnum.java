@@ -43,7 +43,7 @@ public enum OrderExceptionEnum {
 	//转账
 	Transfer_Update_Order_Fail("9_1","0","新增转账单失败或修改转账单失败"),Transfer_Fail("9_3","0","转账失败"),
 	
-	Transfer_Success_Update_Order_Fail("9_5","0","转账成功修改转账单失败"),
+	Transfer_revenueAccount_Fail("9_4","0","手续费转账到收益子账户失败"),Transfer_Success_Update_Order_Fail("9_5","0","转账成功修改转账单失败"),
 	
 	//回调客户端
 	Notify_Client_Transfer_Notify_Fail("11_1","0","转账成功回调失败"),Notify_Client_Not_CallBack("11_3","0","转账成功回调没有响应"),
@@ -77,7 +77,11 @@ public enum OrderExceptionEnum {
 	AccountReceive_ReFreezePayer_Fail("18_01","0","账户收款，重新冻结付款方失败"),
 	AccountReceive_FreezePayee_UpdateOrder_Fail("18_02","0","账户收款，冻结收款方后修改订单状态失败"),
 	AccountReceive_FreezePayee_Fail("18_03","0","账户收款，冻结收款方失败"),
-	AccountReceive_Transfer_UpdateOrder_Fail("18_04","0","账户收款，转账后修改订单状态失败");
+	AccountReceive_Transfer_UpdateOrder_Fail("18_04","0","账户收款，转账后修改订单状态失败"),
+	
+	//提现
+	WithDraw_Transfer_WithDraw_Fail("19_01","0","提现操作：转账成功，提现失败");
+	
 	
 	public String msg;
 	

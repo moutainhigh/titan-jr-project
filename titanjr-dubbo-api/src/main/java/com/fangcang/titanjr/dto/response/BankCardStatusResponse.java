@@ -1,7 +1,7 @@
 package com.fangcang.titanjr.dto.response;
 
-import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
+import com.fangcang.titanjr.entity.TitanBankcard;
 /***
  * 虚拟机构绑卡状态
  * @author luoqinglong
@@ -22,6 +22,10 @@ public class BankCardStatusResponse extends BaseResponseDTO {
 	 */
 	private String orgBankcardStatus;
 	
+	
+	private TitanBankcard bankcard;
+	
+	
 	public String getOrgSubCode() {
 		return orgSubCode;
 	}
@@ -40,8 +44,11 @@ public class BankCardStatusResponse extends BaseResponseDTO {
 	public void setOrgBankcardStatus(String orgBankcardStatus) {
 		this.orgBankcardStatus = orgBankcardStatus;
 	}
-	
-	
-	 
+	public TitanBankcard getBankcard() {
+		return bankcard;
+	}
+	public void setBankcard(TitanBankcard bankcard) {
+		this.bankcard = bankcard;
+	}
 	 
 }

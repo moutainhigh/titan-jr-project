@@ -7,6 +7,7 @@
 	<title>泰坦钱包</title>
 	<jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
+	<script type="text/javascript" src="<%=basePath%>/js/bindingBank.js?v=2017090219"></script>
 </head>
 <body style="min-width: 1300px;" class="bg" >
 <!-- 头部 -->
@@ -425,6 +426,13 @@
 	</div> -->
 </div>
 </div>
+<div id="bindcard-wrap" style="display:none;">
+	<div class="veil"></div>
+	<!--模态框-->
+	<div class="modal-box">
+		 
+	</div>
+</div>
 <form action="<%=basePath%>/account/toBindCardStepOne.shtml" method="post" id="toBindCard" target="_blank">
   <input type="hidden" name="modifyOrBind" id="modifyOrBind">
 </form>
@@ -562,43 +570,46 @@
 		        }
         	});
 		}
-		
-		
-        function validate_BankCard_Satatus(){
+		function validate_BankCard_Satatus(){
 			$.ajax({
 				dataType:"json",
-				showLoading:true,
-				url:"<%=basePath%>/account/validate_person_Enterprise.shtml",
-				success: function (data) {
-					$("#btn_withdraw").attr({"data-result":data.msg});
-					if(data.msg=="5"){
-						//修改银行卡
-						bind_card_fail();
-					}else if(data.msg=="6"){//审核中该如何解决
-						$(".withdrawBtn").text('提现卡审核中···').removeClass('blue decorationUnderline').css("color","#999");
-					}
+				url:"<%=basePath%>/account/checkBindResult.shtml",
+				success: function (result) {
+					if(result.code=="1"){
+						$("#btn_withdraw").attr({"data-result":result.data.orgBankcardStatus});
+		        	  	if(result.data.orgBankcardStatus=="0"){//绑定失败
+		        			bc.bindResultView();
+		        		}else if(result.data.orgBankcardStatus=="10"){//未关联机构
+		        			$(".binding-prompt").show();
+		        		}else if(result.data.orgBankcardStatus=="20"){//无绑定记录
+		        			$(".binding-prompt").show();
+		        		}
+		        	}else{
+		        		 new top.Tip({msg: result.msg, type: 2, timer: 2000});
+		        	}
 				}
 			});
 		}
         
         //提现
         $('.withdrawBtn').on('click',function(){
-        	
         	var bind = $("#btn_withdraw").attr("data-result");
-    		if(bind=="3"){//对公且未绑定
-    			$("#modifyOrBind").val("0");
-    			$("#toBindCard").submit();
-    		}else if(bind=="2"|| bind=="4"){//对私或者对公已绑定成功
-    			account_withdraw();
-    		}else if(bind=="5"){//对公，且绑定失败
-    			 bind_card_fail();
-    		}else if(bind=="6"){
-    			bank_card_binding();
-    		}else{
-    			 new top.Tip({msg: "系统繁忙，请稍后再试", type: 2, timer: 1000});
-    		}
+       	  	if(bind=="0"){//绑定失败
+       			bc.bindResultView();
+       		}else if(bind=="1"){//对私或者对公已绑定成功
+       			account_withdraw();
+       		}else if(bind=="2"){//审核中
+       			bc.bindResultView();
+       		}else if(bind=="10"){//未关联机构
+       			bc.bind_card();
+       		}else if(bind=="20"){//无绑定记录
+       			bc.updateBind();
+       		}else{
+       			new top.Tip({msg: "系统繁忙，请稍后再试", type: 2, timer: 2000});
+       		}
+		     
         });
-        
+         
         //充值
         $('.rechargeBtn').on('click',function(){
         	window.open('<%=basePath%>/account/goto_cashierDesk.shtml?payType=7&succUrl='+encodeURIComponent(js_base_path+'/account/overview-main.shtml'));
@@ -956,61 +967,7 @@
 		}
 	};
 
-	  function bind_card_fail(){
-      	new top.createConfirm({
-			    title:'提示',
-				padding: '20px 20px 40px',
-				width:400,
-				cancelValue : '下次再说',
-		        okValue : '修改提现卡信息',		
-		        content : '<div class="l_h26" style="padding-left: 30px;"><i class="mr_ico"></i><span class="TFS_mrtips"><strong class="c_tfscolor f_16">对不起,提现卡绑定失败</strong>失败原因：银行卡信息或持卡人姓名不正确。</span></div>',
-				ok : function(){	
-					$("#modifyOrBind").val("1");
-					$("#toBindCard").submit();
-		        },
-		        cancel : function(){
-		          	$(".withdrawBtn").text('提现卡绑定失败').removeClass('blue').addClass('MyAssets_red');
-		        },
-		        onclose:function(){
-					$(".withdrawBtn").text('提现卡绑定失败').removeClass('blue').addClass('MyAssets_red');
-				}
-		      });
-      
-      }
-      
-      function bank_card_binding(){
-      	$.ajax({
-      			dataType : 'json',
-      			showLoading:true,
-		        url : '<%=basePath%>/account/checkBindAccountWithDrawCard.shtml',
-		        success : function(data){
-		        	if(data.result=="success"){
-		        		if(data.msg=="2"|| data.msg=="4"){//对私或者对公已绑定成功
-		        			account_withdraw();
-		        		}else if(data.msg=="5"){//对公，且绑定失败
-		        			 bind_card_fail();
-		        		}else if(data.msg=="6"){
-		        			new top.createConfirm({
-		                		title:'提示',
-		        				padding: '20px 20px 40px',
-		        				width:400,
-		        				okValue:'关闭',
-		        				skin:'saas_confirm_singlebtn',
-		        		        content : '<div class="l_h26" style="padding-left: 30px;"><i class="mr_ico"></i><span class="TFS_mrtips"><strong class="c_tfscolor f_16">对不起,提现卡绑定审核中</strong>请您稍后查看,我们会在24小时之内审核您的提现卡。</span></div>',
-		        		        cancel : false
-		        		      });
-		                	window.top.$(".ui-dialog-close").hide();
-		        		}else{
-		        			 new top.Tip({msg: "系统错误", type: 1, time: 1000});
-		        		}
-		        	}
-		        },
-		        error:function(data){
-		        	console.log(data);
-		        	alert("失败");
-		        }
-      	})
-      }        
+	        
       
       function exportExcel(index) {
 			var startDate = $("#startDate_" + index).attr('data-prev');

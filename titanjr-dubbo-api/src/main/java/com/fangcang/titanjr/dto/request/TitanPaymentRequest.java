@@ -82,7 +82,7 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	private String safetyCode;//信用卡背后的3位数字
 	private String validthru;//月年格式 例如2020年09月应写为0920
 	private String rsVersion;//融数对接版本
-	private String jrVersion;//金融对接版本
+	private String jrVersion;//收银台版本
 	private String isSaveHistorypay;//是否保存常用卡  0否  1是
 	
 	

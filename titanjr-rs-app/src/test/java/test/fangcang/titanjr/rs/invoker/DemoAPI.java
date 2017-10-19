@@ -27,8 +27,8 @@ public class DemoAPI {
 	
 	//融数UAT 环境
 		private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
-		private static String appKey = "93A6626A-C082-4D25-B496-EA9CC6E90EDB";
-		private static String appSecret = "DC368712-18A4-4290-9A58-FF995DC161DC";
+		private static String appKey = "762DF53A-4DFD-427A-88F8-C4EEF26195A3";
+		private static String appSecret = "6461B23C-3ABE-4BE2-8E2C-D3FF4B2F5415";
 		private static String session = "1478056836773639888";
 		
 		
@@ -78,10 +78,10 @@ public class DemoAPI {
 		//检查提现卡信息：存在返回false，不存在返回ture  modityWithDrawCard
 //		String requestType = "ruixue.wheatfield.accountnum.ckeck";
 		//单笔转账操作
-//		String requestType = "ruixue.wheatfield.order.transfer";
-
+		String requestType = "ruixue.wheatfield.batchquery.person";
+		//String requestType = "ruixue.wheatfield.person.account.opr";
 		//查询信贷账户余额 TJM10000087
-		String requestType = "ruixue.wheatfield.ordern.query";
+		//String requestType = "ruixue.wheatfield.ordern.query";
 
 		if ("ruixue.wheatfield.enterprise.entityaccountopt".equals(requestType)) {
 			//企业账户开户
@@ -89,6 +89,9 @@ public class DemoAPI {
 		} else if ("ruixue.wheatfield.enterprise.updatecompanyinfo".equals(requestType)) {
 			//企业账户更新
 			strMsg = doWheatfieldEnterpriseUpdatecompanyinfoRequest(session);
+		}else if ("ruixue.wheatfield.person.account.opr".equals(requestType)) {
+			//个人账户更新
+			strMsg = doWheatfieldPersonAccountopr(session);
 		} else if ("ruixue.wheatfield.account.freeze".equals(requestType)) {
 			//冻结账户
 			strMsg = doWheatfieldAccountFreezeRequest(session);
@@ -125,6 +128,9 @@ public class DemoAPI {
 		} else if ("ruixue.wheatfield.batchquery.company".equals(requestType)) {
 			//开户信息查询（企业）（支持批量模糊查询）
 			strMsg = doWheatfieldBatchqueryCompanyRequest(session);
+		} else if ("ruixue.wheatfield.batchquery.person".equals(requestType)) {
+			//个人开户信息查询
+			strMsg = doWheatfieldBatchqueryPerson(session);
 		} else if ("ruixue.wheatfield.balance.getlist".equals(requestType)) {
 			//查询账户余额
 			strMsg = doWheatfieldBalanceGetlistRequest(session);
@@ -161,9 +167,6 @@ public class DemoAPI {
 		} else if ("ruixue.wheatfield.person.accountopr".equals(requestType)) {
 			//个人创建账户
 			strMsg = doWheatfieldPersonAccountoprRequest(session);
-		} else if ("ruixue.wheatfield.batchquery.person".equals(requestType)) {
-			//个人开户信息查询
-			strMsg = doWheatfieldBatchqueryPerson(session);
 		}else if ("ruixue.wheatfield.order.transfer".equals(requestType)) {
 			//单笔转账
 			strMsg = doWheatfieldOrderTransfer(session);
@@ -484,7 +487,7 @@ public class DemoAPI {
 			WheatfieldBatchqueryCompanyRequest req = new WheatfieldBatchqueryCompanyRequest();
 			req.setConstid("M000016");						// 机构码
 //			req.setUserid("PM10000021");							// 用户ID
-			req.setUserid("141223100000056");
+			req.setUserid("TJM60020016");
 			req.setAcuntopnlince("");						// 开户许可证
 			req.setBuslince("");							// 营业执照
 			req.setCompanycode("");							// 企业编号
@@ -1256,7 +1259,7 @@ public class DemoAPI {
 		try {
 			WheatfieldBatchqueryPersonRequest req = new WheatfieldBatchqueryPersonRequest();			
 			req.setConstid("M000016");			//机构号
-			req.setUserid("PP10000021");				//用户id
+			req.setUserid("TJM6000002300");				//用户id
 			WheatfieldBatchqueryPersonResponse rsp = ropClient.execute(req,session);
 			if (rsp != null) {
 				System.out.println("返回报文: \n" + rsp.getBody());
@@ -1283,16 +1286,16 @@ public class DemoAPI {
 			WheatfieldOrderTransferRequest req = new WheatfieldOrderTransferRequest();
 			req.setTransfertype("3");								//1:子账户转账				
 			req.setConditioncode("1");								//1:落单
-			req.setMerchantcode("M000016");							//转入方机构号
-			req.setProductid("P000070");							//转入方产品号
-			req.setUserid("");										//转出的用户
-			req.setRequestno("");									//业务订单号
-			req.setRequesttime("2016-12-12 22:22:22");				//请求时间
-			req.setAmount("100");										//金额
-			req.setUserfee("0");									
-			req.setIntermerchantcode("M000016");					//转出方机构号
-			req.setInterproductid("P000070");						//转出方产品号
-			req.setUserrelateid("141223100000056");								//平台企业账户或普通用户  平台账户“141223100000056”
+			req.setMerchantcode("M000016");							//转出方机构号
+			req.setProductid("P000070");							//转出方产品号
+			req.setUserid("TJM60020018");										//转出的用户
+			req.setRequestno("tjr20171011172131");									//业务订单号
+			req.setRequesttime("2017-10-11 17:22:22");				//请求时间
+			req.setAmount("3");										//金额
+			req.setUserfee("1");									
+			req.setIntermerchantcode("M000016");					//接收方机构号
+			req.setInterproductid("P000070");						//接收方产品号
+			req.setUserrelateid("TJM60020016");								//平台企业账户或普通用户  平台账户“141223100000056”
 			WheatfieldOrderTransferResponse rsp = ropClient.execute(req,session);
 			if (rsp != null) {
 				System.out.println("返回报文: \n" + rsp.getBody());
@@ -1312,6 +1315,41 @@ public class DemoAPI {
 		return strError;
 	}
 	
+	/**
+	 * 修改个人机构信息
+	 * @return
+	 */
+	private static String doWheatfieldPersonAccountopr(String session){
+		String strError = null;
+		try {
+			WheatfieldPersonAccountoprRequest req = new WheatfieldPersonAccountoprRequest();
+			req.setConstid("M000016");
+			req.setUserid("TJM6000002300");
+			req.setProductid("P000070");
+			req.setOpertype("1");//1-新增，2-修改
+			req.setCertificatenumber("421381199110564326");
+			req.setPersonchnname("新增的个人罗庆龙");
+			req.setCertificatetype("0");
+			
+			WheatfieldPersonAccountoprResponse rsp = ropClient
+					.execute(req, session);
+			if (rsp != null) {
+				System.out.println("返回报文: \n" + rsp.getBody());
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						strError = rsp.getSubMsg();
+					} else {
+						strError = rsp.getMsg();
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		} finally {
+		}
+		return strError;
+	}
 	/*
 	 * 转化日期格式
 	 */

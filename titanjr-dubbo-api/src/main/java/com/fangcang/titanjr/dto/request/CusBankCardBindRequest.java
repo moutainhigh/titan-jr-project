@@ -7,8 +7,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import com.fangcang.titanjr.dto.BaseRequestDTO;
 
 public class CusBankCardBindRequest extends BaseRequestDTO {
-	//融数绑卡记录id
-	private String accountid;
+	 
     // 用户类型(1：商户，2：普通用户)
 	@NotBlank
     private String userType;
@@ -82,20 +81,12 @@ public class CusBankCardBindRequest extends BaseRequestDTO {
 
     //机构码
     private String productId;
-
+    //真实机构
     private String userId;
 
     private String constId;
 
     
-    public String getAccountid() {
-		return accountid;
-	}
-
-	public void setAccountid(String accountid) {
-		this.accountid = accountid;
-	}
-
 	public String getUserType() {
         return userType;
     }

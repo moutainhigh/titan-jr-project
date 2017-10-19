@@ -17,6 +17,11 @@ body select{
     width: 1366px;
     margin: 0 auto;
 }
+
+.c_319{
+    color: #d71319;
+}
+
 header{
     /*width: 100%;*/
     height: 40px;
@@ -27,9 +32,9 @@ header b{
     display: inline-block;
     width: 160px;
     height: 15px;
-    background: url("../images/01502241-B2B9-2BDA-983E-EDF3AAE0FE85.png") no-repeat center;
-    -webkit-background-size: auto 15px;
-    background-size: auto 15px;
+    background: url("../images/20170826110741.png") no-repeat center;
+    /*-webkit-background-size: auto 15px;*/
+    /*background-size: auto 15px;*/
     margin-top: 13px;
 }
 header span{
@@ -48,7 +53,7 @@ header span{
 }
 /*付款信息*/
 .main .payment-info-left{
-    width: 760px;
+    max-width: 760px;
     line-height: 22px;
 }
 .main .payment-info-left>p:first-child{
@@ -499,6 +504,9 @@ footer p{
     color: #fff;
 }
 footer p>a{
+    color: #fff;
+}
+footer p>a>span{
     margin: 0 10px 0 80px;
     display: inline-block;
     position: relative;
@@ -748,7 +756,7 @@ footer p>a{
     font-size: 26px;
     position: relative;
     top: 4px;
-    margin-right: 10px;
+    /* margin-right: 10px; */
     cursor: pointer;
 }
 .bank-account-info .register_information .register_list .type{
@@ -841,21 +849,59 @@ footer p>a{
 .bank-account-info .register_information  .type_li .register_btn:hover{
     background-color: #FF0000;
 }
-.bank-account-info .register_information  .type_li .City_components>select{
-    width: 304px;
+/*.bank-account-info .register_information  .type_li .City_components>select{*/
+    /*width: 304px;*/
+    /*height: 36px;*/
+    /*border: 1px solid #ccc;*/
+    /*border-radius: 2px;*/
+    /*line-height: 36px;*/
+    /*padding-left: 10px;*/
+    /*background-color: transparent;*/
+/*}*/
+/*.bank-account-info .register_information  .type_li .City_components>select:hover{*/
+    /*border-color: #666;*/
+/*}*/
+.bank-account-info .register_information  .type_li .City_components{
+    position: relative;
+}
+.bank-account-info .register_information .City_components .certificates-type{
+    width: 294px;
     height: 36px;
     border: 1px solid #ccc;
     border-radius: 2px;
     line-height: 36px;
     padding-left: 10px;
 }
-.bank-account-info .register_information  .type_li .City_components>select:hover{
+.bank-account-info .register_information .City_components .certificates-type:hover{
     border-color: #666;
 }
+.bank-account-info .City_components .certificates-type-items{
+    position: absolute;
+    z-index: 1;
+    top: 37px;
+    left: 0;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    line-height: 36px;
+    background-color: #fff;
+}
+.bank-account-info .City_components .certificates-type-items .certificates-type-item{
+    width: 294px;
+    height: 36px;
+    padding-left: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}
+.bank-account-info .City_components .certificates-type-items .certificates-type-item:hover{
+    background-color: #238AF7;
+    color: #fff;
+}
+
 .bank-account-info .register_information  .type_li .City_components>i{
     position: absolute;
     right: 5px;
     top: 0;
+    z-index: -1;
     line-height: 36px;
     height: 36px;
     color: #666;
@@ -956,7 +1002,7 @@ footer p>a{
 
 /*个人网银*/
 .personal>ul{
-    padding: 30px 0 0 45px;
+    padding: 30px 0 25px 45px;
 }
 .personal>ul>li{
     float: left;
@@ -1022,55 +1068,55 @@ footer p>a{
     padding-left: 40px;
     padding-top: 30px;
 }
-.enterprise .enterprise-content>.enterprise-form>.left{
+.enterprise .enterprise-content .enterprise-form>.left{
     width: 100px;
 }
-.enterprise .enterprise-content>.enterprise-form>.right{
+.enterprise .enterprise-content .enterprise-form>.right{
     width: 300px;
     position: relative;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>s{
+.enterprise .enterprise-content .enterprise-form>.right>s{
     position: absolute;
     top: 0px;
     right: 10px;
     height: 38px;
     line-height: 38px;
 }
-.enterprise .enterprise-content>.enterprise-form>.right .change-bank{
+.enterprise .enterprise-content .enterprise-form>.right .change-bank{
     color: #238AF7;
     margin-left: 20px;
 }
-.enterprise .enterprise-content>.enterprise-form>.right .change-bank:hover{
+.enterprise .enterprise-content .enterprise-form>.right .change-bank:hover{
     text-decoration: underline;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>span:nth-child(2){
+.enterprise .enterprise-content .enterprise-form>.right>span:nth-child(2){
     margin-left: 10px;
     margin-right: 10px;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>span:nth-child(3){
+.enterprise .enterprise-content .enterprise-form>.right>span:nth-child(3){
     color: #666;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>.item{
+.enterprise .enterprise-content .enterprise-form>.right>.item{
     width: 100px;
     color: #ccc;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>.item.selected{
+.enterprise .enterprise-content .enterprise-form>.right>.item.selected{
     color: #d71319;
     border: none;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>.item>i{
+.enterprise .enterprise-content .enterprise-form>.right>.item>i{
     margin-right: 5px;
     cursor: pointer;
     border: none;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>.item>i.selected{
+.enterprise .enterprise-content .enterprise-form>.right>.item>i.selected{
     color: #d71319;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>.item>span{
+.enterprise .enterprise-content .enterprise-form>.right>.item>span{
     color: #333;
     cursor: pointer;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>input{
+.enterprise .enterprise-content .enterprise-form>.right input{
     width: 288px;
     height: 36px;
     padding-left: 10px;
@@ -1078,29 +1124,29 @@ footer p>a{
     border-radius: 2px;
     line-height: 36px;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>input:hover{
+.enterprise .enterprise-content .enterprise-form>.right input:hover{
     border-color: #666;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>table{
-    width: 630px;
+.enterprise .enterprise-content .enterprise-form>.right>table{
+    width: 462px;
     text-align: left;
-    border: 1px solid #f9fafc;
+    border: 1px solid #f1f2f4;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>table tr{
+.enterprise .enterprise-content .enterprise-form>.right>table tr{
     height: 34px;
     line-height: 34px;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>table th,
-.enterprise .enterprise-content>.enterprise-form>.right>table td{
+.enterprise .enterprise-content .enterprise-form>.right>table th,
+.enterprise .enterprise-content .enterprise-form>.right>table td{
     padding-left: 20px;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>table>thead>tr{
+.enterprise .enterprise-content .enterprise-form>.right>table>thead>tr{
     background-color: #f1f2f4;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>table>tbody>tr:nth-child(even){
+.enterprise .enterprise-content .enterprise-form>.right>table>tbody>tr:nth-child(even){
     background-color: #f9fafc;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>button{
+.enterprise .enterprise-content .enterprise-form>.right>button{
     width: 200px;
     height: 50px;
     background-color: #d71319;
@@ -1112,7 +1158,7 @@ footer p>a{
     cursor: pointer;
     border-radius: 2px;
 }
-.enterprise .enterprise-content>.enterprise-form>.right>button:hover{
+.enterprise .enterprise-content .enterprise-form>.right>button:hover{
     background-color: #FF0000;
 }
 /*优惠方式*/
@@ -1932,10 +1978,10 @@ input:hover{
 .credit .City_components{
     position: relative;
 }
-.month-drop-down-frame,.year-drop-down-frame{
+.month-drop-down-frame, .year-drop-down-frame {
     position: absolute;
     width: 118px;
-    max-height: 100px;
+    max-height: 124px;
     top: 36px;
     left: 0;
     z-index: 11;

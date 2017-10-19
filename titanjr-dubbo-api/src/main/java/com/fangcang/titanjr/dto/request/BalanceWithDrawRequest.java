@@ -44,7 +44,7 @@ public class BalanceWithDrawRequest extends BaseRequestDTO {
 
 	@NotNull
 	private String userId;
-
+	// 银行名称
 	private String bankName;
 
 	private String cardNo;

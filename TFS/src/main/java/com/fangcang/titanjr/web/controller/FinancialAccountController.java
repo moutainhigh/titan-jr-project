@@ -320,10 +320,9 @@ public class FinancialAccountController extends BaseController {
     @RequestMapping("bindResultView")
     public String bindResultView(HttpServletRequest request, Model model){
     	BankCardStatusResponse response = titanFinancialBankCardService.getBankCardStatus(this.getUserId());
-    	//if(response.isResult()){
     	if(BankCardEnum.BankCardStatusEnum.CHECKING.getKey().equals(response.getOrgBankcardStatus())){
     		model.addAttribute("orgBankcardStatus", response.getOrgBankcardStatus());
-    		model.addAttribute("orgBankcardMsg", "请两天后关注评审结果");
+    		model.addAttribute("orgBankcardMsg", "请两天后关注审核结果");
     	}else{
     		model.addAttribute("orgBankcardStatus", response.getOrgBankcardStatus());
     		model.addAttribute("orgBankcardMsg", response.getOrgBankcardMsg());
@@ -332,18 +331,6 @@ public class FinancialAccountController extends BaseController {
     	return "account-overview/bind-result-view";
     }
     
-    private QueryBankCardBindInfoResponse queryBankCardInfo(String userType)
-    {
-    	BankCardBindInfoRequest brq = new BankCardBindInfoRequest();
-		brq.setUserid(this.getUserId());
-		//账户用途
-		brq.setUsertype(userType);
-		////1：结算卡，2：所有绑定卡
-		brq.setObjorlist(CommonConstant.ALLCARD);
-		brq.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-		brq.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-		return titanFinancialBankCardService.getBankCardBindInfo(brq);
-    }
     
     /***
      * 绑卡页面(新增或者修改)
@@ -370,34 +357,6 @@ public class FinancialAccountController extends BaseController {
         	return "account-overview/bind-bankcard-update";
         }
     	
-    }
-    
-    @RequestMapping("update_account-withdraw_info")
-    @AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
-    public String updateAccountWithdrawInfo(HttpServletRequest request, Model model,String orgName){
-    	if (null != this.getUserId()) {
-    		OrgSubRequest orgSubRequest = new OrgSubRequest();
-    		orgSubRequest.setOrgCode(this.getUserId());
-            model.addAttribute("organ", titanFinancialOrganService.getOrgSub(orgSubRequest));
-        }
-    	model.addAttribute("showBankCardInput",1);
-
-    	model.addAttribute("modifyOrBind",WebConstant.MODIFY_BANK_CARD);
-
-    	return "account-overview/bind-bankcard";
-    }
-    /***
-     * 提现卡状态
-     * @param request
-     * @param model
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/checkBindAccountWithDrawCard")
-    public String checkBindAccountWithDrawCard(HttpServletRequest request, Model model){
-    	titanFinancialBankCardService.bindBankCardForOne(this.getUserId());
-    	 return this.checkBindResult(request, model);
-    	  
     }
     
     /***
@@ -451,62 +410,6 @@ public class FinancialAccountController extends BaseController {
         	 log.error("绑卡失败，绑卡参数(bindBankCardRequest):"+Tools.gsonToString(bindBankCardRequest),e);
         	 return toJson(putSysError("绑卡失败，请重试"));
 		}
-    }
-    
-    
-    /**
-     * 查询绑卡结果
-     * @param request
-     * @param model
-     * @param orgName
-     * @return
-     * @throws UnsupportedEncodingException
-     */
-//    @RequestMapping(value = "/getBindResult")
-//	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_RECHARGE_40})
-//    public String showBindResult(Model model) throws UnsupportedEncodingException{
-//    	model.addAttribute("modifyOrBind",WebConstant.BIND_BANK_CARD);
-//    	.model..
-//
-//    	return "account-overview/bind-result";
-//    }
-//    
-    
-    private ModifyInvalidWithDrawCardResponse modifyBindCard(BindBankCardRequest bindBankCardRequest){
-    	ModifyInvalidWithDrawCardRequest modifyInvalidWithDrawCardRequest = new ModifyInvalidWithDrawCardRequest();
-    	modifyInvalidWithDrawCardRequest.setAccountnumber(bindBankCardRequest.getAccountNumber());
-    	modifyInvalidWithDrawCardRequest.setAccountrealname(bindBankCardRequest.getUserName());
-    	modifyInvalidWithDrawCardRequest.setHankheadname(bindBankCardRequest.getBankName());
-    	modifyInvalidWithDrawCardRequest.setBankhead(bindBankCardRequest.getBankCode());
-    	modifyInvalidWithDrawCardRequest.setUserid(this.getUserId());
-    	modifyInvalidWithDrawCardRequest.setBankcity(bindBankCardRequest.getCityName());
-    	modifyInvalidWithDrawCardRequest.setBankprovinec(this.queryProvinceName(bindBankCardRequest.getCityCode()));
-    	modifyInvalidWithDrawCardRequest.setHankbranch(bindBankCardRequest.getBranchCode());
-    	modifyInvalidWithDrawCardRequest.setUsertype(WebConstant.ACCOUNT_PUBLIC);
-    	return titanFinancialBankCardService.modifyinvalidPublicCard(modifyInvalidWithDrawCardRequest);
-    }
-    
-    
-    private CusBankCardBindResponse bindBindCardToPublic(BindBankCardRequest bindBankCardRequest){
-    	return null;
-//    	 OrgSubCardRequest  bankCardBindRequest = new OrgSubCardRequest();
-//         bankCardBindRequest.setBankHeadName(bindBankCardRequest.getBankName());
-//         //证件号
-//         bankCardBindRequest.setCertificateNumber(bindBankCardRequest.getCredentialsNumber());
-//         bankCardBindRequest.setAccountNumber(bindBankCardRequest.getAccountNumber());
-//         bankCardBindRequest.setAccountName(bindBankCardRequest.getUserName());
-//         bankCardBindRequest.setBankCode(bindBankCardRequest.getBankCode());
-//         
-//         //以下是哪个说必填但是可选
-//         bankCardBindRequest.setBankBranch(bindBankCardRequest.getBranchCode());
-//         CityInfoDTO city = new CityInfoDTO();
-//         city.setCityCode(bindBankCardRequest.getCityCode());
-//         CityInfosResponse response =  titanFinancialAccountService.getCityInfoList(city);
-//         if (response.isResult() && CollectionUtils.isNotEmpty(response.getCityInfoDTOList())){
-//        	 bankCardBindRequest.setBankCity(response.getCityInfoDTOList().get(0).getCityName());
-//         }
-//         bankCardBindRequest.setBankProvince(this.queryProvinceName(bindBankCardRequest.getCityCode()));
-//         return titanFinancialBankCardService.bindOrgSubCard(bankCardBindRequest);
     }
     
     

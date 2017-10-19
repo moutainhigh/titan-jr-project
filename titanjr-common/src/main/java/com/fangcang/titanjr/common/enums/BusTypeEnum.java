@@ -5,7 +5,7 @@ import com.fangcang.util.StringUtil;
 public enum BusTypeEnum {
 
 	B2B_RATE(3, "企业网银","1"), B2C_RATE(4, "个人网银","2"), CREDIT_RATE(5, "信用卡","3"), QR_RATE(6, "第三方支付","9"),
-	WX_PUBLIC(8, "微信公众号支付","8"),WITHDRAW_RATE(7,"提现手续费","0"),QUICKPAY_RATE(9,"快捷支付","11");
+	WX_PUBLIC(8, "微信公众号支付","8"),WITHDRAW_RATE(7,"提现手续费","0"),QUICKPAY_RATE(9,"快捷支付","11"),BALANCE_RATE(10,"余额支付","4");
 	
 	public int type;
 	
