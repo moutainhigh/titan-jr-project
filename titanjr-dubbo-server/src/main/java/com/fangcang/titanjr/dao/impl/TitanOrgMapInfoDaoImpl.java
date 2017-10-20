@@ -19,8 +19,18 @@ public class TitanOrgMapInfoDaoImpl extends GenericDAOMyBatisImpl implements Tit
 			throw new DaoException(e);
 		}
 	}
-
 	
+	
+	@Override
+	public int update(TitanOrgMapInfoParam titanOrgMapInfoParam) throws DaoException {
+		try {
+			return super.updateEntity("com.fangcang.titanjr.dao.TitanOrgMapInfoDao.updateEntity", titanOrgMapInfoParam);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+
+
 	@Override
 	public int delete(TitanOrgMapInfoParam titanOrgMapInfoParam) throws DaoException {
 		

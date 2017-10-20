@@ -1,8 +1,5 @@
 package com.fangcang.titanjr.web.servlet;
 
-import java.io.IOException;
-import java.nio.CharBuffer;
-
 import com.fangcang.titanjr.service.TitanFinancialBaseInfoService;
 
 public class BankInfoThread implements Runnable{

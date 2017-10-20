@@ -15,6 +15,8 @@ public interface TitanOrgMapInfoDao {
 	
 	int insert(TitanOrgMapInfo entity) throws DaoException;
 	
+	int update(TitanOrgMapInfoParam titanOrgMapInfoParam)throws DaoException;
+	
 	int delete(TitanOrgMapInfoParam titanOrgMapInfoParam) throws DaoException;
 	/***
 	 * 
