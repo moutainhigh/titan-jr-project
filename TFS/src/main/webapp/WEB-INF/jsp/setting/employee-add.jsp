@@ -115,7 +115,7 @@ $('.sendmes').on('click',function(){
 			        timeOut(_this);
 			    } 
 			}else{
-				new top.Tip({msg : result.msg, type: 1, timer:2500});
+				new top.Tip({msg : result.msg, type: 3, timer:2500});
 			}
 		},
 		error : function(){
