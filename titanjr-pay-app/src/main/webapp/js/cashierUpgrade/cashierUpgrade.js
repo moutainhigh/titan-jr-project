@@ -41,12 +41,12 @@ function qrPayment(bankInfo){
         success : function(data){
         	if(data.result == true){debugger;
         		if(bankInfo =='wx'){
-        			$("#wx_pay_amount").text((data.qrCodeDTO.orderAmount)/100);
+        			$("#wx_pay_amount").text(numeral(parseFloat((data.qrCodeDTO.orderAmount)/100)).format("0,0.00"));
             		$("#wx_qrcode").attr("src","../payment/wxPicture.shtml?url="+data.qrCodeDTO.respJs);
             		//微信二维码弹窗
                     $(".wx").show();
         		}else if(bankInfo =='alipay'){
-        			$("#ali_pay_amount").text((data.qrCodeDTO.orderAmount)/100);
+        			$("#ali_pay_amount").text(numeral(parseFloat((data.qrCodeDTO.orderAmount)/100)).format("0,0.00"));
             		$("#ali_qrcode").attr("src","../payment/wxPicture.shtml?url="+data.qrCodeDTO.respJs);
             		//支付宝二维码弹窗
             		$(".zfb").show();
@@ -269,8 +269,9 @@ function sendVierfyCode(_button){debugger;
 		  	        if(data.isSuccess == true){
 		  	        	$(".quick_rsOrder").val(data.orderNo);
 		  	        }else{
-		  	        	btn = true;
 		  	        	clearInterval(interval_countDown);
+		  	        	btn = true;
+		  	        	isFirstSend = true;
 		  	        	$(_button).text("发送验证码").css("color","#ccc");
 		  	        	if($.trim(data.errMsg).length > 0){
 		  	        		new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
@@ -442,9 +443,11 @@ function checkQuickCardNo(inputTextK){
             	   if(data.bankInfo == 'icbc'){
             		   $("#validthru_li").removeClass("isShow");
             		   $("#safetyCode_li").addClass("isShow");
+            		   $("#quick_safetyCode_credit").val("123");
             	   }else if(!data.validAuth){
             		   $("#validthru_li").addClass("isShow");
             		   $("#safetyCode_li").addClass("isShow");
+            		   $("#quick_safetyCode_credit").val("123");
             	   }else{
             		   $("#validthru_li").removeClass("isShow");
             		   $("#safetyCode_li").removeClass("isShow");
@@ -457,8 +460,9 @@ function checkQuickCardNo(inputTextK){
                $(".shortcut-payment").addClass("isShow");//快捷支付tab隐藏
                $(".bank-account-info").removeClass("isShow"); //填写银行卡信息页面显示
                rateCompute($("#quick_payType_hid").val(), 'addpay', index);//费率计算
-               btn = true;
                clearInterval(interval_countDown);
+               btn = true;
+               isFirstSend = true;
                $(".get-verification-btn").text("发送验证码").css("color","#ccc");
         	   
            },complete:function(){
