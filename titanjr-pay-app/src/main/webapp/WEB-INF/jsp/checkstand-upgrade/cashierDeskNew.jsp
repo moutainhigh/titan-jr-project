@@ -1049,25 +1049,28 @@
     }
     
     //费率显示
-    function setRate(){
+    function setRate(){debugger;
     	if('${cashDeskData.paySource }' == '2'){//财务付款需要计算显示手续费（付款方手续费），第一次进来默认选中微信支付
     		rateCompute('wx', 'commpay', 2);
-    		//校验余额支付
-    		var balanceusable = '${not empty cashDeskData.balanceusable }';
-    		var canAccountBalance = '${cashDeskData.canAccountBalance eq true }';
-    		var balanceAmount = parseFloat('${cashDeskData.balanceusable }');
-    		var tradeAmount = parseFloat('${cashDeskData.amount }');
-    		var rateAmount = parseFloat($("#commPayRateAmount_wx_2").text());
-    		if(!balanceusable || !canAccountBalance){
-    			$('.payment-mode-prohibit').css('background-color', '#FCFCFC').css('opacity', '0.4');
-    			$('.payment-mode-prohibit').attr('data-choice', false);
-    		}else if(balanceAmount < tradeAmount + rateAmount){
-    			$("#balanceNotEnough_rate").text(rateAmount);
-    			$("#balanceNotEnough").removeClass('isShow');
-    			$('.payment-mode-prohibit').css('background-color', '#FCFCFC').css('opacity', '0.4');
-    			$('.payment-mode-prohibit').attr('data-choice', false);
-    		}
     	}
+		//校验余额支付
+		var balanceusable = '${not empty cashDeskData.balanceusable }';
+		var canAccountBalance = '${cashDeskData.canAccountBalance eq true }';
+		var balanceAmount = parseFloat('${cashDeskData.balanceusable }');
+		var tradeAmount = parseFloat('${cashDeskData.amount }');
+		var rateAmount = parseFloat($("#commPayRateAmount_wx_2").text());
+		if(isNaN(rateAmount)){
+			rateAmount = 0;
+		}
+		if(!balanceusable || !canAccountBalance){
+			$('.payment-mode-prohibit').css('background-color', '#FCFCFC').css('opacity', '0.4');
+			$('.payment-mode-prohibit').attr('data-choice', false);
+		}else if(balanceAmount < tradeAmount + rateAmount){
+			$("#balanceNotEnough_rate").text(rateAmount);
+			$("#balanceNotEnough").removeClass('isShow');
+			$('.payment-mode-prohibit').css('background-color', '#FCFCFC').css('opacity', '0.4');
+			$('.payment-mode-prohibit').attr('data-choice', false);
+		}
     }
     
     //查询收款账户记录

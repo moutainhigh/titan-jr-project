@@ -280,7 +280,7 @@ function sendVierfyCode(_button){debugger;
 		        	signType: "1",
 		        	version: "v1.1",
 		        	merchantNo: "M000016",
-		        	orderNo: $("#quick_rsOrder").val(),
+		        	orderNo: $(".quick_rsOrder").val(),
 		        	payType: "41",
 		        },
 		        dataType: "json",
