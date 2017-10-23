@@ -194,8 +194,8 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		TitanOrgSub orgSub = null;
 		
 		if(StringUtil.isValidString(orgSubCardRequest.getCertificateNumber())){//优先使用界面输入机构(开户)信息
-			//删除
-			deleteOrgBindCard(orgSubCardRequest.getOrgCode());
+			//删除机构映射和
+			deleteOrgBindCard(orgSubCardRequest.getOrgCode(),orgSubCardRequest.getCertificateNumber(),orgSubCardRequest.getAccountNumber());
 		}else {//如果没传证件信息，则存在关联关系，则用当前关联的信息
 			orgSub = orgService.getOrgSub(orgSubRequest);
 			if(orgSub!=null){
@@ -253,7 +253,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		}else{
 			log.error("真实机构绑卡失败,绑卡参数："+Tools.gsonToString(orgSubCardRequest));
 			orgSubCardResponse.putErrorResult(cusBankCardBindResponse.getReturnMessage());
-			deleteOrgBindCard(orgSubCardRequest.getOrgCode());//绑卡失败，则删除关联
+			deleteOrgBindCard(orgSubCardRequest.getOrgCode(),orgSubCardRequest.getCertificateNumber(),orgSubCardRequest.getAccountNumber());
 			return orgSubCardResponse;
 		}
 		//3-实名验证成功后，检查本地和融数的机构信息是否一致，并修改
@@ -288,14 +288,23 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 	/***
 	 * 删除虚拟机构关联和绑卡记录
 	 * @param orgCode 虚拟机构orgcode
+	 * @param certificateNumber 证件号码
+	 * @param accountNumber 卡号
 	 */
-	private void deleteOrgBindCard(String orgCode){
-		TitanOrgCardMapParam param = new TitanOrgCardMapParam();
-		param.setOrgCode(orgCode);
-		orgCardMapDao.delete(param);
-		TitanOrgMapInfoParam titanOrgMapInfoParam = new TitanOrgMapInfoParam();
-		titanOrgMapInfoParam.setOrgCode(orgCode);
-		orgMapInfoDao.delete(titanOrgMapInfoParam);
+	private void deleteOrgBindCard(String orgCode ,String certificateNumber,String accountNumber){
+		if(StringUtil.isValidString(certificateNumber)){//页面输入了证件信息，则删除映射
+			TitanOrgMapInfoParam titanOrgMapInfoParam = new TitanOrgMapInfoParam();
+			titanOrgMapInfoParam.setOrgCode(orgCode);
+			orgMapInfoDao.delete(titanOrgMapInfoParam);
+		}
+		if(StringUtil.isValidString(accountNumber)){//页面输入了卡号，则删除卡关联
+			TitanOrgCardMapParam param = new TitanOrgCardMapParam();
+			param.setOrgCode(orgCode);
+			orgCardMapDao.delete(param);
+		}
+		
+		
+		
 	}
 	/***
 	 * 设置默认值，如果为空
