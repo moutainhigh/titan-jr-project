@@ -158,6 +158,27 @@ public enum QuickPayBankEnum {
 		return null;
 	}
 	
+	
+	/**
+	 * 是否需要校验信用卡的cvv码和有效期
+	 * @author Jerry
+	 * @date 2017年10月23日 上午11:44:27
+	 */
+	public static boolean isValidAuth(QuickPayBankEnum quickPayBankEnum){
+		
+		if(quickPayBankEnum == null){
+			return false;
+		}
+		
+		if(quickPayBankEnum == CREDIT_CMB || quickPayBankEnum == CREDIT_CCB || quickPayBankEnum == CREDIT_CGB
+				|| quickPayBankEnum == CREDIT_SPDB){
+			return false;
+		}
+		
+		return true;
+		
+	}
+	
 
 	public String getBankCode() {
 		return bankCode;

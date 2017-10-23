@@ -511,6 +511,7 @@
 	                    <input id="merchantNo" name="merchantNo" type="hidden" value="M000016" />
 	                    <input id="payType" name="payType" type="hidden" value="41" />
 	                    <input id="quick_rsOrder_credit" name="orderNo" class="quick_rsOrder" type="hidden" /><!-- 获取验证码的时候设置 -->
+	                    <input id="validAuth" name="validAuth" value="-1" type="hidden" />
                         <ul class="register_list">
                             <li class="type_li clearfix">
                                 <div class="type_name fl">
@@ -572,7 +573,7 @@
                                     </div>
                                 </div>
                             </li>
-                            <li class="type_li clearfix">
+                            <li id="validthru_li" class="type_li clearfix">
                                 <div class="type_name number fl">
                                     <label>信用卡有效期</label>
                                 </div>
@@ -625,7 +626,7 @@
                                     </div>
                                 </div>
                             </li>
-                            <li class="type_li clearfix">
+                            <li id="safetyCode_li" class="type_li clearfix">
                                 <div class="type_name number fl">
                                     <label>信用卡安全码</label>
                                 </div>
@@ -853,8 +854,8 @@
 <div class="wx-payment zfb isShow">
     <div class="wx-payment-title">支付宝支付<i class="iconfont icon-sc close"></i></div>
     <div class="wx-payment-content">
-        <p><span>￥</span><span id="ali_pay_amount"></span></p>
-        <img id="ali_qrcode" src="" alt="支付宝扫描二维码支付"/>
+        <p><span>￥</span><b id="ali_pay_amount"></b></p>
+        <img height="250px;" width="240px;" id="ali_qrcode" src="" alt="支付宝扫描二维码支付"/>
         <div class="icon">
             <div class="left fl"><i class="iconfont icon-zfb"></i></div>
             <div class="right fl">
@@ -1053,7 +1054,7 @@
     	if('${cashDeskData.paySource }' == '2'){//财务付款需要计算显示手续费（付款方手续费），第一次进来默认选中微信支付
     		rateCompute('wx', 'commpay', 2);
     	}
-		//校验余额支付
+		//校验余额支付是否可用
 		var balanceusable = '${not empty cashDeskData.balanceusable }';
 		var canAccountBalance = '${cashDeskData.canAccountBalance eq true }';
 		var balanceAmount = parseFloat('${cashDeskData.balanceusable }');

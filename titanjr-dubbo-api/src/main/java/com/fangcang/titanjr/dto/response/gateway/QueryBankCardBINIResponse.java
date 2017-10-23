@@ -35,6 +35,9 @@ public class QueryBankCardBINIResponse extends RSBaseResponse {
 	private int singleLimit;//单笔限额
 	private int dailyLimit;//单日限额
 	
+	//是否需要校验信用卡的cvv码和有效期
+	private boolean isValidAuth;
+	
 
 	public String getMerchantNo() {
 		return merchantNo;
@@ -122,6 +125,14 @@ public class QueryBankCardBINIResponse extends RSBaseResponse {
 
 	public void setDailyLimit(int dailyLimit) {
 		this.dailyLimit = dailyLimit;
+	}
+
+	public boolean isValidAuth() {
+		return isValidAuth;
+	}
+
+	public void setValidAuth(boolean isValidAuth) {
+		this.isValidAuth = isValidAuth;
 	}
 
 	@Override
