@@ -193,8 +193,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		orgSubRequest.setOrgCode(orgSubCardRequest.getOrgCode()); 
 		TitanOrgSub orgSub = null;
 		
-		if(StringUtil.isValidString(orgSubCardRequest.getCertificateNumber())){//优先使用界面输入机构(开户)信息
-			//删除机构映射和
+		if(StringUtil.isValidString(orgSubCardRequest.getCertificateNumber())){//优先使用界面输入的机构(开户)信息
 			deleteOrgBindCard(orgSubCardRequest.getOrgCode(),orgSubCardRequest.getCertificateNumber(),orgSubCardRequest.getAccountNumber());
 		}else {//如果没传证件信息，则存在关联关系，则用当前关联的信息
 			orgSub = orgService.getOrgSub(orgSubRequest);

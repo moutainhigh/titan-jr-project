@@ -556,37 +556,32 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			return withDrawResponse;
 		}
 		
-		TitanTransOrder titanTransOrder = convertToTitanTransOrder(balanceWithDrawRequest);
-		if (null == titanTransOrder ){
-			log.error("提现交易单构造失败,参数："+JSONSerializer.toJSON(balanceWithDrawRequest));
-			withDrawResponse.putErrorResult("构造提现交易单失败");
-			return withDrawResponse;
-		}
-		TransOrderDTO orderDTO = null;
-		if (balanceWithDrawRequest.getOrderNo() != null) {
-			TransOrderRequest transOrderRequest = new TransOrderRequest();
-			transOrderRequest.setUserorderid(balanceWithDrawRequest
-					.getOrderNo());
-			 orderDTO = titanOrderService
-					.queryTransOrderDTO(transOrderRequest);
-			if (orderDTO != null) {
-				titanTransOrder.setUserorderid(balanceWithDrawRequest.getOrderNo());
-				titanTransOrder.setTransid(orderDTO.getTransid());
-			}
-		}
-		
 		try {
 			//查询绑卡记录
-			BankCardStatusResponse bankCardStatusResponse = titanFinancialBankCardService.getBankCardStatus(titanTransOrder.getUserid());
+			BankCardStatusResponse bankCardStatusResponse = titanFinancialBankCardService.getBankCardStatus(balanceWithDrawRequest.getUserId());
 			TitanBankcard bankcard = bankCardStatusResponse.getBankcard();
 			if(bankcard==null||(!BankCardEnum.BankCardStatusEnum.NORMAL.getKey().equals(bankcard.getStatus().toString()))){
 				withDrawResponse.putErrorResult(bankCardStatusResponse.getOrgBankcardMsg());
 				return withDrawResponse;
 			}
+			
 			String vUserId = balanceWithDrawRequest.getUserId();//余额账户
-			balanceWithDrawRequest.setUserId(bankcard.getUserid());//提现真实账户
+			
 			balanceWithDrawRequest.setCardNo(bankcard.getAccountnumber());//"其他卡"
 			balanceWithDrawRequest.setBankName(bankcard.getBankheadname());
+			TitanTransOrder titanTransOrder = convertToTitanTransOrder(balanceWithDrawRequest);
+			TransOrderDTO orderDTO = null;
+			if (balanceWithDrawRequest.getOrderNo() != null) {
+				TransOrderRequest transOrderRequest = new TransOrderRequest();
+				transOrderRequest.setUserorderid(balanceWithDrawRequest
+						.getOrderNo());
+				 orderDTO = titanOrderService
+						.queryTransOrderDTO(transOrderRequest);
+				if (orderDTO != null) {
+					titanTransOrder.setUserorderid(balanceWithDrawRequest.getOrderNo());
+					titanTransOrder.setTransid(orderDTO.getTransid());
+				}
+			}
 			
 			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_IN_PROCESS.getStatus());
 			titanTransOrder.setTransordertype(TransOrderTypeEnum.WITHDRAW.type);
@@ -638,7 +633,8 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				log.info("提现操作时，真实机构和虚拟机构orgcode相同，不需要转账，直接提现。orgcode:"+vUserId);
 			}
 			
-			//本地化提现信息
+			//本地提现记录
+			balanceWithDrawRequest.setUserId(bankcard.getUserid());//提现到真实账户
 			TitanWithDrawReq titanWithDrawReq = saveTitanWithDraw(balanceWithDrawRequest, titanTransOrder.getTransid());
 			if (null == titanWithDrawReq){
 				log.error("保存提现请求失败,参数balanceWithDrawRequest："+Tools.gsonToString(balanceWithDrawRequest)+",Transid:"+titanTransOrder.getTransid());
