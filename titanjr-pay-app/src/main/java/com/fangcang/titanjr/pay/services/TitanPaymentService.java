@@ -459,9 +459,15 @@ public class TitanPaymentService {
 						if (paySuccess) {
 							rechargeResultConfirmRequest.setPayStatus("3");
 							rechargeResultConfirmRequest.setPayMsg("付款成功");
-							rechargeResultConfirmRequest
-									.setPayAmount(new BigDecimal(transOrderDTO
-											.getTradeamount()).toString());
+							PayerTypeEnum payerTypeEnum = PayerTypeEnum
+									.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
+							Long receivedfee = 0L;
+							//付款方出手续费时，余额支付的实付金额需要加上手续费
+							if (transOrderDTO.getReceivedfee() != null && payerTypeEnum != null && payerTypeEnum.isNeedPayerInfo()) {
+								receivedfee = transOrderDTO.getReceivedfee();
+							}
+							rechargeResultConfirmRequest.setPayAmount(
+									new BigDecimal(transOrderDTO.getTradeamount() + receivedfee).toString());
 						}
 						model.addAttribute("payType", "余额支付");
 					}
