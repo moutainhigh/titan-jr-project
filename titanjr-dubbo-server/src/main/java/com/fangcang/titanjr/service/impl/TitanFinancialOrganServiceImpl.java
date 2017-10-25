@@ -985,10 +985,9 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 			//同时修改虚拟机构
 			TitanOrg updateOrg = new TitanOrg();
 			updateOrg.setOrgcode(titanOrgMapInfo.getOrgCode());
+			updateOrg.setConnect(organRegisterUpdateRequest.getConnect());
+			updateOrg.setMobiletel(organRegisterUpdateRequest.getMobileTel());
 			updateOrg.setOrgname(organRegisterUpdateRequest.getOrgName());
-			updateOrg.setBuslince(organRegisterUpdateRequest.getBuslince());
-			updateOrg.setCertificatetype(NumberUtils.toInt(organRegisterUpdateRequest.getCertificateType()));
-			updateOrg.setCertificatenumber(organRegisterUpdateRequest.getCertificateNumber());
 			titanOrgDao.update(updateOrg);
 			
 			//修改机构审核状态为待审核	
@@ -1094,7 +1093,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		        		BaseResponse orgSubResponse = regOrgSubForRS(orgSubcode); 
 		        		
 		        		if(!CommonConstant.OPERATE_SUCCESS.equals(orgSubResponse.getOperateStatus())){//失败
-		        			LOGGER.error("调用融数接口rsOrganizationManager.resigterPersonOrg 失败,注册机构参数 orgSubcode:"+orgSubcode+",rs返回信息[baseResponse]:"+JSONSerializer.toJSON(orgSubResponse).toString());
+		        			LOGGER.error("调用融数接口失败,注册机构参数 orgSubcode:"+orgSubcode+",rs返回信息[baseResponse]:"+JSONSerializer.toJSON(orgSubResponse).toString());
 		        			response.putErrorResult(orgBaseResponse.getReturnMsg());
 		        			return response;
 		        		}
