@@ -444,7 +444,7 @@
                                 <div class="type_name fl"></div>
                                 <div class="type_agree fl">
                                     <label class="la_agree">
-                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i><span>同意</span><a href="支付协议.html" target="_blank">《支付服务协议》</a>
+                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i><span>同意</span><a href="toPayProtocolPage.action" target="_blank">《支付服务协议》</a>
                                     </label>
                                 </div>
                             </li>
@@ -662,7 +662,7 @@
                                 <div class="type_name fl"></div>
                                 <div class="type_agree fl">
                                     <label class="la_agree">
-                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i><span>同意</span><a href="支付协议.html" target="_blank">《支付服务协议》</a>
+                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i><span>同意</span><a href="toPayProtocolPage.action" target="_blank">《支付服务协议》</a>
                                     </label>
                                 </div>
                             </li>
