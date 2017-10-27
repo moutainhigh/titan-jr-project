@@ -13,7 +13,7 @@ public class CheckPermissionRequest implements Serializable{
 	//房仓用户id
 	private String fcuserid;
 	
-	//permission 1.付款权限,2.查看权限,3充值权限,4.充值和提现权限,5.理财权限,6.贷款权限,7.消息提醒权限,8.系统运营员权限
+	//permission 1.付款权限-38,2.查看权限-39,4.充值和提现权限-40,5.理财权限-41,6.贷款权限-42,7.消息提醒权限,8.系统运营员权限
 	private String permission;
 	
 	
