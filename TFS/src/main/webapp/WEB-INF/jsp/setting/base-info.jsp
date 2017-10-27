@@ -31,14 +31,9 @@
 					<div class="TFS_basictop">
 
 					</div>
-					<h2 style="position: relative;">
-						<c:if test="${orgSubDTO.userType ==1 }">
-							机构信息：
-						</c:if>
-						<c:if test="${orgSubDTO.userType == 2 }">
-							个人信息：
-						</c:if>
-						<p><span>未绑定提现卡</span><a href="javascript:void(0)" class="immediately-binding">立即绑卡</a></p></h2>
+					<h2 style="position: relative;">机构信息：
+						 
+						<p id="bindcard" style="display:none;"><span>未绑定提现卡</span><a href="javascript:void(0)" class="immediately-binding">立即绑卡</a></p></h2>
 					<%--<h2>登录信息：</h2>
 					<div class="TFS_basictop">
 						<ul>
@@ -87,16 +82,69 @@
 <div id="info_per_big_img">
 
 </div>
-	<!--遮罩层-->
-	<div class="veil" style="display: none"></div>
-	<!--模态框-->
+	<div id="bindcard-wrap" style="display:none;">
+		<div class="veil"></div>
+		<!--模态框-->
+		<div class="modal-box">
+			 
+		</div>
+	</div>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
+<script type="text/javascript" src="<%=basePath%>/js/bindingBank.js?v=2017090219"></script>
 <script>
 
 //渲染组件
 F.UI.scan();
 //new validform('.pour_c');
 var big_img_url = '${big_img_50 }';
+$(function(){
+	validate_BankCard_Satatus();
+	$('.immediately-binding').on('click',function(){
+        	$.ajax({
+        		dataType : 'json',		      
+		        url : '<%=basePath%>/account/checkBindResult.shtml',
+		        success:function(result){
+		        	if(result.code=="1"){
+		        	  	if(result.data.orgBankcardStatus=="0"){//绑定失败
+		        			bc.bindResultView();
+		        		}else if(result.data.orgBankcardStatus=="1"){//对私或者对公已绑定成功
+		        			account_withdraw();
+		        		}else if(result.data.orgBankcardStatus=="2"){//审核中
+		        			bc.bindResultView();
+		        		}else if(result.data.orgBankcardStatus=="10"){//未关联机构
+		        			bc.bind_card();
+		        		}else if(result.data.orgBankcardStatus=="20"){//无绑定记录
+		        			bc.updateBind();
+		        		}else{
+		        			new top.Tip({msg: "用户绑卡状态错误,请联系管理员", type: 2, timer: 2000});
+		        		}
+		        	}else{
+		        		 new top.Tip({msg: result.msg, type: 2, timer: 2000});
+		        	}
+		        }
+        	});
+        });
+});
+
+function validate_BankCard_Satatus(){
+	$.ajax({
+		dataType:"json",
+		url:"<%=basePath%>/account/checkBindResult.shtml",
+		success: function (result) {
+			if(result.code=="1"){
+        	  	if(result.data.orgBankcardStatus=="0"){//绑定失败
+        			bc.bindResultView();
+        		}else if(result.data.orgBankcardStatus=="10"){//未关联机构
+        			$("#bindcard").show();
+        		}else if(result.data.orgBankcardStatus=="20"){//无绑定记录
+        			$("#bindcard").show();
+        		}
+        	}else{
+        		 new top.Tip({msg: result.msg, type: 2, timer: 2000});
+        	}
+		}
+	});
+}
 //放大图
 $('.J_magnify').on('click',function(){
 	var _html = "";

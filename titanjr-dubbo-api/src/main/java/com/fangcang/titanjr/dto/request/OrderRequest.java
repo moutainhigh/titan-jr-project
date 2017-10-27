@@ -85,6 +85,15 @@ public class OrderRequest implements Serializable{
     private Integer transid;
     
     private String payerType;
+    
+    /**
+     * 冻结方案  @see FreezeTypeEnum
+     */
+    private String freezeType;
+    
+    //收银台版本
+    private String version;
+    
     public String getReceivablefee() {
 		return receivablefee;
 	}
@@ -328,6 +337,22 @@ public class OrderRequest implements Serializable{
 
 	public void setBussinessInfo(String bussinessInfo) {
 		this.bussinessInfo = bussinessInfo;
+	}
+
+	public String getFreezeType() {
+		return freezeType;
+	}
+
+	public void setFreezeType(String freezeType) {
+		this.freezeType = freezeType;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
 	}
 	
 }

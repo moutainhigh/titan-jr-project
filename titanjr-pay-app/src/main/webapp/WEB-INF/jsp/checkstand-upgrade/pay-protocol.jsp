@@ -5,8 +5,8 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <link rel="stylesheet" href="./css/reset.css"/>
-    <link rel="stylesheet" href="./css/cashier.css"/>
+    <link rel="stylesheet" href="../css/reset.css"/>
+    <link rel="stylesheet" href="../css/cashier.css"/>
 </head>
 <body>
 <header>

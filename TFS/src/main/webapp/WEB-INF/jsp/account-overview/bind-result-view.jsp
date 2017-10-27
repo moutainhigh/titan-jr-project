@@ -55,12 +55,20 @@
 				<div class="content">
 					<div class="left"></div>
 					<div class="right">
-						<button type="button" class="know-btn" onclick="bc.close();">我知道了</button>
+						<button type="button" class="know-btn" onclick="closeBind();">我知道了</button>
 					</div>
 				</div>
 			</c:if>
-			
-			 
 		</div>
+		
+		<script type="text/javascript">
+			function closeBind(){
+				bc.close();
+				window.location.reload();
+			
+			}
+		
+		
+		</script>
 </body>
 </html> 

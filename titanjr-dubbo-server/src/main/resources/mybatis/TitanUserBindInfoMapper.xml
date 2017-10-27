@@ -11,6 +11,7 @@
    		<if test="tfsuserid != null"> and tfsuserid = #{tfsuserid,jdbcType=INTEGER}</if> 
    		<if test="merchantcode != null"> and  merchantcode = #{merchantcode}</if> 
    		<if test="cooptype != null"> and  cooptype = #{cooptype}</if>
+   		<if test="fcuserid != null and fcuserid != ''"> and  fcuserid = #{fcuserid}</if>
     </where>
   </select>
   <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanUserBindInfo" >

@@ -294,4 +294,9 @@ public interface TitanFinancialOrganService {
      * 解除金融机构关联
      */
     public BaseResponseDTO cancelOrgBind(CancelOrgBindRequest cancelOrgBindRequest) throws MessageServiceException;;
+    
+    /**
+     * 初始化旧的机构，生成新的真实机构
+     */
+    public void fixOldOrg();
 }

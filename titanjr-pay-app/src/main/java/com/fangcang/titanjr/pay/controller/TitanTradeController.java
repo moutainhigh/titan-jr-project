@@ -493,6 +493,11 @@ public class TitanTradeController extends BaseController {
 			log.error("PayerType convert is null");
 			return false;
 		}
+		if (pe == PayerTypeEnum.B2B_WX_PUBLIC_PAY) {
+			log.error("PayerType is B2B_WX_PUBLIC_PAY");
+			return false;
+		}
+		
 
 		if (!pe.isRWL() && !StringUtil.isValidString(dto.getAmount())) {
 			log.error("Amount is null");
@@ -508,9 +513,9 @@ public class TitanTradeController extends BaseController {
 			}
 		}
 
-		if (pe.isOpenOrg()
-				&& new BigDecimal(dto.getAmount()).compareTo(BigDecimal.ZERO) < 1) {
-			log.error("Amount not regular ");
+		if (!pe.isRWL() && new BigDecimal(dto.getAmount()).compareTo(BigDecimal.ZERO) <= 0 
+				|| new BigDecimal(dto.getAmount()).compareTo(new BigDecimal(9999999)) > 0) {
+			log.error("传入金额小等于0 或者超过7位数");
 			return false;
 		}
 
@@ -581,18 +586,14 @@ public class TitanTradeController extends BaseController {
 			}
 		}
 		
-		//如果付款方不用自己的账户，则不允许使用冻结方案3
-		if(!StringUtil.isValidString(dto.getPartnerOrgCode()) || !StringUtil.isValidString(
-				dto.getOrgCode()) || !StringUtil.isValidString(dto.getUserId())){
-			if(StringUtil.isValidString(dto.getFreezeType()) && FreezeTypeEnum.FREEZE_PAYER.getKey()
-					.equals(dto.getFreezeType())){
-				log.error("freezeType error");
-				return false;
-			}
-		}
 		//默认冻结方案2
 		if(!StringUtil.isValidString(dto.getFreezeType())){
 			dto.setFreezeType(FreezeTypeEnum.FREEZE_PAYEE.getKey());
+		}
+		//老版收银台只支持冻结方案2
+		if(!FreezeTypeEnum.FREEZE_PAYEE.getKey().equals(dto.getFreezeType())){
+			log.error("freezeType is not 2");
+			return false;
 		}
 
 		return true;
@@ -1093,5 +1094,10 @@ public class TitanTradeController extends BaseController {
 		Map<String, String> resultMap = new HashMap<String, String>();
 		resultMap.put("result", OrderGenerateService.genLoacalPayOrderNo());
 		return resultMap;
+	}
+	
+	@RequestMapping(value = "/toPayProtocolPage", method = RequestMethod.GET)
+	public String toPayProtocolPage(){
+		return "checkstand-upgrade/pay-protocol";
 	}
 }

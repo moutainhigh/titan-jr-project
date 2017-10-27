@@ -43,9 +43,10 @@
 	<bean id="configDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		  destroy-method="close">
 		<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
-		<property name="url" value="jdbc:oracle:thin:@192.168.2.38:1521:fangcangdb" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.2.35:1521:fangcangdb" />
 		<property name="username" value="config" />
-		<property name="password" value="config" />
+		<!-- <property name="password" value="config" /> -->
+		<property name="password" value="iebb3gh5" />
 	</bean>
 	
 	<bean id="orderDataSource" class="org.apache.commons.dbcp.BasicDataSource"

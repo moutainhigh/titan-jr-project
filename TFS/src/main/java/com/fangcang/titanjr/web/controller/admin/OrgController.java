@@ -124,7 +124,7 @@ public class OrgController extends BaseController{
 			model.addAttribute("operatorName", getSAASLoginName());//TODO 这里是个bug,应该从数据库里面拿
 			model.addAttribute("tfsLoginUsername", tfsLoginUsername);
 			
-			if(financialOrganDTO.getUserType()==1){
+			if(financialOrganResponse.getOrgSubDTO().getUserType()==1){
 				return "admin/org/en-verify-org-info";
 			}else {
 				return "admin/org/per-verify-org-info";

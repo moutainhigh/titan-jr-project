@@ -4,6 +4,11 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <style type="text/css">
+    	#J_form_update .content .right .f_ui-valid-item{
+    		margin-right:-5px;
+    	}
+    </style>
 </head>
 <body>
 		<!-- 绑卡 修改 -->
@@ -45,13 +50,13 @@
 					<div class="content">
 						<div class="left">银行卡号:</div>
 						<div class="right">
-							<p><input type="text"  class="bank-input accountnumber" maxlength="16" placeholder="输入银行卡号" datatype="*" errormsg="请填写银行卡号" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/><s class="iconfont icon-sc input-empty isShow"></s></p>
+							<p><input type="text"  class="bank-input accountnumber" maxlength="25" placeholder="输入银行卡号" datatype="*" errormsg="请填写银行卡号" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/><s class="iconfont icon-sc input-empty isShow"></s></p>
 						</div>
 					</div>
 					<div class="content">
 						<div class="left"></div>
 						<div class="right">
-							<button type="button" class="button-btn prohibit" disabled="true" onclick="saveBindCard();">提交</button>
+							<button type="button" class="button-btn prohibit" id="next_commit" disabled="true" onclick="saveBindCard();"></button>
 						</div>
 					</div>
 				
@@ -63,30 +68,7 @@
 		var cityAutoComplete = null;
 		var branchBankAutoComplete = null;
 		var usertype='${orgSub.usertype}'; 
-	//开户银行
-	bankAutoComplete = new AutoComplete($('.bankCode'), {
-	    url : '<%=basePath%>/account/getBankInfoList.shtml?bankType=1',
-	    source : 'bankInfoDTOList',
-	    key : 'bankCode',  //数据源中，做为key的字段
-	    val : 'bankName', //数据源中，做为val的字段
-	    width : 240,
-	    height : 300,
-	    autoSelectVal : true,
-	    clickEvent : function(d, input){
-	        input.attr('data-id', d.key);
-	        $(".bankName").val(d.val);
-	       	bc.checkSubmit();
-	       	if($('.city_code')){
-	       		showCityCode();
-	       	}
-	    }
-	});
-	
-	if($('.city_code')){//企业
-	   initCityAutoComplete();
-	}
-	
-	
+
 	function initCityAutoComplete(){
 		//城市
 		cityAutoComplete = new AutoComplete($('.city_code'), {
@@ -102,12 +84,11 @@
 		        input.attr('value',d.val.substring(d.val.indexOf("-")+1));
 		        var arr = d.val.split("-");
 		        $(".city_name").val(arr[arr.length-1]);
-		        bc.checkSubmit();
+		        bc.isDisabled(".platform-binding-bank-modal");
 		        showBranch();
 		    }
 		});
 	}
-	
 	
 	function showCityCode(){
 		$(".branch_code").val("");
@@ -154,7 +135,7 @@
 			        input.attr('data-id', arr[0]);
 			        $(".city_code").attr("data-id",arr[1]);
 			        $(".branch_name").val(d.val);
-			        bc.checkSubmit();
+			       bc.isDisabled(".platform-binding-bank-modal");
 			    }
 			});
 		}
@@ -178,6 +159,7 @@
 	
 	function saveBindCard(){
 		var paramData = getBankCardData();
+		F.loading.show();
 		$.ajax({
     	    type: 'post',
     		url:'<%=basePath%>/account/bankCardBind.shtml',
@@ -185,13 +167,75 @@
     		data:paramData,
     		success:function(result){
         		if(result.code=="-1"){
-        			new top.Tip({msg: result.msg, type: 2, timer: 2000});
+        			bc.updateCardValid._setErrorStyle($(".accountnumber"),result.msg);
         		}else{
-        			bc.bindResultView();
+        			if(paramData.userType=='2'){//个人表示绑卡成功
+        				bc.close();
+        				if(typeof(bind_nstep)!='undefined'&&bind_nstep=='next'){
+        					account_withdraw();
+        				}else{
+        					window.location.reload();
+        				}
+        			}else{
+        				bc.bindResultView();
+        			}
         		}
-        	}
+        	},
+        	complete:function()
+			{
+				F.loading.hide();
+			}
 	    });
     }
-    bc.initUpdateBindCardPanel();
+    
+    $(function(){
+    	if(typeof(bind_nstep)!='undefined'&&bind_nstep=='withdraw'){
+    		$("#next_commit").html("去提现");
+    	}else{
+    		$("#next_commit").html("提交");
+    	}
+    	//开户银行
+		if(usertype==1){//企业
+			bankAutoComplete = new AutoComplete($('.bankCode'), {
+			    url : '<%=basePath%>/account/getBankInfoList.shtml?bankType=1',
+			    source : 'bankInfoDTOList',
+			    key : 'bankCode',  //数据源中，做为key的字段
+			    val : 'bankName', //数据源中，做为val的字段
+			    width : 240,
+			    height : 300,
+			    autoSelectVal : true,
+			    clickEvent : function(d, input){
+			        input.attr('data-id', d.key);
+			        $(".bankName").val(d.val);
+			       	bc.isDisabled(".platform-binding-bank-modal");
+			       	if($('.city_code').length>0){
+			       		showCityCode();
+			       	}
+			    }
+			});
+		}else{//个人
+			bankAutoComplete = new AutoComplete($('.bankCode'), {
+			    data : personBankData.content,
+			    key : 'bankCode',  //数据源中，做为key的字段
+			    val : 'bankName', //数据源中，做为val的字段
+			    width : 240,
+			    height : 300,
+			    autoSelectVal : true,
+			    clickEvent : function(d, input){
+			        input.attr('data-id', d.key);
+			        $(".bankName").val(d.val);
+			       	bc.isDisabled(".platform-binding-bank-modal");
+			       	if($('.city_code').length>0){
+			       		showCityCode();
+			       	}
+			    }
+			});
+		}
+		if($('.city_code').length>0){//企业
+			initCityAutoComplete();
+		}
+	    bc.initUpdateBindCardPanel();
+    })
+    
 	</script>
 </body>

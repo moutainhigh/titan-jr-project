@@ -31,6 +31,12 @@ public class BaseResponse implements Serializable{
 		setReturnCode(ReturnCode.CODE_SUCCESS.getCode());
 		setReturnMessage(ReturnCode.CODE_SUCCESS.getMsg());
 	}
+	
+	public void putSuccess(String msg){
+		setResult(true);
+		setReturnCode(ReturnCode.CODE_SUCCESS.getCode());
+		setReturnMessage(msg);
+	}
 	/***
 	 * 参数错误
 	 */

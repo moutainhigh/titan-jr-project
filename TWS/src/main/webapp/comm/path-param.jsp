@@ -6,5 +6,6 @@
     //String jsPath = "http://hres.fangcang.com/css/saas";
     String cssSaasPath = "http://hres.fangcang.com/css/saas";
     String cssWalletPath = "http://hres.fangcang.com/css/saas/WALLET";
+    String webWalletPath = "http://hres.fangcang.com/web/wallet";
     String cssAdminPath = "http://hres.fangcang.com/css/goldsystem";
 %>

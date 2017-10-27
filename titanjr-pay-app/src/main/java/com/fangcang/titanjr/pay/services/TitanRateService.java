@@ -189,7 +189,7 @@ public class TitanRateService {
 						.getRsRate()));
 			}
 
-			// 如果非B2B付款则付款金额不用加上费率,直接从付款金额中扣除费率
+			// 财务付款和充值，付款金额需要加上手续费
 			String paySource = paymentRequest.getPaySource();
 			if (!PaySourceEnum.DISTRIBUTION_PC.getDeskCode().equals(paySource) 
 					&& !PaySourceEnum.OPEN_PLATFORM_PC.getDeskCode().equals(paySource)

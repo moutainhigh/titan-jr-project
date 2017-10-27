@@ -18,5 +18,5 @@ public interface TitanOrgSubDao {
 	
 	TitanOrgSub selectOne(TitanOrgSubParam condition) throws DaoException;
 	
-	int update(TitanOrgSub entity) throws DaoException;
+	int update(TitanOrgSubParam condition) throws DaoException;
 }

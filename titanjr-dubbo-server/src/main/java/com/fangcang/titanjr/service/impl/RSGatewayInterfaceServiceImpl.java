@@ -37,6 +37,7 @@ import com.fangcang.titanjr.dto.response.gateway.ReSendVerifyCodeResponse;
 import com.fangcang.titanjr.dto.response.gateway.UnbindBankCardResponse;
 import com.fangcang.titanjr.dto.response.gateway.UpdateBankCardPhoneResponse;
 import com.fangcang.titanjr.enums.BusiCodeEnum;
+import com.fangcang.titanjr.enums.RsErrorCodeEnum;
 import com.fangcang.titanjr.enums.RsVersionEnum;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.RSGatewayInterfaceService;
@@ -73,6 +74,9 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				response = EntityUtils.toString(entity, "UTF-8");
 				quickPaymentResponse = RSConvertFiled2ObjectUtil.convertField2ObjectSuper(QuickPaymentResponse.class, response);
 				log.info("【快捷支付】返回信息:" + quickPaymentResponse.toString());
+				if(StringUtil.isValidString(RsErrorCodeEnum.getValueByKey(quickPaymentResponse.getErrCode()))){
+					quickPaymentResponse.setErrMsg(RsErrorCodeEnum.getValueByKey(quickPaymentResponse.getErrCode()));
+				}
 				
 				return quickPaymentResponse;
 				
@@ -107,6 +111,9 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				response = EntityUtils.toString(entity, "UTF-8");
 				confirmRechargeResponse = RSConvertFiled2ObjectUtil.convertField2ObjectSuper(ConfirmRechargeResponse.class,response);
 				log.info("【确认充值】返回信息:" + confirmRechargeResponse.toString());
+				if(StringUtil.isValidString(RsErrorCodeEnum.getValueByKey(confirmRechargeResponse.getErrCode()))){
+					confirmRechargeResponse.setErrMsg(RsErrorCodeEnum.getValueByKey(confirmRechargeResponse.getErrCode()));
+				}
 				
 				return confirmRechargeResponse;
 				
@@ -214,6 +221,9 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				bankCardBINIResponse = RSConvertFiled2ObjectUtil
 						.convertField2ObjectSuper(QueryBankCardBINIResponse.class, responseStr);
 				log.info("【查询银行卡BIN信息】返回信息:" + bankCardBINIResponse.toString());
+				if(StringUtil.isValidString(RsErrorCodeEnum.getValueByKey(bankCardBINIResponse.getErrCode()))){
+					bankCardBINIResponse.setErrMsg(RsErrorCodeEnum.getValueByKey(bankCardBINIResponse.getErrCode()));
+				}
 				
 				return bankCardBINIResponse;
 			}else{

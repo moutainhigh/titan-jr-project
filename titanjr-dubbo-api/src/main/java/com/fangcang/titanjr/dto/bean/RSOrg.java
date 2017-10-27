@@ -1,7 +1,6 @@
 package com.fangcang.titanjr.dto.bean;
 
 public class RSOrg {
-	private String orgcode;
 	private String orgname;
 	private String userid;
 	/**
@@ -22,13 +21,6 @@ public class RSOrg {
 	 */
 	private String buslince;
 
-	public String getOrgcode() {
-		return orgcode;
-	}
-
-	public void setOrgcode(String orgcode) {
-		this.orgcode = orgcode;
-	}
 
 	public String getOrgname() {
 		return orgname;

@@ -4,13 +4,14 @@ import java.util.List;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
-import com.fangcang.titanjr.dto.bean.RepairTransferDTO;
-import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
-import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.request.RepairTransferRequest;
 import com.fangcang.titanjr.entity.TitanTransferReq;
 import com.fangcang.titanjr.entity.parameter.TitanTransferReqParam;
 
+/***
+ * 转账请求
+ * @author luoqinglong
+ * @date 2017年10月16日
+ */
 public interface TitanTransferReqDao {
 	boolean selectForPage(TitanTransferReqParam condition, PaginationSupport<TitanTransferReq> paginationSupport) throws DaoException;
 	int insert(TitanTransferReq entity) throws DaoException;

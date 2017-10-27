@@ -219,6 +219,10 @@
     where bankcardid = #{bankcardid,jdbcType=INTEGER}
   </update>
   
+  <update id="updateUserId" parameterType="java.util.Map">
+  		update t_tfs_bankcard set userid=#{newUserId} where userid=#{oldUserId}
+  </update>
+  
   <delete id="deleteEntity"  parameterType="com.fangcang.titanjr.entity.TitanBankcard">
   	delete from t_tfs_bankcard
   	<where>

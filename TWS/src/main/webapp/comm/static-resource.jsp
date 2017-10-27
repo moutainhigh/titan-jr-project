@@ -1,4 +1,4 @@
-<!-- �� common css-->
+<!--   common css-->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -7,6 +7,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" href="<%=cssSaasPath %>/css/style_TFS.css"> 
 <link rel="stylesheet" href="<%=cssSaasPath%>/css/jquery-ui-1.9.2.custom.css" >
+<link rel="stylesheet" href="<%=webWalletPath%>/font/iconfont.css"/>
 <link rel="stylesheet" href="<%=cssSaasPath%>/css/fangcang.min.css?v=20161222">
 <link rel="stylesheet" href="<%=cssWalletPath%>/css/AD.css"> 
 <link rel="stylesheet" href="<%=cssWalletPath%>/css/style.css">

@@ -128,7 +128,7 @@ public class TitanQuickPaymentController extends BaseController {
 		}
 		
 		model.addAttribute("confirmRechargeResponse", confirmRechargeResponse);
-		log.error("confirmRecharge is success, but confirmOrderStatus is failed after try again three times");
+		log.error("confirmRecharge is success, but confirmOrderStatus failed after try again three times");
 		return "checkstand-pay/payResult";
 	}
 	
@@ -201,9 +201,11 @@ public class TitanQuickPaymentController extends BaseController {
 				
 				QuickPayBankEnum bankEnum = QuickPayBankEnum.getBankEnum(bankCardBINIResponse.getBankCode()
 						, bankCardBINIResponse.getCardType());
+				boolean isValidAuth = QuickPayBankEnum.isValidAuth(bankEnum);
 				bankCardBINIResponse.setBankInfo(bankEnum.getBankInfo());
 				bankCardBINIResponse.setSingleLimit(bankEnum.getSingleLimit());
 				bankCardBINIResponse.setDailyLimit(bankEnum.getDailyLimit());
+				bankCardBINIResponse.setValidAuth(isValidAuth);
 				return bankCardBINIResponse;
 				
 			}

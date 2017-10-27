@@ -7,6 +7,7 @@ import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.dao.TitanOrgMapInfoDao;
 import com.fangcang.titanjr.entity.TitanOrgMapInfo;
 import com.fangcang.titanjr.entity.parameter.TitanOrgMapInfoParam;
+import com.fangcang.util.StringUtil;
 
 public class TitanOrgMapInfoDaoImpl extends GenericDAOMyBatisImpl implements TitanOrgMapInfoDao {
 
@@ -18,6 +19,29 @@ public class TitanOrgMapInfoDaoImpl extends GenericDAOMyBatisImpl implements Tit
 			throw new DaoException(e);
 		}
 	}
+	
+	
+	@Override
+	public int update(TitanOrgMapInfoParam titanOrgMapInfoParam) throws DaoException {
+		try {
+			return super.updateEntity("com.fangcang.titanjr.dao.TitanOrgMapInfoDao.updateEntity", titanOrgMapInfoParam);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+
+
+	@Override
+	public int delete(TitanOrgMapInfoParam titanOrgMapInfoParam) throws DaoException {
+		
+		if(StringUtil.isValidString(titanOrgMapInfoParam.getOrgCode())||StringUtil.isValidString(titanOrgMapInfoParam.getOrgSubcode())||titanOrgMapInfoParam.getOrgMapid().intValue()>0){
+			return super.delete("com.fangcang.titanjr.dao.TitanOrgMapInfoDao.delete", titanOrgMapInfoParam);
+		}else{
+			throw new DaoException("必填参数不能为空");
+		}
+		
+	}
+
 
 	@Override
 	public List<TitanOrgMapInfo> queryList(TitanOrgMapInfoParam titanOrgMapInfoParam) throws DaoException {

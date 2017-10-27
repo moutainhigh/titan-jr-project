@@ -180,6 +180,12 @@
         <if test="transorderid !=null">
           and transorderid=#{transorderid}
         </if>
+        <if test="userid !=null">
+          and userid=#{userid}
+        </if>
+        <if test="userrelateid !=null">
+          and userrelateid=#{userrelateid}
+        </if>
       </where>
   
   </select>

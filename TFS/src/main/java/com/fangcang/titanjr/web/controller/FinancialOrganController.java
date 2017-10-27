@@ -45,6 +45,7 @@ import com.fangcang.titanjr.dto.bean.UserInfoDTO;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.OrgRegisterValidateRequest;
+import com.fangcang.titanjr.dto.request.OrgSubRequest;
 import com.fangcang.titanjr.dto.request.OrganBindRequest;
 import com.fangcang.titanjr.dto.request.OrganImageRequest;
 import com.fangcang.titanjr.dto.request.OrganImageUploadRequest;
@@ -68,6 +69,7 @@ import com.fangcang.titanjr.dto.response.SendCodeResponse;
 import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
 import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
+import com.fangcang.titanjr.entity.TitanOrgSub;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
@@ -194,7 +196,7 @@ public class FinancialOrganController extends BaseController {
 		}else if(orgRegisterValidateResponse.getOrgDTO()!=null){//填写的证件编码已经存在
 			if(StringUtil.isValidString(orgId)){//修改
 				//判断机构注册证件的编号和登录者是不是同一个机构
-				Integer tfsUserIdStr = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);//金服用户名
+				Integer tfsUserIdStr = Integer.valueOf((String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID));//金服用户名
 				if((tfsUserIdStr!=null)&&(tfsUserIdStr>0)){
 					OrgDTO orgDTO = orgRegisterValidateResponse.getOrgDTO();
     				UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
@@ -202,7 +204,11 @@ public class FinancialOrganController extends BaseController {
         			userInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
         			UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
         			String userOrgCode = userInfoResponse.getUserInfoDTOList().get(0).getOrgCode();
-        			if(userOrgCode.equals(orgDTO.getOrgcode())){
+        			OrgSubRequest orgSubRequest = new OrgSubRequest();
+        			orgSubRequest.setOrgCode(userOrgCode);
+        			TitanOrgSub orgSub = titanFinancialOrganService.getOrgSub(orgSubRequest);
+        			
+        			if(orgSub.getOrgcode().equals(orgDTO.getOrgcode())){
         				return 1;//是登录者所属本机构,该证件可以注册
         			}else{
         				return -1;//证件已经被其他机构使用
@@ -359,7 +365,7 @@ public class FinancialOrganController extends BaseController {
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_LOGIN_UESRNAME, userInfoDTO.getUserLoginName());//金服用户登录名
 			getSession().setAttribute(WebConstant.SESSION_KEY_JR_UESRNAME, userInfoDTO.getUserName());//金服用户名
             getSession().setAttribute(WebConstant.SESSION_KEY_JR_USERID, userInfoDTO.getUserId());//金服机构id标示
-            getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId());//金服用户名
+            getSession().setAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID, userInfoDTO.getTfsUserId()+"");//金服用户名
             //如果包含系统运营员，判定当前地址
             if (containsRole(userInfoDTO.getRoleDTOList(), FinancialRoleEnum.OPERATION.roleCode)) {
                 getSession().setAttribute(WebConstant.SESSION_KEY_JR_RESOURCE, WebConstant.SESSION_KEY_JR_RESOURCE_3_ADMIN);

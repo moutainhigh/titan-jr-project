@@ -61,7 +61,7 @@ public class TitanOrgSubDaoImpl extends GenericDAOMyBatisImpl implements TitanOr
 	}
 
 	@Override
-	public int update(TitanOrgSub entity) throws DaoException {
+	public int update(TitanOrgSubParam entity) throws DaoException {
 		try {
 			return super.updateEntity("com.fangcang.titanjr.dao.TitanOrgSubDao.updateEntity", entity);
 		} catch (Exception e) {

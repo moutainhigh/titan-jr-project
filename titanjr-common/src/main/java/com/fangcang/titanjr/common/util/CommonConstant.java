@@ -19,6 +19,7 @@ public class CommonConstant {
     public static final String RS_FANGCANG_PRODUCT_ID = "P000070";//产品id
     
     public static final String RS_FANGCANG_PRODUCT_ID_230 = "P000230";//贷款产品id
+    public static final String RS_FANGCANG_PRODUCT_ID_229 = "P000229";//收益子账户产品id
     
     
     public static final String RS_LOAN_CREDIT_RATETEMPL_RATE = "RA201611011800001";//贷款费率模板

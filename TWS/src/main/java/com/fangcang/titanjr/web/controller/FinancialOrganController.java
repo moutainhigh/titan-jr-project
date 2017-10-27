@@ -7,13 +7,10 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
-import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -53,6 +50,7 @@ import com.fangcang.titanjr.dto.request.CoopRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.GetCheckCodeRequest;
 import com.fangcang.titanjr.dto.request.OrgRegisterValidateRequest;
+import com.fangcang.titanjr.dto.request.OrgSubRequest;
 import com.fangcang.titanjr.dto.request.OrganBindRequest;
 import com.fangcang.titanjr.dto.request.OrganImageRequest;
 import com.fangcang.titanjr.dto.request.OrganImageUploadRequest;
@@ -77,11 +75,10 @@ import com.fangcang.titanjr.dto.response.OrganQueryCheckResponse;
 import com.fangcang.titanjr.dto.response.OrganRegisterResponse;
 import com.fangcang.titanjr.dto.response.OrganRegisterUpdateResponse;
 import com.fangcang.titanjr.dto.response.SendCodeResponse;
-import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.dto.response.UserInfoResponse;
 import com.fangcang.titanjr.dto.response.UserLoginNameExistResponse;
 import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
-import com.fangcang.titanjr.entity.TitanUser;
+import com.fangcang.titanjr.entity.TitanOrgSub;
 import com.fangcang.titanjr.service.TitanCoopService;
 import com.fangcang.titanjr.service.TitanFinancialBaseInfoService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -95,6 +92,8 @@ import com.fangcang.titanjr.web.util.LoginUtil;
 import com.fangcang.titanjr.web.util.WebConstant;
 import com.fangcang.util.PasswordUtil;
 import com.fangcang.util.StringUtil;
+
+import net.sf.json.JSONSerializer;
 
 /**
  * 泰坦金融机构controller，目的用于后续机构申请提交，查询基础设置等
@@ -272,7 +271,11 @@ public class FinancialOrganController extends BaseController {
         			userInfoQueryRequest.setStatus(TitanUserEnum.Status.AVAILABLE.getKey());
         			UserInfoResponse userInfoResponse = titanFinancialUserService.queryFinancialUser(userInfoQueryRequest);
         			String userOrgCode = userInfoResponse.getUserInfoDTOList().get(0).getOrgCode();
-        			if(userOrgCode.equals(orgDTO.getOrgcode())){
+        			OrgSubRequest orgSubRequest = new OrgSubRequest();
+        			orgSubRequest.setOrgCode(userOrgCode);
+        			TitanOrgSub orgSub = titanFinancialOrganService.getOrgSub(orgSubRequest);
+        			
+        			if(orgSub.getOrgcode().equals(orgDTO.getOrgcode())){
         				return 1;//是登录者所属本机构,该证件可以注册
         			}else{
         				return -1;//证件已经被其他机构使用

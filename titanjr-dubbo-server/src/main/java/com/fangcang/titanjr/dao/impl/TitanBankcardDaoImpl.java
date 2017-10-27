@@ -1,6 +1,8 @@
 package com.fangcang.titanjr.dao.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,6 +60,19 @@ public class TitanBankcardDaoImpl extends GenericDAOMyBatisImpl implements Titan
 		}
 	}
 	
+	@Override
+	public void updateUserId(String newUserId, String oldUserId) throws DaoException {
+		try {
+			Map<String,String> map = new HashMap<String, String>();
+			map.put("newUserId", newUserId);
+			map.put("oldUserId", oldUserId);
+			super.updateEntity("com.fangcang.titanjr.dao.TitanBankcardDao.updateUserId", map);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+		
+	}
+
 	@Override
 	public int delete(TitanBankcard entity) throws DaoException {
 		try {

@@ -104,7 +104,7 @@ public class SettingEmployeeController extends BaseController{
 		if(pageSize==null||pageSize==0){
 			pageSize = 15;
 		}
-		Integer tfsUserId = (Integer)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID);
+		Integer tfsUserId = Integer.valueOf((String)getSession().getAttribute(WebConstant.SESSION_KEY_JR_TFS_USERID));
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();
 		userInfoQueryRequest.setTfsUserId(tfsUserId);
 		userInfoQueryRequest.setPageSize(pageSize);

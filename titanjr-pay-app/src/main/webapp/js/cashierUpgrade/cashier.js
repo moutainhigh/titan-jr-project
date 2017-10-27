@@ -105,10 +105,11 @@ $(function(){
             }
             initData();//初始化收银台
             var paytyep = cashierData.linePayType;
+            var index = $(this).find(".index").val();
             if(cashierData.linePayType == '9'){
             	paytyep = cashierData.bankInfo;
             }
-            rateCompute(paytyep, 'commpay');//费率计算
+            rateCompute(paytyep, 'commpay', index);//费率计算
         }else{
             return;
         }
@@ -139,7 +140,7 @@ $(function(){
                 if(paymentInfor == "泰容易"){ //贷款
                 	//暂不支持
                 	
-                }else if(itemType == "balance"){ //余额支付
+                }else if(itemType == "4"){ //余额支付
                 	var flag = check_set_payPassword();
                 	if(flag){
                 		showLoading();
@@ -394,15 +395,15 @@ $(function(){
     // 添加支付--关闭
     $(".shortcut>.title>.close").on("click",function(){
         isShowVeil("#Veil","hide");
-        $(".bank-account-info .bank-number").text("");
+        /*$(".bank-account-info .bank-number").text("");
         $("#checkCardNo_errorMsg").text("");
-		$("#checkCardNo_errorMsg").addClass("isShow");
+		$("#checkCardNo_errorMsg").addClass("isShow");*/
         $(".shortcut").hide();
     });
     // 添加支付 tab切换
     $(".shortcut>.title>ul").on("click","li",function(){
-        $(this).siblings().removeClass("title-color");
-        $(this).addClass("title-color");
+    	$(this).siblings().removeClass("title-color c_319");
+        $(this).addClass("title-color c_319");
         var mode = $(this).attr("data-mode");
         sessionStorage.setItem("mode", mode);
         tab();
@@ -516,6 +517,17 @@ $(function(){
        $(this).prev().find("input").val("");
         $(this).addClass("isShow");
     });
+    
+    /*// 快捷支付储蓄卡 确认支付
+    $(".savings .register_btn").on("click",function(){
+        $(this).text("正在支付...").css("opacity","0.4");
+        $("#VeilWhite").removeClass("isShow");
+    });
+    // 快捷支付信用卡 确认支付
+    $(".credit .register_btn").on("click",function(){
+        $(this).text("正在支付...").css("opacity","0.4");
+        $("#VeilWhite").removeClass("isShow");
+    }); */
 
     // 个人网银选中
     $(".personal-bank>ul").on("click","li",function(){
@@ -527,8 +539,8 @@ $(function(){
         var bankName = $(this).addClass("selected").find(".bankName_personal").val();
         var supportType = $(this).addClass("selected").find(".supportType_personal").val();
         
-        $("#bankInfo_personal_hid").val(bankInfo);
-        $("#linePayType_personal_hid").val(linePayType);
+        $("#bankInfo_wy_hid").val(bankInfo);
+        $("#linePayType_wy_hid").val(linePayType);
         $("#bankImg_personal").attr("xlink:href","#icon-" + bankInfo);
         $("#bankName_personal").text(bankName);
         
@@ -562,7 +574,7 @@ $(function(){
         
         $(".personal-bank").addClass("isShow"); //个人银行列表隐藏
         $(".personal-bank-infor").removeClass("isShow"); //显示跳转网银界面
-        rateCompute(linePayType, 'addpay');//费率计算
+        rateCompute(linePayType, 'addpay', "personal");//费率计算
     });
     function limitShow(tableId){
     	$("table[name='bankLimit']").addClass("isShow");
@@ -573,9 +585,9 @@ $(function(){
     $(".personal-bank-infor button").click(function(){
     	debugger;
     	if($("#cardType_deposit").hasClass("selected")){
-    		$("#accountType_personal_hid").val("10");
+    		$("#accountType_wy_hid").val("10");
     	}else{
-    		$("#accountType_personal_hid").val("11");
+    		$("#accountType_wy_hid").val("11");
     	}
         $(".shortcut").hide();
         showLoading();
@@ -598,26 +610,35 @@ $(function(){
         var linePayType = $(this).addClass("selected").find(".linePayType_enterprise").val();
         var bankName = $(this).addClass("selected").find(".bankName_enterprise").val();
         
-        $("#bankInfo_personal_hid").val(bankInfo);
-        $("#linePayType_personal_hid").val(linePayType);
-        $("#accountType_personal_hid").val("10");
+        $("#bankInfo_wy_hid").val(bankInfo);
+        $("#linePayType_wy_hid").val(linePayType);
+        $("#accountType_wy_hid").val("10");
         $("#bankImg_enterprise").attr("xlink:href","#icon-" + bankInfo);
         $("#bankName_enterprise").text(bankName);
         
         //民生银行显示企业银行客户号输入框
         if(bankInfo == 'cmbc'){
         	$("#enterpriseCustomerNoDev").removeClass("isShow");
+        }else{
+        	$("#enterpriseCustomerNoDev").addClass("isShow");
+        }
+        //工商银行显示温馨提示
+        if(bankInfo == 'icbc'){
+        	$("#enterprise_warm").show();
+        }else{
+        	$("#enterprise_warm").hide();
         }
         
         $(".enterprise-bank").addClass("isShow"); //企业银行列表隐藏
         $(".enterprise-bank-info").removeClass("isShow"); //显示跳转网银界面
-        rateCompute(linePayType, 'addpay');//费率计算
+        rateCompute(linePayType, 'addpay', "enterprise");//费率计算
     });
     
     //企业网银跳转按钮
     $(".enterprise-bank-info button").click(function(){
-    	if($.trim($("#enterpriseCustomerNo").val()).length <= 0){
-    		alert("请输入企业银行客户号");
+    	var bankInfo = $("#bankInfo_wy_hid").val();
+    	if(bankInfo == 'cmbc' && $.trim($("#enterpriseCustomerNo").val()).length <= 0){
+    		new top.Tip({msg: "请输入企业银行客户号", type: 2, timer: 2000});
     		return;
     	}
         $(".shortcut").hide();
@@ -634,7 +655,7 @@ $(function(){
     $(".enterprise .items").on("click",".item",function(){
         $(this).siblings().removeClass("selected").find("i").removeClass("icon-check").addClass("icon-check1");
         $(this).addClass("selected").find("i").removeClass("icon-check1").addClass("icon-check");
-        limitShow($("#bankInfo_personal_hid").val() + "_" + $(this).find("i").attr("id"));
+        limitShow($("#bankInfo_wy_hid").val() + "_" + $(this).find("i").attr("id"));
         
     });
     
@@ -680,6 +701,8 @@ $(function(){
            $(this).css("borderColor","#dadfe2");
        }
     });
+    
+    //常用支付方式--重新获取验证码
     var btn2 = true;
     $(".obtain-btn-1").click(function(){
         console.log(1);
@@ -766,7 +789,7 @@ function buildCashierData(data){
     
 	//是否使用账户余额
 	cashierData.isaccount = function(){
-		if(itemType == 'balance'){
+		if(itemType == '4'){
 			return 1;
 		}
 		return 2;
@@ -902,9 +925,19 @@ function buildCashierData(data){
 	
 	//添加支付--快捷支付信用卡--获取验证码参数设置
 	cashierData.getRechargeData_credit = function(){debugger;
+		var bankInfo = $("#quick_bankInfo_hid").val();
+		var isValid = $("#validAuth").val();
+		var safetyCode = $("#quick_safetyCode_credit").val();
 		var validthruMonth = $("#quick_validthruMonth_credit").text();
 		var validthruYear = $("#quick_validthruYear_credit").text().substr(2);
 		var validthru = validthruMonth + validthruYear;
+		
+		if(bankInfo == 'icbc'){//工商银行不需要校验cvv码
+			safetyCode = "123";
+		}else if(isValid == '0'){//不需要验证cvv码和有效期，随便写
+			safetyCode = "123";
+			validthru = "0618";
+		}
 		
 		var data= {
 				payOrderNo:cashierData.payOrderNo,
@@ -924,7 +957,7 @@ function buildCashierData(data){
 		       	payerName:$("#quick_payerName_credit").val(),
 		       	payerPhone:$("#quick_payerPhone_credit").val(),
 		       	idCode:$("#quick_idCode_credit").val(),
-		       	safetyCode:$("#quick_safetyCode_credit").val(),
+		       	safetyCode:safetyCode,
 		       	validthru:validthru,
 		       	partnerOrgCode:cashierData.partnerOrgCode,
 		        linePayType:$("#quick_payType_hid").val(),
@@ -1040,8 +1073,8 @@ function buildCashierData(data){
 		document.getElementById('f_isaccount').value=2;
 		document.getElementById('f_recieveOrgName').value=$("#recieveOrgName").val(),
 		document.getElementById('f_recieveTitanCode').value=$("#recieveTitanCode").val(),
-		document.getElementById('f_bankInfo').value=$("#bankInfo_personal_hid").val();
-		document.getElementById('f_linePayType').value=$("#linePayType_personal_hid").val();
+		document.getElementById('f_bankInfo').value=$("#bankInfo_wy_hid").val();
+		document.getElementById('f_linePayType').value=$("#linePayType_wy_hid").val();
 		document.getElementById('f_paySource').value=cashierData.paySource;
 		document.getElementById('f_deskId').value=cashierData.deskId;
 		document.getElementById('f_userid').value=cashierData.userid;
@@ -1050,7 +1083,7 @@ function buildCashierData(data){
 		document.getElementById('f_tradeAmount').value=cashierData.tradeAmount;
 		document.getElementById('f_fcUserid').value=cashierData.fcUserid;
 		document.getElementById('f_payerAcount').value=$("#enterpriseCustomerNo").val();//民生银行企业网银需要银行客户号
-		document.getElementById('f_payerAccountType').value=$("#accountType_personal_hid").val();//用于保存常用支付方式
+		document.getElementById('f_payerAccountType').value=$("#accountType_wy_hid").val();//用于保存常用支付方式
 		document.getElementById('f_sign').value=cashierData.sign;
 		document.getElementById('onlinePaymentForm').submit();
 	};

@@ -4,6 +4,11 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <style type="text/css">
+    	#J_form_enterprise .content .right .f_ui-valid-item{
+    		margin-right:-5px;
+    	}
+    </style>
 </head>
 <body>
 		<!-- 新增绑卡 -->
@@ -47,7 +52,7 @@
 					<div class="content">
 						<div class="left">银行卡号:</div>
 						<div class="right">
-							<p><input type="text"  class="bank-input accountnumber" maxlength="16" placeholder="输入银行卡号" datatype="*" errormsg="请填写银行卡号" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/><s class="iconfont icon-sc input-empty isShow"></s></p>
+							<p><input type="text"  class="bank-input accountnumber" maxlength="25" placeholder="输入银行卡号" datatype="*" errormsg="请填写银行卡号" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/><s class="iconfont icon-sc input-empty isShow"></s></p>
 						</div>
 					</div>
 					<div class="content">
@@ -82,13 +87,13 @@
 					<div class="content">
 						<div class="left">银行卡号:</div>
 						<div class="right">
-							<p><input type="text"  class="bank-input accountnumber" maxlength="16" placeholder="输入银行卡号" datatype="*" errormsg="请填写银行卡号" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/><s class="iconfont icon-sc input-empty isShow"></s></p>
+							<p><input type="text"  class="bank-input accountnumber" maxlength="25" placeholder="输入银行卡号" datatype="*" errormsg="请填写银行卡号" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/><s class="iconfont icon-sc input-empty isShow"></s></p>
 						</div>
 					</div>
 					<div class="content">
 						<div class="left"></div>
 						<div class="right">
-							<button type="button" class="button-btn prohibit" disabled="true" onclick="saveBindCard();">去提现</button>
+							<button type="button" class="button-btn prohibit" id="next_commit" disabled="true" onclick="saveBindCard();"></button>
 						</div>
 					</div>
 				</form>
@@ -101,42 +106,7 @@
 		var cityAutoComplete = null;
 		var branchBankAutoComplete = null;
 		var usertype='${orgSub.usertype}'; 
-	//企业开户银行
-	enterpriseBankAutoComplete = new AutoComplete($('#J_form_enterprise .bankCode'), {
-	    url : '<%=basePath%>/account/getBankInfoList.shtml?bankType=1',
-	    source : 'bankInfoDTOList',
-	    key : 'bankCode',  //数据源中，做为key的字段
-	    val : 'bankName', //数据源中，做为val的字段
-	    width : 240,
-	    height : 300,
-	    autoSelectVal : true,
-	    clickEvent : function(d, input){
-	        input.attr('data-id', d.key);
-	        $("#J_form_enterprise .bankName").val(d.val);
-	       	bc.checkSubmit();
-	       	if($('#J_form_enterprise .city_code')){
-	       		showCityCode();
-	       	}
-	    }
-	});
-	//个人开户行
-	personalBankAutoComplete = new AutoComplete($('#J_form_personal .bankCode'), {
-	    url : '<%=basePath%>/account/getBankInfoList.shtml?bankType=1',
-	    source : 'bankInfoDTOList',
-	    key : 'bankCode',  //数据源中，做为key的字段
-	    val : 'bankName', //数据源中，做为val的字段
-	    width : 240,
-	    height : 300,
-	    autoSelectVal : true,
-	    clickEvent : function(d, input){
-	        input.attr('data-id', d.key);
-	        $("#J_form_personal .bankName").val(d.val);
-	       	bc.checkSubmit();
-	    }
-	});
-	if($('#J_form_enterprise .city_code')){
-	   initCityAutoComplete();
-	}
+	
 	//支行
 	function initCityAutoComplete(){
 		//城市
@@ -152,9 +122,9 @@
 		        input.attr('data-id', d.key);
 		        input.attr('value',d.val.substring(d.val.indexOf("-")+1));
 		        var arr = d.val.split("-");
-		       // $("#J_form_enterprise .city_name").val(arr[arr.length-1]);
-		       // bc.checkSubmit();
-		       // showBranch();
+		        $("#J_form_enterprise .city_name").val(arr[arr.length-1]);
+		        bc.checkSubmit();
+		        showBranch();
 		    }
 		});
 	}
@@ -232,6 +202,7 @@
 	}	
 	
 	function saveBindCard(){
+		F.loading.show();
 		var paramData = getBankCardData();
 		$.ajax({
     	    type: 'post',
@@ -250,9 +221,18 @@
         			}
         			formv._setErrorStyle($("#"+fid+" .accountnumber"),result.msg);
         		}else{
-        			bc.bindResultView();
+        			if(paramData.userType=='2'){//个人表示绑卡成功
+        				bc.close();
+        				account_withdraw();
+        			}else{
+        				bc.bindResultView();
+        			}
         		}
-        	}
+        	},
+        	complete:function()
+			{
+				F.loading.hide();
+			}
 	    });
     }
     //校验身份证号码
@@ -260,12 +240,55 @@
     	var reg = /^\d{15}$|^\d{18}$/g;
     	bc.checkSubmit();
     	if(!reg.test(value)){
-    		//$(inputDom).parent().find("span").append("<p>非身份证绑卡验证需要人工复核，请联系金融运营人员协助确认</p>");
+    		window.setTimeout(function() {
+    			$(inputDom).parent().find("span").append("<p>非身份证验证请联系金融运营人员协助确认</p>");
+    		}, 200);
     		return true;
     	}
     	return true;
     }
-    
-    bc.initBindCardPanel();
+    $(function(){
+    	if(typeof(bind_nstep)!='undefined'&&bind_nstep=='withdraw'){
+    		$("#next_commit").html("去提现");
+    	}else{
+    		$("#next_commit").html("提交");
+    	}
+    	//企业开户银行
+		enterpriseBankAutoComplete = new AutoComplete($('#J_form_enterprise .bankCode'), {
+		    url : '<%=basePath%>/account/getBankInfoList.shtml?bankType=1',
+		    source : 'bankInfoDTOList',
+		    key : 'bankCode',  //数据源中，做为key的字段
+		    val : 'bankName', //数据源中，做为val的字段
+		    width : 240,
+		    height : 300,
+		    autoSelectVal : true,
+		    clickEvent : function(d, input){
+		        input.attr('data-id', d.key);
+		        $("#J_form_enterprise .bankName").val(d.val);
+		       	bc.checkSubmit();
+		       	if($('#J_form_enterprise .city_code').length>0){
+		       		showCityCode();
+		       	}
+		    }
+		});
+		//个人开户行
+		personalBankAutoComplete = new AutoComplete($('#J_form_personal .bankCode'), {
+		    data : personBankData.content,
+		    key : 'bankCode',  //数据源中，做为key的字段
+		    val : 'bankName', //数据源中，做为val的字段
+		    width : 240,
+		    height : 300,
+		    autoSelectVal : true,
+		    clickEvent : function(d, input){
+		        input.attr('data-id', d.key);
+		        $("#J_form_personal .bankName").val(d.val);
+		       	bc.checkSubmit();
+		    }
+		});
+		if($('#J_form_enterprise .city_code').length>0){
+		   initCityAutoComplete();
+		}
+		bc.initBindCardPanel();
+    });
 	</script>
 </body>

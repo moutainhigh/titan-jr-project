@@ -593,5 +593,70 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
         }
         titanCashierItemBankDao.batchSaveItemBanks(banks);
     }
+    
+    @Override
+    public BaseResponseDTO initTradingPlatformCashierdesk() {
+    	 
+    	 BaseResponseDTO baseResponseDTO = new BaseResponseDTO();
+    	 baseResponseDTO.putSysError();
+    	 List<TitanCashierDeskItem> cashierDeskItems = new ArrayList<TitanCashierDeskItem>();
+    	 
+    	 int delCount = titanCashierDeskItemDao.delCashierdeskItemForTradingPlatform();
+    	 log.info("delCashierdeskItemForTradingPlatform is success, delCount:" + delCount);
+    	 
+    	 List<CashierDeskDTO> cashierDeskList = titanCashierDeskItemDao.queryTradingPlatformCashierdesk();
+    	 if(CollectionUtils.isEmpty(cashierDeskList)){
+    		 baseResponseDTO.putSuccess("no cashierDesk need to init");
+    		 return baseResponseDTO;
+    	 }
+    	 
+    	 for (CashierDeskDTO desk : cashierDeskList) {
+    		 cashierDeskItems.add(buildCashierDeskItem(desk.getDeskId(), CashierItemTypeEnum.B2B_ITEM));
+             cashierDeskItems.add(buildCashierDeskItem(desk.getDeskId(), CashierItemTypeEnum.B2C_ITEM));
+             cashierDeskItems.add(buildCashierDeskItem(desk.getDeskId(), CashierItemTypeEnum.CREDIT_ITEM));
+             cashierDeskItems.add(buildCashierDeskItem(desk.getDeskId(), CashierItemTypeEnum.QR_ITEM));
+             cashierDeskItems.add(buildCashierDeskItem(desk.getDeskId(), CashierItemTypeEnum.BALANCE_ITEM));
+    	 }
+    	 //批量插入初始化收银台子项
+    	 int insertDeskItemCount = 0;
+         for (TitanCashierDeskItem deskItem : cashierDeskItems) {
+        	 insertDeskItemCount++;
+             titanCashierDeskItemDao.saveCashierDeskItem(deskItem);
+         }
+    	 log.info("batchSaveCashierDeskItem success, insertDeskItemCount:" + insertDeskItemCount);
+         
+         //默认初始化银行：
+    	 int count = 0;
+         List<TitanCashierItemBank> allItemBanks = new ArrayList<TitanCashierItemBank>();
+         for (TitanCashierDeskItem deskItem : cashierDeskItems) {
+             if (deskItem.getItemtype() == Integer.valueOf(CashierItemTypeEnum.B2B_ITEM.getItemCode())) {
+                 allItemBanks.addAll(buildItemBankList(deskItem.getItemid(), "B2B"));
+             }
+             if (deskItem.getItemtype() == Integer.valueOf(CashierItemTypeEnum.B2C_ITEM.getItemCode())) {
+                 allItemBanks.addAll(buildItemBankList(deskItem.getItemid(), "B2C"));
+             }
+             if (deskItem.getItemtype() == Integer.valueOf(CashierItemTypeEnum.CREDIT_ITEM.getItemCode())) {
+                 allItemBanks.addAll(buildItemBankList(deskItem.getItemid(), "Credit"));
+             }
+             if (deskItem.getItemtype() == Integer.valueOf(CashierItemTypeEnum.QR_ITEM.getItemCode())) {
+                 allItemBanks.addAll(buildQRBankList(deskItem.getItemid()));
+             }
+             if(allItemBanks.size() >= 10000){
+            	 count++;
+            	 int insertItemBanksCount = titanCashierItemBankDao.batchSaveItemBanks(allItemBanks);
+            	 log.info("batchSaveItemBanks_" + count + " success, insertItemBanksCount:" + insertItemBanksCount);
+            	 allItemBanks = new ArrayList<TitanCashierItemBank>();
+             }
+         }
+         if(CollectionUtils.isNotEmpty(allItemBanks)){
+        	 int insertItemBanksCount = titanCashierItemBankDao.batchSaveItemBanks(allItemBanks);
+        	 log.info("batchSaveItemBanks_" + (count+1) + " success, insertItemBanksCount:" + insertItemBanksCount);
+         }
+         log.info("initTradingPlatformCashierdesk success");
+         
+         baseResponseDTO.putSuccess("initTradingPlatformCashierdesk success");
+    	 return baseResponseDTO;
+    	
+    }
 
 }

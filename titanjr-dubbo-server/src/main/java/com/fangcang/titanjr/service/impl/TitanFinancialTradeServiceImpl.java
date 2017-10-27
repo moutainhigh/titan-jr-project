@@ -372,7 +372,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							.genSyncUserOrderId());
 				}
 				OrderOperateResponse orderOperateResponse = this
-						.addRSOrder(orderRequest);
+						.addRSOrder(orderRequest, titanPaymentRequest.getJrVersion());
+				//到融数下单的时候将手续费设成了0，下完单后手续费需要设置回来，方便后面更新订单的时候保存手续费的值
+				orderRequest.setReceivedfee(titanPaymentRequest.getReceivedfee());
 
 				if (!orderOperateResponse.getOperateStatus().equals(
 						CommonConstant.OPERATE_SUCCESS)) {// 融数下单不成功
@@ -515,7 +517,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	 * @author fangdaikang
 	 */
 
-	private OrderOperateResponse addRSOrder(OrderRequest orderRequest)
+	private OrderOperateResponse addRSOrder(OrderRequest orderRequest, String titanJrVersion)
 			throws Exception {
 		try {
 			OrderOperateRequest req = new OrderOperateRequest();
@@ -536,7 +538,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			req.setAdjusttype(orderRequest.getAdjusttype()); // 调整类型
 			req.setAdjustcontent(orderRequest.getAdjustcontent()); // 调整内容
 			req.setUserrelateid(orderRequest.getUserrelateid()); // 关联用户id（若有第三方则必须填写）
-			req.setUnitprice(orderRequest.getReceivedfee());//设置实收的手续费
+			if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanJrVersion)){
+				req.setUnitprice(orderRequest.getReceivedfee());//设置实收的手续费
+			}else{
+				orderRequest.setReceivedfee("0"); //新版收银台，充值手续费为0，在转账的时候再计算手续费
+			}
 			return rsAccTradeManager.operateOrder(req);
 		} catch (Exception e) {
 			throw new Exception(e);
@@ -563,17 +569,20 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				TransOrderRequest transOrderRequest = new TransOrderRequest();
 				transOrderRequest.setOrderid(transferRequest.getOrderid());
 				List<TransOrderDTO> transOrderDTOList =  titanTransOrderDao.selectTitanTransOrderLock(transOrderRequest);
+				TransOrderDTO transOrderDTO = null;
 				if (CollectionUtils.isNotEmpty(transOrderDTOList)) {
-					transid = transOrderDTOList.get(0).getTransid();
-					payOrderNo = transOrderDTOList.get(0).getPayorderno();
+					transOrderDTO = transOrderDTOList.get(0);
+					transid = transOrderDTO.getTransid();
+					payOrderNo = transOrderDTO.getPayorderno();
 				}
 				// 获取落单时的订单id
-				if (transid != null && StringUtil.isValidString(payOrderNo)) {
+				if (transOrderDTO != null && transid != null && StringUtil.isValidString(payOrderNo)) {
 					titanTransferReq.setTransorderid(transid);
 					titanTransferReq.setPayorderno(payOrderNo);
 
 					// 查询该单号是否已经有转账单
-					TitanTransferReq titanTransfer = queryTransfer(payOrderNo);
+					TitanTransferReq titanTransfer = queryTransfer(payOrderNo, transferRequest.getUserid(), 
+							transferRequest.getUserrelateid());
 
 					boolean flag = false;
 					if (titanTransfer == null) {// 判断转账是否已经进行
@@ -639,9 +648,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		return transferResponse;
 	}
 
-	private TitanTransferReq queryTransfer(String payOrderNo) {
+	private TitanTransferReq queryTransfer(String payOrderNo, String userId, String userRelateId) {
 		TitanTransferReqParam titanTransferReqParam = new TitanTransferReqParam();
 		titanTransferReqParam.setPayorderno(payOrderNo);
+		titanTransferReqParam.setUserid(userId);
+		titanTransferReqParam.setUserrelateid(userRelateId);
 		List<TitanTransferReq> titanTransferList = titanTransferReqDao
 				.queryTitanTransferReq(titanTransferReqParam);
 		if (titanTransferList != null && titanTransferList.size() > 0) {
@@ -853,7 +864,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	private AccountTransferRequest getAccountTransferRequest(TransferRequest transferRequest){
 		AccountTransferRequest transferReq = new AccountTransferRequest();;
 		if (transferRequest != null) {
-			transferReq.setAmount(transferRequest.getAmount());
 			if (transferRequest.getTransfertype() != null) {
 				transferReq.setTransfertype(transferRequest.getTransfertype().getKey()); // 1:子账户转账
 			}
@@ -1117,6 +1127,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			orderRequest.setReceivablefee(titanPaymentRequest.getReceivablefee());
 			orderRequest.setReceivedfee(titanPaymentRequest.getReceivedfee());
 			orderRequest.setStandfee(titanPaymentRequest.getStandfee());
+			orderRequest.setFreezeType(transOrderDTO.getFreezeType());
+			orderRequest.setVersion(transOrderDTO.getVersion());
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
@@ -1197,6 +1209,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				titanTransOrder
 						.setBusinessinfo(orderRequest.getBussinessInfo());
 				titanTransOrder.setGoodscnt(1);
+				titanTransOrder.setFreezeType(orderRequest.getFreezeType());
+				titanTransOrder.setVersion(orderRequest.getVersion());
 
 				//设置费率信息
 				if(StringUtil.isValidString(orderRequest.getReceivablefee())){
@@ -1448,6 +1462,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                         tradeDetailResponse.putErrorResult("USERID_INVALID", "查询结果中userId不合法");
                         return tradeDetailResponse;
                     }
+                    PayerTypeEnum payerTypeEnum = null;
+                    if (StringUtil.isValidString(titanTransOrder
+							.getPayerType())) {
+	                    payerTypeEnum = PayerTypeEnum
+								.getPayerTypeEnumByKey(titanTransOrder
+										.getPayerType());
+                    }
                     if (isPayeeValid(transOrderDTO)) { //收款方存在时
                         if (isPayerValid(transOrderDTO)) {//付款方也存在
                             if (isPayeeOrg(tradeDetailRequest, transOrderDTO)) { //当前机构等于收款方
@@ -1457,24 +1478,23 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
                                 }else{
                                 	 transOrderDTO.setTransTarget(getTransTarget(transOrderDTO.getPayermerchant()));//付款方
                                 }
-								// 如果当前机构是收款方并且收款类型为商家联盟，则不考虑费率显示问题
-								if (StringUtil.isValidString(titanTransOrder
-										.getPayerType())) {
-									PayerTypeEnum payerTypeEnum = PayerTypeEnum
-											.getPayerTypeEnumByKey(titanTransOrder
-													.getPayerType());
-
-									// 如果是商家联盟的付款，则收款方不需要展示费率。
-									if (payerTypeEnum != null
-											&& (PayerTypeEnum.SUPPLY_UNION.key
-													.equals(payerTypeEnum.key) || PayerTypeEnum.SUPPLY_FINACIAL.key
-													.equals(payerTypeEnum.key))) {
-										transOrderDTO.setReceivedfee(0L);
-									}
+                                // 当前机构是收款方并且是财务付款，则收款方不需要展示费率。
+								if (payerTypeEnum != null
+										&& (PayerTypeEnum.SUPPLY_UNION.key
+												.equals(payerTypeEnum.key) || PayerTypeEnum.SUPPLY_FINACIAL.key
+												.equals(payerTypeEnum.key))) {
+									transOrderDTO.setReceivedfee(0L);
 								}
 
                             } else if (isPayerOrg(tradeDetailRequest, transOrderDTO)) {//当前机构等于付款方
                                 transOrderDTO.setTradeType("付款");
+                                // 当前机构是付款方并且不是财务付款，则付款方不需要展示费率。
+								if (payerTypeEnum != null
+										&& !PayerTypeEnum.SUPPLY_UNION.key
+												.equals(payerTypeEnum.key) && !PayerTypeEnum.SUPPLY_FINACIAL.key
+												.equals(payerTypeEnum.key)) {
+									transOrderDTO.setReceivedfee(0L);
+								}
                                 transOrderDTO.setTransTarget(getTransTarget(transOrderDTO.getPayeemerchant()));//收款方
                             }
                         } else if (isPayeeOrg(tradeDetailRequest, transOrderDTO)) {//付款方不存在机构等于收款方
@@ -1941,6 +1961,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						titanOrderRequest.getBusinessInfo()).toString());
 			}
 			titanTransOrder.setFreezeType(titanOrderRequest.getFreezeType());
+			titanTransOrder.setVersion(titanOrderRequest.getVersion());
 			try {
 				titanTransOrder.setIsEscrowedPayment(EscrowedEnum.NO_ESCROWED_PAYMENT.getKey());
 				if (StringUtil.isValidString(titanOrderRequest.getEscrowedDate())) {
@@ -2429,13 +2450,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			log.info("网关返回参数:"+JSONSerializer.toJSON(qr));
 			boolean sign = this.validateGateSign(qr);
 			if(!sign){
-				log.error("网关返回签名失败");
+				log.error("融数网关获取支付二维码时返回签名失败,参数:" + JSONSerializer.toJSON(params));
 				qrCodeResponse.putErrorResult("签名验证失败");
 				return qrCodeResponse;
 			}
 			
 			if(!StringUtil.isValidString(qr.getRespJs())){
-				log.error("网关返回参数异常"+qr.getRespJs());
+				log.error("网关返回支付二维码参数异常,参数:" + JSONSerializer.toJSON(params)+","+qr.getRespJs());
 				qrCodeResponse.putErrorResult("网关返回参数异常");
 				return qrCodeResponse;
 			}
@@ -2445,8 +2466,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			return qrCodeResponse;
 			
 		} catch (Exception e) {
-			log.error("系统异常",e);
-			qrCodeResponse.putErrorResult("系统异常");
+			log.error("系统繁忙，请稍后再试",e);
+			qrCodeResponse.putErrorResult("系统繁忙，请稍后再试");
 		}
 		return qrCodeResponse;
 	}

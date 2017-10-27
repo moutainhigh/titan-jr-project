@@ -24,11 +24,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fangcang.titanjr.common.bean.ValidateResponse;
+import com.fangcang.titanjr.common.enums.BusinessLog;
 import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
+import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
+import com.fangcang.titanjr.common.enums.TitanjrVersionEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.GenericValidate;
@@ -40,6 +43,7 @@ import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.AddPayLogRequest;
 import com.fangcang.titanjr.dto.request.NotifyRefundRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.RefundOrderRequest;
@@ -53,6 +57,7 @@ import com.fangcang.titanjr.enums.BusiCodeEnum;
 import com.fangcang.titanjr.response.BaseResponse;
 import com.fangcang.titanjr.rest.enums.AccReceOperTypeEnum;
 import com.fangcang.titanjr.rest.request.JRAccountReceiveRequest;
+import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialRefundService;
@@ -91,6 +96,9 @@ public class JRAccountController {
 	
 	@Resource
     private TitanFinancialUtilService titanFinancialUtilService;
+	
+	@Resource
+	private BusinessLogService businessLogService;
 	
 	
 	/**
@@ -196,6 +204,14 @@ public class JRAccountController {
 					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getKey());
 			return baseResponse;
 		}
+		if(jrAccountReceiveRequest.getIsBackTrack() == 1){
+			if(transOrderDTO.getAmount() == null || transOrderDTO.getAmount() == 0){//当amount为0时表示是余额付款
+				log.error("payType is blance, can not backTrack");
+				baseResponse.putErrorResult(String.valueOf(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getCode()), 
+						TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getKey());
+				return baseResponse;
+			}
+		}
 		if (!OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())){
 			log.error("trans order is not freeze");
 			baseResponse.putErrorResult(String.valueOf(TitanMsgCodeEnum.ORDER_NOT_FREEZE.getCode()), 
@@ -261,7 +277,7 @@ public class JRAccountController {
 	
 	
 	/**
-	 * 解冻付款方资金
+	 * 根据冻结记录解冻付款方资金
 	 * @param isReceive：是否收款
 	 * @author Jerry
 	 * @date 2017年8月14日 下午4:29:32
@@ -299,7 +315,7 @@ public class JRAccountController {
 	
 	
 	/**
-	 * 转账到收款方
+	 * 转账到收款方（设置手续费）
 	 * @author Jerry
 	 * @date 2017年8月14日 下午4:53:21
 	 */
@@ -307,6 +323,13 @@ public class JRAccountController {
 		
 		BaseResponse baseResponse = new BaseResponse();
 		baseResponse.putSuccess();
+		
+		Long receivedFee = 0L;
+		if(transOrderDTO.getReceivedfee() != null){
+			receivedFee = transOrderDTO.getReceivedfee();
+		}
+		PayerTypeEnum payerTypeEnum = PayerTypeEnum
+				.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
 		
 		TransOrderDTO transOrder = new TransOrderDTO();
 		transOrder.setOrderid(transOrderDTO.getOrderid());
@@ -316,7 +339,11 @@ public class JRAccountController {
 		transferRequest.setUserid(transOrderDTO.getUserid()); // 转出的用户
 		transferRequest.setRequestno(OrderGenerateService.genResquestNo()); // 业务订单号
 		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date())); // 请求时间
-		transferRequest.setAmount(transOrderDTO.getTradeamount().toString());
+		if (payerTypeEnum != null && !payerTypeEnum.isNeedPayerInfo()) {//收款方出手续费，减去手续费
+			transferRequest.setAmount(String.valueOf(transOrderDTO.getTradeamount()-receivedFee));
+		}else{
+			transferRequest.setAmount(String.valueOf(transOrderDTO.getTradeamount()));
+		}
 		transferRequest.setUserfee("0");
 		transferRequest.setOrderid(transOrderDTO.getOrderid());
 		transferRequest.setUserrelateid(transOrderDTO.getUserrelateid());
@@ -338,6 +365,21 @@ public class JRAccountController {
 					TitanMsgCodeEnum.TRANSFER_FAIL.getKey());
     	}else{
     		transOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
+    		//将手续费转到收益子账户
+        	if(transferResponse.isResult()){
+    			if(transOrderDTO.getReceivedfee() != null && transOrderDTO.getReceivedfee() > 0){
+    				log.info("began transfer to revenueAccount");
+    				TransferRequest transferRevenueAccountRequest = this.getRevenueAccountTransferRequest(transOrderDTO);
+    				transferResponse = titanFinancialTradeService.transferAccounts(transferRevenueAccountRequest);
+    				if(transferResponse.isResult()){
+    					log.info("transfer to revenueAccount success, transOrderId: " + transOrderDTO.getTransid());
+    					businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
+    				}else{
+    					log.error("transfer to revenueAccount success faild, transOrderId: " + transOrderDTO.getTransid());
+    					titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(), OrderKindEnum.OrderId, OrderExceptionEnum.Transfer_revenueAccount_Fail, transOrderDTO.getStatusid());
+    				}
+    			}
+        	}
     	}
     	
     	//更新订单状态
@@ -416,7 +458,7 @@ public class JRAccountController {
 			Long nowDate = new Date().getTime();
 			if (nowDate - orderDate <= CommonConstant.MS) {
 				
-				log.info("充值未超过30天，执行原路退回，通知融数网关退款");
+				log.info("执行原路退回，通知融数网关退款");
 				RefundOrderRequest refundOrderRequest = buildRefundOrderRequest(
 						transOrderDTO, payOrder.getOrderTime());
 				NotifyRefundRequest notifyRefundRequest = buildNotifyRefundRequest(
@@ -425,6 +467,8 @@ public class JRAccountController {
 						.notifyRefund(refundOrderRequest, notifyRefundRequest, transOrderDTO);
 				log.info("网关退款, 订单orderid: " + transOrderDTO.getOrderid()+", 响应结果:" + 
 						Tools.gsonToString(notifyRefundResponse));
+			}else{
+				log.info("充值超过30天，不执行原路退回");
 			}
 		}
 		
@@ -433,13 +477,12 @@ public class JRAccountController {
 	
 	private RefundOrderRequest buildRefundOrderRequest(TransOrderDTO transOrderDTO, 
 			String orderTime){
-		
 		RefundOrderRequest refundOrderRequest = new RefundOrderRequest();
-		refundOrderRequest.setAmount(String.valueOf(transOrderDTO.getAmount())); //充值的钱
+		refundOrderRequest.setAmount(String.valueOf(transOrderDTO.getAmount())); //充值的钱（包含手续费）
 		refundOrderRequest.setOrderId(transOrderDTO.getOrderid());
 		refundOrderRequest.setOrderTime(orderTime);
-		refundOrderRequest.setTransferAmount(String.valueOf(transOrderDTO.getTradeamount()));
-		refundOrderRequest.setFee(String.valueOf(transOrderDTO.getReceivedfee()));
+		refundOrderRequest.setTransferAmount("0");//冻结在付款方还没转账
+		refundOrderRequest.setFee("0");//新版收银台充值不先扣手续费
 		refundOrderRequest.setPayOrderNo(transOrderDTO.getPayorderno());
 		refundOrderRequest.setUserOrderId(transOrderDTO.getUserorderid());
 		//refundOrderRequest.setNotifyUrl(refundRequest.getNotifyUrl());
@@ -460,6 +503,21 @@ public class JRAccountController {
 		notifyRefundRequest.setSignType(String.valueOf(payOrder.getSignType()));
 		notifyRefundRequest.setVersion(payOrder.getVersion());//关于版本？
 		return notifyRefundRequest;
+	}
+	
+	public TransferRequest getRevenueAccountTransferRequest(TransOrderDTO transOrderDTO){
+		TransferRequest transferRequest = new TransferRequest();
+		transferRequest.setCreator(transOrderDTO.getCreator());
+		transferRequest.setUserid(transOrderDTO.getUserid()); // 转出的用户
+		transferRequest.setProductId(transOrderDTO.getProductid());
+		transferRequest.setRequestno(OrderGenerateService.genResquestNo()); // 业务订单号
+		transferRequest.setRequesttime(DateUtil.sdf4.format(new Date())); // 请求时间
+		transferRequest.setAmount(String.valueOf(transOrderDTO.getReceivedfee()));
+		transferRequest.setUserfee("0");
+		transferRequest.setOrderid(transOrderDTO.getOrderid());
+		transferRequest.setUserrelateid(CommonConstant.RS_FANGCANG_USER_ID); // 转入的用户
+		transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
+		return transferRequest;
 	}
 
 }

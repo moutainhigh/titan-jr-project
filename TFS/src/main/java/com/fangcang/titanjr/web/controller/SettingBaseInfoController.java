@@ -83,8 +83,10 @@ public class SettingBaseInfoController extends BaseController{
 			financialOrganDTO.setCertificateNumber(Tools.replaceInfoStar(financialOrganDTO.getCertificateNumber()));
 			
 			OrgSubDTO orgSubDTO = financialOrganResponse.getOrgSubDTO();
-			orgSubDTO.setBuslince(Tools.replaceInfoStar(orgSubDTO.getBuslince()));
-			orgSubDTO.setCertificateNumber(Tools.replaceInfoStar(orgSubDTO.getCertificateNumber()));
+			if(orgSubDTO!=null){
+				orgSubDTO.setBuslince(Tools.replaceInfoStar(orgSubDTO.getBuslince()));
+				orgSubDTO.setCertificateNumber(Tools.replaceInfoStar(orgSubDTO.getCertificateNumber()));
+			}
 			
 			model.addAttribute("financialOrganDTO", financialOrganDTO);
 			model.addAttribute("orgSubDTO", orgSubDTO);
