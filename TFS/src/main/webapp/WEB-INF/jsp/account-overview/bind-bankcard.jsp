@@ -93,7 +93,7 @@
 					<div class="content">
 						<div class="left"></div>
 						<div class="right">
-							<button type="button" class="button-btn prohibit" disabled="true" onclick="saveBindCard();">去提现</button>
+							<button type="button" class="button-btn prohibit" id="next_commit" disabled="true" onclick="saveBindCard();"></button>
 						</div>
 					</div>
 				</form>
@@ -106,41 +106,7 @@
 		var cityAutoComplete = null;
 		var branchBankAutoComplete = null;
 		var usertype='${orgSub.usertype}'; 
-	//企业开户银行
-	enterpriseBankAutoComplete = new AutoComplete($('#J_form_enterprise .bankCode'), {
-	    url : '<%=basePath%>/account/getBankInfoList.shtml?bankType=1',
-	    source : 'bankInfoDTOList',
-	    key : 'bankCode',  //数据源中，做为key的字段
-	    val : 'bankName', //数据源中，做为val的字段
-	    width : 240,
-	    height : 300,
-	    autoSelectVal : true,
-	    clickEvent : function(d, input){
-	        input.attr('data-id', d.key);
-	        $("#J_form_enterprise .bankName").val(d.val);
-	       	bc.checkSubmit();
-	       	if($('#J_form_enterprise .city_code').length>0){
-	       		showCityCode();
-	       	}
-	    }
-	});
-	//个人开户行
-	personalBankAutoComplete = new AutoComplete($('#J_form_personal .bankCode'), {
-	    data : personBankData.content,
-	    key : 'bankCode',  //数据源中，做为key的字段
-	    val : 'bankName', //数据源中，做为val的字段
-	    width : 240,
-	    height : 300,
-	    autoSelectVal : true,
-	    clickEvent : function(d, input){
-	        input.attr('data-id', d.key);
-	        $("#J_form_personal .bankName").val(d.val);
-	       	bc.checkSubmit();
-	    }
-	});
-	if($('#J_form_enterprise .city_code').length>0){
-	   initCityAutoComplete();
-	}
+	
 	//支行
 	function initCityAutoComplete(){
 		//城市
@@ -281,7 +247,48 @@
     	}
     	return true;
     }
-    
-    bc.initBindCardPanel();
+    $(function(){
+    	if(typeof(bind_nstep)!='undefined'&&bind_nstep=='withdraw'){
+    		$("#next_commit").html("去提现");
+    	}else{
+    		$("#next_commit").html("提交");
+    	}
+    	//企业开户银行
+		enterpriseBankAutoComplete = new AutoComplete($('#J_form_enterprise .bankCode'), {
+		    url : '<%=basePath%>/account/getBankInfoList.shtml?bankType=1',
+		    source : 'bankInfoDTOList',
+		    key : 'bankCode',  //数据源中，做为key的字段
+		    val : 'bankName', //数据源中，做为val的字段
+		    width : 240,
+		    height : 300,
+		    autoSelectVal : true,
+		    clickEvent : function(d, input){
+		        input.attr('data-id', d.key);
+		        $("#J_form_enterprise .bankName").val(d.val);
+		       	bc.checkSubmit();
+		       	if($('#J_form_enterprise .city_code').length>0){
+		       		showCityCode();
+		       	}
+		    }
+		});
+		//个人开户行
+		personalBankAutoComplete = new AutoComplete($('#J_form_personal .bankCode'), {
+		    data : personBankData.content,
+		    key : 'bankCode',  //数据源中，做为key的字段
+		    val : 'bankName', //数据源中，做为val的字段
+		    width : 240,
+		    height : 300,
+		    autoSelectVal : true,
+		    clickEvent : function(d, input){
+		        input.attr('data-id', d.key);
+		        $("#J_form_personal .bankName").val(d.val);
+		       	bc.checkSubmit();
+		    }
+		});
+		if($('#J_form_enterprise .city_code').length>0){
+		   initCityAutoComplete();
+		}
+		bc.initBindCardPanel();
+    });
 	</script>
 </body>

@@ -510,6 +510,8 @@
 	
 	
 	<script type="text/javascript">
+		//绑卡成功后，下一步
+		var bind_nstep='withdraw';
 		//当前页码
 		var page1,page2,page3,page4,page5;
 		//总记录数
