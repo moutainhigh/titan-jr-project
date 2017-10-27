@@ -65,5 +65,14 @@
         	</if>
         </where>
     </select>
-
+    
+    <delete id="delCashierdeskItemForTradingPlatform">
+    	delete from t_tfs_cashierdeskitem where deskid in (
+			select deskid from t_tfs_cashierdesk where usedfor = '3')
+    </delete>
+    
+    <select id="queryTradingPlatformCashierdesk" resultType="com.fangcang.titanjr.dto.bean.CashierDeskDTO">
+    	select deskid from t_tfs_cashierdesk where usedfor = '3'
+    </select>
+		  
 </mapper>
