@@ -392,7 +392,13 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
             	cusBankCardBindResponse.putErrorResult(bankCardBindResponse.getReturnMsg());
             }  
             return cusBankCardBindResponse;
+        }else{//如果融数已经有绑这个卡号，则检查该卡信息和录入信息是否一致
+        	if(!bankCardInfoDTOExist.getBankhead().equals(cusBankCardBindRequest.getBankCode())){
+        		cusBankCardBindResponse.putErrorResult("开户银行不正确");
+            	return cusBankCardBindResponse;
+        	}
         }
+        
         log.info(cusBankCardBindRequest.getUserId()+",卡号:"+cusBankCardBindRequest.getAccountNumber()+",融数返回的绑卡状态："+bankCardInfoDTOExist.getStatus());
         //1.1 绑过，则修改
         if(bankCardInfoDTOExist.getStatus().equals("4")){//审核失败
@@ -438,6 +444,11 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
     		param.setUserid(cusBankCardBindRequest.getUserId());
     		TitanBankcard titanBankcard = titanBankcardDao.selectEntity(param);
         	if(titanBankcard!=null&&titanBankcard.getStatus().intValue()==Integer.valueOf(BankCardEnum.BankCardStatusEnum.NORMAL.getKey())){//成功的记录
+        		if(!titanBankcard.getBankcode().equals(cusBankCardBindRequest.getBankCode())){
+            		cusBankCardBindResponse.putErrorResult("开户银行不正确");
+                	return cusBankCardBindResponse;
+            	}
+        		
         		cusBankCardBindResponse.putSuccess("该卡号已经绑卡成功");
         		cusBankCardBindResponse.setBankcardid(titanBankcard.getBankcardid());
         		return cusBankCardBindResponse;
