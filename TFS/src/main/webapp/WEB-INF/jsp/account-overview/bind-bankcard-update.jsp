@@ -171,7 +171,7 @@
         		}else{
         			if(paramData.userType=='2'){//个人表示绑卡成功
         				bc.close();
-        				if(typeof(bind_nstep)!='undefined'&&bind_nstep=='next'){
+        				if(typeof(bind_nstep)!='undefined'&&bind_nstep=='withdraw'){
         					account_withdraw();
         				}else{
         					window.location.reload();

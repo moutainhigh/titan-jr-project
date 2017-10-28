@@ -34,7 +34,8 @@ var personBankData={
             complete:function(XMLHttpRequest, textStatus){}
         };
         var defaultOption = {
-        	showLoading:false//默认不显示load圈
+        	showLoading:false,//默认不显示load圈
+        	invalidCode:""    //不需要执行的代码,格式如:,403,603,
         };
         opt = $.extend({},defaultOption,opt);
         
@@ -64,13 +65,13 @@ var personBankData={
             },
             error:function(XHR, TS, errorThrown){
             	//登录判断
-            	if(XHR.status&&XHR.status==603){//没有登录
+            	if(XHR.status&&XHR.status==603&&opt.invalidCode.indexOf(",603,")==-1){//没有登录
             		var returnUrl = encodeURIComponent(window.location.href);
             		location.href=js_base_path+"/ex/login.shtml?returnUrl="+returnUrl;
 					return;
 				}
             	//权限判断
-            	if(XHR.status&&XHR.status==403){
+            	if(XHR.status&&XHR.status==403&&opt.invalidCode.indexOf(",403,")==-1){
         			new top.Tip({msg : '没有权限访问，请联系管理员', type: 2 , timer:2000});
         			return ;
         		}
