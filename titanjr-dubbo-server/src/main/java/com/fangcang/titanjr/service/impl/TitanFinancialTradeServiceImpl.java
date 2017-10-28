@@ -1906,7 +1906,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	@Override
 	public TransOrderCreateResponse saveTitanTransOrder(
 			TitanOrderRequest titanOrderRequest) {
-
+		log.info("保存TransOrder信息,参数titanOrderRequest："+Tools.gsonToString(titanOrderRequest));
 		//检查订单是否存在，如果已
 		TransOrderCreateResponse localOrderResponse = checkTitanTransOrder(titanOrderRequest);
 

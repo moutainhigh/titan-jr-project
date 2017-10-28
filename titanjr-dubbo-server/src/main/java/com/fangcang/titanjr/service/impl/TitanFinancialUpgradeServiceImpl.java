@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TransOrderTypeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
@@ -86,7 +87,7 @@ public class TitanFinancialUpgradeServiceImpl implements TitanFinancialUpgradeSe
 				
 				TitanUser titanUser = checkUserInfo(titanOrderRequest.getUserId());
 				if(titanUser == null){
-					log.error("付款方用户不存在，根据userId查询金融用户失败");
+					log.error("付款方用户不存在，根据userId查询金融用户失败，参数titanOrderRequest："+Tools.gsonToString(titanOrderRequest));
 					response.putErrorResult("付款方用户不存在");
 					return response;
 				}
