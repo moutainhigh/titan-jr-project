@@ -380,18 +380,18 @@ var succUrl = '${ param.succUrl}';//成功后的回显页面
     	if($("#accountNum").is(":visible")==true){//如果是需要输入银行卡号
     		var bankName= $("#bankName").val();
         	if(typeof bankName=="undefined" ||bankName.length<1 ){
-        		withDrawCallBack("收款银行不能为空",1);
+        		withDrawCallBack("开户银行不能为空",1);
         		return;
         	}
     		
     		var accountNum = $("#accountNum").val();
     		 if(accountNum.length<1){
-    	        withDrawCallBack("收款账号不能为空",1);
+    	        withDrawCallBack("银行卡号不能为空",1);
     	        return;
     	     }else{
     	    	var neg = /^[0-9]\d*$/
    	        	if(accountNum.length>30||!neg.test(accountNum)){
-   	        		withDrawCallBack("请输入正确的卡号",1);
+   	        		withDrawCallBack("请输入正确的银行卡号",1);
    	        		return;
    	        	}
     	     }

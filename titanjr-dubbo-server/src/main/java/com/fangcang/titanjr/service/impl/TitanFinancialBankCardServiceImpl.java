@@ -192,9 +192,17 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		OrgSubRequest orgSubRequest = new OrgSubRequest();
 		orgSubRequest.setOrgCode(orgSubCardRequest.getOrgCode()); 
 		TitanOrgSub orgSub = null;
+		boolean isDeleteMapInfo = false;//是否删除机构映射关系
+		boolean isDeleteCardMap = false;//是否删除绑卡记录
+		if(StringUtil.isValidString(orgSubCardRequest.getCertificateNumber())){//界面输入了身份证号码就机构映射关系
+			isDeleteMapInfo = true;
+		}
+		if(StringUtil.isValidString(orgSubCardRequest.getAccountNumber())){//界面输入了卡号就删除绑卡记录
+			isDeleteCardMap = true;
+		}
 		
 		if(StringUtil.isValidString(orgSubCardRequest.getCertificateNumber())){//优先使用界面输入的机构(开户)信息
-			deleteOrgBindCard(orgSubCardRequest.getOrgCode(),orgSubCardRequest.getCertificateNumber(),orgSubCardRequest.getAccountNumber());
+			deleteOrgBindCard(orgSubCardRequest.getOrgCode(),isDeleteMapInfo,isDeleteCardMap);
 		}else {//如果没传证件信息，则存在关联关系，则用当前关联的信息
 			orgSub = orgService.getOrgSub(orgSubRequest);
 			if(orgSub!=null){
@@ -252,7 +260,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		}else{
 			log.error("真实机构绑卡失败,绑卡参数："+Tools.gsonToString(orgSubCardRequest));
 			orgSubCardResponse.putErrorResult(cusBankCardBindResponse.getReturnMessage());
-			deleteOrgBindCard(orgSubCardRequest.getOrgCode(),orgSubCardRequest.getCertificateNumber(),orgSubCardRequest.getAccountNumber());
+			deleteOrgBindCard(orgSubCardRequest.getOrgCode(),isDeleteMapInfo,isDeleteCardMap);
 			return orgSubCardResponse;
 		}
 		//3-实名验证成功后，检查本地和融数的机构信息是否一致，并修改
@@ -290,20 +298,19 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 	 * @param certificateNumber 证件号码
 	 * @param accountNumber 卡号
 	 */
-	private void deleteOrgBindCard(String orgCode ,String certificateNumber,String accountNumber){
-		if(StringUtil.isValidString(certificateNumber)){//页面输入了证件信息，则删除映射
+	private void deleteOrgBindCard(String orgCode ,boolean isDeleteMapInfo,boolean isDeleteCardMap){
+		if(isDeleteMapInfo){//页面输入了证件信息，则删除映射
 			TitanOrgMapInfoParam titanOrgMapInfoParam = new TitanOrgMapInfoParam();
 			titanOrgMapInfoParam.setOrgCode(orgCode);
+			log.info("删除机构映射");
 			orgMapInfoDao.delete(titanOrgMapInfoParam);
 		}
-		if(StringUtil.isValidString(accountNumber)){//页面输入了卡号，则删除卡关联
+		if(isDeleteCardMap){//页面输入了卡号，则删除卡关联
 			TitanOrgCardMapParam param = new TitanOrgCardMapParam();
 			param.setOrgCode(orgCode);
+			log.info("删除机构卡关联");
 			orgCardMapDao.delete(param);
 		}
-		
-		
-		
 	}
 	/***
 	 * 设置默认值，如果为空
