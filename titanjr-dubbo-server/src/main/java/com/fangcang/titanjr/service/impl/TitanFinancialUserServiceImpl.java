@@ -243,15 +243,16 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
             }
         } else {
         	List<Long> unselectRoleIdList = new ArrayList<Long>();
-            if((!CollectionUtils.isEmpty(userRegisterRequest.getRoleIdList()))&&CollectionUtils.isEmpty(userRegisterRequest.getUnselectRoleIdList())){
+            if((!CollectionUtils.isEmpty(userRegisterRequest.getRoleIdList()))&&CollectionUtils.isEmpty(userRegisterRequest.getUnselectRoleIdList())){//当取消的权限未够选时，通过差集计算
         		List<TitanRole> list = titanRoleDao.queryRoleList(null);
         		for(TitanRole entityRole : list){
         			if(!userRegisterRequest.getRoleIdList().contains(entityRole.getRoleid())){
         				unselectRoleIdList.add(entityRole.getRoleid());
         			}
         		}
+        		userRegisterRequest.setUnselectRoleIdList(unselectRoleIdList);
         	}
-            userRegisterRequest.setUnselectRoleIdList(unselectRoleIdList);
+            
             userRoleSetRequest.getUserRoleIdMap().put(Long.valueOf(String.valueOf(tfsUserid)),
                     userRegisterRequest.getRoleIdList());
         }
@@ -477,8 +478,9 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 	    				unselectRoleIdList.add(entityRole.getRoleid());
 	    			}
 	    		}
+	    		updateUserRequest.setUnselectRoleIdList(unselectRoleIdList);
 	    	}
-	    	updateUserRequest.setUnselectRoleIdList(unselectRoleIdList);
+	    	
 	    	if(titanUser.getIsadmin()==0){
 	    		//非管理员才可以被修改角色
 	    		UserRoleSetRequest userRoleSetRequest = new UserRoleSetRequest();
