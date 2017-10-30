@@ -273,7 +273,7 @@ public class JRAccountController {
 		if (CollectionUtils.isEmpty(fundFreezeDTOList)) {
 			return null;
 		}else if(fundFreezeDTOList.size() > 0){//只取最新的那条冻结记录
-			fundFreezeDTOList = fundFreezeDTOList.subList(0, 0);
+			fundFreezeDTOList = fundFreezeDTOList.subList(0, 1);
 		}
 		return fundFreezeDTOList;
 	}
