@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONSerializer;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -269,8 +270,10 @@ public class JRAccountController {
 		FundFreezeDTO fundFreezeDTO = new FundFreezeDTO();
 		fundFreezeDTO.setOrderNo(orderId);
 		List<FundFreezeDTO> fundFreezeDTOList = titanOrderService.queryFundFreezeDTO(fundFreezeDTO);
-		if (null == fundFreezeDTOList || fundFreezeDTOList.size() != 1) {
+		if (CollectionUtils.isEmpty(fundFreezeDTOList)) {
 			return null;
+		}else if(fundFreezeDTOList.size() > 0){//只取最新的那条冻结记录
+			fundFreezeDTOList = fundFreezeDTOList.subList(0, 0);
 		}
 		return fundFreezeDTOList;
 	}

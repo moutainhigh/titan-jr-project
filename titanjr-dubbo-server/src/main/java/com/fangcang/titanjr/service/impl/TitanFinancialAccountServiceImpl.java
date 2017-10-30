@@ -1223,16 +1223,16 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				//操作类型 1、直接解冻  2、修改解冻日期
 				if("1".equals(updateFreezeOrderRequest.getOperationType())){
 					
-					log.info("进行订单资金解冻");
+					log.info("进行订单资金解冻,orderid:"+transOrderDTO.getOrderid());
 					FundFreezeDTO fundFreezeDTO = new FundFreezeDTO();
 					fundFreezeDTO.setOrderNo(transOrderDTO.getOrderid());
 					List<FundFreezeDTO> fundFreezeDTOList = titanOrderService.queryFundFreezeDTO(fundFreezeDTO);
-					if (null == fundFreezeDTOList || fundFreezeDTOList.size() != 1) {
-						log.error("冻结单查询失败");
+					if (CollectionUtils.isEmpty(fundFreezeDTOList)) {
+						log.error("冻结单查询失败,orderid:"+transOrderDTO.getOrderid());
 						baseResponseDTO.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
 						return baseResponseDTO;
 					}
-					log.info("查询到解冻订单" + fundFreezeDTOList.size() + "条记录");
+					log.info("查询到解冻订单" + fundFreezeDTOList.size() + "条记录,orderid:"+transOrderDTO.getOrderid());
 					
 					boolean flag = fundUnFreezeWithFreezeOrder(fundFreezeDTOList.get(0));
 					
@@ -1240,13 +1240,13 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 						baseResponseDTO.putErrorResult(TitanMsgCodeEnum.REFUND_UNFREEZE_FAIL);
 						return baseResponseDTO;
 					}
-					log.info("订单资金解冻成功");
+					log.info("订单资金解冻成功,orderid:"+transOrderDTO.getOrderid());
 					baseResponseDTO.putSuccess("解冻成功");
 					
 				}else if("2".equals(updateFreezeOrderRequest.getOperationType())){
 					
 					if(!StringUtil.isValidString(updateFreezeOrderRequest.getuNFreezeDate())){
-						log.error("解冻日期不能为空");
+						log.error("解冻日期不能为空,orderid:"+transOrderDTO.getOrderid());
 						baseResponseDTO.putErrorResult("uNFreezeDate is null");
 						return baseResponseDTO;
 					}
@@ -1262,18 +1262,18 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 						baseResponseDTO.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
 						return baseResponseDTO;
 					}
-					log.info("订单修改解冻日期成功，解冻日期修改为：" + updateFreezeOrderRequest.getuNFreezeDate());
+					log.info("订单修改解冻日期成功，解冻日期修改为：" + updateFreezeOrderRequest.getuNFreezeDate()+",orderid:"+transOrderDTO.getOrderid());
 					baseResponseDTO.putSuccess("订单修改解冻日期成功");
 					
 				}else{
-					log.error("操作类型参数不匹配");
+					log.error("操作类型参数不匹配,orderid:"+transOrderDTO.getOrderid());
 					baseResponseDTO.putErrorResult(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		    		return baseResponseDTO;
 				}
 			}
 			
 		} catch (Exception e) {
-			log.error("解冻异常", e);
+			log.error("解冻异常,请求参数updateFreezeOrderRequest:"+Tools.gsonToString(updateFreezeOrderRequest), e);
 			baseResponseDTO.putErrorResult("解冻异常");
 		}
 		return baseResponseDTO;

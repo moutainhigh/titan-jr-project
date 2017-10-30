@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 
 import net.sf.json.JSONSerializer;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
@@ -264,8 +265,10 @@ public class TitanRefundService {
 		FundFreezeDTO fundFreezeDTO = new FundFreezeDTO();
 		fundFreezeDTO.setOrderNo(orderId);
 		List<FundFreezeDTO> fundFreezeDTOList = titanOrderService.queryFundFreezeDTO(fundFreezeDTO);
-		if (null == fundFreezeDTOList || fundFreezeDTOList.size() != 1) {
+		if (CollectionUtils.isEmpty(fundFreezeDTOList)) {
 			return null;
+		}else if(fundFreezeDTOList.size() > 0){//只取最新的那条冻结记录
+			fundFreezeDTOList = fundFreezeDTOList.subList(0, 0);
 		}
 		return fundFreezeDTOList;
 	}

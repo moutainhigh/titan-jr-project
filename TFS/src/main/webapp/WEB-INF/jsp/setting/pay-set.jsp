@@ -13,13 +13,28 @@
 <div id="scroll" >
 		<div class="main_sell clearfix user_title">
 			<div class="p_r30 p_l10">
-				<span>泰坦金融&nbsp;-&nbsp;泰坦金融设置&nbsp;-&nbsp;付款密码设置</span>
+				<span>泰坦金融&nbsp;-&nbsp;泰坦金融设置&nbsp;-&nbsp;个人账户资料</span>
 			</div>
 		</div>
 	</div>
 	<div class="scroll_x hide t_56"></div>
 	<div class="main_con p_t56">
 		<div class="TFSpassset">
+			<h3 class="TFSpassw_title">个人账户：</h3>
+	        <ul class="TFSpassw_set" style="border-bottom: #ccc 1px dashed;margin-bottom: 20px;">
+	            <li>
+	                <span class="Passname">用户名：</span>
+	                <div class="">
+	                    ${jrLoginName}
+	                </div>
+	            </li>
+	            <li>
+	                <span class="Passname">姓名：</span>
+	                <div class="">
+	                    ${jrUserName}
+	                </div>
+	            </li>
+	        </ul>
 			<c:if test="${hasSetPayPass==0}">
 				<h3 class="TFSpassw_title">请设置您的付款密码：</h3>
 				<ul class="TFSpassw_set">
