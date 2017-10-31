@@ -267,6 +267,7 @@ public class OrgUserController {
 		TitanUserBindInfoDTO coopUserInfoExistDTO = titanFinancialUserService.getUserBindInfoByFcuserid(userBindInfoExistDTOParam);
 		if(coopUserInfoExistDTO==null){
 			baseResponse.putErrorResult("未找到该员工信息");
+			baseResponse.setReturnCode("EMPLOYEE_NOT_EXIST");
 			log.info("修改金融员工接口，未找到该员工信息，参数："+Tools.gsonToString(modifyEmployeeInfoRequest));
             return baseResponse;
 		}
