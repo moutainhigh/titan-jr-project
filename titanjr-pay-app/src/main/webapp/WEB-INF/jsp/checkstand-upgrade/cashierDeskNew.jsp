@@ -511,7 +511,7 @@
 	                    <input id="merchantNo" name="merchantNo" type="hidden" value="M000016" />
 	                    <input id="payType" name="payType" type="hidden" value="41" />
 	                    <input id="quick_rsOrder_credit" name="orderNo" class="quick_rsOrder" type="hidden" /><!-- 获取验证码的时候设置 -->
-	                    <input id="validAuth" name="validAuth" value="-1" type="hidden" />
+	                    <!-- <input id="validAuth" name="validAuth" value="-1" type="hidden" /> -->
                         <ul class="register_list">
                             <li class="type_li clearfix">
                                 <div class="type_name fl">

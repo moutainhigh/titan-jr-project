@@ -195,8 +195,8 @@ function validQuickPayInfo(){
 		var validthruMonth = $("#quick_validthruMonth_credit").text();
 		var validthruYear = $("#quick_validthruYear_credit").text();
 		var safetyCode = $("#quick_safetyCode_credit").val();
-		var bankInfo = $("#quick_bankInfo_hid").val();
-		var validAuth = $("#validAuth").val();
+		/*var bankInfo = $("#quick_bankInfo_hid").val();
+		var validAuth = $("#validAuth").val();*/
 		
 		if(payerName.length <= 0){
 			new top.Tip({msg: "请输入持卡人姓名", type: 2, timer: 2000});
@@ -206,12 +206,12 @@ function validQuickPayInfo(){
 			new top.Tip({msg: "请输入证件号码", type: 2, timer: 2000});
 			return false;
 		}
-		if(bankInfo == 'icbc'){
+		/*if(bankInfo == 'icbc'){
 			if(validthruMonth == "请选择" || validthruYear == "请选择"){
 				new top.Tip({msg: "请选择信用卡有效期", type: 2, timer: 2000});
 				return false;
 			}
-		}else if(validAuth == '1'){
+		}else if(validAuth == '1'){*/
 			if(validthruMonth == "请选择" || validthruYear == "请选择"){
 				new top.Tip({msg: "请选择信用卡有效期", type: 2, timer: 2000});
 				return false;
@@ -220,7 +220,7 @@ function validQuickPayInfo(){
 				new top.Tip({msg: "请输入信用卡安全码", type: 2, timer: 2000});
 				return false;
 			}
-		}
+		//}
 		if(payerPhone.length <= 0){
 			new top.Tip({msg: "请输入银行预留手机号", type: 2, timer: 2000});
 			return false;
@@ -328,7 +328,7 @@ function submitQuickpay_deposit(){debugger;
                },
                dataType: "json",
                success: function (data) {debugger;
-            	   if(data.success == true){
+            	   if(data.success == true || data.errCode == '3081'){
            				checkOrderPayStatus($("#quick_rsOrder_deposit").val());
             	   }else{
             		   new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
@@ -362,7 +362,7 @@ function submitQuickpay_credit(){debugger;
                },
                dataType: "json",
                success: function (data) {debugger;
-            	   if(data.success == true){
+            	   if(data.success == true || data.errCode == '3083'){
            				checkOrderPayStatus($("#quick_rsOrder_credit").val());
             	   }else{
             		   new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
@@ -435,7 +435,7 @@ function checkQuickCardNo(inputTextK){
                    $("#quick_dailyLimit_credit").text(data.dailyLimit);
         		   $(".bank-account-info .savings").addClass("isShow");
             	   $(".bank-account-info .credit").removeClass("isShow");//显示填写信用卡
-            	   if(data.validAuth){
+            	   /*if(data.validAuth){
             		   $("#validAuth").val("1");
             	   }else{
             		   $("#validAuth").val("0");
@@ -451,7 +451,7 @@ function checkQuickCardNo(inputTextK){
             	   }else{
             		   $("#validthru_li").removeClass("isShow");
             		   $("#safetyCode_li").removeClass("isShow");
-            	   }
+            	   }*/
             	   index = "credit";
         	   }
                

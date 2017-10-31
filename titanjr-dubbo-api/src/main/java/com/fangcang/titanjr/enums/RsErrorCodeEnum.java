@@ -9,7 +9,10 @@ import com.fangcang.util.StringUtil;
 public enum RsErrorCodeEnum {
 	
     VALIFYCODE_NOT_SEND("40007","请先获取验证码"),
-    REQUEST_MORE_TIMIE("11012","操作频繁，请一分钟后再试");
+    REQUEST_MORE_TIMIE("11012","操作频繁，请一分钟后再试"),
+    CREDIT_PAY_REQUEST_RESUBMIT("3083","支付请求已经提交，请稍等"),
+    DEPOSIT_PAY_REQUEST_PROGRESS("3081","支付请求正在处理，请稍等"),
+    PARAM_ERROR("1002","输入信息有误，请确认");
 	
 	public String key;
 	
