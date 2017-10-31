@@ -69,7 +69,7 @@ public class SettingBaseInfoController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping("/setting/org-info")
-	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
+	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_ADMIN})
 	public String orgInfo(Model model){
 		
 		UserInfoQueryRequest userInfoQueryRequest = new UserInfoQueryRequest();

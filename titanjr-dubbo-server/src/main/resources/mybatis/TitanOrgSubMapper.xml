@@ -33,14 +33,16 @@
       #{buslince,jdbcType=VARCHAR},
       #{createTime})
   </insert>
-   <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanOrgSub">
+   <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.parameter.TitanOrgSubParam">
         update t_tfs_orgsub
         <set>
             
             <if test="orgname != null">
                 orgname = #{orgname,jdbcType=VARCHAR},
             </if>
-            
+            <if test="newOrgCode != null">
+                orgcode = #{newOrgCode},
+            </if>
             <if test="usertype != null">
                 usertype = #{usertype,jdbcType=INTEGER},
             </if>

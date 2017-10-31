@@ -30,7 +30,7 @@ public enum QuickPayBankEnum {
 	DEPOSIT_HXB("304", "华夏银行", "hxb", "10", 20000, 50000),
 	DEPOSIT_SPDB("310", "浦发银行", "spdb", "10", 20000, 50000),
 	DEPOSIT_CGB("306", "广发银行", "cgb", "10", 20000, 50000),
-	DEPOSIT_CMB("308", "招商银行", "cmb", "10", 20000, 50000),
+	//DEPOSIT_CMB("308", "招商银行", "cmb", "10", 20000, 50000),
 	DEPOSIT_BOS("310", "上海银行", "bos", "10", 5000, 5000),
 	//信用卡
 	CREDIT_BOC("104", "中国银行", "boc", "11", 20000, 20000),
@@ -156,6 +156,27 @@ public enum QuickPayBankEnum {
 		}
 		
 		return null;
+	}
+	
+	
+	/**
+	 * 是否需要校验信用卡的cvv码和有效期
+	 * @author Jerry
+	 * @date 2017年10月23日 上午11:44:27
+	 */
+	public static boolean isValidAuth(QuickPayBankEnum quickPayBankEnum){
+		
+		if(quickPayBankEnum == null){
+			return false;
+		}
+		
+		if(quickPayBankEnum == CREDIT_CMB || quickPayBankEnum == CREDIT_CCB || quickPayBankEnum == CREDIT_CGB
+				|| quickPayBankEnum == CREDIT_SPDB){
+			return false;
+		}
+		
+		return true;
+		
 	}
 	
 

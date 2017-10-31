@@ -206,30 +206,13 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
         
         if (StringUtil.isValidString(userRegisterRequest.getMerchantCode())) {//是否为第三方合作方注册
         	TitanUserBindInfo bindInfo = new TitanUserBindInfo();
-        	//查询房仓金服商家已添加上的用户
-            if(userRegisterRequest.getRegisterSource() == RegSourceEnum.SAAS.getType()){
-            	MerchantUserQueryDTO queryDTO = new MerchantUserQueryDTO();
-                List<String> loginNameList = new ArrayList<String>();
-                loginNameList.add(userRegisterRequest.getFcLoginUserName());
-                queryDTO.setUserLoginNameList(loginNameList);
-                queryDTO.setMerchantCode(userRegisterRequest.getMerchantCode());
-                com.fangcang.dao.PaginationSupport pg = getMerchantUserFacade().queryMerchantUser(queryDTO);
-                if (CollectionUtils.isNotEmpty(pg.getItemList())) {
-                    for (MerchantUserDTO userDTO : (List<MerchantUserDTO>)pg.getItemList()) {
-                        orgiUserId = userDTO.getUserId();
-                    }
-                }else{
-                	 log.error("Saas商家注册金融机构时，无法找到对应的SaaS用户，查询参数fcloginusername:"+userRegisterRequest.getFcLoginUserName());
-                     throw new Exception("Saas商家注册金融机构时，无法找到对应的SaaS用户，查询参数fcloginusername:"+userRegisterRequest.getFcLoginUserName());
-                }
+        	if(StringUtil.isValidString(userRegisterRequest.getCoopUserId())){
+             	orgiUserId = Long.valueOf(userRegisterRequest.getCoopUserId());
             }else{
-            	if(StringUtil.isValidString(userRegisterRequest.getCoopUserId())){
-                 	orgiUserId = Long.valueOf(userRegisterRequest.getCoopUserId());
-                }else{
-                	 log.error("合作方注册金融机构时，未传入合作登录用户CoopUserId,注册参数(userRegisterRequest)为："+Tools.gsonToString(userRegisterRequest));
-                     throw new Exception("合作方注册金融机构时，未传入合作登录用户CoopUserId,注册参数(userRegisterRequest)为："+Tools.gsonToString(userRegisterRequest));
-                }
+            	 log.error("合作方注册金融机构时，未传入合作登录用户CoopUserId,注册参数(userRegisterRequest)为："+Tools.gsonToString(userRegisterRequest));
+                 throw new Exception("合作方注册金融机构时，未传入合作登录用户CoopUserId,注册参数(userRegisterRequest)为："+Tools.gsonToString(userRegisterRequest));
             }
+            
             bindInfo.setUsername(userRegisterRequest.getUserName());
             bindInfo.setLoginname(userRegisterRequest.getLoginUserName());
             bindInfo.setFcloginname(userRegisterRequest.getFcLoginUserName());
@@ -259,6 +242,17 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
                         get(Long.valueOf(String.valueOf(tfsUserid))).add(role.getRoleid());
             }
         } else {
+        	List<Long> unselectRoleIdList = new ArrayList<Long>();
+            if((!CollectionUtils.isEmpty(userRegisterRequest.getRoleIdList()))&&CollectionUtils.isEmpty(userRegisterRequest.getUnselectRoleIdList())){//当取消的权限未够选时，通过差集计算
+        		List<TitanRole> list = titanRoleDao.queryRoleList(null);
+        		for(TitanRole entityRole : list){
+        			if(!userRegisterRequest.getRoleIdList().contains(entityRole.getRoleid())){
+        				unselectRoleIdList.add(entityRole.getRoleid());
+        			}
+        		}
+        		userRegisterRequest.setUnselectRoleIdList(unselectRoleIdList);
+        	}
+            
             userRoleSetRequest.getUserRoleIdMap().put(Long.valueOf(String.valueOf(tfsUserid)),
                     userRegisterRequest.getRoleIdList());
         }
@@ -475,6 +469,17 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 	    	entity.setModifier(updateUserRequest.getOperator());
 	    	entity.setModifytime(new Date());
 	    	titanUserDao.update(entity);
+	    	List<Long> unselectRoleIdList = new ArrayList<Long>();
+	    	//如果未选为空,通过全部的和已选的做差集
+	    	if((!CollectionUtils.isEmpty(updateUserRequest.getRoleIdList()))&&CollectionUtils.isEmpty(updateUserRequest.getUnselectRoleIdList())){
+	    		List<TitanRole> list = titanRoleDao.queryRoleList(null);
+	    		for(TitanRole entityRole : list){
+	    			if(!updateUserRequest.getRoleIdList().contains(entityRole.getRoleid())){
+	    				unselectRoleIdList.add(entityRole.getRoleid());
+	    			}
+	    		}
+	    		updateUserRequest.setUnselectRoleIdList(unselectRoleIdList);
+	    	}
 	    	
 	    	if(titanUser.getIsadmin()==0){
 	    		//非管理员才可以被修改角色

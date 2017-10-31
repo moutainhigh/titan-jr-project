@@ -61,6 +61,7 @@ import com.fangcang.titanjr.entity.TitanOrgMapInfo;
 import com.fangcang.titanjr.entity.TitanOrgSub;
 import com.fangcang.titanjr.entity.parameter.TitanBankcardParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgCardMapParam;
+import com.fangcang.titanjr.entity.parameter.TitanOrgMapInfoParam;
 import com.fangcang.titanjr.rs.dto.BankCardInfo;
 import com.fangcang.titanjr.rs.manager.RSBankCardInfoManager;
 import com.fangcang.titanjr.rs.request.BankCardBindRequest;
@@ -190,11 +191,25 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		log.info("机构绑卡,参数orgSubCardRequest："+Tools.gsonToString(orgSubCardRequest));
 		OrgSubRequest orgSubRequest = new OrgSubRequest();
 		orgSubRequest.setOrgCode(orgSubCardRequest.getOrgCode()); 
-		TitanOrgSub orgSub = orgService.getOrgSub(orgSubRequest);
-		if(orgSub!=null){//存在关联关系，则取当前关联的
-			orgSubCardRequest.setUserType(orgSub.getUsertype()+"");
-			orgSubCardRequest.setAccountName(orgSub.getOrgname());
-			orgSubCardRequest.setCertificateNumber(StringUtil.isValidString(orgSub.getBuslince())?orgSub.getBuslince():orgSub.getCertificatenumber());
+		TitanOrgSub orgSub = null;
+		boolean isDeleteMapInfo = false;//是否删除机构映射关系
+		boolean isDeleteCardMap = false;//是否删除绑卡记录
+		if(StringUtil.isValidString(orgSubCardRequest.getCertificateNumber())){//界面输入了身份证号码就机构映射关系
+			isDeleteMapInfo = true;
+		}
+		if(StringUtil.isValidString(orgSubCardRequest.getAccountNumber())){//界面输入了卡号就删除绑卡记录
+			isDeleteCardMap = true;
+		}
+		
+		if(StringUtil.isValidString(orgSubCardRequest.getCertificateNumber())){//优先使用界面输入的机构(开户)信息
+			deleteOrgBindCard(orgSubCardRequest.getOrgCode(),isDeleteMapInfo,isDeleteCardMap);
+		}else {//如果没传证件信息，则存在关联关系，则用当前关联的信息
+			orgSub = orgService.getOrgSub(orgSubRequest);
+			if(orgSub!=null){
+				orgSubCardRequest.setUserType(orgSub.getUsertype()+"");
+				orgSubCardRequest.setAccountName(orgSub.getOrgname());
+				orgSubCardRequest.setCertificateNumber(StringUtil.isValidString(orgSub.getBuslince())?orgSub.getBuslince():orgSub.getCertificatenumber());
+			}
 		}
 		if (!GenericValidate.validate(orgSubCardRequest)){
 			log.error("机构绑卡的必填参数不能为空,参数为orgSubCardRequest："+Tools.gsonToString(orgSubCardRequest));
@@ -230,8 +245,26 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 			}
 			//注册成功
 			orgSub = orgService.getOrgSub(orgSubRequest);
-			
-		}else if(orgSub.getUsertype()==TitanOrgEnum.UserType.PERSONAL.getKey()){
+		}
+		orgSubCardRequest.setUserId(orgSub.getOrgcode());
+		Integer bankcardid = null;
+		//2-调用融数新增绑卡（公和私）
+		if(orgSub.getUsertype()==TitanOrgEnum.UserType.PERSONAL.getKey()){
+			orgSubCardRequest.setAccountProperty("2");//账户属性（1：对公，2：对私）
+		}else{
+			orgSubCardRequest.setAccountProperty("1");
+		}
+		CusBankCardBindResponse cusBankCardBindResponse = bankCardBind(orgSubCardRequest);
+		if(cusBankCardBindResponse.isResult()){//绑卡成功
+			bankcardid = cusBankCardBindResponse.getBankcardid();
+		}else{
+			log.error("真实机构绑卡失败,绑卡参数："+Tools.gsonToString(orgSubCardRequest));
+			orgSubCardResponse.putErrorResult(cusBankCardBindResponse.getReturnMessage());
+			deleteOrgBindCard(orgSubCardRequest.getOrgCode(),isDeleteMapInfo,isDeleteCardMap);
+			return orgSubCardResponse;
+		}
+		//3-实名验证成功后，检查本地和融数的机构信息是否一致，并修改
+		if(orgSub.getUsertype()==TitanOrgEnum.UserType.PERSONAL.getKey()){
 			//TODO 测试  ，上线后打开，存在关联的机构，则修改名字和身份证号码
 			OrgBaseInfoRequest orgBaseInfoRequest = new OrgBaseInfoRequest();
 			orgBaseInfoRequest.setOrgCode(orgSub.getOrgcode());
@@ -245,26 +278,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 				return orgSubCardResponse;
 			}
 		}
-		
-		orgSubCardRequest.setUserId(orgSub.getOrgcode());
-		//2-该机构是否已经绑过该卡
-		Integer bankcardid = null;
-		//2.1-调用融数新增绑卡（公和私）
-		if(orgSub.getUsertype()==TitanOrgEnum.UserType.PERSONAL.getKey()){
-			orgSubCardRequest.setAccountProperty("2");//账户属性（1：对公，2：对私）
-		}else{
-			orgSubCardRequest.setAccountProperty("1");
-		}
-		CusBankCardBindResponse cusBankCardBindResponse = bankCardBind(orgSubCardRequest);
-		if(cusBankCardBindResponse.isResult()){
-			bankcardid = cusBankCardBindResponse.getBankcardid();
-		}else{
-			log.error("注册真实绑卡失败,绑卡参数："+Tools.gsonToString(orgSubCardRequest));
-			orgSubCardResponse.putErrorResult(cusBankCardBindResponse.getReturnMessage());
-			return orgSubCardResponse;
-		}
-		
-		//3-新增绑卡关联记录
+		//4-新增绑卡关联记录
 		TitanOrgCardMapParam orgCardMapParam = new TitanOrgCardMapParam();
 		orgCardMapParam.setOrgCode(orgSubCardRequest.getOrgCode());
 		orgCardMapDao.delete(orgCardMapParam);
@@ -278,8 +292,26 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		orgSubCardResponse.putSuccess("绑卡成功");
 		return orgSubCardResponse;
 	}
-	
-	
+	/***
+	 * 删除虚拟机构关联和绑卡记录
+	 * @param orgCode 虚拟机构orgcode
+	 * @param certificateNumber 证件号码
+	 * @param accountNumber 卡号
+	 */
+	private void deleteOrgBindCard(String orgCode ,boolean isDeleteMapInfo,boolean isDeleteCardMap){
+		if(isDeleteMapInfo){//页面输入了证件信息，则删除映射
+			TitanOrgMapInfoParam titanOrgMapInfoParam = new TitanOrgMapInfoParam();
+			titanOrgMapInfoParam.setOrgCode(orgCode);
+			log.info("删除机构映射");
+			orgMapInfoDao.delete(titanOrgMapInfoParam);
+		}
+		if(isDeleteCardMap){//页面输入了卡号，则删除卡关联
+			TitanOrgCardMapParam param = new TitanOrgCardMapParam();
+			param.setOrgCode(orgCode);
+			log.info("删除机构卡关联");
+			orgCardMapDao.delete(param);
+		}
+	}
 	/***
 	 * 设置默认值，如果为空
 	 * @param orgSubCardRequest
@@ -360,7 +392,13 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
             	cusBankCardBindResponse.putErrorResult(bankCardBindResponse.getReturnMsg());
             }  
             return cusBankCardBindResponse;
+        }else{//如果融数已经有绑这个卡号，则检查该卡信息和录入信息是否一致
+        	if(!bankCardInfoDTOExist.getBankhead().equals(cusBankCardBindRequest.getBankCode())){
+        		cusBankCardBindResponse.putErrorResult("开户银行不正确");
+            	return cusBankCardBindResponse;
+        	}
         }
+        
         log.info(cusBankCardBindRequest.getUserId()+",卡号:"+cusBankCardBindRequest.getAccountNumber()+",融数返回的绑卡状态："+bankCardInfoDTOExist.getStatus());
         //1.1 绑过，则修改
         if(bankCardInfoDTOExist.getStatus().equals("4")){//审核失败
@@ -406,6 +444,11 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
     		param.setUserid(cusBankCardBindRequest.getUserId());
     		TitanBankcard titanBankcard = titanBankcardDao.selectEntity(param);
         	if(titanBankcard!=null&&titanBankcard.getStatus().intValue()==Integer.valueOf(BankCardEnum.BankCardStatusEnum.NORMAL.getKey())){//成功的记录
+        		if(!titanBankcard.getBankcode().equals(cusBankCardBindRequest.getBankCode())){
+            		cusBankCardBindResponse.putErrorResult("开户银行不正确");
+                	return cusBankCardBindResponse;
+            	}
+        		
         		cusBankCardBindResponse.putSuccess("该卡号已经绑卡成功");
         		cusBankCardBindResponse.setBankcardid(titanBankcard.getBankcardid());
         		return cusBankCardBindResponse;

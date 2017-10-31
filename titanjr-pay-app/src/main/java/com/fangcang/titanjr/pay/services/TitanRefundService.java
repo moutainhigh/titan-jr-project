@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 
 import net.sf.json.JSONSerializer;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
@@ -264,8 +265,10 @@ public class TitanRefundService {
 		FundFreezeDTO fundFreezeDTO = new FundFreezeDTO();
 		fundFreezeDTO.setOrderNo(orderId);
 		List<FundFreezeDTO> fundFreezeDTOList = titanOrderService.queryFundFreezeDTO(fundFreezeDTO);
-		if (null == fundFreezeDTOList || fundFreezeDTOList.size() != 1) {
+		if (CollectionUtils.isEmpty(fundFreezeDTOList)) {
 			return null;
+		}else if(fundFreezeDTOList.size() > 0){//只取最新的那条冻结记录
+			fundFreezeDTOList = fundFreezeDTOList.subList(0, 1);
 		}
 		return fundFreezeDTOList;
 	}
@@ -384,13 +387,14 @@ public class TitanRefundService {
 	}
 
 	private String validateTransOrderStatus(Model model, TransOrderDTO transOrderDTO){
+		log.info("退款时，校验订单信息，payOrderNo：" + transOrderDTO.getPayorderno());
 		if(transOrderDTO ==null){
 			log.error("交易单订单不存在");
 			return setUpErrorResult(model,TitanMsgCodeEnum.QUERY_LOCAL_ORDER);
 		}
 		
 		if(OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()) 
-				&& FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrderDTO.getFreezeType())){
+				&& CommonConstant.FREEZE_PAYER.equals(transOrderDTO.getFreezeAt())){
 			log.error("资金冻结在付款方，不允许退款");
 			return setUpErrorResult(model,TitanMsgCodeEnum.ORDER_FREEZE_PAYER);
 		}

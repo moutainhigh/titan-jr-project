@@ -556,37 +556,32 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			return withDrawResponse;
 		}
 		
-		TitanTransOrder titanTransOrder = convertToTitanTransOrder(balanceWithDrawRequest);
-		if (null == titanTransOrder ){
-			log.error("提现交易单构造失败,参数："+JSONSerializer.toJSON(balanceWithDrawRequest));
-			withDrawResponse.putErrorResult("构造提现交易单失败");
-			return withDrawResponse;
-		}
-		TransOrderDTO orderDTO = null;
-		if (balanceWithDrawRequest.getOrderNo() != null) {
-			TransOrderRequest transOrderRequest = new TransOrderRequest();
-			transOrderRequest.setUserorderid(balanceWithDrawRequest
-					.getOrderNo());
-			 orderDTO = titanOrderService
-					.queryTransOrderDTO(transOrderRequest);
-			if (orderDTO != null) {
-				titanTransOrder.setUserorderid(balanceWithDrawRequest.getOrderNo());
-				titanTransOrder.setTransid(orderDTO.getTransid());
-			}
-		}
-		
 		try {
 			//查询绑卡记录
-			BankCardStatusResponse bankCardStatusResponse = titanFinancialBankCardService.getBankCardStatus(titanTransOrder.getUserid());
+			BankCardStatusResponse bankCardStatusResponse = titanFinancialBankCardService.getBankCardStatus(balanceWithDrawRequest.getUserId());
 			TitanBankcard bankcard = bankCardStatusResponse.getBankcard();
 			if(bankcard==null||(!BankCardEnum.BankCardStatusEnum.NORMAL.getKey().equals(bankcard.getStatus().toString()))){
 				withDrawResponse.putErrorResult(bankCardStatusResponse.getOrgBankcardMsg());
 				return withDrawResponse;
 			}
+			
 			String vUserId = balanceWithDrawRequest.getUserId();//余额账户
-			balanceWithDrawRequest.setUserId(bankcard.getUserid());//提现真实账户
+			
 			balanceWithDrawRequest.setCardNo(bankcard.getAccountnumber());//"其他卡"
 			balanceWithDrawRequest.setBankName(bankcard.getBankheadname());
+			TitanTransOrder titanTransOrder = convertToTitanTransOrder(balanceWithDrawRequest);
+			TransOrderDTO orderDTO = null;
+			if (balanceWithDrawRequest.getOrderNo() != null) {
+				TransOrderRequest transOrderRequest = new TransOrderRequest();
+				transOrderRequest.setUserorderid(balanceWithDrawRequest
+						.getOrderNo());
+				 orderDTO = titanOrderService
+						.queryTransOrderDTO(transOrderRequest);
+				if (orderDTO != null) {
+					titanTransOrder.setUserorderid(balanceWithDrawRequest.getOrderNo());
+					titanTransOrder.setTransid(orderDTO.getTransid());
+				}
+			}
 			
 			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_IN_PROCESS.getStatus());
 			titanTransOrder.setTransordertype(TransOrderTypeEnum.WITHDRAW.type);
@@ -638,7 +633,8 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				log.info("提现操作时，真实机构和虚拟机构orgcode相同，不需要转账，直接提现。orgcode:"+vUserId);
 			}
 			
-			//本地化提现信息
+			//本地提现记录
+			balanceWithDrawRequest.setUserId(bankcard.getUserid());//提现到真实账户
 			TitanWithDrawReq titanWithDrawReq = saveTitanWithDraw(balanceWithDrawRequest, titanTransOrder.getTransid());
 			if (null == titanWithDrawReq){
 				log.error("保存提现请求失败,参数balanceWithDrawRequest："+Tools.gsonToString(balanceWithDrawRequest)+",Transid:"+titanTransOrder.getTransid());
@@ -1227,16 +1223,16 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				//操作类型 1、直接解冻  2、修改解冻日期
 				if("1".equals(updateFreezeOrderRequest.getOperationType())){
 					
-					log.info("进行订单资金解冻");
+					log.info("进行订单资金解冻,orderid:"+transOrderDTO.getOrderid());
 					FundFreezeDTO fundFreezeDTO = new FundFreezeDTO();
 					fundFreezeDTO.setOrderNo(transOrderDTO.getOrderid());
 					List<FundFreezeDTO> fundFreezeDTOList = titanOrderService.queryFundFreezeDTO(fundFreezeDTO);
-					if (null == fundFreezeDTOList || fundFreezeDTOList.size() != 1) {
-						log.error("冻结单查询失败");
+					if (CollectionUtils.isEmpty(fundFreezeDTOList)) {
+						log.error("冻结单查询失败,orderid:"+transOrderDTO.getOrderid());
 						baseResponseDTO.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
 						return baseResponseDTO;
 					}
-					log.info("查询到解冻订单" + fundFreezeDTOList.size() + "条记录");
+					log.info("查询到解冻订单" + fundFreezeDTOList.size() + "条记录,orderid:"+transOrderDTO.getOrderid());
 					
 					boolean flag = fundUnFreezeWithFreezeOrder(fundFreezeDTOList.get(0));
 					
@@ -1244,13 +1240,13 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 						baseResponseDTO.putErrorResult(TitanMsgCodeEnum.REFUND_UNFREEZE_FAIL);
 						return baseResponseDTO;
 					}
-					log.info("订单资金解冻成功");
+					log.info("订单资金解冻成功,orderid:"+transOrderDTO.getOrderid());
 					baseResponseDTO.putSuccess("解冻成功");
 					
 				}else if("2".equals(updateFreezeOrderRequest.getOperationType())){
 					
 					if(!StringUtil.isValidString(updateFreezeOrderRequest.getuNFreezeDate())){
-						log.error("解冻日期不能为空");
+						log.error("解冻日期不能为空,orderid:"+transOrderDTO.getOrderid());
 						baseResponseDTO.putErrorResult("uNFreezeDate is null");
 						return baseResponseDTO;
 					}
@@ -1266,18 +1262,18 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 						baseResponseDTO.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
 						return baseResponseDTO;
 					}
-					log.info("订单修改解冻日期成功，解冻日期修改为：" + updateFreezeOrderRequest.getuNFreezeDate());
+					log.info("订单修改解冻日期成功，解冻日期修改为：" + updateFreezeOrderRequest.getuNFreezeDate()+",orderid:"+transOrderDTO.getOrderid());
 					baseResponseDTO.putSuccess("订单修改解冻日期成功");
 					
 				}else{
-					log.error("操作类型参数不匹配");
+					log.error("操作类型参数不匹配,orderid:"+transOrderDTO.getOrderid());
 					baseResponseDTO.putErrorResult(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		    		return baseResponseDTO;
 				}
 			}
 			
 		} catch (Exception e) {
-			log.error("解冻异常", e);
+			log.error("解冻异常,请求参数updateFreezeOrderRequest:"+Tools.gsonToString(updateFreezeOrderRequest), e);
 			baseResponseDTO.putErrorResult("解冻异常");
 		}
 		return baseResponseDTO;

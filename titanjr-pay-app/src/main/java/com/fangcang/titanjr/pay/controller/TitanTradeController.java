@@ -1095,4 +1095,9 @@ public class TitanTradeController extends BaseController {
 		resultMap.put("result", OrderGenerateService.genLoacalPayOrderNo());
 		return resultMap;
 	}
+	
+	@RequestMapping(value = "/toPayProtocolPage", method = RequestMethod.GET)
+	public String toPayProtocolPage(){
+		return "checkstand-upgrade/pay-protocol";
+	}
 }

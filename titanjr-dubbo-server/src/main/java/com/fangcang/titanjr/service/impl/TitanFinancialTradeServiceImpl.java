@@ -1128,6 +1128,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			orderRequest.setReceivedfee(titanPaymentRequest.getReceivedfee());
 			orderRequest.setStandfee(titanPaymentRequest.getStandfee());
 			orderRequest.setFreezeType(transOrderDTO.getFreezeType());
+			orderRequest.setVersion(transOrderDTO.getVersion());
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
@@ -1209,6 +1210,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						.setBusinessinfo(orderRequest.getBussinessInfo());
 				titanTransOrder.setGoodscnt(1);
 				titanTransOrder.setFreezeType(orderRequest.getFreezeType());
+				titanTransOrder.setVersion(orderRequest.getVersion());
 
 				//设置费率信息
 				if(StringUtil.isValidString(orderRequest.getReceivablefee())){
@@ -1904,7 +1906,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	@Override
 	public TransOrderCreateResponse saveTitanTransOrder(
 			TitanOrderRequest titanOrderRequest) {
-
+		log.info("保存TransOrder信息,参数titanOrderRequest："+Tools.gsonToString(titanOrderRequest));
 		//检查订单是否存在，如果已
 		TransOrderCreateResponse localOrderResponse = checkTitanTransOrder(titanOrderRequest);
 

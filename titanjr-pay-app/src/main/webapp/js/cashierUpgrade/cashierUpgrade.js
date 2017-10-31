@@ -41,12 +41,12 @@ function qrPayment(bankInfo){
         success : function(data){
         	if(data.result == true){debugger;
         		if(bankInfo =='wx'){
-        			$("#wx_pay_amount").text((data.qrCodeDTO.orderAmount)/100);
+        			$("#wx_pay_amount").text(numeral(parseFloat((data.qrCodeDTO.orderAmount)/100)).format("0,0.00"));
             		$("#wx_qrcode").attr("src","../payment/wxPicture.shtml?url="+data.qrCodeDTO.respJs);
             		//微信二维码弹窗
                     $(".wx").show();
         		}else if(bankInfo =='alipay'){
-        			$("#ali_pay_amount").text((data.qrCodeDTO.orderAmount)/100);
+        			$("#ali_pay_amount").text(numeral(parseFloat((data.qrCodeDTO.orderAmount)/100)).format("0,0.00"));
             		$("#ali_qrcode").attr("src","../payment/wxPicture.shtml?url="+data.qrCodeDTO.respJs);
             		//支付宝二维码弹窗
             		$(".zfb").show();
@@ -195,6 +195,8 @@ function validQuickPayInfo(){
 		var validthruMonth = $("#quick_validthruMonth_credit").text();
 		var validthruYear = $("#quick_validthruYear_credit").text();
 		var safetyCode = $("#quick_safetyCode_credit").val();
+		var bankInfo = $("#quick_bankInfo_hid").val();
+		var validAuth = $("#validAuth").val();
 		
 		if(payerName.length <= 0){
 			new top.Tip({msg: "请输入持卡人姓名", type: 2, timer: 2000});
@@ -204,13 +206,20 @@ function validQuickPayInfo(){
 			new top.Tip({msg: "请输入证件号码", type: 2, timer: 2000});
 			return false;
 		}
-		if(validthruMonth == "请选择" || validthruYear == "请选择"){
-			new top.Tip({msg: "请选择信用卡有效期", type: 2, timer: 2000});
-			return false;
-		}
-		if(safetyCode.length <= 0){
-			new top.Tip({msg: "请输入信用卡安全码", type: 2, timer: 2000});
-			return false;
+		if(bankInfo == 'icbc'){
+			if(validthruMonth == "请选择" || validthruYear == "请选择"){
+				new top.Tip({msg: "请选择信用卡有效期", type: 2, timer: 2000});
+				return false;
+			}
+		}else if(validAuth == '1'){
+			if(validthruMonth == "请选择" || validthruYear == "请选择"){
+				new top.Tip({msg: "请选择信用卡有效期", type: 2, timer: 2000});
+				return false;
+			}
+			if(safetyCode.length <= 0){
+				new top.Tip({msg: "请输入信用卡安全码", type: 2, timer: 2000});
+				return false;
+			}
 		}
 		if(payerPhone.length <= 0){
 			new top.Tip({msg: "请输入银行预留手机号", type: 2, timer: 2000});
@@ -260,8 +269,9 @@ function sendVierfyCode(_button){debugger;
 		  	        if(data.isSuccess == true){
 		  	        	$(".quick_rsOrder").val(data.orderNo);
 		  	        }else{
-		  	        	btn = true;
 		  	        	clearInterval(interval_countDown);
+		  	        	btn = true;
+		  	        	isFirstSend = true;
 		  	        	$(_button).text("发送验证码").css("color","#ccc");
 		  	        	if($.trim(data.errMsg).length > 0){
 		  	        		new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
@@ -280,7 +290,7 @@ function sendVierfyCode(_button){debugger;
 		        	signType: "1",
 		        	version: "v1.1",
 		        	merchantNo: "M000016",
-		        	orderNo: $("#quick_rsOrder").val(),
+		        	orderNo: $(".quick_rsOrder").val(),
 		        	payType: "41",
 		        },
 		        dataType: "json",
@@ -425,6 +435,23 @@ function checkQuickCardNo(inputTextK){
                    $("#quick_dailyLimit_credit").text(data.dailyLimit);
         		   $(".bank-account-info .savings").addClass("isShow");
             	   $(".bank-account-info .credit").removeClass("isShow");//显示填写信用卡
+            	   if(data.validAuth){
+            		   $("#validAuth").val("1");
+            	   }else{
+            		   $("#validAuth").val("0");
+            	   }
+            	   if(data.bankInfo == 'icbc'){
+            		   $("#validthru_li").removeClass("isShow");
+            		   $("#safetyCode_li").addClass("isShow");
+            		   $("#quick_safetyCode_credit").val("123");
+            	   }else if(!data.validAuth){
+            		   $("#validthru_li").addClass("isShow");
+            		   $("#safetyCode_li").addClass("isShow");
+            		   $("#quick_safetyCode_credit").val("123");
+            	   }else{
+            		   $("#validthru_li").removeClass("isShow");
+            		   $("#safetyCode_li").removeClass("isShow");
+            	   }
             	   index = "credit";
         	   }
                
@@ -433,6 +460,10 @@ function checkQuickCardNo(inputTextK){
                $(".shortcut-payment").addClass("isShow");//快捷支付tab隐藏
                $(".bank-account-info").removeClass("isShow"); //填写银行卡信息页面显示
                rateCompute($("#quick_payType_hid").val(), 'addpay', index);//费率计算
+               clearInterval(interval_countDown);
+               btn = true;
+               isFirstSend = true;
+               $(".get-verification-btn").text("发送验证码").css("color","#ccc");
         	   
            },complete:function(){
            	   top.F.loading.hide();

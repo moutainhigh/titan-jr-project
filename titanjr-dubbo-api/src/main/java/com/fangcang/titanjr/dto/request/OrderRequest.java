@@ -91,6 +91,9 @@ public class OrderRequest implements Serializable{
      */
     private String freezeType;
     
+    //收银台版本
+    private String version;
+    
     public String getReceivablefee() {
 		return receivablefee;
 	}
@@ -342,6 +345,14 @@ public class OrderRequest implements Serializable{
 
 	public void setFreezeType(String freezeType) {
 		this.freezeType = freezeType;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
 	}
 	
 }

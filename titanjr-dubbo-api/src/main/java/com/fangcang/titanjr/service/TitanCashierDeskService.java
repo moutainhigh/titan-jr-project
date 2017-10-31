@@ -100,4 +100,13 @@ public interface TitanCashierDeskService {
 	 * @throws Exception
 	 */
 	public void executeWxPublicInit() throws Exception;
+	
+	/**
+	 * 初始化交易平台收银台
+	 * @author Jerry
+	 * @date 2017年10月26日 上午11:48:43
+	 * @return
+	 */
+	public BaseResponseDTO initTradingPlatformCashierdesk();
+	
 }

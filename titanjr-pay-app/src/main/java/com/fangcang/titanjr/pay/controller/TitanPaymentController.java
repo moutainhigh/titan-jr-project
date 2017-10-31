@@ -437,6 +437,7 @@ public class TitanPaymentController extends BaseController {
 		if(!StringUtil.isValidString(transOrder.getFreezeType())){
 			transOrder.setFreezeType(FreezeTypeEnum.FREEZE_PAYEE.getKey());
 		}
+		titanPaymentRequest.setPayerType(transOrder.getPayerType());
 		
 		TransferRequest transferRequest = this.convertToTransferRequest(titanPaymentRequest);
 		TransferResponse transferResponse = null;
@@ -526,7 +527,7 @@ public class TitanPaymentController extends BaseController {
     	}else{
     		if (titanPaymentRequest.getReceivedfee() != null && payerTypeEnum != null && !payerTypeEnum.isNeedPayerInfo()) {
 	    		// 收款方出手续费的，交易金额减去手续费
-	    		transferRequest.setAmount(String.valueOf(Integer.parseInt(titanPaymentRequest.getTradeAmount())-Integer.parseInt(titanPaymentRequest.getReceivedfee())));//金额 必须是分
+	    		transferRequest.setAmount(String.valueOf(Integer.parseInt(NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount()))-Integer.parseInt(titanPaymentRequest.getReceivedfee())));//金额 必须是分
     		}else{
     			transferRequest.setAmount(NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount()));
     		}

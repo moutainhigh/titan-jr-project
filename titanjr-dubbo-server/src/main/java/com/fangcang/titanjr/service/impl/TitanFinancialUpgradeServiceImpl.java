@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TransOrderTypeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
@@ -84,9 +85,9 @@ public class TitanFinancialUpgradeServiceImpl implements TitanFinancialUpgradeSe
 			//校验用户信息
 			if(StringUtil.isValidString(titanOrderRequest.getUserId())){
 				
-				TitanUser titanUser = checkUserInfo(titanOrderRequest.getUserId());
+				TitanUser titanUser = checkUserInfo(titanOrderRequest.getUserId(),titanOrderRequest.getPartnerOrgCode());
 				if(titanUser == null){
-					log.error("付款方用户不存在，根据userId查询金融用户失败");
+					log.error("付款方用户不存在，根据userId查询金融用户失败，参数titanOrderRequest："+Tools.gsonToString(titanOrderRequest));
 					response.putErrorResult("付款方用户不存在");
 					return response;
 				}
@@ -161,9 +162,10 @@ public class TitanFinancialUpgradeServiceImpl implements TitanFinancialUpgradeSe
 	 * @author Jerry
 	 * @date 2017年8月3日 下午8:45:54
 	 */
-	private TitanUser checkUserInfo(String userId){
+	private TitanUser checkUserInfo(String userId,String merchantCode){
 		TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
 		titanUserBindInfoDTO.setFcuserid(Long.parseLong(userId));
+		titanUserBindInfoDTO.setMerchantcode(merchantCode);//罗庆龙 add，绑定关系不能只通过用户id查询，不同的合作方用户id可能会重复
 		titanUserBindInfoDTO = titanFinancialUserService
 				.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
 		

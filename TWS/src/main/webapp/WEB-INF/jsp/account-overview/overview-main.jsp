@@ -442,8 +442,9 @@
 <jsp:include page="/comm/foot-line.jsp"></jsp:include>
 
 <script type="text/javascript">  
-//我的账户
-        
+		//绑卡成功后，下一步
+		var bind_nstep='withdraw';
+		//我的账户
         var page1,page2,page3,page4,page5;
 		//总记录数
 		var total1,total2,total3,total4,total5;
@@ -574,6 +575,7 @@
 			$.ajax({
 				dataType:"json",
 				url:"<%=basePath%>/account/checkBindResult.shtml",
+				invalidCode:',403,603,',
 				success: function (result) {
 					if(result.code=="1"){
 						$("#btn_withdraw").attr({"data-result":result.data.orgBankcardStatus});
@@ -587,6 +589,14 @@
 		        	}else{
 		        		 new top.Tip({msg: result.msg, type: 2, timer: 2000});
 		        	}
+				},
+				error:function(XHR){
+					//权限判断
+	            	if(XHR.status&&XHR.status==403){
+	        			$("#btn_withdraw").attr({"data-result":'403'});
+	        			return ;
+	        		}
+				
 				}
 			});
 		}
@@ -604,8 +614,10 @@
        			bc.bind_card();
        		}else if(bind=="20"){//无绑定记录
        			bc.updateBind();
+       		}else if(bind=="403"){//无绑定记录
+       			new top.Tip({msg: "没有权限访问，请联系管理员", type: 2, timer: 3000});
        		}else{
-       			new top.Tip({msg: "系统繁忙，请稍后再试", type: 2, timer: 2000});
+       			new top.Tip({msg: "系统繁忙，请稍后再试", type: 2, timer: 3000});
        		}
 		     
         });

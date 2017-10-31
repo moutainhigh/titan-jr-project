@@ -149,7 +149,7 @@
             data:{
                 currentPage:1,
                 pageSize:size,
-                tradeTypeId:"2",
+                tradeTypeId:"5",//冻结单都查出来
                 isEscrowedPayment:"0"
             },
             url : '<%=basePath%>/account/query-freeze-list.shtml',
@@ -185,7 +185,7 @@
             context: document.body,
             data:{currentPage:1,
                 pageSize:size,
-                tradeTypeId:"2",
+                tradeTypeId:"5",
                 isEscrowedPayment:"0",
                 admissionName: partner,
                 startTimeStr: startDate,
@@ -302,7 +302,7 @@
             context: document.body,
             data:{currentPage:page,
                 pageSize:size,
-                tradeTypeId:"2",
+                tradeTypeId:"5",
                 isEscrowedPayment:"0",
                 admissionName: partner,
                 startTimeStr: startDate,
@@ -341,7 +341,7 @@
 				partner="lksdjlsk12";
 			}
         }
-        var paraList ="?tradeTypeId=" + (2);
+        var paraList ="?tradeTypeId=" + (5);
         if (partner){
             paraList = paraList + "&admissionName=" + partner;
         }
@@ -386,7 +386,7 @@
             data:{
                 currentPage:page,
                 pageSize:size,
-                tradeTypeId:"2",
+                tradeTypeId:"5",
                 isEscrowedPayment:"0",
                 admissionName: partner,
                 startTimeStr: startDate,

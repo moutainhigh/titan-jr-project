@@ -201,9 +201,11 @@ public class TitanQuickPaymentController extends BaseController {
 				
 				QuickPayBankEnum bankEnum = QuickPayBankEnum.getBankEnum(bankCardBINIResponse.getBankCode()
 						, bankCardBINIResponse.getCardType());
+				boolean isValidAuth = QuickPayBankEnum.isValidAuth(bankEnum);
 				bankCardBINIResponse.setBankInfo(bankEnum.getBankInfo());
 				bankCardBINIResponse.setSingleLimit(bankEnum.getSingleLimit());
 				bankCardBINIResponse.setDailyLimit(bankEnum.getDailyLimit());
+				bankCardBINIResponse.setValidAuth(isValidAuth);
 				return bankCardBINIResponse;
 				
 			}

@@ -17,5 +17,34 @@
     values (#{orgCode},#{orgSubcode}, #{isactive},#{createTime})
   </insert>
   
+  <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.parameter.TitanOrgMapInfoParam">
+    update t_tfs_orgmapinfo
+    <set>
+    	<if test="newOrgCode!=null">orgCode = #{newOrgCode},</if>
+    	<if test="newOrgSubCode!=null">orgSubCode = #{newOrgSubCode},</if>
+    </set>
+    <where>
+       <if test="orgMapid !=null">
+         orgMapid = #{orgMapid}
+       </if>
+       <if test="orgCode !=null">
+         and orgCode =#{orgCode}
+       </if>
+       <if test="orgSubcode !=null">
+         and orgSubcode =#{orgSubcode}
+       </if>
+    </where>
+  </update>
+  
+  
+  <delete id="delete" parameterType="com.fangcang.titanjr.entity.parameter.TitanOrgMapInfoParam" >
+    delete from   t_tfs_orgmapinfo 
+		<where>
+	    	<if test="orgMapid != null"> orgmapid = #{orgMapid}</if>
+	    	<if test="orgCode != null"> and  orgcode = #{orgCode}</if>
+	    	<if test="orgSubcode != null"> and  orgsubcode = #{orgSubcode}</if>
+	    	<if test="isactive != null"> and  isactive = #{isactive}</if>
+    	</where>
+  </delete>
   
 </mapper>

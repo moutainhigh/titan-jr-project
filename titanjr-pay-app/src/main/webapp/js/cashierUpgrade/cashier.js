@@ -925,9 +925,19 @@ function buildCashierData(data){
 	
 	//添加支付--快捷支付信用卡--获取验证码参数设置
 	cashierData.getRechargeData_credit = function(){debugger;
+		var bankInfo = $("#quick_bankInfo_hid").val();
+		var isValid = $("#validAuth").val();
+		var safetyCode = $("#quick_safetyCode_credit").val();
 		var validthruMonth = $("#quick_validthruMonth_credit").text();
 		var validthruYear = $("#quick_validthruYear_credit").text().substr(2);
 		var validthru = validthruMonth + validthruYear;
+		
+		if(bankInfo == 'icbc'){//工商银行不需要校验cvv码
+			safetyCode = "123";
+		}else if(isValid == '0'){//不需要验证cvv码和有效期，随便写
+			safetyCode = "123";
+			validthru = "0618";
+		}
 		
 		var data= {
 				payOrderNo:cashierData.payOrderNo,
@@ -947,7 +957,7 @@ function buildCashierData(data){
 		       	payerName:$("#quick_payerName_credit").val(),
 		       	payerPhone:$("#quick_payerPhone_credit").val(),
 		       	idCode:$("#quick_idCode_credit").val(),
-		       	safetyCode:$("#quick_safetyCode_credit").val(),
+		       	safetyCode:safetyCode,
 		       	validthru:validthru,
 		       	partnerOrgCode:cashierData.partnerOrgCode,
 		        linePayType:$("#quick_payType_hid").val(),

@@ -444,7 +444,7 @@
                                 <div class="type_name fl"></div>
                                 <div class="type_agree fl">
                                     <label class="la_agree">
-                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i><span>同意</span><a href="支付协议.html" target="_blank">《支付服务协议》</a>
+                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i><span>同意</span><a href="toPayProtocolPage.action" target="_blank">《支付服务协议》</a>
                                     </label>
                                 </div>
                             </li>
@@ -511,6 +511,7 @@
 	                    <input id="merchantNo" name="merchantNo" type="hidden" value="M000016" />
 	                    <input id="payType" name="payType" type="hidden" value="41" />
 	                    <input id="quick_rsOrder_credit" name="orderNo" class="quick_rsOrder" type="hidden" /><!-- 获取验证码的时候设置 -->
+	                    <input id="validAuth" name="validAuth" value="-1" type="hidden" />
                         <ul class="register_list">
                             <li class="type_li clearfix">
                                 <div class="type_name fl">
@@ -572,7 +573,7 @@
                                     </div>
                                 </div>
                             </li>
-                            <li class="type_li clearfix">
+                            <li id="validthru_li" class="type_li clearfix">
                                 <div class="type_name number fl">
                                     <label>信用卡有效期</label>
                                 </div>
@@ -625,7 +626,7 @@
                                     </div>
                                 </div>
                             </li>
-                            <li class="type_li clearfix">
+                            <li id="safetyCode_li" class="type_li clearfix">
                                 <div class="type_name number fl">
                                     <label>信用卡安全码</label>
                                 </div>
@@ -661,7 +662,7 @@
                                 <div class="type_name fl"></div>
                                 <div class="type_agree fl">
                                     <label class="la_agree">
-                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i><span>同意</span><a href="支付协议.html" target="_blank">《支付服务协议》</a>
+                                        <i class="iconfont icon-fuxuan agreement-gou" style="color: #d71319;"></i><span>同意</span><a href="toPayProtocolPage.action" target="_blank">《支付服务协议》</a>
                                     </label>
                                 </div>
                             </li>
@@ -853,8 +854,8 @@
 <div class="wx-payment zfb isShow">
     <div class="wx-payment-title">支付宝支付<i class="iconfont icon-sc close"></i></div>
     <div class="wx-payment-content">
-        <p><span>￥</span><span id="ali_pay_amount"></span></p>
-        <img id="ali_qrcode" src="" alt="支付宝扫描二维码支付"/>
+        <p><span>￥</span><b id="ali_pay_amount"></b></p>
+        <img height="250px;" width="240px;" id="ali_qrcode" src="" alt="支付宝扫描二维码支付"/>
         <div class="icon">
             <div class="left fl"><i class="iconfont icon-zfb"></i></div>
             <div class="right fl">
@@ -1049,25 +1050,28 @@
     }
     
     //费率显示
-    function setRate(){
+    function setRate(){debugger;
     	if('${cashDeskData.paySource }' == '2'){//财务付款需要计算显示手续费（付款方手续费），第一次进来默认选中微信支付
     		rateCompute('wx', 'commpay', 2);
-    		//校验余额支付
-    		var balanceusable = '${not empty cashDeskData.balanceusable }';
-    		var canAccountBalance = '${cashDeskData.canAccountBalance eq true }';
-    		var balanceAmount = parseFloat('${cashDeskData.balanceusable }');
-    		var tradeAmount = parseFloat('${cashDeskData.amount }');
-    		var rateAmount = parseFloat($("#commPayRateAmount_wx_2").text());
-    		if(!balanceusable || !canAccountBalance){
-    			$('.payment-mode-prohibit').css('background-color', '#FCFCFC').css('opacity', '0.4');
-    			$('.payment-mode-prohibit').attr('data-choice', false);
-    		}else if(balanceAmount < tradeAmount + rateAmount){
-    			$("#balanceNotEnough_rate").text(rateAmount);
-    			$("#balanceNotEnough").removeClass('isShow');
-    			$('.payment-mode-prohibit').css('background-color', '#FCFCFC').css('opacity', '0.4');
-    			$('.payment-mode-prohibit').attr('data-choice', false);
-    		}
     	}
+		//校验余额支付是否可用
+		var balanceusable = '${not empty cashDeskData.balanceusable }';
+		var canAccountBalance = '${cashDeskData.canAccountBalance eq true }';
+		var balanceAmount = parseFloat('${cashDeskData.balanceusable }');
+		var tradeAmount = parseFloat('${cashDeskData.amount }');
+		var rateAmount = parseFloat($("#commPayRateAmount_wx_2").text());
+		if(isNaN(rateAmount)){
+			rateAmount = 0;
+		}
+		if(!balanceusable || !canAccountBalance){
+			$('.payment-mode-prohibit').css('background-color', '#FCFCFC').css('opacity', '0.4');
+			$('.payment-mode-prohibit').attr('data-choice', false);
+		}else if(balanceAmount < tradeAmount + rateAmount){
+			$("#balanceNotEnough_rate").text(rateAmount);
+			$("#balanceNotEnough").removeClass('isShow');
+			$('.payment-mode-prohibit').css('background-color', '#FCFCFC').css('opacity', '0.4');
+			$('.payment-mode-prohibit').attr('data-choice', false);
+		}
     }
     
     //查询收款账户记录

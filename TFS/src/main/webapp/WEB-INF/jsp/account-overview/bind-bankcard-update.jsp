@@ -56,7 +56,7 @@
 					<div class="content">
 						<div class="left"></div>
 						<div class="right">
-							<button type="button" class="button-btn prohibit" disabled="true" onclick="saveBindCard();">提交</button>
+							<button type="button" class="button-btn prohibit" id="next_commit" disabled="true" onclick="saveBindCard();"></button>
 						</div>
 					</div>
 				
@@ -68,51 +68,7 @@
 		var cityAutoComplete = null;
 		var branchBankAutoComplete = null;
 		var usertype='${orgSub.usertype}'; 
-	//开户银行
-	if(usertype==1){//企业
-		bankAutoComplete = new AutoComplete($('.bankCode'), {
-		    url : '<%=basePath%>/account/getBankInfoList.shtml?bankType=1',
-		    source : 'bankInfoDTOList',
-		    key : 'bankCode',  //数据源中，做为key的字段
-		    val : 'bankName', //数据源中，做为val的字段
-		    width : 240,
-		    height : 300,
-		    autoSelectVal : true,
-		    clickEvent : function(d, input){
-		        input.attr('data-id', d.key);
-		        $(".bankName").val(d.val);
-		       	bc.isDisabled(".platform-binding-bank-modal");
-		       	if($('.city_code').length>0){
-		       		showCityCode();
-		       	}
-		    }
-		});
-	}else{//个人
-		bankAutoComplete = new AutoComplete($('.bankCode'), {
-		    data : personBankData.content,
-		    key : 'bankCode',  //数据源中，做为key的字段
-		    val : 'bankName', //数据源中，做为val的字段
-		    width : 240,
-		    height : 300,
-		    autoSelectVal : true,
-		    clickEvent : function(d, input){
-		        input.attr('data-id', d.key);
-		        $(".bankName").val(d.val);
-		       	bc.isDisabled(".platform-binding-bank-modal");
-		       	if($('.city_code').length>0){
-		       		showCityCode();
-		       	}
-		    }
-		});
-	}
-	
-	
-	
-	if($('.city_code').length>0){//企业
-		initCityAutoComplete();
-	}
-	
-	
+
 	function initCityAutoComplete(){
 		//城市
 		cityAutoComplete = new AutoComplete($('.city_code'), {
@@ -215,7 +171,11 @@
         		}else{
         			if(paramData.userType=='2'){//个人表示绑卡成功
         				bc.close();
-        				account_withdraw();
+        				if(typeof(bind_nstep)!='undefined'&&bind_nstep=='withdraw'){
+        					account_withdraw();
+        				}else{
+        					window.location.reload();
+        				}
         			}else{
         				bc.bindResultView();
         			}
@@ -227,6 +187,55 @@
 			}
 	    });
     }
-    bc.initUpdateBindCardPanel();
+    
+    $(function(){
+    	if(typeof(bind_nstep)!='undefined'&&bind_nstep=='withdraw'){
+    		$("#next_commit").html("去提现");
+    	}else{
+    		$("#next_commit").html("提交");
+    	}
+    	//开户银行
+		if(usertype==1){//企业
+			bankAutoComplete = new AutoComplete($('.bankCode'), {
+			    url : '<%=basePath%>/account/getBankInfoList.shtml?bankType=1',
+			    source : 'bankInfoDTOList',
+			    key : 'bankCode',  //数据源中，做为key的字段
+			    val : 'bankName', //数据源中，做为val的字段
+			    width : 240,
+			    height : 300,
+			    autoSelectVal : true,
+			    clickEvent : function(d, input){
+			        input.attr('data-id', d.key);
+			        $(".bankName").val(d.val);
+			       	bc.isDisabled(".platform-binding-bank-modal");
+			       	if($('.city_code').length>0){
+			       		showCityCode();
+			       	}
+			    }
+			});
+		}else{//个人
+			bankAutoComplete = new AutoComplete($('.bankCode'), {
+			    data : personBankData.content,
+			    key : 'bankCode',  //数据源中，做为key的字段
+			    val : 'bankName', //数据源中，做为val的字段
+			    width : 240,
+			    height : 300,
+			    autoSelectVal : true,
+			    clickEvent : function(d, input){
+			        input.attr('data-id', d.key);
+			        $(".bankName").val(d.val);
+			       	bc.isDisabled(".platform-binding-bank-modal");
+			       	if($('.city_code').length>0){
+			       		showCityCode();
+			       	}
+			    }
+			});
+		}
+		if($('.city_code').length>0){//企业
+			initCityAutoComplete();
+		}
+	    bc.initUpdateBindCardPanel();
+    })
+    
 	</script>
 </body>

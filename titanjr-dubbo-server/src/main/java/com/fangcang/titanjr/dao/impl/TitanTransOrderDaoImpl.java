@@ -49,6 +49,10 @@ public class TitanTransOrderDaoImpl extends GenericDAOMyBatisImpl implements Tit
         		
         		super.selectForPage("com.fangcang.titanjr.dao.TitanTransOrderDao.queryWithdrawOrder", condition, paginationSupport);
         		
+        	}else if("5".equals(condition.getStatus())){//冻结记录
+        		
+        		super.selectForPage("com.fangcang.titanjr.dao.TitanTransOrderDao.queryFreezeOrder", condition, paginationSupport);
+        		
         	}else{
         		super.selectForPage("com.fangcang.titanjr.dao.TitanTransOrderDao.queryAllOrder", condition, paginationSupport);
         	}
