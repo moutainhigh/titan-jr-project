@@ -144,6 +144,7 @@ public class TitanFinancialRefundServiceImpl implements
 			List<TitanTransferDTO> titanTransferDTOList = titanOrderService.getTitanTransferDTOList(titanTransferDTO);
 			if (null != titanTransferDTOList) {//如果存在退款转账订单，则判断其是否成功
 				titanTransferDTO = titanTransferDTOList.get(0);
+				log.info("用户退款，订单号orderid:"+titanTransferDTO.getTransorderid());
 				if (titanTransferDTO.getStatus().intValue() == TransferReqEnum.TRANSFER_SUCCESS.getStatus()) {
 					log.error("退款已完成，请勿重复退款,Transorderid:"+titanTransferDTO.getTransorderid());
 					response.putErrorResult(TitanMsgCodeEnum.REFUND_SUCCESSED);
@@ -241,16 +242,15 @@ public class TitanFinancialRefundServiceImpl implements
 			if (RefundTypeEnum.REFUND_ACCOUNT.type.equals(refundRequest.getToBankCardOrAccount())) {
 				log.info("6.5.1如果只有转账退款，则保存转账单设置成功");
 				if (this.saveRefundOrder(refundOrderRequest)) {
-					log.info("资金退款到账户余额完成");
+					log.info("资金退款到账户余额完成,订单号orderid："+refundOrderRequest.getOrderId());
 					response.putSuccess();
 				} else {
-					log.error("系统退款成功，保存退款单失败，当前参数：");
+					log.error("系统退款成功，保存退款单失败，当前参数refundRequest："+Tools.gsonToString(refundRequest)+",订单号orderid："+refundOrderRequest.getOrderId());
 				}
 				return response;
 			}
 			NotifyRefundRequest notifyRefundRequest = this.convertToNotifyRefundRequest(refundRequest);
 			NotifyRefundResponse notifyRefundResponse = notifyRefundOrder(refundOrderRequest,notifyRefundRequest);
-			log.info("6.7通知业务系统退款结果");
 			RefundStatusEnum refundStatus = null;
 			if(notifyRefundResponse.isResult()){
 				RefundStatusEnum status = RefundStatusEnum.getRefundStatusEnumByStatus(Integer.parseInt(notifyRefundResponse.getRefundStatus()));
@@ -264,7 +264,7 @@ public class TitanFinancialRefundServiceImpl implements
 				log.info("网关退款调用失败,订单orderid:"+refundRequest.getOrderNo()+",响应结果:"+Tools.gsonToString(notifyRefundResponse));
 			}
 				
-			log.info("6.7通知业务系统退款结果");
+			log.info("6.7通知业务系统退款结果,订单号orderid："+refundOrderRequest.getOrderId());
 			this.threadNotify(refundOrderRequest.getOrderId(), refundStatus);
 			response.putSuccess("已发起退款");
 			return response;
@@ -787,7 +787,7 @@ public class TitanFinancialRefundServiceImpl implements
 				refund.setOrderNo(orderNo);
 				List<RefundDTO> reFundList= titanRefundDao.queryRefundDTO(refund);
 				if(null==reFundList || reFundList.size()!=1 || reFundList.get(0)==null){
-					log.error("查询退款单异常："+orderNo);
+					log.error("查询退款单异常，单号RefundDTO.orderNo："+orderNo);
 					return;
 				}
 				refund = reFundList.get(0);
