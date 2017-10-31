@@ -140,7 +140,8 @@
 							 payPassword:PasswordStr2.returnStr(),
 							 userId:'${transOrderDTO.userrelateid}',
 							 notifyUrl:'${refundRequest.notifyUrl}',
-							 businessInfo:'${refundRequest.businessInfo}'
+							 businessInfo:'${refundRequest.businessInfo}',
+							 isBackTrack:'${refundRequest.isBackTrack}'
 						 },
 						 success:function(data){
 							 if(data.result ==true){
