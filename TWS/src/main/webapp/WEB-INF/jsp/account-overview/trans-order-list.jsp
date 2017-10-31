@@ -49,18 +49,18 @@
                 已成功
             </c:if>
             
-            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '付款' and tradeItem.freezeType == 2 }">
-                已冻结收款方资金
+            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '付款' and tradeItem.freezeAt == 2 }">
+                冻结在收款方
             </c:if>
-            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '收款' and tradeItem.freezeType == 2 }">
-               已冻结
+            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '收款' and tradeItem.freezeAt == 1 }">
+                冻结在付款方 
             </c:if>
             
-            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '付款' and tradeItem.freezeType == 3 }">
-               已冻结
+            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '付款' and tradeItem.freezeAt == 1 }">
+                 已冻结  
             </c:if>
-            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '收款' and tradeItem.freezeType == 3 }">
-                已冻结付款方资金
+            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '收款' and tradeItem.freezeAt == 2 }">
+                 已冻结
             </c:if>
 
             <c:if test="${tradeItem.statusid == 12 }">
