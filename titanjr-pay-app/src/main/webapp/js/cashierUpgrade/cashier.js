@@ -1064,6 +1064,12 @@ function buildCashierData(data){
 			sign.id = 'f_sign';
 			form.appendChild(sign);
 			
+			var jrVersion = document.createElement("input");
+			jrVersion.type = 'hidden';
+			jrVersion.name = 'jrVersion';
+			jrVersion.id = 'jrVersion';
+			form.appendChild(jrVersion);
+			
 			document.body.appendChild(form);
 	};
 
@@ -1085,6 +1091,7 @@ function buildCashierData(data){
 		document.getElementById('f_payerAcount').value=$("#enterpriseCustomerNo").val();//民生银行企业网银需要银行客户号
 		document.getElementById('f_payerAccountType').value=$("#accountType_wy_hid").val();//用于保存常用支付方式
 		document.getElementById('f_sign').value=cashierData.sign;
+		document.getElementById('jrVersion').value=cashierData.jrVersion;
 		document.getElementById('onlinePaymentForm').submit();
 	};
 	
@@ -1105,6 +1112,7 @@ function buildCashierData(data){
 		document.getElementById('f_fcUserid').value=cashierData.fcUserid;
 		document.getElementById('f_payerAccountType').value=cashierData.payerAccountType;
 		document.getElementById('f_sign').value=cashierData.sign;
+		document.getElementById('jrVersion').value=cashierData.jrVersion;
 		document.getElementById('onlinePaymentForm').submit();
 	};
 	

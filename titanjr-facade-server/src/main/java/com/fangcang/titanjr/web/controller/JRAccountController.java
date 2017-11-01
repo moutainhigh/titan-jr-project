@@ -32,7 +32,6 @@ import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
-import com.fangcang.titanjr.common.enums.TitanjrVersionEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.GenericValidate;
@@ -409,9 +408,20 @@ public class JRAccountController {
 		TransOrderDTO transOrder = new TransOrderDTO();
 		transOrder.setOrderid(transOrderDTO.getOrderid());
 		
+		Long receivedFee = 0L;
+		if(transOrderDTO.getReceivedfee() != null){
+			receivedFee = transOrderDTO.getReceivedfee();
+		}
+		PayerTypeEnum payerTypeEnum = PayerTypeEnum
+				.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
+		
 		RechargeResultConfirmRequest rechargeResultConfirmRequest = new RechargeResultConfirmRequest();
 		rechargeResultConfirmRequest.setOrderNo(transOrderDTO.getOrderid());
-		rechargeResultConfirmRequest.setPayAmount(transOrderDTO.getTradeamount().toString());
+		if (payerTypeEnum != null && !payerTypeEnum.isNeedPayerInfo()) {//收款方出手续费，减去手续费
+			rechargeResultConfirmRequest.setPayAmount(String.valueOf(transOrderDTO.getTradeamount()-receivedFee));
+		}else{
+			rechargeResultConfirmRequest.setPayAmount(transOrderDTO.getTradeamount().toString());
+		}
 		rechargeResultConfirmRequest.setUserid(transOrderDTO.getUserrelateid());
 		
 		FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService
