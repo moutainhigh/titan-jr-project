@@ -2447,7 +2447,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				payUrl = response.substring(response.indexOf("weixin"), response.length());
 				qr.setRespJs(payUrl);
 			}
-			log.info("网关返回参数:"+JSONSerializer.toJSON(qr));
+			log.info("网关返回结果:"+JSONSerializer.toJSON(qr));
 			boolean sign = this.validateGateSign(qr);
 			if(!sign){
 				log.error("融数网关获取支付二维码时返回签名失败,参数:" + JSONSerializer.toJSON(params));
