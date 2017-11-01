@@ -21,6 +21,7 @@ import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.QuickPayBankEnum;
+import com.fangcang.titanjr.common.enums.TitanjrVersionEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
@@ -462,8 +463,10 @@ public class TitanPaymentService {
 							PayerTypeEnum payerTypeEnum = PayerTypeEnum
 									.getPayerTypeEnumByKey(transOrderDTO.getPayerType());
 							Long receivedfee = 0L;
-							//付款方出手续费时，余额支付的实付金额需要加上手续费
-							if (transOrderDTO.getReceivedfee() != null && payerTypeEnum != null && payerTypeEnum.isNeedPayerInfo()) {
+							//新版收银台，付款方出手续费时，余额支付的实付金额需要加上手续费
+							if (TitanjrVersionEnum.isVersion2(transOrderDTO.getVersion()) 
+									&& transOrderDTO.getReceivedfee() != null 
+									&& payerTypeEnum != null && payerTypeEnum.isNeedPayerInfo()) {
 								receivedfee = transOrderDTO.getReceivedfee();
 							}
 							rechargeResultConfirmRequest.setPayAmount(

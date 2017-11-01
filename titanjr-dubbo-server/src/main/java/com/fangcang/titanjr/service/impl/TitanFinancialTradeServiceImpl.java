@@ -1495,6 +1495,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 												.equals(payerTypeEnum.key)) {
 									transOrderDTO.setReceivedfee(0L);
 								}
+								//老版收银台，余额支付也不展示手续费
+								if(TitanjrVersionEnum.isVersion1(transOrderDTO.getVersion()) 
+										&& (transOrderDTO.getAmount() == null || transOrderDTO.getAmount() == 0)){
+									transOrderDTO.setReceivedfee(0L);
+								}
                                 transOrderDTO.setTransTarget(getTransTarget(transOrderDTO.getPayeemerchant()));//收款方
                             }
                         } else if (isPayeeOrg(tradeDetailRequest, transOrderDTO)) {//付款方不存在机构等于收款方

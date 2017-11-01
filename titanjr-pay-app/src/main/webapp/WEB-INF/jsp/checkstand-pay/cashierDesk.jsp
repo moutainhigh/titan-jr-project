@@ -308,6 +308,7 @@
 			balanceusable:'${cashDeskData.balanceusable}',
 			accountHistoryDTO:'${cashDeskData.accountHistoryDTO}',
 			orgName:'${cashDeskData.orgName}',
+    		jrVersion:'${cashDeskData.jrVersion}'
 		});
 	}
 	

@@ -181,6 +181,10 @@
                    from t_tfs_transorder o
                     <where>
                       <include refid="sqlWhere"/>
+                      and (
+                      		(payermerchant=#{userid} and freezeAt=1) 
+                      			or (payeemerchant = #{userid} and freezeAt=2)	
+                      	)
                     </where>
      </select>
      

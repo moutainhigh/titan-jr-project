@@ -54,7 +54,7 @@
 		                ruserId : $("#ruserId").val(),//收款方身份标示N
 		                amount : $("#amount").val(),//订单金额
 		                payerType : $("#payerType").val(),//付款人类型
-		                notify : $("#notify").val(),
+		                notify : $("#notify").val(),//第三方回调地址
 		                version : $("#version").val(),//金融版本 v1.0  v1.1
 		                freezeType : $("#freezeType").val()
 		            };
@@ -100,7 +100,7 @@
             <tr align="left">
                 <td class="tdr">操作人</td>
                 <td>
-                    <input type="text" name="name"  id="name" value="Miss Wang" class="input_t01"/>
+                    <input type="text" name="name"  id="name" value="德玛西亚" class="input_t01"/>
                 </td>
             </tr>
             <tr>
@@ -109,7 +109,7 @@
             </tr>
             <tr>
                 <td class="tdr">业务订单号</td>
-                <td><input type="text" id="goodsId" value="201709211425596000001" name="goodsId"/>
+                <td><input type="text" id="goodsId" value="201710091425596000001" name="goodsId"/>
                 </td>
             </tr>
             <tr>
@@ -127,37 +127,37 @@
             <tr>
                 <td class="tdr">付款方用户ID</td>
                 <td>
-                    <input type="text" value="44905" id="userId" name="userId"/>
+                    <input type="text" value="53839" id="userId" name="userId"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">付款方机构编码</td>
                 <td>
-                    <input type="text" value="M10033241" id="partnerOrgCode" name="partnerOrgCode"/>
+                    <input type="text" value="M10040333" id="partnerOrgCode" name="partnerOrgCode"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">付款方金融机构编码</td>
                 <td>
-                    <input type="text" value="TJM10020005" id="orgCode" name="orgCode"/>
+                    <input type="text" value="TJM60000018" id="orgCode" name="orgCode"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">收款方机构编码</td>
                 <td>
-                    <input type="text" value="TJM10020008" id="ruserId" name="ruserId"/>
+                    <input type="text" value="TJM60000001" id="ruserId" name="ruserId"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">付款金额</td>
                 <td>
-                    <input type="text" value="0.02" id="amount" name="amount"/>
+                    <input type="text" value="0.01" id="amount" name="amount"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">收付款类型</td>
                 <td>
-                    <input type="text" value="2" id="payerType" name="payerType"/><span title="收款方编码为SAAS编码">1:B2B交易平台</span> <span title='2:GDP-收款方SAAS商家编码'> 2:GDP</span> <span title='3:财务供应商-付款方为SAAS用户id'>3:财务付款给供应商</span>  4:财务付款给联盟供应商 1001:对外开放平台,1024:TTM-SAAS商家,10242：TTM-金融商家，10243:TTM移动端
+                    <input type="text" value="1" id="payerType" name="payerType"/><span title="收款方编码为SAAS编码">1:B2B交易平台</span> <span title='2:GDP-收款方SAAS商家编码'> 2:GDP</span> <span title='3:财务供应商-付款方为SAAS用户id'>3:财务付款给供应商</span>  4:财务付款给联盟供应商 1001:对外开放平台,1024:TTM-SAAS商家,10242：TTM-金融商家，10243:TTM移动端
                 </td>
             </tr>
             <tr>
@@ -175,7 +175,7 @@
             <tr>
                 <td class="tdr">版本号</td>
                 <td>
-                    <input type="text" value="v2.0" id="version" name="version"/><span>v1.0-老版本；v2.0-新版本（新版收银台，快捷支付，账户升级）</span>
+                    <input type="text" value="v1.0" id="version" name="version"/><span>v1.0-老版本；v2.0-新版本（新版收银台，快捷支付，账户升级）</span>
                 </td>
             </tr>
             <tr>
@@ -187,7 +187,7 @@
             <tr>
                 <td class="tdr">支付回显地址</td>
                 <td>
-                    <input type="text" value="http://test01.fangcang.com/titanjr-pay-app/payCallBack" id="notify" name="notify"/>
+                    <input type="text" value="http://192.168.0.77:8084/titanjr-pay-app/payCallBack" id="notify" name="notify"/>
                 </td>
             </tr>
             </tbody>
@@ -217,16 +217,16 @@
             </tr>
             <tr>
                 <td class="tdr">金融账号</td>
-                <td><input type="text" id="reuserId" value="TJM10000035" name="reuserId"/></td>
+                <td><input type="text" id="reuserId" value="TJM60000001" name="reuserId"/>收款方金融账号</td>
             </tr>
             <tr>
                 <td class="tdr">操作人ID</td>
-                <td><input type="text" id="retfsUserid" value="10122" name="retfsUserid"/>
+                <td><input type="text" id="retfsUserid" value="10122" name="retfsUserid"/>收款方金融用户ID
                 </td>
             </tr>
              <tr>
                 <td class="tdr">是否为商家编码</td>
-                <td><input type="text" id="isMerchCode" value="10122" name="isMerchCode"/>1,商家编码，0金融账号
+                <td><input type="text" id="isMerchCode" value="0" name="isMerchCode"/>1,商家编码，0金融账号
                 </td>
             </tr>
             <tr>

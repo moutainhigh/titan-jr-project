@@ -1,6 +1,6 @@
 var cashierData = {};
 
-function initCashierData(data){
+function initCashierData(data){debugger;
 	cashierData = data;
 	
 	cashierData.checkBoxIsChecked = function(){
@@ -123,6 +123,7 @@ function initCashierData(data){
 		         creator:cashierData.creator,
 		       	 tradeAmount:cashierData.tradeAmount,
 		       	 sign:cashierData.sign,
+		       	 jrVersion:cashierData.jrVersion,
 		       	
 		       	 recieveOrgName:cashierData.recieveOrgName(),
 		       	 recieveTitanCode:cashierData.recieveTitanCode(),
@@ -236,6 +237,13 @@ function initCashierData(data){
 			tradeAmount.name = 'tradeAmount';
 			tradeAmount.id = 'tradeAmount';
 			form.appendChild(tradeAmount);
+			
+			var jrVersion = document.createElement("input");
+			jrVersion.type = 'hidden';
+			jrVersion.name = 'jrVersion';
+			jrVersion.id = 'jrVersion';
+			form.appendChild(jrVersion);
+			
 			document.body.appendChild(form);
 	};
 	
@@ -244,6 +252,7 @@ function initCashierData(data){
 		
 		document.getElementById('isaccount').value=cashierData.isaccount();
 		document.getElementById('payPassword').value=cashierData.payPassword();
+		document.getElementById('jrVersion').value=cashierData.jrVersion;
 		
 		document.getElementById('recieveOrgName').value=cashierData.recieveOrgName();
 		document.getElementById('recieveTitanCode').value=cashierData.recieveTitanCode();
