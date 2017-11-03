@@ -531,6 +531,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			TitanFundFreezereqParam condition = new TitanFundFreezereqParam();
 			condition.setOrderno(orderNo);
 			PaginationSupport<TitanFundFreezereq> paginationSupport = new PaginationSupport<TitanFundFreezereq>();
+			paginationSupport.setOrderBy(" requesttime DESC ");
 			titanFundFreezereqDao.selectForPage(condition, paginationSupport);
 			List<TitanFundFreezereq> titanFundFreezereqList = paginationSupport.getItemList();
 			if(titanFundFreezereqList !=null && titanFundFreezereqList.size()>0){

@@ -23,6 +23,7 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	private String payPassword;
 	
 	//卡或者第三方支付需要支付金额,业务逻辑改为从后台计算，【不从页面获取】
+	//如果全部用余额支付，也这只此字段，用于费率计算
     private String payAmount = "0";
     
     //余额,业务逻辑改为从后台计算，【不从页面获取】

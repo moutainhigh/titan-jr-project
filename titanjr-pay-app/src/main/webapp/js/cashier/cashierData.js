@@ -79,11 +79,13 @@ function initCashierData(data){debugger;
 		return payPassword;
 	};
 	
-	cashierData.linePayType = function(){
+	cashierData.linePayType = function(){debugger;
 		var itemType = $(".bankName:checked").attr("data-index");
 		var linePayType =null;
 		if("undefined" != typeof itemType){
 			linePayType =   $("#item-"+itemType).attr("data-index");
+		}else{
+			linePayType = 4; //余额支付
 		}
 		return linePayType;
 	};

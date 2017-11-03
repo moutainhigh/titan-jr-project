@@ -288,6 +288,7 @@ public class JRAccountController {
 		
 		BaseResponse baseResponse = new BaseResponse();
 		baseResponse.putSuccess();
+		log.info("==========>>begin to unfreezePayer");
 		
 		//查询冻结单
 		List<FundFreezeDTO> fundFreezeList = getFundFreezeList(transOrderDTO.getOrderid());
@@ -311,6 +312,7 @@ public class JRAccountController {
 					TitanMsgCodeEnum.REFUND_UNFREEZE_FAIL.getKey());
 			return baseResponse;
 		}
+		log.info("==========>>unfreezePayer success");
 		
     	return baseResponse;
 	}
@@ -424,6 +426,7 @@ public class JRAccountController {
 		}
 		rechargeResultConfirmRequest.setUserid(transOrderDTO.getUserrelateid());
 		
+		log.info("==========>>begin to freezePayee");
 		FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService
 				.freezeAccountBalance(rechargeResultConfirmRequest);
 		if (!freezeAccountBalanceResponse.isFreezeSuccess()) {
@@ -439,12 +442,16 @@ public class JRAccountController {
 			transOrder.setFreezeAt(CommonConstant.FREEZE_PAYEE);
 			transOrder.setStatusid(OrderStatusEnum.FREEZE_SUCCESS.getStatus());
 		}
+		log.info("==========>>freezePayee success");
 		
 		//更新订单状态
+		log.info("==========>>begin to updateTransOrder");
 		if(!titanOrderService.updateTransOrder(transOrder)){
 			log.error("账户收款，冻结收款方后修改订单状态失败");
+			log.info("==========>>updateTransOrder is fail");
 			titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.AccountReceive_FreezePayee_UpdateOrder_Fail, JSONSerializer.toJSON(transOrder).toString());
 		}
+		log.info("==========>>updateTransOrder end");
 		
 		return baseResponse;
 	}
