@@ -223,6 +223,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					// 更新一下订单
 					titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
 					titanTransOrder.setTransid(transOrderDTO.getTransid());
+					titanTransOrder.setAmount(0L);//余额支付没有充值
 					int row = titanTransOrderDao.updateTitanTransOrderByTransId(titanTransOrder);
 					if(row<1){
 						log.error("更新本地订单失败");
@@ -1488,11 +1489,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
                             } else if (isPayerOrg(tradeDetailRequest, transOrderDTO)) {//当前机构等于付款方
                                 transOrderDTO.setTradeType("付款");
-                                // 当前机构是付款方并且不是财务付款，则付款方不需要展示费率。
+                                // 如果不是财务付款，则付款方不需要展示费率。
 								if (payerTypeEnum != null
-										&& !PayerTypeEnum.SUPPLY_UNION.key
-												.equals(payerTypeEnum.key) && !PayerTypeEnum.SUPPLY_FINACIAL.key
-												.equals(payerTypeEnum.key)) {
+										&& !PayerTypeEnum.SUPPLY_UNION.key.equals(payerTypeEnum.key) 
+										&& !PayerTypeEnum.SUPPLY_FINACIAL.key.equals(payerTypeEnum.key)) {
 									transOrderDTO.setReceivedfee(0L);
 								}
 								//老版收银台，余额支付也不展示手续费
@@ -1636,7 +1636,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	//如果充值金额相等则返回true；
 	private boolean validateAndUpdateOrder(TitanPaymentRequest titanPaymentRequest, TransOrderDTO transOrderDTO)
 			throws Exception {
-		if (!NumberUtil.covertToCents(titanPaymentRequest.getPayAmount()).equals(transOrderDTO.getAmount().toString())) {
+		if (!NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount()).equals(transOrderDTO.getTradeamount().toString())) {
 			TitanTransOrder titanTransOrder = new TitanTransOrder();
 			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_NO_EFFECT.getStatus());
 			titanTransOrder.setTransid(transOrderDTO.getTransid());
@@ -2452,7 +2452,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				payUrl = response.substring(response.indexOf("weixin"), response.length());
 				qr.setRespJs(payUrl);
 			}
-			log.info("网关返回参数:"+JSONSerializer.toJSON(qr));
+			log.info("网关返回结果:"+JSONSerializer.toJSON(qr));
 			boolean sign = this.validateGateSign(qr);
 			if(!sign){
 				log.error("融数网关获取支付二维码时返回签名失败,参数:" + JSONSerializer.toJSON(params));
