@@ -948,6 +948,7 @@ public class TitanTradeController extends BaseController {
 		}
 		cashierDeskQueryRequest.setUsedFor(PayerTypeEnum
 				.getPaySource(transOrderDTO.getPayerType()));
+		//cashierDeskQueryRequest.setIsOpen("1");
 		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.QueryCashierDeskData, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
 		
 		CashierDeskResponse response = titanCashierDeskService
@@ -961,10 +962,16 @@ public class TitanTradeController extends BaseController {
 					TitanMsgCodeEnum.CASHIER_DESK_NOT_EXISTS.getResMsg());
 			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
 		}
-
-		log.info("begin set cash desk data ");
-
+		
 		CashierDeskDTO cashierDeskDTO = response.getCashierDeskDTOList().get(0);
+		if(cashierDeskDTO.getIsOpen() == null || cashierDeskDTO.getIsOpen() == 0){
+			log.error("cashier desk not open!");
+
+			model.addAttribute("msg",
+					TitanMsgCodeEnum.CASHIER_DESK_NOT_OPEN.getResMsg());
+			return TitanConstantDefine.TRADE_PAY_ERROR_PAGE;
+		}
+		log.info("begin set cash desk data ");
 		
 		//金融升级处理
 		if(TitanjrVersionEnum.isVersion2(deskReq.getVersion())){

@@ -35,7 +35,8 @@ window.onload = function() {
 			payerType : "${payType}",//付款人类型   财务 GDP 等
 			// 			currencyType : "1",//币种
 			// 			checkOrderUrl : 'http://www.baidu.com',//可选
-			notify : ''
+			notify : '',
+			version : "${version}"//金融版本 v1.0  v1.1
 		};
 
 		var businessInfo = {

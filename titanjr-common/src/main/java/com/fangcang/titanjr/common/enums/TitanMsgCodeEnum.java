@@ -38,8 +38,11 @@ public enum TitanMsgCodeEnum {
 
 	// 收银台不存在，请确认
 	CASHIER_DESK_NOT_EXISTS(110100008, "收银台不存在，请确认！"),
-
+	
 	// 收银台不存在，请确认
+	CASHIER_DESK_NOT_OPEN(110100054, "商家收银台未开通，请确认！"),
+
+	//付款密码错误
 	PAY_PWD_ERROR(110100009, "付款密码错误，请确认！"),
 
 	// 密码设置失败
