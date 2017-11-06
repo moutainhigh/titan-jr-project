@@ -396,7 +396,7 @@ public class TitanPaymentController extends BaseController {
 	@RequestMapping("/showTitanPayPage")
 	public String showTitanPayPage(HttpServletRequest request,TitanPaymentRequest titanPaymentRequest) throws Exception{
 		log.info("账户余额支付请求参数:"+JsonConversionTool.toJson(titanPaymentRequest));
-		if(null == titanPaymentRequest || !StringUtil.isValidString(titanPaymentRequest.getTradeAmount())
+		if(null == titanPaymentRequest || !StringUtil.isValidString(titanPaymentRequest.getTradeAmount() )
 				||!StringUtil.isValidString(titanPaymentRequest.getPayOrderNo())){
 			log.error("账户余额支付参数不合法，参数："+JsonConversionTool.toJson(titanPaymentRequest));
 			return toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
