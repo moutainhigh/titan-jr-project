@@ -2,6 +2,7 @@ package com.fangcang.titanjr.web.controller.admin;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -120,7 +121,10 @@ public class OrgController extends BaseController{
 			FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
 			model.addAttribute("financialOrganDTO", financialOrganDTO);
 			model.addAttribute("orgSubDTO", financialOrganResponse.getOrgSubDTO());
-			model.addAttribute("orgImgUrl", financialOrganDTO.getOrgImageInfoList().get(0).getImageURL());
+			if(!CollectionUtils.isEmpty(financialOrganDTO.getOrgImageInfoList())){
+				model.addAttribute("orgImgUrl", financialOrganDTO.getOrgImageInfoList().get(0).getImageURL());
+			}
+			
 			model.addAttribute("operatorName", getSAASLoginName());//TODO 这里是个bug,应该从数据库里面拿
 			model.addAttribute("tfsLoginUsername", tfsLoginUsername);
 			
