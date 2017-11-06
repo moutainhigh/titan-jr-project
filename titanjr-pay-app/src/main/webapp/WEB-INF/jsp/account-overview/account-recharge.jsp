@@ -55,7 +55,7 @@
 						<div class="TFS_rechargeBoxL fl" style="padding:0">
 							<div class="goldpay_top" style="padding-top: 20px; height: 130px; width: 740px;margin:0; ">
 							充值金额：<input type="text" class="text w_200" id="inputeAmount"><span id="inputeAmountError" style="color:red;font-size:12px;padding-left:15px"></span>
-								<div style="padding-left: 88px; padding-top: 7px;" class="c_666 f_14">手续费：<i class="c_f00" id="rateAmount">0.00</i> 元</div>
+								<!-- <div style="padding-left: 88px; padding-top: 7px;" class="c_666 f_14">手续费：<i class="c_f00" id="rateAmount">0.00</i> 元</div> -->
 							</div>
 						</div>
 					<div class="TFS_rechargeBoxR fr" style="height:110px;">
@@ -171,6 +171,7 @@
 	   <input name="deskId" id="deskId" type="hidden" value="${cashDeskData.cashierDeskDTO.deskId}">
 	   <input name="payerAcount" id="payerAcount" type="hidden"/>
 	   <input name="userid" id="userid" type="hidden" value="${cashDeskData.userId}"/>
+	   <input name="jrVersion" id="jrVersion" type="hidden" value="${cashDeskData.jrVersion}"/>
 	</form>
 	
 	<form action="<%=basePath%>/account/overview-main.shtml" id="flashPage" target="right_con_frm"></form>
@@ -259,7 +260,7 @@ function paytable_paywayClick(itemType , amount){
        async: false,
        success: function(data){
     	   
-    	   $('#rateAmount').html(data.data.exRateAmount);
+    	   //$('#rateAmount').html(data.data.exRateAmount);
        }
      }); 
 }
@@ -293,7 +294,8 @@ $(".J_exitKan").on('click', function() {
 });
 
 //设置交易密码
-$('.J_password').on('click',function(){	
+$('.J_password').on('click',function(){
+	 debugger;
 	//验证是否有交易密码
 	 var validate = validate_isBlank();
 	 if(validate==false){

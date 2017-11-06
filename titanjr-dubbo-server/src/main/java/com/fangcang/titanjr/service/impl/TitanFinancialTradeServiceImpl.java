@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
+import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.response.*;
 
 import net.sf.json.JSONSerializer;
@@ -223,6 +224,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					// 更新一下订单
 					titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
 					titanTransOrder.setTransid(transOrderDTO.getTransid());
+					titanTransOrder.setAmount(0L);//余额支付没有充值
 					int row = titanTransOrderDao.updateTitanTransOrderByTransId(titanTransOrder);
 					if(row<1){
 						log.error("更新本地订单失败");
@@ -372,7 +374,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 							.genSyncUserOrderId());
 				}
 				OrderOperateResponse orderOperateResponse = this
-						.addRSOrder(orderRequest, titanPaymentRequest.getJrVersion());
+						.addRSOrder(orderRequest, titanPaymentRequest);
 				//到融数下单的时候将手续费设成了0，下完单后手续费需要设置回来，方便后面更新订单的时候保存手续费的值
 				orderRequest.setReceivedfee(titanPaymentRequest.getReceivedfee());
 
@@ -517,7 +519,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	 * @author fangdaikang
 	 */
 
-	private OrderOperateResponse addRSOrder(OrderRequest orderRequest, String titanJrVersion)
+	private OrderOperateResponse addRSOrder(OrderRequest orderRequest, TitanPaymentRequest titanPaymentRequest)
 			throws Exception {
 		try {
 			OrderOperateRequest req = new OrderOperateRequest();
@@ -538,8 +540,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			req.setAdjusttype(orderRequest.getAdjusttype()); // 调整类型
 			req.setAdjustcontent(orderRequest.getAdjustcontent()); // 调整内容
 			req.setUserrelateid(orderRequest.getUserrelateid()); // 关联用户id（若有第三方则必须填写）
-			if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanJrVersion)){
+			if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanPaymentRequest.getJrVersion())){
 				req.setUnitprice(orderRequest.getReceivedfee());//设置实收的手续费
+				if(PaySourceEnum.RECHARGE.getDeskCode().equals(titanPaymentRequest.getPaySource())){
+					orderRequest.setReceivedfee("0");//充值不收手续费
+				}
 			}else{
 				orderRequest.setReceivedfee("0"); //新版收银台，充值手续费为0，在转账的时候再计算手续费
 			}
@@ -1488,11 +1493,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
                             } else if (isPayerOrg(tradeDetailRequest, transOrderDTO)) {//当前机构等于付款方
                                 transOrderDTO.setTradeType("付款");
-                                // 当前机构是付款方并且不是财务付款，则付款方不需要展示费率。
+                                // 如果不是财务付款，则付款方不需要展示费率。
 								if (payerTypeEnum != null
-										&& !PayerTypeEnum.SUPPLY_UNION.key
-												.equals(payerTypeEnum.key) && !PayerTypeEnum.SUPPLY_FINACIAL.key
-												.equals(payerTypeEnum.key)) {
+										&& !PayerTypeEnum.SUPPLY_UNION.key.equals(payerTypeEnum.key) 
+										&& !PayerTypeEnum.SUPPLY_FINACIAL.key.equals(payerTypeEnum.key)) {
 									transOrderDTO.setReceivedfee(0L);
 								}
 								//老版收银台，余额支付也不展示手续费
@@ -1636,7 +1640,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	//如果充值金额相等则返回true；
 	private boolean validateAndUpdateOrder(TitanPaymentRequest titanPaymentRequest, TransOrderDTO transOrderDTO)
 			throws Exception {
-		if (!NumberUtil.covertToCents(titanPaymentRequest.getPayAmount()).equals(transOrderDTO.getAmount().toString())) {
+		if (!NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount()).equals(transOrderDTO.getTradeamount().toString())) {
 			TitanTransOrder titanTransOrder = new TitanTransOrder();
 			titanTransOrder.setStatusid(OrderStatusEnum.ORDER_NO_EFFECT.getStatus());
 			titanTransOrder.setTransid(transOrderDTO.getTransid());

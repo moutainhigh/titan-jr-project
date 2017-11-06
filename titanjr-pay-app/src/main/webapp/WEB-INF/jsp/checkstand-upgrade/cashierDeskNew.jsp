@@ -882,7 +882,7 @@
             <div class="right fl"><span id="safe_payerphone"></span></div>
         </div>
         <div class="phone message clearfix">
-            <div class="left fl">短信验证</div>
+            <div class="left fl">短信验证码</div>
             <div class="right fl"><input type="text" placeholder="请输入验证码" onkeyup="value=value.replace(/[^\d]/g,'')"/><i class="iconfont icon-sc forgot-password-empty isShow"></i><button class="obtain-btn obtain-btn-1">重新获取</button></div>
             <!--<span class="verification-sentence isShow">验证码不能为空</span>-->
         </div>

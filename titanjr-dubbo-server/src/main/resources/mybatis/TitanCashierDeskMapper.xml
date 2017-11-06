@@ -80,6 +80,7 @@
             <if test="userId !=null"> and d.userid = #{userId}</if>
             <if test="deskId !=null"> and  d.deskid = #{deskId}</if>
             <if test="usedFor !=null"> and  d.usedfor = #{usedFor}</if>
+            <if test="isOpen !=null and isOpen != ''"> and  d.isOpen = #{isOpen}</if>
         </where>
   </select>
 

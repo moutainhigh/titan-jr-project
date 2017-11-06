@@ -412,6 +412,7 @@ public class TitanPaymentController extends BaseController {
         }
         
         //计算并设置费率
+        titanPaymentRequest.setPayAmount(titanPaymentRequest.getTradeAmount());
  		TitanRateComputeReq computeReq = new TitanRateComputeReq();
  		rateCompute(computeReq, titanPaymentRequest);
 		

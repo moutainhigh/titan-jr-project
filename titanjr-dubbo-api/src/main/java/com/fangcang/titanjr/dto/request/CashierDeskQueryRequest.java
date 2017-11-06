@@ -18,6 +18,9 @@ public class CashierDeskQueryRequest implements Serializable {
     private Long deskId;
 
     private Integer usedFor;
+    
+    //开启状态 0关闭 1开启
+    private String isOpen;
 
     public String getPayerOrgCode() {
         return payerOrgCode;
@@ -66,4 +69,12 @@ public class CashierDeskQueryRequest implements Serializable {
     public void setUsedFor(Integer usedFor) {
         this.usedFor = usedFor;
     }
+
+	public String getIsOpen() {
+		return isOpen;
+	}
+
+	public void setIsOpen(String isOpen) {
+		this.isOpen = isOpen;
+	}
 }
