@@ -8,7 +8,7 @@
         <td class="tdl">
             <c:if test="${tradeItem.tradeType == '收款'}">
                 <span class="blue undl curpo J_orderDetails" onclick="showReceiveDetail(this);"
-                  id="${tradeItem.businessordercode}">
+                  id="${tradeItem.userorderid}" >
                    <%--  ${tradeItem.userorderid}-${tradeItem.businessordercode} --%>
                     ${tradeItem.userorderid}
                 </span>
@@ -16,7 +16,7 @@
 
             <c:if test="${tradeItem.tradeType == '付款'}">
                 <span class="blue undl curpo J_orderDetails" onclick="showPayDetail(this);"
-                  id="${tradeItem.businessordercode}">
+                  id="${tradeItem.userorderid}">
                   <%--   ${tradeItem.userorderid}-${tradeItem.businessordercode} --%>
                   ${tradeItem.userorderid}
                 </span>
@@ -78,7 +78,7 @@
         $.ajax({
             dataType: 'html',
             context: document.body,
-            data: {businessordercode: code},
+            data: {userOrderId: code},
             url: '<%=basePath%>/account/order-receive-detail.shtml',
             success: function (html) {
                 var d = window.top.dialog({
@@ -105,7 +105,7 @@
         $.ajax({
             dataType: 'html',
             context: document.body,
-            data: {businessordercode: code},
+            data: {userOrderId: code},
             url: '<%=basePath%>/account/order-pay-detail.shtml',
             success: function (html) {
                 var d = window.top.dialog({

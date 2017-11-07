@@ -28,6 +28,10 @@
 		values (#{userId},#{accountCode},#{currency},#{creator},#{createTime},#{rateType},#{receivablefee},#{receivedfee},#{standerdfee},#{standardRate},#{receivableRate},#{receivedRate},#{amount},#{payType},#{usedFor},#{orderNo});
     </insert>
     
+    <select id="getRateRecordByOrderNo" parameterType="java.lang.String" resultType="com.fangcang.titanjr.entity.TitanRateRecord">
+    	select * from `t_tfs_raterecord` where orderNo=#{orderNo}
+    </select>
+    
     <delete id="deleteRateRecordByOrderNo" parameterType="java.lang.String">
     	  delete from t_tfs_raterecord where orderNo=#{orderNo}
     </delete>

@@ -56,6 +56,12 @@ public class TitanRateConfigDaoImpl extends GenericDAOMyBatisImpl implements Tit
 	}
 
 	@Override
+	public TitanRateRecord getRateRecordByOrderNo(String orderNo) {
+		
+		return (TitanRateRecord)super.selectOne("com.fangcang.titanjr.dao.TitanRateConfigDao.getRateRecordByOrderNo", orderNo);
+	}
+
+	@Override
 	public int deleteRateRecordByOrderNo(String orderNo) {
 		try {
 			return super.delete("com.fangcang.titanjr.dao.TitanRateConfigDao.deleteRateRecordByOrderNo", orderNo);
