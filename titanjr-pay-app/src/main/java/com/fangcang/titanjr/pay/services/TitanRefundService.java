@@ -122,7 +122,7 @@ public class TitanRefundService {
 			titanTransferDTO.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
 			titanTransferDTO = titanOrderService.getTitanTransferDTO(titanTransferDTO);
 			if (null == titanTransferDTO) {
-				log.error("查询账户转账金额失败");
+				log.error("退款时，查询账户转账金额失败,订单号："+transOrderDTO.getPayorderno());
 				response.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
 				return response;
 			}

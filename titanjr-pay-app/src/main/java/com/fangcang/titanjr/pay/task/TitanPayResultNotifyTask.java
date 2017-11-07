@@ -41,7 +41,7 @@ public final class TitanPayResultNotifyTask implements Runnable {
 	public void run() {
 		try {
 			log.info("begin execute taskId=" + taskId);
-
+			Thread.sleep(5*1000);//延迟5秒通知第三方业务系统，防止本地数据没有更新状态，第三方业务系统就来查询新数据
 			if (titanFinancialTradeService == null) {
 				log.error("trade service is null.");
 				return;

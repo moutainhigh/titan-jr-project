@@ -280,7 +280,7 @@ public class TitanPaymentController extends BaseController {
 	        	}else{
 	        		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
 	        		orderStatusEnum = OrderStatusEnum.TRANSFER_SUCCESS;
-	        		financialTradeService.notifyPayResult(transOrderDTO.getUserorderid());
+	        		
 	        		
 	        		//根据订单冻结方案进行冻结操作
 	        		if(CommonConstant.FREEZE_ORDER.equals(transOrderDTO.getIsEscrowedPayment())){
@@ -319,7 +319,9 @@ public class TitanPaymentController extends BaseController {
 			
 			log.info("update the status of the order:"+JsonConversionTool.toJson(orderStatusEnum)+",orderNo:"+orderNo);
 			boolean updateStatus = titanPaymentService.updateOrderStatus(transOrderDTO,orderStatusEnum);
-			
+			if(orderStatusEnum.equals(OrderStatusEnum.TRANSFER_SUCCESS)){//该代码一定要在保存完本地订单状态后再执行，通知第三方系统
+				financialTradeService.notifyPayResult(transOrderDTO.getUserorderid());
+			}
 			if(!updateStatus){//udate the status was failed 
 				log.error("冻结成功修改订单状态失败：update the status of the order were failed");
 				titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Online_Freeze_Success_Update_Order_Fail,orderStatusEnum.getStatus());
