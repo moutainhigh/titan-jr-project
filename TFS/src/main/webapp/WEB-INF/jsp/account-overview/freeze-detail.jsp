@@ -42,20 +42,24 @@
         <div class="label" style="margin-right:17px;">
             <table border="0" cellspacing="0" width="100%">
                 <colgroup>
-                    <col width="20">
-                    <col width="23%">
-                    <col width="20%">
-                    <col width="25%">
-                    <col width="15%">
-                    <col width="10%">
+                	<col width="20">
+                    <col width="12%">
+                    <col width="13%">
+                    <col width="19%">
+                    <col width="22%">
+                    <col width="16%">	
+                    <col width="6%">
+                    <col width="8%">
                     <col width="">
                 </colgroup>
                 <tr>
                     <td></td>
                     <td class="tdl">交易时间</td>
+                    <td class="tdl">交易类型</td>
                     <td class="tdl">交易单号</td>
                     <td class="tdl">交易内容</td>
-                    <td class="tdl">付款方</td>
+                    <td class="tdl">交易对方</td>
+                    <td class="tdl">交易状态</td>
                     <td class="tdr">交易金额</td>
                     <td></td>
                 </tr>
@@ -77,11 +81,13 @@
         <table border="0" cellspacing="0" width="100%">
             <colgroup>
                 <col width="20">
-                <col width="23%">
-                <col width="20%">
-                <col width="25%">
-                <col width="15%">
-                <col width="10%">
+                <col width="12%">
+                <col width="13%">
+                <col width="19%">
+                <col width="22%">
+                <col width="16%">	
+                <col width="6%">
+                <col width="8%">
                 <col width="">
             </colgroup>
             <tbody id="id_1"></tbody>

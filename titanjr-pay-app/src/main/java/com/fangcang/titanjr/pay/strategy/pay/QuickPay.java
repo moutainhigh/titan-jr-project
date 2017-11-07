@@ -35,6 +35,7 @@ public class QuickPay implements PayStrategy {
     	QuickPaymentResponse quickPaymentResponse = rsGatewayInterfaceService.quickPay(quickPaymentRequest);
     	try {
     		if(quickPaymentResponse.isSuccess() && "1".equals(titanPaymentRequest.getIsSaveHistorypay())){
+    			log.info("开始保存快捷支付常用卡历史记录");
     			titanPaymentService.saveCommonPayHistory(titanPaymentRequest);
     		}
 		} catch (Exception e) {

@@ -240,7 +240,10 @@ public class TitanPaymentService {
 				UserBindInfoRequest userBindInfoRequest = new UserBindInfoRequest();
 				userBindInfoRequest.setMerchantcode(titanPaymentRequest.getPartnerOrgCode());
 				userBindInfoRequest.setFcuserid(Long.valueOf(titanPaymentRequest.getFcUserid()));
+				log.info("保存快捷支付常用卡历史记录，查询UserBindInfo请求参数：" + Tools.gsonToString(userBindInfoRequest));
 				UserBindInfoResponse userBindInfoResponse = titanFinancialUserService.queryUserBindInfoDTO(userBindInfoRequest);
+				log.info("保存快捷支付常用卡历史记录，查询UserBindInfo返回结果：" + Tools.gsonToString(userBindInfoResponse));
+				
 				if(CollectionUtils.isNotEmpty(userBindInfoResponse.getPaginationSupport().getItemList())){
 					userBindInfoDTO = userBindInfoResponse.getPaginationSupport().getItemList().get(0);
 				}
@@ -250,6 +253,7 @@ public class TitanPaymentService {
 				}
 			}
 			
+			log.info("=============>>isSaveHistory：" + isSaveHistory);
 			if(isSaveHistory){
 				
 				CommonPayHistoryDTO commonPayHistoryDTO = new CommonPayHistoryDTO();

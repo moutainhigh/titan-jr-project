@@ -10,6 +10,9 @@
 	<tr>
 		<td></td>
 		<td class="tdl"><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${tradeItem.createtime}"/></td>
+		
+		<td class="tdl">${tradeItem.tradeType}</td>
+		
 		<td class="tdl">
 			<c:if test="${tradeItem.tradeType == '收款'}">
 				<a class="blue undl" href="<%=basePath%>/account/order-receive-detail.shtml?userOrderId=${tradeItem.userorderid}" target="_blank">${tradeItem.userorderid}</a>
@@ -35,6 +38,16 @@
 			</span>
 		</td>
 		<td class="tdl"><span class="Province" style="max-width:185px;" title="${tradeItem.transTarget}">${tradeItem.transTarget}</span></td>
+		
+		<td class="tdl">
+        	<c:if test="${tradeItem.statusid == 6 }">
+            	正常冻结
+            </c:if>
+			<c:if test="${tradeItem.statusid == 12 }">
+            	退款中
+            </c:if>
+		</td>
+		
 		<td class="tdr">
 			<c:if test="${tradeItem.tradeType == '付款' or tradeItem.tradeType == '提现'}">
                 -

@@ -177,15 +177,20 @@
      
      <select id="queryFreezeOrder" resultType="com.fangcang.titanjr.entity.TitanTransOrder"
             parameterType="com.fangcang.titanjr.entity.parameter.TitanTransOrderParam" >
-            select o.*
-                   from t_tfs_transorder o
-                    <where>
-                      <include refid="sqlWhere"/>
-                      and (
-                      		(payermerchant=#{userid} and freezeAt=1) 
-                      			or (payeemerchant = #{userid} and freezeAt=2)	
-                      	)
-                    </where>
+            select o.* from t_tfs_transorder o
+               <where>
+               	 <if test="transordertype !=null">
+			          and transordertype = #{transordertype}
+			      </if>
+                 <if test="isEscrowedPayment !=null">
+			          and isEscrowedPayment = #{isEscrowedPayment}
+			      </if>
+               </where>
+               	and (statusid = '6' or statusid = '12')
+               		and (
+	               		(payermerchant=#{userid} and freezeAt=1) 
+	               			or (payeemerchant = #{userid} and freezeAt=2)	
+               		)
      </select>
      
     <!--查询有贷款单信息的交易单-->

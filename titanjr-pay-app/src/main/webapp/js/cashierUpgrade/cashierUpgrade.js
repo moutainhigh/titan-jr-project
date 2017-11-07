@@ -179,8 +179,8 @@ function confirmRecharge(){
     			checkCode: $(".payment-verification input").val()
            },
            dataType: "json",
-           success: function (data) {debugger;
-        	   if(data.success == true){
+           success: function (data) {
+        	   if(data.success == true || data.errCode == '3081' || data.errCode == '3083'){
        				checkOrderPayStatus($("#rsOrderNo").val());
         	   }else{
         		   new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
@@ -258,7 +258,7 @@ var isFirstSend = true;
 var btn = true;
 var interval_countDown;
 //添加快捷支付--发送验证码
-function sendVierfyCode(_button){debugger;
+function sendVierfyCode(_button){
 
 	if(btn){
 	    btn = false;
@@ -331,7 +331,7 @@ function sendVierfyCode(_button){debugger;
 
 
 //添加快捷支付--储蓄卡--确认充值
-function submitQuickpay_deposit(){debugger;
+function submitQuickpay_deposit(){
 	if(quickpayDeposit.validate()){
 		$("#confirm_quickpay_deposit").addClass("disabledButton").attr("disabled", true);
     	$("#VeilWhite").removeClass("isShow");
@@ -351,7 +351,7 @@ function submitQuickpay_deposit(){debugger;
         			checkCode: $("#checkCode_deposit").val()
                },
                dataType: "json",
-               success: function (data) {debugger;
+               success: function (data) {
             	   if(data.success == true || data.errCode == '3081'){
            				checkOrderPayStatus($("#quick_rsOrder_deposit").val());
             	   }else{
@@ -365,7 +365,7 @@ function submitQuickpay_deposit(){debugger;
 	}
 }
 //添加快捷支付--信用卡--确认充值
-function submitQuickpay_credit(){debugger;
+function submitQuickpay_credit(){
 	if(quickpayCredit.validate()){
 		$("#confirm_quickpay_credit").addClass("disabledButton").attr("disabled", true);
     	$("#VeilWhite").removeClass("isShow");
@@ -385,7 +385,7 @@ function submitQuickpay_credit(){debugger;
         			checkCode: $("#checkCode_credit").val()
                },
                dataType: "json",
-               success: function (data) {debugger;
+               success: function (data) {
             	   if(data.success == true || data.errCode == '3083'){
            				checkOrderPayStatus($("#quick_rsOrder_credit").val());
             	   }else{
