@@ -116,7 +116,7 @@ $(function(){
     });
 
     // 选择常用支付方式去支付按钮
-    $(".payment>.go-payment>button").on("click",function(){
+    $(".payment>.go-payment>button").on("click",function(e){
     	
         var $liSelected =  $(".payment-mode>li");
         
@@ -145,6 +145,8 @@ $(function(){
                 	if(flag){
                 		showLoading();
                 		balancePayment();
+                	}else{
+   	          		    e.stopPropagation()
                 	}
                 	
                 }else if(itemType == "9"){ //第三方扫码支付
@@ -704,17 +706,21 @@ $(function(){
     
     //常用支付方式--重新获取验证码
     var btn2 = true;
+    var quick_count;
     $(".obtain-btn-1").click(function(){
-        console.log(1);
         if(btn2){
+        	if($(this).text() == '重新获取'){
+        		re_quickPay_history();
+        	}
             btn2 = false;
             var num = 60;
             var _this = this;
-            setInterval(function(){
+            quick_count = setInterval(function(){
                 num--;
                 if(num < 0){
                     btn2 = true;
-                    $(_this).text("获取验证码").css("color","#222");
+                    $(_this).text("重新获取").css("color","#222");
+                    clearInterval(quick_count);
                     return;
                 }
                 $(_this).text(num + "s").css("color","#bbb");

@@ -422,6 +422,9 @@
             <if test="payertype != null">
                 and payertype = #{payertype}
             </if>
+            <if test="statusId != null and statusId != ''">
+                and statusid = #{statusId}
+            </if>
         </where>
         order by createtime desc
     </select>

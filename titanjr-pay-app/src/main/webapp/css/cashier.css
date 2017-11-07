@@ -940,7 +940,10 @@ footer p>a>span{
     margin-left: 10px;
 }
 .bank-account-info .register_information .register_list .type_li .get-verification-btn:hover{
-    color: #238AF7;
+    color: #238AF7 !important;
+}
+.bank-account-info .register_information .register_list .type_li .hover-flag:hover{
+    color: #bbb !important;
 }
 .bank-account-info .register_information .register_list .type_li02{
     margin-top: 20px;

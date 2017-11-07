@@ -105,7 +105,7 @@ function initRequest() {
         data:{
             currentPage:1,
             pageSize:size,
-            tradeTypeId:"2",
+            tradeTypeId:"5",
             isEscrowedPayment:"0"
         },
         url : '<%=basePath%>/account/query-freeze-list.shtml',
@@ -182,7 +182,7 @@ $('.J_delete').on('click', function (event) {
 	partner="lksdjlsk12";
 }
      }
-     var paraList ="?tradeTypeId=" + (2);
+     var paraList ="?tradeTypeId=" + (5);
      if (partner){
          paraList = paraList + "&admissionName=" + partner;
      }
@@ -258,7 +258,7 @@ function pageNoChangeRequest(page, size) {
         context: document.body,
         data:{currentPage:page,
             pageSize:size,
-            tradeTypeId:"2",
+            tradeTypeId:"5",
             isEscrowedPayment:"0",
             admissionName: partner,
             startTimeStr: startDate,
@@ -316,7 +316,7 @@ function queryFreezeOrders() {
         context: document.body,
         data:{currentPage:1,
             pageSize:size,
-            tradeTypeId:"2",
+            tradeTypeId:"5",
             isEscrowedPayment:"0",
             admissionName: partner,
             startTimeStr: startDate,
