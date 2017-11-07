@@ -130,7 +130,7 @@ public enum TitanMsgCodeEnum {
     
     ORDER_FREEZE_PAYER(110100046,"资金冻结在付款方，拒绝该订单即可"),
     
-    ORDER_NOT_FREEZE(110100047,"订单不是冻结状态"),
+    ORDER_NOT_FREEZE(110100047,"订单不存在或者不是冻结状态"),
     
     ORDER_FREEZETYPE_NOT3(110100048,"订单的冻结状态不是3"),
     

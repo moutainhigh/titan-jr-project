@@ -111,10 +111,10 @@
                                 <td><span  style="width:160px" title="对方：${transOrder.transTarget}">对方：${transOrder.transTarget}</span></td>
                                 <td><span   style="width:160px" title="交易单号${transOrder.payorderno }支付">交易单号${transOrder.payorderno }支付</span></td>
                                 <td>
-                                	<span>+<fmt:formatNumber value="${(transOrder.titanTransferDTO.amount +transOrder.receivedfee) / 100.0 }" pattern="#,##0.00#"/></span>
+                                	<span>+<fmt:formatNumber value="${transOrder.tradeamount / 100.0 }" pattern="#,##0.00#"/></span>
 	                            </td>
 	                             <td style="width:50px">
-                                    <c:if test="${transOrder.receivedfee!=null && transOrder.receivedfee!=0.0 && transOrder.receivedfee!=0.00}">
+                                    <c:if test="${transOrder.receivedfee!=null && transOrder.receivedfee!=0.0 && transOrder.receivedfee!=0.00&&transOrder.isPayFee=='1'}">
 	                                <span>-<fmt:formatNumber value="${transOrder.receivedfee / 100.0 }" pattern="#,##0.00#"/></span>
 	                                </c:if>
 	                            </td>
@@ -146,10 +146,10 @@
                                 </td><!--房仓财务系统单号-->
 
                                   <td>
-                                    <span>-<fmt:formatNumber value="${(transOrder.refundDTO.transferAmount+transOrder.refundDTO.fee) / 100.0 }" pattern="#,##0.00#"/></span>
+                                    <span>-<fmt:formatNumber value="${transOrder.transferAmount / 100.0 }" pattern="#,##0.00#"/></span>
 	                               </td>
 	                               <td style="width:50px">
-	                               <c:if test="${transOrder.refundDTO.fee !=null && transOrder.refundDTO.fee!=0.0 &&transOrder.refundDTO.fee!=0.00}">
+	                               <c:if test="${transOrder.refundDTO.fee !=null && transOrder.refundDTO.fee!=0.0 &&transOrder.refundDTO.fee!=0.00&&transOrder.isPayFee=='1'}">
 	                                <span>+<fmt:formatNumber value="${transOrder.refundDTO.fee / 100.0 }" pattern="#,##0.00#"/></span>
 	                               </c:if>
 	                               </td>

@@ -126,8 +126,11 @@ public class JRAccountController {
 			//查询订单
 			TransOrderRequest transOrderRequest = new TransOrderRequest();
 			transOrderRequest.setPayorderno(jrAccountReceiveRequest.getPayOrderNo());
+			transOrderRequest.setStatusId(OrderStatusEnum.FREEZE_SUCCESS.getStatus());
 			TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
-			
+			if(transOrderDTO!=null){
+				log.info("收款方收款操作订单信息transOrderDTO："+Tools.gsonToString(transOrderDTO));
+			}
 			//校验信息
 			baseResponse = checkInfo(jrAccountReceiveRequest, transOrderDTO);
 			if(!baseResponse.isResult()){
@@ -200,8 +203,8 @@ public class JRAccountController {
 		BaseResponse baseResponse = new BaseResponse();
 		if (null == transOrderDTO) {
 			log.error("query trans order is failed");
-			baseResponse.putErrorResult(String.valueOf(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getCode()), 
-					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getKey());
+			baseResponse.putErrorResult(String.valueOf(TitanMsgCodeEnum.ORDER_NOT_FREEZE.getCode()), 
+					TitanMsgCodeEnum.ORDER_NOT_FREEZE.getKey());
 			return baseResponse;
 		}
 		if(jrAccountReceiveRequest.getIsBackTrack() == 1){

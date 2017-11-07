@@ -66,6 +66,7 @@ import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
 import com.fangcang.titanjr.dao.TitanAccountDao;
 import com.fangcang.titanjr.dao.TitanOrderPayreqDao;
+import com.fangcang.titanjr.dao.TitanRateConfigDao;
 import com.fangcang.titanjr.dao.TitanRefundDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
@@ -102,6 +103,7 @@ import com.fangcang.titanjr.dto.request.TransOrderUpdateRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
 import com.fangcang.titanjr.entity.TitanAccount;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
+import com.fangcang.titanjr.entity.TitanRateRecord;
 import com.fangcang.titanjr.entity.TitanTransOrder;
 import com.fangcang.titanjr.entity.TitanTransferReq;
 import com.fangcang.titanjr.entity.TitanUser;
@@ -186,6 +188,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 	@Resource
 	private TitanRefundDao titanRefundDao;
+	
+	@Resource
+	private TitanRateConfigDao rateConfigDao;
 	
 	@Resource
 	private TitanFinancialUtilService titanFinancialUtilService;
@@ -1553,6 +1558,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					.getItemList())) {
 				for (TransOrderDTO transOrderDTO : tradeDetail.getTransOrders()
 						.getItemList()) {
+					//交易详细页面是否显示手续费,原则：谁出手续费，谁的页面就显示手续费
+					if(StringUtil.isValidString(transOrderDTO.getOrderid())&&transOrderDTO.getReceivedfee()>0){
+						TitanRateRecord rateRecord = rateConfigDao.getRateRecordByOrderNo(transOrderDTO.getOrderid());
+						if(rateRecord.getUserId().equals(tradeDetailRequest.getUserid())){//手续费支付方为当前登录者
+							transOrderDTO.setIsPayFee("1");
+						}
+					}
 					// 获取充值记录
 					if (transOrderDTO.getTradeType().equals("收款")) {// 收款记录
 						TitanTransferDTO titanTransferDTO = new TitanTransferDTO();

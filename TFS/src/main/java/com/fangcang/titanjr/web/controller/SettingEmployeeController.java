@@ -290,7 +290,7 @@ public class SettingEmployeeController extends BaseController{
 				putSysError(respose.getReturnMessage());
 			}
 		} catch (Exception e) {
-			log.error("查询saas用户失败，参数employeePojo:" +ToStringBuilder.reflectionToString(employeePojo), e);
+			log.error("添加saas用户失败，参数employeePojo:" +ToStringBuilder.reflectionToString(employeePojo), e);
 			putSysError("添加员工失败，请重试");
 		}
     	

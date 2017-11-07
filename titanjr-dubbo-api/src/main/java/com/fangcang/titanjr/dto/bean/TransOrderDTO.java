@@ -72,6 +72,8 @@ public class TransOrderDTO implements java.io.Serializable {
 	private Integer transordertype;
 	
 	private String loanOrderNo;
+	// 当前登录用户是否是手续费支付方,0-不是，1-是
+	private String isPayFee;
 
 	private TitanOrderPayDTO titanOrderPayDTO;
 
@@ -494,4 +496,14 @@ public class TransOrderDTO implements java.io.Serializable {
 	public void setVersion(String version) {
 		this.version = version;
 	}
+
+	public String getIsPayFee() {
+		return isPayFee;
+	}
+
+	public void setIsPayFee(String isPayFee) {
+		this.isPayFee = isPayFee;
+	}
+	
+	
 }

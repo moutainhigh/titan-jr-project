@@ -239,14 +239,14 @@ public class TitanTradeService {
 
 		if (pe.isOpenOrg() && StringUtil.isValidString(dto.getRuserId())) {
 			if (StringUtil.isValidString(dto.getUserId())) {
-				log.error("对外商户传入的参数不合法");
+				log.error("对外商户传入的参数不合法,收款方(RuserId)和付款用户id(UserId)不能同时有值");
 				return false;
 			}
 		}
 
 		if (pe.isTTMAlL() && StringUtil.isValidString(dto.getRuserId())) {
 			if (StringUtil.isValidString(dto.getUserId())) {
-				log.error("TTMAl传入参数不合法");
+				log.error("TTMAl传入参数不合法,收款方(RuserId)和付款用户id(UserId)不能同时有值");
 				return false;
 			}
 		}

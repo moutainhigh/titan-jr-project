@@ -116,7 +116,7 @@ function confirmOrder(_orderNo){
 	return status;
 }
 
-//常用支付方式--快捷支付--发送验证码
+//常用支付方式--快捷支付--去支付
 function quickPay_history(){
 	$.ajax({
 		type : "post",
@@ -127,6 +127,30 @@ function quickPay_history(){
            top.F.loading.hide();
     	   if(data.isSuccess == true){
     		   $(".payment-verification").show();//输入验证码弹窗
+        	   $("#rsOrderNo").val(data.orderNo);
+        	   $("#safe_payerphone").text(cashierData.payerPhone);
+        	   //验证码已经发送，显示倒计时
+        	   $(".obtain-btn-1").click();
+    	   }else{
+    		   if($.trim(data.errMsg).length > 0){
+    			   $("#error_cashier_msg").val(data.errMsg);
+	       		}else{
+	       			$("#error_cashier_msg").val(data);
+	       		}
+    		   $("#error_cashier").submit();
+    	   }
+        }
+    });
+}
+//常用支付方式--快捷支付--重发验证码
+function re_quickPay_history(){
+	$.ajax({
+		type : "post",
+		url : "../payment/quickPayRecharge.action",
+        data: cashierData.getQuickPayData(),
+        dataType: "json",
+        success: function (data) {
+    	   if(data.isSuccess == true){
         	   $("#rsOrderNo").val(data.orderNo);
         	   $("#safe_payerphone").text(cashierData.payerPhone);
     	   }else{
@@ -246,10 +270,10 @@ function sendVierfyCode(_button){debugger;
 		        btn = true;
 		        isFirstSend = false;
 		        clearInterval(interval_countDown);
-		        $(_button).text("重发验证码").css("color","#ccc");
+		        $(_button).text("重发验证码").css("color","#333").removeClass('hover-flag');
 		        return;
 		    }
-		    $(_button).text(num + "s").css("color","#bbb");
+		    $(_button).text(num + "s").css("color","#bbb").addClass('hover-flag');
 		},1000)
 		
 	    var param = {};
@@ -272,7 +296,7 @@ function sendVierfyCode(_button){debugger;
 		  	        	clearInterval(interval_countDown);
 		  	        	btn = true;
 		  	        	isFirstSend = true;
-		  	        	$(_button).text("发送验证码").css("color","#ccc");
+		  	        	$(_button).text("发送验证码").css("color","#bbb").addClass('hover-flag');
 		  	        	if($.trim(data.errMsg).length > 0){
 		  	        		new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
 		 	       		}else{
@@ -463,7 +487,7 @@ function checkQuickCardNo(inputTextK){
                clearInterval(interval_countDown);
                btn = true;
                isFirstSend = true;
-               $(".get-verification-btn").text("发送验证码").css("color","#ccc");
+               $(".get-verification-btn").text("发送验证码").css("color","#bbb").addClass('hover-flag');
         	   
            },complete:function(){
            	   top.F.loading.hide();
@@ -611,10 +635,12 @@ function check_payPassword(){
 	          		  result = true;
 	          		
 	          	  }else{
+	          		 PasswordStr2.reset();
 	          		 $("#payPasswordError").text("密码错误，请重新输入");
 	          		
 	          	  }
 	           },error:function(data){
+	        	   PasswordStr2.reset();
 	        	   $("#payPasswordError").text("校验密码失败");
 	           }
 	  	 });
@@ -636,6 +662,8 @@ function set_payPassword(){
 		$("#setPayPasswordError").text("请输入密码");
 		
 	}else if($.trim(payPassword).length < 1 || $.trim(payPassword1).length < 1){
+		PasswordStr.reset();
+		PasswordStr1.reset();
 		$("#setPayPasswordError").text("两次密码输入不一致");
 		
 	}else{
@@ -662,10 +690,14 @@ function set_payPassword(){
 				         }
 				   });
 			}else{
+				PasswordStr.reset();
+				PasswordStr1.reset();
 	 			$("#setPayPasswordError").text("密码必须为6位");
 			}
 			
 		}else{
+			PasswordStr.reset();
+			PasswordStr1.reset();
 			$("#setPayPasswordError").text("两次密码输入不一致");
 			
 		}
