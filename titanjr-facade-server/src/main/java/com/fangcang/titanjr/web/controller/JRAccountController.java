@@ -128,7 +128,9 @@ public class JRAccountController {
 			transOrderRequest.setPayorderno(jrAccountReceiveRequest.getPayOrderNo());
 			transOrderRequest.setStatusId(OrderStatusEnum.FREEZE_SUCCESS.getStatus());
 			TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
-			
+			if(transOrderDTO!=null){
+				log.info("收款方收款操作订单信息transOrderDTO："+Tools.gsonToString(transOrderDTO));
+			}
 			//校验信息
 			baseResponse = checkInfo(jrAccountReceiveRequest, transOrderDTO);
 			if(!baseResponse.isResult()){
