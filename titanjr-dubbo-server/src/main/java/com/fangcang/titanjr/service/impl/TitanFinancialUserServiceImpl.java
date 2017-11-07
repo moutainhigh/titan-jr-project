@@ -1020,6 +1020,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 				}
 			}
 			
+			log.info("checkIsSetPayPassword，fcUserid=" + fcUserid + "，tfsUserId=" + tfsUserId);
 			if(StringUtil.isValidString(tfsUserId)){
 				TitanUser user = titanUserDao.selectTitanUser(Integer.parseInt(tfsUserId));
 				if(user !=null && !StringUtil.isValidString(user.getPaypassword())){

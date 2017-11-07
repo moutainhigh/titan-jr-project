@@ -568,7 +568,7 @@ function hasPayPassword(){
 		async:false,
         url: "../account/checkIsSetPayPassword.action",
         data: {//根据fcUserid查询titanUserBindInfo从而获取到tfsUserId，再查询TitanUser检查密码
-       	 fcUserid:cashierData.fcUserid,
+       	 	 fcUserid:cashierData.fcUserid,
       	 	 tfsUserId:cashierData.tfsUserid
       	 },
         dataType: "json",
