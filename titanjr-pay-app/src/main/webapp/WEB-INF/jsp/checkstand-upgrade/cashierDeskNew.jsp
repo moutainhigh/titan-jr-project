@@ -1050,7 +1050,7 @@
     }
     
     //费率显示
-    function setRate(){debugger;
+    function setRate(){
     	if('${cashDeskData.paySource }' == '2'){//财务付款需要计算显示手续费（付款方手续费），第一次进来默认选中微信支付
     		rateCompute('wx', 'commpay', 2);
     	}
@@ -1063,7 +1063,7 @@
 		if(isNaN(rateAmount)){
 			rateAmount = 0;
 		}
-		if(!balanceusable || !canAccountBalance){
+		if(balanceusable == 'false' || canAccountBalance == 'false'){
 			$('.payment-mode-prohibit').css('background-color', '#FCFCFC').css('opacity', '0.4');
 			$('.payment-mode-prohibit').attr('data-choice', false);
 		}else if(balanceAmount < tradeAmount + rateAmount){
