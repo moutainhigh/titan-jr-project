@@ -104,12 +104,13 @@ public class OrgUserController {
 		if (RegexValidator.isPhone(registerRequest.getConnectPhone())) {
 			String usedPhone = validLoginName(registerRequest.getConnectPhone());
 			organRegisterRequest.setUserloginname(usedPhone);
-		} else{
-			if (RegexValidator.isEmail(registerRequest.getEmail())){
-				String usedEmail = validLoginName(registerRequest.getEmail());
-				organRegisterRequest.setUserloginname(usedEmail);
-			}
+		} else if (RegexValidator.isEmail(registerRequest.getEmail())) {
+			String usedEmail = validLoginName(registerRequest.getEmail());
+			organRegisterRequest.setUserloginname(usedEmail);
+		} else {
+			organRegisterRequest.setUserloginname(registerRequest.getConnectPhone());
 		}
+
 		organRegisterRequest.setPassword(null);
 		organRegisterRequest.setImageid(null);
 		organRegisterRequest.setConnect(registerRequest.getConnect());
