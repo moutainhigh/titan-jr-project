@@ -87,8 +87,9 @@ public class OrgUserController {
 			log.error("参数校验失败，参数registerRequest："+Tools.gsonToString(registerRequest));
 			return registerResponse;
 		}
-		if (!RegexValidator.isPhone(registerRequest.getConnectPhone()) &&
-				!RegexValidator.isEmail(registerRequest.getEmail())){
+
+		if (!StringUtil.isValidString(registerRequest.getConnectPhone()) &&
+				!StringUtil.isValidString(registerRequest.getEmail())){
 			registerResponse.putParamError();
 			log.error("必须有一个合法的邮箱或手机号，参数registerRequest："+Tools.gsonToString(registerRequest));
 			return registerResponse;
@@ -101,14 +102,17 @@ public class OrgUserController {
 		organRegisterRequest.setOrgImageInfoList(null);
 		organRegisterRequest.setEmail(registerRequest.getEmail());
 
-		if (RegexValidator.isPhone(registerRequest.getConnectPhone())) {
+		if (StringUtil.isValidString(registerRequest.getConnectPhone()) &&
+				RegexValidator.isPhone(registerRequest.getConnectPhone())) {
 			String usedPhone = validLoginName(registerRequest.getConnectPhone());
 			organRegisterRequest.setUserloginname(usedPhone);
-		} else if (RegexValidator.isEmail(registerRequest.getEmail())) {
+		} else if (StringUtil.isValidString(registerRequest.getEmail()) &&
+				RegexValidator.isEmail(registerRequest.getEmail())) {
 			String usedEmail = validLoginName(registerRequest.getEmail());
 			organRegisterRequest.setUserloginname(usedEmail);
 		} else {
-			organRegisterRequest.setUserloginname(registerRequest.getConnectPhone());
+			String usedPhone = validLoginName(registerRequest.getConnectPhone() + registerRequest.getEmail());
+			organRegisterRequest.setUserloginname(usedPhone);
 		}
 
 		organRegisterRequest.setPassword(null);
@@ -125,6 +129,7 @@ public class OrgUserController {
 		organRegisterRequest.setUserType(1);
 
 		try {
+			log.info("开始调用服务注册，参数为：" + Tools.gsonToString(organRegisterRequest));
 			OrganRegisterResponse organRegisterResponse = titanFinancialOrganService.registerFinancialOrgan(organRegisterRequest);
 			if (organRegisterResponse.isResult()){
 				log.info("注册成功，参数registerRequest："+Tools.gsonToString(registerRequest));
