@@ -325,9 +325,14 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 	@Override
 	public UserBindInfoResponse queryUserBindInfoDTO(UserBindInfoRequest userBindInfoRequest) {
 		UserBindInfoResponse userBindInfoResponse = new UserBindInfoResponse();
-		if(StringUtil.isValidString(userBindInfoRequest.getMerchantcode())&&userBindInfoRequest.getCooptype()==null){
-			//如果传了商家编码，默认合作方为SAAS
+		//如果传了商家编码，默认合作方为SAAS
+		if(StringUtil.isValidString(userBindInfoRequest.getMerchantcode()) && userBindInfoRequest.
+				getMerchantcode().indexOf("M") > -1){
 			userBindInfoRequest.setCooptype(CoopTypeEnum.SAAS.getKey());
+		}
+		//其它情况根据参数中的合作方编码来
+		if (null != userBindInfoRequest.getCooptype()){
+			userBindInfoRequest.setCooptype(userBindInfoRequest.getCooptype());
 		}
     	
     	TitanUserBindInfoParam param = new TitanUserBindInfoParam();
