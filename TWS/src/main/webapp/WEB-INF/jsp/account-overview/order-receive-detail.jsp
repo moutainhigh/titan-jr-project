@@ -146,7 +146,7 @@
                                 </td><!--房仓财务系统单号-->
 
                                   <td>
-                                    <span>-<fmt:formatNumber value="${transOrder.transferAmount / 100.0 }" pattern="#,##0.00#"/></span>
+                                    <span>-<fmt:formatNumber value="${transOrder.tradeamount / 100.0 }" pattern="#,##0.00#"/></span>
 	                               </td>
 	                               <td style="width:50px">
 	                               <c:if test="${transOrder.refundDTO.fee !=null && transOrder.refundDTO.fee!=0.0 &&transOrder.refundDTO.fee!=0.00&&transOrder.isPayFee=='1'}">
