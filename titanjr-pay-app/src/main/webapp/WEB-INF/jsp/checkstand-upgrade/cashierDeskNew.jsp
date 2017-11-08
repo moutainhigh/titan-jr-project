@@ -270,7 +270,7 @@
                                 <i><b></b></i>
                                 <span></span>
                             </div>
-                            <a href="../edit-password.jsp" target="_blank" class="fl">忘记密码?</a>
+                            <!-- <a href="../edit-password.jsp" target="_blank" class="fl">忘记密码?</a> -->
                         </li>
                     </ul>
                     <span id="payPasswordError" class="password-prompt" style="top: 12px;right: 230px;"></span>

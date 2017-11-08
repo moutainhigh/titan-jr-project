@@ -3,7 +3,7 @@
  */
 
 //余额支付
-function balancePayment() {debugger;
+function balancePayment() {
 	isShowVeil("#Veil","show");// 显示遮罩层
 	top.F.loading.show();
 	$.ajax({//支付页面
@@ -662,13 +662,8 @@ function set_payPassword(){
 	if($.trim(payPassword).length < 1 && $.trim(payPassword1).length < 1){
 		$("#setPayPasswordError").text("请输入密码");
 		
-	}else if($.trim(payPassword).length < 1 || $.trim(payPassword1).length < 1){
-		PasswordStr.reset();
-		PasswordStr1.reset();
-		$("#setPayPasswordError").text("两次密码输入不一致");
-		
 	}else{
-		if(payPassword == payPassword1){
+		if($.trim(payPassword) == $.trim(payPassword1)){
 			
 			if($.trim(payPassword.length) == 6){
 				   $.ajax({
