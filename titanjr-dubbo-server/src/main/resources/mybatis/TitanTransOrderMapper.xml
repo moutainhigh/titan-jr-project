@@ -185,12 +185,15 @@
                  <if test="isEscrowedPayment !=null">
 			          and isEscrowedPayment = #{isEscrowedPayment}
 			      </if>
+                 <if test="statusid !=null">
+			          and statusid = #{statusid}
+			      </if>
                </where>
-               	and (statusid = '6' or statusid = '12')
                		and (
 	               		(payermerchant=#{userid} and freezeAt=1) 
 	               			or (payeemerchant = #{userid} and freezeAt=2)	
                		)
+               	 or (statusid = '12' and payermerchant = #{userid})
      </select>
      
     <!--查询有贷款单信息的交易单-->
