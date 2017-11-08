@@ -81,6 +81,12 @@ public class OrgUserController {
 	public OrgRegisterResponse orgRegister(@ApiParam(required = true, name = "registerRequest", value = "机构信息json数据")
 									  @RequestBody OrgRegisterRequest registerRequest, HttpServletRequest request) {
 		log.info("添加机构操作,参数registerRequest："+Tools.gsonToString(registerRequest));
+		if(registerRequest.getConnectPhone()==null){
+			registerRequest.setConnectPhone("");
+		}
+		if(registerRequest.getEmail()==null){
+			registerRequest.setEmail("");
+		}
 		OrgRegisterResponse registerResponse = new OrgRegisterResponse();
 		if (!GenericValidate.validate(registerRequest)){
 			registerResponse.putParamError();
