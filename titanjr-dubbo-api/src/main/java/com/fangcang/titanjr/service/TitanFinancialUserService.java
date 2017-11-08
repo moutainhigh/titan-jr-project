@@ -192,7 +192,8 @@ public interface TitanFinancialUserService {
    	 * @return true：没有设置密码，false:设置了密码
    	 * @author fangdaikang 
    	 */
-   	public boolean checkIsSetPayPassword(String fcUserid,String tfsUserId);
+   	public boolean checkIsSetPayPassword(String fcUserid,String tfsUserId,String partnerOrgCode);
+   	
    	/**
    	 * 冻结/解冻用户
    	 * @param userFreezeRequest

@@ -688,7 +688,7 @@ public class FinancialAccountController extends BaseController {
     	boolean flag = false;
         Map<String, String> map = new HashMap<String, String>();
         map.put("result", "false");
-        flag = titanFinancialUserService.checkIsSetPayPassword(fcUserid,getTfsUserId());
+        flag = titanFinancialUserService.checkIsSetPayPassword(fcUserid,getTfsUserId(),"");
         if (flag) {
             map.put(WebConstant.RESULT, WebConstant.SUCCESS);
         }

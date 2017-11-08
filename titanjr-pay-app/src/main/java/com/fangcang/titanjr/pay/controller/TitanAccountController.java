@@ -86,13 +86,19 @@ public class TitanAccountController extends BaseController {
 		log.error("检查收款账户失败:" + accountCheckResponse.getReturnMessage());
 		return toMsgJson(TitanMsgCodeEnum.CASHIER_INSTITUTIONS_NOT_EXISTS);
 	}
-
+	/**
+	 * 检查是否设置了支付密码
+	 * @param fcUserid 合作方用户id
+	 * @param tfsUserId  金融用户id
+	 * @param partnerOrgCode 合作方商家编码,ttm ,saas
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping("checkIsSetPayPassword")
-	public String checkIsSetPayPassword(String fcUserid, String tfsUserId) {
+	public String checkIsSetPayPassword(String fcUserid, String tfsUserId,String partnerOrgCode) {
 		boolean flag = false;
 		flag = titanFinancialUserService.checkIsSetPayPassword(fcUserid,
-				tfsUserId);
+				tfsUserId,partnerOrgCode);
 		if (flag) {
 			return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS);
 		}
