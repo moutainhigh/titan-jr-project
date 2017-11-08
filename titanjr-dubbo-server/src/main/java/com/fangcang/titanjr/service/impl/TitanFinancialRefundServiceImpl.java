@@ -745,7 +745,18 @@ public class TitanFinancialRefundServiceImpl implements
 			notifyRefundRequest.setRefundAmount(refundDTO.getRefundAmount());
 			notifyRefundRequest.setOrderTime(refundDTO.getOrderTime());
 			notifyRefundRequest.setRefundOrderno(refundDTO.getRefundOrderno());
-			notifyRefundRequest.setVersion(RsVersionEnum.Version_1.getKey());
+
+			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+			titanOrderPayDTO.setOrderNo(refundDTO.getOrderNo());
+			TitanOrderPayDTO orderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
+			//按照充值单中版本号设置
+			if (null != orderPayDTO){
+				notifyRefundRequest.setVersion(orderPayDTO.getVersion());
+			} else {
+				log.error("对应退款单不存在充值单，请核实退款单信息");
+				continue;
+			}
+
 			notifyRefundRequest.setSignType(SignTypeEnum.MD5.getKey());
 			
 			NotifyRefundResponse notifyRefundResponse = this.notifyGateawayRefund(notifyRefundRequest);
