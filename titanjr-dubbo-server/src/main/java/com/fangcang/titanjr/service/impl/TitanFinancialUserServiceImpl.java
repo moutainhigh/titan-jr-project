@@ -330,10 +330,6 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 				getMerchantcode().indexOf("M") > -1){
 			userBindInfoRequest.setCooptype(CoopTypeEnum.SAAS.getKey());
 		}
-		//其它情况根据参数中的合作方编码来
-		if (null != userBindInfoRequest.getCooptype()){
-			userBindInfoRequest.setCooptype(userBindInfoRequest.getCooptype());
-		}
     	
     	TitanUserBindInfoParam param = new TitanUserBindInfoParam();
     	MyBeanUtil.copyBeanProperties(param, userBindInfoRequest);
