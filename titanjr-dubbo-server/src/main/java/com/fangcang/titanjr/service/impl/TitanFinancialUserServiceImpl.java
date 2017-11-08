@@ -1014,10 +1014,20 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 
 	
 	@Override
-	public boolean checkIsSetPayPassword(String fcUserid,String tfsUserId) {
+	public boolean checkIsSetPayPassword(String fcUserid,String tfsUserId,String partnerOrgCode) {
 		try{
 			TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
-			if(StringUtil.isValidString(fcUserid)){
+			//首先根据商家编码和用户id查询合作方信息
+			if(StringUtil.isValidString(fcUserid)&&StringUtil.isValidString(partnerOrgCode)){
+				titanUserBindInfoDTO.setFcuserid(Long.parseLong(fcUserid));
+				titanUserBindInfoDTO.setMerchantcode(partnerOrgCode);
+				titanUserBindInfoDTO = getUserBindInfoByFcuserid(titanUserBindInfoDTO);
+				if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid() !=null){
+					tfsUserId = titanUserBindInfoDTO.getTfsuserid().toString();
+				}
+			}
+			//然后根据用户id，查询saas用户
+			if(!StringUtil.isValidString(tfsUserId)&&StringUtil.isValidString(fcUserid)){
 				titanUserBindInfoDTO.setFcuserid(Long.parseLong(fcUserid));
 				titanUserBindInfoDTO = getUserBindInfoByFcuserid(titanUserBindInfoDTO);
 				if(titanUserBindInfoDTO !=null && titanUserBindInfoDTO.getTfsuserid() !=null){
@@ -1032,10 +1042,15 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 					//没有设置
 				   return true;
 				}
+				if(user !=null &&StringUtil.isValidString(user.getPaypassword())){
+					return false;
+				}
+			}else{
+				throw new Exception("该用户不存在");
 			}
 			
 		}catch(Exception e){
-			log.error("检查密码失败"+e.getMessage(),e);
+			log.error("检查密码失败,"+e.getMessage()+",请求参数：fcUserid="+fcUserid+",tfsUserId:"+tfsUserId+",partnerOrgCode="+partnerOrgCode,e);
 		}
 		//设置了密码
 		return false;
