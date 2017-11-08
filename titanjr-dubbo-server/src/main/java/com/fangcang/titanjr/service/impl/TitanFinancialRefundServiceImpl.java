@@ -753,7 +753,7 @@ public class TitanFinancialRefundServiceImpl implements
 			if (null != orderPayDTO){
 				notifyRefundRequest.setVersion(orderPayDTO.getVersion());
 			} else {
-				log.error("对应退款单不存在充值单，请核实退款单信息");
+				log.error("对应退款单不存在充值单，请核实退款单信息:" + JSONSerializer.toJSON(refundDTO));
 				continue;
 			}
 
