@@ -122,8 +122,8 @@ public class TitanRefundService {
 			titanTransferDTO.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
 			titanTransferDTO = titanOrderService.getTitanTransferDTO(titanTransferDTO);
 			if (null == titanTransferDTO) {
-				log.error("退款时，查询账户转账金额失败,订单号："+transOrderDTO.getPayorderno());
-				response.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);
+				log.error("退款时，未查询到成功的转账记录,支付单号Payorderno："+transOrderDTO.getPayorderno());
+				response.putErrorResult(TitanMsgCodeEnum.UNEXPECTED_ERROR);//TODO 提示语不对
 				return response;
 			}
 			BigDecimal transferAmount = new BigDecimal(titanTransferDTO.getAmount());
