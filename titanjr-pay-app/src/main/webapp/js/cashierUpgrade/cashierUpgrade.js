@@ -487,7 +487,7 @@ function checkQuickCardNo(inputTextK){
                clearInterval(interval_countDown);
                btn = true;
                isFirstSend = true;
-               $(".get-verification-btn").text("发送验证码").css("color","#bbb").addClass('hover-flag');
+               //$(".get-verification-btn").text("获取验证码").css("color","#bbb").addClass('hover-flag');
         	   
            },complete:function(){
            	   top.F.loading.hide();
@@ -620,7 +620,11 @@ function check_payPassword(){
 	var payPassword2 = PasswordStr2.returnStr();
 	
 	if($.trim(payPassword2).length < 1){
+		 setTimeout(function () {
+ 			 PasswordStr2.clickThis()
+         }, 10)
 		$("#payPasswordError").text("请输入密码");
+		
 	}else{
 		$.ajax({
 	           type: "post",
@@ -629,7 +633,8 @@ function check_payPassword(){
 	           url: '../account/check_payPassword.action',
 	           data: {
 	          	 payPassword: payPassword2,
-	          	 fcUserid: cashierData.fcUserid
+	          	 fcUserid: cashierData.fcUserid,
+	          	 merchantCode: cashierData.partnerOrgCode
 	           },
 	           success: function (data) {
 	          	  if(data.result=="0"){
@@ -637,11 +642,17 @@ function check_payPassword(){
 	          		
 	          	  }else{
 	          		 PasswordStr2.reset();
+	          		 setTimeout(function () {
+	          			 PasswordStr2.clickThis()
+		 	         }, 10)
 	          		 $("#payPasswordError").text("密码错误，请重新输入");
 	          		
 	          	  }
 	           },error:function(data){
 	        	   PasswordStr2.reset();
+	        	   setTimeout(function () {
+	          			 PasswordStr2.clickThis()
+		 	       }, 10)
 	        	   $("#payPasswordError").text("校验密码失败");
 	           }
 	  	 });
@@ -660,6 +671,9 @@ function set_payPassword(){
 	var payPassword1 = PasswordStr1.returnStr();
 	
 	if($.trim(payPassword).length < 1 && $.trim(payPassword1).length < 1){
+		setTimeout(function () {
+             PasswordStr.clickThis()
+        }, 10)
 		$("#setPayPasswordError").text("请输入密码");
 		
 	}else{
@@ -674,6 +688,7 @@ function set_payPassword(){
 				        	 fcuserid: cashierData.fcUserid,
 				        	 payPassword: payPassword,
 				        	 tfsuserid: cashierData.tfsUserid,
+				        	 merchantCode: cashierData.partnerOrgCode
 				         },
 				         dataType: "json",
 				         success: function(data){
@@ -681,19 +696,30 @@ function set_payPassword(){
 				        		 result = true;
 				        		 
 				        	 }else{
-				        		 $("#setPayPasswordError").text(data.msg);
+				        		 PasswordStr.reset();
+				 				 PasswordStr1.reset();
+					 			 setTimeout(function () {
+					 	              PasswordStr.clickThis()
+					 	         }, 10)
+				        		 $("#setPayPasswordError").text("密码设置失败");
 				        	 }
 				         }
 				   });
 			}else{
 				PasswordStr.reset();
 				PasswordStr1.reset();
+				setTimeout(function () {
+	 	              PasswordStr.clickThis()
+	 	         }, 10)
 	 			$("#setPayPasswordError").text("密码必须为6位");
 			}
 			
 		}else{
 			PasswordStr.reset();
 			PasswordStr1.reset();
+			setTimeout(function () {
+	              PasswordStr.clickThis()
+	         }, 10)
 			$("#setPayPasswordError").text("两次密码输入不一致");
 			
 		}

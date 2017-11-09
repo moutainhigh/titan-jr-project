@@ -144,11 +144,12 @@ public class TitanAccountController extends BaseController {
 	@ResponseBody
 	@RequestMapping("/check_payPassword")
 	public String checkPayPassword(String payPassword, String fcUserid,
-			String tfsUserid) throws GlobalServiceException {
+			String tfsUserid, String merchantCode) throws GlobalServiceException {
 		String ttfsUserid = null;
 		if (StringUtil.isValidString(fcUserid)) {
 			TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
 			titanUserBindInfoDTO.setFcuserid(Long.parseLong(fcUserid));
+			titanUserBindInfoDTO.setMerchantcode(merchantCode);
 			titanUserBindInfoDTO = titanFinancialUserService
 					.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
 			if (titanUserBindInfoDTO != null

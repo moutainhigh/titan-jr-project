@@ -21,6 +21,9 @@ public class PayPasswordRequest implements Serializable{
 	
 	private String isForget;
 	
+	//第三方自己的商家编码
+	private String merchantCode;
+	
 	public String getOldPassword() {
 		return oldPassword;
 	}
@@ -59,6 +62,14 @@ public class PayPasswordRequest implements Serializable{
 
 	public void setIsForget(String isForget) {
 		this.isForget = isForget;
+	}
+
+	public String getMerchantCode() {
+		return merchantCode;
+	}
+
+	public void setMerchantCode(String merchantCode) {
+		this.merchantCode = merchantCode;
 	}
 	
 }

@@ -899,7 +899,7 @@ public class TitanPaymentController extends BaseController {
 		if("1".equals(titanPaymentRequest.getIsaccount())){//有使用余额就需要输入密码（去掉是否免密校验）
 //			boolean isAllowNoPwdPay = titanPaymentService.isAllowNoPwdPay(titanPaymentRequest.getUserid(), titanPaymentRequest.getTradeAmount());
 //	        if(!isAllowNoPwdPay){//不允许免密支付，需要输入密码
-	        	boolean isTrue = titanPaymentService.checkPwd(titanPaymentRequest.getPayPassword(), titanPaymentRequest.getFcUserid());
+	        	boolean isTrue = titanPaymentService.checkPwd(titanPaymentRequest.getPayPassword(), titanPaymentRequest.getFcUserid(), titanPaymentRequest.getPartnerOrgCode());
 	        	if(!isTrue){
 	    			resultMap.put(CommonConstant.RETURN_MSG, "付款密码不正确");
 	    			resultMap.put(CommonConstant.RESULT, CommonConstant.OPERATE_FAIL);
