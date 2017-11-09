@@ -601,12 +601,6 @@
                                         <span id="quick_validthruYear_credit" class="select-items">请选择</span>年
                                         <!-- 年份下拉框-->
                                         <div class="year-drop-down-frame isShow">
-                                            <div class="drop-down-frame">2011</div>
-                                            <div class="drop-down-frame">2012</div>
-                                            <div class="drop-down-frame">2013</div>
-                                            <div class="drop-down-frame">2014</div>
-                                            <div class="drop-down-frame">2015</div>
-                                            <div class="drop-down-frame">2016</div>
                                             <div class="drop-down-frame">2017</div>
                                             <div class="drop-down-frame">2018</div>
                                             <div class="drop-down-frame">2019</div>
