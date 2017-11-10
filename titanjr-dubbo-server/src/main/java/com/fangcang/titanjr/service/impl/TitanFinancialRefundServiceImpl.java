@@ -403,6 +403,7 @@ public class TitanFinancialRefundServiceImpl implements
 		titanRefund.setNotifyUrl(refundOrderRequest.getNotifyUrl());
 		titanRefund.setUserorderid(refundOrderRequest.getUserOrderId());
 		titanRefund.setPayOrderNo(refundOrderRequest.getPayOrderNo());
+		titanRefund.setBusinessInfo(refundOrderRequest.getBusinessInfo());
 		titanRefund.setTransferAmount(refundOrderRequest.getAmount());
 		titanRefund.setFee("0");
 		try{
