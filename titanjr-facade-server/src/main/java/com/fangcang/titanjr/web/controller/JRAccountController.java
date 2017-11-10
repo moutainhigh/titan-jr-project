@@ -125,6 +125,13 @@ public class JRAccountController {
 			if(transOrderDTO!=null){
 				log.info("收款方收款操作订单信息transOrderDTO："+Tools.gsonToString(transOrderDTO));
 			}
+			//有成功充值单存在则设置为非原路退回
+			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+			titanOrderPayDTO.setOrderNo(transOrderDTO.getOrderid());
+			TitanOrderPayDTO orderPayDTOResult = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
+			if (null != orderPayDTOResult && ReqstatusEnum.RECHARFE_SUCCESS.getStatus() == orderPayDTOResult.getReqstatus()){
+				jrAccountReceiveRequest.setIsBackTrack(0);
+			}
 			//校验信息
 			baseResponse = checkInfo(jrAccountReceiveRequest, transOrderDTO);
 			if(!baseResponse.isResult()){
@@ -170,12 +177,8 @@ public class JRAccountController {
 				if(!baseResponse.isResult()) {
 					return baseResponse;
 				}
-				//需要原路退回并且有成功充值单存在才执行
-				TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
-				titanOrderPayDTO.setOrderNo(transOrderDTO.getOrderid());
-				TitanOrderPayDTO orderPayDTOResult = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
-				if (null != orderPayDTOResult && ReqstatusEnum.RECHARFE_SUCCESS.getStatus() == orderPayDTOResult.getReqstatus()
-						&& jrAccountReceiveRequest.getIsBackTrack() != 0) {
+				//需要原路退回
+				if (jrAccountReceiveRequest.getIsBackTrack() != 0) {
 					backTrack(transOrderDTO);
 				}
 				
