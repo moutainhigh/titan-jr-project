@@ -401,6 +401,8 @@ public class TitanFinancialRefundServiceImpl implements
 		titanRefund.setCreator(refundOrderRequest.getCreator());
 		titanRefund.setStatus(RefundStatusEnum.REFUND_SUCCESS.status);
 		titanRefund.setNotifyUrl(refundOrderRequest.getNotifyUrl());
+		titanRefund.setUserorderid(refundOrderRequest.getUserOrderId());
+		titanRefund.setPayOrderNo(refundOrderRequest.getPayOrderNo());
 		titanRefund.setTransferAmount(refundOrderRequest.getAmount());
 		titanRefund.setFee("0");
 		try{
@@ -861,7 +863,7 @@ public class TitanFinancialRefundServiceImpl implements
 				log.error("回调异常，TTMALL返回失败,参数[NotifyBean]："+JSONSerializer.toJSON(bean)+",返回信息："+response);
 				throw new Exception("回调异常，TTMALL返回失败");
 			}
-			log.info("回调TTMALL成功,参数[NotifyBean]："+JSONSerializer.toJSON(bean));
+			log.info("回调TTMALL成功,参数[NotifyBean]："+JSONSerializer.toJSON(bean)+",返回信息："+response);
 			
 		}catch(Exception e){
 			log.error("退款回调失败",e);
