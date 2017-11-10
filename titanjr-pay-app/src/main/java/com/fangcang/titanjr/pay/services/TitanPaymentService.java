@@ -120,13 +120,14 @@ public class TitanPaymentService {
 			return false;
 		}
 	 
-	 public boolean checkPwd(String pwd, String fcUserId){
+	 public boolean checkPwd(String pwd, String fcUserId, String partenerOrgCode){
 		 if(!StringUtil.isValidString(pwd) || !StringUtil.isValidString(fcUserId)){
 			 return false;
 		 }
 		 
 		 TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
 		 titanUserBindInfoDTO.setFcuserid(Long.parseLong(fcUserId));
+		 titanUserBindInfoDTO.setMerchantcode(partenerOrgCode);
 		 titanUserBindInfoDTO = titanFinancialUserService.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
 		 
 		 if(null == titanUserBindInfoDTO || null ==titanUserBindInfoDTO.getTfsuserid()){

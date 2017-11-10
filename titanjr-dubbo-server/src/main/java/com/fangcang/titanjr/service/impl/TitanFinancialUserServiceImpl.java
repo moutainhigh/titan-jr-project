@@ -816,6 +816,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 				}else{
 					TitanUserBindInfoDTO titanUserBindInfoDTO = new TitanUserBindInfoDTO();
 					titanUserBindInfoDTO.setFcuserid(Long.parseLong(payPasswordRequest.getFcuserid()));
+					titanUserBindInfoDTO.setMerchantcode(payPasswordRequest.getMerchantCode());
 					
 					titanUserBindInfoDTO = this.getUserBindInfoByFcuserid(titanUserBindInfoDTO);
 					if(titanUserBindInfoDTO !=null){

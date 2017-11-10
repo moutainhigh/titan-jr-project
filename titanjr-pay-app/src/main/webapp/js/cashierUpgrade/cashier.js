@@ -145,8 +145,6 @@ $(function(){
                 	if(flag){
                 		showLoading();
                 		balancePayment();
-                	}else{
-   	          		    e.stopPropagation()
                 	}
                 	
                 }else if(itemType == "9"){ //第三方扫码支付
@@ -719,11 +717,11 @@ $(function(){
                 num--;
                 if(num < 0){
                     btn2 = true;
-                    $(_this).text("重新获取").css("color","#222");
+                    $(_this).text("重新获取").css("color","#333").removeClass('hover-flag2');
                     clearInterval(quick_count);
                     return;
                 }
-                $(_this).text(num + "s").css("color","#bbb");
+                $(_this).text(num + "s").css("color","#bbb").addClass('hover-flag2');
             },1000)
         }else{
             return;
@@ -866,7 +864,8 @@ function buildCashierData(data){
 		       	 bankInfo:cashierData.bankInfo,
 		         linePayType:cashierData.linePayType,
 		         isaccount:cashierData.isaccount(),
-		         payPassword:payPassword
+		         payPassword:payPassword,
+		         partnerOrgCode:cashierData.partnerOrgCode
 		};
 		return data;
 	};

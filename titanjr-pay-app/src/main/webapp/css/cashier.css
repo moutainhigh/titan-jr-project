@@ -1387,9 +1387,13 @@ footer p>a>span{
     line-height: 38px;
     font-size: 13px;
     cursor: pointer;
+    color: #333;
 }
 .payment-verification>.payment-verification-content>.message>.right>.obtain-btn:hover{
-    color: #238AF7;
+    color: #238AF7 !important;
+}
+.payment-verification>.payment-verification-content>.message>.right>.hover-flag2:hover{
+    color: #bbb !important;
 }
 .payment-verification>.payment-verification-content>.verification-code{
     margin-top: 20px;
