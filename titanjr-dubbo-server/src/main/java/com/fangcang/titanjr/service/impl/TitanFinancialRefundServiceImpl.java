@@ -124,6 +124,7 @@ public class TitanFinancialRefundServiceImpl implements
 	@Override
 	public TitanJrRefundResponse refund(TitanJrRefundRequest refundRequest) {
 		TitanJrRefundResponse response = new TitanJrRefundResponse();
+		log.info("发起退款，请求参数refundRequest："+Tools.gsonToString(refundRequest));
 		//标识是否需要再次冻结商户资金
 		boolean isFreeze = false;
 		try {
@@ -399,6 +400,7 @@ public class TitanFinancialRefundServiceImpl implements
 		titanRefund.setOrderTime(DateUtil.sdf5.format(new Date()));
 		titanRefund.setCreator(refundOrderRequest.getCreator());
 		titanRefund.setStatus(RefundStatusEnum.REFUND_SUCCESS.status);
+		titanRefund.setNotifyUrl(refundOrderRequest.getNotifyUrl());
 		titanRefund.setTransferAmount(refundOrderRequest.getAmount());
 		titanRefund.setFee("0");
 		try{
@@ -844,9 +846,11 @@ public class TitanFinancialRefundServiceImpl implements
 	}
 	
 	private void notifyTTMall(NotifyBean bean){
-		HttpPost httpPost = new HttpPost(bean.getNotifyUrl());
-		String response = "";
+		
 		try{
+			HttpPost httpPost = new HttpPost(bean.getNotifyUrl());
+			String response = "";
+			
 			response = TitanjrHttpTools.confirmRefund(bean, httpPost);
 			if(!StringUtil.isValidString(response)){
 				log.error("回调退款单失败,参数[NotifyBean]："+JSONSerializer.toJSON(bean));
