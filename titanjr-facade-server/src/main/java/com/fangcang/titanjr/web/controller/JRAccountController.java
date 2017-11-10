@@ -14,6 +14,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import com.fangcang.titanjr.common.enums.*;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -25,13 +26,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fangcang.titanjr.common.bean.ValidateResponse;
-import com.fangcang.titanjr.common.enums.BusinessLog;
-import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
-import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
-import com.fangcang.titanjr.common.enums.OrderKindEnum;
-import com.fangcang.titanjr.common.enums.OrderStatusEnum;
-import com.fangcang.titanjr.common.enums.PayerTypeEnum;
-import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.GenericValidate;
@@ -176,8 +170,12 @@ public class JRAccountController {
 				if(!baseResponse.isResult()) {
 					return baseResponse;
 				}
-				//需要原路退回才执行
-				if (jrAccountReceiveRequest.getIsBackTrack() != 0) {
+				//需要原路退回并且有成功充值单存在才执行
+				TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+				titanOrderPayDTO.setOrderNo(transOrderDTO.getOrderid());
+				TitanOrderPayDTO orderPayDTOResult = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
+				if (null != orderPayDTOResult && ReqstatusEnum.RECHARFE_SUCCESS.getStatus() == orderPayDTOResult.getReqstatus()
+						&& jrAccountReceiveRequest.getIsBackTrack() != 0) {
 					backTrack(transOrderDTO);
 				}
 				
