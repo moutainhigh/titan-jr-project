@@ -221,7 +221,7 @@
         </ul>
         <div class="payment">
             <ul class="more clearfix">
-                <li><a href="javascript:void(0)" class="more-payment" style="display: none;">更多支付方式</a></li>
+                <li id="more-payment" style="display: none;"><a href="javascript:void(0)" class="more-payment">更多支付方式</a></li>
                 <li><a href="javascript:void(0)" class="quick-bank">添加快捷/银行卡支付</a></li>
             </ul>
             <!-- 密码-->
@@ -1038,7 +1038,7 @@
     	if('${cashDeskData.commonPayHistoryList }' != null){
     		var count = '${cashDeskData.commonPayHistoryList.size() }'
     		if(count > 1){
-    			$(".more-payment").show();
+    			$("#more-payment").show();
     		}
     	}
     }

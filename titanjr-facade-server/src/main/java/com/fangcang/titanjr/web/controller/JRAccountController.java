@@ -125,13 +125,7 @@ public class JRAccountController {
 			if(transOrderDTO!=null){
 				log.info("收款方收款操作订单信息transOrderDTO："+Tools.gsonToString(transOrderDTO));
 			}
-			//有成功充值单存在则设置为非原路退回
-			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
-			titanOrderPayDTO.setOrderNo(transOrderDTO.getOrderid());
-			TitanOrderPayDTO orderPayDTOResult = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
-			if (null != orderPayDTOResult && ReqstatusEnum.RECHARFE_SUCCESS.getStatus() == orderPayDTOResult.getReqstatus()){
-				jrAccountReceiveRequest.setIsBackTrack(0);
-			}
+			
 			//校验信息
 			baseResponse = checkInfo(jrAccountReceiveRequest, transOrderDTO);
 			if(!baseResponse.isResult()){
@@ -208,12 +202,21 @@ public class JRAccountController {
 					TitanMsgCodeEnum.ORDER_NOT_FREEZE.getKey());
 			return baseResponse;
 		}
-		if(jrAccountReceiveRequest.getIsBackTrack() == 1){
-			if(transOrderDTO.getAmount() == null || transOrderDTO.getAmount() == 0){//当amount为0时表示是余额付款
+		
+		//退单的时候，如果没有成功充值单表示是余额支付，需要设置为非原路退回
+		if(AccReceOperTypeEnum.UNRECEIVE_UNFREEZE.getKey() == jrAccountReceiveRequest.getOperateType() 
+				&& 1 == jrAccountReceiveRequest.getIsBackTrack()){
+			/*if(transOrderDTO.getAmount() == null || transOrderDTO.getAmount() == 0){//当amount为0时表示是余额付款
 				log.error("payType is blance, can not backTrack");
 				baseResponse.putErrorResult(String.valueOf(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getCode()), 
 						TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getKey());
 				return baseResponse;
+			}*/
+			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+			titanOrderPayDTO.setOrderNo(transOrderDTO.getOrderid());
+			TitanOrderPayDTO orderPayDTOResult = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
+			if (null == orderPayDTOResult){
+				jrAccountReceiveRequest.setIsBackTrack(0);
 			}
 		}
 		if (!OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())){

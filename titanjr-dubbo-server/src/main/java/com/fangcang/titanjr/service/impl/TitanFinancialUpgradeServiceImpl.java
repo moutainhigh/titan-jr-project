@@ -87,14 +87,16 @@ public class TitanFinancialUpgradeServiceImpl implements TitanFinancialUpgradeSe
 				
 				TitanUser titanUser = checkUserInfo(titanOrderRequest.getUserId(),titanOrderRequest.getPartnerOrgCode());
 				if(titanUser == null){
-					log.error("付款方用户不存在，根据userId查询金融用户失败，参数titanOrderRequest："+Tools.gsonToString(titanOrderRequest));
+					response.setCanAccountBalance(false);
+					/*log.error("付款方用户不存在，根据userId查询金融用户失败，参数titanOrderRequest："+Tools.gsonToString(titanOrderRequest));
 					response.putErrorResult("付款方用户不存在");
-					return response;
+					return response;*/
+				}else{
+					//余额支付权限
+					CheckPermissionResponse permissionResponse = isCanAccountBalance(
+							String.valueOf(titanUser.getTfsuserid()));
+					response.setCanAccountBalance(permissionResponse.isPermission());
 				}
-				//余额支付权限
-				CheckPermissionResponse permissionResponse = isCanAccountBalance(
-						String.valueOf(titanUser.getTfsuserid()));
-				response.setCanAccountBalance(permissionResponse.isPermission());
 				
 			}else{
 				response.setCanAccountBalance(false);

@@ -1131,7 +1131,9 @@ footer p>a>span{
     border-color: #666;
 }
 .enterprise .enterprise-content .enterprise-form>.right>table{
-    width: 462px;
+    /* width: 462px; */
+    min-width: 462px;
+    max-width: 600px !important;
     text-align: left;
     border: 1px solid #f1f2f4;
 }
@@ -1142,6 +1144,14 @@ footer p>a>span{
 .enterprise .enterprise-content .enterprise-form>.right>table th,
 .enterprise .enterprise-content .enterprise-form>.right>table td{
     padding-left: 20px;
+    min-width: 170px;
+    max-width: 250px; 
+    word-break: break-all;
+    white-space: pre-wrap;
+}
+.enterprise .enterprise-content .enterprise-form>.right>table td p{
+    line-height: 20px;
+    padding-right: 10px;
 }
 .enterprise .enterprise-content .enterprise-form>.right>table>thead>tr{
     background-color: #f1f2f4;
@@ -1296,10 +1306,12 @@ footer p>a>span{
 }
 .wx-payment>.wx-payment-content>.icon>.right{
     text-align: left;
+    padding: 4px 0;
+    box-sizing: border-box;
 }
 .wx-payment>.wx-payment-content>.icon>.right>p{
     font-size: 12px;
-    line-height: 20px;
+    line-height: 16px;
     color: #fff;
 }
 .wx-payment>.wx-payment-content>.count-down{
