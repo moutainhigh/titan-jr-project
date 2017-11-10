@@ -124,7 +124,7 @@ public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade 
             infoResponse.setTitanUserName(userInfoResponse.getUserInfoDTOList().get(0).getUserName());
         } else{
             infoResponse.putErrorResult("NO_VALID_RESULT","查询正确的用户信息失败");
-            log.error("根据合作方信息查金融用户信息,未找到用户，请求参数organInfoQueryRequest:"+Tools.gsonToString(organInfoQueryRequest));
+            log.error("根据合作方信息查金融用户信息,未找到用户，请求参数organInfoQueryRequest:"+Tools.gsonToString(organInfoQueryRequest)+",查询响应结果："+Tools.gsonToString(userInfoResponse));
             return infoResponse;
         }
         return infoResponse;
@@ -147,7 +147,7 @@ public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade 
             infoResponse.setTitanOrgName(financialOrganResponse.getFinancialOrganDTO().getOrgName());
         } else {
             infoResponse.putErrorResult("BIND_INFO_INVALID","机构绑定信息不合法");
-            log.error("未查询到绑定机构，查询参数merchantcode："+merchantcode+",regChannel:"+regChannel+",原因："+financialOrganResponse.getReturnMessage());
+            log.error("未查询到绑定机构，查询参数merchantcode："+merchantcode+",regChannel:"+regChannel+",查询响应结果："+Tools.gsonToString(financialOrganResponse));
             return infoResponse;
         }
         return  infoResponse;

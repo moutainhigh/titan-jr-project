@@ -154,7 +154,7 @@ public class OrgUserController {
 			}
 		} catch (MessageServiceException e) {
 			registerResponse.putErrorResult(e.getCode(), e.getMessage());
-			log.error("注册失败，返回消息:"+e.getMessage()+",参数registerRequest："+Tools.gsonToString(registerRequest), e);
+			log.error("注册失败，返回错误消息:"+e.getMessage()+",参数registerRequest："+Tools.gsonToString(registerRequest), e);
 		} catch (Exception e) {
 			registerResponse.putSysError();
 			log.error("" , e);
