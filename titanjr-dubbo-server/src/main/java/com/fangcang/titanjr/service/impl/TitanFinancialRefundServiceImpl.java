@@ -402,8 +402,8 @@ public class TitanFinancialRefundServiceImpl implements
 		titanRefund.setTransferAmount(refundOrderRequest.getAmount());
 		titanRefund.setFee("0");
 		try{
-			this.threadNotify(refundOrderRequest.getOrderId(), RefundStatusEnum.REFUND_SUCCESS);
 			titanRefundDao.insert(titanRefund);
+			this.threadNotify(refundOrderRequest.getOrderId(), RefundStatusEnum.REFUND_SUCCESS);
 		}catch(Exception e){
 			log.error("保存退款单下单失败"+e.getMessage()+":data:"+JSONSerializer.toJSON(titanRefund));
 			titanFinancialUtilService.saveOrderException(refundOrderRequest.getOrderId(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Save_Order_Fail, JSONSerializer.toJSON(titanRefund).toString());
