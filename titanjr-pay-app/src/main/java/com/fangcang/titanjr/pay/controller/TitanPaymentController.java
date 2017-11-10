@@ -480,7 +480,6 @@ public class TitanPaymentController extends BaseController {
 			return toMsgJson(TitanMsgCodeEnum.TRANSFER_FAIL);
 		}
 		
-		financialTradeService.notifyPayResult(localOrderResp.getUserOrderId());
 		orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
 		if(CommonConstant.FREEZE_ORDER.equals(transOrder.getIsEscrowedPayment())){
 			int freezeSuccess = titanPaymentService.freezeAccountBalance(transferRequest, transOrder);
@@ -512,6 +511,8 @@ public class TitanPaymentController extends BaseController {
 			log.error("冻结余额后更新订单失败");
 			titanFinancialUtilService.saveOrderException(transOrder.getPayorderno(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Balance_Pay_Update_TransOrder_Fail, JSONSerializer.toJSON(transOrder).toString());
 		}
+		financialTradeService.notifyPayResult(localOrderResp.getUserOrderId());
+		
 		return toMsgJson(TitanMsgCodeEnum.TITAN_SUCCESS,transOrder.getOrderid());
 	}
 	

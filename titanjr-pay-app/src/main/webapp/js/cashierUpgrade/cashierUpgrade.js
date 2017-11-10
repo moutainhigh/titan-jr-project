@@ -761,8 +761,8 @@ function rateCompute(payType, type, index){
 				       	 $("#commPayRateAmount_" + payType + "_" + index).text(exRateAmount);
 				       	 $("#amount_" + payType + "_" + index).text(_amount);
 		        	 }else{
-		        		 $("#addPayRateAmount_" + payType + "_" + index).text(exRateAmount);
-				       	 $("#addPayAmount_" + payType + "_" + index).text(_amount);
+		        		 //$("#addPayRateAmount_" + payType + "_" + index).text(exRateAmount);
+				       	 //$("#addPayAmount_" + payType + "_" + index).text(_amount);
 		        	 }
 		        }
 		});

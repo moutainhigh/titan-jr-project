@@ -458,12 +458,12 @@
                     </form>
                 </div>
                 <div class="right fr">
-                	<c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
+                	<%-- <c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
 	                	<div style="background-color: #E6E6FA; padding: 10px; margin-bottom: 10px; border: 2px solid #E3E3E3;">
 	                		<span>手续费 ￥<span id="addPayRateAmount_11_deposit">0.00</span></span>&nbsp;&nbsp;&nbsp;
 	                		<span class="money"><s>总金额 ￥</s><span id="addPayAmount_11_deposit">${cashDeskData.amount }</span></span>
 	                	</div>
-                	</c:if>
+                	</c:if> --%>
                     <div class="card">
                         <div class="title">
                         <span>
@@ -670,12 +670,12 @@
                     </form>
                 </div>
                 <div class="right fr">
-                	<c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
+                	<%-- <c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
 	                	<div style="background-color: #E6E6FA; padding: 10px; margin-bottom: 10px; border: 2px solid #E3E3E3;">
 	                		<span>手续费 ￥<span id="addPayRateAmount_11_credit">0.00</span></span>&nbsp;&nbsp;&nbsp;
 	                		<span class="money"><s>总金额 ￥</s><span id="addPayAmount_11_credit">${cashDeskData.amount }</span></span>
 	                	</div>
-                	</c:if>
+                	</c:if> --%>
                     <div class="card">
                         <div class="title">
                         <span>
@@ -745,12 +745,12 @@
                         <use id="bankImg_personal" xlink:href=""></use>
                     </svg>
                     <span id="bankName_personal"></span><a href="javascript:void (0);" class="change-bank">更换付款银行</a>
-                    <c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
+                    <%-- <c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
 	                    <span style="background-color: #E6E6FA; padding: 10px; margin-left:50px; border: 2px solid #E3E3E3;">
 	                		<span>手续费 ￥<span id="addPayRateAmount_2_personal">0.00</span></span>&nbsp;&nbsp;&nbsp;
 	                		<span class="money"><s>总金额 ￥</s><span id="addPayAmount_2_personal">${cashDeskData.amount }</span></span>
 	                	</span>
-                	</c:if>
+                	</c:if> --%>
                 </div>
             </div>
             <div class="enterprise-form clearfix" style="margin-bottom: 20px">
@@ -798,12 +798,12 @@
                         <use id="bankImg_enterprise" xlink:href=""></use>
                     </svg>
                     <span id="bankName_enterprise"></span><a href="javascript:void (0);" class="change-bank">更换付款银行</a>
-                    <c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
+                    <%-- <c:if test="${cashDeskData.paySource =='2' }"><!-- 财务付款给供应商才显示手续费 -->
 	                    <span style="background-color: #E6E6FA; padding: 10px; margin-left:50px; border: 2px solid #E3E3E3;">
 	                		<span>手续费 ￥<span id="addPayRateAmount_1_enterprise">0.00</span></span>&nbsp;&nbsp;&nbsp;
 	                		<span class="money"><s>总金额 ￥</s><span id="addPayAmount_1_enterprise">${cashDeskData.amount }</span></span>
 	                	</span>
-                	</c:if>
+                	</c:if> --%>
                 </div>
             </div>
             <div id="enterpriseCustomerNoDev" class="enterprise-form clearfix isShow" style="margin-bottom: 20px">
