@@ -267,6 +267,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
         	
             PaginationSupport<FinancialOrganDTO> paginationSupport = new PaginationSupport<FinancialOrganDTO>();
             paginationSupport =  titanOrgDao.queryBaseTitanOrgForPage(request, paginationSupport);
+            LOGGER.info("queryBaseFinancialOrgan查询机构,参数:"+Tools.gsonToString(request)+"，查询结果："+Tools.gsonToString(paginationSupport.getItemList()));
             if(paginationSupport.getItemList()!=null&&paginationSupport.getItemList().size()==1){
             	OrgSubDTO orgSubDTO = getOrgSubDTO(paginationSupport.getItemList().get(0).getOrgCode());
             	response.setOrgSubDTO(orgSubDTO);
