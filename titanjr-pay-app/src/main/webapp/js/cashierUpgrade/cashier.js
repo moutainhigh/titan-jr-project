@@ -578,7 +578,12 @@ $(function(){
     });
     function limitShow(tableId){
     	$("table[name='bankLimit']").addClass("isShow");
-    	$("#" + tableId).removeClass("isShow");
+    	if($("#" + tableId).length > 0){
+        	$("#" + tableId).removeClass("isShow");
+        	$("#limitTitle").removeClass("isShow");
+    	}else{
+    		$("#limitTitle").addClass("isShow");
+    	}
     }
     
     //个人网银跳转按钮

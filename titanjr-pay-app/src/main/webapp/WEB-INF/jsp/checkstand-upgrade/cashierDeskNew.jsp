@@ -294,10 +294,10 @@
 	<!-- tab切换 -->
     <div class="title" style="position: relative;">
         <ul class="clearfix">
-            <!-- <li class="title-color" data-mode="quick">快捷支付</li> -->
+            <li class="title-color" data-mode="quick">快捷支付</li>
             <c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem" varStatus="item_status">
             	<c:if test="${deskItem.itemType == 2 }">
-            		<li class="title-color" data-mode="personal">个人网银</li>
+            		<li data-mode="personal">个人网银</li>
             	</c:if>
             	<c:if test="${deskItem.itemType == 1 }">
             		<li data-mode="enterprise">企业网银</li>
@@ -307,7 +307,7 @@
         <i class="iconfont icon-sc close"></i>
     </div>
     <!-- 快捷支付-->
-    <div class="shortcut-payment isShow">
+    <div class="shortcut-payment">
         <div class="bank-account clearfix">
             <div class="enlarge isShow"></div>
             <label class="fl">银行卡号</label>
@@ -716,7 +716,7 @@
     <input id="bankInfo_wy_hid" type="hidden" />
     <input id="linePayType_wy_hid" type="hidden" />
     <!-- 个人网银-->
-    <div class="personal personal-bank">
+    <div class="personal personal-bank isShow">
         <ul class="clearfix">
         	<c:forEach items="${cashDeskData.cashierDeskDTO.cashierDeskItemDTOList }" var="deskItem" varStatus="item_status">
         		<c:if test="${deskItem.itemType == 2 }">
@@ -761,7 +761,7 @@
                 </div>
             </div>
             <div class="enterprise-form clearfix" style="margin-bottom: 30px">
-                <div class="left fl" style="line-height: 34px">付款限额</div>
+                <div id="limitTitle" class="left fl isShow" style="line-height: 34px">付款限额</div>
                 <div class="right fl">
                     <%@include file="limit.jsp"%>
                     <button>跳转至网银并支付</button>
