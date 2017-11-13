@@ -4,7 +4,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>金融设置-收银台设置</title>
+	<title>泰坦金融设置-收银台设置</title>
 	<jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/static-js.jsp"></jsp:include>
@@ -12,7 +12,7 @@
 	<div id="scroll" >
 		<div class="main_sell clearfix user_title">
 			<div class="p_r30 p_l10">
-				<span>泰坦金服&nbsp;-&nbsp;泰坦金服设置&nbsp;-&nbsp;收银台设置</span>
+				<span>泰坦金融&nbsp;-&nbsp;泰坦金融设置&nbsp;-&nbsp;收银台设置</span>
 			</div>
 		</div>
 	</div>
