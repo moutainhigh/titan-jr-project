@@ -231,7 +231,7 @@ public class JRAccountController {
 					TitanMsgCodeEnum.ORDER_FREEZETYPE_NOT3.getKey());
 			return baseResponse;
 		}
-		if(jrAccountReceiveRequest.getTradeAmount() != transOrderDTO.getTradeamount()){
+		if(!jrAccountReceiveRequest.getTradeAmount().equals(transOrderDTO.getTradeamount())){
 			log.error("tradeAmount is error");
 			baseResponse.putErrorResult(String.valueOf(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getCode()), 
 					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getKey());
