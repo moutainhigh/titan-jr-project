@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
+import com.fangcang.titanjr.common.enums.TitanjrVersionEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.MD5;
@@ -44,6 +45,7 @@ import com.fangcang.titanjr.dto.response.CashierDeskResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
 import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
 import com.fangcang.titanjr.enums.PayTypeEnum;
+import com.fangcang.titanjr.enums.RsVersionEnum;
 import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.req.CreateTitanRateRecordReq;
 import com.fangcang.titanjr.pay.req.MobilePayOrderReq;
@@ -230,6 +232,8 @@ public class WeChatController {
 			titanPaymentRequest
 					.setUserid(TitanConstantDefine.EXTERNAL_PAYMENT_ACCOUNT);
 			titanPaymentRequest.setTradeAmount(req.getAmount());
+			titanPaymentRequest.setJrVersion(TitanjrVersionEnum.VERSION_1.getKey());
+			titanPaymentRequest.setRsVersion(RsVersionEnum.Version_1.key);
 
 			// 查询收款人对于的机构信息
 			FinancialOrganDTO financialOrganDTO = financialTradeService
