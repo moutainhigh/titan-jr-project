@@ -740,18 +740,13 @@ function rateCompute(payType, type, index){
 	var paySource = cashierData.paySource;
 	var userId = cashierData.userid;
 	var tradeAmount = cashierData.tradeAmount;
+	var deskId = cashierData.deskId;
 	
 	if(paySource == '2'){//paySource=2 表示财务付款
 		
-		var relPayType = payType;
-		
-		if(payType == 'wx' || payType == 'alipay'){
-			relPayType = 9;
-		}
-		
 		$.ajax({
 			   	type: "get",
-		        url: "../rate/rateCompute.action?userId="+userId+"&amount="+tradeAmount+"&payType="+relPayType+"&date=" + new Date().getTime(),
+		        url: "../rate/rateCompute.action?userId="+userId+"&amount="+tradeAmount+"&deskId="+deskId+"&date=" + new Date().getTime(),
 		        dataType: "json",
 		        async: false,
 		        success: function(data){

@@ -1,12 +1,10 @@
 package com.fangcang.titanjr.pay.req;
 
-import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
-
 public class TitanRateComputeReq 
 {
 	private String userId;
 	private String amount;
-	private CashierItemTypeEnum itemTypeEnum;
+	private String deskId;
 	
 	public String getUserId() {
 		return userId;
@@ -20,10 +18,10 @@ public class TitanRateComputeReq
 	public void setAmount(String amount) {
 		this.amount = amount;
 	}
-	public CashierItemTypeEnum getItemTypeEnum() {
-		return itemTypeEnum;
+	public String getDeskId() {
+		return deskId;
 	}
-	public void setItemTypeEnum(CashierItemTypeEnum itemTypeEnum) {
-		this.itemTypeEnum = itemTypeEnum;
+	public void setDeskId(String deskId) {
+		this.deskId = deskId;
 	}
 }

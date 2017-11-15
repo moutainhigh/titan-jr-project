@@ -13,37 +13,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fangcang.titanjr.common.enums.BankCardEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
-import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.exception.MessageServiceException;
-import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.Tools;
-import com.fangcang.titanjr.dto.bean.BankCardInfoDTO;
 import com.fangcang.titanjr.dto.bean.CityInfoDTO;
 import com.fangcang.titanjr.dto.bean.FinancialOrganDTO;
 import com.fangcang.titanjr.dto.bean.OrgSubDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
-import com.fangcang.titanjr.dto.request.BankCardBindInfoRequest;
-import com.fangcang.titanjr.dto.request.CusBankCardBindRequest;
-import com.fangcang.titanjr.dto.request.DeleteBindBankRequest;
 import com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest;
 import com.fangcang.titanjr.dto.request.OrgSubCardRequest;
 import com.fangcang.titanjr.dto.response.AccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
 import com.fangcang.titanjr.dto.response.BankCardStatusResponse;
 import com.fangcang.titanjr.dto.response.CityInfosResponse;
-import com.fangcang.titanjr.dto.response.CusBankCardBindResponse;
-import com.fangcang.titanjr.dto.response.DeleteBindBankResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.OrgSubCardResponse;
-import com.fangcang.titanjr.dto.response.QueryBankCardBindInfoResponse;
 import com.fangcang.titanjr.pay.req.BindCardRequest;
 import com.fangcang.titanjr.pay.req.CreateTitanRateRecordReq;
 import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
@@ -243,7 +233,6 @@ public class TitanWithdrawController extends BaseController {
 		// 开始计算并设置费率
 		TitanRateComputeReq computeReq = new TitanRateComputeReq();
 		computeReq.setAmount(withDrawRequest.getAmount());
-		computeReq.setItemTypeEnum(null);
 		computeReq.setUserId(withDrawRequest.getUserId());
 
 		TitanRateComputeRsp computeRsp = titanRateService

@@ -27,7 +27,7 @@
 		 }
 		 $.ajax({
 	   	 type: "get",
-	        url: "../rate/rateCompute.action?userId="+userId+"&amount="+payAmount+"&payType="+itemType+"&date=" + new Date().getTime(),
+	        url: "../rate/rateCompute.action?userId="+userId+"&amount="+payAmount+"&deskId="+cashierData.deskId+"&date=" + new Date().getTime(),
 	        dataType: "json",
 	        async: false,
 	        success: function(data){

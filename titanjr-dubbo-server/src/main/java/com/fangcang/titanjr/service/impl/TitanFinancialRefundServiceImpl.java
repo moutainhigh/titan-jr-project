@@ -12,7 +12,6 @@ import javax.annotation.Resource;
 import com.fangcang.titanjr.dto.bean.*;
 import net.sf.json.JSONSerializer;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;

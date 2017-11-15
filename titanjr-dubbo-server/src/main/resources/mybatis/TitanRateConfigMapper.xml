@@ -36,6 +36,7 @@
     	  delete from t_tfs_raterecord where orderNo=#{orderNo}
     </delete>
     
+    <!-- 查询费率配置  update by jerry -->
     <select id="queryRateConfigList" resultType="com.fangcang.titanjr.entity.TitanRateConfig"
 					parameterType="com.fangcang.titanjr.entity.parameter.TitanRateConfigParam">
     	SELECT * FROM t_tfs_rateconfig 
@@ -43,8 +44,11 @@
     	  <if test="userid !=null">
     	    and userId= #{userid}
     	  </if>
-    	  <if test="bustype !=null">
-    	    and bustype=#{bustype}
+    	  <if test="deskId != null and deskId != ''">
+    	    and deskid=#{deskId}
+    	  </if>
+    	  <if test="deskId == null or deskId == ''">
+    	    and deskid is null
     	  </if>
     	  <if test="rateconfigid !=null">
     	    and rateconfigid=#{rateconfigid}
