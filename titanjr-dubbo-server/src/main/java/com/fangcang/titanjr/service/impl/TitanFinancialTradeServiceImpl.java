@@ -232,7 +232,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					titanTransOrder.setAmount(0L);//余额支付没有充值
 					int row = titanTransOrderDao.updateTitanTransOrderByTransId(titanTransOrder);
 					if(row<1){
-						log.error("更新本地订单失败");
+						log.error("更新本地订单失败,订单orderid:"+titanTransOrder.getOrderid());
 						titanFinancialUtilService.saveOrderException(titanTransOrder.getOrderid(), OrderKindEnum.OrderId,OrderExceptionEnum.Balance_Pay_Update_Fail, JSONSerializer.toJSON(titanTransOrder).toString());
 						localAddTransOrderResponse.putErrorResult("更新本地订单失败");
 						return localAddTransOrderResponse;
