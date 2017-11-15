@@ -29,12 +29,13 @@
 			module : pub
 		});
 		 */
-		 
+		var r = Math.random(); 
+		var sBussCode = r.toString().substr(3);
 
 		var businessInfo = {
 			inAccountCode : "A000003337",
 			outAccountCode : "A000018432",
-			bussCode : "566322565",//业务单号
+			bussCode : sBussCode,//业务单号
             billCode:"BS007425",
 		};
 		

@@ -1096,16 +1096,15 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		BalanceUnFreezeRequest balanceUnFreezeRequest = convertBalanceUnFreezeRequest(fundFreezeDTO);
 		if(balanceUnFreezeRequest !=null){
 			try{
-				log.info("调用融数解冻:"+JSONSerializer.toJSON(balanceUnFreezeRequest));
 				BalanceUnFreezeResponse balanceUnFreezeResponse = rsAccTradeManager.unFreezeAccountBalance(balanceUnFreezeRequest);
-				log.info("调用融数解冻结果:"+JSONSerializer.toJSON(balanceUnFreezeResponse));
+				log.info("调用融数解冻,请求参数："+Tools.gsonToString(balanceUnFreezeRequest)+",响应结果:"+Tools.gsonToString(balanceUnFreezeResponse));
 				if(CommonConstant.OPERATE_SUCCESS.equals(balanceUnFreezeResponse.getOperateStatus())){
 			    	//插入解冻记录
 			    	TitanFundUnFreezereq titanFundUnFreezereq = covertToTitanFundUnFreezereq(fundFreezeDTO);
 			    	try{
 			    		titanFundUnFreezereqDao.insert(titanFundUnFreezereq);
 			    	}catch(Exception e){
-			    		log.error("解冻插入订单失败");
+			    		log.error("插入解冻记录失败，解冻参数:"+Tools.gsonToString(balanceUnFreezeRequest)+",解冻响应结果:"+Tools.gsonToString(balanceUnFreezeResponse));
 			    		titanFinancialUtilService.saveOrderException(fundFreezeDTO.getOrderNo(), OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_Insert_Order_Fail, JSONSerializer.toJSON(titanFundUnFreezereq).toString());
     	        		return false;
 			    	}
@@ -1122,7 +1121,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			    	try{
 			    		titanTransOrderDao.update(titanTransOrder);
 			    	}catch(Exception e){
-			    		log.error("解冻修改订单失败");
+			    		log.error("解冻修改订单失败,请求参数："+Tools.gsonToString(balanceUnFreezeRequest)+",响应结果:"+Tools.gsonToString(balanceUnFreezeResponse));
 			    		titanFinancialUtilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_Update_Order_Fail,JSONSerializer.toJSON(titanTransOrder).toString());
     	        		return false;
 			    	}
@@ -1133,7 +1132,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	        		return false;
 			    }
 			}catch(Exception e){
-				log.error("解冻资金异常");
+				log.error("调用融数解冻异常,请求参数："+Tools.gsonToString(balanceUnFreezeRequest));
 				titanFinancialUtilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_Fail,JSONSerializer.toJSON(fundFreezeDTO).toString());
         		return false;
 			}
