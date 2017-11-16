@@ -23,7 +23,7 @@
             </span>
         </td>
         <td class="tdr">
-            <c:if test="${tradeItem.tradeType == '付款' or tradeItem.tradeType == '提现'}">
+            <c:if test="${tradeItem.tradeType == '余额付款' or tradeItem.tradeType == '充值并付款' or tradeItem.tradeType == '提现'}">
                 -
             </c:if>
             <c:if test="${tradeItem.tradeType == '收款' or tradeItem.tradeType == '充值'}">
@@ -35,7 +35,7 @@
             <c:if test="${tradeItem.isEscrowedPayment == 0 and tradeItem.tradeType == '收款' and tradeItem.statusid=='6' and tradeItem.freezeAt == 2}">
                 <i class="freeze_ico" title="客户离店或到担保日期后即可解冻"/>
             </c:if>
-            <c:if test="${tradeItem.isEscrowedPayment == 0 and tradeItem.tradeType == '付款' and tradeItem.statusid=='6' and tradeItem.freezeAt == 1}">
+            <c:if test="${tradeItem.isEscrowedPayment == 0 and (tradeItem.tradeType == '余额付款' or tradeItem.tradeType == '充值并付款') and tradeItem.statusid==6 and tradeItem.freezeAt == 1}">
                 <i class="freeze_ico" title="供应商确认订单后解冻并转账"/>
             </c:if>
         </td>
@@ -49,14 +49,14 @@
                 已成功
             </c:if>
             
-            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '付款' and tradeItem.freezeAt == 2 }">
+            <c:if test="${tradeItem.statusid == 6 and (tradeItem.tradeType == '余额付款' or tradeItem.tradeType == '充值并付款') and tradeItem.freezeAt == 2 }">
                 冻结在收款方
             </c:if>
             <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '收款' and tradeItem.freezeAt == 1 }">
                 冻结在付款方 
             </c:if>
             
-            <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '付款' and tradeItem.freezeAt == 1 }">
+            <c:if test="${tradeItem.statusid == 6 and (tradeItem.tradeType == '余额付款' or tradeItem.tradeType == '充值并付款') and tradeItem.freezeAt == 1 }">
                  已冻结  
             </c:if>
             <c:if test="${tradeItem.statusid == 6 and tradeItem.tradeType == '收款' and tradeItem.freezeAt == 2 }">
@@ -77,16 +77,18 @@
             处理中
             </c:if>
 
-            <c:if test="${tradeItem.statusid == 9}">
+            <c:if test="${tradeItem.statusid == 9 and tradeItem.freezeType==3}">
+                <i class="MyAssets_red">交易取消</i>
+            </c:if>
+          	<c:if test="${tradeItem.statusid == 9 and tradeItem.freezeType!=3}">
                 <i class="MyAssets_red">交易失败</i>
             </c:if>
-          
         </td>
         <td class="">
             <c:if test="${tradeItem.tradeType == '收款'}">
                 <a class="J_orderDetails blue decorationUnderline m_r10" onclick="showReceiveDetail(this);" id="${tradeItem.userorderid}">详情</a>
             </c:if>
-            <c:if test="${tradeItem.tradeType == '付款'}">
+            <c:if test="${tradeItem.tradeType == '余额付款' or tradeItem.tradeType == '充值并付款'}">
                 <a class="J_orderDetails blue decorationUnderline m_r10" onclick="showPayDetail(this);" id="${tradeItem.userorderid}">详情</a>
             </c:if>
             <c:if test="${tradeItem.tradeType == '充值'}">

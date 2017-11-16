@@ -313,7 +313,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				if (null == titanOrderPayreq) 
 				{
 					log.error("未找到相应的充值单，transid:"+transOrderDTO.getTransid());
-					orderResponse.putErrorResult("系统错误");
+					orderResponse.putErrorResult("未找到相应的充值单");
 					return orderResponse;
 				}
 
@@ -1128,6 +1128,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			orderRequest
 					.setPayeemerchant(titanPaymentRequest.getUserrelateid());
 			orderRequest.setTradeamount(transOrderDTO.getTradeamount());
+			orderRequest.setBalanceAmount(titanPaymentRequest.getTransferAmount());
 			orderRequest.setTransordertype(transOrderDTO.getTransordertype());
 			orderRequest.setPayerType(transOrderDTO.getPayerType());
 			orderRequest.setBussinessInfo(transOrderDTO.getBusinessinfo());
@@ -1231,6 +1232,9 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				}
 				if(StringUtil.isValidString(orderRequest.getStandfee())){
 					titanTransOrder.setStandfee(Long.parseLong(orderRequest.getStandfee()));
+				}
+				if(StringUtil.isValidString(orderRequest.getBalanceAmount())){
+					titanTransOrder.setBalanceAmount(Long.parseLong(NumberUtil.covertToCents(orderRequest.getBalanceAmount())));
 				}
 			}
 		} catch (Exception e) {
@@ -1497,7 +1501,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 								}
 
                             } else if (isPayerOrg(tradeDetailRequest, transOrderDTO)) {//当前机构等于付款方
-                                transOrderDTO.setTradeType("付款");
+                            	if(transOrderDTO.getAmount() == 0){
+                            		transOrderDTO.setTradeType("余额付款");
+                            	}else{
+                            		transOrderDTO.setTradeType("充值并付款");
+                            	}
                                 // 如果不是财务付款，则付款方不需要展示费率。
 								if (payerTypeEnum != null
 										&& !PayerTypeEnum.SUPPLY_UNION.key.equals(payerTypeEnum.key) 
@@ -1576,7 +1584,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						transOrderDTO.setTitanTransferDTO(titanTransferDTO);
 						//查询退款
 						transOrderDTO.setRefundDTO(this.getRefundDTO(transOrderDTO.getOrderid()));
-					} else if (transOrderDTO.getTradeType().equals("付款")) {// 付款记录
+					} else if (transOrderDTO.getTradeType().equals("余额付款")||transOrderDTO.getTradeType().equals("充值并付款")) {// 付款记录
 						TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
 						titanTransferDTO.setTransorderid(transOrderDTO
 								.getTransid());
@@ -1648,8 +1656,13 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	}
 	
 
-	//支付金额变更需失效订单 直接将本地单作废重新生成新订单
-	//如果充值金额相等则返回true；
+	/***
+	 * 判断金额是否相等
+	 * @param titanPaymentRequest
+	 * @param transOrderDTO
+	 * @return true:金额相等;false:金额不相等，支付金额变更需失效订单 直接将本地单作废重新生成新订单
+	 * @throws Exception
+	 */
 	private boolean validateAndUpdateOrder(TitanPaymentRequest titanPaymentRequest, TransOrderDTO transOrderDTO)
 			throws Exception {
 		if (!NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount()).equals(transOrderDTO.getTradeamount().toString())) {
@@ -1961,6 +1974,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			titanTransOrder.setGoodscnt(CommonConstant.DEFALUT_GOODCNT);
 			titanTransOrder.setTradeamount(Long.parseLong(NumberUtil
 					.covertToCents(titanOrderRequest.getAmount())));
+			titanTransOrder.setBalanceAmount(0L);
 			titanTransOrder.setPayorderno(titanOrderRequest.getGoodsId());
 			titanTransOrder.setGoodsdetail(titanOrderRequest.getGoodsDetail());
 			titanTransOrder.setGoodsname(titanOrderRequest.getGoodsName());
@@ -1972,6 +1986,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					.getStatus());
 			titanTransOrder.setCreatetime(new Date());
 			titanTransOrder.setAmount(0l);
+			
 			titanTransOrder.setUserorderid(OrderGenerateService
 					.genSyncUserOrderId());
 			if (null != titanOrderRequest.getBusinessInfo()) {

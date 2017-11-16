@@ -42,6 +42,8 @@ public class TitanTransOrder implements java.io.Serializable {
 	private Long receivablefee;
 	private Long receivedfee;
 	private Long tradeamount;
+	//支付余额
+	private Long balanceAmount;
 	private Integer transordertype;
 	private String notifyUrl;
 	// 业务信息
@@ -141,6 +143,14 @@ public class TitanTransOrder implements java.io.Serializable {
 
 	public Date getOrdertime() {
 		return ordertime;
+	}
+
+	public Long getBalanceAmount() {
+		return balanceAmount;
+	}
+
+	public void setBalanceAmount(Long balanceAmount) {
+		this.balanceAmount = balanceAmount;
 	}
 
 	public String getConstid() {

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,18 @@ public class NumberUtil {
 	        }
 	        return cents;
 	}
+	
+	/**
+	 * 是否大于0
+	 * @return
+	 */
+	public static boolean isGTZero(String num){
+		if(!NumberUtils.isNumber(num)){
+			return false;
+		}
+		return NumberUtils.toDouble(num)>0?true:false;
+	}
+	
 	/***
 	 * 分转为元(保留两位小数)
 	 * @param fen 2分

@@ -56,6 +56,8 @@ public class OrderRequest implements Serializable{
     
     //交易金额
     private Long tradeamount;
+    //支付余额
+    private String balanceAmount;
     
     //是否担保支付
     private String isEscrowedPayment;
@@ -94,7 +96,16 @@ public class OrderRequest implements Serializable{
     //收银台版本
     private String version;
     
-    public String getReceivablefee() {
+
+	public String getBalanceAmount() {
+		return balanceAmount;
+	}
+
+	public void setBalanceAmount(String balanceAmount) {
+		this.balanceAmount = balanceAmount;
+	}
+
+	public String getReceivablefee() {
 		return receivablefee;
 	}
 

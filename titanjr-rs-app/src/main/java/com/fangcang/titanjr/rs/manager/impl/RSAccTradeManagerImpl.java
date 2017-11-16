@@ -36,6 +36,7 @@ import com.Rop.api.response.WheatfieldOrdernQueryResponse;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.exception.RSValidateException;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.rs.dto.BalanceInfo;
 import com.fangcang.titanjr.rs.dto.OrderTransferFlow;
 import com.fangcang.titanjr.rs.dto.TradeInfoList;
@@ -128,7 +129,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 			WheatfieldOrderServiceAuthcodeserviceResponse rsp = RSInvokeConstant.ropClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
-				log.info("调用freezeAccountBalance返回报文: \n" + rsp.getBody());
+				log.info("调用freezeAccountBalance方法,冻结参数："+Tools.gsonToString(balanceFreezeRequest)+",返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
 					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
