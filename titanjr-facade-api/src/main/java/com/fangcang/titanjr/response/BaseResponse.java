@@ -4,6 +4,10 @@ import java.io.Serializable;
 
 
 public class BaseResponse implements Serializable{
+	/** 
+	 * 
+	 */
+	private static final long serialVersionUID = 8378283849377513738L;
 	
 	public enum ReturnCode{
 		CODE_SUCCESS("1","成功"),CODE_PARAM_ERROR("-100","参数错误"),CODE_SYS_ERROR("-200","系统错误");
