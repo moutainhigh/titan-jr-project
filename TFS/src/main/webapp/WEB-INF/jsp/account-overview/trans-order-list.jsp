@@ -77,10 +77,7 @@
             处理中
             </c:if>
 
-            <c:if test="${tradeItem.statusid == 9 and tradeItem.freezeType==3}">
-                <i class="MyAssets_red">交易取消</i>
-            </c:if>
-          	<c:if test="${tradeItem.statusid == 9 and tradeItem.freezeType!=3}">
+            <c:if test="${tradeItem.statusid == 9}">
                 <i class="MyAssets_red">交易失败</i>
             </c:if>
         </td>
