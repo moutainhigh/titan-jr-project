@@ -1,5 +1,7 @@
 package com.fangcang.titanjr.dao.impl;
 
+import java.util.List;
+
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
@@ -18,6 +20,15 @@ public class TitanWithDrawReqDaoImpl extends GenericDAOMyBatisImpl implements Ti
 		}
 		
 		return true;
+	}
+
+	@Override
+	public List<TitanWithDrawReq> queryList(TitanWithDrawReqParam condition) throws DaoException {
+		try {
+			return super.selectList("com.fangcang.titanjr.dao.TitanWithDrawReqDao.queryList", condition);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
 	}
 
 	@Override

@@ -14,7 +14,7 @@
       </if>
       
       <if test="userorderid !=null">
-        userorderid = #{userorderid}
+        and userorderid = #{userorderid}
       </if>
     </where>
     order by createtime desc
