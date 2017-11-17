@@ -175,18 +175,19 @@ public class JRAccountController {
 					
 					baseResponse = unfreezePayer(transOrderDTO, false);
 					if(!baseResponse.isResult()) {
+						log.error("拒单时，解冻失败,订单号orderid:"+transOrderDTO.getOrderid());
 						return baseResponse;
 					}
 					//需要原路退回
 					if (jrAccountReceiveRequest.getIsBackTrack() != 0) {
 						backTrack(transOrderDTO);
 					}
-					if (jrAccountReceiveRequest.getIsBackTrack().intValue() == 0 && baseResponse.isResult()) {
+					if (baseResponse.isResult()) {
 						//改订单状态为16,交易取消
-						TitanTransferDTO updateTransferDTO = new TitanTransferDTO();
-						updateTransferDTO.setTransferreqid(transOrderDTO.getTransid());
-						updateTransferDTO.setStatus(Integer.valueOf(OrderStatusEnum.ORDER_CANCEL.getStatus()));
-						titanOrderService.updateTransferOrder(updateTransferDTO);
+						TransOrderDTO updateTransOrderDTO = new TransOrderDTO();
+						updateTransOrderDTO.setTransid(transOrderDTO.getTransid());
+						updateTransOrderDTO.setStatusid(OrderStatusEnum.ORDER_CANCEL.getStatus());
+						titanOrderService.updateTransOrder(updateTransOrderDTO);
 					}
 				}
 				

@@ -887,7 +887,11 @@ public class TitanFinancialRefundServiceImpl implements
 				refund.setOrderNo(orderNo);
 				List<RefundDTO> reFundList= titanRefundDao.queryRefundDTO(refund);
 				if(null==reFundList || reFundList.size()!=1 || reFundList.get(0)==null){
-					log.error("查询退款单异常，单号RefundDTO.orderNo："+orderNo);
+					log.error("查询退款单异常，单号orderid："+orderNo);
+					return;
+				}
+				if(!StringUtil.isValidString(refund.getNotifyUrl())){
+					log.info("退款记录无回调地址，NotifyUrl 为空，无需回调，单号orderid："+orderNo);
 					return;
 				}
 				refund = reFundList.get(0);
@@ -931,7 +935,7 @@ public class TitanFinancialRefundServiceImpl implements
 		transOrder.setStatusid(orderStatusEnum.getStatus());
 		log.info("退款成功修改订单状态,Transid:" + transOrderDTO.getTransid() + ",orderId:"+transOrderDTO.getOrderid()+",Statusid:" + transOrder.getStatusid());
 		
-		if(orderStatusEnum.equals(OrderStatusEnum.REFUND_SUCCESS)&&"1".equals(transOrder.getFreezeAt())&&"3".equals(transOrder.getFreezeType())){
+		if(orderStatusEnum.equals(OrderStatusEnum.REFUND_SUCCESS)&&"1".equals(transOrderDTO.getFreezeAt())&&"3".equals(transOrderDTO.getFreezeType())){
 			//拒单退款成功，则改为交易取消
 			transOrder.setStatusid(OrderStatusEnum.ORDER_CANCEL.getStatus());
 		}
