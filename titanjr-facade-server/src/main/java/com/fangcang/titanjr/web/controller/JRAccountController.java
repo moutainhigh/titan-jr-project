@@ -182,7 +182,7 @@ public class JRAccountController {
 					if (jrAccountReceiveRequest.getIsBackTrack() != 0) {
 						backTrack(transOrderDTO);
 					}
-					if (baseResponse.isResult()) {
+					if (baseResponse.isResult()&&jrAccountReceiveRequest.getIsBackTrack() == 0) {//不原路退回则改为交易取消，包括余额支付
 						//改订单状态为16,交易取消
 						TransOrderDTO updateTransOrderDTO = new TransOrderDTO();
 						updateTransOrderDTO.setTransid(transOrderDTO.getTransid());
