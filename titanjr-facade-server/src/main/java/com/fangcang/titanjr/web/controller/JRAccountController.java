@@ -175,13 +175,20 @@ public class JRAccountController {
 					
 					baseResponse = unfreezePayer(transOrderDTO, false);
 					if(!baseResponse.isResult()) {
+						log.error("拒单时，解冻失败,订单号orderid:"+transOrderDTO.getOrderid());
 						return baseResponse;
 					}
 					//需要原路退回
 					if (jrAccountReceiveRequest.getIsBackTrack() != 0) {
 						backTrack(transOrderDTO);
 					}
-					
+					if (baseResponse.isResult()&&jrAccountReceiveRequest.getIsBackTrack() == 0) {//不原路退回则改为交易取消，包括余额支付
+						//改订单状态为16,交易取消
+						TransOrderDTO updateTransOrderDTO = new TransOrderDTO();
+						updateTransOrderDTO.setTransid(transOrderDTO.getTransid());
+						updateTransOrderDTO.setStatusid(OrderStatusEnum.ORDER_CANCEL.getStatus());
+						titanOrderService.updateTransOrder(updateTransOrderDTO);
+					}
 				}
 				
 			}else{
@@ -199,8 +206,7 @@ public class JRAccountController {
 			}
 			
 		} catch (Exception e) {
-			
-			log.error("收款方是否确认收款操作异常：", e);
+			log.error("收款方是否确认收款操作异常，收款参数jrAccountReceiveRequest："+Tools.gsonToString(jrAccountReceiveRequest), e);
 			baseResponse.putErrorResult(String.valueOf(TitanMsgCodeEnum.UNEXPECTED_ERROR.getCode()), 
 					TitanMsgCodeEnum.UNEXPECTED_ERROR.getKey());
 			return baseResponse;
@@ -319,10 +325,10 @@ public class JRAccountController {
 					TitanMsgCodeEnum.QUERY_FREEZEORDER_FAIL.getKey());
 			return baseResponse;
 		}
-		if (fundFreezeList.get(0) != null && !isReceive) {
-			OrderStatusEnum orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
-			fundFreezeList.get(0).setOrderStatusEnum(orderStatusEnum);
-		}
+//		if (fundFreezeList.get(0) != null && !isReceive) {
+//			OrderStatusEnum orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
+//			fundFreezeList.get(0).setOrderStatusEnum(orderStatusEnum);
+//		}
 		//资金解冻
 		UnFreeBalanceBatchRequest unFreeBalanceBatchRequest = new UnFreeBalanceBatchRequest();
 		unFreeBalanceBatchRequest.setFundFreezeDTOList(fundFreezeList);
@@ -487,9 +493,9 @@ public class JRAccountController {
 	private BaseResponse backTrack(TransOrderDTO transOrderDTO) throws ParseException{
 		
 		BaseResponse baseResponse = new BaseResponse();
-		baseResponse.putSuccess();
+		baseResponse.putSuccess("退款成功");
 		
-		log.info("查询充值记录，判断充值时间是否超过30天");
+		log.info("拒单开始原路退款，订单号orderid："+transOrderDTO.getOrderid());
 		TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
 		titanOrderPayDTO.setOrderNo(transOrderDTO.getOrderid());
 		TitanOrderPayDTO payOrder = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
@@ -499,18 +505,27 @@ public class JRAccountController {
 			Long nowDate = new Date().getTime();
 			if (nowDate - orderDate <= CommonConstant.MS) {
 				
-				log.info("执行原路退回，通知融数网关退款");
+				log.info("执行原路退回，通知融数网关退款，订单号orderid："+transOrderDTO.getOrderid());
 				RefundOrderRequest refundOrderRequest = buildRefundOrderRequest(
 						transOrderDTO, payOrder.getOrderTime());
 				NotifyRefundRequest notifyRefundRequest = buildNotifyRefundRequest(
 						transOrderDTO, payOrder);
 				NotifyRefundResponse notifyRefundResponse = titanFinancialRefundService
 						.notifyRefund(refundOrderRequest, notifyRefundRequest, transOrderDTO);
-				log.info("网关退款, 订单orderid: " + transOrderDTO.getOrderid()+", 响应结果:" + 
-						Tools.gsonToString(notifyRefundResponse));
+				if(notifyRefundResponse.isResult()){
+					log.info("网关退款成功, 订单orderid: " + transOrderDTO.getOrderid()+", 响应结果:" + 
+							Tools.gsonToString(notifyRefundResponse));
+				}else{
+					log.error("网关退款失败, 订单orderid: " + transOrderDTO.getOrderid()+", 响应结果:" + 
+							Tools.gsonToString(notifyRefundResponse));
+					baseResponse.putErrorResult(notifyRefundResponse.getErrMsg());
+				}
+				
 			}else{
 				log.info("充值超过30天，不执行原路退回");
 			}
+		}else{
+			log.info("退款未找到支付记录TitanOrderPay，无需发起退款，订单号orderid："+transOrderDTO.getOrderid());
 		}
 		
 		return baseResponse;

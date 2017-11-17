@@ -589,6 +589,16 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			
 			int rowNum = 0;
 			if (orderDTO != null) {
+				//如果存在提现交易记录，则判断是否已经有提现记录，有则不允许重复提交提现申请，需要重新提交
+				TitanWithDrawReqParam withDrawReqParam = new TitanWithDrawReqParam();
+				withDrawReqParam.setTransorderid(orderDTO.getTransid());
+				List<TitanWithDrawReq> withDrawReqList = titanWithDrawReqDao.queryList(withDrawReqParam);
+				if(CollectionUtils.isNotEmpty(withDrawReqList)){
+					log.error("提现记录重复，请重试。提现卡号："+bankcard.getAccountnumber()+",Transid："+orderDTO.getTransid());
+					withDrawResponse.putErrorResult("提现记录重复，请重试");
+					return withDrawResponse;
+				}
+				
 				if(!StringUtil.isValidString(orderDTO.getOrderid())){
 					titanTransOrder.setOrderid(OrderGenerateService.genLocalOrderNo());
 				}
@@ -600,7 +610,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				rowNum = titanTransOrderDao.insert(titanTransOrder);
 			}
 			if (rowNum <= 0) {
-				log.error("保存交易单失败");
+				log.error("提现时，保存交易单失败，请求参数titanTransOrder："+Tools.gsonToString(titanTransOrder));
 				withDrawResponse.putErrorResult("保存交易单失败");
 				return withDrawResponse;
 			}
@@ -642,6 +652,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				withDrawResponse.putErrorResult("保存提现请求失败");
 				return withDrawResponse;
 			}
+			
 			//调用融数接口提现
 			AccountWithDrawRequest accountWithDrawRequest = new AccountWithDrawRequest();
 			accountWithDrawRequest.setUserid(balanceWithDrawRequest.getUserId());

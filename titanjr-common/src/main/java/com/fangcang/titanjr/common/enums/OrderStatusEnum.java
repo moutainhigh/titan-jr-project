@@ -16,7 +16,8 @@ public enum OrderStatusEnum {
 	REFUND_IN_PROCESS("12","退款中"),
 	REFUND_SUCCESS("13","退款成功"),
 	REFUND_FAIL("14","退款失败"),
-	PROGRESS_ING("15","处理中");
+	PROGRESS_ING("15","处理中"),
+	ORDER_CANCEL("16","交易取消");
   
     private String status;
     

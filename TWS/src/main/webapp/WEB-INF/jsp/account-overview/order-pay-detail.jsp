@@ -29,27 +29,14 @@
 		                        <span class="w_180">交易类型：付款</span>
 		                        <span class="Province">交易状态：
 		                            <c:choose>
-		                                <c:when test="${transOrder.statusid == 8}">
-		                                    已成功
-		                                </c:when>
-		                                <c:when test="${transOrder.statusid == 9}">
-		                                    交易失败
-		                                </c:when>
-		                                <c:when test="${transOrder.statusid == 6}">
-		                                    已冻结
-		                                </c:when>
-		                                <c:when test="${transOrder.statusid == 12 }">
-		                                退款中
-		                                </c:when>
-		                                <c:when test="${transOrder.statusid == 13 }">
-		                                 退款成功
-		                                </c:when>
-		                                <c:when test="${transOrder.statusid == 14 }">
-		                                退款失败
-		                                </c:when>
-		                                <c:otherwise>
-		                                    处理中
-		                                </c:otherwise>
+		                                <c:when test="${transOrder.statusid == 8}">已成功</c:when>
+		                                <c:when test="${transOrder.statusid == 9}">交易失败</c:when>
+		                                <c:when test="${transOrder.statusid == 6}">已冻结</c:when>
+		                                <c:when test="${transOrder.statusid == 12 }">退款中</c:when>
+		                                <c:when test="${transOrder.statusid == 13 }">退款成功</c:when>
+		                                <c:when test="${transOrder.statusid == 14 }">退款失败</c:when>
+		                                <c:when test="${transOrder.statusid == 16 }">交易取消</c:when>
+		                                <c:otherwise>处理中</c:otherwise>
 		                            </c:choose>
 					            </span>
 		                    </p>
@@ -174,10 +161,16 @@
 		                                <td>
 		                                    <span title="交易单号${transOrder.payorderno }退款">交易单号${transOrder.payorderno }退款</span>
 		                                </td><!--房仓财务系统单号-->
-		                                <td><span>+<fmt:formatNumber value="${transOrder.tradeamount / 100.0 }" pattern="#,##0.00#"/></span></td>
+		                                <td><span>
+											<c:if test="${transOrder.statusid != 16 }">+</c:if>
+                                			<c:if test="${transOrder.statusid == 16 }">-</c:if>
+											<fmt:formatNumber value="${transOrder.tradeamount / 100.0 }" pattern="#,##0.00#"/></span></td>
 		                                <td>
 		                                  <c:if test="${(transOrder.refundDTO.fee) / 100.0 !=0.0 && (transOrder.refundDTO.fee) / 100.0 !=0.00&&transOrder.isPayFee=='1'}">
-		                                   <span>+<fmt:formatNumber value="${(transOrder.refundDTO.fee) / 100.0 }" pattern="#,##0.00#"/></span>
+		                                   <span>
+											<c:if test="${transOrder.statusid != 16 }">+</c:if>
+                                			<c:if test="${transOrder.statusid == 16 }">-</c:if>
+											<fmt:formatNumber value="${(transOrder.refundDTO.fee) / 100.0 }" pattern="#,##0.00#"/></span>
 		                                  </c:if>
 		                                </td>
 		                                <td>

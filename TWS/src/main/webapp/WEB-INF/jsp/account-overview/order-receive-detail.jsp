@@ -29,27 +29,14 @@
                         </span>
                         <span class="Province">交易状态：
                             <c:choose>
-                                <c:when test="${transOrder.statusid == 8}">
-                                    已成功
-                                </c:when>
-                                <c:when test="${transOrder.statusid == 9}">
-                                    交易失败
-                                </c:when>
-                                <c:when test="${transOrder.statusid == 6}">
-                                    已冻结
-                                </c:when>
-                                <c:when test="${transOrder.statusid == 12 }">
-                                退款中
-                                </c:when>
-                                <c:when test="${transOrder.statusid == 13 }">
-                                 退款成功
-                                </c:when>
-                                <c:when test="${transOrder.statusid == 14 }">
-                                退款失败
-                                </c:when>
-                              <c:otherwise>
-                                处理中
-                              </c:otherwise>
+                                <c:when test="${transOrder.statusid == 8}">已成功</c:when>
+                                <c:when test="${transOrder.statusid == 9}">交易失败</c:when>
+                                <c:when test="${transOrder.statusid == 6}">已冻结</c:when>
+                                <c:when test="${transOrder.statusid == 12 }">退款中</c:when>
+                                <c:when test="${transOrder.statusid == 13 }">退款成功</c:when>
+                                <c:when test="${transOrder.statusid == 14 }">退款失败</c:when>
+                                <c:when test="${transOrder.statusid == 16 }">交易取消</c:when>
+                              	<c:otherwise>处理中</c:otherwise>
                             </c:choose>
                         </span>
                     </p>
