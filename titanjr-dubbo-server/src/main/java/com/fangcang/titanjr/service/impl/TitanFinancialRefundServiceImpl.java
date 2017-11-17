@@ -827,6 +827,13 @@ public class TitanFinancialRefundServiceImpl implements
 					}
 			    }
 				if(isSynState&&isLongTime){
+					TransOrderRequest transOrderParam = new TransOrderRequest();
+					transOrderParam.setOrderid(refundDTO.getOrderNo());
+					TransOrderDTO transOrderDTOEntity = titanOrderService.queryTransOrderDTO(transOrderParam);
+					if(refundStatusEnum.equals(OrderStatusEnum.REFUND_SUCCESS)&&"1".equals(transOrderDTOEntity.getFreezeAt())&&"3".equals(transOrderDTOEntity.getFreezeType())){//冻结在付款方，而且3不转账冻结在付款方
+						//拒单退款成功，则改为交易取消
+						transOrderDTO.setStatusid(OrderStatusEnum.ORDER_CANCEL.getStatus());
+					}
 					titanOrderService.updateTransOrder(transOrderDTO);
 					titanRefundDao.updateRefundDTO(refundDTO);
 					//更新退款单状态
@@ -923,6 +930,12 @@ public class TitanFinancialRefundServiceImpl implements
 		transOrder.setTransid(transOrderDTO.getTransid());
 		transOrder.setStatusid(orderStatusEnum.getStatus());
 		log.info("退款成功修改订单状态,Transid:" + transOrderDTO.getTransid() + ",orderId:"+transOrderDTO.getOrderid()+",Statusid:" + transOrder.getStatusid());
+		
+		if(orderStatusEnum.equals(OrderStatusEnum.REFUND_SUCCESS)&&"1".equals(transOrder.getFreezeAt())&&"3".equals(transOrder.getFreezeType())){
+			//拒单退款成功，则改为交易取消
+			transOrder.setStatusid(OrderStatusEnum.ORDER_CANCEL.getStatus());
+		}
+		
 		boolean flag = titanOrderService.updateTransOrder(transOrder);
 		if (!flag) {
 			log.error("退款单状态更新失败,orderId:"+transOrderDTO.getOrderid());

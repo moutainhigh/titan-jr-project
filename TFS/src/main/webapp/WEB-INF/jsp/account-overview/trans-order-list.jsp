@@ -80,6 +80,7 @@
             <c:if test="${tradeItem.statusid == 9}">
                 <i class="MyAssets_red">交易失败</i>
             </c:if>
+            <c:if test="${tradeItem.statusid == 16}">交易取消</c:if>
         </td>
         <td class="">
             <c:if test="${tradeItem.tradeType == '收款'}">

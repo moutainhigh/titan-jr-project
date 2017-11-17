@@ -20,32 +20,17 @@
                         <span class="w_250 Province" style="width: 330px;margin-right:15px;">付款方：
                             <i class="recharge-colorRed" title="${transOrder.transTarget }">${transOrder.transTarget }</i>
                         </span>
-                        <span class="w_160 Province">
-                            交易类型：收款
-                        </span>
+                        <span class="w_160 Province">交易类型：收款</span>
                         <span class="Province">交易状态：
                             <c:choose>
-                                <c:when test="${transOrder.statusid == 8}">
-                                    已成功
-                                </c:when>
-                                <c:when test="${transOrder.statusid == 9}">
-                                    交易失败
-                                </c:when>
-                                <c:when test="${transOrder.statusid == 6}">
-                                    已冻结
-                                </c:when>
-                                <c:when test="${transOrder.statusid == 12 }">
-                                退款中
-                                </c:when>
-                                <c:when test="${transOrder.statusid == 13 }">
-                                 退款成功
-                                </c:when>
-                                <c:when test="${transOrder.statusid == 14 }">
-                                退款失败
-                                </c:when>
-                              <c:otherwise>
-                                处理中
-                              </c:otherwise>
+                                <c:when test="${transOrder.statusid == 8}">已成功</c:when>
+                                <c:when test="${transOrder.statusid == 9}">交易失败</c:when>
+                                <c:when test="${transOrder.statusid == 6}">已冻结</c:when>
+                                <c:when test="${transOrder.statusid == 12 }">退款中</c:when>
+                                <c:when test="${transOrder.statusid == 13 }">退款成功</c:when>
+                                <c:when test="${transOrder.statusid == 14 }">退款失败</c:when>
+                                <c:when test="${transOrder.statusid == 16 }">交易取消</c:when>
+                              	<c:otherwise>处理中</c:otherwise>
                             </c:choose>
                         </span>
                     </p>

@@ -406,7 +406,7 @@
         ordertime, provider, userrelateid,amount, goodsname, goodsdetail, goodscnt, unitprice, statusid,
         adjusttype, adjustcontent, creator,receivablefee,standfee, createtime, receivedfee,escrowedDate,isEscrowedPayment,
         payeemerchant,payermerchant,payorderno,merchantcode,tradeamount,transordertype,notifyUrl,businessinfo,
-        payertype as payerType,loanorderno,freezeType,version
+        payertype as payerType,loanorderno,freezeType,freezeAt,version
          from t_tfs_transorder
         <where>
             <if test="transid != null">

@@ -19,18 +19,23 @@ public class OrgRegisterRequest extends BaseRequest {
     @ApiModelProperty(value = "合作方机构编码",required = true)
     @NotBlank
     private String coopOrgCode;
+    
     @ApiModelProperty(value = "合作方机构名称",required = true)
     @NotBlank
     private String coopOrgName;
+    
     @ApiModelProperty(value = "联系人")
     private String connect;
+    
     @ApiModelProperty(value = "联系电话", required = true)
-    @NotBlank
     private String connectPhone;
+    
     @ApiModelProperty(value = "地址")
     private String address;
+    
     @ApiModelProperty(value = "电子邮件")
     private String email;
+    
     @ApiModelProperty(value = "注册来源" , allowableValues = "SAAS_MERCHANT, TTM_SUPPLY, TTM_AGENT", required = true)
     @NotNull
     private RegisterSourceEnum registerSourceEnum;
