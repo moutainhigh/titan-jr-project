@@ -161,10 +161,16 @@
 		                                <td>
 		                                    <span title="交易单号${transOrder.payorderno }退款">交易单号${transOrder.payorderno }退款</span>
 		                                </td><!--房仓财务系统单号-->
-		                                <td><span>+<fmt:formatNumber value="${transOrder.tradeamount / 100.0 }" pattern="#,##0.00#"/></span></td>
+		                                <td><span>
+											<c:if test="${transOrder.statusid != 16 }">+</c:if>
+                                			<c:if test="${transOrder.statusid == 16 }">-</c:if>
+											<fmt:formatNumber value="${transOrder.tradeamount / 100.0 }" pattern="#,##0.00#"/></span></td>
 		                                <td>
 		                                  <c:if test="${(transOrder.refundDTO.fee) / 100.0 !=0.0 && (transOrder.refundDTO.fee) / 100.0 !=0.00&&transOrder.isPayFee=='1'}">
-		                                   <span>+<fmt:formatNumber value="${(transOrder.refundDTO.fee) / 100.0 }" pattern="#,##0.00#"/></span>
+		                                   <span>
+											<c:if test="${transOrder.statusid != 16 }">+</c:if>
+                                			<c:if test="${transOrder.statusid == 16 }">-</c:if>
+											<fmt:formatNumber value="${(transOrder.refundDTO.fee) / 100.0 }" pattern="#,##0.00#"/></span>
 		                                  </c:if>
 		                                </td>
 		                                <td>
