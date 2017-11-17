@@ -1582,8 +1582,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						titanTransferDTO = titanOrderService
 								.getTitanTransferDTO(titanTransferDTO);
 						transOrderDTO.setTitanTransferDTO(titanTransferDTO);
-						
-						if(!transOrderDTO.getStatusid().equals(OrderStatusEnum.ORDER_CANCEL.getStatus())){//因拒单而交易取消的，不显示退款记录,其他的显示退款记录
+						if("1".equals(transOrderDTO.getFreezeAt())&&"3".equals(transOrderDTO.getFreezeType())){//因拒单而交易取消的，不显示退款记录,其他的显示退款记录
 							//查询退款
 							transOrderDTO.setRefundDTO(this.getRefundDTO(transOrderDTO.getOrderid()));
 						}
