@@ -663,7 +663,7 @@ public class JRAccountController {
 			}
 			//如果请求条件不需要原路退回，设置直接退回卡
 			if (isBackTrack != 0) {
-				titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_ACCOUNT.type);
+				titanJrRefundRequest.setToBankCardOrAccount(RefundTypeEnum.REFUND_BANKCARD.type);
 			}
 
 			//解冻操作
