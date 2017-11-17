@@ -896,11 +896,13 @@ public class TitanFinancialRefundServiceImpl implements
 					log.error("查询退款单异常，单号orderid："+orderNo);
 					return;
 				}
+				
+				refund = reFundList.get(0);
 				if(!StringUtil.isValidString(refund.getNotifyUrl())){
 					log.info("退款记录无回调地址，NotifyUrl 为空，无需回调，单号orderid："+orderNo);
 					return;
 				}
-				refund = reFundList.get(0);
+				
 				NotifyBean bean = new NotifyBean();
 				bean.setPayOrderNo(refund.getPayOrderNo());
 				bean.setNotifyUrl(refund.getNotifyUrl());
