@@ -1,5 +1,7 @@
 package com.fangcang.titanjr.redis.service;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 
@@ -53,5 +55,28 @@ public interface RedisService {
 	 * @return 锁值
 	 */
 	public boolean lock(String key);
-	
+
+
+	/**
+	 * 设置mao
+	 * @param keyString
+	 * @param valueMap
+     * @return
+     */
+	public boolean hmSetValue(final String keyString, final Map<String, String> valueMap);
+
+	/**
+	 * 查询map
+	 * @param keyString
+	 * @param keySet
+     * @return
+     */
+	public Map<String, String> hmGetValue(final String keyString,final Set<String> keySet);
+
+	/**
+	 * 查询所有
+	 * @param keyString
+	 * @return
+     */
+	public Map<String, String> hmGetAll(final String keyString);
 }
