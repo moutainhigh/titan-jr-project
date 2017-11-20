@@ -146,6 +146,7 @@ public class TitanFinancialRefundServiceImpl implements
 				log.info("用户退款，订单号orderid:"+titanTransferDTO.getTransorderid());
 				if (titanTransferDTO.getStatus().intValue() == TransferReqEnum.TRANSFER_SUCCESS.getStatus()) {
 					log.error("退款已完成，请勿重复退款,Transorderid:"+titanTransferDTO.getTransorderid());
+					this.threadNotify(refundRequest.getOrderNo(), RefundStatusEnum.REFUND_SUCCESS.status.toString());
 					response.putErrorResult(TitanMsgCodeEnum.REFUND_SUCCESSED);
 					isFreeze = true;
 					return response;
@@ -253,6 +254,7 @@ public class TitanFinancialRefundServiceImpl implements
 			RefundStatusEnum refundStatus = null;
 			if(notifyRefundResponse.isResult()){
 				RefundStatusEnum status = RefundStatusEnum.getRefundStatusEnumByStatus(Integer.parseInt(notifyRefundResponse.getRefundStatus()));
+				
 				if(RefundStatusEnum.REFUND_AFAINST==status){
 					refundStatus = RefundStatusEnum.REFUND_IN_PROCESS;
 				}else{
@@ -264,7 +266,7 @@ public class TitanFinancialRefundServiceImpl implements
 			}
 				
 			log.info("6.7通知业务系统退款结果,订单号orderid："+refundOrderRequest.getOrderId());
-			this.threadNotify(refundOrderRequest.getOrderId(), refundStatus);
+			this.threadNotify(refundOrderRequest.getOrderId(), refundStatus.status.toString());
 			response.putSuccess("已发起退款");
 			return response;
 		} catch (Exception e) {
@@ -278,6 +280,11 @@ public class TitanFinancialRefundServiceImpl implements
 		return response;
 	}
 	
+	@Override
+	public void notifyRefund(String orderId, String refundStatus) {
+		this.threadNotify(orderId, refundStatus);
+	}
+
 	private  NotifyRefundResponse notifyRefundOrder(RefundOrderRequest refundOrderRequest,NotifyRefundRequest notifyRefundRequest){
 		log.info("6.5.2去融数和本地同时下退款单");
 		NotifyRefundResponse notifyRefundResponse = new NotifyRefundResponse();
@@ -376,7 +383,7 @@ public class TitanFinancialRefundServiceImpl implements
 				refundDTO.setStatus(refundStatus.status);
 				titanRefundDao.updateRefundDTO(refundDTO);
 				log.info("6.8.快捷支付再次通知业务系统退款结果,订单号orderid："+refundOrderRequest.getOrderId());
-				threadNotify(refundOrderRequest.getOrderId(), refundStatus);
+				threadNotify(refundOrderRequest.getOrderId(), refundStatus.status.toString());
 			} catch (Exception e){
 				log.error("异步退款通知异常", e);
 			}
@@ -414,7 +421,7 @@ public class TitanFinancialRefundServiceImpl implements
 		titanRefund.setFee("0");
 		try{
 			titanRefundDao.insert(titanRefund);
-			this.threadNotify(refundOrderRequest.getOrderId(), RefundStatusEnum.REFUND_SUCCESS);
+			this.threadNotify(refundOrderRequest.getOrderId(), RefundStatusEnum.REFUND_SUCCESS.status.toString());
 		}catch(Exception e){
 			log.error("保存退款单下单失败"+e.getMessage()+":data:"+JSONSerializer.toJSON(titanRefund));
 			titanFinancialUtilService.saveOrderException(refundOrderRequest.getOrderId(),OrderKindEnum.OrderId, OrderExceptionEnum.Refund_Save_Order_Fail, JSONSerializer.toJSON(titanRefund).toString());
@@ -843,7 +850,7 @@ public class TitanFinancialRefundServiceImpl implements
 					titanOrderService.updateTransOrder(transOrderDTO);
 					titanRefundDao.updateRefundDTO(refundDTO);
 					//更新退款单状态
-					this.threadNotify(refundDTO.getOrderNo(),RefundStatusEnum.getRefundStatusEnumByStatus(refundDTO.getStatus()));
+					this.threadNotify(refundDTO.getOrderNo(),refundDTO.getStatus().toString());
 					
 				}
 				//发失败邮件
@@ -856,6 +863,8 @@ public class TitanFinancialRefundServiceImpl implements
 		}
 	}
 
+	
+	
 	@Override
 	public RefundDTO queryRefundRequest(RefundDTO refundDTO) {
 		return null;
@@ -885,7 +894,7 @@ public class TitanFinancialRefundServiceImpl implements
 		}
 	}
 	
-	private void threadNotify(final String orderNo,final RefundStatusEnum refundStatus){
+	private void threadNotify(final String orderNo,final String refundStatus){
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -907,7 +916,7 @@ public class TitanFinancialRefundServiceImpl implements
 				bean.setPayOrderNo(refund.getPayOrderNo());
 				bean.setNotifyUrl(refund.getNotifyUrl());
 				bean.setUserOrderId(refund.getUserOrderId());
-				bean.setCode(refundStatus.status.toString());
+				bean.setCode(refundStatus);
 				bean.setBusinessInfo(refund.getBusinessInfo());
 				log.info("threadNotify()通知第三方退款单状态,参数[NotifyBean]："+JSONSerializer.toJSON(bean)+",单号orderid:"+orderNo);
 				notifyTTMall(bean);

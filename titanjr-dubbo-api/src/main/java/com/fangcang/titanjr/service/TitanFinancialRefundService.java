@@ -22,6 +22,12 @@ public interface TitanFinancialRefundService {
 	 * 用于定时查询商家退款
 	 */
 	public void refundConfirm(RefundConfirmRequest refundConfirm);
+	/**
+	 * 退款通知第三方平台
+	 * @param orderId 交易流水号
+	 * @param refundStatus 退款状态
+	 */
+	public void notifyRefund(String orderId,String refundStatus);
 	
 	/**
 	 * 查询退款

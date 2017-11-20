@@ -2,7 +2,11 @@ package com.fangcang.titanjr.dto.bean;
 
 import java.io.Serializable;
 import java.util.Date;
-
+/***
+ * 转账单
+ * @author luoqinglong
+ * @date 2017年11月20日
+ */
 public class TitanTransferDTO implements Serializable {
 
     private Integer transferreqid;

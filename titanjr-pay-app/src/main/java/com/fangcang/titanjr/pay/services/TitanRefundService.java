@@ -22,6 +22,7 @@ import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
+import com.fangcang.titanjr.common.enums.RefundStatusEnum;
 import com.fangcang.titanjr.common.enums.RefundTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
@@ -395,24 +396,24 @@ public class TitanRefundService {
 		
 		if(OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()) 
 				&& CommonConstant.FREEZE_PAYER.equals(transOrderDTO.getFreezeAt())){
-			log.error("资金冻结在付款方，不允许退款");
+			log.error("资金冻结在付款方，不允许退款，订单号："+transOrderDTO.getOrderid());
 			return setUpErrorResult(model,TitanMsgCodeEnum.ORDER_FREEZE_PAYER);
 		}
 
 		if(OrderStatusEnum.REFUND_IN_PROCESS.getStatus().equals(transOrderDTO.getStatusid())){
-			log.error("该订单正在退款中，不能重复退款");
+			log.error("该订单正在退款中，不能重复退款，订单号："+transOrderDTO.getOrderid());
 			return setUpErrorResult(model,TitanMsgCodeEnum.ORDER_REFUNND_IN_PROCESS);
 		}
 
 		if(OrderStatusEnum.REFUND_SUCCESS.getStatus().equals(transOrderDTO.getStatusid())){
-			log.error("该订单退款成功，不能重复退款");
+			log.error("该订单退款成功，不能重复退款，订单号："+transOrderDTO.getOrderid());
+			titanFinancialRefundService.notifyRefund(transOrderDTO.getOrderid(), RefundStatusEnum.REFUND_SUCCESS.status.toString());
 			return setUpErrorResult(model,TitanMsgCodeEnum.REFUND_SUCCESSED);
 		}
 
 		if(!(OrderStatusEnum.ORDER_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()) || 
-
-OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()))){
-			log.error("该订单未支付成功，不能退款");
+			OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()))){
+			log.error("该订单未支付成功，不能退款，订单号："+transOrderDTO.getOrderid());
 			return setUpErrorResult(model,TitanMsgCodeEnum.ORDER_NOT_REFUND);
 		}
 		return null;
