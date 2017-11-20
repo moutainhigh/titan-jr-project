@@ -1,6 +1,10 @@
 package com.titanjr.checkstand.dto;
 
 
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by zhaoshan on 2017/11/15.
  */
@@ -11,8 +15,10 @@ public class GateWayPayDTO {
     //用户请求单号，落单时保存
     private String userOrderMo;
     //商户号，需要根据传来的商户号匹配
+    @NotBlank
     private String merchantNo;
     //订单号，系统生成，返回给金融收银台
+    @NotBlank
     private String orderNo;
     //产品号，相当于产品id
     private String productNo;
@@ -23,10 +29,12 @@ public class GateWayPayDTO {
     //产品数量
     private Integer productNum;
     //订单金额，精确到分
+    @NotNull
     private Long orderAmount;
     //支付方式
     private Integer payType;
     //币种
+    @NotNull
     private Integer amtType;
     //银行标示
     private String bankInfo;
@@ -39,10 +47,13 @@ public class GateWayPayDTO {
     //支付人邮箱
     private String payerMail;
     //页面地址
+    @NotBlank
     private String pageUrl;
     //后台通知地址
+    @NotBlank
     private String notifyUrl;
     //订单提交时间
+    @NotBlank
     private String orderTime;
     //订单过期时间
     private String orderExpireTime;

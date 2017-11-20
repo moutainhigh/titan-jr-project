@@ -2,6 +2,7 @@ package com.titanjr.checkstand.api;
 
 import com.titanjr.checkstand.constants.OperateTypeEnum;
 import com.titanjr.checkstand.controller.BaseController;
+import com.titanjr.checkstand.util.JRBeanUtils;
 import com.titanjr.checkstand.util.WebUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,6 @@ public class CheckStandController extends BaseController {
 
     private final static Logger logger = LoggerFactory.getLogger(CheckStandController.class);
 
-    static int testIndex = 1;
 
     @RequestMapping(value = "/payment", method = RequestMethod.POST)
     public String payment(HttpServletRequest request,  RedirectAttributes attr) throws Exception {
@@ -31,11 +31,10 @@ public class CheckStandController extends BaseController {
         //参数MD5验证
 
         resetParameter(request,attr);
-
         //根据策略跳转到对应的收银台路由代理,有些是返回字串，有些是做网关跳转
         //需要从渠道和交易方式两个维度来处理，可能需要选择配置信息
         //参数解析判断与最初步校验
-        OperateTypeEnum operateTypeEnum = judgeRequest(request);
+        OperateTypeEnum operateTypeEnum = JRBeanUtils.recognizeRequestType(request.getParameterMap().keySet());
 
         if (operateTypeEnum.equals(OperateTypeEnum.PAY_REQUEST)){
             return "redirect:" + WebUtil.getRequestBaseUrl(request) + "/pay/entrance.shtml";
@@ -45,20 +44,7 @@ public class CheckStandController extends BaseController {
             return "redirect:" + WebUtil.getRequestBaseUrl(request) + "/refund/entrance.shtml";
         }
 
-
-
         return null;
-    }
-
-    //根据请求对象，判定当前请求类型,只做测试
-    private OperateTypeEnum judgeRequest(HttpServletRequest request){
-        //测试模拟两种返回类型
-        testIndex ++ ;
-        if (testIndex % 2 == 0){
-            return OperateTypeEnum.PAY_REQUEST;
-        } else {
-            return OperateTypeEnum.REFUND_REQUEST;
-        }
     }
 
 }

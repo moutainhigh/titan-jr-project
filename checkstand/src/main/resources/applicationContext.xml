@@ -23,10 +23,26 @@
     <context:component-scan base-package="com.titanjr.checkstand"/>
 
     <mvc:annotation-driven />
-    
-	  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">   
-          <property name="maxUploadSize"><value>10000000</value></property> 
-          <property name="defaultEncoding"><value>UTF-8</value></property> 
+
+    <mvc:interceptors>
+
+        <mvc:interceptor>
+            <mvc:mapping path="/*"/>
+            <mvc:mapping path="/**/*"/>
+            <bean class="com.titanjr.checkstand.interceptor.AccessLimitInterceptor"></bean>
+        </mvc:interceptor>
+
+        <mvc:interceptor>
+            <mvc:mapping path="/*"/>
+            <mvc:mapping path="/**/*"/>
+            <bean class="com.titanjr.checkstand.interceptor.SecurityInterceptor"></bean>
+        </mvc:interceptor>
+
+    </mvc:interceptors>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize"><value>10000000</value></property>
+        <property name="defaultEncoding"><value>UTF-8</value></property>
     </bean>
 
 

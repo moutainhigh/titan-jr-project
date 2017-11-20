@@ -15,7 +15,7 @@ public enum PayTypeEnum {
     WECHAT("28","","微信支付"),
     PINGAN_OFFLINE("29","","平安银行线下充值"),
     QR_WECHAT_URL("30","","微信扫码支付Url"),
-    QR_WECGAT("31","","微信扫码支付二维码"),
+    QR_WECHAT("31","","微信扫码支付二维码"),
     QR_ALIPAY_URL("32","","支付宝扫码支付url"),
     QR_ALIPAY("33","","支付宝扫码支付二维码"),
     QUICK_NEW("41","","新快捷支付");

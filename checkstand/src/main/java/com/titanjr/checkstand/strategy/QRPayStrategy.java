@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Created by zhaoshan on 2017/11/20.
  */
-@Service
+@Service("QRPayStrategy")
 public class QRPayStrategy implements PayRequestStrategy{
 
     @Override

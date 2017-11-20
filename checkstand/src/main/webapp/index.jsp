@@ -19,22 +19,22 @@
             <tr align="left">
                 <td class="tdr">商户号</td>
                 <td>
-                    <input type="text" name="merchantNo" id="merchantNo" value="M10245" class="input_t01"/>
+                    <input type="text" name="merchantNo" id="merchantNo" value="M10000245" class="input_t01"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">订单号</td>
-                <td><input type="text" id="orderNo" value="OD21654813" name="orderNo"/></td>
+                <td><input type="text" id="orderNo" value="TO216548100003" name="orderNo"/></td>
             </tr>
             <tr>
-                <td class="tdr">业务订单号</td>
-                <td><input type="text" id="orderAmount" value="201710091425596000001" name="goodsId"/>
+                <td class="tdr">交易金额</td>
+                <td><input type="text" id="orderAmount" value="10200" name="orderAmount"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">币种</td>
                 <td>
-                    <input type="text" id="amtType" value="1" name="goodsName"/>
+                    <input type="text" id="amtType" value="1" name="amtType"/>
                 </td>
             </tr>
             <tr>
@@ -52,13 +52,13 @@
             <tr>
                 <td class="tdr">页面回调地址</td>
                 <td>
-                    <input type="text" value="" id="pageUrl" name="pageUrl"/>
+                    <input type="text" value="www.fangcang.com" id="pageUrl" name="pageUrl"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">后台通知地址</td>
                 <td>
-                    <input type="text" value="" id="notifyUrl" name="notifyUrl"/>
+                    <input type="text" value="www.fangcang.com/titanjr-pay-app" id="notifyUrl" name="notifyUrl"/>
                 </td>
             </tr>
             <tr>
@@ -126,10 +126,80 @@
     </td>
 </tr>
 
+
+
+<form action="<%=basePath %>/payment.shtml" name="refund_form" id="refund_form" method="post">
+    <div class="pay">
+        <table cellspacing="0" border="0">
+            <tbody>
+            <tr align="left">
+                <td class="tdr">商户号</td>
+                <td>
+                    <input type="text" name="merchantNo"  value="M10000245" class="input_t01"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">业务号</td>
+                <td><input type="text" value="103" name="busiCode"/></td>
+            </tr>
+            <tr>
+                <td class="tdr">退款单号</td>
+                <td><input type="text" id="refundOrderno" value="RD2017112015780001" name="refundOrderno"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">订单号</td>
+                <td>
+                    <input type="text"  value="20171117153862040001" name="orderNo"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">订单时间</td>
+                <td>
+                    <input type="text" value="201711171633"  name="orderTime"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">退款金额</td>
+                <td>
+                    <input type="text" value="10200" id="refundAmount" name="refundAmount"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">版本号</td>
+                <td>
+                    <input type="text" value="v1.0" name="version"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名类型</td>
+                <td>
+                    <input type="text" value="01" name="signType"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名信息</td>
+                <td>
+                    <input type="text" value="F3DK56JHSDF09D"  name="signMsg"/>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+<tr>
+    <td class="tdr"></td>
+    <td>
+        <button value="payTest" id="refundButton" onclick="goRefundPage()">去退款</button>
+    </td>
+</tr>
 </body>
 <script type="text/javascript">
     function goPayPage() {
         $("#pay_form").submit();
+    }
+    function goRefundPage() {
+        $("#refund_form").submit();
     }
 </script>
 

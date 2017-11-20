@@ -1,7 +1,11 @@
 package com.titanjr.checkstand.interceptor;
 
+import com.titanjr.checkstand.constants.OperateTypeEnum;
+import com.titanjr.checkstand.util.AccessLimiter;
+import com.titanjr.checkstand.util.JRBeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -17,9 +21,30 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(AccessLimitInterceptor.class);
 
-    @Override
-    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
+    @Autowired
+    private AccessLimiter accessLimiter;
 
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse httpServletResponse, Object o) throws Exception {
+
+        logger.info("请求参数为{}，当前请求路径是{}", request.getParameterMap(), request.getRequestURI());
+
+        //暂时只处理支付入口位置的请求
+        if ("/checkstand/payment.shtml".equals(request.getRequestURI())){
+            OperateTypeEnum operateTypeEnum = JRBeanUtils.recognizeRequestType(request.getParameterMap().keySet());
+            boolean isFrequency = accessLimiter.accessFrequency(operateTypeEnum);
+            if (isFrequency) {
+                logger.info("满足访问频次，执行下一步");
+                return true;
+            } else {
+                logger.error("访问频率过高");
+                //TODO 转走
+
+            }
+        } else {
+            //暂不处理，但是可能还是需要考虑
+            return true;
+        }
         return true;
     }
 
