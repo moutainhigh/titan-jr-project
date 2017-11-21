@@ -1047,11 +1047,14 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		try{
 			List<FundFreezeDTO> fundFreezeDTOList = titanFundFreezereqDao.queryFundFreezeDTO(unFreezeRequest);
 			if(fundFreezeDTOList !=null && fundFreezeDTOList.size()>0){
-				unFreezeResponse.putSuccess();
+				unFreezeResponse.putSuccess("冻结记录查询成功");
 				unFreezeResponse.setFundFreezeDTO(fundFreezeDTOList);
+			}else{
+				unFreezeResponse.putSuccess("未查到冻结记录");
 			}
 		}catch(Exception e){
-			log.error("查询解冻数据失败"+e.getMessage(),e);
+			log.error("冻结记录查询异常,参数："+Tools.gsonToString(unFreezeRequest),e);
+			unFreezeResponse.putErrorResult("冻结记录查询异常");
 		}
 		return unFreezeResponse;
 	}

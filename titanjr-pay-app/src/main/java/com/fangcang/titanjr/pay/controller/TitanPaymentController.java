@@ -299,7 +299,7 @@ public class TitanPaymentController extends BaseController {
     						orderStatusEnum = OrderStatusEnum.FREEZE_SUCCESS;
     						businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.FreezeSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
     					}else{//冻结失败
-    						log.error("订单冻结失败");
+    						log.error("订单冻结失败,订单号orderid："+Tools.gsonToString(transOrderDTO.getOrderid())+",冻结返回值："+freezeSuccess);
     						orderStatusEnum = OrderStatusEnum.FREEZE_FAIL;
     						titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Notify_Freeze_Insert_Fail, JSONSerializer.toJSON(transOrderDTO).toString());
     					}

@@ -363,21 +363,21 @@ public class TitanPaymentService {
 					.getAmount());
 			
 			if(FreezeTypeEnum.UNFREEZE.getKey().equals(transOrderDTO.getFreezeType())){
-				log.info("转账到收款方，不冻结");
+				log.info("转账到收款方，不冻结,订单号："+transOrderDTO.getOrderid());
 				return 0;//不需要冻结，直接返回
 			}else if(FreezeTypeEnum.FREEZE_PAYER.getKey().equals(transOrderDTO.getFreezeType())){
 				//冻结在付款方,冻结金额需要考虑手续费
 				if(transOrderDTO.getReceivedfee() != null && transOrderDTO.getReceivedfee() > 0){
-					log.info("freezeType is 3, transferAmount add receivedfee");
+					log.info("freezeType is 3, transferAmount add receivedfee,订单号："+transOrderDTO.getOrderid());
 					rechargeResultConfirmRequest.setPayAmount(String.valueOf(Integer.parseInt(transferRequest.getAmount()) + transOrderDTO.getReceivedfee()));
 				}
 				rechargeResultConfirmRequest.setUserid(transferRequest.getUserid());
 				freezeStatus = 1;
-				log.info("不转账，资金冻结在付款方");
+				log.info("不转账，资金冻结在付款方,订单号："+transOrderDTO.getOrderid());
 			}else{
 				rechargeResultConfirmRequest.setUserid(transferRequest.getUserrelateid());//冻结在收款方
 				freezeStatus = 2;
-				log.info("转账到收款方，资金冻结在收款方");
+				log.info("转账到收款方，资金冻结在收款方,订单号："+transOrderDTO.getOrderid());
 			}
 			
 			FreezeAccountBalanceResponse freezeAccountBalanceResponse = titanFinancialAccountService
@@ -388,7 +388,7 @@ public class TitanPaymentService {
 			
 		} catch (Exception e) {
 			freezeStatus = -1;
-			log.error("冻结余额失败" + e.getMessage(), e);
+			log.error("冻结余额失败,订单号："+transOrderDTO.getOrderid(), e);
 		}
 		return freezeStatus;
 	}
