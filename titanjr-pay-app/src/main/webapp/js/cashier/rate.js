@@ -1,5 +1,5 @@
     //计算费率
-	function paytable_paywayClick(itemType){
+	function paytable_paywayClick(itemType){debugger;
 	     var userId = cashierData.userid;
 	     var payAmount = "0";
 		 var transferAmount ="0";
@@ -27,7 +27,7 @@
 		 }
 		 $.ajax({
 	   	 type: "get",
-	        url: "../rate/rateCompute.action?userId="+userId+"&amount="+payAmount+"&deskId="+cashierData.deskId+"&date=" + new Date().getTime(),
+	        url: "../rate/rateCompute.action?userId="+userId+"&amount="+payAmount+"&deskId="+cashierData.deskId+"&payType="+itemType+"&date=" + new Date().getTime(),
 	        dataType: "json",
 	        async: false,
 	        success: function(data){

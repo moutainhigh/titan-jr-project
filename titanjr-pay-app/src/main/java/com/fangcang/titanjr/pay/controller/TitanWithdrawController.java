@@ -271,7 +271,7 @@ public class TitanWithdrawController extends BaseController {
 		if (computeRsp != null) {
 			balanceWithDrawRequest.setStandfee(computeRsp.getStRateAmount());
 			balanceWithDrawRequest.setReceivablefee(computeRsp
-					.getRsRateAmount());
+					.getBenchmarkRateAmount());
 			balanceWithDrawRequest.setReceivedfee(computeRsp.getExRateAmount());
 		}
 		
@@ -287,14 +287,14 @@ public class TitanWithdrawController extends BaseController {
 		req.setAmount(Long.parseLong(NumberUtil.covertToCents(computeReq
 				.getAmount())));
 		req.setReceivablefee(Long.parseLong(NumberUtil.covertToCents(computeRsp
-				.getRsRateAmount())));
+				.getBenchmarkRateAmount())));
 		req.setReceivedfee(Long.parseLong(NumberUtil.covertToCents(computeRsp
 				.getExRateAmount())));
 		req.setStanderdfee(Long.parseLong(NumberUtil.covertToCents(computeRsp
 				.getStRateAmount())));
 		req.setPayType(4);
 		req.setUserId(computeReq.getUserId());
-		req.setReceivableRate(Float.parseFloat(computeRsp.getRsRate()));
+		req.setReceivableRate(Float.parseFloat(computeRsp.getBenchmarkRate()));
 		req.setReceivedRate(Float.parseFloat(computeRsp.getExecutionRate()));
 		req.setStandardRate(Float.parseFloat(computeRsp.getStandRate()));
 		req.setRateType(computeRsp.getRateType());

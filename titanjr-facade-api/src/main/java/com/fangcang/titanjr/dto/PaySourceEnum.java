@@ -19,7 +19,8 @@ public enum PaySourceEnum {
 	    OPEN_PLATFORM_PC("6","对外开放PC端"),
 	    TT_MALL_PC("7","TTM的PC端收银台"),
 	    TT_MALL_MOBILE("8","TTM的移动端收银台"),
-	    TRADING_PLATFORM_MOBILE("9","交易平台移动端收银台");
+	    TRADING_PLATFORM_MOBILE("9","交易平台移动端收银台"),
+		WITHDRAW_PC("10","提现收银台");//提现没有实际的收银台，只用来计算费率
 
 	    private String deskCode;
 	    private String deskName;

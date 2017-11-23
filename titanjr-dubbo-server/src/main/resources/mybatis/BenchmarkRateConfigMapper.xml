@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.BenchmarkRateConfigDao">
+
+	<select id="queryBenchmarkRateConfig" resultType="com.fangcang.titanjr.entity.BenchmarkRateConfig"
+					parameterType="com.fangcang.titanjr.entity.BenchmarkRateConfig">
+    	SELECT * FROM t_tfs_ratebenchmark 
+    	<where>
+    	  <if test="paychannel !=null and paychannel != ''">
+    	    and paychannel = #{paychannel}
+    	  </if>
+    	  <if test="paytype != null and paytype != ''">
+    	    and paytype = #{paytype}
+    	  </if>
+    	  <if test="cardtype != null and cardtype != ''">
+    	    and cardtype = #{cardtype}
+    	  </if>
+    	</where>
+    </select>
+    
+</mapper>

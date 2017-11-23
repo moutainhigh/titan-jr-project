@@ -4,9 +4,9 @@ public class TitanRateComputeRsp extends TitanBaseRsp {
 	private String amount;
 	private String exRateAmount = "0";
 	private String stRateAmount = "0";
-	private String rsRateAmount = "0";
+	private String benchmarkRateAmount = "0";
 	private Integer rateType;
-	private String rsRate;
+	private String benchmarkRate;
 	private String standRate;
 	private String executionRate;
 	
@@ -26,12 +26,12 @@ public class TitanRateComputeRsp extends TitanBaseRsp {
 		this.stRateAmount = stRateAmount;
 	}
 
-	public String getRsRateAmount() {
-		return rsRateAmount;
+	public String getBenchmarkRateAmount() {
+		return benchmarkRateAmount;
 	}
 
-	public void setRsRateAmount(String rsRateAmount) {
-		this.rsRateAmount = rsRateAmount;
+	public void setBenchmarkRateAmount(String benchmarkRateAmount) {
+		this.benchmarkRateAmount = benchmarkRateAmount;
 	}
 
 	public String getAmount() {
@@ -50,12 +50,12 @@ public class TitanRateComputeRsp extends TitanBaseRsp {
 		this.rateType = rateType;
 	}
 
-	public String getRsRate() {
-		return rsRate;
+	public String getBenchmarkRate() {
+		return benchmarkRate;
 	}
 
-	public void setRsRate(String rsRate) {
-		this.rsRate = rsRate;
+	public void setBenchmarkRate(String benchmarkRate) {
+		this.benchmarkRate = benchmarkRate;
 	}
 
 	public String getStandRate() {

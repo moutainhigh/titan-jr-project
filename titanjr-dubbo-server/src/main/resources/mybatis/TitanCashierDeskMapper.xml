@@ -133,5 +133,9 @@
         </where>
 
     </update>
+    
+    <select id="queryAllCashierDeskOrderBy" resultType="com.fangcang.titanjr.entity.TitanCashierDesk">
+	    	select userid, deskid, usedfor, deskname from t_tfs_cashierdesk order by userid 
+  		</select>
 
 </mapper>

@@ -282,6 +282,7 @@ public class WeChatController {
 			// 开始计算并设置费率
 			TitanRateComputeReq computeReq = new TitanRateComputeReq();
 			computeReq.setAmount(titanPaymentRequest.getPayAmount());
+			computeReq.setPayType(CashierItemTypeEnum.QR_ITEM.getItemCode());//目前按第三方支付来
 			computeReq.setUserId(dto.getRuserId());
 			computeReq.setDeskId(titanPaymentRequest.getDeskId());
 

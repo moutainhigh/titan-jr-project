@@ -224,9 +224,9 @@ public class CommonConstant {
     /**
      * 费率类型：百分比
      */
-    public static final int ratetype_percent = 1;
+    public static final int RATETYPE_PERCENT = 1;
     /**
      * 费率类型：每笔固定值
      */
-    public static final int ratetype_fixation = 2;
+    public static final int RATETYPE_FIXATION = 2;
 }

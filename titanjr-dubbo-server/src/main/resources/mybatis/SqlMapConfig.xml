@@ -106,7 +106,9 @@
 		<mapper resource="mybatis/LoanCreditOrderDiscardMapper.xml"/>
 		<mapper resource="mybatis/TitanVirtualOrg.xml"/>
 		<mapper resource="mybatis/TitanOperateLogMapper.xml"/>
+		
 		<mapper resource="mybatis/CommonPayHistoryMapper.xml"/>
+		<mapper resource="mybatis/BenchmarkRateConfigMapper.xml"/>
 
 	</mappers>
 

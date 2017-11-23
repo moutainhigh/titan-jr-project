@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.dao.impl;
 
-import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.dao.TitanRateConfigDao;
@@ -83,6 +82,15 @@ public class TitanRateConfigDaoImpl extends GenericDAOMyBatisImpl implements Tit
 	public List<String> queryUserIdNoRateConfig(Integer busType) {
 		try {
 			return super.selectList("com.fangcang.titanjr.dao.TitanRateConfigDao.queryUserIdNoRateConfig",busType);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+	
+	@Override
+	public int truncateRateConfig() {
+		try {
+			return super.trunTable("com.fangcang.titanjr.dao.TitanRateConfigDao.truncateRateConfig");
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}

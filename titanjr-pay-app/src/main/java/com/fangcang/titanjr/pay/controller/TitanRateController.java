@@ -29,10 +29,11 @@ public class TitanRateController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = "/rateCompute", method = { RequestMethod.GET })
-	public String rateCompute(String userId, String amount, String deskId) {
+	public String rateCompute(String userId, String amount, String deskId, String payType) {
 
 		if (!StringUtil.isValidString(userId)
 				|| !StringUtil.isValidString(amount)
+				|| !StringUtil.isValidString(payType)
 				|| !StringUtil.isValidString(deskId)) {
 			return this.toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
@@ -41,6 +42,7 @@ public class TitanRateController extends BaseController {
 		computeReq.setAmount(amount);
 		computeReq.setDeskId(deskId);
 		computeReq.setUserId(userId);
+		computeReq.setPayType(payType);
 		
 		TitanRateComputeRsp computeRsp = titanRateService
 				.rateCompute(computeReq);

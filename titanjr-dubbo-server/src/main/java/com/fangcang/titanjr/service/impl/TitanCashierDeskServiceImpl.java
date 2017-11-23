@@ -177,6 +177,8 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
                 for (TitanCashierDesk cashierDesk : cashierDeskList) {
                     rateConfigList.add(buildPayRateConfig(cashierDesk, cashierDeskInitRequest.getUserId()));
                 }
+                //增加提现的费率
+                rateConfigList.add(buildPayRateConfig(null, cashierDeskInitRequest.getUserId()));
             }
 
             titanRateConfigDao.batchSaveRateConfigs(rateConfigList);
@@ -208,18 +210,20 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
     private TitanRateConfig buildPayRateConfig(TitanCashierDesk titanCashierDesk, String userId) {
         TitanRateConfig rateConfig = new TitanRateConfig();
         rateConfig.setUserid(userId);
-        if(titanCashierDesk == null){
+        if(titanCashierDesk == null){//提现没有实际的收银台，但是要配置费率
+        	rateConfig.setDeskId("TX");
+        	rateConfig.setUsedfor(PaySourceEnum.WITHDRAW_PC.getDeskCode());
         	rateConfig.setDescription("提现收银台");
-            rateConfig.setRatetype(CommonConstant.ratetype_fixation);
+            rateConfig.setRatetype(CommonConstant.RATETYPE_FIXATION);
             rateConfig.setStandrate(5f);
         }else{
     		rateConfig.setDeskId(String.valueOf(titanCashierDesk.getDeskid()));
-            rateConfig.setRatetype(CommonConstant.ratetype_percent);
+    		rateConfig.setUsedfor(String.valueOf(titanCashierDesk.getUsedfor()));
+            rateConfig.setDescription(titanCashierDesk.getDeskname());
+            rateConfig.setRatetype(CommonConstant.RATETYPE_PERCENT);
         	if(titanCashierDesk.getUsedfor() != null && titanCashierDesk.getUsedfor() == 5){
-        		rateConfig.setDescription("充值收银台");
         		rateConfig.setStandrate(0f);
             }else{
-                rateConfig.setDescription(titanCashierDesk.getDeskname());
                 rateConfig.setStandrate(0.4f);
             }
         }
@@ -282,7 +286,9 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
         List<TitanCashierDesk> deskList = new ArrayList<TitanCashierDesk>();
         if (null == deskType) {
             for (PaySourceEnum paySourceEnum : PaySourceEnum.values()) {
-                deskList.add(getCashierDesk(cashierDeskInitRequest, paySourceEnum));
+            	if(paySourceEnum != PaySourceEnum.WITHDRAW_PC){//提现没有收银台配置
+            		deskList.add(getCashierDesk(cashierDeskInitRequest, paySourceEnum));
+            	}
             }
         } else {
             deskList.add(getCashierDesk(cashierDeskInitRequest, deskType));

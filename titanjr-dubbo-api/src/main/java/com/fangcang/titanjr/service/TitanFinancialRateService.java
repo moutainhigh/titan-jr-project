@@ -1,10 +1,12 @@
 package com.fangcang.titanjr.service;
 
+import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.request.CreateRateRecordRequest;
 import com.fangcang.titanjr.dto.request.RateConfigRequest;
 import com.fangcang.titanjr.dto.response.CreateRateRecordResponse;
 import com.fangcang.titanjr.dto.response.RateConfigResponse;
 import com.fangcang.titanjr.dto.response.RateRecordResponse;
+import com.fangcang.titanjr.entity.BenchmarkRateConfig;
 
 /**
  * @ClassName: TitanFinancialRateService
@@ -22,6 +24,15 @@ public interface TitanFinancialRateService
 	 * @return: RateConfigResponse
 	 */
 	public RateConfigResponse getRateConfigInfos(RateConfigRequest req);
+	
+	/**
+	 * 查询唯一的基准费率
+	 * @author Jerry
+	 * @date 2017年11月20日 下午2:58:58
+	 * @param benchmarkRateConfig
+	 * @return
+	 */
+	public BenchmarkRateConfig queryBenchmarkRateConfig(BenchmarkRateConfig benchmarkRateConfig);
 	
 	
 //	/**
@@ -54,6 +65,6 @@ public interface TitanFinancialRateService
 	 */
 	public CreateRateRecordResponse createRateRecord(CreateRateRecordRequest req);
 	
-	public void initRateData();
+	public BaseResponseDTO initRateData();
 	
 }
