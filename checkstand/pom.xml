@@ -126,6 +126,20 @@
         </dependency>
 
         <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
@@ -139,8 +153,49 @@
 
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>production</id>
+            <properties>
+                <package.environment>production</package.environment>
+            </properties>
+        </profile>
+        <profile>
+            <id>test01</id>
+            <properties>
+                <package.environment>test01</package.environment>
+            </properties>
+        </profile>
+        <profile>
+            <id>test02</id>
+            <properties>
+                <package.environment>test02</package.environment>
+            </properties>
+
+        </profile>
+        <profile>
+            <id>test03</id>
+            <properties>
+                <package.environment>test03</package.environment>
+            </properties>
+
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <package.environment>dev</package.environment>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
+
     <build>
         <finalName>checkstand</finalName>
+        <filters>
+            <filter>src/main/resources/filters/sys-${package.environment}.properties</filter>
+        </filters>
         <!-- 定义resource 文件和目录 -->
         <resources>
             <resource>
@@ -148,7 +203,8 @@
                 <filtering>true</filtering>
                 <excludes>
                     <exclude>production/**/**</exclude>
-                    <exclude>debug_conf.properties</exclude>
+                    <exclude>filters/**/**</exclude>
+                    <!--<exclude>debug_conf.properties</exclude>-->
                 </excludes>
             </resource>
         </resources>
@@ -161,11 +217,12 @@
                     <archive>
                         <addMavenDescriptor>true</addMavenDescriptor>
                     </archive>
-                    <!-- 定义 单独要拷贝的文件 -->
+                    <!-- 定义 单独要拷贝的文件-->
                     <webResources>
                         <resource>
                             <directory>src/main/resources/production</directory>
                             <targetPath>WEB-INF/classes</targetPath>
+                            <filtering>true</filtering>
                         </resource>
                     </webResources>
                 </configuration>

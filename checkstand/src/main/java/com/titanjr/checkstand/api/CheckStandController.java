@@ -3,7 +3,7 @@ package com.titanjr.checkstand.api;
 import com.titanjr.checkstand.constants.OperateTypeEnum;
 import com.titanjr.checkstand.controller.BaseController;
 import com.titanjr.checkstand.util.JRBeanUtils;
-import com.titanjr.checkstand.util.WebUtil;
+import com.titanjr.checkstand.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -25,7 +25,7 @@ public class CheckStandController extends BaseController {
 
 
     @RequestMapping(value = "/payment", method = RequestMethod.POST)
-    public String payment(HttpServletRequest request,  RedirectAttributes attr) throws Exception {
+    public String payment(HttpServletRequest request, RedirectAttributes attr) throws Exception {
 
         //请求频次校验
         //参数MD5验证
@@ -37,11 +37,12 @@ public class CheckStandController extends BaseController {
         OperateTypeEnum operateTypeEnum = JRBeanUtils.recognizeRequestType(request.getParameterMap().keySet());
 
         if (operateTypeEnum.equals(OperateTypeEnum.PAY_REQUEST)){
-            return "redirect:" + WebUtil.getRequestBaseUrl(request) + "/pay/entrance.shtml";
+            request.setCharacterEncoding("UTF-8");
+            return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/pay/entrance.shtml";
         }
 
         if (operateTypeEnum.equals(OperateTypeEnum.REFUND_REQUEST)){
-            return "redirect:" + WebUtil.getRequestBaseUrl(request) + "/refund/entrance.shtml";
+            return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/refund/entrance.shtml";
         }
 
         return null;

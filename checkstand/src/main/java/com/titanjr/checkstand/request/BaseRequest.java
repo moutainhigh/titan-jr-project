@@ -10,7 +10,7 @@ public abstract class BaseRequest {
     private String operator;
     private Date operateTime;
 
-    public abstract void validate();
+    public abstract boolean validate();
 
     public String getOperator() {
         return operator;

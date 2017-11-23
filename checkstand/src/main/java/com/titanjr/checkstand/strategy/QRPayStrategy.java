@@ -1,6 +1,6 @@
 package com.titanjr.checkstand.strategy;
 
-import com.titanjr.checkstand.util.WebUtil;
+import com.titanjr.checkstand.util.WebUtils;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +15,6 @@ public class QRPayStrategy implements PayRequestStrategy{
     public String redirectResult(HttpServletRequest request) {
         //针对快捷支付的校验；
         //可能泛起请求，将参数封装；
-        return WebUtil.getRequestBaseUrl(request) + "/pay/QRCodePay.shtml";
+        return WebUtils.getRequestBaseUrl(request) + "/pay/QRCodePay.shtml";
     }
 }

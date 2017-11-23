@@ -1,6 +1,7 @@
 package com.titanjr.checkstand.dto;
 
 
+import com.titanjr.checkstand.constants.LanguageEnum;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotNull;
 public class GateWayPayDTO {
 
     //支付请求id，保存后才有
-    private Long payreqid;
+    private Long payReqId;
     //用户请求单号，落单时保存
     private String userOrderMo;
     //商户号，需要根据传来的商户号匹配
@@ -76,27 +77,27 @@ public class GateWayPayDTO {
     //微信服务号专用openid
     private String openid;
     //身份证号
-    private String idcode;
+    private String idCode;
     //银行卡类型
-    private String payerAccounttype;
+    private String payerAccountType;
     //安全码
-    private String safetycode;
+    private String safetyCode;
     //有效期
     private String validthru;
     //终端IP
-    private String terminalip;
+    private String terminalIp;
     //终端类型
-    private String terminaltype;
+    private String terminalType;
     //终端信息
-    private String terminalinfo;
+    private String terminalInfo;
     //支付状态
-    private String reqstatus;
+    private Integer reqStatus;
     //语言
-    private String language;
+    private Integer language = LanguageEnum.CHN_SIM.key;
     //合作伙伴商户号
     private String pid;
     //产品价格/单价
-    private String productPrice;
+    private Long productPrice;
     //业务扩展字段
     private String extTL;
     //贸易类型
@@ -104,18 +105,102 @@ public class GateWayPayDTO {
     //海关扩展字段
     private String customsExt;
     //应用id，扫码等付款
-    private String appid;
+    private String appId;
     //随机字符串
-    private String randomstr;
+    private String randomStr;
     //支付限制，不用信用卡
-    private String limit_pay;
+    private String limitPay;
 
-    public Long getPayreqid() {
-        return payreqid;
+    public Long getPayReqId() {
+        return payReqId;
     }
 
-    public void setPayreqid(Long payreqid) {
-        this.payreqid = payreqid;
+    public void setPayReqId(Long payReqId) {
+        this.payReqId = payReqId;
+    }
+
+    public String getIdCode() {
+        return idCode;
+    }
+
+    public void setIdCode(String idCode) {
+        this.idCode = idCode;
+    }
+
+    public String getPayerAccountType() {
+        return payerAccountType;
+    }
+
+    public void setPayerAccountType(String payerAccountType) {
+        this.payerAccountType = payerAccountType;
+    }
+
+    public String getSafetyCode() {
+        return safetyCode;
+    }
+
+    public void setSafetyCode(String safetyCode) {
+        this.safetyCode = safetyCode;
+    }
+
+    public String getTerminalIp() {
+        return terminalIp;
+    }
+
+    public void setTerminalIp(String terminalIp) {
+        this.terminalIp = terminalIp;
+    }
+
+    public String getTerminalType() {
+        return terminalType;
+    }
+
+    public void setTerminalType(String terminalType) {
+        this.terminalType = terminalType;
+    }
+
+    public String getTerminalInfo() {
+        return terminalInfo;
+    }
+
+    public void setTerminalInfo(String terminalInfo) {
+        this.terminalInfo = terminalInfo;
+    }
+
+    public Integer getReqStatus() {
+        return reqStatus;
+    }
+
+    public void setReqStatus(Integer reqStatus) {
+        this.reqStatus = reqStatus;
+    }
+
+    public void setProductPrice(Long productPrice) {
+        this.productPrice = productPrice;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public String getRandomStr() {
+        return randomStr;
+    }
+
+    public void setRandomStr(String randomStr) {
+        this.randomStr = randomStr;
+    }
+
+    public String getLimitPay() {
+        return limitPay;
+    }
+
+    public void setLimitPay(String limitPay) {
+        this.limitPay = limitPay;
     }
 
     public String getUserOrderMo() {
@@ -342,30 +427,6 @@ public class GateWayPayDTO {
         this.openid = openid;
     }
 
-    public String getIdcode() {
-        return idcode;
-    }
-
-    public void setIdcode(String idcode) {
-        this.idcode = idcode;
-    }
-
-    public String getPayerAccounttype() {
-        return payerAccounttype;
-    }
-
-    public void setPayerAccounttype(String payerAccounttype) {
-        this.payerAccounttype = payerAccounttype;
-    }
-
-    public String getSafetycode() {
-        return safetycode;
-    }
-
-    public void setSafetycode(String safetycode) {
-        this.safetycode = safetycode;
-    }
-
     public String getValidthru() {
         return validthru;
     }
@@ -374,43 +435,11 @@ public class GateWayPayDTO {
         this.validthru = validthru;
     }
 
-    public String getTerminalip() {
-        return terminalip;
-    }
-
-    public void setTerminalip(String terminalip) {
-        this.terminalip = terminalip;
-    }
-
-    public String getTerminaltype() {
-        return terminaltype;
-    }
-
-    public void setTerminaltype(String terminaltype) {
-        this.terminaltype = terminaltype;
-    }
-
-    public String getTerminalinfo() {
-        return terminalinfo;
-    }
-
-    public void setTerminalinfo(String terminalinfo) {
-        this.terminalinfo = terminalinfo;
-    }
-
-    public String getReqstatus() {
-        return reqstatus;
-    }
-
-    public void setReqstatus(String reqstatus) {
-        this.reqstatus = reqstatus;
-    }
-
-    public String getLanguage() {
+    public Integer getLanguage() {
         return language;
     }
 
-    public void setLanguage(String language) {
+    public void setLanguage(Integer language) {
         this.language = language;
     }
 
@@ -420,14 +449,6 @@ public class GateWayPayDTO {
 
     public void setPid(String pid) {
         this.pid = pid;
-    }
-
-    public String getProductPrice() {
-        return productPrice;
-    }
-
-    public void setProductPrice(String productPrice) {
-        this.productPrice = productPrice;
     }
 
     public String getExtTL() {
@@ -454,27 +475,7 @@ public class GateWayPayDTO {
         this.customsExt = customsExt;
     }
 
-    public String getAppid() {
-        return appid;
-    }
-
-    public void setAppid(String appid) {
-        this.appid = appid;
-    }
-
-    public String getRandomstr() {
-        return randomstr;
-    }
-
-    public void setRandomstr(String randomstr) {
-        this.randomstr = randomstr;
-    }
-
-    public String getLimit_pay() {
-        return limit_pay;
-    }
-
-    public void setLimit_pay(String limit_pay) {
-        this.limit_pay = limit_pay;
+    public Long getProductPrice() {
+        return productPrice;
     }
 }

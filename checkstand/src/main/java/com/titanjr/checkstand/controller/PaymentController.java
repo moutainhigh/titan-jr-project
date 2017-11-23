@@ -1,13 +1,17 @@
 package com.titanjr.checkstand.controller;
 
 import com.titanjr.checkstand.constants.PayTypeEnum;
+import com.titanjr.checkstand.dto.GateWayPayDTO;
+import com.titanjr.checkstand.request.GateWayPayRequest;
 import com.titanjr.checkstand.strategy.PayRequestStrategy;
 import com.titanjr.checkstand.strategy.StrategyFactory;
+import com.titanjr.checkstand.util.WebUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,22 +26,26 @@ public class PaymentController extends BaseController {
     /**
      * 所有支付入口，进入后分配到具体的支付接口返回不同的参数
      * @param request
-     * @param response
+     * @param attr
      * @throws Exception
      */
     @RequestMapping(value = "/entrance", method = {RequestMethod.GET, RequestMethod.POST})
-    public void entrance(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public String entrance(HttpServletRequest request, RedirectAttributes attr) throws Exception {
         //付款入口,根据付款类型来判定走到具体哪个接口
         //需根据得到的参数类型来做校验
-        PayTypeEnum payTypeEnum = getPayType(request);
+        PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(request.getParameter("payType"));
         PayRequestStrategy payRequestStrategy =  StrategyFactory.getPayRequestStrategy(payTypeEnum);
         String redirectUrl = payRequestStrategy.redirectResult(request);
-        response.sendRedirect(redirectUrl);
+        super.resetParameter(request,attr);
+        return "redirect:" + redirectUrl;
     }
 
     @RequestMapping(value = "/gateWayPay", method = {RequestMethod.GET, RequestMethod.POST})
     public String batchQuery(HttpServletRequest request, Model model) throws Exception {
-
+        GateWayPayDTO payDTO = WebUtils.switch2RequestDTO(GateWayPayDTO.class, request);
+        GateWayPayRequest payRequest = new GateWayPayRequest();
+        payRequest.setGateWayPayDTO(payDTO);
+        payRequest.validate();
         return "gateWayPay";
     }
 
@@ -50,20 +58,6 @@ public class PaymentController extends BaseController {
     }
 
 
-    /**
-     * 测试返回；
-     * @param request
-     * @return
-     */
-    private PayTypeEnum getPayType(HttpServletRequest request){
-        if ("01".equals(request.getParameterMap().get("payType")[0])){
-            return PayTypeEnum.PERSON_EBANK;
-        }
-        if ("02".equals(request.getParameterMap().get("payType")[0])){
-            return PayTypeEnum.QR_WECHAT_URL;
-        }
-       return PayTypeEnum.QR_WECHAT_URL;
-    }
 
 
 }

@@ -16,7 +16,7 @@ public class AccessLimitConfig {
 
     static {
 
-        frequencyConfigMap.put(OperateTypeEnum.PAY_REQUEST,3L);
+        frequencyConfigMap.put(OperateTypeEnum.PAY_REQUEST,300L);
 
         intervalConfigMap.put(OperateTypeEnum.PAY_REQUEST,2000L);
 

@@ -1,6 +1,6 @@
 package com.titanjr.checkstand.strategy;
 
-import com.titanjr.checkstand.util.WebUtil;
+import com.titanjr.checkstand.util.WebUtils;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +19,6 @@ public class NetBankPayStrategy implements PayRequestStrategy{
         //针对快捷支付的参数校验，如果失败返回失败页面
 
 
-        return WebUtil.getRequestBaseUrl(request) + "/pay/gateWayPay.shtml";
+        return WebUtils.getRequestBaseUrl(request) + "/pay/gateWayPay.shtml";
     }
 }

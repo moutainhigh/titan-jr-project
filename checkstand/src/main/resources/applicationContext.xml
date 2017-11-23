@@ -82,11 +82,12 @@
     <!-- 自动扫描注解，无需显式配置  bean 了  -->
     <context:annotation-config/>
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
-    
-    
 
     <bean class="com.fangcang.util.SpringContextUtil"/>
 
     <import resource="spring/applicationContext-redis.xml" />
+    <import resource="applicationContext-dataSource.xml"/>
+    <import resource="applicationContext-service.xml"/>
+    <import resource="applicationContext-persistence.xml"/>
 
 </beans>

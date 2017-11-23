@@ -1,5 +1,6 @@
 package com.titanjr.checkstand.request;
 
+import com.fangcang.titanjr.common.util.GenericValidate;
 import com.titanjr.checkstand.dto.GateWayPayDTO;
 
 /**
@@ -19,7 +20,10 @@ public class GateWayPayRequest extends BaseRequest {
     }
 
     @Override
-    public void validate() {
-
+    public boolean validate() {
+        if (!GenericValidate.validate(gateWayPayDTO)){
+            return true;
+        }
+        return  false;
     }
 }
