@@ -20,6 +20,7 @@ public class GateWayPayDaoTest  extends GenericTest{
     @Test
     public void testBatchSaveRequest(){
         List<GateWayPayDTO> gateWayPayDTOList = new ArrayList<GateWayPayDTO>();
+
         int res = gateWayPayDao.batchSaveGateWayPayDTO(gateWayPayDTOList);
         System.out.println(res);
     }

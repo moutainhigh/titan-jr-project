@@ -14,7 +14,7 @@ public class GateWayPayDTO {
     //支付请求id，保存后才有
     private Long payReqId;
     //用户请求单号，落单时保存
-    private String userOrderMo;
+        private String userOrderNo;
     //商户号，需要根据传来的商户号匹配
     @NotBlank
     private String merchantNo;
@@ -75,7 +75,7 @@ public class GateWayPayDTO {
     //签名信息
     private String signMsg;
     //微信服务号专用openid
-    private String openid;
+    private String openId;
     //身份证号
     private String idCode;
     //银行卡类型
@@ -203,12 +203,12 @@ public class GateWayPayDTO {
         this.limitPay = limitPay;
     }
 
-    public String getUserOrderMo() {
-        return userOrderMo;
+    public String getUserOrderNo() {
+        return userOrderNo;
     }
 
-    public void setUserOrderMo(String userOrderMo) {
-        this.userOrderMo = userOrderMo;
+    public void setUserOrderNo(String userOrderNo) {
+        this.userOrderNo = userOrderNo;
     }
 
     public String getMerchantNo() {
@@ -419,12 +419,12 @@ public class GateWayPayDTO {
         this.signMsg = signMsg;
     }
 
-    public String getOpenid() {
-        return openid;
+    public String getOpenId() {
+        return openId;
     }
 
-    public void setOpenid(String openid) {
-        this.openid = openid;
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 
     public String getValidthru() {

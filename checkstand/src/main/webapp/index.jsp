@@ -40,7 +40,7 @@
             <tr>
                 <td class="tdr">支付方式</td>
                 <td>
-                    <input type="text" value="01" id="payType" name="payType"/>
+                    <input type="text" value="11" id="payType" name="payType"/>
                 </td>
             </tr>
             <tr>
