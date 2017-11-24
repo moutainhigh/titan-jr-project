@@ -95,7 +95,7 @@ public class RedisServiceImpl implements RedisService {
 			public Map<String, String> doInRedis(RedisConnection connection)
 					throws DataAccessException {
 				Map<String, String> result = new HashMap<String, String>();
-				byte[] key = serializableRedisTemplate.getStringSerializer().serialize(keyString);
+				byte[] key = serializableRedisTemplate.getStringSerializer().serialize(Tools.getTitanRedisKey(keyString));
 				if (connection.exists(key)) {
 					for (String kv : keySet){
 						List<byte[]> valueList = connection.hMGet(key,serializableRedisTemplate.getStringSerializer().serialize(kv));
@@ -117,7 +117,7 @@ public class RedisServiceImpl implements RedisService {
 			public Map<String, String> doInRedis(RedisConnection connection)
 					throws DataAccessException {
 				Map<String, String> result = new HashMap<String, String>();
-				byte[] key = serializableRedisTemplate.getStringSerializer().serialize(keyString);
+				byte[] key = serializableRedisTemplate.getStringSerializer().serialize(Tools.getTitanRedisKey(keyString));
 				Map<byte[], byte[]> valueMap = connection.hGetAll(key);
 
 				for (byte[] keys : valueMap.keySet()){
