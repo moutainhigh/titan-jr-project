@@ -21,7 +21,11 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(value = "/")
 public class CheckStandController extends BaseController {
 
-    private final static Logger logger = LoggerFactory.getLogger(CheckStandController.class);
+    /** 
+	 * 
+	 */
+	private static final long serialVersionUID = -7886169613793728087L;
+	private final static Logger logger = LoggerFactory.getLogger(CheckStandController.class);
 
 
     @RequestMapping(value = "/payment", method = RequestMethod.POST)

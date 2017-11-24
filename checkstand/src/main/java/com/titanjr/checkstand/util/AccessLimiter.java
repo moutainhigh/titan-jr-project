@@ -5,11 +5,13 @@ import com.fangcang.titanjr.redis.service.RedisService;
 import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.AccessLimitConfig;
 import com.titanjr.checkstand.constants.OperateTypeEnum;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,8 +44,8 @@ public class AccessLimiter {
     public boolean accessFrequency(OperateTypeEnum operateType) {
         if (AccessLimitConfig.frequencyConfigMap.containsKey(operateType)) {
             Long frequency = AccessLimitConfig.frequencyConfigMap.get(operateType);
-            limit = frequency;
-            intervalPerPermit = intervalInMills * 1.0 / limit;
+            limit = frequency;//限时访问的总次数
+            intervalPerPermit = intervalInMills / limit;
         } else {
             logger.error("当前操作{}未配置的访问{}频次数据", operateType,132456);
             return false;
@@ -59,25 +61,26 @@ public class AccessLimiter {
 
             long lastRefillTime = tokenBucket.getLastRefillTime();
             long refillTime = System.currentTimeMillis();
-            long intervalSinceLast = refillTime - lastRefillTime;
+            long intervalSinceLast = refillTime - lastRefillTime;//间隔时间
 
             long currentTokensRemaining;
             if (intervalSinceLast > intervalInMills) {
                 currentTokensRemaining = limit;
             } else {
-                long grantedTokens = (long) (intervalSinceLast / intervalPerPermit);
-                currentTokensRemaining = Math.min(grantedTokens + tokenBucket.getTokensRemaining(), limit);
+                long grantedTokens = (long) (intervalSinceLast / intervalPerPermit);//间隔时间所消耗的次数
+                //currentTokensRemaining = Math.min(grantedTokens + tokenBucket.getTokensRemaining(), limit);
+                currentTokensRemaining = tokenBucket.getTokensRemaining() - grantedTokens;
             }
             tokenBucket.setLastRefillTime(refillTime);
-            assert currentTokensRemaining >= 0;
-            if (currentTokensRemaining == 0) {
+            //assert currentTokensRemaining >= 0;
+            if (currentTokensRemaining > 0) {
                 tokenBucket.setTokensRemaining(currentTokensRemaining);
                 redisService.hmSetValue(key, tokenBucket.toHash());
-                return false;
-            } else {
-                tokenBucket.setTokensRemaining(currentTokensRemaining - 1);
-                redisService.hmSetValue(key, tokenBucket.toHash());
                 return true;
+            } else {
+                tokenBucket.setTokensRemaining(limit - 1);
+                redisService.hmSetValue(key, tokenBucket.toHash());
+                return false;
             }
         }
     }
