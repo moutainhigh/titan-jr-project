@@ -299,6 +299,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 							TitanFundFreezereq titanFundFreezereq = new TitanFundFreezereq();
 							titanFundFreezereq.setFreezereqid(rechargeResultConfirmRequest.getFreezereqId());
 							titanFundFreezereq.setRequestno(balanceFreezeRequest.getRequestno());
+							titanFundFreezereq.setStatus(1);//1-冻结成功，2-已经解冻成功
 							titanFundFreezereq.setAuthcode(balanceFreezeResponse.getAuthcode());
 							int row = titanFundFreezereqDao.update(titanFundFreezereq);
 							if (row < 1) {
@@ -1073,7 +1074,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		}
 		log.info("解冻时入参:" + JSONSerializer.toJSON(unFreezeRequest));
 		UnFreezeResponse unFreezeResponse = this.queryUnFreezeData(unFreezeRequest);
-		log.info("****************" + Thread.currentThread().getName() + "*********************");
 		log.info("解冻查询结果:" + JSONSerializer.toJSON(unFreezeResponse));
 		if (unFreezeResponse.getFundFreezeDTO() != null && unFreezeResponse.getFundFreezeDTO().size() > 0) {
 			rows = unFreezeResponse.getFundFreezeDTO().size();
@@ -1107,6 +1107,10 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	
 	//根据冻结订单解冻账户资金
 	private boolean fundUnFreezeWithFreezeOrder(FundFreezeDTO fundFreezeDTO ){
+		if(fundFreezeDTO.getStatus()==2){//已经解冻
+			log.info("该冻结记录状态已经成功解冻，无需重复解冻,解冻记录:"+Tools.gsonToString(fundFreezeDTO));
+			return true;
+		}
 		BalanceUnFreezeRequest balanceUnFreezeRequest = convertBalanceUnFreezeRequest(fundFreezeDTO);
 		if(balanceUnFreezeRequest !=null){
 			try{
@@ -1116,6 +1120,10 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			    	//插入解冻记录
 			    	TitanFundUnFreezereq titanFundUnFreezereq = covertToTitanFundUnFreezereq(fundFreezeDTO);
 			    	try{
+			    		TitanFundFreezereq fundFreezereq = new TitanFundFreezereq();
+			    		fundFreezereq.setFreezereqid(fundFreezeDTO.getFreezereqId());
+			    		fundFreezereq.setStatus(2);//解冻成功
+			    		titanFundFreezereqDao.update(fundFreezereq);
 			    		titanFundUnFreezereqDao.insert(titanFundUnFreezereq);
 			    	}catch(Exception e){
 			    		log.error("插入解冻记录失败，解冻参数:"+Tools.gsonToString(balanceUnFreezeRequest)+",解冻响应结果:"+Tools.gsonToString(balanceUnFreezeResponse));

@@ -20,6 +20,8 @@ public class FundFreezeDTO implements Serializable{
 	
 	private String requestNo;
 	
+	private Integer status;
+	
 	private String amount;
 	
 	private String orderNo;
@@ -31,6 +33,17 @@ public class FundFreezeDTO implements Serializable{
 	public String getMerchantCode() {
 		return merchantCode;
 	}
+	
+
+	public Integer getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
 
 	public void setMerchantCode(String merchantCode) {
 		this.merchantCode = merchantCode;
