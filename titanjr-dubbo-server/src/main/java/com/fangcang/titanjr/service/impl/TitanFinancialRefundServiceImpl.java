@@ -938,6 +938,15 @@ public class TitanFinancialRefundServiceImpl implements
 			//除了退款成功，其他状态都设置成退款中
 			if(RefundStatusEnum.REFUND_SUCCESS == status){
 				orderStatusEnum = OrderStatusEnum.REFUND_SUCCESS;
+				RefundDTO refundDTO = new RefundDTO();
+				refundDTO.setOrderNo(transOrderDTO.getOrderid());
+				List<RefundDTO> refundDTOList = titanRefundDao.queryRefundDTO(refundDTO);
+				if(CollectionUtils.isNotEmpty(refundDTOList)){
+					RefundDTO updateRefundDTO = new RefundDTO();
+					updateRefundDTO.setOrderNo(refundDTOList.get(0).getRefundId());
+					updateRefundDTO.setStatus(RefundStatusEnum.REFUND_SUCCESS.status);
+					titanRefundDao.updateRefundDTO(updateRefundDTO);
+				}
 			}else{
 				orderStatusEnum = OrderStatusEnum.REFUND_IN_PROCESS;
 			}
