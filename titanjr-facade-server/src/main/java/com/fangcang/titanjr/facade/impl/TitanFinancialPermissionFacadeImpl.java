@@ -89,7 +89,6 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
             orgBindInfo.setMerchantCode(showPaymentRequest.getMerchantcode());
             orgBindInfo = titanFinancialOrganService.queryOrgBindInfoByUserid(orgBindInfo);
             if (orgBindInfo != null) {
-                log.info("查询得到机构绑定信息，判定展示支付中还是在线支付");
                 TradeDetailRequest tradeDetailRequest = new TradeDetailRequest();
                 tradeDetailRequest.setUserid(orgBindInfo.getUserid());
                 tradeDetailRequest.setPayOrderNo(showPaymentRequest.getPayOrderNo());
@@ -107,7 +106,6 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
                         }
                     }
                 }
-                log.info("查询得到当前交易工单：" + transOrderDTO);
                 if (transOrderDTO == null ||
                         OrderStatusEnum.ORDER_FAIL.getStatus().equals(transOrderDTO.getStatusid()) ||
                         OrderStatusEnum.ORDER_NO_EFFECT.getStatus().equals(transOrderDTO.getStatusid()) ||
@@ -125,13 +123,12 @@ public class TitanFinancialPermissionFacadeImpl implements TitanFinancialPermiss
                     }
                 }
                 showPaymentResponse.setResult(true);
-                log.info("判定权限结束：" + showPaymentResponse.getShowStatus());
             } else {
-                log.error("当前商家未开通或绑定金服机构");
+                log.error("当前商家未开通或绑定金服机构，请求参数："+Tools.gsonToString(showPaymentRequest));
                 showPaymentResponse.setReturnMessage("当前商家未开通或绑定金服机构");
             }
         } else {
-            log.error("请求参数不合法");
+            log.error("请求参数不合法，请求参数："+Tools.gsonToString(showPaymentRequest));
             showPaymentResponse.setReturnMessage("请求参数不合法");
         }
         return showPaymentResponse;
