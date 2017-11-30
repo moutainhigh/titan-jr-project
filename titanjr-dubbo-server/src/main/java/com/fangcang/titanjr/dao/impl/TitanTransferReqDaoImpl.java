@@ -63,7 +63,16 @@ public class TitanTransferReqDaoImpl extends GenericDAOMyBatisImpl implements Ti
 			throw new DaoException(e);
 		}
 	}
-	
+
+	@Override
+	public List<TitanTransferReq> queryTransferByOrderNo(String orderNo) {
+		try {
+			return super.selectList("com.fangcang.titanjr.dao.TitanTransferReqDao.queryTransferByOrderNo", orderNo);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+
 	@Override
 	public int delete(TitanTransferReq entity) throws DaoException {
 		try {

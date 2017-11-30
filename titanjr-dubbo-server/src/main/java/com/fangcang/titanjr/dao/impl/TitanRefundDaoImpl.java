@@ -34,7 +34,16 @@ public class TitanRefundDaoImpl  extends GenericDAOMyBatisImpl implements TitanR
 			throw new DaoException(e);
 		}
 	}
-	
+
+	@Override
+	public List<RefundDTO> queryRefundDTODetail(RefundDTO refundDTO) {
+		try {
+			return super.selectList("com.fangcang.titanjr.dao.TitanRefundDao.queryRefundDTODetail", refundDTO);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+
 	@Override
 	public int updateRefundDTO(RefundDTO refundDTO) {
 		try {

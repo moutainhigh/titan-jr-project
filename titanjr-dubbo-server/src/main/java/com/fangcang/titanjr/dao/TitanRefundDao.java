@@ -16,6 +16,14 @@ public interface TitanRefundDao {
 	 * @return
 	 */
 	List<RefundDTO> queryRefundDTO(RefundDTO refundDTO);
+
+
+	/**
+	 * 查询某个时间单内的退款记录，扩展了refundDTO的参数
+	 * @param refundDTO
+	 * @return
+	 */
+	List<RefundDTO> queryRefundDTODetail(RefundDTO refundDTO);
 	
 	/**
 	 * 修改

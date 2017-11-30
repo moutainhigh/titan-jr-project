@@ -7,7 +7,13 @@ import com.fangcang.titanjr.dao.TitanOrderPayreqDao;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
 
+import java.util.List;
+
 public class TitanOrderPayreqDaoImpl extends GenericDAOMyBatisImpl implements TitanOrderPayreqDao{
+
+
+
+
 	@Override
 	public boolean selectForPage(TitanOrderPayreqParam condition,
 			PaginationSupport<TitanOrderPayreq> paginationSupport)
@@ -18,6 +24,15 @@ public class TitanOrderPayreqDaoImpl extends GenericDAOMyBatisImpl implements Ti
 			throw new DaoException(e);
 		}
 		return true;
+	}
+
+	@Override
+	public List<TitanOrderPayreq> queryOrderPayRequestList(TitanOrderPayreqParam requestParam) throws DaoException {
+		try {
+			return super.selectList("com.fangcang.titanjr.dao.TitanOrderPayreqDao.queryOrderPayRequestList", requestParam);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
 	}
 
 	@Override

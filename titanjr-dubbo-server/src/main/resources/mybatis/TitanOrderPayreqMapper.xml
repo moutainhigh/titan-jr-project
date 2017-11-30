@@ -12,6 +12,25 @@
     	<if test="orderNo != null"> and orderNo = #{orderNo}</if>
     </where>
   </select>
+
+
+    <select id="queryOrderPayRequestList" resultType="com.fangcang.titanjr.entity.TitanOrderPayreq"
+            parameterType="com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam" >
+        select
+        *
+        from t_tfs_orderpayreq
+        <where>
+            <if test="orderpayreqid != null"> orderpayreqid = #{orderpayreqid}</if>
+            <if test="transorderid != null"> and transorderid = #{transorderid}</if>
+            <if test="merchantNo != null"> and merchantNo = #{merchantNo}</if>
+            <if test="orderNo != null"> and orderNo = #{orderNo}</if>
+
+            <if test="startTime != null"> and <![CDATA[ orderTime >= #{startTime} ]]></if>
+            <if test="endTime != null"> and <![CDATA[ orderTime < #{endTime} ]]></if>
+        </where>
+    </select>
+
+
   <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanOrderPayreq" >
     insert into t_tfs_orderpayreq (orderpayreqid, transorderid, merchantNo, 
       orderNo, productNo, productName, 

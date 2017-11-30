@@ -189,7 +189,39 @@
       </where>
   
   </select>
-  
+
+  <select id="queryTransferByOrderNo" parameterType="java.lang.String"
+          resultType="com.fangcang.titanjr.entity.TitanTransferReq">
+      SELECT
+	    q.transferreqid,
+	    q.transorderid,
+	    q.transfertype,
+	    q.conditioncode,
+	    q.merchantcode,
+	    q.userid,
+	    q.productid,
+	    q.intermerchantcode,
+	    q.userrelateid,
+	    q.interproductid,
+        q.amount,
+	    q.userfee,
+	    q.requestno,
+	    q.requesttime,
+	    q.useripaddress,
+    	q.remark,
+  	    q.STATUS,
+	    q.creator,
+	    q.createtime,
+	    q.payorderno
+      FROM
+	    t_tfs_transorder d,
+	    t_tfs_transferreq q
+      WHERE
+	    d.transid = q.transorderid
+      AND d.orderid = #{0}
+
+  </select>
+
   <delete id="delete" parameterType="com.fangcang.titanjr.entity.TitanTransferReq">
     delete from t_tfs_transferreq where transferreqid=#{transferreqid}
   </delete>
