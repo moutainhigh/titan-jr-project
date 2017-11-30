@@ -1,7 +1,7 @@
 package test.titanjr.checkstand.dao;
 
-import com.titanjr.checkstand.dao.GateWayPayDao;
-import com.titanjr.checkstand.dto.GateWayPayDTO;
+import com.titanjr.checkstand.dao.OrderPayRequestDao;
+import com.titanjr.checkstand.dto.OrderPayRequestDTO;
 import org.junit.Test;
 import test.titanjr.checkstand.GenericTest;
 
@@ -15,11 +15,11 @@ import java.util.List;
 public class GateWayPayDaoTest  extends GenericTest{
 
     @Resource
-    private GateWayPayDao gateWayPayDao;
+    private OrderPayRequestDao gateWayPayDao;
 
     @Test
     public void testBatchSaveRequest(){
-        List<GateWayPayDTO> gateWayPayDTOList = new ArrayList<GateWayPayDTO>();
+        List<OrderPayRequestDTO> gateWayPayDTOList = new ArrayList<OrderPayRequestDTO>();
 
         int res = gateWayPayDao.batchSaveGateWayPayDTO(gateWayPayDTOList);
         System.out.println(res);

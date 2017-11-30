@@ -44,7 +44,8 @@
 
 
 	<!-- dao 定义列表 -->
-	<bean id="gateWayPayDao" class="com.titanjr.checkstand.dao.impl.GateWayPayDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="orderPayRequestDao" class="com.titanjr.checkstand.dao.impl.OrderPayRequestDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="gateWayConfigDao" class="com.titanjr.checkstand.dao.impl.GateWayConfigDaoImpl" parent="baseSqlMapClient"></bean>
 	
 </beans>
 

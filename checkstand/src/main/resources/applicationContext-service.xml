@@ -27,6 +27,10 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="initService" class="com.titanjr.checkstand.service.impl.InitServiceImpl" init-method="init" />  
+	
+	<!-- <dubbo:service interface="com.titanjr.checkstand.service.TitanFinancialCallbackService" ref="titanFinancialCallbackService" timeout="40000" /> -->
 
 </beans>
 

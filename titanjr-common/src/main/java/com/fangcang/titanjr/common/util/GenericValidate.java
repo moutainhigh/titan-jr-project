@@ -54,7 +54,7 @@ public class GenericValidate {
 	}
 	
 	
-	public static ValidateResponse validateObj(Object obj) {
+	public static ValidateResponse validateNew(Object obj) {
 		
 		ValidateResponse res = new ValidateResponse();
 		res.putSuccess();

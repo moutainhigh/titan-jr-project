@@ -19,7 +19,7 @@ public enum PayTypeEnum {
     WECHAT_URL("30","微信扫码支付Url","9"),
     WECHAT_QRCODE("31","微信扫码支付二维码",""),
     ALIPAY_URL("32","支付宝扫码支付url","9"),
-    ALIPAY_QRCODE("33","支付宝扫码支付url",""),
+    ALIPAY_QRCODE("33","支付宝扫码支付二维码",""),
     QUICK_PAY_NEW("41","新快捷支付","11");
     
 	public String key;

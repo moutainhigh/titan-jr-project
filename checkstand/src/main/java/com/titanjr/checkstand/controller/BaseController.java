@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +21,11 @@ import java.util.Map;
  * 
  */
 public class BaseController implements Serializable {
+
+	/** 
+	 * 
+	 */
+	private static final long serialVersionUID = -3544543746592691072L;
 
 	private final static Logger logger = LoggerFactory.getLogger(BaseController.class);
 

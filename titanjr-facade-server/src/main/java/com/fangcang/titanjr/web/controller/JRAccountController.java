@@ -118,7 +118,7 @@ public class JRAccountController {
 		
 		try {
 			
-			ValidateResponse res = GenericValidate.validateObj(jrAccountReceiveRequest);
+			ValidateResponse res = GenericValidate.validateNew(jrAccountReceiveRequest);
 			if(!res.isSuccess()){
 				baseResponse.putErrorResult(res.getReturnMessage());
 				return baseResponse;

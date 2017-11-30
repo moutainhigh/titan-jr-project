@@ -68,11 +68,9 @@ public class AccessLimiter {
                 currentTokensRemaining = limit;
             } else {
                 long grantedTokens = (long) (intervalSinceLast / intervalPerPermit);//间隔时间所消耗的次数
-                //currentTokensRemaining = Math.min(grantedTokens + tokenBucket.getTokensRemaining(), limit);
                 currentTokensRemaining = tokenBucket.getTokensRemaining() - grantedTokens;
             }
             tokenBucket.setLastRefillTime(refillTime);
-            //assert currentTokensRemaining >= 0;
             if (currentTokensRemaining > 0) {
                 tokenBucket.setTokensRemaining(currentTokensRemaining);
                 redisService.hmSetValue(key, tokenBucket.toHash());

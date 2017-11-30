@@ -19,6 +19,6 @@ public class NetBankPayStrategy implements PayRequestStrategy{
         //针对快捷支付的参数校验，如果失败返回失败页面
 
 
-        return WebUtils.getRequestBaseUrl(request) + "/pay/gateWayPay.shtml";
+        return WebUtils.getRequestBaseUrl(request) + "/pay/netBankPay.shtml";
     }
 }

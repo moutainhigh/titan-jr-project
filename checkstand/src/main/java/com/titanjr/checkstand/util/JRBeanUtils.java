@@ -1,14 +1,16 @@
 package com.titanjr.checkstand.util;
 
 import com.titanjr.checkstand.constants.OperateTypeEnum;
-import com.titanjr.checkstand.dto.GateWayPayDTO;
+import com.titanjr.checkstand.dto.OrderPayRequestDTO;
 import com.titanjr.checkstand.dto.GateWayRefundDTO;
+
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashSet;
@@ -27,7 +29,8 @@ public class JRBeanUtils {
      * @param cls
      * @return
      */
-    public static Set<String> getRequiredFiledName(Class cls){
+    @SuppressWarnings("rawtypes")
+	public static Set<String> getRequiredFiledName(Class cls){
 
         Set<String> fieldResult = new HashSet<String>();
 
@@ -55,7 +58,8 @@ public class JRBeanUtils {
      * @return
      */
     public static OperateTypeEnum recognizeRequestType(Set<String> paramKeySet){
-        Set<String> requiredFields = JRBeanUtils.getRequiredFiledName(GateWayPayDTO.class);
+    	
+        Set<String> requiredFields = JRBeanUtils.getRequiredFiledName(OrderPayRequestDTO.class);
         Set<String> refundFields = JRBeanUtils.getRequiredFiledName(GateWayRefundDTO.class);
 
         boolean isPayRequest = true;

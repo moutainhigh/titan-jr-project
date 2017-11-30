@@ -21,7 +21,7 @@ public class SecurityInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse httpServletResponse, Object o) throws Exception {
 
-        logger.info("请求参数为{}，当前请求路径是{}", request.getParameterMap(), request.getRequestURI());
+        //logger.info("请求参数为{}，当前请求路径是{}", request.getParameterMap(), request.getRequestURI());
 
         return true;
     }

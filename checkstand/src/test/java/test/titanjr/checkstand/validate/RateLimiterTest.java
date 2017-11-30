@@ -30,7 +30,7 @@ public class RateLimiterTest extends GenericTest{
         for (int i = 0; i < 4; i++) {
             System.out.println(accessLimiter.accessFrequency(OperateTypeEnum.PAY_REQUEST));
         }
-        Thread.sleep(1200);
+        Thread.sleep(500);
         System.out.println(accessLimiter.accessFrequency(OperateTypeEnum.PAY_REQUEST));
         System.out.println(accessLimiter.accessFrequency(OperateTypeEnum.PAY_REQUEST));
         System.out.println(accessLimiter.accessFrequency(OperateTypeEnum.PAY_REQUEST));

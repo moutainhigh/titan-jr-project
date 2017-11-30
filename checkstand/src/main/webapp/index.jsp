@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="/comm/taglib.jsp" %>
+<%@ include file="/common/taglib.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,16 +19,16 @@
             <tr align="left">
                 <td class="tdr">商户号</td>
                 <td>
-                    <input type="text" name="merchantNo" id="merchantNo" value="M10000245" class="input_t01"/>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>
                 </td>
             </tr>
             <tr>
                 <td class="tdr">订单号</td>
-                <td><input type="text" id="orderNo" value="TO216548100003" name="orderNo"/></td>
+                <td><input type="text" id="orderNo" value="TJO2017112900001" name="orderNo"/></td>
             </tr>
             <tr>
                 <td class="tdr">交易金额</td>
-                <td><input type="text" id="orderAmount" value="10200" name="orderAmount"/>
+                <td><input type="text" id="orderAmount" value="100" name="orderAmount"/>
                 </td>
             </tr>
             <tr>
@@ -52,7 +52,7 @@
             <tr>
                 <td class="tdr">页面回调地址</td>
                 <td>
-                    <input type="text" value="www.fangcang.com" id="pageUrl" name="pageUrl"/>
+                    <input type="text" value="http://192.168.0.77:8084/titanjr-pay-app/payment/payConfirmPage.action" id="pageUrl" name="pageUrl"/>
                 </td>
             </tr>
             <tr>
@@ -64,7 +64,7 @@
             <tr>
                 <td class="tdr">订单创建时间</td>
                 <td>
-                    <input type="text" value="201711171633" id="orderTime" name="orderTime"/>
+                    <input type="text" value="20171129103151" id="orderTime" name="orderTime"/>
                 </td>
             </tr>
             <tr>
@@ -115,6 +115,12 @@
                     <input type="text" value="DF76JGHC333DAS" id="signMsg" name="signMsg"/>
                 </td>
             </tr>
+            <tr>
+                <td class="tdr">操作类型</td>
+                <td>
+                    <input type="text" value="1001" id="signMsg" name="operateType"/>1001:支付请求；1002:支付查询；1003:退款请求；1004:退款查询
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
@@ -123,6 +129,68 @@
     <td class="tdr"></td>
     <td>
         <button value="payTest" id="payButton" onclick="goPayPage()">去支付</button>
+    </td>
+</tr>
+
+
+<form action="<%=basePath %>/payment.shtml" name="payQuery_form" id="payQuery_form" method="post">
+    <div class="pay">
+        <table cellspacing="0" border="0">
+            <tbody>
+            <tr align="left">
+                <td class="tdr">商户号</td>
+                <td>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">订单号</td>
+                <td><input type="text" id="orderNo" value="TJO2017112900001" name="orderNo"/></td>
+            </tr>
+            <tr>
+                <td class="tdr">订单创建时间</td>
+                <td>
+                    <input type="text" value="20171129103151" id="orderTime" name="orderTime"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名类型</td>
+                <td>
+                    <input type="text" value="1" id="signType" name="signType"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">业务号</td>
+                <td>
+                    <input type="text" id="busiCode" name="busiCode"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">版本号</td>
+                <td>
+                    <input type="text" value="v1.0" id="version" name="version"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名信息</td>
+                <td>
+                    <input type="text" value="DF76JGHC333DAS" id="signMsg" name="signMsg"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">操作类型</td>
+                <td>
+                    <input type="text" value="1002" id="signMsg" name="operateType"/>1001:支付请求；1002:支付查询；1003:退款请求；1004:退款查询
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</form>
+<tr>
+    <td class="tdr"></td>
+    <td>
+        <button id="payQueryButton" onclick="goPayQuery()">立即查询</button>
     </td>
 </tr>
 
@@ -197,6 +265,9 @@
 <script type="text/javascript">
     function goPayPage() {
         $("#pay_form").submit();
+    }
+    function goPayQuery() {
+        $("#payQuery_form").submit();
     }
     function goRefundPage() {
         $("#refund_form").submit();
