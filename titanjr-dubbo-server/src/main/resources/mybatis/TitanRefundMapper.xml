@@ -48,6 +48,8 @@
         userOrderId=#{userOrderId}
        </if>
      </where>
+     
+     order by createtime desc
   </select>
 
   <select id="queryRefundDTODetail" parameterType="com.fangcang.titanjr.dto.bean.RefundDTO" resultMap="refundDTOMapper">

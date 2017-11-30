@@ -319,6 +319,7 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 			freezeDTO.setRequestTime(DateUtil.sdf4.format(fundFreezereq.getRequesttime()));
 			freezeDTO.setUserId(fundFreezereq.getUserid());
 			freezeDTO.setOrderNo(fundFreezereq.getOrderno());
+			freezeDTO.setStatus(fundFreezereq.getStatus());
 			freezeDTO.setFreezereqId(fundFreezereq.getFreezereqid());
 			freeDTOList.add(freezeDTO);
 		}
