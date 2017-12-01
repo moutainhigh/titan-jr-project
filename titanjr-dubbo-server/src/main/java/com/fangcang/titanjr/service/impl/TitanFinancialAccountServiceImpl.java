@@ -1149,7 +1149,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			    	}
 			    	
 			    }else{
-			    	log.error("调用融数解冻失败");
+			    	log.error("调用融数解冻失败,请求参数："+Tools.gsonToString(balanceUnFreezeRequest)+",响应结果:"+Tools.gsonToString(balanceUnFreezeResponse));
 			    	titanFinancialUtilService.saveOrderException(fundFreezeDTO.getOrderNo(),OrderKindEnum.OrderId,OrderExceptionEnum.UnFreeze_RS_Fail,JSONSerializer.toJSON(fundFreezeDTO).toString());
 	        		return false;
 			    }

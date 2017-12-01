@@ -33,8 +33,8 @@ public class InitSubmitJob {
 
         // 提交任务
         submitBindBankCardJob();
-        //暂时不用该补偿任务，防止重复转账
-        //submitRepairGDPJob();
+       
+        submitRepairGDPJob();
         
         submitUnFreezeTransferOrderJob();
         
