@@ -16,7 +16,7 @@
                 </span>
             </c:if>
 
-            <c:if test="${tradeItem.tradeType == '付款'}">
+            <c:if test="${tradeItem.tradeType == '付款' or tradeItem.tradeType == '充值并付款'}">
                 <span class="blue undl curpo J_orderDetails" onclick="showPayDetail(this);"
                   id="${tradeItem.userorderid}">
                   <%--   ${tradeItem.userorderid}-${tradeItem.businessordercode} --%>
@@ -66,7 +66,7 @@
 		</td>
 
         <td class="tdr">
-            <c:if test="${tradeItem.tradeType == '付款' or tradeItem.tradeType == '提现'}">
+            <c:if test="${tradeItem.tradeType == '付款'  or tradeItem.tradeType == '充值并付款' or tradeItem.tradeType == '提现'}">
                 -
             </c:if>
             <c:if test="${tradeItem.tradeType == '收款' or tradeItem.tradeType == '充值'}">
