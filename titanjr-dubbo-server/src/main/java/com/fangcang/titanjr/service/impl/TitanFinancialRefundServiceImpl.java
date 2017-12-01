@@ -372,7 +372,7 @@ public class TitanFinancialRefundServiceImpl implements
 				TransOrderRequest transOrderParam = new TransOrderRequest();
 				transOrderParam.setOrderid(refundDTO.getOrderNo());
 				TransOrderDTO transOrderDTOEntity = titanOrderService.queryTransOrderDTO(transOrderParam);
-				if(refundStatus.equals(OrderStatusEnum.REFUND_SUCCESS)&&"1".equals(transOrderDTOEntity.getFreezeAt())&&"3".equals(transOrderDTOEntity.getFreezeType())){//冻结在付款方，而且3不转账冻结在付款方
+				if(refundStatus.equals(RefundStatusEnum.REFUND_SUCCESS)&&"1".equals(transOrderDTOEntity.getFreezeAt())&&"3".equals(transOrderDTOEntity.getFreezeType())){//冻结在付款方，而且3不转账冻结在付款方
 					//拒单退款成功，则改为交易取消
 					transOrderDTO.setStatusid(OrderStatusEnum.ORDER_CANCEL.getStatus());
 				}
@@ -843,7 +843,7 @@ public class TitanFinancialRefundServiceImpl implements
 					TransOrderRequest transOrderParam = new TransOrderRequest();
 					transOrderParam.setOrderid(refundDTO.getOrderNo());
 					TransOrderDTO transOrderDTOEntity = titanOrderService.queryTransOrderDTO(transOrderParam);
-					if(refundStatusEnum.equals(OrderStatusEnum.REFUND_SUCCESS)&&"1".equals(transOrderDTOEntity.getFreezeAt())&&"3".equals(transOrderDTOEntity.getFreezeType())){//冻结在付款方，而且3不转账冻结在付款方
+					if(refundStatusEnum.equals(RefundStatusEnum.REFUND_SUCCESS)&&"1".equals(transOrderDTOEntity.getFreezeAt())&&"3".equals(transOrderDTOEntity.getFreezeType())){//冻结在付款方，而且3不转账冻结在付款方
 						//拒单退款成功，则改为交易取消
 						transOrderDTO.setStatusid(OrderStatusEnum.ORDER_CANCEL.getStatus());
 					}
