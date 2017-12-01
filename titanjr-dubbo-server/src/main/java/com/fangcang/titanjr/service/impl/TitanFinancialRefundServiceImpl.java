@@ -943,7 +943,7 @@ public class TitanFinancialRefundServiceImpl implements
 				List<RefundDTO> refundDTOList = titanRefundDao.queryRefundDTO(refundDTO);
 				if(CollectionUtils.isNotEmpty(refundDTOList)){
 					RefundDTO updateRefundDTO = new RefundDTO();
-					updateRefundDTO.setOrderNo(refundDTOList.get(0).getRefundId());
+					updateRefundDTO.setRefundId(refundDTOList.get(0).getRefundId());
 					updateRefundDTO.setStatus(RefundStatusEnum.REFUND_SUCCESS.status);
 					titanRefundDao.updateRefundDTO(updateRefundDTO);
 				}
