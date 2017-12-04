@@ -1,6 +1,7 @@
-package com.titanjr.checkstand.strategy;
+package com.titanjr.checkstand.strategy.pay;
 
 import com.titanjr.checkstand.util.WebUtils;
+
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;

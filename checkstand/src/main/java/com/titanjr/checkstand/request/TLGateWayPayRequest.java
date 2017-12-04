@@ -5,7 +5,7 @@
  * @author Jerry
  * @date 2017年10月27日 上午11:27:55  
  */
-package com.titanjr.checkstand.request.tlzf;
+package com.titanjr.checkstand.request;
 
 import java.io.Serializable;
 import org.hibernate.validator.constraints.NotBlank;

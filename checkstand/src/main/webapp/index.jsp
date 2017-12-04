@@ -180,7 +180,7 @@
             <tr>
                 <td class="tdr">操作类型</td>
                 <td>
-                    <input type="text" value="1002" id="signMsg" name="operateType"/>1001:支付请求；1002:支付查询；1003:退款请求；1004:退款查询
+                    <input type="text" value="1002" id="signMsg" name="operateType"/>
                 </td>
             </tr>
             </tbody>

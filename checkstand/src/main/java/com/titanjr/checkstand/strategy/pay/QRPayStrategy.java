@@ -1,6 +1,7 @@
-package com.titanjr.checkstand.strategy;
+package com.titanjr.checkstand.strategy.pay;
 
 import com.titanjr.checkstand.util.WebUtils;
+
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Created by zhaoshan on 2017/11/20.
  */
-@Service("QRPayStrategy")
+@Service("qrPayStrategy")
 public class QRPayStrategy implements PayRequestStrategy{
 
     @Override

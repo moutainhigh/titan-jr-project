@@ -14,7 +14,7 @@ package com.titanjr.checkstand.constants;
  */
 public enum RequestTypeEnum {
 	
-	GATEWAY_PAY_QUERY_REFUND("101","网关支付,支付查询,网关退款"),
+	GATEWAY_PAY_QUERY_REFUND("101","网关支付,单笔订单查询,网关退款"),
 	GATEWAY_REFUNDQUERY("102","网关退款查询"),
 	
     PUBLIC_PAY("201","公账号/服务窗支付"),

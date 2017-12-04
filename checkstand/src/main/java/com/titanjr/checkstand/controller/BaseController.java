@@ -1,15 +1,21 @@
 package com.titanjr.checkstand.controller;
 
 import com.fangcang.titanjr.common.util.Tools;
+import com.titanjr.checkstand.request.TitanPayCallbackRequest;
+import com.titanjr.checkstand.util.DTOBuilderUtil;
+
 import net.sf.json.JSONSerializer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -124,6 +130,18 @@ public class BaseController implements Serializable {
 				logger.error("当前参数:{}编码失败，请注意", key, e);
 			}
 		}
+    }
+    
+
+    /**
+     * 支付失败，回调泰坦金融收银台
+     * @author Jerry
+     * @date 2017年11月27日 上午10:48:00
+     */
+    protected String payFailedCallback(Model model){
+    	TitanPayCallbackRequest payCallbackRequest = DTOBuilderUtil.getPayFailedCallbackRequest();
+    	model.addAttribute("payCallbackRequest", payCallbackRequest);
+    	return "callbackTitanjr/payFailedCallbackPage";
     }
 
 }

@@ -5,7 +5,7 @@
  * @author Jerry
  * @date 2017年11月24日 下午5:06:01  
  */
-package com.titanjr.checkstand.request.titanjr;
+package com.titanjr.checkstand.request;
 
 import java.io.Serializable;
 

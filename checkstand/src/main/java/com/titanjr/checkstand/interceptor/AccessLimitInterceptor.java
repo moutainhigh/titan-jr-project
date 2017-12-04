@@ -28,15 +28,13 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse httpServletResponse, Object o) throws Exception {
-
-        //logger.info("请求参数为{}; 当前请求路径是{}", CommonUtil.mapString(request.getParameterMap()), request.getRequestURI());
-
         //暂时只处理支付入口位置的请求
         if ("/checkstand/payment.shtml".equals(request.getRequestURI())){
-            OperateTypeEnum operateTypeEnum = JRBeanUtils.recognizeRequestType(request.getParameterMap().keySet());
+            //OperateTypeEnum operateTypeEnum = JRBeanUtils.recognizeRequestType(request.getParameterMap().keySet());
+        	OperateTypeEnum operateTypeEnum = JRBeanUtils.getOperateType(request);
             if(operateTypeEnum == null){
             	logger.info("未匹配到操作类型，请求参数为{}; 当前请求路径是{}", CommonUtil.mapString(request.getParameterMap()), request.getRequestURI());
-                return true;
+                return true;//此处不处理
             }
             boolean isFrequency = accessLimiter.accessFrequency(operateTypeEnum);
             if (isFrequency) {

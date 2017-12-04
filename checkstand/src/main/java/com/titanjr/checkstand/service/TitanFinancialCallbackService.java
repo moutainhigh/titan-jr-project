@@ -7,7 +7,7 @@
  */
 package com.titanjr.checkstand.service;
 
-import com.titanjr.checkstand.request.titanjr.TitanPayCallbackRequest;
+import com.titanjr.checkstand.request.TitanPayCallbackRequest;
 
 /**
  * 泰坦金融回调

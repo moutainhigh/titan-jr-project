@@ -31,7 +31,7 @@ public class GateWayConfigDaoImpl extends GenericDAOMyBatisImpl implements
 		try {
             return super.selectList("com.titanjr.checkstand.dao.GateWayConfigDao.queryGateWayConfigList");
         } catch (Exception e) {
-            logger.error("queryGateWayConfigList Error：" , e);
+            logger.error("queryGateWayConfigList Error：{}" , e);
             throw new DaoException(e);
         }
 	}

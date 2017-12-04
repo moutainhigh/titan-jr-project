@@ -59,7 +59,7 @@ public class InitServiceImpl {
 		}
 		for (int i = 0; i < configList.size(); i++) {
 			GateWayConfigDTO gateWayConfig = configList.get(i);
-			String key = gateWayConfig.getMerchantId() + "_" + gateWayConfig.getPayType() 
+			String key = gateWayConfig.getMerchantId() + "_" + gateWayConfig.getCombPayType() 
 					+ "_" + gateWayConfig.getPayChannel() + "_" + gateWayConfig.getRequestType();
 			initMap.put(key, gateWayConfig);
 		}

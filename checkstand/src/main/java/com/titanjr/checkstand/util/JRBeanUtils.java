@@ -2,13 +2,14 @@ package com.titanjr.checkstand.util;
 
 import com.titanjr.checkstand.constants.OperateTypeEnum;
 import com.titanjr.checkstand.dto.OrderPayRequestDTO;
-import com.titanjr.checkstand.dto.GateWayRefundDTO;
+import com.titanjr.checkstand.dto.TitanRefundRequestDTO;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
 import java.lang.annotation.Annotation;
@@ -60,7 +61,7 @@ public class JRBeanUtils {
     public static OperateTypeEnum recognizeRequestType(Set<String> paramKeySet){
     	
         Set<String> requiredFields = JRBeanUtils.getRequiredFiledName(OrderPayRequestDTO.class);
-        Set<String> refundFields = JRBeanUtils.getRequiredFiledName(GateWayRefundDTO.class);
+        Set<String> refundFields = JRBeanUtils.getRequiredFiledName(TitanRefundRequestDTO.class);
 
         boolean isPayRequest = true;
         for (String requireField : requiredFields){
@@ -87,6 +88,21 @@ public class JRBeanUtils {
         }
 
         return null;
+    }
+    
+    /**
+     * @author Jerry
+     * @date 2017年12月1日 下午4:21:13
+     */
+    public static OperateTypeEnum getOperateType(HttpServletRequest request){
+    	OperateTypeEnum operateTypeEnum = null;
+    	for (String paramKey : request.getParameterMap().keySet()) {
+			if("operateType".equals(paramKey)){
+				String paramValue = request.getParameterMap().get("operateType")[0];
+				operateTypeEnum = OperateTypeEnum.getEnumByKey(paramValue);
+			}
+		}
+    	return operateTypeEnum;
     }
 
 }

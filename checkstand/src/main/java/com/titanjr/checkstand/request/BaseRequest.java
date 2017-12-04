@@ -2,19 +2,16 @@ package com.titanjr.checkstand.request;
 
 import java.util.Date;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * Created by zhaoshan on 2017/11/15.
  */
 public abstract class BaseRequest {
-	
-	public final Logger logger = LoggerFactory.getLogger(BaseRequest.class);
 
     private String operator;
     private Date operateTime;
+    
+    private String requestType;//请求类型，内部使用，非渠道需要字段  @see RequestTypeEnum
 
     public String getOperator() {
         return operator;
@@ -31,4 +28,12 @@ public abstract class BaseRequest {
     public void setOperateTime(Date operateTime) {
         this.operateTime = operateTime;
     }
+
+	public String getRequestType() {
+		return requestType;
+	}
+
+	public void setRequestType(String requestType) {
+		this.requestType = requestType;
+	}
 }

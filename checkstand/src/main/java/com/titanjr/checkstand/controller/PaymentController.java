@@ -8,14 +8,10 @@ import com.fangcang.util.DateUtil;
 import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.dao.OrderPayRequestDao;
 import com.titanjr.checkstand.dto.OrderPayRequestDTO;
-import com.titanjr.checkstand.dto.PayQueryDTO;
-import com.titanjr.checkstand.request.titanjr.TitanPayCallbackRequest;
-import com.titanjr.checkstand.request.tlzf.TLGateWayPayRequest;
-import com.titanjr.checkstand.request.tlzf.TLOrderPayQueryRequest;
+import com.titanjr.checkstand.request.TLGateWayPayRequest;
 import com.titanjr.checkstand.service.TitanFinancialCallbackService;
-import com.titanjr.checkstand.strategy.PayRequestStrategy;
 import com.titanjr.checkstand.strategy.StrategyFactory;
-import com.titanjr.checkstand.util.DTOBuilderUtil;
+import com.titanjr.checkstand.strategy.pay.PayRequestStrategy;
 import com.titanjr.checkstand.util.SignMsgBuilder;
 import com.titanjr.checkstand.util.WebUtils;
 
@@ -61,8 +57,8 @@ public class PaymentController extends BaseController {
         
         PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(request.getParameter("payType"));
         if(payTypeEnum == null){
-        	logger.error("参数错误，未找到对应的支付方式");
-        	return payFailedCallback(model);
+        	logger.error("参数错误，未找到对应的支付方式，payType="+request.getParameter("payType"));
+        	return super.payFailedCallback(model);
         }
         
         //根据支付方式来判定走到具体哪个接口
@@ -87,7 +83,7 @@ public class PaymentController extends BaseController {
         ValidateResponse res = GenericValidate.validateNew(payDTO);
         if (!res.isSuccess()){
         	logger.error("参数错误：{}", res.getReturnMessage());
-        	return payFailedCallback(model);
+        	return super.payFailedCallback(model);
         }
         
         //此处应调Service
@@ -145,57 +141,5 @@ public class PaymentController extends BaseController {
 
         return null;
     }
-    
-    
-    /**
-     * 单笔订单查询
-     * @author Jerry
-     * @date 2017年11月29日 上午10:39:01
-     */
-    @RequestMapping(value = "/orderQuery", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public String orderQuery(HttpServletRequest request, RedirectAttributes attr, Model model) {
-        
-    	try {
-    		
-			PayQueryDTO payQueryDTO = WebUtils.switch2RequestDTO(PayQueryDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(payQueryDTO);
-			if (!res.isSuccess()){
-				logger.error("参数错误：{}", res.getReturnMessage());
-				return payFailedCallback(model);
-			}
-			
-			//test
-			TLOrderPayQueryRequest orderPayQueryRequest = new TLOrderPayQueryRequest();
-			orderPayQueryRequest.setMerchantId(payQueryDTO.getMerchantNo());
-			orderPayQueryRequest.setOrderNo(payQueryDTO.getOrderNo());
-			orderPayQueryRequest.setVersion("v1.5");
-			orderPayQueryRequest.setSignType(payQueryDTO.getSignType());
-			orderPayQueryRequest.setOrderDatetime(payQueryDTO.getOrderTime());
-			orderPayQueryRequest.setQueryDatetime(DateUtil.dateToString(new Date(), "yyyyMMddHHmmss"));
-			orderPayQueryRequest.setSignMsg(SignMsgBuilder.getSignMsgForOrderQuery(orderPayQueryRequest));
-			
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-			
-		}
-    	
-        return null;
-        
-    }
-    
-
-    /**
-     * 支付失败，回调泰坦金融收银台
-     * @author Jerry
-     * @date 2017年11月27日 上午10:48:00
-     */
-    private String payFailedCallback(Model model){
-    	TitanPayCallbackRequest payCallbackRequest = DTOBuilderUtil.getPayFailedCallbackRequest();
-    	model.addAttribute("payCallbackRequest", payCallbackRequest);
-    	return "callbackTitanjr/payFailedCallbackPage";
-    }
-
 
 }

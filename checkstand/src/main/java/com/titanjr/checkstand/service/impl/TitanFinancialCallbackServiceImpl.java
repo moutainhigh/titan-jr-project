@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.fangcang.titanjr.common.util.BeanConvertor;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
-import com.titanjr.checkstand.request.titanjr.TitanPayCallbackRequest;
+import com.titanjr.checkstand.request.TitanPayCallbackRequest;
 import com.titanjr.checkstand.service.TitanFinancialCallbackService;
 
 /**

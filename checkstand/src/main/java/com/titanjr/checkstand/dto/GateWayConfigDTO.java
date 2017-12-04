@@ -29,9 +29,10 @@ public class GateWayConfigDTO implements Serializable {
 	private String merchantId;
 	
 	/**
-	 * 泰坦金融支付方式 1企业银行 2个人银行 3信用卡 8微信公众号 9第三方支付url 11快捷支付
+	 * 支付类型
+	 * 1个人银行/信用卡/企业银行  2公众号(服务窗)/第三方扫码支付  3快捷支付
 	 */
-	private Integer payType;
+	private Integer combPayType;
 	
 	/**
 	 * 支付渠道 01通联 02融宝
@@ -83,12 +84,12 @@ public class GateWayConfigDTO implements Serializable {
 		this.merchantId = merchantId;
 	}
 
-	public Integer getPayType() {
-		return payType;
+	public Integer getCombPayType() {
+		return combPayType;
 	}
 
-	public void setPayType(Integer payType) {
-		this.payType = payType;
+	public void setCombPayType(Integer combPayType) {
+		this.combPayType = combPayType;
 	}
 
 	public String getPayChannel() {

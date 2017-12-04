@@ -5,22 +5,17 @@
  * @author Jerry
  * @date 2017年11月29日 上午11:41:09  
  */
-package com.titanjr.checkstand.request.tlzf;
+package com.titanjr.checkstand.request;
 
-import java.io.Serializable;
-
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * @author Jerry
  * @date 2017年11月29日 上午11:41:09  
  */
-public class TLOrderPayQueryRequest implements Serializable {
-	
-	/** 
-	 * 
-	 */
-	private static final long serialVersionUID = -5186014483410601568L;
+public class TLNetBankPayQueryRequest extends BaseRequest {
 
 	/**
 	 * 商户号
@@ -119,6 +114,11 @@ public class TLOrderPayQueryRequest implements Serializable {
 
 	public void setSignMsg(String signMsg) {
 		this.signMsg = signMsg;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
 	}
 
 }

@@ -7,7 +7,7 @@
  */
 package com.titanjr.checkstand.util;
 
-import com.titanjr.checkstand.request.titanjr.TitanPayCallbackRequest;
+import com.titanjr.checkstand.request.TitanPayCallbackRequest;
 
 /**
  * 对象构建工具类
