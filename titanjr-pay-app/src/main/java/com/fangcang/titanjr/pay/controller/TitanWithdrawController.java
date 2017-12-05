@@ -34,6 +34,7 @@ import com.fangcang.titanjr.dto.response.BankCardStatusResponse;
 import com.fangcang.titanjr.dto.response.CityInfosResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.OrgSubCardResponse;
+import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.req.BindCardRequest;
 import com.fangcang.titanjr.pay.req.CreateTitanRateRecordReq;
 import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
@@ -234,6 +235,7 @@ public class TitanWithdrawController extends BaseController {
 		TitanRateComputeReq computeReq = new TitanRateComputeReq();
 		computeReq.setAmount(withDrawRequest.getAmount());
 		computeReq.setUserId(withDrawRequest.getUserId());
+		computeReq.setPayType(TitanConstantDefine.TL_WITHDRAW_PAYTYPE);
 
 		TitanRateComputeRsp computeRsp = titanRateService
 				.rateCompute(computeReq);

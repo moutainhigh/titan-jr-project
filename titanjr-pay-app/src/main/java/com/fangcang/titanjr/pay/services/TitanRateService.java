@@ -18,6 +18,8 @@ import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.response.AccountResponse;
 import com.fangcang.titanjr.dto.response.RateConfigResponse;
 import com.fangcang.titanjr.entity.BenchmarkRateConfig;
+import com.fangcang.titanjr.enums.PayTypeEnum;
+import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.req.CreateTitanRateRecordReq;
 import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
 import com.fangcang.titanjr.pay.rsp.TitanRateComputeRsp;
@@ -58,8 +60,11 @@ public class TitanRateService {
 		
 		//查询基准费率配置
 		BenchmarkRateConfig benchmarkRateConfig = new BenchmarkRateConfig();
+		benchmarkRateConfig.setPaychannel(TitanConstantDefine.TLPAY_CHANNEL_CODE);//通联渠道
+		if(PayTypeEnum.QUICK_PAY_NEW.getLinePayType().equals(computeReq.getPayType())){
+			benchmarkRateConfig.setPaychannel(TitanConstantDefine.RBPAY_CHANNEL_CODE);//快捷支付对应融宝
+		}
 		benchmarkRateConfig.setPaytype(Integer.parseInt(computeReq.getPayType()));
-		benchmarkRateConfig.setPaychannel("01");//测试渠道
 		if(StringUtil.isValidString(computeReq.getCardType())){
 			benchmarkRateConfig.setCardtype(Integer.parseInt(computeReq.getCardType()));
 		}
