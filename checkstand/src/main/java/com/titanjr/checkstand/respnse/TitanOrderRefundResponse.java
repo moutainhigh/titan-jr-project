@@ -7,6 +7,8 @@
  */
 package com.titanjr.checkstand.respnse;
 
+import com.fangcang.titanjr.common.enums.RefundStatusEnum;
+
 
 /**
  * @author Jerry
@@ -20,6 +22,8 @@ public class TitanOrderRefundResponse extends BaseResponse {
 	
 	private String refundStatus;
 	
+	private String refundMsg;
+	
 
 	public String getRefundStatus() {
 		return refundStatus;
@@ -27,6 +31,23 @@ public class TitanOrderRefundResponse extends BaseResponse {
 
 	public void setRefundStatus(String refundStatus) {
 		this.refundStatus = refundStatus;
+	}
+
+	public String getRefundMsg() {
+		return refundMsg;
+	}
+
+	public void setRefundMsg(String refundMsg) {
+		this.refundMsg = refundMsg;
+	}
+	
+	public void setRefundSuccess(){
+		this.refundStatus = String.valueOf(RefundStatusEnum.REFUND_SUCCESS.status);
+		this.refundMsg = RefundStatusEnum.REFUND_SUCCESS.msg;
+	}
+	public void setRefundFaild(){
+		this.refundStatus = String.valueOf(RefundStatusEnum.REFUND_FAILURE.status);
+		this.refundMsg = RefundStatusEnum.REFUND_FAILURE.msg;
 	}
 
 }

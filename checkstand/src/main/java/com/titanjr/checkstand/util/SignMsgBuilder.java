@@ -82,7 +82,11 @@ public final class SignMsgBuilder {
 		
 		StringBuffer sign = new StringBuffer();
 		if(tlNetBankOrderRefundRequest != null){
-			sign.append("merchantId=");
+			sign.append("version=");
+			sign.append(tlNetBankOrderRefundRequest.getVersion());
+			sign.append("&signType=");
+			sign.append(tlNetBankOrderRefundRequest.getSignType());
+			sign.append("&merchantId=");
 			sign.append(tlNetBankOrderRefundRequest.getMerchantId());
 			sign.append("&orderNo=");
 			sign.append(tlNetBankOrderRefundRequest.getOrderNo());
@@ -92,10 +96,6 @@ public final class SignMsgBuilder {
 			sign.append(tlNetBankOrderRefundRequest.getMchtRefundOrderNo());
 			sign.append("&orderDatetime=");
 			sign.append(tlNetBankOrderRefundRequest.getOrderDatetime());
-			sign.append("&version=");
-			sign.append(tlNetBankOrderRefundRequest.getVersion());
-			sign.append("&signType=");
-			sign.append(tlNetBankOrderRefundRequest.getSignType());
 			sign.append("&key=");
 			sign.append(key);
 		}

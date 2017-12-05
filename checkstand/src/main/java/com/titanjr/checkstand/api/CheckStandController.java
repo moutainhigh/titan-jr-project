@@ -50,7 +50,7 @@ public class CheckStandController extends BaseController {
         	logger.error("路由错误");
         	TitanPayCallbackRequest payCallbackRequest = DTOBuilderUtil.getPayFailedCallbackRequest();
         	model.addAttribute("payCallbackRequest", payCallbackRequest);
-        	return "callback/payConfirmCallbackPage";
+        	return "callbacktitan/payFailedCallbackPage";
         }
 
         if (operateTypeEnum.equals(OperateTypeEnum.PAY_REQUEST)){
@@ -60,7 +60,7 @@ public class CheckStandController extends BaseController {
         
         if (operateTypeEnum.equals(OperateTypeEnum.PAY_QUERY)){
             request.setCharacterEncoding("UTF-8");
-            return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/payOrder/entrance.shtml";
+            return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/query/entrance.shtml";
         }
 
         if (operateTypeEnum.equals(OperateTypeEnum.REFUND_REQUEST)){

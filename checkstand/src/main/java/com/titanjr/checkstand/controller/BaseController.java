@@ -141,7 +141,7 @@ public class BaseController implements Serializable {
     protected String payFailedCallback(Model model){
     	TitanPayCallbackRequest payCallbackRequest = DTOBuilderUtil.getPayFailedCallbackRequest();
     	model.addAttribute("payCallbackRequest", payCallbackRequest);
-    	return "callbackTitanjr/payFailedCallbackPage";
+    	return "callbacktitan/payFailedCallbackPage";
     }
 
 }

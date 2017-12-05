@@ -131,6 +131,9 @@
         <button value="payTest" id="payButton" onclick="goPayPage()">去支付</button>
     </td>
 </tr>
+<tr>
+    <td class="tdr"></td>
+</tr>
 
 
 <form action="<%=basePath %>/payment.shtml" name="payQuery_form" id="payQuery_form" method="post">
@@ -193,7 +196,9 @@
         <button id="payQueryButton" onclick="goPayQuery()">立即查询</button>
     </td>
 </tr>
-
+<tr>
+    <td class="tdr"></td>
+</tr>
 
 
 <form action="<%=basePath %>/payment.shtml" name="refund_form" id="refund_form" method="post">
@@ -203,7 +208,7 @@
             <tr align="left">
                 <td class="tdr">商户号</td>
                 <td>
-                    <input type="text" name="merchantNo"  value="M10000245" class="input_t01"/>
+                    <input type="text" name="merchantNo"  value="100020091218001" class="input_t01"/>
                 </td>
             </tr>
             <tr>
@@ -249,6 +254,12 @@
                 <td class="tdr">签名信息</td>
                 <td>
                     <input type="text" value="F3DK56JHSDF09D"  name="signMsg"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">操作类型</td>
+                <td>
+                    <input type="text" value="1003" id="signMsg" name="operateType"/>1001:支付请求；1002:支付查询；1003:退款请求；1004:退款查询
                 </td>
             </tr>
             </tbody>

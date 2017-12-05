@@ -151,11 +151,11 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 				boolean verifyResult = paymentResult.verify();
 
 				if (verifyResult) {
-					logger.info("【通联-支付订单查询】返回订单支付成功，验签成功");
+					logger.info("【通联-支付订单查询】返回订单支付成功，验签成功，orderNo={}", paymentResult.getOrderNo());
 					tlNetBankPayQueryResponse.putSuccess("订单支付成功");
 					return tlNetBankPayQueryResponse;
 				} else {
-					logger.error("【通联-支付订单查询】返回订单支付成功，验签失败");
+					logger.error("【通联-支付订单查询】返回订单支付成功，验签失败，orderNo={}", paymentResult.getOrderNo());
 					tlNetBankPayQueryResponse.putErrorResult("订单支付成功，验签失败");
 					return tlNetBankPayQueryResponse;
 				}

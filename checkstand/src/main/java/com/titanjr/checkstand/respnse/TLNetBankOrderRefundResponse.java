@@ -7,6 +7,8 @@
  */
 package com.titanjr.checkstand.respnse;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -14,7 +16,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * @author Jerry
  * @date 2017年12月4日 上午11:23:10  
  */
-public class TLNetBankOrderRefundResponse extends BaseResponse {
+public class TLNetBankOrderRefundResponse implements Serializable {
 
 	/** 
 	 * 

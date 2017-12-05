@@ -1,5 +1,7 @@
 package com.titanjr.checkstand.constants;
 
+import com.fangcang.util.StringUtil;
+
 /**
  * Created by zhaoshan on 2017/11/15.
  */
@@ -38,6 +40,9 @@ public enum PayTypeEnum {
      * @return
      */
     public static PayTypeEnum getPayTypeEnum(String typeKey){
+    	if(!StringUtil.isValidString(typeKey)){
+    		return null;
+    	}
         for (PayTypeEnum payTypeEnum : PayTypeEnum.values()){
             if (typeKey.equals(payTypeEnum.typeKey)){
                 return payTypeEnum;
