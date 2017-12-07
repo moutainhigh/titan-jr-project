@@ -1,47 +1,61 @@
 package com.titanjr.checkstand.dto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
- * Created by zhaoshan on 2017/11/20.
+ * 退款请求参数（融数格式）
+ * @author Jerry
+ * @date 2017年12月7日 下午3:00:18
  */
-public class TitanRefundRequestDTO {
+public class TitanRefundDTO {
 
-    //商户号
+    /**
+     * 商户号
+     */
     @NotBlank
     private String merchantNo;
-    //业务号
+    /**
+     * 业务号
+     */
     private String busiCode;
-    //退款单号
+    /**
+     * 退款单号
+     */
     @NotBlank
     private String refundOrderno;
-    //订单号
+    /**
+     * 订单号
+     */
     @NotBlank
     private String orderNo;
-    //订单时间
+    /**
+     * 订单时间
+     */
     @NotBlank
     private String orderTime;
-    //退款金额
+    /**
+     * 退款金额
+     */
     @NotBlank
     private String refundAmount;
-    //版本号
+    /**
+     * 版本号
+     */
     @NotBlank
     private String version;
-    //签名类型
+    /**
+     * 签名类型
+     */
     @NotBlank
     private String signType;
-    //签名信息
+    /**
+     * 签名信息
+     */
     @NotBlank
     private String signMsg;
-
-    //appid应用id
-    private String appid;
-    //原交易单号，第三方支付使用
-    private String oldtrxid;
-    //随机字串
-    private String randomstr;
-    //退款类型
-    private String refundType;
+    
 
     public String getMerchantNo() {
         return merchantNo;
@@ -115,35 +129,9 @@ public class TitanRefundRequestDTO {
         this.signMsg = signMsg;
     }
 
-    public String getAppid() {
-        return appid;
-    }
-
-    public void setAppid(String appid) {
-        this.appid = appid;
-    }
-
-    public String getOldtrxid() {
-        return oldtrxid;
-    }
-
-    public void setOldtrxid(String oldtrxid) {
-        this.oldtrxid = oldtrxid;
-    }
-
-    public String getRandomstr() {
-        return randomstr;
-    }
-
-    public void setRandomstr(String randomstr) {
-        this.randomstr = randomstr;
-    }
-
-    public String getRefundType() {
-        return refundType;
-    }
-
-    public void setRefundType(String refundType) {
-        this.refundType = refundType;
-    }
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
+	}
+    
 }

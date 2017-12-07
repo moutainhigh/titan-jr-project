@@ -1,15 +1,11 @@
 package com.titanjr.checkstand.controller;
 
-import java.util.Date;
-
 import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.titanjr.common.util.GenericValidate;
-import com.fangcang.util.DateUtil;
 import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.dao.OrderPayRequestDao;
-import com.titanjr.checkstand.dto.OrderPayRequestDTO;
-import com.titanjr.checkstand.request.TLGateWayPayRequest;
-import com.titanjr.checkstand.service.TitanFinancialCallbackService;
+import com.titanjr.checkstand.dto.TitanPayDTO;
+import com.titanjr.checkstand.request.TLNetBankPayRequest;
 import com.titanjr.checkstand.strategy.StrategyFactory;
 import com.titanjr.checkstand.strategy.pay.PayRequestStrategy;
 import com.titanjr.checkstand.util.SignMsgBuilder;
@@ -42,9 +38,6 @@ public class PaymentController extends BaseController {
 	@Resource
     private OrderPayRequestDao gateWayPayDao;
 	
-	@Resource
-    private TitanFinancialCallbackService titanFinancialCallbackService;
-	
 
     /**
      * 所有支付入口，进入后分配到具体的支付接口返回不同的参数
@@ -57,7 +50,7 @@ public class PaymentController extends BaseController {
         
         PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(request.getParameter("payType"));
         if(payTypeEnum == null){
-        	logger.error("参数错误，未找到对应的支付方式，payType="+request.getParameter("payType"));
+        	logger.error("参数错误，未找到对应的支付方式，payType={}", request.getParameter("payType"));
         	return super.payFailedCallback(model);
         }
         
@@ -79,7 +72,7 @@ public class PaymentController extends BaseController {
     @RequestMapping(value = "/netBankPay", method = {RequestMethod.GET, RequestMethod.POST})
     public String netBankPay(HttpServletRequest request, Model model) throws Exception {
     	
-        OrderPayRequestDTO payDTO = WebUtils.switch2RequestDTO(OrderPayRequestDTO.class, request);
+        TitanPayDTO payDTO = WebUtils.switch2RequestDTO(TitanPayDTO.class, request);
         ValidateResponse res = GenericValidate.validateNew(payDTO);
         if (!res.isSuccess()){
         	logger.error("参数错误：{}", res.getReturnMessage());
@@ -92,25 +85,25 @@ public class PaymentController extends BaseController {
         //保存返回结果或者回调请求
         
         //test
-        TLGateWayPayRequest tlGateWayPayRequest = new TLGateWayPayRequest();
-        tlGateWayPayRequest.setInputCharset("1");
-        tlGateWayPayRequest.setPickupUrl("http://192.168.0.77:8080/checkstand/callback/tlPayConfirmPage.action");
-        tlGateWayPayRequest.setReceiveUrl("http://192.168.0.77:8080/checkstand/callback/tlPayNotify.action");
-        tlGateWayPayRequest.setVersion("v1.0");
-        tlGateWayPayRequest.setLanguage("1");
-        tlGateWayPayRequest.setSignType("1");
-        tlGateWayPayRequest.setMerchantId(payDTO.getMerchantNo());
-        tlGateWayPayRequest.setOrderNo(payDTO.getOrderNo());
-        tlGateWayPayRequest.setOrderAmount(payDTO.getOrderAmount());
-        tlGateWayPayRequest.setOrderCurrency("0");
-        tlGateWayPayRequest.setOrderDatetime(DateUtil.dateToString(new Date(), "yyyyMMddHHmmss"));
-        tlGateWayPayRequest.setPayType("1");
-        tlGateWayPayRequest.setIssuerId("vbank");
-        tlGateWayPayRequest.setSignMsg(SignMsgBuilder.getSignMsgForGateWayPay(tlGateWayPayRequest));
-        tlGateWayPayRequest.setServerUrl("http://ceshi.allinpay.com/gateway/index.do");
-        model.addAttribute("tlGateWayPayRequest", tlGateWayPayRequest);
+        TLNetBankPayRequest tlNetBankPayRequest = new TLNetBankPayRequest();
+        tlNetBankPayRequest.setInputCharset("1");
+        tlNetBankPayRequest.setPickupUrl("http://192.168.0.77:8080/checkstand/callback/tlPayConfirmPage.action");
+        tlNetBankPayRequest.setReceiveUrl("http://192.168.0.77:8080/checkstand/callback/tlPayNotify.action");
+        tlNetBankPayRequest.setVersion("v1.0");
+        tlNetBankPayRequest.setLanguage("1");
+        tlNetBankPayRequest.setSignType("0");
+        tlNetBankPayRequest.setMerchantId("100020091218001");
+        tlNetBankPayRequest.setOrderNo(payDTO.getOrderNo());
+        tlNetBankPayRequest.setOrderAmount(payDTO.getOrderAmount());
+        tlNetBankPayRequest.setOrderCurrency("0");
+        tlNetBankPayRequest.setOrderDatetime(payDTO.getOrderTime());
+        tlNetBankPayRequest.setPayType("1");
+        tlNetBankPayRequest.setIssuerId(payDTO.getBankInfo());
+        tlNetBankPayRequest.setSignMsg(SignMsgBuilder.getSignMsgForGateWayPay(tlNetBankPayRequest));
+        tlNetBankPayRequest.setServerUrl("http://ceshi.allinpay.com/gateway/index.do");
+        model.addAttribute("tlNetBankPayRequest", tlNetBankPayRequest);
         
-        model.addAttribute("tlGateWayPayRequest", tlGateWayPayRequest);
+        model.addAttribute("tlNetBankPayRequest", tlNetBankPayRequest);
         
         return "payment/tl_gateWayPay";
         
@@ -125,8 +118,23 @@ public class PaymentController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/qrCodePay", method = {RequestMethod.GET, RequestMethod.POST})
     public String qrCodePay(HttpServletRequest request, Model model) throws Exception {
-
+    	
+    	TitanPayDTO payDTO = WebUtils.switch2RequestDTO(TitanPayDTO.class, request);
+        ValidateResponse res = GenericValidate.validateNew(payDTO);
+        if (!res.isSuccess()){
+        	logger.error("参数错误：{}", res.getReturnMessage());
+        	return super.payFailedCallback(model);
+        }
+        
+        //此处应调Service
+        //查询订单是否存在
+        //获取网关支付配置，封装相应渠道的请求参数
+        //保存返回结果或者回调请求
+        
+        
+        
         return null;
+        
     }
     
     

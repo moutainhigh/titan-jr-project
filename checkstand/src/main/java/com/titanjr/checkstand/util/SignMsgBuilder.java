@@ -4,44 +4,45 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fangcang.titanjr.common.util.MD5;
-import com.titanjr.checkstand.request.TLGateWayPayRequest;
+import com.titanjr.checkstand.request.TLNetBankPayRequest;
 import com.titanjr.checkstand.request.TLNetBankOrderRefundRequest;
 import com.titanjr.checkstand.request.TLNetBankPayQueryRequest;
+import com.titanjr.checkstand.request.TLNetBankRefundQueryRequest;
 
 public final class SignMsgBuilder {
 	
 	private final static Logger logger = LoggerFactory.getLogger(SignMsgBuilder.class);
 	
-	public static String getSignMsgForGateWayPay(TLGateWayPayRequest tlGateWayPayRequest) {
+	public static String getSignMsgForGateWayPay(TLNetBankPayRequest tlNetBankPayRequest) {
 		
 		StringBuffer sign = new StringBuffer();
-		if(tlGateWayPayRequest != null){
+		if(tlNetBankPayRequest != null){
 			sign.append("inputCharset=");
-			sign.append(tlGateWayPayRequest.getInputCharset());
+			sign.append(tlNetBankPayRequest.getInputCharset());
 			sign.append("&pickupUrl=");
-			sign.append(tlGateWayPayRequest.getPickupUrl());
+			sign.append(tlNetBankPayRequest.getPickupUrl());
 			sign.append("&receiveUrl=");
-			sign.append(tlGateWayPayRequest.getReceiveUrl());
+			sign.append(tlNetBankPayRequest.getReceiveUrl());
 			sign.append("&version=");
-			sign.append(tlGateWayPayRequest.getVersion());
+			sign.append(tlNetBankPayRequest.getVersion());
 			sign.append("&language=");
-			sign.append(tlGateWayPayRequest.getLanguage());
+			sign.append(tlNetBankPayRequest.getLanguage());
 			sign.append("&signType=");
-			sign.append(tlGateWayPayRequest.getSignType());
+			sign.append(tlNetBankPayRequest.getSignType());
 			sign.append("&merchantId=");
-			sign.append(tlGateWayPayRequest.getMerchantId());
+			sign.append(tlNetBankPayRequest.getMerchantId());
 			sign.append("&orderNo=");
-			sign.append(tlGateWayPayRequest.getOrderNo());
+			sign.append(tlNetBankPayRequest.getOrderNo());
 			sign.append("&orderAmount=");
-			sign.append(tlGateWayPayRequest.getOrderAmount());
+			sign.append(tlNetBankPayRequest.getOrderAmount());
 			sign.append("&orderCurrency=");
-			sign.append(tlGateWayPayRequest.getOrderCurrency());
+			sign.append(tlNetBankPayRequest.getOrderCurrency());
 			sign.append("&orderDatetime=");
-			sign.append(tlGateWayPayRequest.getOrderDatetime());
+			sign.append(tlNetBankPayRequest.getOrderDatetime());
 			sign.append("&payType=");
-			sign.append(tlGateWayPayRequest.getPayType());
+			sign.append(tlNetBankPayRequest.getPayType());
 			sign.append("&issuerId=");
-			sign.append(tlGateWayPayRequest.getIssuerId());
+			sign.append(tlNetBankPayRequest.getIssuerId());
 			sign.append("&key=");
 			sign.append("1234567890");
 		}
@@ -96,6 +97,32 @@ public final class SignMsgBuilder {
 			sign.append(tlNetBankOrderRefundRequest.getMchtRefundOrderNo());
 			sign.append("&orderDatetime=");
 			sign.append(tlNetBankOrderRefundRequest.getOrderDatetime());
+			sign.append("&key=");
+			sign.append(key);
+		}
+		logger.info("tl-refund-sourceMsg：{}", sign.toString());
+		String md5Msg = MD5.MD5Encode(sign.toString(), "UTF-8").toUpperCase();
+		logger.info("tl-refund-signMsg：{}", md5Msg);
+		return md5Msg;
+		
+	}
+	
+	public static String getSignMsgForRefundQuery(TLNetBankRefundQueryRequest tlNetBankRefundQueryRequest, String key) {
+		
+		StringBuffer sign = new StringBuffer();
+		if(tlNetBankRefundQueryRequest != null){
+			sign.append("version=");
+			sign.append(tlNetBankRefundQueryRequest.getVersion());
+			sign.append("&signType=");
+			sign.append(tlNetBankRefundQueryRequest.getSignType());
+			sign.append("&merchantId=");
+			sign.append(tlNetBankRefundQueryRequest.getMerchantId());
+			sign.append("&orderNo=");
+			sign.append(tlNetBankRefundQueryRequest.getOrderNo());
+			sign.append("&refundAmount=");
+			sign.append(tlNetBankRefundQueryRequest.getRefundAmount());
+			sign.append("&mchtRefundOrderNo=");
+			sign.append(tlNetBankRefundQueryRequest.getMchtRefundOrderNo());
 			sign.append("&key=");
 			sign.append(key);
 		}

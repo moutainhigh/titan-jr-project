@@ -3,7 +3,7 @@ package com.titanjr.checkstand.dao.impl;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
 import com.titanjr.checkstand.dao.OrderPayRequestDao;
-import com.titanjr.checkstand.dto.OrderPayRequestDTO;
+import com.titanjr.checkstand.dto.TitanPayDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,9 +17,9 @@ public class OrderPayRequestDaoImpl extends GenericDAOMyBatisImpl implements Ord
     private final static Logger logger = LoggerFactory.getLogger(OrderPayRequestDaoImpl.class);
 
     @Override
-    public int batchSaveGateWayPayDTO(List<OrderPayRequestDTO> orderPayRequestList) {
+    public int batchSaveGateWayPayDTO(List<TitanPayDTO> payRequestList) {
         try {
-            return super.insertEntity("com.titanjr.checkstand.dao.OrderPayRequestDao.batchSave", orderPayRequestList);
+            return super.insertEntity("com.titanjr.checkstand.dao.OrderPayRequestDao.batchSave", payRequestList);
         } catch (Exception e) {
             logger.error("batchSaveGateWayPayDTO Error" , e);
             throw new DaoException(e);

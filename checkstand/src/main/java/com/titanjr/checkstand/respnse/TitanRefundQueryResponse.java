@@ -1,27 +1,27 @@
 /** 
  * CopyRright ©2017 深圳市天下房仓科技有限公司 All Right Reserved.
  * 
- * @fileName TitanOrderRefundResponse.java
+ * @fileName TitanRefundQueryResponse.java
  * @author Jerry
- * @date 2017年12月4日 上午11:39:48  
+ * @date 2017年12月5日 下午6:38:13  
  */
 package com.titanjr.checkstand.respnse;
 
 import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotBlank;
 
-
 /**
- * 退款结果，按照融数格式返回
+ * 退款查询结果，按照融数格式返回
  * @author Jerry
- * @date 2017年12月4日 上午11:39:48  
+ * @date 2017年12月5日 下午6:38:13  
  */
-public class TitanOrderRefundResponse extends RSResponse {
+public class TitanRefundQueryResponse extends RSResponse {
 	/** 
 	 * 
 	 */
-	private static final long serialVersionUID = 2255159199767542474L;
-	
+	private static final long serialVersionUID = 1876223975237926218L;
+
 	/**
 	 * 退款订单号
 	 */
@@ -41,28 +41,31 @@ public class TitanOrderRefundResponse extends RSResponse {
 	private String refundAmount;
 
 	/**
-	 * 退款状态  0处理中，1审核失败, 2退款成功 ,3退款失败，4，退款冲销
+	 * 退款状态    0处理中，1审核失败，2退款成功 ,3退款失败，4，退款冲销
 	 */
 	@NotBlank
 	private String refundStatus;
 
 	/**
-	 * 下单时间
+	 * 下单时间 yyyyMMddHHmmss
 	 */
 	@NotBlank
 	private String orderTime;
 
 	/**
-	 * 退款时间
+	 * 退款时间 yyyyMMddHHmmss
 	 */
 	@NotBlank
 	private String refundTime;
 
+	/**
+	 * 固定值：v1.0；含快捷支付：v1.1
+	 */
 	@NotBlank
 	private String version;
-	
+
 	private String signType;
-	
+
 	private String signMsg;
 
 	public String getRefundOrderno() {
@@ -136,5 +139,5 @@ public class TitanOrderRefundResponse extends RSResponse {
 	public void setSignMsg(String signMsg) {
 		this.signMsg = signMsg;
 	}
-
+	
 }

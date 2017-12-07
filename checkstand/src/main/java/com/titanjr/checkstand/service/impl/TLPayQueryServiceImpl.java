@@ -26,6 +26,8 @@ import com.allinpay.ets.client.PaymentResult;
 import com.fangcang.titanjr.common.util.BeanConvertor;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.util.StringUtil;
+import com.titanjr.checkstand.constants.RSErrorCodeEnum;
+import com.titanjr.checkstand.constants.RSPayStatusEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dto.GateWayConfigDTO;
 import com.titanjr.checkstand.request.TLNetBankPayQueryRequest;
@@ -68,14 +70,14 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 				
 			}else{
 				logger.error("【通联-支付订单查询】失败 httpRes为空");
-				titanPayQueryResponse.putErrorResult("系统错误，请联系管理员");
+				titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 				return titanPayQueryResponse;
 			}
 			
 		} catch (Exception e) {
 			
 			logger.error("【通联-支付订单查询】发生异常：{}", e);
-			titanPayQueryResponse.putErrorResult("系统异常");
+			titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanPayQueryResponse;
 			
 		}
@@ -89,12 +91,12 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 	 */
 	private TitanPayQueryResponse payQueryResult(String responseStr, String key) throws UnsupportedEncodingException{
 		
-		TitanPayQueryResponse tlNetBankPayQueryResponse = new TitanPayQueryResponse();
+		TitanPayQueryResponse titanPayQueryResponse = new TitanPayQueryResponse();
 		logger.info("【通联-支付订单查询】返回信息：{}", responseStr);
 		if(!StringUtil.isValidString(responseStr)){
 			logger.error("【通联-支付订单查询】失败：返回消息为空");
-			tlNetBankPayQueryResponse.putErrorResult("渠道返回消息为空");
-			return tlNetBankPayQueryResponse;
+			titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+			return titanPayQueryResponse;
 		}
 		responseStr = URLDecoder.decode(responseStr, "UTF-8");
 		
@@ -113,14 +115,14 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 		if (null != result.get("ERRORCODE")) {
 			
 			logger.error("【通联-支付订单查询】失败：{}", result.get("ERRORMSG"));
-			tlNetBankPayQueryResponse.putErrorResult(result.get("ERRORMSG"));
-			return tlNetBankPayQueryResponse;
+			titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.build(result.get("ERRORMSG")));
+			return titanPayQueryResponse;
 
 		} else {
 			
 			String payResult = result.get("payResult");
 			if (payResult.equals("1")) {
-				tlNetBankPayQueryResponse.setPayStatsu(payResult);
+				titanPayQueryResponse.setPayStatsu(RSPayStatusEnum.SUCCESS.getStatus());
 				logger.info("【通联-支付订单查询】查询结果为:付款成功，payResult：{}", payResult);
 				// 支付成功，验证签名
 				PaymentResult paymentResult = new PaymentResult();
@@ -146,26 +148,23 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 						.get("returnDatetime"));
 				paymentResult.setKey(key);
 				paymentResult.setSignMsg(result.get("signMsg"));
-				paymentResult.setCertPath("d:\\cert\\TLCert-test.cer");
 
 				boolean verifyResult = paymentResult.verify();
 
 				if (verifyResult) {
-					logger.info("【通联-支付订单查询】返回订单支付成功，验签成功，orderNo={}", paymentResult.getOrderNo());
-					tlNetBankPayQueryResponse.putSuccess("订单支付成功");
-					return tlNetBankPayQueryResponse;
+					logger.info("【通联-支付订单查询】订单支付成功，验签成功，orderNo={}", paymentResult.getOrderNo());
 				} else {
-					logger.error("【通联-支付订单查询】返回订单支付成功，验签失败，orderNo={}", paymentResult.getOrderNo());
-					tlNetBankPayQueryResponse.putErrorResult("订单支付成功，验签失败");
-					return tlNetBankPayQueryResponse;
+					logger.error("【通联-支付订单查询】订单支付成功，验签失败，orderNo={}", paymentResult.getOrderNo());
 				}
 
-			} else {
+			} else {//后续关注支付失败是怎么返回的
 				logger.info("【通联-支付订单查询】查询结果为：订单尚未付款");
-				tlNetBankPayQueryResponse.putErrorResult("订单尚未付款");
-				return tlNetBankPayQueryResponse;
+				titanPayQueryResponse.setPayStatsu(RSPayStatusEnum.PROCESS.getStatus());
+				/*titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.build("订单尚未付款"));
+				return titanPayQueryResponse;*/
 			}
 			
+			return titanPayQueryResponse;
 		}
 	}
 

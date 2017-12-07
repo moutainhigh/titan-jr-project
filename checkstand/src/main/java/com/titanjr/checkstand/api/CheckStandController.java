@@ -2,8 +2,6 @@ package com.titanjr.checkstand.api;
 
 import com.titanjr.checkstand.constants.OperateTypeEnum;
 import com.titanjr.checkstand.controller.BaseController;
-import com.titanjr.checkstand.request.TitanPayCallbackRequest;
-import com.titanjr.checkstand.util.DTOBuilderUtil;
 import com.titanjr.checkstand.util.JRBeanUtils;
 import com.titanjr.checkstand.util.WebUtils;
 
@@ -48,9 +46,7 @@ public class CheckStandController extends BaseController {
         OperateTypeEnum operateTypeEnum = JRBeanUtils.getOperateType(request);
         if(operateTypeEnum == null){
         	logger.error("路由错误");
-        	TitanPayCallbackRequest payCallbackRequest = DTOBuilderUtil.getPayFailedCallbackRequest();
-        	model.addAttribute("payCallbackRequest", payCallbackRequest);
-        	return "callbacktitan/payFailedCallbackPage";
+        	return super.payFailedCallback(model);
         }
 
         if (operateTypeEnum.equals(OperateTypeEnum.PAY_REQUEST)){
@@ -66,8 +62,13 @@ public class CheckStandController extends BaseController {
         if (operateTypeEnum.equals(OperateTypeEnum.REFUND_REQUEST)){
             return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/refund/entrance.shtml";
         }
-
-        return null;
+        
+        if (operateTypeEnum.equals(OperateTypeEnum.REFUND_QUERY)){
+            return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/rfQuery/entrance.shtml";
+        }
+        
+        logger.error("【{}】{}未匹配对应的入口", OperateTypeEnum.REFUND_QUERY.getKey(), OperateTypeEnum.REFUND_QUERY.getValue());
+        return super.payFailedCallback(model);
     }
 
 }

@@ -1,123 +1,170 @@
 package com.titanjr.checkstand.dto;
 
-
-import com.titanjr.checkstand.constants.LanguageEnum;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 
 /**
- * Created by zhaoshan on 2017/11/15.
+ * 支付请求参数（融数格式），只需要将对支付路由有用的字段设置必填
+ * @author Jerry
+ * @date 2017年12月7日 下午2:39:02
  */
-public class OrderPayRequestDTO {
-
-    //支付请求id，保存后才有
-    private Long payReqId;
-    //用户请求单号，落单时保存
-    private String userOrderNo;
-    //商户号，需要根据传来的商户号匹配
+public class TitanPayDTO {
+	
+    /**
+     * 商户号
+     */
     @NotBlank
     private String merchantNo;
-    //订单号，系统生成，返回给金融收银台
+    /**
+     * 业务订单号
+     */
     @NotBlank
     private String orderNo;
-    //产品号，相当于产品id
+    /**
+     * 产品号，相当于产品id
+     */
     private String productNo;
-    //产品名称
+    /**
+     * 产品名称
+     */
     private String productName;
-    //产品描述
+    /**
+     * 产品描述
+     */
     private String productDesc;
-    //产品数量
+    /**
+     * 产品数量
+     */
     private Integer productNum;
-    //订单金额，精确到分
+    /**
+     * 订单金额，精确到分
+     */
     @NotNull
     private Long orderAmount;
-    //支付方式
+    /**
+     * 直连必填<br>
+     * 支付方式11：个人银行 12：企业银行 13：信用卡 28：微信公众号支付  30：微信扫码支付Url 32: 支付宝扫码支付url 41：快捷支付
+     */
+    @NotNull
     private Integer payType;
-    //币种
+    /**
+     * 币种
+     */
     @NotNull
     private Integer amtType;
-    //银行标示
+    /**
+     * 银行标示，快捷支付不能为空
+     */
+    @NotBlank
     private String bankInfo;
-    //付款方账号
+    /**
+     * 付款方账号，快捷支付不能为空
+     */
     private String payerAccount;
-    //支付人姓名
+    /**
+     * 支付人姓名，快捷支付不能为空
+     */
     private String payerName;
-    //支付人手机号
+    /**
+     * 支付人手机号，快捷支付不能为空
+     */
     private String payerPhone;
-    //支付人邮箱
+    /**
+     * 支付人邮箱
+     */
     private String payerMail;
-    //页面地址
+    /**
+     * 页面地址
+     */
     @NotBlank
     private String pageUrl;
-    //后台通知地址
+    /**
+     * 后台通知地址
+     */
     @NotBlank
     private String notifyUrl;
-    //订单提交时间
+    /**
+     * 订单提交时间
+     */
     @NotBlank
     private String orderTime;
-    //订单过期时间
+    /**
+     * 订单过期时间
+     */
     private String orderExpireTime;
-    //订单标示
+    /**
+     * 订单标示
+     */
     private String orderMark;
-    //扩展字段
+    /**
+     * 扩展字段
+     */
     private String expand;
-    //扩展字段
+    /**
+     * 扩展字段
+     */
     private String expand2;
-    //签名类型
+    /**
+     * 签名类型
+     */
+    @NotNull
     private Integer signType;
-    //业务号
+    /**
+     * 业务号   商户订单：101 查询订单：102  商户退款：103 查询退款：104
+     */
+    @NotBlank
     private String busiCode;
-    //版本
+    /**
+     * 版本 固定值：v1.0 新版本：v1.1（含快捷支付）
+     */
+    @NotBlank
     private String version;
-    //字符编码
+    /**
+     * 字符编码  固定值：1，代表UTF-8
+     */
+    @NotBlank
     private String charset;
-    //签名信息
+    /**
+     * 签名信息
+     */
+    @NotBlank
     private String signMsg;
-    //微信服务号专用openid
+    /**
+     * 微信服务号专用openid
+     */
     private String openId;
-    //身份证号
+    /**
+     * 身份证号，快捷支付不能为空
+     */
     private String idCode;
-    //银行卡类型
+    /**
+     * 银行卡类型，快捷支付不能为空  10：借记卡  21：信用卡
+     */
     private String payerAccountType;
-    //安全码
+    /**
+     * 安全码，快捷支付不能为空
+     */
     private String safetyCode;
-    //有效期
+    /**
+     * 有效期，快捷支付不能为空
+     */
     private String validthru;
-    //终端IP
+    /**
+     * 终端IP，快捷支付不能为空
+     */
     private String terminalIp;
-    //终端类型
+    /**
+     * 终端类型，快捷支付不能为空
+     */
     private String terminalType;
-    //终端信息
+    /**
+     * 终端信息，快捷支付不能为空
+     */
     private String terminalInfo;
-    //支付状态
-    private Integer reqStatus;
-    //语言
-    private Integer language = LanguageEnum.CHN_SIM.key;
-    //合作伙伴商户号
-    private String pid;
-    //产品价格/单价
-    private Long productPrice;
-    //业务扩展字段
-    private String extTL;
-    //贸易类型
-    private String tradeNature;
-    //海关扩展字段
-    private String customsExt;
-    //应用id，扫码等付款
-    private String appId;
-    //随机字符串
-    private String randomStr;
-    //支付限制，不用信用卡
-    private String limitPay;
-
-    public Long getPayReqId() {
-        return payReqId;
-    }
-
-    public void setPayReqId(Long payReqId) {
-        this.payReqId = payReqId;
-    }
+    
 
     public String getIdCode() {
         return idCode;
@@ -165,50 +212,6 @@ public class OrderPayRequestDTO {
 
     public void setTerminalInfo(String terminalInfo) {
         this.terminalInfo = terminalInfo;
-    }
-
-    public Integer getReqStatus() {
-        return reqStatus;
-    }
-
-    public void setReqStatus(Integer reqStatus) {
-        this.reqStatus = reqStatus;
-    }
-
-    public void setProductPrice(Long productPrice) {
-        this.productPrice = productPrice;
-    }
-
-    public String getAppId() {
-        return appId;
-    }
-
-    public void setAppId(String appId) {
-        this.appId = appId;
-    }
-
-    public String getRandomStr() {
-        return randomStr;
-    }
-
-    public void setRandomStr(String randomStr) {
-        this.randomStr = randomStr;
-    }
-
-    public String getLimitPay() {
-        return limitPay;
-    }
-
-    public void setLimitPay(String limitPay) {
-        this.limitPay = limitPay;
-    }
-
-    public String getUserOrderNo() {
-        return userOrderNo;
-    }
-
-    public void setUserOrderNo(String userOrderNo) {
-        this.userOrderNo = userOrderNo;
     }
 
     public String getMerchantNo() {
@@ -435,47 +438,9 @@ public class OrderPayRequestDTO {
         this.validthru = validthru;
     }
 
-    public Integer getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(Integer language) {
-        this.language = language;
-    }
-
-    public String getPid() {
-        return pid;
-    }
-
-    public void setPid(String pid) {
-        this.pid = pid;
-    }
-
-    public String getExtTL() {
-        return extTL;
-    }
-
-    public void setExtTL(String extTL) {
-        this.extTL = extTL;
-    }
-
-    public String getTradeNature() {
-        return tradeNature;
-    }
-
-    public void setTradeNature(String tradeNature) {
-        this.tradeNature = tradeNature;
-    }
-
-    public String getCustomsExt() {
-        return customsExt;
-    }
-
-    public void setCustomsExt(String customsExt) {
-        this.customsExt = customsExt;
-    }
-
-    public Long getProductPrice() {
-        return productPrice;
-    }
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
+	}
+	
 }

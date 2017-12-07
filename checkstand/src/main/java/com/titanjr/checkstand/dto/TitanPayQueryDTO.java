@@ -1,11 +1,15 @@
 package com.titanjr.checkstand.dto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
- * Created by zhaoshan on 2017/11/20.
+ * 支付查询请求参数（融数格式）
+ * @author Jerry
+ * @date 2017年12月7日 下午2:39:45
  */
-public class PayQueryDTO {
+public class TitanPayQueryDTO {
 	
 	private String busiCode;
 	private String signType;
@@ -81,6 +85,11 @@ public class PayQueryDTO {
 	}
 	public void setSignMsg(String signMsg) {
 		this.signMsg = signMsg;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
 	}
 
 }

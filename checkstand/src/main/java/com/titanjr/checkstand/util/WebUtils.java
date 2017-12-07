@@ -62,14 +62,8 @@ public class WebUtils {
                 }
 
             }
-        } catch (InstantiationException e) {
-            logger.error("实例化失败", e);
-            return null;
-        } catch (IllegalAccessException e) {
-            logger.error("实例化失败", e);
-            return null;
-        } catch (UnsupportedEncodingException e) {
-            logger.error("实例化失败", e);
+        } catch (Exception e) {
+            logger.error("请求参数实例化失败", e);
             return null;
         }
         return result;

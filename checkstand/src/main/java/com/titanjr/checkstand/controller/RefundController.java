@@ -12,8 +12,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.titanjr.checkstand.constants.PayTypeEnum;
+import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
-import com.titanjr.checkstand.dto.TitanRefundRequestDTO;
+import com.titanjr.checkstand.dto.TitanRefundDTO;
 import com.titanjr.checkstand.request.TLNetBankOrderRefundRequest;
 import com.titanjr.checkstand.respnse.TitanOrderRefundResponse;
 import com.titanjr.checkstand.service.TLOrderRefundService;
@@ -45,7 +46,7 @@ public class RefundController extends BaseController {
 
 		//查询订单，获取支付方式
         
-        //根据支付方式获取查询策略，调对应的接口
+        //根据支付方式获取退款调用策略，调对应的接口
 		PayTypeEnum payTypeEnum = PayTypeEnum.PERSON_EBANK;
 		OrderRefundStrategy refundStrategy =  StrategyFactory.getRefundStrategy(payTypeEnum);
         String redirectUrl = refundStrategy.redirectResult(request);
@@ -65,21 +66,21 @@ public class RefundController extends BaseController {
     	
     	try {
     		
-    		TitanRefundRequestDTO refundRequestDTO = WebUtils.switch2RequestDTO(TitanRefundRequestDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(refundRequestDTO);
+    		TitanRefundDTO refundDTO = WebUtils.switch2RequestDTO(TitanRefundDTO.class, request);
+			ValidateResponse res = GenericValidate.validateNew(refundDTO);
 			if (!res.isSuccess()){
 				logger.error("参数错误：{}", res.getReturnMessage());
-				titanOrderRefundResponse.putErrorResult(res.getReturnMessage());
+				titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
 				return titanOrderRefundResponse;
 			}
 			
-			tlNetBankOrderRefundRequest.setMerchantId(refundRequestDTO.getMerchantNo());
-			tlNetBankOrderRefundRequest.setOrderNo(refundRequestDTO.getOrderNo());
-			tlNetBankOrderRefundRequest.setRefundAmount(Integer.parseInt(refundRequestDTO.getRefundAmount()));//校验
-			tlNetBankOrderRefundRequest.setMchtRefundOrderNo(refundRequestDTO.getRefundOrderno());
+			tlNetBankOrderRefundRequest.setMerchantId(refundDTO.getMerchantNo());
+			tlNetBankOrderRefundRequest.setOrderNo(refundDTO.getOrderNo());
+			tlNetBankOrderRefundRequest.setRefundAmount(Integer.parseInt(refundDTO.getRefundAmount()));//校验
+			tlNetBankOrderRefundRequest.setMchtRefundOrderNo(refundDTO.getRefundOrderno());
 			tlNetBankOrderRefundRequest.setVersion("v2.3");
-			tlNetBankOrderRefundRequest.setSignType("1");
-			tlNetBankOrderRefundRequest.setOrderDatetime(refundRequestDTO.getOrderTime());
+			tlNetBankOrderRefundRequest.setSignType("0");
+			tlNetBankOrderRefundRequest.setOrderDatetime(refundDTO.getOrderTime());
 			tlNetBankOrderRefundRequest.setRequestType(RequestTypeEnum.GATEWAY_PAY_QUERY_REFUND.getKey());
 			
 			titanOrderRefundResponse = tlOrderRefundService.netBankOrderRefund(tlNetBankOrderRefundRequest);
@@ -88,7 +89,7 @@ public class RefundController extends BaseController {
 		} catch (Exception e) {
 			
 			logger.error("订单查询发生异常：{}", e);
-			titanOrderRefundResponse.putErrorResult("系统异常");
+			titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanOrderRefundResponse;
 			
 		}

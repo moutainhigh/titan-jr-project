@@ -5,6 +5,7 @@ import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.strategy.pay.PayRequestStrategy;
 import com.titanjr.checkstand.strategy.payQuery.PayQueryStrategy;
 import com.titanjr.checkstand.strategy.refund.OrderRefundStrategy;
+import com.titanjr.checkstand.strategy.refundQuery.RefundQueryStrategy;
 
 /**
  * Created by zhaoshan on 2017/11/20.
@@ -56,11 +57,41 @@ public class StrategyFactory {
         return null;
     }
     
+    /**
+     * 退款策略
+     * @author Jerry
+     * @date 2017年12月5日 下午6:11:35
+     */
     public static OrderRefundStrategy getRefundStrategy(PayTypeEnum payTypeEnum){
 
         if (PayTypeEnum.PERSON_EBANK.equals(payTypeEnum) || PayTypeEnum.COMP_EBANK.equals(payTypeEnum)
                 || PayTypeEnum.CREDIT_EBANK.equals(payTypeEnum)){
             return (OrderRefundStrategy)SpringContextUtil.getBean("netBnakOrderRefundStrategy");
+        }
+
+        /*if (PayTypeEnum.QR_WECHAT_URL.equals(payTypeEnum) || PayTypeEnum.QR_ALIPAY_URL.equals(payTypeEnum) ||
+                PayTypeEnum.QR_ALIPAY.equals(payTypeEnum) || PayTypeEnum.QR_WECHAT.equals(payTypeEnum) || 
+                PayTypeEnum.WECHAT.equals(payTypeEnum)){
+            return (PayQueryStrategy)SpringContextUtil.getBean("qrPayQueryStrategy");
+        }
+        
+        if (PayTypeEnum.QUICK_NEW.equals(payTypeEnum)){
+            return (PayQueryStrategy)SpringContextUtil.getBean("qkPayQueryStrategy");
+        }*/
+
+        return null;
+    }
+    
+    /**
+     * 退款查询策略
+     * @author Jerry
+     * @date 2017年12月5日 下午6:11:54
+     */
+    public static RefundQueryStrategy getRefundQueryStrategy(PayTypeEnum payTypeEnum){
+
+        if (PayTypeEnum.PERSON_EBANK.equals(payTypeEnum) || PayTypeEnum.COMP_EBANK.equals(payTypeEnum)
+                || PayTypeEnum.CREDIT_EBANK.equals(payTypeEnum)){
+            return (RefundQueryStrategy)SpringContextUtil.getBean("netBankRefundQueryStrategy");
         }
 
         /*if (PayTypeEnum.QR_WECHAT_URL.equals(payTypeEnum) || PayTypeEnum.QR_ALIPAY_URL.equals(payTypeEnum) ||

@@ -15,7 +15,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * @author Jerry
  * @date 2017年10月27日 上午11:27:55  
  */
-public class TLGateWayPayRequest implements Serializable {
+public class TLNetBankPayRequest implements Serializable {
 	
 	/** 
 	 * 

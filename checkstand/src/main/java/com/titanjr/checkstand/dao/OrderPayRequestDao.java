@@ -1,6 +1,6 @@
 package com.titanjr.checkstand.dao;
 
-import com.titanjr.checkstand.dto.OrderPayRequestDTO;
+import com.titanjr.checkstand.dto.TitanPayDTO;
 
 import java.util.List;
 
@@ -14,6 +14,6 @@ public interface OrderPayRequestDao {
      * @param gateWayPayDTOList
      * @return
      */
-    int batchSaveGateWayPayDTO(List<OrderPayRequestDTO> gateWayPayDTOList);
+    int batchSaveGateWayPayDTO(List<TitanPayDTO> gateWayPayDTOList);
 
 }

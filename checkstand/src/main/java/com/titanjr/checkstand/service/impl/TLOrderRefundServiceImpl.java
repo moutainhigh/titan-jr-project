@@ -26,6 +26,7 @@ import com.allinpay.ets.client.PaymentResult;
 import com.fangcang.titanjr.common.util.BeanConvertor;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.util.StringUtil;
+import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dto.GateWayConfigDTO;
 import com.titanjr.checkstand.request.TLNetBankOrderRefundRequest;
@@ -40,7 +41,7 @@ import com.titanjr.checkstand.util.SignMsgBuilder;
 @Service("tlOrderRefundService")
 public class TLOrderRefundServiceImpl implements TLOrderRefundService {
 	
-	private final static Logger logger = LoggerFactory.getLogger(TLPayQueryServiceImpl.class);
+	private final static Logger logger = LoggerFactory.getLogger(TLOrderRefundServiceImpl.class);
 	
 
 	@Override
@@ -71,13 +72,13 @@ public class TLOrderRefundServiceImpl implements TLOrderRefundService {
 				
 			}else{
 				logger.error("【通联-订单退款】失败 httpRes为空");
-				titanOrderRefundResponse.putSysError();
+				titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);;
 				return titanOrderRefundResponse;
 			}
 			
 		} catch (Exception e) {
 			logger.error("【通联-订单退款】发生异常：{}", e);
-			titanOrderRefundResponse.putErrorResult("系统异常");
+			titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanOrderRefundResponse;
 		}
 	}
@@ -96,7 +97,7 @@ public class TLOrderRefundServiceImpl implements TLOrderRefundService {
 		logger.info("【通联-订单退款】返回信息：{}", responseStr);
 		if(!StringUtil.isValidString(responseStr)){
 			logger.error("【通联-订单退款】失败：返回消息为空");
-			titanOrderRefundResponse.putErrorResult("渠道返回消息为空");
+			titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanOrderRefundResponse;
 		}
 		responseStr = URLDecoder.decode(responseStr, "UTF-8");
@@ -115,8 +116,9 @@ public class TLOrderRefundServiceImpl implements TLOrderRefundService {
 		
 		if (StringUtil.isValidString(result.get("ERRORCODE"))) {
 			
+			//订单重复退款会返回：退款金额不能大于可退金额
 			logger.error("【通联-订单退款】失败：{}", result.get("ERRORMSG"));
-			titanOrderRefundResponse.putErrorResult(result.get("ERRORMSG"));
+			titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.build(result.get("ERRORMSG")));
 			return titanOrderRefundResponse;
 
 		} else {
@@ -136,29 +138,22 @@ public class TLOrderRefundServiceImpl implements TLOrderRefundService {
 			paymentResult.setReturnDatetime(result.get("returnDatetime").toString());
 			paymentResult.setSignMsg(result.get("signMsg").toString()); 
 			paymentResult.setKey(key);
-			paymentResult.setCertPath("d:\\cert\\TLCert-test.cer");
 			
 			//验证签名：返回true代表验签成功；否则验签失败。
 			boolean verifyResult = paymentResult.verify();
 			if(!verifyResult){
-				if("20".equals(paymentResult.getRefundResult())){
-					logger.error("【通联-订单退款】退款成功，验签失败，orderNo={}", paymentResult.getOrderNo());
-				}else{
-					logger.error("【通联-订单退款】退款失败，验签失败，orderNo={}", paymentResult.getOrderNo());
-				}
-				titanOrderRefundResponse.putErrorResult("验签失败");
-				return titanOrderRefundResponse;
+				logger.info("【通联-订单退款】验签失败，orderNo={}", paymentResult.getOrderNo());
+			}else{
+				logger.info("【通联-订单退款】验签成功");
 			}
-			logger.info("【通联-订单退款】验签成功，orderNo={}", paymentResult.getOrderNo());
 			
 			if("20".equals(paymentResult.getRefundResult())){
-				titanOrderRefundResponse.setRefundSuccess();
-				
+				logger.info("【通联-订单退款】退款成功，orderNo={}", paymentResult.getOrderNo());
+				titanOrderRefundResponse.setRefundStatus("2");
 			}else{
-				titanOrderRefundResponse.setRefundFaild();
+				logger.info("【通联-订单退款】退款失败，orderNo={}", paymentResult.getOrderNo());
+				titanOrderRefundResponse.setRefundStatus("3");
 			}
-			
-			titanOrderRefundResponse.putSuccess();
 			return titanOrderRefundResponse;
 			
 		}

@@ -18,8 +18,9 @@ import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.util.DateUtil;
 import com.titanjr.checkstand.constants.PayTypeEnum;
+import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
-import com.titanjr.checkstand.dto.PayQueryDTO;
+import com.titanjr.checkstand.dto.TitanPayQueryDTO;
 import com.titanjr.checkstand.request.TLNetBankPayQueryRequest;
 import com.titanjr.checkstand.respnse.TitanPayQueryResponse;
 import com.titanjr.checkstand.service.TLPayQueryService;
@@ -74,18 +75,18 @@ public class PayQueryController extends BaseController {
     	
     	try {
     		
-			PayQueryDTO payQueryDTO = WebUtils.switch2RequestDTO(PayQueryDTO.class, request);
+			TitanPayQueryDTO payQueryDTO = WebUtils.switch2RequestDTO(TitanPayQueryDTO.class, request);
 			ValidateResponse res = GenericValidate.validateNew(payQueryDTO);
 			if (!res.isSuccess()){
 				logger.error("参数错误：{}", res.getReturnMessage());
-				titanPayQueryResponse.putErrorResult(res.getReturnMessage());
+				titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
 				return titanPayQueryResponse;
 			}
 			
 			tlNetBankPayQueryRequest.setMerchantId(payQueryDTO.getMerchantNo());
 			tlNetBankPayQueryRequest.setOrderNo(payQueryDTO.getOrderNo());
 			tlNetBankPayQueryRequest.setVersion("v1.5");
-			tlNetBankPayQueryRequest.setSignType("1");
+			tlNetBankPayQueryRequest.setSignType("0");
 			tlNetBankPayQueryRequest.setOrderDatetime(payQueryDTO.getOrderTime());
 			tlNetBankPayQueryRequest.setQueryDatetime(DateUtil.dateToString(new Date(), "yyyyMMddHHmmss"));
 			tlNetBankPayQueryRequest.setRequestType(RequestTypeEnum.GATEWAY_PAY_QUERY_REFUND.getKey());
@@ -96,7 +97,7 @@ public class PayQueryController extends BaseController {
 		} catch (Exception e) {
 			
 			logger.error("订单查询发生异常：{}", e);
-			titanPayQueryResponse.putErrorResult("系统异常");
+			titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanPayQueryResponse;
 			
 		}

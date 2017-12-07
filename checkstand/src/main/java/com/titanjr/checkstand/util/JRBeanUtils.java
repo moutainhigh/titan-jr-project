@@ -1,8 +1,8 @@
 package com.titanjr.checkstand.util;
 
 import com.titanjr.checkstand.constants.OperateTypeEnum;
-import com.titanjr.checkstand.dto.OrderPayRequestDTO;
-import com.titanjr.checkstand.dto.TitanRefundRequestDTO;
+import com.titanjr.checkstand.dto.TitanPayDTO;
+import com.titanjr.checkstand.dto.TitanRefundDTO;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -60,8 +60,8 @@ public class JRBeanUtils {
      */
     public static OperateTypeEnum recognizeRequestType(Set<String> paramKeySet){
     	
-        Set<String> requiredFields = JRBeanUtils.getRequiredFiledName(OrderPayRequestDTO.class);
-        Set<String> refundFields = JRBeanUtils.getRequiredFiledName(TitanRefundRequestDTO.class);
+        Set<String> requiredFields = JRBeanUtils.getRequiredFiledName(TitanPayDTO.class);
+        Set<String> refundFields = JRBeanUtils.getRequiredFiledName(TitanRefundDTO.class);
 
         boolean isPayRequest = true;
         for (String requireField : requiredFields){

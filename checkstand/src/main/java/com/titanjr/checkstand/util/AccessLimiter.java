@@ -47,7 +47,7 @@ public class AccessLimiter {
             limit = frequency;//限时访问的总次数
             intervalPerPermit = intervalInMills / limit;
         } else {
-            logger.error("当前操作{}未配置的访问{}频次数据", operateType,132456);
+            logger.error("当前操作【{}】未配置的访问频次数据", operateType);
             return false;
         }
         String key = genKey(operateType,null);
