@@ -53,6 +53,10 @@ public class RefundDTO implements Serializable{
 	private Date endTime;
 	//交易单状态，对账使用，查询列表不返回
 	private Integer transStatus;
+	//退款单对应的原始付款方，对账使用，查询列表不返回
+	private String payerMerchant;
+	//退款单对应的原始收款方，对账使用，查询列表不返回
+	private String payeeMerchant;
 	
 	public String getBusinessInfo() {
 		return businessInfo;
@@ -220,5 +224,21 @@ public class RefundDTO implements Serializable{
 
 	public void setTransStatus(Integer transStatus) {
 		this.transStatus = transStatus;
+	}
+
+	public String getPayerMerchant() {
+		return payerMerchant;
+	}
+
+	public void setPayerMerchant(String payerMerchant) {
+		this.payerMerchant = payerMerchant;
+	}
+
+	public String getPayeeMerchant() {
+		return payeeMerchant;
+	}
+
+	public void setPayeeMerchant(String payeeMerchant) {
+		this.payeeMerchant = payeeMerchant;
 	}
 }

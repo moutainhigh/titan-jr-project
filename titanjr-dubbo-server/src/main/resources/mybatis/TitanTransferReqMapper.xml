@@ -186,6 +186,9 @@
         <if test="userrelateid !=null">
           and userrelateid=#{userrelateid}
         </if>
+        <if test="requestno !=null">
+          and requestno=#{requestno}
+        </if>
       </where>
   
   </select>

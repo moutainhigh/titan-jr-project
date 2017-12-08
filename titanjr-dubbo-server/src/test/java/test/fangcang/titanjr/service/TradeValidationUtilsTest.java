@@ -44,14 +44,14 @@ public class TradeValidationUtilsTest extends SpringTest {
 
     @Test
     public void testValidPayAndTransfer(){
-        Date start = DateUtil.stringToDate("2017-11-20 10:00:00","yyyy-MM-dd HH:mm:ss");
-        Date end = DateUtil.stringToDate("2017-11-20 10:59:59","yyyy-MM-dd HH:mm:ss");
-//        try {
-//            List<Transorderinfo> result =  validationUtils.validPayAndTransfer(start,end);
-//            System.out.println(result);;
-//        } catch (ApiException e) {
-//            e.printStackTrace();
-//        }
+        Date start = DateUtil.stringToDate("2016-01-01 00:00:00","yyyy-MM-dd HH:mm:ss");
+        Date end = DateUtil.stringToDate("2017-12-06 23:59:59","yyyy-MM-dd HH:mm:ss");
+        try {
+            List<Transorderinfo> result =  validationUtils.validPayAndTransfer(start,end,"TJM10000022");
+            System.out.println(result);;
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -96,14 +96,14 @@ public class TradeValidationUtilsTest extends SpringTest {
         NotifyRefundRequest notifyRefundRequest = new NotifyRefundRequest();
         notifyRefundRequest.setBusiCode(BusiCodeEnum.QueryRefund.getKey());
         notifyRefundRequest.setMerchantNo("M000016");
-        notifyRefundRequest.setOrderNo("2017111016225100004");
-        notifyRefundRequest.setRefundAmount("477100");
+        notifyRefundRequest.setOrderNo("2017112713031500004");
+        notifyRefundRequest.setRefundAmount("101700");
         //DateUtil.dateToString(DateUtil.stringToDate("2017-04-06 15:23:48","yyyy-MM-dd HH:mm:ss"),"yyyy-MM-dd HH:mm:ss")
-        notifyRefundRequest.setOrderTime("20171110162251");
-        notifyRefundRequest.setRefundOrderno("OD20171128174515001");//OD20170502092341001,OD20170505142021001 ，OD2017060210124100122
+        notifyRefundRequest.setOrderTime("20171127130315");
+        notifyRefundRequest.setRefundOrderno("OD20171201101923006");//OD20170502092341001,OD20170505142021001 ，OD2017060210124100122
         notifyRefundRequest.setVersion("v1.0");
         notifyRefundRequest.setSignType(SignTypeEnum.MD5.getKey());
-//        NotifyRefundResponse notifyRefundResponse = validationUtils.notifyGatewayRefund(notifyRefundRequest);
+        NotifyRefundResponse notifyRefundResponse = validationUtils.notifyGatewayRefund(notifyRefundRequest);
 
     }
 
