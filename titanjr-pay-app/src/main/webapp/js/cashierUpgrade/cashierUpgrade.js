@@ -740,6 +740,7 @@ function rateCompute(payType, type, index){
 	var paySource = cashierData.paySource;
 	var userId = cashierData.userid;
 	var tradeAmount = cashierData.tradeAmount;
+	var deskId = cashierData.deskId;
 	
 	if(paySource == '2'){//paySource=2 表示财务付款
 		
@@ -751,7 +752,7 @@ function rateCompute(payType, type, index){
 		
 		$.ajax({
 			   	type: "get",
-		        url: "../rate/rateCompute.action?userId="+userId+"&amount="+tradeAmount+"&payType="+relPayType+"&date=" + new Date().getTime(),
+		        url: "../rate/rateCompute.action?userId="+userId+"&amount="+tradeAmount+"&deskId="+deskId+"&payType="+relPayType+"&date=" + new Date().getTime(),
 		        dataType: "json",
 		        async: false,
 		        success: function(data){

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
 import com.fangcang.titanjr.pay.rsp.TitanRateComputeRsp;
@@ -30,21 +29,20 @@ public class TitanRateController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = "/rateCompute", method = { RequestMethod.GET })
-	public String rateCompute(String userId, String amount, String payType) {
+	public String rateCompute(String userId, String amount, String deskId, String payType) {
 
 		if (!StringUtil.isValidString(userId)
 				|| !StringUtil.isValidString(amount)
-				|| !StringUtil.isValidString(payType)) {
+				|| !StringUtil.isValidString(payType)
+				|| !StringUtil.isValidString(deskId)) {
 			return this.toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
 
-		CashierItemTypeEnum itemTypeEnum = CashierItemTypeEnum
-				.getCashierItemTypeEnumByKey(payType);
-
 		TitanRateComputeReq computeReq = new TitanRateComputeReq();
 		computeReq.setAmount(amount);
-		computeReq.setItemTypeEnum(itemTypeEnum);
+		computeReq.setDeskId(deskId);
 		computeReq.setUserId(userId);
+		computeReq.setPayType(payType);
 		
 		TitanRateComputeRsp computeRsp = titanRateService
 				.rateCompute(computeReq);

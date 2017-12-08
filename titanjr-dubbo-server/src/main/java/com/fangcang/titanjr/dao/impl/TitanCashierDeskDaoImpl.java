@@ -58,4 +58,13 @@ public class TitanCashierDeskDaoImpl extends GenericDAOMyBatisImpl implements Ti
 		}
 	}
 	
+	@Override
+	public List<TitanCashierDesk> queryAllCashierDeskOrderBy() {
+		try {
+			return super.selectList("com.fangcang.titanjr.dao.TitanCashierDeskDao.queryAllCashierDeskOrderBy");
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+	
 }

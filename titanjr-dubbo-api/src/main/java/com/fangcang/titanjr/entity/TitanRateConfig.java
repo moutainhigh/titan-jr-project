@@ -18,12 +18,13 @@ public class TitanRateConfig implements java.io.Serializable {
 
 	private Integer rateconfigid;
 	private String userid;
-	private Integer cashieritemid;
-	private Integer bustype;
+	private String deskId;
+	private String usedfor;
 	private Integer ratetype;
-	private Float rsrate;
 	private Float standrate;
 	private Float executionrate;
+	private Float minrate;
+	private Float maxrate;
 	private String description;
 	private String creator;
 	private Date createtime;
@@ -38,12 +39,20 @@ public class TitanRateConfig implements java.io.Serializable {
 		this.rateconfigid = rateconfigid;
 	}
 
-	public Integer getCashieritemid() {
-		return this.cashieritemid;
+	public String getDeskId() {
+		return deskId;
 	}
 
-	public void setCashieritemid(Integer cashieritemid) {
-		this.cashieritemid = cashieritemid;
+	public void setDeskId(String deskId) {
+		this.deskId = deskId;
+	}
+
+	public String getUsedfor() {
+		return usedfor;
+	}
+
+	public void setUsedfor(String usedfor) {
+		this.usedfor = usedfor;
 	}
 
 	public Float getStandrate() {
@@ -60,6 +69,22 @@ public class TitanRateConfig implements java.io.Serializable {
 
 	public void setExecutionrate(Float executionrate) {
 		this.executionrate = executionrate;
+	}
+
+	public Float getMinrate() {
+		return minrate;
+	}
+
+	public void setMinrate(Float minrate) {
+		this.minrate = minrate;
+	}
+
+	public Float getMaxrate() {
+		return maxrate;
+	}
+
+	public void setMaxrate(Float maxrate) {
+		this.maxrate = maxrate;
 	}
 
 	public String getDescription() {
@@ -94,28 +119,12 @@ public class TitanRateConfig implements java.io.Serializable {
 		this.userid = userid;
 	}
 
-	public Integer getBustype() {
-		return bustype;
-	}
-
-	public void setBustype(Integer bustype) {
-		this.bustype = bustype;
-	}
-
 	public Integer getRatetype() {
 		return ratetype;
 	}
 
 	public void setRatetype(Integer ratetype) {
 		this.ratetype = ratetype;
-	}
-
-	public Float getRsrate() {
-		return rsrate;
-	}
-
-	public void setRsrate(Float rsrate) {
-		this.rsrate = rsrate;
 	}
 
 	public Date getExpiration() {

@@ -2,23 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fangcang.titanjr.dao.TitanRateConfigDao">
 
+	<!-- 费率结构更改  update by jerry -->
     <insert id="batchSaveRateConfigs" parameterType="java.util.List">
-        insert into t_tfs_rateconfig (userid, cashieritemid, bustype,
-        ratetype, rsrate, standrate,expiration,
-        executionrate, description, creator,
-        createtime)
+        insert into t_tfs_rateconfig (userid, deskId,
+        usedfor, ratetype, standrate,expiration,
+        executionrate, description,
+        minrate, maxrate,
+        creator,createtime)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.userid,jdbcType=VARCHAR},
-            #{item.cashieritemid,jdbcType=INTEGER},
-            #{item.bustype,jdbcType=INTEGER},
+            #{item.deskId,jdbcType=INTEGER},
+            #{item.usedfor},
             #{item.ratetype,jdbcType=INTEGER},
-            #{item.rsrate},
             #{item.standrate},
             #{item.expiration},
             #{item.executionrate},
             #{item.description,jdbcType=VARCHAR},
-            #{item.creator,jdbcType=VARCHAR},
+            #{item.minrate},
+            #{item.maxrate},
+            #{item.creator},
             #{item.createtime})
         </foreach>
     </insert>
@@ -36,6 +39,7 @@
     	  delete from t_tfs_raterecord where orderNo=#{orderNo}
     </delete>
     
+    <!-- 查询费率配置  update by jerry -->
     <select id="queryRateConfigList" resultType="com.fangcang.titanjr.entity.TitanRateConfig"
 					parameterType="com.fangcang.titanjr.entity.parameter.TitanRateConfigParam">
     	SELECT * FROM t_tfs_rateconfig 
@@ -43,19 +47,14 @@
     	  <if test="userid !=null">
     	    and userId= #{userid}
     	  </if>
-    	  <if test="bustype !=null">
-    	    and bustype=#{bustype}
+    	  <if test="deskId != null and deskId != ''">
+    	    and deskid=#{deskId}
     	  </if>
     	  <if test="rateconfigid !=null">
     	    and rateconfigid=#{rateconfigid}
     	  </if>
     	  
     	</where>
-    	
-    	<!-- SELECT t1.* FROM t_tfs_rateconfig t1,(SELECT t1.itemid FROM t_tfs_cashierdeskitem t1 , t_tfs_cashierdesk t2 
-		WHERE t1.deskid = t2.deskid AND t2.userId= #{userid} AND t1.itemtype = #{cashierItemType}) 
-		t2 WHERE t1.cashieritemid = t2.itemid LIMIT 1 -->
-    	
     </select>
     
     
@@ -107,4 +106,9 @@
     <select id="queryUserIdNoRateConfig" parameterType="Integer" resultType="java.lang.String">
     	 SELECT DISTINCT(userid) FROM t_tfs_rateconfig WHERE userid NOT IN (SELECT DISTINCT userid FROM `t_tfs_rateconfig` WHERE bustype =#{busType})
     </select>
+    
+    <delete id="truncateRateConfig">
+    	TRUNCATE TABLE t_tfs_rateconfig
+    </delete>
+    
 </mapper>

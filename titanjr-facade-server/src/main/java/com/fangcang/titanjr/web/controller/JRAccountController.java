@@ -250,9 +250,15 @@ public class JRAccountController {
 			baseResponse.putErrorResult(String.valueOf(TitanMsgCodeEnum.ORDER_FREEZETYPE_NOT3.getCode()), 
 					TitanMsgCodeEnum.ORDER_FREEZETYPE_NOT3.getKey());
 			return baseResponse;
+<<<<<<< HEAD
 		}*/
 		if(!jrAccountReceiveRequest.getTradeAmount().equals(transOrderDTO.getTradeamount())){
 			log.error("tradeAmount is error, payOrderNo:" + jrAccountReceiveRequest.getPayOrderNo());
+=======
+		}
+		if(!jrAccountReceiveRequest.getTradeAmount().equals(transOrderDTO.getTradeamount())){
+			log.error("tradeAmount is error");
+>>>>>>> origin/rateChange
 			baseResponse.putErrorResult(String.valueOf(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getCode()), 
 					TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED.getKey());
 			return baseResponse;

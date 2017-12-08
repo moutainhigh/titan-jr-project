@@ -99,7 +99,7 @@ public interface TitanCashierDeskService {
 	 * 对已经注册的机构增加微信公众号收银台
 	 * @throws Exception
 	 */
-	public void executeWxPublicInit() throws Exception;
+	//public void executeWxPublicInit() throws Exception;
 	
 	/**
 	 * 初始化交易平台收银台

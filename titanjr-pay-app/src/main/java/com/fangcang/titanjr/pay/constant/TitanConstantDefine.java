@@ -31,4 +31,14 @@ public final class TitanConstantDefine {
 	
 	// 收银台 md5签名 key
 	public static final String PAY_APP_CASHIER_SIGN_MD5_KEY = "Yz5:@xts6uP2&!vP";
+	
+	//通联支付标示
+	public static final String TLPAY_CHANNEL_CODE = "01";
+	
+	//融宝支付标示
+	public static final String RBPAY_CHANNEL_CODE = "02";
+	
+	//通联提现基准费率记录的支付方式用0表示
+	public static final String TL_WITHDRAW_PAYTYPE = "0";
+	
 }

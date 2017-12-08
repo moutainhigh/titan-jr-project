@@ -221,4 +221,12 @@ public class CommonConstant {
      */
     public static final String FREEZE_PAYEE = "2";
     
+    /**
+     * 费率类型：百分比
+     */
+    public static final int RATETYPE_PERCENT = 1;
+    /**
+     * 费率类型：每笔固定值
+     */
+    public static final int RATETYPE_FIXATION = 2;
 }
