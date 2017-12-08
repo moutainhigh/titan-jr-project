@@ -10,8 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Resource;
 
 import com.fangcang.titanjr.dto.bean.*;
+
 import net.sf.json.JSONSerializer;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
@@ -62,7 +64,6 @@ import com.fangcang.titanjr.entity.TitanTransferReq;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.enums.BusiCodeEnum;
 import com.fangcang.titanjr.enums.SignTypeEnum;
-import com.fangcang.titanjr.enums.RsVersionEnum;
 import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.manager.impl.InvokeLogRecordManager;
 import com.fangcang.titanjr.rs.request.AccountTransferRequest;

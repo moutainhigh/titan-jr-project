@@ -4,7 +4,7 @@
 
 	<!-- 费率结构更改  update by jerry -->
     <insert id="batchSaveRateConfigs" parameterType="java.util.List">
-        insert into t_tfs_rateconfig (userid, deskId,
+        insert into t_tfs_rateconfig (userid, deskid,
         usedfor, ratetype, standrate,expiration,
         executionrate, description,
         minrate, maxrate,
@@ -12,7 +12,7 @@
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.userid,jdbcType=VARCHAR},
-            #{item.deskId,jdbcType=INTEGER},
+            #{item.deskid,jdbcType=INTEGER},
             #{item.usedfor},
             #{item.ratetype,jdbcType=INTEGER},
             #{item.standrate},
@@ -47,8 +47,8 @@
     	  <if test="userid !=null">
     	    and userId= #{userid}
     	  </if>
-    	  <if test="deskId != null and deskId != ''">
-    	    and deskid=#{deskId}
+    	  <if test="deskid != null and deskid != ''">
+    	    and deskid=#{deskid}
     	  </if>
     	  <if test="rateconfigid !=null">
     	    and rateconfigid=#{rateconfigid}
@@ -57,34 +57,30 @@
     	</where>
     </select>
     
-    
-    
-     <select id="queryRateConfigByWithdraw" resultType="com.fangcang.titanjr.entity.TitanRateConfig"
-					parameterType="com.fangcang.titanjr.entity.parameter.TitanRateConfigParam">	
-    	SELECT t1.* FROM t_tfs_rateconfig t1 WHERE t1.`userid` = #{userid}  AND t1.`cashieritemid` IS NULL AND t1.`description` LIKE '%提现%' LIMIT 1
-    </select>
-    
 
     <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanRateConfig">
         update t_tfs_rateconfig
         <set>
-            <if test="cashieritemid != null">
-                cashieritemid = #{cashieritemid,jdbcType=INTEGER},
+        	<if test="deskid != null">
+                deskid = #{deskid,jdbcType=INTEGER},
             </if>
-            <if test="bustype != null">
-                bustype = #{bustype,jdbcType=INTEGER},
+        	<if test="usedfor != null">
+                usedfor = #{usedfor,jdbcType=INTEGER},
             </if>
             <if test="ratetype != null">
                 ratetype = #{ratetype,jdbcType=INTEGER},
-            </if>
-            <if test="rsrate != null">
-                rsrate = #{rsrate},
             </if>
             <if test="standrate != null">
                 standrate = #{standrate},
             </if>
             <if test="executionrate != null">
                 executionrate = #{executionrate},
+            </if>
+            <if test="minrate != null">
+                minrate = #{minrate,jdbcType=INTEGER},
+            </if>
+        	<if test="maxrate != null">
+                maxrate = #{maxrate,jdbcType=INTEGER},
             </if>
             <if test="description != null">
                 description = #{description,jdbcType=VARCHAR},

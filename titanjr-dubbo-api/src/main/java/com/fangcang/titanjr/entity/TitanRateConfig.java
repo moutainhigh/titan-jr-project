@@ -18,7 +18,7 @@ public class TitanRateConfig implements java.io.Serializable {
 
 	private Integer rateconfigid;
 	private String userid;
-	private String deskId;
+	private String deskid;
 	private String usedfor;
 	private Integer ratetype;
 	private Float standrate;
@@ -39,12 +39,12 @@ public class TitanRateConfig implements java.io.Serializable {
 		this.rateconfigid = rateconfigid;
 	}
 
-	public String getDeskId() {
-		return deskId;
+	public String getDeskid() {
+		return deskid;
 	}
 
-	public void setDeskId(String deskId) {
-		this.deskId = deskId;
+	public void setDeskid(String deskid) {
+		this.deskid = deskid;
 	}
 
 	public String getUsedfor() {

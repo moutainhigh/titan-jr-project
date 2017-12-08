@@ -211,13 +211,13 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
         TitanRateConfig rateConfig = new TitanRateConfig();
         rateConfig.setUserid(userId);
         if(titanCashierDesk == null){//提现没有实际的收银台，但是要配置费率
-        	rateConfig.setDeskId("TX");
+        	rateConfig.setDeskid("TX");
         	rateConfig.setUsedfor(PaySourceEnum.WITHDRAW_PC.getDeskCode());
         	rateConfig.setDescription("提现收银台");
             rateConfig.setRatetype(CommonConstant.RATETYPE_FIXATION);
             rateConfig.setStandrate(5f);
         }else{
-    		rateConfig.setDeskId(String.valueOf(titanCashierDesk.getDeskid()));
+    		rateConfig.setDeskid(String.valueOf(titanCashierDesk.getDeskid()));
     		rateConfig.setUsedfor(String.valueOf(titanCashierDesk.getUsedfor()));
             rateConfig.setDescription(titanCashierDesk.getDeskname());
             rateConfig.setRatetype(CommonConstant.RATETYPE_PERCENT);

@@ -58,7 +58,7 @@ public class TitanFinancialRateServiceImpl implements TitanFinancialRateService 
 
 		TitanRateConfigParam configParam = new TitanRateConfigParam();
 		configParam.setUserid(req.getUserId());
-		configParam.setDeskId(req.getDeskId());
+		configParam.setDeskid(req.getDeskId());
 		
 		List<TitanRateConfig> rateConfigs = titanRateConfigDao
 				.queryTitanRateConfigInfo(configParam);
@@ -149,7 +149,7 @@ public class TitanFinancialRateServiceImpl implements TitanFinancialRateService 
 		logger.info(MessageFormat.format("总共构建出{0}条费率配置", rateConfigList.size()));
 		
 		//先删除费率表数据
-		//titanRateConfigDao.truncateRateConfig();
+		titanRateConfigDao.truncateRateConfig();
 		logger.info("已清除原来的费率费率配置");
 		//插入
 		int insertResult = titanRateConfigDao.batchSaveRateConfigs(rateConfigList);
@@ -169,13 +169,13 @@ public class TitanFinancialRateServiceImpl implements TitanFinancialRateService 
         TitanRateConfig rateConfig = new TitanRateConfig();
         rateConfig.setUserid(titanCashierDesk.getUserid());
         if(titanCashierDesk.getDeskid() == null || titanCashierDesk.getDeskid() == 0){//提现没有实际的收银台，但是要配置费率
-        	rateConfig.setDeskId("TX");
+        	rateConfig.setDeskid("TX");
         	rateConfig.setUsedfor(PaySourceEnum.WITHDRAW_PC.getDeskCode());
         	rateConfig.setDescription("提现收银台");
             rateConfig.setRatetype(CommonConstant.RATETYPE_FIXATION);
             rateConfig.setStandrate(5f);
         }else{
-    		rateConfig.setDeskId(String.valueOf(titanCashierDesk.getDeskid()));
+    		rateConfig.setDeskid(String.valueOf(titanCashierDesk.getDeskid()));
     		rateConfig.setUsedfor(String.valueOf(titanCashierDesk.getUsedfor()));
             rateConfig.setDescription(titanCashierDesk.getDeskname());
             rateConfig.setRatetype(CommonConstant.RATETYPE_PERCENT);
