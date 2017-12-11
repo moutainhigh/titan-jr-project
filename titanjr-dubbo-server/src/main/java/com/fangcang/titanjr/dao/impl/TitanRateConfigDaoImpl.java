@@ -90,7 +90,7 @@ public class TitanRateConfigDaoImpl extends GenericDAOMyBatisImpl implements Tit
 	@Override
 	public int truncateRateConfig() {
 		try {
-			return super.trunTable("com.fangcang.titanjr.dao.TitanRateConfigDao.truncateRateConfig");
+			return super.updateEntity("com.fangcang.titanjr.dao.TitanRateConfigDao.truncateRateConfig",null);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}
