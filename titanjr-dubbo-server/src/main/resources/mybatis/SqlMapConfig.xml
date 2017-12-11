@@ -67,7 +67,6 @@
 		<mapper resource="mybatis/TitanOrgidMapper.xml" />
 		<mapper resource="mybatis/TitanOrgImageMapper.xml" />
 		<mapper resource="mybatis/TitanOrgMapper.xml" />
-		<mapper resource="mybatis/TitanRateChangeLogMapper.xml" />
 		<mapper resource="mybatis/TitanRateConfigMapper.xml" />
 		<mapper resource="mybatis/TitanRoleMapper.xml" />
 		<mapper resource="mybatis/TitanTradeReqFlowMapper.xml" />
