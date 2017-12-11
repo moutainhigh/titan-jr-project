@@ -18,10 +18,9 @@ public class TitanRateDto implements java.io.Serializable{
 	
 	private Integer rateconfigid;
 	private String userid;
-	private Integer cashieritemid;
-	private Integer bustype;
+	private String deskId;
+	private String usedfor;
 	private Integer ratetype;
-	private Float rsrate;
 	private Float standrate;
 	private Float executionrate;
 	private String description;
@@ -40,29 +39,23 @@ public class TitanRateDto implements java.io.Serializable{
 	public void setUserid(String userid) {
 		this.userid = userid;
 	}
-	public Integer getCashieritemid() {
-		return cashieritemid;
+	public String getDeskId() {
+		return deskId;
 	}
-	public void setCashieritemid(Integer cashieritemid) {
-		this.cashieritemid = cashieritemid;
+	public void setDeskId(String deskId) {
+		this.deskId = deskId;
 	}
-	public Integer getBustype() {
-		return bustype;
+	public String getUsedfor() {
+		return usedfor;
 	}
-	public void setBustype(Integer bustype) {
-		this.bustype = bustype;
+	public void setUsedfor(String usedfor) {
+		this.usedfor = usedfor;
 	}
 	public Integer getRatetype() {
 		return ratetype;
 	}
 	public void setRatetype(Integer ratetype) {
 		this.ratetype = ratetype;
-	}
-	public Float getRsrate() {
-		return rsrate;
-	}
-	public void setRsrate(Float rsrate) {
-		this.rsrate = rsrate;
 	}
 	public Float getStandrate() {
 		return standrate;

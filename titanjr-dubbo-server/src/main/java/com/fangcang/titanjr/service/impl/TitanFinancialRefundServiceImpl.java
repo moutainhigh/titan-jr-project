@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Resource;
 
 import com.fangcang.titanjr.dto.bean.*;
+
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -63,7 +64,6 @@ import com.fangcang.titanjr.entity.TitanTransferReq;
 import com.fangcang.titanjr.entity.TitanUser;
 import com.fangcang.titanjr.enums.BusiCodeEnum;
 import com.fangcang.titanjr.enums.SignTypeEnum;
-import com.fangcang.titanjr.enums.RsVersionEnum;
 import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.manager.impl.InvokeLogRecordManager;
 import com.fangcang.titanjr.rs.request.AccountTransferRequest;
@@ -372,7 +372,7 @@ public class TitanFinancialRefundServiceImpl implements
 				TransOrderRequest transOrderParam = new TransOrderRequest();
 				transOrderParam.setOrderid(refundDTO.getOrderNo());
 				TransOrderDTO transOrderDTOEntity = titanOrderService.queryTransOrderDTO(transOrderParam);
-				if(refundStatus.equals(OrderStatusEnum.REFUND_SUCCESS)&&"1".equals(transOrderDTOEntity.getFreezeAt())&&"3".equals(transOrderDTOEntity.getFreezeType())){//冻结在付款方，而且3不转账冻结在付款方
+				if(refundStatus.equals(RefundStatusEnum.REFUND_SUCCESS)&&"1".equals(transOrderDTOEntity.getFreezeAt())&&"3".equals(transOrderDTOEntity.getFreezeType())){//冻结在付款方，而且3不转账冻结在付款方
 					//拒单退款成功，则改为交易取消
 					transOrderDTO.setStatusid(OrderStatusEnum.ORDER_CANCEL.getStatus());
 				}
@@ -843,7 +843,7 @@ public class TitanFinancialRefundServiceImpl implements
 					TransOrderRequest transOrderParam = new TransOrderRequest();
 					transOrderParam.setOrderid(refundDTO.getOrderNo());
 					TransOrderDTO transOrderDTOEntity = titanOrderService.queryTransOrderDTO(transOrderParam);
-					if(refundStatusEnum.equals(OrderStatusEnum.REFUND_SUCCESS)&&"1".equals(transOrderDTOEntity.getFreezeAt())&&"3".equals(transOrderDTOEntity.getFreezeType())){//冻结在付款方，而且3不转账冻结在付款方
+					if(refundStatusEnum.equals(RefundStatusEnum.REFUND_SUCCESS)&&"1".equals(transOrderDTOEntity.getFreezeAt())&&"3".equals(transOrderDTOEntity.getFreezeType())){//冻结在付款方，而且3不转账冻结在付款方
 						//拒单退款成功，则改为交易取消
 						transOrderDTO.setStatusid(OrderStatusEnum.ORDER_CANCEL.getStatus());
 					}
@@ -943,7 +943,7 @@ public class TitanFinancialRefundServiceImpl implements
 				List<RefundDTO> refundDTOList = titanRefundDao.queryRefundDTO(refundDTO);
 				if(CollectionUtils.isNotEmpty(refundDTOList)){
 					RefundDTO updateRefundDTO = new RefundDTO();
-					updateRefundDTO.setOrderNo(refundDTOList.get(0).getRefundId());
+					updateRefundDTO.setRefundId(refundDTOList.get(0).getRefundId());
 					updateRefundDTO.setStatus(RefundStatusEnum.REFUND_SUCCESS.status);
 					titanRefundDao.updateRefundDTO(updateRefundDTO);
 				}

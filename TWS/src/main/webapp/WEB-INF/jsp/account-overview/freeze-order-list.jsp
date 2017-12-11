@@ -17,7 +17,7 @@
 			<c:if test="${tradeItem.tradeType == '收款'}">
 				<a class="blue undl" href="<%=basePath%>/account/order-receive-detail.shtml?userOrderId=${tradeItem.userorderid}" target="_blank">${tradeItem.userorderid}</a>
 			</c:if>
-			<c:if test="${tradeItem.tradeType == '付款'}">
+			<c:if test="${tradeItem.tradeType == '付款' or tradeItem.tradeType == '充值并付款' or tradeItem.tradeType == '余额付款'}">
                 <a class="blue undl" href="<%=basePath%>/account/order-pay-detail.shtml?userOrderId=${tradeItem.userorderid}" target="_blank">${tradeItem.userorderid}</a>
             </c:if>
 
@@ -49,7 +49,7 @@
 		</td>
 		
 		<td class="tdr">
-			<c:if test="${tradeItem.tradeType == '付款' or tradeItem.tradeType == '提现'}">
+			<c:if test="${tradeItem.tradeType == '付款' or tradeItem.tradeType == '充值并付款' or tradeItem.tradeType == '余额付款' or tradeItem.tradeType == '提现'}">
                 -
             </c:if>
             <c:if test="${tradeItem.tradeType == '收款' or tradeItem.tradeType == '充值'}">

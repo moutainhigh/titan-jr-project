@@ -135,6 +135,7 @@
 	<bean id="titanOperateLogDao" class="com.fangcang.titanjr.dao.impl.TitanOperateLogDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="commonPayHistoryDao" class="com.fangcang.titanjr.dao.impl.CommonPayHistoryDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="orgCardMapDao" class="com.fangcang.titanjr.dao.impl.TitanOrgCardMapDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="benchmarkRateConfigDao" class="com.fangcang.titanjr.dao.impl.BenchmarkRateConfigDaoImpl" parent="baseSqlMapClient"></bean>
 	
 </beans>
 

@@ -7,14 +7,12 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import com.fangcang.titanjr.common.enums.BusTypeEnum;
-import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
 import com.fangcang.titanjr.dto.bean.*;
 import com.fangcang.titanjr.dto.request.*;
 import com.fangcang.titanjr.dto.response.*;
 import com.fangcang.titanjr.service.*;
-
 import com.fangcang.titanjr.web.pojo.CashierSwitchPO;
+
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -459,13 +457,9 @@ public class SettingEmployeeController extends BaseController{
 	@RequestMapping("/setting/fee")
 	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_NO_LIMIT})
 	public String fee(HttpServletRequest request,Model model){
-		List<TitanRateDto> rateInfoList = new ArrayList<TitanRateDto>();
 		RateConfigRequest rateConfigRequest = new RateConfigRequest();
 		rateConfigRequest.setUserId(String.valueOf(getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID)));
-		rateConfigRequest.setPayType(CashierItemTypeEnum.B2B_ITEM);
-		rateConfigRequest.setPayType(CashierItemTypeEnum.QR_ITEM);
 
-		RateConfigResponse rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
 		CashierDeskQueryRequest cashierDeskQueryRequest = new CashierDeskQueryRequest();
 		cashierDeskQueryRequest.setUserId(String.valueOf(getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID)));
 		CashierDeskResponse response = titanCashierDeskService.queryCashierDesk(cashierDeskQueryRequest);
@@ -479,39 +473,11 @@ public class SettingEmployeeController extends BaseController{
 				}
 			}
 		}
-		if (CollectionUtils.isNotEmpty(rateConfigResponse.getRateInfoList())) {
-			TitanRateDto rateDto = rateConfigResponse.getRateInfoList().get(0);
-			model.addAttribute("rateInfo", rateDto);
-			rateDto.setDescription(rateDto.getDescription().replace("费率",""));
-			if (!rateDto.getBustype().equals(BusTypeEnum.QR_RATE.type)){
-				rateDto.setDescription(rateDto.getDescription().replace("支付",""));
-			}
-		}
+
+		RateConfigResponse rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
+		model.addAttribute("rateInfoList", rateConfigResponse.getRateInfoList());
+
 		return "setting/fee";
-	}
-	
-	/**
-	 * 新的收付款费率公示（暂时只查第三方支付费率）
-	 * @author Jerry
-	 * @date 2017年8月23日 下午2:24:07
-	 */
-	@AccessPermission(allowRoleCode={CommonConstant.ROLECODE_VIEW_39})
-	@RequestMapping("/feeNew")
-	public String feeNew(HttpServletRequest request,Model model){
-		
-		RateConfigResponse rateConfigResponse = null;
-		List<TitanRateDto> rateInfoList = new ArrayList<TitanRateDto>();
-		RateConfigRequest rateConfigRequest = new RateConfigRequest();
-		
-		rateConfigRequest.setUserId(String.valueOf(getSession().getAttribute(WebConstant.SESSION_KEY_JR_USERID)));
-		rateConfigRequest.setPayType(CashierItemTypeEnum.QR_ITEM);
-		rateConfigResponse = titanFinancialRateService.getRateConfigInfos(rateConfigRequest);
-		rateInfoList = rateConfigResponse.getRateInfoList();
-		if(CollectionUtils.isNotEmpty(rateInfoList)){
-			model.addAttribute("titanRateDto", rateInfoList.get(0));
-		}
-		return "setting/fee";
-		
 	}
 	
 	/**

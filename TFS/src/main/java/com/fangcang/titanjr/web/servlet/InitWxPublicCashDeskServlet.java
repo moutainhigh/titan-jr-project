@@ -33,7 +33,7 @@ public class InitWxPublicCashDeskServlet extends HttpServlet
 			throws ServletException, IOException 
 	{
 		try {
-			titanCashierDeskService.executeWxPublicInit();
+			//titanCashierDeskService.executeWxPublicInit();
 			response.setContentType("text/html");
 			response.setCharacterEncoding("utf-8");
 			response.getWriter().write("微信公众号收银员增加成功!");

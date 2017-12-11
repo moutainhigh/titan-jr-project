@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 
 import com.fangcang.titanjr.enums.*;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
@@ -36,7 +35,6 @@ import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.bean.UserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO;
 import com.fangcang.titanjr.dto.request.AccountCheckRequest;
 import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
@@ -49,13 +47,11 @@ import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
-import com.fangcang.titanjr.dto.request.UserBindInfoRequest;
 import com.fangcang.titanjr.dto.response.AccountCheckResponse;
 import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
-import com.fangcang.titanjr.dto.response.UserBindInfoResponse;
 import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
@@ -237,7 +233,7 @@ public class TitanPaymentService {
 			if(StringUtil.isValidString(titanPaymentRequest.getFcUserid()) && 
 					StringUtil.isValidString(titanPaymentRequest.getPartnerOrgCode())){
 				
-				UserBindInfoDTO userBindInfoDTO = null;
+				/*UserBindInfoDTO userBindInfoDTO = null;
 				UserBindInfoRequest userBindInfoRequest = new UserBindInfoRequest();
 				userBindInfoRequest.setMerchantcode(titanPaymentRequest.getPartnerOrgCode());
 				userBindInfoRequest.setFcuserid(Long.valueOf(titanPaymentRequest.getFcUserid()));
@@ -251,7 +247,11 @@ public class TitanPaymentService {
 				if(userBindInfoDTO != null && titanPaymentRequest.getFcUserid().equals(String.valueOf(
 						userBindInfoDTO.getFcUserId()))){
 					isSaveHistory = true;
-				}
+				}*/
+				
+				//只要传了第三方商家ID和用户ID就可以保存快捷支付历史，不需要校验绑定信息
+				isSaveHistory = true;
+				
 			}
 			
 			log.info("=============>>isSaveHistory：" + isSaveHistory);

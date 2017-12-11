@@ -1862,9 +1862,18 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		for (RepairTransferDTO repairTransferDTO : repairTransferDTOList) {
 			if (StringUtil.isValidString(repairTransferDTO.getTransorderid()) && StringUtil.isValidString
 					(repairTransferDTO.getStatus()) && "2".equals(repairTransferDTO.getStatus())) {//其中2代表转账成功
+				log.info("该订单已经转账成功，无需重复转账，订单号orderid："+repairTransferDTO.getOrderid());
 				continue;
 			}
-
+			
+			TitanTransferReqParam titanTransferReqParam = new TitanTransferReqParam();
+			titanTransferReqParam.setTransorderid(repairTransferDTO.getTransid());
+			List<TitanTransferReq> transferReqList = titanTransferReqDao.queryTitanTransferReq(titanTransferReqParam);
+			if(CollectionUtils.isNotEmpty(transferReqList)){//
+				log.info("该订单已存在转账记录，不允许重新转账，订单号orderid："+repairTransferDTO.getOrderid());
+				continue;
+			}
+			//只有没有转账记录的单才发起转账，失败的单需要人工确认是否成功后才转
 			TransferRequest transferRequest = new TransferRequest();
 			transferRequest.setTransfertype(TransfertypeEnum.BRANCH_TRANSFER);                                //1:子账户转账
 			transferRequest.setConditioncode(ConditioncodeEnum.ADD_OEDER);                                //1:落单
@@ -1892,7 +1901,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 					continue;
 				}
 
-				log.info(transferRequest.getOrderid() + "转账的结果:" + JSONSerializer.toJSON(transferResponse));
+				log.info(transferRequest.getOrderid() + ",转账的结果:" + JSONSerializer.toJSON(transferResponse));
 				OrderStatusEnum orderStatusEnum = OrderStatusEnum.ORDER_SUCCESS;
 				//是否需要冻结
 				if (0 == repairTransferDTO.getIsEscrowedPayment()) {
@@ -1930,12 +1939,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				TransOrderRequest transOrderRequest = new TransOrderRequest();
 				transOrderRequest.setUserorderid(repairTransferDTO.getUserorderid());
 				transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
-				log.info("回调:" + JSONSerializer.toJSON(transOrderDTO));
 				ConfirmFinanceRequest req = new ConfirmFinanceRequest();
 				req.setTransOrderDTO(transOrderDTO);
 				titanFinancialTradeService.confirmFinance(req);
 			} catch (Exception e) {
-				log.error("定时任务转账修复失败", e);
+				log.error("定时任务转账修复失败，订单号："+transferRequest.getOrderid(), e);
 			}
 		}
 	}

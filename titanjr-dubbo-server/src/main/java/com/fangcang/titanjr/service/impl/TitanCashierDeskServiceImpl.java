@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.bean.ValidateResponse;
-import com.fangcang.titanjr.common.enums.BusTypeEnum;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
 import com.fangcang.titanjr.common.enums.SupportBankEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
@@ -174,12 +173,13 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
 
             //默认初始化费率设置
             List<TitanRateConfig> rateConfigList = new ArrayList<TitanRateConfig>();
-            rateConfigList.add(buildPayRateConfig(BusTypeEnum.B2B_RATE, cashierDeskInitRequest.getUserId(), "企业网银支付费率"));
-            rateConfigList.add(buildPayRateConfig(BusTypeEnum.B2C_RATE, cashierDeskInitRequest.getUserId(), "个人网银支付费率"));
-            rateConfigList.add(buildPayRateConfig(BusTypeEnum.CREDIT_RATE, cashierDeskInitRequest.getUserId(), "信用卡网银支付费率"));
-            rateConfigList.add(buildPayRateConfig(BusTypeEnum.QR_RATE, cashierDeskInitRequest.getUserId(), "第三方支付费率"));
-            rateConfigList.add(buildPayRateConfig(BusTypeEnum.WITHDRAW_RATE, cashierDeskInitRequest.getUserId(), "账户提现费率"));
-            rateConfigList.add(buildPayRateConfig(BusTypeEnum.WX_PUBLIC, cashierDeskInitRequest.getUserId(), "微信公众号支付费率"));
+            if (CollectionUtils.isNotEmpty(cashierDeskList)) {
+                for (TitanCashierDesk cashierDesk : cashierDeskList) {
+                    rateConfigList.add(buildPayRateConfig(cashierDesk, cashierDeskInitRequest.getUserId()));
+                }
+                //增加提现的费率
+                rateConfigList.add(buildPayRateConfig(null, cashierDeskInitRequest.getUserId()));
+            }
 
             titanRateConfigDao.batchSaveRateConfigs(rateConfigList);
             deskInitResponse.putSuccess();
@@ -207,46 +207,27 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
         }
     }
 
-    private TitanRateConfig buildPayRateConfig(BusTypeEnum bustype, String userId, String desc) {
+    private TitanRateConfig buildPayRateConfig(TitanCashierDesk titanCashierDesk, String userId) {
         TitanRateConfig rateConfig = new TitanRateConfig();
-        rateConfig.setBustype(bustype.type);//1表示付款费率
-        rateConfig.setDescription(desc);
-        if (bustype.isB2B()) {
-            rateConfig.setRatetype(2);//按笔收费
-            rateConfig.setRsrate(10f);//千分之一点五
-            rateConfig.setStandrate(10f);
-            rateConfig.setExecutionrate(0f);
-
-        } else if (bustype.isB2C()) {
-            rateConfig.setRatetype(1);//按百分比
-            rateConfig.setRsrate(0.2f);//千分之一点五
-            rateConfig.setStandrate(0.3f);
-            rateConfig.setExecutionrate(0f);
-
-        } else if (bustype.isCREDIT()) {
-            rateConfig.setRatetype(1);//按百分比
-            rateConfig.setRsrate(0.2f);
-            rateConfig.setStandrate(0.3f);
-            rateConfig.setExecutionrate(0f);
-
-        } else if (bustype.isQR()) {
-            rateConfig.setRatetype(1);//按百分比
-            rateConfig.setRsrate(0.4f);
-            rateConfig.setStandrate(0.4f);
-            rateConfig.setExecutionrate(0f);
-
-        } else if (bustype.isWITHDRAW()) {
-            rateConfig.setRatetype(2);//按笔收费
-            rateConfig.setRsrate(3f);//每笔3元
-            rateConfig.setStandrate(5f);//每笔5元
-            rateConfig.setExecutionrate(0f);
-        } else if (bustype.isWxPublic()) {
-            rateConfig.setRatetype(1);//按百分比
-            rateConfig.setRsrate(0.4f);
-            rateConfig.setStandrate(0.4f);
-            rateConfig.setExecutionrate(0f);
-        }
         rateConfig.setUserid(userId);
+        if(titanCashierDesk == null){//提现没有实际的收银台，但是要配置费率
+        	rateConfig.setDeskid("TX");
+        	rateConfig.setUsedfor(PaySourceEnum.WITHDRAW_PC.getDeskCode());
+        	rateConfig.setDescription("提现收银台");
+            rateConfig.setRatetype(CommonConstant.RATETYPE_FIXATION);
+            rateConfig.setStandrate(5f);
+        }else{
+    		rateConfig.setDeskid(String.valueOf(titanCashierDesk.getDeskid()));
+    		rateConfig.setUsedfor(String.valueOf(titanCashierDesk.getUsedfor()));
+            rateConfig.setDescription(titanCashierDesk.getDeskname());
+            rateConfig.setRatetype(CommonConstant.RATETYPE_PERCENT);
+        	if(titanCashierDesk.getUsedfor() != null && titanCashierDesk.getUsedfor() == 5){
+        		rateConfig.setStandrate(0f);
+            }else{
+                rateConfig.setStandrate(0.4f);
+            }
+        }
+        rateConfig.setExecutionrate(0f);
         rateConfig.setCreator("system");
         rateConfig.setCreatetime(new Date());
         rateConfig.setExpiration(DateUtil.getDate(new Date(), 6));//默认6个月
@@ -305,7 +286,9 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
         List<TitanCashierDesk> deskList = new ArrayList<TitanCashierDesk>();
         if (null == deskType) {
             for (PaySourceEnum paySourceEnum : PaySourceEnum.values()) {
-                deskList.add(getCashierDesk(cashierDeskInitRequest, paySourceEnum));
+            	if(paySourceEnum != PaySourceEnum.WITHDRAW_PC){//提现没有收银台配置
+            		deskList.add(getCashierDesk(cashierDeskInitRequest, paySourceEnum));
+            	}
             }
         } else {
             deskList.add(getCashierDesk(cashierDeskInitRequest, deskType));
@@ -532,7 +515,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
     }
 
 
-    @Override
+    /*@Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public void executeWxPublicInit() throws Exception {
 
@@ -567,7 +550,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
         }
 
 
-    }
+    }*/
 
     @Override
     public <T> void addModelOfPayment(PaymentItemRequest<T> request) {

@@ -1,21 +1,30 @@
 package com.fangcang.titanjr.service.impl;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
-
-import com.fangcang.titanjr.common.enums.BusTypeEnum;
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.dao.BenchmarkRateConfigDao;
+import com.fangcang.titanjr.dao.TitanCashierDeskDao;
 import com.fangcang.titanjr.dao.TitanRateConfigDao;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
+import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.TitanRateDto;
 import com.fangcang.titanjr.dto.request.CreateRateRecordRequest;
 import com.fangcang.titanjr.dto.request.RateConfigRequest;
 import com.fangcang.titanjr.dto.response.CreateRateRecordResponse;
 import com.fangcang.titanjr.dto.response.RateConfigResponse;
 import com.fangcang.titanjr.dto.response.RateRecordResponse;
+import com.fangcang.titanjr.entity.BenchmarkRateConfig;
+import com.fangcang.titanjr.entity.TitanCashierDesk;
 import com.fangcang.titanjr.entity.TitanRateConfig;
 import com.fangcang.titanjr.entity.TitanRateRecord;
 import com.fangcang.titanjr.entity.parameter.TitanRateConfigParam;
@@ -26,9 +35,17 @@ import com.fangcang.util.StringUtil;
 
 @Service("titanFinancialRateService")
 public class TitanFinancialRateServiceImpl implements TitanFinancialRateService {
+	
+	private static final Log logger = LogFactory.getLog(TitanFinancialRateServiceImpl.class);
 
 	@Resource
 	private TitanRateConfigDao titanRateConfigDao;
+	
+	@Resource
+	private BenchmarkRateConfigDao benchmarkRateConfigDao;
+	
+	@Resource
+    TitanCashierDeskDao titanCashierDeskDao;
 
 	/**
 	 * 查询费率配置信息
@@ -41,13 +58,7 @@ public class TitanFinancialRateServiceImpl implements TitanFinancialRateService 
 
 		TitanRateConfigParam configParam = new TitanRateConfigParam();
 		configParam.setUserid(req.getUserId());
-		/*if (req.getPayType() != null) {
-			configParam.setBustype(BusTypeEnum.getBusTypeByItemType(req.getPayType().getItemCode()));
-		}else{
-			configParam.setBustype(BusTypeEnum.WITHDRAW_RATE.type);
-		}*/
-		//默认全部使用第三方支付的费率
-		configParam.setBustype(BusTypeEnum.QR_RATE.type);
+		configParam.setDeskid(req.getDeskId());
 		
 		List<TitanRateConfig> rateConfigs = titanRateConfigDao
 				.queryTitanRateConfigInfo(configParam);
@@ -63,6 +74,15 @@ public class TitanFinancialRateServiceImpl implements TitanFinancialRateService 
 		}
 		configResponse.setRateInfoList(resultList);
 		return configResponse;
+	}
+	
+	@Override
+	public BenchmarkRateConfig queryBenchmarkRateConfig(BenchmarkRateConfig benchmarkRateConfig) {
+		
+		BenchmarkRateConfig brConfigRespone = new BenchmarkRateConfig();
+		brConfigRespone = benchmarkRateConfigDao.queryBenchmarkRateConfig(benchmarkRateConfig);
+		return brConfigRespone;
+		
 	}
 
 	@Override
@@ -87,81 +107,90 @@ public class TitanFinancialRateServiceImpl implements TitanFinancialRateService 
 	}
 
 	@Override
-	public void initRateData() {
-		List<String> userIdList = titanRateConfigDao.queryAllUserId();
-		for(String userid :userIdList){
-			 TitanRateConfig rateConfigB2B = new TitanRateConfig();
-			 rateConfigB2B.setBustype(BusTypeEnum.B2B_RATE.type);//1表示付款费率
-			 rateConfigB2B.setDescription("企业网银支付费率");
-			 rateConfigB2B.setRatetype(2);//按笔收费
-			 rateConfigB2B.setRsrate(10f);//千分之一点五
-			 rateConfigB2B.setStandrate(10f);
-			 rateConfigB2B.setExecutionrate(0f);
-			 rateConfigB2B.setUserid(userid);
-			 rateConfigB2B.setCreator("system");
-			 rateConfigB2B.setCreatetime(new Date());
-			 rateConfigB2B.setExpiration(DateUtil.getDate(new Date(), 6));
-			 
-	         TitanRateConfig rateConfigB2C = new TitanRateConfig();
-	         rateConfigB2C.setBustype(BusTypeEnum.B2C_RATE.type);//1表示付款费率
-	         rateConfigB2C.setDescription("个人网银支付费率");
-	         rateConfigB2C.setRatetype(1);//按百分比
-	         rateConfigB2C.setRsrate(0.2f);//千分之一点五
-	         rateConfigB2C.setStandrate(0.3f);
-	         rateConfigB2C.setExecutionrate(0f);
-	         rateConfigB2C.setUserid(userid);
-	         rateConfigB2C.setCreator("system");
-	         rateConfigB2C.setCreatetime(new Date());
-	         rateConfigB2C.setExpiration(DateUtil.getDate(new Date(), 6));
-	         
-	         
-	         TitanRateConfig rateConfigCREDIT = new TitanRateConfig();
-	         rateConfigCREDIT.setBustype(BusTypeEnum.CREDIT_RATE.type);//1表示付款费率
-	         rateConfigCREDIT.setDescription("信用卡网银支付费率");
-	         rateConfigCREDIT.setRatetype(1);//按百分比
-	         rateConfigCREDIT.setRsrate(0.2f);//千分之一点五
-	         rateConfigCREDIT.setStandrate(0.3f);
-	         rateConfigCREDIT.setExecutionrate(0f);
-	         rateConfigCREDIT.setUserid(userid);
-	         rateConfigCREDIT.setCreator("system");
-	         rateConfigCREDIT.setCreatetime(new Date());
-	         rateConfigCREDIT.setExpiration(DateUtil.getDate(new Date(), 6));
-	         
-	         
-	         TitanRateConfig rateConfigQR = new TitanRateConfig();
-	         rateConfigQR.setBustype(BusTypeEnum.QR_RATE.type);//1表示付款费率
-	         rateConfigQR.setDescription("第三方支付费率");
-	         rateConfigQR.setRatetype(1);//按百分比
-	         rateConfigQR.setRsrate(0.4f);//千分之一点五
-	         rateConfigQR.setStandrate(0.4f);
-	         rateConfigQR.setExecutionrate(0f);
-	         rateConfigQR.setUserid(userid);
-	         rateConfigQR.setCreator("system");
-	         rateConfigQR.setCreatetime(new Date());
-	         rateConfigQR.setExpiration(DateUtil.getDate(new Date(), 6));
-	         
-	         
-	         TitanRateConfig rateConfigWITHDRAW = new TitanRateConfig();
-	         rateConfigWITHDRAW.setBustype(BusTypeEnum.WITHDRAW_RATE.type);//1表示付款费率
-	         rateConfigWITHDRAW.setDescription("账户提现费率");
-	         rateConfigWITHDRAW.setRatetype(2);//按笔收费
-	         rateConfigWITHDRAW.setRsrate(3f);//每笔3元
-	         rateConfigWITHDRAW.setStandrate(5f);//每笔5元
-	         rateConfigWITHDRAW.setExecutionrate(0f);
-	         rateConfigWITHDRAW.setUserid(userid);
-	         rateConfigWITHDRAW.setCreator("system");
-	         rateConfigWITHDRAW.setCreatetime(new Date());
-	         rateConfigWITHDRAW.setExpiration(DateUtil.getDate(new Date(), 6));
-	         
-	         List<TitanRateConfig> titanRateConfigs = new ArrayList<TitanRateConfig>();
-	         titanRateConfigs.add(rateConfigB2B);
-	         titanRateConfigs.add(rateConfigB2C);
-	         titanRateConfigs.add(rateConfigCREDIT);
-	         titanRateConfigs.add(rateConfigQR);
-	         titanRateConfigs.add(rateConfigWITHDRAW);
-	         titanRateConfigDao.batchSaveRateConfigs(titanRateConfigs);
+	public BaseResponseDTO initRateData() {
+		
+		BaseResponseDTO baseResponseDTO = new BaseResponseDTO();
+		List<TitanRateConfig> rateConfigList = new ArrayList<TitanRateConfig>();
+		
+		
+		
+		//按商家排序查询所有收银台
+		List<TitanCashierDesk> titanCashierDeskkList = titanCashierDeskDao.queryAllCashierDeskOrderBy();
+		if(CollectionUtils.isEmpty(titanCashierDeskkList)){
+			logger.info("查询收银台列表为空");
+			baseResponseDTO.putErrorResult("费率初始化失败，查询收银台列表为空");
+			return baseResponseDTO;
 		}
+		logger.info(MessageFormat.format("总共查询到{0}条收银台记录", titanCashierDeskkList.size()));
+		
+		String userIdTemp = "";
+		for (int i = 0; i < titanCashierDeskkList.size(); i++) {
+			TitanCashierDesk titanCashierDesk = titanCashierDeskkList.get(i);
+			if(i == 0){
+				userIdTemp = titanCashierDesk.getUserid();
+			}
+			String userId = titanCashierDesk.getUserid();
+			
+			rateConfigList.add(buildPayRateConfig(titanCashierDesk));
+			//为上一个商家增加提现收银台费率
+			if(!userId.equals(userIdTemp)){
+				titanCashierDesk = titanCashierDeskkList.get(i-1);
+				titanCashierDesk.setDeskid(null);
+				rateConfigList.add(buildPayRateConfig(titanCashierDesk));
+				userIdTemp = userId;
+			}
+			//为最后一个商家增加提现收银台费率
+			if(i == titanCashierDeskkList.size() -1){
+				titanCashierDesk = titanCashierDeskkList.get(i);
+				titanCashierDesk.setDeskid(null);
+				rateConfigList.add(buildPayRateConfig(titanCashierDesk));
+			}
+		}
+		logger.info(MessageFormat.format("总共构建出{0}条费率配置", rateConfigList.size()));
+		
+		//先删除费率表数据
+		titanRateConfigDao.truncateRateConfig();
+		logger.info("已清除原来的费率费率配置");
+		//插入
+		int insertResult = titanRateConfigDao.batchSaveRateConfigs(rateConfigList);
+		logger.info(MessageFormat.format("初始化收银台费率成功，一共插入{0}条费率配置", insertResult));
+		
+		baseResponseDTO.putSuccess("初始化收银台费率成功，一共插入" + insertResult + "条费率配置");
+		return baseResponseDTO;
 		
 	}
+	
+	/**
+	 * 根据商家收银台配置费率
+	 * @author Jerry
+	 * @date 2017年11月22日 上午10:50:49
+	 */
+	private TitanRateConfig buildPayRateConfig(TitanCashierDesk titanCashierDesk) {
+        TitanRateConfig rateConfig = new TitanRateConfig();
+        rateConfig.setUserid(titanCashierDesk.getUserid());
+        if(titanCashierDesk.getDeskid() == null || titanCashierDesk.getDeskid() == 0){//提现没有实际的收银台，但是要配置费率
+        	rateConfig.setDeskid("TX");
+        	rateConfig.setUsedfor(PaySourceEnum.WITHDRAW_PC.getDeskCode());
+        	rateConfig.setDescription("提现收银台");
+            rateConfig.setRatetype(CommonConstant.RATETYPE_FIXATION);
+            rateConfig.setStandrate(5f);
+        }else{
+    		rateConfig.setDeskid(String.valueOf(titanCashierDesk.getDeskid()));
+    		rateConfig.setUsedfor(String.valueOf(titanCashierDesk.getUsedfor()));
+            rateConfig.setDescription(titanCashierDesk.getDeskname());
+            rateConfig.setRatetype(CommonConstant.RATETYPE_PERCENT);
+        	if(titanCashierDesk.getUsedfor() != null && titanCashierDesk.getUsedfor() == 5){//充值免费
+        		rateConfig.setStandrate(0f);
+            }else{
+                rateConfig.setStandrate(0.4f);
+            }
+        }
+        rateConfig.setExecutionrate(0f);
+        rateConfig.setCreator("system");
+        rateConfig.setCreatetime(new Date());
+        rateConfig.setExpiration(DateUtil.stringToDate("2017-12-31"));
+
+        return rateConfig;
+    }
 
 }

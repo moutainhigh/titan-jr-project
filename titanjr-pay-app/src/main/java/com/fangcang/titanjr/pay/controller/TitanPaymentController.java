@@ -798,13 +798,11 @@ public class TitanPaymentController extends BaseController {
 	 * @param titanPaymentRequest
 	 */
 	private void rateCompute(TitanRateComputeReq computeReq, TitanPaymentRequest titanPaymentRequest){
-		CashierItemTypeEnum cashierItemTypeEnum = CashierItemTypeEnum
-				.getCashierItemTypeEnumByKey(titanPaymentRequest
-						.getLinePayType());
 		// 开始计算并设置费率
 		computeReq.setAmount(titanPaymentRequest.getPayAmount());
-		computeReq.setItemTypeEnum(cashierItemTypeEnum);
+		computeReq.setPayType(titanPaymentRequest.getLinePayType());//第三方支付是9，未细分
 		computeReq.setUserId(titanPaymentRequest.getUserid());
+		computeReq.setDeskId(titanPaymentRequest.getDeskId());
 		//财务端收银台或者充值收付款方的手续费
 		if(PaySourceEnum.FINANCE_SUPPLY_PC.getDeskCode().equals(titanPaymentRequest.getPaySource()) 
 				|| PaySourceEnum.RECHARGE.getDeskCode().equals(titanPaymentRequest.getPaySource())){

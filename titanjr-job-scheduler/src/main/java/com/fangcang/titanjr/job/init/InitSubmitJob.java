@@ -33,7 +33,7 @@ public class InitSubmitJob {
 
         // 提交任务
         submitBindBankCardJob();
-        
+       
         submitRepairGDPJob();
         
         submitUnFreezeTransferOrderJob();

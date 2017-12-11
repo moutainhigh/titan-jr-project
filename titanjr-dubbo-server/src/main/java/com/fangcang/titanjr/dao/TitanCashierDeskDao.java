@@ -23,4 +23,6 @@ public interface TitanCashierDeskDao {
 	 * @throws DaoException
 	 */
 	List<String> queryNotExistCashierDesk(Integer usedfor) throws DaoException;
+	
+	List<TitanCashierDesk> queryAllCashierDeskOrderBy();
 }

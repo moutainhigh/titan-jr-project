@@ -1,6 +1,5 @@
 package com.fangcang.titanjr.dto.request;
 
-import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
 import com.fangcang.titanjr.dto.BaseRequestDTO;
 
 /**
@@ -21,8 +20,7 @@ public class RateConfigRequest extends BaseRequestDTO
 	/** 金服的用户ID */
 	private String userId;
 
-	/** 付款类型 **/
-	private CashierItemTypeEnum payType;
+	private String deskId;
 
 	public String getUserId() {
 		return userId;
@@ -32,12 +30,12 @@ public class RateConfigRequest extends BaseRequestDTO
 		this.userId = userId;
 	}
 
-	public CashierItemTypeEnum getPayType() {
-		return payType;
+	public String getDeskId() {
+		return deskId;
 	}
 
-	public void setPayType(CashierItemTypeEnum payType) {
-		this.payType = payType;
+	public void setDeskId(String deskId) {
+		this.deskId = deskId;
 	}
 
 }
