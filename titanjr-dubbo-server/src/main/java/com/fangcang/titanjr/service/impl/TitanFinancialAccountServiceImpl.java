@@ -672,9 +672,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				amount = String.valueOf((Long.parseLong(amount) - accountWithDrawRequest
 								.getUserfee()));
 			}
-			if(amount.equals("4")){
-				amount = "999999999";
-			}
 			accountWithDrawRequest.setAmount(amount);
 			AccountWithDrawResponse accountWithDrawResponse = rsAccTradeManager.accountBalanceWithDraw(accountWithDrawRequest);
 			if (accountWithDrawResponse != null) {
