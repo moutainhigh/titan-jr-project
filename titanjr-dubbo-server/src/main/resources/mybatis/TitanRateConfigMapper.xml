@@ -99,6 +99,7 @@
       select distinct userid from t_tfs_rateconfig
     </select>
     
+    <!-- 无用 -->
     <select id="queryUserIdNoRateConfig" parameterType="Integer" resultType="java.lang.String">
     	 SELECT DISTINCT(userid) FROM t_tfs_rateconfig WHERE userid NOT IN (SELECT DISTINCT userid FROM `t_tfs_rateconfig` WHERE bustype =#{busType})
     </select>
