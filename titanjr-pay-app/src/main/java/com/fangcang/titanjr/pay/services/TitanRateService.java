@@ -130,6 +130,7 @@ public class TitanRateService {
 			}
 			//基准费率类型  1.百分比，2.每笔固定值
 			if(benchmarkRateConfig != null){
+				BigDecimal zero = BigDecimal.ZERO;
 				if(benchmarkRateConfig.getRatetype() == 1){
 					if (benchmarkRateConfig.getBmrate() > 0) {
 						brBigDecimal = brBigDecimal.divide(new BigDecimal("100"));
@@ -140,9 +141,9 @@ public class TitanRateService {
 							.toString()).setScale(2, BigDecimal.ROUND_HALF_UP);
 					BigDecimal maxRateAmount = new BigDecimal(benchmarkRateConfig.getMaxrate()
 							.toString()).setScale(2, BigDecimal.ROUND_HALF_UP);
-					if(minRateAmount.compareTo(clRateAmount) > 0){
+					if(minRateAmount.compareTo(zero) != 0 && minRateAmount.compareTo(clRateAmount) == 1){
 						computeRsp.setBenchmarkRateAmount(minRateAmount.toString());
-					}else if(maxRateAmount.compareTo(clRateAmount) == -1){
+					}else if(maxRateAmount.compareTo(zero) != 0 && maxRateAmount.compareTo(clRateAmount) == -1){
 						computeRsp.setBenchmarkRateAmount(maxRateAmount.toString());
 					}else{
 						computeRsp.setBenchmarkRateAmount(clRateAmount.toString());
