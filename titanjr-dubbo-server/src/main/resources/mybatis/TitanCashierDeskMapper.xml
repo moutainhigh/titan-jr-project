@@ -26,8 +26,8 @@
                 <result property="deskId" column="deskid"/>
                 <result property="usedfor" column="usedfor"/>
                 <result property="rateType" column="ratetype"/>
-                <result property="minrate" column="minrate"/>
-                <result property="maxrate" column="maxrate"/>
+                <result property="minfee" column="minfee"/>
+                <result property="maxfee" column="maxfee"/>
                 <result property="standRate" column="standrate"/>
                 <result property="executionRate" column="executionrate"/>
                 <result property="description" column="description"/>
@@ -67,8 +67,8 @@
 	    c.deskid,
 	    c.usedfor,
 	    c.ratetype,
-	    c.minrate,
-	    c.maxrate,
+	    c.minfee,
+	    c.maxfee,
 	    c.standrate,
 	    c.executionrate,
 	    c.description,

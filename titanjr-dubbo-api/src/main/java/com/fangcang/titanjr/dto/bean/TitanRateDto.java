@@ -24,8 +24,8 @@ public class TitanRateDto implements java.io.Serializable{
 	private Float standrate;
 	private Float executionrate;
 	private String description;
-	private Float minrate;
-	private Float maxrate;
+	private Float minfee;
+	private Float maxfee;
 	private String creator;
 	private Date createtime;
 	private Date expiration;
@@ -77,17 +77,17 @@ public class TitanRateDto implements java.io.Serializable{
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public Float getMinrate() {
-		return minrate;
+	public Float getMinfee() {
+		return minfee;
 	}
-	public void setMinrate(Float minrate) {
-		this.minrate = minrate;
+	public void setMinfee(Float minfee) {
+		this.minfee = minfee;
 	}
-	public Float getMaxrate() {
-		return maxrate;
+	public Float getMaxfee() {
+		return maxfee;
 	}
-	public void setMaxrate(Float maxrate) {
-		this.maxrate = maxrate;
+	public void setMaxfee(Float maxfee) {
+		this.maxfee = maxfee;
 	}
 	public String getCreator() {
 		return creator;

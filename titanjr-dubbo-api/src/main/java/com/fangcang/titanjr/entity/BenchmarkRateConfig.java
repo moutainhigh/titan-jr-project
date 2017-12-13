@@ -52,14 +52,14 @@ public class BenchmarkRateConfig implements Serializable {
 	private Float bmrate;
 	
 	/**
-	 * 最小费率
+	 * 最少手续费
 	 */
-	private Float minrate;
+	private Float minfee;
 	
 	/**
-	 * 最大费率
+	 * 最大手续费
 	 */
-	private Float maxrate;
+	private Float maxfee;
 	
 	/**
 	 * 有效截止日期
@@ -129,20 +129,20 @@ public class BenchmarkRateConfig implements Serializable {
 		this.bmrate = bmrate;
 	}
 
-	public Float getMinrate() {
-		return minrate;
+	public Float getMinfee() {
+		return minfee;
 	}
 
-	public void setMinrate(Float minrate) {
-		this.minrate = minrate;
+	public void setMinfee(Float minfee) {
+		this.minfee = minfee;
 	}
 
-	public Float getMaxrate() {
-		return maxrate;
+	public Float getMaxfee() {
+		return maxfee;
 	}
 
-	public void setMaxrate(Float maxrate) {
-		this.maxrate = maxrate;
+	public void setMaxfee(Float maxfee) {
+		this.maxfee = maxfee;
 	}
 
 	public String getExpiration() {
