@@ -128,13 +128,12 @@ public class TitanRateService {
 					computeRsp.setAmount(amountBigDecimal.add(minFee)
 							.setScale(2, BigDecimal.ROUND_HALF_UP).toString());//支付金额
 					
-				}else if(maxFee != null){
-					if((minFee != null && maxFee.compareTo(minFee) == 1 && maxFee.compareTo(exRateAmount) == -1) 
-							|| (minFee == null && maxFee.compareTo(exRateAmount) == -1)){
-						computeRsp.setExRateAmount(maxFee.toString());
-						computeRsp.setAmount(amountBigDecimal.add(maxFee)
-								.setScale(2, BigDecimal.ROUND_HALF_UP).toString());//支付金额
-					}
+				}else if(maxFee != null 
+						&& ((minFee != null && maxFee.compareTo(minFee) == 1 && maxFee.compareTo(exRateAmount) == -1) 
+								|| (minFee == null && maxFee.compareTo(exRateAmount) == -1))){
+					computeRsp.setExRateAmount(maxFee.toString());
+					computeRsp.setAmount(amountBigDecimal.add(maxFee)
+							.setScale(2, BigDecimal.ROUND_HALF_UP).toString());//支付金额
 					
 				}else{
 					computeRsp.setExRateAmount(exRateAmount.toString());
@@ -179,11 +178,10 @@ public class TitanRateService {
 					if(minFee != null && minFee.compareTo(clRateAmount) == 1){
 						computeRsp.setBenchmarkRateAmount(minFee.toString());
 						
-					}else if(maxFee != null){
-						if((minFee != null && maxFee.compareTo(minFee) == 1 && maxFee.compareTo(clRateAmount) == -1) 
-								|| (minFee == null && maxFee.compareTo(clRateAmount) == -1)){
-							computeRsp.setBenchmarkRateAmount(maxFee.toString());
-						}
+					}else if(maxFee != null 
+							&& ((minFee != null && maxFee.compareTo(minFee) == 1 && maxFee.compareTo(clRateAmount) == -1) 
+									|| (minFee == null && maxFee.compareTo(clRateAmount) == -1))){
+						computeRsp.setBenchmarkRateAmount(maxFee.toString());
 						
 					}else{
 						computeRsp.setBenchmarkRateAmount(clRateAmount.toString());
