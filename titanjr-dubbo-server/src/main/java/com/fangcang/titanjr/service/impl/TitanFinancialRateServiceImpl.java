@@ -149,8 +149,8 @@ public class TitanFinancialRateServiceImpl implements TitanFinancialRateService 
 		logger.info(MessageFormat.format("总共构建出{0}条费率配置", rateConfigList.size()));
 		
 		//先删除费率表数据
-		titanRateConfigDao.truncateRateConfig();
-		logger.info("已清除原来的费率费率配置");
+		//titanRateConfigDao.truncateRateConfig();
+		//logger.info("已清除原来的费率费率配置");
 		//插入
 		int insertResult = titanRateConfigDao.batchSaveRateConfigs(rateConfigList);
 		logger.info(MessageFormat.format("初始化收银台费率成功，一共插入{0}条费率配置", insertResult));
