@@ -413,11 +413,14 @@ public class TitanPaymentController extends BaseController {
         	return JSONSerializer.toJSON(map).toString();
         }
         
-        //计算并设置费率
-        titanPaymentRequest.setPayAmount(titanPaymentRequest.getTradeAmount());
-        titanPaymentRequest.setTransferAmount(titanPaymentRequest.getTradeAmount());
- 		TitanRateComputeReq computeReq = new TitanRateComputeReq();
- 		rateCompute(computeReq, titanPaymentRequest);
+        //计算并设置费率（财务付款的收银台余额支付不收手续费，不用计算）
+        TitanRateComputeReq computeReq = null;
+        if(!PaySourceEnum.FINANCE_SUPPLY_PC.getDeskCode().equals(titanPaymentRequest.getPaySource())){
+        	titanPaymentRequest.setPayAmount(titanPaymentRequest.getTradeAmount());
+            titanPaymentRequest.setTransferAmount(titanPaymentRequest.getTradeAmount());
+     		computeReq = new TitanRateComputeReq();
+     		rateCompute(computeReq, titanPaymentRequest);
+        }
 		
 		LocalAddTransOrderResponse localOrderResp = titanFinancialTradeService.addLocalTransOrder(titanPaymentRequest);
         log.info("the params of local order:"+JsonConversionTool.toJson(titanPaymentRequest)+"the result of local order:"+JsonConversionTool.toJson(localOrderResp));
@@ -431,7 +434,9 @@ public class TitanPaymentController extends BaseController {
         }
         titanPaymentRequest.setOrderid(localOrderResp.getOrderNo());
         //添加费率记录
- 		addRateRecord(computeReq, titanPaymentRequest);
+        if(computeReq != null){
+        	addRateRecord(computeReq, titanPaymentRequest);
+        }
         
         TransOrderRequest transOrderRequest = new TransOrderRequest();
 		transOrderRequest.setOrderid(localOrderResp.getOrderNo());
@@ -450,20 +455,20 @@ public class TitanPaymentController extends BaseController {
 			//存在安全隐患，如果余额支付两次会不会存在重复支付
 	        lockOutTradeNoList(titanPaymentRequest.getPayOrderNo());//锁定支付单
 	        transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
-        	//新版收银台如果有手续费，需要将手续费转到收益子账户
-	        if(transferResponse.isResult()){
-				if(TitanjrVersionEnum.VERSION_2.getKey().equals(titanPaymentRequest.getJrVersion())){
-					if(titanPaymentRequest.getReceivedfee() != null && Integer.parseInt(titanPaymentRequest.getReceivedfee()) > 0){
-						log.info("began transfer to revenueAccount");
-						TransferRequest transferRevenueAccountRequest = this.getRevenueAccountTransferRequest(titanPaymentRequest);
-						transferResponse = titanFinancialTradeService.transferAccounts(transferRevenueAccountRequest);
-						if(transferResponse.isResult()){
-							log.info("transfer to revenueAccount success, transOrderId: " + transOrder.getTransid());
-							businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrder.getTransid()+""));
-						}else{
-							log.error("transfer to revenueAccount success faild, transOrderId: " + transOrder.getTransid());
-							titanFinancialUtilService.saveOrderException(transOrder.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Transfer_revenueAccount_Fail,orderStatusEnum.getStatus());
-						}
+        	//新版收银台的余额支付如果是非财务付款，需要将手续费转到收益子账户
+	        if(transferResponse.isResult() 
+	        		&& TitanjrVersionEnum.VERSION_2.getKey().equals(titanPaymentRequest.getJrVersion()) 
+	        		&& !PaySourceEnum.FINANCE_SUPPLY_PC.getDeskCode().equals(titanPaymentRequest.getPaySource())){
+				if(titanPaymentRequest.getReceivedfee() != null && Integer.parseInt(titanPaymentRequest.getReceivedfee()) > 0){
+					log.info("began transfer to revenueAccount");
+					TransferRequest transferRevenueAccountRequest = this.getRevenueAccountTransferRequest(titanPaymentRequest);
+					transferResponse = titanFinancialTradeService.transferAccounts(transferRevenueAccountRequest);
+					if(transferResponse.isResult()){
+						log.info("transfer to revenueAccount success, transOrderId: " + transOrder.getTransid());
+						businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrder.getTransid()+""));
+					}else{
+						log.error("transfer to revenueAccount success faild, transOrderId: " + transOrder.getTransid());
+						titanFinancialUtilService.saveOrderException(transOrder.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Transfer_revenueAccount_Fail,orderStatusEnum.getStatus());
 					}
 				}
 	        }

@@ -749,6 +749,9 @@ function rateCompute(payType, type, index){
 		if(payType == 'wx' || payType == 'alipay'){
 			relPayType = 9;
 		}
+		if(relPayType == '4'){//余额支付不收手续费
+			return;
+		}
 		
 		$.ajax({
 			   	type: "get",

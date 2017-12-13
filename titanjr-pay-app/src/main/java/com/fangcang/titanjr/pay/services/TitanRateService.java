@@ -84,7 +84,6 @@ public class TitanRateService {
 			
 			BigDecimal amountBigDecimal = new BigDecimal(computeReq.getAmount());
 			
-			BigDecimal zero = BigDecimal.ZERO;
 			BigDecimal exBigDecimal = new BigDecimal(""
 					+ dto.getExecutionrate());
 			BigDecimal stBigDecimal = new BigDecimal("" + dto.getStandrate());
@@ -98,8 +97,8 @@ public class TitanRateService {
 			// 手续费类型1.百分比，2.金额每笔
 			if (dto.getRatetype() == 1) {
 				
-				BigDecimal minFee = BigDecimal.ZERO;
-				BigDecimal maxFee = BigDecimal.ZERO;
+				BigDecimal minFee = null;
+				BigDecimal maxFee = null;
 				if(dto.getMinfee() != null){
 					minFee = new BigDecimal(dto.getMinfee()
 							.toString()).setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -124,20 +123,14 @@ public class TitanRateService {
 				//执行费率
 				BigDecimal exRateAmount = amountBigDecimal.multiply(exBigDecimal)
 						.setScale(2, BigDecimal.ROUND_HALF_UP);//房仓收下游的实际手续费
-				if(maxFee.compareTo(minFee) != -1){
-					if(minFee.compareTo(zero) != 0 && minFee.compareTo(exRateAmount) == 1){
-						computeRsp.setExRateAmount(minFee.toString());
-						computeRsp.setAmount(amountBigDecimal.add(minFee)
-								.setScale(2, BigDecimal.ROUND_HALF_UP).toString());//支付金额
-					}else if(maxFee.compareTo(zero) != 0 && maxFee.compareTo(exRateAmount) == -1){
-						computeRsp.setExRateAmount(maxFee.toString());
-						computeRsp.setAmount(amountBigDecimal.add(maxFee)
-								.setScale(2, BigDecimal.ROUND_HALF_UP).toString());//支付金额
-					}else{
-						computeRsp.setExRateAmount(exRateAmount.toString());
-						computeRsp.setAmount(amountBigDecimal.add(exRateAmount)
-								.setScale(2, BigDecimal.ROUND_HALF_UP).toString());//支付金额
-					}
+				if(minFee != null && minFee.compareTo(exRateAmount) == 1){
+					computeRsp.setExRateAmount(minFee.toString());
+					computeRsp.setAmount(amountBigDecimal.add(minFee)
+							.setScale(2, BigDecimal.ROUND_HALF_UP).toString());//支付金额
+				}else if(maxFee != null && maxFee.compareTo(minFee) == 1 && maxFee.compareTo(exRateAmount) == -1){
+					computeRsp.setExRateAmount(maxFee.toString());
+					computeRsp.setAmount(amountBigDecimal.add(maxFee)
+							.setScale(2, BigDecimal.ROUND_HALF_UP).toString());//支付金额
 				}else{
 					computeRsp.setExRateAmount(exRateAmount.toString());
 					computeRsp.setAmount(amountBigDecimal.add(exRateAmount)
@@ -159,8 +152,8 @@ public class TitanRateService {
 			//基准费率类型  1.百分比，2.每笔固定值
 			if(benchmarkRateConfig != null){
 				
-				BigDecimal minFee = BigDecimal.ZERO;
-				BigDecimal maxFee = BigDecimal.ZERO;
+				BigDecimal minFee = null;
+				BigDecimal maxFee = null;
 				if(benchmarkRateConfig.getMinfee() != null){
 					minFee = new BigDecimal(benchmarkRateConfig.getMinfee()
 							.toString()).setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -178,18 +171,13 @@ public class TitanRateService {
 					BigDecimal clRateAmount = amountBigDecimal.multiply(brBigDecimal)
 							.setScale(2, BigDecimal.ROUND_HALF_UP);//上游收房仓的实际手续费
 					
-					if(maxFee.compareTo(minFee) != -1){
-						if(minFee.compareTo(zero) != 0 && minFee.compareTo(clRateAmount) == 1){
-							computeRsp.setBenchmarkRateAmount(minFee.toString());
-						}else if(maxFee.compareTo(zero) != 0 && maxFee.compareTo(clRateAmount) == -1){
-							computeRsp.setBenchmarkRateAmount(maxFee.toString());
-						}else{
-							computeRsp.setBenchmarkRateAmount(clRateAmount.toString());
-						}
+					if(minFee != null && minFee.compareTo(clRateAmount) == 1){
+						computeRsp.setBenchmarkRateAmount(minFee.toString());
+					}else if(maxFee != null && maxFee.compareTo(minFee) == 1 && maxFee.compareTo(clRateAmount) == -1){
+						computeRsp.setBenchmarkRateAmount(maxFee.toString());
 					}else{
 						computeRsp.setBenchmarkRateAmount(clRateAmount.toString());
 					}
-					
 					
 				}else{
 					computeRsp.setBenchmarkRateAmount(brBigDecimal.setScale(2,
