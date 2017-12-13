@@ -9,10 +9,10 @@
     	  <if test="paychannel !=null and paychannel != ''">
     	    and paychannel = #{paychannel}
     	  </if>
-    	  <if test="paytype != null and paytype != ''">
+    	  <if test="paytype != null">
     	    and paytype = #{paytype}
     	  </if>
-    	  <if test="cardtype != null and cardtype != ''">
+    	  <if test="cardtype != null">
     	    and cardtype = #{cardtype}
     	  </if>
     	</where>
