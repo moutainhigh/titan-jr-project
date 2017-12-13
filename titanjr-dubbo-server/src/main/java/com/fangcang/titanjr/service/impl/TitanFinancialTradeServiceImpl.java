@@ -344,12 +344,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				
 				
 				if(isAmountChange && isBankInfoChange && isPayerAccountChange){
-					log.info("资金，银行卡，民生银行支付账户没变");
+					log.info("资金，银行卡，民生银行支付账户没变，isAmountChange:"+isAmountChange+",isBankInfoChange:"+isBankInfoChange+",isPayerAccountChange:"+isPayerAccountChange);
 					long times = DateUtil.diffSecondByTime(
 							titanOrderPayreq.getOrderTime(),
 							DateUtil.sdf5.format(new Date()));
 					if (times < this.getExpireTime(titanOrderPayreq)) {// 未过期
-						log.info("验证时间未过期,可以使用原单支付");												// 获取当前单号,需要优化
 						orderid = titanOrderPayreq.getOrderNo();
 						orderResponse.setOrderNo(orderid);
 					} else {
@@ -358,7 +357,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						isAddOrderAgain = true;
 					}
 				} else {
-					log.info("单已过期，废单,单号orderId:"+transOrderDTO.getOrderid());
+					log.info("支付信息已经变更，isAmountChange:"+isAmountChange+",isBankInfoChange:"+isBankInfoChange+",isPayerAccountChange:"+isPayerAccountChange+",单已过期，需要废单,单号orderId:"+transOrderDTO.getOrderid());
 					this.updateOrderNoEffect(transOrderDTO.getTransid());
 					isAddOrderAgain = true;
 				}
