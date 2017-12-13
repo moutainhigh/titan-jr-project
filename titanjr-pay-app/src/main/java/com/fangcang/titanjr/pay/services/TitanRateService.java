@@ -119,18 +119,23 @@ public class TitanRateService {
 				computeRsp.setStRateAmount(amountBigDecimal
 						.multiply(stBigDecimal)
 						.setScale(2, BigDecimal.ROUND_HALF_UP).toString());
-				
-				//执行费率
+				//房仓收下游的实际手续费
 				BigDecimal exRateAmount = amountBigDecimal.multiply(exBigDecimal)
-						.setScale(2, BigDecimal.ROUND_HALF_UP);//房仓收下游的实际手续费
+						.setScale(2, BigDecimal.ROUND_HALF_UP);
+				
 				if(minFee != null && minFee.compareTo(exRateAmount) == 1){
 					computeRsp.setExRateAmount(minFee.toString());
 					computeRsp.setAmount(amountBigDecimal.add(minFee)
 							.setScale(2, BigDecimal.ROUND_HALF_UP).toString());//支付金额
-				}else if(maxFee != null && maxFee.compareTo(minFee) == 1 && maxFee.compareTo(exRateAmount) == -1){
-					computeRsp.setExRateAmount(maxFee.toString());
-					computeRsp.setAmount(amountBigDecimal.add(maxFee)
-							.setScale(2, BigDecimal.ROUND_HALF_UP).toString());//支付金额
+					
+				}else if(maxFee != null){
+					if((minFee != null && maxFee.compareTo(minFee) == 1 && maxFee.compareTo(exRateAmount) == -1) 
+							|| (minFee == null && maxFee.compareTo(exRateAmount) == -1)){
+						computeRsp.setExRateAmount(maxFee.toString());
+						computeRsp.setAmount(amountBigDecimal.add(maxFee)
+								.setScale(2, BigDecimal.ROUND_HALF_UP).toString());//支付金额
+					}
+					
 				}else{
 					computeRsp.setExRateAmount(exRateAmount.toString());
 					computeRsp.setAmount(amountBigDecimal.add(exRateAmount)
@@ -173,10 +178,16 @@ public class TitanRateService {
 					
 					if(minFee != null && minFee.compareTo(clRateAmount) == 1){
 						computeRsp.setBenchmarkRateAmount(minFee.toString());
-					}else if(maxFee != null && maxFee.compareTo(minFee) == 1 && maxFee.compareTo(clRateAmount) == -1){
-						computeRsp.setBenchmarkRateAmount(maxFee.toString());
+						
+					}else if(maxFee != null){
+						if((minFee != null && maxFee.compareTo(minFee) == 1 && maxFee.compareTo(clRateAmount) == -1) 
+								|| (minFee == null && maxFee.compareTo(clRateAmount) == -1)){
+							computeRsp.setBenchmarkRateAmount(maxFee.toString());
+						}
+						
 					}else{
 						computeRsp.setBenchmarkRateAmount(clRateAmount.toString());
+						
 					}
 					
 				}else{
