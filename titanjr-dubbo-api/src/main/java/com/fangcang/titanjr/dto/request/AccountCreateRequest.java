@@ -9,11 +9,19 @@ public class AccountCreateRequest extends BaseRequestDTO{
     private String userid;
     private String accountcode;
     private String accountname;
-    private Integer allownopwdpay;
-    private Double nopwdpaylimit;
-    private String currency;
+    private String productid;
+    
+    
 
-    public String getUserid() {
+    public String getProductid() {
+		return productid;
+	}
+
+	public void setProductid(String productid) {
+		this.productid = productid;
+	}
+
+	public String getUserid() {
         return userid;
     }
 
@@ -37,27 +45,4 @@ public class AccountCreateRequest extends BaseRequestDTO{
         this.accountname = accountname;
     }
 
-    public Integer getAllownopwdpay() {
-        return allownopwdpay;
-    }
-
-    public void setAllownopwdpay(Integer allownopwdpay) {
-        this.allownopwdpay = allownopwdpay;
-    }
-
-    public Double getNopwdpaylimit() {
-        return nopwdpaylimit;
-    }
-
-    public void setNopwdpaylimit(Double nopwdpaylimit) {
-        this.nopwdpaylimit = nopwdpaylimit;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
 }

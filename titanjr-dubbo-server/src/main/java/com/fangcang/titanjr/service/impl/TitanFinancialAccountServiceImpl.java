@@ -178,25 +178,27 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     public AccountCreateResponse createAccount(AccountCreateRequest accountCreateRequest) {
         AccountCreateResponse accountCreateResponse = new AccountCreateResponse();
         AccountBalanceQueryRequest accountBalanceQueryRequest = new AccountBalanceQueryRequest();
+        accountBalanceQueryRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+        accountBalanceQueryRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+        accountBalanceQueryRequest.setUserid(accountCreateRequest.getUserid());
         AccountBalanceQueryResponse response = rsAccTradeManager.queryAccountBalance(accountBalanceQueryRequest);
         if (response.isSuccess()) {
             TitanAccount account = new TitanAccount();
-            account.setCreator(accountCreateRequest.getOperator());
-            account.setCreatetime(new Date());
+            
             account.setAccountcode(accountCreateRequest.getAccountcode());
             account.setAccountname(accountCreateRequest.getAccountname());
-            account.setAllownopwdpay(0);
             account.setCurrency(1);
-            account.setFinaccountid(response.getBalanceInfoList().get(0).getFinaccountid());
-            account.setNopwdpaylimit(1000d);
             account.setUserid(accountCreateRequest.getUserid());
+            account.setProductid(accountCreateRequest.getProductid());
             account.setStatus(1);
-            account.setCreditamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalancecredit()));
-            account.setForzenamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalancefrozon()));
-            account.setSettleamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalancesettle()));
-            account.setTotalamount(Double.valueOf(response.getBalanceInfoList().get(0).getAmount()));
-            account.setUsableamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalanceusable()));
-            account.setBalanceoverlimit(Double.valueOf(response.getBalanceInfoList().get(0).getBalanceoverlimit()));
+            account.setInitcreditamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalancecredit()));
+            account.setInitfrozonamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalancefrozon()));
+            account.setInitsettleamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalancesettle()));
+            account.setInittotalamount(Double.valueOf(response.getBalanceInfoList().get(0).getAmount()));
+            account.setInitusablelimit(Double.valueOf(response.getBalanceInfoList().get(0).getBalanceusable()));
+            account.setInitoverlimit(Double.valueOf(response.getBalanceInfoList().get(0).getBalanceoverlimit()));
+            account.setCreator(accountCreateRequest.getOperator());
+            account.setCreatetime(new Date());
             try {
                 titanAccountDao.insert(account);
             } catch (Exception e) {
