@@ -20,7 +20,7 @@ function balancePayment() {
      });
 }
 //余额支付结果页面
-function toResultPage(data){debugger;
+function toResultPage(data){
  	if(data.result == "0"){
 		$("#check_orderNo").val(data.data);
 		$("#payConfirmPage").submit();
@@ -39,7 +39,7 @@ function qrPayment(bankInfo){
      	data: cashierData.getCommonPayData(),
         url : '../payment/qrCodePaymentUpgrade.action',			
         success : function(data){
-        	if(data.result == true){debugger;
+        	if(data.result == true){
         		if(bankInfo =='wx'){
         			$("#wx_pay_amount").text(numeral(parseFloat((data.qrCodeDTO.orderAmount)/100)).format("0,0.00"));
             		$("#wx_qrcode").attr("src","../payment/wxPicture.shtml?url="+data.qrCodeDTO.respJs);
@@ -68,7 +68,7 @@ function qrPayment(bankInfo){
  }
 var interval;
 //轮询订单支付状态
-function checkOrderPayStatus(_orderNo){debugger;
+function checkOrderPayStatus(_orderNo){
 	$("#qr_orderNo_hid").val(_orderNo);
 	interval=setInterval(function () {   
 		var status = confirmOrder(_orderNo);
