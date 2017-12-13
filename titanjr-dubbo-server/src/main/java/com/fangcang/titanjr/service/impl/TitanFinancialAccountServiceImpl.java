@@ -202,7 +202,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
             try {
                 titanAccountDao.insert(account);
             } catch (Exception e) {
-                log.error("账户创建异常", e);
+                log.error("账户创建异常，请求参数accountCreateRequest："+Tools.gsonToString(accountCreateRequest), e);
                 accountCreateResponse.putErrorResult("create_account_error","账户创建异常");
                 return accountCreateResponse;
             }
