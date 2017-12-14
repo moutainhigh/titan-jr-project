@@ -280,6 +280,9 @@ public class TitanFinancialRefundServiceImpl implements
 		return response;
 	}
 	
+	
+	
+	
 	@Override
 	public void notifyRefund(String orderId, String refundStatus) {
 		this.threadNotify(orderId, refundStatus);
@@ -309,10 +312,14 @@ public class TitanFinancialRefundServiceImpl implements
 		}
 
 		if (!needDelay) {
-			notifyRefundRequest.setBusiCode(BusiCodeEnum.QueryRefund.getKey());
-			NotifyRefundResponse queryNotifyRefundResponse = this.notifyGateawayRefund(notifyRefundRequest);
-			log.info("调用网关退款查询，orderid:" + refundOrderRequest.getOrderId() + ",查询结果notifyRefundResponse：" + Tools.gsonToString(queryNotifyRefundResponse));
-			return queryNotifyRefundResponse;
+			if(notifyRefundResponse.getRefundStatus().equals(RefundStatusEnum.REFUND_SUCCESS.status.toString())){
+				return notifyRefundResponse;
+			}else{
+				notifyRefundRequest.setBusiCode(BusiCodeEnum.QueryRefund.getKey());
+				NotifyRefundResponse queryNotifyRefundResponse = this.notifyGateawayRefund(notifyRefundRequest);
+				log.info("调用网关退款查询，orderid:" + refundOrderRequest.getOrderId() + ",查询结果notifyRefundResponse：" + Tools.gsonToString(queryNotifyRefundResponse));
+				return queryNotifyRefundResponse;
+			}
 		} else {
 			log.info("需要异步线程查询并再次通知，直接返回退款申请的结果");
 			Thread thread = new Thread(new DelayNotifyThread(notifyRefundRequest,refundOrderRequest));

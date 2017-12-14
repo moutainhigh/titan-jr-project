@@ -956,7 +956,7 @@ public class TitanTradeController extends BaseController {
 		if (!(response.isResult() && CollectionUtils.isNotEmpty(response
 				.getCashierDeskDTOList()))) {
 
-			log.error("cashier desk is null!");
+			log.error("cashier desk is null, errMsg：" + response.getReturnMessage());
 
 			model.addAttribute("msg",
 					TitanMsgCodeEnum.CASHIER_DESK_NOT_EXISTS.getResMsg());

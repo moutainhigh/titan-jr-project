@@ -97,10 +97,10 @@
                    	 账户余额：<span><fmt:formatNumber value="${cashDeskData.balanceusable }"  pattern="#,##0.00#" />元</span>
                 </div>
                 <div class="right-money isShow">
-                	<!-- 财务付款给供应商才显示手续费 -->
-					<c:if test="${cashDeskData.paySource =='2' }">
+                	<!-- 财务付款，余额支付不收手续费 -->
+					<%-- <c:if test="${cashDeskData.paySource =='2' }">
 						<span>手续费 ￥<span id="commPayRateAmount_4_1">0.00</span></span>
-					</c:if>
+					</c:if> --%>
                     <span class="money"><s>￥</s><span id="amount_4_1">${cashDeskData.amount }</span></span>
                 </div>
                 <div id="balanceNotEnough" class="isShow" style="float: right;">

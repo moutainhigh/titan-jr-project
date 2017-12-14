@@ -7,7 +7,7 @@
         insert into t_tfs_rateconfig (userid, deskid,
         usedfor, ratetype, standrate,expiration,
         executionrate, description,
-        minrate, maxrate,
+        minfee, maxfee,
         creator,createtime)
         values
         <foreach collection="list" item="item" index="index" separator=",">
@@ -19,8 +19,8 @@
             #{item.expiration},
             #{item.executionrate},
             #{item.description,jdbcType=VARCHAR},
-            #{item.minrate},
-            #{item.maxrate},
+            #{item.minfee},
+            #{item.maxfee},
             #{item.creator},
             #{item.createtime})
         </foreach>
@@ -76,11 +76,11 @@
             <if test="executionrate != null">
                 executionrate = #{executionrate},
             </if>
-            <if test="minrate != null">
-                minrate = #{minrate,jdbcType=INTEGER},
+            <if test="minfee != null">
+                minfee = #{minfee,jdbcType=INTEGER},
             </if>
-        	<if test="maxrate != null">
-                maxrate = #{maxrate,jdbcType=INTEGER},
+        	<if test="maxfee != null">
+                maxfee = #{maxfee,jdbcType=INTEGER},
             </if>
             <if test="description != null">
                 description = #{description,jdbcType=VARCHAR},
@@ -99,6 +99,7 @@
       select distinct userid from t_tfs_rateconfig
     </select>
     
+    <!-- 无用 -->
     <select id="queryUserIdNoRateConfig" parameterType="Integer" resultType="java.lang.String">
     	 SELECT DISTINCT(userid) FROM t_tfs_rateconfig WHERE userid NOT IN (SELECT DISTINCT userid FROM `t_tfs_rateconfig` WHERE bustype =#{busType})
     </select>

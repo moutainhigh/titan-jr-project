@@ -89,7 +89,6 @@
 	<bean id="titanOrgSubDao" class="com.fangcang.titanjr.dao.impl.TitanOrgSubDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanOrgMapInfoDao" class="com.fangcang.titanjr.dao.impl.TitanOrgMapInfoDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanOrgImageDao" class="com.fangcang.titanjr.dao.impl.TitanOrgImageDaoImpl" parent="baseSqlMapClient"></bean>
-	<bean id="titanRateChangeLogDao" class="com.fangcang.titanjr.dao.impl.TitanRateChangeLogDaoImpl" parent="baseSqlMapClient"></bean>
 	
 	<bean id="titanRateConfigDao" class="com.fangcang.titanjr.dao.impl.TitanRateConfigDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="titanRoleDao" class="com.fangcang.titanjr.dao.impl.TitanRoleDaoImpl" parent="baseSqlMapClient"></bean>
