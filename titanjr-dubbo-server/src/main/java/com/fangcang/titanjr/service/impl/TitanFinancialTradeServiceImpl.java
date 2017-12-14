@@ -1598,14 +1598,16 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						titanTransferDTO.setUserrelateid(transOrderDTO.getUserrelateid());
 						titanTransferDTO = titanOrderService
 								.getTitanTransferDTO(titanTransferDTO);
-
-						TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
-						titanOrderPayDTO.setTransorderid(transOrderDTO
-								.getTransid());
-						titanOrderPayDTO = titanOrderService
-								.getTitanOrderPayDTO(titanOrderPayDTO);
-
-						transOrderDTO.setTitanOrderPayDTO(titanOrderPayDTO);
+						
+						if(!transOrderDTO.getTradeType().equals("余额付款")){
+							TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+							titanOrderPayDTO.setTransorderid(transOrderDTO
+									.getTransid());
+							titanOrderPayDTO = titanOrderService
+									.getTitanOrderPayDTO(titanOrderPayDTO);
+							transOrderDTO.setTitanOrderPayDTO(titanOrderPayDTO);
+						}
+						
 						transOrderDTO.setTitanTransferDTO(titanTransferDTO);
 						transOrderDTO.setRefundDTO(this.getRefundDTO(transOrderDTO.getOrderid()));
 
