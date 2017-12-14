@@ -1567,10 +1567,14 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						.getItemList()) {
 					//交易详细页面是否显示手续费,原则：谁出手续费，谁的页面就显示手续费
 					if(StringUtil.isValidString(transOrderDTO.getOrderid())&&transOrderDTO.getReceivedfee()>0){
-						TitanRateRecord rateRecord = rateConfigDao.getRateRecordByOrderNo(transOrderDTO.getOrderid());
-						if(rateRecord.getUserId().equals(tradeDetailRequest.getUserid())){//手续费支付方为当前登录者
-							transOrderDTO.setIsPayFee("1");
+						//提现手续费不在这里算
+						if(!PayerTypeEnum.WITHDRAW.getKey().equals(transOrderDTO.getPayerType())){
+							TitanRateRecord rateRecord = rateConfigDao.getRateRecordByOrderNo(transOrderDTO.getOrderid());
+							if(rateRecord.getUserId().equals(tradeDetailRequest.getUserid())){//手续费支付方为当前登录者
+								transOrderDTO.setIsPayFee("1");
+							}
 						}
+						
 					}
 					// 获取充值记录
 					if (transOrderDTO.getTradeType().equals("收款")) {// 收款记录
