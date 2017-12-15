@@ -272,14 +272,13 @@ public class TitanRateService {
 						.getBenchmarkRate()));
 			}
 
-			// 财务付款，付款金额需要加上手续费（提现不会走到这）
+			// 财务付款和充值，付款金额需要加上手续费（提现不会走到这）
 			String paySource = paymentRequest.getPaySource();
 			if (!PaySourceEnum.DISTRIBUTION_PC.getDeskCode().equals(paySource) 
 					&& !PaySourceEnum.OPEN_PLATFORM_PC.getDeskCode().equals(paySource)
 					&& !PaySourceEnum.TT_MALL_PC.getDeskCode().equals(paySource)
 					&& !PaySourceEnum.TT_MALL_MOBILE.getDeskCode().equals(paySource)
-					&& !PaySourceEnum.TRADING_PLATFORM_PC.getDeskCode().equals(paySource)
-					&& !PaySourceEnum.RECHARGE.getDeskCode().equals(paySource)) {
+					&& !PaySourceEnum.TRADING_PLATFORM_PC.getDeskCode().equals(paySource)) {
 				paymentRequest.setPayAmount(computeRsp.getAmount());
 			}
 		}

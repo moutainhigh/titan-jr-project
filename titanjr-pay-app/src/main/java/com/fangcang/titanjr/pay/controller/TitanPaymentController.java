@@ -540,7 +540,7 @@ public class TitanPaymentController extends BaseController {
     		transferRequest.setAmount(NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount()));	
     	}else{
     		if (titanPaymentRequest.getReceivedfee() != null && payerTypeEnum != null && !payerTypeEnum.isNeedPayerInfo()) {
-	    		// 收款方出手续费的，交易金额减去手续费
+    			log.info("收款方出手续费的，交易金额减去手续费，手续费将转入收益子账户");
 	    		transferRequest.setAmount(String.valueOf(Integer.parseInt(NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount()))-Integer.parseInt(titanPaymentRequest.getReceivedfee())));//金额 必须是分
     		}else{
     			transferRequest.setAmount(NumberUtil.covertToCents(titanPaymentRequest.getTradeAmount()));
