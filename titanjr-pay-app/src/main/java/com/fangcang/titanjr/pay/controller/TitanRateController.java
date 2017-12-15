@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
+import com.fangcang.titanjr.pay.constant.TitanConstantDefine;
 import com.fangcang.titanjr.pay.req.TitanRateComputeReq;
 import com.fangcang.titanjr.pay.rsp.TitanRateComputeRsp;
 import com.fangcang.titanjr.pay.services.TitanRateService;
@@ -34,7 +35,7 @@ public class TitanRateController extends BaseController {
 		if (!StringUtil.isValidString(userId)
 				|| !StringUtil.isValidString(amount)
 				|| !StringUtil.isValidString(payType)
-				|| !StringUtil.isValidString(deskId)) {
+				|| (!TitanConstantDefine.TL_WITHDRAW_PAYTYPE.equals(payType) && !StringUtil.isValidString(deskId))) {
 			return this.toMsgJson(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
 		}
 
