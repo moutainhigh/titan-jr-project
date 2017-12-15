@@ -46,7 +46,13 @@
 										<tr>
 											<td>SaaS分销工具收银台</td>
 											<td>微信扫码支付、支付宝扫码支付、信用卡快捷支付、个人网银支付、企业网银支付、信贷支付等</td>
-											<td>${rateInfo.standrate}%</td>
+											<td>
+												<c:if test="${rateInfo.standrate == 0.0}">免费</c:if>
+												<c:if test="${rateInfo.standrate != 0.0}">
+													<c:if test="${rateInfo.ratetype == 1 }">${rateInfo.standrate}%</c:if>
+													<c:if test="${rateInfo.ratetype == 2 }">${rateInfo.standrate}元/笔</c:if>
+												</c:if>
+											</td>
 											<td>
 												<c:if test="${rateInfo.executionrate == 0.0}">免费</c:if>
 												<c:if test="${rateInfo.executionrate != 0.0}">
@@ -68,7 +74,13 @@
 										<tr>
 											<td>商家联盟交易平台收银台</td>
 											<td>微信扫码支付、支付宝扫码支付、信用卡快捷支付、个人网银支付、企业网银支付、信贷支付等</td>
-											<td>${rateInfo.standrate}%</td>
+											<td>
+												<c:if test="${rateInfo.standrate == 0.0}">免费</c:if>
+												<c:if test="${rateInfo.standrate != 0.0}">
+													<c:if test="${rateInfo.ratetype == 1 }">${rateInfo.standrate}%</c:if>
+													<c:if test="${rateInfo.ratetype == 2 }">${rateInfo.standrate}元/笔</c:if>
+												</c:if>
+											</td>
 											<td><c:if test="${rateInfo.executionrate == 0.0}">免费</c:if>
 												<c:if test="${rateInfo.executionrate != 0.0}">
 													<c:if test="${rateInfo.ratetype == 1 }">${rateInfo.executionrate}%</c:if>
@@ -89,7 +101,13 @@
 										<tr>
 											<td>TTM交易平台</td>
 											<td>微信扫码支付、支付宝扫码支付、信用卡快捷支付、个人网银支付、企业网银支付、信贷支付等</td>
-											<td>${rateInfo.standrate}%</td>
+											<td>
+												<c:if test="${rateInfo.standrate == 0.0}">免费</c:if>
+												<c:if test="${rateInfo.standrate != 0.0}">
+													<c:if test="${rateInfo.ratetype == 1 }">${rateInfo.standrate}%</c:if>
+													<c:if test="${rateInfo.ratetype == 2 }">${rateInfo.standrate}元/笔</c:if>
+												</c:if>
+											</td>
 											<td>
 												<c:if test="${rateInfo.executionrate == 0.0}">免费</c:if>
 												<c:if test="${rateInfo.executionrate != 0.0}">
@@ -124,7 +142,13 @@
 										<tr>
 											<td>财务付款给供应商</td>
 											<td>微信扫码支付、支付宝扫码支付、信用卡快捷支付、个人网银支付、企业网银支付、信贷支付等</td>
-											<td>${rateInfo.standrate}%</td>
+											<td>
+												<c:if test="${rateInfo.standrate == 0.0}">免费</c:if>
+												<c:if test="${rateInfo.standrate != 0.0}">
+													<c:if test="${rateInfo.ratetype == 1 }">${rateInfo.standrate}%</c:if>
+													<c:if test="${rateInfo.ratetype == 2 }">${rateInfo.standrate}元/笔</c:if>
+												</c:if>
+											</td>
 											<td>
 												<c:if test="${rateInfo.executionrate == 0.0}">免费</c:if>
 												<c:if test="${rateInfo.executionrate != 0.0}">
@@ -147,8 +171,21 @@
 							<tr>
 								<td>余额提现</td>
 								<td>账户余额</td>
-								<td>免费</td>
-								<td>免费</td>
+								<td>
+								    <c:if test="${rateInfo.standrate == 0.0}">免费</c:if>
+									<c:if test="${rateInfo.standrate != 0.0}">
+										<c:if test="${rateInfo.ratetype == 1 }">${rateInfo.standrate}%</c:if>
+										<c:if test="${rateInfo.ratetype == 2 }">${rateInfo.standrate}元/笔</c:if>
+									</c:if>
+								</td>
+								<td>
+									<c:if test="${rateInfo.executionrate == 0.0}">免费</c:if>
+									<c:if test="${rateInfo.executionrate != 0.0}">
+										<c:if test="${rateInfo.ratetype == 1 }">${rateInfo.executionrate}%</c:if>
+										<c:if test="${rateInfo.ratetype == 2 }">${rateInfo.executionrate}元/笔</c:if>
+									</c:if>
+									<span class="h">截止至<fmt:formatDate pattern="yyyy-MM-dd" value="${rateInfo.expiration }"/></span>
+								</td>
 								<td><span class="s">已开启</span>&nbsp;不支持关闭</td>
 							</tr>
 							</tbody>
