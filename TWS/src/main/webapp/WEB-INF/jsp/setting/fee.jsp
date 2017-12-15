@@ -168,26 +168,32 @@
 								<td>免费</td>
 								<td><span class="s">已开启</span>&nbsp;不支持关闭</td>
 							</tr>
-							<tr>
-								<td>余额提现</td>
-								<td>账户余额</td>
-								<td>
-								    <c:if test="${rateInfo.standrate == 0.0}">免费</c:if>
-									<c:if test="${rateInfo.standrate != 0.0}">
-										<c:if test="${rateInfo.ratetype == 1 }">${rateInfo.standrate}%</c:if>
-										<c:if test="${rateInfo.ratetype == 2 }">${rateInfo.standrate}元/笔</c:if>
+							<c:if test="${not empty rateInfoList }">
+								<c:forEach items="${rateInfoList }" var="rateInfo" varStatus="status">
+									<c:if test="${rateInfo.usedfor == '10' }">
+										<tr>
+											<td>余额提现</td>
+											<td>账户余额</td>
+											<td>
+											    <c:if test="${rateInfo.standrate == 0.0}">免费</c:if>
+												<c:if test="${rateInfo.standrate != 0.0}">
+													<c:if test="${rateInfo.ratetype == 1 }">${rateInfo.standrate}%</c:if>
+													<c:if test="${rateInfo.ratetype == 2 }">${rateInfo.standrate}元/笔</c:if>
+												</c:if>
+											</td>
+											<td>
+												<c:if test="${rateInfo.executionrate == 0.0}">免费</c:if>
+												<c:if test="${rateInfo.executionrate != 0.0}">
+													<c:if test="${rateInfo.ratetype == 1 }">${rateInfo.executionrate}%</c:if>
+													<c:if test="${rateInfo.ratetype == 2 }">${rateInfo.executionrate}元/笔</c:if>
+												</c:if>
+												<span class="h">截止至<fmt:formatDate pattern="yyyy-MM-dd" value="${rateInfo.expiration }"/></span>
+											</td>
+											<td><span class="s">已开启</span>&nbsp;不支持关闭</td>
+										</tr>
 									</c:if>
-								</td>
-								<td>
-									<c:if test="${rateInfo.executionrate == 0.0}">免费</c:if>
-									<c:if test="${rateInfo.executionrate != 0.0}">
-										<c:if test="${rateInfo.ratetype == 1 }">${rateInfo.executionrate}%</c:if>
-										<c:if test="${rateInfo.ratetype == 2 }">${rateInfo.executionrate}元/笔</c:if>
-									</c:if>
-									<span class="h">截止至<fmt:formatDate pattern="yyyy-MM-dd" value="${rateInfo.expiration }"/></span>
-								</td>
-								<td><span class="s">已开启</span>&nbsp;不支持关闭</td>
-							</tr>
+								</c:forEach>
+							</c:if>
 							</tbody>
 						</table>
 					</div>
