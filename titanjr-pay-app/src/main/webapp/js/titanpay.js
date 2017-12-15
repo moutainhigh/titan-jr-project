@@ -82,14 +82,15 @@ function initTitanPayObj() {
 	}
 
 	titanPayObj.createPayForm = function(address) {
-
+		var rsaJs = config.address + "js/rsa/RSA.js";
+		var payAddr = config.address + 'trade/titanPay.action';
 		var elscript = document.createElement("script");
-		elscript.src = config.address + "js/rsa/RSA.js";
+		elscript.src = rsaJs;
 		elscript.setAttribute("type", "text/javascript");
 		document.body.appendChild(elscript);
 
 		var form = document.createElement("form");
-		form.action = config.address + 'trade/titanPay.action';
+		form.action = payAddr;
 		form.target = '_blank';
 		form.id = 'titan_pay_form';
 		form.method = 'post';

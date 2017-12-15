@@ -20,12 +20,14 @@ function initTitanPayObj() {
         return "Success";
     };
     titanPayObj.createPayForm = function(address) {
+        var rsaJs = config.address + "/titanjr-pay-app/js/rsa/RSA.js";
+        var payAddr = config.address + '/titanjr-pay-app/trade/titanPay.action';
         var elscript = document.createElement("script");
-        elscript.src = config.address + "/titanjr-pay-app/js/rsa/RSA.js";
+        elscript.src = rsaJs;
         elscript.setAttribute("type", "text/javascript");
         document.body.appendChild(elscript);
         var form = document.createElement("form");
-        form.action = config.address + 'trade/titanPay.action';
+        form.action = payAddr;
         form.target = '_blank';
         form.id = 'titan_pay_form';
         form.method = 'post';
@@ -56,7 +58,8 @@ function initTitanPayObj() {
         if (this.checkOrder(orderInfo)) {
             var orderInfo = this.titanEncrypted(JSON.stringify(orderInfo));
             var businessInfo = JSON.stringify(businessInfo);
-            var url = config.address + '/titanjr-pay-app/trade/titanPay.action';
+            var payAddr = config.address + '/titanjr-pay-app/trade/titanPay.action';
+            var url = payAddr;
             url += '?orderInfo=' + encodeURIComponent(orderInfo) + "&businessInfo=" + encodeURIComponent(businessInfo);
             return url;
         }
