@@ -138,11 +138,11 @@ public class FinancialAccountController extends BaseController {
     @RequestMapping(value = "/goto_cashierDesk", method = RequestMethod.GET)
     public String gotoCashierDesk(String payType , Model model)
     {
-    	if(StringUtil.isValidString(payType))
-    	{
+    	if(StringUtil.isValidString(payType)) {
+    		
     		PayerTypeEnum enum1 =  PayerTypeEnum.getPayerTypeEnumByKey(payType);
-    		if(enum1 != null)
-    		{
+    		if(enum1 != null) {
+    			
 		    	model.addAttribute("userId", this.getUserId());
 		    	model.addAttribute("payType",enum1.getKey());
 		    	model.addAttribute("payOrderNo", OrderGenerateService.genLoacalPayOrderNo());
@@ -153,6 +153,7 @@ public class FinancialAccountController extends BaseController {
 		    	model.addAttribute("tfsUserId", getTfsUserId());
 		    	model.addAttribute("version", "v1.0");
 		    	return "account-overview/goto-cashierDesk";
+		    	
     		}
     	}
     	

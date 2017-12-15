@@ -544,11 +544,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			req.setUserrelateid(orderRequest.getUserrelateid()); // 关联用户id（若有第三方则必须填写）
 			if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanPaymentRequest.getJrVersion())){
 				req.setUnitprice(orderRequest.getReceivedfee());//设置实收的手续费
-				//充值收银台不收手续费
-				if(PaySourceEnum.RECHARGE.getDeskCode().equals(titanPaymentRequest.getPaySource())){
+				//充值收银台不收手续费（做成可配置，这里可以去掉）
+				/*if(PaySourceEnum.RECHARGE.getDeskCode().equals(titanPaymentRequest.getPaySource())){
 					req.setUnitprice("0");
 					orderRequest.setReceivedfee("0");
-				}
+				}*/
 			}else{
 				req.setUnitprice("0"); //新版收银台，支付时不扣0，在转账的时候再计算手续费
 			}
