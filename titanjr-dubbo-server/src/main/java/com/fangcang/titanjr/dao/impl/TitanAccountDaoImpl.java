@@ -5,7 +5,6 @@ import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.dao.TitanAccountDao;
 import com.fangcang.titanjr.entity.TitanAccount;
-import com.fangcang.titanjr.entity.TitanUserBindInfo;
 import com.fangcang.titanjr.entity.parameter.TitanAccountParam;
 
 public class TitanAccountDaoImpl extends GenericDAOMyBatisImpl implements TitanAccountDao {

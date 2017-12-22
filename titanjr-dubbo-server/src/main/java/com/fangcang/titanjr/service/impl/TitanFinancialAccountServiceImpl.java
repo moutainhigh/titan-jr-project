@@ -37,6 +37,7 @@ import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanAccountDao;
 import com.fangcang.titanjr.dao.TitanAccountHistoryDao;
+import com.fangcang.titanjr.dao.TitanBalanceInfoDao;
 import com.fangcang.titanjr.dao.TitanCityInfoDao;
 import com.fangcang.titanjr.dao.TitanFundFreezereqDao;
 import com.fangcang.titanjr.dao.TitanFundUnFreezereqDao;
@@ -58,6 +59,7 @@ import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.AccountUpdateRequest;
 import com.fangcang.titanjr.dto.request.AddPayLogRequest;
+import com.fangcang.titanjr.dto.request.BalanceInfoRequest;
 import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
 import com.fangcang.titanjr.dto.request.FreezeAccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
@@ -76,6 +78,7 @@ import com.fangcang.titanjr.dto.response.AccountUpdateResponse;
 import com.fangcang.titanjr.dto.response.BalanceWithDrawResponse;
 import com.fangcang.titanjr.dto.response.BankCardStatusResponse;
 import com.fangcang.titanjr.dto.response.CityInfosResponse;
+import com.fangcang.titanjr.dto.response.CreateBalanceInfoResponse;
 import com.fangcang.titanjr.dto.response.DefaultPayerConfigResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.TransferResponse;
@@ -83,6 +86,7 @@ import com.fangcang.titanjr.dto.response.UnFreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.UnFreezeResponse;
 import com.fangcang.titanjr.entity.TitanAccount;
 import com.fangcang.titanjr.entity.TitanAccountHistory;
+import com.fangcang.titanjr.entity.TitanBalanceInfo;
 import com.fangcang.titanjr.entity.TitanBankcard;
 import com.fangcang.titanjr.entity.TitanFundFreezereq;
 import com.fangcang.titanjr.entity.TitanFundUnFreezereq;
@@ -92,6 +96,7 @@ import com.fangcang.titanjr.entity.TitanTransferReq;
 import com.fangcang.titanjr.entity.TitanWithDrawReq;
 import com.fangcang.titanjr.entity.parameter.TitanAccountHistoryParam;
 import com.fangcang.titanjr.entity.parameter.TitanAccountParam;
+import com.fangcang.titanjr.entity.parameter.TitanBalanceInfoParam;
 import com.fangcang.titanjr.entity.parameter.TitanFundFreezereqParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgParam;
 import com.fangcang.titanjr.entity.parameter.TitanTransferReqParam;
@@ -166,15 +171,116 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     private TitanCityInfoDao titanCityInfoDao;
     
     @Resource
+    private TitanOrgDao orgdao;
+    
+    @Resource
     private TitanTransferReqDao transferReqDao;
     
     @Resource
 	private BusinessLogService businessLogService;
+    @Resource
+    private TitanBalanceInfoDao balanceInfoDao;
     
     
-    
+	@Override
+	public CreateBalanceInfoResponse createBalanceInfo(BalanceInfoRequest balanceInfoRequest) {
+		 
+		
+		return null;
+	}
+	/***
+	 * 融数的账户是否在本地存在
+	 * @param item 融数账户
+	 * @param list 本地帐户
+	 * @return
+	 */
+	private boolean localIsExist(BalanceInfo item,List<TitanBalanceInfo> list){
+		for(TitanBalanceInfo banlance : list){
+			if(banlance.getFinaccountid().equals(item.getFinaccountid())){
+				return true;
+			}
+		}
+		return false;
+	}
 
-    @Override
+	@Override
+	public BaseResponseDTO synBalanceInfo(BalanceInfoRequest balanceInfoRequest) {
+		
+		BaseResponseDTO responseDTO = new BaseResponseDTO();
+		if(!StringUtil.isValidString(balanceInfoRequest.getUserId())){
+			responseDTO.putErrorResult("userid参数不能为空");
+			return responseDTO;
+		}
+		//查出机构本地帐户
+		TitanBalanceInfoParam param = new TitanBalanceInfoParam();
+		param.setUserid(balanceInfoRequest.getUserId());
+		List<TitanBalanceInfo> balanceInfoList = balanceInfoDao.queryList(param);
+		
+		AccountBalanceQueryRequest accountBalanceQueryRequest = new AccountBalanceQueryRequest();
+        accountBalanceQueryRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+        accountBalanceQueryRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+        accountBalanceQueryRequest.setUserid(balanceInfoRequest.getUserId());
+        AccountBalanceQueryResponse response = rsAccTradeManager.queryAccountBalance(accountBalanceQueryRequest);
+        //从融数同步账户
+		if(response.isSuccess()&&CollectionUtils.isNotEmpty(response.getBalanceInfoList())){
+			for(BalanceInfo item :response.getBalanceInfoList()){
+				if(localIsExist(item,balanceInfoList)){
+					//存在,则更新金额
+					TitanBalanceInfo entity = new TitanBalanceInfo();
+					entity.setFinaccountid(item.getFinaccountid());
+					entity.setInitcreditamount(Long.parseLong(item.getBalancecredit()));
+					entity.setInitsettleamount(Long.parseLong(item.getBalancesettle()));
+					entity.setInitfrozonamount(Long.parseLong(item.getBalancefrozon()));
+					entity.setInitoverlimit(Long.parseLong(item.getBalanceoverlimit()));
+					entity.setInitusablelimit(Long.parseLong(item.getBalanceusable()));
+					entity.setInittotalamount(Long.parseLong(item.getAmount()));
+					balanceInfoDao.update(entity);
+				}else{
+					//不存在,则插入
+					TitanBalanceInfo entity = new TitanBalanceInfo();
+					entity.setFinaccountid(item.getFinaccountid());
+					entity.setInitcreditamount(Long.parseLong(item.getBalancecredit()));
+					entity.setInitsettleamount(Long.parseLong(item.getBalancesettle()));
+					entity.setInitfrozonamount(Long.parseLong(item.getBalancefrozon()));
+					entity.setInitoverlimit(Long.parseLong(item.getBalanceoverlimit()));
+					entity.setInitusablelimit(Long.parseLong(item.getBalanceusable()));
+					entity.setInittotalamount(Long.parseLong(item.getAmount()));
+					entity.setStatus(1);//1：正常,2:冻结中
+					entity.setCreatetime(new Date());
+					balanceInfoDao.insert(entity);
+				}
+			}
+			responseDTO.putSuccess();
+		}else{
+			log.info("该userid在融数那边不存在，请检查.userid:"+balanceInfoRequest.getUserId());
+			responseDTO.putErrorResult("该账户不存在，请检查");
+		}
+		return responseDTO;
+	}
+
+	@Override
+	public void initAllBalanceInfo() {
+		int page = 1;
+		PaginationSupport<TitanOrg> paginationSupport = new PaginationSupport<TitanOrg>();
+		paginationSupport.setPageSize(100);
+		paginationSupport.setCurrentPage(page);
+		paginationSupport.setOrderBy(" orgid aes ");
+		paginationSupport = orgdao.selectForPage(null, paginationSupport);
+		
+		while (paginationSupport.getTotalPage()>=page) {
+			for(TitanOrg item : paginationSupport.getItemList()){
+				BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
+				balanceInfoRequest.setUserId(item.getUserid());
+				synBalanceInfo(balanceInfoRequest);
+			}
+			page++;
+			paginationSupport.setCurrentPage(page);
+			paginationSupport = orgdao.selectForPage(null, paginationSupport);
+		}
+		
+	}
+
+	@Override
     public AccountCreateResponse createAccount(AccountCreateRequest accountCreateRequest) {
         AccountCreateResponse accountCreateResponse = new AccountCreateResponse();
         AccountBalanceQueryRequest accountBalanceQueryRequest = new AccountBalanceQueryRequest();
@@ -184,25 +290,26 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
         AccountBalanceQueryResponse response = rsAccTradeManager.queryAccountBalance(accountBalanceQueryRequest);
         if (response.isSuccess()) {
             TitanAccount account = new TitanAccount();
-            
-            account.setAccountcode(accountCreateRequest.getAccountcode());
-            account.setAccountname(accountCreateRequest.getAccountname());
-            account.setCurrency(1);
-            account.setUserid(accountCreateRequest.getUserid());
-            account.setProductid(accountCreateRequest.getProductid());
-            account.setStatus(1);
-            account.setInitcreditamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalancecredit()));
-            account.setInitfrozonamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalancefrozon()));
-            account.setInitsettleamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalancesettle()));
-            account.setInittotalamount(Double.valueOf(response.getBalanceInfoList().get(0).getAmount()));
-            account.setInitusablelimit(Double.valueOf(response.getBalanceInfoList().get(0).getBalanceusable()));
-            account.setInitoverlimit(Double.valueOf(response.getBalanceInfoList().get(0).getBalanceoverlimit()));
             account.setCreator(accountCreateRequest.getOperator());
             account.setCreatetime(new Date());
+            account.setAccountcode(accountCreateRequest.getAccountcode());
+            account.setAccountname(accountCreateRequest.getAccountname());
+            account.setAllownopwdpay(0);
+            account.setCurrency(1);
+            account.setFinaccountid(response.getBalanceInfoList().get(0).getFinaccountid());
+            account.setNopwdpaylimit(1000d);
+            account.setUserid(accountCreateRequest.getUserid());
+            account.setStatus(1);
+            account.setCreditamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalancecredit()));
+            account.setForzenamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalancefrozon()));
+            account.setSettleamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalancesettle()));
+            account.setTotalamount(Double.valueOf(response.getBalanceInfoList().get(0).getAmount()));
+            account.setUsableamount(Double.valueOf(response.getBalanceInfoList().get(0).getBalanceusable()));
+            account.setBalanceoverlimit(Double.valueOf(response.getBalanceInfoList().get(0).getBalanceoverlimit()));
             try {
                 titanAccountDao.insert(account);
             } catch (Exception e) {
-                log.error("账户创建异常，请求参数accountCreateRequest："+Tools.gsonToString(accountCreateRequest), e);
+                log.error("账户创建异常", e);
                 accountCreateResponse.putErrorResult("create_account_error","账户创建异常");
                 return accountCreateResponse;
             }
@@ -920,7 +1027,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			condition.setOutaccountcode(accountHistoryDTO.getOutaccountcode());
 			condition.setInaccountcode(accountHistoryDTO.getInaccountcode());
 			PaginationSupport<TitanAccountHistory> paginationSupport = new PaginationSupport<TitanAccountHistory>();
-			titanAccountHistoryDao.selectForPage(condition, paginationSupport);  
+			titanAccountHistoryDao.selectForPage(condition, paginationSupport);
 			//如果数据了中没有收付款账户记录则插入一条数据，否则直接返回成功
 			if(paginationSupport.getItemList() !=null && paginationSupport.getItemList().size()>0){
 				accountHistoryResponse.putSuccess();

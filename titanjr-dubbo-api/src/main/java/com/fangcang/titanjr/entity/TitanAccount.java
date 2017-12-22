@@ -17,40 +17,19 @@ public class TitanAccount implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = -3270421907480612181L;
 	private Integer accountid;
+	private String finaccountid;
 	private String userid;
-	private String productid;
 	private String accountcode;
 	private String accountname;
-	/**
-	 * 币种：1-人民币
-	 */
 	private Integer currency;
-	/**
-	 * 期初贷记余额
-	 */
-	private Double initcreditamount ;
-	/**
-	 * 期初提现余额
-	 */
-	private Double initsettleamount;
-	/**
-	 * 期初冻结余额
-	 */
-	private Double initfrozonamount;
-	
-	
-	/**
-	 * 期初可信用消费余额
-	 */
-	private Double initoverlimit ; 
-	/**
-	 * 期初可用余额
-	 */
-	private Double initusablelimit;
-	/**
-	 * 期初账户余额
-	 */
-	private Double inittotalamount;
+	private Integer allownopwdpay;
+	private Double nopwdpaylimit;
+	private Double creditamount ;
+	private Double settleamount;
+	private Double forzenamount;
+	private Double balanceoverlimit ; 
+	private Double usableamount;
+	private Double totalamount;
 	
 	/**
 	 * 账户状态1.正常，2.冻结中
@@ -60,25 +39,23 @@ public class TitanAccount implements java.io.Serializable {
 	private Date createtime;
 	private String modifier;
 	private Date modifytime;
-	
-	
 	public Integer getAccountid() {
 		return accountid;
 	}
 	public void setAccountid(Integer accountid) {
 		this.accountid = accountid;
 	}
+	public String getFinaccountid() {
+		return finaccountid;
+	}
+	public void setFinaccountid(String finaccountid) {
+		this.finaccountid = finaccountid;
+	}
 	public String getUserid() {
 		return userid;
 	}
 	public void setUserid(String userid) {
 		this.userid = userid;
-	}
-	public String getProductid() {
-		return productid;
-	}
-	public void setProductid(String productid) {
-		this.productid = productid;
 	}
 	public String getAccountcode() {
 		return accountcode;
@@ -98,41 +75,53 @@ public class TitanAccount implements java.io.Serializable {
 	public void setCurrency(Integer currency) {
 		this.currency = currency;
 	}
-	public Double getInitcreditamount() {
-		return initcreditamount;
+	public Integer getAllownopwdpay() {
+		return allownopwdpay;
 	}
-	public void setInitcreditamount(Double initcreditamount) {
-		this.initcreditamount = initcreditamount;
+	public void setAllownopwdpay(Integer allownopwdpay) {
+		this.allownopwdpay = allownopwdpay;
 	}
-	public Double getInitsettleamount() {
-		return initsettleamount;
+	public Double getNopwdpaylimit() {
+		return nopwdpaylimit;
 	}
-	public void setInitsettleamount(Double initsettleamount) {
-		this.initsettleamount = initsettleamount;
+	public void setNopwdpaylimit(Double nopwdpaylimit) {
+		this.nopwdpaylimit = nopwdpaylimit;
 	}
-	public Double getInitfrozonamount() {
-		return initfrozonamount;
+	public Double getCreditamount() {
+		return creditamount;
 	}
-	public void setInitfrozonamount(Double initfrozonamount) {
-		this.initfrozonamount = initfrozonamount;
+	public void setCreditamount(Double creditamount) {
+		this.creditamount = creditamount;
 	}
-	public Double getInitoverlimit() {
-		return initoverlimit;
+	public Double getSettleamount() {
+		return settleamount;
 	}
-	public void setInitoverlimit(Double initoverlimit) {
-		this.initoverlimit = initoverlimit;
+	public void setSettleamount(Double settleamount) {
+		this.settleamount = settleamount;
 	}
-	public Double getInitusablelimit() {
-		return initusablelimit;
+	public Double getForzenamount() {
+		return forzenamount;
 	}
-	public void setInitusablelimit(Double initusablelimit) {
-		this.initusablelimit = initusablelimit;
+	public void setForzenamount(Double forzenamount) {
+		this.forzenamount = forzenamount;
 	}
-	public Double getInittotalamount() {
-		return inittotalamount;
+	public Double getBalanceoverlimit() {
+		return balanceoverlimit;
 	}
-	public void setInittotalamount(Double inittotalamount) {
-		this.inittotalamount = inittotalamount;
+	public void setBalanceoverlimit(Double balanceoverlimit) {
+		this.balanceoverlimit = balanceoverlimit;
+	}
+	public Double getUsableamount() {
+		return usableamount;
+	}
+	public void setUsableamount(Double usableamount) {
+		this.usableamount = usableamount;
+	}
+	public Double getTotalamount() {
+		return totalamount;
+	}
+	public void setTotalamount(Double totalamount) {
+		this.totalamount = totalamount;
 	}
 	public Integer getStatus() {
 		return status;

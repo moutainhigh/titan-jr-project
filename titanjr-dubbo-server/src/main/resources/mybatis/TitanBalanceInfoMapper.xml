@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanBalanceInfoDao">
+    <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanBalanceInfo"
+            parameterType="com.fangcang.titanjr.entity.parameter.TitanBalanceInfoParam">
+        select
+        *
+        from t_tfs_balanceinfo
+        <where>
+            <if test="accountid != null">accountid = #{accountid}</if>
+            <if test="finaccountid != null"> and finaccountid = #{finaccountid}</if>
+            <if test="userid != null"> and userid =#{userid}</if>
+            <if test="productid != null"> and productid =#{productid}</if>
+          </where>
+    </select>
+
+    
+    <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanBalanceInfo" useGeneratedKeys="true" keyProperty="accountid">
+    insert into t_tfs_balanceinfo (accountid, finaccountid, userid, 
+      productid, accountcode, accountname, 
+      currency, initcreditamount,initsettleamount,initfrozonamount,
+      initoverlimit,initusablelimit,inittotalamount,status,creator,createtime,modifier)
+    values (#{orgid}, #{orgcode}, #{orgname}
+       )
+  </insert>
+    <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanOrg">
+        update t_tfs_org
+        <set>
+            
+            <if test="orgname != null">
+                orgname = #{orgname,jdbcType=VARCHAR},
+            </if>
+            <if test="constid != null">
+                constid = #{constid,jdbcType=VARCHAR},
+            </if>
+            <if test="userid != null">
+                userid = #{userid,jdbcType=VARCHAR},
+            </if>
+            <if test="productid != null">
+                productid = #{productid,jdbcType=VARCHAR},
+            </if>
+            
+            <if test="usertype != null">
+                usertype = #{usertype,jdbcType=INTEGER},
+            </if>
+            <if test="statusid != null">
+                statusid = #{statusid,jdbcType=INTEGER},
+            </if>
+             
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            
+            <if test="certificatetype != null">
+                certificatetype = #{certificatetype,jdbcType=INTEGER},
+            </if>
+            <if test="certificatenumber != null">
+                certificatenumber = #{certificatenumber,jdbcType=VARCHAR},
+            </if>
+            <if test="mobiletel != null">
+                mobiletel = #{mobiletel,jdbcType=VARCHAR},
+            </if>
+            <if test="connect != null">
+                `connect` = #{connect,jdbcType=VARCHAR},
+            </if>
+            <if test="buslince != null">
+                buslince = #{buslince,jdbcType=VARCHAR},
+            </if>
+           
+            <if test="titancode != null">
+                titancode = #{titancode,jdbcType=VARCHAR},
+            </if>
+            
+            <if test="regChannel != null">
+                regchannel = #{regChannel},
+            </if>
+            <if test="lastUpdateDate != null">
+                lastupdatedate = #{lastUpdateDate},
+            </if>
+            <if test="maxLoanAmount != null">
+                maxloanamount = #{maxLoanAmount},
+            </if>
+
+        </set>
+        <where>
+        	<if test="orgid != null"> orgid = #{orgid,jdbcType=INTEGER} </if>
+        	<if test="orgcode != null">
+               and  orgcode = #{orgcode,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </update>
+
+</mapper>

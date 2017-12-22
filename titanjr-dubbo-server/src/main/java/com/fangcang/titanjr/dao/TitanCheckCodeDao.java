@@ -2,7 +2,6 @@ package com.fangcang.titanjr.dao;
 
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
-import com.fangcang.titanjr.entity.TitanAccount;
 import com.fangcang.titanjr.entity.TitanCheckCode;
 import com.fangcang.titanjr.entity.parameter.TitanCheckCodeParam;
 /**

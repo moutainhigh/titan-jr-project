@@ -13,11 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
-import com.fangcang.titanjr.dto.PaySourceEnum;
-import com.fangcang.titanjr.dto.response.*;
-
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,6 +66,7 @@ import com.fangcang.titanjr.dao.TitanRefundDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
+import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
@@ -101,7 +97,22 @@ import com.fangcang.titanjr.dto.request.TradeDetailRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransOrderUpdateRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
+import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
+import com.fangcang.titanjr.dto.response.ConfirmOrdernQueryResponse;
+import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
+import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
+import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
+import com.fangcang.titanjr.dto.response.OrderSaveAndBindCardResponse;
+import com.fangcang.titanjr.dto.response.QrCodeResponse;
+import com.fangcang.titanjr.dto.response.RechargeResponse;
+import com.fangcang.titanjr.dto.response.TradeDetailResponse;
+import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
+import com.fangcang.titanjr.dto.response.TransOrderResponse;
+import com.fangcang.titanjr.dto.response.TransOrderUpdateResponse;
+import com.fangcang.titanjr.dto.response.TransferOrderResponse;
+import com.fangcang.titanjr.dto.response.TransferResponse;
 import com.fangcang.titanjr.entity.TitanAccount;
+import com.fangcang.titanjr.entity.TitanBalanceInfo;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.TitanRateRecord;
 import com.fangcang.titanjr.entity.TitanTransOrder;
@@ -138,6 +149,8 @@ import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
+
+import net.sf.json.JSONSerializer;
 
 @Service("titanFinancialTradeService")
 public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeService {
