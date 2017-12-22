@@ -23,11 +23,11 @@ function initTitanPayObj() {
 
 	// js获取项目根路径，如： http://localhost:8083/uimcardprj
 	titanPayObj.getRootPath = function() {
-		var path = titanPayObj.findScriptTaget();
-		if (path) {
-			path = path.replace('js/titanpay.js', '');
-		}
-		return path;
+		//var path = titanPayObj.findScriptTaget();
+		//if (path) {
+		//	path = path.replace('js/titanpay.js', '');
+		//}
+		return js_base_path;
 
 	}
 
