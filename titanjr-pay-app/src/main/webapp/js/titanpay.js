@@ -21,13 +21,10 @@ function initTitanPayObj() {
 	// var timeIntervalObj = null;
 	var titan_rsakey = null;
 
-	// js获取项目根路径，如： http://localhost:8083/uimcardprj
+	// js获取项目根路径 
 	titanPayObj.getRootPath = function() {
-		//var path = titanPayObj.findScriptTaget();
-		//if (path) {
-		//	path = path.replace('js/titanpay.js', '');
-		//}
-		return js_base_path;
+		//不能通过http://www.fangcang.com/titanjr-pay-app获取，因为繁体版前缀不是fangcang.com
+		return "/titanjr-pay-app/";
 
 	}
 
@@ -82,7 +79,7 @@ function initTitanPayObj() {
 	}
 
 	titanPayObj.createPayForm = function(address) {
-		var rsaJs = config.address + "js/rsa/RSA.js";
+		var rsaJs =  config.address + "js/rsa/RSA.js";
 		var payAddr = config.address + 'trade/titanPay.action';
 		var elscript = document.createElement("script");
 		elscript.src = rsaJs;
