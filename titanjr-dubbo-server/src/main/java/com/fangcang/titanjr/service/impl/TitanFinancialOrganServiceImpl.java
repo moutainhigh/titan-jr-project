@@ -76,6 +76,7 @@ import com.fangcang.titanjr.dto.bean.OrgImageInfo;
 import com.fangcang.titanjr.dto.bean.OrgSubDTO;
 import com.fangcang.titanjr.dto.bean.RSOrg;
 import com.fangcang.titanjr.dto.bean.TitanOpenOrgDTO;
+import com.fangcang.titanjr.dto.request.BalanceInfoRequest;
 import com.fangcang.titanjr.dto.request.CancelOrgBindRequest;
 import com.fangcang.titanjr.dto.request.CashierDeskInitRequest;
 import com.fangcang.titanjr.dto.request.DeleteBindUserRequest;
@@ -121,7 +122,6 @@ import com.fangcang.titanjr.dto.response.UserInfoPageResponse;
 import com.fangcang.titanjr.dto.response.UserRegisterResponse;
 import com.fangcang.titanjr.dto.response.VerifyCheckCodeResponse;
 import com.fangcang.titanjr.entity.TitanAccount;
-import com.fangcang.titanjr.entity.TitanBalanceInfo;
 import com.fangcang.titanjr.entity.TitanCheckCode;
 import com.fangcang.titanjr.entity.TitanOpenOrg;
 import com.fangcang.titanjr.entity.TitanOrg;
@@ -161,6 +161,7 @@ import com.fangcang.titanjr.rs.response.PersonOrgUpdateResponse;
 import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanCodeCenterService;
+import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
@@ -213,6 +214,9 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
     private TitanCheckCodeDao checkCodeDao;
     @Resource
     private TitanFinancialUserService titanFinancialUserService;
+    
+    @Resource
+    private TitanFinancialAccountService accountService;
     @Resource
 	private TitanFinancialSendSMSService smsService;
     @Resource
@@ -1101,21 +1105,10 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	        		}
 	        		
 	        		if(CommonConstant.OPERATE_SUCCESS.equals(orgBaseResponse.getOperateStatus())){
-	            		TitanAccount account = new TitanAccount();
-	            		account.setUserid(newOrgEntity.getUserid());
-	            		account.setAccountcode(titanCodeCenterService.createTitanAccountCode());
-	            		account.setAccountname(newOrgEntity.getUserid());
-	            		account.setAllownopwdpay(0);
-	            		account.setCreditamount(0d);
-	            		account.setNopwdpaylimit(CommonConstant.NO_PWD_PAY_LIMIT);
-	            		account.setSettleamount(0d);
-	            		account.setForzenamount(0d);
-	            		account.setBalanceoverlimit(0d);
-	            		account.setUsableamount(0d);
-	            		account.setTotalamount(0d);
-	            		account.setCreator(organCheckRequest.getOperator());
-	            		account.setCreatetime(nowDate);
-	            		titanAccountDao.insert(account);
+	            		BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
+	            		balanceInfoRequest.setUserId(newOrgEntity.getUserid());
+	            		
+	            		accountService.synBalanceInfo(balanceInfoRequest);
 	            		
 	            		CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest(); 
 	            		cashierDeskInitRequest.setUserId(newOrgEntity.getUserid());

@@ -1,6 +1,13 @@
 package com.fangcang.titanjr.dto.request;
 
-public class BalanceInfoRequest {
+import java.io.Serializable;
+
+public class BalanceInfoRequest implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7234831450034808385L;
 	private String userId;
 	private String finaccountId;
 

@@ -12,16 +12,16 @@ import com.fangcang.titanjr.entity.TitanBalanceInfo;
 import com.fangcang.titanjr.entity.parameter.TitanBalanceInfoParam;
 
 public class TitanBalanceInfoDaoImpl implements TitanBalanceInfoDao {
-
-	@Resource
-	private GenericDAO genericDAO ;
+	
+	@Resource(name="baseSqlMapClient")
+	private GenericDAO genericDAO; 
 	
 	@Override
 	public boolean selectForPage(TitanBalanceInfoParam param,
 			PaginationSupport<TitanBalanceInfo> paginationSupport) throws DaoException {
 		
 		try {
-			  genericDAO.selectForPage("com.fangcang.titanjr.dao.TitanBalanceInfoDao.queryList", param, paginationSupport);
+			genericDAO.selectForPage("com.fangcang.titanjr.dao.TitanBalanceInfoDao.queryList", param, paginationSupport);
 		} catch (Exception e) {
 			throw new DaoException(e);
 		}

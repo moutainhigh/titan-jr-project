@@ -11,7 +11,6 @@ public class TitanBalanceInfo implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = -3270421907480612181L;
 	private Integer accountid;
-	private String finaccountid;
 	private String userid;
 	private String productid;
 	private String accountcode;
@@ -57,12 +56,6 @@ public class TitanBalanceInfo implements java.io.Serializable {
 	private Date modifytime;
 	
 	
-	public String getFinaccountid() {
-		return finaccountid;
-	}
-	public void setFinaccountid(String finaccountid) {
-		this.finaccountid = finaccountid;
-	}
 	public Integer getAccountid() {
 		return accountid;
 	}

@@ -113,6 +113,7 @@ import com.fangcang.titanjr.rs.response.BalanceFreezeResponse;
 import com.fangcang.titanjr.rs.response.BalanceUnFreezeResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.BusinessLogService;
+import com.fangcang.titanjr.service.TitanCodeCenterService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
@@ -177,6 +178,9 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     private TitanTransferReqDao transferReqDao;
     
     @Resource
+    private TitanCodeCenterService codeCenterService;
+    
+    @Resource
 	private BusinessLogService businessLogService;
     @Resource
     private TitanBalanceInfoDao balanceInfoDao;
@@ -194,13 +198,13 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	 * @param list 本地帐户
 	 * @return
 	 */
-	private boolean localIsExist(BalanceInfo item,List<TitanBalanceInfo> list){
+	private String localIsExist(BalanceInfo item,List<TitanBalanceInfo> list){
 		for(TitanBalanceInfo banlance : list){
-			if(banlance.getFinaccountid().equals(item.getFinaccountid())){
-				return true;
+			if((banlance.getUserid().equals(item.getUserid()))&&(banlance.getProductid().equals(item.getProductid()))){
+				return banlance.getAccountcode();
 			}
 		}
-		return false;
+		return "";
 	}
 
 	@Override
@@ -209,6 +213,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		BaseResponseDTO responseDTO = new BaseResponseDTO();
 		if(!StringUtil.isValidString(balanceInfoRequest.getUserId())){
 			responseDTO.putErrorResult("userid参数不能为空");
+			log.error("同步余额账户,userid参数不能为空");
 			return responseDTO;
 		}
 		//查出机构本地帐户
@@ -224,10 +229,11 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
         //从融数同步账户
 		if(response.isSuccess()&&CollectionUtils.isNotEmpty(response.getBalanceInfoList())){
 			for(BalanceInfo item :response.getBalanceInfoList()){
-				if(localIsExist(item,balanceInfoList)){
+				String accountCode = localIsExist(item,balanceInfoList);
+				if(StringUtil.isValidString(localIsExist(item,balanceInfoList))){
 					//存在,则更新金额
 					TitanBalanceInfo entity = new TitanBalanceInfo();
-					entity.setFinaccountid(item.getFinaccountid());
+					entity.setAccountcode(accountCode);
 					entity.setInitcreditamount(Long.parseLong(item.getBalancecredit()));
 					entity.setInitsettleamount(Long.parseLong(item.getBalancesettle()));
 					entity.setInitfrozonamount(Long.parseLong(item.getBalancefrozon()));
@@ -238,7 +244,10 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				}else{
 					//不存在,则插入
 					TitanBalanceInfo entity = new TitanBalanceInfo();
-					entity.setFinaccountid(item.getFinaccountid());
+					entity.setAccountcode(codeCenterService.createTitanAccountCode());
+					entity.setUserid(item.getUserid());
+					entity.setProductid(item.getProductid());
+					entity.setCurrency(1);//人民币
 					entity.setInitcreditamount(Long.parseLong(item.getBalancecredit()));
 					entity.setInitsettleamount(Long.parseLong(item.getBalancesettle()));
 					entity.setInitfrozonamount(Long.parseLong(item.getBalancefrozon()));
@@ -264,7 +273,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		PaginationSupport<TitanOrg> paginationSupport = new PaginationSupport<TitanOrg>();
 		paginationSupport.setPageSize(100);
 		paginationSupport.setCurrentPage(page);
-		paginationSupport.setOrderBy(" orgid aes ");
+		paginationSupport.setOrderBy(" orgid ASC ");
 		paginationSupport = orgdao.selectForPage(null, paginationSupport);
 		
 		while (paginationSupport.getTotalPage()>=page) {
@@ -276,6 +285,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			page++;
 			paginationSupport.setCurrentPage(page);
 			paginationSupport = orgdao.selectForPage(null, paginationSupport);
+			log.info("同步,总页数："+paginationSupport.getTotalPage()+","+page);
 		}
 		
 	}

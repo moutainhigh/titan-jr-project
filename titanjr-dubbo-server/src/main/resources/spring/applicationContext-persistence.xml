@@ -136,5 +136,7 @@
 	<bean id="orgCardMapDao" class="com.fangcang.titanjr.dao.impl.TitanOrgCardMapDaoImpl" parent="baseSqlMapClient"></bean>
 	<bean id="benchmarkRateConfigDao" class="com.fangcang.titanjr.dao.impl.BenchmarkRateConfigDaoImpl" parent="baseSqlMapClient"></bean>
 	
+	<bean id="balanceInfoDao" class="com.fangcang.titanjr.dao.impl.TitanBalanceInfoDaoImpl"></bean>
+	
 </beans>
 
