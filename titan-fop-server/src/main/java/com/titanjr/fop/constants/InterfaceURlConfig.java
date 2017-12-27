@@ -18,4 +18,12 @@ public class InterfaceURlConfig {
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.COMPANY_CREATE, "/organ/createCompany.shtml");
     }
 
+    public static void main(String[] args) {
+        //1492784442821246488
+        //1514279778259484020
+        //1514279806079634938
+        //1514279601978
+
+    }
+
 }

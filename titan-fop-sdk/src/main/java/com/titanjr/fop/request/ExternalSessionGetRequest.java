@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by zhaoshan on 2017/12/20.
  */
-public class ExternalSessionGetRequest implements FopRequest<ExternalSessionGetResponse> {
+public class ExternalSessionGetRequest extends BaseRequest implements FopRequest<ExternalSessionGetResponse> {
 
     public ExternalSessionGetRequest() {
 

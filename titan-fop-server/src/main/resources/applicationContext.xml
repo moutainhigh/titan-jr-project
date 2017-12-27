@@ -33,6 +33,15 @@
     <context:annotation-config/>
     <mvc:annotation-driven/>
 
+    <mvc:interceptors>
+        <!--只在入口校验-->
+        <mvc:interceptor>
+            <mvc:mapping path="/fopapi.shtml"/>
+            <bean class="com.titanjr.fop.interceptor.RequestValidateInterceptor"></bean>
+        </mvc:interceptor>
+
+    </mvc:interceptors>
+
     <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>-->
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="messageConverters">

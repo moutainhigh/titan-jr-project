@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by zhaoshan on 2017/12/21.
  */
-public class WheatfieldBalanceGetlistRequest implements FopRequest<WheatfieldBalanceGetlistResponse> {
+public class WheatfieldBalanceGetlistRequest extends BaseRequest implements FopRequest<WheatfieldBalanceGetlistResponse> {
 
     private final static Logger logger = LoggerFactory.getLogger(WheatfieldBalanceGetlistRequest.class);
 

@@ -52,7 +52,7 @@ public abstract class FopUtils {
     }
 
 
-    private static byte[] encryptMD5(String encryptRequest) throws IOException {
+    public static byte[] encryptMD5(String encryptRequest) throws IOException {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
             byte[] messageByte = messageDigest.digest(encryptRequest.getBytes("UTF-8"));
@@ -62,7 +62,7 @@ public abstract class FopUtils {
         }
     }
 
-    private static String byte2hex(byte[] byteRequest) {
+    public static String byte2hex(byte[] byteRequest) {
         StringBuilder response = new StringBuilder();
 
         for (int index = 0; index < byteRequest.length; ++index) {
