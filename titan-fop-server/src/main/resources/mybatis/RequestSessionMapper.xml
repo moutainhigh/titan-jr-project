@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.titanjr.fop.dao.RequestSessionDao">
+
+
+    <select id="testQuery" resultType="java.lang.Integer">
+        select count(*) from t_tfs_transorder
+    </select>
+
+
+    <insert id="saveRequestSession" parameterType="com.titanjr.fop.entity.RequestSession">
+	   INSERT INTO `t_loan_creditcompany` (
+      	`waterurl`
+      )
+      VALUES
+      	(
+      		#{session}
+      	)
+    </insert>
+
+</mapper>

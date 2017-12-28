@@ -1,12 +1,12 @@
 package com.titanjr.fop.util;
 
-import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
-import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
-import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.util.StringUtil;
 import com.titanjr.fop.api.DefaultFopClient;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.http.*;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -17,13 +17,8 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.*;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.security.SecureRandom;
 import java.util.*;
 
 /**
@@ -138,5 +133,4 @@ public class WebUtils {
     public static String getActualUrl(String initServerUrl, String appKey, String appSecret, String session) {
         return "http://local.fangcang.com:8090/titan-fop-server/fopapi.shtml";
     }
-
 }

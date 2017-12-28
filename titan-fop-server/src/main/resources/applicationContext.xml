@@ -21,7 +21,10 @@
 
 
     <import resource="applicationContext-service.xml"/>
-    <context:component-scan base-package="com.fangcang.titanjr.service"/>
+    <import resource="applicationContext-dataSource.xml"/>
+    <import resource="applicationContext-persistence.xml"/>
+
+    <context:component-scan base-package="com.titanjr.fop.service.impl"/>
 
     <bean id="placeholderspring" class="com.ctol.fangcang.common.Spring3PropertyConfigurer">
         <property name="location">

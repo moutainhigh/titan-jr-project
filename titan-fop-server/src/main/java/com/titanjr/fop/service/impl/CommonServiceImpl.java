@@ -4,10 +4,12 @@ import com.titanjr.fop.exceptions.ServiceException;
 import com.titanjr.fop.request.ExternalSessionGetRequest;
 import com.titanjr.fop.response.ExternalSessionGetResponse;
 import com.titanjr.fop.service.CommonService;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by zhaoshan on 2017/12/22.
  */
+@Component
 public class CommonServiceImpl implements CommonService {
 
     @Override

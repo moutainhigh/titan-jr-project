@@ -30,11 +30,7 @@
     <dubbo:consumer check="false"/>
 
     <!-- retries:重试次数 -->
-    <dubbo:reference id="titanFinancialOrganService" interface="com.fangcang.titanjr.service.TitanFinancialOrganService"
-                     retries="0" timeout="800000"/>
-    <dubbo:reference id="titanFinancialUserService" interface="com.fangcang.titanjr.service.TitanFinancialUserService"
-                     retries="0" timeout="10000"/>
-    <dubbo:reference id="titanFinancialTradeService" interface="com.fangcang.titanjr.service.TitanFinancialTradeService"
+    <dubbo:reference id="TitanFinancialAccountService" interface="com.fangcang.titanjr.service.TitanFinancialAccountService"
                      retries="0" timeout="800000"/>
 
 </beans>
