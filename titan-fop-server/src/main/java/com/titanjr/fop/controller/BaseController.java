@@ -1,5 +1,6 @@
 package com.titanjr.fop.controller;
 
+import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.response.FopResponse;
 import net.sf.json.JSONSerializer;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -42,9 +43,16 @@ public class BaseController {
     }
 
     public String validRequestSign(HttpServletRequest request, FopResponse fopResponse) {
-        if (request.getParameter("signValid").equals("false")) {
-            fopResponse.setErrorCode("");
-            fopResponse.setMsg("");
+        if (null != request.getAttribute("signValid") &&
+                request.getAttribute("signValid").toString().equals("false")) {
+            fopResponse.setErrorCode(ReturnCodeEnum.CODE_SIGN_ERROR.getCode());
+            fopResponse.setMsg(ReturnCodeEnum.CODE_SIGN_ERROR.getMsg());
+            return toJson(fopResponse);
+        }
+        if (null != request.getAttribute("sessionValid") &&
+                request.getAttribute("sessionValid").toString().equals("false")){
+            fopResponse.setErrorCode(ReturnCodeEnum.CODE_SESSION_ERROR.getCode());
+            fopResponse.setMsg(ReturnCodeEnum.CODE_SESSION_ERROR.getMsg());
             return toJson(fopResponse);
         }
         return null;

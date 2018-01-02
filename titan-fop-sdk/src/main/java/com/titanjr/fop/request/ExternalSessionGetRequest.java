@@ -11,6 +11,16 @@ import java.util.Map;
  */
 public class ExternalSessionGetRequest extends BaseRequest implements FopRequest<ExternalSessionGetResponse> {
 
+    private String extParam;
+
+    public String getExtParam() {
+        return extParam;
+    }
+
+    public void setExtParam(String extParam) {
+        this.extParam = extParam;
+    }
+
     public ExternalSessionGetRequest() {
 
     }
@@ -21,6 +31,7 @@ public class ExternalSessionGetRequest extends BaseRequest implements FopRequest
 
     public Map<String, String> getTextParams() {
         FopHashMap textParams = new FopHashMap();
+        textParams.put("extParam",extParam);
         return textParams;
     }
 
@@ -29,6 +40,6 @@ public class ExternalSessionGetRequest extends BaseRequest implements FopRequest
     }
 
     public void check() throws ApiRuleException {
-        
+//        throw new ApiRuleException("excode", "exmsg");
     }
 }

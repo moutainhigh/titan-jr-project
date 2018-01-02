@@ -15,6 +15,7 @@ public class InterfaceURlConfig {
     static {
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.SESSION_GET, "/common/getSession.shtml");
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.BALANCE_GETLIST, "/account/getBalanceList.shtml");
+        INTERFACE_URL_MAP.put(InterfaceConfigEnum.FREEZE_BALANCE, "/account/freezeBalance.shtml");
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.COMPANY_CREATE, "/organ/createCompany.shtml");
     }
 

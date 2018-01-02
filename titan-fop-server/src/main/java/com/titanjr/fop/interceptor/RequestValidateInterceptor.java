@@ -1,21 +1,23 @@
 package com.titanjr.fop.interceptor;
 
+import com.fangcang.util.SpringContextUtil;
 import com.fangcang.util.StringUtil;
+import com.titanjr.fop.dao.RequestSessionDao;
+import com.titanjr.fop.entity.RequestSession;
 import com.titanjr.fop.util.FopUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * 基础校验操作
+ * 验证签名sign信息以及session信息
  * Created by zhaoshan on 2016/4/18.
  */
 public class RequestValidateInterceptor implements HandlerInterceptor {
@@ -53,6 +55,20 @@ public class RequestValidateInterceptor implements HandlerInterceptor {
             httpServletRequest.setAttribute("signValid", "false");
         } else {
             httpServletRequest.setAttribute("signValid", "true");
+            httpServletRequest.setAttribute("appSecret",appSecret);
+        }
+
+        //验证session信息：
+        RequestSessionDao requestSessionDao = (RequestSessionDao)SpringContextUtil.getBean("requestSessionDao");
+        if (StringUtil.isValidString(httpServletRequest.getParameter("session"))){
+            RequestSession requestSession = new RequestSession();
+            requestSession.setAppKey(httpServletRequest.getParameter("appKey"));
+            requestSession.setAppSecret(appSecret);
+            requestSession.setSession(httpServletRequest.getParameter("session"));
+            List<RequestSession> sessionList = requestSessionDao.queryReqSession(requestSession);
+            if (CollectionUtils.isEmpty(sessionList)){
+                httpServletRequest.setAttribute("sessionValid", "false");
+            }
         }
         return true;
     }

@@ -1,6 +1,6 @@
 package com.titanjr.fop.service;
 
-import com.titanjr.fop.exceptions.ServiceException;
+import com.fangcang.exception.ServiceException;
 import com.titanjr.fop.request.ExternalSessionGetRequest;
 import com.titanjr.fop.response.ExternalSessionGetResponse;
 

@@ -3,6 +3,7 @@ package com.titanjr.fop.service;
 import com.fangcang.exception.ServiceException;
 import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceAuthcodeserviceRequest;
 
 import java.util.List;
 
@@ -12,10 +13,19 @@ import java.util.List;
 public interface AccountService {
 
     /**
-     * 查询获取
+     * 查询获取账户余额列表
      * @param balanceGetlistRequest
      * @return
      * @throws ServiceException
      */
     List<SHBalanceInfo> getAccountBalanceList(WheatfieldBalanceGetlistRequest balanceGetlistRequest) throws ServiceException;
+
+
+    /**
+     *
+     * @param authcodeserviceRequest
+     * @return
+     * @throws ServiceException
+     */
+    String freezeAccountBalance(WheatfieldOrderServiceAuthcodeserviceRequest authcodeserviceRequest) throws ServiceException;
 }

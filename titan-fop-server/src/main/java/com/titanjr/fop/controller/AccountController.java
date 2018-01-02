@@ -40,6 +40,7 @@ public class AccountController extends BaseController {
 
 
         WheatfieldBalanceGetlistRequest getlistRequest = BeanUtils.switch2RequestDTO(WheatfieldBalanceGetlistRequest.class,request);
+
         if (null == getlistRequest){
             // TODO 参数转换错误
             return null;

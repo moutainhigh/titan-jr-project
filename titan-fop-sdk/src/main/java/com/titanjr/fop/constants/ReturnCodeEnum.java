@@ -5,7 +5,9 @@ package com.titanjr.fop.constants;
  */
 public enum ReturnCodeEnum {
 
-    CODE_SUCCESS("1","成功"),CODE_PARAM_ERROR("-200","参数错误"),CODE_SYS_ERROR("-300","系统错误");
+    CODE_SIGN_ERROR("-200","sign错误"),
+    CODE_SESSION_ERROR("-201","session信息错误"),
+    CODE_SYS_ERROR("-300","系统错误");
     private String code;
     private String msg;
 

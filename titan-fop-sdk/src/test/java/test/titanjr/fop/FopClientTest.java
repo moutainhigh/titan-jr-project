@@ -26,10 +26,10 @@ public class FopClientTest {
     public void testGetSession() {
 
         ExternalSessionGetRequest sessionGetReq = new ExternalSessionGetRequest();
-
+        sessionGetReq.setExtParam("扩展参数");
         try {
             ExternalSessionGetResponse sessionGetRsp = fopClient.execute(sessionGetReq);
-            sessionGetRsp.getSession();
+            System.out.println(sessionGetRsp.getSession());
         } catch (ApiException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
