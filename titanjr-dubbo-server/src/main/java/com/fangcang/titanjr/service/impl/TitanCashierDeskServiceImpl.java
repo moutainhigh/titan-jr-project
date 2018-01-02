@@ -403,7 +403,7 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
         	commonPayHistoryDTO.setIdtype("1");
         }
 
-        ValidateResponse res = GenericValidate.validateObj(commonPayHistoryDTO);
+        ValidateResponse res = GenericValidate.validateNew(commonPayHistoryDTO);
         if (!res.isSuccess()) {
             log.error("saveQuickcardHistory error：" + res.getReturnMessage());
             baseResponseDTO.putErrorResult(res.getReturnMessage());

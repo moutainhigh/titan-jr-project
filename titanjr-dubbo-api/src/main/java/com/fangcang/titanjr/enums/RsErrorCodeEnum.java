@@ -3,7 +3,7 @@ package com.fangcang.titanjr.enums;
 import com.fangcang.util.StringUtil;
 
 /**
- * 融数错误代码
+ * 融数错误代码，用于快捷支付
  * @author Jerry
  */
 public enum RsErrorCodeEnum {

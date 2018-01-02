@@ -151,7 +151,7 @@ public class TitanFinanceTradeFacadeImpl implements TitanFinancialTradeFacade {
     	
     	try {
     		
-    		ValidateResponse res = GenericValidate.validateObj(updateFreezeRequest);
+    		ValidateResponse res = GenericValidate.validateNew(updateFreezeRequest);
 			if(!res.isSuccess()){
 				log.error("参数错误 =====>> " + res.getReturnMessage());
 	    		baseResponse.putErrorResult(res.getReturnMessage());

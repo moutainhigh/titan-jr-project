@@ -6,16 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -31,7 +25,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.springframework.beans.propertyeditors.URLEditor;
 
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.util.StringUtil;
@@ -46,6 +39,7 @@ public class HttpClient {
 	 * @param response
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private static String getFileName(HttpResponse response) {
 		Header contentHeader = response.getFirstHeader("Content-Disposition");
 		String filename = null;
@@ -229,4 +223,5 @@ public class HttpClient {
 		}
 		return response;
 	}
+	
 }
