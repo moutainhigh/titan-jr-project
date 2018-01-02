@@ -234,12 +234,12 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					//存在,则更新金额
 					TitanBalanceInfo entity = new TitanBalanceInfo();
 					entity.setAccountcode(accountCode);
-					entity.setInitcreditamount(Long.parseLong(item.getBalancecredit()));
-					entity.setInitsettleamount(Long.parseLong(item.getBalancesettle()));
-					entity.setInitfrozonamount(Long.parseLong(item.getBalancefrozon()));
-					entity.setInitoverlimit(Long.parseLong(item.getBalanceoverlimit()));
-					entity.setInitusablelimit(Long.parseLong(item.getBalanceusable()));
-					entity.setInittotalamount(Long.parseLong(item.getAmount()));
+					entity.setCreditamount(Long.parseLong(item.getBalancecredit()));
+					entity.setSettleamount(Long.parseLong(item.getBalancesettle()));
+					entity.setFrozonamount(Long.parseLong(item.getBalancefrozon()));
+					entity.setOverlimit(Long.parseLong(item.getBalanceoverlimit()));
+					entity.setUsablelimit(Long.parseLong(item.getBalanceusable()));
+					entity.setTotalamount(Long.parseLong(item.getAmount()));
 					balanceInfoDao.update(entity);
 				}else{
 					//不存在,则插入
@@ -248,12 +248,12 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					entity.setUserid(item.getUserid());
 					entity.setProductid(item.getProductid());
 					entity.setCurrency(1);//人民币
-					entity.setInitcreditamount(Long.parseLong(item.getBalancecredit()));
-					entity.setInitsettleamount(Long.parseLong(item.getBalancesettle()));
-					entity.setInitfrozonamount(Long.parseLong(item.getBalancefrozon()));
-					entity.setInitoverlimit(Long.parseLong(item.getBalanceoverlimit()));
-					entity.setInitusablelimit(Long.parseLong(item.getBalanceusable()));
-					entity.setInittotalamount(Long.parseLong(item.getAmount()));
+					entity.setCreditamount(Long.parseLong(item.getBalancecredit()));
+					entity.setSettleamount(Long.parseLong(item.getBalancesettle()));
+					entity.setFrozonamount(Long.parseLong(item.getBalancefrozon()));
+					entity.setOverlimit(Long.parseLong(item.getBalanceoverlimit()));
+					entity.setUsablelimit(Long.parseLong(item.getBalanceusable()));
+					entity.setTotalamount(Long.parseLong(item.getAmount()));
 					entity.setStatus(1);//1：正常,2:冻结中
 					entity.setCreatetime(new Date());
 					balanceInfoDao.insert(entity);

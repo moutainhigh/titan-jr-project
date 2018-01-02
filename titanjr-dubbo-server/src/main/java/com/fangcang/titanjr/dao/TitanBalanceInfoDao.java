@@ -5,7 +5,6 @@ import java.util.List;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.entity.TitanBalanceInfo;
-import com.fangcang.titanjr.entity.parameter.TitanAccountParam;
 import com.fangcang.titanjr.entity.parameter.TitanBalanceInfoParam;
 
 public interface TitanBalanceInfoDao {

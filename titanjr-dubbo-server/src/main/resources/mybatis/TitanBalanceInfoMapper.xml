@@ -17,33 +17,33 @@
     <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanBalanceInfo" useGeneratedKeys="true" keyProperty="accountid">
     insert into t_tfs_balanceinfo ( userid, 
       productid, accountcode, accountname, 
-      currency, initcreditamount,initsettleamount,initfrozonamount,
-      initoverlimit,initusablelimit,inittotalamount,status,creator,createtime)
+      currency, creditamount,settleamount,frozonamount,
+      overlimit,usablelimit,totalamount,status,creator,createtime)
     values ( #{userid}, #{productid}, #{accountcode}, #{accountname}, #{currency},
-    #{initcreditamount},#{initsettleamount},#{initfrozonamount},#{initoverlimit},#{initusablelimit},
-    #{inittotalamount},#{status},#{creator},#{createtime})
+    #{creditamount},#{settleamount},#{frozonamount},#{overlimit},#{usablelimit},
+    #{totalamount},#{status},#{creator},#{createtime})
   </insert>
     <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanBalanceInfo">
         update t_tfs_balanceinfo
         <set>
-            <if test="initcreditamount != null">
-                initcreditamount = #{initcreditamount},
+            <if test="creditamount != null">
+                creditamount = #{creditamount},
             </if>
-            <if test="initsettleamount != null">
-                initsettleamount = #{initsettleamount},
+            <if test="settleamount != null">
+                settleamount = #{settleamount},
             </if>
-            <if test="initfrozonamount != null">
-                initfrozonamount = #{initfrozonamount},
+            <if test="frozonamount != null">
+                frozonamount = #{frozonamount},
             </if>
-            <if test="initoverlimit != null">
-                initoverlimit = #{initoverlimit},
+            <if test="overlimit != null">
+                overlimit = #{overlimit},
             </if>
             
-            <if test="initusablelimit != null">
-                initusablelimit = #{initusablelimit},
+            <if test="usablelimit != null">
+                usablelimit = #{usablelimit},
             </if>
-            <if test="inittotalamount != null">
-                inittotalamount = #{inittotalamount},
+            <if test="totalamount != null">
+                totalamount = #{totalamount},
             </if>
             <if test="status != null">
                 status = #{status},

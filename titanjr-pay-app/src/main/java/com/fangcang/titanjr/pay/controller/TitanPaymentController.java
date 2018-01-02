@@ -48,6 +48,7 @@ import com.fangcang.titanjr.dto.request.AddPayLogRequest;
 import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
 import com.fangcang.titanjr.dto.request.ConfirmOrdernQueryRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
+import com.fangcang.titanjr.dto.request.RecordRechargeRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
@@ -75,6 +76,7 @@ import com.fangcang.titanjr.pay.strategy.pay.QuickPay;
 import com.fangcang.titanjr.pay.util.IPUtil;
 import com.fangcang.titanjr.pay.util.TerminalUtil;
 import com.fangcang.titanjr.redis.service.RedisService;
+import com.fangcang.titanjr.service.AccountRecordService;
 import com.fangcang.titanjr.service.BusinessLogService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
@@ -137,6 +139,9 @@ public class TitanPaymentController extends BaseController {
 	private RedisService redisService;
 	
 	@Resource
+	private AccountRecordService accountRecordService;
+	
+	@Resource
 	private RSGatewayInterfaceService rsGatewayInterfaceService;
 	
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
@@ -190,6 +195,13 @@ public class TitanPaymentController extends BaseController {
     			transOrderDTO.setFreezeType(FreezeTypeEnum.FREEZE_PAYEE.getKey());
     		}
         	
+        	RecordRechargeRequest recordRechargeRequest  = new RecordRechargeRequest();
+        	recordRechargeRequest.setAmount(Long.parseLong(rechargeResultConfirmRequest.getPayAmount()));
+        	recordRechargeRequest.setTransOrderId(transOrderDTO.getTransid());
+        	recordRechargeRequest.setProduct(transOrderDTO.getProductid());
+        	recordRechargeRequest.setUserId(transOrderDTO.getUserid());
+        	accountRecordService.recharge(recordRechargeRequest);
+        	
         	//validate transfer order 
         	boolean validateResult = titanPaymentService.validateIsConfirmed(transOrderDTO.getTransid());
 			if(!validateResult){
@@ -203,7 +215,7 @@ public class TitanPaymentController extends BaseController {
 				unlockOutTradeNoList(orderNo);
 				return ;
 			}
-        	
+			
         	// update recharge order
 			int row = titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.RECHARFE_SUCCESS.getStatus()+"");
         	if(row<1){
