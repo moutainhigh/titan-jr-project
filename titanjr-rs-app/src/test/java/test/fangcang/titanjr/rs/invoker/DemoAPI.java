@@ -78,7 +78,7 @@ public class DemoAPI {
 		//检查提现卡信息：存在返回false，不存在返回ture  modityWithDrawCard
 //		String requestType = "ruixue.wheatfield.accountnum.ckeck";
 		//单笔转账操作
-		String requestType = "ruixue.wheatfield.batchquery.person";
+		String requestType = "ruixue.wheatfield.order.service.returngoods";
 		//String requestType = "ruixue.wheatfield.person.account.opr";
 		//查询信贷账户余额 TJM10000087
 		//String requestType = "ruixue.wheatfield.ordern.query";
@@ -170,8 +170,15 @@ public class DemoAPI {
 		}else if ("ruixue.wheatfield.order.transfer".equals(requestType)) {
 			//单笔转账
 			strMsg = doWheatfieldOrderTransfer(session);
+		}else if ("ruixue.wheatfield.user.thaw".equals(requestType)) {
+			//账户资金解冻
+			strMsg = thaw();
+		}else if ("ruixue.wheatfield.order.service.returngoods".equals(requestType)) {
+			//下退款单
+			strMsg = returngoods();
 		}
 
+		
 		if (strMsg == null) {
 			strMsg = "操作成功！";
 		}
@@ -1314,6 +1321,89 @@ public class DemoAPI {
 		}
 		return strError;
 	}
+	/***
+	 * 账户资金解冻
+	 * @return
+	 */
+	private static String thaw(){
+		String strError = null;
+		try {
+			
+			Date date = new Date();
+			WheatfieldUserThawRequest req = new WheatfieldUserThawRequest();
+			req.setAmount(4800L);
+			req.setUserid("141223100000056");
+			req.setFunccode("4018");
+			req.setMerchantcode("M000016");
+			req.setOrderamount(4800L);
+			req.setOrdercount(1);
+			req.setOrderdate(date);
+			req.setOrderno("tjr11022333");
+			req.setRequesttime(date);
+			req.setStatus(1);
+			
+			req.setUserfee(0L);
+			req.setProductid("P000148");
+			req.setUseripaddress("10.21.54.69");
+			 
+			
+			WheatfieldUserThawResponse rsp = ropClient
+					.execute(req, session);
+			if (rsp != null) {
+				System.out.println("返回报文: \n" + rsp.getBody());
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						strError = rsp.getSubMsg();
+					} else {
+						strError = rsp.getMsg();
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		} finally {
+		}
+		
+		return strError;
+	}
+	
+	/***
+	 * 下退款单
+	 * @return
+	 */
+	public static String returngoods(){
+		
+		String strError = null;
+		try {
+			WheatfieldOrderServiceReturngoodsRequest req = new WheatfieldOrderServiceReturngoodsRequest();
+			req.setOrderid("2017122901125000002");
+			req.setAmount("1200");
+			req.setUserorderid("TJO171229011242365");
+			
+			
+			WheatfieldOrderServiceReturngoodsResponse rsp = ropClient
+					.execute(req, session);
+			if (rsp != null) {
+				System.out.println("返回报文: \n" + rsp.getBody());
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						strError = rsp.getSubMsg();
+					} else {
+						strError = rsp.getMsg();
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		} finally {
+		}
+		return strError;
+	}
+	
+	
+	
 	
 	/**
 	 * 修改个人机构信息
