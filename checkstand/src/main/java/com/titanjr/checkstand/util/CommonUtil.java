@@ -8,6 +8,7 @@
 package com.titanjr.checkstand.util;
 
 import java.util.Map;
+import java.util.Random;
 
 /**
  * @author Jerry
@@ -30,6 +31,22 @@ public class CommonUtil {
 			sb.append("]\n");
 		}
 		return sb.toString();
+	}
+	
+	/**
+	 * 生成随机码
+	 * @param n
+	 * @return
+	 */
+	public static String getValidatecode(int n) {
+		Random random = new Random();
+		String sRand = "";
+		n = n == 0 ? 4 : n;// default 4
+		for (int i = 0; i < n; i++) {
+			String rand = String.valueOf(random.nextInt(10));
+			sRand += rand;
+		}
+		return sRand;
 	}
 
 }

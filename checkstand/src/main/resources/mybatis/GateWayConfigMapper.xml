@@ -3,7 +3,7 @@
 <mapper namespace="com.titanjr.checkstand.dao.GateWayConfigDao">
 
     <select id="queryGateWayConfigList" resultType="com.titanjr.checkstand.dto.GateWayConfigDTO">
-    	select * from t_gateway_config_test
+    	select * from t_gateway_config
     </select>
 
 </mapper>

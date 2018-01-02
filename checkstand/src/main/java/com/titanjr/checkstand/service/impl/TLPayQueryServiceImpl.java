@@ -56,11 +56,11 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 			
 			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(tlNetBankPayQueryRequest.getMerchantId()+"_1_01_"+tlNetBankPayQueryRequest.getRequestType());
 			tlNetBankPayQueryRequest.setSignMsg(SignMsgBuilder.getSignMsgForOrderQuery(tlNetBankPayQueryRequest, gateWayConfigDTO.getSecretKey()));
-			logger.info("【通联-支付订单查询】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
+			logger.info("【通联-网银支付查询】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
 			
 			HttpPost httpPost = new HttpPost(gateWayConfigDTO.getGateWayUrl());
 			List<NameValuePair> params = BeanConvertor.beanToList(tlNetBankPayQueryRequest);
-			logger.info("【通联-支付订单查询】请求参数：{}", tlNetBankPayQueryRequest.toString());
+			logger.info("【通联-网银支付查询】请求参数：{}", tlNetBankPayQueryRequest.toString());
 			
 			HttpResponse httpRes = HttpClient.httpRequest(params, httpPost);
 			if (null != httpRes) {
@@ -69,14 +69,14 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 				return payQueryResult(responseStr, gateWayConfigDTO.getSecretKey());
 				
 			}else{
-				logger.error("【通联-支付订单查询】失败 httpRes为空");
+				logger.error("【通联-网银支付查询】失败 httpRes为空");
 				titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 				return titanPayQueryResponse;
 			}
 			
 		} catch (Exception e) {
 			
-			logger.error("【通联-支付订单查询】发生异常：{}", e);
+			logger.error("【通联-网银支付查询】发生异常：", e);
 			titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanPayQueryResponse;
 			
@@ -92,9 +92,9 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 	private TitanPayQueryResponse payQueryResult(String responseStr, String key) throws UnsupportedEncodingException{
 		
 		TitanPayQueryResponse titanPayQueryResponse = new TitanPayQueryResponse();
-		logger.info("【通联-支付订单查询】返回信息：{}", responseStr);
+		logger.info("【通联-网银支付查询】返回信息：{}", responseStr);
 		if(!StringUtil.isValidString(responseStr)){
-			logger.error("【通联-支付订单查询】失败：返回消息为空");
+			logger.error("【通联-网银支付查询】失败：返回消息为空");
 			titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanPayQueryResponse;
 		}
@@ -114,7 +114,7 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 		
 		if (null != result.get("ERRORCODE")) {
 			
-			logger.error("【通联-支付订单查询】失败：{}", result.get("ERRORMSG"));
+			logger.error("【通联-网银支付查询】失败：{}", result.get("ERRORMSG"));
 			titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.build(result.get("ERRORMSG")));
 			return titanPayQueryResponse;
 
@@ -123,7 +123,7 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 			String payResult = result.get("payResult");
 			if (payResult.equals("1")) {
 				titanPayQueryResponse.setPayStatsu(RSPayStatusEnum.SUCCESS.getStatus());
-				logger.info("【通联-支付订单查询】查询结果为:付款成功，payResult：{}", payResult);
+				logger.info("【通联-网银支付查询】查询结果为:付款成功，payResult：{}", payResult);
 				// 支付成功，验证签名
 				PaymentResult paymentResult = new PaymentResult();
 				paymentResult.setMerchantId(result.get("merchantId"));
@@ -152,13 +152,13 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 				boolean verifyResult = paymentResult.verify();
 
 				if (verifyResult) {
-					logger.info("【通联-支付订单查询】订单支付成功，验签成功，orderNo={}", paymentResult.getOrderNo());
+					logger.info("【通联-网银支付查询】订单支付成功，验签成功，orderNo={}", paymentResult.getOrderNo());
 				} else {
-					logger.error("【通联-支付订单查询】订单支付成功，验签失败，orderNo={}", paymentResult.getOrderNo());
+					logger.error("【通联-网银支付查询】订单支付成功，验签失败，orderNo={}", paymentResult.getOrderNo());
 				}
 
 			} else {//后续关注支付失败是怎么返回的
-				logger.info("【通联-支付订单查询】查询结果为：订单尚未付款");
+				logger.info("【通联-网银支付查询】查询结果为：订单尚未付款");
 				titanPayQueryResponse.setPayStatsu(RSPayStatusEnum.PROCESS.getStatus());
 				/*titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.build("订单尚未付款"));
 				return titanPayQueryResponse;*/

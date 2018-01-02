@@ -3,11 +3,11 @@ package com.titanjr.checkstand.constants;
 import com.fangcang.util.StringUtil;
 
 /**
- * 通联退款状态枚举
+ * 通联网银退款状态枚举
  * @author Jerry
  * @date 2017年12月6日 下午5:39:49
  */
-public enum TLRefundResultEnum {
+public enum TLNetBankRefundResultEnum {
 
     UN_PROCESS("TKSUCC0001","退款未受理","0"),
     IN_AUDIT("TKSUCC0002","待通联审核","0"),
@@ -22,18 +22,18 @@ public enum TLRefundResultEnum {
     private String remark;
     private String status; //融数退款状态    0处理中，1审核失败，2退款成功 ,3退款失败，4，退款冲销
 
-    private TLRefundResultEnum(String key, String remark, String status) {
+    private TLNetBankRefundResultEnum(String key, String remark, String status) {
 		this.key = key;
 		this.remark = remark;
 		this.status = status;
 	}
 
 	
-    public static TLRefundResultEnum getTLRefundResultEnumByKey(String key){
+    public static TLNetBankRefundResultEnum getTLRefundResultEnumByKey(String key){
     	if(!StringUtil.isValidString(key)){
     		return null;
     	}
-        for (TLRefundResultEnum refundResultEnum : TLRefundResultEnum.values()){
+        for (TLNetBankRefundResultEnum refundResultEnum : TLNetBankRefundResultEnum.values()){
             if (key.equals(refundResultEnum.key)){
                 return refundResultEnum;
             }

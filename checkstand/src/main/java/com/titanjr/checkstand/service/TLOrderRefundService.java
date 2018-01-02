@@ -8,6 +8,7 @@
 package com.titanjr.checkstand.service;
 
 import com.titanjr.checkstand.request.TLNetBankOrderRefundRequest;
+import com.titanjr.checkstand.request.TLQrOrderRefundRequest;
 import com.titanjr.checkstand.respnse.TitanOrderRefundResponse;
 
 /**
@@ -23,5 +24,13 @@ public interface TLOrderRefundService {
 	 */
 	public TitanOrderRefundResponse netBankOrderRefund(TLNetBankOrderRefundRequest 
 			tlNetBankOrderRefundRequest);
+	
+	
+	/**
+	 * 通联扫码支付订单撤销（当天）/退款（隔天后）
+	 * @author Jerry
+	 * @date 2017年12月19日 下午7:34:53
+	 */
+	public TitanOrderRefundResponse qrCodeOrderRefund(TLQrOrderRefundRequest tlQrOrderRefundRequest);
 
 }

@@ -8,7 +8,7 @@
 package com.titanjr.checkstand.service;
 
 import com.titanjr.checkstand.request.TLNetBankRefundQueryRequest;
-import com.titanjr.checkstand.respnse.TLNetBankRefundQueryResponse;
+import com.titanjr.checkstand.request.TLQrTradeQueryRequest;
 import com.titanjr.checkstand.respnse.TitanRefundQueryResponse;
 
 /**
@@ -19,13 +19,10 @@ import com.titanjr.checkstand.respnse.TitanRefundQueryResponse;
 public interface TLRefundQueryService {
 	
 	/**
-	 * 通联网银支付退款查询
+	 * 网银支付退款查询
 	 * @author Jerry
 	 * @date 2017年12月5日 下午6:47:11
-	 * @param tlNetBankRefundQueryRequest
-	 * @return
 	 */
-	public TitanRefundQueryResponse netBankRefundQuery(TLNetBankRefundQueryRequest 
-			tlNetBankRefundQueryRequest);
+	TitanRefundQueryResponse netBankRefundQuery(TLNetBankRefundQueryRequest tlNetBankRefundQueryRequest);
 
 }

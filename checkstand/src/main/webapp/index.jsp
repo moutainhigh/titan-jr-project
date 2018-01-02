@@ -157,7 +157,7 @@
             <tr>
                 <td class="tdr">操作类型</td>
                 <td>
-                    <input type="text" value="1001" id="signMsg" name="operateType"/>* 1001:支付请求；1002:支付查询；1003:退款请求；1004:退款查询
+                    <input type="text" value="1001" id="signMsg" name="operateType"/>* 1001:支付请求；1002:支付查询；1003:退款请求；1004:退款查询；1005账户交易
                 </td>
             </tr>
             
@@ -373,6 +373,219 @@
     </div>
 </form><br/><br/>
 
+
+<form action="<%=basePath %>/payment.shtml" name="agentPay_form" id="agentPay_form" method="post">
+    <div class="agentPay">
+        <table cellspacing="0" border="0">
+            <tbody>
+            <tr align="left">
+                <td class="tdr">商户号</td>
+                <td>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">商户单号</td>
+                <td><input type="text" id="agentPay_orderNo" value="" name="orderNo"/>
+                    <input type="button" value="刷新" onclick="refreshAgentPayOrderNo()" /></td>
+            </tr>
+            <tr>
+                <td class="tdr">交易金额</td>
+                <td><input type="text" id="tradeAmount" value="1" name="tradeAmount"/></td>
+            </tr>
+            <tr>
+                <td class="tdr">币种</td>
+                <td><input type="text" id="currency" value="CNY" name="currency"/></td>
+            </tr>
+            <tr>
+                <td class="tdr">交易代码</td>
+                <td><input type="text" id="tradeCode" value="100014" name="tradeCode"/></td>
+            </tr>
+            <tr>
+                <td class="tdr">提交时间</td>
+                <td>
+                    <input type="text" id="submitTime" name="submitTime"/>
+                    <input type="button" value="刷新" onclick="refreshSubmitTime()" />
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">银行标示</td>
+                <td>
+                    <input type="text" value="icbc" id="bankInfo" name="bankInfo"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">银行卡类型</td>
+                <td>
+                    <input type="text" value="00" id="accountType" name="accountType"/> 00：银行卡
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">银行卡号</td>
+                <td>
+                    <input type="text" value="6212264000052615040" id="accountNo" name="accountNo"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">账户名</td>
+                <td>
+                    <input type="text" value="奥特曼" id="accountName" name="accountName"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">帐户属性</td>
+                <td>
+                    <input type="text" value="0" id="accountProperty" name="accountProperty"/>0私人，1公司
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">证件号</td>
+                <td>
+                    <input type="text" value="421381177110306452" id="accountId" name="accountId"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">证件类型</td>
+                <td>
+                    <input type="text" value="0" id="idType" name="idType"/>0：身份证
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">操作类型</td>
+                <td>
+                    <input type="text" value="1005" id="signMsg" name="operateType"/>* 1005账户交易
+                </td>
+            </tr>
+            <tr>
+			    <td class="tdr"><button id="agentPayButton" onclick="goAgentPay()">代付</button></td>
+			    <td>
+			    </td>
+			</tr>
+            </tbody>
+        </table>
+    </div>
+</form><br/><br/>
+
+<form action="<%=basePath %>/payment.shtml" name="agentQuery_form" id="agentQuery_form" method="post">
+    <div class="agentQuery">
+        <table cellspacing="0" border="0">
+            <tbody>
+            <tr align="left">
+                <td class="tdr">商户号</td>
+                <td>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">商户单号</td>
+                <td><input type="text" id="orderNo" value="TJO2017112900001" name="orderNo"/>若不填时间必填</td>
+            </tr>
+            <tr>
+                <td class="tdr">交易代码</td>
+                <td><input type="text" id="tradeCode" value="200004" name="tradeCode"/></td>
+            </tr>
+            <tr>
+                <td class="tdr">交易状态</td>
+                <td>
+                    <input type="text" value="2" id="tradeStatus" name="tradeStatus"/>0成功，1失败，2全部，3退票，4代付失败退款，5代付退票退款，6委托扣款，7提现
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">查询类型</td>
+                <td>
+                    <input type="text" value="1" id="queryType" name="queryType"/>0.按完成日期1.按提交日期
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">开始时间</td>
+                <td>
+                    <input type="text" id="startDate" name="startDate"/>若不填则orderNo则必填
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">结束时间</td>
+                <td>
+                    <input type="text" id="endDate" name="endDate"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">操作类型</td>
+                <td>
+                    <input type="text" value="1005" id="signMsg" name="operateType"/>* 1005账户交易
+                </td>
+            </tr>
+            <tr>
+			    <td class="tdr"><button id="agentQueryButton" onclick="agentQuery()">代付查询</button></td>
+			    <td>
+			    </td>
+			</tr>
+            </tbody>
+        </table>
+    </div>
+</form><br/><br/>
+
+
+<form action="<%=basePath %>/payment.shtml" name="agentDownload_form" id="agentDownload_form" method="post">
+    <div class="agentDownload">
+        <table cellspacing="0" border="0">
+            <tbody>
+            <tr align="left">
+                <td class="tdr">商户号</td>
+                <td>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">流水号</td>唯一标示
+                <td>
+                    <input type="text" name="serialNo" id="serialNo" class="input_t01"/>* 
+                    	<input type="button" value="刷新" onclick="refreshSerialNo()" />
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">交易代码</td>
+                <td><input type="text" id="tradeCode" value="200002" name="tradeCode"/>* </td>
+            </tr>
+            <tr>
+                <td class="tdr">交易状态</td>
+                <td>
+                    <input type="text" value="2" id="tradeStatus" name="tradeStatus"/>*  0成功，1失败，2全部，3退票，4代付失败退款，5代付退票退款，6委托扣款，7提现
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">查询类型</td>
+                <td>
+                    <input type="text" value="1" id="queryType" name="queryType"/>*  0.按完成日期1.按提交日期
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">开始时间</td>* 
+                <td>
+                    <input type="text" id="startDate" name="startDate"/>* 
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">结束时间</td>
+                <td>
+                    <input type="text" id="endDate" name="endDate"/>* 
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">操作类型</td>
+                <td>
+                    <input type="text" value="1005" id="signMsg" name="operateType"/>* 1005账户交易
+                </td>
+            </tr>
+            <tr>
+			    <td class="tdr"><button id="agentDownloadButton" onclick="agentDownload()">对账文件下载</button></td>
+			    <td>
+			    </td>
+			</tr>
+            </tbody>
+        </table>
+    </div>
+</form><br/><br/>
+
 </body>
 
 <script type="text/javascript">
@@ -389,12 +602,35 @@
         $("#refundQuery_form").submit();
     }
     
+    function goAgentPay(){
+    	$("#agentPay_form").submit();
+    }
+    function agentQuery() {
+        $("#agentQuery_form").submit();
+    }
+    function agentDownload(){
+    	$("#agentDownload_form").submit();
+    }
+
+    
     function refreshOrderNo(){
     	$("#orderNo").val("TJO"+getDateTimeStr());
     }
     
     function refreshOrderTime(){
         $("#orderTime").val(getDateTimeStr());
+    }
+    
+    function refreshAgentPayOrderNo(){
+    	$("#agentPay_orderNo").val("TJO"+getDateTimeStr());
+    }
+    
+    function refreshSubmitTime(){
+    	$("#submitTime").val(getDateTimeStr());
+    }
+    
+    function refreshSerialNo(){
+    	$("#serialNo").val("100020091218001-"+getDateTimeStr());
     }
     
     function getDateTimeStr(){

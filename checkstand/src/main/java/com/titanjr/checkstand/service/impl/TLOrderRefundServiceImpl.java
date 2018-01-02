@@ -9,9 +9,12 @@ package com.titanjr.checkstand.service.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,13 +26,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.allinpay.ets.client.PaymentResult;
+import com.fangcang.titanjr.common.enums.RefundStatusEnum;
 import com.fangcang.titanjr.common.util.BeanConvertor;
+import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
+import com.fangcang.util.JsonUtil;
 import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
+import com.titanjr.checkstand.constants.RequestTypeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
+import com.titanjr.checkstand.constants.TLQrReturnCodeEnum;
 import com.titanjr.checkstand.dto.GateWayConfigDTO;
 import com.titanjr.checkstand.request.TLNetBankOrderRefundRequest;
+import com.titanjr.checkstand.request.TLQrOrderRefundRequest;
+import com.titanjr.checkstand.respnse.TLQrOrderRefundResponse;
 import com.titanjr.checkstand.respnse.TitanOrderRefundResponse;
 import com.titanjr.checkstand.service.TLOrderRefundService;
 import com.titanjr.checkstand.util.SignMsgBuilder;
@@ -68,7 +78,7 @@ public class TLOrderRefundServiceImpl implements TLOrderRefundService {
 				HttpEntity entity = httpRes.getEntity();
 				responseStr = EntityUtils.toString(entity, "UTF-8");
 				
-				return orderRefundResult(responseStr, gateWayConfigDTO.getSecretKey());
+				return netBankRefundResult(responseStr, gateWayConfigDTO.getSecretKey());
 				
 			}else{
 				logger.error("【通联-订单退款】失败 httpRes为空");
@@ -84,13 +94,114 @@ public class TLOrderRefundServiceImpl implements TLOrderRefundService {
 	}
 	
 	
+	@Override
+	public TitanOrderRefundResponse qrCodeOrderRefund(TLQrOrderRefundRequest tlQrOrderRefundRequest) {
+		
+		TitanOrderRefundResponse titanOrderRefundResponse = new TitanOrderRefundResponse();
+		TLQrOrderRefundResponse tlQrOrderRefundResponse = new TLQrOrderRefundResponse();
+		String responseStr ="";
+		
+		String requestTypeStr = "通联-交易撤销";
+		if(RequestTypeEnum.PUBLIC_REFUND.getKey().equals(tlQrOrderRefundRequest.getRequestType())){
+			requestTypeStr = "通联-交易退款";
+		}
+		
+		try {
+			
+			//查询订单，获取支付方式
+			
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(tlQrOrderRefundRequest.getCusid()+"_2_01_"+tlQrOrderRefundRequest.getRequestType());
+			logger.info("【{}】网关地址：{}", requestTypeStr, gateWayConfigDTO.getGateWayUrl());
+			
+			//TreeMap会按字段名的ASCLL码从小到大排序
+			TreeMap<String,String> params = new TreeMap<String,String>();
+			params.put("cusid", tlQrOrderRefundRequest.getCusid());
+			params.put("appid", gateWayConfigDTO.getAppId());
+			params.put("version", tlQrOrderRefundRequest.getVersion());
+			params.put("reqsn", tlQrOrderRefundRequest.getReqsn());
+			params.put("oldreqsn", tlQrOrderRefundRequest.getOldreqsn());
+			params.put("trxamt", tlQrOrderRefundRequest.getTrxamt());
+			params.put("randomstr", tlQrOrderRefundRequest.getRandomstr());
+			params.put("key", gateWayConfigDTO.getSecretKey());
+			
+			StringBuilder sb = new StringBuilder();
+			for(Map.Entry<String, String> entry:params.entrySet()){
+				if(entry.getValue()!=null&&entry.getValue().length()>0){
+					sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+				}
+			}
+			if(sb.length()>0){
+				sb.deleteCharAt(sb.length()-1);
+			}
+			logger.info("【{}】加密前排序为：{}", requestTypeStr, sb.toString());
+			String md5Msg = MD5.MD5Encode(sb.toString(), "UTF-8").toUpperCase();
+			logger.info("【{}】加密后sign为：{}", requestTypeStr, md5Msg);
+			params.put("sign", md5Msg);
+			params.remove("key");
+			
+			StringBuilder paramBuf = new StringBuilder();
+	    	boolean isNotFirst = false;
+	    	for (Map.Entry<String, String> entry: params.entrySet()){
+	    		if(entry.getValue()!=null&&entry.getValue().length()>0){
+		    		if (isNotFirst)
+		    			paramBuf.append('&');
+		    		isNotFirst = true;
+		    		paramBuf
+		    			.append(entry.getKey())
+		    			.append('=')
+		    			.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+	    		}
+	    	}
+	    	logger.info("【{}】上送参数：{}", requestTypeStr, paramBuf.toString());
+			
+			HttpPost httpPost = new HttpPost(gateWayConfigDTO.getGateWayUrl() + "?" + paramBuf.toString());
+			HttpResponse httpRes = HttpClient.httpRequest(new ArrayList<NameValuePair>(), httpPost);
+			
+			if (null != httpRes) {
+				
+				HttpEntity entity = httpRes.getEntity();
+				responseStr = EntityUtils.toString(entity, "UTF-8");
+				logger.info("【{}】返回信息：{}", requestTypeStr, responseStr);
+				
+				tlQrOrderRefundResponse = (TLQrOrderRefundResponse)JsonUtil.jsonToBean(responseStr, TLQrOrderRefundResponse.class);
+				
+				if(!tlQrOrderRefundResponse.qrCodeResult()){
+					logger.error("【{" +requestTypeStr+ "}】失败，retmsg：{}", tlQrOrderRefundResponse.getRetmsg()+"，"+tlQrOrderRefundResponse.getErrmsg());
+					titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.build(tlQrOrderRefundResponse.getRetmsg()+"，"+tlQrOrderRefundResponse.getErrmsg()));
+					return titanOrderRefundResponse;
+				}
+				if(TLQrReturnCodeEnum.TRADE_SUCCESS.getCode().equals(tlQrOrderRefundResponse.getTrxstatus())){
+					titanOrderRefundResponse.setRefundStatus(String.valueOf(RefundStatusEnum.REFUND_SUCCESS.status));
+				}else if(TLQrReturnCodeEnum.TRADE_PROCESS.getCode().equals(tlQrOrderRefundResponse.getTrxstatus())) {
+					titanOrderRefundResponse.setRefundStatus(String.valueOf(RefundStatusEnum.REFUND_IN_PROCESS.status));
+				}else{//退款失败
+					TLQrReturnCodeEnum em = TLQrReturnCodeEnum.getEnumByCode(tlQrOrderRefundResponse.getTrxstatus());
+					titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.build(em.getRemark()));
+				}
+				
+				return titanOrderRefundResponse;
+				
+			}else{
+				
+				logger.error("【{}】失败 httpRes为空", requestTypeStr);
+				titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanOrderRefundResponse;
+			}
+			
+		} catch (Exception e) {
+			logger.error("【" +requestTypeStr+ "】发生异常：", e);
+			titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+			return titanOrderRefundResponse;
+		}
+	}
+	
+	
 	/**
 	 * 退款返回结果解析
 	 * @author Jerry
-	 * @throws UnsupportedEncodingException 
 	 * @date 2017年12月4日 下午5:05:00
 	 */
-	private TitanOrderRefundResponse orderRefundResult(String responseStr, String key) 
+	private TitanOrderRefundResponse netBankRefundResult(String responseStr, String key) 
 			throws UnsupportedEncodingException{
 		
 		TitanOrderRefundResponse titanOrderRefundResponse = new TitanOrderRefundResponse();

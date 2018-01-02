@@ -11,6 +11,7 @@ import com.titanjr.checkstand.request.TLNetBankPayQueryRequest;
 import com.titanjr.checkstand.respnse.TitanPayQueryResponse;
 
 /**
+ * 通联支付查询接口
  * @author Jerry
  * @date 2017年11月29日 下午5:32:58  
  */

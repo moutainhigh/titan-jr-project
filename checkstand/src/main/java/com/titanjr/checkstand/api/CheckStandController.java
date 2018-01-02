@@ -67,7 +67,11 @@ public class CheckStandController extends BaseController {
             return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/rfQuery/entrance.shtml";
         }
         
-        logger.error("【{}】{}未匹配对应的入口", OperateTypeEnum.REFUND_QUERY.getKey(), OperateTypeEnum.REFUND_QUERY.getValue());
+        if (operateTypeEnum.equals(OperateTypeEnum.AGENT_TRADE)){
+        	return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/agent/entrance.shtml";
+        }
+        
+        logger.error("【{}】{}未匹配对应的入口", operateTypeEnum.getKey(), operateTypeEnum.getValue());
         return super.payFailedCallback(model);
     }
 

@@ -5,7 +5,9 @@
  * @author Jerry
  * @date 2017年11月28日 下午4:07:53  
  */
-package com.titanjr.checkstand.respnse;
+package com.titanjr.checkstand.request;
+
+import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
@@ -16,7 +18,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * @author Jerry
  * @date 2017年11月28日 下午4:07:53  
  */
-public class TLCallbackResponse extends BaseResponse {
+public class TLNetBankPayCallbackRequest implements Serializable {
 
 	/** 
 	 * 

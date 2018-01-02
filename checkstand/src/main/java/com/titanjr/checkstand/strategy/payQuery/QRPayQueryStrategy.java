@@ -17,6 +17,6 @@ public class QRPayQueryStrategy implements PayQueryStrategy{
     @Override
     public String redirectResult(HttpServletRequest request) {
 
-        return WebUtils.getRequestBaseUrl(request) + "/payOrder/qrPayQuery.shtml";
+        return WebUtils.getRequestBaseUrl(request) + "/query/qrCodePayQuery.shtml";
     }
 }

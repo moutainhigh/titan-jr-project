@@ -34,7 +34,7 @@ import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
-import com.titanjr.checkstand.constants.TLRefundResultEnum;
+import com.titanjr.checkstand.constants.TLNetBankRefundResultEnum;
 import com.titanjr.checkstand.dto.GateWayConfigDTO;
 import com.titanjr.checkstand.request.TLNetBankRefundQueryRequest;
 import com.titanjr.checkstand.respnse.TitanRefundQueryResponse;
@@ -45,7 +45,7 @@ import com.titanjr.checkstand.util.SignMsgBuilder;
  * @author Jerry
  * @date 2017年12月5日 下午6:48:42  
  */
-@Service("tlRefundQueryServiceImpl")
+@Service("tlRefundQueryService")
 public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 	
 	private final static Logger logger = LoggerFactory.getLogger(TLRefundQueryServiceImpl.class);
@@ -80,17 +80,17 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 			if (null != httpRes) {
 				HttpEntity entity = httpRes.getEntity();
 				responseStr = EntityUtils.toString(entity, "UTF-8");
-				return RefundQueryResult(responseStr, gateWayConfigDTO.getSecretKey());
+				return NetBankRefundQueryResult(responseStr, gateWayConfigDTO.getSecretKey());
 				
 			}else{
-				logger.error("【通联-支付订单查询】失败 httpRes为空");
+				logger.error("【通联-网银退款查询】失败 httpRes为空");
 				titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 				return titanRefundQueryResponse;
 			}
 			
 		} catch (Exception e) {
 			
-			logger.error("【通联-支付订单查询】发生异常：{}", e);
+			logger.error("【通联-网银退款查询】发生异常：{}", e);
 			titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanRefundQueryResponse;
 			
@@ -100,16 +100,16 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 	
 	
 	/**
-	 * 退款查询结果解析
+	 * 网银退款查询结果解析
 	 * @author Jerry
 	 * @date 2017年12月6日 下午6:17:14
 	 */
-	private TitanRefundQueryResponse RefundQueryResult(String responseStr, String key) throws IOException{
+	private TitanRefundQueryResponse NetBankRefundQueryResult(String responseStr, String key) throws IOException{
 		
 		TitanRefundQueryResponse titanRefundQueryResponse = new TitanRefundQueryResponse();
-		logger.info("【通联-退款查询】返回信息：{}", responseStr);
+		logger.info("【通联-网银退款查询】返回信息：{}", responseStr);
 		if(!StringUtil.isValidString(responseStr)){
-			logger.error("【通联-退款查询】失败：返回消息为空");
+			logger.error("【通联-网银退款查询】失败：返回消息为空");
 			titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanRefundQueryResponse;
 		}
@@ -126,19 +126,19 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 			
 			//获取退款结果
 			if(!StringUtil.isValidString(refundResult)){
-				logger.error("【通联-退款查询】解析refundResult为空");
+				logger.error("【通联-网银退款查询】解析refundResult为空");
 				titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 				return titanRefundQueryResponse;
 			}
 			
-			TLRefundResultEnum refundResultEnum = TLRefundResultEnum.getTLRefundResultEnumByKey(refundResult);
+			TLNetBankRefundResultEnum refundResultEnum = TLNetBankRefundResultEnum.getTLRefundResultEnumByKey(refundResult);
 			if(refundResultEnum == null){
-				logger.error("【通联-退款查询】通联返回的退款状态未匹配到应有的状态");
+				logger.error("【通联-网银退款查询】通联返回的退款状态未匹配到应有的状态");
 				titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 				return titanRefundQueryResponse;
 			}
 			titanRefundQueryResponse.setRefundStatus(refundResultEnum.getStatus());
-			logger.info("【通联-退款查询】退款结果为：{}", refundResultEnum.getRemark());
+			logger.info("【通联-网银退款查询】退款结果为：{}", refundResultEnum.getRemark());
 			
 			//验签
 			BufferedReader fileReader = new BufferedReader(new StringReader(responseStr));
@@ -167,10 +167,10 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 				String sourceString = fileAsString+"|"+key;
 				String fileMd5 = SecurityUtil.MD5Encode(sourceString);
 				if(fileMd5.equals(fileSignMsg)){
-					logger.info("【通联-退款查询】验签成功，orderNo={}", orderNo);
+					logger.info("【通联-网银退款查询】验签成功，orderNo={}", orderNo);
 					
 				}else{
-					logger.info("【通联-退款查询】验签失败，orderNo={}", orderNo);
+					logger.info("【通联-网银退款查询】验签失败，orderNo={}", orderNo);
 				}
 				
 			}else if("1".equals(signTypeMsg)){
@@ -184,14 +184,14 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 				}
 				isVerified = SecurityUtil.verifyByRSA(certPath, fileMd5String.getBytes(), Base64.decode(fileSignMsg));
 				if (isVerified) {
-					logger.info("【通联-退款查询】验签成功，orderNo={}", orderNo);
+					logger.info("【通联-网银退款查询】验签成功，orderNo={}", orderNo);
 				} else {
-					logger.info("【通联-退款查询】验签失败，orderNo={}", orderNo);
+					logger.info("【通联-网银退款查询】验签失败，orderNo={}", orderNo);
 	
 				}
 				
 			}else{
-				logger.error("【通联-退款查询】验签失败，解析signTypeMsg={}", signTypeMsg);
+				logger.error("【通联-网银退款查询】验签失败，解析signTypeMsg={}", signTypeMsg);
 			}
 			
 		}else{
@@ -208,7 +208,7 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 				}
 			}
 			//订单号或退款单号有误都会返回：订单号不存在
-			logger.error("【通联-退款查询】失败：{}", result.get("ERRORMSG"));
+			logger.error("【通联-网银退款查询】失败：{}", result.get("ERRORMSG"));
 			titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.build(result.get("ERRORMSG")));
 			return titanRefundQueryResponse;
 		}

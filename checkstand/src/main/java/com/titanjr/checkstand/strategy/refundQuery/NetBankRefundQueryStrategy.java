@@ -19,5 +19,6 @@ public class NetBankRefundQueryStrategy implements RefundQueryStrategy{
     public String redirectResult(HttpServletRequest request) {
 
         return WebUtils.getRequestBaseUrl(request) + "/rfQuery/netBankRefundQuery.shtml";
+        
     }
 }

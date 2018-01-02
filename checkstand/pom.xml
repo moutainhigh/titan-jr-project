@@ -204,7 +204,7 @@
                 <excludes>
                     <exclude>production/**/**</exclude>
                     <exclude>filters/**/**</exclude>
-                    <!-- <exclude>debug_conf.properties</exclude> -->
+                    <exclude>debug_conf.properties</exclude>
                 </excludes>
             </resource>
         </resources>
@@ -224,17 +224,15 @@
                             <targetPath>WEB-INF/classes</targetPath>
                             <filtering>true</filtering>
                         </resource>
-                    </webResources>
-                    <webResources>  
-				        <resource>  
+                        <resource>  
 				            <directory>${project.basedir}/src/main/webapp/libs</directory>  
 				            <targetPath>WEB-INF/lib</targetPath>  
 				            <filtering>false</filtering>  
 				            <includes>  
 				                <include>**/*.jar</include>  
 				            </includes>  
-				        </resource>  
-				    </webResources>
+				        </resource> 
+                    </webResources>
                 </configuration>
             </plugin>
         </plugins>

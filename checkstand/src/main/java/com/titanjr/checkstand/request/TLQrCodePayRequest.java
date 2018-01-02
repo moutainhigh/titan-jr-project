@@ -7,10 +7,10 @@
  */
 package com.titanjr.checkstand.request;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
@@ -18,12 +18,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * @author Jerry
  * @date 2017年12月7日 下午6:17:28  
  */
-public class TLQrCodePayRequest implements Serializable {
-
-	/** 
-	 * 
-	 */
-	private static final long serialVersionUID = -1294206557105575927L;
+public class TLQrCodePayRequest extends TLBaseRequest {
 	
 	/**
 	 * 平台分配的商户号
@@ -56,7 +51,7 @@ public class TLQrCodePayRequest implements Serializable {
 	private String reqsn;
 
 	/**
-	 * 交易方式 W01：微信扫码支付 A01：支付宝扫码支付
+	 * 交易方式 W01：微信扫码支付    A01：支付宝扫码支付
 	 */
 	@NotBlank
 	private String paytype;
@@ -86,6 +81,7 @@ public class TLQrCodePayRequest implements Serializable {
 	/**
 	 * 接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数
 	 */
+	@NotBlank
 	private String notify_url;
 	
 	/**
@@ -201,6 +197,11 @@ public class TLQrCodePayRequest implements Serializable {
 
 	public void setSign(String sign) {
 		this.sign = sign;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
 	}
 
 }

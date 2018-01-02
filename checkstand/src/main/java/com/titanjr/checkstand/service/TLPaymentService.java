@@ -8,7 +8,7 @@
 package com.titanjr.checkstand.service;
 
 import com.titanjr.checkstand.request.TLQrCodePayRequest;
-import com.titanjr.checkstand.respnse.TLQrCodePayResponse;
+import com.titanjr.checkstand.respnse.TitanQrCodePayResponse;
 
 /**
  * 通联支付服务接口
@@ -22,6 +22,6 @@ public interface TLPaymentService {
 	 * @author Jerry
 	 * @date 2017年12月7日 下午6:31:40
 	 */
-	public TLQrCodePayResponse qrCodePay(TLQrCodePayRequest tlQrCodePayRequest);
+	public TitanQrCodePayResponse qrCodePay(TLQrCodePayRequest tlQrCodePayRequest);
 
 }

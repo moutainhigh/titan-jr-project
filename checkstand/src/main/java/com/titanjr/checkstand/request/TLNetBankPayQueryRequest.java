@@ -15,7 +15,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * @author Jerry
  * @date 2017年11月29日 上午11:41:09  
  */
-public class TLNetBankPayQueryRequest extends BaseRequest {
+public class TLNetBankPayQueryRequest extends TLBaseRequest {
 
 	/**
 	 * 商户号

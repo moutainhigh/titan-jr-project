@@ -14,12 +14,14 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dao.GateWayConfigDao;
 import com.titanjr.checkstand.dto.GateWayConfigDTO;
+import com.titanjr.checkstand.util.tlUtil.XmlTools;
 
 /**
  * 初始化服务实现
@@ -36,7 +38,21 @@ public class InitServiceImpl {
 	
 	public void init(){
 		
+		initXmlProvider();
 		initGateWyUrlConfig();
+		
+	}
+	
+	
+	/**
+	 * 设置安全提供者
+	 * @author Jerry
+	 * @date 2017年12月27日 下午6:54:52
+	 */
+	private void initXmlProvider(){
+		
+		BouncyCastleProvider provider = new BouncyCastleProvider();
+		XmlTools.initProvider(provider);
 		
 	}
 	

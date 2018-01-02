@@ -22,6 +22,14 @@ public class TLQrCodePayResponse implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -7707317035725347614L;
+	private final String isSuccess = "SUCCESS";
+	
+	public boolean qrCodeResult(){
+		if(this.isSuccess.equals(this.retcode)){
+			return true;
+		}
+		return false;
+	}
 	
 	/**
 	 * 返回码  SUCCESS/FAIL 
@@ -171,6 +179,12 @@ public class TLQrCodePayResponse implements Serializable {
 	}
 	public void setSign(String sign) {
 		this.sign = sign;
+	}
+	
+	public TitanQrCodePayResponse convert2TitanResult(){
+		TitanQrCodePayResponse titanQrCodePayResponse = new TitanQrCodePayResponse();
+		
+		return titanQrCodePayResponse;
 	}
 
 }

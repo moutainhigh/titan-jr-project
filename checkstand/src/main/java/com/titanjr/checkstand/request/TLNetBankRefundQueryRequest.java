@@ -18,7 +18,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * @author Jerry
  * @date 2017年12月5日 下午6:28:14  
  */
-public class TLNetBankRefundQueryRequest extends BaseRequest {
+public class TLNetBankRefundQueryRequest extends TLBaseRequest {
 	
 	/**
 	 * 商户号，与提交订单时的商户号保持一致
