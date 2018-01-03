@@ -5,6 +5,7 @@ package com.titanjr.fop.constants;
  */
 public enum ReturnCodeEnum {
     CODE_USERID_ERROR("-100","userid不合法"),
+    CODE_CONVERT_ERROR("-101","参数转换失败"),
     CODE_SIGN_ERROR("-200","sign不合法"),
     CODE_SESSION_ERROR("-201","session信息不合法"),
     CODE_OPERTYPE_ERROR("-202","opertype信息不合法"),

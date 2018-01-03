@@ -3,6 +3,7 @@ package com.titanjr.fop.service.impl;
 import com.fangcang.exception.ServiceException;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
+import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.titanjr.fop.dao.TitanAccountDao;
 import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.exceptions.ApiRuleException;
@@ -28,6 +29,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     TitanAccountDao titanAccountDao;
+
+    @Autowired
+    TitanFinancialOrganService titanFinancialOrganService;
 
     @Override
     public List<SHBalanceInfo> getAccountBalanceList(WheatfieldBalanceGetlistRequest balanceGetlistRequest) throws ServiceException {

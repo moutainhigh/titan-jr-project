@@ -5,7 +5,10 @@ import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
 import com.titanjr.fop.response.WheatfieldBalanceGetlistResponse;
 import com.titanjr.fop.service.AccountService;
 import com.titanjr.fop.util.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,6 +26,7 @@ import java.util.List;
 @RequestMapping(value = "/account")
 public class AccountController extends BaseController {
 
+    private final static Logger logger = LoggerFactory.getLogger(OrderOperController.class);
 
     @Resource
     private AccountService accountService;
@@ -38,15 +42,15 @@ public class AccountController extends BaseController {
         }
         getlistResponse.setIs_success("true");
 
-
         WheatfieldBalanceGetlistRequest getlistRequest = BeanUtils.switch2RequestDTO(WheatfieldBalanceGetlistRequest.class,request);
-
         if (null == getlistRequest){
-            // TODO 参数转换错误
-            return null;
+            return getConvertErrorResp(getlistResponse);
         }
         List<SHBalanceInfo> balanceInfos = accountService.getAccountBalanceList(getlistRequest);
 
+        if (CollectionUtils.isEmpty(balanceInfos)){
+            logger.error("查询账户余额为空，userid：{}" , getlistRequest.getUserid());
+        }
         getlistResponse.setShbalanceinfos(balanceInfos);
 
         return toJson(getlistResponse);

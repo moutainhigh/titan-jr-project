@@ -5,6 +5,7 @@ import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
 import com.titanjr.fop.request.WheatfieldOrderOperRequest;
 import com.titanjr.fop.response.WheatfieldBalanceGetlistResponse;
 import com.titanjr.fop.response.WheatfieldOrderOperResponse;
+import com.titanjr.fop.service.OrderOperService;
 import com.titanjr.fop.util.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -23,8 +25,12 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/order")
 public class OrderOperController extends BaseController {
+
     private final static Logger logger = LoggerFactory.getLogger(OrderOperController.class);
 
+
+    @Resource
+    OrderOperService orderOperService;
 
     @RequestMapping(value = "/orderOper", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
     @ResponseBody
@@ -38,11 +44,10 @@ public class OrderOperController extends BaseController {
         operResponse.setIs_success("true");
 
 
-        WheatfieldOrderOperRequest getlistRequest = BeanUtils.switch2RequestDTO(WheatfieldOrderOperRequest.class,request);
+        WheatfieldOrderOperRequest orderOperRequest = BeanUtils.switch2RequestDTO(WheatfieldOrderOperRequest.class,request);
 
-        if (null == getlistRequest){
-            // TODO 参数转换错误
-            return null;
+        if (null == orderOperRequest){
+
         }
 
         return toJson(operResponse);

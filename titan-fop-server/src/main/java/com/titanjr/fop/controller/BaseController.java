@@ -3,6 +3,8 @@ package com.titanjr.fop.controller;
 import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.response.FopResponse;
 import net.sf.json.JSONSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +16,10 @@ import javax.servlet.http.HttpSession;
  */
 public class BaseController {
 
+    private final static Logger logger = LoggerFactory.getLogger(BaseController.class);
+
     ThreadLocal<HttpServletRequest> requestLocal = new ThreadLocal<HttpServletRequest>();
+
     ThreadLocal<HttpServletResponse> responseLocal = new ThreadLocal<HttpServletResponse>();
 
     @ModelAttribute
@@ -56,5 +61,12 @@ public class BaseController {
             return toJson(fopResponse);
         }
         return null;
+    }
+
+    public String getConvertErrorResp(FopResponse fopResponse){
+        logger.error("request转换为请求参数错误");
+        fopResponse.setErrorCode(ReturnCodeEnum.CODE_CONVERT_ERROR.getCode());
+        fopResponse.setMsg(ReturnCodeEnum.CODE_CONVERT_ERROR.getMsg());
+        return toJson(fopResponse);
     }
 }

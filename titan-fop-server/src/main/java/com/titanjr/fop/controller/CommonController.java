@@ -43,6 +43,9 @@ public class CommonController extends BaseController {
         }
 
         ExternalSessionGetRequest sessionGetRequest = BeanUtils.switch2RequestDTO(ExternalSessionGetRequest.class, request);
+        if (null == sessionGetRequest) {
+            return getConvertErrorResp(sessionGetResponse);
+        }
 
         long random = (long) (Math.random() * 1000000);
         String session = System.currentTimeMillis() + String.valueOf(random);
