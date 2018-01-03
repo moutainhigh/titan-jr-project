@@ -4,9 +4,10 @@ package com.titanjr.fop.constants;
  * Created by zhaoshan on 2017/12/21.
  */
 public enum ReturnCodeEnum {
-
-    CODE_SIGN_ERROR("-200","sign错误"),
-    CODE_SESSION_ERROR("-201","session信息错误"),
+    CODE_USERID_ERROR("-100","userid不合法"),
+    CODE_SIGN_ERROR("-200","sign不合法"),
+    CODE_SESSION_ERROR("-201","session信息不合法"),
+    CODE_OPERTYPE_ERROR("-202","opertype信息不合法"),
     CODE_SYS_ERROR("-300","系统错误");
     private String code;
     private String msg;

@@ -45,7 +45,7 @@ public class WheatfieldBalanceGetlistRequest extends BaseRequest implements FopR
     public void check() throws ApiRuleException {
         if (!StringUtil.isValidString(userid) || !StringUtil.isValidString(rootinstcd)) {
             logger.error("参数校验失败,userid:{},rootinstcd:{}", userid, rootinstcd);
-            throw new ApiRuleException(ReturnCodeEnum.CODE_PARAM_ERROR.getCode(), ReturnCodeEnum.CODE_PARAM_ERROR.getMsg());
+            throw new ApiRuleException(ReturnCodeEnum.CODE_USERID_ERROR.getCode(), ReturnCodeEnum.CODE_USERID_ERROR.getMsg());
         }
     }
 
