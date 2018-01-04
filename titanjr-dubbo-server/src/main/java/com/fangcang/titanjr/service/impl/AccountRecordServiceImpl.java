@@ -10,18 +10,22 @@ import org.apache.log4j.Logger;
 
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanAccountDetailDao;
+import com.fangcang.titanjr.dao.TitanDepositDetailDao;
 import com.fangcang.titanjr.dto.request.RecordRechargeRequest;
 import com.fangcang.titanjr.dto.request.RecordTransferRequest;
 import com.fangcang.titanjr.entity.TitanAccountDetail;
+import com.fangcang.titanjr.entity.TitanDepositDetail;
 import com.fangcang.titanjr.entity.parameter.TitanAccountDetailParam;
 import com.fangcang.titanjr.service.AccountRecordService;
 
 public class AccountRecordServiceImpl implements AccountRecordService {
 	private static final Logger LOGGER = Logger.getLogger(AccountRecordServiceImpl.class);
-	 
+	
 	@Resource
 	TitanAccountDetailDao accountDetailDao;
 	
+	@Resource
+	TitanDepositDetailDao depositDetailDao;
 	
 	@Override
 	public void recharge(RecordRechargeRequest recordRechargeRequest) {
@@ -51,7 +55,18 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setStatus(1);
 		accountDetail.setCreateTime(new Date());
 		accountDetailDao.insert(accountDetail);
-
+		
+		//备付金
+		TitanDepositDetail depositDetail = new TitanDepositDetail();
+		
+		
+		
+		
+		depositDetailDao.insert(depositDetail);
+		
+		
+		
+		
 	}
 
 	@Override
