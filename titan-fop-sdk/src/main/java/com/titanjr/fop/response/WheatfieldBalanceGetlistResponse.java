@@ -11,7 +11,7 @@ public class WheatfieldBalanceGetlistResponse extends FopResponse {
 
     private List<SHBalanceInfo> shbalanceinfos;
 
-    private String is_success;
+    private String is_success = "false";
 
     public List<SHBalanceInfo> getShbalanceinfos() {
         return shbalanceinfos;

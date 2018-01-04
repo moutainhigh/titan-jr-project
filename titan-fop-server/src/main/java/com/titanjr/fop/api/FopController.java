@@ -36,6 +36,7 @@ public class FopController extends BaseController {
         String url = getRequestBaseUrl(request) + InterfaceURlConfig.INTERFACE_URL_MAP.get(configEnum);
         resetParameter(request, attr);
         attr.addAttribute("signValid", request.getAttribute("signValid"));
+        attr.addAttribute("sessionValid", request.getAttribute("sessionValid"));
         return new ModelAndView(new RedirectView(url));
     }
 

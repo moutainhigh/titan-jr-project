@@ -1,8 +1,11 @@
 package com.titanjr.fop.controller;
 
+import com.fangcang.util.StringUtil;
 import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceAuthcodeserviceRequest;
 import com.titanjr.fop.response.WheatfieldBalanceGetlistResponse;
+import com.titanjr.fop.response.WheatfieldOrderServiceAuthcodeserviceResponse;
 import com.titanjr.fop.service.AccountService;
 import com.titanjr.fop.util.BeanUtils;
 import org.slf4j.Logger;
@@ -26,7 +29,7 @@ import java.util.List;
 @RequestMapping(value = "/account")
 public class AccountController extends BaseController {
 
-    private final static Logger logger = LoggerFactory.getLogger(OrderOperController.class);
+    private final static Logger logger = LoggerFactory.getLogger(AccountController.class);
 
     @Resource
     private AccountService accountService;
@@ -42,18 +45,39 @@ public class AccountController extends BaseController {
         }
         getlistResponse.setIs_success("true");
 
-        WheatfieldBalanceGetlistRequest getlistRequest = BeanUtils.switch2RequestDTO(WheatfieldBalanceGetlistRequest.class,request);
-        if (null == getlistRequest){
+        WheatfieldBalanceGetlistRequest getlistRequest = BeanUtils.switch2RequestDTO(WheatfieldBalanceGetlistRequest.class, request);
+        if (null == getlistRequest) {
             return getConvertErrorResp(getlistResponse);
         }
         List<SHBalanceInfo> balanceInfos = accountService.getAccountBalanceList(getlistRequest);
 
-        if (CollectionUtils.isEmpty(balanceInfos)){
-            logger.error("查询账户余额为空，userid：{}" , getlistRequest.getUserid());
+        if (CollectionUtils.isEmpty(balanceInfos)) {
+            logger.info("查询账户余额为空，userid：{}", getlistRequest.getUserid());
         }
         getlistResponse.setShbalanceinfos(balanceInfos);
 
         return toJson(getlistResponse);
+    }
+
+    @RequestMapping(value = "/freezeAccountBalance", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
+    @ResponseBody
+    public String freezeAccountBalance(HttpServletRequest request, RedirectAttributes attr) throws Exception {
+        WheatfieldOrderServiceAuthcodeserviceResponse authcodeserviceResponse = new WheatfieldOrderServiceAuthcodeserviceResponse();
+        String validResult = validRequestSign(request, authcodeserviceResponse);
+        if (null != validResult) {
+            return validResult;
+        }
+        WheatfieldOrderServiceAuthcodeserviceRequest authcodeserviceRequest = BeanUtils.switch2RequestDTO(WheatfieldOrderServiceAuthcodeserviceRequest.class, request);
+        if (null == authcodeserviceRequest) {
+            return getConvertErrorResp(authcodeserviceResponse);
+        }
+        String authCode = accountService.freezeAccountBalance(authcodeserviceRequest);
+        if (!StringUtil.isValidString(authCode)) {
+            return getSysErrorResp(authcodeserviceResponse);
+        }
+        authcodeserviceResponse.setIs_success("true");
+        authcodeserviceResponse.setAuthcode(authCode);
+        return toJson(authcodeserviceResponse);
     }
 
 }

@@ -49,9 +49,9 @@ public class RequestValidateInterceptor implements HandlerInterceptor {
         byte[] encryptRequest = FopUtils.encryptMD5(stringBuilder.toString());
         String requestSig = FopUtils.byte2hex(encryptRequest);
 
-        logger.info("传入的签名为：{}，校验计算出的签名为：{}", sign, requestSig);
         //将校验结果写入attribute中
         if (!sign.equals(requestSig)) {
+            logger.info("签名验证失败，传入的签名为：{}，校验计算出的签名为：{}", sign, requestSig);
             httpServletRequest.setAttribute("signValid", "false");
         } else {
             httpServletRequest.setAttribute("signValid", "true");
@@ -59,14 +59,15 @@ public class RequestValidateInterceptor implements HandlerInterceptor {
         }
 
         //验证session信息：
-        RequestSessionDao requestSessionDao = (RequestSessionDao)SpringContextUtil.getBean("requestSessionDao");
         if (StringUtil.isValidString(httpServletRequest.getParameter("session"))){
+            RequestSessionDao requestSessionDao = (RequestSessionDao)SpringContextUtil.getBean("requestSessionDao");
             RequestSession requestSession = new RequestSession();
             requestSession.setAppKey(httpServletRequest.getParameter("appKey"));
             requestSession.setAppSecret(appSecret);
             requestSession.setSession(httpServletRequest.getParameter("session"));
             List<RequestSession> sessionList = requestSessionDao.queryReqSession(requestSession);
             if (CollectionUtils.isEmpty(sessionList)){
+                logger.info("session验证失败，传入为：{}", httpServletRequest.getParameter("session"));
                 httpServletRequest.setAttribute("sessionValid", "false");
             }
         }

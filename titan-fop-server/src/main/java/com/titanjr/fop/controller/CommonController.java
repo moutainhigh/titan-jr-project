@@ -57,9 +57,7 @@ public class CommonController extends BaseController {
 
         int result = requestSessionDao.saveRequestSession(requestSession);
         if (result < 1) {
-            sessionGetResponse.setErrorCode(ReturnCodeEnum.CODE_SYS_ERROR.getCode());
-            sessionGetResponse.setMsg(ReturnCodeEnum.CODE_SYS_ERROR.getMsg());
-            return toJson(sessionGetResponse);
+            return getSysErrorResp(sessionGetResponse);
         }
         sessionGetResponse.setSession(session);
 

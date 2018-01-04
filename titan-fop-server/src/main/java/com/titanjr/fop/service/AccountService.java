@@ -22,7 +22,7 @@ public interface AccountService {
 
 
     /**
-     *
+     * 冻结账户资金，返回null表示冻结失败
      * @param authcodeserviceRequest
      * @return
      * @throws ServiceException

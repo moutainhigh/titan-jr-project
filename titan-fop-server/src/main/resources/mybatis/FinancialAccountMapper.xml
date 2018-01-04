@@ -4,21 +4,22 @@
 
 
     <select id="queryAccountBalanceList" parameterType="com.fangcang.titanjr.dto.request.AccountBalanceRequest"
-            resultType="com.fangcang.titanjr.dto.bean.AccountBalance">
+            resultType="com.titanjr.fop.dto.BalanceQueryDTO">
 
         SELECT
-        userid,
-        productid,
-        initusablelimit as balanceusable,
-        initfrozonamount as balancefrozon,
-        initsettleamount as balancesettle,
-        initcreditamount as balancecredit,
-        initoverlimit as balanceoverlimit,
-        inittotalamount as amount
+          userid,
+          productid,
+          usablelimit as balanceusable,
+          frozonamount as balancefrozon,
+          settleamount as balancesettle,
+          creditamount as balancecredit,
+          overlimit as balanceoverlimit,
+          totalamount as amount
         FROM
-        t_tfs_balanceinfo
+          t_tfs_balanceinfo
         <where>
-            <if test="userid!=null">and userid = #{userid}</if>
+            <if test="userId!=null">and userid = #{userId}</if>
+            <if test="productId!=null">and productid = #{productId}</if>
         </where>
     </select>
 

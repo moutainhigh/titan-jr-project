@@ -8,7 +8,7 @@ public class WheatfieldOrderOperResponse extends FopResponse {
 
     private String orderid;
 
-    private String is_success;
+    private String is_success = "false";
 
     public WheatfieldOrderOperResponse() {
     }
@@ -17,15 +17,15 @@ public class WheatfieldOrderOperResponse extends FopResponse {
         return this.orderid;
     }
 
-    public void setOrderid(String var1) {
-        this.orderid = var1;
+    public void setOrderid(String orderid) {
+        this.orderid = orderid;
     }
 
     public String getIs_success() {
         return this.is_success;
     }
 
-    public void setIs_success(String var1) {
-        this.is_success = var1;
+    public void setIs_success(String is_success) {
+        this.is_success = is_success;
     }
 }

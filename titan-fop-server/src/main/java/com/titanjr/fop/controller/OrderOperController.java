@@ -1,5 +1,6 @@
 package com.titanjr.fop.controller;
 
+import com.fangcang.util.StringUtil;
 import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
 import com.titanjr.fop.request.WheatfieldOrderOperRequest;
@@ -28,28 +29,31 @@ public class OrderOperController extends BaseController {
 
     private final static Logger logger = LoggerFactory.getLogger(OrderOperController.class);
 
-
     @Resource
     OrderOperService orderOperService;
 
     @RequestMapping(value = "/orderOper", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
     @ResponseBody
     public String orderOper(HttpServletRequest request, RedirectAttributes attr) throws Exception {
-
+        logger.debug("请求参数为:{}", request.getParameterMap());
         WheatfieldOrderOperResponse operResponse = new WheatfieldOrderOperResponse();
         String validResult = validRequestSign(request, operResponse);
         if (null != validResult) {
             return validResult;
         }
-        operResponse.setIs_success("true");
 
-
-        WheatfieldOrderOperRequest orderOperRequest = BeanUtils.switch2RequestDTO(WheatfieldOrderOperRequest.class,request);
-
-        if (null == orderOperRequest){
-
+        WheatfieldOrderOperRequest orderOperRequest = BeanUtils.switch2RequestDTO(WheatfieldOrderOperRequest.class, request);
+        if (null == orderOperRequest) {
+            return getConvertErrorResp(operResponse);
         }
 
+        String orderNo = orderOperService.operateOrder(orderOperRequest);
+        if (!StringUtil.isValidString(orderNo)) {
+            return getSysErrorResp(operResponse);
+        }
+        logger.info("操作成功，当前订单号为：{}", orderNo);
+        operResponse.setIs_success("true");
+        operResponse.setOrderid(orderNo);
         return toJson(operResponse);
     }
 

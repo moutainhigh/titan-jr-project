@@ -35,27 +35,31 @@ public class OrderOperServiceImpl implements OrderOperService {
         transOrderRequest.setUserid(orderOperRequest.getUserid());
         List<TransOrderDTO> transOrderDTOs = titanOrderService.queryTransOrder(transOrderRequest);
         //新增
-        if ("1".equals(orderOperRequest.getOpertype())){
-            if (CollectionUtils.isNotEmpty(transOrderDTOs)){
-                logger.error("新增时已存在交易单，userorderid：{}" , orderOperRequest.getUserorderid());
+        if ("1".equals(orderOperRequest.getOpertype())) {
+            if (CollectionUtils.isNotEmpty(transOrderDTOs)) {
+                logger.error("新增时已存在交易单，userorderid：{}", orderOperRequest.getUserorderid());
                 return null;
             }
             DecimalFormat formater = new DecimalFormat();
             formater.applyPattern("000000");
-            String result = DateUtil.dateToString(new Date(),"yyyyMMddHHmmsssss") + formater.format((long)(Math.random()*1000));
+            String result = DateUtil.dateToString(new Date(), "yyyyMMddHHmmsssss") + formater.format((long) (Math.random() * 1000));
             return result;
         }
         //修改
-        if ("2".equals(orderOperRequest.getOpertype())){
-            if (CollectionUtils.isEmpty(transOrderDTOs) || transOrderDTOs.size() > 1){
+        if ("2".equals(orderOperRequest.getOpertype())) {
+            if (CollectionUtils.isEmpty(transOrderDTOs) || transOrderDTOs.size() > 1) {
                 logger.error("修改时不存在对应的交易单或存在多条，userorderid：{}", orderOperRequest.getUserorderid());
                 return null;
             }
-            if (transOrderDTOs.get(0).getAmount().equals(orderOperRequest.getAmount())){
+            if (!"0".equals(transOrderDTOs.get(0).getStatusid())) {
+                logger.error("非处理中的订单无法修改,userorderid：{}", orderOperRequest.getUserorderid());
+                return null;
+            }
+            if (transOrderDTOs.get(0).getAmount().equals(orderOperRequest.getAmount())) {
                 logger.error("不能修改订单金额,userorderid：{}", orderOperRequest.getUserorderid());
                 return null;
             }
-            if (!transOrderDTOs.get(0).getUserrelateid().equals(orderOperRequest.getUserrelateid())){
+            if (!transOrderDTOs.get(0).getUserrelateid().equals(orderOperRequest.getUserrelateid())) {
                 logger.error("不能修改交易对方,userorderid：{}", orderOperRequest.getUserorderid());
                 return null;
             }
@@ -64,17 +68,36 @@ public class OrderOperServiceImpl implements OrderOperService {
             transOrderDTOs.get(0).setAdjustcontent(orderOperRequest.getAdjustcontent());
             transOrderDTOs.get(0).setRemark(orderOperRequest.getRemark());
             boolean result = titanOrderService.updateTransOrder(transOrderDTOs.get(0));
-            if (!result){
+            if (!result) {
                 logger.error("修改交易单失败,userorderid：{}", orderOperRequest.getUserorderid());
                 return null;
             }
             return transOrderDTOs.get(0).getOrderid();
         }
-        //
-        if ("3".equals(orderOperRequest.getOpertype())){
-
+        //查询
+        if ("3".equals(orderOperRequest.getOpertype())) {
+            if (CollectionUtils.isEmpty(transOrderDTOs) || transOrderDTOs.size() > 1) {
+                logger.error("查询交易单不存在或存在多条，userorderid：{}", orderOperRequest.getUserorderid());
+                return null;
+            }
+            return transOrderDTOs.get(0).getOrderid();
         }
-
+        //取消
+        if ("4".equals(orderOperRequest.getOpertype())) {
+            if (CollectionUtils.isEmpty(transOrderDTOs) || transOrderDTOs.size() > 1) {
+                logger.error("取消时交易单不存在或存在多条，userorderid：{}", orderOperRequest.getUserorderid());
+                return null;
+            }
+            if (!"0".equals(transOrderDTOs.get(0).getStatusid())) {
+                logger.error("非处理中的订单无法操作取消,userorderid：{}", orderOperRequest.getUserorderid());
+                return null;
+            }
+            //设置为失效
+            logger.info("将订单设置为失效,userorderid：{}", orderOperRequest.getUserorderid());
+            transOrderDTOs.get(0).setStatusid("10");
+            titanOrderService.updateTransOrder(transOrderDTOs.get(0));
+            return transOrderDTOs.get(0).getOrderid();
+        }
         return null;
     }
 
