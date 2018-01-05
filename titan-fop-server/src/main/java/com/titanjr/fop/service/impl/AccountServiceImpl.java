@@ -3,13 +3,19 @@ package com.titanjr.fop.service.impl;
 import com.fangcang.exception.ServiceException;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
+import com.fangcang.titanjr.entity.TitanFundUnFreezereq;
+import com.fangcang.titanjr.entity.parameter.TitanUnFundFreezereqParam;
 import com.fangcang.titanjr.service.TitanOrderService;
+import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.dao.TitanAccountDao;
 import com.titanjr.fop.dto.BalanceQueryDTO;
 import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceAuthcodeserviceRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceThawauthcodeRequest;
+import com.titanjr.fop.response.WheatfieldOrderServiceThawauthcodeResponse;
 import com.titanjr.fop.service.AccountService;
+import com.titanjr.fop.util.ResponseUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,11 +92,59 @@ public class AccountServiceImpl implements AccountService {
         balanceList.get(0).setBalanceusable(String.valueOf(accUseable - authcodeserviceRequest.getAmount()));
         int count = titanAccountDao.updateAccountBalance(balanceList.get(0));
         if (count < 1) {
-            logger.error("账户余额查询结果异常：{}", balanceList);
+            logger.error("账户余额更新异常");
             return null;
         }
         //返回生成的验证码
         return getFreezeAuthCode();
+    }
+
+    @Override
+    public WheatfieldOrderServiceThawauthcodeResponse unFreezeAccountBalance(WheatfieldOrderServiceThawauthcodeRequest thawauthcodeRequest) throws ServiceException {
+        WheatfieldOrderServiceThawauthcodeResponse thawauthcodeResponse = new WheatfieldOrderServiceThawauthcodeResponse();
+        //查询冻结记录
+        FundFreezeDTO fundFreezeDTO = new FundFreezeDTO();
+        fundFreezeDTO.setAuthCode(thawauthcodeRequest.getAuthcode());
+        fundFreezeDTO.setRequestNo(thawauthcodeRequest.getRequestno());
+        List<FundFreezeDTO> freezeDTOList = titanOrderService.queryFundFreezeDTO(fundFreezeDTO);
+        //无正确的冻结单
+        if (CollectionUtils.isEmpty(freezeDTOList) || freezeDTOList.size() > 1) {
+            ResponseUtils.getSysErrorResp(thawauthcodeResponse);
+            return thawauthcodeResponse;
+        }
+        //查询解冻记录，若存在则有问题
+        TitanUnFundFreezereqParam unFundFreezereqParam = new TitanUnFundFreezereqParam();
+        unFundFreezereqParam.setRequestno(thawauthcodeRequest.getRequestno());
+        List<TitanFundUnFreezereq> unFreezereqList = titanAccountDao.queryUnFreezeRequest(unFundFreezereqParam);
+        //已解冻或存在解冻单
+        if (freezeDTOList.get(0).getStatus() == 2 || CollectionUtils.isNotEmpty(unFreezereqList)) {
+            ResponseUtils.getSysErrorResp(thawauthcodeResponse);
+            return thawauthcodeResponse;
+        }
+        //查询并更新数据库修改账户余额
+        BalanceQueryDTO balanceQueryDTO = new BalanceQueryDTO();
+        balanceQueryDTO.setUserId(freezeDTOList.get(0).getUserId());
+        balanceQueryDTO.setProductId(freezeDTOList.get(0).getProductId());
+        List<AccountBalance> balanceList = titanAccountDao.queryAccountBalanceList(balanceQueryDTO);
+        if (CollectionUtils.isEmpty(balanceList) || balanceList.size() > 1) {
+            logger.error("账户余额查询结果异常：{}", balanceList);
+            ResponseUtils.getSysErrorResp(thawauthcodeResponse);
+            return thawauthcodeResponse;
+        }
+        Long accFrozen = Long.parseLong(balanceList.get(0).getBalancefrozon());
+        Long accUseable = Long.parseLong(balanceList.get(0).getBalanceusable());
+        balanceList.get(0).setBalancefrozon(String.valueOf(accFrozen - Long.parseLong(thawauthcodeRequest.getAmount())));
+        balanceList.get(0).setBalanceusable(String.valueOf(accUseable + Long.parseLong(thawauthcodeRequest.getAmount())));
+        int count = titanAccountDao.updateAccountBalance(balanceList.get(0));
+        if (count < 1) {
+            logger.error("账户余额更新异常");
+            ResponseUtils.getSysErrorResp(thawauthcodeResponse);
+            return thawauthcodeResponse;
+        }
+        thawauthcodeResponse.setIs_success("true");
+        thawauthcodeResponse.setRetcode("100000");
+        thawauthcodeResponse.setRetmsg("success");
+        return thawauthcodeResponse;
     }
 
     private String getFreezeAuthCode() {

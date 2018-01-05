@@ -2,7 +2,8 @@ package com.titanjr.fop.dao;
 
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
-import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
+import com.fangcang.titanjr.entity.TitanFundUnFreezereq;
+import com.fangcang.titanjr.entity.parameter.TitanUnFundFreezereqParam;
 import com.titanjr.fop.dto.BalanceQueryDTO;
 
 import java.util.List;
@@ -27,4 +28,12 @@ public interface TitanAccountDao {
      * @throws DaoException
      */
     int updateAccountBalance(AccountBalance accountBalance) throws DaoException;
+
+    /**
+     * 查询解冻单记录
+     * @param unFundFreezereqParam
+     * @return
+     * @throws DaoException
+     */
+    List<TitanFundUnFreezereq> queryUnFreezeRequest(TitanUnFundFreezereqParam unFundFreezereqParam) throws DaoException;
 }

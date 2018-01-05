@@ -4,7 +4,7 @@
 
 
     <select id="queryAccountBalanceList" parameterType="com.fangcang.titanjr.dto.request.AccountBalanceRequest"
-            resultType="com.titanjr.fop.dto.BalanceQueryDTO">
+            resultType="com.fangcang.titanjr.dto.bean.AccountBalance">
 
         SELECT
           userid,
@@ -21,6 +21,34 @@
             <if test="userId!=null">and userid = #{userId}</if>
             <if test="productId!=null">and productid = #{productId}</if>
         </where>
+    </select>
+
+
+    <update id="updateAccountBalance" parameterType="com.fangcang.titanjr.dto.bean.AccountBalance" >
+        update t_tfs_balanceinfo
+        <set >
+            <if test="balanceusable != null" >usablelimit = #{balanceusable},</if>
+            <if test="balancefrozon != null" >frozonamount = #{balancefrozon},</if>
+            <if test="balancesettle != null" >settleamount = #{balancesettle},</if>
+            <if test="balancecredit != null" >creditamount = #{balancecredit},</if>
+        </set>
+        where
+          userid = #{userid}
+          and productid = #{productid}
+
+    </update>
+
+    <select id="queryUnFreezeRequest" parameterType="com.fangcang.titanjr.entity.parameter.TitanUnFundFreezereqParam"
+            resultType="com.fangcang.titanjr.entity.TitanFundUnFreezereq">
+      SELECT
+        fundFreezereqid,
+        requesttime,
+        requestno,
+        conditioncode
+      FROM
+        t_tfs_fundunfreezereq q
+      where
+        <if test="requestno != null"> and  requestno = #{requestno} </if>
     </select>
 
 </mapper>

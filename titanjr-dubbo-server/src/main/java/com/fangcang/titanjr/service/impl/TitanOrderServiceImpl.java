@@ -302,6 +302,8 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 		
 		TitanFundFreezereqParam condition = new TitanFundFreezereqParam();
 		condition.setOrderno(fundFreezeDTO.getOrderNo());
+		condition.setAuthcode(fundFreezeDTO.getAuthCode());
+		condition.setRequestno(fundFreezeDTO.getRequestNo());
 		PaginationSupport<TitanFundFreezereq> paginationSupport = new PaginationSupport<TitanFundFreezereq>();
 		paginationSupport.setOrderBy(" requesttime DESC ");
 		titanFundFreezereqDao.selectForPage(condition, paginationSupport);
@@ -321,6 +323,7 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 			freezeDTO.setOrderNo(fundFreezereq.getOrderno());
 			freezeDTO.setStatus(fundFreezereq.getStatus());
 			freezeDTO.setFreezereqId(fundFreezereq.getFreezereqid());
+			freezeDTO.setProductId(fundFreezereq.getProductid());
 			freeDTOList.add(freezeDTO);
 		}
 		

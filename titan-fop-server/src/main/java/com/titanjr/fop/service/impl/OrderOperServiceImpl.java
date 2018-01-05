@@ -1,11 +1,14 @@
 package com.titanjr.fop.service.impl;
 
 import com.fangcang.exception.ServiceException;
+import com.fangcang.titanjr.dto.bean.RefundDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.DateUtil;
+import com.titanjr.fop.dao.TitanOrderDao;
 import com.titanjr.fop.request.WheatfieldOrderOperRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
 import com.titanjr.fop.service.OrderOperService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -27,6 +30,9 @@ public class OrderOperServiceImpl implements OrderOperService {
 
     @Resource
     TitanOrderService titanOrderService;
+
+    @Resource
+    TitanOrderDao titanOrderDao;
 
     @Override
     public String operateOrder(WheatfieldOrderOperRequest orderOperRequest) throws ServiceException {
@@ -101,7 +107,43 @@ public class OrderOperServiceImpl implements OrderOperService {
         return null;
     }
 
-    public static void main(String[] args) {
 
+    @Override
+    public String operateRefundOrder(WheatfieldOrderServiceReturngoodsRequest returngoodsRequest) throws ServiceException {
+        TransOrderRequest transOrderRequest = new TransOrderRequest();
+        transOrderRequest.setUserorderid(returngoodsRequest.getUserorderid());
+        transOrderRequest.setOrderid(returngoodsRequest.getOrderid());
+        List<TransOrderDTO> transOrderDTOs = titanOrderService.queryTransOrder(transOrderRequest);
+        if (CollectionUtils.isEmpty(transOrderDTOs)) {
+            logger.error("不存在交易单，单号:{}", returngoodsRequest.getOrderid());
+            return null;
+        }
+        int refundFlag = 1;
+        for (TransOrderDTO transOrderDTO : transOrderDTOs) {
+            if ("6".equals(transOrderDTO.getStatusid()) || "8".equals(transOrderDTO.getStatusid())) {
+                refundFlag++;
+            }
+        }
+        //只存在一个成功的交易才进行下一步退款
+        if (refundFlag != 2) {
+            logger.error("需退款的交易单状态不正确，单号:{}", returngoodsRequest.getOrderid());
+            return null;
+        }
+        //验证又有的退款单信息
+        RefundDTO refundDTO = new RefundDTO();
+        refundDTO.setOrderNo(returngoodsRequest.getOrderid());
+        List<RefundDTO> refundDTOList = titanOrderDao.queryRefundDTOList(refundDTO);
+        if (CollectionUtils.isNotEmpty(refundDTOList)) {
+            logger.error("已存在退款单，无法退款，单号：{}", returngoodsRequest.getOrderid());
+            return null;
+        }
+        //生成并返回单号
+        DecimalFormat formater = new DecimalFormat();
+        formater.applyPattern("00");
+        StringBuffer stringBuffer = new StringBuffer("OD");
+        stringBuffer.append(DateUtil.dateToString(new Date(), "yyyyMMddHHmmsssss"));
+        stringBuffer.append(formater.format((long) (Math.random() * 10)));
+        return stringBuffer.toString();
     }
+
 }

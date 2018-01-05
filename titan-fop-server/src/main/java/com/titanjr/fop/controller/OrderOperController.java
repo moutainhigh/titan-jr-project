@@ -4,10 +4,13 @@ import com.fangcang.util.StringUtil;
 import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
 import com.titanjr.fop.request.WheatfieldOrderOperRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
 import com.titanjr.fop.response.WheatfieldBalanceGetlistResponse;
 import com.titanjr.fop.response.WheatfieldOrderOperResponse;
+import com.titanjr.fop.response.WheatfieldOrderServiceReturngoodsResponse;
 import com.titanjr.fop.service.OrderOperService;
 import com.titanjr.fop.util.BeanUtils;
+import com.titanjr.fop.util.ResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -37,19 +40,19 @@ public class OrderOperController extends BaseController {
     public String orderOper(HttpServletRequest request, RedirectAttributes attr) throws Exception {
         logger.debug("请求参数为:{}", request.getParameterMap());
         WheatfieldOrderOperResponse operResponse = new WheatfieldOrderOperResponse();
-        String validResult = validRequestSign(request, operResponse);
+        String validResult = ResponseUtils.validRequestSign(request, operResponse);
         if (null != validResult) {
             return validResult;
         }
 
         WheatfieldOrderOperRequest orderOperRequest = BeanUtils.switch2RequestDTO(WheatfieldOrderOperRequest.class, request);
         if (null == orderOperRequest) {
-            return getConvertErrorResp(operResponse);
+            return ResponseUtils.getConvertErrorResp(operResponse);
         }
 
         String orderNo = orderOperService.operateOrder(orderOperRequest);
         if (!StringUtil.isValidString(orderNo)) {
-            return getSysErrorResp(operResponse);
+            return ResponseUtils.getSysErrorResp(operResponse);
         }
         logger.info("操作成功，当前订单号为：{}", orderNo);
         operResponse.setIs_success("true");
@@ -57,5 +60,29 @@ public class OrderOperController extends BaseController {
         return toJson(operResponse);
     }
 
+    @RequestMapping(value = "/operateRefundOrder", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
+    @ResponseBody
+    public String operateRefundOrder(HttpServletRequest request, RedirectAttributes attr) throws Exception {
+        logger.debug("请求参数为:{}", request.getParameterMap());
+        WheatfieldOrderServiceReturngoodsResponse returngoodsResponse = new WheatfieldOrderServiceReturngoodsResponse();
+        String validResult = ResponseUtils.validRequestSign(request, returngoodsResponse);
+        if (null != validResult) {
+            return validResult;
+        }
+
+        WheatfieldOrderServiceReturngoodsRequest returngoodsRequest = BeanUtils.switch2RequestDTO(WheatfieldOrderServiceReturngoodsRequest.class, request);
+        if (null == returngoodsRequest) {
+            return ResponseUtils.getConvertErrorResp(returngoodsResponse);
+        }
+
+        String batchNo = orderOperService.operateRefundOrder(returngoodsRequest);
+        if (!StringUtil.isValidString(batchNo)) {
+            return ResponseUtils.getSysErrorResp(returngoodsResponse);
+        }
+        logger.info("操作成功，退款单号为：{}", batchNo);
+        returngoodsResponse.setIs_success("true");
+        returngoodsResponse.setBatchno(batchNo);
+        return toJson(returngoodsResponse);
+    }
 
 }

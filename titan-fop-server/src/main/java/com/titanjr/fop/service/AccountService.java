@@ -4,6 +4,8 @@ import com.fangcang.exception.ServiceException;
 import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceAuthcodeserviceRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceThawauthcodeRequest;
+import com.titanjr.fop.response.WheatfieldOrderServiceThawauthcodeResponse;
 
 import java.util.List;
 
@@ -28,4 +30,12 @@ public interface AccountService {
      * @throws ServiceException
      */
     String freezeAccountBalance(WheatfieldOrderServiceAuthcodeserviceRequest authcodeserviceRequest) throws ServiceException;
+
+    /**
+     * 解冻账户资金操作
+     * @param thawauthcodeRequest
+     * @return
+     * @throws ServiceException
+     */
+    WheatfieldOrderServiceThawauthcodeResponse unFreezeAccountBalance(WheatfieldOrderServiceThawauthcodeRequest thawauthcodeRequest) throws ServiceException;
 }

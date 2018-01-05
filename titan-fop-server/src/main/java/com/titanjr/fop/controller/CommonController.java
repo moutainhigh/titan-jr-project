@@ -7,6 +7,7 @@ import com.titanjr.fop.entity.RequestSession;
 import com.titanjr.fop.request.ExternalSessionGetRequest;
 import com.titanjr.fop.response.ExternalSessionGetResponse;
 import com.titanjr.fop.util.BeanUtils;
+import com.titanjr.fop.util.ResponseUtils;
 import net.sf.json.JSONSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,14 +38,14 @@ public class CommonController extends BaseController {
     public String getSession(HttpServletRequest request, RedirectAttributes attr) throws Exception {
 
         ExternalSessionGetResponse sessionGetResponse = new ExternalSessionGetResponse();
-        String validResult = validRequestSign(request, sessionGetResponse);
+        String validResult = ResponseUtils.validRequestSign(request, sessionGetResponse);
         if (null != validResult) {
             return validResult;
         }
 
         ExternalSessionGetRequest sessionGetRequest = BeanUtils.switch2RequestDTO(ExternalSessionGetRequest.class, request);
         if (null == sessionGetRequest) {
-            return getConvertErrorResp(sessionGetResponse);
+            return ResponseUtils.getConvertErrorResp(sessionGetResponse);
         }
 
         long random = (long) (Math.random() * 1000000);
@@ -57,7 +58,7 @@ public class CommonController extends BaseController {
 
         int result = requestSessionDao.saveRequestSession(requestSession);
         if (result < 1) {
-            return getSysErrorResp(sessionGetResponse);
+            return ResponseUtils.getSysErrorResp(sessionGetResponse);
         }
         sessionGetResponse.setSession(session);
 

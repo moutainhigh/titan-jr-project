@@ -25,7 +25,9 @@ public class FundFreezeDTO implements Serializable{
 	private String amount;
 	
 	private String orderNo;
-	
+
+	private String productId;
+
 	private String requestTime = DateUtil.sdf4.format(new Date());
 	
 	private OrderStatusEnum orderStatusEnum;
@@ -112,5 +114,12 @@ public class FundFreezeDTO implements Serializable{
 	public void setOrderStatusEnum(OrderStatusEnum orderStatusEnum) {
 		this.orderStatusEnum = orderStatusEnum;
 	}
-	
+
+	public String getProductId() {
+		return productId;
+	}
+
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
 }

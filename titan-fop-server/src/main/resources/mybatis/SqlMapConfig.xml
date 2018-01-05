@@ -47,6 +47,7 @@
     <mappers>
         <mapper resource="mybatis/RequestSessionMapper.xml"/>
         <mapper resource="mybatis/FinancialAccountMapper.xml"/>
+        <mapper resource="mybatis/FinancialOrderMapper.xml"/>
     </mappers>
 
 </configuration>

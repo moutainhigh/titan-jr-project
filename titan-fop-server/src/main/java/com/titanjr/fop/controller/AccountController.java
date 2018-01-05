@@ -4,10 +4,13 @@ import com.fangcang.util.StringUtil;
 import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceAuthcodeserviceRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceThawauthcodeRequest;
 import com.titanjr.fop.response.WheatfieldBalanceGetlistResponse;
 import com.titanjr.fop.response.WheatfieldOrderServiceAuthcodeserviceResponse;
+import com.titanjr.fop.response.WheatfieldOrderServiceThawauthcodeResponse;
 import com.titanjr.fop.service.AccountService;
 import com.titanjr.fop.util.BeanUtils;
+import com.titanjr.fop.util.ResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -19,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,7 +41,7 @@ public class AccountController extends BaseController {
     public String getBalanceList(HttpServletRequest request, RedirectAttributes attr) throws Exception {
 
         WheatfieldBalanceGetlistResponse getlistResponse = new WheatfieldBalanceGetlistResponse();
-        String validResult = validRequestSign(request, getlistResponse);
+        String validResult = ResponseUtils.validRequestSign(request, getlistResponse);
         if (null != validResult) {
             return validResult;
         }
@@ -47,7 +49,7 @@ public class AccountController extends BaseController {
 
         WheatfieldBalanceGetlistRequest getlistRequest = BeanUtils.switch2RequestDTO(WheatfieldBalanceGetlistRequest.class, request);
         if (null == getlistRequest) {
-            return getConvertErrorResp(getlistResponse);
+            return ResponseUtils.getConvertErrorResp(getlistResponse);
         }
         List<SHBalanceInfo> balanceInfos = accountService.getAccountBalanceList(getlistRequest);
 
@@ -63,21 +65,40 @@ public class AccountController extends BaseController {
     @ResponseBody
     public String freezeAccountBalance(HttpServletRequest request, RedirectAttributes attr) throws Exception {
         WheatfieldOrderServiceAuthcodeserviceResponse authcodeserviceResponse = new WheatfieldOrderServiceAuthcodeserviceResponse();
-        String validResult = validRequestSign(request, authcodeserviceResponse);
+        String validResult = ResponseUtils.validRequestSign(request, authcodeserviceResponse);
         if (null != validResult) {
             return validResult;
         }
         WheatfieldOrderServiceAuthcodeserviceRequest authcodeserviceRequest = BeanUtils.switch2RequestDTO(WheatfieldOrderServiceAuthcodeserviceRequest.class, request);
         if (null == authcodeserviceRequest) {
-            return getConvertErrorResp(authcodeserviceResponse);
+            return ResponseUtils.getConvertErrorResp(authcodeserviceResponse);
         }
         String authCode = accountService.freezeAccountBalance(authcodeserviceRequest);
         if (!StringUtil.isValidString(authCode)) {
-            return getSysErrorResp(authcodeserviceResponse);
+            return ResponseUtils.getSysErrorResp(authcodeserviceResponse);
         }
         authcodeserviceResponse.setIs_success("true");
         authcodeserviceResponse.setAuthcode(authCode);
         return toJson(authcodeserviceResponse);
+    }
+
+    @RequestMapping(value = "/unFreezeAccountBalance", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
+    @ResponseBody
+    public String unFreezeAccountBalance(HttpServletRequest request, RedirectAttributes attr) throws Exception {
+        WheatfieldOrderServiceThawauthcodeResponse thawauthcodeResponse = new WheatfieldOrderServiceThawauthcodeResponse();
+        String validResult = ResponseUtils.validRequestSign(request, thawauthcodeResponse);
+        if (null != validResult) {
+            return validResult;
+        }
+        WheatfieldOrderServiceThawauthcodeRequest thawauthcodeRequest = BeanUtils.switch2RequestDTO(WheatfieldOrderServiceThawauthcodeRequest.class, request);
+        if (null == thawauthcodeRequest) {
+            return ResponseUtils.getConvertErrorResp(thawauthcodeResponse);
+        }
+        thawauthcodeResponse = accountService.unFreezeAccountBalance(thawauthcodeRequest);
+        if (null == thawauthcodeResponse) {
+            return ResponseUtils.getSysErrorResp(thawauthcodeResponse);
+        }
+        return toJson(thawauthcodeResponse);
     }
 
 }

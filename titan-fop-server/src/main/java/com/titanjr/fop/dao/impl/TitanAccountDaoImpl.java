@@ -3,7 +3,8 @@ package com.titanjr.fop.dao.impl;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
-import com.fangcang.titanjr.dto.request.AccountBalanceRequest;
+import com.fangcang.titanjr.entity.TitanFundUnFreezereq;
+import com.fangcang.titanjr.entity.parameter.TitanUnFundFreezereqParam;
 import com.titanjr.fop.dao.TitanAccountDao;
 import com.titanjr.fop.dto.BalanceQueryDTO;
 
@@ -30,6 +31,16 @@ public class TitanAccountDaoImpl extends GenericDAOMyBatisImpl implements TitanA
             return super.updateEntity("com.titanjr.fop.dao.TitanAccountDao.updateAccountBalance", accountBalance);
         } catch (Exception e) {
             logger.error("accountBalance Error", e);
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public List<TitanFundUnFreezereq> queryUnFreezeRequest(TitanUnFundFreezereqParam unFundFreezereqParam) throws DaoException {
+        try {
+            return super.selectList("com.titanjr.fop.dao.TitanAccountDao.queryUnFreezeRequest", unFundFreezereqParam);
+        } catch (Exception e) {
+            logger.error("queryUnFreezeRequest Error", e);
             throw new DaoException(e);
         }
     }

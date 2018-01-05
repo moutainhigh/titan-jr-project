@@ -47,36 +47,4 @@ public class BaseController {
         return JSONSerializer.toJSON(object).toString();
     }
 
-    //签名和session处理
-    public String validRequestSign(HttpServletRequest request, FopResponse fopResponse) {
-        if (null != request.getParameter("signValid") &&
-                request.getParameter("signValid").equals("false")) {
-            fopResponse.setErrorCode(ReturnCodeEnum.CODE_SIGN_ERROR.getCode());
-            fopResponse.setMsg(ReturnCodeEnum.CODE_SIGN_ERROR.getMsg());
-            return toJson(fopResponse);
-        }
-        if (null != request.getParameter("sessionValid") &&
-                request.getParameter("sessionValid").equals("false")){
-            fopResponse.setErrorCode(ReturnCodeEnum.CODE_SESSION_ERROR.getCode());
-            fopResponse.setMsg(ReturnCodeEnum.CODE_SESSION_ERROR.getMsg());
-            return toJson(fopResponse);
-        }
-        return null;
-    }
-
-    //request转换为请求对象处理
-    public String getConvertErrorResp(FopResponse fopResponse){
-        logger.error("request转换为请求参数错误");
-        fopResponse.setErrorCode(ReturnCodeEnum.CODE_CONVERT_ERROR.getCode());
-        fopResponse.setMsg(ReturnCodeEnum.CODE_CONVERT_ERROR.getMsg());
-        return toJson(fopResponse);
-    }
-
-    //统一系统异常
-    public String getSysErrorResp(FopResponse fopResponse){
-        logger.error("系统操作异常");
-        fopResponse.setErrorCode(ReturnCodeEnum.CODE_SYS_ERROR.getCode());
-        fopResponse.setMsg(ReturnCodeEnum.CODE_SYS_ERROR.getMsg());
-        return toJson(fopResponse);
-    }
 }

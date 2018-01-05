@@ -176,37 +176,37 @@ public class WheatfieldOrderOperRequest extends BaseRequest implements FopReques
     }
 
     public Map<String, String> getTextParams() {
-        FopHashMap var1 = new FopHashMap();
-        var1.put("ordertime", this.ordertime);
-        var1.put("remark", this.remark);
-        var1.put("adjusttype", this.adjusttype);
-        var1.put("productid", this.productid);
-        var1.put("userid", this.userid);
-        var1.put("userorderid", this.userorderid);
-        var1.put("ordertypeid", this.ordertypeid);
-        var1.put("constid", this.constid);
-        var1.put("opertype", this.opertype);
-        var1.put("number", this.number);
-        var1.put("orderdate", this.orderdate);
-        var1.put("adjustcontent", this.adjustcontent);
-        var1.put("userrelateid", this.userrelateid);
-        var1.put("amount", this.amount);
-        var1.put("goodsdetail", this.goodsdetail);
-        var1.put("goodsname", this.goodsname);
-        var1.put("unitprice", this.unitprice);
+        FopHashMap fopHashMap = new FopHashMap();
+        fopHashMap.put("ordertime", this.ordertime);
+        fopHashMap.put("remark", this.remark);
+        fopHashMap.put("adjusttype", this.adjusttype);
+        fopHashMap.put("productid", this.productid);
+        fopHashMap.put("userid", this.userid);
+        fopHashMap.put("userorderid", this.userorderid);
+        fopHashMap.put("ordertypeid", this.ordertypeid);
+        fopHashMap.put("constid", this.constid);
+        fopHashMap.put("opertype", this.opertype);
+        fopHashMap.put("number", this.number);
+        fopHashMap.put("orderdate", this.orderdate);
+        fopHashMap.put("adjustcontent", this.adjustcontent);
+        fopHashMap.put("userrelateid", this.userrelateid);
+        fopHashMap.put("amount", this.amount);
+        fopHashMap.put("goodsdetail", this.goodsdetail);
+        fopHashMap.put("goodsname", this.goodsname);
+        fopHashMap.put("unitprice", this.unitprice);
         if (this.udfParams != null) {
-            var1.putAll(this.udfParams);
+            fopHashMap.putAll(this.udfParams);
         }
 
-        return var1;
+        return fopHashMap;
     }
 
-    public void putOtherTextParam(String var1, String var2) {
+    public void putOtherTextParam(String key, String value) {
         if (this.udfParams == null) {
             this.udfParams = new FopHashMap();
         }
 
-        this.udfParams.put(var1, var2);
+        this.udfParams.put(key, value);
     }
 
     public Class<WheatfieldOrderOperResponse> getResponseClass() {
