@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 
 /**
- * 退款结果，按照融数格式返回
+ * 退款结果
  * @author Jerry
  * @date 2017年12月4日 上午11:39:48  
  */
@@ -57,13 +57,7 @@ public class TitanOrderRefundResponse extends RSResponse {
 	 */
 	@NotBlank
 	private String refundTime;
-
-	@NotBlank
-	private String version;
 	
-	private String signType;
-	
-	private String signMsg;
 
 	public String getRefundOrderno() {
 		return refundOrderno;
@@ -111,30 +105,6 @@ public class TitanOrderRefundResponse extends RSResponse {
 
 	public void setRefundTime(String refundTime) {
 		this.refundTime = refundTime;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
-	public String getSignType() {
-		return signType;
-	}
-
-	public void setSignType(String signType) {
-		this.signType = signType;
-	}
-
-	public String getSignMsg() {
-		return signMsg;
-	}
-
-	public void setSignMsg(String signMsg) {
-		this.signMsg = signMsg;
 	}
 
 }

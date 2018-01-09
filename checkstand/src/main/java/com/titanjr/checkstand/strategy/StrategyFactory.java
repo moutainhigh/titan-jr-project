@@ -2,12 +2,13 @@ package com.titanjr.checkstand.strategy;
 
 import com.fangcang.util.SpringContextUtil;
 import com.titanjr.checkstand.constants.AgentTradeCodeEnum;
+import com.titanjr.checkstand.constants.BusiCodeEnum;
 import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.strategy.agent.AgentTradeStrategy;
 import com.titanjr.checkstand.strategy.pay.PayRequestStrategy;
-import com.titanjr.checkstand.strategy.payQuery.PayQueryStrategy;
+import com.titanjr.checkstand.strategy.query.QueryStrategy;
+import com.titanjr.checkstand.strategy.quickPay.QuickPayStrategy;
 import com.titanjr.checkstand.strategy.refund.OrderRefundStrategy;
-import com.titanjr.checkstand.strategy.refundQuery.RefundQueryStrategy;
 
 /**
  * Created by zhaoshan on 2017/11/20.
@@ -17,7 +18,7 @@ public class StrategyFactory {
 	/**
 	 * 支付策略
 	 * @author zhaoshan
-	 * @date 2017年12月1日 上午10:04:42
+	 * @date 2017年12月1日 上午10:04:42 
 	 */
     public static PayRequestStrategy getPayRequestStrategy(PayTypeEnum payTypeEnum){
 
@@ -30,6 +31,10 @@ public class StrategyFactory {
                 PayTypeEnum.QR_ALIPAY.equals(payTypeEnum) || PayTypeEnum.QR_WECHAT.equals(payTypeEnum)){
             return (PayRequestStrategy)SpringContextUtil.getBean("qrPayStrategy");
         }
+        
+        if (PayTypeEnum.QUICK_NEW.equals(payTypeEnum)){
+            return (PayRequestStrategy)SpringContextUtil.getBean("quickPayStrategy");
+        }
 
         return null;
     }
@@ -39,21 +44,21 @@ public class StrategyFactory {
      * @author Jerry
      * @date 2017年12月1日 上午10:04:23
      */
-    public static PayQueryStrategy getPayQueryStrategy(PayTypeEnum payTypeEnum){
+    public static QueryStrategy getPayQueryStrategy(PayTypeEnum payTypeEnum){
 
         if (PayTypeEnum.PERSON_EBANK.equals(payTypeEnum) || PayTypeEnum.COMP_EBANK.equals(payTypeEnum)
                 || PayTypeEnum.CREDIT_EBANK.equals(payTypeEnum)){
-            return (PayQueryStrategy)SpringContextUtil.getBean("netBankPayQueryStrategy");
+            return (QueryStrategy)SpringContextUtil.getBean("netBankPayQueryStrategy");
         }
 
         if (PayTypeEnum.QR_WECHAT_URL.equals(payTypeEnum) || PayTypeEnum.QR_ALIPAY_URL.equals(payTypeEnum) ||
                 PayTypeEnum.QR_ALIPAY.equals(payTypeEnum) || PayTypeEnum.QR_WECHAT.equals(payTypeEnum) || 
                 PayTypeEnum.WECHAT.equals(payTypeEnum)){
-            return (PayQueryStrategy)SpringContextUtil.getBean("qrPayQueryStrategy");
+            return (QueryStrategy)SpringContextUtil.getBean("qrPayQueryStrategy");
         }
         
         if (PayTypeEnum.QUICK_NEW.equals(payTypeEnum)){
-            return (PayQueryStrategy)SpringContextUtil.getBean("quickPayQueryStrategy");
+            return (QueryStrategy)SpringContextUtil.getBean("quickPayQueryStrategy");
         }
 
         return null;
@@ -77,9 +82,9 @@ public class StrategyFactory {
             return (OrderRefundStrategy)SpringContextUtil.getBean("qrOrderRefundStrategy");
         }
         
-        /*if (PayTypeEnum.QUICK_NEW.equals(payTypeEnum)){
-            return (PayQueryStrategy)SpringContextUtil.getBean("qkPayQueryStrategy");
-        }*/
+        if (PayTypeEnum.QUICK_NEW.equals(payTypeEnum)){
+            return (OrderRefundStrategy)SpringContextUtil.getBean("quickPayRefundStrategy");
+        }
 
         return null;
     }
@@ -89,27 +94,31 @@ public class StrategyFactory {
      * @author Jerry
      * @date 2017年12月5日 下午6:11:54
      */
-    public static RefundQueryStrategy getRefundQueryStrategy(PayTypeEnum payTypeEnum){
+    public static QueryStrategy getRefundQueryStrategy(PayTypeEnum payTypeEnum){
 
         if (PayTypeEnum.PERSON_EBANK.equals(payTypeEnum) || PayTypeEnum.COMP_EBANK.equals(payTypeEnum)
                 || PayTypeEnum.CREDIT_EBANK.equals(payTypeEnum)){
-            return (RefundQueryStrategy)SpringContextUtil.getBean("netBankRefundQueryStrategy");
+            return (QueryStrategy)SpringContextUtil.getBean("netBankRefundQueryStrategy");
         }
 
         if (PayTypeEnum.QR_WECHAT_URL.equals(payTypeEnum) || PayTypeEnum.QR_ALIPAY_URL.equals(payTypeEnum) ||
                 PayTypeEnum.QR_ALIPAY.equals(payTypeEnum) || PayTypeEnum.QR_WECHAT.equals(payTypeEnum) || 
                 PayTypeEnum.WECHAT.equals(payTypeEnum)){
-            return (RefundQueryStrategy)SpringContextUtil.getBean("qrOrderRefundQueryStrategy");
+            return (QueryStrategy)SpringContextUtil.getBean("qrOrderRefundQueryStrategy");
         }
         
-        /*if (PayTypeEnum.QUICK_NEW.equals(payTypeEnum)){
-            return (PayQueryStrategy)SpringContextUtil.getBean("qkPayQueryStrategy");
-        }*/
+        if (PayTypeEnum.QUICK_NEW.equals(payTypeEnum)){
+            return (QueryStrategy)SpringContextUtil.getBean("quickPayRefundQueryStrategy");
+        }
 
         return null;
     }
     
-    
+    /**
+     * 账户交易策略
+     * @author Jerry
+     * @date 2018年1月3日 下午7:41:51
+     */
     public static AgentTradeStrategy getAgentTradeStrategy(String tradeCode){
 
         if (AgentTradeCodeEnum.AGENT_PAY.getCode().equals(tradeCode)){
@@ -122,6 +131,40 @@ public class StrategyFactory {
         
         if (AgentTradeCodeEnum.AGENT_DOWNLOAD.getCode().equals(tradeCode)){
         	return (AgentTradeStrategy)SpringContextUtil.getBean("agentDownloadStrategy");
+        }
+
+        return null;
+    }
+    
+    /**
+     * 快捷支付策略
+     * @author Jerry
+     * @date 2018年1月3日 下午8:15:43
+     */
+    public static QuickPayStrategy getQuickpayStrategy(BusiCodeEnum busiCodeEnum){
+    	
+    	if (busiCodeEnum == BusiCodeEnum.CARD_BIN_QUERY){
+        	return (QuickPayStrategy)SpringContextUtil.getBean("cardBINQueryStrategy");
+        }
+        
+        if(busiCodeEnum == BusiCodeEnum.QUICK_PAY_CONFIRM){
+        	return (QuickPayStrategy)SpringContextUtil.getBean("quickPayConfirmStrategy");
+        }
+        
+        if(busiCodeEnum == BusiCodeEnum.RE_SEND_MSG){
+        	return (QuickPayStrategy)SpringContextUtil.getBean("reSendMsgStrategy");
+        }
+        
+        if(busiCodeEnum == BusiCodeEnum.CARD_AUTH){
+        	return (QuickPayStrategy)SpringContextUtil.getBean("cardAuthStrategy");
+        }
+        
+        if(busiCodeEnum == BusiCodeEnum.CARD_BIND_QUERY){
+        	return (QuickPayStrategy)SpringContextUtil.getBean("bindCardListQueryStrategy");
+        }
+        
+        if(busiCodeEnum == BusiCodeEnum.CARD_UNBIND){
+        	return (QuickPayStrategy)SpringContextUtil.getBean("unBindCardStrategy");
         }
 
         return null;

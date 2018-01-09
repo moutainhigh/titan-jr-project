@@ -9,6 +9,8 @@ package com.titanjr.checkstand.util;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
+import java.util.UUID;
 
 /**
  * @author Jerry
@@ -33,8 +35,20 @@ public class CommonUtil {
 		return sb.toString();
 	}
 	
+	@SuppressWarnings("rawtypes")
+	public static String treeMapString(TreeMap<String,String> map){
+		StringBuffer sb = new StringBuffer("\n");
+		for(Map.Entry entry: map.entrySet()){
+			String val = (String)entry.getValue();
+			sb.append(entry.getKey()+"=" + val + "\n");
+		}
+		return sb.toString();
+	}
+	
 	/**
 	 * 生成随机码
+	 * @author Jerry
+	 * @date 2018年1月4日 下午3:46:54
 	 * @param n
 	 * @return
 	 */
@@ -47,6 +61,19 @@ public class CommonUtil {
 			sRand += rand;
 		}
 		return sRand;
+	}
+	
+	
+	/**
+	 * 获得一个UUID
+	 * @author Jerry
+	 * @date 2018年1月4日 下午3:46:41
+	 * @return
+	 */
+	public static String getUUID(){
+		String s = UUID.randomUUID().toString();
+		//去掉“-”符号
+		return s.substring(0,8)+s.substring(9,13)+s.substring(14,18)+s.substring(19,23)+s.substring(24);
 	}
 
 }

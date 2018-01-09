@@ -2,7 +2,9 @@ package com.fangcang.titanjr.common.util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -38,6 +40,31 @@ public final class BeanConvertor {
         }
         return list;
         
+    }
+	
+	
+	/**
+	 * 将对象转换成Map
+	 * @author Jerry
+	 * @date 2018年1月3日 下午3:55:06
+	 */
+	public static Map<String, Object> beanToMap(Object obj) throws Exception {    
+        if(obj == null){    
+            return null;    
+        }   
+  
+        Map<String, Object> map = new HashMap<String, Object>();    
+  
+        Field[] declaredFields = obj.getClass().getDeclaredFields();    
+        for (Field field : declaredFields) {    
+            field.setAccessible(true);  
+            if(!String.valueOf(field.get(obj)).equals("null") 
+            		&& !String.valueOf(field.get(obj)).equals("")){
+            	map.put(field.getName(), field.get(obj));
+            }
+        }    
+  
+        return map;  
     }
 
 }

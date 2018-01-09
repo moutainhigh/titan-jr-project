@@ -63,7 +63,7 @@ public enum RequestTypeEnum {
 	/**
 	 * 卡密鉴权
 	 */
-	QUICK_VALID_AUTH("306","卡密鉴权"),
+	QUICK_CARD_AUTH("306","卡密鉴权"),
 	/**
 	 * 确认支付
 	 */
@@ -71,7 +71,7 @@ public enum RequestTypeEnum {
 	/**
 	 * 支付结果查询
 	 */
-	QUICK_PAY_QUERY("308","支付结果查询"),
+	QUICK_PAY_QUERY("308","快捷支付结果查询"),
 	/**
 	 * 解绑卡
 	 */

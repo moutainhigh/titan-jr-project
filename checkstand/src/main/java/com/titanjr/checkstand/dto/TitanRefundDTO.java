@@ -4,6 +4,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.titanjr.checkstand.constants.BusiCodeEnum;
+
 /**
  * 退款请求参数（融数格式）
  * @author Jerry
@@ -17,8 +19,9 @@ public class TitanRefundDTO {
     @NotBlank
     private String merchantNo;
     /**
-     * 业务号
-     */
+	 * 业务号  {@link BusiCodeEnum}
+	 */
+	@NotBlank
     private String busiCode;
     /**
      * 退款单号

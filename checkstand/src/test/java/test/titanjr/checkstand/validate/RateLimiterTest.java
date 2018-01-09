@@ -1,7 +1,7 @@
 package test.titanjr.checkstand.validate;
 
 import com.fangcang.titanjr.redis.service.RedisService;
-import com.titanjr.checkstand.constants.OperateTypeEnum;
+import com.titanjr.checkstand.constants.BusiCodeEnum;
 import com.titanjr.checkstand.util.AccessLimiter;
 import org.junit.Test;
 import test.titanjr.checkstand.GenericTest;
@@ -28,20 +28,20 @@ public class RateLimiterTest extends GenericTest{
     public void testLimiterSet() throws Exception{
 
         for (int i = 0; i < 4; i++) {
-            System.out.println(accessLimiter.accessFrequency(OperateTypeEnum.PAY_REQUEST));
+            System.out.println(accessLimiter.accessFrequency(BusiCodeEnum.PAY_REQUEST));
         }
         Thread.sleep(500);
-        System.out.println(accessLimiter.accessFrequency(OperateTypeEnum.PAY_REQUEST));
-        System.out.println(accessLimiter.accessFrequency(OperateTypeEnum.PAY_REQUEST));
-        System.out.println(accessLimiter.accessFrequency(OperateTypeEnum.PAY_REQUEST));
-        System.out.println(accessLimiter.accessFrequency(OperateTypeEnum.PAY_REQUEST));
+        System.out.println(accessLimiter.accessFrequency(BusiCodeEnum.PAY_REQUEST));
+        System.out.println(accessLimiter.accessFrequency(BusiCodeEnum.PAY_REQUEST));
+        System.out.println(accessLimiter.accessFrequency(BusiCodeEnum.PAY_REQUEST));
+        System.out.println(accessLimiter.accessFrequency(BusiCodeEnum.PAY_REQUEST));
 
         System.out.println("------------------------");
-        System.out.println(accessLimiter.accessInterval(OperateTypeEnum.PAY_REQUEST,"201711171150060003"));
+        System.out.println(accessLimiter.accessInterval(BusiCodeEnum.PAY_REQUEST,"201711171150060003"));
         Thread.sleep(1200);
-        System.out.println(accessLimiter.accessInterval(OperateTypeEnum.PAY_REQUEST,"201711171150060003"));
+        System.out.println(accessLimiter.accessInterval(BusiCodeEnum.PAY_REQUEST,"201711171150060003"));
         Thread.sleep(700);
-        System.out.println(accessLimiter.accessInterval(OperateTypeEnum.PAY_REQUEST,"201711171150060003"));
+        System.out.println(accessLimiter.accessInterval(BusiCodeEnum.PAY_REQUEST,"201711171150060003"));
     }
 
     public void redisTest(){

@@ -31,11 +31,6 @@ public class TitanAgentPayResponse extends RSResponse {
 	private String tradeCode;
 	
 	/**
-	 * 签名信息
-	 */
-	private String signMsg;  
-	
-	/**
 	 * 交易状态  {@link WithDrawStatusEnum}
 	 */
 	private String status;
@@ -47,14 +42,6 @@ public class TitanAgentPayResponse extends RSResponse {
 
 	public void setTradeCode(String tradeCode) {
 		this.tradeCode = tradeCode;
-	}
-
-	public String getSignMsg() {
-		return signMsg;
-	}
-
-	public void setSignMsg(String signMsg) {
-		this.signMsg = signMsg;
 	}
 
 	public String getStatus() {

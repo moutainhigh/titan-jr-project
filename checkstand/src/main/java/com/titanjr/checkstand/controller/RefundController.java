@@ -16,9 +16,11 @@ import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dto.TitanRefundDTO;
+import com.titanjr.checkstand.request.RBQuickPayRefundRequest;
 import com.titanjr.checkstand.request.TLQrOrderRefundRequest;
 import com.titanjr.checkstand.request.TLNetBankOrderRefundRequest;
 import com.titanjr.checkstand.respnse.TitanOrderRefundResponse;
+import com.titanjr.checkstand.service.RBQuickPayService;
 import com.titanjr.checkstand.service.TLOrderRefundService;
 import com.titanjr.checkstand.strategy.StrategyFactory;
 import com.titanjr.checkstand.strategy.refund.OrderRefundStrategy;
@@ -43,6 +45,9 @@ public class RefundController extends BaseController {
 	@Resource
 	private TLOrderRefundService tlOrderRefundService;
 	
+	@Resource
+	private RBQuickPayService rbQuickPayService;
+	
 
 	@RequestMapping(value = "/entrance", method = {RequestMethod.GET, RequestMethod.POST})
     public String entrance(HttpServletRequest request, RedirectAttributes attr, Model model) throws Exception {
@@ -50,7 +55,7 @@ public class RefundController extends BaseController {
 		//查询订单，获取支付方式
         
         //根据支付方式获取退款调用策略，调对应的接口
-		PayTypeEnum payTypeEnum = PayTypeEnum.QR_WECHAT_URL;
+		PayTypeEnum payTypeEnum = PayTypeEnum.QUICK_NEW;
 		OrderRefundStrategy refundStrategy =  StrategyFactory.getRefundStrategy(payTypeEnum);
         String redirectUrl = refundStrategy.redirectResult(request);
         super.resetParameter(request,attr);
@@ -145,6 +150,50 @@ public class RefundController extends BaseController {
 		} catch (Exception e) {
 			
 			logger.error("扫码交易退款发生异常：{}", e);
+			titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+			return titanOrderRefundResponse;
+			
+		}
+        
+    }
+	
+	
+	/**
+	 * 快捷支付退款
+	 * @author Jerry
+	 * @date 2018年1月8日 上午11:18:53
+	 */
+	@ResponseBody
+    @RequestMapping(value = "/quickPayRefund", method = {RequestMethod.GET, RequestMethod.POST})
+    public TitanOrderRefundResponse quickPayRefund(HttpServletRequest request, Model model) {
+    	
+    	TitanOrderRefundResponse titanOrderRefundResponse = new TitanOrderRefundResponse();
+    	
+    	try {
+    		
+			TitanRefundDTO titanRefundDTO = WebUtils.switch2RequestDTO(TitanRefundDTO.class, request);
+			ValidateResponse res = GenericValidate.validateNew(titanRefundDTO);
+			if (!res.isSuccess()){
+				logger.error("【融宝-快捷支付退款】参数错误：{}", res.getReturnMessage());
+				titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
+				return titanOrderRefundResponse;
+			}
+			
+			RBQuickPayRefundRequest rbQuickPayRefundRequest = new RBQuickPayRefundRequest();
+			rbQuickPayRefundRequest.setOrig_order_no(titanRefundDTO.getOrderNo());
+			rbQuickPayRefundRequest.setOrder_no(titanRefundDTO.getRefundOrderno());
+			rbQuickPayRefundRequest.setAmount(titanRefundDTO.getRefundAmount());
+			rbQuickPayRefundRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
+			rbQuickPayRefundRequest.setVersion(SysConstant.RB_VERSION);
+			rbQuickPayRefundRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
+			rbQuickPayRefundRequest.setRequestType(RequestTypeEnum.QUICK_REFUND.getKey());
+			
+			titanOrderRefundResponse = rbQuickPayService.refund(rbQuickPayRefundRequest);
+			return titanOrderRefundResponse;
+			
+		} catch (Exception e) {
+			
+			logger.error("【融宝-快捷支付退款】异常：", e);
 			titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanOrderRefundResponse;
 			

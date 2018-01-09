@@ -33,11 +33,6 @@ public class TitanAgentQueryResponse extends RSResponse {
 	private String tradeCode;
 	
 	/**
-	 * 签名信息
-	 */
-	private String signMsg;  
-	
-	/**
 	 * 查询返回码   00所有的交易都在处理中    01查询成功   02所有的交易都失败   03没有对应的交易<br>
 	 * retCode为01时，交易明细才有值 
 	 */
@@ -55,14 +50,6 @@ public class TitanAgentQueryResponse extends RSResponse {
 
 	public void setTradeCode(String tradeCode) {
 		this.tradeCode = tradeCode;
-	}
-
-	public String getSignMsg() {
-		return signMsg;
-	}
-
-	public void setSignMsg(String signMsg) {
-		this.signMsg = signMsg;
 	}
 
 	public List<TitanAgentResDetailDTO> getDetails() {

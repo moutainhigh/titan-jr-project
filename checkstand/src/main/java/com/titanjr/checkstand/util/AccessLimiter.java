@@ -4,7 +4,7 @@ package com.titanjr.checkstand.util;
 import com.fangcang.titanjr.redis.service.RedisService;
 import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.AccessLimitConfig;
-import com.titanjr.checkstand.constants.OperateTypeEnum;
+import com.titanjr.checkstand.constants.BusiCodeEnum;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,16 +41,16 @@ public class AccessLimiter {
      * @param operateType 操作类型
      * @return
      */
-    public boolean accessFrequency(OperateTypeEnum operateType) {
-        if (AccessLimitConfig.frequencyConfigMap.containsKey(operateType)) {
-            Long frequency = AccessLimitConfig.frequencyConfigMap.get(operateType);
+    public boolean accessFrequency(BusiCodeEnum busiCodeEnum) {
+        if (AccessLimitConfig.frequencyConfigMap.containsKey(busiCodeEnum)) {
+            Long frequency = AccessLimitConfig.frequencyConfigMap.get(busiCodeEnum);
             limit = frequency;//限时访问的总次数
             intervalPerPermit = intervalInMills / limit;
         } else {
-            logger.error("当前操作【{}】未配置的访问频次数据", operateType);
+            logger.error("当前操作【{}】未配置的访问频次数据", busiCodeEnum);
             return false;
         }
-        String key = genKey(operateType,null);
+        String key = genKey(busiCodeEnum, null);
         Map<String, String> counter = redisService.hmGetAll(key);
         if (counter.size() == 0) {
             TokenBucket tokenBucket = new TokenBucket(System.currentTimeMillis(), limit - 1);
@@ -90,7 +90,7 @@ public class AccessLimiter {
      * @param mainKey 需要间隔限制的key
      * @return
      */
-    public boolean accessInterval(OperateTypeEnum operateType, String mainKey){
+    public boolean accessInterval(BusiCodeEnum operateType, String mainKey){
         Long interval;
         if (AccessLimitConfig.intervalConfigMap.containsKey(operateType)) {
             interval = AccessLimitConfig.intervalConfigMap.get(operateType);
@@ -113,7 +113,7 @@ public class AccessLimiter {
         }
     }
 
-    private String genKey(OperateTypeEnum operateType, String mainKey) {
+    private String genKey(BusiCodeEnum operateType, String mainKey) {
         String basekey = "access:limiter:" + limit + ":" + operateType.toString();
         if (StringUtil.isValidString(mainKey)){
             return basekey + ":" + mainKey;
