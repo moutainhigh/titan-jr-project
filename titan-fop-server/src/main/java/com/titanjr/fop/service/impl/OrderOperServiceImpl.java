@@ -129,6 +129,10 @@ public class OrderOperServiceImpl implements OrderOperService {
             logger.error("需退款的交易单状态不正确，单号:{}", returngoodsRequest.getOrderid());
             return null;
         }
+        if (!returngoodsRequest.getAmount().equals(String.valueOf(transOrderDTOs.get(0).getTradeamount()))){
+            logger.error("退款金额和原单金额不一致，单号:{}", returngoodsRequest.getOrderid());
+            return null;
+        }
         //验证又有的退款单信息
         RefundDTO refundDTO = new RefundDTO();
         refundDTO.setOrderNo(returngoodsRequest.getOrderid());

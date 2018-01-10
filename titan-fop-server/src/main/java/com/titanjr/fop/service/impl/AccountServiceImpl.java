@@ -133,6 +133,11 @@ public class AccountServiceImpl implements AccountService {
         }
         Long accFrozen = Long.parseLong(balanceList.get(0).getBalancefrozon());
         Long accUseable = Long.parseLong(balanceList.get(0).getBalanceusable());
+        if (accFrozen < Long.parseLong(thawauthcodeRequest.getAmount())) {
+            logger.error("冻结余额小于需解冻金额，冻结余额：{}，解冻金额：{}", accUseable, thawauthcodeRequest.getAmount());
+            ResponseUtils.getSysErrorResp(thawauthcodeResponse);
+            return thawauthcodeResponse;
+        }
         balanceList.get(0).setBalancefrozon(String.valueOf(accFrozen - Long.parseLong(thawauthcodeRequest.getAmount())));
         balanceList.get(0).setBalanceusable(String.valueOf(accUseable + Long.parseLong(thawauthcodeRequest.getAmount())));
         int count = titanAccountDao.updateAccountBalance(balanceList.get(0));

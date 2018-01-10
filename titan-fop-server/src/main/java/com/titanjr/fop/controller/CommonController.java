@@ -6,6 +6,7 @@ import com.titanjr.fop.dao.RequestSessionDao;
 import com.titanjr.fop.entity.RequestSession;
 import com.titanjr.fop.request.ExternalSessionGetRequest;
 import com.titanjr.fop.response.ExternalSessionGetResponse;
+import com.titanjr.fop.service.CommonService;
 import com.titanjr.fop.util.BeanUtils;
 import com.titanjr.fop.util.ResponseUtils;
 import net.sf.json.JSONSerializer;
@@ -31,7 +32,7 @@ public class CommonController extends BaseController {
     private final static Logger logger = LoggerFactory.getLogger(CommonController.class);
 
     @Autowired
-    RequestSessionDao requestSessionDao;
+    private CommonService commonService;
 
     @RequestMapping(value = "/getSession", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
     @ResponseBody
@@ -47,22 +48,10 @@ public class CommonController extends BaseController {
         if (null == sessionGetRequest) {
             return ResponseUtils.getConvertErrorResp(sessionGetResponse);
         }
-
-        long random = (long) (Math.random() * 1000000);
-        String session = System.currentTimeMillis() + String.valueOf(random);
-        RequestSession requestSession = new RequestSession();
-        requestSession.setAppKey(request.getParameter("appKey"));
-        requestSession.setAppSecret(request.getAttribute("appSecret").toString());
-        requestSession.setCreateTime(new Date());
-        requestSession.setSession(session);
-
-        int result = requestSessionDao.saveRequestSession(requestSession);
-        if (result < 1) {
-            return ResponseUtils.getSysErrorResp(sessionGetResponse);
-        }
-        sessionGetResponse.setSession(session);
-
-        logger.info("get session request:{},session result:{}", JSONSerializer.toJSON(sessionGetRequest).toString(), session);
+        //创建session
+        sessionGetResponse = commonService.createRequestSession(sessionGetRequest);
+        logger.info("get session request:{},session result:{}", JSONSerializer.
+                toJSON(sessionGetRequest).toString(), sessionGetResponse.getSession());
         return toJson(sessionGetResponse);
     }
 

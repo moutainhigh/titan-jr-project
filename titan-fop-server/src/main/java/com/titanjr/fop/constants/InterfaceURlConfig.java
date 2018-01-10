@@ -15,16 +15,10 @@ public class InterfaceURlConfig {
     static {
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.SESSION_GET, "/common/getSession.shtml");
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.BALANCE_GETLIST, "/account/getBalanceList.shtml");
-        INTERFACE_URL_MAP.put(InterfaceConfigEnum.FREEZE_BALANCE, "/account/freezeBalance.shtml");
-        INTERFACE_URL_MAP.put(InterfaceConfigEnum.COMPANY_CREATE, "/organ/createCompany.shtml");
-    }
-
-    public static void main(String[] args) {
-        //1492784442821246488
-        //1514279778259484020
-        //1514279806079634938
-        //1514279601978
-
+        INTERFACE_URL_MAP.put(InterfaceConfigEnum.FREEZE_BALANCE, "/account/freezeAccountBalance.shtml");
+        INTERFACE_URL_MAP.put(InterfaceConfigEnum.UNFREEZE_BALANCE, "/account/unFreezeAccountBalance.shtml");
+        INTERFACE_URL_MAP.put(InterfaceConfigEnum.ORDER_OPERATE, "/order/orderOper.shtml");
+        INTERFACE_URL_MAP.put(InterfaceConfigEnum.REFUND_ORDER_OPERATE, "/order/operateRefundOrder.shtml");
     }
 
 }

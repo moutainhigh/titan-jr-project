@@ -2,6 +2,7 @@ package com.titanjr.fop.util;
 
 import com.fangcang.util.StringUtil;
 import com.titanjr.fop.api.DefaultFopClient;
+import com.titanjr.fop.constants.CommonConstants;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -73,16 +74,16 @@ public class WebUtils {
             responseJson = EntityUtils.toString(entity);
 
             if (response.getStatusLine().getStatusCode() == 302) {
-                Header header=response.getFirstHeader("Location");
+                Header header = response.getFirstHeader("Location");
                 //重定向地址
-                String location =  header.getValue();
-                responseJson = doPost(location,paramMap,connectTimeout,readTimeout);
+                String location = header.getValue();
+                responseJson = doPost(location, paramMap, connectTimeout, readTimeout);
             }
 
             logger.debug("网关请求返回结果：{}" + responseJson);
             return responseJson;
         } else {
-            return  null;
+            return null;
         }
 
     }

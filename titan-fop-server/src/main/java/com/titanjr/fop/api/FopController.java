@@ -30,14 +30,20 @@ public class FopController extends BaseController {
 
 
     @RequestMapping(value = "/fopapi", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
-    public ModelAndView fopsdk(HttpServletRequest request, RedirectAttributes attr) throws Exception {
+    public String fopsdk(HttpServletRequest request, RedirectAttributes attr) throws Exception {
         String methodName = request.getParameter("method");
         InterfaceConfigEnum configEnum = InterfaceConfigEnum.getURlConfigByKey(methodName);
         String url = getRequestBaseUrl(request) + InterfaceURlConfig.INTERFACE_URL_MAP.get(configEnum);
-        resetParameter(request, attr);
+        //resetParameter(request, attr);
         attr.addAttribute("signValid", request.getAttribute("signValid"));
         attr.addAttribute("sessionValid", request.getAttribute("sessionValid"));
-        return new ModelAndView(new RedirectView(url));
+        attr.addAttribute("appSecret",request.getAttribute("appSecret"));
+        attr.addAttribute("method",request.getParameter("method"));
+        attr.addAttribute("appKey",request.getParameter("appKey"));
+        attr.addAttribute("timeStamp",request.getParameter("timeStamp"));
+        attr.addAttribute("format",request.getParameter("format"));
+        attr.addAttribute("session",request.getParameter("session"));
+        return "redirect:" + url;
     }
 
     public String getRequestBaseUrl(HttpServletRequest req) {

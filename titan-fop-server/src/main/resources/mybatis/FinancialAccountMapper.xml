@@ -47,8 +47,9 @@
         conditioncode
       FROM
         t_tfs_fundunfreezereq q
-      where
+      <where>
         <if test="requestno != null"> and  requestno = #{requestno} </if>
+      </where>
     </select>
 
 </mapper>

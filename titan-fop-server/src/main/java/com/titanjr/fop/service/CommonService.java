@@ -10,11 +10,10 @@ import com.titanjr.fop.response.ExternalSessionGetResponse;
 public interface CommonService {
 
     /**
-     * 获取session信息；
-     *
+     * 创建session；
      * @param sessionGetRequest
      * @return
      * @throws ServiceException
      */
-    ExternalSessionGetResponse getRequestSession(ExternalSessionGetRequest sessionGetRequest) throws ServiceException;
+    ExternalSessionGetResponse createRequestSession(ExternalSessionGetRequest sessionGetRequest) throws ServiceException;
 }

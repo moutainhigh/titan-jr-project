@@ -1,5 +1,6 @@
 package com.titanjr.fop.util;
 
+import com.fangcang.util.DateUtil;
 import com.fangcang.util.WebUtil;
 import com.titanjr.fop.api.FopController;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ public class BeanUtils {
 
             Class resultClass = (Class) result.getClass();
             Field[] resultFields = resultClass.getDeclaredFields();
+            Field[] superFields = resultClass.getSuperclass().getDeclaredFields();
             for (Field field : resultFields) {
                 field.setAccessible(true);
                 String fieldType = field.getType().toString();
@@ -41,6 +43,9 @@ public class BeanUtils {
                     String param = URLDecoder.decode(paramMap.get(field.getName()).toString(), "UTF-8");
                     if (fieldType.endsWith("String")) {
                         field.set(result, param);
+                    }
+                    if (fieldType.endsWith("Date")) {
+                        field.set(result, DateUtil.stringToDate(param, "yyyy-MM-dd HH:mm:ss"));
                     }
                     if (fieldType.endsWith("Long") || fieldType.endsWith("long")) {
                         field.set(result, Long.parseLong(param));
@@ -50,6 +55,14 @@ public class BeanUtils {
                     }
                 }
 
+            }
+            //父类中均为字符串类型
+            for (Field field : superFields) {
+                field.setAccessible(true);
+                if (paramMap.containsKey(field.getName()) && null != paramMap.get(field.getName())) {
+                    String param = URLDecoder.decode(paramMap.get(field.getName()).toString(), "UTF-8");
+                    field.set(result, param);
+                }
             }
         } catch (InstantiationException e) {
             logger.error("实例化失败", e);
