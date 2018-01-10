@@ -5,7 +5,7 @@
  * @author Jerry
  * @date 2017年12月20日 上午10:33:24  
  */
-package com.titanjr.checkstand.strategy.refundQuery;
+package com.titanjr.checkstand.strategy.query;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,13 +18,13 @@ import com.titanjr.checkstand.util.WebUtils;
  * @author Jerry
  * @date 2017年12月20日 上午10:33:24  
  */
-@Service("qrOrderRefundQueryStrategy")
-public class QrOrderRefundQueryStrategy implements RefundQueryStrategy {
+@Service("quickPayRefundQueryStrategy")
+public class QuickPayRefundQueryStrategy implements QueryStrategy {
 
 	@Override
 	public String redirectResult(HttpServletRequest request) {
 		
-		return WebUtils.getRequestBaseUrl(request) + "/rfQuery/qrOrderRefundQuery.shtml";
+		return WebUtils.getRequestBaseUrl(request) + "/rfQuery/quickPayRefundQuery.shtml";
 		
 	}
 

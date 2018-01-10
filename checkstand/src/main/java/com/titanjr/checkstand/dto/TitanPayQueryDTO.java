@@ -4,6 +4,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.titanjr.checkstand.constants.BusiCodeEnum;
+
 /**
  * 支付查询请求参数（融数格式）
  * @author Jerry
@@ -11,8 +13,14 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class TitanPayQueryDTO {
 	
+	/**
+	 * 业务号  {@link BusiCodeEnum}
+	 */
+	@NotBlank
 	private String busiCode;
+	@NotBlank
 	private String signType;
+	@NotBlank
 	private String version;
 	@NotBlank
 	private String merchantNo;
@@ -23,6 +31,7 @@ public class TitanPayQueryDTO {
 	private String appid;
 	private String trxid;
 	private String randomstr;
+	@NotBlank
 	private String signMsg;
 	
 	

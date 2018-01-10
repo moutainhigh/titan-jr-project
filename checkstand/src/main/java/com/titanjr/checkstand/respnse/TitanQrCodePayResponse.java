@@ -10,7 +10,7 @@ package com.titanjr.checkstand.respnse;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
- * 第三方支付响应，按照融数格式返回
+ * 第三方支付响应
  * @author Jerry
  * @date 2017年12月18日 上午11:17:16  
  */
@@ -42,21 +42,6 @@ public class TitanQrCodePayResponse extends RSResponse {
 	@NotBlank
 	private String payMsg;
 	/**
-	 * 版本   固定值：v1.0   新版本：v1.1（含快捷支付）
-	 */
-	@NotBlank
-	private String version;
-	/**
-	 * 签名类型   默认1为MD5加签
-	 */
-	@NotBlank
-	private String signType;
-	/**
-	 * 签名字符串
-	 */
-	@NotBlank
-	private String signMsg;
-	/**
 	 * 微信支付返回串
 	 */
 	@NotBlank
@@ -86,24 +71,6 @@ public class TitanQrCodePayResponse extends RSResponse {
 	}
 	public void setPayMsg(String payMsg) {
 		this.payMsg = payMsg;
-	}
-	public String getVersion() {
-		return version;
-	}
-	public void setVersion(String version) {
-		this.version = version;
-	}
-	public String getSignType() {
-		return signType;
-	}
-	public void setSignType(String signType) {
-		this.signType = signType;
-	}
-	public String getSignMsg() {
-		return signMsg;
-	}
-	public void setSignMsg(String signMsg) {
-		this.signMsg = signMsg;
 	}
 	public String getRespJs() {
 		return respJs;

@@ -1,4 +1,4 @@
-package com.titanjr.checkstand.strategy.payQuery;
+package com.titanjr.checkstand.strategy.query;
 
 import com.titanjr.checkstand.util.WebUtils;
 
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2017年12月1日 上午10:54:39
  */
 @Service("qrPayQueryStrategy")
-public class QRPayQueryStrategy implements PayQueryStrategy{
+public class QrCodePayQueryStrategy implements QueryStrategy{
 
     @Override
     public String redirectResult(HttpServletRequest request) {

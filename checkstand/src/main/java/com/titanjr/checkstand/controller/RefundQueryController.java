@@ -20,15 +20,17 @@ import com.titanjr.checkstand.constants.RequestTypeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.constants.TLQrReturnCodeEnum;
 import com.titanjr.checkstand.dto.TitanRefundQueryDTO;
+import com.titanjr.checkstand.request.RBQuickPayRefundQueryRequest;
 import com.titanjr.checkstand.request.TLNetBankRefundQueryRequest;
 import com.titanjr.checkstand.request.TLQrTradeQueryRequest;
 import com.titanjr.checkstand.respnse.TLQrTradeQueryResponse;
 import com.titanjr.checkstand.respnse.TitanRefundQueryResponse;
+import com.titanjr.checkstand.service.RBQuickPayService;
 import com.titanjr.checkstand.service.TLCommonService;
 import com.titanjr.checkstand.service.TLPayQueryService;
 import com.titanjr.checkstand.service.TLRefundQueryService;
 import com.titanjr.checkstand.strategy.StrategyFactory;
-import com.titanjr.checkstand.strategy.refundQuery.RefundQueryStrategy;
+import com.titanjr.checkstand.strategy.query.QueryStrategy;
 import com.titanjr.checkstand.util.CommonUtil;
 import com.titanjr.checkstand.util.WebUtils;
 
@@ -54,6 +56,9 @@ public class RefundQueryController extends BaseController {
 	private TLRefundQueryService tlRefundQueryService;
 	
 	@Resource
+	private RBQuickPayService rbQuickPayService;
+	
+	@Resource
 	private TLCommonService tlCommonService;
 	
 	
@@ -63,8 +68,8 @@ public class RefundQueryController extends BaseController {
 		//查询订单，获取支付方式
         
         //根据支付方式获取查询策略，调对应的接口
-		PayTypeEnum payTypeEnum = PayTypeEnum.QR_WECHAT_URL;
-		RefundQueryStrategy refundQueryStrategy =  StrategyFactory.getRefundQueryStrategy(payTypeEnum);
+		PayTypeEnum payTypeEnum = PayTypeEnum.QUICK_NEW;
+		QueryStrategy refundQueryStrategy =  StrategyFactory.getRefundQueryStrategy(payTypeEnum);
         String redirectUrl = refundQueryStrategy.redirectResult(request);
         super.resetParameter(request,attr);
         
@@ -160,6 +165,50 @@ public class RefundQueryController extends BaseController {
 			}
 			
 			titanRefundQueryResponse.setRefundStatus(TLQrReturnCodeEnum.getRsRefundStatus(tlQrTradeQueryResponse.getTrxstatus()));
+			
+			return titanRefundQueryResponse;
+			
+		} catch (Exception e) {
+			
+			logger.error("订单查询发生异常：", e);
+			titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+			return titanRefundQueryResponse;
+			
+		}
+        
+    }
+    
+    
+    /**
+     * 快捷支付退款查询
+     * @author Jerry
+     * @date 2018年1月8日 下午2:24:23
+     */
+    @RequestMapping(value = "/quickPayRefundQuery", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public TitanRefundQueryResponse quickPayRefundQuery(HttpServletRequest request, RedirectAttributes attr, Model model) {
+    	
+    	RBQuickPayRefundQueryRequest rbQuickPayRefundQueryRequest = new RBQuickPayRefundQueryRequest();
+    	TitanRefundQueryResponse titanRefundQueryResponse = new TitanRefundQueryResponse();
+    	
+    	try {
+    		
+    		TitanRefundQueryDTO refundQueryDTO = WebUtils.switch2RequestDTO(TitanRefundQueryDTO.class, request);
+			ValidateResponse res = GenericValidate.validateNew(refundQueryDTO);
+			if (!res.isSuccess()){
+				logger.error("参数错误：{}", res.getReturnMessage());
+				titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
+				return titanRefundQueryResponse;
+			}
+			
+			rbQuickPayRefundQueryRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
+			rbQuickPayRefundQueryRequest.setOrder_no(refundQueryDTO.getRefundOrderno());
+			rbQuickPayRefundQueryRequest.setOrig_order_no(refundQueryDTO.getOrderNo());
+			rbQuickPayRefundQueryRequest.setVersion(SysConstant.RB_VERSION);
+			rbQuickPayRefundQueryRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
+			rbQuickPayRefundQueryRequest.setRequestType(RequestTypeEnum.QUICK_REFUND_QUERY.getKey());
+			
+			titanRefundQueryResponse = rbQuickPayService.refundQuery(rbQuickPayRefundQueryRequest);
 			
 			return titanRefundQueryResponse;
 			

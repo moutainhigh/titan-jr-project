@@ -1,13 +1,13 @@
-package com.titanjr.checkstand.strategy.payQuery;
+package com.titanjr.checkstand.strategy.quickPay;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 支付订单查询策略
+ * 快捷支付策略
  * @author Jerry
- * @date 2017年12月1日 上午10:23:20
+ * @date 2018年1月4日 下午6:45:34
  */
-public interface PayQueryStrategy {
+public interface QuickPayStrategy {
 
     /**
      * 对请求参数使用对应的策略来处理

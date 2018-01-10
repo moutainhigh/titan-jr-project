@@ -1,9 +1,23 @@
 package com.titanjr.checkstand.util;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fangcang.titanjr.common.util.MD5;
+import com.titanjr.checkstand.constants.RequestTypeEnum;
+import com.titanjr.checkstand.request.RBBindCardQueryRequest;
+import com.titanjr.checkstand.request.RBCardAuthRequest;
+import com.titanjr.checkstand.request.RBCardBINQueryRequest;
+import com.titanjr.checkstand.request.RBQuickPayConfirmRequest;
+import com.titanjr.checkstand.request.RBQuickPayQueryRequest;
+import com.titanjr.checkstand.request.RBQuickPayRefundQueryRequest;
+import com.titanjr.checkstand.request.RBQuickPayRefundRequest;
+import com.titanjr.checkstand.request.RBQuickPayRequest;
+import com.titanjr.checkstand.request.RBReSendMsgRequest;
+import com.titanjr.checkstand.request.RBUnBindCardRequest;
 import com.titanjr.checkstand.request.TLNetBankPayRequest;
 import com.titanjr.checkstand.request.TLNetBankOrderRefundRequest;
 import com.titanjr.checkstand.request.TLNetBankPayQueryRequest;
@@ -131,6 +145,276 @@ public final class SignMsgBuilder {
 		logger.info("tl-refund-signMsg：{}", md5Msg);
 		return md5Msg;
 		
+	}
+	
+	
+	public static TreeMap<String,String> quickPaySign(RBQuickPayRequest rbQuickPayRequest, 
+			String key, String requestType) {
+		
+		TreeMap<String,String> params = new TreeMap<String,String>();
+		params.put("merchant_id", rbQuickPayRequest.getMerchant_id());
+		params.put("version", rbQuickPayRequest.getVersion());
+		params.put("card_no", rbQuickPayRequest.getCard_no());
+		params.put("owner", rbQuickPayRequest.getOwner());
+		params.put("cert_type", rbQuickPayRequest.getCert_type());
+		params.put("cert_no", rbQuickPayRequest.getCert_no());
+		params.put("phone", rbQuickPayRequest.getPhone());
+		params.put("order_no", rbQuickPayRequest.getOrder_no());
+		params.put("transtime", rbQuickPayRequest.getTranstime());
+		params.put("currency", rbQuickPayRequest.getCurrency());
+		params.put("title", rbQuickPayRequest.getTitle());
+		params.put("body", rbQuickPayRequest.getBody());
+		params.put("member_id", rbQuickPayRequest.getMember_id());
+		params.put("terminal_type", rbQuickPayRequest.getTerminal_type());
+		params.put("terminal_info", rbQuickPayRequest.getTerminal_info());
+		params.put("notify_url", rbQuickPayRequest.getNotify_url());
+		params.put("member_ip", rbQuickPayRequest.getMember_ip());
+		params.put("seller_email", rbQuickPayRequest.getSeller_email());
+		params.put("total_fee", rbQuickPayRequest.getTotal_fee().toString());
+		params.put("token_id", rbQuickPayRequest.getToken_id());
+		if(RequestTypeEnum.QUICK_PAY_CREDIT.getKey().equals(rbQuickPayRequest.getRequestType())){
+			params.put("cvv2", rbQuickPayRequest.getCvv2());
+			params.put("validthru", rbQuickPayRequest.getValidthru());
+		}
+		
+		String signSource = getSignSource(params, key);
+		
+		logger.info("rb-quickpay-sourceMsg：{}", signSource);
+		String md5Sign = MD5.MD5Encode(signSource, "UTF-8");
+		logger.info("rb-quickpay-signMsg：{}", md5Sign);
+		
+		rbQuickPayRequest.setSign(md5Sign);
+		params.put("sign", md5Sign);
+		params.put("sign_type", rbQuickPayRequest.getSign_type());
+		
+		return params;
+		
+	}
+	
+	
+	public static TreeMap<String,String> cardBINQuerySign(RBCardBINQueryRequest rbCardBINQueryRequest, String key) {
+		
+		TreeMap<String,String> params = new TreeMap<String,String>();
+		params.put("merchant_id", rbCardBINQueryRequest.getMerchant_id());
+		params.put("version", rbCardBINQueryRequest.getVersion());
+		params.put("card_no", rbCardBINQueryRequest.getCard_no());
+		
+		String signSource = getSignSource(params, key);
+		
+		logger.info("rb-quickpay-sourceMsg：{}", signSource);
+		String md5Sign = MD5.MD5Encode(signSource, "UTF-8");
+		logger.info("rb-quickpay-signMsg：{}", md5Sign);
+		
+		rbCardBINQueryRequest.setSign(md5Sign);
+		params.put("sign", md5Sign);
+		params.put("sign_type", rbCardBINQueryRequest.getSign_type());
+		
+		return params;
+		
+	}
+	
+	
+	public static TreeMap<String,String> quickPayConfirmSign(RBQuickPayConfirmRequest rbQuickPayConfirmRequest, String key) {
+		
+		TreeMap<String,String> params = new TreeMap<String,String>();
+		params.put("merchant_id", rbQuickPayConfirmRequest.getMerchant_id());
+		params.put("order_no", rbQuickPayConfirmRequest.getOrder_no());
+		params.put("check_code", rbQuickPayConfirmRequest.getCheck_code());
+		params.put("version", rbQuickPayConfirmRequest.getVersion());
+		
+		String signSource = getSignSource(params, key);
+		
+		logger.info("rb-quickpay-sourceMsg：{}", signSource);
+		String md5Sign = MD5.MD5Encode(signSource, "UTF-8");
+		logger.info("rb-quickpay-signMsg：{}", md5Sign);
+		
+		rbQuickPayConfirmRequest.setSign(md5Sign);
+		params.put("sign", md5Sign);
+		params.put("sign_type", rbQuickPayConfirmRequest.getSign_type());
+		
+		return params;
+		
+	}
+	
+	
+	public static TreeMap<String,String> reSendMsgSign(RBReSendMsgRequest rbReSendMsgRequest, String key) {
+		
+		TreeMap<String,String> params = new TreeMap<String,String>();
+		params.put("merchant_id", rbReSendMsgRequest.getMerchant_id());
+		params.put("order_no", rbReSendMsgRequest.getOrder_no());
+		params.put("phone", rbReSendMsgRequest.getPhone());
+		params.put("version", rbReSendMsgRequest.getVersion());
+		
+		String signSource = getSignSource(params, key);
+		
+		logger.info("rb-quickpay-sourceMsg：{}", signSource);
+		String md5Sign = MD5.MD5Encode(signSource, "UTF-8");
+		logger.info("rb-quickpay-signMsg：{}", md5Sign);
+		
+		rbReSendMsgRequest.setSign(md5Sign);
+		params.put("sign", md5Sign);
+		params.put("sign_type", rbReSendMsgRequest.getSign_type());
+		
+		return params;
+		
+	}
+	
+	
+	public static TreeMap<String,String> quickPayQuerySign(RBQuickPayQueryRequest rbQuickPayQueryRequest, String key) {
+		
+		TreeMap<String,String> params = new TreeMap<String,String>();
+		params.put("merchant_id", rbQuickPayQueryRequest.getMerchant_id());
+		params.put("order_no", rbQuickPayQueryRequest.getOrder_no());
+		params.put("version", rbQuickPayQueryRequest.getVersion());
+		
+		String signSource = getSignSource(params, key);
+		
+		logger.info("rb-quickpay-sourceMsg：{}", signSource);
+		String md5Sign = MD5.MD5Encode(signSource, "UTF-8");
+		logger.info("rb-quickpay-signMsg：{}", md5Sign);
+		
+		rbQuickPayQueryRequest.setSign(md5Sign);
+		params.put("sign", md5Sign);
+		params.put("sign_type", rbQuickPayQueryRequest.getSign_type());
+		
+		return params;
+		
+	}
+	
+	
+	public static TreeMap<String,String> quickPayRefundSign(RBQuickPayRefundRequest rbQuickPayRefundRequest, String key) {
+		
+		TreeMap<String,String> params = new TreeMap<String,String>();
+		params.put("merchant_id", rbQuickPayRefundRequest.getMerchant_id());
+		params.put("orig_order_no", rbQuickPayRefundRequest.getOrig_order_no());
+		params.put("order_no", rbQuickPayRefundRequest.getOrder_no());
+		params.put("amount", rbQuickPayRefundRequest.getAmount());
+		params.put("version", rbQuickPayRefundRequest.getVersion());
+		
+		String signSource = getSignSource(params, key);
+		
+		logger.info("rb-quickpay-sourceMsg：{}", signSource);
+		String md5Sign = MD5.MD5Encode(signSource, "UTF-8");
+		logger.info("rb-quickpay-signMsg：{}", md5Sign);
+		
+		rbQuickPayRefundRequest.setSign(md5Sign);
+		params.put("sign", md5Sign);
+		params.put("sign_type", rbQuickPayRefundRequest.getSign_type());
+		
+		return params;
+		
+	}
+	
+	
+	public static TreeMap<String,String> quickPayRefundQuerySign(RBQuickPayRefundQueryRequest 
+			rbQuickPayRefundQueryRequest, String key) {
+		
+		TreeMap<String,String> params = new TreeMap<String,String>();
+		params.put("merchant_id", rbQuickPayRefundQueryRequest.getMerchant_id());
+		params.put("order_no", rbQuickPayRefundQueryRequest.getOrder_no());
+		params.put("orig_order_no", rbQuickPayRefundQueryRequest.getOrig_order_no());
+		params.put("version", rbQuickPayRefundQueryRequest.getVersion());
+		
+		String signSource = getSignSource(params, key);
+		
+		logger.info("rb-quickpay-sourceMsg：{}", signSource);
+		String md5Sign = MD5.MD5Encode(signSource, "UTF-8");
+		logger.info("rb-quickpay-signMsg：{}", md5Sign);
+		
+		rbQuickPayRefundQueryRequest.setSign(md5Sign);
+		params.put("sign", md5Sign);
+		params.put("sign_type", rbQuickPayRefundQueryRequest.getSign_type());
+		
+		return params;
+		
+	}
+	
+	
+	public static TreeMap<String,String> cardAuthSign(RBCardAuthRequest rbCardAuthRequest, String key) {
+		
+		TreeMap<String,String> params = new TreeMap<String,String>();
+		params.put("merchant_id", rbCardAuthRequest.getMerchant_id());
+		params.put("member_id", rbCardAuthRequest.getMember_id());
+		params.put("order_no", rbCardAuthRequest.getOrder_no());
+		params.put("bind_id", rbCardAuthRequest.getBind_id());
+		params.put("terminal_type", rbCardAuthRequest.getTerminal_type());
+		params.put("return_url", rbCardAuthRequest.getReturn_url());
+		params.put("notify_url", rbCardAuthRequest.getNotify_url());
+		params.put("version", rbCardAuthRequest.getVersion());
+		
+		String signSource = getSignSource(params, key);
+		
+		logger.info("rb-quickpay-sourceMsg：{}", signSource);
+		String md5Sign = MD5.MD5Encode(signSource, "UTF-8");
+		logger.info("rb-quickpay-signMsg：{}", md5Sign);
+		
+		rbCardAuthRequest.setSign(md5Sign);
+		params.put("sign", md5Sign);
+		params.put("sign_type", rbCardAuthRequest.getSign_type());
+		
+		return params;
+		
+	}
+	
+	
+	public static TreeMap<String,String> queryBindCardSign(RBBindCardQueryRequest rbBindCardQueryRequest, String key) {
+		
+		TreeMap<String,String> params = new TreeMap<String,String>();
+		params.put("merchant_id", rbBindCardQueryRequest.getMerchant_id());
+		params.put("member_id", rbBindCardQueryRequest.getMember_id());
+		params.put("bank_card_type", rbBindCardQueryRequest.getBank_card_type());
+		params.put("version", rbBindCardQueryRequest.getVersion());
+		
+		String signSource = getSignSource(params, key);
+		
+		logger.info("rb-quickpay-sourceMsg：{}", signSource);
+		String md5Sign = MD5.MD5Encode(signSource, "UTF-8");
+		logger.info("rb-quickpay-signMsg：{}", md5Sign);
+		
+		rbBindCardQueryRequest.setSign(md5Sign);
+		params.put("sign", md5Sign);
+		params.put("sign_type", rbBindCardQueryRequest.getSign_type());
+		
+		return params;
+		
+	}
+	
+	
+	public static TreeMap<String,String> unBindCardSign(RBUnBindCardRequest rbUnBindCardRequest, String key) {
+		
+		TreeMap<String,String> params = new TreeMap<String,String>();
+		params.put("merchant_id", rbUnBindCardRequest.getMerchant_id());
+		params.put("member_id", rbUnBindCardRequest.getMember_id());
+		params.put("bind_id", rbUnBindCardRequest.getBind_id());
+		params.put("version", rbUnBindCardRequest.getVersion());
+		
+		String signSource = getSignSource(params, key);
+		
+		logger.info("rb-quickpay-sourceMsg：{}", signSource);
+		String md5Sign = MD5.MD5Encode(signSource, "UTF-8");
+		logger.info("rb-quickpay-signMsg：{}", md5Sign);
+		
+		rbUnBindCardRequest.setSign(md5Sign);
+		params.put("sign", md5Sign);
+		params.put("sign_type", rbUnBindCardRequest.getSign_type());
+		
+		return params;
+		
+	}
+	
+	
+	private static String getSignSource(TreeMap<String,String> params, String key){
+		StringBuilder sb = new StringBuilder();
+		for(Map.Entry<String, String> entry:params.entrySet()){
+			if(entry.getValue()!=null&&entry.getValue().length()>0){
+				sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+			}
+		}
+		if(sb.length()>0){
+			sb.deleteCharAt(sb.length()-1);
+		}
+		sb.append(key);
+		return sb.toString();
 	}
 
 }
