@@ -1,6 +1,6 @@
 package com.titanjr.checkstand.interceptor;
 
-import com.titanjr.checkstand.constants.OperateTypeEnum;
+import com.titanjr.checkstand.constants.BusiCodeEnum;
 import com.titanjr.checkstand.util.AccessLimiter;
 import com.titanjr.checkstand.util.CommonUtil;
 import com.titanjr.checkstand.util.JRBeanUtils;
@@ -31,12 +31,12 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
         //暂时只处理支付入口位置的请求
         if ("/checkstand/payment.shtml".equals(request.getRequestURI())){
             //OperateTypeEnum operateTypeEnum = JRBeanUtils.recognizeRequestType(request.getParameterMap().keySet());
-        	OperateTypeEnum operateTypeEnum = JRBeanUtils.getOperateType(request);
-            if(operateTypeEnum == null){
+        	BusiCodeEnum busiCodeEnum = JRBeanUtils.getBusiCode(request);
+            if(busiCodeEnum == null){
             	logger.info("未匹配到操作类型，请求参数为{}; 当前请求路径是{}", CommonUtil.mapString(request.getParameterMap()), request.getRequestURI());
                 return true;//此处不处理
             }
-            boolean isFrequency = accessLimiter.accessFrequency(operateTypeEnum);
+            boolean isFrequency = accessLimiter.accessFrequency(busiCodeEnum);
             if (isFrequency) {
                 logger.info("满足访问频次，执行下一步");
                 return true;

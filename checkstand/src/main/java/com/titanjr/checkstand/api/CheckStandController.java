@@ -1,6 +1,6 @@
 package com.titanjr.checkstand.api;
 
-import com.titanjr.checkstand.constants.OperateTypeEnum;
+import com.titanjr.checkstand.constants.BusiCodeEnum;
 import com.titanjr.checkstand.controller.BaseController;
 import com.titanjr.checkstand.util.JRBeanUtils;
 import com.titanjr.checkstand.util.WebUtils;
@@ -41,37 +41,43 @@ public class CheckStandController extends BaseController {
 
         resetParameter(request,attr);
         
-        //根据操作类型选择路由
+        //根据业务代码选择接口路由
         //OperateTypeEnum operateTypeEnum = JRBeanUtils.recognizeRequestType(request.getParameterMap().keySet());
-        OperateTypeEnum operateTypeEnum = JRBeanUtils.getOperateType(request);
-        if(operateTypeEnum == null){
-        	logger.error("路由错误");
+        BusiCodeEnum busiCodeEnum = JRBeanUtils.getBusiCode(request);
+        if(busiCodeEnum == null){
+        	logger.error("路由错误，busiCodeEnum={}", busiCodeEnum);
         	return super.payFailedCallback(model);
         }
 
-        if (operateTypeEnum.equals(OperateTypeEnum.PAY_REQUEST)){
+        if (busiCodeEnum.equals(BusiCodeEnum.PAY_REQUEST)){
             request.setCharacterEncoding("UTF-8");
             return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/pay/entrance.shtml";
         }
         
-        if (operateTypeEnum.equals(OperateTypeEnum.PAY_QUERY)){
+        if (busiCodeEnum.equals(BusiCodeEnum.PAY_QUERY)){
             request.setCharacterEncoding("UTF-8");
             return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/query/entrance.shtml";
         }
 
-        if (operateTypeEnum.equals(OperateTypeEnum.REFUND_REQUEST)){
+        if (busiCodeEnum.equals(BusiCodeEnum.REFUND_REQUEST)){
             return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/refund/entrance.shtml";
         }
         
-        if (operateTypeEnum.equals(OperateTypeEnum.REFUND_QUERY)){
+        if (busiCodeEnum.equals(BusiCodeEnum.REFUND_QUERY)){
             return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/rfQuery/entrance.shtml";
         }
         
-        if (operateTypeEnum.equals(OperateTypeEnum.AGENT_TRADE)){
+        if (busiCodeEnum.equals(BusiCodeEnum.AGENT_TRADE)){
         	return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/agent/entrance.shtml";
         }
         
-        logger.error("【{}】{}未匹配对应的入口", operateTypeEnum.getKey(), operateTypeEnum.getValue());
+        if (busiCodeEnum.equals(BusiCodeEnum.CARD_BIN_QUERY) || busiCodeEnum.equals(BusiCodeEnum.QUICK_PAY_CONFIRM)
+        		|| busiCodeEnum.equals(BusiCodeEnum.RE_SEND_MSG) || busiCodeEnum.equals(BusiCodeEnum.CARD_AUTH)
+        		|| busiCodeEnum.equals(BusiCodeEnum.CARD_BIND_QUERY) || busiCodeEnum.equals(BusiCodeEnum.CARD_UNBIND)){
+        	return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/quick/entrance.shtml";
+        }
+        
+        logger.error("【{}】{}未匹配对应的入口", busiCodeEnum.getKey(), busiCodeEnum.getValue());
         return super.payFailedCallback(model);
     }
 

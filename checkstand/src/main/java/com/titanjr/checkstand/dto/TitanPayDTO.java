@@ -87,7 +87,7 @@ public class TitanPayDTO {
     @NotBlank
     private String notifyUrl;
     /**
-     * 订单提交时间
+     * 订单提交时间   yyyyMMddHHmmss
      */
     @NotBlank
     private String orderTime;
@@ -145,11 +145,11 @@ public class TitanPayDTO {
      */
     private String payerAccountType;
     /**
-     * 安全码，快捷支付不能为空
+     * 安全码，信用卡支付不能为空
      */
     private String safetyCode;
     /**
-     * 有效期，快捷支付不能为空
+     * 有效期，信用卡支付不能为空
      */
     private String validthru;
     /**
@@ -157,7 +157,7 @@ public class TitanPayDTO {
      */
     private String terminalIp;
     /**
-     * 终端类型，快捷支付不能为空
+     * 终端类型  web、wap、mobile，快捷支付不能为空  
      */
     private String terminalType;
     /**

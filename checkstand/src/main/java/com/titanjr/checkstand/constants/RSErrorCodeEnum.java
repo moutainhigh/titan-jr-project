@@ -19,8 +19,8 @@ public enum RSErrorCodeEnum {
     REFUND_QUERY_ERROR("11010","退款信息查询错误"),
     REQUEST_MORE("11012","请求频繁"),
     
-    //自己添加部分，如果融数存在此错误返回可替换
-    TEMP_ERROR("",""),
+    //自己添加部分
+    TEMP_ERROR("",""),//通联错误暂时都转成这个
     PRAM_ERROR("90001","参数错误");
     
 	private String errorCode;
@@ -28,7 +28,7 @@ public enum RSErrorCodeEnum {
     
     private RSErrorCodeEnum(String errorCode, String errorMsg) {
 		this.errorCode = errorCode;
-		this.errorCode = errorMsg;
+		this.errorMsg = errorMsg;
 	}
     
     public static RSErrorCodeEnum build(String errMsg){

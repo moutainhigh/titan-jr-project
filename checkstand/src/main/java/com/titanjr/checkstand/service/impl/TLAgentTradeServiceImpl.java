@@ -131,7 +131,7 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 		String resp = XmlTools.send(SysConstant.AGENT_TRADE_URL, xml);
 		logger.info("======================响应内容======================") ;
 		
-		boolean flag = XmlTools.verifySign(resp, resUrl+SysConstant.CRE_PATH, false, false);
+		boolean flag = XmlTools.verifySign(resp, resUrl+SysConstant.CER_PATH, false, false);
 		logger.info("验签结果[{}]", flag) ;
 		
 		return resp;

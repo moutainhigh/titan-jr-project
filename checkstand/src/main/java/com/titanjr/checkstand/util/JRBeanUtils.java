@@ -1,6 +1,6 @@
 package com.titanjr.checkstand.util;
 
-import com.titanjr.checkstand.constants.OperateTypeEnum;
+import com.titanjr.checkstand.constants.BusiCodeEnum;
 import com.titanjr.checkstand.dto.TitanPayDTO;
 import com.titanjr.checkstand.dto.TitanRefundDTO;
 
@@ -58,7 +58,7 @@ public class JRBeanUtils {
      * @param paramKeySet
      * @return
      */
-    public static OperateTypeEnum recognizeRequestType(Set<String> paramKeySet){
+    public static BusiCodeEnum recognizeRequestType(Set<String> paramKeySet){
     	
         Set<String> requiredFields = JRBeanUtils.getRequiredFiledName(TitanPayDTO.class);
         Set<String> refundFields = JRBeanUtils.getRequiredFiledName(TitanRefundDTO.class);
@@ -80,11 +80,11 @@ public class JRBeanUtils {
         }
 
         if (isPayRequest) {
-            return OperateTypeEnum.PAY_REQUEST;
+            return BusiCodeEnum.PAY_REQUEST;
         }
 
         if (isRefundRequest) {
-            return OperateTypeEnum.REFUND_REQUEST;
+            return BusiCodeEnum.REFUND_REQUEST;
         }
 
         return null;
@@ -94,15 +94,15 @@ public class JRBeanUtils {
      * @author Jerry
      * @date 2017年12月1日 下午4:21:13
      */
-    public static OperateTypeEnum getOperateType(HttpServletRequest request){
-    	OperateTypeEnum operateTypeEnum = null;
+    public static BusiCodeEnum getBusiCode(HttpServletRequest request){
+    	BusiCodeEnum busiCodeEnum = null;
     	for (String paramKey : request.getParameterMap().keySet()) {
-			if("operateType".equals(paramKey)){
-				String paramValue = request.getParameterMap().get("operateType")[0];
-				operateTypeEnum = OperateTypeEnum.getEnumByKey(paramValue);
+			if("busiCode".equals(paramKey)){
+				String paramValue = request.getParameterMap().get("busiCode")[0];
+				busiCodeEnum = BusiCodeEnum.getEnumByKey(paramValue);
 			}
 		}
-    	return operateTypeEnum;
+    	return busiCodeEnum;
     }
 
 }

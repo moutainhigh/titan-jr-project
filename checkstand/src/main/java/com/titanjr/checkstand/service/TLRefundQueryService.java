@@ -8,7 +8,6 @@
 package com.titanjr.checkstand.service;
 
 import com.titanjr.checkstand.request.TLNetBankRefundQueryRequest;
-import com.titanjr.checkstand.request.TLQrTradeQueryRequest;
 import com.titanjr.checkstand.respnse.TitanRefundQueryResponse;
 
 /**

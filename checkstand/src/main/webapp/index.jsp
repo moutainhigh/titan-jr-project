@@ -81,15 +81,9 @@
                 </td>
             </tr>
             <tr>
-                <td class="tdr">业务号</td>
-                <td>
-                    <input type="text" value="2" id="busiCode" name="busiCode"/>
-                </td>
-            </tr>
-            <tr>
                 <td class="tdr">版本号</td>
                 <td>
-                    <input type="text" value="v1.0" id="version" name="version"/>
+                    <input type="text" value="v1.0" id="version" name="version"/>含快捷支付：v1.1
                 </td>
             </tr>
             <tr>
@@ -104,23 +98,38 @@
                     <input type="text" value="DF76JGHC333DAS" id="signMsg" name="signMsg"/>*
                 </td>
             </tr>
-            <!-- 快捷支付 -->
-            <!-- <tr>
-                <td class="tdr">支付账号</td>
+            <tr>
+                <td class="tdr">---------------------</td>
+                <td>快捷支付相关参数---------------------</td>
+            </tr>
+            <tr>
+                <td class="tdr">银行卡号</td>
                 <td>
-                    <input type="text" value="" id="payerAcount" name="payerAcount"/>*
+                    <input type="text" value="6214242710498301" id="payerAccount" name="payerAccount"/>*
                 </td>
             </tr>
             <tr>
                 <td class="tdr">银行卡类型</td>
                 <td>
-                    <input type="text" value="" id="payerAccountType" name="payerAccountType"/>*
+                    <input type="text" value="10" id="payerAccountType" name="payerAccountType"/>* 10储蓄卡  11信用卡
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">支付人</td>
+                <td>
+                    <input type="text" value="韩梅梅" id="payerName" name="payerName"/>*
                 </td>
             </tr>
             <tr>
                 <td class="tdr">身份证号</td>
                 <td>
-                    <input type="text" value="" id="idCode" name="idCode"/>*
+                    <input type="text" value="210302196001012114" id="idCode" name="idCode"/>*
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">手机号</td>
+                <td>
+                    <input type="text" value="13220482188" id="payerPhone" name="payerPhone"/>*
                 </td>
             </tr>
             <tr>
@@ -138,26 +147,29 @@
             <tr>
                 <td class="tdr">终端IP</td>
                 <td>
-                    <input type="text" value="" id="terminalIp" name="terminalIp"/>*
+                    <input type="text" value="192.168.0.77" id="terminalIp" name="terminalIp"/>*
                 </td>
             </tr>
             <tr>
                 <td class="tdr">终端类型</td>
                 <td>
-                    <input type="text" value="" id="terminalType" name="terminalType"/>*
+                    <input type="text" value="web" id="terminalType" name="terminalType"/>*
                 </td>
             </tr>
             <tr>
                 <td class="tdr">终端信息</td>
                 <td>
-                    <input type="text" value="" id="terminalInfo" name="terminalInfo"/>*
+                    <input type="text" value="IMEI_MAC" id="terminalInfo" name="terminalInfo"/>*
                 </td>
-            </tr> -->
-            
+            </tr>
             <tr>
-                <td class="tdr">操作类型</td>
+                <td class="tdr">---------------------</td>
+                <td>快捷支付相关参数---------------------</td>
+            </tr>
+            <tr>
+                <td class="tdr">业务编码</td>
                 <td>
-                    <input type="text" value="1001" id="signMsg" name="operateType"/>* 1001:支付请求；1002:支付查询；1003:退款请求；1004:退款查询；1005账户交易
+                    <input type="text" value="101" id="busiCode" name="busiCode"/>* 101:支付请求
                 </td>
             </tr>
             
@@ -178,47 +190,41 @@
             <tr align="left">
                 <td class="tdr">商户号</td>
                 <td>
-                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>*
                 </td>
             </tr>
             <tr>
                 <td class="tdr">订单号</td>
-                <td><input type="text" id="orderNo" value="TJO2017112900001" name="orderNo"/></td>
+                <td><input type="text" id="orderNo" value="TJO2017112900001" name="orderNo"/></td>*
             </tr>
             <tr>
                 <td class="tdr">订单创建时间</td>
                 <td>
-                    <input type="text" value="20171129103151" id="orderTime" name="orderTime"/>
+                    <input type="text" value="20171129103151" id="orderTime" name="orderTime"/>*
                 </td>
             </tr>
             <tr>
                 <td class="tdr">签名类型</td>
                 <td>
-                    <input type="text" value="1" id="signType" name="signType"/>
-                </td>
-            </tr>
-            <tr>
-                <td class="tdr">业务号</td>
-                <td>
-                    <input type="text" id="busiCode" name="busiCode"/>
+                    <input type="text" value="1" id="signType" name="signType"/>*
                 </td>
             </tr>
             <tr>
                 <td class="tdr">版本号</td>
                 <td>
-                    <input type="text" value="v1.0" id="version" name="version"/>
+                    <input type="text" value="v1.0" id="version" name="version"/>*
                 </td>
             </tr>
             <tr>
                 <td class="tdr">签名信息</td>
                 <td>
-                    <input type="text" value="DF76JGHC333DAS" id="signMsg" name="signMsg"/>
+                    <input type="text" value="DF76JGHC333DAS" id="signMsg" name="signMsg"/>*
                 </td>
             </tr>
             <tr>
-                <td class="tdr">操作类型</td>
+                <td class="tdr">业务编码</td>
                 <td>
-                    <input type="text" value="1002" id="signMsg" name="operateType"/>
+                    <input type="text" value="102" id="busiCode" name="busiCode"/>* 102支付查询
                 </td>
             </tr>
             <tr>
@@ -242,10 +248,6 @@
                 <td>
                     <input type="text" name="merchantNo"  value="100020091218001" class="input_t01"/>
                 </td>
-            </tr>
-            <tr>
-                <td class="tdr">业务号</td>
-                <td><input type="text" value="103" name="busiCode"/></td>
             </tr>
             <tr>
                 <td class="tdr">退款单号</td>
@@ -289,9 +291,9 @@
                 </td>
             </tr>
             <tr>
-                <td class="tdr">操作类型</td>
+                <td class="tdr">业务编码</td>
                 <td>
-                    <input type="text" value="1003" id="signMsg" name="operateType"/>
+                    <input type="text" value="103" id="busiCode" name="busiCode"/>103:退款请求
                 </td>
             </tr>
             <tr>
@@ -341,12 +343,6 @@
                 </td>
             </tr>
             <tr>
-                <td class="tdr">业务号</td>
-                <td>
-                    <input type="text" value="104" id="busiCode" name="busiCode"/>
-                </td>
-            </tr>
-            <tr>
                 <td class="tdr">版本号</td>
                 <td>
                     <input type="text" value="v1.0" id="version" name="version"/>
@@ -359,9 +355,9 @@
                 </td>
             </tr>
             <tr>
-                <td class="tdr">操作类型</td>
+                <td class="tdr">业务编码</td>
                 <td>
-                    <input type="text" value="1004" id="signMsg" name="operateType"/>
+                    <input type="text" value="104" id="busiCode" name="busiCode"/>104:退款查询
                 </td>
             </tr>
             <tr>
@@ -451,9 +447,9 @@
                 </td>
             </tr>
             <tr>
-                <td class="tdr">操作类型</td>
+                <td class="tdr">业务编码</td>
                 <td>
-                    <input type="text" value="1005" id="signMsg" name="operateType"/>* 1005账户交易
+                    <input type="text" value="105" id="busiCode" name="busiCode"/>* 105账户交易
                 </td>
             </tr>
             <tr>
@@ -509,9 +505,9 @@
                 </td>
             </tr>
             <tr>
-                <td class="tdr">操作类型</td>
+                <td class="tdr">业务编码</td>
                 <td>
-                    <input type="text" value="1005" id="signMsg" name="operateType"/>* 1005账户交易
+                    <input type="text" value="105" id="busiCode" name="busiCode"/>* 105账户交易
                 </td>
             </tr>
             <tr>
@@ -536,7 +532,7 @@
                 </td>
             </tr>
             <tr align="left">
-                <td class="tdr">流水号</td>唯一标示
+                <td class="tdr">流水号</td>
                 <td>
                     <input type="text" name="serialNo" id="serialNo" class="input_t01"/>* 
                     	<input type="button" value="刷新" onclick="refreshSerialNo()" />
@@ -559,7 +555,7 @@
                 </td>
             </tr>
             <tr>
-                <td class="tdr">开始时间</td>* 
+                <td class="tdr">开始时间</td> 
                 <td>
                     <input type="text" id="startDate" name="startDate"/>* 
                 </td>
@@ -571,9 +567,9 @@
                 </td>
             </tr>
             <tr>
-                <td class="tdr">操作类型</td>
+                <td class="tdr">业务编码</td>
                 <td>
-                    <input type="text" value="1005" id="signMsg" name="operateType"/>* 1005账户交易
+                    <input type="text" value="105" id="busiCode" name="busiCode"/>* 105账户交易
                 </td>
             </tr>
             <tr>
@@ -585,6 +581,342 @@
         </table>
     </div>
 </form><br/><br/>
+
+
+<p>--------------------------------快捷支付测试--------------------------------</p>
+<form action="<%=basePath %>/payment.shtml" name="payConfirm_form" id="payConfirm_form" method="post">
+    <div class="payConfirm">
+        <table cellspacing="0" border="0">
+            <tbody>
+            <tr align="left">
+                <td class="tdr">商户号</td>
+                <td>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">订单号</td>
+                <td>
+                    <input type="text" name="orderNo" id="orderNo" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">支付方式</td>
+                <td>
+                    <input type="text" value="41" name="payType" id="payType" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">手机验证码</td>
+                <td>
+                    <input type="text" name="checkCode" id="checkCode" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">版本号</td>
+                <td>
+                    <input type="text" value="v1.1" id="version" name="version"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名类型</td>
+                <td>
+                    <input type="text" value="1" id="signType" name="signType"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名信息</td>
+                <td>
+                    <input type="text" value="DF76JGHC333DAS" id="signMsg" name="signMsg"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">业务编码</td>
+                <td>
+                    <input type="text" value="109" id="busiCode" name="busiCode"/>* 109确认支付
+                </td>
+            </tr>
+            <tr>
+			    <td class="tdr"><input type="submit" value="快捷支付-确认" id="payConfirm"></button></td>
+			    <td>
+			    </td>
+			</tr>
+            </tbody>
+        </table>
+    </div>
+</form><br/><br/>
+
+
+<form action="<%=basePath %>/payment.shtml" name="cardAuth_form" id="cardAuth_form" method="post">
+    <div class="cardAuth">
+        <table cellspacing="0" border="0">
+            <tbody>
+            <tr align="left">
+                <td class="tdr">商户号</td>
+                <td>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">订单号</td>
+                <td>
+                    <input type="text" name="orderNo" id="orderNo" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">支付方式</td>
+                <td>
+                    <input type="text" value="41" name="payType" id="payType" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">终端类型</td>
+                <td>
+                    <input type="text" value="web" name="terminalType" id="terminalType" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">银行卡号</td>
+                <td>
+                    <input type="text" value="6214242710498509" name="cardNo" id="cardNo" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">页面返回地址</td>
+                <td>
+                    <input type="text" value="http://www.fangcang.org/titanjr-pay-dev3/quickPay/cardSceurityVerifyResultPage.action" name="cardCheckPageUrl" id="cardCheckPageUrl" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">后台通知地址</td>
+                <td>
+                    <input type="text" value="http://www.fangcang.org/titanjr-pay-dev3/quickPay/cardSceurityVerifyResultNotice.action" name="cardChecknotifyUrl" id="cardChecknotifyUrl" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">版本号</td>
+                <td>
+                    <input type="text" value="v1.1" id="version" name="version"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名类型</td>
+                <td>
+                    <input type="text" value="1" id="signType" name="signType"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名信息</td>
+                <td>
+                    <input type="text" value="DF76JGHC333DAS" id="signMsg" name="signMsg"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">业务编码</td>
+                <td>
+                    <input type="text" value="114" id="busiCode" name="busiCode"/>* 114卡密鉴权
+                </td>
+            </tr>
+            <tr>
+			    <td class="tdr"><input type="submit" value="卡密鉴权" id="cardAuth"></button></td>
+			    <td>
+			    </td>
+			</tr>
+            </tbody>
+        </table>
+    </div>
+</form><br/><br/>
+
+
+<form action="<%=basePath %>/payment.shtml" name="cardBINQuery_form" id="cardBINQuery_form" method="post">
+    <div class="cardBINQuery">
+        <table cellspacing="0" border="0">
+            <tbody>
+            <tr align="left">
+                <td class="tdr">商户号</td>
+                <td>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">银行卡号</td>
+                <td>
+                    <input type="text" name="cardNo" id="cardNo" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">版本号</td>
+                <td>
+                    <input type="text" value="v1.1" id="version" name="version"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名类型</td>
+                <td>
+                    <input type="text" value="1" id="signType" name="signType"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名信息</td>
+                <td>
+                    <input type="text" value="DF76JGHC333DAS" id="signMsg" name="signMsg"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">业务编码</td>
+                <td>
+                    <input type="text" value="108" id="busiCode" name="busiCode"/>* 108卡BIN查询
+                </td>
+            </tr>
+            <tr>
+			    <td class="tdr"><input type="submit" value="卡BIN查询" id="cardBINQuery"></button></td>
+			    <td>
+			    </td>
+			</tr>
+            </tbody>
+        </table>
+    </div>
+</form><br/><br/>
+
+
+
+<form action="<%=basePath %>/payment.shtml" name="reSendMsg_form" id="reSendMsg_form" method="post">
+    <div class="reSendMsg">
+        <table cellspacing="0" border="0">
+            <tbody>
+            <tr align="left">
+                <td class="tdr">商户号</td>
+                <td>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">订单号</td>
+                <td>
+                    <input type="text" name="orderNo" id="orderNo" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">支付方式</td>
+                <td>
+                    <input type="text" value="41" name="payType" id="payType" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">版本号</td>
+                <td>
+                    <input type="text" value="v1.1" id="version" name="version"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名类型</td>
+                <td>
+                    <input type="text" value="1" id="signType" name="signType"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名信息</td>
+                <td>
+                    <input type="text" value="DF76JGHC333DAS" id="signMsg" name="signMsg"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">业务编码</td>
+                <td>
+                    <input type="text" value="110" id="busiCode" name="busiCode"/>* 110重发验证码
+                </td>
+            </tr>
+            <tr>
+			    <td class="tdr"><input type="submit" value="重发验证码" id="reSendMsg"></button></td>
+			    <td>
+			    </td>
+			</tr>
+            </tbody>
+        </table>
+    </div>
+</form><br/><br/>
+
+
+<form action="<%=basePath %>/payment.shtml" name="unBindCard_form" id="unBindCard_form" method="post">
+    <div class="unBindCard">
+        <table cellspacing="0" border="0">
+            <tbody>
+            <tr align="left">
+                <td class="tdr">商户号</td>
+                <td>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">用户id</td>
+                <td>
+                    <input type="text" value="12345" name="userId" id="userId" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">身份证号</td>
+                <td>
+                    <input type="text" value="210302196001012114" name="idCode" id="idCode" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">银行卡号</td>
+                <td>
+                    <input type="text" value="6214242710498301" name="cardNo" id="cardNo" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">银行卡账户名</td>
+                <td>
+                    <input type="text" value="韩梅梅" name="acctName" id="acctName" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">银行卡账户名</td>
+                <td>
+                    <input type="text" value="韩梅梅" name="acctName" id="acctName" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
+                <td class="tdr">银行卡类型</td>
+                <td>
+                    <input type="text" value="10" name="cardType" id="cardType" class="input_t01"/>* 10储蓄卡  11信用卡
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">版本号</td>
+                <td>
+                    <input type="text" value="v1.1" id="version" name="version"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名类型</td>
+                <td>
+                    <input type="text" value="1" id="signType" name="signType"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">签名信息</td>
+                <td>
+                    <input type="text" value="DF76JGHC333DAS" id="signMsg" name="signMsg"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">业务编码</td>
+                <td>
+                    <input type="text" value="112" id="busiCode" name="busiCode"/>* 112解绑卡
+                </td>
+            </tr>
+            <tr>
+			    <td class="tdr"><input type="submit" value="解绑卡" id="unBindCard"></button></td>
+			    <td>
+			    </td>
+			</tr>
+            </tbody>
+        </table>
+    </div>
+</form><br/><br/>
+
 
 </body>
 

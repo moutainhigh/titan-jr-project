@@ -10,7 +10,7 @@ package com.titanjr.checkstand.respnse;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
- * 查询结果，按照融数格式返回
+ * 查询结果
  * @author Jerry
  * @date 2017年12月1日 上午11:23:27  
  */
@@ -60,13 +60,6 @@ public class TitanPayQueryResponse extends RSResponse {
 	 * 支付信息
 	 */
 	private String payMsg;
-	
-	@NotBlank
-	private String version;
-	
-	private String signType;
-	
-	private String signMsg;
 	
 
 	public String getOrderAmount() {
@@ -123,30 +116,6 @@ public class TitanPayQueryResponse extends RSResponse {
 
 	public void setPayMsg(String payMsg) {
 		this.payMsg = payMsg;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
-	public String getSignType() {
-		return signType;
-	}
-
-	public void setSignType(String signType) {
-		this.signType = signType;
-	}
-
-	public String getSignMsg() {
-		return signMsg;
-	}
-
-	public void setSignMsg(String signMsg) {
-		this.signMsg = signMsg;
 	}
 
 }

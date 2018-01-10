@@ -23,14 +23,16 @@ import com.titanjr.checkstand.constants.RequestTypeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.constants.TLQrReturnCodeEnum;
 import com.titanjr.checkstand.dto.TitanPayQueryDTO;
+import com.titanjr.checkstand.request.RBQuickPayQueryRequest;
 import com.titanjr.checkstand.request.TLNetBankPayQueryRequest;
 import com.titanjr.checkstand.request.TLQrTradeQueryRequest;
 import com.titanjr.checkstand.respnse.TLQrTradeQueryResponse;
 import com.titanjr.checkstand.respnse.TitanPayQueryResponse;
+import com.titanjr.checkstand.service.RBQuickPayService;
 import com.titanjr.checkstand.service.TLCommonService;
 import com.titanjr.checkstand.service.TLPayQueryService;
 import com.titanjr.checkstand.strategy.StrategyFactory;
-import com.titanjr.checkstand.strategy.payQuery.PayQueryStrategy;
+import com.titanjr.checkstand.strategy.query.QueryStrategy;
 import com.titanjr.checkstand.util.CommonUtil;
 import com.titanjr.checkstand.util.WebUtils;
 
@@ -49,6 +51,9 @@ public class PayQueryController extends BaseController {
 	
 	@Resource
 	private TLPayQueryService tlPayQueryService;
+	
+	@Resource
+	private RBQuickPayService rbQuickPayService;
 
 	@Resource
 	private TLCommonService tlCommonService;
@@ -60,8 +65,8 @@ public class PayQueryController extends BaseController {
 		//查询订单，获取支付方式
         
         //根据支付方式获取查询策略，调对应的接口
-		PayTypeEnum payTypeEnum = PayTypeEnum.QR_WECHAT_URL;
-		PayQueryStrategy payQueryStrategy =  StrategyFactory.getPayQueryStrategy(payTypeEnum);
+		PayTypeEnum payTypeEnum = PayTypeEnum.QUICK_NEW;
+		QueryStrategy payQueryStrategy =  StrategyFactory.getPayQueryStrategy(payTypeEnum);
         String redirectUrl = payQueryStrategy.redirectResult(request);
         super.resetParameter(request,attr);
         
@@ -162,6 +167,48 @@ public class PayQueryController extends BaseController {
 		} catch (Exception e) {
 			
 			logger.error("【通联-扫码支付查询】发生异常：", e);
+			titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+			return titanPayQueryResponse;
+			
+		}
+        
+    }
+    
+    
+    /**
+     * 快捷支付结果查询
+     * @author Jerry
+     * @date 2018年1月5日 下午4:17:53
+     */
+    @ResponseBody
+    @RequestMapping(value = "/quickPayQuery", method = {RequestMethod.GET, RequestMethod.POST})
+    public TitanPayQueryResponse quickPayQuery(HttpServletRequest request, Model model) {
+    	
+    	TitanPayQueryResponse titanPayQueryResponse = new TitanPayQueryResponse();
+    	
+    	try {
+    		
+			TitanPayQueryDTO titanPayQueryDTO = WebUtils.switch2RequestDTO(TitanPayQueryDTO.class, request);
+			ValidateResponse res = GenericValidate.validateNew(titanPayQueryDTO);
+			if (!res.isSuccess()){
+				logger.error("【融宝-快捷支付查询】参数错误：{}", res.getReturnMessage());
+				titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
+				return titanPayQueryResponse;
+			}
+			
+			RBQuickPayQueryRequest rbQuickPayQueryRequest = new RBQuickPayQueryRequest();
+			rbQuickPayQueryRequest.setOrder_no(titanPayQueryDTO.getOrderNo());
+			rbQuickPayQueryRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
+			rbQuickPayQueryRequest.setVersion(SysConstant.RB_VERSION);
+			rbQuickPayQueryRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
+			rbQuickPayQueryRequest.setRequestType(RequestTypeEnum.QUICK_PAY_QUERY.getKey());
+			
+			titanPayQueryResponse = rbQuickPayService.payQuery(rbQuickPayQueryRequest);
+			return titanPayQueryResponse;
+			
+		} catch (Exception e) {
+			
+			logger.error("【融宝-快捷支付查询】异常：", e);
 			titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanPayQueryResponse;
 			
