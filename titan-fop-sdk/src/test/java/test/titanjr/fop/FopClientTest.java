@@ -9,13 +9,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by zhaoshan on 2017/12/20.
  */
 public class FopClientTest {
 
-    private static String ropUrl = "https://open.fangcang.com:19010/titan-fop-server";
+    //正式环境需要对titan-fop-server进行nginx配置，实际请求地址是调用时获取
+    private static String ropUrl = "http://local.fangcang.com:8090/titan-fop-server/";
     private static String appKey = "93A6626A-C082-4D25-B496-EA9CC6E90EDB";
     private static String appSecret = "DC368712-18A4-4290-9A58-FF995DC161DC";
     private DefaultFopClient fopClient = null;
@@ -156,4 +159,7 @@ public class FopClientTest {
         }
     }
 
+    public static void main(String[] args) {
+        System.out.println("http://192.168.0.14:8090/titan-fop-server/fopapi.shtml");
+    }
 }

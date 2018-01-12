@@ -1,13 +1,18 @@
 package com.titanjr.fop.api;
 
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.util.StringUtil;
+import com.titanjr.fop.constants.CommonConstants;
 import com.titanjr.fop.constants.InterfaceConfigEnum;
 import com.titanjr.fop.constants.InterfaceURlConfig;
 import com.titanjr.fop.controller.BaseController;
+import com.titanjr.fop.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -15,6 +20,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 开放平台请求入口
@@ -28,6 +35,25 @@ public class FopController extends BaseController {
 
     private final static Logger logger = LoggerFactory.getLogger(FopController.class);
 
+    @RequestMapping(value = "/fetchServiceUrl", method = RequestMethod.POST)
+    @ResponseBody
+    public String fetchServiceUrl(HttpServletRequest request) throws Exception {
+        String resultURL = "";
+        if (!StringUtil.isValidString(request.getParameter("appSecret"))) {
+            logger.error("传入参数不正确，appSecret不为空");
+        }
+        if (!StringUtil.isValidString(CommonConstants.appSecret) ||
+                !request.getParameter("appSecret").equals(CommonConstants.appSecret)) {
+            logger.error("系统配置appSecret为空或不一致");
+        }
+        if (StringUtil.isValidString(CommonConstants.actualUrl) &&
+                WebUtils.isValidUrl(CommonConstants.actualUrl)) {
+            resultURL = CommonConstants.actualUrl;
+        } else {
+            logger.error("配置的URL为空或不合法");
+        }
+        return resultURL;
+    }
 
     @RequestMapping(value = "/fopapi", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
     public String fopsdk(HttpServletRequest request, RedirectAttributes attr) throws Exception {
@@ -37,12 +63,12 @@ public class FopController extends BaseController {
         //resetParameter(request, attr);
         attr.addAttribute("signValid", request.getAttribute("signValid"));
         attr.addAttribute("sessionValid", request.getAttribute("sessionValid"));
-        attr.addAttribute("appSecret",request.getAttribute("appSecret"));
-        attr.addAttribute("method",request.getParameter("method"));
-        attr.addAttribute("appKey",request.getParameter("appKey"));
-        attr.addAttribute("timeStamp",request.getParameter("timeStamp"));
-        attr.addAttribute("format",request.getParameter("format"));
-        attr.addAttribute("session",request.getParameter("session"));
+        attr.addAttribute("appSecret", request.getAttribute("appSecret"));
+        attr.addAttribute("method", request.getParameter("method"));
+        attr.addAttribute("appKey", request.getParameter("appKey"));
+        attr.addAttribute("timeStamp", request.getParameter("timeStamp"));
+        attr.addAttribute("format", request.getParameter("format"));
+        attr.addAttribute("session", request.getParameter("session"));
         return "redirect:" + url;
     }
 

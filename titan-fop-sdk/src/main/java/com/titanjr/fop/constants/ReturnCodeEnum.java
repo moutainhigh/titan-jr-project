@@ -6,6 +6,7 @@ package com.titanjr.fop.constants;
 public enum ReturnCodeEnum {
     CODE_USERID_ERROR("-100","userid不合法"),
     CODE_CONVERT_ERROR("-101","参数转换失败"),
+    SERVICE_URL_ERROR("-102","获取支付实际请求URL错误"),
     CODE_SIGN_ERROR("-200","sign不合法"),
     CODE_SESSION_ERROR("-201","session信息不合法"),
     CODE_OPERTYPE_ERROR("-202","opertype信息不合法"),
@@ -13,7 +14,7 @@ public enum ReturnCodeEnum {
     private String code;
     private String msg;
 
-    private ReturnCodeEnum(String code,String msg){
+    ReturnCodeEnum(String code,String msg){
         this.code = code;
         this.msg = msg;
     }

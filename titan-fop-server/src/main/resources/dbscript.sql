@@ -8,3 +8,6 @@ CREATE TABLE `t_tfs_reqsession` (
   `isactive` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0-停用 ,1－有效',
   PRIMARY KEY (`sessid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='请求session列表';
+
+insert into configpara values (config.seq_configpara.nextval,0,'3333','pay.appSecret','DC368712-18A4-4290-9A58-FF995DC161DC','金融付款secret','Y');
+insert into configpara values (config.seq_configpara.nextval,0,'3333','pay.serviceUrl','http://192.168.0.14:8090/titan-fop-server/fopapi.shtml','金融付款服务地址','Y');

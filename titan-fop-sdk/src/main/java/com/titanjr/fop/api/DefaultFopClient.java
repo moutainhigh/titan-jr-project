@@ -1,5 +1,7 @@
 package com.titanjr.fop.api;
 
+import com.fangcang.util.StringUtil;
+import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.domain.FopHashMap;
 import com.titanjr.fop.domain.RequestParametersHolder;
 import com.titanjr.fop.exceptions.ApiException;
@@ -170,13 +172,16 @@ public class DefaultFopClient implements FopClient {
                 protocalParams.put("sign", FopUtils.signFopRequest(parametersHolder, this.appSecret));
             }
         } catch (IOException iex) {
-            logger.error("签名计算错误",  iex);
+            logger.error("签名计算错误", iex);
             throw new ApiException(iex);
         }
 
         //现在可用同一个地址
         this.serverUrl = WebUtils.getActualUrl(this.initServerUrl, this.appKey, this.appSecret, session);
-
+        if (!StringUtil.isValidString(this.serverUrl)) {
+            logger.error(ReturnCodeEnum.SERVICE_URL_ERROR.getMsg());
+            throw new ApiException(ReturnCodeEnum.SERVICE_URL_ERROR.getMsg());
+        }
         StringBuffer serviceURL = new StringBuffer(this.serverUrl);
         try {
             String protocalStr = WebUtils.buildQuery(parametersHolder.getProtocalMustParams(), "UTF-8");
@@ -195,8 +200,8 @@ public class DefaultFopClient implements FopClient {
 
         try {
             result = WebUtils.doPost(serviceURL.toString(), appParamMap, this.connectTimeout, this.readTimeout);
-        } catch (IOException var14) {
-            throw new ApiException(var14);
+        } catch (IOException iox) {
+            throw new ApiException(iox);
         }
         //返回的json
         response.put("rsp", result);

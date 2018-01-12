@@ -83,5 +83,5 @@
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
 
     <bean class="com.fangcang.util.SpringContextUtil"/>
-    <bean class="com.titanjr.fop.constants.CommonConstants"/>
+    <bean class="com.titanjr.fop.constants.CommonConstants" init-method="initParam"/>
 </beans>

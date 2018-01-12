@@ -1,5 +1,6 @@
 package com.titanjr.fop.util;
 
+import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.util.StringUtil;
 import com.titanjr.fop.api.DefaultFopClient;
 import com.titanjr.fop.constants.CommonConstants;
@@ -21,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by zhaoshan on 2017/12/20.
@@ -132,6 +135,23 @@ public class WebUtils {
      * @return
      */
     public static String getActualUrl(String initServerUrl, String appKey, String appSecret, String session) {
-        return "http://local.fangcang.com:8090/titan-fop-server/fopapi.shtml";
+        initServerUrl = initServerUrl + CommonConstants.fetchUrl;
+        Map<String, String> paramMap = new HashMap<String, String>();
+        paramMap.put("appKey", appKey);
+        paramMap.put("appSecret", appSecret);
+        paramMap.put("session", session);
+        String responseUrl = null;
+        try {
+            responseUrl = WebUtils.doPost(initServerUrl, paramMap, 60000, 60000);
+        } catch (IOException e) {
+            logger.error("获取业务请求地址失败", e);
+        }
+        return responseUrl;
+    }
+
+    public static boolean isValidUrl(String str) {
+        Pattern exp=Pattern.compile("^((http|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\\&%_\\./-~-]*)?", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = exp.matcher(str);
+        return matcher.matches();
     }
 }
