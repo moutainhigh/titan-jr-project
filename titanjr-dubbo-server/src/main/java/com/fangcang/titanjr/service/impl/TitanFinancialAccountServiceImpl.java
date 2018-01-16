@@ -186,12 +186,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     private TitanBalanceInfoDao balanceInfoDao;
     
     
-	@Override
-	public CreateBalanceInfoResponse createBalanceInfo(BalanceInfoRequest balanceInfoRequest) {
-		 
-		
-		return null;
-	}
 	/***
 	 * 融数的账户是否在本地存在
 	 * @param item 融数账户
@@ -287,6 +281,8 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			paginationSupport = orgdao.selectForPage(null, paginationSupport);
 			log.info("同步,总页数："+paginationSupport.getTotalPage()+","+page);
 		}
+		//suborg
+		
 		
 	}
 

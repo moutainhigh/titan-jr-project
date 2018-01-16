@@ -48,7 +48,7 @@ import com.fangcang.titanjr.dto.request.AddPayLogRequest;
 import com.fangcang.titanjr.dto.request.ApplyLoanRequest;
 import com.fangcang.titanjr.dto.request.ConfirmOrdernQueryRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
-import com.fangcang.titanjr.dto.request.RecordRechargeRequest;
+import com.fangcang.titanjr.dto.request.RecordRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.dto.request.TransferRequest;
@@ -195,10 +195,10 @@ public class TitanPaymentController extends BaseController {
     			transOrderDTO.setFreezeType(FreezeTypeEnum.FREEZE_PAYEE.getKey());
     		}
         	
-        	RecordRechargeRequest recordRechargeRequest  = new RecordRechargeRequest();
+        	RecordRequest recordRechargeRequest  = new RecordRequest();
         	recordRechargeRequest.setAmount(Long.parseLong(rechargeResultConfirmRequest.getPayAmount()));
         	recordRechargeRequest.setTransOrderId(transOrderDTO.getTransid());
-        	recordRechargeRequest.setProduct(transOrderDTO.getProductid());
+        	recordRechargeRequest.setProductId(transOrderDTO.getProductid());
         	recordRechargeRequest.setUserId(transOrderDTO.getUserid());
         	accountRecordService.recharge(recordRechargeRequest);
         	

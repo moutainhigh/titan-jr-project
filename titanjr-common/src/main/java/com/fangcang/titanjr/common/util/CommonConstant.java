@@ -33,6 +33,7 @@ public class CommonConstant {
     public static final String LOAN_CREDIT_NO_PREFIX = "CR";//accountCode编码前缀
     public static final String RS_FANGCANG_USER_ID = "141223100000056";//房仓平台userid
 
+    public static final String DEPOSIT_ACCOUNT_CODE = "141223100000001";//备付金1账户
     //基础业务类型
     public static final String ORDEROTYPE = "B1";
 

@@ -11,4 +11,7 @@ public interface TitanAccountDetailDao {
 	List<TitanAccountDetail> selectList(TitanAccountDetailParam param) throws DaoException;
 	
 	int insert(TitanAccountDetail entity) throws DaoException;
+	
+	
+	
 }

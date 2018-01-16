@@ -12,7 +12,17 @@ public class TitanAccountDetailParam implements Serializable {
 	private Integer tradeType;
 	private String orgCode;
 	private String productId;
+	/***
+	 * 状态:1-有效，２－无效
+	 */
+	private Integer status;
 	
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 	public Long getTransOrderId() {
 		return transOrderId;
 	}

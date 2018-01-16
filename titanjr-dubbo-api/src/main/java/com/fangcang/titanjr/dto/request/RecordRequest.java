@@ -2,7 +2,7 @@ package com.fangcang.titanjr.dto.request;
 
 import java.io.Serializable;
 
-public class RecordRechargeRequest implements Serializable {
+public class RecordRequest implements Serializable {
 
 	/**
 	 * 
@@ -13,7 +13,7 @@ public class RecordRechargeRequest implements Serializable {
 	//充值用户
 	private String 	userId;
 	//充值的产品
-	private String product;
+	private String productId;
 	// 单位：分
 	private long amount;
 	
@@ -36,11 +36,12 @@ public class RecordRechargeRequest implements Serializable {
 	public void setAmount(long amount) {
 		this.amount = amount;
 	}
-	public String getProduct() {
-		return product;
+	public String getProductId() {
+		return productId;
 	}
-	public void setProduct(String product) {
-		this.product = product;
+	public void setProductId(String productId) {
+		this.productId = productId;
 	}
+	
 	
 }

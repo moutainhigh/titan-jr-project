@@ -90,6 +90,8 @@ import com.fangcang.titanjr.dto.request.OrderRequest;
 import com.fangcang.titanjr.dto.request.OrderSaveAndBindCardRequest;
 import com.fangcang.titanjr.dto.request.RechargeRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
+import com.fangcang.titanjr.dto.request.RecordRequest;
+import com.fangcang.titanjr.dto.request.RecordTransferRequest;
 import com.fangcang.titanjr.dto.request.RepairTransferRequest;
 import com.fangcang.titanjr.dto.request.TitanOrderRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
@@ -139,6 +141,7 @@ import com.fangcang.titanjr.rs.response.OrderSaveWithCardResponse;
 import com.fangcang.titanjr.rs.response.OrderTransferFlowResponse;
 import com.fangcang.titanjr.rs.response.OrdernQueryResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+import com.fangcang.titanjr.service.AccountRecordService;
 import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
@@ -212,7 +215,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	private TitanFinancialUpgradeService titanFinancialUpgradeService;
 	
 	private static Map<String, Object> mapLock = new ConcurrentHashMap<String, Object>();
-
+	@Resource
+	private AccountRecordService accountRecordService;
 
 	@Override
 	public LocalAddTransOrderResponse addLocalTransOrder(
@@ -623,6 +627,16 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						log.info("orderid:"+transferRequest.getOrderid()+",转账结果,响应结果[accountTransferResponse]:" + JSON.toJSONString(accountTransferResponse));
 						if (accountTransferResponse != null) {
 							if (CommonConstant.OPERATE_SUCCESS.equals(accountTransferResponse.getOperateStatus())) {
+								//记账
+								RecordTransferRequest recordTransferRequest  = new RecordTransferRequest();
+								recordTransferRequest.setAmount(Long.parseLong(accountTransferRequest.getAmount()));
+								recordTransferRequest.setTransOrderId(transOrderDTO.getTransid());
+								recordTransferRequest.setProductId(accountTransferRequest.getProductid());
+								recordTransferRequest.setUserId(accountTransferRequest.getUserid());
+								recordTransferRequest.setRelateUserId(accountTransferRequest.getUserrelateid());
+								recordTransferRequest.setRelateProductId(accountTransferRequest.getInterproductid());
+					        	accountRecordService.transfer(recordTransferRequest);
+								
 								titanTransferReq.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
 								transferResponse.putSuccess();
 							} else {

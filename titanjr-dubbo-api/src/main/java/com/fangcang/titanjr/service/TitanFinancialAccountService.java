@@ -20,12 +20,7 @@ public interface TitanFinancialAccountService {
      * @return
      */
     public AccountCreateResponse createAccount(AccountCreateRequest accountCreateRequest);
-    /***
-     * 创建账户
-     * @param createBalanceInfoRequest
-     * @return
-     */
-    public CreateBalanceInfoResponse createBalanceInfo(BalanceInfoRequest balanceInfoRequest) ;
+    
     
     /***
      * 同步余额账户，如果不存在则创建

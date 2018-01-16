@@ -12,11 +12,33 @@ public class RecordTransferRequest implements Serializable {
 	private long transOrderId;
 	//发起方
 	private String 	userId;
+	
+	private String productId;
 	//接收方
-	private String userrelateid;
+	private String relateUserId;
+	
+	private String relateProductId;
 	// 单位：分
 	private long amount;
 	
+	public String getProductId() {
+		return productId;
+	}
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
+	public String getRelateUserId() {
+		return relateUserId;
+	}
+	public void setRelateUserId(String relateUserId) {
+		this.relateUserId = relateUserId;
+	}
+	public String getRelateProductId() {
+		return relateProductId;
+	}
+	public void setRelateProductId(String relateProductId) {
+		this.relateProductId = relateProductId;
+	}
 	public long getTransOrderId() {
 		return transOrderId;
 	}
@@ -29,12 +51,7 @@ public class RecordTransferRequest implements Serializable {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	public String getUserrelateid() {
-		return userrelateid;
-	}
-	public void setUserrelateid(String userrelateid) {
-		this.userrelateid = userrelateid;
-	}
+	
 	public long getAmount() {
 		return amount;
 	}

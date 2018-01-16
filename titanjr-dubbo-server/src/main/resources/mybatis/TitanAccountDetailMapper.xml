@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanAccountDetailDao">
+    <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanAccountDetail"
+            parameterType="com.fangcang.titanjr.entity.parameter.TitanAccountDetailParam">
+        select * from t_tfs_accountdetail
+        <where>
+            <if test="accountcode != null">accountcode = #{accountcode}</if>
+            <if test="transorderid != null"> and transorderid =#{transorderid}</if>
+            <if test="tradetype != null"> and tradetype =#{tradetype}</if>
+            <if test="orgcode != null"> and orgcode =#{orgcode}</if>
+            <if test="productid != null"> and productid =#{productid}</if>
+            <if test="status != null"> and status =#{status}</if>
+          </where>
+    </select>
+
+    
+    <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanAccountDetail" useGeneratedKeys="true" keyProperty="detailid">
+    insert into t_tfs_accountdetail (accountcode, 
+      transorderid, tradetype, orgcode, 
+      productid, balancetype,creditamount,frozonamount,
+      settleamount,status,remark,createtime)
+    values ( #{accountCode}, #{transOrderId}, #{tradeType}, #{orgCode}, #{productId},
+    #{balanceType},#{creditAmount},#{frozonAmount},#{settleAmount},#{status},
+    #{remark},#{createTime})
+  </insert>
+    
+
+</mapper>
