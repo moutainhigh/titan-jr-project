@@ -174,18 +174,23 @@ public class TitanFinancialRateServiceImpl implements TitanFinancialRateService 
         	rateConfig.setDescription("提现收银台");
             rateConfig.setRatetype(CommonConstant.RATETYPE_FIXATION);
             rateConfig.setStandrate(5f);
+            rateConfig.setExecutionrate(0f);
         }else{
     		rateConfig.setDeskid(String.valueOf(titanCashierDesk.getDeskid()));
     		rateConfig.setUsedfor(String.valueOf(titanCashierDesk.getUsedfor()));
             rateConfig.setDescription(titanCashierDesk.getDeskname());
             rateConfig.setRatetype(CommonConstant.RATETYPE_PERCENT);
-        	if(titanCashierDesk.getUsedfor() != null && titanCashierDesk.getUsedfor() == 5){//充值免费
-        		rateConfig.setStandrate(0f);
-            }else{
-                rateConfig.setStandrate(0.4f);
+            rateConfig.setStandrate(0.4f);
+            rateConfig.setExecutionrate(0f);
+        	if(titanCashierDesk.getUsedfor() != null){
+        		if(titanCashierDesk.getUsedfor() == 5){
+        			rateConfig.setStandrate(0f);//充值免费
+        		}
+        		if(titanCashierDesk.getUsedfor() == 6){
+        			rateConfig.setExecutionrate(0.4f);//对外开放收银台收千分四
+        		}
             }
         }
-        rateConfig.setExecutionrate(0f);
         rateConfig.setCreator("system");
         rateConfig.setCreatetime(new Date());
         rateConfig.setExpiration(DateUtil.stringToDate("2017-12-31"));

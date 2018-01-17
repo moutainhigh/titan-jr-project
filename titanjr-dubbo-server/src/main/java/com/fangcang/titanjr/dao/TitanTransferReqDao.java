@@ -20,7 +20,9 @@ public interface TitanTransferReqDao {
 	int updateTitanTransferReqByTransorderid(TitanTransferReq titanTransferReq)throws DaoException;
 	
 	List<TitanTransferReq> queryTitanTransferReq(TitanTransferReqParam titanTransferReqParam);
-	
+
+	List<TitanTransferReq> queryTransferByOrderNo(String orderNo);
+
 	int delete(TitanTransferReq entity) throws DaoException ;
 	
 }

@@ -361,12 +361,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 				
 				
 				if(isAmountChange && isBankInfoChange && isPayerAccountChange){
-					log.info("资金，银行卡，民生银行支付账户没变");
+					log.info("资金，银行卡，民生银行支付账户没变，isAmountChange:"+isAmountChange+",isBankInfoChange:"+isBankInfoChange+",isPayerAccountChange:"+isPayerAccountChange);
 					long times = DateUtil.diffSecondByTime(
 							titanOrderPayreq.getOrderTime(),
 							DateUtil.sdf5.format(new Date()));
 					if (times < this.getExpireTime(titanOrderPayreq)) {// 未过期
-						log.info("验证时间未过期,可以使用原单支付");												// 获取当前单号,需要优化
 						orderid = titanOrderPayreq.getOrderNo();
 						orderResponse.setOrderNo(orderid);
 					} else {
@@ -375,7 +374,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						isAddOrderAgain = true;
 					}
 				} else {
-					log.info("单已过期，废单,单号orderId:"+transOrderDTO.getOrderid());
+					log.info("支付信息已经变更，isAmountChange:"+isAmountChange+",isBankInfoChange:"+isBankInfoChange+",isPayerAccountChange:"+isPayerAccountChange+",单已过期，需要废单,单号orderId:"+transOrderDTO.getOrderid());
 					this.updateOrderNoEffect(transOrderDTO.getTransid());
 					isAddOrderAgain = true;
 				}
@@ -562,11 +561,11 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			req.setUserrelateid(orderRequest.getUserrelateid()); // 关联用户id（若有第三方则必须填写）
 			if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanPaymentRequest.getJrVersion())){
 				req.setUnitprice(orderRequest.getReceivedfee());//设置实收的手续费
-				//充值收银台不收手续费
-				if(PaySourceEnum.RECHARGE.getDeskCode().equals(titanPaymentRequest.getPaySource())){
+				//充值收银台不收手续费（做成可配置，这里可以去掉）
+				/*if(PaySourceEnum.RECHARGE.getDeskCode().equals(titanPaymentRequest.getPaySource())){
 					req.setUnitprice("0");
 					orderRequest.setReceivedfee("0");
-				}
+				}*/
 			}else{
 				req.setUnitprice("0"); //新版收银台，支付时不扣0，在转账的时候再计算手续费
 			}
@@ -1595,10 +1594,14 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						.getItemList()) {
 					//交易详细页面是否显示手续费,原则：谁出手续费，谁的页面就显示手续费
 					if(StringUtil.isValidString(transOrderDTO.getOrderid())&&transOrderDTO.getReceivedfee()>0){
-						TitanRateRecord rateRecord = rateConfigDao.getRateRecordByOrderNo(transOrderDTO.getOrderid());
-						if(rateRecord.getUserId().equals(tradeDetailRequest.getUserid())){//手续费支付方为当前登录者
-							transOrderDTO.setIsPayFee("1");
+						//提现手续费不在这里算
+						if(!PayerTypeEnum.WITHDRAW.getKey().equals(transOrderDTO.getPayerType())){
+							TitanRateRecord rateRecord = rateConfigDao.getRateRecordByOrderNo(transOrderDTO.getOrderid());
+							if(rateRecord.getUserId().equals(tradeDetailRequest.getUserid())){//手续费支付方为当前登录者
+								transOrderDTO.setIsPayFee("1");
+							}
 						}
+						
 					}
 					// 获取充值记录
 					if (transOrderDTO.getTradeType().equals("收款")) {// 收款记录
@@ -1622,14 +1625,16 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						titanTransferDTO.setUserrelateid(transOrderDTO.getUserrelateid());
 						titanTransferDTO = titanOrderService
 								.getTitanTransferDTO(titanTransferDTO);
-
-						TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
-						titanOrderPayDTO.setTransorderid(transOrderDTO
-								.getTransid());
-						titanOrderPayDTO = titanOrderService
-								.getTitanOrderPayDTO(titanOrderPayDTO);
-
-						transOrderDTO.setTitanOrderPayDTO(titanOrderPayDTO);
+						
+						if(!transOrderDTO.getTradeType().equals("余额付款")){
+							TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+							titanOrderPayDTO.setTransorderid(transOrderDTO
+									.getTransid());
+							titanOrderPayDTO = titanOrderService
+									.getTitanOrderPayDTO(titanOrderPayDTO);
+							transOrderDTO.setTitanOrderPayDTO(titanOrderPayDTO);
+						}
+						
 						transOrderDTO.setTitanTransferDTO(titanTransferDTO);
 						transOrderDTO.setRefundDTO(this.getRefundDTO(transOrderDTO.getOrderid()));
 

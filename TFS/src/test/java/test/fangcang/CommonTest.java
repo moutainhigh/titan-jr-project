@@ -1,28 +1,33 @@
 package test.fangcang;
 
-import com.fangcang.titanjr.common.bean.CallBackInfo;
-import com.fangcang.titanjr.common.bean.NotifyBean;
-import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
-import com.fangcang.titanjr.common.enums.OrderKindEnum;
-import com.fangcang.titanjr.common.enums.PayerTypeEnum;
-import com.fangcang.titanjr.common.enums.RefundStatusEnum;
-import com.fangcang.titanjr.common.util.httpclient.HttpClient;
-import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
-import com.fangcang.titanjr.dto.bean.OrgBindInfo;
-import com.fangcang.titanjr.dto.bean.RefundDTO;
-import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.util.StringUtil;
-import net.sf.json.JSONSerializer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
-
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import com.fangcang.titanjr.common.bean.CallBackInfo;
+import com.fangcang.titanjr.common.bean.NotifyBean;
+import com.fangcang.titanjr.common.enums.RefundStatusEnum;
+import com.fangcang.titanjr.common.util.MD5;
+import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.common.util.httpclient.HttpClient;
+import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.NotifyRefundRequest;
+import com.fangcang.titanjr.enums.BusiCodeEnum;
+import com.fangcang.util.StringUtil;
+
+import net.sf.json.JSONSerializer;
 
 /**
  * Created by zhaoshan on 2017/3/23.
@@ -32,9 +37,75 @@ public class CommonTest {
     private static final Log log = LogFactory.getLog(CommonTest.class);
 
     public static void main(String[] args) {
-        payCallBack(); 
+    	
     }
 
+    
+    
+    private static void notifyGateawayRefund()   {
+
+		NotifyRefundRequest notifyRefundRequest = new NotifyRefundRequest();
+		notifyRefundRequest.setOrderNo("2017122901125000002");
+		notifyRefundRequest.setOrderTime("20171229011250");
+		notifyRefundRequest.setBusiCode(BusiCodeEnum.QueryRefund.getKey());
+		notifyRefundRequest.setMerchantNo("M000016");
+		notifyRefundRequest.setRefundAmount("1200");
+		notifyRefundRequest.setRefundOrderno("OD20180102170620001");
+		notifyRefundRequest.setSignType("1");
+		notifyRefundRequest.setVersion("v1.0");
+		
+		
+		List<NameValuePair> params = getGateawayParam(notifyRefundRequest);
+		String response ="";
+		BusiCodeEnum busiCodeEnum = BusiCodeEnum.getEnumByKey(notifyRefundRequest.getBusiCode());
+		HttpPost httpPost = new HttpPost("http://checkstand.rongcapital.cn:8485/checkstand/payment");//生产地址
+		HttpResponse resp = HttpClient.httpRequest(params,httpPost);
+		
+		if (null != resp) {
+			HttpEntity entity = resp.getEntity();
+			try {
+				response = EntityUtils.toString(entity);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		log.info("调用融数网关gateWayURL退款或查询退款状态,操作："+busiCodeEnum.toString()+",orderId："+notifyRefundRequest.getOrderNo()+",请求参数:"+Tools.gsonToString(params)+",退款返回信息response："+response);
+    
+    }
+    
+    private static List<NameValuePair> getGateawayParam(NotifyRefundRequest notifyRefundRequest){
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("merchantNo", notifyRefundRequest.getMerchantNo()));
+		params.add(new BasicNameValuePair("busiCode", notifyRefundRequest.getBusiCode()));
+		params.add(new BasicNameValuePair("orderNo", notifyRefundRequest.getOrderNo()));
+		params.add(new BasicNameValuePair("refundAmount", notifyRefundRequest.getRefundAmount()));
+		params.add(new BasicNameValuePair("orderTime", notifyRefundRequest.getOrderTime()));//
+		params.add(new BasicNameValuePair("refundOrderno", notifyRefundRequest.getRefundOrderno()));
+		params.add(new BasicNameValuePair("version", notifyRefundRequest.getVersion()));
+		params.add(new BasicNameValuePair("signType", notifyRefundRequest.getSignType()));
+		String signMsg = getMD5Sign(getStrSign(notifyRefundRequest) ,"UTF-8");
+		params.add(new BasicNameValuePair("signMsg", signMsg));
+		return params;
+	}
+    private static String getMD5Sign(String str,String charset){
+		return MD5.MD5Encode(str, charset);
+	}
+    //获取前面字符串
+  	private static String getStrSign(NotifyRefundRequest notifyRefundRequest){
+  		StringBuffer stringBuffer = new StringBuffer();
+      	stringBuffer.append("signType="+notifyRefundRequest.getSignType());
+      	stringBuffer.append("&version="+notifyRefundRequest.getVersion());
+      	stringBuffer.append("&merchantNo="+notifyRefundRequest.getMerchantNo());
+      	stringBuffer.append("&refundOrderno="+notifyRefundRequest.getRefundOrderno());
+      	stringBuffer.append("&orderNo="+notifyRefundRequest.getOrderNo());
+      	stringBuffer.append("&orderTime="+notifyRefundRequest.getOrderTime());
+      	stringBuffer.append("&refundAmount="+notifyRefundRequest.getRefundAmount());
+      	stringBuffer.append("&key=PCDEFOI8808TFC");
+  		return stringBuffer.toString();
+  	}
+  	
     private static void refundCallback(){
     	
         NotifyBean bean = new NotifyBean();

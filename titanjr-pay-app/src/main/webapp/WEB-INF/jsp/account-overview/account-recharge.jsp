@@ -55,7 +55,7 @@
 						<div class="TFS_rechargeBoxL fl" style="padding:0">
 							<div class="goldpay_top" style="padding-top: 20px; height: 130px; width: 740px;margin:0; ">
 							充值金额：<input type="text" class="text w_200" id="inputeAmount"><span id="inputeAmountError" style="color:red;font-size:12px;padding-left:15px"></span>
-								<!-- <div style="padding-left: 88px; padding-top: 7px;" class="c_666 f_14">手续费：<i class="c_f00" id="rateAmount">0.00</i> 元</div> -->
+								<div style="padding-left: 88px; padding-top: 7px; " class="c_666 f_14">手续费：<i class="c_f00" id="rateAmount">0.00</i> 元</div>
 							</div>
 						</div>
 					<div class="TFS_rechargeBoxR fr" style="height:110px;">
@@ -168,7 +168,7 @@
 	   <input name="linePayType" id="linePayType" type="hidden" value="">
 	   <input name="paySource" id="paySource" type="hidden" value="5">
 	   <input name="payOrderNo" id="payOrderNo" type="hidden" value="${cashDeskData.payOrderNo}">
-	   <input name="deskId" id="deskId" type="hidden" value="${cashDeskData.cashierDeskDTO.deskId}">
+	   <input name="deskId" id="deskId" type="hidden" value="${cashDeskData.deskId}">
 	   <input name="payerAcount" id="payerAcount" type="hidden"/>
 	   <input name="userid" id="userid" type="hidden" value="${cashDeskData.userId}"/>
 	   <input name="jrVersion" id="jrVersion" type="hidden" value="${cashDeskData.jrVersion}"/>
@@ -255,12 +255,17 @@ function paytable_paywayClick(itemType , amount){
   	
 	 $.ajax({
   	   type: "get",
-       url: "<%=basePath%>/rate/rateCompute.action?userId=${cashDeskData.userId}&amount="+amount+"&payType="+itemType+"&date=" + new Date().getTime(),
+       url: "<%=basePath%>/rate/rateCompute.action?userId=${cashDeskData.userId}&amount="+amount+"&payType="+itemType+"&deskId=${cashDeskData.deskId}"+"&date=" + new Date().getTime(),
        dataType: "json",
        async: false,
        success: function(data){
     	   
-    	   //$('#rateAmount').html(data.data.exRateAmount);
+    	   if(data.result != '0'){
+    		   $('#rateAmount').html("？");
+    	   }else{
+    		   $('#rateAmount').html(data.data.exRateAmount);
+    	   }
+    	   
        }
      }); 
 }
@@ -295,7 +300,6 @@ $(".J_exitKan").on('click', function() {
 
 //设置交易密码
 $('.J_password').on('click',function(){
-	 debugger;
 	//验证是否有交易密码
 	 var validate = validate_isBlank();
 	 if(validate==false){

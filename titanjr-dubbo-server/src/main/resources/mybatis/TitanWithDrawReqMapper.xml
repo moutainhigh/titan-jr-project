@@ -16,6 +16,11 @@
       <if test="userorderid !=null">
         and userorderid = #{userorderid}
       </if>
+      <if test="userid !=null">
+        and userid = #{userid}
+      </if>
+      <if test="startTime != null"> and <![CDATA[ createtime >= #{startTime} ]]></if>
+      <if test="endTime != null"> and <![CDATA[ createtime < #{endTime} ]]></if>
     </where>
     order by createtime desc
   </select>

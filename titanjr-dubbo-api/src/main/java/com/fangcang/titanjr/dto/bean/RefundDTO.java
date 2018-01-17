@@ -32,7 +32,7 @@ public class RefundDTO implements Serializable{
 	private String creator;
 	
 	private Integer status;
-	
+
 	private Date createtime;
 	
 	private String transferAmount;
@@ -46,6 +46,17 @@ public class RefundDTO implements Serializable{
 	private String userOrderId;
 	
 	private String businessInfo;
+
+	//退款单创建的开始时间，用作参数
+	private Date startTime;
+	//退款单创建的结束时间，用作参数
+	private Date endTime;
+	//交易单状态，对账使用，查询列表不返回
+	private Integer transStatus;
+	//退款单对应的原始付款方，对账使用，查询列表不返回
+	private String payerMerchant;
+	//退款单对应的原始收款方，对账使用，查询列表不返回
+	private String payeeMerchant;
 	
 	public String getBusinessInfo() {
 		return businessInfo;
@@ -191,4 +202,43 @@ public class RefundDTO implements Serializable{
 		this.userOrderId = userOrderId;
 	}
 
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
+	public Integer getTransStatus() {
+		return transStatus;
+	}
+
+	public void setTransStatus(Integer transStatus) {
+		this.transStatus = transStatus;
+	}
+
+	public String getPayerMerchant() {
+		return payerMerchant;
+	}
+
+	public void setPayerMerchant(String payerMerchant) {
+		this.payerMerchant = payerMerchant;
+	}
+
+	public String getPayeeMerchant() {
+		return payeeMerchant;
+	}
+
+	public void setPayeeMerchant(String payeeMerchant) {
+		this.payeeMerchant = payeeMerchant;
+	}
 }

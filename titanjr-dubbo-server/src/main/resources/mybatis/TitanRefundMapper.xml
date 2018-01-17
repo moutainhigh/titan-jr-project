@@ -23,12 +23,17 @@
     <result property="notifyUrl" column="notifyUrl"/>
     <result property="businessInfo" column="businessInfo"/>
     <result property="createtime" column="createtime"/>
+    <result property="version" column="version"/>
+    <result property="transStatus" column="statusid"/>
+    <result property="payerMerchant" column="payermerchant"/>
+    <result property="payeeMerchant" column="payeemerchant"/>
   </resultMap>
   
   
   <select id="queryList" parameterType="com.fangcang.titanjr.dto.bean.RefundDTO" resultMap="refundDTOMapper">
      select refundid,orderid,refundAmount,refundOrderno,orderTime,creator,status,transferAmount,
-            fee,userOrderId,payOrderNo,notifyUrl,businessInfo,createtime from t_tfs_refund 
+            fee,userOrderId,payOrderNo,notifyUrl,businessInfo,createtime,
+            '' as version, '' as statusid, '' as payermerchant, '' as payeemerchant  from t_tfs_refund
      <where>
        <if test="refundId !=null">
        refundid = #{refundId}
@@ -49,6 +54,40 @@
      
      order by createtime desc
   </select>
+
+  <select id="queryRefundDTODetail" parameterType="com.fangcang.titanjr.dto.bean.RefundDTO" resultMap="refundDTOMapper">
+    SELECT
+      d.refundid,
+      d.orderid,
+      d.refundAmount,
+      d.refundOrderno,
+      d.orderTime,
+      d.creator,
+      d. STATUS,
+      d.transferAmount,
+      d.fee,
+      d.userOrderId,
+      d.payOrderNo,
+      d.notifyUrl,
+      d.businessInfo,
+      d.createtime,
+      q.version,
+      o.statusid,
+      o.payermerchant,
+      o.payeemerchant
+    FROM
+      t_tfs_refund d,
+      t_tfs_transorder o,
+      t_tfs_orderpayreq q
+    <where>
+      o.orderid = d.orderid
+      and o.transid = q.transorderid
+      <if test="startTime != null"> and <![CDATA[ d.createtime >= #{startTime} ]]></if>
+      <if test="endTime != null"> and <![CDATA[ d.createtime < #{endTime} ]]></if>
+      <if test="merchantNo !=null"> AND o.payeemerchant = #{merchantNo}</if>
+    </where>
+  </select>
+
   
   <update id="updateEntity" parameterType="com.fangcang.titanjr.dto.bean.RefundDTO">
     update t_tfs_refund

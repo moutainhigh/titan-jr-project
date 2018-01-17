@@ -26,6 +26,7 @@
 
 	<context:component-scan base-package="com.fangcang.titanjr.service" />
 	<context:component-scan base-package="com.fangcang.titanjr.dao" />
+	<context:component-scan base-package="com.fangcang.titanjr.util" />
 
 	<bean class="com.fangcang.util.SpringContextUtil"/>
 </beans>

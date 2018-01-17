@@ -19,8 +19,8 @@ public class RateConfigDTO  implements Serializable {
     private Float standRate;
     private Float executionRate;
     private String description;
-	private Float minrate;
-	private Float maxrate;
+	private Float minfee;
+	private Float maxfee;
     private Date expiration;
 
     public Integer getRateConfigId() {
@@ -87,20 +87,20 @@ public class RateConfigDTO  implements Serializable {
         this.description = description;
     }
 
-    public Float getMinrate() {
-		return minrate;
+	public Float getMinfee() {
+		return minfee;
 	}
 
-	public void setMinrate(Float minrate) {
-		this.minrate = minrate;
+	public void setMinfee(Float minfee) {
+		this.minfee = minfee;
 	}
 
-	public Float getMaxrate() {
-		return maxrate;
+	public Float getMaxfee() {
+		return maxfee;
 	}
 
-	public void setMaxrate(Float maxrate) {
-		this.maxrate = maxrate;
+	public void setMaxfee(Float maxfee) {
+		this.maxfee = maxfee;
 	}
 
 	public Date getExpiration() {

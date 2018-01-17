@@ -6,6 +6,8 @@
  <link rel="stylesheet" href="<%=cssSaasPath%>/css/jquery-ui-1.9.2.custom.css" >
  <link rel="stylesheet" href="<%=cssSaasPath%>/css/style.css">
 <link href="<%=cssSaasPath%>/themes/${CURRENT_THEME}/css/style.css" rel="stylesheet" type="text/css">
-
+<script type="text/javascript">
+var js_base_path = "<%=basePath%>";
+</script>
 
 

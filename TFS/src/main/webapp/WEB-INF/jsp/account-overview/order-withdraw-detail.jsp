@@ -61,8 +61,9 @@
 							<col width="150">
                         	<col width="60">
                         	<col width="200">
-                        	<col width="200">
-                        	<col width="100">
+                        	<col width="160">
+                        	<col width="80">
+                        	<col width="80">
                         	<col width="">
 	                    </colgroup>
 						<c:if test="${transOrder.titanWithDrawDTO != null}">
@@ -78,9 +79,12 @@
 									<span style="width:120px" title="提现到${transOrder.titanWithDrawDTO.bankname}卡">提现到${transOrder.titanWithDrawDTO.bankname}卡</span><!--融数落单单号-->
 								</td>
 								<td >
-									<span style="width:110px">
-										<fmt:formatNumber value="${transOrder.titanWithDrawDTO.amount/100.0 }" pattern="#,##0.00#"/>
-									</span>
+									-<fmt:formatNumber value="${transOrder.titanWithDrawDTO.amount/100.0 }" pattern="#,##0.00#"/>
+								</td>
+								<td >
+									<c:if test="${(transOrder.titanWithDrawDTO.userfee) / 100.0 !=0.0 && (transOrder.titanWithDrawDTO.userfee) / 100.0 !=0.00}">
+                                	 	-<fmt:formatNumber value="${transOrder.titanWithDrawDTO.userfee/100.0 }" pattern="#,##0.00#"/>
+                                	</c:if>
 								</td>
 								<td>
 									<span style="width:50px">
