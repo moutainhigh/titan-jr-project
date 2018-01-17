@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Created by zhaoshan on 2017/11/15.
  */
-@Service("rateLimiter")
+@Service("accessLimiter")
 public class AccessLimiter {
 
     private final static Logger logger = LoggerFactory.getLogger(AccessLimiter.class);

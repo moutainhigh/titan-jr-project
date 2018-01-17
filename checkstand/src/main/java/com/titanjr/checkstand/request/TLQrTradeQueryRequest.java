@@ -10,7 +10,7 @@ package com.titanjr.checkstand.request;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
- * 通联扫码支付退款查询请求对象
+ * 通联扫码交易（支付、撤销、退货）查询请求对象
  * @author Jerry
  * @date 2017年12月20日 上午10:50:02  
  */
@@ -32,12 +32,12 @@ public class TLQrTradeQueryRequest extends TLBaseRequest {
 	@NotBlank
 	private String version;
 	/**
-	 * 商户退款订单号
+	 * 商户交易订单号
 	 */
 	@NotBlank
 	private String reqsn;
 	/**
-	 * 平台交易流水
+	 * 支付的收银宝平台流水   reqsn和trxid必填其一（本系统现统一传reqsn）
 	 */
 	private String trxid;
 	/**

@@ -16,7 +16,6 @@ import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dto.RBBindCardDTO;
 import com.titanjr.checkstand.dto.TitanBindCardDTO;
-import com.titanjr.checkstand.request.TitanPayCallbackRequest;
 import com.titanjr.checkstand.respnse.RBBindCardQueryResponse;
 import com.titanjr.checkstand.respnse.RBUnBindCardResponse;
 import com.titanjr.checkstand.respnse.TitanBindCardQueryResponse;
@@ -28,25 +27,6 @@ import com.titanjr.checkstand.respnse.TitanUnBindCardResponse;
  * @date 2017年11月25日 上午11:03:12  
  */
 public class BuilderUtil {
-	
-	/**
-	 * 参数错误时，获取前台回调的请求参数
-	 * @author Jerry
-	 */
-	public static TitanPayCallbackRequest getPayFailedCallbackRequest(){
-		
-		TitanPayCallbackRequest payCallbackRequest = new TitanPayCallbackRequest();
-		payCallbackRequest.setOrderNo("2017081714095100001");
-		payCallbackRequest.setPayStatus("4");
-		payCallbackRequest.setPayAmount("100");
-		payCallbackRequest.setPayMsg("支付失败");
-		payCallbackRequest.setOrderPayTime("yyyyMMddHHmmss");
-		payCallbackRequest.setTitanjrGateWayUrl("http://192.168.0.77:8084/titanjr-pay-app/payment/payConfirmPage.action");
-		
-		return payCallbackRequest;
-		
-	}
-	
 	
 	public static TitanBindCardQueryResponse convertBindCardQueryRes(RBBindCardQueryResponse rbBindCardQueryResponse){
 		

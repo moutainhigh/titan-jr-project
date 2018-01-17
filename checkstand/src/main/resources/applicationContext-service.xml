@@ -18,19 +18,17 @@
            				http://code.alibabatech.com/schema/dubbo
            				http://code.alibabatech.com/schema/dubbo/dubbo.xsd"
 		default-autowire="byName">
-
-	<bean id="placeholderspring" class="com.ctol.fangcang.common.Spring3PropertyConfigurer">
-		<property name="ignoreUnresolvablePlaceholders" value="true" />
-		<property name="locations">
-			<list>
-				<value>classpath:jdbc.properties</value>
-			</list>
-		</property>
-	</bean>
 	
 	<bean id="initService" class="com.titanjr.checkstand.service.impl.InitServiceImpl" init-method="init" />  
 	
+	<dubbo:application name="checkstand_consumer" />
+	<dubbo:consumer check="false"/>
+	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
+	
 	<!-- <dubbo:service interface="com.titanjr.checkstand.service.TitanFinancialCallbackService" ref="titanFinancialCallbackService" timeout="40000" /> -->
+	
+	<dubbo:reference id="titanOrderService" interface="com.fangcang.titanjr.service.TitanOrderService" retries="0" timeout="800000"/>
+	<dubbo:reference id="titanFinancialUtilService" interface="com.fangcang.titanjr.service.TitanFinancialUtilService" retries="0" timeout="800000"/>
 
 </beans>
 

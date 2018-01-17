@@ -19,13 +19,25 @@
            				http://code.alibabatech.com/schema/dubbo
            				http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <!-- 启动时扫描所有的controller层 -->
-    <context:component-scan base-package="com.titanjr.checkstand"/>
+	<bean id="placeholderspring" class="com.ctol.fangcang.common.Spring3PropertyConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc.properties</value>
+			</list>
+		</property>
+	</bean>
 
+    <!-- 启动时扫描 -->
+    <context:component-scan base-package="com.titanjr.checkstand"/>
     <mvc:annotation-driven />
+           				
+    <import resource="applicationContext-dataSource.xml" />
+	<import resource="applicationContext-persistence.xml" />
+	<import resource="applicationContext-service.xml" />
+    <import resource="classpath:/spring/applicationContext-redis.xml" />
 
     <mvc:interceptors>
-
         <mvc:interceptor>
             <mvc:mapping path="/*"/>
             <mvc:mapping path="/**/*"/>
@@ -37,7 +49,6 @@
             <mvc:mapping path="/**/*"/>
             <bean class="com.titanjr.checkstand.interceptor.SecurityInterceptor"></bean>
         </mvc:interceptor>
-
     </mvc:interceptors>
 
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
@@ -77,17 +88,11 @@
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
-
-
+    
     <!-- 自动扫描注解，无需显式配置  bean 了  -->
     <context:annotation-config/>
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
 
     <bean class="com.fangcang.util.SpringContextUtil"/>
-
-    <import resource="spring/applicationContext-redis.xml" />
-    <import resource="applicationContext-dataSource.xml"/>
-    <import resource="applicationContext-service.xml"/>
-    <import resource="applicationContext-persistence.xml"/>
 
 </beans>

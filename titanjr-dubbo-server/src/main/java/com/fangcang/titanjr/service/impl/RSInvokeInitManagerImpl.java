@@ -11,8 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.Rop.api.DefaultRopClient;
-import com.Rop.api.request.ExternalSessionGetRequest;
-import com.Rop.api.response.ExternalSessionGetResponse;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.rsa.RSAUtil;
 import com.fangcang.titanjr.dao.TitanSysConfigDao;
@@ -21,6 +19,7 @@ import com.fangcang.titanjr.dto.bean.TitanCallBackConfig;
 import com.fangcang.titanjr.dto.bean.TitanPayMethod;
 import com.fangcang.titanjr.entity.TitanSysConfig;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+import com.titanjr.fop.api.DefaultFopClient;
 
 /**o
  * Created by zhaoshan on 2016/4/8.
@@ -54,8 +53,10 @@ public class RSInvokeInitManagerImpl {
         RSInvokeConfig rSInvokeConfig = getRSInvokeConfig();
         if (rSInvokeConfig!=null) {
             String ropUrl = rSInvokeConfig.getInvokeURL();
+            String fopUrl = rSInvokeConfig.getFopInvokeURL();
             String appKey = rSInvokeConfig.getAppKey();
             String appSecret = rSInvokeConfig.getAppSecret();
+            RSInvokeConstant.fopClient = new DefaultFopClient(fopUrl, appKey, appSecret, "xml");
             RSInvokeConstant.ropClient = new DefaultRopClient(ropUrl, appKey, appSecret, "xml");
             RSInvokeConstant.defaultMerchant = rSInvokeConfig.getDefaultMerchant();
             RSInvokeConstant.defaultRoleId = rSInvokeConfig.getDefaultRoleId();
@@ -70,6 +71,8 @@ public class RSInvokeInitManagerImpl {
             RSInvokeConstant.gateWayURL = titanPayMethod.getGatewayURL();
             RSInvokeConstant.rsCheckKey = titanPayMethod.getCheckKey();
             RSInvokeConstant.titanjrCheckKey = titanPayMethod.getTitanjrCheckKey();
+            RSInvokeConstant.CSPayConfirmPageURL = titanPayMethod.getCsPayConfirmPageURL();
+            RSInvokeConstant.CSPayNoticeURL = titanPayMethod.getCsPayNoticeURL();
             log.info("----------rong shu notify url init success, titanPayMethod:"+Tools.gsonToString(titanPayMethod));
         }else{
         	throw new RuntimeException("rong shu notify url init failed, param[titanPayMethod] is null");
@@ -114,6 +117,11 @@ public class RSInvokeInitManagerImpl {
 					invokeConfig.setDefaultRoleId(NumberUtils.toLong(item.getCfgValue()));
 					continue;
 				}
+				//fop接口地址
+				if(item.getCfgKey().equals("FopInvokeConfig_invokeURL")){
+					invokeConfig.setFopInvokeURL(item.getCfgValue());
+					continue;
+				}
 				break;
 			}
 			return invokeConfig;
@@ -156,7 +164,7 @@ public class RSInvokeInitManagerImpl {
 			TitanPayMethod payMethod = new TitanPayMethod();
 			for(TitanSysConfig item : list){
 				if(item.getCfgKey().equals("TitanPayMethod_gatewayURL")){
-					payMethod.setGatewayURL(item.getCfgValue());
+					//payMethod.setGatewayURL(item.getCfgValue());
 					continue;
 				}
 				if(item.getCfgKey().equals("TitanPayMethod_checkKey")){
@@ -165,6 +173,21 @@ public class RSInvokeInitManagerImpl {
 				}
 				if(item.getCfgKey().equals("TitanPayMethod_titanjrCheckKey")){
 					payMethod.setTitanjrCheckKey(item.getCfgValue());
+					continue;
+				}
+				//checkstand支付网关
+				if(item.getCfgKey().equals("CSPayMethod_gatewayURL")){
+					payMethod.setGatewayURL(item.getCfgValue());
+					continue;
+				}
+				//checkstand支付前台回调地址
+				if(item.getCfgKey().equals("CSPayConfirmPageURL")){
+					payMethod.setCsPayConfirmPageURL(item.getCfgValue());
+					continue;
+				}
+				//checkstand支付后台通知地址
+				if(item.getCfgKey().equals("CSPayNoticeURL")){
+					payMethod.setCsPayNoticeURL(item.getCfgValue());
 					continue;
 				}
 				break;

@@ -32,6 +32,7 @@ import com.fangcang.titanjr.common.util.BeanConvertor;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.util.StringUtil;
+import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.constants.TLNetBankRefundResultEnum;
@@ -59,23 +60,33 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 		
 		try {
 			
-			//查询订单，获取支付方式
-			
-			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(tlNetBankRefundQueryRequest.getMerchantId()+"_1_01_"+tlNetBankRefundQueryRequest.getRequestType());
+			//获取网关配置
+			String configKey = tlNetBankRefundQueryRequest.getMerchantId() +"_" + PayTypeEnum.PERSON_EBANK.combPayType + 
+					"_" + SysConstant.TL_CHANNEL_CODE + "_" + tlNetBankRefundQueryRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【通联-网银退款查询】失败，获取网关配置为空，configKey={}", configKey);
+				titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanRefundQueryResponse;
+			}
 			tlNetBankRefundQueryRequest.setSignMsg(SignMsgBuilder.getSignMsgForRefundQuery(tlNetBankRefundQueryRequest, gateWayConfigDTO.getSecretKey()));
+			
+			//校验参数
 			ValidateResponse res = GenericValidate.validateNew(tlNetBankRefundQueryRequest);
 			if (!res.isSuccess()){
-				logger.error("参数错误：{}", res.getReturnMessage());
+				logger.error("【通联-网银退款查询】参数错误：{}", res.getReturnMessage());
 				titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 				return titanRefundQueryResponse;
 			}
 			postUrl = gateWayConfigDTO.getGateWayUrl();
 			logger.info("【通联-网银退款查询】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
 			
+			//封装http请求参数
 			HttpPost httpPost = new HttpPost(gateWayConfigDTO.getGateWayUrl());
 			List<NameValuePair> params = BeanConvertor.beanToList(tlNetBankRefundQueryRequest);
 			logger.info("【通联-网银退款查询】请求参数：{}", tlNetBankRefundQueryRequest.toString());
 			
+			//发送请求
 			HttpResponse httpRes = HttpClient.httpRequest(params, httpPost);
 			if (null != httpRes) {
 				HttpEntity entity = httpRes.getEntity();

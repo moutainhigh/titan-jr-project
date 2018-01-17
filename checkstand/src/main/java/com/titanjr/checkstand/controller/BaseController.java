@@ -1,8 +1,6 @@
 package com.titanjr.checkstand.controller;
 
 import com.fangcang.titanjr.common.util.Tools;
-import com.titanjr.checkstand.request.TitanPayCallbackRequest;
-import com.titanjr.checkstand.util.BuilderUtil;
 
 import net.sf.json.JSONSerializer;
 
@@ -139,9 +137,8 @@ public class BaseController implements Serializable {
      * @date 2017年11月27日 上午10:48:00
      */
     protected String payFailedCallback(Model model){
-    	TitanPayCallbackRequest payCallbackRequest = BuilderUtil.getPayFailedCallbackRequest();
-    	model.addAttribute("payCallbackRequest", payCallbackRequest);
-    	return "callbacktitan/payFailedCallbackPage";
+    	model.addAttribute("errorMsg", "支付路由错误，请联系系统管理员");
+    	return "payment/resultPage";
     }
 
 }

@@ -64,7 +64,7 @@ public class AgentTradeController extends BaseController {
         //根据交易代码来判定走到具体哪个接口
 		AgentTradeStrategy agentTradeStrategy =  StrategyFactory.getAgentTradeStrategy(tradeCode);
         if(agentTradeStrategy == null){
-        	logger.error("参数错误，tradeCode={}", tradeCode);
+        	logger.error("【账户交易】获取业务策略为空，tradeCode={}", tradeCode);
         	return super.payFailedCallback(model);
         }
         String redirectUrl = agentTradeStrategy.redirectResult(request);

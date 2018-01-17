@@ -11,6 +11,8 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
@@ -82,7 +84,7 @@ public class TLNetBankPayCallbackRequest implements Serializable {
 	 * 商户订单金额<br>
 	 * 整型数字，金额与币种有关 如果是人民币，则单位是分，即10元提交时金额应为1000 如果是美元，单位是美分，即10美元提交时金额为1000
 	 */
-	@NotBlank
+	@NotNull
 	private Long orderAmount;
 	
 	/**
@@ -94,7 +96,7 @@ public class TLNetBankPayCallbackRequest implements Serializable {
 	/**
 	 * 订单实际支付金额
 	 */
-	@NotBlank
+	@NotNull
 	private Long payAmount;
 	
 	/**
@@ -271,6 +273,11 @@ public class TLNetBankPayCallbackRequest implements Serializable {
 
 	public void setSignMsg(String signMsg) {
 		this.signMsg = signMsg;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
 	}
 
 }

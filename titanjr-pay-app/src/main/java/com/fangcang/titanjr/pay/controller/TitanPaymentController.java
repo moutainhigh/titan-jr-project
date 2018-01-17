@@ -770,7 +770,7 @@ public class TitanPaymentController extends BaseController {
 			titanPaymentService.saveCommonPayMethod(titanPaymentRequest);
 		}else{
 			if(CashierItemTypeEnum.isNeedSaveCommonpay(titanPaymentRequest.getLinePayType())){
-				titanPaymentService.saveCommonPayHistory(titanPaymentRequest);
+				titanPaymentService.saveCommonPayMethod(titanPaymentRequest);
 			}
 		}
 		

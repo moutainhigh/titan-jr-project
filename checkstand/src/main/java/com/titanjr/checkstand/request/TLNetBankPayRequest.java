@@ -8,6 +8,9 @@
 package com.titanjr.checkstand.request;
 
 import java.io.Serializable;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
@@ -369,6 +372,11 @@ public class TLNetBankPayRequest implements Serializable {
 	}
 	public void setServerUrl(String serverUrl) {
 		this.serverUrl = serverUrl;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
 	}
 
 }

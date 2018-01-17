@@ -11,6 +11,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
+import com.fangcang.titanjr.service.TitanOrderService;
 import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
@@ -48,15 +50,44 @@ public class RefundController extends BaseController {
 	@Resource
 	private RBQuickPayService rbQuickPayService;
 	
+	@Resource
+	private TitanOrderService titanOrderService;
+	
 
 	@RequestMapping(value = "/entrance", method = {RequestMethod.GET, RequestMethod.POST})
     public String entrance(HttpServletRequest request, RedirectAttributes attr, Model model) throws Exception {
+		
+		String errorUrl = WebUtils.getRequestBaseUrl(request) + "/refund/returnError.shtml";
+		TitanRefundDTO refundDTO = WebUtils.switch2RequestDTO(TitanRefundDTO.class, request);
+		ValidateResponse res = GenericValidate.validateNew(refundDTO);
+		if (!res.isSuccess()){
+			logger.error("【退款】参数错误：{}", res.getReturnMessage());
+			return "redirect:" + errorUrl;
+		}
 
-		//查询订单，获取支付方式
+		//查询充值单
+		TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+		titanOrderPayDTO.setMerchantNo(refundDTO.getMerchantNo());
+		titanOrderPayDTO.setOrderNo(refundDTO.getOrderNo());
+		titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
+		if(titanOrderPayDTO == null){
+			logger.error("【退款】失败，查询充值单为空，orderNo={}，refundOrderNo={}", refundDTO
+					.getOrderNo(), refundDTO.getRefundOrderno());
+			return "redirect:" + errorUrl;
+		}
         
         //根据支付方式获取退款调用策略，调对应的接口
-		PayTypeEnum payTypeEnum = PayTypeEnum.QUICK_NEW;
+		PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(titanOrderPayDTO.getPayType());
+		if(payTypeEnum == null){
+			logger.error("【退款】失败，获取payTypeEnum为空");
+			return "redirect:" + errorUrl;
+		}
 		OrderRefundStrategy refundStrategy =  StrategyFactory.getRefundStrategy(payTypeEnum);
+		if(refundStrategy == null){
+			logger.error("【退款】失败，获取相应的退款策略为空");
+			return "redirect:" + errorUrl;
+		}
+		
         String redirectUrl = refundStrategy.redirectResult(request);
         super.resetParameter(request,attr);
         
@@ -80,19 +111,12 @@ public class RefundController extends BaseController {
     	try {
     		
     		TitanRefundDTO refundDTO = WebUtils.switch2RequestDTO(TitanRefundDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(refundDTO);
-			if (!res.isSuccess()){
-				logger.error("参数错误：{}", res.getReturnMessage());
-				titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
-				return titanOrderRefundResponse;
-			}
-			
 			tlNetBankOrderRefundRequest.setMerchantId(refundDTO.getMerchantNo());
 			tlNetBankOrderRefundRequest.setOrderNo(refundDTO.getOrderNo());
 			tlNetBankOrderRefundRequest.setRefundAmount(Integer.parseInt(refundDTO.getRefundAmount()));//校验
 			tlNetBankOrderRefundRequest.setMchtRefundOrderNo(refundDTO.getRefundOrderno());
-			tlNetBankOrderRefundRequest.setVersion("v2.3");
-			tlNetBankOrderRefundRequest.setSignType("0");
+			tlNetBankOrderRefundRequest.setVersion(SysConstant.TL_NETBANK_REFUND_VERSION);
+			tlNetBankOrderRefundRequest.setSignType(SysConstant.TL_NETBANK_SIGNTYPE);
 			tlNetBankOrderRefundRequest.setOrderDatetime(refundDTO.getOrderTime());
 			tlNetBankOrderRefundRequest.setRequestType(RequestTypeEnum.GATEWAY_PAY_QUERY_REFUND.getKey());
 			
@@ -125,15 +149,8 @@ public class RefundController extends BaseController {
     	try {
         	
     		TitanRefundDTO refundDTO = WebUtils.switch2RequestDTO(TitanRefundDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(refundDTO);
-			if (!res.isSuccess()){
-				logger.error("参数错误：{}", res.getReturnMessage());
-				titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
-				return titanOrderRefundResponse;
-			}
-            
             tlQrOrderRefundRequest.setCusid(SysConstant.QRCODE_CUSTID);
-            tlQrOrderRefundRequest.setVersion("11");
+            tlQrOrderRefundRequest.setVersion(SysConstant.TL_QRCODE_VERSION);
             tlQrOrderRefundRequest.setReqsn(refundDTO.getRefundOrderno());
             tlQrOrderRefundRequest.setOldreqsn(refundDTO.getOrderNo());
             tlQrOrderRefundRequest.setTrxamt(refundDTO.getRefundAmount());
@@ -172,13 +189,6 @@ public class RefundController extends BaseController {
     	try {
     		
 			TitanRefundDTO titanRefundDTO = WebUtils.switch2RequestDTO(TitanRefundDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(titanRefundDTO);
-			if (!res.isSuccess()){
-				logger.error("【融宝-快捷支付退款】参数错误：{}", res.getReturnMessage());
-				titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
-				return titanOrderRefundResponse;
-			}
-			
 			RBQuickPayRefundRequest rbQuickPayRefundRequest = new RBQuickPayRefundRequest();
 			rbQuickPayRefundRequest.setOrig_order_no(titanRefundDTO.getOrderNo());
 			rbQuickPayRefundRequest.setOrder_no(titanRefundDTO.getRefundOrderno());
@@ -198,6 +208,17 @@ public class RefundController extends BaseController {
 			return titanOrderRefundResponse;
 			
 		}
+        
+    }
+	
+	
+	@ResponseBody
+    @RequestMapping(value = "/returnError", method = {RequestMethod.GET, RequestMethod.POST})
+    private TitanOrderRefundResponse returnError(HttpServletRequest request, Model model) {
+    	
+		TitanOrderRefundResponse titanOrderRefundResponse = new TitanOrderRefundResponse();
+		titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+		return titanOrderRefundResponse;
         
     }
 

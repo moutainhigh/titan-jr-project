@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fangcang.titanjr.common.util.MD5;
+import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
 import com.titanjr.checkstand.request.RBBindCardQueryRequest;
 import com.titanjr.checkstand.request.RBCardAuthRequest;
@@ -27,7 +28,8 @@ public final class SignMsgBuilder {
 	
 	private final static Logger logger = LoggerFactory.getLogger(SignMsgBuilder.class);
 	
-	public static String getSignMsgForGateWayPay(TLNetBankPayRequest tlNetBankPayRequest) {
+	
+	public static String getNetBanPaySignMsg(TLNetBankPayRequest tlNetBankPayRequest) {
 		
 		StringBuffer sign = new StringBuffer();
 		if(tlNetBankPayRequest != null){
@@ -399,6 +401,39 @@ public final class SignMsgBuilder {
 		params.put("sign_type", rbUnBindCardRequest.getSign_type());
 		
 		return params;
+		
+	}
+	
+	
+	public static String getpayCallbackSignMsg(RechargeResultConfirmRequest confirmRequest, String key) {
+		
+		StringBuffer sign = new StringBuffer();
+		if(confirmRequest != null){
+			sign.append("merchantNo=");
+			sign.append(confirmRequest.getMerchantNo());
+			sign.append("&payType=");
+			sign.append(confirmRequest.getPayType());
+			sign.append("&orderNo=");
+			sign.append(confirmRequest.getOrderNo());
+			sign.append("&payOrderNo=");
+			sign.append(confirmRequest.getPayOrderNo());
+			sign.append("&payStatus=");
+			sign.append(confirmRequest.getPayStatus());
+			sign.append("&orderTime=");
+			sign.append(confirmRequest.getOrderTime());
+			sign.append("&orderAmount=");
+			sign.append(confirmRequest.getOrderAmount());
+			sign.append("&bankCode=");
+			sign.append(confirmRequest.getBankCode());
+			sign.append("&orderPayTime=");
+			sign.append(confirmRequest.getOrderPayTime());
+			sign.append("&key=");
+			sign.append(key);
+		}
+		logger.info("tl-gateWayPay-sourceMsg：{}", sign.toString());
+		String md5Msg = MD5.MD5Encode(sign.toString(), "UTF-8");
+		logger.info("tl-gateWayPay-signMsg：{}", md5Msg);
+		return md5Msg;
 		
 	}
 	

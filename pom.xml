@@ -24,6 +24,8 @@
         <module>titanjr-pay-app</module>
         <module>TFS</module>
         <module>TWS</module>
+        <module>checkstand</module>
+        <module>titan-fop-sdk</module>
     	<module>titanjr-redis</module>
   </modules>
 

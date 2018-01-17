@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -25,7 +27,9 @@ import org.springframework.stereotype.Service;
 import com.allinpay.ets.client.PaymentResult;
 import com.fangcang.titanjr.common.util.BeanConvertor;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
+import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
+import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.RSPayStatusEnum;
 import com.titanjr.checkstand.constants.SysConstant;
@@ -43,6 +47,9 @@ import com.titanjr.checkstand.util.SignMsgBuilder;
 public class TLPayQueryServiceImpl implements TLPayQueryService {
 	
 	private final static Logger logger = LoggerFactory.getLogger(TLPayQueryServiceImpl.class);
+	
+	@Resource
+	private TitanOrderService titanOrderService;
 
 	@Override
 	public TitanPayQueryResponse netBankPayQuery(TLNetBankPayQueryRequest 
@@ -52,16 +59,25 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 		String responseStr ="";
 		
 		try {
-			//查询订单，获取支付方式
 			
-			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(tlNetBankPayQueryRequest.getMerchantId()+"_1_01_"+tlNetBankPayQueryRequest.getRequestType());
+			//获取网关配置
+			String configKey = tlNetBankPayQueryRequest.getMerchantId() +"_" + PayTypeEnum.PERSON_EBANK.combPayType + 
+					"_" + SysConstant.TL_CHANNEL_CODE + "_" + tlNetBankPayQueryRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【通联-网银支付查询】失败，获取网关配置为空，configKey={}", configKey);
+				titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanPayQueryResponse;
+			}
 			tlNetBankPayQueryRequest.setSignMsg(SignMsgBuilder.getSignMsgForOrderQuery(tlNetBankPayQueryRequest, gateWayConfigDTO.getSecretKey()));
 			logger.info("【通联-网银支付查询】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
 			
+			//http请求参数
 			HttpPost httpPost = new HttpPost(gateWayConfigDTO.getGateWayUrl());
 			List<NameValuePair> params = BeanConvertor.beanToList(tlNetBankPayQueryRequest);
 			logger.info("【通联-网银支付查询】请求参数：{}", tlNetBankPayQueryRequest.toString());
 			
+			//发送请求
 			HttpResponse httpRes = HttpClient.httpRequest(params, httpPost);
 			if (null != httpRes) {
 				HttpEntity entity = httpRes.getEntity();

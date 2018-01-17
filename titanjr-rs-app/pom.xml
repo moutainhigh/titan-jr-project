@@ -18,9 +18,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
+    	<!-- rop后续将启用 -->
         <dependency>
             <groupId>com.ruixuesoft</groupId>
             <artifactId>ropexsdk</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fangcang</groupId>
+            <artifactId>titan-fop-sdk</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

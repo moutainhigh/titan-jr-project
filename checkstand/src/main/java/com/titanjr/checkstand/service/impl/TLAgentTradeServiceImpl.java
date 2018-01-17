@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.fangcang.titanjr.common.enums.WithDrawStatusEnum;
+import com.titanjr.checkstand.constants.AgentRetCodeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dto.TLAgentInfoResponseDTO;
@@ -230,7 +231,7 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 		if("200004".equals(trxcode)||"200005".equals(trxcode)){
 			if("0000".equals(tlAgentTradeResponse.getINFO().getRET_CODE())){
 				
-				titanAgentTradeResponse.setRetCode(SysConstant.RET_CODE_SUCCESS);
+				titanAgentTradeResponse.setRetCode(AgentRetCodeEnum.RET_CODE_SUCCESS.code);
 				QTransRsp qrsq = (QTransRsp) tlAgentTradeResponse.getTrxData().get(0);
 				logger.info("查询成功，具体结果明细如下:");
 				List<TitanAgentResDetailDTO> titanDetails = new ArrayList<TitanAgentResDetailDTO>();
@@ -272,17 +273,17 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 					||"2008".equals(tlAgentTradeResponse.getINFO().getRET_CODE())){
 				
 				logger.info("整个批次的交易都是处理中：{}", tlAgentTradeResponse.getINFO().getERR_MSG());
-				titanAgentTradeResponse.setRetCode(SysConstant.RET_CODE_PROCESS);
+				titanAgentTradeResponse.setRetCode(AgentRetCodeEnum.RET_CODE_PROCESS.code);
 				
 			} else if("2004".equals(tlAgentTradeResponse.getINFO().getRET_CODE())){
 				
 				logger.info("整个批次都未受理通过（最终失败）");
-				titanAgentTradeResponse.setRetCode(SysConstant.RET_CODE_NOT_FIND);
+				titanAgentTradeResponse.setRetCode(AgentRetCodeEnum.RET_CODE_NOT_FIND.code);
 				
 			} else if("1002".equals(tlAgentTradeResponse.getINFO().getRET_CODE())){
 				
 				logger.info("未查询到对应的交易");
-				titanAgentTradeResponse.setRetCode(SysConstant.RET_CODE_NOT_FIND);
+				titanAgentTradeResponse.setRetCode(AgentRetCodeEnum.RET_CODE_NOT_FIND.code);
 				
 			} else{
 				

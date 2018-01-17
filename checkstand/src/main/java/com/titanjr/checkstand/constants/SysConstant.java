@@ -25,68 +25,85 @@ public class SysConstant {
 	
 	
 	/**
-	 * 以下信息为测试所用，以后可能不放这里
+	 * 以下常量的位置后续可能变更
 	 */
+	//----------------仿照融数相关常量定义-----------------------------------
 	public static String RS_MERCHANT_NO = "141223100000056";
+	public static String RS_SIGN_TYPE = "1";
 	public static String RS_VERSION = "v1.0";
 	public static String RS_VERSION_NEW = "v1.1";
 	public static String RS_SUCCESS_CODE = "0000";
 	public static String RS_SUCCESS_MSG = "成功";
 	
+	
+	//-----------------渠道code-----------------------------------
+	public static String TL_CHANNEL_CODE = "01";
+	public static String RB_CHANNEL_CODE = "02";
+	
+	
+	//--------------------------URL-----------------------------------
 	//通联网银支付前台回调地址
-	public static String TL_NB_CALLBACK_PAGE_URL = "http://www.fangcang.org/checkstand/callback/tlNetBankPayConfirmPage.action";
-	
+	public static String TL_NB_CALLBACK_PAGE_URL = "http://www.fangcang.org/checkstand-dev3/callback/tlNetBankPayConfirmPage.action";
 	//通联网银支付后台回调地址
-	public static String TL_NB_NOTICE_URL = "http://www.fangcang.org/checkstand/callback/tlNetBankPayNotice.action";
-	
+	public static String TL_NB_NOTICE_URL = "http://www.fangcang.org/checkstand-dev3/callback/tlNetBankPayNotice.action";
 	//通联扫码支付结果通知地址
-	public static String TL_QRCODE_NOTICE_URL = "http://www.fangcang.org/checkstand/callback/tlQrCodePayNotice.action";
-	
+	public static String TL_QRCODE_NOTICE_URL = "http://www.fangcang.org/checkstand-dev3/callback/tlQrCodePayNotice.action";
 	//通联账户交易网关地址
 	public static String AGENT_TRADE_URL = "https://113.108.182.3/aipg/ProcessServlet";
 	
-	//通联网银支付商户号
-	public static String NETBANK_MERCHANT = "100020091218001";
 	
-	//通联扫码支付商户号
-	public static String QRCODE_CUSTID = "990440153996000";//生产
-	
-	//账户交易商户号
-	public static String AGENT_MERCHANT = "200604000000445";
-	
-	//账户交易用户名/密码
-	public static String USER_NAME = "20060400000044504";
-	public static String USER_PWD = "`12qwe"; 
-	
-	//账户交易-代付业务代码
-	public static String WITHDRAW_CODE = "09400";
-	
-	//账户交易商户证书
-	public static String PFX_PATH= "certify/20060400000044502.p12";
-	public static String CER_PATH = "certify/allinpay-pds.cer";
-	public static String PFX_PWD = "111111";
-	
-	//账户交易-查询结果返回码
-	public static String RET_CODE_PROCESS = "00";//处理中
-	public static String RET_CODE_SUCCESS = "01";//成功
-	public static String RET_CODE_FAILD = "02";//失败
-	public static String RET_CODE_NOT_FIND = "03";//没有对应的交易
-	
-	
-	//签约融宝支付账号或卖家收款融宝支付帐户-test
-	public static String RB_QUICKPAY_MERCHANT = "100000000000147";
-	//签约融宝支付账号或卖家收款融宝支付帐户-test
-	public static String RB_SELLER_EMAIL = "850138237@qq.com";
+	//--------------------------版本号-----------------------------------
+	//通联网银支付版本号
+	public static String TL_NETBANK_PAY_VERSION = "v1.0";
+	//通联网银支付查询版本号
+	public static String TL_NETBANK_PAY_QUERY_VERSION = "v1.5";
+	//通联网银退款版本号
+	public static String TL_NETBANK_REFUND_VERSION = "v2.3";
+	//通联网银退款查询版本号
+	public static String TL_NETBANK_REFUND_QUERY_VERSION = "v2.4";
+	//通联扫码交易默认版本号
+	public static String TL_QRCODE_VERSION = "11";
 	//融宝接口版本号
 	public static String RB_VERSION = "3.1.3";
+	
+	//--------------------------签名方式-----------------------------------
+	//通联网银交易默认MD5签名方式
+	public static String TL_NETBANK_SIGNTYPE = "0";
 	//融宝签名类型
 	public static String RB_SIGN_TYPE = "MD5";
-	//私钥位置（融宝测试所用，上线需要自己生成私钥）
-	public static String PRIVATE_KEY_PATH = "D:\\cert\\itrus001.pfx";
-	//私钥密码
-	public static String PRIVATE_KEY_PWD = "123456";
-	//融宝公钥 正式环境不用更换
-	public static String PUBLIC_KEY_PATH = "D:\\cert\\itrus001.cer";
+
+	
+	//-------------------------------商户号、证书、用户名、密码-----------------------------------
+	//通联网银支付商户号
+	public static String NETBANK_MERCHANT = "100020091218001";
+	//通联扫码支付商户号
+	public static String QRCODE_CUSTID = "990440153996000";//生产
+	//账户交易商户号
+	public static String AGENT_MERCHANT = "200604000000445";
+	//融宝快捷支付商户号
+	public static String RB_QUICKPAY_MERCHANT = "100000000000147";
+	
+	//通联账户交易用户名/密码
+	public static String USER_NAME = "20060400000044504";//info下面的用户名一般是：商户号+04（通联demo里面是加02，后续需验证）
+	public static String USER_PWD = "`12qwe";
+	
+	//通联账户交易商户证书
+	public static String PFX_PATH= "certify/20060400000044502.p12";//私钥位置
+	public static String PFX_PWD = "111111";//私钥密码
+	public static String CER_PATH = "certify/allinpay-pds.cer";//公钥位置
+	
+	//融宝快捷支付证书
+	public static String PRIVATE_KEY_PATH = "D:\\cert\\itrus001.pfx";//私钥位置（融宝测试所用，上线需要自己生成私钥）
+	public static String PRIVATE_KEY_PWD = "123456";//私钥密码
+	public static String PUBLIC_KEY_PATH = "D:\\cert\\itrus001.cer";//融宝公钥 正式环境不用更换
+	
+	//签约融宝支付账号或卖家收款融宝支付帐户-test
+	public static String RB_SELLER_EMAIL = "850138237@qq.com";
+	
+	
+	//--------------------------其他-----------------------------------
+	//账户交易-代付业务代码
+	public static String WITHDRAW_CODE = "09400";
 	
 	public static String CARD_TYPE_DESPOSIT = "10";
 	public static String CARD_TYPE_CREDIT = "11";

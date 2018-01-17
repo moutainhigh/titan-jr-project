@@ -1,9 +1,13 @@
 package com.titanjr.checkstand.controller;
 
 import com.fangcang.titanjr.common.bean.ValidateResponse;
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.common.util.Wxutil;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.TransOrderRequest;
+import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
@@ -54,6 +58,9 @@ public class PaymentController extends BaseController {
 	@Resource
 	private RBQuickPayService rbQuickPayService;
 	
+	@Resource
+	private TitanOrderService titanOrderService;
+	
 
     /**
      * 所有支付入口，进入后分配到具体的支付接口返回不同的参数
@@ -66,12 +73,17 @@ public class PaymentController extends BaseController {
         
         PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(request.getParameter("payType"));
         if(payTypeEnum == null){
-        	logger.error("参数错误，未找到对应的支付方式，payType={}", request.getParameter("payType"));
+        	logger.error("【支付】参数错误，未找到对应的支付方式，payType={}", request.getParameter("payType"));
         	return super.payFailedCallback(model);
         }
         
         //根据支付方式来判定走到具体哪个接口
         PayRequestStrategy payRequestStrategy =  StrategyFactory.getPayRequestStrategy(payTypeEnum);
+        if(payRequestStrategy == null){
+			logger.error("【支付】失败，获取相应的支付策略为空");
+			return super.payFailedCallback(model);
+		}
+        
         String redirectUrl = payRequestStrategy.redirectResult(request);
         super.resetParameter(request,attr);
         
@@ -93,22 +105,18 @@ public class PaymentController extends BaseController {
 			TitanPayDTO payDTO = WebUtils.switch2RequestDTO(TitanPayDTO.class, request);
 			ValidateResponse res = GenericValidate.validateNew(payDTO);
 			if (!res.isSuccess()){
-				logger.error(""
-						+ "【通联-网银支付】参数错误：{}", res.getReturnMessage());
+				logger.error("【通联-网银支付】参数错误：{}", res.getReturnMessage());
+				return super.payFailedCallback(model);
+			}
+			if(!isOrderCanPay(payDTO)){
 				return super.payFailedCallback(model);
 			}
 			
-			//此处应调Service
-			//查询订单是否存在
-			//获取网关支付配置，封装相应渠道的请求参数
-			//保存返回结果或者回调请求
-			
-			//test
 			TLNetBankPayRequest tlNetBankPayRequest = new TLNetBankPayRequest();
 			tlNetBankPayRequest.setInputCharset("1");
 			tlNetBankPayRequest.setPickupUrl(SysConstant.TL_NB_CALLBACK_PAGE_URL);
 			tlNetBankPayRequest.setReceiveUrl(SysConstant.TL_NB_NOTICE_URL);
-			tlNetBankPayRequest.setVersion("v1.0");
+			tlNetBankPayRequest.setVersion(SysConstant.TL_NETBANK_PAY_VERSION);
 			tlNetBankPayRequest.setLanguage("1");
 			tlNetBankPayRequest.setSignType("0");
 			tlNetBankPayRequest.setMerchantId(SysConstant.NETBANK_MERCHANT);
@@ -117,13 +125,13 @@ public class PaymentController extends BaseController {
 			tlNetBankPayRequest.setOrderCurrency("0");
 			tlNetBankPayRequest.setOrderDatetime(payDTO.getOrderTime());
 			tlNetBankPayRequest.setPayType("1");
-			tlNetBankPayRequest.setIssuerId(payDTO.getBankInfo());
-			tlNetBankPayRequest.setSignMsg(SignMsgBuilder.getSignMsgForGateWayPay(tlNetBankPayRequest));
+			//tlNetBankPayRequest.setIssuerId(payDTO.getBankInfo());
+			tlNetBankPayRequest.setIssuerId("vbank");
+			tlNetBankPayRequest.setSignMsg(SignMsgBuilder.getNetBanPaySignMsg(tlNetBankPayRequest));
 			tlNetBankPayRequest.setServerUrl("http://ceshi.allinpay.com/gateway/index.do");
-			model.addAttribute("tlNetBankPayRequest", tlNetBankPayRequest);
+			logger.info("【通联-网银支付】请求参数：{}", tlNetBankPayRequest.toString());
 			
 			model.addAttribute("tlNetBankPayRequest", tlNetBankPayRequest);
-			
 			return "payment/tl_gateWayPay";
 			
 		} catch (Exception e) {
@@ -155,6 +163,10 @@ public class PaymentController extends BaseController {
 				logger.error("【通联-扫码支付】参数错误：{}", res.getReturnMessage());
 				titanQrPayResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
 				//return titanQrPayResponse;
+				return super.payFailedCallback(model);
+			}
+			if(!isOrderCanPay(payDTO)){
+				return super.payFailedCallback(model);
 			}
 			
 			TLQrCodePayRequest tlQrCodePayRequest = new TLQrCodePayRequest();
@@ -205,6 +217,10 @@ public class PaymentController extends BaseController {
 			if (!res.isSuccess() || !StringUtil.isValidString(payDTO.getPayerAccountType())){
 				logger.error("【融宝-签约支付】参数错误：{}，payerAccountType={}", res.getReturnMessage(), payDTO.getPayerAccountType());
 				titanQuickPayResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
+				return titanQuickPayResponse;
+			}
+			if(!isOrderCanPay(payDTO)){
+				titanQuickPayResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 				return titanQuickPayResponse;
 			}
 			
@@ -273,6 +289,27 @@ public class PaymentController extends BaseController {
 		}catch(Exception e){
 			logger.error("微信生成图片错误：", e);
 		}
+	}
+	
+	
+	/**
+	 * 交易单存在并且可以支付
+	 * @author Jerry
+	 * @date 2018年1月12日 上午10:27:26
+	 */
+	private boolean isOrderCanPay(TitanPayDTO payDTO){
+		TransOrderRequest transOrderRequest = new TransOrderRequest();
+		transOrderRequest.setOrderid(payDTO.getOrderNo());
+		TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
+		if(transOrderDTO == null){
+			logger.error("【通联-网银支付】失败：订单不存在，orderNo={}", payDTO.getOrderNo());
+			return false;
+		}
+		if(OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())){
+			logger.error("【通联-网银支付】失败：订单不是可支付状态，orderNo={}", payDTO.getOrderNo());
+			return false;
+		}
+		return true;
 	}
 
 }

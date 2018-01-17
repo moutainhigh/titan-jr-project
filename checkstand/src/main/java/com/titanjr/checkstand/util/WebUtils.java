@@ -22,6 +22,7 @@ public class WebUtils {
      */
     public static String getRequestBaseUrl(HttpServletRequest req) {
         String contextPath = req.getContextPath();
+    	//String contextPath = "/checkstand-dev3"; //发到213用这个
         String host = req.getServerName();
         if (req.getServerPort() != 80) {
             host += ":" + req.getServerPort();

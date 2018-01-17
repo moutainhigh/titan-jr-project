@@ -4,7 +4,7 @@
 <html>
 	<head>
 	 <meta charset="UTF-8">
-    <title>融数支付</title>
+    <title>泰坦支付</title>
     <jsp:include page="/comm/static-resource.jsp"></jsp:include>
 	<jsp:include page="/comm/tfs-static-resource.jsp"></jsp:include>
 	</head>
@@ -36,6 +36,7 @@
 </form>
 <jsp:include page="/comm/static-js.jsp"></jsp:include>
 </body>
+
 <script type="text/javascript">
 if('${result}'=="false"){
 	   function submitErrorform(){

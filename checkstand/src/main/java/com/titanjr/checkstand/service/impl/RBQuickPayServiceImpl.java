@@ -17,6 +17,7 @@ import com.fangcang.titanjr.common.util.BeanConvertor;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.util.JsonUtil;
+import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
@@ -79,8 +80,14 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 		try {
 			
 			//获取网关配置
-			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(
-					rbCardBINQueryRequest.getMerchant_id()+"_3_02_"+rbCardBINQueryRequest.getRequestType());
+			String configKey = rbCardBINQueryRequest.getMerchant_id() +"_" + PayTypeEnum.QUICK_NEW.combPayType + 
+					"_" + SysConstant.RB_CHANNEL_CODE + "_" + rbCardBINQueryRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【融宝-卡BIN查询】失败，获取网关配置为空，configKey={}", configKey);
+				titanCardBINQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanCardBINQueryResponse;
+			}
 			
 			//签名并获取排序后的参数
 			TreeMap<String,String> params = SignMsgBuilder.cardBINQuerySign(rbCardBINQueryRequest, 
@@ -143,11 +150,16 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 		}
 		
 		try {
-			//查询订单，获取支付方式
 			
 			//获取网关配置
-			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(
-					rbQuickPayRequest.getMerchant_id()+"_3_02_"+rbQuickPayRequest.getRequestType());
+			String configKey = rbQuickPayRequest.getMerchant_id() +"_" + PayTypeEnum.QUICK_NEW.combPayType + 
+					"_" + SysConstant.RB_CHANNEL_CODE + "_" + rbQuickPayRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【"+contractType+"】失败，获取网关配置为空，configKey={}，orderNo={}", configKey, rbQuickPayRequest.getOrder_no());
+				titanQuickPayResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanQuickPayResponse;
+			}
 			
 			//签名并获取排序后的参数
 			TreeMap<String,String> params = SignMsgBuilder.quickPaySign(rbQuickPayRequest, gateWayConfigDTO
@@ -209,8 +221,14 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 		try {
 			
 			//获取网关配置
-			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(
-					rbQuickPayConfirmRequest.getMerchant_id()+"_3_02_"+rbQuickPayConfirmRequest.getRequestType());
+			String configKey = rbQuickPayConfirmRequest.getMerchant_id() +"_" + PayTypeEnum.QUICK_NEW.combPayType + 
+					"_" + SysConstant.RB_CHANNEL_CODE + "_" + rbQuickPayConfirmRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【融宝-确认支付】失败，获取网关配置为空，configKey={}，orderNo={}", configKey, rbQuickPayConfirmRequest.getOrder_no());
+				titanPayConfirmResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanPayConfirmResponse;
+			}
 			
 			//签名并获取排序后的参数
 			TreeMap<String,String> params = SignMsgBuilder.quickPayConfirmSign(rbQuickPayConfirmRequest, 
@@ -271,8 +289,14 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 		try {
 			
 			//获取网关配置
-			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(
-					rbReSendMsgRequest.getMerchant_id()+"_3_02_"+rbReSendMsgRequest.getRequestType());
+			String configKey = rbReSendMsgRequest.getMerchant_id() +"_" + PayTypeEnum.QUICK_NEW.combPayType + 
+					"_" + SysConstant.RB_CHANNEL_CODE + "_" + rbReSendMsgRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【融宝-重发验证码】失败，获取网关配置为空，configKey={}，orderNo={}", configKey, rbReSendMsgRequest.getOrder_no());
+				titanReSendMsgResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanReSendMsgResponse;
+			}
 			
 			//签名并获取排序后的参数
 			TreeMap<String,String> params = SignMsgBuilder.reSendMsgSign(rbReSendMsgRequest, 
@@ -333,8 +357,14 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 		try {
 			
 			//获取网关配置
-			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(
-					rbQuickPayQueryRequest.getMerchant_id()+"_3_02_"+rbQuickPayQueryRequest.getRequestType());
+			String configKey = rbQuickPayQueryRequest.getMerchant_id() +"_" + PayTypeEnum.QUICK_NEW.combPayType + 
+					"_" + SysConstant.RB_CHANNEL_CODE + "_" + rbQuickPayQueryRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【融宝-快捷支付查询】失败，获取网关配置为空，configKey={}", configKey);
+				titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanPayQueryResponse;
+			}
 			
 			//签名并获取排序后的参数
 			TreeMap<String,String> params = SignMsgBuilder.quickPayQuerySign(rbQuickPayQueryRequest, 
@@ -395,8 +425,14 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 		try {
 			
 			//获取网关配置
-			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(
-					rbQuickPayRefundRequest.getMerchant_id()+"_3_02_"+rbQuickPayRefundRequest.getRequestType());
+			String configKey = rbQuickPayRefundRequest.getMerchant_id() +"_" + PayTypeEnum.QUICK_NEW.combPayType + 
+					"_" + SysConstant.RB_CHANNEL_CODE + "_" + rbQuickPayRefundRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【融宝-快捷支付退款】失败，获取网关配置为空，configKey={}，orderNo={}", configKey, rbQuickPayRefundRequest.getOrig_order_no());
+				titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanOrderRefundResponse;
+			}
 			
 			//签名并获取排序后的参数
 			TreeMap<String,String> params = SignMsgBuilder.quickPayRefundSign(rbQuickPayRefundRequest, 
@@ -457,8 +493,14 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 		try {
 			
 			//获取网关配置
-			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(
-					rbQuickPayRefundQueryRequest.getMerchant_id()+"_3_02_"+rbQuickPayRefundQueryRequest.getRequestType());
+			String configKey = rbQuickPayRefundQueryRequest.getMerchant_id() +"_" + PayTypeEnum.QUICK_NEW.combPayType + 
+					"_" + SysConstant.RB_CHANNEL_CODE + "_" + rbQuickPayRefundQueryRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【融宝-快捷支付退款查询】失败，获取网关配置为空，configKey={}，orderNo={}", configKey, rbQuickPayRefundQueryRequest.getOrig_order_no());
+				titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanRefundQueryResponse;
+			}
 			
 			//签名并获取排序后的参数
 			TreeMap<String,String> params = SignMsgBuilder.quickPayRefundQuerySign(rbQuickPayRefundQueryRequest, 
@@ -519,8 +561,15 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 		try {
 			
 			//获取网关配置
-			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(
-					rbCardAuthRequest.getMerchant_id()+"_3_02_"+rbCardAuthRequest.getRequestType());
+			String configKey = rbCardAuthRequest.getMerchant_id() +"_" + PayTypeEnum.QUICK_NEW.combPayType + 
+					"_" + SysConstant.RB_CHANNEL_CODE + "_" + rbCardAuthRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【融宝-卡密鉴权】失败，获取网关配置为空，configKey={}", configKey);
+				/*titanCardAuthResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanCardAuthResponse;*/
+				return "【融宝-卡密鉴权】获取网关配置为空，configKey="+configKey;
+			}
 			
 			//签名并获取排序后的参数
 			TreeMap<String,String> params = SignMsgBuilder.cardAuthSign(rbCardAuthRequest, 
@@ -585,8 +634,14 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 		try {
 			
 			//获取网关配置
-			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(
-					rbBindCardQueryRequest.getMerchant_id()+"_3_02_"+rbBindCardQueryRequest.getRequestType());
+			String configKey = rbBindCardQueryRequest.getMerchant_id() +"_" + PayTypeEnum.QUICK_NEW.combPayType + 
+					"_" + SysConstant.RB_CHANNEL_CODE + "_" + rbBindCardQueryRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【融宝-查询绑卡列表】失败，获取网关配置为空，configKey={}", configKey);
+				titanBindCardQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanBindCardQueryResponse;
+			}
 			
 			//签名并获取排序后的参数
 			TreeMap<String,String> params = SignMsgBuilder.queryBindCardSign(rbBindCardQueryRequest, 
@@ -594,18 +649,18 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 			
 			ValidateResponse res = GenericValidate.validateNew(rbBindCardQueryRequest);
 			if (!res.isSuccess()){
-				logger.error("【融宝-绑卡列表】参数错误：{}", res.getReturnMessage());
+				logger.error("【融宝-查询绑卡列表】参数错误：{}", res.getReturnMessage());
 				titanBindCardQueryResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
 				return titanBindCardQueryResponse;
 			}
-			logger.info("【融宝-绑卡列表】请求参数：{}", CommonUtil.treeMapString(params));
+			logger.info("【融宝-查询绑卡列表】请求参数：{}", CommonUtil.treeMapString(params));
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
 			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbBindCardQueryRequest.getMerchant_id());
 			
 			//发送请求
-			logger.info("【融宝-绑卡列表】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
+			logger.info("【融宝-查询绑卡列表】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
 			HttpPost httpPost = new HttpPost(gateWayConfigDTO.getGateWayUrl());
 			List<NameValuePair> paramsList = BeanConvertor.beanToList(rbDataRequest);
 			HttpResponse httpRes = HttpClient.httpRequest(paramsList, httpPost);
@@ -617,20 +672,20 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				// 解密返回的数据
 				responseStr = Decipher.decryptData(responseStr);
 				rbBindCardQueryResponse = (RBBindCardQueryResponse)JsonUtil.jsonToBean(responseStr, RBBindCardQueryResponse.class);
-				logger.info("【融宝-绑卡列表】返回信息:" + rbBindCardQueryResponse.toString());
+				logger.info("【融宝-查询绑卡列表】返回信息:" + rbBindCardQueryResponse.toString());
 				
 				return BuilderUtil.convertBindCardQueryRes(rbBindCardQueryResponse);
 				
 			}else{
 				
-				logger.error("【融宝-绑卡列表】失败 httpRes为空，用户ID=" + rbBindCardQueryRequest.getMember_id());
+				logger.error("【融宝-查询绑卡列表】失败 httpRes为空，用户ID=" + rbBindCardQueryRequest.getMember_id());
 				titanBindCardQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 				return titanBindCardQueryResponse;
 			}
 			
 		} catch (Exception e) {
 			
-			logger.error("【融宝-绑卡列表】发生异常：{}", e);
+			logger.error("【融宝-查询绑卡列表】发生异常：{}", e);
 			titanBindCardQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanBindCardQueryResponse;
 			
@@ -647,8 +702,14 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 		try {
 			
 			//获取网关配置
-			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(
-					rbUnBindCardRequest.getMerchant_id()+"_3_02_"+rbUnBindCardRequest.getRequestType());
+			String configKey = rbUnBindCardRequest.getMerchant_id() +"_" + PayTypeEnum.QUICK_NEW.combPayType + 
+					"_" + SysConstant.RB_CHANNEL_CODE + "_" + rbUnBindCardRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【融宝-解绑卡】失败，获取网关配置为空，configKey={}", configKey);
+				titanUnBindCardResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanUnBindCardResponse;
+			}
 			
 			//签名并获取排序后的参数
 			TreeMap<String,String> params = SignMsgBuilder.unBindCardSign(rbUnBindCardRequest, 

@@ -14,6 +14,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
+import com.fangcang.titanjr.service.TitanOrderService;
 import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
@@ -24,6 +26,7 @@ import com.titanjr.checkstand.request.RBQuickPayRefundQueryRequest;
 import com.titanjr.checkstand.request.TLNetBankRefundQueryRequest;
 import com.titanjr.checkstand.request.TLQrTradeQueryRequest;
 import com.titanjr.checkstand.respnse.TLQrTradeQueryResponse;
+import com.titanjr.checkstand.respnse.TitanOrderRefundResponse;
 import com.titanjr.checkstand.respnse.TitanRefundQueryResponse;
 import com.titanjr.checkstand.service.RBQuickPayService;
 import com.titanjr.checkstand.service.TLCommonService;
@@ -61,16 +64,45 @@ public class RefundQueryController extends BaseController {
 	@Resource
 	private TLCommonService tlCommonService;
 	
+	@Resource
+	private TitanOrderService titanOrderService;
+	
 	
 	@RequestMapping(value = "/entrance", method = {RequestMethod.GET, RequestMethod.POST})
     public String entrance(HttpServletRequest request, RedirectAttributes attr, Model model) throws Exception {
+		
+		String errorUrl = WebUtils.getRequestBaseUrl(request) + "/rfQuery/returnError.shtml";
+		TitanRefundQueryDTO refundQueryDTO = WebUtils.switch2RequestDTO(TitanRefundQueryDTO.class, request);
+		ValidateResponse res = GenericValidate.validateNew(refundQueryDTO);
+		if (!res.isSuccess()){
+			logger.error("【退款查询】参数错误：{}", res.getReturnMessage());
+			return "redirect:" + errorUrl;
+		}
         
-		//查询订单，获取支付方式
+		//查询充值单
+		TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+		titanOrderPayDTO.setMerchantNo(refundQueryDTO.getMerchantNo());
+		titanOrderPayDTO.setOrderNo(refundQueryDTO.getOrderNo());
+		titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
+		if(titanOrderPayDTO == null){
+			logger.error("【退款查询】失败，查询充值单为空，orderNo={}，refundOrderNo={}", refundQueryDTO
+					.getOrderNo(), refundQueryDTO.getRefundOrderno());
+			return "redirect:" + errorUrl;
+		}
         
         //根据支付方式获取查询策略，调对应的接口
-		PayTypeEnum payTypeEnum = PayTypeEnum.QUICK_NEW;
+		PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(titanOrderPayDTO.getPayType());
+		if(payTypeEnum == null){
+			logger.error("【退款查询】失败，获取payTypeEnum为空");
+			return "redirect:" + errorUrl;
+		}
 		QueryStrategy refundQueryStrategy =  StrategyFactory.getRefundQueryStrategy(payTypeEnum);
-        String redirectUrl = refundQueryStrategy.redirectResult(request);
+		if(refundQueryStrategy == null){
+			logger.error("【退款查询】失败，获取相应的退款查询策略为空");
+			return "redirect:" + errorUrl;
+		}
+		
+		String redirectUrl = refundQueryStrategy.redirectResult(request);
         super.resetParameter(request,attr);
         
         return "redirect:" + redirectUrl;
@@ -93,20 +125,13 @@ public class RefundQueryController extends BaseController {
     	try {
     		
 			TitanRefundQueryDTO refundQueryDTO = WebUtils.switch2RequestDTO(TitanRefundQueryDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(refundQueryDTO);
-			if (!res.isSuccess()){
-				logger.error("参数错误：{}", res.getReturnMessage());
-				titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
-				return titanRefundQueryResponse;
-			}
-			
 			tlNetBankRefundQueryRequest.setMerchantId(refundQueryDTO.getMerchantNo());
 			tlNetBankRefundQueryRequest.setOrderNo(refundQueryDTO.getOrderNo());
 			tlNetBankRefundQueryRequest.setMchtRefundOrderNo(refundQueryDTO.getRefundOrderno());
 			tlNetBankRefundQueryRequest.setRefundAmount(refundQueryDTO.getRefundAmount());
-			//tlNetBankRefundQueryRequest.setRefundDatetime("20171205145011");//退款请求会返回这个值
-			tlNetBankRefundQueryRequest.setVersion("v2.4");
-			tlNetBankRefundQueryRequest.setSignType("0");
+			//tlNetBankRefundQueryRequest.setRefundDatetime("20171205145011");//非必填，退款请求会返回这个值
+			tlNetBankRefundQueryRequest.setVersion(SysConstant.TL_NETBANK_REFUND_QUERY_VERSION);
+			tlNetBankRefundQueryRequest.setSignType(SysConstant.TL_NETBANK_SIGNTYPE);
 			tlNetBankRefundQueryRequest.setRequestType(RequestTypeEnum.GATEWAY_REFUNDQUERY.getKey());
 			
 			titanRefundQueryResponse = tlRefundQueryService.netBankRefundQuery(tlNetBankRefundQueryRequest);
@@ -138,15 +163,8 @@ public class RefundQueryController extends BaseController {
     	try {
     		
     		TitanRefundQueryDTO refundQueryDTO = WebUtils.switch2RequestDTO(TitanRefundQueryDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(refundQueryDTO);
-			if (!res.isSuccess()){
-				logger.error("参数错误：{}", res.getReturnMessage());
-				titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
-				return titanRefundQueryResponse;
-			}
-			
 			tlQrTradeQueryRequest.setCusid(SysConstant.QRCODE_CUSTID);
-			tlQrTradeQueryRequest.setVersion("11");
+			tlQrTradeQueryRequest.setVersion(SysConstant.TL_QRCODE_VERSION);
 			tlQrTradeQueryRequest.setReqsn(refundQueryDTO.getRefundOrderno());
 			tlQrTradeQueryRequest.setRandomstr(CommonUtil.getValidatecode(8));
 			tlQrTradeQueryRequest.setRequestType(RequestTypeEnum.PUBLIC_QUERY.getKey());
@@ -194,13 +212,6 @@ public class RefundQueryController extends BaseController {
     	try {
     		
     		TitanRefundQueryDTO refundQueryDTO = WebUtils.switch2RequestDTO(TitanRefundQueryDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(refundQueryDTO);
-			if (!res.isSuccess()){
-				logger.error("参数错误：{}", res.getReturnMessage());
-				titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
-				return titanRefundQueryResponse;
-			}
-			
 			rbQuickPayRefundQueryRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
 			rbQuickPayRefundQueryRequest.setOrder_no(refundQueryDTO.getRefundOrderno());
 			rbQuickPayRefundQueryRequest.setOrig_order_no(refundQueryDTO.getOrderNo());
@@ -219,6 +230,17 @@ public class RefundQueryController extends BaseController {
 			return titanRefundQueryResponse;
 			
 		}
+        
+    }
+    
+    
+    @ResponseBody
+    @RequestMapping(value = "/returnError", method = {RequestMethod.GET, RequestMethod.POST})
+    private TitanOrderRefundResponse returnError(HttpServletRequest request, Model model) {
+    	
+		TitanOrderRefundResponse titanOrderRefundResponse = new TitanOrderRefundResponse();
+		titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+		return titanOrderRefundResponse;
         
     }
 	

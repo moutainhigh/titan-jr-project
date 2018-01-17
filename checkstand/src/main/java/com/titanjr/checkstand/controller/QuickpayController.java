@@ -9,6 +9,7 @@ package com.titanjr.checkstand.controller;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -17,8 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
+import com.fangcang.titanjr.service.TitanOrderService;
 import com.titanjr.checkstand.constants.BusiCodeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
@@ -62,6 +66,9 @@ public class QuickpayController extends BaseController {
 	@Resource
 	private RBQuickPayService rbQuickPayService;
 	
+	@Resource
+	private TitanOrderService titanOrderService;
+	
 	
 	/**
 	 * 快捷支付相关的请求都从这里进来
@@ -73,12 +80,17 @@ public class QuickpayController extends BaseController {
         
         BusiCodeEnum busiCodeEnum = JRBeanUtils.getBusiCode(request);
         if(busiCodeEnum == null){
-        	logger.error("参数错误，未找到对应的业务代码，busiCodeEnum={}", busiCodeEnum);
+        	logger.error("【融宝-快捷服务】参数错误，未找到对应的业务代码，busiCodeEnum={}", busiCodeEnum);
         	return super.payFailedCallback(model);
         }
         
         //根据业务代码来判定走到具体哪个接口
         QuickPayStrategy quickPayStrategy =  StrategyFactory.getQuickpayStrategy(busiCodeEnum);
+        if(quickPayStrategy == null){
+			logger.error("【融宝-快捷服务】失败，获取相应的业务策略为空");
+			return super.payFailedCallback(model);
+		}
+        
         String redirectUrl = quickPayStrategy.redirectResult(request);
         super.resetParameter(request,attr);
         
@@ -185,6 +197,7 @@ public class QuickpayController extends BaseController {
     	
     	try {
     		
+    		//校验参数
 			TitanReSendMsgDTO titanReSendMsgDTO = WebUtils.switch2RequestDTO(TitanReSendMsgDTO.class, request);
 			ValidateResponse res = GenericValidate.validateNew(titanReSendMsgDTO);
 			if (!res.isSuccess()){
@@ -193,9 +206,21 @@ public class QuickpayController extends BaseController {
 				return titanReSendMsgResponse;
 			}
 			
+			//查询充值单（需要得到手机号）
+			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+			titanOrderPayDTO.setMerchantNo(titanReSendMsgDTO.getMerchantNo());
+			titanOrderPayDTO.setOrderNo(titanReSendMsgDTO.getOrderNo());
+			titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
+			if(titanOrderPayDTO == null){
+				logger.error("【融宝-重发验证码】失败，查询充值单为空，orderNo={}", titanReSendMsgDTO.getOrderNo());
+				titanReSendMsgResponse.putErrorResult(RSErrorCodeEnum.build("查询充值单为空"));
+				return titanReSendMsgResponse;
+			}
+			
+			//封装参数调service
 			RBReSendMsgRequest rbReSendMsgRequest = new RBReSendMsgRequest();
 			rbReSendMsgRequest.setOrder_no(titanReSendMsgDTO.getOrderNo());
-			rbReSendMsgRequest.setPhone("");//查询充值单获取手机号
+			rbReSendMsgRequest.setPhone(titanOrderPayDTO.getPayerPhone());
 			rbReSendMsgRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
 			rbReSendMsgRequest.setVersion(SysConstant.RB_VERSION);
 			rbReSendMsgRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
@@ -239,7 +264,7 @@ public class QuickpayController extends BaseController {
 			
 			RBCardAuthRequest rbCardAuthRequest = new RBCardAuthRequest();
 			rbCardAuthRequest.setMember_id("12345");//pay-app需要新增这个参数
-			rbCardAuthRequest.setBind_id("343545");//需要查询融宝绑卡列表，通过cardNo和merber_id匹配bind_id
+			rbCardAuthRequest.setBind_id("343545");//需要查询融宝绑卡列表，通过cardNo和merber_id匹配bind_id（后续：无法实现，绑卡查询返回的卡号不是完全的卡号）
 			rbCardAuthRequest.setOrder_no(titanCardAuthDTO.getOrderNo());
 			rbCardAuthRequest.setTerminal_type(titanCardAuthDTO.getTerminalType());
 			rbCardAuthRequest.setReturn_url(titanCardAuthDTO.getCardCheckPageUrl());//用pay-app的地址

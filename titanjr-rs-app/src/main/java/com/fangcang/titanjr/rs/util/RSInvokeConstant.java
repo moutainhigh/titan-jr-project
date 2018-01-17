@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.Rop.api.DefaultRopClient;
+import com.titanjr.fop.api.DefaultFopClient;
 
 /**
  * 此类需考虑安全性
@@ -12,7 +13,9 @@ import com.Rop.api.DefaultRopClient;
 public class RSInvokeConstant {
 
     //融数调用构造的client
-    public static DefaultRopClient ropClient = null;
+    public static DefaultRopClient ropClient = null;//弃用
+    //调用Fop构造的client
+    public static DefaultFopClient fopClient = null;
     //融数调用回话key ，使用固定值
     public static String sessionKey = "1498838092996169647";
     //支付网关地址
@@ -21,6 +24,11 @@ public class RSInvokeConstant {
     public static String rsCheckKey = null;
     //房仓给融数构造加密数据的签名
     public static String titanjrCheckKey = null;
+    //checkstand支付结果前台回调的地址
+    public static String CSPayConfirmPageURL = null;
+    //checkstand支付结果后台通知的地址
+    public static String CSPayNoticeURL = null;
+    
     /**
      * jr.fangcang.com商家的默认商家编码
      * 金服在SAAS系统中的商家编码

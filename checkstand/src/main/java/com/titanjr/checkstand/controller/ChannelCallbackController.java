@@ -7,18 +7,26 @@
  */
 package com.titanjr.checkstand.controller;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.fangcang.titanjr.common.bean.ValidateResponse;
+import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.util.JsonUtil;
 import com.titanjr.checkstand.request.RBDataRequest;
 import com.titanjr.checkstand.request.RBQuickPayCallbackData;
 import com.titanjr.checkstand.request.TLNetBankPayCallbackRequest;
 import com.titanjr.checkstand.request.TLQrCodePayCallbackRequest;
+import com.titanjr.checkstand.respnse.TLPayCallBackResponse;
+import com.titanjr.checkstand.service.TitanCommonService;
 import com.titanjr.checkstand.util.rbUtil.Decipher;
 
 /**
@@ -36,17 +44,44 @@ public class ChannelCallbackController extends BaseController {
 	private static final long serialVersionUID = 4077037033223889564L;
 	private final static Logger logger = LoggerFactory.getLogger(ChannelCallbackController.class);
 	
+	@Resource
+	private TitanCommonService titanCommonService;
+	
 	
 	/**
-	 * 通联网银支付前台回调
+	 * 通联网银支付前台回调，只有支付成功才回调
 	 * @author Jerry
 	 * @date 2017年11月27日 下午5:33:38
 	 */
 	@RequestMapping(value = "/tlNetBankPayConfirmPage", method = {RequestMethod.POST})
-	public void tlNetBankPayConfirmPage(HttpServletRequest request, TLNetBankPayCallbackRequest 
-			callbackRequest){
+	public String tlNetBankPayConfirmPage(HttpServletRequest request, TLNetBankPayCallbackRequest 
+			tlNetBankPayCallbackRequest, Model model){
 		
-		logger.info("=========================通联网银支付前台回调");
+		logger.info("=========================通联网银支付前台回调：{}", tlNetBankPayCallbackRequest.toString());
+		
+		try {
+			ValidateResponse res = GenericValidate.validateNew(tlNetBankPayCallbackRequest);
+			if (!res.isSuccess()){
+				logger.error("【网银支付前台回调】参数错误：{}", res.getReturnMessage());
+				return null;
+			}
+			
+			TLPayCallBackResponse payConfirmResponse = titanCommonService.payConfirmCallback(tlNetBankPayCallbackRequest);
+			if(!payConfirmResponse.isSuccess()){
+				logger.error("【网银支付前台回调】失败");
+				return null;
+			}
+			
+			model.addAttribute("payConfirmPageUrl", payConfirmResponse.getPayConfirmPageUrl());
+			model.addAttribute("confirmPage", payConfirmResponse.getRechargeResultConfirmRequest());
+			return "payment/payConfirmPageCallback";
+			
+		} catch (Exception e) {
+			
+			logger.error("【网银支付前台回调】发生异常：", e);
+			return null;
+			
+		}
 		
 	}
 	
@@ -57,9 +92,31 @@ public class ChannelCallbackController extends BaseController {
 	 */
 	@RequestMapping(value = "/tlNetBankPayNotice", method = {RequestMethod.POST})
 	public void tlNetBankPayNotify(HttpServletRequest request, TLNetBankPayCallbackRequest 
-			callbackRequest){
+			tlNetBankPayCallbackRequest){
 		
-		logger.info("=========================通联网银支付后台通知");
+		logger.info("=========================通联网银支付后台通知：{}", tlNetBankPayCallbackRequest.toString());
+		
+		try {
+			ValidateResponse res = GenericValidate.validateNew(tlNetBankPayCallbackRequest);
+			if (!res.isSuccess()){
+				logger.error("【网银支付后台通知】参数错误：{}", res.getReturnMessage());
+				return;
+			}
+			
+			TLPayCallBackResponse payConfirmResponse = titanCommonService.PayNotice(tlNetBankPayCallbackRequest);
+			if(!payConfirmResponse.isSuccess()){
+				logger.error("【网银支付后台通知】失败");
+				return;
+			}
+			
+			logger.info("【网银支付后台通知】成功");
+			
+		} catch (Exception e) {
+			
+			logger.error("【网银支付后台通知】发生异常：", e);
+			return;
+			
+		}
 		
 	}
 	

@@ -12,6 +12,8 @@ public class TitanPayMethod implements java.io.Serializable {
     private String gatewayURL;
     private String checkKey;
     private String titanjrCheckKey;
+    private String csPayConfirmPageURL;
+    private String csPayNoticeURL;
     private String creator;
     private Date createTime;
 
@@ -57,7 +59,23 @@ public class TitanPayMethod implements java.io.Serializable {
         this.titanjrCheckKey = titanjrCheckKey;
     }
 
-    public String getCreator() {
+	public String getCsPayConfirmPageURL() {
+		return csPayConfirmPageURL;
+	}
+
+	public void setCsPayConfirmPageURL(String csPayConfirmPageURL) {
+		this.csPayConfirmPageURL = csPayConfirmPageURL;
+	}
+
+	public String getCsPayNoticeURL() {
+		return csPayNoticeURL;
+	}
+
+	public void setCsPayNoticeURL(String csPayNoticeURL) {
+		this.csPayNoticeURL = csPayNoticeURL;
+	}
+
+	public String getCreator() {
         return creator;
     }
 

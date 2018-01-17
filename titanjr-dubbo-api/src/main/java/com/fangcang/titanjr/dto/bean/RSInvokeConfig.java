@@ -15,6 +15,7 @@ public class RSInvokeConfig implements Serializable {
 	private String appKey;
     private String appSecret;
     private String invokeURL;
+    private String fopInvokeURL;
     private String sessionKey;
     private String defaultMerchant;
     private Long defaultRoleId;
@@ -75,5 +76,13 @@ public class RSInvokeConfig implements Serializable {
     public void setDefaultRoleId(Long defaultRoleId) {
         this.defaultRoleId = defaultRoleId;
     }
+
+	public String getFopInvokeURL() {
+		return fopInvokeURL;
+	}
+
+	public void setFopInvokeURL(String fopInvokeURL) {
+		this.fopInvokeURL = fopInvokeURL;
+	}
 
 }
