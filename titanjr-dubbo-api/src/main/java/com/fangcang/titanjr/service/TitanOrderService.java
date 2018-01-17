@@ -3,6 +3,8 @@ package com.fangcang.titanjr.service;
 import java.util.List;
 
 import com.fangcang.corenut.dao.PaginationSupport;
+import com.fangcang.exception.DaoException;
+import com.fangcang.exception.ServiceException;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.dto.bean.OrderExceptionDTO;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
@@ -11,12 +13,14 @@ import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.entity.TitanOrderException;
+import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.parameter.TitanOrderExceptionParam;
+import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
 
 public interface TitanOrderService {
 
 	
-	
+
 	/**
 	 * 根据财务单，查询本地是否有对应的 落单
 	 * 根据业务单号查询金服的交易工单
@@ -69,7 +73,15 @@ public interface TitanOrderService {
 	 * @return
 	 */
 	public TitanOrderPayDTO getTitanOrderPayDTO(TitanOrderPayDTO titanOrderPayDTO);
-	
+
+	/**
+	 * 查询充值单列表
+	 * @param requestParam
+	 * @return
+	 * @throws DaoException
+     */
+	List<TitanOrderPayreq> queryOrderPayRequestList(TitanOrderPayreqParam requestParam) throws ServiceException;
+
 	/**
 	 * 提现记录
 	 * @param titanWithDrawDTO

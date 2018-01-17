@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.fangcang.exception.DaoException;
+import com.fangcang.exception.ServiceException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -132,6 +134,17 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 		}
 		
 		return null;
+	}
+
+	@Override
+	public List<TitanOrderPayreq> queryOrderPayRequestList(TitanOrderPayreqParam requestParam) throws ServiceException {
+		List<TitanOrderPayreq> orderPayreqList = new ArrayList<TitanOrderPayreq>();
+		try {
+			orderPayreqList = titanOrderPayreqDao.queryOrderPayRequestList(requestParam);
+		} catch (Exception e){
+			throw new ServiceException(e);
+		}
+		return orderPayreqList;
 	}
 
 	@Override

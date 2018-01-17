@@ -1,8 +1,12 @@
 package com.titanjr.fop.service;
 
 import com.fangcang.exception.ServiceException;
+import com.titanjr.fop.dto.Transorderinfo;
 import com.titanjr.fop.request.WheatfieldOrderOperRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
+import com.titanjr.fop.request.WheatfieldOrdernQueryRequest;
+
+import java.util.List;
 
 /**
  * Created by zhaoshan on 2018/1/3.
@@ -26,5 +30,14 @@ public interface OrderOperService {
      * @throws ServiceException
      */
     String operateRefundOrder(WheatfieldOrderServiceReturngoodsRequest returngoodsRequest) throws ServiceException;
+
+    /**
+     * 合并查询操作，查询交易单状态
+     *
+     * @param ordernQueryRequest
+     * @return
+     * @throws ServiceException
+     */
+    List<Transorderinfo> queryTradeOrderNew(WheatfieldOrdernQueryRequest ordernQueryRequest) throws ServiceException;
 
 }

@@ -2,15 +2,19 @@ package com.titanjr.fop.controller;
 
 import com.fangcang.util.StringUtil;
 import com.titanjr.fop.dto.SHBalanceInfo;
+import com.titanjr.fop.dto.Transorderinfo;
 import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
 import com.titanjr.fop.request.WheatfieldOrderOperRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
+import com.titanjr.fop.request.WheatfieldOrdernQueryRequest;
 import com.titanjr.fop.response.WheatfieldBalanceGetlistResponse;
 import com.titanjr.fop.response.WheatfieldOrderOperResponse;
 import com.titanjr.fop.response.WheatfieldOrderServiceReturngoodsResponse;
+import com.titanjr.fop.response.WheatfieldOrdernQueryResponse;
 import com.titanjr.fop.service.OrderOperService;
 import com.titanjr.fop.util.BeanUtils;
 import com.titanjr.fop.util.ResponseUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -85,4 +89,27 @@ public class OrderOperController extends BaseController {
         return toJson(returngoodsResponse);
     }
 
+
+    @RequestMapping(value = "/orderNQuery", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
+    @ResponseBody
+    public String orderNQuery(HttpServletRequest request, RedirectAttributes attr) throws Exception {
+        logger.debug("请求参数为:{}", request.getParameterMap());
+        WheatfieldOrdernQueryResponse ordernQueryResponse = new WheatfieldOrdernQueryResponse();
+        String validResult = ResponseUtils.validRequestSign(request, ordernQueryResponse);
+        if (null != validResult) {
+            return validResult;
+        }
+
+        WheatfieldOrdernQueryRequest ordernQueryRequest = BeanUtils.switch2RequestDTO(WheatfieldOrdernQueryRequest.class, request);
+        if (null == ordernQueryRequest) {
+            return ResponseUtils.getConvertErrorResp(ordernQueryResponse);
+        }
+
+        List<Transorderinfo> orderinfoList = orderOperService.queryTradeOrderNew(ordernQueryRequest);
+        if (CollectionUtils.isEmpty(orderinfoList)) {
+            return ResponseUtils.getSysErrorResp(ordernQueryResponse);
+        }
+        logger.info("操作成功，获取交易单列表：{}", orderinfoList);
+        return toJson(ordernQueryResponse);
+    }
 }

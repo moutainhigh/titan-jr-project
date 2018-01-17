@@ -4,11 +4,16 @@ import com.fangcang.exception.ServiceException;
 import com.fangcang.titanjr.dto.bean.RefundDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
+import com.fangcang.titanjr.entity.TitanOrderPayreq;
+import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.DateUtil;
+import com.fangcang.util.StringUtil;
 import com.titanjr.fop.dao.TitanOrderDao;
+import com.titanjr.fop.dto.Transorderinfo;
 import com.titanjr.fop.request.WheatfieldOrderOperRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
+import com.titanjr.fop.request.WheatfieldOrdernQueryRequest;
 import com.titanjr.fop.service.OrderOperService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -17,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -149,5 +155,51 @@ public class OrderOperServiceImpl implements OrderOperService {
         stringBuffer.append(formater.format((long) (Math.random() * 10)));
         return stringBuffer.toString();
     }
+
+    @Override
+    public List<Transorderinfo> queryTradeOrderNew(WheatfieldOrdernQueryRequest ordernQueryRequest) throws ServiceException {
+        //这里能查出充值，转账，提现三种单的状态
+        //针对充值去上游查询交易单状态
+        //针对转账，查询本地转账记录和记账记录
+        //针对提现，查询上游代付状态
+        if (!StringUtil.isValidString(ordernQueryRequest.getFunccode())){
+
+        }
+
+        return null;
+    }
+
+    private List<Transorderinfo> queryRechargeInfo(WheatfieldOrdernQueryRequest ordernQueryRequest){
+        List<Transorderinfo> orderInfoList = new ArrayList<Transorderinfo>();
+        TitanOrderPayreqParam requestParam = new TitanOrderPayreqParam();
+        //merchantcode,funccode这两个暂不处理，status从查出的结果中筛选
+        if (null != ordernQueryRequest.getStarttime()) {
+            requestParam.setStartTime(DateUtil.dateToString(ordernQueryRequest.getStarttime(),"yyyy-MM-dd HH:mm:ss"));
+        }
+        if (null != ordernQueryRequest.getEndtime()){
+            requestParam.setEndTime(DateUtil.dateToString(ordernQueryRequest.getEndtime(),"yyyy-MM-dd HH:mm:ss"));
+        }
+        if (StringUtil.isValidString(ordernQueryRequest.getOrderno())){
+            requestParam.setOrderNo(ordernQueryRequest.getOrderno());
+        }
+        if (null != ordernQueryRequest.getAmount()){
+            requestParam.setOrderAmount((double) ordernQueryRequest.getAmount().longValue());
+        }
+        //充值不需要设置此字段
+        if (StringUtil.isValidString(ordernQueryRequest.getIntermerchantcode())){
+
+        }
+        if (StringUtil.isValidString(ordernQueryRequest.getUserid())){
+            requestParam.setMerchantNo(ordernQueryRequest.getUserid());
+        }
+
+        List<TitanOrderPayreq> orderPayreqList = titanOrderService.queryOrderPayRequestList(requestParam);
+
+
+
+        return  orderInfoList;
+    }
+
+
 
 }
