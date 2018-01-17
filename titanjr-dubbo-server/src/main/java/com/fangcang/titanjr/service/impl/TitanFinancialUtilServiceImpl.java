@@ -233,8 +233,8 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 			config.setRsCheckKey(RSInvokeConstant.rsCheckKey);
 			config.setGateWayURL(RSInvokeConstant.gateWayURL);
 			config.setTitanjrCheckKey(RSInvokeConstant.titanjrCheckKey);
-			config.setLocalPayConfirmPageURL(RSInvokeConstant.CSPayConfirmPageURL);
-			config.setLocalPayNoticeURL(RSInvokeConstant.CSPayNoticeURL);
+			config.setCsPayConfirmPageURL(RSInvokeConstant.csPayConfirmPageURL);
+			config.setCsPayNoticeURL(RSInvokeConstant.csPayNoticeURL);
 		}
 		return config;
 	}

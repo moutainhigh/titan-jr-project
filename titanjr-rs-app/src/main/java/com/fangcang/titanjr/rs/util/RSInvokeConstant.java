@@ -25,9 +25,9 @@ public class RSInvokeConstant {
     //房仓给融数构造加密数据的签名
     public static String titanjrCheckKey = null;
     //checkstand支付结果前台回调的地址
-    public static String CSPayConfirmPageURL = null;
+    public static String csPayConfirmPageURL = null;
     //checkstand支付结果后台通知的地址
-    public static String CSPayNoticeURL = null;
+    public static String csPayNoticeURL = null;
     
     /**
      * jr.fangcang.com商家的默认商家编码

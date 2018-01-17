@@ -16,10 +16,10 @@ public class SysConfig implements Serializable{
     private String rsCheckKey;
     //房仓给融数构造加密数据的签名
     private String titanjrCheckKey ;
-    //融数支付结果前台回调的地址
-    private String LocalPayConfirmPageURL;
-    //融数支付结果后台通知的地址
-    private String LocalPayNoticeURL;
+    //checkstand付结果前台回调的地址
+    private String csPayConfirmPageURL;
+    //checkstand支付结果后台通知的地址
+    private String csPayNoticeURL;
    
 	public String getSessionKey() {
 		return sessionKey;
@@ -45,17 +45,17 @@ public class SysConfig implements Serializable{
 	public void setTitanjrCheckKey(String titanjrCheckKey) {
 		this.titanjrCheckKey = titanjrCheckKey;
 	}
-	public String getLocalPayConfirmPageURL() {
-		return LocalPayConfirmPageURL;
+	public String getCsPayConfirmPageURL() {
+		return csPayConfirmPageURL;
 	}
-	public void setLocalPayConfirmPageURL(String localPayConfirmPageURL) {
-		LocalPayConfirmPageURL = localPayConfirmPageURL;
+	public void setCsPayConfirmPageURL(String csPayConfirmPageURL) {
+		this.csPayConfirmPageURL = csPayConfirmPageURL;
 	}
-	public String getLocalPayNoticeURL() {
-		return LocalPayNoticeURL;
+	public String getCsPayNoticeURL() {
+		return csPayNoticeURL;
 	}
-	public void setLocalPayNoticeURL(String localPayNoticeURL) {
-		LocalPayNoticeURL = localPayNoticeURL;
+	public void setCsPayNoticeURL(String csPayNoticeURL) {
+		this.csPayNoticeURL = csPayNoticeURL;
 	}
 
 }

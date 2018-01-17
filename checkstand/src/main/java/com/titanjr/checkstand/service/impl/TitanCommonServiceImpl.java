@@ -75,9 +75,9 @@ public class TitanCommonServiceImpl implements TitanCommonService {
 			RechargeResultConfirmRequest confirmRequest = payCallBackResponse.getRechargeResultConfirmRequest();
 			confirmRequest.setSignMsg(SignMsgBuilder.getpayCallbackSignMsg(confirmRequest, config.getRsCheckKey()));
 			
-			payCallBackResponse.setPayConfirmPageUrl(config.getLocalPayConfirmPageURL());
+			payCallBackResponse.setPayConfirmPageUrl(config.getCsPayConfirmPageURL());
 			payCallBackResponse.setRechargeResultConfirmRequest(confirmRequest);
-			logger.info("【网银支付前台回调】地址：{}", config.getLocalPayConfirmPageURL());
+			logger.info("【网银支付前台回调】地址：{}", config.getCsPayConfirmPageURL());
 			
 			payCallBackResponse.putSuccess();
 			return payCallBackResponse;
@@ -112,8 +112,8 @@ public class TitanCommonServiceImpl implements TitanCommonService {
 			RechargeResultConfirmRequest confirmRequest = payCallBackResponse.getRechargeResultConfirmRequest();
 			confirmRequest.setSignMsg(SignMsgBuilder.getpayCallbackSignMsg(confirmRequest, config.getRsCheckKey()));
 			
-			logger.info("【网银支付后台通知】地址：{}", config.getLocalPayNoticeURL());
-			HttpPost httpPost = new HttpPost(config.getLocalPayNoticeURL());
+			logger.info("【网银支付后台通知】地址：{}", config.getCsPayNoticeURL());
+			HttpPost httpPost = new HttpPost(config.getCsPayNoticeURL());
 			List<NameValuePair> params = BeanConvertor.beanToList(confirmRequest);
 			logger.info("【网银支付后台通知】请求参数：{}" ,confirmRequest.toString());
 			

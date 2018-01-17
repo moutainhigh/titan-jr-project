@@ -71,8 +71,8 @@ public class RSInvokeInitManagerImpl {
             RSInvokeConstant.gateWayURL = titanPayMethod.getGatewayURL();
             RSInvokeConstant.rsCheckKey = titanPayMethod.getCheckKey();
             RSInvokeConstant.titanjrCheckKey = titanPayMethod.getTitanjrCheckKey();
-            RSInvokeConstant.CSPayConfirmPageURL = titanPayMethod.getCsPayConfirmPageURL();
-            RSInvokeConstant.CSPayNoticeURL = titanPayMethod.getCsPayNoticeURL();
+            RSInvokeConstant.csPayConfirmPageURL = titanPayMethod.getCsPayConfirmPageURL();
+            RSInvokeConstant.csPayNoticeURL = titanPayMethod.getCsPayNoticeURL();
             log.info("----------rong shu notify url init success, titanPayMethod:"+Tools.gsonToString(titanPayMethod));
         }else{
         	throw new RuntimeException("rong shu notify url init failed, param[titanPayMethod] is null");
