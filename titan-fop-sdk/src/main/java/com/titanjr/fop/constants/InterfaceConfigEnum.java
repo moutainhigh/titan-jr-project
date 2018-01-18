@@ -12,7 +12,8 @@ public enum InterfaceConfigEnum {
     COMPANY_CREATE("ruixue.wheatfield.enterprise.entityaccountopt", "企业用户开户"),
     PERSON_OPERATE("ruixue.wheatfield.person.accountopr", "个人用户操作"),
     FREEZE_BALANCE("ruixue.wheatfield.order.service.authcodeservice","冻结资金获取授权码"),
-    UNFREEZE_BALANCE("ruixue.wheatfield.order.service.thawauthcode","冻结资金获取授权码"),;
+    UNFREEZE_BALANCE("ruixue.wheatfield.order.service.thawauthcode","冻结资金获取授权码"),
+    ORDERN_QUERY("ruixue.wheatfield.ordern.query","订单查询");
 
 
 
@@ -33,4 +34,21 @@ public enum InterfaceConfigEnum {
 
         return null;
     }
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+	
 }

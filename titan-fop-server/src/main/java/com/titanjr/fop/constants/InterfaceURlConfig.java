@@ -19,6 +19,7 @@ public class InterfaceURlConfig {
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.UNFREEZE_BALANCE, "/account/unFreezeAccountBalance.shtml");
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.ORDER_OPERATE, "/order/orderOper.shtml");
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.REFUND_ORDER_OPERATE, "/order/operateRefundOrder.shtml");
+        INTERFACE_URL_MAP.put(InterfaceConfigEnum.ORDERN_QUERY, "/order/orderNQuery.shtml");
     }
 
 }
