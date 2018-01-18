@@ -109,6 +109,8 @@
 		<mapper resource="mybatis/CommonPayHistoryMapper.xml"/>
 		<mapper resource="mybatis/BenchmarkRateConfigMapper.xml"/>
 		<mapper resource="mybatis/TitanBalanceInfoMapper.xml"/>
+		<mapper resource="mybatis/TitanAccountDetailMapper.xml"/>
+		<mapper resource="mybatis/TitanDepositDetailMapper.xml"/>
 	</mappers>
 
 </configuration>

@@ -8,6 +8,7 @@
             <if test="accountid != null">accountid = #{accountid}</if>
             <if test="userid != null"> and userid =#{userid}</if>
             <if test="productid != null"> and productid =#{productid}</if>
+            <if test="accountcode != null"> and accountcode =#{accountcode}</if>
           </where>
     </select>
 

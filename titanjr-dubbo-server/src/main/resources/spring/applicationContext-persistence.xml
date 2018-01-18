@@ -137,6 +137,8 @@
 	<bean id="benchmarkRateConfigDao" class="com.fangcang.titanjr.dao.impl.BenchmarkRateConfigDaoImpl" parent="baseSqlMapClient"></bean>
 	
 	<bean id="balanceInfoDao" class="com.fangcang.titanjr.dao.impl.TitanBalanceInfoDaoImpl"></bean>
+	<bean id="accountDetailDao" class="com.fangcang.titanjr.dao.impl.TitanAccountDetailDaoImpl"></bean>
+	<bean id="depositDetailDao" class="com.fangcang.titanjr.dao.impl.TitanDepositDetailDaoImpl"></bean>
 	
 </beans>
 

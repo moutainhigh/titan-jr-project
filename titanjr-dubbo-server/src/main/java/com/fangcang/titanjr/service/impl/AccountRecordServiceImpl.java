@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ import com.fangcang.titanjr.entity.parameter.TitanBalanceInfoParam;
 import com.fangcang.titanjr.enums.TradeTypeAccountDetailEnum;
 import com.fangcang.titanjr.service.AccountRecordService;
 
+@Service("accountRecordService")
 public class AccountRecordServiceImpl implements AccountRecordService {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountRecordServiceImpl.class);
@@ -42,6 +44,25 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 	@Resource
 	private TitanDepositDetailDao depositDetailDao;
 	
+	/**
+	 * 更新余额
+	 */
+	private void updateBalanceInfo(TitanAccountDetail accountDetail){
+		
+		accountDetailDao.insert(accountDetail);
+		
+		TitanBalanceInfoParam param = new TitanBalanceInfoParam();
+		param.setAccountcode(accountDetail.getAccountCode());
+		List<TitanBalanceInfo> balanceInfoList = balanceInfoDao.queryList(param);
+		TitanBalanceInfo balanceInfo = balanceInfoList.get(0);
+		balanceInfo.setSettleamount(balanceInfo.getSettleamount()+accountDetail.getSettleAmount());
+		balanceInfo.setUsablelimit(balanceInfo.getSettleamount());//两个字段的意思是相同的
+		balanceInfo.setFrozonamount(balanceInfo.getFrozonamount()+accountDetail.getFrozonAmount());
+		balanceInfo.setTotalamount(balanceInfo.getSettleamount()+balanceInfo.getFrozonamount());
+		balanceInfo.setCreditamount(accountDetail.getCreditAmount());
+		balanceInfoDao.update(balanceInfo);
+		
+	}
 	/***
 	 * 检查是否已经过记账
 	 * @return true：已经记过账，false:未记账
@@ -96,8 +117,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setSettleAmount(recordRequest.getAmount());
 		accountDetail.setStatus(1);
 		accountDetail.setCreateTime(new Date());
-		accountDetailDao.insert(accountDetail);
-		
+		updateBalanceInfo(accountDetail);
 		//备付金
 		TitanDepositDetail depositDetail = new TitanDepositDetail();
 		depositDetail.setAccountcode(CommonConstant.DEPOSIT_ACCOUNT_CODE);//固定账户
@@ -105,8 +125,10 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		depositDetail.setAmount(recordRequest.getAmount());
 		depositDetail.setTradetype(tradeType);
 		depositDetail.setFee(0L);
+		depositDetail.setStatus(1);
 		depositDetail.setCreatetime(new Date());
 		depositDetailDao.insert(depositDetail);
+		
 		responseDTO.putSuccess("记账成功");
 		return responseDTO;
 	}
@@ -149,7 +171,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setSettleAmount(-recordTransferRequest.getAmount());
 		accountDetail.setStatus(1);
 		accountDetail.setCreateTime(new Date());
-		accountDetailDao.insert(accountDetail);
+		updateBalanceInfo(accountDetail);
 		
 		//2-转入
 		TitanBalanceInfoParam balanceInfoInParam = new TitanBalanceInfoParam();
@@ -172,7 +194,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetailIn.setSettleAmount(recordTransferRequest.getAmount());
 		accountDetailIn.setStatus(1);
 		accountDetailIn.setCreateTime(new Date());
-		accountDetailDao.insert(accountDetailIn);
+		updateBalanceInfo(accountDetailIn);
 		responseDTO.putSuccess("记账成功");
 		return responseDTO;
 	}
@@ -209,7 +231,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setSettleAmount(-recordRequest.getAmount());
 		accountDetail.setStatus(1);
 		accountDetail.setCreateTime(new Date());
-		accountDetailDao.insert(accountDetail);
+		updateBalanceInfo(accountDetail);
 		responseDTO.putSuccess("记账成功");
 		return responseDTO;
 	}
@@ -246,7 +268,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setSettleAmount(recordRequest.getAmount());
 		accountDetail.setStatus(1);
 		accountDetail.setCreateTime(new Date());
-		accountDetailDao.insert(accountDetail);
+		updateBalanceInfo(accountDetail);
 		responseDTO.putSuccess("记账成功");
 		return responseDTO;
 

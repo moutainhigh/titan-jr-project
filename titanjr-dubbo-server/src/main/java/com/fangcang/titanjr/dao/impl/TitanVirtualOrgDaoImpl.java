@@ -5,8 +5,10 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanVirtualOrgDao;
 import com.fangcang.titanjr.entity.TitanVirtualOrg;
 import com.fangcang.titanjr.entity.VirtualOrgRelation;
@@ -16,6 +18,22 @@ public class TitanVirtualOrgDaoImpl extends GenericDAOMyBatisImpl implements
 
 	private static final Log log = LogFactory
 			.getLog(TitanVirtualOrgDaoImpl.class);
+
+	
+	@Override
+	public PaginationSupport<TitanVirtualOrg> selectForPage(TitanVirtualOrg condition,
+			PaginationSupport<TitanVirtualOrg> paginationSupport) throws DaoException {
+		
+		try {
+			return super
+					.selectForPage(
+							"com.fangcang.titanjr.dao.TitanVirtualOrgDao.queryVirtualOrgInfos",condition,
+							paginationSupport);
+		} catch (Exception e) {
+			log.error("selectForPage Error ,TitanVirtualOrg:"+Tools.gsonToString(condition), e);
+			throw new DaoException(e);
+		}
+	}
 
 	public List<TitanVirtualOrg> queryVirtualOrgInfos(TitanVirtualOrg orgCode) {
 		try {

@@ -24,25 +24,25 @@ public class TitanBalanceInfo implements java.io.Serializable {
 	 */
 	private Long creditamount ;
 	/**
-	 * 期初提现余额
+	 * 提现余额
 	 */
 	private Long settleamount;
 	/**
-	 * 期初冻结余额
+	 * 冻结余额
 	 */
 	private Long frozonamount;
 	
 	
 	/**
-	 * 期初可信用消费余额
+	 * 可信用消费余额
 	 */
 	private Long overlimit ; 
 	/**
-	 * 期初可用余额
+	 * 可用余额
 	 */
 	private Long usablelimit;
 	/**
-	 * 期初账户余额
+	 * 账户余额
 	 */
 	private Long totalamount;
 	

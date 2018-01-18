@@ -9,6 +9,7 @@ public class TitanAccountDetailParam implements Serializable {
 	 */
 	private static final long serialVersionUID = -6918260201444166742L;
 	private Long transOrderId;
+	private String accountCode;
 	private Integer tradeType;
 	private String orgCode;
 	private String productId;
@@ -17,6 +18,13 @@ public class TitanAccountDetailParam implements Serializable {
 	 */
 	private Integer status;
 	
+	
+	public String getAccountCode() {
+		return accountCode;
+	}
+	public void setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
+	}
 	public Integer getStatus() {
 		return status;
 	}
