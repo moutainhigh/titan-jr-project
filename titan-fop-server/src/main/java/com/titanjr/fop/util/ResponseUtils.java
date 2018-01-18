@@ -1,7 +1,6 @@
 package com.titanjr.fop.util;
 
 import com.titanjr.fop.constants.ReturnCodeEnum;
-import com.titanjr.fop.controller.BaseController;
 import com.titanjr.fop.response.FopResponse;
 import net.sf.json.JSONSerializer;
 import org.slf4j.Logger;

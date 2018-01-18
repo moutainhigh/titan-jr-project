@@ -559,7 +559,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 				log.info("调用ordernQuery返回报文: \n" + rsp.getBody());
 				String errorMsg;
 				if (rsp.isSuccess() != true) {
-					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+					if (rsp.getSubMsg() != null &&  !"".equals(rsp.getSubMsg())) {
 						errorMsg = rsp.getSubMsg();
 					} else {
 						errorMsg = rsp.getMsg();
