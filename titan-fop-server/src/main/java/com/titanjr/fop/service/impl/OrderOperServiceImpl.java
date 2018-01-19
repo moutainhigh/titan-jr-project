@@ -170,16 +170,31 @@ public class OrderOperServiceImpl implements OrderOperService {
     @Override
     public List<Transorderinfo> queryTradeOrderNew(WheatfieldOrdernQueryRequest ordernQueryRequest) throws ServiceException {
         //这里能查出充值，转账，提现三种单的状态
-        //针对充值去上游查询交易单状态
-        //针对转账，查询本地转账记录和记账记录
-        //针对提现，查询上游代付状态
+        List<Transorderinfo> transorderinfoList = new ArrayList<Transorderinfo>();
         if (!StringUtil.isValidString(ordernQueryRequest.getFunccode())) {
-
+            //充值
+            if (ordernQueryRequest.getFunccode().equals(FuncCodeEnum.RECHARGE_4015.getKey())) {
+                transorderinfoList.addAll(queryRechargeInfo(ordernQueryRequest));
+            }
+            //转账
+            if (ordernQueryRequest.getFunccode().equals(FuncCodeEnum.TRANSFER_3001.getKey())) {
+                transorderinfoList.addAll(queryTransferInfo(ordernQueryRequest));
+            }
+            //提现
+            if (ordernQueryRequest.getFunccode().equals(FuncCodeEnum.WITHDRAW_4016.getKey())) {
+                transorderinfoList.addAll(queryWithDrawInfo(ordernQueryRequest));
+            }
+        } else {
+            transorderinfoList.addAll(queryRechargeInfo(ordernQueryRequest));
+            transorderinfoList.addAll(queryTransferInfo(ordernQueryRequest));
+            transorderinfoList.addAll(queryWithDrawInfo(ordernQueryRequest));
         }
-
-        return null;
+        
+        Collections.sort(transorderinfoList, new TransorderinfoComparator());
+        return transorderinfoList;
     }
 
+    //针对充值去上游查询交易单状态,验证本地交易状态
     private List<Transorderinfo> queryRechargeInfo(WheatfieldOrdernQueryRequest ordernQueryRequest) {
         List<Transorderinfo> orderInfoList = new ArrayList<Transorderinfo>();
         TitanOrderPayreqParam requestParam = new TitanOrderPayreqParam();
@@ -268,6 +283,16 @@ public class OrderOperServiceImpl implements OrderOperService {
         return orderInfoList;
     }
 
+    //针对转账，查询本地转账记录和记账记录
+    private Collection<? extends Transorderinfo> queryTransferInfo(WheatfieldOrdernQueryRequest ordernQueryRequest) {
+        return null;
+    }
+
+    //针对提现，查询上游代付状态,验证本地提现单状态
+    private Collection<? extends Transorderinfo> queryWithDrawInfo(WheatfieldOrdernQueryRequest ordernQueryRequest) {
+        return null;
+    }
+
     //获取支付查询的签名
     private String getPayQuerySign(Map paramMap) {
         StringBuffer stringBuffer = new StringBuffer();
@@ -279,5 +304,23 @@ public class OrderOperServiceImpl implements OrderOperService {
         stringBuffer.append("&key=").append("PCDEFOI8808TFC");
         return MD5.MD5Encode(stringBuffer.toString(), "UTF-8");
     }
+
+    class TransorderinfoComparator implements Comparator<Transorderinfo> {
+
+        @Override
+        public int compare(Transorderinfo first, Transorderinfo second) {
+            Date firstTime = DateUtil.stringToDate(first.getCreatedtime(), "yyyy-MM-dd HH:mm:ss");
+            Date secondTime = DateUtil.stringToDate(second.getCreatedtime(), "yyyy-MM-dd HH:mm:ss");
+            if (DateUtil.compare(firstTime, secondTime) > 1)
+                return -1;
+            else if (DateUtil.compare(firstTime, secondTime) > 1)
+                return 1;
+            else {
+                return 0;
+            }
+        }
+
+    }
+
 
 }
