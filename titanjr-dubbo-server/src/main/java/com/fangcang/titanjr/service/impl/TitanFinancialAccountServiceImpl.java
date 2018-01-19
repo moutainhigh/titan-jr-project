@@ -37,12 +37,15 @@ import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanAccountDao;
 import com.fangcang.titanjr.dao.TitanAccountHistoryDao;
+import com.fangcang.titanjr.dao.TitanBalanceInfoDao;
 import com.fangcang.titanjr.dao.TitanCityInfoDao;
 import com.fangcang.titanjr.dao.TitanFundFreezereqDao;
 import com.fangcang.titanjr.dao.TitanFundUnFreezereqDao;
 import com.fangcang.titanjr.dao.TitanOrgDao;
+import com.fangcang.titanjr.dao.TitanOrgSubDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
+import com.fangcang.titanjr.dao.TitanVirtualOrgDao;
 import com.fangcang.titanjr.dao.TitanWithDrawReqDao;
 import com.fangcang.titanjr.dto.BaseResponseDTO;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
@@ -58,6 +61,7 @@ import com.fangcang.titanjr.dto.request.AccountHistoryRequest;
 import com.fangcang.titanjr.dto.request.AccountRequest;
 import com.fangcang.titanjr.dto.request.AccountUpdateRequest;
 import com.fangcang.titanjr.dto.request.AddPayLogRequest;
+import com.fangcang.titanjr.dto.request.BalanceInfoRequest;
 import com.fangcang.titanjr.dto.request.BalanceWithDrawRequest;
 import com.fangcang.titanjr.dto.request.FreezeAccountBalanceRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
@@ -83,15 +87,19 @@ import com.fangcang.titanjr.dto.response.UnFreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.UnFreezeResponse;
 import com.fangcang.titanjr.entity.TitanAccount;
 import com.fangcang.titanjr.entity.TitanAccountHistory;
+import com.fangcang.titanjr.entity.TitanBalanceInfo;
 import com.fangcang.titanjr.entity.TitanBankcard;
 import com.fangcang.titanjr.entity.TitanFundFreezereq;
 import com.fangcang.titanjr.entity.TitanFundUnFreezereq;
 import com.fangcang.titanjr.entity.TitanOrg;
+import com.fangcang.titanjr.entity.TitanOrgSub;
 import com.fangcang.titanjr.entity.TitanTransOrder;
 import com.fangcang.titanjr.entity.TitanTransferReq;
+import com.fangcang.titanjr.entity.TitanVirtualOrg;
 import com.fangcang.titanjr.entity.TitanWithDrawReq;
 import com.fangcang.titanjr.entity.parameter.TitanAccountHistoryParam;
 import com.fangcang.titanjr.entity.parameter.TitanAccountParam;
+import com.fangcang.titanjr.entity.parameter.TitanBalanceInfoParam;
 import com.fangcang.titanjr.entity.parameter.TitanFundFreezereqParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrgParam;
 import com.fangcang.titanjr.entity.parameter.TitanTransferReqParam;
@@ -108,6 +116,7 @@ import com.fangcang.titanjr.rs.response.BalanceFreezeResponse;
 import com.fangcang.titanjr.rs.response.BalanceUnFreezeResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.BusinessLogService;
+import com.fangcang.titanjr.service.TitanCodeCenterService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
@@ -117,6 +126,7 @@ import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
 
 import net.sf.json.JSONSerializer;
+import oracle.jdbc.util.Login;
 
 /**
  * Created by zhaoshan on 2016/5/9.
@@ -148,6 +158,12 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     private TitanOrgDao titanOrgDao;
     
     @Resource
+    private TitanOrgSubDao titanOrgSubDao;
+    
+    @Resource
+    private TitanVirtualOrgDao titanVirtualOrgDao;
+    
+    @Resource
     private TitanAccountHistoryDao titanAccountHistoryDao;
     
     @Resource
@@ -166,18 +182,166 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
     private TitanCityInfoDao titanCityInfoDao;
     
     @Resource
+    private TitanOrgDao orgdao;
+    
+    @Resource
     private TitanTransferReqDao transferReqDao;
     
     @Resource
+    private TitanCodeCenterService codeCenterService;
+    
+    @Resource
 	private BusinessLogService businessLogService;
+    @Resource
+    private TitanBalanceInfoDao balanceInfoDao;
     
     
-    
+	/***
+	 * 融数的账户是否在本地存在
+	 * @param item 融数账户
+	 * @param list 本地帐户
+	 * @return
+	 */
+	private String localIsExist(BalanceInfo item,List<TitanBalanceInfo> list){
+		for(TitanBalanceInfo banlance : list){
+			if((banlance.getUserid().equals(item.getUserid()))&&(banlance.getProductid().equals(item.getProductid()))){
+				return banlance.getAccountcode();
+			}
+		}
+		return "";
+	}
 
-    @Override
+	@Override
+	public BaseResponseDTO synBalanceInfo(BalanceInfoRequest balanceInfoRequest) {
+		
+		BaseResponseDTO responseDTO = new BaseResponseDTO();
+		if(!StringUtil.isValidString(balanceInfoRequest.getUserId())){
+			responseDTO.putErrorResult("userid参数不能为空");
+			log.error("同步余额账户,userid参数不能为空");
+			return responseDTO;
+		}
+		//查出机构本地帐户
+		TitanBalanceInfoParam param = new TitanBalanceInfoParam();
+		param.setUserid(balanceInfoRequest.getUserId());
+		List<TitanBalanceInfo> balanceInfoList = balanceInfoDao.queryList(param);
+		
+		AccountBalanceQueryRequest accountBalanceQueryRequest = new AccountBalanceQueryRequest();
+        accountBalanceQueryRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+        accountBalanceQueryRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+        accountBalanceQueryRequest.setUserid(balanceInfoRequest.getUserId());
+        AccountBalanceQueryResponse response = rsAccTradeManager.queryAccountBalance(accountBalanceQueryRequest);
+        //从融数同步账户
+		if(response.isSuccess()&&CollectionUtils.isNotEmpty(response.getBalanceInfoList())){
+			for(BalanceInfo item :response.getBalanceInfoList()){
+				String accountCode = localIsExist(item,balanceInfoList);
+				if(StringUtil.isValidString(localIsExist(item,balanceInfoList))){
+					//存在,则更新金额
+					TitanBalanceInfo entity = new TitanBalanceInfo();
+					entity.setAccountcode(accountCode);
+					entity.setCreditamount(Long.parseLong(item.getBalancecredit()));
+					entity.setSettleamount(Long.parseLong(item.getBalancesettle()));
+					entity.setFrozonamount(Long.parseLong(item.getBalancefrozon()));
+					entity.setOverlimit(Long.parseLong(item.getBalanceoverlimit()));
+					entity.setUsablelimit(Long.parseLong(item.getBalanceusable()));
+					entity.setTotalamount(Long.parseLong(item.getAmount()));
+					balanceInfoDao.update(entity);
+				}else{
+					//不存在,则插入
+					TitanBalanceInfo entity = new TitanBalanceInfo();
+					entity.setAccountcode(codeCenterService.createTitanAccountCode());
+					entity.setUserid(item.getUserid());
+					entity.setProductid(item.getProductid());
+					entity.setCurrency(1);//人民币
+					entity.setCreditamount(Long.parseLong(item.getBalancecredit()));
+					entity.setSettleamount(Long.parseLong(item.getBalancesettle()));
+					entity.setFrozonamount(Long.parseLong(item.getBalancefrozon()));
+					entity.setOverlimit(Long.parseLong(item.getBalanceoverlimit()));
+					entity.setUsablelimit(Long.parseLong(item.getBalanceusable()));
+					entity.setTotalamount(Long.parseLong(item.getAmount()));
+					entity.setStatus(1);//1：正常,2:冻结中
+					entity.setCreatetime(new Date());
+					balanceInfoDao.insert(entity);
+				}
+			}
+			responseDTO.putSuccess();
+		}else{
+			log.info("该userid在融数那边不存在，请检查.userid:"+balanceInfoRequest.getUserId());
+			responseDTO.putErrorResult("该账户不存在，请检查");
+		}
+		return responseDTO;
+	}
+
+	@Override
+	public void initAllBalanceInfo() {
+		int page = 1;
+		PaginationSupport<TitanOrg> paginationSupport = new PaginationSupport<TitanOrg>();
+		paginationSupport.setPageSize(100);
+		paginationSupport.setCurrentPage(page);
+		paginationSupport.setOrderBy(" orgid ASC ");
+		paginationSupport = orgdao.selectForPage(null, paginationSupport);
+		log.info("同步org");
+//		while (paginationSupport.getTotalPage()>=page) {
+//			for(TitanOrg item : paginationSupport.getItemList()){
+//				BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
+//				balanceInfoRequest.setUserId(item.getUserid());
+//				synBalanceInfo(balanceInfoRequest);
+//			}
+//			page++;
+//			paginationSupport.setCurrentPage(page);
+//			paginationSupport = orgdao.selectForPage(null, paginationSupport);
+//			log.info("同步,总页数："+paginationSupport.getTotalPage()+","+page);
+//		}
+		log.info("同步suborg");
+		//suborg
+		int spage = 1;
+		PaginationSupport<TitanOrgSub> spaginationSupport = new PaginationSupport<TitanOrgSub>();
+		spaginationSupport.setPageSize(100);
+		spaginationSupport.setCurrentPage(page);
+		spaginationSupport.setOrderBy(" orgsubid ASC ");
+		spaginationSupport = titanOrgSubDao.selectForPage(null, spaginationSupport);
+		
+		while (spaginationSupport.getTotalPage()>=spage) {
+			for(TitanOrgSub item : spaginationSupport.getItemList()){
+				BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
+				balanceInfoRequest.setUserId(item.getOrgcode());
+				synBalanceInfo(balanceInfoRequest);
+			}
+			spage++;
+			spaginationSupport.setCurrentPage(spage);
+			spaginationSupport = titanOrgSubDao.selectForPage(null, spaginationSupport);
+			log.info("同步,总页数："+spaginationSupport.getTotalPage()+","+spage);
+		}
+		log.info("同步vorg");
+		//vorg
+		
+		int vpage = 1;
+		PaginationSupport<TitanVirtualOrg> vpaginationSupport = new PaginationSupport<TitanVirtualOrg>();
+		vpaginationSupport.setPageSize(100);
+		vpaginationSupport.setCurrentPage(page);
+		vpaginationSupport.setOrderBy(" id ASC ");
+		vpaginationSupport = titanVirtualOrgDao.selectForPage(null, vpaginationSupport);
+		
+		while (vpaginationSupport.getTotalPage()>=vpage) {
+			for(TitanVirtualOrg item : vpaginationSupport.getItemList()){
+				BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
+				balanceInfoRequest.setUserId(item.getOrgCode());
+				synBalanceInfo(balanceInfoRequest);
+			}
+			vpage++;
+			vpaginationSupport.setCurrentPage(vpage);
+			vpaginationSupport = titanVirtualOrgDao.selectForPage(null, vpaginationSupport);
+			log.info("同步,总页数："+vpaginationSupport.getTotalPage()+","+vpage);
+		}
+		
+	}
+
+	@Override
     public AccountCreateResponse createAccount(AccountCreateRequest accountCreateRequest) {
         AccountCreateResponse accountCreateResponse = new AccountCreateResponse();
         AccountBalanceQueryRequest accountBalanceQueryRequest = new AccountBalanceQueryRequest();
+        accountBalanceQueryRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+        accountBalanceQueryRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
+        accountBalanceQueryRequest.setUserid(accountCreateRequest.getUserid());
         AccountBalanceQueryResponse response = rsAccTradeManager.queryAccountBalance(accountBalanceQueryRequest);
         if (response.isSuccess()) {
             TitanAccount account = new TitanAccount();
@@ -672,9 +836,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				amount = String.valueOf((Long.parseLong(amount) - accountWithDrawRequest
 								.getUserfee()));
 			}
-			if(amount.equals("4")){
-				amount = "999999999";
-			}
 			accountWithDrawRequest.setAmount(amount);
 			AccountWithDrawResponse accountWithDrawResponse = rsAccTradeManager.accountBalanceWithDraw(accountWithDrawRequest);
 			if (accountWithDrawResponse != null) {
@@ -921,7 +1082,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			condition.setOutaccountcode(accountHistoryDTO.getOutaccountcode());
 			condition.setInaccountcode(accountHistoryDTO.getInaccountcode());
 			PaginationSupport<TitanAccountHistory> paginationSupport = new PaginationSupport<TitanAccountHistory>();
-			titanAccountHistoryDao.selectForPage(condition, paginationSupport);  
+			titanAccountHistoryDao.selectForPage(condition, paginationSupport);
 			//如果数据了中没有收付款账户记录则插入一条数据，否则直接返回成功
 			if(paginationSupport.getItemList() !=null && paginationSupport.getItemList().size()>0){
 				accountHistoryResponse.putSuccess();

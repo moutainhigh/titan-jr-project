@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanDepositDetailDao">
+    <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanDepositDetail"
+            parameterType="com.fangcang.titanjr.entity.parameter.TitanDepositDetailParam">
+        select * from t_tfs_depositdetail
+        <where>
+            <if test="accountcode != null">accountcode = #{accountcode}</if>
+            <if test="transorderid != null"> and transorderid =#{transorderid}</if>
+            <if test="productid != null"> and productid =#{productid}</if>
+          </where>
+    </select>
+
+    
+    <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanDepositDetail" useGeneratedKeys="true" keyProperty="depositdetailid">
+    insert into t_tfs_depositdetail (accountcode, 
+      transorderid, tradetype, fee, 
+      amount, status,createtime)
+    values ( #{accountcode}, #{transorderid}, #{tradetype}, #{fee}, #{amount},
+    #{status},#{createtime})
+  </insert>
+   
+
+</mapper>

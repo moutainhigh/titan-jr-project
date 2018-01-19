@@ -7,6 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.corenut.dao.impl.GenericDAOMyBatisImpl;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.common.util.Tools;
@@ -17,6 +18,18 @@ import com.fangcang.titanjr.entity.parameter.TitanOrgSubParam;
 public class TitanOrgSubDaoImpl extends GenericDAOMyBatisImpl implements TitanOrgSubDao {
 	private final Logger LOG = LoggerFactory.getLogger(TitanOrgSubDaoImpl.class);
 	
+	
+	@Override
+	public PaginationSupport<TitanOrgSub> selectForPage(TitanOrgSubParam condition,
+			PaginationSupport<TitanOrgSub> paginationSupport) throws DaoException {
+		try {
+			paginationSupport = super.selectForPage("com.fangcang.titanjr.dao.TitanOrgSubDao.queryList", condition, paginationSupport);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+		return paginationSupport;
+	}
+
 	@Override
 	public int insert(TitanOrgSub entity) throws DaoException {
 		try {

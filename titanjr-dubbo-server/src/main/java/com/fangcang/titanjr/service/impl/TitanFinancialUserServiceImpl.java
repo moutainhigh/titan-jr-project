@@ -1228,7 +1228,7 @@ public class TitanFinancialUserServiceImpl implements TitanFinancialUserService 
 		try {
 			return titanUserBindInfoDao.queryAdminUserBindInfo(userInfoQueryRequest);
 		} catch (Exception e) {
-			log.error("查询管理员的用户绑定信息异常：", e);
+			log.error("查询管理员的用户绑定信息异常,参数："+Tools.gsonToString(userInfoQueryRequest), e);
 			return null;
 		}
 	}

@@ -300,7 +300,6 @@ $(".J_exitKan").on('click', function() {
 
 //设置交易密码
 $('.J_password').on('click',function(){
-	 debugger;
 	//验证是否有交易密码
 	 var validate = validate_isBlank();
 	 if(validate==false){

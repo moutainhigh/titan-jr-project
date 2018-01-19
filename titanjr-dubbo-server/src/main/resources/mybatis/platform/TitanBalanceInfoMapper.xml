@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fangcang.titanjr.dao.TitanBalanceInfoDao">
+    <select id="queryList" resultType="com.fangcang.titanjr.entity.TitanBalanceInfo"
+            parameterType="com.fangcang.titanjr.entity.parameter.TitanBalanceInfoParam">
+        select
+        *
+        from t_tfs_balanceinfo
+        <where>
+            <if test="accountid != null">accountid = #{accountid}</if>
+            <if test="userid != null"> and userid =#{userid}</if>
+            <if test="productid != null"> and productid =#{productid}</if>
+          </where>
+    </select>
+
+    
+    <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanBalanceInfo" useGeneratedKeys="true" keyProperty="accountid">
+    insert into t_tfs_balanceinfo ( userid, 
+      productid, accountcode, accountname, 
+      currency, creditamount,settleamount,frozonamount,
+      overlimit,usablelimit,totalamount,status,creator,createtime)
+    values ( #{userid}, #{productid}, #{accountcode}, #{accountname}, #{currency},
+    #{creditamount},#{settleamount},#{frozonamount},#{overlimit},#{usablelimit},
+    #{totalamount},#{status},#{creator},#{createtime})
+  </insert>
+    <update id="updateEntity" parameterType="com.fangcang.titanjr.entity.TitanBalanceInfo">
+        update t_tfs_balanceinfo
+        <set>
+            <if test="creditamount != null">
+                creditamount = #{creditamount},
+            </if>
+            <if test="settleamount != null">
+                settleamount = #{settleamount},
+            </if>
+            <if test="frozonamount != null">
+                frozonamount = #{frozonamount},
+            </if>
+            <if test="overlimit != null">
+                overlimit = #{overlimit},
+            </if>
+            
+            <if test="usablelimit != null">
+                usablelimit = #{usablelimit},
+            </if>
+            <if test="totalamount != null">
+                totalamount = #{totalamount},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where accountcode = #{accountcode}
+    </update>
+
+</mapper>

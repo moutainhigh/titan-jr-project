@@ -1,5 +1,6 @@
 package com.fangcang.titanjr.dao;
 
+import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
 import com.fangcang.titanjr.entity.TitanOrgSub;
 import com.fangcang.titanjr.entity.parameter.TitanOrgSubParam;
@@ -11,6 +12,7 @@ import com.fangcang.titanjr.entity.parameter.TitanOrgSubParam;
  *
  */
 public interface TitanOrgSubDao {
+	PaginationSupport<TitanOrgSub> selectForPage(TitanOrgSubParam condition, PaginationSupport<TitanOrgSub> paginationSupport) throws DaoException;
 	
 	int insert(TitanOrgSub entity) throws DaoException;
 	

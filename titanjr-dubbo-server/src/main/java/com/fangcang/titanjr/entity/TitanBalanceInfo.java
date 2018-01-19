@@ -3,33 +3,48 @@ package com.fangcang.titanjr.entity;
 
 import java.util.Date;
 
-/**
- * AbstractAccount entity provides the base persistence definition of the
- * Account entity. @author MyEclipse Persistence Tools
- */
 
-public class TitanAccount implements java.io.Serializable {
-
-	// Fields
+public class TitanBalanceInfo implements java.io.Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3270421907480612181L;
 	private Integer accountid;
-	private String finaccountid;
 	private String userid;
+	private String productid;
 	private String accountcode;
 	private String accountname;
+	/**
+	 * 币种：1-人民币
+	 */
 	private Integer currency;
-	private Integer allownopwdpay;
-	private Double nopwdpaylimit;
-	private Double creditamount ;
-	private Double settleamount;
-	private Double forzenamount;
-	private Double balanceoverlimit ; 
-	private Double usableamount;
-	private Double totalamount;
+	/**
+	 * 期初贷记余额
+	 */
+	private Long creditamount ;
+	/**
+	 * 提现余额
+	 */
+	private Long settleamount;
+	/**
+	 * 冻结余额
+	 */
+	private Long frozonamount;
+	
+	
+	/**
+	 * 可信用消费余额
+	 */
+	private Long overlimit ; 
+	/**
+	 * 可用余额
+	 */
+	private Long usablelimit;
+	/**
+	 * 账户余额
+	 */
+	private Long totalamount;
 	
 	/**
 	 * 账户状态1.正常，2.冻结中
@@ -39,23 +54,25 @@ public class TitanAccount implements java.io.Serializable {
 	private Date createtime;
 	private String modifier;
 	private Date modifytime;
+	
+	
 	public Integer getAccountid() {
 		return accountid;
 	}
 	public void setAccountid(Integer accountid) {
 		this.accountid = accountid;
 	}
-	public String getFinaccountid() {
-		return finaccountid;
-	}
-	public void setFinaccountid(String finaccountid) {
-		this.finaccountid = finaccountid;
-	}
 	public String getUserid() {
 		return userid;
 	}
 	public void setUserid(String userid) {
 		this.userid = userid;
+	}
+	public String getProductid() {
+		return productid;
+	}
+	public void setProductid(String productid) {
+		this.productid = productid;
 	}
 	public String getAccountcode() {
 		return accountcode;
@@ -75,52 +92,41 @@ public class TitanAccount implements java.io.Serializable {
 	public void setCurrency(Integer currency) {
 		this.currency = currency;
 	}
-	public Integer getAllownopwdpay() {
-		return allownopwdpay;
-	}
-	public void setAllownopwdpay(Integer allownopwdpay) {
-		this.allownopwdpay = allownopwdpay;
-	}
-	public Double getNopwdpaylimit() {
-		return nopwdpaylimit;
-	}
-	public void setNopwdpaylimit(Double nopwdpaylimit) {
-		this.nopwdpaylimit = nopwdpaylimit;
-	}
-	public Double getCreditamount() {
+	
+	public Long getCreditamount() {
 		return creditamount;
 	}
-	public void setCreditamount(Double creditamount) {
+	public void setCreditamount(Long creditamount) {
 		this.creditamount = creditamount;
 	}
-	public Double getSettleamount() {
+	public Long getSettleamount() {
 		return settleamount;
 	}
-	public void setSettleamount(Double settleamount) {
+	public void setSettleamount(Long settleamount) {
 		this.settleamount = settleamount;
 	}
-	public Double getForzenamount() {
-		return forzenamount;
+	public Long getFrozonamount() {
+		return frozonamount;
 	}
-	public void setForzenamount(Double forzenamount) {
-		this.forzenamount = forzenamount;
+	public void setFrozonamount(Long frozonamount) {
+		this.frozonamount = frozonamount;
 	}
-	public Double getBalanceoverlimit() {
-		return balanceoverlimit;
+	public Long getOverlimit() {
+		return overlimit;
 	}
-	public void setBalanceoverlimit(Double balanceoverlimit) {
-		this.balanceoverlimit = balanceoverlimit;
+	public void setOverlimit(Long overlimit) {
+		this.overlimit = overlimit;
 	}
-	public Double getUsableamount() {
-		return usableamount;
+	public Long getUsablelimit() {
+		return usablelimit;
 	}
-	public void setUsableamount(Double usableamount) {
-		this.usableamount = usableamount;
+	public void setUsablelimit(Long usablelimit) {
+		this.usablelimit = usablelimit;
 	}
-	public Double getTotalamount() {
+	public Long getTotalamount() {
 		return totalamount;
 	}
-	public void setTotalamount(Double totalamount) {
+	public void setTotalamount(Long totalamount) {
 		this.totalamount = totalamount;
 	}
 	public Integer getStatus() {
