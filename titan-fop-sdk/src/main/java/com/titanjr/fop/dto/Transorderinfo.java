@@ -19,6 +19,10 @@ public class Transorderinfo implements Serializable {
     private String transsumid;
     private String orderstatus;
     private String merchantcode;
+    //根据官方新增字段
+    private String intermerchantcode;
+    //根据官方新增字段
+    private String userid;
 
     public String getAmount() {
         return amount;
@@ -114,5 +118,21 @@ public class Transorderinfo implements Serializable {
 
     public void setMerchantcode(String merchantcode) {
         this.merchantcode = merchantcode;
+    }
+
+    public String getIntermerchantcode() {
+        return intermerchantcode;
+    }
+
+    public void setIntermerchantcode(String intermerchantcode) {
+        this.intermerchantcode = intermerchantcode;
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
     }
 }

@@ -1,30 +1,38 @@
 package com.titanjr.fop.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fangcang.exception.ServiceException;
+import com.fangcang.titanjr.common.enums.ReqstatusEnum;
+import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.dto.bean.RefundDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
+import com.fangcang.titanjr.entity.parameter.TitanAccountDetailParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
 import com.fangcang.titanjr.service.TitanOrderService;
+import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
+import com.titanjr.fop.constants.FuncCodeEnum;
+import com.titanjr.fop.constants.OrderNStatusEnum;
 import com.titanjr.fop.dao.TitanOrderDao;
+import com.titanjr.fop.dto.TitanAccountDetailDTO;
 import com.titanjr.fop.dto.Transorderinfo;
 import com.titanjr.fop.request.WheatfieldOrderOperRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
 import com.titanjr.fop.request.WheatfieldOrdernQueryRequest;
 import com.titanjr.fop.service.OrderOperService;
+import com.titanjr.fop.util.WebUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by zhaoshan on 2018/1/3.
@@ -39,6 +47,9 @@ public class OrderOperServiceImpl implements OrderOperService {
 
     @Resource
     TitanOrderDao titanOrderDao;
+
+    @Resource
+    TitanSysconfigService sysconfigService;
 
     @Override
     public String operateOrder(WheatfieldOrderOperRequest orderOperRequest) throws ServiceException {
@@ -135,7 +146,7 @@ public class OrderOperServiceImpl implements OrderOperService {
             logger.error("需退款的交易单状态不正确，单号:{}", returngoodsRequest.getOrderid());
             return null;
         }
-        if (!returngoodsRequest.getAmount().equals(String.valueOf(transOrderDTOs.get(0).getTradeamount()))){
+        if (!returngoodsRequest.getAmount().equals(String.valueOf(transOrderDTOs.get(0).getTradeamount()))) {
             logger.error("退款金额和原单金额不一致，单号:{}", returngoodsRequest.getOrderid());
             return null;
         }
@@ -162,44 +173,111 @@ public class OrderOperServiceImpl implements OrderOperService {
         //针对充值去上游查询交易单状态
         //针对转账，查询本地转账记录和记账记录
         //针对提现，查询上游代付状态
-        if (!StringUtil.isValidString(ordernQueryRequest.getFunccode())){
+        if (!StringUtil.isValidString(ordernQueryRequest.getFunccode())) {
 
         }
 
         return null;
     }
 
-    private List<Transorderinfo> queryRechargeInfo(WheatfieldOrdernQueryRequest ordernQueryRequest){
+    private List<Transorderinfo> queryRechargeInfo(WheatfieldOrdernQueryRequest ordernQueryRequest) {
         List<Transorderinfo> orderInfoList = new ArrayList<Transorderinfo>();
         TitanOrderPayreqParam requestParam = new TitanOrderPayreqParam();
         //merchantcode,funccode这两个暂不处理，status从查出的结果中筛选
         if (null != ordernQueryRequest.getStarttime()) {
-            requestParam.setStartTime(DateUtil.dateToString(ordernQueryRequest.getStarttime(),"yyyy-MM-dd HH:mm:ss"));
+            requestParam.setStartTime(DateUtil.dateToString(ordernQueryRequest.getStarttime(), "yyyy-MM-dd HH:mm:ss"));
         }
-        if (null != ordernQueryRequest.getEndtime()){
-            requestParam.setEndTime(DateUtil.dateToString(ordernQueryRequest.getEndtime(),"yyyy-MM-dd HH:mm:ss"));
+        if (null != ordernQueryRequest.getEndtime()) {
+            requestParam.setEndTime(DateUtil.dateToString(ordernQueryRequest.getEndtime(), "yyyy-MM-dd HH:mm:ss"));
         }
-        if (StringUtil.isValidString(ordernQueryRequest.getOrderno())){
+        if (StringUtil.isValidString(ordernQueryRequest.getOrderno())) {
             requestParam.setOrderNo(ordernQueryRequest.getOrderno());
         }
-        if (null != ordernQueryRequest.getAmount()){
+        if (null != ordernQueryRequest.getAmount()) {
             requestParam.setOrderAmount((double) ordernQueryRequest.getAmount().longValue());
         }
         //充值不需要设置此字段
-        if (StringUtil.isValidString(ordernQueryRequest.getIntermerchantcode())){
-
+        if (StringUtil.isValidString(ordernQueryRequest.getIntermerchantcode())) {
         }
-        if (StringUtil.isValidString(ordernQueryRequest.getUserid())){
+        if (StringUtil.isValidString(ordernQueryRequest.getUserid())) {
             requestParam.setMerchantNo(ordernQueryRequest.getUserid());
         }
 
         List<TitanOrderPayreq> orderPayreqList = titanOrderService.queryOrderPayRequestList(requestParam);
 
+        //获取网关地址
+        //local.fangcang.com:8090/checkstand/payment.shtml
+        String paymentURL = "http://local.fangcang.com:8090/checkstand/payment.shtml";
+        for (TitanOrderPayreq payreq : orderPayreqList) {
+            Transorderinfo transorderinfo = new Transorderinfo();
+            Map<String, String> paramMap = new HashMap();
+            paramMap.put("busiCode", "102");
+            paramMap.put("signType", "1");
+            paramMap.put("version", payreq.getVersion());
+            paramMap.put("merchantNo", payreq.getMerchantNo());
+            paramMap.put("orderNo", payreq.getOrderNo());
+            paramMap.put("orderTime", payreq.getOrderTime());
+            paramMap.put("signMsg", getPayQuerySign(paramMap));
+            try {
+                //查询网关真实状态
+                String rechargeResult = WebUtils.doPost(paymentURL, paramMap, 60000, 60000);
+                Map resultMap = (Map) JSONObject.parse(rechargeResult);
+                //本地成功但是上游网关出不来结果,需报错通知
+                if (resultMap.isEmpty() && payreq.getReqstatus().equals(ReqstatusEnum.RECHARFE_SUCCESS.getStatus())) {
+                    logger.error("金融上游交易状态冲突，单号：{}", payreq.getOrderNo());
+                    continue;
+                }
+                //查询本地记账状态
+                TitanAccountDetailParam param = new TitanAccountDetailParam();
+                param.setTransOrderId(Long.valueOf(payreq.getTransorderid()));
+                List<TitanAccountDetailDTO> detailDTOList = titanOrderDao.selectAccountDetail(param);
 
+                //原则上有且只有一条记账记录，需报错通知
+                if (CollectionUtils.isEmpty(detailDTOList) || detailDTOList.size() != 1) {
+                    logger.error("本地记账记录不存在，单号：{}", payreq.getOrderNo());
+                    continue;
+                }
+                //金额不一致，需报错通知
+                if (String.valueOf(detailDTOList.get(0).getSettleAmount()).equals(payreq.getOrderAmount())) {
+                    logger.error("记账记录校验失败，单号：{}", payreq.getOrderNo());
+                    continue;
+                }
 
-        return  orderInfoList;
+                if ("3".equals(resultMap.get("payStatsu"))) {
+                    transorderinfo.setOrderno(payreq.getOrderNo());//单号
+                    transorderinfo.setOrderstatus(OrderNStatusEnum.NORMAL_1.getKey());//正常
+                    transorderinfo.setAmount(resultMap.get("payAmount").toString());//金额
+                    transorderinfo.setFunccode(FuncCodeEnum.RECHARGE_4015.getKey());//充值
+                    transorderinfo.setRequestno("");//请求号不存在,无法设置
+                    transorderinfo.setOrderpackageno("");//设置userOrderNo，需关联查询
+                    transorderinfo.setCreatedtime(resultMap.get("orderPayTime").toString());//设置支付时间
+                    transorderinfo.setUpdatedtime(resultMap.get("orderPayTime").toString());//设置支付时间
+                    transorderinfo.setErrorcode("");//不设置
+                    transorderinfo.setErrormsg("");//不设置
+                    transorderinfo.setMerchantcode("M1000016");
+                    transorderinfo.setTranssumid("");//不设置
+                    transorderinfo.setIntermerchantcode("order");//交易对方不设置
+                    transorderinfo.setUserid(payreq.getMerchantNo());
+                    orderInfoList.add(transorderinfo);
+                }
+            } catch (IOException e) {
+                logger.error("当前订单获取最新状态失败", e);
+            }
+
+        }
+        return orderInfoList;
     }
 
-
+    //获取支付查询的签名
+    private String getPayQuerySign(Map paramMap) {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("signType=").append(paramMap.get("signType"));
+        stringBuffer.append("&version=").append(paramMap.get("version"));
+        stringBuffer.append("&merchantNo=").append(paramMap.get("merchantNo"));
+        stringBuffer.append("&orderNo=").append(paramMap.get("orderNo"));
+        stringBuffer.append("&orderTime=").append(paramMap.get("orderTime"));
+        stringBuffer.append("&key=").append("PCDEFOI8808TFC");
+        return MD5.MD5Encode(stringBuffer.toString(), "UTF-8");
+    }
 
 }

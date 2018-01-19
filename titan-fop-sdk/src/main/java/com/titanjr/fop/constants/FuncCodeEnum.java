@@ -19,4 +19,12 @@ public enum FuncCodeEnum {
         this.key = key;
         this.desc = desc;
     }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
 }
