@@ -30,6 +30,10 @@ public class TitanTransferDTO implements Serializable {
     private Date createtime;
     private String payOrderNo;
     
+    //查询开始时间
+    private Date startTime;
+    //查询结束时间
+    private Date endTime;
 
     public Integer getTransferreqid() {
         return transferreqid;
@@ -190,5 +194,20 @@ public class TitanTransferDTO implements Serializable {
 	public void setPayOrderNo(String payOrderNo) {
 		this.payOrderNo = payOrderNo;
 	}
-    
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
 }

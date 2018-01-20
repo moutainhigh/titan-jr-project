@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import com.fangcang.exception.DaoException;
 import com.fangcang.exception.ServiceException;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -173,6 +174,35 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 	}
 
 	@Override
+	public List<TitanWithDrawDTO> queryWithDrawDTOList(TitanWithDrawReqParam withDrawReqParam) {
+		List<TitanWithDrawDTO> withDrawResult = new ArrayList<TitanWithDrawDTO>();
+		if (withDrawReqParam != null) {
+			log.error("查询参数错误，请核实");
+			return withDrawResult;
+		}
+
+		TitanWithDrawReqParam condition = new TitanWithDrawReqParam();
+		condition.setWithdrawreqid(withDrawReqParam.getWithdrawreqid());
+		condition.setTransorderid(withDrawReqParam.getTransorderid());
+		condition.setUserorderid(withDrawReqParam.getUserorderid());
+		List<TitanWithDrawReq> withDrawReqList = new ArrayList<TitanWithDrawReq>();
+		try {
+			withDrawReqList = titanWithDrawReqDao.queryList(condition);
+		} catch (Exception e) {
+			log.error("查询提现记录失败", e);
+		}
+
+		if (CollectionUtils.isNotEmpty(withDrawReqList)) {
+			TitanWithDrawDTO withDrawDTO = new TitanWithDrawDTO();
+			for (TitanWithDrawReq withDrawReq : withDrawReqList) {
+				MyBeanUtil.copyProperties(withDrawDTO, withDrawReq);
+				withDrawResult.add(withDrawDTO);
+			}
+		}
+		return withDrawResult;
+	}
+
+	@Override
 	public String getKeyByPayOrderNo(String payOrderNo) {
 		try{
 			TitanDynamicKey titanDynamicKey = new TitanDynamicKey();
@@ -227,32 +257,34 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 	}
 
 	@Override
-	public List<TitanTransferDTO> getTitanTransferDTOList(
-			TitanTransferDTO titanTransferDTO) {
-		try{
-			if(titanTransferDTO !=null){
-				TitanTransferReqParam condition = new TitanTransferReqParam();
-				condition.setUserrelateid(titanTransferDTO.getUserrelateid());
-				condition.setTransferreqid(titanTransferDTO.getTransferreqid());
-				condition.setTransorderid(titanTransferDTO.getTransorderid());
-				condition.setRequestno(titanTransferDTO.getRequestno());
-				condition.setPayorderno(titanTransferDTO.getPayOrderNo());
-				PaginationSupport<TitanTransferReq> paginationSupport = new PaginationSupport<TitanTransferReq>();
-				titanTransferReqDao.selectForPage(condition, paginationSupport);
-				List<TitanTransferDTO> titanTransferDTOList = new ArrayList<TitanTransferDTO>();
-				if(paginationSupport.getItemList() !=null && paginationSupport.getItemList().size()>0){
-					for(TitanTransferReq titanTransferReq :paginationSupport.getItemList() ){
-						TitanTransferDTO transferDTO = new TitanTransferDTO();
-						MyBeanUtil.copyProperties(transferDTO, titanTransferReq);
-						titanTransferDTOList.add(transferDTO);
-					}
-					return titanTransferDTOList;
-				}
-			}
-		}catch(Exception e){
-			log.error("查询转账记录失败"+e.getMessage(),e);
+	public List<TitanTransferDTO> getTitanTransferDTOList(TitanTransferDTO titanTransferDTO) {
+		List<TitanTransferDTO> titanTransferDTOList = new ArrayList<TitanTransferDTO>();
+		if (titanTransferDTO == null) {
+			log.error("请求参数为空");
+			return titanTransferDTOList;
 		}
-		return null;
+		TitanTransferReqParam condition = new TitanTransferReqParam();
+		condition.setUserrelateid(titanTransferDTO.getUserrelateid());
+		condition.setTransferreqid(titanTransferDTO.getTransferreqid());
+		condition.setTransorderid(titanTransferDTO.getTransorderid());
+		condition.setRequestno(titanTransferDTO.getRequestno());
+		condition.setPayorderno(titanTransferDTO.getPayOrderNo());
+		condition.setUserid(titanTransferDTO.getUserid());
+		List<TitanTransferReq> transferReqList = new ArrayList<TitanTransferReq>();
+		try {
+			transferReqList = titanTransferReqDao.queryTitanTransferReq(condition);
+		} catch (Exception e) {
+			log.error("查询转账记录失败", e);
+		}
+		if (CollectionUtils.isEmpty(transferReqList)) {
+			log.info("查询转账单无结果");
+		}
+		for (TitanTransferReq titanTransferReq : transferReqList) {
+			TitanTransferDTO transferDTO = new TitanTransferDTO();
+			MyBeanUtil.copyProperties(transferDTO, titanTransferReq);
+			titanTransferDTOList.add(transferDTO);
+		}
+		return titanTransferDTOList;
 	}
 	
 
