@@ -16,6 +16,7 @@ import com.fangcang.titanjr.entity.TitanOrderException;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.parameter.TitanOrderExceptionParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
+import com.fangcang.titanjr.entity.parameter.TitanWithDrawReqParam;
 
 public interface TitanOrderService {
 
@@ -88,7 +89,13 @@ public interface TitanOrderService {
 	 * @return
 	 */
 	public TitanWithDrawDTO getTitanWithDrawDTO(TitanWithDrawDTO titanWithDrawDTO);
-	
+
+	/**
+	 * 查询提现记录列表
+	 * @param titanWithDrawDTO
+	 * @return
+	 */
+	public List<TitanWithDrawDTO> queryWithDrawDTOList(TitanWithDrawReqParam withDrawReqParam);
 	/**
 	 * 查询加密的私钥
 	 * @param payOrderNo

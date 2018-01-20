@@ -1,6 +1,5 @@
 package com.titanjr.fop.api;
 
-import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.util.StringUtil;
 import com.titanjr.fop.constants.CommonConstants;
 import com.titanjr.fop.constants.InterfaceConfigEnum;
@@ -13,15 +12,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 开放平台请求入口
@@ -35,7 +30,7 @@ public class FopController extends BaseController {
 
     private final static Logger logger = LoggerFactory.getLogger(FopController.class);
 
-    @RequestMapping(value = "/fetchServiceUrl", method = RequestMethod.POST)
+    @RequestMapping(value = "/fetchServiceUrl", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public String fetchServiceUrl(HttpServletRequest request) throws Exception {
         String resultURL = "";
@@ -49,6 +44,7 @@ public class FopController extends BaseController {
         if (StringUtil.isValidString(CommonConstants.actualUrl) &&
                 WebUtils.isValidUrl(CommonConstants.actualUrl)) {
             resultURL = CommonConstants.actualUrl;
+            resultURL = "http://local.fangcang.com/titan-fop-server/fopapi.shtml";
         } else {
             logger.error("配置的URL为空或不合法");
         }

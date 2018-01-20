@@ -1,15 +1,20 @@
 package com.titanjr.fop.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fangcang.exception.ServiceException;
 import com.fangcang.titanjr.common.enums.ReqstatusEnum;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.dto.bean.RefundDTO;
+import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
+import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.NotifyRefundRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.parameter.TitanAccountDetailParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
+import com.fangcang.titanjr.entity.parameter.TitanWithDrawReqParam;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.DateUtil;
@@ -36,6 +41,8 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
+
+import static com.fangcang.titanjr.common.enums.WithDrawStatusEnum.WithDraw_SUCCESSED;
 
 /**
  * Created by zhaoshan on 2018/1/3.
@@ -192,7 +199,7 @@ public class OrderOperServiceImpl implements OrderOperService {
             transorderinfoList.addAll(queryTransferInfo(ordernQueryRequest));
             transorderinfoList.addAll(queryWithDrawInfo(ordernQueryRequest));
         }
-        
+
         Collections.sort(transorderinfoList, new TransorderinfoComparator());
         return transorderinfoList;
     }
@@ -287,12 +294,153 @@ public class OrderOperServiceImpl implements OrderOperService {
 
     //针对转账，查询本地转账记录和记账记录
     private Collection<? extends Transorderinfo> queryTransferInfo(WheatfieldOrdernQueryRequest ordernQueryRequest) {
-        return null;
+        List<Transorderinfo> orderInfoList = new ArrayList<Transorderinfo>();
+        TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
+        //merchantcode,funccode这两个暂不处理，status从查出的结果中筛选
+        if (null != ordernQueryRequest.getStarttime()) {
+            titanTransferDTO.setStartTime(ordernQueryRequest.getStarttime());
+        }
+        if (null != ordernQueryRequest.getEndtime()) {
+            titanTransferDTO.setEndTime(ordernQueryRequest.getEndtime());
+        }
+        //原融数接口中不接受此参数，我们将此参数作为请求号设置进去
+        if (StringUtil.isValidString(ordernQueryRequest.getOrderno())) {
+            titanTransferDTO.setRequestno(ordernQueryRequest.getOrderno());
+        }
+        if (null != ordernQueryRequest.getAmount()) {
+            titanTransferDTO.setAmount((double) ordernQueryRequest.getAmount().longValue());
+        }
+        //转账的收款方
+        if (StringUtil.isValidString(ordernQueryRequest.getIntermerchantcode())) {
+            titanTransferDTO.setUserrelateid(ordernQueryRequest.getIntermerchantcode());
+        }
+        if (StringUtil.isValidString(ordernQueryRequest.getUserid())) {
+            titanTransferDTO.setUserid(ordernQueryRequest.getUserid());
+        }
+        List<TitanTransferDTO> transferDTOList = titanOrderService.getTitanTransferDTOList(titanTransferDTO);
+        for (TitanTransferDTO transferDTO : transferDTOList) {
+
+            //查询本地记账状态
+            TitanAccountDetailParam param = new TitanAccountDetailParam();
+            param.setTransOrderId(Long.valueOf(transferDTO.getTransorderid()));
+            List<TitanAccountDetailDTO> detailDTOList = titanOrderDao.selectAccountDetail(param);
+
+            //原则上有且只有一条记账记录，需报错通知
+            if (CollectionUtils.isEmpty(detailDTOList) || detailDTOList.size() != 2) {
+                logger.error("本地记账记录不存在，单号：{}", transferDTO.getRequestno());
+                continue;
+            }
+            //金额不一致，需报错通知
+            if (Double.valueOf(detailDTOList.get(0).getSettleAmount()).equals(transferDTO.getAmount())) {
+                logger.error("记账记录校验失败，单号：{}", transferDTO.getRequestno());
+                continue;
+            }
+
+            Transorderinfo transorderinfo = new Transorderinfo();
+            transorderinfo.setOrderno("");//单号,OP开头没法设置
+            transorderinfo.setOrderstatus(OrderNStatusEnum.NORMAL_1.getKey());//正常
+            transorderinfo.setAmount(String.valueOf(transferDTO.getAmount()));//金额
+            transorderinfo.setFunccode(FuncCodeEnum.TRANSFER_3001.getKey());//转账
+            transorderinfo.setRequestno("");//请求号不存在,无法设置
+            transorderinfo.setOrderpackageno("");//设置userOrderNo，需关联查询
+            transorderinfo.setCreatedtime(DateUtil.dateToString(transferDTO.getCreatetime(),"yyyy-MM-dd HH:mm:ss"));//设置创建时间
+            transorderinfo.setUpdatedtime(DateUtil.dateToString(transferDTO.getCreatetime(),"yyyy-MM-dd HH:mm:ss"));//设置创建时间
+            transorderinfo.setErrorcode("");//不设置
+            transorderinfo.setErrormsg("");//不设置
+            transorderinfo.setMerchantcode("M1000016");
+            transorderinfo.setTranssumid("");//不设置
+            transorderinfo.setIntermerchantcode(transferDTO.getUserrelateid());//交易对方不设置
+            transorderinfo.setUserid(transferDTO.getUserid());
+            orderInfoList.add(transorderinfo);
+        }
+        return orderInfoList;
     }
 
     //针对提现，查询上游代付状态,验证本地提现单状态
     private Collection<? extends Transorderinfo> queryWithDrawInfo(WheatfieldOrdernQueryRequest ordernQueryRequest) {
-        return null;
+        List<Transorderinfo> orderInfoList = new ArrayList<Transorderinfo>();
+        TitanWithDrawReqParam withDrawReqParam = new TitanWithDrawReqParam();
+        //merchantcode,funccode这两个暂不处理，status从查出的结果中筛选
+        if (null != ordernQueryRequest.getStarttime()) {
+            withDrawReqParam.setStartTime(ordernQueryRequest.getStarttime());
+        }
+        if (null != ordernQueryRequest.getEndtime()) {
+            withDrawReqParam.setEndTime(ordernQueryRequest.getEndtime());
+        }
+        //原提现单是上游生成的OP开头的单，我们这边不传
+        if (StringUtil.isValidString(ordernQueryRequest.getOrderno())) {
+
+        }
+        if (null != ordernQueryRequest.getAmount()) {
+            withDrawReqParam.setAmount(ordernQueryRequest.getAmount().longValue());
+        }
+        //提现不需要设置此字段
+        if (StringUtil.isValidString(ordernQueryRequest.getIntermerchantcode())) {
+
+        }
+        if (StringUtil.isValidString(ordernQueryRequest.getUserid())) {
+            withDrawReqParam.setUserid(ordernQueryRequest.getUserid());
+        }
+        List<TitanWithDrawDTO> withDrawDTOList = titanOrderService.queryWithDrawDTOList(withDrawReqParam);
+        String paymentURL = "http://local.fangcang.com:8090/checkstand/payment.shtml";
+        for (TitanWithDrawDTO withDrawDTO : withDrawDTOList){
+            Transorderinfo transorderinfo = new Transorderinfo();
+            Map<String, String> paramMap = new HashMap();
+            paramMap.put("merchantNo", "M1000016");
+            paramMap.put("orderNo", withDrawDTO.getUserorderid());//TODO 需要根据提现查出代付交易
+            paramMap.put("tradeCode", "1");
+            paramMap.put("tradeStatus", "2");
+            paramMap.put("queryType", "1");
+            paramMap.put("startDate", null);
+            paramMap.put("endDate", null);
+            try {
+                //查询网关真实提现状态
+                String withDrawResult = WebUtils.doPost(paymentURL, paramMap, 60000, 60000);
+                Map resultMap = (Map) JSONObject.parse(withDrawResult);
+                if (null == resultMap.get("details")){
+                    logger.error("网关返回结果异常");
+                    continue;
+                }
+                if (CollectionUtils.isEmpty((JSONArray)resultMap.get("details"))){
+                    logger.error("查询到的详情为空");
+                    continue;
+                }
+                JSONObject resDetailDTO = (JSONObject)((JSONArray)resultMap.get("details")).get(0);
+                if (null == resDetailDTO || !StringUtil.isValidString(resDetailDTO.get("tradeStatus").toString())){
+                    logger.error("交易状态不正确");
+                    continue;
+                }
+
+                if ("3".equals(resDetailDTO.get("tradeStatus"))){
+                    transorderinfo.setOrderstatus(OrderNStatusEnum.PAY_SUCC_4.getKey());//成功
+                }
+                if ("2".equals(resDetailDTO.get("tradeStatus"))){
+                    transorderinfo.setOrderstatus(OrderNStatusEnum.PAY_FAIL_5.getKey());//失败
+                    //针对失败，起任务平账，平账后状态变成CORRECT_6，交易已冲正；
+
+                }
+                if ("1".equals(resDetailDTO.get("tradeStatus"))){
+                    transorderinfo.setOrderstatus(OrderNStatusEnum.SENDING_7.getKey());//处理中
+                }
+                transorderinfo.setOrderno("");//单号,OP开头没法设置
+                transorderinfo.setAmount(resultMap.get("payAmount").toString());//金额
+                transorderinfo.setFunccode(FuncCodeEnum.WITHDRAW_4016.getKey());//提现
+                transorderinfo.setRequestno("");//请求号不存在,无法设置
+                transorderinfo.setOrderpackageno("");//设置userOrderNo，需关联查询
+                transorderinfo.setCreatedtime(resultMap.get("orderPayTime").toString());//设置支付时间
+                transorderinfo.setUpdatedtime(resultMap.get("orderPayTime").toString());//设置支付时间
+                transorderinfo.setErrorcode("");//不设置
+                transorderinfo.setErrormsg("");//不设置
+                transorderinfo.setMerchantcode("M1000016");
+                transorderinfo.setTranssumid("");//不设置
+                transorderinfo.setIntermerchantcode("");//不返回
+                transorderinfo.setUserid(withDrawDTO.getUserid());
+                orderInfoList.add(transorderinfo);
+            } catch (IOException e) {
+                logger.error("当前订单获取最新状态失败", e);
+            }
+        }
+        return orderInfoList;
     }
 
     //获取支付查询的签名
@@ -304,6 +452,19 @@ public class OrderOperServiceImpl implements OrderOperService {
         stringBuffer.append("&orderNo=").append(paramMap.get("orderNo"));
         stringBuffer.append("&orderTime=").append(paramMap.get("orderTime"));
         stringBuffer.append("&key=").append("PCDEFOI8808TFC");
+        return MD5.MD5Encode(stringBuffer.toString(), "UTF-8");
+    }
+
+    private static String getRefundQuerySign(Map paramMap) {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("signType=").append(paramMap.get("signType"));
+        stringBuffer.append("&version=").append(paramMap.get("version"));
+        stringBuffer.append("&merchantNo=").append(paramMap.get("merchantNo"));
+        stringBuffer.append("&refundOrderno=").append(paramMap.get("refundOrderno"));
+        stringBuffer.append("&orderNo=").append(paramMap.get("orderNo"));
+        stringBuffer.append("&orderTime=").append(paramMap.get("orderTime"));
+        stringBuffer.append("&refundAmount=").append(paramMap.get("refundAmount"));
+        stringBuffer.append("&key=PCDEFOI8808TFC");
         return MD5.MD5Encode(stringBuffer.toString(), "UTF-8");
     }
 
@@ -322,6 +483,14 @@ public class OrderOperServiceImpl implements OrderOperService {
             }
         }
 
+    }
+
+    public static void main(String[] args) {
+        String jsonResp = "{\"details\":[{\"accountName\":\"AC545\",\"orderNo\":\"132456\"}]," +
+                "\"orderNo\":\"OP002458700\",\"retCode\":\"001\",\"signMsg\":\"signMsg\"," +
+                "\"tradeCode\":\"CT1548782\"}";
+        Map resultMap = (Map) JSONObject.parse(jsonResp);
+        System.out.println(resultMap);
     }
 
 

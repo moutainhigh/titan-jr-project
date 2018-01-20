@@ -21,6 +21,9 @@
       <if test="payorderno !=null">
         and payorderno= #{payorderno}
       </if>
+      <if test="payorderno !=null">
+        and payorderno= #{payorderno}
+      </if>
       order by createtime desc
     </where>
   </select>
