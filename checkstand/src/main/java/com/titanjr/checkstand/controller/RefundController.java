@@ -149,7 +149,7 @@ public class RefundController extends BaseController {
     	try {
         	
     		TitanRefundDTO refundDTO = WebUtils.switch2RequestDTO(TitanRefundDTO.class, request);
-            tlQrOrderRefundRequest.setCusid(SysConstant.QRCODE_CUSTID);
+            tlQrOrderRefundRequest.setCusid(SysConstant.TL_QRCODE_CUSTID);
             tlQrOrderRefundRequest.setVersion(SysConstant.TL_QRCODE_VERSION);
             tlQrOrderRefundRequest.setReqsn(refundDTO.getRefundOrderno());
             tlQrOrderRefundRequest.setOldreqsn(refundDTO.getOrderNo());

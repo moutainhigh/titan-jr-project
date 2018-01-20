@@ -6,7 +6,6 @@ import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
 import com.fangcang.titanjr.entity.TitanFundUnFreezereq;
 import com.fangcang.titanjr.entity.parameter.TitanUnFundFreezereqParam;
 import com.fangcang.titanjr.service.TitanOrderService;
-import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.dao.TitanAccountDao;
 import com.titanjr.fop.dto.BalanceQueryDTO;
 import com.titanjr.fop.dto.SHBalanceInfo;
@@ -16,11 +15,12 @@ import com.titanjr.fop.request.WheatfieldOrderServiceThawauthcodeRequest;
 import com.titanjr.fop.response.WheatfieldOrderServiceThawauthcodeResponse;
 import com.titanjr.fop.service.AccountService;
 import com.titanjr.fop.util.ResponseUtils;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Created by zhaoshan on 2017/12/22.
  */
-@Component
+@Service("accountService")
 public class AccountServiceImpl implements AccountService {
 
     private final static Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);

@@ -120,7 +120,7 @@ public class BaseController implements Serializable {
      * @param request
      * @param attr
      */
-    public void resetParameter(HttpServletRequest request,RedirectAttributes attr){
+    public void resetParameter(HttpServletRequest request, RedirectAttributes attr){
         for (String key : request.getParameterMap().keySet()){
 			try {
 				attr.addAttribute(key, URLEncoder.encode(request.getParameterMap().get(key)[0],"UTF-8"));

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿﻿<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
@@ -30,9 +30,11 @@
     <dubbo:consumer check="false"/>
 
     <!-- retries:重试次数 -->
-    <dubbo:reference id="TitanFinancialAccountService" interface="com.fangcang.titanjr.service.TitanFinancialAccountService"
+    <dubbo:reference id="titanFinancialAccountService" interface="com.fangcang.titanjr.service.TitanFinancialAccountService"
                      retries="0" timeout="800000"/>
-    <dubbo:reference id="TitanOrderService" interface="com.fangcang.titanjr.service.TitanOrderService"
+    <dubbo:reference id="titanOrderService" interface="com.fangcang.titanjr.service.TitanOrderService"
                      retries="0" timeout="800000"/>
 
+    <dubbo:reference id="titanSysconfigService" interface="com.fangcang.titanjr.service.TitanSysconfigService"
+                     retries="0" timeout="800000"/>
 </beans>

@@ -106,12 +106,12 @@ public class AgentTradeController extends BaseController {
 			agentInfo.setLEVEL("5");
 			agentInfo.setDATA_TYPE("2");
 			agentInfo.setVERSION("03");
-			agentInfo.setMERCHANT_ID(SysConstant.AGENT_MERCHANT);
+			agentInfo.setMERCHANT_ID(SysConstant.TL_AGENT_MERCHANT);
 			tlAgentTradeRequest.setINFO(agentInfo);
 			
 			TLAgentPayTransDTO trans= new TLAgentPayTransDTO();
 			trans.setBUSINESS_CODE(SysConstant.WITHDRAW_CODE);
-			trans.setMERCHANT_ID(SysConstant.AGENT_MERCHANT);
+			trans.setMERCHANT_ID(SysConstant.TL_AGENT_MERCHANT);
 			trans.setSUBMIT_TIME(agentPayDTO.getSubmitTime());
 			trans.setACCOUNT_NAME(agentPayDTO.getAccountName());
 			trans.setACCOUNT_NO(agentPayDTO.getAccountNo());
@@ -167,11 +167,11 @@ public class AgentTradeController extends BaseController {
 			agentInfo.setLEVEL("5");
 			agentInfo.setDATA_TYPE("2");
 			agentInfo.setVERSION("03");
-			agentInfo.setMERCHANT_ID(SysConstant.AGENT_MERCHANT);
+			agentInfo.setMERCHANT_ID(SysConstant.TL_AGENT_MERCHANT);
 			tlAgentTradeRequest.setINFO(agentInfo);
 			
 			TLAgentQueryTransDTO trans = new TLAgentQueryTransDTO();
-			trans.setMERCHANT_ID(SysConstant.AGENT_MERCHANT);
+			trans.setMERCHANT_ID(SysConstant.TL_AGENT_MERCHANT);
 			trans.setQUERY_SN(agentQueryDTO.getOrderNo());
 			trans.setSTATUS(Integer.parseInt(agentQueryDTO.getTradeStatus()));
 			trans.setTYPE(Integer.parseInt(agentQueryDTO.getQueryType()));
@@ -216,7 +216,7 @@ public class AgentTradeController extends BaseController {
 			
 			TLAgentInfoRequestDTO agentInfo  = new TLAgentInfoRequestDTO();
 			agentInfo.setTRX_CODE(titanAgentDownloadDTO.getTradeCode());
-			agentInfo.setREQ_SN(SysConstant.AGENT_MERCHANT+"-"+String.valueOf(System.currentTimeMillis()));
+			agentInfo.setREQ_SN(SysConstant.TL_AGENT_MERCHANT+"-"+String.valueOf(System.currentTimeMillis()));
 			agentInfo.setUSER_NAME(SysConstant.USER_NAME);
 			agentInfo.setUSER_PASS(SysConstant.USER_PWD);
 			agentInfo.setLEVEL("5");
@@ -226,7 +226,7 @@ public class AgentTradeController extends BaseController {
 			
 			TLAgentQueryTransDTO trans= new TLAgentQueryTransDTO();//对象共用
 			trans.setSTATUS(Integer.parseInt(titanAgentDownloadDTO.getTradeStatus()));
-			trans.setMERCHANT_ID(SysConstant.AGENT_MERCHANT);
+			trans.setMERCHANT_ID(SysConstant.TL_AGENT_MERCHANT);
 			trans.setTYPE(Integer.parseInt(titanAgentDownloadDTO.getQueryType())) ;
 			trans.setSTART_DAY(titanAgentDownloadDTO.getStartDate());
 			trans.setEND_DAY(titanAgentDownloadDTO.getEndDate());

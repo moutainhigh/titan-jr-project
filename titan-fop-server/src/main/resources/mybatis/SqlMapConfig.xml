@@ -48,6 +48,7 @@
         <mapper resource="mybatis/RequestSessionMapper.xml"/>
         <mapper resource="mybatis/FinancialAccountMapper.xml"/>
         <mapper resource="mybatis/FinancialOrderMapper.xml"/>
+		<mapper resource="mybatis/TitanSysconfigMapper.xml" />
     </mappers>
 
 </configuration>

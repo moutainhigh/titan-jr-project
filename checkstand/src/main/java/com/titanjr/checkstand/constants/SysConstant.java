@@ -75,11 +75,11 @@ public class SysConstant {
 	
 	//-------------------------------商户号、证书、用户名、密码-----------------------------------
 	//通联网银支付商户号
-	public static String NETBANK_MERCHANT = "100020091218001";
+	public static String TL_NETBANK_MERCHANT = "100020091218001";
 	//通联扫码支付商户号
-	public static String QRCODE_CUSTID = "990440153996000";//生产
-	//账户交易商户号
-	public static String AGENT_MERCHANT = "200604000000445";
+	public static String TL_QRCODE_CUSTID = "990440153996000";//生产
+	//通联账户交易商户号
+	public static String TL_AGENT_MERCHANT = "200604000000445";
 	//融宝快捷支付商户号
 	public static String RB_QUICKPAY_MERCHANT = "100000000000147";
 	

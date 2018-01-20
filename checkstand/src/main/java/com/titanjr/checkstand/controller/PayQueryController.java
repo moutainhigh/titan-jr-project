@@ -65,8 +65,8 @@ public class PayQueryController extends BaseController {
 	
 	
 	@RequestMapping(value = "/entrance", method = {RequestMethod.GET, RequestMethod.POST})
-    public String entrance(HttpServletRequest request, RedirectAttributes attr, Model model) throws Exception {
-        
+    public String entrance(HttpServletRequest request, RedirectAttributes attr, Model model) {
+		
 		String errorUrl = WebUtils.getRequestBaseUrl(request) + "/query/returnError.shtml";
 		TitanPayQueryDTO payQueryDTO = WebUtils.switch2RequestDTO(TitanPayQueryDTO.class, request);
 		ValidateResponse res = GenericValidate.validateNew(payQueryDTO);
@@ -120,7 +120,7 @@ public class PayQueryController extends BaseController {
     	try {
     		
     		TitanPayQueryDTO payQueryDTO = WebUtils.switch2RequestDTO(TitanPayQueryDTO.class, request);
-			tlNetBankPayQueryRequest.setMerchantId(payQueryDTO.getMerchantNo());
+			tlNetBankPayQueryRequest.setMerchantId(SysConstant.TL_NETBANK_MERCHANT);
 			tlNetBankPayQueryRequest.setOrderNo(payQueryDTO.getOrderNo());
 			tlNetBankPayQueryRequest.setVersion(SysConstant.TL_NETBANK_PAY_QUERY_VERSION);
 			tlNetBankPayQueryRequest.setSignType(SysConstant.TL_NETBANK_SIGNTYPE);
@@ -157,7 +157,7 @@ public class PayQueryController extends BaseController {
     	try {
     		
     		TitanPayQueryDTO payQueryDTO = WebUtils.switch2RequestDTO(TitanPayQueryDTO.class, request);
-			tlQrTradeQueryRequest.setCusid(SysConstant.QRCODE_CUSTID);
+			tlQrTradeQueryRequest.setCusid(SysConstant.TL_QRCODE_CUSTID);
 			tlQrTradeQueryRequest.setVersion(SysConstant.TL_QRCODE_VERSION);
 			tlQrTradeQueryRequest.setReqsn(payQueryDTO.getOrderNo());
 			tlQrTradeQueryRequest.setRandomstr(CommonUtil.getValidatecode(8));

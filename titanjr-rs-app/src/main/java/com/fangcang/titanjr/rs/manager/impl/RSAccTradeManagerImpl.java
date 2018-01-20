@@ -12,18 +12,14 @@ import org.apache.commons.logging.LogFactory;
 
 import com.Rop.api.domain.SHBalanceInfo;
 import com.Rop.api.request.WheatfieldBalanceGetlistRequest;
-import com.Rop.api.request.WheatfieldOrderOperRequest;
 import com.Rop.api.request.WheatfieldOrderSaveWithcardRequest;
 import com.Rop.api.request.WheatfieldOrderServiceAuthcodeserviceRequest;
 import com.Rop.api.request.WheatfieldOrderServiceMultitransferQueryRequest;
-import com.Rop.api.request.WheatfieldOrderServiceMultitransferRequest;
 import com.Rop.api.request.WheatfieldOrderServiceReturngoodsRequest;
 import com.Rop.api.request.WheatfieldOrderServiceThawauthcodeRequest;
 import com.Rop.api.request.WheatfieldOrderServiceWithdrawserviceRequest;
 import com.Rop.api.request.WheatfieldOrderTransferRequest;
-import com.Rop.api.response.WheatfieldAccountFreezeResponse;
 import com.Rop.api.response.WheatfieldBalanceGetlistResponse;
-import com.Rop.api.response.WheatfieldOrderOperResponse;
 import com.Rop.api.response.WheatfieldOrderSaveWithcardResponse;
 import com.Rop.api.response.WheatfieldOrderServiceAuthcodeserviceResponse;
 import com.Rop.api.response.WheatfieldOrderServiceMultitransferQueryResponse;
@@ -64,7 +60,10 @@ import com.fangcang.titanjr.rs.response.OrdernQueryResponse;
 import com.fangcang.titanjr.rs.response.Retbeanlist;
 import com.fangcang.titanjr.rs.util.MyConvertXmlToObject;
 import com.fangcang.util.MyBeanUtil;
+import com.titanjr.fop.constants.FuncCodeEnum;
+import com.titanjr.fop.request.WheatfieldOrderOperRequest;
 import com.titanjr.fop.request.WheatfieldOrdernQueryRequest;
+import com.titanjr.fop.response.WheatfieldOrderOperResponse;
 import com.titanjr.fop.response.WheatfieldOrdernQueryResponse;
 
 public class RSAccTradeManagerImpl implements RSAccTradeManager {
@@ -214,7 +213,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 			}
 			MyBeanUtil.copyProperties(req, orderOperateRequest);
 			log.info("调用融数落单的参数dao:"+JSONSerializer.toJSON(req));
-			WheatfieldOrderOperResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldOrderOperResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用operateOrder返回报文: \n" + rsp.getBody());
@@ -553,6 +552,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 				ordernQueryRequest.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, ordernQueryRequest);
+			req.setFunccode(FuncCodeEnum.RECHARGE_4015.getKey());
 			WheatfieldOrdernQueryResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {

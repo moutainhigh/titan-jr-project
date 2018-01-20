@@ -39,7 +39,7 @@ public class CheckStandController extends BaseController {
         //请求频次校验
         //参数MD5验证
 
-        resetParameter(request,attr);
+        resetParameter(request, attr);
         
         //根据业务代码选择接口路由
         //OperateTypeEnum operateTypeEnum = JRBeanUtils.recognizeRequestType(request.getParameterMap().keySet());

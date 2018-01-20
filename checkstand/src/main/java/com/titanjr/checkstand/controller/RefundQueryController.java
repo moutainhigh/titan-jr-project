@@ -163,7 +163,7 @@ public class RefundQueryController extends BaseController {
     	try {
     		
     		TitanRefundQueryDTO refundQueryDTO = WebUtils.switch2RequestDTO(TitanRefundQueryDTO.class, request);
-			tlQrTradeQueryRequest.setCusid(SysConstant.QRCODE_CUSTID);
+			tlQrTradeQueryRequest.setCusid(SysConstant.TL_QRCODE_CUSTID);
 			tlQrTradeQueryRequest.setVersion(SysConstant.TL_QRCODE_VERSION);
 			tlQrTradeQueryRequest.setReqsn(refundQueryDTO.getRefundOrderno());
 			tlQrTradeQueryRequest.setRandomstr(CommonUtil.getValidatecode(8));

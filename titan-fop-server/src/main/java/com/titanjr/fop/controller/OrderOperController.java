@@ -1,13 +1,10 @@
 package com.titanjr.fop.controller;
 
 import com.fangcang.util.StringUtil;
-import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.dto.Transorderinfo;
-import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
 import com.titanjr.fop.request.WheatfieldOrderOperRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
 import com.titanjr.fop.request.WheatfieldOrdernQueryRequest;
-import com.titanjr.fop.response.WheatfieldBalanceGetlistResponse;
 import com.titanjr.fop.response.WheatfieldOrderOperResponse;
 import com.titanjr.fop.response.WheatfieldOrderServiceReturngoodsResponse;
 import com.titanjr.fop.response.WheatfieldOrdernQueryResponse;
@@ -37,7 +34,7 @@ public class OrderOperController extends BaseController {
     private final static Logger logger = LoggerFactory.getLogger(OrderOperController.class);
 
     @Resource
-    OrderOperService orderOperService;
+    private OrderOperService orderOperService;
 
     @RequestMapping(value = "/orderOper", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
     @ResponseBody

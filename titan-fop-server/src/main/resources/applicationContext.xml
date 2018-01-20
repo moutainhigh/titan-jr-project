@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
@@ -9,9 +9,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 						http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
 						http://www.springframework.org/schema/tx
-    					http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+    					http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
 						http://www.springframework.org/schema/aop
-	       				http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+	       				http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
 	       				http://www.springframework.org/schema/context
            				http://www.springframework.org/schema/context/spring-context-4.2.xsd
 	       				http://www.springframework.org/schema/mvc
@@ -19,24 +19,24 @@
            				http://code.alibabatech.com/schema/dubbo
            				http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
+	<bean id="placeholderspring" class="com.ctol.fangcang.common.Spring3PropertyConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="exceptionHandler" class="com.titanjr.fop.util.HandlerApiExceptionResolver"/>
 
-    <import resource="applicationContext-service.xml"/>
-    <import resource="applicationContext-dataSource.xml"/>
-    <import resource="applicationContext-persistence.xml"/>
-
-    <bean id="exceptionHandler" class="com.titanjr.fop.util.HandlerApiExceptionResolver"/>
-
-    <context:component-scan base-package="com.titanjr.fop.service.impl"/>
-
-    <bean id="placeholderspring" class="com.ctol.fangcang.common.Spring3PropertyConfigurer">
-        <property name="location">
-            <value>classpath:jdbc.properties</value>
-        </property>
-    </bean>
-
-    <context:component-scan base-package="com.titanjr.fop.controller,com.titanjr.fop.api"/>
-    <context:annotation-config/>
-    <mvc:annotation-driven/>
+    <!-- 启动时扫描 -->
+    <context:component-scan base-package="com.titanjr.fop"/>
+    <mvc:annotation-driven />
+           				
+    <import resource="applicationContext-dataSource.xml" />
+	<import resource="applicationContext-persistence.xml" />
+	<import resource="applicationContext-service.xml" />
 
     <mvc:interceptors>
         <!--只在入口校验-->
@@ -44,44 +44,51 @@
             <mvc:mapping path="/fopapi.shtml"/>
             <bean class="com.titanjr.fop.interceptor.RequestValidateInterceptor"></bean>
         </mvc:interceptor>
-
     </mvc:interceptors>
 
-    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize"><value>10000000</value></property>
+        <property name="defaultEncoding"><value>UTF-8</value></property>
+    </bean>
+
+
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="messageConverters">
             <list>
                 <bean class="org.springframework.http.converter.StringHttpMessageConverter">
                     <property name="supportedMediaTypes">
                         <list>
+                            <value>text/html; charset=UTF-8</value>
                             <value>text/plain;charset=UTF-8</value>
                             <value>application/json;charset=UTF-8</value>
-                            <value>text/html;charset=UTF-8</value>
                         </list>
                     </property>
                 </bean>
+
                 <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
                     <property name="supportedMediaTypes">
                         <list>
-                            <value>application/json;charset=UTF-8</value>
-                            <value>application/xml;charset=UTF-8</value>
-                            <value>text/html;charset=UTF-8</value>
+                            <value>text/html; charset=UTF-8</value>
                             <value>text/plain;charset=UTF-8</value>
-                            <value>text/xml;charset=UTF-8</value>
-                            <value>text/javascript;charset=UTF-8</value>
+                            <value>application/json;charset=UTF-8</value>
                         </list>
                     </property>
                 </bean>
             </list>
         </property>
     </bean>
+    <!-- jsp页面解析器(视图编辑器)，当Controller返回XXX字符串时，先通过拦截器，然后该类就会在/WEB-INF/views/目录下，查找XXX.jsp文件 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
+    
     <!-- 自动扫描注解，无需显式配置  bean 了  -->
+    <context:annotation-config/>
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
 
     <bean class="com.fangcang.util.SpringContextUtil"/>
-    <bean class="com.titanjr.fop.constants.CommonConstants" init-method="initParam"/>
+	<bean class="com.titanjr.fop.constants.CommonConstants" init-method="initParam"/>
+	
 </beans>

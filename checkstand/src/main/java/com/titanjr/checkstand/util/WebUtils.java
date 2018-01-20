@@ -1,11 +1,9 @@
 package com.titanjr.checkstand.util;
 
-import com.fangcang.util.WebUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.util.Map;
@@ -42,7 +40,38 @@ public class WebUtils {
         T result = null;
         try {
             result = clazz.newInstance();
-            Map paramMap =  WebUtil.getParameterMap(request);
+            Class resultClass = (Class) result.getClass();
+            Field[] resultFields = resultClass.getDeclaredFields();
+            for ( Field field : resultFields ){
+                field.setAccessible(true);
+                String fieldType = field.getType().toString();
+                if (request.getParameterMap().containsKey(field.getName()) && null != request.getParameterMap().get(field.getName())){
+                    String param = URLDecoder.decode(request.getParameterMap().get(field.getName())[0].toString(),"UTF-8");
+                    if (fieldType.endsWith("String")){
+                        field.set(result,param);
+                    }
+                    if (fieldType.endsWith("Long") || fieldType.endsWith("long")){
+                        field.set(result,Long.parseLong(param));
+                    }
+                    if (fieldType.endsWith("Integer") || fieldType.endsWith("int")){
+                        field.set(result,Integer.parseInt(param));
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+            logger.error("请求参数实例化失败", e);
+            return null;
+        }
+        return result;
+    }
+    
+    
+    public static <T> T switch2RedirectDTO(Class<T> clazz , RedirectAttributes attr){
+        T result = null;
+        try {
+            result = clazz.newInstance();
+            Map<String, String> paramMap = (Map<String, String>)attr.getFlashAttributes();
 
             Class resultClass = (Class) result.getClass();
             Field[] resultFields = resultClass.getDeclaredFields();
@@ -69,4 +98,5 @@ public class WebUtils {
         }
         return result;
     }
+    
 }

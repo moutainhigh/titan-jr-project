@@ -15,6 +15,7 @@ import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
 import com.titanjr.fop.constants.FuncCodeEnum;
+import com.titanjr.fop.constants.InterfaceURlConfig;
 import com.titanjr.fop.constants.OrderNStatusEnum;
 import com.titanjr.fop.dao.TitanOrderDao;
 import com.titanjr.fop.dto.TitanAccountDetailDTO;
@@ -24,12 +25,14 @@ import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
 import com.titanjr.fop.request.WheatfieldOrdernQueryRequest;
 import com.titanjr.fop.service.OrderOperService;
 import com.titanjr.fop.util.WebUtils;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -37,19 +40,19 @@ import java.util.*;
 /**
  * Created by zhaoshan on 2018/1/3.
  */
-@Component
+@Service("orderOperService")
 public class OrderOperServiceImpl implements OrderOperService {
 
     private final static Logger logger = LoggerFactory.getLogger(OrderOperServiceImpl.class);
 
     @Resource
-    TitanOrderService titanOrderService;
+    private TitanOrderService titanOrderService;
 
     @Resource
-    TitanOrderDao titanOrderDao;
+    private TitanOrderDao titanOrderDao;
 
     @Resource
-    TitanSysconfigService sysconfigService;
+    private TitanSysconfigService titanSysconfigService;
 
     @Override
     public String operateOrder(WheatfieldOrderOperRequest orderOperRequest) throws ServiceException {
@@ -59,8 +62,8 @@ public class OrderOperServiceImpl implements OrderOperService {
         List<TransOrderDTO> transOrderDTOs = titanOrderService.queryTransOrder(transOrderRequest);
         //新增
         if ("1".equals(orderOperRequest.getOpertype())) {
-            if (CollectionUtils.isNotEmpty(transOrderDTOs)) {
-                logger.error("新增时已存在交易单，userorderid：{}", orderOperRequest.getUserorderid());
+            if (CollectionUtils.isNotEmpty(transOrderDTOs) && StringUtil.isValidString(transOrderDTOs.get(0).getOrderid())) {
+                logger.error("不可重复落单，userorderid：{}", orderOperRequest.getUserorderid());
                 return null;
             }
             DecimalFormat formater = new DecimalFormat();
@@ -171,7 +174,7 @@ public class OrderOperServiceImpl implements OrderOperService {
     public List<Transorderinfo> queryTradeOrderNew(WheatfieldOrdernQueryRequest ordernQueryRequest) throws ServiceException {
         //这里能查出充值，转账，提现三种单的状态
         List<Transorderinfo> transorderinfoList = new ArrayList<Transorderinfo>();
-        if (!StringUtil.isValidString(ordernQueryRequest.getFunccode())) {
+        if (StringUtil.isValidString(ordernQueryRequest.getFunccode())) {
             //充值
             if (ordernQueryRequest.getFunccode().equals(FuncCodeEnum.RECHARGE_4015.getKey())) {
                 transorderinfoList.addAll(queryRechargeInfo(ordernQueryRequest));
@@ -221,8 +224,7 @@ public class OrderOperServiceImpl implements OrderOperService {
         List<TitanOrderPayreq> orderPayreqList = titanOrderService.queryOrderPayRequestList(requestParam);
 
         //获取网关地址
-        //local.fangcang.com:8090/checkstand/payment.shtml
-        String paymentURL = "http://local.fangcang.com:8090/checkstand/payment.shtml";
+        String paymentURL = InterfaceURlConfig.checkstand_GateWayURL;
         for (TitanOrderPayreq payreq : orderPayreqList) {
             Transorderinfo transorderinfo = new Transorderinfo();
             Map<String, String> paramMap = new HashMap();

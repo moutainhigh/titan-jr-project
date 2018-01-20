@@ -119,7 +119,7 @@ public class PaymentController extends BaseController {
 			tlNetBankPayRequest.setVersion(SysConstant.TL_NETBANK_PAY_VERSION);
 			tlNetBankPayRequest.setLanguage("1");
 			tlNetBankPayRequest.setSignType("0");
-			tlNetBankPayRequest.setMerchantId(SysConstant.NETBANK_MERCHANT);
+			tlNetBankPayRequest.setMerchantId(SysConstant.TL_NETBANK_MERCHANT);
 			tlNetBankPayRequest.setOrderNo(payDTO.getOrderNo());
 			tlNetBankPayRequest.setOrderAmount(payDTO.getOrderAmount());
 			tlNetBankPayRequest.setOrderCurrency("0");
@@ -170,7 +170,7 @@ public class PaymentController extends BaseController {
 			}
 			
 			TLQrCodePayRequest tlQrCodePayRequest = new TLQrCodePayRequest();
-			tlQrCodePayRequest.setCusid(SysConstant.QRCODE_CUSTID);
+			tlQrCodePayRequest.setCusid(SysConstant.TL_NETBANK_MERCHANT);
 			tlQrCodePayRequest.setVersion("11");
 			tlQrCodePayRequest.setTrxamt(Integer.parseInt(payDTO.getOrderAmount().toString()));
 			tlQrCodePayRequest.setReqsn(payDTO.getOrderNo());
