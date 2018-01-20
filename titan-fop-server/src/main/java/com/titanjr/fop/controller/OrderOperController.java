@@ -107,6 +107,7 @@ public class OrderOperController extends BaseController {
             return ResponseUtils.getSysErrorResp(ordernQueryResponse);
         }
         logger.info("操作成功，获取交易单列表：{}", orderinfoList);
+        ordernQueryResponse.setTransorderinfos(orderinfoList);
         return toJson(ordernQueryResponse);
     }
 }

@@ -139,6 +139,12 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 			String payResult = result.get("payResult");
 			if (payResult.equals("1")) {
 				titanPayQueryResponse.setPayStatsu(RSPayStatusEnum.SUCCESS.getStatus());
+				titanPayQueryResponse.setOrderNo(result.get("orderNo"));
+				titanPayQueryResponse.setPayAmount(result.get("payAmount"));
+				titanPayQueryResponse.setOrderAmount(result.get("orderAmount"));
+				titanPayQueryResponse.setOrderTime(result.get("orderDatetime"));
+				titanPayQueryResponse.setOrderPayTime(result.get("payDatetime"));
+				titanPayQueryResponse.setMerchantNo(SysConstant.TL_NETBANK_MERCHANT);
 				logger.info("【通联-网银支付查询】查询结果为:付款成功，payResult：{}", payResult);
 				// 支付成功，验证签名
 				PaymentResult paymentResult = new PaymentResult();
