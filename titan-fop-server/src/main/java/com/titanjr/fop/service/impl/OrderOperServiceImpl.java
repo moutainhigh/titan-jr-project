@@ -9,7 +9,6 @@ import com.fangcang.titanjr.dto.bean.RefundDTO;
 import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
 import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.request.NotifyRefundRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.parameter.TitanAccountDetailParam;
@@ -41,8 +40,6 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
-
-import static com.fangcang.titanjr.common.enums.WithDrawStatusEnum.WithDraw_SUCCESSED;
 
 /**
  * Created by zhaoshan on 2018/1/3.
@@ -234,7 +231,7 @@ public class OrderOperServiceImpl implements OrderOperService {
         String paymentURL = InterfaceURlConfig.checkstand_GateWayURL;
         for (TitanOrderPayreq payreq : orderPayreqList) {
             Transorderinfo transorderinfo = new Transorderinfo();
-            Map<String, String> paramMap = new HashMap();
+            Map<String, String> paramMap = new HashMap<String, String>();
             paramMap.put("busiCode", "102");
             paramMap.put("signType", "1");
             paramMap.put("version", payreq.getVersion());
@@ -251,7 +248,12 @@ public class OrderOperServiceImpl implements OrderOperService {
                     logger.error("金融上游交易状态冲突，单号：{}", payreq.getOrderNo());
                     continue;
                 }
-                //查询本地记账状态
+                if (StringUtil.isValidString((String)resultMap.get("errCode"))) {
+                    logger.error("查询上游交易状态错误，errMsg：{}，单号：{}", resultMap.get("errMsg"), payreq.getOrderNo());
+                    return orderInfoList;
+                }
+                
+                /*//查询本地记账状态
                 TitanAccountDetailParam param = new TitanAccountDetailParam();
                 param.setTransOrderId(Long.valueOf(payreq.getTransorderid()));
                 List<TitanAccountDetailDTO> detailDTOList = titanOrderDao.selectAccountDetail(param);
@@ -265,7 +267,7 @@ public class OrderOperServiceImpl implements OrderOperService {
                 if (String.valueOf(detailDTOList.get(0).getSettleAmount()).equals(payreq.getOrderAmount())) {
                     logger.error("记账记录校验失败，单号：{}", payreq.getOrderNo());
                     continue;
-                }
+                }*/
 
                 if ("3".equals(resultMap.get("payStatsu"))) {
                     transorderinfo.setOrderno(payreq.getOrderNo());//单号
@@ -385,7 +387,7 @@ public class OrderOperServiceImpl implements OrderOperService {
         String paymentURL = "http://local.fangcang.com:8090/checkstand/payment.shtml";
         for (TitanWithDrawDTO withDrawDTO : withDrawDTOList){
             Transorderinfo transorderinfo = new Transorderinfo();
-            Map<String, String> paramMap = new HashMap();
+            Map<String, String> paramMap = new HashMap<String, String>();
             paramMap.put("merchantNo", "M1000016");
             paramMap.put("orderNo", withDrawDTO.getUserorderid());//TODO 需要根据提现查出代付交易
             paramMap.put("tradeCode", "1");

@@ -66,37 +66,4 @@ public class WebUtils {
         return result;
     }
     
-    
-    public static <T> T switch2RedirectDTO(Class<T> clazz , RedirectAttributes attr){
-        T result = null;
-        try {
-            result = clazz.newInstance();
-            Map<String, String> paramMap = (Map<String, String>)attr.getFlashAttributes();
-
-            Class resultClass = (Class) result.getClass();
-            Field[] resultFields = resultClass.getDeclaredFields();
-            for ( Field field : resultFields ){
-                field.setAccessible(true);
-                String fieldType = field.getType().toString();
-                if (paramMap.containsKey(field.getName()) && null != paramMap.get(field.getName())){
-                    String param = URLDecoder.decode(paramMap.get(field.getName()).toString(),"UTF-8");
-                    if (fieldType.endsWith("String")){
-                        field.set(result,param);
-                    }
-                    if (fieldType.endsWith("Long") || fieldType.endsWith("long")){
-                        field.set(result,Long.parseLong(param));
-                    }
-                    if (fieldType.endsWith("Integer") || fieldType.endsWith("int")){
-                        field.set(result,Integer.parseInt(param));
-                    }
-                }
-
-            }
-        } catch (Exception e) {
-            logger.error("请求参数实例化失败", e);
-            return null;
-        }
-        return result;
-    }
-    
 }
