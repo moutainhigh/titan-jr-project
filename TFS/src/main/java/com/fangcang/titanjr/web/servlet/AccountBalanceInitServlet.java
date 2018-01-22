@@ -37,12 +37,17 @@ public class AccountBalanceInitServlet extends HttpServlet{
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
+			String orgCode = (String)request.getParameter("orgCode");
 			response.setContentType("text/html");
 			response.setCharacterEncoding("utf-8");
-			//BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
-			//balanceInfoRequest.setUserId("TJM60000018");
-			//accountService.synBalanceInfo(balanceInfoRequest);
-			accountService.initAllBalanceInfo();
+			if(orgCode==null||"".equals(orgCode)){
+				accountService.initAllBalanceInfo();
+			}else{
+				BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
+				balanceInfoRequest.setUserId(orgCode);
+				accountService.synBalanceInfo(balanceInfoRequest);
+			}
+			
 			response.getWriter().write("数据初始化完成");
 		} catch (Exception e) {
 			e.printStackTrace();

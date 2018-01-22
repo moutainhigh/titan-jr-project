@@ -80,7 +80,12 @@ public enum OrderExceptionEnum {
 	AccountReceive_Transfer_UpdateOrder_Fail("18_04","0","账户收款，转账后修改订单状态失败"),
 	
 	//提现
-	WithDraw_Transfer_WithDraw_Fail("19_01","0","提现操作：转账成功，提现失败");
+	WithDraw_Transfer_WithDraw_Fail("19_01","0","提现操作：转账成功，提现失败"),
+	
+	//记账
+	AccountRecord_Recharge_Fail("20_01","0","充值：记账失败"),
+	AccountRecord_Transfer_Fail("20_02","0","转账：记账失败"),
+	AccountRecord_Refund_Fail("20_03","0","退款：记账失败");
 	
 	
 	public String msg;

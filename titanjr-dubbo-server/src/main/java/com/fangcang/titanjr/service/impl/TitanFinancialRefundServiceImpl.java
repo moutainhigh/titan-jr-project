@@ -36,6 +36,7 @@ import com.fangcang.titanjr.common.enums.RefundTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.enums.TransfertypeEnum;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.MD5;
@@ -51,6 +52,8 @@ import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
 import com.fangcang.titanjr.dto.request.NotifyRefundRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
+import com.fangcang.titanjr.dto.request.RecordRequest;
+import com.fangcang.titanjr.dto.request.RecordTransferRequest;
 import com.fangcang.titanjr.dto.request.RefundConfirmRequest;
 import com.fangcang.titanjr.dto.request.RefundOrderRequest;
 import com.fangcang.titanjr.dto.request.TitanJrRefundRequest;
@@ -71,6 +74,7 @@ import com.fangcang.titanjr.rs.request.RSRefundRequest;
 import com.fangcang.titanjr.rs.response.AccountTransferResponse;
 import com.fangcang.titanjr.rs.response.RsRefundResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
+import com.fangcang.titanjr.service.AccountRecordService;
 import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialRefundService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
@@ -114,6 +118,8 @@ public class TitanFinancialRefundServiceImpl implements
 	@Resource
 	private TitanFinancialUtilService utilService;
 	
+	@Resource
+	private AccountRecordService accountRecordService;
 	
 	@SuppressWarnings("unused")
 	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
@@ -187,6 +193,17 @@ public class TitanFinancialRefundServiceImpl implements
 				this.fixRefundProcess(null, null, titanTransferReq, null);
 				return response;
 			}
+			//记账
+			RecordTransferRequest recordTransferRequest  = new RecordTransferRequest();
+			recordTransferRequest.setAmount(Long.parseLong(tradeTransferRequest.getAmount()));
+			recordTransferRequest.setTransOrderId(refundRequest.getTransorderid());
+			recordTransferRequest.setProductId(tradeTransferRequest.getProductid());
+			recordTransferRequest.setUserId(tradeTransferRequest.getUserid());
+			recordTransferRequest.setRelateUserId(tradeTransferRequest.getUserrelateid());
+			recordTransferRequest.setRelateProductId(tradeTransferRequest.getInterproductid());
+        	accountRecordService.transfer(recordTransferRequest);
+			
+			
 			refundRequest.setTransferAmount(tradeTransferRequest.getAmount());
 
 			//收益账户转账
@@ -206,6 +223,15 @@ public class TitanFinancialRefundServiceImpl implements
 					isFreeze = true;
 					return response;
 				}
+				//手续费记账
+				RecordTransferRequest feeRecordTransferRequest  = new RecordTransferRequest();
+				feeRecordTransferRequest.setAmount(Long.parseLong(userFeeTransferRequest.getAmount()));
+				feeRecordTransferRequest.setTransOrderId(refundRequest.getTransorderid());
+				feeRecordTransferRequest.setProductId(userFeeTransferRequest.getProductid());
+				feeRecordTransferRequest.setUserId(userFeeTransferRequest.getUserid());
+				feeRecordTransferRequest.setRelateUserId(userFeeTransferRequest.getUserrelateid());
+				feeRecordTransferRequest.setRelateProductId(userFeeTransferRequest.getInterproductid());
+	        	accountRecordService.transfer(recordTransferRequest);
 			}
 
 			//修改退款转账订单
@@ -328,6 +354,23 @@ public class TitanFinancialRefundServiceImpl implements
 		}
 	}
 
+	private void addRefundRecord(String orderId){
+		TransOrderRequest transOrderParam = new TransOrderRequest();
+		transOrderParam.setOrderid(orderId);
+		TransOrderDTO transOrderDTOEntity = titanOrderService.queryTransOrderDTO(transOrderParam);
+		RecordRequest recordRequest  = new RecordRequest();
+		recordRequest.setUserId(transOrderDTOEntity.getPayermerchant());//付款方
+		recordRequest.setProductId(transOrderDTOEntity.getProductid());
+		recordRequest.setTransOrderId(transOrderDTOEntity.getTransid());
+		recordRequest.setAmount(transOrderDTOEntity.getAmount());
+		try {
+			accountRecordService.refund(recordRequest);
+		} catch (GlobalServiceException e) {
+			log.error("退款记账失败,orderid:"+orderId+",transorderid:"+transOrderDTOEntity.getTransid(),e);
+			titanFinancialUtilService.saveOrderException(orderId,OrderKindEnum.PayOrderNo, OrderExceptionEnum.AccountRecord_Refund_Fail, null);
+		}
+		
+	}
 	private class DelayNotifyThread implements Runnable{
 
 		private NotifyRefundRequest notifyRefundRequest ;
@@ -473,6 +516,20 @@ public class TitanFinancialRefundServiceImpl implements
 		if(!CommonConstant.OPERATE_SUCCESS.equals(accountTrans.getOperateStatus())){
 			log.error("退款单修复性转账失败");
 			titanFinancialUtilService.saveOrderException(refundRequest.getPayOrderNo(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Refund_Repair_Tranfer_Fail, JSONSerializer.toJSON(accountTransfer).toString());
+		}
+		//记账
+		RecordTransferRequest recordTransferRequest  = new RecordTransferRequest();
+		recordTransferRequest.setAmount(Long.parseLong(accountTransfer.getAmount()));
+		recordTransferRequest.setTransOrderId(refundRequest.getTransorderid());
+		recordTransferRequest.setProductId(accountTransfer.getProductid());
+		recordTransferRequest.setUserId(accountTransfer.getUserid());
+		recordTransferRequest.setRelateUserId(accountTransfer.getUserrelateid());
+		recordTransferRequest.setRelateProductId(accountTransfer.getInterproductid());
+    	try {
+			accountRecordService.transfer(recordTransferRequest);
+		} catch (GlobalServiceException e) {
+			titanFinancialUtilService.saveOrderException(refundRequest.getPayOrderNo(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.AccountRecord_Transfer_Fail, JSONSerializer.toJSON(accountTransfer).toString());
+			log.error("转账记账失败，transorderid:"+refundRequest.getTransorderid()+",orderid:"+refundRequest.getPayOrderNo());
 		}
 		
 	}
@@ -637,7 +694,8 @@ public class TitanFinancialRefundServiceImpl implements
 				if(busiCodeEnum!=null&&busiCodeEnum.equals(BusiCodeEnum.MerchantRefund)){
 					invokeLogRecordManager.logELK(beginDate, new Date(), "titanjr:notifygateawayrefund."+busiCodeEnum.toString().toLowerCase(), Tools.gsonToString(params)+",gatewayurl:"+RSInvokeConstant.gateWayURL+","+Tools.gsonToString(busiCodeEnum), Tools.gsonToString(notifyRefundResponse), notifyRefundResponse.isResult()+"");
 				}
- 
+				// 退款开始记账
+				addRefundRecord(notifyRefundRequest.getOrderNo());
 				return notifyRefundResponse;
 			}else{
 				//网络无响应，则

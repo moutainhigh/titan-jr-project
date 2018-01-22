@@ -168,7 +168,7 @@ public class TitanPaymentController extends BaseController {
 		String signMsg = rechargeResultConfirmRequest.getSignMsg();
     	if(!MD5.MD5Encode(sign, "UTF-8").equals(signMsg)){
     	   log.error("signature verification is fail,The data is:"+JsonConversionTool.toJson(rechargeResultConfirmRequest));
-   		  // return;
+   		   return;
     	}
 		
     	if(!CommonConstant.PAY_SUCCESS.equals(rechargeResultConfirmRequest.getPayStatus())){
