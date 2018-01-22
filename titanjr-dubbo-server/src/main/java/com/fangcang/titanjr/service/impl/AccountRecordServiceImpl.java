@@ -83,7 +83,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		return false;
 		
 	}
-	 
+	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
 	public BaseResponseDTO recharge(RecordRequest recordRequest) {
@@ -205,11 +205,11 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		LOGGER.info("[冻结]记账,请求参数recordRequest:"+Tools.gsonToString(recordRequest));
 		BaseResponseDTO responseDTO = new BaseResponseDTO();
 		int tradeType = TradeTypeAccountDetailEnum.FREEZEE.getTradeType();
-		//交易验证,判断转出是否已经记账
-		if(checkIsRecord(recordRequest,tradeType)){
-			responseDTO.putErrorResult("该笔交易已经记账");
-			return responseDTO;
-		}
+		//同一个订单允许多次冻结，解冻
+		//if(checkIsRecord(recordRequest,tradeType)){
+		//	responseDTO.putErrorResult("该笔交易已经记账");
+		//	return responseDTO;
+		//}
 		TitanBalanceInfoParam balanceInfoParam = new TitanBalanceInfoParam();
 		balanceInfoParam.setUserid(recordRequest.getUserId());
 		balanceInfoParam.setProductid(recordRequest.getProductId());
@@ -242,11 +242,11 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		LOGGER.info("[解冻]记账,请求参数recordRequest:"+Tools.gsonToString(recordRequest));
 		BaseResponseDTO responseDTO = new BaseResponseDTO();
 		int tradeType = TradeTypeAccountDetailEnum.FREEZEE.getTradeType();
-		//交易验证,判断转出是否已经记账
-		if(checkIsRecord(recordRequest,tradeType)){
-			responseDTO.putErrorResult("该笔交易已经记账");
-			return responseDTO;
-		}
+		////同一个订单允许多次冻结，解冻
+//		if(checkIsRecord(recordRequest,tradeType)){
+//			responseDTO.putErrorResult("该笔交易已经记账");
+//			return responseDTO;
+//		}
 		TitanBalanceInfoParam balanceInfoParam = new TitanBalanceInfoParam();
 		balanceInfoParam.setUserid(recordRequest.getUserId());
 		balanceInfoParam.setProductid(recordRequest.getProductId());
@@ -285,11 +285,55 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 			responseDTO.putErrorResult("该笔交易已经记账");
 			return responseDTO;
 		}
+		
+		//主账户扣款记账
+		TitanBalanceInfoParam balanceInfoParam = new TitanBalanceInfoParam();
+		balanceInfoParam.setUserid(recordRequest.getUserId());
+		balanceInfoParam.setProductid(recordRequest.getProductId());
+		List<TitanBalanceInfo> balanceInfoList = balanceInfoDao.queryList(balanceInfoParam);
+		if(CollectionUtils.isEmpty(balanceInfoList)){
+			LOGGER.error("[提现]记账失败，账户不存在。参数："+Tools.gsonToString(recordRequest));
+			responseDTO.putErrorResult("记账失败，账户不存在");
+			return responseDTO;
+		}
+		TitanBalanceInfo balanceInfo = balanceInfoList.get(0);
+		TitanAccountDetail accountDetail = new TitanAccountDetail();
+		accountDetail.setAccountCode(balanceInfo.getAccountcode());
+		accountDetail.setTransOrderId(recordRequest.getTransOrderId());
+		accountDetail.setTradeType(tradeType);
+		accountDetail.setOrgCode(recordRequest.getUserId());
+		accountDetail.setProductId(recordRequest.getProductId());
+		accountDetail.setCreditAmount(0L);
+		accountDetail.setFrozonAmount(0L);
+		accountDetail.setSettleAmount(-recordRequest.getAmount());
+		accountDetail.setStatus(1);
+		accountDetail.setCreateTime(new Date());
+		updateBalanceInfo(accountDetail);
+		
+		//手续费记账
+		TitanBalanceInfoParam feeBalanceInfoParam = new TitanBalanceInfoParam();
+		feeBalanceInfoParam.setUserid(CommonConstant.RS_FANGCANG_USER_ID);
+		feeBalanceInfoParam.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
+		List<TitanBalanceInfo> feeBalanceInfoList = balanceInfoDao.queryList(feeBalanceInfoParam);
+		
+		TitanAccountDetail accountDetailFee = new TitanAccountDetail();
+		accountDetailFee.setAccountCode(feeBalanceInfoList.get(0).getAccountcode());
+		accountDetailFee.setTransOrderId(recordRequest.getTransOrderId());
+		accountDetailFee.setTradeType(tradeType);
+		accountDetailFee.setOrgCode(CommonConstant.RS_FANGCANG_USER_ID);
+		accountDetailFee.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
+		accountDetailFee.setCreditAmount(0L);
+		accountDetailFee.setFrozonAmount(0L);
+		accountDetailFee.setSettleAmount(recordRequest.getFee());
+		accountDetailFee.setStatus(1);
+		accountDetailFee.setCreateTime(new Date());
+		updateBalanceInfo(accountDetailFee);
+		
 		//备付金
 		TitanDepositDetail depositDetail = new TitanDepositDetail();
 		depositDetail.setAccountcode(CommonConstant.DEPOSIT_ACCOUNT_CODE);//固定账户
 		depositDetail.setTransorderid(recordRequest.getTransOrderId());
-		depositDetail.setAmount(recordRequest.getAmount());
+		depositDetail.setAmount(recordRequest.getAmount());//
 		depositDetail.setTradetype(tradeType);
 		depositDetail.setFee(0L);
 		depositDetail.setCreatetime(new Date());
@@ -301,10 +345,50 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 
 	@Override
 	public BaseResponseDTO refund(RecordRequest recordRequest) {
+		LOGGER.info("[退款]记账,请求参数recordRequest:"+Tools.gsonToString(recordRequest));
+		BaseResponseDTO responseDTO = new BaseResponseDTO();
+		int tradeType = TradeTypeAccountDetailEnum.REFUND.getTradeType();
+		//交易验证,判断转出是否已经记账
+		if(checkIsRecord(recordRequest,tradeType)){
+			responseDTO.putErrorResult("该笔交易已经记账");
+			return responseDTO;
+		}
 		
+		//主账户扣款记账
+		TitanBalanceInfoParam balanceInfoParam = new TitanBalanceInfoParam();
+		balanceInfoParam.setUserid(recordRequest.getUserId());
+		balanceInfoParam.setProductid(recordRequest.getProductId());
+		List<TitanBalanceInfo> balanceInfoList = balanceInfoDao.queryList(balanceInfoParam);
+		if(CollectionUtils.isEmpty(balanceInfoList)){
+			LOGGER.error("[退款]记账失败，账户不存在。参数："+Tools.gsonToString(recordRequest));
+			responseDTO.putErrorResult("记账失败，账户不存在");
+			return responseDTO;
+		}
+		TitanBalanceInfo balanceInfo = balanceInfoList.get(0);
+		TitanAccountDetail accountDetail = new TitanAccountDetail();
+		accountDetail.setAccountCode(balanceInfo.getAccountcode());
+		accountDetail.setTransOrderId(recordRequest.getTransOrderId());
+		accountDetail.setTradeType(tradeType);
+		accountDetail.setOrgCode(recordRequest.getUserId());
+		accountDetail.setProductId(recordRequest.getProductId());
+		accountDetail.setCreditAmount(0L);
+		accountDetail.setFrozonAmount(0L);
+		accountDetail.setSettleAmount(-recordRequest.getAmount());
+		accountDetail.setStatus(1);
+		accountDetail.setCreateTime(new Date());
+		updateBalanceInfo(accountDetail);
 		
-		
-		return null;
+		//备付金记账
+		TitanDepositDetail depositDetail = new TitanDepositDetail();
+		depositDetail.setAccountcode(CommonConstant.DEPOSIT_ACCOUNT_CODE);//固定账户
+		depositDetail.setTransorderid(recordRequest.getTransOrderId());
+		depositDetail.setAmount(recordRequest.getAmount());//
+		depositDetail.setTradetype(tradeType);
+		depositDetail.setFee(0L);
+		depositDetail.setCreatetime(new Date());
+		depositDetailDao.insert(depositDetail);
+		responseDTO.putSuccess("记账成功");
+		return responseDTO;
 	}
 
 }

@@ -134,7 +134,7 @@ public class TitanFinancialOrganFacadeImpl implements TitanFinancialOrganFacade 
         FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
         organQueryRequest.setMerchantcode(merchantcode);
         organQueryRequest.setBindStatus(TitanOrgBindinfoEnum.BindStatus.BIND.getKey());
-        log.info("查询机构信息，查询参数buildOrganInfoResponse："+Tools.gsonToString(organQueryRequest));
+        log.info("查询机构信息，查询参数organQueryRequest："+Tools.gsonToString(organQueryRequest));
         FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryBaseFinancialOrgan(organQueryRequest);
         if (null != financialOrganResponse.getFinancialOrganDTO() && StringUtil.
                 isValidString(financialOrganResponse.getFinancialOrganDTO().getUserId())){
