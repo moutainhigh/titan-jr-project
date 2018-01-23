@@ -4,7 +4,9 @@ import com.fangcang.exception.ServiceException;
 import com.titanjr.fop.dto.Transorderinfo;
 import com.titanjr.fop.request.WheatfieldOrderOperRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
+import com.titanjr.fop.request.WheatfieldOrderTransferRequest;
 import com.titanjr.fop.request.WheatfieldOrdernQueryRequest;
+import com.titanjr.fop.response.WheatfieldOrderTransferResponse;
 
 import java.util.List;
 
@@ -40,4 +42,13 @@ public interface OrderOperService {
      */
     List<Transorderinfo> queryTradeOrderNew(WheatfieldOrdernQueryRequest ordernQueryRequest) throws ServiceException;
 
+    /**
+     * 订单转账功能
+     * 需要事务控制；，抓取所有异常，保证返回结果
+     *
+     * @param orderTransferRequest
+     * @return
+     * @throws ServiceException
+     */
+    WheatfieldOrderTransferResponse accountBalanceTransfer(WheatfieldOrderTransferRequest orderTransferRequest) throws ServiceException;
 }

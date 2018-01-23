@@ -270,6 +270,9 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 		condition.setRequestno(titanTransferDTO.getRequestno());
 		condition.setPayorderno(titanTransferDTO.getPayOrderNo());
 		condition.setUserid(titanTransferDTO.getUserid());
+		condition.setStartTime(titanTransferDTO.getStartTime());
+		condition.setEndTime(titanTransferDTO.getEndTime());
+		condition.setAmount(titanTransferDTO.getAmount());
 		List<TitanTransferReq> transferReqList = new ArrayList<TitanTransferReq>();
 		try {
 			transferReqList = titanTransferReqDao.queryTitanTransferReq(condition);

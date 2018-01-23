@@ -13,6 +13,7 @@ public enum InterfaceConfigEnum {
     PERSON_OPERATE("ruixue.wheatfield.person.accountopr", "个人用户操作"),
     FREEZE_BALANCE("ruixue.wheatfield.order.service.authcodeservice","冻结资金获取授权码"),
     UNFREEZE_BALANCE("ruixue.wheatfield.order.service.thawauthcode","冻结资金获取授权码"),
+    ACCOUNT_BALANCE_TRANSFER("ruixue.wheatfield.order.transfer","账户转账"),
     ORDERN_QUERY("ruixue.wheatfield.ordern.query","订单查询");
 
 

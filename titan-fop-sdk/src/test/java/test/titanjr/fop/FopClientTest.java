@@ -159,6 +159,29 @@ public class FopClientTest {
         }
     }
 
+    @Test
+    public void testAccountTransfer(){
+        WheatfieldOrderTransferRequest transferRequest = new WheatfieldOrderTransferRequest();
+        transferRequest.setRequesttime(DateUtil.dateToString(new Date(),"yyyy-MM-dd HH:mm:ss"));
+        transferRequest.setRequestno("OP2017012218302500002");
+        transferRequest.setProductid("P000070");
+        transferRequest.setAmount("20");
+        transferRequest.setConditioncode("3");
+        transferRequest.setIntermerchantcode("M1000016");
+        transferRequest.setInterproductid("P000070");
+        transferRequest.setMerchantcode("M1000016");
+        transferRequest.setTransfertype("1");
+        transferRequest.setUserfee("0");
+        transferRequest.setUserid("TJM60024852");
+        transferRequest.setUserrelateid("TJM60024870");
+        try {
+            WheatfieldOrderTransferResponse transferResponse = fopClient.execute(transferRequest,"1514456720670432636");
+            System.out.println(transferResponse);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         System.out.println("http://192.168.0.14:8090/titan-fop-server/fopapi.shtml");
     }

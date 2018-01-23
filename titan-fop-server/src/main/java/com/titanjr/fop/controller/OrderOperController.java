@@ -1,12 +1,15 @@
 package com.titanjr.fop.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fangcang.util.StringUtil;
 import com.titanjr.fop.dto.Transorderinfo;
 import com.titanjr.fop.request.WheatfieldOrderOperRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
+import com.titanjr.fop.request.WheatfieldOrderTransferRequest;
 import com.titanjr.fop.request.WheatfieldOrdernQueryRequest;
 import com.titanjr.fop.response.WheatfieldOrderOperResponse;
 import com.titanjr.fop.response.WheatfieldOrderServiceReturngoodsResponse;
+import com.titanjr.fop.response.WheatfieldOrderTransferResponse;
 import com.titanjr.fop.response.WheatfieldOrdernQueryResponse;
 import com.titanjr.fop.service.OrderOperService;
 import com.titanjr.fop.util.BeanUtils;
@@ -109,5 +112,25 @@ public class OrderOperController extends BaseController {
         logger.info("操作成功，获取交易单列表：{}", orderinfoList);
         ordernQueryResponse.setTransorderinfos(orderinfoList);
         return toJson(ordernQueryResponse);
+    }
+
+    @RequestMapping(value = "/orderTransfer", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
+    @ResponseBody
+    public String orderTransfer(HttpServletRequest request, RedirectAttributes attr) throws Exception {
+        logger.debug("请求参数为:{}", request.getParameterMap());
+        WheatfieldOrderTransferResponse orderTransferResponse = new WheatfieldOrderTransferResponse();
+//        String validResult = ResponseUtils.validRequestSign(request, orderTransferResponse);
+//        if (null != validResult) {
+//            return validResult;
+//        }
+
+        WheatfieldOrderTransferRequest orderTransferRequest = BeanUtils.switch2RequestDTO(WheatfieldOrderTransferRequest.class, request);
+        if (null == orderTransferRequest) {
+            return ResponseUtils.getConvertErrorResp(orderTransferResponse);
+        }
+
+        orderTransferResponse = orderOperService.accountBalanceTransfer(orderTransferRequest);
+        logger.info("操作成功，转账成功，返回结果为：{}", JSONObject.toJSON(orderTransferResponse));
+        return toJson(orderTransferResponse);
     }
 }

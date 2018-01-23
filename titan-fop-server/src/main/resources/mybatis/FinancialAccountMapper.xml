@@ -31,6 +31,7 @@
             <if test="balancefrozon != null" >frozonamount = #{balancefrozon},</if>
             <if test="balancesettle != null" >settleamount = #{balancesettle},</if>
             <if test="balancecredit != null" >creditamount = #{balancecredit},</if>
+            <if test="amount != null" >totalamount = #{amount},</if>
         </set>
         where
           userid = #{userid}

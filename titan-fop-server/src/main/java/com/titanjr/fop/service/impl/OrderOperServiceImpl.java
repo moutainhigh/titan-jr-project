@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fangcang.exception.ServiceException;
 import com.fangcang.titanjr.common.enums.ReqstatusEnum;
 import com.fangcang.titanjr.common.util.MD5;
-import com.fangcang.titanjr.dto.bean.RefundDTO;
-import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
-import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
-import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.bean.*;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.parameter.TitanAccountDetailParam;
@@ -21,13 +18,18 @@ import com.fangcang.util.StringUtil;
 import com.titanjr.fop.constants.FuncCodeEnum;
 import com.titanjr.fop.constants.InterfaceURlConfig;
 import com.titanjr.fop.constants.OrderNStatusEnum;
+import com.titanjr.fop.dao.TitanAccountDao;
 import com.titanjr.fop.dao.TitanOrderDao;
+import com.titanjr.fop.dto.BalanceQueryDTO;
 import com.titanjr.fop.dto.TitanAccountDetailDTO;
 import com.titanjr.fop.dto.Transorderinfo;
 import com.titanjr.fop.request.WheatfieldOrderOperRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
+import com.titanjr.fop.request.WheatfieldOrderTransferRequest;
 import com.titanjr.fop.request.WheatfieldOrdernQueryRequest;
+import com.titanjr.fop.response.WheatfieldOrderTransferResponse;
 import com.titanjr.fop.service.OrderOperService;
+import com.titanjr.fop.util.ResponseUtils;
 import com.titanjr.fop.util.WebUtils;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -54,6 +56,9 @@ public class OrderOperServiceImpl implements OrderOperService {
 
     @Resource
     private TitanOrderDao titanOrderDao;
+
+    @Resource
+    private TitanAccountDao titanAccountDao;
 
     @Resource
     private TitanSysconfigService titanSysconfigService;
@@ -199,6 +204,89 @@ public class OrderOperServiceImpl implements OrderOperService {
 
         Collections.sort(transorderinfoList, new TransorderinfoComparator());
         return transorderinfoList;
+    }
+
+    @Override
+    public WheatfieldOrderTransferResponse accountBalanceTransfer(WheatfieldOrderTransferRequest orderTransferRequest) throws ServiceException {
+
+        WheatfieldOrderTransferResponse transferResponse = new WheatfieldOrderTransferResponse();
+        //查询转账单是否存在
+        //由于事务隔离级别问题，此接口查不到转账单，建议dubbo-server将转账单下单和操作转账功能分开；
+//        TitanTransferDTO titanTransferDTO = new TitanTransferDTO();
+//        titanTransferDTO.setRequestno(orderTransferRequest.getRequestno());
+//        List<TitanTransferDTO> transOrderDTOs = titanOrderService.getTitanTransferDTOList(titanTransferDTO);
+//        if (CollectionUtils.isEmpty(transOrderDTOs)) {
+//            logger.error("不存在转账单，当前请求号:{}", orderTransferRequest.getRequestno());
+//            ResponseUtils.getSysErrorResp(transferResponse);
+//            return transferResponse;
+//        }
+        //查询转出方/转入方账户是否存在 TODO 建议验证mainorg
+        //验证转出方可用余额是否足够
+        BalanceQueryDTO balanceQueryDTO = new BalanceQueryDTO();
+        balanceQueryDTO.setUserId(orderTransferRequest.getUserid());
+        List<AccountBalance> payerAccounts = titanAccountDao.queryAccountBalanceList(balanceQueryDTO);
+        AccountBalance payerAccount = null;
+        AccountBalance payeeAccount = null;
+        if (CollectionUtils.isNotEmpty(payerAccounts)) {//
+            for (AccountBalance accountBalance : payerAccounts) {
+                if (orderTransferRequest.getProductid().equals(accountBalance.getProductid())) {
+                    payerAccount = accountBalance;
+                    break;
+                }
+            }
+        }
+        balanceQueryDTO.setUserId(orderTransferRequest.getUserrelateid());
+        List<AccountBalance> payeeAccounts = titanAccountDao.queryAccountBalanceList(balanceQueryDTO);
+        if (CollectionUtils.isNotEmpty(payeeAccounts)) {//
+            for (AccountBalance accountBalance : payeeAccounts) {
+                if (orderTransferRequest.getInterproductid().equals(accountBalance.getProductid())) {
+                    payeeAccount = accountBalance;
+                    break;
+                }
+            }
+        }
+        //修改两个账户余额
+        if (payerAccount != null && payeeAccount != null) {
+            Long amount = Long.parseLong(orderTransferRequest.getAmount());
+            Long payerUseable = Long.parseLong(payerAccount.getBalanceusable());
+            if (amount > payerUseable ){
+                logger.error("转账失败，余额不足，可用余额：{}，转账金额：{}",
+                        payerUseable, amount);
+                ResponseUtils.getSysErrorResp(transferResponse);
+                return transferResponse;
+            }
+            Long payerAmount = Long.parseLong(payerAccount.getAmount());
+            Long payerSettle = Long.parseLong(payerAccount.getBalancesettle());
+            payerAccount.setBalanceusable(String.valueOf(payerUseable - amount));
+            payerAccount.setAmount(String.valueOf(payerAmount - amount));
+            payerAccount.setBalancesettle(String.valueOf(payerSettle - amount));
+            int payerCount = titanAccountDao.updateAccountBalance(payerAccount);
+
+            Long payeeUseable = Long.parseLong(payeeAccount.getBalanceusable());
+            Long payeeAmount = Long.parseLong(payeeAccount.getAmount());
+            Long payeeSettle = Long.parseLong(payeeAccount.getBalancesettle());
+            payeeAccount.setBalanceusable(String.valueOf(payeeUseable + amount));
+            payeeAccount.setAmount(String.valueOf(payeeAmount + amount));
+            payeeAccount.setBalancesettle(String.valueOf(payeeSettle + amount));
+            int payeeCount = titanAccountDao.updateAccountBalance(payeeAccount);
+
+            if (payerCount > 0 && payeeCount > 0) {
+                transferResponse.setIs_success("true");
+                transferResponse.setOrderid(orderTransferRequest.getRequestno());
+            } else {
+                logger.error("转账操作失败，当前付款方：{}，收款方：{}",
+                        JSONObject.toJSON(payerAccount), JSONObject.toJSON(payeeAccount));
+                ResponseUtils.getSysErrorResp(transferResponse);
+                return transferResponse;
+            }
+
+        } else {
+            logger.error("收付款方账户异常，付款方:{}，收款方：{}", payerAccount, payeeAccount);
+            ResponseUtils.getSysErrorResp(transferResponse);
+            return transferResponse;
+        }
+        //记录日志
+        return transferResponse;
     }
 
     //针对充值去上游查询交易单状态,验证本地交易状态
