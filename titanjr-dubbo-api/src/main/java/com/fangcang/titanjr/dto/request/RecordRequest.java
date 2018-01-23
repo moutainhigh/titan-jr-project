@@ -14,10 +14,17 @@ public class RecordRequest implements Serializable {
 	private String 	userId;
 	//充值的产品
 	private String productId;
-	// 单位：分
+	// 操作金额，单位：分
 	private long amount;
+	// 操作手续费 单位：分
+	private long fee;
 	
-	
+	public long getFee() {
+		return fee;
+	}
+	public void setFee(long fee) {
+		this.fee = fee;
+	}
 	public long getTransOrderId() {
 		return transOrderId;
 	}
