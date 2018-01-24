@@ -195,12 +195,7 @@ public class TitanPaymentController extends BaseController {
     			transOrderDTO.setFreezeType(FreezeTypeEnum.FREEZE_PAYEE.getKey());
     		}
         	
-        	RecordRequest recordRechargeRequest  = new RecordRequest();
-        	recordRechargeRequest.setAmount(Long.parseLong(rechargeResultConfirmRequest.getPayAmount()));
-        	recordRechargeRequest.setTransOrderId(transOrderDTO.getTransid());
-        	recordRechargeRequest.setProductId(transOrderDTO.getProductid());
-        	recordRechargeRequest.setUserId(transOrderDTO.getUserid());
-        	accountRecordService.recharge(recordRechargeRequest);
+        	
         	
         	//validate transfer order 
         	boolean validateResult = titanPaymentService.validateIsConfirmed(transOrderDTO.getTransid());
@@ -215,7 +210,14 @@ public class TitanPaymentController extends BaseController {
 				unlockOutTradeNoList(orderNo);
 				return ;
 			}
-			
+			//充值记账
+			RecordRequest recordRechargeRequest  = new RecordRequest();
+        	recordRechargeRequest.setAmount(Long.parseLong(rechargeResultConfirmRequest.getPayAmount()));
+        	recordRechargeRequest.setTransOrderId(transOrderDTO.getTransid());
+        	recordRechargeRequest.setProductId(transOrderDTO.getProductid());
+        	recordRechargeRequest.setUserId(transOrderDTO.getUserid());
+        	accountRecordService.recharge(recordRechargeRequest);
+        	
         	// update recharge order
 			int row = titanOrderService.updateTitanOrderPayreq(orderNo,ReqstatusEnum.RECHARFE_SUCCESS.getStatus()+"");
         	if(row<1){
