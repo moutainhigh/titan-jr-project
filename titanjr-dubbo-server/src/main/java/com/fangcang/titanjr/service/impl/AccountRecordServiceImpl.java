@@ -77,7 +77,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		
 		List<TitanAccountDetail> accountDetailList = accountDetailDao.selectList(param);
 		if(CollectionUtils.isNotEmpty(accountDetailList)){
-			LOGGER.error("该笔交易已经记账，无需重复记账，记账参数recordRechargeRequest："+Tools.gsonToString(recordRequest));
+			LOGGER.error("该笔交易已经记账，无需重复记账，记账参数recordRechargeRequest："+Tools.gsonToString(recordRequest)+",记账类型tradeType:"+tradeType);
 			return true;
 		}
 		return false;
@@ -385,6 +385,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		depositDetail.setAmount(recordRequest.getAmount());//
 		depositDetail.setTradetype(tradeType);
 		depositDetail.setFee(0L);
+		depositDetail.setStatus(1);
 		depositDetail.setCreatetime(new Date());
 		depositDetailDao.insert(depositDetail);
 		responseDTO.putSuccess("记账成功");
