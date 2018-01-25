@@ -1,8 +1,12 @@
 package com.titanjr.fop.request;
 
+import com.fangcang.util.StringUtil;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.domain.FopHashMap;
 import com.titanjr.fop.exceptions.ApiRuleException;
 import com.titanjr.fop.response.WheatfieldOrderTransferResponse;
+import com.titanjr.fop.util.FopUtils;
 
 import java.util.Map;
 
@@ -138,7 +142,7 @@ public class WheatfieldOrderTransferRequest extends BaseRequest implements FopRe
         fopHashMap.put("amount", this.amount);
         fopHashMap.put("transfertype", this.transfertype);
         fopHashMap.put("merchantcode", this.merchantcode);
-        if(this.udfParams != null) {
+        if (this.udfParams != null) {
             fopHashMap.putAll(this.udfParams);
         }
 
@@ -146,7 +150,7 @@ public class WheatfieldOrderTransferRequest extends BaseRequest implements FopRe
     }
 
     public void putOtherTextParam(String var1, String var2) {
-        if(this.udfParams == null) {
+        if (this.udfParams == null) {
             this.udfParams = new FopHashMap();
         }
 
@@ -158,5 +162,21 @@ public class WheatfieldOrderTransferRequest extends BaseRequest implements FopRe
     }
 
     public void check() throws ApiRuleException {
+        if (!StringUtil.isValidString(amount) || !FopUtils.isPositiveInteger(amount)) {
+            throw new ApiRuleException(ReturnCodeEnum.CODE_AMOUNT_ERROR.getCode(),
+                    ReturnCodeEnum.CODE_AMOUNT_ERROR.getMsg());
+        }
+        if (!StringUtil.isValidString(userid) || !StringUtil.isValidString(userrelateid)) {
+            throw new ApiRuleException(ReturnCodeEnum.CODE_USERID_ERROR.getCode(),
+                    ReturnCodeEnum.CODE_USERID_ERROR.getMsg());
+        }
+        if (!StringUtil.isValidString(productid) || !StringUtil.isValidString(interproductid)) {
+            throw new ApiRuleException(ReturnCodeEnum.CODE_PRODID_ERROR.getCode(),
+                    ReturnCodeEnum.CODE_PRODID_ERROR.getMsg());
+        }
+        if (!StringUtil.isValidString(requesttime)) {
+            throw new ApiRuleException(ReturnCodeEnum.CODE_TIME_ERROR.getCode(),
+                    ReturnCodeEnum.CODE_TIME_ERROR.getMsg());
+        }
     }
 }

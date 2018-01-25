@@ -1,9 +1,13 @@
 package com.titanjr.fop.request;
 
+import com.fangcang.titanjr.common.util.GenericValidate;
+import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.domain.FopHashMap;
 import com.titanjr.fop.exceptions.ApiRuleException;
 import com.titanjr.fop.response.WheatfieldOrderServiceReturngoodsResponse;
 import com.titanjr.fop.response.WheatfieldOrderServiceThawauthcodeResponse;
+import com.titanjr.fop.util.FopUtils;
+import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.Map;
 
@@ -12,8 +16,11 @@ import java.util.Map;
  */
 public class WheatfieldOrderServiceReturngoodsRequest extends BaseRequest implements FopRequest<WheatfieldOrderServiceReturngoodsResponse> {
     private FopHashMap udfParams;
+    @NotBlank
     private String userorderid;
+    @NotBlank
     private String amount;
+    @NotBlank
     private String orderid;
     private String orderitemid;
 
@@ -82,5 +89,13 @@ public class WheatfieldOrderServiceReturngoodsRequest extends BaseRequest implem
     }
 
     public void check() throws ApiRuleException {
+        if (!GenericValidate.validate(this)) {
+            throw new ApiRuleException(ReturnCodeEnum.CODE_NONE_ERROR.getCode(),
+                    ReturnCodeEnum.CODE_NONE_ERROR.getMsg());
+        }
+        if (!FopUtils.isPositiveInteger(amount)) {
+            throw new ApiRuleException(ReturnCodeEnum.CODE_AMOUNT_ERROR.getCode(),
+                    ReturnCodeEnum.CODE_AMOUNT_ERROR.getMsg());
+        }
     }
 }
