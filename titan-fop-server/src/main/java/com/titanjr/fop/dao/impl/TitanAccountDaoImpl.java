@@ -28,6 +28,9 @@ public class TitanAccountDaoImpl extends GenericDAOMyBatisImpl implements TitanA
     @Override
     public int updateAccountBalance(AccountBalance accountBalance) throws DaoException {
         try {
+//            if (accountBalance.getUserid().equals("TJM60024870")){
+//                throw new DaoException("测试异常");
+//            }
             return super.updateEntity("com.titanjr.fop.dao.TitanAccountDao.updateAccountBalance", accountBalance);
         } catch (Exception e) {
             logger.error("accountBalance Error", e);

@@ -28,7 +28,7 @@
 		</property>
 	</bean>
 	
-	<bean id="exceptionHandler" class="com.titanjr.fop.util.HandlerApiExceptionResolver"/>
+	<!--<bean id="exceptionHandler" class="com.titanjr.fop.util.HandlerApiExceptionResolver"/>-->
 
     <!-- 启动时扫描 -->
     <context:component-scan base-package="com.titanjr.fop"/>

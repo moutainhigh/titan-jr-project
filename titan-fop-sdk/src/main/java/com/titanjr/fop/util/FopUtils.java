@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by zhaoshan on 2017/12/20.
@@ -74,4 +76,17 @@ public abstract class FopUtils {
         }
         return response.toString();
     }
+    private static boolean isMatch(String regex, String orginal){
+        if (orginal == null || orginal.trim().equals("")) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile(regex);
+        Matcher isNum = pattern.matcher(orginal);
+        return isNum.matches();
+    }
+
+    public static boolean isPositiveInteger(String orginal) {
+        return isMatch("^\\+{0,1}[1-9]\\d*", orginal);
+    }
+
 }

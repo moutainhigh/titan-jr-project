@@ -11,6 +11,9 @@ import com.titanjr.fop.service.CommonService;
 import com.titanjr.fop.util.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -24,6 +27,7 @@ public class CommonServiceImpl implements CommonService {
     RequestSessionDao requestSessionDao;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public ExternalSessionGetResponse createRequestSession(ExternalSessionGetRequest sessionGetRequest) throws ServiceException {
 
         ExternalSessionGetResponse sessionGetResponse = new ExternalSessionGetResponse();

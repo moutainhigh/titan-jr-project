@@ -3,6 +3,8 @@ package com.titanjr.fop.service.impl;
 import com.fangcang.exception.ServiceException;
 import com.fangcang.titanjr.dto.bean.AccountBalance;
 import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.entity.TitanFundUnFreezereq;
 import com.fangcang.titanjr.entity.parameter.TitanUnFundFreezereqParam;
 import com.fangcang.titanjr.service.TitanOrderService;
@@ -21,6 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,6 +73,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public String freezeAccountBalance(WheatfieldOrderServiceAuthcodeserviceRequest authcodeserviceRequest) throws ServiceException {
         //查询冻结单当前是否存在以及状态
         FundFreezeDTO fundFreezeDTO = new FundFreezeDTO();
@@ -77,7 +83,15 @@ public class AccountServiceImpl implements AccountService {
             logger.error("当前交易单已存在冻结请求：{}", authcodeserviceRequest.getOrderno());
             return null;
         }
-
+        //查询校验交易单是否存在，暂不校验交易单金额
+        TransOrderRequest transOrderRequest = new TransOrderRequest();
+        transOrderRequest.setOrderid(authcodeserviceRequest.getOrderno());
+        List<TransOrderDTO> transOrderDTOList = titanOrderService.queryTransOrder(transOrderRequest);
+        if (CollectionUtils.isEmpty(transOrderDTOList)){
+            logger.error("传入的交易冻结单号不存在，请验证后重试，单号为：{}", authcodeserviceRequest.getOrderno());
+            return null;
+        }
+        //查询校验账户余额
         BalanceQueryDTO balanceQueryDTO = new BalanceQueryDTO();
         balanceQueryDTO.setUserId(authcodeserviceRequest.getUserid());
         balanceQueryDTO.setProductId(authcodeserviceRequest.getProductid());
@@ -88,8 +102,15 @@ public class AccountServiceImpl implements AccountService {
         }
         Long accFrozen = Long.parseLong(balanceList.get(0).getBalancefrozon());
         Long accUseable = Long.parseLong(balanceList.get(0).getBalanceusable());
+        if (accUseable < authcodeserviceRequest.getAmount()) {
+            logger.error("账户余额小于需冻结金额，账户余额：{}，冻结金额：{}", accUseable, authcodeserviceRequest.getAmount());
+            return null;
+        }
+        //更新账户，冻结资金
+        Long accSettle = Long.parseLong(balanceList.get(0).getBalancesettle());
         balanceList.get(0).setBalancefrozon(String.valueOf(accFrozen + authcodeserviceRequest.getAmount()));
         balanceList.get(0).setBalanceusable(String.valueOf(accUseable - authcodeserviceRequest.getAmount()));
+        balanceList.get(0).setBalancesettle(String.valueOf(accSettle - authcodeserviceRequest.getAmount()));
         int count = titanAccountDao.updateAccountBalance(balanceList.get(0));
         if (count < 1) {
             logger.error("账户余额更新异常");
@@ -100,6 +121,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public WheatfieldOrderServiceThawauthcodeResponse unFreezeAccountBalance(WheatfieldOrderServiceThawauthcodeRequest thawauthcodeRequest) throws ServiceException {
         WheatfieldOrderServiceThawauthcodeResponse thawauthcodeResponse = new WheatfieldOrderServiceThawauthcodeResponse();
         //查询冻结记录
@@ -121,7 +143,13 @@ public class AccountServiceImpl implements AccountService {
             ResponseUtils.getSysErrorResp(thawauthcodeResponse);
             return thawauthcodeResponse;
         }
-        //查询并更新数据库修改账户余额
+        //解冻金额校验失败
+        if (!thawauthcodeRequest.getAmount().equals(freezeDTOList.get(0).getAmount())){
+            logger.error("解冻金额校验失败，冻结金额：{}，解冻金额：{}" ,freezeDTOList.get(0).getAmount(), thawauthcodeRequest.getAmount());
+            ResponseUtils.getSysErrorResp(thawauthcodeResponse);
+            return thawauthcodeResponse;
+        }
+        //查询并校验账户冻结余额
         BalanceQueryDTO balanceQueryDTO = new BalanceQueryDTO();
         balanceQueryDTO.setUserId(freezeDTOList.get(0).getUserId());
         balanceQueryDTO.setProductId(freezeDTOList.get(0).getProductId());
@@ -138,8 +166,11 @@ public class AccountServiceImpl implements AccountService {
             ResponseUtils.getSysErrorResp(thawauthcodeResponse);
             return thawauthcodeResponse;
         }
+        //更新账户解冻资金
+        Long accSettle = Long.parseLong(balanceList.get(0).getBalancesettle());
         balanceList.get(0).setBalancefrozon(String.valueOf(accFrozen - Long.parseLong(thawauthcodeRequest.getAmount())));
         balanceList.get(0).setBalanceusable(String.valueOf(accUseable + Long.parseLong(thawauthcodeRequest.getAmount())));
+        balanceList.get(0).setBalancesettle(String.valueOf(accSettle + Long.parseLong(thawauthcodeRequest.getAmount())));
         int count = titanAccountDao.updateAccountBalance(balanceList.get(0));
         if (count < 1) {
             logger.error("账户余额更新异常");

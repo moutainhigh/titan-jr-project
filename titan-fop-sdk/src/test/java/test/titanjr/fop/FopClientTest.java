@@ -47,7 +47,7 @@ public class FopClientTest {
     public void testGetBalanceInfo() {
 
         WheatfieldBalanceGetlistRequest getlistRequest = new WheatfieldBalanceGetlistRequest();
-        getlistRequest.setUserid("TJM10000118");
+        getlistRequest.setUserid("TJM60024870");
         getlistRequest.setRootinstcd("M000016");
         try {
             WheatfieldBalanceGetlistResponse getlistResponse = fopClient.execute(getlistRequest, "1514456720670432636");
@@ -105,16 +105,16 @@ public class FopClientTest {
     @Test
     public void testFreezeOrder() {
         WheatfieldOrderServiceAuthcodeserviceRequest authcodeserviceRequest = new WheatfieldOrderServiceAuthcodeserviceRequest();
-        authcodeserviceRequest.setOrderno("2018010415564500001");
+        authcodeserviceRequest.setOrderno("2017122511384300001");//测试校验
         authcodeserviceRequest.setIntermerchantcode(null);
         authcodeserviceRequest.setOrdercount(1);
         authcodeserviceRequest.setProductid("P000070");
         authcodeserviceRequest.setPaychannelid(null);
-        authcodeserviceRequest.setRequestno("tjrf180104155707005");
+        authcodeserviceRequest.setRequestno("tjrf180125102507005");
         authcodeserviceRequest.setStatus(2);
         authcodeserviceRequest.setFunccode("40171");
         authcodeserviceRequest.setMerchantcode("M000016");
-        authcodeserviceRequest.setOrderamount(100l);
+        authcodeserviceRequest.setOrderamount(10l);
         authcodeserviceRequest.setOrderdate(null);
         authcodeserviceRequest.setErrorcode(null);
         authcodeserviceRequest.setBusitypeid(null);
@@ -124,7 +124,7 @@ public class FopClientTest {
         authcodeserviceRequest.setRemark("测试单");
         authcodeserviceRequest.setUserid("TJM60024852");
         authcodeserviceRequest.setFeeamount(null);
-        authcodeserviceRequest.setAmount(100L);
+        authcodeserviceRequest.setAmount(10L);
         authcodeserviceRequest.setReferuserid(null);
         authcodeserviceRequest.setProfit(null);
         authcodeserviceRequest.setTradeflowno(null);
@@ -145,11 +145,11 @@ public class FopClientTest {
         thawauthcodeRequest.setRootinstcd("M000016");
         thawauthcodeRequest.setUserid("TJM60024852");
         thawauthcodeRequest.setConditioncode("2");
-        thawauthcodeRequest.setAmount("100");
-        thawauthcodeRequest.setAuthcode("RngUiny6jA");
+        thawauthcodeRequest.setAmount("30");
+        thawauthcodeRequest.setAuthcode("s0BF9ddOdw5");
         thawauthcodeRequest.setFrozenuserorderid(null);
         thawauthcodeRequest.setProductid("P000070");
-        thawauthcodeRequest.setRequestno("tjrf180104155707005");
+        thawauthcodeRequest.setRequestno("tjrf180125102507005");
         thawauthcodeRequest.setRequesttime(DateUtil.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss"));
         try {
             WheatfieldOrderServiceThawauthcodeResponse response = fopClient.execute(thawauthcodeRequest, "1514456720670432636");

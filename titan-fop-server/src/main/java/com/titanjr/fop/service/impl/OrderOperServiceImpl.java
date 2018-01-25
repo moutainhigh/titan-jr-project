@@ -36,6 +36,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -64,6 +67,7 @@ public class OrderOperServiceImpl implements OrderOperService {
     private TitanSysconfigService titanSysconfigService;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public String operateOrder(WheatfieldOrderOperRequest orderOperRequest) throws ServiceException {
         TransOrderRequest transOrderRequest = new TransOrderRequest();
         transOrderRequest.setUserorderid(orderOperRequest.getUserorderid());
@@ -207,6 +211,7 @@ public class OrderOperServiceImpl implements OrderOperService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public WheatfieldOrderTransferResponse accountBalanceTransfer(WheatfieldOrderTransferRequest orderTransferRequest) throws ServiceException {
 
         WheatfieldOrderTransferResponse transferResponse = new WheatfieldOrderTransferResponse();

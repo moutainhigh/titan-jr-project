@@ -1,9 +1,14 @@
 package com.titanjr.fop.request;
 
+import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.util.StringUtil;
+import com.sun.istack.internal.NotNull;
 import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.domain.FopHashMap;
 import com.titanjr.fop.exceptions.ApiRuleException;
 import com.titanjr.fop.response.WheatfieldOrderOperResponse;
+import com.titanjr.fop.util.FopUtils;
+import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.Date;
 import java.util.Map;
@@ -11,22 +16,31 @@ import java.util.Map;
 /**
  * Created by zhaoshan on 2018/1/2.
  */
+
 public class WheatfieldOrderOperRequest extends BaseRequest implements FopRequest<WheatfieldOrderOperResponse> {
     private FopHashMap udfParams;
+    @NotNull
     private Date ordertime;
     private String remark;
     private String adjusttype;
+    @NotBlank
     private String productid;
+    @NotBlank
     private String userid;
+    @NotBlank
     private String userorderid;
     private String ordertypeid;
+    @NotBlank
     private String constid;
     //修改：2,新增：1,取消4,查询3
+    @NotBlank
     private String opertype;
     private Integer number;
+    @NotBlank
     private Date orderdate;
     private String adjustcontent;
     private String userrelateid;
+    @NotBlank
     private String amount;
     private String goodsdetail;
     private String goodsname;
@@ -219,6 +233,13 @@ public class WheatfieldOrderOperRequest extends BaseRequest implements FopReques
             throw new ApiRuleException(ReturnCodeEnum.CODE_OPERTYPE_ERROR.getCode(),
                     ReturnCodeEnum.CODE_OPERTYPE_ERROR.getMsg());
         }
-
+        if (!GenericValidate.validate(this)){
+            throw new ApiRuleException(ReturnCodeEnum.CODE_NONE_ERROR.getCode(),
+                    ReturnCodeEnum.CODE_NONE_ERROR.getMsg());
+        }
+        if (!FopUtils.isPositiveInteger(amount)) {
+            throw new ApiRuleException(ReturnCodeEnum.CODE_AMOUNT_ERROR.getCode(),
+                    ReturnCodeEnum.CODE_AMOUNT_ERROR.getMsg());
+        }
     }
 }

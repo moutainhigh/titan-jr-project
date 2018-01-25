@@ -31,21 +31,19 @@ public class HandlerApiExceptionResolver implements HandlerExceptionResolver {
         try {
             writer = response.getWriter();
         } catch (IOException e) {
-            logger.error("执行异常：{}", e.getMessage(), e);
+            logger.error("获取输出异常：{}", e.getMessage(), e);
             return null;
         }
 
         FopResponse fopResponse = new FopResponse();
-        fopResponse.setErrorCode("Param Valid Error");
-        fopResponse.setMsg("参数校验异常");
+        fopResponse.setErrorCode(exception.getClass().toString());
+        fopResponse.setMsg(exception.getMessage());
         StringWriter sw = new StringWriter();
         exception.printStackTrace(new PrintWriter(sw));
 
         String json = JSONSerializer.toJSON(fopResponse).toString();
         assert json != null;
         writer.write(json);
-        writer.flush();
         return null;
-
     }
 }

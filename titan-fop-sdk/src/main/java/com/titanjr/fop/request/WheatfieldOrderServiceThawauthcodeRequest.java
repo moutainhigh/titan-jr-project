@@ -1,8 +1,12 @@
 package com.titanjr.fop.request;
 
+import com.fangcang.titanjr.common.util.GenericValidate;
+import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.domain.FopHashMap;
 import com.titanjr.fop.exceptions.ApiRuleException;
 import com.titanjr.fop.response.WheatfieldOrderServiceThawauthcodeResponse;
+import com.titanjr.fop.util.FopUtils;
+import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.Map;
 
@@ -11,13 +15,18 @@ import java.util.Map;
  */
 public class WheatfieldOrderServiceThawauthcodeRequest extends BaseRequest implements FopRequest<WheatfieldOrderServiceThawauthcodeResponse> {
     private FopHashMap udfParams;
+    @NotBlank
     private String amount;
     private String rootinstcd;
     private String frozenuserorderid;
+    @NotBlank
     private String requestno;
+    @NotBlank
     private String authcode;
+    @NotBlank
     private String productid;
     private String requesttime;
+    @NotBlank
     private String userid;
     private String conditioncode;
 
@@ -131,5 +140,13 @@ public class WheatfieldOrderServiceThawauthcodeRequest extends BaseRequest imple
     }
 
     public void check() throws ApiRuleException {
+        if (!GenericValidate.validate(this)) {
+            throw new ApiRuleException(ReturnCodeEnum.CODE_NONE_ERROR.getCode(),
+                    ReturnCodeEnum.CODE_NONE_ERROR.getMsg());
+        }
+        if (!FopUtils.isPositiveInteger(amount)) {
+            throw new ApiRuleException(ReturnCodeEnum.CODE_AMOUNT_ERROR.getCode(),
+                    ReturnCodeEnum.CODE_AMOUNT_ERROR.getMsg());
+        }
     }
 }

@@ -1,8 +1,12 @@
 package com.titanjr.fop.request;
 
+import com.fangcang.titanjr.common.util.GenericValidate;
+import com.sun.istack.internal.NotNull;
+import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.domain.FopHashMap;
 import com.titanjr.fop.exceptions.ApiRuleException;
 import com.titanjr.fop.response.WheatfieldOrderServiceAuthcodeserviceResponse;
+import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.Date;
 import java.util.Map;
@@ -12,31 +16,42 @@ import java.util.Map;
  */
 public class WheatfieldOrderServiceAuthcodeserviceRequest extends BaseRequest implements FopRequest<WheatfieldOrderServiceAuthcodeserviceResponse> {
     private FopHashMap udfParams;
+    @NotBlank
     private String orderno;
     private String intermerchantcode;
     private Integer ordercount;
+    @NotBlank
     private String productid;
     private String paychannelid;
+    @NotBlank
     private String requestno;
     private Integer status;
+    @NotBlank
     private String funccode;
+    @NotBlank
     private String merchantcode;
+    @NotNull
     private Long orderamount;
+    @NotNull
     private Date requesttime;
     private Date orderdate;
     private String errorcode;
     private String busitypeid;
     private String bankcode;
+    @NotBlank
     private String conditioncode;
     private String orderpackageno;
     private String remark;
+    @NotBlank
     private String userid;
     private Long feeamount;
+    @NotNull
     private Long amount;
     private String errormsg;
     private String referuserid;
     private Long profit;
     private String tradeflowno;
+    @NotBlank
     private String useripaddress;
     private Long userfee;
 
@@ -317,6 +332,9 @@ public class WheatfieldOrderServiceAuthcodeserviceRequest extends BaseRequest im
     }
 
     public void check() throws ApiRuleException {
-
+        if (!GenericValidate.validate(this)) {
+            throw new ApiRuleException(ReturnCodeEnum.CODE_NONE_ERROR.getCode(),
+                    ReturnCodeEnum.CODE_NONE_ERROR.getMsg());
+        }
     }
 }
