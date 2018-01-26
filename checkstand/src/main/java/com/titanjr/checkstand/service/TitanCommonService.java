@@ -7,9 +7,8 @@
  */
 package com.titanjr.checkstand.service;
 
-import com.titanjr.checkstand.request.TLNetBankPayCallbackRequest;
-import com.titanjr.checkstand.respnse.BaseResponse;
-import com.titanjr.checkstand.respnse.TLPayCallBackResponse;
+import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
+import com.titanjr.checkstand.respnse.TitanPayCallBackResponse;
 
 /**
  * 泰坦金融服务
@@ -19,19 +18,17 @@ import com.titanjr.checkstand.respnse.TLPayCallBackResponse;
 public interface TitanCommonService {
 	
 	/**
-	 * 网银支付前台回调
+	 * 支付结果前台回调
 	 * @author Jerry
 	 * @date 2018年1月16日 上午11:15:48
 	 */
-	public TLPayCallBackResponse payConfirmCallback(TLNetBankPayCallbackRequest 
-			tlNetBankPayCallbackRequest);
+	public TitanPayCallBackResponse payConfirmCallback(RechargeResultConfirmRequest confirmRequest);
 	
 	/**
-	 * 网银支付后台通知
+	 * 支付结果后台通知
 	 * @author Jerry
-	 * @return 
 	 * @date 2018年1月16日 上午11:16:16
 	 */
-	public TLPayCallBackResponse PayNotice(TLNetBankPayCallbackRequest tlNetBankPayCallbackRequest);
+	public TitanPayCallBackResponse PayNotice(RechargeResultConfirmRequest confirmRequest);
 
 }

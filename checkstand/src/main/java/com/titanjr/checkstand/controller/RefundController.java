@@ -61,17 +61,16 @@ public class RefundController extends BaseController {
 		TitanRefundDTO refundDTO = WebUtils.switch2RequestDTO(TitanRefundDTO.class, request);
 		ValidateResponse res = GenericValidate.validateNew(refundDTO);
 		if (!res.isSuccess()){
-			logger.error("【退款】参数错误：{}", res.getReturnMessage());
+			logger.error("【支付路由退款】参数错误：{}", res.getReturnMessage());
 			return "redirect:" + errorUrl;
 		}
 
 		//查询充值单
 		TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
-		titanOrderPayDTO.setMerchantNo(refundDTO.getMerchantNo());
 		titanOrderPayDTO.setOrderNo(refundDTO.getOrderNo());
 		titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
 		if(titanOrderPayDTO == null){
-			logger.error("【退款】失败，查询充值单为空，orderNo={}，refundOrderNo={}", refundDTO
+			logger.error("【支付路由退款】失败，查询充值单为空，orderNo={}，refundOrderNo={}", refundDTO
 					.getOrderNo(), refundDTO.getRefundOrderno());
 			return "redirect:" + errorUrl;
 		}
@@ -79,19 +78,19 @@ public class RefundController extends BaseController {
         //根据支付方式获取退款调用策略，调对应的接口
 		PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(titanOrderPayDTO.getPayType());
 		if(payTypeEnum == null){
-			logger.error("【退款】失败，获取payTypeEnum为空");
+			logger.error("【支付路由退款】失败，获取payTypeEnum为空");
 			return "redirect:" + errorUrl;
 		}
 		OrderRefundStrategy refundStrategy =  StrategyFactory.getRefundStrategy(payTypeEnum);
 		if(refundStrategy == null){
-			logger.error("【退款】失败，获取相应的退款策略为空");
+			logger.error("【支付路由退款】失败，获取相应的退款策略为空");
 			return "redirect:" + errorUrl;
 		}
 		
         String redirectUrl = refundStrategy.redirectResult(request);
         super.resetParameter(request,attr);
         
-        return "redirect:" + redirectUrl;
+        return "forward:" + redirectUrl;
 		
     }
 	
@@ -111,7 +110,7 @@ public class RefundController extends BaseController {
     	try {
     		
     		TitanRefundDTO refundDTO = WebUtils.switch2RequestDTO(TitanRefundDTO.class, request);
-			tlNetBankOrderRefundRequest.setMerchantId(refundDTO.getMerchantNo());
+			tlNetBankOrderRefundRequest.setMerchantId(SysConstant.TL_NETBANK_MERCHANT);
 			tlNetBankOrderRefundRequest.setOrderNo(refundDTO.getOrderNo());
 			tlNetBankOrderRefundRequest.setRefundAmount(Integer.parseInt(refundDTO.getRefundAmount()));//校验
 			tlNetBankOrderRefundRequest.setMchtRefundOrderNo(refundDTO.getRefundOrderno());

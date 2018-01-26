@@ -23,5 +23,12 @@ public interface TLPaymentService {
 	 * @date 2017年12月7日 下午6:31:40
 	 */
 	public TitanQrCodePayResponse qrCodePay(TLQrCodePayRequest tlQrCodePayRequest);
+	
+	/**
+	 * 通联微信公众号支付
+	 * @author Jerry
+	 * @date 2018年1月22日 下午3:27:24
+	 */
+	public TitanQrCodePayResponse wechatPay(TLQrCodePayRequest tlQrCodePayRequest);
 
 }

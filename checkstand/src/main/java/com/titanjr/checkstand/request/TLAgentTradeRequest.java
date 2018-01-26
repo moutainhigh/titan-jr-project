@@ -10,6 +10,8 @@ package com.titanjr.checkstand.request;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.titanjr.checkstand.dto.TLAgentInfoRequestDTO;
 
 /**
@@ -21,6 +23,11 @@ public class TLAgentTradeRequest {
 	
 	private TLAgentInfoRequestDTO INFO;
 	private List trxData;
+	/**
+	 * 请求类型，内部使用，非渠道需要字段  @see RequestTypeEnum
+	 */
+	@NotBlank
+    private String requestType;
 	
 	public TLAgentInfoRequestDTO getINFO() {
 		return INFO;
@@ -64,6 +71,12 @@ public class TLAgentTradeRequest {
 			return trxData.iterator().next();
 		}
 		return null;
+	}
+	public String getRequestType() {
+		return requestType;
+	}
+	public void setRequestType(String requestType) {
+		this.requestType = requestType;
 	}
 
 }

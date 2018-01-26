@@ -21,7 +21,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.util.EntityUtils;
-import org.bouncycastle.util.encoders.Base64;
+//import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -50,7 +50,7 @@ import com.titanjr.checkstand.util.SignMsgBuilder;
 public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 	
 	private final static Logger logger = LoggerFactory.getLogger(TLRefundQueryServiceImpl.class);
-	private static String postUrl = "";
+	//private static String postUrl = "";
 
 	@Override
 	public TitanRefundQueryResponse netBankRefundQuery(TLNetBankRefundQueryRequest tlNetBankRefundQueryRequest) {
@@ -78,7 +78,7 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 				titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 				return titanRefundQueryResponse;
 			}
-			postUrl = gateWayConfigDTO.getGateWayUrl();
+			//postUrl = gateWayConfigDTO.getGateWayUrl();
 			logger.info("【通联-网银退款查询】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
 			
 			//封装http请求参数
@@ -127,6 +127,7 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 		responseStr = URLDecoder.decode(responseStr, "UTF-8");
 		
 		if(responseStr.indexOf("ERRORCODE=") < 0){
+			//返回信息格式例子：v2.4|0|100020091218001|20180125193500017000488|1|20180125074214|OD2018012519370001605|TKSUCC0002|20180125193342
 			String[] responseArr = responseStr.trim().split("\\|");
 			String refundResult = responseArr[7];
 			String orderNo = responseArr[3];
@@ -134,6 +135,16 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 			String fileAsString = ""; // 签名信息前的对账文件内容（签名源串）
 			String fileSignMsg = ""; // 文件签名信息
 			String lines;
+			//返回信息没做签名，pay-app也没有校验
+			titanRefundQueryResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+			titanRefundQueryResponse.setOrderNo(orderNo);
+			titanRefundQueryResponse.setOrderAmount(responseArr[4]); //泰坦金融的退款金额与订单金额相同
+			titanRefundQueryResponse.setRefundOrderno(responseArr[6]);
+			titanRefundQueryResponse.setRefundAmount(responseArr[4]);
+			//titanRefundQueryResponse.setOrderTime(orderTime);未返回
+			titanRefundQueryResponse.setRefundTime(responseArr[5]);
+			titanRefundQueryResponse.setVersion(SysConstant.RS_VERSION);
+			titanRefundQueryResponse.setSignType(SysConstant.RS_SIGN_TYPE);
 			
 			//获取退款结果
 			if(!StringUtil.isValidString(refundResult)){
@@ -144,7 +155,7 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 			
 			TLNetBankRefundResultEnum refundResultEnum = TLNetBankRefundResultEnum.getTLRefundResultEnumByKey(refundResult);
 			if(refundResultEnum == null){
-				logger.error("【通联-网银退款查询】通联返回的退款状态未匹配到应有的状态");
+				logger.error("【通联-网银退款查询】通联返回的退款状态未匹配到对应的枚举类型");
 				titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 				return titanRefundQueryResponse;
 			}
@@ -172,7 +183,7 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 			fileSignMsg = refundOrderList.get(refundOrderList.size()-1);
 			signTypeMsg = String.valueOf(responseStr.charAt(5));
 			
-			boolean isVerified = false; // 验证签名结果
+			//boolean isVerified = false; // 验证签名结果
 			if("0".equals(signTypeMsg)){
 				// 验证签名：先对文件内容计算MD5摘要，再将MD5摘要与返回的签名进行对比
 				String sourceString = fileAsString+"|"+key;
@@ -184,14 +195,14 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 					logger.info("【通联-网银退款查询】验签失败，orderNo={}", orderNo);
 				}
 				
-			}else if("1".equals(signTypeMsg)){
+			}else if("1".equals(signTypeMsg)){//支付路由网关支付目前只用md5签名，不用证书签名
 				
-		        String fileMd5String = SecurityUtil.MD5Encode(fileAsString);
+		        /*String fileMd5String = SecurityUtil.MD5Encode(fileAsString);
 				String certPath="";
 				if(postUrl.indexOf("service.allinpay.com")>0){
-					certPath="/opt/conf/TLCert-prod.cer";//生产证书路径
+					certPath="";//生产证书路径
 				}else{
-					certPath="/opt/conf/TLCert-test.cer"; //测试证书路径
+					certPath=""; //测试证书路径
 				}
 				isVerified = SecurityUtil.verifyByRSA(certPath, fileMd5String.getBytes(), Base64.decode(fileSignMsg));
 				if (isVerified) {
@@ -199,7 +210,7 @@ public class TLRefundQueryServiceImpl implements TLRefundQueryService {
 				} else {
 					logger.info("【通联-网银退款查询】验签失败，orderNo={}", orderNo);
 	
-				}
+				}*/
 				
 			}else{
 				logger.error("【通联-网银退款查询】验签失败，解析signTypeMsg={}", signTypeMsg);

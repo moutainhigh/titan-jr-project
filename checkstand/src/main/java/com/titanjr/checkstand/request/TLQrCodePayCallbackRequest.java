@@ -9,6 +9,9 @@ package com.titanjr.checkstand.request;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 /**
  * 通联扫码支付结果回调参数对象
  * @author Jerry
@@ -223,6 +226,11 @@ public class TLQrCodePayCallbackRequest implements Serializable {
 	}
 	public void setSign(String sign) {
 		this.sign = sign;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
 	}
 
 }

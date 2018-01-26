@@ -8,7 +8,6 @@
 package com.titanjr.checkstand.constants;
 
 import java.util.Map;
-
 import com.titanjr.checkstand.dto.GateWayConfigDTO;
 
 /**
@@ -24,11 +23,8 @@ public class SysConstant {
 	public static Map<String, GateWayConfigDTO> gateWayConfigMap = null;
 	
 	
-	/**
-	 * 以下常量的位置后续可能变更
-	 */
 	//----------------仿照融数相关常量定义-----------------------------------
-	public static String RS_MERCHANT_NO = "141223100000056";
+	public static String RS_MERCHANT_NO = "M000016";
 	public static String RS_SIGN_TYPE = "1";
 	public static String RS_VERSION = "v1.0";
 	public static String RS_VERSION_NEW = "v1.1";
@@ -41,17 +37,6 @@ public class SysConstant {
 	public static String RB_CHANNEL_CODE = "02";
 	
 	
-	//--------------------------URL-----------------------------------
-	//通联网银支付前台回调地址
-	public static String TL_NB_CALLBACK_PAGE_URL = "http://www.fangcang.org/checkstand-dev3/callback/tlNetBankPayConfirmPage.action";
-	//通联网银支付后台回调地址
-	public static String TL_NB_NOTICE_URL = "http://www.fangcang.org/checkstand-dev3/callback/tlNetBankPayNotice.action";
-	//通联扫码支付结果通知地址
-	public static String TL_QRCODE_NOTICE_URL = "http://www.fangcang.org/checkstand-dev3/callback/tlQrCodePayNotice.action";
-	//通联账户交易网关地址
-	public static String AGENT_TRADE_URL = "https://113.108.182.3/aipg/ProcessServlet";
-	
-	
 	//--------------------------版本号-----------------------------------
 	//通联网银支付版本号
 	public static String TL_NETBANK_PAY_VERSION = "v1.0";
@@ -61,12 +46,12 @@ public class SysConstant {
 	public static String TL_NETBANK_REFUND_VERSION = "v2.3";
 	//通联网银退款查询版本号
 	public static String TL_NETBANK_REFUND_QUERY_VERSION = "v2.4";
-	//通联扫码交易默认版本号
+	//通联扫码/微信公众号交易默认版本号
 	public static String TL_QRCODE_VERSION = "11";
 	//融宝接口版本号
 	public static String RB_VERSION = "3.1.3";
 	
-	//--------------------------签名方式-----------------------------------
+	//--------------------------signType-----------------------------------
 	//通联网银交易默认MD5签名方式
 	public static String TL_NETBANK_SIGNTYPE = "0";
 	//融宝签名类型

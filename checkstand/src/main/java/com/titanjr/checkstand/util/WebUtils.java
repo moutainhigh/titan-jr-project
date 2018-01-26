@@ -2,11 +2,9 @@ package com.titanjr.checkstand.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
-import java.util.Map;
 
 /**
  * Created by zhaoshan on 2017/11/20.

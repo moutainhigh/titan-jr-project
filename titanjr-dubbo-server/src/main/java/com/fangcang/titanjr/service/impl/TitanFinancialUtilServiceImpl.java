@@ -65,6 +65,21 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 	@Value("${pay.notifyurl}")
 	private String payNotifyUrl;
 	
+	@Value("${tl.netBankPay.confirmPageurl}")
+	private String tl_NetBankPay_ConfirmPageurl;
+	
+	@Value("${tl.netBankPay.notifyurl}")
+	private String tl_NetBankPay_Notifyurl;
+	
+	@Value("${tl.qrCodePay.notifyurl}")
+	private String tl_QrCodePay_Notifyurl;
+	
+	@Value("${tl.wechatPay.notifyurl}")
+	private String tl_WechatPay_Notifyurl;
+	
+	@Value("${rb.quickPay.notifyurl}")
+	private String rb_QuickPay_Notifyurl;
+	
 	@Value("${send.order.warning}")
 	private String isSendWarning;
 	
@@ -178,6 +193,11 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 				payMethodConfigDTO = new PayMethodConfigDTO();
 				payMethodConfigDTO.setPageurl(MessageFormat.format(payCallbackPageUrl, domainName));
 				payMethodConfigDTO.setNotifyurl(MessageFormat.format(payNotifyUrl, domainName));
+				payMethodConfigDTO.setTl_NetBankPay_ConfirmPageurl(MessageFormat.format(tl_NetBankPay_ConfirmPageurl, domainName));
+				payMethodConfigDTO.setTl_NetBankPay_Notifyurl(MessageFormat.format(tl_NetBankPay_Notifyurl, domainName));
+				payMethodConfigDTO.setTl_QrCodePay_Notifyurl(MessageFormat.format(tl_QrCodePay_Notifyurl, domainName));
+				payMethodConfigDTO.setTl_WechatPay_Notifyurl(MessageFormat.format(tl_WechatPay_Notifyurl, domainName));
+				payMethodConfigDTO.setRb_QuickPay_Notifyurl(MessageFormat.format(rb_QuickPay_Notifyurl, domainName));
 			}
 			return payMethodConfigDTO;
 		}catch(Exception e){

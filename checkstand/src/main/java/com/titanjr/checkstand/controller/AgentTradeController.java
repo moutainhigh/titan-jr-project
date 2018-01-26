@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
+import com.titanjr.checkstand.constants.RequestTypeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dto.TLAgentInfoRequestDTO;
 import com.titanjr.checkstand.dto.TLAgentPayTransDTO;
@@ -121,6 +122,7 @@ public class AgentTradeController extends BaseController {
 			trans.setBANK_CODE(agentPayDTO.getBankInfo());
 			trans.setCURRENCY(agentPayDTO.getCurrency());
 			tlAgentTradeRequest.addTrx(trans);
+			tlAgentTradeRequest.setRequestType(RequestTypeEnum.AGENT_TRADE.getKey());
 			
 			titanAgentPayResponse = tlAgentTradeService.agentPay(tlAgentTradeRequest);
 			return titanAgentPayResponse;

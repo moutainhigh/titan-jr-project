@@ -81,7 +81,6 @@ public class RefundQueryController extends BaseController {
         
 		//查询充值单
 		TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
-		titanOrderPayDTO.setMerchantNo(refundQueryDTO.getMerchantNo());
 		titanOrderPayDTO.setOrderNo(refundQueryDTO.getOrderNo());
 		titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
 		if(titanOrderPayDTO == null){
@@ -105,7 +104,7 @@ public class RefundQueryController extends BaseController {
 		String redirectUrl = refundQueryStrategy.redirectResult(request);
         super.resetParameter(request,attr);
         
-        return "redirect:" + redirectUrl;
+        return "forward:" + redirectUrl;
         
     }
     
@@ -125,7 +124,7 @@ public class RefundQueryController extends BaseController {
     	try {
     		
 			TitanRefundQueryDTO refundQueryDTO = WebUtils.switch2RequestDTO(TitanRefundQueryDTO.class, request);
-			tlNetBankRefundQueryRequest.setMerchantId(refundQueryDTO.getMerchantNo());
+			tlNetBankRefundQueryRequest.setMerchantId(SysConstant.TL_NETBANK_MERCHANT);
 			tlNetBankRefundQueryRequest.setOrderNo(refundQueryDTO.getOrderNo());
 			tlNetBankRefundQueryRequest.setMchtRefundOrderNo(refundQueryDTO.getRefundOrderno());
 			tlNetBankRefundQueryRequest.setRefundAmount(refundQueryDTO.getRefundAmount());

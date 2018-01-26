@@ -17,7 +17,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dao.GateWayConfigDao;
 import com.titanjr.checkstand.dto.GateWayConfigDTO;
@@ -37,10 +36,8 @@ public class InitServiceImpl {
 	
 	
 	public void init(){
-		
 		initXmlProvider();
 		initGateWyUrlConfig();
-		
 	}
 	
 	
@@ -50,10 +47,8 @@ public class InitServiceImpl {
 	 * @date 2017年12月27日 下午6:54:52
 	 */
 	private void initXmlProvider(){
-		
 		BouncyCastleProvider provider = new BouncyCastleProvider();
 		XmlTools.initProvider(provider);
-		
 	}
 	
 	

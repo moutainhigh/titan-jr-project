@@ -24,8 +24,10 @@ import org.springframework.stereotype.Service;
 
 import com.fangcang.titanjr.common.enums.WithDrawStatusEnum;
 import com.titanjr.checkstand.constants.AgentRetCodeEnum;
+import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
+import com.titanjr.checkstand.dto.GateWayConfigDTO;
 import com.titanjr.checkstand.dto.TLAgentInfoResponseDTO;
 import com.titanjr.checkstand.dto.TitanAgentResDetailDTO;
 import com.titanjr.checkstand.request.TLAgentTradeRequest;
@@ -57,7 +59,17 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 		
 		try{
 			
-			String resp = sendXml(tlAgentTradeRequest);
+			String configKey = tlAgentTradeRequest.getINFO().getMERCHANT_ID() +"_" + PayTypeEnum.AGENT_TRADE.combPayType + 
+					"_" + SysConstant.TL_CHANNEL_CODE + "_" + tlAgentTradeRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【通联-代付请求】失败，获取网关配置为空，configKey={}，orderNo={}", configKey, 
+						tlAgentTradeRequest.getINFO().getREQ_SN());
+				titanAgentPayResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanAgentPayResponse;
+			}
+			
+			String resp = sendXml(tlAgentTradeRequest, gateWayConfigDTO.getGateWayUrl());
 			titanAgentPayResponse = agentPayXmlResult(resp);
 			
 		}catch(Exception e){
@@ -81,7 +93,17 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 		
 		try{
 			
-			String resp = sendXml(tlAgentTradeRequest);
+			String configKey = tlAgentTradeRequest.getINFO().getMERCHANT_ID() +"_" + PayTypeEnum.AGENT_TRADE.combPayType + 
+					"_" + SysConstant.TL_CHANNEL_CODE + "_" + tlAgentTradeRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【通联-账户交易查询】失败，获取网关配置为空，configKey={}，orderNo={}", configKey, 
+						tlAgentTradeRequest.getINFO().getREQ_SN());
+				titanAgentTradeResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return titanAgentTradeResponse;
+			}
+			
+			String resp = sendXml(tlAgentTradeRequest, gateWayConfigDTO.getGateWayUrl());
 			titanAgentTradeResponse = agentQuery(resp);
 			
 		}catch(Exception e){
@@ -103,7 +125,15 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 		
 		try{
 			
-			String resp = sendXml(tlAgentTradeRequest);
+			String configKey = tlAgentTradeRequest.getINFO().getMERCHANT_ID() +"_" + PayTypeEnum.AGENT_TRADE.combPayType + 
+					"_" + SysConstant.TL_CHANNEL_CODE + "_" + tlAgentTradeRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【通联-对账文件下载】失败，获取网关配置为空，configKey={}，orderNo={}", configKey, 
+						tlAgentTradeRequest.getINFO().getREQ_SN());
+			}
+			
+			String resp = sendXml(tlAgentTradeRequest, gateWayConfigDTO.getGateWayUrl());
 			writeBill(resp);
 			
 		}catch(Exception e){
@@ -122,14 +152,13 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 	 * @author Jerry
 	 * @date 2017年12月28日 上午11:29:49
 	 */
-	private String sendXml(TLAgentTradeRequest tlAgentTradeRequest) throws Exception{
+	private String sendXml(TLAgentTradeRequest tlAgentTradeRequest, String url) throws Exception{
 		
 		String xml = XmlTools.buildXml(tlAgentTradeRequest, true);
-		
 		xml = XmlTools.signMsg(xml, resUrl+SysConstant.PFX_PATH, SysConstant.PFX_PWD, false);
 		
 		logger.info("======================发送报文======================：\n{}", xml);
-		String resp = XmlTools.send(SysConstant.AGENT_TRADE_URL, xml);
+		String resp = XmlTools.send(url, xml);
 		logger.info("======================响应内容======================") ;
 		
 		boolean flag = XmlTools.verifySign(resp, resUrl+SysConstant.CER_PATH, false, false);

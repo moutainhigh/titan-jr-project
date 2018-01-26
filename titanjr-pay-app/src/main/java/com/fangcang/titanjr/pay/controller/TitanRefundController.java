@@ -1,8 +1,5 @@
 package com.fangcang.titanjr.pay.controller;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import javax.annotation.Resource;
 
 import net.sf.json.JSONSerializer;
@@ -36,7 +33,6 @@ public class TitanRefundController extends BaseController{
 	
 	private static final Log log = LogFactory.getLog(TitanRefundController.class);
 	
-	private static Map<String,Object> mapLock = new  ConcurrentHashMap<String, Object>();
 	@Resource
 	TitanRefundService titanRefundService;
 	

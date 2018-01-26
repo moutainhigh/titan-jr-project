@@ -55,7 +55,6 @@ import com.fangcang.titanjr.common.util.JsonConversionTool;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.NumberUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
-import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
@@ -66,7 +65,6 @@ import com.fangcang.titanjr.dao.TitanRefundDao;
 import com.fangcang.titanjr.dao.TitanTransOrderDao;
 import com.fangcang.titanjr.dao.TitanTransferReqDao;
 import com.fangcang.titanjr.dao.TitanUserDao;
-import com.fangcang.titanjr.dto.PaySourceEnum;
 import com.fangcang.titanjr.dto.bean.CashierItemBankDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
 import com.fangcang.titanjr.dto.bean.OrgBindInfoDTO;
@@ -90,7 +88,6 @@ import com.fangcang.titanjr.dto.request.OrderRequest;
 import com.fangcang.titanjr.dto.request.OrderSaveAndBindCardRequest;
 import com.fangcang.titanjr.dto.request.RechargeRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
-import com.fangcang.titanjr.dto.request.RecordRequest;
 import com.fangcang.titanjr.dto.request.RecordTransferRequest;
 import com.fangcang.titanjr.dto.request.RepairTransferRequest;
 import com.fangcang.titanjr.dto.request.TitanOrderRequest;
@@ -114,7 +111,6 @@ import com.fangcang.titanjr.dto.response.TransOrderUpdateResponse;
 import com.fangcang.titanjr.dto.response.TransferOrderResponse;
 import com.fangcang.titanjr.dto.response.TransferResponse;
 import com.fangcang.titanjr.entity.TitanAccount;
-import com.fangcang.titanjr.entity.TitanBalanceInfo;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.TitanRateRecord;
 import com.fangcang.titanjr.entity.TitanTransOrder;
@@ -460,8 +456,10 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			if (isAddOrderAgain) {
 				titanTransOrder.setTransid(null);
 				row = titanTransOrderDao.insert(titanTransOrder);
+				log.info("本地新增交易单数：" + row);
 			} else {
 				row = titanTransOrderDao.updateTitanTransOrderByTransId(titanTransOrder);
+				log.info("本地更新交易单数：" + row);
 			}
 			return true;
 		} catch (Exception e) {
@@ -878,6 +876,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	}
 
 	// 获取Transid
+	@SuppressWarnings("unused")
 	private TransOrderDTO getTransidByOrderId(String orderId) throws Exception {
 		try {
 			if (StringUtil.isValidString(orderId)) {
@@ -1800,6 +1799,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	}
 
 
+	@SuppressWarnings("unused")
 	private void lockOutTradeNoList(String out_trade_no)
 			throws InterruptedException {
 		synchronized (mapLock) {
@@ -2343,7 +2343,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		if(payerTypeEnum.isB2BPayment()){//B2B端支付
 			
 			if (!payerTypeEnum.getKey().equals(
-					payerTypeEnum.B2B_WX_PUBLIC_PAY.getKey())) {
+					PayerTypeEnum.B2B_WX_PUBLIC_PAY.getKey())) {
 				OrgBindInfo orgBindInfo = this
 						.queryOrgBindInfo(titanOrderRequest.getRuserId());
 				if (orgBindInfo == null) {
@@ -2520,7 +2520,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			
 			//解析response
 			QrCodeDTO qr = new QrCodeDTO();
-			qr = (QrCodeDTO)RSConvertFiled2ObjectUtil.convertField2Object(qr.getClass(), response);
+			qr = JsonConversionTool.toObject(response, qr.getClass());
 			String payUrl =null;
 			if(response.indexOf("weixin")!=-1){
 				payUrl = response.substring(response.indexOf("weixin"), response.length());

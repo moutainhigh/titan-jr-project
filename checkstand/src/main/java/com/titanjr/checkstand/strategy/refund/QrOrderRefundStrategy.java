@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
-import com.titanjr.checkstand.util.WebUtils;
-
 /**
  * @author Jerry
  * @date 2017年12月20日 上午9:46:36  
@@ -23,7 +21,7 @@ public class QrOrderRefundStrategy implements OrderRefundStrategy {
 	@Override
 	public String redirectResult(HttpServletRequest request) {
 		
-		return WebUtils.getRequestBaseUrl(request) + "/refund/qrOrderRefund.shtml";
+		return "/refund/qrOrderRefund.shtml";
 		
 	}
 

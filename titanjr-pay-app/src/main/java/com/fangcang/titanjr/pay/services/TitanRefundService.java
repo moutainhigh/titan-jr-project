@@ -16,8 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
-
-import com.fangcang.titanjr.common.enums.FreezeTypeEnum;
 import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
@@ -388,11 +386,11 @@ public class TitanRefundService {
 	}
 
 	private String validateTransOrderStatus(Model model, TransOrderDTO transOrderDTO){
-		log.info("退款时，校验订单信息，payOrderNo：" + transOrderDTO.getPayorderno());
 		if(transOrderDTO ==null){
 			log.error("交易单订单不存在");
 			return setUpErrorResult(model,TitanMsgCodeEnum.QUERY_LOCAL_ORDER);
 		}
+		log.info("退款时，校验订单信息，payOrderNo：" + transOrderDTO.getPayorderno());
 		
 		if(OrderStatusEnum.FREEZE_SUCCESS.getStatus().equals(transOrderDTO.getStatusid()) 
 				&& CommonConstant.FREEZE_PAYER.equals(transOrderDTO.getFreezeAt())){

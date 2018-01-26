@@ -41,7 +41,6 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
-import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.titanjr.common.util.httpclient.TitanjrHttpTools;
@@ -79,6 +78,7 @@ import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.titanjr.service.TitanFinancialRefundService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
+import com.fangcang.util.JsonUtil;
 import com.fangcang.util.StringUtil;
 
 @Service("titanFinancialRefundService")
@@ -147,7 +147,7 @@ public class TitanFinancialRefundServiceImpl implements
 			titanTransferDTO.setUserrelateid(refundRequest.getUserRelateId());
 			titanTransferDTO.setPayOrderNo(refundRequest.getPayOrderNo());
 			List<TitanTransferDTO> titanTransferDTOList = titanOrderService.getTitanTransferDTOList(titanTransferDTO);
-			if (null != titanTransferDTOList) {//如果存在退款转账订单，则判断其是否成功
+			if (CollectionUtils.isNotEmpty(titanTransferDTOList)) {//如果存在退款转账订单，则判断其是否成功
 				titanTransferDTO = titanTransferDTOList.get(0);
 				log.info("用户退款，订单号orderid:"+titanTransferDTO.getTransorderid());
 				if (titanTransferDTO.getStatus().intValue() == TransferReqEnum.TRANSFER_SUCCESS.getStatus()) {
@@ -165,7 +165,7 @@ public class TitanFinancialRefundServiceImpl implements
 			titanTransferReq.setTransorderid(refundRequest.getTransorderid());
 			titanTransferReq.setPayorderno(refundRequest.getPayOrderNo());
 
-			if (titanTransferDTOList == null) {//保存转账订单，
+			if (CollectionUtils.isEmpty(titanTransferDTOList)) {//保存转账订单，
 				int row = titanTransferReqDao.insert(titanTransferReq);
 				if (row < 1) {
 					log.error(refundRequest.getTransorderid()+"退款保存转账单失败");
@@ -682,7 +682,7 @@ public class TitanFinancialRefundServiceImpl implements
 				response = EntityUtils.toString(entity);
 				log.info("调用融数网关gateWayURL退款或查询退款状态,操作："+busiCodeEnum.toString()+",orderId："+notifyRefundRequest.getOrderNo()+",请求参数:"+Tools.gsonToString(params)+",退款返回信息response："+response);
 				
-				notifyRefundResponse = RSConvertFiled2ObjectUtil.convertField2Object(NotifyRefundResponse.class, response);
+				notifyRefundResponse = (NotifyRefundResponse) JsonUtil.jsonToBean(response, NotifyRefundResponse.class);
 				notifyRefundResponse.putSuccess("");
 				if(StringUtil.isValidString(notifyRefundResponse.getErrCode()) 
 			    		|| StringUtil.isValidString(notifyRefundResponse.getErrMsg())
@@ -773,7 +773,7 @@ public class TitanFinancialRefundServiceImpl implements
 		RefundDTO refund = new RefundDTO();
 		refund.setUserOrderId(refundRequest.getUserOrderId());
 		List<RefundDTO> refundList = titanRefundDao.queryRefundDTO(refund);
-		if(refundList!=null && refundList.get(0)!=null ){
+		if(CollectionUtils.isNotEmpty(refundList)){
 			log.error("退款单已在落单,不能进行恢复操作了");
 			return ;
 		}

@@ -13,7 +13,7 @@ import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
  * @author Jerry
  * @date 2018年1月15日 下午6:47:06  
  */
-public class TLPayCallBackResponse extends BaseResponse {
+public class TitanPayCallBackResponse extends BaseResponse {
 
 	/** 
 	 * 

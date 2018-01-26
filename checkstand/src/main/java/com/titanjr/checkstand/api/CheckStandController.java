@@ -3,7 +3,6 @@ package com.titanjr.checkstand.api;
 import com.titanjr.checkstand.constants.BusiCodeEnum;
 import com.titanjr.checkstand.controller.BaseController;
 import com.titanjr.checkstand.util.JRBeanUtils;
-import com.titanjr.checkstand.util.WebUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,51 +33,58 @@ public class CheckStandController extends BaseController {
 	 * 根据策略跳转到对应的收银台路由代理,有些是返回字串，有些是做网关跳转
 	 */
     @RequestMapping(value = "/payment", method = {RequestMethod.POST, RequestMethod.GET})
-    public String payment(HttpServletRequest request, RedirectAttributes attr, Model model) throws Exception {
+    public String payment(HttpServletRequest request, RedirectAttributes attr, Model model) {
 
         //请求频次校验
         //参数MD5验证
+        try {
+        	
+			resetParameter(request, attr);
+			BusiCodeEnum busiCodeEnum = JRBeanUtils.getBusiCode(request);
+			
+			if(busiCodeEnum == null){
+				logger.error("路由错误，busiCodeEnum={}", busiCodeEnum);
+				return super.payFailedCallback(model);
+			}
 
-        resetParameter(request, attr);
-        
-        //根据业务代码选择接口路由
-        //OperateTypeEnum operateTypeEnum = JRBeanUtils.recognizeRequestType(request.getParameterMap().keySet());
-        BusiCodeEnum busiCodeEnum = JRBeanUtils.getBusiCode(request);
-        if(busiCodeEnum == null){
-        	logger.error("路由错误，busiCodeEnum={}", busiCodeEnum);
-        	return super.payFailedCallback(model);
-        }
+			if (busiCodeEnum.equals(BusiCodeEnum.PAY_REQUEST)){
+			    request.setCharacterEncoding("UTF-8");
+			    //return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/pay/entrance.shtml";
+			    return "forward:/pay/entrance.shtml";
+			}
+			
+			if (busiCodeEnum.equals(BusiCodeEnum.PAY_QUERY)){
+			    request.setCharacterEncoding("UTF-8");
+			    return "forward:/query/entrance.shtml";
+			}
 
-        if (busiCodeEnum.equals(BusiCodeEnum.PAY_REQUEST)){
-            request.setCharacterEncoding("UTF-8");
-            return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/pay/entrance.shtml";
-        }
-        
-        if (busiCodeEnum.equals(BusiCodeEnum.PAY_QUERY)){
-            request.setCharacterEncoding("UTF-8");
-            return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/query/entrance.shtml";
-        }
+			if (busiCodeEnum.equals(BusiCodeEnum.REFUND_REQUEST)){
+			    return "forward:/refund/entrance.shtml";
+			}
+			
+			if (busiCodeEnum.equals(BusiCodeEnum.REFUND_QUERY)){
+			    return "forward:/rfQuery/entrance.shtml";
+			}
+			
+			if (busiCodeEnum.equals(BusiCodeEnum.AGENT_TRADE)){
+				return "forward:/agent/entrance.shtml";
+			}
+			
+			if (busiCodeEnum.equals(BusiCodeEnum.CARD_BIN_QUERY) || busiCodeEnum.equals(BusiCodeEnum.QUICK_PAY_CONFIRM)
+					|| busiCodeEnum.equals(BusiCodeEnum.RE_SEND_MSG) || busiCodeEnum.equals(BusiCodeEnum.CARD_AUTH)
+					|| busiCodeEnum.equals(BusiCodeEnum.CARD_BIND_QUERY) || busiCodeEnum.equals(BusiCodeEnum.CARD_UNBIND)){
+				return "forward:/quick/entrance.shtml";
+			}
+			
+			logger.error("【{}】{}未匹配对应的入口", busiCodeEnum.getKey(), busiCodeEnum.getValue());
+			return super.payFailedCallback(model);
+			
+		} catch (Exception e) {
 
-        if (busiCodeEnum.equals(BusiCodeEnum.REFUND_REQUEST)){
-            return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/refund/entrance.shtml";
-        }
-        
-        if (busiCodeEnum.equals(BusiCodeEnum.REFUND_QUERY)){
-            return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/rfQuery/entrance.shtml";
-        }
-        
-        if (busiCodeEnum.equals(BusiCodeEnum.AGENT_TRADE)){
-        	return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/agent/entrance.shtml";
-        }
-        
-        if (busiCodeEnum.equals(BusiCodeEnum.CARD_BIN_QUERY) || busiCodeEnum.equals(BusiCodeEnum.QUICK_PAY_CONFIRM)
-        		|| busiCodeEnum.equals(BusiCodeEnum.RE_SEND_MSG) || busiCodeEnum.equals(BusiCodeEnum.CARD_AUTH)
-        		|| busiCodeEnum.equals(BusiCodeEnum.CARD_BIND_QUERY) || busiCodeEnum.equals(BusiCodeEnum.CARD_UNBIND)){
-        	return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/quick/entrance.shtml";
-        }
-        
-        logger.error("【{}】{}未匹配对应的入口", busiCodeEnum.getKey(), busiCodeEnum.getValue());
-        return super.payFailedCallback(model);
+			logger.error("支付路由异常：", e);
+			return super.payFailedCallback(model);
+			
+		}
     }
 
 }

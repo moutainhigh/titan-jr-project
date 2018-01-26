@@ -92,7 +92,8 @@ public class TLQrCodePayResponse implements Serializable {
 	 */
 	private String errmsg;
 	/**
-	 * 扫码支付则返回二维码字符串
+	 * 扫码支付则返回二维码字符串<br>
+	 * 微信公众号JS支付则返回json字符串。
 	 */
 	private String payinfo;
 	/**

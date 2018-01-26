@@ -242,13 +242,22 @@ public class TLOrderRefundServiceImpl implements TLOrderRefundService {
 		}
 		
 		if (StringUtil.isValidString(result.get("ERRORCODE"))) {
-			
+			titanOrderRefundResponse.setRefundStatus("3");
 			//订单重复退款会返回：退款金额不能大于可退金额
 			logger.error("【通联-订单退款】失败：{}", result.get("ERRORMSG"));
 			titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.build(result.get("ERRORMSG")));
 			return titanOrderRefundResponse;
 
 		} else {
+			
+			titanOrderRefundResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+			titanOrderRefundResponse.setOrderNo(result.get("orderNo").toString());
+			titanOrderRefundResponse.setRefundOrderno(null==result.get("mchtRefundOrderNo")?"":result.get("mchtRefundOrderNo").toString());
+			titanOrderRefundResponse.setOrderAmount(result.get("orderAmount").toString());
+			titanOrderRefundResponse.setRefundAmount(result.get("refundAmount").toString());
+			titanOrderRefundResponse.setOrderTime(result.get("orderDatetime").toString());
+			titanOrderRefundResponse.setRefundTime(result.get("refundDatetime").toString());
+			titanOrderRefundResponse.setVersion(SysConstant.RS_VERSION);
 			
 			PaymentResult paymentResult = new PaymentResult();
 			paymentResult.setMerchantId(result.get("merchantId").toString());
@@ -281,6 +290,8 @@ public class TLOrderRefundServiceImpl implements TLOrderRefundService {
 				logger.info("【通联-订单退款】退款失败，orderNo={}", paymentResult.getOrderNo());
 				titanOrderRefundResponse.setRefundStatus("3");
 			}
+			
+			//titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR); //test error
 			return titanOrderRefundResponse;
 			
 		}
