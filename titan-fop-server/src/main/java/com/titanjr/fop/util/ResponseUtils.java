@@ -2,9 +2,11 @@ package com.titanjr.fop.util;
 
 import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.response.FopResponse;
+
 import net.sf.json.JSONSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -47,4 +49,12 @@ public class ResponseUtils {
         fopResponse.setMsg(ReturnCodeEnum.CODE_SYS_ERROR.getMsg());
         return JSONSerializer.toJSON(fopResponse).toString();
     }
+    
+    public static String getParamErrorResp(FopResponse fopResponse,String msg){
+    	logger.error("参数错误");
+        fopResponse.setErrorCode(ReturnCodeEnum.CODE_OPERTYPE_ERROR.getCode());
+        fopResponse.setMsg(msg);
+        return JSONSerializer.toJSON(fopResponse).toString();
+    }
+    
 }

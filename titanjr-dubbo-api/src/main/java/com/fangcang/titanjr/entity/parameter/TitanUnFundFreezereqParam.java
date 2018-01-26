@@ -1,7 +1,6 @@
 package com.fangcang.titanjr.entity.parameter;
 // default package
 
-import com.fangcang.titanjr.entity.TitanFundFreezereq;
 import com.fangcang.titanjr.entity.TitanFundUnFreezereq;
 
 /**

@@ -69,7 +69,14 @@ public class BaseResponseDTO implements Serializable {
 		setReturnCode(ReturnCode.CODE_PARAM_ERROR.getCode());
 		setReturnMessage(ReturnCode.CODE_PARAM_ERROR.getMsg());
 	}
-	
+	/***
+	 * 参数错误
+	 */
+	public void putParamError(String msg) {
+		setResult(false);
+		setReturnCode(ReturnCode.CODE_PARAM_ERROR.getCode());
+		setReturnMessage(msg);
+	}
 	/**
 	 * 系统错误
 	 */

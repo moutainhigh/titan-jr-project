@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.titanjr.fop.dao.TitanMainOrgDao">
+
+
+    <select id="queryList" parameterType="com.titanjr.fop.dto.MainOrgDTO"
+            resultType="com.titanjr.fop.entity.TitanMainOrg">
+        SELECT * FROM t_tfs_mainorg
+        <where>
+            <if test="orgCode!=null">and orgcode = #{orgCode}</if>
+            <if test="productId!=null">and productid = #{productId}</if>
+            <if test="userType!=null">and usertype = #{userType}</if>
+            <if test="certificatetype!=null">and certificatetype = #{certificatetype}</if>
+            <if test="certificateNumber!=null">and certificatenumber = #{certificateNumber}</if>
+            <if test="buslince!=null">and buslince = #{buslince}</if>
+        </where>
+    </select>
+	<insert id="insertEntity" parameterType="com.titanjr.fop.entity.TitanMainOrg" useGeneratedKeys="true" keyProperty="orgid">
+    insert into t_tfs_mainorg ( 
+      orgcode, orgname, productid,
+      usertype, statusid,remark,certificatetype,
+      certificatenumber,connect,mobiletel,buslince,createTime)
+    values ( #{orgCode}, #{orgName}, #{productId}, #{userType}, #{remark},
+    #{certificatetype},#{certificateNumber},#{connect},#{mobileTel},#{buslince},
+    #{createTime})
+  </insert>
+
+    <update id="updateEntity" parameterType="com.titanjr.fop.entity.TitanMainOrg" >
+        update t_tfs_mainorg
+        <set >
+            <if test="orgName != null" >orgname = #{orgName},</if>
+            <if test="statusId != null" >statusid = #{statusId},</if>
+            <if test="certificatetype != null" >certificatetype = #{certificatetype},</if>
+            <if test="certificateNumber != null" >certificatenumber = #{certificateNumber},</if>
+            <if test="connect != null" >connect = #{connect},</if>
+            <if test="mobileTel != null" >mobiletel = #{mobileTel},</if>
+            <if test="buslince != null" >buslince = #{buslince},</if>
+        </set>
+        where orgcode = #{orgCode}
+
+    </update>
+    
+</mapper>

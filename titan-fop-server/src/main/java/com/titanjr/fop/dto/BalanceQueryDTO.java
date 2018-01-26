@@ -1,6 +1,5 @@
 package com.titanjr.fop.dto;
 
-import javax.validation.constraints.NotNull;
 
 /**
  * 查询账户信息
