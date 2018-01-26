@@ -53,7 +53,9 @@ public enum RequestTypeEnum {
 	/** 手动关闭订单*/
 	QUICK_CLOSE_ORDER("313","手动关闭订单"),
 	/** 退款查询*/
-	QUICK_REFUND_QUERY("314","退款查询");
+	QUICK_REFUND_QUERY("314","退款查询"),
+	/** 账户交易*/
+	AGENT_TRADE("401","账户交易");
 	
 	private String key;
 	private String value;

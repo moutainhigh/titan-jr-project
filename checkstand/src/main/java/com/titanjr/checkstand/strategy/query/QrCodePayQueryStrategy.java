@@ -1,7 +1,5 @@
 package com.titanjr.checkstand.strategy.query;
 
-import com.titanjr.checkstand.util.WebUtils;
-
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +15,6 @@ public class QrCodePayQueryStrategy implements QueryStrategy{
     @Override
     public String redirectResult(HttpServletRequest request) {
 
-        return WebUtils.getRequestBaseUrl(request) + "/query/qrCodePayQuery.shtml";
+        return "/query/qrCodePayQuery.shtml";
     }
 }

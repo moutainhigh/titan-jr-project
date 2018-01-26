@@ -261,11 +261,11 @@
 					<tr align="left">
 						<td class="tdr">收款机构</td>
 						<td><input type="text" name="payeeOrg" id="payeeOrg"
-							value="TJM10000029" class="input_t01" /></td>
+							value="TJM60000018" class="input_t01" /></td>
 					</tr>
 					<tr>
 						<td class="tdr">收款机构名称</td>
-						<td><input type="text" id="payeeOrgName" value="郑尧辉"
+						<td><input type="text" id="payeeOrgName" value="罗庆龙"
 							name="payeeOrgName" /></td>
 					</tr>
 					<tr>
@@ -291,7 +291,7 @@
 					
 					<tr>
 						<td class="tdr">业务单号</td>
-						<td><input type="text" id="bussOrderNo" value="5445645645"
+						<td><input type="text" id="bussOrderNo" value="201801221637000001"
 							name="bussOrderNo" /></td>
 					</tr>
 					<tr>
@@ -315,7 +315,7 @@
 					
 					<tr>
 						<td class="tdr">业务通知地址</td>
-						<td><input type="text" id="notifyUrl" value="http://www.163.com"
+						<td><input type="text" id="notifyUrl" value="http://192.168.0.77:8084/titanjr-pay-app/payCallBack"
 							name="notifyUrl" /></td>
 					</tr>
 					
@@ -340,7 +340,7 @@
 					</tr>
 					<tr>
 						<td class="tdr">参数签名</td>
-						<td><input type="text" id="sign" value="246456GYTYW7RE234"
+						<td><input type="text" id="sign" value="6D465142BB30C8EF0939732F09F71ACD"
 							name="sign" /></td>
 					</tr>
 					<tr>

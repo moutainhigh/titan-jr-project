@@ -8,10 +8,7 @@
 package com.titanjr.checkstand.strategy.refund;
 
 import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Service;
-
-import com.titanjr.checkstand.util.WebUtils;
 
 /**
  * 网银支付订单退款
@@ -24,7 +21,7 @@ public class NetBnakOrderRefundStrategy implements OrderRefundStrategy {
 	@Override
 	public String redirectResult(HttpServletRequest request) {
 		
-		return WebUtils.getRequestBaseUrl(request) + "/refund/netBankOrderRefund.shtml";
+		return "/refund/netBankOrderRefund.shtml";
 		
 	}
 

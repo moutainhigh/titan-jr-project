@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
-import com.titanjr.checkstand.util.WebUtils;
-
 /**
  * 通联扫码支付退款订单查询
  * @author Jerry
@@ -24,7 +22,7 @@ public class QrCodeRefundQueryStrategy implements QueryStrategy {
 	@Override
 	public String redirectResult(HttpServletRequest request) {
 		
-		return WebUtils.getRequestBaseUrl(request) + "/rfQuery/qrOrderRefundQuery.shtml";
+		return "/rfQuery/qrOrderRefundQuery.shtml";
 		
 	}
 

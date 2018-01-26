@@ -8,6 +8,7 @@
 package com.titanjr.checkstand.respnse;
 
 import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 
@@ -41,7 +42,7 @@ public class TitanOrderRefundResponse extends RSResponse {
 	private String refundAmount;
 
 	/**
-	 * 退款状态  0处理中，1审核失败, 2退款成功 ,3退款失败，4，退款冲销
+	 * 退款状态  0处理中，1审核失败, 2退款成功 ,3退款失败，4，退款冲销    @see RefundStatusEnum
 	 */
 	@NotBlank
 	private String refundStatus;

@@ -15,18 +15,14 @@ import com.Rop.api.request.WheatfieldBalanceGetlistRequest;
 import com.Rop.api.request.WheatfieldOrderSaveWithcardRequest;
 import com.Rop.api.request.WheatfieldOrderServiceAuthcodeserviceRequest;
 import com.Rop.api.request.WheatfieldOrderServiceMultitransferQueryRequest;
-import com.Rop.api.request.WheatfieldOrderServiceReturngoodsRequest;
 import com.Rop.api.request.WheatfieldOrderServiceThawauthcodeRequest;
 import com.Rop.api.request.WheatfieldOrderServiceWithdrawserviceRequest;
-import com.Rop.api.request.WheatfieldOrderTransferRequest;
 import com.Rop.api.response.WheatfieldBalanceGetlistResponse;
 import com.Rop.api.response.WheatfieldOrderSaveWithcardResponse;
 import com.Rop.api.response.WheatfieldOrderServiceAuthcodeserviceResponse;
 import com.Rop.api.response.WheatfieldOrderServiceMultitransferQueryResponse;
-import com.Rop.api.response.WheatfieldOrderServiceReturngoodsResponse;
 import com.Rop.api.response.WheatfieldOrderServiceThawauthcodeResponse;
 import com.Rop.api.response.WheatfieldOrderServiceWithdrawserviceResponse;
-import com.Rop.api.response.WheatfieldOrderTransferResponse;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.exception.RSValidateException;
 import com.fangcang.titanjr.common.util.CommonConstant;
@@ -62,8 +58,12 @@ import com.fangcang.titanjr.rs.util.MyConvertXmlToObject;
 import com.fangcang.util.MyBeanUtil;
 import com.titanjr.fop.constants.FuncCodeEnum;
 import com.titanjr.fop.request.WheatfieldOrderOperRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
+import com.titanjr.fop.request.WheatfieldOrderTransferRequest;
 import com.titanjr.fop.request.WheatfieldOrdernQueryRequest;
 import com.titanjr.fop.response.WheatfieldOrderOperResponse;
+import com.titanjr.fop.response.WheatfieldOrderServiceReturngoodsResponse;
+import com.titanjr.fop.response.WheatfieldOrderTransferResponse;
 import com.titanjr.fop.response.WheatfieldOrdernQueryResponse;
 
 public class RSAccTradeManagerImpl implements RSAccTradeManager {
@@ -334,7 +334,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 				rsp =new WheatfieldOrderTransferResponse();
 				rsp.setIs_success(CommonConstant.OPERATE_SUCCESS);
 			}else{
-				rsp = RSInvokeConstant.ropClient
+				rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			}
 			
@@ -505,7 +505,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 				refundRequest.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, refundRequest);
-			WheatfieldOrderServiceReturngoodsResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldOrderServiceReturngoodsResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用addOrderRefund返回报文: \n" + rsp.getBody());

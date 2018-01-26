@@ -16,9 +16,9 @@ public class SysConfig implements Serializable{
     private String rsCheckKey;
     //房仓给融数构造加密数据的签名
     private String titanjrCheckKey ;
-    //checkstand付结果前台回调的地址
+    //checkstand付结果前台回调pay-app的地址
     private String csPayConfirmPageURL;
-    //checkstand支付结果后台通知的地址
+    //checkstand支付结果后台通知pay-app的地址
     private String csPayNoticeURL;
    
 	public String getSessionKey() {

@@ -1,9 +1,6 @@
 package com.titanjr.checkstand.strategy.query;
 
-import com.titanjr.checkstand.util.WebUtils;
-
 import org.springframework.stereotype.Service;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -18,6 +15,6 @@ public class NetBankPayQueryStrategy implements QueryStrategy{
     @Override
     public String redirectResult(HttpServletRequest request) {
 
-        return WebUtils.getRequestBaseUrl(request) + "/query/netBankPayQuery.shtml";
+        return "/query/netBankPayQuery.shtml";
     }
 }

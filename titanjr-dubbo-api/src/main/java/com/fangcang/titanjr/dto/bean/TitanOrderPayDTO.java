@@ -1,13 +1,17 @@
 package com.fangcang.titanjr.dto.bean;
 
-import com.fangcang.titanjr.common.util.DateUtil;
-
 import java.io.Serializable;
 import java.util.Date;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 public class TitanOrderPayDTO implements Serializable {
 
-    private Integer orderpayreqid;
+    /** 
+	 * 
+	 */
+	private static final long serialVersionUID = -3100935006039877244L;
+	private Integer orderpayreqid;
     private Integer transorderid;
     private String merchantNo;
     private String orderNo;
@@ -323,9 +327,14 @@ public class TitanOrderPayDTO implements Serializable {
     public void setRatetype(Integer ratetype) {
         this.ratetype = ratetype;
     }
- 
-    public Date getOrderDate() {
+
+	public Date getOrderDate() {
         return com.fangcang.util.DateUtil.stringToDate(this.orderTime, "yyyyMMddHHmmss");
     }
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
+	}
 
 }

@@ -1,17 +1,18 @@
 package com.titanjr.fop.request;
 
 import com.fangcang.titanjr.common.util.GenericValidate;
-import com.fangcang.util.StringUtil;
-import com.sun.istack.internal.NotNull;
 import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.domain.FopHashMap;
 import com.titanjr.fop.exceptions.ApiRuleException;
 import com.titanjr.fop.response.WheatfieldOrderOperResponse;
 import com.titanjr.fop.util.FopUtils;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.Date;
 import java.util.Map;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by zhaoshan on 2018/1/2.
@@ -36,7 +37,7 @@ public class WheatfieldOrderOperRequest extends BaseRequest implements FopReques
     @NotBlank
     private String opertype;
     private Integer number;
-    @NotBlank
+    @NotNull
     private Date orderdate;
     private String adjustcontent;
     private String userrelateid;

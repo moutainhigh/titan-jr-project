@@ -23,8 +23,9 @@ import com.titanjr.checkstand.request.TLNetBankPayRequest;
 import com.titanjr.checkstand.request.TLNetBankOrderRefundRequest;
 import com.titanjr.checkstand.request.TLNetBankPayQueryRequest;
 import com.titanjr.checkstand.request.TLNetBankRefundQueryRequest;
+import com.titanjr.checkstand.respnse.TitanQrCodePayResponse;
 
-public final class SignMsgBuilder {
+public class SignMsgBuilder {
 	
 	private final static Logger logger = LoggerFactory.getLogger(SignMsgBuilder.class);
 	
@@ -405,7 +406,7 @@ public final class SignMsgBuilder {
 	}
 	
 	
-	public static String getpayCallbackSignMsg(RechargeResultConfirmRequest confirmRequest, String key) {
+	public static String getPayCallbackSignMsg(RechargeResultConfirmRequest confirmRequest, String key) {
 		
 		StringBuffer sign = new StringBuffer();
 		if(confirmRequest != null){
@@ -427,6 +428,31 @@ public final class SignMsgBuilder {
 			sign.append(confirmRequest.getBankCode());
 			sign.append("&orderPayTime=");
 			sign.append(confirmRequest.getOrderPayTime());
+			sign.append("&key=");
+			sign.append(key);
+		}
+		logger.info("tl-gateWayPay-sourceMsg：{}", sign.toString());
+		String md5Msg = MD5.MD5Encode(sign.toString(), "UTF-8");
+		logger.info("tl-gateWayPay-signMsg：{}", md5Msg);
+		return md5Msg;
+		
+	}
+	
+	
+	public static String tlQrCodePayResponseSignMsg(TitanQrCodePayResponse titanQrPayResponse, String key) {
+		
+		StringBuffer sign = new StringBuffer();
+		if(titanQrPayResponse != null){
+			sign.append("merchantNo=");
+			sign.append(titanQrPayResponse.getMerchantNo());
+			sign.append("&orderNo=");
+			sign.append(titanQrPayResponse.getOrderNo());
+			sign.append("&orderAmount=");
+			sign.append(titanQrPayResponse.getOrderAmount());
+			sign.append("&orderTime=");
+			sign.append(titanQrPayResponse.getOrderTime());
+			sign.append("&payType=");
+			sign.append(titanQrPayResponse.getPayType());
 			sign.append("&key=");
 			sign.append(key);
 		}

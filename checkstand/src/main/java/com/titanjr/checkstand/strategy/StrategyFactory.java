@@ -28,8 +28,9 @@ public class StrategyFactory {
         }
 
         if (PayTypeEnum.QR_WECHAT_URL.equals(payTypeEnum) || PayTypeEnum.QR_ALIPAY_URL.equals(payTypeEnum) ||
-                PayTypeEnum.QR_ALIPAY.equals(payTypeEnum) || PayTypeEnum.QR_WECHAT.equals(payTypeEnum)){
-            return (PayRequestStrategy)SpringContextUtil.getBean("qrPayStrategy");
+                PayTypeEnum.QR_ALIPAY.equals(payTypeEnum) || PayTypeEnum.QR_WECHAT.equals(payTypeEnum)
+                || PayTypeEnum.WECHAT.equals(payTypeEnum)){
+            return (PayRequestStrategy)SpringContextUtil.getBean("qrCodePayStrategy");
         }
         
         if (PayTypeEnum.QUICK_NEW.equals(payTypeEnum)){

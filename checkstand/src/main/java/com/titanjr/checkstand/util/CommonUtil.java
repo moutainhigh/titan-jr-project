@@ -45,6 +45,21 @@ public class CommonUtil {
 		return sb.toString();
 	}
 	
+	public static String toLineString(String paramStr){
+		StringBuffer sb = new StringBuffer("\n");
+		String[] arr = paramStr.split("&");
+		for (int i = 0; i < arr.length; i++) {
+			String str = arr[i];
+			int index = str.indexOf('=');
+			if (index > 0) {
+				String name = str.substring(0, index);
+				String value = str.substring(index + 1);
+				sb.append(name + "=" + value + "\n");
+			}
+		}
+		return sb.toString();
+	}
+	
 	/**
 	 * 生成随机码
 	 * @author Jerry

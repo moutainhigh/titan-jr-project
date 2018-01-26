@@ -50,7 +50,7 @@ public class QRCodePay implements PayStrategy {
 		}
 		QrCodeResponse response = titanFinancialTradeService.getQrCodeUrl(rechargeDataDTO);
 		if(!response.isResult()){
-			log.error("订单号："+rechargeDataDTO.getOrderNo()+",第三方支付获取地址失败,错误信息："+response.getReturnMessage());
+			log.error("订单号："+rechargeDataDTO.getOrderNo()+" ,第三方扫码支付错误："+response.getReturnMessage());
 			titanFinancialUtilService.saveOrderException(rechargeDataDTO.getPayOrderNo(),OrderKindEnum.PayOrderNo, OrderExceptionEnum.Online_Pay_Get_Pay_Url_Fail, JSONSerializer.toJSON(rechargeDataDTO).toString());
 			model.addAttribute(CommonConstant.RETURN_MSG, TitanMsgCodeEnum.QR_EXCEPTION.getKey());
 			return CommonConstant.PAY_WX;

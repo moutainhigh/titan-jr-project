@@ -79,6 +79,12 @@ public class TLQrCodePayRequest extends TLBaseRequest {
 	private String validtime;
 	
 	/**
+	 * 微信支付-用户的微信openid，支付宝支付-用户user_id<br>
+	 * 微信公众号及支付宝服务窗不可为空
+	 */
+	private String acct;
+	
+	/**
 	 * 接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数
 	 */
 	@NotBlank
@@ -173,6 +179,14 @@ public class TLQrCodePayRequest extends TLBaseRequest {
 
 	public void setValidtime(String validtime) {
 		this.validtime = validtime;
+	}
+
+	public String getAcct() {
+		return acct;
+	}
+
+	public void setAcct(String acct) {
+		this.acct = acct;
 	}
 
 	public String getNotify_url() {

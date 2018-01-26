@@ -100,7 +100,7 @@ public class PayQueryController extends BaseController {
         String redirectUrl = payQueryStrategy.redirectResult(request);
         super.resetParameter(request,attr);
         
-        return "redirect:" + redirectUrl;
+        return "forward:" + redirectUrl;
         
     }
     
