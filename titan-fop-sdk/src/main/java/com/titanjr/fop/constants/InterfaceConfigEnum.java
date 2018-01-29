@@ -11,10 +11,11 @@ public enum InterfaceConfigEnum {
     REFUND_ORDER_OPERATE("ruixue.wheatfield.order.service.returngoods", "退款单操作"),
     COMPANY_CREATE("ruixue.wheatfield.enterprise.entityaccountopt", "企业用户开户"),
     COMPANY_BATCHQUERY("ruixue.wheatfield.batchquery.company","企业批量查询"),
+    COMPANY_UPDATE("ruixue.wheatfield.enterprise.updatecompanyinfo", "企业用户信息更新"),
     PERSON_OPERATE("ruixue.wheatfield.person.accountopr", "个人用户操作"),
     PERSON_BATCHQUERY("ruixue.wheatfield.batchquery.person","个人机构批量查询"),
     FREEZE_BALANCE("ruixue.wheatfield.order.service.authcodeservice","冻结资金获取授权码"),
-    UNFREEZE_BALANCE("ruixue.wheatfield.order.service.thawauthcode","冻结资金获取授权码"),
+    UNFREEZE_BALANCE("ruixue.wheatfield.order.service.thawauthcode","解冻资金"),
     ACCOUNT_BALANCE_TRANSFER("ruixue.wheatfield.order.transfer","账户转账"),
     ORDERN_QUERY("ruixue.wheatfield.ordern.query","订单查询");
 
