@@ -16,6 +16,7 @@ import com.titanjr.fop.dto.server.request.OptOrgRequest;
 import com.titanjr.fop.dto.server.response.OptOrgResponse;
 import com.titanjr.fop.dto.server.response.UpdateOrgReponse;
 import com.titanjr.fop.entity.TitanMainOrg;
+import com.titanjr.fop.enums.StatusIdMainOrgEnum;
 import com.titanjr.fop.service.MainOrgService;
 
 public class MainOrgServiceImpl implements MainOrgService {
@@ -54,6 +55,8 @@ public class MainOrgServiceImpl implements MainOrgService {
 		entity.setBuslince(request.getBuslince());
 		entity.setMobileTel(request.getMobiletel());
 		entity.setConnect(request.getConnect());
+		entity.setStatusId(StatusIdMainOrgEnum.NORMAL.getType());
+		
 		entity.setCreateTime(new Date());
 		mainOrgDao.insert(entity);
 		reponse.putSuccess();
@@ -98,37 +101,40 @@ public class MainOrgServiceImpl implements MainOrgService {
 			updateOrgReponse.putParamError("userid不能为空");
 			return updateOrgReponse;
 		}
+		TitanMainOrg entity = new TitanMainOrg();
+		entity.setOrgCode(request.getUserid());
+		if(StringUtil.isValidString(request.getCertificatetype())){
+			entity.setCertificatetype(Integer.parseInt(request.getCertificatetype()));
+		}
+		entity.setCertificateNumber(request.getCertificatenumber());
+		entity.setBuslince(request.getBuslince());
+		entity.setConnect(request.getConnect());
+		entity.setMobileTel(request.getMobiletel());
+		entity.setOrgName(request.getUsername());
+		entity.setStatusId(StatusIdMainOrgEnum.NORMAL.getType());
 		
+		mainOrgDao.update(entity);
 		
+		updateOrgReponse.putSuccess();
+		return updateOrgReponse;
 		
-		
-		
-		return null;
 	}
 	
-	/**
-	 * 修改空值检查
-	 * @param request
-	 * @return
-	 */
-	private String nullValidateUpdate(OptOrgRequest request){
-		//公共校验
-		if(!StringUtil.isValidString(request.getUserid())){
-			return "userid";	
+	@Override
+	public List<TitanMainOrg> queryOrg(OptOrgRequest request) {
+		if(request==null){
+			return null;
 		}
-		if(UserType.PERSONAL.getKey()==request.getUsertype()){//个人
-			if(request.getCertificatetype()==null){
-				return "certificatetype";
-			}
-			if(!StringUtil.isValidString(request.getCertificatenumber())){
-				return "certificatenumber";	
-			}
-		}else if(UserType.ENTERPRISE.getKey()==request.getUsertype()){//企业
-			if(!StringUtil.isValidString(request.getBuslince())){
-				return "buslince";	
-			}
+		MainOrgDTO param = new MainOrgDTO();
+		param.setOrgCode(request.getUserid());
+		param.setOrgName(request.getUsername());
+		param.setUserType(request.getUsertype());
+		if(StringUtil.isValidString(request.getCertificatetype())){
+			param.setCertificatetype(Integer.parseInt(request.getCertificatetype()));
 		}
-		return "";
+		param.setCertificateNumber(request.getCertificatenumber());
+		
+		return mainOrgDao.queryList(param);
 	}
 
 }

@@ -1,8 +1,11 @@
 package com.titanjr.fop.service;
 
+import java.util.List;
+
 import com.titanjr.fop.dto.server.request.OptOrgRequest;
 import com.titanjr.fop.dto.server.response.OptOrgResponse;
 import com.titanjr.fop.dto.server.response.UpdateOrgReponse;
+import com.titanjr.fop.entity.TitanMainOrg;
 
 /***
  * 机构
@@ -24,31 +27,12 @@ public interface MainOrgService {
 	 */
 	UpdateOrgReponse updateOrg(OptOrgRequest request);
 	
-	
 	/***
-	 * 个人机构注册和修改
-	 * @return
-	 */
-	//WheatfieldPersonAccountoprResponse oprPersonAccount(WheatfieldPersonAccountoprRequest request);
-	
-	/***
-	 * 企业账户注册
+	 * 查询机构信息
 	 * @param request
 	 * @return
 	 */
-	//WheatfieldEnterpriseEntityaccountoptResponse optEnterpriseEntityaccount(WheatfieldEnterpriseEntityaccountoptRequest request);
-	 
-	
-	/***
-	 * 修改企业信息
-	 * @param request
-	 * @return
-	 */
-	//WheatfieldEnterpriseUpdatecompanyinfoResponse updateEnterpriseEntityaccount(WheatfieldEnterpriseUpdatecompanyinfoRequest request);
-	
-	//查询机构
-	
-	
+	List<TitanMainOrg> queryOrg(OptOrgRequest request);
 	
 	
 }

@@ -1,8 +1,12 @@
 package com.titanjr.fop.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -13,12 +17,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum.UserType;
 import com.fangcang.titanjr.common.util.Tools;
+import com.titanjr.fop.dto.OpenAccountPerson;
 import com.titanjr.fop.dto.server.request.OptOrgRequest;
 import com.titanjr.fop.dto.server.response.OptOrgResponse;
 import com.titanjr.fop.dto.server.response.UpdateOrgReponse;
+import com.titanjr.fop.entity.TitanMainOrg;
+import com.titanjr.fop.request.WheatfieldBatchqueryCompanyRequest;
+import com.titanjr.fop.request.WheatfieldBatchqueryPersonRequest;
 import com.titanjr.fop.request.WheatfieldEnterpriseEntityaccountoptRequest;
 import com.titanjr.fop.request.WheatfieldEnterpriseUpdatecompanyinfoRequest;
 import com.titanjr.fop.request.WheatfieldPersonAccountoprRequest;
+import com.titanjr.fop.response.WheatfieldBatchqueryCompanyResponse;
+import com.titanjr.fop.response.WheatfieldBatchqueryPersonResponse;
 import com.titanjr.fop.response.WheatfieldEnterpriseEntityaccountoptResponse;
 import com.titanjr.fop.response.WheatfieldEnterpriseUpdatecompanyinfoResponse;
 import com.titanjr.fop.response.WheatfieldPersonAccountoprResponse;
@@ -176,6 +186,81 @@ public class MainOrgController extends BaseController {
     		enterpriseOptResponse.setMsg(updateOrgReponse.getReturnMessage());
     		return toJson(enterpriseOptResponse);
     	}
-	
+    	
 	}
+	
+	//查询机构
+	
+	@RequestMapping(value = "/queryCompany", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
+    @ResponseBody
+    public String queryCompany(HttpServletRequest request, RedirectAttributes attr) throws Exception {
+		WheatfieldBatchqueryCompanyResponse enterpriseOptResponse = new WheatfieldBatchqueryCompanyResponse();
+		String validResult = ResponseUtils.validRequestSign(request, enterpriseOptResponse);
+        if (null != validResult) {
+            return validResult;
+        }
+        enterpriseOptResponse.setIs_success("true");
+        WheatfieldBatchqueryCompanyRequest enterpriseOptRequest = BeanUtils.switch2RequestDTO(WheatfieldBatchqueryCompanyRequest.class, request);
+        if (null == enterpriseOptRequest) {
+            return ResponseUtils.getConvertErrorResp(enterpriseOptResponse);
+        }
+        OptOrgRequest queryOrgRequest = new OptOrgRequest();
+        queryOrgRequest.setBuslince(enterpriseOptRequest.getBuslince());
+        queryOrgRequest.setUserid(enterpriseOptRequest.getUserid());
+        queryOrgRequest.setUsername(enterpriseOptRequest.getCompanyname());
+        List<TitanMainOrg> mainOrgList = mainOrgService.queryOrg(queryOrgRequest);
+        List<OpenAccountPerson> openaccountpersons = new ArrayList<OpenAccountPerson>();
+        if(CollectionUtils.isNotEmpty(mainOrgList)){
+        	for(TitanMainOrg item : mainOrgList){
+        		OpenAccountPerson entity = new OpenAccountPerson();
+        		entity.setUserid(item.getOrgCode());
+        		entity.setPersonchnname(item.getOrgName());
+        		entity.setCertificatetype(item.getCertificatetype()+"");
+        		entity.setCertificatenumber(item.getCertificateNumber());
+        		entity.setRemark(item.getRemark());
+        		entity.setStatusid(item.getStatusId().toString());
+        		openaccountpersons.add(entity);
+        	}
+        }
+		
+    	return toJson(enterpriseOptResponse);
+	}
+	
+	@RequestMapping(value = "/queryPerson", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPerson(HttpServletRequest request, RedirectAttributes attr) throws Exception {
+		WheatfieldBatchqueryPersonResponse personOptResponse = new WheatfieldBatchqueryPersonResponse();
+		String validResult = ResponseUtils.validRequestSign(request, personOptResponse);
+        if (null != validResult) {
+            return validResult;
+        }
+        personOptResponse.setIs_success("true");
+        WheatfieldBatchqueryPersonRequest personOptRequest = BeanUtils.switch2RequestDTO(WheatfieldBatchqueryPersonRequest.class, request);
+        if (null == personOptRequest) {
+            return ResponseUtils.getConvertErrorResp(personOptResponse);
+        }
+        OptOrgRequest queryOrgRequest = new OptOrgRequest();
+        queryOrgRequest.setCertificatetype(personOptRequest.getCertificatetype());
+        queryOrgRequest.setCertificatenumber(personOptRequest.getCertificatenumber());
+        queryOrgRequest.setUserid(personOptRequest.getUserid());
+        queryOrgRequest.setUsername(personOptRequest.getPersonengname());
+        List<TitanMainOrg> mainOrgList = mainOrgService.queryOrg(queryOrgRequest);
+        List<OpenAccountPerson> openaccountpersons = new ArrayList<OpenAccountPerson>();
+        if(CollectionUtils.isNotEmpty(mainOrgList)){
+        	for(TitanMainOrg item : mainOrgList){
+        		OpenAccountPerson entity = new OpenAccountPerson();
+        		entity.setUserid(item.getOrgCode());
+        		entity.setPersonchnname(item.getOrgName());
+        		entity.setCertificatetype(item.getCertificatetype()+"");
+        		entity.setCertificatenumber(item.getCertificateNumber());
+        		entity.setRemark(item.getRemark());
+        		entity.setStatusid(item.getStatusId().toString());
+        		openaccountpersons.add(entity);
+        	}
+        }
+        
+        personOptResponse.setOpenaccountpersons(openaccountpersons);
+		return toJson(personOptResponse);
+	}
+	
 }
