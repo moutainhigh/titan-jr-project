@@ -23,9 +23,17 @@ public class RSBaseResponse implements Serializable {
 		this.remark = remark;
 	}
 	
+	public void putSuccess(){
+		this.isSuccess = true;
+	}
+	
 	public void putError(String msg) {
 		this.isSuccess = false;
 		this.errMsg = msg;
+	}
+	
+	public void putError() {
+		this.isSuccess = false;
 	}
 	
 

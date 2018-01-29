@@ -94,7 +94,7 @@ public class QuickpayController extends BaseController {
         String redirectUrl = quickPayStrategy.redirectResult(request);
         super.resetParameter(request,attr);
         
-        return "redirect:" + redirectUrl;
+        return "forward:" + redirectUrl;
         
     }
     
@@ -171,6 +171,8 @@ public class QuickpayController extends BaseController {
 			rbQuickPayConfirmRequest.setRequestType(RequestTypeEnum.QUICK_PAY_CONFIRM.getKey());
 			
 			titanPayConfirmResponse = rbQuickPayService.payConfirm(rbQuickPayConfirmRequest);
+			//融宝没有返回的信息，自己设置进去
+			titanPayConfirmResponse.setPayType(titanPayConfirmDTO.getPayType());
 			return titanPayConfirmResponse;
 			
 		} catch (Exception e) {
@@ -208,7 +210,6 @@ public class QuickpayController extends BaseController {
 			
 			//查询充值单（需要得到手机号）
 			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
-			titanOrderPayDTO.setMerchantNo(titanReSendMsgDTO.getMerchantNo());
 			titanOrderPayDTO.setOrderNo(titanReSendMsgDTO.getOrderNo());
 			titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
 			if(titanOrderPayDTO == null){
@@ -217,7 +218,6 @@ public class QuickpayController extends BaseController {
 				return titanReSendMsgResponse;
 			}
 			
-			//封装参数调service
 			RBReSendMsgRequest rbReSendMsgRequest = new RBReSendMsgRequest();
 			rbReSendMsgRequest.setOrder_no(titanReSendMsgDTO.getOrderNo());
 			rbReSendMsgRequest.setPhone(titanOrderPayDTO.getPayerPhone());
@@ -227,6 +227,8 @@ public class QuickpayController extends BaseController {
 			rbReSendMsgRequest.setRequestType(RequestTypeEnum.QUICK_MSG_SEND.getKey());
 			
 			titanReSendMsgResponse = rbQuickPayService.reSendMsg(rbReSendMsgRequest);
+			//融宝没有返回的信息，自己设置进去
+			titanReSendMsgResponse.setPayType(titanReSendMsgDTO.getPayType());
 			return titanReSendMsgResponse;
 			
 		} catch (Exception e) {

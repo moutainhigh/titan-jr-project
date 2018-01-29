@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
  * Created by zhaoshan on 2017/11/20.
  */
 @Service("qrCodePayStrategy")
-public class qrCodePayStrategy implements PayRequestStrategy{
+public class QrCodePayStrategy implements PayRequestStrategy{
 
     @Override
     public String redirectResult(HttpServletRequest request) {

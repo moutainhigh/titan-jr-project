@@ -199,7 +199,7 @@ public class ChannelCallbackController extends BaseController {
 	 * @throws Exception 
 	 * @date 2018年1月5日 下午5:00:50
 	 */
-	@RequestMapping(value = "/rbQuickPayNotice", method = {RequestMethod.POST})
+	@RequestMapping(value = "/rbQuickPayNotice")
 	public void rbQuickPayNotice(HttpServletRequest request, HttpServletResponse response, 
 			RBDataRequest rbDataRequest) {
 		

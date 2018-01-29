@@ -149,7 +149,7 @@
 					<span class="money"><s>￥</s><span id="amount_alipay_3">${cashDeskData.amount }</span></span>
                 </div>
             </li>
-            <!-- 常用支付方式历史 -->
+            <!-- 常用支付历史 -->
             <c:if test="${not empty cashDeskData.commonPayHistoryList }">
             	 <c:forEach items="${cashDeskData.commonPayHistoryList }" var="commonPay" varStatus="status">
 	            	<li class="<c:if test='${status.index > 0}'>isShow </c:if>clearfix">
@@ -169,6 +169,7 @@
                     		<input class="idCode" type="hidden" value="${commonPay.idcode }"/>
                     		<input class="safetyCode" type="hidden" value="${commonPay.safetycode }"/>
                     		<input class="validthru" type="hidden" value="${commonPay.validthru }"/>
+                    		<input class="bindCardId" type="hidden" value="${commonPay.bindcardid }"/>
 		                </div>
 		                <c:if test="${commonPay.paytype == '11' }">
 		                	<div class="content discount fl">

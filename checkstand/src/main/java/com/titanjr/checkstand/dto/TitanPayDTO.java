@@ -63,7 +63,7 @@ public class TitanPayDTO {
     /**
      * 付款方账号，快捷支付不能为空
      */
-    private String payerAccount;
+    private String payerAcount;
     /**
      * 支付人姓名，快捷支付不能为空
      */
@@ -164,6 +164,11 @@ public class TitanPayDTO {
      * 终端信息，快捷支付不能为空
      */
     private String terminalInfo;
+    
+	/**
+	 * 快捷支付绑卡ID
+	 */
+	private String bindCardId;
     
 
     public String getIdCode() {
@@ -294,15 +299,15 @@ public class TitanPayDTO {
         this.bankInfo = bankInfo;
     }
 
-    public String getPayerAccount() {
-        return payerAccount;
-    }
+	public String getPayerAcount() {
+		return payerAcount;
+	}
 
-    public void setPayerAccount(String payerAccount) {
-        this.payerAccount = payerAccount;
-    }
+	public void setPayerAcount(String payerAcount) {
+		this.payerAcount = payerAcount;
+	}
 
-    public String getPayerName() {
+	public String getPayerName() {
         return payerName;
     }
 
@@ -437,6 +442,14 @@ public class TitanPayDTO {
     public void setValidthru(String validthru) {
         this.validthru = validthru;
     }
+
+	public String getBindCardId() {
+		return bindCardId;
+	}
+
+	public void setBindCardId(String bindCardId) {
+		this.bindCardId = bindCardId;
+	}
 
 	@Override
 	public String toString() {

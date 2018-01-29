@@ -42,6 +42,7 @@ import com.fangcang.titanjr.enums.RsVersionEnum;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.RSGatewayInterfaceService;
 import com.fangcang.titanjr.util.SignMsgBuilder;
+import com.fangcang.util.JsonUtil;
 import com.fangcang.util.StringUtil;
 
 /**
@@ -58,10 +59,10 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 
 	@Override
 	public QuickPaymentResponse quickPay(QuickPaymentRequest quickPaymentRequest) {
+		
 		QuickPaymentResponse quickPaymentResponse = new QuickPaymentResponse();
 		quickPaymentRequest.setSignMsg(SignMsgBuilder.getSignMsgForQuickPay(quickPaymentRequest));
 		String response ="";
-		
 		try {
 			log.info("【网关接口】为：" + RSInvokeConstant.gateWayURL);
 			HttpPost httpPost = new HttpPost(RSInvokeConstant.gateWayURL);
@@ -70,14 +71,17 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 			
 			HttpResponse quickPayResp = HttpClient.httpRequest(quickPayParams, httpPost);
 			if (null != quickPayResp) {
+				
 				HttpEntity entity = quickPayResp.getEntity();
 				response = EntityUtils.toString(entity, "UTF-8");
-				quickPaymentResponse = RSConvertFiled2ObjectUtil.convertField2ObjectSuper(QuickPaymentResponse.class, response);
-				log.info("【快捷支付】返回信息:" + quickPaymentResponse.toString());
-				if(StringUtil.isValidString(RsErrorCodeEnum.getValueByKey(quickPaymentResponse.getErrCode()))){
-					quickPaymentResponse.setErrMsg(RsErrorCodeEnum.getValueByKey(quickPaymentResponse.getErrCode()));
+				quickPaymentResponse = (QuickPaymentResponse) JsonUtil.jsonToBean(response, QuickPaymentResponse.class);
+				if(!StringUtil.isValidString(quickPaymentResponse.getErrCode())){
+					quickPaymentResponse.putSuccess();
+				}else if(StringUtil.isValidString(RsErrorCodeEnum.getValueByKey(quickPaymentResponse.getErrCode()))){
+					//转换错误信息
+					quickPaymentResponse.putError(RsErrorCodeEnum.getValueByKey(quickPaymentResponse.getErrCode()));
 				}
-				
+				log.info("【快捷支付】返回信息:" + quickPaymentResponse.toString());
 				return quickPaymentResponse;
 				
 			}else{
@@ -109,12 +113,14 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 			if (confirmRechargeResp != null) {
 				HttpEntity entity = confirmRechargeResp.getEntity();
 				response = EntityUtils.toString(entity, "UTF-8");
-				confirmRechargeResponse = RSConvertFiled2ObjectUtil.convertField2ObjectSuper(ConfirmRechargeResponse.class,response);
-				log.info("【确认充值】返回信息:" + confirmRechargeResponse.toString());
-				if(StringUtil.isValidString(RsErrorCodeEnum.getValueByKey(confirmRechargeResponse.getErrCode()))){
-					confirmRechargeResponse.setErrMsg(RsErrorCodeEnum.getValueByKey(confirmRechargeResponse.getErrCode()));
+				confirmRechargeResponse = (ConfirmRechargeResponse) JsonUtil.jsonToBean(response, ConfirmRechargeResponse.class);
+				if(!StringUtil.isValidString(confirmRechargeResponse.getErrCode())){
+					confirmRechargeResponse.putSuccess();
+				}else if(StringUtil.isValidString(RsErrorCodeEnum.getValueByKey(confirmRechargeResponse.getErrCode()))){
+					//转换错误信息
+					confirmRechargeResponse.putError(RsErrorCodeEnum.getValueByKey(confirmRechargeResponse.getErrCode()));
 				}
-				
+				log.info("【确认充值】返回信息:" + confirmRechargeResponse.toString());
 				return confirmRechargeResponse;
 				
 			}else{
@@ -133,6 +139,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 	
 	@Override
 	public ReSendVerifyCodeResponse reSendVerifyCode(ReSendVerifyCodeRequest reSendVerifyCodeRequest) {
+		
 		ReSendVerifyCodeResponse reSendVerifyCodeResponse = new ReSendVerifyCodeResponse();
 		reSendVerifyCodeRequest.setSignMsg(SignMsgBuilder.getSignMsgForReSendVerifyCode(reSendVerifyCodeRequest));
 		String responseStr ="";
@@ -147,19 +154,21 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 			if (resp != null) {
 				HttpEntity entity = resp.getEntity();
 				responseStr = EntityUtils.toString(entity, "UTF-8");
-				reSendVerifyCodeResponse = RSConvertFiled2ObjectUtil
-						.convertField2ObjectSuper(ReSendVerifyCodeResponse.class,responseStr);
-				log.info("调用融数网关gateWayURL【重发验证码】返回信息:" + reSendVerifyCodeResponse.toString());
-				
+				reSendVerifyCodeResponse = (ReSendVerifyCodeResponse) JsonUtil.jsonToBean(responseStr, ReSendVerifyCodeResponse.class);
+				if(!StringUtil.isValidString(reSendVerifyCodeResponse.getErrCode())){
+					reSendVerifyCodeResponse.putSuccess();
+				}
+				log.info("【重发验证码】返回信息:" + reSendVerifyCodeResponse.toString());
 				return reSendVerifyCodeResponse;
+				
 			}else{
 				log.error("网关【重发验证码】失败 resp 为空, 参数params:"+Tools.gsonToString(params));
-				reSendVerifyCodeResponse.putError("返回结果为空");
+				reSendVerifyCodeResponse.putError("resp返回结果为空");
 				return reSendVerifyCodeResponse;
 			}
 			
 		} catch (Exception e) {
-			log.error("重发验证码异常", e);
+			log.error("【重发验证码】异常", e);
 			reSendVerifyCodeResponse.putError("重发验证码异常");
 			return reSendVerifyCodeResponse;
 		}
@@ -168,8 +177,9 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 	
 	
 	@Override
-	public QueryQuickPayBindCardResponse queryQuickPayBindCardInfo(
-			QueryQuickPayBindCardRequest queryQuickPayBindCardRequest) {
+	public QueryQuickPayBindCardResponse queryQuickPayBindCardInfo(QueryQuickPayBindCardRequest 
+			queryQuickPayBindCardRequest) {
+		
 		QueryQuickPayBindCardResponse queryQuickPayBindCardResponse = new QueryQuickPayBindCardResponse();
 		queryQuickPayBindCardRequest.setSignMsg(SignMsgBuilder.getSignMsgForQueryQuickPayBindCard(queryQuickPayBindCardRequest));
 		String responseStr ="";
@@ -204,6 +214,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 	
 	@Override
 	public QueryBankCardBINIResponse queryBankCardBIN(QueryBankCardBINRequest queryBankCardBINRequest) {
+		
 		QueryBankCardBINIResponse bankCardBINIResponse = new QueryBankCardBINIResponse();
 		queryBankCardBINRequest.setSignMsg(SignMsgBuilder.getSignMsgForQueryBankCardBIN(queryBankCardBINRequest));
 		String responseStr ="";
@@ -218,14 +229,13 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 			if (resp != null) {
 				HttpEntity entity = resp.getEntity();
 				responseStr = EntityUtils.toString(entity, "UTF-8");
-				bankCardBINIResponse = RSConvertFiled2ObjectUtil
-						.convertField2ObjectSuper(QueryBankCardBINIResponse.class, responseStr);
-				log.info("【查询银行卡BIN信息】返回信息:" + bankCardBINIResponse.toString());
-				if(StringUtil.isValidString(RsErrorCodeEnum.getValueByKey(bankCardBINIResponse.getErrCode()))){
-					bankCardBINIResponse.setErrMsg(RsErrorCodeEnum.getValueByKey(bankCardBINIResponse.getErrCode()));
+				bankCardBINIResponse = (QueryBankCardBINIResponse) JsonUtil.jsonToBean(responseStr, QueryBankCardBINIResponse.class);
+				if(!StringUtil.isValidString(bankCardBINIResponse.getErrCode())){
+					bankCardBINIResponse.putSuccess();
 				}
-				
+				log.info("【查询银行卡BIN信息】返回信息:" + bankCardBINIResponse.toString());
 				return bankCardBINIResponse;
+				
 			}else{
 				log.error("网关【查询银行卡BIN信息】失败 resp 为空, 参数params:"+Tools.gsonToString(params));
 				bankCardBINIResponse.putError("返回结果为空");

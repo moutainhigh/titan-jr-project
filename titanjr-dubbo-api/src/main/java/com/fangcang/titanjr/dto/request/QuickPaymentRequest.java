@@ -78,6 +78,8 @@ public class QuickPaymentRequest implements Serializable {
 	private String terminalType; 
 	//终端信息
 	private String terminalInfo;
+	//快捷支付绑卡ID
+	private String bindCardId;
 	
 	public String getMerchantNo() {
 		return merchantNo;
@@ -277,7 +279,12 @@ public class QuickPaymentRequest implements Serializable {
 	public void setTerminalInfo(String terminalInfo) {
 		this.terminalInfo = terminalInfo;
 	}
-	
+	public String getBindCardId() {
+		return bindCardId;
+	}
+	public void setBindCardId(String bindCardId) {
+		this.bindCardId = bindCardId;
+	}
 	
 	@Override
 	public String toString() {

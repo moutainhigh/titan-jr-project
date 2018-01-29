@@ -198,6 +198,10 @@ public class RefundController extends BaseController {
 			rbQuickPayRefundRequest.setRequestType(RequestTypeEnum.QUICK_REFUND.getKey());
 			
 			titanOrderRefundResponse = rbQuickPayService.refund(rbQuickPayRefundRequest);
+			titanOrderRefundResponse.setOrderNo(titanRefundDTO.getOrderNo());
+			titanOrderRefundResponse.setOrderTime(titanRefundDTO.getOrderTime());
+			titanOrderRefundResponse.setRefundAmount(titanRefundDTO.getRefundAmount());
+			titanOrderRefundResponse.setRefundOrderno(titanRefundDTO.getRefundOrderno());
 			return titanOrderRefundResponse;
 			
 		} catch (Exception e) {

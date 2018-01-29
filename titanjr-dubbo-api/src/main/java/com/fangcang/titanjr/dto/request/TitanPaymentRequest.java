@@ -86,6 +86,9 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 	private String jrVersion;//收银台版本
 	private String isSaveHistorypay;//是否保存常用卡  0否  1是
 	
+	//快捷支付绑卡ID
+	private String bindCardId;
+	
 	
 	public Float getReceivablerate() {
 		return receivablerate;
@@ -365,6 +368,14 @@ public class TitanPaymentRequest extends TradeBaseParamRequest {
 
 	public void setIsSaveHistorypay(String isSaveHistorypay) {
 		this.isSaveHistorypay = isSaveHistorypay;
+	}
+
+	public String getBindCardId() {
+		return bindCardId;
+	}
+
+	public void setBindCardId(String bindCardId) {
+		this.bindCardId = bindCardId;
 	}
 	
 }

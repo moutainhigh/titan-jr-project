@@ -286,14 +286,14 @@ public class PaymentController extends BaseController {
    @RequestMapping(value = "/quickPay", method = {RequestMethod.GET, RequestMethod.POST})
    public TitanQuickPayResponse quickPay(HttpServletRequest request, Model model) {
    	
-   	TitanQuickPayResponse titanQuickPayResponse = new TitanQuickPayResponse();
+   		TitanQuickPayResponse titanQuickPayResponse = new TitanQuickPayResponse();
    	
-   	try {
+   		try {
    		
 			TitanPayDTO payDTO = WebUtils.switch2RequestDTO(TitanPayDTO.class, request);
 			ValidateResponse res = GenericValidate.validateNew(payDTO);
 			if (!res.isSuccess() || !StringUtil.isValidString(payDTO.getPayerAccountType())){
-				logger.error("【融宝-签约支付】参数错误：{}，payerAccountType={}", res.getReturnMessage(), payDTO.getPayerAccountType());
+				logger.error("【融宝-快捷支付】参数错误：{}，payerAccountType={}", res.getReturnMessage(), payDTO.getPayerAccountType());
 				titanQuickPayResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
 				return titanQuickPayResponse;
 			}
@@ -303,14 +303,21 @@ public class PaymentController extends BaseController {
 			}
 			
 			RBQuickPayRequest rbQuickPayRequest = new RBQuickPayRequest();
+			//已绑卡签约
+			if(StringUtil.isValidString(payDTO.getBindCardId())){
+				rbQuickPayRequest.setBindCardId(payDTO.getBindCardId());
+			}
+			//不是已绑卡签约
+			if(!StringUtil.isValidString(payDTO.getBindCardId())){
+				rbQuickPayRequest.setCard_no(payDTO.getPayerAcount());
+				rbQuickPayRequest.setOwner(payDTO.getPayerName());
+				rbQuickPayRequest.setCert_type("01");
+				rbQuickPayRequest.setCert_no(payDTO.getIdCode());
+				rbQuickPayRequest.setPhone(payDTO.getPayerPhone());
+			}
 			rbQuickPayRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
-			rbQuickPayRequest.setCard_no(payDTO.getPayerAccount());
-			rbQuickPayRequest.setOwner(payDTO.getPayerName());
-			rbQuickPayRequest.setCert_type("01");
-			rbQuickPayRequest.setCert_no(payDTO.getIdCode());
-			rbQuickPayRequest.setPhone(payDTO.getPayerPhone());
 			rbQuickPayRequest.setOrder_no(payDTO.getOrderNo());
-			rbQuickPayRequest.setTranstime(payDTO.getOrderTime());
+			rbQuickPayRequest.setTranstime(payDTO.getOrderTime());//2015-03-06 12:24:59
 			rbQuickPayRequest.setCurrency("156");
 			rbQuickPayRequest.setTotal_fee(Integer.parseInt(payDTO.getOrderAmount().toString()));
 			rbQuickPayRequest.setTitle("支付");//需要pay-app传过来
@@ -325,29 +332,34 @@ public class PaymentController extends BaseController {
 			rbQuickPayRequest.setToken_id(CommonUtil.getUUID());
 			rbQuickPayRequest.setVersion(SysConstant.RB_VERSION);
 			rbQuickPayRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
-			
-			if(SysConstant.CARD_TYPE_DESPOSIT.equals(payDTO.getPayerAccountType())){
-				
-				rbQuickPayRequest.setRequestType(RequestTypeEnum.QUICK_PAY_DEPOSIT.getKey());
-				
-	       	}else if(SysConstant.CARD_TYPE_CREDIT.equals(payDTO.getPayerAccountType())){
-	       		
-	       		if(!StringUtil.isValidString(payDTO.getSafetyCode()) || !StringUtil.isValidString(payDTO.getValidthru())){
-	       			logger.error("【融宝-信用卡签约】参数错误：safetyCode={}，validthru={}", payDTO.getSafetyCode(), payDTO.getValidthru());
-	   				titanQuickPayResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
-	   				return titanQuickPayResponse;
-	       		}
-	       		rbQuickPayRequest.setCvv2(payDTO.getSafetyCode());
-	       		rbQuickPayRequest.setValidthru(payDTO.getValidthru());
-	       		rbQuickPayRequest.setRequestType(RequestTypeEnum.QUICK_PAY_CREDIT.getKey());
-	       	}
+			rbQuickPayRequest.setRequestType(RequestTypeEnum.QUICK_BIND_PAY.getKey());
+			if(!StringUtil.isValidString(rbQuickPayRequest.getBindCardId())){
+				//储蓄卡
+				if(SysConstant.CARD_TYPE_DESPOSIT.equals(payDTO.getPayerAccountType())){
+					rbQuickPayRequest.setRequestType(RequestTypeEnum.QUICK_PAY_DEPOSIT.getKey());
+				//信用卡
+		       	}else if(SysConstant.CARD_TYPE_CREDIT.equals(payDTO.getPayerAccountType())){
+		       		if(!StringUtil.isValidString(payDTO.getSafetyCode()) || !StringUtil.isValidString(payDTO.getValidthru())){
+		       			logger.error("【融宝-快捷支付】参数错误：safetyCode={}，validthru={}", payDTO.getSafetyCode(), payDTO.getValidthru());
+		   				titanQuickPayResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
+		   				return titanQuickPayResponse;
+		       		}
+		       		rbQuickPayRequest.setCvv2(payDTO.getSafetyCode());
+		       		rbQuickPayRequest.setValidthru(payDTO.getValidthru());
+		       		rbQuickPayRequest.setRequestType(RequestTypeEnum.QUICK_PAY_CREDIT.getKey());
+		       	}
+			}
 			
 			titanQuickPayResponse = rbQuickPayService.contractPay(rbQuickPayRequest);
+			//融宝没有返回的信息，自己设置进去
+			titanQuickPayResponse.setOrderAmount(payDTO.getOrderAmount().toString());
+			titanQuickPayResponse.setOrderTime(payDTO.getOrderTime());
+			titanQuickPayResponse.setPayType(payDTO.getPayType().toString());
 			return titanQuickPayResponse;
 			
 		} catch (Exception e) {
 			
-			logger.error("【融宝-签约支付】异常：", e);
+			logger.error("【融宝-快捷支付】异常：", e);
 			titanQuickPayResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanQuickPayResponse;
 			

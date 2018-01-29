@@ -14,6 +14,7 @@ import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.service.RSGatewayInterfaceService;
 import com.fangcang.util.JsonUtil;
 import com.fangcang.util.SpringContextUtil;
+import com.fangcang.util.StringUtil;
 
 @Component
 public class QuickPay implements PayStrategy {
@@ -32,11 +33,15 @@ public class QuickPay implements PayStrategy {
 		
 		QuickPaymentRequest quickPaymentRequest = new QuickPaymentRequest();
 		BeanUtils.copyProperties(rechargeDataDTO, quickPaymentRequest);
+		//已绑卡支付-即使用历史卡支付
+		if(StringUtil.isValidString(titanPaymentRequest.getBindCardId())){
+			quickPaymentRequest.setBindCardId(titanPaymentRequest.getBindCardId());
+		}
     	QuickPaymentResponse quickPaymentResponse = rsGatewayInterfaceService.quickPay(quickPaymentRequest);
     	try {
     		if(quickPaymentResponse.isSuccess() && "1".equals(titanPaymentRequest.getIsSaveHistorypay())){
     			log.info("开始保存快捷支付常用卡历史记录");
-    			titanPaymentService.saveCommonPayHistory(titanPaymentRequest);
+    			titanPaymentService.saveCommonPayHistory(titanPaymentRequest, quickPaymentResponse.getBindCardId());
     		}
 		} catch (Exception e) {
 			log.error("保存快捷支付常用卡历史记录失败：", e);

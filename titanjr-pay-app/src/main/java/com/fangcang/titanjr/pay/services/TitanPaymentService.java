@@ -226,7 +226,7 @@ public class TitanPaymentService {
 		}
 	}
 	
-	public void saveCommonPayHistory(TitanPaymentRequest titanPaymentRequest) {
+	public void saveCommonPayHistory(TitanPaymentRequest titanPaymentRequest, String bindCardId) {
 		try {
 			boolean isSaveHistory = false;
 			
@@ -249,7 +249,7 @@ public class TitanPaymentService {
 					isSaveHistory = true;
 				}*/
 				
-				//只要传了第三方商家ID和用户ID就可以保存快捷支付历史，不需要校验绑定信息
+				//只要传了第三方商家ID和用户ID就可以保存快捷支付历史，不需要校验用户与金融的绑定信息
 				isSaveHistory = true;
 				
 			}
@@ -272,6 +272,7 @@ public class TitanPaymentService {
 				commonPayHistoryDTO.setIdcode(titanPaymentRequest.getIdCode());
 				commonPayHistoryDTO.setSafetycode(titanPaymentRequest.getSafetyCode());
 				commonPayHistoryDTO.setValidthru(titanPaymentRequest.getValidthru());
+				commonPayHistoryDTO.setBindcardid(bindCardId);
 				commonPayHistoryDTO.setCreator(titanPaymentRequest.getCreator());
 				
 				titanCashierDeskService.saveCommonPayHistory(commonPayHistoryDTO);

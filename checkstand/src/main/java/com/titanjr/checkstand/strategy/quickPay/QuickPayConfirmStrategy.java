@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
-import com.titanjr.checkstand.util.WebUtils;
-
 /**
  * @author Jerry
  * @date 2018年1月5日 下午2:09:16  
@@ -22,7 +20,7 @@ public class QuickPayConfirmStrategy implements QuickPayStrategy {
 
 	@Override
 	public String redirectResult(HttpServletRequest request) {
-		return WebUtils.getRequestBaseUrl(request) + "/quick/payConfirm.shtml";
+		return "/quick/payConfirm.shtml";
 	}
 
 }

@@ -26,10 +26,16 @@ public class TitanCardBINQueryResponse extends RSResponse {
 	@NotBlank
 	private String cardNo;
 	/**
-	 * 所属银行编号
+	 * 所属银行编号（其实是泰坦金融的bankInfo）
+	 */
+	private String bankCode;
+	
+	/**
+	 * 融宝的bankCode是泰坦金融的bankInfo
 	 */
 	@NotBlank
-	private String bankCode;
+	private String bankInfo;
+	
 	/**
 	 * 所属银行名称
 	 */
@@ -65,6 +71,12 @@ public class TitanCardBINQueryResponse extends RSResponse {
 	}
 	public void setCardType(String cardType) {
 		this.cardType = cardType;
+	}
+	public String getBankInfo() {
+		return bankInfo;
+	}
+	public void setBankInfo(String bankInfo) {
+		this.bankInfo = bankInfo;
 	}
 
 }

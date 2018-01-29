@@ -11,7 +11,7 @@ public enum BusiCodeEnum {
     REFUND_REQUEST("103","退款请求"),
     REFUND_QUERY("104","退款查询"),
     AGENT_TRADE("105","账户交易"),
-	CARD_BIN_QUERY("108", "卡BIN查询"),
+	CARD_BIN_QUERY("106", "卡BIN查询"),
 	QUICK_PAY_CONFIRM("109", "确认支付"),
 	RE_SEND_MSG("110", "重发验证码"),
 	CARD_BIND_QUERY("111", "绑卡列表查询"),

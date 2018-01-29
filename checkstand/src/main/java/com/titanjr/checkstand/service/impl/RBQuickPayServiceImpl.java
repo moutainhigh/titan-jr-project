@@ -13,12 +13,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.fangcang.titanjr.common.bean.ValidateResponse;
+import com.fangcang.titanjr.common.enums.RefundStatusEnum;
 import com.fangcang.titanjr.common.util.BeanConvertor;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.util.JsonUtil;
+import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.PayTypeEnum;
+import com.titanjr.checkstand.constants.RBRefundStatusEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
+import com.titanjr.checkstand.constants.RSPayStatusEnum;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dto.GateWayConfigDTO;
@@ -119,7 +123,22 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				responseStr = Decipher.decryptData(responseStr);
 				rbCardBINQueryResponse = (RBCardBINQueryResponse)JsonUtil.jsonToBean(responseStr, RBCardBINQueryResponse.class);
 				logger.info("【融宝-卡BIN查询】返回信息:" + rbCardBINQueryResponse.toString());
-				//此处需要参数转换
+				
+				if(!"0000".equals(rbCardBINQueryResponse.getResult_code())){
+					titanCardBINQueryResponse.putErrorResult(RSErrorCodeEnum.build(rbCardBINQueryResponse.getResult_msg()));
+					return titanCardBINQueryResponse;
+				}
+				titanCardBINQueryResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+				titanCardBINQueryResponse.setBankName(rbCardBINQueryResponse.getBank_name());
+				titanCardBINQueryResponse.setBankInfo(rbCardBINQueryResponse.getBank_code().toLowerCase());
+				titanCardBINQueryResponse.setCardNo(rbCardBINQueryResponse.getCard_no());
+				if("1".equals(rbCardBINQueryResponse.getBank_card_type())){
+					titanCardBINQueryResponse.setCardType("11");
+				}else{
+					titanCardBINQueryResponse.setCardType("10");
+				}
+				titanCardBINQueryResponse.setVersion(SysConstant.RS_VERSION_NEW);
+				titanCardBINQueryResponse.setSignType(SysConstant.RS_SIGN_TYPE);
 				return titanCardBINQueryResponse;
 				
 			}else{
@@ -144,8 +163,10 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 		
 		TitanQuickPayResponse titanQuickPayResponse = new TitanQuickPayResponse();
 		RBQuickPayResponse rbQuickPayResponse = new RBQuickPayResponse();
-		String contractType = "融宝-储蓄卡签约";
-		if(RequestTypeEnum.QUICK_PAY_CREDIT.getKey().equals(rbQuickPayRequest.getRequestType())){
+		String contractType = "融宝-已绑卡签约";
+		if(RequestTypeEnum.QUICK_PAY_DEPOSIT.getKey().equals(rbQuickPayRequest.getRequestType())){
+			contractType = "融宝-储蓄卡签约";
+		}else if(RequestTypeEnum.QUICK_PAY_CREDIT.getKey().equals(rbQuickPayRequest.getRequestType())){
 			contractType = "融宝-信用卡签约";
 		}
 		
@@ -191,7 +212,24 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				responseStr = Decipher.decryptData(responseStr);
 				rbQuickPayResponse = (RBQuickPayResponse)JsonUtil.jsonToBean(responseStr, RBQuickPayResponse.class);
 				logger.info("【"+contractType+"】返回信息:" + rbQuickPayResponse.toString());
-				//此处需要参数转换
+				
+				if(!"0000".equals(rbQuickPayResponse.getResult_code())){
+					titanQuickPayResponse.putErrorResult(RSErrorCodeEnum.build(rbQuickPayResponse.getResult_msg()));
+					return titanQuickPayResponse;
+				}
+				titanQuickPayResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+				titanQuickPayResponse.setOrderNo(rbQuickPayResponse.getOrder_no());
+				//titanQuickPayResponse.setOrderAmount();//未返回
+				//titanQuickPayResponse.setOrderTime(rbQuickPayResponse);//未返回
+				//titanQuickPayResponse.setPayType(rbQuickPayResponse);//未返回
+				if(StringUtil.isValidString(rbQuickPayResponse.getBind_id())){
+					titanQuickPayResponse.setBindCardId(rbQuickPayResponse.getBind_id());
+				}
+				if(StringUtil.isValidString(rbQuickPayResponse.getCertificate())){
+					titanQuickPayResponse.setCertificate(rbQuickPayResponse.getCertificate());
+				}
+				titanQuickPayResponse.setVersion(SysConstant.RS_VERSION_NEW);
+				titanQuickPayResponse.setSignType(SysConstant.RS_SIGN_TYPE);
 				return titanQuickPayResponse;
 				
 			}else{
@@ -260,7 +298,16 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				responseStr = Decipher.decryptData(responseStr);
 				rbPayConfirmResponse = (RBPayConfirmResponse)JsonUtil.jsonToBean(responseStr, RBPayConfirmResponse.class);
 				logger.info("【融宝-确认支付】返回信息:" + rbPayConfirmResponse.toString());
-				//此处需要参数转换
+				
+				if(!"0000".equals(rbPayConfirmResponse.getResult_code())){
+					titanPayConfirmResponse.putErrorResult(RSErrorCodeEnum.build(rbPayConfirmResponse.getResult_msg()));
+					return titanPayConfirmResponse;
+				}
+				titanPayConfirmResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+				titanPayConfirmResponse.setOrderNo(rbPayConfirmResponse.getOrder_no());
+				//titanPayConfirmResponse.setPayType(payType); 未返回
+				titanPayConfirmResponse.setVersion(SysConstant.RS_VERSION_NEW);
+				titanPayConfirmResponse.setSignType(SysConstant.RS_SIGN_TYPE);
 				return titanPayConfirmResponse;
 				
 			}else{
@@ -328,7 +375,16 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				responseStr = Decipher.decryptData(responseStr);
 				rbReSendMsgResponse = (RBReSendMsgResponse)JsonUtil.jsonToBean(responseStr, RBReSendMsgResponse.class);
 				logger.info("【融宝-重发验证码】返回信息:" + rbReSendMsgResponse.toString());
-				//此处需要参数转换
+				
+				if(!"0000".equals(rbReSendMsgResponse.getResult_code())){
+					titanReSendMsgResponse.putErrorResult(RSErrorCodeEnum.build(rbReSendMsgResponse.getResult_msg()));
+					return titanReSendMsgResponse;
+				}
+				titanReSendMsgResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+				titanReSendMsgResponse.setOrderNo(rbReSendMsgResponse.getOrder_no());
+				//titanReSendMsgResponse.setPayType(payType);未返回
+				titanReSendMsgResponse.setVersion(SysConstant.RS_VERSION_NEW);
+				titanReSendMsgResponse.setSignType(SysConstant.RS_SIGN_TYPE);
 				return titanReSendMsgResponse;
 				
 			}else{
@@ -396,7 +452,21 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				responseStr = Decipher.decryptData(responseStr);
 				rbPayQueryResponse = (RBPayQueryResponse)JsonUtil.jsonToBean(responseStr, RBPayQueryResponse.class);
 				logger.info("【融宝-快捷支付查询】返回信息:" + rbPayQueryResponse.toString());
-				//此处需要参数转换
+				
+				if(!"0000".equals(rbPayQueryResponse.getResult_code())){
+					titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.build(rbPayQueryResponse.getResult_msg()));
+					return titanPayQueryResponse;
+				}
+				titanPayQueryResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+				titanPayQueryResponse.setOrderNo(rbPayQueryResponse.getOrder_no());
+				titanPayQueryResponse.setOrderAmount(rbPayQueryResponse.getTotal_fee());
+				titanPayQueryResponse.setPayAmount(rbPayQueryResponse.getTotal_fee());
+				//titanPayQueryResponse.setOrderpayNo(orderpayNo);
+				titanPayQueryResponse.setOrderPayTime(rbPayQueryResponse.getTimestamp());
+				//titanPayQueryResponse.setOrderTime(orderTime);
+				titanPayQueryResponse.setPayStatsu(RSPayStatusEnum.convertRBPayStatus2RS(rbPayQueryResponse.getStatus()));
+				titanPayQueryResponse.setVersion(SysConstant.RS_VERSION_NEW);
+				titanPayQueryResponse.setSignType(SysConstant.RS_SIGN_TYPE);
 				return titanPayQueryResponse;
 				
 			}else{
@@ -464,7 +534,20 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				responseStr = Decipher.decryptData(responseStr);
 				rbRefundResponse = (RBBaseResponse)JsonUtil.jsonToBean(responseStr, RBBaseResponse.class);
 				logger.info("【融宝-快捷支付退款】返回信息：result_code={}，result_msg={}", rbRefundResponse.getResult_code(), rbRefundResponse.getResult_msg());
-				//此处需要参数转换
+				if(!"0000".equals(rbRefundResponse.getResult_code())){
+					titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.build(rbRefundResponse.getResult_msg()));
+					return titanOrderRefundResponse;
+				}
+				titanOrderRefundResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+				/*titanOrderRefundResponse.setOrderAmount(orderAmount);
+				titanOrderRefundResponse.setOrderNo(orderNo);
+				titanOrderRefundResponse.setOrderTime(orderTime);
+				titanOrderRefundResponse.setRefundAmount(refundAmount);
+				titanOrderRefundResponse.setRefundOrderno(refundOrderno);
+				titanOrderRefundResponse.setRefundTime(refundTime);*/
+				titanOrderRefundResponse.setRefundStatus(RefundStatusEnum.REFUND_SUCCESS.status.toString());
+				titanOrderRefundResponse.setVersion(SysConstant.RS_VERSION_NEW);
+				titanOrderRefundResponse.setSignType(SysConstant.RS_SIGN_TYPE);
 				return titanOrderRefundResponse;
 				
 			}else{
@@ -532,7 +615,21 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				responseStr = Decipher.decryptData(responseStr);
 				rbRefundQueryResponse = (RBRefundQueryResponse)JsonUtil.jsonToBean(responseStr, RBRefundQueryResponse.class);
 				logger.info("【融宝-快捷支付退款查询】返回信息:" + rbRefundQueryResponse.toString());
-				//此处需要参数转换
+				if(!"0000".equals(rbRefundQueryResponse.getResult_code())){
+					titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.build(rbRefundQueryResponse.getResult_msg()));
+					return titanRefundQueryResponse;
+				}
+				titanRefundQueryResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+				/*titanRefundQueryResponse.setOrderAmount(orderAmount);
+				titanRefundQueryResponse.setOrderNo(orderNo);
+				titanRefundQueryResponse.setOrderTime(orderTime);*/
+				/*titanRefundQueryResponse.setRefundOrderno(refundOrderno);
+				titanRefundQueryResponse.setRefundTime(refundTime);*/
+				titanRefundQueryResponse.setRefundAmount(rbRefundQueryResponse.getTotal_fee());
+				titanRefundQueryResponse.setRefundStatus(RBRefundStatusEnum.trans2TitanStatus(
+						rbRefundQueryResponse.getStatus()));
+				titanRefundQueryResponse.setVersion(SysConstant.RS_VERSION_NEW);
+				titanRefundQueryResponse.setSignType(SysConstant.RS_SIGN_TYPE);
 				return titanRefundQueryResponse;
 				
 			}else{

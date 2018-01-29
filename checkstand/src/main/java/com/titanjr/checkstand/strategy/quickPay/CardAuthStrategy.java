@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
-import com.titanjr.checkstand.util.WebUtils;
-
 /**
  * 卡密鉴权
  * @author Jerry
@@ -24,7 +22,7 @@ public class CardAuthStrategy implements QuickPayStrategy {
 	@Override
 	public String redirectResult(HttpServletRequest request) {
 		
-		return WebUtils.getRequestBaseUrl(request) + "/quick/cardAuth.shtml";
+		return "/quick/cardAuth.shtml";
 		
 	}
 

@@ -765,7 +765,7 @@
             <tr>
                 <td class="tdr">业务编码</td>
                 <td>
-                    <input type="text" value="108" id="busiCode" name="busiCode"/>* 108卡BIN查询
+                    <input type="text" value="106" id="busiCode" name="busiCode"/>* 106卡BIN查询
                 </td>
             </tr>
             <tr>

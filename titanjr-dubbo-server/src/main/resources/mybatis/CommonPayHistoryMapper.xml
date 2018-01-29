@@ -30,11 +30,11 @@
   <insert id="insertEntity" parameterType="com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO" >
     insert into t_tfs_commonpayhistory (commonpayid, orgcode, fcuserid, deskid, paytype, payername, 
     	payeracount, bankname, bankinfo, payeraccounttype, payerphone, idtype, idcode, safetycode, 
-    	validthru, creator, createtime, count, lasttime
+    	validthru, bindcardid, creator, createtime, count, lasttime
       )
     	values (NULL, #{orgcode}, #{fcuserid},#{deskid},#{paytype},#{payername},#{payeracount},  
       	#{bankname}, #{bankinfo},#{payeraccounttype},#{payerphone},#{idtype},#{idcode},#{safetycode},
-      	#{validthru},#{creator},SYSDATE(),#{count},SYSDATE()
+      	#{validthru},#{bindcardid},#{creator},SYSDATE(),#{count},SYSDATE()
       )
   </insert>
   

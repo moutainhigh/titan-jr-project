@@ -1,5 +1,7 @@
 package com.titanjr.checkstand.constants;
 
+import com.fangcang.util.StringUtil;
+
 /**
  * 融数支付状态
  * @author Jerry
@@ -18,6 +20,28 @@ public enum RSPayStatusEnum {
 	private RSPayStatusEnum(String status, String remark) {
 		this.status = status;
 		this.remark = remark;
+	}
+	
+	/**
+	 * 把融宝订单状态转换为收银台需要的状态
+	 * 融宝：completed交易完成，failed支付失败，processing交易处理中，wait等待买家付款，closed订单关闭
+	 * @author Jerry
+	 * @date 2018年1月27日 下午4:44:05
+	 */
+	public static String convertRBPayStatus2RS(String rbstatus){
+		if(!StringUtil.isValidString(rbstatus)){
+			return null;
+		}
+		if("completed".equals(rbstatus)){
+			return RSPayStatusEnum.SUCCESS.status;
+		}
+		if("failed".equals(rbstatus) || "closed".equals(rbstatus)){
+			return RSPayStatusEnum.FAILD.status;
+		}
+		if("processing".equals(rbstatus) || "wait".equals(rbstatus)){
+			return RSPayStatusEnum.PROCESS.status;
+		}
+		return null;
 	}
 	
 	public String getStatus() {

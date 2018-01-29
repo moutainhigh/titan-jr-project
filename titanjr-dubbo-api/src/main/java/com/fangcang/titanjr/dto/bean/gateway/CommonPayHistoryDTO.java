@@ -114,6 +114,11 @@ public class CommonPayHistoryDTO implements Serializable {
 	 */
 	private String usedfor;
 	
+	/**
+	 * 快捷支付绑卡ID
+	 */
+	private String bindcardid;
+	
 
 	public int getCommonpayid() {
 		return commonpayid;
@@ -281,6 +286,14 @@ public class CommonPayHistoryDTO implements Serializable {
 
 	public void setSubpayeracount(String subpayeracount) {
 		this.subpayeracount = subpayeracount;
+	}
+
+	public String getBindcardid() {
+		return bindcardid;
+	}
+
+	public void setBindcardid(String bindcardid) {
+		this.bindcardid = bindcardid;
 	}
 
 }

@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
-import com.titanjr.checkstand.util.WebUtils;
-
 /**
  * @author Jerry
  * @date 2018年1月4日 上午9:32:12  
@@ -23,7 +21,7 @@ public class ReSendMsgStrategy implements QuickPayStrategy {
 	@Override
 	public String redirectResult(HttpServletRequest request) {
 		
-		return WebUtils.getRequestBaseUrl(request) + "/quick/reSendMsg.shtml";
+		return "/quick/reSendMsg.shtml";
 		
 	}
 

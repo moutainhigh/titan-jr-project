@@ -26,29 +26,24 @@ public class RBQuickPayRequest extends RBBaseRequest {
 	private static final long serialVersionUID = -4527585486836605196L;
 	
 	/**
-	 * 银行卡号
+	 * 银行卡号--已绑卡签约不用填
 	 */
-	@NotBlank
 	private String card_no;
 	/**
-	 * 持卡人姓名
+	 * 持卡人姓名--已绑卡签约不用填
 	 */
-	@NotBlank
 	private String owner;
 	/**
-	 * 证件类型    只支持身份证（01）
+	 * 证件类型    只支持身份证（01）--已绑卡签约不用填
 	 */
-	@NotBlank 
 	private String cert_type;
 	/**
-	 * 证件号
+	 * 证件号--已绑卡签约不用填
 	 */
-	@NotBlank 
 	private String cert_no;
 	/**
-	 * 手机号
+	 * 手机号--已绑卡签约不用填
 	 */
-	@NotBlank 
 	private String phone;
 	
 	/**
@@ -96,6 +91,10 @@ public class RBQuickPayRequest extends RBBaseRequest {
 	 */
 	@NotBlank
 	private String member_id;
+	/**
+	 * 绑卡ID
+	 */
+	private String bindCardId;
 	/**
 	 * 终端类型  web、wap、mobile
 	 */
@@ -259,6 +258,12 @@ public class RBQuickPayRequest extends RBBaseRequest {
 	}
 	public void setTime_expire(String time_expire) {
 		this.time_expire = time_expire;
+	}
+	public String getBindCardId() {
+		return bindCardId;
+	}
+	public void setBindCardId(String bindCardId) {
+		this.bindCardId = bindCardId;
 	}
 	
 	@Override

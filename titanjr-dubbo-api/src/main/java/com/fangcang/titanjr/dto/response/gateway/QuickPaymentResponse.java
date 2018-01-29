@@ -39,6 +39,9 @@ public class QuickPaymentResponse extends RSBaseResponse {
 		
 		//卡密校验标识   1：需要卡密校验（不需要卡密校验不返回此值）
 		private String certificate;
+		
+		//快捷支付绑卡ID
+		private String bindCardId;
 
 
 		public String getMerchantNo() {
@@ -119,6 +122,14 @@ public class QuickPaymentResponse extends RSBaseResponse {
 
 		public void setCertificate(String certificate) {
 			this.certificate = certificate;
+		}
+
+		public String getBindCardId() {
+			return bindCardId;
+		}
+
+		public void setBindCardId(String bindCardId) {
+			this.bindCardId = bindCardId;
 		}
 
 		@Override

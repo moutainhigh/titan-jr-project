@@ -8,10 +8,7 @@
 package com.titanjr.checkstand.strategy.pay;
 
 import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Service;
-
-import com.titanjr.checkstand.util.WebUtils;
 
 /**
  * @author Jerry
@@ -23,7 +20,7 @@ public class QuickPayStrategy implements PayRequestStrategy {
 	@Override
 	public String redirectResult(HttpServletRequest request) {
 		
-		return WebUtils.getRequestBaseUrl(request) + "/pay/quickPay.shtml";
+		return "/pay/quickPay.shtml";
 		
 	}
 

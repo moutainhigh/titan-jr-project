@@ -778,6 +778,7 @@ function buildCashierData(data){
 	var idCode;
 	var safetyCode;
 	var validthru;
+	var bindCardId;
 	
 	var $liSelected =  $(".payment-mode>li");
     $liSelected.each(function(i,v){
@@ -792,6 +793,7 @@ function buildCashierData(data){
             	idCode = $(v).find(".idCode").val();
             	safetyCode = $(v).find(".safetyCode").val();
             	validthru = $(v).find(".validthru").val();
+            	bindCardId = $(v).find(".bindCardId").val();
         	}
         }
     });
@@ -836,6 +838,7 @@ function buildCashierData(data){
 		cashierData.idCode = idCode;
 		cashierData.safetyCode = safetyCode;
 		cashierData.validthru = validthru;
+		cashierData.bindCardId = bindCardId;
 	}
 	
 	console.log("isaccount:"+cashierData.isaccount+"--recieveOrgName:"+cashierData.recieveOrgName
@@ -900,6 +903,7 @@ function buildCashierData(data){
 		       	partnerOrgCode:cashierData.partnerOrgCode,
 		        linePayType:cashierData.linePayType,
 		        isaccount:cashierData.isaccount(),
+		        bindCardId:cashierData.bindCardId,
 		        payPassword:cashierData.payPassword_old()
 		};
 		return data;

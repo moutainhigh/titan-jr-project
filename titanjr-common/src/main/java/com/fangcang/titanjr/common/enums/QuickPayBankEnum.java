@@ -66,7 +66,7 @@ public enum QuickPayBankEnum {
 	}
 	
 	/**
-	 * 根据银行卡编码和类型判断是否存在
+	 * 根据银银行标示和类型判断是否存在
 	 * @author Jerry
 	 * @date 2017年7月25日 下午8:06:20
 	 */
@@ -78,7 +78,7 @@ public enum QuickPayBankEnum {
 		
 		for (QuickPayBankEnum e : QuickPayBankEnum.values()) {
 			
-			if(e.bankCode.equals(bankCode) && e.cardType.equals(cardType)){
+			if(e.bankInfo.equals(bankCode) && e.cardType.equals(cardType)){
 				
 				return true;
 			}
@@ -136,7 +136,7 @@ public enum QuickPayBankEnum {
 	
 	
 	/**
-	 * 根据银行卡编码和类型获取枚举
+	 * 根据银行标识和类型获取枚举
 	 * @author Jerry
 	 * @date 2017年9月11日 下午6:18:14
 	 * @return
@@ -149,7 +149,7 @@ public enum QuickPayBankEnum {
 		
 		for (QuickPayBankEnum e : QuickPayBankEnum.values()) {
 			
-			if(e.bankCode.equals(bankCode) && e.cardType.equals(cardType)){
+			if(e.bankInfo.equals(bankCode) && e.cardType.equals(cardType)){
 				
 				return e;
 			}

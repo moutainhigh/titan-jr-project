@@ -79,8 +79,10 @@ public class SysConstant {
 	
 	//融宝快捷支付证书
 	public static String PRIVATE_KEY_PATH = "D:\\cert\\itrus001.pfx";//私钥位置（融宝测试所用，上线需要自己生成私钥）
+	//public static String PRIVATE_KEY_PATH = "/opt/rb-cert/itrus001.pfx";//linux上的目录，上到213使用
 	public static String PRIVATE_KEY_PWD = "123456";//私钥密码
 	public static String PUBLIC_KEY_PATH = "D:\\cert\\itrus001.cer";//融宝公钥 正式环境不用更换
+	//public static String PUBLIC_KEY_PATH = "/opt/rb-cert/itrus001.cer";//linux上的目录，上到213使用
 	
 	//签约融宝支付账号或卖家收款融宝支付帐户-test
 	public static String RB_SELLER_EMAIL = "850138237@qq.com";

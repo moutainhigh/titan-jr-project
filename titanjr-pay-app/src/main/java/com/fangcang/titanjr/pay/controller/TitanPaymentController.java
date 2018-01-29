@@ -803,6 +803,7 @@ public class TitanPaymentController extends BaseController {
 				terminalType = "web";
 			}
 			rechargeDataDTO.setTerminalType(terminalType);
+			rechargeDataDTO.setTerminalInfo("null_MAC");
 			strategy = new QuickPay(); //快捷支付
 			
 		}else{
@@ -900,7 +901,7 @@ public class TitanPaymentController extends BaseController {
 		}
 		stringBuilder.append("&").append("key=").append(md5key);
 		log.info("封装支付参数packageRechargeData,md5原明文"+stringBuilder.toString());
-		return MD5.MD5Encode(stringBuilder.toString());
+		return MD5.MD5Encode(stringBuilder.toString(), "UTF-8");
 	}
 	
  	

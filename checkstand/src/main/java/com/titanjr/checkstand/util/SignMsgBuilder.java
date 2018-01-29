@@ -157,11 +157,6 @@ public class SignMsgBuilder {
 		TreeMap<String,String> params = new TreeMap<String,String>();
 		params.put("merchant_id", rbQuickPayRequest.getMerchant_id());
 		params.put("version", rbQuickPayRequest.getVersion());
-		params.put("card_no", rbQuickPayRequest.getCard_no());
-		params.put("owner", rbQuickPayRequest.getOwner());
-		params.put("cert_type", rbQuickPayRequest.getCert_type());
-		params.put("cert_no", rbQuickPayRequest.getCert_no());
-		params.put("phone", rbQuickPayRequest.getPhone());
 		params.put("order_no", rbQuickPayRequest.getOrder_no());
 		params.put("transtime", rbQuickPayRequest.getTranstime());
 		params.put("currency", rbQuickPayRequest.getCurrency());
@@ -175,6 +170,16 @@ public class SignMsgBuilder {
 		params.put("seller_email", rbQuickPayRequest.getSeller_email());
 		params.put("total_fee", rbQuickPayRequest.getTotal_fee().toString());
 		params.put("token_id", rbQuickPayRequest.getToken_id());
+		if(RequestTypeEnum.QUICK_BIND_PAY.getKey().equals(rbQuickPayRequest.getRequestType())){
+			params.put("bind_id", rbQuickPayRequest.getBindCardId());
+		}
+		if(!RequestTypeEnum.QUICK_BIND_PAY.getKey().equals(rbQuickPayRequest.getRequestType())){
+			params.put("card_no", rbQuickPayRequest.getCard_no());
+			params.put("owner", rbQuickPayRequest.getOwner());
+			params.put("cert_type", rbQuickPayRequest.getCert_type());
+			params.put("cert_no", rbQuickPayRequest.getCert_no());
+			params.put("phone", rbQuickPayRequest.getPhone());
+		}
 		if(RequestTypeEnum.QUICK_PAY_CREDIT.getKey().equals(rbQuickPayRequest.getRequestType())){
 			params.put("cvv2", rbQuickPayRequest.getCvv2());
 			params.put("validthru", rbQuickPayRequest.getValidthru());

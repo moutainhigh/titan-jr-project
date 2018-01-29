@@ -47,6 +47,11 @@ public class TitanQuickPayResponse extends RSResponse {
 	 */
 	private String certificate;
 	
+	/**
+	 * 快捷支付绑卡ID
+	 */
+	private String bindCardId;
+	
 	
 	public String getOrderAmount() {
 		return orderAmount;
@@ -78,6 +83,13 @@ public class TitanQuickPayResponse extends RSResponse {
 	public void setCertificate(String certificate) {
 		this.certificate = certificate;
 	}
+	public String getBindCardId() {
+		return bindCardId;
+	}
+	public void setBindCardId(String bindCardId) {
+		this.bindCardId = bindCardId;
+	}
+	
 	
 	@Override
 	public String toString() {

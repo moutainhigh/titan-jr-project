@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
-import com.titanjr.checkstand.util.WebUtils;
-
 /**
  * 用户绑卡列表查询
  * @author Jerry
@@ -24,7 +22,7 @@ public class BindCardListQueryStrategy implements QuickPayStrategy {
 	@Override
 	public String redirectResult(HttpServletRequest request) {
 		
-		return WebUtils.getRequestBaseUrl(request) + "/quick/bindCardList.shtml";
+		return "/quick/bindCardList.shtml";
 		
 	}
 

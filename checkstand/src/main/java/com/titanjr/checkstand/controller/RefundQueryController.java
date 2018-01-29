@@ -219,6 +219,9 @@ public class RefundQueryController extends BaseController {
 			rbQuickPayRefundQueryRequest.setRequestType(RequestTypeEnum.QUICK_REFUND_QUERY.getKey());
 			
 			titanRefundQueryResponse = rbQuickPayService.refundQuery(rbQuickPayRefundQueryRequest);
+			titanRefundQueryResponse.setOrderNo(refundQueryDTO.getOrderNo());
+			titanRefundQueryResponse.setOrderTime(refundQueryDTO.getOrderTime());
+			titanRefundQueryResponse.setRefundOrderno(refundQueryDTO.getRefundOrderno());
 			
 			return titanRefundQueryResponse;
 			

@@ -213,6 +213,7 @@ public class PayQueryController extends BaseController {
 			rbQuickPayQueryRequest.setRequestType(RequestTypeEnum.QUICK_PAY_QUERY.getKey());
 			
 			titanPayQueryResponse = rbQuickPayService.payQuery(rbQuickPayQueryRequest);
+			titanPayQueryResponse.setOrderTime(titanPayQueryDTO.getOrderTime());
 			return titanPayQueryResponse;
 			
 		} catch (Exception e) {

@@ -104,11 +104,11 @@ public class TitanQuickPaymentController extends BaseController {
 					//4,8,16
 					Thread.sleep(2000 * (2<<index));
 				} catch (InterruptedException e) {
-					log.error("网关充值成功，本地查询订单状态线程等待异常：", e);
+					log.error("网关确认充值成功，本地查询订单状态线程等待异常：", e);
 				}
-				
+				index ++;
 				String orderStatus = titanOrderService.confirmOrderStatus(confirmRechargeResponse.getOrderNo());
-				log.info("try confirmOrderStatus, index=" + (2000 * (2<<index)) + ", orderStatus=" + orderStatus);
+				log.info("网关确认充值成功, 开始第{}次查询本地交易单状态, orderStatus=" + orderStatus);
 				
 				if("success".equals(orderStatus) || "fail".equals(orderStatus)){
 					
@@ -122,7 +122,6 @@ public class TitanQuickPaymentController extends BaseController {
 					return titanPaymentService.payConfirmPage(RechargeResultConfirmRequest, model);
 				}
 				
-				index ++;
 			}
 			
 		}
@@ -197,17 +196,16 @@ public class TitanQuickPaymentController extends BaseController {
 		
 		if(bankCardBINIResponse.isSuccess()){
 			
-			if(QuickPayBankEnum.isExist(bankCardBINIResponse.getBankCode(), bankCardBINIResponse.getCardType())){
-				
-				QuickPayBankEnum bankEnum = QuickPayBankEnum.getBankEnum(bankCardBINIResponse.getBankCode()
+			//根据返回的卡信息校验是否是泰坦金融支持的卡类型
+			if(QuickPayBankEnum.isExist(bankCardBINIResponse.getBankInfo(), bankCardBINIResponse.getCardType())){
+				QuickPayBankEnum bankEnum = QuickPayBankEnum.getBankEnum(bankCardBINIResponse.getBankInfo()
 						, bankCardBINIResponse.getCardType());
 				boolean isValidAuth = QuickPayBankEnum.isValidAuth(bankEnum);
-				bankCardBINIResponse.setBankInfo(bankEnum.getBankInfo());
 				bankCardBINIResponse.setSingleLimit(bankEnum.getSingleLimit());
 				bankCardBINIResponse.setDailyLimit(bankEnum.getDailyLimit());
 				bankCardBINIResponse.setValidAuth(isValidAuth);
+				bankCardBINIResponse.putSuccess("");
 				return bankCardBINIResponse;
-				
 			}
 			bankCardBINIResponse.putError("该银行卡不支持快捷支付");
 		}
