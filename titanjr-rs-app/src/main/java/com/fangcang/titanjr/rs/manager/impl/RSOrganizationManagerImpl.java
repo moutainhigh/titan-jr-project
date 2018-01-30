@@ -1,28 +1,40 @@
 package com.fangcang.titanjr.rs.manager.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.Rop.api.request.WheatfieldAccountCheckRequest;
-import com.Rop.api.request.WheatfieldBatchqueryCompanyRequest;
-import com.Rop.api.request.WheatfieldBatchqueryPersonRequest;
-import com.Rop.api.request.WheatfieldEnterpriseEntityaccountoptRequest;
-import com.Rop.api.request.WheatfieldEnterpriseUpdatecompanyinfoRequest;
-import com.Rop.api.request.WheatfieldPersonAccountoprRequest;
 import com.Rop.api.response.WheatfieldAccountCheckResponse;
-import com.Rop.api.response.WheatfieldBatchqueryCompanyResponse;
-import com.Rop.api.response.WheatfieldBatchqueryPersonResponse;
-import com.Rop.api.response.WheatfieldEnterpriseEntityaccountoptResponse;
-import com.Rop.api.response.WheatfieldEnterpriseUpdatecompanyinfoResponse;
-import com.Rop.api.response.WheatfieldPersonAccountoprResponse;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.exception.RSValidateException;
 import com.fangcang.titanjr.common.util.Tools;
-import com.fangcang.titanjr.rs.request.*;
-import com.fangcang.titanjr.rs.response.*;
 import com.fangcang.titanjr.rs.manager.RSOrganizationManager;
+import com.fangcang.titanjr.rs.request.CompOrgInfoQueryRequest;
+import com.fangcang.titanjr.rs.request.CompanyOrgRegRequest;
+import com.fangcang.titanjr.rs.request.CompanyOrgUpdateRequest;
+import com.fangcang.titanjr.rs.request.OrgStatusQueryRequest;
+import com.fangcang.titanjr.rs.request.PersOrgInfoQueryRequest;
+import com.fangcang.titanjr.rs.request.PersonOrgRegRequest;
+import com.fangcang.titanjr.rs.request.PersonOrgUpdateRequest;
+import com.fangcang.titanjr.rs.response.CompOrgInfoQueryResponse;
+import com.fangcang.titanjr.rs.response.CompanyOrgRegResponse;
+import com.fangcang.titanjr.rs.response.CompanyOrgUpdateResponse;
+import com.fangcang.titanjr.rs.response.OrgStatusQueryResponse;
+import com.fangcang.titanjr.rs.response.PersOrgInfoQueryResponse;
+import com.fangcang.titanjr.rs.response.PersonOrgRegResponse;
+import com.fangcang.titanjr.rs.response.PersonOrgUpdateResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.util.MyBeanUtil;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.titanjr.fop.request.WheatfieldBatchqueryCompanyRequest;
+import com.titanjr.fop.request.WheatfieldBatchqueryPersonRequest;
+import com.titanjr.fop.request.WheatfieldEnterpriseEntityaccountoptRequest;
+import com.titanjr.fop.request.WheatfieldEnterpriseUpdatecompanyinfoRequest;
+import com.titanjr.fop.request.WheatfieldPersonAccountoprRequest;
+import com.titanjr.fop.response.WheatfieldBatchqueryCompanyResponse;
+import com.titanjr.fop.response.WheatfieldBatchqueryPersonResponse;
+import com.titanjr.fop.response.WheatfieldEnterpriseEntityaccountoptResponse;
+import com.titanjr.fop.response.WheatfieldEnterpriseUpdatecompanyinfoResponse;
+import com.titanjr.fop.response.WheatfieldPersonAccountoprResponse;
 
 /**
  * Created by zhaoshan on 2016/4/8.
@@ -45,7 +57,7 @@ public class RSOrganizationManagerImpl implements RSOrganizationManager {
 				companyOrgRegRequest.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, companyOrgRegRequest);
-			WheatfieldEnterpriseEntityaccountoptResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldEnterpriseEntityaccountoptResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用resigterCompanyOrg返回报文: \n" + rsp.getBody());
@@ -91,7 +103,7 @@ public class RSOrganizationManagerImpl implements RSOrganizationManager {
 				companyOrgUpdateRequest.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, companyOrgUpdateRequest);
-			WheatfieldEnterpriseUpdatecompanyinfoResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldEnterpriseUpdatecompanyinfoResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用updateCompanyOrg返回报文: \n" + rsp.getBody());
@@ -140,7 +152,7 @@ public class RSOrganizationManagerImpl implements RSOrganizationManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, personOrgRegRequest);
 			log.info("开始调用个人账户注册接口,请求参数personOrgRegRequest："+Tools.gsonToString(personOrgRegRequest));
-			WheatfieldPersonAccountoprResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldPersonAccountoprResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用resigterPersonOrg返回报文: \n" + rsp.getBody());
@@ -188,7 +200,7 @@ public class RSOrganizationManagerImpl implements RSOrganizationManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, personOrgUpdateRequest);
 			log.info("开始调用个人账户更新接口:");
-			WheatfieldPersonAccountoprResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldPersonAccountoprResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用updateCompanyOrg返回报文: \n" + rsp.getBody());
@@ -284,7 +296,7 @@ public class RSOrganizationManagerImpl implements RSOrganizationManager {
 				compOrgInfoQueryRequest.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, compOrgInfoQueryRequest);
-			WheatfieldBatchqueryCompanyResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldBatchqueryCompanyResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			log.info("开始调用查询机构信息接口:");
 			if (rsp != null) {
@@ -334,7 +346,7 @@ public class RSOrganizationManagerImpl implements RSOrganizationManager {
 				persOrgInfoQueryRequest.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, persOrgInfoQueryRequest);
-			WheatfieldBatchqueryPersonResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldBatchqueryPersonResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			log.info("开始调用查询个人信息接口:");
 			if (rsp != null) {

@@ -49,6 +49,7 @@
         <mapper resource="mybatis/FinancialAccountMapper.xml"/>
         <mapper resource="mybatis/FinancialOrderMapper.xml"/>
 		<mapper resource="mybatis/TitanSysconfigMapper.xml" />
+		<mapper resource="mybatis/FinancialMainOrgMapper.xml" />
     </mappers>
 
 </configuration>

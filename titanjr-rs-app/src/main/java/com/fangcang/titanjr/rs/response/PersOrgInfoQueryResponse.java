@@ -1,9 +1,9 @@
 package com.fangcang.titanjr.rs.response;
 
-import com.Rop.api.domain.OpenAccountPerson;
-import com.fangcang.titanjr.rs.dto.PersonOrg;
 
 import java.util.List;
+
+import com.titanjr.fop.dto.OpenAccountPerson;
 
 /**
  * Created by zhaoshan on 2016/4/13.

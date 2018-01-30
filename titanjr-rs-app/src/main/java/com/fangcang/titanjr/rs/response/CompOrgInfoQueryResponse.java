@@ -1,9 +1,9 @@
 package com.fangcang.titanjr.rs.response;
 
-import com.Rop.api.domain.OpenAccountCompany;
-import com.fangcang.titanjr.rs.dto.CompanyOrg;
 
 import java.util.List;
+
+import com.titanjr.fop.dto.OpenAccountCompany;
 
 /**
  * Created by zhaoshan on 2016/4/13.

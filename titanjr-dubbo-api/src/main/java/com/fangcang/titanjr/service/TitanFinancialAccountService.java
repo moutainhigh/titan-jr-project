@@ -32,6 +32,8 @@ public interface TitanFinancialAccountService {
      * 初始化系统所有账户余额数据
      */
     public void initAllBalanceInfo();
+    
+    public BaseResponseDTO addBalanceInfo(BalanceInfoRequest balanceInfoRequest) ;
     /**
      * 查询一个
      * @param accountRequest

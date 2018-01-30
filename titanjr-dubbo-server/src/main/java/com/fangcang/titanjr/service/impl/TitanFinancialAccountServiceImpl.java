@@ -269,9 +269,48 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			}
 			responseDTO.putSuccess();
 		}else{
+			//不存在,则新建主账户
+			TitanBalanceInfo entity = new TitanBalanceInfo();
+			entity.setAccountcode(codeCenterService.createTitanAccountCode());
+			entity.setUserid(balanceInfoRequest.getUserId());
+			entity.setProductid(balanceInfoRequest.getProductId());
+			entity.setCurrency(1);//人民币
+			entity.setCreditamount(0L);
+			entity.setSettleamount(0L);
+			entity.setFrozonamount(0L);
+			entity.setOverlimit(0L);
+			entity.setUsablelimit(0L);
+			entity.setTotalamount(0L);
+			entity.setStatus(1);//1：正常,2:冻结中
+			entity.setCreatetime(new Date());
+			balanceInfoDao.insert(entity);
+			
 			log.info("该userid在融数那边不存在，请检查.userid:"+balanceInfoRequest.getUserId());
 			responseDTO.putErrorResult("该账户不存在，请检查");
 		}
+		return responseDTO;
+	}
+
+	
+	@Override
+	public BaseResponseDTO addBalanceInfo(BalanceInfoRequest balanceInfoRequest) {
+		BaseResponseDTO responseDTO = new BaseResponseDTO();
+		//不存在,则新建主账户
+		TitanBalanceInfo entity = new TitanBalanceInfo();
+		entity.setAccountcode(codeCenterService.createTitanAccountCode());
+		entity.setUserid(balanceInfoRequest.getUserId());
+		entity.setProductid(balanceInfoRequest.getProductId());
+		entity.setCurrency(1);//人民币
+		entity.setCreditamount(0L);
+		entity.setSettleamount(0L);
+		entity.setFrozonamount(0L);
+		entity.setOverlimit(0L);
+		entity.setUsablelimit(0L);
+		entity.setTotalamount(0L);
+		entity.setStatus(1);//1：正常,2:冻结中
+		entity.setCreatetime(new Date());
+		balanceInfoDao.insert(entity);
+		responseDTO.putSuccess();
 		return responseDTO;
 	}
 

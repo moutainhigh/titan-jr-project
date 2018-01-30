@@ -20,7 +20,7 @@
       orgcode, orgname, productid,
       usertype, statusid,remark,certificatetype,
       certificatenumber,connect,mobiletel,buslince,createTime)
-    values ( #{orgCode}, #{orgName}, #{productId}, #{userType}, #{remark},
+    values ( #{orgCode}, #{orgName}, #{productId}, #{userType},#{statusId}, #{remark},
     #{certificatetype},#{certificateNumber},#{connect},#{mobileTel},#{buslince},
     #{createTime})
   </insert>
