@@ -49,6 +49,7 @@
 	<bean id="titanAccountDao" class="com.titanjr.fop.dao.impl.TitanAccountDaoImpl" parent="baseSqlMapClient"/>
 	<bean id="titanOrderDao" class="com.titanjr.fop.dao.impl.TitanOrderDaoImpl" parent="baseSqlMapClient"/>
 	<bean id="titanSysConfigDao" class="com.titanjr.fop.dao.impl.TitanSysConfigDaoImpl" parent="baseSqlMapClient"></bean>
+	<bean id="titanMainOrgDao" class="com.titanjr.fop.dao.impl.TitanMainOrgDaoImpl" parent="baseSqlMapClient"></bean>
 	
 </beans>
 

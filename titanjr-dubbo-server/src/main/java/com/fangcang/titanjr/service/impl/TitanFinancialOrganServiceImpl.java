@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.Rop.api.domain.OpenAccountPerson;
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.exception.DaoException;
@@ -167,6 +166,7 @@ import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.fangcang.titanjr.service.TitanFinancialUserService;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
+import com.titanjr.fop.dto.OpenAccountPerson;
 
 import net.sf.json.JSONSerializer;
 /**
@@ -1107,7 +1107,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	        		if(CommonConstant.OPERATE_SUCCESS.equals(orgBaseResponse.getOperateStatus())){
 	            		BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
 	            		balanceInfoRequest.setUserId(newOrgEntity.getUserid());
-	            		
+	            		balanceInfoRequest.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID);
 	            		accountService.synBalanceInfo(balanceInfoRequest);
 	            		
 	            		CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest(); 

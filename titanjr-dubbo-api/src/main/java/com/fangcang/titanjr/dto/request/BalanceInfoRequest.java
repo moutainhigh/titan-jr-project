@@ -9,7 +9,18 @@ public class BalanceInfoRequest implements Serializable {
 	 */
 	private static final long serialVersionUID = 7234831450034808385L;
 	private String userId;
+	private String productId;
+	
 	private String finaccountId;
+
+	
+	public String getProductId() {
+		return productId;
+	}
+
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
 
 	public String getUserId() {
 		return userId;
