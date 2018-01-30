@@ -19,6 +19,7 @@ public class InterfaceURlConfig {
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.REFUND_ORDER_OPERATE, "/order/operateRefundOrder.shtml");
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.ORDERN_QUERY, "/order/orderNQuery.shtml");
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.ACCOUNT_BALANCE_TRANSFER, "/order/orderTransfer.shtml");
+        INTERFACE_URL_MAP.put(InterfaceConfigEnum.ACCOUNT_BALANCE_WITHDRAW, "/account/accountWithDraw.shtml");
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.COMPANY_CREATE, "/org/enterpriseOpt.shtml");
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.COMPANY_BATCHQUERY, "/org/queryCompany.shtml");
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.COMPANY_UPDATE, "/org/updateCompanyInfo.shtml");

@@ -17,6 +17,7 @@ public enum InterfaceConfigEnum {
     FREEZE_BALANCE("ruixue.wheatfield.order.service.authcodeservice","冻结资金获取授权码"),
     UNFREEZE_BALANCE("ruixue.wheatfield.order.service.thawauthcode","解冻资金"),
     ACCOUNT_BALANCE_TRANSFER("ruixue.wheatfield.order.transfer","账户转账"),
+    ACCOUNT_BALANCE_WITHDRAW("ruixue.wheatfield.order.service.withdrawservice","账户提现"),
     ORDERN_QUERY("ruixue.wheatfield.ordern.query","订单查询");
 
 

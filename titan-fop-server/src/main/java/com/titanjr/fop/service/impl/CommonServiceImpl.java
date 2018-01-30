@@ -1,7 +1,12 @@
 package com.titanjr.fop.service.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.fangcang.exception.ServiceException;
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.SMSTemplate;
+import com.fangcang.titanjr.dto.request.SendMessageRequest;
+import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
 import com.titanjr.fop.constants.CommonConstants;
 import com.titanjr.fop.dao.RequestSessionDao;
 import com.titanjr.fop.entity.RequestSession;
@@ -15,6 +20,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.MessageFormat;
 import java.util.Date;
 
 /**
@@ -25,6 +31,9 @@ public class CommonServiceImpl implements CommonService {
 
     @Autowired
     RequestSessionDao requestSessionDao;
+
+    @Autowired
+    TitanFinancialSendSMSService titanFinancialSendSMSService;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
@@ -46,5 +55,17 @@ public class CommonServiceImpl implements CommonService {
         }
         sessionGetResponse.setSession(session);
         return sessionGetResponse;
+    }
+
+    @Override
+    public boolean sendSMSMessage(SMSTemplate template, Object messageTarget) throws ServiceException {
+        SendMessageRequest sendCodeRequest = new SendMessageRequest();
+        sendCodeRequest.setReceiveAddress("jinrong@fangcang.com");
+        sendCodeRequest.setSubject(template.getSubject());
+        String content = MessageFormat.format(SMSTemplate.ORG_REG_FAID.getContent(), JSONObject.toJSON(messageTarget).toString());
+        sendCodeRequest.setContent(content);
+        sendCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
+        titanFinancialSendSMSService.asynSendMessage(sendCodeRequest);
+        return false;
     }
 }

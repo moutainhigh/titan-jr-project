@@ -477,15 +477,15 @@ public class OrderOperServiceImpl implements OrderOperService {
             withDrawReqParam.setUserid(ordernQueryRequest.getUserid());
         }
         List<TitanWithDrawDTO> withDrawDTOList = titanOrderService.queryWithDrawDTOList(withDrawReqParam);
-        String paymentURL = "http://local.fangcang.com:8090/checkstand/payment.shtml";
+        String paymentURL = InterfaceURlConfig.checkstand_GateWayURL;//查询
         for (TitanWithDrawDTO withDrawDTO : withDrawDTOList){
             Transorderinfo transorderinfo = new Transorderinfo();
             Map<String, String> paramMap = new HashMap<String, String>();
             paramMap.put("merchantNo", "M1000016");
             paramMap.put("orderNo", withDrawDTO.getUserorderid());//TODO 需要根据提现查出代付交易
-            paramMap.put("tradeCode", "1");
-            paramMap.put("tradeStatus", "2");
-            paramMap.put("queryType", "1");
+            paramMap.put("tradeCode", "1");//
+            paramMap.put("tradeStatus", "2");//所有状态
+            paramMap.put("queryType", "1");//表示代收还是代付
             paramMap.put("startDate", null);
             paramMap.put("endDate", null);
             try {

@@ -1,10 +1,9 @@
-﻿﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
 
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 						http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
@@ -25,7 +24,7 @@
 	<!--  group="production" -->
 	<dubbo:consumer check="false"/>
 	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" timeout="10000" />
-	<dubbo:monitor protocol="registry" />
+	<!-- <dubbo:monitor protocol="registry" /> -->
 
     <!-- retries:重试次数 -->
     <dubbo:reference id="titanFinancialAccountService" interface="com.fangcang.titanjr.service.TitanFinancialAccountService"
@@ -33,6 +32,10 @@
     <dubbo:reference id="titanOrderService" interface="com.fangcang.titanjr.service.TitanOrderService"
                      retries="0" timeout="800000"/>
     <dubbo:reference id="titanSysconfigService" interface="com.fangcang.titanjr.service.TitanSysconfigService"
+                     retries="0" timeout="800000"/>
+    <dubbo:reference id="titanFinancialBankCardService" interface="com.fangcang.titanjr.service.TitanFinancialBankCardService"
+                     retries="0" timeout="800000"/>
+    <dubbo:reference id="titanFinancialSendSMSService" interface="com.fangcang.titanjr.service.TitanFinancialSendSMSService"
                      retries="0" timeout="800000"/>
 
     <bean class="com.titanjr.fop.util.InvokeLogRecorder" id="invokeLogRecorder" >
