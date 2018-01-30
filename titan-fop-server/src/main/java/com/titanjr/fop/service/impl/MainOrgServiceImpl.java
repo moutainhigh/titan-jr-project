@@ -7,8 +7,17 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum.UserType;
+import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
+import com.fangcang.titanjr.dto.request.BalanceInfoRequest;
+import com.fangcang.titanjr.service.TitanFinancialAccountService;
 import com.fangcang.util.StringUtil;
 import com.titanjr.fop.dao.TitanMainOrgDao;
 import com.titanjr.fop.dto.MainOrgDTO;
@@ -19,12 +28,18 @@ import com.titanjr.fop.entity.TitanMainOrg;
 import com.titanjr.fop.enums.StatusIdMainOrgEnum;
 import com.titanjr.fop.service.MainOrgService;
 
+@Service("mainOrgService")
 public class MainOrgServiceImpl implements MainOrgService {
 	
-	@Resource
+	@Autowired
 	private TitanMainOrgDao mainOrgDao ;
+	
+	@Autowired
+	private TitanFinancialAccountService accountService;
+	
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
 	public OptOrgResponse optOrg(OptOrgRequest request) {
 		OptOrgResponse reponse = new OptOrgResponse();
 		//通用检查
@@ -59,8 +74,16 @@ public class MainOrgServiceImpl implements MainOrgService {
 		
 		entity.setCreateTime(new Date());
 		mainOrgDao.insert(entity);
-		reponse.putSuccess();
-		
+		//开通账户
+		BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
+		balanceInfoRequest.setUserId(request.getUserid());
+		balanceInfoRequest.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+		BaseResponseDTO responseDTO = accountService.addBalanceInfo(balanceInfoRequest);
+		if(!responseDTO.isResult()){
+			reponse.putErrorResult("添加失败");
+			return reponse;
+		}
+		reponse.putSuccess("成功");
 		return reponse;
 	}
 	/**
