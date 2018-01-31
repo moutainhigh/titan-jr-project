@@ -28,9 +28,11 @@ import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.JsonUtil;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.request.RBDataRequest;
-import com.titanjr.checkstand.request.RBQuickPayCallbackData;
+import com.titanjr.checkstand.request.RBQuickPayCallbackResponse;
 import com.titanjr.checkstand.request.TLNetBankPayCallbackRequest;
 import com.titanjr.checkstand.request.TLQrCodePayCallbackRequest;
+import com.titanjr.checkstand.respnse.RBCardAuthResponse;
+import com.titanjr.checkstand.respnse.TitanCardAuthResponse;
 import com.titanjr.checkstand.respnse.TitanPayCallBackResponse;
 import com.titanjr.checkstand.service.TitanCommonService;
 import com.titanjr.checkstand.util.rbUtil.Decipher;
@@ -73,19 +75,19 @@ public class ChannelCallbackController extends BaseController {
 			ValidateResponse res = GenericValidate.validateNew(tlNetBankPayCallbackRequest);
 			if (!res.isSuccess()){
 				logger.error("【网银支付前台回调】参数错误：{}", res.getReturnMessage());
-				return null;
+				return super.payFailedCallback(model);
 			}
 			
 			payCallBackResponse = this.getNetBankPayCallbackRequest(tlNetBankPayCallbackRequest);
 			if(!payCallBackResponse.isSuccess()){
-				return null;
+				return super.payFailedCallback(model);
 			}
 			payCallBackResponse.putError();
 			
 			payCallBackResponse = titanCommonService.payConfirmCallback(payCallBackResponse.getRechargeResultConfirmRequest());
 			if(!payCallBackResponse.isSuccess()){
 				logger.error("【网银支付前台回调】失败");
-				return null;
+				return super.payFailedCallback(model);
 			}
 			
 			model.addAttribute("payConfirmPageUrl", payCallBackResponse.getPayConfirmPageUrl());
@@ -95,7 +97,7 @@ public class ChannelCallbackController extends BaseController {
 		} catch (Exception e) {
 			
 			logger.error("【网银支付前台回调】发生异常：", e);
-			return null;
+			return super.payFailedCallback(model);
 			
 		}
 		
@@ -207,16 +209,16 @@ public class ChannelCallbackController extends BaseController {
 		
 		try {
 			
-			RBQuickPayCallbackData data = new RBQuickPayCallbackData();
+			RBQuickPayCallbackResponse quickPayCallbackResponse = new RBQuickPayCallbackResponse();
 			response.getWriter().print("success");
 			response.flushBuffer();
 			String jsonRes = JsonUtil.objectToJson(rbDataRequest);
 			jsonRes = Decipher.decryptData(jsonRes);
-			data = (RBQuickPayCallbackData) JsonUtil.jsonToBean(jsonRes,
-					RBQuickPayCallbackData.class);
-			logger.info("【融宝-快捷支付结果通知】:" + data.toString());
+			quickPayCallbackResponse = (RBQuickPayCallbackResponse) JsonUtil.jsonToBean(jsonRes,
+					RBQuickPayCallbackResponse.class);
+			logger.info("【融宝-快捷支付结果通知】:" + quickPayCallbackResponse.toString());
 			
-			payCallBackResponse = this.getQuickPayCallbackRequest(data);
+			payCallBackResponse = this.getQuickPayCallbackRequest(quickPayCallbackResponse);
 			if(!payCallBackResponse.isSuccess()){
 				return;
 			}
@@ -233,6 +235,77 @@ public class ChannelCallbackController extends BaseController {
 		} catch (Exception e) {
 			
 			logger.error("【融宝-快捷支付结果通知】发生异常：", e);
+			return;
+		}
+		
+	}
+	
+	
+	/**
+	 * 卡密鉴权前台回调
+	 * @author Jerry
+	 * @date 2018年1月31日 上午11:40:01
+	 */
+	@RequestMapping(value = "/rbCardAuthPage")
+	public String rbCardAuthPage(HttpServletRequest request, HttpServletResponse response, 
+			RBDataRequest rbDataRequest, Model model) {
+		
+		TitanCardAuthResponse titanCardAuthResponse = new TitanCardAuthResponse();
+		RBCardAuthResponse rbCardAuthResponse = new RBCardAuthResponse();
+		
+		try {
+			
+			String jsonRes = JsonUtil.objectToJson(rbDataRequest);
+			jsonRes = Decipher.decryptData(jsonRes);
+			rbCardAuthResponse = (RBCardAuthResponse) JsonUtil.jsonToBean(jsonRes,
+					RBCardAuthResponse.class);
+			logger.info("【融宝-卡密鉴权前台回调】:" + rbCardAuthResponse.toString());
+			
+			titanCardAuthResponse = titanCommonService.cardAuthPage(rbCardAuthResponse);
+			if(titanCardAuthResponse == null){
+				return super.payFailedCallback(model);
+			}
+			
+			model.addAttribute("titanCardAuthResponse", titanCardAuthResponse);
+			return "payment/titanCardAuthCallback";
+			
+		} catch (Exception e) {
+			
+			logger.error("【融宝-卡密鉴权前台回调】发生异常：", e);
+			return super.payFailedCallback(model);
+		}
+		
+	}
+	
+	
+	/**
+	 * 卡密鉴权后台通知（待完善）
+	 * @author Jerry
+	 * @date 2018年1月31日 下午3:07:49
+	 */
+	@RequestMapping(value = "/rbCardAuthNotice")
+	public void rbCardAuthNotice(HttpServletRequest request, HttpServletResponse response, 
+			RBDataRequest rbDataRequest) {
+		
+		/*TitanCardAuthResponse titanCardAuthResponse = new TitanCardAuthResponse();
+		RBCardAuthResponse rbCardAuthResponse = new RBCardAuthResponse();*/
+		
+		try {
+			
+			RBQuickPayCallbackResponse data = new RBQuickPayCallbackResponse();
+			response.getWriter().print("success");
+			response.flushBuffer();
+			String jsonRes = JsonUtil.objectToJson(rbDataRequest);
+			jsonRes = Decipher.decryptData(jsonRes);
+			data = (RBQuickPayCallbackResponse) JsonUtil.jsonToBean(jsonRes,
+					RBQuickPayCallbackResponse.class);
+			logger.info("【融宝-卡密鉴权后台通知】:" + data.toString());
+			
+			
+			
+		} catch (Exception e) {
+			
+			logger.error("【融宝-卡密鉴权后台通知】发生异常：", e);
 			return;
 		}
 		
@@ -283,7 +356,7 @@ public class ChannelCallbackController extends BaseController {
 		return payCallBackResponse;
 		
 	}
-	private TitanPayCallBackResponse getQuickPayCallbackRequest(RBQuickPayCallbackData rbQuickPayCallbackData){
+	private TitanPayCallBackResponse getQuickPayCallbackRequest(RBQuickPayCallbackResponse rbQuickPayCallbackData){
 		
 		TitanPayCallBackResponse payCallBackResponse = new TitanPayCallBackResponse();
 		payCallBackResponse.putError();
@@ -373,7 +446,7 @@ public class ChannelCallbackController extends BaseController {
 		confirmRequest.setSignType(SysConstant.RS_SIGN_TYPE);
 		return confirmRequest;
 	}
-	private RechargeResultConfirmRequest quick2TitanCallbackRequest(RBQuickPayCallbackData 
+	private RechargeResultConfirmRequest quick2TitanCallbackRequest(RBQuickPayCallbackResponse 
 			rbQuickPayCallbackData, String payOrderNo, String payType){
 		RechargeResultConfirmRequest confirmRequest = new RechargeResultConfirmRequest();
 		confirmRequest.setMerchantNo(SysConstant.RS_MERCHANT_NO);

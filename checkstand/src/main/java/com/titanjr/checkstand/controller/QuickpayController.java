@@ -7,6 +7,8 @@
  */
 package com.titanjr.checkstand.controller;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,17 +29,20 @@ import com.titanjr.checkstand.constants.BusiCodeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
+import com.titanjr.checkstand.dto.TitanBindCardQueryDTO;
 import com.titanjr.checkstand.dto.TitanCardAuthDTO;
 import com.titanjr.checkstand.dto.TitanCardBINQueryDTO;
 import com.titanjr.checkstand.dto.TitanPayConfirmDTO;
 import com.titanjr.checkstand.dto.TitanReSendMsgDTO;
 import com.titanjr.checkstand.dto.TitanUnBindCardDTO;
+import com.titanjr.checkstand.request.RBBindCardQueryRequest;
 import com.titanjr.checkstand.request.RBCardAuthRequest;
 import com.titanjr.checkstand.request.RBCardBINQueryRequest;
+import com.titanjr.checkstand.request.RBDataRequest;
 import com.titanjr.checkstand.request.RBQuickPayConfirmRequest;
 import com.titanjr.checkstand.request.RBReSendMsgRequest;
 import com.titanjr.checkstand.request.RBUnBindCardRequest;
-//import com.titanjr.checkstand.respnse.TitanCardAuthResponse;
+import com.titanjr.checkstand.respnse.TitanBindCardQueryResponse;
 import com.titanjr.checkstand.respnse.TitanCardBINQueryResponse;
 import com.titanjr.checkstand.respnse.TitanPayConfirmResponse;
 import com.titanjr.checkstand.respnse.TitanReSendMsgResponse;
@@ -243,15 +248,12 @@ public class QuickpayController extends BaseController {
     
     
     /**
-     * 卡密鉴权-返回页面（此功能后期优化）
+     * 卡密鉴权-返回页面
      * @author Jerry
      * @date 2018年1月8日 下午5:13:42
      */
-    @ResponseBody
     @RequestMapping(value = "/cardAuth", method = {RequestMethod.GET, RequestMethod.POST})
     public String cardAuth(HttpServletRequest request, Model model) {
-    	
-    	//TitanCardAuthResponse titanCardAuthResponse = new TitanCardAuthResponse();
     	
     	try {
     		
@@ -259,34 +261,81 @@ public class QuickpayController extends BaseController {
 			ValidateResponse res = GenericValidate.validateNew(titanCardAuthDTO);
 			if (!res.isSuccess()){
 				logger.error("【融宝-卡密鉴权】参数错误：{}", res.getReturnMessage());
-				/*titanCardAuthResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
-				return titanCardAuthResponse;*/
-				return "【融宝-卡密鉴权】参数错误："+res.getReturnMessage();
+				return super.payFailedCallback(model);
 			}
 			
 			RBCardAuthRequest rbCardAuthRequest = new RBCardAuthRequest();
-			rbCardAuthRequest.setMember_id("12345");//pay-app需要新增这个参数
-			rbCardAuthRequest.setBind_id("343545");//需要查询融宝绑卡列表，通过cardNo和merber_id匹配bind_id（后续：无法实现，绑卡查询返回的卡号不是完全的卡号）
+			rbCardAuthRequest.setMember_id(titanCardAuthDTO.getIdCode());//身份证号当作融宝需要的用户ID
+			rbCardAuthRequest.setBind_id(titanCardAuthDTO.getBindCardId());
 			rbCardAuthRequest.setOrder_no(titanCardAuthDTO.getOrderNo());
 			rbCardAuthRequest.setTerminal_type(titanCardAuthDTO.getTerminalType());
-			rbCardAuthRequest.setReturn_url(titanCardAuthDTO.getCardCheckPageUrl());//用pay-app的地址
-			rbCardAuthRequest.setNotify_url(titanCardAuthDTO.getCardChecknotifyUrl());//用支付路由的地址
+			rbCardAuthRequest.setReturn_url(titanCardAuthDTO.getCardCheckPageUrl());
+			rbCardAuthRequest.setNotify_url(titanCardAuthDTO.getCardChecknotifyUrl());
 			rbCardAuthRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
 			rbCardAuthRequest.setVersion(SysConstant.RB_VERSION);
 			rbCardAuthRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
 			rbCardAuthRequest.setRequestType(RequestTypeEnum.QUICK_CARD_AUTH.getKey());
 			
-			/*titanCardAuthResponse = rbQuickPayService.cardAuth(rbCardAuthRequest);
-			return titanCardAuthResponse;*/
+			Map<String, Object> map = rbQuickPayService.cardAuth(rbCardAuthRequest);
+			if(map == null){
+				return super.payFailedCallback(model);
+			}
+			model.addAttribute("gateWayUrl", (String)map.get("gateWayUrl"));
+			model.addAttribute("rbDataRequest", (RBDataRequest)map.get("rbDataRequest"));
 			
-			return rbQuickPayService.cardAuth(rbCardAuthRequest);
+			return "payment/rb_cardAuth";
 			
 		} catch (Exception e) {
 			
 			logger.error("【融宝-卡密鉴权】异常：", e);
-			/*titanCardAuthResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
-			return titanCardAuthResponse;*/
-			return "【融宝-卡密鉴权】异常";
+			return super.payFailedCallback(model);
+			
+		}
+        
+    }
+    
+    
+    /**
+     * 绑卡列表查询
+     * @author Jerry
+     * @date 2018年1月30日 下午3:20:11
+     */
+    @ResponseBody
+    @RequestMapping(value = "/bindCardList", method = {RequestMethod.GET, RequestMethod.POST})
+    public TitanBindCardQueryResponse bindCardList(HttpServletRequest request, Model model) {
+    	
+    	TitanBindCardQueryResponse titanBindCardQueryResponse = new TitanBindCardQueryResponse();
+    	
+    	try {
+    		
+    		TitanBindCardQueryDTO titanBindCardQueryDTO = WebUtils.switch2RequestDTO(TitanBindCardQueryDTO.class, request);
+			ValidateResponse res = GenericValidate.validateNew(titanBindCardQueryDTO);
+			if (!res.isSuccess()){
+				logger.error("【融宝-解绑卡】参数错误：{}", res.getReturnMessage());
+				titanBindCardQueryResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
+				return titanBindCardQueryResponse;
+			}
+			
+			RBBindCardQueryRequest rbBindCardQueryRequest = new RBBindCardQueryRequest();
+			rbBindCardQueryRequest.setMember_id(titanBindCardQueryDTO.getIdCode());//身份证号当作用户ID
+			if("10".equals(titanBindCardQueryDTO.getCardType())){
+				rbBindCardQueryRequest.setBank_card_type("0");
+			}else{
+				rbBindCardQueryRequest.setBank_card_type("1");
+			}
+			rbBindCardQueryRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
+			rbBindCardQueryRequest.setVersion(SysConstant.RB_VERSION);
+			rbBindCardQueryRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
+			rbBindCardQueryRequest.setRequestType(RequestTypeEnum.QUICK_BIND_QUERY.getKey());
+			
+			titanBindCardQueryResponse = rbQuickPayService.bindCardList(rbBindCardQueryRequest);
+			return titanBindCardQueryResponse;
+			
+		} catch (Exception e) {
+			
+			logger.error("【融宝-解绑卡】异常：", e);
+			titanBindCardQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+			return titanBindCardQueryResponse;
 			
 		}
         
@@ -315,8 +364,8 @@ public class QuickpayController extends BaseController {
 			}
 			
 			RBUnBindCardRequest rbUnBindCardRequest = new RBUnBindCardRequest();
-			rbUnBindCardRequest.setMember_id(titanUnBindCardDTO.getUserId());
-			rbUnBindCardRequest.setBind_id("343545");//需要查询本地快捷支付历史卡（泰坦金融保存常用卡的时候要保存bind_id）
+			rbUnBindCardRequest.setMember_id(titanUnBindCardDTO.getIdCode());//身份证号当作用户ID
+			rbUnBindCardRequest.setBind_id(titanUnBindCardDTO.getBindCardId());
 			rbUnBindCardRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
 			rbUnBindCardRequest.setVersion(SysConstant.RB_VERSION);
 			rbUnBindCardRequest.setSign_type(SysConstant.RB_SIGN_TYPE);

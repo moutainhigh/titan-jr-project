@@ -35,6 +35,10 @@ public class TitanUnBindCardDTO implements Serializable {
 	@NotBlank
 	private String merchantNo;
 	/**
+	 * 融宝绑卡ID
+	 */
+	private String bindCardId;
+	/**
 	 * 用户id
 	 */
 	@NotBlank
@@ -44,25 +48,6 @@ public class TitanUnBindCardDTO implements Serializable {
 	 */
 	@NotBlank
 	private String idCode;
-	/**
-	 * 银行卡姓名
-	 */
-	@NotBlank
-	private String acctName;
-	/**
-	 * 银行卡号
-	 */
-	@NotBlank
-	private String cardNo;
-	/**
-	 * 银行卡类型    10储蓄卡  11信用卡
-	 */
-	@NotBlank
-	private String cardType;
-	/**
-	 * 协议号
-	 */
-	private String protocolNo;
 	/**
 	 * 签名的类型，默认1为MD5加签
 	 */
@@ -92,6 +77,12 @@ public class TitanUnBindCardDTO implements Serializable {
 	public void setMerchantNo(String merchantNo) {
 		this.merchantNo = merchantNo;
 	}
+	public String getBindCardId() {
+		return bindCardId;
+	}
+	public void setBindCardId(String bindCardId) {
+		this.bindCardId = bindCardId;
+	}
 	public String getUserId() {
 		return userId;
 	}
@@ -103,24 +94,6 @@ public class TitanUnBindCardDTO implements Serializable {
 	}
 	public void setIdCode(String idCode) {
 		this.idCode = idCode;
-	}
-	public String getAcctName() {
-		return acctName;
-	}
-	public void setAcctName(String acctName) {
-		this.acctName = acctName;
-	}
-	public String getCardNo() {
-		return cardNo;
-	}
-	public void setCardNo(String cardNo) {
-		this.cardNo = cardNo;
-	}
-	public String getProtocolNo() {
-		return protocolNo;
-	}
-	public void setProtocolNo(String protocolNo) {
-		this.protocolNo = protocolNo;
 	}
 	public String getSignType() {
 		return signType;
@@ -139,12 +112,6 @@ public class TitanUnBindCardDTO implements Serializable {
 	}
 	public void setSignMsg(String signMsg) {
 		this.signMsg = signMsg;
-	}
-	public String getCardType() {
-		return cardType;
-	}
-	public void setCardType(String cardType) {
-		this.cardType = cardType;
 	}
 
 }

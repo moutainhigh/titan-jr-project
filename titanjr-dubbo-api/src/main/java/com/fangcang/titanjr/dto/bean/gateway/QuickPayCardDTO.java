@@ -17,8 +17,8 @@ public class QuickPayCardDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 243592485453442657L;
 	
-	//绑卡协议号
-	private String protocolNo;
+	//绑卡ID
+	private String bindCardId;
 	
 	//10：借记卡 11：信用卡
 	private String accountType;
@@ -35,12 +35,12 @@ public class QuickPayCardDTO implements Serializable {
 	//手机号
 	private String mobile;
 
-	public String getProtocolNo() {
-		return protocolNo;
+	public String getBindCardId() {
+		return bindCardId;
 	}
 
-	public void setProtocolNo(String protocolNo) {
-		this.protocolNo = protocolNo;
+	public void setBindCardId(String bindCardId) {
+		this.bindCardId = bindCardId;
 	}
 
 	public String getAccountType() {

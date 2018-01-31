@@ -27,8 +27,12 @@ import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.titanjr.dto.bean.SysConfig;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
+import com.fangcang.titanjr.enums.BusiCodeEnum;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.util.StringUtil;
+import com.titanjr.checkstand.constants.SysConstant;
+import com.titanjr.checkstand.respnse.RBCardAuthResponse;
+import com.titanjr.checkstand.respnse.TitanCardAuthResponse;
 import com.titanjr.checkstand.respnse.TitanPayCallBackResponse;
 import com.titanjr.checkstand.service.TitanCommonService;
 import com.titanjr.checkstand.util.SignMsgBuilder;
@@ -124,6 +128,54 @@ public class TitanCommonServiceImpl implements TitanCommonService {
 			
 		}
 		
+	}
+	
+	
+	@Override
+	public TitanCardAuthResponse cardAuthPage(RBCardAuthResponse rbCardAuthResponse) {
+		
+		TitanCardAuthResponse titanCardAuthResponse = new TitanCardAuthResponse();
+		
+		try {
+			
+			SysConfig config = titanFinancialUtilService.querySysConfig();
+			titanCardAuthResponse = this.quick2TitanCardAuthCallbackRequest(rbCardAuthResponse, config);
+			logger.info("【卡密鉴权前台回调】参数：{}", titanCardAuthResponse.toString());
+			
+			return titanCardAuthResponse;
+			
+		} catch (Exception e) {
+			
+			logger.error("【支付结果前台回调】发生异常：", e);
+			return null;
+			
+		}
+		
+	}
+	
+	
+
+	private TitanCardAuthResponse quick2TitanCardAuthCallbackRequest(RBCardAuthResponse rbCardAuthResponse, 
+			SysConfig config){
+		TitanCardAuthResponse titanCardAuthResponse = new TitanCardAuthResponse();
+		titanCardAuthResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+		titanCardAuthResponse.setBusiCode(BusiCodeEnum.CARE_SCEURITY_VERIFY.getKey());
+		titanCardAuthResponse.setCardNo(rbCardAuthResponse.getCard_last());//卡号后四位
+		titanCardAuthResponse.setOrderNo(rbCardAuthResponse.getOrder_no());
+		titanCardAuthResponse.setPhone(rbCardAuthResponse.getPhone());
+		if(SysConstant.RB_SUCCESS_CODE.equals(rbCardAuthResponse.getResult_code())){
+			titanCardAuthResponse.setStatusId(SysConstant.RS_CARD_AUTH_SUCCESS);
+		}else{
+			titanCardAuthResponse.setStatusId(SysConstant.RS_CARD_AUTH_FAILED);
+		}
+		titanCardAuthResponse.setBankInfo(rbCardAuthResponse.getBank_code());
+		titanCardAuthResponse.setBankName(rbCardAuthResponse.getBank_name());
+		titanCardAuthResponse.setTerminalType("null_MAC");
+		titanCardAuthResponse.setCardPassCheckMsg(rbCardAuthResponse.getResult_msg());
+		titanCardAuthResponse.setVersion(SysConstant.RS_VERSION);
+		titanCardAuthResponse.setSignType(SysConstant.RS_SIGN_TYPE);
+		titanCardAuthResponse.setTitanCardAuthCallbackPageUrl(config.getCsCardAuthPageURL());
+		return titanCardAuthResponse;
 	}
 
 }

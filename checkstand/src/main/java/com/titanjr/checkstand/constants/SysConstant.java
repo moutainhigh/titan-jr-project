@@ -31,6 +31,9 @@ public class SysConstant {
 	public static String RS_SUCCESS_CODE = "0000";
 	public static String RS_SUCCESS_MSG = "成功";
 	
+	public static String RS_CARD_AUTH_SUCCESS = "3";
+	public static String RS_CARD_AUTH_FAILED = "4";
+	
 	
 	//-----------------渠道code-----------------------------------
 	public static String TL_CHANNEL_CODE = "01";
@@ -89,6 +92,9 @@ public class SysConstant {
 	
 	
 	//--------------------------其他-----------------------------------
+	public static String RB_CURRENCY = "156";//融宝币种，人民币
+	public static String RB_SUCCESS_CODE = "0000";//标示融宝返回结果成功的编码
+	
 	//账户交易-代付业务代码
 	public static String WITHDRAW_CODE = "09400";
 	

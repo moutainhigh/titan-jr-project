@@ -61,5 +61,25 @@ public class CommonPayHistoryDaoImpl extends GenericDAOMyBatisImpl implements Co
 			throw new DaoException(e);
 		}
 	}
+	
+	@Override
+	public CommonPayHistoryDTO getCommonPayHistory(
+			CommonPayHistoryDTO commonPayHistoryDTO) throws DaoException {
+		try {
+			return (CommonPayHistoryDTO) super.selectOne("com.fangcang.titanjr.dao.CommonPayHistoryDao.getCommonPayHistory", 
+					commonPayHistoryDTO);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+	
+	@Override
+	public int delCommonPayHistory(CommonPayHistoryDTO commonPayHistoryDTO) throws DaoException {
+		try {
+			return super.delete("com.fangcang.titanjr.dao.CommonPayHistoryDao.delCommonPayHistory", commonPayHistoryDTO);
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
 
 }

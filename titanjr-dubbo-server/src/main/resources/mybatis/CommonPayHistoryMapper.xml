@@ -38,34 +38,62 @@
       )
   </insert>
   
-  <update id="updateEntity" parameterType="com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO" >
-    update t_tfs_commonpayhistory
-    <set >
-      <if test="payerphone != null" >
-        payerphone = #{payerphone},
-      </if>
-      <if test="idtype != null" >
-        idtype = #{idtype},
-      </if>
-      <if test="idcode != null">
-        idcode =#{idcode},
-      </if>
-      <if test="count != null" >
-        count = #{count},
-      </if>
-      <if test="lasttime != null" >
-        lasttime = SYSDATE(),
-      </if>
-    </set>
-    where commonpayid = #{commonpayid}
+  <update id="updateEntity" parameterType="com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO">
+	    update t_tfs_commonpayhistory
+	    <set >
+	      <if test="payerphone != null" >
+	        payerphone = #{payerphone},
+	      </if>
+	      <if test="idtype != null" >
+	        idtype = #{idtype},
+	      </if>
+	      <if test="idcode != null">
+	        idcode =#{idcode},
+	      </if>
+	      <if test="count != null" >
+	        count = #{count},
+	      </if>
+	      <if test="lasttime != null" >
+	        lasttime = SYSDATE(),
+	      </if>
+	    </set>
+	    where commonpayid = #{commonpayid}
   </update>
   
+  <delete id="delCommonPayHistory" parameterType="com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO">
+  		delete from t_tfs_commonpayhistory
+  		<where>
+	      <if test="commonpayid !=null and commonpayid != ''">
+	        and commonpayid =#{commonpayid}
+	      </if>
+	    </where>
+  </delete>
   
   <select id="selectCommonPayHistory" parameterType="com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO" 
       resultType="com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO" >
       select * from t_tfs_commonpayhistory
-  			where fcuserid=#{fcuserid} and orgcode=#{orgcode} and deskid=#{deskid}
+	      <where>
+			      <if test="fcuserid !=null and fcuserid != ''">
+			        and fcuserid =#{fcuserid}
+			      </if>
+			      <if test="orgcode !=null and orgcode != ''">
+			        and orgcode =#{orgcode}
+			      </if>
+			      <if test="deskid !=null and deskid != ''">
+			        and deskid=#{deskid}
+			      </if>
+		    </where>
   			order by lasttime desc
+  </select>
+  
+  <select id="getCommonPayHistory" parameterType="com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO" 
+      resultType="com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO" >
+      select * from t_tfs_commonpayhistory
+ 		<where>
+	      <if test="commonpayid !=null and commonpayid != ''">
+	        and commonpayid =#{commonpayid}
+	      </if>
+	    </where>
   </select>
   
 </mapper>

@@ -854,27 +854,15 @@
                 </td>
             </tr>
             <tr align="left">
+                <td class="tdr">绑卡ID</td>
+                <td>
+                    <input type="text" value="343545" name="bindCardId" id="bindCardId" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr align="left">
                 <td class="tdr">身份证号</td>
                 <td>
                     <input type="text" value="210302196001012114" name="idCode" id="idCode" class="input_t01"/>* 
-                </td>
-            </tr>
-            <tr align="left">
-                <td class="tdr">银行卡号</td>
-                <td>
-                    <input type="text" value="6214242710498301" name="cardNo" id="cardNo" class="input_t01"/>* 
-                </td>
-            </tr>
-            <tr align="left">
-                <td class="tdr">银行卡账户名</td>
-                <td>
-                    <input type="text" value="韩梅梅" name="acctName" id="acctName" class="input_t01"/>* 
-                </td>
-            </tr>
-            <tr align="left">
-                <td class="tdr">银行卡账户名</td>
-                <td>
-                    <input type="text" value="韩梅梅" name="acctName" id="acctName" class="input_t01"/>* 
                 </td>
             </tr>
             <tr align="left">

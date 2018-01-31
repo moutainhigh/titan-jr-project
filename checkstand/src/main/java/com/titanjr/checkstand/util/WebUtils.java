@@ -17,7 +17,7 @@ public class WebUtils {
      * 获取请求的基础URL,截止到上下文
      */
     public static String getRequestBaseUrl(HttpServletRequest req) {
-        String contextPath = req.getContextPath();
+    	String contextPath = req.getContextPath();
     	//String contextPath = "/checkstand-dev3"; //发到213用这个
         String host = req.getServerName();
         if (req.getServerPort() != 80) {

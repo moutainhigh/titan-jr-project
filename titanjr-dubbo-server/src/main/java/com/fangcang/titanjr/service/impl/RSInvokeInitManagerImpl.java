@@ -73,6 +73,8 @@ public class RSInvokeInitManagerImpl {
             RSInvokeConstant.titanjrCheckKey = titanPayMethod.getTitanjrCheckKey();
             RSInvokeConstant.csPayConfirmPageURL = titanPayMethod.getCsPayConfirmPageURL();
             RSInvokeConstant.csPayNoticeURL = titanPayMethod.getCsPayNoticeURL();
+            RSInvokeConstant.csCardAuthPageURL = titanPayMethod.getCsCardAuthPageURL();
+            RSInvokeConstant.csCardAuthNoticeURL = titanPayMethod.getCsCardAuthNoticeURL();
             log.info("----------rong shu notify url init success, titanPayMethod:"+Tools.gsonToString(titanPayMethod));
         }else{
         	throw new RuntimeException("rong shu notify url init failed, param[titanPayMethod] is null");
@@ -188,6 +190,16 @@ public class RSInvokeInitManagerImpl {
 				//checkstand支付后台通知地址
 				if(item.getCfgKey().equals("CSPayNoticeURL")){
 					payMethod.setCsPayNoticeURL(item.getCfgValue());
+					continue;
+				}
+				//checkstand卡密鉴权前台回调地址
+				if(item.getCfgKey().equals("CSCardAuthPageURL")){
+					payMethod.setCsCardAuthPageURL(item.getCfgValue());
+					continue;
+				}
+				//checkstand卡密鉴权后台通知地址
+				if(item.getCfgKey().equals("CSCardAuthNoticeURL")){
+					payMethod.setCsCardAuthNoticeURL(item.getCfgValue());
 					continue;
 				}
 				break;

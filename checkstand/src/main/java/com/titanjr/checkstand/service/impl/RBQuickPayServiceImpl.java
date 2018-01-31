@@ -1,6 +1,8 @@
 package com.titanjr.checkstand.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.http.HttpEntity;
@@ -39,8 +41,6 @@ import com.titanjr.checkstand.request.RBReSendMsgRequest;
 import com.titanjr.checkstand.request.RBUnBindCardRequest;
 import com.titanjr.checkstand.respnse.RBBaseResponse;
 import com.titanjr.checkstand.respnse.RBBindCardQueryResponse;
-/*import com.titanjr.checkstand.respnse.RBCardAuthResponse;
-import com.titanjr.checkstand.respnse.TitanCardAuthResponse;*/
 import com.titanjr.checkstand.respnse.RBCardBINQueryResponse;
 import com.titanjr.checkstand.respnse.RBPayConfirmResponse;
 import com.titanjr.checkstand.respnse.RBPayQueryResponse;
@@ -650,10 +650,9 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 	
 	
 	@Override
-	public String cardAuth(RBCardAuthRequest rbCardAuthRequest) {
-
-		/*TitanCardAuthResponse titanCardAuthResponse = new TitanCardAuthResponse();
-		RBCardAuthResponse rbCardAuthResponse = new RBCardAuthResponse();*/
+	public Map<String, Object> cardAuth(RBCardAuthRequest rbCardAuthRequest) {
+		
+		Map<String, Object> map = new HashMap<String, Object>();
 		
 		try {
 			
@@ -663,9 +662,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
 			if(gateWayConfigDTO == null){
 				logger.error("【融宝-卡密鉴权】失败，获取网关配置为空，configKey={}", configKey);
-				/*titanCardAuthResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
-				return titanCardAuthResponse;*/
-				return "【融宝-卡密鉴权】获取网关配置为空，configKey="+configKey;
+				return null;
 			}
 			
 			//签名并获取排序后的参数
@@ -675,48 +672,24 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 			ValidateResponse res = GenericValidate.validateNew(rbCardAuthRequest);
 			if (!res.isSuccess()){
 				logger.error("【融宝-卡密鉴权】参数错误：{}", res.getReturnMessage());
-				/*titanCardAuthResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
-				return titanCardAuthResponse;*/
-				return "【融宝-卡密鉴权】参数错误："+res.getReturnMessage();
+				return null;
 			}
 			logger.info("【融宝-卡密鉴权】请求参数：{}", CommonUtil.treeMapString(params));
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
 			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbCardAuthRequest.getMerchant_id());
-			
-			//发送请求
 			logger.info("【融宝-卡密鉴权】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
-			HttpPost httpPost = new HttpPost(gateWayConfigDTO.getGateWayUrl());
-			List<NameValuePair> paramsList = BeanConvertor.beanToList(rbDataRequest);
-			HttpResponse httpRes = HttpClient.httpRequest(paramsList, httpPost);
 			
-			if (null != httpRes) {
-				
-				HttpEntity entity = httpRes.getEntity();
-				String responseStr = EntityUtils.toString(entity, "UTF-8");//返回的是jsp
-				/*// 解密返回的数据
-				responseStr = Decipher.decryptData(responseStr);
-				rbCardAuthResponse = (RBCardAuthResponse)JsonUtil.jsonToBean(responseStr, RBCardAuthResponse.class);
-				logger.info("【融宝-卡密鉴权】返回信息:" + rbCardAuthResponse.toString());
-				//此处需要参数转换
-				return titanCardAuthResponse;*/
-				return responseStr;
-				
-			}else{
-				
-				logger.error("【融宝-卡密鉴权】失败 httpRes为空，orderNo=" + rbCardAuthRequest.getOrder_no());
-				/*titanCardAuthResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
-				return titanCardAuthResponse;*/
-				return "【融宝-卡密鉴权】失败 httpRes为空";
-			}
+			map.put("gateWayUrl", gateWayConfigDTO.getGateWayUrl());
+			map.put("rbDataRequest", rbDataRequest);
+			
+			return map;
 			
 		} catch (Exception e) {
 			
 			logger.error("【融宝-卡密鉴权】发生异常：{}", e);
-			/*titanCardAuthResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
-			return titanCardAuthResponse;*/
-			return "【融宝-卡密鉴权】发生异常";
+			return null;
 			
 		}
 	}

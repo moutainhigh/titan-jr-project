@@ -59,6 +59,13 @@ public class TitanCardAuthResponse extends RSResponse {
 	 */
 	private String statusId;
 	
+	/**
+	 * 说明信息
+	 */
+	private String cardPassCheckMsg;
+	
+	private String titanCardAuthCallbackPageUrl;
+	
 
 	public String getBusiCode() {
 		return busiCode;
@@ -122,6 +129,22 @@ public class TitanCardAuthResponse extends RSResponse {
 
 	public void setStatusId(String statusId) {
 		this.statusId = statusId;
+	}
+
+	public String getCardPassCheckMsg() {
+		return cardPassCheckMsg;
+	}
+
+	public void setCardPassCheckMsg(String cardPassCheckMsg) {
+		this.cardPassCheckMsg = cardPassCheckMsg;
+	}
+
+	public String getTitanCardAuthCallbackPageUrl() {
+		return titanCardAuthCallbackPageUrl;
+	}
+
+	public void setTitanCardAuthCallbackPageUrl(String titanCardAuthCallbackPageUrl) {
+		this.titanCardAuthCallbackPageUrl = titanCardAuthCallbackPageUrl;
 	}
 
 	@Override

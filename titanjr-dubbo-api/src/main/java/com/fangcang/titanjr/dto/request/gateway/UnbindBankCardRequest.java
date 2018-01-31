@@ -15,25 +15,20 @@ public class UnbindBankCardRequest implements Serializable {
 	//解绑卡接口：112
 	private String busiCode;
 	
+	private String merchantNo;
+	
+	//本地绑卡ID
+	private String commonPayId;
+	
+	//融宝绑卡ID
+	private String bindCardId;
+	
+	//身份证号（身份证号还可以当作融宝的用户ID）
+	private String idCode;
+	
 	private String signType;
 	
 	private String version;
-	
-	private String merchantNo;
-	
-	private String userId;
-	
-	//身份证号
-	private String idCode;
-	
-	//银行卡账号姓名
-	private String acctName;
-	
-	//银行卡账号
-	private String cardNo;
-	
-	//协议号
-	private String protocolNo;
 	
 	private String signMsg;
 	
@@ -70,12 +65,12 @@ public class UnbindBankCardRequest implements Serializable {
 		this.merchantNo = merchantNo;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getCommonPayId() {
+		return commonPayId;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setCommonPayId(String commonPayId) {
+		this.commonPayId = commonPayId;
 	}
 
 	public String getIdCode() {
@@ -86,28 +81,12 @@ public class UnbindBankCardRequest implements Serializable {
 		this.idCode = idCode;
 	}
 
-	public String getAcctName() {
-		return acctName;
+	public String getBindCardId() {
+		return bindCardId;
 	}
 
-	public void setAcctName(String acctName) {
-		this.acctName = acctName;
-	}
-
-	public String getCardNo() {
-		return cardNo;
-	}
-
-	public void setCardNo(String cardNo) {
-		this.cardNo = cardNo;
-	}
-
-	public String getProtocolNo() {
-		return protocolNo;
-	}
-
-	public void setProtocolNo(String protocolNo) {
-		this.protocolNo = protocolNo;
+	public void setBindCardId(String bindCardId) {
+		this.bindCardId = bindCardId;
 	}
 
 	public String getSignMsg() {
