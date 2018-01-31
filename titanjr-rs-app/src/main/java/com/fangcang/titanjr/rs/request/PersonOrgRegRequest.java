@@ -52,7 +52,7 @@ public class PersonOrgRegRequest extends BaseRequest {
         RequestValidationUtil.checkNotEmpty(this.getConstid(), "constid");
         RequestValidationUtil.checkNotEmpty(this.getUserid(), "userid");
         RequestValidationUtil.checkNotEmpty(this.getProductid(), "productid");
-        RequestValidationUtil.checkNotEmpty(this.personchnname,"personchnname");
+        RequestValidationUtil.checkNotEmpty(this.username,"username");
         RequestValidationUtil.checkNotEmpty(this.certificatenumber, "certificatenumber");
         RequestValidationUtil.checkNotEmpty(this.certificatetype,"certificatetype");
     }

@@ -182,6 +182,25 @@ public class FopClientTest {
         }
     }
 
+    @Test
+    public void testAccountWithDraw(){
+        WheatfieldOrderServiceWithdrawserviceRequest withdrawserviceRequest = new WheatfieldOrderServiceWithdrawserviceRequest();
+        withdrawserviceRequest.setAmount("1");
+        withdrawserviceRequest.setUserid("TJMS60021833");
+        withdrawserviceRequest.setMerchantcode("M000016");
+        withdrawserviceRequest.setCardno("6226096555675449");
+        withdrawserviceRequest.setOrderdate(DateUtil.dateToString(new Date(),"yyyy-MM-dd HH:mm:ss"));
+        withdrawserviceRequest.setProductid("P000070");
+        withdrawserviceRequest.setUserfee(0L);
+        withdrawserviceRequest.setUserorderid("TJR180130114310693");
+        try {
+            WheatfieldOrderServiceWithdrawserviceResponse withdrawserviceResponse = fopClient.execute(withdrawserviceRequest,"1514456720670432636");
+            System.out.println(withdrawserviceResponse);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         System.out.println("http://192.168.0.14:8090/titan-fop-server/fopapi.shtml");
     }

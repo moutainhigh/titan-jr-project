@@ -27,9 +27,13 @@ public enum SMSTemplate {
 	 * 授信申请
 	 */
 	CREDIT_NO_PASS("授信申请审核不通过","您提交的贷款授信申请，未审核通过。不通过原因为：{0}。如有疑问可联系融资方详细咨询。","初审或者融数审核不通过"),
-	CREDIT_REVIEW_PASS("授信申请审核通过","您提交的贷款授信申请，已审核通过，您的授信额度是{0}元。期望资金助您创造更大的利润价值！","融数授信开通");
-	
-	
+	CREDIT_REVIEW_PASS("授信申请审核通过","您提交的贷款授信申请，已审核通过，您的授信额度是{0}元。期望资金助您创造更大的利润价值！","融数授信开通"),
+
+	/**
+	 * 账户提现相关
+	 */
+	WITHDRAW_UPDATE_FAIL("提现修改本地余额失败","提现修改本地账户余额失败，请核查并加急处理,账户信息：{0}。","接口提现异常");
+
 	private  SMSTemplate(String subject,String content,String des){
 		this.subject = subject;
 		this.content = content;

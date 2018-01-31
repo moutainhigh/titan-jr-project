@@ -77,8 +77,11 @@ public class MainOrgController extends BaseController {
         	optOrgRequest.setRemark(personAccountoprRequest.getRemark());
         	OptOrgResponse optOrgResponse = mainOrgService.optOrg(optOrgRequest);
         	if(optOrgResponse.isResult()){
+        		
         		return toJson(personAccountoprResponse);
         	}else{//失败
+        		logger.error("个人机构注册失败，请求参数："+Tools.gsonToString(optOrgRequest)+",返回结果:"+Tools.gsonToString(personAccountoprResponse));
+        		personAccountoprResponse.setIs_success("false");
         		personAccountoprResponse.setErrorCode(optOrgResponse.getReturnCode());
         		personAccountoprResponse.setMsg(optOrgResponse.getReturnMessage());
         		return toJson(personAccountoprResponse);
@@ -95,6 +98,7 @@ public class MainOrgController extends BaseController {
         	if(updateOrgReponse.isResult()){
         		return toJson(personAccountoprResponse);
         	}else{//失败
+        		personAccountoprResponse.setIs_success("false");
         		personAccountoprResponse.setErrorCode(updateOrgReponse.getReturnCode());
         		personAccountoprResponse.setMsg(updateOrgReponse.getReturnMessage());
         		return toJson(personAccountoprResponse);
@@ -141,6 +145,7 @@ public class MainOrgController extends BaseController {
     	if(optOrgResponse.isResult()){
     		return toJson(enterpriseOptResponse);
     	}else{//失败
+    		enterpriseOptResponse.setIs_success("false");
     		enterpriseOptResponse.setErrorCode(optOrgResponse.getReturnCode());
     		enterpriseOptResponse.setMsg(optOrgResponse.getReturnMessage());
     		return toJson(enterpriseOptResponse);

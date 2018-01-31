@@ -26,6 +26,7 @@
         <module>TWS</module>
         <module>checkstand</module>
         <module>titan-fop-sdk</module>
+        <module>titan-fop-server</module>
     	<module>titanjr-redis</module>
   </modules>
 

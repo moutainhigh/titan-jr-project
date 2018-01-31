@@ -1,23 +1,34 @@
 package com.titanjr.fop.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.fangcang.exception.DaoException;
 import com.fangcang.exception.ServiceException;
-import com.fangcang.titanjr.dto.bean.AccountBalance;
-import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
-import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.common.util.SMSTemplate;
+import com.fangcang.titanjr.dto.bean.*;
+import com.fangcang.titanjr.dto.request.BankCardRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.entity.TitanFundUnFreezereq;
 import com.fangcang.titanjr.entity.parameter.TitanUnFundFreezereqParam;
+import com.fangcang.titanjr.entity.parameter.TitanWithDrawReqParam;
+import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.titanjr.service.TitanOrderService;
+import com.fangcang.util.DateUtil;
+import com.fangcang.util.StringUtil;
+import com.titanjr.fop.constants.BankCardMapper;
+import com.titanjr.fop.constants.InterfaceURlConfig;
 import com.titanjr.fop.dao.TitanAccountDao;
 import com.titanjr.fop.dto.BalanceQueryDTO;
 import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceAuthcodeserviceRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceThawauthcodeRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceWithdrawserviceRequest;
 import com.titanjr.fop.response.WheatfieldOrderServiceThawauthcodeResponse;
+import com.titanjr.fop.response.WheatfieldOrderServiceWithdrawserviceResponse;
 import com.titanjr.fop.service.AccountService;
+import com.titanjr.fop.service.CommonService;
 import com.titanjr.fop.util.ResponseUtils;
-
+import com.titanjr.fop.util.WebUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +38,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by zhaoshan on 2017/12/22.
@@ -44,6 +53,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     TitanOrderService titanOrderService;
+
+    @Autowired
+    TitanFinancialBankCardService titanFinancialBankCardService;
+
+    @Autowired
+    CommonService commonService;
 
     @Override
     public List<SHBalanceInfo> getAccountBalanceList(WheatfieldBalanceGetlistRequest balanceGetlistRequest) throws ServiceException {
@@ -87,7 +102,7 @@ public class AccountServiceImpl implements AccountService {
         TransOrderRequest transOrderRequest = new TransOrderRequest();
         transOrderRequest.setOrderid(authcodeserviceRequest.getOrderno());
         List<TransOrderDTO> transOrderDTOList = titanOrderService.queryTransOrder(transOrderRequest);
-        if (CollectionUtils.isEmpty(transOrderDTOList)){
+        if (CollectionUtils.isEmpty(transOrderDTOList)) {
             logger.error("传入的交易冻结单号不存在，请验证后重试，单号为：{}", authcodeserviceRequest.getOrderno());
             return null;
         }
@@ -144,8 +159,8 @@ public class AccountServiceImpl implements AccountService {
             return thawauthcodeResponse;
         }
         //解冻金额校验失败
-        if (!thawauthcodeRequest.getAmount().equals(freezeDTOList.get(0).getAmount())){
-            logger.error("解冻金额校验失败，冻结金额：{}，解冻金额：{}" ,freezeDTOList.get(0).getAmount(), thawauthcodeRequest.getAmount());
+        if (!thawauthcodeRequest.getAmount().equals(freezeDTOList.get(0).getAmount())) {
+            logger.error("解冻金额校验失败，冻结金额：{}，解冻金额：{}", freezeDTOList.get(0).getAmount(), thawauthcodeRequest.getAmount());
             ResponseUtils.getSysErrorResp(thawauthcodeResponse);
             return thawauthcodeResponse;
         }
@@ -181,6 +196,125 @@ public class AccountServiceImpl implements AccountService {
         thawauthcodeResponse.setRetcode("100000");
         thawauthcodeResponse.setRetmsg("success");
         return thawauthcodeResponse;
+    }
+
+    @Override
+    public WheatfieldOrderServiceWithdrawserviceResponse accountBalanceWithDraw(WheatfieldOrderServiceWithdrawserviceRequest withdrawserviceRequest) throws ServiceException {
+        WheatfieldOrderServiceWithdrawserviceResponse withdrawserviceResponse = new WheatfieldOrderServiceWithdrawserviceResponse();
+        //判定账户存在性，金额和提现金额
+        BalanceQueryDTO balanceQueryDTO = new BalanceQueryDTO();
+        balanceQueryDTO.setUserId(withdrawserviceRequest.getUserid());
+        balanceQueryDTO.setProductId(withdrawserviceRequest.getProductid());
+        List<AccountBalance> balanceList = titanAccountDao.queryAccountBalanceList(balanceQueryDTO);
+        if (CollectionUtils.isEmpty(balanceList) || balanceList.size() > 1) {
+            logger.error("账户余额查询结果异常：{}", balanceList);
+            ResponseUtils.getSysErrorResp(withdrawserviceResponse);
+            return withdrawserviceResponse;
+        }
+        Long witDrawAmount = Long.parseLong(withdrawserviceRequest.getAmount());
+        Long balanceSettle = Long.parseLong(balanceList.get(0).getBalancesettle());
+        if (witDrawAmount > balanceSettle) {
+            logger.error("账户可提现金额不足，可提现金额：{}，可用余额：{}",
+                    balanceList.get(0).getBalancesettle(), withdrawserviceRequest.getAmount());
+            ResponseUtils.getSysErrorResp(withdrawserviceResponse);
+            return withdrawserviceResponse;
+        }
+        //校验提现单是否存在，由于事务一致性问题；
+        // 提现落单和提现操作在同一个事务，应无法查到提现单；跟转账问题类似
+//        TitanWithDrawReqParam withDrawReqParam = new TitanWithDrawReqParam();
+//        withDrawReqParam.setUserorderid(withdrawserviceRequest.getUserorderid());
+//        List<TitanWithDrawDTO> withDrawDTOList = titanOrderService.queryWithDrawDTOList(withDrawReqParam);
+//        if (CollectionUtils.isEmpty(withDrawDTOList) || withDrawDTOList.size() > 1) {
+//            logger.error("查询本地提现单异常：{}", withDrawDTOList);
+//            ResponseUtils.getSysErrorResp(withdrawserviceResponse);
+//            return withdrawserviceResponse;
+//        }
+        //查询绑卡信息 1：结算卡，2：其他卡, 3：提现卡, 4：结算提现一体卡)
+        BankCardRequest bankCardRequest = new BankCardRequest();
+        bankCardRequest.setUserId(withdrawserviceRequest.getUserid());
+        List<BankCardDTO> bankCardDTOList = titanFinancialBankCardService.queryBankCardDTO(bankCardRequest);
+        BankCardDTO cardDTO = null;
+        for (BankCardDTO bankCardDTO : bankCardDTOList) {
+            if (StringUtil.isValidString(withdrawserviceRequest.getCardno()) &&//传了卡号一定需要有相同卡
+                    !bankCardDTO.getAccountnumber().equals(withdrawserviceRequest.getCardno())) {
+                cardDTO = bankCardDTO;
+                continue;
+            }
+            if (bankCardDTO.getAccountpurpose().equals("3") || bankCardDTO.getAccountpurpose().equals("1")
+                    || bankCardDTO.getAccountpurpose().equals("4")) {
+                cardDTO = bankCardDTO;
+                break;
+            }
+        }
+        if (cardDTO == null) {
+            logger.error("本地绑卡信息异常，机构号：{}", withdrawserviceRequest.getUserid());
+            ResponseUtils.getSysErrorResp(withdrawserviceResponse);
+            return withdrawserviceResponse;
+        }
+
+        //获取网关地址
+        String paymentURL = InterfaceURlConfig.checkstand_GateWayURL;
+//        paymentURL = "http://192.168.0.14:8090/checkstand/payment.shtml";
+        //发起代付 返回状态
+        Map<String, String> paramMap = new HashMap<String, String>();
+        paramMap.put("merchantNo", "M000016");
+        paramMap.put("orderNo", withdrawserviceRequest.getUserorderid());//客户单号
+        paramMap.put("tradeCode", "100014");
+        paramMap.put("submitTime", DateUtil.dateToString(new Date(), "yyyyMMddHHmmss"));
+        paramMap.put("bankInfo", BankCardMapper.getBankCardByCode(cardDTO.getBankcode()).getBankInfo());//单笔实时代付
+        paramMap.put("busiCode", "105");
+        paramMap.put("accountType", "00");//默认银行卡
+        paramMap.put("accountNo", cardDTO.getAccountnumber());
+        paramMap.put("accountName", cardDTO.getAccountname());
+        if (cardDTO.getAccountproperty().equals("1")) {//对公
+            paramMap.put("accountProperty", "1");
+        }
+        if (cardDTO.getAccountproperty().equals("2")) {//对私
+            paramMap.put("accountProperty", "0");
+        }
+        paramMap.put("tradeAmount", withdrawserviceRequest.getAmount());
+        paramMap.put("currency", "CNY");
+        paramMap.put("accountId", cardDTO.getCertificatenumnumber());
+        paramMap.put("idType", null);//设法区分身份证和回乡证getCertificatetype 不一定准
+        try {
+            //查询网关真实状态
+            String rechargeResult = WebUtils.doPost(paymentURL, paramMap, 60000, 60000);
+            Map resultMap = (Map) JSONObject.parse(rechargeResult);
+            //1:"处理中",2:"失败",3:"成功"
+            if (resultMap.containsKey("status") || resultMap.get("status") == null ||
+                    !StringUtil.isValidString(resultMap.get("status").toString())) {
+                withdrawserviceResponse.setStatus("2");
+            } else {
+                withdrawserviceResponse.setStatus(resultMap.get("status").toString());
+                if (resultMap.get("status").equals("3") || resultMap.get("status").equals("1")) {
+                    withdrawserviceResponse.setIs_success("true");
+                    //需要改账户余额
+                    Long withDrawAmount = Long.parseLong(withdrawserviceRequest.getAmount());
+                    Long accSettle = Long.parseLong(balanceList.get(0).getBalancesettle());
+                    Long usableAmount = Long.parseLong(balanceList.get(0).getBalanceusable());
+                    Long amount = Long.parseLong(balanceList.get(0).getAmount());
+                    balanceList.get(0).setAmount(String.valueOf(amount - withDrawAmount));
+                    balanceList.get(0).setBalanceusable(String.valueOf(usableAmount - withDrawAmount));
+                    balanceList.get(0).setBalancesettle(String.valueOf(accSettle - withDrawAmount));
+                    int count = titanAccountDao.updateAccountBalance(balanceList.get(0));
+                    if (count < 1) {
+                        //这种情况应需立即处理；
+                        withdrawserviceResponse.setStatus("4");
+                        commonService.sendSMSMessage(SMSTemplate.WITHDRAW_UPDATE_FAIL, balanceList);
+                    }
+                }
+            }
+        } catch (DaoException e) {//这种情况应需立即处理；
+            logger.error("更新账户余额异常", e);
+            ResponseUtils.getSysErrorResp(withdrawserviceResponse);
+            commonService.sendSMSMessage(SMSTemplate.WITHDRAW_UPDATE_FAIL, e);
+            return withdrawserviceResponse;
+        } catch (Exception e) {
+            logger.error("上游发起代付提现失败", e);
+            ResponseUtils.getSysErrorResp(withdrawserviceResponse);
+            return withdrawserviceResponse;
+        }
+        return withdrawserviceResponse;
     }
 
     private String getFreezeAuthCode() {

@@ -5,7 +5,9 @@ import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceAuthcodeserviceRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceThawauthcodeRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceWithdrawserviceRequest;
 import com.titanjr.fop.response.WheatfieldOrderServiceThawauthcodeResponse;
+import com.titanjr.fop.response.WheatfieldOrderServiceWithdrawserviceResponse;
 
 import java.util.List;
 
@@ -38,4 +40,12 @@ public interface AccountService {
      * @throws ServiceException
      */
     WheatfieldOrderServiceThawauthcodeResponse unFreezeAccountBalance(WheatfieldOrderServiceThawauthcodeRequest thawauthcodeRequest) throws ServiceException;
+
+    /**
+     * 账户余额提现接口
+     * @param withdrawserviceRequest
+     * @return
+     * @throws ServiceException
+     */
+    WheatfieldOrderServiceWithdrawserviceResponse accountBalanceWithDraw(WheatfieldOrderServiceWithdrawserviceRequest withdrawserviceRequest) throws ServiceException;
 }

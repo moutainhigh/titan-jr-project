@@ -1099,7 +1099,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		        		
 		        		if(!CommonConstant.OPERATE_SUCCESS.equals(orgSubResponse.getOperateStatus())){//失败
 		        			LOGGER.error("调用融数接口失败,注册机构参数 orgSubcode:"+orgSubcode+",rs返回信息[baseResponse]:"+JSONSerializer.toJSON(orgSubResponse).toString());
-		        			response.putErrorResult(orgBaseResponse.getReturnMsg());
+		        			response.putErrorResult(orgSubResponse.getReturnMsg());
 		        			return response;
 		        		}
 	        		}
@@ -1271,7 +1271,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 		}else if(rsOrg.getUsertype()==TitanOrgEnum.UserType.PERSONAL.getKey()){
 			//个人账户
 			PersonOrgRegRequest personOrgRegRequest = new PersonOrgRegRequest();
-			personOrgRegRequest.setPersonchnname(rsOrg.getOrgname());
+			personOrgRegRequest.setUsername(rsOrg.getOrgname());
 			personOrgRegRequest.setCertificatetype(String.valueOf(rsOrg.getCertificatetype()));
 			personOrgRegRequest.setCertificatenumber(rsOrg.getCertificatenumber());
 			personOrgRegRequest.setUserid(rsOrg.getUserid());

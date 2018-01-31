@@ -5,9 +5,11 @@ import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceAuthcodeserviceRequest;
 import com.titanjr.fop.request.WheatfieldOrderServiceThawauthcodeRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceWithdrawserviceRequest;
 import com.titanjr.fop.response.WheatfieldBalanceGetlistResponse;
 import com.titanjr.fop.response.WheatfieldOrderServiceAuthcodeserviceResponse;
 import com.titanjr.fop.response.WheatfieldOrderServiceThawauthcodeResponse;
+import com.titanjr.fop.response.WheatfieldOrderServiceWithdrawserviceResponse;
 import com.titanjr.fop.service.AccountService;
 import com.titanjr.fop.util.BeanUtils;
 import com.titanjr.fop.util.ResponseUtils;
@@ -79,6 +81,7 @@ public class AccountController extends BaseController {
         }
         authcodeserviceResponse.setIs_success("true");
         authcodeserviceResponse.setAuthcode(authCode);
+        logger.info("生成的冻结码为：{}", authCode);
         return toJson(authcodeserviceResponse);
     }
 
@@ -99,6 +102,25 @@ public class AccountController extends BaseController {
             return ResponseUtils.getSysErrorResp(thawauthcodeResponse);
         }
         return toJson(thawauthcodeResponse);
+    }
+
+    @RequestMapping(value = "/accountWithDraw", method = {RequestMethod.POST, RequestMethod.GET}, produces = "text/json;charset=UTF-8")
+    @ResponseBody
+    public String accountWithDraw(HttpServletRequest request, RedirectAttributes attr) throws Exception {
+        WheatfieldOrderServiceWithdrawserviceResponse withdrawserviceResponse = new WheatfieldOrderServiceWithdrawserviceResponse();
+        String validResult = ResponseUtils.validRequestSign(request, withdrawserviceResponse);
+        if (null != validResult) {
+            return validResult;
+        }
+        WheatfieldOrderServiceWithdrawserviceRequest withdrawserviceRequest = BeanUtils.switch2RequestDTO(WheatfieldOrderServiceWithdrawserviceRequest.class, request);
+        if (null == withdrawserviceRequest) {
+            return ResponseUtils.getConvertErrorResp(withdrawserviceResponse);
+        }
+        withdrawserviceResponse = accountService.accountBalanceWithDraw(withdrawserviceRequest);
+        if (null == withdrawserviceResponse) {
+            return ResponseUtils.getSysErrorResp(withdrawserviceResponse);
+        }
+        return toJson(withdrawserviceResponse);
     }
 
 }

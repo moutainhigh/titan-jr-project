@@ -24,6 +24,9 @@ public class FopResponse {
     }
 
     public void setErrorCode(String errorCode) {
+    	if(!StringUtil.isValidString(this.subCode)){
+    		this.subCode = errorCode;
+    	}
         this.errorCode = errorCode;
     }
 
@@ -32,6 +35,9 @@ public class FopResponse {
     }
 
     public void setMsg(String msg) {
+    	if(!StringUtil.isValidString(this.subMsg)){
+    		this.subMsg = msg;
+    	}
         this.msg = msg;
     }
 
@@ -40,6 +46,7 @@ public class FopResponse {
     }
 
     public void setSubCode(String subCode) {
+    	
         this.subCode = subCode;
     }
 
