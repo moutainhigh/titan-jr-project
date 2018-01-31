@@ -39,7 +39,7 @@ import com.titanjr.fop.util.ResponseUtils;
 @Controller
 @RequestMapping(value = "/org")
 public class MainOrgController extends BaseController {
-	private final static Logger logger = LoggerFactory.getLogger(AccountController.class);
+	private final static Logger logger = LoggerFactory.getLogger(MainOrgController.class);
 	
 	@Resource
 	private MainOrgService mainOrgService;
