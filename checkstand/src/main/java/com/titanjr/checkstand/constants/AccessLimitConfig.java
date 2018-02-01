@@ -24,8 +24,23 @@ public class AccessLimitConfig {
         frequencyConfigMap.put(BusiCodeEnum.CARD_BIN_QUERY,300L);
         frequencyConfigMap.put(BusiCodeEnum.QUICK_PAY_CONFIRM,300L);
         frequencyConfigMap.put(BusiCodeEnum.RE_SEND_MSG,300L);
+        frequencyConfigMap.put(BusiCodeEnum.CARD_BIND_QUERY,300L);
+        frequencyConfigMap.put(BusiCodeEnum.CARD_UNBIND,300L);
+        frequencyConfigMap.put(BusiCodeEnum.UPDATE_PHONE,300L);
+        frequencyConfigMap.put(BusiCodeEnum.CARD_AUTH,300L);
 
-        intervalConfigMap.put(BusiCodeEnum.PAY_REQUEST,2000L);
+        intervalConfigMap.put(BusiCodeEnum.PAY_REQUEST,200000L);
+        intervalConfigMap.put(BusiCodeEnum.PAY_QUERY,2000L);
+        intervalConfigMap.put(BusiCodeEnum.REFUND_REQUEST,2000L);
+        intervalConfigMap.put(BusiCodeEnum.REFUND_QUERY,2000L);
+        intervalConfigMap.put(BusiCodeEnum.AGENT_TRADE,2000L);
+        intervalConfigMap.put(BusiCodeEnum.CARD_BIN_QUERY,2000L);
+        intervalConfigMap.put(BusiCodeEnum.QUICK_PAY_CONFIRM,2000L);
+        intervalConfigMap.put(BusiCodeEnum.RE_SEND_MSG,2000L);
+        intervalConfigMap.put(BusiCodeEnum.CARD_BIND_QUERY,2000L);
+        intervalConfigMap.put(BusiCodeEnum.CARD_UNBIND,2000L);
+        intervalConfigMap.put(BusiCodeEnum.UPDATE_PHONE,2000L);
+        intervalConfigMap.put(BusiCodeEnum.CARD_AUTH,2000L);
 
     }
 

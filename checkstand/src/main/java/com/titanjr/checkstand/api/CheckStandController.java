@@ -87,4 +87,14 @@ public class CheckStandController extends BaseController {
 		}
     }
 
+	/**
+	 * 根据策略跳转到对应的收银台路由代理,有些是返回字串，有些是做网关跳转
+	 */
+	@RequestMapping(value = "/resultPage", method = {RequestMethod.POST, RequestMethod.GET})
+	public String toResultPage(HttpServletRequest request, RedirectAttributes attr, Model model) {
+
+		model.addAttribute("errorMsg", "请求频率过高，请稍后重试");
+		return "payment/resultPage";
+	}
+
 }

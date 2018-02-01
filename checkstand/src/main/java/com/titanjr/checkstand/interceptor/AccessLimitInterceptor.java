@@ -1,18 +1,26 @@
 package com.titanjr.checkstand.interceptor;
 
+import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.BusiCodeEnum;
+import com.titanjr.checkstand.constants.RSErrorCodeEnum;
+import com.titanjr.checkstand.respnse.RSResponse;
 import com.titanjr.checkstand.util.AccessLimiter;
 import com.titanjr.checkstand.util.CommonUtil;
 import com.titanjr.checkstand.util.JRBeanUtils;
 
+import net.sf.json.JSONSerializer;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * 请求频率限制的拦截器
@@ -28,28 +36,83 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse httpServletResponse, Object o) throws Exception {
-        //暂时只处理支付入口位置的请求
-        if ("/checkstand/payment.shtml".equals(request.getRequestURI())){
-            //OperateTypeEnum operateTypeEnum = JRBeanUtils.recognizeRequestType(request.getParameterMap().keySet());
-        	BusiCodeEnum busiCodeEnum = JRBeanUtils.getBusiCode(request);
-            if(busiCodeEnum == null){
-            	logger.info("未匹配到操作类型，请求参数为{}; 当前请求路径是{}", CommonUtil.mapString(request.getParameterMap()), request.getRequestURI());
-                return true;//此处不处理
+
+        //单独处理同一张单，一个时间间隔内不能重复支付的问题
+        if ("/checkstand/resultPage.shtml".equals(request.getRequestURI())){
+            return true;
+        }
+        if (request.getRequestURI().indexOf("/pay") > -1 && !"/checkstand/payment.shtml".equals(request.getRequestURI()) &&
+                request.getRequestURI().indexOf("/entrance") < 0) {
+            BusiCodeEnum busiCodeEnum = JRBeanUtils.getBusiCode(request);
+            if (busiCodeEnum != null && StringUtil.isValidString(request.getParameter("orderNo"))) {
+                StringBuilder builder = new StringBuilder(request.getRequestURI());
+                builder.append(request.getParameter("orderNo"));
+                boolean isInterval = accessLimiter.accessInterval(busiCodeEnum, builder.toString());
+                if (!isInterval) {
+                    logger.error("同一张单访问频率过高，单号为：{}", request.getParameter("orderNo"));
+                    if (needGoPage(request.getRequestURI())) {
+                        httpServletResponse.sendRedirect("resultPage.shtml");
+                    } else {
+                        resolveJsonResult(httpServletResponse);
+                    }
+                    return false;
+                }
+            }
+        }
+
+        //只处理最终端的请求
+        if (!"/checkstand/payment.shtml".equals(request.getRequestURI()) &&
+                !"/resultPage.shtml".equals(request.getRequestURI()) &&
+                request.getRequestURI().indexOf("entrance") < 0 &&
+                request.getRequestURI().indexOf("callback") < 0) {
+            BusiCodeEnum busiCodeEnum = JRBeanUtils.getBusiCode(request);
+            if (busiCodeEnum == null) {
+                logger.info("未匹配到操作类型，请求参数为{}; 当前请求路径是{}",
+                        CommonUtil.mapString(request.getParameterMap()), request.getRequestURI());
+                if (needGoPage(request.getRequestURI())) {
+                    httpServletResponse.sendRedirect("resultPage.shtml");
+                } else {
+                    resolveJsonResult(httpServletResponse);
+                }
+                return false;
             }
             boolean isFrequency = accessLimiter.accessFrequency(busiCodeEnum);
             if (isFrequency) {
                 logger.info("满足访问频次，执行下一步");
                 return true;
             } else {
-                logger.error("访问频率过高");
-                //TODO 转走
-
+                logger.error("当前接口：{},请求路径：{}，访问频率过高", busiCodeEnum, request.getRequestURI());
+                if (needGoPage(request.getRequestURI())) {
+                    httpServletResponse.sendRedirect("resultPage.shtml");
+                } else {
+                    resolveJsonResult(httpServletResponse);
+                }
+                return false;
             }
         } else {
-            //暂不处理，但是可能还是需要考虑
+            //暂不处理，需要在 SecurityInterceptor 核实所有链接
+            logger.info("当前地址无需处理，请求地址：{}", request.getRequestURI());
             return true;
         }
-        return true;
+    }
+
+    private boolean needGoPage(String url) {
+        if (url.indexOf("wxPicture") > -1 || url.indexOf("netBankPay") > -1) {
+            return true;
+        }
+        return false;
+    }
+
+    private void resolveJsonResult(HttpServletResponse httpServletResponse) {
+        RSResponse rsResponse = new RSResponse();
+        rsResponse.putErrorResult(RSErrorCodeEnum.REQUEST_MORE);
+        PrintWriter writer;
+        try {
+            writer = httpServletResponse.getWriter();
+            writer.write(JSONSerializer.toJSON(rsResponse).toString());
+        } catch (IOException e) {
+            logger.error("获取输出异常：{}", e.getMessage(), e);
+        }
     }
 
     @Override
