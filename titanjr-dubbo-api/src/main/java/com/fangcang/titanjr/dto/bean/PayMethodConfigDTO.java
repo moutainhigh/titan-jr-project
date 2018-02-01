@@ -35,6 +35,10 @@ public class PayMethodConfigDTO implements Serializable {
 	private String tl_WechatPay_Notifyurl;
 	//融宝快捷支付后台通知地址
 	private String rb_QuickPay_Notifyurl;
+	//融宝卡密鉴权前台回调地址
+	private String rb_CardAuth_Pageurl;
+	//融宝卡密鉴权后台通知地址
+	private String rb_CardAuth_Notifyurl;
 	
 	
 	public Integer getPaymethodid() {
@@ -102,6 +106,18 @@ public class PayMethodConfigDTO implements Serializable {
 	}
 	public void setRb_QuickPay_Notifyurl(String rb_QuickPay_Notifyurl) {
 		this.rb_QuickPay_Notifyurl = rb_QuickPay_Notifyurl;
+	}
+	public String getRb_CardAuth_Pageurl() {
+		return rb_CardAuth_Pageurl;
+	}
+	public void setRb_CardAuth_Pageurl(String rb_CardAuth_Pageurl) {
+		this.rb_CardAuth_Pageurl = rb_CardAuth_Pageurl;
+	}
+	public String getRb_CardAuth_Notifyurl() {
+		return rb_CardAuth_Notifyurl;
+	}
+	public void setRb_CardAuth_Notifyurl(String rb_CardAuth_Notifyurl) {
+		this.rb_CardAuth_Notifyurl = rb_CardAuth_Notifyurl;
 	}
 
 }

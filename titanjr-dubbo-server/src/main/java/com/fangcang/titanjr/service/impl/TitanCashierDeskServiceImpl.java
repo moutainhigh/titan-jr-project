@@ -451,9 +451,29 @@ public class TitanCashierDeskServiceImpl implements TitanCashierDeskService, Ser
         try {
             return commonPayHistoryDao.selectCommonPayHistory(commonPayHistoryDTO);
         } catch (Exception e) {
-            log.error("查询快捷支付卡历史记录异常：", e);
+            log.error("查询支付卡历史列表异常：", e);
         }
         return null;
+    }
+    
+    @Override
+    public CommonPayHistoryDTO getCommonPayHistory(CommonPayHistoryDTO commonPayHistoryDTO) {
+    	try {
+            return commonPayHistoryDao.getCommonPayHistory(commonPayHistoryDTO);
+        } catch (Exception e) {
+            log.error("查询支付卡信息异常：", e);
+        }
+        return null;
+    }
+    
+    @Override
+    public int delCommonPayHistory(CommonPayHistoryDTO commonPayHistoryDTO) {
+    	try {
+            return commonPayHistoryDao.delCommonPayHistory(commonPayHistoryDTO);
+        } catch (Exception e) {
+            log.error("查询支付卡信息异常：", e);
+            return 0;
+        }
     }
 
     @Override

@@ -17,8 +17,8 @@ public class TitanBindCardDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 243592485453442657L;
 	
-	//绑卡协议号
-	private String protocolNo;
+	//绑卡ID
+	private String bindCardId;
 	
 	//10：借记卡 11：信用卡
 	private String accountType;
@@ -35,16 +35,7 @@ public class TitanBindCardDTO implements Serializable {
 	//手机号
 	private String mobile;
 	
-	private String bind_id;
-
-	public String getProtocolNo() {
-		return protocolNo;
-	}
-
-	public void setProtocolNo(String protocolNo) {
-		this.protocolNo = protocolNo;
-	}
-
+	
 	public String getAccountType() {
 		return accountType;
 	}
@@ -84,13 +75,13 @@ public class TitanBindCardDTO implements Serializable {
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
 	}
-	
-	public String getBind_id() {
-		return bind_id;
+
+	public String getBindCardId() {
+		return bindCardId;
 	}
 
-	public void setBind_id(String bind_id) {
-		this.bind_id = bind_id;
+	public void setBindCardId(String bindCardId) {
+		this.bindCardId = bindCardId;
 	}
 
 	@Override

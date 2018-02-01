@@ -32,8 +32,11 @@ public class TitanBindCardQueryDTO implements Serializable {
 	@NotBlank
 	private String merchantNo;
 	@NotBlank
-	private String userId;
-	private String cardNo;
+	private String idCode;
+	@NotBlank
+	private String bindCardId;
+	@NotBlank
+	private String cardType;//融数卡类型：10储蓄卡  11信用卡
 	@NotBlank
 	private String signMsg;
 	
@@ -62,23 +65,29 @@ public class TitanBindCardQueryDTO implements Serializable {
 	public void setMerchantNo(String merchantNo) {
 		this.merchantNo = merchantNo;
 	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-	public String getCardNo() {
-		return cardNo;
-	}
-	public void setCardNo(String cardNo) {
-		this.cardNo = cardNo;
-	}
 	public String getSignMsg() {
 		return signMsg;
 	}
 	public void setSignMsg(String signMsg) {
 		this.signMsg = signMsg;
+	}
+	public String getIdCode() {
+		return idCode;
+	}
+	public void setIdCode(String idCode) {
+		this.idCode = idCode;
+	}
+	public String getCardType() {
+		return cardType;
+	}
+	public void setCardType(String cardType) {
+		this.cardType = cardType;
+	}
+	public String getBindCardId() {
+		return bindCardId;
+	}
+	public void setBindCardId(String bindCardId) {
+		this.bindCardId = bindCardId;
 	}
 
 }

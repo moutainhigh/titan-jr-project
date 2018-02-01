@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fangcang.titanjr.common.enums.QuickPayBankEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.dto.bean.gateway.CommonPayHistoryDTO;
 import com.fangcang.titanjr.dto.bean.gateway.QuickPayCardDTO;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.fangcang.titanjr.dto.request.gateway.CardSceurityVerifyRequest;
@@ -31,9 +32,11 @@ import com.fangcang.titanjr.dto.response.gateway.QueryQuickPayBindCardResponse;
 import com.fangcang.titanjr.dto.response.gateway.ReSendVerifyCodeResponse;
 import com.fangcang.titanjr.dto.response.gateway.UnbindBankCardResponse;
 import com.fangcang.titanjr.dto.response.gateway.UpdateBankCardPhoneResponse;
+import com.fangcang.titanjr.enums.BusiCodeEnum;
 import com.fangcang.titanjr.pay.services.TitanPaymentService;
 import com.fangcang.titanjr.pay.util.TerminalUtil;
 import com.fangcang.titanjr.service.RSGatewayInterfaceService;
+import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.JsonUtil;
 import com.fangcang.util.StringUtil;
@@ -64,10 +67,13 @@ public class TitanQuickPaymentController extends BaseController {
 	
 	@Resource
 	private TitanPaymentService titanPaymentService;
+
+	@Resource
+	private TitanCashierDeskService titanCashierDeskService;
 	
 	
 	/**
-	 * 确认充值（支付历史）
+	 * 确认充值
 	 * @param confirmRechargeRequest
 	 * @return
 	 */
@@ -82,7 +88,7 @@ public class TitanQuickPaymentController extends BaseController {
 	
 	
 	/**
-	 * 确认充值（表单提交）
+	 * 确认充值（卡密鉴权之后，进行表单提交方式请求）
 	 * @param confirmRechargeRequest
 	 * @return
 	 */
@@ -218,7 +224,51 @@ public class TitanQuickPaymentController extends BaseController {
 	@ResponseBody
 	public UnbindBankCardResponse unBindBankCard(UnbindBankCardRequest unbindBankCardRequest){
 		
-		UnbindBankCardResponse unbindBankCardResponse = rsGatewayInterfaceService.unBindBankCard(unbindBankCardRequest);
+		UnbindBankCardResponse unbindBankCardResponse = new UnbindBankCardResponse();
+		unbindBankCardResponse.putError("删除失败");
+		
+		if(!StringUtil.isValidString(unbindBankCardRequest.getCommonPayId())){
+			log.error("【历史卡删除】commonPayId is null");
+			unbindBankCardResponse.putError("删除失败");
+			return unbindBankCardResponse;
+		}
+		
+		CommonPayHistoryDTO commonPayHistoryDTO = new CommonPayHistoryDTO();
+		commonPayHistoryDTO.setCommonpayid(Integer.parseInt(unbindBankCardRequest.getCommonPayId()));
+		commonPayHistoryDTO = titanCashierDeskService.getCommonPayHistory(commonPayHistoryDTO);
+		if(commonPayHistoryDTO == null){
+			log.error("【历史卡删除】查询本地绑卡信息失败");
+			unbindBankCardResponse.putError("删除失败");
+			return unbindBankCardResponse;
+		}
+		
+		//有上游的绑卡ID，说明需要去上游解绑
+		if (StringUtil.isValidString(commonPayHistoryDTO.getBindcardid())) {
+			
+			QueryQuickPayBindCardRequest queryQuickPayBindCardRequest = new QueryQuickPayBindCardRequest();
+			queryQuickPayBindCardRequest.setMerchantNo("M000016");
+			queryQuickPayBindCardRequest.setBusiCode(BusiCodeEnum.QUERY_BANKCARD_BIND.getKey());
+			queryQuickPayBindCardRequest.setIdCode(commonPayHistoryDTO.getIdcode());
+			queryQuickPayBindCardRequest.setCardType(commonPayHistoryDTO.getPayeraccounttype());
+			queryQuickPayBindCardRequest.setSignType("1");
+			queryQuickPayBindCardRequest.setVersion("v1.1");
+			QueryQuickPayBindCardResponse queryQuickPayBindCardResponse = rsGatewayInterfaceService
+					.queryQuickPayBindCardInfo(queryQuickPayBindCardRequest);
+			if(queryQuickPayBindCardResponse.isSuccess()){
+				//解绑卡
+				unbindBankCardRequest.setIdCode(commonPayHistoryDTO.getIdcode());
+				unbindBankCardRequest.setBindCardId(commonPayHistoryDTO.getBindcardid());
+				unbindBankCardResponse = rsGatewayInterfaceService.unBindBankCard(unbindBankCardRequest);
+			}
+		}
+		//上游删除成功再删本地
+		if(unbindBankCardResponse.isSuccess()){
+			int delCount = titanCashierDeskService.delCommonPayHistory(commonPayHistoryDTO);
+			if(delCount <= 0){
+				log.error("【历史卡删除】删除本地绑卡信息0条数据");
+				unbindBankCardResponse.putError("删除失败");
+			}
+		}
 		
 		return unbindBankCardResponse;
 	}
@@ -237,6 +287,13 @@ public class TitanQuickPaymentController extends BaseController {
 	}
 	
 	
+	/**
+	 * 卡密鉴权
+	 * @author Jerry
+	 * @date 2018年1月30日 下午6:39:05
+	 * @param requestl
+	 * @return
+	 */
 	@RequestMapping(value = {"/cardSceurityVerify"})
 	public String cardSceurityVerify(HttpServletRequest request, CardSceurityVerifyRequest 
 			cardSceurityVerifyRequest, Model model){
@@ -254,7 +311,6 @@ public class TitanQuickPaymentController extends BaseController {
 				.getCardSceurityVerifyParam(cardSceurityVerifyRequest);
 		
 		model.addAttribute("cardSceurityVerifyRequest", cardSceurityVerifyParam);
-		//log.info("cardSceurityVerify request：" + Tools.gsonToString(cardSceurityVerifyParam));
 		log.info("cardSceurityVerify request：" + cardSceurityVerifyParam.toString());
 		
 		return "checkstand-pay/cardSceurityVerify";
@@ -262,6 +318,11 @@ public class TitanQuickPaymentController extends BaseController {
 	}
 	
 	
+	/**
+	 * 卡密鉴权前台回调
+	 * @author Jerry
+	 * @date 2018年1月30日 下午6:39:21
+	 */
 	@RequestMapping(value = {"/cardSceurityVerifyResultPage"}, produces = "text/json;charset=UTF-8")
 	public String cardSceurityVerifyResultPage(CardSceurityVerifyResponse cardSceurityVerifyResponse, Model model){
 		
@@ -290,6 +351,11 @@ public class TitanQuickPaymentController extends BaseController {
 	}
 	
 	
+	/**
+	 * 卡密鉴权后台通知
+	 * @author Jerry
+	 * @date 2018年1月30日 下午6:39:49
+	 */
 	@RequestMapping(value = {"/cardSceurityVerifyResultNotice"})
 	public void cardSceurityVerifyResultNotice(CardSceurityVerifyResponse cardSceurityVerifyResponse, Model model){
 		

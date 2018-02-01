@@ -20,18 +20,15 @@ public class CardSceurityVerifyRequest implements Serializable {
 	private String version;
 	
 	private String merchantNo;
-	
 	//业务订单号
 	private String orderNo;
+	//身份证号
+	private String idCode;
+	//绑卡ID
+	private String bindCardId;
 	
-	//支付方式   41：新快捷支付
-	private String payType;
-	
-	//终端类型	Pc端：web 移动端：mobile
+	//终端类型	PC端：web 移动端：mobile
 	private String terminalType;
-	
-	//银行卡账号
-	private String cardNo;
 	
 	//页面返回地址
 	private String cardCheckPageUrl;
@@ -40,6 +37,8 @@ public class CardSceurityVerifyRequest implements Serializable {
 	private String cardChecknotifyUrl;
 	
 	private String signMsg;
+	
+	private String gateWayURL;
 
 	public String getBusiCode() {
 		return busiCode;
@@ -81,28 +80,12 @@ public class CardSceurityVerifyRequest implements Serializable {
 		this.orderNo = orderNo;
 	}
 
-	public String getPayType() {
-		return payType;
-	}
-
-	public void setPayType(String payType) {
-		this.payType = payType;
-	}
-
 	public String getTerminalType() {
 		return terminalType;
 	}
 
 	public void setTerminalType(String terminalType) {
 		this.terminalType = terminalType;
-	}
-
-	public String getCardNo() {
-		return cardNo;
-	}
-
-	public void setCardNo(String cardNo) {
-		this.cardNo = cardNo;
 	}
 
 	public String getCardCheckPageUrl() {
@@ -129,6 +112,30 @@ public class CardSceurityVerifyRequest implements Serializable {
 		this.signMsg = signMsg;
 	}
 	
+	public String getGateWayURL() {
+		return gateWayURL;
+	}
+
+	public void setGateWayURL(String gateWayURL) {
+		this.gateWayURL = gateWayURL;
+	}
+
+	public String getIdCode() {
+		return idCode;
+	}
+
+	public void setIdCode(String idCode) {
+		this.idCode = idCode;
+	}
+
+	public String getBindCardId() {
+		return bindCardId;
+	}
+
+	public void setBindCardId(String bindCardId) {
+		this.bindCardId = bindCardId;
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

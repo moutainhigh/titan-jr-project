@@ -19,23 +19,21 @@ public class QueryQuickPayBindCardRequest implements Serializable {
 
 	// 查询绑卡接口：111
 	private String busiCode;
+	
+	private String merchantNo;
+	
+	//身份证号（身份证号还可以当作融宝的用户ID）
+	private String idCode;
+	
+	//卡类型  10储蓄卡  11信用卡
+	private String cardType;
 
-	// 签名的类型，默认1为MD5加签
+	//签名的类型，默认1为MD5加签
 	private String signType;
 	
 	//新版本：v1.1（含快捷支付）
 	private String version;
-		
-	//
-	private String merchantNo;
 	
-	//
-	private String userId;
-	
-	//银行卡账号（可空）
-	private String cardNo;
-	
-	//
 	private String signMsg;
 
 	public String getBusiCode() {
@@ -77,21 +75,21 @@ public class QueryQuickPayBindCardRequest implements Serializable {
 	public void setSignMsg(String signMsg) {
 		this.signMsg = signMsg;
 	}
-	
-	public String getUserId() {
-		return userId;
+
+	public String getIdCode() {
+		return idCode;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setIdCode(String idCode) {
+		this.idCode = idCode;
 	}
 
-	public String getCardNo() {
-		return cardNo;
+	public String getCardType() {
+		return cardType;
 	}
 
-	public void setCardNo(String cardNo) {
-		this.cardNo = cardNo;
+	public void setCardType(String cardType) {
+		this.cardType = cardType;
 	}
 
 	@Override

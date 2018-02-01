@@ -39,11 +39,11 @@ public class BuilderUtil {
 		if(CollectionUtils.isNotEmpty(rbBindCardQueryResponse.getBind_card_list())){
 			for (RBBindCardDTO rbBindCardDTO : rbBindCardQueryResponse.getBind_card_list()) {
 				TitanBindCardDTO titanBindCardDTO = new TitanBindCardDTO();
-				titanBindCardDTO.setBind_id(rbBindCardDTO.getBind_id());
+				titanBindCardDTO.setBindCardId(rbBindCardDTO.getBind_id());
 				titanBindCardDTO.setAccountNo(rbBindCardDTO.getCard_top()+"****"+rbBindCardDTO.getCard_last());
 				if(StringUtil.isValidString(rbBindCardDTO.getBank_card_type())){
 					titanBindCardDTO.setAccountType("10");
-					if(rbBindCardDTO.getBank_card_type().equals("1")){
+					if(rbBindCardDTO.getBank_card_type().equals("1")){//融宝卡类型：0储蓄卡  1信用卡
 						titanBindCardDTO.setAccountType("11");
 					}
 				}

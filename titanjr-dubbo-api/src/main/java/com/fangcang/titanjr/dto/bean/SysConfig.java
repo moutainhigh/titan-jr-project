@@ -20,6 +20,10 @@ public class SysConfig implements Serializable{
     private String csPayConfirmPageURL;
     //checkstand支付结果后台通知pay-app的地址
     private String csPayNoticeURL;
+    //checkstand卡密鉴权前台回调pay-app的地址
+    private String csCardAuthPageURL;
+    //checkstand卡密鉴权后台通知pay-app的地址
+    private String csCardAuthNoticeURL;
    
 	public String getSessionKey() {
 		return sessionKey;
@@ -56,6 +60,18 @@ public class SysConfig implements Serializable{
 	}
 	public void setCsPayNoticeURL(String csPayNoticeURL) {
 		this.csPayNoticeURL = csPayNoticeURL;
+	}
+	public String getCsCardAuthPageURL() {
+		return csCardAuthPageURL;
+	}
+	public void setCsCardAuthPageURL(String csCardAuthPageURL) {
+		this.csCardAuthPageURL = csCardAuthPageURL;
+	}
+	public String getCsCardAuthNoticeURL() {
+		return csCardAuthNoticeURL;
+	}
+	public void setCsCardAuthNoticeURL(String csCardAuthNoticeURL) {
+		this.csCardAuthNoticeURL = csCardAuthNoticeURL;
 	}
 
 }

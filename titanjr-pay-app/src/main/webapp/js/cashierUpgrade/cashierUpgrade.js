@@ -9,14 +9,14 @@ function balancePayment() {
 	$.ajax({//支付页面
 		type : "post",
 		url : "../payment/showTitanPayPage.action",
-           data: cashierData.getCommonPayData(),
-           dataType: "json",
-           success: function (data) {
-               //如果ajax请求成功则显示回调页面
-               toResultPage(data);
-           },complete:function(){
-           	   
-           }
+		data: cashierData.getCommonPayData(),
+		dataType: "json",
+		success: function (data) {
+           //如果ajax请求成功则显示回调页面
+           toResultPage(data);
+		},complete:function(){
+       	   
+		}
      });
 }
 //余额支付结果页面
@@ -292,6 +292,30 @@ function sendVierfyCode(_button){
 		        success: function (data) {
 		  	        if(data.isSuccess == true){
 		  	        	$(".quick_rsOrder").val(data.orderNo);
+		  	        	//不用卡密鉴权了
+		  	        	/*if(data.certificate == '0'){
+		  	        		clearInterval(interval_countDown);
+			  	        	btn = true;
+			  	        	isFirstSend = true;
+			  	        	$(_button).text("发送验证码").css("color","#bbb").addClass('hover-flag');
+			  	        	var d = dialog({
+				  		          title:  '提示',
+				  		          padding: '30px 20px',
+				  		          width :  240,
+				  		          content:  '使用招商银行第一次支付，需要到鉴权页面输入密码校验权限，确定前往吗？',
+				  		          skin : 'saas_comfirm',
+				  		          cancelValue : '取消',
+				  		          okValue : '确定',
+				  		          ok : function(){
+				  		        	  var verifyParam = "orderNo="+data.orderNo+"&idCode="+param.idCode+"" +
+				  		        	  		"&bindCardId="+data.bindCardId;
+				  		        	  window.location.href = "../quickPay/cardSceurityVerify.action?"+verifyParam;
+				  		          },
+				  		          cancel : function(){
+				  		        	  
+				  		          }
+			  	        	}).showModal();
+		  	        	}*/
 		  	        }else{
 		  	        	clearInterval(interval_countDown);
 		  	        	btn = true;

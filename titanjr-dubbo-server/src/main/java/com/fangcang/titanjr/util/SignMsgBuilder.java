@@ -75,6 +75,7 @@ public final class SignMsgBuilder {
 		return md5Msg;
 	}
 	
+	//此处和融数不一样
 	public static String getSignMsgForQueryQuickPayBindCard(QueryQuickPayBindCardRequest queryQuickPayBindCardRequest) {
 		StringBuffer sign = new StringBuffer();
 		if(queryQuickPayBindCardRequest !=null){
@@ -84,10 +85,8 @@ public final class SignMsgBuilder {
 			sign.append(queryQuickPayBindCardRequest.getVersion());
 			sign.append("&merchantNo=");
 			sign.append(queryQuickPayBindCardRequest.getMerchantNo());
-			sign.append("&userId=");
-			sign.append(queryQuickPayBindCardRequest.getUserId());
-			sign.append("&cardNo=");
-			sign.append(queryQuickPayBindCardRequest.getCardNo());
+			sign.append("&idCode=");
+			sign.append(queryQuickPayBindCardRequest.getIdCode());
 			sign.append("&key=");
 			sign.append(RSInvokeConstant.rsCheckKey);
 		}
@@ -113,6 +112,7 @@ public final class SignMsgBuilder {
 		return md5Msg;
 	}
 	
+	//这个跟融数不一样
 	public static String getSignMsgForUnBindBankCard(UnbindBankCardRequest unbindBankCardRequest) {
 		StringBuffer sign = new StringBuffer();
 		if(unbindBankCardRequest !=null){
@@ -122,12 +122,10 @@ public final class SignMsgBuilder {
 			sign.append(unbindBankCardRequest.getVersion());
 			sign.append("&merchantNo=");
 			sign.append(unbindBankCardRequest.getMerchantNo());
-			sign.append("&userId=");
-			sign.append(unbindBankCardRequest.getUserId());
+			sign.append("&bindCardId=");
+			sign.append(unbindBankCardRequest.getBindCardId());
 			sign.append("&idCode=");
 			sign.append(unbindBankCardRequest.getIdCode());
-			sign.append("&cardNo=");
-			sign.append(unbindBankCardRequest.getCardNo());
 			sign.append("&key=");
 			sign.append(RSInvokeConstant.rsCheckKey);
 		}
@@ -157,7 +155,7 @@ public final class SignMsgBuilder {
 		return md5Msg;
 	}
 	
-	
+	//此处和融数的不一样
 	public static String getSignMsgForCardSceurityVerify(CardSceurityVerifyRequest cardSceurityVerifyRequest) {
 		StringBuffer sign = new StringBuffer();
 		if(cardSceurityVerifyRequest !=null){
@@ -169,8 +167,6 @@ public final class SignMsgBuilder {
 			sign.append(cardSceurityVerifyRequest.getMerchantNo());
 			sign.append("&orderNo=");
 			sign.append(cardSceurityVerifyRequest.getOrderNo());
-			sign.append("&cardNo=");
-			sign.append(cardSceurityVerifyRequest.getCardNo());
 			sign.append("&key=");
 			sign.append(RSInvokeConstant.rsCheckKey);
 		}

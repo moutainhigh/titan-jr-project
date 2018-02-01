@@ -16,7 +16,7 @@ public class CardSceurityVerifyResponse extends RSBaseResponse {
 	 */
 	private static final long serialVersionUID = -818636811226340094L;
 	
-	////卡密校验通知接口：112
+	////卡密校验通知接口：114
 	private String busiCode;
 	
 	//签名的类型，默认1为MD5加签

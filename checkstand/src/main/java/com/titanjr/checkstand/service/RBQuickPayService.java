@@ -1,5 +1,7 @@
 package com.titanjr.checkstand.service;
 
+import java.util.Map;
+
 import com.titanjr.checkstand.request.RBBindCardQueryRequest;
 import com.titanjr.checkstand.request.RBCardAuthRequest;
 import com.titanjr.checkstand.request.RBCardBINQueryRequest;
@@ -11,9 +13,6 @@ import com.titanjr.checkstand.request.RBQuickPayRequest;
 import com.titanjr.checkstand.request.RBReSendMsgRequest;
 import com.titanjr.checkstand.request.RBUnBindCardRequest;
 import com.titanjr.checkstand.respnse.TitanBindCardQueryResponse;
-/*import com.titanjr.checkstand.respnse.RBBindCardQueryResponse;
-import com.titanjr.checkstand.respnse.TitanCardAuthResponse;
-import com.titanjr.checkstand.respnse.RBBindCardQueryResponse;*/
 import com.titanjr.checkstand.respnse.TitanCardBINQueryResponse;
 import com.titanjr.checkstand.respnse.TitanOrderRefundResponse;
 import com.titanjr.checkstand.respnse.TitanPayConfirmResponse;
@@ -80,11 +79,13 @@ public interface RBQuickPayService {
 	public TitanRefundQueryResponse refundQuery(RBQuickPayRefundQueryRequest rbQuickPayRefundQueryRequest);
 	
 	/**
-	 * 卡密鉴权-返回的页面
+	 * 卡密鉴权<br>
+	 * gateWayUrl--融宝卡密鉴权网关地址<br>
+	 * rbDataRequest--融宝卡密鉴权请求参数
 	 * @author Jerry
 	 * @date 2018年1月8日 下午5:06:26
 	 */
-	public String cardAuth(RBCardAuthRequest rbCardAuthRequest);
+	public Map<String, Object> cardAuth(RBCardAuthRequest rbCardAuthRequest);
 	
 	/**
 	 * 绑卡列表查询

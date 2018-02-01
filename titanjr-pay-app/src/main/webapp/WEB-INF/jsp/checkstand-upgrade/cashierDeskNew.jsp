@@ -16,6 +16,13 @@
         .disabledButton{
         	opacity: 0.3;
         }
+        
+        .del-card{
+        	float: right; color: black;
+        }
+        .del-card:hover{
+        	color: orange;
+        }
     </style>
 </head>
 <body>
@@ -149,7 +156,7 @@
 					<span class="money"><s>￥</s><span id="amount_alipay_3">${cashDeskData.amount }</span></span>
                 </div>
             </li>
-            <!-- 常用支付历史 -->
+            <!-- 支付历史 -->
             <c:if test="${not empty cashDeskData.commonPayHistoryList }">
             	 <c:forEach items="${cashDeskData.commonPayHistoryList }" var="commonPay" varStatus="status">
 	            	<li class="<c:if test='${status.index > 0}'>isShow </c:if>clearfix">
@@ -209,7 +216,8 @@
 									</c:if>
 			                </div>
 		                </c:if>
-		                <div class="right-money isShow">
+		                <div id="del-card-${commonPay.commonpayid }" class="del-card" onclick="delCardHistory(${commonPay.commonpayid })">删除</div>
+		                <div style="padding-right: 20px;" class="right-money isShow">
 		                    <!-- 财务付款给供应商才显示手续费 -->
 							<c:if test="${cashDeskData.paySource =='2' }">
 								<span>手续费 ￥<span id="commPayRateAmount_${commonPay.paytype }_${status.index + 4}">0.00</span></span>
@@ -1011,7 +1019,7 @@
 		isMorePay();
 		setRate();
 		showHistoryAccount();
-		isIE();
+		//isIE();
 	}); 
     function initData(){
     	buildCashierData({
@@ -1175,18 +1183,43 @@
     }
     
     function isIE(){
-    	/* var isIE = false;
-    	if (!!window.ActiveXObject || "ActiveXObject" in window){
-    		isIE = true;
-    	}
-    	if(!isIE){
-    		$(".browser").show();
-    	} */
-    	
-	    /* if(!document.all){ 
-	    	$(".browser").show();
-    	} */
-    	$(".browser").show();
+    }
+    
+    function delCardHistory(commonpayid){
+	  	var d = dialog({
+	          title:  '提示',
+	          padding: '30px 20px',
+	          width :  240,
+	          content:  '删除后将不再显示，确定要删除吗？',
+	          skin : 'saas_comfirm',
+	          cancelValue : '取消',
+	          okValue : '确定',
+	          ok : function(){
+	        	  $.ajax({
+	        			 type: "post",
+	        	         url: "../quickPay/unBindBankCard.action",
+	        	         data: {
+	        	        	 commonPayId: commonpayid,
+	        	        	 busiCode: "112",
+        	        		 signType: "1",
+        	        		 version: "v1.1",
+        	    			 merchantNo: "M000016"
+	        	         },
+	        	         dataType: "json",
+	        	         //async:false,
+	        	         success: function(data){
+	        	        	 if(data.success){
+	        	        		 $("#del-card-"+commonpayid).remove();
+	        	        	 }else{
+	        	        		 new top.Tip({msg: data.errMsg, type: 3, timer: 1500});
+	        	        	 }	        	         
+	        	         }
+	        		});
+	          },
+	          cancel : function(){
+	          }
+	         
+	      }).showModal();
     }
 
 </script>

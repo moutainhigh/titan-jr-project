@@ -70,11 +70,26 @@ public interface TitanCashierDeskService {
     public BaseResponseDTO saveCommonPayHistory(CommonPayHistoryDTO commonPayHistoryDTO);
     
     /**
-     * 查询常用支付历史记录（新版收银台）
+     * 查询常用支付历史列表（新版收银台）
      * @author Jerry
      * @date 2017年8月8日 下午5:22:58
      */
     public List<CommonPayHistoryDTO> queryCommonPayHistory(CommonPayHistoryDTO commonPayHistoryDTO);
+    
+    /**
+     * 查询单个实体
+     * @author Jerry
+     * @date 2018年1月30日 上午11:17:26
+     */
+    public CommonPayHistoryDTO getCommonPayHistory(CommonPayHistoryDTO commonPayHistoryDTO);
+    
+    /**
+     * 删除本地绑卡信息
+     * @author Jerry
+     * @date 2018年1月30日 上午11:39:38
+     */
+    public int delCommonPayHistory(CommonPayHistoryDTO commonPayHistoryDTO);
+    
 
     public void initttMallCashDesk();
     

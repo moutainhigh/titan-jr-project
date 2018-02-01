@@ -163,6 +163,8 @@ public class RSOrganizationManagerImpl implements RSOrganizationManager {
 					} else {
 						errorMsg = rsp.getMsg();
 					}
+					response.setSuccess(false);
+					response.setOperateStatus(rsp.getIs_success());
 					response.setReturnCode(rsp.getErrorCode());
 					response.setReturnMsg(errorMsg);
 					log.error("调用接口resigterPersonOrg异常：" + errorMsg);

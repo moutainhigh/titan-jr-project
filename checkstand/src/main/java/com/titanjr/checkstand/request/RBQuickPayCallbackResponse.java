@@ -16,7 +16,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * @author Jerry
  * @date 2018年1月5日 下午5:13:42  
  */
-public class RBQuickPayCallbackData implements Serializable {
+public class RBQuickPayCallbackResponse implements Serializable {
 
 	/** 
 	 * 

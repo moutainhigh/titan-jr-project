@@ -318,11 +318,11 @@ public class PaymentController extends BaseController {
 			rbQuickPayRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
 			rbQuickPayRequest.setOrder_no(payDTO.getOrderNo());
 			rbQuickPayRequest.setTranstime(payDTO.getOrderTime());//2015-03-06 12:24:59
-			rbQuickPayRequest.setCurrency("156");
+			rbQuickPayRequest.setCurrency(SysConstant.RB_CURRENCY);
 			rbQuickPayRequest.setTotal_fee(Integer.parseInt(payDTO.getOrderAmount().toString()));
 			rbQuickPayRequest.setTitle("支付");//需要pay-app传过来
 			rbQuickPayRequest.setBody("泰坦金融");//需要pay-app传过来
-			rbQuickPayRequest.setMember_id("4534535er4");//需要pay-app传过来
+			rbQuickPayRequest.setMember_id(payDTO.getIdCode());//身份证号当作用户ID
 			rbQuickPayRequest.setTerminal_type(payDTO.getTerminalType());
 			rbQuickPayRequest.setTerminal_info(payDTO.getTerminalInfo());
 			rbQuickPayRequest.setMember_ip(payDTO.getTerminalIp());

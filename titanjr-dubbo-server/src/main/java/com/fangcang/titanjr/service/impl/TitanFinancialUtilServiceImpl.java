@@ -80,6 +80,12 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 	@Value("${rb.quickPay.notifyurl}")
 	private String rb_QuickPay_Notifyurl;
 	
+	@Value("${rb.cardAuth.pageurl}")
+	private String rb_CardAuth_Pageurl;
+	
+	@Value("${rb.cardAuth.notifyurl}")
+	private String rb_CardAuth_Notifyurl;
+	
 	@Value("${send.order.warning}")
 	private String isSendWarning;
 	
@@ -198,6 +204,8 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 				payMethodConfigDTO.setTl_QrCodePay_Notifyurl(MessageFormat.format(tl_QrCodePay_Notifyurl, domainName));
 				payMethodConfigDTO.setTl_WechatPay_Notifyurl(MessageFormat.format(tl_WechatPay_Notifyurl, domainName));
 				payMethodConfigDTO.setRb_QuickPay_Notifyurl(MessageFormat.format(rb_QuickPay_Notifyurl, domainName));
+				payMethodConfigDTO.setRb_CardAuth_Pageurl(MessageFormat.format(rb_CardAuth_Pageurl, domainName));
+				payMethodConfigDTO.setRb_CardAuth_Notifyurl(MessageFormat.format(rb_CardAuth_Notifyurl, domainName));
 			}
 			return payMethodConfigDTO;
 		}catch(Exception e){
@@ -255,6 +263,8 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 			config.setTitanjrCheckKey(RSInvokeConstant.titanjrCheckKey);
 			config.setCsPayConfirmPageURL(RSInvokeConstant.csPayConfirmPageURL);
 			config.setCsPayNoticeURL(RSInvokeConstant.csPayNoticeURL);
+			config.setCsCardAuthPageURL(RSInvokeConstant.csCardAuthPageURL);
+			config.setCsCardAuthNoticeURL(RSInvokeConstant.csCardAuthNoticeURL);
 		}
 		return config;
 	}

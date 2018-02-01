@@ -39,22 +39,22 @@ public class TitanCardAuthDTO implements Serializable {
 	private String orderNo;
 	
 	/**
-	 * 支付方式   41：新快捷支付
+	 * 身份证号
 	 */
 	@NotBlank
-	private String payType;
+	private String idCode;
+	
+	/**
+	 * 绑卡ID
+	 */
+	@NotBlank
+	private String bindCardId;
 	
 	/**
 	 * 终端类型  web、wap、mobile
 	 */
 	@NotBlank
 	private String terminalType;
-	
-	/**
-	 * 银行卡账号
-	 */
-	@NotBlank
-	private String cardNo;
 	
 	/**
 	 * 页面返回地址
@@ -115,12 +115,20 @@ public class TitanCardAuthDTO implements Serializable {
 		this.orderNo = orderNo;
 	}
 
-	public String getPayType() {
-		return payType;
+	public String getIdCode() {
+		return idCode;
 	}
 
-	public void setPayType(String payType) {
-		this.payType = payType;
+	public void setIdCode(String idCode) {
+		this.idCode = idCode;
+	}
+
+	public String getBindCardId() {
+		return bindCardId;
+	}
+
+	public void setBindCardId(String bindCardId) {
+		this.bindCardId = bindCardId;
 	}
 
 	public String getTerminalType() {
@@ -129,14 +137,6 @@ public class TitanCardAuthDTO implements Serializable {
 
 	public void setTerminalType(String terminalType) {
 		this.terminalType = terminalType;
-	}
-
-	public String getCardNo() {
-		return cardNo;
-	}
-
-	public void setCardNo(String cardNo) {
-		this.cardNo = cardNo;
 	}
 
 	public String getCardCheckPageUrl() {

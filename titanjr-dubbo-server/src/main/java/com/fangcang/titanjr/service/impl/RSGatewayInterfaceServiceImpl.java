@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import net.sf.json.JSONArray;
 
 import org.apache.commons.logging.Log;
@@ -20,6 +22,7 @@ import com.fangcang.titanjr.common.util.BeanConvertor;
 import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
+import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.gateway.QuickPayCardDTO;
 import com.fangcang.titanjr.dto.request.QuickPaymentRequest;
 import com.fangcang.titanjr.dto.request.gateway.CardSceurityVerifyRequest;
@@ -41,6 +44,7 @@ import com.fangcang.titanjr.enums.RsErrorCodeEnum;
 import com.fangcang.titanjr.enums.RsVersionEnum;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.RSGatewayInterfaceService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.util.SignMsgBuilder;
 import com.fangcang.util.JsonUtil;
 import com.fangcang.util.StringUtil;
@@ -56,6 +60,9 @@ import com.fangcang.util.StringUtil;
 public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService {
 	
 	private static final Log log = LogFactory.getLog(RSGatewayInterfaceServiceImpl.class);
+	
+	@Resource 
+	private TitanFinancialUtilService titanFinancialUtilService;
 
 	@Override
 	public QuickPaymentResponse quickPay(QuickPaymentRequest quickPaymentRequest) {
@@ -347,7 +354,7 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 	    				    	quickPayCardDTO.setAccountType(mapObj.get("accountType").toString());
 	    				    	quickPayCardDTO.setBankNo(mapObj.get("bankNo").toString());
 	    				    	quickPayCardDTO.setMobile(mapObj.get("mobile").toString());
-	    				    	quickPayCardDTO.setProtocolNo(mapObj.get("protocolNo").toString());
+	    				    	quickPayCardDTO.setBindCardId(mapObj.get("bindCardId").toString());
 	    				    	agentProtocolList.add(quickPayCardDTO);
 	    				   }
 	    				   break;
@@ -397,18 +404,22 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 	@Override
 	public CardSceurityVerifyRequest getCardSceurityVerifyParam(CardSceurityVerifyRequest cardSceurityVerifyRequest) {
 		
+
+		PayMethodConfigDTO payMethodConfigDTO = titanFinancialUtilService.getPayMethodConfigDTO(null);
+		
 		CardSceurityVerifyRequest cardSceurityVerifyParam = new CardSceurityVerifyRequest();
 		cardSceurityVerifyParam.setBusiCode(BusiCodeEnum.CARE_SCEURITY_VERIFY.getKey());
-		cardSceurityVerifyParam.setCardNo(cardSceurityVerifyRequest.getCardNo());
 		cardSceurityVerifyParam.setMerchantNo("M000016");
 		cardSceurityVerifyParam.setOrderNo(cardSceurityVerifyRequest.getOrderNo());
-		cardSceurityVerifyParam.setPayType("41");
+		cardSceurityVerifyParam.setBindCardId(cardSceurityVerifyRequest.getBindCardId());
+		cardSceurityVerifyParam.setIdCode(cardSceurityVerifyRequest.getIdCode());
 		cardSceurityVerifyParam.setSignType("1");
 		cardSceurityVerifyParam.setVersion(RsVersionEnum.Version_2.key);
 		cardSceurityVerifyParam.setTerminalType(cardSceurityVerifyRequest.getTerminalType());
-		cardSceurityVerifyParam.setCardChecknotifyUrl("http://www.fangcang.org/titanjr-pay-dev3/quickPay/cardSceurityVerifyResultNotice.action");
-		cardSceurityVerifyParam.setCardCheckPageUrl("http://www.fangcang.org/titanjr-pay-dev3/quickPay/cardSceurityVerifyResultPage.action");
+		cardSceurityVerifyParam.setCardCheckPageUrl(payMethodConfigDTO.getRb_CardAuth_Pageurl());
+		cardSceurityVerifyParam.setCardChecknotifyUrl(payMethodConfigDTO.getRb_CardAuth_Notifyurl());
 		cardSceurityVerifyParam.setSignMsg(SignMsgBuilder.getSignMsgForCardSceurityVerify(cardSceurityVerifyParam));
+		cardSceurityVerifyParam.setGateWayURL(RSInvokeConstant.gateWayURL);
 		
 		return cardSceurityVerifyParam;
 	}
