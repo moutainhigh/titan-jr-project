@@ -4,8 +4,12 @@ import org.junit.Test;
 
 import com.fangcang.titanjr.common.util.Tools;
 import com.titanjr.fop.exceptions.ApiException;
+import com.titanjr.fop.request.WheatfieldBatchqueryCompanyRequest;
+import com.titanjr.fop.request.WheatfieldBatchqueryPersonRequest;
 import com.titanjr.fop.request.WheatfieldEnterpriseUpdatecompanyinfoRequest;
 import com.titanjr.fop.request.WheatfieldPersonAccountoprRequest;
+import com.titanjr.fop.response.WheatfieldBatchqueryCompanyResponse;
+import com.titanjr.fop.response.WheatfieldBatchqueryPersonResponse;
 import com.titanjr.fop.response.WheatfieldEnterpriseUpdatecompanyinfoResponse;
 import com.titanjr.fop.response.WheatfieldPersonAccountoprResponse;
 
@@ -31,7 +35,7 @@ public class OrgTest extends BaseTest {
 		
 	}
 	
-	@Test
+	//@Test
 	public void updateEnterpriseOrg(){
 		WheatfieldEnterpriseUpdatecompanyinfoRequest enterpriseUpdateRequest = new WheatfieldEnterpriseUpdatecompanyinfoRequest();
 		
@@ -50,6 +54,35 @@ public class OrgTest extends BaseTest {
 		} catch (ApiException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	//@Test
+	public void queryBatchPerson(){
+		WheatfieldBatchqueryPersonRequest batchPersonRequest = new WheatfieldBatchqueryPersonRequest();
+		batchPersonRequest.setUserid("TJM10000090");
+		batchPersonRequest.setCertificatenumber("");
+		try {
+			WheatfieldBatchqueryPersonResponse response = fopClient.execute(batchPersonRequest);
+			System.out.println(Tools.gsonToString(response));
+		
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void queryBatchqueryCompany(){
+		
+		WheatfieldBatchqueryCompanyRequest batchCompanyRequest = new WheatfieldBatchqueryCompanyRequest();
+		batchCompanyRequest.setUserid("TJM10000090");
+		try {
+			WheatfieldBatchqueryCompanyResponse response = fopClient.execute(batchCompanyRequest);
+			System.out.println(Tools.gsonToString(response));
+		
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 }
