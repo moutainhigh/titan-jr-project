@@ -311,6 +311,7 @@ public class AccountServiceImpl implements AccountService {
         } catch (Exception e) {
             logger.error("上游发起代付提现失败", e);
             ResponseUtils.getSysErrorResp(withdrawserviceResponse);
+            commonService.sendSMSMessage(SMSTemplate.WITHDRAW_UPDATE_FAIL, e);
             return withdrawserviceResponse;
         }
         return withdrawserviceResponse;

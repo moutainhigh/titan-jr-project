@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fangcang.titanjr.common.enums.entity.TitanOrgEnum.UserType;
 import com.fangcang.titanjr.common.util.Tools;
+import com.titanjr.fop.dto.OpenAccountCompany;
 import com.titanjr.fop.dto.OpenAccountPerson;
 import com.titanjr.fop.dto.server.request.OptOrgRequest;
 import com.titanjr.fop.dto.server.response.OptOrgResponse;
@@ -187,6 +188,7 @@ public class MainOrgController extends BaseController {
     	if(updateOrgReponse.isResult()){
     		return toJson(enterpriseOptResponse);
     	}else{//失败
+    		enterpriseOptResponse.setIs_success("false");
     		enterpriseOptResponse.setErrorCode(updateOrgReponse.getReturnCode());
     		enterpriseOptResponse.setMsg(updateOrgReponse.getReturnMessage());
     		return toJson(enterpriseOptResponse);
@@ -214,20 +216,21 @@ public class MainOrgController extends BaseController {
         queryOrgRequest.setUserid(enterpriseOptRequest.getUserid());
         queryOrgRequest.setUsername(enterpriseOptRequest.getCompanyname());
         List<TitanMainOrg> mainOrgList = mainOrgService.queryOrg(queryOrgRequest);
-        List<OpenAccountPerson> openaccountpersons = new ArrayList<OpenAccountPerson>();
+        List<OpenAccountCompany> openaccountpersons = new ArrayList<OpenAccountCompany>();
         if(CollectionUtils.isNotEmpty(mainOrgList)){
         	for(TitanMainOrg item : mainOrgList){
-        		OpenAccountPerson entity = new OpenAccountPerson();
+        		OpenAccountCompany entity = new OpenAccountCompany();
         		entity.setUserid(item.getOrgCode());
-        		entity.setPersonchnname(item.getOrgName());
-        		entity.setCertificatetype(item.getCertificatetype()+"");
-        		entity.setCertificatenumber(item.getCertificateNumber());
+        		entity.setCompanyname(item.getOrgName());
+        		entity.setBuslince(item.getBuslince());
+        		entity.setConnect(item.getMobileTel());
+        		entity.setCorporatename(item.getConnect());
         		entity.setRemark(item.getRemark());
         		entity.setStatusid(item.getStatusId().toString());
         		openaccountpersons.add(entity);
         	}
         }
-		
+        enterpriseOptResponse.setOpenaccountcompanys(openaccountpersons);
     	return toJson(enterpriseOptResponse);
 	}
 	
