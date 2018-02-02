@@ -281,27 +281,26 @@ public class AccountServiceImpl implements AccountService {
             String rechargeResult = WebUtils.doPost(paymentURL, paramMap, 60000, 60000);
             Map resultMap = (Map) JSONObject.parse(rechargeResult);
             //1:"处理中",2:"失败",3:"成功"
-            if (resultMap.containsKey("status") || resultMap.get("status") == null ||
-                    !StringUtil.isValidString(resultMap.get("status").toString())) {
-                withdrawserviceResponse.setStatus("2");
-            } else {
-                withdrawserviceResponse.setStatus(resultMap.get("status").toString());
-                if (resultMap.get("status").equals("3") || resultMap.get("status").equals("1")) {
-                    withdrawserviceResponse.setIs_success("true");
-                    //需要改账户余额
-                    Long withDrawAmount = Long.parseLong(withdrawserviceRequest.getAmount());
-                    Long accSettle = Long.parseLong(balanceList.get(0).getBalancesettle());
-                    Long usableAmount = Long.parseLong(balanceList.get(0).getBalanceusable());
-                    Long amount = Long.parseLong(balanceList.get(0).getAmount());
-                    balanceList.get(0).setAmount(String.valueOf(amount - withDrawAmount));
-                    balanceList.get(0).setBalanceusable(String.valueOf(usableAmount - withDrawAmount));
-                    balanceList.get(0).setBalancesettle(String.valueOf(accSettle - withDrawAmount));
-                    int count = titanAccountDao.updateAccountBalance(balanceList.get(0));
-                    if (count < 1) {
-                        //这种情况应需立即处理；
-                        withdrawserviceResponse.setStatus("4");
-                        commonService.sendSMSMessage(SMSTemplate.WITHDRAW_UPDATE_FAIL, balanceList);
-                    }
+            if(resultMap.get("errCode") != null || resultMap.get("status") == null){
+            	ResponseUtils.getSysErrorResp(withdrawserviceResponse);
+                return withdrawserviceResponse;
+            }
+            withdrawserviceResponse.setStatus(resultMap.get("status").toString());
+            if (resultMap.get("status").equals("3") || resultMap.get("status").equals("1")) {
+                withdrawserviceResponse.setIs_success("true");
+                //需要改账户余额
+                Long withDrawAmount = Long.parseLong(withdrawserviceRequest.getAmount());
+                Long accSettle = Long.parseLong(balanceList.get(0).getBalancesettle());
+                Long usableAmount = Long.parseLong(balanceList.get(0).getBalanceusable());
+                Long amount = Long.parseLong(balanceList.get(0).getAmount());
+                balanceList.get(0).setAmount(String.valueOf(amount - withDrawAmount));
+                balanceList.get(0).setBalanceusable(String.valueOf(usableAmount - withDrawAmount));
+                balanceList.get(0).setBalancesettle(String.valueOf(accSettle - withDrawAmount));
+                int count = titanAccountDao.updateAccountBalance(balanceList.get(0));
+                if (count < 1) {
+                    //这种情况应需立即处理；
+                    withdrawserviceResponse.setStatus("4");
+                    commonService.sendSMSMessage(SMSTemplate.WITHDRAW_UPDATE_FAIL, balanceList);
                 }
             }
         } catch (DaoException e) {//这种情况应需立即处理；
