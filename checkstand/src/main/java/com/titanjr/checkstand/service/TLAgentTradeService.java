@@ -8,6 +8,7 @@
 package com.titanjr.checkstand.service;
 
 import com.titanjr.checkstand.request.TLAgentTradeRequest;
+import com.titanjr.checkstand.respnse.RSResponse;
 import com.titanjr.checkstand.respnse.TitanAgentPayResponse;
 import com.titanjr.checkstand.respnse.TitanAgentQueryResponse;
 
@@ -37,8 +38,9 @@ public interface TLAgentTradeService {
 	/**
 	 * 对账文件下载
 	 * @author Jerry
+	 * @return 
 	 * @date 2017年12月29日 上午9:54:47
 	 */
-	public void agentDownload(TLAgentTradeRequest tlAgentTradeRequest);
+	public RSResponse agentDownload(TLAgentTradeRequest tlAgentTradeRequest);
 
 }

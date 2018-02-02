@@ -29,6 +29,7 @@
 	
 	<dubbo:reference id="titanOrderService" interface="com.fangcang.titanjr.service.TitanOrderService" retries="0" timeout="800000"/>
 	<dubbo:reference id="titanFinancialUtilService" interface="com.fangcang.titanjr.service.TitanFinancialUtilService" retries="0" timeout="800000"/>
+	<dubbo:reference id="titanSysconfigService" interface="com.fangcang.titanjr.service.TitanSysconfigService" retries="0" timeout="40000"/>
 
 </beans>
 

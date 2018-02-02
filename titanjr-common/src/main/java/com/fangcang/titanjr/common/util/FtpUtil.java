@@ -49,6 +49,11 @@ public class FtpUtil {
 	 * 贷款申请上传的文件资料
 	 */
 	public static final String UPLOAD_PATH_LOAN_APPLY="/loan_apply";
+	/**
+	 * 代收付对账文件
+	 */
+	public static final String UPLOAD_PATH_AGENT_CHECKING = "/agent_checking/allinpay";
+	
 	//TODO 这个后面要删除掉最后的斜杠
 	public static String baseLocation = "/data/image/upload/images/titanjr";
 	

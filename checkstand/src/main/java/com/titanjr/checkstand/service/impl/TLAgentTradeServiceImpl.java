@@ -10,11 +10,14 @@ package com.titanjr.checkstand.service.impl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.io.IOUtils;
@@ -23,14 +26,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.fangcang.titanjr.common.enums.WithDrawStatusEnum;
+import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.FtpUtil;
+import com.fangcang.titanjr.dto.response.FTPConfigResponse;
+import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.titanjr.checkstand.constants.AgentRetCodeEnum;
 import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dto.GateWayConfigDTO;
 import com.titanjr.checkstand.dto.TLAgentInfoResponseDTO;
+import com.titanjr.checkstand.dto.TLAgentPayTransDTO;
+import com.titanjr.checkstand.dto.TLAgentQueryTransDTO;
 import com.titanjr.checkstand.dto.TitanAgentResDetailDTO;
 import com.titanjr.checkstand.request.TLAgentTradeRequest;
+import com.titanjr.checkstand.respnse.RSResponse;
 import com.titanjr.checkstand.respnse.TLAgentTradeResponse;
 import com.titanjr.checkstand.respnse.TitanAgentPayResponse;
 import com.titanjr.checkstand.respnse.TitanAgentQueryResponse;
@@ -51,6 +61,9 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(TLAgentTradeServiceImpl.class);
 	private final String resUrl = this.getClass().getResource("/").getPath().replace("classes/", "");
+
+	@Resource
+	private TitanSysconfigService titanSysconfigService;
 	
 	@Override
 	public TitanAgentPayResponse agentPay(TLAgentTradeRequest tlAgentTradeRequest) {
@@ -59,7 +72,8 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 		
 		try{
 			
-			String configKey = tlAgentTradeRequest.getINFO().getMERCHANT_ID() +"_" + PayTypeEnum.AGENT_TRADE.combPayType + 
+			TLAgentPayTransDTO trans = (TLAgentPayTransDTO)tlAgentTradeRequest.getTrxData().get(0);
+			String configKey = trans.getMERCHANT_ID() +"_" + PayTypeEnum.AGENT_TRADE.combPayType + 
 					"_" + SysConstant.TL_CHANNEL_CODE + "_" + tlAgentTradeRequest.getRequestType();
 			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
 			if(gateWayConfigDTO == null){
@@ -93,7 +107,8 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 		
 		try{
 			
-			String configKey = tlAgentTradeRequest.getINFO().getMERCHANT_ID() +"_" + PayTypeEnum.AGENT_TRADE.combPayType + 
+			TLAgentQueryTransDTO trans = (TLAgentQueryTransDTO)tlAgentTradeRequest.getTrxData().get(0);
+			String configKey = trans.getMERCHANT_ID() +"_" + PayTypeEnum.AGENT_TRADE.combPayType + 
 					"_" + SysConstant.TL_CHANNEL_CODE + "_" + tlAgentTradeRequest.getRequestType();
 			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
 			if(gateWayConfigDTO == null){
@@ -121,20 +136,26 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 	
 	
 	@Override
-	public void agentDownload(TLAgentTradeRequest tlAgentTradeRequest) {
+	public RSResponse agentDownload(TLAgentTradeRequest tlAgentTradeRequest) {
+		
+		RSResponse response = new RSResponse();
 		
 		try{
 			
-			String configKey = tlAgentTradeRequest.getINFO().getMERCHANT_ID() +"_" + PayTypeEnum.AGENT_TRADE.combPayType + 
+			TLAgentQueryTransDTO trans = (TLAgentQueryTransDTO)tlAgentTradeRequest.getTrxData().get(0);
+			String configKey = trans.getMERCHANT_ID() +"_" + PayTypeEnum.AGENT_TRADE.combPayType + 
 					"_" + SysConstant.TL_CHANNEL_CODE + "_" + tlAgentTradeRequest.getRequestType();
 			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
 			if(gateWayConfigDTO == null){
 				logger.error("【通联-对账文件下载】失败，获取网关配置为空，configKey={}，orderNo={}", configKey, 
 						tlAgentTradeRequest.getINFO().getREQ_SN());
+				response.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return response;
 			}
 			
 			String resp = sendXml(tlAgentTradeRequest, gateWayConfigDTO.getGateWayUrl());
 			writeBill(resp);
+			return response;
 			
 		}catch(Exception e){
 			
@@ -142,6 +163,8 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 				logger.error("【通联-对账文件下载】请求链接中断");
 			}
 			logger.error("【通联-对账文件下载】异常：", e);
+			response.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+			return response;
 		}
 		
 	}
@@ -328,7 +351,7 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 	
 	
 	/**
-	 * 解析并写入对账文件
+	 * 对账文件上传到ftp
 	 * @author Jerry
 	 * @date 2017年12月29日 上午10:02:05
 	 */
@@ -344,20 +367,18 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 			throw new Exception("XML报文中不存在</CONTENT>");	
 		}
 		String billContext = resp.substring(iStart + 9, end);
+		String fileName = DateUtil.dateToString(new Date(), "yyyy-MM-dd")+".txt";
 		
-		//写文件
+		//先写入压缩文件到本地
 		FileOutputStream sos=null;
 		sos=new FileOutputStream(new File(resUrl+"/bills/bill.gz"));
 		Base64InputStream b64is=new Base64InputStream(IOUtils.toInputStream(billContext),false);
 		IOUtils.copy(b64is, sos);
 		IOUtils.closeQuietly(b64is);
-		
 		//解压
 		ZipInputStream zin=new ZipInputStream(new FileInputStream(new File(resUrl+"/bills/bill.gz")));
-		ZipEntry zipEntry=null;
-		while ((zipEntry = zin.getNextEntry()) != null) {  
-			 String entryName = zipEntry.getName().toLowerCase(); 
-			 FileOutputStream os = new FileOutputStream(resUrl+"/bills/"+entryName);  
+		while (zin.getNextEntry() != null) {
+			 FileOutputStream os = new FileOutputStream(resUrl+"/bills/"+fileName);  
              // Transfer bytes from the ZIP file to the output file  
              byte[] buf = new byte[1024];  
              int len;  
@@ -366,9 +387,40 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
              }  
              os.close();  
              zin.closeEntry();
-		 }
+		}
+		
+		//上传到ftp
+		FtpUtil util = null;
+		FTPConfigResponse configResponse = titanSysconfigService.getFTPConfig();
+		util = new FtpUtil(configResponse.getFtpServerIp(),
+				configResponse.getFtpServerPort(),
+				configResponse.getFtpServerUser(),
+				configResponse.getFtpServerPassword());
+		util.ftpLogin();
+		logger.info("login ftp success");
+
+		/*List<String> fileList = util.listFiles(FtpUtil.UPLOAD_PATH_AGENT_CHECKING + ""
+				+ "/" + DateUtil.dateToString(new Date(), "yyyy-MM-dd"));
+		// 检查文件是否已经上传过，如果上传过则需要把旧的文件先删掉
+		if (fileList != null) {
+			for (int i = 0; i < fileList.size(); i++) {
+				if (fileList.get(i).indexOf(fileName + ".") != -1) {
+					util.deleteFile(FtpUtil.UPLOAD_PATH_AGENT_CHECKING + ""
+							+ "/" + DateUtil.dateToString(new Date(), "yyyy-MM-dd")
+							+ fileList.get(i));
+				}
+			}
+		}*/
+
+		File file = new File(resUrl+"/bills/"+fileName);
+		InputStream inputStream = new FileInputStream(file);
+		util.uploadStream(fileName, inputStream, FtpUtil.UPLOAD_PATH_AGENT_CHECKING);
+		logger.info("upload to ftp success fileName=" + fileName);
+
+		util.ftpLogOut();
 		
 		logger.info("对账文件下载成功");
+		
 	}
 
 }

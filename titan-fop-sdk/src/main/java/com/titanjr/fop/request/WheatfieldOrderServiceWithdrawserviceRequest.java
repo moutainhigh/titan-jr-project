@@ -6,9 +6,12 @@ import com.titanjr.fop.domain.FopHashMap;
 import com.titanjr.fop.exceptions.ApiRuleException;
 import com.titanjr.fop.response.WheatfieldOrderServiceWithdrawserviceResponse;
 import com.titanjr.fop.util.FopUtils;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.Map;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by zhaoshan on 2018/1/26.
@@ -28,7 +31,7 @@ public class WheatfieldOrderServiceWithdrawserviceRequest extends BaseRequest im
     private String productid;
     @NotBlank
     private String userorderid;
-    @NotBlank
+    @NotNull
     private Long userfee;
 
     public String getUserid() {

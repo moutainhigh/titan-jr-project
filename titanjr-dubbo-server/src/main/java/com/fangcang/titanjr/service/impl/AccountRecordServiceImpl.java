@@ -336,6 +336,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		depositDetail.setAmount(recordRequest.getAmount());//
 		depositDetail.setTradetype(tradeType);
 		depositDetail.setFee(0L);
+		depositDetail.setStatus(1);
 		depositDetail.setCreatetime(new Date());
 		depositDetailDao.insert(depositDetail);
 		responseDTO.putSuccess("记账成功");

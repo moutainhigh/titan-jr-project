@@ -24,7 +24,7 @@ public class TLAgentTradeRequest {
 	private TLAgentInfoRequestDTO INFO;
 	private List trxData;
 	/**
-	 * 请求类型，内部使用，非渠道需要字段  @see RequestTypeEnum
+	 * 请求类型，内部使用，非上游需要字段  @see RequestTypeEnum
 	 */
 	@NotBlank
     private String requestType;

@@ -335,10 +335,10 @@ public class PaymentController extends BaseController {
 			rbQuickPayRequest.setRequestType(RequestTypeEnum.QUICK_BIND_PAY.getKey());
 			if(!StringUtil.isValidString(rbQuickPayRequest.getBindCardId())){
 				//储蓄卡
-				if(SysConstant.CARD_TYPE_DESPOSIT.equals(payDTO.getPayerAccountType())){
+				if(SysConstant.RS_CARD_TYPE_DESPOSIT.equals(payDTO.getPayerAccountType())){
 					rbQuickPayRequest.setRequestType(RequestTypeEnum.QUICK_PAY_DEPOSIT.getKey());
 				//信用卡
-		       	}else if(SysConstant.CARD_TYPE_CREDIT.equals(payDTO.getPayerAccountType())){
+		       	}else if(SysConstant.RS_CARD_TYPE_CREDIT.equals(payDTO.getPayerAccountType())){
 		       		if(!StringUtil.isValidString(payDTO.getSafetyCode()) || !StringUtil.isValidString(payDTO.getValidthru())){
 		       			logger.error("【融宝-快捷支付】参数错误：safetyCode={}，validthru={}", payDTO.getSafetyCode(), payDTO.getValidthru());
 		   				titanQuickPayResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);

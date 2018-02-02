@@ -31,6 +31,9 @@ public class SysConstant {
 	public static String RS_SUCCESS_CODE = "0000";
 	public static String RS_SUCCESS_MSG = "成功";
 	
+	public static String RS_CARD_TYPE_DESPOSIT = "10";
+	public static String RS_CARD_TYPE_CREDIT = "11";
+	
 	public static String RS_CARD_AUTH_SUCCESS = "3";
 	public static String RS_CARD_AUTH_FAILED = "4";
 	
@@ -95,10 +98,9 @@ public class SysConstant {
 	public static String RB_CURRENCY = "156";//融宝币种，人民币
 	public static String RB_SUCCESS_CODE = "0000";//标示融宝返回结果成功的编码
 	
-	//账户交易-代付业务代码
-	public static String WITHDRAW_CODE = "09400";
-	
-	public static String CARD_TYPE_DESPOSIT = "10";
-	public static String CARD_TYPE_CREDIT = "11";
+	public static String TL_WITHDRAW_CODE = "09400";//代付业务代码
+	public static String TL_AGENT_DATA_TYPE = "2";//账户交易的数据格式-固定2：xml格式
+	public static String TL_AGENT_VERSION = "03";//账户交易版本号-固定03
+	public static String TL_AGENT_LEVEL = "3";//账户交易的处理级别，统一暂定为3
 	
 }

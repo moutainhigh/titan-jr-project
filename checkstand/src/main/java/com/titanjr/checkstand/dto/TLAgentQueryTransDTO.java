@@ -1,15 +1,30 @@
 package com.titanjr.checkstand.dto;
 
-public class TLAgentQueryTransDTO
-{
+import org.hibernate.validator.constraints.NotBlank;
+
+public class TLAgentQueryTransDTO {
+	
+	//交易流水号，若不填时间必填
 	private String QUERY_SN;
+	//商户号
+	@NotBlank
 	private String MERCHANT_ID;
-	private int    STATUS;
-	private int    TYPE;
+	//交易状态     0成功,1失败, 2全部,3退票,4代付失败退款,5代付退票退款,6委托扣款,7提现
+	@NotBlank
+	private int STATUS;
+	//查询类型    0.按完成日期1.按提交日期，默认为1
+	@NotBlank
+	private int TYPE;
+	//开始时间  若不填QUERY_SN则必填
 	private String START_DAY;
+	//结束时间  填了开始时间必填
 	private String END_DAY;
+	//结算账号
 	private String SETTACCT;
+	//是否包含手续费   0.不需手续费，1.包含手续费    空则默认为0
 	private String CONTFEE ;
+	
+	
 	public String getCONTFEE() {
 		return CONTFEE;
 	}

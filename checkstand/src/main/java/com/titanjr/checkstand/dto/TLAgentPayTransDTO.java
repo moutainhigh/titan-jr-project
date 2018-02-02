@@ -7,34 +7,61 @@
  */
 package com.titanjr.checkstand.dto;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 /**
  * @author Jerry
  * @date 2017年12月25日 下午4:58:16  
  */
 public class TLAgentPayTransDTO {
 	
+	//业务代码  
+	@NotBlank
 	private String BUSINESS_CODE;
-	private String MERCHANT_ID;  
+	//商户号  
+	@NotBlank
+	private String MERCHANT_ID;
+	//提交时间   YYYYMMDDHHMMSS  
+	@NotBlank
 	private String SUBMIT_TIME;
 	private String TERM_CODE;
+	//有效期  YYYYMMDD，用于信用卡
 	private String VALIDATE;
 	private String TRACK2;
 	private String TRACK3;
 	private String PINCODE;
 	private String E_USER_CODE;
+	//银行代码，存折必须填写
 	private String BANK_CODE;
+	//账号类型   00银行卡，01存折，02信用卡。不填默认为银行卡00。
 	private String ACCOUNT_TYPE;
+	//银行卡或存折号码  
+	@NotBlank
 	private String ACCOUNT_NO;
+	//银行卡或存折上的所有人姓名  
+	@NotBlank
 	private String ACCOUNT_NAME;
+	//账号属性   0私人，1公司。不填时，默认为私人0  
+	@NotBlank
 	private String ACCOUNT_PROP;
+	//金额，单位分  
+	@NotBlank
 	private String AMOUNT;
+	//货币类型  人民币：CNY, 港元：HKD，美元：USD。不填时，默认为人民币
 	private String CURRENCY;
+	//证件类型   0：身份证,1: 户口簿，2：护照,3.军官证,4.士兵证，5. 港澳居民来往内地通行证,6. 台湾同胞来往内地通行证,7. 临时身份证,8. 外国人居留证,9. 警官证, X.其他证件
 	private String ID_TYPE;
+	//证件号
 	private String ID;
+	//手机号
 	private String TEL;
+	//自定义用户号
 	private String CUST_USERID;
+	//备注
 	private String REMARK;
+	//业务代码
 	private String RECVCHNL;
+	//业务代码
 	private String SETTACCT;
 	private String TLTMERID; //posp专用
 	private String INSTID; //posp专用

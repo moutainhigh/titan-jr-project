@@ -7,21 +7,38 @@
  */
 package com.titanjr.checkstand.dto;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 /**
  * @author Jerry
  * @date 2017年12月25日 下午2:56:41  
  */
 public class TLAgentInfoRequestDTO {
 	
-	private String TRX_CODE="";//交易代码
-	private String VERSION="";//版本  默认03
-	private String DATA_TYPE="";//数据格式   固定2：xml格式
-	private String LEVEL="";//处理级别   0-9 0优先级最低
-	private String MERCHANT_ID;
+	//交易代码   {@link AgentTradeCodeEnum}
+	@NotBlank
+	private String TRX_CODE="";
+	//版本  固定值 03
+	@NotBlank
+	private String VERSION="";
+	//数据格式   固定2：xml格式
+	@NotBlank
+	private String DATA_TYPE="";
+	//处理级别   0-9 0优先级最低
+	@NotBlank
+	private String LEVEL="";
+	//用户名（私钥的名称+04）
+	@NotBlank
 	private String USER_NAME="";
+	//密码
+	@NotBlank
 	private String USER_PASS="";
+	//交易流水号（或者叫订单号，商户的唯一标示）
+	@NotBlank
 	private String REQ_SN="";
 	private String REQTIME;
+	//签名
+	@NotBlank
 	private String SIGNED_MSG="";
 	
 	public String getDATA_TYPE() {
@@ -71,12 +88,6 @@ public class TLAgentInfoRequestDTO {
 	}
 	public void setVERSION(String version) {
 		VERSION = version;
-	}
-	public String getMERCHANT_ID() {
-		return MERCHANT_ID;
-	}
-	public void setMERCHANT_ID(String mERCHANTID) {
-		MERCHANT_ID = mERCHANTID;
 	}
 	public String getREQTIME() {
 		return REQTIME;

@@ -31,6 +31,7 @@ import com.titanjr.checkstand.dto.TitanAgentDownloadDTO;
 import com.titanjr.checkstand.dto.TitanAgentPayDTO;
 import com.titanjr.checkstand.dto.TitanAgentQueryDTO;
 import com.titanjr.checkstand.request.TLAgentTradeRequest;
+import com.titanjr.checkstand.respnse.RSResponse;
 import com.titanjr.checkstand.respnse.TitanAgentPayResponse;
 import com.titanjr.checkstand.respnse.TitanAgentQueryResponse;
 import com.titanjr.checkstand.service.TLAgentTradeService;
@@ -104,14 +105,13 @@ public class AgentTradeController extends BaseController {
 			agentInfo.setREQ_SN(agentPayDTO.getOrderNo());
 			agentInfo.setUSER_NAME(SysConstant.USER_NAME);
 			agentInfo.setUSER_PASS(SysConstant.USER_PWD);
-			agentInfo.setLEVEL("5");
-			agentInfo.setDATA_TYPE("2");
-			agentInfo.setVERSION("03");
-			agentInfo.setMERCHANT_ID(SysConstant.TL_AGENT_MERCHANT);
+			agentInfo.setLEVEL(SysConstant.TL_AGENT_LEVEL);
+			agentInfo.setDATA_TYPE(SysConstant.TL_AGENT_DATA_TYPE);
+			agentInfo.setVERSION(SysConstant.TL_AGENT_VERSION);
 			tlAgentTradeRequest.setINFO(agentInfo);
 			
 			TLAgentPayTransDTO trans= new TLAgentPayTransDTO();
-			trans.setBUSINESS_CODE(SysConstant.WITHDRAW_CODE);
+			trans.setBUSINESS_CODE(SysConstant.TL_WITHDRAW_CODE);
 			trans.setMERCHANT_ID(SysConstant.TL_AGENT_MERCHANT);
 			trans.setSUBMIT_TIME(agentPayDTO.getSubmitTime());
 			trans.setACCOUNT_NAME(agentPayDTO.getAccountName());
@@ -166,10 +166,9 @@ public class AgentTradeController extends BaseController {
 			agentInfo.setREQ_SN(agentQueryDTO.getOrderNo());
 			agentInfo.setUSER_NAME(SysConstant.USER_NAME);
 			agentInfo.setUSER_PASS(SysConstant.USER_PWD);
-			agentInfo.setLEVEL("5");
-			agentInfo.setDATA_TYPE("2");
-			agentInfo.setVERSION("03");
-			agentInfo.setMERCHANT_ID(SysConstant.TL_AGENT_MERCHANT);
+			agentInfo.setLEVEL(SysConstant.TL_AGENT_LEVEL);
+			agentInfo.setDATA_TYPE(SysConstant.TL_AGENT_DATA_TYPE);
+			agentInfo.setVERSION(SysConstant.TL_AGENT_VERSION);
 			tlAgentTradeRequest.setINFO(agentInfo);
 			
 			TLAgentQueryTransDTO trans = new TLAgentQueryTransDTO();
@@ -199,9 +198,9 @@ public class AgentTradeController extends BaseController {
 	
 	@RequestMapping(value = "/agentDownload", method = {RequestMethod.GET, RequestMethod.POST})
 	@ResponseBody
-	public String agentDownload(HttpServletRequest request, Model model) throws Exception {
+	public RSResponse agentDownload(HttpServletRequest request, Model model) throws Exception {
 		
-		TitanAgentPayResponse titanAgentPayResponse = new TitanAgentPayResponse();
+		RSResponse response = new RSResponse();
 		
 		try {
     		
@@ -209,9 +208,8 @@ public class AgentTradeController extends BaseController {
 			ValidateResponse res = GenericValidate.validateNew(titanAgentDownloadDTO);
 			if (!res.isSuccess()){
 				logger.error("【通联-对账文件下载】参数错误：{}", res.getReturnMessage());
-				/*titanAgentPayResponse.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
-				return titanAgentPayResponse;*/
-				return "PARAM ERROR";
+				response.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
+				return response;
 			}
 			
 			TLAgentTradeRequest tlAgentTradeRequest = new TLAgentTradeRequest();
@@ -221,9 +219,9 @@ public class AgentTradeController extends BaseController {
 			agentInfo.setREQ_SN(SysConstant.TL_AGENT_MERCHANT+"-"+String.valueOf(System.currentTimeMillis()));
 			agentInfo.setUSER_NAME(SysConstant.USER_NAME);
 			agentInfo.setUSER_PASS(SysConstant.USER_PWD);
-			agentInfo.setLEVEL("5");
-			agentInfo.setDATA_TYPE("2");
-			agentInfo.setVERSION("03");
+			agentInfo.setLEVEL(SysConstant.TL_AGENT_LEVEL);
+			agentInfo.setDATA_TYPE(SysConstant.TL_AGENT_DATA_TYPE);
+			agentInfo.setVERSION(SysConstant.TL_AGENT_VERSION);
 			tlAgentTradeRequest.setINFO(agentInfo);
 			
 			TLAgentQueryTransDTO trans= new TLAgentQueryTransDTO();//对象共用
@@ -233,19 +231,16 @@ public class AgentTradeController extends BaseController {
 			trans.setSTART_DAY(titanAgentDownloadDTO.getStartDate());
 			trans.setEND_DAY(titanAgentDownloadDTO.getEndDate());
 			tlAgentTradeRequest.addTrx(trans);
+			tlAgentTradeRequest.setRequestType(RequestTypeEnum.AGENT_TRADE.getKey());
 			
-			tlAgentTradeService.agentDownload(tlAgentTradeRequest);
-			
-			/*titanAgentPayResponse = tlAgentTradeService.agentPay(tlAgentTradeRequest);
-			return titanAgentPayResponse;*/
-			return "SUCCESS";
+			response = tlAgentTradeService.agentDownload(tlAgentTradeRequest);
+			return response;
 			
 		} catch (Exception e) {
 			
 			logger.error("【通联-对账文件下载】发生异常：", e);
-			titanAgentPayResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
-			//return titanAgentPayResponse;
-			return "ERROR";
+			response.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+			return response;
 		}
         
     }
