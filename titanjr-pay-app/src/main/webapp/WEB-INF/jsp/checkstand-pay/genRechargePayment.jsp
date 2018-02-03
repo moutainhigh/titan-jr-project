@@ -22,7 +22,7 @@
 	<input name="amtType"  type="hidden" value="${rechargeDataDTO.amtType}"/>
 	<input name="payType" type="hidden" value="${rechargeDataDTO.payType}"/>
 	<input name="bankInfo" type="hidden" value="${rechargeDataDTO.bankInfo}"/>
-    <input name="pageUrl" id="pageUrl" type="hidden" />
+    <input name="pageUrl" id="pageUrl" type="hidden" value="${rechargeDataDTO.pageUrl}"/>
 	<input name="notifyUrl" id="notifyUrl" type="hidden" />
 	<input name="orderTime" type="hidden" value="${rechargeDataDTO.orderTime}"/>
 	<input name="orderExpireTime" type="hidden" value="${rechargeDataDTO.orderExpireTime}"/>
@@ -50,7 +50,6 @@ if('${result}'=="false"){
 }else{
 	   function submitform(){
 	   		$("#pay_form").attr({"action":$("#pay_form_action_gateWayUrl").html()});
-	   		$("#pageUrl").val($("#pay_form_pageUrl").html());
 	   		$("#notifyUrl").val($("#pay_form_notifyUrl").html());
 			$("#pay_form").submit();
 		}
