@@ -38,14 +38,16 @@
 		<input type="hidden" name="tradeNature" value="${tlNetBankPayRequest.tradeNature }" />
 		<input type="hidden" name="signMsg" value="${tlNetBankPayRequest.signMsg }" />
 		
-		<input type="submit" value="确认付款，到通联支付去啦"/>
+		<!-- <input type="submit" value="确认付款，到通联支付去啦"/> -->
 	 </form>
 </body>
+
+<jsp:include page="/common/static-js.jsp"></jsp:include>
 <script type="text/javascript">
 	//alert('${tlNetBankPayRequest.orderDatetime }');
-	/* function submitForm(){
+	function submitForm(){
 	   $("#allinpayForm").submit();
 	}
-	window.onload = submitForm; */
+	window.onload = submitForm;
 </script>
 </html>

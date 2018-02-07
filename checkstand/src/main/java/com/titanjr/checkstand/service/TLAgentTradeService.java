@@ -20,11 +20,11 @@ import com.titanjr.checkstand.respnse.TitanAgentQueryResponse;
 public interface TLAgentTradeService {
 	
 	/**
-	 * 代付请求
+	 * 通联代付请求
 	 * @author Jerry
 	 * @date 2017年12月25日 下午6:29:51
 	 */
-	public TitanAgentPayResponse agentPay(TLAgentTradeRequest tlAgentTradeRequest);
+	public TitanAgentPayResponse tlAgentPay(TLAgentTradeRequest tlAgentTradeRequest);
 	
 	
 	/**

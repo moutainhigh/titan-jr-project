@@ -10,8 +10,8 @@ package com.titanjr.checkstand.strategy.agent;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
-
-import com.titanjr.checkstand.util.WebUtils;
+import com.fangcang.util.StringUtil;
+import com.titanjr.checkstand.constants.AgentTradeCodeEnum;
 
 /**
  * 代付
@@ -24,8 +24,19 @@ public class AgentPayStrategy implements AgentTradeStrategy {
 	@Override
 	public String redirectResult(HttpServletRequest request) {
 		
-		return WebUtils.getRequestBaseUrl(request) + "/agent/agentPay.shtml";
+		String tradeCode = request.getParameter("tradeCode");
 		
+		if(!StringUtil.isValidString(tradeCode)){
+			return null;
+		}
+		if (AgentTradeCodeEnum.TL_AGENT_PAY.getCode().equals(tradeCode)){
+			return "/agent/tlAgentPay.shtml";
+        }
+		if (AgentTradeCodeEnum.RB_AGENT_PAY.getCode().equals(tradeCode)){
+			return "/agent/rbAgentPay.shtml";
+        }
+		
+		return null;
 	}
 
 }

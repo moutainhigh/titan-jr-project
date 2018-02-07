@@ -24,9 +24,9 @@
 		<input name="signMsg" type="hidden" value="${titanCardAuthResponse.signMsg}"/>
 	</form>
 </c:if>
+</body>
 
 <jsp:include page="/common/static-js.jsp"></jsp:include>
-</body>
 <script type="text/javascript">
 function submitform(){
 	   $("#cardAuth_form").submit();

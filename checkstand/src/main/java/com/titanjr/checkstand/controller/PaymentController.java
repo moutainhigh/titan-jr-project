@@ -99,6 +99,7 @@ public class PaymentController extends BaseController {
 			return "forward:" + redirectUrl;
 			
 		} catch (Exception e) {
+			
 			logger.error("【checkstand支付】异常：", e);
 			return super.payFailedCallback(model);
 			
@@ -315,7 +316,7 @@ public class PaymentController extends BaseController {
 				rbQuickPayRequest.setCert_no(payDTO.getIdCode());
 				rbQuickPayRequest.setPhone(payDTO.getPayerPhone());
 			}
-			rbQuickPayRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
+			rbQuickPayRequest.setMerchant_id(SysConstant.RB_MERCHANT);
 			rbQuickPayRequest.setOrder_no(payDTO.getOrderNo());
 			rbQuickPayRequest.setTranstime(payDTO.getOrderTime());//2015-03-06 12:24:59
 			rbQuickPayRequest.setCurrency(SysConstant.RB_CURRENCY);
@@ -330,7 +331,7 @@ public class PaymentController extends BaseController {
 			PayMethodConfigDTO payMethodConfigDTO = titanFinancialUtilService.getPayMethodConfigDTO(null);
 			rbQuickPayRequest.setNotify_url(payMethodConfigDTO.getRb_QuickPay_Notifyurl());
 			rbQuickPayRequest.setToken_id(CommonUtil.getUUID());
-			rbQuickPayRequest.setVersion(SysConstant.RB_VERSION);
+			rbQuickPayRequest.setVersion(SysConstant.RB_QUICKPAY_VERSION);
 			rbQuickPayRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
 			rbQuickPayRequest.setRequestType(RequestTypeEnum.QUICK_BIND_PAY.getKey());
 			if(!StringUtil.isValidString(rbQuickPayRequest.getBindCardId())){

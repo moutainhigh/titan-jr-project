@@ -81,25 +81,33 @@ public class QuickpayController extends BaseController {
 	 * @date 2018年1月3日 下午6:36:15
 	 */
 	@RequestMapping(value = "/entrance", method = {RequestMethod.GET, RequestMethod.POST})
-    public String entrance(HttpServletRequest request, RedirectAttributes attr, Model model) throws Exception {
+    public String entrance(HttpServletRequest request, RedirectAttributes attr, Model model) {
         
-        BusiCodeEnum busiCodeEnum = JRBeanUtils.getBusiCode(request);
-        if(busiCodeEnum == null){
-        	logger.error("【融宝-快捷服务】参数错误，未找到对应的业务代码，busiCodeEnum={}", busiCodeEnum);
-        	return super.payFailedCallback(model);
-        }
-        
-        //根据业务代码来判定走到具体哪个接口
-        QuickPayStrategy quickPayStrategy =  StrategyFactory.getQuickpayStrategy(busiCodeEnum);
-        if(quickPayStrategy == null){
-			logger.error("【融宝-快捷服务】失败，获取相应的业务策略为空");
+        try {
+        	
+			BusiCodeEnum busiCodeEnum = JRBeanUtils.getBusiCode(request);
+			if(busiCodeEnum == null){
+				logger.error("【融宝-快捷服务】参数错误，未找到对应的业务代码，busiCodeEnum={}", busiCodeEnum);
+				return super.payFailedCallback(model);
+			}
+			
+			//根据业务代码来判定走到具体哪个接口
+			QuickPayStrategy quickPayStrategy =  StrategyFactory.getQuickpayStrategy(busiCodeEnum);
+			if(quickPayStrategy == null){
+				logger.error("【融宝-快捷服务】失败，获取相应的业务策略为空");
+				return super.payFailedCallback(model);
+			}
+			
+			String redirectUrl = quickPayStrategy.redirectResult(request);
+			super.resetParameter(request,attr);
+			
+			return "forward:" + redirectUrl;
+			
+		} catch (Exception e) {
+			
+			logger.error("【融宝-快捷服务】发生异常：", e);
 			return super.payFailedCallback(model);
 		}
-        
-        String redirectUrl = quickPayStrategy.redirectResult(request);
-        super.resetParameter(request,attr);
-        
-        return "forward:" + redirectUrl;
         
     }
     
@@ -127,8 +135,8 @@ public class QuickpayController extends BaseController {
 			
 			RBCardBINQueryRequest rbCardBINQueryRequest = new RBCardBINQueryRequest();
 			rbCardBINQueryRequest.setCard_no(titanCardBINQueryDTO.getCardNo());
-			rbCardBINQueryRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
-			rbCardBINQueryRequest.setVersion(SysConstant.RB_VERSION);
+			rbCardBINQueryRequest.setMerchant_id(SysConstant.RB_MERCHANT);
+			rbCardBINQueryRequest.setVersion(SysConstant.RB_QUICKPAY_VERSION);
 			rbCardBINQueryRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
 			rbCardBINQueryRequest.setRequestType(RequestTypeEnum.QUICK_CARDBIN_QUERY.getKey());
 			
@@ -170,8 +178,8 @@ public class QuickpayController extends BaseController {
 			RBQuickPayConfirmRequest rbQuickPayConfirmRequest = new RBQuickPayConfirmRequest();
 			rbQuickPayConfirmRequest.setOrder_no(titanPayConfirmDTO.getOrderNo());
 			rbQuickPayConfirmRequest.setCheck_code(titanPayConfirmDTO.getCheckCode());
-			rbQuickPayConfirmRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
-			rbQuickPayConfirmRequest.setVersion(SysConstant.RB_VERSION);
+			rbQuickPayConfirmRequest.setMerchant_id(SysConstant.RB_MERCHANT);
+			rbQuickPayConfirmRequest.setVersion(SysConstant.RB_QUICKPAY_VERSION);
 			rbQuickPayConfirmRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
 			rbQuickPayConfirmRequest.setRequestType(RequestTypeEnum.QUICK_PAY_CONFIRM.getKey());
 			
@@ -226,8 +234,8 @@ public class QuickpayController extends BaseController {
 			RBReSendMsgRequest rbReSendMsgRequest = new RBReSendMsgRequest();
 			rbReSendMsgRequest.setOrder_no(titanReSendMsgDTO.getOrderNo());
 			rbReSendMsgRequest.setPhone(titanOrderPayDTO.getPayerPhone());
-			rbReSendMsgRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
-			rbReSendMsgRequest.setVersion(SysConstant.RB_VERSION);
+			rbReSendMsgRequest.setMerchant_id(SysConstant.RB_MERCHANT);
+			rbReSendMsgRequest.setVersion(SysConstant.RB_QUICKPAY_VERSION);
 			rbReSendMsgRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
 			rbReSendMsgRequest.setRequestType(RequestTypeEnum.QUICK_MSG_SEND.getKey());
 			
@@ -271,8 +279,8 @@ public class QuickpayController extends BaseController {
 			rbCardAuthRequest.setTerminal_type(titanCardAuthDTO.getTerminalType());
 			rbCardAuthRequest.setReturn_url(titanCardAuthDTO.getCardCheckPageUrl());
 			rbCardAuthRequest.setNotify_url(titanCardAuthDTO.getCardChecknotifyUrl());
-			rbCardAuthRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
-			rbCardAuthRequest.setVersion(SysConstant.RB_VERSION);
+			rbCardAuthRequest.setMerchant_id(SysConstant.RB_MERCHANT);
+			rbCardAuthRequest.setVersion(SysConstant.RB_QUICKPAY_VERSION);
 			rbCardAuthRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
 			rbCardAuthRequest.setRequestType(RequestTypeEnum.QUICK_CARD_AUTH.getKey());
 			
@@ -323,8 +331,8 @@ public class QuickpayController extends BaseController {
 			}else{
 				rbBindCardQueryRequest.setBank_card_type("1");
 			}
-			rbBindCardQueryRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
-			rbBindCardQueryRequest.setVersion(SysConstant.RB_VERSION);
+			rbBindCardQueryRequest.setMerchant_id(SysConstant.RB_MERCHANT);
+			rbBindCardQueryRequest.setVersion(SysConstant.RB_QUICKPAY_VERSION);
 			rbBindCardQueryRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
 			rbBindCardQueryRequest.setRequestType(RequestTypeEnum.QUICK_BIND_QUERY.getKey());
 			
@@ -366,8 +374,8 @@ public class QuickpayController extends BaseController {
 			RBUnBindCardRequest rbUnBindCardRequest = new RBUnBindCardRequest();
 			rbUnBindCardRequest.setMember_id(titanUnBindCardDTO.getIdCode());//身份证号当作用户ID
 			rbUnBindCardRequest.setBind_id(titanUnBindCardDTO.getBindCardId());
-			rbUnBindCardRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
-			rbUnBindCardRequest.setVersion(SysConstant.RB_VERSION);
+			rbUnBindCardRequest.setMerchant_id(SysConstant.RB_MERCHANT);
+			rbUnBindCardRequest.setVersion(SysConstant.RB_QUICKPAY_VERSION);
 			rbUnBindCardRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
 			rbUnBindCardRequest.setRequestType(RequestTypeEnum.QUICK_UNBIND.getKey());
 			

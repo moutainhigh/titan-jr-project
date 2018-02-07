@@ -66,41 +66,49 @@ public class PayQueryController extends BaseController {
 	
 	@RequestMapping(value = "/entrance", method = {RequestMethod.GET, RequestMethod.POST})
     public String entrance(HttpServletRequest request, RedirectAttributes attr, Model model) {
-		
+
 		String errorUrl = WebUtils.getRequestBaseUrl(request) + "/query/returnError.shtml";
-		TitanPayQueryDTO payQueryDTO = WebUtils.switch2RequestDTO(TitanPayQueryDTO.class, request);
-		ValidateResponse res = GenericValidate.validateNew(payQueryDTO);
-		if (!res.isSuccess()){
-			logger.error("【支付查询】参数错误：{}", res.getReturnMessage());
+		try {
+			
+			TitanPayQueryDTO payQueryDTO = WebUtils.switch2RequestDTO(TitanPayQueryDTO.class, request);
+			ValidateResponse res = GenericValidate.validateNew(payQueryDTO);
+			if (!res.isSuccess()){
+				logger.error("【支付查询】参数错误：{}", res.getReturnMessage());
+				return "redirect:" + errorUrl;
+			}
+			
+			//查询充值单
+			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+			titanOrderPayDTO.setMerchantNo(payQueryDTO.getMerchantNo());
+			titanOrderPayDTO.setOrderNo(payQueryDTO.getOrderNo());
+			titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
+			if(titanOrderPayDTO == null){
+				logger.error("【支付查询】失败，查询充值单为空，orderNo={}", payQueryDTO.getOrderNo());
+				return "redirect:" + errorUrl;
+			}
+			
+			//根据支付方式获取查询策略，调对应的接口
+			PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(titanOrderPayDTO.getPayType());
+			if(payTypeEnum == null){
+				logger.error("【支付查询】失败，获取payTypeEnum为空");
+				return "redirect:" + errorUrl;
+			}
+			QueryStrategy payQueryStrategy =  StrategyFactory.getPayQueryStrategy(payTypeEnum);
+			if(payQueryStrategy == null){
+				logger.error("【支付查询】失败，获取相应的查询策略为空");
+				return "redirect:" + errorUrl;
+			}
+			
+			String redirectUrl = payQueryStrategy.redirectResult(request);
+			super.resetParameter(request,attr);
+			
+			return "forward:" + redirectUrl;
+		} catch (Exception e) {
+			
+			logger.error("【支付查询】发生异常：", e);
 			return "redirect:" + errorUrl;
+			
 		}
-		
-		//查询充值单
-		TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
-		titanOrderPayDTO.setMerchantNo(payQueryDTO.getMerchantNo());
-		titanOrderPayDTO.setOrderNo(payQueryDTO.getOrderNo());
-		titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
-		if(titanOrderPayDTO == null){
-			logger.error("【支付查询】失败，查询充值单为空，orderNo={}", payQueryDTO.getOrderNo());
-			return "redirect:" + errorUrl;
-		}
-		
-        //根据支付方式获取查询策略，调对应的接口
-		PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(titanOrderPayDTO.getPayType());
-		if(payTypeEnum == null){
-			logger.error("【支付查询】失败，获取payTypeEnum为空");
-			return "redirect:" + errorUrl;
-		}
-		QueryStrategy payQueryStrategy =  StrategyFactory.getPayQueryStrategy(payTypeEnum);
-		if(payQueryStrategy == null){
-			logger.error("【支付查询】失败，获取相应的查询策略为空");
-			return "redirect:" + errorUrl;
-		}
-		
-        String redirectUrl = payQueryStrategy.redirectResult(request);
-        super.resetParameter(request,attr);
-        
-        return "forward:" + redirectUrl;
         
     }
     
@@ -207,8 +215,8 @@ public class PayQueryController extends BaseController {
 			TitanPayQueryDTO titanPayQueryDTO = WebUtils.switch2RequestDTO(TitanPayQueryDTO.class, request);
 			RBQuickPayQueryRequest rbQuickPayQueryRequest = new RBQuickPayQueryRequest();
 			rbQuickPayQueryRequest.setOrder_no(titanPayQueryDTO.getOrderNo());
-			rbQuickPayQueryRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
-			rbQuickPayQueryRequest.setVersion(SysConstant.RB_VERSION);
+			rbQuickPayQueryRequest.setMerchant_id(SysConstant.RB_MERCHANT);
+			rbQuickPayQueryRequest.setVersion(SysConstant.RB_QUICKPAY_VERSION);
 			rbQuickPayQueryRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
 			rbQuickPayQueryRequest.setRequestType(RequestTypeEnum.QUICK_PAY_QUERY.getKey());
 			

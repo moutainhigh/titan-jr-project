@@ -72,39 +72,48 @@ public class RefundQueryController extends BaseController {
     public String entrance(HttpServletRequest request, RedirectAttributes attr, Model model) throws Exception {
 		
 		String errorUrl = WebUtils.getRequestBaseUrl(request) + "/rfQuery/returnError.shtml";
-		TitanRefundQueryDTO refundQueryDTO = WebUtils.switch2RequestDTO(TitanRefundQueryDTO.class, request);
-		ValidateResponse res = GenericValidate.validateNew(refundQueryDTO);
-		if (!res.isSuccess()){
-			logger.error("【退款查询】参数错误：{}", res.getReturnMessage());
+		try {
+			
+			TitanRefundQueryDTO refundQueryDTO = WebUtils.switch2RequestDTO(TitanRefundQueryDTO.class, request);
+			ValidateResponse res = GenericValidate.validateNew(refundQueryDTO);
+			if (!res.isSuccess()){
+				logger.error("【退款查询】参数错误：{}", res.getReturnMessage());
+				return "redirect:" + errorUrl;
+			}
+			
+			//查询充值单
+			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
+			titanOrderPayDTO.setOrderNo(refundQueryDTO.getOrderNo());
+			titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
+			if(titanOrderPayDTO == null){
+				logger.error("【退款查询】失败，查询充值单为空，orderNo={}，refundOrderNo={}", refundQueryDTO
+						.getOrderNo(), refundQueryDTO.getRefundOrderno());
+				return "redirect:" + errorUrl;
+			}
+			
+			//根据支付方式获取查询策略，调对应的接口
+			PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(titanOrderPayDTO.getPayType());
+			if(payTypeEnum == null){
+				logger.error("【退款查询】失败，获取payTypeEnum为空");
+				return "redirect:" + errorUrl;
+			}
+			QueryStrategy refundQueryStrategy =  StrategyFactory.getRefundQueryStrategy(payTypeEnum);
+			if(refundQueryStrategy == null){
+				logger.error("【退款查询】失败，获取相应的退款查询策略为空");
+				return "redirect:" + errorUrl;
+			}
+			
+			String redirectUrl = refundQueryStrategy.redirectResult(request);
+			super.resetParameter(request,attr);
+			
+			return "forward:" + redirectUrl;
+			
+		} catch (Exception e) {
+			
+			logger.error("【退款查询】发生异常：", e);
 			return "redirect:" + errorUrl;
+			
 		}
-        
-		//查询充值单
-		TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
-		titanOrderPayDTO.setOrderNo(refundQueryDTO.getOrderNo());
-		titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
-		if(titanOrderPayDTO == null){
-			logger.error("【退款查询】失败，查询充值单为空，orderNo={}，refundOrderNo={}", refundQueryDTO
-					.getOrderNo(), refundQueryDTO.getRefundOrderno());
-			return "redirect:" + errorUrl;
-		}
-        
-        //根据支付方式获取查询策略，调对应的接口
-		PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(titanOrderPayDTO.getPayType());
-		if(payTypeEnum == null){
-			logger.error("【退款查询】失败，获取payTypeEnum为空");
-			return "redirect:" + errorUrl;
-		}
-		QueryStrategy refundQueryStrategy =  StrategyFactory.getRefundQueryStrategy(payTypeEnum);
-		if(refundQueryStrategy == null){
-			logger.error("【退款查询】失败，获取相应的退款查询策略为空");
-			return "redirect:" + errorUrl;
-		}
-		
-		String redirectUrl = refundQueryStrategy.redirectResult(request);
-        super.resetParameter(request,attr);
-        
-        return "forward:" + redirectUrl;
         
     }
     
@@ -211,10 +220,10 @@ public class RefundQueryController extends BaseController {
     	try {
     		
     		TitanRefundQueryDTO refundQueryDTO = WebUtils.switch2RequestDTO(TitanRefundQueryDTO.class, request);
-			rbQuickPayRefundQueryRequest.setMerchant_id(SysConstant.RB_QUICKPAY_MERCHANT);
+			rbQuickPayRefundQueryRequest.setMerchant_id(SysConstant.RB_MERCHANT);
 			rbQuickPayRefundQueryRequest.setOrder_no(refundQueryDTO.getRefundOrderno());
 			rbQuickPayRefundQueryRequest.setOrig_order_no(refundQueryDTO.getOrderNo());
-			rbQuickPayRefundQueryRequest.setVersion(SysConstant.RB_VERSION);
+			rbQuickPayRefundQueryRequest.setVersion(SysConstant.RB_QUICKPAY_VERSION);
 			rbQuickPayRefundQueryRequest.setSign_type(SysConstant.RB_SIGN_TYPE);
 			rbQuickPayRefundQueryRequest.setRequestType(RequestTypeEnum.QUICK_REFUND_QUERY.getKey());
 			

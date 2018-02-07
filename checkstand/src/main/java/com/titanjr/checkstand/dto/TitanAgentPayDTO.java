@@ -37,17 +37,46 @@ public class TitanAgentPayDTO {
 	private String tradeCode;
 	
 	/**
-	 * 提交时间   yyyyMMddHHmmss<br>
-	 * 好像通联不按我们提交的来，是他们系统的时间
-	 */
-	@NotBlank
-	private String submitTime;
-	
-	/**
 	 * 银行标示
 	 */
 	@NotBlank
 	private String bankInfo;
+	
+	//融宝渠道代付需要字段 ------start----------------
+	/**
+	 * 序号   数字，同一批次不允许重复，不超过六个字符  必填
+	 * 建议用时分秒生成
+	 */
+	private String number;
+	/**
+	 * 银行名称   如：中国工商银行  必填
+	 */
+	private String bankName;
+	/**
+	 * 分行名称    如：北京分行，当对公付款和对私大于5万时务必填写。
+	 */
+	private String branchBank;
+	/**
+	 * 支行名称   如：中关村支行，当对公付款和对私大于5万时务必填写
+	 */
+	private String subBank;
+	/**
+	 * 省，当对公付款和对私大于5万时务必填写
+	 */
+	private String province;
+	/**
+	 * 市，当对公付款和对私大于5万时务必填写
+	 */
+	private String city;
+	/**
+	 * 手机号，当所属行业为金融投资类和资金托管类时必须上送
+	 */
+	private String phone;
+	/**
+	 * 用户协议号  选填
+	 */
+	private String protocolNo;
+	//融宝代付需要字段 ------end----------------
 	
 	/**
 	 * 银行卡类型    00银行卡，01存折，02信用卡。不填默认为银行卡00
@@ -88,7 +117,7 @@ public class TitanAgentPayDTO {
 	/**
 	 * 证件号
 	 */
-	private String accountId;
+	private String idCode;
 	
 	/**
 	 * 开户证件类型<br>
@@ -120,20 +149,68 @@ public class TitanAgentPayDTO {
 		this.merchantNo = merchantNo;
 	}
 
-	public String getSubmitTime() {
-		return submitTime;
-	}
-
-	public void setSubmitTime(String submitTime) {
-		this.submitTime = submitTime;
-	}
-
 	public String getBankInfo() {
 		return bankInfo;
 	}
 
 	public void setBankInfo(String bankInfo) {
 		this.bankInfo = bankInfo;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getBranchBank() {
+		return branchBank;
+	}
+
+	public void setBranchBank(String branchBank) {
+		this.branchBank = branchBank;
+	}
+
+	public String getSubBank() {
+		return subBank;
+	}
+
+	public void setSubBank(String subBank) {
+		this.subBank = subBank;
+	}
+
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getProtocolNo() {
+		return protocolNo;
+	}
+
+	public void setProtocolNo(String protocolNo) {
+		this.protocolNo = protocolNo;
 	}
 
 	public String getAccountType() {
@@ -184,12 +261,12 @@ public class TitanAgentPayDTO {
 		this.currency = currency;
 	}
 
-	public String getAccountId() {
-		return accountId;
+	public String getIdCode() {
+		return idCode;
 	}
 
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
+	public void setIdCode(String idCode) {
+		this.idCode = idCode;
 	}
 
 	public String getIdType() {
@@ -198,6 +275,14 @@ public class TitanAgentPayDTO {
 
 	public void setIdType(String idType) {
 		this.idType = idType;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
 	}
 
 }

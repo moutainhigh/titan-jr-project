@@ -122,15 +122,18 @@ public class StrategyFactory {
      */
     public static AgentTradeStrategy getAgentTradeStrategy(String tradeCode){
 
-        if (AgentTradeCodeEnum.AGENT_PAY.getCode().equals(tradeCode)){
+        if (AgentTradeCodeEnum.TL_AGENT_PAY.getCode().equals(tradeCode) 
+        		|| AgentTradeCodeEnum.RB_AGENT_PAY.getCode().equals(tradeCode)){
             return (AgentTradeStrategy)SpringContextUtil.getBean("agentPayStrategy");
         }
 
-        if (AgentTradeCodeEnum.AGENT_QUERY.getCode().equals(tradeCode)){
+        if (AgentTradeCodeEnum.TL_AGENT_QUERY.getCode().equals(tradeCode)
+        		||AgentTradeCodeEnum.RB_AGENT_QUERY.getCode().equals(tradeCode)){
             return (AgentTradeStrategy)SpringContextUtil.getBean("agentQueryStrategy");
         }
         
-        if (AgentTradeCodeEnum.AGENT_DOWNLOAD.getCode().equals(tradeCode)){
+        if (AgentTradeCodeEnum.TL_AGENT_DOWNLOAD.getCode().equals(tradeCode)
+        		|| AgentTradeCodeEnum.RB_AGENT_DOWNLOAD.getCode().equals(tradeCode)){
         	return (AgentTradeStrategy)SpringContextUtil.getBean("agentDownloadStrategy");
         }
 

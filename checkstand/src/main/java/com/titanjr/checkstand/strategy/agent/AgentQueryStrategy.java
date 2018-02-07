@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
-import com.titanjr.checkstand.util.WebUtils;
+import com.fangcang.util.StringUtil;
+import com.titanjr.checkstand.constants.AgentTradeCodeEnum;
 
 /**
  * 代收付交易结果查询
@@ -24,7 +25,19 @@ public class AgentQueryStrategy implements AgentTradeStrategy {
 	@Override
 	public String redirectResult(HttpServletRequest request) {
 		
-		return WebUtils.getRequestBaseUrl(request) + "/agent/agentQuery.shtml";
+		String tradeCode = request.getParameter("tradeCode");
+		
+		if(!StringUtil.isValidString(tradeCode)){
+			return null;
+		}
+		if (AgentTradeCodeEnum.TL_AGENT_QUERY.getCode().equals(tradeCode)){
+			return "/agent/tlAgentQuery.shtml";
+        }
+		if (AgentTradeCodeEnum.RB_AGENT_QUERY.getCode().equals(tradeCode)){
+			return "/agent/rbAgentQuery.shtml";
+        }
+		
+		return null;
 		
 	}
 

@@ -9,10 +9,8 @@ import com.fangcang.titanjr.dto.request.BankCardRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.entity.TitanFundUnFreezereq;
 import com.fangcang.titanjr.entity.parameter.TitanUnFundFreezereqParam;
-import com.fangcang.titanjr.entity.parameter.TitanWithDrawReqParam;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.titanjr.service.TitanOrderService;
-import com.fangcang.util.DateUtil;
 import com.fangcang.util.StringUtil;
 import com.titanjr.fop.constants.BankCardMapper;
 import com.titanjr.fop.constants.InterfaceURlConfig;
@@ -260,7 +258,7 @@ public class AccountServiceImpl implements AccountService {
         paramMap.put("merchantNo", "M000016");
         paramMap.put("orderNo", withdrawserviceRequest.getUserorderid());//客户单号
         paramMap.put("tradeCode", "100014");
-        paramMap.put("submitTime", DateUtil.dateToString(new Date(), "yyyyMMddHHmmss"));
+        //paramMap.put("submitTime", DateUtil.dateToString(new Date(), "yyyyMMddHHmmss"));
         paramMap.put("bankInfo", BankCardMapper.getBankCardByCode(cardDTO.getBankcode()).getBankInfo());//单笔实时代付
         paramMap.put("busiCode", "105");
         paramMap.put("accountType", "00");//默认银行卡
@@ -274,7 +272,7 @@ public class AccountServiceImpl implements AccountService {
         }
         paramMap.put("tradeAmount", withdrawserviceRequest.getAmount());
         paramMap.put("currency", "CNY");
-        paramMap.put("accountId", cardDTO.getCertificatenumnumber());
+        paramMap.put("idCode", cardDTO.getCertificatenumnumber());
         paramMap.put("idType", null);//设法区分身份证和回乡证getCertificatetype 不一定准
         try {
             //查询网关真实状态

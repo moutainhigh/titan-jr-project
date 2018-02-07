@@ -435,7 +435,7 @@ public class ChannelCallbackController extends BaseController {
 		confirmRequest.setOrderTime(tlQrCodePayCallbackRequest.getTrxdate());
 		confirmRequest.setPayStatus("0");
 		confirmRequest.setPayMsg("支付失败");
-		if("0000".equals(tlQrCodePayCallbackRequest.getTrxstatus())){
+		if(SysConstant.RB_QUICKPAY_SUCCESS.equals(tlQrCodePayCallbackRequest.getTrxstatus())){
 			confirmRequest.setPayStatus("3");
 			confirmRequest.setPayMsg("支付成功");
 		}

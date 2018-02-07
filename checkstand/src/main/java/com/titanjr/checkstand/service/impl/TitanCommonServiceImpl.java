@@ -163,7 +163,7 @@ public class TitanCommonServiceImpl implements TitanCommonService {
 		titanCardAuthResponse.setCardNo(rbCardAuthResponse.getCard_last());//卡号后四位
 		titanCardAuthResponse.setOrderNo(rbCardAuthResponse.getOrder_no());
 		titanCardAuthResponse.setPhone(rbCardAuthResponse.getPhone());
-		if(SysConstant.RB_SUCCESS_CODE.equals(rbCardAuthResponse.getResult_code())){
+		if(SysConstant.RB_QUICKPAY_SUCCESS.equals(rbCardAuthResponse.getResult_code())){
 			titanCardAuthResponse.setStatusId(SysConstant.RS_CARD_AUTH_SUCCESS);
 		}else{
 			titanCardAuthResponse.setStatusId(SysConstant.RS_CARD_AUTH_FAILED);

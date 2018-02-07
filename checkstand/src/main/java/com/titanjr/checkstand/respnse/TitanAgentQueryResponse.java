@@ -34,14 +34,19 @@ public class TitanAgentQueryResponse extends RSResponse {
 	
 	/**
 	 * 查询返回码   00所有的交易都在处理中    01查询成功   02所有的交易都失败   03没有对应的交易<br>
-	 * retCode为01时，交易明细才有值 
+	 * retCode为01时，通联交易明细或者融宝交易状态才有值 
 	 */
 	private String retCode;
 	
 	/**
-	 * 交易明细
+	 * 通联：交易明细
 	 */
 	private List<TitanAgentResDetailDTO> details;
+	
+	/**
+	 * 融宝：交易状态  0失败  1成功
+	 */
+	private String tradeStatus;
 	
 
 	public String getTradeCode() {
@@ -66,6 +71,14 @@ public class TitanAgentQueryResponse extends RSResponse {
 
 	public void setRetCode(String retCode) {
 		this.retCode = retCode;
+	}
+
+	public String getTradeStatus() {
+		return tradeStatus;
+	}
+
+	public void setTradeStatus(String tradeStatus) {
+		this.tradeStatus = tradeStatus;
 	}
 
 }

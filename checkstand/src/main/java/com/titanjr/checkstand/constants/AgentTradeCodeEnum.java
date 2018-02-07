@@ -8,14 +8,18 @@
 package com.titanjr.checkstand.constants;
 
 /**
+ * 融宝的代付没有tradeCode，我们自己定义处理
  * @author Jerry
  * @date 2017年12月25日 上午10:53:35  
  */
 public enum AgentTradeCodeEnum {
 	
-	AGENT_PAY("100014", "单笔实时代付"),
-	AGENT_QUERY("200004", "交易结果查询"),
-	AGENT_DOWNLOAD("200002", "对账文件下载");
+	TL_AGENT_PAY("100014", "通联-单笔实时代付"),
+	TL_AGENT_QUERY("200004", "通联-交易结果查询"),
+	TL_AGENT_DOWNLOAD("200002", "通联-对账文件下载"),
+	RB_AGENT_PAY("300001", "融宝-单笔实时代付"),
+	RB_AGENT_QUERY("300002", "融宝-代付查询"),
+	RB_AGENT_DOWNLOAD("300003", "融宝-对账文件下载");
 	
 	private String code;
 	private String remark;

@@ -50,9 +50,13 @@ public class FtpUtil {
 	 */
 	public static final String UPLOAD_PATH_LOAN_APPLY="/loan_apply";
 	/**
-	 * 代收付对账文件
+	 * 通联代付-对账文件
 	 */
-	public static final String UPLOAD_PATH_AGENT_CHECKING = "/agent_checking/allinpay";
+	public static final String UPLOAD_PATH_TL_AGENT_CHECKING = "/agent_checking/allinpay";
+	/**
+	 * 融宝代付-对账文件
+	 */
+	public static final String UPLOAD_PATH_RB_AGENT_CHECKING = "/agent_checking/reapal";
 	
 	//TODO 这个后面要删除掉最后的斜杠
 	public static String baseLocation = "/data/image/upload/images/titanjr";
@@ -82,7 +86,7 @@ public class FtpUtil {
 	}
 	
 	public FtpUtil(){
-		
+		this.ftpClient = new FTPClient();
 	}
 	/**
 	 * FtpUtil构造函数
@@ -149,6 +153,52 @@ public class FtpUtil {
 
 		return isLogin;
 	}
+	
+	/**
+	 * 登录远程ftp服务器
+	 * @author Jerry
+	 * @date 2018年2月7日 下午3:45:46
+	 * @param path ftp地址
+	 * @param user
+	 * @param pwd
+	 */
+	public boolean loginRemote(String host, String user, String pwd) throws Exception {
+		
+		boolean isLogin = false;
+		try {
+			FTPClientConfig ftpClientConfig = new FTPClientConfig();
+			ftpClientConfig.setServerTimeZoneId(TimeZone.getDefault().getID());
+			this.ftpClient.setControlEncoding("GBK");
+			this.ftpClient.configure(ftpClientConfig);
+			this.ftpClient.connect(host);
+
+			// FTP服务器连接回答
+			int reply = this.ftpClient.getReplyCode();
+			if (!FTPReply.isPositiveCompletion(reply)) {
+				this.ftpClient.disconnect();
+				logger.error("登录FTP服务失败！host：" + host);
+				return isLogin;
+			}
+
+			this.ftpClient.login(user, pwd);
+
+			// 设置传输协议
+			this.ftpClient.enterLocalPassiveMode();
+			this.ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+			this.ftpClient.setBufferSize(1024 * 2);
+			this.ftpClient.setDataTimeout(30 * 1000);
+
+			isLogin = true;
+			this.isLogin = isLogin;
+			
+		} catch (Exception e) {
+			logger.error("登录FTP服务异常！hsot:"+host+",user:"+user+",pwd:"+pwd, e);
+			throw e;
+		}
+
+		return isLogin;
+	}
+	
 
 	/**
 	 * 退出关闭服务器链接
@@ -376,7 +426,7 @@ public class FtpUtil {
 		BufferedOutputStream outStream = null;
 		boolean success = false;
 		try {
-			boolean dirStatus = this.ftpClient.changeWorkingDirectory(remoteDownLoadPath);//改变工作目录
+			boolean dirChangeStatus = this.ftpClient.changeWorkingDirectory(remoteDownLoadPath);//切换FTP服务器的目录  
 			outStream = new BufferedOutputStream(new FileOutputStream(strFilePath));
 
 			logger.info(remoteDownLoadPath+"/"+remoteFileName + "开始下载....");

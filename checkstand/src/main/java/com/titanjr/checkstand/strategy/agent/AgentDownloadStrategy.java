@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
-import com.titanjr.checkstand.util.WebUtils;
+import com.fangcang.util.StringUtil;
+import com.titanjr.checkstand.constants.AgentTradeCodeEnum;
 
 /**
  * 账户交易-对账文件下载
@@ -24,8 +25,19 @@ public class AgentDownloadStrategy implements AgentTradeStrategy {
 	@Override
 	public String redirectResult(HttpServletRequest request) {
 		
-		return WebUtils.getRequestBaseUrl(request) + "/agent/agentDownload.shtml";
+		String tradeCode = request.getParameter("tradeCode");
 		
+		if(!StringUtil.isValidString(tradeCode)){
+			return null;
+		}
+		if (AgentTradeCodeEnum.TL_AGENT_DOWNLOAD.getCode().equals(tradeCode)){
+			return "/agent/tlAgentDownload.shtml";
+        }
+		if (AgentTradeCodeEnum.RB_AGENT_DOWNLOAD.getCode().equals(tradeCode)){
+			return "/agent/rbAgentDownload.shtml";
+        }
+		
+		return null;
 	}
 
 }

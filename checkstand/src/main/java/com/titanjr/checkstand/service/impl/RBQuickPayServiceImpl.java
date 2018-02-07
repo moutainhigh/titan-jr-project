@@ -124,7 +124,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				rbCardBINQueryResponse = (RBCardBINQueryResponse)JsonUtil.jsonToBean(responseStr, RBCardBINQueryResponse.class);
 				logger.info("【融宝-卡BIN查询】返回信息:" + rbCardBINQueryResponse.toString());
 				
-				if(!"0000".equals(rbCardBINQueryResponse.getResult_code())){
+				if(!SysConstant.RB_QUICKPAY_SUCCESS.equals(rbCardBINQueryResponse.getResult_code())){
 					titanCardBINQueryResponse.putErrorResult(RSErrorCodeEnum.build(rbCardBINQueryResponse.getResult_msg()));
 					return titanCardBINQueryResponse;
 				}
@@ -213,7 +213,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				rbQuickPayResponse = (RBQuickPayResponse)JsonUtil.jsonToBean(responseStr, RBQuickPayResponse.class);
 				logger.info("【"+contractType+"】返回信息:" + rbQuickPayResponse.toString());
 				
-				if(!"0000".equals(rbQuickPayResponse.getResult_code())){
+				if(!SysConstant.RB_QUICKPAY_SUCCESS.equals(rbQuickPayResponse.getResult_code())){
 					titanQuickPayResponse.putErrorResult(RSErrorCodeEnum.build(rbQuickPayResponse.getResult_msg()));
 					return titanQuickPayResponse;
 				}
@@ -299,7 +299,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				rbPayConfirmResponse = (RBPayConfirmResponse)JsonUtil.jsonToBean(responseStr, RBPayConfirmResponse.class);
 				logger.info("【融宝-确认支付】返回信息:" + rbPayConfirmResponse.toString());
 				
-				if(!"0000".equals(rbPayConfirmResponse.getResult_code())){
+				if(!SysConstant.RB_QUICKPAY_SUCCESS.equals(rbPayConfirmResponse.getResult_code())){
 					titanPayConfirmResponse.putErrorResult(RSErrorCodeEnum.build(rbPayConfirmResponse.getResult_msg()));
 					return titanPayConfirmResponse;
 				}
@@ -376,7 +376,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				rbReSendMsgResponse = (RBReSendMsgResponse)JsonUtil.jsonToBean(responseStr, RBReSendMsgResponse.class);
 				logger.info("【融宝-重发验证码】返回信息:" + rbReSendMsgResponse.toString());
 				
-				if(!"0000".equals(rbReSendMsgResponse.getResult_code())){
+				if(!SysConstant.RB_QUICKPAY_SUCCESS.equals(rbReSendMsgResponse.getResult_code())){
 					titanReSendMsgResponse.putErrorResult(RSErrorCodeEnum.build(rbReSendMsgResponse.getResult_msg()));
 					return titanReSendMsgResponse;
 				}
@@ -453,7 +453,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				rbPayQueryResponse = (RBPayQueryResponse)JsonUtil.jsonToBean(responseStr, RBPayQueryResponse.class);
 				logger.info("【融宝-快捷支付查询】返回信息:" + rbPayQueryResponse.toString());
 				
-				if(!"0000".equals(rbPayQueryResponse.getResult_code())){
+				if(!SysConstant.RB_QUICKPAY_SUCCESS.equals(rbPayQueryResponse.getResult_code())){
 					titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.build(rbPayQueryResponse.getResult_msg()));
 					return titanPayQueryResponse;
 				}
@@ -534,7 +534,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				responseStr = Decipher.decryptData(responseStr);
 				rbRefundResponse = (RBBaseResponse)JsonUtil.jsonToBean(responseStr, RBBaseResponse.class);
 				logger.info("【融宝-快捷支付退款】返回信息：result_code={}，result_msg={}", rbRefundResponse.getResult_code(), rbRefundResponse.getResult_msg());
-				if(!"0000".equals(rbRefundResponse.getResult_code())){
+				if(!SysConstant.RB_QUICKPAY_SUCCESS.equals(rbRefundResponse.getResult_code())){
 					titanOrderRefundResponse.putErrorResult(RSErrorCodeEnum.build(rbRefundResponse.getResult_msg()));
 					return titanOrderRefundResponse;
 				}
@@ -615,7 +615,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				responseStr = Decipher.decryptData(responseStr);
 				rbRefundQueryResponse = (RBRefundQueryResponse)JsonUtil.jsonToBean(responseStr, RBRefundQueryResponse.class);
 				logger.info("【融宝-快捷支付退款查询】返回信息:" + rbRefundQueryResponse.toString());
-				if(!"0000".equals(rbRefundQueryResponse.getResult_code())){
+				if(!SysConstant.RB_QUICKPAY_SUCCESS.equals(rbRefundQueryResponse.getResult_code())){
 					titanRefundQueryResponse.putErrorResult(RSErrorCodeEnum.build(rbRefundQueryResponse.getResult_msg()));
 					return titanRefundQueryResponse;
 				}

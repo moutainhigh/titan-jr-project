@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
+import com.titanjr.checkstand.dto.RBAgentPayContentDTO;
+import com.titanjr.checkstand.request.RBAgentPayQueryRequest;
+import com.titanjr.checkstand.request.RBAgentPayRequest;
 import com.titanjr.checkstand.request.RBBindCardQueryRequest;
 import com.titanjr.checkstand.request.RBCardAuthRequest;
 import com.titanjr.checkstand.request.RBCardBINQueryRequest;
@@ -469,6 +472,55 @@ public class SignMsgBuilder {
 	}
 	
 	
+	public static TreeMap<String,String> rbAgentPaySign(RBAgentPayRequest rbAgentPayRequest, String key) {
+		
+		TreeMap<String,String> params = new TreeMap<String,String>();
+		params.put("charset", rbAgentPayRequest.getCharset());
+		params.put("trans_time", rbAgentPayRequest.getTrans_time());
+		params.put("batch_no", rbAgentPayRequest.getBatch_no());
+		params.put("batch_count", rbAgentPayRequest.getBatch_count());
+		params.put("pay_type", rbAgentPayRequest.getPay_type());
+		params.put("pay_sight", rbAgentPayRequest.getPay_sight());
+		params.put("batch_amount", rbAgentPayRequest.getBatch_amount());
+		params.put("content", contentDTO2String(rbAgentPayRequest.getContent()));
+		
+		String signSource = getSignSource(params, key);
+		
+		logger.info("rb-quickpay-sourceMsg：{}", signSource);
+		String md5Sign = MD5.MD5Encode(signSource, "UTF-8");
+		logger.info("rb-quickpay-signMsg：{}", md5Sign);
+		
+		rbAgentPayRequest.setSign(md5Sign);
+		params.put("sign", md5Sign);
+		params.put("sign_type", rbAgentPayRequest.getSign_type());
+		
+		return params;
+		
+	}
+	
+	
+	public static TreeMap<String,String> rbAgentQuerySign(RBAgentPayQueryRequest rbAgentPayQueryRequest, String key) {
+		
+		TreeMap<String,String> params = new TreeMap<String,String>();
+		params.put("charset", rbAgentPayQueryRequest.getCharset());
+		params.put("trans_time", rbAgentPayQueryRequest.getTrans_time());
+		params.put("batch_no", rbAgentPayQueryRequest.getBatch_no());
+		params.put("detail_no", rbAgentPayQueryRequest.getDetail_no());
+		
+		String signSource = getSignSource(params, key);
+		
+		logger.info("rb-quickpay-sourceMsg：{}", signSource);
+		String md5Sign = MD5.MD5Encode(signSource, "UTF-8");
+		logger.info("rb-quickpay-signMsg：{}", md5Sign);
+		
+		rbAgentPayQueryRequest.setSign(md5Sign);
+		params.put("sign", md5Sign);
+		params.put("sign_type", rbAgentPayQueryRequest.getSign_type());
+		
+		return params;
+		
+	}
+	
 	private static String getSignSource(TreeMap<String,String> params, String key){
 		StringBuilder sb = new StringBuilder();
 		for(Map.Entry<String, String> entry:params.entrySet()){
@@ -481,6 +533,30 @@ public class SignMsgBuilder {
 		}
 		sb.append(key);
 		return sb.toString();
+	}
+	
+	
+	private static String contentDTO2String(RBAgentPayContentDTO rbAgentPayContentDTO){
+		StringBuilder content = new StringBuilder();
+		content.append(rbAgentPayContentDTO.getNumber()+",");
+		content.append(rbAgentPayContentDTO.getAccountNo()+",");
+		content.append(rbAgentPayContentDTO.getAccountName()+",");
+		content.append(rbAgentPayContentDTO.getBankName()+",");
+		content.append(rbAgentPayContentDTO.getBranchBank()+",");//分行
+		content.append(rbAgentPayContentDTO.getSubBank()+",");//支行
+		content.append(rbAgentPayContentDTO.getAccountProperty()+",");
+		content.append(rbAgentPayContentDTO.getAmount()+",");
+		content.append(rbAgentPayContentDTO.getCurrency()+",");
+		content.append(rbAgentPayContentDTO.getProvince()+",");
+		content.append(rbAgentPayContentDTO.getCity()+",");
+		content.append(rbAgentPayContentDTO.getPhone()+",");
+		content.append(rbAgentPayContentDTO.getCertificateType()+",");
+		content.append(rbAgentPayContentDTO.getCertificateNo()+",");
+		content.append(rbAgentPayContentDTO.getProtocolNo()+",");
+		content.append(rbAgentPayContentDTO.getOrderNo()+",");
+		content.append(rbAgentPayContentDTO.getRemark());
+		return content.toString();
+		//return "1,62220215080205389633,jerry,工商银行,分行,支行,私,0.01,CNY,北京,北京,18910116131,身份证,420321199202150718,0001,12306,hehe";
 	}
 
 }

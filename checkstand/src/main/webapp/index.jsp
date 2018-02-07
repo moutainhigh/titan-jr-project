@@ -381,9 +381,13 @@
                 </td>
             </tr>
             <tr>
-                <td class="tdr">商户单号</td>
+                <td class="tdr">商户单号（批次号）</td>
                 <td><input type="text" id="agentPay_orderNo" value="" name="orderNo"/>
                     <input type="button" value="刷新" onclick="refreshAgentPayOrderNo()" /></td>
+            </tr>
+            <tr>
+                <td class="tdr">序号</td>
+                <td><input type="text" id="number" value="123456" name="number"/>融宝必填：不能大于6个字符 </td>
             </tr>
             <tr>
                 <td class="tdr">交易金额</td>
@@ -395,19 +399,25 @@
             </tr>
             <tr>
                 <td class="tdr">交易代码</td>
-                <td><input type="text" id="tradeCode" value="100014" name="tradeCode"/></td>
+                <td><input type="text" id="tradeCode" value="100014" name="tradeCode"/>100014通联代付；300001融宝代付</td>
             </tr>
-            <tr>
+            <!-- <tr>
                 <td class="tdr">提交时间</td>
                 <td>
                     <input type="text" id="submitTime" name="submitTime"/>
                     <input type="button" value="刷新" onclick="refreshSubmitTime()" />
                 </td>
-            </tr>
+            </tr> -->
             <tr>
                 <td class="tdr">银行标示</td>
                 <td>
                     <input type="text" value="icbc" id="bankInfo" name="bankInfo"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">银行名称</td>
+                <td>
+                    <input type="text" value="工商银行" id="bankName" name="bankName"/>
                 </td>
             </tr>
             <tr>
@@ -437,7 +447,7 @@
             <tr>
                 <td class="tdr">证件号</td>
                 <td>
-                    <input type="text" value="421381177110306452" id="accountId" name="accountId"/>
+                    <input type="text" value="421381177110306452" id="idCode" name="idCode"/>
                 </td>
             </tr>
             <tr>
@@ -474,28 +484,40 @@
             </tr>
             <tr>
                 <td class="tdr">商户单号</td>
-                <td><input type="text" id="orderNo" value="TJO2017112900001" name="orderNo"/>若不填时间必填</td>
+                <td><input type="text" id="orderNo" value="TJO2017112900001" name="orderNo"/>通联：若不填时间必填；融宝必填</td>
             </tr>
             <tr>
                 <td class="tdr">交易代码</td>
-                <td><input type="text" id="tradeCode" value="200004" name="tradeCode"/></td>
+                <td><input type="text" id="tradeCode" value="200004" name="tradeCode"/></td>通联：200004 融宝：300002
             </tr>
             <tr>
                 <td class="tdr">交易状态</td>
                 <td>
-                    <input type="text" value="2" id="tradeStatus" name="tradeStatus"/>0成功，1失败，2全部，3退票，4代付失败退款，5代付退票退款，6委托扣款，7提现
+                    <input type="text" value="2" id="tradeStatus" name="tradeStatus"/>通联必填：0成功，1失败，2全部，3退票，4代付失败退款，5代付退票退款，6委托扣款，7提现
                 </td>
             </tr>
             <tr>
                 <td class="tdr">查询类型</td>
                 <td>
-                    <input type="text" value="1" id="queryType" name="queryType"/>0.按完成日期1.按提交日期
+                    <input type="text" value="1" id="queryType" name="queryType"/>通联必填  0.按完成日期1.按提交日期
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">查询日期</td>
+                <td>
+                    <input type="text" value="2018-02-06" id="transDate" name="transDate"/>融宝必填  yyyy-MM-dd
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">序号</td>
+                <td>
+                    <input type="text" value="123456" id="number" name="number"/>融宝必填：不能大于6个字符
                 </td>
             </tr>
             <tr>
                 <td class="tdr">开始时间</td>
                 <td>
-                    <input type="text" id="startDate" name="startDate"/>若不填则orderNo则必填
+                    <input type="text" id="startDate" name="startDate"/>通联：若不填则orderNo则必填
                 </td>
             </tr>
             <tr>
@@ -534,36 +556,42 @@
             <tr align="left">
                 <td class="tdr">流水号</td>
                 <td>
-                    <input type="text" name="serialNo" id="serialNo" class="input_t01"/>* 
-                    	<input type="button" value="刷新" onclick="refreshSerialNo()" />
+                    <input type="text" name="serialNo" id="serialNo" class="input_t01"/> 
+                    	<input type="button" value="刷新" onclick="refreshSerialNo()" />通联必填
                 </td>
             </tr>
             <tr>
                 <td class="tdr">交易代码</td>
-                <td><input type="text" id="tradeCode" value="200002" name="tradeCode"/>* </td>
+                <td><input type="text" id="tradeCode" value="200002" name="tradeCode"/>* 通联:200002 融宝:300003</td>
             </tr>
             <tr>
                 <td class="tdr">交易状态</td>
                 <td>
-                    <input type="text" value="2" id="tradeStatus" name="tradeStatus"/>*  0成功，1失败，2全部，3退票，4代付失败退款，5代付退票退款，6委托扣款，7提现
+                    <input type="text" value="2" id="tradeStatus" name="tradeStatus"/>通联必填   0成功，1失败，2全部，3退票，4代付失败退款，5代付退票退款，6委托扣款，7提现
                 </td>
             </tr>
             <tr>
                 <td class="tdr">查询类型</td>
                 <td>
-                    <input type="text" value="1" id="queryType" name="queryType"/>*  0.按完成日期1.按提交日期
+                    <input type="text" value="1" id="queryType" name="queryType"/>通联必填    0.按完成日期1.按提交日期
                 </td>
             </tr>
             <tr>
                 <td class="tdr">开始时间</td> 
                 <td>
-                    <input type="text" id="startDate" name="startDate"/>* 
+                    <input type="text" id="startDate" name="startDate"/>通联必填 yyyyMMddHHmmss
                 </td>
             </tr>
             <tr>
                 <td class="tdr">结束时间</td>
                 <td>
-                    <input type="text" id="endDate" name="endDate"/>* 
+                    <input type="text" id="endDate" name="endDate"/>通联必填 
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">交易日期</td>
+                <td>
+                    <input type="text" id="tradeDate" name="tradeDate"/>融宝必填  yyyyMMdd
                 </td>
             </tr>
             <tr>

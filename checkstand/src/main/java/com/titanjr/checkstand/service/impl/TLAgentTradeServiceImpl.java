@@ -66,7 +66,7 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 	private TitanSysconfigService titanSysconfigService;
 	
 	@Override
-	public TitanAgentPayResponse agentPay(TLAgentTradeRequest tlAgentTradeRequest) {
+	public TitanAgentPayResponse tlAgentPay(TLAgentTradeRequest tlAgentTradeRequest) {
 		
 		TitanAgentPayResponse titanAgentPayResponse = new TitanAgentPayResponse();
 		
@@ -155,6 +155,10 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 			
 			String resp = sendXml(tlAgentTradeRequest, gateWayConfigDTO.getGateWayUrl());
 			writeBill(resp);
+			
+			response.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+			response.setVersion(SysConstant.RS_VERSION);
+			response.setSignType(SysConstant.RS_SIGN_TYPE);
 			return response;
 			
 		}catch(Exception e){
@@ -267,7 +271,7 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 	private TitanAgentQueryResponse agentQuery(String retXml) {
 		
 		String trxcode = null;
-		TitanAgentQueryResponse titanAgentTradeResponse = new TitanAgentQueryResponse();
+		TitanAgentQueryResponse titanAgentQueryResponse = new TitanAgentQueryResponse();
 		TLAgentTradeResponse tlAgentTradeResponse = null;
 		//或者交易码
 		if (retXml.indexOf("<TRX_CODE>") != -1)
@@ -277,13 +281,13 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 			if (begin >= 0) trxcode = retXml.substring(begin, end);
 		}
 		tlAgentTradeResponse = XmlTools.parseRsp(retXml);
-		titanAgentTradeResponse.setTradeCode(tlAgentTradeResponse.getINFO().getTRX_CODE());
+		titanAgentQueryResponse.setTradeCode(tlAgentTradeResponse.getINFO().getTRX_CODE());
 		
 		//交易查询处理逻辑
 		if("200004".equals(trxcode)||"200005".equals(trxcode)){
 			if("0000".equals(tlAgentTradeResponse.getINFO().getRET_CODE())){
 				
-				titanAgentTradeResponse.setRetCode(AgentRetCodeEnum.RET_CODE_SUCCESS.code);
+				titanAgentQueryResponse.setRetCode(AgentRetCodeEnum.RET_CODE_SUCCESS.code);
 				QTransRsp qrsq = (QTransRsp) tlAgentTradeResponse.getTrxData().get(0);
 				logger.info("查询成功，具体结果明细如下:");
 				List<TitanAgentResDetailDTO> titanDetails = new ArrayList<TitanAgentResDetailDTO>();
@@ -315,7 +319,7 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 					}
 					titanDetails.add(resDetail);
 				}
-				titanAgentTradeResponse.setDetails(titanDetails);
+				titanAgentQueryResponse.setDetails(titanDetails);
 				
 			} else if("2000".equals(tlAgentTradeResponse.getINFO().getRET_CODE())
 					||"2001".equals(tlAgentTradeResponse.getINFO().getRET_CODE())
@@ -325,27 +329,27 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 					||"2008".equals(tlAgentTradeResponse.getINFO().getRET_CODE())){
 				
 				logger.info("整个批次的交易都是处理中：{}", tlAgentTradeResponse.getINFO().getERR_MSG());
-				titanAgentTradeResponse.setRetCode(AgentRetCodeEnum.RET_CODE_PROCESS.code);
+				titanAgentQueryResponse.setRetCode(AgentRetCodeEnum.RET_CODE_PROCESS.code);
 				
 			} else if("2004".equals(tlAgentTradeResponse.getINFO().getRET_CODE())){
 				
 				logger.info("整个批次都未受理通过（最终失败）");
-				titanAgentTradeResponse.setRetCode(AgentRetCodeEnum.RET_CODE_NOT_FIND.code);
+				titanAgentQueryResponse.setRetCode(AgentRetCodeEnum.RET_CODE_NOT_FIND.code);
 				
 			} else if("1002".equals(tlAgentTradeResponse.getINFO().getRET_CODE())){
 				
 				logger.info("未查询到对应的交易");
-				titanAgentTradeResponse.setRetCode(AgentRetCodeEnum.RET_CODE_NOT_FIND.code);
+				titanAgentQueryResponse.setRetCode(AgentRetCodeEnum.RET_CODE_NOT_FIND.code);
 				
 			} else{
 				
 				logger.error("查询请求失败，请重新发起查询：{}", tlAgentTradeResponse.getINFO().getERR_MSG());
-				titanAgentTradeResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				titanAgentQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 				
 			}
 		}
 		
-		return titanAgentTradeResponse;
+		return titanAgentQueryResponse;
 		
 	}
 	
@@ -414,12 +418,12 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 
 		File file = new File(resUrl+"/bills/"+fileName);
 		InputStream inputStream = new FileInputStream(file);
-		util.uploadStream(fileName, inputStream, FtpUtil.UPLOAD_PATH_AGENT_CHECKING);
+		util.uploadStream(fileName, inputStream, FtpUtil.UPLOAD_PATH_TL_AGENT_CHECKING);
 		logger.info("upload to ftp success fileName=" + fileName);
 
 		util.ftpLogOut();
 		
-		logger.info("对账文件下载成功");
+		logger.info("对账文件下载并上传成功");
 		
 	}
 
