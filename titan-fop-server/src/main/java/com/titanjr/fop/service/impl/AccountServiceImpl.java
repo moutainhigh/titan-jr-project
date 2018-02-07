@@ -258,8 +258,8 @@ public class AccountServiceImpl implements AccountService {
         paramMap.put("merchantNo", "M000016");
         paramMap.put("orderNo", withdrawserviceRequest.getUserorderid());//客户单号
         paramMap.put("tradeCode", "100014");
-        //paramMap.put("submitTime", DateUtil.dateToString(new Date(), "yyyyMMddHHmmss"));
-        paramMap.put("bankInfo", BankCardMapper.getBankCardByCode(cardDTO.getBankcode()).getBankInfo());//单笔实时代付
+        //paramMap.put("submitTime", DateUtil.dateToString(new Date(), "yyyyMMddHHmmss"));//在checkstand处理，通联和融宝要求格式不同
+        paramMap.put("bankInfo", BankCardMapper.getBankCardByCode(cardDTO.getBankcode()).getBankInfo());
         paramMap.put("busiCode", "105");
         paramMap.put("accountType", "00");//默认银行卡
         paramMap.put("accountNo", cardDTO.getAccountnumber());
