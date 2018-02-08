@@ -25,6 +25,7 @@
         <module>TFS</module>
         <module>TWS</module>
     	<module>titanjr-redis</module>
+    <module>titanjr-wechat-mini</module>
   </modules>
 
     <properties>
