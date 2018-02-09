@@ -49,7 +49,7 @@
                         GWC.urlParams[pairs[i].substring(0, pos)] = decodeURIComponent(pairs[i].substring(pos + 1));
                     }
                 },
-                doRedirect: function() {debugger;
+                doRedirect: function() {
                     var code = GWC.urlParams['code'];
                     var appId = GWC.urlParams['appid'];
                     var scope = GWC.urlParams['scope'] || 'snsapi_base';
