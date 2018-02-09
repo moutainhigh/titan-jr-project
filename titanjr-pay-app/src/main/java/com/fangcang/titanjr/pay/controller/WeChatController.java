@@ -323,8 +323,10 @@ public class WeChatController {
 					.getOrderNo());
 			HttpSession httpSession = request.getSession();
 			httpSession.setMaxInactiveInterval(70);
-			// 进行微信的oauth2验证
+			
+			// 微信oauth2验证的回调地址
 			String callBackUrl = this.getRequestBaseUrl(request)
+			//String callBackUrl = "http://www.fangcang.org/titanjr-pay-dev3"//希望微信回调的测试地址
 					+ "/checkstand.action;jsessionid="
 					+ httpSession.getId()
 					+ "?orderData="
@@ -338,7 +340,8 @@ public class WeChatController {
 			log.info("set wx callback url = " + callBackUrl);
 
 			// 重定向到微信的认证平台
-			response.sendRedirect("https://open.weixin.qq.com/connect/oauth2/authorize?"
+			//response.sendRedirect("https://open.weixin.qq.com/connect/oauth2/authorize?"
+			response.sendRedirect("http://www.fangcang.com/titanjr-pay-app/get-wx-code.html?"//先到房仓生产环境处理再请求微信认证平台
 					+ "appid="
 					+ appId
 					+ "&redirect_uri="
@@ -346,6 +349,7 @@ public class WeChatController {
 					+ "&response_type=code"
 					+ "&scope=snsapi_base"
 					+ "&state=123#wechat_redirect");
+			
 			//记录费率日志
 			CreateTitanRateRecordReq rateReq = new CreateTitanRateRecordReq();
 			rateReq.setAmount(Long.parseLong(NumberUtil
