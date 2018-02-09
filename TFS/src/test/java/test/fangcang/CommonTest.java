@@ -39,7 +39,7 @@ public class CommonTest {
     private static final Log log = LogFactory.getLog(CommonTest.class);
 
     public static void main(String[] args) {
-    	payCallBack();
+//    	payCallBack();
     }
 
     
@@ -47,12 +47,12 @@ public class CommonTest {
     private static void notifyGateawayRefund()   {
 
 		NotifyRefundRequest notifyRefundRequest = new NotifyRefundRequest();
-		notifyRefundRequest.setOrderNo("2017112713031500004");
-		notifyRefundRequest.setOrderTime("20171127130315");
+		notifyRefundRequest.setOrderNo("2017122901125000002");
+		notifyRefundRequest.setOrderTime("20171229011250");
 		notifyRefundRequest.setBusiCode(BusiCodeEnum.QueryRefund.getKey());
 		notifyRefundRequest.setMerchantNo("M000016");
-		notifyRefundRequest.setRefundAmount("101700");
-		notifyRefundRequest.setRefundOrderno("OD20171201101923006");
+		notifyRefundRequest.setRefundAmount("1200");
+		notifyRefundRequest.setRefundOrderno("OD20180102170620001");
 		notifyRefundRequest.setSignType("1");
 		notifyRefundRequest.setVersion("v1.0");
 		
