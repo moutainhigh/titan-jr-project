@@ -1,8 +1,12 @@
 package com.titanjr.fop.request;
 
+import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.util.DateUtil;
+import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.domain.FopHashMap;
 import com.titanjr.fop.exceptions.ApiRuleException;
 import com.titanjr.fop.response.WheatfieldOrdernQueryResponse;
+import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.Date;
 import java.util.Map;
@@ -17,6 +21,7 @@ public class WheatfieldOrdernQueryRequest extends BaseRequest implements FopRequ
     private Date starttime;
     private Long amount;
     private String funccode;
+    @NotBlank
     private String merchantcode;
     private String userid;
     private String orderno;
@@ -140,5 +145,9 @@ public class WheatfieldOrdernQueryRequest extends BaseRequest implements FopRequ
     }
 
     public void check() throws ApiRuleException {
+        if (!GenericValidate.validate(this)) {
+            throw new ApiRuleException(ReturnCodeEnum.CODE_NONE_ERROR.getCode(),
+                    ReturnCodeEnum.CODE_NONE_ERROR.getMsg());
+        }
     }
 }

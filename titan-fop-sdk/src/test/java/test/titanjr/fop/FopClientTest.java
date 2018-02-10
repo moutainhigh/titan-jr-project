@@ -2,6 +2,7 @@ package test.titanjr.fop;
 
 import com.fangcang.util.DateUtil;
 import com.titanjr.fop.api.DefaultFopClient;
+import com.titanjr.fop.constants.FuncCodeEnum;
 import com.titanjr.fop.exceptions.ApiException;
 import com.titanjr.fop.request.*;
 import com.titanjr.fop.response.*;
@@ -86,6 +87,27 @@ public class FopClientTest extends BaseTest{
         try {
             WheatfieldOrderServiceReturngoodsResponse response = fopClient.execute(returngoodsRequest, "1514456720670432636");
             System.out.println(response.getBatchno());
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testOrderNQuery() {
+        WheatfieldOrdernQueryRequest ordernQueryRequest = new WheatfieldOrdernQueryRequest();
+        ordernQueryRequest.setMerchantcode("M000016");
+        ordernQueryRequest.setFunccode(FuncCodeEnum.RECHARGE_4015.getKey());
+        ordernQueryRequest.setUserid("TJM60000018");
+        ordernQueryRequest.setStarttime(DateUtil.stringToDate("2018-02-02"));//>=
+        ordernQueryRequest.setEndtime(DateUtil.stringToDate("2018-02-03"));//<
+        try {
+            DateUtil.stringToDate("2018-02-02");
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        try {
+            WheatfieldOrdernQueryResponse response = fopClient.execute(ordernQueryRequest, "1514456720670432636");
+            System.out.println(response.getTransorderinfos());
         } catch (ApiException e) {
             e.printStackTrace();
         }

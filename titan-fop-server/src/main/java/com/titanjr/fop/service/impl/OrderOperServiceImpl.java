@@ -300,10 +300,10 @@ public class OrderOperServiceImpl implements OrderOperService {
         TitanOrderPayreqParam requestParam = new TitanOrderPayreqParam();
         //merchantcode,funccode这两个暂不处理，status从查出的结果中筛选
         if (null != ordernQueryRequest.getStarttime()) {
-            requestParam.setStartTime(DateUtil.dateToString(ordernQueryRequest.getStarttime(), "yyyy-MM-dd HH:mm:ss"));
+            requestParam.setStartTime(DateUtil.dateToString(ordernQueryRequest.getStarttime(), "yyyyMMddHHmmss"));
         }
         if (null != ordernQueryRequest.getEndtime()) {
-            requestParam.setEndTime(DateUtil.dateToString(ordernQueryRequest.getEndtime(), "yyyy-MM-dd HH:mm:ss"));
+            requestParam.setEndTime(DateUtil.dateToString(ordernQueryRequest.getEndtime(), "yyyyMMddHHmmss"));
         }
         if (StringUtil.isValidString(ordernQueryRequest.getOrderno())) {
             requestParam.setOrderNo(ordernQueryRequest.getOrderno());
@@ -322,6 +322,7 @@ public class OrderOperServiceImpl implements OrderOperService {
 
         //获取网关地址
         String paymentURL = InterfaceURlConfig.checkstand_GateWayURL;
+//        paymentURL = "http://192.168.0.14:8090/checkstand/payment.shtml";
         for (TitanOrderPayreq payreq : orderPayreqList) {
             Transorderinfo transorderinfo = new Transorderinfo();
             Map<String, String> paramMap = new HashMap<String, String>();
@@ -337,13 +338,13 @@ public class OrderOperServiceImpl implements OrderOperService {
                 String rechargeResult = WebUtils.doPost(paymentURL, paramMap, 60000, 60000);
                 Map resultMap = (Map) JSONObject.parse(rechargeResult);
                 //本地成功但是上游网关出不来结果,需报错通知
-                if (resultMap.isEmpty() && payreq.getReqstatus().equals(ReqstatusEnum.RECHARFE_SUCCESS.getStatus())) {
+                if (null != resultMap && resultMap.isEmpty() && payreq.getReqstatus().equals(ReqstatusEnum.RECHARFE_SUCCESS.getStatus())) {
                     logger.error("金融上游交易状态冲突，单号：{}", payreq.getOrderNo());
                     continue;
                 }
                 if (StringUtil.isValidString((String)resultMap.get("errCode"))) {
                     logger.error("查询上游交易状态错误，errMsg：{}，单号：{}", resultMap.get("errMsg"), payreq.getOrderNo());
-                    return orderInfoList;
+                    continue;
                 }
                 
                 /*//查询本地记账状态
@@ -567,8 +568,8 @@ public class OrderOperServiceImpl implements OrderOperService {
 
         @Override
         public int compare(Transorderinfo first, Transorderinfo second) {
-            Date firstTime = DateUtil.stringToDate(first.getCreatedtime(), "yyyy-MM-dd HH:mm:ss");
-            Date secondTime = DateUtil.stringToDate(second.getCreatedtime(), "yyyy-MM-dd HH:mm:ss");
+            Date firstTime = DateUtil.stringToDate(first.getCreatedtime(), "yyyyMMddHHmmss");
+            Date secondTime = DateUtil.stringToDate(second.getCreatedtime(), "yyyyMMddHHmmss");
             if (DateUtil.compare(firstTime, secondTime) > 1)
                 return -1;
             else if (DateUtil.compare(firstTime, secondTime) > 1)

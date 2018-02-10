@@ -119,10 +119,10 @@ public class OrderOperController extends BaseController {
     public String orderTransfer(HttpServletRequest request, RedirectAttributes attr) throws Exception {
         logger.debug("请求参数为:{}", request.getParameterMap());
         WheatfieldOrderTransferResponse orderTransferResponse = new WheatfieldOrderTransferResponse();
-//        String validResult = ResponseUtils.validRequestSign(request, orderTransferResponse);
-//        if (null != validResult) {
-//            return validResult;
-//        }
+        String validResult = ResponseUtils.validRequestSign(request, orderTransferResponse);
+        if (null != validResult) {
+            return validResult;
+        }
 
         WheatfieldOrderTransferRequest orderTransferRequest = BeanUtils.switch2RequestDTO(WheatfieldOrderTransferRequest.class, request);
         if (null == orderTransferRequest) {

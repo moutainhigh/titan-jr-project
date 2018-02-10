@@ -1,8 +1,12 @@
 package com.titanjr.fop.util;
 
+import com.titanjr.fop.dto.Transorderinfo;
 import com.titanjr.fop.exceptions.ApiException;
 import com.titanjr.fop.response.FopResponse;
 import net.sf.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by zhaoshan on 2017/12/19.
@@ -16,7 +20,9 @@ public class ObjectJsonParser<T extends FopResponse> implements FopParser<T> {
 
     public T parse(String resultJson) throws ApiException {
         JSONObject jsonObject = JSONObject.fromObject(resultJson);
-        T result = (T) JSONObject.toBean(jsonObject, clazz);
+        Map classMap = new HashMap();
+        classMap.put("transorderinfos",Transorderinfo.class);
+        T result = (T) JSONObject.toBean(jsonObject, clazz,classMap);
         return result;
     }
 
