@@ -20,7 +20,7 @@ public class FopClientTest extends BaseTest{
 
     @Test
     public void testGetSession() {
-    	
+
         ExternalSessionGetRequest sessionGetReq = new ExternalSessionGetRequest();
         sessionGetReq.setExtParam("扩展参数");
         try {

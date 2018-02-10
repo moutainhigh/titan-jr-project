@@ -1,7 +1,6 @@
 package com.titanjr.fop.request;
 
 import com.fangcang.titanjr.common.util.GenericValidate;
-import com.fangcang.util.DateUtil;
 import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.domain.FopHashMap;
 import com.titanjr.fop.exceptions.ApiRuleException;
