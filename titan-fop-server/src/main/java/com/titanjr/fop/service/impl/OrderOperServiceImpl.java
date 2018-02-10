@@ -11,6 +11,7 @@ import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.parameter.TitanAccountDetailParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
 import com.fangcang.titanjr.entity.parameter.TitanWithDrawReqParam;
+import com.fangcang.titanjr.enums.TradeTypeAccountDetailEnum;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.DateUtil;
@@ -419,6 +420,7 @@ public class OrderOperServiceImpl implements OrderOperService {
             //查询本地记账状态
             TitanAccountDetailParam param = new TitanAccountDetailParam();
             param.setTransOrderId(Long.valueOf(transferDTO.getTransorderid()));
+            param.setTradeType(TradeTypeAccountDetailEnum.TRANSFER.getTradeType());
             List<TitanAccountDetailDTO> detailDTOList = titanOrderDao.selectAccountDetail(param);
 
             //原则上有且只有一条记账记录，需报错通知

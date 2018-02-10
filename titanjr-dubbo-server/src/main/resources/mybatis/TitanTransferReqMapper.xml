@@ -189,8 +189,8 @@
         <if test="requestno !=null">
           and requestno=#{requestno}
         </if>
-        <if test="startTime != null"> and <![CDATA[ d.requesttime >= #{startTime} ]]></if>
-        <if test="endTime != null"> and <![CDATA[ d.requesttime < #{endTime} ]]></if>
+        <if test="startTime != null"> and <![CDATA[ createtime >= #{startTime} ]]></if>
+        <if test="endTime != null"> and <![CDATA[ createtime < #{endTime} ]]></if>
       </where>
   
   </select>
