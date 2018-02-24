@@ -21,6 +21,7 @@
       </if>
       <if test="startTime != null"> and <![CDATA[ createtime >= #{startTime} ]]></if>
       <if test="endTime != null"> and <![CDATA[ createtime < #{endTime} ]]></if>
+      <if test="amount != null"> and amount = #{amount}</if>
     </where>
     order by createtime desc
   </select>

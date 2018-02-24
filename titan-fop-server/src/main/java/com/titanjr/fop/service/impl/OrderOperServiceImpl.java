@@ -206,8 +206,9 @@ public class OrderOperServiceImpl implements OrderOperService {
             transorderinfoList.addAll(queryTransferInfo(ordernQueryRequest));
             transorderinfoList.addAll(queryWithDrawInfo(ordernQueryRequest));
         }
-
-        Collections.sort(transorderinfoList, new TransorderinfoComparator());
+        if (transorderinfoList.size() > 1) {
+            Collections.sort(transorderinfoList, new TransorderinfoComparator());
+        }
         return transorderinfoList;
     }
 
@@ -255,7 +256,7 @@ public class OrderOperServiceImpl implements OrderOperService {
         if (payerAccount != null && payeeAccount != null) {
             Long amount = Long.parseLong(orderTransferRequest.getAmount());
             Long payerUseable = Long.parseLong(payerAccount.getBalanceusable());
-            if (amount > payerUseable ){
+            if (amount > payerUseable) {
                 logger.error("转账失败，余额不足，可用余额：{}，转账金额：{}",
                         payerUseable, amount);
                 ResponseUtils.getSysErrorResp(transferResponse);
@@ -343,7 +344,7 @@ public class OrderOperServiceImpl implements OrderOperService {
                     logger.error("金融上游交易状态冲突，单号：{}", payreq.getOrderNo());
                     continue;
                 }
-                if (StringUtil.isValidString((String)resultMap.get("errCode"))) {
+                if (StringUtil.isValidString((String) resultMap.get("errCode"))) {
                     logger.error("查询上游交易状态错误，errMsg：{}，单号：{}", resultMap.get("errMsg"), payreq.getOrderNo());
                     continue;
                 }
@@ -441,8 +442,8 @@ public class OrderOperServiceImpl implements OrderOperService {
             transorderinfo.setFunccode(FuncCodeEnum.TRANSFER_3001.getKey());//转账
             transorderinfo.setRequestno("");//请求号不存在,无法设置
             transorderinfo.setOrderpackageno("");//设置userOrderNo，需关联查询
-            transorderinfo.setCreatedtime(DateUtil.dateToString(transferDTO.getCreatetime(),"yyyy-MM-dd HH:mm:ss"));//设置创建时间
-            transorderinfo.setUpdatedtime(DateUtil.dateToString(transferDTO.getCreatetime(),"yyyy-MM-dd HH:mm:ss"));//设置创建时间
+            transorderinfo.setCreatedtime(DateUtil.dateToString(transferDTO.getCreatetime(), "yyyy-MM-dd HH:mm:ss"));//设置创建时间
+            transorderinfo.setUpdatedtime(DateUtil.dateToString(transferDTO.getCreatetime(), "yyyy-MM-dd HH:mm:ss"));//设置创建时间
             transorderinfo.setErrorcode("");//不设置
             transorderinfo.setErrormsg("");//不设置
             transorderinfo.setMerchantcode("M1000016");
@@ -481,7 +482,8 @@ public class OrderOperServiceImpl implements OrderOperService {
         }
         List<TitanWithDrawDTO> withDrawDTOList = titanOrderService.queryWithDrawDTOList(withDrawReqParam);
         String paymentURL = InterfaceURlConfig.checkstand_GateWayURL;//查询
-        for (TitanWithDrawDTO withDrawDTO : withDrawDTOList){
+//        paymentURL = "http://192.168.0.14:8090/checkstand/payment.shtml";
+        for (TitanWithDrawDTO withDrawDTO : withDrawDTOList) {
             Transorderinfo transorderinfo = new Transorderinfo();
             Map<String, String> paramMap = new HashMap<String, String>();
             paramMap.put("merchantNo", "M1000016");
@@ -495,29 +497,29 @@ public class OrderOperServiceImpl implements OrderOperService {
                 //查询网关真实提现状态
                 String withDrawResult = WebUtils.doPost(paymentURL, paramMap, 60000, 60000);
                 Map resultMap = (Map) JSONObject.parse(withDrawResult);
-                if (null == resultMap.get("details")){
+                if (null == resultMap.get("details")) {
                     logger.error("网关返回结果异常");
                     continue;
                 }
-                if (CollectionUtils.isEmpty((JSONArray)resultMap.get("details"))){
+                if (CollectionUtils.isEmpty((JSONArray) resultMap.get("details"))) {
                     logger.error("查询到的详情为空");
                     continue;
                 }
-                JSONObject resDetailDTO = (JSONObject)((JSONArray)resultMap.get("details")).get(0);
-                if (null == resDetailDTO || !StringUtil.isValidString(resDetailDTO.get("tradeStatus").toString())){
+                JSONObject resDetailDTO = (JSONObject) ((JSONArray) resultMap.get("details")).get(0);
+                if (null == resDetailDTO || !StringUtil.isValidString(resDetailDTO.get("tradeStatus").toString())) {
                     logger.error("交易状态不正确");
                     continue;
                 }
 
-                if ("3".equals(resDetailDTO.get("tradeStatus"))){
+                if ("3".equals(resDetailDTO.get("tradeStatus"))) {
                     transorderinfo.setOrderstatus(OrderNStatusEnum.PAY_SUCC_4.getKey());//成功
                 }
-                if ("2".equals(resDetailDTO.get("tradeStatus"))){
+                if ("2".equals(resDetailDTO.get("tradeStatus"))) {
                     transorderinfo.setOrderstatus(OrderNStatusEnum.PAY_FAIL_5.getKey());//失败
                     //针对失败，起任务平账，平账后状态变成CORRECT_6，交易已冲正；
 
                 }
-                if ("1".equals(resDetailDTO.get("tradeStatus"))){
+                if ("1".equals(resDetailDTO.get("tradeStatus"))) {
                     transorderinfo.setOrderstatus(OrderNStatusEnum.SENDING_7.getKey());//处理中
                 }
                 transorderinfo.setOrderno("");//单号,OP开头没法设置

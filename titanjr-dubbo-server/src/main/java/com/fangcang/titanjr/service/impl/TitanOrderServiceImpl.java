@@ -176,18 +176,14 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 	@Override
 	public List<TitanWithDrawDTO> queryWithDrawDTOList(TitanWithDrawReqParam withDrawReqParam) {
 		List<TitanWithDrawDTO> withDrawResult = new ArrayList<TitanWithDrawDTO>();
-		if (withDrawReqParam != null) {
+		if (withDrawReqParam == null) {
 			log.error("查询参数错误，请核实");
 			return withDrawResult;
 		}
 
-		TitanWithDrawReqParam condition = new TitanWithDrawReqParam();
-		condition.setWithdrawreqid(withDrawReqParam.getWithdrawreqid());
-		condition.setTransorderid(withDrawReqParam.getTransorderid());
-		condition.setUserorderid(withDrawReqParam.getUserorderid());
 		List<TitanWithDrawReq> withDrawReqList = new ArrayList<TitanWithDrawReq>();
 		try {
-			withDrawReqList = titanWithDrawReqDao.queryList(condition);
+			withDrawReqList = titanWithDrawReqDao.queryList(withDrawReqParam);
 		} catch (Exception e) {
 			log.error("查询提现记录失败", e);
 		}
