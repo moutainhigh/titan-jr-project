@@ -134,13 +134,13 @@ public class TLPaymentServiceImpl implements TLPaymentService {
 				
 			}else{
 				
-				logger.error("【通联-扫码支付】失败 httpRes为空");
+				logger.error("【通联-微信公众号支付】失败 httpRes为空");
 				titanQrCodePayResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);;
 				return titanQrCodePayResponse;
 			}
 			
 		} catch (Exception e) {
-			logger.error("【通联-扫码支付】发生异常：", e);
+			logger.error("【通联-微信公众号支付】发生异常：", e);
 			titanQrCodePayResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanQrCodePayResponse;
 		}

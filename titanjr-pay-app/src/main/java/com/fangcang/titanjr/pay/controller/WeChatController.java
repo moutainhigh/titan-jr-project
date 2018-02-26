@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fangcang.titanjr.common.enums.CashierItemTypeEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
@@ -60,6 +61,7 @@ import com.fangcang.titanjr.service.TitanCashierDeskService;
 import com.fangcang.titanjr.service.TitanFinancialOrganService;
 import com.fangcang.titanjr.service.TitanFinancialTradeService;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
+import com.fangcang.util.JSONUtils;
 import com.fangcang.util.StringUtil;
 
 /**
@@ -325,8 +327,8 @@ public class WeChatController {
 			httpSession.setMaxInactiveInterval(70);
 			
 			// 微信oauth2验证的回调地址
-			String callBackUrl = this.getRequestBaseUrl(request)
-			//String callBackUrl = "http://www.fangcang.org/titanjr-pay-dev3"//希望微信回调的测试地址
+			//String callBackUrl = this.getRequestBaseUrl(request)
+			String callBackUrl = "http://www.fangcang.org/titanjr-pay-dev3"//由于nginx原因，213不能用getRequestBaseUrl()获取根路径
 					+ "/checkstand.action;jsessionid="
 					+ httpSession.getId()
 					+ "?orderData="
@@ -340,7 +342,14 @@ public class WeChatController {
 			log.info("set wx callback url = " + callBackUrl);
 
 			// 重定向到微信的认证平台
-			//response.sendRedirect("https://open.weixin.qq.com/connect/oauth2/authorize?"
+			/*response.sendRedirect("https://open.weixin.qq.com/connect/oauth2/authorize?"
+					+ "appid="
+					+ appId
+					+ "&redirect_uri="
+					+ URLEncoder.encode(callBackUrl, "UTF-8")
+					+ "&response_type=code"
+					+ "&scope=snsapi_base"
+					+ "&state=123#wechat_redirect");*/
 			response.sendRedirect("http://www.fangcang.com/titanjr-pay-app/get-wx-code.html?"//先到房仓生产环境处理再请求微信认证平台
 					+ "appid="
 					+ appId
@@ -348,7 +357,8 @@ public class WeChatController {
 					+ URLEncoder.encode(callBackUrl, "UTF-8")
 					+ "&response_type=code"
 					+ "&scope=snsapi_base"
-					+ "&state=123#wechat_redirect");
+					+ "&state=STATE"
+					+ "&connect_redirect=1#wechat_redirect");
 			
 			//记录费率日志
 			CreateTitanRateRecordReq rateReq = new CreateTitanRateRecordReq();
@@ -512,10 +522,9 @@ public class WeChatController {
 									gatewayParam);
 					session.setAttribute(dataDTO.getSignMsg(), result);
 				}
-
 				result = String.valueOf(session.getAttribute(dataDTO
 						.getSignMsg()));
-
+				
 				log.info("gateway request result[" + result + "]");
 
 			} finally {
@@ -548,6 +557,8 @@ public class WeChatController {
 					"failJumpUrl",
 					appendRequestParam(failJumpUrl,
 							TitanMsgCodeEnum.REQUEST_PAYER_FAIL));
+			
+			log.info("to wxjsapi：payJson===>>" + resultMap.get("respJs"));
 			return "/checkstand-pay/wxjsapi";
 
 		} catch (Exception e) {

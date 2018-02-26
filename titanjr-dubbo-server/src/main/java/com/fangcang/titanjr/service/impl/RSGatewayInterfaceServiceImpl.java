@@ -245,13 +245,13 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 				
 			}else{
 				log.error("网关【查询银行卡BIN信息】失败 resp 为空, 参数params:"+Tools.gsonToString(params));
-				bankCardBINIResponse.putError("返回结果为空");
+				bankCardBINIResponse.putError("查询银行卡信息异常");
 				return bankCardBINIResponse;
 			}
 			
 		} catch (Exception e) {
 			log.error("查询银行卡BIN信息异常", e);
-			bankCardBINIResponse.putError("查询银行卡BIN异常");
+			bankCardBINIResponse.putError("查询银行卡信息异常");
 			return bankCardBINIResponse;
 		}
 	}

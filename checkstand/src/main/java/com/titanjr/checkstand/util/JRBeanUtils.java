@@ -14,7 +14,9 @@ import javax.validation.constraints.NotNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -103,6 +105,49 @@ public class JRBeanUtils {
 			}
 		}
     	return busiCodeEnum;
+    }
+    
+    
+    /**
+     * 将对象有效字段用"&"连接起来
+     * @author Jerry
+     * @date 2018年2月11日 下午6:23:08
+     */
+    public static String beanToString(Object obj) throws Exception {    
+        if(obj == null){    
+            return null;    
+        }   
+  
+        StringBuffer sb = new StringBuffer(""); 
+        
+        for (Field field : obj.getClass().getDeclaredFields()) {    
+            field.setAccessible(true);  
+            if(!String.valueOf(field.get(obj)).equals("null") 
+            		&& !String.valueOf(field.get(obj)).equals("")
+            		&& !"serialVersionUID".equals(field.getName())
+            		&& !"respJs".equals(field.getName())){
+            	sb.append(field.getName()+"="+field.get(obj)+"&");
+            }
+        }
+        for (Field field : obj.getClass().getSuperclass().getDeclaredFields()) {
+        	field.setAccessible(true);  
+            if(!String.valueOf(field.get(obj)).equals("null") 
+            		&& !String.valueOf(field.get(obj)).equals("")
+            		&& !"serialVersionUID".equals(field.getName())){
+            	sb.append(field.getName()+"="+field.get(obj)+"&");
+            }
+        }
+        for (Field field : obj.getClass().getDeclaredFields()) {    
+            field.setAccessible(true);  
+            if("respJs".equals(field.getName())){
+            	sb.append(field.getName()+"="+field.get(obj)+"&");
+            }
+        }
+        if(sb.length()>0){
+			sb.deleteCharAt(sb.length()-1);
+		}
+  
+        return sb.toString();  
     }
 
 }

@@ -28,6 +28,7 @@ import com.titanjr.checkstand.service.TLPaymentService;
 import com.titanjr.checkstand.strategy.StrategyFactory;
 import com.titanjr.checkstand.strategy.pay.PayRequestStrategy;
 import com.titanjr.checkstand.util.CommonUtil;
+import com.titanjr.checkstand.util.JRBeanUtils;
 import com.titanjr.checkstand.util.SignMsgBuilder;
 import com.titanjr.checkstand.util.WebUtils;
 
@@ -228,7 +229,7 @@ public class PaymentController extends BaseController {
     
     @ResponseBody
     @RequestMapping(value = "/wechatPay")
-    public TitanQrCodePayResponse wechatPay(HttpServletRequest request, Model model) {
+    public String wechatPay(HttpServletRequest request, Model model) {
 		
 		TitanQrCodePayResponse titanQrPayResponse = new TitanQrCodePayResponse();
     	try {
@@ -238,16 +239,16 @@ public class PaymentController extends BaseController {
 			if (!res.isSuccess()){
 				logger.error("【通联-微信公众号支付】参数错误：{}", res.getReturnMessage());
 				titanQrPayResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
-				return titanQrPayResponse;
+				return JRBeanUtils.beanToString(titanQrPayResponse);
 			}
 			if(!isOrderCanPay(payDTO)){
 				titanQrPayResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
-				return titanQrPayResponse;
+				return JRBeanUtils.beanToString(titanQrPayResponse);
 			}
 			PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(payDTO.getPayType().toString());
 			
 			TLQrCodePayRequest tlQrCodePayRequest = new TLQrCodePayRequest();
-			tlQrCodePayRequest.setCusid(SysConstant.TL_NETBANK_MERCHANT);
+			tlQrCodePayRequest.setCusid(SysConstant.TL_QRCODE_CUSTID);
 			tlQrCodePayRequest.setVersion(SysConstant.TL_QRCODE_VERSION);
 			tlQrCodePayRequest.setTrxamt(Integer.parseInt(payDTO.getOrderAmount().toString()));
 			tlQrCodePayRequest.setReqsn(payDTO.getOrderNo());
@@ -266,13 +267,12 @@ public class PaymentController extends BaseController {
 			SysConfig config = titanFinancialUtilService.querySysConfig();
 			titanQrPayResponse.setSignMsg(SignMsgBuilder.tlQrCodePayResponseSignMsg(titanQrPayResponse, config.getRsCheckKey()));
 			
-			return titanQrPayResponse;
+			return JRBeanUtils.beanToString(titanQrPayResponse);
 			
 		} catch (Exception e) {
 			
 			logger.error("【通联-微信公众号支付】异常：", e);
-			titanQrPayResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
-			return titanQrPayResponse;
+			return "errCode=9999&errMsg=系统异常";
 		}
         
     }

@@ -191,7 +191,31 @@ public class ChannelCallbackController extends BaseController {
 	public void tlWechatPayNotice(HttpServletRequest request, TLQrCodePayCallbackRequest 
 			tlQrCodePayCallbackRequest){
 		
-		logger.info("=========================通联微信公众号支付结果通知");
+		logger.info("【通联微信公众号支付结果通知】：{}", tlQrCodePayCallbackRequest.toString());
+		TitanPayCallBackResponse payCallBackResponse = new TitanPayCallBackResponse();
+		
+		try {
+			
+			payCallBackResponse = this.getQrCodePayCallbackRequest(tlQrCodePayCallbackRequest);
+			if(!payCallBackResponse.isSuccess()){
+				return;
+			}
+			payCallBackResponse.putError();
+			
+			payCallBackResponse = titanCommonService.PayNotice(payCallBackResponse.getRechargeResultConfirmRequest());
+			if(!payCallBackResponse.isSuccess()){
+				logger.error("【扫码支付后台通知】失败");
+				return;
+			}
+			
+			logger.info("【扫码支付后台通知】成功");
+			
+		} catch (Exception e) {
+			
+			logger.error("【扫码支付后台通知】发生异常：", e);
+			return;
+			
+		}
 		
 	}
 	
@@ -425,6 +449,7 @@ public class ChannelCallbackController extends BaseController {
 		confirmRequest.setSignType(SysConstant.RS_SIGN_TYPE);
 		return confirmRequest;
 	}
+	//扫码和公众号通用
 	private RechargeResultConfirmRequest qrCode2TitanCallbackRequest(TLQrCodePayCallbackRequest 
 			tlQrCodePayCallbackRequest, String payOrderNo, String payType){
 		RechargeResultConfirmRequest confirmRequest = new RechargeResultConfirmRequest();

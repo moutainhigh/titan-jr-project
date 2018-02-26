@@ -58,7 +58,6 @@ public class TitanPayDTO {
     /**
      * 银行标示，快捷支付不能为空
      */
-    @NotBlank
     private String bankInfo;
     /**
      * 付款方账号，快捷支付不能为空

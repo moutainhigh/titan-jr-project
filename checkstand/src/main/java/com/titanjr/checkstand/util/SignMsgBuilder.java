@@ -464,9 +464,9 @@ public class SignMsgBuilder {
 			sign.append("&key=");
 			sign.append(key);
 		}
-		logger.info("tl-gateWayPay-sourceMsg：{}", sign.toString());
+		logger.info("fc-qrCodePay-sourceMsg：{}", sign.toString());
 		String md5Msg = MD5.MD5Encode(sign.toString(), "UTF-8");
-		logger.info("tl-gateWayPay-signMsg：{}", md5Msg);
+		logger.info("fc-qrCodePay-signMsg：{}", md5Msg);
 		return md5Msg;
 		
 	}

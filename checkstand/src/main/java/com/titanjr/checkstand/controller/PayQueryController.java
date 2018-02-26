@@ -151,7 +151,7 @@ public class PayQueryController extends BaseController {
     
     
     /**
-     * 通联扫码支付查询
+     * 通联扫码/公众号支付查询
      * @author Jerry
      * @date 2017年12月21日 上午10:37:14
      */
@@ -175,22 +175,25 @@ public class PayQueryController extends BaseController {
 			TLQrTradeQueryResponse tlQrTradeQueryResponse = tlCommonService.qrCodeTradeQuery(tlQrTradeQueryRequest);
 			
 			if(tlQrTradeQueryResponse == null){
-				logger.error("【通联-扫码支付查询】tlQrTradeQueryResponse为空，请查看TLCommonService的报错日志");
+				logger.error("【通联-扫码/公众号支付查询】tlQrTradeQueryResponse为空，请查看TLCommonService的报错日志");
 				titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 				return titanPayQueryResponse;
 			}
 			if(!tlQrTradeQueryResponse.qrCodeResult()){
-				logger.error("【通联-扫码支付查询】失败，retmsg：{}", tlQrTradeQueryResponse.getRetmsg());
+				logger.error("【通联-扫码/公众号支付查询】失败，retmsg：{}", tlQrTradeQueryResponse.getRetmsg());
 				titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.build(tlQrTradeQueryResponse.getRetmsg()));
 				return titanPayQueryResponse;
 			}
+			titanPayQueryResponse.setOrderNo(tlQrTradeQueryResponse.getReqsn());
 			titanPayQueryResponse.setPayStatsu(TLQrReturnCodeEnum.getRsPayStatus(tlQrTradeQueryResponse.getTrxstatus()));
+			titanPayQueryResponse.setPayAmount(tlQrTradeQueryResponse.getTrxamt());
+			titanPayQueryResponse.setOrderPayTime(tlQrTradeQueryResponse.getFintime());
 			
 			return titanPayQueryResponse;
 			
 		} catch (Exception e) {
 			
-			logger.error("【通联-扫码支付查询】发生异常：", e);
+			logger.error("【通联-扫码/公众号支付查询】发生异常：", e);
 			titanPayQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanPayQueryResponse;
 			

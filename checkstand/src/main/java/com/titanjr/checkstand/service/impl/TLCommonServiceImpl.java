@@ -58,10 +58,10 @@ public class TLCommonServiceImpl implements TLCommonService {
 					"_" + SysConstant.TL_CHANNEL_CODE + "_" + tlQrTradeQueryRequest.getRequestType();
 			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
 			if(gateWayConfigDTO == null){
-				logger.error("【通联-扫码支付交易查询】失败，获取网关配置为空，configKey={}", configKey);
+				logger.error("【通联-扫码/公众号支付交易查询】失败，获取网关配置为空，configKey={}", configKey);
 				return tlQrTradeQueryResponse;
 			}
-			logger.info("【通联-扫码支付交易查询】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
+			logger.info("【通联-扫码/公众号支付交易查询】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
 			
 			//TreeMap会按字段名的ASCLL码从小到大排序
 			TreeMap<String,String> params = new TreeMap<String,String>();
@@ -81,9 +81,9 @@ public class TLCommonServiceImpl implements TLCommonService {
 			if(sb.length()>0){
 				sb.deleteCharAt(sb.length()-1);
 			}
-			logger.info("【通联-扫码支付交易查询】加密前排序为：{}", sb.toString());
+			logger.info("【通联-扫码/公众号支付交易查询】加密前排序为：{}", sb.toString());
 			String md5Msg = MD5.MD5Encode(sb.toString(), "UTF-8").toUpperCase();
-			logger.info("【通联-扫码支付交易查询】加密后sign为：{}", md5Msg);
+			logger.info("【通联-扫码/公众号支付交易查询】加密后sign为：{}", md5Msg);
 			params.put("sign", md5Msg);
 			params.remove("key");
 			
@@ -100,7 +100,7 @@ public class TLCommonServiceImpl implements TLCommonService {
 		    			.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
 	    		}
 	    	}
-	    	logger.info("【通联-扫码支付交易查询】上送参数：{}", paramBuf.toString());
+	    	logger.info("【通联-扫码/公众号支付交易查询】上送参数：{}", paramBuf.toString());
 			
 			HttpPost httpPost = new HttpPost(gateWayConfigDTO.getGateWayUrl() + "?" + paramBuf.toString());
 			HttpResponse httpRes = HttpClient.httpRequest(new ArrayList<NameValuePair>(), httpPost);
@@ -109,7 +109,7 @@ public class TLCommonServiceImpl implements TLCommonService {
 				
 				HttpEntity entity = httpRes.getEntity();
 				responseStr = EntityUtils.toString(entity, "UTF-8");
-				logger.info("【通联-扫码支付交易查询】返回信息：{}", responseStr);
+				logger.info("【通联-扫码/公众号支付交易查询】返回信息：{}", responseStr);
 				
 				tlQrTradeQueryResponse = (TLQrTradeQueryResponse)JsonUtil.jsonToBean(responseStr, TLQrTradeQueryResponse.class);
 				
@@ -117,12 +117,12 @@ public class TLCommonServiceImpl implements TLCommonService {
 				
 			}else{
 				
-				logger.error("【通联-扫码支付交易查询】失败 httpRes为空");
+				logger.error("【通联-扫码/公众号支付交易查询】失败 httpRes为空");
 				return tlQrTradeQueryResponse;
 			}
 			
 		} catch (Exception e) {
-			logger.error("【通联-扫码支付交易查询】发生异常：", e);
+			logger.error("【通联-扫码/公众号支付交易查询】发生异常：", e);
 			return tlQrTradeQueryResponse;
 		}
 		
