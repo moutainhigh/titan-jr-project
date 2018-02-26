@@ -327,8 +327,8 @@ public class WeChatController {
 			httpSession.setMaxInactiveInterval(70);
 			
 			// 微信oauth2验证的回调地址
-			//String callBackUrl = this.getRequestBaseUrl(request)
-			String callBackUrl = "http://www.fangcang.org/titanjr-pay-dev3"//由于nginx原因，213不能用getRequestBaseUrl()获取根路径
+			String callBackUrl = this.getRequestBaseUrl(request)
+			//String callBackUrl = "http://www.fangcang.org/titanjr-pay-dev3"//由于nginx原因，213不能用getRequestBaseUrl()获取根路径
 					+ "/checkstand.action;jsessionid="
 					+ httpSession.getId()
 					+ "?orderData="
