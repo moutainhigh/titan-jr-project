@@ -7,9 +7,20 @@
  */
 package com.titanjr.checkstand.strategy.quickPay;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import com.fangcang.titanjr.common.bean.ValidateResponse;
+import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.dto.bean.SysConfig;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
+import com.titanjr.checkstand.dto.TitanBindCardQueryDTO;
+import com.titanjr.checkstand.util.TitanSignValidater;
+import com.titanjr.checkstand.util.WebUtils;
 
 /**
  * 用户绑卡列表查询
@@ -19,8 +30,25 @@ import org.springframework.stereotype.Service;
 @Service("bindCardListQueryStrategy")
 public class BindCardListQueryStrategy implements QuickPayStrategy {
 
+	private static final Logger logger = LoggerFactory.getLogger(BindCardListQueryStrategy.class);
+
+	@Resource
+	private TitanFinancialUtilService titanFinancialUtilService;
+	
+
 	@Override
 	public String redirectResult(HttpServletRequest request) {
+
+		TitanBindCardQueryDTO titanBindCardQueryDTO = WebUtils.switch2RequestDTO(TitanBindCardQueryDTO.class, request);
+		ValidateResponse res = GenericValidate.validateNew(titanBindCardQueryDTO);
+		if (!res.isSuccess()){
+			logger.error("【查询绑卡列表】参数错误：{}", res.getReturnMessage());
+			return null;
+		}
+		SysConfig config = titanFinancialUtilService.querySysConfig();
+		if(!TitanSignValidater.validateBindCardListSign(titanBindCardQueryDTO, config.getRsCheckKey())){
+			return null;
+		}
 		
 		return "/quick/bindCardList.shtml";
 		

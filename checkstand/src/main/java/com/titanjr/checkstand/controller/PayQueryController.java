@@ -19,6 +19,7 @@ import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.DateUtil;
+import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
@@ -100,6 +101,10 @@ public class PayQueryController extends BaseController {
 			}
 			
 			String redirectUrl = payQueryStrategy.redirectResult(request);
+			if(!StringUtil.isValidString(redirectUrl)){
+				logger.error("【支付查询】获取重定向地址失败");
+				return super.payFailedCallback(model);
+			}
 			super.resetParameter(request,attr);
 			
 			return "forward:" + redirectUrl;

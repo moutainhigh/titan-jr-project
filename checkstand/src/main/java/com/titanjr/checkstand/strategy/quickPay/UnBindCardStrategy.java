@@ -7,9 +7,20 @@
  */
 package com.titanjr.checkstand.strategy.quickPay;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import com.fangcang.titanjr.common.bean.ValidateResponse;
+import com.fangcang.titanjr.common.util.GenericValidate;
+import com.fangcang.titanjr.dto.bean.SysConfig;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
+import com.titanjr.checkstand.dto.TitanUnBindCardDTO;
+import com.titanjr.checkstand.util.TitanSignValidater;
+import com.titanjr.checkstand.util.WebUtils;
 
 /**
  * 解绑卡
@@ -19,8 +30,25 @@ import org.springframework.stereotype.Service;
 @Service("unBindCardStrategy")
 public class UnBindCardStrategy implements QuickPayStrategy {
 
+	private static final Logger logger = LoggerFactory.getLogger(UnBindCardStrategy.class);
+
+	@Resource
+	private TitanFinancialUtilService titanFinancialUtilService;
+	
+
 	@Override
 	public String redirectResult(HttpServletRequest request) {
+
+		TitanUnBindCardDTO titanUnBindCardDTO = WebUtils.switch2RequestDTO(TitanUnBindCardDTO.class, request);
+		ValidateResponse res = GenericValidate.validateNew(titanUnBindCardDTO);
+		if (!res.isSuccess()){
+			logger.error("【解绑卡】参数错误：{}", res.getReturnMessage());
+			return null;
+		}
+		SysConfig config = titanFinancialUtilService.querySysConfig();
+		if(!TitanSignValidater.validateUnBindCardSign(titanUnBindCardDTO, config.getRsCheckKey())){
+			return null;
+		}
 		
 		return "/quick/unBindCard.shtml";
 		

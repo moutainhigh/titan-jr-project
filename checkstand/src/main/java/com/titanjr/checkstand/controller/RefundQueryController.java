@@ -16,6 +16,7 @@ import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.service.TitanOrderService;
+import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
@@ -104,6 +105,10 @@ public class RefundQueryController extends BaseController {
 			}
 			
 			String redirectUrl = refundQueryStrategy.redirectResult(request);
+			if(!StringUtil.isValidString(redirectUrl)){
+				logger.error("【退款查询】获取重定向地址失败");
+				return super.payFailedCallback(model);
+			}
 			super.resetParameter(request,attr);
 			
 			return "forward:" + redirectUrl;

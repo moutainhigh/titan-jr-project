@@ -25,6 +25,7 @@ import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.service.TitanOrderService;
+import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.BusiCodeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
@@ -99,6 +100,10 @@ public class QuickpayController extends BaseController {
 			}
 			
 			String redirectUrl = quickPayStrategy.redirectResult(request);
+			if(!StringUtil.isValidString(redirectUrl)){
+				logger.error("【融宝-快捷服务】获取重定向地址失败");
+				return super.payFailedCallback(model);
+			}
 			super.resetParameter(request,attr);
 			
 			return "forward:" + redirectUrl;
@@ -126,12 +131,6 @@ public class QuickpayController extends BaseController {
     	try {
     		
     		TitanCardBINQueryDTO titanCardBINQueryDTO = WebUtils.switch2RequestDTO(TitanCardBINQueryDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(titanCardBINQueryDTO);
-			if (!res.isSuccess()){
-				logger.error("【融宝-卡BIN查询】参数错误：{}", res.getReturnMessage());
-				titanCardBINQueryResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
-				return titanCardBINQueryResponse;
-			}
 			
 			RBCardBINQueryRequest rbCardBINQueryRequest = new RBCardBINQueryRequest();
 			rbCardBINQueryRequest.setCard_no(titanCardBINQueryDTO.getCardNo());
@@ -168,12 +167,6 @@ public class QuickpayController extends BaseController {
     	try {
     		
 			TitanPayConfirmDTO titanPayConfirmDTO = WebUtils.switch2RequestDTO(TitanPayConfirmDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(titanPayConfirmDTO);
-			if (!res.isSuccess()){
-				logger.error("【融宝-确认支付】参数错误：{}", res.getReturnMessage());
-				titanPayConfirmResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
-				return titanPayConfirmResponse;
-			}
 			
 			RBQuickPayConfirmRequest rbQuickPayConfirmRequest = new RBQuickPayConfirmRequest();
 			rbQuickPayConfirmRequest.setOrder_no(titanPayConfirmDTO.getOrderNo());
@@ -212,14 +205,7 @@ public class QuickpayController extends BaseController {
     	
     	try {
     		
-    		//校验参数
 			TitanReSendMsgDTO titanReSendMsgDTO = WebUtils.switch2RequestDTO(TitanReSendMsgDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(titanReSendMsgDTO);
-			if (!res.isSuccess()){
-				logger.error("【融宝-重发验证码】参数错误：{}", res.getReturnMessage());
-				titanReSendMsgResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
-				return titanReSendMsgResponse;
-			}
 			
 			//查询充值单（需要得到手机号）
 			TitanOrderPayDTO titanOrderPayDTO = new TitanOrderPayDTO();
@@ -317,12 +303,6 @@ public class QuickpayController extends BaseController {
     	try {
     		
     		TitanBindCardQueryDTO titanBindCardQueryDTO = WebUtils.switch2RequestDTO(TitanBindCardQueryDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(titanBindCardQueryDTO);
-			if (!res.isSuccess()){
-				logger.error("【融宝-解绑卡】参数错误：{}", res.getReturnMessage());
-				titanBindCardQueryResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
-				return titanBindCardQueryResponse;
-			}
 			
 			RBBindCardQueryRequest rbBindCardQueryRequest = new RBBindCardQueryRequest();
 			rbBindCardQueryRequest.setMember_id(titanBindCardQueryDTO.getIdCode());//身份证号当作用户ID
@@ -341,7 +321,7 @@ public class QuickpayController extends BaseController {
 			
 		} catch (Exception e) {
 			
-			logger.error("【融宝-解绑卡】异常：", e);
+			logger.error("【融宝-查询绑卡列表】异常：", e);
 			titanBindCardQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanBindCardQueryResponse;
 			
@@ -364,12 +344,6 @@ public class QuickpayController extends BaseController {
     	try {
     		
 			TitanUnBindCardDTO titanUnBindCardDTO = WebUtils.switch2RequestDTO(TitanUnBindCardDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(titanUnBindCardDTO);
-			if (!res.isSuccess()){
-				logger.error("【融宝-解绑卡】参数错误：{}", res.getReturnMessage());
-				titanUnBindCardResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
-				return titanUnBindCardResponse;
-			}
 			
 			RBUnBindCardRequest rbUnBindCardRequest = new RBUnBindCardRequest();
 			rbUnBindCardRequest.setMember_id(titanUnBindCardDTO.getIdCode());//身份证号当作用户ID

@@ -22,15 +22,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.util.BeanConvertor;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.titanjr.dto.bean.SysConfig;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
+import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.enums.BusiCodeEnum;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
+import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.SysConstant;
+import com.titanjr.checkstand.dto.TitanPayDTO;
 import com.titanjr.checkstand.respnse.RBCardAuthResponse;
 import com.titanjr.checkstand.respnse.TitanCardAuthResponse;
 import com.titanjr.checkstand.respnse.TitanPayCallBackResponse;
@@ -48,6 +53,9 @@ public class TitanCommonServiceImpl implements TitanCommonService {
 	
 	@Resource
 	private TitanFinancialUtilService titanFinancialUtilService;
+
+	@Resource
+	private TitanOrderService titanOrderService;
 	
 
 	@Override
@@ -151,6 +159,28 @@ public class TitanCommonServiceImpl implements TitanCommonService {
 			
 		}
 		
+	}
+    
+    
+    /**
+	 * 交易单存在并且可以支付
+	 * @author Jerry
+	 * @date 2018年1月12日 上午10:27:26
+	 */
+	@Override
+	public boolean isOrderCanPay(TitanPayDTO payDTO){
+		TransOrderRequest transOrderRequest = new TransOrderRequest();
+		transOrderRequest.setOrderid(payDTO.getOrderNo());
+		TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
+		if(transOrderDTO == null){
+			logger.error("【支付】失败：交易单不存在，orderNo={}", payDTO.getOrderNo());
+			return false;
+		}
+		if(OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())){
+			logger.error("【支付】失败：交易单不是可支付状态，orderNo={}", payDTO.getOrderNo());
+			return false;
+		}
+		return true;
 	}
 	
 	

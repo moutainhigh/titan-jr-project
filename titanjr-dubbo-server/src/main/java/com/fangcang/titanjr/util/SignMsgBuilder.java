@@ -75,7 +75,7 @@ public final class SignMsgBuilder {
 		return md5Msg;
 	}
 	
-	//此处和融数不一样
+	//此处和融数不一样，用户ID用身份证表示，没有卡号
 	public static String getSignMsgForQueryQuickPayBindCard(QueryQuickPayBindCardRequest queryQuickPayBindCardRequest) {
 		StringBuffer sign = new StringBuffer();
 		if(queryQuickPayBindCardRequest !=null){
@@ -85,7 +85,7 @@ public final class SignMsgBuilder {
 			sign.append(queryQuickPayBindCardRequest.getVersion());
 			sign.append("&merchantNo=");
 			sign.append(queryQuickPayBindCardRequest.getMerchantNo());
-			sign.append("&idCode=");
+			sign.append("&userId=");
 			sign.append(queryQuickPayBindCardRequest.getIdCode());
 			sign.append("&key=");
 			sign.append(RSInvokeConstant.rsCheckKey);
@@ -112,7 +112,7 @@ public final class SignMsgBuilder {
 		return md5Msg;
 	}
 	
-	//这个跟融数不一样
+	//此处跟融数不一样，用户ID用身份证表示，没有卡号
 	public static String getSignMsgForUnBindBankCard(UnbindBankCardRequest unbindBankCardRequest) {
 		StringBuffer sign = new StringBuffer();
 		if(unbindBankCardRequest !=null){
@@ -122,8 +122,8 @@ public final class SignMsgBuilder {
 			sign.append(unbindBankCardRequest.getVersion());
 			sign.append("&merchantNo=");
 			sign.append(unbindBankCardRequest.getMerchantNo());
-			sign.append("&bindCardId=");
-			sign.append(unbindBankCardRequest.getBindCardId());
+			sign.append("&userId=");
+			sign.append(unbindBankCardRequest.getIdCode());
 			sign.append("&idCode=");
 			sign.append(unbindBankCardRequest.getIdCode());
 			sign.append("&key=");

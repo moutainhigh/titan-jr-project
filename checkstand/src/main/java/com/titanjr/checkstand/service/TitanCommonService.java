@@ -8,6 +8,7 @@
 package com.titanjr.checkstand.service;
 
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
+import com.titanjr.checkstand.dto.TitanPayDTO;
 import com.titanjr.checkstand.respnse.RBCardAuthResponse;
 import com.titanjr.checkstand.respnse.TitanCardAuthResponse;
 import com.titanjr.checkstand.respnse.TitanPayCallBackResponse;
@@ -39,5 +40,12 @@ public interface TitanCommonService {
 	 * @date 2018年1月31日 下午2:49:41
 	 */
 	public TitanCardAuthResponse cardAuthPage(RBCardAuthResponse rbCardAuthResponse);
+	
+	/**
+	 * 交易单存在并且可以支付
+	 * @author Jerry
+	 * @date 2018年1月12日 上午10:27:26
+	 */
+	public boolean isOrderCanPay(TitanPayDTO payDTO);
 
 }

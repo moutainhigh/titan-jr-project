@@ -7,9 +7,16 @@
  */
 package com.titanjr.checkstand.strategy.query;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
+
+import com.fangcang.titanjr.dto.bean.SysConfig;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
+import com.titanjr.checkstand.dto.TitanPayQueryDTO;
+import com.titanjr.checkstand.util.TitanSignValidater;
+import com.titanjr.checkstand.util.WebUtils;
 
 /**
  * @author Jerry
@@ -18,8 +25,19 @@ import org.springframework.stereotype.Service;
 @Service("quickPayQueryStrategy")
 public class QuickPayQueryStrategy implements QueryStrategy {
 
+	@Resource
+	private TitanFinancialUtilService titanFinancialUtilService;
+	
+
 	@Override
 	public String redirectResult(HttpServletRequest request) {
+    	
+    	TitanPayQueryDTO payQueryDTO = WebUtils.switch2RequestDTO(TitanPayQueryDTO.class, request);
+    	
+		SysConfig config = titanFinancialUtilService.querySysConfig();
+		if(!TitanSignValidater.validatePayQuerySign(payQueryDTO, config.getRsCheckKey())){
+			return null;
+		}
 		
 		return "/query/quickPayQuery.shtml";
 		

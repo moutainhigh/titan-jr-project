@@ -33,7 +33,7 @@ public class SignMsgBuilder {
 	private final static Logger logger = LoggerFactory.getLogger(SignMsgBuilder.class);
 	
 	
-	public static String getNetBanPaySignMsg(TLNetBankPayRequest tlNetBankPayRequest) {
+	public static String getNetBanPaySignMsg(TLNetBankPayRequest tlNetBankPayRequest, String key) {
 		
 		StringBuffer sign = new StringBuffer();
 		if(tlNetBankPayRequest != null){
@@ -64,7 +64,7 @@ public class SignMsgBuilder {
 			sign.append("&issuerId=");
 			sign.append(tlNetBankPayRequest.getIssuerId());
 			sign.append("&key=");
-			sign.append("1234567890");
+			sign.append(key);
 		}
 		logger.info("tl-gateWayPay-sourceMsg：{}", sign.toString());
 		String md5Msg = MD5.MD5Encode(sign.toString(), "UTF-8").toUpperCase();

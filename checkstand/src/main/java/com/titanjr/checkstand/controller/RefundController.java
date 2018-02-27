@@ -13,6 +13,7 @@ import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.dto.bean.TitanOrderPayDTO;
 import com.fangcang.titanjr.service.TitanOrderService;
+import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
@@ -63,7 +64,7 @@ public class RefundController extends BaseController {
 			TitanRefundDTO refundDTO = WebUtils.switch2RequestDTO(TitanRefundDTO.class, request);
 			ValidateResponse res = GenericValidate.validateNew(refundDTO);
 			if (!res.isSuccess()){
-				logger.error("【支付路由退款】参数错误：{}", res.getReturnMessage());
+				logger.error("【退款】参数错误：{}", res.getReturnMessage());
 				return "redirect:" + errorUrl;
 			}
 
@@ -72,7 +73,7 @@ public class RefundController extends BaseController {
 			titanOrderPayDTO.setOrderNo(refundDTO.getOrderNo());
 			titanOrderPayDTO = titanOrderService.getTitanOrderPayDTO(titanOrderPayDTO);
 			if(titanOrderPayDTO == null){
-				logger.error("【支付路由退款】失败，查询充值单为空，orderNo={}，refundOrderNo={}", refundDTO
+				logger.error("【退款】失败，查询充值单为空，orderNo={}，refundOrderNo={}", refundDTO
 						.getOrderNo(), refundDTO.getRefundOrderno());
 				return "redirect:" + errorUrl;
 			}
@@ -80,23 +81,27 @@ public class RefundController extends BaseController {
 			//根据支付方式获取退款调用策略，调对应的接口
 			PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(titanOrderPayDTO.getPayType());
 			if(payTypeEnum == null){
-				logger.error("【支付路由退款】失败，获取payTypeEnum为空");
+				logger.error("【退款】失败，获取payTypeEnum为空");
 				return "redirect:" + errorUrl;
 			}
 			OrderRefundStrategy refundStrategy =  StrategyFactory.getRefundStrategy(payTypeEnum);
 			if(refundStrategy == null){
-				logger.error("【支付路由退款】失败，获取相应的退款策略为空");
+				logger.error("【退款】失败，获取相应的退款策略为空");
 				return "redirect:" + errorUrl;
 			}
 			
 			String redirectUrl = refundStrategy.redirectResult(request);
+			if(!StringUtil.isValidString(redirectUrl)){
+				logger.error("【退款】获取重定向地址失败");
+				return super.payFailedCallback(model);
+			}
 			super.resetParameter(request,attr);
 			
 			return "forward:" + redirectUrl;
 			
 		} catch (Exception e) {
 			
-			logger.error("【支付路由退款】发生异常：", e);
+			logger.error("【退款】发生异常：", e);
 			return "redirect:" + errorUrl;
 			
 		}

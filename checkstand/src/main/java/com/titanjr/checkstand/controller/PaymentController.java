@@ -1,14 +1,9 @@
 package com.titanjr.checkstand.controller;
 
-import com.fangcang.titanjr.common.bean.ValidateResponse;
-import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.util.CommonConstant;
-import com.fangcang.titanjr.common.util.GenericValidate;
 import com.fangcang.titanjr.common.util.Wxutil;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.SysConfig;
-import com.fangcang.titanjr.dto.bean.TransOrderDTO;
-import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.service.TitanFinancialUtilService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
@@ -95,6 +90,10 @@ public class PaymentController extends BaseController {
 			}
 			
 			String redirectUrl = payRequestStrategy.redirectResult(request);
+			if(!StringUtil.isValidString(redirectUrl)){
+				logger.error("【支付】获取重定向地址失败");
+				return super.payFailedCallback(model);
+			}
 			super.resetParameter(request,attr);
 			
 			return "forward:" + redirectUrl;
@@ -120,20 +119,12 @@ public class PaymentController extends BaseController {
         try {
         	
 			TitanPayDTO payDTO = WebUtils.switch2RequestDTO(TitanPayDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(payDTO);
-			if (!res.isSuccess()){
-				logger.error("【通联-网银支付】参数错误：{}", res.getReturnMessage());
-				return super.payFailedCallback(model);
-			}
-			if(!isOrderCanPay(payDTO)){
-				return super.payFailedCallback(model);
-			}
 			
 			String configKey = SysConstant.TL_NETBANK_MERCHANT +"_" + PayTypeEnum.PERSON_EBANK.combPayType + 
 					"_" + SysConstant.TL_CHANNEL_CODE + "_" + RequestTypeEnum.GATEWAY_PAY_QUERY_REFUND.getKey();
 			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
 			if(gateWayConfigDTO == null){
-				logger.error("【通联-扫码支付】失败，获取网关配置为空，configKey={}，orderNo={}", configKey, payDTO.getOrderNo());
+				logger.error("【通联-网银支付】失败，获取网关配置为空，configKey={}，orderNo={}", configKey, payDTO.getOrderNo());
 				return super.payFailedCallback(model);
 			}
 			
@@ -154,7 +145,7 @@ public class PaymentController extends BaseController {
 			tlNetBankPayRequest.setPayType(payTypeEnum.channelTypeKey);
 			//tlNetBankPayRequest.setIssuerId(payDTO.getBankInfo());
 			tlNetBankPayRequest.setIssuerId("vbank");
-			tlNetBankPayRequest.setSignMsg(SignMsgBuilder.getNetBanPaySignMsg(tlNetBankPayRequest));
+			tlNetBankPayRequest.setSignMsg(SignMsgBuilder.getNetBanPaySignMsg(tlNetBankPayRequest, gateWayConfigDTO.getSecretKey()));
 			tlNetBankPayRequest.setServerUrl(gateWayConfigDTO.getGateWayUrl());
 			logger.info("【通联-网银支付】请求参数：{}", tlNetBankPayRequest.toString());
 			
@@ -184,16 +175,6 @@ public class PaymentController extends BaseController {
     	try {
 			
 			TitanPayDTO payDTO = WebUtils.switch2RequestDTO(TitanPayDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(payDTO);
-			if (!res.isSuccess()){
-				logger.error("【通联-扫码支付】参数错误：{}", res.getReturnMessage());
-				titanQrPayResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
-				return titanQrPayResponse;
-			}
-			if(!isOrderCanPay(payDTO)){
-				titanQrPayResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
-				return titanQrPayResponse;
-			}
 			PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(payDTO.getPayType().toString());
 			
 			TLQrCodePayRequest tlQrCodePayRequest = new TLQrCodePayRequest();
@@ -235,16 +216,6 @@ public class PaymentController extends BaseController {
     	try {
 			
 			TitanPayDTO payDTO = WebUtils.switch2RequestDTO(TitanPayDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(payDTO);
-			if (!res.isSuccess()){
-				logger.error("【通联-微信公众号支付】参数错误：{}", res.getReturnMessage());
-				titanQrPayResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
-				return JRBeanUtils.beanToString(titanQrPayResponse);
-			}
-			if(!isOrderCanPay(payDTO)){
-				titanQrPayResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
-				return JRBeanUtils.beanToString(titanQrPayResponse);
-			}
 			PayTypeEnum payTypeEnum = PayTypeEnum.getPayTypeEnum(payDTO.getPayType().toString());
 			
 			TLQrCodePayRequest tlQrCodePayRequest = new TLQrCodePayRequest();
@@ -292,16 +263,6 @@ public class PaymentController extends BaseController {
    		try {
    		
 			TitanPayDTO payDTO = WebUtils.switch2RequestDTO(TitanPayDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(payDTO);
-			if (!res.isSuccess() || !StringUtil.isValidString(payDTO.getPayerAccountType())){
-				logger.error("【融宝-快捷支付】参数错误：{}，payerAccountType={}", res.getReturnMessage(), payDTO.getPayerAccountType());
-				titanQuickPayResponse.putErrorResult(RSErrorCodeEnum.PRAM_ERROR);
-				return titanQuickPayResponse;
-			}
-			if(!isOrderCanPay(payDTO)){
-				titanQuickPayResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
-				return titanQuickPayResponse;
-			}
 			
 			RBQuickPayRequest rbQuickPayRequest = new RBQuickPayRequest();
 			//已绑卡签约
@@ -381,27 +342,6 @@ public class PaymentController extends BaseController {
 		}catch(Exception e){
 			logger.error("微信生成图片错误：", e);
 		}
-	}
-	
-	
-	/**
-	 * 交易单存在并且可以支付
-	 * @author Jerry
-	 * @date 2018年1月12日 上午10:27:26
-	 */
-	private boolean isOrderCanPay(TitanPayDTO payDTO){
-		TransOrderRequest transOrderRequest = new TransOrderRequest();
-		transOrderRequest.setOrderid(payDTO.getOrderNo());
-		TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
-		if(transOrderDTO == null){
-			logger.error("【支付】失败：交易单不存在，orderNo={}", payDTO.getOrderNo());
-			return false;
-		}
-		if(OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid())){
-			logger.error("【支付】失败：交易单不是可支付状态，orderNo={}", payDTO.getOrderNo());
-			return false;
-		}
-		return true;
 	}
 
 }
