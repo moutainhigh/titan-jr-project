@@ -21,9 +21,17 @@ public class TitanAccountDetail implements Serializable {
 	private String productId;
 	
 	private Integer balanceType;
+	
 	private Long creditAmount;
+	
 	private Long frozonAmount;
+	
 	private Long settleAmount;
+	
+	private Long totalCreditAmount;
+	private Long totalFrozonAmount;
+	private Long totalSettleAmount; 
+	
 	/**
 	 * 状态:1-有效，２－无效
 	 */
@@ -110,6 +118,23 @@ public class TitanAccountDetail implements Serializable {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
-	
+	public Long getTotalCreditAmount() {
+		return totalCreditAmount;
+	}
+	public void setTotalCreditAmount(Long totalCreditAmount) {
+		this.totalCreditAmount = totalCreditAmount;
+	}
+	public Long getTotalFrozonAmount() {
+		return totalFrozonAmount;
+	}
+	public void setTotalFrozonAmount(Long totalFrozonAmount) {
+		this.totalFrozonAmount = totalFrozonAmount;
+	}
+	public Long getTotalSettleAmount() {
+		return totalSettleAmount;
+	}
+	public void setTotalSettleAmount(Long totalSettleAmount) {
+		this.totalSettleAmount = totalSettleAmount;
+	}
 	
 }

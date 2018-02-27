@@ -19,9 +19,9 @@
     insert into t_tfs_accountdetail (accountcode, 
       transorderid, tradetype, orgcode, 
       productid, balancetype,creditamount,frozonamount,
-      settleamount,status,remark,createtime)
+      settleamount,totalcreditamount,totalfrozonamount,totalsettleamount,status,remark,createtime)
     values ( #{accountCode}, #{transOrderId}, #{tradeType}, #{orgCode}, #{productId},
-    #{balanceType},#{creditAmount},#{frozonAmount},#{settleAmount},#{status},
+    #{balanceType},#{creditAmount},#{frozonAmount},#{settleAmount},#{totalCreditAmount},#{totalFrozonAmount},#{totalSettleAmount},#{status},
     #{remark},#{createTime})
   </insert>
     

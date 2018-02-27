@@ -49,18 +49,23 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 	 */
 	private void updateBalanceInfo(TitanAccountDetail accountDetail){
 		
-		accountDetailDao.insert(accountDetail);
-		
 		TitanBalanceInfoParam param = new TitanBalanceInfoParam();
 		param.setAccountcode(accountDetail.getAccountCode());
 		List<TitanBalanceInfo> balanceInfoList = balanceInfoDao.queryList(param);
 		TitanBalanceInfo balanceInfo = balanceInfoList.get(0);
+		
 		balanceInfo.setSettleamount(balanceInfo.getSettleamount()+accountDetail.getSettleAmount());
 		balanceInfo.setUsablelimit(balanceInfo.getSettleamount());//两个字段的意思是相同的
 		balanceInfo.setFrozonamount(balanceInfo.getFrozonamount()+accountDetail.getFrozonAmount());
 		balanceInfo.setTotalamount(balanceInfo.getSettleamount()+balanceInfo.getFrozonamount());
 		balanceInfo.setCreditamount(accountDetail.getCreditAmount());
 		balanceInfoDao.update(balanceInfo);
+		//保存本次记账后的总金额
+		accountDetail.setTotalCreditAmount(balanceInfo.getCreditamount());
+		accountDetail.setTotalFrozonAmount(balanceInfo.getFrozonamount());
+		accountDetail.setTotalSettleAmount(balanceInfo.getSettleamount());
+		
+		accountDetailDao.insert(accountDetail);
 		
 	}
 	/***
