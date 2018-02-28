@@ -164,9 +164,9 @@ public class OrganizationManagerTest extends GenericTest {
 		req.setRole("");							// 角色号
 		req.setStatusid("1");
 		req.setReferuserid("");
-		OrgStatusQueryResponse response = rsOrganizationManager.queryOrgStatus(req);
-    	System.out.print("查询机构状态-----------"+response.getReturnCode()+"----------"+response.getReturnMsg());
-    	System.out.print("------------------"+response.getOperateStatus());
+//		OrgStatusQueryResponse response = rsOrganizationManager.queryOrgStatus(req);
+//    	System.out.print("查询机构状态-----------"+response.getReturnCode()+"----------"+response.getReturnMsg());
+//    	System.out.print("------------------"+response.getOperateStatus());
     }
     
     //更新个人信息 success

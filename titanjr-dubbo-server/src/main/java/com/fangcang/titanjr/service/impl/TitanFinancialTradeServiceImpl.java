@@ -124,7 +124,6 @@ import com.fangcang.titanjr.enums.OperTypeEnum;
 import com.fangcang.titanjr.enums.OrderTypeEnum;
 import com.fangcang.titanjr.rs.dto.Transorderinfo;
 import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
-import com.fangcang.titanjr.rs.manager.RSPayOrderManager;
 import com.fangcang.titanjr.rs.request.AccountTransferRequest;
 import com.fangcang.titanjr.rs.request.OrderOperateRequest;
 import com.fangcang.titanjr.rs.request.OrderSaveWithCardRequest;
@@ -160,13 +159,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
     RSAccTradeManager rsAccTradeManager;
 
     @Resource
-    RSPayOrderManager rsPayOrderManager;
-
-    @Resource
     TitanFinancialTradeService titanFinancialTradeService;
-
-    @Resource
-    private HessianProxyBeanFactory hessianProxyBeanFactory;
 
     @Resource
     private TitanTransOrderDao titanTransOrderDao;
@@ -641,18 +634,18 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 								titanFinancialUtilService.saveOrderException(payOrderNo,OrderKindEnum.PayOrderNo, OrderExceptionEnum.Transfer_Fail, JSONSerializer.toJSON(accountTransferRequest).toString());
 								titanTransferReq.setStatus(TransferReqEnum.TRANSFER_FAIL.getStatus());
 								transferResponse.putErrorResult(accountTransferResponse.getRetcode(), accountTransferResponse.getRetmsg());
-								// 转账是否成功，重复佐证 待确认
-								ROPErrorEnum ropErrorEnum = ROPErrorEnum.getROPErrorEnumByCode(accountTransferResponse.getReturnCode());
-								if (ropErrorEnum != null) {// 若错误提示是ROP连接等错误需要重复确认
-									AccountTransferFlowRequest accountTransferFlowRequest = new AccountTransferFlowRequest();
-									accountTransferFlowRequest.setRequestNo(accountTransferRequest.getRequestno());
-									accountTransferFlowRequest.setProductId(accountTransferRequest.getProductid());
-									accountTransferFlowRequest.setUserId(accountTransferRequest.getUserid());
-									if (this.confirmTransAccountSuccess(accountTransferFlowRequest)) {// 确认转账成功
-										titanTransferReq.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
-										transferResponse.putSuccess();
-									}
-								}
+								// 转账是否成功，重复佐证 待确认 --去掉此验证
+//								ROPErrorEnum ropErrorEnum = ROPErrorEnum.getROPErrorEnumByCode(accountTransferResponse.getReturnCode());
+//								if (ropErrorEnum != null) {// 若错误提示是ROP连接等错误需要重复确认
+//									AccountTransferFlowRequest accountTransferFlowRequest = new AccountTransferFlowRequest();
+//									accountTransferFlowRequest.setRequestNo(accountTransferRequest.getRequestno());
+//									accountTransferFlowRequest.setProductId(accountTransferRequest.getProductid());
+//									accountTransferFlowRequest.setUserId(accountTransferRequest.getUserid());
+//									if (this.confirmTransAccountSuccess(accountTransferFlowRequest)) {// 确认转账成功
+//										titanTransferReq.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
+//										transferResponse.putSuccess();
+//									}
+//								}
 							}
 							try {
 								titanTransferReqDao.update(titanTransferReq);
@@ -853,27 +846,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 //		}
 //		return null;
 //	}
-
-	// 查询转账
-	private boolean confirmTransAccountSuccess(
-			AccountTransferFlowRequest accountTransferFlowRequest) {
-		try {
-			if (accountTransferFlowRequest != null) {
-				OrderTransferFlowRequest orderTransferFlowRequest = new OrderTransferFlowRequest();
-				orderTransferFlowRequest.setUserid(accountTransferFlowRequest.getUserId());
-				orderTransferFlowRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-				orderTransferFlowRequest.setRequestno(accountTransferFlowRequest.getRequestNo());
-				orderTransferFlowRequest.setProductid(accountTransferFlowRequest.getProductId());
-				OrderTransferFlowResponse orderTransferFlowResponse = rsAccTradeManager.queryOrderTranferFlow(orderTransferFlowRequest);
-				if (CommonConstant.OPERATE_SUCCESS.equals(orderTransferFlowResponse.getOperateStatus())) {
-					return true;
-				}
-			}
-		} catch (Exception e) {
-			log.error("确认转账是否成功异常" + e.getMessage(), e);
-		}
-		return false;
-	}
 
 	// 获取Transid
 	@SuppressWarnings("unused")
@@ -2581,30 +2553,30 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	    }
 	    return false;
 	}
-	
-	@Override
-	public OrderSaveAndBindCardResponse saveTransOrderAndBindCard(
-			OrderSaveAndBindCardRequest request) {
-		OrderSaveAndBindCardResponse orderSaveAndBindCardResponse = new OrderSaveAndBindCardResponse();
-		if(null == request){
-			orderSaveAndBindCardResponse.putErrorResult(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
-			return orderSaveAndBindCardResponse;
-		}
-		
-		OrderSaveWithCardRequest orderSaveWithCardRequest = this.convertToOrderSaveWithCardRequest(request);
-		OrderSaveWithCardResponse orderSaveWithCardResponse = rsAccTradeManager.orderSaveWithdraw(orderSaveWithCardRequest);
-		
-		if(CommonConstant.OPERATE_SUCCESS.equals(orderSaveWithCardResponse.getOperateStatus())){
-			orderSaveAndBindCardResponse.setOrderId(orderSaveWithCardResponse.getOrderId());
-			
-			orderSaveAndBindCardResponse.putSuccess();
-			return orderSaveAndBindCardResponse;
-		}
-		
-		log.error("落单+绑卡失败:"+orderSaveWithCardResponse.getReturnMsg());
-		orderSaveAndBindCardResponse.putErrorResult(TitanMsgCodeEnum.OPER_ORDER_AND_BIND_CARD_FAIL);
-		return orderSaveAndBindCardResponse;
-	}
+	//不再需要，直接注释掉
+//	@Override
+//	public OrderSaveAndBindCardResponse saveTransOrderAndBindCard(
+//			OrderSaveAndBindCardRequest request) {
+//		OrderSaveAndBindCardResponse orderSaveAndBindCardResponse = new OrderSaveAndBindCardResponse();
+//		if(null == request){
+//			orderSaveAndBindCardResponse.putErrorResult(TitanMsgCodeEnum.PARAMETER_VALIDATION_FAILED);
+//			return orderSaveAndBindCardResponse;
+//		}
+//
+//		OrderSaveWithCardRequest orderSaveWithCardRequest = this.convertToOrderSaveWithCardRequest(request);
+//		OrderSaveWithCardResponse orderSaveWithCardResponse = rsAccTradeManager.orderSaveWithdraw(orderSaveWithCardRequest);
+//
+//		if(CommonConstant.OPERATE_SUCCESS.equals(orderSaveWithCardResponse.getOperateStatus())){
+//			orderSaveAndBindCardResponse.setOrderId(orderSaveWithCardResponse.getOrderId());
+//
+//			orderSaveAndBindCardResponse.putSuccess();
+//			return orderSaveAndBindCardResponse;
+//		}
+//
+//		log.error("落单+绑卡失败:"+orderSaveWithCardResponse.getReturnMsg());
+//		orderSaveAndBindCardResponse.putErrorResult(TitanMsgCodeEnum.OPER_ORDER_AND_BIND_CARD_FAIL);
+//		return orderSaveAndBindCardResponse;
+//	}
 	
 	/**
 	 * @param request
@@ -2639,14 +2611,14 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	}
 	
 	@Override
-	public ConfirmOrdernQueryResponse ordernQuery(
+	public ConfirmOrdernQueryResponse confirmRechargeStatus(
 			ConfirmOrdernQueryRequest confirmOrdernQueryRequest) {
 		
 		ConfirmOrdernQueryResponse response = new ConfirmOrdernQueryResponse();
 		OrdernQueryRequest ordernQueryRequest = new OrdernQueryRequest();
 		ordernQueryRequest.setOrderno(confirmOrdernQueryRequest.getOrderNo());
 		ordernQueryRequest.setMerchantcode(confirmOrdernQueryRequest.getMerchantcode());
-		
+		ordernQueryRequest.setFunccode("4015");//充值
 		OrdernQueryResponse ordernQueryResponse = rsAccTradeManager.ordernQuery(ordernQueryRequest);
 		if(!ordernQueryResponse.isSuccess()){
 			log.error("查询订单失败,orderNo:"+ordernQueryRequest.getOrderno()+",ReturnCode"+ordernQueryResponse.getReturnCode()+",ReturnMsg:"+ordernQueryResponse.getReturnMsg());

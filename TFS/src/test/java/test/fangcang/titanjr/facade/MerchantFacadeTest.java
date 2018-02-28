@@ -1,10 +1,8 @@
 package test.fangcang.titanjr.facade;
 
 import com.fangcang.merchant.api.MerchantFacade;
-import com.fangcang.merchant.query.dto.MerchantDetailQueryDTO;
-import com.fangcang.merchant.response.dto.MerchantResponseDTO;
+
 import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
-import com.fangcang.titanjr.common.factory.ProxyFactoryConstants;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import test.fangcang.GenericTest;
@@ -30,21 +28,32 @@ public class MerchantFacadeTest extends GenericTest{
     }
 
     public static void main(String[] args) {
-        ClassPathXmlApplicationContext cfx = new ClassPathXmlApplicationContext("classpath:applicationContext-hessian.xml");
+//        ClassPathXmlApplicationContext cfx = new ClassPathXmlApplicationContext("classpath:applicationContext-hessian.xml");
 //        merchantFacade = (MerchantFacade)cfx.getBean("merchantFacade");
 //        MerchantDetailQueryDTO queryDTO=new MerchantDetailQueryDTO();
 //        queryDTO.setMerchantCode("M10000001");
 //        MerchantResponseDTO response = merchantFacade.queryMerchantDetail(queryDTO);
 //        System.out.println(response);
+//
+//        HessianProxyBeanFactory commonHessianBeanFactory = (HessianProxyBeanFactory)cfx.getBean("commonHessianBeanFactory");
+//        //commonHessianBeanFactory.getMerchantFacade();
+//        MerchantFacade facade = commonHessianBeanFactory.getHessianProxyBean(MerchantFacade.class,
+//                ProxyFactoryConstants.merchantServerUrl  + "merchantFacade");
+//        MerchantDetailQueryDTO queryDTO=new MerchantDetailQueryDTO();
+//        queryDTO.setMerchantCode("M10000001");
+//        MerchantResponseDTO response = facade.queryMerchantDetail(queryDTO);
+//        System.out.println(response);
+//
+//        ClassPathXmlApplicationContext cfx = new ClassPathXmlApplicationContext("classpath:applicationContext-hessian.xml");
+//
+//        HessianProxyBeanFactory commonHessianBeanFactory = new HessianProxyBeanFactory();
+//        HotelOrderSearchFacade facade = commonHessianBeanFactory.getHessianProxyBean(HotelOrderSearchFacade.class,
+//                    "http://www.fangcang.com/hotel-order-serverC3/remote/hotelOrderSearchFacade");
+//        OrderDetailResponseDTO orderDetailResponseDTO = facade.queryOrderByOtherOrderCode("S98170625161139");
+//        System.out.println(orderDetailResponseDTO);
 
-        HessianProxyBeanFactory commonHessianBeanFactory = (HessianProxyBeanFactory)cfx.getBean("commonHessianBeanFactory");
-        //commonHessianBeanFactory.getMerchantFacade();
-        MerchantFacade facade = commonHessianBeanFactory.getHessianProxyBean(MerchantFacade.class,
-                ProxyFactoryConstants.merchantServerUrl  + "merchantFacade");
-        MerchantDetailQueryDTO queryDTO=new MerchantDetailQueryDTO();
-        queryDTO.setMerchantCode("M10000001");
-        MerchantResponseDTO response = facade.queryMerchantDetail(queryDTO);
-        System.out.println(response);
     }
+
+
 
 }

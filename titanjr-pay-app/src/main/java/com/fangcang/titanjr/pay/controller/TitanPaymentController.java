@@ -361,7 +361,7 @@ public class TitanPaymentController extends BaseController {
 		// 重试三次
 		for (int i = 0; i < 3; i++) {
 
-			response = titanFinancialTradeService.ordernQuery(request);
+			response = titanFinancialTradeService.confirmRechargeStatus(request);
 
 			if (response == null || !response.isResult()
 					|| null == response.getTransOrderInfos()
