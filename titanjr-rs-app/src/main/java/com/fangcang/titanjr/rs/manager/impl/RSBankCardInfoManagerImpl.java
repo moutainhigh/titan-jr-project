@@ -3,26 +3,16 @@ package com.fangcang.titanjr.rs.manager.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fangcang.titanjr.rs.util.RSInvokeConstant;
-
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.Rop.api.domain.Accountinfo;
-import com.Rop.api.request.WheatfieldAccountUpdateRequest;
-import com.Rop.api.request.WheatfieldAccountinfoDeleteRequest;
 import com.Rop.api.request.WheatfieldAccountinfoQueryRequest;
 import com.Rop.api.request.WheatfieldAccountinfoUpdateRequest;
 import com.Rop.api.request.WheatfieldAccountnumCkeckRequest;
-import com.Rop.api.request.WheatfieldBankaccountBindingRequest;
-import com.Rop.api.response.WheatfieldAccountUpdateResponse;
-import com.Rop.api.response.WheatfieldAccountinfoDeleteResponse;
 import com.Rop.api.response.WheatfieldAccountinfoQueryResponse;
 import com.Rop.api.response.WheatfieldAccountinfoUpdateResponse;
 import com.Rop.api.response.WheatfieldAccountnumCkeckResponse;
-import com.Rop.api.response.WheatfieldBankaccountBindingResponse;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.rs.dto.BankCardInfo;
 import com.fangcang.titanjr.rs.manager.RSBankCardInfoManager;
@@ -38,7 +28,16 @@ import com.fangcang.titanjr.rs.response.BankCardQueryResponse;
 import com.fangcang.titanjr.rs.response.DeletePersonCardResponse;
 import com.fangcang.titanjr.rs.response.InvalidPubCardModifyResponse;
 import com.fangcang.titanjr.rs.response.WithDrawCardModifyResponse;
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.util.MyBeanUtil;
+import com.titanjr.fop.request.WheatfieldAccountUpdateRequest;
+import com.titanjr.fop.request.WheatfieldAccountinfoDeleteRequest;
+import com.titanjr.fop.request.WheatfieldBankaccountBindingRequest;
+import com.titanjr.fop.response.WheatfieldAccountUpdateResponse;
+import com.titanjr.fop.response.WheatfieldAccountinfoDeleteResponse;
+import com.titanjr.fop.response.WheatfieldBankaccountBindingResponse;
+
+import net.sf.json.JSONSerializer;
 
 public class RSBankCardInfoManagerImpl implements RSBankCardInfoManager {
 	private static final Log log = LogFactory.getLog(RSBankCardInfoManagerImpl.class);
@@ -57,7 +56,7 @@ public class RSBankCardInfoManagerImpl implements RSBankCardInfoManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, bankCardBindRequest);
 			log.info("调用融数的绑卡信息："+JSONSerializer.toJSON(req));
-			WheatfieldBankaccountBindingResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldBankaccountBindingResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用bindBankCard返回报文: \n" + rsp.getBody());
@@ -226,7 +225,7 @@ public class RSBankCardInfoManagerImpl implements RSBankCardInfoManager {
 			}
 			MyBeanUtil.copyBeanProperties(req, invalidPubCardModifyRequest);
 			log.info("调用融数的绑卡信息："+JSONSerializer.toJSON(req));
-			WheatfieldAccountUpdateResponse rsp = RSInvokeConstant.ropClient.execute(req, RSInvokeConstant.sessionKey);
+			WheatfieldAccountUpdateResponse rsp = RSInvokeConstant.fopClient.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用modifyInvalidPublicCard返回报文: \n" + rsp.getBody());
 				String errorMsg;
@@ -267,7 +266,7 @@ public class RSBankCardInfoManagerImpl implements RSBankCardInfoManager {
 				deletePersonCardRequest.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, deletePersonCardRequest);
-			WheatfieldAccountinfoDeleteResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldAccountinfoDeleteResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用deletePersonCard返回报文: \n" + rsp.getBody());

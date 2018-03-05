@@ -25,6 +25,10 @@ public class InterfaceURlConfig {
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.COMPANY_UPDATE, "/org/updateCompanyInfo.shtml");
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.PERSON_OPERATE, "/org/personOpt.shtml");
         INTERFACE_URL_MAP.put(InterfaceConfigEnum.PERSON_BATCHQUERY, "/org/queryPerson.shtml");
+        
+        INTERFACE_URL_MAP.put(InterfaceConfigEnum.BANKCARD_BINDBANKCARD, "/bankcard/bindbankCard.shtml");
+        INTERFACE_URL_MAP.put(InterfaceConfigEnum.BANKCARD_DELETEPERSONCARD, "/bankcard/deletePersonCard.shtml");
+        INTERFACE_URL_MAP.put(InterfaceConfigEnum.BANKCARD_ACCOUNTUPDATE, "/bankcard/accountUpdate.shtml");
 
     }
     

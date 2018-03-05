@@ -18,8 +18,12 @@ public enum InterfaceConfigEnum {
     UNFREEZE_BALANCE("ruixue.wheatfield.order.service.thawauthcode","解冻资金"),
     ACCOUNT_BALANCE_TRANSFER("ruixue.wheatfield.order.transfer","账户转账"),
     ACCOUNT_BALANCE_WITHDRAW("ruixue.wheatfield.order.service.withdrawservice","账户提现"),
-    ORDERN_QUERY("ruixue.wheatfield.ordern.query","订单查询");
+    ORDERN_QUERY("ruixue.wheatfield.ordern.query","订单查询"),
 
+    BANKCARD_BINDBANKCARD("fangcang.wheatfield.bankaccount.binding","绑定银行卡"),
+	BANKCARD_DELETEPERSONCARD("fangcang.wheatfield.accountinfo.delete","删除个人绑卡"),
+	BANKCARD_ACCOUNTUPDATE("fangcang.wheatfield.account.update","更新绑卡信息");
+	
 
 
     private String key;
