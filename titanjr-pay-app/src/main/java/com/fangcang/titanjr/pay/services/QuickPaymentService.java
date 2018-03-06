@@ -85,77 +85,77 @@ public class QuickPaymentService {
 		return null;
 	}
 	
-	//快捷支付
-	public RechargeResponse quickPayment(QuickPaymentData quickPaymentData){
-		
-		RechargeResponse rechargeResponse = new RechargeResponse();
-		
-		TransOrderRequest transOrderRequest = new TransOrderRequest();
-        transOrderRequest.setPayorderno(quickPaymentData.getOrderNo());
-		TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
-		
-		if(null == transOrderDTO){
-			log.error("订单信息为空");
-			rechargeResponse.putErrorResult(TitanMsgCodeEnum.QUERY_ORDER_FAIL);
-			return rechargeResponse;
-		}
-		//获取相应的数据，身份信息,真实姓名
-//		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
-//		organQueryRequest.setUserId(transOrderDTO.getUserid());
-//		FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
-//		if(!financialOrganResponse.isResult()){
-//			log.error("机构不存在");
-//			rechargeResponse.putErrorResult(TitanMsgCodeEnum.ACCOUNT_NOT_EXIST);
+	//快捷支付--不再需要注释掉
+//	public RechargeResponse quickPayment(QuickPaymentData quickPaymentData){
+//
+//		RechargeResponse rechargeResponse = new RechargeResponse();
+//
+//		TransOrderRequest transOrderRequest = new TransOrderRequest();
+//        transOrderRequest.setPayorderno(quickPaymentData.getOrderNo());
+//		TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
+//
+//		if(null == transOrderDTO){
+//			log.error("订单信息为空");
+//			rechargeResponse.putErrorResult(TitanMsgCodeEnum.QUERY_ORDER_FAIL);
 //			return rechargeResponse;
 //		}
-		
-//		FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
-		if(CommonConstant.IS_BIND_CARD.equals(quickPaymentData.getIsBindCard())){
-			OrderSaveAndBindCardRequest request  = converTOOrderSaveAndBindCardRequest(quickPaymentData, transOrderDTO);
-//			request.setAccountName(financialOrganDTO.getOrgName());
-//			request.setCertificateNumber(financialOrganDTO.getCertificateNumber());
-			request.setAccountName("方代康");
-			request.setCertificateNumber("422801199110012637");
-			OrderSaveAndBindCardResponse orderSaveAndBindCardResponse = titanFinancialTradeService.saveTransOrderAndBindCard(request);
-			if(!orderSaveAndBindCardResponse.isResult()){
-				log.error("下单并绑卡失败:"+JSONSerializer.toJSON(orderSaveAndBindCardResponse));
-				rechargeResponse.putErrorResult(orderSaveAndBindCardResponse.getReturnCode(), orderSaveAndBindCardResponse.getReturnMessage());
-			    return rechargeResponse;
-			}
-			//更新本地数据
-			transOrderDTO.setOrderid(orderSaveAndBindCardResponse.getOrderId());
-			transOrderDTO.setOrdertypeid(request.getOrderTypeId());
-			transOrderDTO.setProductid(request.getProductId());
-			
-			boolean updateTransOrder = titanOrderService.updateTransOrder(transOrderDTO);
-			if(!updateTransOrder){
-				log.error("保存落单信息失败:");
-				rechargeResponse.putErrorResult(TitanMsgCodeEnum.RS_SUCCESS_SAVELOCA_FAIL);
-				return rechargeResponse;
-			}
-			
-		}else{
-			TitanPaymentRequest titanPaymentRequest = converToTitanPaymentRequest(quickPaymentData, transOrderDTO);
-			TransOrderCreateResponse transOrderCreateResponse = titanFinancialTradeService.createRsOrder(titanPaymentRequest);
-			if(!transOrderCreateResponse.isResult()){
-				log.error("融数下单失败:"+JSONSerializer.toJSON(transOrderCreateResponse));
-				rechargeResponse.putErrorResult(TitanMsgCodeEnum.RS_ADD_ORDER_FAIL);
-			    return rechargeResponse;
-			}
-			transOrderDTO.setOrderid(transOrderCreateResponse.getOrderNo());
-		}
-		
-		//封装相应的数据调转融数的连连支付
-		RechargeRequest rechargeRequest = convertToRechargeRequest(transOrderDTO);
-		rechargeResponse = titanFinancialTradeService.packageRechargeData(rechargeRequest);
-		if(!rechargeResponse.isResult()){
-			log.error("封装充值信息失败");
-			rechargeResponse.putErrorResult(TitanMsgCodeEnum.PACKAGE_RECHARGE_DATA_FAIL);
-			return rechargeResponse;
-		}
-		rechargeResponse.putSuccess();
-		return rechargeResponse;
-	}
+//		//获取相应的数据，身份信息,真实姓名
+////		FinancialOrganQueryRequest organQueryRequest = new FinancialOrganQueryRequest();
+////		organQueryRequest.setUserId(transOrderDTO.getUserid());
+////		FinancialOrganResponse financialOrganResponse = titanFinancialOrganService.queryFinancialOrgan(organQueryRequest);
+////		if(!financialOrganResponse.isResult()){
+////			log.error("机构不存在");
+////			rechargeResponse.putErrorResult(TitanMsgCodeEnum.ACCOUNT_NOT_EXIST);
+////			return rechargeResponse;
+////		}
+//
+////		FinancialOrganDTO financialOrganDTO = financialOrganResponse.getFinancialOrganDTO();
+//		if(CommonConstant.IS_BIND_CARD.equals(quickPaymentData.getIsBindCard())){
+//			OrderSaveAndBindCardRequest request  = converTOOrderSaveAndBindCardRequest(quickPaymentData, transOrderDTO);
+////			request.setAccountName(financialOrganDTO.getOrgName());
+////			request.setCertificateNumber(financialOrganDTO.getCertificateNumber());
+//			request.setAccountName("方代康");
+//			request.setCertificateNumber("422801199110012637");
+//			OrderSaveAndBindCardResponse orderSaveAndBindCardResponse = titanFinancialTradeService.saveTransOrderAndBindCard(request);
+//			if(!orderSaveAndBindCardResponse.isResult()){
+//				log.error("下单并绑卡失败:"+JSONSerializer.toJSON(orderSaveAndBindCardResponse));
+//				rechargeResponse.putErrorResult(orderSaveAndBindCardResponse.getReturnCode(), orderSaveAndBindCardResponse.getReturnMessage());
+//			    return rechargeResponse;
+//			}
+//			//更新本地数据
+//			transOrderDTO.setOrderid(orderSaveAndBindCardResponse.getOrderId());
+//			transOrderDTO.setOrdertypeid(request.getOrderTypeId());
+//			transOrderDTO.setProductid(request.getProductId());
+//
+//			boolean updateTransOrder = titanOrderService.updateTransOrder(transOrderDTO);
+//			if(!updateTransOrder){
+//				log.error("保存落单信息失败:");
+//				rechargeResponse.putErrorResult(TitanMsgCodeEnum.RS_SUCCESS_SAVELOCA_FAIL);
+//				return rechargeResponse;
+//			}
+//
+//		}else{
+//			TitanPaymentRequest titanPaymentRequest = converToTitanPaymentRequest(quickPaymentData, transOrderDTO);
+//			TransOrderCreateResponse transOrderCreateResponse = titanFinancialTradeService.createRsOrder(titanPaymentRequest);
+//			if(!transOrderCreateResponse.isResult()){
+//				log.error("融数下单失败:"+JSONSerializer.toJSON(transOrderCreateResponse));
+//				rechargeResponse.putErrorResult(TitanMsgCodeEnum.RS_ADD_ORDER_FAIL);
+//			    return rechargeResponse;
+//			}
+//			transOrderDTO.setOrderid(transOrderCreateResponse.getOrderNo());
+//		}
+//
+//		//封装相应的数据调转融数的连连支付
+//		RechargeRequest rechargeRequest = convertToRechargeRequest(transOrderDTO);
+//		rechargeResponse = titanFinancialTradeService.packageRechargeData(rechargeRequest);
+//		if(!rechargeResponse.isResult()){
+//			log.error("封装充值信息失败");
+//			rechargeResponse.putErrorResult(TitanMsgCodeEnum.PACKAGE_RECHARGE_DATA_FAIL);
+//			return rechargeResponse;
+//		}
+//		rechargeResponse.putSuccess();
+//		return rechargeResponse;
+//	}
 	
 	private TitanPaymentRequest converToTitanPaymentRequest(QuickPaymentData quickPaymentData,TransOrderDTO transOrderDTO){
 		TitanPaymentRequest titanPaymentRequest = new TitanPaymentRequest();

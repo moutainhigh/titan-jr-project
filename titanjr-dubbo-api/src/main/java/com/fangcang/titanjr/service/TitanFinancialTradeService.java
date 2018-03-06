@@ -126,19 +126,20 @@ public interface TitanFinancialTradeService {
 	 * @return
 	 */
 	public QrCodeResponse getQrCodeUrl(RechargeDataDTO rechargeDataDTO );
-	
+
+	//不再需要，直接注释掉
 	/**
 	 * 下单并绑卡
 	 * @param request
 	 * @return
 	 */
-	public  OrderSaveAndBindCardResponse saveTransOrderAndBindCard(OrderSaveAndBindCardRequest request);
+//	public  OrderSaveAndBindCardResponse saveTransOrderAndBindCard(OrderSaveAndBindCardRequest request);
 	
 	/**
-	* 确认订单支付成功
+	* 确认订单充值成功
 	 * @param ordernQueryRequest
 	 * @return
 	 */
-	public ConfirmOrdernQueryResponse ordernQuery(ConfirmOrdernQueryRequest ordernQueryRequest);
+	public ConfirmOrdernQueryResponse confirmRechargeStatus(ConfirmOrdernQueryRequest ordernQueryRequest);
 	
 }

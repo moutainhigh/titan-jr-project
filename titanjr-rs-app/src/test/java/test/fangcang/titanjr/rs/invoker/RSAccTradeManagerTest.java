@@ -308,10 +308,10 @@ public class RSAccTradeManagerTest extends GenericTest {
     	orderTransferFlowRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
     	orderTransferFlowRequest.setUserid("PM10000021");
     	orderTransferFlowRequest.setRequestno("TJR160615103211355");
-    	OrderTransferFlowResponse orderTransferFlowResponse = rsAccTradeManager.queryOrderTranferFlow(orderTransferFlowRequest);
-    	if(orderTransferFlowResponse !=null){
-    		System.out.println(orderTransferFlowResponse.getOperateStatus()+"----"+orderTransferFlowResponse.getRetmsg());
-    	}
+//    	OrderTransferFlowResponse orderTransferFlowResponse = rsAccTradeManager.queryOrderTranferFlow(orderTransferFlowRequest);
+//    	if(orderTransferFlowResponse !=null){
+//    		System.out.println(orderTransferFlowResponse.getOperateStatus()+"----"+orderTransferFlowResponse.getRetmsg());
+//    	}
     }
     
 }

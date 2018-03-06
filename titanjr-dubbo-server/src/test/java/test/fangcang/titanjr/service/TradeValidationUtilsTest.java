@@ -103,7 +103,7 @@ public class TradeValidationUtilsTest extends SpringTest {
         notifyRefundRequest.setRefundOrderno("OD20171201101923006");//OD20170502092341001,OD20170505142021001 ，OD2017060210124100122
         notifyRefundRequest.setVersion("v1.0");
         notifyRefundRequest.setSignType(SignTypeEnum.MD5.getKey());
-        NotifyRefundResponse notifyRefundResponse = validationUtils.notifyGatewayRefund(notifyRefundRequest);
+//        NotifyRefundResponse notifyRefundResponse = validationUtils.notifyGatewayRefund(notifyRefundRequest);
 
     }
 
@@ -111,8 +111,8 @@ public class TradeValidationUtilsTest extends SpringTest {
     public void testQueryRefundList(){
         RefundDTO refundDTO = new RefundDTO();
         refundDTO.setOrderNo("2017112713031500004");
-        List<RefundDTO>  list = titanRefundDao.queryRefundDTO(refundDTO);
-        System.out.println(list);
+//        List<RefundDTO>  list = titanRefundDao.queryRefundDTO(refundDTO);
+//        System.out.println(list);
     }
 
 }

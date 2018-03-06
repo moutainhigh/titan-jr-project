@@ -39,14 +39,6 @@ public interface RSOrganizationManager {
      */
     public PersonOrgUpdateResponse updatePersonOrg(PersonOrgUpdateRequest personOrgUpdateRequest);
 
-    /**
-     * 查询机构状态
-     * 账户状态（1：生效，2：冻结，3：注销） 不填默认为查询 1：生效状态
-     * @param orgStatusQueryRequest
-     * @return
-     */
-    public OrgStatusQueryResponse queryOrgStatus(OrgStatusQueryRequest orgStatusQueryRequest);
-
 
     /**
      * 查询已注册的企业机构的信息

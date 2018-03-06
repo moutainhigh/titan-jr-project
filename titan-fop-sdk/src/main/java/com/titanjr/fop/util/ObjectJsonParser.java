@@ -1,5 +1,6 @@
 package com.titanjr.fop.util;
 
+import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.dto.Transorderinfo;
 import com.titanjr.fop.exceptions.ApiException;
 import com.titanjr.fop.response.FopResponse;
@@ -22,6 +23,7 @@ public class ObjectJsonParser<T extends FopResponse> implements FopParser<T> {
         JSONObject jsonObject = JSONObject.fromObject(resultJson);
         Map classMap = new HashMap();
         classMap.put("transorderinfos",Transorderinfo.class);
+        classMap.put("shbalanceinfos", SHBalanceInfo.class);
         T result = (T) JSONObject.toBean(jsonObject, clazz,classMap);
         return result;
     }
