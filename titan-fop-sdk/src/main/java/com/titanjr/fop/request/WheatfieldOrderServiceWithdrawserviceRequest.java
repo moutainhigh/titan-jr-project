@@ -1,7 +1,9 @@
 package com.titanjr.fop.request;
 
 import com.fangcang.titanjr.common.util.GenericValidate;
+import com.titanjr.fop.constants.CommonConstants;
 import com.titanjr.fop.constants.ReturnCodeEnum;
+import com.titanjr.fop.constants.WithDrawChannelEnum;
 import com.titanjr.fop.domain.FopHashMap;
 import com.titanjr.fop.exceptions.ApiRuleException;
 import com.titanjr.fop.response.WheatfieldOrderServiceWithdrawserviceResponse;
@@ -33,6 +35,9 @@ public class WheatfieldOrderServiceWithdrawserviceRequest extends BaseRequest im
     private String userorderid;
     @NotNull
     private Long userfee;
+
+    //默认使用通联渠道提现
+    private WithDrawChannelEnum withDrawChannel = CommonConstants.defaultChannel;
 
     public String getUserid() {
         return userid;
@@ -96,6 +101,14 @@ public class WheatfieldOrderServiceWithdrawserviceRequest extends BaseRequest im
 
     public void setUserfee(Long userfee) {
         this.userfee = userfee;
+    }
+
+    public WithDrawChannelEnum getWithDrawChannel() {
+        return withDrawChannel;
+    }
+
+    public void setWithDrawChannel(WithDrawChannelEnum withDrawChannel) {
+        this.withDrawChannel = withDrawChannel;
     }
 
     public String getApiMethodName() {

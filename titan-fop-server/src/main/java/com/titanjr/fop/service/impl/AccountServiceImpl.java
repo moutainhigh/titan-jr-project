@@ -14,6 +14,7 @@ import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
 import com.titanjr.fop.constants.BankCardMapper;
 import com.titanjr.fop.constants.InterfaceURlConfig;
+import com.titanjr.fop.constants.WithDrawChannelEnum;
 import com.titanjr.fop.dao.TitanAccountDao;
 import com.titanjr.fop.dto.BalanceQueryDTO;
 import com.titanjr.fop.dto.SHBalanceInfo;
@@ -254,6 +255,7 @@ public class AccountServiceImpl implements AccountService {
         String paymentURL = InterfaceURlConfig.checkstand_GateWayURL;
 //        paymentURL = "http://192.168.0.14:8090/checkstand/payment.shtml";
         //发起代付 返回状态
+        //对应于TLAgentTradeRequest对象
         Map<String, String> paramMap = new HashMap<String, String>();
         paramMap.put("merchantNo", "M000016");
         paramMap.put("orderNo", withdrawserviceRequest.getUserorderid());//客户单号
@@ -274,6 +276,10 @@ public class AccountServiceImpl implements AccountService {
         paramMap.put("currency", "CNY");
         paramMap.put("idCode", cardDTO.getCertificatenumnumber());
         paramMap.put("idType", null);//设法区分身份证和回乡证getCertificatetype 不一定准
+        //若提现渠道有设置则使用设置的
+        if (withdrawserviceRequest.getWithDrawChannel().equals(WithDrawChannelEnum.RB_CHANNEL)) {
+            paramMap.put("tradeCode","300001");
+        }
         try {
             //查询网关真实状态
             String rechargeResult = WebUtils.doPost(paymentURL, paramMap, 60000, 60000);
@@ -312,6 +318,7 @@ public class AccountServiceImpl implements AccountService {
             commonService.sendSMSMessage(SMSTemplate.WITHDRAW_UPDATE_FAIL, e);
             return withdrawserviceResponse;
         }
+
         return withdrawserviceResponse;
     }
 
