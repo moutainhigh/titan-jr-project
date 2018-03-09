@@ -16,6 +16,7 @@ public class TitanAccountDetail implements Serializable {
 	private Long detailId;
 	private String accountCode;
 	private Long transOrderId;
+	private String userOrderId;
 	private Integer tradeType;
 	private String orgCode;
 	private String productId;
@@ -39,7 +40,12 @@ public class TitanAccountDetail implements Serializable {
 	private String remark;
 	private Date createTime;
 	
-	
+	public String getUserOrderId() {
+		return userOrderId;
+	}
+	public void setUserOrderId(String userOrderId) {
+		this.userOrderId = userOrderId;
+	}
 	public Long getDetailId() {
 		return detailId;
 	}

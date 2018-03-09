@@ -62,7 +62,7 @@ public interface RSAccTradeManager {
      * @param orderTransferFlowRequest
      * @return
      */
-    public OrderTransferFlowResponse queryOrderTranferFlow(OrderTransferFlowRequest orderTransferFlowRequest);
+//    public OrderTransferFlowResponse queryOrderTranferFlow(OrderTransferFlowRequest orderTransferFlowRequest);
 
     /**
      * 基本的交易，单笔转账操作接口
@@ -83,7 +83,7 @@ public interface RSAccTradeManager {
      * @param orderSaveWithCardRequest
      * @return
      */
-    public OrderSaveWithCardResponse orderSaveWithdraw(OrderSaveWithCardRequest orderSaveWithCardRequest);
+//    public OrderSaveWithCardResponse orderSaveWithdraw(OrderSaveWithCardRequest orderSaveWithCardRequest);
 
     
     /**

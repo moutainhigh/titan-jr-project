@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.fangcang.corenut.dao.PaginationSupport;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.util.DateUtil;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanDynamicKeyDao;
 import com.fangcang.titanjr.dao.TitanFundFreezereqDao;
 import com.fangcang.titanjr.dao.TitanOrderExceptionDao;
@@ -276,7 +277,7 @@ public class TitanOrderServiceImpl implements TitanOrderService {
 			log.error("查询转账记录失败", e);
 		}
 		if (CollectionUtils.isEmpty(transferReqList)) {
-			log.info("查询转账单无结果");
+			log.info("查询转账单无结果,查询参数："+Tools.gsonToString(titanTransferDTO));
 		}
 		for (TitanTransferReq titanTransferReq : transferReqList) {
 			TitanTransferDTO transferDTO = new TitanTransferDTO();

@@ -17,6 +17,8 @@ public class OrdernQueryRequest extends BaseRequest{
 	
 	private String merchantcode;
 
+	private String funccode;
+
 	public String getOrderno() {
 		return orderno;
 	}
@@ -32,7 +34,15 @@ public class OrdernQueryRequest extends BaseRequest{
 	public void setMerchantcode(String merchantcode) {
 		this.merchantcode = merchantcode;
 	}
-	
+
+	public String getFunccode() {
+		return funccode;
+	}
+
+	public void setFunccode(String funccode) {
+		this.funccode = funccode;
+	}
+
 	@Override
 	public void check() throws RSValidateException {
 		RequestValidationUtil.checkNotEmpty(this.getOrderno(), "orderno");

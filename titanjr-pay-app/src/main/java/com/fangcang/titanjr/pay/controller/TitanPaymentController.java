@@ -154,15 +154,15 @@ public class TitanPaymentController extends BaseController {
     @RequestMapping(value = "notify")
     public void notify(RechargeResultConfirmRequest rechargeResultConfirmRequest,HttpServletResponse response) throws IOException{
 		String orderNo = rechargeResultConfirmRequest.getOrderNo();
+		log.info("收到融数通知(notify)的支付结果rechargeResultConfirmRequest："+Tools.gsonToString(rechargeResultConfirmRequest));
+		
 		if(!StringUtil.isValidString(orderNo)){
-			log.error("RS callback is fail");
+			log.error("notify callback is fail,orderNo is null");
 			return;
 		}
 
 		response.getWriter().print("returnCode=000000&returnMsg=成功");
 		response.flushBuffer();
-		
-		log.info("收到融数通知(notify)的支付结果rechargeResultConfirmRequest："+Tools.gsonToString(rechargeResultConfirmRequest));
 		
 		String sign  = titanPaymentService.getSign(rechargeResultConfirmRequest);
 		String signMsg = rechargeResultConfirmRequest.getSignMsg();
@@ -361,7 +361,7 @@ public class TitanPaymentController extends BaseController {
 		// 重试三次
 		for (int i = 0; i < 3; i++) {
 
-			response = titanFinancialTradeService.ordernQuery(request);
+			response = titanFinancialTradeService.confirmRechargeStatus(request);
 
 			if (response == null || !response.isResult()
 					|| null == response.getTransOrderInfos()

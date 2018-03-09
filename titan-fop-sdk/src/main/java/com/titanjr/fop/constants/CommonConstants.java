@@ -20,6 +20,9 @@ public class CommonConstants {
 
     public static final String fetchUrl = "/fetchServiceUrl.shtml";
 
+    //设置默认提现通道，可通过接口调整修改
+    public static WithDrawChannelEnum defaultChannel = WithDrawChannelEnum.TL_CHANNEL;
+
     public void initParam() {
         CommonConstants.appSecret = ParamServiceImpl.getInstance().getConfValue("{pay.appSecret}");
         CommonConstants.actualUrl = ParamServiceImpl.getInstance().getConfValue("{pay.serviceUrl}");

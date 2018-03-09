@@ -1,7 +1,6 @@
 package com.titanjr.fop.request;
 
 import com.fangcang.util.StringUtil;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.domain.FopHashMap;
 import com.titanjr.fop.exceptions.ApiRuleException;

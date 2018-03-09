@@ -7,7 +7,6 @@ import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.OrderGenerateService;
 import com.fangcang.titanjr.dto.bean.AccountHistoryDTO;
 import com.fangcang.titanjr.dto.bean.OrgBindInfo;
-import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderInfo;
 import com.fangcang.titanjr.dto.request.*;
@@ -18,14 +17,11 @@ import com.fangcang.util.StringUtil;
 
 import net.sf.json.JSONSerializer;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.junit.Before;
 import org.junit.Test;
 
 import test.fangcang.GenericTest;
 
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -482,7 +478,7 @@ public class TianjrFinancialTradeTest extends GenericTest{
 		// 重试三次
 		for (int i = 0; i < 3; i++) {
 
-			response = titanFinancialTradeService.ordernQuery(request);
+			response = titanFinancialTradeService.confirmRechargeStatus(request);
 
 			if (response == null || !response.isResult()
 					|| null == response.getTransOrderInfos()

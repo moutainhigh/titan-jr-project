@@ -50,6 +50,12 @@ public class ResponseUtils {
         return JSONSerializer.toJSON(fopResponse).toString();
     }
     
+    public static String getErrorResp(FopResponse fopResponse){
+    	fopResponse.setErrorCode(fopResponse.getErrorCode());
+        fopResponse.setMsg(fopResponse.getMsg());
+        return JSONSerializer.toJSON(fopResponse).toString();
+    }
+    
     public static String getParamErrorResp(FopResponse fopResponse,String msg){
     	logger.error("参数错误");
         fopResponse.setErrorCode(ReturnCodeEnum.CODE_OPERTYPE_ERROR.getCode());

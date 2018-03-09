@@ -240,55 +240,6 @@ public class RSOrganizationManagerImpl implements RSOrganizationManager {
 	}
 
 	@Override
-	public OrgStatusQueryResponse queryOrgStatus(
-			OrgStatusQueryRequest orgStatusQueryRequest) {
-		OrgStatusQueryResponse response = new OrgStatusQueryResponse();
-		try {
-			WheatfieldAccountCheckRequest req = new WheatfieldAccountCheckRequest();
-			if (needCheckRequest) {
-				orgStatusQueryRequest.check();
-			}
-			MyBeanUtil.copyBeanProperties(req, orgStatusQueryRequest);
-			WheatfieldAccountCheckResponse rsp = RSInvokeConstant.ropClient
-					.execute(req, RSInvokeConstant.sessionKey);
-			log.info("开始调用更新账户信息接口:");
-			if (rsp != null) {
-				log.info("调用queryOrgStatus返回报文: \n" + rsp.getBody());
-				String errorMsg;
-				if (rsp.isSuccess() != true) {
-					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
-						errorMsg = rsp.getSubMsg();
-					} else {
-						errorMsg = rsp.getMsg();
-					}
-					response.setReturnCode(rsp.getErrorCode());
-					response.setReturnMsg(errorMsg);
-					log.error("调用接口queryOrgStatus异常：" + errorMsg);
-				} else {
-					log.info("调用接口queryOrgStatus查询用户状态成功");
-					response.setSuccess(true);
-					response.setOperateStatus(rsp.getIs_success());
-					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
-				}
-			} else {
-				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
-				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
-			}
-
-		} catch (RSValidateException re) {
-			response.setReturnCode(re.getErrorCode());
-			response.setReturnMsg(re.getErrorMsg());
-			log.error("调用updateCompanyOrg参数校验异常", re);
-		} catch (Exception e) {
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg(e.getMessage());
-			log.error("调用updateCompanyOrg过程出现未知异常", e);
-		}
-		return response;
-	}
-
-	@Override
 	public CompOrgInfoQueryResponse queryCompOrgInfo(
 			CompOrgInfoQueryRequest compOrgInfoQueryRequest) {
 		CompOrgInfoQueryResponse response = new CompOrgInfoQueryResponse();

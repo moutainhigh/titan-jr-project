@@ -1,5 +1,6 @@
 package com.titanjr.fop.api;
 
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.util.StringUtil;
 import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.domain.FopHashMap;
@@ -134,7 +135,7 @@ public class DefaultFopClient implements FopClient {
 
             fopResponse.setParams((HashMap) responseMap.get("textParams"));
             if (!fopResponse.isSuccess()) {
-                logger.error("request fail,");
+                logger.error("request fail,返回结果："+Tools.gsonToString(fopResponse));
             }
             return fopResponse;
         }

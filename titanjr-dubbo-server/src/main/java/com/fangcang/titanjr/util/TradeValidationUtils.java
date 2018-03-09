@@ -90,201 +90,11 @@ public class TradeValidationUtils {
      * @return
      * @throws ApiException
      */
-    public List<Transorderinfo> validOrderPayRequest(Date startTime, Date endTime) throws ApiException {
-
-        WheatfieldOrdernQueryRequest ordernQueryRequest = new WheatfieldOrdernQueryRequest();
-        //ordernQueryRequest.setUserid("141223100000056");
-        //ordernQueryRequest.setStatus("1");
-        ordernQueryRequest.setMerchantcode("M000016");
-        ordernQueryRequest.setFunccode("4015");
-        ordernQueryRequest.setStarttime(startTime);
-        ordernQueryRequest.setEndtime(endTime);
-        WheatfieldOrdernQueryResponse wheatfieldOrdernQueryResponse = TradeValidationUtils.ropClient.execute(ordernQueryRequest, session);
-        List<Transorderinfo> transorderinfoList = wheatfieldOrdernQueryResponse.getTransorderinfos();
-
-        Set<String> statusList = new HashSet<String>();
-        Set<String> funCodeList = new HashSet<String>();
-
-        for (Transorderinfo transorderinfo : transorderinfoList) {
-            statusList.add(transorderinfo.getOrderstatus());
-            funCodeList.add(transorderinfo.getFunccode());
-        }
-
-        //查询本地所有充值单
-        TitanOrderPayreqParam requestParam = new TitanOrderPayreqParam();
-        requestParam.setStartTime(DateUtil.dateToString(startTime, "yyyyMMddHHmmss"));
-        requestParam.setEndTime(DateUtil.dateToString(endTime, "yyyyMMddHHmmss"));
-        List<TitanOrderPayreq> titanOrderPayreqs = titanOrderPayreqDao.queryOrderPayRequestList(requestParam);
-
-        List<Transorderinfo> result = new ArrayList<Transorderinfo>();
-        List<TitanOrderPayreq> payreqList = new ArrayList<TitanOrderPayreq>();
-
-        //校验本地充值单和真实是否一致
-        for (TitanOrderPayreq payreq : titanOrderPayreqs) {
-            boolean isValid = false;
-            boolean hasMatched = false;
-            for (Transorderinfo transorderinfo : transorderinfoList) {
-                if (transorderinfo.getOrderno().equals(payreq.getOrderNo())) {
-                    hasMatched = true;
-                    if (payreq.getReqstatus() == 2) {//如果本地成功
-                        //交易不成功
-                        if ("1".equals(transorderinfo.getOrderstatus())) {
-                            isValid = true;
-                        } else {
-                            result.add(transorderinfo);
-                            payreqList.add(payreq);
-                        }
-                        break;
-                    }
-                }
-            }
-            //如果无匹配的，判定状态是否有问题
-            if (!hasMatched) {
-                if (payreq.getReqstatus() != 2) {
-                    isValid = true;
-                } else {
-                    payreqList.add(payreq);
-                }
-            }
-        }
-        for (Transorderinfo transorderinfo : transorderinfoList) {
-            boolean hasMatched = false;
-            for (TitanOrderPayreq payreq : titanOrderPayreqs) {
-                if (transorderinfo.getOrderno().equals(payreq.getOrderNo())) {
-                    hasMatched = true;
-                }
-            }
-            if (!hasMatched) {
-                result.add(transorderinfo);
-            }
-        }
-
-        return result;
-    }
-
-    public void validRemoteOrders(){
-
-    }
-
-
-    /**
-     * 验证本地退款单是否跟远程匹配
-     *
-     * @param startTime
-     * @param endTime
-     * @return
-     * @throws ApiException
-     */
-    public List<Transorderinfo> validRefundOrderInfo(Date startTime, Date endTime) throws ApiException {
-        List<Transorderinfo> result = new ArrayList<Transorderinfo>();
-        Map<String, RefundDTO> refundResult = new HashMap<String, RefundDTO>();
-        Map<String, NotifyRefundResponse> refundResponseMap = new HashMap<String, NotifyRefundResponse>();
-        RefundDTO refundQuery = new RefundDTO();
-        refundQuery.setStartTime(startTime);
-        refundQuery.setEndTime(endTime);
-//        refundQuery.setMerchantNo("141223100000056");
-        List<RefundDTO> refundDTOList = titanRefundDao.queryRefundDTODetail(refundQuery);
-
-        for (RefundDTO refundDTO : refundDTOList) {
-            if (!StringUtil.isValidString(refundDTO.getRefundOrderno()) &&
-                    Integer.parseInt(refundDTO.getRefundAmount()) > 100) {
-                refundResult.put(refundDTO.getOrderNo(), refundDTO);
-                continue;
-            }
-            if (Integer.parseInt(refundDTO.getRefundAmount()) < 100) {
-                continue;
-            }
-            NotifyRefundRequest notifyRefundRequest = new NotifyRefundRequest();
-            notifyRefundRequest.setBusiCode(BusiCodeEnum.QueryRefund.getKey());
-            notifyRefundRequest.setMerchantNo("M000016");
-            notifyRefundRequest.setOrderNo(refundDTO.getOrderNo());
-            notifyRefundRequest.setRefundAmount(refundDTO.getRefundAmount());
-            //DateUtil.dateToString(DateUtil.stringToDate("2017-04-06 15:23:48","yyyy-MM-dd HH:mm:ss"),"yyyy-MM-dd HH:mm:ss")
-            notifyRefundRequest.setOrderTime(refundDTO.getOrderTime());
-            notifyRefundRequest.setRefundOrderno(refundDTO.getRefundOrderno());//OD20170502092341001,OD20170505142021001 ，OD2017060210124100122
-            notifyRefundRequest.setVersion(refundDTO.getVersion());
-//            if ("v2.0".equals(refundDTO.getVersion())) {
-//                notifyRefundRequest.setVersion("v1.1");
-//            }
-            notifyRefundRequest.setSignType(SignTypeEnum.MD5.getKey());
-            NotifyRefundResponse notifyRefundResponse = notifyGatewayRefund(notifyRefundRequest);
-            if (StringUtil.isValidString(notifyRefundResponse.getErrMsg()) &&
-                    Integer.parseInt(refundDTO.getRefundAmount()) > 100) {
-                refundResult.put(refundDTO.getOrderNo(), refundDTO);
-            } else {
-                if (String.valueOf(refundDTO.getStatus()).equals(notifyRefundResponse.getRefundStatus()) &&
-                        ("0".equals(notifyRefundResponse.getRefundStatus()) || "2".equals(notifyRefundResponse.getRefundStatus()))) {
-
-                } else {
-                    if (Integer.parseInt(refundDTO.getRefundAmount()) > 100) {
-                        refundResult.put(refundDTO.getOrderNo(), refundDTO);
-                        refundResponseMap.put(notifyRefundResponse.getOrderNo(), notifyRefundResponse);
-                    }
-                }
-            }
-        }
-
-        for (RefundDTO refundDTO : refundResult.values()) {
-            if (!refundResponseMap.containsKey(refundDTO.getOrderNo())) {
-                continue;
-            }
-            if (refundDTO.getStatus() == 0 && (refundDTO.getTransStatus() == 13 || refundDTO.getTransStatus() == 16) &&
-                    "2".equals(refundResponseMap.get(refundDTO.getOrderNo()).getRefundStatus())) {
-                //TODO 更新
-                System.out.println(refundDTO.getOrderNo());
-                RefundDTO updateRefund = new RefundDTO();
-                updateRefund.setOrderNo(refundDTO.getOrderNo());
-                updateRefund.setStatus(2);
-//                titanRefundDao.updateRefundDTO(updateRefund);
-            }
-        }
-
-
-        return result;
-    }
-
-    /**
-     * 因退款需要先转账所以同时验证退款，校验充值和转账，将充值和转账全部查出，先只验证中间账户
-     * 中间账户充值资金 = 中间账户转出资金 + 退款成功金额
-     * 得到：有问题的退款单，有问题的充值单，有问题的转账单
-     *
-     * @param startTime
-     * @param endTime
-     * @return
-     * @throws ApiException
-     */
-    public List<Transorderinfo> validPayAndTransfer(Date startTime, Date endTime, String orgCode) throws ApiException {
+    public List<Transorderinfo> validRechargeOrder(Date startTime, Date endTime, String orgCode) throws ApiException {
         //融数充值入某个账户（中间账户）需核实的单
         List<Transorderinfo> rechargeResult = new ArrayList<Transorderinfo>();
-        //融数从某个账户（中间账户）转出需核实的单
-        List<Transorderinfo> paidOutResult = new ArrayList<Transorderinfo>();
-        //融数转入某个账户（中间账户）需核实的单
-        List<Transorderinfo> paidInResult = new ArrayList<Transorderinfo>();
-
-        List<Transorderinfo> withDrawResult = new ArrayList<Transorderinfo>();
-
         //本地数据库充值需核实
         List<TitanOrderPayreq> localRechargeResult = new ArrayList<TitanOrderPayreq>();
-        //本地数据库转账转入需核实
-        List<TitanTransferReq> localPayInResult = new ArrayList<TitanTransferReq>();
-        //本地数据库转账转出需核实
-        List<TitanTransferReq> localPayOutResult = new ArrayList<TitanTransferReq>();
-        //本地退款需核实
-        List<RefundDTO> localRefundResult = new ArrayList<RefundDTO>();
-
-        List<TitanWithDrawReq> localWithDrawResult = new ArrayList<TitanWithDrawReq>();
-
-        //融数充值充入合计
-        long rechargeCount = 0l;
-        //融数转账转出合计
-        long payOutCount = 0l;
-        //融数转账转入合计
-        long payInCount = 0l;
-
-        //融数涉及状态集合
-        Set<String> statusSet = new HashSet<String>();
-        //融数涉及业务编码集合
-        Set<String> funCodeSet = new HashSet<String>();
 
         WheatfieldOrdernQueryRequest ordernQueryRequest = new WheatfieldOrdernQueryRequest();
         //中间账户充值进账记录
@@ -300,106 +110,26 @@ public class TradeValidationUtils {
             rechargeInfo = Collections.emptyList();
         }
         log.info("融数充值：融数查询充值入当前账户:" + orgCode + "的总记录数：" + rechargeInfo.size());
-
-        //中间账户转出记录"TJM10000022"
-        ordernQueryRequest.setUserid(orgCode);
-        //ordernQueryRequest.setStatus("1");
-        ordernQueryRequest.setMerchantcode("M000016");
-        ordernQueryRequest.setFunccode("3001");
-        ordernQueryRequest.setStarttime(startTime);
-        ordernQueryRequest.setEndtime(endTime);
-        wheatfieldOrdernQueryResponse = TradeValidationUtils.ropClient.execute(ordernQueryRequest, session);
-        List<Transorderinfo> paidOut = wheatfieldOrdernQueryResponse.getTransorderinfos();
-        if (null == paidOut) {
-            paidOut = Collections.emptyList();
-        }
-        log.info("融数转出：融数查询从当前账户:" + orgCode + "转出资金的总记录数：" + paidOut.size());
-
-        //中间账户退款（部分手工调账的）转入记录
-        ordernQueryRequest.setIntermerchantcode(orgCode);
-        ordernQueryRequest.setUserid(null);
-        //ordernQueryRequest.setStatus("1");
-        ordernQueryRequest.setMerchantcode("M000016");
-        ordernQueryRequest.setFunccode("3001");
-        ordernQueryRequest.setStarttime(startTime);
-        ordernQueryRequest.setEndtime(endTime);
-        wheatfieldOrdernQueryResponse = TradeValidationUtils.ropClient.execute(ordernQueryRequest, session);
-        List<Transorderinfo> paidIn = wheatfieldOrdernQueryResponse.getTransorderinfos();
-        if (null == paidIn) {
-            paidIn = Collections.emptyList();
-        }
-        log.info("融数转入：融数查询转账转入当前账户:" + orgCode + "的总记录数：" + paidIn.size());
-
-        //中间账户退款（部分手工调账的）转入记录
-        ordernQueryRequest.setIntermerchantcode(null);
-        ordernQueryRequest.setUserid(orgCode);
-        //ordernQueryRequest.setStatus("1");
-        ordernQueryRequest.setMerchantcode("M000016");
-        ordernQueryRequest.setFunccode("4016");
-        ordernQueryRequest.setStarttime(startTime);
-        ordernQueryRequest.setEndtime(endTime);
-        wheatfieldOrdernQueryResponse = TradeValidationUtils.ropClient.execute(ordernQueryRequest, session);
-        List<Transorderinfo> withDraw = wheatfieldOrdernQueryResponse.getTransorderinfos();
-        if (null == withDraw) {
-            withDraw = Collections.emptyList();
-        }
-        log.info("融数提现：融数查询当前账户:" + orgCode + "提现的总记录数：" + withDraw.size());
+        //融数充值充入合计
+        long rechargeCount = 0l;
+        //融数涉及状态集合
+        Set<String> statusSet = new HashSet<String>();
+        //融数涉及业务编码集合
+        Set<String> funCodeSet = new HashSet<String>();
 
         for (Transorderinfo transorderinfo : rechargeInfo) {
             statusSet.add(transorderinfo.getOrderstatus());
             funCodeSet.add(transorderinfo.getFunccode());
             rechargeCount += Long.parseLong(transorderinfo.getAmount());
         }
-
-        for (Transorderinfo transorderinfo : paidOut) {
-            statusSet.add(transorderinfo.getOrderstatus());
-            funCodeSet.add(transorderinfo.getFunccode());
-            payOutCount += Long.parseLong(transorderinfo.getAmount());
-        }
-
-        for (Transorderinfo transorderinfo : paidIn) {
-            statusSet.add(transorderinfo.getOrderstatus());
-            funCodeSet.add(transorderinfo.getFunccode());
-            payInCount += Long.parseLong(transorderinfo.getAmount());
-        }
         log.info("融数：包含的状态集合：" + statusSet + ",包含的财务代码集合：" + funCodeSet);
-        log.info("融数：充值总金额：" + rechargeCount + "，转出总金额" + payOutCount + "，转入总金额：" + payInCount);
-
+        log.info("融数：充值总金额：" + rechargeCount);
         TitanOrderPayreqParam requestParam = new TitanOrderPayreqParam();
         requestParam.setStartTime(DateUtil.dateToString(startTime, "yyyyMMddHHmmss"));
         requestParam.setEndTime(DateUtil.dateToString(endTime, "yyyyMMddHHmmss"));
         requestParam.setMerchantNo(orgCode);
         List<TitanOrderPayreq> titanOrderPayReqs = titanOrderPayreqDao.queryOrderPayRequestList(requestParam);
         log.info("本地充值：当前账户" + orgCode + "充值单记录数：" + titanOrderPayReqs.size());
-
-        TitanTransferReqParam titanTransferReqParam = new TitanTransferReqParam();
-        titanTransferReqParam.setUserrelateid(orgCode);
-        List<TitanTransferReq> localPayIn = titanTransferReqDao.queryTitanTransferReq(titanTransferReqParam);
-        log.info("本地转入：转账转入当前账户" + orgCode + "的记录数：" + localPayIn.size());
-
-        titanTransferReqParam.setUserrelateid(null);
-        titanTransferReqParam.setUserid(orgCode);
-        List<TitanTransferReq> localPayOut = titanTransferReqDao.queryTitanTransferReq(titanTransferReqParam);
-        log.info("本地转出：转账转出当前账户" + orgCode + "的记录数：" + localPayOut.size());
-
-        TitanWithDrawReqParam reqParam = new TitanWithDrawReqParam();
-        reqParam.setStartTime(startTime);
-        reqParam.setEndTime(endTime);
-        reqParam.setUserid(orgCode);
-        List<TitanWithDrawReq> withDrawReqs = titanWithDrawReqDao.queryList(reqParam);
-        log.info("本地提现：本地当前账户" + orgCode + "提现的记录数：" + withDrawReqs.size());
-
-        //经由账户成功退款记录，提款单号可能被更新；因此存在多次下退款单的情况
-        RefundDTO refundQuery = new RefundDTO();
-        refundQuery.setStartTime(startTime);
-        refundQuery.setEndTime(endTime);
-        refundQuery.setMerchantNo(orgCode);
-        List<RefundDTO> refundDTOList = titanRefundDao.queryRefundDTODetail(refundQuery);
-        if (refundDTOList == null) {
-            refundDTOList = Collections.EMPTY_LIST;
-        }
-        log.info("本地退款：当前账户" + orgCode + "退出的记录数：" + refundDTOList.size());
-
         log.info("=======================开始验证充值单==============================");
         //校验本地充值单和真实是否一致
         for (TitanOrderPayreq payReq : titanOrderPayReqs) {
@@ -435,77 +165,135 @@ public class TradeValidationUtils {
                 rechargeResult.add(transorderinfo);
             }
         }
+        return null;
+    }
 
+    /**
+     * 简化只验证转出单
+     * 转出分两种情况，一种是付款给别人，一种是退款给别人
+     *
+     * @param startTime
+     * @param endTime
+     * @return
+     * @throws ApiException
+     */
+    public List<Transorderinfo> validTransferOrder(Date startTime, Date endTime, String orgCode) throws ApiException {
+        //融数从某个账户（中间账户）转出需核实的单
+        List<Transorderinfo> paidOutResult = new ArrayList<Transorderinfo>();
+        //本地数据库转账转出需核实
+        List<TitanTransferReq> localPayOutResult = new ArrayList<TitanTransferReq>();
+        //融数转账转出合计
+        long payOutCount = 0l;
+        //融数涉及状态集合
+        Set<String> statusSet = new HashSet<String>();
+        //融数涉及业务编码集合
+        Set<String> funCodeSet = new HashSet<String>();
+        WheatfieldOrdernQueryRequest ordernQueryRequest = new WheatfieldOrdernQueryRequest();
+        //中间账户转出记录"TJM10000022"
+        ordernQueryRequest.setUserid(orgCode);
+        //ordernQueryRequest.setStatus("1");
+        ordernQueryRequest.setMerchantcode("M000016");
+        ordernQueryRequest.setFunccode("3001");
+        ordernQueryRequest.setStarttime(startTime);
+        ordernQueryRequest.setEndtime(endTime);
+        WheatfieldOrdernQueryResponse wheatfieldOrdernQueryResponse = TradeValidationUtils.ropClient.execute(ordernQueryRequest, session);
+        List<Transorderinfo> paidOut = wheatfieldOrdernQueryResponse.getTransorderinfos();
+        if (null == paidOut) {
+            paidOut = Collections.emptyList();
+        }
+        log.info("融数转出：融数查询从当前账户:" + orgCode + "转出资金的总记录数：" + paidOut.size());
+        for (Transorderinfo transorderinfo : paidOut) {
+            statusSet.add(transorderinfo.getOrderstatus());
+            funCodeSet.add(transorderinfo.getFunccode());
+            payOutCount += Long.parseLong(transorderinfo.getAmount());
+        }
+        log.info("融数：包含的状态集合：" + statusSet + ",包含的财务代码集合：" + funCodeSet);
+        log.info("融数：转出总金额" + payOutCount);
+
+        TitanTransferReqParam titanTransferReqParam = new TitanTransferReqParam();
+        titanTransferReqParam.setUserid(orgCode);
+        titanTransferReqParam.setStartTime(startTime);
+        titanTransferReqParam.setEndTime(endTime);
+        List<TitanTransferReq> localPayOut = titanTransferReqDao.queryTitanTransferReq(titanTransferReqParam);
+        log.info("本地转出：转账转出当前账户" + orgCode + "的记录数：" + localPayOut.size());
         log.info("=======================开始验证转出单==============================");
         for (Transorderinfo payout : paidOut) {
             boolean isMatch = false;
-            for (TitanTransferReq req : localPayOut){
+            for (TitanTransferReq req : localPayOut) {
                 if (req.getRequestno().equals(payout.getRequestno()) && req.getStatus() == 2 &&
-                        String.valueOf(req.getAmount()).equals(payout.getAmount())){
+                        Double.valueOf(req.getAmount()).equals( Double.valueOf(payout.getAmount()))) {
                     isMatch = true;
                 }
             }
-            if (!isMatch){
+            if (!isMatch) {
                 log.info("融数转出单不存在本地对应，请求号：" + payout.getRequestno());
                 paidOutResult.add(payout);
             }
         }
-
-        for (TitanTransferReq req : localPayOut){
+        for (TitanTransferReq req : localPayOut) {
             boolean isMatch = false;
-            if (req.getStatus() != 2){
+            if (req.getStatus() != 2) {
                 continue;
             }
-            for (Transorderinfo payout : paidOut){
+            for (Transorderinfo payout : paidOut) {
                 if (req.getRequestno().equals(payout.getRequestno()) &&
-                        req.getAmount().equals(Double.parseDouble(payout.getAmount()))){
+                        req.getAmount().equals(Double.parseDouble(payout.getAmount()))) {
                     isMatch = true;
                     break;
                 }
             }
-            if (!isMatch){
+            if (!isMatch) {
                 log.info("本地转出单不存在融数对应，请求号：" + req.getRequestno());
                 localPayOutResult.add(req);
             }
         }
+        return null;
+    }
 
-        log.info("=======================开始验证转入单==============================");
-        for (Transorderinfo payin : paidIn) {
-            boolean isMatch = false;
-            for (TitanTransferReq req : localPayIn){
-                if (req.getRequestno().equals(payin.getRequestno()) && req.getStatus() == 2 &&
-                        req.getAmount().equals(Double.parseDouble(payin.getAmount()))){
-                    isMatch = true;
-                }
-            }
-            if (!isMatch){
-                log.info("融数转入单不存在本地对应，请求号：" + payin.getRequestno());
-                paidInResult.add(payin);
-            }
+    /**
+     * 校验本地提现单和融数提现单是否有不一致
+     *
+     * @param startTime
+     * @param endTime
+     * @param orgCode
+     */
+    public List<Transorderinfo> validWithDrawOrder(Date startTime, Date endTime, String orgCode) throws ApiException {
+        List<Transorderinfo> withDrawResult = new ArrayList<Transorderinfo>();
+        List<TitanWithDrawReq> localWithDrawResult = new ArrayList<TitanWithDrawReq>();
+        TitanWithDrawReqParam reqParam = new TitanWithDrawReqParam();
+        reqParam.setStartTime(startTime);
+        reqParam.setEndTime(endTime);
+        reqParam.setUserid(orgCode);
+        List<TitanWithDrawReq> withDrawReqs = titanWithDrawReqDao.queryList(reqParam);
+        log.info("本地提现：本地当前账户" + orgCode + "提现的记录数：" + withDrawReqs.size());
+
+        WheatfieldOrdernQueryRequest ordernQueryRequest = new WheatfieldOrdernQueryRequest();
+        //中间账户退款（部分手工调账的）转入记录
+        ordernQueryRequest.setIntermerchantcode(null);
+        ordernQueryRequest.setUserid(orgCode);
+        //ordernQueryRequest.setStatus("1");
+        ordernQueryRequest.setMerchantcode("M000016");
+        ordernQueryRequest.setFunccode("4016");
+        ordernQueryRequest.setStarttime(startTime);
+        ordernQueryRequest.setEndtime(endTime);
+        WheatfieldOrdernQueryResponse wheatfieldOrdernQueryResponse = null;
+        try {
+            wheatfieldOrdernQueryResponse = TradeValidationUtils.ropClient.execute(ordernQueryRequest, session);
+        } catch (ApiException e) {
+            e.printStackTrace();
         }
-        for (TitanTransferReq req : localPayIn){
-            boolean isMatch = false;
-            if (req.getStatus() != 2){
-                continue;
-            }
-            for (Transorderinfo payin : paidIn){
-                if (req.getRequestno().equals(payin.getRequestno()) &&
-                        req.getAmount().equals(Double.parseDouble(payin.getAmount()))){
-                    isMatch = true;
-                    break;
-                }
-            }
-            if (!isMatch){
-                log.info("本地转入单不存在融数对应，请求号：" + req.getRequestno());
-                localPayInResult.add(req);
-            }
+        List<Transorderinfo> withDraw = wheatfieldOrdernQueryResponse.getTransorderinfos();
+        if (null == withDraw) {
+            withDraw = Collections.emptyList();
         }
+        log.info("融数提现：融数查询当前账户:" + orgCode + "提现的总记录数：" + withDraw.size());
+
         log.info("=======================开始验证提现单==============================");
         Set<String> reqNoSet = new HashSet<String>();
         List<Transorderinfo> duplicateList = new ArrayList<Transorderinfo>();
-        for (Transorderinfo transorderinfo : withDraw){
+        for (Transorderinfo transorderinfo : withDraw) {
             boolean isMatch = false;
-            if (duplicateList.contains(transorderinfo.getRequestno())){
+            if (reqNoSet.contains(transorderinfo.getRequestno())) {
                 log.info("提现单重复的记录:" + transorderinfo.getRequestno());
                 duplicateList.add(transorderinfo);
             }
@@ -513,142 +301,100 @@ public class TradeValidationUtils {
             for (TitanWithDrawReq req : withDrawReqs) {
                 if (transorderinfo.getRequestno().equals(req.getUserorderid())
                         && transorderinfo.getAmount().equals(String.valueOf(req.getAmount()))
-                        && transorderinfo.getOrderstatus().equals("4") && req.getStatus() == 3){
+                        && transorderinfo.getOrderstatus().equals("4") && req.getStatus() == 3) {
                     isMatch = true;
                     break;
                 }
             }
-            if ( !isMatch ){
+            if (!isMatch) {
                 withDrawResult.add(transorderinfo);
             }
         }
 
-        for (TitanWithDrawReq req : withDrawReqs){
+        for (TitanWithDrawReq req : withDrawReqs) {
             boolean isMatch = false;
             for (Transorderinfo transorderinfo : withDraw) {
                 if (transorderinfo.getRequestno().equals(req.getUserorderid())
                         && transorderinfo.getAmount().equals(String.valueOf(req.getAmount()))
-                        && transorderinfo.getOrderstatus().equals("4") && req.getStatus() == 3){
+                        && transorderinfo.getOrderstatus().equals("4") && req.getStatus() == 3) {
                     isMatch = true;
                     break;
                 }
             }
-            if ( !isMatch ){
+            if (!isMatch) {
                 localWithDrawResult.add(req);
             }
         }
+        return null;
+    }
 
-        log.info("=======================开始验证本地退款单============================");
-        //针对一张单，如果发生退款，当前商家作为收款方：转账转出，作为付款方，转账转入
-        //退款匹配逻辑,产生了退款单一定执行了转账，TODO 退款单可能会被修改
-        for (RefundDTO refDTO : refundDTOList) {
+    /**
+     * 验证本地退款单是否跟远程匹配
+     * 本地请求退款之前一定会先落一张单
+     * TODO 本地退款单号可能被修改过
+     *
+     * @param startTime
+     * @param endTime
+     * @return
+     * @throws ApiException
+     */
+    public List<RefundDTO> validRefundOrder(Date startTime, Date endTime, String orgCode) throws ApiException {
+        //经由账户成功退款记录，提款单号可能被更新；因此存在多次下退款单的情况
+        List<RefundDTO> localRefundResult = new ArrayList<RefundDTO>();
+        List<NotifyRefundResponse> refundResponseList = new ArrayList<NotifyRefundResponse>();
+        RefundDTO refundQuery = new RefundDTO();
+        refundQuery.setStartTime(startTime);
+        refundQuery.setEndTime(endTime);
+        refundQuery.setMerchantNo(orgCode);
+        List<RefundDTO> refundDTOList = titanRefundDao.queryRefundDTODetail(refundQuery);
+        if (refundDTOList == null) {
+            refundDTOList = Collections.EMPTY_LIST;
+        }
+        log.info("本地退款：当前账户" + orgCode + "退出的记录数：" + refundDTOList.size());
+        for (RefundDTO refundDTO : refundDTOList) {
+            if (!StringUtil.isValidString(refundDTO.getRefundOrderno()) &&
+                    Integer.parseInt(refundDTO.getRefundAmount()) > 100) {//无退款单号
+                localRefundResult.add(refundDTO);
+                continue;
+            }
+            if (Integer.parseInt(refundDTO.getRefundAmount()) < 100) {
+                continue;
+            }
             NotifyRefundRequest notifyRefundRequest = new NotifyRefundRequest();
             notifyRefundRequest.setBusiCode(BusiCodeEnum.QueryRefund.getKey());
             notifyRefundRequest.setMerchantNo("M000016");
-            notifyRefundRequest.setOrderNo(refDTO.getOrderNo());
-            notifyRefundRequest.setRefundAmount(refDTO.getRefundAmount());
-            //DateUtil.dateToString(DateUtil.stringToDate("2017-04-06 15:23:48","yyyy-MM-dd HH:mm:ss"),"yyyy-MM-dd HH:mm:ss")
-            notifyRefundRequest.setOrderTime(refDTO.getOrderTime());
-            notifyRefundRequest.setRefundOrderno(refDTO.getRefundOrderno());//OD20170502092341001,OD20170505142021001 ，OD2017060210124100122
-            notifyRefundRequest.setVersion(refDTO.getVersion());
+            notifyRefundRequest.setOrderNo(refundDTO.getOrderNo());
+            notifyRefundRequest.setRefundAmount(refundDTO.getRefundAmount());
+            notifyRefundRequest.setOrderTime(refundDTO.getOrderTime());
+            notifyRefundRequest.setRefundOrderno(refundDTO.getRefundOrderno());
+            notifyRefundRequest.setVersion(refundDTO.getVersion());
+//            if ("v2.0".equals(refundDTO.getVersion())) {
+//                notifyRefundRequest.setVersion("v1.1");
+//            }
             notifyRefundRequest.setSignType(SignTypeEnum.MD5.getKey());
             NotifyRefundResponse notifyRefundResponse = notifyGatewayRefund(notifyRefundRequest);
-            if (!notifyRefundResponse.isResult() || !notifyRefundResponse.getRefundStatus().
-                    equals(String.valueOf(refDTO.getStatus()))){
-                localRefundResult.add(refDTO);
-                continue;
+            //查询失败
+            if (StringUtil.isValidString(notifyRefundResponse.getErrMsg()) &&
+                    Integer.parseInt(refundDTO.getRefundAmount()) > 100) {
+                log.info("查询远程状态失败");
+                localRefundResult.add(refundDTO);
+                refundResponseList.add(notifyRefundResponse);
             }
-            boolean transferStatus = false;
-            //只验证退转账金额，暂不验证退手续费
-            if (orgCode.equals(refDTO.getPayeeMerchant())) {
-                for (Transorderinfo payout : paidOut) {
-                    String createDate = DateUtil.dateToString(refDTO.getCreatetime(), "yyyy-MM-dd HH:mm:ss");
-                    if (compareTime(createDate, payout.getCreatedtime())) {//时间很接近
-                        //转账未处理时候
-                        if (!transferStatus && payout.getAmount().equals(refDTO.getTransferAmount())) {
-                            transferStatus = true;
-                        }
-                    }
-                }
-            }
-            //表明此退款单不存在合适的转账单
-            if (!transferStatus) {
-                localRefundResult.add(refDTO);
+            //当前单不匹配
+            if (!notifyRefundResponse.getRefundStatus().equals(String.valueOf(refundDTO.getStatus())) ||
+                    !notifyRefundResponse.getOrderAmount().equals(refundDTO.getRefundAmount())){
+                log.info("本地订单状态金额和远程不匹配");
+                localRefundResult.add(refundDTO);
+                refundResponseList.add(notifyRefundResponse);
             }
         }
-
-        return rechargeResult;
-
-//        Map<String, String> transferRechargeMap = new HashMap<String, String>();
-//        //首先验证有充值和转出对不上的记录,有充值，无对应转账记录的
-//        for (Transorderinfo transorderinfo : rechargeInfo) {
-//            List<TitanTransferReq> transferReqList = titanTransferReqDao.queryTransferByOrderNo(transorderinfo.getOrderno());
-//            if (transferReqList.isEmpty() || transferReqList.size() != 1) {
-//                rechargeResult.add(transorderinfo);
-//                continue;
-//            }
-//            TitanTransferReq transferReq = transferReqList.get(0);
-//            //能查出来的充值交易状态一定等于1？
-//            if (transferReq.getStatus() != 2 && "1".equals(transorderinfo.getOrderstatus())) {
-//                rechargeResult.add(transorderinfo);
-//                continue;
-//            }
-//            boolean isMatched = false;
-//            for (Transorderinfo out : paidOut) {
-//                if (transferReq.getRequestno().equals(out.getRequestno()) &&
-//                        transorderinfo.getAmount().equals(out.getAmount())) {
-//                    isMatched = true;
-//                    transferRechargeMap.put(out.getRequestno(), transorderinfo.getOrderno());
-//                    break;
-//                }
-//            }
-//
-//            if (!isMatched) {
-//                rechargeResult.add(transorderinfo);
-//            }
-//
-//        }
-//
-//        //有转账，无正确的充值记录的
-//        for (Transorderinfo out : paidOut) {
-//            /*TitanTransferReqParam titanTransferReqParam = new TitanTransferReqParam();
-//            titanTransferReqParam.setRequestno(out.getRequestno());
-//			List<TitanTransferReq>  transferReqList = titanTransferReqDao.queryTitanTransferReq(titanTransferReqParam);
-//			if (transferReqList.isEmpty() || transferReqList.size() != 1){
-//				paidOutResult.add(out);
-//				continue;
-//			}
-//			TitanTransferReq transferReq = transferReqList.get(0);
-//			TransOrderRequest transOrderRequest = new TransOrderRequest();
-//			transOrderRequest.setTransid(transferReq.getTransorderid());
-//			List<TransOrderDTO> transOrderDTOList = titanOrderService.queryTransOrder(transOrderRequest);
-//			if (transOrderDTOList.isEmpty() || transOrderDTOList.size() != 1){
-//				paidOutResult.add(out);
-//				continue;
-//			}
-//			TransOrderDTO transOrderDTO = transOrderDTOList.get(0);*/
-//            boolean isMatched = false;
-//            for (Transorderinfo transorderinfo : rechargeInfo) {
-//                if (transferRechargeMap.containsKey(out.getRequestno()) &&
-//                        transferRechargeMap.get(out.getRequestno()).equals(transorderinfo.getOrderno())) {
-//                    isMatched = true;
-//                    break;
-//                }
-//            }
-//
-//            if (!isMatched) {
-//                paidOutResult.add(out);
-//            }
-//        }
-
-        //TODO 反向根据本地验证远程，校验或者本地存在远程不存在，或本地远程状态对不上；
-
-
+        return localRefundResult;
     }
 
     /**
      * 去融数下退款单操作
      * 此方法可以修改成根据失败的退款单，创建新的退款单，同时重新发起一次退款
+     *
      * @param refundDTO 数据库中查询出的退款DTO
      * @return
      */
@@ -690,6 +436,7 @@ public class TradeValidationUtils {
 
     /**
      * 通知网关退款，可以退款申请或者退款查询
+     *
      * @param notifyRefundRequest
      * @return
      */

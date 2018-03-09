@@ -7,6 +7,7 @@
         <where>
             <if test="accountCode != null">accountcode = #{accountCode}</if>
             <if test="transOrderId != null"> and transorderid =#{transOrderId}</if>
+            <if test="userOrderId != null"> and userorderid =#{userOrderId}</if>
             <if test="tradeType != null"> and tradetype =#{tradeType}</if>
             <if test="orgCode != null"> and orgcode =#{orgCode}</if>
             <if test="productId != null"> and productid =#{productId}</if>
@@ -17,10 +18,10 @@
     
     <insert id="insertEntity" parameterType="com.fangcang.titanjr.entity.TitanAccountDetail" useGeneratedKeys="true" keyProperty="detailid">
     insert into t_tfs_accountdetail (accountcode, 
-      transorderid, tradetype, orgcode, 
+      transorderid,userorderid, tradetype, orgcode, 
       productid, balancetype,creditamount,frozonamount,
       settleamount,totalcreditamount,totalfrozonamount,totalsettleamount,status,remark,createtime)
-    values ( #{accountCode}, #{transOrderId}, #{tradeType}, #{orgCode}, #{productId},
+    values ( #{accountCode}, #{transOrderId},#{userOrderId}, #{tradeType}, #{orgCode}, #{productId},
     #{balanceType},#{creditAmount},#{frozonAmount},#{settleAmount},#{totalCreditAmount},#{totalFrozonAmount},#{totalSettleAmount},#{status},
     #{remark},#{createTime})
   </insert>

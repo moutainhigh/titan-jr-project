@@ -5,22 +5,14 @@ import java.util.List;
 
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 
+import com.titanjr.fop.dto.SHBalanceInfo;
+import com.titanjr.fop.request.*;
+import com.titanjr.fop.response.*;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.Rop.api.domain.SHBalanceInfo;
-import com.Rop.api.request.WheatfieldBalanceGetlistRequest;
-import com.Rop.api.request.WheatfieldOrderSaveWithcardRequest;
-import com.Rop.api.request.WheatfieldOrderServiceAuthcodeserviceRequest;
-import com.Rop.api.request.WheatfieldOrderServiceMultitransferQueryRequest;
-import com.Rop.api.request.WheatfieldOrderServiceThawauthcodeRequest;
-import com.Rop.api.response.WheatfieldBalanceGetlistResponse;
-import com.Rop.api.response.WheatfieldOrderSaveWithcardResponse;
-import com.Rop.api.response.WheatfieldOrderServiceAuthcodeserviceResponse;
-import com.Rop.api.response.WheatfieldOrderServiceMultitransferQueryResponse;
-import com.Rop.api.response.WheatfieldOrderServiceThawauthcodeResponse;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
 import com.fangcang.titanjr.common.exception.RSValidateException;
 import com.fangcang.titanjr.common.util.CommonConstant;
@@ -55,16 +47,6 @@ import com.fangcang.titanjr.rs.response.Retbeanlist;
 import com.fangcang.titanjr.rs.util.MyConvertXmlToObject;
 import com.fangcang.util.MyBeanUtil;
 import com.titanjr.fop.constants.FuncCodeEnum;
-import com.titanjr.fop.request.WheatfieldOrderOperRequest;
-import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
-import com.titanjr.fop.request.WheatfieldOrderServiceWithdrawserviceRequest;
-import com.titanjr.fop.request.WheatfieldOrderTransferRequest;
-import com.titanjr.fop.request.WheatfieldOrdernQueryRequest;
-import com.titanjr.fop.response.WheatfieldOrderOperResponse;
-import com.titanjr.fop.response.WheatfieldOrderServiceReturngoodsResponse;
-import com.titanjr.fop.response.WheatfieldOrderServiceWithdrawserviceResponse;
-import com.titanjr.fop.response.WheatfieldOrderTransferResponse;
-import com.titanjr.fop.response.WheatfieldOrdernQueryResponse;
 
 public class RSAccTradeManagerImpl implements RSAccTradeManager {
 
@@ -82,7 +64,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 				accountBalanceQueryRequest.check();
 			}
 			MyBeanUtil.copyProperties(req, accountBalanceQueryRequest);
-			WheatfieldBalanceGetlistResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldBalanceGetlistResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用queryAccountBalance返回报文: \n" + rsp.getBody());
@@ -125,7 +107,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 				balanceFreezeRequest.check();
 			}
 			MyBeanUtil.copyProperties(req, balanceFreezeRequest);
-			WheatfieldOrderServiceAuthcodeserviceResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldOrderServiceAuthcodeserviceResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用freezeAccountBalance方法,冻结参数："+Tools.gsonToString(balanceFreezeRequest)+",返回报文: \n" + rsp.getBody());
@@ -168,7 +150,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 				balanceUnFreezeRequest.check();
 			}
 			MyBeanUtil.copyProperties(req, balanceUnFreezeRequest);
-			WheatfieldOrderServiceThawauthcodeResponse rsp = RSInvokeConstant.ropClient
+			WheatfieldOrderServiceThawauthcodeResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
 				log.info("调用unFreezeAccountBalance返回报文: \n" + rsp.getBody());
@@ -181,7 +163,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 					}
 					response.setReturnCode(rsp.getErrorCode());
 					response.setReturnMsg(errorMsg);
-					log.error("调用接口unFreezeAccountBalance异常：" + errorMsg);
+					log.error("调用接口unFreezeAccountBalance,请求参数balanceUnFreezeRequest：" + Tools.gsonToString(balanceUnFreezeRequest)+",错误信息："+errorMsg);
 				} else {
 					response.setSuccess(true);
 					response.setRetcode(rsp.getRetcode());
@@ -262,60 +244,60 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 		return response;
 	}
 
-	@Override
-	public OrderTransferFlowResponse queryOrderTranferFlow(
-			OrderTransferFlowRequest orderTransferFlowRequest) {
-		OrderTransferFlowResponse response = new OrderTransferFlowResponse();
-		try{
-			WheatfieldOrderServiceMultitransferQueryRequest req = new WheatfieldOrderServiceMultitransferQueryRequest();
-			if(needCheckRequest){
-				orderTransferFlowRequest.check();
-			}
-			MyBeanUtil.copyProperties(req, orderTransferFlowRequest);
-			WheatfieldOrderServiceMultitransferQueryResponse rsp = RSInvokeConstant.ropClient
-					.execute(req, RSInvokeConstant.sessionKey);
-			if (rsp != null) {
-				log.info("调用queryOrderTranferFlow返回报文: \n" + rsp.getBody());
-				String errorMsg;
-				if (rsp.isSuccess() != true) {
-					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
-						errorMsg = rsp.getSubMsg();
-					} else {
-						errorMsg = rsp.getMsg();
-					}
-					response.setReturnCode(rsp.getErrorCode());
-					response.setReturnMsg(errorMsg);
-					log.error("调用接口queryOrderTranferFlow异常：" + errorMsg);
-				} else {
-					response.setSuccess(true);
-					response.setOperateStatus(rsp.getIs_success());
-					response.setRetcode(rsp.getRetcode());
-					response.setRetmsg(rsp.getRetmsg());
-					Object obj = MyConvertXmlToObject.convertXml2Object(rsp.getBody());
-					if(obj !=null && CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
-						OrderTransferFlow orderTransferFlow = (OrderTransferFlow)obj;
-						if(orderTransferFlow !=null && orderTransferFlow.getTradeInfoList()!=null){
-							TradeInfoList orderTransferFlowList = orderTransferFlow.getTradeInfoList();
-							if(orderTransferFlowList!=null && orderTransferFlowList.getTradeInfoList()!=null){
-								response.setTradeInfoList(orderTransferFlowList.getTradeInfoList());
-							}
-						}
-					}
-					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
-				}
-			} else {
-				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
-				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
-			}
-		}catch(Exception e){
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg(e.getMessage());
-			log.error("调用queryOrderTranferFlow过程出现未知异常", e);
-		}
-		return response;	
-		
-	}
+//	@Override
+//	public OrderTransferFlowResponse queryOrderTranferFlow(
+//			OrderTransferFlowRequest orderTransferFlowRequest) {
+//		OrderTransferFlowResponse response = new OrderTransferFlowResponse();
+//		try{
+//			WheatfieldOrderServiceMultitransferQueryRequest req = new WheatfieldOrderServiceMultitransferQueryRequest();
+//			if(needCheckRequest){
+//				orderTransferFlowRequest.check();
+//			}
+//			MyBeanUtil.copyProperties(req, orderTransferFlowRequest);
+//			WheatfieldOrderServiceMultitransferQueryResponse rsp = RSInvokeConstant.fopClient
+//					.execute(req, RSInvokeConstant.sessionKey);
+//			if (rsp != null) {
+//				log.info("调用queryOrderTranferFlow返回报文: \n" + rsp.getBody());
+//				String errorMsg;
+//				if (rsp.isSuccess() != true) {
+//					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+//						errorMsg = rsp.getSubMsg();
+//					} else {
+//						errorMsg = rsp.getMsg();
+//					}
+//					response.setReturnCode(rsp.getErrorCode());
+//					response.setReturnMsg(errorMsg);
+//					log.error("调用接口queryOrderTranferFlow异常：" + errorMsg);
+//				} else {
+//					response.setSuccess(true);
+//					response.setOperateStatus(rsp.getIs_success());
+//					response.setRetcode(rsp.getRetcode());
+//					response.setRetmsg(rsp.getRetmsg());
+//					Object obj = MyConvertXmlToObject.convertXml2Object(rsp.getBody());
+//					if(obj !=null && CommonConstant.OPERATE_SUCCESS.equals(rsp.getIs_success())){
+//						OrderTransferFlow orderTransferFlow = (OrderTransferFlow)obj;
+//						if(orderTransferFlow !=null && orderTransferFlow.getTradeInfoList()!=null){
+//							TradeInfoList orderTransferFlowList = orderTransferFlow.getTradeInfoList();
+//							if(orderTransferFlowList!=null && orderTransferFlowList.getTradeInfoList()!=null){
+//								response.setTradeInfoList(orderTransferFlowList.getTradeInfoList());
+//							}
+//						}
+//					}
+//					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+//					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+//				}
+//			} else {
+//				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
+//				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
+//			}
+//		}catch(Exception e){
+//			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+//			response.setReturnMsg(e.getMessage());
+//			log.error("调用queryOrderTranferFlow过程出现未知异常", e);
+//		}
+//		return response;
+//
+//	}
 
 	@Override
 	public AccountTransferResponse accountBalanceTransfer(
@@ -449,52 +431,52 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 	}
 
 
-	@Override
-	public OrderSaveWithCardResponse orderSaveWithdraw(
-			OrderSaveWithCardRequest orderSaveWithCardRequest) {
-		OrderSaveWithCardResponse response = new OrderSaveWithCardResponse();
-		try{
-			WheatfieldOrderSaveWithcardRequest req = new WheatfieldOrderSaveWithcardRequest();
-			if(needCheckRequest){
-				orderSaveWithCardRequest.check();
-			}
-			MyBeanUtil.copyBeanProperties(req, orderSaveWithCardRequest);
-			WheatfieldOrderSaveWithcardResponse rsp = RSInvokeConstant.ropClient
-					.execute(req, RSInvokeConstant.sessionKey);
-			if (rsp != null) {
-				log.info("调用orderSaveWithCardRequest返回报文: \n" + rsp.getBody());
-				String errorMsg;
-				if (rsp.isSuccess() != true) {
-					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
-						errorMsg = rsp.getSubMsg();
-					} else {
-						errorMsg = rsp.getMsg();
-					}
-					response.setReturnCode(rsp.getErrorCode());
-					response.setReturnMsg(errorMsg);
-					log.error("调用接口orderSaveWithCardRequest异常：" + errorMsg);
-				} else {
-					response.setSuccess(true);
-					response.setOperateStatus(rsp.getIs_success());
-					response.setReturnMsg(rsp.getMsg());
-					response.setOrderId(rsp.getOrderid());
-					if(rsp.getIs_success().equals(CommonConstant.OPERATE_SUCCESS)){
-						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
-						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
-					}
-				}
-			}else{
-				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
-				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
-			}
-			
-		}catch(Exception e){
-			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
-			response.setReturnMsg(e.getMessage());
-			log.error("调用orderSaveWithCardRequest过程出现未知异常", e);
-		}
-		return response;
-	}
+//	@Override
+//	public OrderSaveWithCardResponse orderSaveWithdraw(
+//			OrderSaveWithCardRequest orderSaveWithCardRequest) {
+//		OrderSaveWithCardResponse response = new OrderSaveWithCardResponse();
+//		try{
+//			WheatfieldOrderSaveWithcardRequest req = new WheatfieldOrderSaveWithcardRequest();
+//			if(needCheckRequest){
+//				orderSaveWithCardRequest.check();
+//			}
+//			MyBeanUtil.copyBeanProperties(req, orderSaveWithCardRequest);
+//			WheatfieldOrderSaveWithcardResponse rsp = RSInvokeConstant.fopClient
+//					.execute(req, RSInvokeConstant.sessionKey);
+//			if (rsp != null) {
+//				log.info("调用orderSaveWithCardRequest返回报文: \n" + rsp.getBody());
+//				String errorMsg;
+//				if (rsp.isSuccess() != true) {
+//					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+//						errorMsg = rsp.getSubMsg();
+//					} else {
+//						errorMsg = rsp.getMsg();
+//					}
+//					response.setReturnCode(rsp.getErrorCode());
+//					response.setReturnMsg(errorMsg);
+//					log.error("调用接口orderSaveWithCardRequest异常：" + errorMsg);
+//				} else {
+//					response.setSuccess(true);
+//					response.setOperateStatus(rsp.getIs_success());
+//					response.setReturnMsg(rsp.getMsg());
+//					response.setOrderId(rsp.getOrderid());
+//					if(rsp.getIs_success().equals(CommonConstant.OPERATE_SUCCESS)){
+//						response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+//						response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+//					}
+//				}
+//			}else{
+//				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
+//				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
+//			}
+//
+//		}catch(Exception e){
+//			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+//			response.setReturnMsg(e.getMessage());
+//			log.error("调用orderSaveWithCardRequest过程出现未知异常", e);
+//		}
+//		return response;
+//	}
 
 	@Override
 	public RsRefundResponse addOrderRefund(RSRefundRequest refundRequest) {
@@ -552,7 +534,6 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 				ordernQueryRequest.check();
 			}
 			MyBeanUtil.copyBeanProperties(req, ordernQueryRequest);
-			req.setFunccode(FuncCodeEnum.RECHARGE_4015.getKey());
 			WheatfieldOrdernQueryResponse rsp = RSInvokeConstant.fopClient
 					.execute(req, RSInvokeConstant.sessionKey);
 			if (rsp != null) {
