@@ -1,5 +1,6 @@
 package com.titanjr.fop.controller;
 
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.util.StringUtil;
 import com.titanjr.fop.dto.SHBalanceInfo;
 import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
@@ -73,10 +74,12 @@ public class AccountController extends BaseController {
         }
         WheatfieldOrderServiceAuthcodeserviceRequest authcodeserviceRequest = BeanUtils.switch2RequestDTO(WheatfieldOrderServiceAuthcodeserviceRequest.class, request);
         if (null == authcodeserviceRequest) {
+        	logger.error("冻结失败，参数转换失败");
             return ResponseUtils.getConvertErrorResp(authcodeserviceResponse);
         }
         String authCode = accountService.freezeAccountBalance(authcodeserviceRequest);
         if (!StringUtil.isValidString(authCode)) {
+        	logger.error("冻结失败，冻结码生成失败，参数authcodeserviceRequest:"+Tools.gsonToString(authcodeserviceRequest));
             return ResponseUtils.getSysErrorResp(authcodeserviceResponse);
         }
         authcodeserviceResponse.setIs_success("true");
