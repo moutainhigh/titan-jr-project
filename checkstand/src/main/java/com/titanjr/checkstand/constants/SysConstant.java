@@ -80,13 +80,14 @@ public class SysConstant {
 	public static final String RB_MERCHANT = "100000001301858";//生产通用
 	
 	//通联账户交易商户证书（在项目路径下）
-	public static final String PFX_PATH= "certify/20060400000044502.p12";//私钥位置
+	//public static final String PFX_PATH= "certify/20060400000044502.p12";//私钥-测试
+	public static final String PFX_PATH= "certify/20022200000978704.p12";//私钥-生产
 	public static final String PFX_PWD = "111111";//私钥密码
-	public static final String CER_PATH = "certify/allinpay-pds.cer";//公钥位置
-	
+	public static final String CER_PATH = "certify/allinpay-pds.cer";//公钥
 	//通联账户交易用-户名/密码
-	public static final String USER_NAME = "20060400000044504";//info下面的用户名一般是：商户号+04（通联demo里面是加02，后续需验证）
-	public static final String USER_PWD = "`12qwe";
+	public static final String USER_NAME = "20022200000978704";//用户名：商户号+04
+	//public static final String USER_PWD = "`12qwe";//密码-测试
+	public static final String USER_PWD = "111111";//密码-生产
 	
 	//融宝快捷支付证书（在磁盘下）
 	public static final String PRIVATE_KEY_PATH = "D:\\cert\\itrus001.pfx";//房仓私钥
@@ -113,7 +114,7 @@ public class SysConstant {
 	public static final String RB_AGENT_SUCCESS = "0001";//标示融宝代付查询成功的编码
 	public static final String RB_CHARSET_CODE = "UTF-8";//融宝代付相关接口要求编码格式
 	
-	public static final String TL_WITHDRAW_CODE = "09400";//代付业务代码
+	public static final String TL_WITHDRAW_CODE = "09900";//代付业务代码
 	public static final String TL_AGENT_DATA_TYPE = "2";//账户交易的数据格式-固定2：xml格式
 	public static final String TL_AGENT_VERSION = "03";//账户交易版本号-固定03
 	public static final String TL_AGENT_LEVEL = "3";//账户交易的处理级别，统一暂定为3
