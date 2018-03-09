@@ -50,6 +50,7 @@
         t_tfs_fundunfreezereq q
       <where>
         <if test="requestno != null"> and  requestno = #{requestno} </if>
+        <if test="fundFreezereqid != null"> and  fundFreezereqid = #{fundFreezereqid} </if>
       </where>
     </select>
 

@@ -111,9 +111,14 @@ public class AccountServiceImpl implements AccountService {
         FundFreezeDTO fundFreezeDTO = new FundFreezeDTO();
         fundFreezeDTO.setOrderNo(authcodeserviceRequest.getOrderno());
         List<FundFreezeDTO> freezeDTOList = titanOrderService.queryFundFreezeDTO(fundFreezeDTO);
+        
         if (CollectionUtils.isNotEmpty(freezeDTOList)) {
-            logger.error("当前交易单已存在冻结请求：{}", authcodeserviceRequest.getOrderno());
-            return null;
+        	for(FundFreezeDTO item:freezeDTOList){
+        		if(item.getStatus()==1){//冻结中
+        			logger.error("当前交易单已存在冻结中的记录，订单号：{}", authcodeserviceRequest.getOrderno());
+                    return null;
+        		}
+        	}
         }
         //查询校验交易单是否存在，暂不校验交易单金额
         TransOrderRequest transOrderRequest = new TransOrderRequest();
@@ -132,7 +137,6 @@ public class AccountServiceImpl implements AccountService {
             logger.error("账户余额查询结果异常：{}", balanceList);
             return null;
         }
-        Long accFrozen = Long.parseLong(balanceList.get(0).getBalancefrozon());
         Long accUseable = Long.parseLong(balanceList.get(0).getBalanceusable());
         if (accUseable < authcodeserviceRequest.getAmount()) {
             logger.error("账户余额小于需冻结金额，账户余额：{}，冻结金额：{}", accUseable, authcodeserviceRequest.getAmount());
@@ -176,7 +180,7 @@ public class AccountServiceImpl implements AccountService {
         }
         //查询解冻记录，若存在则有问题
         TitanUnFundFreezereqParam unFundFreezereqParam = new TitanUnFundFreezereqParam();
-        unFundFreezereqParam.setRequestno(thawauthcodeRequest.getFrozenuserorderid());
+        unFundFreezereqParam.setFundFreezereqid(freezeDTOList.get(0).getFreezereqId());
         List<TitanFundUnFreezereq> unFreezereqList = titanAccountDao.queryUnFreezeRequest(unFundFreezereqParam);
         //已解冻或存在解冻单
         if (freezeDTOList.get(0).getStatus() == 2 || CollectionUtils.isNotEmpty(unFreezereqList)) {

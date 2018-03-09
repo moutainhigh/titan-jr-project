@@ -1335,6 +1335,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					
 					//插入解冻记录
 			    	TitanFundUnFreezereq titanFundUnFreezereq = covertToTitanFundUnFreezereq(fundFreezeDTO);
+			    	titanFundUnFreezereq.setRequestno(balanceUnFreezeRequest.getRequestno());
 			    	try{
 			    		TitanFundFreezereq fundFreezereq = new TitanFundFreezereq();
 			    		fundFreezereq.setFreezereqid(fundFreezeDTO.getFreezereqId());
