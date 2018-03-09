@@ -97,7 +97,9 @@ public class SysConstant {
 	
 	//融宝FTP
 	public static String RB_FTP_HOST  = "entrust.reapal.com";
-	public static String RB_FTP_DIR  = "/dforderfiles";
+	public static String RB_ACCOUNT_DIR  = "/dforderfiles/";
+	public static String RB_RECHARGE_DIR  = "/inchannel/";
+	public static String RB_REFUND_DIR  = "/refund/";
 	public static String RB_FTP_USER = "100000001301858";//生产-对应商户号
 	public static String RB_FTP_PWD = "&r1rhAD3s";
 	
