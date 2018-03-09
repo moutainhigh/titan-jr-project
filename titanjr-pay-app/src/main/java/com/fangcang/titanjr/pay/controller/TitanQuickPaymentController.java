@@ -254,15 +254,16 @@ public class TitanQuickPaymentController extends BaseController {
 			queryQuickPayBindCardRequest.setVersion("v1.1");
 			QueryQuickPayBindCardResponse queryQuickPayBindCardResponse = rsGatewayInterfaceService
 					.queryQuickPayBindCardInfo(queryQuickPayBindCardRequest);
-			if(queryQuickPayBindCardResponse.isSuccess()){
+			if("0000".equals(queryQuickPayBindCardResponse.getErrCode())){
 				//解绑卡
 				unbindBankCardRequest.setIdCode(commonPayHistoryDTO.getIdcode());
+				unbindBankCardRequest.setUserId(commonPayHistoryDTO.getIdcode());
 				unbindBankCardRequest.setBindCardId(commonPayHistoryDTO.getBindcardid());
 				unbindBankCardResponse = rsGatewayInterfaceService.unBindBankCard(unbindBankCardRequest);
 			}
 		}
 		//上游删除成功再删本地
-		if(unbindBankCardResponse.isSuccess()){
+		if("0000".equals(unbindBankCardResponse.getErrCode())){
 			int delCount = titanCashierDeskService.delCommonPayHistory(commonPayHistoryDTO);
 			if(delCount <= 0){
 				log.error("【历史卡删除】删除本地绑卡信息0条数据");

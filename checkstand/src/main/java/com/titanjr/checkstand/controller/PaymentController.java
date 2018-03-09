@@ -143,8 +143,7 @@ public class PaymentController extends BaseController {
 			tlNetBankPayRequest.setOrderCurrency("0");
 			tlNetBankPayRequest.setOrderDatetime(payDTO.getOrderTime());
 			tlNetBankPayRequest.setPayType(payTypeEnum.channelTypeKey);
-			//tlNetBankPayRequest.setIssuerId(payDTO.getBankInfo());
-			tlNetBankPayRequest.setIssuerId("vbank");
+			tlNetBankPayRequest.setIssuerId(payDTO.getBankInfo());
 			tlNetBankPayRequest.setSignMsg(SignMsgBuilder.getNetBanPaySignMsg(tlNetBankPayRequest, gateWayConfigDTO.getSecretKey()));
 			tlNetBankPayRequest.setServerUrl(gateWayConfigDTO.getGateWayUrl());
 			logger.info("【通联-网银支付】请求参数：{}", tlNetBankPayRequest.toString());
@@ -184,6 +183,7 @@ public class PaymentController extends BaseController {
 			tlQrCodePayRequest.setReqsn(payDTO.getOrderNo());
 			tlQrCodePayRequest.setPaytype(payTypeEnum.channelTypeKey);
 			tlQrCodePayRequest.setRandomstr(CommonUtil.getValidatecode(8));
+			tlQrCodePayRequest.setValidtime("15");
 			PayMethodConfigDTO payMethodConfigDTO = titanFinancialUtilService.getPayMethodConfigDTO(null);
 			tlQrCodePayRequest.setNotify_url(payMethodConfigDTO.getTl_QrCodePay_Notifyurl());
 			tlQrCodePayRequest.setRequestType(RequestTypeEnum.PUBLIC_PAY.getKey());

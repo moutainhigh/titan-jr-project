@@ -201,7 +201,8 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 			if (resp != null) {
 				HttpEntity entity = resp.getEntity();
 				responseStr = EntityUtils.toString(entity, "UTF-8");
-				queryQuickPayBindCardResponse = convertToQueryQuickPayBindCardResponse(responseStr);
+				//queryQuickPayBindCardResponse = convertToQueryQuickPayBindCardResponse(responseStr);//测试环境
+				queryQuickPayBindCardResponse = (QueryQuickPayBindCardResponse) JsonUtil.jsonToBean(responseStr, QueryQuickPayBindCardResponse.class);
 				log.info("【查询快捷绑卡信息】返回信息:" + queryQuickPayBindCardResponse.toString());
 				
 				return queryQuickPayBindCardResponse;
@@ -273,8 +274,9 @@ public class RSGatewayInterfaceServiceImpl implements RSGatewayInterfaceService 
 			if (resp != null) {
 				HttpEntity entity = resp.getEntity();
 				responseStr = EntityUtils.toString(entity, "UTF-8");
-				unbindBankCardResponse = RSConvertFiled2ObjectUtil
-						.convertField2ObjectSuper(UnbindBankCardResponse.class, responseStr);
+				/*unbindBankCardResponse = RSConvertFiled2ObjectUtil
+						.convertField2ObjectSuper(UnbindBankCardResponse.class, responseStr);*/
+				unbindBankCardResponse = (UnbindBankCardResponse) JsonUtil.jsonToBean(responseStr, UnbindBankCardResponse.class);
 				log.info("【银行卡解绑】返回信息:" + unbindBankCardResponse.toString());
 				
 				return unbindBankCardResponse;
