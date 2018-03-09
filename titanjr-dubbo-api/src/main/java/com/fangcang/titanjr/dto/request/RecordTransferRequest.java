@@ -10,6 +10,8 @@ public class RecordTransferRequest implements Serializable {
 	private static final long serialVersionUID = 35599605006900247L;
 	//交易单号
 	private long transOrderId;
+	
+	private String userOrderId;
 	//发起方
 	private String 	userId;
 	
@@ -21,6 +23,12 @@ public class RecordTransferRequest implements Serializable {
 	// 单位：分
 	private long amount;
 	
+	public String getUserOrderId() {
+		return userOrderId;
+	}
+	public void setUserOrderId(String userOrderId) {
+		this.userOrderId = userOrderId;
+	}
 	public String getProductId() {
 		return productId;
 	}

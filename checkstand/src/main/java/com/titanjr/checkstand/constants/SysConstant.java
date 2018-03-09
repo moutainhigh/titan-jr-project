@@ -68,7 +68,7 @@ public class SysConstant {
 	
 	//-------------------------------商户号、证书、用户名、密码-----------------------------------
 	//通联网银支付商户号
-	public static String TL_NETBANK_MERCHANT = "100020091218001";//测试
+	public static String TL_NETBANK_MERCHANT = "109164111611001";//测试
 	//通联扫码支付商户号   
 	public static String TL_QRCODE_CUSTID = "179222079914865";//179222079914865-真实     990440153996000-测试
 	//通联账户交易商户号

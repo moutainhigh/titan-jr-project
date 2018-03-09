@@ -516,15 +516,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 						}
 						freezeAccountBalanceResponse.setFreezeSuccess(true);
 						freezeAccountBalanceResponse.putSuccess();
-						//冻结记账
-						TransOrderRequest transOrderRequest = new TransOrderRequest();
-						TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
-						RecordRequest recordRequest = new RecordRequest();
-						recordRequest.setTransOrderId(transOrderDTO.getTransid());
-						recordRequest.setUserId(balanceFreezeRequest.getUserid());
-						recordRequest.setProductId(balanceFreezeRequest.getProductid());
-						recordRequest.setAmount(balanceFreezeRequest.getAmount());
-						accountRecordService.freeze(recordRequest);
 						return freezeAccountBalanceResponse;
 					}
 				}
@@ -719,15 +710,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					BalanceUnFreezeResponse balanceUnFreezeResponse = rsAccTradeManager.unFreezeAccountBalance(balanceUnFreezeRequest);
 					if(balanceUnFreezeResponse !=null ){//解冻成功，插入数据库
 						if(CommonConstant.OPERATE_SUCCESS.equals(balanceUnFreezeResponse.getOperateStatus())){
-							//解冻记账
-							TransOrderRequest transOrderRequest = new TransOrderRequest();
-							TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
-							RecordRequest recordRequest = new RecordRequest();
-							recordRequest.setTransOrderId(transOrderDTO.getTransid());
-							recordRequest.setUserId(balanceUnFreezeRequest.getUserid());
-							recordRequest.setProductId(balanceUnFreezeRequest.getProductid());
-							recordRequest.setAmount(Long.parseLong(balanceUnFreezeRequest.getAmount()));
-							accountRecordService.freeze(recordRequest);
 							
 							TitanFundUnFreezereq titanFundUnFreezereq = new TitanFundUnFreezereq();
 							MyBeanUtil.copyProperties(titanFundUnFreezereq, unFreezeAccountBalanceRequest);
@@ -1350,15 +1332,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				BalanceUnFreezeResponse balanceUnFreezeResponse = rsAccTradeManager.unFreezeAccountBalance(balanceUnFreezeRequest);
 				log.info("调用融数解冻,请求参数："+Tools.gsonToString(balanceUnFreezeRequest)+",响应结果:"+Tools.gsonToString(balanceUnFreezeResponse));
 				if(CommonConstant.OPERATE_SUCCESS.equals(balanceUnFreezeResponse.getOperateStatus())){
-			    	//解冻记账
-					TransOrderRequest transOrderRequest = new TransOrderRequest();
-					TransOrderDTO transOrderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
-					RecordRequest recordRequest = new RecordRequest();
-					recordRequest.setTransOrderId(transOrderDTO.getTransid());
-					recordRequest.setUserId(balanceUnFreezeRequest.getUserid());
-					recordRequest.setProductId(balanceUnFreezeRequest.getProductid());
-					recordRequest.setAmount(Long.parseLong(balanceUnFreezeRequest.getAmount()));
-					accountRecordService.freeze(recordRequest);
 					
 					//插入解冻记录
 			    	TitanFundUnFreezereq titanFundUnFreezereq = covertToTitanFundUnFreezereq(fundFreezeDTO);

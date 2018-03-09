@@ -1,14 +1,39 @@
 package com.titanjr.fop.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.fastjson.JSONObject;
 import com.fangcang.exception.DaoException;
 import com.fangcang.exception.ServiceException;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.SMSTemplate;
-import com.fangcang.titanjr.dto.bean.*;
+import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
+import com.fangcang.titanjr.dto.bean.AccountBalance;
+import com.fangcang.titanjr.dto.bean.BankCardDTO;
+import com.fangcang.titanjr.dto.bean.FundFreezeDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.BankCardRequest;
+import com.fangcang.titanjr.dto.request.RecordRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.entity.TitanFundUnFreezereq;
 import com.fangcang.titanjr.entity.parameter.TitanUnFundFreezereqParam;
+import com.fangcang.titanjr.service.AccountRecordService;
 import com.fangcang.titanjr.service.TitanFinancialBankCardService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.StringUtil;
@@ -27,16 +52,6 @@ import com.titanjr.fop.service.AccountService;
 import com.titanjr.fop.service.CommonService;
 import com.titanjr.fop.util.ResponseUtils;
 import com.titanjr.fop.util.WebUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 /**
  * Created by zhaoshan on 2017/12/22.
@@ -57,7 +72,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     CommonService commonService;
-
+    
+    @Autowired
+    AccountRecordService accountRecordService;
+    
     @Override
     public List<SHBalanceInfo> getAccountBalanceList(WheatfieldBalanceGetlistRequest balanceGetlistRequest) throws ServiceException {
 
@@ -119,15 +137,22 @@ public class AccountServiceImpl implements AccountService {
             logger.error("账户余额小于需冻结金额，账户余额：{}，冻结金额：{}", accUseable, authcodeserviceRequest.getAmount());
             return null;
         }
-        //更新账户，冻结资金
-        Long accSettle = Long.parseLong(balanceList.get(0).getBalancesettle());
-        balanceList.get(0).setBalancefrozon(String.valueOf(accFrozen + authcodeserviceRequest.getAmount()));
-        balanceList.get(0).setBalanceusable(String.valueOf(accUseable - authcodeserviceRequest.getAmount()));
-        balanceList.get(0).setBalancesettle(String.valueOf(accSettle - authcodeserviceRequest.getAmount()));
-        int count = titanAccountDao.updateAccountBalance(balanceList.get(0));
-        if (count < 1) {
-            logger.error("账户余额更新异常");
-            return null;
+        
+        RecordRequest recordRequest = new RecordRequest();
+        recordRequest.setUserOrderId(authcodeserviceRequest.getRequestno());
+        recordRequest.setAmount(authcodeserviceRequest.getAmount());
+        recordRequest.setUserId(authcodeserviceRequest.getUserid());
+        recordRequest.setProductId(authcodeserviceRequest.getProductid());
+        BaseResponseDTO response = new BaseResponseDTO();
+		try {
+			response = accountRecordService.freeze(recordRequest);
+		} catch (GlobalServiceException e) {
+			logger.error("冻结记账异常,记账参数recordRequest："+Tools.gsonToString(recordRequest),e);
+			response.putErrorResult("冻结失败");
+		}
+        if (!response.isResult()) {
+        	 logger.error("冻结记账失败,冻结参数authcodeserviceRequest："+Tools.gsonToString(authcodeserviceRequest));
+             return null;
         }
         //返回生成的验证码
         return getFreezeAuthCode();
@@ -140,20 +165,23 @@ public class AccountServiceImpl implements AccountService {
         //查询冻结记录
         FundFreezeDTO fundFreezeDTO = new FundFreezeDTO();
         fundFreezeDTO.setAuthCode(thawauthcodeRequest.getAuthcode());
-        fundFreezeDTO.setRequestNo(thawauthcodeRequest.getRequestno());
+        fundFreezeDTO.setRequestNo(thawauthcodeRequest.getFrozenuserorderid());
         List<FundFreezeDTO> freezeDTOList = titanOrderService.queryFundFreezeDTO(fundFreezeDTO);
         //无正确的冻结单
         if (CollectionUtils.isEmpty(freezeDTOList) || freezeDTOList.size() > 1) {
-            ResponseUtils.getSysErrorResp(thawauthcodeResponse);
-            return thawauthcodeResponse;
+        	logger.error("解冻时，该冻结记录不存在或者错误，冻结记录查询参数【授权码】:"+thawauthcodeRequest.getAuthcode()+",请求号："+thawauthcodeRequest.getRequestno()+",查询结果："+Tools.gsonToString(freezeDTOList));
+        	thawauthcodeResponse.setMsg("该冻结记录不存在或者错误");
+            ResponseUtils.getErrorResp(thawauthcodeResponse);
         }
         //查询解冻记录，若存在则有问题
         TitanUnFundFreezereqParam unFundFreezereqParam = new TitanUnFundFreezereqParam();
-        unFundFreezereqParam.setRequestno(thawauthcodeRequest.getRequestno());
+        unFundFreezereqParam.setRequestno(thawauthcodeRequest.getFrozenuserorderid());
         List<TitanFundUnFreezereq> unFreezereqList = titanAccountDao.queryUnFreezeRequest(unFundFreezereqParam);
         //已解冻或存在解冻单
         if (freezeDTOList.get(0).getStatus() == 2 || CollectionUtils.isNotEmpty(unFreezereqList)) {
-            ResponseUtils.getSysErrorResp(thawauthcodeResponse);
+        	logger.error("该冻结记录已经解冻，冻结查询参数："+Tools.gsonToString(thawauthcodeRequest));
+        	thawauthcodeResponse.setMsg("该冻结记录已经解冻");
+            ResponseUtils.getErrorResp(thawauthcodeResponse);
             return thawauthcodeResponse;
         }
         //解冻金额校验失败
@@ -180,16 +208,27 @@ public class AccountServiceImpl implements AccountService {
             return thawauthcodeResponse;
         }
         //更新账户解冻资金
-        Long accSettle = Long.parseLong(balanceList.get(0).getBalancesettle());
-        balanceList.get(0).setBalancefrozon(String.valueOf(accFrozen - Long.parseLong(thawauthcodeRequest.getAmount())));
-        balanceList.get(0).setBalanceusable(String.valueOf(accUseable + Long.parseLong(thawauthcodeRequest.getAmount())));
-        balanceList.get(0).setBalancesettle(String.valueOf(accSettle + Long.parseLong(thawauthcodeRequest.getAmount())));
-        int count = titanAccountDao.updateAccountBalance(balanceList.get(0));
-        if (count < 1) {
-            logger.error("账户余额更新异常");
-            ResponseUtils.getSysErrorResp(thawauthcodeResponse);
+        RecordRequest recordRequest = new RecordRequest();
+        recordRequest.setUserOrderId(thawauthcodeRequest.getRequestno());
+        recordRequest.setAmount(Long.valueOf(thawauthcodeRequest.getAmount()));
+        recordRequest.setUserId(thawauthcodeRequest.getUserid());
+        recordRequest.setProductId(thawauthcodeRequest.getProductid());
+        BaseResponseDTO response = new BaseResponseDTO();
+		try {
+			response = accountRecordService.unFreeze(recordRequest);
+			if (!response.isResult()) {
+	        	 logger.error("解冻记账失败,解动参数thawauthcodeRequest："+Tools.gsonToString(thawauthcodeRequest));
+	        	 thawauthcodeResponse.setMsg("解冻失败");
+	        	 ResponseUtils.getErrorResp(thawauthcodeResponse);
+	             return thawauthcodeResponse;
+	        }
+		} catch (GlobalServiceException e) {
+			logger.error("解冻记账异常,记账参数recordRequest："+Tools.gsonToString(recordRequest),e);
+			thawauthcodeResponse.setMsg("解冻异常");
+       	 	ResponseUtils.getErrorResp(thawauthcodeResponse);
             return thawauthcodeResponse;
-        }
+		}
+        
         thawauthcodeResponse.setIs_success("true");
         thawauthcodeResponse.setRetcode("100000");
         thawauthcodeResponse.setRetmsg("success");

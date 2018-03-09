@@ -163,7 +163,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 					}
 					response.setReturnCode(rsp.getErrorCode());
 					response.setReturnMsg(errorMsg);
-					log.error("调用接口unFreezeAccountBalance异常：" + errorMsg);
+					log.error("调用接口unFreezeAccountBalance,请求参数balanceUnFreezeRequest：" + Tools.gsonToString(balanceUnFreezeRequest)+",错误信息："+errorMsg);
 				} else {
 					response.setSuccess(true);
 					response.setRetcode(rsp.getRetcode());
