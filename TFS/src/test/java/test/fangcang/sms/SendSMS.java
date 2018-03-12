@@ -5,11 +5,10 @@ import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Test;
 
-import test.fangcang.GenericTest;
-
-import com.fangcang.titanjr.dto.request.SendSMSRequest;
-import com.fangcang.titanjr.service.TitanFinancialBaseInfoService;
+import com.fangcang.titanjr.dto.request.SendMessageRequest;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
+
+import test.fangcang.GenericTest;
 
 public class SendSMS extends GenericTest{
 	@Resource
@@ -23,12 +22,12 @@ public class SendSMS extends GenericTest{
 	
 	@Test
 	public void testInitCityInfo() throws Exception{
-		SendSMSRequest sendSMSRequest = new SendSMSRequest();
+		SendMessageRequest sendSMSRequest = new SendMessageRequest();
 		sendSMSRequest.setContent("hello!");
-		sendSMSRequest.setMobilePhone("15926148549");
+		sendSMSRequest.setReceiveAddress("15926148549");
 		sendSMSRequest.setProviderkey("3369");
 		sendSMSRequest.setMerchantCode("M10000001");
-		titanFinancialSendSMSService.sendSMS(sendSMSRequest);
+		titanFinancialSendSMSService.asynSendMessage(sendSMSRequest);
 	}
 	
 }
