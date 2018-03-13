@@ -85,12 +85,13 @@ public class FinancialMainController extends BaseController {
 					if (checkStatus != null) {
 						orgCheckResultKey = checkStatus.getCheckResultKey();
 						orgCheckResultMsg = checkStatus.getCheckResultMsg();
-						model.addAttribute("userType", organOrganResponse.getOrgSubDTO().getUserType());
 						model.addAttribute("orgId", organOrganResponse.getFinancialOrganDTO().getOrgId());
 					}else{
 						log.error("金融首页错误，机构无审核状态[organOrganResponse]:"+Tools.gsonToString(organOrganResponse)+",saasLoginName:"+saasLoginName);
 					}
-					
+					if(organOrganResponse.getOrgSubDTO()!=null){
+						model.addAttribute("userType", organOrganResponse.getOrgSubDTO().getUserType());
+					}
 				}else{
 	        		log.error("金融首页错误，查询金融机构失败[organOrganResponse]:"+Tools.gsonToString(organOrganResponse)+",saasLoginName:"+saasLoginName);
 	        	}
