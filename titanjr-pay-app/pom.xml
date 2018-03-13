@@ -273,13 +273,6 @@
           <artifactId>bcprov-jdk14</artifactId>
           <version>138</version>
       </dependency> -->
-
-        <dependency>
-            <groupId>com.ruixuesoft</groupId>
-            <artifactId>RopExSdk</artifactId>
-            <version>1.0.0</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>com.fangcang</groupId>
             <artifactId>titanjr-rs-app</artifactId>

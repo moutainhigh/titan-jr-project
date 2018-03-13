@@ -48,6 +48,23 @@
         </dependency>
 
         <dependency>
+            <groupId>com.allinpay</groupId>
+            <artifactId>refundorder</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.allinpay</groupId>
+            <artifactId>bcprov-jdk14</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.allinpay</groupId>
+            <artifactId>allinpay-security</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
         </dependency>
