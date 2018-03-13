@@ -180,8 +180,16 @@ function confirmRecharge(){
            },
            dataType: "json",
            success: function (data) {
-        	   if(data.success == true || data.errCode == '3081' || data.errCode == '3083'){
+        	   debugger;
+        	   if(data.success == true || data.errCode == '3081' || data.errCode == '3083'){//银行处理中
+        		    $(".payment-verification").hide();
        				checkOrderPayStatus($("#rsOrderNo").val());
+         		    //isShowVeil("#Veil","hide");
+       				
+        	   }else if(data.errCode == '3069' || data.errCode == '11012'){//3069验证码错误,11012操作频繁
+        		   new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
+        		   top.F.loading.hide();
+        		   
         	   }else{
         		   new top.Tip({msg: data.errMsg, type: 3, timer: 2000});
         		   top.F.loading.hide();

@@ -159,7 +159,7 @@
             <!-- 支付历史 -->
             <c:if test="${not empty cashDeskData.commonPayHistoryList }">
             	 <c:forEach items="${cashDeskData.commonPayHistoryList }" var="commonPay" varStatus="status">
-	            	<li class="<c:if test='${status.index > 0}'>isShow </c:if>clearfix">
+	            	<li id="del-card-${commonPay.commonpayid }" class="<c:if test='${status.index > 0}'>isShow </c:if>clearfix">
 	            		<input class="index" type="hidden" value="${status.index + 4 }"/>
 		                <div class="icon fl">
 		                    <b class="iconfont icon-check1"></b>
@@ -216,7 +216,7 @@
 									</c:if>
 			                </div>
 		                </c:if>
-		                <div id="del-card-${commonPay.commonpayid }" class="del-card" onclick="delCardHistory(${commonPay.commonpayid })">删除</div>
+		                <div class="del-card" onclick="delCardHistory(${commonPay.commonpayid })">删除</div>
 		                <div style="padding-right: 20px;" class="right-money isShow">
 		                    <!-- 财务付款给供应商才显示手续费 -->
 							<c:if test="${cashDeskData.paySource =='2' }">
@@ -1208,7 +1208,8 @@
 	        	         dataType: "json",
 	        	         //async:false,
 	        	         success: function(data){
-	        	        	 if(data.success){
+	        	        	 debugger;
+	        	        	 if(data.errCode = '0000'){
 	        	        		 $("#del-card-"+commonpayid).remove();
 	        	        	 }else{
 	        	        		 new top.Tip({msg: data.errMsg, type: 3, timer: 1500});

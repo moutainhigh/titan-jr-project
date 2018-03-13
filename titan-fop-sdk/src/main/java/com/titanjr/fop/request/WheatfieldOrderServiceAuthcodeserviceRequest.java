@@ -1,15 +1,17 @@
 package com.titanjr.fop.request;
 
+import java.util.Date;
+import java.util.Map;
+
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.fangcang.titanjr.common.util.GenericValidate;
-import com.sun.istack.internal.NotNull;
 import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.domain.FopHashMap;
 import com.titanjr.fop.exceptions.ApiRuleException;
 import com.titanjr.fop.response.WheatfieldOrderServiceAuthcodeserviceResponse;
-import org.hibernate.validator.constraints.NotBlank;
-
-import java.util.Date;
-import java.util.Map;
 
 /**
  * Created by zhaoshan on 2017/12/28.

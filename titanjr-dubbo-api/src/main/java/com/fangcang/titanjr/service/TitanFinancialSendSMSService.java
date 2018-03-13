@@ -9,15 +9,7 @@ import com.fangcang.titanjr.dto.response.SendSmsResponse;
 
 public interface TitanFinancialSendSMSService {
 
-	/**
-	 * 发送短信
-	 * @param SendSMSRequest
-	 * @return
-	 * @deprecated see sendMessage()
-	 */
-	@Deprecated
-	public SendSmsResponse sendSMS(SendSMSRequest SendSMSRequest);
-	/**
+	 /**
 	 * 发送消息(手机和短信)
 	 * @param sendEmailRequest
 	 * @return

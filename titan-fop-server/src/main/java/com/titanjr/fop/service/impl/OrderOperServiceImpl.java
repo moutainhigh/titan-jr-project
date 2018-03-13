@@ -1,17 +1,47 @@
 package com.titanjr.fop.service.impl;
 
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fangcang.exception.ServiceException;
 import com.fangcang.titanjr.common.enums.ReqstatusEnum;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.MD5;
-import com.fangcang.titanjr.dto.bean.*;
+import com.fangcang.titanjr.common.util.Tools;
+import com.fangcang.titanjr.dto.BaseResponseDTO;
+import com.fangcang.titanjr.dto.bean.AccountBalance;
+import com.fangcang.titanjr.dto.bean.RefundDTO;
+import com.fangcang.titanjr.dto.bean.TitanTransferDTO;
+import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
+import com.fangcang.titanjr.dto.bean.TransOrderDTO;
+import com.fangcang.titanjr.dto.request.RecordTransferRequest;
 import com.fangcang.titanjr.dto.request.TransOrderRequest;
 import com.fangcang.titanjr.entity.TitanOrderPayreq;
 import com.fangcang.titanjr.entity.parameter.TitanAccountDetailParam;
 import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
 import com.fangcang.titanjr.entity.parameter.TitanWithDrawReqParam;
 import com.fangcang.titanjr.enums.TradeTypeAccountDetailEnum;
+import com.fangcang.titanjr.service.AccountRecordService;
 import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.DateUtil;
@@ -19,6 +49,7 @@ import com.fangcang.util.StringUtil;
 import com.titanjr.fop.constants.FuncCodeEnum;
 import com.titanjr.fop.constants.InterfaceURlConfig;
 import com.titanjr.fop.constants.OrderNStatusEnum;
+import com.titanjr.fop.constants.ReturnCodeEnum;
 import com.titanjr.fop.dao.TitanAccountDao;
 import com.titanjr.fop.dao.TitanOrderDao;
 import com.titanjr.fop.dto.BalanceQueryDTO;
@@ -32,20 +63,6 @@ import com.titanjr.fop.response.WheatfieldOrderTransferResponse;
 import com.titanjr.fop.service.OrderOperService;
 import com.titanjr.fop.util.ResponseUtils;
 import com.titanjr.fop.util.WebUtils;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.*;
 
 /**
  * Created by zhaoshan on 2018/1/3.
@@ -66,6 +83,9 @@ public class OrderOperServiceImpl implements OrderOperService {
 
     @Resource
     private TitanSysconfigService titanSysconfigService;
+    
+    @Resource
+    AccountRecordService accountRecordService;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
@@ -259,30 +279,31 @@ public class OrderOperServiceImpl implements OrderOperService {
             if (amount > payerUseable) {
                 logger.error("转账失败，余额不足，可用余额：{}，转账金额：{}",
                         payerUseable, amount);
-                ResponseUtils.getSysErrorResp(transferResponse);
+                transferResponse.setErrorCode(ReturnCodeEnum.CODE_AMOUNT_NO.getCode());
+                transferResponse.setMsg(ReturnCodeEnum.CODE_AMOUNT_NO.getMsg());
+                ResponseUtils.getErrorResp(transferResponse);
                 return transferResponse;
             }
-            Long payerAmount = Long.parseLong(payerAccount.getAmount());
-            Long payerSettle = Long.parseLong(payerAccount.getBalancesettle());
-            payerAccount.setBalanceusable(String.valueOf(payerUseable - amount));
-            payerAccount.setAmount(String.valueOf(payerAmount - amount));
-            payerAccount.setBalancesettle(String.valueOf(payerSettle - amount));
-            int payerCount = titanAccountDao.updateAccountBalance(payerAccount);
+            RecordTransferRequest recordTransferRequest = new RecordTransferRequest();
+            recordTransferRequest.setUserOrderId(orderTransferRequest.getRequestno());
+            recordTransferRequest.setAmount(amount);
+            recordTransferRequest.setUserId(orderTransferRequest.getUserid());
+            recordTransferRequest.setProductId(orderTransferRequest.getProductid());
+            recordTransferRequest.setRelateUserId(orderTransferRequest.getUserrelateid());
+            recordTransferRequest.setRelateProductId(orderTransferRequest.getProductid());
+            BaseResponseDTO response = new BaseResponseDTO();
+			try {
+				response = accountRecordService.transfer(recordTransferRequest);
+			} catch (GlobalServiceException e) {
+				logger.error("转账记账失败,参数recordTransferRequest："+Tools.gsonToString(recordTransferRequest),e);
+				response.putErrorResult("转账失败");
+			}
 
-            Long payeeUseable = Long.parseLong(payeeAccount.getBalanceusable());
-            Long payeeAmount = Long.parseLong(payeeAccount.getAmount());
-            Long payeeSettle = Long.parseLong(payeeAccount.getBalancesettle());
-            payeeAccount.setBalanceusable(String.valueOf(payeeUseable + amount));
-            payeeAccount.setAmount(String.valueOf(payeeAmount + amount));
-            payeeAccount.setBalancesettle(String.valueOf(payeeSettle + amount));
-            int payeeCount = titanAccountDao.updateAccountBalance(payeeAccount);
-
-            if (payerCount > 0 && payeeCount > 0) {
+            if (response.isResult()) {
                 transferResponse.setIs_success("true");
                 transferResponse.setOrderid(orderTransferRequest.getRequestno());
             } else {
-                logger.error("转账操作失败，当前付款方：{}，收款方：{}",
-                        JSONObject.toJSON(payerAccount), JSONObject.toJSON(payeeAccount));
+                logger.error("转账操作失败，,参数recordTransferRequest：{},返回结果transferResponse：",Tools.gsonToString(recordTransferRequest),Tools.gsonToString(transferResponse));
                 ResponseUtils.getSysErrorResp(transferResponse);
                 return transferResponse;
             }

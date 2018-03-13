@@ -300,7 +300,9 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				logger.info("【融宝-确认支付】返回信息:" + rbPayConfirmResponse.toString());
 				
 				if(!SysConstant.RB_QUICKPAY_SUCCESS.equals(rbPayConfirmResponse.getResult_code())){
-					titanPayConfirmResponse.putErrorResult(RSErrorCodeEnum.build(rbPayConfirmResponse.getResult_msg()));
+					//titanPayConfirmResponse.putErrorResult(RSErrorCodeEnum.build(rbPayConfirmResponse.getResult_msg()));
+					titanPayConfirmResponse.setErrCode(rbPayConfirmResponse.getResult_code());
+					titanPayConfirmResponse.setErrMsg(rbPayConfirmResponse.getResult_msg());
 					return titanPayConfirmResponse;
 				}
 				titanPayConfirmResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);

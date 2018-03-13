@@ -256,13 +256,16 @@ public class TitanFinancialUtilServiceImpl implements TitanFinancialUtilService{
 	@Override
 	public SysConfig querySysConfig() {
 		if(config == null){
+			String domainName = domainConfigDao.queryCurrentEnvDomain();
 			config = new SysConfig();
 			config.setSessionKey(RSInvokeConstant.sessionKey);
 			config.setRsCheckKey(RSInvokeConstant.rsCheckKey);
 			config.setGateWayURL(RSInvokeConstant.gateWayURL);
 			config.setTitanjrCheckKey(RSInvokeConstant.titanjrCheckKey);
-			config.setCsPayConfirmPageURL(RSInvokeConstant.csPayConfirmPageURL);
-			config.setCsPayNoticeURL(RSInvokeConstant.csPayNoticeURL);
+			
+			config.setCsPayConfirmPageURL(MessageFormat.format(payCallbackPageUrl, domainName));
+			config.setCsPayNoticeURL(MessageFormat.format(payNotifyUrl, domainName));
+			
 			config.setCsCardAuthPageURL(RSInvokeConstant.csCardAuthPageURL);
 			config.setCsCardAuthNoticeURL(RSInvokeConstant.csCardAuthNoticeURL);
 		}

@@ -143,7 +143,7 @@ public class FinancialMainController extends BaseController {
 					if (checkStatus != null) {
 						orgCheckResultKey = checkStatus.getCheckResultKey();
 						orgCheckResultMsg = checkStatus.getCheckResultMsg();
-						model.addAttribute("userType", organOrganResponse.getFinancialOrganDTO().getUserType());
+						model.addAttribute("userType", organOrganResponse.getOrgSubDTO().getUserType());
 						model.addAttribute("orgId", organOrganResponse.getFinancialOrganDTO().getOrgId());
 					}
 				}

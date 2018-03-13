@@ -75,6 +75,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 	private boolean checkIsRecord(RecordRequest recordRequest,int tradeType){
 		TitanAccountDetailParam param = new TitanAccountDetailParam();
 		param.setTransOrderId(recordRequest.getTransOrderId());
+		param.setUserOrderId(recordRequest.getUserOrderId());
 		param.setOrgCode(recordRequest.getUserId());
 		param.setProductId(recordRequest.getProductId());
 		param.setTradeType(tradeType);
@@ -114,6 +115,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		TitanAccountDetail accountDetail = new TitanAccountDetail();
 		accountDetail.setAccountCode(balanceInfo.getAccountcode());
 		accountDetail.setTransOrderId(recordRequest.getTransOrderId());
+		accountDetail.setUserOrderId(recordRequest.getUserOrderId());
 		accountDetail.setTradeType(tradeType);
 		accountDetail.setOrgCode(recordRequest.getUserId());
 		accountDetail.setProductId(recordRequest.getProductId());
@@ -121,6 +123,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setFrozonAmount(0L);
 		accountDetail.setSettleAmount(recordRequest.getAmount());
 		accountDetail.setStatus(1);
+		accountDetail.setRemark("充值");
 		accountDetail.setCreateTime(new Date());
 		updateBalanceInfo(accountDetail);
 		//备付金
@@ -149,6 +152,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		recordRequest.setUserId(recordTransferRequest.getUserId());
 		recordRequest.setProductId(recordTransferRequest.getProductId());
 		recordRequest.setTransOrderId(recordTransferRequest.getTransOrderId());
+		recordRequest.setUserOrderId(recordTransferRequest.getUserOrderId());
 		//判断转出是否已经记账
 		if(checkIsRecord(recordRequest,tradeType)){
 			responseDTO.putErrorResult("该笔交易已经记账");
@@ -168,6 +172,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		TitanAccountDetail accountDetail = new TitanAccountDetail();
 		accountDetail.setAccountCode(balanceInfo.getAccountcode());
 		accountDetail.setTransOrderId(recordTransferRequest.getTransOrderId());
+		accountDetail.setUserOrderId(recordTransferRequest.getUserOrderId());
 		accountDetail.setTradeType(tradeType);
 		accountDetail.setOrgCode(recordTransferRequest.getUserId());
 		accountDetail.setProductId(recordTransferRequest.getProductId());
@@ -176,6 +181,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setSettleAmount(-recordTransferRequest.getAmount());
 		accountDetail.setStatus(1);
 		accountDetail.setCreateTime(new Date());
+		accountDetail.setRemark("转账");
 		updateBalanceInfo(accountDetail);
 		
 		//2-转入
@@ -191,6 +197,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		TitanAccountDetail accountDetailIn = new TitanAccountDetail();
 		accountDetailIn.setAccountCode(balanceInfoIn.getAccountcode());
 		accountDetailIn.setTransOrderId(recordTransferRequest.getTransOrderId());
+		accountDetailIn.setUserOrderId(recordTransferRequest.getUserOrderId());
 		accountDetailIn.setTradeType(tradeType);
 		accountDetailIn.setOrgCode(recordTransferRequest.getRelateUserId());
 		accountDetailIn.setProductId(recordTransferRequest.getRelateProductId());
@@ -199,6 +206,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetailIn.setSettleAmount(recordTransferRequest.getAmount());
 		accountDetailIn.setStatus(1);
 		accountDetailIn.setCreateTime(new Date());
+		accountDetailIn.setRemark("转账");
 		updateBalanceInfo(accountDetailIn);
 		responseDTO.putSuccess("记账成功");
 		return responseDTO;
@@ -228,6 +236,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		TitanAccountDetail accountDetail = new TitanAccountDetail();
 		accountDetail.setAccountCode(balanceInfo.getAccountcode());
 		accountDetail.setTransOrderId(recordRequest.getTransOrderId());
+		accountDetail.setUserOrderId(recordRequest.getUserOrderId());
 		accountDetail.setTradeType(tradeType);
 		accountDetail.setOrgCode(recordRequest.getUserId());
 		accountDetail.setProductId(recordRequest.getProductId());
@@ -236,6 +245,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setSettleAmount(-recordRequest.getAmount());
 		accountDetail.setStatus(1);
 		accountDetail.setCreateTime(new Date());
+		accountDetail.setRemark("冻结");
 		updateBalanceInfo(accountDetail);
 		responseDTO.putSuccess("记账成功");
 		return responseDTO;
@@ -265,6 +275,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		TitanAccountDetail accountDetail = new TitanAccountDetail();
 		accountDetail.setAccountCode(balanceInfo.getAccountcode());
 		accountDetail.setTransOrderId(recordRequest.getTransOrderId());
+		accountDetail.setUserOrderId(recordRequest.getUserOrderId());
 		accountDetail.setTradeType(tradeType);
 		accountDetail.setOrgCode(recordRequest.getUserId());
 		accountDetail.setProductId(recordRequest.getProductId());
@@ -273,6 +284,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setSettleAmount(recordRequest.getAmount());
 		accountDetail.setStatus(1);
 		accountDetail.setCreateTime(new Date());
+		accountDetail.setRemark("解冻");
 		updateBalanceInfo(accountDetail);
 		responseDTO.putSuccess("记账成功");
 		return responseDTO;
@@ -305,6 +317,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		TitanAccountDetail accountDetail = new TitanAccountDetail();
 		accountDetail.setAccountCode(balanceInfo.getAccountcode());
 		accountDetail.setTransOrderId(recordRequest.getTransOrderId());
+		accountDetail.setUserOrderId(recordRequest.getUserOrderId());
 		accountDetail.setTradeType(tradeType);
 		accountDetail.setOrgCode(recordRequest.getUserId());
 		accountDetail.setProductId(recordRequest.getProductId());
@@ -313,6 +326,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setSettleAmount(-recordRequest.getAmount());
 		accountDetail.setStatus(1);
 		accountDetail.setCreateTime(new Date());
+		accountDetail.setRemark("提现");
 		updateBalanceInfo(accountDetail);
 		
 		//手续费记账
@@ -324,6 +338,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		TitanAccountDetail accountDetailFee = new TitanAccountDetail();
 		accountDetailFee.setAccountCode(feeBalanceInfoList.get(0).getAccountcode());
 		accountDetailFee.setTransOrderId(recordRequest.getTransOrderId());
+		accountDetailFee.setUserOrderId(recordRequest.getUserOrderId());
 		accountDetailFee.setTradeType(tradeType);
 		accountDetailFee.setOrgCode(CommonConstant.RS_FANGCANG_USER_ID);
 		accountDetailFee.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
@@ -332,6 +347,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetailFee.setSettleAmount(recordRequest.getFee());
 		accountDetailFee.setStatus(1);
 		accountDetailFee.setCreateTime(new Date());
+		accountDetailFee.setRemark("提现");
 		updateBalanceInfo(accountDetailFee);
 		
 		//备付金
@@ -374,6 +390,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		TitanAccountDetail accountDetail = new TitanAccountDetail();
 		accountDetail.setAccountCode(balanceInfo.getAccountcode());
 		accountDetail.setTransOrderId(recordRequest.getTransOrderId());
+		accountDetail.setUserOrderId(recordRequest.getUserOrderId());
 		accountDetail.setTradeType(tradeType);
 		accountDetail.setOrgCode(recordRequest.getUserId());
 		accountDetail.setProductId(recordRequest.getProductId());
@@ -382,6 +399,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setSettleAmount(-recordRequest.getAmount());
 		accountDetail.setStatus(1);
 		accountDetail.setCreateTime(new Date());
+		accountDetail.setRemark("退款");
 		updateBalanceInfo(accountDetail);
 		
 		//备付金记账

@@ -23,7 +23,10 @@ public class UnbindBankCardRequest implements Serializable {
 	//融宝绑卡ID
 	private String bindCardId;
 	
-	//身份证号（身份证号还可以当作融宝的用户ID）
+	//用户ID（身份证号还可以当作融宝的用户ID）
+	private String userId;
+	
+	//身份证号
 	private String idCode;
 	
 	private String signType;
@@ -98,6 +101,14 @@ public class UnbindBankCardRequest implements Serializable {
 	}
 	
 	
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

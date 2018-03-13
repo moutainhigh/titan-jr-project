@@ -55,6 +55,7 @@ public class FopController extends BaseController {
         String methodName = request.getParameter("method");
         InterfaceConfigEnum configEnum = InterfaceConfigEnum.getURlConfigByKey(methodName);
         String url = getRequestBaseUrl(request) + InterfaceURlConfig.INTERFACE_URL_MAP.get(configEnum);
+        //String url = "http://www.fangcang.org/titan-fop-dev3" + InterfaceURlConfig.INTERFACE_URL_MAP.get(configEnum); //发到213用这个
         //resetParameter(request, attr);
         attr.addAttribute("signValid", request.getAttribute("signValid"));
         attr.addAttribute("sessionValid", request.getAttribute("sessionValid"));

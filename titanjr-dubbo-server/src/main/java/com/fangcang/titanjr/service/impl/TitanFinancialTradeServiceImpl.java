@@ -617,15 +617,6 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 						log.info("orderid:"+transferRequest.getOrderid()+",转账结果,响应结果[accountTransferResponse]:" + JSON.toJSONString(accountTransferResponse));
 						if (accountTransferResponse != null) {
 							if (CommonConstant.OPERATE_SUCCESS.equals(accountTransferResponse.getOperateStatus())) {
-								//记账
-								RecordTransferRequest recordTransferRequest  = new RecordTransferRequest();
-								recordTransferRequest.setAmount(Long.parseLong(accountTransferRequest.getAmount()));
-								recordTransferRequest.setTransOrderId(transOrderDTO.getTransid());
-								recordTransferRequest.setProductId(accountTransferRequest.getProductid());
-								recordTransferRequest.setUserId(accountTransferRequest.getUserid());
-								recordTransferRequest.setRelateUserId(accountTransferRequest.getUserrelateid());
-								recordTransferRequest.setRelateProductId(accountTransferRequest.getInterproductid());
-					        	accountRecordService.transfer(recordTransferRequest);
 								
 								titanTransferReq.setStatus(TransferReqEnum.TRANSFER_SUCCESS.getStatus());
 								transferResponse.putSuccess();
@@ -2495,7 +2486,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			qr = JsonConversionTool.toObject(response, qr.getClass());
 			String payUrl =null;
 			if(response.indexOf("weixin")!=-1){
-				payUrl = response.substring(response.indexOf("weixin"), response.length());
+				payUrl = response.substring(response.indexOf("weixin"), response.length()-2);
 				qr.setRespJs(payUrl);
 			}
 			log.info("网关返回结果:"+JSONSerializer.toJSON(qr));

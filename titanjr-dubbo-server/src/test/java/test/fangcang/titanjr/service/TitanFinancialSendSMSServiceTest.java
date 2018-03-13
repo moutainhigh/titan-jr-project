@@ -2,18 +2,17 @@ package test.fangcang.titanjr.service;
 
 import javax.annotation.Resource;
 
-import net.sf.json.JSONSerializer;
-
 import org.junit.Assert;
 import org.junit.Test;
 
-import test.fangcang.titanjr.SpringTest;
-
 import com.fangcang.titanjr.dto.request.SendCodeRequest;
-import com.fangcang.titanjr.dto.request.SendSMSRequest;
+import com.fangcang.titanjr.dto.request.SendMessageRequest;
 import com.fangcang.titanjr.dto.response.SendCodeResponse;
-import com.fangcang.titanjr.dto.response.SendSmsResponse;
+import com.fangcang.titanjr.dto.response.SendMessageResponse;
 import com.fangcang.titanjr.service.TitanFinancialSendSMSService;
+
+import net.sf.json.JSONSerializer;
+import test.fangcang.titanjr.SpringTest;
 
 /**
  * Created by zhaoshan on 2016/5/10.
@@ -26,12 +25,12 @@ public class TitanFinancialSendSMSServiceTest extends SpringTest  {
    // @Test
     public void testSendMsg(){
     	try{
-	    	SendSMSRequest sendSMSRequest = new SendSMSRequest();
+    		SendMessageRequest sendSMSRequest = new SendMessageRequest();
 			sendSMSRequest.setContent("hello!");
-			sendSMSRequest.setMobilePhone("13352989767");
+			sendSMSRequest.setReceiveAddress("13352989767");
 			sendSMSRequest.setProviderkey("3369");
 			sendSMSRequest.setMerchantCode("M10021071");
-			SendSmsResponse response = titanFinancialSendSMSService.sendSMS(sendSMSRequest);
+			SendMessageResponse response = titanFinancialSendSMSService.sendMessage(sendSMSRequest);
 			System.out.println(JSONSerializer.toJSON(response).toString());
 		Assert.assertFalse(response.isResult()==false);
 		} catch (Exception e) {

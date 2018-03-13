@@ -13,7 +13,9 @@ public enum ReturnCodeEnum {
     CODE_SESSION_ERROR("-201","session信息不合法"),
     CODE_OPERTYPE_ERROR("-202","opertype信息不合法"),
     CODE_AMOUNT_ERROR("-203","金额信息不合法"),
+    
     CODE_TIME_ERROR("-204","请求时间不合法"),
+    CODE_AMOUNT_NO("-205","余额不足"),
     CODE_SYS_ERROR("-300","系统错误");
     private String code;
     private String msg;

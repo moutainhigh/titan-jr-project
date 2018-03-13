@@ -164,6 +164,7 @@ public class TLPaymentServiceImpl implements TLPaymentService {
 		params.put("reqsn", tlQrCodePayRequest.getReqsn());
 		params.put("paytype", tlQrCodePayRequest.getPaytype());
 		params.put("randomstr", tlQrCodePayRequest.getRandomstr());
+		params.put("validtime", tlQrCodePayRequest.getValidtime());
 		params.put("body", tlQrCodePayRequest.getBody());
 		params.put("notify_url", tlQrCodePayRequest.getNotify_url());
 		if(StringUtil.isValidString(tlQrCodePayRequest.getAcct())){

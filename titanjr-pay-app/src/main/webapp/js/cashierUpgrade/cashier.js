@@ -227,7 +227,7 @@ $(function(){
     $(".payment-verification .confirm-btn").on("click",function(){debugger;
         if($(".payment-verification input").val() != ""){
             //isShowVeil("#Veil","hide");
-            $(".payment-verification").hide();
+            //$(".payment-verification").hide();
             top.F.loading.show();
             confirmRecharge();
         }else{

@@ -36,8 +36,7 @@ public class TitanFinancialSendSMSServiceImpl implements TitanFinancialSendSMSSe
 	@Autowired
     private HessianProxyBeanFactory hessianProxyBeanFactory ;
 
-	@Override
-	public SendSmsResponse sendSMS(SendSMSRequest sendSMSRequest) {
+	private SendSmsResponse sendSMS(SendSMSRequest sendSMSRequest) {
 		SendSmsResponse sendSmsResponse = new SendSmsResponse();
 		try{
 			if(sendSMSRequest !=null){
