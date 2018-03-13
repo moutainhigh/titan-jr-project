@@ -280,8 +280,7 @@
                             <targetPath>WEB-INF/classes</targetPath>
                             <filtering>true</filtering>
                         </resource>
-                        <resource>  
-				            <directory>${project.basedir}/src/main/webapp/libs</directory>  
+                        <resource>
 				            <targetPath>WEB-INF/lib</targetPath>  
 				            <filtering>false</filtering>  
 				            <includes>  
