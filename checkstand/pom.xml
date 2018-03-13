@@ -280,13 +280,6 @@
                             <targetPath>WEB-INF/classes</targetPath>
                             <filtering>true</filtering>
                         </resource>
-                        <resource>
-				            <targetPath>WEB-INF/lib</targetPath>  
-				            <filtering>false</filtering>  
-				            <includes>  
-				                <include>**/*.jar</include>  
-				            </includes>  
-				        </resource> 
                     </webResources>
                 </configuration>
             </plugin>
