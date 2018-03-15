@@ -200,6 +200,7 @@ public class DefaultFopClient implements FopClient {
         String result;
 
         try {
+        	logger.info("sdk 请求url:"+serverUrl+",参数appParamMap："+Tools.gsonToString(appParamMap));
             result = WebUtils.doPost(serviceURL.toString(), appParamMap, this.connectTimeout, this.readTimeout);
         } catch (IOException iox) {
             throw new ApiException(iox);
