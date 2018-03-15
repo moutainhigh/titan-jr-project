@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.fangcang.log.model.BaseLogDto;
 import com.fangcang.log.rocketmq.LogProducer;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
+import com.fangcang.titanjr.common.util.ThreadPoolUtil;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.dao.TitanOperateLogDao;
 import com.fangcang.titanjr.dto.bean.PayLog;
@@ -68,14 +69,15 @@ public class BusinessLogServiceImpl implements BusinessLogService {
 		    	
 		    	payLog.setCreateTime(new Date());
 		    	BaseLogDto payLogDto = new BaseLogDto(payLog);
-				
-				LogProducer.sendMsg(payLogDto);
+		    	ThreadPoolUtil.excute(new LogThread(payLogDto));
+		    	
 			} catch (Exception e) {
 				log.error("支付业务流程日志写失败，orderId:"+addPayLogRequest.getOrderId(),e);
 			}
 
 	}
-
+	
+	
 	@Override
 	public void addOperateLog(OperateLogRequest operateLogRequest) {
 		TitanOperateLog entity = new TitanOperateLog();
@@ -89,5 +91,25 @@ public class BusinessLogServiceImpl implements BusinessLogService {
 			log.error("操作日志失败，参数operateLogRequest:"+Tools.gsonToString(operateLogRequest),e);
 		}
 	}
+	
+	
+	public class LogThread implements Runnable{
+		private BaseLogDto payLogDto;
+		
+		public LogThread(BaseLogDto payLogDto){
+			this.payLogDto = payLogDto;
+		}
+		
+		@Override
+		public void run() {
+			try {
+				LogProducer.sendMsg(payLogDto);
+			} catch (Exception e) {
+				log.error("支付业务流程日志写失败，payLogDto:"+Tools.gsonToString(payLogDto),e);
+			}
+		}
+		
+	}
 
 }
+	

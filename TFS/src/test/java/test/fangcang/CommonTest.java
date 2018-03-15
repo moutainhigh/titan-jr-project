@@ -17,6 +17,8 @@ import org.apache.http.util.EntityUtils;
 
 import com.fangcang.titanjr.common.bean.CallBackInfo;
 import com.fangcang.titanjr.common.bean.NotifyBean;
+import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.RefundStatusEnum;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.Tools;
@@ -37,7 +39,7 @@ public class CommonTest {
     private static final Log log = LogFactory.getLog(CommonTest.class);
 
     public static void main(String[] args) {
-    	
+//    	payCallBack();
     }
 
     
@@ -142,15 +144,25 @@ public class CommonTest {
 
 
     public static void payCallBack() {
+//        TransOrderDTO transOrderDTO = new TransOrderDTO();
+//        transOrderDTO.setPayorderno("1000000000022167");
+//        transOrderDTO.setBusinessordercode("H1493180203112955");
+//        transOrderDTO.setMerchantcode("M10030311");
+//        transOrderDTO.setCreator("东莞运通");
+//        transOrderDTO.setUserorderid("TJO180203142256394");
+//        transOrderDTO.setTradeamount((long)5);
+//        transOrderDTO.setBusinessinfo("{\"bussCode\":\"H1493180203112955\"}");
+//        transOrderDTO.setNotifyUrl("http://172.16.21.28:19010/PUS/fcjr_pay.shtml");
+        
         TransOrderDTO transOrderDTO = new TransOrderDTO();
-        transOrderDTO.setPayorderno("AD724968");
-        transOrderDTO.setBusinessordercode("");
-        transOrderDTO.setMerchantcode("");
+        transOrderDTO.setPayorderno("1000000000022167");
+        transOrderDTO.setBusinessordercode("H1493180203112955");
+        transOrderDTO.setMerchantcode("M10030311");
         transOrderDTO.setCreator("东莞运通");
-        transOrderDTO.setUserorderid("TJO170330140528406");
-        transOrderDTO.setTradeamount((long)85000);
-        transOrderDTO.setBusinessinfo("{\"extraInfo\":{\"merpriv\":\"15263\",\"orderamt\":\"850.0\"},\"ruserId\":\"TJM10000098\",\"bussCode\":\"\"}");
-        transOrderDTO.setNotifyUrl("http://www.bookingclub.cn/taitanpayment/taitanpaynotify");
+        transOrderDTO.setUserorderid("TJO180203142256394");
+        transOrderDTO.setTradeamount((long)5);
+        transOrderDTO.setBusinessinfo("{\"bussCode\":\"H1493180203112955\"}");
+        transOrderDTO.setNotifyUrl("http://192.168.0.18:19020/PUS/fcjr_pay.html");
         try {
             CommonTest.confirmFinance(transOrderDTO);
         } catch (Exception e) {
@@ -200,13 +212,13 @@ public class CommonTest {
         } catch (Exception e) {
             log.error("调用http请求通知支付失败", e);
         }
-        log.info("调用http请求通知支付支付结果完成：" + response);
+        log.info("调用http请求通知支付结果response：" + response+",orderid:"+transOrderDTO.getOrderid());
         if (StringUtil.isValidString(response)) {
             CallBackInfo callBackInfo = TitanjrHttpTools.analyzeResponse(response);
             System.out.println(callBackInfo.toString());
         } else {// 记录异常单
-            log.error("回调无响应");
-        }
+			log.error("调用http请求通知支付结果，回调响应 为空，response：" + response+",通知参数:"+JSONSerializer.toJSON(params)+",orderid:"+transOrderDTO.getOrderid());
+		}
 
     }
 
