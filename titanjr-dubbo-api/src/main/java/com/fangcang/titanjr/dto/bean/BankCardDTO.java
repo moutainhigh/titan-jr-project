@@ -26,6 +26,9 @@ public class BankCardDTO implements Serializable{
 	private String reqsn;
 	private Date submittime;
 	private String openaccountdescription;
+	/**
+	 * 1：结算卡，2：其他卡, 3：提现卡, 4：结算提现一体卡
+	 */
 	private String accountpurpose;
 	private String bindid;
 	private String accountproperty;

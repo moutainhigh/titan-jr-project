@@ -278,9 +278,9 @@ public class AccountServiceImpl implements AccountService {
         BankCardDTO cardDTO = null;
         for (BankCardDTO bankCardDTO : bankCardDTOList) {
             if (StringUtil.isValidString(withdrawserviceRequest.getCardno()) &&//传了卡号一定需要有相同卡
-                    !bankCardDTO.getAccountnumber().equals(withdrawserviceRequest.getCardno())) {
+                    bankCardDTO.getAccountnumber().equals(withdrawserviceRequest.getCardno())) {
                 cardDTO = bankCardDTO;
-                continue;
+                break;
             }
             if (bankCardDTO.getAccountpurpose().equals("3") || bankCardDTO.getAccountpurpose().equals("1")
                     || bankCardDTO.getAccountpurpose().equals("4")) {
@@ -294,8 +294,11 @@ public class AccountServiceImpl implements AccountService {
             return withdrawserviceResponse;
         }
 
-        //获取网关地址
-        String paymentURL = InterfaceURlConfig.checkstand_GateWayURL;
+        //TODO 正式网站 获取网关地址
+        //String paymentURL = InterfaceURlConfig.checkstand_GateWayURL;
+        
+        //TODO 测试网址
+        String paymentURL = "http://local.fangcang.com/checkstand/payment.shtml";
 //        paymentURL = "http://192.168.0.14:8090/checkstand/payment.shtml";
         //发起代付 返回状态
         //对应于TLAgentTradeRequest对象

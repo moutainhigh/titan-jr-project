@@ -376,7 +376,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 					}
 					response.setReturnCode(rsp.getErrorCode());
 					response.setReturnMsg(errorMsg);
-					log.error("调用接口accountBalanceWithDraw异常：" + errorMsg);
+					log.error("调用接口accountBalanceWithDraw异常：" + errorMsg+"，请求参数："+Tools.gsonToString(accountWithDrawRequest));
 				} else {
 					response.setSuccess(true);
 					response.setOperateStatus(rsp.getIs_success());
@@ -393,7 +393,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 		}catch(Exception e){
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
 			response.setReturnMsg(e.getMessage());
-			log.error("调用accountBalanceWithDraw过程出现未知异常", e);
+			log.error("调用accountBalanceWithDraw过程出现未知异常,请求参数："+Tools.gsonToString(accountWithDrawRequest), e);
 		}
 		return response;	
 	}

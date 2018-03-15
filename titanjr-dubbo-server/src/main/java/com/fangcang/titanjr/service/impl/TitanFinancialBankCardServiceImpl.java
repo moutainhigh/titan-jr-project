@@ -265,7 +265,7 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
 		}
 		//3-实名验证成功后，检查本地和融数的机构信息是否一致，并修改
 		if(orgSub.getUsertype()==TitanOrgEnum.UserType.PERSONAL.getKey()){
-			//TODO 测试  ，上线后打开，存在关联的机构，则修改名字和身份证号码
+			//存在关联的机构，则修改名字和身份证号码
 			OrgBaseInfoRequest orgBaseInfoRequest = new OrgBaseInfoRequest();
 			orgBaseInfoRequest.setOrgCode(orgSub.getOrgcode());
 			orgBaseInfoRequest.setOrgName(orgSubCardRequest.getAccountName());
