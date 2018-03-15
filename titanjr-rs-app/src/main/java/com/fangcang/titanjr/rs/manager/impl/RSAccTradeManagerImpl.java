@@ -92,7 +92,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 		}catch(Exception e){
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
 			response.setReturnMsg(e.getMessage());
-			log.error("调用queryAccountBalance过程出现未知异常", e);
+			log.error("调用queryAccountBalance过程出现未知异常,请求参数fopClient："+Tools.gsonToString(RSInvokeConstant.fopClient)+",accountBalanceQueryRequest:"+Tools.gsonToString(accountBalanceQueryRequest), e);
 		}
 		return response;
 	}
@@ -135,7 +135,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 		}catch(Exception e){
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
 			response.setReturnMsg(e.getMessage());
-			log.error("调用freezeAccountBalance过程出现未知异常", e);
+			log.error("调用freezeAccountBalance过程出现未知异常,请求参数fopClient："+Tools.gsonToString(RSInvokeConstant.fopClient)+",balanceFreezeRequest:"+Tools.gsonToString(balanceFreezeRequest), e);
 		}
 		return response;
 	}
@@ -179,7 +179,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 		}catch(Exception e){
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
 			response.setReturnMsg(e.getMessage());
-			log.error("调用freezeAccountBalance过程出现未知异常", e);
+			log.error("调用freezeAccountBalance过程出现未知异常,请求参数fopClient："+Tools.gsonToString(RSInvokeConstant.fopClient)+",balanceUnFreezeRequest:"+Tools.gsonToString(balanceUnFreezeRequest), e);
 		}
 		return response;
 	}
