@@ -46,7 +46,7 @@ public class CommonServiceImpl implements CommonService {
         requestSession.setAppKey(sessionGetRequest.getAppKey());
         requestSession.setAppSecret(CommonConstants.appSecret);
         requestSession.setCreateTime(new Date());
-        requestSession.setSession(session);
+        requestSession.setReqSession(session);
 
         int result = requestSessionDao.saveRequestSession(requestSession);
         if (result < 1) {
