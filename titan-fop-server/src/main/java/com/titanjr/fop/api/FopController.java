@@ -41,8 +41,7 @@ public class FopController extends BaseController {
                 !request.getParameter("appSecret").equals(CommonConstants.appSecret)) {
             logger.error("系统配置appSecret为空或不一致");
         }
-        if (StringUtil.isValidString(CommonConstants.actualUrl) &&
-                WebUtils.isValidUrl(CommonConstants.actualUrl)) {
+        if (StringUtil.isValidString(CommonConstants.actualUrl)) {
             resultURL = CommonConstants.actualUrl;
         } else {
             logger.error("配置的URL为空或不合法");
