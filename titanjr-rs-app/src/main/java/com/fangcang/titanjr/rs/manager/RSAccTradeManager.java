@@ -1,7 +1,21 @@
 package com.fangcang.titanjr.rs.manager;
 
-import com.fangcang.titanjr.rs.request.*;
-import com.fangcang.titanjr.rs.response.*;
+import com.fangcang.titanjr.rs.request.AccountBalanceQueryRequest;
+import com.fangcang.titanjr.rs.request.AccountTransferRequest;
+import com.fangcang.titanjr.rs.request.AccountWithDrawRequest;
+import com.fangcang.titanjr.rs.request.BalanceFreezeRequest;
+import com.fangcang.titanjr.rs.request.BalanceUnFreezeRequest;
+import com.fangcang.titanjr.rs.request.OrderOperateRequest;
+import com.fangcang.titanjr.rs.request.OrdernQueryRequest;
+import com.fangcang.titanjr.rs.request.RSRefundRequest;
+import com.fangcang.titanjr.rs.response.AccountBalanceQueryResponse;
+import com.fangcang.titanjr.rs.response.AccountTransferResponse;
+import com.fangcang.titanjr.rs.response.AccountWithDrawResponse;
+import com.fangcang.titanjr.rs.response.BalanceFreezeResponse;
+import com.fangcang.titanjr.rs.response.BalanceUnFreezeResponse;
+import com.fangcang.titanjr.rs.response.OrderOperateResponse;
+import com.fangcang.titanjr.rs.response.OrdernQueryResponse;
+import com.fangcang.titanjr.rs.response.RsRefundResponse;
 
 /**
  * Created by zhaoshan on 2016/4/12.
@@ -14,6 +28,13 @@ import com.fangcang.titanjr.rs.response.*;
  */
 public interface RSAccTradeManager {
 
+	/**
+	 * 上线新账户系统时，初始化同步融数的账户余额使用
+	 * @param accountBalanceQueryRequest
+	 * @return
+	 */
+	public AccountBalanceQueryResponse queryAccountBalanceWithRS(AccountBalanceQueryRequest accountBalanceQueryRequest);
+	
     /**
      * 账户可用余额查询
      * 查询二级机构的账户可用余额

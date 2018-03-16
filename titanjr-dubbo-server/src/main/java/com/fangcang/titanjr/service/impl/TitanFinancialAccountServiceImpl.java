@@ -233,7 +233,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
         accountBalanceQueryRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
         accountBalanceQueryRequest.setRootinstcd(CommonConstant.RS_FANGCANG_CONST_ID);
         accountBalanceQueryRequest.setUserid(balanceInfoRequest.getUserId());
-        AccountBalanceQueryResponse response = rsAccTradeManager.queryAccountBalance(accountBalanceQueryRequest);
+        AccountBalanceQueryResponse response = rsAccTradeManager.queryAccountBalanceWithRS(accountBalanceQueryRequest);
         //从融数同步账户
 		if(response.isSuccess()&&CollectionUtils.isNotEmpty(response.getBalanceInfoList())){
 			for(BalanceInfo item :response.getBalanceInfoList()){

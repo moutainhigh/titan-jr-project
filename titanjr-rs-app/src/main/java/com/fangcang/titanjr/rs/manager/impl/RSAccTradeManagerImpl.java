@@ -3,13 +3,6 @@ package com.fangcang.titanjr.rs.manager.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fangcang.titanjr.rs.util.RSInvokeConstant;
-
-import com.titanjr.fop.dto.SHBalanceInfo;
-import com.titanjr.fop.request.*;
-import com.titanjr.fop.response.*;
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -18,8 +11,6 @@ import com.fangcang.titanjr.common.exception.RSValidateException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.rs.dto.BalanceInfo;
-import com.fangcang.titanjr.rs.dto.OrderTransferFlow;
-import com.fangcang.titanjr.rs.dto.TradeInfoList;
 import com.fangcang.titanjr.rs.dto.Transorderinfo;
 import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.request.AccountBalanceQueryRequest;
@@ -28,10 +19,8 @@ import com.fangcang.titanjr.rs.request.AccountWithDrawRequest;
 import com.fangcang.titanjr.rs.request.BalanceFreezeRequest;
 import com.fangcang.titanjr.rs.request.BalanceUnFreezeRequest;
 import com.fangcang.titanjr.rs.request.OrderOperateRequest;
-import com.fangcang.titanjr.rs.request.OrderSaveWithCardRequest;
-import com.fangcang.titanjr.rs.request.OrderTransferFlowRequest;
-import com.fangcang.titanjr.rs.request.RSRefundRequest;
 import com.fangcang.titanjr.rs.request.OrdernQueryRequest;
+import com.fangcang.titanjr.rs.request.RSRefundRequest;
 import com.fangcang.titanjr.rs.response.AccountBalanceQueryResponse;
 import com.fangcang.titanjr.rs.response.AccountTransferResponse;
 import com.fangcang.titanjr.rs.response.AccountWithDrawResponse;
@@ -39,14 +28,31 @@ import com.fangcang.titanjr.rs.response.BalanceFreezeResponse;
 import com.fangcang.titanjr.rs.response.BalanceUnFreezeResponse;
 import com.fangcang.titanjr.rs.response.OrderInfoResponse;
 import com.fangcang.titanjr.rs.response.OrderOperateResponse;
-import com.fangcang.titanjr.rs.response.OrderSaveWithCardResponse;
-import com.fangcang.titanjr.rs.response.OrderTransferFlowResponse;
-import com.fangcang.titanjr.rs.response.RsRefundResponse;
 import com.fangcang.titanjr.rs.response.OrdernQueryResponse;
 import com.fangcang.titanjr.rs.response.Retbeanlist;
+import com.fangcang.titanjr.rs.response.RsRefundResponse;
 import com.fangcang.titanjr.rs.util.MyConvertXmlToObject;
+import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.util.MyBeanUtil;
-import com.titanjr.fop.constants.FuncCodeEnum;
+import com.titanjr.fop.dto.SHBalanceInfo;
+import com.titanjr.fop.request.WheatfieldBalanceGetlistRequest;
+import com.titanjr.fop.request.WheatfieldOrderOperRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceAuthcodeserviceRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceReturngoodsRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceThawauthcodeRequest;
+import com.titanjr.fop.request.WheatfieldOrderServiceWithdrawserviceRequest;
+import com.titanjr.fop.request.WheatfieldOrderTransferRequest;
+import com.titanjr.fop.request.WheatfieldOrdernQueryRequest;
+import com.titanjr.fop.response.WheatfieldBalanceGetlistResponse;
+import com.titanjr.fop.response.WheatfieldOrderOperResponse;
+import com.titanjr.fop.response.WheatfieldOrderServiceAuthcodeserviceResponse;
+import com.titanjr.fop.response.WheatfieldOrderServiceReturngoodsResponse;
+import com.titanjr.fop.response.WheatfieldOrderServiceThawauthcodeResponse;
+import com.titanjr.fop.response.WheatfieldOrderServiceWithdrawserviceResponse;
+import com.titanjr.fop.response.WheatfieldOrderTransferResponse;
+import com.titanjr.fop.response.WheatfieldOrdernQueryResponse;
+
+import net.sf.json.JSONSerializer;
 
 public class RSAccTradeManagerImpl implements RSAccTradeManager {
 
@@ -54,6 +60,53 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 			.getLog(RSAccTradeManagerImpl.class);
 
 	private static final boolean needCheckRequest = true;// 是否校验请求
+	
+	
+	@Override
+	public AccountBalanceQueryResponse queryAccountBalanceWithRS(
+			AccountBalanceQueryRequest accountBalanceQueryRequest) {
+		AccountBalanceQueryResponse response = new AccountBalanceQueryResponse();
+		try{
+			com.Rop.api.request.WheatfieldBalanceGetlistRequest req = new com.Rop.api.request.WheatfieldBalanceGetlistRequest();
+			if(needCheckRequest){
+				accountBalanceQueryRequest.check();
+			}
+			MyBeanUtil.copyProperties(req, accountBalanceQueryRequest);
+			com.Rop.api.response.WheatfieldBalanceGetlistResponse rsp = RSInvokeConstant.ropClient
+					.execute(req, RSInvokeConstant.sessionKey);
+			if (rsp != null) {
+				log.info("调用queryAccountBalance返回报文: \n" + rsp.getBody());
+				String errorMsg;
+				if (rsp.isSuccess() != true) {
+					if (rsp.getSubMsg() != null && rsp.getSubMsg() != "") {
+						errorMsg = rsp.getSubMsg();
+					} else {
+						errorMsg = rsp.getMsg();
+					}
+					response.setReturnCode(rsp.getErrorCode());
+					response.setReturnMsg(errorMsg);
+					log.error("调用接口queryAccountBalance异常：" + errorMsg);
+				} else {
+					response.setSuccess(true);
+					response.setOperateStatus(rsp.getIs_success());
+					response.setBalanceInfoList(shbalanceinfoToBalanceInfoWithRS(rsp.getShbalanceinfos()));
+					response.setReturnCode(RSInvokeErrorEnum.INVOKE_SUCCESS.returnCode);
+					response.setReturnMsg(RSInvokeErrorEnum.INVOKE_SUCCESS.returnMsg);
+				}
+			} else {
+				response.setReturnCode(RSInvokeErrorEnum.RETURN_EMPTY.returnCode);
+				response.setReturnMsg(RSInvokeErrorEnum.RETURN_EMPTY.returnMsg);
+			}
+		}catch(Exception e){
+			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
+			response.setReturnMsg(e.getMessage());
+			log.error("调用queryAccountBalance过程出现未知异常,请求参数fopClient："+Tools.gsonToString(RSInvokeConstant.fopClient)+",accountBalanceQueryRequest:"+Tools.gsonToString(accountBalanceQueryRequest), e);
+		}
+		return response;
+	}
+	
+	
+	
 	@Override
 	public AccountBalanceQueryResponse queryAccountBalance(
 			AccountBalanceQueryRequest accountBalanceQueryRequest) {
@@ -398,6 +451,31 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 		return response;	
 	}
 	
+	private List<BalanceInfo> shbalanceinfoToBalanceInfoWithRS(List<com.Rop.api.domain.SHBalanceInfo> shBalanceInfos){
+		List<BalanceInfo> balanceInfos = new ArrayList<BalanceInfo>();
+		if(shBalanceInfos !=null && shBalanceInfos.size()>0){
+			for(int i=0;i<shBalanceInfos.size();i++){
+				BalanceInfo balanceInfo = new BalanceInfo();
+				com.Rop.api.domain.SHBalanceInfo  shBalanceInfo = shBalanceInfos.get(i);
+				if(shBalanceInfo !=null){
+					balanceInfo.setAmount(shBalanceInfo.getAmount());
+					balanceInfo.setBalancecredit(shBalanceInfo.getBalancecredit());
+					balanceInfo.setBalancefrozon(shBalanceInfo.getBalancefrozon());
+					balanceInfo.setBalanceoverlimit(shBalanceInfo.getBalanceoverlimit());
+					balanceInfo.setBalancesettle(shBalanceInfo.getBalancesettle());
+					
+					balanceInfo.setBalanceusable(shBalanceInfo.getBalanceusable());
+					balanceInfo.setProductid(shBalanceInfo.getProductid());
+					balanceInfo.setUserid(shBalanceInfo.getUserid());
+					balanceInfos.add(balanceInfo);
+				}
+				
+			}
+			
+		}
+		
+		return balanceInfos;
+	}
 	/**
 	 * 将融数账户信息转换为本地的账户信息
 	 * @param shBalanceInfos 融数返回的账户信息
@@ -578,4 +656,6 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 		}
 		return response;
 	}
+
+	
 }
