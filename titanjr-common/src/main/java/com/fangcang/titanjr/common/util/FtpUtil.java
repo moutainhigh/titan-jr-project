@@ -50,13 +50,13 @@ public class FtpUtil {
 	 */
 	public static final String UPLOAD_PATH_LOAN_APPLY="/loan_apply";
 	/**
-	 * 通联代付-对账文件
+	 * 通联对账文件
 	 */
-	public static final String UPLOAD_PATH_TL_AGENT_CHECKING = "/agent_checking/allinpay";
+	public static final String UPLOAD_PATH_TL_AGENT_CHECKING = "/account_bills/allinpay";
 	/**
-	 * 融宝代付-对账文件
+	 * 融宝对账文件
 	 */
-	public static final String UPLOAD_PATH_RB_AGENT_CHECKING = "/agent_checking/reapal";
+	public static final String UPLOAD_PATH_RB_AGENT_CHECKING = "/account_bills/reapal";
 	
 	//TODO 这个后面要删除掉最后的斜杠
 	public static String baseLocation = "/data/image/upload/images/titanjr";

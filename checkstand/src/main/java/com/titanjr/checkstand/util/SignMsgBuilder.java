@@ -22,6 +22,7 @@ import com.titanjr.checkstand.request.RBQuickPayRefundRequest;
 import com.titanjr.checkstand.request.RBQuickPayRequest;
 import com.titanjr.checkstand.request.RBReSendMsgRequest;
 import com.titanjr.checkstand.request.RBUnBindCardRequest;
+import com.titanjr.checkstand.request.TLGatewayPayDownloadRequest;
 import com.titanjr.checkstand.request.TLNetBankPayRequest;
 import com.titanjr.checkstand.request.TLNetBankOrderRefundRequest;
 import com.titanjr.checkstand.request.TLNetBankPayQueryRequest;
@@ -149,6 +150,25 @@ public class SignMsgBuilder {
 		logger.info("tl-refund-sourceMsg：{}", sign.toString());
 		String md5Msg = MD5.MD5Encode(sign.toString(), "UTF-8").toUpperCase();
 		logger.info("tl-refund-signMsg：{}", md5Msg);
+		return md5Msg;
+		
+	}
+	
+	
+	public static String getSignMsgForGatewayDoanload(TLGatewayPayDownloadRequest tlGatewayPayDownloadRequest, String key) {
+		
+		StringBuffer sign = new StringBuffer();
+		if(tlGatewayPayDownloadRequest != null){
+			//sign.append("merchantId=");
+			sign.append(tlGatewayPayDownloadRequest.getMchtCd());
+			//sign.append("&version=");
+			sign.append(tlGatewayPayDownloadRequest.getSettleDate());
+			//sign.append("&key=");
+			sign.append(key);
+		}
+		logger.info("tl-gatewayDoanload-sourceMsg：{}", sign.toString());
+		String md5Msg = MD5.MD5Encode(sign.toString(), "UTF-8").toUpperCase();
+		logger.info("tl-gatewayDoanload-signMsg：{}", md5Msg);
 		return md5Msg;
 		
 	}

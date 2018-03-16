@@ -28,6 +28,7 @@ public class AccessLimitConfig {
         frequencyConfigMap.put(BusiCodeEnum.CARD_UNBIND,300L);
         frequencyConfigMap.put(BusiCodeEnum.UPDATE_PHONE,300L);
         frequencyConfigMap.put(BusiCodeEnum.CARD_AUTH,300L);
+        frequencyConfigMap.put(BusiCodeEnum.ACCOUNT_DOWNLOAD,2000L);
 
         intervalConfigMap.put(BusiCodeEnum.PAY_REQUEST,200000L);
         intervalConfigMap.put(BusiCodeEnum.PAY_QUERY,2000L);

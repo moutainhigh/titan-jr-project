@@ -8,6 +8,7 @@
 package com.titanjr.checkstand.constants;
 
 import java.util.Map;
+
 import com.titanjr.checkstand.dto.GateWayConfigDTO;
 
 /**
@@ -79,27 +80,30 @@ public class SysConstant {
 	//public static final String RB_MERCHANT = "100000000000147";//测试通用
 	public static final String RB_MERCHANT = "100000001301858";//生产通用
 	
-	//通联账户交易商户证书（在项目路径下）
-	//public static final String PFX_PATH= "certify/20060400000044502.p12";//私钥-测试
-	public static final String PFX_PATH= "certify/20022200000978704.p12";//私钥-生产
+	//通联账户交易商户证书（都是通联帮我们生成的）
+	//public static final String PFX_PATH= "certify/tl/20060400000044502.p12";//私钥-测试
+	public static final String PFX_PATH= "certify/tl/20022200000978704.p12";//私钥-生产
 	public static final String PFX_PWD = "111111";//私钥密码
-	public static final String CER_PATH = "certify/allinpay-pds.cer";//公钥
+	public static final String CER_PATH = "certify/tl/allinpay-pds.cer";//公钥
+	public static final String MD5_CER_PATH = "certify/tl/TLCert.cer";//MD5加密证书
 	//通联账户交易用-户名/密码
 	public static final String USER_NAME = "20022200000978704";//用户名：商户号+04
 	//public static final String USER_PWD = "`12qwe";//密码-测试
 	public static final String USER_PWD = "111111";//密码-生产
 	
 	//融宝快捷支付证书（在磁盘下）
-	public static final String PRIVATE_KEY_PATH = "D:\\cert\\itrus001.pfx";//房仓私钥
-	public static final String PUBLIC_KEY_PATH = "D:\\cert\\itrus001.cer";//融宝公钥（正式环境不用更换）
-	//public static final String PRIVATE_KEY_PATH = "/opt/rb-cert/itrus001.pfx";//linux上的目录，上到213使用
-	//public static final String PUBLIC_KEY_PATH = "/opt/rb-cert/itrus001.cer";//linux上的目录，上到213使用
+	public static final String PRIVATE_KEY_PATH = "certify/rb/itrus001.pfx";//房仓生成私钥
+	public static final String PUBLIC_KEY_PATH = "certify/rb/itrus001.cer";//融宝提供公钥
 	public static final String PRIVATE_KEY_PWD = "123456";//私钥密码
 	
 	//签约融宝支付账号或卖家收款融宝支付帐户-test
 	public static final String RB_SELLER_EMAIL = "850138237@qq.com";
 	
-	//融宝FTP
+	//通联对账文件
+	public static String TL_GATEWAY_DIR = "/gateway";
+	public static String TL_QECODE_DIR = "/qrcode";
+	
+	//融宝对账文件-FTP
 	public static String RB_FTP_HOST  = "entrust.reapal.com";
 	public static String RB_ACCOUNT_DIR  = "/dforderfiles/";
 	public static String RB_RECHARGE_DIR  = "/inchannel/";

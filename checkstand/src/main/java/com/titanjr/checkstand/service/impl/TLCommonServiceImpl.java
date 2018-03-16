@@ -22,7 +22,6 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
 import com.fangcang.titanjr.service.TitanOrderService;
@@ -45,6 +44,7 @@ public class TLCommonServiceImpl implements TLCommonService {
 	
 	@Resource
 	private TitanOrderService titanOrderService;
+	
 
 	@Override
 	public TLQrTradeQueryResponse qrCodeTradeQuery(TLQrTradeQueryRequest tlQrTradeQueryRequest) {

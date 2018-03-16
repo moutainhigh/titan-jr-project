@@ -11,7 +11,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.fangcang.titanjr.common.bean.ValidateResponse;
 import com.fangcang.util.StringUtil;
-import com.titanjr.checkstand.constants.AgentTradeCodeEnum;
+import com.titanjr.checkstand.constants.TradeCodeEnum;
 
 /**
  * @author Jerry
@@ -31,7 +31,7 @@ public class TitanAgentQueryDTO {
 	private String orderNo;
 	
 	/**
-	 * 交易代码 {@link AgentTradeCodeEnum}
+	 * 交易代码 {@link TradeCodeEnum}
 	 */
 	@NotBlank
 	private String tradeCode;

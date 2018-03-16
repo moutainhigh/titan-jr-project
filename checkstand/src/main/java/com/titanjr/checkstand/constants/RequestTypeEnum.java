@@ -34,10 +34,12 @@ public enum RequestTypeEnum {
 	QUICK_REFUND("312","退款请求"),
 	QUICK_CLOSE_ORDER("313","手动关闭订单"),
 	QUICK_REFUND_QUERY("314","退款查询"),
-	AGENT_TRADE("401","账户交易"),
-	AGENT_PAY("402","代付"),
-	AGENT_PAY_QUERY("403","代付查询"),
-	AGENT_DOWNLOAD("404","对账文件下载");
+	AGENT_TRADE("401","通联-账户交易"),
+	AGENT_PAY("402","融宝-代付"),
+	AGENT_PAY_QUERY("403","融宝-代付查询"),
+	AGENT_DOWNLOAD("404","融宝-对账文件下载"),
+	GATEWAY_DOWNLOAD("405","通联-网关支付对账文件下载"),
+	QRCODE_DOWNLOAD("406","通联-扫码/公众号对账文件下载");
 	
 	private String key;
 	private String value;
