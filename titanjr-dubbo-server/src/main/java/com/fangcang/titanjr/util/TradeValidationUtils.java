@@ -82,6 +82,39 @@ public class TradeValidationUtils {
     @Resource
     private TitanRefundDao titanRefundDao;
 
+    public boolean validAccountAmount(String orgCode){
+        //计算充值金额
+        TitanOrderPayreqParam requestParam = new TitanOrderPayreqParam();
+        requestParam.setMerchantNo(orgCode);
+        List<TitanOrderPayreq> titanOrderPayReqs = titanOrderPayreqDao.queryOrderPayRequestList(requestParam);
+        log.info("本地充值：当前账户" + orgCode + "充值单记录数：" + titanOrderPayReqs.size());
+
+//        for ()
+
+        //计算转入金额
+
+        //计算转出金额
+
+        //计算提现金额
+
+        //计算退款金额
+
+        //获取账户余额
+
+        //公式：充值+转入=转出+提现+退款+账户余额
+
+        return false;
+    }
+
+    public Map<String, List> validOrgTradeInfo(Date startTime, Date endTime, String orgCode) throws ApiException {
+        Map<String,List> resultMap = new HashMap<String, List>();
+        resultMap.putAll(this.validRechargeOrder(startTime,endTime,orgCode));
+        resultMap.putAll(this.validTransferOrder(startTime,endTime,orgCode));
+        resultMap.putAll(this.validWithDrawOrder(startTime,endTime,orgCode));
+        resultMap.putAll(this.validRefundOrder(startTime,endTime,orgCode));
+        return resultMap;
+    }
+
     /**
      * 充值单校验逻辑,检验本地充值单和远程充值单是否一致
      *
@@ -90,11 +123,14 @@ public class TradeValidationUtils {
      * @return
      * @throws ApiException
      */
-    public List<Transorderinfo> validRechargeOrder(Date startTime, Date endTime, String orgCode) throws ApiException {
+    public Map<String, List> validRechargeOrder(Date startTime, Date endTime, String orgCode) throws ApiException {
+        Map<String, List> resultMap = new HashMap<String, List>();
         //融数充值入某个账户（中间账户）需核实的单
         List<Transorderinfo> rechargeResult = new ArrayList<Transorderinfo>();
         //本地数据库充值需核实
         List<TitanOrderPayreq> localRechargeResult = new ArrayList<TitanOrderPayreq>();
+        resultMap.put("rechargeResult", rechargeResult);
+        resultMap.put("localRechargeResult", localRechargeResult);
 
         WheatfieldOrdernQueryRequest ordernQueryRequest = new WheatfieldOrdernQueryRequest();
         //中间账户充值进账记录
@@ -165,7 +201,7 @@ public class TradeValidationUtils {
                 rechargeResult.add(transorderinfo);
             }
         }
-        return null;
+        return resultMap;
     }
 
     /**
@@ -177,11 +213,14 @@ public class TradeValidationUtils {
      * @return
      * @throws ApiException
      */
-    public List<Transorderinfo> validTransferOrder(Date startTime, Date endTime, String orgCode) throws ApiException {
+    public Map<String, List> validTransferOrder(Date startTime, Date endTime, String orgCode) throws ApiException {
+        Map<String, List> resultMap = new HashMap<String, List>();
         //融数从某个账户（中间账户）转出需核实的单
         List<Transorderinfo> paidOutResult = new ArrayList<Transorderinfo>();
         //本地数据库转账转出需核实
         List<TitanTransferReq> localPayOutResult = new ArrayList<TitanTransferReq>();
+        resultMap.put("paidOutResult", paidOutResult);
+        resultMap.put("localPayOutResult", localPayOutResult);
         //融数转账转出合计
         long payOutCount = 0l;
         //融数涉及状态集合
@@ -196,6 +235,7 @@ public class TradeValidationUtils {
         ordernQueryRequest.setFunccode("3001");
         ordernQueryRequest.setStarttime(startTime);
         ordernQueryRequest.setEndtime(endTime);
+
         WheatfieldOrdernQueryResponse wheatfieldOrdernQueryResponse = TradeValidationUtils.ropClient.execute(ordernQueryRequest, session);
         List<Transorderinfo> paidOut = wheatfieldOrdernQueryResponse.getTransorderinfos();
         if (null == paidOut) {
@@ -221,7 +261,7 @@ public class TradeValidationUtils {
             boolean isMatch = false;
             for (TitanTransferReq req : localPayOut) {
                 if (req.getRequestno().equals(payout.getRequestno()) && req.getStatus() == 2 &&
-                        Double.valueOf(req.getAmount()).equals( Double.valueOf(payout.getAmount()))) {
+                        Double.valueOf(req.getAmount()).equals(Double.valueOf(payout.getAmount()))) {
                     isMatch = true;
                 }
             }
@@ -247,7 +287,7 @@ public class TradeValidationUtils {
                 localPayOutResult.add(req);
             }
         }
-        return null;
+        return resultMap;
     }
 
     /**
@@ -257,9 +297,13 @@ public class TradeValidationUtils {
      * @param endTime
      * @param orgCode
      */
-    public List<Transorderinfo> validWithDrawOrder(Date startTime, Date endTime, String orgCode) throws ApiException {
+    public Map<String, List> validWithDrawOrder(Date startTime, Date endTime, String orgCode) throws ApiException {
+        Map<String, List> resultMap = new HashMap<String, List>();
         List<Transorderinfo> withDrawResult = new ArrayList<Transorderinfo>();
         List<TitanWithDrawReq> localWithDrawResult = new ArrayList<TitanWithDrawReq>();
+        resultMap.put("withDrawResult", withDrawResult);
+        resultMap.put("localWithDrawResult", localWithDrawResult);
+
         TitanWithDrawReqParam reqParam = new TitanWithDrawReqParam();
         reqParam.setStartTime(startTime);
         reqParam.setEndTime(endTime);
@@ -276,12 +320,8 @@ public class TradeValidationUtils {
         ordernQueryRequest.setFunccode("4016");
         ordernQueryRequest.setStarttime(startTime);
         ordernQueryRequest.setEndtime(endTime);
-        WheatfieldOrdernQueryResponse wheatfieldOrdernQueryResponse = null;
-        try {
-            wheatfieldOrdernQueryResponse = TradeValidationUtils.ropClient.execute(ordernQueryRequest, session);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
+        WheatfieldOrdernQueryResponse wheatfieldOrdernQueryResponse = TradeValidationUtils.ropClient.execute(ordernQueryRequest, session);
+
         List<Transorderinfo> withDraw = wheatfieldOrdernQueryResponse.getTransorderinfos();
         if (null == withDraw) {
             withDraw = Collections.emptyList();
@@ -325,7 +365,7 @@ public class TradeValidationUtils {
                 localWithDrawResult.add(req);
             }
         }
-        return null;
+        return resultMap;
     }
 
     /**
@@ -338,10 +378,13 @@ public class TradeValidationUtils {
      * @return
      * @throws ApiException
      */
-    public List<RefundDTO> validRefundOrder(Date startTime, Date endTime, String orgCode) throws ApiException {
+    public Map<String, List> validRefundOrder(Date startTime, Date endTime, String orgCode) throws ApiException {
+        Map<String, List> resultMap = new HashMap<String, List>();
         //经由账户成功退款记录，提款单号可能被更新；因此存在多次下退款单的情况
         List<RefundDTO> localRefundResult = new ArrayList<RefundDTO>();
         List<NotifyRefundResponse> refundResponseList = new ArrayList<NotifyRefundResponse>();
+        resultMap.put("localRefundResult", localRefundResult);
+        resultMap.put("refundResponseList", refundResponseList);
         RefundDTO refundQuery = new RefundDTO();
         refundQuery.setStartTime(startTime);
         refundQuery.setEndTime(endTime);
@@ -382,13 +425,13 @@ public class TradeValidationUtils {
             }
             //当前单不匹配
             if (!notifyRefundResponse.getRefundStatus().equals(String.valueOf(refundDTO.getStatus())) ||
-                    !notifyRefundResponse.getOrderAmount().equals(refundDTO.getRefundAmount())){
+                    !notifyRefundResponse.getOrderAmount().equals(refundDTO.getRefundAmount())) {
                 log.info("本地订单状态金额和远程不匹配");
                 localRefundResult.add(refundDTO);
                 refundResponseList.add(notifyRefundResponse);
             }
         }
-        return localRefundResult;
+        return resultMap;
     }
 
     /**
