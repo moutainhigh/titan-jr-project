@@ -10,7 +10,7 @@ public class RequestSession {
 
     private String appKey;
     private String appSecret;
-    private String session;
+    private String reqSession;
     private Date createTime;
 
     public String getAppKey() {
@@ -29,15 +29,16 @@ public class RequestSession {
         this.appSecret = appSecret;
     }
 
-    public String getSession() {
-        return session;
-    }
 
-    public void setSession(String session) {
-        this.session = session;
-    }
+    public String getReqSession() {
+		return reqSession;
+	}
 
-    public Date getCreateTime() {
+	public void setReqSession(String reqSession) {
+		this.reqSession = reqSession;
+	}
+
+	public Date getCreateTime() {
         return createTime;
     }
 

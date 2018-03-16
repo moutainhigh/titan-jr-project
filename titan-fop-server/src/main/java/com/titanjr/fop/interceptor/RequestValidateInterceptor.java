@@ -64,7 +64,7 @@ public class RequestValidateInterceptor implements HandlerInterceptor {
             RequestSession requestSession = new RequestSession();
             requestSession.setAppKey(httpServletRequest.getParameter("appKey"));
             requestSession.setAppSecret(CommonConstants.appSecret);
-            requestSession.setSession(httpServletRequest.getParameter("session"));
+            requestSession.setReqSession(httpServletRequest.getParameter("session"));
             List<RequestSession> sessionList = requestSessionDao.queryReqSession(requestSession);
             if (CollectionUtils.isEmpty(sessionList)) {
                 logger.info("session验证失败，传入为：{}", httpServletRequest.getParameter("session"));

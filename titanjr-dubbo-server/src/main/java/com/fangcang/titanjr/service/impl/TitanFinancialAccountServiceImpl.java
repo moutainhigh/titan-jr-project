@@ -224,6 +224,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			log.error("同步余额账户,userid参数不能为空");
 			return responseDTO;
 		}
+		log.info("同步余额账户,balanceInfoRequest:"+Tools.gsonToString(balanceInfoRequest));
 		//查出机构本地帐户
 		TitanBalanceInfoParam param = new TitanBalanceInfoParam();
 		param.setUserid(balanceInfoRequest.getUserId());

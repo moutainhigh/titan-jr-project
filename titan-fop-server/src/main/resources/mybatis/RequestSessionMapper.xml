@@ -8,14 +8,14 @@
         select
           appkey as appKey,
           appsecret as appSecret,
-          `SESSION` as session,
+          `reqsession` as reqSession,
           createtime as createTime
         from
           t_tfs_reqsession
         <where>
             <if test="appKey!=null">and appkey = #{appKey}</if>
             <if test="appSecret!=null">and appsecret = #{appSecret}</if>
-            <if test="session!=null">and `SESSION` = #{session}</if>
+            <if test="reqSession!=null">and `reqsession` = #{reqSession}</if>
         </where>
     </select>
 
@@ -24,13 +24,13 @@
 	   INSERT INTO `t_tfs_reqsession` (
 	      `appkey`,
 	      `appsecret`,
-	      `SESSION`,
+	      `reqsession`,
 	      `createtime`,
 	      `isactive`
         )
       VALUES
 	    (
-		  #{appKey},#{appSecret},#{session},#{createTime},1
+		  #{appKey},#{appSecret},#{reqSession},#{createTime},1
 	    )
     </insert>
 
