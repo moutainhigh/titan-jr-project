@@ -488,7 +488,7 @@
             </tr>
             <tr>
                 <td class="tdr">交易代码</td>
-                <td><input type="text" id="tradeCode" value="200004" name="tradeCode"/></td>通联：200004 融宝：300002
+                <td><input type="text" id="tradeCode" value="200004" name="tradeCode"/>通联：200004 融宝：300002</td>
             </tr>
             <tr>
                 <td class="tdr">交易状态</td>
@@ -609,6 +609,44 @@
         </table>
     </div>
 </form><br/><br/>
+
+
+<form action="<%=basePath %>/payment.shtml" name="gateWayPayDownload_form" id="gateWayPayDownload_form" method="post">
+    <div class="gateWayPayDownload">
+        <table cellspacing="0" border="0">
+            <tbody>
+            <tr align="left">
+                <td class="tdr">商户号</td>
+                <td>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">交易代码</td>
+                <td><input type="text" id="tradeCode" value="200005" name="tradeCode"/>* 200005通联-网关支付对账文件下载  200006通联-扫码支付对账文件下载</td>
+            </tr>
+            <tr>
+                <td class="tdr">交易日期</td>
+                <td>
+                    <input type="text" id="tradeDate" name="tradeDate"/>* 
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">业务编码</td>
+                <td>
+                    <input type="text" value="115" id="busiCode" name="busiCode"/>* 115对账文件下载
+                </td>
+            </tr>
+            <tr>
+			    <td class="tdr"><button id="gateWayPayDownloadButton" onclick="gateWayPayDownload()">开始下载</button></td>
+			    <td>
+			    </td>
+			</tr>
+            </tbody>
+        </table>
+    </div>
+</form><br/><br/>
+
 
 
 <p>--------------------------------快捷支付测试--------------------------------</p>
@@ -958,6 +996,9 @@
     }
     function agentDownload(){
     	$("#agentDownload_form").submit();
+    }
+    function gateWayPayDownload(){
+    	$("#gateWayPayDownload_form").submit();
     }
 
     

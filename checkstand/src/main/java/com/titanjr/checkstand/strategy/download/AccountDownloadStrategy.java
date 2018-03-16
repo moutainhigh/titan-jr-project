@@ -5,7 +5,7 @@
  * @author Jerry
  * @date 2017年12月28日 下午6:52:22  
  */
-package com.titanjr.checkstand.strategy.agent;
+package com.titanjr.checkstand.strategy.download;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,12 +15,12 @@ import com.fangcang.util.StringUtil;
 import com.titanjr.checkstand.constants.TradeCodeEnum;
 
 /**
- * 账户交易-对账文件下载
+ * 对账文件下载
  * @author Jerry
- * @date 2017年12月28日 下午6:52:22  
+ * @date 2018年3月15日 下午4:59:32
  */
-@Service("agentDownloadStrategy")
-public class AgentDownloadStrategy implements AgentTradeStrategy {
+@Service("accountDownloadStrategy")
+public class AccountDownloadStrategy implements DownloadStrategy {
 
 	@Override
 	public String redirectResult(HttpServletRequest request) {
@@ -31,10 +31,16 @@ public class AgentDownloadStrategy implements AgentTradeStrategy {
 			return null;
 		}
 		if (TradeCodeEnum.TL_AGENT_DOWNLOAD.getCode().equals(tradeCode)){
-			return "/agent/tlAgentDownload.shtml";
+			return "/download/tlAgentDownload.shtml";
         }
+		if (TradeCodeEnum.TL_GATEWAY_DOWNLOAD.getCode().equals(tradeCode)){
+			return "/download/tlGatewayDownload.shtml";
+		}
+		if (TradeCodeEnum.TL_QRCODE_DOWNLOAD.getCode().equals(tradeCode)){
+			return "/download/tlQrcodeDownload.shtml";
+		}
 		if (TradeCodeEnum.RB_AGENT_DOWNLOAD.getCode().equals(tradeCode)){
-			return "/agent/rbAgentDownload.shtml";
+			return "/download/rbBillsDownload.shtml";
         }
 		
 		return null;

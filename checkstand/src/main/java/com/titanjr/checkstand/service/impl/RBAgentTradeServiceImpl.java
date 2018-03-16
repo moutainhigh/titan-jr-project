@@ -13,9 +13,11 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.TreeMap;
+
 import javax.annotation.Resource;
 
 import com.fangcang.util.DateUtil;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -35,7 +37,7 @@ import com.fangcang.titanjr.dto.response.FTPConfigResponse;
 import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.JsonUtil;
 import com.titanjr.checkstand.constants.AgentRetCodeEnum;
-import com.titanjr.checkstand.constants.AgentTradeCodeEnum;
+import com.titanjr.checkstand.constants.TradeCodeEnum;
 import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
@@ -63,7 +65,8 @@ import com.titanjr.checkstand.util.rbUtil.Decipher;
 public class RBAgentTradeServiceImpl implements RBAgentTradeService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(RBAgentTradeServiceImpl.class);
-	private final String resUrl = System.getProperty("java.io.tmpdir");//建议临时存放tmp目录
+	private final String resUrl = this.getClass().getResource("/").getPath().replace("classes/", "");
+	private final String tmpUrl = System.getProperty("java.io.tmpdir");//建议临时存放tmp目录
 	
 	@Resource
 	private TitanSysconfigService titanSysconfigService;
@@ -98,7 +101,7 @@ public class RBAgentTradeServiceImpl implements RBAgentTradeService {
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
-			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbAgentPayRequest.getMerchant_id());
+			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbAgentPayRequest.getMerchant_id(), resUrl);
 			rbDataRequest.setVersion(rbAgentPayRequest.getVersion());
 			
 			//发送请求
@@ -112,7 +115,7 @@ public class RBAgentTradeServiceImpl implements RBAgentTradeService {
 				HttpEntity entity = httpRes.getEntity();
 				String responseStr = EntityUtils.toString(entity, "UTF-8");
 				// 解密返回的数据
-				responseStr = Decipher.decryptData(responseStr);
+				responseStr = Decipher.decryptData(responseStr, resUrl);
 				rbAgentPayResponse = (RBAgentPayResponse)JsonUtil.jsonToBean(responseStr, RBAgentPayResponse.class);
 				logger.info("【融宝-代付请求】返回信息:" + rbAgentPayResponse.toString());
 				
@@ -122,7 +125,7 @@ public class RBAgentTradeServiceImpl implements RBAgentTradeService {
 				}
 				titanAgentPayResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);
 				titanAgentPayResponse.setOrderNo(rbAgentPayResponse.getBatch_no());
-				titanAgentPayResponse.setTradeCode(AgentTradeCodeEnum.RB_AGENT_PAY.getCode());
+				titanAgentPayResponse.setTradeCode(TradeCodeEnum.RB_AGENT_PAY.getCode());
 				titanAgentPayResponse.setStatus(WithDrawStatusEnum.WithDraw_SUCCESSED.getKey().toString());
 				titanAgentPayResponse.setVersion(SysConstant.RS_VERSION_NEW);
 				titanAgentPayResponse.setSignType(SysConstant.RS_SIGN_TYPE);
@@ -175,7 +178,7 @@ public class RBAgentTradeServiceImpl implements RBAgentTradeService {
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
-			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbAgentPayQueryRequest.getMerchant_id());
+			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbAgentPayQueryRequest.getMerchant_id(), resUrl);
 			rbDataRequest.setVersion(rbAgentPayQueryRequest.getVersion());
 			
 			//发送请求
@@ -189,7 +192,7 @@ public class RBAgentTradeServiceImpl implements RBAgentTradeService {
 				HttpEntity entity = httpRes.getEntity();
 				String responseStr = EntityUtils.toString(entity, "UTF-8");
 				// 解密返回的数据
-				responseStr = Decipher.decryptData(responseStr);
+				responseStr = Decipher.decryptData(responseStr, resUrl);
 				rbAgentPayQueryResponse = (RBAgentPayQueryResponse)JsonUtil.jsonToBean(responseStr, RBAgentPayQueryResponse.class);
 				logger.info("【融宝-代付查询】返回信息:" + rbAgentPayQueryResponse.toString());
 				
@@ -199,7 +202,7 @@ public class RBAgentTradeServiceImpl implements RBAgentTradeService {
 				}
 				titanAgentQueryResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);
 				titanAgentQueryResponse.setOrderNo(rbAgentPayQueryResponse.getBatch_no());
-				titanAgentQueryResponse.setTradeCode(AgentTradeCodeEnum.RB_AGENT_QUERY.getCode());
+				titanAgentQueryResponse.setTradeCode(TradeCodeEnum.RB_AGENT_QUERY.getCode());
 				titanAgentQueryResponse.setRetCode(AgentRetCodeEnum.RET_CODE_SUCCESS.code);
 				titanAgentQueryResponse.setVersion(SysConstant.RS_VERSION_NEW);
 				titanAgentQueryResponse.setSignType(SysConstant.RS_SIGN_TYPE);
@@ -248,13 +251,13 @@ public class RBAgentTradeServiceImpl implements RBAgentTradeService {
 					getTradeDate(), "yyyyMMdd"), "yyyy-MM-dd");
 
 			String accountFileName = rbAgentDownloadRequest.getTradeDate() + ".txt";
-			File accountLocal = new File(resUrl + SysConstant.RB_ACCOUNT_DIR);
+			File accountLocal = new File(tmpUrl + SysConstant.RB_ACCOUNT_DIR);
 			accountLocal.mkdir();
 			String rechargeFileName = transferFormat + ".txt";
-			File rechargeLocal = new File(resUrl + SysConstant.RB_RECHARGE_DIR);
+			File rechargeLocal = new File(tmpUrl + SysConstant.RB_RECHARGE_DIR);
 			rechargeLocal.mkdir();
 			String refundFileName = transferFormat + ".txt";
-			File refundLocal = new File(resUrl + SysConstant.RB_REFUND_DIR);
+			File refundLocal = new File(tmpUrl + SysConstant.RB_REFUND_DIR);
 			refundLocal.mkdir();
 
 			//登录融宝ftp下载文件
@@ -297,7 +300,7 @@ public class RBAgentTradeServiceImpl implements RBAgentTradeService {
 
 
 	private boolean FTPFileUpload(FtpUtil util, String prefix, String baseDir, String fileName) {
-		File file = new File(resUrl + baseDir + fileName);
+		File file = new File(tmpUrl + baseDir + fileName);
 		InputStream inputStream;
 		try {
 			inputStream = new FileInputStream(file);

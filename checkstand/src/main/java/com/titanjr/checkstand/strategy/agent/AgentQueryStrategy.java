@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
 import com.fangcang.util.StringUtil;
-import com.titanjr.checkstand.constants.AgentTradeCodeEnum;
+import com.titanjr.checkstand.constants.TradeCodeEnum;
 
 /**
  * 代收付交易结果查询
@@ -30,10 +30,10 @@ public class AgentQueryStrategy implements AgentTradeStrategy {
 		if(!StringUtil.isValidString(tradeCode)){
 			return null;
 		}
-		if (AgentTradeCodeEnum.TL_AGENT_QUERY.getCode().equals(tradeCode)){
+		if (TradeCodeEnum.TL_AGENT_QUERY.getCode().equals(tradeCode)){
 			return "/agent/tlAgentQuery.shtml";
         }
-		if (AgentTradeCodeEnum.RB_AGENT_QUERY.getCode().equals(tradeCode)){
+		if (TradeCodeEnum.RB_AGENT_QUERY.getCode().equals(tradeCode)){
 			return "/agent/rbAgentQuery.shtml";
         }
 		

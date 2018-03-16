@@ -76,6 +76,10 @@ public class CheckStandController extends BaseController {
 				return "forward:/quick/entrance.shtml";
 			}
 			
+			if (busiCodeEnum.equals(BusiCodeEnum.ACCOUNT_DOWNLOAD)){
+				return "forward:/download/entrance.shtml";
+			}
+			
 			logger.error("【{}】{}未匹配对应的入口", busiCodeEnum.getKey(), busiCodeEnum.getValue());
 			return super.payFailedCallback(model);
 			

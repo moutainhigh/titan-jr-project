@@ -3,26 +3,34 @@ package test.titanjr.checkstand.service;
 import com.titanjr.checkstand.constants.RequestTypeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.request.RBAgentDownloadRequest;
+import com.titanjr.checkstand.request.TLGatewayPayDownloadRequest;
 import com.titanjr.checkstand.respnse.RSResponse;
+import com.titanjr.checkstand.service.AccountDownloadService;
 import com.titanjr.checkstand.service.RBAgentTradeService;
+
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import test.titanjr.checkstand.GenericTest;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by zhaoshan on 2018/3/8.
  */
 public class RBAgentTradeServiceTest extends GenericTest {
+	
+	private static final Logger logger = LoggerFactory.getLogger(RBAgentTradeServiceTest.class);
 
     @Resource
     private RBAgentTradeService rbAgentTradeService;
-
-    @Test
+	
+	@Resource
+	private AccountDownloadService accountDownloadService;
+	
+	
+	@Test
     public void testAgentDownload(){
         RBAgentDownloadRequest rbAgentDownloadRequest = new RBAgentDownloadRequest();
         rbAgentDownloadRequest.setMerchant_id("100000001301858");
@@ -30,6 +38,18 @@ public class RBAgentTradeServiceTest extends GenericTest {
         rbAgentDownloadRequest.setRequestType(RequestTypeEnum.AGENT_DOWNLOAD.getKey());
 
         RSResponse response = rbAgentTradeService.agentDownload(rbAgentDownloadRequest);
+        logger.info("response========>>errCode={}，errMsg={}", response.getErrCode(), response.getErrMsg());
+    }
+    
+    @Test
+    public void testGatewayDownload(){
+    	TLGatewayPayDownloadRequest gatewayPayDownloadRequest = new TLGatewayPayDownloadRequest();
+    	gatewayPayDownloadRequest.setMchtCd(SysConstant.TL_NETBANK_MERCHANT);
+    	gatewayPayDownloadRequest.setSettleDate("2018-03-14");
+    	gatewayPayDownloadRequest.setRequestType(RequestTypeEnum.GATEWAY_DOWNLOAD.getKey());
+
+        RSResponse response = accountDownloadService.gatewayPayDownload(gatewayPayDownloadRequest);
+        logger.info("response========>>errCode={}，errMsg={}", response.getErrCode(), response.getErrMsg());
     }
 
 }

@@ -70,7 +70,6 @@ public class TLPayQueryServiceImpl implements TLPayQueryService {
 				return titanPayQueryResponse;
 			}
 			tlNetBankPayQueryRequest.setSignMsg(SignMsgBuilder.getSignMsgForOrderQuery(tlNetBankPayQueryRequest, gateWayConfigDTO.getSecretKey()));
-			logger.info("【通联-网银支付查询】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
 			
 			//http请求参数
 			HttpPost httpPost = new HttpPost(gateWayConfigDTO.getGateWayUrl());

@@ -51,6 +51,7 @@ public class ChannelCallbackController extends BaseController {
 	 */
 	private static final long serialVersionUID = 4077037033223889564L;
 	private final static Logger logger = LoggerFactory.getLogger(ChannelCallbackController.class);
+	private final String resUrl = this.getClass().getResource("/").getPath().replace("classes/", "");
 	
 	@Resource
 	private TitanCommonService titanCommonService;
@@ -237,7 +238,7 @@ public class ChannelCallbackController extends BaseController {
 			response.getWriter().print("success");
 			response.flushBuffer();
 			String jsonRes = JsonUtil.objectToJson(rbDataRequest);
-			jsonRes = Decipher.decryptData(jsonRes);
+			jsonRes = Decipher.decryptData(jsonRes, resUrl);
 			quickPayCallbackResponse = (RBQuickPayCallbackResponse) JsonUtil.jsonToBean(jsonRes,
 					RBQuickPayCallbackResponse.class);
 			logger.info("【融宝-快捷支付结果通知】:" + quickPayCallbackResponse.toString());
@@ -280,7 +281,7 @@ public class ChannelCallbackController extends BaseController {
 		try {
 			
 			String jsonRes = JsonUtil.objectToJson(rbDataRequest);
-			jsonRes = Decipher.decryptData(jsonRes);
+			jsonRes = Decipher.decryptData(jsonRes, resUrl);
 			rbCardAuthResponse = (RBCardAuthResponse) JsonUtil.jsonToBean(jsonRes,
 					RBCardAuthResponse.class);
 			logger.info("【融宝-卡密鉴权前台回调】:" + rbCardAuthResponse.toString());
@@ -320,7 +321,7 @@ public class ChannelCallbackController extends BaseController {
 			response.getWriter().print("success");
 			response.flushBuffer();
 			String jsonRes = JsonUtil.objectToJson(rbDataRequest);
-			jsonRes = Decipher.decryptData(jsonRes);
+			jsonRes = Decipher.decryptData(jsonRes, resUrl);
 			data = (RBQuickPayCallbackResponse) JsonUtil.jsonToBean(jsonRes,
 					RBQuickPayCallbackResponse.class);
 			logger.info("【融宝-卡密鉴权后台通知】:" + data.toString());

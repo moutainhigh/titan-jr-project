@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-import com.titanjr.checkstand.constants.AgentTradeCodeEnum;
+import com.titanjr.checkstand.constants.TradeCodeEnum;
 import com.titanjr.checkstand.dto.TitanAgentResDetailDTO;
 
 /**
@@ -27,7 +27,7 @@ public class TitanAgentQueryResponse extends RSResponse {
 	private static final long serialVersionUID = 6448112507980722639L;
 	
 	/**
-	 * 交易代码 {@link AgentTradeCodeEnum}
+	 * 交易代码 {@link TradeCodeEnum}
 	 */
 	@NotBlank
 	private String tradeCode;

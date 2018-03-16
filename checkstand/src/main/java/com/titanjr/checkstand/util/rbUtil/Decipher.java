@@ -28,7 +28,7 @@ public class Decipher {
 	 * @author Jerry
 	 * @date 2018年1月3日 下午5:44:41
 	 */
-	public static String decryptData(String responseStr) throws Exception {
+	public static String decryptData(String responseStr, String resUrl) throws Exception {
 
 		//将返回的json串转换为map
 		TreeMap<String, String> map = JSON.parseObject(responseStr,
@@ -38,7 +38,7 @@ public class Decipher {
 		String data = map.get("data");
 
 		// 获取自己私钥解密
-		PrivateKey pvkformPfx = RSA.getPvkformPfx(SysConstant.PRIVATE_KEY_PATH,
+		PrivateKey pvkformPfx = RSA.getPvkformPfx(resUrl+SysConstant.PRIVATE_KEY_PATH,
 				SysConstant.PRIVATE_KEY_PWD);
 		String decryptData = RSA.decrypt(encryptkey, pvkformPfx);
 
@@ -56,7 +56,7 @@ public class Decipher {
 	 * @return
 	 * @throws com.reapal.common.exception.ServiceException
 	 */
-	public static String decryptData(String encryptkey, String data)
+	/*public static String decryptData(String encryptkey, String data)
 			throws Exception {
 
 		// 获取自己私钥解密
@@ -66,7 +66,7 @@ public class Decipher {
 
 		return AES.decryptFromBase64(data, decryptKey);
 
-	}
+	}*/
 	
 
 	/**
@@ -74,13 +74,13 @@ public class Decipher {
 	 * @author Jerry
 	 * @date 2018年1月3日 下午5:28:34
 	 */
-	public static RBDataRequest encryptData(String json, String merchantId) throws Exception {
+	public static RBDataRequest encryptData(String json, String merchantId, String resUrl) throws Exception {
 		logger.info("json数据=============>" + json);
 		RBDataRequest rbDataRequest = new RBDataRequest();
 		rbDataRequest.setMerchant_id(merchantId);
 
 		// 商户获取融宝公钥
-		PublicKey pubKeyFromCrt = RSA.getPubKeyFromCRT(SysConstant.PUBLIC_KEY_PATH);
+		PublicKey pubKeyFromCrt = RSA.getPubKeyFromCRT(resUrl+SysConstant.PUBLIC_KEY_PATH);
 		// 随机生成16数字
 		String key = getRandom(16);
 

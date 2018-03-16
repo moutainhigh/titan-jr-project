@@ -1,10 +1,11 @@
 package com.titanjr.checkstand.strategy;
 
 import com.fangcang.util.SpringContextUtil;
-import com.titanjr.checkstand.constants.AgentTradeCodeEnum;
+import com.titanjr.checkstand.constants.TradeCodeEnum;
 import com.titanjr.checkstand.constants.BusiCodeEnum;
 import com.titanjr.checkstand.constants.PayTypeEnum;
 import com.titanjr.checkstand.strategy.agent.AgentTradeStrategy;
+import com.titanjr.checkstand.strategy.download.AccountDownloadStrategy;
 import com.titanjr.checkstand.strategy.pay.PayRequestStrategy;
 import com.titanjr.checkstand.strategy.query.QueryStrategy;
 import com.titanjr.checkstand.strategy.quickPay.QuickPayStrategy;
@@ -122,19 +123,36 @@ public class StrategyFactory {
      */
     public static AgentTradeStrategy getAgentTradeStrategy(String tradeCode){
 
-        if (AgentTradeCodeEnum.TL_AGENT_PAY.getCode().equals(tradeCode) 
-        		|| AgentTradeCodeEnum.RB_AGENT_PAY.getCode().equals(tradeCode)){
+        if (TradeCodeEnum.TL_AGENT_PAY.getCode().equals(tradeCode) 
+        		|| TradeCodeEnum.RB_AGENT_PAY.getCode().equals(tradeCode)){
             return (AgentTradeStrategy)SpringContextUtil.getBean("agentPayStrategy");
         }
 
-        if (AgentTradeCodeEnum.TL_AGENT_QUERY.getCode().equals(tradeCode)
-        		||AgentTradeCodeEnum.RB_AGENT_QUERY.getCode().equals(tradeCode)){
+        if (TradeCodeEnum.TL_AGENT_QUERY.getCode().equals(tradeCode)
+        		||TradeCodeEnum.RB_AGENT_QUERY.getCode().equals(tradeCode)){
             return (AgentTradeStrategy)SpringContextUtil.getBean("agentQueryStrategy");
         }
         
-        if (AgentTradeCodeEnum.TL_AGENT_DOWNLOAD.getCode().equals(tradeCode)
-        		|| AgentTradeCodeEnum.RB_AGENT_DOWNLOAD.getCode().equals(tradeCode)){
+        if (TradeCodeEnum.TL_AGENT_DOWNLOAD.getCode().equals(tradeCode)
+        		|| TradeCodeEnum.RB_AGENT_DOWNLOAD.getCode().equals(tradeCode)){
         	return (AgentTradeStrategy)SpringContextUtil.getBean("agentDownloadStrategy");
+        }
+
+        return null;
+    }
+    
+    /**
+     * 对账文件下载
+     * @author Jerry
+     * @date 2018年3月15日 下午5:03:22
+     */
+    public static AccountDownloadStrategy getAccountDownloadStrategy(String tradeCode){
+
+        if (TradeCodeEnum.TL_AGENT_DOWNLOAD.getCode().equals(tradeCode) 
+        		|| TradeCodeEnum.TL_GATEWAY_DOWNLOAD.getCode().equals(tradeCode)
+        		|| TradeCodeEnum.TL_QRCODE_DOWNLOAD.getCode().equals(tradeCode)
+        		|| TradeCodeEnum.RB_AGENT_DOWNLOAD.getCode().equals(tradeCode)){
+            return (AccountDownloadStrategy)SpringContextUtil.getBean("accountDownloadStrategy");
         }
 
         return null;

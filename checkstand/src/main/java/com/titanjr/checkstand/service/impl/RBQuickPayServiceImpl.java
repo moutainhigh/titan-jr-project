@@ -73,6 +73,7 @@ import com.titanjr.checkstand.util.rbUtil.Decipher;
 public class RBQuickPayServiceImpl implements RBQuickPayService {
 	
 	private final static Logger logger = LoggerFactory.getLogger(RBQuickPayServiceImpl.class);
+	private final String resUrl = this.getClass().getResource("/").getPath().replace("classes/", "");
 
 	
 	@Override
@@ -107,7 +108,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
-			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbCardBINQueryRequest.getMerchant_id());
+			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbCardBINQueryRequest.getMerchant_id(), resUrl);
 			
 			//发送请求
 			logger.info("【融宝-卡BIN查询】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
@@ -120,7 +121,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				HttpEntity entity = httpRes.getEntity();
 				String responseStr = EntityUtils.toString(entity, "UTF-8");
 				// 解密返回的数据
-				responseStr = Decipher.decryptData(responseStr);
+				responseStr = Decipher.decryptData(responseStr, resUrl);
 				rbCardBINQueryResponse = (RBCardBINQueryResponse)JsonUtil.jsonToBean(responseStr, RBCardBINQueryResponse.class);
 				logger.info("【融宝-卡BIN查询】返回信息:" + rbCardBINQueryResponse.toString());
 				
@@ -196,7 +197,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
-			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbQuickPayRequest.getMerchant_id());
+			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbQuickPayRequest.getMerchant_id(), resUrl);
 			
 			//发送请求
 			logger.info("【"+contractType+"】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
@@ -209,7 +210,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				HttpEntity entity = httpRes.getEntity();
 				String responseStr = EntityUtils.toString(entity, "UTF-8");
 				// 解密返回的数据
-				responseStr = Decipher.decryptData(responseStr);
+				responseStr = Decipher.decryptData(responseStr, resUrl);
 				rbQuickPayResponse = (RBQuickPayResponse)JsonUtil.jsonToBean(responseStr, RBQuickPayResponse.class);
 				logger.info("【"+contractType+"】返回信息:" + rbQuickPayResponse.toString());
 				
@@ -282,7 +283,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
-			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbQuickPayConfirmRequest.getMerchant_id());
+			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbQuickPayConfirmRequest.getMerchant_id(), resUrl);
 			
 			//发送请求
 			logger.info("【融宝-确认支付】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
@@ -295,7 +296,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				HttpEntity entity = httpRes.getEntity();
 				String responseStr = EntityUtils.toString(entity, "UTF-8");
 				// 解密返回的数据
-				responseStr = Decipher.decryptData(responseStr);
+				responseStr = Decipher.decryptData(responseStr, resUrl);
 				rbPayConfirmResponse = (RBPayConfirmResponse)JsonUtil.jsonToBean(responseStr, RBPayConfirmResponse.class);
 				logger.info("【融宝-确认支付】返回信息:" + rbPayConfirmResponse.toString());
 				
@@ -361,7 +362,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
-			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbReSendMsgRequest.getMerchant_id());
+			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbReSendMsgRequest.getMerchant_id(), resUrl);
 			
 			//发送请求
 			logger.info("【融宝-重发验证码】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
@@ -374,7 +375,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				HttpEntity entity = httpRes.getEntity();
 				String responseStr = EntityUtils.toString(entity, "UTF-8");
 				// 解密返回的数据
-				responseStr = Decipher.decryptData(responseStr);
+				responseStr = Decipher.decryptData(responseStr, resUrl);
 				rbReSendMsgResponse = (RBReSendMsgResponse)JsonUtil.jsonToBean(responseStr, RBReSendMsgResponse.class);
 				logger.info("【融宝-重发验证码】返回信息:" + rbReSendMsgResponse.toString());
 				
@@ -438,7 +439,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
-			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbQuickPayQueryRequest.getMerchant_id());
+			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbQuickPayQueryRequest.getMerchant_id(), resUrl);
 			
 			//发送请求
 			logger.info("【融宝-快捷支付查询】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
@@ -451,7 +452,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				HttpEntity entity = httpRes.getEntity();
 				String responseStr = EntityUtils.toString(entity, "UTF-8");
 				// 解密返回的数据
-				responseStr = Decipher.decryptData(responseStr);
+				responseStr = Decipher.decryptData(responseStr, resUrl);
 				rbPayQueryResponse = (RBPayQueryResponse)JsonUtil.jsonToBean(responseStr, RBPayQueryResponse.class);
 				logger.info("【融宝-快捷支付查询】返回信息:" + rbPayQueryResponse.toString());
 				
@@ -520,7 +521,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
-			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbQuickPayRefundRequest.getMerchant_id());
+			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbQuickPayRefundRequest.getMerchant_id(), resUrl);
 			
 			//发送请求
 			logger.info("【融宝-快捷支付退款】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
@@ -533,7 +534,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				HttpEntity entity = httpRes.getEntity();
 				String responseStr = EntityUtils.toString(entity, "UTF-8");
 				// 解密返回的数据
-				responseStr = Decipher.decryptData(responseStr);
+				responseStr = Decipher.decryptData(responseStr, resUrl);
 				rbRefundResponse = (RBBaseResponse)JsonUtil.jsonToBean(responseStr, RBBaseResponse.class);
 				logger.info("【融宝-快捷支付退款】返回信息：result_code={}，result_msg={}", rbRefundResponse.getResult_code(), rbRefundResponse.getResult_msg());
 				if(!SysConstant.RB_QUICKPAY_SUCCESS.equals(rbRefundResponse.getResult_code())){
@@ -601,7 +602,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
-			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbQuickPayRefundQueryRequest.getMerchant_id());
+			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbQuickPayRefundQueryRequest.getMerchant_id(), resUrl);
 			
 			//发送请求
 			logger.info("【融宝-快捷支付退款查询】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
@@ -614,7 +615,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				HttpEntity entity = httpRes.getEntity();
 				String responseStr = EntityUtils.toString(entity, "UTF-8");
 				// 解密返回的数据
-				responseStr = Decipher.decryptData(responseStr);
+				responseStr = Decipher.decryptData(responseStr, resUrl);
 				rbRefundQueryResponse = (RBRefundQueryResponse)JsonUtil.jsonToBean(responseStr, RBRefundQueryResponse.class);
 				logger.info("【融宝-快捷支付退款查询】返回信息:" + rbRefundQueryResponse.toString());
 				if(!SysConstant.RB_QUICKPAY_SUCCESS.equals(rbRefundQueryResponse.getResult_code())){
@@ -680,7 +681,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
-			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbCardAuthRequest.getMerchant_id());
+			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbCardAuthRequest.getMerchant_id(), resUrl);
 			logger.info("【融宝-卡密鉴权】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
 			
 			map.put("gateWayUrl", gateWayConfigDTO.getGateWayUrl());
@@ -729,7 +730,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
-			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbBindCardQueryRequest.getMerchant_id());
+			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbBindCardQueryRequest.getMerchant_id(), resUrl);
 			
 			//发送请求
 			logger.info("【融宝-查询绑卡列表】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
@@ -742,7 +743,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				HttpEntity entity = httpRes.getEntity();
 				String responseStr = EntityUtils.toString(entity, "UTF-8");
 				// 解密返回的数据
-				responseStr = Decipher.decryptData(responseStr);
+				responseStr = Decipher.decryptData(responseStr, resUrl);
 				rbBindCardQueryResponse = (RBBindCardQueryResponse)JsonUtil.jsonToBean(responseStr, RBBindCardQueryResponse.class);
 				logger.info("【融宝-查询绑卡列表】返回信息:" + rbBindCardQueryResponse.toString());
 				
@@ -797,7 +798,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 			
 			//数据加密
 			String json = JsonUtil.objectToJson(params);
-			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbUnBindCardRequest.getMerchant_id());
+			RBDataRequest rbDataRequest = Decipher.encryptData(json, rbUnBindCardRequest.getMerchant_id(), resUrl);
 			
 			//发送请求
 			logger.info("【融宝-解绑卡】网关地址：{}", gateWayConfigDTO.getGateWayUrl());
@@ -810,7 +811,7 @@ public class RBQuickPayServiceImpl implements RBQuickPayService {
 				HttpEntity entity = httpRes.getEntity();
 				String responseStr = EntityUtils.toString(entity, "UTF-8");
 				// 解密返回的数据
-				responseStr = Decipher.decryptData(responseStr);
+				responseStr = Decipher.decryptData(responseStr, resUrl);
 				rbUnBindCardResponse = (RBUnBindCardResponse)JsonUtil.jsonToBean(responseStr, RBUnBindCardResponse.class);
 				logger.info("【融宝-解绑卡】返回信息:" + rbUnBindCardResponse.toString());
 				

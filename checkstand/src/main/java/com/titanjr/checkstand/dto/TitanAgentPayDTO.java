@@ -9,7 +9,7 @@ package com.titanjr.checkstand.dto;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-import com.titanjr.checkstand.constants.AgentTradeCodeEnum;
+import com.titanjr.checkstand.constants.TradeCodeEnum;
 
 /**
  * 泰坦金融代付请求对象
@@ -31,7 +31,7 @@ public class TitanAgentPayDTO {
 	private String orderNo;
 	
 	/**
-	 * 交易代码 {@link AgentTradeCodeEnum}
+	 * 交易代码 {@link TradeCodeEnum}
 	 */
 	@NotBlank
 	private String tradeCode;

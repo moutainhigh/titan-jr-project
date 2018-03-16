@@ -17,7 +17,8 @@ public enum BusiCodeEnum {
 	CARD_BIND_QUERY("111", "绑卡列表查询"),
 	CARD_UNBIND("112", "解绑卡"),
 	UPDATE_PHONE("113", "更改预留手机号"),
-	CARD_AUTH("114", "卡密鉴权");
+	CARD_AUTH("114", "卡密鉴权"),
+    ACCOUNT_DOWNLOAD("115", "对账文件下载");
     
     private BusiCodeEnum(String key, String value) {
 		this.key = key;
