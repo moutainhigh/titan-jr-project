@@ -96,6 +96,7 @@ public class PaymentController extends BaseController {
 			}
 			super.resetParameter(request,attr);
 			
+			logger.info("【支付】获取跳转地址为：{}", redirectUrl);
 			return "forward:" + redirectUrl;
 			
 		} catch (Exception e) {
@@ -170,6 +171,7 @@ public class PaymentController extends BaseController {
     @RequestMapping(value = "/qrCodePay", method = {RequestMethod.GET, RequestMethod.POST})
     public TitanQrCodePayResponse qrCodePay(HttpServletRequest request, Model model) {
 		
+    	logger.info("【扫码支付】地址跳转成功");
 		TitanQrCodePayResponse titanQrPayResponse = new TitanQrCodePayResponse();
     	try {
 			

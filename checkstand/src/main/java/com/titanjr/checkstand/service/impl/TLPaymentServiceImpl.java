@@ -57,6 +57,7 @@ public class TLPaymentServiceImpl implements TLPaymentService {
 		
 		try {
 			
+			logger.info("【通联-扫码支付】开始获取网关配置信息");
 			//获取网关配置
 			String configKey = tlQrCodePayRequest.getCusid() +"_" + PayTypeEnum.QR_WECHAT_URL.combPayType + 
 					"_" + SysConstant.TL_CHANNEL_CODE + "_" + tlQrCodePayRequest.getRequestType();
