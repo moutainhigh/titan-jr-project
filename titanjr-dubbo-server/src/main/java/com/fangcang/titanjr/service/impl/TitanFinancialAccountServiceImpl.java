@@ -204,19 +204,19 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	 * 融数的账户是否在本地存在
 	 * @param item 融数账户
 	 * @param list 本地帐户
-	 * @return
+	 * @return 返回本地账户编码
 	 */
-	private String localIsExist(BalanceInfo item,List<TitanBalanceInfo> list){
-		for(TitanBalanceInfo banlance : list){
-			if((banlance.getUserid().equals(item.getUserid()))&&(banlance.getProductid().equals(item.getProductid()))){
-				return banlance.getAccountcode();
+	private String localIsExist(BalanceInfo rsBalanceInfo,List<TitanBalanceInfo> list){
+		for(TitanBalanceInfo localBanlance : list){
+			if((localBanlance.getUserid().equals(rsBalanceInfo.getUserid()))&&(localBanlance.getProductid().equals(rsBalanceInfo.getProductid()))){
+				return localBanlance.getAccountcode();
 			}
 		}
 		return "";
 	}
 
 	@Override
-	public BaseResponseDTO synBalanceInfo(BalanceInfoRequest balanceInfoRequest) {
+	public BaseResponseDTO synBalanceInfo(BalanceInfoRequest balanceInfoRequest,boolean isForbidUpdate) {
 		
 		BaseResponseDTO responseDTO = new BaseResponseDTO();
 		if(!StringUtil.isValidString(balanceInfoRequest.getUserId())){
@@ -270,23 +270,8 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			}
 			responseDTO.putSuccess();
 		}else{
-			//不存在,则新建主账户
-			TitanBalanceInfo entity = new TitanBalanceInfo();
-			entity.setAccountcode(codeCenterService.createTitanAccountCode());
-			entity.setUserid(balanceInfoRequest.getUserId());
-			entity.setProductid(balanceInfoRequest.getProductId());
-			entity.setCurrency(1);//人民币
-			entity.setCreditamount(0L);
-			entity.setSettleamount(0L);
-			entity.setFrozonamount(0L);
-			entity.setOverlimit(0L);
-			entity.setUsablelimit(0L);
-			entity.setTotalamount(0L);
-			entity.setStatus(1);//1：正常,2:冻结中
-			entity.setCreatetime(new Date());
-			balanceInfoDao.insert(entity);
-			
-			log.info("该userid在融数那边不存在，请检查.userid:"+balanceInfoRequest.getUserId());
+			//不存在
+			log.warn("该userid在融数那边不存在，请检查.userid:"+balanceInfoRequest.getUserId());
 			responseDTO.putErrorResult("该账户不存在，请检查");
 		}
 		return responseDTO;
@@ -328,7 +313,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			for(TitanOrg item : paginationSupport.getItemList()){
 				BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
 				balanceInfoRequest.setUserId(item.getUserid());
-				synBalanceInfo(balanceInfoRequest);
+				synBalanceInfo(balanceInfoRequest,true);//批量同步账户时，只新增账户，不更新余额
 			}
 			page++;
 			paginationSupport.setCurrentPage(page);
@@ -348,7 +333,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			for(TitanOrgSub item : spaginationSupport.getItemList()){
 				BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
 				balanceInfoRequest.setUserId(item.getOrgcode());
-				synBalanceInfo(balanceInfoRequest);
+				synBalanceInfo(balanceInfoRequest,true);
 			}
 			spage++;
 			spaginationSupport.setCurrentPage(spage);
@@ -369,7 +354,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			for(TitanVirtualOrg item : vpaginationSupport.getItemList()){
 				BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
 				balanceInfoRequest.setUserId(item.getOrgCode());
-				synBalanceInfo(balanceInfoRequest);
+				synBalanceInfo(balanceInfoRequest,true);
 			}
 			vpage++;
 			vpaginationSupport.setCurrentPage(vpage);

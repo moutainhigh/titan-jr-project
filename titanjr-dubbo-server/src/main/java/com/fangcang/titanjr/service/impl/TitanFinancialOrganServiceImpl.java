@@ -1108,7 +1108,7 @@ public class TitanFinancialOrganServiceImpl implements TitanFinancialOrganServic
 	            		BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
 	            		balanceInfoRequest.setUserId(newOrgEntity.getUserid());
 	            		balanceInfoRequest.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-	            		accountService.synBalanceInfo(balanceInfoRequest);
+	            		accountService.synBalanceInfo(balanceInfoRequest,false);
 	            		
 	            		CashierDeskInitRequest cashierDeskInitRequest = new CashierDeskInitRequest(); 
 	            		cashierDeskInitRequest.setUserId(newOrgEntity.getUserid());

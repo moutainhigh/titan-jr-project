@@ -41,11 +41,11 @@ public class AccountBalanceInitServlet extends HttpServlet{
 			response.setContentType("text/html");
 			response.setCharacterEncoding("utf-8");
 			if(orgCode==null||"".equals(orgCode)){
-				accountService.initAllBalanceInfo();
+				accountService.initAllBalanceInfo();//批量同步账户时，只新增账户，不更新余额
 			}else{
 				BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
 				balanceInfoRequest.setUserId(orgCode);
-				accountService.synBalanceInfo(balanceInfoRequest);
+				accountService.synBalanceInfo(balanceInfoRequest,false);//单个账户同步时，则可以更新余额
 			}
 			
 			response.getWriter().write("数据初始化完成");
