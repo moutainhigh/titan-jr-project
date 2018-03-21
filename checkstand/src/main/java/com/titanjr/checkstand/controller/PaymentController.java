@@ -1,6 +1,7 @@
 package com.titanjr.checkstand.controller;
 
 import com.fangcang.titanjr.common.util.CommonConstant;
+import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.Wxutil;
 import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.SysConfig;
@@ -96,7 +97,7 @@ public class PaymentController extends BaseController {
 			}
 			super.resetParameter(request,attr);
 			
-			logger.info("【支付】获取跳转地址为1：{}", WebUtils.getRequestBaseUrl(request)+redirectUrl);
+			logger.info("【支付】获取跳转地址为1：{}", WebUtils.getRequestBaseUrl(request)+","+redirectUrl);
 			return "forward:" + redirectUrl;
 			
 		} catch (Exception e) {
@@ -120,7 +121,7 @@ public class PaymentController extends BaseController {
         try {
         	
 			TitanPayDTO payDTO = WebUtils.switch2RequestDTO(TitanPayDTO.class, request);
-			
+			logger.info("网银支付，请求参数payDTO："+Tools.gsonToString(payDTO));
 			String configKey = SysConstant.TL_NETBANK_MERCHANT +"_" + PayTypeEnum.PERSON_EBANK.combPayType + 
 					"_" + SysConstant.TL_CHANNEL_CODE + "_" + RequestTypeEnum.GATEWAY_PAY_QUERY_REFUND.getKey();
 			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
