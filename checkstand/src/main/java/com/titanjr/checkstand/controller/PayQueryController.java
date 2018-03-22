@@ -107,7 +107,9 @@ public class PayQueryController extends BaseController {
 			}
 			super.resetParameter(request,attr);
 			
-			return "forward:" + redirectUrl;
+			//return "forward:" + redirectUrl;
+			return "redirect:" + WebUtils.getRequestBaseUrl(request) + redirectUrl;
+			
 		} catch (Exception e) {
 			
 			logger.error("【支付查询】发生异常：", e);

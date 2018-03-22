@@ -16,14 +16,6 @@ public class SysConfig implements Serializable{
     private String rsCheckKey;
     //房仓给融数构造加密数据的签名
     private String titanjrCheckKey ;
-    //checkstand付结果前台回调pay-app的地址
-    private String csPayConfirmPageURL;
-    //checkstand支付结果后台通知pay-app的地址
-    private String csPayNoticeURL;
-    //checkstand卡密鉴权前台回调pay-app的地址
-    private String csCardAuthPageURL;
-    //checkstand卡密鉴权后台通知pay-app的地址
-    private String csCardAuthNoticeURL;
    
 	public String getSessionKey() {
 		return sessionKey;
@@ -48,30 +40,6 @@ public class SysConfig implements Serializable{
 	}
 	public void setTitanjrCheckKey(String titanjrCheckKey) {
 		this.titanjrCheckKey = titanjrCheckKey;
-	}
-	public String getCsPayConfirmPageURL() {
-		return csPayConfirmPageURL;
-	}
-	public void setCsPayConfirmPageURL(String csPayConfirmPageURL) {
-		this.csPayConfirmPageURL = csPayConfirmPageURL;
-	}
-	public String getCsPayNoticeURL() {
-		return csPayNoticeURL;
-	}
-	public void setCsPayNoticeURL(String csPayNoticeURL) {
-		this.csPayNoticeURL = csPayNoticeURL;
-	}
-	public String getCsCardAuthPageURL() {
-		return csCardAuthPageURL;
-	}
-	public void setCsCardAuthPageURL(String csCardAuthPageURL) {
-		this.csCardAuthPageURL = csCardAuthPageURL;
-	}
-	public String getCsCardAuthNoticeURL() {
-		return csCardAuthNoticeURL;
-	}
-	public void setCsCardAuthNoticeURL(String csCardAuthNoticeURL) {
-		this.csCardAuthNoticeURL = csCardAuthNoticeURL;
 	}
 
 }

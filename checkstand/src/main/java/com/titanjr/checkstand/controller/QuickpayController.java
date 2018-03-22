@@ -106,7 +106,8 @@ public class QuickpayController extends BaseController {
 			}
 			super.resetParameter(request,attr);
 			
-			return "forward:" + redirectUrl;
+			//return "forward:" + redirectUrl;
+			return "redirect:" + WebUtils.getRequestBaseUrl(request) + redirectUrl;
 			
 		} catch (Exception e) {
 			

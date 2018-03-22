@@ -45,8 +45,8 @@
 	<!--**************************************** 分页插件    end ****************************************-->
 
 	<mappers>
-		<mapper resource="mybatis/OrderPayRequestMapper.xml" />
 		<mapper resource="mybatis/GateWayConfigMapper.xml" />
+		<mapper resource="mybatis/AccountDownloadMapper.xml" />
 	</mappers>
 
 </configuration>
