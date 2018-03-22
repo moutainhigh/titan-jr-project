@@ -290,7 +290,7 @@ public class OrderOperServiceImpl implements OrderOperService {
             recordTransferRequest.setUserId(orderTransferRequest.getUserid());
             recordTransferRequest.setProductId(orderTransferRequest.getProductid());
             recordTransferRequest.setRelateUserId(orderTransferRequest.getUserrelateid());
-            recordTransferRequest.setRelateProductId(orderTransferRequest.getProductid());
+            recordTransferRequest.setRelateProductId(orderTransferRequest.getInterproductid());
             BaseResponseDTO response = new BaseResponseDTO();
 			try {
 				response = accountRecordService.transfer(recordTransferRequest);
