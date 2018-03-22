@@ -216,7 +216,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	}
 
 	@Override
-	public BaseResponseDTO synBalanceInfo(BalanceInfoRequest balanceInfoRequest,boolean isForbidUpdate) {
+	public BaseResponseDTO synBalanceInfo(BalanceInfoRequest balanceInfoRequest,boolean isUpdate) {
 		
 		BaseResponseDTO responseDTO = new BaseResponseDTO();
 		if(!StringUtil.isValidString(balanceInfoRequest.getUserId())){
@@ -239,7 +239,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		if(response.isSuccess()&&CollectionUtils.isNotEmpty(response.getBalanceInfoList())){
 			for(BalanceInfo item :response.getBalanceInfoList()){
 				String accountCode = localIsExist(item,balanceInfoList);
-				if(StringUtil.isValidString(localIsExist(item,balanceInfoList))){
+				if(StringUtil.isValidString(accountCode)&&(isUpdate==true)){
 					//存在,则更新金额
 					TitanBalanceInfo entity = new TitanBalanceInfo();
 					entity.setAccountcode(accountCode);
@@ -250,7 +250,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					entity.setUsablelimit(Long.parseLong(item.getBalanceusable()));
 					entity.setTotalamount(Long.parseLong(item.getAmount()));
 					balanceInfoDao.update(entity);
-				}else{
+				}else if(!StringUtil.isValidString(accountCode)){
 					//不存在,则插入
 					TitanBalanceInfo entity = new TitanBalanceInfo();
 					entity.setAccountcode(codeCenterService.createTitanAccountCode());
@@ -305,7 +305,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		int page = 1;
 		PaginationSupport<TitanOrg> paginationSupport = new PaginationSupport<TitanOrg>();
 		paginationSupport.setPageSize(100);
-		paginationSupport.setCurrentPage(page);
+		paginationSupport.setCurrentPage(1);
 		paginationSupport.setOrderBy(" orgid ASC ");
 		paginationSupport = orgdao.selectForPage(null, paginationSupport);
 		log.info("开始同步org");
@@ -313,7 +313,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			for(TitanOrg item : paginationSupport.getItemList()){
 				BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
 				balanceInfoRequest.setUserId(item.getUserid());
-				synBalanceInfo(balanceInfoRequest,true);//批量同步账户时，只新增账户，不更新余额
+				synBalanceInfo(balanceInfoRequest,false);//批量同步账户时，只新增账户，不更新余额
 			}
 			page++;
 			paginationSupport.setCurrentPage(page);
@@ -325,7 +325,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		int spage = 1;
 		PaginationSupport<TitanOrgSub> spaginationSupport = new PaginationSupport<TitanOrgSub>();
 		spaginationSupport.setPageSize(100);
-		spaginationSupport.setCurrentPage(page);
+		spaginationSupport.setCurrentPage(1);
 		spaginationSupport.setOrderBy(" orgsubid ASC ");
 		spaginationSupport = titanOrgSubDao.selectForPage(null, spaginationSupport);
 		
@@ -346,7 +346,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 		int vpage = 1;
 		PaginationSupport<TitanVirtualOrg> vpaginationSupport = new PaginationSupport<TitanVirtualOrg>();
 		vpaginationSupport.setPageSize(100);
-		vpaginationSupport.setCurrentPage(page);
+		vpaginationSupport.setCurrentPage(1);
 		vpaginationSupport.setOrderBy(" id ASC ");
 		vpaginationSupport = titanVirtualOrgDao.selectForPage(null, vpaginationSupport);
 		

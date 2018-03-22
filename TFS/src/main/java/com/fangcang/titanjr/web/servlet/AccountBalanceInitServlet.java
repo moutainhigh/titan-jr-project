@@ -45,7 +45,7 @@ public class AccountBalanceInitServlet extends HttpServlet{
 			}else{
 				BalanceInfoRequest balanceInfoRequest = new BalanceInfoRequest();
 				balanceInfoRequest.setUserId(orgCode);
-				accountService.synBalanceInfo(balanceInfoRequest,false);//单个账户同步时，则可以更新余额
+				accountService.synBalanceInfo(balanceInfoRequest,true);//单个账户同步时，则可以更新余额
 			}
 			
 			response.getWriter().write("数据初始化完成");

@@ -25,10 +25,10 @@ public interface TitanFinancialAccountService {
     /***
      * 同步余额账户，如果不存在则创建
      * @param balanceInfoRequest
-     * @param isForbidUpdate  是否禁用更新余额
+     * @param isUpdate  当本地账户存在时，是否允许更新余额
      * @return
      */
-    public BaseResponseDTO synBalanceInfo(BalanceInfoRequest balanceInfoRequest,boolean isForbidUpdate) ;
+    public BaseResponseDTO synBalanceInfo(BalanceInfoRequest balanceInfoRequest,boolean isUpdate) ;
     /***
      * 初始化系统所有账户余额数据
      */
