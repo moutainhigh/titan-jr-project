@@ -82,7 +82,25 @@ public class PaymentController extends BaseController {
 				return super.payFailedCallback(model);
 			}
 			
-			//根据支付方式来判定走到具体哪个接口
+			/*if (PayTypeEnum.PERSON_EBANK.equals(payTypeEnum) || PayTypeEnum.COMP_EBANK.equals(payTypeEnum)
+	                || PayTypeEnum.CREDIT_EBANK.equals(payTypeEnum)){
+	            return this.netBankPay(request, model);
+	        }
+
+	        if (PayTypeEnum.QR_WECHAT_URL.equals(payTypeEnum) || PayTypeEnum.QR_ALIPAY_URL.equals(payTypeEnum) ||
+	                PayTypeEnum.QR_ALIPAY.equals(payTypeEnum) || PayTypeEnum.QR_WECHAT.equals(payTypeEnum)
+	                || PayTypeEnum.WECHAT.equals(payTypeEnum)){
+	            return this.qrCodePay(request, model);
+	        }
+	        
+	        if (PayTypeEnum.QUICK_NEW.equals(payTypeEnum)){
+	            return this.quickPay(request, model);
+	        }
+	        
+	        logger.error("【支付】跳转分发失败，payTypeEnum={}", payTypeEnum);
+			return super.payFailedCallback(model);*/
+			
+	        //根据支付方式来判定走到具体哪个接口
 			PayRequestStrategy payRequestStrategy =  StrategyFactory.getPayRequestStrategy(payTypeEnum);
 			if(payRequestStrategy == null){
 				logger.error("【支付】失败，获取相应的支付策略为空");
@@ -96,7 +114,7 @@ public class PaymentController extends BaseController {
 			}
 			super.resetParameter(request,attr);
 			
-			logger.info("【支付】获取跳转地址为：{}", redirectUrl);
+			logger.info("【支付】获取跳转地址为1：{}", WebUtils.getRequestBaseUrl(request)+","+redirectUrl);
 			return "forward:" + redirectUrl;
 			
 		} catch (Exception e) {
@@ -117,6 +135,7 @@ public class PaymentController extends BaseController {
     @RequestMapping(value = "/netBankPay", method = {RequestMethod.GET, RequestMethod.POST})
     public String netBankPay(HttpServletRequest request, Model model) {
     	
+    	logger.info("【网银支付】地址重定向成功");
         try {
         	
 			TitanPayDTO payDTO = WebUtils.switch2RequestDTO(TitanPayDTO.class, request);

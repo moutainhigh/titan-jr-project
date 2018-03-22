@@ -3,6 +3,7 @@ package com.titanjr.checkstand.api;
 import com.titanjr.checkstand.constants.BusiCodeEnum;
 import com.titanjr.checkstand.controller.BaseController;
 import com.titanjr.checkstand.util.JRBeanUtils;
+import com.titanjr.checkstand.util.WebUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +50,8 @@ public class CheckStandController extends BaseController {
 
 			if (busiCodeEnum.equals(BusiCodeEnum.PAY_REQUEST)){
 			    request.setCharacterEncoding("UTF-8");
-			    //return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/pay/entrance.shtml";
-			    return "forward:/pay/entrance.shtml";
+			    return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/pay/entrance.shtml";
+			    //return "forward:/pay/entrance.shtml";
 			}
 			
 			if (busiCodeEnum.equals(BusiCodeEnum.PAY_QUERY)){
