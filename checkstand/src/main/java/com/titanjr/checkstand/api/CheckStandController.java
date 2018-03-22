@@ -50,35 +50,46 @@ public class CheckStandController extends BaseController {
 
 			if (busiCodeEnum.equals(BusiCodeEnum.PAY_REQUEST)){
 			    request.setCharacterEncoding("UTF-8");
-			    return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/pay/entrance.shtml";
 			    //return "forward:/pay/entrance.shtml";
+			    return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/pay/entrance.shtml";
 			}
 			
 			if (busiCodeEnum.equals(BusiCodeEnum.PAY_QUERY)){
 			    request.setCharacterEncoding("UTF-8");
-			    return "forward:/query/entrance.shtml";
+			    //return "forward:/query/entrance.shtml";
+			    return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/query/entrance.shtml";
 			}
 
 			if (busiCodeEnum.equals(BusiCodeEnum.REFUND_REQUEST)){
-			    return "forward:/refund/entrance.shtml";
+			    request.setCharacterEncoding("UTF-8");
+			    //return "forward:/refund/entrance.shtml";
+			    return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/refund/entrance.shtml";
 			}
 			
 			if (busiCodeEnum.equals(BusiCodeEnum.REFUND_QUERY)){
-			    return "forward:/rfQuery/entrance.shtml";
+			    request.setCharacterEncoding("UTF-8");
+			    //return "forward:/rfQuery/entrance.shtml";
+			    return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/rfQuery/entrance.shtml";
 			}
 			
 			if (busiCodeEnum.equals(BusiCodeEnum.AGENT_TRADE)){
+			    request.setCharacterEncoding("UTF-8");
 				return "forward:/agent/entrance.shtml";
+			    //return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/agent/entrance.shtml";
 			}
 			
 			if (busiCodeEnum.equals(BusiCodeEnum.CARD_BIN_QUERY) || busiCodeEnum.equals(BusiCodeEnum.QUICK_PAY_CONFIRM)
 					|| busiCodeEnum.equals(BusiCodeEnum.RE_SEND_MSG) || busiCodeEnum.equals(BusiCodeEnum.CARD_AUTH)
 					|| busiCodeEnum.equals(BusiCodeEnum.CARD_BIND_QUERY) || busiCodeEnum.equals(BusiCodeEnum.CARD_UNBIND)){
-				return "forward:/quick/entrance.shtml";
+			    request.setCharacterEncoding("UTF-8");
+				//return "forward:/quick/entrance.shtml";
+			    return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/quick/entrance.shtml";
 			}
 			
 			if (busiCodeEnum.equals(BusiCodeEnum.ACCOUNT_DOWNLOAD)){
-				return "forward:/download/entrance.shtml";
+			    request.setCharacterEncoding("UTF-8");
+				//return "forward:/download/entrance.shtml";
+			    return "redirect:" + WebUtils.getRequestBaseUrl(request) + "/download/entrance.shtml";
 			}
 			
 			logger.error("【{}】{}未匹配对应的入口", busiCodeEnum.getKey(), busiCodeEnum.getValue());

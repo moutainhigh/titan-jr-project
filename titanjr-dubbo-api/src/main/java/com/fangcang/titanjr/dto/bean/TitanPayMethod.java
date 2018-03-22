@@ -12,14 +12,6 @@ public class TitanPayMethod implements java.io.Serializable {
     private String gatewayURL;
     private String checkKey;
     private String titanjrCheckKey;
-    //checkstand支付结果前台回调pay-app的地址
-    private String csPayConfirmPageURL;
-    //checkstand支付结果后台通知pay-app的地址
-    private String csPayNoticeURL;
-    //checkstand卡密鉴权前台回调pay-app的地址
-    private String csCardAuthPageURL;
-    //checkstand卡密鉴权后台通知pay-app的地址
-    private String csCardAuthNoticeURL;
     private String creator;
     private Date createTime;
 
@@ -65,22 +57,6 @@ public class TitanPayMethod implements java.io.Serializable {
         this.titanjrCheckKey = titanjrCheckKey;
     }
 
-	public String getCsPayConfirmPageURL() {
-		return csPayConfirmPageURL;
-	}
-
-	public void setCsPayConfirmPageURL(String csPayConfirmPageURL) {
-		this.csPayConfirmPageURL = csPayConfirmPageURL;
-	}
-
-	public String getCsPayNoticeURL() {
-		return csPayNoticeURL;
-	}
-
-	public void setCsPayNoticeURL(String csPayNoticeURL) {
-		this.csPayNoticeURL = csPayNoticeURL;
-	}
-
 	public String getCreator() {
         return creator;
     }
@@ -104,20 +80,5 @@ public class TitanPayMethod implements java.io.Serializable {
     public void setPayMethodConfigList(List<TitanPayMethodConfig> payMethodConfigList) {
         this.payMethodConfigList = payMethodConfigList;
     }
-
-	public String getCsCardAuthPageURL() {
-		return csCardAuthPageURL;
-	}
-
-	public void setCsCardAuthPageURL(String csCardAuthPageURL) {
-		this.csCardAuthPageURL = csCardAuthPageURL;
-	}
-
-	public String getCsCardAuthNoticeURL() {
-		return csCardAuthNoticeURL;
-	}
-
-	public void setCsCardAuthNoticeURL(String csCardAuthNoticeURL) {
-		this.csCardAuthNoticeURL = csCardAuthNoticeURL;
-	}
+    
 }
