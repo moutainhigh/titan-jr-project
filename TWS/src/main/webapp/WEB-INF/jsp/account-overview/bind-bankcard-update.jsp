@@ -171,12 +171,8 @@
         		if(result.code=="-1"){
         			bc.updateCardValid._setErrorStyle($(".accountnumber"),result.msg);
         		}else{
-        			if(paramData.userType=='2'){//个人表示绑卡成功
-        				bc.close();
-        				window.location.reload();
-        			}else{
-        				bc.bindResultView();
-        			}
+       				bc.close();
+       				window.location.reload();
         		}
         	},
         	complete:function()

@@ -309,7 +309,7 @@ public class OrderOperServiceImpl implements OrderOperService {
             }
 
         } else {
-            logger.error("收付款方账户异常，付款方:{}，收款方：{}", payerAccount, payeeAccount);
+            logger.error("收付款方账户异常，付款方:{}，收款方：{}", Tools.gsonToString(payerAccount), Tools.gsonToString(payeeAccount));
             ResponseUtils.getSysErrorResp(transferResponse);
             return transferResponse;
         }

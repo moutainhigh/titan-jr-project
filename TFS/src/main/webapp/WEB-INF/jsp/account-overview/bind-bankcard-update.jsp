@@ -169,16 +169,12 @@
         		if(result.code=="-1"){
         			bc.updateCardValid._setErrorStyle($(".accountnumber"),result.msg);
         		}else{
-        			if(paramData.userType=='2'){//个人表示绑卡成功
-        				bc.close();
-        				if(typeof(bind_nstep)!='undefined'&&bind_nstep=='withdraw'){
-        					account_withdraw();
-        				}else{
-        					window.location.reload();
-        				}
-        			}else{
-        				bc.bindResultView();
-        			}
+       				bc.close();
+       				if(typeof(bind_nstep)!='undefined'&&bind_nstep=='withdraw'){
+       					account_withdraw();
+       				}else{
+       					window.location.reload();
+       				}
         		}
         	},
         	complete:function()

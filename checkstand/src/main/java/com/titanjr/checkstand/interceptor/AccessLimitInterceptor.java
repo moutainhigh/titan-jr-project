@@ -37,6 +37,7 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse httpServletResponse, Object o) throws Exception {
 
+    	logger.info("拦截器1:"+request.getRequestURI());	
         //单独处理同一张单，一个时间间隔内不能重复支付的问题
         if ("/checkstand/resultPage.shtml".equals(request.getRequestURI())){
             return true;
@@ -59,13 +60,14 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
                 }
             }
         }
-
+        	
         //只处理最终端的请求
         if (!"/checkstand/payment.shtml".equals(request.getRequestURI()) &&
                 !"/resultPage.shtml".equals(request.getRequestURI()) &&
                 request.getRequestURI().indexOf("entrance") < 0 &&
                 request.getRequestURI().indexOf("callback") < 0) {
             BusiCodeEnum busiCodeEnum = JRBeanUtils.getBusiCode(request);
+            logger.info("拦截器3，频率检查:"+busiCodeEnum);
             if (busiCodeEnum == null) {
                 logger.info("未匹配到操作类型，请求参数为{}; 当前请求路径是{}",
                         CommonUtil.mapString(request.getParameterMap()), request.getRequestURI());
