@@ -115,8 +115,9 @@ public class PaymentController extends BaseController {
 			}
 			super.resetParameter(request,attr);
 			
-			logger.info("【支付】获取跳转地址为1：{}", WebUtils.getRequestBaseUrl(request)+","+redirectUrl);
-			return "forward:" + redirectUrl;
+			logger.info("【支付】获取重定向地址为：{}", WebUtils.getRequestBaseUrl(request) + redirectUrl);
+			//return "forward:" + redirectUrl;
+			return "redirect:" + WebUtils.getRequestBaseUrl(request) + redirectUrl;
 			
 		} catch (Exception e) {
 			
