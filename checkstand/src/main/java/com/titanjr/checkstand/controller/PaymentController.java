@@ -74,6 +74,8 @@ public class PaymentController extends BaseController {
      */
     @RequestMapping(value = "/entrance", method = {RequestMethod.GET, RequestMethod.POST})
     public String entrance(HttpServletRequest request, RedirectAttributes attr, Model model) {
+    	
+    	logger.info("CHECKSTAND PAY");
         
         try {
         	

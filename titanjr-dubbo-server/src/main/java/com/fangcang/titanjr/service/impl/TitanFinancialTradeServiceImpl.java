@@ -2460,7 +2460,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		QrCodeResponse qrCodeResponse = new QrCodeResponse();
 		try {
 			List<NameValuePair> params = this.getCommonHttpParams(rechargeDataDTO);
-			log.info("微信调用网关接口参数:" + JSONSerializer.toJSON(params));
+			log.info("微信调用网关接口参数:" + JSONSerializer.toJSON(params) + "gateWayUrl：" + rechargeDataDTO.getGateWayUrl());
 			
 			   HttpPost httpPost = new HttpPost(rechargeDataDTO.getGateWayUrl());
 //		        httpPost.setConfig(requestConfig);
