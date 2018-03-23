@@ -295,10 +295,10 @@ public class AccountServiceImpl implements AccountService {
         }
 
         //TODO 正式网站 获取网关地址
-        //String paymentURL = InterfaceURlConfig.checkstand_GateWayURL;
+        String paymentURL = InterfaceURlConfig.checkstand_GateWayURL;
         
         //TODO 测试网址
-        String paymentURL = "http://local.fangcang.com/checkstand/payment.shtml";
+        //String paymentURL = "http://local.fangcang.com/checkstand/payment.shtml";
 //        paymentURL = "http://192.168.0.14:8090/checkstand/payment.shtml";
         //发起代付 返回状态
         //对应于TLAgentTradeRequest对象

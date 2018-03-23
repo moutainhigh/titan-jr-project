@@ -216,6 +216,7 @@ public class TitanPaymentController extends BaseController {
         	recordRechargeRequest.setTransOrderId(transOrderDTO.getTransid());
         	recordRechargeRequest.setProductId(transOrderDTO.getProductid());
         	recordRechargeRequest.setUserId(transOrderDTO.getUserid());
+        	
         	accountRecordService.recharge(recordRechargeRequest);
         	
         	// update recharge order
@@ -267,31 +268,26 @@ public class TitanPaymentController extends BaseController {
             		log.info("begin to transfer:"+JsonConversionTool.toJson(transferRequest));
     	        	transferResponse = titanFinancialTradeService.transferAccounts(transferRequest);
     	        	log.info("the result of transfer :"+JsonConversionTool.toJson(transferResponse)+",orderid:"+transferRequest.getOrderid());
-    	        	
-    	        	//新版收银台如果有手续费，需要将手续费转到收益子账户
-    	        	if(transferResponse.isResult()){
-    	        		if(TitanjrVersionEnum.VERSION_2.getKey().equals(transOrderDTO.getVersion())){
-    	        			if(transOrderDTO.getReceivedfee() != null && transOrderDTO.getReceivedfee() > 0){
-    	        				log.info("began transfer to revenueAccount");
-    	        				TransferRequest transferRevenueAccountRequest = titanPaymentService
-    	        						.getRevenueAccountTransferRequest(transOrderDTO);
-    	        				transferResponse = titanFinancialTradeService.transferAccounts(transferRevenueAccountRequest);
-    	        				if(transferResponse.isResult()){
-    	        					log.info("transfer to revenueAccount success, transOrderId: " + transOrderDTO.getTransid());
-    	        					businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
-    	        				}else{
-    	        					log.error("transfer to revenueAccount success faild, transOrderId: " + transOrderDTO.getTransid());
-    	        					titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Transfer_revenueAccount_Fail,orderStatusEnum.getStatus());
-    	        				}
-    	        			}
-    	        		}
-    	        	}
+    	        	 
         		}
 	        	
 	        	if(transferResponse != null && !transferResponse.isResult()){//转账失败
 	        		orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
 	        		
 	        	}else{
+	        		//充值或者支付有手续费，需要将手续费转到收益子账户
+        			if(transOrderDTO.getReceivedfee() != null && transOrderDTO.getReceivedfee() > 0){
+        				TransferRequest transferRevenueAccountRequest = titanPaymentService
+        						.getRevenueAccountTransferRequest(transOrderDTO);
+        				transferResponse = titanFinancialTradeService.transferAccounts(transferRevenueAccountRequest);
+        				if(transferResponse.isResult()){
+        					businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
+        				}else{
+        					log.error("transfer to revenueAccount success faild, transOrderId: " + transOrderDTO.getTransid());
+        					titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Transfer_revenueAccount_Fail,orderStatusEnum.getStatus());
+        				}
+        			}
+	        		
 	        		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
 	        		orderStatusEnum = OrderStatusEnum.TRANSFER_SUCCESS;
 	        		isNotify = true;
@@ -348,6 +344,7 @@ public class TitanPaymentController extends BaseController {
     	}
     	
 	}
+	
 	
 	private boolean validateOrderStatus(String orderNo){
 

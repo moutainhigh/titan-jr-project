@@ -353,7 +353,7 @@ public class TitanTradeController extends BaseController {
 				}
 				url = "/withdraw/account-withdraw.action?userId="
 						+ orderRequest.getUserId() + "&tfsUserId=" + tfsUserId
-						+ "&fcUserId=" + fcUserId + "&orderNo="
+						+ "&fcUserId=" + fcUserId + "&orderNo=" 
 						+ orderCreateResponse.getOrderNo();
 			} else {
 				// 获取收银台地址

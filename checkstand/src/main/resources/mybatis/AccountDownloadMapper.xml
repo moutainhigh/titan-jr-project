@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.titanjr.checkstand.dao.AccountDownloadDao">
+
+    <insert id="batchSave" parameterType="java.util.List">
+        INSERT INTO `t_account_download` (
+	      `merchantNo`,
+	      `orderNo`,
+		  `partnerOrderNo`,
+		  `channelCode`,
+		  `tradeDate`,
+		  `settlDate`,
+		  `tradeType`,
+		  `tradeTypeDes`,
+		  `tradeAmount`,
+		  `settlAmount`,
+		  `fee`,
+		  `bankCardNo`,
+		  `payer`,
+		  `payee`
+        )
+      VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+		(
+		  #{item.merchantNo},
+	      #{item.orderNo},
+		  #{item.partnerOrderNo},
+		  #{item.channelCode},
+		  #{item.tradeDate},
+		  #{item.settlDate},
+		  #{item.tradeType},
+		  #{item.tradeTypeDes},
+		  #{item.tradeAmount},
+		  #{item.settlAmount},
+		  #{item.fee},
+		  #{item.bankCardNo},
+		  #{item.payer},
+		  #{item.payee}
+		)
+	  </foreach>
+    </insert>
+
+</mapper>

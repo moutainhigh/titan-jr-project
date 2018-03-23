@@ -26,6 +26,7 @@ import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.util.BeanConvertor;
 import com.fangcang.titanjr.common.util.Tools;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
+import com.fangcang.titanjr.dto.bean.PayMethodConfigDTO;
 import com.fangcang.titanjr.dto.bean.SysConfig;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
@@ -67,11 +68,12 @@ public class TitanCommonServiceImpl implements TitanCommonService {
 			
 			//获取系统配置
 			SysConfig config = titanFinancialUtilService.querySysConfig();
+			PayMethodConfigDTO payMethodConfigDTO = titanFinancialUtilService.getPayMethodConfigDTO(null);
 			confirmRequest.setSignMsg(SignMsgBuilder.getPayCallbackSignMsg(confirmRequest, config.getRsCheckKey()));
 			
-			payCallBackResponse.setPayConfirmPageUrl(config.getCsPayConfirmPageURL());
+			payCallBackResponse.setPayConfirmPageUrl(payMethodConfigDTO.getPageurl());
 			payCallBackResponse.setRechargeResultConfirmRequest(confirmRequest);
-			logger.info("【支付结果前台回调】地址：{}", config.getCsPayConfirmPageURL());
+			logger.info("【支付结果前台回调】地址：{}", payMethodConfigDTO.getNotifyurl());
 			
 			payCallBackResponse.putSuccess();
 			return payCallBackResponse;
@@ -94,10 +96,11 @@ public class TitanCommonServiceImpl implements TitanCommonService {
 		try {
 			
 			SysConfig config = titanFinancialUtilService.querySysConfig();
+			PayMethodConfigDTO payMethodConfigDTO = titanFinancialUtilService.getPayMethodConfigDTO(null);
 			confirmRequest.setSignMsg(SignMsgBuilder.getPayCallbackSignMsg(confirmRequest, config.getRsCheckKey()));
 			
-			logger.info("【支付结果后台通知】地址：{}", config.getCsPayNoticeURL());
-			HttpPost httpPost = new HttpPost(config.getCsPayNoticeURL());
+			logger.info("【支付结果后台通知】地址：{}", payMethodConfigDTO.getNotifyurl());
+			HttpPost httpPost = new HttpPost(payMethodConfigDTO.getNotifyurl());
 			List<NameValuePair> params = BeanConvertor.beanToList(confirmRequest);
 			logger.info("【支付结果后台通知】请求参数：{}" ,confirmRequest.toString());
 			
@@ -146,8 +149,8 @@ public class TitanCommonServiceImpl implements TitanCommonService {
 		
 		try {
 			
-			SysConfig config = titanFinancialUtilService.querySysConfig();
-			titanCardAuthResponse = this.quick2TitanCardAuthCallbackRequest(rbCardAuthResponse, config);
+			PayMethodConfigDTO payMethodConfigDTO = titanFinancialUtilService.getPayMethodConfigDTO(null);
+			titanCardAuthResponse = this.quick2TitanCardAuthCallbackRequest(rbCardAuthResponse, payMethodConfigDTO.getRb_CardAuth_Pageurl());
 			logger.info("【卡密鉴权前台回调】参数：{}", titanCardAuthResponse.toString());
 			
 			return titanCardAuthResponse;
@@ -186,7 +189,7 @@ public class TitanCommonServiceImpl implements TitanCommonService {
 	
 
 	private TitanCardAuthResponse quick2TitanCardAuthCallbackRequest(RBCardAuthResponse rbCardAuthResponse, 
-			SysConfig config){
+			String csCardAuthPageURL){
 		TitanCardAuthResponse titanCardAuthResponse = new TitanCardAuthResponse();
 		titanCardAuthResponse.setMerchantNo(SysConstant.RS_MERCHANT_NO);
 		titanCardAuthResponse.setBusiCode(BusiCodeEnum.CARE_SCEURITY_VERIFY.getKey());
@@ -204,7 +207,7 @@ public class TitanCommonServiceImpl implements TitanCommonService {
 		titanCardAuthResponse.setCardPassCheckMsg(rbCardAuthResponse.getResult_msg());
 		titanCardAuthResponse.setVersion(SysConstant.RS_VERSION);
 		titanCardAuthResponse.setSignType(SysConstant.RS_SIGN_TYPE);
-		titanCardAuthResponse.setTitanCardAuthCallbackPageUrl(config.getCsCardAuthPageURL());
+		titanCardAuthResponse.setTitanCardAuthCallbackPageUrl(csCardAuthPageURL);
 		return titanCardAuthResponse;
 	}
 

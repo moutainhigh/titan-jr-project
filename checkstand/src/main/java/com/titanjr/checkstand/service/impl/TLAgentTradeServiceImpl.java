@@ -10,6 +10,7 @@ package com.titanjr.checkstand.service.impl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.ArrayList;
@@ -20,9 +21,12 @@ import java.util.zip.ZipInputStream;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64InputStream;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.fangcang.titanjr.common.enums.WithDrawStatusEnum;
@@ -60,10 +64,21 @@ import com.titanjr.checkstand.util.tlUtil.bean.TransRet;
 public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(TLAgentTradeServiceImpl.class);
-	private final String resUrl = this.getClass().getResource("/").getPath().replace("classes/", "");
+	//private String resUrl = this.getClass().getResource("/").getPath().replace("classes/", "");
+	private static String resUrl;
 
 	@Resource
 	private TitanSysconfigService titanSysconfigService;
+	
+	private static ApplicationContext appCtx = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");;
+	static{
+		try {
+			resUrl = appCtx.getResource("/").getFile().getPath().replace("classes", "");
+		} catch (IOException e) {
+			logger.error("初始化applicationContext异常：", e);
+		}
+	}
+	
 	
 	@Override
 	public TitanAgentPayResponse tlAgentPay(TLAgentTradeRequest tlAgentTradeRequest) {
@@ -181,6 +196,9 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 	 */
 	private String sendXml(TLAgentTradeRequest tlAgentTradeRequest, String url) throws Exception{
 		
+		logger.info("resUrl：{}", resUrl);
+		//logger.info("resUrl_pro：{}", resUrl_pro);
+		
 		String xml = XmlTools.buildXml(tlAgentTradeRequest, true);
 		xml = XmlTools.signMsg(xml, resUrl+SysConstant.PFX_PATH, SysConstant.PFX_PWD, false);
 		
@@ -214,9 +232,14 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 				trxcode = retXml.substring(begin, end);
 			}
 		}
+		TransRet ret = null;
 		tlAgentTradeResponse = XmlTools.parseRsp(retXml);
 		TLAgentInfoResponseDTO info = tlAgentTradeResponse.getINFO();
-		TransRet ret = (TransRet) tlAgentTradeResponse.getTrxData().get(0);
+		@SuppressWarnings("rawtypes")
+		List trxData = tlAgentTradeResponse.getTrxData();
+		if(CollectionUtils.isNotEmpty(trxData)){//某些错误这个对象为空
+			ret = (TransRet) trxData.get(0);
+		}
 		titanAgentPayResponse.setOrderNo(info.getREQ_SN());
 		titanAgentPayResponse.setTradeCode(info.getTRX_CODE());
 		
@@ -251,7 +274,7 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 				
 			}else{
 				
-				logger.error("交易失败(最终结果)，失败原因：", ret.getERR_MSG());
+				logger.error("交易失败(最终结果)，失败原因：", ret==null?"无":ret.getERR_MSG());
 				titanAgentPayResponse.putErrorResult(RSErrorCodeEnum.build(ret.getERR_MSG()));
 				
 			}

@@ -625,7 +625,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 					}
 					response.setReturnCode(rsp.getErrorCode());
 					response.setReturnMsg(errorMsg);
-					log.error("调用接口WheatfieldOrdernQueryRequest异常：" + errorMsg);
+					log.error("调用接口ordernQuery异常：" + errorMsg);
 					return response;
 				} else {
 					response.setSuccess(true);
@@ -652,7 +652,7 @@ public class RSAccTradeManagerImpl implements RSAccTradeManager {
 		}catch(Exception e){
 			response.setReturnCode(RSInvokeErrorEnum.UNKNOWN_ERROR.returnCode);
 			response.setReturnMsg(e.getMessage());
-			log.error("调用orderSaveWithCardRequest过程出现未知异常", e);
+			log.error("调用ordernQuery过程出现未知异常", e);
 		}
 		return response;
 	}
