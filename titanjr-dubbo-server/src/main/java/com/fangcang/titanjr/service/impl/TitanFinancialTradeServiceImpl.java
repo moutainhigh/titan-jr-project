@@ -287,14 +287,14 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 		if (null == transOrderResponse
 				|| null == transOrderResponse.getTransOrder()) 
 		{
-			log.error("订单不存在");
+			log.error("订单不存在,payorderno:"+titanPaymentRequest.getPayOrderNo());
 			orderResponse.putErrorResult("订单不存在");
 			return orderResponse;
 		}
 		TransOrderDTO transOrderDTO = transOrderResponse.getTransOrder();
 		if(OrderStatusEnum.isPaySuccess(transOrderDTO.getStatusid()))
 		{
-			log.error("支付成功,请勿重复支付");
+			log.error("支付成功,请勿重复支付,orderid:"+transOrderDTO.getOrderid());
 			orderResponse.putErrorResult("支付成功,请勿重复支付！");
 			return orderResponse;
 		}
@@ -542,16 +542,16 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			req.setAdjusttype(orderRequest.getAdjusttype()); // 调整类型
 			req.setAdjustcontent(orderRequest.getAdjustcontent()); // 调整内容
 			req.setUserrelateid(orderRequest.getUserrelateid()); // 关联用户id（若有第三方则必须填写）
-			if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanPaymentRequest.getJrVersion())){
+			//if(TitanjrVersionEnum.VERSION_1.getKey().equals(titanPaymentRequest.getJrVersion())){
 				req.setUnitprice(orderRequest.getReceivedfee());//设置实收的手续费
 				//充值收银台不收手续费（做成可配置，这里可以去掉）
 				/*if(PaySourceEnum.RECHARGE.getDeskCode().equals(titanPaymentRequest.getPaySource())){
 					req.setUnitprice("0");
 					orderRequest.setReceivedfee("0");
 				}*/
-			}else{
+			//}else{
 				req.setUnitprice("0"); //新版收银台，支付时不扣0，在转账的时候再计算手续费
-			}
+			//}
 			return rsAccTradeManager.operateOrder(req);
 		} catch (Exception e) {
 			throw new Exception(e);

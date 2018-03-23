@@ -216,6 +216,7 @@ public class TitanPaymentController extends BaseController {
         	recordRechargeRequest.setTransOrderId(transOrderDTO.getTransid());
         	recordRechargeRequest.setProductId(transOrderDTO.getProductid());
         	recordRechargeRequest.setUserId(transOrderDTO.getUserid());
+        	
         	accountRecordService.recharge(recordRechargeRequest);
         	
         	// update recharge order
@@ -270,7 +271,7 @@ public class TitanPaymentController extends BaseController {
     	        	
     	        	//新版收银台如果有手续费，需要将手续费转到收益子账户
     	        	if(transferResponse.isResult()){
-    	        		if(TitanjrVersionEnum.VERSION_2.getKey().equals(transOrderDTO.getVersion())){
+    	        		//if(TitanjrVersionEnum.VERSION_2.getKey().equals(transOrderDTO.getVersion())){
     	        			if(transOrderDTO.getReceivedfee() != null && transOrderDTO.getReceivedfee() > 0){
     	        				log.info("began transfer to revenueAccount");
     	        				TransferRequest transferRevenueAccountRequest = titanPaymentService
@@ -285,7 +286,7 @@ public class TitanPaymentController extends BaseController {
     	        				}
     	        			}
     	        		}
-    	        	}
+    	        	//}
         		}
 	        	
 	        	if(transferResponse != null && !transferResponse.isResult()){//转账失败
@@ -348,6 +349,7 @@ public class TitanPaymentController extends BaseController {
     	}
     	
 	}
+	
 	
 	private boolean validateOrderStatus(String orderNo){
 
