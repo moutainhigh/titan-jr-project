@@ -149,10 +149,10 @@ public class AgentTradeController extends BaseController {
 			trans.setAMOUNT(agentPayDTO.getTradeAmount());
 			trans.setBANK_CODE(agentPayDTO.getBankInfo());
 			trans.setCURRENCY(agentPayDTO.getCurrency());
-			trans.setPROVINCE(agentPayDTO.getProvince());
+			//trans.setPROVINCE(agentPayDTO.getProvince());
 			trans.setID_TYPE(agentPayDTO.getIdType());
 			trans.setID(agentPayDTO.getIdCode());
-			trans.setCITY(agentPayDTO.getCity());
+			//trans.setCITY(agentPayDTO.getCity());
 			tlAgentTradeRequest.addTrx(trans);
 			tlAgentTradeRequest.setRequestType(RequestTypeEnum.AGENT_TRADE.getKey());
 			titanAgentPayResponse = tlAgentTradeService.tlAgentPay(tlAgentTradeRequest);

@@ -19,7 +19,8 @@
            				http://code.alibabatech.com/schema/dubbo/dubbo.xsd"
 		default-autowire="byName">
 	
-	<bean id="initService" class="com.titanjr.checkstand.service.impl.InitServiceImpl" init-method="init" />  
+	<bean id="initService1" class="com.titanjr.checkstand.service.impl.InitServiceImpl" init-method="init" />  
+	<bean id="initService2" class="com.titanjr.checkstand.service.impl.TLAgentTradeServiceImpl" init-method="init" />  
 	
 	<dubbo:application name="checkstand_consumer" />
 	<dubbo:consumer check="false"/>

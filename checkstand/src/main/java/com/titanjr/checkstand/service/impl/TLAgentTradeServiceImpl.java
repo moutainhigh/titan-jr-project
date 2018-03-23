@@ -25,8 +25,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.fangcang.titanjr.common.enums.WithDrawStatusEnum;
@@ -70,12 +70,14 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 	@Resource
 	private TitanSysconfigService titanSysconfigService;
 	
-	private static ApplicationContext appCtx = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");;
-	static{
+	@Autowired
+	private ApplicationContext appCtx;
+	
+	public void init(){
 		try {
-			resUrl = appCtx.getResource("/").getFile().getPath().replace("classes", "");
+			resUrl = appCtx.getResource("classpath:").getFile().getPath().replace("classes", "");
 		} catch (IOException e) {
-			logger.error("初始化applicationContext异常：", e);
+			logger.error("初始化appCtx异常：", e);
 		}
 	}
 	
