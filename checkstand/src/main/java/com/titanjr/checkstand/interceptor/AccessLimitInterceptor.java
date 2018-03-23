@@ -39,7 +39,7 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
 
     	logger.info("拦截器1:"+request.getRequestURI());	
         //单独处理同一张单，一个时间间隔内不能重复支付的问题
-        if ("/checkstand/resultPage.shtml".equals(request.getRequestURI())){
+        if ("/checkstand/resultPage.shtml".equals(request.getRequestURI()) || "/checkstand/pathTest.shtml".equals(request.getRequestURI())){
             return true;
         }
         if (request.getRequestURI().indexOf("/pay") > -1 && !"/checkstand/payment.shtml".equals(request.getRequestURI()) &&

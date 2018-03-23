@@ -4,16 +4,20 @@ import com.titanjr.checkstand.constants.BusiCodeEnum;
 import com.titanjr.checkstand.controller.BaseController;
 import com.titanjr.checkstand.util.JRBeanUtils;
 import com.titanjr.checkstand.util.WebUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * 网关支付总入口
@@ -100,6 +104,25 @@ public class CheckStandController extends BaseController {
 
 		model.addAttribute("errorMsg", "请求频率过高，请稍后重试");
 		return "payment/resultPage";
+	}
+
+
+	@Autowired
+	ApplicationContext applicationContext;
+
+	@RequestMapping(value = "/pathTest", method = {RequestMethod.GET, RequestMethod.POST})
+	@ResponseBody
+	public String pathTest(HttpServletRequest request) {
+		String result = null;
+		try {
+			String testPath = applicationContext.getResource("classpath:").getFile().getPath();
+			testPath = testPath.replace("classes","certify/tl/20022200000978704.p12");
+			File testFile = new File(testPath);
+			result = "filePath:" + testPath + ",======result:" + testFile.exists();
+		} catch (IOException e) {
+			result="error";
+		}
+		return result;
 	}
 
 }
