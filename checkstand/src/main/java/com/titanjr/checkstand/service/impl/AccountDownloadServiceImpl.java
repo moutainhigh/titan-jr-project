@@ -58,8 +58,10 @@ import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.JsonUtil;
 import com.fangcang.util.StringUtil;
+import com.titanjr.checkstand.constants.GatewayDownloadTradeTypeEnum;
+import com.titanjr.checkstand.constants.GatewayDwonloadErrCodeEnum;
 import com.titanjr.checkstand.constants.PayTypeEnum;
-import com.titanjr.checkstand.constants.QrCodeTradeTypeEnum;
+import com.titanjr.checkstand.constants.QrCodeDownloadTradeTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dao.AccountDownloadDao;
@@ -119,6 +121,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 			
 			String fileAsString = ""; // 签名信息前的对账文件内容
 			String fileSignMsg = ""; // 文件签名信息
+			@SuppressWarnings("unused")
 			boolean isVerified = false; // 验证签名结果
 			// 建立连接
 			URL url = new URL(gateWayConfigDTO.getGateWayUrl() 
@@ -143,8 +146,13 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 			}
 			fileReader.close();
 			fileAsString = fileBuf.toString();
+			if(GatewayDwonloadErrCodeEnum.isExist(fileAsString.replace("\r\n", ""))){
+				logger.error("【通联-网关支付对账文件下载】失败：{}", GatewayDwonloadErrCodeEnum.getValue(fileAsString.replace("\r\n", "")));
+				response.putErrorResult(RSErrorCodeEnum.build(GatewayDwonloadErrCodeEnum.getValue(fileAsString.replace("\r\n", ""))));
+				return response;
+			}
 			
-			// 验证签名：先对文件内容计算 MD5 摘要，再将 MD5 摘要作为明文进行签名验证
+			//验证签名：先对文件内容计算 MD5 摘要，再将 MD5 摘要作为明文进行签名验证
 			String fileMd5 = SecurityUtil.MD5Encode(fileAsString);
 			isVerified = SecurityUtil.verifyByRSA(resUrl+SysConstant.MD5_CER_PATH, fileMd5.getBytes(), Base64.decode(fileSignMsg));
 			/*if (isVerified) {
@@ -159,22 +167,10 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 				fwriter.close();
 				logger.info("文件临时保存为："+accountLocal.getPath()+"\\"+fileName);
 				
-				//登录ftp并上传文件
-				FtpUtil util = null;
-				FTPConfigResponse configResponse = titanSysconfigService.getFTPConfig();
-				util = new FtpUtil(configResponse.getFtpServerIp(),
-						configResponse.getFtpServerPort(),
-						configResponse.getFtpServerUser(),
-						configResponse.getFtpServerPassword());
-				util.ftpLogin();
-				logger.info("login ftp success");
-				File file = new File(accountLocal.getPath()+"\\"+fileName);
-				InputStream inputStream = new FileInputStream(file);
-				util.uploadStream(fileName, inputStream, FtpUtil.UPLOAD_PATH_TL_AGENT_CHECKING+SysConstant.TL_GATEWAY_DIR);
-				logger.info("upload to ftp success fileName=" + tlGatewayPayDownloadRequest.getSettleDate()+".txt");
-				util.ftpLogOut();
-				
-				logger.info("网关支付对账文件下载并上传成功");
+				//对账文件信息保存到数据库
+				this.saveGatewayDowanloadInfo(fileAsString);
+				//对账文件上传到房仓FTP
+				this.uploadFtp(accountLocal.getPath()+"\\"+fileName, fileName);
 				
 			/*} else {
 				logger.error("【通联-网关支付对账文件下载】签名验证失败，丢弃该文件，日期：{}", tlGatewayPayDownloadRequest.getSettleDate());
@@ -329,7 +325,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 					//对账文件信息保存到数据库
 					this.saveQrCodeDowanloadInfo(localZipPath.getPath()+"\\"+fileName+".xlsx");
 					//对账文件上传到房仓FTP
-					
+					uploadFtp(localZipPath.getPath()+"\\"+fileName+".xlsx", fileName+".xlsx");
 					
 				}
 				return response;
@@ -436,7 +432,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 	 * @author Jerry
 	 * @date 2018年3月16日 下午3:39:41
 	 */
-	private boolean saveQrCodeDowanloadInfo(String realPath){
+	private boolean saveQrCodeDowanloadInfo(String filePath){
 		
 		List<AccountDownloadDTO> list = new ArrayList<AccountDownloadDTO>();
 		String merchantNo = "";
@@ -444,7 +440,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 		String channelCode = SysConstant.TL_CHANNEL_CODE;
         try{
         	
-            File file = new File(realPath);
+            File file = new File(filePath);
             InputStream str = new FileInputStream(file);
             XSSFWorkbook xwb = new XSSFWorkbook(str);  //利用poi读取excel文件流
             XSSFSheet st = xwb.getSheetAt(0);  //读取sheet的第一个工作表
@@ -458,7 +454,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
             		merchantNo = cell.getStringCellValue();
             	}
             }
-            //遍历对账明细，提取信息
+            //遍历对账明细，提取信息（如果通联的excel对账文件格式有变化，数据会不准）
             for (int i = 10; i < rows-4; i++) {
             	XSSFCell cell = null;
             	AccountDownloadDTO accountDownloadDTO = new AccountDownloadDTO();
@@ -480,7 +476,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
             	cell = row.getCell(2);
             	String tradeTypeDes = cell.getStringCellValue();
             	accountDownloadDTO.setTradeTypeDes(tradeTypeDes);
-            	accountDownloadDTO.setTradeType(QrCodeTradeTypeEnum.getValue(tradeTypeDes));
+            	accountDownloadDTO.setTradeType(QrCodeDownloadTradeTypeEnum.getValue(tradeTypeDes));
             	//交易金额
             	cell = row.getCell(9);
             	accountDownloadDTO.setTradeAmount(cell.getStringCellValue());
@@ -506,5 +502,88 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
         }
          
     }
+	
+	private boolean saveGatewayDowanloadInfo(String fileInfo){
+		
+		try {
+			
+			List<AccountDownloadDTO> list = new ArrayList<AccountDownloadDTO>();
+			String[] array = fileInfo.split("\r\n");
+			
+			for (int i = 1; i < array.length; i++) {
+				
+				String[] strs = array[i].split("\\|");
+				AccountDownloadDTO accountDownloadDTO = new AccountDownloadDTO();
+				//商户号
+				accountDownloadDTO.setMerchantNo(strs[2]);
+				//商户订单号
+				accountDownloadDTO.setOrderNo(strs[4]);
+				//第三方订单号
+				accountDownloadDTO.setPartnerOrderNo(strs[5]);
+				//第三方编码【01通联 02融宝】
+				accountDownloadDTO.setChannelCode(SysConstant.TL_CHANNEL_CODE);
+				//交易时间    yyyy-MM-dd HH:mm:ss
+				accountDownloadDTO.setTradeDate(strs[3]);
+				//结算日期    yyyy-MM-dd
+				accountDownloadDTO.setSettlDate(strs[1]);
+				//交易类型  1充值  2退款  3冲销   4提现  0未知类型
+				String tradeTypeDes = strs[0];
+				accountDownloadDTO.setTradeTypeDes(tradeTypeDes);
+				accountDownloadDTO.setTradeType(GatewayDownloadTradeTypeEnum.getTradeType(tradeTypeDes));
+				//交易金额
+				accountDownloadDTO.setTradeAmount(strs[6]);
+				//清算金额
+				accountDownloadDTO.setSettlAmount(strs[8]);
+				//手续费
+				accountDownloadDTO.setFee(strs[7]);
+				
+				list.add(accountDownloadDTO);
+				
+			}
+			
+			int saveCount = accountDownloadDao.batchSave(list);
+			if(saveCount > 0){
+				logger.info("对账文件信息保存成功，共保存{}条记录", saveCount);
+				return true;
+			}
+			return false;
+			
+		} catch (Exception e) {
+			
+			logger.error("网关支付对账信息保存到数据库异常：", e);
+       	 	return false;
+			
+		}
+		
+	}
+	
+	/**
+	 * 上传房仓FTP
+	 * @author Jerry
+	 * @date 2018年3月22日 下午4:50:36
+	 * @param filePath
+	 * @param fileName
+	 * @throws Exception
+	 */
+	private void uploadFtp(String filePath, String fileName) throws Exception{
+		
+		//登录ftp并上传文件
+		FtpUtil util = null;
+		FTPConfigResponse configResponse = titanSysconfigService.getFTPConfig();
+		util = new FtpUtil(configResponse.getFtpServerIp(),
+				configResponse.getFtpServerPort(),
+				configResponse.getFtpServerUser(),
+				configResponse.getFtpServerPassword());
+		util.ftpLogin();
+		logger.info("login ftp success");
+		File file = new File(filePath);
+		InputStream inputStream = new FileInputStream(file);
+		util.uploadStream(fileName, inputStream, FtpUtil.UPLOAD_PATH_TL_AGENT_CHECKING+SysConstant.TL_QECODE_DIR);
+		logger.info("upload to ftp success fileName=" + fileName);
+		util.ftpLogOut();
+		
+		logger.info("网关支付对账文件下载并上传成功");
+		
+	}
 
 }

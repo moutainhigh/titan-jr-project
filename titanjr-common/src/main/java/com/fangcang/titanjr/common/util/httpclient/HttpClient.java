@@ -205,8 +205,7 @@ public class HttpClient {
 				.setDefaultRequestConfig(defaultRequestConfig).build();
 		RequestConfig requestConfig = RequestConfig.copy(defaultRequestConfig)
 				.build();
-		httpPost.setHeader("Content-Type",
-				"application/x-www-form-urlencoded;charset=UTF-8");
+		httpPost.setHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
 		httpPost.setConfig(requestConfig);
 		HttpResponse response = null;
 		try {
@@ -214,6 +213,15 @@ public class HttpClient {
 				httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 			}
 			response = httpclient.execute(httpPost);
+			if (null != response) {
+	            if (response.getStatusLine().getStatusCode() == 302) {
+	                Header header = response.getFirstHeader("Location");
+	                //重定向地址
+	                String location = header.getValue();
+	                httpPost = new HttpPost(location);
+	                response = httpRequest(params, httpPost);
+	            }
+	        }
 		} catch (UnsupportedEncodingException e) {
 			log.error(Tools.getStringBuilder().append("httpclient 请求 ,UnsupportedEncodingException异常，url:  ").append(httpPost.getURI()).append(",param:").append(Tools.gsonToString(params))+"，错误信息："+e.getMessage(), e);
 		} catch (ClientProtocolException e) {

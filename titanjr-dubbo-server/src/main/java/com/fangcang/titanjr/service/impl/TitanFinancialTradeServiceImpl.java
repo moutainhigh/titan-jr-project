@@ -38,7 +38,6 @@ import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
 import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.enums.OrderStatusEnum;
 import com.fangcang.titanjr.common.enums.PayerTypeEnum;
-import com.fangcang.titanjr.common.enums.ROPErrorEnum;
 import com.fangcang.titanjr.common.enums.ReqstatusEnum;
 import com.fangcang.titanjr.common.enums.SupportBankEnum;
 import com.fangcang.titanjr.common.enums.TitanMsgCodeEnum;
@@ -47,7 +46,6 @@ import com.fangcang.titanjr.common.enums.TradeTypeEnum;
 import com.fangcang.titanjr.common.enums.TransOrderTypeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.enums.TransfertypeEnum;
-import com.fangcang.titanjr.common.factory.HessianProxyBeanFactory;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.GenericValidate;
@@ -78,7 +76,6 @@ import com.fangcang.titanjr.dto.bean.TitanUserBindInfoDTO;
 import com.fangcang.titanjr.dto.bean.TitanWithDrawDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderDTO;
 import com.fangcang.titanjr.dto.bean.TransOrderInfo;
-import com.fangcang.titanjr.dto.request.AccountTransferFlowRequest;
 import com.fangcang.titanjr.dto.request.AllowNoPwdPayRequest;
 import com.fangcang.titanjr.dto.request.ConfirmFinanceRequest;
 import com.fangcang.titanjr.dto.request.ConfirmOrdernQueryRequest;
@@ -88,7 +85,6 @@ import com.fangcang.titanjr.dto.request.OrderRequest;
 import com.fangcang.titanjr.dto.request.OrderSaveAndBindCardRequest;
 import com.fangcang.titanjr.dto.request.RechargeRequest;
 import com.fangcang.titanjr.dto.request.RechargeResultConfirmRequest;
-import com.fangcang.titanjr.dto.request.RecordTransferRequest;
 import com.fangcang.titanjr.dto.request.RepairTransferRequest;
 import com.fangcang.titanjr.dto.request.TitanOrderRequest;
 import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
@@ -101,7 +97,6 @@ import com.fangcang.titanjr.dto.response.ConfirmOrdernQueryResponse;
 import com.fangcang.titanjr.dto.response.FinancialOrganResponse;
 import com.fangcang.titanjr.dto.response.FreezeAccountBalanceResponse;
 import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
-import com.fangcang.titanjr.dto.response.OrderSaveAndBindCardResponse;
 import com.fangcang.titanjr.dto.response.QrCodeResponse;
 import com.fangcang.titanjr.dto.response.RechargeResponse;
 import com.fangcang.titanjr.dto.response.TradeDetailResponse;
@@ -127,13 +122,10 @@ import com.fangcang.titanjr.rs.manager.RSAccTradeManager;
 import com.fangcang.titanjr.rs.request.AccountTransferRequest;
 import com.fangcang.titanjr.rs.request.OrderOperateRequest;
 import com.fangcang.titanjr.rs.request.OrderSaveWithCardRequest;
-import com.fangcang.titanjr.rs.request.OrderTransferFlowRequest;
 import com.fangcang.titanjr.rs.request.OrdernQueryRequest;
 import com.fangcang.titanjr.rs.request.RSPayOrderRequest;
 import com.fangcang.titanjr.rs.response.AccountTransferResponse;
 import com.fangcang.titanjr.rs.response.OrderOperateResponse;
-import com.fangcang.titanjr.rs.response.OrderSaveWithCardResponse;
-import com.fangcang.titanjr.rs.response.OrderTransferFlowResponse;
 import com.fangcang.titanjr.rs.response.OrdernQueryResponse;
 import com.fangcang.titanjr.rs.util.RSInvokeConstant;
 import com.fangcang.titanjr.service.AccountRecordService;
@@ -2462,9 +2454,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			List<NameValuePair> params = this.getCommonHttpParams(rechargeDataDTO);
 			log.info("微信调用网关接口参数:" + JSONSerializer.toJSON(params) + "gateWayUrl：" + rechargeDataDTO.getGateWayUrl());
 			
-			   HttpPost httpPost = new HttpPost(rechargeDataDTO.getGateWayUrl());
-//		        httpPost.setConfig(requestConfig);
-		        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+			HttpPost httpPost = new HttpPost(rechargeDataDTO.getGateWayUrl());
 			HttpResponse resp = HttpClient.httpRequest(params, httpPost);
 			if(resp == null){
 				log.error("调用网关获取支付二维码失败,返回结果resp："+Tools.gsonToString(resp)+",参数:" + JSONSerializer.toJSON(params));
@@ -2574,6 +2564,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 	 * @param request
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private OrderSaveWithCardRequest convertToOrderSaveWithCardRequest(OrderSaveAndBindCardRequest request){
 		OrderSaveWithCardRequest orderSaveWithCardRequest = new OrderSaveWithCardRequest();
 		orderSaveWithCardRequest.setAccountname(request.getAccountName());

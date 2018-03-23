@@ -85,24 +85,6 @@ public class PaymentController extends BaseController {
 				return super.payFailedCallback(model);
 			}
 			
-			/*if (PayTypeEnum.PERSON_EBANK.equals(payTypeEnum) || PayTypeEnum.COMP_EBANK.equals(payTypeEnum)
-	                || PayTypeEnum.CREDIT_EBANK.equals(payTypeEnum)){
-	            return this.netBankPay(request, model);
-	        }
-
-	        if (PayTypeEnum.QR_WECHAT_URL.equals(payTypeEnum) || PayTypeEnum.QR_ALIPAY_URL.equals(payTypeEnum) ||
-	                PayTypeEnum.QR_ALIPAY.equals(payTypeEnum) || PayTypeEnum.QR_WECHAT.equals(payTypeEnum)
-	                || PayTypeEnum.WECHAT.equals(payTypeEnum)){
-	            return this.qrCodePay(request, model);
-	        }
-	        
-	        if (PayTypeEnum.QUICK_NEW.equals(payTypeEnum)){
-	            return this.quickPay(request, model);
-	        }
-	        
-	        logger.error("【支付】跳转分发失败，payTypeEnum={}", payTypeEnum);
-			return super.payFailedCallback(model);*/
-			
 	        //根据支付方式来判定走到具体哪个接口
 			PayRequestStrategy payRequestStrategy =  StrategyFactory.getPayRequestStrategy(payTypeEnum);
 			if(payRequestStrategy == null){
@@ -117,7 +99,6 @@ public class PaymentController extends BaseController {
 			}
 			super.resetParameter(request,attr);
 			
-			logger.info("【支付】获取重定向地址为：{}", WebUtils.getRequestBaseUrl(request) + redirectUrl);
 			//return "forward:" + redirectUrl;
 			return "redirect:" + WebUtils.getRequestBaseUrl(request) + redirectUrl;
 			
