@@ -118,7 +118,7 @@
     select ub.* from t_tfs_user u
 		left join t_tfs_userbindinfo ub on u.tfsuserid = ub.tfsuserid
 	    <where>
-	   		<if test="bindMerchantCode != null"> and u.merchantcode = #{bindMerchantCode}</if> 
+	   		<if test="bindMerchantCode != null"> and ub.merchantcode = #{bindMerchantCode}</if> 
 	   		<if test="isadmin != null"> and u.isadmin = #{isadmin}</if>
 	    </where>
   </select>
