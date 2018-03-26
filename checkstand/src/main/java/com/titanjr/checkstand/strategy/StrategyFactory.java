@@ -132,11 +132,6 @@ public class StrategyFactory {
         		||TradeCodeEnum.RB_AGENT_QUERY.getCode().equals(tradeCode)){
             return (AgentTradeStrategy)SpringContextUtil.getBean("agentQueryStrategy");
         }
-        
-        if (TradeCodeEnum.TL_AGENT_DOWNLOAD.getCode().equals(tradeCode)
-        		|| TradeCodeEnum.RB_AGENT_DOWNLOAD.getCode().equals(tradeCode)){
-        	return (AgentTradeStrategy)SpringContextUtil.getBean("agentDownloadStrategy");
-        }
 
         return null;
     }

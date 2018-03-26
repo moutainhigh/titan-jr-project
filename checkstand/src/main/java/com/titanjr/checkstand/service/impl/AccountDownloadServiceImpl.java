@@ -10,12 +10,14 @@ package com.titanjr.checkstand.service.impl;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -24,6 +26,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -35,6 +38,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
+import org.apache.commons.codec.binary.Base64InputStream;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -47,6 +52,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.allinpay.ets.client.SecurityUtil;
@@ -67,6 +74,9 @@ import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dao.AccountDownloadDao;
 import com.titanjr.checkstand.dto.AccountDownloadDTO;
 import com.titanjr.checkstand.dto.GateWayConfigDTO;
+import com.titanjr.checkstand.dto.TLAgentQueryTransDTO;
+import com.titanjr.checkstand.request.RBAgentDownloadRequest;
+import com.titanjr.checkstand.request.TLAgentTradeRequest;
 import com.titanjr.checkstand.request.TLGatewayPayDownloadRequest;
 import com.titanjr.checkstand.request.TLQrCodeDownloadRequest;
 import com.titanjr.checkstand.respnse.RSResponse;
@@ -76,6 +86,7 @@ import com.titanjr.checkstand.util.CommonUtil;
 import com.titanjr.checkstand.util.MyHostnameVerifier;
 import com.titanjr.checkstand.util.MyX509TrustManager;
 import com.titanjr.checkstand.util.SignMsgBuilder;
+import com.titanjr.checkstand.util.tlUtil.XmlTools;
 
 /**
  * 对账文件下载服务实现
@@ -87,7 +98,8 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 	
 	private final static Logger logger = LoggerFactory.getLogger(AccountDownloadServiceImpl.class);
 	
-	private final String resUrl = this.getClass().getResource("/").getPath().replace("classes/", "");
+	//private final String resUrl = this.getClass().getResource("/").getPath().replace("classes/", "");
+	private static String resUrl;
 	private final String tmpUrl = System.getProperty("java.io.tmpdir"); //临时目录
 	
 	@Resource
@@ -95,9 +107,23 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 	
 	@Resource
 	private AccountDownloadDao accountDownloadDao;
+	
+	@Autowired
+	private ApplicationContext appCtx;
+	public void init(){
+		try {
+			resUrl = appCtx.getResource("classpath:").getFile().getPath().replace("classes", "");
+			if(resUrl.indexOf("timers") != -1){
+				resUrl += resUrl+"/";
+			}
+		} catch (IOException e) {
+			logger.error("初始化appCtx异常：", e);
+		}
+	}
+	
 
 	@Override
-	public RSResponse gatewayPayDownload(TLGatewayPayDownloadRequest tlGatewayPayDownloadRequest) {
+	public RSResponse tlGatewayPayDownload(TLGatewayPayDownloadRequest tlGatewayPayDownloadRequest) {
 
 		RSResponse response = new RSResponse();
 		response.setMerchantNo(SysConstant.RS_MERCHANT_NO);
@@ -170,7 +196,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 				//对账文件信息保存到数据库
 				this.saveGatewayDowanloadInfo(fileAsString);
 				//对账文件上传到房仓FTP
-				this.uploadFtp(accountLocal.getPath()+"\\"+fileName, fileName);
+				this.uploadFtp(accountLocal.getPath()+"\\"+fileName, fileName, SysConstant.TL_GATEWAY_DIR);
 				
 			/*} else {
 				logger.error("【通联-网关支付对账文件下载】签名验证失败，丢弃该文件，日期：{}", tlGatewayPayDownloadRequest.getSettleDate());
@@ -249,7 +275,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 	
 	@SuppressWarnings({ "unused", "resource" })
 	@Override
-	public RSResponse qrCodePayDownload(TLQrCodeDownloadRequest tlQrCodeDownloadRequest) {
+	public RSResponse tlQrCodePayDownload(TLQrCodeDownloadRequest tlQrCodeDownloadRequest) {
 
 		TLQrCodeDownloadResponse tlQrCodeDownloadResponse = new TLQrCodeDownloadResponse();
 		RSResponse response = new RSResponse();
@@ -325,7 +351,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 					//对账文件信息保存到数据库
 					this.saveQrCodeDowanloadInfo(localZipPath.getPath()+"\\"+fileName+".xlsx");
 					//对账文件上传到房仓FTP
-					uploadFtp(localZipPath.getPath()+"\\"+fileName+".xlsx", fileName+".xlsx");
+					uploadFtp(localZipPath.getPath()+"\\"+fileName+".xlsx", fileName+".xlsx", SysConstant.TL_QECODE_DIR);
 					
 				}
 				return response;
@@ -339,6 +365,112 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 			
 		} catch (Exception e) {
 			logger.error("【通联-扫码/公众号支付对账文件下载】发生异常：", e);
+			response.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+			return response;
+		}
+
+	}
+	
+	
+	@Override
+	public RSResponse tlAgentDownload(TLAgentTradeRequest tlAgentTradeRequest) {
+		
+		RSResponse response = new RSResponse();
+		
+		try{
+			
+			TLAgentQueryTransDTO trans = (TLAgentQueryTransDTO)tlAgentTradeRequest.getTrxData().get(0);
+			String configKey = trans.getMERCHANT_ID() +"_" + PayTypeEnum.AGENT_TRADE.combPayType + 
+					"_" + SysConstant.TL_CHANNEL_CODE + "_" + tlAgentTradeRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if(gateWayConfigDTO == null){
+				logger.error("【通联-对账文件下载】失败，获取网关配置为空，configKey={}，orderNo={}", configKey, 
+						tlAgentTradeRequest.getINFO().getREQ_SN());
+				response.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return response;
+			}
+			
+			String resp = sendXml(tlAgentTradeRequest, gateWayConfigDTO.getGateWayUrl());
+			writeBill(resp);
+			
+			response.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+			response.setVersion(SysConstant.RS_VERSION);
+			response.setSignType(SysConstant.RS_SIGN_TYPE);
+			return response;
+			
+		}catch(Exception e){
+			
+			if(e.getCause() instanceof ConnectException||e instanceof ConnectException){
+				logger.error("【通联-对账文件下载】请求链接中断");
+			}
+			logger.error("【通联-对账文件下载】异常：", e);
+			response.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+			return response;
+		}
+		
+	}
+	
+	
+	@Override
+	public RSResponse rbAccountDownload(RBAgentDownloadRequest rbAgentDownloadRequest) {
+
+		RSResponse response = new RSResponse();
+
+		try {
+			String configKey = rbAgentDownloadRequest.getMerchant_id() + "_" + PayTypeEnum.AGENT_TRADE.combPayType +
+					"_" + SysConstant.RB_CHANNEL_CODE + "_" + rbAgentDownloadRequest.getRequestType();
+			GateWayConfigDTO gateWayConfigDTO = SysConstant.gateWayConfigMap.get(configKey);
+			if (gateWayConfigDTO == null) {
+				logger.error("【融宝-对账文件下载】失败，获取网关配置为空，configKey={}", configKey);
+				response.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
+				return response;
+			}
+
+			String transferFormat = DateUtil.dateToString(DateUtil.stringToDate(rbAgentDownloadRequest.
+					getTradeDate(), "yyyyMMdd"), "yyyy-MM-dd");
+
+			String accountFileName = rbAgentDownloadRequest.getTradeDate() + ".txt";
+			File accountLocal = new File(tmpUrl + SysConstant.RB_ACCOUNT_DIR);
+			accountLocal.mkdir();
+			String rechargeFileName = transferFormat + ".txt";
+			File rechargeLocal = new File(tmpUrl + SysConstant.RB_RECHARGE_DIR);
+			rechargeLocal.mkdir();
+			String refundFileName = transferFormat + ".txt";
+			File refundLocal = new File(tmpUrl + SysConstant.RB_REFUND_DIR);
+			refundLocal.mkdir();
+
+			//登录融宝ftp下载文件
+			FtpUtil util = new FtpUtil();
+			util.loginRemote(SysConstant.RB_FTP_HOST, SysConstant.RB_FTP_USER, SysConstant.RB_FTP_PWD);
+			logger.info("login rbFtp success");
+			util.downloadFile(accountFileName, accountLocal.getPath(), SysConstant.RB_ACCOUNT_DIR);
+			util.downloadFile(rechargeFileName, rechargeLocal.getPath(), SysConstant.RB_RECHARGE_DIR + transferFormat);
+			util.downloadFile(refundFileName,refundLocal.getPath() , SysConstant.RB_REFUND_DIR + transferFormat);
+			util.ftpLogOut();
+
+			//登录房仓ftp并上传
+			FTPConfigResponse configResponse = titanSysconfigService.getFTPConfig();
+			util = new FtpUtil(configResponse.getFtpServerIp(),
+					configResponse.getFtpServerPort(),
+					configResponse.getFtpServerUser(),
+					configResponse.getFtpServerPassword());
+			util.ftpLogin();
+			logger.info("login fcFtp success");
+
+			FTPFileUpload(util, "ACCOUNT-", SysConstant.RB_ACCOUNT_DIR, accountFileName);
+			FTPFileUpload(util, "RECHARGE-", SysConstant.RB_RECHARGE_DIR, rechargeFileName);
+			FTPFileUpload(util, "REFUND-", SysConstant.RB_REFUND_DIR, refundFileName);
+
+			util.ftpLogOut();
+			logger.info("对账文件下载并上传成功");
+
+			response.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+			response.setVersion(SysConstant.RS_VERSION);
+			response.setSignType(SysConstant.RS_SIGN_TYPE);
+			return response;
+
+		} catch (Exception e) {
+			logger.error("【融宝-对账文件下载】发生异常：", e);
 			response.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return response;
 		}
@@ -557,15 +689,115 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 		
 	}
 	
+	
+	/**
+	 * 对账文件上传到ftp
+	 * @author Jerry
+	 * @date 2017年12月29日 上午10:02:05
+	 */
+	@SuppressWarnings("resource")
+	private void writeBill(String resp) throws Exception {
+		
+		int iStart = resp.indexOf("<CONTENT>");
+		int end = resp.indexOf("</CONTENT>");
+		if(iStart==-1) {
+			throw new Exception("XML报文中不存在<CONTENT>");
+		}
+		if(end==-1) {
+			throw new Exception("XML报文中不存在</CONTENT>");	
+		}
+		String billContext = resp.substring(iStart + 9, end);
+		String fileName = DateUtil.dateToString(new Date(), "yyyy-MM-dd")+".txt";
+		
+		File agentLocal = new File(tmpUrl+SysConstant.TL_AGENT_DIR+"/");
+		agentLocal.mkdir();
+		
+		//先写入压缩文件到本地
+		FileOutputStream sos=null;
+		sos=new FileOutputStream(new File(agentLocal.getPath()+"bill.gz"));
+		Base64InputStream b64is=new Base64InputStream(IOUtils.toInputStream(billContext),false);
+		IOUtils.copy(b64is, sos);
+		IOUtils.closeQuietly(b64is);
+		//解压
+		ZipInputStream zin=new ZipInputStream(new FileInputStream(new File(agentLocal.getPath()+"bill.gz")));
+		while (zin.getNextEntry() != null) {
+			 FileOutputStream os = new FileOutputStream(agentLocal.getPath()+fileName);  
+             // Transfer bytes from the ZIP file to the output file  
+             byte[] buf = new byte[1024];  
+             int len;  
+             while ((len = zin.read(buf)) > 0) {  
+                 os.write(buf, 0, len);  
+             }  
+             os.close();  
+             zin.closeEntry();
+		}
+		
+		//上传到ftp
+		FtpUtil util = null;
+		FTPConfigResponse configResponse = titanSysconfigService.getFTPConfig();
+		util = new FtpUtil(configResponse.getFtpServerIp(),
+				configResponse.getFtpServerPort(),
+				configResponse.getFtpServerUser(),
+				configResponse.getFtpServerPassword());
+		util.ftpLogin();
+		logger.info("login ftp success");
+
+		/*List<String> fileList = util.listFiles(FtpUtil.UPLOAD_PATH_AGENT_CHECKING + ""
+				+ "/" + DateUtil.dateToString(new Date(), "yyyy-MM-dd"));
+		// 检查文件是否已经上传过，如果上传过则需要把旧的文件先删掉
+		if (fileList != null) {
+			for (int i = 0; i < fileList.size(); i++) {
+				if (fileList.get(i).indexOf(fileName + ".") != -1) {
+					util.deleteFile(FtpUtil.UPLOAD_PATH_AGENT_CHECKING + ""
+							+ "/" + DateUtil.dateToString(new Date(), "yyyy-MM-dd")
+							+ fileList.get(i));
+				}
+			}
+		}*/
+
+		File file = new File(agentLocal.getPath()+fileName);
+		InputStream inputStream = new FileInputStream(file);
+		util.uploadStream(fileName, inputStream, FtpUtil.UPLOAD_PATH_TL_AGENT_CHECKING+SysConstant.TL_AGENT_DIR);
+		logger.info("upload to ftp success fileName=" + fileName);
+
+		util.ftpLogOut();
+		
+		logger.info("对账文件下载并上传成功");
+		
+	}
+	
+	
+	/**
+	 * 发送报文
+	 * @author Jerry
+	 * @date 2017年12月28日 上午11:29:49
+	 */
+	private String sendXml(TLAgentTradeRequest tlAgentTradeRequest, String url) throws Exception{
+		
+		logger.info("resUrl：{}", resUrl);
+		//logger.info("resUrl_pro：{}", resUrl_pro);
+		
+		String xml = XmlTools.buildXml(tlAgentTradeRequest, true);
+		xml = XmlTools.signMsg(xml, resUrl+SysConstant.PFX_PATH, SysConstant.PFX_PWD, false);
+		
+		logger.info("======================发送报文======================：\n{}", xml);
+		String resp = XmlTools.send(url, xml);
+		logger.info("======================响应内容======================") ;
+		
+		boolean flag = XmlTools.verifySign(resp, resUrl+SysConstant.CER_PATH, false, false);
+		logger.info("验签结果[{}]", flag) ;
+		
+		return resp;
+		
+	}
+	
+	
 	/**
 	 * 上传房仓FTP
 	 * @author Jerry
 	 * @date 2018年3月22日 下午4:50:36
-	 * @param filePath
-	 * @param fileName
-	 * @throws Exception
 	 */
-	private void uploadFtp(String filePath, String fileName) throws Exception{
+	private void uploadFtp(String filePath, String fileName, String businessDir) throws Exception{
 		
 		//登录ftp并上传文件
 		FtpUtil util = null;
@@ -578,12 +810,31 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 		logger.info("login ftp success");
 		File file = new File(filePath);
 		InputStream inputStream = new FileInputStream(file);
-		util.uploadStream(fileName, inputStream, FtpUtil.UPLOAD_PATH_TL_AGENT_CHECKING+SysConstant.TL_QECODE_DIR);
+		util.uploadStream(fileName, inputStream, FtpUtil.UPLOAD_PATH_TL_AGENT_CHECKING+businessDir);
 		logger.info("upload to ftp success fileName=" + fileName);
 		util.ftpLogOut();
 		
 		logger.info("网关支付对账文件下载并上传成功");
 		
+	}
+
+
+	private boolean FTPFileUpload(FtpUtil util, String prefix, String baseDir, String fileName) {
+		File file = new File(tmpUrl + baseDir + fileName);
+		InputStream inputStream;
+		try {
+			inputStream = new FileInputStream(file);
+			util.uploadStream(prefix + fileName, inputStream, FtpUtil.UPLOAD_PATH_RB_AGENT_CHECKING);
+		} catch (FileNotFoundException e) {
+			logger.error("本地文件流读取失败,本地文件路径：{}", file.getPath(), e);
+			return false;
+		} catch (Exception e) {
+			logger.error("FTP上传失败", e);
+			return false;
+		}
+
+		logger.info("upload to fcFtp success fileName=" + baseDir + fileName);
+		return true;
 	}
 
 }

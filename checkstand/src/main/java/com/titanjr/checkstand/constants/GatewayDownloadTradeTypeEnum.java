@@ -34,14 +34,14 @@ public enum GatewayDownloadTradeTypeEnum {
 	public static String getTradeType(String key){
 		
 		if(!StringUtil.isValidString(key)){
-			return UNKONW_TYPE.value;
+			return UNKONW_TYPE.tradeType;
 		}
 		for (GatewayDownloadTradeTypeEnum tradeTypeEnum : GatewayDownloadTradeTypeEnum.values()) {
 			if(key.equals(tradeTypeEnum.key)){
-				return tradeTypeEnum.value;
+				return tradeTypeEnum.tradeType;
 			}
 		}
-		return UNKONW_TYPE.value;
+		return UNKONW_TYPE.tradeType;
 		
 	}
 	

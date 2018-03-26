@@ -35,14 +35,11 @@ import com.titanjr.checkstand.dto.RBAgentPayContentDTO;
 import com.titanjr.checkstand.dto.TLAgentInfoRequestDTO;
 import com.titanjr.checkstand.dto.TLAgentPayTransDTO;
 import com.titanjr.checkstand.dto.TLAgentQueryTransDTO;
-import com.titanjr.checkstand.dto.TitanAgentDownloadDTO;
 import com.titanjr.checkstand.dto.TitanAgentPayDTO;
 import com.titanjr.checkstand.dto.TitanAgentQueryDTO;
-import com.titanjr.checkstand.request.RBAgentDownloadRequest;
 import com.titanjr.checkstand.request.RBAgentPayQueryRequest;
 import com.titanjr.checkstand.request.RBAgentPayRequest;
 import com.titanjr.checkstand.request.TLAgentTradeRequest;
-import com.titanjr.checkstand.respnse.RSResponse;
 import com.titanjr.checkstand.respnse.TitanAgentPayResponse;
 import com.titanjr.checkstand.respnse.TitanAgentQueryResponse;
 import com.titanjr.checkstand.service.RBAgentTradeService;
@@ -343,107 +340,6 @@ public class AgentTradeController extends BaseController {
 			titanAgentQueryResponse.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			return titanAgentQueryResponse;
 			
-		}
-        
-    }
-	
-	
-	/**
-	 * 通联对账文件下载
-	 * @author Jerry
-	 * @date 2018年2月7日 上午11:33:42
-	 */
-	@RequestMapping(value = "/tlAgentDownload", method = {RequestMethod.GET, RequestMethod.POST})
-	@ResponseBody
-	public RSResponse tlAgentDownload(HttpServletRequest request, Model model) {
-		
-		RSResponse response = new RSResponse();
-		
-		try {
-    		
-			TitanAgentDownloadDTO titanAgentDownloadDTO = WebUtils.switch2RequestDTO(TitanAgentDownloadDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(titanAgentDownloadDTO);
-			if (!res.isSuccess()){
-				logger.error("【通联-对账文件下载】参数错误：{}", res.getReturnMessage());
-				response.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
-				return response;
-			}
-			res = titanAgentDownloadDTO.validateForTL();
-			if(!res.isSuccess()){
-				logger.error("【通联-对账文件下载】参数错误：{}", res.getReturnMessage());
-				response.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
-				return response;
-			}
-			
-			TLAgentTradeRequest tlAgentTradeRequest = new TLAgentTradeRequest();
-			
-			TLAgentInfoRequestDTO agentInfo  = new TLAgentInfoRequestDTO();
-			agentInfo.setTRX_CODE(titanAgentDownloadDTO.getTradeCode());
-			agentInfo.setREQ_SN(titanAgentDownloadDTO.getSerialNo());
-			agentInfo.setUSER_NAME(SysConstant.USER_NAME);
-			agentInfo.setUSER_PASS(SysConstant.USER_PWD);
-			agentInfo.setLEVEL(SysConstant.TL_AGENT_LEVEL);
-			agentInfo.setDATA_TYPE(SysConstant.TL_AGENT_DATA_TYPE);
-			agentInfo.setVERSION(SysConstant.TL_AGENT_VERSION);
-			tlAgentTradeRequest.setINFO(agentInfo);
-			
-			TLAgentQueryTransDTO trans= new TLAgentQueryTransDTO();//对象共用
-			trans.setSTATUS(Integer.parseInt(titanAgentDownloadDTO.getTradeStatus()));
-			trans.setMERCHANT_ID(SysConstant.TL_AGENT_MERCHANT);
-			trans.setTYPE(Integer.parseInt(titanAgentDownloadDTO.getQueryType())) ;
-			trans.setSTART_DAY(titanAgentDownloadDTO.getStartDate());
-			trans.setEND_DAY(titanAgentDownloadDTO.getEndDate());
-			tlAgentTradeRequest.addTrx(trans);
-			tlAgentTradeRequest.setRequestType(RequestTypeEnum.AGENT_TRADE.getKey());
-			
-			response = tlAgentTradeService.agentDownload(tlAgentTradeRequest);
-			return response;
-			
-		} catch (Exception e) {
-			
-			logger.error("【通联-对账文件下载】发生异常：", e);
-			response.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
-			return response;
-		}
-        
-    }
-	
-	
-	@RequestMapping(value = "/rbAgentDownload")
-	@ResponseBody
-	public RSResponse rbAgentDownload(HttpServletRequest request, Model model) {
-		
-		RSResponse response = new RSResponse();
-		
-		try {
-    		
-			TitanAgentDownloadDTO titanAgentDownloadDTO = WebUtils.switch2RequestDTO(TitanAgentDownloadDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(titanAgentDownloadDTO);
-			if (!res.isSuccess()){
-				logger.error("【融宝-对账文件下载】参数错误：{}", res.getReturnMessage());
-				response.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
-				return response;
-			}
-			res = titanAgentDownloadDTO.validateForRB();
-			if(!res.isSuccess()){
-				logger.error("【融宝-对账文件下载】参数错误：{}", res.getReturnMessage());
-				response.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
-				return response;
-			}
-			
-			RBAgentDownloadRequest rbAgentDownloadRequest = new RBAgentDownloadRequest();
-			rbAgentDownloadRequest.setMerchant_id(SysConstant.RB_MERCHANT);
-			rbAgentDownloadRequest.setTradeDate(titanAgentDownloadDTO.getTradeDate());
-			rbAgentDownloadRequest.setRequestType(RequestTypeEnum.AGENT_DOWNLOAD.getKey());
-			
-			response = rbAgentTradeService.agentDownload(rbAgentDownloadRequest);
-			return response;
-			
-		} catch (Exception e) {
-			
-			logger.error("【融宝-对账文件下载】发生异常：", e);
-			response.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
-			return response;
 		}
         
     }

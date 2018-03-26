@@ -64,7 +64,7 @@ public class TitanAgentDownloadDTO {
 	private String endDate;
 	
 	/**
-	 * 交易日期（按某个日期下载）    yyyyMMdd
+	 * 交易日期（按某个日期下载）    yyyy-MM-dd
 	 * 通联不需要 ；   融宝必填
 	 */
 	private String tradeDate;

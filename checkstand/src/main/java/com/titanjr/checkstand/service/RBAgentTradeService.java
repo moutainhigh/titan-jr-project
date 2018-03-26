@@ -7,10 +7,8 @@
  */
 package com.titanjr.checkstand.service;
 
-import com.titanjr.checkstand.request.RBAgentDownloadRequest;
 import com.titanjr.checkstand.request.RBAgentPayQueryRequest;
 import com.titanjr.checkstand.request.RBAgentPayRequest;
-import com.titanjr.checkstand.respnse.RSResponse;
 import com.titanjr.checkstand.respnse.TitanAgentPayResponse;
 import com.titanjr.checkstand.respnse.TitanAgentQueryResponse;
 
@@ -34,13 +32,5 @@ public interface RBAgentTradeService {
 	 * @date 2018年2月6日 下午4:46:37
 	 */
 	public TitanAgentQueryResponse agentQuery(RBAgentPayQueryRequest rbAgentPayQueryRequest);
-	
-	/**
-	 * 对账文件下载，对账内容只包括代付支付成功的交易
-	 * @author Jerry
-	 * @date 2018年2月6日 下午4:46:03
-	 * @param tradeDate 交易时间   yyyy-MM-dd
-	 */
-	public RSResponse agentDownload(RBAgentDownloadRequest rbAgentDownloadRequest);
 
 }

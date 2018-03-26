@@ -102,6 +102,7 @@ public class SysConstant {
 	//通联对账文件
 	public static String TL_GATEWAY_DIR = "/gateway";
 	public static String TL_QECODE_DIR = "/qrcode";
+	public static String TL_AGENT_DIR = "/agent";
 	
 	//融宝对账文件-FTP
 	public static String RB_FTP_HOST  = "entrust.reapal.com";

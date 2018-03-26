@@ -543,6 +543,79 @@
 </form><br/><br/>
 
 
+<form action="<%=basePath %>/payment.shtml" name="gateWayPayDownload_form" id="gateWayPayDownload_form" method="post">
+    <div class="gateWayPayDownload">
+        <table cellspacing="0" border="0">
+            <tbody>
+            <tr align="left">
+                <td class="tdr">商户号</td>
+                <td>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">交易代码</td>
+                <td><input type="text" id="tradeCode" value="200005" name="tradeCode"/>* 200005通联-网关支付对账文件下载</td>
+            </tr>
+            <tr>
+                <td class="tdr">交易日期</td>
+                <td>
+                    <input type="text" id="tradeDate" name="tradeDate"/>* yyyy-MM-dd
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">业务编码</td>
+                <td>
+                    <input type="text" value="115" id="busiCode" name="busiCode"/>* 115对账文件下载
+                </td>
+            </tr>
+            <tr>
+			    <td class="tdr"><button id="gateWayPayDownloadButton" onclick="gateWayPayDownload()">网关支付对账文件下载</button></td>
+			    <td>
+			    </td>
+			</tr>
+            </tbody>
+        </table>
+    </div>
+</form><br/><br/>
+
+<form action="<%=basePath %>/payment.shtml" name="qrCodeDownload_form" id="qrCodeDownload_form" method="post">
+    <div class="qrCodeDownload">
+        <table cellspacing="0" border="0">
+            <tbody>
+            <tr align="left">
+                <td class="tdr">商户号</td>
+                <td>
+                    <input type="text" name="merchantNo" id="merchantNo" value="100020091218001" class="input_t01"/>* 
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">交易代码</td>
+                <td><input type="text" id="tradeCode" value="200006" name="tradeCode"/>* 200006通联-扫码/公众号对账文件下载</td>
+            </tr>
+            <tr>
+                <td class="tdr">交易日期</td>
+                <td>
+                    <input type="text" id="tradeDate" name="tradeDate"/>* yyyy-MM-dd
+                </td>
+            </tr>
+            <tr>
+                <td class="tdr">业务编码</td>
+                <td>
+                    <input type="text" value="115" id="busiCode" name="busiCode"/>* 115对账文件下载
+                </td>
+            </tr>
+            <tr>
+			    <td class="tdr"><button id="qrCodeDownloadButton" onclick="qrCodeDownload()">扫码/公众号对账文件下载</button></td>
+			    <td>
+			    </td>
+			</tr>
+            </tbody>
+        </table>
+    </div>
+</form><br/><br/>
+
+
 <form action="<%=basePath %>/payment.shtml" name="agentDownload_form" id="agentDownload_form" method="post">
     <div class="agentDownload">
         <table cellspacing="0" border="0">
@@ -557,51 +630,45 @@
                 <td class="tdr">流水号</td>
                 <td>
                     <input type="text" name="serialNo" id="serialNo" class="input_t01"/> 
-                    	<input type="button" value="刷新" onclick="refreshSerialNo()" />通联必填
+                    	<input type="button" value="刷新" onclick="refreshSerialNo()" />* 
                 </td>
             </tr>
             <tr>
                 <td class="tdr">交易代码</td>
-                <td><input type="text" id="tradeCode" value="200002" name="tradeCode"/>* 通联:200002 融宝:300003</td>
+                <td><input type="text" id="tradeCode" value="200002" name="tradeCode"/>* 200002通联-账户交易对账文件下载</td>
             </tr>
             <tr>
                 <td class="tdr">交易状态</td>
                 <td>
-                    <input type="text" value="2" id="tradeStatus" name="tradeStatus"/>通联必填   0成功，1失败，2全部，3退票，4代付失败退款，5代付退票退款，6委托扣款，7提现
+                    <input type="text" value="2" id="tradeStatus" name="tradeStatus"/>* 0成功，1失败，2全部，3退票，4代付失败退款，5代付退票退款，6委托扣款，7提现
                 </td>
             </tr>
             <tr>
                 <td class="tdr">查询类型</td>
                 <td>
-                    <input type="text" value="1" id="queryType" name="queryType"/>通联必填    0.按完成日期1.按提交日期
+                    <input type="text" value="1" id="queryType" name="queryType"/>* 0.按完成日期   1.按提交日期
                 </td>
             </tr>
             <tr>
                 <td class="tdr">开始时间</td> 
                 <td>
-                    <input type="text" id="startDate" name="startDate"/>通联必填 yyyyMMddHHmmss
+                    <input type="text" id="startDate" name="startDate"/>* yyyyMMddHHmmss
                 </td>
             </tr>
             <tr>
                 <td class="tdr">结束时间</td>
                 <td>
-                    <input type="text" id="endDate" name="endDate"/>通联必填 
-                </td>
-            </tr>
-            <tr>
-                <td class="tdr">交易日期</td>
-                <td>
-                    <input type="text" id="tradeDate" name="tradeDate"/>融宝必填  yyyyMMdd
+                    <input type="text" id="endDate" name="endDate"/>*  
                 </td>
             </tr>
             <tr>
                 <td class="tdr">业务编码</td>
                 <td>
-                    <input type="text" value="105" id="busiCode" name="busiCode"/>* 105账户交易
+                    <input type="text" value="115" id="busiCode" name="busiCode"/>* 115对账文件下载
                 </td>
             </tr>
             <tr>
-			    <td class="tdr"><button id="agentDownloadButton" onclick="agentDownload()">对账文件下载</button></td>
+			    <td class="tdr"><button id="agentDownloadButton" onclick="agentDownload()">账户交易对账文件下载</button></td>
 			    <td>
 			    </td>
 			</tr>
@@ -611,8 +678,8 @@
 </form><br/><br/>
 
 
-<form action="<%=basePath %>/payment.shtml" name="gateWayPayDownload_form" id="gateWayPayDownload_form" method="post">
-    <div class="gateWayPayDownload">
+<form action="<%=basePath %>/payment.shtml" name="rbAccountDownload_form" id="rbAccountDownload_form" method="post">
+    <div class="agentDownload">
         <table cellspacing="0" border="0">
             <tbody>
             <tr align="left">
@@ -623,12 +690,12 @@
             </tr>
             <tr>
                 <td class="tdr">交易代码</td>
-                <td><input type="text" id="tradeCode" value="200005" name="tradeCode"/>* 200005通联-网关支付对账文件下载  200006通联-扫码支付对账文件下载</td>
+                <td><input type="text" id="tradeCode" value="300003" name="tradeCode"/>* 300003融宝对账文件下载</td>
             </tr>
             <tr>
                 <td class="tdr">交易日期</td>
                 <td>
-                    <input type="text" id="tradeDate" name="tradeDate"/>* 
+                    <input type="text" id="tradeDate" name="tradeDate"/>* yyyy-MM-dd
                 </td>
             </tr>
             <tr>
@@ -638,7 +705,7 @@
                 </td>
             </tr>
             <tr>
-			    <td class="tdr"><button id="gateWayPayDownloadButton" onclick="gateWayPayDownload()">开始下载</button></td>
+			    <td class="tdr"><button id="rbAccountDownloadButton" onclick="rbAccountDownload()">融宝对账文件下载</button></td>
 			    <td>
 			    </td>
 			</tr>
@@ -646,7 +713,6 @@
         </table>
     </div>
 </form><br/><br/>
-
 
 
 <p>--------------------------------快捷支付测试--------------------------------</p>
@@ -994,11 +1060,18 @@
     function agentQuery() {
         $("#agentQuery_form").submit();
     }
+    
+    function gateWayPayDownload(){
+    	$("#gateWayPayDownload_form").submit();
+    }
+    function qrCodeDownload(){
+    	$("#qrCodeDownload_form").submit();
+    }
     function agentDownload(){
     	$("#agentDownload_form").submit();
     }
-    function gateWayPayDownload(){
-    	$("#gateWayPayDownload_form").submit();
+    function rbAccountDownload(){
+    	$("#rbAccountDownload_form").submit();
     }
 
     

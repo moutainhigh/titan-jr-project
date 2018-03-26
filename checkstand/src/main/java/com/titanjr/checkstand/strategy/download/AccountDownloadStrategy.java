@@ -30,17 +30,17 @@ public class AccountDownloadStrategy implements DownloadStrategy {
 		if(!StringUtil.isValidString(tradeCode)){
 			return null;
 		}
-		if (TradeCodeEnum.TL_AGENT_DOWNLOAD.getCode().equals(tradeCode)){
-			return "/download/tlAgentDownload.shtml";
-        }
-		if (TradeCodeEnum.TL_GATEWAY_DOWNLOAD.getCode().equals(tradeCode)){
-			return "/download/tlGatewayDownload.shtml";
+		if (TradeCodeEnum.TL_GATEWAY_DOWNLOAD.getCode().equals(tradeCode)){//通联网关支付对账文件下载
+			return "/download/tlGatewayPayDownload.shtml";
 		}
-		if (TradeCodeEnum.TL_QRCODE_DOWNLOAD.getCode().equals(tradeCode)){
+		if (TradeCodeEnum.TL_QRCODE_DOWNLOAD.getCode().equals(tradeCode)){//通联扫码支付对账文件下载
 			return "/download/tlQrcodeDownload.shtml";
 		}
-		if (TradeCodeEnum.RB_AGENT_DOWNLOAD.getCode().equals(tradeCode)){
-			return "/download/rbBillsDownload.shtml";
+		if (TradeCodeEnum.TL_AGENT_DOWNLOAD.getCode().equals(tradeCode)){//通联账户交易对账文件下载
+			return "/download/tlAgentDownload.shtml";
+        }
+		if (TradeCodeEnum.RB_AGENT_DOWNLOAD.getCode().equals(tradeCode)){//融宝对账文件下载
+			return "/download/rbAccountDownload.shtml";
         }
 		
 		return null;

@@ -31,13 +31,13 @@ public class RBAgentTradeServiceTest extends GenericTest {
 	
 	
 	@Test
-    public void testAgentDownload(){
+    public void testRBAccountDownload(){
         RBAgentDownloadRequest rbAgentDownloadRequest = new RBAgentDownloadRequest();
         rbAgentDownloadRequest.setMerchant_id("100000001301858");
         rbAgentDownloadRequest.setTradeDate("20180307");
         rbAgentDownloadRequest.setRequestType(RequestTypeEnum.AGENT_DOWNLOAD.getKey());
 
-        RSResponse response = rbAgentTradeService.agentDownload(rbAgentDownloadRequest);
+        RSResponse response = accountDownloadService.rbAccountDownload(rbAgentDownloadRequest);
         logger.info("response========>>errCode={}，errMsg={}", response.getErrCode(), response.getErrMsg());
     }
     
@@ -48,7 +48,7 @@ public class RBAgentTradeServiceTest extends GenericTest {
     	gatewayPayDownloadRequest.setSettleDate("2018-03-14");
     	gatewayPayDownloadRequest.setRequestType(RequestTypeEnum.GATEWAY_DOWNLOAD.getKey());
 
-        RSResponse response = accountDownloadService.gatewayPayDownload(gatewayPayDownloadRequest);
+        RSResponse response = accountDownloadService.tlGatewayPayDownload(gatewayPayDownloadRequest);
         logger.info("response========>>errCode={}，errMsg={}", response.getErrCode(), response.getErrMsg());
     }
 

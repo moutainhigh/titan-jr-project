@@ -21,6 +21,7 @@
 	
 	<bean id="initService1" class="com.titanjr.checkstand.service.impl.InitServiceImpl" init-method="init" />  
 	<bean id="initService2" class="com.titanjr.checkstand.service.impl.TLAgentTradeServiceImpl" init-method="init" />  
+	<bean id="initService3" class="com.titanjr.checkstand.service.impl.AccountDownloadServiceImpl" init-method="init" />  
 	
 	<dubbo:application name="checkstand_consumer" />
 	<dubbo:consumer check="false"/>
