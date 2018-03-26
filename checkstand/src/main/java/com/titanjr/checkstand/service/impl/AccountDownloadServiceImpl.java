@@ -114,7 +114,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 		try {
 			resUrl = appCtx.getResource("classpath:").getFile().getPath().replace("classes", "");
 			if(resUrl.indexOf("timers") != -1){
-				resUrl += resUrl+"/";
+				resUrl = resUrl+"/";
 			}
 		} catch (IOException e) {
 			logger.error("初始化appCtx异常：", e);
