@@ -139,7 +139,10 @@ public class CheckStandController extends BaseController {
 			testPath = testPath.replace("classes","certify/tl/20022200000978704.p12");
 			File testFile = new File(testPath);
 			result = "filePath:" + testPath + ",======result:" + testFile.exists();
+			String prePath = System.getProperty("checkstand.root"); 
+			System.out.println("----------------web-info:"+prePath);
 		} catch (IOException e) {
+			e.printStackTrace();
 			result="error";
 		}
 		return result;

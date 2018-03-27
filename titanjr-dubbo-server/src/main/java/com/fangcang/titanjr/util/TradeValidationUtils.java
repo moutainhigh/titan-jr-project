@@ -4,9 +4,12 @@ import java.util.*;
 
 import com.Rop.api.ApiException;
 import com.Rop.api.DefaultRopClient;
+import com.Rop.api.domain.SHBalanceInfo;
 import com.Rop.api.domain.Transorderinfo;
+import com.Rop.api.request.WheatfieldBalanceGetlistRequest;
 import com.Rop.api.request.WheatfieldOrderServiceReturngoodsRequest;
 import com.Rop.api.request.WheatfieldOrdernQueryRequest;
+import com.Rop.api.response.WheatfieldBalanceGetlistResponse;
 import com.Rop.api.response.WheatfieldOrderServiceReturngoodsResponse;
 import com.Rop.api.response.WheatfieldOrdernQueryResponse;
 import com.fangcang.titanjr.common.enums.RSInvokeErrorEnum;
@@ -39,7 +42,6 @@ import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
@@ -82,36 +84,98 @@ public class TradeValidationUtils {
     @Resource
     private TitanRefundDao titanRefundDao;
 
-    public boolean validAccountAmount(String orgCode){
+    public boolean validAccountAmount(String orgCode) throws ApiException {
+
+        //判定包含的主账户和子账户数据，判定机构有多少子账户
+
         //计算充值金额
         TitanOrderPayreqParam requestParam = new TitanOrderPayreqParam();
         requestParam.setMerchantNo(orgCode);
         List<TitanOrderPayreq> titanOrderPayReqs = titanOrderPayreqDao.queryOrderPayRequestList(requestParam);
         log.info("本地充值：当前账户" + orgCode + "充值单记录数：" + titanOrderPayReqs.size());
-
-//        for ()
-
+        Long totalRecharge = 0l;
+        for (TitanOrderPayreq payreq : titanOrderPayReqs) {
+            if (payreq.getReqstatus() == 2) {//计算充值成功的
+                totalRecharge += (long) (payreq.getOrderAmount().doubleValue());
+            }
+        }
         //计算转入金额
+        TitanTransferReqParam titanTransferReqParam = new TitanTransferReqParam();
+        titanTransferReqParam.setUserrelateid(orgCode);
+        List<TitanTransferReq> localPayIn = titanTransferReqDao.queryTitanTransferReq(titanTransferReqParam);
+        Long totalPayIn = 0l;
+        for (TitanTransferReq payIn : localPayIn) {
+            if (payIn.getStatus() == 2) {//转账成功的
+                totalPayIn += (long) (payIn.getAmount().doubleValue());
+            }
+        }
 
         //计算转出金额
+        titanTransferReqParam.setUserrelateid(null);
+        titanTransferReqParam.setUserid(orgCode);
+        List<TitanTransferReq> localPayOut = titanTransferReqDao.queryTitanTransferReq(titanTransferReqParam);
+        Long payOutTotal = 0l;
+        for (TitanTransferReq payOut : localPayOut) {
+            if (payOut.getStatus() == 2) {//转账成功的
+                payOutTotal += (long) (payOut.getAmount().doubleValue());
+            }
+        }
 
         //计算提现金额
+        TitanWithDrawReqParam reqParam = new TitanWithDrawReqParam();
+        reqParam.setUserid(orgCode);
+        List<TitanWithDrawReq> withDrawReqs = titanWithDrawReqDao.queryList(reqParam);
+        Long withDrawTotal = 0l;
+        for (TitanWithDrawReq withDrawReq : withDrawReqs) {
+            if (withDrawReq.getStatus() == 3) {//提现成功
+                withDrawTotal += withDrawReq.getAmount();
+            }
+        }
 
         //计算退款金额
+        RefundDTO refundQuery = new RefundDTO();
+        refundQuery.setPayerMerchant(orgCode);//退款单中付款方为自己的
+        List<RefundDTO> refundDTOList = titanRefundDao.queryRefundDTODetail(refundQuery);
+        Long refundTotal = 0l;
+        for (RefundDTO refundDTO : refundDTOList) {
+            if (refundDTO.getStatus() == 2 && (refundDTO.getTransStatus() == 13 || refundDTO.getTransStatus() ==16)) {//先计算退款成功的
+                refundTotal += Long.parseLong(refundDTO.getRefundAmount());
+            }
+        }
 
         //获取账户余额
+        WheatfieldBalanceGetlistRequest getlistRequest = new WheatfieldBalanceGetlistRequest();
+        getlistRequest.setRootinstcd("M000016");
+        getlistRequest.setUserid(orgCode);
+
+        WheatfieldBalanceGetlistResponse getlistResponse = TradeValidationUtils.ropClient.execute(getlistRequest, session);
+        Long accountAmount = 0l;
+        List<SHBalanceInfo> balanceInfos = getlistResponse.getShbalanceinfos();
+        for (SHBalanceInfo balanceInfo : balanceInfos) {
+            if ("P000070".equals(balanceInfo.getProductid())) {
+                accountAmount = Long.parseLong(balanceInfo.getBalanceusable()) + Long.parseLong(balanceInfo.getBalancefrozon());
+            }
+        }
 
         //公式：充值+转入=转出+提现+退款+账户余额
-
+        log.info("收入资金统计，充值合计：" + totalRecharge + ",账户转入合计：" + totalPayIn);
+        Long totalIn = totalRecharge + totalPayIn;
+        log.info("支出资金统计，账户转出合计：" + payOutTotal + ",提现合计："
+                + withDrawTotal + ",退款合计：" + refundTotal + ",账户余额：" + accountAmount);
+        Long totalOut = payOutTotal + withDrawTotal + refundTotal + accountAmount;
+        log.info("收入总计：" + totalIn + "支出总计：" + totalOut);
+        if (totalIn.equals(totalOut)) {
+            return true;
+        }
         return false;
     }
 
     public Map<String, List> validOrgTradeInfo(Date startTime, Date endTime, String orgCode) throws ApiException {
-        Map<String,List> resultMap = new HashMap<String, List>();
-        resultMap.putAll(this.validRechargeOrder(startTime,endTime,orgCode));
-        resultMap.putAll(this.validTransferOrder(startTime,endTime,orgCode));
-        resultMap.putAll(this.validWithDrawOrder(startTime,endTime,orgCode));
-        resultMap.putAll(this.validRefundOrder(startTime,endTime,orgCode));
+        Map<String, List> resultMap = new HashMap<String, List>();
+        resultMap.putAll(this.validRechargeOrder(startTime, endTime, orgCode));
+        resultMap.putAll(this.validTransferOrder(startTime, endTime, orgCode));
+        resultMap.putAll(this.validWithDrawOrder(startTime, endTime, orgCode));
+        resultMap.putAll(this.validRefundOrder(startTime, endTime, orgCode));
         return resultMap;
     }
 

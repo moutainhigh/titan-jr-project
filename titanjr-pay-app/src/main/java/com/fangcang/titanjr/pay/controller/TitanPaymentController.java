@@ -248,7 +248,7 @@ public class TitanPaymentController extends BaseController {
         	
         	if(PayerTypeEnum.RECHARGE.key.equals(payerType.getKey())){//如果是充值则置订单为成功
         		orderStatusEnum= OrderStatusEnum.ORDER_SUCCESS;
-        		
+        		transferFeeAccounts(transOrderDTO);
         	}else{//不是充值操作，就需要转帐
         		
         		TransferResponse transferResponse = null;
@@ -275,19 +275,7 @@ public class TitanPaymentController extends BaseController {
 	        		orderStatusEnum = OrderStatusEnum.ORDER_FAIL;
 	        		
 	        	}else{
-	        		//充值或者支付有手续费，需要将手续费转到收益子账户
-        			if(transOrderDTO.getReceivedfee() != null && transOrderDTO.getReceivedfee() > 0){
-        				TransferRequest transferRevenueAccountRequest = titanPaymentService
-        						.getRevenueAccountTransferRequest(transOrderDTO);
-        				transferResponse = titanFinancialTradeService.transferAccounts(transferRevenueAccountRequest);
-        				if(transferResponse.isResult()){
-        					businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
-        				}else{
-        					log.error("transfer to revenueAccount success faild, transOrderId: " + transOrderDTO.getTransid());
-        					titanFinancialUtilService.saveOrderException(orderNo,OrderKindEnum.OrderId, OrderExceptionEnum.Transfer_revenueAccount_Fail,orderStatusEnum.getStatus());
-        				}
-        			}
-	        		
+	        		transferFeeAccounts(transOrderDTO);
 	        		businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
 	        		orderStatusEnum = OrderStatusEnum.TRANSFER_SUCCESS;
 	        		isNotify = true;
@@ -320,6 +308,7 @@ public class TitanPaymentController extends BaseController {
 						titanPaymentService.addAccountHistory(transOrderDTO);
 					}
 	        	}
+	        	
         	}
         	
         	//udate the status being success if the transfer is success but that is not freeze 
@@ -345,6 +334,30 @@ public class TitanPaymentController extends BaseController {
     	
 	}
 	
+	
+	/***
+	 * 充值或者支付有手续费，需要将手续费转到收益子账户
+	 * @param transOrderDTO
+	 * @return
+	 * @throws Exception
+	 */
+	private TransferResponse transferFeeAccounts(TransOrderDTO transOrderDTO) throws Exception {
+		TransferResponse transferResponse = null;
+		
+		if(transOrderDTO.getReceivedfee() != null && transOrderDTO.getReceivedfee() > 0){
+			TransferRequest transferRevenueAccountRequest = titanPaymentService
+					.getRevenueAccountTransferRequest(transOrderDTO);
+			transferResponse = titanFinancialTradeService.transferAccounts(transferRevenueAccountRequest);
+			if(transferResponse.isResult()){
+				businessLogService.addPayLog(new AddPayLogRequest(BusinessLog.PayStep.TransferSucc, OrderKindEnum.TransOrderId, transOrderDTO.getTransid()+""));
+			}else{
+				log.error("transfer to revenueAccount success faild, transOrderId: " + transOrderDTO.getTransid());
+				titanFinancialUtilService.saveOrderException(transOrderDTO.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.Transfer_revenueAccount_Fail,null);
+			}
+		}
+		return transferResponse;
+		
+	}
 	
 	private boolean validateOrderStatus(String orderNo){
 

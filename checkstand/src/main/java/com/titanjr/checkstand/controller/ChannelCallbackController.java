@@ -7,6 +7,8 @@
  */
 package com.titanjr.checkstand.controller;
 
+import java.io.File;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,7 +53,7 @@ public class ChannelCallbackController extends BaseController {
 	 */
 	private static final long serialVersionUID = 4077037033223889564L;
 	private final static Logger logger = LoggerFactory.getLogger(ChannelCallbackController.class);
-	private final String resUrl = this.getClass().getResource("/").getPath().replace("classes/", "");
+	private final String resUrl = System.getProperty("checkstand.root")+File.separator+"WEB-INF"+File.separator;
 	
 	@Resource
 	private TitanCommonService titanCommonService;
