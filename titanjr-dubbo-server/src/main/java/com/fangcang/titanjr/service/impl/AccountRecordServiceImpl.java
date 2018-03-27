@@ -323,7 +323,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setProductId(recordRequest.getProductId());
 		accountDetail.setCreditAmount(0L);
 		accountDetail.setFrozonAmount(0L);
-		accountDetail.setSettleAmount(-recordRequest.getAmount());
+		accountDetail.setSettleAmount(-(recordRequest.getAmount()+recordRequest.getFee()));
 		accountDetail.setStatus(1);
 		accountDetail.setCreateTime(new Date());
 		accountDetail.setRemark("提现");
