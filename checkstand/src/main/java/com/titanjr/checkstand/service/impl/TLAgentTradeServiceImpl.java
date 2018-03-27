@@ -63,7 +63,7 @@ public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 	
 	public void init(){
 		//try {
-			resUrl = System.getProperty("checkstand.root")+File.separator+"WEB-INF";
+			resUrl = System.getProperty("checkstand.root")+File.separator+"WEB-INF"+File.separator;
 			//resUrl = appCtx.getResource("classpath:").getFile().getPath().replace("classes", "");
 			//if(resUrl.indexOf("timers") != -1){
 			//	resUrl = resUrl+"/";
