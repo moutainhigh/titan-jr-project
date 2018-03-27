@@ -52,26 +52,10 @@ import com.titanjr.checkstand.util.tlUtil.bean.TransRet;
 public class TLAgentTradeServiceImpl implements TLAgentTradeService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(TLAgentTradeServiceImpl.class);
-	//private String resUrl = this.getClass().getResource("/").getPath().replace("classes/", "");
-	private static String resUrl;
+	private static String resUrl = System.getProperty("checkstand.root")+File.separator+"WEB-INF"+File.separator;
 
 	@Resource
 	private TitanSysconfigService titanSysconfigService;
-	
-	@Autowired
-	private ApplicationContext appCtx;
-	
-	public void init(){
-		//try {
-			resUrl = System.getProperty("checkstand.root")+File.separator+"WEB-INF"+File.separator;
-			//resUrl = appCtx.getResource("classpath:").getFile().getPath().replace("classes", "");
-			//if(resUrl.indexOf("timers") != -1){
-			//	resUrl = resUrl+"/";
-			//}
-		//} catch (IOException e) {
-		//	logger.error("初始化appCtx异常：", e);
-		//}
-	}
 	
 	
 	@Override

@@ -99,7 +99,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 	private final static Logger logger = LoggerFactory.getLogger(AccountDownloadServiceImpl.class);
 	
 	//private final String resUrl = this.getClass().getResource("/").getPath().replace("classes/", "");
-	private static String resUrl;
+	private static String resUrl  = System.getProperty("checkstand.root")+File.separator+"WEB-INF"+File.separator;
 	private final String tmpUrl = System.getProperty("java.io.tmpdir"); //临时目录
 	
 	@Resource
@@ -107,18 +107,6 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 	
 	@Resource
 	private AccountDownloadDao accountDownloadDao;
-	
-	public void init(){
-		//try {
-			resUrl = System.getProperty("checkstand.root")+File.separator+"WEB-INF"+File.separator;
-			//resUrl = appCtx.getResource("classpath:").getFile().getPath().replace("classes", "");
-			//if(resUrl.indexOf("timers") != -1){
-			//	resUrl = resUrl+"/";
-			//}
-		//} catch (IOException e) {
-		//	logger.error("初始化appCtx异常：", e);
-		//}
-	}
 	
 
 	@Override
