@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,10 +66,11 @@ import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.JsonUtil;
 import com.fangcang.util.StringUtil;
-import com.titanjr.checkstand.constants.GatewayDownloadTradeTypeEnum;
+import com.titanjr.checkstand.constants.TLAgentTradeTypeEnum;
+import com.titanjr.checkstand.constants.TLGatewayTradeTypeEnum;
 import com.titanjr.checkstand.constants.GatewayDwonloadErrCodeEnum;
 import com.titanjr.checkstand.constants.PayTypeEnum;
-import com.titanjr.checkstand.constants.QrCodeDownloadTradeTypeEnum;
+import com.titanjr.checkstand.constants.TLQrCodeTradeTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dao.AccountDownloadDao;
@@ -194,7 +196,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 				logger.info("文件临时保存为："+accountLocal.getPath()+"\\"+fileName);
 				
 				//对账文件信息保存到数据库
-				this.saveGatewayDowanloadInfo(fileAsString);
+				this.saveTLGatewayDowanloadInfo(fileAsString);
 				//对账文件上传到房仓FTP
 				this.uploadFtp(accountLocal.getPath()+"\\"+fileName, fileName, SysConstant.TL_GATEWAY_DIR);
 				
@@ -202,7 +204,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 				logger.error("【通联-网关支付对账文件下载】签名验证失败，丢弃该文件，日期：{}", tlGatewayPayDownloadRequest.getSettleDate());
 				response.putErrorResult(RSErrorCodeEnum.SYSTEM_ERROR);
 			}*/
-			
+			initRSResponse(response);
 			return response;
 			
 			//---------------------------下面的写法也可以，上面是通联的写法
@@ -349,11 +351,12 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 			             zin.closeEntry();
 					}
 					//对账文件信息保存到数据库
-					this.saveQrCodeDowanloadInfo(localZipPath.getPath()+"\\"+fileName+".xlsx");
+					this.saveTLQrCodeDowanloadInfo(localZipPath.getPath()+"\\"+fileName+".xlsx");
 					//对账文件上传到房仓FTP
 					uploadFtp(localZipPath.getPath()+"\\"+fileName+".xlsx", fileName+".xlsx", SysConstant.TL_QECODE_DIR);
 					
 				}
+				initRSResponse(response);
 				return response;
 				
 			}else{
@@ -393,9 +396,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 			String resp = sendXml(tlAgentTradeRequest, gateWayConfigDTO.getGateWayUrl());
 			writeBill(resp);
 			
-			response.setMerchantNo(SysConstant.RS_MERCHANT_NO);
-			response.setVersion(SysConstant.RS_VERSION);
-			response.setSignType(SysConstant.RS_SIGN_TYPE);
+			initRSResponse(response);
 			return response;
 			
 		}catch(Exception e){
@@ -464,9 +465,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 			util.ftpLogOut();
 			logger.info("对账文件下载并上传成功");
 
-			response.setMerchantNo(SysConstant.RS_MERCHANT_NO);
-			response.setVersion(SysConstant.RS_VERSION);
-			response.setSignType(SysConstant.RS_SIGN_TYPE);
+			initRSResponse(response);
 			return response;
 
 		} catch (Exception e) {
@@ -559,88 +558,12 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 	}
 	
 	
-	/**
-	 * poi读取xlsx保存到数据库
-	 * @author Jerry
-	 * @date 2018年3月16日 下午3:39:41
-	 */
-	private boolean saveQrCodeDowanloadInfo(String filePath){
-		
-		List<AccountDownloadDTO> list = new ArrayList<AccountDownloadDTO>();
-		String merchantNo = "";
-		String tradeDate = "";
-		String channelCode = SysConstant.TL_CHANNEL_CODE;
-        try{
-        	
-            File file = new File(filePath);
-            InputStream str = new FileInputStream(file);
-            XSSFWorkbook xwb = new XSSFWorkbook(str);  //利用poi读取excel文件流
-            XSSFSheet st = xwb.getSheetAt(0);  //读取sheet的第一个工作表
-            int rows = st.getLastRowNum();//总行数
-            logger.info("总行数："+rows);
-            //读取商户号
-            XSSFRow row = st.getRow(2);
-            if(row!=null){
-            	XSSFCell cell = row.getCell(7);
-            	if(cell != null){
-            		merchantNo = cell.getStringCellValue();
-            	}
-            }
-            //遍历对账明细，提取信息（如果通联的excel对账文件格式有变化，数据会不准）
-            for (int i = 10; i < rows-4; i++) {
-            	XSSFCell cell = null;
-            	AccountDownloadDTO accountDownloadDTO = new AccountDownloadDTO();
-            	accountDownloadDTO.setMerchantNo(merchantNo);
-            	accountDownloadDTO.setChannelCode(channelCode);
-            	row = st.getRow(i);
-            	//交易时间
-            	cell = row.getCell(11);
-            	tradeDate = cell.getStringCellValue();
-            	cell = row.getCell(1);
-            	accountDownloadDTO.setTradeDate(tradeDate+" "+cell.getStringCellValue());
-            	//商户订单号
-            	cell = row.getCell(13);
-            	accountDownloadDTO.setOrderNo(cell.getStringCellValue());
-            	//第三方订单号
-            	cell = row.getCell(12);
-            	accountDownloadDTO.setPartnerOrderNo(cell.getStringCellValue());
-            	//交易类型  1充值  2退款  3冲销   4提现  0未知类型
-            	cell = row.getCell(2);
-            	String tradeTypeDes = cell.getStringCellValue();
-            	accountDownloadDTO.setTradeTypeDes(tradeTypeDes);
-            	accountDownloadDTO.setTradeType(QrCodeDownloadTradeTypeEnum.getValue(tradeTypeDes));
-            	//交易金额
-            	cell = row.getCell(9);
-            	accountDownloadDTO.setTradeAmount(cell.getStringCellValue());
-            	//手续费
-            	cell = row.getCell(10);
-            	accountDownloadDTO.setFee(cell.getStringCellValue());
-            	
-            	list.add(accountDownloadDTO);
-			}
-            
-            int saveCount = accountDownloadDao.batchSave(list);
-            if(saveCount > 0){
-            	logger.info("对账文件信息保存成功，共保存{}条记录", saveCount);
-            	return true;
-            }
-            return false;
-            
-        }catch(IOException e){
-        	
-        	 logger.error("操作excel对账信息保存到数据库异常：", e);
-        	 return false;
-        	
-        }
-         
-    }
-	
-	private boolean saveGatewayDowanloadInfo(String fileInfo){
+	private boolean saveTLGatewayDowanloadInfo(String fileString){
 		
 		try {
 			
 			List<AccountDownloadDTO> list = new ArrayList<AccountDownloadDTO>();
-			String[] array = fileInfo.split("\r\n");
+			String[] array = fileString.split("\r\n");
 			
 			for (int i = 1; i < array.length; i++) {
 				
@@ -661,7 +584,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 				//交易类型  1充值  2退款  3冲销   4提现  0未知类型
 				String tradeTypeDes = strs[0];
 				accountDownloadDTO.setTradeTypeDes(tradeTypeDes);
-				accountDownloadDTO.setTradeType(GatewayDownloadTradeTypeEnum.getTradeType(tradeTypeDes));
+				accountDownloadDTO.setTradeType(TLGatewayTradeTypeEnum.getTradeType(tradeTypeDes));
 				//交易金额
 				accountDownloadDTO.setTradeAmount(strs[6]);
 				//清算金额
@@ -675,14 +598,192 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 			
 			int saveCount = accountDownloadDao.batchSave(list);
 			if(saveCount > 0){
-				logger.info("对账文件信息保存成功，共保存{}条记录", saveCount);
+				logger.info("【通联-网关支付】对账文件信息保存成功，共保存{}条记录", saveCount);
 				return true;
 			}
 			return false;
 			
 		} catch (Exception e) {
 			
-			logger.error("网关支付对账信息保存到数据库异常：", e);
+			logger.error("【通联-网关支付】对账信息保存到数据库异常：", e);
+       	 	return false;
+			
+		}
+		
+	}
+	
+	
+
+	
+	
+	/**
+	 * poi读取xlsx保存到数据库
+	 * @author Jerry
+	 * @date 2018年3月16日 下午3:39:41
+	 */
+	private boolean saveTLQrCodeDowanloadInfo(String filePath){
+		
+		List<AccountDownloadDTO> list = new ArrayList<AccountDownloadDTO>();
+		String merchantNo = "";
+		String tradeDate = "";
+		String channelCode = SysConstant.TL_CHANNEL_CODE;
+        try{
+        	
+            File file = new File(filePath);
+            InputStream str = new FileInputStream(file);
+            XSSFWorkbook xwb = new XSSFWorkbook(str);  //利用poi读取excel文件流
+            XSSFSheet st = xwb.getSheetAt(0);  //读取sheet的第一个工作表
+            int rows = st.getLastRowNum();//总行数，好像会少一行，所以下面遍历是rows-2
+            logger.info("总行数："+rows);
+            //读取商户号
+            XSSFRow row = st.getRow(2);
+            if(row!=null){
+            	XSSFCell cell = row.getCell(7);
+            	if(cell != null){
+            		merchantNo = cell.getStringCellValue();
+            	}
+            }
+            //遍历对账明细，提取信息（如果通联的excel对账文件格式有变化，数据会不准）
+            for (int i = 10; i < rows-2; i++) {
+            	XSSFCell cell = null;
+            	AccountDownloadDTO accountDownloadDTO = new AccountDownloadDTO();
+            	accountDownloadDTO.setMerchantNo(merchantNo);
+            	accountDownloadDTO.setChannelCode(channelCode);
+            	row = st.getRow(i);
+            	//交易时间
+            	cell = row.getCell(11);
+            	tradeDate = cell.getStringCellValue();
+            	cell = row.getCell(1);
+            	accountDownloadDTO.setTradeDate(tradeDate+" "+cell.getStringCellValue());
+            	//商户订单号
+            	cell = row.getCell(13);
+            	accountDownloadDTO.setOrderNo(cell.getStringCellValue());
+            	//第三方订单号
+            	cell = row.getCell(12);
+            	accountDownloadDTO.setPartnerOrderNo(cell.getStringCellValue());
+            	//交易类型  1充值  2退款  3冲销   4提现  0未知类型
+            	cell = row.getCell(2);
+            	String tradeTypeDes = cell.getStringCellValue();
+            	accountDownloadDTO.setTradeTypeDes(tradeTypeDes);
+            	accountDownloadDTO.setTradeType(TLQrCodeTradeTypeEnum.getValue(tradeTypeDes));
+            	//交易金额
+            	cell = row.getCell(9);
+            	accountDownloadDTO.setTradeAmount(cell.getStringCellValue());
+            	//手续费
+            	cell = row.getCell(10);
+            	accountDownloadDTO.setFee(cell.getStringCellValue());
+            	
+            	list.add(accountDownloadDTO);
+			}
+            
+            int saveCount = accountDownloadDao.batchSave(list);
+            if(saveCount > 0){
+            	logger.info("【通联-扫码/公众号】对账文件信息保存成功，共保存{}条记录", saveCount);
+            	return true;
+            }
+            return false;
+            
+        }catch(IOException e){
+        	
+        	 logger.error("【通联-扫码/公众号】操作excel对账信息保存到数据库异常：", e);
+        	 return false;
+        	
+        }
+         
+    }
+	
+	
+	/**
+	 * 通联账户交易对账文件信息保存到数据库
+	 * @author Jerry
+	 * @date 2018年3月27日 下午2:42:19
+	 */
+	private boolean saveTLAgentDowanloadInfo(String filePath){
+		
+		try {
+			
+			List<AccountDownloadDTO> list = new ArrayList<AccountDownloadDTO>();
+			StringBuffer fileBuf = new StringBuffer();
+			String fileString = "";
+			//读取对账文件
+			File file = new File(filePath);
+			if (file.isFile()) { 
+	            //使用Reader，表示读字符数据，使用BufferedReader，表示建立缓冲区读字符数据。
+	            BufferedReader bufferedReader = null; 
+	            FileReader fileReader = null; 
+	            try { 
+	                fileReader = new FileReader(file);
+	                //嵌套使用，装饰者模式
+	                bufferedReader = new BufferedReader(fileReader); 
+	                String line = bufferedReader.readLine(); 
+	                //一行一行读
+	                while (line != null) {
+	                	fileBuf.append(line + "\r\n");
+	                    line = bufferedReader.readLine(); 
+	                } 
+	            } catch (Exception e) {
+	            	logger.error("【通联】账户交易对账文件信息保存数据库失败，读取文件异常：", e);
+	            	return false;
+	            	
+	            }  finally {
+	                try { 
+	                    fileReader.close(); 
+	                    bufferedReader.close(); 
+	                } catch (IOException e) { 
+	                    e.printStackTrace(); 
+	                }
+	            } 
+	   
+	        }
+			
+			//解析文件内容，构建对象
+			fileString = fileBuf.toString();
+			String[] array = fileString.split("\r\n");
+			for (int i = 1; i < array.length; i++) {
+				
+				String[] strs = array[i].split(" ");
+				AccountDownloadDTO accountDownloadDTO = new AccountDownloadDTO();
+				//商户号
+				accountDownloadDTO.setMerchantNo(SysConstant.TL_AGENT_MERCHANT);
+				//商户订单号
+				accountDownloadDTO.setOrderNo(strs[0]);
+				//第三方编码【01通联 02融宝】
+				accountDownloadDTO.setChannelCode(SysConstant.TL_CHANNEL_CODE);
+				//交易时间    yyyy-MM-dd HH:mm:ss
+				StringBuffer tradeDateSB = new StringBuffer(strs[6]);
+				accountDownloadDTO.setTradeDate(tradeDateSB.insert(4, "-").insert(7, "-").insert(10, " ")
+						.insert(13, ":").insert(16, ":").toString());
+				//结算日期    yyyy-MM-dd
+				StringBuffer settlDateSB = new StringBuffer(strs[7]);
+				accountDownloadDTO.setSettlDate(settlDateSB.insert(4, "-").insert(7, "-").toString());
+				//交易类型  1充值  2退款  3冲销   4提现  0未知类型
+				TLAgentTradeTypeEnum tlAgentTradeTypeEnum = TLAgentTradeTypeEnum.getByKey(strs[2]);
+				accountDownloadDTO.setTradeTypeDes(tlAgentTradeTypeEnum.value);
+				accountDownloadDTO.setTradeType(tlAgentTradeTypeEnum.tradeType);
+				//交易金额
+				accountDownloadDTO.setTradeAmount(strs[4]);
+				//手续费可能没有，需要判断
+				if(strs.length == 9){
+					accountDownloadDTO.setFee(StringUtil.isValidString(strs[8])?strs[8]:"0");
+				}
+				if(strs.length == 10){
+					accountDownloadDTO.setFee(StringUtil.isValidString(strs[9])?strs[9]:"0");
+				}
+				
+				list.add(accountDownloadDTO);
+				
+			}
+			
+			int saveCount = accountDownloadDao.batchSave(list);
+			if(saveCount > 0){
+				logger.info("【通联-账户交易】对账文件信息保存成功，共保存{}条记录", saveCount);
+				return true;
+			}
+			return false;
+			
+		} catch (Exception e) {
+			
+			logger.error("【通联-账户交易】对账信息保存到数据库异常：", e);
        	 	return false;
 			
 		}
@@ -691,7 +792,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 	
 	
 	/**
-	 * 对账文件上传到ftp
+	 * 对账文件上传到ftp并保存到数据库
 	 * @author Jerry
 	 * @date 2017年12月29日 上午10:02:05
 	 */
@@ -732,37 +833,8 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
              zin.closeEntry();
 		}
 		
-		//上传到ftp
-		FtpUtil util = null;
-		FTPConfigResponse configResponse = titanSysconfigService.getFTPConfig();
-		util = new FtpUtil(configResponse.getFtpServerIp(),
-				configResponse.getFtpServerPort(),
-				configResponse.getFtpServerUser(),
-				configResponse.getFtpServerPassword());
-		util.ftpLogin();
-		logger.info("login ftp success");
-
-		/*List<String> fileList = util.listFiles(FtpUtil.UPLOAD_PATH_AGENT_CHECKING + ""
-				+ "/" + DateUtil.dateToString(new Date(), "yyyy-MM-dd"));
-		// 检查文件是否已经上传过，如果上传过则需要把旧的文件先删掉
-		if (fileList != null) {
-			for (int i = 0; i < fileList.size(); i++) {
-				if (fileList.get(i).indexOf(fileName + ".") != -1) {
-					util.deleteFile(FtpUtil.UPLOAD_PATH_AGENT_CHECKING + ""
-							+ "/" + DateUtil.dateToString(new Date(), "yyyy-MM-dd")
-							+ fileList.get(i));
-				}
-			}
-		}*/
-
-		File file = new File(agentLocal.getPath()+fileName);
-		InputStream inputStream = new FileInputStream(file);
-		util.uploadStream(fileName, inputStream, FtpUtil.UPLOAD_PATH_TL_AGENT_CHECKING+SysConstant.TL_AGENT_DIR);
-		logger.info("upload to ftp success fileName=" + fileName);
-
-		util.ftpLogOut();
-		
-		logger.info("对账文件下载并上传成功");
+		this.saveTLAgentDowanloadInfo(agentLocal.getPath()+fileName);
+		this.uploadFtp(agentLocal.getPath()+fileName, fileName, SysConstant.TL_AGENT_DIR);
 		
 	}
 	
@@ -824,6 +896,11 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 		InputStream inputStream;
 		try {
 			inputStream = new FileInputStream(file);
+			if("ACCOUNT-".equals(prefix)){
+				StringBuffer sb = new StringBuffer(fileName);
+				sb.insert(4, "-").insert(7, "-");
+				fileName = sb.toString();
+			}
 			util.uploadStream(prefix + fileName, inputStream, FtpUtil.UPLOAD_PATH_RB_AGENT_CHECKING);
 		} catch (FileNotFoundException e) {
 			logger.error("本地文件流读取失败,本地文件路径：{}", file.getPath(), e);
@@ -835,6 +912,13 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 
 		logger.info("upload to fcFtp success fileName=" + baseDir + fileName);
 		return true;
+	}
+	
+	
+	private void initRSResponse(RSResponse response){
+		response.setMerchantNo(SysConstant.RS_MERCHANT_NO);
+		response.setVersion(SysConstant.RS_VERSION);
+		response.setSignType(SysConstant.RS_SIGN_TYPE);
 	}
 
 }

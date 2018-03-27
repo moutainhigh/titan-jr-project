@@ -14,34 +14,33 @@ import com.fangcang.util.StringUtil;
  * @author Jerry
  * @date 2018年3月21日 下午5:13:01  
  */
-public enum GatewayDownloadTradeTypeEnum {
+public enum TLQrCodeTradeTypeEnum {
 	
-	PAY_SUCCESS("ZF", "支付成功", "1"),
-	REFUND_SUCCESS("TH", "退款成功", "2"),
-	OFFSET_SUCCESS("CX", "冲销成功", "3"),
-	UNKONW_TYPE("WZ", "未知类型", "0");
+	WECHAT_PAY("微信支付", "1"),
+	ALIPAY_PAY("支付宝支付", "1"),
+	WECHAT_REFUND("微信退货", "2"),
+	ALIPAY_REFUND("支付宝退货", "2"),
+	UNKONW_TYPE("未知类型", "0");
 	
 	public String key;
-	public String value;
-	public String tradeType; //1充值  2退款 3冲销
+	public String value;//1充值  2退款
 	
-	private GatewayDownloadTradeTypeEnum(String key, String value, String tradeType) {
+	private TLQrCodeTradeTypeEnum(String key, String value) {
 		this.key = key;
 		this.value = value;
-		this.tradeType = tradeType;
 	}
 	
-	public static String getTradeType(String key){
+	public static String getValue(String key){
 		
 		if(!StringUtil.isValidString(key)){
-			return UNKONW_TYPE.tradeType;
+			return UNKONW_TYPE.value;
 		}
-		for (GatewayDownloadTradeTypeEnum tradeTypeEnum : GatewayDownloadTradeTypeEnum.values()) {
+		for (TLQrCodeTradeTypeEnum tradeTypeEnum : TLQrCodeTradeTypeEnum.values()) {
 			if(key.equals(tradeTypeEnum.key)){
-				return tradeTypeEnum.tradeType;
+				return tradeTypeEnum.value;
 			}
 		}
-		return UNKONW_TYPE.tradeType;
+		return UNKONW_TYPE.value;
 		
 	}
 	
@@ -56,14 +55,6 @@ public enum GatewayDownloadTradeTypeEnum {
 	}
 	public void setValue(String value) {
 		this.value = value;
-	}
-
-	public String getTradeType() {
-		return tradeType;
-	}
-
-	public void setTradeType(String tradeType) {
-		this.tradeType = tradeType;
 	}
 
 }

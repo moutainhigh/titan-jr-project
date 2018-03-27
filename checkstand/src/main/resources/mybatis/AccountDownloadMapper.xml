@@ -3,7 +3,7 @@
 <mapper namespace="com.titanjr.checkstand.dao.AccountDownloadDao">
 
     <insert id="batchSave" parameterType="java.util.List">
-        INSERT INTO `t_account_download` (
+        INSERT INTO `t_tfs_account_download` (
 	      `merchantNo`,
 	      `orderNo`,
 		  `partnerOrderNo`,

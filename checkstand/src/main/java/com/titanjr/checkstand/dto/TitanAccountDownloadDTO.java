@@ -1,31 +1,25 @@
 /** 
  * CopyRright ©2017 深圳市天下房仓科技有限公司 All Right Reserved.
  * 
- * @fileName TitanGatewayDownloadDTO.java
+ * @fileName TitanAgentPayDTO.java
  * @author Jerry
- * @date 2018年3月15日 下午6:23:47  
+ * @date 2017年12月25日 上午11:49:04  
  */
 package com.titanjr.checkstand.dto;
 
-import java.io.Serializable;
-
 import org.hibernate.validator.constraints.NotBlank;
-
 import com.titanjr.checkstand.constants.TradeCodeEnum;
 
 /**
+ * 账户交易-对账文件下载请求对象<br>
+ * 通联，融宝合用，有注解的是都必填的，请注意有特别说明的字段
  * @author Jerry
- * @date 2018年3月15日 下午6:23:47  
+ * @date 2017年12月28日 下午7:10:59
  */
-public class TitanGatewayDownloadDTO implements Serializable {
-
-	/** 
-	 * 
-	 */
-	private static final long serialVersionUID = -20721888819956302L;
+public class TitanAccountDownloadDTO {
 	
 	/**
-	 * 商户号
+	 * 商家ID
 	 */
 	@NotBlank
 	private String merchantNo;
@@ -35,12 +29,12 @@ public class TitanGatewayDownloadDTO implements Serializable {
 	 */
 	@NotBlank
 	private String tradeCode;
-
+	
 	/**
-	 * 格式为 yyyy-MM-dd，结算日期
+	 * 交易日期（按某个日期下载）    yyyyMMdd
 	 */
 	@NotBlank
-	private String settlDate ;
+	private String tradeDate;
 	
 
 	public String getMerchantNo() {
@@ -59,12 +53,12 @@ public class TitanGatewayDownloadDTO implements Serializable {
 		this.tradeCode = tradeCode;
 	}
 
-	public String getSettlDate() {
-		return settlDate;
+	public String getTradeDate() {
+		return tradeDate;
 	}
 
-	public void setSettlDate(String settlDate) {
-		this.settlDate = settlDate;
+	public void setTradeDate(String tradeDate) {
+		this.tradeDate = tradeDate;
 	}
 
 }

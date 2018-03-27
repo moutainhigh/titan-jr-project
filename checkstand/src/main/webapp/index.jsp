@@ -517,7 +517,7 @@
             <tr>
                 <td class="tdr">开始时间</td>
                 <td>
-                    <input type="text" id="startDate" name="startDate"/>通联：若不填则orderNo则必填
+                    <input type="text" id="startDate" name="startDate"/>通联：若不填则orderNo则必填 ， yyyyMMddHHmmss
                 </td>
             </tr>
             <tr>
@@ -558,9 +558,9 @@
                 <td><input type="text" id="tradeCode" value="200005" name="tradeCode"/>* 200005通联-网关支付对账文件下载</td>
             </tr>
             <tr>
-                <td class="tdr">交易日期</td>
+                <td class="tdr">结算日期</td>
                 <td>
-                    <input type="text" id="tradeDate" name="tradeDate"/>* yyyy-MM-dd
+                    <input type="text" id="settlDate" name="settlDate"/>* yyyy-MM-dd
                 </td>
             </tr>
             <tr>
@@ -596,7 +596,7 @@
             <tr>
                 <td class="tdr">交易日期</td>
                 <td>
-                    <input type="text" id="tradeDate" name="tradeDate"/>* yyyy-MM-dd
+                    <input type="text" id="tradeDate" name="tradeDate"/>* yyyyMMdd
                 </td>
             </tr>
             <tr>
@@ -662,6 +662,12 @@
                 </td>
             </tr>
             <tr>
+                <td class="tdr">是否包含手续费</td>
+                <td>
+                    <input type="text" value="1" id="contFee" name="contFee"/>* 0.不需手续费，1.包含手续费
+                </td>
+            </tr>
+            <tr>
                 <td class="tdr">业务编码</td>
                 <td>
                     <input type="text" value="115" id="busiCode" name="busiCode"/>* 115对账文件下载
@@ -695,7 +701,7 @@
             <tr>
                 <td class="tdr">交易日期</td>
                 <td>
-                    <input type="text" id="tradeDate" name="tradeDate"/>* yyyy-MM-dd
+                    <input type="text" id="tradeDate" name="tradeDate"/>* yyyyMMdd
                 </td>
             </tr>
             <tr>

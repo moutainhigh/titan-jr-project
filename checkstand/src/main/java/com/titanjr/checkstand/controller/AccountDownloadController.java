@@ -27,6 +27,7 @@ import com.titanjr.checkstand.constants.RequestTypeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
 import com.titanjr.checkstand.dto.TLAgentInfoRequestDTO;
 import com.titanjr.checkstand.dto.TLAgentQueryTransDTO;
+import com.titanjr.checkstand.dto.TitanAccountDownloadDTO;
 import com.titanjr.checkstand.dto.TitanAgentDownloadDTO;
 import com.titanjr.checkstand.dto.TitanGatewayDownloadDTO;
 import com.titanjr.checkstand.dto.TitanQrcodeDownloadDTO;
@@ -121,7 +122,7 @@ public class AccountDownloadController extends BaseController {
 			
 			TLGatewayPayDownloadRequest tlGatewayPayDownloadRequest = new TLGatewayPayDownloadRequest();
 			tlGatewayPayDownloadRequest.setMchtCd(SysConstant.TL_NETBANK_MERCHANT);
-			tlGatewayPayDownloadRequest.setSettleDate(titanGatewayDownloadDTO.getTradeDate());
+			tlGatewayPayDownloadRequest.setSettleDate(titanGatewayDownloadDTO.getSettlDate());
 			tlGatewayPayDownloadRequest.setRequestType(RequestTypeEnum.GATEWAY_DOWNLOAD.getKey());
 			
 			response = accountDownloadService.tlGatewayPayDownload(tlGatewayPayDownloadRequest);
@@ -161,7 +162,7 @@ public class AccountDownloadController extends BaseController {
 			
 			TLQrCodeDownloadRequest tlQrCodeDownloadRequest = new TLQrCodeDownloadRequest();
 			tlQrCodeDownloadRequest.setCusid(SysConstant.TL_QRCODE_CUSTID);
-			tlQrCodeDownloadRequest.setDate(titanQrcodeDownloadDTO.getTradeDate().replaceAll("-", ""));
+			tlQrCodeDownloadRequest.setDate(titanQrcodeDownloadDTO.getTradeDate());
 			tlQrCodeDownloadRequest.setRandomstr(CommonUtil.getValidatecode(8));
 			tlQrCodeDownloadRequest.setRequestType(RequestTypeEnum.QRCODE_DOWNLOAD.getKey());
 			
@@ -198,12 +199,6 @@ public class AccountDownloadController extends BaseController {
 				response.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
 				return response;
 			}
-			res = titanAgentDownloadDTO.validateForTL();
-			if(!res.isSuccess()){
-				logger.error("【通联-对账文件下载】参数错误：{}", res.getReturnMessage());
-				response.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
-				return response;
-			}
 			
 			TLAgentTradeRequest tlAgentTradeRequest = new TLAgentTradeRequest();
 			
@@ -223,6 +218,7 @@ public class AccountDownloadController extends BaseController {
 			trans.setTYPE(Integer.parseInt(titanAgentDownloadDTO.getQueryType())) ;
 			trans.setSTART_DAY(titanAgentDownloadDTO.getStartDate());
 			trans.setEND_DAY(titanAgentDownloadDTO.getEndDate());
+			trans.setCONTFEE(titanAgentDownloadDTO.getContFee());
 			tlAgentTradeRequest.addTrx(trans);
 			tlAgentTradeRequest.setRequestType(RequestTypeEnum.AGENT_TRADE.getKey());
 			
@@ -247,15 +243,9 @@ public class AccountDownloadController extends BaseController {
 		
 		try {
     		
-			TitanAgentDownloadDTO titanAgentDownloadDTO = WebUtils.switch2RequestDTO(TitanAgentDownloadDTO.class, request);
-			ValidateResponse res = GenericValidate.validateNew(titanAgentDownloadDTO);
+			TitanAccountDownloadDTO titanAccountDownloadDTO = WebUtils.switch2RequestDTO(TitanAccountDownloadDTO.class, request);
+			ValidateResponse res = GenericValidate.validateNew(titanAccountDownloadDTO);
 			if (!res.isSuccess()){
-				logger.error("【融宝-对账文件下载】参数错误：{}", res.getReturnMessage());
-				response.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
-				return response;
-			}
-			res = titanAgentDownloadDTO.validateForRB();
-			if(!res.isSuccess()){
 				logger.error("【融宝-对账文件下载】参数错误：{}", res.getReturnMessage());
 				response.putErrorResult(RSErrorCodeEnum.build(res.getReturnMessage()));
 				return response;
@@ -263,7 +253,7 @@ public class AccountDownloadController extends BaseController {
 			
 			RBAgentDownloadRequest rbAgentDownloadRequest = new RBAgentDownloadRequest();
 			rbAgentDownloadRequest.setMerchant_id(SysConstant.RB_MERCHANT);
-			rbAgentDownloadRequest.setTradeDate(titanAgentDownloadDTO.getTradeDate().replaceAll("-", ""));
+			rbAgentDownloadRequest.setTradeDate(titanAccountDownloadDTO.getTradeDate());
 			rbAgentDownloadRequest.setRequestType(RequestTypeEnum.AGENT_DOWNLOAD.getKey());
 			
 			response = accountDownloadService.rbAccountDownload(rbAgentDownloadRequest);

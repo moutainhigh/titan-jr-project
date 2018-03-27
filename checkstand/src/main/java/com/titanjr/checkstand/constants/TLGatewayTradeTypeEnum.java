@@ -14,33 +14,34 @@ import com.fangcang.util.StringUtil;
  * @author Jerry
  * @date 2018年3月21日 下午5:13:01  
  */
-public enum QrCodeDownloadTradeTypeEnum {
+public enum TLGatewayTradeTypeEnum {
 	
-	WECHAT_PAY("微信支付", "1"),
-	ALIPAY_PAY("支付宝支付", "1"),
-	WECHAT_REFUND("微信退货", "2"),
-	ALIPAY_REFUND("支付宝退货", "2"),
-	UNKONW_TYPE("未知类型", "0");
+	PAY_SUCCESS("ZF", "支付成功", "1"),
+	REFUND_SUCCESS("TH", "退款成功", "2"),
+	OFFSET_SUCCESS("CX", "冲销成功", "3"),
+	UNKONW_TYPE("WZ", "未知类型", "0");
 	
 	public String key;
-	public String value;//1充值  2退款
+	public String value;
+	public String tradeType; //1充值  2退款 3冲销
 	
-	private QrCodeDownloadTradeTypeEnum(String key, String value) {
+	private TLGatewayTradeTypeEnum(String key, String value, String tradeType) {
 		this.key = key;
 		this.value = value;
+		this.tradeType = tradeType;
 	}
 	
-	public static String getValue(String key){
+	public static String getTradeType(String key){
 		
 		if(!StringUtil.isValidString(key)){
-			return UNKONW_TYPE.value;
+			return UNKONW_TYPE.tradeType;
 		}
-		for (QrCodeDownloadTradeTypeEnum tradeTypeEnum : QrCodeDownloadTradeTypeEnum.values()) {
+		for (TLGatewayTradeTypeEnum tradeTypeEnum : TLGatewayTradeTypeEnum.values()) {
 			if(key.equals(tradeTypeEnum.key)){
-				return tradeTypeEnum.value;
+				return tradeTypeEnum.tradeType;
 			}
 		}
-		return UNKONW_TYPE.value;
+		return UNKONW_TYPE.tradeType;
 		
 	}
 	
@@ -55,6 +56,14 @@ public enum QrCodeDownloadTradeTypeEnum {
 	}
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public String getTradeType() {
+		return tradeType;
+	}
+
+	public void setTradeType(String tradeType) {
+		this.tradeType = tradeType;
 	}
 
 }
