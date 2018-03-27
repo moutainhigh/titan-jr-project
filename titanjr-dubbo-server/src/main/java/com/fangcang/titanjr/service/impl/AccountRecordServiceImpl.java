@@ -256,7 +256,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 	public BaseResponseDTO unFreeze(RecordRequest recordRequest) {
 		LOGGER.info("[解冻]记账,请求参数recordRequest:"+Tools.gsonToString(recordRequest));
 		BaseResponseDTO responseDTO = new BaseResponseDTO();
-		int tradeType = TradeTypeAccountDetailEnum.FREEZEE.getTradeType();
+		int tradeType = TradeTypeAccountDetailEnum.UNFREEZEE.getTradeType();
 		////同一个订单允许多次冻结，解冻
 //		if(checkIsRecord(recordRequest,tradeType)){
 //			responseDTO.putErrorResult("该笔交易已经记账");
