@@ -61,6 +61,8 @@ public class TLAgentPayTransDTO {
 	private String REMARK;
 	//业务代码
 	private String RECVCHNL;
+	private String PROVINCE;
+	private String CITY;
 	//业务代码
 	private String SETTACCT;
 	private String TLTMERID; //posp专用
@@ -307,4 +309,19 @@ public class TLAgentPayTransDTO {
 		RECVCHNL = rECVCHNL;
 	}
 
+	public String getCITY() {
+		return CITY;
+	}
+
+	public void setCITY(String CITY) {
+		this.CITY = CITY;
+	}
+
+	public String getPROVINCE() {
+		return PROVINCE;
+	}
+
+	public void setPROVINCE(String PROVINCE) {
+		this.PROVINCE = PROVINCE;
+	}
 }

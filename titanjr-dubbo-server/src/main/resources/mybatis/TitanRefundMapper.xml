@@ -85,6 +85,8 @@
       <if test="startTime != null"> and <![CDATA[ d.createtime >= #{startTime} ]]></if>
       <if test="endTime != null"> and <![CDATA[ d.createtime < #{endTime} ]]></if>
       <if test="merchantNo !=null"> AND o.payeemerchant = #{merchantNo}</if>
+      <if test="payerMerchant != null">and o.payermerchant = #{payerMerchant} </if>
+      <if test="payeeMerchant != null">and o.payeemerchant = #{payeeMerchant} </if>
     </where>
   </select>
 

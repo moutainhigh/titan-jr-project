@@ -274,6 +274,7 @@ public class AccountServiceImpl implements AccountService {
         //查询绑卡信息 1：结算卡，2：其他卡, 3：提现卡, 4：结算提现一体卡)
         BankCardRequest bankCardRequest = new BankCardRequest();
         bankCardRequest.setUserId(withdrawserviceRequest.getUserid());
+        bankCardRequest.setStatus(1);
         List<BankCardDTO> bankCardDTOList = titanFinancialBankCardService.queryBankCardDTO(bankCardRequest);
         BankCardDTO cardDTO = null;
         for (BankCardDTO bankCardDTO : bankCardDTOList) {
@@ -287,6 +288,10 @@ public class AccountServiceImpl implements AccountService {
                 cardDTO = bankCardDTO;
                 break;
             }
+        }
+        //如果只有一张提现卡就用当前的卡
+        if (cardDTO == null && CollectionUtils.isNotEmpty(bankCardDTOList) && bankCardDTOList.size() == 1) {
+            cardDTO = bankCardDTOList.get(0);
         }
         if (cardDTO == null) {
             logger.error("本地绑卡信息异常，机构号：{}", withdrawserviceRequest.getUserid());
@@ -320,8 +325,10 @@ public class AccountServiceImpl implements AccountService {
         }
         paramMap.put("tradeAmount", withdrawserviceRequest.getAmount());
         paramMap.put("currency", "CNY");
-        paramMap.put("idCode", cardDTO.getCertificatenumnumber());
-        paramMap.put("idType", null);//设法区分身份证和回乡证getCertificatetype 不一定准
+        //paramMap.put("idCode", cardDTO.getCertificatenumnumber());
+        //paramMap.put("idType", "5");//设法区分身份证和回乡证getCertificatetype 不一定准
+        paramMap.put("province",cardDTO.getBankprovince());
+        paramMap.put("city",cardDTO.getBankcity());
         //若提现渠道有设置则使用设置的
         if (withdrawserviceRequest.getWithDrawChannel().equals(WithDrawChannelEnum.RB_CHANNEL)) {
             paramMap.put("tradeCode","300001");
