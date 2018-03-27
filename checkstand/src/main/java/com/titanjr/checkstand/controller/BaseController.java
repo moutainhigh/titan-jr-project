@@ -122,11 +122,7 @@ public class BaseController implements Serializable {
      */
     public void resetParameter(HttpServletRequest request, RedirectAttributes attr){
         for (String key : request.getParameterMap().keySet()){
-			try {
-				attr.addAttribute(key, URLEncoder.encode(request.getParameterMap().get(key)[0],"UTF-8"));
-			} catch (UnsupportedEncodingException e) {
-				logger.error("当前参数:{}编码失败，请注意", key, e);
-			}
+        	attr.addAttribute(key, request.getParameterMap().get(key)[0]);
 		}
     }
     

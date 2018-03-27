@@ -18,6 +18,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * 网关支付总入口
@@ -33,6 +35,20 @@ public class CheckStandController extends BaseController {
 	private static final long serialVersionUID = -7886169613793728087L;
 	private final static Logger logger = LoggerFactory.getLogger(CheckStandController.class);
 
+	/**
+	 * encode参数
+	 * @param request
+	 * @param attr
+	 */
+	private void resetParam(HttpServletRequest request, RedirectAttributes attr){
+        for (String key : request.getParameterMap().keySet()){
+			try {
+				attr.addAttribute(key, URLEncoder.encode(request.getParameterMap().get(key)[0],"UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				logger.error("当前参数:{}编码失败，请注意", key, e);
+			}
+		}
+    }
 	
 	/**
 	 * 根据策略跳转到对应的收银台路由代理,有些是返回字串，有些是做网关跳转
@@ -46,7 +62,7 @@ public class CheckStandController extends BaseController {
         //参数MD5验证
         try {
         	
-			resetParameter(request, attr);
+        	this.resetParam(request, attr);
 			BusiCodeEnum busiCodeEnum = JRBeanUtils.getBusiCode(request);
 			
 			if(busiCodeEnum == null){

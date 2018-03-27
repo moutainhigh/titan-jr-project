@@ -48,8 +48,8 @@ public class WebUtils {
                 field.setAccessible(true);
                 String fieldType = field.getType().toString();
                 if (request.getParameterMap().containsKey(field.getName()) && null != request.getParameterMap().get(field.getName())){
-                    String param = URLDecoder.decode(request.getParameterMap().get(field.getName())[0].toString(),"UTF-8");
-                    if (fieldType.endsWith("String")){
+                	String param = URLDecoder.decode(request.getParameterMap().get(field.getName())[0].toString(),"UTF-8");
+                	if (fieldType.endsWith("String")){
                         field.set(result,param);
                     }
                     if (fieldType.endsWith("Long") || fieldType.endsWith("long")){
