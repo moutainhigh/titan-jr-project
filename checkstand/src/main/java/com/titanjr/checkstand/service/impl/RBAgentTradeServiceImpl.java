@@ -7,6 +7,7 @@
  */
 package com.titanjr.checkstand.service.impl;
 
+import java.io.File;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -55,7 +56,7 @@ import com.titanjr.checkstand.util.rbUtil.Decipher;
 public class RBAgentTradeServiceImpl implements RBAgentTradeService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(RBAgentTradeServiceImpl.class);
-	private final String resUrl = this.getClass().getResource("/").getPath().replace("classes/", "");
+	private final String resUrl = System.getProperty("checkstand.root")+File.separator+"WEB-INF"+File.separator;
 	
 	@Resource
 	private TitanSysconfigService titanSysconfigService;

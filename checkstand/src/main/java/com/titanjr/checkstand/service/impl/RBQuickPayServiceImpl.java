@@ -74,7 +74,7 @@ import com.titanjr.checkstand.util.rbUtil.Decipher;
 public class RBQuickPayServiceImpl implements RBQuickPayService {
 	
 	private final static Logger logger = LoggerFactory.getLogger(RBQuickPayServiceImpl.class);
-	private final String resUrl = System.getProperty("checkstand.root")+File.separator+"WEB-INF"+File.separator;;
+	private final String resUrl = System.getProperty("checkstand.root")+File.separator+"WEB-INF"+File.separator;
 
 	
 	@Override
