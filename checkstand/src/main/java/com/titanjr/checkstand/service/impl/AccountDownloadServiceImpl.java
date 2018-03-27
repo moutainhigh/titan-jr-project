@@ -108,17 +108,16 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 	@Resource
 	private AccountDownloadDao accountDownloadDao;
 	
-	@Autowired
-	private ApplicationContext appCtx;
 	public void init(){
-		try {
-			resUrl = appCtx.getResource("classpath:").getFile().getPath().replace("classes", "");
-			if(resUrl.indexOf("timers") != -1){
-				resUrl = resUrl+"/";
-			}
-		} catch (IOException e) {
-			logger.error("初始化appCtx异常：", e);
-		}
+		//try {
+			resUrl = System.getProperty("checkstand.root")+File.separator+"WEB-INF"+File.separator;
+			//resUrl = appCtx.getResource("classpath:").getFile().getPath().replace("classes", "");
+			//if(resUrl.indexOf("timers") != -1){
+			//	resUrl = resUrl+"/";
+			//}
+		//} catch (IOException e) {
+		//	logger.error("初始化appCtx异常：", e);
+		//}
 	}
 	
 
