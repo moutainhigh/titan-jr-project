@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<form action="<%=basePath %>/payment.shtml" name="pay_form" id="pay_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="pay_form" id="pay_form" target="blank" method="post">
     <div class="pay">
         <table cellspacing="0" border="0">
             <tbody>
@@ -183,7 +183,7 @@
 </form><br/><br/>
 
 
-<form action="<%=basePath %>/payment.shtml" name="payQuery_form" id="payQuery_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="payQuery_form" target="blank" id="payQuery_form" method="post">
     <div class="payQuery">
         <table cellspacing="0" border="0">
             <tbody>
@@ -239,7 +239,7 @@
 
 
 
-<form action="<%=basePath %>/payment.shtml" name="refund_form" id="refund_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="refund_form" target="blank" id="refund_form" method="post">
     <div class="refund">
         <table cellspacing="0" border="0">
             <tbody>
@@ -308,7 +308,7 @@
 
 
 
-<form action="<%=basePath %>/payment.shtml" name="refundQuery_form" id="refundQuery_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="refundQuery_form" target="blank" id="refundQuery_form" method="post">
     <div class="refundQuery">
         <table cellspacing="0" border="0">
             <tbody>
@@ -370,7 +370,7 @@
 </form><br/><br/>
 
 
-<form action="<%=basePath %>/payment.shtml" name="agentPay_form" id="agentPay_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="agentPay_form" target="blank" id="agentPay_form" method="post">
     <div class="agentPay">
         <table cellspacing="0" border="0">
             <tbody>
@@ -472,7 +472,7 @@
     </div>
 </form><br/><br/>
 
-<form action="<%=basePath %>/payment.shtml" name="agentQuery_form" id="agentQuery_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="agentQuery_form" target="blank" id="agentQuery_form" method="post">
     <div class="agentQuery">
         <table cellspacing="0" border="0">
             <tbody>
@@ -543,7 +543,7 @@
 </form><br/><br/>
 
 
-<form action="<%=basePath %>/payment.shtml" name="gateWayPayDownload_form" id="gateWayPayDownload_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="gateWayPayDownload_form" target="blank" id="gateWayPayDownload_form" method="post">
     <div class="gateWayPayDownload">
         <table cellspacing="0" border="0">
             <tbody>
@@ -579,7 +579,7 @@
     </div>
 </form><br/><br/>
 
-<form action="<%=basePath %>/payment.shtml" name="qrCodeDownload_form" id="qrCodeDownload_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="qrCodeDownload_form" target="blank" id="qrCodeDownload_form" method="post">
     <div class="qrCodeDownload">
         <table cellspacing="0" border="0">
             <tbody>
@@ -616,7 +616,7 @@
 </form><br/><br/>
 
 
-<form action="<%=basePath %>/payment.shtml" name="agentDownload_form" id="agentDownload_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="agentDownload_form" target="blank" id="agentDownload_form" method="post">
     <div class="agentDownload">
         <table cellspacing="0" border="0">
             <tbody>
@@ -684,7 +684,7 @@
 </form><br/><br/>
 
 
-<form action="<%=basePath %>/payment.shtml" name="rbAccountDownload_form" id="rbAccountDownload_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="rbAccountDownload_form" target="blank" id="rbAccountDownload_form" method="post">
     <div class="agentDownload">
         <table cellspacing="0" border="0">
             <tbody>
@@ -722,7 +722,7 @@
 
 
 <p>--------------------------------快捷支付测试--------------------------------</p>
-<form action="<%=basePath %>/payment.shtml" name="payConfirm_form" id="payConfirm_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="payConfirm_form" target="blank" id="payConfirm_form" method="post">
     <div class="payConfirm">
         <table cellspacing="0" border="0">
             <tbody>
@@ -785,7 +785,7 @@
 </form><br/><br/>
 
 
-<form action="<%=basePath %>/payment.shtml" name="cardAuth_form" id="cardAuth_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="cardAuth_form" target="blank" id="cardAuth_form" method="post">
     <div class="cardAuth">
         <table cellspacing="0" border="0">
             <tbody>
@@ -866,7 +866,7 @@
 </form><br/><br/>
 
 
-<form action="<%=basePath %>/payment.shtml" name="cardBINQuery_form" id="cardBINQuery_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="cardBINQuery_form" target="blank" id="cardBINQuery_form" method="post">
     <div class="cardBINQuery">
         <table cellspacing="0" border="0">
             <tbody>
@@ -918,7 +918,7 @@
 
 
 
-<form action="<%=basePath %>/payment.shtml" name="reSendMsg_form" id="reSendMsg_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="reSendMsg_form" target="blank" id="reSendMsg_form" method="post">
     <div class="reSendMsg">
         <table cellspacing="0" border="0">
             <tbody>
@@ -975,7 +975,7 @@
 </form><br/><br/>
 
 
-<form action="<%=basePath %>/payment.shtml" name="unBindCard_form" id="unBindCard_form" method="post">
+<form action="<%=basePath %>/payment.shtml" name="unBindCard_form" target="blank" id="unBindCard_form" method="post">
     <div class="unBindCard">
         <table cellspacing="0" border="0">
             <tbody>
