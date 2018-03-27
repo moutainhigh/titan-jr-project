@@ -345,26 +345,7 @@ public class AccountServiceImpl implements AccountService {
             withdrawserviceResponse.setStatus(resultMap.get("status").toString());
             if (resultMap.get("status").equals("3") || resultMap.get("status").equals("1")) {
                 withdrawserviceResponse.setIs_success("true");
-                //需要改账户余额
-                Long withDrawAmount = Long.parseLong(withdrawserviceRequest.getAmount());
-                Long accSettle = Long.parseLong(balanceList.get(0).getBalancesettle());
-                Long usableAmount = Long.parseLong(balanceList.get(0).getBalanceusable());
-                Long amount = Long.parseLong(balanceList.get(0).getAmount());
-                balanceList.get(0).setAmount(String.valueOf(amount - withDrawAmount));
-                balanceList.get(0).setBalanceusable(String.valueOf(usableAmount - withDrawAmount));
-                balanceList.get(0).setBalancesettle(String.valueOf(accSettle - withDrawAmount));
-                int count = titanAccountDao.updateAccountBalance(balanceList.get(0));
-                if (count < 1) {
-                    //这种情况应需立即处理；
-                    withdrawserviceResponse.setStatus("4");
-                    commonService.sendSMSMessage(SMSTemplate.WITHDRAW_UPDATE_FAIL, balanceList);
-                }
             }
-        } catch (DaoException e) {//这种情况应需立即处理；
-            logger.error("更新账户余额异常", e);
-            ResponseUtils.getSysErrorResp(withdrawserviceResponse);
-            commonService.sendSMSMessage(SMSTemplate.WITHDRAW_UPDATE_FAIL, e);
-            return withdrawserviceResponse;
         } catch (Exception e) {
             logger.error("上游发起代付提现失败", e);
             ResponseUtils.getSysErrorResp(withdrawserviceResponse);
