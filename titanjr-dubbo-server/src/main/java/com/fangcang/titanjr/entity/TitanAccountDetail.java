@@ -17,6 +17,9 @@ public class TitanAccountDetail implements Serializable {
 	private String accountCode;
 	private Long transOrderId;
 	private String userOrderId;
+	/***
+	 * 
+	 */
 	private Integer tradeType;
 	private String orgCode;
 	private String productId;

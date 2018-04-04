@@ -44,4 +44,11 @@ public interface AccountRecordService {
 	 * @throws GlobalServiceException
 	 */
 	BaseResponseDTO refund(RecordRequest recordRequest) throws GlobalServiceException;
+	/**
+	 * 退款余额退回记账
+	 * @param recordRequest
+	 * @return
+	 * @throws GlobalServiceException
+	 */
+	BaseResponseDTO refundBack(RecordRequest recordRequest) throws GlobalServiceException;
 }

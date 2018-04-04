@@ -1,6 +1,7 @@
 package com.fangcang.titanjr.service.impl;
 
 
+
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fangcang.titanjr.common.enums.OrderExceptionEnum;
+import com.fangcang.titanjr.common.enums.OrderKindEnum;
 import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.Tools;
@@ -29,6 +32,10 @@ import com.fangcang.titanjr.entity.parameter.TitanAccountDetailParam;
 import com.fangcang.titanjr.entity.parameter.TitanBalanceInfoParam;
 import com.fangcang.titanjr.enums.TradeTypeAccountDetailEnum;
 import com.fangcang.titanjr.service.AccountRecordService;
+import com.fangcang.titanjr.service.TitanFinancialUtilService;
+import com.github.pagehelper.StringUtil;
+
+import net.sf.json.JSONSerializer;
 
 @Service("accountRecordService")
 public class AccountRecordServiceImpl implements AccountRecordService {
@@ -43,6 +50,9 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 	
 	@Resource
 	private TitanDepositDetailDao depositDetailDao;
+	
+	@Resource
+    private TitanFinancialUtilService titanFinancialUtilService;
 	
 	/**
 	 * 更新余额
@@ -59,7 +69,20 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		balanceInfo.setFrozonamount(balanceInfo.getFrozonamount()+accountDetail.getFrozonAmount());
 		balanceInfo.setTotalamount(balanceInfo.getSettleamount()+balanceInfo.getFrozonamount());
 		balanceInfo.setCreditamount(accountDetail.getCreditAmount());
-		balanceInfoDao.update(balanceInfo);
+		//检查账户余额，如果小于零，则发送异常邮件。
+		if(balanceInfo.getSettleamount()<0){
+			LOGGER.error("账户余额错误,记账时,可提现余额小于0,账户变动记录accountDetail:"+Tools.gsonToString(accountDetail));
+			String transOrderId = String.valueOf(accountDetail.getTransOrderId());
+			OrderKindEnum orderKind = OrderKindEnum.TransOrderId;
+			if(StringUtil.isNotEmpty(accountDetail.getUserOrderId())){
+				transOrderId = accountDetail.getUserOrderId();
+				orderKind = OrderKindEnum.UserOrderId;
+			}
+			titanFinancialUtilService.saveOrderException(transOrderId,orderKind, OrderExceptionEnum.AccountRecord_Settleamount_Error, JSONSerializer.toJSON(accountDetail).toString());
+		}else{//大于0才修改账户余额
+			balanceInfoDao.update(balanceInfo);
+		}
+		
 		//保存本次记账后的总金额
 		accountDetail.setTotalCreditAmount(balanceInfo.getCreditamount());
 		accountDetail.setTotalFrozonAmount(balanceInfo.getFrozonamount());
@@ -323,7 +346,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setProductId(recordRequest.getProductId());
 		accountDetail.setCreditAmount(0L);
 		accountDetail.setFrozonAmount(0L);
-		accountDetail.setSettleAmount(-(recordRequest.getAmount()+recordRequest.getFee()));
+		accountDetail.setSettleAmount(-(recordRequest.getAmount()+recordRequest.getFee()));//到卡金额+手续费
 		accountDetail.setStatus(1);
 		accountDetail.setCreateTime(new Date());
 		accountDetail.setRemark("提现");
@@ -354,7 +377,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		TitanDepositDetail depositDetail = new TitanDepositDetail();
 		depositDetail.setAccountcode(CommonConstant.DEPOSIT_ACCOUNT_CODE);//固定账户
 		depositDetail.setTransorderid(recordRequest.getTransOrderId());
-		depositDetail.setAmount(recordRequest.getAmount());//
+		depositDetail.setAmount(-recordRequest.getAmount());//
 		depositDetail.setTradetype(tradeType);
 		depositDetail.setFee(0L);
 		depositDetail.setStatus(1);
@@ -406,7 +429,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		TitanDepositDetail depositDetail = new TitanDepositDetail();
 		depositDetail.setAccountcode(CommonConstant.DEPOSIT_ACCOUNT_CODE);//固定账户
 		depositDetail.setTransorderid(recordRequest.getTransOrderId());
-		depositDetail.setAmount(recordRequest.getAmount());//
+		depositDetail.setAmount(-recordRequest.getAmount());
 		depositDetail.setTradetype(tradeType);
 		depositDetail.setFee(0L);
 		depositDetail.setStatus(1);
@@ -415,5 +438,66 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		responseDTO.putSuccess("记账成功");
 		return responseDTO;
 	}
+	
+	
+	@Override
+	public BaseResponseDTO refundBack(RecordRequest recordRequest) throws GlobalServiceException {
+		LOGGER.info("[退款金额退回]记账,请求参数recordRequest:"+Tools.gsonToString(recordRequest));
+		BaseResponseDTO responseDTO = new BaseResponseDTO();
+		int tradeType = TradeTypeAccountDetailEnum.REFUND.getTradeType();
+		//交易验证,判断转出是否已经记账
+		if(!checkIsRecord(recordRequest,tradeType)){
+			LOGGER.error("该笔退款无[退款记账]，无法退回退款，请确认.请求参数:"+Tools.gsonToString(recordRequest));
+			responseDTO.putErrorResult("该笔交易无退款记账");
+			return responseDTO;
+		}
+		int recordTradeType = TradeTypeAccountDetailEnum.REFUND_BACK.getTradeType();
+		//是否已经有退款退回记账
+		if(checkIsRecord(recordRequest,recordTradeType)){
+			responseDTO.putErrorResult("该笔交易已经记账");
+			return responseDTO;
+		}
+		//主账户
+		TitanBalanceInfoParam balanceInfoParam = new TitanBalanceInfoParam();
+		balanceInfoParam.setUserid(recordRequest.getUserId());
+		balanceInfoParam.setProductid(recordRequest.getProductId());
+		List<TitanBalanceInfo> balanceInfoList = balanceInfoDao.queryList(balanceInfoParam);
+		if(CollectionUtils.isEmpty(balanceInfoList)){
+			LOGGER.error("[退款金额退回]记账失败，账户不存在。参数："+Tools.gsonToString(recordRequest));
+			responseDTO.putErrorResult("记账失败，账户不存在");
+			return responseDTO;
+		}
+		TitanBalanceInfo balanceInfo = balanceInfoList.get(0);
+		TitanAccountDetail accountDetail = new TitanAccountDetail();
+		accountDetail.setAccountCode(balanceInfo.getAccountcode());
+		accountDetail.setTransOrderId(recordRequest.getTransOrderId());
+		accountDetail.setUserOrderId(recordRequest.getUserOrderId());
+		accountDetail.setTradeType(recordTradeType);
+		accountDetail.setOrgCode(recordRequest.getUserId());
+		accountDetail.setProductId(recordRequest.getProductId());
+		accountDetail.setCreditAmount(0L);
+		accountDetail.setFrozonAmount(0L);
+		accountDetail.setSettleAmount(recordRequest.getAmount());
+		accountDetail.setStatus(1);
+		accountDetail.setCreateTime(new Date());
+		accountDetail.setRemark("退款金额退回");
+		updateBalanceInfo(accountDetail);
+		
+		//备付金记账
+		TitanDepositDetail depositDetail = new TitanDepositDetail();
+		depositDetail.setAccountcode(CommonConstant.DEPOSIT_ACCOUNT_CODE);//固定账户
+		depositDetail.setTransorderid(recordRequest.getTransOrderId());
+		depositDetail.setAmount(recordRequest.getAmount());
+		depositDetail.setTradetype(recordTradeType);
+		depositDetail.setFee(0L);
+		depositDetail.setStatus(1);
+		depositDetail.setCreatetime(new Date());
+		depositDetailDao.insert(depositDetail);
+		responseDTO.putSuccess("记账成功");
+		return responseDTO;
+		
+	}
 
+	
+	
 }

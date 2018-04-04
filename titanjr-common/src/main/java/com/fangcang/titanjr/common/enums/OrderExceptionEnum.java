@@ -85,8 +85,9 @@ public enum OrderExceptionEnum {
 	//记账
 	AccountRecord_Recharge_Fail("20_01","0","充值：记账失败"),
 	AccountRecord_Transfer_Fail("20_02","0","转账：记账失败"),
-	AccountRecord_Refund_Fail("20_03","0","退款：记账失败");
-	
+	AccountRecord_Refund_Fail("20_03","0","退款：记账失败"),
+	AccountRecord_Settleamount_Error("20_04","0","记账时，可提现余额小于0"),
+	AccountRecord_RefundBack_Fail("20_05","0","退款退回时记账失败");
 	
 	public String msg;
 	
