@@ -40,6 +40,13 @@ public interface AccountRecordService {
 	BaseResponseDTO withdraw(RecordRequest recordRequest) throws GlobalServiceException;
 	
 	/**
+	 * 提现退回记账
+	 * @param recordRequest
+	 * @return
+	 * @throws GlobalServiceException
+	 */
+	BaseResponseDTO withdrawBack(RecordRequest recordRequest) throws GlobalServiceException;
+	/**
 	 * 退款记账
 	 * @throws GlobalServiceException
 	 */

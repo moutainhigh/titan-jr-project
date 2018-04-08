@@ -46,6 +46,7 @@ import com.fangcang.titanjr.common.enums.TradeTypeEnum;
 import com.fangcang.titanjr.common.enums.TransOrderTypeEnum;
 import com.fangcang.titanjr.common.enums.TransferReqEnum;
 import com.fangcang.titanjr.common.enums.TransfertypeEnum;
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.DateUtil;
 import com.fangcang.titanjr.common.util.GenericValidate;
@@ -560,8 +561,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 
 	// 转账 t添加数据库锁
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
-	public TransferResponse transferAccounts(TransferRequest transferRequest) throws Exception {
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT,rollbackFor = Exception.class)
+	public TransferResponse transferAccounts(TransferRequest transferRequest) throws GlobalServiceException {
 		log.info("进入转账，入参：" + JSON.toJSONString(transferRequest));
 		TransferResponse transferResponse = new TransferResponse();
 		if (transferRequest == null) {//增加参数校验
@@ -651,7 +652,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			}
 		} catch (Exception e) {
 			log.error("转账流程出现异常", e);
-			throw new Exception(e);
+			throw new GlobalServiceException(e);
 		} finally {
 			unlockOutTradeNoList(payOrderNo);
 		}

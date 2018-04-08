@@ -15,9 +15,13 @@ public class RecordRequest implements Serializable {
 	private String 	userId;
 	//充值的产品
 	private String productId;
-	// 操作金额，单位：分
+	/**
+	 *  操作金额(不包含手续费)，单位：分
+	 */
 	private long amount;
-	// 操作手续费 单位：分
+	/***
+	 *  操作手续费 单位：分
+	 */
 	private long fee;
 	
 	

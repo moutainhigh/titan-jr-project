@@ -1,8 +1,27 @@
 package com.fangcang.titanjr.service;
 
+import com.fangcang.titanjr.common.exception.GlobalServiceException;
 import com.fangcang.titanjr.dto.bean.RechargeDataDTO;
-import com.fangcang.titanjr.dto.request.*;
-import com.fangcang.titanjr.dto.response.*;
+import com.fangcang.titanjr.dto.request.AllowNoPwdPayRequest;
+import com.fangcang.titanjr.dto.request.ConfirmFinanceRequest;
+import com.fangcang.titanjr.dto.request.ConfirmOrdernQueryRequest;
+import com.fangcang.titanjr.dto.request.JudgeAllowNoPwdPayRequest;
+import com.fangcang.titanjr.dto.request.RechargeRequest;
+import com.fangcang.titanjr.dto.request.RepairTransferRequest;
+import com.fangcang.titanjr.dto.request.TitanOrderRequest;
+import com.fangcang.titanjr.dto.request.TitanPaymentRequest;
+import com.fangcang.titanjr.dto.request.TradeDetailRequest;
+import com.fangcang.titanjr.dto.request.TransOrderUpdateRequest;
+import com.fangcang.titanjr.dto.request.TransferRequest;
+import com.fangcang.titanjr.dto.response.AllowNoPwdPayResponse;
+import com.fangcang.titanjr.dto.response.ConfirmOrdernQueryResponse;
+import com.fangcang.titanjr.dto.response.LocalAddTransOrderResponse;
+import com.fangcang.titanjr.dto.response.QrCodeResponse;
+import com.fangcang.titanjr.dto.response.RechargeResponse;
+import com.fangcang.titanjr.dto.response.TradeDetailResponse;
+import com.fangcang.titanjr.dto.response.TransOrderCreateResponse;
+import com.fangcang.titanjr.dto.response.TransOrderUpdateResponse;
+import com.fangcang.titanjr.dto.response.TransferResponse;
 /**
  * 金服交易相关服务
  * 交易工单，交易请求，交易流水等逻辑
@@ -56,7 +75,7 @@ public interface TitanFinancialTradeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public TransferResponse transferAccounts(TransferRequest transferRequest) throws Exception;
+	public TransferResponse transferAccounts(TransferRequest transferRequest) throws GlobalServiceException;
 	
 	/**
 	 * 开通或关闭免密支付

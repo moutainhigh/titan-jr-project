@@ -497,7 +497,15 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		return responseDTO;
 		
 	}
-
 	
+	@Override
+	public BaseResponseDTO withdrawBack(RecordRequest recordRequest) throws GlobalServiceException {
+		//TODO 
+		
+		
+		
+		
+		return null;
+	}
 	
 }

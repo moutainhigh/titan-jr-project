@@ -848,7 +848,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				return withDrawResponse;
 			}
 			
-			//调用融数接口提现
+			//调用接口提现
 			AccountWithDrawRequest accountWithDrawRequest = new AccountWithDrawRequest();
 			accountWithDrawRequest.setUserid(balanceWithDrawRequest.getUserId());
 			accountWithDrawRequest.setUserfee(Long.valueOf(NumberUtil.covertToCents(balanceWithDrawRequest.getReceivedfee())));
@@ -878,19 +878,62 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 					RecordRequest recordRequest = new RecordRequest();
 					recordRequest.setUserId(accountWithDrawRequest.getUserid());
 					recordRequest.setProductId(accountWithDrawRequest.getProductid());
+					recordRequest.setUserOrderId(balanceWithDrawRequest.getUserorderid());
 					recordRequest.setTransOrderId(titanTransOrder.getTransid());
 					recordRequest.setAmount(Long.parseLong(accountWithDrawRequest.getAmount()));
-					recordRequest.setFee(accountWithDrawRequest.getUserfee());
+					recordRequest.setFee(0);
 					
-					accountRecordService.withdraw(recordRequest);
-					
+					BaseResponseDTO withdrawResponseDTO = accountRecordService.withdraw(recordRequest);
+					if(withdrawResponseDTO.isResult()==false){
+						log.error("提现记账失败,记账参数："+Tools.gsonToString(recordRequest)+",返回信息withdrawResponseDTO："+Tools.gsonToString(withdrawResponseDTO));
+						throw new GlobalServiceException("提现记账失败");
+					}
+					// 手续费转账
+					TransferRequest transferRequest = new TransferRequest();
+			    	transferRequest.setUserid(accountWithDrawRequest.getUserid());										//转出的用户
+			    	transferRequest.setRequestno(OrderGenerateService.genResquestNo());		//业务订单号
+			    	transferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));		//请求时间
+			    	transferRequest.setAmount(accountWithDrawRequest.getUserfee().toString());//金额 必须是分
+			    	transferRequest.setUserfee("0");									
+			    	transferRequest.setUserrelateid(CommonConstant.RS_FANGCANG_USER_ID);	                   //接收方用户Id
+			    	transferRequest.setInterproductid(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
+			    	transferRequest.setOrderid(titanTransOrder.getOrderid());//
+			    	TransferResponse transferResponse = tradeService.transferAccounts(transferRequest);
+			    	if(transferResponse.isResult()==false){
+						log.error("提现手续费转账失败,参数："+Tools.gsonToString(recordRequest)+",返回信息transferRequest："+Tools.gsonToString(transferRequest));
+						throw new GlobalServiceException("提现手续费转账失败");
+					}
 				} else {//提现失败
 					log.error("提现到银行卡失败,订单号orderid:"+orderDTO.getOrderid()+"，错误信息："+Tools.gsonToString(accountWithDrawResponse));
 					withDrawResponse.putErrorResult(accountWithDrawResponse.getReturnCode(), accountWithDrawResponse.getReturnMsg());
 					titanTransOrder.setStatusid(OrderStatusEnum.ORDER_FAIL.getStatus());
 					titanWithDrawReq.setStatus(WithDrawStatusEnum.WithDraw_FAILED.getKey());
 					withDrawResponse.setOperateStatus(false);
-					//TODO 转账成功，提现失败，需要自动修复提现
+					//转账成功，提现失败，需要自动修复提现,转回原账户
+					TitanTransferReqParam titanTransferReqParam = new TitanTransferReqParam();
+					titanTransferReqParam.setTransorderid(titanWithDrawReq.getTransorderid());
+					titanTransferReqParam.setUserrelateid(titanWithDrawReq.getUserid());
+					titanTransferReqParam.setInterproductid(titanWithDrawReq.getProductid());
+					List<TitanTransferReq> transferReqList = transferReqDao.queryTitanTransferReq(titanTransferReqParam);
+					
+			    	if(CollectionUtils.isNotEmpty(transferReqList)){//转回原账户
+			    		TitanTransferReq titanTransferReq = transferReqList.get(0);
+			    		TransferRequest backTransferRequest = new TransferRequest();
+			    		backTransferRequest.setUserid(titanTransferReq.getUserrelateid());			//转出的用户
+			    		backTransferRequest.setProductId(titanTransferReq.getInterproductid());
+			    		backTransferRequest.setRequestno(OrderGenerateService.genResquestNo());		//业务订单号
+			    		backTransferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));		//请求时间
+			    		backTransferRequest.setAmount(titanTransferReq.getAmount().toString());//金额 必须是分
+			    		backTransferRequest.setUserfee("0");
+			    		backTransferRequest.setUserrelateid(titanTransferReq.getUserid());		//接收方用户Id
+			    		backTransferRequest.setInterproductid(titanTransferReq.getProductid());
+			    		backTransferRequest.setOrderid(titanTransOrder.getOrderid());
+			        	TransferResponse backTransferResponse = tradeService.transferAccounts(backTransferRequest);
+			        	if(backTransferResponse.isResult()==false){
+			    			log.error("提现退回转账失败,参数backTransferRequest："+Tools.gsonToString(backTransferRequest)+",返回信息backTransferResponse："+Tools.gsonToString(backTransferResponse));
+			    			throw new GlobalServiceException("提现退回转账失败");
+			    		}
+			    	}//提现没转账记录，则表示真实账户和虚拟账户是同一账户，不需要转账
 					titanFinancialUtilService.saveOrderException(titanTransOrder.getOrderid(),OrderKindEnum.OrderId, OrderExceptionEnum.WithDraw_Transfer_WithDraw_Fail, accountWithDrawResponse.getReturnMsg());
 				}
 				//更新订单
@@ -901,112 +944,195 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 				log.error("提现到银行卡失败,融数接口返回信息为空,订单号orderid:"+orderDTO.getOrderid());
 			}
 		} catch (Exception e) {
-			log.error("账户提现操作失败", e);
-			withDrawResponse.putSysError();
+			log.error("账户提现操作失败,参数balanceWithDrawRequest:"+Tools.gsonToString(balanceWithDrawRequest), e);
+			withDrawResponse.putErrorResult("提现失败");
 		}
 		return withDrawResponse;
 	}
 	
 	/**
-	 * 向融数发起提现
+	 * 提现退回
+	 * @param orderId
+	 * @throws Exception 
 	 */
-	private BalanceWithDrawResponse pushWithDraw(String orderId){
-		BalanceWithDrawResponse withDrawResponse = new BalanceWithDrawResponse();
-		//1-校验该提现单本地状态是否已经成功
+	private BaseResponseDTO withDrawBack(String orderId) throws GlobalServiceException{
+		BaseResponseDTO baseResponseDTO = new BaseResponseDTO();
+		baseResponseDTO.putSuccess();
+		//1-提现退回记账
 		TransOrderRequest transOrderRequest = new TransOrderRequest();
 		transOrderRequest.setOrderid(orderId);
-		TransOrderDTO orderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
-		TitanTransferReqParam titanTransferReqParam = new TitanTransferReqParam();
-		titanTransferReqParam.setTransferreqid(orderDTO.getTransid());
-		List<TitanTransferReq> transferReqList = transferReqDao.queryTitanTransferReq(titanTransferReqParam);
-		if(CollectionUtils.isEmpty(transferReqList)){
-			log.info("无转账记录，不需要重新发起提现.提现交易订单号orderId："+orderId);
-			return withDrawResponse;
-		}
-		TitanTransferReq titanTransferReq = transferReqList.get(0);
-		if(!titanTransferReq.getStatus().equals("2")){//2:成功
-			log.info("无成功的转账记录，不需要重新发起提现。提现交易订单orderId："+orderId+"，转账单号Transferreqid："+titanTransferReq.getTransferreqid());
-			return withDrawResponse;
-		}
-		//提现转账已经成功,检查提现单状态
-		PaginationSupport<TitanWithDrawReq> withDrawReqPage = new PaginationSupport<TitanWithDrawReq>();
-		withDrawReqPage.setPageSize(PaginationSupport.NO_SPLIT_PAGE_SIZE);
-		TitanWithDrawReqParam condition = new TitanWithDrawReqParam();
-		condition.setTransorderid(orderDTO.getTransid());
-		withDrawReqPage.setOrderBy(" createtime desc ");
-		titanWithDrawReqDao.selectForPage(condition, withDrawReqPage);
-		if(CollectionUtils.isEmpty(withDrawReqPage.getItemList())){
-			log.info("数据库无提现记录，不需要重新发起提现。提现交易订单orderId："+orderId);
-			return withDrawResponse;
-		}
-		TitanWithDrawReq titanWithDrawReq = withDrawReqPage.getItemList().get(0);
-		if(titanWithDrawReq.getStatus()!=2){//不是提现失败的单，不处理
-			log.info("不需要重新发起提现。提现交易订单orderId："+orderId+"，提现单号Withdrawreqid："+titanWithDrawReq.getWithdrawreqid());
-			return withDrawResponse;
-		}
+		List<TransOrderDTO> transOrderList = titanTransOrderDao.selectTitanTransOrder(transOrderRequest);
+		TitanWithDrawReqParam withDrawReqParam = new TitanWithDrawReqParam();
+		withDrawReqParam.setTransorderid(transOrderList.get(0).getTransid());
+		List<TitanWithDrawReq> titanWithDrawReqList =  titanWithDrawReqDao.queryList(withDrawReqParam);
+		TitanWithDrawReq titanWithDrawReq = titanWithDrawReqList.get(0);
 		
-		//保存本地提现记录
-		BalanceWithDrawRequest balanceWithDrawRequest = new BalanceWithDrawRequest();
-		balanceWithDrawRequest.setBankName(titanWithDrawReq.getBankname());
-		balanceWithDrawRequest.setCardNo(titanWithDrawReq.getBankcode());
-		balanceWithDrawRequest.setAmount(titanWithDrawReq.getAmount()+"");
-		balanceWithDrawRequest.setReceivablefee(titanWithDrawReq.getUserfee()+"");
-		balanceWithDrawRequest.setOrderDate(titanWithDrawReq.getOrderdate());
-		balanceWithDrawRequest.setUserId(titanWithDrawReq.getUserid());
-		balanceWithDrawRequest.setUserorderid(titanWithDrawReq.getUserorderid());
+		RecordRequest recordRequest = new RecordRequest();
+		recordRequest.setUserId(titanWithDrawReq.getUserid());
+		recordRequest.setProductId(titanWithDrawReq.getProductid());
+		recordRequest.setTransOrderId(titanWithDrawReq.getTransorderid());
+		recordRequest.setAmount(titanWithDrawReq.getAmount());//不包含手续费
+		recordRequest.setFee(titanWithDrawReq.getUserfee());
 		
-		TitanWithDrawReq newWithDrawReq = saveTitanWithDraw(balanceWithDrawRequest, orderDTO.getTransid());
-		if (null == newWithDrawReq){
-			log.error("保存提现记录失败,参数balanceWithDrawRequest："+Tools.gsonToString(balanceWithDrawRequest)+",Transid:"+orderDTO.getTransid());
-			withDrawResponse.putErrorResult("保存提现记录失败");
-			return withDrawResponse;
-		}
-		//2-调用融数接口提现
-		AccountWithDrawRequest accountWithDrawRequest = new AccountWithDrawRequest();
-		accountWithDrawRequest.setUserid(balanceWithDrawRequest.getUserId());
-		accountWithDrawRequest.setUserfee(Long.valueOf(NumberUtil.covertToCents(balanceWithDrawRequest.getReceivedfee())));
-		accountWithDrawRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
-		accountWithDrawRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
-		accountWithDrawRequest.setOrderdate(balanceWithDrawRequest.getOrderDate());
-		accountWithDrawRequest.setCardno(balanceWithDrawRequest.getCardNo());
-		accountWithDrawRequest.setUserorderid(balanceWithDrawRequest.getUserorderid());
-		accountWithDrawRequest.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
-		
-		String amount = NumberUtil.covertToCents(balanceWithDrawRequest.getAmount());
-		//将提现金额减去手续费
-		if(accountWithDrawRequest.getUserfee() != null)
-		{
-			amount = String.valueOf((Long.parseLong(amount) - accountWithDrawRequest
-							.getUserfee()));
-		}
-		
-		accountWithDrawRequest.setAmount(amount);
-		//3-到融数提现
-		TitanTransOrder titanTransOrder = new TitanTransOrder();
-		titanTransOrder.setTransid(orderDTO.getTransid());
-		AccountWithDrawResponse accountWithDrawResponse = rsAccTradeManager.accountBalanceWithDraw(accountWithDrawRequest);
-		if (accountWithDrawResponse != null) {
-			if (CommonConstant.OPERATE_SUCCESS.equals(accountWithDrawResponse.getOperateStatus())) {
-				withDrawResponse.putSuccess("提现请求已经提交，请关注银行通知");
-				withDrawResponse.setOperateStatus(true);
-				newWithDrawReq.setStatus(WithDrawStatusEnum.WithDraw_SUCCESSED.getKey());
-				titanTransOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
-			} else {//提现失败
-				log.error("提现到银行卡失败,交易订单号orderid:"+orderDTO.getOrderid()+",提现单号:"+newWithDrawReq.getWithdrawreqid()+"，错误信息："+Tools.gsonToString(accountWithDrawResponse));
-				withDrawResponse.putErrorResult(accountWithDrawResponse.getReturnCode(), accountWithDrawResponse.getReturnMsg());
-				titanTransOrder.setStatusid(OrderStatusEnum.ORDER_FAIL.getStatus());
-				newWithDrawReq.setStatus(WithDrawStatusEnum.WithDraw_FAILED.getKey());
-				withDrawResponse.setOperateStatus(false);
+		try {
+			BaseResponseDTO baseResponseDTO2 = accountRecordService.withdrawBack(recordRequest);
+			if(baseResponseDTO2.isResult()==false){
+				baseResponseDTO.putErrorResult(baseResponseDTO2.getReturnMessage());
+				return baseResponseDTO;
 			}
-			titanTransOrderDao.update(titanTransOrder);
-			titanWithDrawReqDao.update(newWithDrawReq);
-		}else{
-			log.error("提现到银行卡失败,错误信息："+Tools.gsonToString(accountWithDrawResponse));
-			withDrawResponse.putErrorResult("请求失败");
+		} catch (GlobalServiceException e) {
+			baseResponseDTO.putErrorResult("提现退回记账异常");
+			//TODO 发送异常邮件
+			return baseResponseDTO;
 		}
-		return withDrawResponse;
+		//2-提现手续费退回
+		TransferRequest feeTransferRequest = new TransferRequest();
+		feeTransferRequest.setUserid(CommonConstant.RS_FANGCANG_USER_ID);										//转出的用户
+		feeTransferRequest.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
+		feeTransferRequest.setRequestno(OrderGenerateService.genResquestNo());		//业务订单号
+		feeTransferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));		//请求时间
+		feeTransferRequest.setAmount(titanWithDrawReq.getUserfee().toString());//金额 必须是分
+		feeTransferRequest.setUserfee("0");									
+		feeTransferRequest.setUserrelateid(titanWithDrawReq.getUserid());	                   //接收方用户Id
+		feeTransferRequest.setInterproductid(titanWithDrawReq.getProductid());
+		feeTransferRequest.setOrderid(orderId);
+    	TransferResponse transferResponse = tradeService.transferAccounts(feeTransferRequest);
+    	if(transferResponse.isResult()==false){
+			log.error("提现手续费退回转账失败,参数feeTransferRequest："+Tools.gsonToString(feeTransferRequest)+",返回信息transferResponse："+Tools.gsonToString(transferResponse));
+			throw new GlobalServiceException("提现手续费退回转账失败");
+		}
+    	
+		//3-转回原账户
+		TitanTransferReqParam titanTransferReqParam = new TitanTransferReqParam();
+		titanTransferReqParam.setTransorderid(titanWithDrawReq.getTransorderid());
+		titanTransferReqParam.setUserrelateid(titanWithDrawReq.getUserid());
+		titanTransferReqParam.setInterproductid(titanWithDrawReq.getProductid());
+		List<TitanTransferReq> transferReqList = transferReqDao.queryTitanTransferReq(titanTransferReqParam);
+		
+    	if(CollectionUtils.isNotEmpty(transferReqList)){//转回原账户
+    		TitanTransferReq titanTransferReq = transferReqList.get(0);
+    		TransferRequest backTransferRequest = new TransferRequest();
+    		backTransferRequest.setUserid(titanTransferReq.getUserrelateid());			//转出的用户
+    		backTransferRequest.setProductId(titanTransferReq.getInterproductid());
+    		backTransferRequest.setRequestno(OrderGenerateService.genResquestNo());		//业务订单号
+    		backTransferRequest.setRequesttime(DateUtil.sdf4.format(new Date()));		//请求时间
+    		backTransferRequest.setAmount(titanTransferReq.getAmount().toString());//金额 必须是分
+    		backTransferRequest.setUserfee("0");
+    		backTransferRequest.setUserrelateid(titanTransferReq.getUserid());		//接收方用户Id
+    		backTransferRequest.setInterproductid(titanTransferReq.getProductid());
+    		backTransferRequest.setOrderid(orderId);
+        	TransferResponse backTransferResponse = tradeService.transferAccounts(backTransferRequest);
+        	if(backTransferResponse.isResult()==false){
+    			log.error("提现退回转账失败,参数backTransferRequest："+Tools.gsonToString(backTransferRequest)+",返回信息backTransferResponse："+Tools.gsonToString(backTransferResponse));
+    			throw new GlobalServiceException("提现退回转账失败");
+    		}
+    	}//提现没转账记录，则表示真实账户和虚拟账户是同一账户，不需要转账
+		
+    	return baseResponseDTO;
 		
 	}
+	
+	
+	/**
+	 * 向融数发起提现
+	 */
+//	private BalanceWithDrawResponse pushWithDraw(String orderId){
+//		BalanceWithDrawResponse withDrawResponse = new BalanceWithDrawResponse();
+//		//1-校验该提现单本地状态是否已经成功
+//		TransOrderRequest transOrderRequest = new TransOrderRequest();
+//		transOrderRequest.setOrderid(orderId);
+//		TransOrderDTO orderDTO = titanOrderService.queryTransOrderDTO(transOrderRequest);
+//		TitanTransferReqParam titanTransferReqParam = new TitanTransferReqParam();
+//		titanTransferReqParam.setTransferreqid(orderDTO.getTransid());
+//		List<TitanTransferReq> transferReqList = transferReqDao.queryTitanTransferReq(titanTransferReqParam);
+//		if(CollectionUtils.isEmpty(transferReqList)){
+//			log.info("无转账记录，不需要重新发起提现.提现交易订单号orderId："+orderId);
+//			return withDrawResponse;
+//		}
+//		TitanTransferReq titanTransferReq = transferReqList.get(0);
+//		if(!titanTransferReq.getStatus().equals("2")){//2:成功
+//			log.info("无成功的转账记录，不需要重新发起提现。提现交易订单orderId："+orderId+"，转账单号Transferreqid："+titanTransferReq.getTransferreqid());
+//			return withDrawResponse;
+//		}
+//		//提现转账已经成功,检查提现单状态
+//		PaginationSupport<TitanWithDrawReq> withDrawReqPage = new PaginationSupport<TitanWithDrawReq>();
+//		withDrawReqPage.setPageSize(PaginationSupport.NO_SPLIT_PAGE_SIZE);
+//		TitanWithDrawReqParam condition = new TitanWithDrawReqParam();
+//		condition.setTransorderid(orderDTO.getTransid());
+//		withDrawReqPage.setOrderBy(" createtime desc ");
+//		titanWithDrawReqDao.selectForPage(condition, withDrawReqPage);
+//		if(CollectionUtils.isEmpty(withDrawReqPage.getItemList())){
+//			log.info("数据库无提现记录，不需要重新发起提现。提现交易订单orderId："+orderId);
+//			return withDrawResponse;
+//		}
+//		TitanWithDrawReq titanWithDrawReq = withDrawReqPage.getItemList().get(0);
+//		if(titanWithDrawReq.getStatus()!=2){//不是提现失败的单，不处理
+//			log.info("不需要重新发起提现。提现交易订单orderId："+orderId+"，提现单号Withdrawreqid："+titanWithDrawReq.getWithdrawreqid());
+//			return withDrawResponse;
+//		}
+//		
+//		//保存本地提现记录
+//		BalanceWithDrawRequest balanceWithDrawRequest = new BalanceWithDrawRequest();
+//		balanceWithDrawRequest.setBankName(titanWithDrawReq.getBankname());
+//		balanceWithDrawRequest.setCardNo(titanWithDrawReq.getBankcode());
+//		balanceWithDrawRequest.setAmount(titanWithDrawReq.getAmount()+"");
+//		balanceWithDrawRequest.setReceivablefee(titanWithDrawReq.getUserfee()+"");
+//		balanceWithDrawRequest.setOrderDate(titanWithDrawReq.getOrderdate());
+//		balanceWithDrawRequest.setUserId(titanWithDrawReq.getUserid());
+//		balanceWithDrawRequest.setUserorderid(titanWithDrawReq.getUserorderid());
+//		
+//		TitanWithDrawReq newWithDrawReq = saveTitanWithDraw(balanceWithDrawRequest, orderDTO.getTransid());
+//		if (null == newWithDrawReq){
+//			log.error("保存提现记录失败,参数balanceWithDrawRequest："+Tools.gsonToString(balanceWithDrawRequest)+",Transid:"+orderDTO.getTransid());
+//			withDrawResponse.putErrorResult("保存提现记录失败");
+//			return withDrawResponse;
+//		}
+//		//2-调用融数接口提现
+//		AccountWithDrawRequest accountWithDrawRequest = new AccountWithDrawRequest();
+//		accountWithDrawRequest.setUserid(balanceWithDrawRequest.getUserId());
+//		accountWithDrawRequest.setUserfee(Long.valueOf(NumberUtil.covertToCents(balanceWithDrawRequest.getReceivedfee())));
+//		accountWithDrawRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+//		accountWithDrawRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+//		accountWithDrawRequest.setOrderdate(balanceWithDrawRequest.getOrderDate());
+//		accountWithDrawRequest.setCardno(balanceWithDrawRequest.getCardNo());
+//		accountWithDrawRequest.setUserorderid(balanceWithDrawRequest.getUserorderid());
+//		accountWithDrawRequest.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
+//		
+//		String amount = NumberUtil.covertToCents(balanceWithDrawRequest.getAmount());
+//		//将提现金额减去手续费
+//		if(accountWithDrawRequest.getUserfee() != null)
+//		{
+//			amount = String.valueOf((Long.parseLong(amount) - accountWithDrawRequest
+//							.getUserfee()));
+//		}
+//		
+//		accountWithDrawRequest.setAmount(amount);
+//		//3-到融数提现
+//		TitanTransOrder titanTransOrder = new TitanTransOrder();
+//		titanTransOrder.setTransid(orderDTO.getTransid());
+//		AccountWithDrawResponse accountWithDrawResponse = rsAccTradeManager.accountBalanceWithDraw(accountWithDrawRequest);
+//		if (accountWithDrawResponse != null) {
+//			if (CommonConstant.OPERATE_SUCCESS.equals(accountWithDrawResponse.getOperateStatus())) {
+//				withDrawResponse.putSuccess("提现请求已经提交，请关注银行通知");
+//				withDrawResponse.setOperateStatus(true);
+//				newWithDrawReq.setStatus(WithDrawStatusEnum.WithDraw_SUCCESSED.getKey());
+//				titanTransOrder.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
+//			} else {//提现失败
+//				log.error("提现到银行卡失败,交易订单号orderid:"+orderDTO.getOrderid()+",提现单号:"+newWithDrawReq.getWithdrawreqid()+"，错误信息："+Tools.gsonToString(accountWithDrawResponse));
+//				withDrawResponse.putErrorResult(accountWithDrawResponse.getReturnCode(), accountWithDrawResponse.getReturnMsg());
+//				titanTransOrder.setStatusid(OrderStatusEnum.ORDER_FAIL.getStatus());
+//				newWithDrawReq.setStatus(WithDrawStatusEnum.WithDraw_FAILED.getKey());
+//				withDrawResponse.setOperateStatus(false);
+//			}
+//			titanTransOrderDao.update(titanTransOrder);
+//			titanWithDrawReqDao.update(newWithDrawReq);
+//		}else{
+//			log.error("提现到银行卡失败,错误信息："+Tools.gsonToString(accountWithDrawResponse));
+//			withDrawResponse.putErrorResult("请求失败");
+//		}
+//		return withDrawResponse;
+//		
+//	}
 	
 	//保存提现信息
 	private TitanWithDrawReq saveTitanWithDraw(BalanceWithDrawRequest balanceWithDrawRequest, Integer transOrderId){
