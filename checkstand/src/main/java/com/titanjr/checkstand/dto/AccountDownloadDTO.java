@@ -42,6 +42,10 @@ public class AccountDownloadDTO implements Serializable {
 	 */
 	private String tradeDate;
 	/**
+	 * 交易状态
+	 */
+	private String tradeStatus;
+	/**
 	 * 结算日期    yyyy-MM-dd
 	 */
 	private String settlDate;
@@ -69,6 +73,10 @@ public class AccountDownloadDTO implements Serializable {
 	 * 银行账号【提现有值】
 	 */
 	private String bankCardNo;
+	/**
+	 * 卡类型   1储蓄卡 2信用卡
+	 */
+	private String cardType;
 	/**
 	 * 付款方
 	 */
@@ -115,6 +123,12 @@ public class AccountDownloadDTO implements Serializable {
 	public void setSettlDate(String settlDate) {
 		this.settlDate = settlDate;
 	}
+	public String getTradeStatus() {
+		return tradeStatus;
+	}
+	public void setTradeStatus(String tradeStatus) {
+		this.tradeStatus = tradeStatus;
+	}
 	public String getTradeType() {
 		return tradeType;
 	}
@@ -150,6 +164,12 @@ public class AccountDownloadDTO implements Serializable {
 	}
 	public void setBankCardNo(String bankCardNo) {
 		this.bankCardNo = bankCardNo;
+	}
+	public String getCardType() {
+		return cardType;
+	}
+	public void setCardType(String cardType) {
+		this.cardType = cardType;
 	}
 	public String getPayer() {
 		return payer;

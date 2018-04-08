@@ -9,6 +9,7 @@
 		  `partnerOrderNo`,
 		  `channelCode`,
 		  `tradeDate`,
+		  `tradeStatus`,
 		  `settlDate`,
 		  `tradeType`,
 		  `tradeTypeDes`,
@@ -16,6 +17,7 @@
 		  `settlAmount`,
 		  `fee`,
 		  `bankCardNo`,
+		  `cardType`,
 		  `payer`,
 		  `payee`
         )
@@ -27,6 +29,7 @@
 		  #{item.partnerOrderNo},
 		  #{item.channelCode},
 		  #{item.tradeDate},
+		  #{item.tradeStatus},
 		  #{item.settlDate},
 		  #{item.tradeType},
 		  #{item.tradeTypeDes},
@@ -34,6 +37,7 @@
 		  #{item.settlAmount},
 		  #{item.fee},
 		  #{item.bankCardNo},
+		  #{item.cardType},
 		  #{item.payer},
 		  #{item.payee}
 		)

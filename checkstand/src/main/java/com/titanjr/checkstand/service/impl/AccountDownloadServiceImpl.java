@@ -40,6 +40,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
 import org.apache.commons.codec.binary.Base64InputStream;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -53,8 +54,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.allinpay.ets.client.SecurityUtil;
@@ -66,13 +65,12 @@ import com.fangcang.titanjr.service.TitanSysconfigService;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.JsonUtil;
 import com.fangcang.util.StringUtil;
-import com.titanjr.checkstand.constants.TLAgentTradeTypeEnum;
-import com.titanjr.checkstand.constants.TLGatewayTradeTypeEnum;
+import com.titanjr.checkstand.constants.RBTradeTypeEnum;
 import com.titanjr.checkstand.constants.GatewayDwonloadErrCodeEnum;
 import com.titanjr.checkstand.constants.PayTypeEnum;
-import com.titanjr.checkstand.constants.TLQrCodeTradeTypeEnum;
 import com.titanjr.checkstand.constants.RSErrorCodeEnum;
 import com.titanjr.checkstand.constants.SysConstant;
+import com.titanjr.checkstand.constants.TLTradeTypeEnum;
 import com.titanjr.checkstand.dao.AccountDownloadDao;
 import com.titanjr.checkstand.dto.AccountDownloadDTO;
 import com.titanjr.checkstand.dto.GateWayConfigDTO;
@@ -434,6 +432,11 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 			util.downloadFile(rechargeFileName, rechargeLocal.getPath(), SysConstant.RB_RECHARGE_DIR + transferFormat);
 			util.downloadFile(refundFileName,refundLocal.getPath() , SysConstant.RB_REFUND_DIR + transferFormat);
 			util.ftpLogOut();
+			
+			//保存到数据库
+			saveRBAccountDowanloadInfo(rechargeLocal.getPath()+"/"+rechargeFileName, RBTradeTypeEnum.RB_PAY.tradeType);
+			saveRBAccountDowanloadInfo(refundLocal.getPath()+"/"+refundFileName, RBTradeTypeEnum.RB_REFUND.tradeType);
+			saveRBAccountDowanloadInfo(accountLocal.getPath()+"/"+accountFileName, RBTradeTypeEnum.RB_AGENT.tradeType);
 
 			//登录房仓ftp并上传
 			FTPConfigResponse configResponse = titanSysconfigService.getFTPConfig();
@@ -570,7 +573,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 				//交易类型  1充值  2退款  3冲销   4提现  0未知类型
 				String tradeTypeDes = strs[0];
 				accountDownloadDTO.setTradeTypeDes(tradeTypeDes);
-				accountDownloadDTO.setTradeType(TLGatewayTradeTypeEnum.getTradeType(tradeTypeDes));
+				accountDownloadDTO.setTradeType(TLTradeTypeEnum.getTradeType(tradeTypeDes));
 				//交易金额
 				accountDownloadDTO.setTradeAmount(strs[6]);
 				//清算金额
@@ -651,7 +654,7 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
             	cell = row.getCell(2);
             	String tradeTypeDes = cell.getStringCellValue();
             	accountDownloadDTO.setTradeTypeDes(tradeTypeDes);
-            	accountDownloadDTO.setTradeType(TLQrCodeTradeTypeEnum.getValue(tradeTypeDes));
+            	accountDownloadDTO.setTradeType(TLTradeTypeEnum.getTradeType(tradeTypeDes));
             	//交易金额
             	cell = row.getCell(9);
             	accountDownloadDTO.setTradeAmount(cell.getStringCellValue());
@@ -743,9 +746,9 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 				StringBuffer settlDateSB = new StringBuffer(strs[7]);
 				accountDownloadDTO.setSettlDate(settlDateSB.insert(4, "-").insert(7, "-").toString());
 				//交易类型  1充值  2退款  3冲销   4提现  0未知类型
-				TLAgentTradeTypeEnum tlAgentTradeTypeEnum = TLAgentTradeTypeEnum.getByKey(strs[2]);
-				accountDownloadDTO.setTradeTypeDes(tlAgentTradeTypeEnum.value);
-				accountDownloadDTO.setTradeType(tlAgentTradeTypeEnum.tradeType);
+				TLTradeTypeEnum tlTradeTypeEnum = TLTradeTypeEnum.getByKey(strs[2]);
+				accountDownloadDTO.setTradeTypeDes(tlTradeTypeEnum.value);
+				accountDownloadDTO.setTradeType(tlTradeTypeEnum.tradeType);
 				//交易金额
 				accountDownloadDTO.setTradeAmount(strs[4]);
 				//手续费可能没有，需要判断
@@ -766,6 +769,160 @@ public class AccountDownloadServiceImpl implements AccountDownloadService {
 				return true;
 			}
 			return false;
+			
+		} catch (Exception e) {
+			
+			logger.error("【通联-账户交易】对账信息保存到数据库异常：", e);
+       	 	return false;
+			
+		}
+		
+	}
+	
+	
+	private boolean saveRBAccountDowanloadInfo(String filePath, String tradeType){
+		
+		try {
+			
+			List<AccountDownloadDTO> list = new ArrayList<AccountDownloadDTO>();
+			StringBuffer fileBuf = new StringBuffer();
+			String fileString = "";
+			//读取对账文件
+			File file = new File(filePath);
+			if (file.isFile()) { 
+	            //使用Reader，表示读字符数据，使用BufferedReader，表示建立缓冲区读字符数据。
+	            BufferedReader bufferedReader = null; 
+	            FileReader fileReader = null; 
+	            try { 
+	                fileReader = new FileReader(file);
+	                //嵌套使用，装饰者模式
+	                bufferedReader = new BufferedReader(fileReader); 
+	                String line = bufferedReader.readLine(); 
+	                //一行一行读
+	                while (line != null) {
+	                	fileBuf.append(line + "\r\n");
+	                    line = bufferedReader.readLine(); 
+	                } 
+	            } catch (Exception e) {
+	            	logger.error("【融宝】对账文件信息保存数据库失败，读取文件异常：", e);
+	            	return false;
+	            	
+	            }  finally {
+	                try { 
+	                    fileReader.close(); 
+	                    bufferedReader.close(); 
+	                } catch (IOException e) { 
+	                    e.printStackTrace(); 
+	                }
+	            } 
+	   
+	        }
+			
+			//解析文件内容，构建对象
+			fileString = fileBuf.toString();
+			String[] array = fileString.split("\r\n");
+			for (int i = 1; i < array.length; i++) {
+				
+				String[] strs = array[i].split("\\|");
+				AccountDownloadDTO accountDownloadDTO = new AccountDownloadDTO();
+				//商户号
+				accountDownloadDTO.setMerchantNo(SysConstant.TL_AGENT_MERCHANT);
+				//第三方编码【01通联 02融宝】
+				accountDownloadDTO.setChannelCode(SysConstant.RB_CHANNEL_CODE);
+				//交易类型  1充值  2退款  3冲销   4提现  0未知类型
+				accountDownloadDTO.setTradeType(tradeType);
+				accountDownloadDTO.setTradeTypeDes(RBTradeTypeEnum.getValueByTradeType(tradeType));
+				
+				if(!tradeType.equals(RBTradeTypeEnum.RB_AGENT.tradeType)){
+					
+					//商户订单号
+					accountDownloadDTO.setOrderNo(strs[0]);
+					//第三方订单号
+					accountDownloadDTO.setPartnerOrderNo(strs[1]);
+					//卡类型  融宝充值和退款文件中  0：借记卡    1：贷记卡
+					if("0".equals(strs[5])){
+						accountDownloadDTO.setCardType("1");
+					}else{
+						accountDownloadDTO.setCardType("2");
+					}
+					
+					if(tradeType.equals(RBTradeTypeEnum.RB_PAY.tradeType)){//充值
+						//交易时间    yyyy-MM-dd HH:mm:ss
+						accountDownloadDTO.setTradeDate(strs[13]);
+						//交易状态
+						accountDownloadDTO.setTradeStatus("1");//入金对账文件只有交易成功的记录
+						//交易金额
+						accountDownloadDTO.setTradeAmount(strs[6]);
+						//清算金额
+						accountDownloadDTO.setSettlAmount(strs[10]);
+						//手续费
+						accountDownloadDTO.setFee(strs[9]);
+						//付款方
+						accountDownloadDTO.setPayer(strs[14]);
+						//收款方
+						accountDownloadDTO.setPayee(strs[15]);
+					}
+					if(tradeType.equals(RBTradeTypeEnum.RB_REFUND.tradeType)){//退款
+						//交易时间    yyyy-MM-dd HH:mm:ss
+						accountDownloadDTO.setTradeDate(strs[10]);
+						//交易状态
+						if(StringUtil.isValidString(strs[9])){
+							if("processing".equals(strs[9])){
+								accountDownloadDTO.setTradeStatus("2");
+							}else if("failed".equals(strs[9])){
+								accountDownloadDTO.setTradeStatus("2");
+							}else{
+								accountDownloadDTO.setTradeStatus("1");
+							}
+						}
+						//交易金额
+						accountDownloadDTO.setTradeAmount(strs[7]);
+						//付款方
+						accountDownloadDTO.setPayer(strs[12]);
+						//收款方
+						accountDownloadDTO.setPayee(strs[13]);
+					}
+					
+				}else{  //账户交易
+					
+					//第三方订单号
+					accountDownloadDTO.setPartnerOrderNo(strs[0]);
+					//交易时间    yyyy-MM-dd HH:mm:ss
+					accountDownloadDTO.setTradeDate(strs[12]);
+					//交易状态
+					if("0".equals(strs[13])){
+						accountDownloadDTO.setTradeStatus("1");
+					}else{
+						accountDownloadDTO.setTradeStatus("2");
+					}
+					//交易金额
+					accountDownloadDTO.setTradeAmount(strs[8]);
+					//手续费
+					accountDownloadDTO.setFee(strs[9]);
+					//银行账户
+					accountDownloadDTO.setTradeAmount(strs[3]);
+					//卡类型
+					accountDownloadDTO.setCardType(strs[6]); //???
+					
+				}
+				
+				/*accountDownloadDTO.setTradeDate(tradeDateSB.insert(4, "-").insert(7, "-").insert(10, " ")
+						.insert(13, ":").insert(16, ":").toString());*/
+				list.add(accountDownloadDTO);
+				
+			}
+			
+			if(CollectionUtils.isNotEmpty(list)){
+				int saveCount = accountDownloadDao.batchSave(list);
+				if(saveCount > 0){
+					logger.info("【通联-账户交易】对账文件信息保存成功，共保存{}条记录", saveCount);
+					return true;
+				}
+				return false;
+			}else{
+				logger.info("【通联-账户交易】没有需要插入的交易记录，交易类型为：{}", RBTradeTypeEnum.getValueByTradeType(tradeType));
+				return false;
+			}
 			
 		} catch (Exception e) {
 			
