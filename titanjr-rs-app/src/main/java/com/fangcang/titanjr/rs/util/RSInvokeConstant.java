@@ -45,4 +45,8 @@ public class RSInvokeConstant {
    // public static Map<String, TitanPayMethodConfig> payMethodConfigMap = new HashMap<String, TitanPayMethodConfig>();
     //金服回调地址配置
     public static Map<String,String> callBackConfigMap = new HashMap<String, String>();
+    /**
+     * 代付渠道，100014-通联，300001-融宝
+     */
+    public static String agent_pay_provider = null;
 }

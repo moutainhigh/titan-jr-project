@@ -1142,6 +1142,7 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			titanWithDrawReq.setTransorderid(transOrderId);
 			titanWithDrawReq.setBankcode(balanceWithDrawRequest.getCardNo());
 			titanWithDrawReq.setBankname(balanceWithDrawRequest.getBankName());
+			titanWithDrawReq.setPayProvider(RSInvokeConstant.agent_pay_provider);
 			int rowNum = titanWithDrawReqDao.insert(titanWithDrawReq);
 			if (rowNum <= 0) {
 				log.error("插入提现记录失败,参数titanWithDrawReq："+Tools.gsonToString(titanWithDrawReq));

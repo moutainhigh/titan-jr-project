@@ -33,23 +33,13 @@ public class RSInvokeInitManagerImpl {
 	private final static String OBJ_KEY_DEFAULTPAYERCONFIG = "DefaultPayerConfig";
 	//融数上传zip资料rsa 加密key
 	private final static String CFG_KEY_UPLOAD_FILE_RSA_PUBLIC_KEY = "upload_file_ras_public_key";
-	
+	private final static String AGENT_PAY_PROVIDER = "AGENT_PAY_PROVIDER";
 	
 	@Resource(name="titanSysConfigDao")
 	private TitanSysConfigDao titanSysConfigDao;
 	
     public void initRopClient() {
-        //测试时使用
-//        String ropUrl = "https://testapi.open.ruixuesoft.com:30005/ropapi";
-//        String appKey = "F1A95B5E-3485-4CEB-8036-F2B9EC53EF65";
-//        String appSecret = "8B6E8EEF-48CC-4CCF-94C6-55C4AA2FE9F2";
-//        RSInvokeConstant.ropClient = new DefaultRopClient(ropUrl, appKey, appSecret, "xml");
-//        RSInvokeConstant.sessionKey = "1460355562856409835";
-//        RSInvokeConstant.defaultMerchant = "M10020809";
-//        RSInvokeConstant.defaultRoleId = 1301L;
-//    	System.setProperty("sun.net.client.defaultConnectTimeout", "5000");  
-//    	System.setProperty("sun.net.client.defaultReadTimeout", "5000");
-//        正式上线之后使用
+ 
         RSInvokeConfig rSInvokeConfig = getRSInvokeConfig();
         if (rSInvokeConfig!=null) {
             String ropUrl = rSInvokeConfig.getInvokeURL();
@@ -76,13 +66,10 @@ public class RSInvokeInitManagerImpl {
         	throw new RuntimeException("rong shu notify url init failed, param[titanPayMethod] is null");
         }
         log.info("当前构建的sessionkey是：" + RSInvokeConstant.sessionKey);
-        /*List<TitanCallBackConfig> callBackConfigs = getTitanCallBackConfig();
-        for (TitanCallBackConfig callBackConfig : callBackConfigs) {
-            RSInvokeConstant.callBackConfigMap.put(callBackConfig.getPaySource(),callBackConfig.getCallBackURL());
-        }
-        log.info("callBackConfig:"+Tools.gsonToString(RSInvokeConstant.callBackConfigMap));*/
+       
         getDefaultPayerConfig();
         initUploadFileRSAPublicKey();
+        getAgentPayProvider();
     }
 	/***
 	 * 融数sdk初始化参数
@@ -218,4 +205,16 @@ public class RSInvokeInitManagerImpl {
 		}
 		
     }
+    private void getAgentPayProvider(){
+    	TitanSysConfig param = new TitanSysConfig();
+    	param.setCfgKey(AGENT_PAY_PROVIDER);
+    	List<TitanSysConfig> list = titanSysConfigDao.querySysConfigList(param);
+		if(CollectionUtils.isNotEmpty(list)){
+			RSInvokeConstant.agent_pay_provider = list.get(0).getCfgValue();
+		}else{
+			log.error("代付渠道未配置，请先在数据库中配置");
+		}
+    	
+    }
+    
 }
