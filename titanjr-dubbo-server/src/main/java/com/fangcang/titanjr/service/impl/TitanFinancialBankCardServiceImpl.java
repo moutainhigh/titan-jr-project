@@ -494,9 +494,9 @@ public class TitanFinancialBankCardServiceImpl implements TitanFinancialBankCard
     	try {
     		if(isBindSuccess){
         		if(CommonConstant.ENTERPRISE.equals(titanBankcard.getAccountproperty())){
-                	titanBankcard.setStatus(BindCardStatus.BIND_BINDING.status);//对公绑卡成功，还出于审核状态
+                	titanBankcard.setStatus(BindCardStatus.BIND_SUCCESS.status);//新版绑卡，都不用审核
                 }else if(CommonConstant.PERSONAL.equals(titanBankcard.getAccountproperty())){
-                	titanBankcard.setStatus(BindCardStatus.BIND_SUCCESS.status); //对私绑卡成功就直接记录成功
+                	titanBankcard.setStatus(BindCardStatus.BIND_SUCCESS.status); //新版绑卡，都不用审核
                 }else{
                 	log.error("绑卡类型错误  accountProperty：" + titanBankcard.getAccountproperty()+",参数titanBankcard："+Tools.gsonToString(titanBankcard));
                 }
