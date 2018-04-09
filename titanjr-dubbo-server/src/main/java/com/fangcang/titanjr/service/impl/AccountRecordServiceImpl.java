@@ -352,26 +352,29 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		accountDetail.setRemark("提现");
 		updateBalanceInfo(accountDetail);
 		
-		//手续费记账
-		TitanBalanceInfoParam feeBalanceInfoParam = new TitanBalanceInfoParam();
-		feeBalanceInfoParam.setUserid(CommonConstant.RS_FANGCANG_USER_ID);
-		feeBalanceInfoParam.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
-		List<TitanBalanceInfo> feeBalanceInfoList = balanceInfoDao.queryList(feeBalanceInfoParam);
+		if(recordRequest.getFee()>0){//一般情况不存在，因为手续费是通过转账记得
+			//手续费记账
+			TitanBalanceInfoParam feeBalanceInfoParam = new TitanBalanceInfoParam();
+			feeBalanceInfoParam.setUserid(CommonConstant.RS_FANGCANG_USER_ID);
+			feeBalanceInfoParam.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
+			List<TitanBalanceInfo> feeBalanceInfoList = balanceInfoDao.queryList(feeBalanceInfoParam);
+			
+			TitanAccountDetail accountDetailFee = new TitanAccountDetail();
+			accountDetailFee.setAccountCode(feeBalanceInfoList.get(0).getAccountcode());
+			accountDetailFee.setTransOrderId(recordRequest.getTransOrderId());
+			accountDetailFee.setUserOrderId(recordRequest.getUserOrderId());
+			accountDetailFee.setTradeType(tradeType);
+			accountDetailFee.setOrgCode(CommonConstant.RS_FANGCANG_USER_ID);
+			accountDetailFee.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
+			accountDetailFee.setCreditAmount(0L);
+			accountDetailFee.setFrozonAmount(0L);
+			accountDetailFee.setSettleAmount(recordRequest.getFee());
+			accountDetailFee.setStatus(1);
+			accountDetailFee.setCreateTime(new Date());
+			accountDetailFee.setRemark("提现手续费");
+			updateBalanceInfo(accountDetailFee);
+		}
 		
-		TitanAccountDetail accountDetailFee = new TitanAccountDetail();
-		accountDetailFee.setAccountCode(feeBalanceInfoList.get(0).getAccountcode());
-		accountDetailFee.setTransOrderId(recordRequest.getTransOrderId());
-		accountDetailFee.setUserOrderId(recordRequest.getUserOrderId());
-		accountDetailFee.setTradeType(tradeType);
-		accountDetailFee.setOrgCode(CommonConstant.RS_FANGCANG_USER_ID);
-		accountDetailFee.setProductId(CommonConstant.RS_FANGCANG_PRODUCT_ID_229);
-		accountDetailFee.setCreditAmount(0L);
-		accountDetailFee.setFrozonAmount(0L);
-		accountDetailFee.setSettleAmount(recordRequest.getFee());
-		accountDetailFee.setStatus(1);
-		accountDetailFee.setCreateTime(new Date());
-		accountDetailFee.setRemark("提现");
-		updateBalanceInfo(accountDetailFee);
 		
 		//备付金
 		TitanDepositDetail depositDetail = new TitanDepositDetail();
