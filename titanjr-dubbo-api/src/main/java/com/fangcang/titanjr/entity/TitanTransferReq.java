@@ -25,8 +25,8 @@ public class TitanTransferReq implements java.io.Serializable {
 	private String intermerchantcode;
 	private String userrelateid;
 	private String interproductid;
-	private Double amount;
-	private Double userfee;
+	private Long amount;
+	private Long userfee;
 	private String requestno;
 	private Date requesttime;
 	private String useripaddress;
@@ -51,7 +51,7 @@ public class TitanTransferReq implements java.io.Serializable {
 	public TitanTransferReq(Integer transorderid, Integer transfertype,
 			Integer conditioncode, String merchantcode, String userid,
 			String productid, String intermerchantcode, String userrelateid,
-			String interproductid, Double amount, Double userfee,
+			String interproductid, Long amount, Long userfee,
 			String requestno, Date requesttime, String useripaddress,
 			String remark, Integer status, String creator, Date createtime,String payOrderNo) {
 		this.transorderid = transorderid;
@@ -157,19 +157,19 @@ public class TitanTransferReq implements java.io.Serializable {
 		this.interproductid = interproductid;
 	}
 
-	public Double getAmount() {
+	public Long getAmount() {
 		return this.amount;
 	}
 
-	public void setAmount(Double amount) {
+	public void setAmount(Long amount) {
 		this.amount = amount;
 	}
 
-	public Double getUserfee() {
+	public Long getUserfee() {
 		return this.userfee;
 	}
 
-	public void setUserfee(Double userfee) {
+	public void setUserfee(Long userfee) {
 		this.userfee = userfee;
 	}
 

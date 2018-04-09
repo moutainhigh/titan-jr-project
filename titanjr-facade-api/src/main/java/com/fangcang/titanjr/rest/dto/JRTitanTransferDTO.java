@@ -19,10 +19,10 @@ public class JRTitanTransferDTO {
     private String userRelateId;
     @ApiModelProperty(value = "收款方账户ID")
     private String interProductId;
-    @ApiModelProperty(value = "转账金额")
-    private Double amount;
-    @ApiModelProperty(value = "手续费")
-    private Double userFee;
+    @ApiModelProperty(value = "转账金额(分)")
+    private Long amount;
+    @ApiModelProperty(value = "手续费(分)")
+    private Long userFee;
     @ApiModelProperty(value = "请求号")
     private String requestNo;
     @ApiModelProperty(value = "请求时间")
@@ -71,19 +71,19 @@ public class JRTitanTransferDTO {
         this.interProductId = interProductId;
     }
 
-    public Double getAmount() {
+    public Long getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(Long amount) {
         this.amount = amount;
     }
 
-    public Double getUserFee() {
+    public Long getUserFee() {
         return userFee;
     }
 
-    public void setUserFee(Double userFee) {
+    public void setUserFee(Long userFee) {
         this.userFee = userFee;
     }
 

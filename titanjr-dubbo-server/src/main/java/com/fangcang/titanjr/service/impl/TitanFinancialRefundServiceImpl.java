@@ -579,8 +579,8 @@ public class TitanFinancialRefundServiceImpl implements
 		TitanTransferReq titanTransferReq = new TitanTransferReq();
 		titanTransferReq = new TitanTransferReq();
 		if (StringUtil.isValidString(accountTransfer.getAmount())) {
-			titanTransferReq.setAmount(Double
-					.parseDouble(accountTransfer.getAmount()));
+			titanTransferReq.setAmount(Long
+					.parseLong(accountTransfer.getAmount()));
 		}
 			titanTransferReq.setTransfertype(Integer
 					.parseInt(TransfertypeEnum.BRANCH_TRANSFER.getKey())); // 1:子账户转账
@@ -594,7 +594,7 @@ public class TitanFinancialRefundServiceImpl implements
 		titanTransferReq.setRequestno(accountTransfer.getRequestno());
 		titanTransferReq.setRequesttime(DateUtil.sdf4.parse(accountTransfer.getRequesttime()));
 		titanTransferReq.setStatus(Integer.parseInt("0"));
-		titanTransferReq.setUserfee(Double.valueOf(0));
+		titanTransferReq.setUserfee(0L);
 		titanTransferReq.setUserid(accountTransfer.getUserid());
 		titanTransferReq.setUserrelateid(accountTransfer.getUserrelateid());
 		titanTransferReq.setStatus(TransferReqEnum.TRANSFER_IN_PROCESS.getStatus());

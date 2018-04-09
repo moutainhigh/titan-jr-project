@@ -884,7 +884,7 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 			if (transferRequest != null) {
 				titanTransferReq = new TitanTransferReq();
 				if (StringUtil.isValidString(transferRequest.getAmount())) {
-					titanTransferReq.setAmount(Double.parseDouble(transferRequest.getAmount()));
+					titanTransferReq.setAmount(Long.parseLong(transferRequest.getAmount()));
 				}
 				if (transferRequest.getTransfertype() != null) {
 					titanTransferReq.setTransfertype(Integer.parseInt(transferRequest.getTransfertype().getKey())); // 1:子账户转账
@@ -911,8 +911,8 @@ public class TitanFinancialTradeServiceImpl implements TitanFinancialTradeServic
 									.getKey()));
 				}
 				if (transferRequest.getUserfee() != null) {
-					titanTransferReq.setUserfee(Double
-							.parseDouble(transferRequest.getUserfee()));
+					titanTransferReq.setUserfee(Long
+							.parseLong(transferRequest.getUserfee()));
 				}
 				titanTransferReq.setUserid(transferRequest.getUserid());
 				titanTransferReq.setUserrelateid(transferRequest

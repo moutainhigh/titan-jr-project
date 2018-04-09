@@ -427,7 +427,7 @@ public class OrderOperServiceImpl implements OrderOperService {
             titanTransferDTO.setRequestno(ordernQueryRequest.getOrderno());
         }
         if (null != ordernQueryRequest.getAmount()) {
-            titanTransferDTO.setAmount((double) ordernQueryRequest.getAmount().longValue());
+            titanTransferDTO.setAmount(ordernQueryRequest.getAmount().longValue());
         }
         //转账的收款方
         if (StringUtil.isValidString(ordernQueryRequest.getIntermerchantcode())) {

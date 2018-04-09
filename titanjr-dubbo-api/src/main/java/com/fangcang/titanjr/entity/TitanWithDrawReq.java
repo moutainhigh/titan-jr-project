@@ -21,6 +21,11 @@ public class TitanWithDrawReq implements java.io.Serializable {
     private Long amount;
     private Long userfee;
     private Integer status;
+    /**
+     * 代付渠道，100014-通联，300001-融宝
+     */
+    private String payProvider;
+    
     private String creator;
     private Date createtime;
     private Float standardrate;
@@ -28,12 +33,20 @@ public class TitanWithDrawReq implements java.io.Serializable {
     private Integer ratetype;
     private Float receivablefee;
     private Float receivedfee;
-
+    
     private String bankname;
 
     private String bankcode;
 
-    public Integer getWithdrawreqid() {
+    public String getPayProvider() {
+		return payProvider;
+	}
+
+	public void setPayProvider(String payProvider) {
+		this.payProvider = payProvider;
+	}
+
+	public Integer getWithdrawreqid() {
         return this.withdrawreqid;
     }
 
