@@ -312,7 +312,8 @@ public class AccountServiceImpl implements AccountService {
         paramMap.put("orderNo", withdrawserviceRequest.getUserorderid());//客户单号
         paramMap.put("tradeCode", "100014");
         //paramMap.put("submitTime", DateUtil.dateToString(new Date(), "yyyyMMddHHmmss"));//在checkstand处理，通联和融宝要求格式不同
-        paramMap.put("bankInfo", BankCardMapper.getBankCardByCode(cardDTO.getBankcode()).getBankInfo());
+        //paramMap.put("bankInfo", BankCardMapper.getBankCardByCode(cardDTO.getBankcode()).getBankInfo());//融宝对公使用字母代号
+        paramMap.put("bankInfo", cardDTO.getBankcode());//通联对公使用数字代号
         paramMap.put("busiCode", "105");
         paramMap.put("accountType", "00");//默认银行卡
         paramMap.put("accountNo", cardDTO.getAccountnumber());
@@ -339,7 +340,9 @@ public class AccountServiceImpl implements AccountService {
             Map resultMap = (Map) JSONObject.parse(rechargeResult);
             //1:"处理中",2:"失败",3:"成功"
             if(resultMap.get("errCode") != null || resultMap.get("status") == null){
-            	ResponseUtils.getSysErrorResp(withdrawserviceResponse);
+            	logger.error("checkstand上游发起代付失败，返回错误信息："+Tools.gsonToString(resultMap)+",请求参数:"+Tools.gsonToString(paramMap));
+            	withdrawserviceResponse.setMsg(resultMap.get("errMsg").toString());
+            	ResponseUtils.getErrorResp(withdrawserviceResponse);
                 return withdrawserviceResponse;
             }
             withdrawserviceResponse.setStatus(resultMap.get("status").toString());
@@ -347,9 +350,9 @@ public class AccountServiceImpl implements AccountService {
                 withdrawserviceResponse.setIs_success("true");
             }
         } catch (Exception e) {
-            logger.error("上游发起代付提现失败", e);
+            logger.error("上游发起代付提现失败，提现参数withdrawserviceRequest："+Tools.gsonToString(withdrawserviceRequest), e);
             ResponseUtils.getSysErrorResp(withdrawserviceResponse);
-            commonService.sendSMSMessage(SMSTemplate.WITHDRAW_UPDATE_FAIL, e);
+            //commonService.sendSMSMessage(SMSTemplate.WITHDRAW_UPDATE_FAIL, withdrawserviceRequest);
             return withdrawserviceResponse;
         }
 
