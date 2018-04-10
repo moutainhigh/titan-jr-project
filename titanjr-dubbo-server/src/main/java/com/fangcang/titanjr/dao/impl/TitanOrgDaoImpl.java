@@ -153,7 +153,16 @@ public class TitanOrgDaoImpl extends GenericDAOMyBatisImpl implements TitanOrgDa
 			throw new DaoException(e);
 		}
 	}
-	
+
+	@Override
+	public List<TitanOrg> queryTitanOrgWithTrans() {
+		try {
+			return super.selectList("com.fangcang.titanjr.dao.TitanOrgDao.queryTitanOrgWithTrans");
+		} catch (Exception e) {
+			throw new DaoException(e);
+		}
+	}
+
 	/***
 	 * 设置默认查询参数
 	 * @param organQueryRequest

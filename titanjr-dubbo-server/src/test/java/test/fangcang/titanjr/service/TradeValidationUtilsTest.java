@@ -1,7 +1,10 @@
 package test.fangcang.titanjr.service;
 
 import com.Rop.api.ApiException;
+import com.Rop.api.DefaultRopClient;
 import com.Rop.api.domain.Transorderinfo;
+import com.Rop.api.request.WheatfieldOrdernQueryRequest;
+import com.Rop.api.response.WheatfieldOrdernQueryResponse;
 import com.alibaba.fastjson.JSONObject;
 import com.fangcang.merchant.enums.VersionEnum;
 import com.fangcang.titanjr.common.util.SMSTemplate;
@@ -54,18 +57,18 @@ public class TradeValidationUtilsTest extends SpringTest {
     @Resource
     TitanFinancialBankCardService titanFinancialBankCardService;
 
-    private static String ropUrl = "http://local.fangcang.com:8090/titan-fop-server/";
+    private static String ropUrl = "https://api.open.ruixuesoft.com:30005/ropapi";
     private static String appKey = "93A6626A-C082-4D25-B496-EA9CC6E90EDB";
-    private static String appSecret = "6461B23C-3ABE-4BE2-8E2C-D3FF4B2F5415";
-    protected DefaultFopClient fopClient = null;
+    private static String appSecret = "DC368712-18A4-4290-9A58-FF995DC161DC";
+    protected DefaultRopClient ropClient = null;
 
     @Before
-    public void initFopClient() {
-        fopClient = new DefaultFopClient(ropUrl, appKey, appSecret);
+    public void initRopClient() {
+        ropClient = new DefaultRopClient(ropUrl, appKey, appSecret);
     }
 
     @Test
-    public void testWithDrawFix() {
+    public void testWithDrawFix() throws ApiException {
         //已处理订单
 //        TJR180309182035738  OP20180309182037003  2018-03-09 18:20:37  TJM10000744
 //        TJR180309144940671  OP20180309144942002  2018-03-09 14:49:43  TJMS10027842
@@ -154,8 +157,73 @@ public class TradeValidationUtilsTest extends SpringTest {
         //TJR180326092717625  OP20180326092719002  2018-03-26 09:27:19  TJM10000098
         //TJR180326141507237  OP20180326141508002  2018-03-26 14:15:09  TJM10000666
 
+        //TJR180327164748179  OP20180327164749002  2018-03-27 16:47:50  TJM10000014
+        //TJR180327221512188  OP20180327221514002  2018-03-27 22:15:15  TJM10000014
+        //TJR180327173909287  OP20180327173910002  2018-03-27 17:39:11  TJM10000546
+        //TJR180327181608685  OP20180327181610002  2018-03-27 18:16:10  TJM10000022
 
-        //execFixProcess("TJR180326141507237");
+        //TJR180328173552511  OP20180328173554002  2018-03-28 17:35:54  TJMS10027884
+        //TJR180328195058632  OP20180328195100002  2018-03-28 19:51:00  TJM10000744
+        //TJR180328180254416  OP20180328180256002  2018-03-28 18:02:56  TJM10000014
+        //TJR180328143842847  OP20180328143844002  2018-03-28 14:38:44  TJM10000014
+
+
+        //TJR180329094250884  OP20180329094252002  2018-03-29 09:42:52  TJM10000276
+        //TJR180329094101626  OP20180329094102002  2018-03-29 09:41:03  TJM10000276
+        //TJR180329093917159  OP20180329093918007  2018-03-29 09:39:19  TJM10000276
+        //TJR180329093719716  OP20180329093720003  2018-03-29 09:37:21  TJM10000276
+        //TJR180329170053253  OP20180329170054002  2018-03-29 17:00:55  TJM10000760
+        //TJR180329093540188  OP20180329093541002  2018-03-29 09:35:42  TJM10000276
+        //TJR180329182540146  OP20180329182541002  2018-03-29 18:25:42  TJM10000744
+        //TJR180329094623352  OP20180329094624002  2018-03-29 09:46:25  TJM10000276
+        //TJR180329163343454  OP20180329163344002  2018-03-29 16:33:45  TJM10000014
+        //TJR180329094439152  OP20180329094441002  2018-03-29 09:44:41  TJM10000276
+
+        //TJR180330102355693  OP20180330102356003  2018-03-30 10:23:57  TJM10000068
+        //TJR180330113252691  OP20180330113254002  2018-03-30 11:32:55  TJM10000014
+        //TJR180330175234814  OP20180330175236002  2018-03-30 17:52:36  TJM10000014
+        //TJR180330215027411  OP20180330215029002  2018-03-30 21:50:29  TJM10000014
+        //TJR180330110313941  OP20180330110315002  2018-03-30 11:03:15  TJM10000022
+        //TJR180330174016982  OP20180330174017003  2018-03-30 17:40:18  TJM10000276
+
+
+        //TJR180401123350908  OP20180401123352002  2018-04-01 12:33:52  TJM10000022
+        //TJR180401204526766  OP20180401204527002  2018-04-01 20:45:28  TJM10000014
+
+//        TJR180402114630476  OP20180402114631002  2018-04-02 11:46:32  M000016
+//        TJR180402114754716  OP20180402114755003  2018-04-02 11:47:56  M000016
+//        TJR180402200929461  OP20180402200931002  2018-04-02 20:09:31  M000016
+//        TJR180402101314423  OP20180402101315002  2018-04-02 10:13:16  M000016
+//        TJR180402183449042  OP20180402183450002  2018-04-02 18:34:51  M000016
+//        TJR180402104014987  OP20180402104016002  2018-04-02 10:40:16  M000016
+//        TJR180402104040737  OP20180402104041002  2018-04-02 10:40:42  M000016
+//        TJR180402104100254  OP20180402104101003  2018-04-02 10:41:02  M000016
+//        TJR180402104116633  OP20180402104117002  2018-04-02 10:41:18  M000016
+//        TJR180402104135567  OP20180402104136004  2018-04-02 10:41:37  M000016
+//        TJR180402104203138  OP20180402104204002  2018-04-02 10:42:04  M000016
+//        TJR180402104221131  OP20180402104222002  2018-04-02 10:42:23  M000016
+//        TJR180402104235721  OP20180402104237002  2018-04-02 10:42:37  M000016
+//        TJR180402104250184  OP20180402104251002  2018-04-02 10:42:51  M000016
+//        TJR180402104306243  OP20180402104308005  2018-04-02 10:43:08  M000016
+//        TJR180402214334485  OP20180402214336002  2018-04-02 21:43:37  M000016
+//        TJR180402114332226  OP20180402114334002  2018-04-02 11:43:34  M000016
+//        TJR180402114503192  OP20180402114504002  2018-04-02 11:45:04  M000016
+
+        WheatfieldOrdernQueryRequest ordernQueryRequest = new WheatfieldOrdernQueryRequest();
+        //中间账户退款（部分手工调账的）转入记录
+        ordernQueryRequest.setMerchantcode("M000016");
+        ordernQueryRequest.setFunccode("4016");
+        ordernQueryRequest.setStarttime(DateUtil.stringToDate("2018-04-02 00:00:00","yyyy-MM-dd HH:mm:ss"));
+        ordernQueryRequest.setEndtime(DateUtil.stringToDate("2018-04-03 00:00:00","yyyy-MM-dd HH:mm:ss"));
+        WheatfieldOrdernQueryResponse wheatfieldOrdernQueryResponse = this.ropClient.execute(ordernQueryRequest, "1478056836773639888");
+        for (Transorderinfo transorderinfo : wheatfieldOrdernQueryResponse.getTransorderinfos()){
+            if ("7".equals(transorderinfo.getOrderstatus())) {
+                System.out.println(transorderinfo.getRequestno() + "  " + transorderinfo.getOrderno() + "  "
+                        + transorderinfo.getCreatedtime() + "  " + transorderinfo.getMerchantcode());
+//                execFixProcess(transorderinfo.getRequestno());
+            }
+        }
+
     }
 
     private void execFixProcess(String userOrderId) {
@@ -250,9 +318,11 @@ public class TradeValidationUtilsTest extends SpringTest {
     }
 
     @Test
-    public void testValidAccountAmount() {
+    public void testValidOrgTradeInfo() {
+        Date start = DateUtil.stringToDate("2015-02-01 00:00:00", "yyyy-MM-dd HH:mm:ss");
+        Date end = DateUtil.stringToDate("2018-04-31 23:59:59", "yyyy-MM-dd HH:mm:ss");
         try {
-            boolean result = validationUtils.validAccountAmount("TJM10000016");
+            Map<String, List> result = validationUtils.validOrgTradeInfo(start, end, "TJM10000022");
             System.out.println(result);
         } catch (ApiException e) {
             e.printStackTrace();
@@ -260,12 +330,20 @@ public class TradeValidationUtilsTest extends SpringTest {
     }
 
     @Test
-    public void testValidOrgTradeInfo() {
-        Date start = DateUtil.stringToDate("2015-02-01 00:00:00", "yyyy-MM-dd HH:mm:ss");
-        Date end = DateUtil.stringToDate("2018-03-31 23:59:59", "yyyy-MM-dd HH:mm:ss");
+    public void testValidAccountAmount() {
         try {
-            Map<String, List> result = validationUtils.validOrgTradeInfo(start, end, "TJM10000016");
+            boolean result = validationUtils.validAccountAmount("TJM10000022");
             System.out.println(result);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testComputeAllBalance(){
+        try {
+            Map<String, Long> balanceResult = validationUtils.computeAllBalance();
+            System.out.println(balanceResult);
         } catch (ApiException e) {
             e.printStackTrace();
         }

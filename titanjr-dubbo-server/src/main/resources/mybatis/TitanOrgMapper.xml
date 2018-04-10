@@ -62,6 +62,23 @@
             </where>
          
     </select>
+
+    <select id="queryTitanOrgWithTrans" resultType="com.fangcang.titanjr.entity.TitanOrg">
+        SELECT DISTINCT
+	      g.userid,
+	      g.orgname,
+	      g.productid,
+	      g.constid,
+	      g.usertype,
+	      g.statusid,
+	      g.regsource
+        FROM
+	      t_tfs_org g,
+	      t_tfs_transorder q
+        WHERE
+	      g.orgcode = q.payermerchant
+          OR g.orgcode = q.payeemerchant
+    </select>
     
     <select id="countOrg" parameterType="com.fangcang.titanjr.dto.request.FinancialOrganQueryRequest" resultType="Integer">
     	SELECT 

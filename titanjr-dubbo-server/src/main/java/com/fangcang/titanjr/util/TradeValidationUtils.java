@@ -1,5 +1,6 @@
 package com.fangcang.titanjr.util;
 
+import java.io.*;
 import java.util.*;
 
 import com.Rop.api.ApiException;
@@ -18,19 +19,13 @@ import com.fangcang.titanjr.common.util.CommonConstant;
 import com.fangcang.titanjr.common.util.MD5;
 import com.fangcang.titanjr.common.util.RSConvertFiled2ObjectUtil;
 import com.fangcang.titanjr.common.util.httpclient.HttpClient;
-import com.fangcang.titanjr.dao.TitanOrderPayreqDao;
-import com.fangcang.titanjr.dao.TitanRefundDao;
-import com.fangcang.titanjr.dao.TitanTransferReqDao;
-import com.fangcang.titanjr.dao.TitanWithDrawReqDao;
+import com.fangcang.titanjr.dao.*;
 import com.fangcang.titanjr.dto.bean.RefundDTO;
 import com.fangcang.titanjr.dto.request.NotifyRefundRequest;
 import com.fangcang.titanjr.dto.request.RefundOrderRequest;
 import com.fangcang.titanjr.dto.response.NotifyRefundResponse;
 import com.fangcang.titanjr.dto.response.RefundOrderResponse;
-import com.fangcang.titanjr.entity.TitanOrderPayreq;
-import com.fangcang.titanjr.entity.TitanRefund;
-import com.fangcang.titanjr.entity.TitanTransferReq;
-import com.fangcang.titanjr.entity.TitanWithDrawReq;
+import com.fangcang.titanjr.entity.*;
 import com.fangcang.titanjr.entity.parameter.TitanOrderPayreqParam;
 import com.fangcang.titanjr.entity.parameter.TitanTransferReqParam;
 import com.fangcang.titanjr.entity.parameter.TitanWithDrawReqParam;
@@ -42,6 +37,8 @@ import com.fangcang.titanjr.service.TitanOrderService;
 import com.fangcang.util.DateUtil;
 import com.fangcang.util.MyBeanUtil;
 import com.fangcang.util.StringUtil;
+import net.sf.json.JSONSerializer;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
@@ -51,6 +48,12 @@ import org.apache.http.ParseException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -68,6 +71,7 @@ public class TradeValidationUtils {
 
     private static DefaultRopClient ropClient = new DefaultRopClient(ropUrl, appKey, appSecret, "json");
 
+    private static String filePath = System.getProperty("user.home") + File.separator + "export.xlsx";
 
     @Resource
     private TitanOrderService titanOrderService;
@@ -84,10 +88,40 @@ public class TradeValidationUtils {
     @Resource
     private TitanRefundDao titanRefundDao;
 
+    @Resource
+    private TitanOrgDao titanOrgDao;
+
+
+    /**
+     * 验证一个机构一段时间内所有交易单的状态，并将本地和远程(融数)核对不上的交易记录在excel中
+     * @param startTime 验证开始时间
+     * @param endTime 验证结束时间
+     * @param orgCode 机构编码
+     * @return 所有无法核对上的交易
+     * @throws ApiException
+     */
+    public Map<String, List> validOrgTradeInfo(Date startTime, Date endTime, String orgCode) throws ApiException {
+        Map<String, List> resultMap = new HashMap<String, List>();
+        resultMap.putAll(this.validRechargeOrder(startTime, endTime, orgCode));
+        resultMap.putAll(this.validTransferOrder(startTime, endTime, orgCode));
+        resultMap.putAll(this.validWithDrawOrder(startTime, endTime, orgCode));
+        resultMap.putAll(this.validRefundOrder(startTime, endTime, orgCode));
+        return resultMap;
+    }
+
+    /**
+     * "收入资金统计，充值合计：" + totalRecharge + ",账户转入合计：" + totalPayIn
+     * "支出资金统计，账户转出合计：" + payOutTotal + ",提现合计："
+     *                 + withDrawTotal + ",退款合计：" + refundTotal + ",账户余额：" + accountAmount
+     * 验证收入和支出是否相等
+     * @param orgCode
+     * @return
+     * @throws ApiException
+     */
     public boolean validAccountAmount(String orgCode) throws ApiException {
 
         //判定包含的主账户和子账户数据，判定机构有多少子账户
-
+        //只验证主账户P000070
         //计算充值金额
         TitanOrderPayreqParam requestParam = new TitanOrderPayreqParam();
         requestParam.setMerchantNo(orgCode);
@@ -138,7 +172,7 @@ public class TradeValidationUtils {
         List<RefundDTO> refundDTOList = titanRefundDao.queryRefundDTODetail(refundQuery);
         Long refundTotal = 0l;
         for (RefundDTO refundDTO : refundDTOList) {
-            if (refundDTO.getStatus() == 2 && (refundDTO.getTransStatus() == 13 || refundDTO.getTransStatus() ==16)) {//先计算退款成功的
+            if (refundDTO.getStatus() == 2 && (refundDTO.getTransStatus() == 13 || refundDTO.getTransStatus() == 16)) {//先计算退款成功的
                 refundTotal += Long.parseLong(refundDTO.getRefundAmount());
             }
         }
@@ -170,13 +204,40 @@ public class TradeValidationUtils {
         return false;
     }
 
-    public Map<String, List> validOrgTradeInfo(Date startTime, Date endTime, String orgCode) throws ApiException {
-        Map<String, List> resultMap = new HashMap<String, List>();
-        resultMap.putAll(this.validRechargeOrder(startTime, endTime, orgCode));
-        resultMap.putAll(this.validTransferOrder(startTime, endTime, orgCode));
-        resultMap.putAll(this.validWithDrawOrder(startTime, endTime, orgCode));
-        resultMap.putAll(this.validRefundOrder(startTime, endTime, orgCode));
-        return resultMap;
+    /**
+     * 验证系统所有虚拟账户的余额
+     * 跟备付金进行核对
+     * @return
+     * @throws ApiException
+     */
+    public Map<String, Long> computeAllBalance() throws ApiException {
+        List<TitanOrg> titanOrgs = titanOrgDao.queryTitanOrgWithTrans();
+        Map<String, Long> accountAmountMap = new HashMap<String, Long>();
+        TitanOrg commonOrg = new TitanOrg();
+        commonOrg.setUserid("141223100000056");
+//        titanOrgs.add(commonOrg);
+        WheatfieldBalanceGetlistRequest getlistRequest = new WheatfieldBalanceGetlistRequest();
+        getlistRequest.setRootinstcd("M000016");
+        for (TitanOrg titanOrg : titanOrgs) {
+            log.info("当前机构编码：" + titanOrg.getUserid());
+            getlistRequest.setUserid(titanOrg.getUserid());
+            WheatfieldBalanceGetlistResponse getlistResponse = TradeValidationUtils.ropClient.execute(getlistRequest, session);
+            List<SHBalanceInfo> balanceInfos = getlistResponse.getShbalanceinfos();
+            if (CollectionUtils.isNotEmpty(balanceInfos)) {
+                for (SHBalanceInfo balanceInfo : balanceInfos) {
+                    Long accountAmount = (Long.parseLong(balanceInfo.getBalanceusable()) +
+                            Long.parseLong(balanceInfo.getBalancefrozon()));
+                    if (!accountAmount.equals(Long.parseLong(balanceInfo.getAmount()))) {
+                        log.info("存在可用余额+冻结金额不等于账户余额的账户：" + JSONSerializer.toJSON(balanceInfo));
+                    }
+                    if (accountAmountMap.containsKey(balanceInfo.getProductid())) {
+                        accountAmount = accountAmountMap.get(balanceInfo.getProductid()) + accountAmount;
+                    }
+                    accountAmountMap.put(balanceInfo.getProductid(), accountAmount);
+                }
+            }
+        }
+        return accountAmountMap;
     }
 
     /**
@@ -265,8 +326,10 @@ public class TradeValidationUtils {
                 rechargeResult.add(transorderinfo);
             }
         }
+        writeExcelRecharge(rechargeResult, localRechargeResult, orgCode);
         return resultMap;
     }
+
 
     /**
      * 简化只验证转出单
@@ -341,7 +404,7 @@ public class TradeValidationUtils {
             }
             for (Transorderinfo payout : paidOut) {
                 if (req.getRequestno().equals(payout.getRequestno()) &&
-                        req.getAmount().equals(Double.parseDouble(payout.getAmount()))) {
+                        String.valueOf(req.getAmount()).equals(payout.getAmount())) {
                     isMatch = true;
                     break;
                 }
@@ -351,6 +414,8 @@ public class TradeValidationUtils {
                 localPayOutResult.add(req);
             }
         }
+        //写入excel
+        writeExcelTransfer(paidOutResult, localPayOutResult, orgCode);
         return resultMap;
     }
 
@@ -429,6 +494,8 @@ public class TradeValidationUtils {
                 localWithDrawResult.add(req);
             }
         }
+        //写入Excel
+        writeExcelWithDraw(withDrawResult, localWithDrawResult, orgCode);
         return resultMap;
     }
 
@@ -495,7 +562,244 @@ public class TradeValidationUtils {
                 refundResponseList.add(notifyRefundResponse);
             }
         }
+
+        //记录退款信息写入excel
+        writeExcelRefund(localRefundResult, refundResponseList, orgCode);
         return resultMap;
+    }
+
+    private void createSheetTitle(XSSFWorkbook xwb, File excelFile, String sheetName, String[] titleList) throws IOException {
+        XSSFSheet xssfSheet = xwb.createSheet(sheetName);
+        xssfSheet.createRow(0);
+        int index = 0;
+        while (index < titleList.length) {
+            xssfSheet.getRow(0).createCell(index).setCellValue(titleList[index]);
+            index++;
+        }
+        try (OutputStream outputStream = new FileOutputStream(excelFile)) {
+            xwb.write(outputStream);
+            outputStream.flush();
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+
+    private void writeExcelRecharge(List<Transorderinfo> rechargeResult, List<TitanOrderPayreq> localRechargeResult, String orgCode) {
+        log.info("充值异常记录写入excel开始，当前机构：" + orgCode);
+        Integer startRow = 0;
+        String[] titleList = {"商户号", "订单号/充值单ID",
+                "充值请求号", "充值金额", "创建时间", "充值状态"};
+        try {
+            File excelFile = new File(filePath);
+            XSSFWorkbook xwb;
+            if (!excelFile.exists()) {
+                xwb = new XSSFWorkbook();
+                createSheetTitle(xwb, excelFile, "rechargeResult", titleList);
+            } else {
+                xwb = new XSSFWorkbook(new FileInputStream(excelFile));
+                Sheet refundSheet = xwb.getSheet("rechargeResult");
+                if (null != refundSheet) {
+                    startRow = refundSheet.getLastRowNum();
+                } else {
+                    createSheetTitle(xwb, excelFile, "rechargeResult", titleList);
+                }
+            }
+            xwb = new XSSFWorkbook(new FileInputStream(excelFile));
+            Sheet rechargeSheet = xwb.getSheet("rechargeResult");
+            for (int i = 0, j = localRechargeResult.size(); i < j; i++) {
+                Row row = rechargeSheet.createRow(++startRow);
+                row.createCell(0).setCellValue(orgCode);
+                row.createCell(1).setCellValue(localRechargeResult.get(i).getOrderNo());
+                row.createCell(2).setCellValue(localRechargeResult.get(i).getTransorderid());
+                row.createCell(3).setCellValue(localRechargeResult.get(i).getOrderAmount());
+                row.createCell(4).setCellValue(localRechargeResult.get(i).getOrderTime());
+                row.createCell(5).setCellValue(String.valueOf(localRechargeResult.get(i).getReqstatus()));
+            }
+
+            for (int i = 0, j = rechargeResult.size(); i < j; i++) {
+                Row row = rechargeSheet.createRow(++startRow);
+                row.createCell(0).setCellValue(orgCode);
+                row.createCell(1).setCellValue(rechargeResult.get(i).getOrderno());
+                row.createCell(2).setCellValue(rechargeResult.get(i).getRequestno());
+                row.createCell(3).setCellValue(rechargeResult.get(i).getAmount());
+                row.createCell(4).setCellValue(rechargeResult.get(i).getCreatedtime());
+                row.createCell(5).setCellValue(rechargeResult.get(i).getOrderstatus());
+            }
+
+            OutputStream stream = new FileOutputStream(excelFile);
+            //写入数据
+            xwb.write(stream);
+            //关闭文件流
+            stream.close();
+        } catch (IOException e) {
+            log.error("充值异常交易写入本地Excel失败", e);
+        }
+        log.info("充值异常记录写入excel成功，当前机构：" + orgCode);
+    }
+
+    private void writeExcelTransfer(List<Transorderinfo> paidOutResult, List<TitanTransferReq> localPayOutResult, String orgCode) {
+        log.info("转账异常记录写入excel开始，当前机构：" + orgCode);
+        Integer startRow = 0;
+        String[] titleList = {"商户号", "收款方", "订单号/转账单ID",
+                "转账请求号", "转账金额", "创建时间", "转账状态"};
+        try {
+            File excelFile = new File(filePath);
+            XSSFWorkbook xwb;
+            if (!excelFile.exists()) {
+                xwb = new XSSFWorkbook();
+                createSheetTitle(xwb, excelFile, "paidOutResult", titleList);
+            } else {
+                xwb = new XSSFWorkbook(new FileInputStream(excelFile));
+                Sheet refundSheet = xwb.getSheet("paidOutResult");
+                if (null != refundSheet) {
+                    startRow = refundSheet.getLastRowNum();
+                } else {
+                    createSheetTitle(xwb, excelFile, "paidOutResult", titleList);
+                }
+            }
+            xwb = new XSSFWorkbook(new FileInputStream(excelFile));
+            Sheet refundSheet = xwb.getSheet("paidOutResult");
+            for (int i = 0, j = localPayOutResult.size(); i < j; i++) {
+                Row row = refundSheet.createRow(++startRow);
+                row.createCell(0).setCellValue(orgCode);//付款方
+                row.createCell(1).setCellValue(localPayOutResult.get(i).getUserrelateid());//收款方
+                row.createCell(2).setCellValue(localPayOutResult.get(i).getTransferreqid());
+                row.createCell(3).setCellValue(localPayOutResult.get(i).getRequestno());
+                row.createCell(4).setCellValue(localPayOutResult.get(i).getAmount());
+                row.createCell(5).setCellValue(null != localPayOutResult.get(i).getCreatetime() ?
+                        DateUtil.dateToString(localPayOutResult.get(i).getCreatetime(), "yyyy-MM-dd HH:mm:ss") : "");
+                row.createCell(6).setCellValue(String.valueOf(localPayOutResult.get(i).getStatus()));
+            }
+
+            for (int i = 0, j = paidOutResult.size(); i < j; i++) {
+                Row row = refundSheet.createRow(++startRow);
+                row.createCell(0).setCellValue(orgCode);
+                row.createCell(1).setCellValue(paidOutResult.get(i).getOrderpackageno());//此值应该暂时拿不到
+                row.createCell(2).setCellValue(paidOutResult.get(i).getOrderno());
+                row.createCell(3).setCellValue(paidOutResult.get(i).getRequestno());
+                row.createCell(4).setCellValue(paidOutResult.get(i).getAmount());
+                row.createCell(5).setCellValue(paidOutResult.get(i).getCreatedtime());
+                row.createCell(6).setCellValue(paidOutResult.get(i).getOrderstatus());
+            }
+
+            OutputStream stream = new FileOutputStream(excelFile);
+            //写入数据
+            xwb.write(stream);
+            //关闭文件流
+            stream.close();
+        } catch (IOException e) {
+            log.error("转账异常写入本地Excel失败", e);
+        }
+        log.info("转账异常记录写入excel成功，当前机构：" + orgCode);
+    }
+
+    private void writeExcelWithDraw(List<Transorderinfo> withDrawResult, List<TitanWithDrawReq> localWithDrawResult, String orgCode) {
+        log.info("提现异常记录写入excel开始，当前机构：" + orgCode);
+        Integer startRow = 0;
+        String[] titleList = {"商户号", "订单号/提现单ID",
+                "提现请求号", "提现金额", "创建时间", "提现状态"};
+        try {
+            File excelFile = new File(filePath);
+            XSSFWorkbook xwb;
+            if (!excelFile.exists()) {
+                xwb = new XSSFWorkbook();
+                createSheetTitle(xwb, excelFile, "withDrawResult", titleList);
+            } else {
+                xwb = new XSSFWorkbook(new FileInputStream(excelFile));
+                Sheet refundSheet = xwb.getSheet("withDrawResult");
+                if (null != refundSheet) {
+                    startRow = refundSheet.getLastRowNum();
+                } else {
+                    createSheetTitle(xwb, excelFile, "withDrawResult", titleList);
+                }
+            }
+            xwb = new XSSFWorkbook(new FileInputStream(excelFile));
+            Sheet refundSheet = xwb.getSheet("withDrawResult");
+            for (int i = 0, j = localWithDrawResult.size(); i < j; i++) {
+                Row row = refundSheet.createRow(++startRow);
+                row.createCell(0).setCellValue(orgCode);
+                row.createCell(1).setCellValue(localWithDrawResult.get(i).getWithdrawreqid());
+                row.createCell(2).setCellValue(localWithDrawResult.get(i).getUserorderid());
+                row.createCell(3).setCellValue(localWithDrawResult.get(i).getAmount());
+                row.createCell(4).setCellValue(null != localWithDrawResult.get(i).getCreatetime() ?
+                        DateUtil.dateToString(localWithDrawResult.get(i).getCreatetime(), "yyyy-MM-dd HH:mm:ss") : "");
+                row.createCell(5).setCellValue(String.valueOf(localWithDrawResult.get(i).getStatus()));
+            }
+
+            for (int i = 0, j = withDrawResult.size(); i < j; i++) {
+                Row row = refundSheet.createRow(++startRow);
+                row.createCell(0).setCellValue(orgCode);
+                row.createCell(1).setCellValue(withDrawResult.get(i).getOrderno());
+                row.createCell(2).setCellValue(withDrawResult.get(i).getRequestno());
+                row.createCell(3).setCellValue(withDrawResult.get(i).getAmount());
+                row.createCell(4).setCellValue(withDrawResult.get(i).getCreatedtime());
+                row.createCell(5).setCellValue(withDrawResult.get(i).getOrderstatus());
+            }
+
+            OutputStream stream = new FileOutputStream(excelFile);
+            //写入数据
+            xwb.write(stream);
+            //关闭文件流
+            stream.close();
+        } catch (IOException e) {
+            log.error("提现异常写入本地Excel失败", e);
+        }
+        log.info("提现异常记录写入excel成功，当前机构：" + orgCode);
+    }
+
+    private void writeExcelRefund(List<RefundDTO> localRefundResult, List<NotifyRefundResponse> refundResponseList, String orgCode) {
+        log.info("退款异常记录写入excel开始，当前机构：" + orgCode);
+        Integer startRow = 0;
+        String[] titleList = {"商户号", "订单号",
+                "退款单号", "退款金额", "创建时间", "退款状态"
+        };
+        try {
+            File excelFile = new File(filePath);
+            XSSFWorkbook xwb;
+            if (!excelFile.exists()) {
+                xwb = new XSSFWorkbook();
+                createSheetTitle(xwb, excelFile, "refundResult", titleList);
+            } else {
+                xwb = new XSSFWorkbook(new FileInputStream(excelFile));
+                Sheet refundSheet = xwb.getSheet("refundResult");
+                if (null != refundSheet) {
+                    startRow = refundSheet.getLastRowNum();
+                } else {
+                    createSheetTitle(xwb, excelFile, "refundResult", titleList);
+                }
+            }
+            xwb = new XSSFWorkbook(new FileInputStream(excelFile));
+            Sheet refundSheet = xwb.getSheet("refundResult");
+            for (int i = 0, j = localRefundResult.size(); i < j; i++) {
+                Row row = refundSheet.createRow(++startRow);
+                row.createCell(0).setCellValue(orgCode);
+                row.createCell(1).setCellValue(localRefundResult.get(i).getOrderNo());
+                row.createCell(2).setCellValue(localRefundResult.get(i).getRefundOrderno());
+                row.createCell(3).setCellValue(localRefundResult.get(i).getRefundAmount());
+                row.createCell(4).setCellValue(null != localRefundResult.get(i).getCreatetime() ?
+                        DateUtil.dateToString(localRefundResult.get(i).getCreatetime(), "yyyy-MM-dd HH:mm:ss") : "");
+                row.createCell(5).setCellValue(String.valueOf(localRefundResult.get(i).getStatus()));
+            }
+
+            for (int i = 0, j = refundResponseList.size(); i < j; i++) {
+                Row row = refundSheet.createRow(++startRow);
+                row.createCell(0).setCellValue(orgCode);
+                row.createCell(1).setCellValue(refundResponseList.get(i).getOrderNo());
+                row.createCell(2).setCellValue(refundResponseList.get(i).getRefundOrderno());
+                row.createCell(3).setCellValue(refundResponseList.get(i).getOrderAmount());
+                row.createCell(4).setCellValue(refundResponseList.get(i).getOrderTime());
+                row.createCell(5).setCellValue(refundResponseList.get(i).getRefundStatus());
+            }
+
+            OutputStream stream = new FileOutputStream(excelFile);
+            //写入数据
+            xwb.write(stream);
+            //关闭文件流
+            stream.close();
+        } catch (IOException e) {
+            log.error("退款异常写入本地Excel失败", e);
+        }
+        log.info("退款异常记录写入excel开始，当前机构：" + orgCode);
     }
 
     /**

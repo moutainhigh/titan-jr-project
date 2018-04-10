@@ -38,4 +38,10 @@ public interface TitanOrgDao {
 	int update(TitanOrg entity) throws DaoException;
 	
 	List<TitanOrg> queryTitanOrgListByUserId(FinancialOrganQueryRequest organQueryRequest);
+
+	/**
+	 * 查询所有产生过交易的机构
+	 * @return
+     */
+	List<TitanOrg> queryTitanOrgWithTrans();
 }
