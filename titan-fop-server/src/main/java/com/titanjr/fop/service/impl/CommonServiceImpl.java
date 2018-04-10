@@ -62,7 +62,7 @@ public class CommonServiceImpl implements CommonService {
         SendMessageRequest sendCodeRequest = new SendMessageRequest();
         sendCodeRequest.setReceiveAddress("jinrong@fangcang.com");
         sendCodeRequest.setSubject(template.getSubject());
-        String content = MessageFormat.format(SMSTemplate.ORG_REG_FAID.getContent(), JSONObject.toJSON(messageTarget).toString());
+        String content = MessageFormat.format(template.getContent(), JSONObject.toJSON(messageTarget).toString());
         sendCodeRequest.setContent(content);
         sendCodeRequest.setMerchantCode(CommonConstant.FANGCANG_MERCHANTCODE);
         titanFinancialSendSMSService.asynSendMessage(sendCodeRequest);

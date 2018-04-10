@@ -95,6 +95,10 @@ public interface TitanFinancialAccountService {
 	public BalanceWithDrawResponse accountBalanceWithdraw(BalanceWithDrawRequest balanceWithDrawRequest);
 	
 	/**
+	 * 批量发起提现
+	 */
+	public void withdrawBatch();
+	/**
 	 * 更新收付款历史记录
 	 * @param accountHistoryRequest
 	 * @return

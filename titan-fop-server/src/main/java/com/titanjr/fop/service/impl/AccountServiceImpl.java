@@ -333,6 +333,7 @@ public class AccountServiceImpl implements AccountService {
         //若提现渠道有设置则使用设置的
         if (withdrawserviceRequest.getWithDrawChannel().equals(WithDrawChannelEnum.RB_CHANNEL)) {
             paramMap.put("tradeCode","300001");
+            paramMap.put("bankInfo", BankCardMapper.getBankCardByCode(cardDTO.getBankcode()).getBankInfo());//融宝对公使用字母代号
         }
         try {
             //查询网关真实状态

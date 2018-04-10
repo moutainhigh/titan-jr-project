@@ -1,8 +1,10 @@
 package com.fangcang.titanjr.service.impl;
 
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -951,11 +953,71 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 	}
 	
 	/**
+	 * 定时提现
+	 */
+	public void withdrawBatch(){
+		
+		int pageSize = 1;//TODO 生产改为10
+		int pageNo = 1;
+		TitanWithDrawReqParam condition  = new TitanWithDrawReqParam();
+		condition.setStatus(1);//处理中
+		PaginationSupport<TitanWithDrawReq> page = new PaginationSupport<TitanWithDrawReq>();
+		page.setCurrentPage(pageNo);
+		page.setPageSize(pageSize);
+		page.setOrderBy(" withdrawreqid ");
+		
+		titanWithDrawReqDao.selectForPage(condition, page);
+		List<TitanWithDrawReq> itemList = page.getItemList();
+		while (itemList.size()>0) {
+			for(TitanWithDrawReq item : itemList){
+				//如果是代付中，则查询上游代付状态
+				if(item.getStatus()==1){//处理中
+					//调用接口提现
+					AccountWithDrawRequest accountWithDrawRequest = new AccountWithDrawRequest();
+					accountWithDrawRequest.setUserid(item.getUserid());
+					accountWithDrawRequest.setUserfee(0L);
+					accountWithDrawRequest.setConstid(CommonConstant.RS_FANGCANG_CONST_ID);
+					accountWithDrawRequest.setProductid(CommonConstant.RS_FANGCANG_PRODUCT_ID);
+					accountWithDrawRequest.setOrderdate(item.getOrderdate());
+					accountWithDrawRequest.setCardno(item.getCardno());
+					accountWithDrawRequest.setUserorderid(item.getUserorderid());
+					accountWithDrawRequest.setMerchantcode(CommonConstant.RS_FANGCANG_CONST_ID);
+					accountWithDrawRequest.setAmount(item.getAmount().toString());
+					AccountWithDrawResponse accountWithDrawResponse = rsAccTradeManager.accountBalanceWithDraw(accountWithDrawRequest);
+					log.info("提现定时器，提现单accountWithDrawRequest："+Tools.gsonToString(accountWithDrawRequest));
+					TitanWithDrawReq updateParam = new TitanWithDrawReq();
+					updateParam.setWithdrawreqid(item.getWithdrawreqid());
+					updateParam.setPayProvider(RSInvokeConstant.agent_pay_provider);
+					TitanTransOrder orderUpdateParam = new TitanTransOrder();
+					orderUpdateParam.setTransid(item.getTransorderid());
+					if (CommonConstant.OPERATE_SUCCESS.equals(accountWithDrawResponse.getOperateStatus())) {
+						updateParam.setStatus(WithDrawStatusEnum.WithDraw_SUCCESSED.getKey());
+						orderUpdateParam.setStatusid(OrderStatusEnum.ORDER_SUCCESS.getStatus());
+					} else {//提现失败
+						log.error("提现到银行卡失败,订单号Transorderid:"+item.getTransorderid()+",userOrderId:"+item.getUserorderid()+"，错误信息："+Tools.gsonToString(accountWithDrawResponse));
+						orderUpdateParam.setStatusid(OrderStatusEnum.ORDER_FAIL.getStatus());
+						updateParam.setStatus(WithDrawStatusEnum.WithDraw_FAILED.getKey());
+						titanFinancialUtilService.saveOrderException(item.getUserorderid(),OrderKindEnum.UserOrderId, OrderExceptionEnum.WithDraw_Transfer_WithDraw_Fail, accountWithDrawResponse.getReturnMsg());
+					}
+					titanTransOrderDao.update(orderUpdateParam);
+					titanWithDrawReqDao.update(updateParam);
+				}
+			}
+			
+			page.setCurrentPage(pageNo);
+			page.setItemList(Collections.EMPTY_LIST);
+			titanWithDrawReqDao.selectForPage(condition, page);
+			itemList = page.getItemList();
+			//TODO 失败回退,手动退回到原始账户(虚拟账户)
+		}
+	}
+	
+	/**
 	 * 提现退回
 	 * @param orderId
 	 * @throws Exception 
 	 */
-	private BaseResponseDTO withDrawBack(String orderId) throws GlobalServiceException{
+	private BaseResponseDTO withdrawBack(String orderId) throws GlobalServiceException{
 		BaseResponseDTO baseResponseDTO = new BaseResponseDTO();
 		baseResponseDTO.putSuccess();
 		//1-提现退回记账
@@ -1142,7 +1204,6 @@ public class TitanFinancialAccountServiceImpl implements TitanFinancialAccountSe
 			titanWithDrawReq.setTransorderid(transOrderId);
 			titanWithDrawReq.setBankcode(balanceWithDrawRequest.getCardNo());
 			titanWithDrawReq.setBankname(balanceWithDrawRequest.getBankName());
-			titanWithDrawReq.setPayProvider(RSInvokeConstant.agent_pay_provider);
 			int rowNum = titanWithDrawReqDao.insert(titanWithDrawReq);
 			if (rowNum <= 0) {
 				log.error("插入提现记录失败,参数titanWithDrawReq："+Tools.gsonToString(titanWithDrawReq));
