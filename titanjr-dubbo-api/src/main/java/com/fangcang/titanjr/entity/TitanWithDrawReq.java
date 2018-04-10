@@ -28,6 +28,8 @@ public class TitanWithDrawReq implements java.io.Serializable {
     
     private String creator;
     private Date createtime;
+    private Date updatetime;
+    
     private Float standardrate;
     private Float executionrate;
     private Integer ratetype;
@@ -37,8 +39,28 @@ public class TitanWithDrawReq implements java.io.Serializable {
     private String bankname;
 
     private String bankcode;
+    /**
+     * 卡号
+     */
+    private String cardno;
 
-    public String getPayProvider() {
+    public Date getUpdatetime() {
+		return updatetime;
+	}
+
+	public void setUpdatetime(Date updatetime) {
+		this.updatetime = updatetime;
+	}
+
+	public String getCardno() {
+		return cardno;
+	}
+
+	public void setCardno(String cardno) {
+		this.cardno = cardno;
+	}
+
+	public String getPayProvider() {
 		return payProvider;
 	}
 

@@ -34,12 +34,12 @@ public class BalanceWithDrawRequest extends BaseRequestDTO {
 	
 	private String orderNo;
 	
-	//100 手续费（分）
+	// 手续费（元）
 	// 应收手续费
 	private String receivablefee = "0";
-	// 实收手续费
+	// 实收手续费（元）
 	private String receivedfee = "0";
-	// 标准费率手续费
+	// 标准费率手续费（元）
 	private String standfee = "0";
 
 	@NotNull
