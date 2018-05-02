@@ -501,6 +501,9 @@ public class OrderOperServiceImpl implements OrderOperService {
         if (StringUtil.isValidString(ordernQueryRequest.getUserid())) {
             withDrawReqParam.setUserid(ordernQueryRequest.getUserid());
         }
+        if (StringUtil.isValidString(ordernQueryRequest.getOrderno())) {
+            withDrawReqParam.setUserorderid(ordernQueryRequest.getOrderno());
+        }
         List<TitanWithDrawDTO> withDrawDTOList = titanOrderService.queryWithDrawDTOList(withDrawReqParam);
         String paymentURL = InterfaceURlConfig.checkstand_GateWayURL;//查询
 //        paymentURL = "http://192.168.0.14:8090/checkstand/payment.shtml";

@@ -157,6 +157,7 @@ public class CheckStandController extends BaseController {
 			result = "filePath:" + testPath + ",======result:" + testFile.exists();
 			String prePath = System.getProperty("checkstand.root"); 
 			System.out.println("----------------web-info:"+prePath);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			result="error";

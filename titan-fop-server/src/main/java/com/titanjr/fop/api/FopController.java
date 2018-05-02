@@ -43,6 +43,7 @@ public class FopController extends BaseController {
         }
         if (StringUtil.isValidString(CommonConstants.actualUrl)) {
             resultURL = CommonConstants.actualUrl;
+            resultURL = "http://local.fangcang.com:8090/titan-fop-server/fopapi.shtml";
         } else {
             logger.error("配置的URL为空或不合法");
         }

@@ -88,7 +88,7 @@ public class AgentTradeController extends BaseController {
 				return super.payFailedCallback(model);
 			}
 			
-			super.resetParameter(request,attr);
+//			super.resetParameter(request,attr);
 			//return "forward:" + redirectUrl;
 			return "redirect:" + WebUtils.getRequestBaseUrl(request) + redirectUrl;
 			
